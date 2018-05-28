@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033108AbeE1KW0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:22:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41744 "EHLO mail.kernel.org"
+        id S1033532AbeE1KWc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:22:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033069AbeE1KWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:22:19 -0400
+        id S1033488AbeE1KWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:22:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pawel Dembicki <paweldembicki@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 151/268] net: qmi_wwan: add BroadMobi BM806U 2020:2033
-Date: Mon, 28 May 2018 12:02:05 +0200
-Message-Id: <20180528100219.523238247@linuxfoundation.org>
+Subject: [PATCH 4.4 150/268] ARM: 8748/1: mm: Define vdso_start, vdso_end as array
+Date: Mon, 28 May 2018 12:02:04 +0200
+Message-Id: <20180528100219.425332848@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,32 +31,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pawel Dembicki <paweldembicki@gmail.com>
+From: Jinbum Park <jinb.park7@gmail.com>
 
-[ Upstream commit 743989254ea9f132517806d8893ca9b6cf9dc86b ]
+[ Upstream commit 73b9160d0dfe44dfdaffd6465dc1224c38a4a73c ]
 
-BroadMobi BM806U is an Qualcomm MDM9225 based 3G/4G modem.
-Tested hardware BM806U is mounted on D-Link DWR-921-C3 router.
-The USB id is added to qmi_wwan.c to allow QMI communication with
-the BM806U.
+Define vdso_start, vdso_end as array to avoid compile-time analysis error
+for the case of built with CONFIG_FORTIFY_SOURCE.
 
-Tested on 4.14 kernel and OpenWRT.
+and, since vdso_start, vdso_end are used in vdso.c only,
+move extern-declaration from vdso.h to vdso.c.
 
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+If kernel is built with CONFIG_FORTIFY_SOURCE,
+compile-time error happens at this code.
+- if (memcmp(&vdso_start, "177ELF", 4))
+
+The size of "&vdso_start" is recognized as 1 byte, but n is 4,
+So that compile-time error is reported.
+
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/qmi_wwan.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/include/asm/vdso.h |    2 --
+ arch/arm/kernel/vdso.c      |   12 +++++++-----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -713,6 +713,7 @@ static const struct usb_device_id produc
- 	{QMI_FIXED_INTF(0x19d2, 0x2002, 4)},	/* ZTE (Vodafone) K3765-Z */
- 	{QMI_FIXED_INTF(0x2001, 0x7e19, 4)},	/* D-Link DWM-221 B1 */
- 	{QMI_FIXED_INTF(0x2001, 0x7e35, 4)},	/* D-Link DWM-222 */
-+	{QMI_FIXED_INTF(0x2020, 0x2033, 4)},	/* BroadMobi BM806U */
- 	{QMI_FIXED_INTF(0x0f3d, 0x68a2, 8)},    /* Sierra Wireless MC7700 */
- 	{QMI_FIXED_INTF(0x114f, 0x68a2, 8)},    /* Sierra Wireless MC7750 */
- 	{QMI_FIXED_INTF(0x1199, 0x68a2, 8)},	/* Sierra Wireless MC7710 in QMI mode */
+--- a/arch/arm/include/asm/vdso.h
++++ b/arch/arm/include/asm/vdso.h
+@@ -11,8 +11,6 @@ struct mm_struct;
+ 
+ void arm_install_vdso(struct mm_struct *mm, unsigned long addr);
+ 
+-extern char vdso_start, vdso_end;
+-
+ extern unsigned int vdso_total_pages;
+ 
+ #else /* CONFIG_VDSO */
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -38,6 +38,8 @@
+ 
+ static struct page **vdso_text_pagelist;
+ 
++extern char vdso_start[], vdso_end[];
++
+ /* Total number of pages needed for the data and text portions of the VDSO. */
+ unsigned int vdso_total_pages __read_mostly;
+ 
+@@ -178,13 +180,13 @@ static int __init vdso_init(void)
+ 	unsigned int text_pages;
+ 	int i;
+ 
+-	if (memcmp(&vdso_start, "\177ELF", 4)) {
++	if (memcmp(vdso_start, "\177ELF", 4)) {
+ 		pr_err("VDSO is not a valid ELF object!\n");
+ 		return -ENOEXEC;
+ 	}
+ 
+-	text_pages = (&vdso_end - &vdso_start) >> PAGE_SHIFT;
+-	pr_debug("vdso: %i text pages at base %p\n", text_pages, &vdso_start);
++	text_pages = (vdso_end - vdso_start) >> PAGE_SHIFT;
++	pr_debug("vdso: %i text pages at base %p\n", text_pages, vdso_start);
+ 
+ 	/* Allocate the VDSO text pagelist */
+ 	vdso_text_pagelist = kcalloc(text_pages, sizeof(struct page *),
+@@ -199,7 +201,7 @@ static int __init vdso_init(void)
+ 	for (i = 0; i < text_pages; i++) {
+ 		struct page *page;
+ 
+-		page = virt_to_page(&vdso_start + i * PAGE_SIZE);
++		page = virt_to_page(vdso_start + i * PAGE_SIZE);
+ 		vdso_text_pagelist[i] = page;
+ 	}
+ 
+@@ -210,7 +212,7 @@ static int __init vdso_init(void)
+ 
+ 	cntvct_ok = cntvct_functional();
+ 
+-	patch_vdso(&vdso_start);
++	patch_vdso(vdso_start);
+ 
+ 	return 0;
+ }
