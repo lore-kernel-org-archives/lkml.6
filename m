@@ -1,34 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754513AbeE1R2I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 13:28:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754369AbeE1R2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 13:28:03 -0400
-Date: Mon, 28 May 2018 14:28:00 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH] perf test: Use header file util/debug.h
-Message-ID: <20180528172800.GE25467@kernel.org>
-References: <20180528134817.36643-1-tmricht@linux.ibm.com>
+        id S1754570AbeE1RcM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 13:32:12 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51964 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754443AbeE1RcJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 13:32:09 -0400
+Subject: Re: [PATCH] kbuild: add endianness flag to CHEKCFLAGS
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org
+References: <20180528170048.16595-1-luc.vanoostenryck@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <7ce087bc-dd52-bae8-96f2-fad91f5a345e@infradead.org>
+Date: Mon, 28 May 2018 10:31:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528134817.36643-1-tmricht@linux.ibm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180528170048.16595-1-luc.vanoostenryck@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, May 28, 2018 at 03:48:17PM +0200, Thomas Richter escreveu:
-> Use the header file util/debug.h instead of
-> declaration of verbose variable.
+On 05/28/2018 10:00 AM, Luc Van Oostenryck wrote:
+> The kernel depends on macros like __BYTE_ORDER__,
+> __BIG_ENDIAN__ or __LITTLE_ENDIAN__.
+> 
+> OTOH, sparse doesn't know about the endianness of the kernel and
+> by default uses the same as the machine on which sparse was built.
+> 
+> Ensure that sparse can predefine the macros corresponding to
+> how the kernel was configured by adding -m{big,little}-endian
+> to CHECKFLAGS in the main Makefile (and so for all archs).
+> Also, remove the equivalent done in arch specific Makefiles.
+> 
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+> ---
+>  Makefile               | 3 +++
+>  arch/openrisc/Makefile | 1 -
+>  arch/parisc/Makefile   | 2 +-
+>  arch/s390/Makefile     | 2 +-
+>  4 files changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index 56ba070df..057a278d2 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -878,6 +878,9 @@ ifeq ($(CONFIG_STRIP_ASM_SYMS),y)
+>  LDFLAGS_vmlinux	+= $(call ld-option, -X,)
+>  endif
+>  
+> +# insure the checker run with the right endianness
+> +CHECKFLAGS += $(if $(CONFIG_CPU_BIG_ENDIAN),-mbig,-mlittle)
 
-Thanks, applied.
+Does this need to be                           -mbig-endian,-mlittle-endian)
 
-- Arnaldo
+> +
+>  # Default kernel image to build when no specific target is given.
+>  # KBUILD_IMAGE may be overruled on the command line or
+>  # set in the environment
+> diff --git a/arch/openrisc/Makefile b/arch/openrisc/Makefile
+> index cf8802962..89076a66e 100644
+> --- a/arch/openrisc/Makefile
+> +++ b/arch/openrisc/Makefile
+> @@ -25,7 +25,6 @@ LDFLAGS_vmlinux :=
+>  LIBGCC 		:= $(shell $(CC) $(KBUILD_CFLAGS) -print-libgcc-file-name)
+>  
+>  KBUILD_CFLAGS	+= -pipe -ffixed-r10 -D__linux__
+> -CHECKFLAGS	+= -mbig-endian
+>  
+>  ifeq ($(CONFIG_OPENRISC_HAVE_INST_MUL),y)
+>  	KBUILD_CFLAGS += $(call cc-option,-mhard-mul)
+> diff --git a/arch/parisc/Makefile b/arch/parisc/Makefile
+> index 34ac503e2..348ae4779 100644
+> --- a/arch/parisc/Makefile
+> +++ b/arch/parisc/Makefile
+> @@ -22,7 +22,7 @@ KBUILD_IMAGE := vmlinuz
+>  KBUILD_DEFCONFIG := default_defconfig
+>  
+>  NM		= sh $(srctree)/arch/parisc/nm
+> -CHECKFLAGS	+= -D__hppa__=1 -mbig-endian
+> +CHECKFLAGS	+= -D__hppa__=1
+>  LIBGCC		= $(shell $(CC) $(KBUILD_CFLAGS) -print-libgcc-file-name)
+>  export LIBGCC
+>  
+> diff --git a/arch/s390/Makefile b/arch/s390/Makefile
+> index c79936d02..68a690442 100644
+> --- a/arch/s390/Makefile
+> +++ b/arch/s390/Makefile
+> @@ -18,7 +18,7 @@ KBUILD_CFLAGS	+= -m64
+>  KBUILD_AFLAGS	+= -m64
+>  UTS_MACHINE	:= s390x
+>  STACK_SIZE	:= 16384
+> -CHECKFLAGS	+= -D__s390__ -D__s390x__ -mbig-endian
+> +CHECKFLAGS	+= -D__s390__ -D__s390x__
+>  
+>  export LD_BFD
+>  
+> 
+
+
+-- 
+~Randy
