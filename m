@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422829AbeE1LCk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:02:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49906 "EHLO mail.kernel.org"
+        id S938654AbeE1MTV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:19:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422816AbeE1LCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:02:32 -0400
+        id S1422826AbeE1LCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:02:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Eric Anholt <eric@anholt.net>, Matthias Reichl <hias@horus.com>,
+        stable@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 467/496] ARM: dts: bcm283x: Fix probing of bcm2835-i2s
-Date: Mon, 28 May 2018 12:04:12 +0200
-Message-Id: <20180528100339.589751125@linuxfoundation.org>
+Subject: [PATCH 4.14 470/496] audit: return on memory error to avoid null pointer dereference
+Date: Mon, 28 May 2018 12:04:15 +0200
+Message-Id: <20180528100339.706632423@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,36 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Richard Guy Briggs <rgb@redhat.com>
 
-[ Upstream commit 79c81facdc0b43b1cef37b8d5689a8c8b78f8be0 ]
+[ Upstream commit 23138ead270045f1b3e912e667967b6094244999 ]
 
-Since 517e7a1537a ("ASoC: bcm2835: move to use the clock framework")
-the bcm2835-i2s requires a clock as DT property. Unfortunately
-the necessary DT change has never been applied. While we are at it
-also fix the first PCM register range to cover the PCM_GRAY register.
+If there is a memory allocation error when trying to change an audit
+kernel feature value, the ignored allocation error will trigger a NULL
+pointer dereference oops on subsequent use of that pointer.  Return
+instead.
 
-Fixes: 517e7a1537a ("ASoC: bcm2835: move to use the clock framework")
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Tested-by: Matthias Reichl <hias@horus.com>
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Passes audit-testsuite.
+See: https://github.com/linux-audit/audit-kernel/issues/76
+
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+[PM: not necessary (other funcs check for NULL), but a good practice]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm283x.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/audit.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -396,8 +396,8 @@
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -1058,6 +1058,8 @@ static void audit_log_feature_change(int
+ 		return;
  
- 		i2s: i2s@7e203000 {
- 			compatible = "brcm,bcm2835-i2s";
--			reg = <0x7e203000 0x20>,
--			      <0x7e101098 0x02>;
-+			reg = <0x7e203000 0x24>;
-+			clocks = <&clocks BCM2835_CLOCK_PCM>;
- 
- 			dmas = <&dma 2>,
- 			       <&dma 3>;
+ 	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
++	if (!ab)
++		return;
+ 	audit_log_task_info(ab, current);
+ 	audit_log_format(ab, " feature=%s old=%u new=%u old_lock=%u new_lock=%u res=%d",
+ 			 audit_feature_names[which], !!old_feature, !!new_feature,
