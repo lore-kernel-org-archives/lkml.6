@@ -1,122 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940419AbeE1QmO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:42:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36816 "EHLO mail.kernel.org"
+        id S940420AbeE1Qmh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:42:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933884AbeE1Qls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:41:48 -0400
-X-Google-Smtp-Source: AB8JxZqwih+C75DaTmNH7X4wfTFsEp7wawEUVJXPLcQ8l05Fs8avrDLqbLtOh9km8X7GGmlkmgWfouHZ/N5h0HmKJX8=
+        id S933622AbeE1KHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:07:48 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Laurence Oberman <loberman@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 050/185] scsi: qla2xxx: Avoid triggering undefined behavior in qla2x00_mbx_completion()
+Date: Mon, 28 May 2018 12:01:31 +0200
+Message-Id: <20180528100055.150963794@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
+References: <20180528100050.700971285@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <1527501347-16521-1-git-send-email-m.purski@samsung.com>
-References: <CGME20180528095555eucas1p2fb61f362a3aa2d0082b8c4001b17f176@eucas1p2.samsung.com>
- <1527500833-16005-1-git-send-email-m.purski@samsung.com> <1527501347-16521-1-git-send-email-m.purski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 28 May 2018 18:41:45 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPc6Wxcs2XYKGRXT7_G8ENzgJT1ocWAqviNs1D-mGBoF7w@mail.gmail.com>
-Message-ID: <CAJKOXPc6Wxcs2XYKGRXT7_G8ENzgJT1ocWAqviNs1D-mGBoF7w@mail.gmail.com>
-Subject: Re: [PATCH 12/12] ARM: dts: exynos5250-arndale: add dsi and panel nodes
-To: Maciej Purski <m.purski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>, Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 11:55 AM, Maciej Purski <m.purski@samsung.com> wrote:
-> The patch adds bridge and panel nodes.
-> It adds also DSI properties specific for arndale board.
->
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250-arndale.dts | 39 ++++++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-> index 80221fa..6f0b1c4 100644
-> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -71,6 +71,17 @@
->                 };
->         };
->
-> +       panel: panel {
-> +               compatible = "boe,hv070wsa-100";
-> +               power-supply = <&vcc_3v3_reg>;
-> +               enable-gpios = <&gpd1 3 GPIO_ACTIVE_HIGH>;
-> +               port {
-> +                       panel_ep: endpoint {
-> +                               remote-endpoint = <&bridge_out_ep>;
-> +                       };
-> +               };
-> +       };
-> +
->         regulators {
->                 compatible = "simple-bus";
->                 #address-cells = <1>;
-> @@ -476,6 +487,34 @@
->         };
->  };
->
-> +&dsi_0 {
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Please put the node alphabetically, so before &dp.
+------------------
 
-Also this patch should be squashed with previous one (regulators),
-because adding non-controllable fixed regulators on its own does not
-bring benefits. Linux will not disable them. You added these
-regulators for the bridge below. Without the bridge, their existence
-does not have much sense.
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-Best regards,
-Krzysztof
+[ Upstream commit c02189e12ce3bf3808cb880569d3b10249f50bd9 ]
 
-> +       vddcore-supply = <&ldo8_reg>;
-> +       vddio-supply = <&ldo10_reg>;
-> +       samsung,pll-clock-frequency = <24000000>;
-> +       samsung,burst-clock-frequency = <320000000>;
-> +       samsung,esc-clock-frequency = <10000000>;
-> +       status = "okay";
-> +
-> +       bridge@0 {
-> +               reg = <0>;
-> +               compatible = "toshiba,tc358764";
-> +               vddc-supply = <&vcc_1v2_reg>;
-> +               vddio-supply = <&vcc_1v8_reg>;
-> +               vddmipi-supply = <&vcc_1v2_reg>;
-> +               vddlvds133-supply = <&vcc_3v3_reg>;
-> +               vddlvds112-supply = <&vcc_1v2_reg>;
-> +               reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               port@1 {
-> +                       reg = <1>;
-> +                       bridge_out_ep: endpoint {
-> +                               remote-endpoint = <&panel_ep>;
-> +                       };
-> +               };
-> +       };
-> +};
-> +
->  &i2c_2 {
->         status = "okay";
->         /* used by HDMI DDC */
-> --
-> 2.7.4
->
+A left shift must shift less than the bit width of the left argument.
+Avoid triggering undefined behavior if ha->mbx_count == 32.
+
+This patch avoids that UBSAN reports the following complaint:
+
+UBSAN: Undefined behaviour in drivers/scsi/qla2xxx/qla_isr.c:275:14
+shift exponent 32 is too large for 32-bit type 'int'
+Call Trace:
+ dump_stack+0x4e/0x6c
+ ubsan_epilogue+0xd/0x3b
+ __ubsan_handle_shift_out_of_bounds+0x112/0x14c
+ qla2x00_mbx_completion+0x1c5/0x25d [qla2xxx]
+ qla2300_intr_handler+0x1ea/0x3bb [qla2xxx]
+ qla2x00_mailbox_command+0x77b/0x139a [qla2xxx]
+ qla2x00_mbx_reg_test+0x83/0x114 [qla2xxx]
+ qla2x00_chip_diag+0x354/0x45f [qla2xxx]
+ qla2x00_initialize_adapter+0x2c2/0xa4e [qla2xxx]
+ qla2x00_probe_one+0x1681/0x392e [qla2xxx]
+ pci_device_probe+0x10b/0x1f1
+ driver_probe_device+0x21f/0x3a4
+ __driver_attach+0xa9/0xe1
+ bus_for_each_dev+0x6e/0xb5
+ driver_attach+0x22/0x3c
+ bus_add_driver+0x1d1/0x2ae
+ driver_register+0x78/0x130
+ __pci_register_driver+0x75/0xa8
+ qla2x00_module_init+0x21b/0x267 [qla2xxx]
+ do_one_initcall+0x5a/0x1e2
+ do_init_module+0x9d/0x285
+ load_module+0x20db/0x38e3
+ SYSC_finit_module+0xa8/0xbc
+ SyS_finit_module+0x9/0xb
+ do_syscall_64+0x77/0x271
+ entry_SYSCALL64_slow_path+0x25/0x25
+
+Reported-by: Meelis Roos <mroos@linux.ee>
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
+Acked-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/scsi/qla2xxx/qla_isr.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/drivers/scsi/qla2xxx/qla_isr.c
++++ b/drivers/scsi/qla2xxx/qla_isr.c
+@@ -268,7 +268,8 @@ qla2x00_mbx_completion(scsi_qla_host_t *
+ 	struct device_reg_2xxx __iomem *reg = &ha->iobase->isp;
+ 
+ 	/* Read all mbox registers? */
+-	mboxes = (1 << ha->mbx_count) - 1;
++	WARN_ON_ONCE(ha->mbx_count > 32);
++	mboxes = (1ULL << ha->mbx_count) - 1;
+ 	if (!ha->mcp)
+ 		ql_dbg(ql_dbg_async, vha, 0x5001, "MBX pointer ERROR.\n");
+ 	else
+@@ -2454,7 +2455,8 @@ qla24xx_mbx_completion(scsi_qla_host_t *
+ 	struct device_reg_24xx __iomem *reg = &ha->iobase->isp24;
+ 
+ 	/* Read all mbox registers? */
+-	mboxes = (1 << ha->mbx_count) - 1;
++	WARN_ON_ONCE(ha->mbx_count > 32);
++	mboxes = (1ULL << ha->mbx_count) - 1;
+ 	if (!ha->mcp)
+ 		ql_dbg(ql_dbg_async, vha, 0x504e, "MBX pointer ERROR.\n");
+ 	else
