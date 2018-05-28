@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033503AbeE1KWR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:22:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41532 "EHLO mail.kernel.org"
+        id S1033108AbeE1KW0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:22:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033383AbeE1KWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:22:06 -0400
+        id S1033069AbeE1KWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:22:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Pawel Dembicki <paweldembicki@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 178/268] net: bgmac: Fix endian access in bgmac_dma_tx_ring_free()
-Date: Mon, 28 May 2018 12:02:32 +0200
-Message-Id: <20180528100222.534320833@linuxfoundation.org>
+Subject: [PATCH 4.4 151/268] net: qmi_wwan: add BroadMobi BM806U 2020:2033
+Date: Mon, 28 May 2018 12:02:05 +0200
+Message-Id: <20180528100219.523238247@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,32 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Pawel Dembicki <paweldembicki@gmail.com>
 
-[ Upstream commit 60d6e6f0b9e422dd01aeda39257ee0428e5e2a3f ]
+[ Upstream commit 743989254ea9f132517806d8893ca9b6cf9dc86b ]
 
-bgmac_dma_tx_ring_free() assigns the ctl1 word which is a litle endian
-32-bit word without using proper accessors, fix this, and because a
-length cannot be negative, use unsigned int while at it.
+BroadMobi BM806U is an Qualcomm MDM9225 based 3G/4G modem.
+Tested hardware BM806U is mounted on D-Link DWR-921-C3 router.
+The USB id is added to qmi_wwan.c to allow QMI communication with
+the BM806U.
 
-Fixes: 9cde94506eac ("bgmac: implement scatter/gather support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Tested on 4.14 kernel and OpenWRT.
+
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bgmac.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/usb/qmi_wwan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/broadcom/bgmac.c
-+++ b/drivers/net/ethernet/broadcom/bgmac.c
-@@ -531,7 +531,8 @@ static void bgmac_dma_tx_ring_free(struc
- 	int i;
- 
- 	for (i = 0; i < BGMAC_TX_RING_SLOTS; i++) {
--		int len = dma_desc[i].ctl1 & BGMAC_DESC_CTL1_LEN;
-+		u32 ctl1 = le32_to_cpu(dma_desc[i].ctl1);
-+		unsigned int len = ctl1 & BGMAC_DESC_CTL1_LEN;
- 
- 		slot = &ring->slots[i];
- 		dev_kfree_skb(slot->skb);
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -713,6 +713,7 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x19d2, 0x2002, 4)},	/* ZTE (Vodafone) K3765-Z */
+ 	{QMI_FIXED_INTF(0x2001, 0x7e19, 4)},	/* D-Link DWM-221 B1 */
+ 	{QMI_FIXED_INTF(0x2001, 0x7e35, 4)},	/* D-Link DWM-222 */
++	{QMI_FIXED_INTF(0x2020, 0x2033, 4)},	/* BroadMobi BM806U */
+ 	{QMI_FIXED_INTF(0x0f3d, 0x68a2, 8)},    /* Sierra Wireless MC7700 */
+ 	{QMI_FIXED_INTF(0x114f, 0x68a2, 8)},    /* Sierra Wireless MC7750 */
+ 	{QMI_FIXED_INTF(0x1199, 0x68a2, 8)},	/* Sierra Wireless MC7710 in QMI mode */
