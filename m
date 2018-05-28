@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424668AbeE1LQN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:16:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35146 "EHLO mail.kernel.org"
+        id S1424651AbeE1LQH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:16:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424637AbeE1LQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:16:08 -0400
+        id S1424637AbeE1LQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:16:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Ladislav Michl <ladis@linux-mips.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 262/272] ARM: dts: at91: tse850: use the correct compatible for the eeprom
-Date: Mon, 28 May 2018 12:04:55 +0200
-Message-Id: <20180528100302.166661866@linuxfoundation.org>
+Subject: [PATCH 4.16 234/272] power: supply: ltc2941-battery-gauge: Fix temperature units
+Date: Mon, 28 May 2018 12:04:27 +0200
+Message-Id: <20180528100300.046537637@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -30,31 +30,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Rosin <peda@axentia.se>
+From: Ladislav Michl <ladis@linux-mips.org>
 
-[ Upstream commit 7981190fb5dd710dea08c2613cee3d05e795ca5e ]
+[ Upstream commit dde5953f05a89eb63a0d666ffe51d447b2ac3e05 ]
 
-The used part does contain an eeprom compatible with an Atmel 24c02
-chip and it is from NXP, but it is not called 24c02. It's actually a
-se97b chip. Adjust the compatible accordingly.
+Temperature is measured in tenths of degree Celsius.
 
-Fixes: 21dd0ece34c2 ("ARM: dts: at91: add devicetree for the Axentia TSE-850")
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: 085bc24d1553 ("Add LTC2941/LTC2943 Battery Gauge Driver")
+Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/at91-tse850-3.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/power/supply/ltc2941-battery-gauge.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/arm/boot/dts/at91-tse850-3.dts
-+++ b/arch/arm/boot/dts/at91-tse850-3.dts
-@@ -246,7 +246,7 @@
- 	};
+--- a/drivers/power/supply/ltc2941-battery-gauge.c
++++ b/drivers/power/supply/ltc2941-battery-gauge.c
+@@ -317,15 +317,15 @@ static int ltc294x_get_temperature(const
  
- 	eeprom@50 {
--		compatible = "nxp,24c02", "atmel,24c02";
-+		compatible = "nxp,se97b", "atmel,24c02";
- 		reg = <0x50>;
- 		pagesize = <16>;
- 	};
+ 	if (info->id == LTC2942_ID) {
+ 		reg = LTC2942_REG_TEMPERATURE_MSB;
+-		value = 60000;	/* Full-scale is 600 Kelvin */
++		value = 6000;	/* Full-scale is 600 Kelvin */
+ 	} else {
+ 		reg = LTC2943_REG_TEMPERATURE_MSB;
+-		value = 51000;	/* Full-scale is 510 Kelvin */
++		value = 5100;	/* Full-scale is 510 Kelvin */
+ 	}
+ 	ret = ltc294x_read_regs(info->client, reg, &datar[0], 2);
+ 	value *= (datar[0] << 8) | datar[1];
+-	/* Convert to centidegrees  */
+-	*val = value / 0xFFFF - 27215;
++	/* Convert to tenths of degree Celsius */
++	*val = value / 0xFFFF - 2722;
+ 	return ret;
+ }
+ 
