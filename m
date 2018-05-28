@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754339AbeE1Jrc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:47:32 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40539 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754159AbeE1Jr0 (ORCPT
+        id S932211AbeE1Jrs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:47:48 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55016 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754216AbeE1Jr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 05:47:26 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180528094723euoutp021dd82793a24b2644418bb5c038e2b29e~yxeyaPtzG1507715077euoutp02N
-X-AuditID: cbfec7f5-b45ff700000028a9-f1-5b0bd02a10e0
+        Mon, 28 May 2018 05:47:28 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180528094726euoutp0128457152d56b120324682396e459fe57~yxe04Vyfp1961319613euoutp01S
+X-AuditID: cbfec7f5-b45ff700000028a9-fb-5b0bd02d94d5
 From: Maciej Purski <m.purski@samsung.com>
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
@@ -27,92 +27,119 @@ Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 00/12] Add TOSHIBA TC358764 DSI/LVDS bridge driver
-Date: Mon, 28 May 2018 11:47:04 +0200
-Message-id: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
+Subject: [PATCH 03/12] drm/exynos: move connector creation to attach
+ callback
+Date: Mon, 28 May 2018 11:47:07 +0200
+Message-id: <1527500833-16005-4-git-send-email-m.purski@samsung.com>
 X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTYRjHe7dz8+TsNA3fVCQmhQy0RD+8UUiU4fkkUR8iNW3pYUo6bUdN
-        o2wY2jad1zRN80I6banlFDVBP5g0L3jDNLO8wMLyLkwTUyrn9Nvv//8/z/O+DzyUULyDuVDR
-        igROqZDFSAgaa/20PeQlHTkack5byqCpxiEc6Yb6BChNvYKjpuJ3OKro2fM+b64RKH82F0O/
-        ZkYxlGNeEqLh4fckGkxbJpEmr5pERvMEjsY6yghUPNwlQJULUxhq6JkmUc2XUQFK7+whUXHB
-        AoG2O8qxSyfY+vJ6wI5l6wTsh5fTJFuqLsFZo0FDsG2/53B2NtMkYJurn7DZLQbAWozu1+hg
-        +mIkFxOdxCnP+t+ho56uFZHxOceT21UNpAoMirTAjoKMHzTp9LgW0JSYqQPQ9KpKYBMWAFVd
-        G8RhlaWqANgCPYB1ExOYTfwDsE9j3hMURTBSWP8s3Oo7MQYAmydX9juETCEORyqWcOsoR+Yy
-        LJg3YFbGmNMws+gHsLKICYDajgbc9pw7/DqkEVqbIbNFwJ/DeoEtCIDm1YkDdoSLphbSxm5w
-        rCATs3EcTJ83H/jJsEs3cDD0AvxoGt1nIeMA81tfCK2/howIqjPEthIWrm6s768sZm5Do3oc
-        5AJYCY4YgDOXyMfKOd5XwT3w5mWxfKJC7h0RF2sEeycx8Ne02Q66du92A4YCEnuRaocOEeOy
-        JD4lthtASihxEtFee5YoUpbykFPGhSsTYzi+G7hSmMRZFOaZGixm5LIE7h7HxXPKw1RA2bmo
-        QOP9yQSL35lcu9l1V7pst1aqdiKyOkPr5m5a8pqOvQ3Nky5mzSyf0i4G9S9+C0u8jr3u/ZOi
-        SJuUZ53Xtdkn91ZfbUOF/aZpjbP5e+BcrbvPDbVHs6c/3xORqnco2Vq49eikvPtKjZ/vm/Lc
-        Lb2LOWjl+WyjBz3uFhKYETD42F2C8VEyH6lQycv+A0AAAOEOAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHLMWRmVeSWpSXmKPExsVy+t/xy7qaF7ijDbZtVLW4te4cq0XvuZNM
+In-reply-to: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0gUURjFvTszO+PW2rQa3jTEFsoQtKKCG2YPSBglsCgolLTVnVbRVdvx
+        /Ue+Unct31jrA11K0zaf66Pc0EwlSfOVlWaYmSA+UTIFSzTX0f9+3/nOPYcPLoVJUgkbKjAk
+        nFWFyIKlQhHe9H6t38lpYI/3iYENAo1W9xEove+DACWqFwhUp60hUEnnlvZ5ZVGIcsazcDT9
+        YxBHmZNzGOrvryVRb+I8iTTZpSQyTH4l0JCxSIi0/a0CpJsZxVFV5xiJyoYHBSi5pZNE2twZ
+        IVozFuMXDzCVxZWAGcpIFzDNBWMkU6jOJxiDXiNkXq3+JJjxh10Cpr40jslo0ANm2WB3VeQl
+        OidngwMjWdXx83dEAfmFRjzsqVW0oTYLjwe/6TRgTkH6NCw3NOBpQERJ6AoAdYVLQn5YBrCu
+        vAnbdfWkV2L84jmAH5Obd1ybAC62DZNpgKKEtCOsTPU16Va0HsD6kQVgGjA6j4ADJXOEKcqS
+        9oQVCTnAxDh9BBqLG0gTi+nLMKP6GeDr7OC3Ps12tTntBodaUrbbIJ1JwuKZMqGpDW49+N5h
+        wfst4WwXnwPpQ1CjfifgORQmT03u6NGwNb2H4NkFdnQNbjNGW8CcpicYHymG6hQJb2GgPnGT
+        4I/UAtj24C2eBQ7qgJkeWLMRnFLBcqdC2ChnTqbkIkIUzv6hSgPY+h49G10rr0Hrul87oCkg
+        3SuO/yfylhCySC5G2Q4ghUmtxCKnLUksl8XEsqpQX1VEMMu1A1sKl1qLfY7d95LQClk4G8Sy
+        YaxqdyugzG3iQRWLvTzTcMu10cGj0dXdzyjCJpIS+vavX38RcIGSCxTXfKKyH/f6TV2R6zYj
+        LRUThns3itx1Rz20892Dd+NGctk/3Wml1Z+CzGve/NLb7xudoeUb/vYOSxrbL7FJq7cvPVJ5
+        +hbM9sZ5tiurlC55weU33TYOc2Nn1dN/DaFmFZ1SnAuQnXTEVJzsP2iQfPsaAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsVy+t/xy7o6F7ijDSYckbC4te4cq0XvuZNM
         Fk0db1ktNs5Yz2ox/whQ7MrX92wWk+5PYLF4ce8ii0X/49fMFufPb2C3ONv0ht2ic+ISdotN
         j6+xWlzeNYfNYsb5fUwWC17eYrFYe+Quu8XS6xeZLFr3HmG3mDH5JZvFz13zWBxEPdbMW8Po
         cbmvl8lj56y77B6zO2ayemxa1cnmsf3bA1aP+93HmTw2L6n36NuyitHj8ya5AK4oLpuU1JzM
-        stQifbsErozm99PYC/oFK3Y0rGVvYDzL28XIySEhYCLxeeFkxi5GLg4hgSWMEp83N7JBOI1M
-        Eo2fVgM5HBxsAloSa9rjQeIiAqsYJab+vcMO4jALzGaVePVoAiPIKGEBJ4nJz1axgNgsAqoS
-        3dOegMV5BVwkunatZYVYJydx81wn8wRGrgWMDKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzEC
-        Q3nbsZ9bdjB2vQs+xCjAwajEw6vxkytaiDWxrLgy9xCjBAezkggvly5QiDclsbIqtSg/vqg0
-        J7X4EKM0B4uSOO95g8ooIYH0xJLU7NTUgtQimCwTB6dUA+Ox0/sjpjHlbbn9p+rg8qpnply6
-        l3YcO+RoKC/Wn/i7YfsN9xYL/odLjEXkHJgShW7/c7fd0r6jlilkwt0vizeaB7wRyP28jYE5
-        kOfxtmAfz23f+PJ9HmnHHehXW/fguUJit4jw7OP50rumFBwLq5wlctSmNPp2ko1o5nvPoiK2
-        S+ZhdmuyDiqxFGckGmoxFxUnAgB9tsfWYQIAAA==
-X-CMS-MailID: 20180528094721eucas1p22b90fd838ce00f029fec7f5241cc06b5
+        stQifbsEroyZs3exFCwSqdi0YQJLA+MngS5GTg4JAROJ071rmLsYuTiEBJYwSkzY+hzKaWSS
+        2NLwk72LkYODTUBLYk17PEhcRGAVo8TUv3fYQRxmgdmsEq8eTWAEGSUs4CuxbNkJZhCbRUBV
+        Yte8LewgNq+Ai0TfusWMEOvkJG6e6wSr4RRwlbi8t40NxBYCqtneOItlAiPPAkaGVYwiqaXF
+        uem5xYZ6xYm5xaV56XrJ+bmbGIGhv+3Yz807GC9tDD7EKMDBqMTD2/CbK1qINbGsuDL3EKME
+        B7OSCC+XLlCINyWxsiq1KD++qDQntfgQozQHi5I473mDyighgfTEktTs1NSC1CKYLBMHp1QD
+        o2Ekw5S7wgdXapzNf9gxK3nv9O6vLLc2/Npvuby2auFP7uOpWzdp7LJcufqnYPKFuwHbamOC
+        NENMdt2cKGN6cxZP9c11cZr8/IppYv4Ve1fvnzY34Krx/nim+W8zp+fcOf0v3Oe96vc2JWM9
+        V2P3nOTChO59aW7L/upxP3w+4X6G99/Xn2qi/ZRYijMSDbWYi4oTAaeOMp95AgAA
+X-CMS-MailID: 20180528094724eucas1p17a37e06002ed96d97aaca87231f13bbb
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180528094721eucas1p22b90fd838ce00f029fec7f5241cc06b5
-References: <CGME20180528094721eucas1p22b90fd838ce00f029fec7f5241cc06b5@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20180528094724eucas1p17a37e06002ed96d97aaca87231f13bbb
+References: <1527500833-16005-1-git-send-email-m.purski@samsung.com>
+        <CGME20180528094724eucas1p17a37e06002ed96d97aaca87231f13bbb@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+The current implementation assumes that the only possible peripheral
+device for DSIM is a panel. Using an output bridge should also be
+possible.
 
-this patchset is a next attempt to add the tc358764 driver.
-The previous one can be found here:
+If an output bridge in available, don't create a new connector.
+Instead add bridge to DSIM encdoer in dsi_host_attach().
 
-https://lists.freedesktop.org/archives/dri-devel/2014-February/053705.html
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 35 +++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 13 deletions(-)
 
-Back then, TC358764 was added as a panel driver.
-
-The bridge is supposed to be a DSI peripheral. Currently exynos_dsi accepts only panels
-as its peripherals. Therefore, some logic in exynos_dsi had to be ammended. That is implemented
-in first 4 patches.
-
-Apart from the driver this patchset adds support for BOE HV070WSA-100 panel, which is used by
-TC358764 and dts nodes to exynos5250.dtsi and exynos5250-arndale.dtsi.
-
-Best regards,
-
-Maciej Purski
-
-Maciej Purski (12):
-  drm/exynos: rename "bridge_node" to "mic_bridge_node"
-  drm/exynos: move pm_runtime_get_sync() to exynos_dsi_init()
-  drm/exynos: move connector creation to attach callback
-  drm/exynos: add non-panel path to exynos_dsi_enable()
-  panel/hv070wsa-100: add DT bindings
-  drm/panel: add support for BOE HV070WSA-100 panel to simple-panel
-  dt-bindings: tc358754: add DT bindings
-  drm/bridge: tc358764: Add DSI to LVDS bridge driver
-  ARM: dts: exynos5250: add mipi-phy node
-  ARM: dts: exynos5250: add DSI node
-  ARM: dts: exynos5250-arndale: add display regulators
-  ARM: dts: exynos5250-arndale: add dsi and panel nodes
-
- .../bindings/display/bridge/toshiba,tc358764.txt   |  42 ++
- .../bindings/display/panel/boe,hv070wsa-100.txt    |   7 +
- arch/arm/boot/dts/exynos5250-arndale.dts           |  63 +++
- arch/arm/boot/dts/exynos5250.dtsi                  |  20 +
- drivers/gpu/drm/bridge/Kconfig                     |   7 +
- drivers/gpu/drm/bridge/Makefile                    |   1 +
- drivers/gpu/drm/bridge/tc358764.c                  | 547 +++++++++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  84 ++--
- drivers/gpu/drm/panel/panel-simple.c               |  25 +
- 9 files changed, 756 insertions(+), 40 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
- create mode 100644 Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt
- create mode 100644 drivers/gpu/drm/bridge/tc358764.c
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 94460b0..8957faf 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1498,7 +1498,28 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 				  struct mipi_dsi_device *device)
+ {
+ 	struct exynos_dsi *dsi = host_to_dsi(host);
+-	struct drm_device *drm = dsi->connector.dev;
++	struct drm_encoder *encoder = &dsi->encoder;
++	struct drm_device *drm = encoder->dev;
++	struct drm_bridge *out_bridge;
++
++	out_bridge  = of_drm_find_bridge(device->dev.of_node);
++	if (out_bridge) {
++		drm_bridge_attach(encoder, out_bridge, NULL);
++	} else {
++		int ret = exynos_dsi_create_connector(encoder);
++
++		if (ret) {
++			DRM_ERROR("failed to create connector ret = %d\n", ret);
++			drm_encoder_cleanup(encoder);
++			return ret;
++		}
++
++		dsi->panel = of_drm_find_panel(device->dev.of_node);
++		if (dsi->panel) {
++			drm_panel_attach(dsi->panel, &dsi->connector);
++			dsi->connector.status = connector_status_connected;
++		}
++	}
+ 
+ 	/*
+ 	 * This is a temporary solution and should be made by more generic way.
+@@ -1517,11 +1538,6 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 	dsi->lanes = device->lanes;
+ 	dsi->format = device->format;
+ 	dsi->mode_flags = device->mode_flags;
+-	dsi->panel = of_drm_find_panel(device->dev.of_node);
+-	if (dsi->panel) {
+-		drm_panel_attach(dsi->panel, &dsi->connector);
+-		dsi->connector.status = connector_status_connected;
+-	}
+ 	exynos_drm_crtc_get_by_type(drm, EXYNOS_DISPLAY_TYPE_LCD)->i80_mode =
+ 			!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO);
+ 
+@@ -1650,13 +1666,6 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = exynos_dsi_create_connector(encoder);
+-	if (ret) {
+-		DRM_ERROR("failed to create connector ret = %d\n", ret);
+-		drm_encoder_cleanup(encoder);
+-		return ret;
+-	}
+-
+ 	if (dsi->mic_bridge_node) {
+ 		mic_bridge = of_drm_find_bridge(dsi->mic_bridge_node);
+ 		if (mic_bridge)
 -- 
 2.7.4
