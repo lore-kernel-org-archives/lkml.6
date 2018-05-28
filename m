@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165640AbeE1OXM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:23:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54878 "EHLO mail.kernel.org"
+        id S1161910AbeE1KeV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:34:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161880AbeE1Keg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:34:36 -0400
+        id S1161883AbeE1KeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:34:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        kernel-janitors@vger.kernel.org,
+        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
+        Sasha Neftin <sasha.neftin@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 154/329] clocksource/drivers/fsl_ftm_timer: Fix error return checking
-Date: Mon, 28 May 2018 12:01:23 +0200
-Message-Id: <20180528100255.341176749@linuxfoundation.org>
+Subject: [PATCH 4.9 178/329] e1000e: Fix check_for_link return value with autoneg off
+Date: Mon, 28 May 2018 12:01:47 +0200
+Message-Id: <20180528100257.185402752@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -32,40 +32,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Benjamin Poirier <bpoirier@suse.com>
 
-[ Upstream commit f287eb9013ccf199cbfa4eabd80c36fedfc15a73 ]
+[ Upstream commit 4e7dc08e57c95673d2edaba8983c3de4dd1f65f5 ]
 
-The error checks on freq for a negative error return always fails because
-freq is unsigned and can never be negative. Fix this by making freq a
-signed long.
+When autoneg is off, the .check_for_link callback functions clear the
+get_link_status flag and systematically return a "pseudo-error". This means
+that the link is not detected as up until the next execution of the
+e1000_watchdog_task() 2 seconds later.
 
-Detected with Coccinelle:
-drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
-compared with zero: freq <= 0
-
-Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180226113614.3092-1-colin.king@canonical.com
+Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Acked-by: Sasha Neftin <sasha.neftin@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clocksource/fsl_ftm_timer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/e1000e/ich8lan.c |    2 +-
+ drivers/net/ethernet/intel/e1000e/mac.c     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/clocksource/fsl_ftm_timer.c
-+++ b/drivers/clocksource/fsl_ftm_timer.c
-@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct
+--- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
++++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+@@ -1600,7 +1600,7 @@ static s32 e1000_check_for_copper_link_i
+ 	 * we have already determined whether we have link or not.
+ 	 */
+ 	if (!mac->autoneg)
+-		return -E1000_ERR_CONFIG;
++		return 1;
  
- static unsigned long __init ftm_clk_init(struct device_node *np)
- {
--	unsigned long freq;
-+	long freq;
+ 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
+ 	 * of MAC speed/duplex configuration.  So we only need to
+--- a/drivers/net/ethernet/intel/e1000e/mac.c
++++ b/drivers/net/ethernet/intel/e1000e/mac.c
+@@ -450,7 +450,7 @@ s32 e1000e_check_for_copper_link(struct
+ 	 * we have already determined whether we have link or not.
+ 	 */
+ 	if (!mac->autoneg)
+-		return -E1000_ERR_CONFIG;
++		return 1;
  
- 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
- 	if (freq <= 0)
+ 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
+ 	 * of MAC speed/duplex configuration.  So we only need to
