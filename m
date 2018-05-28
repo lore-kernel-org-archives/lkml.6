@@ -1,95 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933758AbeE1T7l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 15:59:41 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:36476 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933699AbeE1T7i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 15:59:38 -0400
-X-Google-Smtp-Source: AB8JxZpZODp9gYGvol4DYM7AKh/RoRHKcyz6dL0X0clUrWbzfO77jucFn1H/084FfeV29J4amPH6pZ7f4Mj0vcVCyRU=
+        id S933789AbeE1UDd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 16:03:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46248 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933699AbeE1UD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 16:03:29 -0400
+Date: Mon, 28 May 2018 17:03:26 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Robert Walker <Robert.Walker@arm.com>, mike.leach@linaro.org,
+        kim.phillips@arm.co, Tor Jeremiassen <tor@ti.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, coresight@lists.linaro.org
+Subject: Re: [RFT v3 0/4] Perf script: Add python script for CoreSight trace
+ disassembler
+Message-ID: <20180528200326.GJ25467@kernel.org>
+References: <1527497103-3593-1-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
-References: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
- <alpine.LNX.2.21.1805271212480.9@nippy.intranet> <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com>
- <alpine.LNX.2.21.1805271547090.9@nippy.intranet> <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com>
- <alpine.LNX.2.21.1805281521420.10@nippy.intranet> <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
-From: Michael Schmitz <schmitzmic@gmail.com>
-Date: Tue, 29 May 2018 07:59:37 +1200
-Message-ID: <CAOmrzkKVu6vPgMgvR9JuR==Q=XmTnDf_iyXfP7sDVymaXDX20Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC
- based ethernet
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Finn Thain <fthain@telegraphics.com.au>,
-        Christoph Hellwig <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>,
-        Joshua Thompson <funaho@jurai.org>, Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527497103-3593-1-git-send-email-leo.yan@linaro.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Em Mon, May 28, 2018 at 04:44:59PM +0800, Leo Yan escreveu:
+> This patch series is to support for using 'perf script' for CoreSight
+> trace disassembler, for this purpose this patch series adds a new
+> python script to parse CoreSight tracing event and use command 'objdump'
+> for disassembled lines, finally this can generate readable program
+> execution flow for reviewing tracing data.
+> 
+> Patch 0001 is one fixing patch to generate samples for the start packet
+> and exception packets.
+> 
+> Patch 0002 is the prerequisite to add addr into sample dict, so this
+> value can be used by python script to analyze instruction range.
+> 
+> Patch 0003 is to add python script for trace disassembler.
+> 
+> Patch 0004 is to add doc to explain python script usage and give
+> example for it.
+> 
+> This patch series has been rebased on acme git tree [1] with the commit
+> 19422a9f2a3b ("perf tools: Fix kernel_start for PTI on x86") and tested
+> on Hikey (ARM64 octa CA53 cores).
 
-my preference would be Finn's patch introducing a m68k
-arch_setup_pdev_archdata(). It nicely preserves what bus code sets up
-prior to registering a platform device (important for Zorro devices
-using platform or mfd devices), and allows overriding by drivers that
-need it.
+Thanks, applied to perf/core.
 
-If ever a kernel-wide consensus is reached to move this setup to the
-generic arch_setup_pdev_archdata(), we can still back out his patch at
-that time. Finn found one counterexample where absence of DMA mask
-signaled 'do not use DMA', so I think moving the DMA mask setup to
-generic code is unlikely to happen any time.
-
-Just my $0.02 ...
-
-Cheers,
-
-  MIchael
-
-On Mon, May 28, 2018 at 10:15 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Mon, May 28, 2018 at 7:26 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
->> On Mon, 28 May 2018, Michael Schmitz wrote:
->>> Am 27.05.2018 um 17:49 schrieb Finn Thain:
->>> > On Sun, 27 May 2018, Michael Schmitz wrote:
->>> >
->>> >> That should have fixed the warning already ...
->>> >
->>> > It's still not fixed (hence my "acked-by" for Geunter's patch).
->>> >
->>>
->>> Odd - does link order still matter even though the
->>> arch_setup_dev_archdata() function from the core platform code is
->>> declared as a weak symbol?
->>>
->>> I'll see what I can find out on elgar ...
->>>
->>
->> Any one of the numerous patches/rfcs/suggestions that I sent will avoid
->> the WARN splat.
->>
->> When I said "it's still not fixed", what I meant to say was, "it's still
->> not fixed in mainline and no proposed fix was accepted to the best of my
->> knowledge".
->
-> Indeed.
->
-> Do we have a consensus on the way forward? The merge window for
-> v4.18 will open soon.
->
-> Thanks!
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+- Arnaldo
