@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425097AbeE1NYB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:24:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38488 "EHLO mail.kernel.org"
+        id S1165353AbeE1NYg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 09:24:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163222AbeE1Ksg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:48:36 -0400
+        id S1163274AbeE1Ksa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:48:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 166/496] nbd: fix return value in error handling path
-Date: Mon, 28 May 2018 11:59:11 +0200
-Message-Id: <20180528100326.858140919@linuxfoundation.org>
+Subject: [PATCH 4.14 164/496] ip6_tunnel: fix IFLA_MTU ignored on NEWLINK
+Date: Mon, 28 May 2018 11:59:09 +0200
+Message-Id: <20180528100326.778418658@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,32 +31,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 0979962f5490abe75b3e2befb07a564fa0cf631b ]
+[ Upstream commit a6aa80446234ec0ad38eecdb8efc59e91daae565 ]
 
-It seems that the proper value to return in this particular case is the
-one contained into variable new_index instead of ret.
+Commit 128bb975dc3c ("ip6_gre: init dev->mtu and dev->hard_header_len
+correctly") fixed IFLA_MTU ignored on NEWLINK for ip6_gre. The same
+mtu fix is also needed for ip6_tunnel.
 
-Addresses-Coverity-ID: 1465148 ("Copy-paste error")
-Fixes: e46c7287b1c2 ("nbd: add a basic netlink interface")
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Note that dev->hard_header_len setting for ip6_tunnel works fine,
+no need to fix it.
+
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/nbd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/ip6_tunnel.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1591,7 +1591,7 @@ again:
- 			if (new_index < 0) {
- 				mutex_unlock(&nbd_index_mutex);
- 				printk(KERN_ERR "nbd: failed to add new device\n");
--				return ret;
-+				return new_index;
- 			}
- 			nbd = idr_find(&nbd_index_idr, new_index);
- 		}
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1990,14 +1990,14 @@ static int ip6_tnl_newlink(struct net *s
+ {
+ 	struct net *net = dev_net(dev);
+ 	struct ip6_tnl_net *ip6n = net_generic(net, ip6_tnl_net_id);
+-	struct ip6_tnl *nt, *t;
+ 	struct ip_tunnel_encap ipencap;
++	struct ip6_tnl *nt, *t;
++	int err;
+ 
+ 	nt = netdev_priv(dev);
+ 
+ 	if (ip6_tnl_netlink_encap_parms(data, &ipencap)) {
+-		int err = ip6_tnl_encap_setup(nt, &ipencap);
+-
++		err = ip6_tnl_encap_setup(nt, &ipencap);
+ 		if (err < 0)
+ 			return err;
+ 	}
+@@ -2013,7 +2013,11 @@ static int ip6_tnl_newlink(struct net *s
+ 			return -EEXIST;
+ 	}
+ 
+-	return ip6_tnl_create2(dev);
++	err = ip6_tnl_create2(dev);
++	if (!err && tb[IFLA_MTU])
++		ip6_tnl_change_mtu(dev, nla_get_u32(tb[IFLA_MTU]));
++
++	return err;
+ }
+ 
+ static int ip6_tnl_changelink(struct net_device *dev, struct nlattr *tb[],
