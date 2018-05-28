@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163348AbeE1Ks0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:48:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38236 "EHLO mail.kernel.org"
+        id S1163380AbeE1Ksd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:48:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163313AbeE1KsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:48:17 -0400
+        id S1163197AbeE1KsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:48:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Vinod Koul <vinod.koul@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 159/496] r8152: fix tx packets accounting
-Date: Mon, 28 May 2018 11:59:04 +0200
-Message-Id: <20180528100326.584373497@linuxfoundation.org>
+Subject: [PATCH 4.14 161/496] dmaengine: rcar-dmac: fix max_chunk_size for R-Car Gen3
+Date: Mon, 28 May 2018 11:59:06 +0200
+Message-Id: <20180528100326.661781985@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,32 +32,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-[ Upstream commit 4c27bf3c5b7434ccb9ab962301da661c26b467a4 ]
+[ Upstream commit d716d9b702bb759dd6fb50804f10a174bd156d71 ]
 
-r8152 driver handles TSO packets (limited to ~16KB) quite well,
-but pretends each TSO logical packet is a single packet on the wire.
+According to R-Car Gen3 Rev.0.80 manual, the DMATCR can be set to
+16,777,215 as maximum. So, this patch fixes the max_chunk_size for
+safety on all of SoCs. Otherwise, a system may hang if the DMATCR
+is set to 0 on R-Car Gen3.
 
-There is also some error since headers are accounted once, but
-error rate is small enough that we do not care.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/r8152.c |    2 +-
+ drivers/dma/sh/rcar-dmac.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -1793,7 +1793,7 @@ static int r8152_tx_agg_fill(struct r815
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -880,7 +880,7 @@ rcar_dmac_chan_prep_sg(struct rcar_dmac_
  
- 		tx_data += len;
- 		agg->skb_len += len;
--		agg->skb_num++;
-+		agg->skb_num += skb_shinfo(skb)->gso_segs ?: 1;
+ 	rcar_dmac_chan_configure_desc(chan, desc);
  
- 		dev_kfree_skb_any(skb);
+-	max_chunk_size = (RCAR_DMATCR_MASK + 1) << desc->xfer_shift;
++	max_chunk_size = RCAR_DMATCR_MASK << desc->xfer_shift;
  
+ 	/*
+ 	 * Allocate and fill the transfer chunk descriptors. We own the only
