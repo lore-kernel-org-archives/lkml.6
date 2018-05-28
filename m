@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939221AbeE1NbO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:31:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37060 "EHLO mail.kernel.org"
+        id S1034083AbeE1Kqv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:46:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163161AbeE1Kqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:46:53 -0400
+        id S1163161AbeE1Kqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:46:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        James Morris <james.morris@microsoft.com>,
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Keerthy <j-keerthy@ti.com>, Ladislav Michl <ladis@linux-mips.org>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 128/496] integrity/security: fix digsig.c build error with header file
-Date: Mon, 28 May 2018 11:58:33 +0200
-Message-Id: <20180528100325.320727936@linuxfoundation.org>
+Subject: [PATCH 4.14 125/496] ARM: OMAP: Fix dmtimer init for omap1
+Date: Mon, 28 May 2018 11:58:30 +0200
+Message-Id: <20180528100325.194394683@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -32,34 +31,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 120f3b11ef88fc38ce1d0ff9c9a4b37860ad3140 ]
+[ Upstream commit ba6887836178d43b3665b9da075c2c5dfe1d207c ]
 
-security/integrity/digsig.c has build errors on some $ARCH due to a
-missing header file, so add it.
+We need to enable PM runtime on omap1 also as otherwise we
+will get errors:
 
-  security/integrity/digsig.c:146:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
+omap_timer omap_timer.1: omap_dm_timer_probe: pm_runtime_get_sync failed!
+omap_timer: probe of omap_timer.1 failed with error -13
+...
 
-Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org
-Link: http://kisskb.ellerman.id.au/kisskb/head/13396/
-Signed-off-by: James Morris <james.morris@microsoft.com>
+We are checking for OMAP_TIMER_NEEDS_RESET flag elsewhere so this is
+safe to do.
+
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/integrity/digsig.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/plat-omap/dmtimer.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -18,6 +18,7 @@
- #include <linux/cred.h>
- #include <linux/key-type.h>
- #include <linux/digsig.h>
-+#include <linux/vmalloc.h>
- #include <crypto/public_key.h>
- #include <keys/system_keyring.h>
+--- a/arch/arm/plat-omap/dmtimer.c
++++ b/arch/arm/plat-omap/dmtimer.c
+@@ -890,11 +890,8 @@ static int omap_dm_timer_probe(struct pl
+ 	timer->irq = irq->start;
+ 	timer->pdev = pdev;
  
+-	/* Skip pm_runtime_enable for OMAP1 */
+-	if (!(timer->capability & OMAP_TIMER_NEEDS_RESET)) {
+-		pm_runtime_enable(dev);
+-		pm_runtime_irq_safe(dev);
+-	}
++	pm_runtime_enable(dev);
++	pm_runtime_irq_safe(dev);
+ 
+ 	if (!timer->reserved) {
+ 		ret = pm_runtime_get_sync(dev);
