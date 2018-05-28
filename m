@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939452AbeE1O5E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:57:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46728 "EHLO mail.kernel.org"
+        id S1034275AbeE1K0y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:26:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932455AbeE1K1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:22 -0400
+        id S1034236AbeE1K0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:26:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 027/329] NFSv4: always set NFS_LOCK_LOST when a lock is lost.
-Date: Mon, 28 May 2018 11:59:16 +0200
-Message-Id: <20180528100244.680106008@linuxfoundation.org>
+        stable@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.9 005/329] affs_lookup(): close a race with affs_remove_link()
+Date: Mon, 28 May 2018 11:58:54 +0200
+Message-Id: <20180528100242.438204734@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,102 +29,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit dce2630c7da73b0634686bca557cc8945cc450c8 ]
+commit 30da870ce4a4e007c901858a96e9e394a1daa74a upstream.
 
-There are 2 comments in the NFSv4 code which suggest that
-SIGLOST should possibly be sent to a process.  In these
-cases a lock has been lost.
-The current practice is to set NFS_LOCK_LOST so that
-read/write returns EIO when a lock is lost.
-So change these comments to code when sets NFS_LOCK_LOST.
+we unlock the directory hash too early - if we are looking at secondary
+link and primary (in another directory) gets removed just as we unlock,
+we could have the old primary moved in place of the secondary, leaving
+us to look into freed entry (and leaving our dentry with ->d_fsdata
+pointing to a freed entry).
 
-One case is when lock recovery after apparent server restart
-fails with NFS4ERR_DENIED, NFS4ERR_RECLAIM_BAD, or
-NFS4ERRO_RECLAIM_CONFLICT.  The other case is when a lock
-attempt as part of lease recovery fails with NFS4ERR_DENIED.
-
-In an ideal world, these should not happen.  However I have
-a packet trace showing an NFSv4.1 session getting
-NFS4ERR_BADSESSION after an extended network parition.  The
-NFSv4.1 client treats this like server reboot until/unless
-it get NFS4ERR_NO_GRACE, in which case it switches over to
-"nograce" recovery mode.  In this network trace, the client
-attempts to recover a lock and the server (incorrectly)
-reports NFS4ERR_DENIED rather than NFS4ERR_NO_GRACE.  This
-leads to the ineffective comment and the client then
-continues to write using the OPEN stateid.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@vger.kernel.org # 2.4.4+
+Acked-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/nfs/nfs4proc.c  |   12 ++++++++----
- fs/nfs/nfs4state.c |    5 ++++-
- 2 files changed, 12 insertions(+), 5 deletions(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -1934,7 +1934,7 @@ static int nfs4_open_reclaim(struct nfs4
- 	return ret;
- }
+---
+ fs/affs/namei.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+--- a/fs/affs/namei.c
++++ b/fs/affs/namei.c
+@@ -224,9 +224,10 @@ affs_lookup(struct inode *dir, struct de
  
--static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct nfs4_state *state, const nfs4_stateid *stateid, int err)
-+static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct nfs4_state *state, const nfs4_stateid *stateid, struct file_lock *fl, int err)
- {
- 	switch (err) {
- 		default:
-@@ -1981,7 +1981,11 @@ static int nfs4_handle_delegation_recall
- 			return -EAGAIN;
- 		case -ENOMEM:
- 		case -NFS4ERR_DENIED:
--			/* kill_proc(fl->fl_pid, SIGLOST, 1); */
-+			if (fl) {
-+				struct nfs4_lock_state *lsp = fl->fl_u.nfs4_fl.owner;
-+				if (lsp)
-+					set_bit(NFS_LOCK_LOST, &lsp->ls_flags);
-+			}
- 			return 0;
- 	}
- 	return err;
-@@ -2017,7 +2021,7 @@ int nfs4_open_delegation_recall(struct n
- 		err = nfs4_open_recover_helper(opendata, FMODE_READ);
- 	}
- 	nfs4_opendata_put(opendata);
--	return nfs4_handle_delegation_recall_error(server, state, stateid, err);
-+	return nfs4_handle_delegation_recall_error(server, state, stateid, NULL, err);
- }
+ 	affs_lock_dir(dir);
+ 	bh = affs_find_entry(dir, dentry);
+-	affs_unlock_dir(dir);
+-	if (IS_ERR(bh))
++	if (IS_ERR(bh)) {
++		affs_unlock_dir(dir);
+ 		return ERR_CAST(bh);
++	}
+ 	if (bh) {
+ 		u32 ino = bh->b_blocknr;
  
- static void nfs4_open_confirm_prepare(struct rpc_task *task, void *calldata)
-@@ -6499,7 +6503,7 @@ int nfs4_lock_delegation_recall(struct f
- 	if (err != 0)
- 		return err;
- 	err = _nfs4_do_setlk(state, F_SETLK, fl, NFS_LOCK_NEW);
--	return nfs4_handle_delegation_recall_error(server, state, stateid, err);
-+	return nfs4_handle_delegation_recall_error(server, state, stateid, fl, err);
- }
- 
- struct nfs_release_lockowner_data {
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -1429,6 +1429,7 @@ static int nfs4_reclaim_locks(struct nfs
- 	struct inode *inode = state->inode;
- 	struct nfs_inode *nfsi = NFS_I(inode);
- 	struct file_lock *fl;
-+	struct nfs4_lock_state *lsp;
- 	int status = 0;
- 	struct file_lock_context *flctx = inode->i_flctx;
- 	struct list_head *list;
-@@ -1469,7 +1470,9 @@ restart:
- 		case -NFS4ERR_DENIED:
- 		case -NFS4ERR_RECLAIM_BAD:
- 		case -NFS4ERR_RECLAIM_CONFLICT:
--			/* kill_proc(fl->fl_pid, SIGLOST, 1); */
-+			lsp = fl->fl_u.nfs4_fl.owner;
-+			if (lsp)
-+				set_bit(NFS_LOCK_LOST, &lsp->ls_flags);
- 			status = 0;
+@@ -240,10 +241,13 @@ affs_lookup(struct inode *dir, struct de
  		}
- 		spin_lock(&flctx->flc_lock);
+ 		affs_brelse(bh);
+ 		inode = affs_iget(sb, ino);
+-		if (IS_ERR(inode))
++		if (IS_ERR(inode)) {
++			affs_unlock_dir(dir);
+ 			return ERR_CAST(inode);
++		}
+ 	}
+ 	d_add(dentry, inode);
++	affs_unlock_dir(dir);
+ 	return NULL;
+ }
+ 
