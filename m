@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938429AbeE1L5g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:57:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55430 "EHLO mail.kernel.org"
+        id S938443AbeE1L5n (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:57:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423533AbeE1LII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:08:08 -0400
+        id S1423527AbeE1LIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:08:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Justin Maggard <jmaggard@netgear.com>,
-        Qu Wenruo <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>, David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 093/272] btrfs: qgroup: Fix root item corruption when multiple same source snapshots are created with quota enabled
-Date: Mon, 28 May 2018 12:02:06 +0200
-Message-Id: <20180528100248.964280991@linuxfoundation.org>
+Subject: [PATCH 4.16 092/272] btrfs: fix lockdep splat in btrfs_alloc_subvolume_writers
+Date: Mon, 28 May 2018 12:02:05 +0200
+Message-Id: <20180528100248.869823788@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -31,57 +30,434 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Jeff Mahoney <jeffm@suse.com>
 
-[ Upstream commit 4d31778aa2fa342f5f92ca4025b293a1729161d1 ]
+[ Upstream commit 8a5a916d9a35e13576d79cc16e24611821b13e34 ]
 
-When multiple pending snapshots referring to the same source subvolume
-are executed, enabled quota will cause root item corruption, where root
-items are using old bytenr (no backref in extent tree).
+While running btrfs/011, I hit the following lockdep splat.
 
-This can be triggered by fstests btrfs/152.
+This is the important bit:
+   pcpu_alloc+0x1ac/0x5e0
+   __percpu_counter_init+0x4e/0xb0
+   btrfs_init_fs_root+0x99/0x1c0 [btrfs]
+   btrfs_get_fs_root.part.54+0x5b/0x150 [btrfs]
+   resolve_indirect_refs+0x130/0x830 [btrfs]
+   find_parent_nodes+0x69e/0xff0 [btrfs]
+   btrfs_find_all_roots_safe+0xa0/0x110 [btrfs]
+   btrfs_find_all_roots+0x50/0x70 [btrfs]
+   btrfs_qgroup_prepare_account_extents+0x53/0x90 [btrfs]
+   btrfs_commit_transaction+0x3ce/0x9b0 [btrfs]
 
-The cause is when source subvolume is still dirty, extra commit
-(simplied transaction commit) of qgroup_account_snapshot() can skip
-dirty roots not recorded in current transaction, making root item of
-source subvolume not updated.
+The percpu_counter_init call in btrfs_alloc_subvolume_writers
+uses GFP_KERNEL, which we can't do during transaction commit.
 
-Fix it by forcing recording source subvolume in current transaction
-before qgroup sub-transaction commit.
+This switches it to GFP_NOFS.
 
-Reported-by: Justin Maggard <jmaggard@netgear.com>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
+========================================================
+WARNING: possible irq lock inversion dependency detected
+4.12.14-kvmsmall #8 Tainted: G        W
+--------------------------------------------------------
+kswapd0/50 just changed the state of lock:
+ (&delayed_node->mutex){+.+.-.}, at: [<ffffffffc06994fa>] __btrfs_release_delayed_node+0x3a/0x1f0 [btrfs]
+but this lock took another, RECLAIM_FS-unsafe lock in the past:
+ (pcpu_alloc_mutex){+.+.+.}
+
+and interrupts could create inverse lock ordering between them.
+
+other info that might help us debug this:
+Chain exists of:
+  &delayed_node->mutex --> &found->groups_sem --> pcpu_alloc_mutex
+
+ Possible interrupt unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(pcpu_alloc_mutex);
+                               local_irq_disable();
+                               lock(&delayed_node->mutex);
+                               lock(&found->groups_sem);
+  <Interrupt>
+    lock(&delayed_node->mutex);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd0/50:
+ #0:  (shrinker_rwsem){++++..}, at: [<ffffffff811dc11f>] shrink_slab+0x7f/0x5b0
+ #1:  (&type->s_umount_key#30){+++++.}, at: [<ffffffff8126dec6>] trylock_super+0x16/0x50
+
+the shortest dependencies between 2nd lock and 1st lock:
+   -> (pcpu_alloc_mutex){+.+.+.} ops: 4904 {
+      HARDIRQ-ON-W at:
+                          __mutex_lock+0x4e/0x8c0
+                          pcpu_alloc+0x1ac/0x5e0
+                          alloc_kmem_cache_cpus.isra.70+0x25/0xa0
+                          __do_tune_cpucache+0x2c/0x220
+                          do_tune_cpucache+0x26/0xc0
+                          enable_cpucache+0x6d/0xf0
+                          kmem_cache_init_late+0x42/0x75
+                          start_kernel+0x343/0x4cb
+                          x86_64_start_kernel+0x127/0x134
+                          secondary_startup_64+0xa5/0xb0
+      SOFTIRQ-ON-W at:
+                          __mutex_lock+0x4e/0x8c0
+                          pcpu_alloc+0x1ac/0x5e0
+                          alloc_kmem_cache_cpus.isra.70+0x25/0xa0
+                          __do_tune_cpucache+0x2c/0x220
+                          do_tune_cpucache+0x26/0xc0
+                          enable_cpucache+0x6d/0xf0
+                          kmem_cache_init_late+0x42/0x75
+                          start_kernel+0x343/0x4cb
+                          x86_64_start_kernel+0x127/0x134
+                          secondary_startup_64+0xa5/0xb0
+      RECLAIM_FS-ON-W at:
+                             __kmalloc+0x47/0x310
+                             pcpu_extend_area_map+0x2b/0xc0
+                             pcpu_alloc+0x3ec/0x5e0
+                             alloc_kmem_cache_cpus.isra.70+0x25/0xa0
+                             __do_tune_cpucache+0x2c/0x220
+                             do_tune_cpucache+0x26/0xc0
+                             enable_cpucache+0x6d/0xf0
+                             __kmem_cache_create+0x1bf/0x390
+                             create_cache+0xba/0x1b0
+                             kmem_cache_create+0x1f8/0x2b0
+                             ksm_init+0x6f/0x19d
+                             do_one_initcall+0x50/0x1b0
+                             kernel_init_freeable+0x201/0x289
+                             kernel_init+0xa/0x100
+                             ret_from_fork+0x3a/0x50
+      INITIAL USE at:
+                         __mutex_lock+0x4e/0x8c0
+                         pcpu_alloc+0x1ac/0x5e0
+                         alloc_kmem_cache_cpus.isra.70+0x25/0xa0
+                         setup_cpu_cache+0x2f/0x1f0
+                         __kmem_cache_create+0x1bf/0x390
+                         create_boot_cache+0x8b/0xb1
+                         kmem_cache_init+0xa1/0x19e
+                         start_kernel+0x270/0x4cb
+                         x86_64_start_kernel+0x127/0x134
+                         secondary_startup_64+0xa5/0xb0
+    }
+    ... key      at: [<ffffffff821d8e70>] pcpu_alloc_mutex+0x70/0xa0
+    ... acquired at:
+   pcpu_alloc+0x1ac/0x5e0
+   __percpu_counter_init+0x4e/0xb0
+   btrfs_init_fs_root+0x99/0x1c0 [btrfs]
+   btrfs_get_fs_root.part.54+0x5b/0x150 [btrfs]
+   resolve_indirect_refs+0x130/0x830 [btrfs]
+   find_parent_nodes+0x69e/0xff0 [btrfs]
+   btrfs_find_all_roots_safe+0xa0/0x110 [btrfs]
+   btrfs_find_all_roots+0x50/0x70 [btrfs]
+   btrfs_qgroup_prepare_account_extents+0x53/0x90 [btrfs]
+   btrfs_commit_transaction+0x3ce/0x9b0 [btrfs]
+   transaction_kthread+0x176/0x1b0 [btrfs]
+   kthread+0x102/0x140
+   ret_from_fork+0x3a/0x50
+
+  -> (&fs_info->commit_root_sem){++++..} ops: 1566382 {
+     HARDIRQ-ON-W at:
+                        down_write+0x3e/0xa0
+                        cache_block_group+0x287/0x420 [btrfs]
+                        find_free_extent+0x106c/0x12d0 [btrfs]
+                        btrfs_reserve_extent+0xd8/0x170 [btrfs]
+                        cow_file_range.isra.66+0x133/0x470 [btrfs]
+                        run_delalloc_range+0x121/0x410 [btrfs]
+                        writepage_delalloc.isra.50+0xfe/0x180 [btrfs]
+                        __extent_writepage+0x19a/0x360 [btrfs]
+                        extent_write_cache_pages.constprop.56+0x249/0x3e0 [btrfs]
+                        extent_writepages+0x4d/0x60 [btrfs]
+                        do_writepages+0x1a/0x70
+                        __filemap_fdatawrite_range+0xa7/0xe0
+                        btrfs_rename+0x5ee/0xdb0 [btrfs]
+                        vfs_rename+0x52a/0x7e0
+                        SyS_rename+0x351/0x3b0
+                        do_syscall_64+0x79/0x1e0
+                        entry_SYSCALL_64_after_hwframe+0x42/0xb7
+     HARDIRQ-ON-R at:
+                        down_read+0x35/0x90
+                        caching_thread+0x57/0x560 [btrfs]
+                        normal_work_helper+0x1c0/0x5e0 [btrfs]
+                        process_one_work+0x1e0/0x5c0
+                        worker_thread+0x44/0x390
+                        kthread+0x102/0x140
+                        ret_from_fork+0x3a/0x50
+     SOFTIRQ-ON-W at:
+                        down_write+0x3e/0xa0
+                        cache_block_group+0x287/0x420 [btrfs]
+                        find_free_extent+0x106c/0x12d0 [btrfs]
+                        btrfs_reserve_extent+0xd8/0x170 [btrfs]
+                        cow_file_range.isra.66+0x133/0x470 [btrfs]
+                        run_delalloc_range+0x121/0x410 [btrfs]
+                        writepage_delalloc.isra.50+0xfe/0x180 [btrfs]
+                        __extent_writepage+0x19a/0x360 [btrfs]
+                        extent_write_cache_pages.constprop.56+0x249/0x3e0 [btrfs]
+                        extent_writepages+0x4d/0x60 [btrfs]
+                        do_writepages+0x1a/0x70
+                        __filemap_fdatawrite_range+0xa7/0xe0
+                        btrfs_rename+0x5ee/0xdb0 [btrfs]
+                        vfs_rename+0x52a/0x7e0
+                        SyS_rename+0x351/0x3b0
+                        do_syscall_64+0x79/0x1e0
+                        entry_SYSCALL_64_after_hwframe+0x42/0xb7
+     SOFTIRQ-ON-R at:
+                        down_read+0x35/0x90
+                        caching_thread+0x57/0x560 [btrfs]
+                        normal_work_helper+0x1c0/0x5e0 [btrfs]
+                        process_one_work+0x1e0/0x5c0
+                        worker_thread+0x44/0x390
+                        kthread+0x102/0x140
+                        ret_from_fork+0x3a/0x50
+     INITIAL USE at:
+                       down_write+0x3e/0xa0
+                       cache_block_group+0x287/0x420 [btrfs]
+                       find_free_extent+0x106c/0x12d0 [btrfs]
+                       btrfs_reserve_extent+0xd8/0x170 [btrfs]
+                       cow_file_range.isra.66+0x133/0x470 [btrfs]
+                       run_delalloc_range+0x121/0x410 [btrfs]
+                       writepage_delalloc.isra.50+0xfe/0x180 [btrfs]
+                       __extent_writepage+0x19a/0x360 [btrfs]
+                       extent_write_cache_pages.constprop.56+0x249/0x3e0 [btrfs]
+                       extent_writepages+0x4d/0x60 [btrfs]
+                       do_writepages+0x1a/0x70
+                       __filemap_fdatawrite_range+0xa7/0xe0
+                       btrfs_rename+0x5ee/0xdb0 [btrfs]
+                       vfs_rename+0x52a/0x7e0
+                       SyS_rename+0x351/0x3b0
+                       do_syscall_64+0x79/0x1e0
+                       entry_SYSCALL_64_after_hwframe+0x42/0xb7
+   }
+   ... key      at: [<ffffffffc0729578>] __key.61970+0x0/0xfffffffffff9aa88 [btrfs]
+   ... acquired at:
+   cache_block_group+0x287/0x420 [btrfs]
+   find_free_extent+0x106c/0x12d0 [btrfs]
+   btrfs_reserve_extent+0xd8/0x170 [btrfs]
+   btrfs_alloc_tree_block+0x12f/0x4c0 [btrfs]
+   btrfs_create_tree+0xbb/0x2a0 [btrfs]
+   btrfs_create_uuid_tree+0x37/0x140 [btrfs]
+   open_ctree+0x23c0/0x2660 [btrfs]
+   btrfs_mount+0xd36/0xf90 [btrfs]
+   mount_fs+0x3a/0x160
+   vfs_kern_mount+0x66/0x150
+   btrfs_mount+0x18c/0xf90 [btrfs]
+   mount_fs+0x3a/0x160
+   vfs_kern_mount+0x66/0x150
+   do_mount+0x1c1/0xcc0
+   SyS_mount+0x7e/0xd0
+   do_syscall_64+0x79/0x1e0
+   entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+ -> (&found->groups_sem){++++..} ops: 2134587 {
+    HARDIRQ-ON-W at:
+                      down_write+0x3e/0xa0
+                      __link_block_group+0x34/0x130 [btrfs]
+                      btrfs_read_block_groups+0x33d/0x7b0 [btrfs]
+                      open_ctree+0x2054/0x2660 [btrfs]
+                      btrfs_mount+0xd36/0xf90 [btrfs]
+                      mount_fs+0x3a/0x160
+                      vfs_kern_mount+0x66/0x150
+                      btrfs_mount+0x18c/0xf90 [btrfs]
+                      mount_fs+0x3a/0x160
+                      vfs_kern_mount+0x66/0x150
+                      do_mount+0x1c1/0xcc0
+                      SyS_mount+0x7e/0xd0
+                      do_syscall_64+0x79/0x1e0
+                      entry_SYSCALL_64_after_hwframe+0x42/0xb7
+    HARDIRQ-ON-R at:
+                      down_read+0x35/0x90
+                      btrfs_calc_num_tolerated_disk_barrier_failures+0x113/0x1f0 [btrfs]
+                      open_ctree+0x207b/0x2660 [btrfs]
+                      btrfs_mount+0xd36/0xf90 [btrfs]
+                      mount_fs+0x3a/0x160
+                      vfs_kern_mount+0x66/0x150
+                      btrfs_mount+0x18c/0xf90 [btrfs]
+                      mount_fs+0x3a/0x160
+                      vfs_kern_mount+0x66/0x150
+                      do_mount+0x1c1/0xcc0
+                      SyS_mount+0x7e/0xd0
+                      do_syscall_64+0x79/0x1e0
+                      entry_SYSCALL_64_after_hwframe+0x42/0xb7
+    SOFTIRQ-ON-W at:
+                      down_write+0x3e/0xa0
+                      __link_block_group+0x34/0x130 [btrfs]
+                      btrfs_read_block_groups+0x33d/0x7b0 [btrfs]
+                      open_ctree+0x2054/0x2660 [btrfs]
+                      btrfs_mount+0xd36/0xf90 [btrfs]
+                      mount_fs+0x3a/0x160
+                      vfs_kern_mount+0x66/0x150
+                      btrfs_mount+0x18c/0xf90 [btrfs]
+                      mount_fs+0x3a/0x160
+                      vfs_kern_mount+0x66/0x150
+                      do_mount+0x1c1/0xcc0
+                      SyS_mount+0x7e/0xd0
+                      do_syscall_64+0x79/0x1e0
+                      entry_SYSCALL_64_after_hwframe+0x42/0xb7
+    SOFTIRQ-ON-R at:
+                      down_read+0x35/0x90
+                      btrfs_calc_num_tolerated_disk_barrier_failures+0x113/0x1f0 [btrfs]
+                      open_ctree+0x207b/0x2660 [btrfs]
+                      btrfs_mount+0xd36/0xf90 [btrfs]
+                      mount_fs+0x3a/0x160
+                      vfs_kern_mount+0x66/0x150
+                      btrfs_mount+0x18c/0xf90 [btrfs]
+                      mount_fs+0x3a/0x160
+                      vfs_kern_mount+0x66/0x150
+                      do_mount+0x1c1/0xcc0
+                      SyS_mount+0x7e/0xd0
+                      do_syscall_64+0x79/0x1e0
+                      entry_SYSCALL_64_after_hwframe+0x42/0xb7
+    INITIAL USE at:
+                     down_write+0x3e/0xa0
+                     __link_block_group+0x34/0x130 [btrfs]
+                     btrfs_read_block_groups+0x33d/0x7b0 [btrfs]
+                     open_ctree+0x2054/0x2660 [btrfs]
+                     btrfs_mount+0xd36/0xf90 [btrfs]
+                     mount_fs+0x3a/0x160
+                     vfs_kern_mount+0x66/0x150
+                     btrfs_mount+0x18c/0xf90 [btrfs]
+                     mount_fs+0x3a/0x160
+                     vfs_kern_mount+0x66/0x150
+                     do_mount+0x1c1/0xcc0
+                     SyS_mount+0x7e/0xd0
+                     do_syscall_64+0x79/0x1e0
+                     entry_SYSCALL_64_after_hwframe+0x42/0xb7
+  }
+  ... key      at: [<ffffffffc0729488>] __key.59101+0x0/0xfffffffffff9ab78 [btrfs]
+  ... acquired at:
+   find_free_extent+0xcb4/0x12d0 [btrfs]
+   btrfs_reserve_extent+0xd8/0x170 [btrfs]
+   btrfs_alloc_tree_block+0x12f/0x4c0 [btrfs]
+   __btrfs_cow_block+0x110/0x5b0 [btrfs]
+   btrfs_cow_block+0xd7/0x290 [btrfs]
+   btrfs_search_slot+0x1f6/0x960 [btrfs]
+   btrfs_lookup_inode+0x2a/0x90 [btrfs]
+   __btrfs_update_delayed_inode+0x65/0x210 [btrfs]
+   btrfs_commit_inode_delayed_inode+0x121/0x130 [btrfs]
+   btrfs_evict_inode+0x3fe/0x6a0 [btrfs]
+   evict+0xc4/0x190
+   __dentry_kill+0xbf/0x170
+   dput+0x2ae/0x2f0
+   SyS_rename+0x2a6/0x3b0
+   do_syscall_64+0x79/0x1e0
+   entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+-> (&delayed_node->mutex){+.+.-.} ops: 5580204 {
+   HARDIRQ-ON-W at:
+                    __mutex_lock+0x4e/0x8c0
+                    btrfs_delayed_update_inode+0x46/0x6e0 [btrfs]
+                    btrfs_update_inode+0x83/0x110 [btrfs]
+                    btrfs_dirty_inode+0x62/0xe0 [btrfs]
+                    touch_atime+0x8c/0xb0
+                    do_generic_file_read+0x818/0xb10
+                    __vfs_read+0xdc/0x150
+                    vfs_read+0x8a/0x130
+                    SyS_read+0x45/0xa0
+                    do_syscall_64+0x79/0x1e0
+                    entry_SYSCALL_64_after_hwframe+0x42/0xb7
+   SOFTIRQ-ON-W at:
+                    __mutex_lock+0x4e/0x8c0
+                    btrfs_delayed_update_inode+0x46/0x6e0 [btrfs]
+                    btrfs_update_inode+0x83/0x110 [btrfs]
+                    btrfs_dirty_inode+0x62/0xe0 [btrfs]
+                    touch_atime+0x8c/0xb0
+                    do_generic_file_read+0x818/0xb10
+                    __vfs_read+0xdc/0x150
+                    vfs_read+0x8a/0x130
+                    SyS_read+0x45/0xa0
+                    do_syscall_64+0x79/0x1e0
+                    entry_SYSCALL_64_after_hwframe+0x42/0xb7
+   IN-RECLAIM_FS-W at:
+                       __mutex_lock+0x4e/0x8c0
+                       __btrfs_release_delayed_node+0x3a/0x1f0 [btrfs]
+                       btrfs_evict_inode+0x22c/0x6a0 [btrfs]
+                       evict+0xc4/0x190
+                       dispose_list+0x35/0x50
+                       prune_icache_sb+0x42/0x50
+                       super_cache_scan+0x139/0x190
+                       shrink_slab+0x262/0x5b0
+                       shrink_node+0x2eb/0x2f0
+                       kswapd+0x2eb/0x890
+                       kthread+0x102/0x140
+                       ret_from_fork+0x3a/0x50
+   INITIAL USE at:
+                   __mutex_lock+0x4e/0x8c0
+                   btrfs_delayed_update_inode+0x46/0x6e0 [btrfs]
+                   btrfs_update_inode+0x83/0x110 [btrfs]
+                   btrfs_dirty_inode+0x62/0xe0 [btrfs]
+                   touch_atime+0x8c/0xb0
+                   do_generic_file_read+0x818/0xb10
+                   __vfs_read+0xdc/0x150
+                   vfs_read+0x8a/0x130
+                   SyS_read+0x45/0xa0
+                   do_syscall_64+0x79/0x1e0
+                   entry_SYSCALL_64_after_hwframe+0x42/0xb7
+ }
+ ... key      at: [<ffffffffc072d488>] __key.56935+0x0/0xfffffffffff96b78 [btrfs]
+ ... acquired at:
+   __lock_acquire+0x264/0x11c0
+   lock_acquire+0xbd/0x1e0
+   __mutex_lock+0x4e/0x8c0
+   __btrfs_release_delayed_node+0x3a/0x1f0 [btrfs]
+   btrfs_evict_inode+0x22c/0x6a0 [btrfs]
+   evict+0xc4/0x190
+   dispose_list+0x35/0x50
+   prune_icache_sb+0x42/0x50
+   super_cache_scan+0x139/0x190
+   shrink_slab+0x262/0x5b0
+   shrink_node+0x2eb/0x2f0
+   kswapd+0x2eb/0x890
+   kthread+0x102/0x140
+   ret_from_fork+0x3a/0x50
+
+stack backtrace:
+CPU: 1 PID: 50 Comm: kswapd0 Tainted: G        W        4.12.14-kvmsmall #8 SLE15 (unreleased)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+Call Trace:
+ dump_stack+0x78/0xb7
+ print_irq_inversion_bug.part.38+0x19f/0x1aa
+ check_usage_forwards+0x102/0x120
+ ? ret_from_fork+0x3a/0x50
+ ? check_usage_backwards+0x110/0x110
+ mark_lock+0x16c/0x270
+ __lock_acquire+0x264/0x11c0
+ ? pagevec_lookup_entries+0x1a/0x30
+ ? truncate_inode_pages_range+0x2b3/0x7f0
+ lock_acquire+0xbd/0x1e0
+ ? __btrfs_release_delayed_node+0x3a/0x1f0 [btrfs]
+ __mutex_lock+0x4e/0x8c0
+ ? __btrfs_release_delayed_node+0x3a/0x1f0 [btrfs]
+ ? __btrfs_release_delayed_node+0x3a/0x1f0 [btrfs]
+ ? btrfs_evict_inode+0x1f6/0x6a0 [btrfs]
+ __btrfs_release_delayed_node+0x3a/0x1f0 [btrfs]
+ btrfs_evict_inode+0x22c/0x6a0 [btrfs]
+ evict+0xc4/0x190
+ dispose_list+0x35/0x50
+ prune_icache_sb+0x42/0x50
+ super_cache_scan+0x139/0x190
+ shrink_slab+0x262/0x5b0
+ shrink_node+0x2eb/0x2f0
+ kswapd+0x2eb/0x890
+ kthread+0x102/0x140
+ ? mem_cgroup_shrink_node+0x2c0/0x2c0
+ ? kthread_create_on_node+0x40/0x40
+ ret_from_fork+0x3a/0x50
+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/transaction.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ fs/btrfs/disk-io.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/transaction.c
-+++ b/fs/btrfs/transaction.c
-@@ -319,7 +319,7 @@ static int record_root_in_trans(struct b
- 	if ((test_bit(BTRFS_ROOT_REF_COWS, &root->state) &&
- 	    root->last_trans < trans->transid) || force) {
- 		WARN_ON(root == fs_info->extent_root);
--		WARN_ON(root->commit_root != root->node);
-+		WARN_ON(!force && root->commit_root != root->node);
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1108,7 +1108,7 @@ static struct btrfs_subvolume_writers *b
+ 	if (!writers)
+ 		return ERR_PTR(-ENOMEM);
  
- 		/*
- 		 * see below for IN_TRANS_SETUP usage rules
-@@ -1366,6 +1366,14 @@ static int qgroup_account_snapshot(struc
- 		return 0;
- 
- 	/*
-+	 * Ensure dirty @src will be commited.  Or, after comming
-+	 * commit_fs_roots() and switch_commit_roots(), any dirty but not
-+	 * recorded root will never be updated again, causing an outdated root
-+	 * item.
-+	 */
-+	record_root_in_trans(trans, src, 1);
-+
-+	/*
- 	 * We are going to commit transaction, see btrfs_commit_transaction()
- 	 * comment for reason locking tree_log_mutex
- 	 */
+-	ret = percpu_counter_init(&writers->counter, 0, GFP_KERNEL);
++	ret = percpu_counter_init(&writers->counter, 0, GFP_NOFS);
+ 	if (ret < 0) {
+ 		kfree(writers);
+ 		return ERR_PTR(ret);
