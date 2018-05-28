@@ -1,109 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752960AbeE1BpE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 27 May 2018 21:45:04 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:39849 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752934AbeE1BpB (ORCPT
+        id S1752995AbeE1BrH (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 27 May 2018 21:47:07 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:37879 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752934AbeE1BrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 May 2018 21:45:01 -0400
-X-Google-Smtp-Source: ADUXVKJFGxuEyrSDBUOjPhQsTmQdhb5t+SEAHlMDGoER+c6jcqmVn1xTHUYH1XguYrWGiFOz9alurg==
-Subject: Re: [RESEND PATCH V5 00/33] block: support multipage bvec
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Sun, 27 May 2018 21:47:06 -0400
+X-ME-Proxy: <xmx:mV8LWxumUdYwyBRB0xTwONiqMdgvMjET20124FhglpfZLvP8hylBdQ>
+X-ME-Proxy: <xmx:mV8LW3pSHD01pkz8nXYT5SF0K1KQuDUyo0W7ZDl06wbdoG1Mm-K5ww>
+X-ME-Proxy: <xmx:mV8LW5QyWEMHWe7MnaQNBfgw2rSqRFXPyrdj6QiuNFS60njZGamneg>
+X-ME-Proxy: <xmx:mV8LW0aIN_i0mfH_08yKFI9GD29XNzGq0zN1UxecEFCXs9xkon04tg>
+X-ME-Proxy: <xmx:mV8LWy7PXU9GVwVeIiCrGutI9gUWS6jRbKARmuvvPS-oslG8aEWYlQ>
+X-ME-Proxy: <xmx:mV8LWxeWqjWkFIbYJVIbnSA5gm1MlkjW3zJ1Jxa3eptljAYzb553tQ>
+X-ME-Sender: <xms:mV8LWxMvfgTl1keT3pA-wyphHk6QudDJQFgPaovYsNDXy_i5kkXjBA>
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Tobin C. Harding" <me@tobin.cc>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
         "Theodore Ts'o" <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
-        Filipe Manana <fdmanana@gmail.com>
-References: <20180525034621.31147-1-ming.lei@redhat.com>
- <20180525045306.GB8740@kmo-pixel>
- <8aa4276d-c0bc-3266-aa53-bf08a2e5ab5c@kernel.dk>
- <20180527072332.GA18240@ming.t460p>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <cc266632-497c-6849-e291-4f042c8d987a@kernel.dk>
-Date: Sun, 27 May 2018 19:44:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180527072332.GA18240@ming.t460p>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/4] enable early printing of hashed pointers
+Date: Mon, 28 May 2018 11:46:38 +1000
+Message-Id: <1527472002-11571-1-git-send-email-me@tobin.cc>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/27/18 1:23 AM, Ming Lei wrote:
-> On Fri, May 25, 2018 at 10:30:46AM -0600, Jens Axboe wrote:
->> On 5/24/18 10:53 PM, Kent Overstreet wrote:
->>> On Fri, May 25, 2018 at 11:45:48AM +0800, Ming Lei wrote:
->>>> Hi,
->>>>
->>>> This patchset brings multipage bvec into block layer:
->>>
->>> patch series looks sane to me. goddamn that's a lot of renaming.
->>
->> Indeed... I actually objected to some of the segment -> page
->> renaming, but it's still in there. The foo2() temporary functions
->> also concern me, we all know there's nothing more permanent than a
->> temporary fixup.
-> 
-> Jens, I remember I explained the renaming story to you in lsfmm a bit:
-> 
-> 1) the current naming of segment is actually wrong, since every segment
-> only stores one single-page vector
-> 
-> 2) the most important part is that once multipage bvec is introduced,
-> if the old _segment naming is still kept, it can be very confusing,
-> especially no good name is left for the helpers of dealing with real
-> segment.
+Currently printing pointers early in the boot sequence can result in a
+dummy string '(____ptrval____)' being printed.  While resolving this
+issue it was noticed that we can use the hw RNG if available for hashing
+pointers.
 
-Yes, we discussed exactly this, which is why I'm surprised you went
-ahead with the same approach. I told you I don't like tree wide renames,
-if they can be avoided. I'd rather suffer some pain wrt page vs segments
-naming, and then later do a rename (if it bothers us) once the dust has
-settled on the interesting part of the changes.
+Patch one and two do the ground work to be able to use hw RNG removing
+from get_random_bytes_arch() the call to get_random_bytes() and
+returning the number of bytes of random material successfully returned. 
 
-I'm very well away of our current naming and what it signifies.  With
-#1, you are really splitting hairs, imho. Find a decent name for
-multiple segment. Chunk?
+Patch three uses the hw RNG to get keying material if it is available.
 
-> For the foo2() temporary change, that is only for avoiding tree-wide
-> change in one single tree, with this way, we can change sub-system one
-> by one, but if you think it is good to do tree-wide conversion in one
-> patch, I am fine to do it in next version.
+Patch four further assists debugging early in the boot sequence for
+machines that do not have a hw RNG by adding a command line option
+'debug_boot_weak_hash'.  If enabled, non-cryptographically secure hashing
+is used instead of siphash so we can hash at any time. 
 
-It's still a painful middle step.
+During the versions of this set I have been totally confused about which
+patches go through which tree.  This version again puts all 4 patches
+together in the hope they will go through Andrew's tree.
 
->>> Things are going to get interesting when we start sticking compound
->>> pages in the page cache, there'll be some interesting questions of
->>> semantics to deal with then but I think getting this will only help
->>> w.r.t. plumbing that through and not dealing with 4k pages
->>> unnecessarily - but I think even if we were to decide that merging
->>> in bio_add_page() is not the way to go when the upper layers are
->>> passing compound pages around already, this patch series helps
->>> because regardless at some point everything under
->>> generic_make_request() is going to have to deal with segments that
->>> are more than one page, and this patch series makes that happen. So
->>> incremental progress.
->>>
->>> Jens, any objections to getting this in?
->>
->> I like most of it, but I'd much rather get this way earlier in the
->> series.  We're basically just one week away from the merge window, it
->> needs more simmer and testing time than that. On top of that, it
->> hasn't received much review yet.
->>
->> So as far as I'm concerned, we can kick off the 4.19 block branch
->> with iterated versions of this patchset.
-> 
-> OK, I will post out again once v4.19 is started.
 
-Sounds good.
+Steve,
+
+Could you please take a quick squiz at the final 2 patches if you get a
+chance.  I assumed we are in preemptible context during early_init based
+on your code (and code comment) and called static_branch_disable()
+directly if hw RNG returned keying material.  It's a pretty simple
+change but I'd love to get someone else to check I've not noob'ed it.
+
+
+thanks,
+Tobin.
+
+v6
+ - Rebase on top of Steve's patch (fixing race condition).  Uses static
+   branch instead of memory barrier.
+
+v5
+ - Use 'upside-down-xmas-tree' style to declare local variables (Steve)
+ - Added Reviewed-by tag from Steve (patch 2 and 3).
+
+v4
+ - remove last patch of series (command line option patch)
+
+v3
+ - Add __ro_after_init (suggested by Kees).
+
+v2
+ - Use min_t() instead of min() (thanks checkpatch).
+ - Add __must_check to function declaration (thanks Steve).
+ - Use hw RNG by default if available (as originally suggested by Kees).
+ - Add command line option to use cryptographically insecure hashing.
+   If debug_early_boot is enabled use hash_long() instead of siphash
+   (as requested by Steve, and solves original problem for Anna-Maria).
+ - Added Acked-by tag from Ted (patch 1 and 2)
+
+
+
+Tobin C. Harding (4):
+  random: Fix whitespace pre random-bytes work
+  random: Return nbytes filled from hw RNG
+  vsprintf: Use hw RNG for ptr_key
+  vsprintf: Add command line option debug_boot_weak_hash
+
+ Documentation/admin-guide/kernel-parameters.txt |  9 ++++++++
+ drivers/char/random.c                           | 19 ++++++++--------
+ include/linux/random.h                          |  2 +-
+ lib/vsprintf.c                                  | 30 ++++++++++++++++++++++++-
+ 4 files changed, 49 insertions(+), 11 deletions(-)
 
 -- 
-Jens Axboe
+2.7.4
