@@ -1,52 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S940311AbeE1Qkd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 12:40:33 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38223 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934545AbeE1QkZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 12:40:25 -0400
-X-Google-Smtp-Source: AB8JxZrY7wjApJfAkAc8OgWu5/ERdF/44EjevydbyhPPfZDBwsmfHr4zSiFextKO0eulkyCzTcJ7Og==
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: [PATCH] sh: pass machine size to sparse
-Date: Mon, 28 May 2018 18:40:18 +0200
-Message-Id: <20180528164018.16064-1-luc.vanoostenryck@gmail.com>
+        id S940379AbeE1Qkv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:40:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933984AbeE1KIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:08:09 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 057/185] ARM: OMAP1: clock: Fix debugfs_create_*() usage
+Date: Mon, 28 May 2018 12:01:38 +0200
+Message-Id: <20180528100055.721477967@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
+References: <20180528100050.700971285@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default, sparse assumes a 64bit machine when compiled on x86-64
-and 32bit when compiled on anything else.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-This can of course create all sort of problems, like issuing false
-warnings like: 'shift too big (32) for type unsigned long', or
-worse, to not emit legitimate warnings.
+------------------
 
-Fix this by passing to sparse the appropriate -m32/-m64 flag
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+[ Upstream commit 8cbbf1745dcde7ba7e423dc70619d223de90fd43 ]
+
+When exposing data access through debugfs, the correct
+debugfs_create_*() functions must be used, depending on data type.
+
+Remove all casts from data pointers passed to debugfs_create_*()
+functions, as such casts prevent the compiler from flagging bugs.
+
+Correct all wrong usage:
+  - clk.rate is unsigned long, not u32,
+  - clk.flags is u8, not u32, which exposed the successive
+    clk.rate_offset and clk.src_offset fields.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sh/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/mach-omap1/clock.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/sh/Makefile b/arch/sh/Makefile
-index 65300193b..3a195c9d5 100644
---- a/arch/sh/Makefile
-+++ b/arch/sh/Makefile
-@@ -206,6 +206,8 @@ ifeq ($(CONFIG_DWARF_UNWINDER),y)
-   KBUILD_CFLAGS += -fasynchronous-unwind-tables
- endif
+--- a/arch/arm/mach-omap1/clock.c
++++ b/arch/arm/mach-omap1/clock.c
+@@ -1031,17 +1031,17 @@ static int clk_debugfs_register_one(stru
+ 		return -ENOMEM;
+ 	c->dent = d;
  
-+CHECKFLAGS += -m$(BITS)
-+
- libs-$(CONFIG_SUPERH32)		:= arch/sh/lib/	$(libs-y)
- libs-$(CONFIG_SUPERH64)		:= arch/sh/lib64/ $(libs-y)
- 
--- 
-2.17.0
+-	d = debugfs_create_u8("usecount", S_IRUGO, c->dent, (u8 *)&c->usecount);
++	d = debugfs_create_u8("usecount", S_IRUGO, c->dent, &c->usecount);
+ 	if (!d) {
+ 		err = -ENOMEM;
+ 		goto err_out;
+ 	}
+-	d = debugfs_create_u32("rate", S_IRUGO, c->dent, (u32 *)&c->rate);
++	d = debugfs_create_ulong("rate", S_IRUGO, c->dent, &c->rate);
+ 	if (!d) {
+ 		err = -ENOMEM;
+ 		goto err_out;
+ 	}
+-	d = debugfs_create_x32("flags", S_IRUGO, c->dent, (u32 *)&c->flags);
++	d = debugfs_create_x8("flags", S_IRUGO, c->dent, &c->flags);
+ 	if (!d) {
+ 		err = -ENOMEM;
+ 		goto err_out;
