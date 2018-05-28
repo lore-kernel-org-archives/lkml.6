@@ -1,60 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753408AbeE1GOj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 02:14:39 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36415 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751785AbeE1GOg (ORCPT
+        id S1753397AbeE1GQv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 02:16:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34570 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751785AbeE1GQs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 02:14:36 -0400
-Date: Mon, 28 May 2018 08:14:28 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>
-cc: Paolo Bonzini <pbonzini@redhat.com>, Waiman Long <longman@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/KVM: Fix incorrect SSBD bit in
- kvm_cpuid_7_0_edx_x86_features
-In-Reply-To: <20180525195009.GC26007@flask>
-Message-ID: <alpine.DEB.2.21.1805280811440.1585@nanos.tec.linutronix.de>
-References: <1527268584-752-1-git-send-email-longman@redhat.com> <20180525195009.GC26007@flask>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 28 May 2018 02:16:48 -0400
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1075720976-1527488068=:1585"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Mon, 28 May 2018 11:46:47 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH v3 13/16] mtd: rawnand: qcom: minor code reorganization
+ for bad block check
+In-Reply-To: <20180526104900.139dd19b@xps13>
+References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
+ <1527250904-21988-14-git-send-email-absahu@codeaurora.org>
+ <20180526104900.139dd19b@xps13>
+Message-ID: <d48035002fc00f142edc8ed80309f8a7@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1075720976-1527488068=:1585
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: 8BIT
-
-On Fri, 25 May 2018, Radim KrËm·¯ wrote:
-
-> 2018-05-25 13:16-0400, Waiman Long:
-> > As the SSBD bit in kvm_cpuid_7_0_edx_x86_features has been renamed to
-> > SPEC_CTRL_SSBD in the commit 52817587e706 ("x86/cpufeatures: Disentangle
-> > SSBD enumeration"). The corresponding name change needed to be made in
-> > the KVM code as well.
-> > 
-> > Fixes: 52817587e706 ("x86/cpufeatures: Disentangle SSBD enumeration")
-> > 
-> > Signed-off-by: Waiman Long <longman@redhat.com>
-> > ---
+On 2018-05-26 14:28, Miquel Raynal wrote:
+> Hi Abhishek,
 > 
-> Thomas, are you taking this one?
+> 
+>> @@ -2141,12 +2127,10 @@ static int qcom_nandc_block_bad(struct 
+>> mtd_info *mtd, loff_t ofs)
+>>  		goto err;
+>>  	}
+>> 
+>> -	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);
+>> -
+>> -	bad = nandc->data_buffer[bbpos] != 0xff;
+>> +	bad = bbm_bytes_buf[0] != 0xff;
+> 
+> BTW, as there are host->bbm_size bytes that can inform on the block
+> state, don't we need to check all of them?
+> 
 
-Konrad sent the same fix, which is already upstream 
+  We are checking all of them.
+  host->bbm_size will be either 1 (for NAND_BUSWIDTH_8) or
+  2 (for NAND_BUSWIDTH_16).
 
-0aa48468d009 ("KVM/VMX: Expose SSBD properly to guests")
+  
+https://elixir.bootlin.com/linux/v4.17-rc7/source/drivers/mtd/nand/raw/qcom_nandc.c#L2347
 
-Thanks,
+  Thanks,
+  Abhishek
 
-	tglx
---8323329-1075720976-1527488068=:1585--
+>> 
+>>  	if (chip->options & NAND_BUSWIDTH_16)
+>> -		bad = bad || (nandc->data_buffer[bbpos + 1] != 0xff);
+>> +		bad = bad || (bbm_bytes_buf[1] != 0xff);
+>>  err:
+>>  	return bad;
+>>  }
+> 
+> Thanks,
+> Miqu√®l
