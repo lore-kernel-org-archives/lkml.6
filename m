@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163717AbeE1Kul (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:50:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40084 "EHLO mail.kernel.org"
+        id S1163750AbeE1Ku4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:50:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163660AbeE1Kue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:50:34 -0400
+        id S1163737AbeE1Kut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:50:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tal Bar <talb@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>, Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Majd Dibbiny <majd@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 177/496] spectrum: Reference count VLAN entries
-Date: Mon, 28 May 2018 11:59:22 +0200
-Message-Id: <20180528100327.328191207@linuxfoundation.org>
+Subject: [PATCH 4.14 182/496] IB/mlx: Set slid to zero in Ethernet completion struct
+Date: Mon, 28 May 2018 11:59:27 +0200
+Message-Id: <20180528100327.628551595@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,89 +31,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Moni Shoua <monis@mellanox.com>
 
-[ Upstream commit b3529af6bb0d4fe72defdd539712ceffaa054fb3 ]
+[ Upstream commit 65389322b28f81cc137b60a41044c2d958a7b950 ]
 
-One of the basic construct in the device is a port-VLAN pair, which can
-be bound to a FID or a RIF in order to direct packets to the bridge or
-the router, respectively.
+IB spec says that a lid should be ignored when link layer is Ethernet,
+for example when building or parsing a CM request message (CA17-34).
+However, since ib_lid_be16() and ib_lid_cpu16()  validates the slid,
+not only when link layer is IB, we set the slid to zero to prevent
+false warnings in the kernel log.
 
-Since not all the netdevs are configured with a VLAN (e.g., sw1p1 vs.
-sw1p1.10), VID 1 is used to represent these and thus this VID can be
-used by both upper devices of mlxsw ports and by the driver itself.
-
-However, this VID is not reference counted and therefore might be freed
-prematurely, which can result in various WARNINGs. For example:
-
-$ ip link add name br0 type bridge vlan_filtering 1
-$ teamd -t team0 -d -c '{"runner": {"name": "lacp"}}'
-$ ip link set dev team0 master br0
-$ ip link set dev enp1s0np1 master team0
-$ ip address add 192.0.2.1/24 dev enp1s0np1
-
-The enslavement to team0 will fail because team0 already has an upper
-and thus vlan_vids_del_by_dev() will be executed as part of team's error
-path which will delete VID 1 from enp1s0np1 (added by br0 as PVID). The
-WARNING will be generated when the driver will realize it can't find VID
-1 on the port and bind it to a RIF.
-
-Fix this by adding a reference count to the VLAN entries on the port, in
-a similar fashion to the reference counting used by the corresponding
-'vlan_vid_info' structure in the 8021q driver.
-
-Fixes: c57529e1d5d8 ("mlxsw: spectrum: Replace vPorts with Port-VLAN")
-Reported-by: Tal Bar <talb@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Tested-by: Tal Bar <talb@mellanox.com>
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 62ede7779904 ("Add OPA extended LID support")
+Reviewed-by: Majd Dibbiny <majd@mellanox.com>
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    8 +++++++-
- drivers/net/ethernet/mellanox/mlxsw/spectrum.h |    1 +
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/mlx4/cq.c |    4 +++-
+ drivers/infiniband/hw/mlx5/cq.c |    3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -1417,6 +1417,7 @@ mlxsw_sp_port_vlan_create(struct mlxsw_s
+--- a/drivers/infiniband/hw/mlx4/cq.c
++++ b/drivers/infiniband/hw/mlx4/cq.c
+@@ -597,6 +597,7 @@ static void use_tunnel_data(struct mlx4_
+ 	wc->dlid_path_bits = 0;
+ 
+ 	if (is_eth) {
++		wc->slid = 0;
+ 		wc->vlan_id = be16_to_cpu(hdr->tun.sl_vid);
+ 		memcpy(&(wc->smac[0]), (char *)&hdr->tun.mac_31_0, 4);
+ 		memcpy(&(wc->smac[4]), (char *)&hdr->tun.slid_mac_47_32, 2);
+@@ -845,7 +846,6 @@ repoll:
+ 			}
+ 		}
+ 
+-		wc->slid	   = be16_to_cpu(cqe->rlid);
+ 		g_mlpath_rqpn	   = be32_to_cpu(cqe->g_mlpath_rqpn);
+ 		wc->src_qp	   = g_mlpath_rqpn & 0xffffff;
+ 		wc->dlid_path_bits = (g_mlpath_rqpn >> 24) & 0x7f;
+@@ -854,6 +854,7 @@ repoll:
+ 		wc->wc_flags	  |= mlx4_ib_ipoib_csum_ok(cqe->status,
+ 					cqe->checksum) ? IB_WC_IP_CSUM_OK : 0;
+ 		if (is_eth) {
++			wc->slid = 0;
+ 			wc->sl  = be16_to_cpu(cqe->sl_vid) >> 13;
+ 			if (be32_to_cpu(cqe->vlan_my_qpn) &
+ 					MLX4_CQE_CVLAN_PRESENT_MASK) {
+@@ -865,6 +866,7 @@ repoll:
+ 			memcpy(wc->smac, cqe->smac, ETH_ALEN);
+ 			wc->wc_flags |= (IB_WC_WITH_VLAN | IB_WC_WITH_SMAC);
+ 		} else {
++			wc->slid = be16_to_cpu(cqe->rlid);
+ 			wc->sl  = be16_to_cpu(cqe->sl_vid) >> 12;
+ 			wc->vlan_id = 0xffff;
+ 		}
+--- a/drivers/infiniband/hw/mlx5/cq.c
++++ b/drivers/infiniband/hw/mlx5/cq.c
+@@ -224,7 +224,6 @@ static void handle_responder(struct ib_w
+ 		wc->ex.invalidate_rkey = be32_to_cpu(cqe->imm_inval_pkey);
+ 		break;
+ 	}
+-	wc->slid	   = be16_to_cpu(cqe->slid);
+ 	wc->src_qp	   = be32_to_cpu(cqe->flags_rqpn) & 0xffffff;
+ 	wc->dlid_path_bits = cqe->ml_path;
+ 	g = (be32_to_cpu(cqe->flags_rqpn) >> 28) & 3;
+@@ -239,10 +238,12 @@ static void handle_responder(struct ib_w
  	}
  
- 	mlxsw_sp_port_vlan->mlxsw_sp_port = mlxsw_sp_port;
-+	mlxsw_sp_port_vlan->ref_count = 1;
- 	mlxsw_sp_port_vlan->vid = vid;
- 	list_add(&mlxsw_sp_port_vlan->list, &mlxsw_sp_port->vlans_list);
+ 	if (ll != IB_LINK_LAYER_ETHERNET) {
++		wc->slid = be16_to_cpu(cqe->slid);
+ 		wc->sl = (be32_to_cpu(cqe->flags_rqpn) >> 24) & 0xf;
+ 		return;
+ 	}
  
-@@ -1444,8 +1445,10 @@ mlxsw_sp_port_vlan_get(struct mlxsw_sp_p
- 	struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan;
- 
- 	mlxsw_sp_port_vlan = mlxsw_sp_port_vlan_find_by_vid(mlxsw_sp_port, vid);
--	if (mlxsw_sp_port_vlan)
-+	if (mlxsw_sp_port_vlan) {
-+		mlxsw_sp_port_vlan->ref_count++;
- 		return mlxsw_sp_port_vlan;
-+	}
- 
- 	return mlxsw_sp_port_vlan_create(mlxsw_sp_port, vid);
- }
-@@ -1454,6 +1457,9 @@ void mlxsw_sp_port_vlan_put(struct mlxsw
- {
- 	struct mlxsw_sp_fid *fid = mlxsw_sp_port_vlan->fid;
- 
-+	if (--mlxsw_sp_port_vlan->ref_count != 0)
-+		return;
-+
- 	if (mlxsw_sp_port_vlan->bridge_port)
- 		mlxsw_sp_port_vlan_bridge_leave(mlxsw_sp_port_vlan);
- 	else if (fid)
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
-@@ -194,6 +194,7 @@ struct mlxsw_sp_port_vlan {
- 	struct list_head list;
- 	struct mlxsw_sp_port *mlxsw_sp_port;
- 	struct mlxsw_sp_fid *fid;
-+	unsigned int ref_count;
- 	u16 vid;
- 	struct mlxsw_sp_bridge_port *bridge_port;
- 	struct list_head bridge_vlan_node;
++	wc->slid = 0;
+ 	vlan_present = cqe->l4_l3_hdr_type & 0x1;
+ 	roce_packet_type   = (be32_to_cpu(cqe->flags_rqpn) >> 24) & 0x3;
+ 	if (vlan_present) {
