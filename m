@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165302AbeE1NSb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 09:18:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39478 "EHLO mail.kernel.org"
+        id S1163584AbeE1Ktv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:49:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163480AbeE1Ktx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:49:53 -0400
+        id S1163570AbeE1Ktq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:49:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@icloud.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 194/496] ceph: fix potential memory leak in init_caches()
-Date: Mon, 28 May 2018 11:59:39 +0200
-Message-Id: <20180528100328.106815693@linuxfoundation.org>
+Subject: [PATCH 4.14 192/496] Btrfs: send, fix issuing write op when processing hole in no data mode
+Date: Mon, 28 May 2018 11:59:37 +0200
+Message-Id: <20180528100328.031076035@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,42 +30,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chengguang Xu <cgxu519@icloud.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit 1c789249578895bb14ab62b4327306439b754857 ]
+[ Upstream commit d4dfc0f4d39475ccbbac947880b5464a74c30b99 ]
 
-There is lack of cache destroy operation for ceph_file_cachep
-when failing from fscache register.
+When doing an incremental send of a filesystem with the no-holes feature
+enabled, we end up issuing a write operation when using the no data mode
+send flag, instead of issuing an update extent operation. Fix this by
+issuing the update extent operation instead.
 
-Signed-off-by: Chengguang Xu <cgxu519@icloud.com>
-Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Trivial reproducer:
+
+  $ mkfs.btrfs -f -O no-holes /dev/sdc
+  $ mkfs.btrfs -f /dev/sdd
+  $ mount /dev/sdc /mnt/sdc
+  $ mount /dev/sdd /mnt/sdd
+
+  $ xfs_io -f -c "pwrite -S 0xab 0 32K" /mnt/sdc/foobar
+  $ btrfs subvolume snapshot -r /mnt/sdc /mnt/sdc/snap1
+
+  $ xfs_io -c "fpunch 8K 8K" /mnt/sdc/foobar
+  $ btrfs subvolume snapshot -r /mnt/sdc /mnt/sdc/snap2
+
+  $ btrfs send /mnt/sdc/snap1 | btrfs receive /mnt/sdd
+  $ btrfs send --no-data -p /mnt/sdc/snap1 /mnt/sdc/snap2 \
+       | btrfs receive -vv /mnt/sdd
+
+Before this change the output of the second receive command is:
+
+  receiving snapshot snap2 uuid=f6922049-8c22-e544-9ff9-fc6755918447...
+  utimes
+  write foobar, offset 8192, len 8192
+  utimes foobar
+  BTRFS_IOC_SET_RECEIVED_SUBVOL uuid=f6922049-8c22-e544-9ff9-...
+
+After this change it is:
+
+  receiving snapshot snap2 uuid=564d36a3-ebc8-7343-aec9-bf6fda278e64...
+  utimes
+  update_extent foobar: offset=8192, len=8192
+  utimes foobar
+  BTRFS_IOC_SET_RECEIVED_SUBVOL uuid=564d36a3-ebc8-7343-aec9-bf6fda278e64...
+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ceph/super.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/btrfs/send.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -712,14 +712,17 @@ static int __init init_caches(void)
- 		goto bad_dentry;
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -5008,6 +5008,9 @@ static int send_hole(struct send_ctx *sc
+ 	u64 len;
+ 	int ret = 0;
  
- 	ceph_file_cachep = KMEM_CACHE(ceph_file_info, SLAB_MEM_SPREAD);
--
- 	if (!ceph_file_cachep)
- 		goto bad_file;
- 
--	if ((error = ceph_fscache_register()))
--		goto bad_file;
-+	error = ceph_fscache_register();
-+	if (error)
-+		goto bad_fscache;
- 
- 	return 0;
++	if (sctx->flags & BTRFS_SEND_FLAG_NO_FILE_DATA)
++		return send_update_extent(sctx, offset, end - offset);
 +
-+bad_fscache:
-+	kmem_cache_destroy(ceph_file_cachep);
- bad_file:
- 	kmem_cache_destroy(ceph_dentry_cachep);
- bad_dentry:
+ 	p = fs_path_alloc();
+ 	if (!p)
+ 		return -ENOMEM;
