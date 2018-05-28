@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422746AbeE1LBg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:01:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49008 "EHLO mail.kernel.org"
+        id S1164866AbeE1LBs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:01:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938029AbeE1LB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:01:29 -0400
+        id S1422751AbeE1LBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:01:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
+        stable@vger.kernel.org, Govindarajulu Varadarajan <gvaradar@cisco.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 443/496] tools: hv: fix compiler warnings about major/target_fname
-Date: Mon, 28 May 2018 12:03:48 +0200
-Message-Id: <20180528100338.528303118@linuxfoundation.org>
+Subject: [PATCH 4.14 447/496] enic: enable rq before updating rq descriptors
+Date: Mon, 28 May 2018 12:03:52 +0200
+Message-Id: <20180528100338.721045997@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,56 +30,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Govindarajulu Varadarajan <gvaradar@cisco.com>
 
-[ Upstream commit 1330fc35327f3ecdfa1aa645e7321ced7349b2cd ]
+[ Upstream commit e8588e268509292550634d9a35f2723a207683b2 ]
 
-This patch fixes the below warnings with new glibc and gcc:
+rq should be enabled before posting the buffers to rq desc. If not hw sees
+stale value and casuses DMAR errors.
 
-hv_vss_daemon.c:100:13: warning: In the GNU C Library, "major" is defined
- by <sys/sysmacros.h>. For historical compatibility, it is currently
-defined by <sys/types.h> as well, but we plan to  remove this soon.
-To use "major", include <sys/sysmacros.h>  directly.
-
-hv_fcopy_daemon.c:42:2: note: 'snprintf' output between 2 and 1040
-bytes into a destination of size 260
-
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/hv/hv_fcopy_daemon.c |    3 ++-
- tools/hv/hv_vss_daemon.c   |    1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/cisco/enic/enic_main.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/tools/hv/hv_fcopy_daemon.c
-+++ b/tools/hv/hv_fcopy_daemon.c
-@@ -23,13 +23,14 @@
- #include <unistd.h>
- #include <errno.h>
- #include <linux/hyperv.h>
-+#include <linux/limits.h>
- #include <syslog.h>
- #include <sys/stat.h>
- #include <fcntl.h>
- #include <getopt.h>
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -1897,6 +1897,8 @@ static int enic_open(struct net_device *
+ 	}
  
- static int target_fd;
--static char target_fname[W_MAX_PATH];
-+static char target_fname[PATH_MAX];
- static unsigned long long filesize;
+ 	for (i = 0; i < enic->rq_count; i++) {
++		/* enable rq before updating rq desc */
++		vnic_rq_enable(&enic->rq[i]);
+ 		vnic_rq_fill(&enic->rq[i], enic_rq_alloc_buf);
+ 		/* Need at least one buffer on ring to get going */
+ 		if (vnic_rq_desc_used(&enic->rq[i]) == 0) {
+@@ -1908,8 +1910,6 @@ static int enic_open(struct net_device *
  
- static int hv_start_fcopy(struct hv_start_fcopy *smsg)
---- a/tools/hv/hv_vss_daemon.c
-+++ b/tools/hv/hv_vss_daemon.c
-@@ -22,6 +22,7 @@
- #include <sys/poll.h>
- #include <sys/ioctl.h>
- #include <sys/stat.h>
-+#include <sys/sysmacros.h>
- #include <fcntl.h>
- #include <stdio.h>
- #include <mntent.h>
+ 	for (i = 0; i < enic->wq_count; i++)
+ 		vnic_wq_enable(&enic->wq[i]);
+-	for (i = 0; i < enic->rq_count; i++)
+-		vnic_rq_enable(&enic->rq[i]);
+ 
+ 	if (!enic_is_dynamic(enic) && !enic_is_sriov_vf(enic))
+ 		enic_dev_add_station_addr(enic);
+@@ -1935,8 +1935,12 @@ static int enic_open(struct net_device *
+ 	return 0;
+ 
+ err_out_free_rq:
+-	for (i = 0; i < enic->rq_count; i++)
++	for (i = 0; i < enic->rq_count; i++) {
++		err = vnic_rq_disable(&enic->rq[i]);
++		if (err)
++			return err;
+ 		vnic_rq_clean(&enic->rq[i], enic_free_rq_buf);
++	}
+ 	enic_dev_notify_unset(enic);
+ err_out_free_intr:
+ 	enic_unset_affinity_hint(enic);
