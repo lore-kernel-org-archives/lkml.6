@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163131AbeE1Kq2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:46:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36644 "EHLO mail.kernel.org"
+        id S1163150AbeE1Kqh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:46:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1163105AbeE1KqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:46:21 -0400
+        id S1163133AbeE1Kqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:46:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        David Howells <dhowells@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 118/496] s390/cio: fix ccw_device_start_timeout API
-Date: Mon, 28 May 2018 11:58:23 +0200
-Message-Id: <20180528100324.903706542@linuxfoundation.org>
+Subject: [PATCH 4.14 122/496] PKCS#7: fix direct verification of SignerInfo signature
+Date: Mon, 28 May 2018 11:58:27 +0200
+Message-Id: <20180528100325.070271045@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -30,196 +30,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit f97a6b6c47d2f329a24f92cc0ca3c6df5727ba73 ]
+[ Upstream commit 6459ae386699a5fe0dc52cf30255f75274fa43a4 ]
 
-There are cases a device driver can't start IO because the device is
-currently in use by cio. In this case the device driver is notified
-when the device is usable again.
+If none of the certificates in a SignerInfo's certificate chain match a
+trusted key, nor is the last certificate signed by a trusted key, then
+pkcs7_validate_trust_one() tries to check whether the SignerInfo's
+signature was made directly by a trusted key.  But, it actually fails to
+set the 'sig' variable correctly, so it actually verifies the last
+signature seen.  That will only be the SignerInfo's signature if the
+certificate chain is empty; otherwise it will actually be the last
+certificate's signature.
 
-Using ccw_device_start_timeout we would set the timeout (and change
-an existing timeout) before we test for internal usage. Worst case
-this could lead to an unexpected timer deletion.
+This is not by itself a security problem, since verifying any of the
+certificates in the chain should be sufficient to verify the SignerInfo.
+Still, it's not working as intended so it should be fixed.
 
-Fix this by setting the timeout after we test for internal usage.
+Fix it by setting 'sig' correctly for the direct verification case.
 
-Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 757932e6da6d ("PKCS#7: Handle PKCS#7 messages that contain no X.509 certs")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/cio/device_ops.c |   72 ++++++++++++++++++------------------------
- 1 file changed, 32 insertions(+), 40 deletions(-)
+ crypto/asymmetric_keys/pkcs7_trust.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/s390/cio/device_ops.c
-+++ b/drivers/s390/cio/device_ops.c
-@@ -160,7 +160,7 @@ int ccw_device_clear(struct ccw_device *
- }
- 
- /**
-- * ccw_device_start_key() - start a s390 channel program with key
-+ * ccw_device_start_timeout_key() - start a s390 channel program with timeout and key
-  * @cdev: target ccw device
-  * @cpa: logical start address of channel program
-  * @intparm: user specific interruption parameter; will be presented back to
-@@ -171,10 +171,15 @@ int ccw_device_clear(struct ccw_device *
-  * @key: storage key to be used for the I/O
-  * @flags: additional flags; defines the action to be performed for I/O
-  *	   processing.
-+ * @expires: timeout value in jiffies
-  *
-  * Start a S/390 channel program. When the interrupt arrives, the
-  * IRQ handler is called, either immediately, delayed (dev-end missing,
-  * or sense required) or never (no IRQ handler registered).
-+ * This function notifies the device driver if the channel program has not
-+ * completed during the time specified by @expires. If a timeout occurs, the
-+ * channel program is terminated via xsch, hsch or csch, and the device's
-+ * interrupt handler will be called with an irb containing ERR_PTR(-%ETIMEDOUT).
-  * Returns:
-  *  %0, if the operation was successful;
-  *  -%EBUSY, if the device is busy, or status pending;
-@@ -183,9 +188,9 @@ int ccw_device_clear(struct ccw_device *
-  * Context:
-  *  Interrupts disabled, ccw device lock held
-  */
--int ccw_device_start_key(struct ccw_device *cdev, struct ccw1 *cpa,
--			 unsigned long intparm, __u8 lpm, __u8 key,
--			 unsigned long flags)
-+int ccw_device_start_timeout_key(struct ccw_device *cdev, struct ccw1 *cpa,
-+				 unsigned long intparm, __u8 lpm, __u8 key,
-+				 unsigned long flags, int expires)
- {
- 	struct subchannel *sch;
- 	int ret;
-@@ -225,6 +230,8 @@ int ccw_device_start_key(struct ccw_devi
- 	switch (ret) {
- 	case 0:
- 		cdev->private->intparm = intparm;
-+		if (expires)
-+			ccw_device_set_timeout(cdev, expires);
- 		break;
- 	case -EACCES:
- 	case -ENODEV:
-@@ -235,7 +242,7 @@ int ccw_device_start_key(struct ccw_devi
- }
- 
- /**
-- * ccw_device_start_timeout_key() - start a s390 channel program with timeout and key
-+ * ccw_device_start_key() - start a s390 channel program with key
-  * @cdev: target ccw device
-  * @cpa: logical start address of channel program
-  * @intparm: user specific interruption parameter; will be presented back to
-@@ -246,15 +253,10 @@ int ccw_device_start_key(struct ccw_devi
-  * @key: storage key to be used for the I/O
-  * @flags: additional flags; defines the action to be performed for I/O
-  *	   processing.
-- * @expires: timeout value in jiffies
-  *
-  * Start a S/390 channel program. When the interrupt arrives, the
-  * IRQ handler is called, either immediately, delayed (dev-end missing,
-  * or sense required) or never (no IRQ handler registered).
-- * This function notifies the device driver if the channel program has not
-- * completed during the time specified by @expires. If a timeout occurs, the
-- * channel program is terminated via xsch, hsch or csch, and the device's
-- * interrupt handler will be called with an irb containing ERR_PTR(-%ETIMEDOUT).
-  * Returns:
-  *  %0, if the operation was successful;
-  *  -%EBUSY, if the device is busy, or status pending;
-@@ -263,19 +265,12 @@ int ccw_device_start_key(struct ccw_devi
-  * Context:
-  *  Interrupts disabled, ccw device lock held
-  */
--int ccw_device_start_timeout_key(struct ccw_device *cdev, struct ccw1 *cpa,
--				 unsigned long intparm, __u8 lpm, __u8 key,
--				 unsigned long flags, int expires)
-+int ccw_device_start_key(struct ccw_device *cdev, struct ccw1 *cpa,
-+			 unsigned long intparm, __u8 lpm, __u8 key,
-+			 unsigned long flags)
- {
--	int ret;
--
--	if (!cdev)
--		return -ENODEV;
--	ccw_device_set_timeout(cdev, expires);
--	ret = ccw_device_start_key(cdev, cpa, intparm, lpm, key, flags);
--	if (ret != 0)
--		ccw_device_set_timeout(cdev, 0);
--	return ret;
-+	return ccw_device_start_timeout_key(cdev, cpa, intparm, lpm, key,
-+					    flags, 0);
- }
- 
- /**
-@@ -490,18 +485,20 @@ void ccw_device_get_id(struct ccw_device
- EXPORT_SYMBOL(ccw_device_get_id);
- 
- /**
-- * ccw_device_tm_start_key() - perform start function
-+ * ccw_device_tm_start_timeout_key() - perform start function
-  * @cdev: ccw device on which to perform the start function
-  * @tcw: transport-command word to be started
-  * @intparm: user defined parameter to be passed to the interrupt handler
-  * @lpm: mask of paths to use
-  * @key: storage key to use for storage access
-+ * @expires: time span in jiffies after which to abort request
-  *
-  * Start the tcw on the given ccw device. Return zero on success, non-zero
-  * otherwise.
-  */
--int ccw_device_tm_start_key(struct ccw_device *cdev, struct tcw *tcw,
--			    unsigned long intparm, u8 lpm, u8 key)
-+int ccw_device_tm_start_timeout_key(struct ccw_device *cdev, struct tcw *tcw,
-+				    unsigned long intparm, u8 lpm, u8 key,
-+				    int expires)
- {
- 	struct subchannel *sch;
- 	int rc;
-@@ -528,37 +525,32 @@ int ccw_device_tm_start_key(struct ccw_d
- 			return -EACCES;
+--- a/crypto/asymmetric_keys/pkcs7_trust.c
++++ b/crypto/asymmetric_keys/pkcs7_trust.c
+@@ -106,6 +106,7 @@ static int pkcs7_validate_trust_one(stru
+ 		pr_devel("sinfo %u: Direct signer is key %x\n",
+ 			 sinfo->index, key_serial(key));
+ 		x509 = NULL;
++		sig = sinfo->sig;
+ 		goto matched;
  	}
- 	rc = cio_tm_start_key(sch, tcw, lpm, key);
--	if (rc == 0)
-+	if (rc == 0) {
- 		cdev->private->intparm = intparm;
-+		if (expires)
-+			ccw_device_set_timeout(cdev, expires);
-+	}
- 	return rc;
- }
--EXPORT_SYMBOL(ccw_device_tm_start_key);
-+EXPORT_SYMBOL(ccw_device_tm_start_timeout_key);
- 
- /**
-- * ccw_device_tm_start_timeout_key() - perform start function
-+ * ccw_device_tm_start_key() - perform start function
-  * @cdev: ccw device on which to perform the start function
-  * @tcw: transport-command word to be started
-  * @intparm: user defined parameter to be passed to the interrupt handler
-  * @lpm: mask of paths to use
-  * @key: storage key to use for storage access
-- * @expires: time span in jiffies after which to abort request
-  *
-  * Start the tcw on the given ccw device. Return zero on success, non-zero
-  * otherwise.
-  */
--int ccw_device_tm_start_timeout_key(struct ccw_device *cdev, struct tcw *tcw,
--				    unsigned long intparm, u8 lpm, u8 key,
--				    int expires)
-+int ccw_device_tm_start_key(struct ccw_device *cdev, struct tcw *tcw,
-+			    unsigned long intparm, u8 lpm, u8 key)
- {
--	int ret;
--
--	ccw_device_set_timeout(cdev, expires);
--	ret = ccw_device_tm_start_key(cdev, tcw, intparm, lpm, key);
--	if (ret != 0)
--		ccw_device_set_timeout(cdev, 0);
--	return ret;
-+	return ccw_device_tm_start_timeout_key(cdev, tcw, intparm, lpm, key, 0);
- }
--EXPORT_SYMBOL(ccw_device_tm_start_timeout_key);
-+EXPORT_SYMBOL(ccw_device_tm_start_key);
- 
- /**
-  * ccw_device_tm_start() - perform start function
+ 	if (PTR_ERR(key) != -ENOKEY)
