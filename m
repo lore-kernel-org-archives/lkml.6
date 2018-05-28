@@ -1,24 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162159AbeE1KgB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:36:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56276 "EHLO mail.kernel.org"
+        id S1162201AbeE1KgZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:36:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162136AbeE1Kfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:35:54 -0400
+        id S1162174AbeE1KgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:36:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 214/329] mm, thp: do not cause memcg oom for thp
-Date: Mon, 28 May 2018 12:02:23 +0200
-Message-Id: <20180528100259.976572800@linuxfoundation.org>
+Subject: [PATCH 4.9 191/329] xen: xenbus: use put_device() instead of kfree()
+Date: Mon, 28 May 2018 12:02:00 +0200
+Message-Id: <20180528100258.221409981@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -34,78 +30,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rientjes <rientjes@google.com>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-[ Upstream commit 9d3c3354bb85bab4d865fe95039443f09a4c8394 ]
+[ Upstream commit 351b2bccede1cb673ec7957b35ea997ea24c8884 ]
 
-Commit 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
-madvised allocations") changed the page allocator to no longer detect
-thp allocations based on __GFP_NORETRY.
+Never directly free @dev after calling device_register(), even
+if it returned an error! Always use put_device() to give up the
+reference initialized.
 
-It did not, however, modify the mem cgroup try_charge() path to avoid
-oom kill for either khugepaged collapsing or thp faulting.  It is never
-expected to oom kill a process to allocate a hugepage for thp; reclaim
-is governed by the thp defrag mode and MADV_HUGEPAGE, but allocations
-(and charging) should fallback instead of oom killing processes.
-
-Link: http://lkml.kernel.org/r/alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com
-Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
-Signed-off-by: David Rientjes <rientjes@google.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/huge_memory.c |    5 +++--
- mm/khugepaged.c  |    8 ++++++--
- 2 files changed, 9 insertions(+), 4 deletions(-)
+ drivers/xen/xenbus/xenbus_probe.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -542,7 +542,8 @@ static int __do_huge_pmd_anonymous_page(
+--- a/drivers/xen/xenbus/xenbus_probe.c
++++ b/drivers/xen/xenbus/xenbus_probe.c
+@@ -470,8 +470,11 @@ int xenbus_probe_node(struct xen_bus_typ
  
- 	VM_BUG_ON_PAGE(!PageCompound(page), page);
+ 	/* Register with generic device framework. */
+ 	err = device_register(&xendev->dev);
+-	if (err)
++	if (err) {
++		put_device(&xendev->dev);
++		xendev = NULL;
+ 		goto fail;
++	}
  
--	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp, &memcg, true)) {
-+	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp | __GFP_NORETRY, &memcg,
-+				  true)) {
- 		put_page(page);
- 		count_vm_event(THP_FAULT_FALLBACK);
- 		return VM_FAULT_FALLBACK;
-@@ -1060,7 +1061,7 @@ alloc:
- 	}
- 
- 	if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
--					huge_gfp, &memcg, true))) {
-+				huge_gfp | __GFP_NORETRY, &memcg, true))) {
- 		put_page(new_page);
- 		split_huge_pmd(vma, fe->pmd, fe->address);
- 		if (page)
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -963,7 +963,9 @@ static void collapse_huge_page(struct mm
- 		goto out_nolock;
- 	}
- 
--	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
-+	/* Do not oom kill for khugepaged charges */
-+	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
-+					   &memcg, true))) {
- 		result = SCAN_CGROUP_CHARGE_FAIL;
- 		goto out_nolock;
- 	}
-@@ -1323,7 +1325,9 @@ static void collapse_shmem(struct mm_str
- 		goto out;
- 	}
- 
--	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
-+	/* Do not oom kill for khugepaged charges */
-+	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
-+					   &memcg, true))) {
- 		result = SCAN_CGROUP_CHARGE_FAIL;
- 		goto out;
- 	}
+ 	return 0;
+ fail:
