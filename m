@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161678AbeE1KdL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:33:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53218 "EHLO mail.kernel.org"
+        id S1165664AbeE1ObV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:31:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161665AbeE1KdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:33:05 -0400
+        id S1161399AbeE1KdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:33:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-        Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 121/329] drm/exynos: g2d: use monotonic timestamps
-Date: Mon, 28 May 2018 12:00:50 +0200
-Message-Id: <20180528100252.774355964@linuxfoundation.org>
+Subject: [PATCH 4.9 148/329] netfilter: ebtables: convert BUG_ONs to WARN_ONs
+Date: Mon, 28 May 2018 12:01:17 +0200
+Message-Id: <20180528100254.880259128@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,67 +30,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit a588a8bb7b25a3fb4f7fed00feb7aec541fc2632 ]
+[ Upstream commit fc6a5d0601c5ac1d02f283a46f60b87b2033e5ca ]
 
-The exynos DRM driver uses real-time 'struct timeval' values
-for exporting its timestamps to user space. This has multiple
-problems:
+All of these conditions are not fatal and should have
+been WARN_ONs from the get-go.
 
-1. signed seconds overflow in y2038
-2. the 'struct timeval' definition is deprecated in the kernel
-3. time may jump or go backwards after a 'settimeofday()' syscall
-4. other DRM timestamps are in CLOCK_MONOTONIC domain, so they
-   can't be compared
-5. exporting microseconds requires a division by 1000, which may
-   be slow on some architectures.
+Convert them to WARN_ONs and bail out.
 
-The code existed in two places before, but the IPP portion was
-removed in 8ded59413ccc ("drm/exynos: ipp: Remove Exynos DRM
-IPP subsystem"), so we no longer need to worry about it.
-
-Ideally timestamps should just use 64-bit nanoseconds instead, but
-of course we can't change that now. Instead, this tries to address
-the first four points above by using monotonic 'timespec' values.
-
-According to Tobias Jakobi, user space doesn't care about the
-timestamp at the moment, so we can change the format. Even if
-there is something looking at them, it will work just fine with
-monotonic times as long as the application only looks at the
-relative values between two events.
-
-Link: https://patchwork.kernel.org/patch/10038593/
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_g2d.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/bridge/netfilter/ebtables.c |   27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -926,7 +926,7 @@ static void g2d_finish_event(struct g2d_
- 	struct drm_device *drm_dev = g2d->subdrv.drm_dev;
- 	struct g2d_runqueue_node *runqueue_node = g2d->runqueue_node;
- 	struct drm_exynos_pending_g2d_event *e;
--	struct timeval now;
-+	struct timespec64 now;
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -1625,7 +1625,8 @@ static int compat_match_to_user(struct e
+ 	int off = ebt_compat_match_offset(match, m->match_size);
+ 	compat_uint_t msize = m->match_size - off;
  
- 	if (list_empty(&runqueue_node->event_list))
- 		return;
-@@ -934,9 +934,9 @@ static void g2d_finish_event(struct g2d_
- 	e = list_first_entry(&runqueue_node->event_list,
- 			     struct drm_exynos_pending_g2d_event, base.link);
+-	BUG_ON(off >= m->match_size);
++	if (WARN_ON(off >= m->match_size))
++		return -EINVAL;
  
--	do_gettimeofday(&now);
-+	ktime_get_ts64(&now);
- 	e->event.tv_sec = now.tv_sec;
--	e->event.tv_usec = now.tv_usec;
-+	e->event.tv_usec = now.tv_nsec / NSEC_PER_USEC;
- 	e->event.cmdlist_no = cmdlist_no;
+ 	if (copy_to_user(cm->u.name, match->name,
+ 	    strlen(match->name) + 1) || put_user(msize, &cm->match_size))
+@@ -1652,7 +1653,8 @@ static int compat_target_to_user(struct
+ 	int off = xt_compat_target_offset(target);
+ 	compat_uint_t tsize = t->target_size - off;
  
- 	drm_send_event(drm_dev, &e->base);
+-	BUG_ON(off >= t->target_size);
++	if (WARN_ON(off >= t->target_size))
++		return -EINVAL;
+ 
+ 	if (copy_to_user(cm->u.name, target->name,
+ 	    strlen(target->name) + 1) || put_user(tsize, &cm->match_size))
+@@ -1880,7 +1882,8 @@ static int ebt_buf_add(struct ebt_entrie
+ 	if (state->buf_kern_start == NULL)
+ 		goto count_only;
+ 
+-	BUG_ON(state->buf_kern_offset + sz > state->buf_kern_len);
++	if (WARN_ON(state->buf_kern_offset + sz > state->buf_kern_len))
++		return -EINVAL;
+ 
+ 	memcpy(state->buf_kern_start + state->buf_kern_offset, data, sz);
+ 
+@@ -1893,7 +1896,8 @@ static int ebt_buf_add_pad(struct ebt_en
+ {
+ 	char *b = state->buf_kern_start;
+ 
+-	BUG_ON(b && state->buf_kern_offset > state->buf_kern_len);
++	if (WARN_ON(b && state->buf_kern_offset > state->buf_kern_len))
++		return -EINVAL;
+ 
+ 	if (b != NULL && sz > 0)
+ 		memset(b + state->buf_kern_offset, 0, sz);
+@@ -1970,8 +1974,10 @@ static int compat_mtw_from_user(struct c
+ 	pad = XT_ALIGN(size_kern) - size_kern;
+ 
+ 	if (pad > 0 && dst) {
+-		BUG_ON(state->buf_kern_len <= pad);
+-		BUG_ON(state->buf_kern_offset - (match_size + off) + size_kern > state->buf_kern_len - pad);
++		if (WARN_ON(state->buf_kern_len <= pad))
++			return -EINVAL;
++		if (WARN_ON(state->buf_kern_offset - (match_size + off) + size_kern > state->buf_kern_len - pad))
++			return -EINVAL;
+ 		memset(dst + size_kern, 0, pad);
+ 	}
+ 	return off + match_size;
+@@ -2021,7 +2027,8 @@ static int ebt_size_mwt(struct compat_eb
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		BUG_ON(ret < match32->match_size);
++		if (WARN_ON(ret < match32->match_size))
++			return -EINVAL;
+ 		growth += ret - match32->match_size;
+ 		growth += ebt_compat_entry_padsize();
+ 
+@@ -2130,7 +2137,8 @@ static int size_entry_mwt(struct ebt_ent
+ 
+ 	startoff = state->buf_user_offset - startoff;
+ 
+-	BUG_ON(*total < startoff);
++	if (WARN_ON(*total < startoff))
++		return -EINVAL;
+ 	*total -= startoff;
+ 	return 0;
+ }
+@@ -2257,7 +2265,8 @@ static int compat_do_replace(struct net
+ 	state.buf_kern_len = size64;
+ 
+ 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
+-	BUG_ON(ret < 0);	/* parses same data again */
++	if (WARN_ON(ret < 0))
++		goto out_unlock;
+ 
+ 	vfree(entries_tmp);
+ 	tmp.entries_size = size64;
