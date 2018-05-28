@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165779AbeE1OaC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:30:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53640 "EHLO mail.kernel.org"
+        id S1161728AbeE1Kd0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:33:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161743AbeE1Kd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:33:29 -0400
+        id S1161695AbeE1KdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:33:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 163/329] sit: fix IFLA_MTU ignored on NEWLINK
-Date: Mon, 28 May 2018 12:01:32 +0200
-Message-Id: <20180528100256.007658794@linuxfoundation.org>
+Subject: [PATCH 4.9 158/329] r8152: fix tx packets accounting
+Date: Mon, 28 May 2018 12:01:27 +0200
+Message-Id: <20180528100255.639566495@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,40 +30,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 2b3957c34b6d7f03544b12ebbf875eee430745db ]
+[ Upstream commit 4c27bf3c5b7434ccb9ab962301da661c26b467a4 ]
 
-Commit 128bb975dc3c ("ip6_gre: init dev->mtu and dev->hard_header_len
-correctly") fixed IFLA_MTU ignored on NEWLINK for ip6_gre. The same
-mtu fix is also needed for sit.
+r8152 driver handles TSO packets (limited to ~16KB) quite well,
+but pretends each TSO logical packet is a single packet on the wire.
 
-Note that dev->hard_header_len setting for sit works fine, no need to
-fix it. sit is actually ipv4 tunnel, it can't call ip6_tnl_change_mtu
-to set mtu.
+There is also some error since headers are accounted once, but
+error rate is small enough that we do not care.
 
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/sit.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/usb/r8152.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -1572,6 +1572,13 @@ static int ipip6_newlink(struct net *src
- 	if (err < 0)
- 		return err;
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -1693,7 +1693,7 @@ static int r8152_tx_agg_fill(struct r815
  
-+	if (tb[IFLA_MTU]) {
-+		u32 mtu = nla_get_u32(tb[IFLA_MTU]);
-+
-+		if (mtu >= IPV6_MIN_MTU && mtu <= 0xFFF8 - dev->hard_header_len)
-+			dev->mtu = mtu;
-+	}
-+
- #ifdef CONFIG_IPV6_SIT_6RD
- 	if (ipip6_netlink_6rd_parms(data, &ip6rd))
- 		err = ipip6_tunnel_update_6rd(nt, &ip6rd);
+ 		tx_data += len;
+ 		agg->skb_len += len;
+-		agg->skb_num++;
++		agg->skb_num += skb_shinfo(skb)->gso_segs ?: 1;
+ 
+ 		dev_kfree_skb_any(skb);
+ 
