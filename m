@@ -1,25 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165897AbeE1OmU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:42:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50364 "EHLO mail.kernel.org"
+        id S1161157AbeE1Kal (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:30:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161162AbeE1Kan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:30:43 -0400
+        id S1161119AbeE1Kad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <fengguang.wu@intel.com>,
-        Michael Kelley <mhkelley@outlook.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, kys@microsoft.com,
-        martin.petersen@oracle.com, mikelley@microsoft.com,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
+        Parag Warudkar <parag.warudkar@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 101/329] cpumask: Make for_each_cpu_wrap() available on UP as well
-Date: Mon, 28 May 2018 12:00:30 +0200
-Message-Id: <20180528100251.219971171@linuxfoundation.org>
+Subject: [PATCH 4.9 080/329] firmware: dmi_scan: Fix handling of empty DMI strings
+Date: Mon, 28 May 2018 12:00:09 +0200
+Message-Id: <20180528100249.487632231@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -35,40 +31,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Kelley <mhkelley@outlook.com>
+From: Jean Delvare <jdelvare@suse.de>
 
-[ Upstream commit d207af2eab3f8668b95ad02b21930481c42806fd ]
+[ Upstream commit a7770ae194569e96a93c48aceb304edded9cc648 ]
 
-for_each_cpu_wrap() was originally added in the #else half of a
-large "#if NR_CPUS == 1" statement, but was omitted in the #if
-half.  This patch adds the missing #if half to prevent compile
-errors when NR_CPUS is 1.
+The handling of empty DMI strings looks quite broken to me:
+* Strings from 1 to 7 spaces are not considered empty.
+* True empty DMI strings (string index set to 0) are not considered
+  empty, and result in allocating a 0-char string.
+* Strings with invalid index also result in allocating a 0-char
+  string.
+* Strings starting with 8 spaces are all considered empty, even if
+  non-space characters follow (sounds like a weird thing to do, but
+  I have actually seen occurrences of this in DMI tables before.)
+* Strings which are considered empty are reported as 8 spaces,
+  instead of being actually empty.
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Michael Kelley <mhkelley@outlook.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Some of these issues are the result of an off-by-one error in memcmp,
+the rest is incorrect by design.
+
+So let's get it square: missing strings and strings made of only
+spaces, regardless of their length, should be treated as empty and
+no memory should be allocated for them. All other strings are
+non-empty and should be allocated.
+
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Fixes: 79da4721117f ("x86: fix DMI out of memory problems")
+Cc: Parag Warudkar <parag.warudkar@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kys@microsoft.com
-Cc: martin.petersen@oracle.com
-Cc: mikelley@microsoft.com
-Fixes: c743f0a5c50f ("sched/fair, cpumask: Export for_each_cpu_wrap()")
-Link: http://lkml.kernel.org/r/SN6PR1901MB2045F087F59450507D4FCC17CBF50@SN6PR1901MB2045.namprd19.prod.outlook.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/cpumask.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/firmware/dmi_scan.c |   22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -164,6 +164,8 @@ static inline unsigned int cpumask_local
- 	for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
- #define for_each_cpu_not(cpu, mask)		\
- 	for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
-+#define for_each_cpu_wrap(cpu, mask, start)	\
-+	for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask, (void)(start))
- #define for_each_cpu_and(cpu, mask, and)	\
- 	for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask, (void)and)
- #else
+--- a/drivers/firmware/dmi_scan.c
++++ b/drivers/firmware/dmi_scan.c
+@@ -18,7 +18,7 @@ EXPORT_SYMBOL_GPL(dmi_kobj);
+  * of and an antecedent to, SMBIOS, which stands for System
+  * Management BIOS.  See further: http://www.dmtf.org/standards
+  */
+-static const char dmi_empty_string[] = "        ";
++static const char dmi_empty_string[] = "";
+ 
+ static u32 dmi_ver __initdata;
+ static u32 dmi_len;
+@@ -44,25 +44,21 @@ static int dmi_memdev_nr;
+ static const char * __init dmi_string_nosave(const struct dmi_header *dm, u8 s)
+ {
+ 	const u8 *bp = ((u8 *) dm) + dm->length;
++	const u8 *nsp;
+ 
+ 	if (s) {
+-		s--;
+-		while (s > 0 && *bp) {
++		while (--s > 0 && *bp)
+ 			bp += strlen(bp) + 1;
+-			s--;
+-		}
+ 
+-		if (*bp != 0) {
+-			size_t len = strlen(bp)+1;
+-			size_t cmp_len = len > 8 ? 8 : len;
+-
+-			if (!memcmp(bp, dmi_empty_string, cmp_len))
+-				return dmi_empty_string;
++		/* Strings containing only spaces are considered empty */
++		nsp = bp;
++		while (*nsp == ' ')
++			nsp++;
++		if (*nsp != '\0')
+ 			return bp;
+-		}
+ 	}
+ 
+-	return "";
++	return dmi_empty_string;
+ }
+ 
+ static const char * __init dmi_string(const struct dmi_header *dm, u8 s)
