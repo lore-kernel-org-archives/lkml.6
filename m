@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034330AbeE1PaT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:30:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39408 "EHLO mail.kernel.org"
+        id S1032759AbeE1KTa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:19:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032770AbeE1KTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:19:31 -0400
+        id S936951AbeE1KTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:19:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Igor Pylypiv <igor.pylypiv@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        kernel-janitors@vger.kernel.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 123/268] watchdog: f71808e_wdt: Fix magic close handling
-Date: Mon, 28 May 2018 12:01:37 +0200
-Message-Id: <20180528100216.042281572@linuxfoundation.org>
+Subject: [PATCH 4.4 111/268] clocksource/drivers/fsl_ftm_timer: Fix error return checking
+Date: Mon, 28 May 2018 12:01:25 +0200
+Message-Id: <20180528100214.738500256@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -30,35 +32,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Igor Pylypiv <igor.pylypiv@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 7bd3e7b743956afbec30fb525bc3c5e22e3d475c ]
+[ Upstream commit f287eb9013ccf199cbfa4eabd80c36fedfc15a73 ]
 
-Watchdog close is "expected" when any byte is 'V' not just the last one.
-Writing "V" to the device fails because the last byte is the end of string.
+The error checks on freq for a negative error return always fails because
+freq is unsigned and can never be negative. Fix this by making freq a
+signed long.
 
-$ echo V > /dev/watchdog
-f71808e_wdt: Unexpected close, not stopping watchdog!
+Detected with Coccinelle:
+drivers/clocksource/fsl_ftm_timer.c:287:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
+drivers/clocksource/fsl_ftm_timer.c:291:5-9: WARNING: Unsigned expression
+compared with zero: freq <= 0
 
-Signed-off-by: Igor Pylypiv <igor.pylypiv@gmail.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Fixes: 2529c3a33079 ("clocksource: Add Freescale FlexTimer Module (FTM) timer support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180226113614.3092-1-colin.king@canonical.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/watchdog/f71808e_wdt.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clocksource/fsl_ftm_timer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/watchdog/f71808e_wdt.c
-+++ b/drivers/watchdog/f71808e_wdt.c
-@@ -520,7 +520,8 @@ static ssize_t watchdog_write(struct fil
- 				char c;
- 				if (get_user(c, buf + i))
- 					return -EFAULT;
--				expect_close = (c == 'V');
-+				if (c == 'V')
-+					expect_close = true;
- 			}
+--- a/drivers/clocksource/fsl_ftm_timer.c
++++ b/drivers/clocksource/fsl_ftm_timer.c
+@@ -281,7 +281,7 @@ static int __init __ftm_clk_init(struct
  
- 			/* Properly order writes across fork()ed processes */
+ static unsigned long __init ftm_clk_init(struct device_node *np)
+ {
+-	unsigned long freq;
++	long freq;
+ 
+ 	freq = __ftm_clk_init(np, "ftm-evt-counter-en", "ftm-evt");
+ 	if (freq <= 0)
