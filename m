@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164669AbeE1K7v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:59:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47520 "EHLO mail.kernel.org"
+        id S1164684AbeE1LAA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:00:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932449AbeE1K7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:59:38 -0400
+        id S932449AbeE1K7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:59:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Ihnken Menssen <menssen@de.ibm.com>,
+        Ursula Braun <ubraun@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 404/496] IB/core: Honor port_num while resolving GID for IB link layer
-Date: Mon, 28 May 2018 12:03:09 +0200
-Message-Id: <20180528100336.787142818@linuxfoundation.org>
+Subject: [PATCH 4.14 409/496] net/smc: pay attention to MAX_ORDER for CQ entries
+Date: Mon, 28 May 2018 12:03:14 +0200
+Message-Id: <20180528100336.993515861@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,59 +31,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Ursula Braun <ubraun@linux.vnet.ibm.com>
 
-[ Upstream commit 563c4ba3bd2b8b0b21c65669ec2226b1cfa1138b ]
+[ Upstream commit c9f4c6cf53bfafb639386a4c094929f13f573e04 ]
 
-ah_attr contains the port number to which cm_id is bound. However, while
-searching for GID table for matching GID entry, the port number is
-ignored.
+smc allocates a certain number of CQ entries for used RoCE devices. For
+mlx5 devices the chosen constant number results in a large allocation
+causing this warning:
 
-This could cause the wrong GID to be used when the ah_attr is converted to
-an AH.
+[13355.124656] WARNING: CPU: 3 PID: 16535 at mm/page_alloc.c:3883 __alloc_pages_nodemask+0x2be/0x10c0
+[13355.124657] Modules linked in: smc_diag(O) smc(O) xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4 xt_tcpudp bridge stp llc ip6table_filter ip6_tables iptable_filter mlx5_ib ib_core sunrpc mlx5_core s390_trng rng_core ghash_s390 prng aes_s390 des_s390 des_generic sha512_s390 sha256_s390 sha1_s390 sha_common ptp pps_core eadm_sch dm_multipath dm_mod vhost_net tun vhost tap sch_fq_codel kvm ip_tables x_tables autofs4 [last unloaded: smc]
+[13355.124672] CPU: 3 PID: 16535 Comm: kworker/3:0 Tainted: G           O    4.14.0uschi #1
+[13355.124673] Hardware name: IBM 3906 M04 704 (LPAR)
+[13355.124675] Workqueue: events smc_listen_work [smc]
+[13355.124677] task: 00000000e2f22100 task.stack: 0000000084720000
+[13355.124678] Krnl PSW : 0704c00180000000 000000000029da76 (__alloc_pages_nodemask+0x2be/0x10c0)
+[13355.124681]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+[13355.124682] Krnl GPRS: 0000000000000000 00550e00014080c0 0000000000000000 0000000000000001
+[13355.124684]            000000000029d8b6 00000000f3bfd710 0000000000000000 00000000014080c0
+[13355.124685]            0000000000000009 00000000ec277a00 0000000000200000 0000000000000000
+[13355.124686]            0000000000000000 00000000000001ff 000000000029d8b6 0000000084723720
+[13355.124708] Krnl Code: 000000000029da6a: a7110200		tmll	%r1,512
+                          000000000029da6e: a774ff29		brc	7,29d8c0
+                         #000000000029da72: a7f40001		brc	15,29da74
+                         >000000000029da76: a7f4ff25		brc	15,29d8c0
+                          000000000029da7a: a7380000		lhi	%r3,0
+                          000000000029da7e: a7f4fef1		brc	15,29d860
+                          000000000029da82: 5820f0c4		l	%r2,196(%r15)
+                          000000000029da86: a53e0048		llilh	%r3,72
+[13355.124720] Call Trace:
+[13355.124722] ([<000000000029d8b6>] __alloc_pages_nodemask+0xfe/0x10c0)
+[13355.124724]  [<000000000013bd1e>] s390_dma_alloc+0x6e/0x148
+[13355.124733]  [<000003ff802eeba6>] mlx5_dma_zalloc_coherent_node+0x8e/0xe0 [mlx5_core]
+[13355.124740]  [<000003ff802eee18>] mlx5_buf_alloc_node+0x70/0x108 [mlx5_core]
+[13355.124744]  [<000003ff804eb410>] mlx5_ib_create_cq+0x558/0x898 [mlx5_ib]
+[13355.124749]  [<000003ff80407d40>] ib_create_cq+0x48/0x88 [ib_core]
+[13355.124751]  [<000003ff80109fba>] smc_ib_setup_per_ibdev+0x52/0x118 [smc]
+[13355.124753]  [<000003ff8010bcb6>] smc_conn_create+0x65e/0x728 [smc]
+[13355.124755]  [<000003ff801081a2>] smc_listen_work+0x2d2/0x540 [smc]
+[13355.124756]  [<0000000000162c66>] process_one_work+0x1be/0x440
+[13355.124758]  [<0000000000162f40>] worker_thread+0x58/0x458
+[13355.124759]  [<0000000000169e7e>] kthread+0x14e/0x168
+[13355.124760]  [<00000000009ce8be>] kernel_thread_starter+0x6/0xc
+[13355.124762]  [<00000000009ce8b8>] kernel_thread_starter+0x0/0xc
+[13355.124762] Last Breaking-Event-Address:
+[13355.124764]  [<000000000029da72>] __alloc_pages_nodemask+0x2ba/0x10c0
+[13355.124764] ---[ end trace 34be38b581c0b585 ]---
 
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+This patch reduces the smc constant for the maximum number of allocated
+completion queue entries SMC_MAX_CQE by 2 to avoid high round up values
+in the mlx5 code, and reduces the number of allocated completion queue
+entries even more, if the final allocation for an mlx5 device hits the
+MAX_ORDER limit.
+
+Reported-by: Ihnken Menssen <menssen@de.ibm.com>
+Signed-off-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/multicast.c |   24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ net/smc/smc_ib.c |   10 +++++++++-
+ net/smc/smc_wr.h |    1 -
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/core/multicast.c
-+++ b/drivers/infiniband/core/multicast.c
-@@ -724,21 +724,19 @@ int ib_init_ah_from_mcmember(struct ib_d
+--- a/net/smc/smc_ib.c
++++ b/net/smc/smc_ib.c
+@@ -23,6 +23,8 @@
+ #include "smc_wr.h"
+ #include "smc.h"
+ 
++#define SMC_MAX_CQE 32766	/* max. # of completion queue elements */
++
+ #define SMC_QP_MIN_RNR_TIMER		5
+ #define SMC_QP_TIMEOUT			15 /* 4096 * 2 ** timeout usec */
+ #define SMC_QP_RETRY_CNT			7 /* 7: infinite */
+@@ -435,9 +437,15 @@ out:
+ long smc_ib_setup_per_ibdev(struct smc_ib_device *smcibdev)
  {
- 	int ret;
- 	u16 gid_index;
--	u8 p;
+ 	struct ib_cq_init_attr cqattr =	{
+-		.cqe = SMC_WR_MAX_CQE, .comp_vector = 0 };
++		.cqe = SMC_MAX_CQE, .comp_vector = 0 };
++	int cqe_size_order, smc_order;
+ 	long rc;
  
--	if (rdma_protocol_roce(device, port_num)) {
--		ret = ib_find_cached_gid_by_port(device, &rec->port_gid,
--						 gid_type, port_num,
--						 ndev,
--						 &gid_index);
--	} else if (rdma_protocol_ib(device, port_num)) {
--		ret = ib_find_cached_gid(device, &rec->port_gid,
--					 IB_GID_TYPE_IB, NULL, &p,
--					 &gid_index);
--	} else {
--		ret = -EINVAL;
--	}
-+	/* GID table is not based on the netdevice for IB link layer,
-+	 * so ignore ndev during search.
-+	 */
-+	if (rdma_protocol_ib(device, port_num))
-+		ndev = NULL;
-+	else if (!rdma_protocol_roce(device, port_num))
-+		return -EINVAL;
++	/* the calculated number of cq entries fits to mlx5 cq allocation */
++	cqe_size_order = cache_line_size() == 128 ? 7 : 6;
++	smc_order = MAX_ORDER - cqe_size_order - 1;
++	if (SMC_MAX_CQE + 2 > (0x00000001 << smc_order) * PAGE_SIZE)
++		cqattr.cqe = (0x00000001 << smc_order) * PAGE_SIZE - 2;
+ 	smcibdev->roce_cq_send = ib_create_cq(smcibdev->ibdev,
+ 					      smc_wr_tx_cq_handler, NULL,
+ 					      smcibdev, &cqattr);
+--- a/net/smc/smc_wr.h
++++ b/net/smc/smc_wr.h
+@@ -19,7 +19,6 @@
+ #include "smc.h"
+ #include "smc_core.h"
  
-+	ret = ib_find_cached_gid_by_port(device, &rec->port_gid,
-+					 gid_type, port_num,
-+					 ndev,
-+					 &gid_index);
- 	if (ret)
- 		return ret;
+-#define SMC_WR_MAX_CQE 32768	/* max. # of completion queue elements */
+ #define SMC_WR_BUF_CNT 16	/* # of ctrl buffers per link */
  
+ #define SMC_WR_TX_WAIT_FREE_SLOT_TIME	(10 * HZ)
