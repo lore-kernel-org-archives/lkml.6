@@ -1,68 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425085AbeE1MpU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 08:45:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937843AbeE1K5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:57:34 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 359/496] xen/acpi: off by one in read_acpi_id()
-Date: Mon, 28 May 2018 12:02:24 +0200
-Message-Id: <20180528100334.909509426@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1425103AbeE1Mpc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 08:45:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46990 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1425087AbeE1MpZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 08:45:25 -0400
+Date: Mon, 28 May 2018 14:45:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH v8 3/6] cpuset: Add cpuset.sched.load_balance flag to v2
+Message-ID: <20180528124508.GE3452@worktop.programming.kicks-ass.net>
+References: <1526590545-3350-1-git-send-email-longman@redhat.com>
+ <1526590545-3350-4-git-send-email-longman@redhat.com>
+ <20180524154341.GJ12198@hirez.programming.kicks-ass.net>
+ <9f547771-54e8-118e-80f7-48f99c7b0a12@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f547771-54e8-118e-80f7-48f99c7b0a12@redhat.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Thu, May 24, 2018 at 02:55:25PM -0400, Waiman Long wrote:
+> On 05/24/2018 11:43 AM, Peter Zijlstra wrote:
 
-------------------
+> > I'm confused... why exactly do we have both domain and load_balance ?
+> 
+> The domain is for partitioning the CPUs only. It doesn't change the load
+> balancing state. So the load_balance flag is still need to turn on and
+> off load balancing.
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+OK, so we have to two boolean flags, giving 4 possible states. Lets just
+go through them one by on:
 
-[ Upstream commit c37a3c94775855567b90f91775b9691e10bd2806 ]
+A) domain:0 load_balance:0 -- we have no exclusive domain, but have
+   load-balancing disabled across them. AFAICT this should be an invalid
+   state.
 
-If acpi_id is == nr_acpi_bits, then we access one element beyond the end
-of the acpi_psd[] array or we set one bit beyond the end of the bit map
-when we do __set_bit(acpi_id, acpi_id_present);
+B) domain:0 load_balance:1 -- we have no exclusive domain, but have
+   load-balancing enabled. AFAICT this is the default state and is a
+   no-op.
 
-Fixes: 59a568029181 ("xen/acpi-processor: C and P-state driver that uploads said data to hypervisor.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/xen/xen-acpi-processor.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+C) domain:1 load_balance:0 -- we have an exclusive domain, and have
+   load-balancing disabled across it. This is, AFAICT, identical to
+   having a bunch of sub/sibling groups each with a single CPU domain.
 
---- a/drivers/xen/xen-acpi-processor.c
-+++ b/drivers/xen/xen-acpi-processor.c
-@@ -362,9 +362,9 @@ read_acpi_id(acpi_handle handle, u32 lvl
- 	}
- 	/* There are more ACPI Processor objects than in x2APIC or MADT.
- 	 * This can happen with incorrect ACPI SSDT declerations. */
--	if (acpi_id > nr_acpi_bits) {
--		pr_debug("We only have %u, trying to set %u\n",
--			 nr_acpi_bits, acpi_id);
-+	if (acpi_id >= nr_acpi_bits) {
-+		pr_debug("max acpi id %u, trying to set %u\n",
-+			 nr_acpi_bits - 1, acpi_id);
- 		return AE_OK;
- 	}
- 	/* OK, There is a ACPI Processor object */
+D) domain:1 load_balance:1 -- we have an exclusive domain, and have
+   load-balancing enabled. This is a partition.
+
+Now, I think I've overlooked the fact that load_balance==1 only really
+means something when the parent's load_balance==0, but I'm not sure that
+really changes anything.
+
+So, afaict, the above only have two useful states: B and D. Which again
+raises the question, why two knobs? What useful configurations does it
+allow?
