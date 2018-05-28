@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165903AbeE1Ome (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 10:42:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50318 "EHLO mail.kernel.org"
+        id S1165873AbeE1OnD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:43:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161148AbeE1Kal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:30:41 -0400
+        id S1161120AbeE1Kag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:30:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+        stable@vger.kernel.org, Jia Zhang <zhang.jia@linux.alibaba.com>,
+        Jiri Olsa <jolsa@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, jolsa@redhat.com,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 100/329] irqchip/gic-v3: Ignore disabled ITS nodes
-Date: Mon, 28 May 2018 12:00:29 +0200
-Message-Id: <20180528100251.144536062@linuxfoundation.org>
+Subject: [PATCH 4.9 098/329] vfs/proc/kcore, x86/mm/kcore: Fix SMAP fault when dumping vsyscall user page
+Date: Mon, 28 May 2018 12:00:27 +0200
+Message-Id: <20180528100250.962528905@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -33,75 +34,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+From: Jia Zhang <zhang.jia@linux.alibaba.com>
 
-[ Upstream commit 95a2562590c2f64a0398183f978d5cf3db6d0284 ]
+[ Upstream commit 595dd46ebfc10be041a365d0a3fa99df50b6ba73 ]
 
-On some platforms there's an ITS available but it's not enabled
-because reading or writing the registers is denied by the
-firmware. In fact, reading or writing them will cause the system
-to reset. We could remove the node from DT in such a case, but
-it's better to skip nodes that are marked as "disabled" in DT so
-that we can describe the hardware that exists and use the status
-property to indicate how the firmware has configured things.
+Commit:
 
-Cc: Stuart Yoder <stuyoder@gmail.com>
-Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+  df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext data")
+
+... introduced a bounce buffer to work around CONFIG_HARDENED_USERCOPY=y.
+However, accessing the vsyscall user page will cause an SMAP fault.
+
+Replace memcpy() with copy_from_user() to fix this bug works, but adding
+a common way to handle this sort of user page may be useful for future.
+
+Currently, only vsyscall page requires KCORE_USER.
+
+Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: jolsa@redhat.com
+Link: http://lkml.kernel.org/r/1518446694-21124-2-git-send-email-zhang.jia@linux.alibaba.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/irqchip/irq-gic-v3-its-pci-msi.c               |    2 ++
- drivers/irqchip/irq-gic-v3-its-platform-msi.c          |    2 ++
- drivers/irqchip/irq-gic-v3-its.c                       |    2 ++
- drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c |    2 ++
- 4 files changed, 8 insertions(+)
+ arch/x86/mm/init_64.c |    3 +--
+ fs/proc/kcore.c       |    4 ++++
+ include/linux/kcore.h |    1 +
+ 3 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/irqchip/irq-gic-v3-its-pci-msi.c
-+++ b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
-@@ -133,6 +133,8 @@ static int __init its_pci_of_msi_init(vo
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -1014,8 +1014,7 @@ void __init mem_init(void)
+ 	after_bootmem = 1;
  
- 	for (np = of_find_matching_node(NULL, its_device_id); np;
- 	     np = of_find_matching_node(np, its_device_id)) {
-+		if (!of_device_is_available(np))
-+			continue;
- 		if (!of_property_read_bool(np, "msi-controller"))
- 			continue;
+ 	/* Register memory areas for /proc/kcore */
+-	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR,
+-			 PAGE_SIZE, KCORE_OTHER);
++	kclist_add(&kcore_vsyscall, (void *)VSYSCALL_ADDR, PAGE_SIZE, KCORE_USER);
  
---- a/drivers/irqchip/irq-gic-v3-its-platform-msi.c
-+++ b/drivers/irqchip/irq-gic-v3-its-platform-msi.c
-@@ -80,6 +80,8 @@ static int __init its_pmsi_init(void)
- 
- 	for (np = of_find_matching_node(NULL, its_device_id); np;
- 	     np = of_find_matching_node(np, its_device_id)) {
-+		if (!of_device_is_available(np))
-+			continue;
- 		if (!of_property_read_bool(np, "msi-controller"))
- 			continue;
- 
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1807,6 +1807,8 @@ static int __init its_of_probe(struct de
- 
- 	for (np = of_find_matching_node(node, its_device_id); np;
- 	     np = of_find_matching_node(np, its_device_id)) {
-+		if (!of_device_is_available(np))
-+			continue;
- 		if (!of_property_read_bool(np, "msi-controller")) {
- 			pr_warn("%s: no msi-controller property, ITS ignored\n",
- 				np->full_name);
---- a/drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c
-+++ b/drivers/staging/fsl-mc/bus/irq-gic-v3-its-fsl-mc-msi.c
-@@ -75,6 +75,8 @@ int __init its_fsl_mc_msi_init(void)
- 
- 	for (np = of_find_matching_node(NULL, its_device_id); np;
- 	     np = of_find_matching_node(np, its_device_id)) {
-+		if (!of_device_is_available(np))
-+			continue;
- 		if (!of_property_read_bool(np, "msi-controller"))
- 			continue;
+ 	mem_init_print_info(NULL);
+ }
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -505,6 +505,10 @@ read_kcore(struct file *file, char __use
+ 			/* we have to zero-fill user buffer even if no read */
+ 			if (copy_to_user(buffer, buf, tsz))
+ 				return -EFAULT;
++		} else if (m->type == KCORE_USER) {
++			/* User page is handled prior to normal kernel page: */
++			if (copy_to_user(buffer, (char *)start, tsz))
++				return -EFAULT;
+ 		} else {
+ 			if (kern_addr_valid(start)) {
+ 				/*
+--- a/include/linux/kcore.h
++++ b/include/linux/kcore.h
+@@ -9,6 +9,7 @@ enum kcore_type {
+ 	KCORE_VMALLOC,
+ 	KCORE_RAM,
+ 	KCORE_VMEMMAP,
++	KCORE_USER,
+ 	KCORE_OTHER,
+ };
  
