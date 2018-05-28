@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161998AbeE1KfA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:35:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55142 "EHLO mail.kernel.org"
+        id S1165618AbeE1OVU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 10:21:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161514AbeE1Keu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:34:50 -0400
+        id S1161997AbeE1KfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:35:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 192/329] arm64: Relax ARM_SMCCC_ARCH_WORKAROUND_1 discovery
-Date: Mon, 28 May 2018 12:02:01 +0200
-Message-Id: <20180528100258.289483818@linuxfoundation.org>
+        stable@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 196/329] workqueue: use put_device() instead of kfree()
+Date: Mon, 28 May 2018 12:02:05 +0200
+Message-Id: <20180528100258.586488678@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -30,44 +29,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-[ Upstream commit e21da1c992007594d391e7b301779cf30f438691 ]
+[ Upstream commit 537f4146c53c95aac977852b371bafb9c6755ee1 ]
 
-A recent update to the ARM SMCCC ARCH_WORKAROUND_1 specification
-allows firmware to return a non zero, positive value to describe
-that although the mitigation is implemented at the higher exception
-level, the CPU on which the call is made is not affected.
+Never directly free @dev after calling device_register(), even
+if it returned an error! Always use put_device() to give up the
+reference initialized in this function instead.
 
-Let's relax the check on the return value from ARCH_WORKAROUND_1
-so that we only error out if the returned value is negative.
-
-Fixes: b092201e0020 ("arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP hardening support")
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpu_errata.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/workqueue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -160,7 +160,7 @@ static int enable_smccc_arch_workaround_
- 	case PSCI_CONDUIT_HVC:
- 		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
- 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
--		if (res.a0)
-+		if ((int)res.a0 < 0)
- 			return 0;
- 		cb = call_hvc_arch_workaround_1;
- 		smccc_start = __smccc_workaround_1_hvc_start;
-@@ -170,7 +170,7 @@ static int enable_smccc_arch_workaround_
- 	case PSCI_CONDUIT_SMC:
- 		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
- 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
--		if (res.a0)
-+		if ((int)res.a0 < 0)
- 			return 0;
- 		cb = call_smc_arch_workaround_1;
- 		smccc_start = __smccc_workaround_1_smc_start;
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -5272,7 +5272,7 @@ int workqueue_sysfs_register(struct work
+ 
+ 	ret = device_register(&wq_dev->dev);
+ 	if (ret) {
+-		kfree(wq_dev);
++		put_device(&wq_dev->dev);
+ 		wq->wq_dev = NULL;
+ 		return ret;
+ 	}
