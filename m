@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754362AbeE1JYS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 05:24:18 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:21452 "EHLO
+        id S933763AbeE1JZR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 05:25:17 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:23171 "EHLO
         conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754090AbeE1JYM (ORCPT
+        with ESMTP id S933656AbeE1JZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 05:24:12 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4S9MInM027506
+        Mon, 28 May 2018 05:25:09 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w4S9MIne027506
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -18,9 +18,9 @@ Cc: linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v5 05/31] kconfig: remove string expansion for mainmenu after yyparse()
-Date: Mon, 28 May 2018 18:21:42 +0900
-Message-Id: <1527499328-13213-6-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v5 23/31] stack-protector: test compiler capability in Kconfig and drop AUTO mode
+Date: Mon, 28 May 2018 18:22:00 +0900
+Message-Id: <1527499328-13213-24-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com>
@@ -28,81 +28,281 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that environments are expanded in the lexer, conf_parse() does
-not need to expand them explicitly.
+Move the test for -fstack-protector(-strong) option to Kconfig.
 
-The hack introduced by commit 0724a7c32a54 ("kconfig: Don't leak
-main menus during parsing") can go away.
+If the compiler does not support the option, the corresponding menu
+is automatically hidden.  If STRONG is not supported, it will fall
+back to REGULAR.  If REGULAR is not supported, it will be disabled.
+This means, AUTO is implicitly handled by the dependency solver of
+Kconfig, hence removed.
+
+I also turned the 'choice' into only two boolean symbols.  The use of
+'choice' is not a good idea here, because all of all{yes,mod,no}config
+would choose the first visible value, while we want allnoconfig to
+disable as many features as possible.
+
+X86 has additional shell scripts in case the compiler supports those
+options, but generates broken code.  I added CC_HAS_SANE_STACKPROTECTOR
+to test this.  I had to add -m32 to gcc-x86_32-has-stack-protector.sh
+to make it work correctly.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+Acked-by: Kees Cook <keescook@chromium.org>
 ---
 
 Changes in v5: None
 Changes in v4: None
 Changes in v3: None
-Changes in v2:
-  - Simplify the patch.  Just remove the text expansion.
+Changes in v2: None
 
- scripts/kconfig/zconf.y | 24 +++++-------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+ Makefile                                  | 93 ++-----------------------------
+ arch/Kconfig                              | 32 ++++-------
+ arch/x86/Kconfig                          | 11 +++-
+ scripts/gcc-x86_32-has-stack-protector.sh |  7 +--
+ scripts/gcc-x86_64-has-stack-protector.sh |  5 --
+ 5 files changed, 28 insertions(+), 120 deletions(-)
 
-diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
-index 3a4a0fa..22e318c 100644
---- a/scripts/kconfig/zconf.y
-+++ b/scripts/kconfig/zconf.y
-@@ -109,7 +109,7 @@ static struct menu *current_menu, *current_entry;
- %%
- input: nl start | start;
+diff --git a/Makefile b/Makefile
+index defb383..80e0800 100644
+--- a/Makefile
++++ b/Makefile
+@@ -675,55 +675,11 @@ ifneq ($(CONFIG_FRAME_WARN),0)
+ KBUILD_CFLAGS += $(call cc-option,-Wframe-larger-than=${CONFIG_FRAME_WARN})
+ endif
  
--start: mainmenu_stmt stmt_list | no_mainmenu_stmt stmt_list;
-+start: mainmenu_stmt stmt_list | stmt_list;
+-# This selects the stack protector compiler flag. Testing it is delayed
+-# until after .config has been reprocessed, in the prepare-compiler-check
+-# target.
+-ifdef CONFIG_CC_STACKPROTECTOR_AUTO
+-  stackp-flag := $(call cc-option,-fstack-protector-strong,$(call cc-option,-fstack-protector))
+-  stackp-name := AUTO
+-else
+-ifdef CONFIG_CC_STACKPROTECTOR_REGULAR
+-  stackp-flag := -fstack-protector
+-  stackp-name := REGULAR
+-else
+-ifdef CONFIG_CC_STACKPROTECTOR_STRONG
+-  stackp-flag := -fstack-protector-strong
+-  stackp-name := STRONG
+-else
+-  # If either there is no stack protector for this architecture or
+-  # CONFIG_CC_STACKPROTECTOR_NONE is selected, we're done, and $(stackp-name)
+-  # is empty, skipping all remaining stack protector tests.
+-  #
+-  # Force off for distro compilers that enable stack protector by default.
+-  KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
+-endif
+-endif
+-endif
+-# Find arch-specific stack protector compiler sanity-checking script.
+-ifdef stackp-name
+-ifneq ($(stackp-flag),)
+-  stackp-path := $(srctree)/scripts/gcc-$(SRCARCH)_$(BITS)-has-stack-protector.sh
+-  stackp-check := $(wildcard $(stackp-path))
+-  # If the wildcard test matches a test script, run it to check functionality.
+-  ifdef stackp-check
+-    ifneq ($(shell $(CONFIG_SHELL) $(stackp-check) $(CC) $(KBUILD_CPPFLAGS) $(biarch)),y)
+-      stackp-broken := y
+-    endif
+-  endif
+-  ifndef stackp-broken
+-    # If the stack protector is functional, enable code that depends on it.
+-    KBUILD_CPPFLAGS += -DCONFIG_CC_STACKPROTECTOR
+-    # Either we've already detected the flag (for AUTO) or we'll fail the
+-    # build in the prepare-compiler-check rule (for specific flag).
+-    KBUILD_CFLAGS += $(stackp-flag)
+-  else
+-    # We have to make sure stack protector is unconditionally disabled if
+-    # the compiler is broken (in case we're going to continue the build in
+-    # AUTO mode).
+-    KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
+-  endif
+-endif
+-endif
++stackp-flags-$(CONFIG_CC_HAS_STACKPROTECTOR_NONE) := -fno-stack-protector
++stackp-flags-$(CONFIG_CC_STACKPROTECTOR)          := -fstack-protector
++stackp-flags-$(CONFIG_CC_STACKPROTECTOR_STRONG)   := -fstack-protector-strong
++
++KBUILD_CFLAGS += $(stackp-flags-y)
  
- /* mainmenu entry */
+ ifeq ($(cc-name),clang)
+ KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+@@ -1102,7 +1058,7 @@ endif
+ # prepare2 creates a makefile if using a separate output directory.
+ # From this point forward, .config has been reprocessed, so any rules
+ # that need to depend on updated CONFIG_* values can be checked here.
+-prepare2: prepare3 prepare-compiler-check outputmakefile asm-generic
++prepare2: prepare3 outputmakefile asm-generic
  
-@@ -118,19 +118,6 @@ mainmenu_stmt: T_MAINMENU prompt nl
- 	menu_add_prompt(P_MENU, $2, NULL);
- };
+ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
+                    include/config/auto.conf
+@@ -1128,43 +1084,6 @@ uapi-asm-generic:
+ PHONY += prepare-objtool
+ prepare-objtool: $(objtool_target)
  
--/* Default main menu, if there's no mainmenu entry */
+-# Check for CONFIG flags that require compiler support. Abort the build
+-# after .config has been processed, but before the kernel build starts.
+-#
+-# For security-sensitive CONFIG options, we don't want to fallback and/or
+-# silently change which compiler flags will be used, since that leads to
+-# producing kernels with different security feature characteristics
+-# depending on the compiler used. (For example, "But I selected
+-# CC_STACKPROTECTOR_STRONG! Why did it build with _REGULAR?!")
+-PHONY += prepare-compiler-check
+-prepare-compiler-check: FORCE
+-# Make sure compiler supports requested stack protector flag.
+-ifdef stackp-name
+-  # Warn about CONFIG_CC_STACKPROTECTOR_AUTO having found no option.
+-  ifeq ($(stackp-flag),)
+-	@echo CONFIG_CC_STACKPROTECTOR_$(stackp-name): \
+-		  Compiler does not support any known stack-protector >&2
+-  else
+-  # Fail if specifically requested stack protector is missing.
+-  ifeq ($(call cc-option, $(stackp-flag)),)
+-	@echo Cannot use CONFIG_CC_STACKPROTECTOR_$(stackp-name): \
+-		  $(stackp-flag) not supported by compiler >&2 && exit 1
+-  endif
+-  endif
+-endif
+-# Make sure compiler does not have buggy stack-protector support. If a
+-# specific stack-protector was requested, fail the build, otherwise warn.
+-ifdef stackp-broken
+-  ifeq ($(stackp-name),AUTO)
+-	@echo CONFIG_CC_STACKPROTECTOR_$(stackp-name): \
+-                  $(stackp-flag) available but compiler is broken: disabling >&2
+-  else
+-	@echo Cannot use CONFIG_CC_STACKPROTECTOR_$(stackp-name): \
+-                  $(stackp-flag) available but compiler is broken >&2 && exit 1
+-  endif
+-endif
+-	@:
 -
--no_mainmenu_stmt: /* empty */
--{
--	/*
--	 * Hack: Keep the main menu title on the heap so we can safely free it
--	 * later regardless of whether it comes from the 'prompt' in
--	 * mainmenu_stmt or here
--	 */
--	menu_add_prompt(P_MENU, xstrdup("Linux Kernel Configuration"), NULL);
--};
+ # Generate some files
+ # ---------------------------------------------------------------------------
+ 
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 75dd23a..1556ef4 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -539,13 +539,16 @@ config HAVE_CC_STACKPROTECTOR
+ 	bool
+ 	help
+ 	  An arch should select this symbol if:
+-	  - its compiler supports the -fstack-protector option
+ 	  - it has implemented a stack canary (e.g. __stack_chk_guard)
+ 
+-choice
+-	prompt "Stack Protector buffer overflow detection"
++config CC_HAS_STACKPROTECTOR_NONE
++	def_bool $(cc-option,-fno-stack-protector)
++
++config CC_STACKPROTECTOR
++	bool "Stack Protector buffer overflow detection"
+ 	depends on HAVE_CC_STACKPROTECTOR
+-	default CC_STACKPROTECTOR_AUTO
++	depends on $(cc-option,-fstack-protector)
++	default y
+ 	help
+ 	  This option turns on the "stack-protector" GCC feature. This
+ 	  feature puts, at the beginning of functions, a canary value on
+@@ -555,14 +558,6 @@ choice
+ 	  overwrite the canary, which gets detected and the attack is then
+ 	  neutralized via a kernel panic.
+ 
+-config CC_STACKPROTECTOR_NONE
+-	bool "None"
+-	help
+-	  Disable "stack-protector" GCC feature.
 -
+-config CC_STACKPROTECTOR_REGULAR
+-	bool "Regular"
+-	help
+ 	  Functions will have the stack-protector canary logic added if they
+ 	  have an 8-byte or larger character array on the stack.
+ 
+@@ -574,7 +569,10 @@ config CC_STACKPROTECTOR_REGULAR
+ 	  by about 0.3%.
+ 
+ config CC_STACKPROTECTOR_STRONG
+-	bool "Strong"
++	bool "Strong Stack Protector"
++	depends on CC_STACKPROTECTOR
++	depends on $(cc-option,-fstack-protector-strong)
++	default y
+ 	help
+ 	  Functions will have the stack-protector canary logic added in any
+ 	  of the following conditions:
+@@ -592,14 +590,6 @@ config CC_STACKPROTECTOR_STRONG
+ 	  about 20% of all kernel functions, which increases the kernel code
+ 	  size by about 2%.
+ 
+-config CC_STACKPROTECTOR_AUTO
+-	bool "Automatic"
+-	help
+-	  If the compiler supports it, the best available stack-protector
+-	  option will be chosen.
 -
- stmt_list:
- 	  /* empty */
- 	| stmt_list common_stmt
-@@ -528,7 +515,6 @@ word_opt: /* empty */			{ $$ = NULL; }
+-endchoice
+-
+ config LD_DEAD_CODE_DATA_ELIMINATION
+ 	bool
+ 	help
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 2236505..9ab335f 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -126,7 +126,7 @@ config X86
+ 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD if X86_64
+ 	select HAVE_ARCH_VMAP_STACK		if X86_64
+ 	select HAVE_ARCH_WITHIN_STACK_FRAMES
+-	select HAVE_CC_STACKPROTECTOR
++	select HAVE_CC_STACKPROTECTOR		if CC_HAS_SANE_STACKPROTECTOR
+ 	select HAVE_CMPXCHG_DOUBLE
+ 	select HAVE_CMPXCHG_LOCAL
+ 	select HAVE_CONTEXT_TRACKING		if X86_64
+@@ -345,6 +345,15 @@ config PGTABLE_LEVELS
+ 	default 2
  
- void conf_parse(const char *name)
- {
--	const char *tmp;
- 	struct symbol *sym;
- 	int i;
+ source "init/Kconfig"
++
++config CC_HAS_SANE_STACKPROTECTOR
++	bool
++	default $(success,$(srctree)/scripts/gcc-x86_64-has-stack-protector.sh $(CC)) if 64BIT
++	default $(success,$(srctree)/scripts/gcc-x86_32-has-stack-protector.sh $(CC))
++	help
++	   We have to make sure stack protector is unconditionally disabled if
++	   the compiler produces broken code.
++
+ source "kernel/Kconfig.freezer"
  
-@@ -544,10 +530,10 @@ void conf_parse(const char *name)
- 	if (!modules_sym)
- 		modules_sym = sym_find( "n" );
+ menu "Processor type and features"
+diff --git a/scripts/gcc-x86_32-has-stack-protector.sh b/scripts/gcc-x86_32-has-stack-protector.sh
+index 6b2aeef..f5c1194 100755
+--- a/scripts/gcc-x86_32-has-stack-protector.sh
++++ b/scripts/gcc-x86_32-has-stack-protector.sh
+@@ -1,9 +1,4 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0
  
--	tmp = rootmenu.prompt->text;
--	rootmenu.prompt->text = _(rootmenu.prompt->text);
--	rootmenu.prompt->text = sym_expand_string_value(rootmenu.prompt->text);
--	free((char*)tmp);
-+	if (!menu_has_prompt(&rootmenu)) {
-+		current_entry = &rootmenu;
-+		menu_add_prompt(P_MENU, "Linux Kernel Configuration", NULL);
-+	}
+-echo "int foo(void) { char X[200]; return 3; }" | $* -S -x c -c -O0 -fstack-protector - -o - 2> /dev/null | grep -q "%gs"
+-if [ "$?" -eq "0" ] ; then
+-	echo y
+-else
+-	echo n
+-fi
++echo "int foo(void) { char X[200]; return 3; }" | $* -S -x c -c -m32 -O0 -fstack-protector - -o - 2> /dev/null | grep -q "%gs"
+diff --git a/scripts/gcc-x86_64-has-stack-protector.sh b/scripts/gcc-x86_64-has-stack-protector.sh
+index 4a48bdc..3755af0 100755
+--- a/scripts/gcc-x86_64-has-stack-protector.sh
++++ b/scripts/gcc-x86_64-has-stack-protector.sh
+@@ -2,8 +2,3 @@
+ # SPDX-License-Identifier: GPL-2.0
  
- 	menu_finalize(&rootmenu);
- 	for_all_symbols(i, sym) {
+ echo "int foo(void) { char X[200]; return 3; }" | $* -S -x c -c -O0 -mcmodel=kernel -fno-PIE -fstack-protector - -o - 2> /dev/null | grep -q "%gs"
+-if [ "$?" -eq "0" ] ; then
+-	echo y
+-else
+-	echo n
+-fi
 -- 
 2.7.4
