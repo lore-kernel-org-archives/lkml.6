@@ -1,28 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S939572AbeE1PFw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:05:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44452 "EHLO mail.kernel.org"
+        id S939578AbeE1PGQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 11:06:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033929AbeE1KZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:25:08 -0400
+        id S1033319AbeE1KZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:25:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Thomas Vincent-Cross <me@tvc.id.au>,
+        Bjorn Helgaas <helgaas@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 218/268] perf/core: Fix perf_output_read_group()
-Date: Mon, 28 May 2018 12:03:12 +0200
-Message-Id: <20180528100226.962117774@linuxfoundation.org>
+Subject: [PATCH 4.4 244/268] PCI: Add function 1 DMA alias quirk for Marvell 88SE9220
+Date: Mon, 28 May 2018 12:03:38 +0200
+Message-Id: <20180528100230.916472036@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 References: <20180528100202.045206534@linuxfoundation.org>
@@ -38,76 +30,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Thomas Vincent-Cross <me@tvc.id.au>
 
-[ Upstream commit 9e5b127d6f33468143d90c8a45ca12410e4c3fa7 ]
+[ Upstream commit 832e4e1f76b8a84991e9db56fdcef1ebce839b8b ]
 
-Mark reported his arm64 perf fuzzer runs sometimes splat like:
+Add Marvell 88SE9220 DMA quirk as found and tested on bug 42679.
 
-  armv8pmu_read_counter+0x1e8/0x2d8
-  armpmu_event_update+0x8c/0x188
-  armpmu_read+0xc/0x18
-  perf_output_read+0x550/0x11e8
-  perf_event_read_event+0x1d0/0x248
-  perf_event_exit_task+0x468/0xbb8
-  do_exit+0x690/0x1310
-  do_group_exit+0xd0/0x2b0
-  get_signal+0x2e8/0x17a8
-  do_signal+0x144/0x4f8
-  do_notify_resume+0x148/0x1e8
-  work_pending+0x8/0x14
-
-which asserts that we only call pmu::read() on ACTIVE events.
-
-The above callchain does:
-
-  perf_event_exit_task()
-    perf_event_exit_task_context()
-      task_ctx_sched_out() // INACTIVE
-      perf_event_exit_event()
-        perf_event_set_state(EXIT) // EXIT
-        sync_child_event()
-          perf_event_read_event()
-            perf_output_read()
-              perf_output_read_group()
-                leader->pmu->read()
-
-Which results in doing a pmu::read() on an !ACTIVE event.
-
-I _think_ this is 'new' since we added attr.inherit_stat, which added
-the perf_event_read_event() to the exit path, without that
-perf_event_read_output() would only trigger from samples and for
-@event to trigger a sample, it's leader _must_ be ACTIVE too.
-
-Still, adding this check makes it consistent with the @sub case for
-the siblings.
-
-Reported-and-Tested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=42679
+Signed-off-by: Thomas Vincent-Cross <me@tvc.id.au>
+Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/events/core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5299,7 +5299,8 @@ static void perf_output_read_group(struc
- 	if (read_format & PERF_FORMAT_TOTAL_TIME_RUNNING)
- 		values[n++] = running;
- 
--	if (leader != event)
-+	if ((leader != event) &&
-+	    (leader->state == PERF_EVENT_STATE_ACTIVE))
- 		leader->pmu->read(leader);
- 
- 	values[n++] = perf_event_count(leader);
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3628,6 +3628,9 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_M
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c46 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x91a0,
+ 			 quirk_dma_func1_alias);
++/* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c127 */
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9220,
++			 quirk_dma_func1_alias);
+ /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c49 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9230,
+ 			 quirk_dma_func1_alias);
