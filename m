@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936910AbeE1K1Y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:27:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46650 "EHLO mail.kernel.org"
+        id S937021AbeE1K1g (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:27:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932315AbeE1K1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:27:16 -0400
+        id S936926AbeE1K10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:27:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hector Martin <marcan@marcan.st>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 025/329] firewire-ohci: work around oversized DMA reads on JMicron controllers
-Date: Mon, 28 May 2018 11:59:14 +0200
-Message-Id: <20180528100244.473735367@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Dave Jones <davej@codemonkey.org.uk>
+Subject: [PATCH 4.9 011/329] libata: Blacklist some Sandisk SSDs for NCQ
+Date: Mon, 28 May 2018 11:59:00 +0200
+Message-Id: <20180528100243.191812855@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
 References: <20180528100241.796630982@linuxfoundation.org>
@@ -31,45 +29,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hector Martin <marcan@marcan.st>
+From: Tejun Heo <tj@kernel.org>
 
-[ Upstream commit 188775181bc05f29372b305ef96485840e351fde ]
+commit 322579dcc865b94b47345ad1b6002ad167f85405 upstream.
 
-At least some JMicron controllers issue buggy oversized DMA reads when
-fetching context descriptors, always fetching 0x20 bytes at once for
-descriptors which are only 0x10 bytes long. This is often harmless, but
-can cause page faults on modern systems with IOMMUs:
+Sandisk SSDs SD7SN6S256G and SD8SN8U256G are regularly locking up
+regularly under sustained moderate load with NCQ enabled.  Blacklist
+for now.
 
-DMAR: [DMA Read] Request device [05:00.0] fault addr fff56000 [fault reason 06] PTE Read access is not set
-firewire_ohci 0000:05:00.0: DMA context IT0 has stopped, error code: evt_descriptor_read
-
-This works around the problem by always leaving 0x10 padding bytes at
-the end of descriptor buffer pages, which should be harmless to do
-unconditionally for controllers in case others have the same behavior.
-
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Reviewed-by: Clemens Ladisch <clemens@ladisch.de>
-Signed-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Dave Jones <davej@codemonkey.org.uk>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/firewire/ohci.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/firewire/ohci.c
-+++ b/drivers/firewire/ohci.c
-@@ -1130,7 +1130,13 @@ static int context_add_buffer(struct con
- 		return -ENOMEM;
+---
+ drivers/ata/libata-core.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4366,6 +4366,10 @@ static const struct ata_blacklist_entry
+ 	/* https://bugzilla.kernel.org/show_bug.cgi?id=15573 */
+ 	{ "C300-CTFDDAC128MAG",	"0001",		ATA_HORKAGE_NONCQ, },
  
- 	offset = (void *)&desc->buffer - (void *)desc;
--	desc->buffer_size = PAGE_SIZE - offset;
-+	/*
-+	 * Some controllers, like JMicron ones, always issue 0x20-byte DMA reads
-+	 * for descriptors, even 0x10-byte ones. This can cause page faults when
-+	 * an IOMMU is in use and the oversized read crosses a page boundary.
-+	 * Work around this by always leaving at least 0x10 bytes of padding.
-+	 */
-+	desc->buffer_size = PAGE_SIZE - offset - 0x10;
- 	desc->buffer_bus = bus_addr + offset;
- 	desc->used = 0;
- 
++	/* Some Sandisk SSDs lock up hard with NCQ enabled.  Reported on
++	   SD7SN6S256G and SD8SN8U256G */
++	{ "SanDisk SD[78]SN*G",	NULL,		ATA_HORKAGE_NONCQ, },
++
+ 	/* devices which puke on READ_NATIVE_MAX */
+ 	{ "HDS724040KLSA80",	"KFAOA20N",	ATA_HORKAGE_BROKEN_HPA, },
+ 	{ "WDC WD3200JD-00KLB0", "WD-WCAMR1130137", ATA_HORKAGE_BROKEN_HPA },
