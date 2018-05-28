@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423738AbeE1LJV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:09:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56956 "EHLO mail.kernel.org"
+        id S1423724AbeE1LJO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:09:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423244AbeE1LJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:09:12 -0400
+        id S1423710AbeE1LJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:09:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 087/272] net: bgmac: Correctly annotate register space
-Date: Mon, 28 May 2018 12:02:00 +0200
-Message-Id: <20180528100248.414361265@linuxfoundation.org>
+Subject: [PATCH 4.16 086/272] net: bgmac: Fix endian access in bgmac_dma_tx_ring_free()
+Date: Mon, 28 May 2018 12:01:59 +0200
+Message-Id: <20180528100248.333468228@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
 References: <20180528100240.256525891@linuxfoundation.org>
@@ -32,34 +32,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 16a1c0646e55c3345bce8e4edfc06ad119d27c04 ]
+[ Upstream commit 60d6e6f0b9e422dd01aeda39257ee0428e5e2a3f ]
 
-All the members: base, idm_base and nicpm_base should be annotated with
-__iomem since they are pointers to register space. This fixes a bunch of
-sparse reported warnings.
+bgmac_dma_tx_ring_free() assigns the ctl1 word which is a litle endian
+32-bit word without using proper accessors, fix this, and because a
+length cannot be negative, use unsigned int while at it.
 
-Fixes: f6a95a24957a ("net: ethernet: bgmac: Add platform device support")
-Fixes: dd5c5d037f5e ("net: ethernet: bgmac: add NS2 support")
+Fixes: 9cde94506eac ("bgmac: implement scatter/gather support")
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bgmac.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/broadcom/bgmac.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bgmac.h
-+++ b/drivers/net/ethernet/broadcom/bgmac.h
-@@ -479,9 +479,9 @@ struct bgmac_rx_header {
- struct bgmac {
- 	union {
- 		struct {
--			void *base;
--			void *idm_base;
--			void *nicpm_base;
-+			void __iomem *base;
-+			void __iomem *idm_base;
-+			void __iomem *nicpm_base;
- 		} plat;
- 		struct {
- 			struct bcma_device *core;
+--- a/drivers/net/ethernet/broadcom/bgmac.c
++++ b/drivers/net/ethernet/broadcom/bgmac.c
+@@ -533,7 +533,8 @@ static void bgmac_dma_tx_ring_free(struc
+ 	int i;
+ 
+ 	for (i = 0; i < BGMAC_TX_RING_SLOTS; i++) {
+-		int len = dma_desc[i].ctl1 & BGMAC_DESC_CTL1_LEN;
++		u32 ctl1 = le32_to_cpu(dma_desc[i].ctl1);
++		unsigned int len = ctl1 & BGMAC_DESC_CTL1_LEN;
+ 
+ 		slot = &ring->slots[i];
+ 		dev_kfree_skb(slot->skb);
