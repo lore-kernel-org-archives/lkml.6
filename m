@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164431AbeE1Kzp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:55:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44182 "EHLO mail.kernel.org"
+        id S1164404AbeE1Kzd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:55:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164416AbeE1Kzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:55:38 -0400
+        id S1164386AbeE1Kz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:55:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
-        Davide Caratti <dcaratti@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Vinayak Menon <vinmenon@codeaurora.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 284/496] net/sched: fix idr leak in the error path of tcf_skbmod_init()
-Date: Mon, 28 May 2018 12:01:09 +0200
-Message-Id: <20180528100331.808800023@linuxfoundation.org>
+Subject: [PATCH 4.14 311/496] mm/kmemleak.c: wait for scan completion before disabling free
+Date: Mon, 28 May 2018 12:01:36 +0200
+Message-Id: <20180528100332.924396565@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
 References: <20180528100319.498712256@linuxfoundation.org>
@@ -31,62 +32,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Vinayak Menon <vinmenon@codeaurora.org>
 
-[ Upstream commit f29cdfbe33d6915ba8056179b0041279a67e3647 ]
+[ Upstream commit 914b6dfff790544d9b77dfd1723adb3745ec9700 ]
 
-tcf_skbmod_init() can fail after the idr has been successfully reserved.
-When this happens, every subsequent attempt to configure skbmod rules
-using the same idr value will systematically fail with -ENOSPC, unless
-the first attempt was done using the 'replace' keyword:
+A crash is observed when kmemleak_scan accesses the object->pointer,
+likely due to the following race.
 
- # tc action add action skbmod swap mac index 100
- RTNETLINK answers: Cannot allocate memory
- We have an error talking to the kernel
- # tc action add action skbmod swap mac index 100
- RTNETLINK answers: No space left on device
- We have an error talking to the kernel
- # tc action add action skbmod swap mac index 100
- RTNETLINK answers: No space left on device
- We have an error talking to the kernel
- ...
+  TASK A             TASK B                     TASK C
+  kmemleak_write
+   (with "scan" and
+   NOT "scan=on")
+  kmemleak_scan()
+                     create_object
+                     kmem_cache_alloc fails
+                     kmemleak_disable
+                     kmemleak_do_cleanup
+                     kmemleak_free_enabled = 0
+                                                kfree
+                                                kmemleak_free bails out
+                                                 (kmemleak_free_enabled is 0)
+                                                slub frees object->pointer
+  update_checksum
+  crash - object->pointer
+   freed (DEBUG_PAGEALLOC)
 
-Fix this in tcf_skbmod_init(), ensuring that tcf_idr_release() is called
-on the error path when the idr has been reserved, but not yet inserted.
-Also, don't test 'ovr' in the error path, to avoid a 'replace' failure
-implicitly become a 'delete' that leaks refcount in act_skbmod module:
+kmemleak_do_cleanup waits for the scan thread to complete, but not for
+direct call to kmemleak_scan via kmemleak_write.  So add a wait for
+kmemleak_scan completion before disabling kmemleak_free, and while at it
+fix the comment on stop_scan_thread.
 
- # rmmod act_skbmod; modprobe act_skbmod
- # tc action add action skbmod swap mac index 100
- # tc action add action skbmod swap mac continue index 100
- RTNETLINK answers: File exists
- We have an error talking to the kernel
- # tc action replace action skbmod swap mac continue index 100
- RTNETLINK answers: Cannot allocate memory
- We have an error talking to the kernel
- # tc action list action skbmod
- #
- # rmmod  act_skbmod
- rmmod: ERROR: Module act_skbmod is in use
-
-Fixes: 65a206c01e8e ("net/sched: Change act_api and act_xxx modules to use IDR")
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[vinmenon@codeaurora.org: fix stop_scan_thread comment]
+  Link: http://lkml.kernel.org/r/1522219972-22809-1-git-send-email-vinmenon@codeaurora.org
+Link: http://lkml.kernel.org/r/1522063429-18992-1-git-send-email-vinmenon@codeaurora.org
+Signed-off-by: Vinayak Menon <vinmenon@codeaurora.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_skbmod.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/kmemleak.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/net/sched/act_skbmod.c
-+++ b/net/sched/act_skbmod.c
-@@ -155,7 +155,7 @@ static int tcf_skbmod_init(struct net *n
- 	ASSERT_RTNL();
- 	p = kzalloc(sizeof(struct tcf_skbmod_params), GFP_KERNEL);
- 	if (unlikely(!p)) {
--		if (ovr)
-+		if (ret == ACT_P_CREATED)
- 			tcf_idr_release(*a, bind);
- 		return -ENOMEM;
- 	}
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1658,8 +1658,7 @@ static void start_scan_thread(void)
+ }
+ 
+ /*
+- * Stop the automatic memory scanning thread. This function must be called
+- * with the scan_mutex held.
++ * Stop the automatic memory scanning thread.
+  */
+ static void stop_scan_thread(void)
+ {
+@@ -1922,12 +1921,15 @@ static void kmemleak_do_cleanup(struct w
+ {
+ 	stop_scan_thread();
+ 
++	mutex_lock(&scan_mutex);
+ 	/*
+-	 * Once the scan thread has stopped, it is safe to no longer track
+-	 * object freeing. Ordering of the scan thread stopping and the memory
+-	 * accesses below is guaranteed by the kthread_stop() function.
++	 * Once it is made sure that kmemleak_scan has stopped, it is safe to no
++	 * longer track object freeing. Ordering of the scan thread stopping and
++	 * the memory accesses below is guaranteed by the kthread_stop()
++	 * function.
+ 	 */
+ 	kmemleak_free_enabled = 0;
++	mutex_unlock(&scan_mutex);
+ 
+ 	if (!kmemleak_found_leaks)
+ 		__kmemleak_do_cleanup();
