@@ -1,68 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932868AbeE1P73 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 11:59:29 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:50951 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932729AbeE1P7C (ORCPT
+        id S932948AbeE1QAE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 12:00:04 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:45950 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932638AbeE1P77 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 11:59:02 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Gwendal Grignou <gwendal@chromium.org>,
-        Thierry Escande <thierry.escande@collabora.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Shawn Nematbakhsh <shawnn@chromium.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform: chrome: Add input dependency for tablet switch driver
-Date: Mon, 28 May 2018 17:58:46 +0200
-Message-Id: <20180528155858.2966723-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:7yQ/qrJTiO4zeqavhzbkzn1xs9IW5rZavdqFq/Oer4kfrIskvJg
- slxD5Ax9FDc5grvdRKj4qW81hcC1zDptvfUDGL0JNJ54y9p+GZDgBar53ghuY1PGtIKMu7z
- Y50YYNyzWbZwrGNbDRcJuJASWX4Xo0KfXXanjw4H9FU5v5Q2m0PYQChaJYO7Wcn4XdK5XTt
- JwIyt+6i3B1EqWzeUFkfw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:hkSHGmWifxI=:f3VdYOwqK67k1QA5mnjZqb
- GzqNuQsr7VDwXgjhtdLqPRt0TLKd9vHR2+c+g/gKKWnwRhkbHfCAq44yrEAzsH3Zp4k6Q2cQR
- bcvBPvMjIN/VrvCvfFZRhdR5IVPvTDYB1UAGW7rXs2g3khyDWsGUjGb+/z9RkmeZ1DgK0KP6b
- 3usNsifnnB6TxUb0KdfSB+9t8mZ1KVkK75fx911gmxXlrK5nzdsbsyDxBstfX2TYYQXoIdOpo
- 3Q4mEXjbgAC/6KPVZZ0Ro8CFd71D9MR0Si9NZFHayTvE7//EoNhU3xU/1GAK+ZMsgUb30f+WP
- 9FadRzMJCJxePmCZfrH8oaIlVIWMTWVVi/auZUISQeFS1ruyb89mxlvBY37yiTAKH/JbUZJgv
- I+GvecgsZcLVUI8/onTmLtkf9Jeb20qsTenp53SxYdewDIbE0DKIzs4Tw7jSyke6j1dSil/Xn
- udlB7RYLltCXMiLnNxVXX1CjjGb7dA2zcTOcAmvbOlPBELBBNrohDKz3cSAc7s+kGgF2td9HP
- QYyqdoROK8NU/yGvXyPrWGgJvJYm3pvp7iEAF+25mvV2qRkdLFdS2U36fTdtc5CarIQgePkjQ
- mSaKGdsLpSSes+ZsYzEae5+QPO5eOlym3I/d+s2PmriDclwhOzRpYGSqTO0khZb6UeEDz7bqw
- RSXkDqsr75e1X9p0JFh76jZDt/YbKfNGZCDI/yRpC4WUKhlOZKf6wH0mt4DBWtsPV75I=
+        Mon, 28 May 2018 11:59:59 -0400
+Date: Mon, 28 May 2018 08:59:32 -0700
+From: Paul Burton <paul.burton@mips.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 2/2] sched: Warn if we fail to migrate a task
+Message-ID: <20180528155932.rcyipmxc5kshjvsy@pburton-laptop>
+References: <20180526154648.11635-1-paul.burton@mips.com>
+ <20180526154648.11635-3-paul.burton@mips.com>
+ <20180528150656.GF12217@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180528150656.GF12217@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180512
+X-BESS-ID: 1527523173-531715-32137-306557-1
+X-BESS-VER: 2018.6-r1805181819
+X-BESS-Apparent-Source-IP: 12.201.5.32
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.193454
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without CONFIG_INPUT, or with a modular input layer and built-in
-tablet driver, we get a link error:
+Hi Peter,
 
-ERROR: "input_event" [drivers/platform/chrome/chromeos_tbmc.ko] undefined!
-ERROR: "input_register_device" [drivers/platform/chrome/chromeos_tbmc.ko] undefined!
-ERROR: "input_set_capability" [drivers/platform/chrome/chromeos_tbmc.ko] undefined!
-ERROR: "devm_input_allocate_device" [drivers/platform/chrome/chromeos_tbmc.ko] undefined!
+On Mon, May 28, 2018 at 05:06:56PM +0200, Peter Zijlstra wrote:
+> On Sat, May 26, 2018 at 08:46:48AM -0700, Paul Burton wrote:
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 2380bc228dd0..cda3affd45b7 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -1127,7 +1127,8 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
+> >  		struct migration_arg arg = { p, dest_cpu };
+> >  		/* Need help from migration thread: drop lock and wait. */
+> >  		task_rq_unlock(rq, p, &rf);
+> > -		stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
+> > +		ret = stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
+> > +		WARN_ON(ret);
+> >  		tlb_migrate_finish(p->mm);
+> >  		return 0;
+> >  	} else if (task_on_rq_queued(p)) {
+> 
+> I think we can trigger this at will.. Set affinity to the CPU you're
+> going to take offline and offline concurrently.
+> 
+> It is possible for the offline to happen between task_rq_unlock() and
+> stop_one_cpu(), at which point the WARM will then trigger.
 
-This adds the corresponding Kconfig dependency
+Right, good point. The problem is only if stop_one_cpu() returns an
+error whilst cpu_of(rq) is being brought online, not whilst it's being
+offlined.
 
-Fixes: b418f74170d7 ("platform: chrome: Add Tablet Switch ACPI driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/platform/chrome/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+> The point is; and maybe this should be a comment somewhere; that if this
+> fails, there is nothing we can do about it, and it should be fixed up by
+> migrate_tasks()/select_task_rq().
+> 
+> There is no point in propagating the error to userspace, since if we'd
+> have slightly different timing and completed the stop_one_cpu() before
+> the hot-un-plug, migrate_tasks()/select_task_rq() would've had to fix up
+> anyway.
 
-diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-index 57aabe6e94a3..cb0df9eb3e0f 100644
---- a/drivers/platform/chrome/Kconfig
-+++ b/drivers/platform/chrome/Kconfig
-@@ -41,6 +41,7 @@ config CHROMEOS_PSTORE
- config CHROMEOS_TBMC
- 	tristate "ChromeOS Tablet Switch Controller"
- 	depends on ACPI
-+	depends on INPUT
- 	help
- 	  This option adds a driver for the tablet switch on
- 	  select Chrome OS systems.
--- 
-2.9.0
+I agree userspace shouldn't need to care about this but in my case
+(using the test program I linked from the previous patch) this triggers
+whilst the CPU is being brought online, not taken offline. That means
+migrate_tasks() is not involved, and we actually just return from here
+back out from a sched_setaffinity syscall & continue running the user
+task on a CPU that is no longer present in the task's cpus_allowed.
+
+I can't think of a good qualifier to limit the warning to only trigger
+in that scenario though, so in reality perhaps we're best to just trust
+that with patch 1 applied the problem will go away.
+
+Thanks,
+    Paul
