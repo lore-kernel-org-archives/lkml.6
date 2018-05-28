@@ -1,110 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753957AbeE1HsF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 03:48:05 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:31363 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753668AbeE1HsE (ORCPT
+        id S1753990AbeE1HsZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 03:48:25 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44928 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753668AbeE1HsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 03:48:04 -0400
-X-UUID: 72df2bdd77f74a16bd91c427f15417c3-20180528
-Message-ID: <1527493677.24367.10.camel@mtksdaap41>
-Subject: Re: [PATCH v4 8/9] drm/mediatek: add third ddp path
-From: CK Hu <ck.hu@mediatek.com>
-To: Stu Hsieh <stu.hsieh@mediatek.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date: Mon, 28 May 2018 15:47:57 +0800
-In-Reply-To: <1527489507-24453-9-git-send-email-stu.hsieh@mediatek.com>
-References: <1527489507-24453-1-git-send-email-stu.hsieh@mediatek.com>
-         <1527489507-24453-9-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Mon, 28 May 2018 03:48:23 -0400
+Date: Mon, 28 May 2018 10:47:56 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] vfio/pci: remove a bogus cast in vfio_msi_set_block()
+Message-ID: <20180528074756.bgl5fxvn7foe5uhn@kili.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8906 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=870
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805280096
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+This cast is confusing...  The "start" variable is an unsigned int.  We
+absolutely do not want to cast it to a negative int so why is the cast
+there?  It turns out, when you look at the context, it's a no-op and we
+can just remove it.
 
-One inline comment.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Mon, 2018-05-28 at 14:38 +0800, Stu Hsieh wrote:
-> This patch create third crtc by third ddp path
-> 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 3 +++
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 5 +++++
->  drivers/gpu/drm/mediatek/mtk_drm_drv.h  | 7 +++++--
->  3 files changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> index 658b8dd45b83..2d6aa150a9ff 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> @@ -539,6 +539,9 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
->  	int ret;
->  	int i;
->  
-> +	if (!path)
-> +		return 0;
-> +
->  	for (i = 0; i < path_len; i++) {
->  		enum mtk_ddp_comp_id comp_id = path[i];
->  		struct device_node *node;
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index 08d5d0b47bfe..3d279a299383 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -232,6 +232,11 @@ static int mtk_drm_kms_init(struct drm_device *drm)
->  	if (ret < 0)
->  		goto err_component_unbind;
->  
-> +	ret = mtk_drm_crtc_create(drm, private->data->third_path,
-> +				  private->data->third_len);
-> +	if (ret < 0)
-> +		goto err_component_unbind;
-> +
->  	/* Use OVL device for all DMA memory allocations */
->  	np = private->comp_node[private->data->main_path[0]] ?:
->  	     private->comp_node[private->data->ext_path[0]];
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> index c3378c452c0a..d867e2683923 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> @@ -17,8 +17,8 @@
->  #include <linux/io.h>
->  #include "mtk_drm_ddp_comp.h"
->  
-> -#define MAX_CRTC	2
-> -#define MAX_CONNECTOR	2
-> +#define MAX_CRTC	3
-> +#define MAX_CONNECTOR	3
-
-MAX_CONNECTOR is useless, maybe we just need to remove it in a clean up
-patch. Or you could keep its value.
-
-Regards,
-CK
-
->  
->  struct device;
->  struct device_node;
-> @@ -33,6 +33,9 @@ struct mtk_mmsys_driver_data {
->  	unsigned int main_len;
->  	const enum mtk_ddp_comp_id *ext_path;
->  	unsigned int ext_len;
-> +	const enum mtk_ddp_comp_id *third_path;
-> +	unsigned int third_len;
-> +
->  	bool shadow_register;
->  };
->  
+diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+index 1c46045b0e7f..2724fed62129 100644
+--- a/drivers/vfio/pci/vfio_pci_intrs.c
++++ b/drivers/vfio/pci/vfio_pci_intrs.c
+@@ -368,7 +368,7 @@ static int vfio_msi_set_block(struct vfio_pci_device *vdev, unsigned start,
+ 	}
+ 
+ 	if (ret) {
+-		for (--j; j >= (int)start; j--)
++		for (--j; j >= start; j--)
+ 			vfio_msi_set_vector_signal(vdev, j, -1, msix);
+ 	}
+ 
