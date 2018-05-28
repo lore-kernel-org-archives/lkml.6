@@ -1,81 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034215AbeE1K0i (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 06:26:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45910 "EHLO mail.kernel.org"
+        id S1034231AbeE1K0l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 06:26:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034191AbeE1K0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 06:26:32 -0400
+        id S1033986AbeE1K0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 06:26:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 250/268] clk: samsung: exynos5250: Fix PLL rates
-Date: Mon, 28 May 2018 12:03:44 +0200
-Message-Id: <20180528100231.579270171@linuxfoundation.org>
+        stable@vger.kernel.org, NeilBrown <neil@brown.name>,
+        Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
+        linux-mips@linux-mips.org, James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.9 001/329] MIPS: c-r4k: Fix data corruption related to cache coherence
+Date: Mon, 28 May 2018 11:58:50 +0200
+Message-Id: <20180528100241.996392531@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
+References: <20180528100241.796630982@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: NeilBrown <neil@brown.name>
 
-[ Upstream commit 2ac051eeabaa411ef89ae7cd5bb8e60cb41ad780 ]
+commit 55a2aa08b3af519a9693f99cdf7fa6d8b62d9f65 upstream.
 
-Rates declared in PLL rate tables should match exactly rates calculated
-from PLL coefficients. If that is not the case, rate of the PLL's child clock
-might be set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is, the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
+When DMA will be performed to a MIPS32 1004K CPS, the L1-cache for the
+range needs to be flushed and invalidated first.
+The code currently takes one of two approaches.
+1/ If the range is less than the size of the dcache, then HIT type
+   requests flush/invalidate cache lines for the particular addresses.
+   HIT-type requests a globalised by the CPS so this is safe on SMP.
 
-To fix this issue declared rates are changed to exactly match rates generated
-by the PLL, as calculated from the P, M, S, K coefficients.
+2/ If the range is larger than the size of dcache, then INDEX type
+   requests flush/invalidate the whole cache. INDEX type requests affect
+   the local cache only. CPS does not propagate them in any way. So this
+   invalidation is not safe on SMP CPS systems.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Data corruption due to '2' can quite easily be demonstrated by
+repeatedly "echo 3 > /proc/sys/vm/drop_caches" and then sha1sum a file
+that is several times the size of available memory. Dropping caches
+means that large contiguous extents (large than dcache) are more likely.
+
+This was not a problem before Linux-4.8 because option 2 was never used
+if CONFIG_MIPS_CPS was defined. The commit which removed that apparently
+didn't appreciate the full consequence of the change.
+
+We could, in theory, globalize the INDEX based flush by sending an IPI
+to other cores. These cache invalidation routines can be called with
+interrupts disabled and synchronous IPI require interrupts to be
+enabled. Asynchronous IPI may not trigger writeback soon enough. So we
+cannot use IPI in practice.
+
+We can already test if IPI would be needed for an INDEX operation with
+r4k_op_needs_ipi(R4K_INDEX). If this is true then we mustn't try the
+INDEX approach as we cannot use IPI. If this is false (e.g. when there
+is only one core and hence one L1 cache) then it is safe to use the
+INDEX approach without IPI.
+
+This patch avoids options 2 if r4k_op_needs_ipi(R4K_INDEX), and so
+eliminates the corruption.
+
+Fixes: c00ab4896ed5 ("MIPS: Remove cpu_has_safe_index_cacheops")
+Signed-off-by: NeilBrown <neil@brown.name>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 4.8+
+Patchwork: https://patchwork.linux-mips.org/patch/19259/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/clk/samsung/clk-exynos5250.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -711,13 +711,13 @@ static struct samsung_pll_rate_table epl
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
- 	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
--	PLL_36XX_RATE(180633600, 90, 3, 2, 20762),
-+	PLL_36XX_RATE(180633605, 90, 3, 2, 20762),
- 	PLL_36XX_RATE(180000000, 90, 3, 2, 0),
- 	PLL_36XX_RATE(73728000, 98, 2, 4, 19923),
--	PLL_36XX_RATE(67737600, 90, 2, 4, 20762),
-+	PLL_36XX_RATE(67737602, 90, 2, 4, 20762),
- 	PLL_36XX_RATE(49152000, 98, 3, 4, 19923),
--	PLL_36XX_RATE(45158400, 90, 3, 4, 20762),
--	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
-+	PLL_36XX_RATE(45158401, 90, 3, 4, 20762),
-+	PLL_36XX_RATE(32768001, 131, 3, 5, 4719),
- 	{ },
- };
+---
+ arch/mips/mm/c-r4k.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+--- a/arch/mips/mm/c-r4k.c
++++ b/arch/mips/mm/c-r4k.c
+@@ -851,9 +851,12 @@ static void r4k_dma_cache_wback_inv(unsi
+ 	/*
+ 	 * Either no secondary cache or the available caches don't have the
+ 	 * subset property so we have to flush the primary caches
+-	 * explicitly
++	 * explicitly.
++	 * If we would need IPI to perform an INDEX-type operation, then
++	 * we have to use the HIT-type alternative as IPI cannot be used
++	 * here due to interrupts possibly being disabled.
+ 	 */
+-	if (size >= dcache_size) {
++	if (!r4k_op_needs_ipi(R4K_INDEX) && size >= dcache_size) {
+ 		r4k_blast_dcache();
+ 	} else {
+ 		R4600_HIT_CACHEOP_WAR_IMPL;
+@@ -890,7 +893,7 @@ static void r4k_dma_cache_inv(unsigned l
+ 		return;
+ 	}
  
+-	if (size >= dcache_size) {
++	if (!r4k_op_needs_ipi(R4K_INDEX) && size >= dcache_size) {
+ 		r4k_blast_dcache();
+ 	} else {
+ 		R4600_HIT_CACHEOP_WAR_IMPL;
