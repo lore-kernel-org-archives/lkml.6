@@ -1,59 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S938342AbeE1LbG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 07:31:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33740 "EHLO mail.kernel.org"
+        id S938350AbeE1LbP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 07:31:15 -0400
+Received: from ozlabs.org ([203.11.71.1]:36823 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937985AbeE1LO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 07:14:29 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Vincent-Cross <me@tvc.id.au>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 229/272] PCI: Add function 1 DMA alias quirk for Marvell 88SE9220
-Date: Mon, 28 May 2018 12:04:22 +0200
-Message-Id: <20180528100259.650510163@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
-References: <20180528100240.256525891@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S937985AbeE1LbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 07:31:10 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Joel Fernandes <joel.opensrc@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, Rich Felker <dalias@libc.org>,
+        Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: Re: [PATCH 04/12] powerpc: Implement hw_breakpoint_arch_parse()
+In-Reply-To: <20180525140556.GD22082@lerouge>
+References: <1526697950-7091-1-git-send-email-frederic@kernel.org> <1526697950-7091-5-git-send-email-frederic@kernel.org> <87fu2hstf3.fsf@concordia.ellerman.id.au> <20180525140556.GD22082@lerouge>
+Date: Mon, 28 May 2018 21:31:07 +1000
+Message-ID: <87in783tl0.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Frederic Weisbecker <frederic@kernel.org> writes:
 
-------------------
+> On Thu, May 24, 2018 at 12:01:52PM +1000, Michael Ellerman wrote:
+>> Frederic Weisbecker <frederic@kernel.org> writes:
+>> 
+>> > diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
+>> > index 348cac9..fba6527 100644
+>> > --- a/arch/powerpc/kernel/hw_breakpoint.c
+>> > +++ b/arch/powerpc/kernel/hw_breakpoint.c
+>> > @@ -139,30 +139,31 @@ int arch_bp_generic_fields(int type, int *gen_bp_type)
+>> >  /*
+>> >   * Validate the arch-specific HW Breakpoint register settings
+>> >   */
+>> > -int arch_validate_hwbkpt_settings(struct perf_event *bp)
+>> > +int hw_breakpoint_arch_parse(struct perf_event *bp,
+>> > +			     struct perf_event_attr *attr,
+>> > +			     struct arch_hw_breakpoint *hw)
+>> 
+>> I think the semantics here are that we are reading from bp/attr and
+>> writing to hw?
+>> 
+>> If so would some sprinkling of const on the first two parameters help
+>> make that clearer?
+>
+> I seem to remember there was an issue with that due to the various functions
+> we call that need to be converted to take const as well. I thought I would
+> do it in a seperate series but actually it should be no big deal to do it
+> on this one.
 
-From: Thomas Vincent-Cross <me@tvc.id.au>
+Yeah, that does sometimes snowball out of control.
 
-[ Upstream commit 832e4e1f76b8a84991e9db56fdcef1ebce839b8b ]
+> Let me try that and respin.
 
-Add Marvell 88SE9220 DMA quirk as found and tested on bug 42679.
+Cool. It would be nice to have, but obviously not crucial.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=42679
-Signed-off-by: Thomas Vincent-Cross <me@tvc.id.au>
-Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pci/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -3903,6 +3903,9 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_M
- /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c46 */
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x91a0,
- 			 quirk_dma_func1_alias);
-+/* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c127 */
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9220,
-+			 quirk_dma_func1_alias);
- /* https://bugzilla.kernel.org/show_bug.cgi?id=42679#c49 */
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MARVELL_EXT, 0x9230,
- 			 quirk_dma_func1_alias);
+cheers
