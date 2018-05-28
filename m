@@ -1,73 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934221AbeE1VZk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 17:25:40 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:32922 "EHLO
+        id S934241AbeE1VZr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 17:25:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39308 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934139AbeE1VVV (ORCPT
+        with ESMTP id S934145AbeE1VZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 17:21:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 70FC16044B
+        Mon, 28 May 2018 17:25:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E337B6044B
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH V2] PCI/portdrv: do not disable device on reboot/shutdown
+To: Don Brace <don.brace@microsemi.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "timur@codeaurora.org" <timur@codeaurora.org>,
+        "ryan@finnie.org" <ryan@finnie.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Frederick Lawler <fred@fredlawl.com>,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "esc.storagedev" <esc.storagedev@microsemi.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+References: <1527043490-17268-1-git-send-email-okaya@codeaurora.org>
+ <20180523213249.GD150632@bhelgaas-glaptop.roam.corp.google.com>
+ <61f70fd6-52fd-da07-ce73-303f95132131@codeaurora.org>
+ <82656e20-e821-1944-3399-1667ceb27719@codeaurora.org>
+ <20180524130727.GA85822@bhelgaas-glaptop.roam.corp.google.com>
+ <36b790d3fb4c43349cfa560283c03ab5@microsemi.com>
 From: Sinan Kaya <okaya@codeaurora.org>
-To: linux-pci@vger.kernel.org, ryan@finnie.org, timur@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, stable@vger.kernel.org,
-        Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        esc.storagedev@microsemi.com (open list:HEWLETT-PACKARD SMART ARRAY
-        RAID DRIVER (hpsa)),
-        linux-scsi@vger.kernel.org (open list:HEWLETT-PACKARD SMART ARRAY RAID
-        DRIVER (hpsa)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V3 2/2] scsi: hpsa: drop shutdown callback
-Date: Mon, 28 May 2018 17:21:11 -0400
-Message-Id: <1527542471-10316-2-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527542471-10316-1-git-send-email-okaya@codeaurora.org>
-References: <1527542471-10316-1-git-send-email-okaya@codeaurora.org>
+Message-ID: <667a240c-9f83-181d-9aa3-f9ee3aa66272@codeaurora.org>
+Date: Mon, 28 May 2018 14:25:33 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <36b790d3fb4c43349cfa560283c03ab5@microsemi.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'Commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
-shutdown")' has been added to kernel to shutdown pending PCIe port
-service interrupts during reboot so that a newly started kexec kernel
-wouldn't observe pending interrupts.
+On 5/24/2018 6:37 AM, Don Brace wrote:
+>> But we really need guidance from an hpsa expert.  I don't know the
+>> filesystem/SCSI/hpsa details.
+>>
+>> Bjorn
+> It's most likely OCSD traffic that will stop when bus mastering is turned off.
+> So, I'll run some tests on my end before ACKing your patch.
 
-pcie_port_device_remove() is disabling the root port and switches by
-calling pci_disable_device() after all PCIe service drivers are shutdown.
+Can you test V3 instead of this?
 
-This has been found to cause crashes on HP DL360 Gen9 machines during
-reboot due to hpsa driver not clearing the bus master bit during the
-shutdown procedure by calling pci_disable_device().
+I don't think adding pci_disable_device() to shutdown() is enough to put
+the HW into safe state. I moved clean  up responsibility to remove() instead
+of shutdown().
 
-Drop the shutdown API and do an orderly clean up by using the remove.
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199779
-Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
-Cc: stable@vger.kernel.org
-Reported-by: Ryan Finnie <ryan@finnie.org>
----
- drivers/scsi/hpsa.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 3a9eca1..3dbef28 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -8970,7 +8970,6 @@ static struct pci_driver hpsa_pci_driver = {
- 	.probe = hpsa_init_one,
- 	.remove = hpsa_remove_one,
- 	.id_table = hpsa_pci_device_id,	/* id_table */
--	.shutdown = hpsa_shutdown,
- 	.suspend = hpsa_suspend,
- 	.resume = hpsa_resume,
- };
 -- 
-2.7.4
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
