@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934138AbeE2MQD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:16:03 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55601 "EHLO mail.bootlin.com"
+        id S934152AbeE2MQH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:16:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55589 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933982AbeE2MPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:15:06 -0400
+        id S934028AbeE2MPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:15:04 -0400
 From: Antoine Tenart <antoine.tenart@bootlin.com>
 To: herbert@gondor.apana.org.au, davem@davemloft.net
 Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
@@ -13,9 +13,9 @@ Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
         thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
         gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
         nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
-Subject: [PATCH 07/10] crypto: sha512_generic - add a sha384 0-length pre-computed hash
-Date: Tue, 29 May 2018 14:13:49 +0200
-Message-Id: <20180529121352.19490-8-antoine.tenart@bootlin.com>
+Subject: [PATCH 05/10] crypto: inside-secure - hmac(sha512) support
+Date: Tue, 29 May 2018 14:13:47 +0200
+Message-Id: <20180529121352.19490-6-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180529121352.19490-1-antoine.tenart@bootlin.com>
 References: <20180529121352.19490-1-antoine.tenart@bootlin.com>
@@ -23,49 +23,123 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the sha384 pre-computed 0-length hash so that device
-drivers can use it when an hardware engine does not support computing a
-hash from a 0 length input.
+This patch adds the hmac(sha512) algorithm support to the Inside Secure
+SafeXcel driver.
 
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- crypto/sha512_generic.c | 10 ++++++++++
- include/crypto/sha.h    |  2 ++
- 2 files changed, 12 insertions(+)
+ drivers/crypto/inside-secure/safexcel.c      |  1 +
+ drivers/crypto/inside-secure/safexcel.h      |  3 +-
+ drivers/crypto/inside-secure/safexcel_hash.c | 60 +++++++++++++++++++-
+ 3 files changed, 61 insertions(+), 3 deletions(-)
 
-diff --git a/crypto/sha512_generic.c b/crypto/sha512_generic.c
-index 439723d9273e..0b805d03b5e5 100644
---- a/crypto/sha512_generic.c
-+++ b/crypto/sha512_generic.c
-@@ -23,6 +23,16 @@
- #include <asm/byteorder.h>
- #include <asm/unaligned.h>
+diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
+index 126def0b4450..b3c5f3c8e208 100644
+--- a/drivers/crypto/inside-secure/safexcel.c
++++ b/drivers/crypto/inside-secure/safexcel.c
+@@ -794,6 +794,7 @@ static struct safexcel_alg_template *safexcel_algs[] = {
+ 	&safexcel_alg_hmac_sha1,
+ 	&safexcel_alg_hmac_sha224,
+ 	&safexcel_alg_hmac_sha256,
++	&safexcel_alg_hmac_sha512,
+ 	&safexcel_alg_authenc_hmac_sha1_cbc_aes,
+ 	&safexcel_alg_authenc_hmac_sha224_cbc_aes,
+ 	&safexcel_alg_authenc_hmac_sha256_cbc_aes,
+diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
+index 0438e058844c..5885844a9994 100644
+--- a/drivers/crypto/inside-secure/safexcel.h
++++ b/drivers/crypto/inside-secure/safexcel.h
+@@ -287,7 +287,7 @@ struct safexcel_context_record {
+ 	u32 control0;
+ 	u32 control1;
  
-+const u8 sha384_zero_message_hash[SHA384_DIGEST_SIZE] = {
-+	0x38, 0xb0, 0x60, 0xa7, 0x51, 0xac, 0x96, 0x38,
-+	0x4c, 0xd9, 0x32, 0x7e, 0xb1, 0xb1, 0xe3, 0x6a,
-+	0x21, 0xfd, 0xb7, 0x11, 0x14, 0xbe, 0x07, 0x43,
-+	0x4c, 0x0c, 0xc7, 0xbf, 0x63, 0xf6, 0xe1, 0xda,
-+	0x27, 0x4e, 0xde, 0xbf, 0xe7, 0x6f, 0x65, 0xfb,
-+	0xd5, 0x1a, 0xd2, 0xf1, 0x48, 0x98, 0xb9, 0x5b
+-	__le32 data[24];
++	__le32 data[40];
+ } __packed;
+ 
+ /* control0 */
+@@ -676,6 +676,7 @@ extern struct safexcel_alg_template safexcel_alg_sha512;
+ extern struct safexcel_alg_template safexcel_alg_hmac_sha1;
+ extern struct safexcel_alg_template safexcel_alg_hmac_sha224;
+ extern struct safexcel_alg_template safexcel_alg_hmac_sha256;
++extern struct safexcel_alg_template safexcel_alg_hmac_sha512;
+ extern struct safexcel_alg_template safexcel_alg_authenc_hmac_sha1_cbc_aes;
+ extern struct safexcel_alg_template safexcel_alg_authenc_hmac_sha224_cbc_aes;
+ extern struct safexcel_alg_template safexcel_alg_authenc_hmac_sha256_cbc_aes;
+diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
+index f5d206030591..54f9e4da7db6 100644
+--- a/drivers/crypto/inside-secure/safexcel_hash.c
++++ b/drivers/crypto/inside-secure/safexcel_hash.c
+@@ -22,8 +22,8 @@ struct safexcel_ahash_ctx {
+ 
+ 	u32 alg;
+ 
+-	u32 ipad[SHA256_DIGEST_SIZE / sizeof(u32)];
+-	u32 opad[SHA256_DIGEST_SIZE / sizeof(u32)];
++	u32 ipad[SHA512_DIGEST_SIZE / sizeof(u32)];
++	u32 opad[SHA512_DIGEST_SIZE / sizeof(u32)];
+ };
+ 
+ struct safexcel_ahash_req {
+@@ -1358,3 +1358,59 @@ struct safexcel_alg_template safexcel_alg_sha512 = {
+ 		},
+ 	},
+ };
++
++static int safexcel_hmac_sha512_setkey(struct crypto_ahash *tfm, const u8 *key,
++				       unsigned int keylen)
++{
++	return safexcel_hmac_alg_setkey(tfm, key, keylen, "safexcel-sha512",
++					SHA512_DIGEST_SIZE);
++}
++
++static int safexcel_hmac_sha512_init(struct ahash_request *areq)
++{
++	struct safexcel_ahash_req *req = ahash_request_ctx(areq);
++
++	safexcel_sha512_init(areq);
++	req->digest = CONTEXT_CONTROL_DIGEST_HMAC;
++	return 0;
++}
++
++static int safexcel_hmac_sha512_digest(struct ahash_request *areq)
++{
++	int ret = safexcel_hmac_sha512_init(areq);
++
++	if (ret)
++		return ret;
++
++	return safexcel_ahash_finup(areq);
++}
++
++struct safexcel_alg_template safexcel_alg_hmac_sha512 = {
++	.type = SAFEXCEL_ALG_TYPE_AHASH,
++	.alg.ahash = {
++		.init = safexcel_hmac_sha512_init,
++		.update = safexcel_ahash_update,
++		.final = safexcel_ahash_final,
++		.finup = safexcel_ahash_finup,
++		.digest = safexcel_hmac_sha512_digest,
++		.setkey = safexcel_hmac_sha512_setkey,
++		.export = safexcel_ahash_export,
++		.import = safexcel_ahash_import,
++		.halg = {
++			.digestsize = SHA512_DIGEST_SIZE,
++			.statesize = sizeof(struct safexcel_ahash_export_state),
++			.base = {
++				.cra_name = "hmac(sha512)",
++				.cra_driver_name = "safexcel-hmac-sha512",
++				.cra_priority = 300,
++				.cra_flags = CRYPTO_ALG_ASYNC |
++					     CRYPTO_ALG_KERN_DRIVER_ONLY,
++				.cra_blocksize = SHA512_BLOCK_SIZE,
++				.cra_ctxsize = sizeof(struct safexcel_ahash_ctx),
++				.cra_init = safexcel_ahash_cra_init,
++				.cra_exit = safexcel_ahash_cra_exit,
++				.cra_module = THIS_MODULE,
++			},
++		},
++	},
 +};
-+EXPORT_SYMBOL_GPL(sha384_zero_message_hash);
-+
- const u8 sha512_zero_message_hash[SHA512_DIGEST_SIZE] = {
- 	0xcf, 0x83, 0xe1, 0x35, 0x7e, 0xef, 0xb8, 0xbd,
- 	0xf1, 0x54, 0x28, 0x50, 0xd6, 0x6d, 0x80, 0x07,
-diff --git a/include/crypto/sha.h b/include/crypto/sha.h
-index 799f071b93df..8a46202b1857 100644
---- a/include/crypto/sha.h
-+++ b/include/crypto/sha.h
-@@ -71,6 +71,8 @@ extern const u8 sha224_zero_message_hash[SHA224_DIGEST_SIZE];
- 
- extern const u8 sha256_zero_message_hash[SHA256_DIGEST_SIZE];
- 
-+extern const u8 sha384_zero_message_hash[SHA384_DIGEST_SIZE];
-+
- extern const u8 sha512_zero_message_hash[SHA512_DIGEST_SIZE];
- 
- struct sha1_state {
 -- 
 2.17.0
