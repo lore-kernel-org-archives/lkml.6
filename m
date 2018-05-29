@@ -1,116 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933956AbeE2MMm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:12:42 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:35470 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933793AbeE2MMh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:12:37 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Tue, 29 May 2018 14:12:35 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
-        miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
-        krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
-In-Reply-To: <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
-References: <20180527215442.14760-5-stefan@agner.ch>
- <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
- <5665b799f763daa82dced238fb494863@agner.ch>
- <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
-Message-ID: <90180dd9fc6e60175c54b9d70e50f0e5@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[25];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+        id S933997AbeE2MNp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:13:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:38614 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933818AbeE2MME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:12:04 -0400
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Julien Grall <julien.grall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 13/17] arm64: KVM: Handle guest's ARCH_WORKAROUND_2 requests
+Date: Tue, 29 May 2018 13:11:17 +0100
+Message-Id: <20180529121121.24927-14-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180529121121.24927-1-marc.zyngier@arm.com>
+References: <20180529121121.24927-1-marc.zyngier@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.05.2018 09:48, Peter De Schrijver wrote:
-> On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
->> On 28.05.2018 09:55, Peter De Schrijver wrote:
->> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
->> >> From: Lucas Stach <dev@lynxeye.de>
->> >>
->> >> Set up the NAND Flash controller clock to run at 150MHz
->> >> instead of the rate set by the bootloader. This is a
->> >> conservative rate which also yields good performance.
->> >>
->> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> >> ---
->> >>  drivers/clk/tegra/clk-tegra20.c | 1 +
->> >>  1 file changed, 1 insertion(+)
->> >>
->> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
->> >> index 0ee56dd04cec..dff8c425cd28 100644
->> >> --- a/drivers/clk/tegra/clk-tegra20.c
->> >> +++ b/drivers/clk/tegra/clk-tegra20.c
->> >> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->> >>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
->> >>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
->> >>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
->> >> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
->> >>  	/* must be the last entry */
->> >>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
->> >>  };
->> >> --
->> >> 2.17.0
->> >>
->> >
->> > Maybe better to specify this in the Tegra20 dtsi? See
->> > "Assigned clock parents and rates" in
->> > Documentation/devicetree/bindings/clock/clock-bindings.txt
->>
->> assigned-clocks indeed works just fine for this case. Thanks for
->> bringing this up, will drop this patch and add the device tree
->> properties in v3.
->>
->> Hm, interesting that none of the Tegra device tree make use of the
->> feature so far. I guess there would be other cases where this would be
->> useful as well (the one just above, VDE?).
->>
-> 
-> Yes, historically this feature wasn't available, so we used these init tables.
-> Unfortunately it's not easy to get rid of them for parent and rate
-> configuration, because new kernels should also work with existing DTBs, so we
-> can't just add assigned-clock properties and remove the existing table
-> entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
-> are only enabled by the init table. For not yet merged blocks, this is
-> ofcourse not a concern.
+In order to forward the guest's ARCH_WORKAROUND_2 calls to EL3,
+add a small(-ish) sequence to handle it at EL2. Special care must
+be taken to track the state of the guest itself by updating the
+workaround flags. We also rely on patching to enable calls into
+the firmware.
 
-Sure I understand.
+Note that since we need to execute branches, this always executes
+after the Spectre-v2 mitigation has been applied.
 
-Was just somewhat surprised that it isn't used at all yet (grep -r -e
-assigned-clock arch/arm/boot/dts/tegra* returns nothing). After all,
-assigned clocks bindings have been merged in 2014 :-)
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+ arch/arm64/kernel/asm-offsets.c |  1 +
+ arch/arm64/kvm/hyp/hyp-entry.S  | 38 +++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 38 insertions(+), 1 deletion(-)
 
-At least "clk: tegra: Specify VDE clock rate" merged earlier this year
-would have been a candidate already.
-
---
-Stefan
+diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
+index 5bdda651bd05..323aeb5f2fe6 100644
+--- a/arch/arm64/kernel/asm-offsets.c
++++ b/arch/arm64/kernel/asm-offsets.c
+@@ -136,6 +136,7 @@ int main(void)
+ #ifdef CONFIG_KVM_ARM_HOST
+   DEFINE(VCPU_CONTEXT,		offsetof(struct kvm_vcpu, arch.ctxt));
+   DEFINE(VCPU_FAULT_DISR,	offsetof(struct kvm_vcpu, arch.fault.disr_el1));
++  DEFINE(VCPU_WORKAROUND_FLAGS,	offsetof(struct kvm_vcpu, arch.workaround_flags));
+   DEFINE(CPU_GP_REGS,		offsetof(struct kvm_cpu_context, gp_regs));
+   DEFINE(CPU_USER_PT_REGS,	offsetof(struct kvm_regs, regs));
+   DEFINE(CPU_FP_REGS,		offsetof(struct kvm_regs, fp_regs));
+diff --git a/arch/arm64/kvm/hyp/hyp-entry.S b/arch/arm64/kvm/hyp/hyp-entry.S
+index bffece27b5c1..05d836979032 100644
+--- a/arch/arm64/kvm/hyp/hyp-entry.S
++++ b/arch/arm64/kvm/hyp/hyp-entry.S
+@@ -106,8 +106,44 @@ el1_hvc_guest:
+ 	 */
+ 	ldr	x1, [sp]				// Guest's x0
+ 	eor	w1, w1, #ARM_SMCCC_ARCH_WORKAROUND_1
++	cbz	w1, wa_epilogue
++
++	/* ARM_SMCCC_ARCH_WORKAROUND_2 handling */
++	eor	w1, w1, #(ARM_SMCCC_ARCH_WORKAROUND_1 ^ \
++			  ARM_SMCCC_ARCH_WORKAROUND_2)
+ 	cbnz	w1, el1_trap
+-	mov	x0, x1
++
++#ifdef CONFIG_ARM64_SSBD
++alternative_cb	arm64_enable_wa2_handling
++	b	wa2_end
++alternative_cb_end
++	get_vcpu_ptr	x2, x0
++	ldr	x0, [x2, #VCPU_WORKAROUND_FLAGS]
++
++	// Sanitize the argument and update the guest flags
++	ldr	x1, [sp, #8]			// Guest's x1
++	clz	w1, w1				// Murphy's device:
++	lsr	w1, w1, #5			// w1 = !!w1 without using
++	eor	w1, w1, #1			// the flags...
++	bfi	x0, x1, #VCPU_WORKAROUND_2_FLAG_SHIFT, #1
++	str	x0, [x2, #VCPU_WORKAROUND_FLAGS]
++
++	/* Check that we actually need to perform the call */
++	hyp_ldr_this_cpu x0, arm64_ssbd_callback_required, x2
++	cbz	x0, wa2_end
++
++	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
++	smc	#0
++
++	/* Don't leak data from the SMC call */
++	mov	x3, xzr
++wa2_end:
++	mov	x2, xzr
++	mov	x1, xzr
++#endif
++
++wa_epilogue:
++	mov	x0, xzr
+ 	add	sp, sp, #16
+ 	eret
+ 
+-- 
+2.14.2
