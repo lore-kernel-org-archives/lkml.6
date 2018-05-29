@@ -1,87 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965026AbeE2OzN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:55:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41914 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964996AbeE2OzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:55:10 -0400
-Date: Tue, 29 May 2018 15:55:06 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
-        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
-        valentin.schneider@arm.com
-Subject: Re: [PATCH v5 01/10] sched/pelt: Move pelt related code in a
- dedicated file
-Message-ID: <20180529145506.GF15173@e108498-lin.cambridge.arm.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-2-git-send-email-vincent.guittot@linaro.org>
- <20180525142648.GC15173@e108498-lin.cambridge.arm.com>
- <20180525180455.GF30654@e110439-lin>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525180455.GF30654@e110439-lin>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+        id S964905AbeE2Oyo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:54:44 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:45228 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S936785AbeE2Oxq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:53:46 -0400
+From: Oleksandr Shamray <oleksandrs@mellanox.com>
+To: gregkh@linuxfoundation.org, arnd@arndb.de
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
+        jiri@resnulli.us, tklauser@distanz.ch, linux-serial@vger.kernel.org,
+        vadimp@mellanox.com, system-sw-low-level@mellanox.com,
+        robh+dt@kernel.org, openocd-devel-owner@lists.sourceforge.net,
+        linux-api@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+        Oleksandr Shamray <oleksandrs@mellanox.com>
+Subject: [patch v25 3/4] Documentation: jtag: Add bindings for Aspeed SoC 24xx and 25xx families JTAG master driver
+Date: Tue, 29 May 2018 17:53:37 +0300
+Message-Id: <1527605618-15705-4-git-send-email-oleksandrs@mellanox.com>
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1527605618-15705-1-git-send-email-oleksandrs@mellanox.com>
+References: <1527605618-15705-1-git-send-email-oleksandrs@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 25 May 2018 at 19:04:55 (+0100), Patrick Bellasi wrote:
-> On 25-May 15:26, Quentin Perret wrote:
-> > And also, I understand these functions are large, but if we _really_
-> > want to inline them even though they're big, why not putting them in
-> > sched-pelt.h ?
-> 
-> Had the same tought at first... but then I recalled that header is
-> generated from a script. Thus, eventually, it should be a different one.
+It has been tested on Mellanox system with BMC equipped with
+Aspeed 2520 SoC for programming CPLD devices.
 
-Ah, good point. This patch already introduces a pelt.h so I guess that
-could work as well.
+Signed-off-by: Oleksandr Shamray <oleksandrs@mellanox.com>
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+v21->v22
+v20->v21
+v19->v20
+v18->v19
 
-> 
-> > We probably wouldn't accept that for everything, but
-> > those PELT functions are used all over the place, including latency
-> > sensitive code paths (e.g. task wake-up).
-> 
-> We should better measure the overheads, if any, and check what
-> (a modern) compiler does. Maybe some hackbench run could help on the
-> first point.
+v17->v18
+v16->v17
+v15->v16
+Comments pointed by Joel Stanley <joel.stan@gmail.com>
+- change clocks = <&clk_apb> to proper clocks = <&syscon ASPEED_CLK_APB>
+- add reset descriptions in bndings file
 
-FWIW, I ran a few hackbench tests today on my Intel box:
- - Intel i7-6700 (4 cores / 8 threads) @ 3.40GHz
- - Base kernel: today's tip/sched/core "2539fc82aa9b sched/fair: Update
-   util_est before updating schedutil"
- - Compiler: GCC 7.3.0
+v14->v15
+v13->v14
+v12->v13
+v11->v12
+v10->v11
+v9->v10
+v8->v9
+v7->v8
+Comments pointed by pointed by Joel Stanley <joel.stan@gmail.com>
+- Change compatible string to ast2400 and ast2000
 
-The tables below summarize the results for:
-perf stat --repeat 10 perf bench sched messaging --pipe --thread -l 50000 --group G
+V6->v7
+Comments pointed by Tobias Klauser <tklauser@distanz.ch>
+ - Fix spell "Doccumentation" -> "Documentation"
 
-Without patch:
-  +---+-------+----------+---------+
-  | G | Tasks | Duration | Stddev  |
-  +---+-------+----------+---------+
-  | 1 | 40    | 3.906    | +-0.84% |
-  | 2 | 80    | 8.569    | +-0.77% |
-  | 4 | 160   | 16.384   | +-0.46% |
-  | 8 | 320   | 33.686   | +-0.42% |
-  +---+-------+----------+---------+
+v5->v6
+Comments pointed by Tobias Klauser <tklauser@distanz.ch>
+- Small nit: s/documentation/Documentation/
 
-With patch:
-  +---+-------+----------------+---------+
-  | G | Tasks | Duration       | Stddev  |
-  +---+-------+----------------+---------+
-  | 1 | 40    | 3.953 (+1.2%)  | +-1.43% |
-  | 2 | 80    | 8.646 (+0.9%)  | +-0.32% |
-  | 4 | 160   | 16.390 (+0.0%) | +-0.38% |
-  | 8 | 320   | 33.992 (+0.9%) | +-0.27% |
-  +---+-------+----------------+---------+
+v4->v5
 
-So there is (maybe) a little something on my box, but not so significant
-IMHO ... :)
+V3->v4
+Comments pointed by Rob Herring <robh@kernel.org>
+- delete unnecessary "status" and "reg-shift" descriptions in
+  bndings file
 
-Thanks,
-Quentin
+v2->v3
+Comments pointed by Rob Herring <robh@kernel.org>
+- split Aspeed jtag driver and binding to sepatrate patches
+- delete unnecessary "status" and "reg-shift" descriptions in
+  bndings file
+---
+ .../devicetree/bindings/jtag/aspeed-jtag.txt       |   22 ++++++++++++++++++++
+ MAINTAINERS                                        |    1 +
+ 2 files changed, 23 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/jtag/aspeed-jtag.txt
+
+diff --git a/Documentation/devicetree/bindings/jtag/aspeed-jtag.txt b/Documentation/devicetree/bindings/jtag/aspeed-jtag.txt
+new file mode 100644
+index 0000000..7c36eb6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/jtag/aspeed-jtag.txt
+@@ -0,0 +1,22 @@
++Aspeed JTAG driver for ast2400 and ast2500 SoC
++
++Required properties:
++- compatible:		Should be one of
++      - "aspeed,ast2400-jtag"
++      - "aspeed,ast2500-jtag"
++- reg			contains the offset and length of the JTAG memory
++			region
++- clocks		root clock of bus, should reference the APB
++			clock in the second cell
++- resets		phandle to reset controller with the reset number in
++			the second cell
++- interrupts		should contain JTAG controller interrupt
++
++Example:
++jtag: jtag@1e6e4000 {
++	compatible = "aspeed,ast2500-jtag";
++	reg = <0x1e6e4000 0x1c>;
++	clocks = <&syscon ASPEED_CLK_APB>;
++	resets = <&syscon ASPEED_RESET_JTAG_MASTER>;
++	interrupts = <43>;
++};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e7b8b2c..a5e5f75 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7617,6 +7617,7 @@ S:	Maintained
+ F:	include/linux/jtag.h
+ F:	include/uapi/linux/jtag.h
+ F:	drivers/jtag/
++F:	Documentation/devicetree/bindings/jtag/
+ 
+ K10TEMP HARDWARE MONITORING DRIVER
+ M:	Clemens Ladisch <clemens@ladisch.de>
+-- 
+1.7.1
