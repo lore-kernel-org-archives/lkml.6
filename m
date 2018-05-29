@@ -1,80 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935738AbeE2Op3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:45:29 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:56033 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935287AbeE2OpW (ORCPT
+        id S936481AbeE2Oo5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:44:57 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:40108 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935402AbeE2OoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:45:22 -0400
-From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-To: William Wu <william.wu@rock-chips.com>,
-        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC: "sergei.shtylyov@cogentembedded.com"
-        <sergei.shtylyov@cogentembedded.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-rockchip@lists.infradead.org"
-        <linux-rockchip@lists.infradead.org>,
-        "frank.wang@rock-chips.com" <frank.wang@rock-chips.com>,
-        "huangtao@rock-chips.com" <huangtao@rock-chips.com>,
-        "dianders@google.com" <dianders@google.com>,
-        "daniel.meng@rock-chips.com" <daniel.meng@rock-chips.com>,
-        "John.Youn@synopsys.com" <John.Youn@synopsys.com>,
-        "fml@rock-chips.com" <fml@rock-chips.com>
-Subject: Re: [PATCH] usb: dwc2: fix the incorrect bitmaps for the ports of
- multi_tt hub
-Thread-Topic: [PATCH] usb: dwc2: fix the incorrect bitmaps for the ports of
- multi_tt hub
-Thread-Index: AQHT8OxXMtSRTMYeG0CT9CelkWDIlA==
-Date: Tue, 29 May 2018 14:45:10 +0000
-Message-ID: <410670D7E743164D87FA6160E7907A56013135A5A0@am04wembxa.internal.synopsys.com>
-References: <1526897520-9340-1-git-send-email-william.wu@rock-chips.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.116.70.165]
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+        Tue, 29 May 2018 10:44:17 -0400
+X-Google-Smtp-Source: AB8JxZrl6BBkjJIvT7jgozrBqOIiXcXU9+MYKh1SMuPLFSeu44amU6Pq8Ax5u7FEsi0HW0nUB65kWQ==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 28/39] ovl: fix documentation of non-standard behavior
+Date: Tue, 29 May 2018 16:43:28 +0200
+Message-Id: <20180529144339.16538-29-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
+References: <20180529144339.16538-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TEjYTF029222
 
-Acked-by Minas Harutyunyan hminas@synopsys.com>
+We can now drop description of the ro/rw inconsistency from the
+documentation.
 
-On 5/21/2018 2:13 PM, William Wu wrote:
-> The dwc2_get_ls_map() use ttport to reference into the
-> bitmap if we're on a multi_tt hub. But the bitmaps index
-> from 0 to (hub->maxchild - 1), while the ttport index from
-> 1 to hub->maxchild. This will cause invalid memory access
-> when the number of ttport is hub->maxchild.
-> 
-> Without this patch, I can easily meet a Kernel panic issue
-> if connect a low-speed USB mouse with the max port of FE2.1
-> multi-tt hub (1a40:0201) on rk3288 platform.
-> 
-> Signed-off-by: William Wu <william.wu@rock-chips.com>
-> ---
->   drivers/usb/dwc2/hcd_queue.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/dwc2/hcd_queue.c b/drivers/usb/dwc2/hcd_queue.c
-> index d7c3d6c..9c55d1a 100644
-> --- a/drivers/usb/dwc2/hcd_queue.c
-> +++ b/drivers/usb/dwc2/hcd_queue.c
-> @@ -383,7 +383,7 @@ static unsigned long *dwc2_get_ls_map(struct dwc2_hsotg *hsotg,
->   	/* Get the map and adjust if this is a multi_tt hub */
->   	map = qh->dwc_tt->periodic_bitmaps;
->   	if (qh->dwc_tt->usb_tt->multi)
-> -		map += DWC2_ELEMENTS_PER_LS_BITMAP * qh->ttport;
-> +		map += DWC2_ELEMENTS_PER_LS_BITMAP * (qh->ttport - 1);
->   
->   	return map;
->   }
-> 
+Also clarify, that now fully standard compliant behavior can be enabled
+with kernel/module/mount options.
+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ Documentation/filesystems/overlayfs.txt | 60 +++++++++++++++++++++------------
+ 1 file changed, 39 insertions(+), 21 deletions(-)
+
+diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
+index 72615a2c0752..f087bc40c6a5 100644
+--- a/Documentation/filesystems/overlayfs.txt
++++ b/Documentation/filesystems/overlayfs.txt
+@@ -10,10 +10,6 @@ union-filesystems).  An overlay-filesystem tries to present a
+ filesystem which is the result over overlaying one filesystem on top
+ of the other.
+ 
+-The result will inevitably fail to look exactly like a normal
+-filesystem for various technical reasons.  The expectation is that
+-many use cases will be able to ignore these differences.
+-
+ 
+ Overlay objects
+ ---------------
+@@ -306,27 +302,49 @@ the copied layers will fail the verification of the lower root file handle.
+ Non-standard behavior
+ ---------------------
+ 
+-The copy_up operation essentially creates a new, identical file and
+-moves it over to the old name.  Any open files referring to this inode
+-will access the old data.
++Overlayfs can now act as a POSIX compliant filesystem with the following
++features turned on:
++
++1) "redirect_dir"
++
++Enabled with the mount option or module option: "redirect_dir=on" or with
++the kernel config option CONFIG_OVERLAY_FS_REDIRECT_DIR=y.
++
++If this feature is disabled, then rename(2) on a lower or merged directory
++will fail with EXDEV ("Invalid cross-device link").
++
++2) "inode index"
++
++Enabled with the mount option or module option "index=on" or with the
++kernel config option CONFIG_OVERLAY_FS_INDEX=y.
++
++If this feature is disabled and a file with multiple hard links is copied
++up, then this will "break" the link.  Changes will not be propagated to
++other names referring to the same inode.
++
++3) "xino"
++
++Enabled with the mount option "xino=auto" or "xino=on", with the module
++option "xino_auto=on" or with the kernel config option
++CONFIG_OVERLAY_FS_XINO_AUTO=y.  Also implicitly enabled by using the same
++underlying filesystem for all layers making up the overlay.
+ 
+-The new file may be on a different filesystem, so both st_dev and st_ino
+-of the real file may change.  The values of st_dev and st_ino returned by
+-stat(2) on an overlay object are often not the same as the real file
+-stat(2) values to prevent the values from changing on copy_up.
++If this feature is disabled or the underlying filesystem doesn't have
++enough free bits in the inode number, then overlayfs will not be able to
++guarantee that the values of st_ino and st_dev returned by stat(2) and the
++value of d_ino returned by readdir(3) will act like on a normal filesystem.
++E.g. the value of st_dev may be different for two objects in the same
++overlay filesystem and the value of st_ino for directory objects may not be
++persistent and could change even while the overlay filesystem is mounted.
+ 
+-Unless "xino" feature is enabled, when overlay layers are not all on the
+-same underlying filesystem, the value of st_dev may be different for two
+-non-directory objects in the same overlay filesystem and the value of
+-st_ino for directory objects may be non persistent and could change even
+-while the overlay filesystem is still mounted.
++4) "copy_up_shared"
+ 
+-Unless "inode index" feature is enabled, if a file with multiple hard
+-links is copied up, then this will "break" the link.  Changes will not be
+-propagated to other names referring to the same inode.
++Enabled with the mount option or module option "copy_up_shared=on" or with
++the kernel config option CONFIG_OVERLAY_FS_COPY_UP_SHARED=y.
+ 
+-Unless "redirect_dir" feature is enabled, rename(2) on a lower or merged
+-directory will fail with EXDEV.
++If this feature is disabled, then a memory mapping created with MAP_SHARED
++might contain stale data if the file has been copied up and modified in the
++meantime.
+ 
+ 
+ Changes to underlying filesystems
+-- 
+2.14.3
