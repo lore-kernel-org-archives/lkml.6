@@ -1,107 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932157AbeE2G6n (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 02:58:43 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:47874 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754743AbeE2G6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 02:58:39 -0400
-Message-Id: <97b30159fb712dcdb7ea2fa748fed45f0a18e2eb.1527576934.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/cell: fix build failure by disabling attribute-alias
- warning
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue, 29 May 2018 06:58:37 +0000 (UTC)
+        id S932219AbeE2G7Q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 02:59:16 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:45780 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932182AbeE2G7O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 02:59:14 -0400
+X-Google-Smtp-Source: AB8JxZomDkbOjkAKG77WCfUSIoKllWlEaSIWGriZlkb+fAQGJ6UQbw77t7XOdKJNtnZJUq2ZxpAj8A==
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
+To: b.zolnierkie@samsung.com
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] video/hdmi: prefer strlcpy to strncpy
+Date: Mon, 28 May 2018 23:59:05 -0700
+Message-Id: <1527577145-7750-1-git-send-email-nick.desaulniers@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Latest GCC version emit the following warnings
+Fixes a stringop-truncation warning from gcc-8.
 
-As arch/powerpc code is built with -Werror, this breaks build with
-GCC 8.1
-
-This patch inhibits those warnings
-
-  CC      arch/powerpc/platforms/cell/spu_syscalls.o
-In file included from arch/powerpc/platforms/cell/spu_syscalls.c:26:
-./include/linux/syscalls.h:233:18: error: 'sys_spu_create' alias between functions of incompatible types 'long int(const char *, unsigned int,  umode_t,  int)' {aka 'long int(const char *, unsigned int,  short unsigned int,  int)'} and 'long int(long int,  long int,  long int,  long int)' [-Werror=attribute-alias]
-  asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
-                  ^~~
-./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
-./include/linux/syscalls.h:214:36: note: in expansion of macro 'SYSCALL_DEFINEx'
- #define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
-                                    ^~~~~~~~~~~~~~~
-arch/powerpc/platforms/cell/spu_syscalls.c:70:1: note: in expansion of macro 'SYSCALL_DEFINE4'
- SYSCALL_DEFINE4(spu_create, const char __user *, name, unsigned int, flags,
- ^~~~~~~~~~~~~~~
-./include/linux/syscalls.h:238:18: note: aliased declaration here
-  asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
-                  ^~~~~~~~
-./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
-./include/linux/syscalls.h:214:36: note: in expansion of macro 'SYSCALL_DEFINEx'
- #define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
-                                    ^~~~~~~~~~~~~~~
-arch/powerpc/platforms/cell/spu_syscalls.c:70:1: note: in expansion of macro 'SYSCALL_DEFINE4'
- SYSCALL_DEFINE4(spu_create, const char __user *, name, unsigned int, flags,
- ^~~~~~~~~~~~~~~
-./include/linux/syscalls.h:233:18: error: 'sys_spu_run' alias between functions of incompatible types 'long int(int,  __u32 *, __u32 *)' {aka 'long int(int,  unsigned int *, unsigned int *)'} and 'long int(long int,  long int,  long int)' [-Werror=attribute-alias]
-  asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
-                  ^~~
-./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
-./include/linux/syscalls.h:213:36: note: in expansion of macro 'SYSCALL_DEFINEx'
- #define SYSCALL_DEFINE3(name, ...) SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
-                                    ^~~~~~~~~~~~~~~
-arch/powerpc/platforms/cell/spu_syscalls.c:94:1: note: in expansion of macro 'SYSCALL_DEFINE3'
- SYSCALL_DEFINE3(spu_run,int, fd, __u32 __user *, unpc, __u32 __user *, ustatus)
- ^~~~~~~~~~~~~~~
-./include/linux/syscalls.h:238:18: note: aliased declaration here
-  asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
-                  ^~~~~~~~
-./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
-./include/linux/syscalls.h:213:36: note: in expansion of macro 'SYSCALL_DEFINEx'
- #define SYSCALL_DEFINE3(name, ...) SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
-                                    ^~~~~~~~~~~~~~~
-arch/powerpc/platforms/cell/spu_syscalls.c:94:1: note: in expansion of macro 'SYSCALL_DEFINE3'
- SYSCALL_DEFINE3(spu_run,int, fd, __u32 __user *, unpc, __u32 __user *, ustatus)
- ^~~~~~~~~~~~~~~
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
 ---
- arch/powerpc/platforms/cell/spu_syscalls.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/video/hdmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/platforms/cell/spu_syscalls.c b/arch/powerpc/platforms/cell/spu_syscalls.c
-index 263413a34823..9afc91dfbdcd 100644
---- a/arch/powerpc/platforms/cell/spu_syscalls.c
-+++ b/arch/powerpc/platforms/cell/spu_syscalls.c
-@@ -67,6 +67,8 @@ static inline void spufs_calls_put(struct spufs_calls *calls) { }
+diff --git a/drivers/video/hdmi.c b/drivers/video/hdmi.c
+index 111a0ab..46c184c 100644
+--- a/drivers/video/hdmi.c
++++ b/drivers/video/hdmi.c
+@@ -168,8 +168,8 @@ int hdmi_spd_infoframe_init(struct hdmi_spd_infoframe *frame,
+ 	frame->version = 1;
+ 	frame->length = HDMI_SPD_INFOFRAME_SIZE;
  
- #endif /* CONFIG_SPU_FS_MODULE */
+-	strncpy(frame->vendor, vendor, sizeof(frame->vendor));
+-	strncpy(frame->product, product, sizeof(frame->product));
++	strlcpy(frame->vendor, vendor, sizeof(frame->vendor));
++	strlcpy(frame->product, product, sizeof(frame->product));
  
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wattribute-alias"
- SYSCALL_DEFINE4(spu_create, const char __user *, name, unsigned int, flags,
- 	umode_t, mode, int, neighbor_fd)
- {
-@@ -111,6 +113,7 @@ SYSCALL_DEFINE3(spu_run,int, fd, __u32 __user *, unpc, __u32 __user *, ustatus)
- 	spufs_calls_put(calls);
- 	return ret;
+ 	return 0;
  }
-+#pragma GCC diagnostic pop
- 
- #ifdef CONFIG_COREDUMP
- int elf_coredump_extra_notes_size(void)
 -- 
-2.13.3
+2.7.4
