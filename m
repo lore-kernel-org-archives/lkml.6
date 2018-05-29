@@ -1,57 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935677AbeE2Plk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:41:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43240 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935243AbeE2Pli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:41:38 -0400
-Date: Tue, 29 May 2018 16:42:08 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>, Rob Herring <robh@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/bus: arm-cci: fix build warnings
-Message-ID: <20180529154207.GJ17159@arm.com>
-References: <20180528154228.2403116-1-arnd@arndb.de>
- <0db1b8cd-b695-6cbf-9b27-f632b76bad11@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0db1b8cd-b695-6cbf-9b27-f632b76bad11@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S936508AbeE2Ply (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:41:54 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:39900 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935702AbeE2Plr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:41:47 -0400
+X-Google-Smtp-Source: ADUXVKL5X8cSDrqip4mN217SKLv/PO3Jd4TvnJfi9U5ic5TuxPZPqjlQvuUpofnjwpzq6iI/tY6Xqw==
+From: Thomas Hebb <tommyhebb@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Thomas Hebb <tommyhebb@gmail.com>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Synaptics
+        Berlin SoC support),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH] ARM: dts: berlin: switch to earlycon
+Date: Tue, 29 May 2018 11:41:42 -0400
+Message-Id: <7f67507ad697fc8c6d012f734c4d9a631d1afad1.1527608389.git.tommyhebb@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 04:34:01PM +0100, Robin Murphy wrote:
-> On 28/05/18 16:41, Arnd Bergmann wrote:
-> >When the arm-cci driver is enabled, but both CONFIG_ARM_CCI5xx_PMU and
-> >CONFIG_ARM_CCI400_PMU are not, we get a warning about how parts of
-> >the driver are never used:
-> >
-> >drivers/perf/arm-cci.c:1454:29: error: 'cci_pmu_models' defined but not used [-Werror=unused-variable]
-> >drivers/perf/arm-cci.c:693:16: error: 'cci_pmu_event_show' defined but not used [-Werror=unused-function]
-> >drivers/perf/arm-cci.c:685:16: error: 'cci_pmu_format_show' defined but not used [-Werror=unused-function]
-> >
-> >Marking all three functions as __maybe_unused avoids the warnings in
-> >randconfig builds. I'm doing this lacking any ideas for a better fix.
-> 
-> Yeah, it's a bit of a silly configuration to allow building a driver
-> supporting no PMU types, but I couldn't find a way to enforce "at least one
-> sub-option enabled" logic without introducing mutually-exclusive
-> dependencies which kbuild thinks are recursive.
-> 
-> An alternative would be to remove the CCI400/CCI5x0 configurability
-> altogether - I've not not looked in detail at how much difference that
-> actually makes.
-> 
-> Otherwise, as an immediate quick-fix:
-> 
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+The Synopsys DesignWare 8250 UART in Berlin SoCs is now supported by
+8250_early, so we can use earlycon for early console output instead
+of earlyprintk, which requires an SoC-specific kernel.
 
-I'll pick this one up into the arm perf tree.
+Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
+---
+ arch/arm/boot/dts/berlin2-sony-nsz-gs7.dts        | 2 +-
+ arch/arm/boot/dts/berlin2cd-google-chromecast.dts | 2 +-
+ arch/arm/boot/dts/berlin2q-marvell-dmp.dts        | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Will
+diff --git a/arch/arm/boot/dts/berlin2-sony-nsz-gs7.dts b/arch/arm/boot/dts/berlin2-sony-nsz-gs7.dts
+index 1c475796d17f..f98798bb684f 100644
+--- a/arch/arm/boot/dts/berlin2-sony-nsz-gs7.dts
++++ b/arch/arm/boot/dts/berlin2-sony-nsz-gs7.dts
+@@ -45,7 +45,7 @@
+ 	compatible = "sony,nsz-gs7", "marvell,berlin2", "marvell,berlin";
+ 
+ 	chosen {
+-		bootargs = "earlyprintk";
++		bootargs = "earlycon";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+index ca24def0ce13..20f31cdeaf38 100644
+--- a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
++++ b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+@@ -46,7 +46,7 @@
+ 	compatible = "google,chromecast", "marvell,berlin2cd", "marvell,berlin";
+ 
+ 	chosen {
+-		bootargs = "earlyprintk";
++		bootargs = "earlycon";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/berlin2q-marvell-dmp.dts b/arch/arm/boot/dts/berlin2q-marvell-dmp.dts
+index 57aa5f8a7c77..9834e84a0797 100644
+--- a/arch/arm/boot/dts/berlin2q-marvell-dmp.dts
++++ b/arch/arm/boot/dts/berlin2q-marvell-dmp.dts
+@@ -49,7 +49,7 @@
+ 	};
+ 
+ 	chosen {
+-		bootargs = "earlyprintk";
++		bootargs = "earlycon";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-- 
+2.17.0
