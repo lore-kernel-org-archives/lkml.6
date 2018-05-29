@@ -1,74 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935083AbeE2OWM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:22:12 -0400
-Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38190 "EHLO
+        id S935160AbeE2OWV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:22:21 -0400
+Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38208 "EHLO
         smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934868AbeE2OWH (ORCPT
+        with ESMTP id S934868AbeE2OWN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:22:07 -0400
+        Tue, 29 May 2018 10:22:13 -0400
 From: James Simmons <jsimmons@infradead.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
         Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Lustre Development List <lustre-devel@lists.lustre.org>,
-        James Simmons <uja.ornl@yahoo.com>
-Subject: [PATCH v2 00/25] staging: lustre: libcfs: SMP rework
-Date: Tue, 29 May 2018 10:21:40 -0400
-Message-Id: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
+        Dmitry Eremin <dmitry.eremin@intel.com>,
+        James Simmons <jsimmons@infradead.org>
+Subject: [PATCH v2 03/25] staging: lustre: libcfs: rename variable i to cpu
+Date: Tue, 29 May 2018 10:21:43 -0400
+Message-Id: <1527603725-30560-4-git-send-email-jsimmons@infradead.org>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
+References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Simmons <uja.ornl@yahoo.com>
+From: Dmitry Eremin <dmitry.eremin@intel.com>
 
-Recently lustre support has been expanded to extreme machines with as
-many as a 1000+ cores. On the other end lustre also has been ported
-to platforms like ARM and KNL which have uniquie NUMA and core setup.
-For example some devices exist that have NUMA nodes with no cores.
-With these new platforms the limitations of the Lustre's SMP code
-came to light so a lot of work was needed. This resulted in this
-patch set which has been tested on these platforms.
+Change the name of the variable i used for for_each_cpu() to cpu
+for code readability.
 
-Amir Shehata (8):
-  staging: lustre: libcfs: replace MAX_NUMNODES with nr_node_ids
-  staging: lustre: libcfs: remove excess space
-  staging: lustre: libcfs: replace num_possible_cpus() with nr_cpu_ids
-  staging: lustre: libcfs: NUMA support
-  staging: lustre: libcfs: add cpu distance handling
-  staging: lustre: libcfs: use distance in cpu and node handling
-  staging: lustre: libcfs: provide debugfs files for distance handling
-  staging: lustre: libcfs: invert error handling for cfs_cpt_table_print
+Signed-off-by: Dmitry Eremin <dmitry.eremin@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8703
+Reviewed-on: https://review.whamcloud.com/23303
+Reviewed-by: James Simmons <uja.ornl@yahoo.com>
+Reviewed-by: Doug Oucharek <dougso@me.com>
+Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
+Signed-off-by: James Simmons <jsimmons@infradead.org>
+---
+Changelog:
 
-Dmitry Eremin (15):
-  staging: lustre: libcfs: remove useless CPU partition code
-  staging: lustre: libcfs: rename variable i to cpu
-  staging: lustre: libcfs: fix libcfs_cpu coding style
-  staging: lustre: libcfs: use int type for CPT identification.
-  staging: lustre: libcfs: rename i to node for cfs_cpt_set_nodemask
-  staging: lustre: libcfs: rename i to cpu for cfs_cpt_bind
-  staging: lustre: libcfs: rename cpumask_var_t variables to *_mask
-  staging: lustre: libcfs: rename goto label in cfs_cpt_table_print
-  staging: lustre: libcfs: update debug messages
-  staging: lustre: libcfs: make tolerant to offline CPUs and empty NUMA nodes
-  staging: lustre: libcfs: report NUMA node instead of just node
-  staging: lustre: libcfs: update debug messages in CPT code
-  staging: lustre: libcfs: rework CPU pattern parsing code
-  staging: lustre: libcfs: change CPT estimate algorithm
-  staging: lustre: ptlrpc: use current CPU instead of hardcoded 0
+v1) Initial patch
+v2) Rebased to handle recent cleanups in libcfs
 
-James Simmons (2):
-  staging: lustre: libcfs: restore UMP handling
-  staging: lustre: libcfs: properly handle failure cases in SMP code
+ drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
- .../lustre/include/linux/libcfs/libcfs_cpu.h       | 225 +++--
- drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c    | 965 +++++++++++----------
- drivers/staging/lustre/lnet/libcfs/module.c        |  57 ++
- drivers/staging/lustre/lnet/lnet/lib-msg.c         |   2 +
- drivers/staging/lustre/lustre/ptlrpc/service.c     |  11 +-
- 5 files changed, 728 insertions(+), 532 deletions(-)
-
+diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
+index 951a9ca..34df7ed 100644
+--- a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
++++ b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
+@@ -340,7 +340,7 @@ struct cfs_cpt_table *
+ cfs_cpt_set_cpumask(struct cfs_cpt_table *cptab, int cpt,
+ 		    const cpumask_t *mask)
+ {
+-	int i;
++	int cpu;
+ 
+ 	if (!cpumask_weight(mask) ||
+ 	    cpumask_any_and(mask, cpu_online_mask) >= nr_cpu_ids) {
+@@ -349,8 +349,8 @@ struct cfs_cpt_table *
+ 		return 0;
+ 	}
+ 
+-	for_each_cpu(i, mask) {
+-		if (!cfs_cpt_set_cpu(cptab, cpt, i))
++	for_each_cpu(cpu, mask) {
++		if (!cfs_cpt_set_cpu(cptab, cpt, cpu))
+ 			return 0;
+ 	}
+ 
+@@ -362,10 +362,10 @@ struct cfs_cpt_table *
+ cfs_cpt_unset_cpumask(struct cfs_cpt_table *cptab, int cpt,
+ 		      const cpumask_t *mask)
+ {
+-	int i;
++	int cpu;
+ 
+-	for_each_cpu(i, mask)
+-		cfs_cpt_unset_cpu(cptab, cpt, i);
++	for_each_cpu(cpu, mask)
++		cfs_cpt_unset_cpu(cptab, cpt, cpu);
+ }
+ EXPORT_SYMBOL(cfs_cpt_unset_cpumask);
+ 
 -- 
 1.8.3.1
