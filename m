@@ -1,107 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965495AbeE2RZd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 13:25:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49036 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965424AbeE2RZc (ORCPT
+        id S965356AbeE2R1S (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 13:27:18 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34730 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937187AbeE2R1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 13:25:32 -0400
-Date: Tue, 29 May 2018 19:25:26 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: changbin.du@intel.com, akpm@linux-foundation.org, tglx@linutronix.de,
-        pombredanne@nexb.com, neilb@suse.com, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] scripts/faddr2line: show the code context
-Message-ID: <20180529172526.GX12235@hirez.programming.kicks-ass.net>
-References: <1521444205-2259-1-git-send-email-changbin.du@intel.com>
- <20180529160332.GD12258@hirez.programming.kicks-ass.net>
- <20180529162636.GW12235@hirez.programming.kicks-ass.net>
- <20180529170710.q33dcw5l7a4bwd4t@treble>
- <20180529172430.GB12180@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529172430.GB12180@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Tue, 29 May 2018 13:27:14 -0400
+X-Google-Smtp-Source: AB8JxZrmq5rzdrQsw07Jci8S7LfyyIW3y24YMCWniTzvim2tzzPLkDXICedHu5fkjJwenRFuxoj4OA==
+From: Jeffrin Jose T <ahiliation@gmail.com>
+To: shuah@kernel.org, kstewart@linuxfoundation.org, tglx@linutronix.de,
+        pombredanne@nexb.com, gregkh@linuxfoundation.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrin Jose T <ahiliation@gmail.com>
+Subject: [PATCH] [RESEND] selftest: intel_pstate: debug support message from aperf.c and return value fix.
+Date: Tue, 29 May 2018 22:54:36 +0530
+Message-Id: <20180529172436.4432-1-ahiliation@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 07:24:30PM +0200, Peter Zijlstra wrote:
-> From: Peter Zijlstra (Intel) <peterz@infraded.org>
+Additional message along with an error message which is more
+verbose for debug support from aperf.c and updated with the
+new return value "KSFT_SKIP".
 
-Shees, you'd figure I could type my own email address by now..
+Signed-off-by: Jeffrin Jose T [Rajagiri SET] <ahiliation@gmail.com>
+---
+ tools/testing/selftests/intel_pstate/aperf.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-From: Peter Zijlstra (Intel) <peterz@infradead.org>
-
-> 
-> Commit 6870c0165feaa5 ("scripts/faddr2line: show the code context")
-> radically altered the output format of the faddr2line tool. And while
-> the new list output format might have merrit it broke my vim usage and
-> was hard to read.
-> 
-> Make the new format optional; using a '--list' argument and attempt to
-> make the output slightly easier to read by adding a little whitespace to
-> separate the different files and explicitly mark the line in question.
-> 
-> Cc: Changbin Du <changbin.du@intel.com>
-> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> Fixes: 6870c0165feaa5 ("scripts/faddr2line: show the code context")
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  scripts/faddr2line | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/scripts/faddr2line b/scripts/faddr2line
-> index 1876a741087c..a0149db00be7 100755
-> --- a/scripts/faddr2line
-> +++ b/scripts/faddr2line
-> @@ -56,7 +56,7 @@ command -v ${SIZE} >/dev/null 2>&1 || die "size isn't installed"
->  command -v ${NM} >/dev/null 2>&1 || die "nm isn't installed"
->  
->  usage() {
-> -	echo "usage: faddr2line <object file> <func+offset> <func+offset>..." >&2
-> +	echo "usage: faddr2line [--list] <object file> <func+offset> <func+offset>..." >&2
->  	exit 1
->  }
->  
-> @@ -166,15 +166,25 @@ __faddr2line() {
->  		local file_lines=$(${ADDR2LINE} -fpie $objfile $addr | sed "s; $dir_prefix\(\./\)*; ;")
->  		[[ -z $file_lines ]] && return
->  
-> +		if [[ $LIST = 0 ]]; then
-> +			echo "$file_lines" | while read -r line
-> +			do
-> +				echo $line
-> +			done
-> +			DONE=1;
-> +			return
-> +		fi
-> +
->  		# show each line with context
->  		echo "$file_lines" | while read -r line
->  		do
-> +			echo
->  			echo $line
->  			n=$(echo $line | sed 's/.*:\([0-9]\+\).*/\1/g')
->  			n1=$[$n-5]
->  			n2=$[$n+5]
->  			f=$(echo $line | sed 's/.*at \(.\+\):.*/\1/g')
-> -			awk 'NR>=strtonum("'$n1'") && NR<=strtonum("'$n2'") {printf("%d\t%s\n", NR, $0)}' $f
-> +			awk 'NR>=strtonum("'$n1'") && NR<=strtonum("'$n2'") { if (NR=='$n') printf(">%d<", NR); else printf(" %d ", NR); printf("\t%s\n", $0)}' $f
->  		done
->  
->  		DONE=1
-> @@ -185,6 +195,10 @@ __faddr2line() {
->  [[ $# -lt 2 ]] && usage
->  
->  objfile=$1
-> +
-> +LIST=0
-> +[[ "$objfile" == "--list" ]] && LIST=1 && shift && objfile=$1
-> +
->  [[ ! -f $objfile ]] && die "can't find objfile $objfile"
->  shift
->  
+diff --git a/tools/testing/selftests/intel_pstate/aperf.c b/tools/testing/selftests/intel_pstate/aperf.c
+index d21edea9c560..f6cd03a87493 100644
+--- a/tools/testing/selftests/intel_pstate/aperf.c
++++ b/tools/testing/selftests/intel_pstate/aperf.c
+@@ -9,6 +9,8 @@
+ #include <sys/timeb.h>
+ #include <sched.h>
+ #include <errno.h>
++#include <string.h>
++#include "../kselftest.h"
+ 
+ void usage(char *name) {
+ 	printf ("Usage: %s cpunum\n", name);
+@@ -41,8 +43,8 @@ int main(int argc, char **argv) {
+ 	fd = open(msr_file_name, O_RDONLY);
+ 
+ 	if (fd == -1) {
+-		perror("Failed to open");
+-		return 1;
++		printf("/dev/cpu/%d/msr: %s\n", cpu, strerror(errno));
++		return KSFT_SKIP;
+ 	}
+ 
+ 	CPU_ZERO(&cpuset);
+-- 
+2.17.0
