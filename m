@@ -1,39 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965099AbeE2O7x (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:59:53 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41762 "EHLO
+        id S935753AbeE2PAD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:00:03 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42136 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965048AbeE2O7p (ORCPT
+        with ESMTP id S935773AbeE2O76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:59:45 -0400
+        Tue, 29 May 2018 10:59:58 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Agrawal@sirena.org.uk, Akshu <Akshu.Agrawal@amd.com>
-Cc: Akshu Agrawal <akshu.agrawal@amd.com>,
-        Daniel Kurtz <djkurtz@chromium.org>, Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        djkurtz@chromium.org, Mark Brown <broonie@kernel.org>,
-        "Mukunda,, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>, akshu.agrawal@amd.com,
-        Guenter Roeck <linux@roeck-us.net>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: AMD: make channel 1 dma as circular" to the asoc tree
-In-Reply-To: <1527479306-12658-1-git-send-email-akshu.agrawal@amd.com>
-Message-Id: <E1fNg6A-00069N-NV@debutante>
-Date: Tue, 29 May 2018 15:59:42 +0100
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Philipp Zabel <philipp.zabel@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Philipp Zabel <philipp.zabel@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: gpio: Get enable GPIO using GPIO descriptor" to the regulator tree
+In-Reply-To: <20180212131717.27193-4-linus.walleij@linaro.org>
+Message-Id: <E1fNg6N-0006Cf-J8@debutante>
+Date: Tue, 29 May 2018 15:59:55 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: AMD: make channel 1 dma as circular
+   regulator: gpio: Get enable GPIO using GPIO descriptor
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -54,182 +49,193 @@ to this mail.
 Thanks,
 Mark
 
->From 6b116dfb4633a7efce7f96355c2d272d8b16f0fb Mon Sep 17 00:00:00 2001
-From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
-Date: Mon, 28 May 2018 11:48:22 +0800
-Subject: [PATCH] ASoC: AMD: make channel 1 dma as circular
+>From 37bed97f00734ce329495823d9682181028b51e4 Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 14 May 2018 10:06:23 +0200
+Subject: [PATCH] regulator: gpio: Get enable GPIO using GPIO descriptor
 
-channel 1: SYSMEM<->ACP
-channel 2: ACP<->I2S
-Instead of waiting on period interrupt of ch 2 and then starting
-dma on ch1, we make ch1 dma as circular.
-This removes dependency of period granularity on hw pointer.
+We augment the GPIO regulator to get the *enable* regulator
+GPIO line (not the other lines) using a descriptor rather than
+a global number.
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-Tested-by: Daniel Kurtz <djkurtz@chromium.org>
+We then pass this into the regulator core which has been
+prepared to hande enable descriptors in a separate patch.
+
+Switch over the two boardfiles using this facility and clean
+up so we only pass descriptors around.
+
+Cc: Philipp Zabel <philipp.zabel@gmail.com> # HX4700/Magician maintainer
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/acp-pcm-dma.c | 74 +++++--------------------------------
- 1 file changed, 10 insertions(+), 64 deletions(-)
+ arch/arm/mach-pxa/hx4700.c               | 12 +++++++++++-
+ arch/arm/mach-pxa/magician.c             | 11 ++++++++++-
+ drivers/regulator/gpio-regulator.c       | 23 +++++++++++------------
+ include/linux/regulator/gpio-regulator.h |  3 ---
+ 4 files changed, 32 insertions(+), 17 deletions(-)
 
-diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index ac32deaa9541..77203841c535 100644
---- a/sound/soc/amd/acp-pcm-dma.c
-+++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -337,8 +337,7 @@ static void config_acp_dma(void __iomem *acp_mmio,
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index e2e7f247a645..6717a10180eb 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -20,6 +20,7 @@
+ #include <linux/delay.h>
+ #include <linux/fb.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/machine.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/input.h>
+ #include <linux/input/navpoint.h>
+@@ -711,7 +712,6 @@ static struct gpio_regulator_state bq24022_states[] = {
+ static struct gpio_regulator_config bq24022_info = {
+ 	.supply_name = "bq24022",
+ 
+-	.enable_gpio = GPIO72_HX4700_BQ24022_nCHARGE_EN,
+ 	.enable_high = 0,
+ 	.enabled_at_boot = 0,
+ 
+@@ -733,6 +733,15 @@ static struct platform_device bq24022 = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table bq24022_gpiod_table = {
++	.dev_id = "gpio-regulator",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa", GPIO72_HX4700_BQ24022_nCHARGE_EN,
++			    "enable", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ /*
+  * StrataFlash
+  */
+@@ -875,6 +884,7 @@ static void __init hx4700_init(void)
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+ 
++	gpiod_add_lookup_table(&bq24022_gpiod_table);
+ 	platform_add_devices(devices, ARRAY_SIZE(devices));
+ 	pwm_add_table(hx4700_pwm_lookup, ARRAY_SIZE(hx4700_pwm_lookup));
+ 
+diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+index 14c0f80bc9e7..9a5bda3ea194 100644
+--- a/arch/arm/mach-pxa/magician.c
++++ b/arch/arm/mach-pxa/magician.c
+@@ -657,7 +657,6 @@ static struct gpio_regulator_state bq24022_states[] = {
+ static struct gpio_regulator_config bq24022_info = {
+ 	.supply_name		= "bq24022",
+ 
+-	.enable_gpio		= GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
+ 	.enable_high		= 0,
+ 	.enabled_at_boot	= 1,
+ 
+@@ -679,6 +678,15 @@ static struct platform_device bq24022 = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table bq24022_gpiod_table = {
++	.dev_id = "gpio-regulator",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa", GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
++			    "enable", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ /*
+  * fixed regulator for ads7846
+  */
+@@ -1007,6 +1015,7 @@ static void __init magician_init(void)
+ 	regulator_register_always_on(0, "power", pwm_backlight_supply,
+ 		ARRAY_SIZE(pwm_backlight_supply), 5000000);
+ 
++	gpiod_add_lookup_table(&bq24022_gpiod_table);
+ 	platform_add_devices(ARRAY_AND_SIZE(devices));
  }
  
- /* Start a given DMA channel transfer */
--static void acp_dma_start(void __iomem *acp_mmio,
--			  u16 ch_num, bool is_circular)
-+static void acp_dma_start(void __iomem *acp_mmio, u16 ch_num)
- {
- 	u32 dma_ctrl;
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index a86b8997bb54..9d6094c4d71c 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -31,6 +31,7 @@
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/regulator/gpio-regulator.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
+@@ -161,10 +162,6 @@ of_get_gpio_regulator_config(struct device *dev, struct device_node *np,
  
-@@ -369,11 +368,8 @@ static void acp_dma_start(void __iomem *acp_mmio,
- 		break;
- 	}
+ 	of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
  
--	/* enable  for ACP SRAM to/from I2S DMA channel */
--	if (is_circular == true)
--		dma_ctrl |= ACP_DMA_CNTL_0__Circular_DMA_En_MASK;
--	else
--		dma_ctrl &= ~ACP_DMA_CNTL_0__Circular_DMA_En_MASK;
-+	/* circular for both DMA channel */
-+	dma_ctrl |= ACP_DMA_CNTL_0__Circular_DMA_En_MASK;
- 
- 	acp_reg_write(dma_ctrl, acp_mmio, mmACP_DMA_CNTL_0 + ch_num);
- }
-@@ -617,7 +613,6 @@ static int acp_deinit(void __iomem *acp_mmio)
- /* ACP DMA irq handler routine for playback, capture usecases */
- static irqreturn_t dma_irq_handler(int irq, void *arg)
- {
--	u16 dscr_idx;
- 	u32 intr_flag, ext_intr_status;
- 	struct audio_drv_data *irq_data;
- 	void __iomem *acp_mmio;
-@@ -634,33 +629,13 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
- 
- 	if ((intr_flag & BIT(ACP_TO_I2S_DMA_CH_NUM)) != 0) {
- 		valid_irq = true;
--		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_13) ==
--				PLAYBACK_START_DMA_DESCR_CH13)
--			dscr_idx = PLAYBACK_END_DMA_DESCR_CH12;
--		else
--			dscr_idx = PLAYBACK_START_DMA_DESCR_CH12;
--		config_acp_dma_channel(acp_mmio, SYSRAM_TO_ACP_CH_NUM, dscr_idx,
--				       1, 0);
--		acp_dma_start(acp_mmio, SYSRAM_TO_ACP_CH_NUM, false);
+-	config->enable_gpio = of_get_named_gpio(np, "enable-gpio", 0);
+-	if (config->enable_gpio < 0 && config->enable_gpio != -ENOENT)
+-		return ERR_PTR(config->enable_gpio);
 -
- 		snd_pcm_period_elapsed(irq_data->play_i2ssp_stream);
--
- 		acp_reg_write((intr_flag & BIT(ACP_TO_I2S_DMA_CH_NUM)) << 16,
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+ 	/* Fetch GPIOs. - optional property*/
+ 	ret = of_gpio_count(np);
+ 	if ((ret < 0) && (ret != -ENOENT))
+@@ -255,6 +252,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct gpio_regulator_data *drvdata;
+ 	struct regulator_config cfg = { };
++	enum gpiod_flags gflags;
+ 	int ptr, ret, state;
+ 
+ 	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_regulator_data),
+@@ -340,21 +338,22 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	cfg.driver_data = drvdata;
+ 	cfg.of_node = np;
+ 
+-	if (gpio_is_valid(config->enable_gpio)) {
+-		cfg.ena_gpio = config->enable_gpio;
+-		cfg.ena_gpio_initialized = true;
+-	}
+ 	cfg.ena_gpio_invert = !config->enable_high;
+ 	if (config->enabled_at_boot) {
+ 		if (config->enable_high)
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
++			gflags = GPIOD_OUT_HIGH;
+ 		else
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
++			gflags = GPIOD_OUT_LOW;
+ 	} else {
+ 		if (config->enable_high)
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
++			gflags = GPIOD_OUT_LOW;
+ 		else
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
++			gflags = GPIOD_OUT_HIGH;
++	}
++	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "enable", gflags);
++	if (IS_ERR(cfg.ena_gpiod)) {
++		ret = PTR_ERR(cfg.ena_gpiod);
++		goto err_stategpio;
  	}
  
- 	if ((intr_flag & BIT(ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM)) != 0) {
- 		valid_irq = true;
--		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_9) ==
--			PLAYBACK_START_DMA_DESCR_CH9)
--			dscr_idx = PLAYBACK_END_DMA_DESCR_CH8;
--		else
--			dscr_idx = PLAYBACK_START_DMA_DESCR_CH8;
--		config_acp_dma_channel(acp_mmio,
--				       SYSRAM_TO_ACP_BT_INSTANCE_CH_NUM,
--				       dscr_idx, 1, 0);
--		acp_dma_start(acp_mmio, SYSRAM_TO_ACP_BT_INSTANCE_CH_NUM,
--			      false);
- 		snd_pcm_period_elapsed(irq_data->play_i2sbt_stream);
- 		acp_reg_write((intr_flag &
- 			      BIT(ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM)) << 16,
-@@ -669,38 +644,20 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
+ 	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
+diff --git a/include/linux/regulator/gpio-regulator.h b/include/linux/regulator/gpio-regulator.h
+index 19fbd267406d..536cab86f2d5 100644
+--- a/include/linux/regulator/gpio-regulator.h
++++ b/include/linux/regulator/gpio-regulator.h
+@@ -44,8 +44,6 @@ struct gpio_regulator_state {
+ /**
+  * struct gpio_regulator_config - config structure
+  * @supply_name:	Name of the regulator supply
+- * @enable_gpio:	GPIO to use for enable control
+- *			set to -EINVAL if not used
+  * @enable_high:	Polarity of enable GPIO
+  *			1 = Active high, 0 = Active low
+  * @enabled_at_boot:	Whether regulator has been enabled at
+@@ -69,7 +67,6 @@ struct gpio_regulator_state {
+ struct gpio_regulator_config {
+ 	const char *supply_name;
  
- 	if ((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) != 0) {
- 		valid_irq = true;
--		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_15) ==
--				CAPTURE_START_DMA_DESCR_CH15)
--			dscr_idx = CAPTURE_END_DMA_DESCR_CH14;
--		else
--			dscr_idx = CAPTURE_START_DMA_DESCR_CH14;
--		config_acp_dma_channel(acp_mmio, ACP_TO_SYSRAM_CH_NUM, dscr_idx,
--				       1, 0);
--		acp_dma_start(acp_mmio, ACP_TO_SYSRAM_CH_NUM, false);
--
-+		snd_pcm_period_elapsed(irq_data->capture_i2ssp_stream);
- 		acp_reg_write((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) << 16,
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
- 	}
- 
- 	if ((intr_flag & BIT(ACP_TO_SYSRAM_CH_NUM)) != 0) {
- 		valid_irq = true;
--		snd_pcm_period_elapsed(irq_data->capture_i2ssp_stream);
- 		acp_reg_write((intr_flag & BIT(ACP_TO_SYSRAM_CH_NUM)) << 16,
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
- 	}
- 
- 	if ((intr_flag & BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) != 0) {
- 		valid_irq = true;
--		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_11) ==
--			CAPTURE_START_DMA_DESCR_CH11)
--			dscr_idx = CAPTURE_END_DMA_DESCR_CH10;
--		else
--			dscr_idx = CAPTURE_START_DMA_DESCR_CH10;
--		config_acp_dma_channel(acp_mmio,
--				       ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM,
--				       dscr_idx, 1, 0);
--		acp_dma_start(acp_mmio, ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM,
--			      false);
-+		snd_pcm_period_elapsed(irq_data->capture_i2sbt_stream);
- 		acp_reg_write((intr_flag &
- 			      BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) << 16,
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
-@@ -708,7 +665,6 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
- 
- 	if ((intr_flag & BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) != 0) {
- 		valid_irq = true;
--		snd_pcm_period_elapsed(irq_data->capture_i2sbt_stream);
- 		acp_reg_write((intr_flag &
- 			      BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) << 16,
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
-@@ -1015,14 +971,10 @@ static int acp_dma_prepare(struct snd_pcm_substream *substream)
- static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
- {
- 	int ret;
--	u32 loops = 4000;
- 	u64 bytescount = 0;
- 
- 	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct snd_soc_pcm_runtime *prtd = substream->private_data;
- 	struct audio_substream_data *rtd = runtime->private_data;
--	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
--								    DRV_NAME);
- 
- 	if (!rtd)
- 		return -EINVAL;
-@@ -1034,18 +986,12 @@ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
- 		if (rtd->bytescount == 0)
- 			rtd->bytescount = bytescount;
- 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--			acp_dma_start(rtd->acp_mmio, rtd->ch1, false);
--			while (acp_reg_read(rtd->acp_mmio, mmACP_DMA_CH_STS) &
--				BIT(rtd->ch1)) {
--				if (!loops--) {
--					dev_err(component->dev,
--						"acp dma start timeout\n");
--					return -ETIMEDOUT;
--				}
--				cpu_relax();
--			}
-+			acp_dma_start(rtd->acp_mmio, rtd->ch1);
-+			acp_dma_start(rtd->acp_mmio, rtd->ch2);
-+		} else {
-+			acp_dma_start(rtd->acp_mmio, rtd->ch2);
-+			acp_dma_start(rtd->acp_mmio, rtd->ch1);
- 		}
--		acp_dma_start(rtd->acp_mmio, rtd->ch2, true);
- 		ret = 0;
- 		break;
- 	case SNDRV_PCM_TRIGGER_STOP:
+-	int enable_gpio;
+ 	unsigned enable_high:1;
+ 	unsigned enabled_at_boot:1;
+ 	unsigned startup_delay;
 -- 
 2.17.0
