@@ -1,41 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933513AbeE2L4K (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 07:56:10 -0400
-Received: from 8bytes.org ([81.169.241.247]:46974 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933174AbeE2L4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S933542AbeE2L4X (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 07:56:23 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:33482 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933424AbeE2L4H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 May 2018 07:56:07 -0400
-Date: Tue, 29 May 2018 13:56:05 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
-        sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
-        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/9] iommu/vt-d: Improve PASID id and table management
-Message-ID: <20180529115605.GI18595@8bytes.org>
-References: <1525398084-28815-1-git-send-email-baolu.lu@linux.intel.com>
- <20180515141101.GF18595@8bytes.org>
- <5AFBE53C.2070604@linux.intel.com>
+X-Google-Smtp-Source: ADUXVKIV2fXXR77nHtFOIeJWFCVJrfHTXJBhGB+ACvZmAU2s1Be9couOPDhJHNSvtczbKgYmr/eurNAY1zaHVRd3LVQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5AFBE53C.2070604@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <09fb3fe7-d703-43f1-74f7-f8cb5ff1f67a@arm.com>
+References: <20180511235807.30834-1-jeremy.linton@arm.com> <20180517170523.h7tuvbzdfluuidcz@armageddon.cambridge.arm.com>
+ <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com> <09fb3fe7-d703-43f1-74f7-f8cb5ff1f67a@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 May 2018 13:56:05 +0200
+X-Google-Sender-Auth: cmJXcZSbPlmCYNfjITfUYk61dP8
+Message-ID: <CAMuHMdXgiMeD4uF+j8W+CpNwYYK2W_8xqk_=vGBiW=bUvKeq7w@mail.gmail.com>
+Subject: Re: [PATCH v9 00/12] Support PPTT for ARM64
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>, austinwc@codeaurora.org,
+        tnowicki@caviumnetworks.com, Palmer Dabbelt <palmer@sifive.com>,
+        Will Deacon <Will.Deacon@arm.com>, linux-riscv@lists.infradead.org,
+        Morten.Rasmussen@arm.com, vkilari@codeaurora.org,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, jhugo@codeaurora.org,
+        Al Stone <ahs3@redhat.com>, Len Brown <lenb@kernel.org>,
+        John Garry <john.garry@huawei.com>, wangxiongfeng2@huawei.com,
+        Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 04:01:00PM +0800, Lu Baolu wrote:
-> You are right. System-wide pasid space is necessary, hence PATCH
-> 1~3 implement it. But PATCH 4~9 don't go into the opposite direction,
-> it's designed to address another potential issue.
+Hi Sudeep,
 
-Okay, thanks for the clarification. Please send me a rebased version of
-this after the merge window I will review again.
+On Tue, May 29, 2018 at 1:14 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> On 29/05/18 11:48, Geert Uytterhoeven wrote:
+>> On Thu, May 17, 2018 at 7:05 PM, Catalin Marinas
+>> <catalin.marinas@arm.com> wrote:
+>>> On Fri, May 11, 2018 at 06:57:55PM -0500, Jeremy Linton wrote:
+>>>> Jeremy Linton (12):
+>>>>   drivers: base: cacheinfo: move cache_setup_of_node()
+>>>>   drivers: base: cacheinfo: setup DT cache properties early
+>>>>   cacheinfo: rename of_node to fw_token
+>>>>   arm64/acpi: Create arch specific cpu to acpi id helper
+>>>>   ACPI/PPTT: Add Processor Properties Topology Table parsing
+>>>>   ACPI: Enable PPTT support on ARM64
+>>>>   drivers: base cacheinfo: Add support for ACPI based firmware tables
+>>>>   arm64: Add support for ACPI based firmware tables
+>>>>   arm64: topology: rename cluster_id
+>>>>   arm64: topology: enable ACPI/PPTT based CPU topology
+>>>>   ACPI: Add PPTT to injectable table list
+>>>>   arm64: topology: divorce MC scheduling domain from core_siblings
+>>>
+>>> Queued for 4.18 (without Sudeep's latest property_read_u64 cacheinfo
+>>> patch - http://lkml.kernel.org/r/20180517154701.GA20281@e107155-lin; I
+>>> can add it separately).
+>>
+>> This is now commit 37c3ec2d810f87ea ("arm64: topology: divorce MC
+>> scheduling domain from core_siblings") in arm64/for-next/core, causing
+>> system suspend on big.LITTLE systems to hang after shutting down the first
+>> CPU:
+>>
+>>     $ echo mem > /sys/power/state
+>>     PM: suspend entry (deep)
+>>     PM: Syncing filesystems ... done.
+>>     Freezing user space processes ... (elapsed 0.001 seconds) done.
+>>     OOM killer disabled.
+>>     Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+>>     Disabling non-boot CPUs ...
+>>     CPU1: shutdown
+>>     psci: CPU1 killed.
+>>
+>
+> Is it OK to assume the suspend failed just after shutting down one CPU
+> or it's failing during resume ? It depends on whether you had console
+> disabled or not.
 
+I have no-console-suspend enabled.
+It's failing during suspend, the next lines should be:
 
-Thanks,
+    CPU2: shutdown
+    psci: CPU2 killed.
+    ...
 
-	Joerg
+>> For me, it fails on the following big.LITTLE systems:
+>>
+>>     R-Car H3 ES2.0 (4xCA57 + 4xCA53)
+>>     R-Car M3-W (2xCA57 + 4xCA53)
+>>
+>
+> Interesting, is it PSCI based system suspend ?
+
+Yes it is.
+
+Suspend-to-idle, which doesn't offline CPUs, still works.
+
+>> System supend still works fine on systems with big cores only:
+>>
+>>     R-Car H3 ES1.0 (4xCA57 (4xCA53 disabled in firmware))
+>>     R-Car M3-N (2xCA57)
+>>
+>> Reverting this commit fixes the issue for me.
+>
+> I can't find anything that relates to system suspend in these patches
+> unless they are messing with something during CPU hot plug-in back
+> during resume.
+
+It's only the last patch that introduces the breakage.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
