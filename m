@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933187AbeE2KEr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:04:47 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40330 "EHLO
+        id S933197AbeE2KEw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:04:52 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54773 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933146AbeE2KEf (ORCPT
+        with ESMTP id S933157AbeE2KEh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:04:35 -0400
-X-Google-Smtp-Source: ADUXVKInPfiT5E08mwa05atlCtkdC9jv2gdESxSgm1xjpp4CXksPDmMOR9EuCK7z+t2hX/AkBD7KFQ==
+        Tue, 29 May 2018 06:04:37 -0400
+X-Google-Smtp-Source: AB8JxZoUmLU2Qxs3zDSRshLWegb/wHhLEQDZKm9FgRfhKMHuXHEncGNVpvhTmO+4ay3TZw6CBHNLCQ==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
 Cc: Ulf Hansson <ulf.hansson@linaro.org>,
@@ -19,10 +19,11 @@ Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 4/9] PM / Domains: Drop unused parameter in genpd_allocate_dev_data()
-Date: Tue, 29 May 2018 12:04:16 +0200
-Message-Id: <20180529100421.31022-5-ulf.hansson@linaro.org>
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v2 5/9] PM / Domains: dt: Allow power-domain property to be a list of specifiers
+Date: Tue, 29 May 2018 12:04:17 +0200
+Message-Id: <20180529100421.31022-6-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180529100421.31022-1-ulf.hansson@linaro.org>
 References: <20180529100421.31022-1-ulf.hansson@linaro.org>
@@ -30,34 +31,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The in-parameter struct generic_pm_domain *genpd to
-genpd_allocate_dev_data() is unused, so let's drop it.
+To be able to describe topologies where devices are partitioned across
+multiple power domains, let's extend the power-domain property to allow
+being a list of PM domain specifiers.
 
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Suggested-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/base/power/domain.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index c89b0ad068b7..7ebf7993273a 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -1316,7 +1316,6 @@ EXPORT_SYMBOL_GPL(pm_genpd_syscore_poweron);
- #endif /* CONFIG_PM_SLEEP */
+Changes in v2:
+	- Fixed comments from Geert. Re-worded to "PM domain specifiers" and
+	clarified DT example.
+
+---
+ .../bindings/power/power_domain.txt           | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
+index 4733f76cbe48..9b387f861aed 100644
+--- a/Documentation/devicetree/bindings/power/power_domain.txt
++++ b/Documentation/devicetree/bindings/power/power_domain.txt
+@@ -111,8 +111,8 @@ Example 3:
+ ==PM domain consumers==
  
- static struct generic_pm_domain_data *genpd_alloc_dev_data(struct device *dev,
--					struct generic_pm_domain *genpd,
- 					struct gpd_timing_data *td)
- {
- 	struct generic_pm_domain_data *gpd_data;
-@@ -1385,7 +1384,7 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
- 	if (IS_ERR_OR_NULL(genpd) || IS_ERR_OR_NULL(dev))
- 		return -EINVAL;
+ Required properties:
+- - power-domains : A phandle and PM domain specifier as defined by bindings of
+-                   the power controller specified by phandle.
++ - power-domains : A list of PM domain specifiers, as defined by bindings of
++		the power controller that is the PM domain provider.
  
--	gpd_data = genpd_alloc_dev_data(dev, genpd, td);
-+	gpd_data = genpd_alloc_dev_data(dev, td);
- 	if (IS_ERR(gpd_data))
- 		return PTR_ERR(gpd_data);
+ Example:
  
+@@ -122,9 +122,18 @@ Example:
+ 		power-domains = <&power 0>;
+ 	};
+ 
+-The node above defines a typical PM domain consumer device, which is located
+-inside a PM domain with index 0 of a power controller represented by a node
+-with the label "power".
++	leaky-device@12351000 {
++		compatible = "foo,i-leak-current";
++		reg = <0x12351000 0x1000>;
++		power-domains = <&power 0>, <&power 1> ;
++	};
++
++The first example above defines a typical PM domain consumer device, which is
++located inside a PM domain with index 0 of a power controller represented by a
++node with the label "power".
++In the second example the consumer device are partitioned across two PM domains,
++the first with index 0 and the second with index 1, of a power controller that
++is represented by a node with the label "power.
+ 
+ Optional properties:
+ - required-opps: This contains phandle to an OPP node in another device's OPP
 -- 
 2.17.0
