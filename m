@@ -1,106 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936519AbeE2OrJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:47:09 -0400
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:56234 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936662AbeE2Oqo (ORCPT
+        id S964793AbeE2Ord (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:47:33 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49112 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935764AbeE2OrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:46:44 -0400
-X-Google-Smtp-Source: ADUXVKIlI2VQ0pAyEcl/ArskIU5cuMAGcbQh0f6dE+xNoe3pJW86VfVEMQ6tQReyWXcsOLR40t4rzA==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 23/28] ovl: Set redirect on upper inode when it is linked
-Date: Tue, 29 May 2018 16:46:07 +0200
-Message-Id: <20180529144612.16675-24-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
-References: <20180529144612.16675-1-mszeredi@redhat.com>
+        Tue, 29 May 2018 10:47:24 -0400
+Date: Tue, 29 May 2018 15:47:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 10/19 v3] regulator: s2mps11: Pass descriptor instead of
+ GPIO number
+Message-ID: <20180529144720.GI23509@sirena.org.uk>
+References: <20180514080640.12515-1-linus.walleij@linaro.org>
+ <20180526100243.GA1564@sirena.org.uk>
+ <CACRpkdZFrFuNnP=uJyREckr8EXW6L2ku+=QwVA7Tva3CpfrpCQ@mail.gmail.com>
+ <CGME20180528112908eucas1p2946a9b6385fcaf6c19921c9767420405@eucas1p2.samsung.com>
+ <2026891.KGZ2uNuXyI@amdc3058>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="nO3oAMapP4dBpMZi"
+Content-Disposition: inline
+In-Reply-To: <2026891.KGZ2uNuXyI@amdc3058>
+X-Cookie: Variables don't
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivek Goyal <vgoyal@redhat.com>
 
-When we create a hardlink to a metacopy upper file, first the redirect on
-that inode.  Path based lookup will not work with newly created link and
-redirect will solve that issue.
+--nO3oAMapP4dBpMZi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Also use absolute redirect as two hardlinks could be in different
-directores and relative redirect will not work.
+On Mon, May 28, 2018 at 01:29:07PM +0200, Bartlomiej Zolnierkiewicz wrote:
 
-I have not put any additional locking around setting redirects while
-introducing redirects for non-dir files.  For now it feels like existing
-locking is sufficient.  If that's not the case, we will have add more
-locking.  Following is my rationale about why do I think current locking
-seems ok.
+> I've also tested the new code (with fixup) on Artik5 board (which
+> actually uses GPIO properties) and discovered the other problem,
+> the GPIO core code doesn't handle shared GPIOs which are used by
+> many platforms.
 
-Basic problem for non-dir files is that more than on dentry could be
-pointing to same inode and in theory only relying on dentry based locks
-(d->d_lock) did not seem sufficient.
+If the GPIO code is moved to use the regulator API GPIO support that
+should hopefully deal with it (or we have a lot more boards with
+problems).
 
-We set redirect upon rename and upon link creation.  In both the paths for
-non-dir file, VFS locks both source and target inodes (->i_rwsem).  That
-means vfs rename and link operations on same source and target can't he
-happening in parallel (Even if there are multiple dentries pointing to same
-inode).  So that probably means that at a time on an inode, only one call
-of ovl_set_redirect() could be working and we don't need additional locking
-in ovl_set_redirect().
+--nO3oAMapP4dBpMZi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-ovl_inode->redirect is initialized only when inode is created new.  That
-means it should not race with any other path and setting
-ovl_inode->redirect should be fine.
+-----BEGIN PGP SIGNATURE-----
 
-Reading of ovl_inode->redirect happens in ovl_get_redirect() path.  And
-this called only in ovl_set_redirect().  And ovl_set_redirect() already
-seemed to be protected using ->i_rwsem.  That means ovl_set_redirect() and
-ovl_get_redirect() on source/target inode should not make progress in
-parallel and is mutually exclusive.  Hence no additional locking required.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsNZ/cACgkQJNaLcl1U
+h9CQvAf+JXWL9Rylcy3kh40Nn6bBLR+zqVNyElRktkpAmSbklSnL77rwpjbPUhYV
+xAu6vdjDp/RfrSeENiE6VdB8eMSHc5h3dLMObS4GXTrpIFDRmqE7Gjpw+52KS1dI
+R6gCTO+hSKC/WfNdwe5L8c3QXG2DbVqOgZI/c9ni/M0RltXPne2lORrPcCD1w+nm
+gHN4DsxaXszPMU06gsYwdC6M0m8ISXPknluHmVI37Z/VM2xHTsiW1oOIwssU0rCG
+ZspLKpNWRF151HBAlEEbI3it1h7VehRcSN5t+5kIYfX18li8s3BzqNb5zDUtAfmg
+8R5clcPS9QdkLYzkHfejWxt5SixL9Q==
+=KJk3
+-----END PGP SIGNATURE-----
 
-Now, only case where ovl_set_redirect() and ovl_get_redirect() could race
-seems to be case of absolute redirects where ovl_get_redirect() has to
-travel up the tree.  In that case we already take d->d_lock and that should
-be sufficient as directories will not have multiple dentries pointing to
-same inode.
-
-So given VFS locking and current usage of redirect, current locking around
-redirect seems to be ok for non-dir as well.  Once we have the logic to
-remove redirect when metacopy file gets copied up, then we probably will
-need additional locking.
-
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/overlayfs/dir.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 1658961a9762..7063e0f588cc 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -24,6 +24,8 @@ module_param_named(redirect_max, ovl_redirect_max, ushort, 0644);
- MODULE_PARM_DESC(ovl_redirect_max,
- 		 "Maximum length of absolute redirect xattr value");
- 
-+static int ovl_set_redirect(struct dentry *dentry, bool samedir);
-+
- int ovl_cleanup(struct inode *wdir, struct dentry *wdentry)
- {
- 	int err;
-@@ -656,6 +658,12 @@ static int ovl_link(struct dentry *old, struct inode *newdir,
- 	if (err)
- 		goto out_drop_write;
- 
-+	if (ovl_is_metacopy_dentry(old)) {
-+		err = ovl_set_redirect(old, false);
-+		if (err)
-+			goto out_drop_write;
-+	}
-+
- 	err = ovl_nlink_start(old, &locked);
- 	if (err)
- 		goto out_drop_write;
--- 
-2.14.3
+--nO3oAMapP4dBpMZi--
