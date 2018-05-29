@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934883AbeE2N74 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:59:56 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40643 "EHLO huawei.com"
+        id S934904AbeE2OAJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:00:09 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43594 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934533AbeE2N7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:59:50 -0400
+        id S934802AbeE2OAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:00:06 -0400
 From: nixiaoming <nixiaoming@huawei.com>
 To: <catalin.marinas@arm.com>, <will.deacon@arm.com>,
         <ard.biesheuvel@linaro.org>, <marc.zyngier@arm.com>,
@@ -19,9 +19,9 @@ To: <catalin.marinas@arm.com>, <will.deacon@arm.com>,
 CC: <nixiaoming@huawei.com>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <x86@kernel.org>,
         <linux-s390@vger.kernel.org>
-Subject: [PATCH 1/3] arm64:add missing CONFIG_STRICT_KERNEL_RWX for mark_rodata_ro
-Date: Tue, 29 May 2018 21:36:15 +0800
-Message-ID: <20180529133615.26889-1-nixiaoming@huawei.com>
+Subject: [PATCH 3/3] s390:add missing CONFIG_STRICT_KERNEL_RWX for mark_rodata_ro
+Date: Tue, 29 May 2018 21:36:28 +0800
+Message-ID: <20180529133628.27055-1-nixiaoming@huawei.com>
 X-Mailer: git-send-email 2.10.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -31,35 +31,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mark_rodata_ro is only called by the function mark_readonly when
-CONFIG_STRICT_KERNEL_RWX=y,
+mark_rodata_ro is only called by the function mark_readonly
+when CONFIG_STRICT_KERNEL_RWX=y
+
 if CONFIG_STRICT_KERNEL_RWX is not set
 a compile warning may be triggered: unused function
 
 Signed-off-by: nixiaoming <nixiaoming@huawei.com>
 ---
- arch/arm64/mm/mmu.c | 2 ++
+ arch/s390/mm/init.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 2dbb2c9..849f326 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -491,6 +491,7 @@ static void __init map_mem(pgd_t *pgdp)
- #endif
+diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
+index 3fa3e53..a96fc3f 100644
+--- a/arch/s390/mm/init.c
++++ b/arch/s390/mm/init.c
+@@ -116,6 +116,7 @@ void __init paging_init(void)
+ 	free_area_init_nodes(max_zone_pfns);
  }
  
 +#ifdef CONFIG_STRICT_KERNEL_RWX
  void mark_rodata_ro(void)
  {
- 	unsigned long section_size;
-@@ -505,6 +506,7 @@ void mark_rodata_ro(void)
- 
- 	debug_checkwx();
+ 	unsigned long size = __end_ro_after_init - __start_ro_after_init;
+@@ -123,6 +124,7 @@ void mark_rodata_ro(void)
+ 	set_memory_ro((unsigned long)__start_ro_after_init, size >> PAGE_SHIFT);
+ 	pr_info("Write protected read-only-after-init data: %luk\n", size >> 10);
  }
 +#endif
  
- static void __init map_kernel_segment(pgd_t *pgdp, void *va_start, void *va_end,
- 				      pgprot_t prot, struct vm_struct *vma,
+ void __init mem_init(void)
+ {
 -- 
 2.10.1
