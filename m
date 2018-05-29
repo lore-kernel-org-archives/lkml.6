@@ -1,58 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754716AbeE2Grb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 02:47:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54018 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754466AbeE2Gr1 (ORCPT
+        id S1754725AbeE2Gss (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 02:48:48 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:34928 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754466AbeE2Gsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 02:47:27 -0400
-Date: Mon, 28 May 2018 23:47:19 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <christian@brauner.io>
-Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-        gregkh@linuxfoundation.org, mingo@kernel.org,
-        james.morris@microsoft.com, keescook@chromium.org,
-        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, oleg@redhat.com
-Subject: Re: [PATCH 8/8] signal: simplify rt_sigaction()
-Message-ID: <20180529064719.GA14800@infradead.org>
-References: <20180528134916.7568-1-christian@brauner.io>
- <20180528134916.7568-9-christian@brauner.io>
+        Tue, 29 May 2018 02:48:46 -0400
+X-Google-Smtp-Source: ADUXVKLfBVGNzE67smH4PxdQjRABcxedlrbzYiWaK9nwQSfL5O2pcJ/S+0FrJMngrvfgp29c1wQP8p8nJ46hP5trGTI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528134916.7568-9-christian@brauner.io>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <8736yb5jez.wl%kuninori.morimoto.gx@renesas.com>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180427165722.19445-11-kieran.bingham+renesas@ideasonboard.com>
+ <CAMuHMdW6HeWMwRDcn6PLnwzgxvYz-h=jx=1qvYEK9okwqY0itg@mail.gmail.com> <8736yb5jez.wl%kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 May 2018 08:48:43 +0200
+X-Google-Sender-Auth: kcNBHqfAhSy1_bjbdSIMhka9di0
+Message-ID: <CAMuHMdWPFOjT9qk0Z4+-nSTumjhN_Q6Ntwh3__CgBCobquX8Rg@mail.gmail.com>
+Subject: Re: [PATCH v2 10/11] arm64: dts: r8a77965-salvator-x: Enable DU
+ external clocks and HDMI
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +	if (act)
->  		if (copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)))
->  			return -EFAULT;
+Hi Morimoto-san,
 
-	if (act && copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)))
-		return -EFAULT;
+On Tue, May 29, 2018 at 3:44 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+>> > +&hdmi0_con {
+>> > +       remote-endpoint = <&rcar_dw_hdmi0_out>;
+>> > +};
+>>
+>> I think the hdmi0 and hdmi0_con parts can be moved to salvator-common.dtsi.
+>> Can we do that now (with stubs?), or does this have to wait until r8a77965 has
+>> received HDMI sound support?
+>
+> HDMI sound doesn't use hdmi0_con.
+> You can do it now, thanks
 
->  	ret = do_sigaction(sig, act ? &new_sa : NULL, oact ? &old_sa : NULL);
-> -
-> -	if (!ret && oact) {
-> +	if (!ret && oact)
->  		if (copy_to_user(oact, &old_sa.sa, sizeof(old_sa.sa)))
->  			return -EFAULT;
-> -	}
+Thanks, so hdmi0_con can be moved now.
 
-	ret = do_sigaction(sig, act ? &new_sa : NULL, oact ? &old_sa : NULL);
-	if (!ret && oact && copy_to_user(oact, &old_sa.sa, sizeof(old_sa.sa)))
-		return -EFAULT;
+But HDMI sound does use hdmi0/ports/port@2. right?
 
-Althought I'd personaly write it as:
+Gr{oetje,eeting}s,
 
-	ret = do_sigaction(sig, act ? &new_sa : NULL, oact ? &old_sa : NULL);
-	if (ret)
-		return ret;
-	if (oact && copy_to_user(oact, &old_sa.sa, sizeof(old_sa.sa)))
-		return -EFAULT;
-	return 0;
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
