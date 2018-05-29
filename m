@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754844AbeE2HDc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:03:32 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35840 "EHLO
+        id S1754854AbeE2HDw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:03:52 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35837 "EHLO
         mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754780AbeE2HDY (ORCPT
+        with ESMTP id S1754702AbeE2HDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 May 2018 03:03:24 -0400
 From: Vadim Pasternak <vadimp@mellanox.com>
@@ -13,86 +13,276 @@ To: dvhart@infradead.org, andy.shevchenko@gmail.com,
 Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com,
         Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH v4 8/8] Documentation/ABI: Add documentation mlxreg-io sysfs interfaces
-Date: Tue, 29 May 2018 08:59:07 +0000
-Message-Id: <1527584347-167548-3-git-send-email-vadimp@mellanox.com>
+Subject: [PATCH v4 6/8] platform/mellanox: Introduce support for Mellanox register access driver
+Date: Tue, 29 May 2018 08:59:05 +0000
+Message-Id: <1527584347-167548-1-git-send-email-vadimp@mellanox.com>
 X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1527584347-167548-1-git-send-email-vadimp@mellanox.com>
-References: <1527584347-167548-1-git-send-email-vadimp@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for mlxreg-io driver sysfs interfaces for user space
-access to system's power resets control, reset causes monitoring,
-programmable devices version reading and devices selection control.
+Introduce new Mellanox platform driver to allow access to Mellanox
+programmable device register space trough sysfs interface.
+The driver purpose is to provide sysfs interface for user space for the
+registers essential for system control and monitoring.
+The sets of registers for sysfs access are supposed to be defined per
+system type bases and include the registers related to system resets
+operation, system reset causes monitoring and some kinds of mux selection.
 
 Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
 ---
-v4:
- Comments pointed out by Greg:
- Add Documentation/ABI/ entries for the new sysfs files.
+v1->v2:
+ Changed added by Vadim:
+ - Change ---help--- to help in Kconfig, according to new requirements;
+v2->v3:
+ Comments pointed out by Darren:
+ - Remove conditional assignment per attribute mode type, because mode
+   will guard against not permitted access.
+   Verified by Vadim.
 ---
- Documentation/ABI/stable/sysfs-driver-mlxreg-io | 51 +++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
- create mode 100644 Documentation/ABI/stable/sysfs-driver-mlxreg-io
+ drivers/platform/mellanox/Kconfig     |  11 ++
+ drivers/platform/mellanox/Makefile    |   1 +
+ drivers/platform/mellanox/mlxreg-io.c | 203 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 215 insertions(+)
+ create mode 100644 drivers/platform/mellanox/mlxreg-io.c
 
-diff --git a/Documentation/ABI/stable/sysfs-driver-mlxreg-io b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+diff --git a/drivers/platform/mellanox/Kconfig b/drivers/platform/mellanox/Kconfig
+index 591bccd..ddfae9fc 100644
+--- a/drivers/platform/mellanox/Kconfig
++++ b/drivers/platform/mellanox/Kconfig
+@@ -23,4 +23,15 @@ config MLXREG_HOTPLUG
+ 	  This driver handles hot-plug events for the power suppliers, power
+ 	  cables and fans on the wide range Mellanox IB and Ethernet systems.
+ 
++config MLXREG_IO
++	tristate "Mellanox platform register access driver support"
++	depends on REGMAP
++	depends on HWMON
++	help
++	  This driver allows access to Mellanox programmable device register
++	  space trough sysfs interface. The sets of registers for sysfs access
++	  are defined per system type bases and includes the registers related
++	  to system resets operation, system reset causes monitoring and some
++	  kinds of mux selection.
++
+ endif # MELLANOX_PLATFORM
+diff --git a/drivers/platform/mellanox/Makefile b/drivers/platform/mellanox/Makefile
+index 7c8385e..57074d9c 100644
+--- a/drivers/platform/mellanox/Makefile
++++ b/drivers/platform/mellanox/Makefile
+@@ -4,3 +4,4 @@
+ # Mellanox Platform-Specific Drivers
+ #
+ obj-$(CONFIG_MLXREG_HOTPLUG)	+= mlxreg-hotplug.o
++obj-$(CONFIG_MLXREG_IO) += mlxreg-io.o
+diff --git a/drivers/platform/mellanox/mlxreg-io.c b/drivers/platform/mellanox/mlxreg-io.c
 new file mode 100644
-index 0000000..fcd659e
+index 0000000..b85452f
 --- /dev/null
-+++ b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
-@@ -0,0 +1,51 @@
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
-+							cause_aux_pwr_or_ref
-+							cause_asic_thermal
-+							cause_hotswap_or_wd
-+							cause_fw_reset
-+							cause_long_pb
-+							cause_main_pwr_fail
-+							cause_short_pb
-+							cause_sw_reset
-+Date:		May 2018
-+KernelVersion:	4.18
-+Contact:	Vadim Pasternak <vadimpmellanox.com>
-+Description:	These files show the system reset cause, as following: power
-+		auxiliary outage or power refresh, ASIC thermal shutdown,
-+		hotswap or watchdog, firmware reset, long press power button,
-+		short press power button, software reset. Value 1 in file means
-+		this is reset cause, 0 - otherwise. Only one of the above
-+		causes could be 1 at the same time, representing only last
-+		reset cause.
++++ b/drivers/platform/mellanox/mlxreg-io.c
+@@ -0,0 +1,203 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Mellanox register access driver
++ *
++ * Copyright (C) 2018 Mellanox Technologies
++ * Copyright (C) 2018 Vadim Pasternak <vadimp@mellanox.com>
++ */
 +
-+		The files are read only.
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/hwmon.h>
++#include <linux/hwmon-sysfs.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_data/mlxreg.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
 +
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
-+							cpld1_version
-+							cpld2_version
-+Date:		May 2018
-+KernelVersion:	4.18
-+Contact:	Vadim Pasternak <vadimpmellanox.com>
-+Description:	These files show with which CPLD versions have been burned
-+		on carrier and switch boards.
++/* Attribute parameters. */
++#define MLXREG_IO_ATT_SIZE	10
++#define MLXREG_IO_ATT_NUM	48
 +
-+		The files are read only.
++/**
++ * struct mlxreg_io_priv_data - driver's private data:
++ *
++ * @pdev: platform device;
++ * @pdata: platform data;
++ * @hwmon: hwmon device;
++ * @mlxreg_io_attr: sysfs attributes array;
++ * @mlxreg_io_dev_attr: sysfs sensor device attribute array;
++ * @group: sysfs attribute group;
++ * @groups: list of sysfs attribute group for hwmon registration;
++ */
++struct mlxreg_io_priv_data {
++	struct platform_device *pdev;
++	struct mlxreg_core_platform_data *pdata;
++	struct device *hwmon;
++	struct attribute *mlxreg_io_attr[MLXREG_IO_ATT_NUM + 1];
++	struct sensor_device_attribute mlxreg_io_dev_attr[MLXREG_IO_ATT_NUM];
++	struct attribute_group group;
++	const struct attribute_group *groups[2];
++};
 +
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/select_iio
-+Date:		May 2018
-+KernelVersion:	4.18
-+Contact:	Vadim Pasternak <vadimpmellanox.com>
-+Description:	This file allows iio devices selection.
++static ssize_t
++mlxreg_io_attr_show(struct device *dev, struct device_attribute *attr,
++		    char *buf)
++{
++	struct mlxreg_io_priv_data *priv = dev_get_drvdata(dev);
++	int index = to_sensor_dev_attr(attr)->index;
++	struct mlxreg_core_data *data = priv->pdata->data + index;
++	u32 regval = 0;
++	int ret;
 +
-+		The file is read/write.
++	ret = regmap_read(priv->pdata->regmap, data->reg, &regval);
++	if (ret)
++		goto access_error;
 +
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/psu1_on
-+		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/psu2_on
-+		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/pwr_cycle
-+Date:		May 2018
-+KernelVersion:	4.18
-+Contact:	Vadim Pasternak <vadimpmellanox.com>
-+Description:	These files allow assert system's power cycling and PS units
-+		on/off switching.
++	if (!data->bit)
++		regval = !!(regval & ~data->mask);
 +
-+		The files are write only.
++	return sprintf(buf, "%u\n", regval);
++
++access_error:
++	return ret;
++}
++
++static ssize_t
++mlxreg_io_attr_store(struct device *dev, struct device_attribute *attr,
++		     const char *buf, size_t len)
++{
++	struct mlxreg_io_priv_data *priv = dev_get_drvdata(dev);
++	int index = to_sensor_dev_attr(attr)->index;
++	struct mlxreg_core_data *data = priv->pdata->data + index;
++	u32 val, regval;
++	int ret;
++
++	ret = kstrtou32(buf, MLXREG_IO_ATT_SIZE, &val);
++	if (ret)
++		return ret;
++
++	ret = regmap_read(priv->pdata->regmap, data->reg, &regval);
++	if (ret)
++		goto access_error;
++
++	regval &= data->mask;
++
++	val = !!val;
++	if (val)
++		regval |= ~data->mask;
++	else
++		regval &= data->mask;
++
++	ret = regmap_write(priv->pdata->regmap, data->reg, regval);
++	if (ret)
++		goto access_error;
++
++	return len;
++
++access_error:
++	dev_err(&priv->pdev->dev, "Bus access error\n");
++	return ret;
++}
++
++static struct device_attribute mlxreg_io_devattr_rw = {
++	.show	= mlxreg_io_attr_show,
++	.store	= mlxreg_io_attr_store,
++};
++
++static int mlxreg_io_attr_init(struct mlxreg_io_priv_data *priv)
++{
++	int i;
++
++	priv->group.attrs = devm_kzalloc(&priv->pdev->dev,
++					 priv->pdata->counter *
++					 sizeof(struct attribute *),
++					 GFP_KERNEL);
++	if (!priv->group.attrs)
++		return -ENOMEM;
++
++	for (i = 0; i < priv->pdata->counter; i++) {
++		priv->mlxreg_io_attr[i] =
++				&priv->mlxreg_io_dev_attr[i].dev_attr.attr;
++		memcpy(&priv->mlxreg_io_dev_attr[i].dev_attr,
++		       &mlxreg_io_devattr_rw, sizeof(struct device_attribute));
++
++		/* Set attribute name as a label. */
++		priv->mlxreg_io_attr[i]->name =
++				devm_kasprintf(&priv->pdev->dev, GFP_KERNEL,
++					       priv->pdata->data[i].label);
++
++		if (!priv->mlxreg_io_attr[i]->name) {
++			dev_err(&priv->pdev->dev, "Memory allocation failed for sysfs attribute %d.\n",
++				i + 1);
++			return -ENOMEM;
++		}
++
++		priv->mlxreg_io_dev_attr[i].dev_attr.attr.mode =
++						priv->pdata->data[i].mode;
++		priv->mlxreg_io_dev_attr[i].dev_attr.attr.name =
++					priv->mlxreg_io_attr[i]->name;
++		priv->mlxreg_io_dev_attr[i].index = i;
++		sysfs_attr_init(&priv->mlxreg_io_dev_attr[i].dev_attr.attr);
++	}
++
++	priv->group.attrs = priv->mlxreg_io_attr;
++	priv->groups[0] = &priv->group;
++	priv->groups[1] = NULL;
++
++	return 0;
++}
++
++static int mlxreg_io_probe(struct platform_device *pdev)
++{
++	struct mlxreg_io_priv_data *priv;
++	int err;
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->pdata = dev_get_platdata(&pdev->dev);
++	if (!priv->pdata) {
++		dev_err(&pdev->dev, "Failed to get platform data.\n");
++		return -EINVAL;
++	}
++
++	priv->pdev = pdev;
++
++	err = mlxreg_io_attr_init(priv);
++	if (err) {
++		dev_err(&priv->pdev->dev, "Failed to allocate attributes: %d\n",
++			err);
++		return err;
++	}
++
++	priv->hwmon = devm_hwmon_device_register_with_groups(&pdev->dev,
++							     "mlxreg_io",
++							      priv,
++							      priv->groups);
++	if (IS_ERR(priv->hwmon)) {
++		dev_err(&pdev->dev, "Failed to register hwmon device %ld\n",
++			PTR_ERR(priv->hwmon));
++		return PTR_ERR(priv->hwmon);
++	}
++
++	dev_set_drvdata(&pdev->dev, priv);
++
++	return 0;
++}
++
++static struct platform_driver mlxreg_io_driver = {
++	.driver = {
++	    .name = "mlxreg-io",
++	},
++	.probe = mlxreg_io_probe,
++};
++
++module_platform_driver(mlxreg_io_driver);
++
++MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
++MODULE_DESCRIPTION("Mellanox regmap I/O access driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:mlxreg-io");
 -- 
 2.1.4
