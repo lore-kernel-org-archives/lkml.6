@@ -1,106 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965226AbeE2QkN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:40:13 -0400
-Received: from mga11.intel.com ([192.55.52.93]:18535 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935486AbeE2QkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:40:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
-   d="scan'208";a="60064591"
-Subject: Re: [RFC PATCH 00/16] x86/split_lock: Enable #AC exception for split
- locked accesses
-To: Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
-Cc: Ashok Raj <ashok.raj@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>, Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <b4d3e2d0-dfb1-fa1d-8430-0bcb124063e5@intel.com>
-Date: Tue, 29 May 2018 09:40:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S936915AbeE2Qkl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:40:41 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36872 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936494AbeE2Qkj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 12:40:39 -0400
+X-Google-Smtp-Source: ADUXVKJZZ/AuOMQikpFzIPNWiZDoxWTTVYpkrmGmdLLm1L9xT5QhqXeKHqbiG9Tr/mmL+H4968Wi2A==
+Date: Tue, 29 May 2018 10:40:32 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
+Cc: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] IB/mad: Use ID allocator routines to allocate agent
+ number
+Message-ID: <20180529164032.GB18457@ziepe.ca>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+ <20180529154922.GA18457@ziepe.ca>
+ <A470D739-D0CD-42EE-9196-8E7610B6DAF4@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <A470D739-D0CD-42EE-9196-8E7610B6DAF4@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/27/2018 08:45 AM, Fenghua Yu wrote:
-> A split lock is any atomic operation whose operand crosses two cache
-> lines. Since the operand spans two cache lines and the operation must
-> be atomic, the system locks the bus while the CPU accesses the two cache
-> lines.
+On Tue, May 29, 2018 at 06:16:14PM +0200, Håkon Bugge wrote:
+>
+> > On 29 May 2018, at 17:49, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > 
+> > On Tue, May 29, 2018 at 09:38:08AM +0200, Hans Westgaard Ry wrote:
+> >> The agent TID is a 64 bit value split in two dwords.  The least
+> >> significant dword is the TID running counter. The most significant
+> >> dword is the agent number. In the CX-3 shared port model, the mlx4
+> >> driver uses the most significant byte of the agent number to store the
+> >> slave number, making agent numbers greater and equal to 2^24 (3 bytes)
+> >> unusable.
+> > 
+> > There is no reason for this to be an ida, just do something like
+> > 
+> > mad_agent_priv->agent.hi_tid = atomic_inc_return(&ib_mad_client_id) & mad_agent_priv->ib_dev->tid_mask;
+> > 
+> > And have the driver set tid_mask to 3 bytes of 0xFF
+> 
+> The issue is that some of the mad agents are long-lived, so you will
+> wrap and use the same TID twice.
 
-Could you give us a bit of an idea why this is RFC?  What needs review?
-What needs commenting-on?  What is left before you think this can be
-merged?  Where would you like Thomas, Ingo, and other reviewers to focus
-their attention?
+We already have that problem, and using ida is problematic because we
+need to maximize the time between TID re-use, which ida isn't doing.
 
-One thing we from Intel can be horrible about is launching in to the
-details of the hardware implementation instead of focusing on the
-software implications.  For instance, you launch into the details of bus
-locks without mentioning key things like:
+Preventing re-use seems like a seperate issue from limiting the range
+to be compatible with mlx4.
 
-Split-lock-detection is a new hardware feature that generates
-alignment-check (#AC) faults to help detect when badly-aligned atomic
-instructions might impact whole-system performance.  These patches are
-primarily targeted at application-level issues, but we can also detect
-the same issues in the kernel.  There is a significant interaction
-between this feature and firmware because firmware may or may not be
-prepared for this feature to be enabled.
+Jason
