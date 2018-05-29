@@ -1,99 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967276AbeE2VaJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:30:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55142 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966989AbeE2VaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:30:08 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-audit@redhat.com
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit" actions
-Date: Tue, 29 May 2018 17:30:06 -0400
-Message-ID: <1569841.KfYyxMilWs@x2>
-Organization: Red Hat
-In-Reply-To: <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
+        id S967314AbeE2Vav (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:30:51 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:45371 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966945AbeE2Vat (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 17:30:49 -0400
+X-Google-Smtp-Source: ADUXVKLq3CzQ1VFugAukhJ2+Lm+O/fVfn3ypUIJFRB0+XI8li20xWeL5YI6D0rmgXR51GIqLXb9jmw==
+Date: Tue, 29 May 2018 14:30:47 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 09/11] misc: throttler: Add core support for non-thermal
+ throttling
+Message-ID: <20180529213047.GK168650@google.com>
+References: <20180525203043.249193-1-mka@chromium.org>
+ <20180525203043.249193-10-mka@chromium.org>
+ <20180528080826.GA17162@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180528080826.GA17162@kroah.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, May 28, 2018 at 10:08:26AM +0200, Greg Kroah-Hartman wrote:
+> On Fri, May 25, 2018 at 01:30:41PM -0700, Matthias Kaehlcke wrote:
+> > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+> > index 20be70c3f118..01a1714dd2ad 100644
+> > --- a/drivers/misc/Makefile
+> > +++ b/drivers/misc/Makefile
+> > @@ -57,3 +57,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+> >  obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+> >  obj-$(CONFIG_OCXL)		+= ocxl/
+> >  obj-$(CONFIG_MISC_RTSX)		+= cardreader/
+> > +obj-y				+= throttler/
+> 
+> Shouldn't you depend on a Kconfig option to traverse into this
+> directory?
 
+Ack
 
-On Thursday, May 24, 2018 4:11:05 PM EDT Stefan Berger wrote:
-> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
-> the IMA "audit" policy action.  This patch defines
-> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
+> > diff --git a/drivers/misc/throttler/Kconfig b/drivers/misc/throttler/Kconfig
+> > new file mode 100644
+> > index 000000000000..ef8388f6bc0a
+> > --- /dev/null
+> > +++ b/drivers/misc/throttler/Kconfig
+> > @@ -0,0 +1,13 @@
+> > +menuconfig THROTTLER
+> > +	bool "Throttler support"
+> > +	default n
 > 
-> With this change we now call integrity_audit_msg_common() to get
-> common integrity auditing fields. This now produces the following
-> record when parsing an IMA policy rule:
-> 
-> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
->   fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
->   subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->   op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
->   tty=tty2 res=1
+> the default is always 'n' no need to say it again here :)
 
-Since this is a new event, do you mind moving the tty field to be between 
-auid= and ses=  ?   That is the more natural place for it. 
+Will remove
 
-Also, it might be more natural for the op= and cause= fields to be before the 
-pid= portion. This doesn't matter as much to me because those are not 
-searchable fields and they are skipped right over. But moving the tty field 
-is the main comment from me.
+> > +	depends on OF
+> > +	select CPU_FREQ
+> > +	select PM_DEVFREQ
+> > +	help
+> > +	  This option enables core support for non-thermal throttling of CPUs
+> > +	  and devfreq devices.
+> > +
+> > +	  Note that you also need a event monitor module usually called
+> > +	  *_throttler.
+> > +
+> > diff --git a/drivers/misc/throttler/Makefile b/drivers/misc/throttler/Makefile
+> > new file mode 100644
+> > index 000000000000..c8d920cee315
+> > --- /dev/null
+> > +++ b/drivers/misc/throttler/Makefile
+> > @@ -0,0 +1 @@
+> > +obj-$(CONFIG_THROTTLER)		+= core.o
+> > diff --git a/drivers/misc/throttler/core.c b/drivers/misc/throttler/core.c
+> > new file mode 100644
+> > index 000000000000..c058d03212b8
+> > --- /dev/null
+> > +++ b/drivers/misc/throttler/core.c
+> > @@ -0,0 +1,373 @@
+> > +/*
+> > + * Core code for non-thermal throttling
+> > + *
+> > + * Copyright (C) 2018 Google, Inc.
+> > + *
+> > + * This software is licensed under the terms of the GNU General Public
+> > + * License version 2, as published by the Free Software Foundation, and
+> > + * may be copied, distributed, and modified under those terms.
+> > + *
+> > + * This program is distributed in the hope that it will be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + *
+> > + */
+> 
+> Please just use a single SPDX line, like checkpatch.pl would have warned
+> you about.  No need for the full verbous license boiler-plate text here
+> at all.
 
-Thanks,
--Steve
-
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> ---
->  include/uapi/linux/audit.h          | 3 ++-
->  security/integrity/ima/ima_policy.c | 5 +++--
->  2 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 4e61a9e05132..776e0abd35cf 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -146,7 +146,8 @@
->  #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
->  #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
->  #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
-> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
-> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs 
-> */ +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
-> 
->  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A 
-REQUEST. */
-> 
-> diff --git a/security/integrity/ima/ima_policy.c
-> b/security/integrity/ima/ima_policy.c index 3aed25a7178a..a8ae47a386b4
-> 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct
-> ima_rule_entry *entry) int result = 0;
-> 
->  	ab = integrity_audit_log_start(NULL, GFP_KERNEL,
-> -				       AUDIT_INTEGRITY_RULE);
-> +				       AUDIT_INTEGRITY_POLICY_RULE);
-> 
->  	entry->uid = INVALID_UID;
->  	entry->fowner = INVALID_UID;
-> @@ -926,7 +926,8 @@ static int ima_parse_rule(char *rule, struct
-> ima_rule_entry *entry) temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
->  	else if (entry->func == POLICY_CHECK)
->  		temp_ima_appraise |= IMA_APPRAISE_POLICY;
-> -	audit_log_format(ab, "res=%d", !result);
-> +	integrity_audit_msg_common(ab, NULL, NULL,
-> +				   "policy_update", "parse_rule", result);
->  	audit_log_end(ab);
->  	return result;
->  }
+Ok
