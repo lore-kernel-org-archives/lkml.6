@@ -1,44 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936942AbeE2PpB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:45:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:43566 "EHLO foss.arm.com"
+        id S936864AbeE2Po3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:44:29 -0400
+Received: from foss.arm.com ([217.140.101.70]:43446 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935434AbeE2Poz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:44:55 -0400
-Date: Tue, 29 May 2018 16:45:24 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: nixiaoming <nixiaoming@huawei.com>
-Cc: catalin.marinas@arm.com, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, james.morse@arm.com, kristina.martsenko@arm.com,
-        steve.capper@arm.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, akpm@linux-foundation.org, vbabka@suse.cz,
-        mhocko@suse.com, dave.hansen@linux.intel.com, dan.j.williams@intel.com,
-        kirill.shutemov@linux.intel.com, zhang.jia@linux.alibaba.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH 1/3] arm64:add missing CONFIG_STRICT_KERNEL_RWX for
- mark_rodata_ro
-Message-ID: <20180529154523.GK17159@arm.com>
-References: <20180529133615.26889-1-nixiaoming@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529133615.26889-1-nixiaoming@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S964812AbeE2PoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:44:17 -0400
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>, Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>
+Subject: [PATCHv2 07/16] atomics/alpha: define atomic64_fetch_add_unless()
+Date: Tue, 29 May 2018 16:43:37 +0100
+Message-Id: <20180529154346.3168-8-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180529154346.3168-1-mark.rutland@arm.com>
+References: <20180529154346.3168-1-mark.rutland@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 09:36:15PM +0800, nixiaoming wrote:
-> mark_rodata_ro is only called by the function mark_readonly when
-> CONFIG_STRICT_KERNEL_RWX=y,
-> if CONFIG_STRICT_KERNEL_RWX is not set
-> a compile warning may be triggered: unused function
+As a step towards unifying the atomic/atomic64/atomic_long APIs, this
+patch converts the arch/alpha implementation of atomic64_add_unless() into
+an implementation of atomic64_fetch_add_unless().
 
-How are you achieving this configuration? In our Kconfig we select this
-unconditionally.
+A wrapper in <linux/atomic.h> will build atomic_add_unless() atop of
+this, provided it is given a preprocessor definition.
 
-Will
+No functional change is intended as a result of this patch.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Matt Turner <mattst88@gmail.com>
+---
+ arch/alpha/include/asm/atomic.h | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/arch/alpha/include/asm/atomic.h b/arch/alpha/include/asm/atomic.h
+index 4a800a3424a3..dcb7bbeeae02 100644
+--- a/arch/alpha/include/asm/atomic.h
++++ b/arch/alpha/include/asm/atomic.h
+@@ -238,35 +238,36 @@ static __inline__ int atomic_fetch_add_unless(atomic_t *v, int a, int u)
+ #define atomic_fetch_add_unless atomic_fetch_add_unless
+ 
+ /**
+- * atomic64_add_unless - add unless the number is a given value
++ * atomic64_fetch_add_unless - add unless the number is a given value
+  * @v: pointer of type atomic64_t
+  * @a: the amount to add to v...
+  * @u: ...unless v is equal to u.
+  *
+  * Atomically adds @a to @v, so long as it was not @u.
+- * Returns true iff @v was not @u.
++ * Returns the old value of @v.
+  */
+-static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
++static __inline__ int atomic64_fetch_add_unless(atomic64_t *v, long a, long u)
+ {
+-	long c, tmp;
++	long c, new, old;
+ 	smp_mb();
+ 	__asm__ __volatile__(
+-	"1:	ldq_l	%[tmp],%[mem]\n"
+-	"	cmpeq	%[tmp],%[u],%[c]\n"
+-	"	addq	%[tmp],%[a],%[tmp]\n"
++	"1:	ldq_l	%[old],%[mem]\n"
++	"	cmpeq	%[old],%[u],%[c]\n"
++	"	addq	%[old],%[a],%[new]\n"
+ 	"	bne	%[c],2f\n"
+-	"	stq_c	%[tmp],%[mem]\n"
+-	"	beq	%[tmp],3f\n"
++	"	stq_c	%[new],%[mem]\n"
++	"	beq	%[new],3f\n"
+ 	"2:\n"
+ 	".subsection 2\n"
+ 	"3:	br	1b\n"
+ 	".previous"
+-	: [tmp] "=&r"(tmp), [c] "=&r"(c)
++	: [old] "=&r"(old), [new] "=&r"(new), [c] "=&r"(c)
+ 	: [mem] "m"(*v), [a] "rI"(a), [u] "rI"(u)
+ 	: "memory");
+ 	smp_mb();
+-	return !c;
++	return old;
+ }
++#define atomic64_fetch_add_unless atomic64_fetch_add_unless
+ 
+ /*
+  * atomic64_dec_if_positive - decrement by 1 if old value positive
+-- 
+2.11.0
