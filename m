@@ -1,57 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936586AbeE2OvL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:51:11 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:62951 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935308AbeE2OvF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:51:05 -0400
-From: Sekhar Nori <nsekhar@ti.com>
-To: Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>
-CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>
-Subject: [PATCH] gpio: davinci: fix build warning when !CONFIG_OF
-Date: Tue, 29 May 2018 20:21:01 +0530
-Message-ID: <20180529145101.20808-1-nsekhar@ti.com>
-X-Mailer: git-send-email 2.16.2
+        id S936645AbeE2OvU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:51:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56268 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935748AbeE2OvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:51:08 -0400
+Date: Tue, 29 May 2018 16:51:06 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        guillaume.knispel@supersonicimagine.com,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
+Message-ID: <20180529145106.GV27180@dhcp22.suse.cz>
+References: <20180524211135.27760-1-dave@stgolabs.net>
+ <20180524211135.27760-4-dave@stgolabs.net>
+ <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
+ <20180529144317.GA20910@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529144317.GA20910@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This nukes the following warning that is seen when building without
-OF support:
+On Tue 29-05-18 16:43:17, Michal Hocko wrote:
+> On Thu 24-05-18 14:37:36, Linus Torvalds wrote:
+> > On Thu, May 24, 2018 at 2:28 PM Davidlohr Bueso <dave@stgolabs.net> wrote:
+> > 
+> > >                  if (gfpflags_allow_blocking(gfp))
+> > > -                       tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
+> > > +                       tlocks = kvmalloc_array(size, sizeof(spinlock_t),
+> > gfp);
+> > >                  else
+> > >                          tlocks = kmalloc_array(size, sizeof(spinlock_t),
+> > gfp);
+> > 
+> > Side note: how about we just move that "gfpflags_allow_blocking()" into
+> > kvmalloc() instead, and make kvmalloc() generally usable?
+> > 
+> > Now we have that really odd situation where kvmalloc() takes gfp flags, but
+> > to quote the comment:
+> > 
+> >   * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm
+> > people.
+> > 
+> > and the code:
+> > 
+> >          /*
+> >           * vmalloc uses GFP_KERNEL for some internal allocations (e.g page
+> > tables)
+> >           * so the given set of flags has to be compatible.
+> >           */
+> >          WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
+> > 
+> > which isn't really all that helpful. Do mm people really want to be
+> > consulted about random uses?
+> 
+> The purpose was to have a clean usage base after the conversion. If we
+> are growing a non-trivial use base which wants to use GFP_NOWAIT semantic
+> then sure we can make kvmalloc never fallback to vmallock. But see
+> below...
+> 
+> > Maybe we could just make the rule for kvmalloc() be to only fall back on
+> > vmalloc for allocations that are
+> > 
+> >   - larger than page size
+> > 
+> >   - blocking and allow GFP_KERNEL (so basically that WARN_ON_ONCE() logic in
+> > kvmalloc_node).
+> > 
+> > Hmm? Isn't that what everybody really *wants* kvmalloc() and friends to do?
+> 
+> ... Well, there are users who would like to use kvmalloc for
+> GFP_NOFS/GFP_NOIO context. Do we want them to fail more likely for
+> larger order rather than have them fixed (to either drop the NOFS
+> because it just has been blindly copied from a different code without
+> too much thinking or use the scope NOFS/NOIO API)? A warn_on tends to be
+> rather harsh but effective way to push maintainers fix their broken
+> code...
 
-drivers/gpio/gpio-davinci.c:437:25: warning: ‘keystone_gpio_get_irq_chip’ defined but not used [-Wunused-function]
- static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
-                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
----
- drivers/gpio/gpio-davinci.c | 2 --
- 1 file changed, 2 deletions(-)
+In other words, what about the following?
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 987126c4c6f6..b574ecff7761 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -610,14 +610,12 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- 	return 0;
+diff --git a/mm/util.c b/mm/util.c
+index 45fc3169e7b0..05706e18d201 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -391,6 +391,10 @@ EXPORT_SYMBOL(vm_mmap);
+  * __GFP_RETRY_MAYFAIL is supported, and it should be used only if kmalloc is
+  * preferable to the vmalloc fallback, due to visible performance drawbacks.
+  *
++ * GFP_NOWAIT request never fallback to vmalloc but it is accepted for convenience
++ * to not force people open conding kmalloc fallback on !gfpflags_allow_blocking
++ * requests.
++ *
+  * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm people.
+  */
+ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+@@ -402,7 +406,7 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+ 	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
+ 	 * so the given set of flags has to be compatible.
+ 	 */
+-	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
++	WARN_ON_ONCE((flags & (__GFP_FS|__GFP_IO)) != (__GFP_FS|__GFP_IO));
+ 
+ 	/*
+ 	 * We want to attempt a large physically contiguous block first because
+@@ -427,6 +431,9 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+ 	if (ret || size <= PAGE_SIZE)
+ 		return ret;
+ 
++	if (!gfpflags_allow_blocking(flags))
++		return NULL;
++
+ 	return __vmalloc_node_flags_caller(size, node, flags,
+ 			__builtin_return_address(0));
  }
- 
--#if IS_ENABLED(CONFIG_OF)
- static const struct of_device_id davinci_gpio_ids[] = {
- 	{ .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
- 	{ .compatible = "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, davinci_gpio_ids);
--#endif
- 
- static struct platform_driver davinci_gpio_driver = {
- 	.probe		= davinci_gpio_probe,
 -- 
-2.16.2
+Michal Hocko
+SUSE Labs
