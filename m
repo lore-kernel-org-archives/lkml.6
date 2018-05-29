@@ -1,171 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966191AbeE2Tal (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:30:41 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46010 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965761AbeE2Taj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:30:39 -0400
-Date: Tue, 29 May 2018 21:30:36 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Abhishek Sahu <absahu@codeaurora.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v3 01/16] mtd: rawnand: helper function for setting up
- ECC configuration
-Message-ID: <20180529213036.150ed16a@bbrezillon>
-In-Reply-To: <20180526095807.5caf5800@xps13>
-References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
-        <1527250904-21988-2-git-send-email-absahu@codeaurora.org>
-        <20180526095807.5caf5800@xps13>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S966426AbeE2Tcl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:32:41 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45495 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966107AbeE2Tci (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 15:32:38 -0400
+X-Google-Smtp-Source: ADUXVKJGBC2p6yLZBDSlwx0eDGMvuSCY7Wd1x/CeRR3jmH8N5N/rjlc3TBEHmCT/sk0XzIKMS/T9qA==
+Date: Tue, 29 May 2018 12:32:36 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 05/11] PM / devfreq: governors: Return device frequency
+ limits instead of user limits
+Message-ID: <20180529193236.GH168650@google.com>
+References: <20180525203043.249193-6-mka@chromium.org>
+ <20180525203043.249193-1-mka@chromium.org>
+ <CGME20180525203125epcas3p46c7cac352ede4b0ba5d2b36bc32ad566@epcms1p8>
+ <20180528050444epcms1p8e6552d55231a099ec89304dfb1f819b9@epcms1p8>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180528050444epcms1p8e6552d55231a099ec89304dfb1f819b9@epcms1p8>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 26 May 2018 10:42:47 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+On Mon, May 28, 2018 at 02:04:44PM +0900, MyungJoo Ham wrote:
+> >The performance, powersave and simpleondemand governors can return
+> >df->min/max_freq, which are the user defined frequency limits.
+> >update_devfreq() already takes care of adjusting the target frequency
+> >with the user limits if necessary, therefore we can return
+> >df->scaling_min/max_freq instead, which is the min/max frequency
+> >supported by the device at a given time (depending on the
+> >enabled/disabled OPPs)
+> >
+> >Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> >---
+> > drivers/devfreq/governor_performance.c    | 2 +-
+> > drivers/devfreq/governor_powersave.c      | 2 +-
+> > drivers/devfreq/governor_simpleondemand.c | 6 +++---
+> > 3 files changed, 5 insertions(+), 5 deletions(-)
+> >
+> 
+> Actually, even scaling_max_freq and scaling_min_freq are
+> covered centerally at devfreq.c:update_devfreq();
+> 
+> Wouldn't it be sufficient to return UINT_MAX for performance
+> and return UINT_MIN (0) for powersave, if the purpose is to
+> remove redundancy?
+> 
+> In the same sense, we may return UINT_MAX for freq-increasing
+> case for simpleondemand as well, because they are filtered
+> centrally anyway.
+> 
+> (This commit might be better merged to 4/11 in that case as well.)
 
-> Hi Abhishek,
-> 
-> On Fri, 25 May 2018 17:51:29 +0530, Abhishek Sahu
-> <absahu@codeaurora.org> wrote:
-> 
-> > commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,
-> > match, maximize ECC settings") provides generic helpers which
-> > drivers can use for setting up ECC parameters.
-> > 
-> > Since same board can have different ECC strength nand chips so
-> > following is the logic for setting up ECC strength and ECC step
-> > size, which can be used by most of the drivers.
-> > 
-> > 1. If both ECC step size and ECC strength are already set
-> >    (usually by DT) then just check whether this setting
-> >    is supported by NAND controller.
-> > 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
-> >    supported by NAND controller.
-> > 3. Otherwise, try to match the ECC step size and ECC strength closest
-> >    to the chip's requirement. If available OOB size can't fit the chip
-> >    requirement then select maximum ECC strength which can be fit with
-> >    available OOB size.
-> > 
-> > This patch introduces nand_ecc_choose_conf function which calls the
-> > required helper functions for the above logic. The drivers can use
-> > this single function instead of calling the 3 helper functions
-> > individually.
-> > 
-> > CC: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> > ---
-> > * Changes from v2:
-> > 
-> >   1. Renamed function to nand_ecc_choose_conf.
-> >   2. Minor code reorganization to remove warning and 2 function calls
-> >      for nand_maximize_ecc.
-> > 
-> > * Changes from v1:
-> >   NEW PATCH
-> > 
-> >  drivers/mtd/nand/raw/nand_base.c | 42 ++++++++++++++++++++++++++++++++++++++++
-> >  drivers/mtd/nand/raw/nand_base.c | 31 +++++++++++++++++++++++++++++++
-> >  include/linux/mtd/rawnand.h      |  3 +++
-> >  2 files changed, 34 insertions(+)
-> > 
-> > diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> > index 72f3a89..e52019d 100644
-> > --- a/drivers/mtd/nand/raw/nand_base.c
-> > +++ b/drivers/mtd/nand/raw/nand_base.c
-> > @@ -6249,6 +6249,37 @@ int nand_maximize_ecc(struct nand_chip *chip,
-> >  }
-> >  EXPORT_SYMBOL_GPL(nand_maximize_ecc);
-> >  
-> > +/**
-> > + * nand_ecc_choose_conf - Set the ECC strength and ECC step size
-> > + * @chip: nand chip info structure
-> > + * @caps: ECC engine caps info structure
-> > + * @oobavail: OOB size that the ECC engine can use
-> > + *
-> > + * Choose the ECC configuration according to following logic
-> > + *
-> > + * 1. If both ECC step size and ECC strength are already set (usually by DT)
-> > + *    then check if it is supported by this controller.
-> > + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
-> > + * 3. Otherwise, try to match the ECC step size and ECC strength closest
-> > + *    to the chip's requirement. If available OOB size can't fit the chip
-> > + *    requirement then fallback to the maximum ECC step size and ECC strength.
-> > + *
-> > + * On success, the chosen ECC settings are set.
-> > + */
-> > +int nand_ecc_choose_conf(struct nand_chip *chip,
-> > +			 const struct nand_ecc_caps *caps, int oobavail)
-> > +{
-> > +	if (chip->ecc.size && chip->ecc.strength)
-> > +		return nand_check_ecc_caps(chip, caps, oobavail);
-> > +
-> > +	if (!(chip->ecc.options & NAND_ECC_MAXIMIZE) &&
-> > +	    !nand_match_ecc_req(chip, caps, oobavail))
-> > +		return 0;
-> > +
-> > +	return nand_maximize_ecc(chip, caps, oobavail);  
-> 
-> I personally don't mind if nand_maximize_ecc() is called twice in
-> the function if it clarifies the logic. Maybe the following will be
-> more clear for the user?
-> 
-> 	if (chip->ecc.size && chip->ecc.strength)
-> 		return nand_check_ecc_caps(chip, caps, oobavail);
-> 
-> 	if (chip->ecc.options & NAND_ECC_MAXIMIZE)
-> 		return nand_maximize_ecc(chip, caps, oobavail);
-> 
-> 	if (!nand_match_ecc_req(chip, caps, oobavail))
-> 		return 0;
-> 
-> 	return nand_maximize_ecc(chip, caps, oobavail);
+I did this in the first variant of the patch (before sending it in a
+series), but Chanwoo Choi objected:
 
-I personally don't mind, and it seems Masahiro wanted to keep the logic
-he had used in the denali driver.
+https://patchwork.kernel.org/patch/10404893/
 
-> 
-> Also, I'm not sure we should just error out when nand_check_ecc_caps()
-> fails. What about something more robust, like:
-> 
-> 	int ret;
-> 
-> 	if (chip->ecc.size && chip->ecc.strength) {
-> 		ret = nand_check_ecc_caps(chip, caps, oobavail);
-> 		if (ret)
-> 			goto maximize_ecc;
-
-Nope. When someone asked for a specific ECC config by passing the
-nand-ecc-xxx props we should apply it or return an erro if it's not
-supported. People passing those props should now what the ECC engine
-supports and pick one valid values.
-
-> 
-> 		return 0;
-> 	}
-> 
-> 	if (chip->ecc.options & NAND_ECC_MAXIMIZE)
-> 		goto maximize_ecc;
-> 
-> 	ret = nand_match_ecc_req(chip, caps, oobavail);
-> 	if (ret)
-> 		goto maximize_ecc;
-> 
-> 	return 0;
-> 
-> maximize_ecc:
-> 	return nand_maximize_ecc(chip, caps, oobavail);
-> 
+I also still think that returning a constant would be the cleanest
+solution if we can agree on this. What do you think about
+DEVFREQ_MIN/MAX_FREQ (0/UINT_MAX) to make things slightly clearer?
