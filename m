@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965260AbeE2QjF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:39:05 -0400
-Received: from mga04.intel.com ([192.55.52.120]:2113 "EHLO mga04.intel.com"
+        id S965226AbeE2QkN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:40:13 -0400
+Received: from mga11.intel.com ([192.55.52.93]:18535 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964951AbeE2QjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:39:03 -0400
+        id S935486AbeE2QkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 12:40:11 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
-   d="scan'208";a="60064274"
+   d="scan'208";a="60064591"
 Subject: Re: [RFC PATCH 00/16] x86/split_lock: Enable #AC exception for split
  locked accesses
 To: Fenghua Yu <fenghua.yu@intel.com>,
@@ -68,30 +68,39 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <f43f6139-7303-b469-a8b9-fe65e1cd9aed@intel.com>
-Date: Tue, 29 May 2018 09:39:01 -0700
+Message-ID: <b4d3e2d0-dfb1-fa1d-8430-0bcb124063e5@intel.com>
+Date: Tue, 29 May 2018 09:40:09 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
 In-Reply-To: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 05/27/2018 08:45 AM, Fenghua Yu wrote:
-> ==Detect Split Lock==
-> 
-> To detect split lock, a new control bit (bit 29) in per-core TEST_CTL
-> MSR 0x33 will be introduced in future x86 processors. When the bit 29
-> is set, the processor causes #AC exception for split locked accesses at
-> all CPL.
-> 
-> The bit 29 specification in MSR TEST_CTL is published in the latest
-> Intel Architecture Instruction Set Extensions and Future Features
-> Programming Reference.
+> A split lock is any atomic operation whose operand crosses two cache
+> lines. Since the operand spans two cache lines and the operation must
+> be atomic, the system locks the bus while the CPU accesses the two cache
+> lines.
 
-The fact that this is per-core is pretty important, right?  Where does
-that get mentioned?
+Could you give us a bit of an idea why this is RFC?  What needs review?
+What needs commenting-on?  What is left before you think this can be
+merged?  Where would you like Thomas, Ingo, and other reviewers to focus
+their attention?
+
+One thing we from Intel can be horrible about is launching in to the
+details of the hardware implementation instead of focusing on the
+software implications.  For instance, you launch into the details of bus
+locks without mentioning key things like:
+
+Split-lock-detection is a new hardware feature that generates
+alignment-check (#AC) faults to help detect when badly-aligned atomic
+instructions might impact whole-system performance.  These patches are
+primarily targeted at application-level issues, but we can also detect
+the same issues in the kernel.  There is a significant interaction
+between this feature and firmware because firmware may or may not be
+prepared for this feature to be enabled.
