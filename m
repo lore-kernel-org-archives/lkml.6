@@ -1,66 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934699AbeE2NLQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:11:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41932 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934669AbeE2NLG (ORCPT
+        id S934665AbeE2NLE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:11:04 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36282 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934564AbeE2NKv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:11:06 -0400
-Subject: Re: [next-20180517][ppc] watchdog: CPU 88 self-detected hard LOCKUP
- @ update_cfs_group+0x30/0x150
-From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Date: Tue, 29 May 2018 18:39:40 +0530
-In-Reply-To: <20180521165056.5f3dceeb@roar.ozlabs.ibm.com>
-References: <1526883300.19317.18.camel@abdul>
-         <20180521165056.5f3dceeb@roar.ozlabs.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052913-0020-0000-0000-00000E090A5C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009096; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01039372; UDB=6.00531955; IPR=6.00818500;
- MB=3.00021358; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-29 13:11:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052913-0021-0000-0000-000061A315D4
-Message-Id: <1527599380.3777.3.camel@abdul>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805290150
+        Tue, 29 May 2018 09:10:51 -0400
+X-Google-Smtp-Source: ADUXVKJQQM/3UkpYbi6sRHPahPgQmlcMoxchczRnzPn2fEWOh8/Dqv/+ug1BE1f1mFsHa6Wi2pukeQ==
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>, Rob Herring <robh@kernel.org>,
+        Johan Hovold <johan@kernel.org>, linux-bluetooth@vger.kernel.org
+Subject: [PATCH 11/19] Bluetooth: hci_bcm: MODULE_DEVICE_TABLE(serdev)
+Date: Tue, 29 May 2018 15:10:06 +0200
+Message-Id: <20180529131014.18641-12-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
+References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-21 at 16:50 +1000, Nicholas Piggin wrote:
-> Ah, it's POWER8.
-> 
-> I'm betting we have a bug with nohz timer offloading somewhere.
-> 
-> I *think* we may have seen similar on P9 as well, but that may be
-> related to problems with stop states.
-> 
-> Can you reproduce it easily? I'm thinking maybe adding some
-> tracepoints that track decrementer settings and interrupts, and
-> nohz offload activity might show something up.
+Export serdev table to the module header, allowing module autoload via
+udev/modprobe.
 
-Yes, the problem is reproducible consistently on our CI setup and today
-It triggered on 4.17.0-rc6 (mainline) too.
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/bluetooth/hci_bcm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index f4d7846c06b8..ff0fd3502a90 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -1327,8 +1327,10 @@ MODULE_DEVICE_TABLE(of, bcm_bluetooth_of_match);
+ 
+ static const struct serdev_device_id bcm_serdev_id[] = {
+ 	{ "bcm43438-bt", },
++	{ "hci_uart_bcm", },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(serdev, bcm_serdev_id);
+ 
+ static struct serdev_device_driver bcm_serdev_driver = {
+ 	.probe = bcm_serdev_probe,
 -- 
-Regard's
-
-Abdul Haleem
-IBM Linux Technology Centre
+2.17.0
