@@ -1,69 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936966AbeE2U7W (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 16:59:22 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:50594 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932798AbeE2U7R (ORCPT
+        id S937045AbeE2VAc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:00:32 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:36038 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935793AbeE2VAa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 16:59:17 -0400
-Date: Tue, 29 May 2018 13:59:15 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: binding: Fix "#cooling-cells" property's name
-Message-ID: <20180529205915.GA18129@roeck-us.net>
-References: <9754c25e8459685d4919017dd7c8709cee7b89ce.1527224960.git.viresh.kumar@linaro.org>
+        Tue, 29 May 2018 17:00:30 -0400
+X-Google-Smtp-Source: ADUXVKIAyRPxaCaCUfQiv+pOJerUCDpAeQFN4kzkqVQRH+tUOTwH1zvGdW6fEHG/mwdmpRMB1LrZ/w==
+Date: Tue, 29 May 2018 17:00:25 -0400
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
+        Coly Li <colyli@suse.de>, Ciaran Farrell <ciaran.farrell@suse.com>,
+        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+        linux-bcache@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jonas Oberg <jonas@fsfe.org>
+Subject: Re: PostgreSQL licensed code on Linux
+Message-ID: <20180529210025.GB3487@kmo-pixel>
+References: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
+ <20180529192643.GA3487@kmo-pixel>
+ <20180529205143.GB7381@thunk.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9754c25e8459685d4919017dd7c8709cee7b89ce.1527224960.git.viresh.kumar@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <20180529205143.GB7381@thunk.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 10:49:57AM +0530, Viresh Kumar wrote:
-> It should be "#cooling-cells" instead of "cooling-cells". Fix it.
+On Tue, May 29, 2018 at 04:51:44PM -0400, Theodore Y. Ts'o wrote:
+> On Tue, May 29, 2018 at 03:26:43PM -0400, Kent Overstreet wrote:
+> > > That seems to indicate that we've had already PostgreSQL licensed code on
+> > > Linux since Kent's addition of bcache to Linux in 2013. The portion of code
+> > > is rather small though, to me it seems to cover only crc_table[],
+> > > bch_crc64_update(), and bch_crc64().
+> >
+> > > As silly as it may be we should split out the PostgreSQL licensed code from
+> > > drivers/md/bcache/util.c into its own file and while at it clarify the
+> > > license.
 > 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> While we're at it maybe we should move the crc-64 code to lib and/or
+> crypto, alongside our support for crc-8, crc-16, and crc-32
+> algorithms?  That way if there are other potential users for crc-64,
+> they will be less likely to re-invent the wheel....
 
-Applied to hwmon-next after updating the subject.
-
-Thanks,
-Guenter
-
-> ---
->  Documentation/devicetree/bindings/hwmon/gpio-fan.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/gpio-fan.txt b/Documentation/devicetree/bindings/hwmon/gpio-fan.txt
-> index 439a7430fc68..2becdcfdc840 100644
-> --- a/Documentation/devicetree/bindings/hwmon/gpio-fan.txt
-> +++ b/Documentation/devicetree/bindings/hwmon/gpio-fan.txt
-> @@ -11,7 +11,7 @@ Bindings for fan connected to GPIO lines
->    must have the RPM values in ascending order.
->  - alarm-gpios: This pin going active indicates something is wrong with
->    the fan, and a udev event will be fired.
-> -- cooling-cells: If used as a cooling device, must be <2>
-> +- #cooling-cells: If used as a cooling device, must be <2>
->    Also see: Documentation/devicetree/bindings/thermal/thermal.txt
->    min and max states are derived from the speed-map of the fan.
->  
-> -- 
-> 2.15.0.194.g9af6a3dea062
-> 
+Yeah, this came up because Coly wanted to do that, but needed to know what to
+put in MODULE_LICENSE().
