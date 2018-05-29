@@ -1,125 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936881AbeE2PHH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:07:07 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46162 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936865AbeE2PHC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S936877AbeE2PHC (ORCPT <rfc822;w@1wt.eu>);
         Tue, 29 May 2018 11:07:02 -0400
-X-Google-Smtp-Source: AB8JxZqS4LxGC85oiLZVFWU1Lc0QLfvrCBLRBldp6zQ3hKQxinEzbTHoxwbcBbXbb80nwGSPGEqAJw==
-Date: Tue, 29 May 2018 17:06:59 +0200
-From: Christian Brauner <christian@brauner.io>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-        gregkh@linuxfoundation.org, mingo@kernel.org,
-        james.morris@microsoft.com, keescook@chromium.org,
-        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH v1 06/20] signal: drop else branch in do_signal_stop()
-Message-ID: <20180529150658.GA28029@gmail.com>
-References: <20180528215355.16119-1-christian@brauner.io>
- <20180528215355.16119-7-christian@brauner.io>
- <20180529143039.GA1802@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180529143039.GA1802@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: from mail-out.m-online.net ([212.18.0.10]:39403 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935282AbeE2PGz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:06:55 -0400
+X-Auth-Info: 8dA3Ykz1C+Qqj90QIuErX1acBwR+H6xP3o/Wh12Lbz8=
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH v2] display: panel: Add KOE tx14d24vm1bpa display support (320x240)
+Date: Tue, 29 May 2018 17:05:28 +0200
+Message-Id: <20180529150528.22136-1-lukma@denx.de>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180412143715.6828-1-lukma@denx.de>
+References: <20180412143715.6828-1-lukma@denx.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 04:30:40PM +0200, Oleg Nesterov wrote:
-> I am busy now, can't review, just picked a random patch from this series...
-> 
-> On 05/28, Christian Brauner wrote:
-> > do_signal_stop() already returns in the if branch so there's no need to
-> > keep the else branch around.
-> 
-> OK, but for what???
+This commit adds support for KOE's 5.7" display.
 
-Yes to both.
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes for v2:
+- Add Reviewed-by tag
 
-> 
-> Do you think this change makes the code more readable? more clean? or what?
-> 
-> I do not really care but to me these "if/else" branches make this code more
-> symmetrical, so I don't understand the purpose.
+---
+ .../bindings/display/panel/koe,tx14d24vm1bpa.txt   | 42 ++++++++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c               | 26 ++++++++++++++
+ 2 files changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
 
-The pattern where both the if and the else branch return is fairly
-uncommon even in this file. Otherwise you would need to also argue that
-functions like:
-
-int send_sig_info(int sig, struct siginfo *info, struct task_struct *p)
-{
-        /*
-         * Make sure legacy kernel users don't send in bad values
-         * (normal paths check this in check_kill_permission).
-         */
-        if (!valid_signal(sig))
-                return -EINVAL;
-
-        return do_send_sig_info(sig, info, p, false);
-}
-
-should really be:
-
-int send_sig_info(int sig, struct siginfo *info, struct task_struct *p)
-{
-        /*
-         * Make sure legacy kernel users don't send in bad values
-         * (normal paths check this in check_kill_permission).
-         */
-        if (!valid_signal(sig))
-                return -EINVAL;
-        else
-                return do_send_sig_info(sig, info, p, false);
-}
-
-Which I find very uneasy on the eye. Even more so when there are
-multiple lines in the else that returns.
-
-Christian
-
-> 
-> 
-> 
-> > Signed-off-by: Christian Brauner <christian@brauner.io>
-> > ---
-> > v0->v1:
-> > * patch unchanged
-> > ---
-> >  kernel/signal.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/kernel/signal.c b/kernel/signal.c
-> > index a628b56415e6..d1914439f144 100644
-> > --- a/kernel/signal.c
-> > +++ b/kernel/signal.c
-> > @@ -2214,14 +2214,14 @@ static bool do_signal_stop(int signr)
-> >  		/* Now we don't run again until woken by SIGCONT or SIGKILL */
-> >  		freezable_schedule();
-> >  		return true;
-> > -	} else {
-> > -		/*
-> > -		 * While ptraced, group stop is handled by STOP trap.
-> > -		 * Schedule it and let the caller deal with it.
-> > -		 */
-> > -		task_set_jobctl_pending(current, JOBCTL_TRAP_STOP);
-> > -		return false;
-> >  	}
-> > +
-> > +	/*
-> > +	 * While ptraced, group stop is handled by STOP trap.
-> > +	 * Schedule it and let the caller deal with it.
-> > +	 */
-> > +	task_set_jobctl_pending(current, JOBCTL_TRAP_STOP);
-> > +	return false;
-> >  }
-> >  
-> >  /**
-> > -- 
-> > 2.17.0
-> > 
-> 
+diff --git a/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt b/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+new file mode 100644
+index 000000000000..be7ac666807b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+@@ -0,0 +1,42 @@
++Kaohsiung Opto-Electronics Inc. 5.7" QVGA (320 x 240) TFT LCD panel
++
++Required properties:
++- compatible: should be "koe,tx14d24vm1bpa"
++- backlight: phandle of the backlight device attached to the panel
++- power-supply: single regulator to provide the supply voltage
++
++Required nodes:
++- port: Parallel port mapping to connect this display
++
++This panel needs single power supply voltage. Its backlight is conntrolled
++via PWM signal.
++
++Example:
++--------
++
++Example device-tree definition when connected to iMX53 based board
++
++	lcd_panel: lcd-panel {
++		compatible = "koe,tx14d24vm1bpa";
++		backlight = <&backlight_lcd>;
++		power-supply = <&reg_3v3>;
++
++		port {
++			lcd_panel_in: endpoint {
++				remote-endpoint = <&lcd_display_out>;
++			};
++		};
++	};
++
++Then one needs to extend the dispX node:
++
++	lcd_display: disp1 {
++
++		port@1 {
++			reg = <1>;
++
++			lcd_display_out: endpoint {
++				remote-endpoint = <&lcd_panel_in>;
++			};
++		};
++	};
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index d9984bdb5bb5..103b43ce7dee 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -1268,6 +1268,29 @@ static const struct panel_desc innolux_zj070na_01p = {
+ 	},
+ };
+ 
++static const struct display_timing koe_tx14d24vm1bpa_timing = {
++	.pixelclock = { 5580000, 5850000, 6200000 },
++	.hactive = { 320, 320, 320 },
++	.hfront_porch = { 30, 30, 30 },
++	.hback_porch = { 30, 30, 30 },
++	.hsync_len = { 1, 5, 17 },
++	.vactive = { 240, 240, 240 },
++	.vfront_porch = { 6, 6, 6 },
++	.vback_porch = { 5, 5, 5 },
++	.vsync_len = { 1, 2, 11 },
++	.flags = DISPLAY_FLAGS_DE_HIGH,
++};
++
++static const struct panel_desc koe_tx14d24vm1bpa = {
++	.timings = &koe_tx14d24vm1bpa_timing,
++	.num_timings = 1,
++	.bpc = 6,
++	.size = {
++		.width = 115,
++		.height = 86,
++	},
++};
++
+ static const struct display_timing koe_tx31d200vm0baa_timing = {
+ 	.pixelclock = { 39600000, 43200000, 48000000 },
+ 	.hactive = { 1280, 1280, 1280 },
+@@ -2204,6 +2227,9 @@ static const struct of_device_id platform_of_match[] = {
+ 		.compatible = "innolux,zj070na-01p",
+ 		.data = &innolux_zj070na_01p,
+ 	}, {
++		.compatible = "koe,tx14d24vm1bpa",
++		.data = &koe_tx14d24vm1bpa,
++	}, {
+ 		.compatible = "koe,tx31d200vm0baa",
+ 		.data = &koe_tx31d200vm0baa,
+ 	}, {
+-- 
+2.11.0
