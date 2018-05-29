@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1840633-1527586445-2-15707331616890894710
+X-Cyrus-Session-Id: sloti22d1t05-2038058-1527597148-2-14296603244813153315
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='us-ascii'
@@ -7,25 +7,25 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527586445; b=LKFY79L5QmfvfCn7eEaHI060RzSbpHhK5R02K5jzwsfEe4rNM3
-    x4M9rzYNFBUIRoPXHiXg53kZmjGZiYr8CB5tAR/jTyjkui2Oupph+G50NzLsh4HF
-    PbS7BOpFI5jkoog9fwTR/fNHKoEj3kFgkxJ2TkGJKBU3CH4yT8uDPcZu1QljiPXX
-    b2xDX+L97k7OKvATkiD6nyhiRUXV+xzK+fnLRwi1a5g8w6QnuXMZKm7mJxhQ8lgA
-    AzvwTkTUIWY6FZ5oAF74slY6BdUG6PXMc3RVcXpxWBiDv2XUKAuelB47JC+HFwSf
-    S4f7LiyZ6BGS2ypZl7Ou/VlEH0fSGQypzE8Q==
+    1527597148; b=UsOH6OgqATr0Pj5wwWHwFGil/IDkV2ecRjn7fOmS1Nr1uAiRKH
+    rDuqvnhKnvUq8De3gjepx/R9DqnttlR5JsfZR2FsrskBsElkR/m52BYi8qj4a/D4
+    6hfkmOfpJIGqGnAejI/x0qYmEoKoko5UhZ+ie/i2VzFt+X++fbeL/x20/MJSTkVT
+    LwyeDJ/l+FdPz3JP2NNSWYV2GZJa5R9kssBmy+JFPYnvQ1SWLm2mqVctj1LIVqex
+    Aw7Yk6EMaYAeaxZ6G1NOBqcduCPoZw0c2T6nFnG6o2nXhyy1RCSed+qnWrkb0Zzm
+    81bdG41M2t59Td20DWLD7a3eIodrPlIjMSRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1527586445; bh=MRvi/N6F8rL
-    9txM5v/jLRMwuhDFnk91WzpYvGqiWlPs=; b=D1hhbKIWIkVSP82TXhT3RDuAdzT
-    1cnbFgB4rUocxDvYrPiauvyhl1LR/GoCH06nTN90h6PK1+TcBkybi8bx+F+WAodh
-    s9h5HlE+o+gSiP44VzDjHP1zROqPLy9IxKUdjilwHOrfBdt76xPx7+e1o+3sUtfx
-    FHajU7JcnKXXF70PpJIaJVIdMC/xpWg75W1+2Px8ClbEdhjulC8xzTdGteNc0YqX
-    G0IK6d9+YWIoLBF/MxOwye0JrD+eHepHC6Kh6Ru1dVhJUzG3OjuHomJyK6gSfsQJ
-    NO9oLIXBjykek0pNXD5nAW/oJ0Uk6XBsgGWDn5gfgWab40LKvJjP2vKvQPg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1527597148; bh=Kwpr8Tp3s4QlC7nKwZh1tdFE211U7L
+    J8HfiiCc4doWY=; b=TlYs0Q+b4SPGpq9LMmLn+wDRw9OU7TnSm22ZPQHfF/gdHX
+    0A6zE74/90I+70NF7YwftZrBGo+XlA+sn2V3M1Y9Fu+cirz3J+Yzx4YvGSFBB/sH
+    aPlEbklQNf7KdpA+Xla+s/P0AeA7hEvsturjGHczqfB60g4CAaVaFeReKzY6ma6c
+    oOeIufxUD02hZCfI3cwqcDs9nRdPsyG/9fCb+HCS0e77+GVsoDBkYcvd/2Rsj5Wn
+    YMpYmnunqAdr0zkLy6VFoG9CJL/ab1GP942nU+hAkVvkOV3DNFBXDEwO8HliH+E5
+    HPAveW+z39xWLnh6JeukJyQq/fEqFj4z/9le8KdA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=amarulasolutions.com
-    header.i=@amarulasolutions.com header.b=L166XqKS header.a=rsa-sha256
+    header.i=@amarulasolutions.com header.b=Sv8mMt7F header.a=rsa-sha256
     header.s=google x-bits=1024;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=amarulasolutions.com;
@@ -35,17 +35,17 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=Ca/4oUxx;
+    header.i=@1e100.net header.b=criK57n7;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=amarulasolutions.com header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=amarulasolutions.com
-      header.i=@amarulasolutions.com header.b=L166XqKS header.a=rsa-sha256
+      header.i=@amarulasolutions.com header.b=Sv8mMt7F header.a=rsa-sha256
       header.s=google x-bits=1024;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=amarulasolutions.com;
@@ -55,7 +55,7 @@ Authentication-Results: mx5.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=Ca/4oUxx;
+      header.i=@1e100.net header.b=criK57n7;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
@@ -63,23 +63,22 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCXb1tNLTNAc+tuQpDKBcqi20aAxBRL6KY0VQpawXYD3Ps6LtmEm2kh/1jw9SFAGjfA4Rk9q9Gn33YewyDcL1IRxXhtR7g6UMfsCVXWARUhZrtaj1Rqh
-    kKkpmYepqgfzUHEzrBZN+Lpk2O2IbV5rExIIPxdTJQTbXrxSrh2TqIZg2Wp8A0mLlofAF4ltdj3omLbVdhP1itG6QzU/MSNVlm6v6Xm15z6ybqHyFzNYVLWw
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKbDeubT78S+yei9IK2vH7nnmBcALikYnvw5DTBMoYOZkDOki3QL7lYcGnD3f8lzeheiYwG/VPRZJpgjhpvk89e3rLfsuBrr65a7NBdnGlp0ZnXUzXRR
+    2KzdN8HtcioeGvXEbCLiPxmRMgIW+IcSZs/n7ujfzTHaJXP55+ixj6T6Ay1pkGqfrvMf4l465PFPNzUlLXefSnEFZwF8/lcDgsD7MAQ8SUpOuniLK8tJBaFW
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=NEAV23lmAAAA:8 a=B6GvL0XKAAAA:8 a=37J2uu4F_DKpu0mRC18A:9
-    a=CjuIK1q_8ugA:10
+    a=xB7911u2hZRMw3IvlAYA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932231AbeE2JeC (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 05:34:02 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:44089 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932339AbeE2Jd7 (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Tue, 29 May 2018 05:33:59 -0400
-X-Google-Smtp-Source: AB8JxZoJ8HqlSrOm45+syqTPNjEiHVt/DnU9NFrL8s+SoSCNhpodDorq322MiQ4ATtb8aF6VgpL9jA==
-Date: Tue, 29 May 2018 11:33:50 +0200
+        id S933716AbeE2McZ (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 08:32:25 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42450 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933653AbeE2McY (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Tue, 29 May 2018 08:32:24 -0400
+X-Google-Smtp-Source: AB8JxZrnDX054o8GxU7qSuSvFzafhwJqMadi4AqAotLJma7B0zUa0jeVQOfMll4QosboBywSXocrrA==
+Date: Tue, 29 May 2018 14:32:16 +0200
 From: Andrea Parri <andrea.parri@amarulasolutions.com>
 To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
@@ -88,15 +87,16 @@ Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
         akiyks@gmail.com, mingo@kernel.org
 Subject: Re: [PATCH RFC tools/memory-model] Add litmus-test naming scheme
-Message-ID: <20180529093350.GA5803@andrea>
+Message-ID: <20180529123216.GA11608@andrea>
 References: <20180525191020.GA5914@linux.vnet.ibm.com>
  <20180528112010.GA8801@andrea>
  <20180528214838.GZ3803@linux.vnet.ibm.com>
+ <20180529093350.GA5803@andrea>
+ <20180529121941.GG3803@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20180528214838.GZ3803@linux.vnet.ibm.com>
+In-Reply-To: <20180529121941.GG3803@linux.vnet.ibm.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
@@ -106,356 +106,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 [...]
 
-> > We used to distinguigh between the test name and the test filename; we
-> > currently have only one test whose name ends with .litmus:
-> >=20
-> >   ISA2+pooncelock+pooncelock+pombonce.litmus
-> >=20
-> > (that I missed until now...).
->=20
-> I queued a commit to fix this with your Reported-by, good catch!
+> > Right, thanks.  Ah, maybe we should strive to meet the 80-chars bound
+> > by splitting the command with "\"?
+> 
+> We could, but combined with your later request for indentation, we end
+> up with something like this:
+> 
+> 	$ norm7 -bell linux-kernel.bell \
+> 		Rfi Once PodRR Once Fre Once Rfi Once PodRR Once Fre Once | \
+> 	  sed -e 's/:.*//g'
+> 	SB+rfionceonce-poonceonces
+> 
+> In the immortal words of MSDOS, are you sure?  ;-)
 
-Thanks for the fix.
-
-
-> > I also notice that, with the current version, the above command can be
-> > simplified to:
-> >=20
-> >   $ norm7 -bell linux-kernel.bell Rfi Once PodRR Once Fre Once Rfi Once=
- PodRR Once Fre Once | sed -e 's/:.*//g'
->=20
-> Dropping the "classify7" command, correct?
-
-Right, thanks.  Ah, maybe we should strive to meet the 80-chars bound
-by splitting the command with "\"?
+I find it more readable, but it's just taste ;-)  Commands are indented
+with 2 spaces in the other README.
 
 
-> > Maybe expand to recall that we're referring to a particular cycle (the
-> > cycle referred to in the previous section)? (the term 'consecutive' is
-> > overloaded ;-)
->=20
-> Well, it is an English word, so overloading is the common case.  ;-)
->=20
-> How about this?
+> > Well, "Rfi" produces "rfi" while "PosWR" produces "pos" for a name...
+> 
+> Right you are!  How about this, then?
+> 
+> Rfi: Read-from internal.  The current process wrote a variable and then
+>         immediately read the value back from it.  For the purposes of
+>         litmus-test code generation, Rfi acts identically to PosWR.
+>         However, they differ for purposes of naming, and they also result
+>         in different "exists" clauses.
+> 	Example:  ???
 
-Looks better, thanks.
-
-
-> > I'm not sure if it is worth commenting on this, but compare, e.g., the
-> > 'exists' clauses of the following two tests (thinking at 'coherence'):
-> >=20
-> > $ diyone7 -arch LISA PosWR PodRR Fre PosWR PodRR Fre
-> > LISA A
-> > "PosWR PodRR Fre PosWR PodRR Fre"
-> > Generator=3Ddiyone7 (version 7.49+02(dev))
-> > Prefetch=3D0:x=3DF,0:y=3DT,1:y=3DF,1:x=3DT
-> > Com=3DFr Fr
-> > Orig=3DPosWR PodRR Fre PosWR PodRR Fre
-> > {
-> > }
-> >  P0       | P1       ;
-> >  w[] x 1  | w[] y 1  ;
-> >  r[] r0 x | r[] r0 y ;
-> >  r[] r1 y | r[] r1 x ;
-> > exists
-> > (0:r1=3D0 /\ 1:r1=3D0)
-> >=20
-> > $ diyone7 -arch LISA Rfi PodRR Fre Rfi PodRR Fre
-> > LISA A
-> > "Rfi PodRR Fre Rfi PodRR Fre"
-> > Generator=3Ddiyone7 (version 7.49+02(dev))
-> > Prefetch=3D0:x=3DF,0:y=3DT,1:y=3DF,1:x=3DT
-> > Com=3DFr Fr
-> > Orig=3DRfi PodRR Fre Rfi PodRR Fre
-> > {
-> > }
-> >  P0       | P1       ;
-> >  w[] x 1  | w[] y 1  ;
-> >  r[] r0 x | r[] r0 y ;
-> >  r[] r1 y | r[] r1 x ;
-> > exists
-> > (0:r0=3D1 /\ 0:r1=3D0 /\ 1:r0=3D1 /\ 1:r1=3D0)
->=20
-> How about this?
->=20
-> fi: Read-from internal.  The current process wrote a variable and then
-> 	immediately read the value back from it.  For the purposes of
-> 	naming, Rfi acts identically to PosWR.
-
-Well, "Rfi" produces "rfi" while "PosWR" produces "pos" for a name...
-
-
-> However, there are subtle
-> 	but very real differences between them in other contexts.
-
-I think that you're fascinated by the evocative power of English words. ;-)
-
-
-> > The list of descriptors is incomplete; the command:
-> >=20
-> >   $ diyone7 -bell linux-kernel.bell -show edges
-> >=20
-> > shows other descriptors (including fences and dependencies).  We might
-> > want to list this command; searching the commit history, I found:
-> >=20
-> >    3c24730ef6c662 ("gen: Add a new command line option -show (edges|fen=
-ces|annotations) that list various categories of candidate relaxations.")
->=20
-> Yow!!!
->=20
->  CtrldR CtrldW CtrlsR CtrlsW DpAddrdR DpAddrdW DpAddrsR DpAddrsW DpCtrldR=
- DpCtrldW DpCtrlsR DpCtrlsW DpDatadW DpDatasW Dpd* DpdR DpdW Dps* DpsR DpsW=
- FenceAfter-atomic FenceAfter-atomicd** FenceAfter-atomicd*R FenceAfter-ato=
-micd*W FenceAfter-atomicdR* FenceAfter-atomicdRR FenceAfter-atomicdRW Fence=
-After-atomicdW* FenceAfter-atomicdWR FenceAfter-atomicdWW FenceAfter-atomic=
-s** FenceAfter-atomics*R FenceAfter-atomics*W FenceAfter-atomicsR* FenceAft=
-er-atomicsRR FenceAfter-atomicsRW FenceAfter-atomicsW* FenceAfter-atomicsWR=
- FenceAfter-atomicsWW FenceAfter-spinlock FenceAfter-spinlockd** FenceAfter=
--spinlockd*R FenceAfter-spinlockd*W FenceAfter-spinlockdR* FenceAfter-spinl=
-ockdRR FenceAfter-spinlockdRW FenceAfter-spinlockdW* FenceAfter-spinlockdWR=
- FenceAfter-spinlockdWW FenceAfter-spinlocks** FenceAfter-spinlocks*R Fence=
-After-spinlocks*W FenceAfter-spinlocksR* FenceAfter-spinlocksRR FenceAfter-=
-spinlocksRW FenceAfter-spinlocksW* FenceAfter-spinlocksWR FenceAfter-spinlo=
-cksWW FenceBefore-atomic FenceBefore-atomicd** FenceBefore-atomicd*R FenceB=
-efore-atomicd*W FenceBefore-atomicdR* FenceBefore-atomicdRR FenceBefore-ato=
-micdRW FenceBefore-atomicdW* FenceBefore-atomicdWR FenceBefore-atomicdWW Fe=
-nceBefore-atomics** FenceBefore-atomics*R FenceBefore-atomics*W FenceBefore=
--atomicsR* FenceBefore-atomicsRR FenceBefore-atomicsRW FenceBefore-atomicsW=
-* FenceBefore-atomicsWR FenceBefore-atomicsWW FenceMb FenceMbd** FenceMbd*R=
- FenceMbd*W FenceMbdR* FenceMbdRR FenceMbdRW FenceMbdW* FenceMbdWR FenceMbd=
-WW FenceMbs** FenceMbs*R FenceMbs*W FenceMbsR* FenceMbsRR FenceMbsRW FenceM=
-bsW* FenceMbsWR FenceMbsWW FenceRcu-lock FenceRcu-lockd** FenceRcu-lockd*R =
-FenceRcu-lockd*W FenceRcu-lockdR* FenceRcu-lockdRR FenceRcu-lockdRW FenceRc=
-u-lockdW* FenceRcu-lockdWR FenceRcu-lockdWW FenceRcu-locks** FenceRcu-locks=
-*R FenceRcu-locks*W FenceRcu-locksR* FenceRcu-locksRR FenceRcu-locksRW Fenc=
-eRcu-locksW* FenceRcu-locksWR FenceRcu-locksWW FenceRcu-unlock FenceRcu-unl=
-ockd** FenceRcu-unlockd*R FenceRcu-unlockd*W FenceRcu-unlockdR* FenceRcu-un=
-lockdRR FenceRcu-unlockdRW FenceRcu-unlockdW* FenceRcu-unlockdWR FenceRcu-u=
-nlockdWW FenceRcu-unlocks** FenceRcu-unlocks*R FenceRcu-unlocks*W FenceRcu-=
-unlocksR* FenceRcu-unlocksRR FenceRcu-unlocksRW FenceRcu-unlocksW* FenceRcu=
--unlocksWR FenceRcu-unlocksWW FenceRmb FenceRmbd** FenceRmbd*R FenceRmbd*W =
-FenceRmbdR* FenceRmbdRR FenceRmbdRW FenceRmbdW* FenceRmbdWR FenceRmbdWW Fen=
-ceRmbs** FenceRmbs*R FenceRmbs*W FenceRmbsR* FenceRmbsRR FenceRmbsRW FenceR=
-mbsW* FenceRmbsWR FenceRmbsWW FenceSync-rcu FenceSync-rcud** FenceSync-rcud=
-*R FenceSync-rcud*W FenceSync-rcudR* FenceSync-rcudRR FenceSync-rcudRW Fenc=
-eSync-rcudW* FenceSync-rcudWR FenceSync-rcudWW FenceSync-rcus** FenceSync-r=
-cus*R FenceSync-rcus*W FenceSync-rcusR* FenceSync-rcusRR FenceSync-rcusRW F=
-enceSync-rcusW* FenceSync-rcusWR FenceSync-rcusWW FenceWmb FenceWmbd** Fenc=
-eWmbd*R FenceWmbd*W FenceWmbdR* FenceWmbdRR FenceWmbdRW FenceWmbdW* FenceWm=
-bdWR FenceWmbdWW FenceWmbs** FenceWmbs*R FenceWmbs*W FenceWmbsR* FenceWmbsR=
-R FenceWmbsRW FenceWmbsW* FenceWmbsWR FenceWmbsWW Fenced** Fenced*R Fenced*=
-W FencedR* FencedRR FencedRW FencedW* FencedWR FencedWW Fences** Fences*R F=
-ences*W FencesR* FencesRR FencesRW FencesW* FencesWR FencesWW FrBack FrLeav=
-e Fre Fri Hat Na Pod** Pod*R Pod*W PodR* PodRR PodRW PodW* PodWR PodWW Pos*=
-* Pos*R Pos*W PosR* PosRR PosRW PosW* PosWR PosWW R Read RfBack RfLeave Rfe=
- Rfi Rmw W Write WsBack WsLeave Wse Wsi
->=20
-> I added the following at the end:
->=20
-> Please note that the above is a partial list.  To see the full list of
-> descriptors, execute the following command:
->=20
-> $ diyone7 -bell linux-kernel.bell -show edges
-
-Thanks.  One more nit: I'd indent this and the above "norm7" commands as
-we do in our "main" README.
-
-
->=20
-> > I also notice that our current names for tests with fences (and cycle)
-> > deviate from the corresponding 'norm7' results; e.g.,
-> >=20
-> >   $ norm7 -bell linux-kernel.bell FenceWmbdWW Once Rfe Once FenceRmbdRR=
- Once Fre Once | sed -e 's/:.*//g'
-> >   MP+fencewmbonceonce+fencermbonceonce
-> >=20
-> > while we use 'MP+wmbonceonce+rmbonceonce' (that is, we omit the 'fence'
-> > prefixes).
->=20
-> Would you be willing to send me a patch fixing them up?
-
-Yes, I'll work this out.
+LGTM, thanks.
 
   Andrea
-
-
->=20
-> Please see below for updated patch.
->=20
-> 							Thanx, Paul
->=20
-> ------------------------------------------------------------------------
->=20
-> commit 04a897a8e202e8d79dd47910321f0e8efb081854
-> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Date:   Fri May 25 12:02:53 2018 -0700
->=20
->     EXP tools/memory-model: Add litmus-test naming scheme
->    =20
->     This commit documents the scheme used to generate the names for the
->     litmus tests.
->    =20
->     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
->     [ paulmck: Apply feedback from Andrea Parri. ]
->=20
-> diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/=
-litmus-tests/README
-> index 00140aaf58b7..9c0ea65c5362 100644
-> --- a/tools/memory-model/litmus-tests/README
-> +++ b/tools/memory-model/litmus-tests/README
-> @@ -1,4 +1,6 @@
-> -This directory contains the following litmus tests:
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +LITMUS TESTS
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> =20
->  CoRR+poonceonce+Once.litmus
->  	Test of read-read coherence, that is, whether or not two
-> @@ -151,3 +153,143 @@ Z6.0+pooncerelease+poacquirerelease+mbonceonce.litm=
-us
->  A great many more litmus tests are available here:
-> =20
->  	https://github.com/paulmckrcu/litmus
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +LITMUS TEST NAMING
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Litmus tests are usually named based on their contents, which means that
-> +looking at the name tells you what the litmus test does.  The naming
-> +scheme covers litmus tests having a single cycle that passes through
-> +each process exactly once, so litmus tests not fitting this description
-> +are named on an ad-hoc basis.
-> +
-> +The structure of a litmus-test name is the litmus-test class, a plus
-> +sign ("+"), and one string for each process, separated by plus signs.
-> +The end of the name is ".litmus".
-> +
-> +The litmus-test classes may be found in the infamous test6.pdf:
-> +https://www.cl.cam.ac.uk/~pes20/ppc-supplemental/test6.pdf
-> +Each class defines the pattern of accesses and of the variables accessed.
-> +For example, if the one process writes to a pair of variables, and
-> +the other process reads from these same variables, the corresponding
-> +litmus-test class is "MP" (message passing), which may be found on the
-> +left-hand end of the second row of tests on page one of test6.pdf.
-> +
-> +The strings used to identify the actions carried out by each process are
-> +complex due to a desire to have short(er) names.  Thus, there is a tool =
-to
-> +generate these strings from a given litmus test's actions.  For example,
-> +consider the processes from SB+rfionceonce-poonceonces.litmus:
-> +
-> +	P0(int *x, int *y)
-> +	{
-> +		int r1;
-> +		int r2;
-> +
-> +		WRITE_ONCE(*x, 1);
-> +		r1 =3D READ_ONCE(*x);
-> +		r2 =3D READ_ONCE(*y);
-> +	}
-> +
-> +	P1(int *x, int *y)
-> +	{
-> +		int r3;
-> +		int r4;
-> +
-> +		WRITE_ONCE(*y, 1);
-> +		r3 =3D READ_ONCE(*y);
-> +		r4 =3D READ_ONCE(*x);
-> +	}
-> +
-> +The next step is to construct a space-separated list of descriptors,
-> +interleaving descriptions of the relation between a pair of consecutive
-> +accesses with descriptions of the second access in the pair.
-> +
-> +P0()'s WRITE_ONCE() is read by its first READ_ONCE(), which is a
-> +reads-from link (rf) and internal to the P0() process.  This is
-> +"rfi", which is an abbreviation for "reads-from internal".  Because
-> +some of the tools string these abbreviations together with space
-> +characters separating processes, the first character is capitalized,
-> +resulting in "Rfi".
-> +
-> +P0()'s second access is a READ_ONCE(), as opposed to (for example)
-> +smp_load_acquire(), so next is "Once".  Thus far, we have "Rfi Once".
-> +
-> +P0()'s third access is also a READ_ONCE(), but to y rather than x.
-> +This is related to P0()'s second access by program order ("po"),
-> +to a different variable ("d"), and both accesses are reads ("RR").
-> +The resulting descriptor is "PodRR".  Because P0()'s third access is
-> +READ_ONCE(), we add another "Once" descriptor.
-> +
-> +A from-read ("fre") relation links P0()'s third to P1()'s first
-> +access, and the resulting descriptor is "Fre".  P1()'s first access is
-> +WRITE_ONCE(), which as before gives the descriptor "Once".  The string
-> +thus far is thus "Rfi Once PodRR Once Fre Once".
-> +
-> +The remainder of P1() is similar to P0(), which means we add
-> +"Rfi Once PodRR Once".  Another fre links P1()'s last access to
-> +P0()'s first access, which is WRITE_ONCE(), so we add "Fre Once".
-> +The full string is thus:
-> +
-> +	Rfi Once PodRR Once Fre Once Rfi Once PodRR Once Fre Once
-> +
-> +This string can be given to the "norm7" and "classify7" tools to
-> +produce the name:
-> +
-> +$ norm7 -bell linux-kernel.bell Rfi Once PodRR Once Fre Once Rfi Once Po=
-dRR Once Fre Once | sed -e 's/:.*//g'
-> +SB+rfionceonce-poonceonces
-> +
-> +Adding the ".litmus" suffix: SB+rfionceonce-poonceonces.litmus
-> +
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +LITMUS TEST DESCRIPTORS
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +These descriptors cover connections between consecutive accesses within
-> +the cycle through a given litmus test:
-> +
-> +Fre: From-read external.  The current process wrote a variable that
-> +	the previous process read.  Example: The SB (store buffering) test.
-> +Fri: From-read internal.  This process read a variable and then
-> +	immediately wrote to it.  Example: ???
-> +PodRR: Program-order different variable, read followed by read.
-> +	This process read a variable and again read a different variable.
-> +	Example: The read-side process in the MP (message-passing) test.
-> +PodRW: Program-order different variable, read followed by write.
-> +	This process read a variable and then wrote a different variable.
-> +	Example: The LB (load buffering) test.
-> +PodWR: Program-order different variable, write followed by read.
-> +	This process wrote a variable and then read a different variable.
-> +	Example: The SB (store buffering) test.
-> +PodWW: Program-order different variable, write followed by write.
-> +	This process wrote a variable and again wrote a different variable.
-> +	Example: The write-side process in the MP (message-passing) test.
-> +PosRR: Program-order same variable, read followed by read.
-> +	This process read a variable and again read that same variable.
-> +	Example: ???
-> +PosRW: Program-order same variable, read followed by write.
-> +	This process read a variable and then wrote that same variable.
-> +	Example: ???
-> +PosWR: Program-order same variable, write followed by read.
-> +	This process wrote a variable and then read that same variable.
-> +	Example: ???
-> +PosWW: Program-order same variable, write followed by write.
-> +	This process wrote a variable and again wrote that same variable.
-> +	Example: ???
-> +Rfe: Read-from external.  The current process read a variable written
-> +	by the previous process.  Example: The MP (message passing) test.
-> +Rfi: Read-from internal.  The current process wrote a variable and then
-> +	immediately read the value back from it.  For the purposes of
-> +	naming, Rfi acts identically to PosWR.	However, there are subtle
-> +	but very real differences between them in other contexts.
-> +	Example:  ???
-> +Wse: Write same external.  The current process wrote to a variable that
-> +	was also written to by the previous process.  Example:  ???
-> +Wsi: Write same internal.  The current process wrote to a variable and
-> +	then immediately wrote to it again.  Example:  ???
-> +
-> +Please note that the above is a partial list.  To see the full list of
-> +descriptors, execute the following command:
-> +
-> +$ diyone7 -bell linux-kernel.bell -show edges
->=20
