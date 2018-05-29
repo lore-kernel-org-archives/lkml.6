@@ -1,46 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935019AbeE2Ohh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:37:37 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34565 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934803AbeE2Ohb (ORCPT
+        id S935047AbeE2Ohw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:37:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33340 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934608AbeE2Ohs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:37:31 -0400
-X-Google-Smtp-Source: ADUXVKIMM+srEqVxfEB3dObGzgGhmrw+NtZ8JByH8LWQJ1mc3VgZJbNvWi6ptn7VsrG7RTaJK5t8nt/WRNEXxCuf6dg=
+        Tue, 29 May 2018 10:37:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B59AF60261
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+Subject: Re: [PATCH v5 5/8] dt-bindings: remoteproc: Add Q6v5 Modem PIL
+ binding for SDM845
+To: Rob Herring <robh@kernel.org>
+Cc: bjorn.andersson@linaro.org, p.zabel@pengutronix.de,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
+        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
+        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+References: <20180521172714.8551-1-sibis@codeaurora.org>
+ <20180521172714.8551-6-sibis@codeaurora.org>
+ <20180522155626.GA2744@rob-hp-laptop>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <3ef231eb-b6c4-b173-89fe-88e376a30b72@codeaurora.org>
+Date: Tue, 29 May 2018 20:07:40 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180529.101553.694799514284747444.davem@davemloft.net>
-References: <1527243245-29582-1-git-send-email-laoar.shao@gmail.com> <20180529.101553.694799514284747444.davem@davemloft.net>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 29 May 2018 22:36:50 +0800
-Message-ID: <CALOAHbAzy_KfT0FcU9fumPKZgSaSOAAfY755TGxsJU7toB_1dA@mail.gmail.com>
-Subject: Re: [PATCH v2 net-next] tcp: use data length instead of skb->len in tcp_probe
-To: David Miller <davem@davemloft.net>
-Cc: Song Liu <songliubraving@fb.com>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180522155626.GA2744@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:15 PM, David Miller <davem@davemloft.net> wrote:
-> From: Yafang Shao <laoar.shao@gmail.com>
-> Date: Fri, 25 May 2018 18:14:05 +0800
->
->> skb->len is meaningless to user.
->> data length could be more helpful, with which we can easily filter out
->> the packet without payload.
+Hi Rob,
+Will send it out again.
+
+On 05/22/2018 09:26 PM, Rob Herring wrote:
+> On Mon, May 21, 2018 at 10:57:11PM +0530, Sibi Sankar wrote:
+>> Add new compatible string for Qualcomm SDM845 SoCs
 >>
->> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
->
-> Applied, thank you.
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>   Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 1 +
+>>   1 file changed, 1 insertion(+)
+> 
+> Please add acks/reviewed-bys when posting new versions.
+> 
+> Rob
+> 
 
-Hi Dave,
-
-There's an update on this patch.
-Pls.  see V4.
-
-And I will send a V5 patch per Eric's suggestion.
-
-Thanks
-Yafang
+-- 
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
