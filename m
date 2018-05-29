@@ -1,52 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964993AbeE2OzF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:55:05 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:56258 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936597AbeE2Oy7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:54:59 -0400
-Date: Tue, 29 May 2018 10:54:55 -0400 (EDT)
-Message-Id: <20180529.105455.676464019941488974.davem@davemloft.net>
-To: laoar.shao@gmail.com
-Cc: songliubraving@fb.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] tcp: use data length instead of skb->len
- in tcp_probe
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <CALOAHbAzy_KfT0FcU9fumPKZgSaSOAAfY755TGxsJU7toB_1dA@mail.gmail.com>
-References: <1527243245-29582-1-git-send-email-laoar.shao@gmail.com>
-        <20180529.101553.694799514284747444.davem@davemloft.net>
-        <CALOAHbAzy_KfT0FcU9fumPKZgSaSOAAfY755TGxsJU7toB_1dA@mail.gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S965026AbeE2OzN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:55:13 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41914 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964996AbeE2OzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:55:10 -0400
+Date: Tue, 29 May 2018 15:55:06 +0100
+From: Quentin Perret <quentin.perret@arm.com>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com
+Subject: Re: [PATCH v5 01/10] sched/pelt: Move pelt related code in a
+ dedicated file
+Message-ID: <20180529145506.GF15173@e108498-lin.cambridge.arm.com>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-2-git-send-email-vincent.guittot@linaro.org>
+ <20180525142648.GC15173@e108498-lin.cambridge.arm.com>
+ <20180525180455.GF30654@e110439-lin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180525180455.GF30654@e110439-lin>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 29 May 2018 22:36:50 +0800
+On Friday 25 May 2018 at 19:04:55 (+0100), Patrick Bellasi wrote:
+> On 25-May 15:26, Quentin Perret wrote:
+> > And also, I understand these functions are large, but if we _really_
+> > want to inline them even though they're big, why not putting them in
+> > sched-pelt.h ?
+> 
+> Had the same tought at first... but then I recalled that header is
+> generated from a script. Thus, eventually, it should be a different one.
 
-> On Tue, May 29, 2018 at 10:15 PM, David Miller <davem@davemloft.net> wrote:
->> From: Yafang Shao <laoar.shao@gmail.com>
->> Date: Fri, 25 May 2018 18:14:05 +0800
->>
->>> skb->len is meaningless to user.
->>> data length could be more helpful, with which we can easily filter out
->>> the packet without payload.
->>>
->>> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
->>
->> Applied, thank you.
-> 
-> Hi Dave,
-> 
-> There's an update on this patch.
-> Pls.  see V4.
-> 
-> And I will send a V5 patch per Eric's suggestion.
+Ah, good point. This patch already introduces a pelt.h so I guess that
+could work as well.
 
-Sorry, I pushed it out already.  You'll need to send me relative changes.
+> 
+> > We probably wouldn't accept that for everything, but
+> > those PELT functions are used all over the place, including latency
+> > sensitive code paths (e.g. task wake-up).
+> 
+> We should better measure the overheads, if any, and check what
+> (a modern) compiler does. Maybe some hackbench run could help on the
+> first point.
+
+FWIW, I ran a few hackbench tests today on my Intel box:
+ - Intel i7-6700 (4 cores / 8 threads) @ 3.40GHz
+ - Base kernel: today's tip/sched/core "2539fc82aa9b sched/fair: Update
+   util_est before updating schedutil"
+ - Compiler: GCC 7.3.0
+
+The tables below summarize the results for:
+perf stat --repeat 10 perf bench sched messaging --pipe --thread -l 50000 --group G
+
+Without patch:
+  +---+-------+----------+---------+
+  | G | Tasks | Duration | Stddev  |
+  +---+-------+----------+---------+
+  | 1 | 40    | 3.906    | +-0.84% |
+  | 2 | 80    | 8.569    | +-0.77% |
+  | 4 | 160   | 16.384   | +-0.46% |
+  | 8 | 320   | 33.686   | +-0.42% |
+  +---+-------+----------+---------+
+
+With patch:
+  +---+-------+----------------+---------+
+  | G | Tasks | Duration       | Stddev  |
+  +---+-------+----------------+---------+
+  | 1 | 40    | 3.953 (+1.2%)  | +-1.43% |
+  | 2 | 80    | 8.646 (+0.9%)  | +-0.32% |
+  | 4 | 160   | 16.390 (+0.0%) | +-0.38% |
+  | 8 | 320   | 33.992 (+0.9%) | +-0.27% |
+  +---+-------+----------------+---------+
+
+So there is (maybe) a little something on my box, but not so significant
+IMHO ... :)
+
+Thanks,
+Quentin
