@@ -1,67 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933084AbeE2K4L (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:56:11 -0400
-Received: from foss.arm.com ([217.140.101.70]:37352 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932763AbeE2K4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:56:10 -0400
+        id S933255AbeE2K4Q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:56:16 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37360 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933081AbeE2K4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 06:56:12 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com,
         mark.rutland@arm.com, robin.murphy@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 0/5] arm64: perf: Support for chained counters
-Date: Tue, 29 May 2018 11:55:51 +0100
-Message-Id: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 1/5] arm_pmu: Clean up maximum period handling
+Date: Tue, 29 May 2018 11:55:52 +0100
+Message-Id: <1527591356-10934-2-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
+References: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for counting PMU events using 64bit counters
-for arm64 PMU.
+Each PMU defines their max_period of the counter as the maximum
+value that can be counted. Since all the PMU backends support
+32bit counters by default, let us remove the redundant field.
 
-The Arm v8 PMUv3 supports combining two adjacent 32bit counters
-(low even and hig odd counters) to count a given "event" in 64bit mode.
-This series adds the support for 64bit events in the core arm_pmu driver
-infrastructure and adds the support for armv8 64bit kernel PMU to use
-chained counters to count in 64bit mode. For CPU cycles, we use the cycle
-counter in 64bit mode, when requested. If the cycle counter is not available,
-we fall back to chaining the counters.
+No functional changes.
 
-Tested on Juno, Fast models. Applies on 4.17-rc4
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+Changes since v1:
+ - Remove max_period field.
+---
+ arch/arm/kernel/perf_event_v6.c     |  2 --
+ arch/arm/kernel/perf_event_v7.c     |  1 -
+ arch/arm/kernel/perf_event_xscale.c |  2 --
+ arch/arm64/kernel/perf_event.c      |  1 -
+ drivers/perf/arm_pmu.c              | 16 ++++++++++++----
+ include/linux/perf/arm_pmu.h        |  1 -
+ 6 files changed, 12 insertions(+), 11 deletions(-)
 
-Change since v1:
- - Remove unnecessary isb()s in chain counter reads/writes
- - Fix event programming order for counters
- - Tighten chain counter event read sequence
- - Set chain event to count in all ELs
- - Cleanup helpers to be consistent
- - Fix build break on xcale PMU (reported by kbuild-robot)
- - Remove the explicit counter width field from pmu backends and default
-   to 32bit.
- - Rename flag ARMPMU_EVT_LONG => ARMPMU_EVT_64BIT and
-   the format string "chain" => "bits64". (Unfortunately we can't use "64bit"
-   and I am open for suggestion on a better name)
- - Rename armpmu_get_event_max_period() => armpmu_event_max_period()
- - For 64bit CPU cycles events, allow chaining if cycle counter is
-   not available.
-
-Suzuki K Poulose (5):
-  arm_pmu: Clean up maximum period handling
-  arm_pmu: Change API to support 64bit counter values
-  arm_pmu: Add support for 64bit event counters
-  arm_pmu: Tidy up clear_event_idx call backs
-  arm64: perf: Add support for chaining event counters
-
- arch/arm/kernel/perf_event_v6.c     |   6 +-
- arch/arm/kernel/perf_event_v7.c     |   7 +-
- arch/arm/kernel/perf_event_xscale.c |  10 +-
- arch/arm64/kernel/perf_event.c      | 234 +++++++++++++++++++++++++++++++-----
- drivers/perf/arm_pmu.c              |  41 +++++--
- include/linux/perf/arm_pmu.h        |  11 +-
- 6 files changed, 254 insertions(+), 55 deletions(-)
-
+diff --git a/arch/arm/kernel/perf_event_v6.c b/arch/arm/kernel/perf_event_v6.c
+index 1d7061a..89d6f35 100644
+--- a/arch/arm/kernel/perf_event_v6.c
++++ b/arch/arm/kernel/perf_event_v6.c
+@@ -497,7 +497,6 @@ static void armv6pmu_init(struct arm_pmu *cpu_pmu)
+ 	cpu_pmu->stop		= armv6pmu_stop;
+ 	cpu_pmu->map_event	= armv6_map_event;
+ 	cpu_pmu->num_events	= 3;
+-	cpu_pmu->max_period	= (1LLU << 32) - 1;
+ }
+ 
+ static int armv6_1136_pmu_init(struct arm_pmu *cpu_pmu)
+@@ -548,7 +547,6 @@ static int armv6mpcore_pmu_init(struct arm_pmu *cpu_pmu)
+ 	cpu_pmu->stop		= armv6pmu_stop;
+ 	cpu_pmu->map_event	= armv6mpcore_map_event;
+ 	cpu_pmu->num_events	= 3;
+-	cpu_pmu->max_period	= (1LLU << 32) - 1;
+ 
+ 	return 0;
+ }
+diff --git a/arch/arm/kernel/perf_event_v7.c b/arch/arm/kernel/perf_event_v7.c
+index 870b66c..18c038e 100644
+--- a/arch/arm/kernel/perf_event_v7.c
++++ b/arch/arm/kernel/perf_event_v7.c
+@@ -1171,7 +1171,6 @@ static void armv7pmu_init(struct arm_pmu *cpu_pmu)
+ 	cpu_pmu->start		= armv7pmu_start;
+ 	cpu_pmu->stop		= armv7pmu_stop;
+ 	cpu_pmu->reset		= armv7pmu_reset;
+-	cpu_pmu->max_period	= (1LLU << 32) - 1;
+ };
+ 
+ static void armv7_read_num_pmnc_events(void *info)
+diff --git a/arch/arm/kernel/perf_event_xscale.c b/arch/arm/kernel/perf_event_xscale.c
+index fcf218d..8ba0e14 100644
+--- a/arch/arm/kernel/perf_event_xscale.c
++++ b/arch/arm/kernel/perf_event_xscale.c
+@@ -375,7 +375,6 @@ static int xscale1pmu_init(struct arm_pmu *cpu_pmu)
+ 	cpu_pmu->stop		= xscale1pmu_stop;
+ 	cpu_pmu->map_event	= xscale_map_event;
+ 	cpu_pmu->num_events	= 3;
+-	cpu_pmu->max_period	= (1LLU << 32) - 1;
+ 
+ 	return 0;
+ }
+@@ -745,7 +744,6 @@ static int xscale2pmu_init(struct arm_pmu *cpu_pmu)
+ 	cpu_pmu->stop		= xscale2pmu_stop;
+ 	cpu_pmu->map_event	= xscale_map_event;
+ 	cpu_pmu->num_events	= 5;
+-	cpu_pmu->max_period	= (1LLU << 32) - 1;
+ 
+ 	return 0;
+ }
+diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+index 85a251b..2c42f88 100644
+--- a/arch/arm64/kernel/perf_event.c
++++ b/arch/arm64/kernel/perf_event.c
+@@ -961,7 +961,6 @@ static int armv8_pmu_init(struct arm_pmu *cpu_pmu)
+ 	cpu_pmu->start			= armv8pmu_start,
+ 	cpu_pmu->stop			= armv8pmu_stop,
+ 	cpu_pmu->reset			= armv8pmu_reset,
+-	cpu_pmu->max_period		= (1LLU << 32) - 1,
+ 	cpu_pmu->set_event_filter	= armv8pmu_set_event_filter;
+ 
+ 	return 0;
+diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+index 1a0d340..8962d26 100644
+--- a/drivers/perf/arm_pmu.c
++++ b/drivers/perf/arm_pmu.c
+@@ -28,6 +28,11 @@
+ static DEFINE_PER_CPU(struct arm_pmu *, cpu_armpmu);
+ static DEFINE_PER_CPU(int, cpu_irq);
+ 
++static inline u64 arm_pmu_max_period(void)
++{
++	return (1ULL << 32) - 1;
++}
++
+ static int
+ armpmu_map_cache_event(const unsigned (*cache_map)
+ 				      [PERF_COUNT_HW_CACHE_MAX]
+@@ -114,8 +119,10 @@ int armpmu_event_set_period(struct perf_event *event)
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	s64 left = local64_read(&hwc->period_left);
+ 	s64 period = hwc->sample_period;
++	u64 max_period;
+ 	int ret = 0;
+ 
++	max_period = arm_pmu_max_period();
+ 	if (unlikely(left <= -period)) {
+ 		left = period;
+ 		local64_set(&hwc->period_left, left);
+@@ -136,8 +143,8 @@ int armpmu_event_set_period(struct perf_event *event)
+ 	 * effect we are reducing max_period to account for
+ 	 * interrupt latency (and we are being very conservative).
+ 	 */
+-	if (left > (armpmu->max_period >> 1))
+-		left = armpmu->max_period >> 1;
++	if (left > (max_period >> 1))
++		left = (max_period >> 1);
+ 
+ 	local64_set(&hwc->prev_count, (u64)-left);
+ 
+@@ -153,6 +160,7 @@ u64 armpmu_event_update(struct perf_event *event)
+ 	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	u64 delta, prev_raw_count, new_raw_count;
++	u64 max_period = arm_pmu_max_period();
+ 
+ again:
+ 	prev_raw_count = local64_read(&hwc->prev_count);
+@@ -162,7 +170,7 @@ u64 armpmu_event_update(struct perf_event *event)
+ 			     new_raw_count) != prev_raw_count)
+ 		goto again;
+ 
+-	delta = (new_raw_count - prev_raw_count) & armpmu->max_period;
++	delta = (new_raw_count - prev_raw_count) & max_period;
+ 
+ 	local64_add(delta, &event->count);
+ 	local64_sub(delta, &hwc->period_left);
+@@ -402,7 +410,7 @@ __hw_perf_event_init(struct perf_event *event)
+ 		 * is far less likely to overtake the previous one unless
+ 		 * you have some serious IRQ latency issues.
+ 		 */
+-		hwc->sample_period  = armpmu->max_period >> 1;
++		hwc->sample_period  = arm_pmu_max_period() >> 1;
+ 		hwc->last_period    = hwc->sample_period;
+ 		local64_set(&hwc->period_left, hwc->sample_period);
+ 	}
+diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+index 40036a5..2ee62bc 100644
+--- a/include/linux/perf/arm_pmu.h
++++ b/include/linux/perf/arm_pmu.h
+@@ -94,7 +94,6 @@ struct arm_pmu {
+ 	void		(*reset)(void *);
+ 	int		(*map_event)(struct perf_event *event);
+ 	int		num_events;
+-	u64		max_period;
+ 	bool		secure_access; /* 32-bit ARM only */
+ #define ARMV8_PMUV3_MAX_COMMON_EVENTS 0x40
+ 	DECLARE_BITMAP(pmceid_bitmap, ARMV8_PMUV3_MAX_COMMON_EVENTS);
 -- 
 2.7.4
