@@ -1,172 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935666AbeE2PP6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:15:58 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54466 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935535AbeE2Ons (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:43:48 -0400
-X-Google-Smtp-Source: AB8JxZoQx5eIRyIUJWiSodJ2nlsnMVbUWE1zK2EunNNx3rRMptreLxIQmMbuF2F4/A6DHfDhnPkIig==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/39] vfs: optionally don't account file in nr_files
-Date: Tue, 29 May 2018 16:43:05 +0200
-Message-Id: <20180529144339.16538-6-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
-References: <20180529144339.16538-1-mszeredi@redhat.com>
+        id S935856AbeE2PQL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:16:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36290 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935535AbeE2PQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:16:07 -0400
+Date: Tue, 29 May 2018 17:15:55 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Eugen Hristev <eugen.hristev@microchip.com>
+Cc: Peter Rosin <peda@axentia.se>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+Message-ID: <20180529171555.19dd723f@bbrezillon>
+In-Reply-To: <e3c34fb7-4881-3f49-b43b-1b07a8ab865d@microchip.com>
+References: <20180329131054.22506-1-peda@axentia.se>
+        <20180329153322.5e2fc1e7@bbrezillon>
+        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
+        <20180329154416.5c1a0013@bbrezillon>
+        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
+        <20180402142249.7e076a64@bbrezillon>
+        <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
+        <20180402212843.164d5d21@bbrezillon>
+        <20180402222020.1d344c14@bbrezillon>
+        <d7e6f78d-b57b-4d0f-c07c-ca6c1930cd51@axentia.se>
+        <20180403091813.5fb5c18c@bbrezillon>
+        <d0afd431-6e51-a9b7-c103-ecf1f6e07c2e@axentia.se>
+        <959d826d-1a98-ca22-acee-a4548427fcd3@microchip.com>
+        <a25ca617-d3da-d401-1ba9-8e5887f8a8e5@microchip.com>
+        <024079cb-77ad-9c48-e370-e6e8f2de171b@axentia.se>
+        <9c496531-f7b6-4b9d-dd51-0bfb68ead303@axentia.se>
+        <c3cc1894-2d7d-93b6-a9de-ed9ca4564ae9@axentia.se>
+        <19d68279-072e-7646-6fdd-8649578229ea@microchip.com>
+        <20180529164911.29820e07@bbrezillon>
+        <e3c34fb7-4881-3f49-b43b-1b07a8ab865d@microchip.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stacking file operations in overlay will store an extra open file for each
-overlay file opened.
+On Tue, 29 May 2018 18:01:40 +0300
+Eugen Hristev <eugen.hristev@microchip.com> wrote:
 
-The overhead is just that of "struct file" which is about 256bytes, because
-overlay already pins an extra dentry and inode when the file is open, which
-add up to a much larger overhead.
+> [...]
+> 
+> 
+> > 
+> > I think you're missing something here. We use the DMA engine in memcpy
+> > mode (SRAM -> DRAM), not in device mode (dev -> DRAM or DRAM -> dev).
+> > So there's no dmas prop defined in the DT and there should not be.
+> > 
+> > Regards,
+> > 
+> > Boris
+> >   
+> 
+> Ok, so the memcpy SRAM <-> DRAM will hog the transfer between DRAM and 
+> LCD if my understanding is correct. That's the DMA that Peter wants to 
+> disable with his patch ?
+> 
+> Then we can then try to force NFC SRAM DMA channels to use just DDR port 
+> 1 or 2 for memcpy ?
 
-For fear of breaking working setups, don't start accounting the extra file.
+You mean the dmaengine? According to "14.1.3 Master to Slave Access"
+that's already the case.
 
-The implementation adds a bool argument to path_open() to control whether
-the returned file is to be accounted or not.  If the file is not accounted,
-f_mode will contain FMODE_NOACCOUNT, so that when freeing the file the
-count is not decremented.
+Only DMAC0 can access the NFC SRAM and it's done through DMAC0:IF0,
+then access to DDR is going through port DDR port 1 (DMAC0:IF1) or 2
+(DMAC0:IF0).
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/file_table.c    | 13 +++++++++----
- fs/internal.h      |  7 ++++++-
- fs/open.c          | 10 +++++-----
- include/linux/fs.h |  5 ++++-
- 4 files changed, 24 insertions(+), 11 deletions(-)
+> 
+> I have also received a suggestion to try to increase the porches in 
+> LCDC_LCDCFG3 .
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 7ec0b3e5f05d..60376bfa04cf 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -51,7 +51,8 @@ static void file_free_rcu(struct rcu_head *head)
- 
- static inline void file_free(struct file *f)
- {
--	percpu_counter_dec(&nr_files);
-+	if (!(f->f_mode & FMODE_NOACCOUNT))
-+		percpu_counter_dec(&nr_files);
- 	call_rcu(&f->f_u.fu_rcuhead, file_free_rcu);
- }
- 
-@@ -100,7 +101,7 @@ int proc_nr_files(struct ctl_table *table, int write,
-  * done, you will imbalance int the mount's writer count
-  * and a warning at __fput() time.
-  */
--struct file *get_empty_filp(void)
-+struct file *__get_empty_filp(bool account)
- {
- 	const struct cred *cred = current_cred();
- 	static long old_max;
-@@ -110,7 +111,8 @@ struct file *get_empty_filp(void)
- 	/*
- 	 * Privileged users can go above max_files
- 	 */
--	if (get_nr_files() >= files_stat.max_files && !capable(CAP_SYS_ADMIN)) {
-+	if (account &&
-+	    get_nr_files() >= files_stat.max_files && !capable(CAP_SYS_ADMIN)) {
- 		/*
- 		 * percpu_counters are inaccurate.  Do an expensive check before
- 		 * we go and fail.
-@@ -123,7 +125,10 @@ struct file *get_empty_filp(void)
- 	if (unlikely(!f))
- 		return ERR_PTR(-ENOMEM);
- 
--	percpu_counter_inc(&nr_files);
-+	if (account)
-+		percpu_counter_inc(&nr_files);
-+	else
-+		f->f_mode = FMODE_NOACCOUNT;
- 	f->f_cred = get_cred(cred);
- 	error = security_file_alloc(f);
- 	if (unlikely(error)) {
-diff --git a/fs/internal.h b/fs/internal.h
-index e08972db0303..b82725ba3054 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -93,7 +93,12 @@ extern void chroot_fs_refs(const struct path *, const struct path *);
- /*
-  * file_table.c
-  */
--extern struct file *get_empty_filp(void);
-+extern struct file *__get_empty_filp(bool account);
-+
-+static inline struct file *get_empty_filp(void)
-+{
-+	return __get_empty_filp(true);
-+}
- 
- /*
-  * super.c
-diff --git a/fs/open.c b/fs/open.c
-index d0bf7f061a1a..6e52fd6fea7c 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -732,8 +732,8 @@ static int do_dentry_open(struct file *f,
- 	static const struct file_operations empty_fops = {};
- 	int error;
- 
--	f->f_mode = OPEN_FMODE(f->f_flags) | FMODE_LSEEK |
--				FMODE_PREAD | FMODE_PWRITE;
-+	f->f_mode = (f->f_mode & FMODE_NOACCOUNT) | OPEN_FMODE(f->f_flags) |
-+		FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
- 
- 	path_get(&f->f_path);
- 	f->f_inode = inode;
-@@ -743,7 +743,7 @@ static int do_dentry_open(struct file *f,
- 	f->f_wb_err = filemap_sample_wb_err(f->f_mapping);
- 
- 	if (unlikely(f->f_flags & O_PATH)) {
--		f->f_mode = FMODE_PATH;
-+		f->f_mode = (f->f_mode & FMODE_NOACCOUNT) | FMODE_PATH;
- 		f->f_op = &empty_fops;
- 		goto done;
- 	}
-@@ -917,12 +917,12 @@ int vfs_open(const struct path *path, struct file *file,
-  * Return: A pointer to a struct file or an IS_ERR pointer.  Cannot return NULL.
-  */
- struct file *path_open(const struct path *path, int flags, struct inode *inode,
--		       const struct cred *cred)
-+		       const struct cred *cred, bool account)
- {
- 	struct file *file;
- 	int retval;
- 
--	file = get_empty_filp();
-+	file = __get_empty_filp(account);
- 	if (IS_ERR(file))
- 		return file;
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 9473e68280d0..ecc854c75611 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -153,6 +153,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- /* File is capable of returning -EAGAIN if I/O will block */
- #define FMODE_NOWAIT	((__force fmode_t)0x8000000)
- 
-+/* File does not contribute to nr_files count */
-+#define FMODE_NOACCOUNT	((__force fmode_t)0x10000000)
-+
- /*
-  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
-  * that indicates that they should check the contents of the iovec are
-@@ -2402,7 +2405,7 @@ extern struct file *file_open_root(struct dentry *, struct vfsmount *,
- 				   const char *, int, umode_t);
- extern struct file * dentry_open(const struct path *, int, const struct cred *);
- extern struct file *path_open(const struct path *, int, struct inode *,
--			      const struct cred *);
-+			      const struct cred *, bool);
- extern int filp_close(struct file *, fl_owner_t id);
- 
- extern struct filename *getname_flags(const char __user *, int, int *);
--- 
-2.14.3
+Yep, Nicolas suggested something similar. Peter, can you try that?
