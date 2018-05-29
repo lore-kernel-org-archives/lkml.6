@@ -1,181 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966656AbeE2UMn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 16:12:43 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58356 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966179AbeE2UMk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 16:12:40 -0400
-Subject: Re: [PATCH] Documentation: fpga: cleanup
-To: Alan Tull <atull@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
-References: <20180529175600.3672-1-atull@kernel.org>
- <20180529175600.3672-2-atull@kernel.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <bdfe3a0a-923d-aa1d-420a-c627dfe1fd8a@infradead.org>
-Date: Tue, 29 May 2018 13:12:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S966643AbeE2UP7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 16:15:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:47170 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966179AbeE2UPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 16:15:55 -0400
+Date: Tue, 29 May 2018 21:16:24 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>, austinwc@codeaurora.org,
+        tnowicki@caviumnetworks.com, Palmer Dabbelt <palmer@sifive.com>,
+        linux-riscv@lists.infradead.org, Morten.Rasmussen@arm.com,
+        vkilari@codeaurora.org, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        jhugo@codeaurora.org, Al Stone <ahs3@redhat.com>,
+        Len Brown <lenb@kernel.org>, John Garry <john.garry@huawei.com>,
+        wangxiongfeng2@huawei.com, Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v9 00/12] Support PPTT for ARM64
+Message-ID: <20180529201623.GA591@arm.com>
+References: <20180511235807.30834-1-jeremy.linton@arm.com>
+ <20180517170523.h7tuvbzdfluuidcz@armageddon.cambridge.arm.com>
+ <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com>
+ <09fb3fe7-d703-43f1-74f7-f8cb5ff1f67a@arm.com>
+ <CAMuHMdXgiMeD4uF+j8W+CpNwYYK2W_8xqk_=vGBiW=bUvKeq7w@mail.gmail.com>
+ <551905a6-eaa8-97df-06ec-1ceedfbc164f@arm.com>
+ <20180529150823.GD17159@arm.com>
+ <CAMuHMdU0yET6+-FfS8e9HJdKB7h0gDn7kzWGpJZV=UiWn5fLkA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529175600.3672-2-atull@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU0yET6+-FfS8e9HJdKB7h0gDn7kzWGpJZV=UiWn5fLkA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 10:56 AM, Alan Tull wrote:
-> Minor fixes including:
+Hi Geert,
+
+On Tue, May 29, 2018 at 05:51:29PM +0200, Geert Uytterhoeven wrote:
+> On Tue, May 29, 2018 at 5:08 PM, Will Deacon <will.deacon@arm.com> wrote:
+> > On Tue, May 29, 2018 at 02:18:40PM +0100, Sudeep Holla wrote:
+> >> On 29/05/18 12:56, Geert Uytterhoeven wrote:
+> >> > On Tue, May 29, 2018 at 1:14 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> >> >> On 29/05/18 11:48, Geert Uytterhoeven wrote:
+> >> >>> System supend still works fine on systems with big cores only:
+> >> >>>
+> >> >>>     R-Car H3 ES1.0 (4xCA57 (4xCA53 disabled in firmware))
+> >> >>>     R-Car M3-N (2xCA57)
+> >> >>>
+> >> >>> Reverting this commit fixes the issue for me.
+> >> >>
+> >> >> I can't find anything that relates to system suspend in these patches
+> >> >> unless they are messing with something during CPU hot plug-in back
+> >> >> during resume.
+> >> >
+> >> > It's only the last patch that introduces the breakage.
+> >> >
+> >>
+> >> As specified in the commit log, it won't change any behavior for DT
+> >> systems if it's non-NUMA or single node system. So I am still wondering
+> >> what could trigger this regression.
+> >
+> > I wonder if we're somehow giving an uninitialised/invalid NUMA configuration
+> > to the scheduler, although I can't see how this would happen.
+> >
+> > Geert -- if you enable CONFIG_DEBUG_PER_CPU_MAPS=y and apply the diff below
+> > do you see anything shouting in dmesg?
 > 
-> * fix some typos
-> * correct use of a/an
-> * rephrase explanation of .state ops function
-> * s/re-use/reuse/ (use only one spelling of 'reuse' in these docs)
-> * s/cpu/CPU/
-> 
-> Signed-off-by: Alan Tull <atull@kernel.org>
+> Thanks, but unfortunately it doesn't help.
+> I added some debug code to print cpumask, but so far I don't see anything
+> suspicious.
 
-Thanks.  Looks good.
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Damn, sorry for wasting your time. For the record, Catalin's been seeing
+boot failures under KVM on a non-big/LITTLE machine that bisect reliably
+to this patch, but we've also not been able to explain them. Worse, adding
+so much as a printk makes the problem disappear.
 
-
-> ---
->  Documentation/driver-api/fpga/fpga-mgr.rst    | 12 ++++++------
->  Documentation/driver-api/fpga/fpga-region.rst | 12 ++++++------
->  Documentation/driver-api/fpga/intro.rst       | 14 +++++++-------
->  3 files changed, 19 insertions(+), 19 deletions(-)
-> 
-> diff --git a/Documentation/driver-api/fpga/fpga-mgr.rst b/Documentation/driver-api/fpga/fpga-mgr.rst
-> index bcf2dd2..4b3825d 100644
-> --- a/Documentation/driver-api/fpga/fpga-mgr.rst
-> +++ b/Documentation/driver-api/fpga/fpga-mgr.rst
-> @@ -83,7 +83,7 @@ The programming sequence is::
->   3. .write_complete
->  
->  The .write_init function will prepare the FPGA to receive the image data.  The
-> -buffer passed into .write_init will be atmost .initial_header_size bytes long,
-> +buffer passed into .write_init will be at most .initial_header_size bytes long;
->  if the whole bitstream is not immediately available then the core code will
->  buffer up at least this much before starting.
->  
-> @@ -98,9 +98,9 @@ scatter list. This interface is suitable for drivers which use DMA.
->  The .write_complete function is called after all the image has been written
->  to put the FPGA into operating mode.
->  
-> -The ops include a .state function which will read the hardware FPGA manager and
-> -return a code of type enum fpga_mgr_states.  It doesn't result in a change in
-> -hardware state.
-> +The ops include a .state function which will determine the state the FPGA is in
-> +and return a code of type enum fpga_mgr_states.  It doesn't result in a change
-> +in state.
->  
->  How to write an image buffer to a supported FPGA
->  ------------------------------------------------
-> @@ -181,8 +181,8 @@ API for implementing a new FPGA Manager driver
->  .. kernel-doc:: drivers/fpga/fpga-mgr.c
->     :functions: fpga_mgr_unregister
->  
-> -API for programming a FPGA
-> ---------------------------
-> +API for programming an FPGA
-> +---------------------------
->  
->  .. kernel-doc:: include/linux/fpga/fpga-mgr.h
->     :functions: fpga_image_info
-> diff --git a/Documentation/driver-api/fpga/fpga-region.rst b/Documentation/driver-api/fpga/fpga-region.rst
-> index f89e4a3..f30333c 100644
-> --- a/Documentation/driver-api/fpga/fpga-region.rst
-> +++ b/Documentation/driver-api/fpga/fpga-region.rst
-> @@ -4,7 +4,7 @@ FPGA Region
->  Overview
->  --------
->  
-> -This document is meant to be an brief overview of the FPGA region API usage.  A
-> +This document is meant to be a brief overview of the FPGA region API usage.  A
->  more conceptual look at regions can be found in the Device Tree binding
->  document [#f1]_.
->  
-> @@ -31,11 +31,11 @@ fpga_image_info including:
->   * pointers to the image as either a scatter-gather buffer, a contiguous
->     buffer, or the name of firmware file
->  
-> - * flags indicating specifics such as whether the image if for partial
-> + * flags indicating specifics such as whether the image is for partial
->     reconfiguration.
->  
-> -How to program a FPGA using a region
-> -------------------------------------
-> +How to program an FPGA using a region
-> +-------------------------------------
->  
->  First, allocate the info struct::
->  
-> @@ -77,8 +77,8 @@ An example of usage can be seen in the probe function of [#f2]_.
->  .. [#f1] ../devicetree/bindings/fpga/fpga-region.txt
->  .. [#f2] ../../drivers/fpga/of-fpga-region.c
->  
-> -API to program a FGPA
-> ----------------------
-> +API to program an FPGA
-> +----------------------
->  
->  .. kernel-doc:: drivers/fpga/fpga-region.c
->     :functions: fpga_region_program_fpga
-> diff --git a/Documentation/driver-api/fpga/intro.rst b/Documentation/driver-api/fpga/intro.rst
-> index 51cd81d..50d1cab 100644
-> --- a/Documentation/driver-api/fpga/intro.rst
-> +++ b/Documentation/driver-api/fpga/intro.rst
-> @@ -12,18 +12,18 @@ Linux.  Some of the core intentions of the FPGA subsystems are:
->  
->  * Code should not be shared between upper and lower layers.  This
->    should go without saying.  If that seems necessary, there's probably
-> -  framework functionality that that can be added that will benefit
-> +  framework functionality that can be added that will benefit
->    other users.  Write the linux-fpga mailing list and maintainers and
->    seek out a solution that expands the framework for broad reuse.
->  
-> -* Generally, when adding code, think of the future.  Plan for re-use.
-> +* Generally, when adding code, think of the future.  Plan for reuse.
->  
->  The framework in the kernel is divided into:
->  
->  FPGA Manager
->  ------------
->  
-> -If you are adding a new FPGA or a new method of programming a FPGA,
-> +If you are adding a new FPGA or a new method of programming an FPGA,
->  this is the subsystem for you.  Low level FPGA manager drivers contain
->  the knowledge of how to program a specific device.  This subsystem
->  includes the framework in fpga-mgr.c and the low level drivers that
-> @@ -32,10 +32,10 @@ are registered with it.
->  FPGA Bridge
->  -----------
->  
-> -FPGA Bridges prevent spurious signals from going out of a FPGA or a
-> -region of a FPGA during programming.  They are disabled before
-> +FPGA Bridges prevent spurious signals from going out of an FPGA or a
-> +region of an FPGA during programming.  They are disabled before
->  programming begins and re-enabled afterwards.  An FPGA bridge may be
-> -actual hard hardware that gates a bus to a cpu or a soft ("freeze")
-> +actual hard hardware that gates a bus to a CPU or a soft ("freeze")
->  bridge in FPGA fabric that surrounds a partial reconfiguration region
->  of an FPGA.  This subsystem includes fpga-bridge.c and the low level
->  drivers that are registered with it.
-> @@ -44,7 +44,7 @@ FPGA Region
->  -----------
->  
->  If you are adding a new interface to the FPGA framework, add it on top
-> -of a FPGA region to allow the most reuse of your interface.
-> +of an FPGA region to allow the most reuse of your interface.
->  
->  The FPGA Region framework (fpga-region.c) associates managers and
->  bridges as reconfigurable regions.  A region may refer to the whole
-> 
-
-
--- 
-~Randy
+Will
