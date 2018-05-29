@@ -1,79 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755253AbeE2HrO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:47:14 -0400
-Received: from foss.arm.com ([217.140.101.70]:34680 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755176AbeE2HrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:47:08 -0400
-Subject: Re: linux-next: manual merge of the irqchip tree with the arm-soc
- tree
-To: Alexandre Torgue <alexandre.torgue@st.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ludovic Barre <ludovic.barre@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-References: <20180529155257.5ae48830@canb.auug.org.au>
- <1bedc0b7-21f9-1e15-a11c-3de06e81b5ba@st.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <c306fbd9-21d9-5345-e820-52bc23d1b7c7@arm.com>
-Date: Tue, 29 May 2018 08:47:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755288AbeE2HrY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:47:24 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:45170 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754813AbeE2HrT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:47:19 -0400
+X-Google-Smtp-Source: AB8JxZruZ/Ay0OBSqr/0ttQvG/N0QsaQB3roGcwgVIfDQ6fLbvYn9zmHVrNlLJJ+q/AYamN4sqKVCXsuKDHKHbDJN6w=
 MIME-Version: 1.0
-In-Reply-To: <1bedc0b7-21f9-1e15-a11c-3de06e81b5ba@st.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <f5f2de3e1a39613f7303bfdc0d2f2210d4c91910.1527573345.git.christophe.leroy@c-s.fr>
+References: <f5f2de3e1a39613f7303bfdc0d2f2210d4c91910.1527573345.git.christophe.leroy@c-s.fr>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 May 2018 09:47:17 +0200
+X-Google-Sender-Auth: usaSpzXySNZ-xnenqaEnNT4-6Ic
+Message-ID: <CAMuHMdVSKigQPUQH=BVc2fRSRmuEThLaf+V9ghMPDT9_m1C6BA@mail.gmail.com>
+Subject: Re: [PATCH v2] powerpc/64: Fix build failure with GCC 8.1
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Geoff Levand <geoff@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/05/18 08:41, Alexandre Torgue wrote:
-> Hi Stephen
-> 
-> On 05/29/2018 07:52 AM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Today's linux-next merge of the irqchip tree got a conflict in:
->>
->>    arch/arm/boot/dts/stm32mp157c.dtsi
->>
->> between commit:
->>
->>    3c00436fdb20 ("ARM: dts: stm32: add USBPHYC support to stm32mp157c")
->>
->> from the arm-soc tree and commit:
->>
->>    5f0e9d2557d7 ("ARM: dts: stm32: Add exti support for stm32mp157c")
->>
->> from the irqchip tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
->>
-> 
-> Thanks for the fix (I will reorder nodes in a future patch). My opinion 
-> is that all STM32 DT patches should come through my STM32 tree. It is my 
-> role to fix this kind of conflicts. I thought it was a common rule 
-> (driver patches go to sub-system maintainer tree and DT to the Machine 
-> maintainer). For incoming next-series which contain DT+driver patches I 
-> will indicate clearly that I take DT patch. I'm right ?
-Happy to oblige. Can you make sure you sync up with Ludovic and define
-what you want to do?
+Hi Christophe,
 
-In the meantime, I'm dropping the series altogether.
+CC Geoff
 
-Thanks,
+On Tue, May 29, 2018 at 8:03 AM, Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
+>   CC      arch/powerpc/kernel/nvram_64.o
+> arch/powerpc/kernel/nvram_64.c: In function 'nvram_create_partition':
+> arch/powerpc/kernel/nvram_64.c:1042:2: error: 'strncpy' specified bound 12 equals destination size [-Werror=stringop-truncation]
+>   strncpy(new_part->header.name, name, 12);
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+>   CC      arch/powerpc/kernel/trace/ftrace.o
+> In function 'make_field',
+>     inlined from 'ps3_repository_read_boot_dat_address' at arch/powerpc/platforms/ps3/repository.c:900:9:
+> arch/powerpc/platforms/ps3/repository.c:106:2: error: 'strncpy' output truncated before terminating nul copying 8 bytes from a string of the same length [-Werror=stringop-truncation]
+>   strncpy((char *)&n, text, 8);
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-	M.
+Thanks for your patch!
+
+> --- a/arch/powerpc/kernel/nvram_64.c
+> +++ b/arch/powerpc/kernel/nvram_64.c
+> @@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char *name, int sig,
+>         new_part->index = free_part->index;
+>         new_part->header.signature = sig;
+>         new_part->header.length = size;
+> -       strncpy(new_part->header.name, name, 12);
+> +       memcpy(new_part->header.name, name, strnlen(name, sizeof(new_part->header.name)));
+
+The comment for nvram_header.lgnth says:
+
+        /* Terminating null required only for names < 12 chars. */
+
+This will not terminate the string with a zero (the struct is
+allocated with kmalloc).
+So the original code is correct, the new one isn't.
+
+>         new_part->header.checksum = nvram_checksum(&new_part->header);
+>
+>         rc = nvram_write_header(new_part);
+> diff --git a/arch/powerpc/platforms/ps3/repository.c b/arch/powerpc/platforms/ps3/repository.c
+> index 50dbaf24b1ee..e49c887787c4 100644
+> --- a/arch/powerpc/platforms/ps3/repository.c
+> +++ b/arch/powerpc/platforms/ps3/repository.c
+> @@ -101,9 +101,9 @@ static u64 make_first_field(const char *text, u64 index)
+>
+>  static u64 make_field(const char *text, u64 index)
+>  {
+> -       u64 n;
+> +       u64 n = 0;
+>
+> -       strncpy((char *)&n, text, 8);
+> +       memcpy((char *)&n, text, strnlen(text, sizeof(n)));
+
+This changes behavior: strncpy() fills the remainder of the buffer with
+zeroes.  I don't remember the details of the PS3 repository structure,
+but given this writes to a fixed size u64 buffer, I'd expect the PS3
+hypervisor code to (1) rely on the zero padding, and (2) not need a zero
+terminator if there are 8 characters in the buffer, so probably the
+original code is correct, and the "fixed" code isn't.
+
+Has this been tested on a PS3?
+
+>         return n + index;
+>  }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Jazz is not dead. It just smells funny...
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
