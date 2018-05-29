@@ -1,73 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936827AbeE2PGD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:06:03 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37679 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935448AbeE2PFH (ORCPT
+        id S936836AbeE2PGw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:06:52 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:33000 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935282AbeE2PGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:05:07 -0400
-X-Google-Smtp-Source: AB8JxZqe3lh4d4wP313B1sriqfDFrtdQ6X+V9OJ1AOCKKuqb4O/hh0n1ouyVCDIWs7JBnIla2MW1tA==
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH v2 2/5] ARM: clk-imx6q: add EPIT clock support
-Date: Tue, 29 May 2018 17:04:52 +0200
-Message-Id: <20180529150455.17300-3-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180529150455.17300-1-peron.clem@gmail.com>
-References: <20180529150455.17300-1-peron.clem@gmail.com>
+        Tue, 29 May 2018 11:06:36 -0400
+X-Google-Smtp-Source: ADUXVKI8DnldwNYBC18DWnCgjbuQzjSPfJe9Keiyvt5kU0xk5XoJDNOiYHOYInuKfs8fwxTX++ze3oJhXzvovNU76Tk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <a6f0601c-fd8b-2a16-6f66-77f350f114b5@butterbrot.org>
+References: <20180529095800.13504-1-benjamin.tissoires@redhat.com> <a6f0601c-fd8b-2a16-6f66-77f350f114b5@butterbrot.org>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Tue, 29 May 2018 17:06:34 +0200
+Message-ID: <CAO-hwJJb54s14htqbaX-+LdPQpuFNa+Vf-fmw+ZJWkrTDZMN+g@mail.gmail.com>
+Subject: Re: [PATCH 0/9] Hid multitouch rewrite, support os system multi-axis devices
+To: Florian Echtler <floe@butterbrot.org>
+Cc: Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mario.Limonciello@dell.com, Peter Hutterer <peter.hutterer@who-t.net>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Didier <colin.didier@devialet.com>
+Hi Florian,
 
-Add EPIT clock support to the i.MX6Q clocking infrastructure.
+On Tue, May 29, 2018 at 12:38 PM, Florian Echtler <floe@butterbrot.org> wrote:
+> Hello Benjamin,
+>
+> I have a side question about your patchset: for the SUR40 touchscreen, we had a
+> discussion a while ago about how to support the different object types which the
+> firmware can detect (plain touch contact, printed token with ID, generic blob
+> outline).
 
-Signed-off-by: Colin Didier <colin.didier@devialet.com>
-Signed-off-by: Clément Peron <clement.peron@devialet.com>
----
- drivers/clk/imx/clk-imx6q.c               | 2 ++
- include/dt-bindings/clock/imx6qdl-clock.h | 4 +++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+Plain touch contact should already be reported by MT_TOOL_FINGER.
+Printed token with ID seems challenging as even if it is a different
+tool (not a finger) I am not sure we can convey which ID is which.
+And generic blob is even worse because we need a tracking ID that
+would regroup the various touch points, and it doesn't reflect a
+particular tool.
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 8d518ad5dc13..b9ea7037e193 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -753,6 +753,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	else
- 		clk[IMX6Q_CLK_ECSPI5] = imx_clk_gate2("ecspi5",        "ecspi_root",        base + 0x6c, 8);
- 	clk[IMX6QDL_CLK_ENET]         = imx_clk_gate2("enet",          "ipg",               base + 0x6c, 10);
-+	clk[IMX6QDL_CLK_EPIT1]        = imx_clk_gate2("epit1",         "ipg",               base + 0x6c, 12);
-+	clk[IMX6QDL_CLK_EPIT2]        = imx_clk_gate2("epit2",         "ipg",               base + 0x6c, 14);
- 	clk[IMX6QDL_CLK_ESAI_EXTAL]   = imx_clk_gate2_shared("esai_extal",   "esai_podf",   base + 0x6c, 16, &share_count_esai);
- 	clk[IMX6QDL_CLK_ESAI_IPG]     = imx_clk_gate2_shared("esai_ipg",   "ahb",           base + 0x6c, 16, &share_count_esai);
- 	clk[IMX6QDL_CLK_ESAI_MEM]     = imx_clk_gate2_shared("esai_mem", "ahb",             base + 0x6c, 16, &share_count_esai);
-diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
-index da59fd9cdb5e..7ad171b8f3bf 100644
---- a/include/dt-bindings/clock/imx6qdl-clock.h
-+++ b/include/dt-bindings/clock/imx6qdl-clock.h
-@@ -271,6 +271,8 @@
- #define IMX6QDL_CLK_PRE_AXI			258
- #define IMX6QDL_CLK_MLB_SEL			259
- #define IMX6QDL_CLK_MLB_PODF			260
--#define IMX6QDL_CLK_END				261
-+#define IMX6QDL_CLK_EPIT1			261
-+#define IMX6QDL_CLK_EPIT2			262
-+#define IMX6QDL_CLK_END				263
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
--- 
-2.17.0
+> Would the pass-through for the tool type allow us to differentiate
+> those, once we define suitable tool types for each object class?
+
+I am honestly puzzled by this and can't do much for you here. Could
+you please re-tell us the specific use cases, so we can think about
+the solutions?
+
+Cheers,
+Benjamin
+
+>
+> Thanks & best regards, Florian
+>
+> On 29.05.2018 11:57, Benjamin Tissoires wrote:
+>> Hi Jiri,
+>>
+>> this heavy rewrite of hid-multitouch serves two main purposes:
+>> - the first point is to enable the support of the Totem on the Dell Canvas 27.
+>>   This new type of devices (System Multi Axis) is used by Microsoft to show
+>>   a new circular menu that is used by the second hand while you interact with
+>>   your preferred hand with your tool.
+>>   I couldn't enable it before because hid-multitouch expected to have only one
+>>   multitouch collection, and this device is exported as a separate multitouch
+>>   collextion in the same HID device than the one containing the touch sensor.
+>>
+>> - the second point is to streamline the process of the multitouch events. We
+>>   used to temporary store the events in a struct as they come in, and then do
+>>   the processing on the cache we just made. When doing the processing was also
+>>   not very clear. This made that even if hid-multitouch should IMO be merged in
+>>   hid-core, we couldn't.
+>>
+>>   The new processing of the events here adds a preparsing of the report in
+>>   one HID collection (application usage), and from now on, the processing
+>>   of the report is cleaner IMO. I still haven't merged hid-mt into hid-core,
+>>   because even if I wrote a bunch of unit tests trying to not break any devices,
+>>   we are not protected from a weird thing that magically happened before but is
+>>   now broken.
+>>
+>> I must say that when I worked on the tests, I came to realise that some legacy
+>> Win7 devices were better handled now. Initially I thought my new code broke them
+>> but comparing the outputs from https://github.com/bentiss/hid-devices before
+>> and after the changes, the new changes are closer to what I would expect by
+>> looking at the raw HID events.
+>>
+>> I also included 2 patches to enable the Surface Dial. It's a BLE device similar
+>> to the Totem from Dell, except that you can buy it for roughly $80 instead of
+>> $1800 for the Canvas.
+>>
+>>
+>> Dmitry, 2 patches are of interest for you:
+>> - 1/9 Input: mt - export MT_TOOL in input_mt_init_slot()
+>> - 7/9 HID: input: enable Totem on the Dell Canvas 27
+>>
+>> The second one exports a new MT_TOOL. In theory, I think patch 1/9 could be
+>> carried through your tree but it'll be better to have the full series applied
+>> at once.
+>>
+>> Cheers,
+>> Benjamin
+>>
+>> Benjamin Tissoires (9):
+>>   Input: mt - export MT_TOOL in input_mt_init_slot()
+>>   HID: multitouch: make sure the static list of class is not changed
+>>   HID: multitouch: Store per collection multitouch data
+>>   HID: multitouch: store a per application quirks value
+>>   HID: multitouch: ditch mt_report_id
+>>   HID: multitouch: remove one copy of values
+>>   HID: input: enable Totem on the Dell Canvas 27
+>>   HID: core: do not upper bound the collection stack
+>>   HID: microsoft: support the Surface Dial
+>>
+>>  drivers/hid/hid-core.c                   |  17 +-
+>>  drivers/hid/hid-input.c                  |   3 +
+>>  drivers/hid/hid-microsoft.c              |  49 +-
+>>  drivers/hid/hid-multitouch.c             | 941 ++++++++++++++++++-------------
+>>  drivers/input/input-mt.c                 |   1 +
+>>  drivers/input/rmi4/rmi_2d_sensor.c       |   2 -
+>>  drivers/input/touchscreen/atmel_mxt_ts.c |   2 -
+>>  drivers/input/touchscreen/hideep.c       |   2 -
+>>  drivers/input/touchscreen/wacom_w8001.c  |   2 -
+>>  include/linux/hid.h                      |  15 +-
+>>  include/uapi/linux/input.h               |   3 +-
+>>  11 files changed, 616 insertions(+), 421 deletions(-)
+>>
+>
+>
+> --
+> SENT FROM MY DEC VT50 TERMINAL
+>
