@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934735AbeE2NMh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:12:37 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52731 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934628AbeE2NK7 (ORCPT
+        id S934733AbeE2NMQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:12:16 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55360 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934083AbeE2NLB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:10:59 -0400
-X-Google-Smtp-Source: AB8JxZrhKQRALUb9U1brRNCQgzGEai4E0CDkJmQ67c3Vs66yVlWJbm16rfXcxGoCdrK2kwVWmE+uPQ==
+        Tue, 29 May 2018 09:11:01 -0400
+X-Google-Smtp-Source: AB8JxZp2e6bGBzu/LWBeo9cjXzWCIkgHVKtY7I48IRg4/rMFKjoDctJnF6vY4X24+rpl14ypOTiBDw==
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
 Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
         Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 16/19] serdev: ttyport: Move serport structure to its own header
-Date: Tue, 29 May 2018 15:10:11 +0200
-Message-Id: <20180529131014.18641-17-ricardo.ribalda@gmail.com>
+Subject: [PATCH 17/19] serdev: Mark controllers compatible with ttyport
+Date: Tue, 29 May 2018 15:10:12 +0200
+Message-Id: <20180529131014.18641-18-ricardo.ribalda@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
 References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
@@ -24,7 +24,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This way we can reuse this structure in other modules.
+This allows us to treat differently this controllers, by creating a tty
+compatibility layer.
 
 Cc: Rob Herring <robh@kernel.org>
 Cc: Johan Hovold <johan@kernel.org>
@@ -32,55 +33,33 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jiri Slaby <jslaby@suse.com>
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/tty/serdev/serdev-ttyport.c |  9 +--------
- drivers/tty/serdev/serport.h        | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+), 8 deletions(-)
- create mode 100644 drivers/tty/serdev/serport.h
+ drivers/tty/serdev/serdev-ttyport.c | 1 +
+ include/linux/serdev.h              | 1 +
+ 2 files changed, 2 insertions(+)
 
 diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
-index fa1672993b4c..4acc5f41dc67 100644
+index 4acc5f41dc67..ae961260e4a4 100644
 --- a/drivers/tty/serdev/serdev-ttyport.c
 +++ b/drivers/tty/serdev/serdev-ttyport.c
-@@ -7,17 +7,10 @@
- #include <linux/tty.h>
- #include <linux/tty_driver.h>
- #include <linux/poll.h>
-+#include "serport.h"
+@@ -276,6 +276,7 @@ struct device *serdev_tty_port_register(struct tty_port *port,
+ 	serport->tty_drv = drv;
  
- #define SERPORT_ACTIVE		1
+ 	ctrl->ops = &ctrl_ops;
++	ctrl->is_ttyport = true;
  
--struct serport {
--	struct tty_port *port;
--	struct tty_struct *tty;
--	struct tty_driver *tty_drv;
--	int tty_idx;
--	unsigned long flags;
--};
--
- /*
-  * Callback functions from the tty port.
-  */
-diff --git a/drivers/tty/serdev/serport.h b/drivers/tty/serdev/serport.h
-new file mode 100644
-index 000000000000..15bc1ff6326e
---- /dev/null
-+++ b/drivers/tty/serdev/serport.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2016-2017 Linaro Ltd., Rob Herring <robh@kernel.org>
-+ */
-+#ifndef _SERPORT_H
-+#define _SERPORT_H
-+
-+struct serport {
-+	struct tty_port *port;
-+	struct tty_struct *tty;
-+	struct tty_driver *tty_drv;
-+	int tty_idx;
-+	unsigned long flags;
-+};
-+
-+#endif
+ 	old_ops = port->client_ops;
+ 	port->client_ops = &client_ops;
+diff --git a/include/linux/serdev.h b/include/linux/serdev.h
+index bb3b9599c652..07d63933bdb9 100644
+--- a/include/linux/serdev.h
++++ b/include/linux/serdev.h
+@@ -116,6 +116,7 @@ struct serdev_controller {
+ 	unsigned int		nr;
+ 	struct serdev_device	*serdev;
+ 	const struct serdev_controller_ops *ops;
++	bool			is_ttyport;
+ };
+ 
+ static inline struct serdev_controller *to_serdev_controller(struct device *d)
 -- 
 2.17.0
