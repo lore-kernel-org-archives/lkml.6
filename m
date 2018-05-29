@@ -1,180 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968104AbeE2WYL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:24:11 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:44935 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967772AbeE2WYE (ORCPT
+        id S968555AbeE2WZx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:25:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48814 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967882AbeE2WZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:24:04 -0400
-X-Google-Smtp-Source: ADUXVKLUgOp2W7mbyN1QFVSeI2w+T9huwRbNr9wmBtUQtStmnojgX2IFJTBFndnWW4o92Y2R+i1fVvCc80tfoz8s+lU=
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKgiJfZTTs0RM9yaXSBMVq1Nsby4L8fwjOZ7yM3kik7Nw@mail.gmail.com>
-References: <20180505075854.192237-1-ksspiers@google.com> <CAGXu5jKgiJfZTTs0RM9yaXSBMVq1Nsby4L8fwjOZ7yM3kik7Nw@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 29 May 2018 15:24:02 -0700
-X-Google-Sender-Auth: FSwblBWMYXSI1yD5Za3HWLepavY
-Message-ID: <CAGXu5jK8+-vgpQB7kDnjjTk9pYJey2+gFUiv91QxWPj5zRuu_Q@mail.gmail.com>
-Subject: Re: [PATCH v2] async_pq: Remove VLA usage
-To: Kyle Spiers <ksspiers@google.com>,
-        Dan Williams <dan.j.williams@intel.com>, vinod.koul@intel.com,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, ray.jui@broadcom.com,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 May 2018 18:25:50 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        wsa@the-dreams.de, robh+dt@kernel.org, benh@kernel.crashing.org,
+        joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v7 0/7] i2c: Add FSI-attached I2C master algorithm
+Date: Tue, 29 May 2018 17:24:18 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18052922-0012-0000-0000-000016571677
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009097; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039557; UDB=6.00532065; IPR=6.00818685;
+ MB=3.00021364; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-29 22:25:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052922-0013-0000-0000-0000530627C8
+Message-Id: <1527632665-25707-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=519 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805290238
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 1:57 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Sat, May 5, 2018 at 12:58 AM, Kyle Spiers <ksspiers@google.com> wrote:
->> In the quest to remove VLAs from the kernel[1], this moves the
->> allocation of coefs and blocks from the stack to being kmalloc()ed.
->>
->> [1] https://lkml.org/lkml/2018/3/7/621
->>
->> Signed-off-by: Kyle Spiers <ksspiers@google.com>
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
->
-> Is this something that should go via Vinod, Dan, or direct through
-> Herbert's crypto tree?
+This series adds an algorithm for an I2C master physically located on an FSI
+slave device. The I2C master has multiple ports, each of which may be connected
+to an I2C slave. Access to the I2C master registers is achieved over FSI bus.
 
-Friendly ping. Any news on this patch?
+Due to the multi-port nature of the I2C master, the driver instantiates a new
+I2C adapter for each port connected to a slave. The connected ports should be
+defined in the device tree under the I2C master device.
 
-Thanks!
+Changes since v6
+ - Remove spinlock for reset functionality; it's unecessary and doesn't work
+   with the latest FSI core.
+ - Use a mutex instead of a semaphore, and don't wait for timeout to get the
+   lock.
+ - Use usleeps instead of schedule_timeout; it's not worth the overhead when
+   the wait should be very short in between sending the command and receiving
+   the response.
 
--Kees
+Changes since v5
+ - Fix reset functionality and do a reset after every transfer failure
 
->
-> Thanks!
->
-> -Kees
->
->> ---
->> Forgot to add slab.h
->> ---
->>  crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
->>  crypto/async_tx/raid6test.c |  9 ++++++++-
->>  2 files changed, 22 insertions(+), 5 deletions(-)
->>
->> diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
->> index 56bd612927ab..af1912313a23 100644
->> --- a/crypto/async_tx/async_pq.c
->> +++ b/crypto/async_tx/async_pq.c
->> @@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
->>             (src_cnt <= dma_maxpq(device, 0) ||
->>              dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
->>             is_dma_pq_aligned(device, offset, 0, len)) {
->> -               struct dma_async_tx_descriptor *tx;
->> +               struct dma_async_tx_descriptor *tx = NULL;
->>                 enum dma_ctrl_flags dma_flags = 0;
->> -               unsigned char coefs[src_cnt];
->> +               unsigned char *coefs;
->>                 int i, j;
->>
->>                 /* run the p+q asynchronously */
->> @@ -207,6 +207,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
->>                  * sources and update the coefficients accordingly
->>                  */
->>                 unmap->len = len;
->> +               coefs = kmalloc_array(src_cnt, sizeof(*coefs), GFP_KERNEL);
->> +               if (!coefs)
->> +                       goto out;
->>                 for (i = 0, j = 0; i < src_cnt; i++) {
->>                         if (blocks[i] == NULL)
->>                                 continue;
->> @@ -240,7 +243,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
->>                 }
->>
->>                 tx = do_async_gen_syndrome(chan, coefs, j, unmap, dma_flags, submit);
->> +out:
->>                 dmaengine_unmap_put(unmap);
->> +               kfree(coefs);
->>                 return tx;
->>         }
->>
->> @@ -298,8 +303,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
->>  {
->>         struct dma_chan *chan = pq_val_chan(submit, blocks, disks, len);
->>         struct dma_device *device = chan ? chan->device : NULL;
->> -       struct dma_async_tx_descriptor *tx;
->> -       unsigned char coefs[disks-2];
->> +       struct dma_async_tx_descriptor *tx = NULL;
->> +       unsigned char *coefs = NULL;
->>         enum dma_ctrl_flags dma_flags = submit->cb_fn ? DMA_PREP_INTERRUPT : 0;
->>         struct dmaengine_unmap_data *unmap = NULL;
->>
->> @@ -318,6 +323,9 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
->>                          __func__, disks, len);
->>
->>                 unmap->len = len;
->> +               coefs = kmalloc_array(disks - 2, sizeof(*coefs), GFP_KERNEL);
->> +               if (!coefs)
->> +                       goto out;
->>                 for (i = 0; i < disks-2; i++)
->>                         if (likely(blocks[i])) {
->>                                 unmap->addr[j] = dma_map_page(dev, blocks[i],
->> @@ -423,6 +431,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
->>                 async_tx_sync_epilog(submit);
->>                 tx = NULL;
->>         }
->> +out:
->> +       kfree(coefs);
->>         dmaengine_unmap_put(unmap);
->>
->>         return tx;
->> diff --git a/crypto/async_tx/raid6test.c b/crypto/async_tx/raid6test.c
->> index dad95f45b88f..4237a5ae8f42 100644
->> --- a/crypto/async_tx/raid6test.c
->> +++ b/crypto/async_tx/raid6test.c
->> @@ -24,6 +24,7 @@
->>  #include <linux/mm.h>
->>  #include <linux/random.h>
->>  #include <linux/module.h>
->> +#include <linux/slab.h>
->>
->>  #undef pr
->>  #define pr(fmt, args...) pr_info("raid6test: " fmt, ##args)
->> @@ -81,11 +82,16 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
->>                         init_async_submit(&submit, 0, NULL, NULL, NULL, addr_conv);
->>                         tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
->>                 } else {
->> -                       struct page *blocks[disks];
->> +                       struct page **blocks;
->>                         struct page *dest;
->>                         int count = 0;
->>                         int i;
->>
->> +                       blocks = kmalloc_array(disks, sizeof(*blocks),
->> +                                                       GFP_KERNEL);
->> +                       if (!blocks)
->> +                               return;
->> +
->>                         /* data+Q failure.  Reconstruct data from P,
->>                          * then rebuild syndrome
->>                          */
->> @@ -101,6 +107,7 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
->>
->>                         init_async_submit(&submit, 0, tx, NULL, NULL, addr_conv);
->>                         tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
->> +                       kfree(blocks);
->>                 }
->>         } else {
->>                 if (failb == disks-2) {
->> --
->> 2.17.0.441.gb46fe60e1d-goog
->>
->
->
->
-> --
-> Kees Cook
-> Pixel Security
+Edward A. James (7):
+  dt-bindings: i2c: Add FSI-attached I2C master dt binding documentation
+  drivers/i2c: Add FSI-attached I2C master algorithm
+  drivers/i2c: Add port structure to FSI algorithm
+  drivers/i2c: Add abort and hardware reset procedures
+  drivers/i2c: Add transfer implementation for FSI algorithm
+  drivers/i2c: Add I2C master locking to FSI algorithm
+  drivers/i2c: Add bus recovery for FSI algorithm
 
-
+ Documentation/devicetree/bindings/i2c/i2c-fsi.txt |  40 ++
+ drivers/i2c/busses/Kconfig                        |  11 +
+ drivers/i2c/busses/Makefile                       |   1 +
+ drivers/i2c/busses/i2c-fsi.c                      | 738 ++++++++++++++++++++++
+ 4 files changed, 790 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-fsi.txt
+ create mode 100644 drivers/i2c/busses/i2c-fsi.c
 
 -- 
-Kees Cook
-Pixel Security
+1.8.3.1
