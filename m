@@ -1,63 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755389AbeE2IpP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:45:15 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48352 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755249AbeE2IpM (ORCPT
+        id S1754997AbeE2Iqt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:46:49 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46604 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751091AbeE2Iqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:45:12 -0400
-Date: Tue, 29 May 2018 11:45:03 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Auger Eric <eric.auger@redhat.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vfio/pci: remove a bogus cast in vfio_msi_set_block()
-Message-ID: <20180529084502.hltdpojgnkjieaaj@mwanda>
-References: <20180528074756.bgl5fxvn7foe5uhn@kili.mountain>
- <8df5c218-cc97-3dbc-e820-f8bdc710ac17@redhat.com>
+        Tue, 29 May 2018 04:46:45 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: "Wangtao (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        gengyanping@hisilicon.com, sunzhaosheng@hisilicon.com
+Subject: Re: [PATCH] cpufreq: reinitialize new policy min/max when writing scaling_(max|min)_freq
+Date: Tue, 29 May 2018 10:45:57 +0200
+Message-ID: <3949526.VSbr9bPLlU@aspire.rjw.lan>
+In-Reply-To: <7700fad7-211d-d8b2-e4ee-975c1cf1f9dc@hisilicon.com>
+References: <1527144234-96396-1-git-send-email-kevin.wangtao@hisilicon.com> <CAJZ5v0ih6s9WviSpg9D+kSt2h8T5Vnx-MziOmYuk1H4yZOYLNg@mail.gmail.com> <7700fad7-211d-d8b2-e4ee-975c1cf1f9dc@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8df5c218-cc97-3dbc-e820-f8bdc710ac17@redhat.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8907 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805290102
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 09:27:18PM +0200, Auger Eric wrote:
-> Hi Dan,
+On Friday, May 25, 2018 4:54:04 AM CEST Wangtao (Kevin, Kirin) wrote:
 > 
-> On 05/28/2018 09:47 AM, Dan Carpenter wrote:
-> > This cast is confusing...  The "start" variable is an unsigned int.  We
-> > absolutely do not want to cast it to a negative int so why is the cast
-> > there?  It turns out, when you look at the context, it's a no-op and we
-> > can just remove it.
+> 在 2018/5/24 15:45, Rafael J. Wysocki 写道:
+> > On Thu, May 24, 2018 at 8:43 AM, Kevin Wangtao
+> > <kevin.wangtao@hisilicon.com> wrote:
+> >> consider such situation, current user_policy.min is 1000000,
+> >> current user_policy.max is 1200000, in cpufreq_set_policy,
+> >> other driver may update policy.min to 1200000, policy.max to
+> >> 1300000. After that, If we input "echo 1300000 > scaling_min_freq",
+> >> then user_policy.min will be 1300000, and user_policy.max is
+> >> still 1200000, because the input value is checked with policy.max
+> >> not user_policy.max. if we get all related cpus offline and
+> >> online again, it will cause cpufreq_init_policy fail because
+> >> user_policy.min is higher than user_policy.max.
 > > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-> > index 1c46045b0e7f..2724fed62129 100644
-> > --- a/drivers/vfio/pci/vfio_pci_intrs.c
-> > +++ b/drivers/vfio/pci/vfio_pci_intrs.c
-> > @@ -368,7 +368,7 @@ static int vfio_msi_set_block(struct vfio_pci_device *vdev, unsigned start,
-> >  	}
-> >  
-> >  	if (ret) {
-> > -		for (--j; j >= (int)start; j--)
-> > +		for (--j; j >= start; j--)
-> I think this was done one purpose as j can be -1 while start is an
-> unsigned.
-> 
+> > How do you reproduce this, exactly?
+>
+> I write a driver register CPUFREQ_POLICY_NOTIFIER, and when event is CPUFREQ_ADJUST,
+> it will modify policy's min/max according to some conditions, I test it with writing
+> scaling_(max|min)_freq to traverse all frequencies repeatly, and also repeat hotplug
+> as background.
 
-Oh, wow...  Yeah.  Sorry.  I didn't think that through.  I will create
-a static checker warning so this particular bug doesn't happen to me
-again.
-
-regards,
-dan carpenter
+You are expected to use cpufreq_update_policy() to update the limits in policy
+notifiers.  Do you use it in your driver?
