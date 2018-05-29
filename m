@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935339AbeE2O1z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:27:55 -0400
+        id S935080AbeE2O2N (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:28:13 -0400
 Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38208 "EHLO
         smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935137AbeE2OWT (ORCPT
+        with ESMTP id S935078AbeE2OWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:22:19 -0400
+        Tue, 29 May 2018 10:22:18 -0400
 From: James Simmons <jsimmons@infradead.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
@@ -15,9 +15,9 @@ Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Lustre Development List <lustre-devel@lists.lustre.org>,
         Amir Shehata <amir.shehata@intel.com>,
         James Simmons <jsimmons@infradead.org>
-Subject: [PATCH v2 08/25] staging: lustre: libcfs: NUMA support
-Date: Tue, 29 May 2018 10:21:48 -0400
-Message-Id: <1527603725-30560-9-git-send-email-jsimmons@infradead.org>
+Subject: [PATCH v2 v2 07/25] staging: lustre: libcfs: replace num_possible_cpus() with nr_cpu_ids
+Date: Tue, 29 May 2018 10:21:47 -0400
+Message-Id: <1527603725-30560-8-git-send-email-jsimmons@infradead.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
 References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
@@ -27,11 +27,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Amir Shehata <amir.shehata@intel.com>
 
-This patch adds NUMA node support. NUMA node information is stored
-in the CPT table. A NUMA node mask is maintained for the entire
-table as well as for each CPT to track the NUMA nodes related to
-each of the CPTs. Add new function cfs_cpt_of_node() which returns
-the CPT of a particular NUMA node.
+Move from num_possible_cpus() to nr_cpu_ids.
 
 Signed-off-by: Amir Shehata <amir.shehata@intel.com>
 Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-7734
@@ -43,100 +39,31 @@ Signed-off-by: James Simmons <jsimmons@infradead.org>
 Changelog:
 
 v1) Initial patch
-v2) Rebased patch to handle recent libcfs changes
+v2) Rebased patch. Same code
 
- .../lustre/include/linux/libcfs/libcfs_cpu.h        | 11 +++++++++++
- drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c     | 21 +++++++++++++++++++++
- 2 files changed, 32 insertions(+)
+ drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h
-index 3626969..487625d 100644
---- a/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h
-+++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h
-@@ -103,6 +103,8 @@ struct cfs_cpt_table {
- 	struct cfs_cpu_partition	*ctb_parts;
- 	/* shadow HW CPU to CPU partition ID */
- 	int				*ctb_cpu2cpt;
-+	/* shadow HW node to CPU partition ID */
-+	int				*ctb_node2cpt;
- 	/* all nodes in this partition table */
- 	nodemask_t			*ctb_nodemask;
- #else
-@@ -157,6 +159,10 @@ struct cfs_cpt_table {
-  */
- int cfs_cpt_of_cpu(struct cfs_cpt_table *cptab, int cpu);
- /**
-+ * shadow HW node ID \a NODE to CPU-partition ID by \a cptab
-+ */
-+int cfs_cpt_of_node(struct cfs_cpt_table *cptab, int node);
-+/**
-  * bind current thread on a CPU-partition \a cpt of \a cptab
-  */
- int cfs_cpt_bind(struct cfs_cpt_table *cptab, int cpt);
-@@ -345,6 +351,11 @@ static inline int cfs_cpt_table_print(struct cfs_cpt_table *cptab,
- 	return 0;
- }
- 
-+static inline int cfs_cpt_of_node(struct cfs_cpt_table *cptab, int node)
-+{
-+	return 0;
-+}
-+
- static inline int
- cfs_cpt_bind(struct cfs_cpt_table *cptab, int cpt)
- {
 diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-index 3f855a8..f616073 100644
+index d9d1388..3f855a8 100644
 --- a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
 +++ b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-@@ -98,6 +98,15 @@ struct cfs_cpt_table *
- 	memset(cptab->ctb_cpu2cpt, -1,
- 	       nr_cpu_ids * sizeof(cptab->ctb_cpu2cpt[0]));
+@@ -89,14 +89,14 @@ struct cfs_cpt_table *
+ 	if (!cptab->ctb_nodemask)
+ 		goto failed_alloc_nodemask;
  
-+	cptab->ctb_node2cpt = kvmalloc_array(nr_node_ids,
-+					     sizeof(cptab->ctb_node2cpt[0]),
-+					     GFP_KERNEL);
-+	if (!cptab->ctb_node2cpt)
-+		goto failed_alloc_node2cpt;
-+
-+	memset(cptab->ctb_node2cpt, -1,
-+	       nr_node_ids * sizeof(cptab->ctb_node2cpt[0]));
-+
+-	cptab->ctb_cpu2cpt = kvmalloc_array(num_possible_cpus(),
++	cptab->ctb_cpu2cpt = kvmalloc_array(nr_cpu_ids,
+ 					    sizeof(cptab->ctb_cpu2cpt[0]),
+ 					    GFP_KERNEL);
+ 	if (!cptab->ctb_cpu2cpt)
+ 		goto failed_alloc_cpu2cpt;
+ 
+ 	memset(cptab->ctb_cpu2cpt, -1,
+-	       num_possible_cpus() * sizeof(cptab->ctb_cpu2cpt[0]));
++	       nr_cpu_ids * sizeof(cptab->ctb_cpu2cpt[0]));
+ 
  	cptab->ctb_parts = kvmalloc_array(ncpt, sizeof(cptab->ctb_parts[0]),
  					  GFP_KERNEL);
- 	if (!cptab->ctb_parts)
-@@ -129,6 +138,8 @@ struct cfs_cpt_table *
- 
- 	kvfree(cptab->ctb_parts);
- failed_alloc_ctb_parts:
-+	kvfree(cptab->ctb_node2cpt);
-+failed_alloc_node2cpt:
- 	kvfree(cptab->ctb_cpu2cpt);
- failed_alloc_cpu2cpt:
- 	kfree(cptab->ctb_nodemask);
-@@ -146,6 +157,7 @@ struct cfs_cpt_table *
- 	int i;
- 
- 	kvfree(cptab->ctb_cpu2cpt);
-+	kvfree(cptab->ctb_node2cpt);
- 
- 	for (i = 0; cptab->ctb_parts && i < cptab->ctb_nparts; i++) {
- 		struct cfs_cpu_partition *part = &cptab->ctb_parts[i];
-@@ -511,6 +523,15 @@ struct cfs_cpt_table *
- }
- EXPORT_SYMBOL(cfs_cpt_of_cpu);
- 
-+int cfs_cpt_of_node(struct cfs_cpt_table *cptab, int node)
-+{
-+	if (node < 0 || node > nr_node_ids)
-+		return CFS_CPT_ANY;
-+
-+	return cptab->ctb_node2cpt[node];
-+}
-+EXPORT_SYMBOL(cfs_cpt_of_node);
-+
- int
- cfs_cpt_bind(struct cfs_cpt_table *cptab, int cpt)
- {
 -- 
 1.8.3.1
