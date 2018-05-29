@@ -1,133 +1,537 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966113AbeE2Syr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 14:54:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56814 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965425AbeE2Syn (ORCPT
+        id S966183AbeE2Szc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 14:55:32 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40838 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965425AbeE2Sz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 14:54:43 -0400
-Subject: Re: [patch v25 4/4] Documentation: jtag: Add ABI documentation
-To: Oleksandr Shamray <oleksandrs@mellanox.com>,
-        gregkh@linuxfoundation.org, arnd@arndb.de
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
-        jiri@resnulli.us, tklauser@distanz.ch, linux-serial@vger.kernel.org,
-        vadimp@mellanox.com, system-sw-low-level@mellanox.com,
-        robh+dt@kernel.org, openocd-devel-owner@lists.sourceforge.net,
-        linux-api@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org
-References: <1527605618-15705-1-git-send-email-oleksandrs@mellanox.com>
- <1527605618-15705-5-git-send-email-oleksandrs@mellanox.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <b1afae1e-b93b-3b86-1a45-ab0e408087e1@infradead.org>
-Date: Tue, 29 May 2018 11:54:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 29 May 2018 14:55:27 -0400
+X-Google-Smtp-Source: AB8JxZo6uSvc6hxE9uQXFvI+f9swvKPCZQ9KsxZrVjJjwLiGw88+7nKEWViB9jC9CMVIPl45vIBydQ==
+Date: Tue, 29 May 2018 11:55:24 -0700
+From: Omar Sandoval <osandov@osandov.com>
+To: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: axboe@kernel.dk, holger@applied-asynchrony.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 2/2] block: kyber: make kyber more friendly with
+ merging
+Message-ID: <20180529185524.GA23487@vader>
+References: <1527057202-2802-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1527057202-2802-3-git-send-email-jianchao.w.wang@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <1527605618-15705-5-git-send-email-oleksandrs@mellanox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1527057202-2802-3-git-send-email-jianchao.w.wang@oracle.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 07:53 AM, Oleksandr Shamray wrote:
-> Added document that describe the ABI for JTAG class drivrer
+On Wed, May 23, 2018 at 02:33:22PM +0800, Jianchao Wang wrote:
+> Currently, kyber is very unfriendly with merging. kyber depends
+> on ctx rq_list to do merging, however, most of time, it will not
+> leave any requests in ctx rq_list. This is because even if tokens
+> of one domain is used up, kyber will try to dispatch requests
+> from other domain and flush the rq_list there.
+> 
+> To improve this, we setup kyber_ctx_queue (kcq) which is similar
+> with ctx, but it has rq_lists for different domain and build same
+> mapping between kcq and khd as the ctx & hctx. Then we could merge,
+> insert and dispatch for different domains separately. At the same
+> time, only flush the rq_list of kcq when get domain token successfully.
+> Then if one domain token is used up, the requests could be left in
+> the rq_list of that domain and maybe merged with following io.
+> 
+> Following is my test result on machine with 8 cores and NVMe card
+> INTEL SSDPEKKR128G7
+> 
+> fio size=256m ioengine=libaio iodepth=64 direct=1 numjobs=8
+> seq/random
+> +------+---------------------------------------------------------------+
+> |patch?| bw(MB/s) |   iops    | slat(usec) |    clat(usec)   |  merge  |
+> +----------------------------------------------------------------------+
+> | w/o  |  606/612 | 151k/153k |  6.89/7.03 | 3349.21/3305.40 |   0/0   |
+> +----------------------------------------------------------------------+
+> | w/   | 1083/616 | 277k/154k |  4.93/6.95 | 1830.62/3279.95 | 223k/3k |
+> +----------------------------------------------------------------------+
+> When set numjobs to 16, the bw and iops could reach 1662MB/s and 425k
+> on my platform.
+> 
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
 
-Sorry, there are still a few typos.  Please see below.
+Thanks, the per-hctx kqcs make much more sense. This is pretty cool! A
+few nitpicks below.
 
 > ---
->  Documentation/ABI/testing/gpio-cdev |    1 -
->  Documentation/ABI/testing/jtag-dev  |   23 +++++++
->  Documentation/jtag/overview         |   27 +++++++++
->  Documentation/jtag/transactions     |  109 +++++++++++++++++++++++++++++++++++
->  MAINTAINERS                         |    1 +
->  5 files changed, 160 insertions(+), 1 deletions(-)
->  create mode 100644 Documentation/ABI/testing/jtag-dev
->  create mode 100644 Documentation/jtag/overview
->  create mode 100644 Documentation/jtag/transactions
+>  block/kyber-iosched.c | 197 +++++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 162 insertions(+), 35 deletions(-)
 > 
+> diff --git a/block/kyber-iosched.c b/block/kyber-iosched.c
+> index 0d6d25e3..7ca1364 100644
+> --- a/block/kyber-iosched.c
+> +++ b/block/kyber-iosched.c
+> @@ -72,6 +72,15 @@ static const unsigned int kyber_batch_size[] = {
+>  	[KYBER_OTHER] = 8,
+>  };
+>  
+> +struct kyber_ctx_queue {
 
-> diff --git a/Documentation/jtag/overview b/Documentation/jtag/overview
-> new file mode 100644
-> index 0000000..f179095
-> --- /dev/null
-> +++ b/Documentation/jtag/overview
-> @@ -0,0 +1,27 @@
-> +Linux kernel JTAG support
-> +=========================
-> +
-> +JTAG is an industry standard for verifying hardware.JTAG provides access to
+I'm not crazy about this name, but I can't really think of anything
+better, so this will have to do.
 
-needs space:
-                                              hardware. JTAG provides
+> +	/*
+> +	 * Copied from blk_mq_ctx->index_hw
+> +	 */
+> +	unsigned int index;
 
-> +many logic signals of a complex integrated circuit, including the device pins.
-> +
-> +A JTAG interface is a special interface added to a chip.
-> +Depending on the version of JTAG, two, four, or five pins are added.
-> +
-> +The connector pins are:
-> +	TDI (Test Data In)
-> +	TDO (Test Data Out)
-> +	TCK (Test Clock)
-> +	TMS (Test Mode Select)
-> +	TRST (Test Reset) optional
-> +
-> +JTAG interface is designed to have two parts - basic core driver and
-> +hardware specific driver. The basic driver introduces a general interface
-> +which is not dependent of specific hardware. It provides communication
-> +between user space and hardware specific driver.
-> +Each JTAG device is represented as a char device from (jtag0, jtag1, ...).
-> +Access to a JTAG device is performed through IOCTL calls.
-> +
-> +Call flow example:
-> +User: open  -> /dev/jatgX
-> +User: ioctl -> /dev/jtagX -> JTAG core driver -> JTAG hardware specific driver
-> +User: close -> /dev/jatgX
+We can just calculate this as kcq - khd->kcqs in the one place we use
+it.
 
-> diff --git a/Documentation/jtag/transactions b/Documentation/jtag/transactions
-> new file mode 100644
-> index 0000000..c5176a7
-> --- /dev/null
-> +++ b/Documentation/jtag/transactions
-> @@ -0,0 +1,109 @@
-> +The JTAG API
-> +=============
+> +	spinlock_t lock;
+> +	struct list_head rq_list[KYBER_NUM_DOMAINS];
+> +} ____cacheline_aligned_in_smp;
 > +
-> +JTAG master devices can be accessed through a character misc-device.
-> +Each JTAG master interface can be accessed by using /dev/jtagN.
+>  struct kyber_queue_data {
+>  	struct request_queue *q;
+>  
+> @@ -99,6 +108,8 @@ struct kyber_hctx_data {
+>  	struct list_head rqs[KYBER_NUM_DOMAINS];
+>  	unsigned int cur_domain;
+>  	unsigned int batching;
+> +	struct kyber_ctx_queue *kcqs;
+> +	struct sbitmap kcq_map[KYBER_NUM_DOMAINS];
+>  	wait_queue_entry_t domain_wait[KYBER_NUM_DOMAINS];
+>  	struct sbq_wait_state *domain_ws[KYBER_NUM_DOMAINS];
+>  	atomic_t wait_index[KYBER_NUM_DOMAINS];
+> @@ -107,10 +118,8 @@ struct kyber_hctx_data {
+>  static int kyber_domain_wake(wait_queue_entry_t *wait, unsigned mode, int flags,
+>  			     void *key);
+>  
+> -static int rq_sched_domain(const struct request *rq)
+> +static int kyber_sched_domain(unsigned int op)
+
+Please make this return an unsigned int since that's what we use for
+sched_domain everywhere except the stats bucket function.
+
+>  {
+> -	unsigned int op = rq->cmd_flags;
+> -
+>  	if ((op & REQ_OP_MASK) == REQ_OP_READ)
+>  		return KYBER_READ;
+>  	else if ((op & REQ_OP_MASK) == REQ_OP_WRITE && op_is_sync(op))
+> @@ -284,6 +293,11 @@ static unsigned int kyber_sched_tags_shift(struct kyber_queue_data *kqd)
+>  	return kqd->q->queue_hw_ctx[0]->sched_tags->bitmap_tags.sb.shift;
+>  }
+>  
+> +static int kyber_bucket_fn(const struct request *rq)
+> +{
+> +	return kyber_sched_domain(rq->cmd_flags);
+> +}
 > +
-> +JTAG system calls set:
-> +- SIR (Scan Instruction Register, IEEE 1149.1 Instruction Register scan);
-> +- SDR (Scan Data Register, IEEE 1149.1 Data Register scan);
-> +- RUNTEST (Forces the IEEE 1149.1 bus to a run state for a specified
-> +number of clocks.
+>  static struct kyber_queue_data *kyber_queue_data_alloc(struct request_queue *q)
+>  {
+>  	struct kyber_queue_data *kqd;
+> @@ -297,11 +311,10 @@ static struct kyber_queue_data *kyber_queue_data_alloc(struct request_queue *q)
+>  		goto err;
+>  	kqd->q = q;
+>  
+> -	kqd->cb = blk_stat_alloc_callback(kyber_stat_timer_fn, rq_sched_domain,
+> +	kqd->cb = blk_stat_alloc_callback(kyber_stat_timer_fn, kyber_bucket_fn,
+>  					  KYBER_NUM_DOMAINS, kqd);
+>  	if (!kqd->cb)
+>  		goto err_kqd;
+> -
+
+Unrelated whitespace change.
+
+>  	/*
+>  	 * The maximum number of tokens for any scheduling domain is at least
+>  	 * the queue depth of a single hardware queue. If the hardware doesn't
+> @@ -376,15 +389,45 @@ static void kyber_exit_sched(struct elevator_queue *e)
+>  	kfree(kqd);
+>  }
+>  
+> +static void kyber_ctx_queue_init(struct kyber_ctx_queue *kcq)
+> +{
+> +	unsigned int i;
 > +
-> +open(), close()
-> +-------
-> +open() opens JTAG device.
+> +	spin_lock_init(&kcq->lock);
+> +	for (i = 0; i < KYBER_NUM_DOMAINS; i++)
+> +		INIT_LIST_HEAD(&kcq->rq_list[i]);
+> +}
 > +
-> +Open/Close  device:
-> +- jtag_fd = open("/dev/jtag0", O_RDWR);
-> +- close(jtag_fd);
+>  static int kyber_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
+>  {
+>  	struct kyber_hctx_data *khd;
+> -	int i;
+> +	int i, sd;
+>  
+>  	khd = kmalloc_node(sizeof(*khd), GFP_KERNEL, hctx->numa_node);
+>  	if (!khd)
+>  		return -ENOMEM;
+>  
+> +	khd->kcqs = kmalloc_array_node(hctx->nr_ctx,
+> +			sizeof(struct kyber_ctx_queue),
+> +			GFP_KERNEL, hctx->numa_node);
+
+Argument whitespace alignment is still wrong here. I guess you have to
+pass --strict to checkpatch.pl to get it to warn about that. Usually I
+wouldn't be nitpicky about this but I made sure to keep this file nice
+and neat, and we need a v3 anyways :)
+
+> +	if (!khd->kcqs)
+> +		goto err_khd;
+> +	/*
+> +	 * clone the mapping between hctx and ctx to khd and kcq
+> +	 */
+> +	for (i = 0; i < hctx->nr_ctx; i++) {
+> +		kyber_ctx_queue_init(&khd->kcqs[i]);
+> +		khd->kcqs[i].index = i;
+> +	}
 > +
-> +ioctl()
-> +-------
-> +All access operations to JTAG devices are erformed through ioctl interface.
+> +	sd = 0;
+> +	for (i = 0; i < KYBER_NUM_DOMAINS; i++) {
+> +		if (sbitmap_init_node(&khd->kcq_map[i], hctx->nr_ctx,
+> +				ilog2(8), GFP_KERNEL, hctx->numa_node))
 
-                                             performed
+Whitespace again.
 
-> +The IOCTL interface supports these requests:
-> +	JTAG_IOCRUNTEST - Force JTAG state machine to RUN_TEST/IDLE state
-> +	JTAG_SIOCFREQ - Set JTAG TCK frequency
-> +	JTAG_GIOCFREQ - Get JTAG TCK frequency
-> +	JTAG_IOCXFER - send JTAG data Xfer
-> +	JTAG_GIOCSTATUS - get current JTAG TAP status
-> +	JTAG_SIOCMODE - set JTAG mode flags.
+> +			goto err_kcq_map;
 
+In this error case, I'd prefer if we did something similar to
+kyber_queue_data_alloc() instead of having this obscurely-named sd
+variable:
 
+			while (--i >= 0)
+				sbitmap_free(&khd->kcq_map[i]);
+			goto err_kcqs;
 
--- 
-~Randy
+Where err_kcqs is just the kfree(khd->kcqs).
+
+> +		sd++;
+> +	}
+> +
+>  	spin_lock_init(&khd->lock);
+>  
+>  	for (i = 0; i < KYBER_NUM_DOMAINS; i++) {
+> @@ -402,10 +445,24 @@ static int kyber_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
+>  	hctx->sched_data = khd;
+>  
+>  	return 0;
+> +
+> +err_kcq_map:
+> +	for (i = 0; i < sd; i++)
+> +		sbitmap_free(&khd->kcq_map[i]);
+> +	kfree(khd->kcqs);
+> +err_khd:
+> +	kfree(khd);
+> +	return -ENOMEM;
+>  }
+>  
+>  static void kyber_exit_hctx(struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
+>  {
+> +	struct kyber_hctx_data *khd = hctx->sched_data;
+> +	int i;
+> +
+> +	for (i = 0; i < KYBER_NUM_DOMAINS; i++)
+> +		sbitmap_free(&khd->kcq_map[i]);
+> +	kfree(khd->kcqs);
+>  	kfree(hctx->sched_data);
+>  }
+>  
+> @@ -427,7 +484,7 @@ static void rq_clear_domain_token(struct kyber_queue_data *kqd,
+>  
+>  	nr = rq_get_domain_token(rq);
+>  	if (nr != -1) {
+> -		sched_domain = rq_sched_domain(rq);
+> +		sched_domain = kyber_sched_domain(rq->cmd_flags);
+>  		sbitmap_queue_clear(&kqd->domain_tokens[sched_domain], nr,
+>  				    rq->mq_ctx->cpu);
+>  	}
+> @@ -446,11 +503,51 @@ static void kyber_limit_depth(unsigned int op, struct blk_mq_alloc_data *data)
+>  	}
+>  }
+>  
+> +static bool kyber_bio_merge(struct blk_mq_hw_ctx *hctx, struct bio *bio)
+> +{
+> +	struct kyber_hctx_data *khd = hctx->sched_data;
+> +	struct blk_mq_ctx *ctx = blk_mq_get_ctx(hctx->queue);
+> +	struct kyber_ctx_queue *kcq = &khd->kcqs[ctx->index_hw];
+> +	struct list_head *rq_list = &kcq->rq_list[kyber_sched_domain(bio->bi_opf)];
+> +	bool merged;
+> +
+> +	spin_lock(&kcq->lock);
+> +	merged = blk_mq_bio_list_merge(hctx->queue, rq_list, bio);
+> +	spin_unlock(&kcq->lock);
+> +	blk_mq_put_ctx(ctx);
+> +
+> +	return merged;
+> +}
+> +
+>  static void kyber_prepare_request(struct request *rq, struct bio *bio)
+>  {
+>  	rq_set_domain_token(rq, -1);
+>  }
+>  
+> +static void kyber_insert_requests(struct blk_mq_hw_ctx *hctx,
+> +		struct list_head *rq_list, bool at_head)
+
+Whitespace.
+
+> +{
+> +	struct kyber_hctx_data *khd = hctx->sched_data;
+> +	struct kyber_ctx_queue *kcq;
+> +	struct request *rq, *next;
+> +	struct list_head *head;
+> +	unsigned int sched_domain;
+> +
+> +	list_for_each_entry_safe(rq, next, rq_list, queuelist) {
+
+Please declare the variables which are local to the loop iteration
+inside of the loop body. I.e.,
+
+		unsigned int sched_domain;
+		struct kyber_ctx_queue *kcq;
+		struct list_head *head;
+
+> +		sched_domain = kyber_sched_domain(rq->cmd_flags);
+> +		kcq = &khd->kcqs[rq->mq_ctx->index_hw];
+> +		head = &kcq->rq_list[sched_domain];
+> +		spin_lock(&kcq->lock);
+> +		if (at_head)
+> +			list_move(&rq->queuelist, head);
+> +		else
+> +			list_move_tail(&rq->queuelist, head);
+> +		sbitmap_set_bit(&khd->kcq_map[sched_domain], kcq->index);
+> +		blk_mq_sched_request_inserted(rq);
+> +		spin_unlock(&kcq->lock);
+> +	}
+> +}
+> +
+>  static void kyber_finish_request(struct request *rq)
+>  {
+>  	struct kyber_queue_data *kqd = rq->q->elevator->elevator_data;
+> @@ -469,7 +566,7 @@ static void kyber_completed_request(struct request *rq)
+>  	 * Check if this request met our latency goal. If not, quickly gather
+>  	 * some statistics and start throttling.
+>  	 */
+> -	sched_domain = rq_sched_domain(rq);
+> +	sched_domain = kyber_sched_domain(rq->cmd_flags);
+>  	switch (sched_domain) {
+>  	case KYBER_READ:
+>  		target = kqd->read_lat_nsec;
+> @@ -495,19 +592,36 @@ static void kyber_completed_request(struct request *rq)
+>  		blk_stat_activate_msecs(kqd->cb, 10);
+>  }
+>  
+> -static void kyber_flush_busy_ctxs(struct kyber_hctx_data *khd,
+> -				  struct blk_mq_hw_ctx *hctx)
+> +struct flush_kcq_data {
+> +	struct kyber_hctx_data *khd;
+> +	unsigned int sched_domain;
+> +	struct list_head *list;
+> +};
+> +
+> +static bool flush_busy_kcq(struct sbitmap *sb, unsigned int bitnr, void *data)
+>  {
+> -	LIST_HEAD(rq_list);
+> -	struct request *rq, *next;
+> +	struct flush_kcq_data *flush_data = data;
+> +	struct kyber_ctx_queue *kcq = &flush_data->khd->kcqs[bitnr];
+>  
+> -	blk_mq_flush_busy_ctxs(hctx, &rq_list);
+> -	list_for_each_entry_safe(rq, next, &rq_list, queuelist) {
+> -		unsigned int sched_domain;
+> +	spin_lock(&kcq->lock);
+> +	list_splice_tail_init(&kcq->rq_list[flush_data->sched_domain],
+> +			flush_data->list);
+> +	sbitmap_clear_bit(sb, bitnr);
+> +	spin_unlock(&kcq->lock);
+>  
+> -		sched_domain = rq_sched_domain(rq);
+> -		list_move_tail(&rq->queuelist, &khd->rqs[sched_domain]);
+> -	}
+> +	return true;
+> +}
+> +
+> +static void kyber_flush_busy_kcqs(struct kyber_hctx_data *khd,
+> +		unsigned int sched_domain, struct list_head *list)
+> +{
+> +	struct flush_kcq_data data = {
+> +		.khd = khd,
+> +		.sched_domain = sched_domain,
+> +		.list = list,
+> +	};
+> +
+> +	sbitmap_for_each_set(&khd->kcq_map[sched_domain], flush_busy_kcq, &data);
+>  }
+>  
+>  static int kyber_domain_wake(wait_queue_entry_t *wait, unsigned mode, int flags,
+> @@ -570,26 +684,19 @@ static int kyber_get_domain_token(struct kyber_queue_data *kqd,
+>  static struct request *
+>  kyber_dispatch_cur_domain(struct kyber_queue_data *kqd,
+>  			  struct kyber_hctx_data *khd,
+> -			  struct blk_mq_hw_ctx *hctx,
+> -			  bool *flushed)
+> +			  struct blk_mq_hw_ctx *hctx)
+>  {
+>  	struct list_head *rqs;
+>  	struct request *rq;
+>  	int nr;
+>  
+>  	rqs = &khd->rqs[khd->cur_domain];
+> -	rq = list_first_entry_or_null(rqs, struct request, queuelist);
+>  
+>  	/*
+> -	 * If there wasn't already a pending request and we haven't flushed the
+> -	 * software queues yet, flush the software queues and check again.
+> +	 * If we do have cur_domain rqs on khd or kcq list, then try to require
+> +	 * the token
+>  	 */
+> -	if (!rq && !*flushed) {
+> -		kyber_flush_busy_ctxs(khd, hctx);
+> -		*flushed = true;
+> -		rq = list_first_entry_or_null(rqs, struct request, queuelist);
+> -	}
+> -
+> +	rq = list_first_entry_or_null(rqs, struct request, queuelist);
+>  	if (rq) {
+>  		nr = kyber_get_domain_token(kqd, khd, hctx);
+>  		if (nr >= 0) {
+> @@ -598,8 +705,25 @@ kyber_dispatch_cur_domain(struct kyber_queue_data *kqd,
+>  			list_del_init(&rq->queuelist);
+>  			return rq;
+>  		}
+> +	} else if (sbitmap_any_bit_set(&khd->kcq_map[khd->cur_domain])) {
+> +		nr = kyber_get_domain_token(kqd, khd, hctx);
+> +		if (nr >= 0) {
+> +			kyber_flush_busy_kcqs(khd, khd->cur_domain, rqs);
+> +			rq = list_first_entry_or_null(rqs, struct request, queuelist);
+
+This should just be list_first_entry() if we're so sure that we will
+always get a request.
+
+> +			/*
+> +			 * khd->lock and kcq->lock will ensure that, if kcq_map[cur_domain]
+> +			 * is set, we must be able to get requests from the kcq
+> +			 */
+> +			khd->batching++;
+> +			rq_set_domain_token(rq, nr);
+> +			list_del_init(&rq->queuelist);
+> +			return rq;
+> +		}
+> +		/*
+> +		 * if not get domain token, the rqs could be left on kcqs to merged
+> +		 * with following ios.
+> +		 */
+>  	}
+> -
+>  	/* There were either no pending requests or no tokens. */
+>  	return NULL;
+>  }
+
+Clever logic in this function :) I think it needs a more complete
+explanation rather than the little pieces sprinkled about, how about
+this (applied on top of your patch):
+
+diff --git a/block/kyber-iosched.c b/block/kyber-iosched.c
+index f60bb4ce1fe6..f4f17527b7be 100644
+--- a/block/kyber-iosched.c
++++ b/block/kyber-iosched.c
+@@ -696,8 +696,12 @@ kyber_dispatch_cur_domain(struct kyber_queue_data *kqd,
+ 	rqs = &khd->rqs[khd->cur_domain];
+ 
+ 	/*
+-	 * If we do have cur_domain rqs on khd or kcq list, then try to require
+-	 * the token
++	 * If we already have a flushed request, then we just need to get a
++	 * token for it. Otherwise, if there are pending requests in the kcqs,
++	 * flush the kcqs, but only if we can get a token. If not, we should
++	 * leave the requests in the kcqs so that they can be merged. Note that
++	 * khd->lock serializes the flushes, so if we observed any bit set in
++	 * the kcq_map, we will always get a request.
+ 	 */
+ 	rq = list_first_entry_or_null(rqs, struct request, queuelist);
+ 	if (rq) {
+@@ -712,20 +716,12 @@ kyber_dispatch_cur_domain(struct kyber_queue_data *kqd,
+ 		nr = kyber_get_domain_token(kqd, khd, hctx);
+ 		if (nr >= 0) {
+ 			kyber_flush_busy_kcqs(khd, khd->cur_domain, rqs);
+-			rq = list_first_entry_or_null(rqs, struct request, queuelist);
+-			/*
+-			 * khd->lock and kcq->lock will ensure that, if kcq_map[cur_domain]
+-			 * is set, we must be able to get requests from the kcq
+-			 */
++			rq = list_first_entry(rqs, struct request, queuelist);
+ 			khd->batching++;
+ 			rq_set_domain_token(rq, nr);
+ 			list_del_init(&rq->queuelist);
+ 			return rq;
+ 		}
+-		/*
+-		 * if not get domain token, the rqs could be left on kcqs to merged
+-		 * with following ios.
+-		 */
+ 	}
+ 	/* There were either no pending requests or no tokens. */
+ 	return NULL;
+
+> @@ -608,7 +732,6 @@ static struct request *kyber_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>  {
+>  	struct kyber_queue_data *kqd = hctx->queue->elevator->elevator_data;
+>  	struct kyber_hctx_data *khd = hctx->sched_data;
+> -	bool flushed = false;
+>  	struct request *rq;
+>  	int i;
+>  
+> @@ -619,7 +742,7 @@ static struct request *kyber_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>  	 * from the batch.
+>  	 */
+>  	if (khd->batching < kyber_batch_size[khd->cur_domain]) {
+> -		rq = kyber_dispatch_cur_domain(kqd, khd, hctx, &flushed);
+> +		rq = kyber_dispatch_cur_domain(kqd, khd, hctx);
+>  		if (rq)
+>  			goto out;
+>  	}
+> @@ -640,7 +763,7 @@ static struct request *kyber_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>  		else
+>  			khd->cur_domain++;
+>  
+> -		rq = kyber_dispatch_cur_domain(kqd, khd, hctx, &flushed);
+> +		rq = kyber_dispatch_cur_domain(kqd, khd, hctx);
+>  		if (rq)
+>  			goto out;
+>  	}
+> @@ -657,10 +780,12 @@ static bool kyber_has_work(struct blk_mq_hw_ctx *hctx)
+>  	int i;
+>  
+>  	for (i = 0; i < KYBER_NUM_DOMAINS; i++) {
+> -		if (!list_empty_careful(&khd->rqs[i]))
+> +		if (!list_empty_careful(&khd->rqs[i]) ||
+> +				sbitmap_any_bit_set(&khd->kcq_map[i]))
+
+Whitespace.
+
+>  			return true;
+>  	}
+> -	return sbitmap_any_bit_set(&hctx->ctx_map);
+> +
+> +	return false;
+>  }
+>  
+>  #define KYBER_LAT_SHOW_STORE(op)					\
+> @@ -831,7 +956,9 @@ static struct elevator_type kyber_sched = {
+>  		.init_hctx = kyber_init_hctx,
+>  		.exit_hctx = kyber_exit_hctx,
+>  		.limit_depth = kyber_limit_depth,
+> +		.bio_merge = kyber_bio_merge,
+>  		.prepare_request = kyber_prepare_request,
+> +		.insert_requests = kyber_insert_requests,
+>  		.finish_request = kyber_finish_request,
+>  		.requeue_request = kyber_finish_request,
+>  		.completed_request = kyber_completed_request,
+> -- 
+> 2.7.4
+> 
