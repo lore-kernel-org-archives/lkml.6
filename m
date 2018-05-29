@@ -1,129 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936645AbeE2OvU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:51:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56268 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935748AbeE2OvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:51:08 -0400
-Date: Tue, 29 May 2018 16:51:06 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        guillaume.knispel@supersonicimagine.com,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
-Message-ID: <20180529145106.GV27180@dhcp22.suse.cz>
-References: <20180524211135.27760-1-dave@stgolabs.net>
- <20180524211135.27760-4-dave@stgolabs.net>
- <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
- <20180529144317.GA20910@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529144317.GA20910@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S936692AbeE2Ovo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:51:44 -0400
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:40199 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936627AbeE2Oqi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:46:38 -0400
+X-Google-Smtp-Source: ADUXVKKzNyhohHh8NqQst/Bq2V9YmKrnEOkKrzhUAtBVucc6qixMBDvMw8mGK64Z+gTnbCkmK1QSlQ==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 18/28] ovl: Check redirects for metacopy files
+Date: Tue, 29 May 2018 16:46:02 +0200
+Message-Id: <20180529144612.16675-19-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
+References: <20180529144612.16675-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 29-05-18 16:43:17, Michal Hocko wrote:
-> On Thu 24-05-18 14:37:36, Linus Torvalds wrote:
-> > On Thu, May 24, 2018 at 2:28 PM Davidlohr Bueso <dave@stgolabs.net> wrote:
-> > 
-> > >                  if (gfpflags_allow_blocking(gfp))
-> > > -                       tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
-> > > +                       tlocks = kvmalloc_array(size, sizeof(spinlock_t),
-> > gfp);
-> > >                  else
-> > >                          tlocks = kmalloc_array(size, sizeof(spinlock_t),
-> > gfp);
-> > 
-> > Side note: how about we just move that "gfpflags_allow_blocking()" into
-> > kvmalloc() instead, and make kvmalloc() generally usable?
-> > 
-> > Now we have that really odd situation where kvmalloc() takes gfp flags, but
-> > to quote the comment:
-> > 
-> >   * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm
-> > people.
-> > 
-> > and the code:
-> > 
-> >          /*
-> >           * vmalloc uses GFP_KERNEL for some internal allocations (e.g page
-> > tables)
-> >           * so the given set of flags has to be compatible.
-> >           */
-> >          WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
-> > 
-> > which isn't really all that helpful. Do mm people really want to be
-> > consulted about random uses?
-> 
-> The purpose was to have a clean usage base after the conversion. If we
-> are growing a non-trivial use base which wants to use GFP_NOWAIT semantic
-> then sure we can make kvmalloc never fallback to vmallock. But see
-> below...
-> 
-> > Maybe we could just make the rule for kvmalloc() be to only fall back on
-> > vmalloc for allocations that are
-> > 
-> >   - larger than page size
-> > 
-> >   - blocking and allow GFP_KERNEL (so basically that WARN_ON_ONCE() logic in
-> > kvmalloc_node).
-> > 
-> > Hmm? Isn't that what everybody really *wants* kvmalloc() and friends to do?
-> 
-> ... Well, there are users who would like to use kvmalloc for
-> GFP_NOFS/GFP_NOIO context. Do we want them to fail more likely for
-> larger order rather than have them fixed (to either drop the NOFS
-> because it just has been blindly copied from a different code without
-> too much thinking or use the scope NOFS/NOIO API)? A warn_on tends to be
-> rather harsh but effective way to push maintainers fix their broken
-> code...
+From: Vivek Goyal <vgoyal@redhat.com>
 
-In other words, what about the following?
+Right now we rely on path based lookup for data origin of metacopy upper.
+This will work only if upper has not been renamed.  We solved this problem
+already for merged directories using redirect.  Use same logic for metacopy
+files.
 
-diff --git a/mm/util.c b/mm/util.c
-index 45fc3169e7b0..05706e18d201 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -391,6 +391,10 @@ EXPORT_SYMBOL(vm_mmap);
-  * __GFP_RETRY_MAYFAIL is supported, and it should be used only if kmalloc is
-  * preferable to the vmalloc fallback, due to visible performance drawbacks.
-  *
-+ * GFP_NOWAIT request never fallback to vmalloc but it is accepted for convenience
-+ * to not force people open conding kmalloc fallback on !gfpflags_allow_blocking
-+ * requests.
-+ *
-  * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm people.
-  */
- void *kvmalloc_node(size_t size, gfp_t flags, int node)
-@@ -402,7 +406,7 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
- 	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
- 	 * so the given set of flags has to be compatible.
- 	 */
--	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
-+	WARN_ON_ONCE((flags & (__GFP_FS|__GFP_IO)) != (__GFP_FS|__GFP_IO));
+This patch just goes on to check redirects for metacopy files.
+
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/overlayfs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index 451cd6effcf6..e38fa61e08df 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -272,7 +272,8 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
  
- 	/*
- 	 * We want to attempt a large physically contiguous block first because
-@@ -427,6 +431,9 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
- 	if (ret || size <= PAGE_SIZE)
- 		return ret;
+ 		d->metacopy = err;
+ 		d->stop = !d->metacopy;
+-		goto out;
++		if (!d->metacopy || d->last)
++			goto out;
+ 	} else {
+ 		if (last_element)
+ 			d->is_dir = true;
+@@ -874,7 +875,6 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		if (upperdentry && !d.is_dir) {
+ 			unsigned int origin_ctr = 0;
  
-+	if (!gfpflags_allow_blocking(flags))
-+		return NULL;
-+
- 	return __vmalloc_node_flags_caller(size, node, flags,
- 			__builtin_return_address(0));
- }
+-			BUG_ON(d.redirect);
+ 			/*
+ 			 * Lookup copy up origin by decoding origin file handle.
+ 			 * We may get a disconnected dentry, which is fine,
 -- 
-Michal Hocko
-SUSE Labs
+2.14.3
