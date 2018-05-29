@@ -1,67 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936872AbeE2QTf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:19:35 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:41685 "EHLO pegase1.c-s.fr"
+        id S964968AbeE2QVi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:21:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935771AbeE2QTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:19:20 -0400
-Message-Id: <96d2828025d815e91e3946f6ef45a09d9a206ca3.1527610536.git.christophe.leroy@c-s.fr>
-In-Reply-To: <2e937890abac10677aae3c1e345dd934a6794c37.1527610536.git.christophe.leroy@c-s.fr>
-References: <2e937890abac10677aae3c1e345dd934a6794c37.1527610536.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 3/3] powerpc/time: no steal_time if !CONFIG_PPC_SPLPAR
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue, 29 May 2018 16:19:18 +0000 (UTC)
+        id S935416AbeE2QVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 12:21:37 -0400
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/3] f2fs: make __f2fs_write_data_pages() static
+Date: Wed, 30 May 2018 00:20:39 +0800
+Message-Id: <20180529162041.16005-1-chao@kernel.org>
+X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_PPC_SPLPAR is not selected, steal_time will always
-be NUL, so accounting it is pointless
+From: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- New in v3
- 
- arch/powerpc/kernel/time.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/f2fs/data.c | 2 +-
+ fs/f2fs/f2fs.h | 3 ---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index 7d6040233003..85d1b1ff45f3 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -346,7 +346,8 @@ void vtime_account_system(struct task_struct *tsk)
- 	stime = vtime_delta(tsk, &stime_scaled, &steal_time);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 97e6df852f37..10aa4d9a4b7c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2072,7 +2072,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	return ret;
+ }
  
- 	stime -= min(stime, steal_time);
--	acct->steal_time += steal_time;
-+	if (IS_ENABLED(CONFIG_PPC_SPLPAR))
-+		acct->steal_time += steal_time;
- 
- 	if ((tsk->flags & PF_VCPU) && !irq_count()) {
- 		acct->gtime += stime;
-@@ -401,7 +402,7 @@ void vtime_flush(struct task_struct *tsk)
- 	if (acct->gtime)
- 		account_guest_time(tsk, cputime_to_nsecs(acct->gtime));
- 
--	if (acct->steal_time)
-+	if (IS_ENABLED(CONFIG_PPC_SPLPAR) && acct->steal_time)
- 		account_steal_time(cputime_to_nsecs(acct->steal_time));
- 
- 	if (acct->idle_time)
-@@ -425,7 +426,8 @@ void vtime_flush(struct task_struct *tsk)
- 	acct->stime_scaled = 0;
- #endif
- 	acct->gtime = 0;
--	acct->steal_time = 0;
-+	if (IS_ENABLED(CONFIG_PPC_SPLPAR))
-+		acct->steal_time = 0;
- 	acct->idle_time = 0;
- 	acct->stime = 0;
- 	acct->hardirq_time = 0;
+-int __f2fs_write_data_pages(struct address_space *mapping,
++static int __f2fs_write_data_pages(struct address_space *mapping,
+ 						struct writeback_control *wbc,
+ 						enum iostat_type io_type)
+ {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c8e7f34ca290..18de7556dee8 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2956,9 +2956,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 			u64 start, u64 len);
+ bool should_update_inplace(struct inode *inode, struct f2fs_io_info *fio);
+ bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio);
+-int __f2fs_write_data_pages(struct address_space *mapping,
+-						struct writeback_control *wbc,
+-						enum iostat_type io_type);
+ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+ 			unsigned int length);
+ int f2fs_release_page(struct page *page, gfp_t wait);
 -- 
-2.13.3
+2.16.2.17.g38e79b1fd
