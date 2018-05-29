@@ -1,57 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935398AbeE2Ome (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:42:34 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:36313 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935324AbeE2Om1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:42:27 -0400
-X-Google-Smtp-Source: ADUXVKJOFdVJcs5zvZoqyeRgTSeL6xC9ABAb/iPPsPRZf8HyHVjRAGznZ9q7DuVIU82q6VZZ3/lhuQ==
-Subject: Re: [PATCH v2 net-next] tcp: use data length instead of skb->len in
- tcp_probe
-To: Yafang Shao <laoar.shao@gmail.com>, David Miller <davem@davemloft.net>
-Cc: Song Liu <songliubraving@fb.com>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1527243245-29582-1-git-send-email-laoar.shao@gmail.com>
- <20180529.101553.694799514284747444.davem@davemloft.net>
- <CALOAHbAzy_KfT0FcU9fumPKZgSaSOAAfY755TGxsJU7toB_1dA@mail.gmail.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <98df6d86-f237-b2d4-9f85-ce6d11c1ac4f@gmail.com>
-Date: Tue, 29 May 2018 07:42:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S935519AbeE2OnZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:43:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54156 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935077AbeE2OnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:43:20 -0400
+Date: Tue, 29 May 2018 16:43:17 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        guillaume.knispel@supersonicimagine.com,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
+Message-ID: <20180529144317.GA20910@dhcp22.suse.cz>
+References: <20180524211135.27760-1-dave@stgolabs.net>
+ <20180524211135.27760-4-dave@stgolabs.net>
+ <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CALOAHbAzy_KfT0FcU9fumPKZgSaSOAAfY755TGxsJU7toB_1dA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/29/2018 07:36 AM, Yafang Shao wrote:
-> On Tue, May 29, 2018 at 10:15 PM, David Miller <davem@davemloft.net> wrote:
->> From: Yafang Shao <laoar.shao@gmail.com>
->> Date: Fri, 25 May 2018 18:14:05 +0800
->>
->>> skb->len is meaningless to user.
->>> data length could be more helpful, with which we can easily filter out
->>> the packet without payload.
->>>
->>> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
->>
->> Applied, thank you.
+On Thu 24-05-18 14:37:36, Linus Torvalds wrote:
+> On Thu, May 24, 2018 at 2:28 PM Davidlohr Bueso <dave@stgolabs.net> wrote:
 > 
-> Hi Dave,
+> >                  if (gfpflags_allow_blocking(gfp))
+> > -                       tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
+> > +                       tlocks = kvmalloc_array(size, sizeof(spinlock_t),
+> gfp);
+> >                  else
+> >                          tlocks = kmalloc_array(size, sizeof(spinlock_t),
+> gfp);
 > 
-> There's an update on this patch.
-> Pls.  see V4.
+> Side note: how about we just move that "gfpflags_allow_blocking()" into
+> kvmalloc() instead, and make kvmalloc() generally usable?
 > 
-> And I will send a V5 patch per Eric's suggestion.
+> Now we have that really odd situation where kvmalloc() takes gfp flags, but
+> to quote the comment:
+> 
+>   * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm
+> people.
+> 
+> and the code:
+> 
+>          /*
+>           * vmalloc uses GFP_KERNEL for some internal allocations (e.g page
+> tables)
+>           * so the given set of flags has to be compatible.
+>           */
+>          WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
+> 
+> which isn't really all that helpful. Do mm people really want to be
+> consulted about random uses?
 
-Ah, if it is merged it might be too late.
+The purpose was to have a clean usage base after the conversion. If we
+are growing a non-trivial use base which wants to use GFP_NOWAIT semantic
+then sure we can make kvmalloc never fallback to vmallock. But see
+below...
 
-No big deal.
+> Maybe we could just make the rule for kvmalloc() be to only fall back on
+> vmalloc for allocations that are
+> 
+>   - larger than page size
+> 
+>   - blocking and allow GFP_KERNEL (so basically that WARN_ON_ONCE() logic in
+> kvmalloc_node).
+> 
+> Hmm? Isn't that what everybody really *wants* kvmalloc() and friends to do?
+
+... Well, there are users who would like to use kvmalloc for
+GFP_NOFS/GFP_NOIO context. Do we want them to fail more likely for
+larger order rather than have them fixed (to either drop the NOFS
+because it just has been blindly copied from a different code without
+too much thinking or use the scope NOFS/NOIO API)? A warn_on tends to be
+rather harsh but effective way to push maintainers fix their broken
+code...
+-- 
+Michal Hocko
+SUSE Labs
