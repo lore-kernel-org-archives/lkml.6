@@ -1,70 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966197AbeE2ST4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 14:19:56 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52661 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936904AbeE2STu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 14:19:50 -0400
-Date: Tue, 29 May 2018 11:19:25 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <35cdbb04-7b1d-59ae-2ff8-af1d57751113@redhat.com>
-References: <20180529123800.19627-1-prarit@redhat.com> <CAGXu5jJvJbTZT5=u7TJtLsN-TsuSEfw8h2EwV8w-oefJkADoBg@mail.gmail.com> <71b5df93-2e21-f3c3-fa22-4488729daeb5@redhat.com> <20180529160743.GA7381@thunk.org> <35cdbb04-7b1d-59ae-2ff8-af1d57751113@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH] x86, random: Fix get_random_bytes() warning in x86 start_kernel
-To: Prarit Bhargava <prarit@redhat.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        X86 ML <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rik van Riel <riel@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-From: hpa@zytor.com
-Message-ID: <54FF298C-0992-4592-AAF8-9ABBF8DE917D@zytor.com>
+        id S966189AbeE2STY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 14:19:24 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42441 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937009AbeE2SSQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 14:18:16 -0400
+X-Google-Smtp-Source: ADUXVKLf2Lz6HzK3/q2vhfDHlSaKnYDyXofeWG5vPKKGLo/4A+SL1oQkdpr0Ymk2lPfcp2HAKCDRlw==
+From: Evan Green <evgreen@chromium.org>
+To: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc: Gwendal Grignou <gwendal@chromium.org>,
+        Evan Green <evgreen@chromium.org>
+Subject: [PATCH 2/7] scsi: ufs: Add config descriptor documentation
+Date: Tue, 29 May 2018 11:17:35 -0700
+Message-Id: <20180529181740.195362-3-evgreen@chromium.org>
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20180529181740.195362-1-evgreen@chromium.org>
+References: <20180529181740.195362-1-evgreen@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 29, 2018 9:58:10 AM PDT, Prarit Bhargava <prarit@redhat.com> wrote:
->
->
->On 05/29/2018 12:07 PM, Theodore Y. Ts'o wrote:
->> On Tue, May 29, 2018 at 11:01:07AM -0400, Prarit Bhargava wrote:
->>> Kees, in early boot no pool is available so the stack canary is
->initialized from
->>> the TSC.  Later in boot, the stack canary will use the the crng.
->>>
->>> ie) in early boot only TSC is okay, and late boot (when crng_ready()
->is true)
->>> the pool will be used.
->> 
->> But that means all of the kernel threads (e.g., workqueues, et. al)
->> would not be well protected by the stack canary.  That
->> seems.... rather unfortunate.
->
->Well, as stated the TSC is used as a source of entropy in early boot. 
->It's
->always been that way and get_random_bytes() AFAICT has always returned
->0.  CPUs
->added later on via hotplug do use get_random_bytes().
->
->Does anyone cc'd have a better idea on how to get another source of
->entropy this
->early in boot?
->
->P.
->
->> 
->>       	     	  	      	   	     - Ted
->> 
+This change adds the documentation for the new sysfs files plumbed out
+for the UFS configuration descriptor.
 
-RDRAND/RDSEED for newer x86 processors.
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
+ Documentation/ABI/testing/sysfs-driver-ufs | 174 +++++++++++++++++++++++++++++
+ 1 file changed, 174 insertions(+)
+
+diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
+index 016724ec26d5..a1336194628f 100644
+--- a/Documentation/ABI/testing/sysfs-driver-ufs
++++ b/Documentation/ABI/testing/sysfs-driver-ufs
+@@ -237,6 +237,180 @@ Description:	This file shows the command maximum timeout for a change
+ 		The file is read only.
+ 
+ 
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_boot_enable
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows whether or not the UFS boot feature is enabled.
++		This is one of the UFS configuration descriptor parameters.
++		More information about the descriptor can be found in the UFS
++		2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_descriptor_access_enable
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows whether or not access will be permitted to the
++		Device Descriptor after the partial initialization phase of the
++		boot sequence. This is one of the UFS configuration descriptor
++		parameters. More information about the descriptor can be found
++		in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_high_priority_lun
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the identifier of the high priority logical
++		unit. This is one of the UFS configuration descriptor
++		parameters. More information about the descriptor can be found
++		in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_init_active_icc_level
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the ICC level in active mode after device
++		initialization or hardware reset. This is one of the UFS
++		configuration descriptor parameters. More information about the
++		descriptor can be found in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_initial_power_mode
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the power mode after device initialization or
++		hardware reset. This is one of the UFS configuration descriptor
++		parameters. More information about the descriptor can be found
++		in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_number_of_luns
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the number of logical units that the device will
++		support. This is one of the UFS configuration descriptor
++		parameters. More information about the descriptor can be found
++		in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_periodic_rtc_update
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the frequency and method of real time clock
++		updates. This is one of the UFS configuration descriptor
++		parameters. More information about the descriptor can be found
++		in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_secure_removal_type
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the secure removal type of the UFS device. This
++		is one of the UFS configuration descriptor parameters. More
++		information about the descriptor can be found in the UFS 2.1
++		specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_unit
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file identifies the logical unit number whose parameters
++		are being displayed by the unit_* files in this directory. This
++		file can be set to different numerical values in order to
++		interact with configuration unit descriptors from additional
++		LUNs.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_allocation_units
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the number of allocation units assigned to the
++		logical unit. The cfg_unit file controls which logical unit is
++		being displayed. This is one of the UFS configuration unit
++		descriptor parameters. More information about the descriptor
++		can be found in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_boot_lun_id
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the boot LUN ID for this logical unit,
++		indicating whether it is Boot A, Boot B, or not special. The
++		cfg_unit file controls which logical unit is being displayed.
++		This is one of the UFS configuration unit descriptor parameters.
++		More information about the descriptor can be found in the UFS
++		2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_context_capabilities
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the context capabilities for the logical unit.
++		The cfg_unit file controls which logical unit is
++		being displayed. This is one of the UFS configuration unit
++		descriptor parameters. More information about the descriptor
++		can be found in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_data_reliability
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the data reliability for the logical unit.
++		The cfg_unit file controls which logical unit is
++		being displayed. This is one of the UFS configuration unit
++		descriptor parameters. More information about the descriptor
++		can be found in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_logical_block_size
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the logical block size for the logical unit as
++		a power of two. The cfg_unit file controls which logical unit is
++		being displayed. This is one of the UFS configuration unit
++		descriptor parameters. More information about the descriptor
++		can be found in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_lu_enable
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows whether or not the logical unit is enabled.
++		The cfg_unit file controls which logical unit is
++		being displayed. This is one of the UFS configuration unit
++		descriptor parameters. More information about the descriptor
++		can be found in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_lu_write_protect
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the write protect status for the logical unit.
++		The cfg_unit file controls which logical unit is
++		being displayed. This is one of the UFS configuration unit
++		descriptor parameters. More information about the descriptor
++		can be found in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_memory_type
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the memory type for the logical unit.
++		The cfg_unit file controls which logical unit is
++		being displayed. This is one of the UFS configuration unit
++		descriptor parameters. More information about the descriptor
++		can be found in the UFS 2.1 specification.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_provisioning_type
++Date:		May 2018
++Contact:	Evan Green <evgreen@chromium.org>
++Description:	This file shows the provisioning type information for the
++		logical unit. The cfg_unit file controls which logical unit is
++		being displayed. This is one of the UFS configuration unit
++		descriptor parameters. More information about the descriptor
++		can be found in the UFS 2.1 specification.
++		The file is read only.
++
++
+ What:		/sys/bus/platform/drivers/ufshcd/*/interconnect_descriptor/unipro_version
+ Date:		February 2018
+ Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+2.13.5
