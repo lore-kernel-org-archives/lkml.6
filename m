@@ -1,94 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755298AbeE2ILf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:11:35 -0400
-Received: from mga05.intel.com ([192.55.52.43]:25219 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755012AbeE2ILa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:11:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,455,1520924400";
-   d="scan'208";a="62519026"
-Date: Tue, 29 May 2018 16:11:27 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: "Ye, Xiaolong" <xiaolong.ye@intel.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lkp@01.org" <lkp@01.org>, "hannes@cmpxchg.org" <hannes@cmpxchg.org>
-Subject: Re: [LKP] [lkp-robot] [mm, memcontrol] 309fe96bfc:
- vm-scalability.throughput +23.0% improvement
-Message-ID: <20180529081127.GB14785@intel.com>
-References: <20180528114019.GF9904@yexl-desktop>
- <20180528120318.GB27180@dhcp22.suse.cz>
- <dbd727326f53648ed114e03a85085b6b4655fda2.camel@intel.com>
- <20180529075800.GL27180@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529075800.GL27180@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S932232AbeE2IPh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:15:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51452 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754919AbeE2IPb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 04:15:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B16B56028C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+From: Mukesh Ojha <mojha@codeaurora.org>
+To: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mukesh Ojha <mojha@codeaurora.org>
+Subject: [PATCH] time: Fix sleeptime injection for non-stop clocksource & persistent clock
+Date: Tue, 29 May 2018 13:45:18 +0530
+Message-Id: <1527581718-5624-1-git-send-email-mojha@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 09:58:00AM +0200, Michal Hocko wrote:
-> On Tue 29-05-18 03:15:51, Lu, Aaron wrote:
-> > On Mon, 2018-05-28 at 14:03 +0200, Michal Hocko wrote:
-> > > On Mon 28-05-18 19:40:19, kernel test robot wrote:
-> > > > 
-> > > > Greeting,
-> > > > 
-> > > > FYI, we noticed a +23.0% improvement of vm-scalability.throughput due to commit:
-> > > > 
-> > > > 
-> > > > commit: 309fe96bfc0ae387f53612927a8f0dc3eb056efd ("mm, memcontrol: implement memory.swap.events")
-> > > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> > > 
-> > > This doesn't make any sense to me. The patch merely adds an accounting.
-> > > It doesn't optimize anything. So I strongly suspect the result is just
-> > > misleading or the test (environment) misconfigured. Not the first time
-> > > I am seeing something like that I am afraid.
-> > > 
-> > 
-> > Most likely the same situation as:
-> > "
-> > FYI, we noticed a -27.2% regression of will-it-scale.per_process_ops
-> > due to commit:
-> > 
-> > 
-> > commit: e27be240df53f1a20c659168e722b5d9f16cc7f4 ("mm: memcg: make sure
-> > memory.events is uptodate when waking pollers")
-> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> > "
-> > 
-> > Where the performance change is due to layout change of
-> > 'struct mem_cgroup':
-> > http://lkml.kernel.org/r/20180528085201.GA2918@intel.com
-> 
-> I do not follow. How can _this_ patch lead to an improvement when it
-> actually _adds_ an accounting? The other report you are mentioning is a
+Currently, for both non-stop clocksource and persistent clock
+there is a corner case, when a driver failed to go suspend mode
+rtc_resume injects the sleeptime as timekeeping_rtc_skipresume
+returned 'false' due to which we can see mismatch in time with
+system clock.
 
-This patch also changed the layout of 'struct mem_cgroup':
+Success case:
+                                         {sleeptime_injected=true}
+rtc_suspend() => timekeeping_suspend() => timekeeping_resume() => rtc_resume()
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index d99b71bc2c66..517096c3cc99 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -208,6 +210,9 @@ struct mem_cgroup {
- 	atomic_long_t memory_events[MEMCG_NR_MEMORY_EVENTS];
- 	struct cgroup_file events_file;
+Failure case:
+             {failure in sleep path} {sleeptime_injected=false}
+rtc_suspend()       =>             rtc_resume()
+
+Change-Id: I98928761c98cec21a3033a55d3e10fb34138f38c
+Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
+---
+ kernel/time/timekeeping.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 427e33d..c022d82 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1511,9 +1511,6 @@ void __weak read_boot_clock64(struct timespec64 *ts)
+ 	ts->tv_nsec = 0;
+ }
  
-+	/* handle for "memory.swap.events" */
-+	struct cgroup_file swap_events_file;
+-/* Flag for if timekeeping_resume() has injected sleeptime */
+-static bool sleeptime_injected;
+-
+ /* Flag for if there is a persistent clock on this platform */
+ static bool persistent_clock_exists;
+ 
+@@ -1611,7 +1608,14 @@ static void __timekeeping_inject_sleeptime(struct timekeeper *tk,
+  */
+ bool timekeeping_rtc_skipresume(void)
+ {
+-	return sleeptime_injected;
++	struct timekeeper *tk = &tk_core.timekeeper;
++	bool skip_rtc_resume = false;
 +
- 	/* protect arrays of thresholds */
- 	struct mutex thresholds_lock;
-
-And I'm guessing that might be the cause.
-
-> _regression_ and I can imagine that the layout changes can lead to that
-> result.
++	skip_rtc_resume = ((tk->tkr_mono.clock->flags &
++			CLOCK_SOURCE_SUSPEND_NONSTOP) ||
++			(persistent_clock_exists)) ? true : false;
++
++	return skip_rtc_resume;
+ }
+ 
+ /**
+@@ -1671,8 +1675,8 @@ void timekeeping_resume(void)
+ 	unsigned long flags;
+ 	struct timespec64 ts_new, ts_delta;
+ 	cycle_t cycle_now, cycle_delta;
++	bool sleeptime_injected = false;
+ 
+-	sleeptime_injected = false;
+ 	read_persistent_clock64(&ts_new);
+ 
+ 	clockevents_resume();
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
