@@ -1,30 +1,31 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-682722-1527521961-2-6887939567618582556
+X-Cyrus-Session-Id: sloti22d1t05-2473614-1527616352-2-5507928452563041477
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527521961; b=ZGkzvhxtO0EwD/MVC/JCn8a13cr7Lf4DlPNntT01Y99kFSjjyW
-    SZrt2RAMGJcnPB7XARNI/nzOMS4A8yqQz4GaOHei/XivhGzNbeeHRiDRLitWDWWV
-    RzD/fgHRfgn0pzQHOioV9T48MlXRmAb3lVai5I9aARP2X6gOiAzxAbwEiAIZaXgp
-    3rj9evXWpZ2J6sTg7xRUb2E8z+r8Va1orBWoSKOs3ROAEALntyVpEr5YlU1nNnnd
-    alw+PGmFbaKlySjBzJDsxMDBjDW7APw5BI3UqzVod+bA49gVp0hMAXx1IuMFyVtn
-    3aFnyh9G5dpNt0Lxt1TkZoHR07b7XB+N1fNA==
+    1527616352; b=J1CyBBaUxU7gi7rxabliey8N3/jhpYFfGgXgfGdnjmMIU+BxLm
+    KChrxkWTRandtWoOgXTlPwr3ejbpjyDzfBqngBQnxcI00DKrp83dX+8qY7ANyMZG
+    ZHh15ak58KN+4rhr9bsgbEOTNncsXgHgJGaaf1Syk+NzIgPRrpdUSXoqDzjAyTCg
+    qESXtVzRHPPM/Z7B9PLJzKcXz2cxuMyghvO8xoCg1iIfa7LghtLL3tHmgTJi94fm
+    Tcbzi2BxLwD+qMF0hqUzJlcJQ8Tw6aZ5diTk8gL3QHdWA+fFHgws0Iu8CXSmLtV+
+    MoBngdCCcoLQmtYsS1usvvCciybHyQoCJPVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1527521961; bh=sFDnTp8olFsTip/V3jHC6YVREX1bZn
-    rJKzn7K1jCkKY=; b=RcpOIuPxK1ZDxNprWbbNHXv0rbisUMJryzswiqkqEanCC/
-    s8c96aI6fq8pk7f3uTrn34ubHJYTsEh6ZG0VluuB6+XKUL3sjfZ9GUyQYknUomRL
-    2qXsIRisyn3uIl/5rUy5L02ngIvxJQUGOrJgn/nkczJJpN9sWos1aJu5qGlfufiV
-    ytyK/AGv2gDIRpvDQko/ouxv2Rt7K4WfRb+JaU0jTqY62SKpoGqPkkUdtnZ2kWHF
-    oe8SHLcyT6hiHR4rqnuG1XFdcI2M0NtRfo+3bYKDcGxdIm7G90srNTqfznmHlP1m
-    2lIEKCILS7KeEdN4LNjr7FCATilbM+PAliH7VwJg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:sender:list-id; s=fm2; t=1527616352; bh=nIK+GMBluQu
+    nwjdDjHaFoOG+Eijsa4m850lIcmI2s1k=; b=PIodrRp0oUTFoCRtIvvDeBT5KdJ
+    AG9Uh6FCILmzJCD5giNlyw6LdbQR70wQRc3y96GlCmE+U3XCotOjmzQMKGFtTIM0
+    9DQ9eMhhAUFduKAzeromVgb54aZxdOXX66jitFeIWIRcAOSXsgOaqH70MhpQ/stL
+    0ijpcu2Qco/rxmgOhEzYFoHfH1PCdYS02WTlfgeZNP5E9j2yJZ2Vy+BcPFD6O3c2
+    2KgmAYMgK1z8Biyf0QLw1KveMqcvaboPVi5m2y+Nc15Is4o9gh4q5Yyz4354ri36
+    B6d+HWqsG9A5X9QmZd6jQtY2diV2I1Fb2HYivz6qT9b4qxPIL3VyLMwJrSw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -33,12 +34,14 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    header.domain=linux.intel.com header.result=pass
+    header_org.domain=intel.com header_org.result=pass
+    header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -47,87 +50,121 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+      header.domain=linux.intel.com header.result=pass
+      header_org.domain=intel.com header_org.result=pass
+      header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAIrXeQC1ewxg6fVSRwS0NCoegDwlmXXuOabj9UzKpo6WD7oi9cBZYPTPsoI1rDFXguE6BGmnC0khE+VO+8YR/UChj1WGQCzUoeqz1iKLXE3onFnX+h6
-    6eh0fS6bjXDTKcnNZrTfsA2fNuZTAnaVojjsy4uigRB0DjtPjk6pexe59oGGLj25YW1lXfv3MnWqzj6j+lsG/0z7PdFOsUp2Bj69YfK0+F4Fmelqi58JszDc
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=TKYDfnLQTZiq3GljLNMA:9
-    a=N8N-558xWu8A:10
+X-CM-Envelope: MS4wfIQdLrvqh1YSdDbDvvll812D/qNwYxN/OdQojIBOMloepEQQj8tEEeqhSEakF1iPq+tM+5Gx4JwJPqGZ821N4kN2bkVwI8WbSG6Jwm/5YJSJnQRnT7Pi
+    Wx/s+GbD5nRL5HeeO9edKWkTdmVUP/knLLKu66lNvqiHVoanUfPkwhXdQuRlnF2gwoBuvvITMzBuh740cVVEE0OZHFwnIbx3vwYqP8+TsElBA3FATWgV6quK
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=D19gQVrFAAAA:8
+    a=QyXUC8HyAAAA:8 a=QHnUnqrNbGsPDOyfjgsA:9 a=yzbIBNFuMBQuJNWB:21
+    a=tGGYIao_fjB3U7nK:21 a=W4TVW4IDbPiebHqcZpNg:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034572AbeE1PjM (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 28 May 2018 11:39:12 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:54205 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969088AbeE1PjG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 May 2018 11:39:06 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Mikulas Patocka <mpatocka@redhat.com>,
+        id S965453AbeE2Rw1 (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 13:52:27 -0400
+Received: from mga18.intel.com ([134.134.136.126]:57205 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965391AbeE2Rw0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 May 2018 13:52:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
+   d="scan'208";a="58641737"
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: Arnd Bergmann <arnd@arndb.de>,
+        Mikulas Patocka <mpatocka@redhat.com>,
         Shaohua Li <shli@kernel.org>, Alasdair Kergon <agk@redhat.com>,
         Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
-Cc: Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-fsdevel@vger.kernel.org,
         Dan Williams <dan.j.williams@intel.com>,
         Heinz Mauelshagen <heinzm@redhat.com>,
         linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dm: writecache: add DAX dependency
-Date: Mon, 28 May 2018 17:38:10 +0200
-Message-Id: <20180528153834.2268557-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:RVNtoTNxmkupetdjiOpqWgwo6lSqiBxyBsOD/guBm6k/BgIb1bU
- /PkFlS0foP11aHO8R3kgO1Lp7VW92gLWVPQgJdrVS/nFASHjIkRppnPw2QzQSRTdJnzlmxc
- Q2pE4xGD49yo/xR9D/++PL28JK0ukas67VXppxQSRd2sV0e3YfwtlNCSkVwbBpxRDv/pggt
- 6JFG8Ca+lXli6dYSgcvlA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ouZeIPFc7Os=:KUhffD8Bt0pxIgBdPPYEjn
- rUrjnOcg/ETHJg+aoiKr8nTLXOzU4fcKT7WdOYUCgjokiZ07tuDiyqfGT4uxn4tAo5BSmtc1a
- rUpaeso2/KouH3k4q9srz8sfDjZEIL5I/LiGi/q3z5NOPG2+meMbVAImvBsg63UztUevn8pFw
- uM01/c29aHtDjjmdpCSsuxhTuEwtrmSqEj8BmulVH83/v+j4qZu+ij5fH2sPDkBIotmiANCFv
- H3BUsMPcVabzgf8a7NF6e20AVc8wWzEMlCsDCHKNB2rEq+9cNvxQ91XuD+mfngLSqMl893hhx
- 2Zk5Eodm0KVZ+lMWsKmRa5S2jJRL5FD9R1s8DzCAgyums59Xo1zuuTx8iEFPynfpi1MAtm+yn
- EjLkRQBBQxMBz7UjNdG4vcQXfV6Ou9ngi6Tq8U9kbSpLxQOAXMVFS4qXTPoRGKEXUs5bt5glK
- Vf7kEY7hqiyYBlnZJQ4Y6Ni9a0uowfXQ7eOiSwp47gB7alrQ+JiQWJC9SLxbFjgREhqjJEnc1
- WjH6ic4Sm8jLlCpdT+7Nt3URb2VLmxb8CYpx/Xk4NBSZCcm41X+a0x90fe0d+l3+IdcrKgibv
- BtaObZ63bGAORN1HNySB6r7JMRMpdgj5FW2MpM41YP8HVeslf9cvu/iexso87Lno7PT/9Q6Pc
- qmWfu0J9Tp6oSU2RCfazALeU+KCM7oc8LRReWmUkc1u5qQDWaHKUuhS363LR41YS4R38=
+Subject: [PATCH] dm-writecache: fix compilation issue with !DAX
+Date: Tue, 29 May 2018 11:52:16 -0600
+Message-Id: <20180529175216.24937-1-ross.zwisler@linux.intel.com>
+X-Mailer: git-send-email 2.14.3
+In-reply-to: <20180528153834.2268557-1-arnd@arndb.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The new dm-writecache driver inconditionally uses the dax
-subsystem, leading to link errors in some configurations:
+As reported by Arnd (https://lkml.org/lkml/2018/5/28/1697), dm-writecache
+will fail with link errors in configs where DAX isn't present:
 
 drivers/md/dm-writecache.o: In function `writecache_ctr':
 dm-writecache.c:(.text+0x1fdc): undefined reference to `dax_read_lock'
 dm-writecache.c:(.text+0x2004): undefined reference to `dax_direct_access'
 dm-writecache.c:(.text+0x21cc): undefined reference to `dax_read_unlock'
 
-It seems wrong to require DAX in order to build the writecache
-driver, but that at least avoids randconfig build errors.
+Fix this by following the lead of the other DM modules and wrapping calls
+to the generic DAX code in #if IS_ENABLED(CONFIG_DAX_DRIVER) blocks.
 
-Fixes: bb15b431d650 ("dm: add writecache target")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+We also expand the failure case for the 'p' (persistent memory) flag so
+that fails on both architectures that don't support persistent memory and
+on kernels that don't have DAX support configured.  This prevents us from
+ever hitting the BUG() in the persistent_memory_claim() stub.
+
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Reported-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/md/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/dm-writecache.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-index 852c7ebe2902..f8ecf2da1edf 100644
---- a/drivers/md/Kconfig
-+++ b/drivers/md/Kconfig
-@@ -338,6 +338,7 @@ config DM_CACHE_SMQ
- config DM_WRITECACHE
- 	tristate "Writecache target"
- 	depends on BLK_DEV_DM
-+	depends on DAX
- 	---help---
- 	   The writecache target caches writes on persistent memory or SSD.
- 	   It is intended for databases or other programs that need extremely
+diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+index 92af65fdf4af..1c2b53ae1a96 100644
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -253,6 +253,7 @@ static void wc_unlock(struct dm_writecache *wc)
+ 	mutex_unlock(&wc->lock);
+ }
+ 
++#if IS_ENABLED(CONFIG_DAX_DRIVER)
+ static int persistent_memory_claim(struct dm_writecache *wc)
+ {
+ 	int r;
+@@ -337,6 +338,12 @@ static int persistent_memory_claim(struct dm_writecache *wc)
+ err1:
+ 	return r;
+ }
++#else
++static int persistent_memory_claim(struct dm_writecache *wc)
++{
++	BUG();
++}
++#endif
+ 
+ static void persistent_memory_release(struct dm_writecache *wc)
+ {
+@@ -1901,16 +1908,17 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	if (!strcasecmp(string, "s")) {
+ 		wc->pmem_mode = false;
+ 	} else if (!strcasecmp(string, "p")) {
+-#ifdef CONFIG_ARCH_HAS_PMEM_API
++#if defined(CONFIG_ARCH_HAS_PMEM_API) && IS_ENABLED(CONFIG_DAX_DRIVER)
+ 		wc->pmem_mode = true;
+ 		wc->writeback_fua = true;
+ #else
+ 		/*
+-		 * If the architecture doesn't support persistent memory, this
+-		 * driver can only be used in SSD-only mode.
++		 * If the architecture doesn't support persistent memory or
++		 * the kernel doesn't support any DAX drivers, this driver can
++		 * only be used in SSD-only mode.
+ 		 */
+ 		r = -EOPNOTSUPP;
+-		ti->error = "Persistent memory not supported on this architecture";
++		ti->error = "Persistent memory or DAX not supported on this system";
+ 		goto bad;
+ #endif
+ 	} else {
 -- 
-2.9.0
+2.14.3
