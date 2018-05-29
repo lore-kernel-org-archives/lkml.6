@@ -1,245 +1,455 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754761AbeE2HKw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:10:52 -0400
-Received: from mail-db5eur01on0124.outbound.protection.outlook.com ([104.47.2.124]:10810
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751444AbeE2HKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:10:50 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se;
-Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
- dma
-To: Eugen Hristev <eugen.hristev@microchip.com>
-Cc: Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180329131054.22506-1-peda@axentia.se>
- <20180329153322.5e2fc1e7@bbrezillon>
- <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
- <20180329154416.5c1a0013@bbrezillon>
- <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
- <20180402142249.7e076a64@bbrezillon>
- <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
- <20180402212843.164d5d21@bbrezillon> <20180402222020.1d344c14@bbrezillon>
- <d7e6f78d-b57b-4d0f-c07c-ca6c1930cd51@axentia.se>
- <20180403091813.5fb5c18c@bbrezillon>
- <d0afd431-6e51-a9b7-c103-ecf1f6e07c2e@axentia.se>
- <959d826d-1a98-ca22-acee-a4548427fcd3@microchip.com>
- <a25ca617-d3da-d401-1ba9-8e5887f8a8e5@microchip.com>
- <024079cb-77ad-9c48-e370-e6e8f2de171b@axentia.se>
- <9c496531-f7b6-4b9d-dd51-0bfb68ead303@axentia.se>
- <c3cc1894-2d7d-93b6-a9de-ed9ca4564ae9@axentia.se>
- <19d68279-072e-7646-6fdd-8649578229ea@microchip.com>
-From: Peter Rosin <peda@axentia.se>
-Organization: Axentia Technologies AB
-Message-ID: <9ae5fc1d-9f02-9742-f801-2252389294eb@axentia.se>
-Date: Tue, 29 May 2018 09:10:42 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1754825AbeE2HLN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:11:13 -0400
+Received: from mga04.intel.com ([192.55.52.120]:42696 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751444AbeE2HLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:11:10 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,455,1520924400";
+   d="scan'208";a="59937853"
+Date: Tue, 29 May 2018 10:11:03 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
+        Russell King <linux@armlinux.org.uk>, Ben Skeggs <bskeggs@redhat.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
+Message-ID: <20180529071103.GL23723@intel.com>
+References: <20180526155623.12610-1-digetx@gmail.com>
+ <20180526155623.12610-2-digetx@gmail.com>
+ <20180528131501.GK23723@intel.com>
+ <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <19d68279-072e-7646-6fdd-8649578229ea@microchip.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: HE1P195CA0015.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::25)
- To VI1PR0201MB2462.eurprd02.prod.outlook.com (2603:10a6:800:54::22)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7026125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR0201MB2462;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2462;3:IgMDNpZX/1eGeiDXizSPET1zJONrVdglAwjdsZHZIdp5WTa46PyCqdd3lQPaYBxU266kRbpFD8xhJ+DFUeKE/ckDXOvYkgINk0QCvimJ3xQixVz9JAAQ56DDozoS7bBgMU66idM3ZCM2lgRGPsx0QU0rUBfxmbpFm45mwG+9M8HgQ/B3V0jIPiCkLjOyPnPjIak89DRKzgDU+PGOTPY42/jfm+1IR6xleBOEXG6x/JA3JrNi9Iu/5UZsu+fBt/D1;25:TZtmoyVmSnaVVg9wLoaDYX0TNBak8Nhd0IcNf95K8K5RYMelJNhc0FXzS4FKYyIRkQPk34mxxyj+DF33p0e++pnn4eBPZkSJpVCb1B18yImGnTrEQRWkKgkOIRQqvGP1Gh5j/8N9HKuBahqVaLGkYgWNepFRTU03XnaFGyf1H6AOk3Es0FoG+bJaRyY1exT9Cv++fYIJi/P82eWV+V/bjd216ZIBMGOMba/heKKp2zvgLUKAtYfFgMbguUS51wkGWBKg3OIBxD9gppVbB0vrnMGgyzMzkfMpSRW4f1svQbgjs/KEZTz7mPijgpl4HBlRbxC1lDFDTPkD67Q7a6a+rQ==;31:1fJeMMHjhz1t5iScTuDVFPu8xI5NA6d52/YSCM3QwPAAaiJOX1YJJE8GcFEECwSNI1tWGudgZKJl6zEZ6EuQ24y4lzGb05AUKd3u/+PKhvS069Gqlo+QaPbNNsdwvFadB0UH2aBudDpkFZQ//fRL00FWXkwHFfTB45oypQE8E3Z4K9A5Jbli4pISWeNlO4MOw0lYuypQAoSPvDtz0/cddi4QBPJSjRDCtPLDzs6GN60=
-X-MS-TrafficTypeDiagnostic: VI1PR0201MB2462:
-X-Microsoft-Antispam-PRVS: <VI1PR0201MB24629AEA11BE37E0CE811062BC6D0@VI1PR0201MB2462.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(2016111802025)(20161123560045)(6072148)(6043046)(201708071742011)(7699016);SRVR:VI1PR0201MB2462;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0201MB2462;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2462;4:gGcfjFNESm6NmfzZw9qv6LBfzUgcC/mNrxnow48nmw/dK5FbZ1J/7mZSuVG5iXsPT2/9UIx02c+Q1e461vPK9l1nSIvNix8BEoYYVbAgeV9rwcKNwEK8/dMpRXEbW7DGumZFN1FVjWW0UPrfenJaGu0/3amL/V1VVosSnbP+Tg2AAwZBqrdNvorls9pwFhapfiA9hW88y+FocbKEONv787182tCUAhJEiU6Sr5L8PiE2T9QK8idOG3VAk/RNm8z6KVXSpuY/QLBoGTaBvMUs5g==
-X-Forefront-PRVS: 0687389FB0
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(7966004)(396003)(376002)(39380400002)(346002)(39830400003)(366004)(377424004)(189003)(199004)(39060400002)(446003)(5660300001)(47776003)(11346002)(65826007)(77096007)(64126003)(6246003)(105586002)(7416002)(58126008)(25786009)(3260700006)(6666003)(2616005)(6116002)(316002)(16576012)(7736002)(81166006)(6916009)(31696002)(386003)(8936002)(2906002)(345774005)(54906003)(81156014)(4326008)(53546011)(86362001)(66066001)(97736004)(36756003)(8676002)(305945005)(3846002)(230700001)(65956001)(956004)(575784001)(2486003)(36916002)(52146003)(23676004)(53936002)(31686004)(229853002)(50466002)(486006)(65806001)(26005)(508600001)(93886005)(117156002)(6486002)(186003)(52116002)(74482002)(76176011)(68736007)(106356001)(16526019)(476003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0201MB2462;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjAyMDFNQjI0NjI7MjM6L0laQkh0THpPY3NGa3gyVy9ueFhhUlJt?=
- =?utf-8?B?ZlJPOEtySjUzS2g3aFh6SzZRdk1UcHRkMERsTHpQSkx0dnpSRlg3MGovd0xj?=
- =?utf-8?B?TmtWc2xFZ1k5QjY5eml0QVRKcTlXSDYyd0R4MEliU3RKOW5uMWpLWnZSb1ZZ?=
- =?utf-8?B?MDMwNlEvbHE4c3ZrelQyTnBJT1NYdzFHUDgyUkNzMzE2WG1Yci8zbFdadDUv?=
- =?utf-8?B?ck9BQU5Ic1N6U0VMTWI2V1VldTVVYXhXWFRKOUxWaTVIOU5JT2xSeHRFd3VW?=
- =?utf-8?B?UVRvd013d2F4YXM1RHFGOXhFbkM5SUxRbUxCL1N2MjhXSmpVcW03WWY1RUJU?=
- =?utf-8?B?cjRHZ0h6Mkp4M0x3M2l1cUNNNkxPYzd0dFQ0dGVlYUpjYWt1K3FrYm4rUG52?=
- =?utf-8?B?MHJ1UzQ3VTFwaXk1YXFTV2p2R0Fabkx2bEphVm5DUGhvakhNT08zTHV3bE9E?=
- =?utf-8?B?Z2kvS2E3SzMzUkRPSVFpN1hTeGpWdm84VlNWU0hBVnhmN3VWeVhyVzRERExI?=
- =?utf-8?B?YjNqWHF0eFpEVFN6dkgxUmdxVmdZOFJOd1J1RmRHQ016WDhleWpuZ2x4R2Z6?=
- =?utf-8?B?M1FuSlBOYllOMkYydlhpekIyZEZtcmtUMmZoMUJsNlBuUHBVcU1GLytzN0lI?=
- =?utf-8?B?M3JnM2h6RHJwejdpVWs5OEd6WU53ZUVHR0JmNzF6WXREZms4aGkzRURNVWdj?=
- =?utf-8?B?dHJPVmpIcHhCblM0ODZrRHZmTFJydUhoS2JnanNMOExKYVMzQkNZRjYzaGwz?=
- =?utf-8?B?UzIvc0Jhbm1hQzlQbWxRcVdmZ2NWeTJXNFBJQjR4djVaOWhjejRDYWZGanNt?=
- =?utf-8?B?azRvRlAyQjJpRkNOYlJpeWxaeUVuTzIydmdIWjRCN2pJYVA4QndrL0oyelBV?=
- =?utf-8?B?N2ZBQmZuN0RBRzRTVjQzdG5pTnZmNFRjWm9NU2UrVXduaWIyQ1NyenJNNzdH?=
- =?utf-8?B?TWEvS2tUUDFqQW14NlZzVGs3OXV0b3V5Y01LamVwd3ZhYmhjQ3Rrd2hBYUtG?=
- =?utf-8?B?Q005SS9KcnpFS1Q4bUpBejhCOG5kUzAzVjhPazh6a01ML3ZMMFVmT0NQMU1F?=
- =?utf-8?B?aFp4WTlEbHMrdnY0RzF3emN2ZHlMalVTeGRkdmd2WmwvOXc3bndFU2FlUHpX?=
- =?utf-8?B?UHZCeHp5amdUZ2Z3WFJja1VHck9OKzBzUE14YWRGdUNTQWk1UFdPNHNyaWUr?=
- =?utf-8?B?RVRVcCttTllJT204cjliNkw2VDJ1RWFodzNOeWVnclRVTzlrZ0hnZitodUwr?=
- =?utf-8?B?dzc2VnhTQ2k4bHFBOXJ6cUYraU80UGhjR1pSdEFJb3BKNWJhWnRpVmRHd1Ni?=
- =?utf-8?B?dW55YzZqd3o3azhZckx6YWtkb0FOeWhzU0lBWG5MVmxSRFh0UFdRdDUyb2Vh?=
- =?utf-8?B?MEFIRWhHZnZqSkJNcTJPeDBYaVdhQ3R0cjE3RmJZUmpmdXBUNVM2MS9LQ0RQ?=
- =?utf-8?B?UHF1OXFKT0tEbHZFeWM0RGpQMjJpc2V4ZWlYa3pHSldVSllzTFAyR3A4UVcv?=
- =?utf-8?B?T1k3OUZVWVlobWFwV3Z2U3RRM0UxY3hCV0U1ODl5aG9BajdyNXpReUhJZ3Nk?=
- =?utf-8?B?cGlDaXovaDc5YnNWSGZWT2dGWFpZRjRwZzVqK0U1aDhUazhlNlhNUklpSndI?=
- =?utf-8?B?Z2RNL2ZmaWhPK3VmNSthU3JWOWtDd0xsM21rd2o4dlBxMHlSbXJZZ2xTMnVm?=
- =?utf-8?B?UGE3ays1aDhsekVkR296OEZUQ2NObWVZYTduajZZaEYwaVdtRzhrQnZnbDVE?=
- =?utf-8?B?ZDFad3c3dFZ1cnJJclFNSFU3d1Nza2pRU3IzNllLN05pcHhlRzhZY3ZqTWx0?=
- =?utf-8?B?NEpnYlljS041N09GZEowa21NaW1SeVNMUHJ2RVJkQWRrLytGcUhmMDRCVUtk?=
- =?utf-8?B?cURUY0lUZGJ5MlhYdGdtOFEzdlRRN0xGRDNlK1dtUmh3V2l0dW1IZGZRVjZL?=
- =?utf-8?B?YlpXYVArN1N2dEFNeTMrY1FubTZrYjcwSSt3OGZXSXN6eXBzbWRXSExKMjRQ?=
- =?utf-8?B?OGJTMHpYa3NRTFpEbDUvNXhqOERidnMyeTdnT3FkZlROdzFRMENPMFhwWTRO?=
- =?utf-8?B?SmV1NnV4N2o5ZlVGUjh0amFiTVVqQ016bnBrejJUSWNOaGdFTE40eHlnNUtC?=
- =?utf-8?B?amE3QWl1cHJmeElQQ0ZoR1RFVWlOSFFRWnNFV0hCdk96Vmt5ZU5tVng5eGth?=
- =?utf-8?B?RWkvS0xKZklyMmZxUTVMSnkrSmlFbnllUnJRaFN5d2IzS1JUbmZnRXduWTZv?=
- =?utf-8?B?a0tpQlJRaTJONXFSQzhMZitYWXJzYURFeHlIdDFRdkFuMU4rc01xQXU1SVhN?=
- =?utf-8?Q?uehJY0pEQ5jX+Ppgxw=3D?=
-X-Microsoft-Antispam-Message-Info: /avNMdDriGuWDUl31wpL9tmyBgHTFqpV5l6M7KAvHKCg8gPXc7ETmU5iIjnfTLqmB35Vrfbaf9HS9bvg/gIkMDSSOJyvO/q0GnOMoJBD6LmLJumHWi73gc4V0MTvBzu2VtTajNu07e4bvdLtBwg9t+/dZ+niYjFP+8Z3Va6PVbo6vIrRR7XTFJi7+gTYmNOi
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2462;6:/1DZKuKz9G6pdHfoK2wNQiB6ZNNznZnnqUwtScqnV/EmM84zEf/ZptDxlOSxeoAZLCqz/jpk0QjVC7CJ4HOHyDgxAW5WImVmdUfdSnXhpX7utIsZp2cjDcJkEg4iEQhaUnTEomS3J55IuJN9lcvTNFSJzgo2T7ILZfF+1B2gJvRGEKAh+VWQc1IZUIOvddnnyGGvHd4y0i33iwR3XqVOaWBABNvlaNgVoxEvlcbbrJc24Z1GWCHfFp91Qv3sAe0ZGKq05fDf3CrQcDkqfkrY94gsp+81dit/+s+l4PJkxrUAoc3bN52IorOeYtsdRvh2fC8H/yGROBto1yC2F1Cv2ygNX1nhdvpq4jL3Zvg1PciHYAoGKkLS03uv5LHFlp0BpfllbR/fraL9dL5PPHEMMi/SsKuYbGF3A4g9YIiFZU50irwT9aIi6Neu2FvY1nG/YsECEUIq6mDabeLTMB4yQA==;5:MZmv4YUO4l3YpWKGBJ9pg8TJvDwp+PPR6o0iteT6v23Dv2dpR1IS7Q0tFhHCLS/TJfkHzZnTiBT+0ULa7pWacn/NXVq1uwbd/eqFYNMcIBzW2knXiorICZGnB0aEG+08nMISaRl5c+i5F3gz0U+H/lZyIl1hPsKOj35XUG5vkFI=;24:JX+p7uW5TZahS0wWfSS3V2hXbJcCgG5GAVcsRFq5unvXR7jxPgnuPQ23D5cApLCDXcYkEemRcSJsalBms96Dn34+6lV+jOHFGrH0Yypxm8M=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2462;7:aBfjz/Msk+quyMaLNhfrpl2pz57D851j6P0RfusmPPQZs3H3EMjtpOx5TvfYMzBlQnc8abqgFbua4CNPTsP2LQgWZWadcwMMueQCsa3eNAkB2s5D5sM73GKWr75Yi1KK268z3fEBJRb9OBForKpoloKlfOZQPgPlPIJgX0KLPTke1Ulni5RTPQ7COBPwiN9wMm1akQwj69knjLfz1E/1qsDmrun8AMtcGx/GHGh3TbJngjfhP9t1vrvCjV2Bjq2J
-X-MS-Office365-Filtering-Correlation-Id: e31e74ae-5afc-46f4-c1c6-08d5c5334ca8
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2018 07:10:45.1050 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e31e74ae-5afc-46f4-c1c6-08d5c5334ca8
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0201MB2462
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-29 08:30, Eugen Hristev wrote:
+On Tue, May 29, 2018 at 02:48:22AM +0300, Dmitry Osipenko wrote:
+> On 28.05.2018 16:15, Ville Syrjälä wrote:
+> > On Sat, May 26, 2018 at 06:56:22PM +0300, Dmitry Osipenko wrote:
+> >> Color keying is the action of replacing pixels matching a given color
+> >> (or range of colors) with transparent pixels in an overlay when
+> >> performing blitting. Depending on the hardware capabilities, the
+> >> matching pixel can either become fully transparent or gain adjustment
+> >> of the pixels component values.
+> >>
+> >> Color keying is found in a large number of devices whose capabilities
+> >> often differ, but they still have enough common features in range to
+> >> standardize color key properties. This commit adds nine generic DRM plane
+> >> properties related to the color keying to cover various HW capabilities.
+> >>
+> >> This patch is based on the initial work done by Laurent Pinchart, most of
+> >> credits for this patch goes to him.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>  drivers/gpu/drm/drm_atomic.c |  36 ++++++
+> >>  drivers/gpu/drm/drm_blend.c  | 229 +++++++++++++++++++++++++++++++++++
+> >>  include/drm/drm_blend.h      |   3 +
+> >>  include/drm/drm_plane.h      |  77 ++++++++++++
+> >>  4 files changed, 345 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> >> index 895741e9cd7d..5b808cb68654 100644
+> >> --- a/drivers/gpu/drm/drm_atomic.c
+> >> +++ b/drivers/gpu/drm/drm_atomic.c
+> >> @@ -799,6 +799,24 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
+> >>  		state->rotation = val;
+> >>  	} else if (property == plane->zpos_property) {
+> >>  		state->zpos = val;
+> >> +	} else if (property == plane->colorkey.mode_property) {
+> >> +		state->colorkey.mode = val;
+> >> +	} else if (property == plane->colorkey.min_property) {
+> >> +		state->colorkey.min = val;
+> >> +	} else if (property == plane->colorkey.max_property) {
+> >> +		state->colorkey.max = val;
+> >> +	} else if (property == plane->colorkey.format_property) {
+> >> +		state->colorkey.format = val;
+> >> +	} else if (property == plane->colorkey.mask_property) {
+> >> +		state->colorkey.mask = val;
+> >> +	} else if (property == plane->colorkey.inverted_match_property) {
+> >> +		state->colorkey.inverted_match = val;
+> >> +	} else if (property == plane->colorkey.replacement_mask_property) {
+> >> +		state->colorkey.replacement_mask = val;
+> >> +	} else if (property == plane->colorkey.replacement_value_property) {
+> >> +		state->colorkey.replacement_value = val;
+> >> +	} else if (property == plane->colorkey.replacement_format_property) {
+> >> +		state->colorkey.replacement_format = val;
+> >>  	} else if (property == plane->color_encoding_property) {
+> >>  		state->color_encoding = val;
+> >>  	} else if (property == plane->color_range_property) {
+> >> @@ -864,6 +882,24 @@ drm_atomic_plane_get_property(struct drm_plane *plane,
+> >>  		*val = state->rotation;
+> >>  	} else if (property == plane->zpos_property) {
+> >>  		*val = state->zpos;
+> >> +	} else if (property == plane->colorkey.mode_property) {
+> >> +		*val = state->colorkey.mode;
+> >> +	} else if (property == plane->colorkey.min_property) {
+> >> +		*val = state->colorkey.min;
+> >> +	} else if (property == plane->colorkey.max_property) {
+> >> +		*val = state->colorkey.max;
+> >> +	} else if (property == plane->colorkey.format_property) {
+> >> +		*val = state->colorkey.format;
+> >> +	} else if (property == plane->colorkey.mask_property) {
+> >> +		*val = state->colorkey.mask;
+> >> +	} else if (property == plane->colorkey.inverted_match_property) {
+> >> +		*val = state->colorkey.inverted_match;
+> >> +	} else if (property == plane->colorkey.replacement_mask_property) {
+> >> +		*val = state->colorkey.replacement_mask;
+> >> +	} else if (property == plane->colorkey.replacement_value_property) {
+> >> +		*val = state->colorkey.replacement_value;
+> >> +	} else if (property == plane->colorkey.replacement_format_property) {
+> >> +		*val = state->colorkey.replacement_format;
+> >>  	} else if (property == plane->color_encoding_property) {
+> >>  		*val = state->color_encoding;
+> >>  	} else if (property == plane->color_range_property) {
+> >> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+> >> index a16a74d7e15e..05e5632ce375 100644
+> >> --- a/drivers/gpu/drm/drm_blend.c
+> >> +++ b/drivers/gpu/drm/drm_blend.c
+> >> @@ -107,6 +107,11 @@
+> >>   *	planes. Without this property the primary plane is always below the cursor
+> >>   *	plane, and ordering between all other planes is undefined.
+> >>   *
+> >> + * colorkey:
+> >> + *	Color keying is set up with drm_plane_create_colorkey_properties().
+> >> + *	It adds support for replacing a range of colors with a transparent
+> >> + *	color in the plane.
+> >> + *
+> >>   * Note that all the property extensions described here apply either to the
+> >>   * plane or the CRTC (e.g. for the background color, which currently is not
+> >>   * exposed and assumed to be black).
+> >> @@ -448,3 +453,227 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
+> >>  	return 0;
+> >>  }
+> >>  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
+> >> +
+> >> +static const char * const plane_colorkey_mode_name[] = {
+> >> +	[DRM_PLANE_COLORKEY_MODE_DISABLED] = "disabled",
+> >> +	[DRM_PLANE_COLORKEY_MODE_SRC] = "src-match-src-replace",
+> >> +	[DRM_PLANE_COLORKEY_MODE_DST] = "dst-match-src-replace",
+> > 
+> > This list seems way more limited than I was expecting, at least when
+> > compared to all the different props you're proposing to add.
+> > 
 > 
-> 
-> On 28.05.2018 13:10, Peter Rosin wrote:
->> On 2018-05-28 00:11, Peter Rosin wrote:
->>> On 2018-05-27 11:18, Peter Rosin wrote:
->>>> On 2018-05-25 16:51, Tudor Ambarus wrote:
->>>>> We think the best way is to keep LCD on DDR Ports 2 and 3 (8th and 9th
->>>>> slaves), to have maximum bandwidth and to use DMA on DDR port 1 for NAND
->>>>> (7th slave).
->>>>
->>>> Exactly how do I accomplish that?
->>>>
->>>> I can see how I can move the LCD between slave DDR port 2 and 3 by
->>>> selecting LCDC DMA master 8 or 9 (but according to the above it should
->>>> not matter). The big question is how I control what slave the NAND flash
->>>> is going to use? I find nothing in the datasheet, and the code is also
->>>> non-transparent enough for me to figure it out by myself without
->>>> throwing out this question first...
-> 
->  >> [...]
-> 
->>> and the output is
->>>
->>> atmel-nand-controller 10000000.ebi:nand-controller: using dma0chan5 for DMA transfers
->>>
->>> So, DMA controller 0 is in use. I still don't know if IF0, IF1 or IF2 is used
->>> or how to find out. I guess IF2 is not in use since that does not allow any
->>> DDR2 port as slave...
-> 
-> Hello Peter,
-> 
-> Thank you for all the information, I will chip in to help a little bit.
-> The Master/channel is described in the device tree. The channel has a 
-> controller, a mem/periph interface and a periph ID, plus a FIFO 
-> configuration.
-> 
-> The dma chan number reported in the dmesg is just software.
+> What else are you expecting to see in the list?
 
-Got that, that was why I added the various additional traces in that
-horrid patch in the mail you are responding to :-)
+Prerry much all kinds of modes for the funky replacement values
+and whanot.
 
->                                                             Here is an 
-> example from DT:
-> dmas = <&dma0 2 AT91_DMA_CFG_PER_ID(1)>,
->         <&dma0 2 AT91_DMA_CFG_PER_ID(2)>;
 > 
-> you can match this with the help from 
-> Documentation/devicetree/bindings/dma/atmel-dma.txt:
+> >> +};
+> >> +
+> >> +/**
+> >> + * drm_plane_create_colorkey_properties - create colorkey properties
+> >> + * @plane: drm plane
+> >> + * @supported_modes: bitmask of supported color keying modes
+> >> + *
+> >> + * This function creates the generic color keying properties and attach them to
+> >> + * the plane to enable color keying control for blending operations.
+> >> + *
+> >> + * Color keying is controlled through nine properties:
+> >> + *
+> >> + * colorkey.mode:
+> >> + *	The mode is an enumerated property that controls how color keying
+> >> + *	operates. The "disabled" mode that disables color keying and is
+> >> + *	very likely to exist if color keying is supported, it should be the
+> >> + *	default mode.
+> >> + *
+> >> + * colorkey.min, colorkey.max:
+> >> + *	These two properties specify the colors that are treated as the color
+> >> + *	key. Pixel whose value is in the [min, max] range is the color key
+> >> + *	matching pixel. The minimum and maximum values are expressed as a
+> >> + *	64-bit integer in AXYZ16161616 format, where A is the alpha value and
+> >> + *	X, Y and Z correspond to the color components of the colorkey.format.
+> >> + *	In most cases XYZ will be either RGB or YUV.
+> >> + *
+> >> + *	When a single color key is desired instead of a range, userspace shall
+> >> + *	set the min and max properties to the same value.
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if range can't be
+> >> + *	handled.
+> >> + *
+> >> + * colorkey.format:
+> >> + *	This property specifies the pixel format for the colorkey.min / max
+> >> + *	properties. The format is given in a form of DRM fourcc code.
+> > 
+> > Umm. Why we do even need this? This seems incompatible with your earlier
+> > "min/max are specified in 16bpc format" statement.
+> > 
 > 
-> 1. A phandle pointing to the DMA controller. 
+> AXYZ16161616 is just an abstraction of a pixel format, at least that's how I'm
+> interpreting the AXYZ16161616.
 > 
-> 2. The memory interface (16 most significant bits), the peripheral 
-> interface
-> (16 less significant bits). 
+> Previously Laurent specified that min/max values should be given in the format
+> of the planes framebuffer. This doesn't work for a case of setting property for
+> a disabled plane because disabled plane doesn't have a framebuffer. This also
+> doesn't work for Tegra that can take only XRGB8888 format for a color key, AFAIK
+> HW internally converts all pixel formats to ARGB8888 and RGB part participates
+> in the color matching (later Tegra's support alpha channel matching as well).
+> Hence I added the format property that explicitly tells in what format the color
+> key integer value is given.
 > 
-> 3. Parameters for the at91 DMA configuration register which are device 
-> 
-> dependent: 
-> 
->    - bit 7-0: peripheral identifier for the hardware handshaking 
-> interface. The
->    identifier can be different for tx and rx. 
-> 
->    - bit 11-8: FIFO configuration. 0 for half FIFO, 1 for ALAP, 2 for ASAP.
-> 
-> 
-> So , what was Tudor asking for, is your DT for the ebi node (if you are 
-> using ebi), or, your NFC SRAM (Nand Flash Controller SRAM) DMA 
-> devicetree chunk, so, we can figure out which type of DMA are you using.
-> 
-> Normally, the ebi should be connected to both DMA0 and DMA1 on those 
-> interfaces specified in DT. Which ones you want to use, depends on your 
-> setup (and contention on the bus/accesses, like in your case, the HLCDC)
-> 
-> Thats why we have multiple choices, to pick the right one for each case.
-> In our vanilla DT sama5d3.dtsi we do not have DMA described for ebi 
-> interface.
+> I'm now thinking that format property should be exposed to userspace in a form
+> of a ENUM-list, because otherwise userspace doesn't know what color key formats
+> are supported by the DRM driver.
 
-Ahh, *that* NAND DMA configuration. Of course, how silly of me...
+I'm not sure that'll help particularly much. Generally you can't 
+choose the format anyway, and it may just depends on the fb format
+or some other related factors. So not really sure how much benefit
+such an enum would have.
 
-This is a setup based on the at91-linea.dtsi "CPU" board. That dtsi should
-have the relevant NAND/DMA info. Also, at91-nattis-2-natte-2.dts describes
-the older HW (with a 1024x768 panel) that is also affected, if you want a
-full device tree to look at.
+And for hw where eg. the colorkey is always RGB even for YUV data
+(or vice versa) we could just do the YUV<->RGB conversion in the
+driver for the colorkey value provided by the user. The driver is
+in the best position to know the exact YUV<->RGB conversion formula
+used by the hardware anyway.
 
-Looks like I didn't make a selection, quoting from at91-linea.dtsi:
+> 
+> And probably somehow userspace should be informed about that colorkey format
+> should match the framebuffers format if that's what driver expects. Maybe a
+> read-only property?
+> 
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if pixel format
+> >> + *	is unsupported.
+> >> + *
+> >> + * colorkey.mask:
+> >> + *	This property specifies the pixel components mask. Unmasked pixel
+> >> + *	components are not participating in the matching. This mask value is
+> >> + *	applied to colorkey.min / max values. The mask value is given in a
+> >> + *	form of DRM fourcc code corresponding to the colorkey.format property.
+> >> + *
+> >> + *	For example: userspace shall set the colorkey.mask to 0x0000ff00
+> >> + *	to match only the green component if colorkey.format is set to
+> >> + *	DRM_FORMAT_XRGB8888.
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if mask value
+> >> + *	can't be handled.
+> >> + *
+> >> + * colorkey.inverted-match:
+> >> + *	This property specifies whether the matching min-max range should
+> >> + *	be inverted, i.e. pixels outside of the given color range become
+> >> + *	the color key match.
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if inversion
+> >> + *	mode can't be handled.
+> > 
+> > Hmm. I'm trying to figure out what this means for the src vs. dst
+> > colorkey modes. Those pretty much already have an inverted meaning when
+> > compared to each other. So I can't figure out from these docs whether 
+> > you're supposed to use this when you want a normal dst ckey or normal
+> > src key semantics.
+> > 
+> 
+> I also couldn't understand what initial semantic to src/dst was given by Laurent.
+> 
+> In a case of this patch:
+> 
+> The src/dst-match specifies the "source" plane for which the color matching is
+> performed. Src means the plane to which the colorkey properties are applied. Dst
+> means planes other than plane X to which the colorkey properties are applied, in
+> particular the planes that are Z-positioned under the plane X. Hope that's more
+> clear now.
+> 
+> The src-replace part specifies that pixels of the plane to which the colorkey
+> properties are applied will be replaced.
+> 
+> I'll try to re-work the doc if the above sounds good.
+> 
+> The inverted-match property controls whether given color-match range shall be
+> inverted, like for example: if given color key is a red color, then all colors
+> expect the red will be matched as a color key.
+> 
+> Actually maybe inversion could be expressed using the mask solely. Like we could
+> add a helper that converts "value+mask" into "value=(value & ~mask),
+> inversion=true" if mask has form of 0x11000111, though this could be not
+> applicable to all possible pixel formats.. not sure.
+> 
+> >> + *
+> >> + * colorkey.replacement-value:
+> >> + *	This property specifies the color value that replaces pixels matching
+> >> + *	the color key. The value is expressed in AXYZ16161616 format, where A
+> >> + *	is the alpha value and X, Y and Z correspond to the color components
+> >> + *	of the colorkey.replacement-format.
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if replacement
+> >> + *	value can't be handled.
+> >> + *
+> >> + * colorkey.replacement-format:
+> >> + *	This property specifies the pixel format for the
+> >> + *	colorkey.replacement-value property. The format is given in a form of
+> >> + *	DRM fourcc code.
+> > 
+> > Again this seems at odds with the 16bpc replacement-value.
+> > 
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if replacement
+> >> + *	pixel format is unsupported.
+> >> + *
+> >> + * colorkey.replacement-mask:
+> >> + *	This property specifies the pixel components mask that defines
+> >> + *	what components of the colorkey.replacement-value will participate in
+> >> + *	replacement of the pixels color. Unmasked pixel components are not
+> >> + *	participating in the replacement.
+> > 
+> > Does that mean that the data for the unmasked bits will be coming
+> > from the source?
+> > 
+> 
+> Yeah, I see that "source" is vaguely defined.
+> 
+> Yes, the unmasked bits are coming from the source. The "source" is defined by
+> the mode.
+> 
+> src-match- -->SRC<-- -replace
+> dst-match- -->SRC<-- -replace
+> 
+> Src means the plane to which the colorkey properties are applied, as I stated above.
+> 
+> >> The mask value is given in a form of
+> >> + *	DRM fourcc code corresponding to the colorkey.replacement-format
+> >> + *	property.
+> >> + *
+> >> + *	For example: userspace shall set the colorkey.replacement-mask to
+> >> + *	0x0000ff00 to replace only the green component if
+> >> + *	colorkey.replacement-format is set to DRM_FORMAT_XRGB8888.
+> >> + *
+> >> + *	Userspace shall set colorkey.replacement-mask to 0 to disable the color
+> >> + *	replacement. In this case matching pixels become transparent.
+> >> + *
+> >> + *	Drivers return an error from their plane atomic check if replacement
+> >> + *	mask value can't be handled.
+> >> + *
+> >> + * Returns:
+> >> + * Zero on success, negative errno on failure.
+> >> + */
+> >> +int drm_plane_create_colorkey_properties(struct drm_plane *plane,
+> >> +					 u32 supported_modes)
+> >> +{
+> >> +	struct drm_prop_enum_list modes_list[DRM_PLANE_COLORKEY_MODES_NUM];
+> >> +	struct drm_property *replacement_format_prop;
+> >> +	struct drm_property *replacement_value_prop;
+> >> +	struct drm_property *replacement_mask_prop;
+> >> +	struct drm_property *inverted_match_prop;
+> >> +	struct drm_property *format_prop;
+> >> +	struct drm_property *mask_prop;
+> >> +	struct drm_property *mode_prop;
+> >> +	struct drm_property *min_prop;
+> >> +	struct drm_property *max_prop;
+> >> +	unsigned int modes_num = 0;
+> >> +	unsigned int i;
+> >> +
+> >> +	/* at least two modes should be supported */
+> >> +	if (!supported_modes)
+> >> +		return -EINVAL;
+> >> +
+> >> +	/* modes are driver-specific, build the list of supported modes */
+> >> +	for (i = 0; i < DRM_PLANE_COLORKEY_MODES_NUM; i++) {
+> >> +		if (!(supported_modes & BIT(i)))
+> >> +			continue;
+> >> +
+> >> +		modes_list[modes_num].name = plane_colorkey_mode_name[i];
+> >> +		modes_list[modes_num].type = i;
+> >> +		modes_num++;
+> >> +	}
+> >> +
+> >> +	mode_prop = drm_property_create_enum(plane->dev, 0, "colorkey.mode",
+> >> +					     modes_list, modes_num);
+> >> +	if (!mode_prop)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	mask_prop = drm_property_create_range(plane->dev, 0, "colorkey.mask",
+> >> +					      0, U64_MAX);
+> >> +	if (!mask_prop)
+> >> +		goto err_destroy_mode_prop;
+> >> +
+> >> +	min_prop = drm_property_create_range(plane->dev, 0, "colorkey.min",
+> >> +					     0, U64_MAX);
+> >> +	if (!min_prop)
+> >> +		goto err_destroy_mask_prop;
+> >> +
+> >> +	max_prop = drm_property_create_range(plane->dev, 0, "colorkey.max",
+> >> +					     0, U64_MAX);
+> >> +	if (!max_prop)
+> >> +		goto err_destroy_min_prop;
+> >> +
+> >> +	format_prop = drm_property_create_range(plane->dev, 0,
+> >> +					"colorkey.format",
+> >> +					0, U32_MAX);
+> >> +	if (!format_prop)
+> >> +		goto err_destroy_max_prop;
+> >> +
+> >> +	inverted_match_prop = drm_property_create_bool(plane->dev, 0,
+> >> +					"colorkey.inverted-match");
+> >> +	if (!inverted_match_prop)
+> >> +		goto err_destroy_format_prop;
+> >> +
+> >> +	replacement_mask_prop = drm_property_create_range(plane->dev, 0,
+> >> +					"colorkey.replacement-mask",
+> >> +					0, U64_MAX);
+> >> +	if (!replacement_mask_prop)
+> >> +		goto err_destroy_inverted_match_prop;
+> >> +
+> >> +	replacement_value_prop = drm_property_create_range(plane->dev, 0,
+> >> +					"colorkey.replacement-value",
+> >> +					0, U64_MAX);
+> >> +	if (!replacement_value_prop)
+> >> +		goto err_destroy_replacement_mask_prop;
+> >> +
+> >> +	replacement_format_prop = drm_property_create_range(plane->dev, 0,
+> >> +					"colorkey.replacement-format",
+> >> +					0, U64_MAX);
+> >> +	if (!replacement_format_prop)
+> >> +		goto err_destroy_replacement_value_prop;
+> > 
+> > I don't think we want to add all these props for every driver/hardware.
+> > IMO the set of props we expose should depend on the supported set of
+> > colorkeying modes.
+> > 
+> 
+> Probably, I don't mind. This should be documented then, I can address that in
+> the next iteration.
+> 
+> /I think/ all of the currently-defined properties are relevant to the defined
+> color keying modes.
 
-&ebi {
-	pinctrl-0 = <&pinctrl_ebi_nand_addr>;
-	pinctrl-names = "default";
-	status = "okay";
-};
+i915 will want just value/mask or min/max, depending on whether we're
+dealing with rgb or yuv. And I've seen a lot of hardware with just the
+value/mask approach over the years.
 
-&nand_controller {
-	status = "okay";
+> Later, if the list of modes will be extended with new modes,
+> the creation of properties could be conditionalized.
+> 
+> Though maybe "color components replacement" and "replacement with a complete
+> transparency" could be factored out into a specific color keying modes.
 
-	nand: nand@3 {
-		reg = <0x3 0x0 0x2>;
-		atmel,rb = <0>;
-		nand-bus-width = <8>;
-		nand-ecc-mode = "hw";
-		nand-ecc-strength = <4>;
-		nand-ecc-step-size = <512>;
-		nand-on-flash-bbt;
-		label = "atmel_nand";
-	};
-};
+Yes. I've never seen those in any hardware. In fact I'm wondering where
+is the userspace for all these complex modes? Ie. should we even bother
+with them at this time?
 
-The reason is probably because the sama5d3xek device-trees didn't at the
-time of "fork". Does anybody have any suggestion for some extra properties
-to try in the above nodes?
-
-Further, I forgot that I had actually upstreamed linea support for
-at91bootstrap, so relevant NAND timings etc can be found in lpddr1_init()
-in
-
-	at91bootstrap/contrib/board/axentia/sama5d3_linea/sama5d3_linea.c
-
-Cheers,
-Peter
+-- 
+Ville Syrjälä
+Intel
