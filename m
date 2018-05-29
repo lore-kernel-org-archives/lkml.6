@@ -1,104 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965780AbeE2SGS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 14:06:18 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35515 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936888AbeE2SGK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 14:06:10 -0400
-X-Google-Smtp-Source: AB8JxZr2xqTyy9HsKxxRZv9cyR2l/RjpDvox5oRi+BGU95h02O1RAr8jeQR9UlMC61ZlffA9AgW+HQ==
-Date: Tue, 29 May 2018 11:06:08 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 01/11] PM / devfreq: Init user limits from OPP limits,
- not viceversa
-Message-ID: <20180529180608.GF168650@google.com>
-References: <20180525203043.249193-1-mka@chromium.org>
- <CGME20180525203410epcas1p2fd2a35468b9c37f2c542e499d3ed5a03@epcas1p2.samsung.com>
- <20180525203043.249193-2-mka@chromium.org>
- <5B0B9319.9060709@samsung.com>
+        id S937004AbeE2SHE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 14:07:04 -0400
+Received: from sauhun.de ([88.99.104.3]:56874 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936880AbeE2SHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 14:07:02 -0400
+Date: Tue, 29 May 2018 20:06:59 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Shardar Shariff Md <smohammed@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
+Message-ID: <20180529180659.f5s56nstykztvykr@ninjato>
+References: <20180513211347.7187-1-digetx@gmail.com>
+ <20180514115933.GH18312@ulmo>
+ <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
+ <5949e650-8ab5-b4bb-196d-5a0705383141@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yhskpz7hnuvbrtlc"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5B0B9319.9060709@samsung.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <5949e650-8ab5-b4bb-196d-5a0705383141@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 02:26:49PM +0900, Chanwoo Choi wrote:
-> Hi,
-> 
-> On 2018년 05월 26일 05:30, Matthias Kaehlcke wrote:
-> > Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding
-> > the devfreq device") introduced the initialization of the user
-> > limits min/max_freq from the lowest/highest available OPPs. Later
-> > commit f1d981eaecf8 ("PM / devfreq: Use the available min/max
-> > frequency") added scaling_min/max_freq, which actually represent
-> > the frequencies of the lowest/highest available OPP. scaling_min/
-> > max_freq are initialized with the values from min/max_freq, which
-> > is totally correct in the context, but a bit awkward to read.
-> > 
-> > Swap the initialization and assign scaling_min/max_freq with the
-> > OPP freqs and then the user limts min/max_freq with scaling_min/
-> > max_freq.
-> > 
-> > Needless to say that this change is a NOP, intended to improve
-> > readability.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> >  drivers/devfreq/devfreq.c | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> > index fe2af6aa88fc..0057ef5b0a98 100644
-> > --- a/drivers/devfreq/devfreq.c
-> > +++ b/drivers/devfreq/devfreq.c
-> > @@ -604,21 +604,21 @@ struct devfreq *devfreq_add_device(struct device *dev,
-> >  		mutex_lock(&devfreq->lock);
-> >  	}
-> >  
-> > -	devfreq->min_freq = find_available_min_freq(devfreq);
-> > -	if (!devfreq->min_freq) {
-> > +	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
-> > +	if (!devfreq->scaling_min_freq) {
-> >  		mutex_unlock(&devfreq->lock);
-> >  		err = -EINVAL;
-> >  		goto err_dev;
-> >  	}
-> > -	devfreq->scaling_min_freq = devfreq->min_freq;
-> > +	devfreq->min_freq = devfreq->scaling_min_freq;
-> >  
-> > -	devfreq->max_freq = find_available_max_freq(devfreq);
-> > -	if (!devfreq->max_freq) {
-> > +	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
-> > +	if (!devfreq->scaling_max_freq) {
-> >  		mutex_unlock(&devfreq->lock);
-> >  		err = -EINVAL;
-> >  		goto err_dev;
-> >  	}
-> > -	devfreq->scaling_max_freq = devfreq->max_freq;
-> > +	devfreq->max_freq = devfreq->scaling_max_freq;
-> >  
-> >  	dev_set_name(&devfreq->dev, "devfreq%d",
-> >  				atomic_inc_return(&devfreq_no));
-> > 
-> 
-> I already replied with my Reviewed-by tag. You are missing my tag.
-> 
-> Again, 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Sorry, forgot to add the tag after creating the series. I now added it
-to my local tree.
+--yhskpz7hnuvbrtlc
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> > Our I2C driver is based on the interrupt. So we have converted the
+> > suspend/resume to suspend_noirq and reseume_noirq so that we will not a=
+llow the
+> > transfer when system interrupt disabled in downstream.
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 SET_NOIRQ_SYSTEM=
+_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
+> >=20
+> > In shutdown path, where interrupt disabled and still need i2c, we use t=
+he
+> > bit-bang method via GPIO for i2c transfer.
+> In the current upstream kernel suspend/resume can't be simply moved to the
+> 'noirq' stage because resume invokes tegra_i2c_init() which uses runtime =
+PM and
+> that doesn't work with the IRQ's being disabled. But things do not work e=
+ven
+> with the tegra_i2c_init() changed to work with the disabled IRQ's, like I=
+ wrote
+> above the I2C transfer fails (due to timeout) and a "fix" for that failur=
+e was
+> to remove reset_control_assert/deassert from the tegra_i2c_init(). So I'd=
+ go for
+> a complete suspend/resume removal for now as it is causes problem.
+
+Laxman, are you convinced or do you have still objections?
+
+
+--yhskpz7hnuvbrtlc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsNlsMACgkQFA3kzBSg
+KbZnxg//b/JEKpMaCPyKEn1ejp1JJJfDrCgpngPA+xDdGprQTefGkNCtFZ8e1xG8
+SumlReMYABex7myrnkNl8p7xo5BYpn2/PnSRg3VieneKXJMfsB6IvX4Q0u6+MixO
+WeHJwFtDBbhbOligybufr5s03VQ58F0lW16CscBZioHa+epYtWshVbrsyhJ3V4wN
+P9LeR9sj7JYQlEvOWa5jhhJREUq2P8Dl2/si17rDzGiYqPi3PO84Dhc5kfT2qhxC
+UtSTf7NXxqMe2el9TKgMmWVe//LizZ4+e+JJfKgjuL7UKhxr3Rd8fScCGPp7FEiN
+IKZAnnSAhD2/VKJFdWA2JDzH6+nkpNNWfcrfLU4XvHXToC2IXxkYkD2wxaJx0tb9
+0+BfU/dxfQCmPTc8A8NnsP+vV0qWrBLGqPeJA+Jv6rEOvDWwe7V57wPZujXVruPA
+/BCvjFM5s8uM+gzls15WfgdDzOLEOGKUfIPj0Xf0nWSfTE8MUdPyGBXHq1mBZ/XI
+pMmmtJFpPO7Fr/P8drVPm4fNz6tSUgAFYuWtelYlO5PE7l4d75jy20S08zYTzFi7
+3W/dREtSIU3TM0TV18e0URJfLyGk/Utzj8IK16bYFZVX7LycCb2pOQgiFF9xozpU
+ocr0N2OXZwm91J9T96QtGFs10dF9UYcesXb3xNYvFJpCJWyV7hI=
+=luMx
+-----END PGP SIGNATURE-----
+
+--yhskpz7hnuvbrtlc--
