@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966171AbeE2TJM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:09:12 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55750 "EHLO
+        id S966359AbeE2TLy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:11:54 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34636 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965614AbeE2TJL (ORCPT
+        with ESMTP id S965614AbeE2TLu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:09:11 -0400
-X-Google-Smtp-Source: ADUXVKJUifOCwKVaTiAHxhfcz1I+jBpKa/7spLO7qqb0IaYS/WSpbqDg5RDAUocDydBGUKi37O/bJA==
+        Tue, 29 May 2018 15:11:50 -0400
+X-Google-Smtp-Source: ADUXVKLaKkU1iOyom8CKfEKQtpMZNaxGfMi7UkBaJtiuB835XyCfUm9v538MlFX+OYTgd3O+cSTXQQ==
 From: Thibaut Robert <thibaut.robert@gmail.com>
 To: Aditya Shankar <aditya.shankar@microchip.com>,
         Ganesh Krishna <ganesh.krishna@microchip.com>,
@@ -15,99 +15,216 @@ To: Aditya Shankar <aditya.shankar@microchip.com>,
 Cc: linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Thibaut Robert <thibaut.robert@gmail.com>
-Subject: [PATCH 1/1] staging: wilc1000: Use common structs to parse ip packets
-Date: Tue, 29 May 2018 21:08:39 +0200
-Message-Id: <20180529190839.12818-1-thibaut.robert@gmail.com>
+Subject: [PATCH 1/2] staging: wilc1000: fix some endianness sparse warnings
+Date: Tue, 29 May 2018 21:11:43 +0200
+Message-Id: <20180529191143.13081-1-thibaut.robert@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use structs ethhdr, iphdr and tcphdr instead of manual parsing in
-tcp_process.
-This commit fix handling of ip packets containing options.
-It also fixes the following sparse warning:
-
-drivers/staging/wilc1000//wilc_wlan.c:201:19: warning: cast to restricted __be16
+This commit fix a few sparse warnings. It mostly consists of fixing the type declarations
+and avoiding the use of variables with mixed endianness values.
 
 Signed-off-by: Thibaut Robert <thibaut.robert@gmail.com>
 ---
- drivers/staging/wilc1000/wilc_wlan.c | 44 +++++++++++-----------------
- 1 file changed, 17 insertions(+), 27 deletions(-)
+ drivers/staging/wilc1000/wilc_spi.c           | 15 ++++++-----
+ .../staging/wilc1000/wilc_wfi_cfgoperations.c |  2 +-
+ drivers/staging/wilc1000/wilc_wlan.c          | 26 +++++++++----------
+ drivers/staging/wilc1000/wilc_wlan_cfg.c      |  8 +++---
+ drivers/staging/wilc1000/wilc_wlan_cfg.h      |  4 +--
+ 5 files changed, 27 insertions(+), 28 deletions(-)
 
+diff --git a/drivers/staging/wilc1000/wilc_spi.c b/drivers/staging/wilc1000/wilc_spi.c
+index 647526387784..e51f0d91a376 100644
+--- a/drivers/staging/wilc1000/wilc_spi.c
++++ b/drivers/staging/wilc1000/wilc_spi.c
+@@ -666,11 +666,11 @@ static int spi_data_write(struct wilc *wilc, u8 *b, u32 sz)
+ static int spi_internal_write(struct wilc *wilc, u32 adr, u32 dat)
+ {
+ 	struct spi_device *spi = to_spi_device(wilc->dev);
++	__le32 le32dat = cpu_to_le32(dat);
+ 	int result;
+ 
+-	dat = cpu_to_le32(dat);
+-	result = spi_cmd_complete(wilc, CMD_INTERNAL_WRITE, adr, (u8 *)&dat, 4,
+-				  0);
++	result = spi_cmd_complete(wilc, CMD_INTERNAL_WRITE, adr, (u8 *)&le32dat,
++				  4, 0);
+ 	if (result != N_OK)
+ 		dev_err(&spi->dev, "Failed internal write cmd...\n");
+ 
+@@ -689,7 +689,7 @@ static int spi_internal_read(struct wilc *wilc, u32 adr, u32 *data)
+ 		return 0;
+ 	}
+ 
+-	*data = cpu_to_le32(*data);
++	le32_to_cpus(data);
+ 
+ 	return 1;
+ }
+@@ -706,15 +706,16 @@ static int wilc_spi_write_reg(struct wilc *wilc, u32 addr, u32 data)
+ 	int result = N_OK;
+ 	u8 cmd = CMD_SINGLE_WRITE;
+ 	u8 clockless = 0;
++	__le32 le32data = cpu_to_le32(data);
+ 
+-	data = cpu_to_le32(data);
+ 	if (addr < 0x30) {
+ 		/* Clockless register */
+ 		cmd = CMD_INTERNAL_WRITE;
+ 		clockless = 1;
+ 	}
+ 
+-	result = spi_cmd_complete(wilc, cmd, addr, (u8 *)&data, 4, clockless);
++	result = spi_cmd_complete(wilc, cmd, addr, (u8 *)&le32data, 4,
++				  clockless);
+ 	if (result != N_OK)
+ 		dev_err(&spi->dev, "Failed cmd, write reg (%08x)...\n", addr);
+ 
+@@ -769,7 +770,7 @@ static int wilc_spi_read_reg(struct wilc *wilc, u32 addr, u32 *data)
+ 		return 0;
+ 	}
+ 
+-	*data = cpu_to_le32(*data);
++	le32_to_cpus(data);
+ 
+ 	return 1;
+ }
+diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+index e248702ee519..745bf5ca2622 100644
+--- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
++++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+@@ -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device *dev, u8 *buff, u32 size)
+ 
+ 	freq = ieee80211_channel_to_frequency(curr_channel, NL80211_BAND_2GHZ);
+ 
+-	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
++	if (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {
+ 		cfg80211_rx_mgmt(priv->wdev, freq, 0, buff, size, 0);
+ 		return;
+ 	}
 diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
-index d4ebbf67e50b..28c93f3f846e 100644
+index 28c93f3f846e..a5ac1d26590b 100644
 --- a/drivers/staging/wilc1000/wilc_wlan.c
 +++ b/drivers/staging/wilc1000/wilc_wlan.c
-@@ -1,4 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <linux/if_ether.h>
-+#include <linux/ip.h>
- #include "wilc_wfi_netdevice.h"
- #include "wilc_wlan_cfg.h"
- 
-@@ -184,9 +186,9 @@ static inline int add_tcp_pending_ack(u32 ack, u32 session_index,
- 
- static inline void tcp_process(struct net_device *dev, struct txq_entry_t *tqe)
- {
--	u8 *eth_hdr_ptr;
-+	const struct ethhdr *eth_hdr_ptr = (const struct ethhdr *)tqe->buffer;
-+
- 	u8 *buffer = tqe->buffer;
--	unsigned short h_proto;
- 	int i;
- 	unsigned long flags;
+@@ -560,7 +560,8 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+ 	int ret = 0;
+ 	int counter;
+ 	int timeout;
+-	u32 vmm_table[WILC_VMM_TBL_SIZE];
++	__le32 vmm_table[WILC_VMM_TBL_SIZE];
++	u32 table_entry;
  	struct wilc_vif *vif;
-@@ -197,37 +199,25 @@ static inline void tcp_process(struct net_device *dev, struct txq_entry_t *tqe)
+ 	struct wilc *wilc;
+ 	const struct wilc_hif_func *func;
+@@ -598,10 +599,10 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+ 			if ((sum + vmm_sz) > LINUX_TX_SIZE)
+ 				break;
  
- 	spin_lock_irqsave(&wilc->txq_spinlock, flags);
+-			vmm_table[i] = vmm_sz / 4;
++			table_entry = vmm_sz / 4;
+ 			if (tqe->type == WILC_CFG_PKT)
+-				vmm_table[i] |= BIT(10);
+-			vmm_table[i] = cpu_to_le32(vmm_table[i]);
++				table_entry |= BIT(10);
++			vmm_table[i] = cpu_to_le32(table_entry);
  
--	eth_hdr_ptr = &buffer[0];
--	h_proto = ntohs(*((unsigned short *)&eth_hdr_ptr[12]));
--	if (h_proto == ETH_P_IP) {
--		u8 *ip_hdr_ptr;
--		u8 protocol;
--
--		ip_hdr_ptr = &buffer[ETHERNET_HDR_LEN];
--		protocol = ip_hdr_ptr[9];
-+	if (eth_hdr_ptr->h_proto == htons(ETH_P_IP)) {
-+		const struct iphdr *ip_hdr_ptr = (const struct iphdr *)
-+		  (buffer + ETH_HLEN);
+ 			i++;
+ 			sum += vmm_sz;
+@@ -704,8 +705,7 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+ 		if (vmm_table[i] == 0)
+ 			break;
  
--		if (protocol == 0x06) {
--			u8 *tcp_hdr_ptr;
-+		if (ip_hdr_ptr->protocol == IPPROTO_TCP) {
-+			const struct tcphdr *tcp_hdr_ptr;
- 			u32 IHL, total_length, data_offset;
+-		vmm_table[i] = cpu_to_le32(vmm_table[i]);
+-		vmm_sz = (vmm_table[i] & 0x3ff);
++		vmm_sz = (le32_to_cpu(vmm_table[i]) & 0x3ff);
+ 		vmm_sz *= 4;
+ 		header = (tqe->type << 31) |
+ 			 (tqe->buffer_size << 15) |
+@@ -715,8 +715,7 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+ 		else
+ 			header &= ~BIT(30);
  
--			tcp_hdr_ptr = &ip_hdr_ptr[IP_HDR_LEN];
--			IHL = (ip_hdr_ptr[0] & 0xf) << 2;
--			total_length = ((u32)ip_hdr_ptr[2] << 8) +
--					(u32)ip_hdr_ptr[3];
--			data_offset = ((u32)tcp_hdr_ptr[12] & 0xf0) >> 2;
-+			IHL = ip_hdr_ptr->ihl << 2;
-+			tcp_hdr_ptr = (const struct tcphdr *)
-+			  ((u8 *)ip_hdr_ptr + IHL);
-+			total_length = ntohs(ip_hdr_ptr->tot_len);
-+
-+			data_offset = tcp_hdr_ptr->doff << 2;
- 			if (total_length == (IHL + data_offset)) {
- 				u32 seq_no, ack_no;
+-		header = cpu_to_le32(header);
+-		memcpy(&txb[offset], &header, 4);
++		*((__le32 *)&txb[offset]) = cpu_to_le32(header);
+ 		if (tqe->type == WILC_CFG_PKT) {
+ 			buffer_offset = ETH_CONFIG_PKT_HDR_OFFSET;
+ 		} else if (tqe->type == WILC_NET_PKT) {
+@@ -770,8 +769,7 @@ static void wilc_wlan_handle_rx_buff(struct wilc *wilc, u8 *buffer, int size)
  
--				seq_no = ((u32)tcp_hdr_ptr[4] << 24) +
--					 ((u32)tcp_hdr_ptr[5] << 16) +
--					 ((u32)tcp_hdr_ptr[6] << 8) +
--					 (u32)tcp_hdr_ptr[7];
--
--				ack_no = ((u32)tcp_hdr_ptr[8] << 24) +
--					 ((u32)tcp_hdr_ptr[9] << 16) +
--					 ((u32)tcp_hdr_ptr[10] << 8) +
--					 (u32)tcp_hdr_ptr[11];
--
-+				seq_no = ntohl(tcp_hdr_ptr->seq);
-+				ack_no = ntohl(tcp_hdr_ptr->ack_seq);
- 				for (i = 0; i < tcp_session; i++) {
- 					u32 j = ack_session_info[i].seq_num;
+ 	do {
+ 		buff_ptr = buffer + offset;
+-		memcpy(&header, buff_ptr, 4);
+-		header = cpu_to_le32(header);
++		header = le32_to_cpup((__le32 *)buff_ptr);
  
+ 		is_cfg_packet = (header >> 31) & 0x1;
+ 		pkt_offset = (header >> 22) & 0x1ff;
+@@ -942,6 +940,7 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
+ 	u32 offset;
+ 	u32 addr, size, size2, blksz;
+ 	u8 *dma_buffer;
++	const __le32 *header;
+ 	int ret = 0;
+ 
+ 	blksz = BIT(12);
+@@ -952,10 +951,9 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
+ 
+ 	offset = 0;
+ 	do {
+-		memcpy(&addr, &buffer[offset], 4);
+-		memcpy(&size, &buffer[offset + 4], 4);
+-		addr = cpu_to_le32(addr);
+-		size = cpu_to_le32(size);
++		header = (__le32 *)buffer + offset;
++		addr = le32_to_cpu(header[0]);
++		size = le32_to_cpu(header[1]);
+ 		acquire_bus(wilc, ACQUIRE_ONLY);
+ 		offset += 8;
+ 		while (((int)size) && (offset < buffer_size)) {
+diff --git a/drivers/staging/wilc1000/wilc_wlan_cfg.c b/drivers/staging/wilc1000/wilc_wlan_cfg.c
+index c0b9b700f4d7..4a914d8572aa 100644
+--- a/drivers/staging/wilc1000/wilc_wlan_cfg.c
++++ b/drivers/staging/wilc1000/wilc_wlan_cfg.c
+@@ -275,14 +275,14 @@ static int wilc_wlan_cfg_set_bin(u8 *frame, u32 offset, u16 id, u8 *b, u32 size)
+ 
+ static void wilc_wlan_parse_response_frame(u8 *info, int size)
+ {
+-	u32 wid, len = 0, i = 0;
++	u32 wid;
++	int len = 0, i = 0;
+ 
+ 	while (size > 0) {
+ 		i = 0;
+-		wid = info[0] | (info[1] << 8);
+-		wid = cpu_to_le32(wid);
++		wid = le16_to_cpup((__le16 *)info);
+ 
+-		switch ((wid >> 12) & 0x7) {
++		switch (info[1] >> 4) {
+ 		case WID_CHAR:
+ 			do {
+ 				if (g_cfg_byte[i].id == WID_NIL)
+diff --git a/drivers/staging/wilc1000/wilc_wlan_cfg.h b/drivers/staging/wilc1000/wilc_wlan_cfg.h
+index 08092a551840..9e029338bcab 100644
+--- a/drivers/staging/wilc1000/wilc_wlan_cfg.h
++++ b/drivers/staging/wilc1000/wilc_wlan_cfg.h
+@@ -18,12 +18,12 @@ struct wilc_cfg_byte {
+ 
+ struct wilc_cfg_hword {
+ 	u16 id;
+-	u16 val;
++	__le16 val;
+ };
+ 
+ struct wilc_cfg_word {
+ 	u32 id;
+-	u32 val;
++	__le32 val;
+ };
+ 
+ struct wilc_cfg_str {
 -- 
 2.17.0
