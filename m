@@ -1,89 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033649AbeE2DAH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 23:00:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:46925 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033342AbeE2DAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 23:00:03 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 29 May 2018 13:00:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: linux-next: manual merge of the net-next tree with the s390 tree
-Message-ID: <20180529130001.02d3cdde@canb.auug.org.au>
+        id S1033720AbeE2DCl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 23:02:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36324 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1033342AbeE2DCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 23:02:38 -0400
+Date: Mon, 28 May 2018 23:02:36 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Hannes Reinecke <hare@suse.de>, Laurence Oberman <loberman@redhat.com>,
+        Ewan Milne <emilne@redhat.com>, James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+Message-ID: <20180529030236.GA28895@redhat.com>
+References: <20180525125322.15398-1-jthumshirn@suse.de>
+ <20180525130535.GA24239@lst.de>
+ <20180525135813.GB9591@redhat.com>
+ <20180525141211.GA25971@lst.de>
+ <20180525145056.GD9591@redhat.com>
+ <yq1muwj45sg.fsf@oracle.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/roaZ5u8C1Leq=F9cwqIJ16w"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq1muwj45sg.fsf@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/roaZ5u8C1Leq=F9cwqIJ16w
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 28 2018 at  9:19pm -0400,
+Martin K. Petersen <martin.petersen@oracle.com> wrote:
 
-Hi all,
+> 
+> Mike,
+> 
+> I understand and appreciate your position but I still don't think the
+> arguments for enabling DM multipath are sufficiently compelling. The
+> whole point of ANA is for things to be plug and play without any admin
+> intervention whatsoever.
+> 
+> I also think we're getting ahead of ourselves a bit. The assumption
+> seems to be that NVMe ANA devices are going to be broken--or that they
+> will require the same amount of tweaking as SCSI devices--and therefore
+> DM multipath support is inevitable. However, I'm not sure that will be
+> the case.
+> 
+> > Thing is you really don't get to dictate that to the industry.  Sorry.
+> 
+> We are in the fortunate position of being able to influence how the spec
+> is written. It's a great opportunity to fix the mistakes of the past in
+> SCSI. And to encourage the industry to ship products that don't need the
+> current level of manual configuration and complex management.
+> 
+> So I am in favor of Johannes' patches *if* we get to the point where a
+> Plan B is needed. But I am not entirely convinced that's the case just
+> yet. Let's see some more ANA devices first. And once we do, we are also
+> in a position where we can put some pressure on the vendors to either
+> amend the specification or fix their implementations to work with ANA.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+ANA really isn't a motivating factor for whether or not to apply this
+patch.  So no, I don't have any interest in waiting to apply it.
 
-  arch/s390/net/Makefile
+You're somehow missing that your implied "Plan A" (native NVMe
+multipath) has been pushed as the only way forward for NVMe multipath
+despite it being unproven.  Worse, literally no userspace infrastructure
+exists to control native NVMe multipath (and this is supposed to be
+comforting because the spec is tightly coupled to hch's implementation
+that he controls with an iron fist).
 
-between commit:
+We're supposed to be OK with completely _forced_ obsolescence of
+dm-multipath infrastructure that has proven itself capable of managing a
+wide range of complex multipath deployments for a tremendous amount of
+enterprise Linux customers (of multiple vendors)!?  This is a tough sell
+given the content of my previous paragraph (coupled with the fact the
+next enterprise Linux versions are being hardened _now_).
 
-  866f4c8e0e26 ("s390/net: add pnetid support")
+No, what both Red Hat and SUSE are saying is: cool let's have a go at
+"Plan A" but, in parallel, what harm is there in allowing "Plan B" (dm
+multipath) to be conditionally enabled to coexist with native NVMe
+multipath?
 
-from the s390 tree and commit:
+Nobody can explain why this patch is some sort of detriment.  It
+literally is an amazingly simple switch that provides flexibility we
+_need_.  hch had some non-specific concern about this patch forcing
+support of some "ABI".  Which ABI is that _exactly_?
 
-  e1cf4befa297 ("bpf, s390x: remove ld_abs/ld_ind")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/s390/net/Makefile
-index e2b85ffdbb0c,d4663b4bf509..000000000000
---- a/arch/s390/net/Makefile
-+++ b/arch/s390/net/Makefile
-@@@ -2,5 -2,4 +2,5 @@@
-  #
-  # Arch-specific network modules
-  #
-- obj-$(CONFIG_BPF_JIT) +=3D bpf_jit.o bpf_jit_comp.o
-+ obj-$(CONFIG_BPF_JIT) +=3D bpf_jit_comp.o
- +obj-$(CONFIG_HAVE_PNETID) +=3D pnet.o
-
---Sig_/roaZ5u8C1Leq=F9cwqIJ16w
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsMwjEACgkQAVBC80lX
-0GzV+Qf8DwPinRjfUGxs69LJu4aWn1Cszl3B/Jvt2hc0WSvd0b66oHRstb8vGPkZ
-VJFAhnTikb0dSZZMckxMuVNQk9veXHLJE9w7N8G006AeNHCL/fmqlHv8YCXotevy
-7aH412g9BFImtt5y0KeVeYxM9gWy+8oz+c+5UNBMj1QfeDHy0YkhXLxQ7YmkGZpO
-iV0pv0e5Ap9P0P5p37RxxqjMPQwb6rHgCut8eear0q33cCi2quoo/Fayci9+zKuX
-GFp+WcxSy4zRsnIyhGWQ9jn8C2dMHz0t493ry/iz/gzkB+QN/naQvYCvLRqn6ODI
-gy47PL0hp8T68Pc0IXPpEATh5H8nZw==
-=aKfL
------END PGP SIGNATURE-----
-
---Sig_/roaZ5u8C1Leq=F9cwqIJ16w--
+Mike
