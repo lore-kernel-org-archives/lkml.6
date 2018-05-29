@@ -1,169 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937063AbeE2WzW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:55:22 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:42178 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935806AbeE2WzU (ORCPT
+        id S967822AbeE2W5O (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:57:14 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38978 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935806AbeE2W5K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:55:20 -0400
-X-Google-Smtp-Source: ADUXVKKjthYRjsMDU2FO3eyZqoebeh8hpFX0FcEwW9zLmvnoXw++/zBEdSPIHBjsskpEBcztFzhe3g==
-Date: Tue, 29 May 2018 15:55:16 -0700
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Coly Li <colyli@suse.de>, Ciaran Farrell <ciaran.farrell@suse.com>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        linux-bcache@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tso Ted <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jonas Oberg <jonas@fsfe.org>
-Subject: Re: PostgreSQL licensed code on Linux
-Message-ID: <20180529225516.GH31712@garbanzo.do-not-panic.com>
-References: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
- <20180529192643.GA3487@kmo-pixel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529192643.GA3487@kmo-pixel>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Tue, 29 May 2018 18:57:10 -0400
+X-Google-Smtp-Source: ADUXVKIhj7oWmCeowd4sao/kPnf7llaKO7YKWeArWN2EhLbnufMJ3SDYi3JWlHyLtEcKv1Tw5DcgwQ==
+From: Ben Chan <benchan@chromium.org>
+To: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>, dtor@chromium.org,
+        drinkcat@chromium.org
+Subject: [PATCH] HID: multitouch: fix calculation of last slot field in multi-touch reports
+Date: Tue, 29 May 2018 15:56:55 -0700
+Message-Id: <20180529225655.214380-1-benchan@chromium.org>
+X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 03:26:43PM -0400, Kent Overstreet wrote:
-> On Tue, May 29, 2018 at 12:14:01PM -0700, Luis R. Rodriguez wrote:
-> > The question over future possible PostgreSQL licensed code on Linux came up
-> > to me recently. While doing some quick of digging around I found code
-> > already under such license it seems:
-> > 
-> > The file drivers/md/bcache/util.c has:
-> > 
-> > cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 318) /*
-> > cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 319)  * Portions
-> > Copyright (c) 1996-2001, PostgreSQL Global Development Group (Any
-> > cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 320)  * use
-> > permitted, subject to terms of PostgreSQL license; see.)
-> > 
-> > That seems to indicate that we've had already PostgreSQL licensed code on
-> > Linux since Kent's addition of bcache to Linux in 2013. The portion of code
-> > is rather small though, to me it seems to cover only crc_table[],
-> > bch_crc64_update(), and bch_crc64(). Four things:
-> 
-> Yep, it's just that code.
+According to [1] and also seemingly agreed by [2], the Scan Time usage
+(0x0D 0x56) is a report level usage, not a contact level usage.
 
-Great, thanks for the confirmation.
+However, the hid-multitouch driver currently includes HID_DG_SCANTIME
+when calculating `td->last_slot_field', which may lead to
+mt_complete_slot() being prematurely called in certain cases (e.g. when
+each touch input report includes more than one contact and the Scan Time
+usage appears before any contact logical collection).
 
-> > a) This is the only code on Linux which seems to use PostgreSQL
-> > b) The language for license seem to be cut off, 'see.' seems incomplete,
-> > whereas typically it would point to a file with the full language text.
-> > c) We can only infer what portions of the file are under this license
-> > d) Even though some licenses claim to be GPL-Compatible, if possible we
-> > should dual license such with the GPL if possible (*)
-> > 
-> > If some folks are considering adding yet more code to Linux which is
-> > currently under a PostgreSQL license I figured reviewing the existing
-> > PostgreSQL code's use may be a good start to set precedent for future work.
-> > Since we already have at least one file with a PostgreSQL-sort-of boiler
-> > plate it at least sets the precedent we have already sort of dealt with
-> > PostgreSQL.
-> > 
-> > My recommendations:
-> > 
-> > As silly as it may be we should split out the PostgreSQL licensed code from
-> > drivers/md/bcache/util.c into its own file and while at it clarify the
-> > license.
-> > 
-> > If possible, if we can dual license this code with GPL it would be good as
-> > it would do two things:
-> > 
-> > 1) Removes any ambiguity in case of questions over GPL Compatibility in the
-> > future about the PostgreSQL license
-> > 
-> > 2) Other folks considering using PostgreSQL licensed code on Linux have a
-> > template they can use
-> 
-> Sounds good to me, I'll defer to your judgement since you have more experience
-> with these things than me :) Let me know if there's anything you need from me. I
-> never modified that code besides renaming the functions, but dual licensing
-> would be fine by me.
+This patch fixes the issue by skipping mt_store_field() on
+HID_DG_SCANTIME, similar to how HID_DG_CONTACTCOUNT and
+HID_DG_CONTACTMAX are handled.
 
-IANAL, but my recommendations below.
+[1] https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/windows-precision-touchpad-required-hid-top-level-collections#windows-precision-touchpad-input-reports
+[2] https://patchwork.kernel.org/patch/1742181/
 
-Trying to get all interested parties on Linux to agree PostgreSQL is
-indeed GPL-Compatible is certainly possible but may require a bit of
-legal billable hours on quite a bit of parts in the community. It takes
-a long time...
+Fixes: 29cc309d8bf19 ("HID: hid-multitouch: forward MSC_TIMESTAMP")
+Signed-off-by: Ben Chan <benchan@chromium.org>
+---
+ drivers/hid/hid-multitouch.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Dual licensing would be preferred to avoid adding yet-another-license
-and possibile ambiguities over compatibility, however, that would
-require the original copyright holder's permission.
-
-You can poke if you'd like, however there are two other alternatives.
-
-a) License new code to GPL and add provenance notice for PostgreSQL
-	-  Useful if we know upstream PostgreSQL does not care for our
-	   own changes
-
-b) Dual license GPL/PostgreSQL with provenance notice for the original
-   PostgreSQL code.
-
-   	- Useful if we know PostgreSQL may be interested in reaping
-	  benefit of our own changes on Linux as well.
-
-a) and b) are possible if you made changes to the code (even space and
-style changes count). If you opt for a) our code on Linux and evolutions of it
-remains GPL, but would annotate provenance from the PostgreSQL license.
-It'd include language such as:
-
--------------------------------------------------------------------------------
-<GPL header>
-
-  * This file incorporates work covered by the following copyright and
-  * permission notice: 
-
-<Original PostgreSQL header and copyrght notice>
--------------------------------------------------------------------------------
-
-So for instance this strategy was done on the carl9170 device driver rewrite
-where Johannes took ISC licensed otus device driver from staging and
-rewrote the driver based on it, an example file with the notice:
-
-drivers/net/wireless/ath/carl9170/phy.c
-
-This followed the guidence previously provided by SFLC on dealing with
-this [0].
-
-But since there may be other code coming up we have to consider what the
-goals are.
-
-  - Is the plan to consider incorporating more PostgreSQL
-    licensed code on Linux? 
-
-  - Is the goal to also let the PostgreSQL reap benefit of our own
-    enhancements?
-    
-If so for both then, and we if we really dont' want to get a good set of
-company attorneys to say "PostgreSQL is GPL compatible", then b)
-should work. It would be something like:
-
--------------------------------------------------------------------------------
-<GPL header>
-etc... later version; or, when distributed separately from the Linux kernel or      
-when incorporated into other software packages, subject to the license:    
-
-<latest PostgreSQL header and copyrght notice with your name>
-
-  * This file incorporates work covered by the following copyright and
-  * permission notice: 
-
-<Original PostgreSQL header and copyrght notice>
--------------------------------------------------------------------------------
-
-[0] https://www.softwarefreedom.org/resources/2007/gpl-non-gpl-collaboration.html
-
-  Luis
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index dad2fbb0e3f8..161551aab496 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -620,13 +620,16 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 			hid_map_usage(hi, usage, bit, max,
+ 				EV_MSC, MSC_TIMESTAMP);
+ 			input_set_capability(hi->input, EV_MSC, MSC_TIMESTAMP);
+-			mt_store_field(usage, td, hi);
+ 			/* Ignore if indexes are out of bounds. */
+ 			if (field->index >= field->report->maxfield ||
+ 			    usage->usage_index >= field->report_count)
+ 				return 1;
+ 			td->scantime_index = field->index;
+ 			td->scantime_val_index = usage->usage_index;
++			/*
++			 * We don't set td->last_slot_field as scan time is
++			 * global to the report.
++			 */
+ 			return 1;
+ 		case HID_DG_CONTACTCOUNT:
+ 			/* Ignore if indexes are out of bounds. */
+-- 
+2.17.0.921.gf22659ad46-goog
