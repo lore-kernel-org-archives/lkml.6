@@ -1,120 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755354AbeE2DmX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 23:42:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:34217 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751895AbeE2DmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 23:42:13 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 29 May 2018 13:42:09 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBl?= =?UTF-8?B?bA==?=
-        <bjorn.topel@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>, Christoph Hellwig <hch@lst.de>
-Subject: linux-next: build failure after merge of the net-next tree
-Message-ID: <20180529134209.4b8353f1@canb.auug.org.au>
+        id S1754437AbeE2D51 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 23:57:27 -0400
+Received: from mail-ve1eur01on0073.outbound.protection.outlook.com ([104.47.1.73]:59904
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751674AbeE2D5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 23:57:21 -0400
+From: "Y.b. Lu" <yangbo.lu@nxp.com>
+To: David Miller <davem@davemloft.net>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+Subject: RE: [PATCH 5/5] MAINTAINERS: add myself as maintainer for QorIQ PTP
+ clock driver
+Thread-Topic: [PATCH 5/5] MAINTAINERS: add myself as maintainer for QorIQ PTP
+ clock driver
+Thread-Index: AQHT8+LGBsUTAo6yFEmBHKhoaYxTQKRGDFCAgAANI+A=
+Date: Tue, 29 May 2018 03:57:16 +0000
+Message-ID: <DB6PR0401MB253603A4BCE81F08557F9C0CF86D0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+References: <20180525044038.37756-1-yangbo.lu@nxp.com>
+        <20180525044038.37756-5-yangbo.lu@nxp.com>
+ <20180528.230631.1400838711386498433.davem@davemloft.net>
+In-Reply-To: <20180528.230631.1400838711386498433.davem@davemloft.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yangbo.lu@nxp.com;
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB6PR0401MB2310;7:aXdsZoylaQN/lfysRZipHGCBcXg9I9cm/kOUtMOcKmiKAC9tB8/CCpMRvqs3xYjonUSzmotdxx77dwpZe54q1bplSSXSA47MCvo4rQWkP+nxWksONEmmHKP0t7KRKOF6Jt58PkZjchPB75P1M6qsjgkKZ+BSFabc7MyNGVG0mbEJel4Ari0v9nKdkRLWFN9BF8TgcOPAbUrjPu9SF1q4+f/mVXEe2om2AoCV1eZrpOAunZYSEQgQPHx/A467D+K9
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0401MB2310;
+x-ms-traffictypediagnostic: DB6PR0401MB2310:
+x-microsoft-antispam-prvs: <DB6PR0401MB23105B7113E979E20BA9BEBFF86D0@DB6PR0401MB2310.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DB6PR0401MB2310;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0401MB2310;
+x-forefront-prvs: 0687389FB0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(366004)(39860400002)(346002)(376002)(396003)(13464003)(199004)(189003)(102836004)(53546011)(6506007)(5250100002)(25786009)(7696005)(105586002)(11346002)(86362001)(39060400002)(106356001)(6246003)(26005)(9686003)(4326008)(68736007)(476003)(5660300001)(76176011)(486006)(53936002)(74316002)(229853002)(305945005)(6436002)(55016002)(316002)(81166006)(8936002)(478600001)(446003)(2906002)(3846002)(81156014)(7736002)(54906003)(6916009)(6116002)(66066001)(99286004)(14454004)(2900100001)(97736004)(186003)(8676002)(33656002)(3280700002)(3660700001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0401MB2310;H:DB6PR0401MB2536.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: kPzKxGYytdy00BIbly26RwKJob4DKf1QXycptKD/Mn6CrieqPm0lSTLzQ7iynmEBnlaIeUvQzl77a94OlCQMZIfOu2bkKRSaNxavtDQtNrtvaW0f0wGXd+c1zQvXUzwFG328KlzkMtMIHa9AQWDZaPkvsCgKEn+VaqfqgARbsHaagyxaVyhMkeFA9ZzNWUgg
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wW6_Q0.rSu9m3ivmZ58XCaX"; protocol="application/pgp-signature"
+X-MS-Office365-Filtering-Correlation-Id: b941fd1b-e04e-468d-99fe-08d5c51844fa
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b941fd1b-e04e-468d-99fe-08d5c51844fa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2018 03:57:16.9016
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2310
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4T3vjCl023285
 
---Sig_/wW6_Q0.rSu9m3ivmZ58XCaX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-Hi all,
+> -----Original Message-----
+> From: David Miller [mailto:davem@davemloft.net]
+> Sent: Tuesday, May 29, 2018 11:07 AM
+> To: Y.b. Lu <yangbo.lu@nxp.com>
+> Cc: netdev@vger.kernel.org; devicetree@vger.kernel.org;
+> linux-kernel@vger.kernel.org; richardcochran@gmail.com; Claudiu Manoil
+> <claudiu.manoil@nxp.com>; robh+dt@kernel.org
+> Subject: Re: [PATCH 5/5] MAINTAINERS: add myself as maintainer for QorIQ
+> PTP clock driver
+> 
+> From: Yangbo Lu <yangbo.lu@nxp.com>
+> Date: Fri, 25 May 2018 12:40:38 +0800
+> 
+> > Added myself as maintainer for QorIQ PTP clock driver.
+> > Since gianfar_ptp.c was renamed to ptp_qoriq.c, let's also maintain it
+> > under QorIQ PTP clock driver.
+> >
+> > Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+> 
+> Because of the dependency on the staging tree changes, this doesn't apply
+> cleanly to net-next.
+> 
+> You'll have to figure out how you want to sort this out.
 
-After merging the net-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-net/xdp/xsk.c: In function 'xsk_poll':
-net/xdp/xsk.c:207:22: error: implicit declaration of function 'datagram_pol=
-l'; did you mean 'datagram_poll_mask'? [-Werror=3Dimplicit-function-declara=
-tion]
-  unsigned int mask =3D datagram_poll(file, sock, wait);
-                      ^~~~~~~~~~~~~=20
-                      datagram_poll_mask
-
-Caused by commit
-
-  c497176cb2e4 ("xsk: add Rx receive functions and poll support")
-
-interacting with commit
-
-  db5051ead64a ("net: convert datagram_poll users tp ->poll_mask")
-
-from the vfs tree.
-
-[Christoph, I noticed that the comment above datagram_poll in
-net/core/datagram.c needs the function name updated]
-
-I have added the following merge fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 29 May 2018 13:34:25 +1000
-Subject: [PATCH] xsk: update for "net: convert datagram_poll users tp->poll=
-_mask"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/xdp/xsk.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-index cce0e4f8a536..4ee140afbc61 100644
---- a/net/xdp/xsk.c
-+++ b/net/xdp/xsk.c
-@@ -201,10 +201,9 @@ static int xsk_sendmsg(struct socket *sock, struct msg=
-hdr *m, size_t total_len)
- 	return xsk_generic_xmit(sk, m, total_len);
- }
-=20
--static unsigned int xsk_poll(struct file *file, struct socket *sock,
--			     struct poll_table_struct *wait)
-+static __poll_t xsk_poll_mask(struct socket *sock, __poll_t events)
- {
--	unsigned int mask =3D datagram_poll(file, sock, wait);
-+	__poll_t mask =3D datagram_poll_mask(sock, events);
- 	struct sock *sk =3D sock->sk;
- 	struct xdp_sock *xs =3D xdp_sk(sk);
-=20
-@@ -580,7 +579,7 @@ static const struct proto_ops xsk_proto_ops =3D {
- 	.socketpair	=3D sock_no_socketpair,
- 	.accept		=3D sock_no_accept,
- 	.getname	=3D sock_no_getname,
--	.poll		=3D xsk_poll,
-+	.poll_mask	=3D xsk_poll_mask,
- 	.ioctl		=3D sock_no_ioctl,
- 	.listen		=3D sock_no_listen,
- 	.shutdown	=3D sock_no_shutdown,
---=20
-2.17.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/wW6_Q0.rSu9m3ivmZ58XCaX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsMzBEACgkQAVBC80lX
-0Gxswwf+Ozt2QOlqUAZ8aqdH44Pqo3mb6vaggSqCflmT67/qhiC12M5fiMXGqyI4
-QggzQcphqCPtX+erUrM8PQAPdh5+/sjiCzTc7YgmbIk4UWqAdUlH11H96s3sEBRn
-XGQ9PEU+lBbE/NjhI9v4tJL1Es1FgsM+KREPHMWj8f4L8X4O9GvNA4VQl2Ywr4wU
-MsvjJtaujAZY6pgCjdx1Vvqj6zdRqf2endCt8Pph/5C7GEq9G1UZKr62hlL4/v0s
-en+tVswtL0VNAk8wH4p/k6NelOzwCN+jsBsLXvlNwZArYnYnrTXCgQtMykxcg7MV
-P3Lnt4NZYNu2IIT8iy7dh926qDSgzg==
-=WRdG
------END PGP SIGNATURE-----
-
---Sig_/wW6_Q0.rSu9m3ivmZ58XCaX--
+[Y.b. Lu] I sent out a v2 MAINTAINERS patch. I think it also makes sense to drop dpaa2 rtc drivers in the entry.
+Thanks a lot.
