@@ -1,126 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932823AbeE2JuX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:50:23 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50070 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932516AbeE2JtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:49:22 -0400
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v5 3/3] [DO NOT MERGE] arm: dts: sun8i: bpi-m2m: Add DSI display
-Date: Tue, 29 May 2018 11:49:16 +0200
-Message-Id: <eba350219d6521c5c84986c68f7f0045dcac9aea.1527587352.git-series.maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
-References: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
-In-Reply-To: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
-References: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
+        id S932649AbeE2JwN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:52:13 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54022 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932476AbeE2JwH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 05:52:07 -0400
+X-Google-Smtp-Source: ADUXVKLtGKAz1mfljfHn6ThYcVtsmziH5AtCitUXEGygWXqlVbMATID6mSl3vxLBhgGxjvvP7BMKLw==
+Date: Tue, 29 May 2018 11:52:03 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        viresh.kumar@linaro.org, valentin.schneider@arm.com
+Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
+Message-ID: <20180529095203.GD8985@localhost.localdomain>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
+ <20180529084009.GE15173@e108498-lin.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529084009.GE15173@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BananaPi M2M has an optional 1280x720 DSI panel. Since that panel is
-optional, we can only show a DT patch that would show how to enable it.
+On 29/05/18 09:40, Quentin Perret wrote:
+> Hi Vincent,
+> 
+> On Friday 25 May 2018 at 15:12:26 (+0200), Vincent Guittot wrote:
+> > Now that we have both the dl class bandwidth requirement and the dl class
+> > utilization, we can use the max of the 2 values when agregating the
+> > utilization of the CPU.
+> > 
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  kernel/sched/sched.h | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> > index 4526ba6..0eb07a8 100644
+> > --- a/kernel/sched/sched.h
+> > +++ b/kernel/sched/sched.h
+> > @@ -2194,7 +2194,11 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
+> >  #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+> >  static inline unsigned long cpu_util_dl(struct rq *rq)
+> >  {
+> > -	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> > +	unsigned long util = (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> > +
+> > +	util = max_t(unsigned long, util, READ_ONCE(rq->avg_dl.util_avg));
+> 
+> Would it make sense to use a UTIL_EST version of that signal here ? I
+> don't think that would make sense for the RT class with your patch-set
+> since you only really use the blocked part of the signal for RT IIUC,
+> but would that work for DL ?
 
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
----
- arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts | 48 +++++++++++++++++++++-
- 1 file changed, 48 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts b/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
-index 0dbdb29a8fff..16ee662b06d6 100644
---- a/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
-+++ b/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
-@@ -44,6 +44,7 @@
- #include "sun8i-a33.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "BananaPi M2 Magic";
-@@ -81,6 +82,23 @@
- 		};
- 	};
- 
-+	pwm_bl: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <1 2 4 8 16 32 64 128 255>;
-+		default-brightness-level = <8>;
-+		enable-gpios = <&r_pio 0 4 GPIO_ACTIVE_HIGH>; /* PG10 */
-+	};
-+
-+	reg_panel: reg-panel {
-+		compatible = "regulator-fixed";
-+		regulator-name = "panel";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&pio 1 7 GPIO_ACTIVE_HIGH>; /* PB07 */
-+		enable-active-high;
-+	};
-+
- 	reg_vcc5v0: vcc5v0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc5v0";
-@@ -120,6 +138,26 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&dphy {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "bananapi,lhr050h41", "ilitek,ili9881c";
-+		reg = <0>;
-+		reset-gpios = <&r_pio 0 5 GPIO_ACTIVE_LOW>; /* PL05 */
-+		power-supply = <&reg_panel>;
-+		backlight = <&pwm_bl>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -178,6 +216,12 @@
- 	status = "okay";
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm0_pins>;
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
-@@ -290,6 +334,10 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_b>;
--- 
-git-series 0.9.1
+Well, UTIL_EST for DL looks pretty much what we already do by computing
+utilization based on dl.running_bw. That's why I was thinking of using
+that as a starting point for dl.util_avg decay phase.
