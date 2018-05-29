@@ -1,168 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935870AbeE2Plu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:41:50 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:38111 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935243AbeE2Plq (ORCPT
+        id S935663AbeE2Pnl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:43:41 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:59326 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934948AbeE2Pni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:41:46 -0400
-X-Google-Smtp-Source: ADUXVKL+kc3ma3vrtIBeO0rNZ/hFS7JLqep2yVdchRGv0YgpTtn3K3BsR7m1MEFudAlYLZ8GPBJp4UTxsTa0DujlyOQ=
+        Tue, 29 May 2018 11:43:38 -0400
+Date: Tue, 29 May 2018 16:42:51 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org,
+        robin.murphy@arm.com
+Subject: Re: [PATCH] ARM: mcpm, perf/arm-cci: export mcpm_is_available
+Message-ID: <20180529154251.GM17671@n2100.armlinux.org.uk>
+References: <20180528154448.2494709-1-arnd@arndb.de>
+ <20180529153013.GH17159@arm.com>
+ <20180529153324.GL17671@n2100.armlinux.org.uk>
+ <20180529154120.GI17159@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529144339.16538-4-mszeredi@redhat.com>
-References: <20180529144339.16538-1-mszeredi@redhat.com> <20180529144339.16538-4-mszeredi@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 29 May 2018 18:41:44 +0300
-Message-ID: <CAOQ4uxi5Y4mF9b9g5a_ggEUWPToKbRUsuzwN4aGjvnQ6itRkUw@mail.gmail.com>
-Subject: Re: [PATCH 03/39] vfs: dedupe: extract helper for a single dedup
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529154120.GI17159@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 5:43 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
-> Extract vfs_dedupe_file_range_one() helper to deal with a single dedup
-> request.
->
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/read_write.c | 89 +++++++++++++++++++++++++++++++--------------------------
->  1 file changed, 49 insertions(+), 40 deletions(-)
->
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 1818581cadf6..82a53c44c0aa 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1964,6 +1964,44 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
->  }
->  EXPORT_SYMBOL(vfs_dedupe_file_range_compare);
->
-> +static s64 vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
-> +                                    struct file *dst_file, loff_t dst_pos,
-> +                                    u64 len)
-> +{
-> +       s64 ret;
-> +
-> +       ret = mnt_want_write_file(dst_file);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = clone_verify_area(dst_file, dst_pos, len, true);
-> +       if (ret < 0)
-> +               goto out_drop_write;
-> +
-> +       ret = -EINVAL;
-> +       if (!(capable(CAP_SYS_ADMIN) || (dst_file->f_mode & FMODE_WRITE)))
-> +               goto out_drop_write;
-> +
-> +       ret = -EXDEV;
-> +       if (src_file->f_path.mnt != dst_file->f_path.mnt)
-> +               goto out_drop_write;
-> +
-> +       ret = -EISDIR;
-> +       if (S_ISDIR(file_inode(dst_file)->i_mode))
-> +               goto out_drop_write;
-> +
-> +       ret = -EINVAL;
-> +       if (!dst_file->f_op->dedupe_file_range)
-> +               goto out_drop_write;
-> +
-> +       ret = dst_file->f_op->dedupe_file_range(src_file, src_pos,
-> +                                               dst_file, dst_pos, len);
-> +out_drop_write:
-> +       mnt_drop_write_file(dst_file);
-> +
-> +       return ret;
-> +}
-> +
->  int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
->  {
->         struct file_dedupe_range_info *info;
-> @@ -1972,10 +2010,7 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
->         u64 len;
->         int i;
->         int ret;
-> -       bool is_admin = capable(CAP_SYS_ADMIN);
->         u16 count = same->dest_count;
-> -       struct file *dst_file;
-> -       loff_t dst_off;
->         loff_t deduped;
->
->         if (!(file->f_mode & FMODE_READ))
-> @@ -2010,54 +2045,28 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
->         }
->
->         for (i = 0, info = same->info; i < count; i++, info++) {
-> -               struct inode *dst;
->                 struct fd dst_fd = fdget(info->dest_fd);
-> +               struct file *dst_file = dst_fd.file;
->
-> -               dst_file = dst_fd.file;
->                 if (!dst_file) {
->                         info->status = -EBADF;
->                         goto next_loop;
->                 }
-> -               dst = file_inode(dst_file);
-> -
-> -               ret = mnt_want_write_file(dst_file);
-> -               if (ret) {
-> -                       info->status = ret;
-> -                       goto next_loop;
-> -               }
-> -
-> -               dst_off = info->dest_offset;
-> -               ret = clone_verify_area(dst_file, dst_off, len, true);
-> -               if (ret < 0) {
-> -                       info->status = ret;
-> -                       goto next_file;
-> -               }
-> -               ret = 0;
->
->                 if (info->reserved) {
->                         info->status = -EINVAL;
-> -               } else if (!(is_admin || (dst_file->f_mode & FMODE_WRITE))) {
-> -                       info->status = -EINVAL;
-> -               } else if (file->f_path.mnt != dst_file->f_path.mnt) {
-> -                       info->status = -EXDEV;
-> -               } else if (S_ISDIR(dst->i_mode)) {
-> -                       info->status = -EISDIR;
-> -               } else if (dst_file->f_op->dedupe_file_range == NULL) {
-> -                       info->status = -EINVAL;
-> -               } else {
-> -                       deduped = dst_file->f_op->dedupe_file_range(file, off,
-> -                                                       dst_file,
-> -                                                       info->dest_offset, len);
-> -                       if (deduped == -EBADE)
-> -                               info->status = FILE_DEDUPE_RANGE_DIFFERS;
-> -                       else if (deduped < 0)
-> -                               info->status = deduped;
-> -                       else
-> -                               info->bytes_deduped += deduped;
-> +                       goto next_loop;
->                 }
->
-> -next_file:
-> -               mnt_drop_write_file(dst_file);
-> +               deduped = vfs_dedupe_file_range_one(file, off, dst_file,
-> +                                                   info->dest_offset, len);
-> +               if (deduped == -EBADE)
-> +                       info->status = FILE_DEDUPE_RANGE_DIFFERS;
-> +               else if (deduped < 0)
-> +                       info->status = deduped;
-> +               else
-> +                       info->bytes_deduped += deduped;
-> +
->  next_loop:
->                 fdput(dst_fd);
->
+On Tue, May 29, 2018 at 04:41:20PM +0100, Will Deacon wrote:
+> Hi Russell,
+> 
+> On Tue, May 29, 2018 at 04:33:24PM +0100, Russell King - ARM Linux wrote:
+> > On Tue, May 29, 2018 at 04:30:14PM +0100, Will Deacon wrote:
+> > > Hi Arnd, Russell, [+Nico and Robin]
+> > > 
+> > > On Mon, May 28, 2018 at 05:44:36PM +0200, Arnd Bergmann wrote:
+> > > > Now that the ARM CCI PMU driver can be built as a loadable module,
+> > > > we get a link failure when MCPM is enabled:
+> > > > 
+> > > > ERROR: "mcpm_is_available" [drivers/perf/arm-cci.ko] undefined!
+> > > > 
+> > > > The simplest fix is to export that helper function.
+> > > > 
+> > > > Fixes: 8b0c93c20ef7 ("perf/arm-cci: Allow building as a module")
+> > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > > ---
+> > > > The patch that caused this is currently part of the arm-perf/for-next/perf
+> > > > branch, it would be good to have the fix there as well.
+> > > > ---
+> > > >  arch/arm/common/mcpm_entry.c | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > 
+> > > I'm happy to take this via the arm perf tree if others are ok with that.
+> > > Alternatively, I can revert the offending commit if there are objections
+> > > to exporting the symbol.
+> > > 
+> > > Russell: do you any preference?
+> > 
+> > As it claims to fix 8b0c93c20ef7, which I don't have, I can't take this
+> > patch.  Do we know which tree has this?
+> 
+> Yes, sorry, it's in my for-next/perf branch:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/commit/?h=for-next/perf&id=8b0c93c20ef78f15d8b760964ff79bda7f68c610
+> 
+> which is now in -next.
+> 
+> I'm happy to take the mcpm patch on top with your ack, but if you have
+> conflicting changes (or would prefer not to export the symbol to modules)
+> then I can just revert the patch in my tree for now.
 
-Please note that this patch conflicts with but is also an alternative to commit
-227627114799 fs: avoid fdput() after failed fdget() in vfs_dedupe_file_range()
-on Al's fixes => for-next branch.
+I have no changes to that file, so:
 
-Thanks,
-Amir.
+Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+
+Thanks.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
