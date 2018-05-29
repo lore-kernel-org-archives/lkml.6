@@ -1,60 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754767AbeE2HFN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:05:13 -0400
-Received: from verein.lst.de ([213.95.11.211]:53585 "EHLO newverein.lst.de"
+        id S1754833AbeE2HFZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:05:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754661AbeE2HFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:05:09 -0400
-Date: Tue, 29 May 2018 09:11:19 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christoph Hellwig <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>,
-        Joshua Thompson <funaho@jurai.org>, Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh
-        SONIC based ethernet
-Message-ID: <20180529071119.GB32615@lst.de>
-References: <1527378785-13326-1-git-send-email-linux@roeck-us.net> <alpine.LNX.2.21.1805271212480.9@nippy.intranet> <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com> <alpine.LNX.2.21.1805271547090.9@nippy.intranet> <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com> <alpine.LNX.2.21.1805281521420.10@nippy.intranet> <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com> <alpine.LNX.2.21.1805291047230.13@nippy.intranet> <b4f0d2d7-fcd5-b68f-0bc6-cd41c353aba7@gmail.com> <alpine.LNX.2.21.1805291524080.16@nippy.intranet>
+        id S1754787AbeE2HFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:05:22 -0400
+Date: Tue, 29 May 2018 09:05:01 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Steffen Maier <maier@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        stable@vger.kernel.org, Doug Gilbert <dgilbert@interlog.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH 4.14 199/496] scsi: core: return BLK_STS_OK for DID_OK in
+ __scsi_error_from_host_byte()
+Message-ID: <20180529070501.GC2473@kroah.com>
+References: <20180528100319.498712256@linuxfoundation.org>
+ <20180528100328.325324152@linuxfoundation.org>
+ <ebdbc325-6f1c-ceab-97f8-d57194367440@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LNX.2.21.1805291524080.16@nippy.intranet>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <ebdbc325-6f1c-ceab-97f8-d57194367440@linux.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 03:38:23PM +1000, Finn Thain wrote:
-> On Tue, 29 May 2018, Michael Schmitz wrote:
+On Mon, May 28, 2018 at 03:59:56PM +0200, Steffen Maier wrote:
+> question:
+> drop because of upstream's
 > 
-> > > 
-> > > Since an arch gets to apply limits in the dma ops it implements, why 
-> > > would arch code also have to set a limit in the form of default 
-> > > platform device masks? Powerpc seems to be the only arch that does 
-> > > this.
-> > 
-> > One of Christoph's recent patches removed most of arches' dma ops, 
-> > replacing them by one generic implementation instead. m68k was one of 
-> > the affected arches. I concede his patch series is experimental still 
-> > and not in mainline, but may be included at some time.
+> cbe095e2b584 ("Revert "scsi: core: return BLK_STS_OK for DID_OK in
+> __scsi_error_from_host_byte()"")
+> Fixes: e39a97353e53 ("scsi: core: return BLK_STS_OK for DID_OK in
+> __scsi_error_from_host_byte()")
 > 
-> I found some patches here,
-> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/generic-dma-noncoherent.2
+> as in stable-queue's
 > 
-> Looks like m68k_dma_alloc() gets renamed arch_dma_alloc() and the generic 
-> ops don't use the dma masks.
+> c40541008b93 ("drop a scsi patch from 4.14")
+> 
+> ?
 
-This is for the 'coherent' allocations, and literatelly nothing changes
-for those yet.
+Ugh, you are right, sorry about this, now dropping it again :)
 
-But for the mapping path this switches m68k to use the dma-direct
-path, wrapped by dma-noncoherent.  And these do check dev->dma_mask,
-although only really for sanity checking.
+Sasha, any way your scripts can detect that a patch was later reverted
+so you don't add it to your patch series?
 
-Btw, can I get a review and testing for the above?  They aren't really
-experimental any more, and I'd like to move architectures over as soon
-as possible.
+thanks,
+
+greg k-h
