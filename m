@@ -1,56 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932244AbeE2HJQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:09:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37284 "EHLO mail.kernel.org"
+        id S932298AbeE2HJY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:09:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932114AbeE2HJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:09:13 -0400
-Date: Tue, 29 May 2018 09:08:52 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 000/496] 4.14.45-stable review
-Message-ID: <20180529070852.GD20225@kroah.com>
-References: <20180528100319.498712256@linuxfoundation.org>
- <20180528160609.GA6895@flashbox>
+        id S932114AbeE2HJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:09:19 -0400
+Date: Tue, 29 May 2018 12:39:15 +0530
+From: Vinod <vkoul@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Frank Mori Hess <fmh6jj@gmail.com>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
+Message-ID: <20180529070915.GF5666@vkoul-mobl>
+References: <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com>
+ <20180515062144.GC13271@vkoul-mobl>
+ <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
+ <20180517041946.GQ13271@vkoul-mobl>
+ <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
+ <CGME20180518040358epcas2p353b0096d33116ca78a03b16d24569813@epcas2p3.samsung.com>
+ <20180518040349.GB2932@vkoul-mobl>
+ <7f0b7404-ee12-977f-02a4-a463d1873aee@samsung.com>
+ <20180518072112.GG2932@vkoul-mobl>
+ <20180529051745eucas1p2ee6ec3e34f075d255c87f8f54a626784~zBcpaqmAb1928519285eucas1p2H@eucas1p2.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180528160609.GA6895@flashbox>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180529051745eucas1p2ee6ec3e34f075d255c87f8f54a626784~zBcpaqmAb1928519285eucas1p2H@eucas1p2.samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 09:06:09AM -0700, Nathan Chancellor wrote:
-> On Mon, May 28, 2018 at 11:56:25AM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.45 release.
-> > There are 496 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed May 30 10:00:57 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.45-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
+On 29-05-18, 07:17, Marek Szyprowski wrote:
+> Hi Vinod,
 > 
-> Merged, compiled, and installed onto my Raspberry Pi 3.
+> On 2018-05-18 09:21, Vinod wrote:
+> > On 18-05-18, 08:28, Marek Szyprowski wrote:
+> >> Hi Vinod,
+> >>
+> >> Okay, I see that in theory, there are some tricky bits in implementing DMA
+> >> support in UART drivers. On the other hand there are already drivers
+> >> with seems
+> >> to be working fine. This discussion is about revert of the feature
+> >> present in
+> >> pl330 driver, which is required by other in-kernel driver without proper
+> >> fix to
+> >> them.
+> >>
+> >> Can we drop it for now and discuss what and how should be implemented to
+> >> make
+> >> everyone happy, without any regressions?
+> > Sure am dropping the revert, we can always bring it back if it is required
 > 
-> No initial issues noticed in general usage or dmesg.
+> This revert is still in your -next branch. Do you plan to update it as well?
 
-Thanks for testing 2 of these and letting me know.
+I dont send it to linus and merge topic/* into for-linus and send. It gets
+updated on rebase on -rc1.
 
-greg k-h
+-- 
+~Vinod
