@@ -1,142 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932486AbeE2JhS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:37:18 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:32889 "EHLO pegase1.c-s.fr"
+        id S932594AbeE2Jhc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:37:32 -0400
+Received: from ozlabs.org ([203.11.71.1]:49705 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932322AbeE2JhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:37:13 -0400
-Subject: Re: [PATCH v2] powerpc/64: Fix build failure with GCC 8.1
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        id S932354AbeE2JhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 05:37:16 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 29 May 2018 19:37:13 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Geoff Levand <geoff@infradead.org>
-References: <f5f2de3e1a39613f7303bfdc0d2f2210d4c91910.1527573345.git.christophe.leroy@c-s.fr>
- <CAMuHMdVSKigQPUQH=BVc2fRSRmuEThLaf+V9ghMPDT9_m1C6BA@mail.gmail.com>
- <1fa5b220-4d21-b4cd-33bf-8a3ce3178063@c-s.fr>
- <CAMuHMdXwO1_wrrTi40UmZC4o6KjvP0LF38m45n0ZNA2pDb_7Qg@mail.gmail.com>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <3a438dd8-49c3-ad39-e2a1-040e0ce67279@c-s.fr>
-Date: Tue, 29 May 2018 11:37:11 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Alexey Dobriyan <adobriyan@gmail.com>
+Subject: linux-next: manual merge of the akpm-current tree with the vfs tree
+Message-ID: <20180529193713.317619d5@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXwO1_wrrTi40UmZC4o6KjvP0LF38m45n0ZNA2pDb_7Qg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ZrbYxbM/.RU+1pgQj4E_.=e"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/ZrbYxbM/.RU+1pgQj4E_.=e
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-Le 29/05/2018 à 11:05, Geert Uytterhoeven a écrit :
-> Hi Christophe,
-> 
-> On Tue, May 29, 2018 at 10:56 AM, Christophe LEROY
-> <christophe.leroy@c-s.fr> wrote:
->> Le 29/05/2018 à 09:47, Geert Uytterhoeven a écrit :
->>> On Tue, May 29, 2018 at 8:03 AM, Christophe Leroy
->>> <christophe.leroy@c-s.fr> wrote:
->>>>
->>>>     CC      arch/powerpc/kernel/nvram_64.o
->>>> arch/powerpc/kernel/nvram_64.c: In function 'nvram_create_partition':
->>>> arch/powerpc/kernel/nvram_64.c:1042:2: error: 'strncpy' specified bound
->>>> 12 equals destination size [-Werror=stringop-truncation]
->>>>     strncpy(new_part->header.name, name, 12);
->>>>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>>
->>>>     CC      arch/powerpc/kernel/trace/ftrace.o
->>>> In function 'make_field',
->>>>       inlined from 'ps3_repository_read_boot_dat_address' at
->>>> arch/powerpc/platforms/ps3/repository.c:900:9:
->>>> arch/powerpc/platforms/ps3/repository.c:106:2: error: 'strncpy' output
->>>> truncated before terminating nul copying 8 bytes from a string of the same
->>>> length [-Werror=stringop-truncation]
->>>>     strncpy((char *)&n, text, 8);
->>>>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>>
->>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>>
->>>
->>> Thanks for your patch!
->>>
->>>> --- a/arch/powerpc/kernel/nvram_64.c
->>>> +++ b/arch/powerpc/kernel/nvram_64.c
->>>> @@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char
->>>> *name, int sig,
->>>>           new_part->index = free_part->index;
->>>>           new_part->header.signature = sig;
->>>>           new_part->header.length = size;
->>>> -       strncpy(new_part->header.name, name, 12);
->>>> +       memcpy(new_part->header.name, name, strnlen(name,
->>>> sizeof(new_part->header.name)));
->>>
->>>
->>> The comment for nvram_header.lgnth says:
->>>
->>>           /* Terminating null required only for names < 12 chars. */
->>>
->>> This will not terminate the string with a zero (the struct is
->>> allocated with kmalloc).
->>> So the original code is correct, the new one isn't.
->>
->> Right, then I have to first zeroize the destination.
-> 
-> Using kzalloc() instead of kmalloc() will do.
-> 
-> Still, papering around these warnings seems to obscure things, IMHO.
-> And it increases code size, as you had to add a call to strnlen().
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Right but then, what is the best solution to elimate that warning ?
+  fs/proc/base.c
 
-Would it be better to enclose those two lines in:
+between commit:
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstringop-truncation"
-...
-#pragma GCC diagnostic pop
+  0168b9e38c42 ("procfs: switch instantiate_t to d_splice_alias()")
 
+from the vfs tree and commit:
 
-Christophe
+  a1cb629945be ("proc: skip branch in /proc/*/* lookup")
 
-> 
->>>>           new_part->header.checksum = nvram_checksum(&new_part->header);
->>>>
->>>>           rc = nvram_write_header(new_part);
->>>> diff --git a/arch/powerpc/platforms/ps3/repository.c
->>>> b/arch/powerpc/platforms/ps3/repository.c
->>>> index 50dbaf24b1ee..e49c887787c4 100644
->>>> --- a/arch/powerpc/platforms/ps3/repository.c
->>>> +++ b/arch/powerpc/platforms/ps3/repository.c
->>>> @@ -101,9 +101,9 @@ static u64 make_first_field(const char *text, u64
->>>> index)
->>>>
->>>>    static u64 make_field(const char *text, u64 index)
->>>>    {
->>>> -       u64 n;
->>>> +       u64 n = 0;
->>>>
->>>> -       strncpy((char *)&n, text, 8);
->>>> +       memcpy((char *)&n, text, strnlen(text, sizeof(n)));
->>>
->>>
->>> This changes behavior: strncpy() fills the remainder of the buffer with
->>> zeroes.  I don't remember the details of the PS3 repository structure,
->>> but given this writes to a fixed size u64 buffer, I'd expect the PS3
->>> hypervisor code to (1) rely on the zero padding, and (2) not need a zero
->>> terminator if there are 8 characters in the buffer, so probably the
->>> original code is correct, and the "fixed" code isn't.
->>
->> Here I have set n to 0 prior to the copy, so the buffer IS zero padded.
-> 
-> Sorry, I missed that part.
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/proc/base.c
+index af128b374143,9b02b88e0b91..000000000000
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@@ -2479,17 -2457,14 +2451,14 @@@ static struct dentry *proc_pident_looku
+  	for (p =3D ents; p < last; p++) {
+  		if (p->len !=3D dentry->d_name.len)
+  			continue;
+- 		if (!memcmp(dentry->d_name.name, p->name, p->len))
++ 		if (!memcmp(dentry->d_name.name, p->name, p->len)) {
+ -			error =3D proc_pident_instantiate(dir, dentry, task, p);
+++			res =3D proc_pident_instantiate(dentry, task, p);
+  			break;
++ 		}
+  	}
+- 	if (p >=3D last)
+- 		goto out;
+-=20
+- 	res =3D proc_pident_instantiate(dentry, task, p);
+- out:
+  	put_task_struct(task);
+  out_no_task:
+ -	return ERR_PTR(error);
+ +	return res;
+  }
+ =20
+  static int proc_pident_readdir(struct file *file, struct dir_context *ctx,
+
+--Sig_/ZrbYxbM/.RU+1pgQj4E_.=e
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNH0kACgkQAVBC80lX
+0Gzerwf/eH1X4aMft7XXlVcUNdzE4TbP/5c3DR6uYrDsP8FmWpU9KS2nbia18a05
+Q45scT7fFWiRMuQQIAZV4z3JMJNBPzoTKEN/ruuQajE6LYht0AkuwNgYwFIWKZH2
+xsK+1u0gK8cHXanWGdwFwE0USRtcYUZdpVrsisaJ2z86yMlbhSlXZYhEZdgc9GON
+YyZMR4AILnzt/+ICDrbJ0xbWQAfKnkEUY/L9QeckiGk+X1MJu/Mi9r+U3wXT7++l
+Mjj5/pFUVL2nAxpl+SxMVCTS6erDi4OA1k5WB5AsXAtjY/GIYzJxpQwdtBEkb0Tq
+pfS7R64mmVOYf9qtw1OopIRGGFoICw==
+=bEu0
+-----END PGP SIGNATURE-----
+
+--Sig_/ZrbYxbM/.RU+1pgQj4E_.=e--
