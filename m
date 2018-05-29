@@ -1,65 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754243AbeE2Fs5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 01:48:57 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38617 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751250AbeE2Fsz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 01:48:55 -0400
-X-Google-Smtp-Source: ADUXVKLw1KCC/HCZFmIe6Pzmrtw3bgFau8caRlF5M9aDkpGTDKhoOZ46Ng62uerjZpAC8qk07qKqaQ==
-Subject: Re: [alsa-devel] [PATCH] ALSA: xen: ensure nul-terminated device name
-To: Arnd Bergmann <arnd@arndb.de>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: xen-devel@lists.xenproject.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20180528160011.2989632-1-arnd@arndb.de>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <2469af3f-df85-fbca-a486-566f9aaa436d@gmail.com>
-Date: Tue, 29 May 2018 08:48:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754426AbeE2FxF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 01:53:05 -0400
+Received: from ozlabs.org ([203.11.71.1]:40763 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751591AbeE2FxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 01:53:02 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 29 May 2018 15:52:57 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Marc Zyngier <marc.zyngier@arm.com>, Olof Johansson <olof@lixom.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: linux-next: manual merge of the irqchip tree with the arm-soc tree
+Message-ID: <20180529155257.5ae48830@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180528160011.2989632-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xukjiupTS1RFg90FaSqfu5U"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 06:59 PM, Arnd Bergmann wrote:
-> gcc-8 warns that pcm_instance->name is not necessarily terminated correctly
-> if the input is more than 80 characters long or lacks a termination byte
-> itself:
->
-> In function 'strncpy',
->      inlined from 'cfg_device' at sound/xen/xen_snd_front_cfg.c:399:3,
->      inlined from 'xen_snd_front_cfg_card' at sound/xen/xen_snd_front_cfg.c:509:9:
-> include/linux/string.h:254:9: error: '__builtin_strncpy' specified bound 80 equals destination size [-Werror=stringop-truncation]
->    return __builtin_strncpy(p, q, size);
->
-> Using strlcpy() instead of strncpy() makes this a bit safer.
->
-> Fixes: fd3b36045c2c ("ALSA: xen-front: Read sound driver configuration from Xen store")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   sound/xen/xen_snd_front_cfg.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/sound/xen/xen_snd_front_cfg.c b/sound/xen/xen_snd_front_cfg.c
-> index 38c7e1eefbb9..684b5f1d51ac 100644
-> --- a/sound/xen/xen_snd_front_cfg.c
-> +++ b/sound/xen/xen_snd_front_cfg.c
-> @@ -396,7 +396,7 @@ static int cfg_device(struct xen_snd_front_info *front_info,
->   
->   	str = xenbus_read(XBT_NIL, device_path, XENSND_FIELD_DEVICE_NAME, NULL);
->   	if (!IS_ERR(str)) {
-> -		strncpy(pcm_instance->name, str, sizeof(pcm_instance->name));
-> +		strlcpy(pcm_instance->name, str, sizeof(pcm_instance->name));
->   		kfree(str);
->   	}
->   
-Thank you for your patch,
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+--Sig_/xukjiupTS1RFg90FaSqfu5U
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the irqchip tree got a conflict in:
+
+  arch/arm/boot/dts/stm32mp157c.dtsi
+
+between commit:
+
+  3c00436fdb20 ("ARM: dts: stm32: add USBPHYC support to stm32mp157c")
+
+from the arm-soc tree and commit:
+
+  5f0e9d2557d7 ("ARM: dts: stm32: Add exti support for stm32mp157c")
+
+from the irqchip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm/boot/dts/stm32mp157c.dtsi
+index b66f673b5038,4fa0df853c8a..000000000000
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@@ -777,26 -183,13 +777,33 @@@
+  			status =3D "disabled";
+  		};
+ =20
+ +		usbphyc: usbphyc@5a006000 {
+ +			#address-cells =3D <1>;
+ +			#size-cells =3D <0>;
+ +			compatible =3D "st,stm32mp1-usbphyc";
+ +			reg =3D <0x5a006000 0x1000>;
+ +			clocks =3D <&rcc USBPHY_K>;
+ +			resets =3D <&rcc USBPHY_R>;
+ +			status =3D "disabled";
+ +
+ +			usbphyc_port0: usb-phy@0 {
+ +				#phy-cells =3D <0>;
+ +				reg =3D <0>;
+ +			};
+ +
+ +			usbphyc_port1: usb-phy@1 {
+ +				#phy-cells =3D <1>;
+ +				reg =3D <1>;
+ +			};
+ +		};
+ +
++ 		exti: interrupt-controller@5000d000 {
++ 			compatible =3D "st,stm32mp1-exti", "syscon";
++ 			interrupt-controller;
++ 			#interrupt-cells =3D <2>;
++ 			reg =3D <0x5000d000 0x400>;
++ 		};
++=20
+  		usart1: serial@5c000000 {
+  			compatible =3D "st,stm32h7-uart";
+  			reg =3D <0x5c000000 0x400>;
+
+--Sig_/xukjiupTS1RFg90FaSqfu5U
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsM6rkACgkQAVBC80lX
+0Gyyrgf/Uzj5K4V0odofg90cZLU5BBR0op2JpGmfWEdUctcuj9mILMwn5ftvppTk
+4mwEF0qxo2rDujnzxCKdcXloDqeQUw6sowIXaMlTA+FabTerfGUSBhwxCfIoWeVC
+h6eKgcxiwRjv79b8H0n8vYEGuapCxmOH05G+x/VIHtoyPo9sntmLczGsZpML7m3q
+Kacv83kGEN6Tm+MAYODI1e94WhLZjFMgN0Ae3tWGGf567d1J+pVxw4KuFRJ53koa
+GXzO4/yAERheiP/4PmFikvF69FtnYYE0e2NDVXV7nmafNf7G5S5Ftnk99JKMPlxY
+z9h04HbmsqO7wLk/jkOjcH0nrvIeEA==
+=g9L9
+-----END PGP SIGNATURE-----
+
+--Sig_/xukjiupTS1RFg90FaSqfu5U--
