@@ -1,88 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933398AbeE2Lpt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 07:45:49 -0400
-Received: from mga18.intel.com ([134.134.136.126]:39507 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933363AbeE2Lpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 07:45:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,456,1520924400";
-   d="scan'208";a="43641680"
-Content-Type: text/plain; charset="utf-8"
+        id S933394AbeE2Lrs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 07:47:48 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58430 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933288AbeE2Lrp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 07:47:45 -0400
+Date: Tue, 29 May 2018 12:47:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <20180529114740.GG23509@sirena.org.uk>
+References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+ <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: DRI <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <20180529192605.617c02ef@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-References: <20180529192605.617c02ef@canb.auug.org.au>
-Message-ID: <152759434328.7210.11935906789217675792@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.6
-Subject: Re: linux-next: build failure after merge of the drm-intel-fixes tree
-Date: Tue, 29 May 2018 14:45:43 +0300
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="64j1qyTOoGvYcHb1"
+Content-Disposition: inline
+In-Reply-To: <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+X-Cookie: Variables don't
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Rothwell (2018-05-29 12:26:05)
-> Hi all,
-> 
-> After merging the drm-intel-fixes tree, today's linux-next build (i386
-> defconfig) failed like this:
 
-Thanks for reporting. I've added a patch to fix the issue now.
+--64j1qyTOoGvYcHb1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I'll talk with our CI team about testing 32-bit building to try to
-avoid these in the future.
+On Tue, May 29, 2018 at 01:02:15PM +0300, Matti Vaittinen wrote:
 
-Regards, Joonas
+> @@ -0,0 +1,677 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright (C) 2018 ROHM Semiconductors */
+> +/*
+> + * bd71837-regulator.c ROHM BD71837MWV regulator driver
+> + */
 
-> 
-> In file included from include/asm-generic/barrier.h:20:0,
->                  from arch/x86/include/asm/barrier.h:86,
->                  from include/linux/nospec.h:8,
->                  from drivers/gpu/drm/i915/i915_query.c:7:
-> drivers/gpu/drm/i915/i915_query.c: In function 'i915_query_ioctl':
-> include/linux/compiler.h:339:38: error: call to '__compiletime_assert_119' declared with attribute error: BUILD_BUG_ON failed: sizeof(_s) > sizeof(long)
->   _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
->                                       ^
-> include/linux/compiler.h:319:4: note: in definition of macro '__compiletime_assert'
->     prefix ## suffix();    \
->     ^~~~~~
-> include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_assert'
->   _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
->   ^~~~~~~~~~~~~~~~~~~
-> include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_assert'
->  #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
->                                      ^~~~~~~~~~~~~~~~~~
-> include/linux/build_bug.h:69:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
->   BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
->   ^~~~~~~~~~~~~~~~
-> include/linux/nospec.h:55:2: note: in expansion of macro 'BUILD_BUG_ON'
->   BUILD_BUG_ON(sizeof(_i) > sizeof(long));   \
->   ^~~~~~~~~~~~
-> drivers/gpu/drm/i915/i915_query.c:118:15: note: in expansion of macro 'array_index_nospec'
->     func_idx = array_index_nospec(func_idx,
->                ^~~~~~~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->   540ead8c5a0e ("drm/i915/query: Protect tainted function pointer lookup")
-> 
-> I have reverted that commit for today.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+The SPDX header (and the rest of the block) need to be C++ comments.
+
+> +static int bd71837_regulator_set_regmap(struct regulator_dev *rdev, int set)
+> +{
+> +	int ret = -EINVAL;
+> +	struct bd71837_pmic *pmic = rdev->reg_data;
+> +
+> +	/* According to the data sheet we must not change regulator voltage
+> +	 * when it is enabled. Thus we need to check if regulator is enabled
+> +	 * before changing the voltage. This mutex is used to avoid race where
+> +	 * we might enable regulator after it's state has been checked but
+> +	 * before the voltage is changed
+> +	 */
+> +	mutex_lock(&pmic->mtx);
+> +	if (!set)
+> +		ret = regulator_disable_regmap(rdev);
+> +	else
+> +		ret = regulator_enable_regmap(rdev);
+> +	mutex_unlock(&pmic->mtx);
+> +
+
+This still has the weird locking/wrapper thing going on.  The regulator
+core will ensure that only one operation is called on a given regulator
+at once.
+
+> +static const struct regulator_desc bd71837_regulators[] = {
+> +	{
+> +	 .name = "buck1",
+
+The indentation style here is weird, please follow CodingStyle.  Looks
+like the second level is just indented by a space for some reason, and
+there's similar problems elsewhere.
+
+--64j1qyTOoGvYcHb1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsNPdsACgkQJNaLcl1U
+h9DIMwf9Gko/cLaIOR7E6jd5feuDxB3vTjXfFNZPaTspdh0DO16BEpXHpqfVKEfU
+J8h+FlYeXeaiGA6PGN8hqVSR/VV4duOTRzstjYYeTNpBeYTDeL8KBP2JyqTd5rcO
+r+Wup8DMwGXZi7DbPcCYWef3KBe01tRvijThMkouhfu+6SUpc8jgaeNAQlcAw4O/
+cbNIseTZs82gJAeAp3QJq4qvPNn7LpUjrZh85A0Xp9lVi0h4H/x60LDVPB+EmsII
+gzwDVmIopWv2U+75lkYXSVA0q+fYgzUpT6Cv5eaa19xL1E5KDquvp6CqTNwrjbhX
+s/D6TS6ufJyFzVUuAp59DT2LhrZXwQ==
+=Zutn
+-----END PGP SIGNATURE-----
+
+--64j1qyTOoGvYcHb1--
