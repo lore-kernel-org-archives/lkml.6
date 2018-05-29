@@ -1,145 +1,232 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1592812-1527778849-2-14727206827882814480
+Return-Path: <linux-fsdevel-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2099817-1527598531-2-11176543516550391566
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-security-module-owner@vger.kernel.org
+X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527778848; b=bZJwcMljdpfB6vUvP0bIIaZash7r7Z6H6PijRPlia3zjickfF7
-    68LjgKDgIMC0U6b/EfQQY6WX2KkKkuXPa3t/gCBU/FQuqRfTemUrHUEDdmEkCDt4
-    r0DEgswMIOUQ13tbA39hdvVuExUzPTaK5PRiP+LHBkszg6FuQ6NMhz2BDzhxC79C
-    6MSOtmD+NaH/8rjEAZpf64ygWR9icrec4IbQ0y/3osjTOez+RciGxRYQKYPjer40
-    N5tz7cSmenoRqmBkpo2CYHNxtoaGtF8Pux/WAQDfKBbNBLp7VYCauPnyJ6iroP85
-    5nDe1KUvKtYSaAlQZpz9YT6Ua2WqsMd6KxAQ==
+    1527598531; b=RVw2UKcut9xUUiXABqAEzNdiDHNZfKWKhiCQd0o3XFl6oAUrEj
+    LSfELCKQ5Uh7bUmDdcVhCiZ2Yjmtt1bVBNk/RCIpwWmBbf6IwG9dqZ/sXUWomnXt
+    2z2kqQFWvO2yIlHCIdRiVoP+34iYWJEzWf2xrb4IbZdWa9tQ3Si0Rix+AZJHnODk
+    QH8lOcZkg7iiflNLmKMnQjZAcTWlX7qLLwGk+N6YH6x7B3RhwMNbm/vjW70Sokef
+    gN6F9Zc2hkqP87+zpvH23G8FhGq9eBdBYHohFYmLvTe14vNkj6+gG2Kw2mGidRrI
+    fjRuzPY8DdOx1e+7oHPa352kDqT7pfir70ig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:date:in-reply-to
-    :references:content-type:mime-version:content-transfer-encoding
-    :message-id:sender:list-id; s=fm2; t=1527778848; bh=XfRrLtWvbuAJ
-    BhpNzsG8RBXKGi+SqdYFJoUksIz+AUY=; b=CxDS6ONrxZpKbuQ76e22z6Z6CF9G
-    tMg0Ol3+NZS/yMxnmLowTzIVdazbumoIueCosqYGVkNbJRL/NzZXYaAvTKXVafOe
-    Y4SaO9BOWIfXH3g/zcc4VRM8wasC5jtYjYWuq40x84TzPksDjnifuXQi081C/KC8
-    VRoKpO7rAKl0bToMPpXD96Tg9bLKlYiPXvhNfHYf2i6UwmX/GPXD45LPaLHrHIVs
-    Epe620bl1w29FXCDkS1irFyfRQP0oXDnlj+1QtrDUT96vgZuWZ1gad3e4CaVWKVj
-    TjW209nj/7UeckcXvUzCHozEosvF+Y6qh+s60X2Z6CxMk+bY8uC0jURMOA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1527598531; bh=CJ9A7wwRn/soQIYJNZjiGGgvO6ixXUyEOI79kqTHTm
+    M=; b=TFtodwg3NmHtVobbliW5S/FqVXT7IatyHMCeGN9KYKUVSYPPCYghAnPjjp
+    pOYx9wJrwJfwc893Y/xCYmH5DHX+Kv/thigX7PdMQNH35HM26o08AKymrpAK6f2Z
+    EK8T5FJsFfR7paB+Rc3wAFFy2dOyFbsQM7EjrPBx/b92ci5r9vs+8L0wWILOP/pF
+    2Fey0Wqw/zMva8OcfPjV3HYqGWQWWb67Ill9Lrk9DJXmmxKYAU+moCmB7RmjwzFW
+    BGts6zT9ubz6hjR2gwVOl/yXpxcGKPAwj8lToT/tXPgjf9tTDzwhLJfAOq8chaea
+    Ou8ZvhMEJ/gveelbFJTNL43y3fVQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-    header.from=linux.vnet.ibm.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=qAOgCIP+;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.vnet.ibm.com header.result=pass
-    header_org.domain=ibm.com header_org.result=pass
-    header_is_org_domain=no;
+    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-      header.from=linux.vnet.ibm.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=qAOgCIP+;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.vnet.ibm.com header.result=pass
-      header_org.domain=ibm.com header_org.result=pass
-      header_is_org_domain=no;
+      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIkhrXS6M3mh4tQXHWdZ7Ka6DLBoypIKdqjjajdTKFLf4QLUew+qFyWADUNINyXG2FNoHYlp6dVYu7Pal5i/T+iCDTQKM8QfG9gXOlvlE7fG4uOi8QVQ
-    dLf4gpi233Q93QI9t0TUDi3fRVIVN07FsYjsk+06kyRXGAl9G88DHHE97ERqLB1pn8jb8aur0EP36bO5j0/4AfoR8w+V5R/tmYl+IaWgsLR1cukVIq4JsEPe
-    BSRCnWja3W1jULqDaTi2Mg==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHteDRQQLBi1pkEsplNCdes5mwQ5EbgBzfPKZYVNXj/PghVK3zQ8bvKuOkp3ZuzF954nKFM8jKxBiczRqYyK2eyN4tX+Y06tYn8jIvovgo/mvLd8e7+M
+    j3+zKQkC9YkXR/pKdtniyg/mBTf2f0wMJt8V4iyPqLKlZLeeHba5RiMARJ9yOPDxX7xNTrVBHuK+hxpGVdMyDZzi5B74cyzSVXp1CSrATeRF0aBY4lANsZv7
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=DfNHnWVPAAAA:8 a=VwQbUJbxAAAA:8 a=DnAUPfl5-9z4B3bKB2IA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=PtDNVHqPAAAA:8 a=6-X8RuxaUqMGMgnIRgEA:9 a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19
+    a=QEXdDO2ut3YA:10 a=SsLxlLYP9IwA:10 a=BpimnaHY1jUKGyF_4-AF:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755369AbeEaPAo (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 31 May 2018 11:00:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56618 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755311AbeEaPAn (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 May 2018 11:00:43 -0400
-Subject: Re: [PATCH][next] EVM: fix memory leak of temporary buffer 'temp'
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Colin King <colin.king@canonical.com>,
-        Matthew Garrett <mjg59@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 31 May 2018 11:00:22 -0400
-In-Reply-To: <20180527221502.25073-1-colin.king@canonical.com>
-References: <20180527221502.25073-1-colin.king@canonical.com>
+        id S933701AbeE2Mz1 (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 08:55:27 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:45600 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933592AbeE2Mz1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 May 2018 08:55:27 -0400
+X-Google-Smtp-Source: ADUXVKLtgPfw7Qg9UIckUUVw4CmewPsD808iD7MdSQBx1yqi9mYlKYKm2mVEpgcZyNm+C5ogCCmvrxZb2n0p+dXaqd0=
+MIME-Version: 1.0
+In-Reply-To: <877enmskec.fsf@xmission.com>
+References: <87r2mre5b3.fsf@xmission.com> <87wovubbdf.fsf@xmission.com> <877enmskec.fsf@xmission.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Tue, 29 May 2018 14:55:25 +0200
+Message-ID: <CAOssrKdS9gOsZrNfqJbk_j0Z8-hrqrYWW+=_Z5mUEX1KE-Kw6Q@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Ensure posix acls are translated outside of init_user_ns
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18053115-0020-0000-0000-000002956846
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053115-0021-0000-0000-000020E0E6E4
-Message-Id: <1527778822.3427.13.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=974 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805310169
-Sender: owner-linux-security-module@vger.kernel.org
+Sender: linux-fsdevel-owner@vger.kernel.org
+X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, 2018-05-27 at 23:15 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The allocation of 'temp' is not kfree'd and hence there is a memory
-> leak on each call of evm_read_xattrs.  Fix this by kfree'ing it
-> after copying data from it back to the user space buffer 'buf'.
-> 
-> Detected by CoverityScan, CID#1469386 ("Resource Leak")
-> 
-> Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Tue, May 29, 2018 at 2:42 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+> ebiederm@xmission.com (Eric W. Biederman) writes:
+>
+>> ebiederm@xmission.com (Eric W. Biederman) writes:
+>>
+>>> Ensure the translation happens by failing to read or write
+>>> posix acls when the filesystem has not indicated it supports
+>>> posix acls.
+>>>
+>>> This ensures that modern cached posix acl support is available
+>>> and used when dealing with posix acls.  This is important
+>>> because only that path has the code to convernt the uids and
+>>> gids in posix acls into the user namespace of a fuse filesystem.
+>>>
+>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>>> ---
+>>
+>> ping.
+>>
+>> Miklos are you around where you can look at this?
+>
+> Perhaps I got the wrong email address.
 
-Thanks, this patch and "EVM: Fix null dereference on xattr when xattr
-fails to allocate" are queued in the next-integrity branch.
 
-Mimi
+No, sorry.  I'll queue this up for 4.18.
 
-> ---
->  security/integrity/evm/evm_secfs.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-> index a7a0a1acae99..fb8bc950aceb 100644
-> --- a/security/integrity/evm/evm_secfs.c
-> +++ b/security/integrity/evm/evm_secfs.c
-> @@ -158,6 +158,8 @@ static ssize_t evm_read_xattrs(struct file *filp, char __user *buf,
->  	mutex_unlock(&xattr_list_mutex);
->  	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
-> 
-> +	kfree(temp);
-> +
->  	return rc;
->  }
-> 
+Just wanted to finish off overlayfs stuff before getting into fuse.
 
+Thanks,
+Miklos
+
+>
+>>
+>>> Miklos after several attempts to handle this better last cycle.  I
+>>> figure we should go with the stupid version for now.  I think I know
+>>> how to do better but I don't want that to gate forward progress on
+>>> fully unprivileged fuse mounts.  Especially as this is the last known
+>>> issue to deal with.
+>>>
+>>>  fs/fuse/fuse_i.h |  1 +
+>>>  fs/fuse/inode.c  |  7 +++++++
+>>>  fs/fuse/xattr.c  | 43 +++++++++++++++++++++++++++++++++++++++++++
+>>>  3 files changed, 51 insertions(+)
+>>>
+>>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+>>> index f630951df8dc..5256ad333b05 100644
+>>> --- a/fs/fuse/fuse_i.h
+>>> +++ b/fs/fuse/fuse_i.h
+>>> @@ -985,6 +985,7 @@ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size);
+>>>  int fuse_removexattr(struct inode *inode, const char *name);
+>>>  extern const struct xattr_handler *fuse_xattr_handlers[];
+>>>  extern const struct xattr_handler *fuse_acl_xattr_handlers[];
+>>> +extern const struct xattr_handler *fuse_no_acl_xattr_handlers[];
+>>>
+>>>  struct posix_acl;
+>>>  struct posix_acl *fuse_get_acl(struct inode *inode, int type);
+>>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+>>> index 1643043d4fe5..22c76cf8c2e3 100644
+>>> --- a/fs/fuse/inode.c
+>>> +++ b/fs/fuse/inode.c
+>>> @@ -1100,6 +1100,13 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+>>>          file->f_cred->user_ns != sb->s_user_ns)
+>>>              goto err_fput;
+>>>
+>>> +    /*
+>>> +     * If we are not in the initial user namespace posix
+>>> +     * acls must be translated.
+>>> +     */
+>>> +    if (sb->s_user_ns != &init_user_ns)
+>>> +            sb->s_xattr = fuse_no_acl_xattr_handlers;
+>>> +
+>>>      fc = kmalloc(sizeof(*fc), GFP_KERNEL);
+>>>      err = -ENOMEM;
+>>>      if (!fc)
+>>> diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
+>>> index 3caac46b08b0..433717640f78 100644
+>>> --- a/fs/fuse/xattr.c
+>>> +++ b/fs/fuse/xattr.c
+>>> @@ -192,6 +192,26 @@ static int fuse_xattr_set(const struct xattr_handler *handler,
+>>>      return fuse_setxattr(inode, name, value, size, flags);
+>>>  }
+>>>
+>>> +static bool no_xattr_list(struct dentry *dentry)
+>>> +{
+>>> +    return false;
+>>> +}
+>>> +
+>>> +static int no_xattr_get(const struct xattr_handler *handler,
+>>> +                    struct dentry *dentry, struct inode *inode,
+>>> +                    const char *name, void *value, size_t size)
+>>> +{
+>>> +    return -EOPNOTSUPP;
+>>> +}
+>>> +
+>>> +static int no_xattr_set(const struct xattr_handler *handler,
+>>> +                    struct dentry *dentry, struct inode *nodee,
+>>> +                    const char *name, const void *value,
+>>> +                    size_t size, int flags)
+>>> +{
+>>> +    return -EOPNOTSUPP;
+>>> +}
+>>> +
+>>>  static const struct xattr_handler fuse_xattr_handler = {
+>>>      .prefix = "",
+>>>      .get    = fuse_xattr_get,
+>>> @@ -209,3 +229,26 @@ const struct xattr_handler *fuse_acl_xattr_handlers[] = {
+>>>      &fuse_xattr_handler,
+>>>      NULL
+>>>  };
+>>> +
+>>> +static const struct xattr_handler fuse_no_acl_access_xattr_handler = {
+>>> +    .name  = XATTR_NAME_POSIX_ACL_ACCESS,
+>>> +    .flags = ACL_TYPE_ACCESS,
+>>> +    .list  = no_xattr_list,
+>>> +    .get   = no_xattr_get,
+>>> +    .set   = no_xattr_set,
+>>> +};
+>>> +
+>>> +static const struct xattr_handler fuse_no_acl_default_xattr_handler = {
+>>> +    .name  = XATTR_NAME_POSIX_ACL_DEFAULT,
+>>> +    .flags = ACL_TYPE_ACCESS,
+>>> +    .list  = no_xattr_list,
+>>> +    .get   = no_xattr_get,
+>>> +    .set   = no_xattr_set,
+>>> +};
+>>> +
+>>> +const struct xattr_handler *fuse_no_acl_xattr_handlers[] = {
+>>> +    &fuse_no_acl_access_xattr_handler,
+>>> +    &fuse_no_acl_default_xattr_handler,
+>>> +    &fuse_xattr_handler,
+>>> +    NULL
+>>> +};
