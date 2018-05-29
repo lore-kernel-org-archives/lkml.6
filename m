@@ -1,64 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932616AbeE2JVJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:21:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:35728 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932404AbeE2JVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:21:05 -0400
-Date: Tue, 29 May 2018 10:21:34 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: nixiaoming <nixiaoming@huawei.com>
-Cc: catalin.marinas@arm.com, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, james.morse@arm.com, kristina.martsenko@arm.com,
-        steve.capper@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] arm64:add missing CONFIG_STRICT_KERNEL_RWX for
- mark_rodata_ro
-Message-ID: <20180529092133.GA6533@arm.com>
-References: <20180528033353.54725-1-nixiaoming@huawei.com>
+        id S932687AbeE2JXH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:23:07 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:45218 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932517AbeE2JXC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 05:23:02 -0400
+X-Google-Smtp-Source: ADUXVKKAj884wvQAHcIjWL8jwH7neiWFgoxDT++uObhAvWLyV/Tfw5AFOqI99PtadLFF1UzhV00udg==
+Subject: Re: [PATCH] brcmfmac: stop watchdog before detach and free everything
+To: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <1527493857-2220-1-git-send-email-michael@amarulasolutions.com>
+ <5B0BD13D.8000809@broadcom.com>
+ <CAOf5uw=mPOgngZW8UcPfvtxH+5nCR-36ovjYPH7AvO99y1M_xA@mail.gmail.com>
+ <CAHp75VcC_cisfVTKU0bVm3+=NFLt3P0EkXh3uC4hWCA7y_7G3w@mail.gmail.com>
+ <CAOf5uw=G5iYfuoRBCOWU-PkEGpm1_qMwB+1=MjRQgxB+e_0w=g@mail.gmail.com>
+ <CAOf5uwkLT_-esTkqj-Mhbsn_f-JETs+XF+vd8v=U+FQSoSPcQA@mail.gmail.com>
+Cc: Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Ian Molton <ian@mnementh.co.uk>,
+        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
+        "open list:BROADCOM BRCM80211 IEEE802.11n WIRELESS DRIVER"
+        <brcm80211-dev-list.pdl@broadcom.com>,
+        brcm80211-dev-list@cypress.com, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5B0D1BF1.7070105@broadcom.com>
+Date: Tue, 29 May 2018 11:22:57 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528033353.54725-1-nixiaoming@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAOf5uwkLT_-esTkqj-Mhbsn_f-JETs+XF+vd8v=U+FQSoSPcQA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5/28/2018 5:33 PM, Michael Nazzareno Trimarchi wrote:
+> Hi Andy
+>
+> The problem seems really easy to solve:
+>
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> index 412a05b..ba60b151 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> @@ -4227,13 +4227,7 @@ struct brcmf_sdio *brcmf_sdio_probe(struct
+> brcmf_sdio_dev *sdiodev)
+>          timer_setup(&bus->timer, brcmf_sdio_watchdog, 0);
+>          /* Initialize watchdog thread */
+>          init_completion(&bus->watchdog_wait);
+> -       bus->watchdog_tsk = kthread_run(brcmf_sdio_watchdog_thread,
+> -                                       bus, "brcmf_wdog/%s",
+> -                                       dev_name(&sdiodev->func1->dev));
+> -       if (IS_ERR(bus->watchdog_tsk)) {
+> -               pr_warn("brcmf_watchdog thread failed to start\n");
+> -               bus->watchdog_tsk = NULL;
+> -       }
+> +
+>          /* Initialize DPC thread */
+>          bus->dpc_triggered = false;
+>          bus->dpc_running = false;
+> @@ -4281,6 +4275,14 @@ struct brcmf_sdio *brcmf_sdio_probe(struct
+> brcmf_sdio_dev *sdiodev)
+>                  goto fail;
+>          }
+>
+> +       bus->watchdog_tsk = kthread_run(brcmf_sdio_watchdog_thread,
+> +                                       bus, "brcmf_wdog/%s",
+> +                                       dev_name(&sdiodev->func1->dev));
+> +       if (IS_ERR(bus->watchdog_tsk)) {
+> +               pr_warn("brcmf_watchdog thread failed to start\n");
+> +               bus->watchdog_tsk = NULL;
+> +       }
+> +
+>          return bus;
 
-On Mon, May 28, 2018 at 11:33:53AM +0800, nixiaoming wrote:
-> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
+Hi Michael,
 
-Please can you write a commit message explaining what this fixes and also
-give me a pointer to patches 2 and 3 from this series?
+That makes no sense. Or are you saying the function 
+brcmf_fw_get_firmwares() fails for you? Oh wait, you mentioned the 
+driver was built-in, right? The above change does not solve the issue. 
+It just makes it less likely to occur. So I think your initial fix is 
+the best solution for this.
 
-Will
-
-> ---
->  arch/arm64/mm/mmu.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 2dbb2c9..849f326 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -491,6 +491,7 @@ static void __init map_mem(pgd_t *pgdp)
->  #endif
->  }
->  
-> +#ifdef CONFIG_STRICT_KERNEL_RWX
->  void mark_rodata_ro(void)
->  {
->  	unsigned long section_size;
-> @@ -505,6 +506,7 @@ void mark_rodata_ro(void)
->  
->  	debug_checkwx();
->  }
-> +#endif
->  
->  static void __init map_kernel_segment(pgd_t *pgdp, void *va_start, void *va_end,
->  				      pgprot_t prot, struct vm_struct *vma,
-> -- 
-> 2.10.1
-> 
+Regards,
+Arend
