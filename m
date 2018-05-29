@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933197AbeE2KEw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:04:52 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54773 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933157AbeE2KEh (ORCPT
+        id S933206AbeE2KFd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:05:33 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52558 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933165AbeE2KEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:04:37 -0400
-X-Google-Smtp-Source: AB8JxZoUmLU2Qxs3zDSRshLWegb/wHhLEQDZKm9FgRfhKMHuXHEncGNVpvhTmO+4ay3TZw6CBHNLCQ==
+        Tue, 29 May 2018 06:04:42 -0400
+X-Google-Smtp-Source: ADUXVKJeObP68e8ut4WHB00kxNq4iihomAaNX61RuLdxYWga3Fsyujl/yYKCgHyZzeWajzklXEstPw==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
 Cc: Ulf Hansson <ulf.hansson@linaro.org>,
@@ -19,11 +19,10 @@ Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v2 5/9] PM / Domains: dt: Allow power-domain property to be a list of specifiers
-Date: Tue, 29 May 2018 12:04:17 +0200
-Message-Id: <20180529100421.31022-6-ulf.hansson@linaro.org>
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v2 8/9] PM / Domains: Add support for multi PM domains per device to genpd
+Date: Tue, 29 May 2018 12:04:20 +0200
+Message-Id: <20180529100421.31022-9-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180529100421.31022-1-ulf.hansson@linaro.org>
 References: <20180529100421.31022-1-ulf.hansson@linaro.org>
@@ -31,60 +30,188 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To be able to describe topologies where devices are partitioned across
-multiple power domains, let's extend the power-domain property to allow
-being a list of PM domain specifiers.
+To support devices being partitioned across multiple PM domains, let's
+begin with extending genpd to cope with these kind of configurations.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
-Suggested-by: Jon Hunter <jonathanh@nvidia.com>
+Therefore, add a new exported function genpd_dev_pm_attach_by_id(), which
+is similar to the existing genpd_dev_pm_attach(), but with the difference
+that it allows its callers to provide an index to the PM domain that it
+wants to attach.
+
+Note that, genpd_dev_pm_attach_by_id() shall only be called by the driver
+core / PM core, similar to how the existing dev_pm_domain_attach() makes
+use of genpd_dev_pm_attach(). However, this is implemented by following
+changes on top.
+
+Because, only one PM domain can be attached per device, genpd needs to
+create a virtual device that it can attach/detach instead. More precisely,
+let the new function genpd_dev_pm_attach_by_id() register a virtual struct
+device via calling device_register(). Then let it attach this device to the
+corresponding PM domain, rather than the one that is provided by the
+caller. The actual attaching is done via re-using the existing genpd OF
+functions.
+
+At successful attachment, genpd_dev_pm_attach_by_id() returns the created
+virtual device, which allows the caller to operate on it to deal with power
+management. Following changes on top, provides more details in this
+regards.
+
+To deal with detaching of a PM domain for the multiple PM domains case,
+let's also extend the existing genpd_dev_pm_detach() function, to cover the
+cleanup of the created virtual device, via make it call device_unregister()
+on it. In this way, there is no need to introduce a new function to deal
+with detach for the multiple PM domain case, but instead the existing one
+is re-used.
+
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
 Changes in v2:
-	- Fixed comments from Geert. Re-worded to "PM domain specifiers" and
-	clarified DT example.
+	- Fixed comments from Jon. Clarified function descriptions
+	and changelog.
 
 ---
- .../bindings/power/power_domain.txt           | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/base/power/domain.c | 80 +++++++++++++++++++++++++++++++++++++
+ include/linux/pm_domain.h   |  8 ++++
+ 2 files changed, 88 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
-index 4733f76cbe48..9b387f861aed 100644
---- a/Documentation/devicetree/bindings/power/power_domain.txt
-+++ b/Documentation/devicetree/bindings/power/power_domain.txt
-@@ -111,8 +111,8 @@ Example 3:
- ==PM domain consumers==
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 2af99bfcbe3c..2b496d79159d 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2171,6 +2171,15 @@ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
+ }
+ EXPORT_SYMBOL_GPL(of_genpd_remove_last);
  
- Required properties:
-- - power-domains : A phandle and PM domain specifier as defined by bindings of
--                   the power controller specified by phandle.
-+ - power-domains : A list of PM domain specifiers, as defined by bindings of
-+		the power controller that is the PM domain provider.
- 
- Example:
- 
-@@ -122,9 +122,18 @@ Example:
- 		power-domains = <&power 0>;
- 	};
- 
--The node above defines a typical PM domain consumer device, which is located
--inside a PM domain with index 0 of a power controller represented by a node
--with the label "power".
-+	leaky-device@12351000 {
-+		compatible = "foo,i-leak-current";
-+		reg = <0x12351000 0x1000>;
-+		power-domains = <&power 0>, <&power 1> ;
-+	};
++static void genpd_release_dev(struct device *dev)
++{
++	kfree(dev);
++}
 +
-+The first example above defines a typical PM domain consumer device, which is
-+located inside a PM domain with index 0 of a power controller represented by a
-+node with the label "power".
-+In the second example the consumer device are partitioned across two PM domains,
-+the first with index 0 and the second with index 1, of a power controller that
-+is represented by a node with the label "power.
++static struct bus_type genpd_bus_type = {
++	.name		= "genpd",
++};
++
+ /**
+  * genpd_dev_pm_detach - Detach a device from its PM domain.
+  * @dev: Device to detach.
+@@ -2208,6 +2217,10 @@ static void genpd_dev_pm_detach(struct device *dev, bool power_off)
  
- Optional properties:
- - required-opps: This contains phandle to an OPP node in another device's OPP
+ 	/* Check if PM domain can be powered off after removing this device. */
+ 	genpd_queue_power_off_work(pd);
++
++	/* Unregister the device if it was created by genpd. */
++	if (dev->bus == &genpd_bus_type)
++		device_unregister(dev);
+ }
+ 
+ static void genpd_dev_pm_sync(struct device *dev)
+@@ -2298,6 +2311,67 @@ int genpd_dev_pm_attach(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
+ 
++/**
++ * genpd_dev_pm_attach_by_id() - Attach a device to one of its PM domain.
++ * @dev: Device to attach.
++ * @index: The index of the PM domain.
++ *
++ * Parse device's OF node to find a PM domain specifier at the provided @index.
++ * If such is found, creates a virtual device and attaches it to the retrieved
++ * pm_domain ops. To deal with detaching of the virtual device, the ->detach()
++ * callback in the struct dev_pm_domain are assigned to genpd_dev_pm_detach().
++ *
++ * Returns the created virtual device if successfully attached PM domain, NULL
++ * when the device don't need a PM domain, else an ERR_PTR() in case of
++ * failures. If a power-domain exists for the device, but cannot be found or
++ * turned on, then ERR_PTR(-EPROBE_DEFER) is returned to ensure that the device
++ * is not probed and to re-try again later.
++ */
++struct device *genpd_dev_pm_attach_by_id(struct device *dev,
++					 unsigned int index)
++{
++	struct device *genpd_dev;
++	int num_domains;
++	int ret;
++
++	if (!dev->of_node)
++		return NULL;
++
++	/* Deal only with devices using multiple PM domains. */
++	num_domains = of_count_phandle_with_args(dev->of_node, "power-domains",
++						 "#power-domain-cells");
++	if (num_domains < 2 || index >= num_domains)
++		return NULL;
++
++	/* Allocate and register device on the genpd bus. */
++	genpd_dev = kzalloc(sizeof(*genpd_dev), GFP_KERNEL);
++	if (!genpd_dev)
++		return ERR_PTR(-ENOMEM);
++
++	dev_set_name(genpd_dev, "genpd:%u:%s", index, dev_name(dev));
++	genpd_dev->bus = &genpd_bus_type;
++	genpd_dev->release = genpd_release_dev;
++
++	ret = device_register(genpd_dev);
++	if (ret) {
++		kfree(genpd_dev);
++		return ERR_PTR(ret);
++	}
++
++	/* Try to attach the device to the PM domain at the specified index. */
++	ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index);
++	if (ret < 1) {
++		device_unregister(genpd_dev);
++		return ret ? ERR_PTR(ret) : NULL;
++	}
++
++	pm_runtime_set_active(genpd_dev);
++	pm_runtime_enable(genpd_dev);
++
++	return genpd_dev;
++}
++EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
++
+ static const struct of_device_id idle_state_match[] = {
+ 	{ .compatible = "domain-idle-state", },
+ 	{ }
+@@ -2457,6 +2531,12 @@ unsigned int of_genpd_opp_to_performance_state(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(of_genpd_opp_to_performance_state);
+ 
++static int __init genpd_bus_init(void)
++{
++	return bus_register(&genpd_bus_type);
++}
++core_initcall(genpd_bus_init);
++
+ #endif /* CONFIG_PM_GENERIC_DOMAINS_OF */
+ 
+ 
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 42e0d649e653..82458e8e2e01 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -237,6 +237,8 @@ unsigned int of_genpd_opp_to_performance_state(struct device *dev,
+ 				struct device_node *opp_node);
+ 
+ int genpd_dev_pm_attach(struct device *dev);
++struct device *genpd_dev_pm_attach_by_id(struct device *dev,
++					 unsigned int index);
+ #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
+ static inline int of_genpd_add_provider_simple(struct device_node *np,
+ 					struct generic_pm_domain *genpd)
+@@ -282,6 +284,12 @@ static inline int genpd_dev_pm_attach(struct device *dev)
+ 	return 0;
+ }
+ 
++static inline struct device *genpd_dev_pm_attach_by_id(struct device *dev,
++						       unsigned int index)
++{
++	return NULL;
++}
++
+ static inline
+ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
+ {
 -- 
 2.17.0
