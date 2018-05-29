@@ -1,90 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754567AbeE2GZO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 02:25:14 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36680 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751668AbeE2GZM (ORCPT
+        id S1754613AbeE2G1K (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 02:27:10 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40643 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754440AbeE2G1I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 02:25:12 -0400
-X-Google-Smtp-Source: ADUXVKLw3H2fZQadDVE5jpA7JjJud61ZeNTLpDaXzcRCaPDNUhD9PIn17CJQVpfkgQucWKuNGNM6pA==
-Subject: Re: [PATCH] drm: Fix possible race conditions while unplugging DRM
- device
-To: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, daniel.vetter@intel.com, seanpaul@chromium.org,
-        gustavo@padovan.org
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-References: <20180522141304.18646-1-andr2000@gmail.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <226cb967-2464-767b-c051-95c120f6558a@gmail.com>
-Date: Tue, 29 May 2018 09:25:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 29 May 2018 02:27:08 -0400
+X-Google-Smtp-Source: AB8JxZqEEzHaHnod2JM3KX1lOHPPMTcaTeCJQZJ9IuVejwQfggExSejpoP9z1ydAmUUYUzuKUnzjdw==
+Date: Tue, 29 May 2018 08:27:03 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v8 4/6] cpuset: Make generate_sched_domains() recognize
+ isolated_cpus
+Message-ID: <20180529062703.GA8985@localhost.localdomain>
+References: <1526590545-3350-1-git-send-email-longman@redhat.com>
+ <1526590545-3350-5-git-send-email-longman@redhat.com>
+ <20180524102837.GA3948@localhost.localdomain>
+ <45d70c88-e9f5-716a-ee9a-33dc111159cc@redhat.com>
+ <8e610b98-970c-a309-5821-fc8e6aca892f@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180522141304.18646-1-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e610b98-970c-a309-5821-fc8e6aca892f@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping
+On 28/05/18 21:24, Waiman Long wrote:
+> On 05/28/2018 09:12 PM, Waiman Long wrote:
+> > On 05/24/2018 06:28 AM, Juri Lelli wrote:
+> >> On 17/05/18 16:55, Waiman Long wrote:
+> >>
+> >> [...]
+> >>
+> >>> @@ -849,7 +860,12 @@ static void rebuild_sched_domains_locked(void)
+> >>>  	 * passing doms with offlined cpu to partition_sched_domains().
+> >>>  	 * Anyways, hotplug work item will rebuild sched domains.
+> >>>  	 */
+> >>> -	if (!cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
+> >>> +	if (!top_cpuset.isolation_count &&
+> >>> +	    !cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
+> >>> +		goto out;
+> >>> +
+> >>> +	if (top_cpuset.isolation_count &&
+> >>> +	   !cpumask_subset(top_cpuset.effective_cpus, cpu_active_mask))
+> >>>  		goto out;
+> >> Do we cover the case in which hotplug removed one of the isolated cpus
+> >> from cpu_active_mask?
+> > Yes, you are right. That is the remnant of my original patch that allows
+> > only one isolated_cpus at root. Thanks for spotting that.
+> 
+> I am sorry. I would like to take it back my previous comment. The code
+> above looks for inconsistency in the state of the effective_cpus mask to
+> find out if it is racing with a hotplug event. If it is, we can skip the
+> domain generation as the hotplug event will do that too. The checks are
+> still valid with the current patchset. So I don't think we need to make
+> any change here.
 
-On 05/22/2018 05:13 PM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->
-> When unplugging a hotpluggable DRM device we first unregister it
-> with drm_dev_unregister and then set drm_device.unplugged flag which
-> is used to mark device critical sections with drm_dev_enter()/
-> drm_dev_exit() preventing access to device resources that are not
-> available after the device is gone.
-> But drm_dev_unregister may lead to hotplug uevent(s) fired to
-> user-space on card and/or connector removal, thus making it possible
-> for user-space to try accessing a disconnected device.
->
-> Fix this by first making sure device is properly marked as
-> disconnected and only then unregister it.
->
-> Fixes: bee330f3d672 ("drm: Use srcu to protect drm_device.unplugged")
->
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> Reported-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
-> Cc: "Noralf Trønnes" <noralf@tronnes.org>
-> ---
->   drivers/gpu/drm/drm_drv.c | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-> index b553a6f2ff0e..7af748ed1c58 100644
-> --- a/drivers/gpu/drm/drm_drv.c
-> +++ b/drivers/gpu/drm/drm_drv.c
-> @@ -369,13 +369,6 @@ EXPORT_SYMBOL(drm_dev_exit);
->    */
->   void drm_dev_unplug(struct drm_device *dev)
->   {
-> -	drm_dev_unregister(dev);
-> -
-> -	mutex_lock(&drm_global_mutex);
-> -	if (dev->open_count == 0)
-> -		drm_dev_put(dev);
-> -	mutex_unlock(&drm_global_mutex);
-> -
->   	/*
->   	 * After synchronizing any critical read section is guaranteed to see
->   	 * the new value of ->unplugged, and any critical section which might
-> @@ -384,6 +377,13 @@ void drm_dev_unplug(struct drm_device *dev)
->   	 */
->   	dev->unplugged = true;
->   	synchronize_srcu(&drm_unplug_srcu);
-> +
-> +	drm_dev_unregister(dev);
-> +
-> +	mutex_lock(&drm_global_mutex);
-> +	if (dev->open_count == 0)
-> +		drm_dev_put(dev);
-> +	mutex_unlock(&drm_global_mutex);
->   }
->   EXPORT_SYMBOL(drm_dev_unplug);
->   
+Yes, these checks are valid, but don't we also need to check for hotplug
+races w.r.t. isolated CPUs (of some other sub domain)?
