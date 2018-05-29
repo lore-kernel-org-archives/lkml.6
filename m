@@ -1,138 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968056AbeE2XT2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 19:19:28 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:35225 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965084AbeE2XT0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 19:19:26 -0400
-X-Google-Smtp-Source: ADUXVKIxhWpceYkdBFRgGnpy7qur8ao3tijCUGw7o8uZvC2PyZLRKVUlqXeocklLsFfCVN810kxmrTl/3B21imRY47w=
-MIME-Version: 1.0
-In-Reply-To: <1527632665-25707-4-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1527632665-25707-1-git-send-email-eajames@linux.vnet.ibm.com> <1527632665-25707-4-git-send-email-eajames@linux.vnet.ibm.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 30 May 2018 02:19:25 +0300
-Message-ID: <CAHp75Vd38BrJcULxoqj1mTKCEvMh9ZVYEvzCMAg2t9onZrSR6w@mail.gmail.com>
-Subject: Re: [PATCH v7 3/7] drivers/i2c: Add port structure to FSI algorithm
-To: Eddie James <eajames@linux.vnet.ibm.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+        id S1030219AbeE2XUu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 19:20:50 -0400
+Received: from ozlabs.org ([203.11.71.1]:58487 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965084AbeE2XUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 19:20:48 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 30 May 2018 09:20:27 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Edward A. James" <eajames@us.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Greentime Hu <greentime@andestech.com>
+Subject: linux-next: manual merge of the dma-mapping tree with Linus' tree
+Message-ID: <20180530092027.510bd34a@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6CfB4MlC/ShTASRvm=ezsW="; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 1:24 AM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
-> From: "Edward A. James" <eajames@us.ibm.com>
->
-> Add and initialize I2C adapters for each port on the FSI-attached I2C
-> master. Ports for each master are defined in the devicetree.
+--Sig_/6CfB4MlC/ShTASRvm=ezsW=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> +#include <linux/of.h>
+Hi Christoph,
 
+Today's linux-next merge of the dma-mapping tree got a conflict in:
 
-> +static int fsi_i2c_set_port(struct fsi_i2c_port *port)
-> +{
-> +       int rc;
-> +       struct fsi_device *fsi = port->master->fsi;
-> +       u32 mode, dummy = 0;
-> +       u16 old_port;
-> +
-> +       rc = fsi_i2c_read_reg(fsi, I2C_FSI_MODE, &mode);
-> +       if (rc)
-> +               return rc;
-> +
+  arch/nds32/Kconfig
 
-> +       old_port = GETFIELD(I2C_MODE_PORT, mode);
-> +
-> +       if (old_port != port->port) {
+between commit:
 
-Why not simple
+  aeaa7af744fa ("nds32: lib: To use generic lib instead of libgcc to preven=
+t the symbol undefined issue.")
 
-if (port->port == GETFIELD())
-  return 0;
+from Linus' tree and commit:
 
-?
+  267d2e18a281 ("nds32: use generic dma_noncoherent_ops")
 
-> +               /* reset engine when port is changed */
-> +               rc = fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
-> +               if (rc)
-> +                       return rc;
-> +       }
+from the dma-mapping tree.
 
-> +       return rc;
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-It's hardly would be non-zero, right?
+--=20
+Cheers,
+Stephen Rothwell
 
-> +}
+diff --cc arch/nds32/Kconfig
+index b7404f2dcf5b,67d0ac0a989c..000000000000
+--- a/arch/nds32/Kconfig
++++ b/arch/nds32/Kconfig
+@@@ -9,12 -11,7 +11,13 @@@ config NDS3
+  	select CLKSRC_MMIO
+  	select CLONE_BACKWARDS
+  	select COMMON_CLK
++ 	select DMA_NONCOHERENT_OPS
+ +	select GENERIC_ASHLDI3
+ +	select GENERIC_ASHRDI3
+ +	select GENERIC_LSHRDI3
+ +	select GENERIC_CMPDI2
+ +	select GENERIC_MULDI3
+ +	select GENERIC_UCMPDI2
+  	select GENERIC_ATOMIC64
+  	select GENERIC_CPU_DEVICES
+  	select GENERIC_CLOCKEVENTS
 
->  static int fsi_i2c_probe(struct device *dev)
->  {
+--Sig_/6CfB4MlC/ShTASRvm=ezsW=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Isn't below somehow repeats of_i2c_register_devices() ?
-Why not to use it?
+-----BEGIN PGP SIGNATURE-----
 
-> +       /* Add adapter for each i2c port of the master. */
-> +       for_each_available_child_of_node(dev->of_node, np) {
-> +               rc = of_property_read_u32(np, "reg", &port_no);
-> +               if (rc || port_no > USHRT_MAX)
-> +                       continue;
-> +
-> +               port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
-> +               if (!port)
-> +                       break;
-> +
-> +               port->master = i2c;
-> +               port->port = port_no;
-> +
-> +               port->adapter.owner = THIS_MODULE;
-> +               port->adapter.dev.of_node = np;
-> +               port->adapter.dev.parent = dev;
-> +               port->adapter.algo = &fsi_i2c_algorithm;
-> +               port->adapter.algo_data = port;
-> +
-> +               snprintf(port->adapter.name, sizeof(port->adapter.name),
-> +                        "i2c_bus-%u", port_no);
-> +
-> +               rc = i2c_add_adapter(&port->adapter);
-> +               if (rc < 0) {
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsN4DsACgkQAVBC80lX
+0GzFAAf+NQxEvchUDErdqIPcuX8NSsb7gnMqqY0bTSv7Gcgb43GZibYUxulYi9/w
+fTt4QNhIMzePHeJN1PNnDhPlwXT7pQ98o8i6PNzWbPoBZp6Cq/pXLV90Zf9o/e3h
+xGPYkxGEWyFIAY/w6cxLyaTsmO0QKD2iK+rk5fCGQwSjBahAj/JHwBhaXb4eyy+B
+QbZJPHGvAtMVFqB01+B5n5Pw/c32wHvbBAOhk5NczbIKWrenQa7PZBH2D0RNbB4Y
+YKKrQwScsd/SeKXgNtsKumzlvw6cl2rTTHOIyw4zT7KgF/h4j0Ur+uN7vD1Y06vX
+Mjlt73cLMWupSUG6xnCzjyHxBzh6Eg==
+=6ZQM
+-----END PGP SIGNATURE-----
 
-> +                       dev_err(dev, "Failed to register adapter: %d\n", rc);
-
-> +                       devm_kfree(dev, port);
-
-This hurts my eyes. Why?!
-
-> +                       continue;
-> +               }
-> +
-> +               list_add(&port->list, &i2c->ports);
-> +       }
-> +
->         dev_set_drvdata(dev, i2c);
->
->         return 0;
->  }
-
-> +       if (!list_empty(&i2c->ports)) {
-
-My gosh, this is done already in list_for_each*()
-
-> +               list_for_each_entry(port, &i2c->ports, list) {
-> +                       i2c_del_adapter(&port->adapter);
-> +               }
-
-> +       }
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+--Sig_/6CfB4MlC/ShTASRvm=ezsW=--
