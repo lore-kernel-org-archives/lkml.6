@@ -1,74 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934544AbeE2NfE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:35:04 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8162 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934136AbeE2NfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:35:02 -0400
-Subject: Re: [PATCH net-next] net: davinci_mdio: fix building error without
- CONFIG_OF
-To: <davem@davemloft.net>, <grygorii.strashko@ti.com>, <muvarov@gmail.com>
-References: <20180529115651.3420-1-yuehaibing@huawei.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <andrew@lunn.ch>, <fugang.duan@nxp.com>, <linux-omap@vger.kernel.org>
-From: YueHaibing <yuehaibing@huawei.com>
-Message-ID: <747c9847-8e54-fa2e-231d-ac8b64d7ff47@huawei.com>
-Date: Tue, 29 May 2018 21:34:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S934578AbeE2NfY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:35:24 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40570 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934136AbeE2NfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:35:19 -0400
+Date: Tue, 29 May 2018 14:35:13 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Julien Grall <julien.grall@arm.com>
+Subject: Re: [PATCH v2 08/17] arm64: ssbd: Restore mitigation status on CPU
+ resume
+Message-ID: <20180529133510.xopxpmxf7ypjeksc@lakrids.cambridge.arm.com>
+References: <20180529121121.24927-1-marc.zyngier@arm.com>
+ <20180529121121.24927-9-marc.zyngier@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529115651.3420-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529121121.24927-9-marc.zyngier@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pls ignore this, there has been a Patch from Arnd Bergmann <arnd@arndb.de>
-
-[PATCH] net: davinci: fix building davinci mdio code without CONFIG_OF
-
-
-On 2018/5/29 19:56, YueHaibing wrote:
-> gcc report a build error when compiling without CONFIG_OF
-> drivers/net/ethernet/ti/davinci_mdio.c: In function ‘davinci_mdio_probe’:
-> drivers/net/ethernet/ti/davinci_mdio.c:380:9: error: implicit declaration of function ‘davinci_mdio_probe_dt’ [-Werror=implicit-function-declaration]
->    ret = davinci_mdio_probe_dt(&data->pdata, pdev);
->          ^
-> Fixes: 9eae9c7d0875 ("drivers: net: davinci_mdio: enable pm runtime auto for ti cpsw-mdio")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/ethernet/ti/davinci_mdio.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+On Tue, May 29, 2018 at 01:11:12PM +0100, Marc Zyngier wrote:
+> On a system where firmware can dynamically change the state of the
+> mitigation, the CPU will always come up with the mitigation enabled,
+> including when coming back from suspend.
 > 
-> diff --git a/drivers/net/ethernet/ti/davinci_mdio.c b/drivers/net/ethernet/ti/davinci_mdio.c
-> index 8ac7283..6e544d9 100644
-> --- a/drivers/net/ethernet/ti/davinci_mdio.c
-> +++ b/drivers/net/ethernet/ti/davinci_mdio.c
-> @@ -339,9 +339,7 @@ static int davinci_mdio_probe_dt(struct mdio_platform_data *data,
->  
->  	return 0;
->  }
-> -#endif
->  
-> -#if IS_ENABLED(CONFIG_OF)
->  static const struct davinci_mdio_of_param of_cpsw_mdio_data = {
->  	.autosuspend_delay_ms = 100,
->  };
-> @@ -352,6 +350,12 @@ static const struct of_device_id davinci_mdio_of_mtable[] = {
->  	{ /* sentinel */ },
->  };
->  MODULE_DEVICE_TABLE(of, davinci_mdio_of_mtable);
-> +#else
-> +static int davinci_mdio_probe_dt(struct mdio_platform_data *data,
-> +				 struct platform_device *pdev)
-> +{
-> +	return -EINVAL;
-> +}
+> If the user has requested "no mitigation" via a command line option,
+> let's enforce it by calling into the firmware again to disable it.
+> 
+> Similarily, for a resume from hibernate, the mitigation could have
+> been disabled by the boot kernel. Let's ensure that it is set
+> back on in that case.
+> 
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+
+With teh fixup in swsusp_arch_suspend(), this looks good to me. FWIW:
+
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
+> ---
+>  arch/arm64/include/asm/cpufeature.h |  6 ++++++
+>  arch/arm64/kernel/cpu_errata.c      |  2 +-
+>  arch/arm64/kernel/hibernate.c       | 11 +++++++++++
+>  arch/arm64/kernel/suspend.c         |  8 ++++++++
+>  4 files changed, 26 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> index b0fc3224ce8a..55bc1f073bfb 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -553,6 +553,12 @@ static inline int arm64_get_ssbd_state(void)
 >  #endif
+>  }
 >  
->  static int davinci_mdio_probe(struct platform_device *pdev)
+> +#ifdef CONFIG_ARM64_SSBD
+> +void arm64_set_ssbd_mitigation(bool state);
+> +#else
+> +static inline void arm64_set_ssbd_mitigation(bool state) {}
+> +#endif
+> +
+>  #endif /* __ASSEMBLY__ */
+>  
+>  #endif
+> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+> index 2fef634e6953..2b9a31a6a16a 100644
+> --- a/arch/arm64/kernel/cpu_errata.c
+> +++ b/arch/arm64/kernel/cpu_errata.c
+> @@ -303,7 +303,7 @@ void __init arm64_enable_wa2_handling(struct alt_instr *alt,
+>  		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
+>  }
+>  
+> -static void arm64_set_ssbd_mitigation(bool state)
+> +void arm64_set_ssbd_mitigation(bool state)
+>  {
+>  	switch (psci_ops.conduit) {
+>  	case PSCI_CONDUIT_HVC:
+> diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
+> index 1ec5f28c39fc..6b2686d54411 100644
+> --- a/arch/arm64/kernel/hibernate.c
+> +++ b/arch/arm64/kernel/hibernate.c
+> @@ -313,6 +313,17 @@ int swsusp_arch_suspend(void)
+>  
+>  		sleep_cpu = -EINVAL;
+>  		__cpu_suspend_exit();
+> +
+> +		/*
+> +		 * Just in case the boot kernel did turn the SSBD
+> +		 * mitigation off behind our back, let's set the state
+> +		 * to what we expect it to be.
+> +		 */
+> +		switch (arm64_get_ssbd_state()) {
+> +		case ARM64_SSBD_FORCE_ENABLE:
+> +		case ARM64_SSBD_KERNEL:
+> +			arm64_set_ssbd_mitigation(true);
+> +		}
+>  	}
+>  
+>  	local_daif_restore(flags);
+> diff --git a/arch/arm64/kernel/suspend.c b/arch/arm64/kernel/suspend.c
+> index a307b9e13392..70c283368b64 100644
+> --- a/arch/arm64/kernel/suspend.c
+> +++ b/arch/arm64/kernel/suspend.c
+> @@ -62,6 +62,14 @@ void notrace __cpu_suspend_exit(void)
+>  	 */
+>  	if (hw_breakpoint_restore)
+>  		hw_breakpoint_restore(cpu);
+> +
+> +	/*
+> +	 * On resume, firmware implementing dynamic mitigation will
+> +	 * have turned the mitigation on. If the user has forcefully
+> +	 * disabled it, make sure their wishes are obeyed.
+> +	 */
+> +	if (arm64_get_ssbd_state() == ARM64_SSBD_FORCE_DISABLE)
+> +		arm64_set_ssbd_mitigation(false);
+>  }
+>  
+>  /*
+> -- 
+> 2.14.2
 > 
