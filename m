@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933069AbeE2KVG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:21:06 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50936 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932916AbeE2KVA (ORCPT
+        id S933166AbeE2KWO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:22:14 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34094 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932915AbeE2KU4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:21:00 -0400
-X-Google-Smtp-Source: ADUXVKI9TfcFGMpvU8jjM2zy0+Mboc4u6nnmxhQhSE+brN2dhsCCsaZCcsXGuM39vgoSGhCElKYlvg==
+        Tue, 29 May 2018 06:20:56 -0400
+X-Google-Smtp-Source: ADUXVKJKJHajIrkN0MPz5jg6QLwOWg2KYk5Z7RMlPkHaGAnsGQBNX89L3aVJsVNgw8qpEAyczINrJw==
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To: broonie@kernel.org, linux-arm-msm@vger.kernel.org,
         alsa-devel@alsa-project.org, robh+dt@kernel.org,
@@ -17,9 +17,9 @@ Cc: mark.rutland@arm.com, lgirdwood@gmail.com, plai@codeaurora.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 5/6] ASoC: qdsp6: q6routing: Add macros for mixers
-Date: Tue, 29 May 2018 11:18:32 +0100
-Message-Id: <20180529101833.30489-6-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 2/6] ASoC: qdsp6: qdafe: add support to tdm ports
+Date: Tue, 29 May 2018 11:18:29 +0100
+Message-Id: <20180529101833.30489-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180529101833.30489-1-srinivas.kandagatla@linaro.org>
 References: <20180529101833.30489-1-srinivas.kandagatla@linaro.org>
@@ -27,713 +27,590 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All the mixer controls are pretty much same from all the afe ports.
-
-Make these as proper macros for 2 reasons.
-
-1> To avoid any typos in adding new mixer controls for each port.
-2> Easy to edit from single place, easy to add new ports
-
-This also prepares the routing driver to accomdate 40 tdm dais.
+This patch adds support to tdm ports in AFE.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- sound/soc/qcom/qdsp6/q6routing.c | 631 ++++++---------------------------------
- 1 file changed, 97 insertions(+), 534 deletions(-)
+ sound/soc/qcom/qdsp6/q6afe.c | 429 ++++++++++++++++++++++++++++++++++++++++++-
+ sound/soc/qcom/qdsp6/q6afe.h |  20 +-
+ 2 files changed, 447 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
-index 08c25c26adf4..a4e74cac491b 100644
---- a/sound/soc/qcom/qdsp6/q6routing.c
-+++ b/sound/soc/qcom/qdsp6/q6routing.c
-@@ -26,6 +26,63 @@
+diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
+index de0030068ecb..01f43218984b 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.c
++++ b/sound/soc/qcom/qdsp6/q6afe.c
+@@ -31,6 +31,7 @@
+ #define AFE_PORT_CMDRSP_GET_PARAM_V2	0x00010106
+ #define AFE_PARAM_ID_HDMI_CONFIG	0x00010210
+ #define AFE_MODULE_AUDIO_DEV_INTERFACE	0x0001020C
++#define AFE_MODULE_TDM			0x0001028A
  
- #define DRV_NAME "q6routing-component"
+ #define AFE_PARAM_ID_CDC_SLIMBUS_SLAVE_CFG 0x00010235
  
-+#define Q6ROUTING_RX_MIXERS(id)						\
-+	SOC_SINGLE_EXT("MultiMedia1", id,				\
-+	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,\
-+	msm_routing_put_audio_mixer),					\
-+	SOC_SINGLE_EXT("MultiMedia2", id,				\
-+	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,\
-+	msm_routing_put_audio_mixer),					\
-+	SOC_SINGLE_EXT("MultiMedia3", id,				\
-+	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,\
-+	msm_routing_put_audio_mixer),					\
-+	SOC_SINGLE_EXT("MultiMedia4", id,				\
-+	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,\
-+	msm_routing_put_audio_mixer),					\
-+	SOC_SINGLE_EXT("MultiMedia5", id,				\
-+	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,\
-+	msm_routing_put_audio_mixer),					\
-+	SOC_SINGLE_EXT("MultiMedia6", id,				\
-+	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,\
-+	msm_routing_put_audio_mixer),					\
-+	SOC_SINGLE_EXT("MultiMedia7", id,				\
-+	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,\
-+	msm_routing_put_audio_mixer),					\
-+	SOC_SINGLE_EXT("MultiMedia8", id,				\
-+	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,\
-+	msm_routing_put_audio_mixer),
+@@ -39,6 +40,8 @@
+ 
+ #define AFE_PARAM_ID_SLIMBUS_CONFIG    0x00010212
+ #define AFE_PARAM_ID_I2S_CONFIG	0x0001020D
++#define AFE_PARAM_ID_TDM_CONFIG	0x0001029D
++#define AFE_PARAM_ID_PORT_SLOT_MAPPING_CONFIG	0x00010297
+ 
+ /* I2S config specific */
+ #define AFE_API_VERSION_I2S_CONFIG	0x1
+@@ -113,10 +116,194 @@
+ #define AFE_PORT_ID_QUATERNARY_MI2S_RX      0x1006
+ #define AFE_PORT_ID_QUATERNARY_MI2S_TX      0x1007
+ 
++/* Start of the range of port IDs for TDM devices. */
++#define AFE_PORT_ID_TDM_PORT_RANGE_START	0x9000
 +
-+#define Q6ROUTING_RX_DAPM_ROUTE(mix_name, s)	\
-+	{ mix_name, "MultiMedia1", "MM_DL1" },	\
-+	{ mix_name, "MultiMedia2", "MM_DL2" },	\
-+	{ mix_name, "MultiMedia3", "MM_DL3" },	\
-+	{ mix_name, "MultiMedia4", "MM_DL4" },	\
-+	{ mix_name, "MultiMedia5", "MM_DL5" },	\
-+	{ mix_name, "MultiMedia6", "MM_DL6" },	\
-+	{ mix_name, "MultiMedia7", "MM_DL7" },	\
-+	{ mix_name, "MultiMedia8", "MM_DL8" },	\
-+	{ s, NULL, mix_name }
++/* End of the range of port IDs for TDM devices. */
++#define AFE_PORT_ID_TDM_PORT_RANGE_END \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START+0x50-1)
 +
-+#define Q6ROUTING_TX_DAPM_ROUTE(mix_name)		\
-+	{ mix_name, "PRI_MI2S_TX", "PRI_MI2S_TX" },	\
-+	{ mix_name, "SEC_MI2S_TX", "SEC_MI2S_TX" },	\
-+	{ mix_name, "QUAT_MI2S_TX", "QUAT_MI2S_TX" },	\
-+	{ mix_name, "TERT_MI2S_TX", "TERT_MI2S_TX" }
++/* Size of the range of port IDs for TDM ports. */
++#define AFE_PORT_ID_TDM_PORT_RANGE_SIZE \
++	(AFE_PORT_ID_TDM_PORT_RANGE_END - \
++	AFE_PORT_ID_TDM_PORT_RANGE_START+1)
 +
-+#define Q6ROUTING_TX_MIXERS(id)						\
-+	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,			\
-+		id, 1, 0, msm_routing_get_audio_mixer,			\
-+		msm_routing_put_audio_mixer),				\
-+	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,		\
-+		id, 1, 0, msm_routing_get_audio_mixer,			\
-+		msm_routing_put_audio_mixer),				\
-+	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,		\
-+		id, 1, 0, msm_routing_get_audio_mixer,			\
-+		msm_routing_put_audio_mixer),				\
-+	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,		\
-+		id, 1, 0, msm_routing_get_audio_mixer,			\
-+		msm_routing_put_audio_mixer),
++#define AFE_PORT_ID_PRIMARY_TDM_RX \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START + 0x00)
++#define AFE_PORT_ID_PRIMARY_TDM_RX_1 \
++	(AFE_PORT_ID_PRIMARY_TDM_RX + 0x02)
++#define AFE_PORT_ID_PRIMARY_TDM_RX_2 \
++	(AFE_PORT_ID_PRIMARY_TDM_RX + 0x04)
++#define AFE_PORT_ID_PRIMARY_TDM_RX_3 \
++	(AFE_PORT_ID_PRIMARY_TDM_RX + 0x06)
++#define AFE_PORT_ID_PRIMARY_TDM_RX_4 \
++	(AFE_PORT_ID_PRIMARY_TDM_RX + 0x08)
++#define AFE_PORT_ID_PRIMARY_TDM_RX_5 \
++	(AFE_PORT_ID_PRIMARY_TDM_RX + 0x0A)
++#define AFE_PORT_ID_PRIMARY_TDM_RX_6 \
++	(AFE_PORT_ID_PRIMARY_TDM_RX + 0x0C)
++#define AFE_PORT_ID_PRIMARY_TDM_RX_7 \
++	(AFE_PORT_ID_PRIMARY_TDM_RX + 0x0E)
 +
- struct session_data {
- 	int state;
- 	int port_id;
-@@ -207,430 +264,64 @@ static int msm_routing_put_audio_mixer(struct snd_kcontrol *kcontrol,
- }
++#define AFE_PORT_ID_PRIMARY_TDM_TX \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START + 0x01)
++#define AFE_PORT_ID_PRIMARY_TDM_TX_1 \
++	(AFE_PORT_ID_PRIMARY_TDM_TX + 0x02)
++#define AFE_PORT_ID_PRIMARY_TDM_TX_2 \
++	(AFE_PORT_ID_PRIMARY_TDM_TX + 0x04)
++#define AFE_PORT_ID_PRIMARY_TDM_TX_3 \
++	(AFE_PORT_ID_PRIMARY_TDM_TX + 0x06)
++#define AFE_PORT_ID_PRIMARY_TDM_TX_4 \
++	(AFE_PORT_ID_PRIMARY_TDM_TX + 0x08)
++#define AFE_PORT_ID_PRIMARY_TDM_TX_5 \
++	(AFE_PORT_ID_PRIMARY_TDM_TX + 0x0A)
++#define AFE_PORT_ID_PRIMARY_TDM_TX_6 \
++	(AFE_PORT_ID_PRIMARY_TDM_TX + 0x0C)
++#define AFE_PORT_ID_PRIMARY_TDM_TX_7 \
++	(AFE_PORT_ID_PRIMARY_TDM_TX + 0x0E)
++
++#define AFE_PORT_ID_SECONDARY_TDM_RX \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START + 0x10)
++#define AFE_PORT_ID_SECONDARY_TDM_RX_1 \
++	(AFE_PORT_ID_SECONDARY_TDM_RX + 0x02)
++#define AFE_PORT_ID_SECONDARY_TDM_RX_2 \
++	(AFE_PORT_ID_SECONDARY_TDM_RX + 0x04)
++#define AFE_PORT_ID_SECONDARY_TDM_RX_3 \
++	(AFE_PORT_ID_SECONDARY_TDM_RX + 0x06)
++#define AFE_PORT_ID_SECONDARY_TDM_RX_4 \
++	(AFE_PORT_ID_SECONDARY_TDM_RX + 0x08)
++#define AFE_PORT_ID_SECONDARY_TDM_RX_5 \
++	(AFE_PORT_ID_SECONDARY_TDM_RX + 0x0A)
++#define AFE_PORT_ID_SECONDARY_TDM_RX_6 \
++	(AFE_PORT_ID_SECONDARY_TDM_RX + 0x0C)
++#define AFE_PORT_ID_SECONDARY_TDM_RX_7 \
++	(AFE_PORT_ID_SECONDARY_TDM_RX + 0x0E)
++
++#define AFE_PORT_ID_SECONDARY_TDM_TX \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START + 0x11)
++#define AFE_PORT_ID_SECONDARY_TDM_TX_1 \
++	(AFE_PORT_ID_SECONDARY_TDM_TX + 0x02)
++#define AFE_PORT_ID_SECONDARY_TDM_TX_2 \
++	(AFE_PORT_ID_SECONDARY_TDM_TX + 0x04)
++#define AFE_PORT_ID_SECONDARY_TDM_TX_3 \
++	(AFE_PORT_ID_SECONDARY_TDM_TX + 0x06)
++#define AFE_PORT_ID_SECONDARY_TDM_TX_4 \
++	(AFE_PORT_ID_SECONDARY_TDM_TX + 0x08)
++#define AFE_PORT_ID_SECONDARY_TDM_TX_5 \
++	(AFE_PORT_ID_SECONDARY_TDM_TX + 0x0A)
++#define AFE_PORT_ID_SECONDARY_TDM_TX_6 \
++	(AFE_PORT_ID_SECONDARY_TDM_TX + 0x0C)
++#define AFE_PORT_ID_SECONDARY_TDM_TX_7 \
++	(AFE_PORT_ID_SECONDARY_TDM_TX + 0x0E)
++
++#define AFE_PORT_ID_TERTIARY_TDM_RX \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START + 0x20)
++#define AFE_PORT_ID_TERTIARY_TDM_RX_1 \
++	(AFE_PORT_ID_TERTIARY_TDM_RX + 0x02)
++#define AFE_PORT_ID_TERTIARY_TDM_RX_2 \
++	(AFE_PORT_ID_TERTIARY_TDM_RX + 0x04)
++#define AFE_PORT_ID_TERTIARY_TDM_RX_3 \
++	(AFE_PORT_ID_TERTIARY_TDM_RX + 0x06)
++#define AFE_PORT_ID_TERTIARY_TDM_RX_4 \
++	(AFE_PORT_ID_TERTIARY_TDM_RX + 0x08)
++#define AFE_PORT_ID_TERTIARY_TDM_RX_5 \
++	(AFE_PORT_ID_TERTIARY_TDM_RX + 0x0A)
++#define AFE_PORT_ID_TERTIARY_TDM_RX_6 \
++	(AFE_PORT_ID_TERTIARY_TDM_RX + 0x0C)
++#define AFE_PORT_ID_TERTIARY_TDM_RX_7 \
++	(AFE_PORT_ID_TERTIARY_TDM_RX + 0x0E)
++
++#define AFE_PORT_ID_TERTIARY_TDM_TX \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START + 0x21)
++#define AFE_PORT_ID_TERTIARY_TDM_TX_1 \
++	(AFE_PORT_ID_TERTIARY_TDM_TX + 0x02)
++#define AFE_PORT_ID_TERTIARY_TDM_TX_2 \
++	(AFE_PORT_ID_TERTIARY_TDM_TX + 0x04)
++#define AFE_PORT_ID_TERTIARY_TDM_TX_3 \
++	(AFE_PORT_ID_TERTIARY_TDM_TX + 0x06)
++#define AFE_PORT_ID_TERTIARY_TDM_TX_4 \
++	(AFE_PORT_ID_TERTIARY_TDM_TX + 0x08)
++#define AFE_PORT_ID_TERTIARY_TDM_TX_5 \
++	(AFE_PORT_ID_TERTIARY_TDM_TX + 0x0A)
++#define AFE_PORT_ID_TERTIARY_TDM_TX_6 \
++	(AFE_PORT_ID_TERTIARY_TDM_TX + 0x0C)
++#define AFE_PORT_ID_TERTIARY_TDM_TX_7 \
++	(AFE_PORT_ID_TERTIARY_TDM_TX + 0x0E)
++
++#define AFE_PORT_ID_QUATERNARY_TDM_RX \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START + 0x30)
++#define AFE_PORT_ID_QUATERNARY_TDM_RX_1 \
++	(AFE_PORT_ID_QUATERNARY_TDM_RX + 0x02)
++#define AFE_PORT_ID_QUATERNARY_TDM_RX_2 \
++	(AFE_PORT_ID_QUATERNARY_TDM_RX + 0x04)
++#define AFE_PORT_ID_QUATERNARY_TDM_RX_3 \
++	(AFE_PORT_ID_QUATERNARY_TDM_RX + 0x06)
++#define AFE_PORT_ID_QUATERNARY_TDM_RX_4 \
++	(AFE_PORT_ID_QUATERNARY_TDM_RX + 0x08)
++#define AFE_PORT_ID_QUATERNARY_TDM_RX_5 \
++	(AFE_PORT_ID_QUATERNARY_TDM_RX + 0x0A)
++#define AFE_PORT_ID_QUATERNARY_TDM_RX_6 \
++	(AFE_PORT_ID_QUATERNARY_TDM_RX + 0x0C)
++#define AFE_PORT_ID_QUATERNARY_TDM_RX_7 \
++	(AFE_PORT_ID_QUATERNARY_TDM_RX + 0x0E)
++
++#define AFE_PORT_ID_QUATERNARY_TDM_TX \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START + 0x31)
++#define AFE_PORT_ID_QUATERNARY_TDM_TX_1 \
++	(AFE_PORT_ID_QUATERNARY_TDM_TX + 0x02)
++#define AFE_PORT_ID_QUATERNARY_TDM_TX_2 \
++	(AFE_PORT_ID_QUATERNARY_TDM_TX + 0x04)
++#define AFE_PORT_ID_QUATERNARY_TDM_TX_3 \
++	(AFE_PORT_ID_QUATERNARY_TDM_TX + 0x06)
++#define AFE_PORT_ID_QUATERNARY_TDM_TX_4 \
++	(AFE_PORT_ID_QUATERNARY_TDM_TX + 0x08)
++#define AFE_PORT_ID_QUATERNARY_TDM_TX_5 \
++	(AFE_PORT_ID_QUATERNARY_TDM_TX + 0x0A)
++#define AFE_PORT_ID_QUATERNARY_TDM_TX_6 \
++	(AFE_PORT_ID_QUATERNARY_TDM_TX + 0x0C)
++#define AFE_PORT_ID_QUATERNARY_TDM_TX_7 \
++	(AFE_PORT_ID_QUATERNARY_TDM_TX + 0x0E)
++
++#define AFE_PORT_ID_QUINARY_TDM_RX \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START + 0x40)
++#define AFE_PORT_ID_QUINARY_TDM_RX_1 \
++	(AFE_PORT_ID_QUINARY_TDM_RX + 0x02)
++#define AFE_PORT_ID_QUINARY_TDM_RX_2 \
++	(AFE_PORT_ID_QUINARY_TDM_RX + 0x04)
++#define AFE_PORT_ID_QUINARY_TDM_RX_3 \
++	(AFE_PORT_ID_QUINARY_TDM_RX + 0x06)
++#define AFE_PORT_ID_QUINARY_TDM_RX_4 \
++	(AFE_PORT_ID_QUINARY_TDM_RX + 0x08)
++#define AFE_PORT_ID_QUINARY_TDM_RX_5 \
++	(AFE_PORT_ID_QUINARY_TDM_RX + 0x0A)
++#define AFE_PORT_ID_QUINARY_TDM_RX_6 \
++	(AFE_PORT_ID_QUINARY_TDM_RX + 0x0C)
++#define AFE_PORT_ID_QUINARY_TDM_RX_7 \
++	(AFE_PORT_ID_QUINARY_TDM_RX + 0x0E)
++
++#define AFE_PORT_ID_QUINARY_TDM_TX \
++	(AFE_PORT_ID_TDM_PORT_RANGE_START + 0x41)
++#define AFE_PORT_ID_QUINARY_TDM_TX_1 \
++	(AFE_PORT_ID_QUINARY_TDM_TX + 0x02)
++#define AFE_PORT_ID_QUINARY_TDM_TX_2 \
++	(AFE_PORT_ID_QUINARY_TDM_TX + 0x04)
++#define AFE_PORT_ID_QUINARY_TDM_TX_3 \
++	(AFE_PORT_ID_QUINARY_TDM_TX + 0x06)
++#define AFE_PORT_ID_QUINARY_TDM_TX_4 \
++	(AFE_PORT_ID_QUINARY_TDM_TX + 0x08)
++#define AFE_PORT_ID_QUINARY_TDM_TX_5 \
++	(AFE_PORT_ID_QUINARY_TDM_TX + 0x0A)
++#define AFE_PORT_ID_QUINARY_TDM_TX_6 \
++	(AFE_PORT_ID_QUINARY_TDM_TX + 0x0C)
++#define AFE_PORT_ID_QUINARY_TDM_TX_7 \
++	(AFE_PORT_ID_QUINARY_TDM_TX + 0x0E)
++
+ #define Q6AFE_LPASS_MODE_CLK1_VALID 1
+ #define Q6AFE_LPASS_MODE_CLK2_VALID 2
+ #define Q6AFE_LPASS_CLK_SRC_INTERNAL 1
+ #define Q6AFE_LPASS_CLK_ROOT_DEFAULT 0
++#define AFE_API_VERSION_TDM_CONFIG              1
++#define AFE_API_VERSION_SLOT_MAPPING_CONFIG	1
  
- static const struct snd_kcontrol_new hdmi_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", HDMI_RX,
--		       MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0,
--		       msm_routing_get_audio_mixer,
--		       msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", HDMI_RX,
--		       MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0,
--		       msm_routing_get_audio_mixer,
--		       msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", HDMI_RX,
--		       MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0,
--		       msm_routing_get_audio_mixer,
--		       msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", HDMI_RX,
--		       MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0,
--		       msm_routing_get_audio_mixer,
--		       msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", HDMI_RX,
--		       MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0,
--		       msm_routing_get_audio_mixer,
--		       msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia6", HDMI_RX,
--		       MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0,
--		       msm_routing_get_audio_mixer,
--		       msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia7", HDMI_RX,
--		       MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0,
--		       msm_routing_get_audio_mixer,
--		       msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia8", HDMI_RX,
--		       MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0,
--		       msm_routing_get_audio_mixer,
--		       msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(HDMI_RX) };
+ #define TIMEOUT_MS 1000
+ #define AFE_CMD_RESP_AVAIL	0
+@@ -245,10 +432,27 @@ struct afe_param_id_i2s_cfg {
+ 	u16	reserved;
+ } __packed;
  
- static const struct snd_kcontrol_new primary_mi2s_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", PRIMARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", PRIMARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", PRIMARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", PRIMARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", PRIMARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia6", PRIMARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia7", PRIMARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia8", PRIMARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(PRIMARY_MI2S_RX) };
++struct afe_param_id_tdm_cfg {
++	u32	tdm_cfg_minor_version;
++	u32	num_channels;
++	u32	sample_rate;
++	u32	bit_width;
++	u16	data_format;
++	u16	sync_mode;
++	u16	sync_src;
++	u16	nslots_per_frame;
++	u16	ctrl_data_out_enable;
++	u16	ctrl_invert_sync_pulse;
++	u16	ctrl_sync_data_delay;
++	u16	slot_width;
++	u32	slot_mask;
++} __packed;
++
+ union afe_port_config {
+ 	struct afe_param_id_hdmi_multi_chan_audio_cfg hdmi_multi_ch;
+ 	struct afe_param_id_slimbus_cfg           slim_cfg;
+ 	struct afe_param_id_i2s_cfg	i2s_cfg;
++	struct afe_param_id_tdm_cfg	tdm_cfg;
+ } __packed;
  
- static const struct snd_kcontrol_new secondary_mi2s_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", SECONDARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", SECONDARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", SECONDARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", SECONDARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", SECONDARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia6", SECONDARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia7", SECONDARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia8", SECONDARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(SECONDARY_MI2S_RX) };
  
- static const struct snd_kcontrol_new quaternary_mi2s_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", QUATERNARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", QUATERNARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", QUATERNARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", QUATERNARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", QUATERNARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia6", QUATERNARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia7", QUATERNARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia8", QUATERNARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(QUATERNARY_MI2S_RX) };
- 
- static const struct snd_kcontrol_new tertiary_mi2s_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", TERTIARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", TERTIARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", TERTIARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", TERTIARY_MI2S_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
--
-+	Q6ROUTING_RX_MIXERS(TERTIARY_MI2S_RX) };
- 
- static const struct snd_kcontrol_new slimbus_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", SLIMBUS_0_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", SLIMBUS_0_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", SLIMBUS_0_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", SLIMBUS_0_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", SLIMBUS_0_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia6", SLIMBUS_0_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia7", SLIMBUS_0_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia8", SLIMBUS_0_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(SLIMBUS_0_RX) };
- 
- static const struct snd_kcontrol_new slimbus_1_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", SLIMBUS_1_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", SLIMBUS_1_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", SLIMBUS_1_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", SLIMBUS_1_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", SLIMBUS_1_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia6", SLIMBUS_1_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia7", SLIMBUS_1_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia8", SLIMBUS_1_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(SLIMBUS_1_RX) };
- 
- static const struct snd_kcontrol_new slimbus_2_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", SLIMBUS_2_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", SLIMBUS_2_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", SLIMBUS_2_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", SLIMBUS_2_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", SLIMBUS_2_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia6", SLIMBUS_2_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia7", SLIMBUS_2_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia8", SLIMBUS_2_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(SLIMBUS_2_RX) };
- 
- static const struct snd_kcontrol_new slimbus_3_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", SLIMBUS_3_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", SLIMBUS_3_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", SLIMBUS_3_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", SLIMBUS_3_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", SLIMBUS_3_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia6", SLIMBUS_3_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia7", SLIMBUS_3_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia8", SLIMBUS_3_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(SLIMBUS_3_RX) };
- 
- static const struct snd_kcontrol_new slimbus_4_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", SLIMBUS_4_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", SLIMBUS_4_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", SLIMBUS_4_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(SLIMBUS_4_RX) };
- 
- static const struct snd_kcontrol_new slimbus_5_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", SLIMBUS_5_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", SLIMBUS_5_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", SLIMBUS_5_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", SLIMBUS_5_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", SLIMBUS_5_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia6", SLIMBUS_5_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia7", SLIMBUS_5_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia8", SLIMBUS_5_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(SLIMBUS_5_RX) };
- 
- static const struct snd_kcontrol_new slimbus_6_rx_mixer_controls[] = {
--	SOC_SINGLE_EXT("MultiMedia1", SLIMBUS_6_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia2", SLIMBUS_6_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia3", SLIMBUS_6_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia4", SLIMBUS_6_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia5", SLIMBUS_6_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia6", SLIMBUS_6_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia7", SLIMBUS_6_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("MultiMedia8", SLIMBUS_6_RX,
--	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--	msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_RX_MIXERS(SLIMBUS_6_RX) };
- 
- static const struct snd_kcontrol_new mmul1_mixer_controls[] = {
--	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_TX_MIXERS(MSM_FRONTEND_DAI_MULTIMEDIA1) };
- 
- static const struct snd_kcontrol_new mmul2_mixer_controls[] = {
--	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_TX_MIXERS(MSM_FRONTEND_DAI_MULTIMEDIA2) };
- 
- static const struct snd_kcontrol_new mmul3_mixer_controls[] = {
--	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_TX_MIXERS(MSM_FRONTEND_DAI_MULTIMEDIA3) };
- 
- static const struct snd_kcontrol_new mmul4_mixer_controls[] = {
--	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_TX_MIXERS(MSM_FRONTEND_DAI_MULTIMEDIA4) };
- 
- static const struct snd_kcontrol_new mmul5_mixer_controls[] = {
--	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_TX_MIXERS(MSM_FRONTEND_DAI_MULTIMEDIA5) };
- 
- static const struct snd_kcontrol_new mmul6_mixer_controls[] = {
--	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_TX_MIXERS(MSM_FRONTEND_DAI_MULTIMEDIA6) };
- 
- static const struct snd_kcontrol_new mmul7_mixer_controls[] = {
--	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_TX_MIXERS(MSM_FRONTEND_DAI_MULTIMEDIA7) };
- 
- static const struct snd_kcontrol_new mmul8_mixer_controls[] = {
--	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
--		MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
--		msm_routing_put_audio_mixer),
--};
-+	Q6ROUTING_TX_MIXERS(MSM_FRONTEND_DAI_MULTIMEDIA8) };
- 
- static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
- 	/* Frontend AIF */
-@@ -709,154 +400,26 @@ static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
+@@ -261,9 +465,18 @@ struct afe_clk_set {
+ 	uint32_t enable;
  };
  
- static const struct snd_soc_dapm_route intercon[] = {
--	{"HDMI Mixer", "MultiMedia1", "MM_DL1"},
--	{"HDMI Mixer", "MultiMedia2", "MM_DL2"},
--	{"HDMI Mixer", "MultiMedia3", "MM_DL3"},
--	{"HDMI Mixer", "MultiMedia4", "MM_DL4"},
--	{"HDMI Mixer", "MultiMedia5", "MM_DL5"},
--	{"HDMI Mixer", "MultiMedia6", "MM_DL6"},
--	{"HDMI Mixer", "MultiMedia7", "MM_DL7"},
--	{"HDMI Mixer", "MultiMedia8", "MM_DL8"},
--	{"HDMI_RX", NULL, "HDMI Mixer"},
--
--	{"SLIMBUS_0_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"SLIMBUS_0_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"SLIMBUS_0_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
--	{"SLIMBUS_0_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
--	{"SLIMBUS_0_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
--	{"SLIMBUS_0_RX Audio Mixer", "MultiMedia6", "MM_DL6"},
--	{"SLIMBUS_0_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
--	{"SLIMBUS_0_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
--	{"SLIMBUS_0_RX", NULL, "SLIMBUS_0_RX Audio Mixer"},
--
--	{"SLIMBUS_1_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"SLIMBUS_1_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"SLIMBUS_1_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
--	{"SLIMBUS_1_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
--	{"SLIMBUS_1_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
--	{"SLIMBUS_1_RX Audio Mixer", "MultiMedia6", "MM_DL6"},
--	{"SLIMBUS_1_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
--	{"SLIMBUS_1_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
--	{"SLIMBUS_1_RX", NULL, "SLIMBUS_1_RX Audio Mixer"},
--
--	{"SLIMBUS_2_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"SLIMBUS_2_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"SLIMBUS_2_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
--	{"SLIMBUS_2_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
--	{"SLIMBUS_2_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
--	{"SLIMBUS_2_RX Audio Mixer", "MultiMedia6", "MM_DL6"},
--	{"SLIMBUS_2_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
--	{"SLIMBUS_2_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
--	{"SLIMBUS_2_RX", NULL, "SLIMBUS_2_RX Audio Mixer"},
--
--	{"SLIMBUS_3_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"SLIMBUS_3_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"SLIMBUS_3_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
--	{"SLIMBUS_3_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
--	{"SLIMBUS_3_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
--	{"SLIMBUS_3_RX Audio Mixer", "MultiMedia6", "MM_DL6"},
--	{"SLIMBUS_3_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
--	{"SLIMBUS_3_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
--	{"SLIMBUS_3_RX", NULL, "SLIMBUS_3_RX Audio Mixer"},
--
--	{"SLIMBUS_4_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"SLIMBUS_4_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"SLIMBUS_4_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
--	{"SLIMBUS_4_RX", NULL, "SLIMBUS_4_RX Audio Mixer"},
--
--	{"SLIMBUS_5_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"SLIMBUS_5_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"SLIMBUS_5_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
--	{"SLIMBUS_5_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
--	{"SLIMBUS_5_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
--	{"SLIMBUS_5_RX Audio Mixer", "MultiMedia6", "MM_DL6"},
--	{"SLIMBUS_5_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
--	{"SLIMBUS_5_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
--	{"SLIMBUS_5_RX", NULL, "SLIMBUS_5_RX Audio Mixer"},
--
--	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
--	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
--	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
--	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia6", "MM_DL6"},
--	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
--	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
--	{"SLIMBUS_6_RX", NULL, "SLIMBUS_6_RX Audio Mixer"},
--
--	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
--	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
--	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
--	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia6", "MM_DL6"},
--	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
--	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
--	{"QUAT_MI2S_RX", NULL, "QUAT_MI2S_RX Audio Mixer"},
--
--	{"TERT_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"TERT_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"TERT_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
--	{"TERT_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
--	{"TERT_MI2S_RX", NULL, "TERT_MI2S_RX Audio Mixer"},
--
--	{"SEC_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"SEC_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"SEC_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
--	{"SEC_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
--	{"SEC_MI2S_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
--	{"SEC_MI2S_RX Audio Mixer", "MultiMedia6", "MM_DL5"},
--	{"SEC_MI2S_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
--	{"SEC_MI2S_RX Audio Mixer", "MultiMedia8", "MM_DL7"},
--	{"SEC_MI2S_RX", NULL, "SEC_MI2S_RX Audio Mixer"},
--
--	{"PRI_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
--	{"PRI_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
--	{"PRI_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
--	{"PRI_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
--	{"PRI_MI2S_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
--	{"PRI_MI2S_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
--	{"PRI_MI2S_RX", NULL, "PRI_MI2S_RX Audio Mixer"},
--
--	{"MultiMedia1 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
--	{"MultiMedia1 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
--	{"MultiMedia1 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
--	{"MultiMedia1 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
--
--	{"MultiMedia2 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
--	{"MultiMedia2 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
--	{"MultiMedia2 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
--	{"MultiMedia2 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
--
--	{"MultiMedia3 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
--	{"MultiMedia3 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
--	{"MultiMedia3 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
--	{"MultiMedia3 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
--
--	{"MultiMedia4 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
--	{"MultiMedia4 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
--	{"MultiMedia4 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
--	{"MultiMedia4 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
--
--	{"MultiMedia5 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
--	{"MultiMedia5 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
--	{"MultiMedia5 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
--	{"MultiMedia5 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
--
--	{"MultiMedia6 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
--	{"MultiMedia6 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
--	{"MultiMedia6 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
--	{"MultiMedia6 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
--
--	{"MultiMedia7 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
--	{"MultiMedia7 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
--	{"MultiMedia7 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
--	{"MultiMedia7 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
--
--	{"MultiMedia8 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
--	{"MultiMedia8 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
--	{"MultiMedia8 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
--	{"MultiMedia8 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
-+	Q6ROUTING_RX_DAPM_ROUTE("HDMI Mixer", "HDMI_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("SLIMBUS_0_RX Audio Mixer", "SLIMBUS_0_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("SLIMBUS_1_RX Audio Mixer", "SLIMBUS_1_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("SLIMBUS_2_RX Audio Mixer", "SLIMBUS_2_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("SLIMBUS_3_RX Audio Mixer", "SLIMBUS_3_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("SLIMBUS_4_RX Audio Mixer", "SLIMBUS_4_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("SLIMBUS_5_RX Audio Mixer", "SLIMBUS_5_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("SLIMBUS_6_RX Audio Mixer", "SLIMBUS_6_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("QUAT_MI2S_RX Audio Mixer", "QUAT_MI2S_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("TERT_MI2S_RX Audio Mixer", "TERT_MI2S_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("SEC_MI2S_RX Audio Mixer", "SEC_MI2S_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("PRI_MI2S_RX Audio Mixer", "PRI_MI2S_RX"),
-+	Q6ROUTING_TX_DAPM_ROUTE("MultiMedia1 Mixer"),
-+	Q6ROUTING_TX_DAPM_ROUTE("MultiMedia2 Mixer"),
-+	Q6ROUTING_TX_DAPM_ROUTE("MultiMedia3 Mixer"),
-+	Q6ROUTING_TX_DAPM_ROUTE("MultiMedia4 Mixer"),
-+	Q6ROUTING_TX_DAPM_ROUTE("MultiMedia5 Mixer"),
-+	Q6ROUTING_TX_DAPM_ROUTE("MultiMedia6 Mixer"),
-+	Q6ROUTING_TX_DAPM_ROUTE("MultiMedia7 Mixer"),
-+	Q6ROUTING_TX_DAPM_ROUTE("MultiMedia8 Mixer"),
++struct afe_param_id_slot_mapping_cfg {
++	u32	minor_version;
++	u16	num_channels;
++	u16	bitwidth;
++	u32	data_align_type;
++	u16	ch_mapping[AFE_PORT_MAX_AUDIO_CHAN_CNT];
++} __packed;
++
+ struct q6afe_port {
+ 	wait_queue_head_t wait;
+ 	union afe_port_config port_cfg;
++	struct afe_param_id_slot_mapping_cfg *scfg;
+ 	struct aprv2_ibasic_rsp_result_t result;
+ 	int token;
+ 	int id;
+@@ -318,6 +531,166 @@ static struct afe_port_map port_maps[AFE_PORT_MAX] = {
+ 				QUATERNARY_MI2S_RX, 1, 1},
+ 	[QUATERNARY_MI2S_TX] = { AFE_PORT_ID_QUATERNARY_MI2S_TX,
+ 				QUATERNARY_MI2S_TX, 0, 1},
++	[PRIMARY_TDM_RX_0] =  { AFE_PORT_ID_PRIMARY_TDM_RX,
++				PRIMARY_TDM_RX_0, 1, 1},
++	[PRIMARY_TDM_TX_0] =  { AFE_PORT_ID_PRIMARY_TDM_TX,
++				PRIMARY_TDM_TX_0, 0, 1},
++	[PRIMARY_TDM_RX_1] =  { AFE_PORT_ID_PRIMARY_TDM_RX_1,
++				PRIMARY_TDM_RX_1, 1, 1},
++	[PRIMARY_TDM_TX_1] =  { AFE_PORT_ID_PRIMARY_TDM_TX_1,
++				PRIMARY_TDM_TX_1, 0, 1},
++	[PRIMARY_TDM_RX_2] =  { AFE_PORT_ID_PRIMARY_TDM_RX_2,
++				PRIMARY_TDM_RX_2, 1, 1},
++	[PRIMARY_TDM_TX_2] =  { AFE_PORT_ID_PRIMARY_TDM_TX_2,
++				PRIMARY_TDM_TX_2, 0, 1},
++	[PRIMARY_TDM_RX_3] =  { AFE_PORT_ID_PRIMARY_TDM_RX_3,
++				PRIMARY_TDM_RX_3, 1, 1},
++	[PRIMARY_TDM_TX_3] =  { AFE_PORT_ID_PRIMARY_TDM_TX_3,
++				PRIMARY_TDM_TX_3, 0, 1},
++	[PRIMARY_TDM_RX_4] =  { AFE_PORT_ID_PRIMARY_TDM_RX_4,
++				PRIMARY_TDM_RX_4, 1, 1},
++	[PRIMARY_TDM_TX_4] =  { AFE_PORT_ID_PRIMARY_TDM_TX_4,
++				PRIMARY_TDM_TX_4, 0, 1},
++	[PRIMARY_TDM_RX_5] =  { AFE_PORT_ID_PRIMARY_TDM_RX_5,
++				PRIMARY_TDM_RX_5, 1, 1},
++	[PRIMARY_TDM_TX_5] =  { AFE_PORT_ID_PRIMARY_TDM_TX_5,
++				PRIMARY_TDM_TX_5, 0, 1},
++	[PRIMARY_TDM_RX_6] =  { AFE_PORT_ID_PRIMARY_TDM_RX_6,
++				PRIMARY_TDM_RX_6, 1, 1},
++	[PRIMARY_TDM_TX_6] =  { AFE_PORT_ID_PRIMARY_TDM_TX_6,
++				PRIMARY_TDM_TX_6, 0, 1},
++	[PRIMARY_TDM_RX_7] =  { AFE_PORT_ID_PRIMARY_TDM_RX_7,
++				PRIMARY_TDM_RX_7, 1, 1},
++	[PRIMARY_TDM_TX_7] =  { AFE_PORT_ID_PRIMARY_TDM_TX_7,
++				PRIMARY_TDM_TX_7, 0, 1},
++	[SECONDARY_TDM_RX_0] =  { AFE_PORT_ID_SECONDARY_TDM_RX,
++				SECONDARY_TDM_RX_0, 1, 1},
++	[SECONDARY_TDM_TX_0] =  { AFE_PORT_ID_SECONDARY_TDM_TX,
++				SECONDARY_TDM_TX_0, 0, 1},
++	[SECONDARY_TDM_RX_1] =  { AFE_PORT_ID_SECONDARY_TDM_RX_1,
++				SECONDARY_TDM_RX_1, 1, 1},
++	[SECONDARY_TDM_TX_1] =  { AFE_PORT_ID_SECONDARY_TDM_TX_1,
++				SECONDARY_TDM_TX_1, 0, 1},
++	[SECONDARY_TDM_RX_2] =  { AFE_PORT_ID_SECONDARY_TDM_RX_2,
++				SECONDARY_TDM_RX_2, 1, 1},
++	[SECONDARY_TDM_TX_2] =  { AFE_PORT_ID_SECONDARY_TDM_TX_2,
++				SECONDARY_TDM_TX_2, 0, 1},
++	[SECONDARY_TDM_RX_3] =  { AFE_PORT_ID_SECONDARY_TDM_RX_3,
++				SECONDARY_TDM_RX_3, 1, 1},
++	[SECONDARY_TDM_TX_3] =  { AFE_PORT_ID_SECONDARY_TDM_TX_3,
++				SECONDARY_TDM_TX_3, 0, 1},
++	[SECONDARY_TDM_RX_4] =  { AFE_PORT_ID_SECONDARY_TDM_RX_4,
++				SECONDARY_TDM_RX_4, 1, 1},
++	[SECONDARY_TDM_TX_4] =  { AFE_PORT_ID_SECONDARY_TDM_TX_4,
++				SECONDARY_TDM_TX_4, 0, 1},
++	[SECONDARY_TDM_RX_5] =  { AFE_PORT_ID_SECONDARY_TDM_RX_5,
++				SECONDARY_TDM_RX_5, 1, 1},
++	[SECONDARY_TDM_TX_5] =  { AFE_PORT_ID_SECONDARY_TDM_TX_5,
++				SECONDARY_TDM_TX_5, 0, 1},
++	[SECONDARY_TDM_RX_6] =  { AFE_PORT_ID_SECONDARY_TDM_RX_6,
++				SECONDARY_TDM_RX_6, 1, 1},
++	[SECONDARY_TDM_TX_6] =  { AFE_PORT_ID_SECONDARY_TDM_TX_6,
++				SECONDARY_TDM_TX_6, 0, 1},
++	[SECONDARY_TDM_RX_7] =  { AFE_PORT_ID_SECONDARY_TDM_RX_7,
++				SECONDARY_TDM_RX_7, 1, 1},
++	[SECONDARY_TDM_TX_7] =  { AFE_PORT_ID_SECONDARY_TDM_TX_7,
++				SECONDARY_TDM_TX_7, 0, 1},
++	[TERTIARY_TDM_RX_0] =  { AFE_PORT_ID_TERTIARY_TDM_RX,
++				TERTIARY_TDM_RX_0, 1, 1},
++	[TERTIARY_TDM_TX_0] =  { AFE_PORT_ID_TERTIARY_TDM_TX,
++				TERTIARY_TDM_TX_0, 0, 1},
++	[TERTIARY_TDM_RX_1] =  { AFE_PORT_ID_TERTIARY_TDM_RX_1,
++				TERTIARY_TDM_RX_1, 1, 1},
++	[TERTIARY_TDM_TX_1] =  { AFE_PORT_ID_TERTIARY_TDM_TX_1,
++				TERTIARY_TDM_TX_1, 0, 1},
++	[TERTIARY_TDM_RX_2] =  { AFE_PORT_ID_TERTIARY_TDM_RX_2,
++				TERTIARY_TDM_RX_2, 1, 1},
++	[TERTIARY_TDM_TX_2] =  { AFE_PORT_ID_TERTIARY_TDM_TX_2,
++				TERTIARY_TDM_TX_2, 0, 1},
++	[TERTIARY_TDM_RX_3] =  { AFE_PORT_ID_TERTIARY_TDM_RX_3,
++				TERTIARY_TDM_RX_3, 1, 1},
++	[TERTIARY_TDM_TX_3] =  { AFE_PORT_ID_TERTIARY_TDM_TX_3,
++				TERTIARY_TDM_TX_3, 0, 1},
++	[TERTIARY_TDM_RX_4] =  { AFE_PORT_ID_TERTIARY_TDM_RX_4,
++				TERTIARY_TDM_RX_4, 1, 1},
++	[TERTIARY_TDM_TX_4] =  { AFE_PORT_ID_TERTIARY_TDM_TX_4,
++				TERTIARY_TDM_TX_4, 0, 1},
++	[TERTIARY_TDM_RX_5] =  { AFE_PORT_ID_TERTIARY_TDM_RX_5,
++				TERTIARY_TDM_RX_5, 1, 1},
++	[TERTIARY_TDM_TX_5] =  { AFE_PORT_ID_TERTIARY_TDM_TX_5,
++				TERTIARY_TDM_TX_5, 0, 1},
++	[TERTIARY_TDM_RX_6] =  { AFE_PORT_ID_TERTIARY_TDM_RX_6,
++				TERTIARY_TDM_RX_6, 1, 1},
++	[TERTIARY_TDM_TX_6] =  { AFE_PORT_ID_TERTIARY_TDM_TX_6,
++				TERTIARY_TDM_TX_6, 0, 1},
++	[TERTIARY_TDM_RX_7] =  { AFE_PORT_ID_TERTIARY_TDM_RX_7,
++				TERTIARY_TDM_RX_7, 1, 1},
++	[TERTIARY_TDM_TX_7] =  { AFE_PORT_ID_TERTIARY_TDM_TX_7,
++				TERTIARY_TDM_TX_7, 0, 1},
++	[QUATERNARY_TDM_RX_0] =  { AFE_PORT_ID_QUATERNARY_TDM_RX,
++				QUATERNARY_TDM_RX_0, 1, 1},
++	[QUATERNARY_TDM_TX_0] =  { AFE_PORT_ID_QUATERNARY_TDM_TX,
++				QUATERNARY_TDM_TX_0, 0, 1},
++	[QUATERNARY_TDM_RX_1] =  { AFE_PORT_ID_QUATERNARY_TDM_RX_1,
++				QUATERNARY_TDM_RX_1, 1, 1},
++	[QUATERNARY_TDM_TX_1] =  { AFE_PORT_ID_QUATERNARY_TDM_TX_1,
++				QUATERNARY_TDM_TX_1, 0, 1},
++	[QUATERNARY_TDM_RX_2] =  { AFE_PORT_ID_QUATERNARY_TDM_RX_2,
++				QUATERNARY_TDM_RX_2, 1, 1},
++	[QUATERNARY_TDM_TX_2] =  { AFE_PORT_ID_QUATERNARY_TDM_TX_2,
++				QUATERNARY_TDM_TX_2, 0, 1},
++	[QUATERNARY_TDM_RX_3] =  { AFE_PORT_ID_QUATERNARY_TDM_RX_3,
++				QUATERNARY_TDM_RX_3, 1, 1},
++	[QUATERNARY_TDM_TX_3] =  { AFE_PORT_ID_QUATERNARY_TDM_TX_3,
++				QUATERNARY_TDM_TX_3, 0, 1},
++	[QUATERNARY_TDM_RX_4] =  { AFE_PORT_ID_QUATERNARY_TDM_RX_4,
++				QUATERNARY_TDM_RX_4, 1, 1},
++	[QUATERNARY_TDM_TX_4] =  { AFE_PORT_ID_QUATERNARY_TDM_TX_4,
++				QUATERNARY_TDM_TX_4, 0, 1},
++	[QUATERNARY_TDM_RX_5] =  { AFE_PORT_ID_QUATERNARY_TDM_RX_5,
++				QUATERNARY_TDM_RX_5, 1, 1},
++	[QUATERNARY_TDM_TX_5] =  { AFE_PORT_ID_QUATERNARY_TDM_TX_5,
++				QUATERNARY_TDM_TX_5, 0, 1},
++	[QUATERNARY_TDM_RX_6] =  { AFE_PORT_ID_QUATERNARY_TDM_RX_6,
++				QUATERNARY_TDM_RX_6, 1, 1},
++	[QUATERNARY_TDM_TX_6] =  { AFE_PORT_ID_QUATERNARY_TDM_TX_6,
++				QUATERNARY_TDM_TX_6, 0, 1},
++	[QUATERNARY_TDM_RX_7] =  { AFE_PORT_ID_QUATERNARY_TDM_RX_7,
++				QUATERNARY_TDM_RX_7, 1, 1},
++	[QUATERNARY_TDM_TX_7] =  { AFE_PORT_ID_QUATERNARY_TDM_TX_7,
++				QUATERNARY_TDM_TX_7, 0, 1},
++	[QUINARY_TDM_RX_0] =  { AFE_PORT_ID_QUINARY_TDM_RX,
++				QUINARY_TDM_RX_0, 1, 1},
++	[QUINARY_TDM_TX_0] =  { AFE_PORT_ID_QUINARY_TDM_TX,
++				QUINARY_TDM_TX_0, 0, 1},
++	[QUINARY_TDM_RX_1] =  { AFE_PORT_ID_QUINARY_TDM_RX_1,
++				QUINARY_TDM_RX_1, 1, 1},
++	[QUINARY_TDM_TX_1] =  { AFE_PORT_ID_QUINARY_TDM_TX_1,
++				QUINARY_TDM_TX_1, 0, 1},
++	[QUINARY_TDM_RX_2] =  { AFE_PORT_ID_QUINARY_TDM_RX_2,
++				QUINARY_TDM_RX_2, 1, 1},
++	[QUINARY_TDM_TX_2] =  { AFE_PORT_ID_QUINARY_TDM_TX_2,
++				QUINARY_TDM_TX_2, 0, 1},
++	[QUINARY_TDM_RX_3] =  { AFE_PORT_ID_QUINARY_TDM_RX_3,
++				QUINARY_TDM_RX_3, 1, 1},
++	[QUINARY_TDM_TX_3] =  { AFE_PORT_ID_QUINARY_TDM_TX_3,
++				QUINARY_TDM_TX_3, 0, 1},
++	[QUINARY_TDM_RX_4] =  { AFE_PORT_ID_QUINARY_TDM_RX_4,
++				QUINARY_TDM_RX_4, 1, 1},
++	[QUINARY_TDM_TX_4] =  { AFE_PORT_ID_QUINARY_TDM_TX_4,
++				QUINARY_TDM_TX_4, 0, 1},
++	[QUINARY_TDM_RX_5] =  { AFE_PORT_ID_QUINARY_TDM_RX_5,
++				QUINARY_TDM_RX_5, 1, 1},
++	[QUINARY_TDM_TX_5] =  { AFE_PORT_ID_QUINARY_TDM_TX_5,
++				QUINARY_TDM_TX_5, 0, 1},
++	[QUINARY_TDM_RX_6] =  { AFE_PORT_ID_QUINARY_TDM_RX_6,
++				QUINARY_TDM_RX_6, 1, 1},
++	[QUINARY_TDM_TX_6] =  { AFE_PORT_ID_QUINARY_TDM_TX_6,
++				QUINARY_TDM_TX_6, 0, 1},
++	[QUINARY_TDM_RX_7] =  { AFE_PORT_ID_QUINARY_TDM_RX_7,
++				QUINARY_TDM_RX_7, 1, 1},
++	[QUINARY_TDM_TX_7] =  { AFE_PORT_ID_QUINARY_TDM_TX_7,
++				QUINARY_TDM_TX_7, 0, 1},
+ };
  
- 	{"MM_UL1", NULL, "MultiMedia1 Mixer"},
- 	{"MM_UL2", NULL, "MultiMedia2 Mixer"},
+ static void q6afe_port_free(struct kref *ref)
+@@ -331,6 +704,7 @@ static void q6afe_port_free(struct kref *ref)
+ 	spin_lock_irqsave(&afe->port_list_lock, flags);
+ 	list_del(&port->node);
+ 	spin_unlock_irqrestore(&afe->port_list_lock, flags);
++	kfree(port->scfg);
+ 	kfree(port);
+ }
+ 
+@@ -601,7 +975,9 @@ int q6afe_port_set_sysclk(struct q6afe_port *port, int clk_id,
+ 		ccfg.clk_set_mode = Q6AFE_LPASS_MODE_CLK2_VALID;
+ 		ret = q6afe_set_lpass_clock(port, &ccfg);
+ 		break;
+-	case Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT ... Q6AFE_LPASS_CLK_ID_INT_MCLK_1:
++	case Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT ... Q6AFE_LPASS_CLK_ID_QUI_MI2S_OSR:
++	case Q6AFE_LPASS_CLK_ID_MCLK_1 ... Q6AFE_LPASS_CLK_ID_INT_MCLK_1:
++	case Q6AFE_LPASS_CLK_ID_PRI_TDM_IBIT ... Q6AFE_LPASS_CLK_ID_QUIN_TDM_EBIT:
+ 		cset.clk_set_minor_version = AFE_API_VERSION_CLOCK_SET;
+ 		cset.clk_id = clk_id;
+ 		cset.clk_freq_in_hz = freq;
+@@ -696,6 +1072,42 @@ void q6afe_slim_port_prepare(struct q6afe_port *port,
+ }
+ EXPORT_SYMBOL_GPL(q6afe_slim_port_prepare);
+ 
++/**
++ * q6afe_tdm_port_prepare() - Prepare tdm afe port.
++ *
++ * @port: Instance of afe port
++ * @cfg: TDM configuration for the afe port
++ *
++ */
++void q6afe_tdm_port_prepare(struct q6afe_port *port,
++			     struct q6afe_tdm_cfg *cfg)
++{
++	union afe_port_config *pcfg = &port->port_cfg;
++
++	pcfg->tdm_cfg.tdm_cfg_minor_version = AFE_API_VERSION_TDM_CONFIG;
++	pcfg->tdm_cfg.num_channels = cfg->num_channels;
++	pcfg->tdm_cfg.sample_rate = cfg->sample_rate;
++	pcfg->tdm_cfg.bit_width = cfg->bit_width;
++	pcfg->tdm_cfg.data_format = cfg->data_format;
++	pcfg->tdm_cfg.sync_mode = cfg->sync_mode;
++	pcfg->tdm_cfg.sync_src = cfg->sync_src;
++	pcfg->tdm_cfg.nslots_per_frame = cfg->nslots_per_frame;
++
++	pcfg->tdm_cfg.slot_width = cfg->slot_width;
++	pcfg->tdm_cfg.slot_mask = cfg->slot_mask;
++	port->scfg = kzalloc(sizeof(*port->scfg), GFP_KERNEL);
++	if (!port->scfg)
++		return;
++
++	port->scfg->minor_version = AFE_API_VERSION_SLOT_MAPPING_CONFIG;
++	port->scfg->num_channels = cfg->num_channels;
++	port->scfg->bitwidth = cfg->bit_width;
++	port->scfg->data_align_type = cfg->data_align_type;
++	memcpy(port->scfg->ch_mapping, cfg->ch_mapping,
++			sizeof(u16) * AFE_PORT_MAX_AUDIO_CHAN_CNT);
++}
++EXPORT_SYMBOL_GPL(q6afe_tdm_port_prepare);
++
+ /**
+  * q6afe_hdmi_port_prepare() - Prepare hdmi afe port.
+  *
+@@ -886,6 +1298,17 @@ int q6afe_port_start(struct q6afe_port *port)
+ 		return ret;
+ 	}
+ 
++	if (port->scfg) {
++		ret  = q6afe_port_set_param_v2(port, port->scfg,
++					AFE_PARAM_ID_PORT_SLOT_MAPPING_CONFIG,
++					AFE_MODULE_TDM, sizeof(*port->scfg));
++		if (ret) {
++			dev_err(afe->dev, "AFE enable for port 0x%x failed %d\n",
++			port_id, ret);
++			return ret;
++		}
++	}
++
+ 	pkt_size = APR_HDR_SIZE + sizeof(*start);
+ 	p = kzalloc(pkt_size, GFP_KERNEL);
+ 	if (!p)
+@@ -970,6 +1393,10 @@ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
+ 	case AFE_PORT_ID_QUATERNARY_MI2S_TX:
+ 		cfg_type = AFE_PARAM_ID_I2S_CONFIG;
+ 		break;
++	case AFE_PORT_ID_PRIMARY_TDM_RX ... AFE_PORT_ID_QUINARY_TDM_TX_7:
++		cfg_type = AFE_PARAM_ID_TDM_CONFIG;
++		break;
++
+ 	default:
+ 		dev_err(dev, "Invalid port id 0x%x\n", port_id);
+ 		return ERR_PTR(-EINVAL);
+diff --git a/sound/soc/qcom/qdsp6/q6afe.h b/sound/soc/qcom/qdsp6/q6afe.h
+index 5ca54a9bdfd5..c7ed5422baff 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.h
++++ b/sound/soc/qcom/qdsp6/q6afe.h
+@@ -5,7 +5,7 @@
+ 
+ #include <dt-bindings/sound/qcom,q6afe.h>
+ 
+-#define AFE_PORT_MAX		48
++#define AFE_PORT_MAX		105
+ 
+ #define MSM_AFE_PORT_TYPE_RX 0
+ #define MSM_AFE_PORT_TYPE_TX 1
+@@ -144,6 +144,8 @@
+ /* Clock attribute for invert and no couple case */
+ #define Q6AFE_LPASS_CLK_ATTRIBUTE_INVERT_COUPLE_NO	0x4
+ 
++#define Q6AFE_CMAP_INVALID		0xFFFF
++
+ struct q6afe_hdmi_cfg {
+ 	u16                  datatype;
+ 	u16                  channel_allocation;
+@@ -168,10 +170,25 @@ struct q6afe_i2s_cfg {
+ 	int fmt;
+ };
+ 
++struct q6afe_tdm_cfg {
++	u16	num_channels;
++	u32	sample_rate;
++	u16	bit_width;
++	u16	data_format;
++	u16	sync_mode;
++	u16	sync_src;
++	u16	nslots_per_frame;
++	u16	slot_width;
++	u16	slot_mask;
++	u32	data_align_type;
++	u16	ch_mapping[AFE_MAX_CHAN_COUNT];
++};
++
+ struct q6afe_port_config {
+ 	struct q6afe_hdmi_cfg hdmi;
+ 	struct q6afe_slim_cfg slim;
+ 	struct q6afe_i2s_cfg i2s_cfg;
++	struct q6afe_tdm_cfg tdm;
+ };
+ 
+ struct q6afe_port;
+@@ -186,6 +203,7 @@ void q6afe_hdmi_port_prepare(struct q6afe_port *port,
+ void q6afe_slim_port_prepare(struct q6afe_port *port,
+ 			  struct q6afe_slim_cfg *cfg);
+ int q6afe_i2s_port_prepare(struct q6afe_port *port, struct q6afe_i2s_cfg *cfg);
++void q6afe_tdm_port_prepare(struct q6afe_port *port, struct q6afe_tdm_cfg *cfg);
+ 
+ int q6afe_port_set_sysclk(struct q6afe_port *port, int clk_id,
+ 			  int clk_src, int clk_root,
 -- 
 2.16.2
