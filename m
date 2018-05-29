@@ -1,143 +1,165 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3174725-1527654904-2-18178186924118577021
+X-Cyrus-Session-Id: sloti22d1t05-2302194-1527608456-2-11643566342764516765
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527654904; b=CjHTnpIhRDcXyl3nh0FEg412SDNYlOS1PXoYtidDT6K0lyvFCE
-    ltcmwtA16WOCtL0S+4Y3GYVOpV3z0kbluIHPfWFzy3OS3K3V6QOWiQ0hv3Aw4HIB
-    iqxHR/PWCK3i8cR2rBe0VECG3Dhzi+iJ4yPQF8MyHFrM7hcDSTSrbD6Oj3UKTK53
-    kmVBpnHG8/sLMaLf7zK2MPG3dp18yl3yChzxYzMcEBX+GqEZ8j/nGc/2X9yFlh5+
-    9meGaHDaQEdphHIt0KCbgmLhSukhg2IkvhzVz6GmaLJ8fHghRJ5fx1VXcwhxqkDV
-    ROAdJFgwNq4CEtitz83sTkb02KGhARL3bKkA==
+    1527608455; b=GkkMFzDu2BYt4P90RvH3bHzWwlXTIN6rsQRE3jr5qgbPtkvV1m
+    lzdPXmemBpkw5WT2mlIKjBIJ0hAu6kZFP42IAqaMLmPRd+HESyKM06HOmVF1kDke
+    a+j0IeyHx6YFZ1zkR5UjyI9K6hVowQL134AhL+5/CZUAU8wBzRkKBhtWwcOxwl4K
+    hgzF536+NyzJ8U4yQdvg/DuS5SgdAfpHBferkzIpDuDGs67vJadfTqIcY5rZ2Gfr
+    Q0y4meRpr7aUhaClK9vljqRlp+mjnpJO07F7dzC39Uuq9sSobfjuchyXDjlzf38l
+    +C9383MDzMXKiD+eKosYXHiv2sMESOcT0lRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527654904; bh=CeADdkq2WcSrOiVjp0dG/LIv4knSa3
-    0FHpBX1wAoOsA=; b=kxS6SqpJytaNiO/2yy/BrfMufpcGogURwvYCO75A0W9oRT
-    YkHKVQRYU5ABQz+eRGj3jy1ckdxJ1lMOSRwzIbdYkhUgMiH9NkdZM2ijXzJZWuDA
-    5wsqAv6p5g2ma7FtJcs4ybCnzi9mJXldTUFzT5uy5YO53Rvp4EwdrIP+AnAKjDty
-    5uvEbmyZt4ZYX7HncM+hA4wwbmS0dOpwepOoPnmv7Txp59LL4Ayz0YfloDlsjUB2
-    S9+YJf9+VMZ2G8zKqxf7ECPRLgfLFPZT3VbFjddD1RWwf4qCwYTkbdP+GUmy3I8V
-    OGSkDmGGMWst8CFfaqHbVqpqnRUswKQu5x5vUVVg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=fromorbit.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1527608455; bh=1QHomPqwz94oSov/7MO/6iTWv2mVoqI63XiMoVg5BI
+    o=; b=KFUS6e6ldPX7KvlB5lGZxst0Lase5me81EB6Tn8ptvNX97rbpGcsRr5HOd
+    BviFGSYNyHG9MYKXd6sXMr3FM9YggAyPSnRZ72LpxSfQhiIx6mdT+5X7gBS1h5PQ
+    UWWdrF8b/IjdejrhceCWuwYkcsm0txjx8d4F+gzB7Km7ILs6Gmt8QD0qSO47Z+Kv
+    X8z4j9OHo7NWC4gUux+3tqPHXKdKRRz7qML7nnG3ezRb5KHu/motTiXptGNw7Cjt
+    36qkCOQhg0UEng47liREnl8oS4FxdCbiA7gSJh3AV2k08boWs+qo2KISzrCZt6is
+    ByOQqJvXC63Hc65N5QhePjF8XJSg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kinvolk.io
+    header.i=@kinvolk.io header.b=Jda0AN+9 header.a=rsa-sha256
+    header.s=google x-bits=1024;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kinvolk.io;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=BonKth8C;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=fromorbit.com header.result=pass
-    header_is_org_domain=yes;
+    header.domain=kinvolk.io header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=fromorbit.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=kinvolk.io
+      header.i=@kinvolk.io header.b=Jda0AN+9 header.a=rsa-sha256
+      header.s=google x-bits=1024;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kinvolk.io;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=BonKth8C;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=fromorbit.com header.result=pass
-      header_is_org_domain=yes;
+      header.domain=kinvolk.io header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKA1th97tNhVs+OcL77WWyIQnjaIQGbmdGMZXQKCYvWMr+cEfk8DG6S6NV49A26la8Vl/oZSVq9iXv0c8SWo4+0gxQPdZBonpFwQnOXI6kPGq64rdZbd
-    qNC4ekbTQqp84l/pdT8vfLjjPh6fkrilf7rLC3i37Yu+XxwTBxlvfohp5ocMTSkV2NTaO4NDQiZ4cXCAUrHrg5YfyV+mmrMCFiUDeG7YsYbIGMvoCMytTDeM
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=7-415B0cAAAA:8 a=GvOkAvA3uZluRxjufzAA:9 a=CjuIK1q_8ugA:10
-    a=biEYGPWJfzWAr4FL6Ov7:22
+X-CM-Envelope: MS4wfMG4kpQNLlfCG7vnRcetof9xOJkLxKHuknByZortUar980WavTuLAfOL4glTmkXtfviDTSweXOx6kodzmvGYA0MI2Os/kEBQ5r7A7/qr0nZlyy5fm34j
+    DVCO+3RScr7Eozh0C5NdgqWsCNcp2uv+/ImQ6rB288rXA5CBLD3VfkdJ5ZQbnzIwcDoYIr53+py7RfKWf86G7EUfSaBQfB2ECHyLrg9XfVSblIW8skT5pRWz
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=PtDNVHqPAAAA:8 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=ag1SF4gXAAAA:8 a=L2i-6bQ3sLBWRfcJRRIA:9 a=QEXdDO2ut3YA:10
+    a=BpimnaHY1jUKGyF_4-AF:22 a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934990AbeE3EfB (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 30 May 2018 00:35:01 -0400
-Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:3904 "EHLO
-        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934541AbeE3Ee6 (ORCPT
+        id S935090AbeE2Pkw (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 11:40:52 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:34273 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934860AbeE2Pkv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 May 2018 00:34:58 -0400
-Date: Wed, 30 May 2018 14:34:55 +1000
-From: Dave Chinner <david@fromorbit.com>
+        Tue, 29 May 2018 11:40:51 -0400
+X-Google-Smtp-Source: ADUXVKKjdUENhfxDFgWevGvOsNha/CdGBVBkUUl8jtT/MtuG/TqFHe0xQxS1QHwv2FeBAVrI7FCiU1yxTEpml/s0Fjo=
+MIME-Version: 1.0
+In-Reply-To: <87o9h6554f.fsf@xmission.com>
+References: <87o9h6554f.fsf@xmission.com>
+From: Dongsu Park <dongsu@kinvolk.io>
+Date: Tue, 29 May 2018 17:40:50 +0200
+Message-ID: <CANxcAMt5f7=TV3Yqc6iavos=saGFOPKC4R4Yr9yGbKoVwq3YGw@mail.gmail.com>
+Subject: Re: [REVIEW][PATCH 0/6] Wrapping up the vfs support for unprivileged mounts
 To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linux Containers <containers@lists.linux-foundation.org>,
+Cc: Linux Containers <containers@lists.linux-foundation.org>,
         linux-fsdevel@vger.kernel.org,
         Seth Forshee <seth.forshee@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [REVIEW][PATCH 0/6] Wrapping up the vfs support for unprivileged
- mounts
-Message-ID: <20180530043455.GN23861@dastard>
-References: <87o9h6554f.fsf@xmission.com>
- <20180524214617.GG7712@thunk.org>
- <87y3g8y6x9.fsf@xmission.com>
- <20180525035716.GE10363@dastard>
- <8736yar4g3.fsf@xmission.com>
- <20180529221710.GM23861@dastard>
- <87k1rlkh1g.fsf@xmission.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1rlkh1g.fsf@xmission.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        LKML <linux-kernel@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 29, 2018 at 09:34:35PM -0500, Eric W. Biederman wrote:
-> Dave Chinner <david@fromorbit.com> writes:
-> 
-> > Yeah, the are some fairly big process and policy things that
-> > need to be decided here. Not just at the kernel level, but at
-> > distro and app infrastructure level too.
-> >
-> > I was originally sceptical of supporting kernel filesystems via
-> > lkl, but the desire for unprivileged mounts has not gone away
-> > and so I'm less worried about accessing filesystems that way
-> > than I am of letting the kernel parse untrusted images from
-> > untrusted users...
-> 
-> There is also the more readily available libguestfs which doesn't
-> support as many filesystems but does seem available in most linux
-> distributions already.  It already has a fuse option available
-> with guestmount.  I may have to dig in there and see how to make
-> it available without using fusermount.
+Hi,
 
-That only provides host access to filesystems mounted inside guest
-VMs, right?  AFAIA, libguestfs is not providing a FUSE
-implementation that mounts and parses raw XFS images. e.g it barely
-understands anything XFS, and that which it does is via running and
-screen-scraping the output of XFS's userspace management tools...
+On Thu, May 24, 2018 at 1:22 AM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+>
+> Very slowly the work has been progressing to ensure the vfs has the
+> necessary support for mounting filesystems without privilege.
+>
+> This patchset contains one more core piece of that work, ensuring a few
+> more operations that would write back an inode and confuse an exisiting
+> filesystem are denied.
+>
+> The rest of the changes actually enable userns root to do things with
+> filesystems that the userns root has mounted.  Most of these have been
+> waiting in the wings a long time, held back because I wanted the core
+> of the patchset to be solid before I started allowing additional
+> behavor.
+>
+> It is definitely time for these changes so the effect of s_user_ns
+> becomes less theoretical.
+>
+> The change to allow mknod is new, but consistent with everything else
+> and harmless as device nodes on filesystems mounted without privilege
+> are ignored.
+>
+> Unless problems show up in the during review I plan to merge these changes.
 
-> > I'm not sure what the correct forum for this is - wasn't this
-> > something the Plumbers conference was supposed to facilitate?
-> 
-> Yes.  If we all need to be in a room and talk about things.
-> It is early enough in the planning for Plumers that we could
-> definitely schedule a talk or a BOF for this.
+Thank you for the great work. I have been looking forward to seeing it.
+I have just gathered available relevant patches in my branch:
 
-Ok. I have no idea if I'll be at plumbers - it's an awful long way
-from where I am....
+https://github.com/kinvolk/linux/tree/dongsu/fuse-userns-for-4.18
 
-Cheers,
+With this branch, I tested sshfs/fuse from non-init user namespace.
+It works fine as expected. So you can add:
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Tested-by: Dongsu Park <dongsu@kinvolk.io>
+
+Thanks!
+Dongsu
+
+> These changes are also available at:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-test
+>
+> Eric W. Biederman (5):
+>       vfs: Don't allow changing the link count of an inode with an invalid uid or gid
+>       vfs: Allow userns root to call mknod on owned filesystems.
+>       fs: Allow superblock owner to replace invalid owners of inodes
+>       fs: Allow superblock owner to access do_remount_sb()
+>       capabilities: Allow privileged user in s_user_ns to set security.* xattrs
+>
+> Seth Forshee (1):
+>       fs: Allow CAP_SYS_ADMIN in s_user_ns to freeze and thaw filesystems
+>
+>  fs/attr.c            | 36 ++++++++++++++++++++++++++++--------
+>  fs/ioctl.c           |  4 ++--
+>  fs/namei.c           | 16 ++++++++++++----
+>  fs/namespace.c       |  4 ++--
+>  security/commoncap.c |  8 ++++++--
+>  5 files changed, 50 insertions(+), 18 deletions(-)
+>
+> Eric
+> _______________________________________________
+> Containers mailing list
+> Containers@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/containers
