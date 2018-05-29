@@ -1,73 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968043AbeE2W7I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:59:08 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33436 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967991AbeE2W7E (ORCPT
+        id S968107AbeE2W7e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:59:34 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42694 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967906AbeE2W7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:59:04 -0400
-X-Google-Smtp-Source: ADUXVKK4xRc3G/gNg0UMtXwCZcMrTOZIOLEgzZFAeSQIDV1xrN4e6/WyZ3oA1jtBHs0pxZfhhRkP5Q==
-Date: Tue, 29 May 2018 15:59:01 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Pramod Kumar <pramod.kumar@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mdio-mux-gpio: Remove VLA usage
-Message-ID: <20180529225901.GA30464@beast>
+        Tue, 29 May 2018 18:59:32 -0400
+X-Google-Smtp-Source: ADUXVKJ6sExi7vHWohysc91x9PSB9s3yyytu6rhQu0ZnqAZMWfIJR5zPCI33xQFgcj6F8AqLwDP/xQ==
+Date: Tue, 29 May 2018 15:59:28 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Martin Kepplinger <martink@posteo.de>
+Cc: corbet@lwn.net, gregkh@linuxfoundation.org, logang@deltatee.com,
+        stefanha@redhat.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH 1/2] Input: mk712: update documentation web link
+Message-ID: <20180529225928.GF167092@dtor-ws>
+References: <20180402125551.13641-1-martink@posteo.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180402125551.13641-1-martink@posteo.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-allocates the values buffer during the callback instead of putting it
-on the stack.
+On Mon, Apr 02, 2018 at 02:55:50PM +0200, Martin Kepplinger wrote:
+> At the mentioned address there's nothing found. By searching information
+> on the controller chip still can be found, so update the link to the
+> resulting page.
+> 
+> Signed-off-by: Martin Kepplinger <martink@posteo.de>
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+Applied, thank you.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/net/phy/mdio-mux-gpio.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
-index 082ffef0dec4..e99994f4ed50 100644
---- a/drivers/net/phy/mdio-mux-gpio.c
-+++ b/drivers/net/phy/mdio-mux-gpio.c
-@@ -26,18 +26,23 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
- 				   void *data)
- {
- 	struct mdio_mux_gpio_state *s = data;
--	int values[s->gpios->ndescs];
-+	int *values;
- 	unsigned int n;
- 
- 	if (current_child == desired_child)
- 		return 0;
- 
-+	values = kmalloc_array(s->gpios->ndescs, sizeof(*values), GFP_KERNEL);
-+	if (!values)
-+		return -ENOMEM;
-+
- 	for (n = 0; n < s->gpios->ndescs; n++)
- 		values[n] = (desired_child >> n) & 1;
- 
- 	gpiod_set_array_value_cansleep(s->gpios->ndescs, s->gpios->desc,
- 				       values);
- 
-+	kfree(values);
- 	return 0;
- }
- 
--- 
-2.17.0
-
+> ---
+>  drivers/input/touchscreen/mk712.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/touchscreen/mk712.c b/drivers/input/touchscreen/mk712.c
+> index bd5352824f77..c179060525ae 100644
+> --- a/drivers/input/touchscreen/mk712.c
+> +++ b/drivers/input/touchscreen/mk712.c
+> @@ -17,7 +17,7 @@
+>   * found in Gateway AOL Connected Touchpad computers.
+>   *
+>   * Documentation for ICS MK712 can be found at:
+> - *	http://www.idt.com/products/getDoc.cfm?docID=18713923
+> + *	https://www.idt.com/general-parts/mk712-touch-screen-controller
+>   */
+>  
+>  /*
+> -- 
+> 2.16.2
+> 
 
 -- 
-Kees Cook
-Pixel Security
+Dmitry
