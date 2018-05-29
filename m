@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967098AbeE2VRh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:17:37 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:46589 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966847AbeE2VRb (ORCPT
+        id S967417AbeE2VUj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:20:39 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:43794 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967099AbeE2VRc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:17:31 -0400
-X-Google-Smtp-Source: ADUXVKIqDa7RcPW58D/9JRPCYrHQmzujbpwCT9iybMqnf12I4YdUjdbwFneEZT+mia0LT6gGbmR4NQ==
+        Tue, 29 May 2018 17:17:32 -0400
+X-Google-Smtp-Source: ADUXVKLMnDmPk/RWV1FW8yuYFHneMOc44iW8G2K7SDgynYfAML7OndSO/LoIPX21kGYZ2VBFGJ6K+g==
 From: Josef Bacik <josef@toxicpanda.com>
 To: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
         akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
         linux-kernel@vger.kernel.org, tj@kernel.org,
         linux-fsdevel@vger.kernel.org
 Cc: Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 02/13] block: introduce bio_issue_as_root_blkg
-Date: Tue, 29 May 2018 17:17:13 -0400
-Message-Id: <20180529211724.4531-3-josef@toxicpanda.com>
+Subject: [PATCH 03/13] blk-cgroup: allow controllers to output their own stats
+Date: Tue, 29 May 2018 17:17:14 -0400
+Message-Id: <20180529211724.4531-4-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529211724.4531-1-josef@toxicpanda.com>
 References: <20180529211724.4531-1-josef@toxicpanda.com>
@@ -26,45 +26,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Josef Bacik <jbacik@fb.com>
 
-Instead of forcing all file systems to get the right context on their
-bio's, simply check for REQ_META to see if we need to issue as the root
-blkg.  We don't want to force all bio's to have the root blkg associated
-with them if REQ_META is set, as some controllers (blk-iolatency) need
-to know who the originating cgroup is so it can backcharge them for the
-work they are doing.  This helper will make sure that the controllers do
-the proper thing wrt the IO priority and backcharging.
+blk-iolatency has a few stats that it would like to print out, and
+instead of adding a bunch of crap to the generic code just provide a
+helper so that controllers can add stuff to the stat line if they want
+to.
 
 Signed-off-by: Josef Bacik <jbacik@fb.com>
 ---
- include/linux/blk-cgroup.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ block/blk-cgroup.c         | 52 +++++++++++++++++++++++++++++++++++++++++++---
+ include/linux/blk-cgroup.h |  3 +++
+ 2 files changed, 52 insertions(+), 3 deletions(-)
 
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index eb85cb87c40f..9e767e4a852d 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -954,13 +954,28 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
+ 
+ 	hlist_for_each_entry_rcu(blkg, &blkcg->blkg_list, blkcg_node) {
+ 		const char *dname;
++		char *buf;
+ 		struct blkg_rwstat rwstat;
+ 		u64 rbytes, wbytes, rios, wios;
++		size_t size = seq_get_buf(sf, &buf), count = 0, total = 0;
++		int i;
+ 
+ 		dname = blkg_dev_name(blkg);
+ 		if (!dname)
+ 			continue;
+ 
++		/*
++		 * Hooray string manipulation, count is the size written NOT
++		 * INCLUDING THE \0, so size is now count+1 less than what we
++		 * had before, but we want to start writing the next bit from
++		 * the \0 so we only add count to buf.
++		 */
++		count = snprintf(buf, size, "%s ", dname);
++		if (count >= size)
++			continue;
++		buf += count;
++		size -= count + 1;
++
+ 		spin_lock_irq(blkg->q->queue_lock);
+ 
+ 		rwstat = blkg_rwstat_recursive_sum(blkg, NULL,
+@@ -975,9 +990,40 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
+ 
+ 		spin_unlock_irq(blkg->q->queue_lock);
+ 
+-		if (rbytes || wbytes || rios || wios)
+-			seq_printf(sf, "%s rbytes=%llu wbytes=%llu rios=%llu wios=%llu\n",
+-				   dname, rbytes, wbytes, rios, wios);
++		if (rbytes || wbytes || rios || wios) {
++			total += count;
++			count = snprintf(buf, size,
++					 "rbytes=%llu wbytes=%llu rios=%llu wios=%llu",
++					 rbytes, wbytes, rios, wios);
++			if (count >= size)
++				continue;
++			buf += count;
++			total += count;
++			size -= count + 1;
++		}
++
++		mutex_lock(&blkcg_pol_mutex);
++		for (i = 0; i < BLKCG_MAX_POLS; i++) {
++			struct blkcg_policy *pol = blkcg_policy[i];
++
++			if (!blkg->pd[i] || !pol->pd_stat_fn)
++				continue;
++
++			count = pol->pd_stat_fn(blkg->pd[i], buf, size);
++			if (count >= size)
++				continue;
++			buf += count;
++			total += count;
++			size -= count + 1;
++		}
++		mutex_unlock(&blkcg_pol_mutex);
++		if (total) {
++			count = snprintf(buf, size, "\n");
++			if (count >= size)
++				continue;
++			total += count;
++			seq_commit(sf, total);
++		}
+ 	}
+ 
+ 	rcu_read_unlock();
 diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 6c666fd7de3c..69aa71dc0c04 100644
+index 69aa71dc0c04..b41292726c0f 100644
 --- a/include/linux/blk-cgroup.h
 +++ b/include/linux/blk-cgroup.h
-@@ -238,6 +238,22 @@ static inline struct blkcg *bio_blkcg(struct bio *bio)
- 	return css_to_blkcg(task_css(current, io_cgrp_id));
- }
+@@ -148,6 +148,8 @@ typedef void (blkcg_pol_online_pd_fn)(struct blkg_policy_data *pd);
+ typedef void (blkcg_pol_offline_pd_fn)(struct blkg_policy_data *pd);
+ typedef void (blkcg_pol_free_pd_fn)(struct blkg_policy_data *pd);
+ typedef void (blkcg_pol_reset_pd_stats_fn)(struct blkg_policy_data *pd);
++typedef size_t (blkcg_pol_stat_pd_fn)(struct blkg_policy_data *pd, char *buf,
++				      size_t size);
  
-+/**
-+ * bio_issue_as_root_blkg - see if this bio needs to be issued as root blkg
-+ * @return: true if this bio needs to be submitted with the root blkg context.
-+ *
-+ * In order to avoid priority inversions we sometimes need to issue a bio as if
-+ * it were attached to the root blkg, and then backcharge to the actual owning
-+ * blkg.  The idea is we do bio_blkcg() to look up the actual context for the
-+ * bio and attach the appropriate blkg to the bio.  Then we call this helper and
-+ * if it is true run with the root blkg for that queue and then do any
-+ * backcharging to the originating cgroup once the io is complete.
-+ */
-+static inline bool bio_issue_as_root_blkg(struct bio *bio)
-+{
-+	return (bio->bi_opf & REQ_META);
-+}
-+
- /**
-  * blkcg_parent - get the parent of a blkcg
-  * @blkcg: blkcg of interest
+ struct blkcg_policy {
+ 	int				plid;
+@@ -167,6 +169,7 @@ struct blkcg_policy {
+ 	blkcg_pol_offline_pd_fn		*pd_offline_fn;
+ 	blkcg_pol_free_pd_fn		*pd_free_fn;
+ 	blkcg_pol_reset_pd_stats_fn	*pd_reset_stats_fn;
++	blkcg_pol_stat_pd_fn		*pd_stat_fn;
+ };
+ 
+ extern struct blkcg blkcg_root;
 -- 
 2.14.3
