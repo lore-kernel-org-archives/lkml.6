@@ -1,81 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964867AbeE2PXy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:23:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935483AbeE2PX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:23:29 -0400
-Message-Id: <20180529152304.885389740@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Tue, 29 May 2018 11:23:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 00/19] tracing: Updates for 4.18
+        id S936468AbeE2PYE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:24:04 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:27017 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935483AbeE2PYC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:24:02 -0400
+X-IronPort-AV: E=Sophos;i="5.49,456,1520924400";
+   d="scan'208";a="12000422"
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+CC: Peter Rosin <peda@axentia.se>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180329131054.22506-1-peda@axentia.se>
+ <20180329153322.5e2fc1e7@bbrezillon>
+ <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
+ <20180329154416.5c1a0013@bbrezillon>
+ <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
+ <20180402142249.7e076a64@bbrezillon>
+ <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
+ <20180402212843.164d5d21@bbrezillon> <20180402222020.1d344c14@bbrezillon>
+ <d7e6f78d-b57b-4d0f-c07c-ca6c1930cd51@axentia.se>
+ <20180403091813.5fb5c18c@bbrezillon>
+ <d0afd431-6e51-a9b7-c103-ecf1f6e07c2e@axentia.se>
+ <959d826d-1a98-ca22-acee-a4548427fcd3@microchip.com>
+ <a25ca617-d3da-d401-1ba9-8e5887f8a8e5@microchip.com>
+ <024079cb-77ad-9c48-e370-e6e8f2de171b@axentia.se>
+ <9c496531-f7b6-4b9d-dd51-0bfb68ead303@axentia.se>
+ <c3cc1894-2d7d-93b6-a9de-ed9ca4564ae9@axentia.se>
+ <19d68279-072e-7646-6fdd-8649578229ea@microchip.com>
+ <20180529164911.29820e07@bbrezillon>
+ <e3c34fb7-4881-3f49-b43b-1b07a8ab865d@microchip.com>
+ <20180529171555.19dd723f@bbrezillon>
+From: Eugen Hristev <eugen.hristev@microchip.com>
+Message-ID: <1affd186-7f78-8bb0-050e-da82143c2982@microchip.com>
+Date: Tue, 29 May 2018 18:21:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180529171555.19dd723f@bbrezillon>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-for-next
-
-Head SHA1: 086d713d2535b389de1893d2f3874e9cfb6dbdf3
 
 
-Andi Kleen (1):
-      trace: Use -mcount-record for dynamic ftrace
+On 29.05.2018 18:15, Boris Brezillon wrote:
+> On Tue, 29 May 2018 18:01:40 +0300
+> Eugen Hristev <eugen.hristev@microchip.com> wrote:
+> 
+>> [...]
+>>
+>>
+>>>
+>>> I think you're missing something here. We use the DMA engine in memcpy
+>>> mode (SRAM -> DRAM), not in device mode (dev -> DRAM or DRAM -> dev).
+>>> So there's no dmas prop defined in the DT and there should not be.
+>>>
+>>> Regards,
+>>>
+>>> Boris
+>>>    
+>>
+>> Ok, so the memcpy SRAM <-> DRAM will hog the transfer between DRAM and
+>> LCD if my understanding is correct. That's the DMA that Peter wants to
+>> disable with his patch ?
+>>
+>> Then we can then try to force NFC SRAM DMA channels to use just DDR port
+>> 1 or 2 for memcpy ?
+> 
+> You mean the dmaengine? According to "14.1.3 Master to Slave Access"
+> that's already the case.
+> 
+> Only DMAC0 can access the NFC SRAM and it's done through DMAC0:IF0,
+> then access to DDR is going through port DDR port 1 (DMAC0:IF1) or 2
+> (DMAC0:IF0).
 
-Lee, Chun-Yi (1):
-      tracepoints: Fix the descriptions of tracepoint_probe_register{_prio}
+If we can make NFC use port 1 only, then HLCDC could have two ports as 
+master 8 & 9, maybe a better bandwidth.
 
-Steven Rostedt (VMware) (16):
-      tracing: Do not reference event data in post call triggers
-      tracing: Add __find_event_file() to find event files without restrictions
-      tracing: Have event_trace_init() called by trace_init_tracefs()
-      tracing: Add brackets in ftrace event dynamic arrays
-      tracing: Do not show filter file for ftrace internal events
-      tracing: Add trigger file for trace_markers tracefs/ftrace/print
-      tracing: Have zero size length in filter logic be full string
-      tracing: Prevent further users of zero size static arrays in trace events
-      tracing: Allow histogram triggers to access ftrace internal events
-      tracing: Document trace_marker triggers
-      ftrace/selftest: Have the reset_trigger code be a bit more careful
-      ftrace/selftest: Fix reset_trigger() to handle triggers with filters
-      tracing/selftest: Add selftests to test trace_marker histogram triggers
-      tracing/selftest: Add test to test hist trigger between kernel event and trace_marker
-      tracing/selftest: Add test to test simple snapshot trigger for trace_marker
-      ring-buffer: Fix a bunch of typos in comments
-
-Vasyl Gomonovych (1):
-      ring-buffer: Fix typo in comment
-
-----
- Documentation/trace/events.rst                     |   6 +-
- Documentation/trace/ftrace.rst                     |   5 +
- Documentation/trace/histogram.txt                  | 545 ++++++++++++++++++++-
- include/linux/ring_buffer.h                        |   2 +-
- include/linux/trace_events.h                       |   3 +-
- include/trace/trace_events.h                       |   1 +
- kernel/trace/ring_buffer.c                         |  20 +-
- kernel/trace/trace.c                               |  19 +
- kernel/trace/trace.h                               |   9 +-
- kernel/trace/trace_entries.h                       |   6 +-
- kernel/trace/trace_events.c                        |  36 +-
- kernel/trace/trace_events_filter.c                 |  23 +-
- kernel/trace/trace_events_hist.c                   |   2 +-
- kernel/trace/trace_events_trigger.c                |   6 +-
- kernel/trace/trace_export.c                        |   9 +-
- kernel/tracepoint.c                                |   3 +-
- scripts/Makefile.build                             |   6 +
- tools/testing/selftests/ftrace/test.d/functions    |  23 +-
- .../test.d/trigger/trigger-trace-marker-hist.tc    |  49 ++
- .../trigger/trigger-trace-marker-snapshot.tc       |  74 +++
- .../trigger-trace-marker-synthetic-kernel.tc       |  68 +++
- .../trigger/trigger-trace-marker-synthetic.tc      |  66 +++
- 22 files changed, 927 insertions(+), 54 deletions(-)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-hist.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+> 
+>>
+>> I have also received a suggestion to try to increase the porches in
+>> LCDC_LCDCFG3 .
+> 
+> Yep, Nicolas suggested something similar. Peter, can you try that?
+> 
