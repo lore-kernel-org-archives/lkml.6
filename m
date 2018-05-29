@@ -1,142 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964841AbeE2OtQ (ORCPT <rfc822;w@1wt.eu>);
+        id S936490AbeE2OtX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:49:23 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:32820 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964830AbeE2OtQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 May 2018 10:49:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34270 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935507AbeE2OtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:49:13 -0400
-Date: Tue, 29 May 2018 16:49:11 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Eugen Hristev <eugen.hristev@microchip.com>
-Cc: Peter Rosin <peda@axentia.se>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
- dma
-Message-ID: <20180529164911.29820e07@bbrezillon>
-In-Reply-To: <19d68279-072e-7646-6fdd-8649578229ea@microchip.com>
-References: <20180329131054.22506-1-peda@axentia.se>
-        <20180329153322.5e2fc1e7@bbrezillon>
-        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
-        <20180329154416.5c1a0013@bbrezillon>
-        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
-        <20180402142249.7e076a64@bbrezillon>
-        <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
-        <20180402212843.164d5d21@bbrezillon>
-        <20180402222020.1d344c14@bbrezillon>
-        <d7e6f78d-b57b-4d0f-c07c-ca6c1930cd51@axentia.se>
-        <20180403091813.5fb5c18c@bbrezillon>
-        <d0afd431-6e51-a9b7-c103-ecf1f6e07c2e@axentia.se>
-        <959d826d-1a98-ca22-acee-a4548427fcd3@microchip.com>
-        <a25ca617-d3da-d401-1ba9-8e5887f8a8e5@microchip.com>
-        <024079cb-77ad-9c48-e370-e6e8f2de171b@axentia.se>
-        <9c496531-f7b6-4b9d-dd51-0bfb68ead303@axentia.se>
-        <c3cc1894-2d7d-93b6-a9de-ed9ca4564ae9@axentia.se>
-        <19d68279-072e-7646-6fdd-8649578229ea@microchip.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+X-Google-Smtp-Source: ADUXVKJb+x+/gUuqlcJrtgEP6sAO4JOkEcuDXEoW9aubmKpwm6Nr0WVEOEIziLzwzJIQ7IBYZ9k/8l2VpvDRCX3YGug=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180529123800.19627-1-prarit@redhat.com>
+References: <20180529123800.19627-1-prarit@redhat.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 29 May 2018 07:49:14 -0700
+X-Google-Sender-Auth: P2QUCRpMefoVsB2v4mMZL6N8H1o
+Message-ID: <CAGXu5jJvJbTZT5=u7TJtLsN-TsuSEfw8h2EwV8w-oefJkADoBg@mail.gmail.com>
+Subject: Re: [PATCH] x86, random: Fix get_random_bytes() warning in x86 start_kernel
+To: Prarit Bhargava <prarit@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rik van Riel <riel@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eugen,
+On Tue, May 29, 2018 at 5:38 AM, Prarit Bhargava <prarit@redhat.com> wrote:
+> After 43838a23a05f ("random: fix crng_ready() test") early boot calls
+> to get_random_bytes() will warn on each cpu on x86 because the crng
+> is not initialized.  For example,
+>
+> random: get_random_bytes called from start_kernel+0x8e/0x587 with crng_init=0
+>
+> x86 only uses get_random_bytes() for better randomization of the stack
+> canary value so the warning is of no consequence.
+>
+> Export crng_ready() for x86 and test if the crng is initialized before
+> calling get_random_bytes().
 
-On Tue, 29 May 2018 09:30:54 +0300
-Eugen Hristev <eugen.hristev@microchip.com> wrote:
+NAK. This leaves the stack canary with very little entropy. This needs
+to pull from whatever pool is available, not skip it.
 
-> On 28.05.2018 13:10, Peter Rosin wrote:
-> > On 2018-05-28 00:11, Peter Rosin wrote:  
-> >> On 2018-05-27 11:18, Peter Rosin wrote:  
-> >>> On 2018-05-25 16:51, Tudor Ambarus wrote:  
-> >>>> We think the best way is to keep LCD on DDR Ports 2 and 3 (8th and 9th
-> >>>> slaves), to have maximum bandwidth and to use DMA on DDR port 1 for NAND
-> >>>> (7th slave).  
-> >>>
-> >>> Exactly how do I accomplish that?
-> >>>
-> >>> I can see how I can move the LCD between slave DDR port 2 and 3 by
-> >>> selecting LCDC DMA master 8 or 9 (but according to the above it should
-> >>> not matter). The big question is how I control what slave the NAND flash
-> >>> is going to use? I find nothing in the datasheet, and the code is also
-> >>> non-transparent enough for me to figure it out by myself without
-> >>> throwing out this question first...  
-> 
->  >> [...]  
-> 
-> >> and the output is
-> >>
-> >> atmel-nand-controller 10000000.ebi:nand-controller: using dma0chan5 for DMA transfers
-> >>
-> >> So, DMA controller 0 is in use. I still don't know if IF0, IF1 or IF2 is used
-> >> or how to find out. I guess IF2 is not in use since that does not allow any
-> >> DDR2 port as slave...  
-> 
-> Hello Peter,
-> 
-> Thank you for all the information, I will chip in to help a little bit.
-> The Master/channel is described in the device tree. The channel has a 
-> controller, a mem/periph interface and a periph ID, plus a FIFO 
-> configuration.
-> 
-> The dma chan number reported in the dmesg is just software. Here is an 
-> example from DT:
-> dmas = <&dma0 2 AT91_DMA_CFG_PER_ID(1)>,
->         <&dma0 2 AT91_DMA_CFG_PER_ID(2)>;
-> 
-> you can match this with the help from 
-> Documentation/devicetree/bindings/dma/atmel-dma.txt:
-> 
-> 1. A phandle pointing to the DMA controller. 
-> 
-> 2. The memory interface (16 most significant bits), the peripheral 
-> interface
-> (16 less significant bits). 
-> 
-> 3. Parameters for the at91 DMA configuration register which are device 
-> 
-> dependent: 
-> 
->    - bit 7-0: peripheral identifier for the hardware handshaking 
-> interface. The
->    identifier can be different for tx and rx. 
-> 
->    - bit 11-8: FIFO configuration. 0 for half FIFO, 1 for ALAP, 2 for ASAP.
-> 
-> 
-> So , what was Tudor asking for, is your DT for the ebi node (if you are 
-> using ebi), or, your NFC SRAM (Nand Flash Controller SRAM) DMA 
-> devicetree chunk, so, we can figure out which type of DMA are you using.
+-Kees
 
-I think you're missing something here. We use the DMA engine in memcpy
-mode (SRAM -> DRAM), not in device mode (dev -> DRAM or DRAM -> dev).
-So there's no dmas prop defined in the DT and there should not be.
+>
+> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Rik van Riel <riel@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Philippe Ombredanne <pombredanne@nexb.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Prarit Bhargava <prarit@redhat.com>
+> Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> ---
+>  arch/x86/include/asm/stackprotector.h | 3 ++-
+>  drivers/char/random.c                 | 5 ++++-
+>  include/linux/random.h                | 1 +
+>  3 files changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/stackprotector.h b/arch/x86/include/asm/stackprotector.h
+> index 371b3a4af000..4e2223aa34fc 100644
+> --- a/arch/x86/include/asm/stackprotector.h
+> +++ b/arch/x86/include/asm/stackprotector.h
+> @@ -72,7 +72,8 @@ static __always_inline void boot_init_stack_canary(void)
+>          * there it already has some randomness on most systems. Later
+>          * on during the bootup the random pool has true entropy too.
+>          */
+> -       get_random_bytes(&canary, sizeof(canary));
+> +       if (crng_ready())
+> +               get_random_bytes(&canary, sizeof(canary));
+>         tsc = rdtsc();
+>         canary += tsc + (tsc << 32UL);
+>         canary &= CANARY_MASK;
+> diff --git a/drivers/char/random.c b/drivers/char/random.c
+> index cd888d4ee605..003091d104bf 100644
+> --- a/drivers/char/random.c
+> +++ b/drivers/char/random.c
+> @@ -428,7 +428,10 @@ struct crng_state primary_crng = {
+>   * its value (from 0->1->2).
+>   */
+>  static int crng_init = 0;
+> -#define crng_ready() (likely(crng_init > 1))
+> +int crng_ready(void)
+> +{
+> +       return likely(crng_init > 1);
+> +}
+>  static int crng_init_cnt = 0;
+>  static unsigned long crng_global_init_time = 0;
+>  #define CRNG_INIT_CNT_THRESH (2*CHACHA20_KEY_SIZE)
+> diff --git a/include/linux/random.h b/include/linux/random.h
+> index 2ddf13b4281e..45616513abd9 100644
+> --- a/include/linux/random.h
+> +++ b/include/linux/random.h
+> @@ -196,4 +196,5 @@ static inline u32 next_pseudo_random32(u32 seed)
+>         return seed * 1664525 + 1013904223;
+>  }
+>
+> +extern int crng_ready(void);
+>  #endif /* _LINUX_RANDOM_H */
+> --
+> 2.14.3
+>
 
-Regards,
 
-Boris
 
-> 
-> Normally, the ebi should be connected to both DMA0 and DMA1 on those 
-> interfaces specified in DT. Which ones you want to use, depends on your 
-> setup (and contention on the bus/accesses, like in your case, the HLCDC)
-> 
-> Thats why we have multiple choices, to pick the right one for each case.
-> In our vanilla DT sama5d3.dtsi we do not have DMA described for ebi 
-> interface.
-> 
-> Eugen
-> 
->  >> [...]  
+-- 
+Kees Cook
+Pixel Security
