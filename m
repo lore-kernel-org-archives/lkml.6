@@ -1,46 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933613AbeE2MJm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:09:42 -0400
-Received: from 8bytes.org ([81.169.241.247]:47114 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933135AbeE2MJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:09:39 -0400
-Date: Tue, 29 May 2018 14:09:38 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Gary R Hook <gary.hook@amd.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] iommu/amd: Add basic debugfs infrastructure for
- AMD IOMMU
-Message-ID: <20180529120938.GK18595@8bytes.org>
-References: <152631818082.18929.13970142119193316487.stgit@sosxen2.amd.com>
- <152631842907.18929.8819955271544326298.stgit@sosxen2.amd.com>
- <ba2bb6f7-77ea-4431-af0f-d20c19820d5d@infradead.org>
- <5e45f38e-cb45-d4a1-f351-30543f787290@amd.com>
- <20180515134603.GD18595@8bytes.org>
- <4041cb33-19a2-5542-4211-1dce51de5e40@amd.com>
- <89a0e3af-8970-cd80-418d-630841795807@infradead.org>
- <3eefbef8-142e-0a29-3e97-536717f63a98@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3eefbef8-142e-0a29-3e97-536717f63a98@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S933623AbeE2MLc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:11:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38338 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933135AbeE2MLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:11:30 -0400
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Julien Grall <julien.grall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 00/17] arm64 SSBD (aka Spectre-v4) mitigation
+Date: Tue, 29 May 2018 13:11:04 +0100
+Message-Id: <20180529121121.24927-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.14.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 04:02:46PM -0500, Gary R Hook wrote:
-> "Preferred", perhaps. Neither is incorrect. And really, the Makefile/Kconfig
-> choice is somewhat separate from the organization issue.
-> 
-> So I've made the changes for this. Now I'm waiting on Joerg to make a
-> decision on the code/file organization. I still prefer a separate file for
-> the debug fs code.
+Hi all,
 
-The Kconfig option looks nicer to me, please use it. Then you can also
-put the code into a separate file.
+This patch series implements the Linux kernel side of the "Spectre-v4"
+(CVE-2018-3639) mitigation known as "Speculative Store Bypass Disable"
+(SSBD).
 
+More information can be found at:
 
-	Joerg
+  https://bugs.chromium.org/p/project-zero/issues/detail?id=1528
+  https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability
+
+For all released Arm Cortex-A CPUs that are affected by this issue, then
+the preferred mitigation is simply to set a chicken bit in the firmware
+during CPU initialisation and therefore no change to Linux is required.
+Other CPUs may require the chicken bit to be toggled dynamically (for
+example, when switching between user-mode and kernel-mode) and this is
+achieved by calling into EL3 via an SMC which has been published as part
+of the latest SMCCC specification:
+
+  https://developer.arm.com/cache-speculation-vulnerability-firmware-specification
+
+as well as an ATF update for the released ARM cores affected by SSBD:
+
+  https://github.com/ARM-software/arm-trusted-firmware/pull/1392
+
+These patches provide the following:
+
+  1. Safe probing of firmware to establish which CPUs in the system
+     require calling into EL3 as part of the mitigation.
+
+  2. For CPUs that require it, call into EL3 on exception entry/exit
+     from EL0 to apply the SSBD mitigation when running at EL1.
+
+  3. A command-line option to force the SSBD mitigation to be always on,
+     always off, or dymamically toggled (default) for CPUs that require
+     the EL3 call.
+
+  4. An initial implementation of a prctl() backend for arm64 that allows
+     userspace tasks to opt-in to the mitigation explicitly. This is
+     intended to match the interface provided by x86, and so we rely on
+     their core changes here. The seccomp interface is provided as an
+     extra set of patches, which I'd like *not* to see merged. The main
+     reason is that it is invasive, has ugly/unclear semantics, and could
+     probably be left to the existing prctl interface.
+
+  5. An initial implementation of the call via KVM, which exposes the
+     mitigation to the guest via an HVC interface. This isn't yet
+     complete and doesn't include save/restore functionality for the
+     workaround state.
+
+All comments welcome,
+
+	M.
+
+* From v1 [1]:
+
+  - New TIF_SSBD_PENDING flag to enable the mitigation, atomically
+    converted to TIF_SSBD on exit to userspace. Moved the seccomp thing to
+    its own patch.
+  - Renamed do_ssbd() to arm64_set_ssbd_mitigation() early in the series
+  - Some spelling fixes
+  - Dropped the now unnecessary #ifdef in ssbd.c
+  - SSBD handling in entry.S default to NOP until patching comes in, which
+    itself got tiddied up
+  - Renamed ARM64_SSBD_EL1_ENTRY to ARM64_SSBD_KERNEL
+  - Collected RBs
+
+[1] https://lwn.net/ml/linux-kernel/20180522150648.28297-1-marc.zyngier@arm.com/
+
+Marc Zyngier (17):
+  arm/arm64: smccc: Add SMCCC-specific return codes
+  arm64: Call ARCH_WORKAROUND_2 on transitions between EL0 and EL1
+  arm64: Add per-cpu infrastructure to call ARCH_WORKAROUND_2
+  arm64: Add ARCH_WORKAROUND_2 probing
+  arm64: Add 'ssbd' command-line option
+  arm64: ssbd: Add global mitigation state accessor
+  arm64: ssbd: Skip apply_ssbd if not using dynamic mitigation
+  arm64: ssbd: Restore mitigation status on CPU resume
+  arm64: ssbd: Introduce thread flag to control userspace mitigation
+  arm64: ssbd: Add prctl interface for per-thread mitigation
+  arm64: KVM: Add HYP per-cpu accessors
+  arm64: KVM: Add ARCH_WORKAROUND_2 support for guests
+  arm64: KVM: Handle guest's ARCH_WORKAROUND_2 requests
+  arm64: KVM: Add ARCH_WORKAROUND_2 discovery through
+    ARCH_FEATURES_FUNC_ID
+  arm64: Add test_and_clear_flag and set_flag atomic assembler
+    primitives
+  arm64: ssbd: Enable delayed setting of TIF_SSBD
+  arm64: ssbd: Implement arch_seccomp_spec_mitigate
+
+ Documentation/admin-guide/kernel-parameters.txt |  17 +++
+ arch/arm/include/asm/kvm_host.h                 |  12 ++
+ arch/arm/include/asm/kvm_mmu.h                  |   5 +
+ arch/arm64/Kconfig                              |   9 ++
+ arch/arm64/include/asm/assembler.h              |  37 +++++
+ arch/arm64/include/asm/cpucaps.h                |   3 +-
+ arch/arm64/include/asm/cpufeature.h             |  22 +++
+ arch/arm64/include/asm/kvm_asm.h                |  30 +++-
+ arch/arm64/include/asm/kvm_host.h               |  26 ++++
+ arch/arm64/include/asm/kvm_mmu.h                |  24 ++++
+ arch/arm64/include/asm/thread_info.h            |   2 +
+ arch/arm64/kernel/Makefile                      |   1 +
+ arch/arm64/kernel/asm-offsets.c                 |   1 +
+ arch/arm64/kernel/cpu_errata.c                  | 180 ++++++++++++++++++++++++
+ arch/arm64/kernel/entry.S                       |  46 ++++++
+ arch/arm64/kernel/hibernate.c                   |  11 ++
+ arch/arm64/kernel/ssbd.c                        | 115 +++++++++++++++
+ arch/arm64/kernel/suspend.c                     |   8 ++
+ arch/arm64/kvm/hyp/hyp-entry.S                  |  38 ++++-
+ arch/arm64/kvm/hyp/switch.c                     |  42 ++++++
+ arch/arm64/kvm/reset.c                          |   4 +
+ include/linux/arm-smccc.h                       |  10 ++
+ virt/kvm/arm/arm.c                              |   4 +
+ virt/kvm/arm/psci.c                             |  18 ++-
+ 24 files changed, 659 insertions(+), 6 deletions(-)
+ create mode 100644 arch/arm64/kernel/ssbd.c
+
+-- 
+2.14.2
