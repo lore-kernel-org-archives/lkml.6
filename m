@@ -1,73 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936829AbeE2QFK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:05:10 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:46336 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936523AbeE2QE5 (ORCPT
+        id S936493AbeE2QEv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:04:51 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:38353 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934963AbeE2QEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:04:57 -0400
-X-Google-Smtp-Source: AB8JxZrCnDork22wORNYsGmXzbF073hNi9g2X52amauyruJSaTInrtpJZX6nf9Nqf5EZhRsB9ijdgg==
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Cc: linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2] rtc: sun6i: Fix bit_idx value for clk_register_gate
-Date: Tue, 29 May 2018 21:34:25 +0530
-Message-Id: <20180529160425.23697-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.14.3
+        Tue, 29 May 2018 12:04:49 -0400
+X-Google-Smtp-Source: ADUXVKJ1onC3zetNiDhmedbgQjNXosmbWy9CGWVsqthWUnEAVD09v6nNnngfPeWOOZarjt/DmBUGSlxh8EYZGSVBWmo=
+MIME-Version: 1.0
+In-Reply-To: <CAOQ4uxi5Y4mF9b9g5a_ggEUWPToKbRUsuzwN4aGjvnQ6itRkUw@mail.gmail.com>
+References: <20180529144339.16538-1-mszeredi@redhat.com> <20180529144339.16538-4-mszeredi@redhat.com>
+ <CAOQ4uxi5Y4mF9b9g5a_ggEUWPToKbRUsuzwN4aGjvnQ6itRkUw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 29 May 2018 19:04:47 +0300
+Message-ID: <CAOQ4uxiUUtLAMxvDg8hMcgqZUV96dLs8stJPgh6w-pj4KGvabw@mail.gmail.com>
+Subject: Re: [PATCH 03/39] vfs: dedupe: extract helper for a single dedup
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Trimarchi <michael@amarulasolutions.com>
+On Tue, May 29, 2018 at 6:41 PM, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Tue, May 29, 2018 at 5:43 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+>> Extract vfs_dedupe_file_range_one() helper to deal with a single dedup
+>> request.
+>>
+>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+>> ---
+>>  fs/read_write.c | 89 +++++++++++++++++++++++++++++++--------------------------
+>>  1 file changed, 49 insertions(+), 40 deletions(-)
+>>
+>> diff --git a/fs/read_write.c b/fs/read_write.c
+>> index 1818581cadf6..82a53c44c0aa 100644
+>> --- a/fs/read_write.c
+>> +++ b/fs/read_write.c
+>> @@ -1964,6 +1964,44 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+>>  }
+>>  EXPORT_SYMBOL(vfs_dedupe_file_range_compare);
+>>
+>> +static s64 vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
+>> +                                    struct file *dst_file, loff_t dst_pos,
+>> +                                    u64 len)
+>> +{
+>> +       s64 ret;
+>> +
+>> +       ret = mnt_want_write_file(dst_file);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = clone_verify_area(dst_file, dst_pos, len, true);
+>> +       if (ret < 0)
+>> +               goto out_drop_write;
+>> +
+>> +       ret = -EINVAL;
+>> +       if (!(capable(CAP_SYS_ADMIN) || (dst_file->f_mode & FMODE_WRITE)))
+>> +               goto out_drop_write;
+>> +
+>> +       ret = -EXDEV;
+>> +       if (src_file->f_path.mnt != dst_file->f_path.mnt)
+>> +               goto out_drop_write;
+>> +
+>> +       ret = -EISDIR;
+>> +       if (S_ISDIR(file_inode(dst_file)->i_mode))
+>> +               goto out_drop_write;
+>> +
+>> +       ret = -EINVAL;
+>> +       if (!dst_file->f_op->dedupe_file_range)
+>> +               goto out_drop_write;
+>> +
+>> +       ret = dst_file->f_op->dedupe_file_range(src_file, src_pos,
+>> +                                               dst_file, dst_pos, len);
+>> +out_drop_write:
+>> +       mnt_drop_write_file(dst_file);
+>> +
+>> +       return ret;
+>> +}
+>> +
+>>  int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
+>>  {
+>>         struct file_dedupe_range_info *info;
+>> @@ -1972,10 +2010,7 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
+>>         u64 len;
+>>         int i;
+>>         int ret;
+>> -       bool is_admin = capable(CAP_SYS_ADMIN);
+>>         u16 count = same->dest_count;
+>> -       struct file *dst_file;
+>> -       loff_t dst_off;
+>>         loff_t deduped;
+>>
+>>         if (!(file->f_mode & FMODE_READ))
+>> @@ -2010,54 +2045,28 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
+>>         }
+>>
+>>         for (i = 0, info = same->info; i < count; i++, info++) {
+>> -               struct inode *dst;
+>>                 struct fd dst_fd = fdget(info->dest_fd);
+>> +               struct file *dst_file = dst_fd.file;
+>>
+>> -               dst_file = dst_fd.file;
+>>                 if (!dst_file) {
+>>                         info->status = -EBADF;
+>>                         goto next_loop;
+>>                 }
+>> -               dst = file_inode(dst_file);
+>> -
+>> -               ret = mnt_want_write_file(dst_file);
+>> -               if (ret) {
+>> -                       info->status = ret;
+>> -                       goto next_loop;
+>> -               }
+>> -
+>> -               dst_off = info->dest_offset;
+>> -               ret = clone_verify_area(dst_file, dst_off, len, true);
+>> -               if (ret < 0) {
+>> -                       info->status = ret;
+>> -                       goto next_file;
+>> -               }
+>> -               ret = 0;
+>>
+>>                 if (info->reserved) {
+>>                         info->status = -EINVAL;
+>> -               } else if (!(is_admin || (dst_file->f_mode & FMODE_WRITE))) {
+>> -                       info->status = -EINVAL;
+>> -               } else if (file->f_path.mnt != dst_file->f_path.mnt) {
+>> -                       info->status = -EXDEV;
+>> -               } else if (S_ISDIR(dst->i_mode)) {
+>> -                       info->status = -EISDIR;
+>> -               } else if (dst_file->f_op->dedupe_file_range == NULL) {
+>> -                       info->status = -EINVAL;
+>> -               } else {
+>> -                       deduped = dst_file->f_op->dedupe_file_range(file, off,
+>> -                                                       dst_file,
+>> -                                                       info->dest_offset, len);
+>> -                       if (deduped == -EBADE)
+>> -                               info->status = FILE_DEDUPE_RANGE_DIFFERS;
+>> -                       else if (deduped < 0)
+>> -                               info->status = deduped;
+>> -                       else
+>> -                               info->bytes_deduped += deduped;
+>> +                       goto next_loop;
+>>                 }
+>>
+>> -next_file:
+>> -               mnt_drop_write_file(dst_file);
+>> +               deduped = vfs_dedupe_file_range_one(file, off, dst_file,
+>> +                                                   info->dest_offset, len);
+>> +               if (deduped == -EBADE)
+>> +                       info->status = FILE_DEDUPE_RANGE_DIFFERS;
+>> +               else if (deduped < 0)
+>> +                       info->status = deduped;
+>> +               else
+>> +                       info->bytes_deduped += deduped;
+>> +
+>>  next_loop:
+>>                 fdput(dst_fd);
+>>
+>
+> Please note that this patch conflicts with but is also an alternative to commit
+> 227627114799 fs: avoid fdput() after failed fdget() in vfs_dedupe_file_range()
+> on Al's fixes => for-next branch.
+>
 
-clk-gate core will take bit_idx through clk_register_gate
-and then do clk_gate_ops by using BIT(bit_idx), but rtc-sun6i
-is passing bit_idx as BIT(bit_idx) it becomes BIT(BIT(bit_idx)
-which is wrong and eventually external gate clock is not enabling.
+Sorry, that's a conflict, and a rather trivial one, but Miklos' patch is not
+an alternative fix.
 
-This patch fixed by passing bit index and the original change
-introduced from below commit.
-"rtc: sun6i: Add support for the external oscillator gate"
-(sha1: 	17ecd246414b3a0fe0cb248c86977a8bda465b7b)
-
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v2:
-- add suffix _OFFSET with macro name to distinguish b/w
-  register actual values vs offset.
-
- drivers/rtc/rtc-sun6i.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-index 2e6fb275acc8..2cd5a7b1a2e3 100644
---- a/drivers/rtc/rtc-sun6i.c
-+++ b/drivers/rtc/rtc-sun6i.c
-@@ -74,7 +74,7 @@
- #define SUN6I_ALARM_CONFIG_WAKEUP		BIT(0)
- 
- #define SUN6I_LOSC_OUT_GATING			0x0060
--#define SUN6I_LOSC_OUT_GATING_EN		BIT(0)
-+#define SUN6I_LOSC_OUT_GATING_EN_OFFSET		0
- 
- /*
-  * Get date values
-@@ -255,7 +255,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
- 				      &clkout_name);
- 	rtc->ext_losc = clk_register_gate(NULL, clkout_name, rtc->hw.init->name,
- 					  0, rtc->base + SUN6I_LOSC_OUT_GATING,
--					  SUN6I_LOSC_OUT_GATING_EN, 0,
-+					  SUN6I_LOSC_OUT_GATING_EN_OFFSET, 0,
- 					  &rtc->lock);
- 	if (IS_ERR(rtc->ext_losc)) {
- 		pr_crit("Couldn't register the LOSC external gate\n");
--- 
-2.14.3
+Thanks,
+Amir.
