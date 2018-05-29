@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967509AbeE2VSQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:18:16 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:42456 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967315AbeE2VRo (ORCPT
+        id S967478AbeE2VSN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:18:13 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:39443 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967348AbeE2VRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:17:44 -0400
-X-Google-Smtp-Source: ADUXVKJjNwnL2vOTniGhWp8i5OzfzTwb5rJuVf8/NMRTdCKkZgsfjMm2mvAYjKGk7vVEIiYZvwRBBw==
+        Tue, 29 May 2018 17:17:48 -0400
+X-Google-Smtp-Source: ADUXVKLNAbwbhxyxNu7qukElTuxhXoCXC+o5oNMGSmMZY9Sv0qXbFltcxnrYCz6FN/EZOgDXoCxWgQ==
 From: Josef Bacik <josef@toxicpanda.com>
 To: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
         akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
         linux-kernel@vger.kernel.org, tj@kernel.org,
         linux-fsdevel@vger.kernel.org
 Cc: Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 11/13] rq-qos: introduce dio_bio callback
-Date: Tue, 29 May 2018 17:17:22 -0400
-Message-Id: <20180529211724.4531-12-josef@toxicpanda.com>
+Subject: [PATCH 13/13] Documentation: add a doc for blk-iolatency
+Date: Tue, 29 May 2018 17:17:24 -0400
+Message-Id: <20180529211724.4531-14-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529211724.4531-1-josef@toxicpanda.com>
 References: <20180529211724.4531-1-josef@toxicpanda.com>
@@ -26,80 +26,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Josef Bacik <jbacik@fb.com>
 
-wbt cares only about request completion time, but controllers may need
-information that is on the bio itself, so add a done_bio callback for
-rq-qos so things like blk-iolatency can use it to have the bio when it
-completes.
+A basic documentation to describe the interface, statistics, and
+behavior of io.latency.
 
 Signed-off-by: Josef Bacik <jbacik@fb.com>
 ---
- block/bio.c        |  4 ++++
- block/blk-rq-qos.c | 10 ++++++++++
- block/blk-rq-qos.h |  2 ++
- 3 files changed, 16 insertions(+)
+ Documentation/blk-iolatency.txt | 80 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+ create mode 100644 Documentation/blk-iolatency.txt
 
-diff --git a/block/bio.c b/block/bio.c
-index 57c4b1986e76..5b2afd23be7f 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -32,6 +32,7 @@
- 
- #include <trace/events/block.h>
- #include "blk.h"
-+#include "blk-rq-qos.h"
- 
- /*
-  * Test patch to inline a certain number of bi_io_vec's inside the bio
-@@ -1781,6 +1782,9 @@ void bio_endio(struct bio *bio)
- 	if (WARN_ONCE(bio->bi_next, "driver left bi_next not NULL"))
- 		bio->bi_next = NULL;
- 
-+	if (bio->bi_disk)
-+		rq_qos_done_bio(bio->bi_disk->queue, bio);
+diff --git a/Documentation/blk-iolatency.txt b/Documentation/blk-iolatency.txt
+new file mode 100644
+index 000000000000..9dd86f4f64b6
+--- /dev/null
++++ b/Documentation/blk-iolatency.txt
+@@ -0,0 +1,80 @@
++Block IO Latency Controller
 +
- 	/*
- 	 * Need to have a real endio function for chained bios, otherwise
- 	 * various corner cases will break (like stacking block devices that
-diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
-index b7b02e04f64f..5134b24482f6 100644
---- a/block/blk-rq-qos.c
-+++ b/block/blk-rq-qos.c
-@@ -88,6 +88,16 @@ void rq_qos_track(struct request_queue *q, struct request *rq, struct bio *bio)
- 	}
- }
- 
-+void rq_qos_done_bio(struct request_queue *q, struct bio *bio)
-+{
-+	struct rq_qos *rqos;
++Overview
++========
 +
-+	for(rqos = q->rq_qos; rqos; rqos = rqos->next) {
-+		if (rqos->ops->done_bio)
-+			rqos->ops->done_bio(rqos, bio);
-+	}
-+}
++This is a cgroup v2 controller for IO workload protection.  You provide a group
++with a latency target, and if the average latency exceeds that target the
++controller will throttle any peers that have a lower latency target than the
++protected workload.
 +
- /*
-  * Return true, if we can't increase the depth further by scaling
-  */
-diff --git a/block/blk-rq-qos.h b/block/blk-rq-qos.h
-index 501253676dd8..3874e6ad09f0 100644
---- a/block/blk-rq-qos.h
-+++ b/block/blk-rq-qos.h
-@@ -30,6 +30,7 @@ struct rq_qos_ops {
- 	void (*issue)(struct rq_qos *, struct request *);
- 	void (*requeue)(struct rq_qos *, struct request *);
- 	void (*done)(struct rq_qos *, struct request *);
-+	void (*done_bio)(struct rq_qos *, struct bio *);
- 	void (*cleanup)(struct rq_qos *, struct bio *);
- 	void (*exit)(struct rq_qos *);
- };
-@@ -86,6 +87,7 @@ void rq_qos_cleanup(struct request_queue *, struct bio *);
- void rq_qos_done(struct request_queue *, struct request *);
- void rq_qos_issue(struct request_queue *, struct request *);
- void rq_qos_requeue(struct request_queue *, struct request *);
-+void rq_qos_done_bio(struct request_queue *q, struct bio *bio);
- void rq_qos_throttle(struct request_queue *, struct bio *, spinlock_t *);
- void rq_qos_track(struct request_queue *q, struct request *, struct bio *);
- void rq_qos_exit(struct request_queue *);
++Interface
++=========
++
++- io.latency.  This takes a similar format as the other controllers
++
++	"MAJOR:MINOR target=<target time in microseconds"
++
++- io.stat.  If the controller is enabled you will see extra stats in io.stat in
++  addition to the normal ones
++
++	- depth=<integer>.  This is the current queue depth for the group.
++	- delay=<time in microseconds>. This is the current delay per task that
++	  does IO in this group.
++	- use_delay=<integer>.  This is how deep into the delay we currently
++	  are, the larger this number is the longer it'll take us to get back to
++	  queue depth > 1.
++	- total_lat_avg=<time in microseconds>.  The running average IO latency
++	  for this group.  Running average is generally flawed, but will give an
++	  admistrator a general idea of the overall latency they can expect for
++	  their workload on the given disk.
++
++HOWTO
++=====
++
++The limits are only applied at the peer level in the heirarchy.  This means that
++in the diagram below, only groups A, B, and C will influence eachother, and
++groups D and F will influence eachother.  Group G will influence nobody.
++
++			[root]
++		/	   |		\
++		A	   B		C
++	       /  \        |
++	      D    F	   G
++
++
++So the ideal way to configure this is to set io.latency in groups A, B, and C.
++Generally you do not want to set a value lower than the latency your device
++supports.  Experiment to find the value that works best for your workload, start
++at higher than the expected latency for your device and watch the total_lat_avg
++value in io.stat for your workload group to get an idea of the latency you see
++during normal operation.  Use this value as a basis for your real setting,
++setting at 10-15% higher than the value in io.stat.  Experimentation is key here
++because total_lat_avg is a running total, so is the "statistics" portion of
++"lies, damned lies, and statistics."
++
++How Throttling Works
++====================
++
++io.latency is work conserving, so as long as everybody is meeting their latency
++target the controller doesn't do anything.  Once a group starts missing it's
++target it begins throttling any peer group that has a higher target than itself.
++This throttling takes 2 forms
++
++- Queue depth throttling.  This is the number of outstanding IO's a group is
++  allowed to have.  We will clamp down relatively quickly, starting at no limit
++  and going all the way down to 1 IO at a time.
++
++- Artificial delay induction.  There are certain types of IO that cannot be
++  throttled without possibly adversely affecting higher priority groups.  This
++  includes swapping and metadata IO.  These types of IO are allowed to occur
++  normally, however they are "charged" to the originating group.  If the
++  originating group is being throttled you will see the use_delay and delay
++  fields in io.stat increase.  The delay value is how many microseconds that are
++  being added to any process that runs in this group.  Because this number can
++  grow quite large if there is a lot of swapping or metadata IO occuring we
++  limit the individual delay events to 1 second at a time.
++
++Once the victimized group starts meeting it's latency target again it will start
++unthrottling any peer groups that were throttled previous.  If the victimized
++group simply stops doing IO the global counter will unthrottle appropriately.
 -- 
 2.14.3
