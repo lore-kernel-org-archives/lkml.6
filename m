@@ -1,58 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965904AbeE2SSd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 14:18:33 -0400
-Received: from mail-qt0-f172.google.com ([209.85.216.172]:40851 "EHLO
-        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936888AbeE2SSS (ORCPT
+        id S966065AbeE2STL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 14:19:11 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:33649 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937037AbeE2SSW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 14:18:18 -0400
-X-Google-Smtp-Source: ADUXVKJPePUHwhMTT9VxYrv0woi72E0CFh0NaMSp2cXdvEbNr685AL7fuCajW0tVLSOwBJIjRX+Tw48CpxiLh/+Vk5Q=
-MIME-Version: 1.0
-In-Reply-To: <4a060ed5-f147-6778-caa2-7866b1f04479@gmail.com>
-References: <20180529024018.12740-1-yuehaibing@huawei.com> <CAK8P3a0jnU69RQ8jLF82GofE=fgENMVoWkObYvro82f+q=p_XA@mail.gmail.com>
- <4a060ed5-f147-6778-caa2-7866b1f04479@gmail.com>
-From: Song Liu <liu.song.a23@gmail.com>
-Date: Tue, 29 May 2018 11:18:15 -0700
-Message-ID: <CAPhsuW7tkQVY0rVRt2=cAHf_fif7W_73Ns7_mnt3CriMbGEhrg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: hide the unused 'off' variable
-To: John Fastabend <john.fastabend@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, YueHaibing <yuehaibing@huawei.com>,
-        David Miller <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 May 2018 14:18:22 -0400
+X-Google-Smtp-Source: AB8JxZpW908x+WVxr7AZcXM1BVXd5Tuw/+XYGx3mJ259QnVlfFP15mVDQA9kgcxM5D/kI7rt5aaIGg==
+From: Evan Green <evgreen@chromium.org>
+To: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc: Gwendal Grignou <gwendal@chromium.org>,
+        Evan Green <evgreen@chromium.org>
+Subject: [PATCH 6/7] scsi: ufs: Enable writing config descriptor
+Date: Tue, 29 May 2018 11:17:39 -0700
+Message-Id: <20180529181740.195362-7-evgreen@chromium.org>
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20180529181740.195362-1-evgreen@chromium.org>
+References: <20180529181740.195362-1-evgreen@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TIJDHc012732
 
-On Tue, May 29, 2018 at 8:53 AM, John Fastabend
-<john.fastabend@gmail.com> wrote:
-> On 05/29/2018 03:35 AM, Arnd Bergmann wrote:
->> On Tue, May 29, 2018 at 4:40 AM, YueHaibing <yuehaibing@huawei.com> wrote:
->>> The local variable is only used while CONFIG_IPV6 enabled
->>>
->>> net/core/filter.c: In function ‘sk_msg_convert_ctx_access’:
->>> net/core/filter.c:6489:6: warning: unused variable ‘off’ [-Wunused-variable]
->>>   int off;
->>>       ^
->>> This puts it into #ifdef.
->>>
->>> Fixes: 303def35f64e ("bpf: allow sk_msg programs to read sock fields")
->>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>
->> I was about to send the same patch and found you had already sent one.
->>
->> Acked-by: Arnd Bergmann <arnd@arndb.de>
->>
->
-> Thanks! I'm curious why kbuild bot didn't catch this. Will
-> try to dig into that in a bit.
->
-> Acked-by: John Fastabend <john.fastabend@gmail.com>
+This change enables writing to fields of the config descriptor
+via sysfs. It can be used to provision an unprovisioned UFS
+device, or reprovision an unlocked device.
 
-Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
+ drivers/scsi/ufs/ufs-sysfs.c | 64 +++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 61 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
+index 623c56074572..54e9f3bca9db 100644
+--- a/drivers/scsi/ufs/ufs-sysfs.c
++++ b/drivers/scsi/ufs/ufs-sysfs.c
+@@ -252,6 +252,31 @@ static ssize_t ufs_sysfs_read_desc_param(struct ufs_hba *hba,
+ 	return ret;
+ }
+ 
++static ssize_t ufs_sysfs_write_desc_param(struct ufs_hba *hba,
++				  enum desc_idn desc_id,
++				  u8 desc_index,
++				  u8 param_offset,
++				  const char *buf,
++				  ssize_t buf_size,
++				  u8 width)
++{
++	int ret;
++	unsigned long long value;
++
++	if (kstrtoull(buf, 0, &value))
++		return -EINVAL;
++
++	/* Convert to big endian, and send only the appropriate width. */
++	value = cpu_to_be64(value);
++	ret = ufshcd_rw_desc_param(hba, UPIU_QUERY_OPCODE_WRITE_DESC, desc_id,
++				desc_index, param_offset,
++				(u8 *)&value + 8 - width, width);
++	if (ret)
++		return -EINVAL;
++
++	return buf_size;
++}
++
+ #define UFS_DESC_PARAM(_name, _puname, _duname, _size)			\
+ static ssize_t _name##_show(struct device *dev,				\
+ 	struct device_attribute *attr, char *buf)			\
+@@ -357,8 +382,25 @@ static ssize_t cfg_unit_store(struct device *dev,
+ 	return count;
+ }
+ 
+-#define UFS_CONFIG_DESC_PARAM(_name, _uname, _size)			\
+-	UFS_DESC_PARAM(cfg_##_name, _uname, CONFIGURATION, _size)
++#define UFS_CONFIG_DESC_PARAM(_name, _puname, _size)			\
++static ssize_t cfg_##_name##_show(struct device *dev,			\
++	struct device_attribute *attr, char *buf)			\
++{									\
++	struct ufs_hba *hba = dev_get_drvdata(dev);			\
++	return ufs_sysfs_read_desc_param(hba,				\
++		QUERY_DESC_IDN_CONFIGURATION, 0,			\
++		CONFIGURATION_DESC_PARAM##_puname, buf, _size);		\
++}									\
++static ssize_t cfg_##_name##_store(struct device *dev,			\
++		struct device_attribute *attr, const char *buf,		\
++		size_t count)						\
++{									\
++	struct ufs_hba *hba = dev_get_drvdata(dev);			\
++	return ufs_sysfs_write_desc_param(hba,				\
++		QUERY_DESC_IDN_CONFIGURATION, 0,			\
++		CONFIGURATION_DESC_PARAM##_puname, buf, count, _size);	\
++}									\
++static DEVICE_ATTR_RW(cfg_##_name)
+ 
+ #define UFS_CONFIG_UNIT_DESC_PARAM(_name, _uname, _size)		\
+ static ssize_t unit_##_name##_show(struct device *dev,			\
+@@ -375,7 +417,23 @@ static ssize_t unit_##_name##_show(struct device *dev,			\
+ 	return ufs_sysfs_read_desc_param(hba,				\
+ 		QUERY_DESC_IDN_CONFIGURATION, 0, offset, buf, _size);	\
+ }									\
+-static DEVICE_ATTR_RO(unit_##_name)
++static ssize_t unit_##_name##_store(struct device *dev,			\
++		struct device_attribute *attr, const char *buf,		\
++		size_t count)						\
++{									\
++	struct ufs_hba *hba = dev_get_drvdata(dev);			\
++	size_t offset = CONFIGURATION_DESC_PARAM_UNIT0 +		\
++		(hba->sysfs_config_unit *				\
++		 CONFIGURATION_UNIT_DESC_SIZE) +			\
++		 CONFIGURATION_UNIT_DESC_PARAM_##_uname;		\
++	if (offset + _size > hba->desc_size.conf_desc) {		\
++		return -EINVAL;						\
++	}								\
++	return ufs_sysfs_write_desc_param(hba,				\
++		QUERY_DESC_IDN_CONFIGURATION, 0, offset, buf, count,	\
++		_size);							\
++}									\
++static DEVICE_ATTR_RW(unit_##_name)
+ 
+ UFS_CONFIG_DESC_PARAM(number_of_luns, _NUM_LU, 1);
+ UFS_CONFIG_DESC_PARAM(boot_enable, _BOOT_ENBL, 1);
+-- 
+2.13.5
