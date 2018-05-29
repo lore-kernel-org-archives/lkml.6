@@ -1,100 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965352AbeE2RW4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 13:22:56 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:43198 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965068AbeE2RWx (ORCPT
+        id S965418AbeE2RYs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 13:24:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48860 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965356AbeE2RYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 13:22:53 -0400
-X-Google-Smtp-Source: ADUXVKIhLcx3qlrQirdcc1/CfF6TvEqBwU+VSOQWyofU7Q9SpeBzPprbfVfIJUiSukt+QHx8HWqzJg==
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Icenowy Zheng <icenowy@aosc.io>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH] arm64: allwinner: a64-amarula-relic: Enable AP6330 WiFi support
-Date: Tue, 29 May 2018 22:52:38 +0530
-Message-Id: <20180529172238.9718-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.14.3
+        Tue, 29 May 2018 13:24:38 -0400
+Date: Tue, 29 May 2018 19:24:30 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: changbin.du@intel.com, akpm@linux-foundation.org, tglx@linutronix.de,
+        pombredanne@nexb.com, neilb@suse.com, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] scripts/faddr2line: show the code context
+Message-ID: <20180529172430.GB12180@hirez.programming.kicks-ass.net>
+References: <1521444205-2259-1-git-send-email-changbin.du@intel.com>
+ <20180529160332.GD12258@hirez.programming.kicks-ass.net>
+ <20180529162636.GW12235@hirez.programming.kicks-ass.net>
+ <20180529170710.q33dcw5l7a4bwd4t@treble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529170710.q33dcw5l7a4bwd4t@treble>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable AP6330 WiFi/BT combo chip on Amarula A64-Relic board:
-- WiFi SDIO interface is connected to MMC1
-- WiFi WL-PMU-EN pin connected to gpio PL2: attach to mmc-pwrseq
-- WiFi WL-WAKE-AP pin connected to gpio PL3
-- 32kHz external oscillator gate clock from RTC
+On Tue, May 29, 2018 at 12:07:10PM -0500, Josh Poimboeuf wrote:
+> Yeah, this change really should have been an optional arg.  It hurt the
+> readability and compactness of the output.  The above looks good to me.
+> 
+> Care to send a proper patch?  If you send it to Linus he might apply it
+> directly as he did with my original patches.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- .../dts/allwinner/sun50i-a64-amarula-relic.dts     | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+From: Peter Zijlstra (Intel) <peterz@infraded.org>
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-index ce4a256ff086..a77b70ca88e3 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-@@ -21,12 +21,43 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	wifi_pwrseq: wifi-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		clocks = <&rtc 1>;
-+		clock-names = "ext_clock";
-+		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* WL-PMU-EN: PL2 */
-+	};
- };
+Commit 6870c0165feaa5 ("scripts/faddr2line: show the code context")
+radically altered the output format of the faddr2line tool. And while
+the new list output format might have merrit it broke my vim usage and
+was hard to read.
+
+Make the new format optional; using a '--list' argument and attempt to
+make the output slightly easier to read by adding a little whitespace to
+separate the different files and explicitly mark the line in question.
+
+Cc: Changbin Du <changbin.du@intel.com>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Fixes: 6870c0165feaa5 ("scripts/faddr2line: show the code context")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ scripts/faddr2line | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/faddr2line b/scripts/faddr2line
+index 1876a741087c..a0149db00be7 100755
+--- a/scripts/faddr2line
++++ b/scripts/faddr2line
+@@ -56,7 +56,7 @@ command -v ${SIZE} >/dev/null 2>&1 || die "size isn't installed"
+ command -v ${NM} >/dev/null 2>&1 || die "nm isn't installed"
  
- &ehci0 {
- 	status = "okay";
- };
+ usage() {
+-	echo "usage: faddr2line <object file> <func+offset> <func+offset>..." >&2
++	echo "usage: faddr2line [--list] <object file> <func+offset> <func+offset>..." >&2
+ 	exit 1
+ }
  
-+&mmc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc1_pins>;
-+	vmmc-supply = <&reg_dcdc1>;
-+	/*
-+	 * Schematic shows both dldo4 and eldo1 connected for vcc-io-wifi, but
-+	 * dldo4 connection shows DNP(Do Not Populate) and eldo1 connected with
-+	 * 0Ohm register to vcc-io-wifi so eldo1 is used.
-+	 */
-+	vqmmc-supply = <&reg_eldo1>;
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	bus-width = <4>;
-+	non-removable;
-+	status = "okay";
-+
-+	brcmf: wifi@1 {
-+		reg = <1>;
-+		compatible = "brcm,bcm4329-fmac";
-+		interrupt-parent = <&r_pio>;
-+		interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>;	/* WL-WAKE-AP: PL3 */
-+		interrupt-names = "host-wake";
-+	};
-+};
-+
- &mmc2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc2_pins>;
-@@ -170,6 +201,12 @@
- 	regulator-name = "vcc-rtc";
- };
+@@ -166,15 +166,25 @@ __faddr2line() {
+ 		local file_lines=$(${ADDR2LINE} -fpie $objfile $addr | sed "s; $dir_prefix\(\./\)*; ;")
+ 		[[ -z $file_lines ]] && return
  
-+&rtc {
-+	clock-output-names = "rtc-osc32k", "rtc-osc32k-out";
-+	clocks = <&osc32k>;
-+	#clock-cells = <1>;
-+};
++		if [[ $LIST = 0 ]]; then
++			echo "$file_lines" | while read -r line
++			do
++				echo $line
++			done
++			DONE=1;
++			return
++		fi
 +
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
--- 
-2.14.3
+ 		# show each line with context
+ 		echo "$file_lines" | while read -r line
+ 		do
++			echo
+ 			echo $line
+ 			n=$(echo $line | sed 's/.*:\([0-9]\+\).*/\1/g')
+ 			n1=$[$n-5]
+ 			n2=$[$n+5]
+ 			f=$(echo $line | sed 's/.*at \(.\+\):.*/\1/g')
+-			awk 'NR>=strtonum("'$n1'") && NR<=strtonum("'$n2'") {printf("%d\t%s\n", NR, $0)}' $f
++			awk 'NR>=strtonum("'$n1'") && NR<=strtonum("'$n2'") { if (NR=='$n') printf(">%d<", NR); else printf(" %d ", NR); printf("\t%s\n", $0)}' $f
+ 		done
+ 
+ 		DONE=1
+@@ -185,6 +195,10 @@ __faddr2line() {
+ [[ $# -lt 2 ]] && usage
+ 
+ objfile=$1
++
++LIST=0
++[[ "$objfile" == "--list" ]] && LIST=1 && shift && objfile=$1
++
+ [[ ! -f $objfile ]] && die "can't find objfile $objfile"
+ shift
+ 
