@@ -1,26 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936906AbeE2PsA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:48:00 -0400
-Received: from foss.arm.com ([217.140.101.70]:43412 "EHLO foss.arm.com"
+        id S965076AbeE2PqU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:46:20 -0400
+Received: from foss.arm.com ([217.140.101.70]:43512 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934948AbeE2PoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:44:13 -0400
+        id S936866AbeE2Poa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:44:30 -0400
 From: Mark Rutland <mark.rutland@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: Mark Rutland <mark.rutland@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>
-Subject: [PATCHv2 05/16] atomics: prepare for atomic64_fetch_add_unless()
-Date: Tue, 29 May 2018 16:43:35 +0100
-Message-Id: <20180529154346.3168-6-mark.rutland@arm.com>
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCHv2 14/16] atomics/treewide: remove atomic_inc_not_zero_hint()
+Date: Tue, 29 May 2018 16:43:44 +0100
+Message-Id: <20180529154346.3168-15-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180529154346.3168-1-mark.rutland@arm.com>
 References: <20180529154346.3168-1-mark.rutland@arm.com>
@@ -28,92 +21,93 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently architecture must implement atomic_fetch_add_unless(), with
-common code providing atomic_add_unless(). Architectures must also
-implement atmic64_add_unless() directly, with no corresponding
-atomic64_fetch_add_unless().
+While documentation suggests atomic_inc_not_zero_hint() will perform better
+than atomic_inc_not_zero(), this is unlikely to be the case. No architectures
+implement atomic_inc_not_zero_hint() directly, and thus it either falls back to
+atomic_inc_not_zero(), or a loop using atomic_cmpxchg().
 
-This divergenece is unfortunate, and means that the APIs for atomic_t,
-atomic64_t, and atomic_long_t differ.
+Whenever the hint does not match the value in memory, the repeated use of
+atomic_cmpxchg() will be more expensive than the read that
+atomic_inc_not_zero_hint() attempts to avoid. For architectures with LL/SC
+atomics, a read cannot be avoided, and it would always be better to use
+atomic_inc_not_zero() directly. For other architectures, their own
+atomic_inc_not_zero() is likely to be more optimal than an atomic_cmpxchg()
+loop regardless.
 
-In preparation for unifying things, with architectures providing
-atomic64_fetch_add_unless, this patch adds a generic
-atomic64_add_unless() which will use atomic64_fetch_add_unless(). The
-instrumented atomics are updated to take this case into account.
+Generally, atomic_inc_not_zero_hint() is liable to perform worse than
+atomic_inc_not_zero(). Further, atomic_inc_not_zero_hint() only exists
+for atomic_t, and not atomic64_t or atomic_long_t, and there is only one
+user in the kernel tree.
+
+Given all this, let's remove atomic_inc_not_zero_hint(), and migrate the
+existing user over to atomic_inc_not_zero().
 
 There should be no functional change as a result of this patch.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Palmer Dabbelt <palmer@sifive.com>
-Cc: Albert Ou <albert@sifive.com>
 ---
- include/asm-generic/atomic-instrumented.h |  9 +++++++++
- include/linux/atomic.h                    | 16 ++++++++++++++++
- 2 files changed, 25 insertions(+)
+ include/linux/atomic.h | 32 --------------------------------
+ net/atm/pppoatm.c      |  2 +-
+ 2 files changed, 1 insertion(+), 33 deletions(-)
 
-diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-index 6e0818c182e2..e22d7e5f4ce7 100644
---- a/include/asm-generic/atomic-instrumented.h
-+++ b/include/asm-generic/atomic-instrumented.h
-@@ -93,11 +93,20 @@ static __always_inline int atomic_fetch_add_unless(atomic_t *v, int a, int u)
+diff --git a/include/linux/atomic.h b/include/linux/atomic.h
+index 7d41b6fffab6..8ec4d120b264 100644
+--- a/include/linux/atomic.h
++++ b/include/linux/atomic.h
+@@ -656,38 +656,6 @@ static inline int atomic_fetch_andnot_release(int i, atomic_t *v)
  }
  #endif
  
-+#ifdef arch_atomic64_fetch_add_unless
-+#define atomic64_fetch_add_unless atomic64_fetch_add_unless
-+static __always_inline int atomic64_fetch_add_unless(atomic64_t *v, s64 a, s64 u)
-+{
-+	kasan_check_write(v, sizeof(*v));
-+	return arch_atomic64_fetch_add_unless(v, a, u);
-+}
-+#else
- static __always_inline bool atomic64_add_unless(atomic64_t *v, s64 a, s64 u)
+-/**
+- * atomic_inc_not_zero_hint - increment if not null
+- * @v: pointer of type atomic_t
+- * @hint: probable value of the atomic before the increment
+- *
+- * This version of atomic_inc_not_zero() gives a hint of probable
+- * value of the atomic. This helps processor to not read the memory
+- * before doing the atomic read/modify/write cycle, lowering
+- * number of bus transactions on some arches.
+- *
+- * Returns: 0 if increment was not done, 1 otherwise.
+- */
+-#ifndef atomic_inc_not_zero_hint
+-static inline int atomic_inc_not_zero_hint(atomic_t *v, int hint)
+-{
+-	int val, c = hint;
+-
+-	/* sanity test, should be removed by compiler if hint is a constant */
+-	if (!hint)
+-		return atomic_inc_not_zero(v);
+-
+-	do {
+-		val = atomic_cmpxchg(v, c, c + 1);
+-		if (val == c)
+-			return 1;
+-		c = val;
+-	} while (c);
+-
+-	return 0;
+-}
+-#endif
+-
+ #ifndef atomic_inc_unless_negative
+ static inline int atomic_inc_unless_negative(atomic_t *p)
  {
- 	kasan_check_write(v, sizeof(*v));
- 	return arch_atomic64_add_unless(v, a, u);
- }
-+#endif
+diff --git a/net/atm/pppoatm.c b/net/atm/pppoatm.c
+index 21d9d341a619..a4d82afd4586 100644
+--- a/net/atm/pppoatm.c
++++ b/net/atm/pppoatm.c
+@@ -244,7 +244,7 @@ static int pppoatm_may_send(struct pppoatm_vcc *pvcc, int size)
+ 	 * the packet count limit, so...
+ 	 */
+ 	if (atm_may_send(pvcc->atmvcc, size) &&
+-	    atomic_inc_not_zero_hint(&pvcc->inflight, NONE_INFLIGHT))
++	    atomic_inc_not_zero(&pvcc->inflight))
+ 		return 1;
  
- static __always_inline void atomic_inc(atomic_t *v)
- {
-diff --git a/include/linux/atomic.h b/include/linux/atomic.h
-index 1105c0b37f27..8d93209052e1 100644
---- a/include/linux/atomic.h
-+++ b/include/linux/atomic.h
-@@ -1072,6 +1072,22 @@ static inline int atomic_dec_if_positive(atomic_t *v)
- #endif /* atomic64_try_cmpxchg */
- 
- /**
-+ * atomic64_add_unless - add unless the number is already a given value
-+ * @v: pointer of type atomic_t
-+ * @a: the amount to add to v...
-+ * @u: ...unless v is equal to u.
-+ *
-+ * Atomically adds @a to @v, so long as @v was not already @u.
-+ * Returns non-zero if @v was not @u, and zero otherwise.
-+ */
-+#ifdef atomic64_fetch_add_unless
-+static inline int atomic64_add_unless(atomic64_t *v, long long a, long long u)
-+{
-+	return atomic64_fetch_add_unless(v, a, u) != u;
-+}
-+#endif
-+
-+/**
-  * atomic64_inc_not_zero - increment unless the number is zero
-  * @v: pointer of type atomic64_t
-  *
+ 	/*
 -- 
 2.11.0
