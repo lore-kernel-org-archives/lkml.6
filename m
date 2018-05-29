@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934640AbeE2NK7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:10:59 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:51732 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934083AbeE2NKt (ORCPT
+        id S934686AbeE2NLK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:11:10 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34724 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934660AbeE2NLE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:10:49 -0400
-X-Google-Smtp-Source: ADUXVKLmakJxkI0zxx12fpUmP0lYUCjiguPshI/DAeCpX6U1TISny+6IsHaeYy1qOU4YmBun2Vb2lA==
+        Tue, 29 May 2018 09:11:04 -0400
+X-Google-Smtp-Source: ADUXVKI5vlHgVWgUOgscN77s5wliegxsoMYl3DKdVQ8R2+Bi1l/ZqCA4dTZnpWDJ812S9ZP5qm85lA==
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
 Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 10/19] file2alias: Support for serdev devices
-Date: Tue, 29 May 2018 15:10:05 +0200
-Message-Id: <20180529131014.18641-11-ricardo.ribalda@gmail.com>
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH 19/19] serdev: Instantiate a ttydev serdev if acpi and of fails
+Date: Tue, 29 May 2018 15:10:14 +0200
+Message-Id: <20180529131014.18641-20-ricardo.ribalda@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
 References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
@@ -24,65 +24,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows file2alias to generate the proper module headers to
-support serdev modalias drivers.
+If a serdev ttyport controller does not have an acpi nor an of child,
+create a ttydev as a child of that controller.
 
-Eg:
+Doing this allows the removal, addition and replacement of ttydev devices
+at runtime.
 
-root@qt5022:~# modinfo serdev:ttydev | grep alias
-alias:          serdev:ttydev_serdev
-alias:          serdev:ttydev
-
-root@qt5022:~#
-	cat /lib/modules/4.16.0-qtec-standard/modules.alias | grep serdev
-alias serdev:ttydev_serdev serdev_ttydev
-alias serdev:ttydev serdev_ttydev
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Rob Herring <robh@kernel.org>
 Cc: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- scripts/mod/devicetable-offsets.c |  3 +++
- scripts/mod/file2alias.c          | 11 +++++++++++
- 2 files changed, 14 insertions(+)
+ drivers/tty/serdev/core.c | 36 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-index 9fad6afe4c41..6082c41b7ad7 100644
---- a/scripts/mod/devicetable-offsets.c
-+++ b/scripts/mod/devicetable-offsets.c
-@@ -142,6 +142,9 @@ int main(void)
- 	DEVID(i2c_device_id);
- 	DEVID_FIELD(i2c_device_id, name);
- 
-+	DEVID(serdev_device_id);
-+	DEVID_FIELD(serdev_device_id, name);
-+
- 	DEVID(spi_device_id);
- 	DEVID_FIELD(spi_device_id, name);
- 
-diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-index b9beeaa4695b..dce6df3a159a 100644
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@ -955,6 +955,17 @@ static int do_i2c_entry(const char *filename, void *symval,
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index 9414700e6442..34295dacfb84 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -619,6 +619,27 @@ static inline int acpi_serdev_register_devices(struct serdev_controller *ctrl)
  }
- ADD_TO_DEVTABLE("i2c", i2c_device_id, do_i2c_entry);
+ #endif /* CONFIG_ACPI */
  
-+/* Looks like: serdev:S */
-+static int do_serdev_entry(const char *filename, void *symval,
-+			   char *alias)
++
++#if IS_ENABLED(CONFIG_SERIAL_DEV_CTRL_TTYDEV)
++static int serdev_controller_add_ttydev(struct serdev_controller *ctrl)
 +{
-+	DEF_FIELD_ADDR(symval, serdev_device_id, name);
-+	sprintf(alias, SERDEV_MODULE_PREFIX "%s", *name);
++	struct serdev_device *serdev;
++	int err;
 +
-+	return 1;
++	serdev = serdev_device_alloc(ctrl);
++	if (!serdev)
++		return -ENOMEM;
++
++	strcpy(serdev->modalias, "ttydev");
++
++	err = serdev_device_add(serdev);
++	if (err)
++		serdev_device_put(serdev);
++
++	return err;
 +}
-+ADD_TO_DEVTABLE("serdev", serdev_device_id, do_serdev_entry);
++#endif
 +
- /* Looks like: spi:S */
- static int do_spi_entry(const char *filename, void *symval,
- 			char *alias)
+ /**
+  * serdev_controller_add() - Add an serdev controller
+  * @ctrl:	controller to be registered.
+@@ -628,7 +649,7 @@ static inline int acpi_serdev_register_devices(struct serdev_controller *ctrl)
+  */
+ int serdev_controller_add(struct serdev_controller *ctrl)
+ {
+-	int ret_of, ret_acpi, ret;
++	int ret_of, ret_acpi, ret, ret_tty = -ENODEV;
+ 
+ 	/* Can't register until after driver model init */
+ 	if (WARN_ON(!is_registered))
+@@ -640,9 +661,16 @@ int serdev_controller_add(struct serdev_controller *ctrl)
+ 
+ 	ret_of = of_serdev_register_devices(ctrl);
+ 	ret_acpi = acpi_serdev_register_devices(ctrl);
+-	if (ret_of && ret_acpi) {
+-		dev_dbg(&ctrl->dev, "no devices registered: of:%d acpi:%d\n",
+-			ret_of, ret_acpi);
++
++#if IS_ENABLED(CONFIG_SERIAL_DEV_CTRL_TTYDEV)
++	if (ret_of && ret_acpi && ctrl->is_ttyport)
++		ret_tty = serdev_controller_add_ttydev(ctrl);
++#endif
++
++	if (ret_of && ret_acpi && ret_tty) {
++		dev_dbg(&ctrl->dev,
++			"no devices registered: of:%d acpi:%d tty:%d\n",
++			ret_of, ret_acpi, ret_tty);
+ 		ret = -ENODEV;
+ 		goto out_dev_del;
+ 	}
 -- 
 2.17.0
