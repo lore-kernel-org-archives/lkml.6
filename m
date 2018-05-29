@@ -1,58 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966799AbeE2UfS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 16:35:18 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:43748 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966480AbeE2UfP (ORCPT
+        id S966693AbeE2Uk2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 16:40:28 -0400
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:46003 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965927AbeE2UkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 16:35:15 -0400
-X-Google-Smtp-Source: ADUXVKJsjPIzGEE8vnbu1mRKjZj2jy1aO3w4tQS39RZ0GixTD/0jV6Xkee1lwAYfixO3OKJ5kklXZSbim0ulupWmnoI=
+        Tue, 29 May 2018 16:40:23 -0400
+X-Google-Smtp-Source: ADUXVKLn3OTGmCuEj43LWIHZwL3Mw69gQvSgySfrx8HriHMbdzh81nNuEPdogvO6QlcVt4001ZjbCMT/crP/548zqmI=
 MIME-Version: 1.0
-In-Reply-To: <20180529131014.18641-8-ricardo.ribalda@gmail.com>
-References: <20180529131014.18641-1-ricardo.ribalda@gmail.com> <20180529131014.18641-8-ricardo.ribalda@gmail.com>
+In-Reply-To: <1527605618-15705-1-git-send-email-oleksandrs@mellanox.com>
+References: <1527605618-15705-1-git-send-email-oleksandrs@mellanox.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 29 May 2018 23:35:13 +0300
-Message-ID: <CAHp75Ve_=euX83qVfArU+ZbcU2Z_PnBdtQGi7XbA7AVfM1XO-w@mail.gmail.com>
-Subject: Re: [PATCH 07/19] serdev: Allows dynamic creation of devices via sysfs
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Date: Tue, 29 May 2018 23:40:22 +0300
+Message-ID: <CAHp75Vf-5px=nPg1pZYp3ZrtY_puQRhsPZg97k7GcVxmFYZOzQ@mail.gmail.com>
+Subject: Re: [patch v25 0/4] JTAG driver introduction
+To: Oleksandr Shamray <oleksandrs@mellanox.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>, openbmc@lists.ozlabs.org,
+        Joel Stanley <joel@jms.id.au>,
+        =?UTF-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>,
+        Tobias Klauser <tklauser@distanz.ch>,
         "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
+        Vadim Pasternak <vadimp@mellanox.com>,
+        system-sw-low-level <system-sw-low-level@mellanox.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        openocd-devel-owner@lists.sourceforge.net, linux-api@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 4:10 PM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> Allow creating and deleting devices via sysfs. Devices created will be
-> matched to serdev drivers via modalias (the string provided by the user)
-> and deleted via their name.
+On Tue, May 29, 2018 at 5:53 PM, Oleksandr Shamray
+<oleksandrs@mellanox.com> wrote:
 
-> +       int err;
-> +       char *nline;
-
-Better to read in reversed order.
-
-> +       nline = strchr(buf, '\n');
-> +       if (nline)
-> +               *nline = '\0';
-
-strim() / strstrip() ?
-
-> +       nline = strchr(buf, '\n');
-> +       if (nline)
-> +               *nline = '\0';
-
-Ditto.
-
-> +static DEVICE_ATTR_IGNORE_LOCKDEP(delete_device, 0200, NULL,
-> +                                 delete_device_store);
-
-Perhaps leave it on one line?
+Please, STOP spamming mailing lists. Give (potential) reviewers time
+to look at this.
+In any case you already missed a next cycle, so, calm down and better
+collect reports and address comments thoroughly.
 
 -- 
 With Best Regards,
