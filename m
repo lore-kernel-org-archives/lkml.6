@@ -1,81 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967516AbeE2VVE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:21:04 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:45802 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966946AbeE2VU7 (ORCPT
+        id S967051AbeE2VYN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:24:13 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:44401 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966914AbeE2VYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:20:59 -0400
-X-Google-Smtp-Source: ADUXVKIye5USyjX8GB/e7J3t1EEGKURZxSg2F14zcWzbILFLy4g8SN7vVn9D84y+AclPyygiBIBv6DPEG+X3sYf6p6o=
+        Tue, 29 May 2018 17:24:10 -0400
+X-Google-Smtp-Source: ADUXVKI9NwvdHGa2monDn2GSETW87VyZX+uSrU3bW031QwTLVsuinWWAEB/IkddrMOJ4u9g/lJqmJ1J4jKzy9qR2N8Q=
 MIME-Version: 1.0
-In-Reply-To: <KL1P15301MB0006DF4209AEE3809ABD303FBF6B0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
-References: <KL1P15301MB0006DF4209AEE3809ABD303FBF6B0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 30 May 2018 00:20:57 +0300
-Message-ID: <CAHp75Vd9kiyOaSbaK6c4b7ucF23kgP0yQxKpUAGrjHgKfJprXA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: hv: Do not wait forever on a device that has disappeared
-To: Dexuan Cui <decui@microsoft.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "driverdev-devel@linuxdriverproject.org"
-        <driverdev-devel@linuxdriverproject.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
+References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
+ <20180529131014.18641-8-ricardo.ribalda@gmail.com> <CAHp75Ve_=euX83qVfArU+ZbcU2Z_PnBdtQGi7XbA7AVfM1XO-w@mail.gmail.com>
+In-Reply-To: <CAHp75Ve_=euX83qVfArU+ZbcU2Z_PnBdtQGi7XbA7AVfM1XO-w@mail.gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date: Tue, 29 May 2018 23:23:51 +0200
+Message-ID: <CAPybu_3tZ2z7sk5tSwgXdqNyiTm_31UwdUsWNL1_eNHBDQyCiw@mail.gmail.com>
+Subject: Re: [PATCH 07/19] serdev: Allows dynamic creation of devices via sysfs
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 12:12 AM, Dexuan Cui <decui@microsoft.com> wrote:
->
-> Before the guest finishes the device initialization, the device can be
-> removed anytime by the host, and after that the host won't respond to
-> the guest's request, so the guest should be prepared to handle this
-> case.
+Hi Andy,
 
-> +       while (true) {
-> +               if (hdev->channel->rescind) {
-> +                       dev_warn_once(&hdev->device, "The device is gone.\n");
-> +                       return -ENODEV;
-> +               }
-> +
-> +               if (wait_for_completion_timeout(comp, HZ / 10))
-> +                       break;
-> +       }
+On Tue, May 29, 2018 at 10:35 PM Andy Shevchenko <andy.shevchenko@gmail.com>
+wrote:
 
-Infinite loops are usually a red flags.
+> On Tue, May 29, 2018 at 4:10 PM, Ricardo Ribalda Delgado
+> <ricardo.ribalda@gmail.com> wrote:
+> > Allow creating and deleting devices via sysfs. Devices created will be
+> > matched to serdev drivers via modalias (the string provided by the user)
+> > and deleted via their name.
 
-What's wrong with simple:
+> > +       int err;
+> > +       char *nline;
 
-do {
-  ...
-} while (wait_...(...) == 0);
+> Better to read in reversed order.
 
-?
+> > +       nline = strchr(buf, '\n');
+> > +       if (nline)
+> > +               *nline = '\0';
 
-> +       if (!ret)
-> +               ret = wait_for_response(hdev, &comp);
+> strim() / strstrip() ?
 
-Better to use well established patterns, i.e.
+> > +       nline = strchr(buf, '\n');
+> > +       if (nline)
+> > +               *nline = '\0';
 
-if (ret)
- return ret;
+> Ditto.
 
-> +               if (!ret)
-> +                       ret = wait_for_response(hdev, &comp_pkt.host_event);
+> > +static DEVICE_ATTR_IGNORE_LOCKDEP(delete_device, 0200, NULL,
+> > +                                 delete_device_store);
 
-Here it looks okay on the first glance, but better to think about it
-again and refactor.
+> Perhaps leave it on one line?
+
+> --
+> With Best Regards,
+> Andy Shevchenko
+
+Thanks for your review. I am working on v2 at
+https://github.com/ribalda/linux/tree/serdev2 it fixes your comments except
+the line cut for DEVICE_ATTR, I want also to make checkpatch happy ;)
+
+Will send v2  to the list after I got more feedback, you can of course ping
+me if there is something in my tree that it is not fixed properly.
+
+Cheers
+
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Ricardo Ribalda
