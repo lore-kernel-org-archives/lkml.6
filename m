@@ -1,71 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751337AbeE2FDr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 01:03:47 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38555 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750872AbeE2FDp (ORCPT
+        id S1751418AbeE2FIi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 01:08:38 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45433 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750972AbeE2FIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 01:03:45 -0400
-X-Google-Smtp-Source: AB8JxZqcUzfaxcewOvr7dtf6V/FqFj4fGLkW8/OGKwAzDZPHfBfP46jk2HRdRR+ARvX6c6P6dhg+PQ==
-Date: Mon, 28 May 2018 22:05:23 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: Introduce prepare/unprepare ops for rproc
- coredump
-Message-ID: <20180529050523.GG2259@tuxbook-pro>
-References: <20180521184559.20864-1-sibis@codeaurora.org>
+        Tue, 29 May 2018 01:08:35 -0400
+X-Google-Smtp-Source: AB8JxZrpkOke98fIUNOdu+SanQjD2uB4pe4nTpYqUbpZ1GKm72P84w7MOQy5Zu8WldI3s0BPDWStcw==
+Date: Mon, 28 May 2018 22:08:33 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        viresh.kumar@linaro.org, valentin.schneider@arm.com,
+        quentin.perret@arm.com, Luca Abeni <luca.abeni@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Alessio Balsini <alessio.balsini@santannapisa.it>
+Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
+Message-ID: <20180529050833.GA226378@joelaf.mtv.corp.google.com>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
+ <20180528101234.GA1293@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180521184559.20864-1-sibis@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180528101234.GA1293@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 21 May 11:45 PDT 2018, Sibi Sankar wrote:
-
-> In some occasions the remoteproc device might need to
-> prepare some hardware before the coredump can be performed
-> and cleanup the state afterwards.
+On Mon, May 28, 2018 at 12:12:34PM +0200, Juri Lelli wrote:
+[..] 
+> > +
+> > +	util = max_t(unsigned long, util, READ_ONCE(rq->avg_dl.util_avg));
+> > +
+> > +	return util;
 > 
-> Q6V5 modem requires the mba to be loaded before the
-> coredump and some cleanup of the resources afterwards.
+> Anyway, just a quick thought. I guess we should experiment with this a
+> bit. Now, I don't unfortunately have a Arm platform at hand for testing.
+> Claudio, Luca (now Cc-ed), would you be able to fire some tests with
+> this change?
 > 
+> Oh, adding Joel and Alessio as well that experimented with DEADLINE
+> lately.
 
-This describes two different changes, so please put it in two+ patches.
+I also feel that for power reasons, dl.util_avg shouldn't drive the OPP
+beyond what the running bandwidth is, or atleast do that only if CFS tasks
+are running and being preempted as you/Vincent mentioned in one of the
+threads.
 
-[..]
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index dfdaede9139e..010819e01279 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -333,6 +333,8 @@ struct firmware;
->   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
->   * @da_to_va:	optional platform hook to perform address translations
->   * @load_rsc_table:	load resource table from firmware image
-> + * @prepare_coredump:	prepare function, called before coredump
-> + * @unprepare_coredump:	unprepare function, called post coredump
+With our DL experiments, I didn't measure power but got it to a point where
+the OPP is scaling correctly based on DL parameters. I think Alessio did
+measure power at his setup but I can't recall now. Alessio?
 
-I believe there will be other cases where we will need driver-specific
-logic to extract the memory content of the segments, e.g. through custom
-hardware sequences or non-mmio reads.
+thanks,
 
-To support this I think we should extend the struct rproc_dump_segment
-to carry an optional "dump" function that if specified will be used
-instead of the memcpy in rproc_coredump(). Drivers can then for each
-segment specify this function, if needed.
-
-Through some restructuring in the msa driver and your patch you should
-be able to implement this using such a mechanism instead - and it would
-be useful to these other cases as well.
-
-
-PS. I hope we can get away from some of the conditionals in your patch
-through some restructuring of the code.
-
-Regards,
-Bjorn
+ - Joel
