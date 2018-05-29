@@ -1,64 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935250AbeE2ObJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:31:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33088 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934857AbeE2ObF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:31:05 -0400
-Date: Tue, 29 May 2018 16:31:02 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH] KVM: VMX: Optimize tscdeadline timer latency
-Message-ID: <20180529143102.GC7819@flask>
-References: <1527576797-5738-1-git-send-email-wanpengli@tencent.com>
- <20180529142324.GA7819@flask>
+        id S935348AbeE2ObU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:31:20 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:55969 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934857AbeE2ObP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:31:15 -0400
+From: Gevorg Sahakyan <Gevorg.Sahakyan@synopsys.com>
+To: William Wu <william.wu@rock-chips.com>,
+        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>,
+        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "sergei.shtylyov@cogentembedded.com"
+        <sergei.shtylyov@cogentembedded.com>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org"
+        <linux-rockchip@lists.infradead.org>,
+        "frank.wang@rock-chips.com" <frank.wang@rock-chips.com>,
+        "huangtao@rock-chips.com" <huangtao@rock-chips.com>,
+        "dianders@google.com" <dianders@google.com>,
+        "daniel.meng@rock-chips.com" <daniel.meng@rock-chips.com>,
+        "John.Youn@synopsys.com" <John.Youn@synopsys.com>,
+        "wzz@rock-chips.com" <wzz@rock-chips.com>,
+        "zsq@rock-chips.com" <zsq@rock-chips.com>,
+        "Allen.Hsu@quantatw.com" <Allen.Hsu@quantatw.com>,
+        "StanTsui@AOPEN.com" <StanTsui@AOPEN.com>,
+        "Spruce.Wu@quantatw.com" <Spruce.Wu@quantatw.com>,
+        "Martin.Tsai@quantatw.com" <Martin.Tsai@quantatw.com>,
+        "Kevin.Shai@quantatw.com" <Kevin.Shai@quantatw.com>,
+        "Mon-Jer.Wu@quantatw.com" <Mon-Jer.Wu@quantatw.com>,
+        "Claud.Chang@quantatw.com" <Claud.Chang@quantatw.com>,
+        "San.Lin@quantatw.com" <San.Lin@quantatw.com>,
+        "Ren.Kuo@quantatw.com" <Ren.Kuo@quantatw.com>,
+        "davidhtwang@aopen.com" <davidhtwang@AOPEN.com>,
+        "fonglin@aopen.com" <fonglin@AOPEN.com>,
+        "stevencheng@aopen.com" <stevencheng@AOPEN.com>,
+        "tomchen@aopen.com" <tomchen@AOPEN.com>,
+        "donchang@aopen.com" <donchang@AOPEN.com>,
+        "milesschofield@aopen.com" <milesschofield@AOPEN.com>
+Subject: Re: [PATCH v5 0/2] usb: dwc2: fix isoc split in transfer issue
+Thread-Topic: [PATCH v5 0/2] usb: dwc2: fix isoc split in transfer issue
+Thread-Index: AQHT6Q0qsr/2hrCuvkKD/isR8OvB0w==
+Date: Tue, 29 May 2018 14:30:06 +0000
+Message-ID: <3A9D5F5B1BA2034E826C50459B71BE044CB587EA@am04wembxa.internal.synopsys.com>
+References: <1526031992-16565-1-git-send-email-william.wu@rock-chips.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.71.36]
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180529142324.GA7819@flask>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TEVTs6029033
 
-2018-05-29 16:23+0200, Radim Krčmář:
-> 2018-05-29 14:53+0800, Wanpeng Li:
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> > 
-> > 'Commit d0659d946be0 ("KVM: x86: add option to advance tscdeadline 
-> > hrtimer expiration")' advances the tscdeadline (the timer is emulated 
-> > by hrtimer) expiration in order that the latency which is incurred 
-> > by hypervisor (apic_timer_fn -> vmentry) can be avoided. This patch 
-> > adds the advance tscdeadline expiration support to which the tscdeadline 
-> > timer is emulated by VMX preemption timer to reduce the hypervisor 
-> > lantency (handle_preemption_timer -> vmentry). clockevents infrastruture 
-> > can program minimum delay if hrtimer feeds a expiration in the past, 
-> > we set delta_tsc to 1(which will be converted to 0 before vmentry) 
-> > which can lead to an immediately vmexit when delta_tsc is not bigger 
-> > than advance ns. 
-> > 
-> > This patch can reduce ~63% latency (~4450 cycles to ~1660 cycles on 
-> > a haswell desktop) for kvm-unit-tests/tscdeadline_latency when testing
-> > busy waits.
-> > 
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Krčmář <rkrcmar@redhat.com>
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> > diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> > @@ -12444,6 +12444,12 @@ static int vmx_set_hv_timer(struct kvm_vcpu *vcpu, u64 guest_deadline_tsc)
-> >  	tscl = rdtsc();
-> >  	guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
-> >  	delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
-> > +	lapic_timer_advance_cycles = nsec_to_cycles(vcpu, lapic_timer_advance_ns);
-> > +	if (delta_tsc > lapic_timer_advance_cycles)
-> > +		delta_tsc -= lapic_timer_advance_cycles;
-> > +	else
-> > +		delta_tsc = 1;
-> 
-> Why don't we just "return 1" to say that the timer has expired?
-
-This case might be rare, so setting delta_tsc = 0 would be safer.
+On 5/11/2018 1:48 PM, William Wu wrote:
+> This patch fix dma unaligned problem and data lost problem for
+> isoc split in transfer.
+>
+> Test on rk3288 platform, use an usb hs Hub (GL852G-12) and an usb
+> fs audio device (Plantronics headset) to capture and playback.
+>
+> William Wu (2):
+>   usb: dwc2: alloc dma aligned buffer for isoc split in
+>   usb: dwc2: fix isoc split in transfer with no data
+>
+On HAPS-DX7 with HS HUB Belkin(050d:0233) using internal USB testing tool.
+Tested-by: Gevorg Sahakyan <sahakyan@synopsys.com>
