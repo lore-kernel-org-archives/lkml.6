@@ -1,71 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935700AbeE2OrO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:47:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54873 "EHLO mx2.suse.de"
+        id S935764AbeE2OsE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:48:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936654AbeE2Oqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:46:44 -0400
-Date: Tue, 29 May 2018 16:46:40 +0200
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To: Christophe LEROY <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Neuling <mikey@neuling.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/64s: Enhance the information in
- cpu_show_spectre_v1()
-Message-ID: <20180529164640.02faedcd@kitsune.suse.cz>
-In-Reply-To: <1b720765-faf1-719e-ab76-b3eafa559896@c-s.fr>
-References: <20180424041559.32410-1-mpe@ellerman.id.au>
-        <20180528131914.32231-1-msuchanek@suse.de>
-        <1b720765-faf1-719e-ab76-b3eafa559896@c-s.fr>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S935518AbeE2OrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:47:08 -0400
+X-Google-Smtp-Source: ADUXVKJUQBRRU/P52X7xDNs88ilbVPlxjcfhEULHY82BMvpNUhyjNnTDFU17Sny5kO6TG97NmxUn7oy+aqWs5Kf5cMs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1765be22-4bd7-c870-926c-2956e46df1d9@gmail.com>
+References: <20180524175024.19874-1-robh@kernel.org> <20180524175024.19874-2-robh@kernel.org>
+ <20180524181834.GF4828@sirena.org.uk> <1765be22-4bd7-c870-926c-2956e46df1d9@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 29 May 2018 09:46:46 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKWuOKvyYDVPS_tq8VJ25ZazZvSXBxyu5j4LqDxycyLPg@mail.gmail.com>
+Message-ID: <CAL_JsqKWuOKvyYDVPS_tq8VJ25ZazZvSXBxyu5j4LqDxycyLPg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] driver core: make deferring probe after init optional
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Architecture Mailman List <boot-architecture@lists.linaro.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 May 2018 16:13:49 +0200
-Christophe LEROY <christophe.leroy@c-s.fr> wrote:
+On Tue, May 29, 2018 at 12:12 AM, Frank Rowand <frowand.list@gmail.com> wrote:
+> On 05/24/18 11:18, Mark Brown wrote:
+>> On Thu, May 24, 2018 at 12:50:17PM -0500, Rob Herring wrote:
+>>
+>>> Subsystems or drivers may opt-in to this behavior by calling
+>>> driver_deferred_probe_check_init_done() instead of just returning
+>>> -EPROBE_DEFER. They may use additional information from DT or kernel's
+>>> config to decide whether to continue to defer probe or not.
+>>
+>> Should userspace have some involvement in this decision?  It knows if
+>> it's got any intention of loading modules for example.  Kernel config
+>> checks might be good enough, though it's going to be a pain to work out
+>> if the relevant driver is built as a module for example.
+>>
+>
+> A parallel issue is that loading an overlay could provide the resource
+> that will allow the deferred probe to complete.  (That is, once we
+> finish implementing the run time overlays feature.)
 
-> Le 28/05/2018 à 15:19, Michal Suchanek a écrit :
-> > We now have barrier_nospec as mitigation so print it in
-> > cpu_show_spectre_v1 when enabled.
-> > 
-> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > ---
-> >   arch/powerpc/kernel/security.c | 5 ++++-
-> >   1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/powerpc/kernel/security.c
-> > b/arch/powerpc/kernel/security.c index 0239383c7e4d..a0c32d53980b
-> > 100644 --- a/arch/powerpc/kernel/security.c
-> > +++ b/arch/powerpc/kernel/security.c
-> > @@ -120,7 +120,10 @@ ssize_t cpu_show_spectre_v1(struct device
-> > *dev, struct device_attribute *attr, c if
-> > (!security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR)) return
-> > sprintf(buf, "Not affected\n"); 
-> > -	return sprintf(buf, "Vulnerable\n");
-> > +	if (barrier_nospec_enabled)  
-> 
-> > +		return sprintf(buf, "Mitigation: __user pointer
-> > sanitization\n");
-> > +	else
-> > +		return sprintf(buf, "Vulnerable\n");  
-> 
-> Checkpatch would tell you that an else is unneeded after a return. So 
-> just leave it as it was before.
+I'd like to see an actual example where that could happen. I agree you
+could craft it, but would it really be a valid partitioning? For
+example, SoC pinctrl, iommu, or power domains defined in an overlay
+would not be something valid to apply during kernel boot or after boot
+(though putting those into overlays is exactly what Alex wants to do).
 
-Where did you get your copy of checkpatch? The one in Linux tree does
-not do that.
-
-Thanks
-
-Michal
+Rob
