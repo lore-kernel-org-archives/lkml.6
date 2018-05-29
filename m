@@ -1,169 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933702AbeE2MLq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:11:46 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38434 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933675AbeE2MLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:11:41 -0400
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Cc: Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Julien Grall <julien.grall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 04/17] arm64: Add ARCH_WORKAROUND_2 probing
-Date: Tue, 29 May 2018 13:11:08 +0100
-Message-Id: <20180529121121.24927-5-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180529121121.24927-1-marc.zyngier@arm.com>
-References: <20180529121121.24927-1-marc.zyngier@arm.com>
+        id S933911AbeE2MTJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:19:09 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:34079 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933525AbeE2MTF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:19:05 -0400
+Date: Tue, 29 May 2018 13:18:57 +0100 (BST)
+From: Justin Skists <justin.skists@juzza.co.uk>
+To: Jonathan Corbet <corbet@lwn.net>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <1478759754.17398.1527596337445@email.1and1.co.uk>
+In-Reply-To: <20180529113725.GB13092@rapoport-lnx>
+References: <20180529113725.GB13092@rapoport-lnx>
+Subject: Re: [PATCH] docs/admin-guide/mm: add high level concepts overview
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev28
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:tf9yff0S+vRchjRRFUfqUbTuUvmfskTELu0hcqnIUHWaw4uKARF
+ 4TPt4V/x7CC7h5NIppWYbLbKsuRnKB56g6W9fJhABpf8/Pkm5DhPfU0d0OKMwse61un5g8l
+ oq6s8f7ve9h3RcsK46sho1d/8vBCyxG9zLIzcXhXglKiJI4Em8T7dHzGweRSmKWghH++ALG
+ gdAku1BN7CVJwnTSD5VKA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:JbdSI3FAteg=:lOj2ldpepZMVhBvpq9dIlV
+ xQEgCdW9h0NZTW9PTIwXMc8/yiEmld603+IWD6CNlayPNb5zgdODMi61IQv8k9H/RIAU2PWxA
+ a4lwC/gdiUmqBF5h6m5qhhgxuPI+0NH6QOJ6gUtnvUayrqDY3abzLI/abCa0/OsaGS53de5rI
+ 0VMYdeEKmbK2Rf4Jg/n50IVUdWSp/v3IAYa/pWUDd+nkYuwJ6UL25VhjUlA0+SKm16fXeuKnO
+ q9pKbv8U/vBi/Z/bV/leGZwHd7534/3Mpp2RmdeMeMRV7s/078BILIC1jUPMXWDXcNg+ik8Fk
+ 9plxdsu0Yz8aNw3HuYNMgGV3slMs9OOVsJlMifZEiqxzbDJU1/bZMLBnFXdI0AQg7cTLn/i20
+ J802BKjilN0rKJSjeZgn2SULM0v6bk3lSgTC0ViWe+813YiKORoIKAnmc0LVoqfimjg1oLLXi
+ pxjRXhhdrVtvOsABrwbiGpEWKQBt42hyG//4fsJqlWfr+9oDtRYZ2CebNnYmZXafHgdb7UEJa
+ 6RK90yPn8PWVRfJGRqfTKikGdjUJ3G4XAnFx+TV740WpQaU3BBM12Q567dVCtHQWmH+4Yqf0Q
+ dpS0/eP+lGrQEIpCZkkgVc0ZsHgC8mAHqIe8mVEblekUCAmEuaBTuTCA3rGpUH4FufX/dkYBO
+ 4fCvuTxa9Ib7r6DbUbnleHPKea2HK2yE5SxL4XoNHEdOwpFW/EFBqjpCcGRgdsqCkFDSPI6l+
+ ZSrKIBB7Kv8HWLrl
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As for Spectre variant-2, we rely on SMCCC 1.1 to provide the
-discovery mechanism for detecting the SSBD mitigation.
 
-A new capability is also allocated for that purpose, and a
-config option.
+> On 29 May 2018 at 12:37 Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+> 
 
-Reviewed-by: Julien Grall <julien.grall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- arch/arm64/Kconfig               |  9 ++++++
- arch/arm64/include/asm/cpucaps.h |  3 +-
- arch/arm64/kernel/cpu_errata.c   | 69 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 80 insertions(+), 1 deletion(-)
+> +=================
+> +Concepts overview
+> +=================
+> +
+> +The memory management in Linux is complex system that evolved over the
+> +years and included more and more functionality to support variety of
+> +systems from MMU-less microcontrollers to supercomputers. The memory
+> +management for systems without MMU is called ``nommu`` and it
+> +definitely deserves a dedicated document, which hopefully will be
+> +eventually written. Yet, although some of the concepts are the same,
+> +here we assume that MMU is available and CPU can translate a virtual
+> +address to a physical address.
+> +
+> +.. contents:: :local:
+> +
+> +Virtual Memory Primer
+> +=====================
+> +
+> +The physical memory in a computer system is a limited resource and
+> +even for systems that support memory hotplug there is a hard limit on
+> +the amount of memory that can be installed. The physical memory is not
+> +necessary contiguous, it might be accessible as a set of distinct
+> +address ranges. Besides, different CPU architectures, and even
+> +different implementations of the same architecture have different view
+> +how these address ranges defined.
+> +
+> +All this makes dealing directly with physical memory quite complex and
+> +to avoid this complexity a concept of virtual memory was developed.
+> +
+> +The virtual memory abstracts the details of physical memory from the
+> +application software, allows to keep only needed information in the
+> +physical memory (demand paging) and provides a mechanism for the
+> +protection and controlled sharing of data between processes.
+> +
+> +With virtual memory, each and every memory access uses a virtual
+> +address. When the CPU decodes the an instruction that reads (or
+> +writes) from (or to) the system memory, it translates the `virtual`
+> +address encoded in that instruction to a `physical` address that the
+> +memory controller can understand.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index eb2cf4938f6d..b2103b4df467 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -938,6 +938,15 @@ config HARDEN_EL2_VECTORS
- 
- 	  If unsure, say Y.
- 
-+config ARM64_SSBD
-+	bool "Speculative Store Bypass Disable" if EXPERT
-+	default y
-+	help
-+	  This enables mitigation of the bypassing of previous stores
-+	  by speculative loads.
-+
-+	  If unsure, say Y.
-+
- menuconfig ARMV8_DEPRECATED
- 	bool "Emulate deprecated/obsolete ARMv8 instructions"
- 	depends on COMPAT
-diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-index bc51b72fafd4..8a699c708fc9 100644
---- a/arch/arm64/include/asm/cpucaps.h
-+++ b/arch/arm64/include/asm/cpucaps.h
-@@ -48,7 +48,8 @@
- #define ARM64_HAS_CACHE_IDC			27
- #define ARM64_HAS_CACHE_DIC			28
- #define ARM64_HW_DBM				29
-+#define ARM64_SSBD				30
- 
--#define ARM64_NCAPS				30
-+#define ARM64_NCAPS				31
- 
- #endif /* __ASM_CPUCAPS_H */
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index d1a7a68dc142..0c76c9f176bb 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -256,6 +256,67 @@ void __init arm64_update_smccc_conduit(struct alt_instr *alt,
- 
- 	*updptr = cpu_to_le32(insn);
- }
-+
-+static void arm64_set_ssbd_mitigation(bool state)
-+{
-+	switch (psci_ops.conduit) {
-+	case PSCI_CONDUIT_HVC:
-+		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_2, state, NULL);
-+		break;
-+
-+	case PSCI_CONDUIT_SMC:
-+		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, state, NULL);
-+		break;
-+
-+	default:
-+		WARN_ON_ONCE(1);
-+		break;
-+	}
-+}
-+
-+static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
-+				    int scope)
-+{
-+	struct arm_smccc_res res;
-+	bool supported = true;
-+
-+	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
-+
-+	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
-+		return false;
-+
-+	/*
-+	 * The probe function return value is either negative
-+	 * (unsupported or mitigated), positive (unaffected), or zero
-+	 * (requires mitigation). We only need to do anything in the
-+	 * last case.
-+	 */
-+	switch (psci_ops.conduit) {
-+	case PSCI_CONDUIT_HVC:
-+		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
-+				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
-+		if ((int)res.a0 != 0)
-+			supported = false;
-+		break;
-+
-+	case PSCI_CONDUIT_SMC:
-+		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
-+				  ARM_SMCCC_ARCH_WORKAROUND_2, &res);
-+		if ((int)res.a0 != 0)
-+			supported = false;
-+		break;
-+
-+	default:
-+		supported = false;
-+	}
-+
-+	if (supported) {
-+		__this_cpu_write(arm64_ssbd_callback_required, 1);
-+		arm64_set_ssbd_mitigation(true);
-+	}
-+
-+	return supported;
-+}
- #endif	/* CONFIG_ARM64_SSBD */
- 
- #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
-@@ -513,6 +574,14 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
- 		ERRATA_MIDR_RANGE_LIST(arm64_harden_el2_vectors),
- 	},
-+#endif
-+#ifdef CONFIG_ARM64_SSBD
-+	{
-+		.desc = "Speculative Store Bypass Disable",
-+		.capability = ARM64_SSBD,
-+		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
-+		.matches = has_ssbd_mitigation,
-+	},
- #endif
- 	{
- 	}
--- 
-2.14.2
+I spotted an errant "the an" in that paragraph.
+
+I would rewrite that sentence as "When the CPU decodes an instruction that
+reads from (or writes to) the system memory," ...
+
+The rest of the document looks good to me, and a nice overview.
+
+
+Best regards,
+Justin.
