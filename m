@@ -1,79 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755144AbeE2COr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 22:14:47 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8200 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756022AbeE2COU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 22:14:20 -0400
-From: Jason Yan <yanaijie@huawei.com>
-To: <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <john.garry@huawei.com>, <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH 0/8] libsas: Support swapping disks and SATA phy link rate matching the pathway
-Date: Tue, 29 May 2018 10:23:01 +0800
-Message-ID: <20180529022309.21071-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.13.6
+        id S1756097AbeE2CPD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 22:15:03 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56986 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755922AbeE2CO7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 22:14:59 -0400
+Date: Tue, 29 May 2018 12:15:05 +1000 (AEST)
+From: Finn Thain <fthain@telegraphics.com.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: Christoph Hellwig <hch@lst.de>, Michael Schmitz <schmitzmic@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, Joshua Thompson <funaho@jurai.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC
+ based ethernet
+In-Reply-To: <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
+Message-ID: <alpine.LNX.2.21.1805291047230.13@nippy.intranet>
+References: <1527378785-13326-1-git-send-email-linux@roeck-us.net> <alpine.LNX.2.21.1805271212480.9@nippy.intranet> <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com> <alpine.LNX.2.21.1805271547090.9@nippy.intranet> <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com>
+ <alpine.LNX.2.21.1805281521420.10@nippy.intranet> <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The work flow of revalidation now is scanning expander phy by the
-sequence of the phy and check if the phy have changed. This will leads
-to some issues of swapping disks or replacing a disk with a new one.
+On Mon, 28 May 2018, Geert Uytterhoeven wrote:
 
-And when an expander phy attached to a SATA phy is using a physical link
-rate greater than the expander host phys's linkrate, the disk will failed
-to be discovered(ATA commands all failed). This is described in sas
-protocal spec as:
+> 
+> Do we have a consensus on the way forward?
 
-"If an expander phy attached to a SATA phy is using a physical link rate
-greater than the maximum connection rate supported by the pathway from
-an STP initiator port, a management application client should use the
-SMP PHY CONTROL function (see 10.4.3.10) to set the PROGRAMMED MAXIMUM
-PHYSICAL LINK RATE field of the expander phy to the maximum connection
-rate supported by the pathway from that STP initiator port."
+My prefered solution remains the two driver patches that I originally 
+submitted, which you objected to:
 
-This patchset addresses the issues above by these main changes:
-1. Let the revalidation first scan all phys, mark all changed phys, then
-revalidate in two steps. First check if we need to unregister some devices.
-if we need to unregister some devices, raise a new bcast and return.
-Second, if no devices need to be unregistered, discover new devices.
-2. Check the SATA phy's linkrate to see if it is greater than any phy's 
-linkrate it may pass through. Remember the minimum linkrate of the pathway
-and set the SATA phy linkrate to it using the SMP PHY CONTROL function.
-3. Other changes such as checking the ata devices class and id to ensure
-the same device after flutter and so on.
+https://lkml.org/lkml/2018/5/3/10
+https://lkml.org/lkml/2018/5/3/9
 
-Jason Yan (8):
-  scsi: libsas: delete dead code in scsi_transport_sas.c
-  scsi: libsas: check the lldd callback correctly
-  scsi: libsas: always unregister the old device if going to discover
-    new
-  scsi: libsas: trigger a new revalidation to discover the device
-  scsi: libsas: check if the same sata device when flutter
-  scsi: libsas: reset the phy state and address if discover failed
-  scsi: libsas: fix issue of swapping two sas disks
-  scsi: libsas: support SATA phy link rate unmatch the pathway
+So there is no consensus yet.
 
- drivers/ata/libata-core.c          |   3 +-
- drivers/scsi/libsas/sas_ata.c      | 131 ++++++++++++++++++++++++
- drivers/scsi/libsas/sas_discover.c |   4 +-
- drivers/scsi/libsas/sas_expander.c | 198 +++++++++++++++++++++++++++++--------
- drivers/scsi/libsas/sas_port.c     |   2 +
- drivers/scsi/scsi_transport_sas.c  |   2 -
- include/linux/libata.h             |   2 +
- include/scsi/libsas.h              |   1 +
- include/scsi/sas_ata.h             |   6 ++
- 9 files changed, 305 insertions(+), 44 deletions(-)
+To my mind, the existing code is pretty clear: drivers should set the 
+(default) mask. See also,
+
+$ egrep -r -A1 "coherent_dma_mask.*expected" */
+drivers/of/device.c:     * Set default coherent_dma_mask to 32 bit.  Drivers are expected to
+drivers/of/device.c-     * setup the correct supported mask.
+--
+drivers/acpi/arm64/iort.c:       * Set default coherent_dma_mask to 32 bit.  Drivers are expected to
+drivers/acpi/arm64/iort.c-       * setup the correct supported mask.
+$ 
+
+And drivers/usb/dwc2/platform.c:
+
+        /*
+         * Use reasonable defaults so platforms don't have to provide these.
+         */
+        if (!dev->dev.dma_mask)
+                dev->dev.dma_mask = &dev->dev.coherent_dma_mask;
+        retval = dma_set_coherent_mask(&dev->dev, DMA_BIT_MASK(32));
+
+And FWIW,
+
+$ egrep -wlr "dma_set_mask_and_coherent|dma_set_coherent_mask|dma_coerce_mask_and_coherent" drivers/ | wc -l
+196
+
+I suppose that a driver should avoid lengthening an existing device mask.
+
+Since an arch gets to apply limits in the dma ops it implements, why would 
+arch code also have to set a limit in the form of default platform device 
+masks? Powerpc seems to be the only arch that does this.
+
+The same line of reasoning suggests that the problematic WARN_ON should 
+not appear in include/linux/ in the first place. If it is needed by 
+certain architectures, it should be in arch/x.
+
+I would send a patch to revert commit 205e1b7f51e4 ("dma-mapping: warn 
+when there is no coherent_dma_mask") if I thought that arch code was not 
+somehow relying on it. But I'll leave that up to Chrisoph.
 
 -- 
-2.13.6
