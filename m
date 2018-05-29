@@ -1,101 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935492AbeE2QAI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:00:08 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:41667 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934836AbeE2QAD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:00:03 -0400
-X-Google-Smtp-Source: ADUXVKL5m/0IdYzoh4lbqLGecyqqt8k07fLtjKx/oJC447Fp4FC/UnYaUUdDAav8dTR3CY+wIqZX35jFhgEXVTG4F8o=
+        id S935584AbeE2QCq convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:02:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39403 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934933AbeE2QCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 12:02:40 -0400
+Date: Tue, 29 May 2018 18:02:38 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4] arm64: allwinner: a64: Add Amarula A64-Relic initial
+ support
+Message-ID: <20180529160238.cdyzgl3t6jzovn23@flea.home>
+References: <20180524111631.11864-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-References: <20180529150455.17300-1-peron.clem@gmail.com> <20180529150455.17300-5-peron.clem@gmail.com>
- <CAOMZO5AMK=vn7NCiQs-Ps-q=UyBro1J_+P4rTooU7nmHK20TjQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5AMK=vn7NCiQs-Ps-q=UyBro1J_+P4rTooU7nmHK20TjQ@mail.gmail.com>
-From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date: Tue, 29 May 2018 17:59:51 +0200
-Message-ID: <CAJiuCccEyrUfoKV4bh4qamn-MQntcFUdvHiLu2Y8aeQ--HdiDg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] clocksource: add driver for i.MX EPIT timer
-To: festevam@gmail.com
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180524111631.11864-1-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TG0CVc004950
 
-Hi Fabio,
-On Tue, 29 May 2018 at 17:20, Fabio Estevam <festevam@gmail.com> wrote:
+On Thu, May 24, 2018 at 04:46:31PM +0530, Jagan Teki wrote:
+> Amarula A64-Relic is Allwinner A64 based IoT device, which support
+> - Allwinner A64 Cortex-A53
+> - Mali-400MP2 GPU
+> - AXP803 PMIC
+> - 1GB DDR3 RAM
+> - 8GB eMMC
+> - AP6330 Wifi/BLE
+> - MIPI-DSI
+> - CSI: OV5640 sensor
+> - USB OTG
+> - 12V DC power supply
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-> On Tue, May 29, 2018 at 12:04 PM, Clément Péron <peron.clem@gmail.com>
-wrote:
+Applied, thanks
 
-> > +static int __init epit_timer_init(struct device_node *np)
-> > +{
-> > +       struct epit_timer *epittm;
-> > +       struct clk *clk_ipg;
-> > +       int ret;
-> > +
-> > +       epittm = kzalloc(sizeof(*epittm), GFP_KERNEL);
-> > +       if (!epittm)
-> > +               return -ENOMEM;
-> > +
-> > +       epittm->base = of_iomap(np, 0);
-> > +       if (!epittm->base) {
-> > +               ret = -ENXIO;
-> > +               goto out_kfree;
-> > +       }
-> > +
-> > +       epittm->irq = irq_of_parse_and_map(np, 0);
-> > +       if (!epittm->irq) {
-> > +               ret = -EINVAL;
-> > +               goto out_kfree;
+Maxime
 
-> You should jump to out_iounmap and call of_iounmap().
-
-> > +       }
-> > +
-> > +       clk_ipg = of_clk_get_by_name(np, "ipg");
-> > +       if (IS_ERR(clk_ipg)) {
-> > +               pr_err("i.MX EPIT: unable to get clk_ipg\n");
-> > +               ret = PTR_ERR(clk_ipg);
-> > +               goto out_kfree;
-> > +       }
-> > +       clk_prepare_enable(clk_ipg);
-
-> clk_prepare_enable() may fail, so better check its return value and
-> propagate it in the case of error.
-
-> > +
-> > +       epittm->clk_per = of_clk_get_by_name(np, "per");
-> > +       if (IS_ERR(epittm->clk_per)) {
-> > +               pr_err("i.MX EPIT: unable to get clk_per\n");
-> > +               ret = PTR_ERR(epittm->clk_per);
-> > +               goto out_clk_ipg_disable;
-> > +       }
-> > +       clk_prepare_enable(epittm->clk_per);
-
-> Ditto.
-
-> > +
-> > +       /*
-> > +        * Initialise to a known state (all timers off, and timing
-reset)
-> > +        */
-
-> For a single line of comment you could simply write:
-
-> /* bla bla */
-
-Thanks for the review, i will send a new version
-
-Clement
+-- 
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
