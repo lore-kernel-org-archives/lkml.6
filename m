@@ -1,55 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755286AbeE2IV6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:21:58 -0400
-Received: from foss.arm.com ([217.140.101.70]:34926 "EHLO foss.arm.com"
+        id S932389AbeE2IWp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:22:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46238 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755190AbeE2IVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:21:55 -0400
-Date: Tue, 29 May 2018 09:21:51 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, rjw@rjwysocki.net, juri.lelli@redhat.com,
-        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
-        viresh.kumar@linaro.org, valentin.schneider@arm.com
-Subject: Re: [PATCH v5 01/10] sched/pelt: Move pelt related code in a
- dedicated file
-Message-ID: <20180529082151.GD15173@e108498-lin.cambridge.arm.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-2-git-send-email-vincent.guittot@linaro.org>
- <20180525142648.GC15173@e108498-lin.cambridge.arm.com>
- <20180525161423.GP12180@hirez.programming.kicks-ass.net>
+        id S1755292AbeE2IWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 04:22:42 -0400
+Date: Tue, 29 May 2018 10:22:40 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Nikolay Borisov <nborisov@suse.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Sterba <dsterba@suse.cz>
+Subject: Re: [PATCH] doc: document scope NOFS, NOIO APIs
+Message-ID: <20180529082240.GP27180@dhcp22.suse.cz>
+References: <20180424183536.GF30619@thunk.org>
+ <20180524114341.1101-1-mhocko@kernel.org>
+ <6c9df175-df6c-2531-b90c-318e4fff72bb@infradead.org>
+ <20180525075217.GF11881@dhcp22.suse.cz>
+ <7c5d8afb-563f-43fd-50ef-d532550983c7@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180525161423.GP12180@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <7c5d8afb-563f-43fd-50ef-d532550983c7@suse.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 25 May 2018 at 18:14:23 (+0200), Peter Zijlstra wrote:
-> On Fri, May 25, 2018 at 03:26:48PM +0100, Quentin Perret wrote:
-> > (both quite old TBH -- 4.9.4 for arm64, 4.8.4 for x86).
+On Mon 28-05-18 10:21:00, Nikolay Borisov wrote:
 > 
-> You really should try with a more recent compiler.
+> 
+> On 25.05.2018 10:52, Michal Hocko wrote:
+> > On Thu 24-05-18 09:37:18, Randy Dunlap wrote:
+> >> On 05/24/2018 04:43 AM, Michal Hocko wrote:
+> > [...]
+> >>> +The traditional way to avoid this deadlock problem is to clear __GFP_FS
+> >>> +resp. __GFP_IO (note the later implies clearing the first as well) in
+> >>
+> >>                             latter
+> > 
+> > ?
+> > No I really meant that clearing __GFP_IO implies __GFP_FS clearing
+> Sorry to barge in like that, but Randy is right.
+> 
+> <NIT WARNING>
+> 
+> 
+> https://www.merriam-webster.com/dictionary/latter
+> 
+> " of, relating to, or being the second of two groups or things or the
+> last of several groups or things referred to
+> 
+> </NIT WARNING>
 
-Right, so I just gave it a try for x86 with gcc 8.0.1 (which seem to
-introduce a lot of LTO-related enhancements) and I get the following:
-
-Without patch
-   text data bss dec hex filename
-   17474129 4980348 995532 23450009 165d199 vmlinux
-
-With patch
-   text data bss dec hex filename
-   17474049 4980348 995532 23449929 165d149 vmlinux
-
-So it is still true that this patch actually changes the code size, most
-likely because of new function calls. But maybe we don't care if the
-impact on performance isn't noticeable ... As Patrick said, a hackbench
-run should be more interesting here. I'll give a try later today.
-
-Thanks,
-Quentin
+Fixed
+-- 
+Michal Hocko
+SUSE Labs
