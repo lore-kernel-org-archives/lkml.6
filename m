@@ -1,490 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967428AbeE2VgJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:36:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48370 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967003AbeE2VgE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:36:04 -0400
-Date: Tue, 29 May 2018 23:36:00 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
-        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
-        dhaval.giani@oracle.com, rohit.k.jain@oracle.com,
-        Mike Galbraith <umgwanakikbuti@gmail.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>
-Subject: Re: [PATCH 1/3] sched: remove select_idle_core() for scalability
-Message-ID: <20180529213600.GC12180@hirez.programming.kicks-ass.net>
-References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
- <20180424004116.28151-2-subhra.mazumdar@oracle.com>
- <20180424124621.GQ4082@hirez.programming.kicks-ass.net>
- <df8f4982-908a-23e6-5148-4d4e91d38be4@oracle.com>
- <20180425174909.GB4043@hirez.programming.kicks-ass.net>
- <e2011797-382b-0ac9-79eb-e17109ef4c96@oracle.com>
- <20180501180348.GI12217@hirez.programming.kicks-ass.net>
- <1ea04602-041a-5b90-eba9-c20c7e98c92e@oracle.com>
+        id S967296AbeE2ViE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:38:04 -0400
+Received: from mail-db5eur01on0106.outbound.protection.outlook.com ([104.47.2.106]:60032
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966949AbeE2ViB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 17:38:01 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se;
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+To: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>
+Cc: Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Richard Weinberger <richard@nod.at>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180329131054.22506-1-peda@axentia.se>
+ <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
+ <20180402142249.7e076a64@bbrezillon>
+ <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
+ <20180402212843.164d5d21@bbrezillon> <20180402222020.1d344c14@bbrezillon>
+ <d7e6f78d-b57b-4d0f-c07c-ca6c1930cd51@axentia.se>
+ <20180403091813.5fb5c18c@bbrezillon>
+ <d0afd431-6e51-a9b7-c103-ecf1f6e07c2e@axentia.se>
+ <959d826d-1a98-ca22-acee-a4548427fcd3@microchip.com>
+ <a25ca617-d3da-d401-1ba9-8e5887f8a8e5@microchip.com>
+ <024079cb-77ad-9c48-e370-e6e8f2de171b@axentia.se>
+ <9c496531-f7b6-4b9d-dd51-0bfb68ead303@axentia.se>
+ <c3cc1894-2d7d-93b6-a9de-ed9ca4564ae9@axentia.se>
+ <19d68279-072e-7646-6fdd-8649578229ea@microchip.com>
+ <20180529164911.29820e07@bbrezillon>
+ <e3c34fb7-4881-3f49-b43b-1b07a8ab865d@microchip.com>
+ <20180529171555.19dd723f@bbrezillon>
+ <1affd186-7f78-8bb0-050e-da82143c2982@microchip.com>
+ <20180529174621.50a9001a@bbrezillon> <20180529195708.1fa41027@bbrezillon>
+From: Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <6d59f0b7-1213-f225-3e58-8326d384a1d8@axentia.se>
+Date: Tue, 29 May 2018 23:37:50 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1ea04602-041a-5b90-eba9-c20c7e98c92e@oracle.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180529195708.1fa41027@bbrezillon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1P189CA0021.EURP189.PROD.OUTLOOK.COM (2603:10a6:7:53::34)
+ To VI1PR0201MB2463.eurprd02.prod.outlook.com (2603:10a6:800:54::23)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR0201MB2463;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2463;3:BqAmWLsjRgruiMd8wVXaZmmNqmKEV3hG2PLjS76HXcpltDL/0Lc9rH3FUlaimi7KEOH2hQ/EV5Iexe+oIg32MTLXPNQRss0JQPasRhp5F2trLGyXlcmBIN+UQdRR9vVM6U5+k6kTwNgkGOW+h4/uowjTyr/DnyStM/vhO47BcW2AhQ67HX6hplIra7i8NK3GFRfArOYHsySMleZ05rjSCTDc/wsDC8O+k0EKF7qt6+GFXv1Kido9Eve/wtDRMSMO;25:FdWjw4SU/jA/zvX2CjFLiVW01YpAmjrLLTl/g6jfCOeBJyEzxwk8yilKOB5jBKpbnYRP/5TpScVW1zdStYRGDaTTeRG/O5/0La8XwspUIChatfftUK3I/qJQdjj3qQYVuXfB/2Wv4HURM3jWJOFLGkTFbaefEND4yxL6FAchhEIRe0G5JLBkS7JT16tpwweIG7YOqfM2T9r/V7CT87sd8pvsmao9k/xpruNgzlJq+2sT5OePQU9GI6LN5jK2YiPMgbWYw3oKFCfkLn6asvXMFSVU72+bvZselWmwEK7VI9KD8W14u3wzA+23J0ztCv71PgxdcizR8GboqdT0Dyt94w==;31:DIZzhZrbOU41+XphA1BhUNO2UGdrPDe9WlyY9d1fD4B4kKHLs22gAqnr/vImSvCYgPiKreCLwj/9FUNumO9q+zfPRT1PVcJ3rSaRaEgWJbC31+Zi9uSKFnyv+JWpyapwCiZOcnOjcURIUVVjDxn3zDJ36Xv7jwwRfu4ry4Zp3AOIbRD/pH17BHxBOG0M6aZuZiJxzTm5m1NoIm3C0zzyLsZikxp4MENESu9/t45RVjQ=
+X-MS-TrafficTypeDiagnostic: VI1PR0201MB2463:
+X-Microsoft-Antispam-PRVS: <VI1PR0201MB2463B799D4148CF8834B67A7BC6D0@VI1PR0201MB2463.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(2016111802025)(6043046)(6072148)(201708071742011)(7699016);SRVR:VI1PR0201MB2463;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0201MB2463;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2463;4:ETvAORrM3fMWzEQSJ7hTOfcY0TuMZBmNwr5Su3uBKWLXJr6ENyrGfScu/5AwAFrJ5/Tk8c4NZDzF0N4m6hZT+Mmp42FQxDT0w0LokTnpPEZl3jf2TBWsdp3Jhv80f9q3Y+AR4vPDqm2/L3NRzxbpLHyFbSU0isomDmL38X3g9P1iD1hDPKoJcEeags2CJ0v17KXcNCCsRQH5S7MW8D+MfkKPsP6djiqt+2GC1d6OYycmhjHFobOPvuceHyeSBsOQlf8sH9q0Hkq8EsCzgI769Q==
+X-Forefront-PRVS: 0687389FB0
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39380400002)(346002)(376002)(396003)(39830400003)(366004)(52314003)(189003)(199004)(6246003)(64126003)(117156002)(53936002)(39060400002)(26005)(77096007)(31686004)(53546011)(186003)(31696002)(16526019)(86362001)(478600001)(97736004)(106356001)(50466002)(68736007)(6666003)(3260700006)(25786009)(8676002)(93886005)(8936002)(65826007)(47776003)(2906002)(81166006)(36756003)(7416002)(74482002)(316002)(66066001)(65956001)(81156014)(6486002)(230700001)(5660300001)(486006)(229853002)(36916002)(52146003)(2486003)(23676004)(65806001)(956004)(52116002)(4326008)(105586002)(2616005)(386003)(3846002)(76176011)(446003)(110136005)(11346002)(16576012)(58126008)(7736002)(54906003)(476003)(305945005)(6116002)(59450400001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0201MB2463;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjAyMDFNQjI0NjM7MjM6K2pRN2toSjE2dlJTS1h2eU1DRkdzUVBh?=
+ =?utf-8?B?bEp2RWVVRWpBQVpDekRLR040THNXSGVKRjFkT0lPUDh6Zis1b0FhY2NLV09z?=
+ =?utf-8?B?SXhrZnNlK1VNTEptbVBOdk8xVVVWQ3lTUjFjQVFYaXFUYVFTRzR1ZTR4VjZk?=
+ =?utf-8?B?Q2dPcTVaTHdRcTM0YldTbTNURzNrZGZpQjMvR01UVDZHV05tdG53WHYvZHRD?=
+ =?utf-8?B?dENJbXB1S0lQR3lkUHJnbkQ1THlYZWxPTjRzWXBuZWxJdUMvTkZWRnlFWmJt?=
+ =?utf-8?B?NGV3TXJOeUtsMWI3bTdjUW13V3M2elI1QTJoYUhuVG9Dc0J2NVNTb1lCbzlC?=
+ =?utf-8?B?QkFHM1VtVUF4NkxiUExyRGRyQ1VyQTF4RDhoVkpSUklaWWhjUmovQUJ4OXdi?=
+ =?utf-8?B?VXdEdWp3cTZOb0dUTXl3MXloUXcyNEgwRzNVMXdkaHhmRXhGcEs0V1FJVXpl?=
+ =?utf-8?B?aVYzdWVocnNpeU9pbTNUcm9iMlVPeGFsSWg3UmpTai9kekIzZ1RBUyt6N3hI?=
+ =?utf-8?B?aDcwM1pOVGJkQXlYTW8wQXNUR0Jmc3pGUGdJc1lTdFZzeWQ4VU91QVlLMHB1?=
+ =?utf-8?B?Q1htYlVJRkdjaC9uZzUvSGNORjh5WlJHMWFidzcxZENDdVVSK1o3ZlFBcGNY?=
+ =?utf-8?B?cEhHenZIK0I5cVplN3pOc0dHWG5pMjFrRWJjck1wLzVmSFBsV1pWMEZMOUNF?=
+ =?utf-8?B?Z3AxT29Rc2tWZWk4MExFbE4yaTl0VXNjSlRWczhUN0dMU0RJdWV1TjVVRUJa?=
+ =?utf-8?B?Q3R3bko4N2U0dDRHeTM4UzVLQ0Q0LzM3aU5rdzNmS3hNSXE2V2p6eGNHUjNS?=
+ =?utf-8?B?a0ZnVHhwK2FWV05XK1p2dU5Xb01YNEEybzBJemliQW1sN1QwaHlRbTVOSXdU?=
+ =?utf-8?B?anIvcHdCNkVpK0JOdEpCTVliNnp6eXhYTHhOWDFpZFdZeHdKMVozZVRJYUtr?=
+ =?utf-8?B?NU5sb3hXVUxCcmtJQ2dhcUJ2QThMbExhZ1hCNDBDd3g0M3ZyWVoxakoyeW9R?=
+ =?utf-8?B?OW0wMVVoNDFNV2dyMGVLL29Kd250TXUrYWJKYmVlNktJYVJ0ZWw2THErV2Z4?=
+ =?utf-8?B?bWVFOEl5YWNlL3V2MkozcjQ1ZXlrdzltdC9jc1NlSlZ5azVNMzJwcmU5d3NK?=
+ =?utf-8?B?aE1pa1F3eWR0aE4vTDFRR1Vmc1Z4RXJzeXJ1Tktiek1qQ21YdytUTm1zb0Ny?=
+ =?utf-8?B?eDVCZ1MyM3pXalFNL3NDandLZ0ZBMlQyUVhwbmk2eEg2cHBRYWRxcVRmVXhZ?=
+ =?utf-8?B?RjZyNGY1eHE3cHpJMEdwS3RsaEdiVUY4WFQrdVJxTEVNdVc2cFhkbGtyN1BN?=
+ =?utf-8?B?WVdHVHlRaGlxNkJ3YnhBelBvY3p0K2NuWWVOb1ZLN000bWJMLzE1QkhwbjBr?=
+ =?utf-8?B?MUY0UUcyTDhZMTY3VG15emY4dnlNRW1MWFQ5bVc0eXNzOHFIUUJwY3VQUlZa?=
+ =?utf-8?B?MEJuWW9QZEVLRFNKdVA3NmdLSVlBMktsZDJVU3Flano5aXdEQmJNd0VaR3Er?=
+ =?utf-8?B?enFFd2dLbkloZ0NlK3h4L3Z4a3pkN0RtOHpOdDUvUU9ZT1hkZ2lac1ZPQ3FI?=
+ =?utf-8?B?TCtYRUlYNVlydFFxck51bUp6L20wUW5LT3FIYW81VnJCM1pBUFEvOS95emRr?=
+ =?utf-8?B?Q2J1TU85NjV3SUliWnNTNkhEZFBNMVdRVkcyUFZRRzR1cFVLeGRnUmhCUzdM?=
+ =?utf-8?B?OEJSL3J3MVJBbGtOdTZFd0FkaE42RSswWHZWU2pVRkI2Zk02NnFZYlA4UXhY?=
+ =?utf-8?B?WkdTZlhtVDQ0eU56SE85T0hhN2ttdERmck5sM3Z0LzNHQmlVbFlKYWUycHV2?=
+ =?utf-8?B?N2JnMmFvNGJMUEp6SEtEVVFVcVp0aFhxT0hHUXd0d0dEZm5qa1hsQ1VQSm5J?=
+ =?utf-8?B?eTFzaDhGQmNJNmtWNitHMjZGWGt3a053d3BaYmVEaFJpYmhsWTkyUGRwZVJV?=
+ =?utf-8?B?M0hjS09ORTRyL1E2S1J3YkpLSTIxVjZ0V3Jqc0RrTloxYUNxQnFqa1BTdWFr?=
+ =?utf-8?B?LzN6ZUdWVUFEbGh1VVIxQUt4dGlhamJzQXN2eU9SdmZpOEZIWGpOY1RWaGU4?=
+ =?utf-8?B?dEx4akpiT1dwTmRNTXVIWTZ2VURmMGJ5ZTNpSVNNN1FTNURHZ3RNbHgveHVH?=
+ =?utf-8?B?TDh1b0RFaGJkanZWc1d1VGxEdGhKc0J4NHFYTFNRaTVJMjdmNnM3QXVIeE9Y?=
+ =?utf-8?B?VVRCZlJqOHVzUTF1SE56dFdoZjVxUDdGc2VRdTI0Ums5eXZUTktXQnUrMFhw?=
+ =?utf-8?Q?jn2P1tTqZ8vX6WJ2naX0?=
+X-Microsoft-Antispam-Message-Info: FSaepgPY4FHSdhqY55vhUCYeUziD9b3NNRbygZr9zWGo5hwptLZkD4gE6uOKrxxolOUYuks5RDJVYzLU3Zl6invKIIH3UoHX8CjO/NcUQn44sgDT6Xl9jXo4M67p24T0EbNLm9dWyYsoh4oQNjaga0YoJEdHHJhVrLzM2stt+LdQsVkcZ9ASIjYNp2s5XoSQ
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2463;6:qi3OxSUY7Nlh28b1KvTs6u38TK06gYpcq1QhX7CO6qsUbQZeAczAlMIFWeXTwsp2/qei26MiemFIg4U/RZ48pM+A51xaufgXq3R9OvawZZuIYA/BFIgJYgOY+JJ2MpKoh/OVR/nVyf+apVPYZMLZsx5D09N+0EQ336JvcCiZ1zC0i7A1qcF6QIBvkzIaXCnbw9sbJBaWWGCjc8TkqiirPfb+EZ4ivl2nZbeSZv//y4e8SbG1+VH19l+iIM/M7jMnnL+m22Xg4k6gft+sRWaJd34pWSshTjHoO2lkOjMeHB3YPHMg31czQeyLeOOTrhJnVXHk44HK7MiaGe4AvMgAsHIcRFLfdO3N2wnJH020GZCIZJs3QcMetTp+/H4jZdwY+CfkdnE1l8d25t4Pt/Rf0vPOKfTnj9GcBMbZM9iqBCmgzO1sGSeiQnJ6V5pz4bxk6wbH0efiidf3ZJmLUKHdqQ==;5:fonPYKzF/Y4HeHf0nwGT8KWH8SsQT2hpkR3PWy84kl2/bsS5nAZoUziKdji7kag27gngi4io1U4XVtLrGZCeUzS0nggiWSGsxikHBpW+FLEPLVPynPUynUSMm78mUs5pejjtqrykKT8d3rKz6qTkfMLtrl1vGQRzc5wLbvMKZm0=;24:N75vfftHS8SfvlOrUc8XZ5SPvhF2cEOGMttfEN+sIvp/wHIgbBNRPfY8BK4palHBE1d9fIL3IG9rBa4/Jk4TzQvmUYmW2C2z0eggbq04Ao8=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2463;7:jQVGkiOTkrDiRyNlSTRHSR0775dfLaq3VG2YBEltLTduUyKamgftv7g7Y0q8XqM5A9vPmwJt7hDMkzFyyUMHFmioKbNNoVYnCpms3TFS4+DZ+ALlPiBoGoERZJpdStdi6B3dvJp/IeIY+YMc46ecD9CECEStCfkmRHIeEE7+dTMqcHUwwnrtgx1PfR6/Q3EgzUbJfCxRDHe28EPfzLCFc3YF1e2aNX5qCJwSb91nf8t2uPm3+HRH1im5L+hnu4ZY
+X-MS-Office365-Filtering-Correlation-Id: 14eed720-de42-4ab7-3cb0-08d5c5ac722e
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2018 21:37:57.1910 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14eed720-de42-4ab7-3cb0-08d5c5ac722e
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0201MB2463
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 02:58:42PM -0700, Subhra Mazumdar wrote:
-> I re-ran the test after fixing that bug but still get similar regressions
-> for hackbench
+Hi again!
 
-> Hackbench process on 2 socket, 44 core and 88 threads Intel x86 machine
-> (lower is better):
-> groups  baseline       %stdev  patch %stdev
-> 1       0.5742         21.13   0.5131 (10.64%) 4.11
-> 2       0.5776         7.87    0.5387 (6.73%) 2.39
-> 4       0.9578         1.12    1.0549 (-10.14%) 0.85
-> 8       1.7018         1.35    1.8516 (-8.8%) 1.56
-> 16      2.9955         1.36    3.2466 (-8.38%) 0.42
-> 32      5.4354         0.59    5.7738 (-6.23%) 0.38
+I have spent some hours bringing out the old hardware with the 1024x768
+panel from underneath the usual piles of junk and layers of dust...and
+tried the current kernel on that one. And the display was stable even
+when stressing with lots of NAND accesses.  *boggle*
 
-On my IVB-EP (2 socket, 10 core/socket, 2 threads/core):
+Then I remembered that I had lowered the pixel clock (from 71.1 MHz to
+65 MHz (and reduced the vertical blanking to maintain the refresh rate).
+I didn't notice that this fixed the NAND interference, probably because
+I ran NAND without DMA at the time? Anyway, if I reset the pixel clock
+to 71.1 MHz (without increasing the vertical blanking, just to be nasty)
+I can get the artifacts easily. But running with a pixel clock of 65 MHz
+is not a problem at all, so we can consider NAND-DMA with that panel
+solved.
 
-bench:
+However, now we know that this setup needs relatively little to start
+working, and that might be good if we want to see if other changes has
+any effect. I will look into that tomorrow. And we can also get a grip
+on the critical bandwidth.
 
-  perf stat --null --repeat 10 -- perf bench sched messaging -g $i -t -l 10000 2>&1 | grep "seconds time elapsed"
-
-config + results:
-
-ORIG (SIS_PROP, shift=9)
-
-1:        0.557325175 seconds time elapsed                                          ( +-  0.83% )
-2:        0.620646551 seconds time elapsed                                          ( +-  1.46% )
-5:        2.313514786 seconds time elapsed                                          ( +-  2.11% )
-10:        3.796233615 seconds time elapsed                                          ( +-  1.57% )
-20:        6.319403172 seconds time elapsed                                          ( +-  1.61% )
-40:        9.313219134 seconds time elapsed                                          ( +-  1.03% )
-
-PROP+AGE+ONCE shift=0
-
-1:        0.559497993 seconds time elapsed                                          ( +-  0.55% )
-2:        0.631549599 seconds time elapsed                                          ( +-  1.73% )
-5:        2.195464815 seconds time elapsed                                          ( +-  1.77% )
-10:        3.703455811 seconds time elapsed                                          ( +-  1.30% )
-20:        6.440869566 seconds time elapsed                                          ( +-  1.23% )
-40:        9.537849253 seconds time elapsed                                          ( +-  2.00% )
-
-FOLD+AGE+ONCE+PONIES shift=0
-
-1:        0.558893325 seconds time elapsed                                          ( +-  0.98% )
-2:        0.617426276 seconds time elapsed                                          ( +-  1.07% )
-5:        2.342727231 seconds time elapsed                                          ( +-  1.34% )
-10:        3.850449091 seconds time elapsed                                          ( +-  1.07% )
-20:        6.622412262 seconds time elapsed                                          ( +-  0.85% )
-40:        9.487138039 seconds time elapsed                                          ( +-  2.88% )
-
-FOLD+AGE+ONCE+PONIES+PONIES2 shift=0
-
-10:       3.695294317 seconds time elapsed                                          ( +-  1.21% )
+But first, answers to some random questions...
 
 
-Which seems to not hurt anymore.. can you confirm?
+On 2018-05-29 09:25, Eugen Hristev wrote:
+> One more thing: what are the actual nand commands which you use when you 
+> get the glitches? read/write/erase ... ?
 
-Also, I didn't run anything other than hackbench on it so far.
+Erase seems to be least sensitive, read or write are worse (and similar)
+according to my unscientific observations.
 
-(sorry, the code is a right mess, it's what I ended up with after a day
-of poking with no cleanups)
+> What happens if you try to minimize the nand access? you also said at 
+> some point that only *some* nand accesses cause glitches.
+
+These systems will normally not access the NAND, but the displays look
+like total crap when this happens. It can happen even when sync()ing
+small files, but doesn't happen for every little file. Writing out or
+reading a large file to/from NAND invariably triggers the issue.
+
+> Another thing : even if the LCD displays a still image, the DMA still 
+> feeds data to the LCD right ?
+
+Absolutely. But since we are not playing some large video file (which
+could have been stored on the NAND) we typically don't see the problem. It
+only turns up in special circumstances. But these circumstances can't be
+avoided and the display looks so freaking ugly when it happens...
 
 
----
- include/linux/sched/topology.h |   7 ++
- kernel/sched/core.c            |   8 ++
- kernel/sched/fair.c            | 201 ++++++++++++++++++++++++++++++++++++++---
- kernel/sched/features.h        |   9 ++
- kernel/sched/sched.h           |   3 +
- kernel/sched/topology.c        |  13 ++-
- 6 files changed, 228 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 26347741ba50..1a53a805547e 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -72,6 +72,8 @@ struct sched_domain_shared {
- 	atomic_t	ref;
- 	atomic_t	nr_busy_cpus;
- 	int		has_idle_cores;
-+
-+	unsigned long core_mask[0];
- };
- 
- struct sched_domain {
-@@ -162,6 +164,11 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
- 	return to_cpumask(sd->span);
- }
- 
-+static inline struct cpumask *sched_domain_cores(struct sched_domain *sd)
-+{
-+	return to_cpumask(sd->shared->core_mask);
-+}
-+
- extern void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 				    struct sched_domain_attr *dattr_new);
- 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8d59b259af4a..2e2ee0df9e4d 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1674,6 +1674,12 @@ static void ttwu_do_wakeup(struct rq *rq, struct task_struct *p, int wake_flags,
- 		if (rq->avg_idle > max)
- 			rq->avg_idle = max;
- 
-+		rq->wake_stamp = jiffies;
-+		rq->wake_avg = rq->avg_idle / 2;
-+
-+		if (sched_feat(SIS_TRACE))
-+			trace_printk("delta: %Lu %Lu %Lu\n", delta, rq->avg_idle, rq->wake_avg);
-+
- 		rq->idle_stamp = 0;
- 	}
- #endif
-@@ -6051,6 +6057,8 @@ void __init sched_init(void)
- 		rq->online = 0;
- 		rq->idle_stamp = 0;
- 		rq->avg_idle = 2*sysctl_sched_migration_cost;
-+		rq->wake_stamp = jiffies;
-+		rq->wake_avg = rq->avg_idle;
- 		rq->max_idle_balance_cost = sysctl_sched_migration_cost;
- 
- 		INIT_LIST_HEAD(&rq->cfs_tasks);
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e497c05aab7f..8fe1c2404092 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6361,6 +6361,16 @@ static inline int select_idle_smt(struct task_struct *p, struct sched_domain *sd
- 
- #endif /* CONFIG_SCHED_SMT */
- 
-+static DEFINE_PER_CPU(int, sis_rotor);
-+
-+unsigned long sched_sis_shift = 9;
-+unsigned long sched_sis_min = 2;
-+unsigned long sched_sis_max = INT_MAX;
-+
-+module_param(sched_sis_shift, ulong, 0644);
-+module_param(sched_sis_min, ulong, 0644);
-+module_param(sched_sis_max, ulong, 0644);
-+
- /*
-  * Scan the LLC domain for idle CPUs; this is dynamically regulated by
-  * comparing the average scan cost (tracked in sd->avg_scan_cost) against the
-@@ -6372,17 +6382,30 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- 	u64 avg_cost, avg_idle;
- 	u64 time, cost;
- 	s64 delta;
--	int cpu, nr = INT_MAX;
-+	int cpu, best_cpu = -1, loops = 0, nr = sched_sis_max;
- 
- 	this_sd = rcu_dereference(*this_cpu_ptr(&sd_llc));
- 	if (!this_sd)
- 		return -1;
- 
--	/*
--	 * Due to large variance we need a large fuzz factor; hackbench in
--	 * particularly is sensitive here.
--	 */
--	avg_idle = this_rq()->avg_idle / 512;
-+	if (sched_feat(SIS_AGE)) {
-+		/* age the remaining idle time */
-+		unsigned long now = jiffies;
-+		struct rq *this_rq = this_rq();
-+
-+		if (unlikely(this_rq->wake_stamp < now)) {
-+			while (this_rq->wake_stamp < now && this_rq->wake_avg) {
-+				this_rq->wake_stamp++;
-+				this_rq->wake_avg >>= 1;
-+			}
-+		}
-+
-+		avg_idle = this_rq->wake_avg;
-+	} else {
-+		avg_idle = this_rq()->avg_idle;
-+	}
-+
-+	avg_idle >>= sched_sis_shift;
- 	avg_cost = this_sd->avg_scan_cost + 1;
- 
- 	if (sched_feat(SIS_AVG_CPU) && avg_idle < avg_cost)
-@@ -6390,29 +6413,170 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- 
- 	if (sched_feat(SIS_PROP)) {
- 		u64 span_avg = sd->span_weight * avg_idle;
--		if (span_avg > 4*avg_cost)
-+		if (span_avg > 2*sched_sis_min*avg_cost)
- 			nr = div_u64(span_avg, avg_cost);
- 		else
--			nr = 4;
-+			nr = 2*sched_sis_min;
- 	}
- 
- 	time = local_clock();
- 
-+	if (sched_feat(SIS_ROTOR))
-+		target = this_cpu_read(sis_rotor);
-+
- 	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
--		if (!--nr)
--			return -1;
-+		if (loops++ >= nr)
-+			break;
-+		this_cpu_write(sis_rotor, cpu);
- 		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
- 			continue;
--		if (available_idle_cpu(cpu))
-+		if (available_idle_cpu(cpu)) {
-+			best_cpu = cpu;
-+			break;
-+		}
-+	}
-+
-+	time = local_clock() - time;
-+	time = div_u64(time, loops);
-+	cost = this_sd->avg_scan_cost;
-+	delta = (s64)(time - cost) / 8;
-+	this_sd->avg_scan_cost += delta;
-+
-+	if (sched_feat(SIS_TRACE))
-+	trace_printk("cpu: wake_avg: %Lu avg_idle: %Lu avg_idle: %Lu avg_cost: %Lu nr: %d loops: %d best_cpu: %d time: %Lu\n", 
-+			this_rq()->wake_avg, this_rq()->avg_idle,
-+			avg_idle, avg_cost, nr, loops, cpu,
-+			time);
-+
-+	if (sched_feat(SIS_ONCE)) {
-+		struct rq *this_rq = this_rq();
-+
-+		if (this_rq->wake_avg > time)
-+			this_rq->wake_avg -= time;
-+		else
-+			this_rq->wake_avg = 0;
-+	}
-+
-+	return best_cpu;
-+}
-+
-+
-+/*
-+ * Scan the LLC domain for idlest cores; this is dynamically regulated by
-+ * comparing the average scan cost (tracked in sd->avg_scan_cost) against the
-+ * average idle time for this rq (as found in rq->avg_idle).
-+ */
-+static int select_idle_core_fold(struct task_struct *p, struct sched_domain *sd, int target)
-+{
-+	int best_busy = UINT_MAX, best_cpu = -1;
-+	struct sched_domain *this_sd;
-+	u64 avg_cost, avg_idle;
-+	int nr = sched_sis_max, loops = 0;
-+	u64 time, cost;
-+	int core, cpu;
-+	s64 delta;
-+	bool has_idle_cores = true;
-+
-+	this_sd = rcu_dereference(*this_cpu_ptr(&sd_llc));
-+	if (!this_sd)
-+		return -1;
-+
-+	if (sched_feat(SIS_ROTOR))
-+		target = this_cpu_read(sis_rotor);
-+
-+	if (sched_feat(SIS_PONIES))
-+		has_idle_cores = test_idle_cores(target, false);
-+
-+	if (sched_feat(SIS_AGE)) {
-+		/* age the remaining idle time */
-+		unsigned long now = jiffies;
-+		struct rq *this_rq = this_rq();
-+
-+		if (unlikely(this_rq->wake_stamp < now)) {
-+			while (this_rq->wake_stamp < now && this_rq->wake_avg) {
-+				this_rq->wake_stamp++;
-+				this_rq->wake_avg >>= 1;
-+			}
-+		}
-+
-+		avg_idle = this_rq->wake_avg;
-+	} else {
-+		avg_idle = this_rq()->avg_idle;
-+	}
-+
-+	avg_idle >>= sched_sis_shift;
-+	avg_cost = this_sd->avg_scan_cost + 1;
-+
-+	if (sched_feat(SIS_PROP)) {
-+		u64 span_avg = sd->span_weight * avg_idle;
-+		if (span_avg > sched_sis_min*avg_cost)
-+			nr = div_u64(span_avg, avg_cost);
-+		else
-+			nr = sched_sis_min;
-+	}
-+
-+	time = local_clock();
-+
-+	for_each_cpu_wrap(core, sched_domain_cores(sd), target) {
-+		int first_idle = -1;
-+		int busy = 0;
-+
-+		if (loops++ >= nr)
- 			break;
-+
-+		this_cpu_write(sis_rotor, core);
-+
-+		for (cpu = core; cpu < nr_cpumask_bits; cpu = cpumask_next(cpu, cpu_smt_mask(core))) {
-+			if (!idle_cpu(cpu))
-+				busy++;
-+			else if (first_idle < 0 && cpumask_test_cpu(cpu, &p->cpus_allowed)) {
-+				if (!has_idle_cores) {
-+					best_cpu = cpu;
-+					goto out;
-+				}
-+				first_idle = cpu;
-+			}
-+		}
-+
-+		if (first_idle < 0)
-+			continue;
-+
-+		if (!busy) {
-+			best_cpu = first_idle;
-+			goto out;
-+		}
-+
-+		if (busy < best_busy) {
-+			best_busy = busy;
-+			best_cpu = first_idle;
-+		}
- 	}
- 
-+	set_idle_cores(target, 0);
-+
-+out:
- 	time = local_clock() - time;
-+	time = div_u64(time, loops);
- 	cost = this_sd->avg_scan_cost;
- 	delta = (s64)(time - cost) / 8;
- 	this_sd->avg_scan_cost += delta;
- 
--	return cpu;
-+	if (sched_feat(SIS_TRACE))
-+	trace_printk("fold: wake_avg: %Lu avg_idle: %Lu avg_idle: %Lu avg_cost: %Lu nr: %d loops: %d best_cpu: %d time: %Lu\n", 
-+			this_rq()->wake_avg, this_rq()->avg_idle,
-+			avg_idle, avg_cost, nr, loops, best_cpu,
-+			time);
-+
-+	if (sched_feat(SIS_ONCE)) {
-+		struct rq *this_rq = this_rq();
-+
-+		if (this_rq->wake_avg > time)
-+			this_rq->wake_avg -= time;
-+		else
-+			this_rq->wake_avg = 0;
-+	}
-+
-+	return best_cpu;
- }
- 
- /*
-@@ -6451,7 +6615,17 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	if (!sd)
- 		return target;
- 
-+	if (sched_feat(SIS_FOLD)) {
-+		if (sched_feat(SIS_PONIES2) && !test_idle_cores(target, false))
-+			i = select_idle_cpu(p, sd, target);
-+		else
-+			i = select_idle_core_fold(p, sd, target);
-+		goto out;
-+	}
-+
- 	i = select_idle_core(p, sd, target);
-+	if (sched_feat(SIS_TRACE))
-+		trace_printk("select_idle_core: %d\n", i);
- 	if ((unsigned)i < nr_cpumask_bits)
- 		return i;
- 
-@@ -6460,6 +6634,9 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 		return i;
- 
- 	i = select_idle_smt(p, sd, target);
-+	if (sched_feat(SIS_TRACE))
-+		trace_printk("select_idle_smt: %d\n", i);
-+out:
- 	if ((unsigned)i < nr_cpumask_bits)
- 		return i;
- 
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 85ae8488039c..bb572f949e5f 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -58,6 +58,15 @@ SCHED_FEAT(TTWU_QUEUE, true)
- SCHED_FEAT(SIS_AVG_CPU, false)
- SCHED_FEAT(SIS_PROP, true)
- 
-+SCHED_FEAT(SIS_FOLD, true)
-+SCHED_FEAT(SIS_AGE, true)
-+SCHED_FEAT(SIS_ONCE, true)
-+SCHED_FEAT(SIS_ROTOR, false)
-+SCHED_FEAT(SIS_PONIES, false)
-+SCHED_FEAT(SIS_PONIES2, true)
-+
-+SCHED_FEAT(SIS_TRACE, false)
-+
- /*
-  * Issue a WARN when we do multiple update_rq_clock() calls
-  * in a single rq->lock section. Default disabled because the
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 67702b4d9ac7..240c35a4c6e0 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -831,6 +831,9 @@ struct rq {
- 	u64			idle_stamp;
- 	u64			avg_idle;
- 
-+	unsigned long		wake_stamp;
-+	u64			wake_avg;
-+
- 	/* This is used to determine avg_idle's max value */
- 	u64			max_idle_balance_cost;
- #endif
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 61a1125c1ae4..a47a6fc9796e 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1189,9 +1189,20 @@ sd_init(struct sched_domain_topology_level *tl,
- 	 * instance.
- 	 */
- 	if (sd->flags & SD_SHARE_PKG_RESOURCES) {
-+		int core, smt;
-+
- 		sd->shared = *per_cpu_ptr(sdd->sds, sd_id);
- 		atomic_inc(&sd->shared->ref);
- 		atomic_set(&sd->shared->nr_busy_cpus, sd_weight);
-+
-+		for_each_cpu(core, sched_domain_span(sd)) {
-+			for_each_cpu(smt, cpu_smt_mask(core)) {
-+				if (cpumask_test_cpu(smt, sched_domain_span(sd))) {
-+					__cpumask_set_cpu(smt, sched_domain_cores(sd));
-+					break;
-+				}
-+			}
-+		}
- 	}
- 
- 	sd->private = sdd;
-@@ -1537,7 +1548,7 @@ static int __sdt_alloc(const struct cpumask *cpu_map)
- 
- 			*per_cpu_ptr(sdd->sd, j) = sd;
- 
--			sds = kzalloc_node(sizeof(struct sched_domain_shared),
-+			sds = kzalloc_node(sizeof(struct sched_domain_shared) + cpumask_size(),
- 					GFP_KERNEL, cpu_to_node(j));
- 			if (!sds)
- 				return -ENOMEM;
+On 2018-05-29 17:01, Eugen Hristev wrote:
+> Then we can then try to force NFC SRAM DMA channels to use just DDR port 
+> 1 or 2 for memcpy ?
+
+I *think* my "horrid" patch does that. Specifically this line
+
++			desc->txd.phys = (desc->txd.phys & ~3) | 1;
+
+
+
+
+On 2018-05-28 18:09, Nicolas Ferre wrote:
+> Can you try to make all that you can to maximize the blanking period of 
+> your screen (some are more tolerant than others according to that). By 
+> doing so, you would allow the LCD FIFO to recover better after each 
+> line. You might loose some columns on the side of your display but it 
+> would give us a good idea of how far we are from getting rid of those 
+> annoying LCD reset glitches (that are due to underruns on LCD FIFO).
+
+I noticed that the 1024x768 panel is using 24bpp, not 16bpp as I
+stated previously. Also, the horizontal blanking is 320 pixels, so a
+total of 1024+320=1344 pixels/row and a pixel clock of 71.1 Mhz yields
+18.9 us/row. The needed data during that time is 1024*24 bits so
+1.30 Gbit/s. For the 65 MHz pixel clock, I get 1.19 Gbit/s. Assuming,
+of course, that the pixel clock is actually what was requested... What
+is the granularity of the pixel clock anyway?
+
+For the bigger 1920x1080 panel, I have a horizontal blanking of 200
+pixels and a pixel clock of 144 MHz, so 14.7 us/row -> 2.09 Gbit/s.
+I suspect that no amount of fiddling with blanking is going to get
+that anyway near the needed ~1.25 Gbit/s. Besides, the specs of the
+panel say that the maximum horizontal blanking time is 280 pixels.
+Seems futile to even try since this horizontal blanking time is so
+much shorter for the larger panel (fewer and faster pixels) and the
+longer time wasn't enough for the smaller panel to catch up. But ok,
+in combination with something else it might be just enough. Will try
+tomorrow...
+
+
+On 2018-05-28 18:09, Boris Brezillon wrote:
+> On Mon, 28 May 2018 17:52:53 +0200 Peter Rosin <peda@axentia.se> wrote:
+>> The panels we are using only supports one resolution (each), but the issue
+>> is there with both 1920x1080@16bpp and 1024x768@8bpp (~60Hz).
+> 
+> Duh! This adds to the weirdness of this issue. I'd thought that by
+> dividing the required bandwidth by 2 you would get a reliable setup.
+
+I think I might have misremembered seeing the issue with 1024x768@8bpp.
+Sorry. But it *is* there for (the old variant of) 1024x768@24bpp, and
+that is still only 60% or so of the bandwidth compared to 1920x1080@16bpp.
+
+Cheers,
+Peter
