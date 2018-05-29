@@ -1,134 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934777AbeE2NnY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:43:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36360 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934334AbeE2NmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:42:14 -0400
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v9 4/7] cpuset: Make generate_sched_domains() recognize isolated_cpus
-Date: Tue, 29 May 2018 09:41:31 -0400
-Message-Id: <1527601294-3444-5-git-send-email-longman@redhat.com>
-In-Reply-To: <1527601294-3444-1-git-send-email-longman@redhat.com>
-References: <1527601294-3444-1-git-send-email-longman@redhat.com>
+        id S934571AbeE2Nol (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:44:41 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:45660 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934183AbeE2Noj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:44:39 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Christian Brauner <christian@brauner.io>
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@kernel.org, james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, oleg@redhat.com
+References: <20180528215355.16119-1-christian@brauner.io>
+        <20180528215355.16119-5-christian@brauner.io>
+        <87r2lusl8l.fsf@xmission.com> <20180529124159.GB11221@mailbox.org>
+Date: Tue, 29 May 2018 08:44:22 -0500
+In-Reply-To: <20180529124159.GB11221@mailbox.org> (Christian Brauner's message
+        of "Tue, 29 May 2018 14:41:59 +0200")
+Message-ID: <87fu2apoeh.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fNevU-0003Ol-AV;;;mid=<87fu2apoeh.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/aPs6JEd5ipzP93vR70RmFaBLr9ahXwsw=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Christian Brauner <christian@brauner.io>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 237 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 3.5 (1.5%), b_tie_ro: 2.4 (1.0%), parse: 1.42 (0.6%),
+        extract_message_metadata: 17 (7.0%), get_uri_detail_list: 2.3 (1.0%),
+        tests_pri_-1000: 7 (3.0%), tests_pri_-950: 1.71 (0.7%), tests_pri_-900: 1.38
+        (0.6%), tests_pri_-400: 25 (10.6%), check_bayes: 24 (10.0%), b_tokenize: 9
+        (3.8%), b_tok_get_all: 7 (2.9%), b_comp_prob: 2.9 (1.2%), b_tok_touch_all:
+        3.0 (1.2%), b_finish: 0.62 (0.3%), tests_pri_0: 171 (72.2%),
+        check_dkim_signature: 0.59 (0.2%), check_dkim_adsp: 3.2 (1.4%),
+        tests_pri_500: 4.5 (1.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v1 04/20] signal: add copy_pending() helper
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generate_sched_domains() function and the hotplug code are modified
-to make them use the newly introduced isolated_cpus mask for schedule
-domains generation.
+Christian Brauner <christian@brauner.io> writes:
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/cgroup/cpuset.c | 33 +++++++++++++++++++++++++++++----
- 1 file changed, 29 insertions(+), 4 deletions(-)
+> On Tue, May 29, 2018 at 07:24:26AM -0500, Eric W. Biederman wrote:
+>> Christian Brauner <christian@brauner.io> writes:
+>> 
+>> > Instead of using a goto for this let's add a simple helper copy_pending()
+>> > which can be called in both places.
+>> 
+>> Ick no.  As far as I can see this just confuses the logic of the
+>> collect_signal function.
+>> 
+>> Instead of having two cases with an optional
+>> "sigdelset(&list->signal, sig)" if the signal is no longer in the queue,
+>> you are moving the core work of collect_signal into another function.
+>> 
+>> At the very least this is going to make maintenance more difficult
+>> as now the work of this function is split into two functions.
+>
+> I do disagree here tbh. The goto jump into it the if part of an if-else
+> seems pretty nasty.
+> I also don't know why this should be confusing the logic. There's a
+> single function that is called in two places and it is declared directly
+> atop it's only caller. Additionally, recognizing a single name of a
+> function as being the same in two places is way easier then recognizing
+> that a multi-line pattern is the same in two places.
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index b94d4a0..71cd920 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -672,13 +672,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	int ndoms = 0;		/* number of sched domains in result */
- 	int nslot;		/* next empty doms[] struct cpumask slot */
- 	struct cgroup_subsys_state *pos_css;
-+	bool root_load_balance = is_sched_load_balance(&top_cpuset);
- 
- 	doms = NULL;
- 	dattr = NULL;
- 	csa = NULL;
- 
- 	/* Special case for the 99% of systems with one, full, sched domain */
--	if (is_sched_load_balance(&top_cpuset)) {
-+	if (root_load_balance && !top_cpuset.isolation_count) {
- 		ndoms = 1;
- 		doms = alloc_sched_domains(ndoms);
- 		if (!doms)
-@@ -701,6 +702,8 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	csn = 0;
- 
- 	rcu_read_lock();
-+	if (root_load_balance)
-+		csa[csn++] = &top_cpuset;
- 	cpuset_for_each_descendant_pre(cp, pos_css, &top_cpuset) {
- 		if (cp == &top_cpuset)
- 			continue;
-@@ -711,6 +714,9 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 		 * parent's cpus, so just skip them, and then we call
- 		 * update_domain_attr_tree() to calc relax_domain_level of
- 		 * the corresponding sched domain.
-+		 *
-+		 * If root is load-balancing, we can skip @cp if it
-+		 * is a subset of the root's effective_cpus.
- 		 */
- 		if (!cpumask_empty(cp->cpus_allowed) &&
- 		    !(is_sched_load_balance(cp) &&
-@@ -718,11 +724,16 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 					 housekeeping_cpumask(HK_FLAG_DOMAIN))))
- 			continue;
- 
-+		if (root_load_balance &&
-+		    cpumask_subset(cp->cpus_allowed, top_cpuset.effective_cpus))
-+			continue;
-+
- 		if (is_sched_load_balance(cp))
- 			csa[csn++] = cp;
- 
--		/* skip @cp's subtree */
--		pos_css = css_rightmost_descendant(pos_css);
-+		/* skip @cp's subtree if not a scheduling domain root */
-+		if (!is_sched_domain_root(cp))
-+			pos_css = css_rightmost_descendant(pos_css);
- 	}
- 	rcu_read_unlock();
- 
-@@ -849,7 +860,12 @@ static void rebuild_sched_domains_locked(void)
- 	 * passing doms with offlined cpu to partition_sched_domains().
- 	 * Anyways, hotplug work item will rebuild sched domains.
- 	 */
--	if (!cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
-+	if (!top_cpuset.isolation_count &&
-+	    !cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
-+		goto out;
-+
-+	if (top_cpuset.isolation_count &&
-+	   !cpumask_subset(top_cpuset.effective_cpus, cpu_active_mask))
- 		goto out;
- 
- 	/* Generate domain masks and attrs */
-@@ -2635,6 +2651,11 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 	cpumask_copy(&new_cpus, cpu_active_mask);
- 	new_mems = node_states[N_MEMORY];
- 
-+	/*
-+	 * If isolated_cpus is populated, it is likely that the check below
-+	 * will produce a false positive on cpus_updated when the cpu list
-+	 * isn't changed. It is extra work, but it is better to be safe.
-+	 */
- 	cpus_updated = !cpumask_equal(top_cpuset.effective_cpus, &new_cpus);
- 	mems_updated = !nodes_equal(top_cpuset.effective_mems, new_mems);
- 
-@@ -2643,6 +2664,10 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 		spin_lock_irq(&callback_lock);
- 		if (!on_dfl)
- 			cpumask_copy(top_cpuset.cpus_allowed, &new_cpus);
-+
-+		if (top_cpuset.isolation_count)
-+			cpumask_andnot(&new_cpus, &new_cpus,
-+					top_cpuset.isolated_cpus);
- 		cpumask_copy(top_cpuset.effective_cpus, &new_cpus);
- 		spin_unlock_irq(&callback_lock);
- 		/* we don't mess with cpumasks of tasks in top_cpuset */
--- 
-1.8.3.1
+But there are not two places.  There is only one place.
+The logic might be cleaned up reorganizing the tests a little bit.
+Something like this perhaps.
+
+	/*
+	 * Collect the siginfo appropriate to this signal.  Check if
+	 * there is another siginfo for the same signal.
+	*/
+	list_for_each_entry(q, &list->list, list) {
+		if (q->info.si_signo == sig) {
+			if (first)
+                        	break;
+			first = q;
+		}
+	}
+
+	/* Not still pending? */
+	if (!first || (&q->list != &list->list))
+        	sigdelset(&list->signal, sig);
+	if (first) {
+		...
+
+
+The logic at a high level is:
+	Is there another instance of this signal pending?
+             yes?  Then don't "sigdelset"
+        Do we have siginfo?
+           yes? return it.
+           no?  dummy up a siginfo.
+
+Making that logic clearer would be nice.  Obscuring it with
+an extra function just obstructs maintenance.
+
+Eric
