@@ -1,122 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755065AbeE2HzM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:55:12 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:44167 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754796AbeE2HzK (ORCPT
+        id S1755135AbeE2H5t (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:57:49 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:40035 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754796AbeE2H5o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:55:10 -0400
-X-Google-Smtp-Source: ADUXVKKQvUjZ3VnUfVYfVMK4fMsKiG4huHHNrk+tKMNarCiCUFV+QNFpzIOUWeO5F6YVu5QjSQy+7g==
-Date: Tue, 29 May 2018 08:55:06 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
-Message-ID: <20180529075505.GD4790@dell>
-References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
- <20180523114230.10109-4-marek.vasut+renesas@gmail.com>
- <6ED8E3B22081A4459DAC7699F3695FB701941A488A@SW-EX-MBX02.diasemi.com>
+        Tue, 29 May 2018 03:57:44 -0400
+X-Google-Smtp-Source: ADUXVKKVrL0+AkA8Tg93sh0Y6GMQ7JDnr7JlTLAAxLkYG4+uVy7Adkzh46bR7TB86zErbK/qorsP9L/LIR2dLjP1fyg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6ED8E3B22081A4459DAC7699F3695FB701941A488A@SW-EX-MBX02.diasemi.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1527573427-16569-1-git-send-email-nick.desaulniers@gmail.com>
+References: <1527573427-16569-1-git-send-email-nick.desaulniers@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 29 May 2018 09:57:43 +0200
+X-Google-Sender-Auth: aLb772PoYN2vCver3A2QEdc7JAw
+Message-ID: <CAK8P3a2=THd7YL6sB4=xXZShD=wOjk_taM1L-E5VPH77TiQK0w@mail.gmail.com>
+Subject: Re: [PATCH] kdb: prefer strlcpy to strncpy
+To: Nick Desaulniers <nick.desaulniers@gmail.com>
+Cc: Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018, Steve Twiss wrote:
+On Tue, May 29, 2018 at 7:57 AM, Nick Desaulniers
+<nick.desaulniers@gmail.com> wrote:
+> Fixes stringop-truncation and stringop-overflow warnings from gcc-8.
 
-> Thanks Marek,
-> 
-> On 23 May 2018 12:42 Marek Vasut wrote,
-> 
-> > To: linux-kernel@vger.kernel.org
-> > Cc: Marek Vasut <marek.vasut+renesas@gmail.com>; Geert Uytterhoeven <geert+renesas@glider.be>; Lee Jones <lee.jones@linaro.org>; Mark Brown <broonie@kernel.org>; Steve Twiss <stwiss.opensource@diasemi.com>; Wolfram Sang <wsa+renesas@sang-engineering.com>; linux-renesas-soc@vger.kernel.org
-> > Subject: [PATCH 4/6] mfd: da9063: Disallow RTC on DA9063L
-> >
-> > The DA9063L does not contain RTC block, unlike the full DA9063.
-> > Do not allow binding RTC driver on this variant of the chip.
-> >
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > Cc: Mark Brown <broonie@kernel.org>
-> > Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Cc: linux-renesas-soc@vger.kernel.org
-> > ---
-> >  drivers/mfd/da9063-core.c | 18 +++++++++++-------
-> >  1 file changed, 11 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c index 7360b76b4f72..263c83006413 100644
-> > --- a/drivers/mfd/da9063-core.c
-> > +++ b/drivers/mfd/da9063-core.c
-> > @@ -101,14 +101,14 @@ static const struct mfd_cell da9063_devs[] = {
-> >  		.of_compatible = "dlg,da9063-onkey",
-> >  	},
-> >  	{
-> > +		.name		= DA9063_DRVNAME_VIBRATION,
-> > +	},
-> > +	{	/* Only present on DA9063 , not on DA9063L */
-> >  		.name		= DA9063_DRVNAME_RTC,
-> >  		.num_resources	= ARRAY_SIZE(da9063_rtc_resources),
-> >  		.resources	= da9063_rtc_resources,
-> >  		.of_compatible	= "dlg,da9063-rtc",
-> >  	},
-> > -	{
-> > -		.name		= DA9063_DRVNAME_VIBRATION,
-> > -	},
-> >  };
-> >  
-> >  static int da9063_clear_fault_log(struct da9063 *da9063) @@ -163,7 +163,7 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)  {
-> >  	struct da9063_pdata *pdata = da9063->dev->platform_data;
-> >  	int model, variant_id, variant_code;
-> > -	int ret;
-> > +	int da9063_devs_len, ret;
-> >  
-> >  	ret = da9063_clear_fault_log(da9063);
-> >  	if (ret < 0)
-> > @@ -225,9 +225,13 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
-> >  
-> >  	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
-> >  
-> > -	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
-> > -			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
-> > -			      NULL);
-> > +	da9063_devs_len = ARRAY_SIZE(da9063_devs);
-> > +	/* RTC, the last device in the list, is only present on DA9063 */
-> > +	if (da9063->type == PMIC_TYPE_DA9063L)
-> > +		da9063_devs_len -= 1;
-> > +
-> > +	ret = mfd_add_devices(da9063->dev, -1, da9063_devs, da9063_devs_len,
-> > +			      NULL, da9063->irq_base, NULL);
-> >  	if (ret)
-> >  		dev_err(da9063->dev, "Cannot add MFD cells\n");
-> >  
-> 
-> MFD cells definitely has less impact than regmap_range and regmap_irq.
-> I agree, there's no point in having a completely new 
-> static const struct mfd_cell da9063l_devs[] = { ... }  for DA9063L
+That patch description should really explain whether gcc is right or not. What's
+the worst thing that could happen here?
 
-This solution is fragile.
+I would also recommend citing the exact warning you got.
 
-I agree that a new MFD cell is not required in its entirety.  It
-would however, be better to split out the RTC entry into a new one and
-only register it when (da9063->type == PMIC_TYPE_DA9063).  This is a
-better solution than messing around with passed struct sizes.
+> diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
+> index ed5d349..b5dfff1 100644
+> --- a/kernel/debug/kdb/kdb_io.c
+> +++ b/kernel/debug/kdb/kdb_io.c
+> @@ -443,7 +443,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
+>  char *kdb_getstr(char *buffer, size_t bufsize, const char *prompt)
+>  {
+>         if (prompt && kdb_prompt_str != prompt)
+> -               strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
+> +               strlcpy(kdb_prompt_str, prompt, CMD_BUFLEN);
+>         kdb_printf(kdb_prompt_str);
+>         kdb_nextline = 1;       /* Prompt and input resets line number */
+>         return kdb_read(buffer, bufsize);
+> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> index e405677..c30a0d8 100644
+> --- a/kernel/debug/kdb/kdb_main.c
+> +++ b/kernel/debug/kdb/kdb_main.c
+> @@ -1103,12 +1103,12 @@ static int handle_ctrl_cmd(char *cmd)
+>         case CTRL_P:
+>                 if (cmdptr != cmd_tail)
+>                         cmdptr = (cmdptr-1) % KDB_CMD_HISTORY_COUNT;
+> -               strncpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+> +               strlcpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+>                 return 1;
+>         case CTRL_N:
+>                 if (cmdptr != cmd_head)
+>                         cmdptr = (cmdptr+1) % KDB_CMD_HISTORY_COUNT;
+> -               strncpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+> +               strlcpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+>                 return 1;
+>         }
+>         return 0;
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Those three all look good.
+
+> diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
+> index 990b3cc..dcfbf8f 100644
+> --- a/kernel/debug/kdb/kdb_support.c
+> +++ b/kernel/debug/kdb/kdb_support.c
+> @@ -236,7 +236,7 @@ int kallsyms_symbol_next(char *prefix_name, int flag)
+>
+>         while ((name = kdb_walk_kallsyms(&pos))) {
+>                 if (strncmp(name, prefix_name, prefix_len) == 0) {
+> -                       strncpy(prefix_name, name, strlen(name)+1);
+> +                       strlcpy(prefix_name, name, prefix_len);
+>                         return 1;
+>                 }
+
+I don't know what this does, but you are changing the behavior: the previous
+'strlen(name)+1' argument was the size of the source string (which makes
+the strncpy() behave the same as a plain strcpy()), the new one means
+we only copy at most as many bytes as the previous length of the destination
+string.
+
+Is that intended? If yes, better explain it in the patch description.
+
+        Arnd
