@@ -1,154 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935360AbeE2OaP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:30:15 -0400
-Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38132 "EHLO
-        smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934533AbeE2OVv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:21:51 -0400
-From: James Simmons <jsimmons@infradead.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
-        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>,
-        James Simmons <jsimmons@infradead.org>
-Subject: [PATCH v2 1/6] staging: lustre: llite: create acl.c file
-Date: Tue, 29 May 2018 10:21:40 -0400
-Message-Id: <1527603705-30450-2-git-send-email-jsimmons@infradead.org>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1527603705-30450-1-git-send-email-jsimmons@infradead.org>
-References: <1527603705-30450-1-git-send-email-jsimmons@infradead.org>
+        id S935062AbeE2Oas (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:30:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38102 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934533AbeE2Oan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:30:43 -0400
+Date: Tue, 29 May 2018 16:30:40 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        gregkh@linuxfoundation.org, mingo@kernel.org,
+        james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH v1 06/20] signal: drop else branch in do_signal_stop()
+Message-ID: <20180529143039.GA1802@redhat.com>
+References: <20180528215355.16119-1-christian@brauner.io>
+ <20180528215355.16119-7-christian@brauner.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180528215355.16119-7-christian@brauner.io>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move ll_get_acl() to its own file acl.c just like all the other
-linux file systems do.
+I am busy now, can't review, just picked a random patch from this series...
 
-Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-6142
-Signed-off-by: James Simmons <jsimmons@infradead.org>
----
-Changelog:
+On 05/28, Christian Brauner wrote:
+> do_signal_stop() already returns in the if branch so there's no need to
+> keep the else branch around.
 
-v1) Initial patch to add acl.c file which contains acl handling
-    for lustre
+OK, but for what???
 
- drivers/staging/lustre/lustre/llite/Makefile       |  2 +
- drivers/staging/lustre/lustre/llite/acl.c          | 51 ++++++++++++++++++++++
- drivers/staging/lustre/lustre/llite/file.c         | 13 ------
- .../staging/lustre/lustre/llite/llite_internal.h   |  5 +++
- 4 files changed, 58 insertions(+), 13 deletions(-)
- create mode 100644 drivers/staging/lustre/lustre/llite/acl.c
+Do you think this change makes the code more readable? more clean? or what?
 
-diff --git a/drivers/staging/lustre/lustre/llite/Makefile b/drivers/staging/lustre/lustre/llite/Makefile
-index 519fd74..5200924 100644
---- a/drivers/staging/lustre/lustre/llite/Makefile
-+++ b/drivers/staging/lustre/lustre/llite/Makefile
-@@ -9,3 +9,5 @@ lustre-y := dcache.o dir.o file.o llite_lib.o llite_nfs.o \
- 	    super25.o statahead.o glimpse.o lcommon_cl.o lcommon_misc.o \
- 	    vvp_dev.o vvp_page.o vvp_lock.o vvp_io.o vvp_object.o \
- 	    lproc_llite.o
-+
-+lustre-$(CONFIG_FS_POSIX_ACL) += acl.o
-diff --git a/drivers/staging/lustre/lustre/llite/acl.c b/drivers/staging/lustre/lustre/llite/acl.c
-new file mode 100644
-index 0000000..d7c3bf9
---- /dev/null
-+++ b/drivers/staging/lustre/lustre/llite/acl.c
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * GPL HEADER START
-+ *
-+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 only,
-+ * as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License version 2 for more details (a copy is included
-+ * in the LICENSE file that accompanied this code).
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * version 2 along with this program; If not, see
-+ * http://www.gnu.org/licenses/gpl-2.0.html
-+ *
-+ * GPL HEADER END
-+ */
-+/*
-+ * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
-+ * Use is subject to license terms.
-+ *
-+ * Copyright (c) 2011, 2015, Intel Corporation.
-+ */
-+/*
-+ * This file is part of Lustre, http://www.lustre.org/
-+ * Lustre is a trademark of Sun Microsystems, Inc.
-+ *
-+ * lustre/llite/acl.c
-+ */
-+
-+#define DEBUG_SUBSYSTEM S_LLITE
-+
-+#include "llite_internal.h"
-+
-+struct posix_acl *ll_get_acl(struct inode *inode, int type)
-+{
-+	struct ll_inode_info *lli = ll_i2info(inode);
-+	struct posix_acl *acl = NULL;
-+
-+	spin_lock(&lli->lli_lock);
-+	/* VFS' acl_permission_check->check_acl will release the refcount */
-+	acl = posix_acl_dup(lli->lli_posix_acl);
-+	spin_unlock(&lli->lli_lock);
-+
-+	return acl;
-+}
-diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
-index a77cadc..ccbf91b 100644
---- a/drivers/staging/lustre/lustre/llite/file.c
-+++ b/drivers/staging/lustre/lustre/llite/file.c
-@@ -3030,19 +3030,6 @@ static int ll_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	return rc;
- }
- 
--struct posix_acl *ll_get_acl(struct inode *inode, int type)
--{
--	struct ll_inode_info *lli = ll_i2info(inode);
--	struct posix_acl *acl = NULL;
--
--	spin_lock(&lli->lli_lock);
--	/* VFS' acl_permission_check->check_acl will release the refcount */
--	acl = posix_acl_dup(lli->lli_posix_acl);
--	spin_unlock(&lli->lli_lock);
--
--	return acl;
--}
--
- int ll_inode_permission(struct inode *inode, int mask)
- {
- 	struct ll_sb_info *sbi;
-diff --git a/drivers/staging/lustre/lustre/llite/llite_internal.h b/drivers/staging/lustre/lustre/llite/llite_internal.h
-index 379d88e..bdb1564 100644
---- a/drivers/staging/lustre/lustre/llite/llite_internal.h
-+++ b/drivers/staging/lustre/lustre/llite/llite_internal.h
-@@ -754,7 +754,12 @@ enum ldlm_mode ll_take_md_lock(struct inode *inode, __u64 bits,
- int ll_md_real_close(struct inode *inode, fmode_t fmode);
- int ll_getattr(const struct path *path, struct kstat *stat,
- 	       u32 request_mask, unsigned int flags);
-+#ifdef CONFIG_FS_POSIX_ACL
- struct posix_acl *ll_get_acl(struct inode *inode, int type);
-+#else
-+#define ll_get_acl NULL
-+#endif /* CONFIG_FS_POSIX_ACL */
-+
- int ll_migrate(struct inode *parent, struct file *file, int mdtidx,
- 	       const char *name, int namelen);
- int ll_get_fid_by_name(struct inode *parent, const char *name,
--- 
-1.8.3.1
+I do not really care but to me these "if/else" branches make this code more
+symmetrical, so I don't understand the purpose.
+
+
+
+> Signed-off-by: Christian Brauner <christian@brauner.io>
+> ---
+> v0->v1:
+> * patch unchanged
+> ---
+>  kernel/signal.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index a628b56415e6..d1914439f144 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2214,14 +2214,14 @@ static bool do_signal_stop(int signr)
+>  		/* Now we don't run again until woken by SIGCONT or SIGKILL */
+>  		freezable_schedule();
+>  		return true;
+> -	} else {
+> -		/*
+> -		 * While ptraced, group stop is handled by STOP trap.
+> -		 * Schedule it and let the caller deal with it.
+> -		 */
+> -		task_set_jobctl_pending(current, JOBCTL_TRAP_STOP);
+> -		return false;
+>  	}
+> +
+> +	/*
+> +	 * While ptraced, group stop is handled by STOP trap.
+> +	 * Schedule it and let the caller deal with it.
+> +	 */
+> +	task_set_jobctl_pending(current, JOBCTL_TRAP_STOP);
+> +	return false;
+>  }
+>  
+>  /**
+> -- 
+> 2.17.0
+> 
