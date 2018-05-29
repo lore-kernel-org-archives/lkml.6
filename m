@@ -1,79 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967742AbeE2WPM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:15:12 -0400
-Received: from gate.crashing.org ([63.228.1.57]:45183 "EHLO gate.crashing.org"
+        id S967688AbeE2WPH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:15:07 -0400
+Received: from muru.com ([72.249.23.125]:45080 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967686AbeE2WPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:15:06 -0400
-Message-ID: <230075a7760a9cf878355e2b8abe4cdb967a482a.camel@kernel.crashing.org>
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, luto@kernel.org
-Date: Wed, 30 May 2018 08:13:54 +1000
-In-Reply-To: <20180529140319.GA19972@infradead.org>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
-         <20180523213703-mutt-send-email-mst@kernel.org>
-         <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
-         <20180525202300-mutt-send-email-mst@kernel.org>
-         <6fff9f5d67361653e6072570a857cf0d1009a123.camel@kernel.crashing.org>
-         <2f1d48cf029c1f0903f3cffea946ae5b85f60ec0.camel@kernel.crashing.org>
-         <20180529140319.GA19972@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S966170AbeE2WPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 18:15:05 -0400
+Date: Tue, 29 May 2018 15:15:01 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Maciej Purski <m.purski@samsung.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org, Carlos Hernandez <ceh@ti.com>
+Subject: Regression in Linux next again
+Message-ID: <20180529221501.GJ5702@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-29 at 07:03 -0700, Christoph Hellwig wrote:
-> On Tue, May 29, 2018 at 09:56:24AM +1000, Benjamin Herrenschmidt wrote:
-> > I don't think forcing the addition of an emulated iommu in the middle
-> > just to work around the fact that virtio "cheats" and doesn't use the
-> > dma API unless there is one, is the right "fix".
-> 
-> Agreed.
-> 
-> > The right long term fix is to always use the DMA API, reducing code
-> > path etc... and just have a single point where virtio can "chose"
-> > alternate DMA ops (via an arch hook to deal with our case).
-> 
-> Also agreed.
-> 
-> When Andi added vring_use_dma_api it was marked as temporary.
-> 
-> So I'd much rather move to blacklisting platforms that needs this
-> hack now than adding another exception.
-> 
-> And then once we have the blacklist move it to a quirk in the arch
-> code that just forces dma_direct_ops as the per-device dma ops.
-> 
-> I don't really think this is crazy long term, but something we could
-> do relatively quickly.  Interestingly enough the original commit
-> mentions PPC64 as a case where this quirk is needed.
+Hi,
 
-Not sure why, it's not so much a platform issue today. It's qemu itself
-who by defaults bypasses any iommu. I suppose ppc64 stood out because
-unlike x86 we always have an iommu by default.
+Linux next has a regression at least on beaglebone-x15 where
+booting Linux hangs shortly after starting init when loading
+modules with no output. I bisected it down to commit
+456e7cdf3b1a ("regulator: core: Change voltage setting path")
 
-Anyway, Anshuman, I think that's the right approach, first make virtio
-always use the DMA API with a quirk early to override the ops.
+I think I bisected this same issue for the second time now
+but for a different merge window. What's up with that?
 
-Christoph: the overriding of the ops isn't a platform thing. It's a
-qemu thing, ie, from a Linux perspective, it's a feature of the
-"device". So it should be done in virtio itself, not the platform code.
+And then we also have commit 696861761a58 ("regulator: core: Add
+voltage balancing mechanism") that fails to compile breaking
+git bisect:
 
-However, we do want the ability in platform code to force the bounce
-buffering to solve our secure VM issue.
+drivers/regulator/core.c: In function 'regulator_balance_voltage':
+drivers/regulator/core.c:3284:9: error: implicit declaration of
+function 'regulator_set_voltage'.
 
-Cheers,
-Ben.
+Reverting both patches fixes the issue for me. I could
+not debug it further because of the compile error(s).
+
+Regards,
+
+Tony
