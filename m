@@ -1,171 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755225AbeE2IJ5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:09:57 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:35083 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754922AbeE2IJx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:09:53 -0400
-X-Google-Smtp-Source: ADUXVKLi5eQ6YJ3uKmRVOqEsJpUEQ1hb0AvNKLZG0+BnZrEyQW4wcGjTY+fWNsgE0lYMtremUE2HnFznv7s/CDFxmvA=
+        id S1755298AbeE2ILf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:11:35 -0400
+Received: from mga05.intel.com ([192.55.52.43]:25219 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755012AbeE2ILa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 04:11:30 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,455,1520924400";
+   d="scan'208";a="62519026"
+Date: Tue, 29 May 2018 16:11:27 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: "Ye, Xiaolong" <xiaolong.ye@intel.com>,
+        "tj@kernel.org" <tj@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lkp@01.org" <lkp@01.org>, "hannes@cmpxchg.org" <hannes@cmpxchg.org>
+Subject: Re: [LKP] [lkp-robot] [mm, memcontrol] 309fe96bfc:
+ vm-scalability.throughput +23.0% improvement
+Message-ID: <20180529081127.GB14785@intel.com>
+References: <20180528114019.GF9904@yexl-desktop>
+ <20180528120318.GB27180@dhcp22.suse.cz>
+ <dbd727326f53648ed114e03a85085b6b4655fda2.camel@intel.com>
+ <20180529075800.GL27180@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180525101958.13277-2-bigeasy@linutronix.de>
-References: <20180525101958.13277-1-bigeasy@linutronix.de> <20180525101958.13277-2-bigeasy@linutronix.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 29 May 2018 10:09:51 +0200
-X-Google-Sender-Auth: zyi70DPZAuJ7ER5isYCdoVdnIGU
-Message-ID: <CAJZ5v0jEUR7YxzujvZn8WVK+dMxmOxoHNiLKcmgCq9awHR=vYg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kernel/SRCU: provide a static initializer
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529075800.GL27180@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 12:19 PM, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> There are macros for static initializer for the three out of four
-> possible notifier types, that are:
->         ATOMIC_NOTIFIER_HEAD()
->         BLOCKING_NOTIFIER_HEAD()
->         RAW_NOTIFIER_HEAD()
->
-> This patch provides a static initilizer for the forth type to make it
-> complete.
->
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+On Tue, May 29, 2018 at 09:58:00AM +0200, Michal Hocko wrote:
+> On Tue 29-05-18 03:15:51, Lu, Aaron wrote:
+> > On Mon, 2018-05-28 at 14:03 +0200, Michal Hocko wrote:
+> > > On Mon 28-05-18 19:40:19, kernel test robot wrote:
+> > > > 
+> > > > Greeting,
+> > > > 
+> > > > FYI, we noticed a +23.0% improvement of vm-scalability.throughput due to commit:
+> > > > 
+> > > > 
+> > > > commit: 309fe96bfc0ae387f53612927a8f0dc3eb056efd ("mm, memcontrol: implement memory.swap.events")
+> > > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> > > 
+> > > This doesn't make any sense to me. The patch merely adds an accounting.
+> > > It doesn't optimize anything. So I strongly suspect the result is just
+> > > misleading or the test (environment) misconfigured. Not the first time
+> > > I am seeing something like that I am afraid.
+> > > 
+> > 
+> > Most likely the same situation as:
+> > "
+> > FYI, we noticed a -27.2% regression of will-it-scale.per_process_ops
+> > due to commit:
+> > 
+> > 
+> > commit: e27be240df53f1a20c659168e722b5d9f16cc7f4 ("mm: memcg: make sure
+> > memory.events is uptodate when waking pollers")
+> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> > "
+> > 
+> > Where the performance change is due to layout change of
+> > 'struct mem_cgroup':
+> > http://lkml.kernel.org/r/20180528085201.GA2918@intel.com
+> 
+> I do not follow. How can _this_ patch lead to an improvement when it
+> actually _adds_ an accounting? The other report you are mentioning is a
 
-I cannot apply this without an ACK from Paul.
+This patch also changed the layout of 'struct mem_cgroup':
 
-> ---
->  include/linux/notifier.h | 34 +++++++++++++++++++++++++++++-----
->  include/linux/srcutiny.h |  6 +++---
->  include/linux/srcutree.h |  6 +++---
->  3 files changed, 35 insertions(+), 11 deletions(-)
->
-> diff --git a/include/linux/notifier.h b/include/linux/notifier.h
-> index 6d731110e0db..f35c7bf76143 100644
-> --- a/include/linux/notifier.h
-> +++ b/include/linux/notifier.h
-> @@ -43,9 +43,7 @@
->   * in srcu_notifier_call_chain(): no cache bounces and no memory barriers.
->   * As compensation, srcu_notifier_chain_unregister() is rather expensive.
->   * SRCU notifier chains should be used when the chain will be called very
-> - * often but notifier_blocks will seldom be removed.  Also, SRCU notifier
-> - * chains are slightly more difficult to use because they require special
-> - * runtime initialization.
-> + * often but notifier_blocks will seldom be removed.
->   */
->
->  struct notifier_block;
-> @@ -91,7 +89,7 @@ struct srcu_notifier_head {
->                 (name)->head = NULL;            \
->         } while (0)
->
-> -/* srcu_notifier_heads must be initialized and cleaned up dynamically */
-> +/* srcu_notifier_heads must be cleaned up dynamically */
->  extern void srcu_init_notifier_head(struct srcu_notifier_head *nh);
->  #define srcu_cleanup_notifier_head(name)       \
->                 cleanup_srcu_struct(&(name)->srcu);
-> @@ -104,7 +102,13 @@ extern void srcu_init_notifier_head(struct srcu_notifier_head *nh);
->                 .head = NULL }
->  #define RAW_NOTIFIER_INIT(name)        {                               \
->                 .head = NULL }
-> -/* srcu_notifier_heads cannot be initialized statically */
-> +
-> +#define SRCU_NOTIFIER_INIT(name, pcpu)                         \
-> +       {                                                       \
-> +               .mutex = __MUTEX_INITIALIZER(name.mutex),       \
-> +               .head = NULL,                                   \
-> +               .srcu = __SRCU_STRUCT_INIT(name.srcu, pcpu),    \
-> +       }
->
->  #define ATOMIC_NOTIFIER_HEAD(name)                             \
->         struct atomic_notifier_head name =                      \
-> @@ -116,6 +120,26 @@ extern void srcu_init_notifier_head(struct srcu_notifier_head *nh);
->         struct raw_notifier_head name =                         \
->                 RAW_NOTIFIER_INIT(name)
->
-> +#ifdef CONFIG_TREE_SRCU
-> +#define _SRCU_NOTIFIER_HEAD(name, mod)                         \
-> +       static DEFINE_PER_CPU(struct srcu_data,                 \
-> +                       name##_head_srcu_data);                 \
-> +       mod struct srcu_notifier_head name =                    \
-> +                       SRCU_NOTIFIER_INIT(name, name##_head_srcu_data)
-> +
-> +#else
-> +#define _SRCU_NOTIFIER_HEAD(name, mod)                         \
-> +       mod struct srcu_notifier_head name =                    \
-> +                       SRCU_NOTIFIER_INIT(name, name)
-> +
-> +#endif
-> +
-> +#define SRCU_NOTIFIER_HEAD(name)                               \
-> +       _SRCU_NOTIFIER_HEAD(name, /* not static */)
-> +
-> +#define SRCU_NOTIFIER_HEAD_STATIC(name)                                \
-> +       _SRCU_NOTIFIER_HEAD(name, static)
-> +
->  #ifdef __KERNEL__
->
->  extern int atomic_notifier_chain_register(struct atomic_notifier_head *nh,
-> diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
-> index 261471f407a5..f41d2fb09f87 100644
-> --- a/include/linux/srcutiny.h
-> +++ b/include/linux/srcutiny.h
-> @@ -43,7 +43,7 @@ struct srcu_struct {
->
->  void srcu_drive_gp(struct work_struct *wp);
->
-> -#define __SRCU_STRUCT_INIT(name)                                       \
-> +#define __SRCU_STRUCT_INIT(name, __ignored)                            \
->  {                                                                      \
->         .srcu_wq = __SWAIT_QUEUE_HEAD_INITIALIZER(name.srcu_wq),        \
->         .srcu_cb_tail = &name.srcu_cb_head,                             \
-> @@ -56,9 +56,9 @@ void srcu_drive_gp(struct work_struct *wp);
->   * Tree SRCU, which needs some per-CPU data.
->   */
->  #define DEFINE_SRCU(name) \
-> -       struct srcu_struct name = __SRCU_STRUCT_INIT(name)
-> +       struct srcu_struct name = __SRCU_STRUCT_INIT(name, name)
->  #define DEFINE_STATIC_SRCU(name) \
-> -       static struct srcu_struct name = __SRCU_STRUCT_INIT(name)
-> +       static struct srcu_struct name = __SRCU_STRUCT_INIT(name, name)
->
->  void synchronize_srcu(struct srcu_struct *sp);
->
-> diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-> index 4eda108abee0..745d4ca4dd50 100644
-> --- a/include/linux/srcutree.h
-> +++ b/include/linux/srcutree.h
-> @@ -104,9 +104,9 @@ struct srcu_struct {
->  #define SRCU_STATE_SCAN1       1
->  #define SRCU_STATE_SCAN2       2
->
-> -#define __SRCU_STRUCT_INIT(name)                                       \
-> +#define __SRCU_STRUCT_INIT(name, pcpu_name)                            \
->         {                                                               \
-> -               .sda = &name##_srcu_data,                               \
-> +               .sda = &pcpu_name,                                      \
->                 .lock = __SPIN_LOCK_UNLOCKED(name.lock),                \
->                 .srcu_gp_seq_needed = 0 - 1,                            \
->                 __SRCU_DEP_MAP_INIT(name)                               \
-> @@ -133,7 +133,7 @@ struct srcu_struct {
->   */
->  #define __DEFINE_SRCU(name, is_static)                                 \
->         static DEFINE_PER_CPU(struct srcu_data, name##_srcu_data);\
-> -       is_static struct srcu_struct name = __SRCU_STRUCT_INIT(name)
-> +       is_static struct srcu_struct name = __SRCU_STRUCT_INIT(name, name##_srcu_data)
->  #define DEFINE_SRCU(name)              __DEFINE_SRCU(name, /* not static */)
->  #define DEFINE_STATIC_SRCU(name)       __DEFINE_SRCU(name, static)
->
-> --
-> 2.17.0
->
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index d99b71bc2c66..517096c3cc99 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -208,6 +210,9 @@ struct mem_cgroup {
+ 	atomic_long_t memory_events[MEMCG_NR_MEMORY_EVENTS];
+ 	struct cgroup_file events_file;
+ 
++	/* handle for "memory.swap.events" */
++	struct cgroup_file swap_events_file;
++
+ 	/* protect arrays of thresholds */
+ 	struct mutex thresholds_lock;
+
+And I'm guessing that might be the cause.
+
+> _regression_ and I can imagine that the layout changes can lead to that
+> result.
