@@ -1,89 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754539AbeE2Ehn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 00:37:43 -0400
-Received: from ozlabs.org ([203.11.71.1]:36601 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750871AbeE2Ehg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 00:37:36 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 29 May 2018 14:37:33 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>, Christoph Hellwig <hch@lst.de>
-Subject: linux-next: manual merge of the block tree with the vfs tree
-Message-ID: <20180529143733.66340ef7@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=H=PXTdySOdGeNkY3yfEW2r"; protocol="application/pgp-signature"
+        id S1754654AbeE2EiP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 00:38:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44614 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754541AbeE2EiG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 00:38:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 090E160242
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
+From: Can Guo <cang@codeaurora.org>
+To: subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        vivek.gautam@codeaurora.org, mgautam@codeaurora.org, kishon@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Can Guo <cang@codeaurora.org>
+Subject: [PATCH v6 0/3] Support for Qualcomm UFS QMP PHY on SDM845
+Date: Tue, 29 May 2018 12:37:48 +0800
+Message-Id: <20180529043751.10580-1-cang@codeaurora.org>
+X-Mailer: git-send-email 2.15.0.windows.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/=H=PXTdySOdGeNkY3yfEW2r
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch series adds support for UFS QMP PHY on SDM845 and the
+compatible string for it. This patch series depends on the current
+proposed QMP V3 USB3 UNI PHY support for sdm845 driver [1], on
+the DT bindings for the QMP V3 USB3 PHYs based dirver [2], and also
+rebased on updated pipe_clk initialization sequence [3]. This series
+can only be merged once the dependent patches do.
+[1] http://lists-archives.com/linux-kernel/29071659-dt-bindings-phy-qcom-qmp-update-bindings-for-sdm845.html
+[2] http://lists-archives.com/linux-kernel/29071660-phy-qcom-qmp-add-qmp-v3-usb3-uni-phy-support-for-sdm845.html
+[3] https://patchwork.kernel.org/patch/10376551/
 
-Hi all,
+Changes since v5:
+- Updates the PHY power control sequence.
+- Updates UFS PHY power on condition check.
 
-Today's linux-next merge of the block tree got a conflict in:
+Changes since v4:
+- Adds 'ref_aux' clock back to SDM845 UFS PHY clock list.
+- Power on PHY before serdes configuration starts.
+- Updates the UFS PHY initialization sequence.
+- Updates a few UFS PHY registers.
+- Incorporated review comments from Vivek and Manu.
 
-  drivers/block/drbd/drbd_main.c
+Changes since v3:
+- Incorporated review comments from Vivek and Rob.
 
-between commit:
+Changes since v2:
+- Incorporated review comments from Vivek and Rob.
+- Remove "ref_aux" from sdm845 ufs phy clock list structure.
 
-  004fd11db1d6 ("drbd: switch to proc_create_single")
+Changes since v1:
+- Incorporated review comments from Vivek and Manu.
+- Update the commit title of patch 2.
 
-from the vfs tree and commit:
+Can Guo (3):
+  phy: Update PHY power control sequence
+  phy: Add QMP phy based UFS phy support for sdm845
+  dt-bindings: phy-qcom-qmp: Add UFS phy compatible string for sdm845
 
-  5657a819a8d9 ("block drivers/block: Use octal not symbolic permissions")
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   4 +-
+ drivers/phy/qualcomm/phy-qcom-qmp.c                | 205 +++++++++++++++++++--
+ drivers/phy/qualcomm/phy-qcom-qmp.h                |  15 ++
+ 3 files changed, 210 insertions(+), 14 deletions(-)
 
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/block/drbd/drbd_main.c
-index c2d154faac02,e6ec831ad472..000000000000
---- a/drivers/block/drbd/drbd_main.c
-+++ b/drivers/block/drbd/drbd_main.c
-@@@ -3010,8 -3010,7 +3010,8 @@@ static int __init drbd_init(void
-  		goto fail;
- =20
-  	err =3D -ENOMEM;
-- 	drbd_proc =3D proc_create_single("drbd", S_IFREG | S_IRUGO , NULL,
- -	drbd_proc =3D proc_create_data("drbd", S_IFREG | 0444 , NULL, &drbd_proc=
-_fops, NULL);
-++	drbd_proc =3D proc_create_single("drbd", S_IFREG | 0444 , NULL,
- +			drbd_seq_show);
-  	if (!drbd_proc)	{
-  		pr_err("unable to register proc file\n");
-  		goto fail;
-
---Sig_/=H=PXTdySOdGeNkY3yfEW2r
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsM2Q0ACgkQAVBC80lX
-0GzS5ggAmnJe9u1mMawq5r4v2/s9QcUsnQy2p10FiseAm9JfAzNBMrUUe0WG4O2u
-SWj7mwjOdaHyKCVhyXaXdfbCwZMU549J5+1kIItf4ekqCXPug0T7qpnZRb7fIGl7
-vYQFuJkMoinZntocWiXRU3GKuugr3qrlnugbEjx8lEc17eEI8S+ZxieHmc9Bnyq7
-/I9/7njHBrv+LVnOsaBAAmGAKLwCH+H7upO5r4l1qfPuuhAoJmpa8icaDpzKrrpv
-/nrL/WCBWKWArRujKB987mRarkvXhwwlKPT7CiaAnLWi4F7op9QIcEvysJ8ZUI1D
-ikzDC8+m/D+PdBKXfIPlRw6PVpRMNA==
-=XrNz
------END PGP SIGNATURE-----
-
---Sig_/=H=PXTdySOdGeNkY3yfEW2r--
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
