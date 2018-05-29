@@ -1,92 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967805AbeE2Wec (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:34:32 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52880 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967502AbeE2Wea (ORCPT
+        id S967789AbeE2WhX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:37:23 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36868 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967485AbeE2WhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:34:30 -0400
-Date: Wed, 30 May 2018 00:34:27 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org
-Subject: Re: v4.17-rc1: regressions on N900, N950
-Message-ID: <20180529223427.GA5045@amd>
-References: <20180522080250.4fzyvqrgw5oigexn@pali>
- <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
- <20180522205824.GA24927@amd>
- <20180522215638.GC2299@darkstar.musicnaut.iki.fi>
- <20180523140615.GA27180@amd>
- <20180523201208.GA31731@amd>
- <20180523220456.GY98604@atomide.com>
- <20180524094705.GA16705@amd>
- <20180529204517.GA6765@amd>
- <20180529210909.7m4cyhh524xqipju@earth.universe>
+        Tue, 29 May 2018 18:37:21 -0400
+X-Google-Smtp-Source: ADUXVKLOvecpYqEG453zVo2a2b73+O3W4c1PaHS3qIscjcX70LlvOcxLwi0Hy+riA3kmlkIsS0rArsKF551GUh0KLe8=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
-Content-Disposition: inline
-In-Reply-To: <20180529210909.7m4cyhh524xqipju@earth.universe>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180505075854.192237-1-ksspiers@google.com>
+References: <20180505075854.192237-1-ksspiers@google.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 29 May 2018 15:37:20 -0700
+Message-ID: <CAPcyv4i__AQmCxM1rVBrLqXreMxQ5u9uRHRyJ=XZjDELxxJTzw@mail.gmail.com>
+Subject: Re: [PATCH v2] async_pq: Remove VLA usage
+To: Kyle Spiers <ksspiers@google.com>
+Cc: David Miller <davem@davemloft.net>, Kees Cook <keescook@chromium.org>,
+        Vinod Koul <vinod.koul@intel.com>, ray.jui@broadcom.com,
+        linux-crypto@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-raid <linux-raid@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[ adding linux-raid ]
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Apologies for the delay, the recent ping from Kees made me take a closer look.
 
-On Tue 2018-05-29 23:09:09, Sebastian Reichel wrote:
-> Hi Pavel,
->=20
-> On Tue, May 29, 2018 at 10:45:17PM +0200, Pavel Machek wrote:
-> > > > > still results in working touchscreen, removing any of the three f=
-ields
-> > > > > breaks it again.
-> > > >=20
-> > > > I bisected one regression down, see "omapdrm regression in v4.17-rc=
- series"
-> > > > not sure if it covers all the issues being discussed here though.
-> > >=20
-> > > Reverting 24aac6011f70 fixes screen on n900 in v4.17-rc for me. (But
-> > > strange dependency on tsc2005@0 is still there).
-> >=20
-> > Laurent, your patch looks pretty obvious, but unfortunately breaks
-> > display on Nokia N900.
-> >=20
-> > The patch is pretty big as is, perhaps you have version split to sdi
-> > =3D> *sdi and then static =3D> dynamic allocation?
->=20
-> There is a queued fix:
->=20
-> https://github.com/freedesktop/drm-misc/commit/2bc5ff0bdc00d81d719dad7458=
-9317a260d583ed
+On Sat, May 5, 2018 at 12:58 AM, Kyle Spiers <ksspiers@google.com> wrote:
+> In the quest to remove VLAs from the kernel[1], this moves the
+> allocation of coefs and blocks from the stack to being kmalloc()ed.
+>
+> [1] https://lkml.org/lkml/2018/3/7/621
+>
+> Signed-off-by: Kyle Spiers <ksspiers@google.com>
+> ---
+> Forgot to add slab.h
+> ---
+>  crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
+>  crypto/async_tx/raid6test.c |  9 ++++++++-
+>  2 files changed, 22 insertions(+), 5 deletions(-)
+>
+> diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
+> index 56bd612927ab..af1912313a23 100644
+> --- a/crypto/async_tx/async_pq.c
+> +++ b/crypto/async_tx/async_pq.c
+> @@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>             (src_cnt <= dma_maxpq(device, 0) ||
+>              dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
+>             is_dma_pq_aligned(device, offset, 0, len)) {
+> -               struct dma_async_tx_descriptor *tx;
+> +               struct dma_async_tx_descriptor *tx = NULL;
+>                 enum dma_ctrl_flags dma_flags = 0;
+> -               unsigned char coefs[src_cnt];
+> +               unsigned char *coefs;
+>                 int i, j;
+>
+>                 /* run the p+q asynchronously */
+> @@ -207,6 +207,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>                  * sources and update the coefficients accordingly
+>                  */
+>                 unmap->len = len;
+> +               coefs = kmalloc_array(src_cnt, sizeof(*coefs), GFP_KERNEL);
 
-Thanks for the pointer! I hope it makes it in time for v4.17...
+At a minimum this needs to be GFP_NOIO since raid may be in the
+page-reclaim path.
 
-                                                                        Pav=
-el
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsN1XMACgkQMOfwapXb+vLe4ACghJwgHTzFCX9hdxnm9yuZAKbf
-aC8AoLxD0FHwm9QxpVU9Az/eFK/fQ8PH
-=1IyN
------END PGP SIGNATURE-----
-
---xHFwDpU9dbj6ez1V--
+However, I think it may be better to allocate this with the rest of
+the stripe resources and pass it in as a scratch buffer. See the usage
+/ implementation of scribble_alloc() in drivers/md/raid5.c.
