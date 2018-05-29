@@ -1,106 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933799AbeE2MRi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:17:38 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55564 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933839AbeE2MPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:15:03 -0400
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
-Subject: [PATCH 02/10] crypto: inside-secure - improve the counter computation
-Date: Tue, 29 May 2018 14:13:44 +0200
-Message-Id: <20180529121352.19490-3-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180529121352.19490-1-antoine.tenart@bootlin.com>
-References: <20180529121352.19490-1-antoine.tenart@bootlin.com>
+        id S933828AbeE2MR6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:17:58 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52574 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933576AbeE2MRy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:17:54 -0400
+Date: Tue, 29 May 2018 13:17:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [alsa-devel][PATCH v1] ASoC: TSCS454: Add Support
+Message-ID: <20180529121746.GH23509@sirena.org.uk>
+References: <20180529105147.GA32219@t7-ThinkPad-E560>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="82evfD9Ogz2JrdWZ"
+Content-Disposition: inline
+In-Reply-To: <20180529105147.GA32219@t7-ThinkPad-E560>
+X-Cookie: Variables don't
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A counter is given to the engine when finishing hash computation. It
-currently uses the blocksize while it counts the number of 64 bytes
-blocks given to the engine. This works well for all algorithms so far,
-as SHA1, SHA224 and SHA256 all have a blocksize of 64 bytes, but others
-algorithms such as SHA512 wouldn't work.
 
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
----
- drivers/crypto/inside-secure/safexcel.h      |  5 +++++
- drivers/crypto/inside-secure/safexcel_hash.c | 12 +++++-------
- 2 files changed, 10 insertions(+), 7 deletions(-)
+--82evfD9Ogz2JrdWZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
-index 8b3ee9b59f53..d2adedc23e9a 100644
---- a/drivers/crypto/inside-secure/safexcel.h
-+++ b/drivers/crypto/inside-secure/safexcel.h
-@@ -327,6 +327,11 @@ struct safexcel_context_record {
- #define CONTEXT_CONTROL_COUNTER_MODE		BIT(10)
- #define CONTEXT_CONTROL_HASH_STORE		BIT(19)
- 
-+/* The hash counter given to the engine in the context has a granularity of
-+ * 64 bits.
-+ */
-+#define EIP197_COUNTER_BLOCK_SIZE		64
-+
- /* EIP197_CS_RAM_CTRL */
- #define EIP197_TRC_ENABLE_0			BIT(4)
- #define EIP197_TRC_ENABLE_1			BIT(5)
-diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
-index 8eef95f82e11..83418f7501b5 100644
---- a/drivers/crypto/inside-secure/safexcel_hash.c
-+++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -72,8 +72,7 @@ static void safexcel_hash_token(struct safexcel_command_desc *cdesc,
- static void safexcel_context_control(struct safexcel_ahash_ctx *ctx,
- 				     struct safexcel_ahash_req *req,
- 				     struct safexcel_command_desc *cdesc,
--				     unsigned int digestsize,
--				     unsigned int blocksize)
-+				     unsigned int digestsize)
- {
- 	int i;
- 
-@@ -107,7 +106,8 @@ static void safexcel_context_control(struct safexcel_ahash_ctx *ctx,
- 				ctx->base.ctxr->data[i] = cpu_to_le32(req->state[i]);
- 
- 			if (req->finish)
--				ctx->base.ctxr->data[i] = cpu_to_le32(req->processed / blocksize);
-+				ctx->base.ctxr->data[i] =
-+					cpu_to_le32(req->processed / EIP197_COUNTER_BLOCK_SIZE);
- 		}
- 	} else if (req->digest == CONTEXT_CONTROL_DIGEST_HMAC) {
- 		cdesc->control_data.control0 |= CONTEXT_CONTROL_SIZE(2 * req->state_sz / sizeof(u32));
-@@ -282,8 +282,7 @@ static int safexcel_ahash_send_req(struct crypto_async_request *async, int ring,
- 
- send_command:
- 	/* Setup the context options */
--	safexcel_context_control(ctx, req, first_cdesc, req->state_sz,
--				 crypto_ahash_blocksize(ahash));
-+	safexcel_context_control(ctx, req, first_cdesc, req->state_sz);
- 
- 	/* Add the token */
- 	safexcel_hash_token(first_cdesc, len, req->state_sz);
-@@ -335,7 +334,6 @@ static inline bool safexcel_ahash_needs_inv_get(struct ahash_request *areq)
- {
- 	struct safexcel_ahash_ctx *ctx = crypto_ahash_ctx(crypto_ahash_reqtfm(areq));
- 	struct safexcel_ahash_req *req = ahash_request_ctx(areq);
--	struct crypto_ahash *ahash = crypto_ahash_reqtfm(areq);
- 	unsigned int state_w_sz = req->state_sz / sizeof(u32);
- 	int i;
- 
-@@ -344,7 +342,7 @@ static inline bool safexcel_ahash_needs_inv_get(struct ahash_request *areq)
- 			return true;
- 
- 	if (ctx->base.ctxr->data[state_w_sz] !=
--	    cpu_to_le32(req->processed / crypto_ahash_blocksize(ahash)))
-+	    cpu_to_le32(req->processed / EIP197_COUNTER_BLOCK_SIZE))
- 		return true;
- 
- 	return false;
--- 
-2.17.0
+On Tue, May 29, 2018 at 05:52:00AM -0500, Steven Eckhoff wrote:
+
+> +static char const * const in_bst_txt[] = {
+> +		"0 dB", "10 dB", "20 dB", "30 dB"};
+> +
+
+This looks like just a regular volume control, it should be a normal
+SOC_SINGLE_TLV().
+
+> +	SOC_SINGLE("Input Channel 1 Mute En",
+> +			R_ICTL0, FB_ICTL0_IN1MUTE, 1, 0),
+
+All these En controls (I'm guessing Enable?) are just simple on/off
+controls and should end in Switch as per ControlNames.txt.
+
+> +	/* R_ICH0VOL PG 1 ADDR 0x12 */
+> +	SOC_SINGLE_TLV("Input Channel 0", R_ICH0VOL,
+> +			FB_ICHVOL_ICHVOL, FM_ICHVOL_ICHVOL, 0, in_vol_tlv_arr),
+
+All volume controls should end in Volume.
+
+> +static int tscs454_hw_params(struct snd_pcm_substream *substream,
+> +		struct snd_pcm_hw_params *params,
+> +		struct snd_soc_dai *dai)
+> +{
+> +	struct snd_soc_component *component = dai->component;
+> +	struct tscs454 *tscs454 = snd_soc_component_get_drvdata(component);
+> +	unsigned int fs = params_rate(params);
+
+> +	mutex_lock(&aif->lock);
+> +	config_aif = aif->users == 0;
+> +	aif->users++;
+> +	mutex_unlock(&aif->lock);
+> +
+> +	if (!config_aif)
+> +		return 0;
+
+We silently ignore attempts to configure the parameters?  That's broken,
+userspace won't know.  You should be setting more of the symmetry flags
+on the DAIs (for things that are relevant) and returning an error if
+there's an attempt to configure an incompatible parameter.
+
+> +	mutex_lock(&tscs454->active_aifs_lock);
+> +	res_ir_pll = tscs454->active_aifs == 0;
+
+Please write normal if statements, these comparisons within assignments
+are easy to miss and look like attempts to combine multiple
+initializations in a single line due to the mix of = and ==.
+
+--82evfD9Ogz2JrdWZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsNROkACgkQJNaLcl1U
+h9CNUwf8CmICB1Kmq854Tm6vc1zv73K9wuGMNRaTHSruYq+n7B1kHwlbBB7u8Ca5
+lDkiSXt+StcJwQYKM9YVtWwd88MmAsEkPMCzmtYDHxeAE068/C+KhPyrdPStZAqz
+ixQEeYA9rRROrxb9SBpNz2AOH4febKsE+cRhNoimwsvAbuNO6FNDQYJIfOAqLREG
+WrnsL69PvKfyIfBRCPiB2Tw4Q2kAGCoNBbJ9tRQGc7aPkeoh7A25sKq6BWylotUK
+JEqLBtdUHGQd/gdrrqcPdvrk7e8IxEEtkalyMaDIcYBw98IR+5dXU0UPpHuF1TOy
+CeWm3ZyGpmo+GZolmUljvNPYJSYxUA==
+=Y94q
+-----END PGP SIGNATURE-----
+
+--82evfD9Ogz2JrdWZ--
