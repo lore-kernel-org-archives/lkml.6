@@ -1,212 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965126AbeE2QWa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:22:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935416AbeE2QW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:22:27 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: kvm@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Andre Przywara <andre.przywara@arm.com>, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Subject: [PATCH] kvm: no need to check return value of debugfs_create functions
-Date: Tue, 29 May 2018 18:22:04 +0200
-Message-Id: <20180529162204.11757-1-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
+        id S964982AbeE2Q0f (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:26:35 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:34906 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936536AbeE2Q0a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 12:26:30 -0400
+X-Google-Smtp-Source: ADUXVKKQ0awAbeIAJQw7Db50NUSTfh5kLW0qZdmh4qQaEvEeOZ3o5urN/6Ye6cQb3T6wErPGv9rqWw==
+Date: Tue, 29 May 2018 09:26:27 -0700
+From: "'tj@kernel.org'" <tj@kernel.org>
+To: "Hatayama, Daisuke" <d.hatayama@jp.fujitsu.com>
+Cc: "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
+        "Okajima, Toshiyuki" <toshi.okajima@jp.fujitsu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "'ebiederm@aristanetworks.com'" <ebiederm@aristanetworks.com>
+Subject: Re: [RESEND PATCH v2] kernfs: fix dentry unexpected skip
+Message-ID: <20180529162627.GH1351649@devbig577.frc2.facebook.com>
+References: <33710E6CAA200E4583255F4FB666C4E21B63D491@G01JPEXMBYT03>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <33710E6CAA200E4583255F4FB666C4E21B63D491@G01JPEXMBYT03>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+Hello,
 
-This cleans up the error handling a lot, as this code will never get
-hit.
+On Mon, May 28, 2018 at 12:54:03PM +0000, Hatayama, Daisuke wrote:
+> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+> index 89d1dc1..3aeeb7a 100644
+> --- a/fs/kernfs/dir.c
+> +++ b/fs/kernfs/dir.c
+> @@ -1621,8 +1621,10 @@ static int kernfs_dir_fop_release(struct inode *inode, struct file *filp)
+>  static struct kernfs_node *kernfs_dir_next_pos(const void *ns,
+>  	struct kernfs_node *parent, ino_t ino, struct kernfs_node *pos)
+>  {
+> +	struct kernfs_node *orig = pos;
+> +
+>  	pos = kernfs_dir_pos(ns, parent, ino, pos);
+> -	if (pos) {
+> +	if (pos && kernfs_sd_compare(pos, orig) <= 0) {
 
-Cc: Paul Mackerras <paulus@ozlabs.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: "Radim Krčmář" <rkrcmar@redhat.com>
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: Eric Auger <eric.auger@redhat.com>
-Cc: Andre Przywara <andre.przywara@arm.com>
-Cc: kvm-ppc@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: kvmarm@lists.cs.columbia.edu
-Cc: kvm@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/kvm/book3s_hv.c   |  3 +--
- virt/kvm/arm/vgic/vgic-debug.c | 17 ++++-----------
- virt/kvm/arm/vgic/vgic.h       |  4 ++--
- virt/kvm/kvm_main.c            | 40 +++++++---------------------------
- 4 files changed, 15 insertions(+), 49 deletions(-)
+Hmm... the code seems a bit unintuitive to me and I wonder whether
+it's because there are two identical skipping loops in
+kernfs_dir_pos() and kernfs_dir_next_pos() and we're now trying to
+selectively disable one of them.  Wouldn't it make more sense to get
+rid of it from kernfs_dir_pos() and skip explicitly only when
+necessary?
 
-diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-index 4d07fca5121c..67d7de1470cc 100644
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -3950,8 +3950,7 @@ static int kvmppc_core_init_vm_hv(struct kvm *kvm)
- 	 */
- 	snprintf(buf, sizeof(buf), "vm%d", current->pid);
- 	kvm->arch.debugfs_dir = debugfs_create_dir(buf, kvm_debugfs_dir);
--	if (!IS_ERR_OR_NULL(kvm->arch.debugfs_dir))
--		kvmppc_mmu_debugfs_init(kvm);
-+	kvmppc_mmu_debugfs_init(kvm);
- 
- 	return 0;
- }
-diff --git a/virt/kvm/arm/vgic/vgic-debug.c b/virt/kvm/arm/vgic/vgic-debug.c
-index 10b38178cff2..0140b29079b6 100644
---- a/virt/kvm/arm/vgic/vgic-debug.c
-+++ b/virt/kvm/arm/vgic/vgic-debug.c
-@@ -263,21 +263,12 @@ static const struct file_operations vgic_debug_fops = {
- 	.release = seq_release
- };
- 
--int vgic_debug_init(struct kvm *kvm)
-+void vgic_debug_init(struct kvm *kvm)
- {
--	if (!kvm->debugfs_dentry)
--		return -ENOENT;
--
--	if (!debugfs_create_file("vgic-state", 0444,
--				 kvm->debugfs_dentry,
--				 kvm,
--				 &vgic_debug_fops))
--		return -ENOMEM;
--
--	return 0;
-+	debugfs_create_file("vgic-state", 0444, kvm->debugfs_dentry, kvm,
-+			    &vgic_debug_fops);
- }
- 
--int vgic_debug_destroy(struct kvm *kvm)
-+void vgic_debug_destroy(struct kvm *kvm)
- {
--	return 0;
- }
-diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-index 830e815748a0..3c38c5349953 100644
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@ -229,8 +229,8 @@ void vgic_get_vmcr(struct kvm_vcpu *vcpu, struct vgic_vmcr *vmcr);
- int vgic_lazy_init(struct kvm *kvm);
- int vgic_init(struct kvm *kvm);
- 
--int vgic_debug_init(struct kvm *kvm);
--int vgic_debug_destroy(struct kvm *kvm);
-+void vgic_debug_init(struct kvm *kvm);
-+void vgic_debug_destroy(struct kvm *kvm);
- 
- bool lock_all_vcpus(struct kvm *kvm);
- void unlock_all_vcpus(struct kvm *kvm);
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index c7b2e927f699..0ad400f353fc 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -572,10 +572,7 @@ static int kvm_create_vm_debugfs(struct kvm *kvm, int fd)
- 		return 0;
- 
- 	snprintf(dir_name, sizeof(dir_name), "%d-%d", task_pid_nr(current), fd);
--	kvm->debugfs_dentry = debugfs_create_dir(dir_name,
--						 kvm_debugfs_dir);
--	if (!kvm->debugfs_dentry)
--		return -ENOMEM;
-+	kvm->debugfs_dentry = debugfs_create_dir(dir_name, kvm_debugfs_dir);
- 
- 	kvm->debugfs_stat_data = kcalloc(kvm_debugfs_num_entries,
- 					 sizeof(*kvm->debugfs_stat_data),
-@@ -591,11 +588,8 @@ static int kvm_create_vm_debugfs(struct kvm *kvm, int fd)
- 		stat_data->kvm = kvm;
- 		stat_data->offset = p->offset;
- 		kvm->debugfs_stat_data[p - debugfs_entries] = stat_data;
--		if (!debugfs_create_file(p->name, 0644,
--					 kvm->debugfs_dentry,
--					 stat_data,
--					 stat_fops_per_vm[p->kind]))
--			return -ENOMEM;
-+		debugfs_create_file(p->name, 0644, kvm->debugfs_dentry,
-+				    stat_data, stat_fops_per_vm[p->kind]);
- 	}
- 	return 0;
- }
-@@ -3896,29 +3890,18 @@ static void kvm_uevent_notify_change(unsigned int type, struct kvm *kvm)
- 	kfree(env);
- }
- 
--static int kvm_init_debug(void)
-+static void kvm_init_debug(void)
- {
--	int r = -EEXIST;
- 	struct kvm_stats_debugfs_item *p;
- 
- 	kvm_debugfs_dir = debugfs_create_dir("kvm", NULL);
--	if (kvm_debugfs_dir == NULL)
--		goto out;
- 
- 	kvm_debugfs_num_entries = 0;
- 	for (p = debugfs_entries; p->name; ++p, kvm_debugfs_num_entries++) {
--		if (!debugfs_create_file(p->name, 0644, kvm_debugfs_dir,
--					 (void *)(long)p->offset,
--					 stat_fops[p->kind]))
--			goto out_dir;
-+		debugfs_create_file(p->name, 0644, kvm_debugfs_dir,
-+				    (void *)(long)p->offset,
-+				    stat_fops[p->kind]);
- 	}
--
--	return 0;
--
--out_dir:
--	debugfs_remove_recursive(kvm_debugfs_dir);
--out:
--	return r;
- }
- 
- static int kvm_suspend(void)
-@@ -4046,20 +4029,13 @@ int kvm_init(void *opaque, unsigned vcpu_size, unsigned vcpu_align,
- 	kvm_preempt_ops.sched_in = kvm_sched_in;
- 	kvm_preempt_ops.sched_out = kvm_sched_out;
- 
--	r = kvm_init_debug();
--	if (r) {
--		pr_err("kvm: create debugfs files failed\n");
--		goto out_undebugfs;
--	}
-+	kvm_init_debug();
- 
- 	r = kvm_vfio_ops_init();
- 	WARN_ON(r);
- 
- 	return 0;
- 
--out_undebugfs:
--	unregister_syscore_ops(&kvm_syscore_ops);
--	misc_deregister(&kvm_dev);
- out_unreg:
- 	kvm_async_pf_deinit();
- out_free:
+Thanks.
+
 -- 
-2.17.0
+tejun
