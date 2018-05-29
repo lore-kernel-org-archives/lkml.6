@@ -1,76 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932966AbeE2KMw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:12:52 -0400
-Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:33203 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932665AbeE2KMs (ORCPT
+        id S932938AbeE2KOI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:14:08 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:32946 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932866AbeE2KOF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:12:48 -0400
-From: David Wang <davidwang@zhaoxin.com>
-To: <rjw@rjwysocki.net>, <mingo@redhat.com>, <len.brown@intel.com>,
-        <pavel@ucw.cz>, <tglx@linutronix.de>, <hpa@zytor.com>,
-        <x86@kernel.org>, <linux-pm@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
-        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
-        <lukelin@viacpu.com>, <timguo@zhaoxin.com>,
-        David Wang <davidwang@zhaoxin.com>
-Subject: [PATCH v3] Optimize C3 entry on Centaur CPUs
-Date: Tue, 29 May 2018 18:12:37 +0800
-Message-ID: <1527588757-19229-1-git-send-email-davidwang@zhaoxin.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.29.8.54]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx3.zhaoxin.com (10.29.252.165)
+        Tue, 29 May 2018 06:14:05 -0400
+From: Tomer Maimon <tmaimon77@gmail.com>
+To: robh+dt@kernel.org, mark.rutland@arm.com, jdelvare@suse.com,
+        linux@roeck-us.net, avifishman70@gmail.com, yuenn@google.com,
+        brendanhiggins@google.com, venture@google.com, joel@jms.id.au
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, openbmc@lists.ozlabs.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v1 0/2] hwmon: Add NPCM7xx PWM driver support
+Date: Tue, 29 May 2018 13:02:19 +0300
+Message-Id: <1527588141-18639-1-git-send-email-tmaimon77@gmail.com>
+X-Mailer: git-send-email 1.8.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For new Centaur CPUs the ucode will take care of the preservation of cache coherence
-between CPU cores in C-states regardless of how deep the C-states are. So, it is not
-necessary to flush the caches in software befor entering C3.
+This patch set adds Pulse Width Modulation (PWM) support 
+for the Nuvoton NPCM7xx Baseboard Management Controller (BMC).
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
+The NPCM7xx PWM controller can support 8 PWM output ports.
 
-Changes from v2 to v3:
-*1, Replace "c->x86_mask" with "c->x86_stepping".
+The hwmon driver provides sysfs entries through which the user can 
+configure and get the duty cycle between 0 (disable the specific PWM) 
+to 255 of particular PWM output port.
 
-Changes from v1 to v2:
-* 1, Add some Family/Model/Stepping contrains to let this patch only apply
-* to new centaur CPUs.
-* 2, The arbiter disable/enable operations maybe needed for old VIA/Centaur
-* platform. So, delete "flags->bm_control=0" in patch v1.
+The NPCM7xx PWM driver tested on NPCM750 evaluation board.
 
----
- arch/x86/kernel/acpi/cstate.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Tomer Maimon (2):
+  dt-binding: hwmon: Add NPCM7xx PWM documentation
+  hwmon: npcm-pwm: add NPCM7xx PWM driver
 
-diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
-index dde437f..a82fed6 100644
---- a/arch/x86/kernel/acpi/cstate.c
-+++ b/arch/x86/kernel/acpi/cstate.c
-@@ -51,6 +51,19 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
- 	if (c->x86_vendor == X86_VENDOR_INTEL &&
- 	    (c->x86 > 0xf || (c->x86 == 6 && c->x86_model >= 0x0f)))
- 			flags->bm_control = 0;
-+
-+	/*
-+	 * For all recent Centaur CPUs, the ucode will make sure that each
-+	 * core can keep cache coherence with each other while entering C3
-+	 * type state. So, set bm_check to 1 to indicate that the kernel
-+	 * need not execute a cache flush operation (WBINVD) when entering
-+	 * C3 type state.
-+	 */
-+	if (c->x86_vendor == X86_VENDOR_CENTAUR) {
-+		if (c->x86 > 6 || (c->x86 == 6 && c->x86_model == 0x0f &&
-+			c->x86_stepping >= 0x0e))
-+			flags->bm_check = 1;
-+	}
- }
- EXPORT_SYMBOL(acpi_processor_power_init_bm_check);
- 
+ .../devicetree/bindings/hwmon/npcm7xx-pwm.txt      |  25 ++
+ drivers/hwmon/Kconfig                              |   6 +
+ drivers/hwmon/Makefile                             |   1 +
+ drivers/hwmon/npcm7xx-pwm.c                        | 363 +++++++++++++++++++++
+ 4 files changed, 395 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/npcm7xx-pwm.txt
+ create mode 100644 drivers/hwmon/npcm7xx-pwm.c
+
 -- 
-1.9.1
+2.14.1
