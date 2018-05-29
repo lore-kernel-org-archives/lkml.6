@@ -1,153 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968292AbeE2WYg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:24:36 -0400
-Received: from mga01.intel.com ([192.55.52.88]:58338 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967604AbeE2WY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:24:28 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,458,1520924400";
-   d="p7s'?scan'208";a="232756748"
-From: "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>
-To: "rafael@kernel.org" <rafael@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "lenb@kernel.org" <lenb@kernel.org>
-Subject: Re: [RFC/RFT] [PATCH v2 4/6] cpufreq: intel_pstate: HWP boost
- performance on IO wakeup
-Thread-Topic: [RFC/RFT] [PATCH v2 4/6] cpufreq: intel_pstate: HWP boost
- performance on IO wakeup
-Thread-Index: AQHT95vNBF8mn65NRUGyuuALSvKodg==
-Date: Tue, 29 May 2018 22:24:25 +0000
-Message-ID: <1527632663.2951.44.camel@intel.com>
-References: <20180524014738.52924-1-srinivas.pandruvada@linux.intel.com>
-         <20180524014738.52924-5-srinivas.pandruvada@linux.intel.com>
-         <CAJZ5v0iG+jNC77KCHNUAt5tAtrtgryz2U4P1s_d9vB0HzLyOFw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iG+jNC77KCHNUAt5tAtrtgryz2U4P1s_d9vB0HzLyOFw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.254.56.8]
-Content-Type: multipart/signed; micalg=sha-1;
-        protocol="application/x-pkcs7-signature"; boundary="=-1s1yTxBCvNZ7xdWDtX2w"
-MIME-Version: 1.0
+        id S968034AbeE2WZe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:25:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44388 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S968222AbeE2WYy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 18:24:54 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        wsa@the-dreams.de, robh+dt@kernel.org, benh@kernel.crashing.org,
+        joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        "Edward A. James" <eajames@us.ibm.com>
+Subject: [PATCH v7 7/7] drivers/i2c: Add bus recovery for FSI algorithm
+Date: Tue, 29 May 2018 17:24:25 -0500
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1527632665-25707-1-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1527632665-25707-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18052922-0004-0000-0000-0000142FE0CE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009097; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039556; UDB=6.00532065; IPR=6.00818684;
+ MB=3.00021364; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-29 22:24:52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052922-0005-0000-0000-0000877305B4
+Message-Id: <1527632665-25707-8-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=948 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805290238
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-1s1yTxBCvNZ7xdWDtX2w
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+From: "Edward A. James" <eajames@us.ibm.com>
 
-T24gVHVlLCAyMDE4LTA1LTI5IGF0IDA5OjQ0ICswMjAwLCBSYWZhZWwgSi4gV3lzb2NraSB3cm90
-ZToKPiBPbiBUaHUsIE1heSAyNCwgMjAxOCBhdCAzOjQ3IEFNLCBTcmluaXZhcyBQYW5kcnV2YWRh
-Cj4gPHNyaW5pdmFzLnBhbmRydXZhZGFAbGludXguaW50ZWwuY29tPiB3cm90ZToKClsuLi5dCgo+
-ID4gCj4gPiArwqDCoMKgwqDCoMKgwqBjcHUtPnNhbXBsZS50aW1lID0gdGltZTsKPiA+ICvCoMKg
-wqDCoMKgwqDCoGlvX2ZsYWcgPSB0ZXN0X2FuZF9jbGVhcl9iaXQoU0NIRURfQ1BVRlJFUV9JT1dB
-SVQsICZjcHUtCj4gPiA+c2NoZWRfZmxhZ3MpOwo+IAo+IEkgZG9uJ3QgdGhpbmsgeW91IG5lZWQg
-dG8gdXNlIGJpdCBvcHMgaGVyZS4KCkFncmVlLiBUaGlzIGlzIG5vdCByZXF1aXJlZCBoZXJlIGZv
-ciBqdXN0IElPIGJvb3N0IHN1cHBvcnQuCgo+IAo+IF91cGRhdGVfdXRpbCgpIHJ1bnMgdW5kZXIg
-cnEtPmxvY2sgZm9yIHRoZSB0YXJnZXQgQ1BVLCBzbyBpdCB3aWxsIG5vdAo+IHJ1biBjb25jdXJy
-ZW50bHkgb24gdHdvIGRpZmZlcmVudCBDUFVzIGZvciB0aGUgc2FtZSB0YXJnZXQgYW55d2F5Lgo+
-IAo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKGlvX2ZsYWcpIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqBib29sIGRvX2lvID0gZmFsc2U7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgLyoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCogU2V0IGlvd2FpdF9ib29zdCBmbGFnIGFuZCB1cGRhdGUgdGltZS4gU2luY2UgSU8KPiA+IFdB
-SVQgZmxhZwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgKiBpcyBzZXQgYWxs
-IHRoZSB0aW1lLCB3ZSBjYW4ndCBqdXN0IGNvbmNsdWRlIHRoYXQKPiA+IHRoZXJlIGlzCj4gPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAqIHNvbWUgSU8gYm91bmQgYWN0aXZpdHkg
-aXMgc2NoZWR1bGVkIG9uIHRoaXMgQ1BVCj4gPiB3aXRoIGp1c3QKPiA+ICvCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCogb25lIG9jY3VycmVuY2UuIElmIHdlIHJlY2VpdmUgYXQgbGVh
-c3QgdHdvIGluCj4gPiB0d28KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCog
-Y29uc2VjdXRpdmUgdGlja3MsIHRoZW4gd2UgdHJlYXQgYXMgYm9vc3QKPiA+IGNhbmRpZGF0ZS4K
-PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCovCj4gPiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgaWYgKHRpbWVfYmVmb3JlNjQodGltZSwgY3B1LT5sYXN0X2lvX3Vw
-ZGF0ZSArIDIgKgo+ID4gVElDS19OU0VDKSkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgZG9faW8gPSB0cnVlOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoGNwdS0+bGFzdF9pb191cGRhdGUgPSB0aW1lOwo+ID4gKwo+ID4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmIChkb19pbykKPiA+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaW50ZWxfcHN0YXRlX2h3cF9ib29z
-dF91cChjcHUpOwo+IAo+IEJ1dCB3aGF0IGhhcHBlbnMgaWYgdXNlciBzcGFjZSB3YW50cyB0byB1
-cGRhdGUgdGhlIGxpbWl0cyB3aGlsZQo+IGJvb3N0aW5nIGlzIGluIGVmZmVjdD/CoMKgU2hvdWxk
-bid0IGl0IHRha2UgaHdwX2Jvb3N0X21pbiBpbnRvIGFjY291bnQKPiB0aGVuPwpVc2VyIHJlcXVl
-c3QgaGFzIGFsd2F5cyBoaWdoZXIgcHJpb3JpdHkuIFVzZXIgbWluIHdpbGwgYmUgdGFrZW4gaW50
-bwphY2NvdW50IGFzIHRoZSBib29zdCBtaW4gaXMgdXBkYXRlZCB1bmRlciB0aGUgdGhlIHVwZGF0
-ZSB1dGlsIGNhbGwKYmFjaywgbm90IGp1c3Qgb25lIHRpbWUuCgpUaGFua3MsClNyaW5pdmFzCg==
+Bus recovery should reset the engine and force clock the bus 9 times
+to recover most situations.
 
+Signed-off-by: Edward A. James <eajames@us.ibm.com>
+---
+ drivers/i2c/busses/i2c-fsi.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
---=-1s1yTxBCvNZ7xdWDtX2w
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-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
-aQGEV8ArjHXcotL/yLNh30JyB9sygYzIQadqyFvtvhUyiHwAh7Pf6Gl7Gsz0i/QSq7MK49JvgbUM
-F1TCZwc7AgMBAAGjggI9MIICOTAdBgNVHQ4EFgQUf6YLVqF1vjXfk2h4J2GzgJAOB/8wHwYDVR0j
-BBgwFoAUHmkqtNwo/kcYTiELP7ysES/wmPUwZQYDVR0fBF4wXDBaoFigVoZUaHR0cDovL3d3dy5p
-bnRlbC5jb20vcmVwb3NpdG9yeS9DUkwvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIwSXNzdWlu
-ZyUyMENBJTIwNEEuY3JsMIGfBggrBgEFBQcBAQSBkjCBjzBpBggrBgEFBQcwAoZdaHR0cDovL3d3
-dy5pbnRlbC5jb20vcmVwb3NpdG9yeS9jZXJ0aWZpY2F0ZXMvSW50ZWwlMjBFeHRlcm5hbCUyMEJh
-c2ljJTIwSXNzdWluZyUyMENBJTIwNEEuY3J0MCIGCCsGAQUFBzABhhZodHRwOi8vb2NzcC5pbnRl
-bC5jb20vMAsGA1UdDwQEAwIHgDA8BgkrBgEEAYI3FQcELzAtBiUrBgEEAYI3FQiGw4x1hJnlUYP9
-gSiFjp9TgpHACWeB3r05lfBDAgFkAgEJMB8GA1UdJQQYMBYGCCsGAQUFBwMEBgorBgEEAYI3CgMM
-MCkGCSsGAQQBgjcVCgQcMBowCgYIKwYBBQUHAwQwDAYKKwYBBAGCNwoDDDBXBgNVHREEUDBOoC0G
-CisGAQQBgjcUAgOgHwwdc3Jpbml2YXMucGFuZHJ1dmFkYUBpbnRlbC5jb22BHXNyaW5pdmFzLnBh
-bmRydXZhZGFAaW50ZWwuY29tMA0GCSqGSIb3DQEBBQUAA4IBAQDDpWcY9zqtG5P0e1FRJpG/RPQ6
-p6sQJHZ5UwykMtYFqBJYOZn9B8koeLEhE4vOAh6v6fgVoCfOvwxJ57BUAdP3jvkbCaLz3r6nUHNr
-6w6KwnT9rHykdDjZsRUGs2yP+139qVqoXRHTOLfqvnAzcirjgf4Fz3JRPJZraRWrICBehqhYVfFH
-sxxBgOauQ+DTHjZARkomjmrATvlDpLMlN74L/BKZI4rl4R/BjSaLBzAKQnAN0nvWefpPzdeSYuxK
-XaN1xDzINPDnmShXSbQzee0h2CvEnIMtPQDM9DJACUi14Cc9y4o7DqRky4r1+XnksN2lKnu83l4E
-oSxCkDMhszkFMYICFzCCAhMCAQEwgZAweTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRQwEgYD
-VQQHEwtTYW50YSBDbGFyYTEaMBgGA1UEChMRSW50ZWwgQ29ycG9yYXRpb24xKzApBgNVBAMTIklu
-dGVsIEV4dGVybmFsIEJhc2ljIElzc3VpbmcgQ0EgNEECEzMAAK0KIyEkTMbH5OYAAAAArQowCQYF
-Kw4DAhoFAKBdMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE4MDUy
-OTIyMjQyM1owIwYJKoZIhvcNAQkEMRYEFBVS1bXvgseVRp/sNVbEJ7z/KRuXMA0GCSqGSIb3DQEB
-AQUABIIBABs0ObB596HUkgnASTBoZ3awqPmQtOhnKf4vVKMM7JCFVXn3nKJDZH+ca+OE1EG4cz5Z
-ohZrcXJBUidYaaiNBv45/fvFvO+45Qmi3jAVDwuaYV/sDdqB0aGKcUOF7dQ6xUbTiSu/GeRhxjOf
-PTOQHekgz7iMi/xjR/cSCWMDmzexj/umyoXstb5C9N/jxmiVT/L89ubKhyraBWTs1ogcFxnI8dFu
-pSOEAa4kyj9GZcQIJEVO8rsPybzcd3VJz8ZGxMbDGLAMxEVkIQc1E7+vFRTi73dzqQGDJR0VlklT
-mrLHvke5js1/ZXy18FMMUUegTnVDMBNHQuNz1obdseTBEe0AAAAAAAA=
-
-
---=-1s1yTxBCvNZ7xdWDtX2w--
+diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
+index f309267..52a662c 100644
+--- a/drivers/i2c/busses/i2c-fsi.c
++++ b/drivers/i2c/busses/i2c-fsi.c
+@@ -621,6 +621,24 @@ static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
+ 		| I2C_FUNC_SMBUS_EMUL | I2C_FUNC_SMBUS_BLOCK_DATA;
+ }
+ 
++static int fsi_i2c_recover_bus(struct i2c_adapter *adap)
++{
++	int rc;
++	struct fsi_i2c_port *port = adap->algo_data;
++	struct fsi_i2c_master *master = port->master;
++
++	mutex_lock(&master->lock);
++
++	rc = fsi_i2c_reset(master, port->port);
++
++	mutex_unlock(&master->lock);
++	return rc;
++}
++
++static struct i2c_bus_recovery_info fsi_i2c_bus_recovery_info = {
++	.recover_bus = fsi_i2c_recover_bus,
++};
++
+ static const struct i2c_algorithm fsi_i2c_algorithm = {
+ 	.master_xfer = fsi_i2c_xfer,
+ 	.functionality = fsi_i2c_functionality,
+@@ -663,6 +681,7 @@ static int fsi_i2c_probe(struct device *dev)
+ 		port->adapter.dev.of_node = np;
+ 		port->adapter.dev.parent = dev;
+ 		port->adapter.algo = &fsi_i2c_algorithm;
++		port->adapter.bus_recovery_info = &fsi_i2c_bus_recovery_info;
+ 		port->adapter.algo_data = port;
+ 
+ 		snprintf(port->adapter.name, sizeof(port->adapter.name),
+-- 
+1.8.3.1
