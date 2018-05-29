@@ -1,75 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966150AbeE2TTn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:19:43 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:33050 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965541AbeE2TTk (ORCPT
+        id S966315AbeE2TUU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:20:20 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38398 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965541AbeE2TUR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:19:40 -0400
-X-Google-Smtp-Source: ADUXVKKXQnH5aPG2nH4lWHZmnKtfdUHBMJo9j6z6yBVRrR83sqZ0qsLysH5tF+kiXVf7mS7LEvqd4A==
-Content-Type: text/plain;
-        charset=utf-8
-Subject: Re: [PATCH 4.16 000/272] 4.16.13-stable review
-From: Rafael Tinoco <rafael.tinoco@linaro.org>
-In-Reply-To: <20180529070815.GB20225@kroah.com>
-Date: Tue, 29 May 2018 16:19:34 -0300
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux- stable <stable@vger.kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Guenter Roeck <linux@roeck-us.net>
-Message-Id: <BBE1C638-60BE-4F73-820C-D1E1EFBD33E3@linaro.org>
-References: <20180528100240.256525891@linuxfoundation.org>
- <CA+G9fYu1NuW6vB+bHEsYSmyJAB27kw8vP=0uwhVR962Yq4C43g@mail.gmail.com>
- <20180529070815.GB20225@kroah.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Tue, 29 May 2018 15:20:17 -0400
+X-Google-Smtp-Source: AB8JxZrzEfAfOWvlFVfy8LusSyev109rzvDCo/X2VdtX6mc6XPsgQa/YJ0gT2+6KkTlvdNBno6qrTw==
+From: Mathieu Malaterre <malat@debian.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/prom: Fix %u/%llx usage since prom_printf() change
+Date: Tue, 29 May 2018 21:20:01 +0200
+Message-Id: <20180529192001.30200-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TJK5f8016542
 
-The following bug has been opened for LTP:
+In commit eae5f709a4d7 ("powerpc: Add __printf verification to
+prom_printf") __printf attribute was added to prom_printf(), which
+means GCC started warning about type/format mismatches. As part of that
+commit we changed some "%lx" formats to "%llx" where the type is
+actually unsigned long long.
 
-https://github.com/linux-test-project/ltp/issues/319
+Unfortunately prom_printf() doesn't know how to print "%llx", it just
+prints a literal "lx", eg:
 
-for the CVE-2017-5669's wrong assumptions (based on Davidlohr's work). 
+  reserved memory map:
+    lx - lx
+    lx - lx
 
-I'll change the test to cover both scenarios and expect the right results from them.
+prom_printf() also doesn't know how to print "%u" (only "%lu"), it just
+print a literal "u", eg:
 
-> On 29 May 2018, at 04:08, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> 
-> On Tue, May 29, 2018 at 10:55:34AM +0530, Naresh Kamboju wrote:
->> On 28 May 2018 at 15:30, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->>> This is the start of the stable review cycle for the 4.16.13 release.
->>> There are 272 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>> 
->>> Responses should be made by Wed May 30 10:01:02 UTC 2018.
->>> Anything received after that time might be too late.
->>> 
->>> The whole patch series can be found in one patch at:
->>>        https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.13-rc1.gz
->>> or in the git tree and branch at:
->>>        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
->>> and the diffstat can be found below.
->>> 
->>> thanks,
->>> 
->>> greg k-h
->> 
->> Results from Linaro’s test farm.
->> No regressions on arm64, arm and x86_64.
->> 
->> NOTE:
->> The failed LTP test case "cve-2017-5669" is a waiver here.
-> 
-> Thanks for figuring that one out :)
-> 
-> Also, thanks for testing all of these and letting me know.
+  Max number of cores passed to firmware: u (NR_CPUS = 2048)
+
+instead of:
+
+  Max number of cores passed to firmware: 2048 (NR_CPUS = 2048)
+
+This commit adds support for the missing formatters.
+
+Fixes: eae5f709a4d7 ("powerpc: Add __printf verification to prom_printf")
+Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+I've reviewed all formatters added in eae5f709a4d7 and only %u and %llx were
+actually missing (eg. llu or lld are not used)
+
+ arch/powerpc/kernel/prom_init.c | 72 +++++++++++++++++++++++++++--------------
+ 1 file changed, 48 insertions(+), 24 deletions(-)
+
+diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+index 4d62f561f272..2c04516fe274 100644
+--- a/arch/powerpc/kernel/prom_init.c
++++ b/arch/powerpc/kernel/prom_init.c
+@@ -301,6 +301,9 @@ static void __init prom_print(const char *msg)
+ }
+ 
+ 
++/* both prom_print_hex & prom_print_dec takes an unsigned long as input so that
++ * we do not need __udivdi3 or __umoddi3 on 32bits
++ */
+ static void __init prom_print_hex(unsigned long val)
+ {
+ 	int i, nibbles = sizeof(val)*2;
+@@ -341,6 +344,7 @@ static void __init prom_printf(const char *format, ...)
+ 	va_list args;
+ 	unsigned long v;
+ 	long vs;
++	int n = 0;
+ 
+ 	va_start(args, format);
+ 	for (p = format; *p != 0; p = q) {
+@@ -359,6 +363,10 @@ static void __init prom_printf(const char *format, ...)
+ 		++q;
+ 		if (*q == 0)
+ 			break;
++		while (*q == 'l') {
++			++q;
++			++n;
++		}
+ 		switch (*q) {
+ 		case 's':
+ 			++q;
+@@ -367,39 +375,55 @@ static void __init prom_printf(const char *format, ...)
+ 			break;
+ 		case 'x':
+ 			++q;
+-			v = va_arg(args, unsigned long);
++			switch (n) {
++			case 0:
++				v = va_arg(args, unsigned int);
++				break;
++			case 1:
++				v = va_arg(args, unsigned long);
++				break;
++			case 2:
++			default:
++				v = va_arg(args, unsigned long long);
++				break;
++			}
+ 			prom_print_hex(v);
+ 			break;
+-		case 'd':
++		case 'u':
+ 			++q;
+-			vs = va_arg(args, int);
+-			if (vs < 0) {
+-				prom_print("-");
+-				vs = -vs;
++			switch (n) {
++			case 0:
++				v = va_arg(args, unsigned int);
++				break;
++			case 1:
++				v = va_arg(args, unsigned long);
++				break;
++			case 2:
++			default:
++				v = va_arg(args, unsigned long long);
++				break;
+ 			}
+-			prom_print_dec(vs);
++			prom_print_dec(v);
+ 			break;
+-		case 'l':
++		case 'd':
+ 			++q;
+-			if (*q == 0)
++			switch (n) {
++			case 0:
++				vs = va_arg(args, int);
+ 				break;
+-			else if (*q == 'x') {
+-				++q;
+-				v = va_arg(args, unsigned long);
+-				prom_print_hex(v);
+-			} else if (*q == 'u') { /* '%lu' */
+-				++q;
+-				v = va_arg(args, unsigned long);
+-				prom_print_dec(v);
+-			} else if (*q == 'd') { /* %ld */
+-				++q;
++			case 1:
+ 				vs = va_arg(args, long);
+-				if (vs < 0) {
+-					prom_print("-");
+-					vs = -vs;
+-				}
+-				prom_print_dec(vs);
++				break;
++			case 2:
++			default:
++				vs = va_arg(args, long long);
++				break;
++			}
++			if (vs < 0) {
++				prom_print("-");
++				vs = -vs;
+ 			}
++			prom_print_dec(vs);
+ 			break;
+ 		}
+ 	}
+-- 
+2.11.0
