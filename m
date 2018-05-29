@@ -1,67 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932746AbeE2Jt0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:49:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50050 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932418AbeE2JtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:49:21 -0400
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v5 1/3] dt-bindings: panel: Add the Ilitek ILI9881c panel documentation
-Date: Tue, 29 May 2018 11:49:14 +0200
-Message-Id: <a348cdd07d3287e8203ee8d840ea279fe10a6204.1527587352.git-series.maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
-References: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
-In-Reply-To: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
-References: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
+        id S932775AbeE2Jtj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:49:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36804 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932723AbeE2JtZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 05:49:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CAB086021C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+From: Mukesh Ojha <mojha@codeaurora.org>
+To: john.stultz@linaro.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org
+Cc: neeraju@codeaurora.org, gkohli@codeaurora.org, cpandya@codeaurora.org,
+        Mukesh Ojha <mojha@codeaurora.org>
+Subject: [PATCH RESEND] time: Fix sleeptime injection for non-stop clocksource & persistent clock
+Date: Tue, 29 May 2018 15:19:11 +0530
+Message-Id: <1527587351-26634-1-git-send-email-mojha@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LHR050H41 from BananaPi is a 1280x700 4-lanes DSI panel based on the
-ILI9881c from Ilitek.
+Currently, for both non-stop clocksource and persistent clock
+there is a corner case, when a driver failed to go suspend mode
+rtc_resume() injects the sleeptime as timekeeping_rtc_skipresume()
+returned 'false' due to which we can see mismatch in time between
+system clock and other timers.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Success case:
+                                         {sleeptime_injected=true}
+rtc_suspend() => timekeeping_suspend() => timekeeping_resume() => 
+  rtc_resume()
+
+Failure case:
+             {failure in sleep path} {sleeptime_injected=false}
+rtc_suspend()          =>            rtc_resume()
+
+Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
 ---
- Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.txt | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.txt
 
-diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.txt b/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.txt
-new file mode 100644
-index 000000000000..4a041acb4e18
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.txt
-@@ -0,0 +1,20 @@
-+Ilitek ILI9881c based MIPI-DSI panels
+Changes from Resend:
+ * updated commit text.
+
+ kernel/time/timekeeping.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 427e33d..c022d82 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1511,9 +1511,6 @@ void __weak read_boot_clock64(struct timespec64 *ts)
+ 	ts->tv_nsec = 0;
+ }
+ 
+-/* Flag for if timekeeping_resume() has injected sleeptime */
+-static bool sleeptime_injected;
+-
+ /* Flag for if there is a persistent clock on this platform */
+ static bool persistent_clock_exists;
+ 
+@@ -1611,7 +1608,14 @@ static void __timekeeping_inject_sleeptime(struct timekeeper *tk,
+  */
+ bool timekeeping_rtc_skipresume(void)
+ {
+-	return sleeptime_injected;
++	struct timekeeper *tk = &tk_core.timekeeper;
++	bool skip_rtc_resume = false;
 +
-+Required properties:
-+  - compatible: must be "ilitek,ili9881c" and one of:
-+    * "bananapi,lhr050h41"
-+  - reg: DSI virtual channel used by that screen
-+  - power-supply: phandle to the power regulator
-+  - reset-gpios: a GPIO phandle for the reset pin
++	skip_rtc_resume = ((tk->tkr_mono.clock->flags &
++			CLOCK_SOURCE_SUSPEND_NONSTOP) ||
++			(persistent_clock_exists)) ? true : false;
 +
-+Optional properties:
-+  - backlight: phandle to the backlight used
-+
-+Example:
-+panel@0 {
-+	compatible = "bananapi,lhr050h41", "ilitek,ili9881c";
-+	reg = <0>;
-+	power-supply = <&reg_display>;
-+	reset-gpios = <&r_pio 0 5 GPIO_ACTIVE_LOW>; /* PL05 */
-+	backlight = <&pwm_bl>;
-+};
++	return skip_rtc_resume;
+ }
+ 
+ /**
+@@ -1671,8 +1675,8 @@ void timekeeping_resume(void)
+ 	unsigned long flags;
+ 	struct timespec64 ts_new, ts_delta;
+ 	cycle_t cycle_now, cycle_delta;
++	bool sleeptime_injected = false;
+ 
+-	sleeptime_injected = false;
+ 	read_persistent_clock64(&ts_new);
+ 
+ 	clockevents_resume();
 -- 
-git-series 0.9.1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
