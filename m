@@ -1,100 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966768AbeE2UqA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 16:46:00 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42724 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S966767AbeE2Up6 (ORCPT
+        id S966953AbeE2Uqj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 16:46:39 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36959 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966767AbeE2Uqh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 16:45:58 -0400
-Subject: Re: [PATCH v4 5/7] scsi: ipr: Eliminate duplicate barriers on
- weakly-ordered archs
-To: Sinan Kaya <okaya@codeaurora.org>, linux-scsi@vger.kernel.org,
-        timur@codeaurora.org, sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Brian King <brking@us.ibm.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org
-References: <1521514207-10695-1-git-send-email-okaya@codeaurora.org>
- <1521514207-10695-6-git-send-email-okaya@codeaurora.org>
-From: Brian King <brking@linux.ibm.com>
-Date: Tue, 29 May 2018 15:45:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 29 May 2018 16:46:37 -0400
+X-Google-Smtp-Source: AB8JxZpPai6ZyyGbKVbJDahKPxebX1twyueB37QsM33MIpK/BZPXXfm0MHF5eAYKMdysTvxKt1B/PT164V9E9rZQoT8=
 MIME-Version: 1.0
-In-Reply-To: <1521514207-10695-6-git-send-email-okaya@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052920-0016-0000-0000-000008D403A0
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009097; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01039523; UDB=6.00532045; IPR=6.00818652;
- MB=3.00021362; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-29 20:45:56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052920-0017-0000-0000-00003EFC8DE1
-Message-Id: <a10fa941-1729-2890-50cb-59c4a5b5e596@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=801 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805290219
+References: <20180524211135.27760-1-dave@stgolabs.net> <20180524211135.27760-4-dave@stgolabs.net>
+ <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
+ <20180529144317.GA20910@dhcp22.suse.cz> <20180529145106.GV27180@dhcp22.suse.cz>
+In-Reply-To: <20180529145106.GV27180@dhcp22.suse.cz>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 29 May 2018 15:46:25 -0500
+Message-ID: <CA+55aFxoC0+hKBQ_TmbXM_X60fnP8JKC3aVvGc=8bKh2oxL12g@mail.gmail.com>
+Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        guillaume.knispel@supersonicimagine.com,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/19/2018 09:50 PM, Sinan Kaya wrote:
-> Code includes barrier() followed by writel(). writel() already has a
-> barrier
-> on some architectures like arm64.
-> 
-> This ends up CPU observing two barriers back to back before executing the
-> register write.
-> 
-> Since code already has an explicit barrier call, changing writeX() to
-> writeX_relaxed().
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> ---
->  drivers/scsi/ipr.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
-> index e07dd99..209adac 100644
-> --- a/drivers/scsi/ipr.c
-> +++ b/drivers/scsi/ipr.c
-> @@ -762,9 +762,9 @@ static void ipr_mask_and_clear_interrupts(struct ipr_ioa_cfg *ioa_cfg,
-> 
->  	/* Set interrupt mask to stop all new interrupts */
->  	if (ioa_cfg->sis64)
-> -		writeq(~0, ioa_cfg->regs.set_interrupt_mask_reg);
-> +		writeq_relaxed(~0, ioa_cfg->regs.set_interrupt_mask_reg);
->  	else
-> -		writel(~0, ioa_cfg->regs.set_interrupt_mask_reg);
-> +		writel_relaxed(~0, ioa_cfg->regs.set_interrupt_mask_reg);
-> 
->  	/* Clear any pending interrupts */
->  	if (ioa_cfg->sis64)
-> @@ -8435,7 +8435,8 @@ static int ipr_reset_enable_ioa(struct ipr_cmnd *ipr_cmd)
->  	wmb();
->  	if (ioa_cfg->sis64) {
->  		/* Set the adapter to the correct endian mode. */
-> -		writel(IPR_ENDIAN_SWAP_KEY, ioa_cfg->regs.endian_swap_reg);
-> +		writel_relaxed(IPR_ENDIAN_SWAP_KEY,
-> +			       ioa_cfg->regs.endian_swap_reg);
->  		int_reg = readl(ioa_cfg->regs.endian_swap_reg);
->  	}
-> 
+On Tue, May 29, 2018 at 9:51 AM Michal Hocko <mhocko@kernel.org> wrote:
 
-Looks fine to me. Thanks.
+> In other words, what about the following?
 
-Acked-by: Brian King <brking@linux.vnet.ibm.com>
+> +       WARN_ON_ONCE((flags & (__GFP_FS|__GFP_IO)) !=
+(__GFP_FS|__GFP_IO));
 
--- 
-Brian King
-Power Linux I/O
-IBM Linux Technology Center
+I  still don't understand the point of this warning.
+
+It's only stupid. It basically says "this function is garbage, so let me
+warn about the fact that I'm a moron".
+
+If we all needed to warn about ourselves being morons, there would be a
+hell of a lot of big blinking signs everywhere.
+
+And the *ONLY* thing that warning has ever caused is  just stupid code that
+does
+
+     if (flags == GFP_KERNEL)
+         .. do kvmalloc ..
+     else
+         .. do kmalloc() ..
+
+which is a *STUPID* pattern.
+
+In other words, the WARN_ON() is bogus garbage. It's bogus exactly because
+NOBODY CARES and all everybody will ever do is to just avoid it by writing
+worse code.
+
+The whole and ONLY point of "kvmalloc()" and friends is to make it easy to
+write code and _not_ have those idiotic "let's do kmalloc or kvmalloc
+depending on the phase of the moon" garbage. So the warning has literally
+destroyed the only value that function has!
+
+> +       if (!gfpflags_allow_blocking(flags))
+> +               return NULL;
+> +
+
+And no. Now all the code *above* this check is just wrong. All the code
+that modifies the gfp_flags with the intention of falling back on vmalloc()
+is just wrong, since we're not falling back on vmalloc any more.
+
+So I really think the semantics should be simple:
+
+  - if we don't allow GFP_KERNEL, then the code becomes just "kmalloc()",
+since there is no valid fallback to vmalloc. vmalloc does GFP_KERNEL.
+
+  - otherwise, we do what we used to do (except now the warning is gone,
+because we already handled the case it warned about).
+
+Nothing else. No stupid other cases. The *only* thing that function should
+ask itself is "can I fall back on vmalloc or not", and if it can't then it
+should just be a kmalloc.
+
+Because otherwise we'll continue to have people that just check in the
+caller instead.
+
+         Linus
