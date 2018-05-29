@@ -1,91 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936954AbeE2QeE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:34:04 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45887 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936570AbeE2QeD (ORCPT
+        id S965098AbeE2QhY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:37:24 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37037 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935486AbeE2QhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:34:03 -0400
-X-Google-Smtp-Source: ADUXVKJ5D4stgpPttzWDbajjHw8mrMiW9tyt3ZJ12ELHc+OIuChLU0zUwzAQnlXnr7SmFwa1BQ2Wgg==
-Date: Tue, 29 May 2018 09:34:00 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Nick Desaulniers <nick.desaulniers@gmail.com>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: blkcipher: prefer strlcpy to strncpy
-Message-ID: <20180529163400.GA166256@gmail.com>
-References: <1527572683-26098-1-git-send-email-nick.desaulniers@gmail.com>
+        Tue, 29 May 2018 12:37:22 -0400
+X-Google-Smtp-Source: AB8JxZrW9MHRteXO4r7WMYDnm7klk2sZwYB6GUYY60jJk7Xu3Wr1KyjwBi2hfe/O19KUeWFfM3AWyA==
+From: Thierry Escande <thierry.escande@linaro.org>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: hci_qca: Fix "Sleep inside atomic section" warning
+Date: Tue, 29 May 2018 18:37:16 +0200
+Message-Id: <20180529163716.3886-1-thierry.escande@linaro.org>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527572683-26098-1-git-send-email-nick.desaulniers@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset = "utf-8"
+Content-Transfert-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 10:44:43PM -0700, Nick Desaulniers wrote:
-> Fixes stringop-truncation warnings from gcc-8.
-> 
-> Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-> ---
->  crypto/ablkcipher.c | 8 ++++----
->  crypto/blkcipher.c  | 4 ++--
->  2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/crypto/ablkcipher.c b/crypto/ablkcipher.c
-> index d880a48..e38867f 100644
-> --- a/crypto/ablkcipher.c
-> +++ b/crypto/ablkcipher.c
-> @@ -370,8 +370,8 @@ static int crypto_ablkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
->  {
->  	struct crypto_report_blkcipher rblkcipher;
->  
-> -	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
-> -	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
-> +	strlcpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
-> +	strlcpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
->  		sizeof(rblkcipher.geniv));
->  
->  	rblkcipher.blocksize = alg->cra_blocksize;
-> @@ -444,8 +444,8 @@ static int crypto_givcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
->  {
->  	struct crypto_report_blkcipher rblkcipher;
->  
-> -	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
-> -	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
-> +	strlcpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
-> +	strlcpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
->  		sizeof(rblkcipher.geniv));
->  
->  	rblkcipher.blocksize = alg->cra_blocksize;
-> diff --git a/crypto/blkcipher.c b/crypto/blkcipher.c
-> index 01c0d4a..ee88e48 100644
-> --- a/crypto/blkcipher.c
-> +++ b/crypto/blkcipher.c
-> @@ -509,8 +509,8 @@ static int crypto_blkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
->  {
->  	struct crypto_report_blkcipher rblkcipher;
->  
-> -	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
-> -	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
-> +	strlcpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
-> +	strlcpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
->  		sizeof(rblkcipher.geniv));
->  
->  	rblkcipher.blocksize = alg->cra_blocksize;
-> -- 
-> 2.7.4
-> 
+This patch fixes the following warning during boot:
 
-Hi Nick, this patch is wrong.  The 'struct crypto_report_blkcipher' is being
-copied to userspace via netlink, so all bytes of it must be initialized.
-strncpy() does this but strlcpy() does not.
+ do not call blocking ops when !TASK_RUNNING; state=1 set at
+ [<(ptrval)>] qca_setup+0x194/0x750 [hci_uart]
+ WARNING: CPU: 2 PID: 1878 at kernel/sched/core.c:6135
+ __might_sleep+0x7c/0x88
 
-I noticed that you're sending out some other patches replacing strncpy() with
-strlcpy() too.  Can you please double check them for this same bug?
+In qca_set_baudrate(), the current task state is set to
+TASK_UNINTERRUPTIBLE before going to sleep for 300ms. It was then
+restored to TASK_INTERRUPTIBLE. This patch sets the current task state
+back to TASK_RUNNING instead.
 
-Thanks,
+Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+---
+ drivers/bluetooth/hci_qca.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Eric
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index f05382b5a65d..51790dd02afb 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -910,7 +910,7 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+ 	 */
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+-	set_current_state(TASK_INTERRUPTIBLE);
++	set_current_state(TASK_RUNNING);
+ 
+ 	return 0;
+ }
+-- 
+2.14.1
