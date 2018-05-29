@@ -1,49 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755863AbeE2Aqc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 20:46:32 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36796 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755808AbeE2Aq2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 20:46:28 -0400
-X-Google-Smtp-Source: AB8JxZpYPP8N65FNJRDrXaS2gjTBPGMpeFx++VbKBbAOr8IFTfA2p4YyY7GBnH+5e0bypX1pBhLVRQ==
-Subject: Re: [PATCH 4.16 000/272] 4.16.13-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20180528100240.256525891@linuxfoundation.org>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <b1529156-a65e-1aa6-43e4-88c895befefc@roeck-us.net>
-Date: Mon, 28 May 2018 17:46:26 -0700
+        id S1755883AbeE2AzS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 20:55:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32966 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755808AbeE2AzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 20:55:14 -0400
+Subject: Re: [PATCH v8 2/6] cpuset: Add new v2 cpuset.sched.domain flag
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
+References: <1526590545-3350-1-git-send-email-longman@redhat.com>
+ <1526590545-3350-3-git-send-email-longman@redhat.com>
+ <20180522125750.GA31040@localhost.localdomain>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <595ad976-6859-95bc-179f-88e11ba98dbf@redhat.com>
+Date: Mon, 28 May 2018 20:55:13 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180528100240.256525891@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20180522125750.GA31040@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 03:00 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.16.13 release.
-> There are 272 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed May 30 10:01:02 UTC 2018.
-> Anything received after that time might be too late.
-> 
+On 05/22/2018 08:57 AM, Juri Lelli wrote:
+> Hi,
+>
+> On 17/05/18 16:55, Waiman Long wrote:
+>
+> [...]
+>
+>>  /**
+>> + * update_isolated_cpumask - update the isolated_cpus mask of parent cpuset
+>> + * @cpuset:  The cpuset that requests CPU isolation
+>> + * @oldmask: The old isolated cpumask to be removed from the parent
+>> + * @newmask: The new isolated cpumask to be added to the parent
+>> + * Return: 0 if successful, an error code otherwise
+>> + *
+>> + * Changes to the isolated CPUs are not allowed if any of CPUs changing
+>> + * state are in any of the child cpusets of the parent except the requesting
+>> + * child.
+>> + *
+>> + * If the sched_domain flag changes, either the oldmask (0=>1) or the
+>> + * newmask (1=>0) will be NULL.
+>> + *
+>> + * Called with cpuset_mutex held.
+>> + */
+>> +static int update_isolated_cpumask(struct cpuset *cpuset,
+>> +	struct cpumask *oldmask, struct cpumask *newmask)
+>> +{
+>> +	int retval;
+>> +	int adding, deleting;
+>> +	cpumask_var_t addmask, delmask;
+>> +	struct cpuset *parent = parent_cs(cpuset);
+>> +	struct cpuset *sibling;
+>> +	struct cgroup_subsys_state *pos_css;
+>> +	int old_count = parent->isolation_count;
+>> +	bool dying = cpuset->css.flags & CSS_DYING;
+>> +
+>> +	/*
+>> +	 * Parent must be a scheduling domain with non-empty cpus_allowed.
+>> +	 */
+>> +	if (!is_sched_domain(parent) || cpumask_empty(parent->cpus_allowed))
+>> +		return -EINVAL;
+>> +
+>> +	/*
+>> +	 * The oldmask, if present, must be a subset of parent's isolated
+>> +	 * CPUs.
+>> +	 */
+>> +	if (oldmask && !cpumask_empty(oldmask) && (!parent->isolation_count ||
+>> +			!cpumask_subset(oldmask, parent->isolated_cpus))) {
+>> +		WARN_ON_ONCE(1);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	/*
+>> +	 * A sched_domain state change is not allowed if there are
+>> +	 * online children and the cpuset is not dying.
+>> +	 */
+>> +	if (!dying && (!oldmask || !newmask) &&
+>> +	    css_has_online_children(&cpuset->css))
+>> +		return -EBUSY;
+>> +
+>> +	if (!zalloc_cpumask_var(&addmask, GFP_KERNEL))
+>> +		return -ENOMEM;
+>> +	if (!zalloc_cpumask_var(&delmask, GFP_KERNEL)) {
+>> +		free_cpumask_var(addmask);
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	if (!old_count) {
+>> +		if (!zalloc_cpumask_var(&parent->isolated_cpus, GFP_KERNEL)) {
+>> +			retval = -ENOMEM;
+>> +			goto out;
+>> +		}
+>> +		old_count = 1;
+>> +	}
+>> +
+>> +	retval = -EBUSY;
+>> +	adding = deleting = false;
+>> +	if (newmask)
+>> +		cpumask_copy(addmask, newmask);
+>> +	if (oldmask)
+>> +		deleting = cpumask_andnot(delmask, oldmask, addmask);
+>> +	if (newmask)
+>> +		adding = cpumask_andnot(addmask, newmask, delmask);
+>> +
+>> +	if (!adding && !deleting)
+>> +		goto out_ok;
+>> +
+>> +	/*
+>> +	 * The cpus to be added must be in the parent's effective_cpus mask
+>> +	 * but not in the isolated_cpus mask.
+>> +	 */
+>> +	if (!cpumask_subset(addmask, parent->effective_cpus))
+>> +		goto out;
+>> +	if (parent->isolation_count &&
+>> +	    cpumask_intersects(parent->isolated_cpus, addmask))
+>> +		goto out;
+>> +
+>> +	/*
+>> +	 * Check if any CPUs in addmask or delmask are in a sibling cpuset.
+>> +	 * An empty sibling cpus_allowed means it is the same as parent's
+>> +	 * effective_cpus. This checking is skipped if the cpuset is dying.
+>> +	 */
+>> +	if (dying)
+>> +		goto updated_isolated_cpus;
+>> +
+>> +	cpuset_for_each_child(sibling, pos_css, parent) {
+>> +		if ((sibling == cpuset) || !(sibling->css.flags & CSS_ONLINE))
+>> +			continue;
+>> +		if (cpumask_empty(sibling->cpus_allowed))
+>> +			goto out;
+>> +		if (adding &&
+>> +		    cpumask_intersects(sibling->cpus_allowed, addmask))
+>> +			goto out;
+>> +		if (deleting &&
+>> +		    cpumask_intersects(sibling->cpus_allowed, delmask))
+>> +			goto out;
+>> +	}
+> Just got the below by echoing 1 into cpuset.sched.domain of a sibling with
+> "isolated" cpuset.cpus. Guess you are missing proper locking about here
+> above.
+>
+> --->8---
+> [ 7509.905005] =============================
+> [ 7509.905009] WARNING: suspicious RCU usage
+> [ 7509.905014] 4.17.0-rc5+ #11 Not tainted
+> [ 7509.905017] -----------------------------
+> [ 7509.905023] /home/juri/work/kernel/linux/kernel/cgroup/cgroup.c:3826 cgroup_mutex or RCU read lock required!
+> [ 7509.905026] 
+>                other info that might help us debug this:
 
-Build results:
-	total: 143 pass: 143 fail: 0
-Qemu test results:
-	total: 141 pass: 141 fail: 0
+The cause is missing rcu_lock/rcu_unlock in section of the code. It will
+be fixed in the next version.
 
-Details are available at http://kerneltests.org/builders.
-
-Guenter
+Cheers,
+Longman
