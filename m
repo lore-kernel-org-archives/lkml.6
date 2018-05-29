@@ -1,155 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933965AbeE2MNM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:13:12 -0400
-Received: from foss.arm.com ([217.140.101.70]:38634 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933548AbeE2MMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:12:07 -0400
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Cc: Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Julien Grall <julien.grall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 14/17] arm64: KVM: Add ARCH_WORKAROUND_2 discovery through ARCH_FEATURES_FUNC_ID
-Date: Tue, 29 May 2018 13:11:18 +0100
-Message-Id: <20180529121121.24927-15-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180529121121.24927-1-marc.zyngier@arm.com>
-References: <20180529121121.24927-1-marc.zyngier@arm.com>
+        id S933983AbeE2MNW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:13:22 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:43078 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933494AbeE2MNT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:13:19 -0400
+X-Google-Smtp-Source: AB8JxZpBipfSbQYw4wuGwNX8KPus3G3NvTeUiuNjn25UogSdNYnWKsafnNtwWJpNu9S56gmJminO4A==
+Date: Tue, 29 May 2018 21:13:15 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Hoeun Ryu <hoeun.ryu@lge.com.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Hoeun Ryu <hoeun.ryu@lge.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH]  printk: make printk_safe_flush safe in NMI context by
+ skipping flushing
+Message-ID: <20180529121315.GE438@jagdpanzerIV>
+References: <1527562331-25880-1-git-send-email-hoeun.ryu@lge.com.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527562331-25880-1-git-send-email-hoeun.ryu@lge.com.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all our infrastructure is in place, let's expose the
-availability of ARCH_WORKAROUND_2 to guests. We take this opportunity
-to tidy up a couple of SMCCC constants.
+On (05/29/18 11:51), Hoeun Ryu wrote:
+>  Make printk_safe_flush() safe in NMI context.
+> nmi_trigger_cpumask_backtrace() can be called in NMI context. For example the
+> function is called in watchdog_overflow_callback() if the flag of hardlockup
+> backtrace (sysctl_hardlockup_all_cpu_backtrace) is true and
+> watchdog_overflow_callback() function is called in NMI context on some
+> architectures.
+>  Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace() eventually tries
+> to lock logbuf_lock in vprintk_emit() but the logbuf_lock can be already locked in
+> preempted contexts (task or irq in this case) or by other CPUs and it may cause
+> deadlocks.
+>  By making printk_safe_flush() safe in NMI context, the backtrace triggering CPU
+> just skips flushing if the lock is not avaiable in NMI context. The messages in
+> per-cpu nmi buffer of the backtrace triggering CPU can be lost if the CPU is in
+> hard lockup (because irq is disabled here) but if panic() is not called. The
+> flushing can be delayed by the next irq work in normal cases.
 
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- arch/arm/include/asm/kvm_host.h   | 12 ++++++++++++
- arch/arm64/include/asm/kvm_host.h | 23 +++++++++++++++++++++++
- arch/arm64/kvm/reset.c            |  4 ++++
- virt/kvm/arm/psci.c               | 18 ++++++++++++++++--
- 4 files changed, 55 insertions(+), 2 deletions(-)
+Any chance we can add more info to the commit message? E.g. backtraces
+which would describe "how" is this possible (like the one I posted in
+another email). Just to make it more clear.
 
-diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
-index c7c28c885a19..7001fb871429 100644
---- a/arch/arm/include/asm/kvm_host.h
-+++ b/arch/arm/include/asm/kvm_host.h
-@@ -315,6 +315,18 @@ static inline bool kvm_arm_harden_branch_predictor(void)
- 	return false;
- }
- 
-+#define KVM_SSBD_UNKNOWN		-1
-+#define KVM_SSBD_FORCE_DISABLE		0
-+#define KVM_SSBD_KERNEL		1
-+#define KVM_SSBD_FORCE_ENABLE		2
-+#define KVM_SSBD_MITIGATED		3
-+
-+static inline int kvm_arm_have_ssbd(void)
-+{
-+	/* No way to detect it yet, pretend it is not there. */
-+	return KVM_SSBD_UNKNOWN;
-+}
-+
- static inline void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu) {}
- static inline void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu) {}
- 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 9bef3f69bdcd..95d8a0e15b5f 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -455,6 +455,29 @@ static inline bool kvm_arm_harden_branch_predictor(void)
- 	return cpus_have_const_cap(ARM64_HARDEN_BRANCH_PREDICTOR);
- }
- 
-+#define KVM_SSBD_UNKNOWN		-1
-+#define KVM_SSBD_FORCE_DISABLE		0
-+#define KVM_SSBD_KERNEL		1
-+#define KVM_SSBD_FORCE_ENABLE		2
-+#define KVM_SSBD_MITIGATED		3
-+
-+static inline int kvm_arm_have_ssbd(void)
-+{
-+	switch (arm64_get_ssbd_state()) {
-+	case ARM64_SSBD_FORCE_DISABLE:
-+		return KVM_SSBD_FORCE_DISABLE;
-+	case ARM64_SSBD_KERNEL:
-+		return KVM_SSBD_KERNEL;
-+	case ARM64_SSBD_FORCE_ENABLE:
-+		return KVM_SSBD_FORCE_ENABLE;
-+	case ARM64_SSBD_MITIGATED:
-+		return KVM_SSBD_MITIGATED;
-+	case ARM64_SSBD_UNKNOWN:
-+	default:
-+		return KVM_SSBD_UNKNOWN;
-+	}
-+}
-+
- void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu);
- void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu);
- 
-diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index 3256b9228e75..a74311beda35 100644
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -122,6 +122,10 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu)
- 	/* Reset PMU */
- 	kvm_pmu_vcpu_reset(vcpu);
- 
-+	/* Default workaround setup is enabled (if supported) */
-+	if (kvm_arm_have_ssbd() == KVM_SSBD_KERNEL)
-+		vcpu->arch.workaround_flags |= VCPU_WORKAROUND_2_FLAG;
-+
- 	/* Reset timer */
- 	return kvm_timer_vcpu_reset(vcpu);
- }
-diff --git a/virt/kvm/arm/psci.c b/virt/kvm/arm/psci.c
-index c4762bef13c6..c95ab4c5a475 100644
---- a/virt/kvm/arm/psci.c
-+++ b/virt/kvm/arm/psci.c
-@@ -405,7 +405,7 @@ static int kvm_psci_call(struct kvm_vcpu *vcpu)
- int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
- {
- 	u32 func_id = smccc_get_function(vcpu);
--	u32 val = PSCI_RET_NOT_SUPPORTED;
-+	u32 val = SMCCC_RET_NOT_SUPPORTED;
- 	u32 feature;
- 
- 	switch (func_id) {
-@@ -417,7 +417,21 @@ int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
- 		switch(feature) {
- 		case ARM_SMCCC_ARCH_WORKAROUND_1:
- 			if (kvm_arm_harden_branch_predictor())
--				val = 0;
-+				val = SMCCC_RET_SUCCESS;
-+			break;
-+		case ARM_SMCCC_ARCH_WORKAROUND_2:
-+			switch (kvm_arm_have_ssbd()) {
-+			case KVM_SSBD_FORCE_DISABLE:
-+			case KVM_SSBD_UNKNOWN:
-+				break;
-+			case KVM_SSBD_KERNEL:
-+				val = SMCCC_RET_SUCCESS;
-+				break;
-+			case KVM_SSBD_FORCE_ENABLE:
-+			case KVM_SSBD_MITIGATED:
-+				val = SMCCC_RET_NOT_REQUIRED;
-+				break;
-+			}
- 			break;
- 		}
- 		break;
--- 
-2.14.2
+> @@ -254,6 +254,16 @@ void printk_safe_flush(void)
+>  {
+>  	int cpu;
+>  
+> +	/*
+> +	 * Just avoid deadlocks here, we could loose the messages in per-cpu nmi buffer
+> +	 * in the case that hardlockup happens but panic() is not called (irq_work won't
+> +	 * work).
+> +	 * The flushing can be delayed by the next irq_work if flushing is skippped here
+									   ^^ skipped
+
+	-ss
