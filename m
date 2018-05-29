@@ -1,76 +1,759 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933123AbeE2KCJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:02:09 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36486 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933026AbeE2KCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:02:04 -0400
-Date: Tue, 29 May 2018 11:02:00 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: YaoJun <yaojun8558363@gmail.com>
-Cc: kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, jmorris@namei.org
-Subject: Re: [PATCH] mark tramp_pg_dir read-only
-Message-ID: <20180529100200.ntfppwx4i26arwa5@lakrids.cambridge.arm.com>
-References: <20180529091609.9830-1-yaojun8558363@gmail.com>
+        id S933129AbeE2KCa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:02:30 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36525 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932632AbeE2KCZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 06:02:25 -0400
+X-Google-Smtp-Source: ADUXVKLuwTFb2V4MC30RyCBqaTco/3dHGHXFOKbpFJ7SK6cPiL8/xbwJniQqdgLxsxBGYtVLHjNnOg==
+Date: Tue, 29 May 2018 13:02:15 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529091609.9830-1-yaojun8558363@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Support for controlling the 8 bucks and 7 LDOs the PMIC contains.
 
-For patches to arm64, please CC the arm64 maintainers, and the
-linux-arm-kernel mailing list.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/regulator/Kconfig             |  11 +
+ drivers/regulator/Makefile            |   1 +
+ drivers/regulator/bd71837-regulator.c | 677 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 689 insertions(+)
+ create mode 100644 drivers/regulator/bd71837-regulator.c
 
-Generally, please try to follow the guidance of
-Documentation/process/submitting-patches.rst
-
-e.g. you can use get_maintainer.pl to figure out who to Cc:
-
-[mark@lakrids:~/src/linux]% ./scripts/get_maintainer.pl arch/arm64/mm/mmu.c
-Catalin Marinas <catalin.marinas@arm.com> (maintainer:ARM64 PORT (AARCH64 ARCHITECTURE),commit_signer:8/16=50%)
-Will Deacon <will.deacon@arm.com> (maintainer:ARM64 PORT (AARCH64 ARCHITECTURE),commit_signer:9/16=56%,authored:6/16=38%,added_lines:205/242=85%,removed_lines:142/157=90%)
-Ard Biesheuvel <ard.biesheuvel@linaro.org> (commit_signer:5/16=31%)
-Marc Zyngier <marc.zyngier@arm.com> (commit_signer:4/16=25%)
-Dan Williams <dan.j.williams@intel.com> (commit_signer:2/16=12%)
-Kristina Martsenko <kristina.martsenko@arm.com> (authored:2/16=12%)
-James Morse <james.morse@arm.com> (authored:2/16=12%)
-Tobias Klauser <tklauser@distanz.ch> (authored:1/16=6%)
-Steve Capper <steve.capper@arm.com> (authored:1/16=6%)
-linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT (AARCH64 ARCHITECTURE))
-linux-kernel@vger.kernel.org (open list)
-
-Thanks,
-Mark.
-
-On Tue, May 29, 2018 at 05:16:09PM +0800, YaoJun wrote:
-> To prevent KSMA(Kernel Space Mirroring Attack), it's necessary
-> to set tramp_pg_dir read-only after initialization.
-> 
-> ---
->  arch/arm64/mm/mmu.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 2dbb2c9f1ec1..964520e4e675 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -551,6 +551,9 @@ static int __init map_entry_trampoline(void)
->  	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
->  			     prot, pgd_pgtable_alloc, 0);
->  
-> +	update_mapping_prot(__pa_symbol(tramp_pg_dir), (unsigned long)tramp_pg_dir,
-> +			    PGD_SIZE, PAGE_KERNEL_RO);
-> +
->  	/* Map both the text and data into the kernel page table */
->  	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
->  	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
-> -- 
-> 2.17.0
-> 
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 097f61784a7d..139f4b53fea0 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -180,6 +180,17 @@ config REGULATOR_BCM590XX
+ 	  BCM590xx PMUs. This will enable support for the software
+ 	  controllable LDO/Switching regulators.
+ 
++config REGULATOR_BD71837
++	tristate "ROHM BD71837 Power Regulator"
++	depends on MFD_BD71837
++	help
++	  This driver supports voltage regulators on ROHM BD71837 PMIC.
++	  This will enable support for the software controllable buck
++	  and LDO regulators.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called bd71837-regulator.
++
+ config REGULATOR_BD9571MWV
+ 	tristate "ROHM BD9571MWV Regulators"
+ 	depends on MFD_BD9571MWV
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 590674fbecd7..1b4d8ec416c2 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -27,6 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+ obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
+ obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
+ obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
++obj-$(CONFIG_REGULATOR_BD71837) += bd71837-regulator.o
+ obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
+ obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
+ obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+new file mode 100644
+index 000000000000..826c1ce3c6d6
+--- /dev/null
++++ b/drivers/regulator/bd71837-regulator.c
+@@ -0,0 +1,677 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (C) 2018 ROHM Semiconductors */
++/*
++ * bd71837-regulator.c ROHM BD71837MWV regulator driver
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/err.h>
++#include <linux/interrupt.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/driver.h>
++#include <linux/regulator/machine.h>
++#include <linux/delay.h>
++#include <linux/slab.h>
++#include <linux/gpio.h>
++#include <linux/mfd/bd71837.h>
++#include <linux/regulator/of_regulator.h>
++
++struct bd71837_pmic {
++	struct regulator_desc descs[BD71837_REGULATOR_CNT];
++	struct bd71837 *mfd;
++	struct platform_device *pdev;
++	struct regulator_dev *rdev[BD71837_REGULATOR_CNT];
++	struct mutex mtx;
++};
++
++/*
++ * BUCK1/2/3/4
++ * BUCK1RAMPRATE[1:0] BUCK1 DVS ramp rate setting
++ * 00: 10.00mV/usec 10mV 1uS
++ * 01: 5.00mV/usec	10mV 2uS
++ * 10: 2.50mV/usec	10mV 4uS
++ * 11: 1.25mV/usec	10mV 8uS
++ */
++static int bd71837_buck1234_set_ramp_delay(struct regulator_dev *rdev,
++					   int ramp_delay)
++{
++	struct bd71837_pmic *pmic = rdev_get_drvdata(rdev);
++	struct bd71837 *mfd = pmic->mfd;
++	int id = rdev->desc->id;
++	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
++
++	dev_dbg(&(pmic->pdev->dev), "Buck[%d] Set Ramp = %d\n", id + 1,
++		ramp_delay);
++	switch (ramp_delay) {
++	case 1 ... 1250:
++		ramp_value = BUCK_RAMPRATE_1P25MV;
++		break;
++	case 1251 ... 2500:
++		ramp_value = BUCK_RAMPRATE_2P50MV;
++		break;
++	case 2501 ... 5000:
++		ramp_value = BUCK_RAMPRATE_5P00MV;
++		break;
++	case 5001 ... 10000:
++		ramp_value = BUCK_RAMPRATE_10P00MV;
++		break;
++	default:
++		ramp_value = BUCK_RAMPRATE_10P00MV;
++		dev_err(&pmic->pdev->dev,
++			"%s: ramp_delay: %d not supported, setting 10000mV//us\n",
++			rdev->desc->name, ramp_delay);
++	}
++
++	return regmap_update_bits(mfd->regmap, BD71837_REG_BUCK1_CTRL + id,
++				  BUCK_RAMPRATE_MASK, ramp_value << 6);
++}
++
++static int bd71837_regulator_set_regmap(struct regulator_dev *rdev, int set)
++{
++	int ret = -EINVAL;
++	struct bd71837_pmic *pmic = rdev->reg_data;
++
++	/* According to the data sheet we must not change regulator voltage
++	 * when it is enabled. Thus we need to check if regulator is enabled
++	 * before changing the voltage. This mutex is used to avoid race where
++	 * we might enable regulator after it's state has been checked but
++	 * before the voltage is changed
++	 */
++	mutex_lock(&pmic->mtx);
++	if (!set)
++		ret = regulator_disable_regmap(rdev);
++	else
++		ret = regulator_enable_regmap(rdev);
++	mutex_unlock(&pmic->mtx);
++
++	return ret;
++}
++
++static int bd71837_regulator_enable_regmap(struct regulator_dev *rdev)
++{
++	return bd71837_regulator_set_regmap(rdev, 1);
++}
++
++static int bd71837_regulator_disable_regmap(struct regulator_dev *rdev)
++{
++	return bd71837_regulator_set_regmap(rdev, 0);
++}
++
++static int bd71837_regulator_set_voltage_sel_regmap(struct regulator_dev *rdev,
++						    unsigned int sel)
++{
++	int ret;
++	struct bd71837_pmic *pmic = rdev->reg_data;
++
++	/* According to the data sheet we must not change regulator voltage
++	 * when it is enabled. Error out if regulator is enabled.
++	 */
++	mutex_lock(&pmic->mtx);
++	ret = regulator_is_enabled_regmap(rdev);
++	if (!ret)
++		ret = regulator_set_voltage_sel_regmap(rdev, sel);
++	else if (ret == 1)
++		ret = -EBUSY;
++	mutex_unlock(&pmic->mtx);
++	return ret;
++}
++
++static struct regulator_ops bd71837_ldo_regulator_ops = {
++	.enable = bd71837_regulator_enable_regmap,
++	.disable = bd71837_regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_linear_range,
++	.set_voltage_sel = bd71837_regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++};
++
++static struct regulator_ops bd71837_ldo_regulator_nolinear_ops = {
++	.enable = bd71837_regulator_enable_regmap,
++	.disable = bd71837_regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_table,
++	.set_voltage_sel = bd71837_regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++};
++
++static struct regulator_ops bd71837_buck_regulator_ops = {
++	.enable = bd71837_regulator_enable_regmap,
++	.disable = bd71837_regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_linear_range,
++	.set_voltage_sel = bd71837_regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_time_sel = regulator_set_voltage_time_sel,
++};
++
++static struct regulator_ops bd71837_buck_regulator_nolinear_ops = {
++	.enable = bd71837_regulator_enable_regmap,
++	.disable = bd71837_regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_table,
++	.set_voltage_sel = bd71837_regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_time_sel = regulator_set_voltage_time_sel,
++};
++
++static struct regulator_ops bd71837_buck1234_regulator_ops = {
++	.enable = bd71837_regulator_enable_regmap,
++	.disable = bd71837_regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_linear_range,
++	.set_voltage_sel = bd71837_regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_time_sel = regulator_set_voltage_time_sel,
++	.set_ramp_delay = bd71837_buck1234_set_ramp_delay,
++};
++
++/*
++ * BUCK1/2/3/4
++ * 0.70 to 1.30V (10mV step)
++ */
++static const struct regulator_linear_range bd71837_buck1234_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(700000, 0x00, 0x3C, 10000),
++	REGULATOR_LINEAR_RANGE(1300000, 0x3D, 0x3F, 0),
++};
++
++/*
++ * BUCK5
++ * 0.9V to 1.35V ()
++ */
++static const struct regulator_linear_range bd71837_buck5_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(700000, 0x00, 0x03, 100000),
++	REGULATOR_LINEAR_RANGE(1050000, 0x04, 0x05, 50000),
++	REGULATOR_LINEAR_RANGE(1200000, 0x06, 0x07, 150000),
++};
++
++/*
++ * BUCK6
++ * 3.0V to 3.3V (step 100mV)
++ */
++static const struct regulator_linear_range bd71837_buck6_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(3000000, 0x00, 0x03, 100000),
++};
++
++/*
++ * BUCK7
++ * 000 = 1.605V
++ * 001 = 1.695V
++ * 010 = 1.755V
++ * 011 = 1.8V (Initial)
++ * 100 = 1.845V
++ * 101 = 1.905V
++ * 110 = 1.95V
++ * 111 = 1.995V
++ */
++static const unsigned int buck_7_volts[] = {
++	1605000, 1695000, 1755000, 1800000, 1845000, 1905000, 1950000, 1995000
++};
++
++/*
++ * BUCK8
++ * 0.8V to 1.40V (step 10mV)
++ */
++static const struct regulator_linear_range bd71837_buck8_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(800000, 0x00, 0x3C, 10000),
++	REGULATOR_LINEAR_RANGE(1400000, 0x3D, 0x3F, 0),
++};
++
++/*
++ * LDO1
++ * 3.0 to 3.3V (100mV step)
++ */
++static const struct regulator_linear_range bd71837_ldo1_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(3000000, 0x00, 0x03, 100000),
++};
++
++/*
++ * LDO2
++ * 0.8 or 0.9V
++ */
++const unsigned int ldo_2_volts[] = {
++	900000, 800000
++};
++
++/*
++ * LDO3
++ * 1.8 to 3.3V (100mV step)
++ */
++static const struct regulator_linear_range bd71837_ldo3_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
++};
++
++/*
++ * LDO4
++ * 0.9 to 1.8V (100mV step)
++ */
++static const struct regulator_linear_range bd71837_ldo4_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(900000, 0x00, 0x09, 100000),
++	REGULATOR_LINEAR_RANGE(1800000, 0x0A, 0x0F, 0),
++};
++
++/*
++ * LDO5
++ * 1.8 to 3.3V (100mV step)
++ */
++static const struct regulator_linear_range bd71837_ldo5_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
++};
++
++/*
++ * LDO6
++ * 0.9 to 1.8V (100mV step)
++ */
++static const struct regulator_linear_range bd71837_ldo6_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(900000, 0x00, 0x09, 100000),
++	REGULATOR_LINEAR_RANGE(1800000, 0x0A, 0x0F, 0),
++};
++
++/*
++ * LDO7
++ * 1.8 to 3.3V (100mV step)
++ */
++static const struct regulator_linear_range bd71837_ldo7_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
++};
++
++static const struct regulator_desc bd71837_regulators[] = {
++	{
++	 .name = "buck1",
++	 .of_match = of_match_ptr("BUCK1"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_BUCK1,
++	 .ops = &bd71837_buck1234_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_BUCK1_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_buck1234_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
++	 .vsel_reg = BD71837_REG_BUCK1_VOLT_RUN,
++	 .vsel_mask = BUCK1_RUN_MASK,
++	 .enable_reg = BD71837_REG_BUCK1_CTRL,
++	 .enable_mask = BD71837_BUCK_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "buck2",
++	 .of_match = of_match_ptr("BUCK2"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_BUCK2,
++	 .ops = &bd71837_buck1234_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_BUCK2_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_buck1234_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
++	 .vsel_reg = BD71837_REG_BUCK2_VOLT_RUN,
++	 .vsel_mask = BUCK2_RUN_MASK,
++	 .enable_reg = BD71837_REG_BUCK2_CTRL,
++	 .enable_mask = BD71837_BUCK_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "buck3",
++	 .of_match = of_match_ptr("BUCK3"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_BUCK3,
++	 .ops = &bd71837_buck1234_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_BUCK3_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_buck1234_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
++	 .vsel_reg = BD71837_REG_BUCK3_VOLT_RUN,
++	 .vsel_mask = BUCK3_RUN_MASK,
++	 .enable_reg = BD71837_REG_BUCK3_CTRL,
++	 .enable_mask = BD71837_BUCK_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "buck4",
++	 .of_match = of_match_ptr("BUCK4"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_BUCK4,
++	 .ops = &bd71837_buck1234_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_BUCK4_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_buck1234_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
++	 .vsel_reg = BD71837_REG_BUCK4_VOLT_RUN,
++	 .vsel_mask = BUCK4_RUN_MASK,
++	 .enable_reg = BD71837_REG_BUCK4_CTRL,
++	 .enable_mask = BD71837_BUCK_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "buck5",
++	 .of_match = of_match_ptr("BUCK5"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_BUCK5,
++	 .ops = &bd71837_buck_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_BUCK5_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_buck5_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck5_voltage_ranges),
++	 .vsel_reg = BD71837_REG_BUCK5_VOLT,
++	 .vsel_mask = BUCK5_MASK,
++	 .enable_reg = BD71837_REG_BUCK5_CTRL,
++	 .enable_mask = BD71837_BUCK_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "buck6",
++	 .of_match = of_match_ptr("BUCK6"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_BUCK6,
++	 .ops = &bd71837_buck_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_BUCK6_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_buck6_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck6_voltage_ranges),
++	 .vsel_reg = BD71837_REG_BUCK6_VOLT,
++	 .vsel_mask = BUCK6_MASK,
++	 .enable_reg = BD71837_REG_BUCK6_CTRL,
++	 .enable_mask = BD71837_BUCK_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "buck7",
++	 .of_match = of_match_ptr("BUCK7"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_BUCK7,
++	 .ops = &bd71837_buck_regulator_nolinear_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .volt_table = &buck_7_volts[0],
++	 .n_voltages = ARRAY_SIZE(buck_7_volts),
++	 .vsel_reg = BD71837_REG_BUCK7_VOLT,
++	 .vsel_mask = BUCK7_MASK,
++	 .enable_reg = BD71837_REG_BUCK7_CTRL,
++	 .enable_mask = BD71837_BUCK_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "buck8",
++	 .of_match = of_match_ptr("BUCK8"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_BUCK8,
++	 .ops = &bd71837_buck_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_BUCK8_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_buck8_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_buck8_voltage_ranges),
++	 .vsel_reg = BD71837_REG_BUCK8_VOLT,
++	 .vsel_mask = BUCK8_MASK,
++	 .enable_reg = BD71837_REG_BUCK8_CTRL,
++	 .enable_mask = BD71837_BUCK_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "ldo1",
++	 .of_match = of_match_ptr("LDO1"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_LDO1,
++	 .ops = &bd71837_ldo_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_LDO1_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_ldo1_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo1_voltage_ranges),
++	 .vsel_reg = BD71837_REG_LDO1_VOLT,
++	 .vsel_mask = LDO1_MASK,
++	 .enable_reg = BD71837_REG_LDO1_VOLT,
++	 .enable_mask = BD71837_LDO_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "ldo2",
++	 .of_match = of_match_ptr("LDO2"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_LDO2,
++	 .ops = &bd71837_ldo_regulator_nolinear_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .volt_table = &ldo_2_volts[0],
++	 .vsel_reg = BD71837_REG_LDO2_VOLT,
++	 .vsel_mask = LDO2_MASK,
++	 .n_voltages = ARRAY_SIZE(ldo_2_volts),
++	 .n_voltages = BD71837_LDO2_VOLTAGE_NUM,
++	 .enable_reg = BD71837_REG_LDO2_VOLT,
++	 .enable_mask = BD71837_LDO_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "ldo3",
++	 .of_match = of_match_ptr("LDO3"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_LDO3,
++	 .ops = &bd71837_ldo_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_LDO3_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_ldo3_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo3_voltage_ranges),
++	 .vsel_reg = BD71837_REG_LDO3_VOLT,
++	 .vsel_mask = LDO3_MASK,
++	 .enable_reg = BD71837_REG_LDO3_VOLT,
++	 .enable_mask = BD71837_LDO_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "ldo4",
++	 .of_match = of_match_ptr("LDO4"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_LDO4,
++	 .ops = &bd71837_ldo_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_LDO4_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_ldo4_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo4_voltage_ranges),
++	 .vsel_reg = BD71837_REG_LDO4_VOLT,
++	 .vsel_mask = LDO4_MASK,
++	 .enable_reg = BD71837_REG_LDO4_VOLT,
++	 .enable_mask = BD71837_LDO_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "ldo5",
++	 .of_match = of_match_ptr("LDO5"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_LDO5,
++	 .ops = &bd71837_ldo_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_LDO5_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_ldo5_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo5_voltage_ranges),
++	 /* LDO5 is supplied by buck6 */
++	 .supply_name = "buck6",
++	 .vsel_reg = BD71837_REG_LDO5_VOLT,
++	 .vsel_mask = LDO5_MASK,
++	 .enable_reg = BD71837_REG_LDO5_VOLT,
++	 .enable_mask = BD71837_LDO_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "ldo6",
++	 .of_match = of_match_ptr("LDO6"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_LDO6,
++	 .ops = &bd71837_ldo_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_LDO6_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_ldo6_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo6_voltage_ranges),
++	 /* LDO6 is supplied by buck7 */
++	 .supply_name = "buck7",
++	 .vsel_reg = BD71837_REG_LDO6_VOLT,
++	 .vsel_mask = LDO6_MASK,
++	 .enable_reg = BD71837_REG_LDO6_VOLT,
++	 .enable_mask = BD71837_LDO_EN,
++	 .owner = THIS_MODULE,
++	 },
++	{
++	 .name = "ldo7",
++	 .of_match = of_match_ptr("LDO7"),
++	 .regulators_node = of_match_ptr("regulators"),
++	 .id = BD71837_LDO7,
++	 .ops = &bd71837_ldo_regulator_ops,
++	 .type = REGULATOR_VOLTAGE,
++	 .n_voltages = BD71837_LDO7_VOLTAGE_NUM,
++	 .linear_ranges = bd71837_ldo7_voltage_ranges,
++	 .n_linear_ranges = ARRAY_SIZE(bd71837_ldo7_voltage_ranges),
++	 .vsel_reg = BD71837_REG_LDO7_VOLT,
++	 .vsel_mask = LDO7_MASK,
++	 .enable_reg = BD71837_REG_LDO7_VOLT,
++	 .enable_mask = BD71837_LDO_EN,
++	 .owner = THIS_MODULE,
++	 },
++};
++
++struct reg_init {
++	unsigned int reg;
++	unsigned int mask;
++};
++
++static int bd71837_probe(struct platform_device *pdev)
++{
++	struct bd71837_pmic *pmic;
++	struct bd71837_board *pdata;
++	struct regulator_config config = { 0 };
++	struct reg_init pmic_regulator_inits[] = {
++		{
++		 .reg = BD71837_REG_BUCK1_CTRL,
++		 .mask = BD71837_BUCK_SEL,
++		}, {
++		 .reg = BD71837_REG_BUCK2_CTRL,
++		 .mask = BD71837_BUCK_SEL,
++		}, {
++		 .reg = BD71837_REG_BUCK3_CTRL,
++		 .mask = BD71837_BUCK_SEL,
++		}, {
++		 .reg = BD71837_REG_BUCK4_CTRL,
++		 .mask = BD71837_BUCK_SEL,
++		}, {
++		 .reg = BD71837_REG_BUCK5_CTRL,
++		 .mask = BD71837_BUCK_SEL,
++		}, {
++		 .reg = BD71837_REG_BUCK6_CTRL,
++		 .mask = BD71837_BUCK_SEL,
++		}, {
++		 .reg = BD71837_REG_BUCK7_CTRL,
++		 .mask = BD71837_BUCK_SEL,
++		}, {
++		 .reg = BD71837_REG_BUCK8_CTRL,
++		 .mask = BD71837_BUCK_SEL,
++		}, {
++		 .reg = BD71837_REG_LDO1_VOLT,
++		 .mask = BD71837_LDO_SEL,
++		}, {
++		 .reg = BD71837_REG_LDO2_VOLT,
++		 .mask = BD71837_LDO_SEL,
++		}, {
++		 .reg = BD71837_REG_LDO3_VOLT,
++		 .mask = BD71837_LDO_SEL,
++		}, {
++		 .reg = BD71837_REG_LDO4_VOLT,
++		 .mask = BD71837_LDO_SEL,
++		}, {
++		 .reg = BD71837_REG_LDO5_VOLT,
++		 .mask = BD71837_LDO_SEL,
++		}, {
++		 .reg = BD71837_REG_LDO6_VOLT,
++		 .mask = BD71837_LDO_SEL,
++		}, {
++		 .reg = BD71837_REG_LDO7_VOLT,
++		 .mask = BD71837_LDO_SEL,
++		}
++	};
++
++	int i, err;
++
++	pmic = devm_kzalloc(&pdev->dev, sizeof(struct bd71837_pmic),
++			    GFP_KERNEL);
++	if (!pmic)
++		return -ENOMEM;
++
++	mutex_init(&pmic->mtx);
++
++	memcpy(pmic->descs, bd71837_regulators, sizeof(pmic->descs));
++
++	pmic->pdev = pdev;
++	pmic->mfd = dev_get_drvdata(pdev->dev.parent);
++
++	if (!pmic->mfd) {
++		dev_err(&pdev->dev, "No MFD driver data\n");
++		err = -EINVAL;
++		goto err;
++	}
++	platform_set_drvdata(pdev, pmic);
++	pdata = dev_get_platdata(pmic->mfd->dev);
++
++	/* Register LOCK release */
++	err = regmap_update_bits(pmic->mfd->regmap, BD71837_REG_REGLOCK,
++				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
++	if (err) {
++		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
++		goto err;
++	} else {
++		dev_dbg(&pmic->pdev->dev, "%s: Unlocked lock register 0x%x\n",
++			__func__, BD71837_REG_REGLOCK);
++	}
++
++	for (i = 0; i < ARRAY_SIZE(pmic_regulator_inits); i++) {
++
++		struct regulator_desc *desc;
++		struct regulator_dev *rdev;
++
++		desc = &pmic->descs[i];
++
++		if (pdata)
++			config.init_data = pdata->init_data[i];
++
++		config.dev = pdev->dev.parent;
++		config.driver_data = pmic;
++		config.regmap = pmic->mfd->regmap;
++
++		rdev = devm_regulator_register(&pdev->dev, desc, &config);
++		if (IS_ERR(rdev)) {
++			dev_err(pmic->mfd->dev,
++				"failed to register %s regulator\n",
++				desc->name);
++			err = PTR_ERR(rdev);
++			goto err;
++		}
++		/* Regulator register gets the regulator constraints and
++		 * applies them (set_machine_constraints). This should have
++		 * turned the control register(s) to correct values and we
++		 * can now switch the control from PMIC state machine to the
++		 * register interface
++		 */
++		err = regmap_update_bits(pmic->mfd->regmap,
++					 pmic_regulator_inits[i].reg,
++					 pmic_regulator_inits[i].mask,
++					 0xFFFFFFFF);
++		if (err) {
++			dev_err(&pmic->pdev->dev,
++				"Failed to write BUCK/LDO SEL bit for (%s)\n",
++				desc->name);
++			goto err;
++		}
++
++		pmic->rdev[i] = rdev;
++	}
++
++	return 0;
++
++err:
++	return err;
++}
++
++static struct platform_driver bd71837_regulator = {
++	.driver = {
++		   .name = "bd71837-pmic",
++		   .owner = THIS_MODULE,
++		   },
++	.probe = bd71837_probe,
++};
++
++module_platform_driver(bd71837_regulator);
++
++MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
++MODULE_DESCRIPTION("BD71837 voltage regulator driver");
++MODULE_LICENSE("GPL");
+-- 
+2.14.3
