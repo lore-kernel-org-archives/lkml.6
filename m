@@ -1,32 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965002AbeE2O7V (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:59:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40632 "EHLO
+        id S965046AbeE2O7e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:59:34 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41212 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936500AbeE2O7L (ORCPT
+        with ESMTP id S935773AbeE2O73 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:59:11 -0400
+        Tue, 29 May 2018 10:59:29 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Cc: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
-        nicolas.ferre@microchip.com, boris.brezillon@bootlin.com,
-        alexandre.belloni@bootlin.com, robh+dt@kernel.org, broonie@kernel.org,
-        Cristian.Birsan@microchip.com, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S controller" to the asoc tree
-In-Reply-To: <1527251668-31396-5-git-send-email-codrin.ciubotariu@microchip.com>
-Message-Id: <E1fNg5a-0005qO-IW@debutante>
-Date: Tue, 29 May 2018 15:59:06 +0100
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+        robh+dt@kernel.org, bgoswami@codeaurora.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com,
+        linux-kernel@vger.kernel.org, plai@codeaurora.org, tiwai@suse.com,
+        lgirdwood@gmail.com, spatakok@qti.qualcomm.com,
+        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: q6afe-dai: use q6afe_dai_prepare() for MI2S" to the asoc tree
+In-Reply-To: <20180529101833.30489-4-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fNg5s-00062B-N9@debutante>
+Date: Tue, 29 May 2018 15:59:24 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S controller
+   ASoC: qdsp6: q6afe-dai: use q6afe_dai_prepare() for MI2S
 
 has been applied to the asoc tree at
 
@@ -51,75 +51,102 @@ to this mail.
 Thanks,
 Mark
 
->From 969cc0528e0efdfdeaa5bbc0ab707d8a7819a8ec Mon Sep 17 00:00:00 2001
-From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Date: Fri, 25 May 2018 15:34:25 +0300
-Subject: [PATCH] ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S
- controller
+>From b916449c5e0129858320e313bbcfff05ae4cde6d Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Tue, 29 May 2018 11:18:30 +0100
+Subject: [PATCH] ASoC: qdsp6: q6afe-dai: use q6afe_dai_prepare() for MI2S
 
-This patch adds DT bindings for the new Atmel I2S controller embedded
-inside sama5d2x SoCs.
+Use common q6afe_dai_prepare() for MI2S dais, this will remove
+some code duplication. Also make the if statement to switch to
+make the code look neater.
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/sound/atmel-i2s.txt   | 47 +++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/atmel-i2s.txt
+ sound/soc/qcom/qdsp6/q6afe-dai.c | 53 +++++++++++---------------------
+ 1 file changed, 18 insertions(+), 35 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/atmel-i2s.txt b/Documentation/devicetree/bindings/sound/atmel-i2s.txt
-new file mode 100644
-index 000000000000..735368b8a73f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/atmel-i2s.txt
-@@ -0,0 +1,47 @@
-+* Atmel I2S controller
-+
-+Required properties:
-+- compatible:     Should be "atmel,sama5d2-i2s".
-+- reg:            Should be the physical base address of the controller and the
-+                  length of memory mapped region.
-+- interrupts:     Should contain the interrupt for the controller.
-+- dmas:           Should be one per channel name listed in the dma-names property,
-+                  as described in atmel-dma.txt and dma.txt files.
-+- dma-names:      Two dmas have to be defined, "tx" and "rx".
-+                  This IP also supports one shared channel for both rx and tx;
-+                  if this mode is used, one "rx-tx" name must be used.
-+- clocks:         Must contain an entry for each entry in clock-names.
-+                  Please refer to clock-bindings.txt.
-+- clock-names:    Should be one of each entry matching the clocks phandles list:
-+                  - "pclk" (peripheral clock) Required.
-+                  - "gclk" (generated clock) Optional (1).
-+                  - "aclk" (Audio PLL clock) Optional (1).
-+                  - "muxclk" (I2S mux clock) Optional (1).
-+
-+Optional properties:
-+- pinctrl-0:      Should specify pin control groups used for this controller.
-+- princtrl-names: Should contain only one value - "default".
-+
-+
-+(1) : Only the peripheral clock is required. The generated clock, the Audio
-+      PLL clock adn the I2S mux clock are optional and should only be set
-+      together, when Master Mode is required.
-+
-+Example:
-+
-+	i2s@f8050000 {
-+		compatible = "atmel,sama5d2-i2s";
-+		reg = <0xf8050000 0x300>;
-+		interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
-+		dmas = <&dma0
-+			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+			 AT91_XDMAC_DT_PERID(31))>,
-+		       <&dma0
-+			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+			 AT91_XDMAC_DT_PERID(32))>;
-+		dma-names = "tx", "rx";
-+		clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
-+		clock-names = "pclk", "gclk", "aclk", "muxclk";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_i2s0_default>;
-+	};
+diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+index 4378e29a95c5..e529edfd8001 100644
+--- a/sound/soc/qcom/qdsp6/q6afe-dai.c
++++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+@@ -144,38 +144,6 @@ static void q6afe_dai_shutdown(struct snd_pcm_substream *substream,
+ 
+ }
+ 
+-static int q6afe_mi2s_prepare(struct snd_pcm_substream *substream,
+-		struct snd_soc_dai *dai)
+-{
+-	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
+-	int rc;
+-
+-	if (dai_data->is_port_started[dai->id]) {
+-		/* stop the port and restart with new port config */
+-		rc = q6afe_port_stop(dai_data->port[dai->id]);
+-		if (rc < 0) {
+-			dev_err(dai->dev, "fail to close AFE port (%d)\n", rc);
+-			return rc;
+-		}
+-	}
+-
+-	rc = q6afe_i2s_port_prepare(dai_data->port[dai->id],
+-			       &dai_data->port_config[dai->id].i2s_cfg);
+-	if (rc < 0) {
+-		dev_err(dai->dev, "fail to prepare AFE port %x\n", dai->id);
+-		return rc;
+-	}
+-
+-	rc = q6afe_port_start(dai_data->port[dai->id]);
+-	if (rc < 0) {
+-		dev_err(dai->dev, "fail to start AFE port %x\n", dai->id);
+-		return rc;
+-	}
+-	dai_data->is_port_started[dai->id] = true;
+-
+-	return 0;
+-}
+-
+ static int q6afe_dai_prepare(struct snd_pcm_substream *substream,
+ 		struct snd_soc_dai *dai)
+ {
+@@ -191,12 +159,27 @@ static int q6afe_dai_prepare(struct snd_pcm_substream *substream,
+ 		}
+ 	}
+ 
+-	if (dai->id == HDMI_RX)
++	switch (dai->id) {
++	case HDMI_RX:
+ 		q6afe_hdmi_port_prepare(dai_data->port[dai->id],
+ 					&dai_data->port_config[dai->id].hdmi);
+-	else if (dai->id >= SLIMBUS_0_RX && dai->id <= SLIMBUS_6_TX)
++		break;
++	case SLIMBUS_0_RX ... SLIMBUS_6_TX:
+ 		q6afe_slim_port_prepare(dai_data->port[dai->id],
+ 					&dai_data->port_config[dai->id].slim);
++		break;
++	case PRIMARY_MI2S_RX ... QUATERNARY_MI2S_TX:
++		rc = q6afe_i2s_port_prepare(dai_data->port[dai->id],
++			       &dai_data->port_config[dai->id].i2s_cfg);
++		if (rc < 0) {
++			dev_err(dai->dev, "fail to prepare AFE port %x\n",
++				dai->id);
++			return rc;
++		}
++		break;
++	default:
++		return -EINVAL;
++	}
+ 
+ 	rc = q6afe_port_start(dai_data->port[dai->id]);
+ 	if (rc < 0) {
+@@ -289,7 +272,7 @@ static struct snd_soc_dai_ops q6hdmi_ops = {
+ };
+ 
+ static struct snd_soc_dai_ops q6i2s_ops = {
+-	.prepare	= q6afe_mi2s_prepare,
++	.prepare	= q6afe_dai_prepare,
+ 	.hw_params	= q6i2s_hw_params,
+ 	.set_fmt	= q6i2s_set_fmt,
+ 	.shutdown	= q6afe_dai_shutdown,
 -- 
 2.17.0
