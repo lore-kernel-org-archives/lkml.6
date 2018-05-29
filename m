@@ -1,92 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755369AbeE2I17 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:27:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47759 "EHLO mx2.suse.de"
+        id S1755350AbeE2Ib6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:31:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49187 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751766AbeE2I1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:27:54 -0400
-Date: Tue, 29 May 2018 10:27:51 +0200
+        id S1751203AbeE2Ibz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 04:31:55 -0400
+Date: Tue, 29 May 2018 10:31:53 +0200
 From: Michal Hocko <mhocko@kernel.org>
-To: Aaron Lu <aaron.lu@intel.com>
-Cc: "Ye, Xiaolong" <xiaolong.ye@intel.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lkp@01.org" <lkp@01.org>, "hannes@cmpxchg.org" <hannes@cmpxchg.org>
-Subject: Re: [LKP] [lkp-robot] [mm, memcontrol] 309fe96bfc:
- vm-scalability.throughput +23.0% improvement
-Message-ID: <20180529082751.GQ27180@dhcp22.suse.cz>
-References: <20180528114019.GF9904@yexl-desktop>
- <20180528120318.GB27180@dhcp22.suse.cz>
- <dbd727326f53648ed114e03a85085b6b4655fda2.camel@intel.com>
- <20180529075800.GL27180@dhcp22.suse.cz>
- <20180529081127.GB14785@intel.com>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] memcg: force charge kmem counter too
+Message-ID: <20180529083153.GR27180@dhcp22.suse.cz>
+References: <20180525185501.82098-1-shakeelb@google.com>
+ <20180526185144.xvh7ejlyelzvqwdb@esperanza>
+ <CALvZod5yTxcuB_Aao-a0ChNEnwyBJk9UPvEQ80s9tZFBQ0cxpw@mail.gmail.com>
+ <20180528091110.GG1517@dhcp22.suse.cz>
+ <CALvZod6x5iRmcJ6pYKS+jwJd855jnwmVcPK9tnKbuJ9Hfppa-A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529081127.GB14785@intel.com>
+In-Reply-To: <CALvZod6x5iRmcJ6pYKS+jwJd855jnwmVcPK9tnKbuJ9Hfppa-A@mail.gmail.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 29-05-18 16:11:27, Aaron Lu wrote:
-> On Tue, May 29, 2018 at 09:58:00AM +0200, Michal Hocko wrote:
-> > On Tue 29-05-18 03:15:51, Lu, Aaron wrote:
-> > > On Mon, 2018-05-28 at 14:03 +0200, Michal Hocko wrote:
-> > > > On Mon 28-05-18 19:40:19, kernel test robot wrote:
-> > > > > 
-> > > > > Greeting,
-> > > > > 
-> > > > > FYI, we noticed a +23.0% improvement of vm-scalability.throughput due to commit:
-> > > > > 
-> > > > > 
-> > > > > commit: 309fe96bfc0ae387f53612927a8f0dc3eb056efd ("mm, memcontrol: implement memory.swap.events")
-> > > > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> > > > 
-> > > > This doesn't make any sense to me. The patch merely adds an accounting.
-> > > > It doesn't optimize anything. So I strongly suspect the result is just
-> > > > misleading or the test (environment) misconfigured. Not the first time
-> > > > I am seeing something like that I am afraid.
-> > > > 
-> > > 
-> > > Most likely the same situation as:
-> > > "
-> > > FYI, we noticed a -27.2% regression of will-it-scale.per_process_ops
-> > > due to commit:
-> > > 
-> > > 
-> > > commit: e27be240df53f1a20c659168e722b5d9f16cc7f4 ("mm: memcg: make sure
-> > > memory.events is uptodate when waking pollers")
-> > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> > > "
-> > > 
-> > > Where the performance change is due to layout change of
-> > > 'struct mem_cgroup':
-> > > http://lkml.kernel.org/r/20180528085201.GA2918@intel.com
-> > 
-> > I do not follow. How can _this_ patch lead to an improvement when it
-> > actually _adds_ an accounting? The other report you are mentioning is a
-> 
-> This patch also changed the layout of 'struct mem_cgroup':
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index d99b71bc2c66..517096c3cc99 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -208,6 +210,9 @@ struct mem_cgroup {
->  	atomic_long_t memory_events[MEMCG_NR_MEMORY_EVENTS];
->  	struct cgroup_file events_file;
->  
-> +	/* handle for "memory.swap.events" */
-> +	struct cgroup_file swap_events_file;
-> +
->  	/* protect arrays of thresholds */
->  	struct mutex thresholds_lock;
-> 
-> And I'm guessing that might be the cause.
+On Mon 28-05-18 10:23:07, Shakeel Butt wrote:
+> On Mon, May 28, 2018 at 2:11 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> Though is there a precedence where the broken feature is not fixed
+> because an alternative is available?
 
-Ohh, you are right! Sorry, I've missed that part.
+Well, I can see how breaking GFP_NOFAIL semantic is problematic, on the
+other hand we keep saying that kmem accounting in v1 is hard usable and
+strongly discourage people from using it. Sure we can add the code which
+handles _this_ particular case but that wouldn't make the whole thing
+more usable I strongly suspect. Maybe I am wrong and you can provide
+some specific examples. Is GFP_NOFAIL that common to matter?
+
+In any case we should balance between the code maintainability here.
+Adding more cruft into the allocator path is not free.
 
 -- 
 Michal Hocko
