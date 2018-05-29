@@ -1,61 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932546AbeE2ItX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:49:23 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:65390 "EHLO
+        id S1755461AbeE2Isr convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:48:47 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:50123 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932470AbeE2ItD (ORCPT
+        with ESMTP id S1755438AbeE2Ism (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:49:03 -0400
+        Tue, 29 May 2018 04:48:42 -0400
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzbot <syzbot+ae590932da6e45d6564d@syzkaller.appspotmail.com>
-Subject: Re: [PATCH] PM / hibernate: Fix oops at snapshot_write().
-Date: Tue, 29 May 2018 10:48:16 +0200
-Message-ID: <3568719.h7yFa1lZHo@aspire.rjw.lan>
-In-Reply-To: <1527296376-3540-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1527296376-3540-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+To: "Wangtao (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        gengyanping@hisilicon.com, sunzhaosheng@hisilicon.com
+Subject: Re: [PATCH] cpufreq: reinitialize new policy min/max when writing scaling_(max|min)_freq
+Date: Tue, 29 May 2018 10:47:55 +0200
+Message-ID: <2309223.3p98OPSZcO@aspire.rjw.lan>
+In-Reply-To: <c6d1e102-bfdb-572c-2045-bf669ee9d674@hisilicon.com>
+References: <1527144234-96396-1-git-send-email-kevin.wangtao@hisilicon.com> <CAJZ5v0ih6s9WviSpg9D+kSt2h8T5Vnx-MziOmYuk1H4yZOYLNg@mail.gmail.com> <c6d1e102-bfdb-572c-2045-bf669ee9d674@hisilicon.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday, May 26, 2018 2:59:36 AM CEST Tetsuo Handa wrote:
-> syzbot is reporting NULL pointer dereference at snapshot_write() [1].
-> This is because data->handle is zero-cleared by ioctl(SNAPSHOT_FREE).
-> Fix this by checking data_of(data->handle) != NULL before using it.
+On Saturday, May 26, 2018 8:50:46 AM CEST Wangtao (Kevin, Kirin) wrote:
 > 
-> [1] https://syzkaller.appspot.com/bug?id=828a3c71bd344a6de8b6a31233d51a72099f27fd
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: syzbot <syzbot+ae590932da6e45d6564d@syzkaller.appspotmail.com>
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> ---
->  kernel/power/user.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/kernel/power/user.c b/kernel/power/user.c
-> index 75c959d..abd2255 100644
-> --- a/kernel/power/user.c
-> +++ b/kernel/power/user.c
-> @@ -186,6 +186,11 @@ static ssize_t snapshot_write(struct file *filp, const char __user *buf,
->  		res = PAGE_SIZE - pg_offp;
->  	}
->  
-> +	if (!data_of(data->handle)) {
-> +		res = -EINVAL;
-> +		goto unlock;
-> +	}
-> +
->  	res = simple_write_to_buffer(data_of(data->handle), res, &pg_offp,
->  			buf, count);
->  	if (res > 0)
-> 
+> 在 2018/5/24 15:45, Rafael J. Wysocki 写道:
+> > On Thu, May 24, 2018 at 8:43 AM, Kevin Wangtao
+> > <kevin.wangtao@hisilicon.com> wrote:
+> >> consider such situation, current user_policy.min is 1000000,
+> >> current user_policy.max is 1200000, in cpufreq_set_policy,
+> >> other driver may update policy.min to 1200000, policy.max to
+> >> 1300000. After that, If we input "echo 1300000 > scaling_min_freq",
+> >> then user_policy.min will be 1300000, and user_policy.max is
+> >> still 1200000, because the input value is checked with policy.max
+> >> not user_policy.max. if we get all related cpus offline and
+> >> online again, it will cause cpufreq_init_policy fail because
+> >> user_policy.min is higher than user_policy.max.
+> > 
+> > How do you reproduce this, exactly?
+>
+> I can also reproduce this issue with upstream code, write max frequency to scaling_max_freq
+> and scaling_min_freq, run benchmark to let cpu cooling take effect to clip freq, then write
+> the cliped freq to scaling_max_freq, thus user_policy.min is still max frequency but user_policy.max
+> is cliped freq which is lower than max frequency.
 
-Applied, thanks!
+OK, this is a bit more convincing.
+
+It looks like bad interaction between cpufreq_update_policy() and updates of
+the limits via sysfs.
