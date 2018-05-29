@@ -1,82 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935173AbeE2Oa5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:30:57 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43026 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934533AbeE2Oav (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:30:51 -0400
-X-Google-Smtp-Source: AB8JxZrqk/g5GVYaAwO/k9hVit7X5Gx0Epw7SvPCGd7VzyPRMMqxbvwuTn4na+/HipvQIdhjhB2jaA==
-Date: Tue, 29 May 2018 16:30:47 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] display: panel: Add KOE tx14d24vm1bpa display
- support (320x240)
-Message-ID: <20180529143047.GB22634@ulmo>
-References: <20180412143715.6828-1-lukma@denx.de>
- <20180509154338.2841-1-lukma@denx.de>
- <20180519130533.2494bceb@jawa>
- <20180528095519.799adadc@jawa>
+        id S935250AbeE2ObJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:31:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33088 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934857AbeE2ObF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:31:05 -0400
+Date: Tue, 29 May 2018 16:31:02 +0200
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH] KVM: VMX: Optimize tscdeadline timer latency
+Message-ID: <20180529143102.GC7819@flask>
+References: <1527576797-5738-1-git-send-email-wanpengli@tencent.com>
+ <20180529142324.GA7819@flask>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180528095519.799adadc@jawa>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180529142324.GA7819@flask>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-05-29 16:23+0200, Radim Krčmář:
+> 2018-05-29 14:53+0800, Wanpeng Li:
+> > From: Wanpeng Li <wanpengli@tencent.com>
+> > 
+> > 'Commit d0659d946be0 ("KVM: x86: add option to advance tscdeadline 
+> > hrtimer expiration")' advances the tscdeadline (the timer is emulated 
+> > by hrtimer) expiration in order that the latency which is incurred 
+> > by hypervisor (apic_timer_fn -> vmentry) can be avoided. This patch 
+> > adds the advance tscdeadline expiration support to which the tscdeadline 
+> > timer is emulated by VMX preemption timer to reduce the hypervisor 
+> > lantency (handle_preemption_timer -> vmentry). clockevents infrastruture 
+> > can program minimum delay if hrtimer feeds a expiration in the past, 
+> > we set delta_tsc to 1(which will be converted to 0 before vmentry) 
+> > which can lead to an immediately vmexit when delta_tsc is not bigger 
+> > than advance ns. 
+> > 
+> > This patch can reduce ~63% latency (~4450 cycles to ~1660 cycles on 
+> > a haswell desktop) for kvm-unit-tests/tscdeadline_latency when testing
+> > busy waits.
+> > 
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Radim Krčmář <rkrcmar@redhat.com>
+> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > ---
+> > diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> > @@ -12444,6 +12444,12 @@ static int vmx_set_hv_timer(struct kvm_vcpu *vcpu, u64 guest_deadline_tsc)
+> >  	tscl = rdtsc();
+> >  	guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
+> >  	delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
+> > +	lapic_timer_advance_cycles = nsec_to_cycles(vcpu, lapic_timer_advance_ns);
+> > +	if (delta_tsc > lapic_timer_advance_cycles)
+> > +		delta_tsc -= lapic_timer_advance_cycles;
+> > +	else
+> > +		delta_tsc = 1;
+> 
+> Why don't we just "return 1" to say that the timer has expired?
 
---p4qYPpj5QlsIQJ0K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, May 28, 2018 at 09:55:19AM +0200, Lukasz Majewski wrote:
-> Hi,
->=20
-> > Hi Thierry,
-> >=20
-> > > This commit adds support for KOE's 5.7" display.
-> > >  =20
-> >=20
-> > Thierry, shall I perform some more work on this code, or is it
-> > eligible for applying to your tree?
->=20
-> Gentle ping. If Thierry is overworked - maybe there is a co-maintainer
-> so he/she could apply this patch?
-
-Please use the proper prefix for the commit subject to increase the
-chances of this being noticed.
-
-This is also still missing a Reviewed-by or Acked-by from Rob.
-
-Thierry
-
---p4qYPpj5QlsIQJ0K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsNZBcACgkQ3SOs138+
-s6GnfQ//VHE9F4PXqAaNTI/1z/+qhaIC6w5Mo6gMXd5k1OyUZQmi50PrgFFlhB6u
-rJ0dIxke6ufh7MaFvJ7Yxat5au/Q7cVwJud5c4IRC43HXCHHv1mkOBkWVR+stJ9y
-atXbCd0INbIU+mBvLJY+QK90G9wdEX5d/BZJgW8qvodUwXnZ6lPmvzQbMdnd1C4r
-zbh1XfgUf6cyzoJqs4zUk7oXwGiwXLyJY/w3un5QdhKAb8GSjQle1AnO/ERWxQmG
-1FtlYh0FanRNC/14jRb4gZTDvrKxtP/p1wNm9Th0Jn5IBbfSWU/HW9vZFh+oJ798
-Cql19SXQ9CewGkCjGjEuVOyiBnqJIUwiCHtEZZtqHRAomX7hFcj9c6Ab6kXbRA0j
-PYfx69YV6+kHX8feeRMfvn/N50Y8GfaqUT+wq1pDxobGd6jT1iz/icPLtqw4JaIh
-HOWROqkIVUPbtkjNk4i0NNlnoEyw1LdjiFHlRtBMYgOdp+2FjopmzY3i/RQWpWmY
-e2LILDSuEjnpkex9OGqEpLMTpfyCSGYZb/49yGGsY8lCS+VtwWrGSY1/YRVNvKUU
-ZQHGPO1kWuueUb2/LlCvSXiJRrhCJOHDPuLQhMFLxysDrsCAXX3yBDHPM9lJOOsw
-Sg5QzthVtMB6imjkY2Q4c/Z/SNnAc2H22zPuU3uqu9kC311nPOg=
-=WCqz
------END PGP SIGNATURE-----
-
---p4qYPpj5QlsIQJ0K--
+This case might be rare, so setting delta_tsc = 0 would be safer.
