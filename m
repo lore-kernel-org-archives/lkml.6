@@ -1,125 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754595AbeE2GSb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 02:18:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50898 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751800AbeE2GS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 02:18:27 -0400
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com, jasowang@redhat.com
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net] vhost_net: flush batched heads before trying to busy polling
-Date: Tue, 29 May 2018 14:18:19 +0800
-Message-Id: <1527574699-13047-1-git-send-email-jasowang@redhat.com>
+        id S1754647AbeE2GSo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 02:18:44 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:53803 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751800AbeE2GSj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 02:18:39 -0400
+Subject: Re: [PATCH v2] media: staging: tegra-vde: Reset memory client
+To: Dmitry Osipenko <digetx@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20180526142755.22966-1-digetx@gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <87260ffb-545f-4b2c-450f-25091d028187@xs4all.nl>
+Date: Tue, 29 May 2018 08:18:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20180526142755.22966-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGFwoS4QrU3eI9p1VrMjdjeNp7BvzLJOJ3EhJAjrIq20Oq7QQ8ZBMGnJt5b/pee0uH5cxm6tgZWtPtnki4lrEWz4HFYCiGZ/5Oij/LndrnI4Shp0Qv52
+ xCV4Q7RsFXZARcoZrQOiWWP7WqkSAlbG8eQ+WlCqdythJ/DU7DMWN6rujjd8Exp0xuCAJuwLWnaB94kZyDEiwuTs6xx5iu+ZWJ5b39tfuz2Vn7cFnIPdcMHm
+ HPfaO+4GbVl8wDviX8uL41O7qbdTl2qvByVfg5RCFfpIbOiDvwrsO0wTiS0R1vUAaB3iXuMHLYK5ffBSZHlN/3yBoL12IV1uG58bHll/dSA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After commit e2b3b35eb989 ("vhost_net: batch used ring update in rx"),
-we tend to batch updating used heads. But it doesn't flush batched
-heads before trying to do busy polling, this will cause vhost to wait
-for guest TX which waits for the used RX. Fixing by flush batched
-heads before busy loop.
+Hi Dmitry,
 
-1 byte TCP_RR performance recovers from 13107.83 to 50402.65.
+On 05/26/2018 04:27 PM, Dmitry Osipenko wrote:
+> DMA requests must be blocked before resetting VDE HW, otherwise it is
+> possible to get a memory corruption or a machine hang. Use the reset
+> control provided by the Memory Controller to block DMA before resetting
+> the VDE HW.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+> 
+> Changelog:
+> 
+> v2:
+> 	- Reset HW even if Memory Client resetting fails.
 
-Fixes: e2b3b35eb989 ("vhost_net: batch used ring update in rx")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c | 37 ++++++++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 13 deletions(-)
+Please note that v1 has already been merged, so if you can make a v3 rebased
+on top of the latest media_tree master branch, then I'll queue that up for
+4.18.
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 986058a..eeaf673 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -105,7 +105,9 @@ struct vhost_net_virtqueue {
- 	/* vhost zerocopy support fields below: */
- 	/* last used idx for outstanding DMA zerocopy buffers */
- 	int upend_idx;
--	/* first used idx for DMA done zerocopy buffers */
-+	/* For TX, first used idx for DMA done zerocopy buffers
-+	 * For RX, number of batched heads
-+	 */
- 	int done_idx;
- 	/* an array of userspace buffers info */
- 	struct ubuf_info *ubuf_info;
-@@ -626,6 +628,18 @@ static int sk_has_rx_data(struct sock *sk)
- 	return skb_queue_empty(&sk->sk_receive_queue);
- }
- 
-+static void vhost_rx_signal_used(struct vhost_net_virtqueue *nvq)
-+{
-+	struct vhost_virtqueue *vq = &nvq->vq;
-+	struct vhost_dev *dev = vq->dev;
-+
-+	if (!nvq->done_idx)
-+		return;
-+
-+	vhost_add_used_and_signal_n(dev, vq, vq->heads, nvq->done_idx);
-+	nvq->done_idx = 0;
-+}
-+
- static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk)
- {
- 	struct vhost_net_virtqueue *rvq = &net->vqs[VHOST_NET_VQ_RX];
-@@ -635,6 +649,8 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk)
- 	int len = peek_head_len(rvq, sk);
- 
- 	if (!len && vq->busyloop_timeout) {
-+		/* Flush batched heads first */
-+		vhost_rx_signal_used(rvq);
- 		/* Both tx vq and rx socket were polled here */
- 		mutex_lock_nested(&vq->mutex, 1);
- 		vhost_disable_notify(&net->dev, vq);
-@@ -762,7 +778,7 @@ static void handle_rx(struct vhost_net *net)
- 	};
- 	size_t total_len = 0;
- 	int err, mergeable;
--	s16 headcount, nheads = 0;
-+	s16 headcount;
- 	size_t vhost_hlen, sock_hlen;
- 	size_t vhost_len, sock_len;
- 	struct socket *sock;
-@@ -790,8 +806,8 @@ static void handle_rx(struct vhost_net *net)
- 	while ((sock_len = vhost_net_rx_peek_head_len(net, sock->sk))) {
- 		sock_len += sock_hlen;
- 		vhost_len = sock_len + vhost_hlen;
--		headcount = get_rx_bufs(vq, vq->heads + nheads, vhost_len,
--					&in, vq_log, &log,
-+		headcount = get_rx_bufs(vq, vq->heads + nvq->done_idx,
-+					vhost_len, &in, vq_log, &log,
- 					likely(mergeable) ? UIO_MAXIOV : 1);
- 		/* On error, stop handling until the next kick. */
- 		if (unlikely(headcount < 0))
-@@ -862,12 +878,9 @@ static void handle_rx(struct vhost_net *net)
- 			vhost_discard_vq_desc(vq, headcount);
- 			goto out;
- 		}
--		nheads += headcount;
--		if (nheads > VHOST_RX_BATCH) {
--			vhost_add_used_and_signal_n(&net->dev, vq, vq->heads,
--						    nheads);
--			nheads = 0;
--		}
-+		nvq->done_idx += headcount;
-+		if (nvq->done_idx > VHOST_RX_BATCH)
-+			vhost_rx_signal_used(nvq);
- 		if (unlikely(vq_log))
- 			vhost_log_write(vq, vq_log, log, vhost_len);
- 		total_len += vhost_len;
-@@ -878,9 +891,7 @@ static void handle_rx(struct vhost_net *net)
- 	}
- 	vhost_net_enable_vq(net, vq);
- out:
--	if (nheads)
--		vhost_add_used_and_signal_n(&net->dev, vq, vq->heads,
--					    nheads);
-+	vhost_rx_signal_used(nvq);
- 	mutex_unlock(&vq->mutex);
- }
- 
--- 
-2.7.4
+Regards,
+
+	Hans
+> 
+>  drivers/staging/media/tegra-vde/tegra-vde.c | 35 +++++++++++++++++++--
+>  1 file changed, 33 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+> index 90177a59b97c..6f06061a40d9 100644
+> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
+> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+> @@ -73,6 +73,7 @@ struct tegra_vde {
+>  	struct mutex lock;
+>  	struct miscdevice miscdev;
+>  	struct reset_control *rst;
+> +	struct reset_control *rst_mc;
+>  	struct gen_pool *iram_pool;
+>  	struct completion decode_completion;
+>  	struct clk *clk;
+> @@ -850,9 +851,23 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  	 * We rely on the VDE registers reset value, otherwise VDE
+>  	 * causes bus lockup.
+>  	 */
+> +	ret = reset_control_assert(vde->rst_mc);
+> +	if (ret) {
+> +		dev_err(dev, "DEC start: Failed to assert MC reset: %d\n",
+> +			ret);
+> +		goto put_runtime_pm;
+> +	}
+> +
+>  	ret = reset_control_reset(vde->rst);
+>  	if (ret) {
+> -		dev_err(dev, "Failed to reset HW: %d\n", ret);
+> +		dev_err(dev, "DEC start: Failed to reset HW: %d\n", ret);
+> +		goto put_runtime_pm;
+> +	}
+> +
+> +	ret = reset_control_deassert(vde->rst_mc);
+> +	if (ret) {
+> +		dev_err(dev, "DEC start: Failed to deassert MC reset: %d\n",
+> +			ret);
+>  		goto put_runtime_pm;
+>  	}
+>  
+> @@ -880,9 +895,18 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+>  		ret = timeout;
+>  	}
+>  
+> +	/*
+> +	 * At first reset memory client to avoid resetting VDE HW in the
+> +	 * middle of DMA which could result into memory corruption or hang
+> +	 * the whole system.
+> +	 */
+> +	err = reset_control_assert(vde->rst_mc);
+> +	if (err)
+> +		dev_err(dev, "DEC end: Failed to assert MC reset: %d\n", err);
+> +
+>  	err = reset_control_assert(vde->rst);
+>  	if (err)
+> -		dev_err(dev, "Failed to assert HW reset: %d\n", err);
+> +		dev_err(dev, "DEC end: Failed to assert HW reset: %d\n", err);
+>  
+>  put_runtime_pm:
+>  	pm_runtime_mark_last_busy(dev);
+> @@ -1074,6 +1098,13 @@ static int tegra_vde_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> +	vde->rst_mc = devm_reset_control_get_optional(dev, "mc");
+> +	if (IS_ERR(vde->rst_mc)) {
+> +		err = PTR_ERR(vde->rst_mc);
+> +		dev_err(dev, "Could not get MC reset %d\n", err);
+> +		return err;
+> +	}
+> +
+>  	irq = platform_get_irq_byname(pdev, "sync-token");
+>  	if (irq < 0)
+>  		return irq;
+> 
