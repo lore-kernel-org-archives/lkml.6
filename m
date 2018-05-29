@@ -1,75 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934834AbeE2NTG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:19:06 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60954 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934754AbeE2NS4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:18:56 -0400
-Message-ID: <d72a1651f7b00c06dfcd8e8973293b93298a20ca.camel@collabora.com>
-Subject: Re: [PATCH v10 01/16] videobuf2: Make struct vb2_buffer refcounted
-From: Ezequiel Garcia <ezequiel@collabora.com>
-To: sathyam panda <panda.sathyam9@gmail.com>
-Cc: linux-media@vger.kernel.org, kernel@collabora.com,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-Date: Tue, 29 May 2018 10:17:25 -0300
-In-Reply-To: <CAE6UAyx81nZDQEHuNn0BK5EkB-KmNdSnkiNF+NJTmiUkz72CrA@mail.gmail.com>
-References: <20180521165946.11778-1-ezequiel@collabora.com>
-         <20180521165946.11778-2-ezequiel@collabora.com>
-         <CAE6UAyx81nZDQEHuNn0BK5EkB-KmNdSnkiNF+NJTmiUkz72CrA@mail.gmail.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        id S934395AbeE2NSw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:18:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40200 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933865AbeE2NSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:18:48 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>, austinwc@codeaurora.org,
+        tnowicki@caviumnetworks.com, Palmer Dabbelt <palmer@sifive.com>,
+        Will Deacon <Will.Deacon@arm.com>, linux-riscv@lists.infradead.org,
+        Morten.Rasmussen@arm.com, vkilari@codeaurora.org,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, jhugo@codeaurora.org,
+        Al Stone <ahs3@redhat.com>, Len Brown <lenb@kernel.org>,
+        John Garry <john.garry@huawei.com>, wangxiongfeng2@huawei.com,
+        Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v9 00/12] Support PPTT for ARM64
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20180511235807.30834-1-jeremy.linton@arm.com>
+ <20180517170523.h7tuvbzdfluuidcz@armageddon.cambridge.arm.com>
+ <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com>
+ <09fb3fe7-d703-43f1-74f7-f8cb5ff1f67a@arm.com>
+ <CAMuHMdXgiMeD4uF+j8W+CpNwYYK2W_8xqk_=vGBiW=bUvKeq7w@mail.gmail.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <551905a6-eaa8-97df-06ec-1ceedfbc164f@arm.com>
+Date: Tue, 29 May 2018 14:18:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXgiMeD4uF+j8W+CpNwYYK2W_8xqk_=vGBiW=bUvKeq7w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-05-25 at 12:11 +0530, sathyam panda wrote:
-> Hello,
+
+
+On 29/05/18 12:56, Geert Uytterhoeven wrote:
+> Hi Sudeep,
 > 
-> On 5/21/18, Ezequiel Garcia <ezequiel@collabora.com> wrote:
-> > The in-fence implementation involves having a per-buffer fence callback,
-> > that triggers on the fence signal. The fence callback is called
-> > asynchronously
-> > and needs a valid reference to the associated ideobuf2 buffer.
-> > 
-> > Allow this by making the vb2_buffer refcounted, so it can be passed
-> > to other contexts.
-> > 
+> On Tue, May 29, 2018 at 1:14 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>> On 29/05/18 11:48, Geert Uytterhoeven wrote:
+>>> On Thu, May 17, 2018 at 7:05 PM, Catalin Marinas
+>>> <catalin.marinas@arm.com> wrote:
+>>>> On Fri, May 11, 2018 at 06:57:55PM -0500, Jeremy Linton wrote:
+>>>>> Jeremy Linton (12):
+>>>>>   drivers: base: cacheinfo: move cache_setup_of_node()
+>>>>>   drivers: base: cacheinfo: setup DT cache properties early
+>>>>>   cacheinfo: rename of_node to fw_token
+>>>>>   arm64/acpi: Create arch specific cpu to acpi id helper
+>>>>>   ACPI/PPTT: Add Processor Properties Topology Table parsing
+>>>>>   ACPI: Enable PPTT support on ARM64
+>>>>>   drivers: base cacheinfo: Add support for ACPI based firmware tables
+>>>>>   arm64: Add support for ACPI based firmware tables
+>>>>>   arm64: topology: rename cluster_id
+>>>>>   arm64: topology: enable ACPI/PPTT based CPU topology
+>>>>>   ACPI: Add PPTT to injectable table list
+>>>>>   arm64: topology: divorce MC scheduling domain from core_siblings
+>>>>
+>>>> Queued for 4.18 (without Sudeep's latest property_read_u64 cacheinfo
+>>>> patch - http://lkml.kernel.org/r/20180517154701.GA20281@e107155-lin; I
+>>>> can add it separately).
+>>>
+>>> This is now commit 37c3ec2d810f87ea ("arm64: topology: divorce MC
+>>> scheduling domain from core_siblings") in arm64/for-next/core, causing
+>>> system suspend on big.LITTLE systems to hang after shutting down the first
+>>> CPU:
+>>>
+>>>     $ echo mem > /sys/power/state
+>>>     PM: suspend entry (deep)
+>>>     PM: Syncing filesystems ... done.
+>>>     Freezing user space processes ... (elapsed 0.001 seconds) done.
+>>>     OOM killer disabled.
+>>>     Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+>>>     Disabling non-boot CPUs ...
+>>>     CPU1: shutdown
+>>>     psci: CPU1 killed.
+>>>
+>>
+>> Is it OK to assume the suspend failed just after shutting down one CPU
+>> or it's failing during resume ? It depends on whether you had console
+>> disabled or not.
 > 
-> -Is it really required, because when a queued buffer with an in_fence
-> is deallocated, firstly queue is cancelled.
-> -And __vb2_dqbuf is called which calls dma_fence_remove_callback.
-> -So if fence callback has been called -__vb2_dqbuf will wait to
-> acquire fence lock.
-> -So during execution of fence callback, buffers and queue are still valid.
-> -And if __vb2_dqbuf remove callback first ,then dma_fence_signal will
-> wait for lock
-> - so there won't be any fence callback to call for that buffer when
-> dma_fence_signal resumes.
+> I have no-console-suspend enabled.
+> It's failing during suspend, the next lines should be:
+> 
+>     CPU2: shutdown
+>     psci: CPU2 killed.
+>     ...
 > 
 
-Hi Sathyam,
+OK, I was hoping to be something during resume as this patch has nothing
+executed during suspend. Do you see any change in topology before and
+after this patch applied. I am interested in the output of:
 
-Thanks for your review! The refcount is definitely required,
-as the fence callback only schedules a workqueue, which is
-completely asynchronous with respect to the rest of the
-ioctls.
+$ grep "" /sys/devices/system/cpu/cpu*/topology/*
 
-In particular, the workqueue is not synchronized with
-vb2_core_queue_release.
+>>> For me, it fails on the following big.LITTLE systems:
+>>>
+>>>     R-Car H3 ES2.0 (4xCA57 + 4xCA53)
+>>>     R-Car M3-W (2xCA57 + 4xCA53)
+>>>
+>>
+>> Interesting, is it PSCI based system suspend ?
+> 
+> Yes it is.
+> 
+> Suspend-to-idle, which doesn't offline CPUs, still works.
+> 
 
-Also, another subtle detail, dma_fence_remove_callback
-can fail to remove the callback.
+>From DT, I guess this platform doesn't have any idle states.
+Does this use genpd power domains ? I see power-domains in the DT, so
+asking to get more info. Do you have any out of tree patches especially
+if they are depending on some topology cpumasks ?
 
-Thanks,
-Eze
+>>> System supend still works fine on systems with big cores only:
+>>>
+>>>     R-Car H3 ES1.0 (4xCA57 (4xCA53 disabled in firmware))
+>>>     R-Car M3-N (2xCA57)
+>>>
+>>> Reverting this commit fixes the issue for me.
+>>
+>> I can't find anything that relates to system suspend in these patches
+>> unless they are messing with something during CPU hot plug-in back
+>> during resume.
+> 
+> It's only the last patch that introduces the breakage.
+> 
+
+As specified in the commit log, it won't change any behavior for DT
+systems if it's non-NUMA or single node system. So I am still wondering
+what could trigger this regression.
+
+-- 
+Regards,
+Sudeep
