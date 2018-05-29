@@ -1,75 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934658AbeE2OBC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:01:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36598 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934764AbeE2N7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:59:37 -0400
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Gerd Hoffmann <kraxel@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK),
-        linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING
-        FRAMEWORK),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] dma-buf: make map_atomic and map function pointers optional
-Date: Tue, 29 May 2018 15:59:18 +0200
-Message-Id: <20180529135918.19729-1-kraxel@redhat.com>
+        id S934764AbeE2OCf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:02:35 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60757 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933858AbeE2OCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:02:31 -0400
+Date: Tue, 29 May 2018 16:02:19 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] rtc: sun6i: Fix bit_idx value for clk_register_gate
+Message-ID: <20180529140219.auat656qcl5jdru7@flea.home>
+References: <20180528075032.6769-1-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180528075032.6769-1-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So drivers don't need dummy functions just returning NULL.
+Hi,
 
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- include/linux/dma-buf.h   | 4 ++--
- drivers/dma-buf/dma-buf.c | 4 ++++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+On Mon, May 28, 2018 at 01:20:32PM +0530, Jagan Teki wrote:
+> From: Michael Trimarchi <michael@amarulasolutions.com>
+> 
+> clk-gate core will take bit_idx through clk_register_gate
+> and then do clk_gate_ops by using BIT(bit_idx), but rtc-sun6i
+> is passing bit_idx as BIT(bit_idx) it becomes BIT(BIT(bit_idx)
+> which is wrong and eventually external gate clock is not enabling.
+> 
+> This patch fixed by passing bit index and the original change
+> introduced from below commit.
+> "rtc: sun6i: Add support for the external oscillator gate"
+> (sha1: 	17ecd246414b3a0fe0cb248c86977a8bda465b7b)
+> 
+> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-index 085db2fee2..88917fa796 100644
---- a/include/linux/dma-buf.h
-+++ b/include/linux/dma-buf.h
-@@ -39,12 +39,12 @@ struct dma_buf_attachment;
- 
- /**
-  * struct dma_buf_ops - operations possible on struct dma_buf
-- * @map_atomic: maps a page from the buffer into kernel address
-+ * @map_atomic: [optional] maps a page from the buffer into kernel address
-  *		space, users may not block until the subsequent unmap call.
-  *		This callback must not sleep.
-  * @unmap_atomic: [optional] unmaps a atomically mapped page from the buffer.
-  *		  This Callback must not sleep.
-- * @map: maps a page from the buffer into kernel address space.
-+ * @map: [optional] maps a page from the buffer into kernel address space.
-  * @unmap: [optional] unmaps a page from the buffer.
-  * @vmap: [optional] creates a virtual mapping for the buffer into kernel
-  *	  address space. Same restrictions as for vmap and friends apply.
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index d78d5fc173..4c45e31258 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -872,6 +872,8 @@ void *dma_buf_kmap_atomic(struct dma_buf *dmabuf, unsigned long page_num)
- {
- 	WARN_ON(!dmabuf);
- 
-+	if (!dmabuf->ops->map_atomic)
-+		return NULL;
- 	return dmabuf->ops->map_atomic(dmabuf, page_num);
- }
- EXPORT_SYMBOL_GPL(dma_buf_kmap_atomic);
-@@ -907,6 +909,8 @@ void *dma_buf_kmap(struct dma_buf *dmabuf, unsigned long page_num)
- {
- 	WARN_ON(!dmabuf);
- 
-+	if (!dmabuf->ops->map)
-+		return NULL;
- 	return dmabuf->ops->map(dmabuf, page_num);
- }
- EXPORT_SYMBOL_GPL(dma_buf_kmap);
+Cc'ing to stable and adding a Fixes tag would be great.
+
+> ---
+>  drivers/rtc/rtc-sun6i.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+> index 2e6fb275acc8..a66f40c96582 100644
+> --- a/drivers/rtc/rtc-sun6i.c
+> +++ b/drivers/rtc/rtc-sun6i.c
+> @@ -74,7 +74,7 @@
+>  #define SUN6I_ALARM_CONFIG_WAKEUP		BIT(0)
+>  
+>  #define SUN6I_LOSC_OUT_GATING			0x0060
+> -#define SUN6I_LOSC_OUT_GATING_EN		BIT(0)
+> +#define SUN6I_LOSC_OUT_GATING_EN		0
+
+All the other register definitions in that driver are the actual value
+needed, and not the offset. Just to make it obvious that it shouldn't
+be used as is, please add an _OFFSET at the end of the defined name
+
+Thanks!
+Maxime
+
 -- 
-2.9.3
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
