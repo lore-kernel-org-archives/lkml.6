@@ -1,98 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936864AbeE2Po3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:44:29 -0400
-Received: from foss.arm.com ([217.140.101.70]:43446 "EHLO foss.arm.com"
+        id S965036AbeE2Pp6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:45:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964812AbeE2PoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:44:17 -0400
-From: Mark Rutland <mark.rutland@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>
-Subject: [PATCHv2 07/16] atomics/alpha: define atomic64_fetch_add_unless()
-Date: Tue, 29 May 2018 16:43:37 +0100
-Message-Id: <20180529154346.3168-8-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180529154346.3168-1-mark.rutland@arm.com>
-References: <20180529154346.3168-1-mark.rutland@arm.com>
+        id S936954AbeE2Ppw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:45:52 -0400
+X-Google-Smtp-Source: ADUXVKIAT7BO6mwsv+vWMqbaEP2d1DyllGzLVV0BOyMGTTzPsNPjjToj3VR+Q96y0eWVglZ8055CZmp1KZN72Y2v5mg=
+MIME-Version: 1.0
+In-Reply-To: <3ef231eb-b6c4-b173-89fe-88e376a30b72@codeaurora.org>
+References: <20180521172714.8551-1-sibis@codeaurora.org> <20180521172714.8551-6-sibis@codeaurora.org>
+ <20180522155626.GA2744@rob-hp-laptop> <3ef231eb-b6c4-b173-89fe-88e376a30b72@codeaurora.org>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 29 May 2018 10:45:30 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq++NFBfjhirWXAengow5K0ZRz7Qm2P+RGi+jQkVxJ9vNQ@mail.gmail.com>
+Message-ID: <CAL_Jsq++NFBfjhirWXAengow5K0ZRz7Qm2P+RGi+jQkVxJ9vNQ@mail.gmail.com>
+Subject: Re: [PATCH v5 5/8] dt-bindings: remoteproc: Add Q6v5 Modem PIL
+ binding for SDM845
+To: Sibi S <sibis@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM"
+        <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>,
+        Kyle Yan <kyan@codeaurora.org>, Sricharan <sricharan@codeaurora.org>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Trilok Soni <tsoni@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a step towards unifying the atomic/atomic64/atomic_long APIs, this
-patch converts the arch/alpha implementation of atomic64_add_unless() into
-an implementation of atomic64_fetch_add_unless().
+On Tue, May 29, 2018 at 9:37 AM, Sibi S <sibis@codeaurora.org> wrote:
+> Hi Rob,
+> Will send it out again.
 
-A wrapper in <linux/atomic.h> will build atomic_add_unless() atop of
-this, provided it is given a preprocessor definition.
+Please don't top post on mail lists.
 
-No functional change is intended as a result of this patch.
+You don't need to resend *just* to add tags. A new version just needs
+them because maintainers aren't going to go search through your prior
+versions for you to add them. But my mentioning it should be enough.
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
----
- arch/alpha/include/asm/atomic.h | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/arch/alpha/include/asm/atomic.h b/arch/alpha/include/asm/atomic.h
-index 4a800a3424a3..dcb7bbeeae02 100644
---- a/arch/alpha/include/asm/atomic.h
-+++ b/arch/alpha/include/asm/atomic.h
-@@ -238,35 +238,36 @@ static __inline__ int atomic_fetch_add_unless(atomic_t *v, int a, int u)
- #define atomic_fetch_add_unless atomic_fetch_add_unless
- 
- /**
-- * atomic64_add_unless - add unless the number is a given value
-+ * atomic64_fetch_add_unless - add unless the number is a given value
-  * @v: pointer of type atomic64_t
-  * @a: the amount to add to v...
-  * @u: ...unless v is equal to u.
-  *
-  * Atomically adds @a to @v, so long as it was not @u.
-- * Returns true iff @v was not @u.
-+ * Returns the old value of @v.
-  */
--static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
-+static __inline__ int atomic64_fetch_add_unless(atomic64_t *v, long a, long u)
- {
--	long c, tmp;
-+	long c, new, old;
- 	smp_mb();
- 	__asm__ __volatile__(
--	"1:	ldq_l	%[tmp],%[mem]\n"
--	"	cmpeq	%[tmp],%[u],%[c]\n"
--	"	addq	%[tmp],%[a],%[tmp]\n"
-+	"1:	ldq_l	%[old],%[mem]\n"
-+	"	cmpeq	%[old],%[u],%[c]\n"
-+	"	addq	%[old],%[a],%[new]\n"
- 	"	bne	%[c],2f\n"
--	"	stq_c	%[tmp],%[mem]\n"
--	"	beq	%[tmp],3f\n"
-+	"	stq_c	%[new],%[mem]\n"
-+	"	beq	%[new],3f\n"
- 	"2:\n"
- 	".subsection 2\n"
- 	"3:	br	1b\n"
- 	".previous"
--	: [tmp] "=&r"(tmp), [c] "=&r"(c)
-+	: [old] "=&r"(old), [new] "=&r"(new), [c] "=&r"(c)
- 	: [mem] "m"(*v), [a] "rI"(a), [u] "rI"(u)
- 	: "memory");
- 	smp_mb();
--	return !c;
-+	return old;
- }
-+#define atomic64_fetch_add_unless atomic64_fetch_add_unless
- 
- /*
-  * atomic64_dec_if_positive - decrement by 1 if old value positive
--- 
-2.11.0
+Rob
