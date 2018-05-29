@@ -1,122 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966492AbeE2Tmt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:42:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:26538 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965980AbeE2Tmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:42:47 -0400
-Date: Tue, 29 May 2018 13:42:44 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Auger Eric <eric.auger@redhat.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, kvm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        id S966450AbeE2Tu4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:50:56 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:47990 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965980AbeE2Tuz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 15:50:55 -0400
+Subject: Re: [PATCH 4.9 000/329] 4.9.104-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] vfio: platform: Fix using devices in PM Domains
-Message-ID: <20180529134244.40f7f6f4@w520.home>
-In-Reply-To: <8bcadbb5-064c-0ad2-30a2-4aeec6253dd1@redhat.com>
-References: <1527614128-30196-1-git-send-email-geert+renesas@glider.be>
-        <8bcadbb5-064c-0ad2-30a2-4aeec6253dd1@redhat.com>
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20180528100241.796630982@linuxfoundation.org>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <0dd04abb-0295-b4c7-2500-99e39867d0dc@kernel.org>
+Date: Tue, 29 May 2018 13:50:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180528100241.796630982@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 May 2018 21:06:08 +0200
-Auger Eric <eric.auger@redhat.com> wrote:
+On 05/28/2018 03:58 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.104 release.
+> There are 329 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed May 30 10:00:51 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.104-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-> Hi,
-> On 05/29/2018 07:15 PM, Geert Uytterhoeven wrote:
-> > If a device is part of a PM Domain (e.g. power and/or clock domain), its
-> > power state is managed using Runtime PM.  Without Runtime PM, the device
-> > may not be powered up or clocked, causing subtle failures, crashes, or
-> > system lock-ups when the device is accessed by the guest.
-> > 
-> > Fix this by adding Runtime PM support, powering the device when the VFIO
-> > device is opened by the guest.
-> > 
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>  
-> Acked-by: Eric Auger <eric.auger@redhat.com>
+Compiled and booted on my test system. No dmesg regressions.
 
-Looks ok to me too, applied with Eric's ack to vfio next branch for
-v4.18.  Thanks,
-
-Alex
-
-> > ---
-> > Against linux-vfio/next
-> > 
-> > v4:
-> >   - Keep device powered while issuing reset,
-> > 
-> > v3:
-> >   - Drop controversial note about unsafeness of exporting fine-grained
-> >     power management from host to guest,
-> > 
-> > v2:
-> >   - Improve wording,
-> >   - Add Reviewed-by.
-> > ---
-> >  drivers/vfio/platform/vfio_platform_common.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-> > index b60bb5326668498c..c0cd824be2b767be 100644
-> > --- a/drivers/vfio/platform/vfio_platform_common.c
-> > +++ b/drivers/vfio/platform/vfio_platform_common.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/iommu.h>
-> >  #include <linux/module.h>
-> >  #include <linux/mutex.h>
-> > +#include <linux/pm_runtime.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/types.h>
-> >  #include <linux/uaccess.h>
-> > @@ -239,6 +240,7 @@ static void vfio_platform_release(void *device_data)
-> >  				 ret, extra_dbg ? extra_dbg : "");
-> >  			WARN_ON(1);
-> >  		}
-> > +		pm_runtime_put(vdev->device);
-> >  		vfio_platform_regions_cleanup(vdev);
-> >  		vfio_platform_irq_cleanup(vdev);
-> >  	}
-> > @@ -269,6 +271,10 @@ static int vfio_platform_open(void *device_data)
-> >  		if (ret)
-> >  			goto err_irq;
-> >  
-> > +		ret = pm_runtime_get_sync(vdev->device);
-> > +		if (ret < 0)
-> > +			goto err_pm;
-> > +
-> >  		ret = vfio_platform_call_reset(vdev, &extra_dbg);
-> >  		if (ret && vdev->reset_required) {
-> >  			dev_warn(vdev->device, "reset driver is required and reset call failed in open (%d) %s\n",
-> > @@ -283,6 +289,8 @@ static int vfio_platform_open(void *device_data)
-> >  	return 0;
-> >  
-> >  err_rst:
-> > +	pm_runtime_put(vdev->device);
-> > +err_pm:
-> >  	vfio_platform_irq_cleanup(vdev);
-> >  err_irq:
-> >  	vfio_platform_regions_cleanup(vdev);
-> > @@ -690,6 +698,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
-> >  
-> >  	mutex_init(&vdev->igate);
-> >  
-> > +	pm_runtime_enable(vdev->device);
-> >  	return 0;
-> >  
-> >  put_iommu:
-> > @@ -707,6 +716,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
-> >  	vdev = vfio_del_group_dev(dev);
-> >  
-> >  	if (vdev) {
-> > +		pm_runtime_disable(vdev->device);
-> >  		vfio_platform_put_reset(vdev);
-> >  		vfio_iommu_group_put(dev->iommu_group, dev);
-> >  	}
-> >   
+thanks,
+-- Shuah
