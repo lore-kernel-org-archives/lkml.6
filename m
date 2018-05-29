@@ -1,92 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754531AbeE2FyM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 01:54:12 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:39830 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754449AbeE2FyJ (ORCPT
+        id S1754452AbeE2F51 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 01:57:27 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35455 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751852AbeE2F5Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 01:54:09 -0400
-X-Google-Smtp-Source: AB8JxZoqMH1+NJ3wfczhdhgZdHAuSi285CacLMBxtOyMfYuhnQlPSiJ7U9u1FduRzTDwx1WKdHYL6w==
-Date: Mon, 28 May 2018 22:54:05 -0700
-From: Benson Leung <bleung@google.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Thierry Escande <thierry.escande@collabora.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Shawn Nematbakhsh <shawnn@chromium.org>, linux-kernel@vger.kernel.org,
-        bleung@google.com
-Subject: Re: [PATCH] platform: chrome: Add input dependency for tablet switch
- driver
-Message-ID: <20180529055405.GA26811@decatoncale.mtv.corp.google.com>
-References: <20180528155858.2966723-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
-Content-Disposition: inline
-In-Reply-To: <20180528155858.2966723-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 29 May 2018 01:57:24 -0400
+X-Google-Smtp-Source: AB8JxZoc4ZAMWR1kxwcV1KgPy1XRC1QjcoDRFmbmvAhmf+7A7gBG94R0jxexUTKjLydf1bJnUT62eA==
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
+To: jason.wessel@windriver.com, daniel.thompson@linaro.org
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: [PATCH] kdb: prefer strlcpy to strncpy
+Date: Mon, 28 May 2018 22:57:04 -0700
+Message-Id: <1527573427-16569-1-git-send-email-nick.desaulniers@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fixes stringop-truncation and stringop-overflow warnings from gcc-8.
 
---OgqxwSJOaUobr8KG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+---
+ kernel/debug/kdb/kdb_io.c      | 2 +-
+ kernel/debug/kdb/kdb_main.c    | 4 ++--
+ kernel/debug/kdb/kdb_support.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-Hi Arnd,
-
-On Mon, May 28, 2018 at 05:58:46PM +0200, Arnd Bergmann wrote:
-> Without CONFIG_INPUT, or with a modular input layer and built-in
-> tablet driver, we get a link error:
->=20
-> ERROR: "input_event" [drivers/platform/chrome/chromeos_tbmc.ko] undefined!
-> ERROR: "input_register_device" [drivers/platform/chrome/chromeos_tbmc.ko]=
- undefined!
-> ERROR: "input_set_capability" [drivers/platform/chrome/chromeos_tbmc.ko] =
-undefined!
-> ERROR: "devm_input_allocate_device" [drivers/platform/chrome/chromeos_tbm=
-c.ko] undefined!
->=20
-> This adds the corresponding Kconfig dependency
->=20
-> Fixes: b418f74170d7 ("platform: chrome: Add Tablet Switch ACPI driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Thanks for the catch! Applied for 4.18.
-
-Benson
-
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---OgqxwSJOaUobr8KG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlsM6v0ACgkQHwn1ewov
-5liGsRAAsRAnftkMzYqfKc4H+Cy7clolMUffmtFBjco+o8Q/LJDUFh054XP5vLmk
-wbF87OwZPJM8T6zv6A0jNUUuy2Zm34e62dHXIfDYM+kX6Xr+CEO4fccVdHLLmAR/
-BYs3o+g4EUMwirpyd2Uxd/NyIWBx6u5iLDMjjIyddu/iixd59hJ1CrNrWeawn2FL
-vOxWc2fn4Bc95Z6y1eP6R4XGEIpQLN/0RfUh3y8DjjW4yHmKXhWeaDV18jCzwp06
-UmmnHRWMy+TMZmJ01JAvkp3T5iP8Xl+YmRVxu2P+yGmHYvTwG+vOIsJn53h2Hlwg
-x16pc5Qt0cipZYbDMoQpW6eGAjL27k9UEfbVESPPYPxO7cPfAaysCpFgGMbITS6X
-AjAYUNslpbs21LbqvnGW7dB01s2Rmk2oVKdTio57QrY6/33ayiLWqS+wvh3/Gr6m
-bkTC6UHcSGAtnEseKU2MhB3VcxM1lwzrlRqu/8C5eVW/+lA0goU0a/ND7Lmu5+ui
-umYBn19VdmPQvqmrCL9EQS4AI3a7p49/VJOWTm2mt5k5jQzw8u+ixhSmuJplTQFw
-VNsrpj6NojIozOgpDnQR3eyIsPFhGvRY4r6bcZ2tuhkJu/kY19YFguWedjLdnv5G
-xGCYN25792MXIl+Pqat5LVOnzVd/9hY5RTW7vziZSnMNZ887gaw=
-=fgTg
------END PGP SIGNATURE-----
-
---OgqxwSJOaUobr8KG--
+diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
+index ed5d349..b5dfff1 100644
+--- a/kernel/debug/kdb/kdb_io.c
++++ b/kernel/debug/kdb/kdb_io.c
+@@ -443,7 +443,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
+ char *kdb_getstr(char *buffer, size_t bufsize, const char *prompt)
+ {
+ 	if (prompt && kdb_prompt_str != prompt)
+-		strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
++		strlcpy(kdb_prompt_str, prompt, CMD_BUFLEN);
+ 	kdb_printf(kdb_prompt_str);
+ 	kdb_nextline = 1;	/* Prompt and input resets line number */
+ 	return kdb_read(buffer, bufsize);
+diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+index e405677..c30a0d8 100644
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -1103,12 +1103,12 @@ static int handle_ctrl_cmd(char *cmd)
+ 	case CTRL_P:
+ 		if (cmdptr != cmd_tail)
+ 			cmdptr = (cmdptr-1) % KDB_CMD_HISTORY_COUNT;
+-		strncpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
++		strlcpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+ 		return 1;
+ 	case CTRL_N:
+ 		if (cmdptr != cmd_head)
+ 			cmdptr = (cmdptr+1) % KDB_CMD_HISTORY_COUNT;
+-		strncpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
++		strlcpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+ 		return 1;
+ 	}
+ 	return 0;
+diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
+index 990b3cc..dcfbf8f 100644
+--- a/kernel/debug/kdb/kdb_support.c
++++ b/kernel/debug/kdb/kdb_support.c
+@@ -236,7 +236,7 @@ int kallsyms_symbol_next(char *prefix_name, int flag)
+ 
+ 	while ((name = kdb_walk_kallsyms(&pos))) {
+ 		if (strncmp(name, prefix_name, prefix_len) == 0) {
+-			strncpy(prefix_name, name, strlen(name)+1);
++			strlcpy(prefix_name, name, prefix_len);
+ 			return 1;
+ 		}
+ 	}
+-- 
+2.7.4
