@@ -1,75 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935348AbeE2ObU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:31:20 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:55969 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934857AbeE2ObP (ORCPT
+        id S935404AbeE2Ob3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:31:29 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39538 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934857AbeE2ObV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:31:15 -0400
-From: Gevorg Sahakyan <Gevorg.Sahakyan@synopsys.com>
-To: William Wu <william.wu@rock-chips.com>,
-        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC: "sergei.shtylyov@cogentembedded.com"
-        <sergei.shtylyov@cogentembedded.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-rockchip@lists.infradead.org"
-        <linux-rockchip@lists.infradead.org>,
-        "frank.wang@rock-chips.com" <frank.wang@rock-chips.com>,
-        "huangtao@rock-chips.com" <huangtao@rock-chips.com>,
-        "dianders@google.com" <dianders@google.com>,
-        "daniel.meng@rock-chips.com" <daniel.meng@rock-chips.com>,
-        "John.Youn@synopsys.com" <John.Youn@synopsys.com>,
-        "wzz@rock-chips.com" <wzz@rock-chips.com>,
-        "zsq@rock-chips.com" <zsq@rock-chips.com>,
-        "Allen.Hsu@quantatw.com" <Allen.Hsu@quantatw.com>,
-        "StanTsui@AOPEN.com" <StanTsui@AOPEN.com>,
-        "Spruce.Wu@quantatw.com" <Spruce.Wu@quantatw.com>,
-        "Martin.Tsai@quantatw.com" <Martin.Tsai@quantatw.com>,
-        "Kevin.Shai@quantatw.com" <Kevin.Shai@quantatw.com>,
-        "Mon-Jer.Wu@quantatw.com" <Mon-Jer.Wu@quantatw.com>,
-        "Claud.Chang@quantatw.com" <Claud.Chang@quantatw.com>,
-        "San.Lin@quantatw.com" <San.Lin@quantatw.com>,
-        "Ren.Kuo@quantatw.com" <Ren.Kuo@quantatw.com>,
-        "davidhtwang@aopen.com" <davidhtwang@AOPEN.com>,
-        "fonglin@aopen.com" <fonglin@AOPEN.com>,
-        "stevencheng@aopen.com" <stevencheng@AOPEN.com>,
-        "tomchen@aopen.com" <tomchen@AOPEN.com>,
-        "donchang@aopen.com" <donchang@AOPEN.com>,
-        "milesschofield@aopen.com" <milesschofield@AOPEN.com>
-Subject: Re: [PATCH v5 0/2] usb: dwc2: fix isoc split in transfer issue
-Thread-Topic: [PATCH v5 0/2] usb: dwc2: fix isoc split in transfer issue
-Thread-Index: AQHT6Q0qsr/2hrCuvkKD/isR8OvB0w==
-Date: Tue, 29 May 2018 14:30:06 +0000
-Message-ID: <3A9D5F5B1BA2034E826C50459B71BE044CB587EA@am04wembxa.internal.synopsys.com>
-References: <1526031992-16565-1-git-send-email-william.wu@rock-chips.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.116.71.36]
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 29 May 2018 10:31:21 -0400
+X-Google-Smtp-Source: ADUXVKJYWaIDV32X+3CkXIvjA9BNFBNSoqBxH2x+epGuAKvhEIjIlq2kV4zA4UvKUYhl3JLe9lWpoeKzPnxbPMoc4Lo=
 MIME-Version: 1.0
+In-Reply-To: <3b99eb56-f303-98b8-cb1e-7ff134769c43@ti.com>
+References: <20180528155059.2736080-1-arnd@arndb.de> <3b99eb56-f303-98b8-cb1e-7ff134769c43@ti.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 29 May 2018 16:31:19 +0200
+X-Google-Sender-Auth: CDATOi89P7vd4QylhKTmPkTiqIw
+Message-ID: <CAK8P3a2-421Y3Hwcu0SG0rORhO-wF06ULTJSAMrNypivS1PJjQ@mail.gmail.com>
+Subject: Re: [PATCH] net: davinci: fix building davinci mdio code without CONFIG_OF
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TEVTs6029033
 
-On 5/11/2018 1:48 PM, William Wu wrote:
-> This patch fix dma unaligned problem and data lost problem for
-> isoc split in transfer.
+On Tue, May 29, 2018 at 3:25 PM, Sekhar Nori <nsekhar@ti.com> wrote:
+
+>> @@ -374,7 +372,7 @@ static int davinci_mdio_probe(struct platform_device *pdev)
+>>               return -ENOMEM;
+>>       }
+>>
+>> -     if (dev->of_node) {
+>> +     if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
+>>               const struct of_device_id       *of_id;
+>>
+>>               ret = davinci_mdio_probe_dt(&data->pdata, pdev);
 >
-> Test on rk3288 platform, use an usb hs Hub (GL852G-12) and an usb
-> fs audio device (Plantronics headset) to capture and playback.
+> I was expecting this one change to fix the issue since the if() block
+> should be compiled away removing references to davinci_mdio_probe_dt().
 >
-> William Wu (2):
->   usb: dwc2: alloc dma aligned buffer for isoc split in
->   usb: dwc2: fix isoc split in transfer with no data
+> The code does get compiled out and there are no references to
+> davinci_mdio_probe_dt() in the final object when !CONFIG_OF.
 >
-On HAPS-DX7 with HS HUB Belkin(050d:0233) using internal USB testing tool.
-Tested-by: Gevorg Sahakyan <sahakyan@synopsys.com>
+> But the compile error remains if the #ifdefs you removed above are
+> installed back. Not sure why.
+
+The way that "if (IS_ENABLED())" works, everything gets compiled at
+first, but then the compiler uses dead code elimination to remove it
+from the output after verifying that everything builds.
+
+       Arnd
