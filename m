@@ -1,81 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934045AbeE2NHL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:07:11 -0400
-Received: from mga02.intel.com ([134.134.136.20]:45992 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933548AbeE2NHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:07:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,456,1520924400";
-   d="scan'208";a="45629331"
-From: "Konopko, Igor J" <igor.j.konopko@intel.com>
-To: Javier Gonzalez <javier@cnexlabs.com>,
-        Matias Bjorling <mb@lightnvm.io>
-CC: Jens Axboe <axboe@fb.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Dziegielewski, Marcin" <marcin.dziegielewski@intel.com>
-Subject: RE: [GIT PULL 20/20] lightnvm: pblk: sync RB and RL states during GC
-Thread-Topic: [GIT PULL 20/20] lightnvm: pblk: sync RB and RL states during
- GC
-Thread-Index: AQHT9mP5f7rVDC7vJkSDb4u0BKcPN6RE5hgAgAG7ZgA=
-Date: Tue, 29 May 2018 13:07:05 +0000
-Message-ID: <76C92B909A93A84C99173B331AB578DAC7AB520A@irsmsx111.ger.corp.intel.com>
-References: <20180528085841.26684-1-mb@lightnvm.io>
- <20180528085841.26684-21-mb@lightnvm.io>
- <23C83C0A-B4FC-4472-B88B-4C7725F793FD@cnexlabs.com>
-In-Reply-To: <23C83C0A-B4FC-4472-B88B-4C7725F793FD@cnexlabs.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjM2ZjI4OWUtNzJkNy00MGVjLWI1ZTItNmFlNTliZTAyM2U5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZElLZDRFSEIyVHlxQVlDOWZ6eVY0T0dIMXA1WlMwbnd6disyUW9PSkQyelI5U0NWb1p4bXlxMGE3OGFydVZtbSJ9
-x-ctpclassification: CTP_NT
-x-originating-ip: [163.33.239.180]
-Content-Type: text/plain; charset="utf-8"
+        id S934079AbeE2NIJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:08:09 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:36690 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933548AbeE2NII (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:08:08 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w4TD7s6S028853
+X-Nifty-SrcIP: [209.85.213.48]
+X-Google-Smtp-Source: ADUXVKJ+qlS5HB0v+eUQSBAUN+Ne56hUUBG6bgMRPEEfuqxI/aucJIiMUC6Q2UPgAvGSdJTy/drjGBuCGEHemjy7ww8=
 MIME-Version: 1.0
+In-Reply-To: <20180524031612.79723-1-nixiaoming@huawei.com>
+References: <20180524031612.79723-1-nixiaoming@huawei.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 29 May 2018 22:07:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARoYg+qJKir=sC_jVrbLODa-SB5fUmWCiq2eRiJh3VLaw@mail.gmail.com>
+Message-ID: <CAK7LNARoYg+qJKir=sC_jVrbLODa-SB5fUmWCiq2eRiJh3VLaw@mail.gmail.com>
+Subject: Re: [PATCH] scripts: Fixed printf format mismatch
+To: nixiaoming <nixiaoming@huawei.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>, Guenter Roeck <linux@roeck-us.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        James Hogan <jhogan@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4TD8JgC024581
 
-> From: Javier Gonzalez [mailto:javier@cnexlabs.com]
-> Do you mean random writes? On fully sequential, a line will either be
-> fully written, fully invalidated or on its way to be written. When
-> invalidating the line, then the whole line will be invalidated and GC
-> will free it without having to move valid data.
+2018-05-24 12:16 GMT+09:00 nixiaoming <nixiaoming@huawei.com>:
+> scripts/kallsyms.c: function write_src:
+> "printf", the #1 format specifier "d" need arg type "int",
+> but the according arg "table_cnt" has type "unsigned int"
+>
+> scripts/recordmcount.c: function do_file:
+> "fprintf", the #1 format specifier "d" need arg type "int",
+> but the according arg "(*w2)(ehdr->e_machine)" has type "unsigned int"
+>
+> scripts/recordmcount.h: function find_secsym_ndx:
+> "fprintf", the #1 format specifier "d" need arg type "int",
+> but the according arg "txtndx" has type "unsigned int"
+>
+> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
 
-I meant sequential writes, since this is the easiest way to reach rl->rb_state = PBLK_RL_LOW. When we updating this values inside __pblk_rl_update_rates(), most of the times rl->rb_user_cnt will became equal to rl->rb_user_max - which means that we cannot handle any more user IOs. In that case pblk_rl_user_may_insert() will return false, no one will call pblk_rb_update_l2p(), rl->rb_user_cnt will not be decreased, so user IOs will stuck for forever.
 
-> I can see why you might have problems with very low OP due to the rate
-> limiter, but unfortunately this is not a good way of solving the
-> problem. When you do this, you basically make the L2P to point to the
-> device instead of pointing to the write cache, which in essence bypasses
-> mw_cuints. As a result, if a read comes in to one of the synced entries,
-> it will violate the device-host contract and most probably fail (for
-> sure fail on > SLC).
+Applied to linux-kbuild
+with Steven's Ack.
 
-What about using on that path some modified version of pblk_rb_sync_l2p() which will synchronize all the RB entries except last mw_cunits number of elements?
+Thanks.
 
-Also you wrote about mw_cuints definitely makes sense, but even without my changes I believe that we can lead into such a situation - especially for pblk with small number of LUNs assigned under  write IOs with high sector count. Pblk_rb_update_l2p() does not explicitly takes mw_cunints this value into consideration right now.
 
-> I think that the right way of solving this problem is separating the
-> write and GC buffers and then assigning tokens to them. The write thread
-> will then consume both buffers based on these tokens. In this case, user
-> I/O will have a buffer for itself, which will be guaranteed to advance
-> at the rate the rate-limiter is allowing it to. Note that the 2 buffers
-> can be a single buffer with a new set of pointers so that the lookup can
-> be done with a single bit.
-> 
-> I have been looking for time to implement this for a while. If you want
-> to give it a go, we can talk and I can give you some pointers on
-> potential issues I have thought about.
+> ---
+>  scripts/kallsyms.c     | 2 +-
+>  scripts/recordmcount.c | 2 +-
+>  scripts/recordmcount.h | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+> index 5abfbf1..e0c416a 100644
+> --- a/scripts/kallsyms.c
+> +++ b/scripts/kallsyms.c
+> @@ -424,7 +424,7 @@ static void write_src(void)
+>         }
+>
+>         output_label("kallsyms_num_syms");
+> -       printf("\tPTR\t%d\n", table_cnt);
+> +       printf("\tPTR\t%u\n", table_cnt);
+>         printf("\n");
+>
+>         /* table of offset markers, that give the offset in the compressed stream
+> diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
+> index 8c9691c..895c40e 100644
+> --- a/scripts/recordmcount.c
+> +++ b/scripts/recordmcount.c
+> @@ -500,7 +500,7 @@ do_file(char const *const fname)
+>         gpfx = 0;
+>         switch (w2(ehdr->e_machine)) {
+>         default:
+> -               fprintf(stderr, "unrecognized e_machine %d %s\n",
+> +               fprintf(stderr, "unrecognized e_machine %u %s\n",
+>                         w2(ehdr->e_machine), fname);
+>                 fail_file();
+>                 break;
+> diff --git a/scripts/recordmcount.h b/scripts/recordmcount.h
+> index b9897e2..2e77937 100644
+> --- a/scripts/recordmcount.h
+> +++ b/scripts/recordmcount.h
+> @@ -441,7 +441,7 @@ static unsigned find_secsym_ndx(unsigned const txtndx,
+>                         return symp - sym0;
+>                 }
+>         }
+> -       fprintf(stderr, "Cannot find symbol for section %d: %s.\n",
+> +       fprintf(stderr, "Cannot find symbol for section %u: %s.\n",
+>                 txtndx, txtname);
+>         fail_file();
+>  }
+> --
+> 2.10.1
+>
 
-I believe this is interesting option - we can discuss this for one of next releases.
+
+
+-- 
+Best Regards
+Masahiro Yamada
