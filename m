@@ -1,73 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933843AbeE2M3r (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:29:47 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:46037 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933675AbeE2M3o (ORCPT
+        id S933860AbeE2Maj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:30:39 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:44732 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933565AbeE2Mah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:29:44 -0400
-X-Google-Smtp-Source: ADUXVKKyW2QtNz2FvGwnrsD4v2v7Y8stgz6Huq6qF1ieDtoEmK7l2x4Nt/rZU425fu11V2l8QEacAu/5NaK39W6l5Zs=
+        Tue, 29 May 2018 08:30:37 -0400
+X-Google-Smtp-Source: ADUXVKI6yJqJBqHH/UZ8gaF9bjsrp4199AVd4pnh2pLrWjwYxT2SWDhlgTAB9kSxaBzxj+bG0zAjnzTmAU0DGaXQznE=
 MIME-Version: 1.0
-X-Originating-IP: [2a02:168:5628:0:d0c7:bcda:eea:9e5d]
-In-Reply-To: <20180529104855.vvrfdtbgrsqj27ga@sirius.home.kraxel.org>
-References: <20180525140808.12714-1-kraxel@redhat.com> <20180529082327.GF3438@phenom.ffwll.local>
- <20180529084406.GI3438@phenom.ffwll.local> <20180529104855.vvrfdtbgrsqj27ga@sirius.home.kraxel.org>
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date: Tue, 29 May 2018 14:29:43 +0200
-Message-ID: <CAKMK7uEUrgKkmPTtku5otN++H3SW7xLaGEn0S9nGEpGAA_Uy+A@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] [PATCH v3] Add udmabuf misc device
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>, Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK"
-        <linux-kselftest@vger.kernel.org>
+In-Reply-To: <20180529013044.23815-1-benh@kernel.crashing.org>
+References: <20180529013044.23815-1-benh@kernel.crashing.org>
+From: Joel Stanley <joel@jms.id.au>
+Date: Tue, 29 May 2018 22:00:16 +0930
+X-Google-Sender-Auth: Ug87zoNO_SXc9cKRXUIqwLOGblk
+Message-ID: <CACPK8XdvnGHz6Om2RQmgu+7F4h9AEh+Ay=A_b4+3vDGqD4SKbA@mail.gmail.com>
+Subject: Re: [PATCH 00/15] fsi: Overall improvements and new SBE fifo driver
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Christopher Bostic <cbostic@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 12:48 PM, Gerd Hoffmann <kraxel@redhat.com> wrote:
->   Hi,
+On 29 May 2018 at 11:00, Benjamin Herrenschmidt
+<benh@kernel.crashing.org> wrote:
+> This series brings in a number of improvements to our FSI stack
+> (one of the service interfaces for communicating between a BMC chip and
+> our POWER processors).
 >
->> > > qemu test branch:
->> > >   https://git.kraxel.org/cgit/qemu/log/?h=sirius/udmabuf
->         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> The GPIO based "Soft FSI" performance is significantly improved, and
+> it's reliability as well.
 >
->> > > + if (!shmem_mapping(file_inode(ubuf->filp)->i_mapping))
->> > > +         goto err_free_ubuf;
->>
->> Can/should we test here that the memfd has a locked down size here?
+> The SBE fifo driver provides the interface to the processor "Self Boot
+> Engine"
 >
-> Makes sense.  Suggested way to check that?  unstatic memfd_get_seals()
-> function (mm/shmem.c)?  Or is there some better way?
->
-> Also which seals should we require?  Is F_SEAL_SHRINK enough?
+> Some of these patches have been simmering for a while in the OpenBMC
+> tree.
 
-Yes I think that's enough.
+I run this series atop of 4.17-rc7 today, and they look solid.
 
-Hm ... I think we also need to prevent the F_SEAL_WRITE, because
-there's no way to stop dma from tampering with the buffer once it's a
-dma-buf. Otherwise evil userspace could create a memfd, F_SEAL_SHRINK
-it, make a dma-buf out of it, F_SEAL_WRITE it, hand it to some
-unsuspecting priviledged service and then pull it over the table with
-a few dma-buf writes.
+Tested-by: Joel Stanley <joel@jms.id.au>
 
->> On that: Link to userspace patches/git tree using this would be nice.
->
-> See above.
+Cheers,
 
-Ow, I was blind :-)
-
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Joel
