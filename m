@@ -1,123 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965090AbeE2QPw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:15:52 -0400
-Received: from mga02.intel.com ([134.134.136.20]:58647 "EHLO mga02.intel.com"
+        id S965135AbeE2QQE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:16:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934877AbeE2QPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:15:50 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
-   d="scan'208";a="43700611"
-Date: Tue, 29 May 2018 09:15:49 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Borislav Petkov <bp@suse.de>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Ashok Raj <ashok.raj@intel.com>,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3 V2] x86/mce: Fix incorrect "Machine check from unknown
- source" message
-Message-ID: <20180529161549.GB935@agluck-desk>
-References: <cover.1527283897.git.tony.luck@intel.com>
- <52e049a497e86fd0b71c529651def8871c804df0.1527283897.git.tony.luck@intel.com>
- <20180528204923.GB30792@zn.tnic>
+        id S934877AbeE2QQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 12:16:00 -0400
+X-Google-Smtp-Source: ADUXVKLjyAo7yb/in9FLhQjZ7J1faDmQMAZp0Np414OiJAWJkEaKw8ngF4y7ac0NAj9r+R1rTnDL9+J2eafejq9kTxI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528204923.GB30792@zn.tnic>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <970da65f-2026-246a-38ba-ccf2a5daa598@infradead.org>
+References: <20180516235007.3951-1-atull@kernel.org> <20180516235007.3951-13-atull@kernel.org>
+ <970da65f-2026-246a-38ba-ccf2a5daa598@infradead.org>
+From: Alan Tull <atull@kernel.org>
+Date: Tue, 29 May 2018 11:15:18 -0500
+X-Gmail-Original-Message-ID: <CANk1AXRBw1hG7X_=67haH30i179By2svYnU1pciaB37UkE37Xg@mail.gmail.com>
+Message-ID: <CANk1AXRBw1hG7X_=67haH30i179By2svYnU1pciaB37UkE37Xg@mail.gmail.com>
+Subject: Re: [PATCH 12/14] documentation: fpga: move fpga-region.txt to driver-api
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some injection testing resulted in the following console log:
+On Fri, May 25, 2018 at 9:33 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
 
- mce: [Hardware Error]: CPU 22: Machine Check Exception: f Bank 1: bd80000000100134
- mce: [Hardware Error]: RIP 10:<ffffffffc05292dd> {pmem_do_bvec+0x11d/0x330 [nd_pmem]}
- mce: [Hardware Error]: TSC c51a63035d52 ADDR 3234bc4000 MISC 88
- mce: [Hardware Error]: PROCESSOR 0:50654 TIME 1526502199 SOCKET 0 APIC 38 microcode 2000043
- mce: [Hardware Error]: Run the above through 'mcelog --ascii'
- Kernel panic - not syncing: Machine check from unknown source
+Hi Randy,
 
-This confused everybody because the first line quite clearly shows
-that we found a logged error in "Bank 1", while the last line says
-"unknown source".
+Thanks for the reviews.  These are up on char-misc-next already, so
+I'll send a patch to fix.
 
-The problem is that the Linux code doesn't do the right thing
-for a local machine check that results in a fatal error.
+Alan
 
-It turns out that we know very early in the handler whether the
-machine check is fatal. The call to mce_no_way_out() has checked
-all the banks for the CPU that took the local machine check. If
-it says we must crash, we can do so right away with the right
-messages.
-
-We do scan all the banks again. This means that we might initially
-not see a problem, but during the second scan find something fatal.
-If this happens we print a different message (so I can see if it
-actually every happens).
-
-Cc: stable@vger.kernel.org # 4.2
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
-
-V2: Boris:
-	1) make the "different message" more descriptive. 
-	2) don't bother reassigning "severity" variable.
-
- arch/x86/kernel/cpu/mcheck/mce.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 42cf2880d0ed..f013d97abd5f 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -1205,13 +1205,18 @@ void do_machine_check(struct pt_regs *regs, long error_code)
- 		lmce = m.mcgstatus & MCG_STATUS_LMCES;
- 
- 	/*
-+	 * Local machine check may already know that we have to panic.
-+	 * Broadcast machine check begins rendezvous in mce_start()
- 	 * Go through all banks in exclusion of the other CPUs. This way we
- 	 * don't report duplicated events on shared banks because the first one
--	 * to see it will clear it. If this is a Local MCE, then no need to
--	 * perform rendezvous.
-+	 * to see it will clear it.
- 	 */
--	if (!lmce)
-+	if (lmce) {
-+		if (no_way_out)
-+			mce_panic("Fatal local machine check", &m, msg);
-+	} else {
- 		order = mce_start(&no_way_out);
-+	}
- 
- 	for (i = 0; i < cfg->banks; i++) {
- 		__clear_bit(i, toclear);
-@@ -1287,12 +1292,17 @@ void do_machine_check(struct pt_regs *regs, long error_code)
- 			no_way_out = worst >= MCE_PANIC_SEVERITY;
- 	} else {
- 		/*
--		 * Local MCE skipped calling mce_reign()
--		 * If we found a fatal error, we need to panic here.
-+		 * If there was a fatal machine check we should have
-+		 * already called mce_panic earlier in this function.
-+		 * Since we re-read the banks, we might have found
-+		 * something new. Check again to see if we found a
-+		 * fatal error. We call "mce_severity()" again to
-+		 * make sure we have the right "msg".
- 		 */
--		 if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3)
--			mce_panic("Machine check from unknown source",
--				NULL, NULL);
-+		if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3) {
-+			severity = mce_severity(&m, cfg->tolerant, &msg, true);
-+			mce_panic("Local fatal machine check!", &m, msg);
-+		}
- 	}
- 
- 	/*
--- 
-2.17.0
+> On 05/16/2018 04:50 PM, Alan Tull wrote:
+>> Move Documentation/fpga/fpga-region.txt to
+>> driver-api/fpga/fpga-region.rst.  Including:
+>>  - Add it to driver-api/fpga/index.rst
+>>  - Formatting changes to build cleanly as ReST documentation
+>>  - Some rewrites for better flow as a ReST doc such as moving
+>>    API reference to the end of the doc
+>>  - Rewrite API reference section to refer to kernel-doc
+>>    documentation in fpga-region.c driver code
+>>
+>> Signed-off-by: Alan Tull <atull@kernel.org>
+>> ---
+>>  Documentation/driver-api/fpga/fpga-region.rst | 102 ++++++++++++++++++++++++++
+>>  Documentation/driver-api/fpga/index.rst       |   1 +
+>>  Documentation/fpga/fpga-region.txt            |  94 ------------------------
+>>  3 files changed, 103 insertions(+), 94 deletions(-)
+>>  create mode 100644 Documentation/driver-api/fpga/fpga-region.rst
+>>  delete mode 100644 Documentation/fpga/fpga-region.txt
+>>
+>> diff --git a/Documentation/driver-api/fpga/fpga-region.rst b/Documentation/driver-api/fpga/fpga-region.rst
+>> new file mode 100644
+>> index 0000000..f89e4a3
+>> --- /dev/null
+>> +++ b/Documentation/driver-api/fpga/fpga-region.rst
+>> @@ -0,0 +1,102 @@
+>> +FPGA Region
+>> +===========
+>> +
+>> +Overview
+>> +--------
+>> +
+>> +This document is meant to be an brief overview of the FPGA region API usage.  A
+>
+>                                 a brief overview
+>
+>> +more conceptual look at regions can be found in the Device Tree binding
+>> +document [#f1]_.
+>> +
+>> +For the purposes of this API document, let's just say that a region associates
+>> +an FPGA Manager and a bridge (or bridges) with a reprogrammable region of an
+>> +FPGA or the whole FPGA.  The API provides a way to register a region and to
+>> +program a region.
+>> +
+>> +Currently the only layer above fpga-region.c in the kernel is the Device Tree
+>> +support (of-fpga-region.c) described in [#f1]_.  The DT support layer uses regions
+>> +to program the FPGA and then DT to handle enumeration.  The common region code
+>> +is intended to be used by other schemes that have other ways of accomplishing
+>> +enumeration after programming.
+>> +
+>> +An fpga-region can be set up to know the following things:
+>> +
+>> + * which FPGA manager to use to do the programming
+>> +
+>> + * which bridges to disable before programming and enable afterwards.
+>> +
+>> +Additional info needed to program the FPGA image is passed in the struct
+>> +fpga_image_info including:
+>> +
+>> + * pointers to the image as either a scatter-gather buffer, a contiguous
+>> +   buffer, or the name of firmware file
+>> +
+>> + * flags indicating specifics such as whether the image if for partial
+>
+>                                                            is for
+>
+>> +   reconfiguration.
+>> +
+>> +How to program a FPGA using a region
+>
+>                   an FPGA
+>
+>> +------------------------------------
+>> +
+>> +First, allocate the info struct::
+>> +
+>> +     info = fpga_image_info_alloc(dev);
+>> +     if (!info)
+>> +             return -ENOMEM;
+>> +
+>> +Set flags as needed, i.e.::
+>> +
+>> +     info->flags |= FPGA_MGR_PARTIAL_RECONFIG;
+>> +
+>> +Point to your FPGA image, such as::
+>> +
+>> +     info->sgt = &sgt;
+>> +
+>> +Add info to region and do the programming::
+>> +
+>> +     region->info = info;
+>> +     ret = fpga_region_program_fpga(region);
+>> +
+>> +:c:func:`fpga_region_program_fpga()` operates on info passed in the
+>> +fpga_image_info (region->info).  This function will attempt to:
+>> +
+>> + * lock the region's mutex
+>> + * lock the region's FPGA manager
+>> + * build a list of FPGA bridges if a method has been specified to do so
+>> + * disable the bridges
+>> + * program the FPGA
+>> + * re-enable the bridges
+>> + * release the locks
+>> +
+>> +Then you will want to enumerate whatever hardware has appeared in the FPGA.
+>> +
+>> +How to add a new FPGA region
+>> +----------------------------
+>> +
+>> +An example of usage can be seen in the probe function of [#f2]_.
+>> +
+>> +.. [#f1] ../devicetree/bindings/fpga/fpga-region.txt
+>> +.. [#f2] ../../drivers/fpga/of-fpga-region.c
+>> +
+>> +API to program a FGPA
+>> +---------------------
+>> +
+>> +.. kernel-doc:: drivers/fpga/fpga-region.c
+>> +   :functions: fpga_region_program_fpga
+>> +
+>> +API to add a new FPGA region
+>> +----------------------------
+>> +
+>> +.. kernel-doc:: include/linux/fpga/fpga-region.h
+>> +   :functions: fpga_region
+>> +
+>> +.. kernel-doc:: drivers/fpga/fpga-region.c
+>> +   :functions: fpga_region_create
+>> +
+>> +.. kernel-doc:: drivers/fpga/fpga-region.c
+>> +   :functions: fpga_region_free
+>> +
+>> +.. kernel-doc:: drivers/fpga/fpga-region.c
+>> +   :functions: fpga_region_register
+>> +
+>> +.. kernel-doc:: drivers/fpga/fpga-region.c
+>> +   :functions: fpga_region_unregister
+>
+>
+> --
+> ~Randy
