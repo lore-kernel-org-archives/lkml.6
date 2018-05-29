@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933255AbeE2K4Q (ORCPT <rfc822;w@1wt.eu>);
+        id S933334AbeE2K4Y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:56:24 -0400
+Received: from foss.arm.com ([217.140.101.70]:37378 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933158AbeE2K4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 May 2018 06:56:16 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37360 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933081AbeE2K4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:56:12 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com,
         mark.rutland@arm.com, robin.murphy@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 1/5] arm_pmu: Clean up maximum period handling
-Date: Tue, 29 May 2018 11:55:52 +0100
-Message-Id: <1527591356-10934-2-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 4/5] arm_pmu: Tidy up clear_event_idx call backs
+Date: Tue, 29 May 2018 11:55:55 +0100
+Message-Id: <1527591356-10934-5-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
 References: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
@@ -21,166 +21,77 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each PMU defines their max_period of the counter as the maximum
-value that can be counted. Since all the PMU backends support
-32bit counters by default, let us remove the redundant field.
-
-No functional changes.
+The armpmu uses get_event_idx callback to allocate an event
+counter for a given event, which marks the selected counter
+as "used". Now, when we delete the counter, the arm_pmu goes
+ahead and clears the "used" bit and then invokes the "clear_event_idx"
+call back, which kind of splits the job between the core code
+and the backend. Tidy this up by relying on the clear_event_idx
+to do the book keeping, if available. Otherwise, let the core
+driver do the default "clear" bit operation. This will be useful
+for adding the chained event support, where we leave the event
+idx maintenance to the backend.
 
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
-Changes since v1:
- - Remove max_period field.
----
- arch/arm/kernel/perf_event_v6.c     |  2 --
- arch/arm/kernel/perf_event_v7.c     |  1 -
- arch/arm/kernel/perf_event_xscale.c |  2 --
- arch/arm64/kernel/perf_event.c      |  1 -
- drivers/perf/arm_pmu.c              | 16 ++++++++++++----
- include/linux/perf/arm_pmu.h        |  1 -
- 6 files changed, 12 insertions(+), 11 deletions(-)
+ arch/arm/kernel/perf_event_v7.c |  2 ++
+ drivers/perf/arm_pmu.c          | 15 +++++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/kernel/perf_event_v6.c b/arch/arm/kernel/perf_event_v6.c
-index 1d7061a..89d6f35 100644
---- a/arch/arm/kernel/perf_event_v6.c
-+++ b/arch/arm/kernel/perf_event_v6.c
-@@ -497,7 +497,6 @@ static void armv6pmu_init(struct arm_pmu *cpu_pmu)
- 	cpu_pmu->stop		= armv6pmu_stop;
- 	cpu_pmu->map_event	= armv6_map_event;
- 	cpu_pmu->num_events	= 3;
--	cpu_pmu->max_period	= (1LLU << 32) - 1;
- }
- 
- static int armv6_1136_pmu_init(struct arm_pmu *cpu_pmu)
-@@ -548,7 +547,6 @@ static int armv6mpcore_pmu_init(struct arm_pmu *cpu_pmu)
- 	cpu_pmu->stop		= armv6pmu_stop;
- 	cpu_pmu->map_event	= armv6mpcore_map_event;
- 	cpu_pmu->num_events	= 3;
--	cpu_pmu->max_period	= (1LLU << 32) - 1;
- 
- 	return 0;
- }
 diff --git a/arch/arm/kernel/perf_event_v7.c b/arch/arm/kernel/perf_event_v7.c
-index 870b66c..18c038e 100644
+index 5f342fc..5e78faa 100644
 --- a/arch/arm/kernel/perf_event_v7.c
 +++ b/arch/arm/kernel/perf_event_v7.c
-@@ -1171,7 +1171,6 @@ static void armv7pmu_init(struct arm_pmu *cpu_pmu)
- 	cpu_pmu->start		= armv7pmu_start;
- 	cpu_pmu->stop		= armv7pmu_stop;
- 	cpu_pmu->reset		= armv7pmu_reset;
--	cpu_pmu->max_period	= (1LLU << 32) - 1;
- };
+@@ -1638,6 +1638,7 @@ static void krait_pmu_clear_event_idx(struct pmu_hw_events *cpuc,
+ 	bool venum_event = EVENT_VENUM(hwc->config_base);
+ 	bool krait_event = EVENT_CPU(hwc->config_base);
  
- static void armv7_read_num_pmnc_events(void *info)
-diff --git a/arch/arm/kernel/perf_event_xscale.c b/arch/arm/kernel/perf_event_xscale.c
-index fcf218d..8ba0e14 100644
---- a/arch/arm/kernel/perf_event_xscale.c
-+++ b/arch/arm/kernel/perf_event_xscale.c
-@@ -375,7 +375,6 @@ static int xscale1pmu_init(struct arm_pmu *cpu_pmu)
- 	cpu_pmu->stop		= xscale1pmu_stop;
- 	cpu_pmu->map_event	= xscale_map_event;
- 	cpu_pmu->num_events	= 3;
--	cpu_pmu->max_period	= (1LLU << 32) - 1;
++	clear_bit(hwc->idx, cpuc->used_mask);
+ 	if (venum_event || krait_event) {
+ 		bit = krait_event_to_bit(event, region, group);
+ 		clear_bit(bit, cpuc->used_mask);
+@@ -1967,6 +1968,7 @@ static void scorpion_pmu_clear_event_idx(struct pmu_hw_events *cpuc,
+ 	bool venum_event = EVENT_VENUM(hwc->config_base);
+ 	bool scorpion_event = EVENT_CPU(hwc->config_base);
  
- 	return 0;
- }
-@@ -745,7 +744,6 @@ static int xscale2pmu_init(struct arm_pmu *cpu_pmu)
- 	cpu_pmu->stop		= xscale2pmu_stop;
- 	cpu_pmu->map_event	= xscale_map_event;
- 	cpu_pmu->num_events	= 5;
--	cpu_pmu->max_period	= (1LLU << 32) - 1;
- 
- 	return 0;
- }
-diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
-index 85a251b..2c42f88 100644
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -961,7 +961,6 @@ static int armv8_pmu_init(struct arm_pmu *cpu_pmu)
- 	cpu_pmu->start			= armv8pmu_start,
- 	cpu_pmu->stop			= armv8pmu_stop,
- 	cpu_pmu->reset			= armv8pmu_reset,
--	cpu_pmu->max_period		= (1LLU << 32) - 1,
- 	cpu_pmu->set_event_filter	= armv8pmu_set_event_filter;
- 
- 	return 0;
++	clear_bit(hwc->idx, cpuc->used_mask);
+ 	if (venum_event || scorpion_event) {
+ 		bit = scorpion_event_to_bit(event, region, group);
+ 		clear_bit(bit, cpuc->used_mask);
 diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-index 1a0d340..8962d26 100644
+index ff858e6..9ae7e68 100644
 --- a/drivers/perf/arm_pmu.c
 +++ b/drivers/perf/arm_pmu.c
-@@ -28,6 +28,11 @@
- static DEFINE_PER_CPU(struct arm_pmu *, cpu_armpmu);
- static DEFINE_PER_CPU(int, cpu_irq);
+@@ -226,6 +226,16 @@ static void armpmu_start(struct perf_event *event, int flags)
+ 	armpmu->enable(event);
+ }
  
-+static inline u64 arm_pmu_max_period(void)
++static void armpmu_clear_event_idx(struct arm_pmu *armpmu,
++				   struct pmu_hw_events *hw_events,
++				   struct perf_event *event)
 +{
-+	return (1ULL << 32) - 1;
++	if (armpmu->clear_event_idx)
++		armpmu->clear_event_idx(hw_events, event);
++	else
++		clear_bit(event->hw.idx, hw_events->used_mask);
 +}
 +
- static int
- armpmu_map_cache_event(const unsigned (*cache_map)
- 				      [PERF_COUNT_HW_CACHE_MAX]
-@@ -114,8 +119,10 @@ int armpmu_event_set_period(struct perf_event *event)
- 	struct hw_perf_event *hwc = &event->hw;
- 	s64 left = local64_read(&hwc->period_left);
- 	s64 period = hwc->sample_period;
-+	u64 max_period;
- 	int ret = 0;
+ static void
+ armpmu_del(struct perf_event *event, int flags)
+ {
+@@ -236,10 +246,7 @@ armpmu_del(struct perf_event *event, int flags)
  
-+	max_period = arm_pmu_max_period();
- 	if (unlikely(left <= -period)) {
- 		left = period;
- 		local64_set(&hwc->period_left, left);
-@@ -136,8 +143,8 @@ int armpmu_event_set_period(struct perf_event *event)
- 	 * effect we are reducing max_period to account for
- 	 * interrupt latency (and we are being very conservative).
- 	 */
--	if (left > (armpmu->max_period >> 1))
--		left = armpmu->max_period >> 1;
-+	if (left > (max_period >> 1))
-+		left = (max_period >> 1);
+ 	armpmu_stop(event, PERF_EF_UPDATE);
+ 	hw_events->events[idx] = NULL;
+-	clear_bit(idx, hw_events->used_mask);
+-	if (armpmu->clear_event_idx)
+-		armpmu->clear_event_idx(hw_events, event);
+-
++	armpmu_clear_event_idx(armpmu, hw_events, event);
+ 	perf_event_update_userpage(event);
+ }
  
- 	local64_set(&hwc->prev_count, (u64)-left);
- 
-@@ -153,6 +160,7 @@ u64 armpmu_event_update(struct perf_event *event)
- 	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
- 	struct hw_perf_event *hwc = &event->hw;
- 	u64 delta, prev_raw_count, new_raw_count;
-+	u64 max_period = arm_pmu_max_period();
- 
- again:
- 	prev_raw_count = local64_read(&hwc->prev_count);
-@@ -162,7 +170,7 @@ u64 armpmu_event_update(struct perf_event *event)
- 			     new_raw_count) != prev_raw_count)
- 		goto again;
- 
--	delta = (new_raw_count - prev_raw_count) & armpmu->max_period;
-+	delta = (new_raw_count - prev_raw_count) & max_period;
- 
- 	local64_add(delta, &event->count);
- 	local64_sub(delta, &hwc->period_left);
-@@ -402,7 +410,7 @@ __hw_perf_event_init(struct perf_event *event)
- 		 * is far less likely to overtake the previous one unless
- 		 * you have some serious IRQ latency issues.
- 		 */
--		hwc->sample_period  = armpmu->max_period >> 1;
-+		hwc->sample_period  = arm_pmu_max_period() >> 1;
- 		hwc->last_period    = hwc->sample_period;
- 		local64_set(&hwc->period_left, hwc->sample_period);
- 	}
-diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
-index 40036a5..2ee62bc 100644
---- a/include/linux/perf/arm_pmu.h
-+++ b/include/linux/perf/arm_pmu.h
-@@ -94,7 +94,6 @@ struct arm_pmu {
- 	void		(*reset)(void *);
- 	int		(*map_event)(struct perf_event *event);
- 	int		num_events;
--	u64		max_period;
- 	bool		secure_access; /* 32-bit ARM only */
- #define ARMV8_PMUV3_MAX_COMMON_EVENTS 0x40
- 	DECLARE_BITMAP(pmceid_bitmap, ARMV8_PMUV3_MAX_COMMON_EVENTS);
 -- 
 2.7.4
