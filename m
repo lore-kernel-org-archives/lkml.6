@@ -1,24 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968373AbeE2WWf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:22:35 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37930 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967877AbeE2WRH (ORCPT
+        id S968190AbeE2WWP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:22:15 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44254 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967956AbeE2WRL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:17:07 -0400
-X-Google-Smtp-Source: ADUXVKKLOOO9X1g4xJI4iw04Z3ZsFAqIrPsfrOdSyhKN/glG9LPEiBvyU1ITa/eyKzSOurHRajBOHg==
+        Tue, 29 May 2018 18:17:11 -0400
+X-Google-Smtp-Source: ADUXVKJ7r1r+iBxVMmw2tGNNb9jK337fTIhmX0IbiGDG0eVxxRz6qdfVRylSsQ7Y2EYjVwV7tB4UPQ==
 From: Thomas Garnier <thgarnie@google.com>
 To: kernel-hardening@lists.openwall.com
-Cc: Thomas Garnier <thgarnie@google.com>, Juergen Gross <jgross@suse.com>,
-        Alok Kataria <akataria@vmware.com>,
+Cc: Thomas Garnier <thgarnie@google.com>,
+        Skip Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Skip Alexander Potapenko <glider@google.com>,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 12/27] x86/paravirt: Adapt assembly for PIE support
-Date: Tue, 29 May 2018 15:15:13 -0700
-Message-Id: <20180529221625.33541-13-thgarnie@google.com>
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 13/27] x86/boot/64: Build head64.c as mcmodel large when PIE is enabled
+Date: Tue, 29 May 2018 15:15:14 -0700
+Message-Id: <20180529221625.33541-14-thgarnie@google.com>
 X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 In-Reply-To: <20180529221625.33541-1-thgarnie@google.com>
 References: <20180529221625.33541-1-thgarnie@google.com>
@@ -26,49 +30,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if PIE is enabled, switch the paravirt assembly constraints to be
-compatible. The %c/i constrains generate smaller code so is kept by
-default.
+The __startup_64 function assumes all symbols have relocated addresses
+instead of the current boot virtual address. PIE generated code favor
+relative addresses making all virtual and physical address math incorrect.
+If PIE is enabled, build head64.c as mcmodel large instead to ensure absolute
+references on all memory access. Add a global __force_order variable required
+when using a large model with read_cr* functions.
+
+To build head64.c as mcmodel=large, disable the retpoline gcc flags.
+This code is used at early boot and removed later, it doesn't need
+retpoline mitigation.
 
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/include/asm/paravirt_types.h | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/x86/kernel/Makefile | 6 ++++++
+ arch/x86/kernel/head64.c | 3 +++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 180bc0bff0fb..140747a98d94 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -337,9 +337,17 @@ extern struct pv_lock_ops pv_lock_ops;
- #define PARAVIRT_PATCH(x)					\
- 	(offsetof(struct paravirt_patch_template, x) / sizeof(void *))
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 02d6f5cf4e70..0f6da4b216e0 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -22,6 +22,12 @@ CFLAGS_REMOVE_early_printk.o = -pg
+ CFLAGS_REMOVE_head64.o = -pg
+ endif
  
-+#ifdef CONFIG_X86_PIE
-+#define paravirt_opptr_call "a"
-+#define paravirt_opptr_type "p"
-+#else
-+#define paravirt_opptr_call "c"
-+#define paravirt_opptr_type "i"
-+#endif
++ifdef CONFIG_X86_PIE
++# Remove PIE and retpoline flags that are incompatible with mcmodel=large
++CFLAGS_REMOVE_head64.o += -fPIE -mindirect-branch=thunk-extern -mindirect-branch-register
++CFLAGS_head64.o = -mcmodel=large
++endif
 +
- #define paravirt_type(op)				\
- 	[paravirt_typenum] "i" (PARAVIRT_PATCH(op)),	\
--	[paravirt_opptr] "i" (&(op))
-+	[paravirt_opptr] paravirt_opptr_type (&(op))
- #define paravirt_clobber(clobber)		\
- 	[paravirt_clobber] "i" (clobber)
+ KASAN_SANITIZE_head$(BITS).o				:= n
+ KASAN_SANITIZE_dumpstack.o				:= n
+ KASAN_SANITIZE_dumpstack_$(BITS).o			:= n
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 2d29e47c056e..fa661fb97127 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -64,6 +64,9 @@ EXPORT_SYMBOL(vmemmap_base);
  
-@@ -395,7 +403,7 @@ int paravirt_disable_iospace(void);
-  */
- #define PARAVIRT_CALL					\
- 	ANNOTATE_RETPOLINE_SAFE				\
--	"call *%c[paravirt_opptr];"
-+	"call *%" paravirt_opptr_call "[paravirt_opptr];"
+ #define __head	__section(.head.text)
  
- /*
-  * These macros are intended to wrap calls through one of the paravirt
++/* Required for read_cr3 when building as PIE */
++unsigned long __force_order;
++
+ static void __head *fixup_pointer(void *ptr, unsigned long physaddr)
+ {
+ 	return ptr - (void *)_text + (void *)physaddr;
 -- 
 2.17.0.921.gf22659ad46-goog
