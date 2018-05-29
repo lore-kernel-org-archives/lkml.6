@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933673AbeE2MLj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:11:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38372 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933135AbeE2MLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:11:33 -0400
+        id S933747AbeE2MLv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:11:51 -0400
+Received: from foss.arm.com ([217.140.101.70]:38414 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933658AbeE2MLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:11:38 -0400
 From: Marc Zyngier <marc.zyngier@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu
@@ -19,9 +19,9 @@ Cc: Will Deacon <will.deacon@arm.com>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         Julien Grall <julien.grall@arm.com>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 01/17] arm/arm64: smccc: Add SMCCC-specific return codes
-Date: Tue, 29 May 2018 13:11:05 +0100
-Message-Id: <20180529121121.24927-2-marc.zyngier@arm.com>
+Subject: [PATCH v2 03/17] arm64: Add per-cpu infrastructure to call ARCH_WORKAROUND_2
+Date: Tue, 29 May 2018 13:11:07 +0100
+Message-Id: <20180529121121.24927-4-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180529121121.24927-1-marc.zyngier@arm.com>
 References: <20180529121121.24927-1-marc.zyngier@arm.com>
@@ -29,34 +29,72 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We've so far used the PSCI return codes for SMCCC because they
-were extremely similar. But with the new ARM DEN 0070A specification,
-"NOT_REQUIRED" (-2) is clashing with PSCI's "PSCI_RET_INVALID_PARAMS".
+In a heterogeneous system, we can end up with both affected and
+unaffected CPUs. Let's check their status before calling into the
+firmware.
 
-Let's bite the bullet and add SMCCC specific return codes. Users
-can be repainted as and when required.
-
-Acked-by: Will Deacon <will.deacon@arm.com>
+Reviewed-by: Julien Grall <julien.grall@arm.com>
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- include/linux/arm-smccc.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/kernel/cpu_errata.c |  2 ++
+ arch/arm64/kernel/entry.S      | 11 +++++++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-index a031897fca76..c89da86de99f 100644
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -291,5 +291,10 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
-  */
- #define arm_smccc_1_1_hvc(...)	__arm_smccc_1_1(SMCCC_HVC_INST, __VA_ARGS__)
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index d98d8ce29533..d1a7a68dc142 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -233,6 +233,8 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
+ #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
  
-+/* Return codes defined in ARM DEN 0070A */
-+#define SMCCC_RET_SUCCESS			0
-+#define SMCCC_RET_NOT_SUPPORTED			-1
-+#define SMCCC_RET_NOT_REQUIRED			-2
+ #ifdef CONFIG_ARM64_SSBD
++DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
 +
- #endif /*__ASSEMBLY__*/
- #endif /*__LINUX_ARM_SMCCC_H*/
+ void __init arm64_update_smccc_conduit(struct alt_instr *alt,
+ 				       __le32 *origptr, __le32 *updptr,
+ 				       int nr_inst)
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index f33e6aed3037..29ad672a6abd 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -140,8 +140,10 @@ alternative_else_nop_endif
+ 
+ 	// This macro corrupts x0-x3. It is the caller's duty
+ 	// to save/restore them if required.
+-	.macro	apply_ssbd, state
++	.macro	apply_ssbd, state, targ, tmp1, tmp2
+ #ifdef CONFIG_ARM64_SSBD
++	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
++	cbz	\tmp2, \targ
+ 	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
+ 	mov	w1, #\state
+ alternative_cb	arm64_update_smccc_conduit
+@@ -176,12 +178,13 @@ alternative_cb_end
+ 	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
+ 	disable_step_tsk x19, x20		// exceptions when scheduling.
+ 
+-	apply_ssbd 1
++	apply_ssbd 1, 1f, x22, x23
+ 
+ #ifdef CONFIG_ARM64_SSBD
+ 	ldp	x0, x1, [sp, #16 * 0]
+ 	ldp	x2, x3, [sp, #16 * 1]
+ #endif
++1:
+ 
+ 	mov	x29, xzr			// fp pointed to user-space
+ 	.else
+@@ -323,8 +326,8 @@ alternative_if ARM64_WORKAROUND_845719
+ alternative_else_nop_endif
+ #endif
+ 3:
+-	apply_ssbd 0
+-
++	apply_ssbd 0, 5f, x0, x1
++5:
+ 	.endif
+ 
+ 	msr	elr_el1, x21			// set up the return data
 -- 
 2.14.2
