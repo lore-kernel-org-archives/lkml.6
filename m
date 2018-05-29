@@ -1,58 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934452AbeE2NKP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:10:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45174 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934378AbeE2NKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:10:09 -0400
-Date: Tue, 29 May 2018 15:09:48 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Oleksandr Shamray <oleksandrs@mellanox.com>
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        openbmc@lists.ozlabs.org, joel@jms.id.au, jiri@resnulli.us,
-        tklauser@distanz.ch, linux-serial@vger.kernel.org, vadimp@mellanox.com,
-        system-sw-low-level@mellanox.com, robh+dt@kernel.org,
-        openocd-devel-owner@lists.sourceforge.net, linux-api@vger.kernel.org,
-        davem@davemloft.net, mchehab@kernel.org
-Subject: Re: [patch v23 1/4] drivers: jtag: Add JTAG core driver
-Message-ID: <20180529130948.GC30119@kroah.com>
-References: <1527594545-19870-1-git-send-email-oleksandrs@mellanox.com>
- <1527594545-19870-2-git-send-email-oleksandrs@mellanox.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527594545-19870-2-git-send-email-oleksandrs@mellanox.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S934550AbeE2NKr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:10:47 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35584 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934083AbeE2NKg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:10:36 -0400
+X-Google-Smtp-Source: AB8JxZpXHFNUrrQOCIEsQ7Fiqa3fTiOmVRAzfH8Q5D/G93WOCOK+O7JdrAkIIXdKovGLZRGh52HyIQ==
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>, Rob Herring <robh@kernel.org>,
+        Johan Hovold <johan@kernel.org>, linux-bluetooth@vger.kernel.org
+Subject: [PATCH 02/19] Bluetooth: hci_bcm: Add serdev_id_table
+Date: Tue, 29 May 2018 15:09:57 +0200
+Message-Id: <20180529131014.18641-3-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
+References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 02:49:02PM +0300, Oleksandr Shamray wrote:
-> +static int jtag_release(struct inode *inode, struct file *file)
-> +{
-> +	return 0;
-> +}
+Describe which hardware is supported by the current driver.
 
-If you do not do anything, then there is no need to have this callback
-at all, right?
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/bluetooth/hci_bcm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> +/**
-> + * enum jtag_endstate:
-> + *
-> + * @JTAG_STATE_IDLE: JTAG state machine IDLE state
-> + * @JTAG_STATE_PAUSEIR: JTAG state machine PAUSE_IR state
-> + * @JTAG_STATE_PAUSEDR: JTAG state machine PAUSE_DR state
-> + */
-> +enum jtag_endstate {
-> +	JTAG_STATE_IDLE,
-> +	JTAG_STATE_PAUSEIR,
-> +	JTAG_STATE_PAUSEDR,
-
-Be specific with these enums, set them to a value so you know all is
-good.  Userspace C compilers can be funny at times.
-
-Otherwise, looks really good, nice work.
-
-greg k-h
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index 441f5e1deb11..f4d7846c06b8 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -1325,6 +1325,11 @@ static const struct of_device_id bcm_bluetooth_of_match[] = {
+ MODULE_DEVICE_TABLE(of, bcm_bluetooth_of_match);
+ #endif
+ 
++static const struct serdev_device_id bcm_serdev_id[] = {
++	{ "bcm43438-bt", },
++	{}
++};
++
+ static struct serdev_device_driver bcm_serdev_driver = {
+ 	.probe = bcm_serdev_probe,
+ 	.remove = bcm_serdev_remove,
+@@ -1334,6 +1339,7 @@ static struct serdev_device_driver bcm_serdev_driver = {
+ 		.acpi_match_table = ACPI_PTR(bcm_acpi_match),
+ 		.pm = &bcm_pm_ops,
+ 	},
++	.id_table = bcm_serdev_id,
+ };
+ 
+ int __init bcm_init(void)
+-- 
+2.17.0
