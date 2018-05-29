@@ -1,82 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965206AbeE2PrQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:47:16 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43656 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936829AbeE2PrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:47:09 -0400
-Date: Tue, 29 May 2018 16:47:38 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org,
-        robin.murphy@arm.com
-Subject: Re: [PATCH] ARM: mcpm, perf/arm-cci: export mcpm_is_available
-Message-ID: <20180529154738.GL17159@arm.com>
-References: <20180528154448.2494709-1-arnd@arndb.de>
- <20180529153013.GH17159@arm.com>
- <20180529153324.GL17671@n2100.armlinux.org.uk>
- <20180529154120.GI17159@arm.com>
- <20180529154251.GM17671@n2100.armlinux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529154251.GM17671@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S936901AbeE2Prq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:47:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:43434 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936801AbeE2PoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:44:15 -0400
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCHv2 06/16] atomics/generic: define atomic64_fetch_add_unless()
+Date: Tue, 29 May 2018 16:43:36 +0100
+Message-Id: <20180529154346.3168-7-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180529154346.3168-1-mark.rutland@arm.com>
+References: <20180529154346.3168-1-mark.rutland@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 04:42:51PM +0100, Russell King - ARM Linux wrote:
-> On Tue, May 29, 2018 at 04:41:20PM +0100, Will Deacon wrote:
-> > Hi Russell,
-> > 
-> > On Tue, May 29, 2018 at 04:33:24PM +0100, Russell King - ARM Linux wrote:
-> > > On Tue, May 29, 2018 at 04:30:14PM +0100, Will Deacon wrote:
-> > > > Hi Arnd, Russell, [+Nico and Robin]
-> > > > 
-> > > > On Mon, May 28, 2018 at 05:44:36PM +0200, Arnd Bergmann wrote:
-> > > > > Now that the ARM CCI PMU driver can be built as a loadable module,
-> > > > > we get a link failure when MCPM is enabled:
-> > > > > 
-> > > > > ERROR: "mcpm_is_available" [drivers/perf/arm-cci.ko] undefined!
-> > > > > 
-> > > > > The simplest fix is to export that helper function.
-> > > > > 
-> > > > > Fixes: 8b0c93c20ef7 ("perf/arm-cci: Allow building as a module")
-> > > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > > > ---
-> > > > > The patch that caused this is currently part of the arm-perf/for-next/perf
-> > > > > branch, it would be good to have the fix there as well.
-> > > > > ---
-> > > > >  arch/arm/common/mcpm_entry.c | 2 ++
-> > > > >  1 file changed, 2 insertions(+)
-> > > > 
-> > > > I'm happy to take this via the arm perf tree if others are ok with that.
-> > > > Alternatively, I can revert the offending commit if there are objections
-> > > > to exporting the symbol.
-> > > > 
-> > > > Russell: do you any preference?
-> > > 
-> > > As it claims to fix 8b0c93c20ef7, which I don't have, I can't take this
-> > > patch.  Do we know which tree has this?
-> > 
-> > Yes, sorry, it's in my for-next/perf branch:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/commit/?h=for-next/perf&id=8b0c93c20ef78f15d8b760964ff79bda7f68c610
-> > 
-> > which is now in -next.
-> > 
-> > I'm happy to take the mcpm patch on top with your ack, but if you have
-> > conflicting changes (or would prefer not to export the symbol to modules)
-> > then I can just revert the patch in my tree for now.
-> 
-> I have no changes to that file, so:
-> 
-> Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+As a step towards unifying the atomic/atomic64/atomic_long APIs, this
+patch converts the generic implementation of atomic64_add_unless() into
+a generic implementation of atomic64_fetch_add_unless().
 
-Thanks, I've picked up the fix from Arnd with your Ack and will push out
-this evening.
+A wrapper in <linux/atomic.h> will build atomic_add_unless() atop of
+this, provided it is given a preprocessor definition.
 
-Will
+No functional change is intended as a result of this patch.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+---
+ include/asm-generic/atomic64.h |  3 ++-
+ lib/atomic64.c                 | 13 ++++++-------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/include/asm-generic/atomic64.h b/include/asm-generic/atomic64.h
+index e9a94b7a4d0a..b0aa425361ad 100644
+--- a/include/asm-generic/atomic64.h
++++ b/include/asm-generic/atomic64.h
+@@ -52,7 +52,8 @@ ATOMIC64_OPS(xor)
+ extern long long atomic64_dec_if_positive(atomic64_t *v);
+ extern long long atomic64_cmpxchg(atomic64_t *v, long long o, long long n);
+ extern long long atomic64_xchg(atomic64_t *v, long long new);
+-extern int	 atomic64_add_unless(atomic64_t *v, long long a, long long u);
++extern long long atomic64_fetch_add_unless(atomic64_t *v, long long a, long long u);
++#define atomic64_fetch_add_unless atomic64_fetch_add_unless
+ 
+ #define atomic64_add_negative(a, v)	(atomic64_add_return((a), (v)) < 0)
+ #define atomic64_inc(v)			atomic64_add(1LL, (v))
+diff --git a/lib/atomic64.c b/lib/atomic64.c
+index 53c2d5edc826..fb2a38af5ae8 100644
+--- a/lib/atomic64.c
++++ b/lib/atomic64.c
+@@ -178,18 +178,17 @@ long long atomic64_xchg(atomic64_t *v, long long new)
+ }
+ EXPORT_SYMBOL(atomic64_xchg);
+ 
+-int atomic64_add_unless(atomic64_t *v, long long a, long long u)
++long long atomic64_fetch_add_unless(atomic64_t *v, long long a, long long u)
+ {
+ 	unsigned long flags;
+ 	raw_spinlock_t *lock = lock_addr(v);
+-	int ret = 0;
++	long long val;
+ 
+ 	raw_spin_lock_irqsave(lock, flags);
+-	if (v->counter != u) {
++	val = v->counter;
++	if (val != u)
+ 		v->counter += a;
+-		ret = 1;
+-	}
+ 	raw_spin_unlock_irqrestore(lock, flags);
+-	return ret;
++	return val;
+ }
+-EXPORT_SYMBOL(atomic64_add_unless);
++EXPORT_SYMBOL(atomic64_fetch_add_unless);
+-- 
+2.11.0
