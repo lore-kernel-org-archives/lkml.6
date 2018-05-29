@@ -1,88 +1,272 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935715AbeE2PRW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:17:22 -0400
-Received: from mga07.intel.com ([134.134.136.100]:17614 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935022AbeE2PRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:17:16 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,456,1520924400";
-   d="scan'208";a="53154547"
-Date: Tue, 29 May 2018 09:17:12 -0600
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mikulas Patocka <mpatocka@redhat.com>, Shaohua Li <shli@kernel.org>,
-        Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        linux-fsdevel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Heinz Mauelshagen <heinzm@redhat.com>, linux-raid@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dm: writecache: add DAX dependency
-Message-ID: <20180529151712.GA2537@linux.intel.com>
-Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mikulas Patocka <mpatocka@redhat.com>, Shaohua Li <shli@kernel.org>,
-        Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-fsdevel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Heinz Mauelshagen <heinzm@redhat.com>, linux-raid@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180528153834.2268557-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528153834.2268557-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S964850AbeE2PS0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:18:26 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:39127 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935043AbeE2Oly (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:41:54 -0400
+X-Google-Smtp-Source: AB8JxZo40moKkcknAmrzvXGZBpZk8rNX1Tg8PmNZoN4nuJjR3zPT/qyBpy7hDAhK/Nmjd7WP2FcVXA==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 04/11] ovl: struct cattr cleanups
+Date: Tue, 29 May 2018 16:41:36 +0200
+Message-Id: <20180529144143.16378-5-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529144143.16378-1-mszeredi@redhat.com>
+References: <20180529144143.16378-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 05:38:10PM +0200, Arnd Bergmann wrote:
-> The new dm-writecache driver inconditionally uses the dax
-			       unconditionally
+From: Amir Goldstein <amir73il@gmail.com>
 
-> subsystem, leading to link errors in some configurations:
-> 
-> drivers/md/dm-writecache.o: In function `writecache_ctr':
-> dm-writecache.c:(.text+0x1fdc): undefined reference to `dax_read_lock'
-> dm-writecache.c:(.text+0x2004): undefined reference to `dax_direct_access'
-> dm-writecache.c:(.text+0x21cc): undefined reference to `dax_read_unlock'
-> 
-> It seems wrong to require DAX in order to build the writecache
-> driver, but that at least avoids randconfig build errors.
-> 
-> Fixes: bb15b431d650 ("dm: add writecache target")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/md/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-> index 852c7ebe2902..f8ecf2da1edf 100644
-> --- a/drivers/md/Kconfig
-> +++ b/drivers/md/Kconfig
-> @@ -338,6 +338,7 @@ config DM_CACHE_SMQ
->  config DM_WRITECACHE
->  	tristate "Writecache target"
->  	depends on BLK_DEV_DM
-> +	depends on DAX
->  	---help---
->  	   The writecache target caches writes on persistent memory or SSD.
->  	   It is intended for databases or other programs that need extremely
+* Rename to ovl_cattr
 
-I think the right way to handle this is to instead wrap all the DAX code in
-dm-writecache in "#if IS_ENABLED(CONFIG_DAX_DRIVER)" blocks and provide stubs
-for the non-DAX case.  This prevents you from having to pull in all the
-generic DAX code unnecessarily.
+* Fold ovl_create_real() hardlink argument into struct ovl_cattr
 
-In looking at the file I think this is just the persistent_memory_claim()
-function.
+* Create macro OVL_CATTR() to initialize struct ovl_cattr from mode
 
-I'll send out a patch once I've tested a bit.
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/overlayfs/copy_up.c   |  5 ++---
+ fs/overlayfs/dir.c       | 45 +++++++++++++++++++++------------------------
+ fs/overlayfs/overlayfs.h |  9 ++++++---
+ fs/overlayfs/super.c     |  4 +---
+ 4 files changed, 30 insertions(+), 33 deletions(-)
 
-- Ross
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index a8273dec0fb8..5f4c78b1bbeb 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -486,7 +486,7 @@ static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
+ 	struct dentry *temp;
+ 	const struct cred *old_creds = NULL;
+ 	struct cred *new_creds = NULL;
+-	struct cattr cattr = {
++	struct ovl_cattr cattr = {
+ 		/* Can't properly set mode on creation because of the umask */
+ 		.mode = c->stat.mode & S_IFMT,
+ 		.rdev = c->stat.rdev,
+@@ -509,8 +509,7 @@ static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
+ 		if (IS_ERR(temp))
+ 			goto temp_err;
+ 
+-		err = ovl_create_real(d_inode(c->workdir), temp, &cattr,
+-				      NULL);
++		err = ovl_create_real(d_inode(c->workdir), temp, &cattr);
+ 		if (err) {
+ 			dput(temp);
+ 			goto out;
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 4d431a3f7a0a..0fb3ef85f298 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -115,15 +115,15 @@ int ovl_cleanup_and_whiteout(struct dentry *workdir, struct inode *dir,
+ }
+ 
+ int ovl_create_real(struct inode *dir, struct dentry *newdentry,
+-		    struct cattr *attr, struct dentry *hardlink)
++		    struct ovl_cattr *attr)
+ {
+ 	int err;
+ 
+ 	if (newdentry->d_inode)
+ 		return -ESTALE;
+ 
+-	if (hardlink) {
+-		err = ovl_do_link(hardlink, dir, newdentry);
++	if (attr->hardlink) {
++		err = ovl_do_link(attr->hardlink, dir, newdentry);
+ 	} else {
+ 		switch (attr->mode & S_IFMT) {
+ 		case S_IFREG:
+@@ -213,14 +213,14 @@ static bool ovl_type_origin(struct dentry *dentry)
+ }
+ 
+ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
+-			    struct cattr *attr, struct dentry *hardlink)
++			    struct ovl_cattr *attr)
+ {
+ 	struct dentry *upperdir = ovl_dentry_upper(dentry->d_parent);
+ 	struct inode *udir = upperdir->d_inode;
+ 	struct dentry *newdentry;
+ 	int err;
+ 
+-	if (!hardlink && !IS_POSIXACL(udir))
++	if (!attr->hardlink && !IS_POSIXACL(udir))
+ 		attr->mode &= ~current_umask();
+ 
+ 	inode_lock_nested(udir, I_MUTEX_PARENT);
+@@ -229,7 +229,7 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
+ 	err = PTR_ERR(newdentry);
+ 	if (IS_ERR(newdentry))
+ 		goto out_unlock;
+-	err = ovl_create_real(udir, newdentry, attr, hardlink);
++	err = ovl_create_real(udir, newdentry, attr);
+ 	if (err)
+ 		goto out_dput;
+ 
+@@ -238,7 +238,7 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
+ 		ovl_set_opaque(dentry, newdentry);
+ 	}
+ 
+-	ovl_instantiate(dentry, inode, newdentry, !!hardlink);
++	ovl_instantiate(dentry, inode, newdentry, !!attr->hardlink);
+ 	newdentry = NULL;
+ out_dput:
+ 	dput(newdentry);
+@@ -285,8 +285,7 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
+ 	if (IS_ERR(opaquedir))
+ 		goto out_unlock;
+ 
+-	err = ovl_create_real(wdir, opaquedir,
+-			      &(struct cattr){.mode = stat.mode}, NULL);
++	err = ovl_create_real(wdir, opaquedir, OVL_CATTR(stat.mode));
+ 	if (err)
+ 		goto out_dput;
+ 
+@@ -354,8 +353,7 @@ static int ovl_set_upper_acl(struct dentry *upperdentry, const char *name,
+ }
+ 
+ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+-				    struct cattr *cattr,
+-				    struct dentry *hardlink)
++				    struct ovl_cattr *cattr)
+ {
+ 	struct dentry *workdir = ovl_workdir(dentry);
+ 	struct inode *wdir = workdir->d_inode;
+@@ -365,6 +363,7 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+ 	struct dentry *newdentry;
+ 	int err;
+ 	struct posix_acl *acl, *default_acl;
++	bool hardlink = !!cattr->hardlink;
+ 
+ 	if (WARN_ON(!workdir))
+ 		return -EROFS;
+@@ -391,7 +390,7 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+ 	if (IS_ERR(upper))
+ 		goto out_dput;
+ 
+-	err = ovl_create_real(wdir, newdentry, cattr, hardlink);
++	err = ovl_create_real(wdir, newdentry, cattr);
+ 	if (err)
+ 		goto out_dput2;
+ 
+@@ -439,7 +438,7 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+ 		if (err)
+ 			goto out_cleanup;
+ 	}
+-	ovl_instantiate(dentry, inode, newdentry, !!hardlink);
++	ovl_instantiate(dentry, inode, newdentry, hardlink);
+ 	newdentry = NULL;
+ out_dput2:
+ 	dput(upper);
+@@ -460,8 +459,7 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+ }
+ 
+ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+-			      struct cattr *attr, struct dentry *hardlink,
+-			      bool origin)
++			      struct ovl_cattr *attr, bool origin)
+ {
+ 	int err;
+ 	const struct cred *old_cred;
+@@ -489,7 +487,7 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+ 	if (override_cred) {
+ 		override_cred->fsuid = inode->i_uid;
+ 		override_cred->fsgid = inode->i_gid;
+-		if (!hardlink) {
++		if (!attr->hardlink) {
+ 			err = security_dentry_create_files_as(dentry,
+ 					attr->mode, &dentry->d_name, old_cred,
+ 					override_cred);
+@@ -502,11 +500,9 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+ 		put_cred(override_cred);
+ 
+ 		if (!ovl_dentry_is_whiteout(dentry))
+-			err = ovl_create_upper(dentry, inode, attr,
+-						hardlink);
++			err = ovl_create_upper(dentry, inode, attr);
+ 		else
+-			err = ovl_create_over_whiteout(dentry, inode, attr,
+-							hardlink);
++			err = ovl_create_over_whiteout(dentry, inode, attr);
+ 	}
+ out_revert_creds:
+ 	revert_creds(old_cred);
+@@ -518,7 +514,7 @@ static int ovl_create_object(struct dentry *dentry, int mode, dev_t rdev,
+ {
+ 	int err;
+ 	struct inode *inode;
+-	struct cattr attr = {
++	struct ovl_cattr attr = {
+ 		.rdev = rdev,
+ 		.link = link,
+ 	};
+@@ -535,7 +531,7 @@ static int ovl_create_object(struct dentry *dentry, int mode, dev_t rdev,
+ 	inode_init_owner(inode, dentry->d_parent->d_inode, mode);
+ 	attr.mode = inode->i_mode;
+ 
+-	err = ovl_create_or_link(dentry, inode, &attr, NULL, false);
++	err = ovl_create_or_link(dentry, inode, &attr, false);
+ 	if (err)
+ 		iput(inode);
+ 
+@@ -594,8 +590,9 @@ static int ovl_link(struct dentry *old, struct inode *newdir,
+ 	inode = d_inode(old);
+ 	ihold(inode);
+ 
+-	err = ovl_create_or_link(new, inode, NULL, ovl_dentry_upper(old),
+-				 ovl_type_origin(old));
++	err = ovl_create_or_link(new, inode,
++			&(struct ovl_cattr) {.hardlink = ovl_dentry_upper(old)},
++			ovl_type_origin(old));
+ 	if (err)
+ 		iput(inode);
+ 
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 1c30d60cc290..aa8286419133 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -349,14 +349,17 @@ extern const struct inode_operations ovl_dir_inode_operations;
+ struct dentry *ovl_lookup_temp(struct dentry *workdir);
+ int ovl_cleanup_and_whiteout(struct dentry *workdir, struct inode *dir,
+ 			     struct dentry *dentry);
+-struct cattr {
++struct ovl_cattr {
+ 	dev_t rdev;
+ 	umode_t mode;
+ 	const char *link;
++	struct dentry *hardlink;
+ };
++
++#define OVL_CATTR(m) (&(struct ovl_cattr) { .mode = (m) })
++
+ int ovl_create_real(struct inode *dir, struct dentry *newdentry,
+-		    struct cattr *attr,
+-		    struct dentry *hardlink);
++		    struct ovl_cattr *attr);
+ int ovl_cleanup(struct inode *dir, struct dentry *dentry);
+ 
+ /* copy_up.c */
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 94a7a654b0b8..286d36772e9c 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -611,9 +611,7 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
+ 			goto retry;
+ 		}
+ 
+-		err = ovl_create_real(dir, work,
+-				      &(struct cattr){.mode = S_IFDIR | 0},
+-				      NULL);
++		err = ovl_create_real(dir, work, OVL_CATTR(attr.ia_mode));
+ 		if (err)
+ 			goto out_dput;
+ 
+-- 
+2.14.3
