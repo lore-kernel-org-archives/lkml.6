@@ -1,36 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934964AbeE2OA0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:00:26 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:55428 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934802AbeE2OAV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:00:21 -0400
-Date: Tue, 29 May 2018 10:00:19 -0400 (EDT)
-Message-Id: <20180529.100019.342627848221840486.davem@davemloft.net>
-To: brnkv.i1@gmail.com
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] atm: zatm: fix memcmp casting
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180525174952.21965-1-brnkv.i1@gmail.com>
-References: <20180525174952.21965-1-brnkv.i1@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S934658AbeE2OBC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:01:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36598 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934764AbeE2N7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:59:37 -0400
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Gerd Hoffmann <kraxel@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK),
+        linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING
+        FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] dma-buf: make map_atomic and map function pointers optional
+Date: Tue, 29 May 2018 15:59:18 +0200
+Message-Id: <20180529135918.19729-1-kraxel@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Bornyakov <brnkv.i1@gmail.com>
-Date: Fri, 25 May 2018 20:49:52 +0300
+So drivers don't need dummy functions just returning NULL.
 
-> memcmp() returns int, but eprom_try_esi() cast it to unsigned char. One
-> can lose significant bits and get 0 from non-0 value returned by the
-> memcmp().
-> 
-> Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/linux/dma-buf.h   | 4 ++--
+ drivers/dma-buf/dma-buf.c | 4 ++++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-Applied, thanks.
+diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+index 085db2fee2..88917fa796 100644
+--- a/include/linux/dma-buf.h
++++ b/include/linux/dma-buf.h
+@@ -39,12 +39,12 @@ struct dma_buf_attachment;
+ 
+ /**
+  * struct dma_buf_ops - operations possible on struct dma_buf
+- * @map_atomic: maps a page from the buffer into kernel address
++ * @map_atomic: [optional] maps a page from the buffer into kernel address
+  *		space, users may not block until the subsequent unmap call.
+  *		This callback must not sleep.
+  * @unmap_atomic: [optional] unmaps a atomically mapped page from the buffer.
+  *		  This Callback must not sleep.
+- * @map: maps a page from the buffer into kernel address space.
++ * @map: [optional] maps a page from the buffer into kernel address space.
+  * @unmap: [optional] unmaps a page from the buffer.
+  * @vmap: [optional] creates a virtual mapping for the buffer into kernel
+  *	  address space. Same restrictions as for vmap and friends apply.
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index d78d5fc173..4c45e31258 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -872,6 +872,8 @@ void *dma_buf_kmap_atomic(struct dma_buf *dmabuf, unsigned long page_num)
+ {
+ 	WARN_ON(!dmabuf);
+ 
++	if (!dmabuf->ops->map_atomic)
++		return NULL;
+ 	return dmabuf->ops->map_atomic(dmabuf, page_num);
+ }
+ EXPORT_SYMBOL_GPL(dma_buf_kmap_atomic);
+@@ -907,6 +909,8 @@ void *dma_buf_kmap(struct dma_buf *dmabuf, unsigned long page_num)
+ {
+ 	WARN_ON(!dmabuf);
+ 
++	if (!dmabuf->ops->map)
++		return NULL;
+ 	return dmabuf->ops->map(dmabuf, page_num);
+ }
+ EXPORT_SYMBOL_GPL(dma_buf_kmap);
+-- 
+2.9.3
