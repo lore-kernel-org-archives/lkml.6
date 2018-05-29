@@ -1,92 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932775AbeE2Jtj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:49:39 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36804 "EHLO
+        id S932810AbeE2JuE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:50:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37340 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932723AbeE2JtZ (ORCPT
+        with ESMTP id S932448AbeE2JuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:49:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CAB086021C
+        Tue, 29 May 2018 05:50:00 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11D8B6021C
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-From: Mukesh Ojha <mojha@codeaurora.org>
-To: john.stultz@linaro.org, tglx@linutronix.de,
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Subject: Re: [PATCH v2 2/6] dt-bindings: opp: Introduce qcom-opp bindings
+To: David Collins <collinsd@codeaurora.org>, viresh.kumar@linaro.org,
+        sboyd@kernel.org, andy.gross@linaro.org, ulf.hansson@linaro.org
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc: neeraju@codeaurora.org, gkohli@codeaurora.org, cpandya@codeaurora.org,
-        Mukesh Ojha <mojha@codeaurora.org>
-Subject: [PATCH RESEND] time: Fix sleeptime injection for non-stop clocksource & persistent clock
-Date: Tue, 29 May 2018 15:19:11 +0530
-Message-Id: <1527587351-26634-1-git-send-email-mojha@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+References: <20180525100121.28214-1-rnayak@codeaurora.org>
+ <20180525100121.28214-3-rnayak@codeaurora.org>
+ <67054dca-33a8-7e7c-6218-dc5abf84f6d8@codeaurora.org>
+Message-ID: <9786fd42-b48a-757f-97cb-0ca65c2f030e@codeaurora.org>
+Date: Tue, 29 May 2018 15:19:54 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <67054dca-33a8-7e7c-6218-dc5abf84f6d8@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, for both non-stop clocksource and persistent clock
-there is a corner case, when a driver failed to go suspend mode
-rtc_resume() injects the sleeptime as timekeeping_rtc_skipresume()
-returned 'false' due to which we can see mismatch in time between
-system clock and other timers.
 
-Success case:
-                                         {sleeptime_injected=true}
-rtc_suspend() => timekeeping_suspend() => timekeeping_resume() => 
-  rtc_resume()
 
-Failure case:
-             {failure in sleep path} {sleeptime_injected=false}
-rtc_suspend()          =>            rtc_resume()
+On 05/26/2018 04:03 AM, David Collins wrote:
+> Hello Rajendra,
+> 
+> On 05/25/2018 03:01 AM, Rajendra Nayak wrote:
+>> On Qualcomm platforms, an OPP node needs to describe an
+> 
+> s/Qualcomm/Qualcomm Technologies, Inc./
+> 
+> 
 
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
----
+[] ..
 
-Changes from Resend:
- * updated commit text.
+> 
+> s/Qualcomm/Qualcomm Technologies, Inc./ ?
+> 
+> s/descibe/describe/
+> 
+> 
+>> +
+>> +OPP tables for devices on Qualcomm platforms require an additional
+> 
+> s/Qualcomm/Qualcomm Technologies, Inc./
+> 
+> 
+>> +platform specific corner/level value to be specified.
+>> +This value is passed on to the RPM (Resource Power Manager) by
+> 
+> Do you want to mention RPMh here as well?
+> 
+> 
 
- kernel/time/timekeeping.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+[] ..
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 427e33d..c022d82 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1511,9 +1511,6 @@ void __weak read_boot_clock64(struct timespec64 *ts)
- 	ts->tv_nsec = 0;
- }
- 
--/* Flag for if timekeeping_resume() has injected sleeptime */
--static bool sleeptime_injected;
--
- /* Flag for if there is a persistent clock on this platform */
- static bool persistent_clock_exists;
- 
-@@ -1611,7 +1608,14 @@ static void __timekeeping_inject_sleeptime(struct timekeeper *tk,
-  */
- bool timekeeping_rtc_skipresume(void)
- {
--	return sleeptime_injected;
-+	struct timekeeper *tk = &tk_core.timekeeper;
-+	bool skip_rtc_resume = false;
-+
-+	skip_rtc_resume = ((tk->tkr_mono.clock->flags &
-+			CLOCK_SOURCE_SUSPEND_NONSTOP) ||
-+			(persistent_clock_exists)) ? true : false;
-+
-+	return skip_rtc_resume;
- }
- 
- /**
-@@ -1671,8 +1675,8 @@ void timekeeping_resume(void)
- 	unsigned long flags;
- 	struct timespec64 ts_new, ts_delta;
- 	cycle_t cycle_now, cycle_delta;
-+	bool sleeptime_injected = false;
- 
--	sleeptime_injected = false;
- 	read_persistent_clock64(&ts_new);
- 
- 	clockevents_resume();
+>> +
+>> +Required properties:
+>> +- qcom,level: On Qualcomm platforms an OPP node can describe a positive value
+> 
+> s/Qualcomm/Qualcomm Technologies, Inc./
+> 
+> 
+>> +representing a corner/level that's communicated with a remote microprocessor
+>> +(usually called the RPM) which then translates it into a certain voltage on
+>> +a voltage rail.
+> 
+> Should these lines be indented 2 spaces as is the case for the compatible
+> property above?
+> 
+> Could you add an example for both RPM and RPMh in this binding file?
+
+Thanks David for the review. I will fix all this up when I respin.
+
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
