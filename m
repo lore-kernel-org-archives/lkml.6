@@ -1,104 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754948AbeE2Hol (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:44:41 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35074 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754794AbeE2Hoj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:44:39 -0400
-Subject: Re: [PATCH] perf docu: Update section on cpu topology
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Andi Kleen <andi@firstfloor.org>
-References: <20180528074433.16652-1-tmricht@linux.ibm.com>
- <20180528195412.GI25467@kernel.org>
-From: Thomas-Mich Richter <tmricht@linux.ibm.com>
-Organization: IBM LTC
-Date: Tue, 29 May 2018 09:44:29 +0200
+        id S1755078AbeE2Hqb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:46:31 -0400
+Received: from zoot.epublica.de ([78.46.103.157]:40384 "EHLO zoot.epublica.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754920AbeE2Hq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:46:28 -0400
+Subject: Re: [PATCH] HID: Add support for 146b:0902 Bigben Interactive Kids'
+ gamepad
+To: Roderick Colenbrander <thunderbird2k@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <31245206-038e-4a5b-a1a1-8877463556a7@hanno.de>
+ <CAEc3jaB7jPJ_xa5rFrunwcPgkG9VrCdJSbb=BrQsHKxrO9AixQ@mail.gmail.com>
+From: Hanno Zulla <abos@hanno.de>
+Message-ID: <729f18bc-65b7-9bfd-50ed-fbb1f168500d@hanno.de>
+Date: Tue, 29 May 2018 09:46:24 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180528195412.GI25467@kernel.org>
+In-Reply-To: <CAEc3jaB7jPJ_xa5rFrunwcPgkG9VrCdJSbb=BrQsHKxrO9AixQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18052907-0040-0000-0000-0000043ECF7A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052907-0041-0000-0000-000026441CF5
-Message-Id: <7a8d7174-0fe5-5492-9c40-8cf65a65bab9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805290093
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 09:54 PM, Arnaldo Carvalho de Melo wrote:
-> Em Mon, May 28, 2018 at 09:44:33AM +0200, Thomas Richter escreveu:
->> Add an explanation of each cpu's core and socket
->> identifier to the documentation.
-> 
-> Thanks, applying. I guess it is not that worth to mention that older
-> files may have just the string lists, right?
-> 
-> - Arnaldo
+Hi Roderick,
+Hi Benjamin,
 
-Ah, sorry but that did not cross my mind....
+thanks for the review!
 
-It was introduced with commit 
-2bb00d2f95193 ("perf tools: Store the cpu socket and core ids in the perf.data header")
-and is available since Linux 4.4
+> In terms of code style, I noticed a lot of C++ style comments which> are not part of the kernel code style instead use C comments. To
+check> for potential other issues as well, run your patch through>
+'scripts/checkpatch.pl'.
 
-Hope this helps...
+Okay, will check with that.
 
->  
->> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
->> ---
->>  tools/perf/Documentation/perf.data-file-format.txt | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
->> index d00f0d51cab8..c57904a526ce 100644
->> --- a/tools/perf/Documentation/perf.data-file-format.txt
->> +++ b/tools/perf/Documentation/perf.data-file-format.txt
->> @@ -153,10 +153,18 @@ struct {
->>  	HEADER_CPU_TOPOLOGY = 13,
->>  
->>  String lists defining the core and CPU threads topology.
->> +The string lists are followed by a variable length array
->> +which contains core_id and socket_id of each cpu.
->> +The number of entries can be determined by the size of the
->> +section minus the sizes of both string lists.
->>  
->>  struct {
->>         struct perf_header_string_list cores; /* Variable length */
->>         struct perf_header_string_list threads; /* Variable length */
->> +       struct {
->> +	      uint32_t core_id;
->> +	      uint32_t socket_id;
->> +       } cpus[nr]; /* Variable length records */
->>  };
->>  
->>  Example:
->> -- 
->> 2.14.3
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-perf-users" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> I noticed you fixed up reported descriptors a bit to get axes remapped
+> in a different way. This is reasonable as the default mappings are
+> often not good. However, I would suggest use the mapping functions
+> instead (e.g. see hid-sony.c and other drivers). It also allows you to
+> properly remap buttons as well. I suspect the current button mapping
+> is all over the place as well. Make sure axis and button mapping
+> complies to the Linux gamepad spec (see
+> Documentation/input/gamepad.rst).
 
+The main reason for the fixup was to cleanup the output part of the
+descriptor, as the device's original descriptor seemed to use
+nonsensical/undefined "Usage" values.
 
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-Vorsitzende des Aufsichtsrats: Martina Koederitz 
-Geschäftsführung: Dirk Wittkopp
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+Those two axis remappings were the only two necessary. The rest of the
+mappings are fine and look okay when compared to other drivers that do
+not fully adhere to the gamepad spec (e.g. xpad.c also doesn't map my
+XBox-Controller's D-Pad to NORTH/EAST/SOUTH/WEST but instead to HAT0 in
+the same way as this device does).
+
+I had assumed that using a descriptor fixup and leaving the actual work
+to the standard driver was cleaner than meddling with the incoming data
+in a mapping function.
+
+Actually, I was researching if I could fix the descriptor so that no
+LED/FF-specific code is necessary, but my knowledge of HID was too
+limited to achieve that.
+
+> In addition to those comments, please also try to follow the
+> submission guidelines
+
+Ah, thank you.
+
+> Also, keep point 9 in mind ("Don't get discouraged - or impatient").
+
+Nah. Don't worry! :-D
+
+Thanks & kind regards,
+
+Hanno
