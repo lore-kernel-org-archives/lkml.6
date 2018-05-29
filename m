@@ -1,122 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966279AbeE2Szq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 14:55:46 -0400
-Received: from mail-pf0-f181.google.com ([209.85.192.181]:33447 "EHLO
-        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965571AbeE2Szn (ORCPT
+        id S966329AbeE2S4F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 14:56:05 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:46592 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S965746AbeE2S4C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 14:55:43 -0400
-X-Google-Smtp-Source: AB8JxZrQxTXgXRr+xh8SXiKZLbGaXytULx86V5xXQ8YnT10obzZo9HywJsNnfP+GqLH/sG1KHnT3CA==
-Date: Tue, 29 May 2018 11:55:41 -0700
-From: Omar Sandoval <osandov@osandov.com>
-To: Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc: axboe@kernel.dk, holger@applied-asynchrony.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] blk-mq: abstract out blk-mq-sched rq list
- iteration bio merge helper
-Message-ID: <20180529185541.GB23487@vader>
-References: <1527057202-2802-1-git-send-email-jianchao.w.wang@oracle.com>
- <1527057202-2802-2-git-send-email-jianchao.w.wang@oracle.com>
+        Tue, 29 May 2018 14:56:02 -0400
+Date: Tue, 29 May 2018 14:56:01 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: Prasanthi Chellakumar <Prasanthi.Chellakumar@microchip.com>
+cc: linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH] usb: host: ohci: fix sfr kernel warning in ohci-at91
+ driver
+In-Reply-To: <1527285896-12811-1-git-send-email-Prasanthi.Chellakumar@microchip.com>
+Message-ID: <Pine.LNX.4.44L0.1805291455340.1458-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527057202-2802-2-git-send-email-jianchao.w.wang@oracle.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 02:33:21PM +0800, Jianchao Wang wrote:
-> From: Jens Axboe <axboe@kernel.dk>
+On Fri, 25 May 2018, Prasanthi Chellakumar wrote:
+
+> The USB Host Controller driver 'ohci-at91.c' reads a Special Function
+> Register - OHCI Interrupt Configuration Register (AT91_SFR_OHCIICR)
+> for bits SUSPEND_A/B/C. These bits are defined in sama5d2 alone, so
+> sfr register mapping is done with compatible string "atmel,sama5d2-sfr".
+> This gives a kernel warning 'failed to find sfr node' with non sama5d2
+> cpus which is removed here, thus leaving it up to having a proper DTS.
 > 
-> No functional changes in this patch, just a prep patch for utilizing
-> this in an IO scheduler.
-
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Prasanthi Chellakumar <prasanthi.chellakumar@microchip.com>
+> 
 > ---
->  block/blk-mq-sched.c   | 34 ++++++++++++++++++++++++----------
->  include/linux/blk-mq.h |  3 ++-
->  2 files changed, 26 insertions(+), 11 deletions(-)
 > 
-> diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-> index 25c14c5..b0f2c2a 100644
-> --- a/block/blk-mq-sched.c
-> +++ b/block/blk-mq-sched.c
-> @@ -268,19 +268,16 @@ bool blk_mq_sched_try_merge(struct request_queue *q, struct bio *bio,
->  EXPORT_SYMBOL_GPL(blk_mq_sched_try_merge);
->  
->  /*
-> - * Reverse check our software queue for entries that we could potentially
-> - * merge with. Currently includes a hand-wavy stop count of 8, to not spend
-> - * too much time checking for merges.
-> + * Iterate list of requests and see if we can merge this bio with any
-> + * of them.
->   */
-> -static bool blk_mq_attempt_merge(struct request_queue *q,
-> -				 struct blk_mq_ctx *ctx, struct bio *bio)
-> +bool blk_mq_bio_list_merge(struct request_queue *q, struct list_head *list,
-> +			   struct bio *bio)
->  {
->  	struct request *rq;
->  	int checked = 8;
->  
-> -	lockdep_assert_held(&ctx->lock);
-> -
-> -	list_for_each_entry_reverse(rq, &ctx->rq_list, queuelist) {
-> +	list_for_each_entry_reverse(rq, list, queuelist) {
->  		bool merged = false;
->  
->  		if (!checked--)
-> @@ -305,13 +302,30 @@ static bool blk_mq_attempt_merge(struct request_queue *q,
->  			continue;
->  		}
->  
-> -		if (merged)
-> -			ctx->rq_merged++;
->  		return merged;
->  	}
->  
->  	return false;
->  }
-> +EXPORT_SYMBOL_GPL(blk_mq_bio_list_merge);
-> +
-> +/*
-> + * Reverse check our software queue for entries that we could potentially
-> + * merge with. Currently includes a hand-wavy stop count of 8, to not spend
-> + * too much time checking for merges.
-> + */
-> +static bool blk_mq_attempt_merge(struct request_queue *q,
-> +				 struct blk_mq_ctx *ctx, struct bio *bio)
-> +{
-> +	lockdep_assert_held(&ctx->lock);
-> +
-> +	if (blk_mq_bio_list_merge(q, &ctx->rq_list, bio)) {
-> +		ctx->rq_merged++;
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
->  
->  bool __blk_mq_sched_bio_merge(struct request_queue *q, struct bio *bio)
->  {
-> diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-> index ebc34a5..fb35517 100644
-> --- a/include/linux/blk-mq.h
-> +++ b/include/linux/blk-mq.h
-> @@ -259,7 +259,8 @@ void blk_mq_add_to_requeue_list(struct request *rq, bool at_head,
->  void blk_mq_kick_requeue_list(struct request_queue *q);
->  void blk_mq_delay_kick_requeue_list(struct request_queue *q, unsigned long msecs);
->  void blk_mq_complete_request(struct request *rq);
-> -
-> +bool blk_mq_bio_list_merge(struct request_queue *q, struct list_head *list,
-> +			   struct bio *bio);
->  bool blk_mq_queue_stopped(struct request_queue *q);
->  void blk_mq_stop_hw_queue(struct blk_mq_hw_ctx *hctx);
->  void blk_mq_start_hw_queue(struct blk_mq_hw_ctx *hctx);
-> -- 
-> 2.7.4
+> The AT91_SFR_OHCIIR register is read for USB suspend and wake
+> up control. The OHCI driver has a sfr register mapping for sama5d2
+> alone. The USB suspend proceeds only when there is valid sfr regmap.
+> So SFR access in boards that it is absent is not required. In such
+> boards, USB suspend control requests is processed by usb_hub_control().
+> But there is a kernel warning with non sama5d2 cpus. This patch fixes
+> the kernel warning, changing to debug message(dev_dbg).
+> ---
+>  drivers/usb/host/ohci-at91.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
+> index af0566d..ce11c47 100644
+> --- a/drivers/usb/host/ohci-at91.c
+> +++ b/drivers/usb/host/ohci-at91.c
+> @@ -214,7 +214,7 @@ static int usb_hcd_at91_probe(const struct hc_driver *driver,
+>  
+>  	ohci_at91->sfr_regmap = at91_dt_syscon_sfr();
+>  	if (!ohci_at91->sfr_regmap)
+> -		dev_warn(dev, "failed to find sfr node\n");
+> +		dev_dbg(dev, "failed to find sfr node\n");
+>  
+>  	board = hcd->self.controller->platform_data;
+>  	ohci = hcd_to_ohci(hcd);
+
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
