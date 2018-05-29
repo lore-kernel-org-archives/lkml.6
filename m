@@ -1,64 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934678AbeE2NUo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:20:44 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54945 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934204AbeE2NKj (ORCPT
+        id S934285AbeE2NXF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:23:05 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:59139 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933444AbeE2NXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:10:39 -0400
-X-Google-Smtp-Source: AB8JxZoSlAm4AGQFa2dJEwF6dP54dodubmErcnVpO5XQiVXdDwcNXuLvCWaWRaT2NXCb0SDyB3hqPQ==
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>, Rob Herring <robh@kernel.org>,
-        Johan Hovold <johan@kernel.org>, linux-bluetooth@vger.kernel.org
-Subject: [PATCH 04/19] Bluetooth: hci_nokia: Add serdev_id_table
-Date: Tue, 29 May 2018 15:09:59 +0200
-Message-Id: <20180529131014.18641-5-ricardo.ribalda@gmail.com>
+        Tue, 29 May 2018 09:23:02 -0400
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
+CC: <mkl@pengutronix.de>, <wg@grandegger.com>, <faiz_abbas@ti.com>
+Subject: [PATCH] can: m_can: Fix runtime resume call
+Date: Tue, 29 May 2018 18:54:26 +0530
+Message-ID: <20180529132426.31216-1-faiz_abbas@ti.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
-References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Describe which hardware is supported by the current driver.
+pm_runtime_get_sync() returns a 1 if the state of the device is already
+'active'. This is not a failure case and should return a success.
 
-Cc: Marcel Holtmann <marcel@holtmann.org>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Therefore fix error handling for pm_runtime_get_sync() call such that
+it returns success when the value is 1.
+
+Also cleanup the TODO for using runtime PM for sleep mode as that is
+implemented.
+
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- drivers/bluetooth/hci_nokia.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/can/m_can/m_can.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_nokia.c b/drivers/bluetooth/hci_nokia.c
-index 3539fd03f47e..e32dfcd56b8d 100644
---- a/drivers/bluetooth/hci_nokia.c
-+++ b/drivers/bluetooth/hci_nokia.c
-@@ -801,6 +801,11 @@ static const struct of_device_id nokia_bluetooth_of_match[] = {
- MODULE_DEVICE_TABLE(of, nokia_bluetooth_of_match);
- #endif
+diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+index a9fbf81ac3d4..04c48371ab2a 100644
+--- a/drivers/net/can/m_can/m_can.c
++++ b/drivers/net/can/m_can/m_can.c
+@@ -634,10 +634,12 @@ static int m_can_clk_start(struct m_can_priv *priv)
+ 	int err;
  
-+static struct serdev_device_id nokia_bluetooth_serdev_id[] = {
-+	{ "hp4-bluetooth", },
-+	{},
-+};
-+
- static struct serdev_device_driver nokia_bluetooth_serdev_driver = {
- 	.probe = nokia_bluetooth_serdev_probe,
- 	.remove = nokia_bluetooth_serdev_remove,
-@@ -809,6 +814,7 @@ static struct serdev_device_driver nokia_bluetooth_serdev_driver = {
- 		.pm = &nokia_bluetooth_pm_ops,
- 		.of_match_table = of_match_ptr(nokia_bluetooth_of_match),
- 	},
-+	.id_table = nokia_bluetooth_serdev_id,
- };
+ 	err = pm_runtime_get_sync(priv->device);
+-	if (err)
++	if (err < 0) {
+ 		pm_runtime_put_noidle(priv->device);
++		return err;
++	}
  
- module_serdev_device_driver(nokia_bluetooth_serdev_driver);
+-	return err;
++	return 0;
+ }
+ 
+ static void m_can_clk_stop(struct m_can_priv *priv)
+@@ -1687,8 +1689,6 @@ static int m_can_plat_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-/* TODO: runtime PM with power down or sleep mode  */
+-
+ static __maybe_unused int m_can_suspend(struct device *dev)
+ {
+ 	struct net_device *ndev = dev_get_drvdata(dev);
 -- 
 2.17.0
