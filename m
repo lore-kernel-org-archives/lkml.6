@@ -1,292 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936816AbeE2OyQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:54:16 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:45237 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S935482AbeE2Oxs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:53:48 -0400
-From: Oleksandr Shamray <oleksandrs@mellanox.com>
-To: gregkh@linuxfoundation.org, arnd@arndb.de
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
-        jiri@resnulli.us, tklauser@distanz.ch, linux-serial@vger.kernel.org,
-        vadimp@mellanox.com, system-sw-low-level@mellanox.com,
-        robh+dt@kernel.org, openocd-devel-owner@lists.sourceforge.net,
-        linux-api@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
-        Oleksandr Shamray <oleksandrs@mellanox.com>
-Subject: [patch v25 4/4] Documentation: jtag: Add ABI documentation
-Date: Tue, 29 May 2018 17:53:38 +0300
-Message-Id: <1527605618-15705-5-git-send-email-oleksandrs@mellanox.com>
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1527605618-15705-1-git-send-email-oleksandrs@mellanox.com>
-References: <1527605618-15705-1-git-send-email-oleksandrs@mellanox.com>
+        id S936798AbeE2OyM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:54:12 -0400
+Received: from 8bytes.org ([81.169.241.247]:57220 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936544AbeE2OyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:54:06 -0400
+Date: Tue, 29 May 2018 16:54:05 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Gary R Hook <gary.hook@amd.com>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/amd - Optimize PPR log handling
+Message-ID: <20180529145405.GN18595@8bytes.org>
+References: <152668031618.108078.8188026193559324640.stgit@wsp141332wss.amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152668031618.108078.8188026193559324640.stgit@wsp141332wss.amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added document that describe the ABI for JTAG class drivrer
+Hey Gary,
 
-Signed-off-by: Oleksandr Shamray <oleksandrs@mellanox.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
-v24->v25
-Comments pointed by Greg KH <gregkh@linuxfoundation.org>
-- Fixed documentation according to new open() behavior
+On Fri, May 18, 2018 at 04:51:56PM -0500, Gary R Hook wrote:
+> Improve the performance of the PPR log polling function (i.e. the
+> task of emptying the log) by minimizing MMIO operations and more
+> efficiently processing groups of log entries. Cache the head
+> pointer, as there's never a reason to read it. Ensure the head
+> pointer register is updated every so often, to inform the IOMMU
+> that space is available in the log.
+> 
+> Finally, since a single pass may leave logged events unread, use
+> an outer loop to repeat until head has caught up to tail.
+> 
+> Signed-off-by: Gary R Hook <gary.hook@amd.com>
 
-v23->24
-v22->v23
-Comments pointed by Randy Dunlap <rdunlap@infradead.org>
-- fix spell in ABI doccumentation
+Do you have numbers for the performance improvement? How did you test
+this patch?
 
-v21->v22
-Comments pointed by Randy Dunlap <rdunlap@infradead.org>
-- fix spell in ABI doccumentation
 
-v20->v21
-Comments pointed by Randy Dunlap <rdunlap@infradead.org>
-- Fix JTAG dirver help in Kconfig
+Regards,
 
-v19->v20
-Comments pointed by Randy Dunlap <rdunlap@infradead.org>
-- Fix JTAG doccumentation
-
-v18->v19
-Pavel Machek <pavel@ucw.cz>
-- Added JTAG doccumentation to Documentation/jtag
-
-v17->v18
-v16->v17
-v15->v16
-v14->v15
-v13->v14
-v12->v13
-v11->v12 Tobias Klauser <tklauser@distanz.ch>
-Comments pointed by
-- rename /Documentation/ABI/testing/jatg-dev -> jtag-dev
-- Typo: s/interfase/interface
-v10->v11
-v9->v10
-Fixes added by Oleksandr:
-- change jtag-cdev to jtag-dev in documentation
-- update KernelVersion and Date in jtag-dev documentation;
-v8->v9
-v7->v8
-v6->v7
-Comments pointed by Pavel Machek <pavel@ucw.cz>
-- Added jtag-cdev documentation to Documentation/ABI/testing folder
----
- Documentation/ABI/testing/gpio-cdev |    1 -
- Documentation/ABI/testing/jtag-dev  |   23 +++++++
- Documentation/jtag/overview         |   27 +++++++++
- Documentation/jtag/transactions     |  109 +++++++++++++++++++++++++++++++++++
- MAINTAINERS                         |    1 +
- 5 files changed, 160 insertions(+), 1 deletions(-)
- create mode 100644 Documentation/ABI/testing/jtag-dev
- create mode 100644 Documentation/jtag/overview
- create mode 100644 Documentation/jtag/transactions
-
-diff --git a/Documentation/ABI/testing/gpio-cdev b/Documentation/ABI/testing/gpio-cdev
-index 7b265fb..c09d589 100644
---- a/Documentation/ABI/testing/gpio-cdev
-+++ b/Documentation/ABI/testing/gpio-cdev
-@@ -12,7 +12,6 @@ Description:
- 		The following file operations are supported:
- 
- 		open(2)
--		Currently the only useful flags are O_RDWR.
- 
- 		ioctl(2)
- 		Initiate various actions.
-diff --git a/Documentation/ABI/testing/jtag-dev b/Documentation/ABI/testing/jtag-dev
-new file mode 100644
-index 0000000..08249fe
---- /dev/null
-+++ b/Documentation/ABI/testing/jtag-dev
-@@ -0,0 +1,23 @@
-+What:		/dev/jtag[0-9]+
-+Date:		May 2018
-+KernelVersion:	4.18
-+Contact:	oleksandrs@mellanox.com
-+Description:
-+		The misc device files /dev/jtag* are the interface
-+		between JTAG master interface and userspace.
-+
-+		The ioctl(2)-based ABI is defined and documented in
-+		[include/uapi]<linux/jtag.h>.
-+
-+		The following file operations are supported:
-+
-+		open(2)
-+		Opens and allocates file descriptor.
-+
-+		ioctl(2)
-+		Initiate various actions.
-+		See the inline documentation in [include/uapi]<linux/jtag.h>
-+		for descriptions of all ioctls.
-+
-+Users:
-+		userspace tools which wants to access to JTAG bus
-diff --git a/Documentation/jtag/overview b/Documentation/jtag/overview
-new file mode 100644
-index 0000000..f179095
---- /dev/null
-+++ b/Documentation/jtag/overview
-@@ -0,0 +1,27 @@
-+Linux kernel JTAG support
-+=========================
-+
-+JTAG is an industry standard for verifying hardware.JTAG provides access to
-+many logic signals of a complex integrated circuit, including the device pins.
-+
-+A JTAG interface is a special interface added to a chip.
-+Depending on the version of JTAG, two, four, or five pins are added.
-+
-+The connector pins are:
-+	TDI (Test Data In)
-+	TDO (Test Data Out)
-+	TCK (Test Clock)
-+	TMS (Test Mode Select)
-+	TRST (Test Reset) optional
-+
-+JTAG interface is designed to have two parts - basic core driver and
-+hardware specific driver. The basic driver introduces a general interface
-+which is not dependent of specific hardware. It provides communication
-+between user space and hardware specific driver.
-+Each JTAG device is represented as a char device from (jtag0, jtag1, ...).
-+Access to a JTAG device is performed through IOCTL calls.
-+
-+Call flow example:
-+User: open  -> /dev/jatgX
-+User: ioctl -> /dev/jtagX -> JTAG core driver -> JTAG hardware specific driver
-+User: close -> /dev/jatgX
-diff --git a/Documentation/jtag/transactions b/Documentation/jtag/transactions
-new file mode 100644
-index 0000000..c5176a7
---- /dev/null
-+++ b/Documentation/jtag/transactions
-@@ -0,0 +1,109 @@
-+The JTAG API
-+=============
-+
-+JTAG master devices can be accessed through a character misc-device.
-+Each JTAG master interface can be accessed by using /dev/jtagN.
-+
-+JTAG system calls set:
-+- SIR (Scan Instruction Register, IEEE 1149.1 Instruction Register scan);
-+- SDR (Scan Data Register, IEEE 1149.1 Data Register scan);
-+- RUNTEST (Forces the IEEE 1149.1 bus to a run state for a specified
-+number of clocks.
-+
-+open(), close()
-+-------
-+open() opens JTAG device.
-+
-+Open/Close  device:
-+- jtag_fd = open("/dev/jtag0", O_RDWR);
-+- close(jtag_fd);
-+
-+ioctl()
-+-------
-+All access operations to JTAG devices are erformed through ioctl interface.
-+The IOCTL interface supports these requests:
-+	JTAG_IOCRUNTEST - Force JTAG state machine to RUN_TEST/IDLE state
-+	JTAG_SIOCFREQ - Set JTAG TCK frequency
-+	JTAG_GIOCFREQ - Get JTAG TCK frequency
-+	JTAG_IOCXFER - send JTAG data Xfer
-+	JTAG_GIOCSTATUS - get current JTAG TAP status
-+	JTAG_SIOCMODE - set JTAG mode flags.
-+
-+JTAG_SIOCFREQ, JTAG_GIOCFREQ
-+------
-+Set/Get JTAG clock speed:
-+
-+	unsigned int jtag_fd;
-+	ioctl(jtag_fd, JTAG_SIOCFREQ, &frq);
-+	ioctl(jtag_fd, JTAG_GIOCFREQ, &frq);
-+
-+JTAG_IOCRUNTEST
-+------
-+Force JTAG state machine to RUN_TEST/IDLE state
-+
-+struct jtag_run_test_idle {
-+	__u8	reset;
-+	__u8	endstate;
-+	__u8	tck;
-+};
-+
-+reset:
-+	JTAG_NO_RESET - run IDLE/PAUSE from current state
-+	JTAG_FORCE_RESET - go through TEST_LOGIC/RESET state before IDLE/PAUSE
-+endstate: completion flag
-+tck: clock counter
-+
-+Example:
-+	struct jtag_run_test_idle runtest;
-+
-+	runtest.endstate = JTAG_STATE_IDLE;
-+	runtest.reset = 0;
-+	runtest.tck = data_p->tck;
-+	usleep(25 * 1000);
-+	ioctl(jtag_fd, JTAG_IOCRUNTEST, &runtest);
-+
-+JTAG_IOCXFER
-+------
-+Send SDR/SIR transaction
-+
-+struct jtag_xfer {
-+	__u8	type;
-+	__u8	direction;
-+	__u8	endstate;
-+	__u8	padding;
-+	__u32	length;
-+	__u64	tdio;
-+};
-+
-+type: transfer type - JTAG_SIR_XFER/JTAG_SDR_XFER
-+direction: xfer direction - JTAG_SIR_XFER/JTAG_SDR_XFER
-+length: xfer data length in bits
-+tdio : xfer data array
-+endstate: xfer end state after transaction finish
-+	   can be: JTAG_STATE_IDLE/JTAG_STATE_PAUSEIR/JTAG_STATE_PAUSEDR
-+
-+Example:
-+	struct jtag_xfer xfer;
-+	static char buf[64];
-+	static unsigned int buf_len = 0;
-+	[...]
-+	xfer.type = JTAG_SDR_XFER;
-+	xfer.tdio = (__u64)buf;
-+	xfer.length = buf_len;
-+	xfer.endstate = JTAG_STATE_IDLE;
-+
-+	if (is_read)
-+		xfer.direction = JTAG_READ_XFER;
-+	else
-+		xfer.direction = JTAG_WRITE_XFER;
-+
-+	ioctl(jtag_fd, JTAG_IOCXFER, &xfer);
-+
-+JTAG_SIOCMODE
-+------
-+If hardware driver can support different running modes you can change it.
-+
-+Example:
-+	unsigned int mode;
-+	mode = JTAG_XFER_HW_MODE;
-+	ioctl(jtag_fd, JTAG_SIOCMODE, &mode);
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a5e5f75..e067eda 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7618,6 +7618,7 @@ F:	include/linux/jtag.h
- F:	include/uapi/linux/jtag.h
- F:	drivers/jtag/
- F:	Documentation/devicetree/bindings/jtag/
-+F:	Documentation/ABI/testing/jtag-dev
- 
- K10TEMP HARDWARE MONITORING DRIVER
- M:	Clemens Ladisch <clemens@ladisch.de>
--- 
-1.7.1
+	Joerg
