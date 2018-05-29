@@ -1,237 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936787AbeE2P0l (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:26:41 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:49170 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935454AbeE2P0d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:26:33 -0400
-Subject: Re: [PATCH 5/5] remoteproc: Introduce prepare and unprepare for
- subdevices
-To: Alex Elder <elder@linaro.org>, <ohad@wizery.com>,
-        <bjorn.andersson@linaro.org>, Fabien DESSENNE <fabien.dessenne@st.com>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180515205345.8090-1-elder@linaro.org>
- <20180515205345.8090-6-elder@linaro.org>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=arnaud.pouliquen@st.com; prefer-encrypt=mutual; keydata=
- xsFNBFZu+HIBEAC/bt4pnj18oKkUw40q1IXSPeDFOuuznWgFbjFS6Mrb8axwtnxeYicv0WAL
- rWhlhQ6W2TfKDJtkDygkfaZw7Nlsj57zXrzjVXuy4Vkezxtg7kvSLYItQAE8YFSOrBTL58Yd
- d5cAFz/9WbWGRf0o9MxFavvGQ9zkfHVd+Ytw6dJNP4DUys9260BoxKZZMaevxobh5Hnram6M
- gVBYGMuJf5tmkXD/FhxjWEZ5q8pCfqZTlN9IZn7S8d0tyFL7+nkeYldA2DdVplfXXieEEURQ
- aBjcZ7ZTrzu1X/1RrH1tIQE7dclxk5pr2xY8osNePmxSoi+4DJzpZeQ32U4wAyZ8Hs0i50rS
- VxZuT2xW7tlNcw147w+kR9+xugXrECo0v1uX7/ysgFnZ/YasN8E+osM2sfa7OYUloVX5KeUK
- yT58KAVkjUfo0OdtSmGkEkILWQLACFEFVJPz7/I8PisoqzLS4Jb8aXbrwgIg7d4NDgW2FddV
- X9jd1odJK5N68SZqRF+I8ndttRGK0o7NZHH4hxJg9jvyEELdgQAmjR9Vf0eZGNfowLCnVcLq
- s+8q3nQ1RrW5cRBgB8YT2kC8wwY5as8fhfp4846pe2b8Akh0+Vba5pXaTvtmdOMRrcS7CtF6
- Ogf9zKAxPZxTp0qGUOLE3PmSc3P3FQBLYa6Y+uS2v2iZTXljqQARAQABzSpBcm5hdWQgUG91
- bGlxdWVuIDxhcm5hdWQucG91bGlxdWVuQHN0LmNvbT7CwX4EEwECACgFAlZu+HICGyMFCQlm
- AYAGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEP0ZQ+DAfqbfdXgP/RN0bU0gq3Pm1uAO
- 4LejmGbYeTi5OSKh7niuFthrlgUvzR4UxMbUBk30utQAd/FwYPHR81mE9N4PYEWKWMW0T3u0
- 5ASOBLpQeWj+edSE50jLggclVa4qDMl0pTfyLKOodt8USNB8aF0aDg5ITkt0euaGFaPn2kOZ
- QWVN+9a5O2MzNR3Sm61ojM2WPuB1HobbrCFzCT+VQDy4FLU0rsTjTanf6zpZdOeabt0LfWxF
- M69io06vzNSHYH91RJVl9mkIz7bYEZTBQR23KjLCsRXWfZ+54x6d6ITYZ2hp965PWuAhwWQr
- DdTJ3gPxmXJ7xK9+O15+DdUAbxF9FJXvvt9U5pTk3taTM3FIp/qaw77uxI/wniYA0dnIJRX0
- o51sjR6cCO6hwLciO7+Q0OCDCbtStuKCCCTZY5bF6fuEqgybDwvLGAokYIdoMagJu1DLKu4p
- seKgPqGZ4vouTmEp6cWMzSyRz4pf3xIJc5McsdrUTN2LtcX63E45xKaj/n0Neft/Ce7OuyLB
- rr0ujOrVlWsLwyzpU5w5dX7bzkEW1Hp4mv44EDxH9zRiyI5dNPpLf57I83Vs/qP4bpy7/Hm1
- fqbuM0wMbOquPGFI8fcYTkghntAAXMqNE6IvETzYqsPZwT0URpOzM9mho8u5+daFWWAuUXGA
- qRbo7qRs8Ev5jDsKBvGhzsFNBFZu+HIBEACrw5wF7Uf1h71YD5Jk7BG+57rpvnrLGk2s+YVW
- zmKsZPHT68SlMOy8/3gptJWgddHaM5xRLFsERswASmnJjIdPTOkSkVizfAjrFekZUr+dDZi2
- 3PrISz8AQBd+uJ29jRpeqViLiV+PrtCHnAKM0pxQ1BOv8TVlkfO7tZVduLJl5mVoz1sq3/C7
- hT5ZICc2REWrfS24/Gk8mmtvMybiTMyM0QLFZvWyvNCvcGUS8s2a8PIcr+Xb3R9H0hMnYc2E
- 7bc5/e39f8oTbKI6xLLFLa5yJEVfTiVksyCkzpJSHo2eoVdW0lOtIlcUz1ICgZ7vVJg7chmQ
- nPmubeBMw73EyvagdzVeLm8Y/6Zux8SRab+ZcU/ZQWNPKoW5clUvagFBQYJ6I2qEoh2PqBI4
- Wx0g1ca7ZIwjsIfWS7L3e310GITBsDmIeUJqMkfIAregf8KADPs4+L71sLeOXvjmdgTsHA8P
- lK8kUxpbIaTrGgHoviJ1IYwOvJBWrZRhdjfXTPl+ZFrJiB2E55XXogAAF4w/XHpEQNGkAXdQ
- u0o6tFkJutsJoU75aHPA4q/OvRlEiU6/8LNJeqRAR7oAvTexpO70f0Jns9GHzoy8sWbnp/LD
- BSH5iRCwq6Q0hJiEzrVTnO3bBp0WXfgowjXqR+YR86JPrzw2zjgr1e2zCZ1gHBTOyJZiDwAR
- AQABwsFlBBgBAgAPBQJWbvhyAhsMBQkJZgGAAAoJEP0ZQ+DAfqbfs5AQAJKIr2+j+U3JaMs3
- px9bbxcuxRLtVP5gR3FiPR0onalO0QEOLKkXb1DeJaeHHxDdJnVV7rCJX/Fz5CzkymUJ7GIO
- gpUGstSpJETi2sxvYvxfmTvE78D76rM5duvnGy8lob6wR2W3IqIRwmd4X0Cy1Gtgo+i2plh2
- ttVOM3OoigkCPY3AGD0ts+FbTn1LBVeivaOorezSGpKXy3cTKrEY9H5PC+DRJ1j3nbodC3o6
- peWAlfCXVtErSQ17QzNydFDOysL1GIVn0+XY7X4Bq+KpVmhQOloEX5/At4FlhOpsv9AQ30rZ
- 3F5lo6FG1EqLIvg4FnMJldDmszZRv0bR0RM9Ag71J9bgwHEn8uS2vafuL1hOazZ0eAo7Oyup
- 2VNRC7Inbc+irY1qXSjmq3ZrD3SSZVa+LhYfijFYuEgKjs4s+Dvk/xVL0JYWbKkpGWRz5M82
- Pj7co6u8pTEReGBYSVUBHx7GF1e3L/IMZZMquggEsixD8CYMOzahCEZ7UUwD5LKxRfmBWBgK
- 36tfTyducLyZtGB3mbJYfWeI7aiFgYsd5ehov6OIBlOz5iOshd97+wbbmziYEp6jWMIMX+Em
- zqSvS5ETZydayO5JBbw7fFBd1nGVYk1WL6Ll72g+iEnqgIckMtxey1TgfT7GhPkR7hl54ZAe
- 8mOik8I/F6EW8XyQAA2P
-Message-ID: <90ecf369-517c-1741-0af2-c1988986d2a9@st.com>
-Date: Tue, 29 May 2018 17:26:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S935061AbeE2P1G (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:27:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38346 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935530AbeE2PXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:23:30 -0400
+Message-Id: <20180529152327.119138803@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Tue, 29 May 2018 11:23:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>, Joel Fernandes <joelaf@google.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [for-next][PATCH 08/19] tracing: Add trigger file for trace_markers tracefs/ftrace/print
+References: <20180529152304.885389740@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <20180515205345.8090-6-elder@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_05:,,
- signatures=0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=0008-tracing-Add-trigger-file-for-trace_markers-tracefs-f.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabien,
-Please , could you add your "Tested-by" as you test it on ST platform?
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Thanks
-Arnaud
+Allow writing to the trace_markers file initiate triggers defined in
+tracefs/ftrace/print/trigger file. This will allow of user space to trigger
+the same type of triggers (including histograms) that the trace events use.
 
-On 05/15/2018 10:53 PM, Alex Elder wrote:
-> From: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> On rare occasions a subdevice might need to prepare some hardware
-> resources before a remote processor is booted, and clean up some
-> state after it has been shut down.
-> 
-> One such example is the IP Accelerator found in various Qualcomm
-> platforms, which is accessed directly from both the modem remoteproc
-> and the application subsystem and requires an intricate lockstep
-> process when bringing the modem up and down.
-> 
-> [elder@linaro.org: minor description and comment edits]
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Acked-by: Alex Elder <elder@linaro.org>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 56 ++++++++++++++++++++++++++--
->  include/linux/remoteproc.h           |  4 ++
->  2 files changed, 57 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 2ede7ae6f5bc..283b258f5e0f 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -776,6 +776,30 @@ static int rproc_handle_resources(struct rproc *rproc,
->  	return ret;
->  }
->  
-> +static int rproc_prepare_subdevices(struct rproc *rproc)
-> +{
-> +	struct rproc_subdev *subdev;
-> +	int ret;
-> +
-> +	list_for_each_entry(subdev, &rproc->subdevs, node) {
-> +		if (subdev->prepare) {
-> +			ret = subdev->prepare(subdev);
-> +			if (ret)
-> +				goto unroll_preparation;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +unroll_preparation:
-> +	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
-> +		if (subdev->unprepare)
-> +			subdev->unprepare(subdev);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static int rproc_start_subdevices(struct rproc *rproc)
->  {
->  	struct rproc_subdev *subdev;
-> @@ -810,6 +834,16 @@ static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
->  	}
->  }
->  
-> +static void rproc_unprepare_subdevices(struct rproc *rproc)
-> +{
-> +	struct rproc_subdev *subdev;
-> +
-> +	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
-> +		if (subdev->unprepare)
-> +			subdev->unprepare(subdev);
-> +	}
-> +}
-> +
->  /**
->   * rproc_coredump_cleanup() - clean up dump_segments list
->   * @rproc: the remote processor handle
-> @@ -902,11 +936,18 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  		rproc->table_ptr = loaded_table;
->  	}
->  
-> +	ret = rproc_prepare_subdevices(rproc);
-> +	if (ret) {
-> +		dev_err(dev, "failed to prepare subdevices for %s: %d\n",
-> +			rproc->name, ret);
-> +		return ret;
-> +	}
-> +
->  	/* power up the remote processor */
->  	ret = rproc->ops->start(rproc);
->  	if (ret) {
->  		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
-> -		return ret;
-> +		goto unprepare_subdevices;
->  	}
->  
->  	/* Start any subdevices for the remote processor */
-> @@ -914,8 +955,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	if (ret) {
->  		dev_err(dev, "failed to probe subdevices for %s: %d\n",
->  			rproc->name, ret);
-> -		rproc->ops->stop(rproc);
-> -		return ret;
-> +		goto stop_rproc;
->  	}
->  
->  	rproc->state = RPROC_RUNNING;
-> @@ -923,6 +963,14 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	dev_info(dev, "remote processor %s is now up\n", rproc->name);
->  
->  	return 0;
-> +
-> +stop_rproc:
-> +	rproc->ops->stop(rproc);
-> +
-> +unprepare_subdevices:
-> +	rproc_unprepare_subdevices(rproc);
-> +
-> +	return ret;
->  }
->  
->  /*
-> @@ -1035,6 +1083,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
->  		return ret;
->  	}
->  
-> +	rproc_unprepare_subdevices(rproc);
-> +
->  	rproc->state = RPROC_OFFLINE;
->  
->  	dev_info(dev, "stopped remote processor %s\n", rproc->name);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 8f1426330cca..e3c5d856b6da 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -477,15 +477,19 @@ struct rproc {
->  /**
->   * struct rproc_subdev - subdevice tied to a remoteproc
->   * @node: list node related to the rproc subdevs list
-> + * @prepare: prepare function, called before the rproc is started
->   * @start: start function, called after the rproc has been started
->   * @stop: stop function, called before the rproc is stopped; the @crashed
->   *	    parameter indicates if this originates from a recovery
-> + * @unprepare: unprepare function, called after the rproc has been stopped
->   */
->  struct rproc_subdev {
->  	struct list_head node;
->  
-> +	int (*prepare)(struct rproc_subdev *subdev);
->  	int (*start)(struct rproc_subdev *subdev);
->  	void (*stop)(struct rproc_subdev *subdev, bool crashed);
-> +	void (*unprepare)(struct rproc_subdev *subdev);
->  };
->  
->  /* we currently support only two vrings per rvdev */
-> 
+Had to create a ftrace_event_register() function that will become the
+trace_marker print event's reg() function. This is required because of how
+triggers are enabled:
+
+  event_trigger_write() {
+    event_trigger_regex_write() {
+      trigger_process_regex() {
+        for p in trigger_commands {
+          p->func(); /* trigger_snapshot_cmd->func */
+            event_trigger_callback() {
+              cmd_ops->reg() /* register_trigger() */ {
+                trace_event_trigger_enable_disable() {
+                  trace_event_enable_disable() {
+                    call->class->reg();
+
+Without the reg() function, the trigger code will call a NULL pointer and
+crash the system.
+
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: Karim Yaghmour <karim.yaghmour@opersys.com>
+Cc: Brendan Gregg <bgregg@netflix.com>
+Suggested-by: Joel Fernandes <joelaf@google.com>
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c         | 17 +++++++++++++++++
+ kernel/trace/trace.h         |  1 +
+ kernel/trace/trace_entries.h |  6 ++++--
+ kernel/trace/trace_export.c  |  7 +++++++
+ 4 files changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index d5000cba5a27..e69820f77b33 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -6074,6 +6074,7 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
+ {
+ 	struct trace_array *tr = filp->private_data;
+ 	struct ring_buffer_event *event;
++	enum event_trigger_type tt = ETT_NONE;
+ 	struct ring_buffer *buffer;
+ 	struct print_entry *entry;
+ 	unsigned long irq_flags;
+@@ -6122,6 +6123,12 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
+ 		written = cnt;
+ 	len = cnt;
+ 
++	if (tr->trace_marker_file && !list_empty(&tr->trace_marker_file->triggers)) {
++		/* do not add \n before testing triggers, but add \0 */
++		entry->buf[cnt] = '\0';
++		tt = event_triggers_call(tr->trace_marker_file, entry, event);
++	}
++
+ 	if (entry->buf[cnt - 1] != '\n') {
+ 		entry->buf[cnt] = '\n';
+ 		entry->buf[cnt + 1] = '\0';
+@@ -6130,6 +6137,9 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
+ 
+ 	__buffer_unlock_commit(buffer, event);
+ 
++	if (tt)
++		event_triggers_post_call(tr->trace_marker_file, tt);
++
+ 	if (written > 0)
+ 		*fpos += written;
+ 
+@@ -7896,6 +7906,7 @@ static __init void create_trace_instances(struct dentry *d_tracer)
+ static void
+ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
+ {
++	struct trace_event_file *file;
+ 	int cpu;
+ 
+ 	trace_create_file("available_tracers", 0444, d_tracer,
+@@ -7928,6 +7939,12 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
+ 	trace_create_file("trace_marker", 0220, d_tracer,
+ 			  tr, &tracing_mark_fops);
+ 
++	file = __find_event_file(tr, "ftrace", "print");
++	if (file && file->dir)
++		trace_create_file("trigger", 0644, file->dir, file,
++				  &event_trigger_fops);
++	tr->trace_marker_file = file;
++
+ 	trace_create_file("trace_marker_raw", 0220, d_tracer,
+ 			  tr, &tracing_mark_raw_fops);
+ 
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index d0319cbacf11..630c5a24b2b2 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -259,6 +259,7 @@ struct trace_array {
+ 	struct trace_options	*topts;
+ 	struct list_head	systems;
+ 	struct list_head	events;
++	struct trace_event_file *trace_marker_file;
+ 	cpumask_var_t		tracing_cpumask; /* only trace on set CPUs */
+ 	int			ref;
+ #ifdef CONFIG_FUNCTION_TRACER
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index e3a658bac10f..1d67464ed95e 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -230,7 +230,7 @@ FTRACE_ENTRY(bprint, bprint_entry,
+ 	FILTER_OTHER
+ );
+ 
+-FTRACE_ENTRY(print, print_entry,
++FTRACE_ENTRY_REG(print, print_entry,
+ 
+ 	TRACE_PRINT,
+ 
+@@ -242,7 +242,9 @@ FTRACE_ENTRY(print, print_entry,
+ 	F_printk("%ps: %s",
+ 		 (void *)__entry->ip, __entry->buf),
+ 
+-	FILTER_OTHER
++	FILTER_OTHER,
++
++	ftrace_event_register
+ );
+ 
+ FTRACE_ENTRY(raw_data, raw_data_entry,
+diff --git a/kernel/trace/trace_export.c b/kernel/trace/trace_export.c
+index d842f1eadfe5..45630a76ed3a 100644
+--- a/kernel/trace/trace_export.c
++++ b/kernel/trace/trace_export.c
+@@ -14,6 +14,13 @@
+ 
+ #include "trace_output.h"
+ 
++/* Stub function for events with triggers */
++static int ftrace_event_register(struct trace_event_call *call,
++				 enum trace_reg type, void *data)
++{
++	return 0;
++}
++
+ #undef TRACE_SYSTEM
+ #define TRACE_SYSTEM	ftrace
+ 
+-- 
+2.17.0
