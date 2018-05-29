@@ -1,121 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936551AbeE2PZR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:25:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38340 "EHLO mail.kernel.org"
+        id S936777AbeE2P0V (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:26:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935584AbeE2PXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:23:35 -0400
-Message-Id: <20180529152328.491485013@goodmis.org>
+        id S935545AbeE2PXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:23:32 -0400
+Message-Id: <20180529152327.931763476@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Tue, 29 May 2018 11:23:21 -0400
+Date: Tue, 29 May 2018 11:23:18 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-next][PATCH 17/19] tracing/selftest: Add test to test simple snapshot trigger for
- trace_marker
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [for-next][PATCH 14/19] ftrace/selftest: Fix reset_trigger() to handle triggers with filters
 References: <20180529152304.885389740@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=0017-tracing-selftest-Add-test-to-test-simple-snapshot-tr.patch
+Content-Disposition: inline; filename=0014-ftrace-selftest-Fix-reset_trigger-to-handle-triggers.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Several complex trigger tests were added for trace_marker, but not a simple
-one. This could be used to help diagnose a problem with the code by giving a
-reference between how complex a trigger is that fails.
+The reset_trigger() function breaks up the command by a space ' '. This is
+useful to ignore the '[active]' word for triggers when removing them. But if
+the trigger has a filter (ie. "if prio < 10") then the filter needs to be
+attached to the line that is written into the trigger file to remove it. But
+the truncation removes the filter and the triggers are not cleared properly.
 
-Suggested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Before, reset_trigger() did this:
+
+ # echo 'hist:keys=common_pid if prev_prio < 10' > events/sched/sched_switch/trigger
+ # echo 'hist:keys=common_pid if next_prio < 10' >> events/sched/sched_switch/trigger
+ # cat events/sched/sched_switch/trigger
+hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if prev_prio < 10 [active]
+hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if next_prio < 10 [active]
+
+ reset_trigger() {
+   echo '!hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048' >> events/sched/sched_switch/trigger
+ }
+
+ # cat events/sched/sched_switch/trigger
+hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if prev_prio < 10 [active]
+hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if next_prio < 10 [active]
+
+After, where it includes the filter:
+
+ reset_trigger() {
+   echo '!hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if prev_prio < 10' >> events/sched/sched_switch/trigger
+ }
+
+ # cat events/sched/sched_switch/trigger
+hist:keys=common_pid:vals=hitcount:sort=hitcount:size=2048 if next_prio < 10 [active]
+
+Fixes: cfa0963dc474f ("kselftests/ftrace : Add event trigger testcases")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../trigger/trigger-trace-marker-snapshot.tc  | 74 +++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
+ tools/testing/selftests/ftrace/test.d/functions | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
-new file mode 100644
-index 000000000000..6748e8cb42d0
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
-@@ -0,0 +1,74 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: trace_marker trigger - test snapshot trigger
-+# flags: instance
-+
-+do_reset() {
-+    reset_trigger
-+    echo > set_event
-+    echo 0 > snapshot
-+    clear_trace
-+}
-+
-+fail() { #msg
-+    do_reset
-+    echo $1
-+    exit_fail
-+}
-+
-+if [ ! -f set_event ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f snapshot ]; then
-+    echo "snapshot is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -d events/ftrace/print ]; then
-+    echo "event trace_marker is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f events/ftrace/print/trigger ]; then
-+    echo "event trigger is not supported"
-+    exit_unsupported
-+fi
-+
-+test_trace() {
-+    file=$1
-+    x=$2
-+
-+    cat $file | while read line; do
-+	comment=`echo $line | sed -e 's/^#//'`
-+	if [ "$line" != "$comment" ]; then
-+	    continue
-+	fi
-+	echo "testing $line for >$x<"
-+	match=`echo $line | sed -e "s/>$x<//"`
-+	if [ "$line" == "$match" ]; then
-+	    fail "$line does not have >$x< in it"
-+	fi
-+	let x=$x+2
-+    done
-+}
-+
-+do_reset
-+
-+echo "Test snapshot trace_marker tigger"
-+
-+echo 'snapshot' > events/ftrace/print/trigger
-+
-+# make sure the snapshot is allocated
-+
-+grep -q 'Snapshot is allocated' snapshot
-+
-+for i in `seq 1 10` ; do echo "hello >$i<" > trace_marker; done
-+
-+test_trace trace 1
-+test_trace snapshot 2
-+
-+do_reset
-+
-+exit 0
+diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
+index 8393b1c06027..e4645d5e3126 100644
+--- a/tools/testing/selftests/ftrace/test.d/functions
++++ b/tools/testing/selftests/ftrace/test.d/functions
+@@ -19,13 +19,13 @@ reset_trigger_file() {
+     # remove action triggers first
+     grep -H ':on[^:]*(' $@ |
+     while read line; do
+-        cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
++        cmd=`echo $line | cut -f2- -d: | cut -f1 -d"["`
+ 	file=`echo $line | cut -f1 -d:`
+ 	echo "!$cmd" >> $file
+     done
+     grep -Hv ^# $@ |
+     while read line; do
+-        cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
++        cmd=`echo $line | cut -f2- -d: | cut -f1 -d"["`
+ 	file=`echo $line | cut -f1 -d:`
+ 	echo "!$cmd" > $file
+     done
 -- 
 2.17.0
