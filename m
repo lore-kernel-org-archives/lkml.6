@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755917AbeE2BHC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 21:07:02 -0400
-Received: from mx.socionext.com ([202.248.49.38]:11280 "EHLO mx.socionext.com"
+        id S935239AbeE2BJY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 21:09:24 -0400
+Received: from mx.socionext.com ([202.248.49.38]:11323 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755808AbeE2BG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 21:06:58 -0400
+        id S1755916AbeE2BJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 21:09:22 -0400
 From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 To: Abylay Ospan <aospan@netup.ru>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
@@ -14,34 +14,43 @@ Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [RESEND PATCH] media: helene: fix tuning frequency of satellite
-Date: Tue, 29 May 2018 10:06:40 +0900
-Message-Id: <20180529010640.18604-1-suzuki.katsuhiro@socionext.com>
+Subject: [RESEND PATCH] media: helene: fix xtal frequency setting at power on
+Date: Tue, 29 May 2018 10:09:20 +0900
+Message-Id: <20180529010920.20320-1-suzuki.katsuhiro@socionext.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes tuning frequency of satellite to kHz. That as same
-as terrestrial one.
+This patch fixes crystal frequency setting when power on this device.
 
 Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Acked-by: Abylay Ospan <aospan@netup.ru>
+
 ---
- drivers/media/dvb-frontends/helene.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Changes from before:
+  - Add Abylay's Ack
+
+---
+ drivers/media/dvb-frontends/helene.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/media/dvb-frontends/helene.c b/drivers/media/dvb-frontends/helene.c
-index 04033f0c278b..0a4f312c4368 100644
+index 0a4f312c4368..8fcf7a00782a 100644
 --- a/drivers/media/dvb-frontends/helene.c
 +++ b/drivers/media/dvb-frontends/helene.c
-@@ -523,7 +523,7 @@ static int helene_set_params_s(struct dvb_frontend *fe)
- 	enum helene_tv_system_t tv_system;
- 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
- 	struct helene_priv *priv = fe->tuner_priv;
--	int frequencykHz = p->frequency;
-+	int frequencykHz = p->frequency / 1000;
- 	uint32_t frequency4kHz = 0;
- 	u32 symbol_rate = p->symbol_rate/1000;
+@@ -924,7 +924,10 @@ static int helene_x_pon(struct helene_priv *priv)
+ 	helene_write_regs(priv, 0x99, cdata, sizeof(cdata));
  
+ 	/* 0x81 - 0x94 */
+-	data[0] = 0x18; /* xtal 24 MHz */
++	if (priv->xtal == SONY_HELENE_XTAL_16000)
++		data[0] = 0x10; /* xtal 16 MHz */
++	else
++		data[0] = 0x18; /* xtal 24 MHz */
+ 	data[1] = (uint8_t)(0x80 | (0x04 & 0x1F)); /* 4 x 25 = 100uA */
+ 	data[2] = (uint8_t)(0x80 | (0x26 & 0x7F)); /* 38 x 0.25 = 9.5pF */
+ 	data[3] = 0x80; /* REFOUT signal output 500mVpp */
 -- 
 2.17.0
