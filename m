@@ -1,116 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966154AbeE2STV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 14:19:21 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:33410 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965608AbeE2SSS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 14:18:18 -0400
-X-Google-Smtp-Source: ADUXVKLqloMkwekKKZLdHISmq2Suoixts9+AI+QdzFF6Aw3g6tXmZSM3/6+HRBFj/t6+Dl4r8jj3pQ==
-From: Evan Green <evgreen@chromium.org>
-To: Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Cc: Gwendal Grignou <gwendal@chromium.org>,
-        Evan Green <evgreen@chromium.org>
-Subject: [PATCH 3/7] scsi: ufs: Make sysfs attributes writable
-Date: Tue, 29 May 2018 11:17:36 -0700
-Message-Id: <20180529181740.195362-4-evgreen@chromium.org>
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180529181740.195362-1-evgreen@chromium.org>
-References: <20180529181740.195362-1-evgreen@chromium.org>
+        id S966197AbeE2ST4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 14:19:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52661 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936904AbeE2STu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 14:19:50 -0400
+Date: Tue, 29 May 2018 11:19:25 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <35cdbb04-7b1d-59ae-2ff8-af1d57751113@redhat.com>
+References: <20180529123800.19627-1-prarit@redhat.com> <CAGXu5jJvJbTZT5=u7TJtLsN-TsuSEfw8h2EwV8w-oefJkADoBg@mail.gmail.com> <71b5df93-2e21-f3c3-fa22-4488729daeb5@redhat.com> <20180529160743.GA7381@thunk.org> <35cdbb04-7b1d-59ae-2ff8-af1d57751113@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH] x86, random: Fix get_random_bytes() warning in x86 start_kernel
+To: Prarit Bhargava <prarit@redhat.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        X86 ML <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rik van Riel <riel@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+From: hpa@zytor.com
+Message-ID: <54FF298C-0992-4592-AAF8-9ABBF8DE917D@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change makes the UFS controller's sysfs attributes writable, which
-will enable users to provision unprovisioned UFS devices, or
-re-provision unlocked UFS devices.
+On May 29, 2018 9:58:10 AM PDT, Prarit Bhargava <prarit@redhat.com> wrote:
+>
+>
+>On 05/29/2018 12:07 PM, Theodore Y. Ts'o wrote:
+>> On Tue, May 29, 2018 at 11:01:07AM -0400, Prarit Bhargava wrote:
+>>> Kees, in early boot no pool is available so the stack canary is
+>initialized from
+>>> the TSC.  Later in boot, the stack canary will use the the crng.
+>>>
+>>> ie) in early boot only TSC is okay, and late boot (when crng_ready()
+>is true)
+>>> the pool will be used.
+>> 
+>> But that means all of the kernel threads (e.g., workqueues, et. al)
+>> would not be well protected by the stack canary.  That
+>> seems.... rather unfortunate.
+>
+>Well, as stated the TSC is used as a source of entropy in early boot. 
+>It's
+>always been that way and get_random_bytes() AFAICT has always returned
+>0.  CPUs
+>added later on via hotplug do use get_random_bytes().
+>
+>Does anyone cc'd have a better idea on how to get another source of
+>entropy this
+>early in boot?
+>
+>P.
+>
+>> 
+>>       	     	  	      	   	     - Ted
+>> 
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
----
- drivers/scsi/ufs/ufs-sysfs.c | 58 +++++++++++++++++++++++++++++---------------
- 1 file changed, 39 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-index a7d65492832a..51bf54e6b47a 100644
---- a/drivers/scsi/ufs/ufs-sysfs.c
-+++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -751,7 +751,7 @@ static const struct attribute_group ufs_sysfs_flags_group = {
- 	.attrs = ufs_sysfs_device_flags,
- };
- 
--#define UFS_ATTRIBUTE(_name, _uname)					\
-+#define UFS_ATTRIBUTE_SHOW(_name, _uname)				\
- static ssize_t _name##_show(struct device *dev,				\
- 	struct device_attribute *attr, char *buf)			\
- {									\
-@@ -761,25 +761,45 @@ static ssize_t _name##_show(struct device *dev,				\
- 		QUERY_ATTR_IDN##_uname, 0, 0, &value))			\
- 		return -EINVAL;						\
- 	return sprintf(buf, "0x%08X\n", value);				\
--}									\
--static DEVICE_ATTR_RO(_name)
-+}
- 
--UFS_ATTRIBUTE(boot_lun_enabled, _BOOT_LU_EN);
--UFS_ATTRIBUTE(current_power_mode, _POWER_MODE);
--UFS_ATTRIBUTE(active_icc_level, _ACTIVE_ICC_LVL);
--UFS_ATTRIBUTE(ooo_data_enabled, _OOO_DATA_EN);
--UFS_ATTRIBUTE(bkops_status, _BKOPS_STATUS);
--UFS_ATTRIBUTE(purge_status, _PURGE_STATUS);
--UFS_ATTRIBUTE(max_data_in_size, _MAX_DATA_IN);
--UFS_ATTRIBUTE(max_data_out_size, _MAX_DATA_OUT);
--UFS_ATTRIBUTE(reference_clock_frequency, _REF_CLK_FREQ);
--UFS_ATTRIBUTE(configuration_descriptor_lock, _CONF_DESC_LOCK);
--UFS_ATTRIBUTE(max_number_of_rtt, _MAX_NUM_OF_RTT);
--UFS_ATTRIBUTE(exception_event_control, _EE_CONTROL);
--UFS_ATTRIBUTE(exception_event_status, _EE_STATUS);
--UFS_ATTRIBUTE(ffu_status, _FFU_STATUS);
--UFS_ATTRIBUTE(psa_state, _PSA_STATE);
--UFS_ATTRIBUTE(psa_data_size, _PSA_DATA_SIZE);
-+#define UFS_ATTRIBUTE_RO(_name, _uname)					\
-+UFS_ATTRIBUTE_SHOW(_name, _uname)					\
-+DEVICE_ATTR_RO(_name)
-+
-+#define UFS_ATTRIBUTE_RW(_name, _uname)					\
-+UFS_ATTRIBUTE_SHOW(_name, _uname)					\
-+static ssize_t _name##_store(struct device *dev,			\
-+		struct device_attribute *attr, const char *buf,		\
-+		size_t count)						\
-+{									\
-+	struct ufs_hba *hba = dev_get_drvdata(dev);			\
-+	unsigned long value;						\
-+	if (kstrtoul(buf, 0, &value))					\
-+		return -EINVAL;						\
-+	if (ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,	\
-+		QUERY_ATTR_IDN##_uname, 0, 0, (u32 *)&value))		\
-+		return -EINVAL;						\
-+	return count;							\
-+}									\
-+static DEVICE_ATTR_RW(_name)
-+
-+UFS_ATTRIBUTE_RW(boot_lun_enabled, _BOOT_LU_EN);
-+UFS_ATTRIBUTE_RO(current_power_mode, _POWER_MODE);
-+UFS_ATTRIBUTE_RW(active_icc_level, _ACTIVE_ICC_LVL);
-+UFS_ATTRIBUTE_RW(ooo_data_enabled, _OOO_DATA_EN);
-+UFS_ATTRIBUTE_RO(bkops_status, _BKOPS_STATUS);
-+UFS_ATTRIBUTE_RO(purge_status, _PURGE_STATUS);
-+UFS_ATTRIBUTE_RW(max_data_in_size, _MAX_DATA_IN);
-+UFS_ATTRIBUTE_RW(max_data_out_size, _MAX_DATA_OUT);
-+UFS_ATTRIBUTE_RW(reference_clock_frequency, _REF_CLK_FREQ);
-+UFS_ATTRIBUTE_RW(configuration_descriptor_lock, _CONF_DESC_LOCK);
-+UFS_ATTRIBUTE_RW(max_number_of_rtt, _MAX_NUM_OF_RTT);
-+UFS_ATTRIBUTE_RW(exception_event_control, _EE_CONTROL);
-+UFS_ATTRIBUTE_RW(exception_event_status, _EE_STATUS);
-+UFS_ATTRIBUTE_RO(ffu_status, _FFU_STATUS);
-+UFS_ATTRIBUTE_RO(psa_state, _PSA_STATE);
-+UFS_ATTRIBUTE_RO(psa_data_size, _PSA_DATA_SIZE);
- 
- static struct attribute *ufs_sysfs_attributes[] = {
- 	&dev_attr_boot_lun_enabled.attr,
+RDRAND/RDSEED for newer x86 processors.
 -- 
-2.13.5
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
