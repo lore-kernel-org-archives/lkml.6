@@ -1,65 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968133AbeE2W7i (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:59:38 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35484 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967991AbeE2W7d (ORCPT
+        id S968157AbeE2XAa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 19:00:30 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37366 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967697AbeE2XA1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:59:33 -0400
-X-Google-Smtp-Source: ADUXVKIbF6G3WX8gbQX7drEXSI1+rGqd0D3APCTg5bJ4oFMANwdId3wVoCMyckcUd04i69k2SnY37A==
-Date: Tue, 29 May 2018 15:59:28 -0700
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, Coly Li <colyli@suse.de>,
-        Ciaran Farrell <ciaran.farrell@suse.com>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        linux-bcache@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jonas Oberg <jonas@fsfe.org>
-Subject: Re: PostgreSQL licensed code on Linux
-Message-ID: <20180529225928.GI31712@garbanzo.do-not-panic.com>
-References: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
- <20180529192643.GA3487@kmo-pixel>
- <20180529205143.GB7381@thunk.org>
- <20180529210025.GB3487@kmo-pixel>
+        Tue, 29 May 2018 19:00:27 -0400
+X-Google-Smtp-Source: ADUXVKIEScpz1iv38kX0TgKltggT5usZmUpERF3x06J5L0O8gtBfrWo5PDQF+L7NHBdqz5RdU8Jw81gKn3lPrSUxluo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529210025.GB3487@kmo-pixel>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAPcyv4g2XQtuYGPu8HMbPj6wXqGwxiL5jDRznf5fmW4WgC2DTw@mail.gmail.com>
+References: <152694211402.5484.2277538346144115181.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180524001026.GA3527@redhat.com> <CAPcyv4hVERZoqWrCxwOkmM075OP_ada7FiYsQgokijuWyC1MbA@mail.gmail.com>
+ <CAPM=9tzMJq=KC+ijoj-JGmc1R3wbshdwtfR3Zpmyaw3jYJ9+gw@mail.gmail.com> <CAPcyv4g2XQtuYGPu8HMbPj6wXqGwxiL5jDRznf5fmW4WgC2DTw@mail.gmail.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Wed, 30 May 2018 09:00:25 +1000
+Message-ID: <CAPM=9twm=17t=2=M27ELB=vZWzpqM7GuwCUsC891jJ0t3JM4vg@mail.gmail.com>
+Subject: Re: [PATCH 0/5] mm: rework hmm to use devm_memremap_pages
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Jerome Glisse <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>, Christoph Hellwig <hch@lst.de>,
+        Michal Hocko <mhocko@suse.com>, Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 05:00:25PM -0400, Kent Overstreet wrote:
-> On Tue, May 29, 2018 at 04:51:44PM -0400, Theodore Y. Ts'o wrote:
-> > On Tue, May 29, 2018 at 03:26:43PM -0400, Kent Overstreet wrote:
-> > > > That seems to indicate that we've had already PostgreSQL licensed code on
-> > > > Linux since Kent's addition of bcache to Linux in 2013. The portion of code
-> > > > is rather small though, to me it seems to cover only crc_table[],
-> > > > bch_crc64_update(), and bch_crc64().
-> > >
-> > > > As silly as it may be we should split out the PostgreSQL licensed code from
-> > > > drivers/md/bcache/util.c into its own file and while at it clarify the
-> > > > license.
-> > 
-> > While we're at it maybe we should move the crc-64 code to lib and/or
-> > crypto, alongside our support for crc-8, crc-16, and crc-32
-> > algorithms?  That way if there are other potential users for crc-64,
-> > they will be less likely to re-invent the wheel....
-> 
-> Yeah, this came up because Coly wanted to do that, but needed to know what to
-> put in MODULE_LICENSE().
+On 30 May 2018 at 08:31, Dan Williams <dan.j.williams@intel.com> wrote:
+> On Tue, May 29, 2018 at 3:22 PM, Dave Airlie <airlied@gmail.com> wrote:
+>>
+>> On 24 May 2018 at 13:18, Dan Williams <dan.j.williams@intel.com> wrote:
+>> > On Wed, May 23, 2018 at 5:10 PM, Jerome Glisse <jglisse@redhat.com> wrote:
+>> >> On Mon, May 21, 2018 at 03:35:14PM -0700, Dan Williams wrote:
+>> >>> Hi Andrew, please consider this series for 4.18.
+>> >>>
+>> >>> For maintainability, as ZONE_DEVICE continues to attract new users,
+>> >>> it is useful to keep all users consolidated on devm_memremap_pages() as
+>> >>> the interface for create "device pages".
+>> >>>
+>> >>> The devm_memremap_pages() implementation was recently reworked to make
+>> >>> it more generic for arbitrary users, like the proposed peer-to-peer
+>> >>> PCI-E enabling. HMM pre-dated this rework and opted to duplicate
+>> >>> devm_memremap_pages() as hmm_devmem_pages_create().
+>> >>>
+>> >>> Rework HMM to be a consumer of devm_memremap_pages() directly and fix up
+>> >>> the licensing on the exports given the deep dependencies on the mm.
+>> >>
+>> >> I am on PTO right now so i won't be able to quickly review it all
+>> >> but forcing GPL export is problematic for me now. I rather have
+>> >> device driver using "sane" common helpers than creating their own
+>> >> crazy thing.
+>> >
+>> > Sane drivers that need this level of deep integration with Linux
+>> > memory management need to be upstream. Otherwise, HMM is an
+>> > unprecedented departure from the norms of Linux kernel development.
+>>
+>> Isn't it the author of code choice what EXPORT_SYMBOL to use? and
+>> isn't the agreement that if something is EXPORT_SYMBOL now, changing
+>> underlying exports isn't considered a good idea. We've seen this before
+>> with the refcount fun,
+>>
+>> See d557d1b58b3546bab2c5bc2d624c5709840e6b10
+>>
+>> Not commenting on the legality or what derived works are considered,
+>> since really the markings are just an indication of the authors opinion,
+>> and at this stage I think are actually meaningless, since we've diverged
+>> considerably from the advice given to Linus back when this started.
+>
+> Yes, and in this case devm_memremap_pages() was originally written by
+> Christoph and I:
+>
+>     41e94a851304 add devm_memremap_pages
 
-At run time its GPL, so MODULE_LICENSE("GPL") would make sense. I had
-sent a patch to help clarify this in 2012, I'll resend now [0].
+So you wrote some code in 2015 (3 years ago) and you've now decided
+to change the EXPORT marker on it? what changed in 3 years, and why
+would changing that marker 3 years later have any effect on your original
+statement that it was an EXPORT_SYMBOL.
 
-[0] https://lkml.org/lkml/2012/4/8/75
+Think what EXPORT_SYMBOL vs GPL means, it isn't a bit stick that magically
+makes things into derived works. If something wasn't a derived work for 3 years
+using that API, then it isn't a derived work now 3 years later because you
+changed the marker. Retrospectively changing the markers doesn't really
+make any sense legally or otherwise.
 
-  Luis
+>
+> HMM started off by duplicating devm_memremap_pages() which is fixed up
+> by this series:
+
+Just looking in my current tree hmm_devmem_pages_create and
+devm_memremap_pages don't look like duplicates, they might have
+code but they definitely aren't one for one copies. I'm not sure you can
+just say Jerome copied that code in, you've now refactored the code
+so HMM can use it and are changing the symbol exports underneath it,
+
+Again if Christoph believes all uses of this are a derived work he didn't
+indicate it 3 years ago, but neither does the mark make any legal difference
+in this case, since everything in the kernel is GPL, and if you
+consider something
+a derived work or not is well into legal land.
+
+I'd rather anyways the original author of HMM wishes were respected
+on his code, or at least you wait until he gets back from holidays before
+pushing to merge this.
+
+Dave.
