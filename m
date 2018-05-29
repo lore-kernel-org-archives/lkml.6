@@ -1,727 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965161AbeE2QmP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:42:15 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:43298 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936494AbeE2QmN (ORCPT
+        id S936921AbeE2QzR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:55:17 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40178 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935486AbeE2QzP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:42:13 -0400
-Date: Tue, 29 May 2018 18:42:10 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+        Tue, 29 May 2018 12:55:15 -0400
+From: Song Liu <songliubraving@fb.com>
 To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v4.16.12-rt5
-Message-ID: <20180529164210.4os2rn5femjpku6a@linutronix.de>
+CC: Song Liu <liu.song.a23@gmail.com>, Tariq Toukan <tariqt@mellanox.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Maor Gottlieb <maorg@mellanox.com>, "Kernel Team" <Kernel-team@fb.com>
+Subject: Re: WARNING and PANIC in irq_matrix_free
+Thread-Topic: WARNING and PANIC in irq_matrix_free
+Thread-Index: AQHT9GSPvVlQSgBGI0+pRnF2w/wY8aRE+2SAgACA+QCAABp+gIAAM+8AgACcbQCAAIuNAA==
+Date: Tue, 29 May 2018 16:54:59 +0000
+Message-ID: <7954157A-E523-4041-825B-828A3A38E51B@fb.com>
+References: <e2ec1a14-326a-57c2-56a6-7c2235e5b8b3@mellanox.com>
+ <alpine.DEB.2.21.1802201829180.24268@nanos.tec.linutronix.de>
+ <CAJwJo6aeb2q-C1R2MBnQQ8yR+7Xy4FWqSmBCE=7CkK_OHNCqSQ@mail.gmail.com>
+ <alpine.DEB.2.21.1805191319190.1599@nanos.tec.linutronix.de>
+ <16f47fa4-1555-cddb-3dfb-7d56fb992ea1@mellanox.com>
+ <alpine.DEB.2.21.1805231049021.1598@nanos.tec.linutronix.de>
+ <CAPhsuW7PPRfPYfCtBMsOYdGJCkPKsVNU0501RFKdECvadhOu3w@mail.gmail.com>
+ <alpine.DEB.2.21.1805281251140.1578@nanos.tec.linutronix.de>
+ <09A22A95-6BBD-48EB-A2FE-42BF6244F751@fb.com>
+ <alpine.DEB.2.21.1805282206440.1584@nanos.tec.linutronix.de>
+ <3F47F523-64C5-422B-B9B0-73B8D105CF71@fb.com>
+ <alpine.DEB.2.21.1805291031480.1685@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1805291031480.1685@nanos.tec.linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.6.18)
+x-originating-ip: [2620:10d:c090:200::4:40e8]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1631;7:97sWd0OPcNwk3veg1tF3stnm5u2b40Q+vsoJt5CrqWc7Oy2OPrMawoym+35vxT7i21qWlVrqEargT+FynELn6t2EavKWfmc9Jwz20SgZhSvJC/vHdkT/F4ZNoQKbbCeAuKQVGTbzfTZfrEyUZRUzJOOYINoS73nagCph/Z+HTBsO6FothE0HCLzTH2tRW1rwbz+2t6ZOjDTWgZ4ukN8cXlV55xATd3Ibb5Xtrg+v8tChwt7aK8lcRLoCds/Xs2w+;20:pXMtjnlTIw1yrs32pjAsi1h6jRnXn3cZUA4E9zX3KwKl/wYJspQW/p7QRSD10n+ZjFTKcmWTf9m3varen3oYX+sBy8HuQGHZDOwkTKBh7CTBlMFFmcA1XImwNWngdOAIG9Eh+Q+rfqrnkV1oQ96dNHUz2pnh+JxREnrQKQgc37U=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1631;
+x-ms-traffictypediagnostic: MWHPR15MB1631:
+x-microsoft-antispam-prvs: <MWHPR15MB163146E051FE6AF874528027B36D0@MWHPR15MB1631.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(209352067349851);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231254)(11241501184)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR15MB1631;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1631;
+x-forefront-prvs: 0687389FB0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(346002)(39380400002)(376002)(39860400002)(199004)(189003)(2906002)(6512007)(2616005)(446003)(39060400002)(11346002)(6116002)(229853002)(33656002)(6486002)(486006)(5250100002)(53946003)(76176011)(6506007)(6436002)(5890100001)(53546011)(102836004)(478600001)(4326008)(14454004)(476003)(3660700001)(99286004)(7736002)(53936002)(59450400001)(106356001)(105586002)(2900100001)(46003)(3280700002)(25786009)(57306001)(68736007)(305945005)(36756003)(186003)(50226002)(97736004)(8676002)(5660300001)(6916009)(81166006)(81156014)(93886005)(54906003)(6246003)(8936002)(316002)(86362001)(82746002)(83716003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1631;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: jINbYZVCbNt/gREr6hqoc0nLmCJFJYHN7d8LmwzgaGsX6lT74O/mgdC1dxZVChUrCHoEQ+CmaMEHDkzHZCJAsh47xqatVRrws+wxll8EsoHYFVoRzXssOY8P6w8TWGpZBqG9Xfx7URxjDajFZqO3zavubkDbj3/oXTbsP9iqspIY2EKn9KJEhpi/DBm3hn4r
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <32919D25A0BD8C44AC747BB8326A27C3@namprd15.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: NeoMutt/20180512
+X-MS-Office365-Filtering-Correlation-Id: 4b7f04bd-8193-4c7a-b9cc-08d5c584ea68
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b7f04bd-8193-4c7a-b9cc-08d5c584ea68
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2018 16:54:59.9692
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1631
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_06:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TGtPJm008654
 
-Dear RT folks!
 
-I'm pleased to announce the v4.16.12-rt5 patch set. 
 
-Changes since v4.16.12-rt4:
+> On May 29, 2018, at 1:35 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> On Mon, 28 May 2018, Song Liu wrote:
+>>> On May 28, 2018, at 1:09 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>>> 
+>>> On Mon, 28 May 2018, Song Liu wrote:
+>>>> This doesn't fix the issue with bnxt. Here is a trace with this patch:
+>>> 
+>>> That's just the backtrace which is not really helpful. The real question is
+>>> what leads to this scenaria.
+>>> 
+>>> What I was asking for is to enable the irq_vector and irq_matrix trace
+>>> points along with ftrace_dump_on_oops. The latter dumps the trace buffer
+>>> when the problem happens and that should give us a hint what actually
+>>> causes that.
+>> 
+>> Attached is the dump I got. It seems pretty noisy, with many message lost.
+>> 
+>> Maybe we cannot enable all trace points under irq_vectors/ and irq_matrix.
+> 
+> Right. Sorry, I forgot to say that we only need the irq_vectors ones which
+> are related to vector allocation, i.e.: irq_vectors/vector_* 
+> 
+> Thanks,
+> 
+> 	tglx
 
-  - Update the "suspend prevent might sleep splat" patch. The newer
-    version also supports s2idle.
+Here is the ftrace dump:
 
-  - The seqlock implementation had a missing memory barrier. Patch by
-    Julia Cartwright.
+[ 1609.472697]    <...>-53363  19d... 1610359225us : vector_deactivate: irq=29 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472698]    <...>-53363  19d... 1610359229us : vector_clear: irq=29 vector=33 cpu=21 prev_vector=0 prev_cpu=0
+[ 1609.472699]    <...>-53363  19d... 1610359230us : irq_matrix_free: bit=33 cpu=21 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11239, global_rsvd=23, total_alloc=17
+[ 1609.472699]    <...>-53363  19d... 1610359231us : irq_matrix_reserve: online_maps=56 global_avl=11239, global_rsvd=24, total_alloc=17
+[ 1609.472700]    <...>-53363  19d... 1610359232us : vector_reserve: irq=29 ret=0
+[ 1609.472700]    <...>-53363  19d... 1610359233us : vector_config: irq=29 vector=239 cpu=0 apicdest=0x00000000
+[ 1609.472701]    <...>-53363  19d... 1610359242us : vector_deactivate: irq=30 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472701]    <...>-53363  19d... 1610359242us : vector_clear: irq=30 vector=33 cpu=11 prev_vector=0 prev_cpu=1
+[ 1609.472701]    <...>-53363  19d... 1610359242us : irq_matrix_free: bit=33 cpu=11 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11240, global_rsvd=24, total_alloc=16
+[ 1609.472702]    <...>-53363  19d... 1610359243us : irq_matrix_reserve: online_maps=56 global_avl=11240, global_rsvd=25, total_alloc=16
+[ 1609.472702]    <...>-53363  19d... 1610359243us : vector_reserve: irq=30 ret=0
+[ 1609.472703]    <...>-53363  19d... 1610359243us : vector_config: irq=30 vector=239 cpu=0 apicdest=0x00000000
+[ 1609.472703]    <...>-53363  19d... 1610359248us : vector_deactivate: irq=31 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472703]    <...>-53363  19d... 1610359248us : vector_clear: irq=31 vector=33 cpu=20 prev_vector=0 prev_cpu=2
+[ 1609.472704]    <...>-53363  19d... 1610359249us : irq_matrix_free: bit=33 cpu=20 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11241, global_rsvd=25, total_alloc=15
+[ 1609.472704]    <...>-53363  19d... 1610359249us : irq_matrix_reserve: online_maps=56 global_avl=11241, global_rsvd=26, total_alloc=15
+[ 1609.472705]    <...>-53363  19d... 1610359249us : vector_reserve: irq=31 ret=0
+[ 1609.472705]    <...>-53363  19d... 1610359249us : vector_config: irq=31 vector=239 cpu=0 apicdest=0x00000000
+[ 1609.472705]    <...>-53363  19d... 1610359255us : vector_deactivate: irq=32 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472706]    <...>-53363  19d... 1610359255us : vector_clear: irq=32 vector=33 cpu=9 prev_vector=0 prev_cpu=3
+[ 1609.472707]    <...>-53363  19d... 1610359255us : irq_matrix_free: bit=33 cpu=9 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11242, global_rsvd=26, total_alloc=14
+[ 1609.472707]    <...>-53363  19d... 1610359256us : irq_matrix_reserve: online_maps=56 global_avl=11242, global_rsvd=27, total_alloc=14
+[ 1609.472708]    <...>-53363  19d... 1610359256us : vector_reserve: irq=32 ret=0
+[ 1609.472708]    <...>-53363  19d... 1610359256us : vector_config: irq=32 vector=239 cpu=0 apicdest=0x00000000
+[ 1609.472709]    <...>-53363  19d... 1610359261us : vector_deactivate: irq=33 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472709]    <...>-53363  19d... 1610359261us : vector_clear: irq=33 vector=33 cpu=18 prev_vector=0 prev_cpu=4
+[ 1609.472710]    <...>-53363  19d... 1610359262us : irq_matrix_free: bit=33 cpu=18 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11243, global_rsvd=27, total_alloc=13
+[ 1609.472710]    <...>-53363  19d... 1610359262us : irq_matrix_reserve: online_maps=56 global_avl=11243, global_rsvd=28, total_alloc=13
+[ 1609.472711]    <...>-53363  19d... 1610359262us : vector_reserve: irq=33 ret=0
+[ 1609.472711]    <...>-53363  19d... 1610359262us : vector_config: irq=33 vector=239 cpu=0 apicdest=0x00000000
+[ 1609.472711]    <...>-53363  19d... 1610359268us : vector_deactivate: irq=34 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472712]    <...>-53363  19d... 1610359268us : vector_clear: irq=34 vector=34 cpu=7 prev_vector=0 prev_cpu=5
+[ 1609.472712]    <...>-53363  19d... 1610359268us : irq_matrix_free: bit=34 cpu=7 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11244, global_rsvd=28, total_alloc=12
+[ 1609.472713]    <...>-53363  19d... 1610359268us : irq_matrix_reserve: online_maps=56 global_avl=11244, global_rsvd=29, total_alloc=12
+[ 1609.472713]    <...>-53363  19d... 1610359269us : vector_reserve: irq=34 ret=0
+[ 1609.472713]    <...>-53363  19d... 1610359269us : vector_config: irq=34 vector=239 cpu=0 apicdest=0x00000000
+[ 1609.472714]    <...>-53363  19d... 1610359279us : vector_deactivate: irq=35 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472714]    <...>-53363  19d... 1610359279us : vector_clear: irq=35 vector=33 cpu=26 prev_vector=0 prev_cpu=6
+[ 1609.472715]    <...>-53363  19d... 1610359279us : irq_matrix_free: bit=33 cpu=26 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11245, global_rsvd=29, total_alloc=11
+[ 1609.472715]    <...>-53363  19d... 1610359279us : irq_matrix_reserve: online_maps=56 global_avl=11245, global_rsvd=30, total_alloc=11
+[ 1609.472715]    <...>-53363  19d... 1610359280us : vector_reserve: irq=35 ret=0
+[ 1609.472716]    <...>-53363  19d... 1610359280us : vector_config: irq=35 vector=239 cpu=0 apicdest=0x00000000
+[ 1609.472716]    <...>-53363  19d... 1610359285us : vector_deactivate: irq=36 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472717]    <...>-53363  19d... 1610359285us : vector_clear: irq=36 vector=33 cpu=10 prev_vector=0 prev_cpu=7
+[ 1609.472717]    <...>-53363  19d... 1610359286us : irq_matrix_free: bit=33 cpu=10 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11246, global_rsvd=30, total_alloc=10
+[ 1609.472718]    <...>-53363  19d... 1610359286us : irq_matrix_reserve: online_maps=56 global_avl=11246, global_rsvd=31, total_alloc=10
+[ 1609.472718]    <...>-53363  19d... 1610359286us : vector_reserve: irq=36 ret=0
+[ 1609.472718]    <...>-53363  19d... 1610359286us : vector_config: irq=36 vector=239 cpu=0 apicdest=0x00000000
+[ 1609.472719]    <...>-53363  20d... 1610366617us : vector_activate: irq=29 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472719]    <...>-53363  20d... 1610366619us : vector_alloc: irq=29 vector=4294967268 reserved=1 ret=0
+[ 1609.472719]    <...>-53363  20d... 1610366621us : irq_matrix_alloc: bit=33 cpu=7 online=1 avl=200 alloc=1 managed=0 online_maps=56 global_avl=11245, global_rsvd=30, total_alloc=11
+[ 1609.472720]    <...>-53363  20d... 1610366623us : vector_update: irq=29 vector=33 cpu=7 prev_vector=0 prev_cpu=21
+[ 1609.472720]    <...>-53363  20d... 1610366623us : vector_alloc: irq=29 vector=33 reserved=1 ret=0
+[ 1609.472721]    <...>-53363  20d... 1610366623us : vector_config: irq=29 vector=33 cpu=7 apicdest=0x00000010
+[ 1609.472721]    <...>-53363  20d... 1610366629us : irq_matrix_alloc: bit=33 cpu=21 online=1 avl=200 alloc=1 managed=0 online_maps=56 global_avl=11244, global_rsvd=30, total_alloc=12
+[ 1609.472722]    <...>-53363  20d... 1610366629us : vector_update: irq=29 vector=33 cpu=21 prev_vector=33 prev_cpu=7
+[ 1609.472723]    <...>-53363  20d... 1610366629us : vector_alloc: irq=29 vector=33 reserved=1 ret=0
+[ 1609.472723]    <...>-53363  20d... 1610366630us : vector_config: irq=29 vector=33 cpu=21 apicdest=0x00000030
+[ 1609.472724]    <...>-53363  20d... 1610366637us : irq_matrix_alloc: bit=35 cpu=0 online=1 avl=197 alloc=4 managed=0 online_maps=56 global_avl=11243, global_rsvd=30, total_alloc=13
+[ 1609.472724]    <...>-53363  20d... 1610366637us : vector_update: irq=29 vector=35 cpu=0 prev_vector=33 prev_cpu=21
+[ 1609.472725]    <...>-53363  20d... 1610366637us : vector_alloc: irq=29 vector=35 reserved=1 ret=0
+[ 1609.472725]    <...>-53363  20d... 1610366638us : vector_config: irq=29 vector=35 cpu=0 apicdest=0x00000000
+[ 1609.472725]    <...>-53363  20dN.. 1610366643us : vector_activate: irq=30 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472726]    <...>-53363  20dN.. 1610366644us : irq_matrix_alloc: bit=33 cpu=11 online=1 avl=200 alloc=1 managed=0 online_maps=56 global_avl=11242, global_rsvd=29, total_alloc=14
+[ 1609.472726]    <...>-53363  20dN.. 1610366644us : vector_update: irq=30 vector=33 cpu=11 prev_vector=0 prev_cpu=11
+[ 1609.472727]    <...>-53363  20dN.. 1610366644us : vector_alloc: irq=30 vector=33 reserved=1 ret=0
+[ 1609.472727]    <...>-53363  20dN.. 1610366644us : vector_config: irq=30 vector=33 cpu=11 apicdest=0x00000018
+[ 1609.472727]    <...>-53363  20dN.. 1610366647us : vector_config: irq=30 vector=33 cpu=11 apicdest=0x00000018
+[ 1609.472728]    <...>-53363  20dN.. 1610366650us : irq_matrix_alloc: bit=34 cpu=1 online=1 avl=199 alloc=2 managed=0 online_maps=56 global_avl=11241, global_rsvd=29, total_alloc=15
+[ 1609.472728]    <...>-53363  20dN.. 1610366651us : vector_update: irq=30 vector=34 cpu=1 prev_vector=33 prev_cpu=11
+[ 1609.472729]    <...>-53363  20dN.. 1610366651us : vector_alloc: irq=30 vector=34 reserved=1 ret=0
+[ 1609.472729]    <...>-53363  20dN.. 1610366651us : vector_config: irq=30 vector=34 cpu=1 apicdest=0x00000002
+[ 1609.472729]    <...>-53363  20dN.. 1610366654us : vector_activate: irq=31 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472730]    <...>-53363  20dN.. 1610366654us : vector_alloc: irq=31 vector=4294967268 reserved=1 ret=0
+[ 1609.472730]    <...>-53363  20dN.. 1610366655us : irq_matrix_alloc: bit=33 cpu=9 online=1 avl=200 alloc=1 managed=0 online_maps=56 global_avl=11240, global_rsvd=28, total_alloc=16
+[ 1609.472731]    <...>-53363  20dN.. 1610366655us : vector_update: irq=31 vector=33 cpu=9 prev_vector=0 prev_cpu=20
+[ 1609.472731]    <...>-53363  20dN.. 1610366656us : vector_alloc: irq=31 vector=33 reserved=1 ret=0
+[ 1609.472731]    <...>-53363  20dN.. 1610366656us : vector_config: irq=31 vector=33 cpu=9 apicdest=0x00000014
+[ 1609.472732]   <idle>-0       7d.h. 1610366658us : vector_free_moved: irq=29 cpu=21 vector=33 is_managed=0
+[ 1609.472732]   <idle>-0       7d.h. 1610366660us : irq_matrix_free: bit=33 cpu=21 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11241, global_rsvd=28, total_alloc=15
+[ 1609.472733]    <...>-53363  20dN.. 1610366662us : irq_matrix_alloc: bit=33 cpu=20 online=1 avl=200 alloc=1 managed=0 online_maps=56 global_avl=11240, global_rsvd=28, total_alloc=16
+[ 1609.472733]    <...>-53363  20dN.. 1610366662us : vector_update: irq=31 vector=33 cpu=20 prev_vector=33 prev_cpu=9
+[ 1609.472734]    <...>-53363  20dN.. 1610366662us : vector_alloc: irq=31 vector=33 reserved=1 ret=0
+[ 1609.472734]    <...>-53363  20dN.. 1610366662us : vector_config: irq=31 vector=33 cpu=20 apicdest=0x0000002c
+[ 1609.472735]    <...>-53363  20dN.. 1610366666us : irq_matrix_alloc: bit=34 cpu=2 online=1 avl=199 alloc=2 managed=0 online_maps=56 global_avl=11239, global_rsvd=28, total_alloc=17
+[ 1609.472735]    <...>-53363  20dN.. 1610366666us : vector_update: irq=31 vector=34 cpu=2 prev_vector=33 prev_cpu=20
+[ 1609.472736]    <...>-53363  20dN.. 1610366666us : vector_alloc: irq=31 vector=34 reserved=1 ret=0
+[ 1609.472736]    <...>-53363  20dN.. 1610366666us : vector_config: irq=31 vector=34 cpu=2 apicdest=0x00000004
+[ 1609.472737]    <...>-53363  20dNh. 1610366669us : vector_free_moved: irq=31 cpu=20 vector=33 is_managed=0
+[ 1609.472737]    <...>-53363  20dNh. 1610366670us : irq_matrix_free: bit=33 cpu=20 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11240, global_rsvd=28, total_alloc=16
+[ 1609.472738]    <...>-53363  20dN.. 1610366671us : vector_activate: irq=32 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472739]    <...>-53363  20dN.. 1610366671us : irq_matrix_alloc: bit=34 cpu=9 online=1 avl=199 alloc=2 managed=0 online_maps=56 global_avl=11239, global_rsvd=27, total_alloc=17
+[ 1609.472739]    <...>-53363  20dN.. 1610366671us : vector_update: irq=32 vector=34 cpu=9 prev_vector=0 prev_cpu=9
+[ 1609.472739]    <...>-53363  20dN.. 1610366671us : vector_alloc: irq=32 vector=34 reserved=1 ret=0
+[ 1609.472740]    <...>-53363  20dN.. 1610366672us : vector_config: irq=32 vector=34 cpu=9 apicdest=0x00000014
+[ 1609.472740]    <...>-53363  20dN.. 1610366674us : vector_config: irq=32 vector=34 cpu=9 apicdest=0x00000014
+[ 1609.472741]    <...>-53363  20dN.. 1610366678us : irq_matrix_alloc: bit=34 cpu=3 online=1 avl=199 alloc=2 managed=0 online_maps=56 global_avl=11238, global_rsvd=27, total_alloc=18
+[ 1609.472741]    <...>-53363  20dN.. 1610366678us : vector_update: irq=32 vector=34 cpu=3 prev_vector=34 prev_cpu=9
+[ 1609.472741]    <...>-53363  20dN.. 1610366679us : vector_alloc: irq=32 vector=34 reserved=1 ret=0
+[ 1609.472742]    <...>-53363  20dN.. 1610366679us : vector_config: irq=32 vector=34 cpu=3 apicdest=0x00000006
+[ 1609.472742]   <idle>-0      11d.h. 1610366680us : vector_free_moved: irq=30 cpu=11 vector=33 is_managed=0
+[ 1609.472743]   <idle>-0      11d.h. 1610366681us : irq_matrix_free: bit=33 cpu=11 online=1 avl=201 alloc=0 managed=0 online_maps=56 global_avl=11239, global_rsvd=27, total_alloc=17
+[ 1609.472743]    <...>-53363  20dN.. 1610366683us : vector_activate: irq=33 is_managed=0 can_reserve=1 reserve=0
+[ 1609.472743]    <...>-53363  20dN.. 1610366683us : vector_alloc: irq=33 vector=4294967268 reserved=1 ret=0
+[ 1609.472744]    <...>-53363  20dN.. 1610366684us : irq_matrix_alloc: bit=33 cpu=10 online=1 avl=200 alloc=1 managed=0 online_maps=56 global_avl=11238, global_rsvd=26, total_alloc=18
+[ 1609.472744]    <...>-53363  20dN.. 1610366684us : vector_update: irq=33 vector=33 cpu=10 prev_vector=0 prev_cpu=18
+[ 1609.472745]    <...>-53363  20dN.. 1610366684us : vector_alloc: irq=33 vector=33 reserved=1 ret=0
+[ 1609.472745]    <...>-53363  20dN.. 1610366685us : vector_config: irq=33 vector=33 cpu=10 apicdest=0x00000016
+[ 1609.472745]    <...>-53363  20dN.. 1610366688us : irq_matrix_alloc: bit=33 cpu=18 online=1 avl=200 alloc=1 managed=0 online_maps=56 global_avl=11237, global_rsvd=26, total_alloc=19
+[ 1609.472746]    <...>-53363  20dN.. 1610366688us : vector_update: irq=33 vector=33 cpu=18 prev_vector=33 prev_cpu=10
+[ 1609.472746]    <...>-53363  20dN.. 1610366688us : vector_alloc: irq=33 vector=33 reserved=1 ret=0
+[ 1609.472747]    <...>-53363  20dN.. 1610366688us : vector_config: irq=33 vector=33 cpu=18 apicdest=0x00000028
+[ 1609.472747]    <...>-53363  20dN.. 1610366692us : irq_matrix_alloc: bit=34 cpu=4 online=1 avl=199 alloc=2 managed=0 online_maps=56 global_avl=11236, global_rsvd=26, total_alloc=20
+[ 1609.472747]    <...>-53363  20dN.. 1610366692us : vector_update: irq=33 vector=34 cpu=4 prev_vector=33 prev_cpu=18
+[ 1609.472748]    <...>-53363  20dN.. 1610366692us : vector_alloc: irq=33 vector=34 reserved=1 ret=0
+[ 1609.472748]    <...>-53363  20dN.. 1610366693us : vector_config: irq=33 vector=34 cpu=4 apicdest=0x00000008
+[ 1609.472749]   <idle>-0       9d.h. 1610366694us : vector_free_moved: irq=32 cpu=9 vector=34 is_managed=0
+[ 1609.472749]   <idle>-0       9d.h. 1610366695us : irq_matrix_free: bit=34 cpu=9 online=1 avl=200 alloc=1 managed=0 online_maps=56 global_avl=11237, global_rsvd=26, total_alloc=19
+[ 1609.472750]   <idle>-0       9d.h. 1610366696us : vector_free_moved: irq=31 cpu=20 vector=0 is_managed=0
 
-  - The new priority reported by trace_sched_pi_setprio() was wrong in
-    case the task was de-boosted. Reported by Christian Mansky.
 
-  - Update of the refcount_t queue: The raid5 patch was replaced with
-    the atomic interface because it does not fit for the refcount_t API.
-
-  - Since the last release softirq_count() returns the "BH disable"
-    count. In this release I am dropping the workarounds we had because
-    softirq_count() returned always 0.
-
-Known issues
-     - A warning triggered in "rcu_note_context_switch" originated from
-       SyS_timer_gettime(). The issue was always there, it is now
-       visible. Reported by Grygorii Strashko and Daniel Wagner.
-
-The delta patch against v4.16.12-rt4 is appended below and can be found here:
- 
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.16/incr/patch-4.16.12-rt4-rt5.patch.xz
-
-You can get this release via the git tree at:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.16.12-rt5
-
-The RT patch against v4.16.12 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.16/older/patch-4.16.12-rt5.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.16/older/patches-4.16.12-rt5.tar.xz
-
-Sebastian
-
-diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-index ea01621ed769..2e76fbcba76e 100644
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -57,7 +57,7 @@ static void split_counters(unsigned int *cnt, unsigned int *inpr)
- /* A preserved old value of the events counter. */
- static unsigned int saved_count;
- 
--static DEFINE_SPINLOCK(events_lock);
-+static DEFINE_RAW_SPINLOCK(events_lock);
- 
- static void pm_wakeup_timer_fn(struct timer_list *t);
- 
-@@ -185,9 +185,9 @@ void wakeup_source_add(struct wakeup_source *ws)
- 	ws->active = false;
- 	ws->last_time = ktime_get();
- 
--	spin_lock_irqsave(&events_lock, flags);
-+	raw_spin_lock_irqsave(&events_lock, flags);
- 	list_add_rcu(&ws->entry, &wakeup_sources);
--	spin_unlock_irqrestore(&events_lock, flags);
-+	raw_spin_unlock_irqrestore(&events_lock, flags);
- }
- EXPORT_SYMBOL_GPL(wakeup_source_add);
- 
-@@ -202,9 +202,9 @@ void wakeup_source_remove(struct wakeup_source *ws)
- 	if (WARN_ON(!ws))
- 		return;
- 
--	spin_lock_irqsave(&events_lock, flags);
-+	raw_spin_lock_irqsave(&events_lock, flags);
- 	list_del_rcu(&ws->entry);
--	spin_unlock_irqrestore(&events_lock, flags);
-+	raw_spin_unlock_irqrestore(&events_lock, flags);
- 	synchronize_srcu(&wakeup_srcu);
- }
- EXPORT_SYMBOL_GPL(wakeup_source_remove);
-@@ -843,7 +843,7 @@ bool pm_wakeup_pending(void)
- 	unsigned long flags;
- 	bool ret = false;
- 
--	spin_lock_irqsave(&events_lock, flags);
-+	raw_spin_lock_irqsave(&events_lock, flags);
- 	if (events_check_enabled) {
- 		unsigned int cnt, inpr;
- 
-@@ -851,7 +851,7 @@ bool pm_wakeup_pending(void)
- 		ret = (cnt != saved_count || inpr > 0);
- 		events_check_enabled = !ret;
- 	}
--	spin_unlock_irqrestore(&events_lock, flags);
-+	raw_spin_unlock_irqrestore(&events_lock, flags);
- 
- 	if (ret) {
- 		pr_info("PM: Wakeup pending, aborting suspend\n");
-@@ -940,13 +940,13 @@ bool pm_save_wakeup_count(unsigned int count)
- 	unsigned long flags;
- 
- 	events_check_enabled = false;
--	spin_lock_irqsave(&events_lock, flags);
-+	raw_spin_lock_irqsave(&events_lock, flags);
- 	split_counters(&cnt, &inpr);
- 	if (cnt == count && inpr == 0) {
- 		saved_count = count;
- 		events_check_enabled = true;
- 	}
--	spin_unlock_irqrestore(&events_lock, flags);
-+	raw_spin_unlock_irqrestore(&events_lock, flags);
- 	return events_check_enabled;
- }
- 
-diff --git a/drivers/md/raid5-cache.c b/drivers/md/raid5-cache.c
-index 532fdf56c117..3c65f52b68f5 100644
---- a/drivers/md/raid5-cache.c
-+++ b/drivers/md/raid5-cache.c
-@@ -1049,7 +1049,7 @@ int r5l_write_stripe(struct r5l_log *log, struct stripe_head *sh)
- 	 * don't delay.
- 	 */
- 	clear_bit(STRIPE_DELAYED, &sh->state);
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- 
- 	mutex_lock(&log->io_mutex);
- 	/* meta + data */
-@@ -1388,7 +1388,7 @@ static void r5c_flush_stripe(struct r5conf *conf, struct stripe_head *sh)
- 	lockdep_assert_held(&conf->device_lock);
- 
- 	list_del_init(&sh->lru);
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- 
- 	set_bit(STRIPE_HANDLE, &sh->state);
- 	atomic_inc(&conf->active_stripes);
-@@ -1491,7 +1491,7 @@ static void r5c_do_reclaim(struct r5conf *conf)
- 			 */
- 			if (!list_empty(&sh->lru) &&
- 			    !test_bit(STRIPE_HANDLE, &sh->state) &&
--			    refcount_read(&sh->count) == 0) {
-+			    atomic_read(&sh->count) == 0) {
- 				r5c_flush_stripe(conf, sh);
- 				if (count++ >= R5C_RECLAIM_STRIPE_GROUP)
- 					break;
-@@ -2912,7 +2912,7 @@ int r5c_cache_data(struct r5l_log *log, struct stripe_head *sh)
- 	 * don't delay.
- 	 */
- 	clear_bit(STRIPE_DELAYED, &sh->state);
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- 
- 	mutex_lock(&log->io_mutex);
- 	/* meta + data */
-diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
-index 87840cfe7a80..42890a08375b 100644
---- a/drivers/md/raid5-ppl.c
-+++ b/drivers/md/raid5-ppl.c
-@@ -388,7 +388,7 @@ int ppl_write_stripe(struct r5conf *conf, struct stripe_head *sh)
- 
- 	set_bit(STRIPE_LOG_TRAPPED, &sh->state);
- 	clear_bit(STRIPE_DELAYED, &sh->state);
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- 
- 	if (ppl_log_stripe(log, sh)) {
- 		spin_lock_irq(&ppl_conf->no_mem_stripes_lock);
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index eb967afd749a..d8de7476d26a 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -306,7 +306,7 @@ static void do_release_stripe(struct r5conf *conf, struct stripe_head *sh,
- static void __release_stripe(struct r5conf *conf, struct stripe_head *sh,
- 			     struct list_head *temp_inactive_list)
- {
--	if (refcount_dec_and_test(&sh->count))
-+	if (atomic_dec_and_test(&sh->count))
- 		do_release_stripe(conf, sh, temp_inactive_list);
- }
- 
-@@ -398,7 +398,7 @@ void raid5_release_stripe(struct stripe_head *sh)
- 
- 	/* Avoid release_list until the last reference.
- 	 */
--	if (refcount_dec_not_one(&sh->count))
-+	if (atomic_add_unless(&sh->count, -1, 1))
- 		return;
- 
- 	if (unlikely(!conf->mddev->thread) ||
-@@ -410,7 +410,7 @@ void raid5_release_stripe(struct stripe_head *sh)
- 	return;
- slow_path:
- 	/* we are ok here if STRIPE_ON_RELEASE_LIST is set or not */
--	if (refcount_dec_and_lock_irqsave(&sh->count, &conf->device_lock, &flags)) {
-+	if (atomic_dec_and_lock_irqsave(&sh->count, &conf->device_lock, flags)) {
- 		INIT_LIST_HEAD(&list);
- 		hash = sh->hash_lock_index;
- 		do_release_stripe(conf, sh, &list);
-@@ -499,7 +499,7 @@ static void init_stripe(struct stripe_head *sh, sector_t sector, int previous)
- 	struct r5conf *conf = sh->raid_conf;
- 	int i, seq;
- 
--	BUG_ON(refcount_read(&sh->count) != 0);
-+	BUG_ON(atomic_read(&sh->count) != 0);
- 	BUG_ON(test_bit(STRIPE_HANDLE, &sh->state));
- 	BUG_ON(stripe_operations_active(sh));
- 	BUG_ON(sh->batch_head);
-@@ -676,11 +676,11 @@ raid5_get_active_stripe(struct r5conf *conf, sector_t sector,
- 					  &conf->cache_state);
- 			} else {
- 				init_stripe(sh, sector, previous);
--				refcount_inc(&sh->count);
-+				atomic_inc(&sh->count);
- 			}
--		} else if (!refcount_inc_not_zero(&sh->count)) {
-+		} else if (!atomic_inc_not_zero(&sh->count)) {
- 			spin_lock(&conf->device_lock);
--			if (!refcount_read(&sh->count)) {
-+			if (!atomic_read(&sh->count)) {
- 				if (!test_bit(STRIPE_HANDLE, &sh->state))
- 					atomic_inc(&conf->active_stripes);
- 				BUG_ON(list_empty(&sh->lru) &&
-@@ -696,7 +696,7 @@ raid5_get_active_stripe(struct r5conf *conf, sector_t sector,
- 					sh->group = NULL;
- 				}
- 			}
--			refcount_inc(&sh->count);
-+			atomic_inc(&sh->count);
- 			spin_unlock(&conf->device_lock);
- 		}
- 	} while (sh == NULL);
-@@ -758,9 +758,9 @@ static void stripe_add_to_batch_list(struct r5conf *conf, struct stripe_head *sh
- 	hash = stripe_hash_locks_hash(head_sector);
- 	spin_lock_irq(conf->hash_locks + hash);
- 	head = __find_stripe(conf, head_sector, conf->generation);
--	if (head && !refcount_inc_not_zero(&head->count)) {
-+	if (head && !atomic_inc_not_zero(&head->count)) {
- 		spin_lock(&conf->device_lock);
--		if (!refcount_read(&head->count)) {
-+		if (!atomic_read(&head->count)) {
- 			if (!test_bit(STRIPE_HANDLE, &head->state))
- 				atomic_inc(&conf->active_stripes);
- 			BUG_ON(list_empty(&head->lru) &&
-@@ -776,7 +776,7 @@ static void stripe_add_to_batch_list(struct r5conf *conf, struct stripe_head *sh
- 				head->group = NULL;
- 			}
- 		}
--		refcount_inc(&head->count);
-+		atomic_inc(&head->count);
- 		spin_unlock(&conf->device_lock);
- 	}
- 	spin_unlock_irq(conf->hash_locks + hash);
-@@ -845,7 +845,7 @@ static void stripe_add_to_batch_list(struct r5conf *conf, struct stripe_head *sh
- 		sh->batch_head->bm_seq = seq;
- 	}
- 
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- unlock_out:
- 	unlock_two_stripes(head, sh);
- out:
-@@ -1108,9 +1108,9 @@ static void ops_run_io(struct stripe_head *sh, struct stripe_head_state *s)
- 			pr_debug("%s: for %llu schedule op %d on disc %d\n",
- 				__func__, (unsigned long long)sh->sector,
- 				bi->bi_opf, i);
--			refcount_inc(&sh->count);
-+			atomic_inc(&sh->count);
- 			if (sh != head_sh)
--				refcount_inc(&head_sh->count);
-+				atomic_inc(&head_sh->count);
- 			if (use_new_offset(conf, sh))
- 				bi->bi_iter.bi_sector = (sh->sector
- 						 + rdev->new_data_offset);
-@@ -1172,9 +1172,9 @@ static void ops_run_io(struct stripe_head *sh, struct stripe_head_state *s)
- 				 "replacement disc %d\n",
- 				__func__, (unsigned long long)sh->sector,
- 				rbi->bi_opf, i);
--			refcount_inc(&sh->count);
-+			atomic_inc(&sh->count);
- 			if (sh != head_sh)
--				refcount_inc(&head_sh->count);
-+				atomic_inc(&head_sh->count);
- 			if (use_new_offset(conf, sh))
- 				rbi->bi_iter.bi_sector = (sh->sector
- 						  + rrdev->new_data_offset);
-@@ -1352,7 +1352,7 @@ static void ops_run_biofill(struct stripe_head *sh)
- 		}
- 	}
- 
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- 	init_async_submit(&submit, ASYNC_TX_ACK, tx, ops_complete_biofill, sh, NULL);
- 	async_trigger_callback(&submit);
- }
-@@ -1430,7 +1430,7 @@ ops_run_compute5(struct stripe_head *sh, struct raid5_percpu *percpu)
- 		if (i != target)
- 			xor_srcs[count++] = sh->dev[i].page;
- 
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- 
- 	init_async_submit(&submit, ASYNC_TX_FENCE|ASYNC_TX_XOR_ZERO_DST, NULL,
- 			  ops_complete_compute, sh, to_addr_conv(sh, percpu, 0));
-@@ -1519,7 +1519,7 @@ ops_run_compute6_1(struct stripe_head *sh, struct raid5_percpu *percpu)
- 	BUG_ON(!test_bit(R5_Wantcompute, &tgt->flags));
- 	dest = tgt->page;
- 
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- 
- 	if (target == qd_idx) {
- 		count = set_syndrome_sources(blocks, sh, SYNDROME_SRC_ALL);
-@@ -1594,7 +1594,7 @@ ops_run_compute6_2(struct stripe_head *sh, struct raid5_percpu *percpu)
- 	pr_debug("%s: stripe: %llu faila: %d failb: %d\n",
- 		 __func__, (unsigned long long)sh->sector, faila, failb);
- 
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- 
- 	if (failb == syndrome_disks+1) {
- 		/* Q disk is one of the missing disks */
-@@ -1865,7 +1865,7 @@ ops_run_reconstruct5(struct stripe_head *sh, struct raid5_percpu *percpu,
- 			break;
- 	}
- 	if (i >= sh->disks) {
--		refcount_inc(&sh->count);
-+		atomic_inc(&sh->count);
- 		set_bit(R5_Discard, &sh->dev[pd_idx].flags);
- 		ops_complete_reconstruct(sh);
- 		return;
-@@ -1906,7 +1906,7 @@ ops_run_reconstruct5(struct stripe_head *sh, struct raid5_percpu *percpu,
- 		flags = ASYNC_TX_ACK |
- 			(prexor ? ASYNC_TX_XOR_DROP_DST : ASYNC_TX_XOR_ZERO_DST);
- 
--		refcount_inc(&head_sh->count);
-+		atomic_inc(&head_sh->count);
- 		init_async_submit(&submit, flags, tx, ops_complete_reconstruct, head_sh,
- 				  to_addr_conv(sh, percpu, j));
- 	} else {
-@@ -1948,7 +1948,7 @@ ops_run_reconstruct6(struct stripe_head *sh, struct raid5_percpu *percpu,
- 			break;
- 	}
- 	if (i >= sh->disks) {
--		refcount_inc(&sh->count);
-+		atomic_inc(&sh->count);
- 		set_bit(R5_Discard, &sh->dev[sh->pd_idx].flags);
- 		set_bit(R5_Discard, &sh->dev[sh->qd_idx].flags);
- 		ops_complete_reconstruct(sh);
-@@ -1972,7 +1972,7 @@ ops_run_reconstruct6(struct stripe_head *sh, struct raid5_percpu *percpu,
- 				 struct stripe_head, batch_list) == head_sh;
- 
- 	if (last_stripe) {
--		refcount_inc(&head_sh->count);
-+		atomic_inc(&head_sh->count);
- 		init_async_submit(&submit, txflags, tx, ops_complete_reconstruct,
- 				  head_sh, to_addr_conv(sh, percpu, j));
- 	} else
-@@ -2029,7 +2029,7 @@ static void ops_run_check_p(struct stripe_head *sh, struct raid5_percpu *percpu)
- 	tx = async_xor_val(xor_dest, xor_srcs, 0, count, STRIPE_SIZE,
- 			   &sh->ops.zero_sum_result, &submit);
- 
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- 	init_async_submit(&submit, ASYNC_TX_ACK, tx, ops_complete_check, sh, NULL);
- 	tx = async_trigger_callback(&submit);
- }
-@@ -2048,7 +2048,7 @@ static void ops_run_check_pq(struct stripe_head *sh, struct raid5_percpu *percpu
- 	if (!checkp)
- 		srcs[count] = NULL;
- 
--	refcount_inc(&sh->count);
-+	atomic_inc(&sh->count);
- 	init_async_submit(&submit, ASYNC_TX_ACK, NULL, ops_complete_check,
- 			  sh, to_addr_conv(sh, percpu, 0));
- 	async_syndrome_val(srcs, 0, count+2, STRIPE_SIZE,
-@@ -2150,7 +2150,7 @@ static struct stripe_head *alloc_stripe(struct kmem_cache *sc, gfp_t gfp,
- 		INIT_LIST_HEAD(&sh->lru);
- 		INIT_LIST_HEAD(&sh->r5c);
- 		INIT_LIST_HEAD(&sh->log_list);
--		refcount_set(&sh->count, 1);
-+		atomic_set(&sh->count, 1);
- 		sh->raid_conf = conf;
- 		sh->log_start = MaxSector;
- 		for (i = 0; i < disks; i++) {
-@@ -2451,7 +2451,7 @@ static int drop_one_stripe(struct r5conf *conf)
- 	spin_unlock_irq(conf->hash_locks + hash);
- 	if (!sh)
- 		return 0;
--	BUG_ON(refcount_read(&sh->count));
-+	BUG_ON(atomic_read(&sh->count));
- 	shrink_buffers(sh);
- 	free_stripe(conf->slab_cache, sh);
- 	atomic_dec(&conf->active_stripes);
-@@ -2483,7 +2483,7 @@ static void raid5_end_read_request(struct bio * bi)
- 			break;
- 
- 	pr_debug("end_read_request %llu/%d, count: %d, error %d.\n",
--		(unsigned long long)sh->sector, i, refcount_read(&sh->count),
-+		(unsigned long long)sh->sector, i, atomic_read(&sh->count),
- 		bi->bi_status);
- 	if (i == disks) {
- 		bio_reset(bi);
-@@ -2620,7 +2620,7 @@ static void raid5_end_write_request(struct bio *bi)
- 		}
- 	}
- 	pr_debug("end_write_request %llu/%d, count %d, error: %d.\n",
--		(unsigned long long)sh->sector, i, refcount_read(&sh->count),
-+		(unsigned long long)sh->sector, i, atomic_read(&sh->count),
- 		bi->bi_status);
- 	if (i == disks) {
- 		bio_reset(bi);
-@@ -4687,7 +4687,7 @@ static void handle_stripe(struct stripe_head *sh)
- 	pr_debug("handling stripe %llu, state=%#lx cnt=%d, "
- 		"pd_idx=%d, qd_idx=%d\n, check:%d, reconstruct:%d\n",
- 	       (unsigned long long)sh->sector, sh->state,
--	       refcount_read(&sh->count), sh->pd_idx, sh->qd_idx,
-+	       atomic_read(&sh->count), sh->pd_idx, sh->qd_idx,
- 	       sh->check_state, sh->reconstruct_state);
- 
- 	analyse_stripe(sh, &s);
-@@ -5062,7 +5062,7 @@ static void activate_bit_delay(struct r5conf *conf,
- 		struct stripe_head *sh = list_entry(head.next, struct stripe_head, lru);
- 		int hash;
- 		list_del_init(&sh->lru);
--		refcount_inc(&sh->count);
-+		atomic_inc(&sh->count);
- 		hash = sh->hash_lock_index;
- 		__release_stripe(conf, sh, &temp_inactive_list[hash]);
- 	}
-@@ -5387,8 +5387,7 @@ static struct stripe_head *__get_priority_stripe(struct r5conf *conf, int group)
- 		sh->group = NULL;
- 	}
- 	list_del_init(&sh->lru);
--	refcount_inc(&sh->count);
--	BUG_ON(refcount_read(&sh->count) != 1);
-+	BUG_ON(atomic_inc_return(&sh->count) != 1);
- 	return sh;
- }
- 
-diff --git a/drivers/md/raid5.h b/drivers/md/raid5.h
-index 8c6d39e9db41..2796fb045885 100644
---- a/drivers/md/raid5.h
-+++ b/drivers/md/raid5.h
-@@ -4,7 +4,7 @@
- 
- #include <linux/raid/xor.h>
- #include <linux/dmaengine.h>
--#include <linux/refcount.h>
-+
- /*
-  *
-  * Each stripe contains one buffer per device.  Each buffer can be in
-@@ -208,7 +208,7 @@ struct stripe_head {
- 	short			ddf_layout;/* use DDF ordering to calculate Q */
- 	short			hash_lock_index;
- 	unsigned long		state;		/* state flags */
--	refcount_t		count;	      /* nr of active thread/requests */
-+	atomic_t		count;	      /* nr of active thread/requests */
- 	int			bm_seq;	/* sequence number for bitmap flushes */
- 	int			disks;		/* disks in stripe */
- 	int			overwrite_disks; /* total overwrite disks in stripe,
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index b1f2d663ab6e..6fc77d4dbdcd 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -608,22 +608,11 @@ do {									\
- 			  "IRQs not disabled as expected\n");		\
- 	} while (0)
- 
--#ifdef CONFIG_PREEMPT_RT_FULL
--# define lockdep_assert_in_softirq() do { } while (0)
--#else
--# define lockdep_assert_in_softirq()	do {				\
--		WARN_ONCE(debug_locks && !current->lockdep_recursion &&	\
--			  !current->softirq_context,			\
--			  "Not in softirq context as expected\n");	\
--	} while (0)
--#endif
--
- #else
- # define might_lock(lock) do { } while (0)
- # define might_lock_read(lock) do { } while (0)
- # define lockdep_assert_irqs_enabled() do { } while (0)
- # define lockdep_assert_irqs_disabled() do { } while (0)
--# define lockdep_assert_in_softirq() do { } while (0)
- #endif
- 
- #ifdef CONFIG_LOCKDEP
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index 97eb2c0d4502..58f9909d6659 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -461,6 +461,7 @@ static inline unsigned read_seqbegin(seqlock_t *sl)
- 		spin_unlock_wait(&sl->lock);
- 		goto repeat;
- 	}
-+	smp_rmb();
- 	return ret;
- }
- #endif
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index 15068e3ef74e..f6f72c583e83 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -419,6 +419,11 @@ extern int _atomic_dec_and_lock(atomic_t *atomic, spinlock_t *lock);
- #define atomic_dec_and_lock(atomic, lock) \
- 		__cond_lock(lock, _atomic_dec_and_lock(atomic, lock))
- 
-+extern int _atomic_dec_and_lock_irqsave(atomic_t *atomic, spinlock_t *lock,
-+					unsigned long *flags);
-+#define atomic_dec_and_lock_irqsave(atomic, lock, flags) \
-+		__cond_lock(lock, _atomic_dec_and_lock_irqsave(atomic, lock, &(flags)))
-+
- int alloc_bucket_spinlocks(spinlock_t **locks, unsigned int *lock_mask,
- 			   size_t max_size, unsigned int cpu_mult,
- 			   gfp_t gfp);
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index bc01e06bc716..0be866c91f62 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -435,7 +435,9 @@ TRACE_EVENT(sched_pi_setprio,
- 		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
- 		__entry->pid		= tsk->pid;
- 		__entry->oldprio	= tsk->prio;
--		__entry->newprio	= pi_task ? pi_task->prio : tsk->prio;
-+		__entry->newprio	= pi_task ?
-+				min(tsk->normal_prio, pi_task->prio) :
-+				tsk->normal_prio;
- 		/* XXX SCHED_DEADLINE bits missing */
- 	),
- 
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index 44e17d70154f..b89605fe0e88 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -27,6 +27,7 @@
- #include <linux/export.h>
- #include <linux/suspend.h>
- #include <linux/syscore_ops.h>
-+#include <linux/swait.h>
- #include <linux/ftrace.h>
- #include <trace/events/power.h>
- #include <linux/compiler.h>
-@@ -57,10 +58,10 @@ EXPORT_SYMBOL_GPL(pm_suspend_global_flags);
- 
- static const struct platform_suspend_ops *suspend_ops;
- static const struct platform_s2idle_ops *s2idle_ops;
--static DECLARE_WAIT_QUEUE_HEAD(s2idle_wait_head);
-+static DECLARE_SWAIT_QUEUE_HEAD(s2idle_wait_head);
- 
- enum s2idle_states __read_mostly s2idle_state;
--static DEFINE_SPINLOCK(s2idle_lock);
-+static DEFINE_RAW_SPINLOCK(s2idle_lock);
- 
- void s2idle_set_ops(const struct platform_s2idle_ops *ops)
- {
-@@ -78,12 +79,12 @@ static void s2idle_enter(void)
- {
- 	trace_suspend_resume(TPS("machine_suspend"), PM_SUSPEND_TO_IDLE, true);
- 
--	spin_lock_irq(&s2idle_lock);
-+	raw_spin_lock_irq(&s2idle_lock);
- 	if (pm_wakeup_pending())
- 		goto out;
- 
- 	s2idle_state = S2IDLE_STATE_ENTER;
--	spin_unlock_irq(&s2idle_lock);
-+	raw_spin_unlock_irq(&s2idle_lock);
- 
- 	get_online_cpus();
- 	cpuidle_resume();
-@@ -91,17 +92,17 @@ static void s2idle_enter(void)
- 	/* Push all the CPUs into the idle loop. */
- 	wake_up_all_idle_cpus();
- 	/* Make the current CPU wait so it can enter the idle loop too. */
--	wait_event(s2idle_wait_head,
--		   s2idle_state == S2IDLE_STATE_WAKE);
-+	swait_event(s2idle_wait_head,
-+		    s2idle_state == S2IDLE_STATE_WAKE);
- 
- 	cpuidle_pause();
- 	put_online_cpus();
- 
--	spin_lock_irq(&s2idle_lock);
-+	raw_spin_lock_irq(&s2idle_lock);
- 
-  out:
- 	s2idle_state = S2IDLE_STATE_NONE;
--	spin_unlock_irq(&s2idle_lock);
-+	raw_spin_unlock_irq(&s2idle_lock);
- 
- 	trace_suspend_resume(TPS("machine_suspend"), PM_SUSPEND_TO_IDLE, false);
- }
-@@ -156,12 +157,12 @@ void s2idle_wake(void)
- {
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&s2idle_lock, flags);
-+	raw_spin_lock_irqsave(&s2idle_lock, flags);
- 	if (s2idle_state > S2IDLE_STATE_NONE) {
- 		s2idle_state = S2IDLE_STATE_WAKE;
--		wake_up(&s2idle_wait_head);
-+		swake_up(&s2idle_wait_head);
- 	}
--	spin_unlock_irqrestore(&s2idle_lock, flags);
-+	raw_spin_unlock_irqrestore(&s2idle_lock, flags);
- }
- EXPORT_SYMBOL_GPL(s2idle_wake);
- 
-diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
-index 7f5a26c3a8ee..7a87a4488a5e 100644
---- a/kernel/time/tick-common.c
-+++ b/kernel/time/tick-common.c
-@@ -492,6 +492,7 @@ void tick_freeze(void)
- 	if (tick_freeze_depth == num_online_cpus()) {
- 		trace_suspend_resume(TPS("timekeeping_freeze"),
- 				     smp_processor_id(), true);
-+		system_state = SYSTEM_SUSPEND;
- 		timekeeping_suspend();
- 	} else {
- 		tick_suspend_local();
-@@ -515,6 +516,7 @@ void tick_unfreeze(void)
- 
- 	if (tick_freeze_depth == num_online_cpus()) {
- 		timekeeping_resume();
-+		system_state = SYSTEM_RUNNING;
- 		trace_suspend_resume(TPS("timekeeping_freeze"),
- 				     smp_processor_id(), false);
- 	} else {
-diff --git a/lib/dec_and_lock.c b/lib/dec_and_lock.c
-index 347fa7ac2e8a..9555b68bb774 100644
---- a/lib/dec_and_lock.c
-+++ b/lib/dec_and_lock.c
-@@ -33,3 +33,19 @@ int _atomic_dec_and_lock(atomic_t *atomic, spinlock_t *lock)
- }
- 
- EXPORT_SYMBOL(_atomic_dec_and_lock);
-+
-+int _atomic_dec_and_lock_irqsave(atomic_t *atomic, spinlock_t *lock,
-+				 unsigned long *flags)
-+{
-+	/* Subtract 1 from counter unless that drops it to 0 (ie. it was 1) */
-+	if (atomic_add_unless(atomic, -1, 1))
-+		return 0;
-+
-+	/* Otherwise do it the slow way */
-+	spin_lock_irqsave(lock, *flags);
-+	if (atomic_dec_and_test(atomic))
-+		return 1;
-+	spin_unlock_irqrestore(lock, *flags);
-+	return 0;
-+}
-+EXPORT_SYMBOL(_atomic_dec_and_lock_irqsave);
-diff --git a/localversion-rt b/localversion-rt
-index ad3da1bcab7e..0efe7ba1930e 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt4
-+-rt5
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 2f47c4304cec..2677398054e9 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -4736,9 +4736,6 @@ static int netif_receive_skb_internal(struct sk_buff *skb)
-  */
- int netif_receive_skb(struct sk_buff *skb)
- {
--	lockdep_assert_irqs_enabled();
--	lockdep_assert_in_softirq();
--
- 	trace_netif_receive_skb_entry(skb);
- 
- 	return netif_receive_skb_internal(skb);
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 691de29f3e0c..56fe16b07538 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -4245,6 +4245,8 @@ void ieee80211_rx_napi(struct ieee80211_hw *hw, struct ieee80211_sta *pubsta,
- 	struct ieee80211_supported_band *sband;
- 	struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
- 
-+	WARN_ON_ONCE(softirq_count() == 0);
-+
- 	if (WARN_ON(status->band >= NUM_NL80211_BANDS))
- 		goto drop;
- 
-diff --git a/net/mac802154/rx.c b/net/mac802154/rx.c
-index 66916c270efc..4dcf6e18563a 100644
---- a/net/mac802154/rx.c
-+++ b/net/mac802154/rx.c
-@@ -258,6 +258,8 @@ void ieee802154_rx(struct ieee802154_local *local, struct sk_buff *skb)
- {
- 	u16 crc;
- 
-+	WARN_ON_ONCE(softirq_count() == 0);
-+
- 	if (local->suspended)
- 		goto drop;
- 
+Thanks,
+Song
