@@ -1,70 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968388AbeE2WW6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:22:58 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39890 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967917AbeE2WWz (ORCPT
+        id S968104AbeE2WYL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:24:11 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:44935 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967772AbeE2WYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:22:55 -0400
-X-Google-Smtp-Source: ADUXVKI8cQTWpR2Lq3+xMh1q8BhgRsbvFc21LCMe/8n3HDhdDF/y6hwpp7VdV1U9fWsf81RodNFkdiqSRfzm99aBTSI=
+        Tue, 29 May 2018 18:24:04 -0400
+X-Google-Smtp-Source: ADUXVKLUgOp2W7mbyN1QFVSeI2w+T9huwRbNr9wmBtUQtStmnojgX2IFJTBFndnWW4o92Y2R+i1fVvCc80tfoz8s+lU=
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4hVERZoqWrCxwOkmM075OP_ada7FiYsQgokijuWyC1MbA@mail.gmail.com>
-References: <152694211402.5484.2277538346144115181.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180524001026.GA3527@redhat.com> <CAPcyv4hVERZoqWrCxwOkmM075OP_ada7FiYsQgokijuWyC1MbA@mail.gmail.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Wed, 30 May 2018 08:22:53 +1000
-Message-ID: <CAPM=9tzMJq=KC+ijoj-JGmc1R3wbshdwtfR3Zpmyaw3jYJ9+gw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] mm: rework hmm to use devm_memremap_pages
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Jerome Glisse <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>, Christoph Hellwig <hch@lst.de>,
-        Michal Hocko <mhocko@suse.com>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAGXu5jKgiJfZTTs0RM9yaXSBMVq1Nsby4L8fwjOZ7yM3kik7Nw@mail.gmail.com>
+References: <20180505075854.192237-1-ksspiers@google.com> <CAGXu5jKgiJfZTTs0RM9yaXSBMVq1Nsby4L8fwjOZ7yM3kik7Nw@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 29 May 2018 15:24:02 -0700
+X-Google-Sender-Auth: FSwblBWMYXSI1yD5Za3HWLepavY
+Message-ID: <CAGXu5jK8+-vgpQB7kDnjjTk9pYJey2+gFUiv91QxWPj5zRuu_Q@mail.gmail.com>
+Subject: Re: [PATCH v2] async_pq: Remove VLA usage
+To: Kyle Spiers <ksspiers@google.com>,
+        Dan Williams <dan.j.williams@intel.com>, vinod.koul@intel.com,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, ray.jui@broadcom.com,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24 May 2018 at 13:18, Dan Williams <dan.j.williams@intel.com> wrote:
-> On Wed, May 23, 2018 at 5:10 PM, Jerome Glisse <jglisse@redhat.com> wrote:
->> On Mon, May 21, 2018 at 03:35:14PM -0700, Dan Williams wrote:
->>> Hi Andrew, please consider this series for 4.18.
->>>
->>> For maintainability, as ZONE_DEVICE continues to attract new users,
->>> it is useful to keep all users consolidated on devm_memremap_pages() as
->>> the interface for create "device pages".
->>>
->>> The devm_memremap_pages() implementation was recently reworked to make
->>> it more generic for arbitrary users, like the proposed peer-to-peer
->>> PCI-E enabling. HMM pre-dated this rework and opted to duplicate
->>> devm_memremap_pages() as hmm_devmem_pages_create().
->>>
->>> Rework HMM to be a consumer of devm_memremap_pages() directly and fix up
->>> the licensing on the exports given the deep dependencies on the mm.
+On Thu, May 10, 2018 at 1:57 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Sat, May 5, 2018 at 12:58 AM, Kyle Spiers <ksspiers@google.com> wrote:
+>> In the quest to remove VLAs from the kernel[1], this moves the
+>> allocation of coefs and blocks from the stack to being kmalloc()ed.
 >>
->> I am on PTO right now so i won't be able to quickly review it all
->> but forcing GPL export is problematic for me now. I rather have
->> device driver using "sane" common helpers than creating their own
->> crazy thing.
+>> [1] https://lkml.org/lkml/2018/3/7/621
+>>
+>> Signed-off-by: Kyle Spiers <ksspiers@google.com>
 >
-> Sane drivers that need this level of deep integration with Linux
-> memory management need to be upstream. Otherwise, HMM is an
-> unprecedented departure from the norms of Linux kernel development.
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+>
+> Is this something that should go via Vinod, Dan, or direct through
+> Herbert's crypto tree?
 
-Isn't it the author of code choice what EXPORT_SYMBOL to use? and
-isn't the agreement that if something is EXPORT_SYMBOL now, changing
-underlying exports isn't considered a good idea. We've seen this before
-with the refcount fun,
+Friendly ping. Any news on this patch?
 
-See d557d1b58b3546bab2c5bc2d624c5709840e6b10
+Thanks!
 
-Not commenting on the legality or what derived works are considered,
-since really the markings are just an indication of the authors opinion,
-and at this stage I think are actually meaningless, since we've diverged
-considerably from the advice given to Linus back when this started.
+-Kees
 
-If Christoph is willing to enforce it the markings won't matter either way.
+>
+> Thanks!
+>
+> -Kees
+>
+>> ---
+>> Forgot to add slab.h
+>> ---
+>>  crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
+>>  crypto/async_tx/raid6test.c |  9 ++++++++-
+>>  2 files changed, 22 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
+>> index 56bd612927ab..af1912313a23 100644
+>> --- a/crypto/async_tx/async_pq.c
+>> +++ b/crypto/async_tx/async_pq.c
+>> @@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>>             (src_cnt <= dma_maxpq(device, 0) ||
+>>              dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
+>>             is_dma_pq_aligned(device, offset, 0, len)) {
+>> -               struct dma_async_tx_descriptor *tx;
+>> +               struct dma_async_tx_descriptor *tx = NULL;
+>>                 enum dma_ctrl_flags dma_flags = 0;
+>> -               unsigned char coefs[src_cnt];
+>> +               unsigned char *coefs;
+>>                 int i, j;
+>>
+>>                 /* run the p+q asynchronously */
+>> @@ -207,6 +207,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>>                  * sources and update the coefficients accordingly
+>>                  */
+>>                 unmap->len = len;
+>> +               coefs = kmalloc_array(src_cnt, sizeof(*coefs), GFP_KERNEL);
+>> +               if (!coefs)
+>> +                       goto out;
+>>                 for (i = 0, j = 0; i < src_cnt; i++) {
+>>                         if (blocks[i] == NULL)
+>>                                 continue;
+>> @@ -240,7 +243,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>>                 }
+>>
+>>                 tx = do_async_gen_syndrome(chan, coefs, j, unmap, dma_flags, submit);
+>> +out:
+>>                 dmaengine_unmap_put(unmap);
+>> +               kfree(coefs);
+>>                 return tx;
+>>         }
+>>
+>> @@ -298,8 +303,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+>>  {
+>>         struct dma_chan *chan = pq_val_chan(submit, blocks, disks, len);
+>>         struct dma_device *device = chan ? chan->device : NULL;
+>> -       struct dma_async_tx_descriptor *tx;
+>> -       unsigned char coefs[disks-2];
+>> +       struct dma_async_tx_descriptor *tx = NULL;
+>> +       unsigned char *coefs = NULL;
+>>         enum dma_ctrl_flags dma_flags = submit->cb_fn ? DMA_PREP_INTERRUPT : 0;
+>>         struct dmaengine_unmap_data *unmap = NULL;
+>>
+>> @@ -318,6 +323,9 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+>>                          __func__, disks, len);
+>>
+>>                 unmap->len = len;
+>> +               coefs = kmalloc_array(disks - 2, sizeof(*coefs), GFP_KERNEL);
+>> +               if (!coefs)
+>> +                       goto out;
+>>                 for (i = 0; i < disks-2; i++)
+>>                         if (likely(blocks[i])) {
+>>                                 unmap->addr[j] = dma_map_page(dev, blocks[i],
+>> @@ -423,6 +431,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+>>                 async_tx_sync_epilog(submit);
+>>                 tx = NULL;
+>>         }
+>> +out:
+>> +       kfree(coefs);
+>>         dmaengine_unmap_put(unmap);
+>>
+>>         return tx;
+>> diff --git a/crypto/async_tx/raid6test.c b/crypto/async_tx/raid6test.c
+>> index dad95f45b88f..4237a5ae8f42 100644
+>> --- a/crypto/async_tx/raid6test.c
+>> +++ b/crypto/async_tx/raid6test.c
+>> @@ -24,6 +24,7 @@
+>>  #include <linux/mm.h>
+>>  #include <linux/random.h>
+>>  #include <linux/module.h>
+>> +#include <linux/slab.h>
+>>
+>>  #undef pr
+>>  #define pr(fmt, args...) pr_info("raid6test: " fmt, ##args)
+>> @@ -81,11 +82,16 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
+>>                         init_async_submit(&submit, 0, NULL, NULL, NULL, addr_conv);
+>>                         tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
+>>                 } else {
+>> -                       struct page *blocks[disks];
+>> +                       struct page **blocks;
+>>                         struct page *dest;
+>>                         int count = 0;
+>>                         int i;
+>>
+>> +                       blocks = kmalloc_array(disks, sizeof(*blocks),
+>> +                                                       GFP_KERNEL);
+>> +                       if (!blocks)
+>> +                               return;
+>> +
+>>                         /* data+Q failure.  Reconstruct data from P,
+>>                          * then rebuild syndrome
+>>                          */
+>> @@ -101,6 +107,7 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
+>>
+>>                         init_async_submit(&submit, 0, tx, NULL, NULL, addr_conv);
+>>                         tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
+>> +                       kfree(blocks);
+>>                 }
+>>         } else {
+>>                 if (failb == disks-2) {
+>> --
+>> 2.17.0.441.gb46fe60e1d-goog
+>>
+>
+>
+>
+> --
+> Kees Cook
+> Pixel Security
 
-Dave.
+
+
+-- 
+Kees Cook
+Pixel Security
