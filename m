@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933910AbeE2MMR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:12:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38674 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933869AbeE2MMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:12:13 -0400
+        id S933965AbeE2MNM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:13:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:38634 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933548AbeE2MMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:12:07 -0400
 From: Marc Zyngier <marc.zyngier@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu
@@ -19,9 +19,9 @@ Cc: Will Deacon <will.deacon@arm.com>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         Julien Grall <julien.grall@arm.com>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 16/17] arm64: ssbd: Enable delayed setting of TIF_SSBD
-Date: Tue, 29 May 2018 13:11:20 +0100
-Message-Id: <20180529121121.24927-17-marc.zyngier@arm.com>
+Subject: [PATCH v2 14/17] arm64: KVM: Add ARCH_WORKAROUND_2 discovery through ARCH_FEATURES_FUNC_ID
+Date: Tue, 29 May 2018 13:11:18 +0100
+Message-Id: <20180529121121.24927-15-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180529121121.24927-1-marc.zyngier@arm.com>
 References: <20180529121121.24927-1-marc.zyngier@arm.com>
@@ -29,107 +29,127 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Setting the TIF_SSBD flag on a seccomp thread can happen while the
-thread is in userspace (a complete departure from the normal behaviour
-of the prctl interface).
+Now that all our infrastructure is in place, let's expose the
+availability of ARCH_WORKAROUND_2 to guests. We take this opportunity
+to tidy up a couple of SMCCC constants.
 
-As a consequence, the kernel will not enable the mitigation when
-transitioning from EL0 to EL1, as it relies on not seeing TIF_SSBD
-to call into the firmware. Not exactly what we had planned.
-
-As a way to solve this problem, let's introduce a new TIF_SSBD_PENDING
-flag, which gets set on the userspace thread instead of TIF_SSBD.
-On entering the kernel, the mitigation will be activated (as the
-TIF_SSBD flag is not there). On exit to userspace, we check for the
-pending flag, and if present, replace it with TIF_SSBD, leaving
-the mitigation on.
-
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- arch/arm64/include/asm/thread_info.h |  1 +
- arch/arm64/kernel/entry.S            | 16 ++++++++++++++++
- arch/arm64/kernel/ssbd.c             |  5 +++--
- 3 files changed, 20 insertions(+), 2 deletions(-)
+ arch/arm/include/asm/kvm_host.h   | 12 ++++++++++++
+ arch/arm64/include/asm/kvm_host.h | 23 +++++++++++++++++++++++
+ arch/arm64/kvm/reset.c            |  4 ++++
+ virt/kvm/arm/psci.c               | 18 ++++++++++++++++--
+ 4 files changed, 55 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
-index cbcf11b5e637..e462e7332951 100644
---- a/arch/arm64/include/asm/thread_info.h
-+++ b/arch/arm64/include/asm/thread_info.h
-@@ -95,6 +95,7 @@ void arch_release_task_struct(struct task_struct *tsk);
- #define TIF_SVE			23	/* Scalable Vector Extension in use */
- #define TIF_SVE_VL_INHERIT	24	/* Inherit sve_vl_onexec across exec */
- #define TIF_SSBD		25	/* Wants SSB mitigation */
-+#define TIF_SSBD_PENDING	26	/* Sets TIF_SSB on exit to EL0 */
+diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+index c7c28c885a19..7001fb871429 100644
+--- a/arch/arm/include/asm/kvm_host.h
++++ b/arch/arm/include/asm/kvm_host.h
+@@ -315,6 +315,18 @@ static inline bool kvm_arm_harden_branch_predictor(void)
+ 	return false;
+ }
  
- #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
- #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 28ad8799406f..550c793d9bc6 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -896,12 +896,27 @@ el0_error_naked:
- 	b	ret_to_user
- ENDPROC(el0_error)
++#define KVM_SSBD_UNKNOWN		-1
++#define KVM_SSBD_FORCE_DISABLE		0
++#define KVM_SSBD_KERNEL		1
++#define KVM_SSBD_FORCE_ENABLE		2
++#define KVM_SSBD_MITIGATED		3
++
++static inline int kvm_arm_have_ssbd(void)
++{
++	/* No way to detect it yet, pretend it is not there. */
++	return KVM_SSBD_UNKNOWN;
++}
++
+ static inline void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu) {}
+ static inline void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu) {}
  
-+	.macro fixup_ssbd, tmp1, tmp2, wtmp
-+#ifdef CONFIG_ARM64_SSBD
-+alternative_cb	arm64_enable_wa2_handling
-+	b	2f
-+alternative_cb_end
-+	// If the thread is in the SSBD_PENDING state, move it to
-+	// the SSBD state, ensuring that the mitigation stays on.
-+	add	\tmp2, tsk, #TSK_TI_FLAGS
-+	test_and_clear_flag \tmp1, \tmp2, TIF_SSBD_PENDING, \wtmp
-+	cbz	\tmp1, 2f
-+	set_flag \tmp2, TIF_SSBD, \tmp1, \wtmp
-+2:
-+#endif
-+	.endm
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 9bef3f69bdcd..95d8a0e15b5f 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -455,6 +455,29 @@ static inline bool kvm_arm_harden_branch_predictor(void)
+ 	return cpus_have_const_cap(ARM64_HARDEN_BRANCH_PREDICTOR);
+ }
  
- /*
-  * This is the fast syscall return path.  We do as little as possible here,
-  * and this includes saving x0 back into the kernel stack.
-  */
- ret_fast_syscall:
-+	fixup_ssbd	x20, x21 , w22
- 	disable_daif
- 	str	x0, [sp, #S_X0]			// returned x0
- 	ldr	x1, [tsk, #TSK_TI_FLAGS]	// re-check for syscall tracing
-@@ -930,6 +945,7 @@ work_pending:
-  * "slow" syscall return path.
-  */
- ret_to_user:
-+	fixup_ssbd	x20, x21, w22
- 	disable_daif
- 	ldr	x1, [tsk, #TSK_TI_FLAGS]
- 	and	x2, x1, #_TIF_WORK_MASK
-diff --git a/arch/arm64/kernel/ssbd.c b/arch/arm64/kernel/ssbd.c
-index 07b12c034ec2..34eafdc7fb6b 100644
---- a/arch/arm64/kernel/ssbd.c
-+++ b/arch/arm64/kernel/ssbd.c
-@@ -43,20 +43,21 @@ static int ssbd_prctl_set(struct task_struct *task, unsigned long ctrl)
- 		    task_spec_ssb_force_disable(task))
- 			return -EPERM;
- 		task_clear_spec_ssb_disable(task);
-+		clear_tsk_thread_flag(task, TIF_SSBD_PENDING);
- 		clear_tsk_thread_flag(task, TIF_SSBD);
++#define KVM_SSBD_UNKNOWN		-1
++#define KVM_SSBD_FORCE_DISABLE		0
++#define KVM_SSBD_KERNEL		1
++#define KVM_SSBD_FORCE_ENABLE		2
++#define KVM_SSBD_MITIGATED		3
++
++static inline int kvm_arm_have_ssbd(void)
++{
++	switch (arm64_get_ssbd_state()) {
++	case ARM64_SSBD_FORCE_DISABLE:
++		return KVM_SSBD_FORCE_DISABLE;
++	case ARM64_SSBD_KERNEL:
++		return KVM_SSBD_KERNEL;
++	case ARM64_SSBD_FORCE_ENABLE:
++		return KVM_SSBD_FORCE_ENABLE;
++	case ARM64_SSBD_MITIGATED:
++		return KVM_SSBD_MITIGATED;
++	case ARM64_SSBD_UNKNOWN:
++	default:
++		return KVM_SSBD_UNKNOWN;
++	}
++}
++
+ void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu);
+ void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu);
+ 
+diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+index 3256b9228e75..a74311beda35 100644
+--- a/arch/arm64/kvm/reset.c
++++ b/arch/arm64/kvm/reset.c
+@@ -122,6 +122,10 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu)
+ 	/* Reset PMU */
+ 	kvm_pmu_vcpu_reset(vcpu);
+ 
++	/* Default workaround setup is enabled (if supported) */
++	if (kvm_arm_have_ssbd() == KVM_SSBD_KERNEL)
++		vcpu->arch.workaround_flags |= VCPU_WORKAROUND_2_FLAG;
++
+ 	/* Reset timer */
+ 	return kvm_timer_vcpu_reset(vcpu);
+ }
+diff --git a/virt/kvm/arm/psci.c b/virt/kvm/arm/psci.c
+index c4762bef13c6..c95ab4c5a475 100644
+--- a/virt/kvm/arm/psci.c
++++ b/virt/kvm/arm/psci.c
+@@ -405,7 +405,7 @@ static int kvm_psci_call(struct kvm_vcpu *vcpu)
+ int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
+ {
+ 	u32 func_id = smccc_get_function(vcpu);
+-	u32 val = PSCI_RET_NOT_SUPPORTED;
++	u32 val = SMCCC_RET_NOT_SUPPORTED;
+ 	u32 feature;
+ 
+ 	switch (func_id) {
+@@ -417,7 +417,21 @@ int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
+ 		switch(feature) {
+ 		case ARM_SMCCC_ARCH_WORKAROUND_1:
+ 			if (kvm_arm_harden_branch_predictor())
+-				val = 0;
++				val = SMCCC_RET_SUCCESS;
++			break;
++		case ARM_SMCCC_ARCH_WORKAROUND_2:
++			switch (kvm_arm_have_ssbd()) {
++			case KVM_SSBD_FORCE_DISABLE:
++			case KVM_SSBD_UNKNOWN:
++				break;
++			case KVM_SSBD_KERNEL:
++				val = SMCCC_RET_SUCCESS;
++				break;
++			case KVM_SSBD_FORCE_ENABLE:
++			case KVM_SSBD_MITIGATED:
++				val = SMCCC_RET_NOT_REQUIRED;
++				break;
++			}
+ 			break;
+ 		}
  		break;
- 	case PR_SPEC_DISABLE:
- 		if (state == ARM64_SSBD_FORCE_DISABLE)
- 			return -EPERM;
- 		task_set_spec_ssb_disable(task);
--		set_tsk_thread_flag(task, TIF_SSBD);
-+		set_tsk_thread_flag(task, TIF_SSBD_PENDING);
- 		break;
- 	case PR_SPEC_FORCE_DISABLE:
- 		if (state == ARM64_SSBD_FORCE_DISABLE)
- 			return -EPERM;
- 		task_set_spec_ssb_disable(task);
- 		task_set_spec_ssb_force_disable(task);
--		set_tsk_thread_flag(task, TIF_SSBD);
-+		set_tsk_thread_flag(task, TIF_SSBD_PENDING);
- 		break;
- 	default:
- 		return -ERANGE;
 -- 
 2.14.2
