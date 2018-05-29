@@ -1,63 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936463AbeE2Oox (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:44:53 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35535 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935798AbeE2OoS (ORCPT
+        id S935585AbeE2OqR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:46:17 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:56039 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935077AbeE2OqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:44:18 -0400
-X-Google-Smtp-Source: AB8JxZpItVtQCvRGPAU/QxEQKxJiHAhb1lS6Rz7kpvwGQqAoUm9SZAEqVB7cSlfxn+dlmYYRpQ2iwA==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 29/39] vfs: simplify dentry_open()
-Date: Tue, 29 May 2018 16:43:29 +0200
-Message-Id: <20180529144339.16538-30-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
-References: <20180529144339.16538-1-mszeredi@redhat.com>
+        Tue, 29 May 2018 10:46:11 -0400
+From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+To: William Wu <william.wu@rock-chips.com>,
+        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>,
+        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "sergei.shtylyov@cogentembedded.com"
+        <sergei.shtylyov@cogentembedded.com>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org"
+        <linux-rockchip@lists.infradead.org>,
+        "frank.wang@rock-chips.com" <frank.wang@rock-chips.com>,
+        "huangtao@rock-chips.com" <huangtao@rock-chips.com>,
+        "dianders@google.com" <dianders@google.com>,
+        "daniel.meng@rock-chips.com" <daniel.meng@rock-chips.com>,
+        "John.Youn@synopsys.com" <John.Youn@synopsys.com>,
+        "wzz@rock-chips.com" <wzz@rock-chips.com>,
+        "zsq@rock-chips.com" <zsq@rock-chips.com>,
+        "Allen.Hsu@quantatw.com" <Allen.Hsu@quantatw.com>,
+        "StanTsui@AOPEN.com" <StanTsui@AOPEN.com>,
+        "Spruce.Wu@quantatw.com" <Spruce.Wu@quantatw.com>,
+        "Martin.Tsai@quantatw.com" <Martin.Tsai@quantatw.com>,
+        "Kevin.Shai@quantatw.com" <Kevin.Shai@quantatw.com>,
+        "Mon-Jer.Wu@quantatw.com" <Mon-Jer.Wu@quantatw.com>,
+        "Claud.Chang@quantatw.com" <Claud.Chang@quantatw.com>,
+        "San.Lin@quantatw.com" <San.Lin@quantatw.com>,
+        "Ren.Kuo@quantatw.com" <Ren.Kuo@quantatw.com>,
+        "davidhtwang@aopen.com" <davidhtwang@AOPEN.com>,
+        "fonglin@aopen.com" <fonglin@AOPEN.com>,
+        "stevencheng@aopen.com" <stevencheng@AOPEN.com>,
+        "tomchen@aopen.com" <tomchen@AOPEN.com>,
+        "donchang@aopen.com" <donchang@AOPEN.com>,
+        "milesschofield@aopen.com" <milesschofield@AOPEN.com>
+Subject: Re: [PATCH v5 0/2] usb: dwc2: fix isoc split in transfer issue
+Thread-Topic: [PATCH v5 0/2] usb: dwc2: fix isoc split in transfer issue
+Thread-Index: AQHT6Q0p0EAJwXN+RESxmw6vChgslA==
+Date: Tue, 29 May 2018 14:44:44 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013135A58D@am04wembxa.internal.synopsys.com>
+References: <1526031992-16565-1-git-send-email-william.wu@rock-chips.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.165]
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TEkMNP029241
 
-dentry_open() can now just call path_open().
+Acked-by Minas Harutyunyan hminas@synopsys.com>
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/open.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
-
-diff --git a/fs/open.c b/fs/open.c
-index 244cd2ecfefd..1d4bc541c619 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -935,25 +935,12 @@ EXPORT_SYMBOL(path_open);
- struct file *dentry_open(const struct path *path, int flags,
- 			 const struct cred *cred)
- {
--	int error;
--	struct file *f;
--
- 	validate_creds(cred);
- 
- 	/* We must always pass in a valid mount pointer. */
- 	BUG_ON(!path->mnt);
- 
--	f = get_empty_filp();
--	if (IS_ERR(f))
--		return f;
--
--	f->f_flags = flags;
--	error = vfs_open(path, f, cred);
--	if (error) {
--		put_filp(f);
--		return ERR_PTR(error);
--	}
--	return f;
-+	return path_open(path, flags, d_backing_inode(path->dentry), cred, true);
- }
- EXPORT_SYMBOL(dentry_open);
- 
--- 
-2.14.3
+On 5/11/2018 1:48 PM, William Wu wrote:
+> This patch fix dma unaligned problem and data lost problem for
+> isoc split in transfer.
+> 
+> Test on rk3288 platform, use an usb hs Hub (GL852G-12) and an usb
+> fs audio device (Plantronics headset) to capture and playback.
+> 
+> William Wu (2):
+>    usb: dwc2: alloc dma aligned buffer for isoc split in
+>    usb: dwc2: fix isoc split in transfer with no data
+> 
+>   drivers/usb/dwc2/core.h      |  3 ++
+>   drivers/usb/dwc2/hcd.c       | 89 +++++++++++++++++++++++++++++++++++++++++---
+>   drivers/usb/dwc2/hcd.h       |  8 ++++
+>   drivers/usb/dwc2/hcd_intr.c  | 11 +++++-
+>   drivers/usb/dwc2/hcd_queue.c |  3 ++
+>   5 files changed, 107 insertions(+), 7 deletions(-)
+> 
