@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964952AbeE2PEP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:04:15 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53975 "EHLO
+        id S936434AbeE2PEX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:04:23 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38270 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936406AbeE2Oo3 (ORCPT
+        with ESMTP id S935864AbeE2Oo1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:44:29 -0400
-X-Google-Smtp-Source: ADUXVKIasoaZEjDPk9LqG1Jv6FZOJf7qUmg8qxy407xYMA5qNp41UELxJdbyENX17MNcxCBaC5xUeg==
+        Tue, 29 May 2018 10:44:27 -0400
+X-Google-Smtp-Source: ADUXVKI3/5d0SAvrjzdmu6pVdCGBwW1BpMv80yYW/8EpbmhER/gYvfyZ/XErm5nkT6fsNHSIQ78NwQ==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 38/39] Revert "fsnotify: support overlayfs"
-Date: Tue, 29 May 2018 16:43:38 +0200
-Message-Id: <20180529144339.16538-39-mszeredi@redhat.com>
+Subject: [PATCH 36/39] Revert "vfs: do get_write_access() on upper layer of overlayfs"
+Date: Tue, 29 May 2018 16:43:36 +0200
+Message-Id: <20180529144339.16538-37-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
 References: <20180529144339.16538-1-mszeredi@redhat.com>
@@ -21,67 +21,70 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit f3fbbb079263bd29ae592478de6808db7e708267.
+This reverts commit 4d0c5ba2ff79ef9f5188998b29fd28fcb05f3667.
 
-Overlayfs now works correctly without adding hacks to fsnotify.
+We now get write access on both overlay and underlying layers so this patch
+is no longer needed for correct operation.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- include/linux/fsnotify.h | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ fs/locks.c |  3 +--
+ fs/open.c  | 15 ++-------------
+ 2 files changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index bdaf22582f6e..fd1ce10553bf 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -30,11 +30,7 @@ static inline int fsnotify_parent(const struct path *path, struct dentry *dentry
- static inline int fsnotify_perm(struct file *file, int mask)
+diff --git a/fs/locks.c b/fs/locks.c
+index 62bbe8b31f26..9c0e5f3da66c 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -1654,8 +1654,7 @@ check_conflicting_open(const struct dentry *dentry, const long arg, int flags)
+ 	if (flags & FL_LAYOUT)
+ 		return 0;
+ 
+-	if ((arg == F_RDLCK) &&
+-	    (atomic_read(&d_real_inode(dentry)->i_writecount) > 0))
++	if ((arg == F_RDLCK) && (atomic_read(&inode->i_writecount) > 0))
+ 		return -EAGAIN;
+ 
+ 	if ((arg == F_WRLCK) && ((d_count(dentry) > 1) ||
+diff --git a/fs/open.c b/fs/open.c
+index 127b49819afb..0d63b57c7f89 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -68,7 +68,6 @@ int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
+ long vfs_truncate(const struct path *path, loff_t length)
  {
- 	const struct path *path = &file->f_path;
+ 	struct inode *inode;
+-	struct dentry *upperdentry;
+ 	long error;
+ 
+ 	inode = path->dentry->d_inode;
+@@ -91,17 +90,7 @@ long vfs_truncate(const struct path *path, loff_t length)
+ 	if (IS_APPEND(inode))
+ 		goto mnt_drop_write_and_out;
+ 
 -	/*
--	 * Do not use file_inode() here or anywhere in this file to get the
--	 * inode.  That would break *notity on overlayfs.
+-	 * If this is an overlayfs then do as if opening the file so we get
+-	 * write access on the upper inode, not on the overlay inode.  For
+-	 * non-overlay filesystems d_real() is an identity function.
 -	 */
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode = file_inode(file);
- 	__u32 fsnotify_mask = 0;
- 	int ret;
+-	upperdentry = d_real(path->dentry, NULL, O_WRONLY);
+-	error = PTR_ERR(upperdentry);
+-	if (IS_ERR(upperdentry))
+-		goto mnt_drop_write_and_out;
+-
+-	error = get_write_access(upperdentry->d_inode);
++	error = get_write_access(inode);
+ 	if (error)
+ 		goto mnt_drop_write_and_out;
  
-@@ -178,7 +174,7 @@ static inline void fsnotify_mkdir(struct inode *inode, struct dentry *dentry)
- static inline void fsnotify_access(struct file *file)
- {
- 	const struct path *path = &file->f_path;
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode = file_inode(file);
- 	__u32 mask = FS_ACCESS;
+@@ -120,7 +109,7 @@ long vfs_truncate(const struct path *path, loff_t length)
+ 		error = do_truncate(path->dentry, length, 0, NULL);
  
- 	if (S_ISDIR(inode->i_mode))
-@@ -196,7 +192,7 @@ static inline void fsnotify_access(struct file *file)
- static inline void fsnotify_modify(struct file *file)
- {
- 	const struct path *path = &file->f_path;
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode = file_inode(file);
- 	__u32 mask = FS_MODIFY;
- 
- 	if (S_ISDIR(inode->i_mode))
-@@ -214,7 +210,7 @@ static inline void fsnotify_modify(struct file *file)
- static inline void fsnotify_open(struct file *file)
- {
- 	const struct path *path = &file->f_path;
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode = file_inode(file);
- 	__u32 mask = FS_OPEN;
- 
- 	if (S_ISDIR(inode->i_mode))
-@@ -230,7 +226,7 @@ static inline void fsnotify_open(struct file *file)
- static inline void fsnotify_close(struct file *file)
- {
- 	const struct path *path = &file->f_path;
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode = file_inode(file);
- 	fmode_t mode = file->f_mode;
- 	__u32 mask = (mode & FMODE_WRITE) ? FS_CLOSE_WRITE : FS_CLOSE_NOWRITE;
- 
+ put_write_and_out:
+-	put_write_access(upperdentry->d_inode);
++	put_write_access(inode);
+ mnt_drop_write_and_out:
+ 	mnt_drop_write(path->mnt);
+ out:
 -- 
 2.14.3
