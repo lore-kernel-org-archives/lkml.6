@@ -1,57 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932724AbeE2JO0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:14:26 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35601 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932284AbeE2JOT (ORCPT
+        id S932744AbeE2JOe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:14:34 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:32903 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932711AbeE2JO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:14:19 -0400
-From: Colin King <colin.king@canonical.com>
-To: Johannes Berg <johannes@sipsolutions.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mac80211_hwsim: add error check to call to rhashtable_init
-Date: Tue, 29 May 2018 10:14:12 +0100
-Message-Id: <20180529091412.8530-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Tue, 29 May 2018 05:14:27 -0400
+From: avifishman70@gmail.com
+To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
+        yuenn@google.com, brendanhiggins@google.com,
+        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
+        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
+        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
+        digetx@gmail.com, kstewart@linuxfoundation.org, hdegoede@redhat.com,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        openbmc@lists.ozlabs.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, davem@davemloft.net,
+        mchehab+samsung@kernel.org, akpm@linux-foundation.org,
+        rdunlap@infradead.org, Avi Fishman <AviFishman70@gmail.com>
+Subject: [PATCH v1 0/3] USB host: Add USB ehci support for nuvoton npcm7xx
+Date: Tue, 29 May 2018 11:35:32 +0300
+Message-Id: <1527582935-31175-1-git-send-email-avifishman70@gmail.com>
+X-Mailer: git-send-email 1.8.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Avi Fishman <AviFishman70@gmail.com>
 
-The call to rhashtable_init is missing an error return check, it is
-possible for this to fail various different ways, so fix this by adding
-an error check.
+This patch adds support for ehci controller for the Nuvoton npcm7xx platform.
+Most of the code was taken from ehci-spear.c + specific initialization code
 
-Detected by: CoverityScan, CID#1469446 ("Unchecked return value")
+Avi Fishman (3):
+  USB host: Add USB ehci support for nuvoton npcm7xx platform
+  USB: DT probing support to ehci-npcm7xx
+  MAINTAINERS: add subfolders for nuvoton *npcm*
 
-Fixes: c6509cc3b3e8 ("mac80211_hwsim: add hashtable with mac address keys for faster lookup")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/mac80211_hwsim.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/usb/npcm7xx-usb.txt        |  18 ++
+ MAINTAINERS                                        |   3 +
+ drivers/usb/host/Kconfig                           |   8 +
+ drivers/usb/host/Makefile                          |   1 +
+ drivers/usb/host/ehci-npcm7xx.c                    | 212 +++++++++++++++++++++
+ 5 files changed, 242 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
+ create mode 100644 drivers/usb/host/ehci-npcm7xx.c
 
-diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
-index 89fc22520d40..f4b4f5690b16 100644
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -3573,7 +3573,9 @@ static int __init init_mac80211_hwsim(void)
- 	hwsim_wq = alloc_workqueue("hwsim_wq", 0, 0);
- 	if (!hwsim_wq)
- 		return -ENOMEM;
--	rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
-+	err = rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
-+	if (err)
-+		return err;
- 
- 	err = register_pernet_device(&hwsim_net_ops);
- 	if (err)
 -- 
-2.17.0
+2.14.1
