@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935391AbeE2OXt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:23:49 -0400
+        id S935395AbeE2OYX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:24:23 -0400
 Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38208 "EHLO
         smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935304AbeE2OWn (ORCPT
+        with ESMTP id S935257AbeE2OWh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:22:43 -0400
+        Tue, 29 May 2018 10:22:37 -0400
 From: James Simmons <jsimmons@infradead.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
@@ -15,9 +15,9 @@ Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Lustre Development List <lustre-devel@lists.lustre.org>,
         Dmitry Eremin <dmitry.eremin@intel.com>,
         James Simmons <jsimmons@infradead.org>
-Subject: [PATCH v2 24/25] staging: lustre: libcfs: change CPT estimate algorithm
-Date: Tue, 29 May 2018 10:22:04 -0400
-Message-Id: <1527603725-30560-25-git-send-email-jsimmons@infradead.org>
+Subject: [PATCH v2 20/25] staging: lustre: libcfs: make tolerant to offline CPUs and empty NUMA nodes
+Date: Tue, 29 May 2018 10:22:00 -0400
+Message-Id: <1527603725-30560-21-git-send-email-jsimmons@infradead.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
 References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
@@ -27,94 +27,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dmitry Eremin <dmitry.eremin@intel.com>
 
-The main idea to have more CPU partitions is based on KNL experience.
-When a thread submit IO for network communication one of threads from
-current CPT is used for network stack. Whith high parallelization many
-threads become involved in network submission but having less CPU
-partitions they will wait until single thread process them from network
-queue. So, the bottleneck just moves into network layer in case of
-small amount of CPU partitions. My experiments showed that the best
-performance was when for each IO thread we have one network thread.
-This condition can be provided having 2 real HW cores (without hyper
-threads) per CPT. This is exactly what implemented in this patch.
-
-Change CPT estimate algorithm from 2 * (N - 1)^2 < NCPUS <= 2 * N^2
-to 2 HW cores per CPT. This is critical for machines with number of
-cores different from 2^N.
-
-Current algorithm splits CPTs in KNL:
-LNet: HW CPU cores: 272, npartitions: 16
-cpu_partition_table=
-    0       : 0-4,68-71,136-139,204-207
-    1       : 5-9,73-76,141-144,209-212
-    2       : 10-14,78-81,146-149,214-217
-    3       : 15-17,72,77,83-85,140,145,151-153,208,219-221
-    4       : 18-21,82,86-88,150,154-156,213,218,222-224
-    5       : 22-26,90-93,158-161,226-229
-    6       : 27-31,95-98,163-166,231-234
-    7       : 32-35,89,100-103,168-171,236-239
-    8       : 36-38,94,99,104-105,157,162,167,172-173,225,230,235,240-241
-    9       : 39-43,107-110,175-178,243-246
-    10      : 44-48,112-115,180-183,248-251
-    11      : 49-51,106,111,117-119,174,179,185-187,242,253-255
-    12      : 52-55,116,120-122,184,188-190,247,252,256-258
-    13      : 56-60,124-127,192-195,260-263
-    14      : 61-65,129-132,197-200,265-268
-    15      : 66-67,123,128,133-135,191,196,201-203,259,264,269-271
-
-New algorithm will split CPTs in KNL:
-LNet: HW CPU cores: 272, npartitions: 34
-cpu_partition_table=
-    0       : 0-1,68-69,136-137,204-205
-    1       : 2-3,70-71,138-139,206-207
-    2       : 4-5,72-73,140-141,208-209
-    3       : 6-7,74-75,142-143,210-211
-    4       : 8-9,76-77,144-145,212-213
-    5       : 10-11,78-79,146-147,214-215
-    6       : 12-13,80-81,148-149,216-217
-    7       : 14-15,82-83,150-151,218-219
-    8       : 16-17,84-85,152-153,220-221
-    9       : 18-19,86-87,154-155,222-223
-    10      : 20-21,88-89,156-157,224-225
-    11      : 22-23,90-91,158-159,226-227
-    12      : 24-25,92-93,160-161,228-229
-    13      : 26-27,94-95,162-163,230-231
-    14      : 28-29,96-97,164-165,232-233
-    15      : 30-31,98-99,166-167,234-235
-    16      : 32-33,100-101,168-169,236-237
-    17      : 34-35,102-103,170-171,238-239
-    18      : 36-37,104-105,172-173,240-241
-    19      : 38-39,106-107,174-175,242-243
-    20      : 40-41,108-109,176-177,244-245
-    21      : 42-43,110-111,178-179,246-247
-    22      : 44-45,112-113,180-181,248-249
-    23      : 46-47,114-115,182-183,250-251
-    24      : 48-49,116-117,184-185,252-253
-    25      : 50-51,118-119,186-187,254-255
-    26      : 52-53,120-121,188-189,256-257
-    27      : 54-55,122-123,190-191,258-259
-    28      : 56-57,124-125,192-193,260-261
-    29      : 58-59,126-127,194-195,262-263
-    30      : 60-61,128-129,196-197,264-265
-    31      : 62-63,130-131,198-199,266-267
-    32      : 64-65,132-133,200-201,268-269
-    33      : 66-67,134-135,202-203,270-271
-
-'N' pattern in KNL works is not always good.
-in flat mode it will be one CPT with all CPUs inside.
-
-in SNC-4 mode:
-cpu_partition_table=
-    0       : 0-17,68-85,136-153,204-221
-    1       : 18-35,86-103,154-171,222-239
-    2       : 36-51,104-119,172-187,240-255
-    3       : 52-67,120-135,188-203,256-271
+Rework CPU partition code in the way of make it more tolerant to
+offline CPUs and empty nodes.
 
 Signed-off-by: Dmitry Eremin <dmitry.eremin@intel.com>
 Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8703
-Reviewed-on: https://review.whamcloud.com/24304
+Reviewed-on: https://review.whamcloud.com/23222
+Reviewed-by: Amir Shehata <amir.shehata@intel.com>
 Reviewed-by: James Simmons <uja.ornl@yahoo.com>
-Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
 Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
 Signed-off-by: James Simmons <jsimmons@infradead.org>
 ---
@@ -123,52 +43,277 @@ Changelog:
 v1) Initial patch
 v2) Rebased patch. No changes in code from earlier patch
 
- drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c | 30 +++++--------------------
- 1 file changed, 5 insertions(+), 25 deletions(-)
+ .../lustre/include/linux/libcfs/libcfs_cpu.h       |   2 +
+ drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c    | 132 +++++++++------------
+ drivers/staging/lustre/lnet/lnet/lib-msg.c         |   2 +
+ 3 files changed, 60 insertions(+), 76 deletions(-)
 
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h
+index 9f4ba9d..c0aa0b3 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h
+@@ -91,6 +91,8 @@ struct cfs_cpu_partition {
+ 	unsigned int			*cpt_distance;
+ 	/* spread rotor for NUMA allocator */
+ 	int				cpt_spread_rotor;
++	/* NUMA node if cpt_nodemask is empty */
++	int				cpt_node;
+ };
+ #endif /* CONFIG_SMP */
+ 
 diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-index aed48de..ff752d5 100644
+index 7f1061e..99a9494 100644
 --- a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
 +++ b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-@@ -798,34 +798,14 @@ static int cfs_cpt_choose_ncpus(struct cfs_cpt_table *cptab, int cpt,
+@@ -457,8 +457,16 @@ int cfs_cpt_set_cpu(struct cfs_cpt_table *cptab, int cpt, int cpu)
+ 		return 0;
+ 	}
  
- static int cfs_cpt_num_estimate(void)
+-	LASSERT(!cpumask_test_cpu(cpu, cptab->ctb_cpumask));
+-	LASSERT(!cpumask_test_cpu(cpu, cptab->ctb_parts[cpt].cpt_cpumask));
++	if (cpumask_test_cpu(cpu, cptab->ctb_cpumask)) {
++		CDEBUG(D_INFO, "CPU %d is already in cpumask\n", cpu);
++		return 0;
++	}
++
++	if (cpumask_test_cpu(cpu, cptab->ctb_parts[cpt].cpt_cpumask)) {
++		CDEBUG(D_INFO, "CPU %d is already in partition %d cpumask\n",
++		       cpu, cptab->ctb_cpu2cpt[cpu]);
++		return 0;
++	}
+ 
+ 	cfs_cpt_add_cpu(cptab, cpt, cpu);
+ 	cfs_cpt_add_node(cptab, cpt, cpu_to_node(cpu));
+@@ -527,8 +535,10 @@ void cfs_cpt_unset_cpumask(struct cfs_cpt_table *cptab, int cpt,
  {
--	int nnode = num_online_nodes();
-+	int nthr = cpumask_weight(topology_sibling_cpumask(smp_processor_id()));
- 	int ncpu = num_online_cpus();
--	int ncpt;
-+	int ncpt = 1;
+ 	int cpu;
  
--	if (ncpu <= CPT_WEIGHT_MIN) {
--		ncpt = 1;
--		goto out;
+-	for_each_cpu(cpu, mask)
+-		cfs_cpt_unset_cpu(cptab, cpt, cpu);
++	for_each_cpu(cpu, mask) {
++		cfs_cpt_del_cpu(cptab, cpt, cpu);
++		cfs_cpt_del_node(cptab, cpt, cpu_to_node(cpu));
++	}
+ }
+ EXPORT_SYMBOL(cfs_cpt_unset_cpumask);
+ 
+@@ -579,10 +589,8 @@ int cfs_cpt_set_nodemask(struct cfs_cpt_table *cptab, int cpt,
+ {
+ 	int node;
+ 
+-	for_each_node_mask(node, *mask) {
+-		if (!cfs_cpt_set_node(cptab, cpt, node))
+-			return 0;
+-	}
++	for_each_node_mask(node, *mask)
++		cfs_cpt_set_node(cptab, cpt, node);
+ 
+ 	return 1;
+ }
+@@ -603,7 +611,7 @@ int cfs_cpt_spread_node(struct cfs_cpt_table *cptab, int cpt)
+ 	nodemask_t *mask;
+ 	int weight;
+ 	int rotor;
+-	int node;
++	int node = 0;
+ 
+ 	/* convert CPU partition ID to HW node id */
+ 
+@@ -613,20 +621,20 @@ int cfs_cpt_spread_node(struct cfs_cpt_table *cptab, int cpt)
+ 	} else {
+ 		mask = cptab->ctb_parts[cpt].cpt_nodemask;
+ 		rotor = cptab->ctb_parts[cpt].cpt_spread_rotor++;
++		node  = cptab->ctb_parts[cpt].cpt_node;
+ 	}
+ 
+ 	weight = nodes_weight(*mask);
+-	LASSERT(weight > 0);
+-
+-	rotor %= weight;
++	if (weight > 0) {
++		rotor %= weight;
+ 
+-	for_each_node_mask(node, *mask) {
+-		if (!rotor--)
+-			return node;
++		for_each_node_mask(node, *mask) {
++			if (!rotor--)
++				return node;
++		}
+ 	}
+ 
+-	LBUG();
+-	return 0;
++	return node;
+ }
+ EXPORT_SYMBOL(cfs_cpt_spread_node);
+ 
+@@ -719,17 +727,21 @@ static int cfs_cpt_choose_ncpus(struct cfs_cpt_table *cptab, int cpt,
+ 	cpumask_var_t core_mask;
+ 	int rc = 0;
+ 	int cpu;
++	int i;
+ 
+ 	LASSERT(number > 0);
+ 
+ 	if (number >= cpumask_weight(node_mask)) {
+ 		while (!cpumask_empty(node_mask)) {
+ 			cpu = cpumask_first(node_mask);
++			cpumask_clear_cpu(cpu, node_mask);
++
++			if (!cpu_online(cpu))
++				continue;
+ 
+ 			rc = cfs_cpt_set_cpu(cptab, cpt, cpu);
+ 			if (!rc)
+ 				return -EINVAL;
+-			cpumask_clear_cpu(cpu, node_mask);
+ 		}
+ 		return 0;
+ 	}
+@@ -750,24 +762,19 @@ static int cfs_cpt_choose_ncpus(struct cfs_cpt_table *cptab, int cpt,
+ 		cpu = cpumask_first(node_mask);
+ 
+ 		/* get cpumask for cores in the same socket */
+-		cpumask_copy(socket_mask, topology_core_cpumask(cpu));
+-		cpumask_and(socket_mask, socket_mask, node_mask);
+-
+-		LASSERT(!cpumask_empty(socket_mask));
+-
++		cpumask_and(socket_mask, topology_core_cpumask(cpu), node_mask);
+ 		while (!cpumask_empty(socket_mask)) {
+-			int i;
+-
+ 			/* get cpumask for hts in the same core */
+-			cpumask_copy(core_mask, topology_sibling_cpumask(cpu));
+-			cpumask_and(core_mask, core_mask, node_mask);
+-
+-			LASSERT(!cpumask_empty(core_mask));
++			cpumask_and(core_mask, topology_sibling_cpumask(cpu),
++				    node_mask);
+ 
+ 			for_each_cpu(i, core_mask) {
+ 				cpumask_clear_cpu(i, socket_mask);
+ 				cpumask_clear_cpu(i, node_mask);
+ 
++				if (!cpu_online(i))
++					continue;
++
+ 				rc = cfs_cpt_set_cpu(cptab, cpt, i);
+ 				if (!rc) {
+ 					rc = -EINVAL;
+@@ -836,23 +843,18 @@ static struct cfs_cpt_table *cfs_cpt_table_create(int ncpt)
+ 	struct cfs_cpt_table *cptab = NULL;
+ 	cpumask_var_t node_mask;
+ 	int cpt = 0;
++	int node;
+ 	int num;
+-	int rc;
+-	int i;
++	int rem;
++	int rc = 0;
+ 
+-	rc = cfs_cpt_num_estimate();
++	num = cfs_cpt_num_estimate();
+ 	if (ncpt <= 0)
+-		ncpt = rc;
++		ncpt = num;
+ 
+-	if (ncpt > num_online_cpus() || ncpt > 4 * rc) {
++	if (ncpt > num_online_cpus() || ncpt > 4 * num) {
+ 		CWARN("CPU partition number %d is larger than suggested value (%d), your system may have performance issue or run out of memory while under pressure\n",
+-		      ncpt, rc);
 -	}
 -
--	/* generate reasonable number of CPU partitions based on total number
--	 * of CPUs, Preferred N should be power2 and match this condition:
--	 * 2 * (N - 1)^2 < NCPUS <= 2 * N^2
--	 */
--	for (ncpt = 2; ncpu > 2 * ncpt * ncpt; ncpt <<= 1)
--		;
--
--	if (ncpt <= nnode) { /* fat numa system */
--		while (nnode > ncpt)
--			nnode >>= 1;
-+	if (ncpu > CPT_WEIGHT_MIN)
-+		for (ncpt = 2; ncpu > 2 * nthr * ncpt; ncpt++)
-+			; /* nothing */
+-	if (num_online_cpus() % ncpt) {
+-		CERROR("CPU number %d is not multiple of cpu_npartition %d, please try different cpu_npartitions value or set pattern string by cpu_pattern=STRING\n",
+-		       (int)num_online_cpus(), ncpt);
+-		goto failed;
++		      ncpt, num);
+ 	}
  
--	} else { /* ncpt > nnode */
--		while ((nnode << 1) <= ncpt)
--			nnode <<= 1;
+ 	cptab = cfs_cpt_table_alloc(ncpt);
+@@ -861,55 +863,33 @@ static struct cfs_cpt_table *cfs_cpt_table_create(int ncpt)
+ 		goto failed;
+ 	}
+ 
+-	num = num_online_cpus() / ncpt;
+-	if (!num) {
+-		CERROR("CPU changed while setting CPU partition\n");
+-		goto failed;
 -	}
 -
--	ncpt = nnode;
+ 	if (!zalloc_cpumask_var(&node_mask, GFP_NOFS)) {
+ 		CERROR("Failed to allocate scratch cpumask\n");
+ 		goto failed;
+ 	}
+ 
+-	for_each_online_node(i) {
+-		cpumask_copy(node_mask, cpumask_of_node(i));
 -
--out:
- #if (BITS_PER_LONG == 32)
- 	/* config many CPU partitions on 32-bit system could consume
- 	 * too much memory
+-		while (!cpumask_empty(node_mask)) {
+-			struct cfs_cpu_partition *part;
+-			int n;
+-
+-			/*
+-			 * Each emulated NUMA node has all allowed CPUs in
+-			 * the mask.
+-			 * End loop when all partitions have assigned CPUs.
+-			 */
+-			if (cpt == ncpt)
+-				break;
+-
+-			part = &cptab->ctb_parts[cpt];
++	num = num_online_cpus() / ncpt;
++	rem = num_online_cpus() % ncpt;
++	for_each_online_node(node) {
++		cpumask_copy(node_mask, cpumask_of_node(node));
+ 
+-			n = num - cpumask_weight(part->cpt_cpumask);
+-			LASSERT(n > 0);
++		while (cpt < ncpt && !cpumask_empty(node_mask)) {
++			struct cfs_cpu_partition *part = &cptab->ctb_parts[cpt];
++			int ncpu = cpumask_weight(part->cpt_cpumask);
+ 
+-			rc = cfs_cpt_choose_ncpus(cptab, cpt, node_mask, n);
++			rc = cfs_cpt_choose_ncpus(cptab, cpt, node_mask,
++						  num - ncpu);
+ 			if (rc < 0)
+ 				goto failed_mask;
+ 
+-			LASSERT(num >= cpumask_weight(part->cpt_cpumask));
+-			if (num == cpumask_weight(part->cpt_cpumask))
++			ncpu = cpumask_weight(part->cpt_cpumask);
++			if (ncpu == num + !!(rem > 0)) {
+ 				cpt++;
++				rem--;
++			}
+ 		}
+ 	}
+ 
+-	if (cpt != ncpt ||
+-	    num != cpumask_weight(cptab->ctb_parts[ncpt - 1].cpt_cpumask)) {
+-		CERROR("Expect %d(%d) CPU partitions but got %d(%d), CPU hotplug/unplug while setting?\n",
+-		       cptab->ctb_nparts, num, cpt,
+-		       cpumask_weight(cptab->ctb_parts[ncpt - 1].cpt_cpumask));
+-		goto failed_mask;
+-	}
+-
+ 	free_cpumask_var(node_mask);
+ 
+ 	return cptab;
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-msg.c b/drivers/staging/lustre/lnet/lnet/lib-msg.c
+index 0091273..27bdefa 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-msg.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-msg.c
+@@ -568,6 +568,8 @@
+ 
+ 	/* number of CPUs */
+ 	container->msc_nfinalizers = cfs_cpt_weight(lnet_cpt_table(), cpt);
++	if (container->msc_nfinalizers == 0)
++		container->msc_nfinalizers = 1;
+ 
+ 	container->msc_finalizers = kvzalloc_cpt(container->msc_nfinalizers *
+ 						 sizeof(*container->msc_finalizers),
 -- 
 1.8.3.1
