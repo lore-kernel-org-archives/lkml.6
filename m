@@ -1,98 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967882AbeE2XIj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 19:08:39 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:40620 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935846AbeE2XIg (ORCPT
+        id S967973AbeE2XLJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 19:11:09 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36193 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967697AbeE2XLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 19:08:36 -0400
-X-Google-Smtp-Source: ADUXVKKQEXmZ6nbccvXE1f990udGICFw5EsD1HPSGS3FAJyApyp6NMQafGPul+yYHJPaF357XJzh65oXxUtQX1lseCY=
+        Tue, 29 May 2018 19:11:07 -0400
+X-Google-Smtp-Source: ADUXVKJZKjwiNkqbwGxu+2EjY0G5KG4DMA/ka61jdAvmbTSl3lAJMce1Y5+GA+pjKKxCq5cnPhx5gBrTl0KdJPCkEM8=
 MIME-Version: 1.0
-References: <20180529221625.33541-1-thgarnie@google.com> <20180529221625.33541-15-thgarnie@google.com>
- <01000163ae145cac-5ac07b51-8f08-4da5-bb93-0238d59756d3-000000@email.amazonses.com>
-In-Reply-To: <01000163ae145cac-5ac07b51-8f08-4da5-bb93-0238d59756d3-000000@email.amazonses.com>
-From: Thomas Garnier <thgarnie@google.com>
-Date: Tue, 29 May 2018 16:08:24 -0700
-Message-ID: <CAJcbSZF_MUpG37e7rt67pfNOT+m3ed2L+jRgvQ2Enb0wVLdOcg@mail.gmail.com>
-Subject: Re: [PATCH v4 14/27] x86/percpu: Adapt percpu for PIE support
-To: Christoph Lameter <cl@linux.com>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Skip Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Skip Frederic Weisbecker <frederic@kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Dennis Zhou <dennisszhou@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Borislav Petkov <bp@suse.de>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Francis Deslauriers <francis.deslauriers@efficios.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>
+In-Reply-To: <1527580944-10043-1-git-send-email-Anson.Huang@nxp.com>
+References: <1527580944-10043-1-git-send-email-Anson.Huang@nxp.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Tue, 29 May 2018 16:11:06 -0700
+Message-ID: <CAHQ1cqF1-zkR_wQgRK1M3Wd+Hvha+St3jT=-Qvn1RM8N88qW8Q@mail.gmail.com>
+Subject: Re: [PATCH] soc: imx: gpcv2: correct PGC offset
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Linux-imx@nxp.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 3:46 PM Christopher Lameter <cl@linux.com> wrote:
+On Tue, May 29, 2018 at 1:02 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
+> Correct MIPI/PCIe/USB_HSIC's PGC offset based on
+> design RTL, the value on Reference Manual are incorrect.
+>
 
-> On Tue, 29 May 2018, Thomas Garnier wrote:
+Nit: I'd s/the value on/the values in the/ here.
 
-> > Perpcu uses a clever design where the .percu ELF section has a virtual
-> > address of zero and the relocation code avoid relocating specific
-> > symbols. It makes the code simple and easily adaptable with or without
-> > SMP support.
-> >
-> > This design is incompatible with PIE because generated code always try
-to
-> > access the zero virtual address relative to the default mapping address.
+> The correct offset should be as below:
+>
+> 0x800 ~ 0x83F: PGC for core0 of A7 platform;
+> 0x840 ~ 0x87F: PGC for core1 of A7 platform;
+> 0x880 ~ 0x8BF: PGC for SCU of A7 platform;
+> 0xA00 ~ 0xA3F: PGC for fastmix/megamix;
+> 0xC00 ~ 0xC3F: PGC for MIPI PHY;
+> 0xC40 ~ 0xC7F: PGC for PCIe_PHY;
+> 0xC80 ~ 0xCBF: PGC for USB OTG1 PHY;
+> 0xCC0 ~ 0xCFF: PGC for USB OTG2 PHY;
+> 0xD00 ~ 0xD3F: PGC for USB HSIC PHY;
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/soc/imx/gpcv2.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/soc/imx/gpcv2.c b/drivers/soc/imx/gpcv2.c
+> index afc7ecc..132c946 100644
+> --- a/drivers/soc/imx/gpcv2.c
+> +++ b/drivers/soc/imx/gpcv2.c
+> @@ -40,9 +40,9 @@
+>  #define GPC_M4_PU_PDN_FLG              0x1bc
+>
+>
+> -#define PGC_MIPI                       4
+> -#define PGC_PCIE                       5
+> -#define PGC_USB_HSIC                   8
+> +#define PGC_MIPI                       16
+> +#define PGC_PCIE                       17
+> +#define PGC_USB_HSIC                   20
 
-> We always access relative to the "segment register".
+As a suggestion, please add a comment explicitly saying that those
+values might differ from what some version of the RM might specify.
+Explanation in commit message is great, but seeing a note in the code
+might save quite a bit of digging for someone who is reading the code,
+double checking those values and thinking that they might be wrong.
 
-> You can already change the segment register to relocate the per cpu
-> sections arbitrarily since all per cpu "addresses" are offsets relative to
-> the segment register. I am not sure what exactly you are trying to
-> accomplish here?
+Other than that:
 
-When building with PIE, the compiler wants the code to be relocatable
-anywhere in the 64-bit VA space. Instead of taking the segment register as
-an immediate value, it takes it as VA that need to be relocated relative to
-where the kernel is mapped. The per-cpu section VA is zero to create the
-proper offset to the different variable. The kernel could be at the top of
-the 64-bit VA space. PIE will try to create the delta between any VA and
-zero and fail because segment register based operations do not have full
-64-bit VA range. Does it make sense?
+Acked-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-For PIE only, this change will remove the per-cpu section VA of zero. Now
-the distance between the per-cpu symbol and the kernel base VA can fit in
-the generated instructions.
-
-
-> Maybe you need to explain it better?
-
-I will try do explain it better on the next patch set.
-
-
-
-
--- 
-Thomas
+Thanks,
+Andrey Smirnov
