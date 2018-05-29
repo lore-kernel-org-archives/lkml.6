@@ -1,97 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754851AbeE2HMh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:12:37 -0400
-Received: from mail-qt0-f172.google.com ([209.85.216.172]:33756 "EHLO
-        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754709AbeE2HMe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:12:34 -0400
-X-Google-Smtp-Source: ADUXVKJYn/mYgvua28vQQAHqpCc9m7z79MDg9eOuznAyymSkN5oYdLxD7b9+PpKTVS329lD60xyp9W9leHJtbsjd8tc=
+        id S1754780AbeE2HQ4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:16:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750831AbeE2HQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:16:54 -0400
+Date: Tue, 29 May 2018 09:16:33 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Oleksandr Shamray <oleksandrs@mellanox.com>
+Cc: "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        "joel@jms.id.au" <joel@jms.id.au>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "tklauser@distanz.ch" <tklauser@distanz.ch>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Vadim Pasternak <vadimp@mellanox.com>,
+        system-sw-low-level <system-sw-low-level@mellanox.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "openocd-devel-owner@lists.sourceforge.net"
+        <openocd-devel-owner@lists.sourceforge.net>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "mchehab@kernel.org" <mchehab@kernel.org>
+Subject: Re: [patch v22 1/4] drivers: jtag: Add JTAG core driver
+Message-ID: <20180529071633.GB20427@kroah.com>
+References: <1527503652-21975-1-git-send-email-oleksandrs@mellanox.com>
+ <1527503652-21975-2-git-send-email-oleksandrs@mellanox.com>
+ <20180528123527.GA17613@kroah.com>
+ <AM5PR0501MB24490173AD50A2E478DFCF35B16E0@AM5PR0501MB2449.eurprd05.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <CAEc3jaB7jPJ_xa5rFrunwcPgkG9VrCdJSbb=BrQsHKxrO9AixQ@mail.gmail.com>
-References: <31245206-038e-4a5b-a1a1-8877463556a7@hanno.de> <CAEc3jaB7jPJ_xa5rFrunwcPgkG9VrCdJSbb=BrQsHKxrO9AixQ@mail.gmail.com>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Tue, 29 May 2018 09:12:33 +0200
-Message-ID: <CAO-hwJ+oO_8cGK+S9kxqOGZhwE2T+HucLWnKA7zjFm9cwvwjtQ@mail.gmail.com>
-Subject: Re: [PATCH] HID: Add support for 146b:0902 Bigben Interactive Kids' gamepad
-To: Roderick Colenbrander <thunderbird2k@gmail.com>
-Cc: Hanno Zulla <abos@hanno.de>, Jiri Kosina <jikos@kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM5PR0501MB24490173AD50A2E478DFCF35B16E0@AM5PR0501MB2449.eurprd05.prod.outlook.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 12:57 AM, Roderick Colenbrander
-<thunderbird2k@gmail.com> wrote:
-> Hi Hanno,
->
-> A few suggestions for your patch based on a quick review (had limited time).
->
-> In terms of code style, I noticed a lot of C++ style comments which
-> are not part of the kernel code style instead use C comments. To check
-> for potential other issues as well, run your patch through
-> 'scripts/checkpatch.pl'.
->
-> I noticed you fixed up reported descriptors a bit to get axes remapped
-> in a different way. This is reasonable as the default mappings are
-> often not good. However, I would suggest use the mapping functions
-> instead (e.g. see hid-sony.c and other drivers). It also allows you to
-> properly remap buttons as well. I suspect the current button mapping
-> is all over the place as well. Make sure axis and button mapping
-> complies to the Linux gamepad spec (see
-> Documentation/input/gamepad.rst).
+On Mon, May 28, 2018 at 03:59:46PM +0000, Oleksandr Shamray wrote:
+> > > +	const struct jtag_ops *ops;
+> > > +	int id;
+> > > +	bool opened;
+> > 
+> > You shouldn't care about this, but ok...
+> 
+> Jtag HW not support to using with multiple requests from different users. So we prohibit this.
 
-Thanks a lot Roderick for the review.
+Ok, but then that's a userspace problem, not your driver's problem.
+Serial ports can't handle multiple requests in a sane way either, and so
+it's a userspace bug if they do that.  It's not up to the kernel to try
+to prevent it, and really, you are not preventing this from happening at
+all, you are only keeping more than one open() call from happening.  You
+aren't serializing the device access at all.
 
-In addition to those comments, please also try to follow the
-submission guidelines (point 6 of
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst).
-It's easier for us to share comments if your patch is inlined in the
-email, so we can directly pinpoint which line is in trouble.
+So you are giving yourself a false sense of "We are protecting the
+device" here.  Just drop the whole "only one open() call" logic
+entirely.  It will make your kernel code simpler and you aren't giving
+yourself false-hope that you really prevented userspace from doing
+something stupid :)
 
-Also, keep point 9 in mind ("Don't get discouraged - or impatient").
-For the first submissions, it's usual to have several revisions of the
-same series.
+> > > +	case JTAG_IOCRUNTEST:
+> > > +		if (copy_from_user(&idle, (const void __user *)arg,
+> > > +				   sizeof(struct jtag_run_test_idle)))
+> > > +			return -EFAULT;
+> > > +
+> > > +		if (idle.endstate > JTAG_STATE_PAUSEDR)
+> > > +			return -EINVAL;
+> > 
+> > No validation that idle contains sane values?  Don't make every jtag driver
+> > have to do this type of validation please.
+> > 
+> 
+> I have partially validation of idle structure  (if (idle.endstate > JTAG_STATE_PAUSEDR)).
+> But I will add more validation.
 
-Cheers,
-Benjamin
+Go to the nearest whiteboard and write this at the top:
+	ALL INPUT IS EVIL
 
->
-> Thanks,
-> Roderick
->
-> On Wed, May 23, 2018 at 8:57 AM, Hanno Zulla <abos@hanno.de> wrote:
->> Hello,
->>
->> this is a driver for the "BigBen Interactive Kid-friendly Wired
->> Controller PS3OFMINIPAD SONY" [1] with USB id 146b:0902. It was
->> originally sold as a PS3 accessory and serves as a very nice gamepad for
->> Retropie.
->>
->> With the help of serialusb [2], it was possible to analyze the protocol
->> used by the gamepad and fix the missing entries for the descriptor.
->>
->>
->> This is my *first* driver, so please review accordingly.
->>
->>
->> Three things where I'm not sure and hope to hear from you about:
->>
->> - is that the correct use of hid_validate_values() in bigben_probe()?
->>
->> - is the error handling in bigben_probe() correct?
->>
->> - how do I properly test possible suspend/resume scenarios?
->>
->> Thanks,
->>
->> Hanno
->>
->>
->> [1]
->> <https://www.bigben-interactive.co.uk/bigben-products/gaming-accessories/wired-mini-controller-ps3>
->>
->> [2] <https://github.com/matlo/serialusb>
+Don't erase it.  You have to validate all the things, otherwise
+something bad will happen, I guarantee it.  Wait until the syzbot gets
+ahold of this layer if you don't believe me :)
+
+> > > +static int jtag_open(struct inode *inode, struct file *file) {
+> > > +	struct jtag *jtag = container_of(file->private_data, struct jtag,
+> > > +miscdev);
+> > > +
+> > > +	if (mutex_lock_interruptible(&jtag->open_lock))
+> > > +		return -ERESTARTSYS;
+> > 
+> > Why restart?  Just grab the lock, you don't want to have to do restartable
+> > logic in userspace, right?
+> 
+> Will change like:
+> 
+> ret = mutex_lock_interruptible(&jtag->open_lock);
+> if (ret)
+> 	return ret;
+
+No, what's wrong with a simple:
+	mutex_lock();
+?
+
+You are only holding it for a very short time, people can wait, there is
+no rush here or "fast path" happening.
+
+Anyway, this whole lock should just go away entirely, due to the lack of
+needing to track open() calls.  But in the future, keep locks simple, no
+need to add complexity when it is not warranted.
+
+> > > +	if (jtag->opened) {
+> > > +		mutex_unlock(&jtag->open_lock);
+> > > +		return -EBUSY;
+> > 
+> > Why do you care about only 1 userspace open call?  What does that buy you?
+> > Userspace can always pass around that file descriptor and use it in multiple
+> > places, so you are not really "protecting" yourself from anything.
+> > 
+> 
+> Accessing to JTAG HW from multiple processes will make confusion in the work of the JTAG protocol.
+> And I want to prohibit this.
+
+See my previous comments for why your attempt at protecting open() does
+not prevent this from happening.  Hint, you forgot about dup(3) :(
+
+thanks,
+
+greg k-h
