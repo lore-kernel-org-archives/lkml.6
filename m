@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935455AbeE2CQD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 22:16:03 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51337 "EHLO huawei.com"
+        id S935191AbeE2CQB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 22:16:01 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51313 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752600AbeE2COQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1755998AbeE2COQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 May 2018 22:14:16 -0400
 From: Jason Yan <yanaijie@huawei.com>
 To: <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
@@ -13,11 +13,11 @@ CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
         <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
         <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        Jason Yan <yanaijie@huawei.com>, Xiaofei Tan <tanxiaofei@huawei.com>,
-        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
-Subject: [PATCH 7/8] scsi: libsas: fix issue of swapping two sas disks
-Date: Tue, 29 May 2018 10:23:08 +0800
-Message-ID: <20180529022309.21071-8-yanaijie@huawei.com>
+        Jason Yan <yanaijie@huawei.com>, Ewan Milne <emilne@redhat.com>,
+        Tomas Henzl <thenzl@redhat.com>
+Subject: [PATCH 5/8] scsi: libsas: check if the same sata device when flutter
+Date: Tue, 29 May 2018 10:23:06 +0800
+Message-ID: <20180529022309.21071-6-yanaijie@huawei.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180529022309.21071-1-yanaijie@huawei.com>
 References: <20180529022309.21071-1-yanaijie@huawei.com>
@@ -29,75 +29,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The work flow of revalidation now is scanning expander phy by the
-sequence of the phy and check if the phy have changed. This will leads
-to an issue of swapping two sas disks on one expander.
+The ata device do not have a real sas address. If a ata device is
+replaced with another one, the sas address is the same. Now libsas treat
+this senario as flutter and do not delete the old one and discover the
+new one. This will cause the data read from or write to the wrong
+device.
 
-Assume we have two sas disks, connected with expander phy10 and phy11:
+And also when hotplugging a sata device, libsas entered to the flutter
+case and sometimes found the phy attached address is abnormal. The log
+is like this:
 
-phy10: 5000cca04eb1001d  port-0:0:10
-phy11: 5000cca04eb043ad  port-0:0:11
+sas: ex 500e004aaaaaaa1f phy6 originated BROADCAST(CHANGE)
+sas: ex 500e004aaaaaaa1f phy06:U:0 attached: 0000000000000000 (no device)
+sas: ex 500e004aaaaaaa1f phy 0x6 broadcast flutter
 
-Swap these two disks, and imaging the following scenario:
-
-revalidation 1:
-  -->phy10: 0 --> delete phy10 domain device
-  -->phy11: 5000cca04eb043ad (no change)
-revalidation done
-
-revalidation 2:
-  -->step 1, check phy10:
-  -->phy10: 5000cca04eb043ad   --> add to wide port(port-0:0:11) (phy11
-       address is still 5000cca04eb043ad now)
-
-  -->step 2, check phy11:
-  -->phy11: 0  --> phy11 address is 0 now, but it's part of wide
-       port(port-0:0:11), the domain device will not be deleted.
-revalidation done
-
-revalidation 3:
-  -->phy10, 5000cca04eb043ad (no change)
-  -->phy11: 5000cca04eb1001d --> try to add port-0:0:11 but failed,
-       port-0:0:11 already exist, trigger a warning as follows
-revalidation done
-
-[14790.189699] sysfs: cannot create duplicate filename
-'/devices/pci0000:74/0000:74:02.0/host0/port-0:0/expander-0:0/port-0:0:11'
-[14790.201081] CPU: 25 PID: 5031 Comm: kworker/u192:3 Not tainted
-4.16.0-rc1-191134-g138f084-dirty #228
-[14790.210199] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 EC UEFI
-Nemo 2.0 RC0 - B303 05/16/2018
-[14790.219323] Workqueue: 0000:74:02.0_disco_q sas_revalidate_domain
-[14790.225404] Call trace:
-[14790.227842]  dump_backtrace+0x0/0x18c
-[14790.231492]  show_stack+0x14/0x1c
-[14790.234798]  dump_stack+0x88/0xac
-[14790.238101]  sysfs_warn_dup+0x64/0x7c
-[14790.241751]  sysfs_create_dir_ns+0x90/0xa0
-[14790.245835]  kobject_add_internal+0xa0/0x284
-[14790.250092]  kobject_add+0xb8/0x11c
-[14790.253570]  device_add+0xe8/0x598
-[14790.256960]  sas_port_add+0x24/0x50
-[14790.260436]  sas_ex_discover_devices+0xb10/0xc30
-[14790.265040]  sas_ex_revalidate_domain+0x1d8/0x518
-[14790.269731]  sas_revalidate_domain+0x12c/0x154
-[14790.274163]  process_one_work+0x128/0x2b0
-[14790.278160]  worker_thread+0x14c/0x408
-[14790.281897]  kthread+0xfc/0x128
-[14790.285026]  ret_from_fork+0x10/0x18
-[14790.288598] ------------[ cut here ]------------
-
-At last, the disk 5000cca04eb1001d is lost.
-
-The basic idea of fix this issue is to let the revalidation first scan
-all phys, and then unregisterring devices. Only when no devices need to
-be unregisterred, go to the next step to discover new devices. If there
-are devices need unregister, unregister those devices and raise a new
-bcast. The next revalidation will process the discovering of the new
-devices.
+Fix this issue by checking the phy attached address and the ata device's
+class and id if they are the same as the origin. The ata class and id is
+readed in ata EH process. When ata EH is scheduled, revalidate will be
+deferred and a new bcast will be raised.
 
 Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: Xiaofei Tan <tanxiaofei@huawei.com>
+Reviewed-by: John Garry <john.garry@huawei.com>
 CC: chenxiang <chenxiang66@hisilicon.com>
 CC: John Garry <john.garry@huawei.com>
 CC: Johannes Thumshirn <jthumshirn@suse.de>
@@ -105,201 +57,137 @@ CC: Ewan Milne <emilne@redhat.com>
 CC: Christoph Hellwig <hch@lst.de>
 CC: Tomas Henzl <thenzl@redhat.com>
 CC: Dan Williams <dan.j.williams@intel.com>
+CC: Tejun Heo <tj@kernel.org>
 CC: Hannes Reinecke <hare@suse.com>
 ---
- drivers/scsi/libsas/sas_expander.c | 149 ++++++++++++++++++++++++++++---------
- 1 file changed, 112 insertions(+), 37 deletions(-)
+ drivers/ata/libata-core.c          |  3 ++-
+ drivers/scsi/libsas/sas_ata.c      | 18 ++++++++++++++++++
+ drivers/scsi/libsas/sas_expander.c | 28 ++++++++++++++++++++++++++++
+ include/linux/libata.h             |  2 ++
+ include/scsi/libsas.h              |  1 +
+ 5 files changed, 51 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 68596bd4cf06..7656ad58b381 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4228,7 +4228,7 @@ void ata_std_postreset(struct ata_link *link, unsigned int *classes)
+  *	RETURNS:
+  *	1 if @dev matches @new_class and @new_id, 0 otherwise.
+  */
+-static int ata_dev_same_device(struct ata_device *dev, unsigned int new_class,
++int ata_dev_same_device(struct ata_device *dev, unsigned int new_class,
+ 			       const u16 *new_id)
+ {
+ 	const u16 *old_id = dev->id;
+@@ -7391,3 +7391,4 @@ EXPORT_SYMBOL_GPL(ata_cable_80wire);
+ EXPORT_SYMBOL_GPL(ata_cable_unknown);
+ EXPORT_SYMBOL_GPL(ata_cable_ignore);
+ EXPORT_SYMBOL_GPL(ata_cable_sata);
++EXPORT_SYMBOL_GPL(ata_dev_same_device);
+\ No newline at end of file
+diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
+index 0cc1567eacc1..83f2c920480b 100644
+--- a/drivers/scsi/libsas/sas_ata.c
++++ b/drivers/scsi/libsas/sas_ata.c
+@@ -620,6 +620,22 @@ static int sas_get_ata_command_set(struct domain_device *dev)
+ 	return ata_dev_classify(&tf);
+ }
+ 
++static void sas_ata_store_id(struct domain_device *dev)
++{
++	struct ata_device *ata_dev = sas_to_ata_dev(dev);
++	unsigned char model[ATA_ID_PROD_LEN + 1];
++	unsigned char serial[ATA_ID_SERNO_LEN + 1];
++
++	/* store the ata device's class and id */
++	memcpy(dev->sata_dev.id, ata_dev->id, ATA_ID_WORDS);
++	dev->sata_dev.class = ata_dev->class;
++
++	ata_id_c_string(ata_dev->id, model, ATA_ID_PROD, sizeof(model));
++	ata_id_c_string(ata_dev->id, serial, ATA_ID_SERNO, sizeof(serial));
++
++	sas_ata_printk(KERN_INFO, dev, "model:%s serial:%s\n", model, serial);
++}
++
+ void sas_probe_sata(struct asd_sas_port *port)
+ {
+ 	struct domain_device *dev, *n;
+@@ -644,6 +660,8 @@ void sas_probe_sata(struct asd_sas_port *port)
+ 		 */
+ 		if (ata_dev_disabled(sas_to_ata_dev(dev)))
+ 			sas_fail_probe(dev, __func__, -ENODEV);
++		else
++			sas_ata_store_id(dev);
+ 	}
+ 
+ }
 diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-index 6b6de85466c6..52d96965191c 100644
+index 25ad9ef54e6c..4617eccb0c43 100644
 --- a/drivers/scsi/libsas/sas_expander.c
 +++ b/drivers/scsi/libsas/sas_expander.c
-@@ -2022,8 +2022,6 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
- {
- 	struct expander_device *ex = &dev->ex_dev;
- 	struct ex_phy *phy = &ex->ex_phy[phy_id];
--	struct asd_sas_port *port = dev->port;
--	struct asd_sas_phy *sas_phy;
- 	enum sas_device_type type = SAS_PHY_UNUSED;
- 	u8 sas_addr[8];
- 	int res;
-@@ -2101,10 +2099,6 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
- 
- 	/* force the next revalidation find this phy and bring it up */
- 	phy->phy_change_count = -1;
--	ex->ex_change_count = -1;
--	sas_phy = container_of(port->phy_list.next, struct asd_sas_phy,
--			port_phy_el);
--	port->ha->notify_port_event(sas_phy, PORTE_BROADCAST_RCVD);
- 
- 	return 0;
- }
-@@ -2127,30 +2121,74 @@ static int sas_rediscover(struct domain_device *dev, const int phy_id)
- {
- 	struct expander_device *ex = &dev->ex_dev;
- 	struct ex_phy *changed_phy = &ex->ex_phy[phy_id];
--	int res = 0;
- 	int i;
- 	bool last = true;	/* is this the last phy of the port */
- 
--	SAS_DPRINTK("ex %016llx phy%d originated BROADCAST(CHANGE)\n",
--		    SAS_ADDR(dev->sas_addr), phy_id);
-+	for (i = 0; i < ex->num_phys; i++) {
-+		struct ex_phy *phy = &ex->ex_phy[i];
- 
--	if (SAS_ADDR(changed_phy->attached_sas_addr) != 0) {
--		for (i = 0; i < ex->num_phys; i++) {
--			struct ex_phy *phy = &ex->ex_phy[i];
-+		if (i == phy_id)
-+			continue;
-+		if (SAS_ADDR(phy->attached_sas_addr) ==
-+		    SAS_ADDR(changed_phy->attached_sas_addr)) {
-+			SAS_DPRINTK("phy%d part of wide port with "
-+				    "phy%d\n", phy_id, i);
-+			last = false;
-+			break;
+@@ -2053,9 +2053,37 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
+ 			action = ", needs recovery";
+ 		SAS_DPRINTK("ex %016llx phy 0x%x broadcast flutter%s\n",
+ 			    SAS_ADDR(dev->sas_addr), phy_id, action);
++
++		/* the phy attached address will be updated by sas_ex_phy_discover()
++		 * and sometimes become abnormal
++		 */
++		if (SAS_ADDR(phy->attached_sas_addr) != SAS_ADDR(sas_addr) ||
++		    SAS_ADDR(phy->attached_sas_addr) == 0) {
++			/* if attached_sas_addr become abnormal, we must set the
++			 * original address back so that the device can be unregistered
++			 */
++			memcpy(phy->attached_sas_addr, sas_addr, SAS_ADDR_SIZE);
++			SAS_DPRINTK("phy address(%016llx) abnormal, origin:%016llx\n",
++				    SAS_ADDR(phy->attached_sas_addr),
++				    SAS_ADDR(sas_addr));
++			goto unregister;
 +		}
-+	}
-+	return sas_rediscover_dev(dev, phy_id, last);
-+}
- 
--			if (i == phy_id)
--				continue;
--			if (SAS_ADDR(phy->attached_sas_addr) ==
--			    SAS_ADDR(changed_phy->attached_sas_addr)) {
--				SAS_DPRINTK("phy%d part of wide port with "
--					    "phy%d\n", phy_id, i);
--				last = false;
--				break;
--			}
-+static inline int sas_ex_unregister(struct domain_device *dev,
-+				 u8 *changed_phy,
-+				 int nr)
-+{
-+	struct expander_device *ex = &dev->ex_dev;
-+	int unregistered = 0;
-+	struct ex_phy *phy;
-+	int res;
-+	int i;
 +
-+	for (i = 0; i < nr; i++) {
-+		SAS_DPRINTK("ex %016llx phy%d originated BROADCAST(CHANGE)\n",
-+			    SAS_ADDR(dev->sas_addr), changed_phy[i]);
 +
-+		phy = &ex->ex_phy[changed_phy[i]];
++		if (ata_dev) {
++			struct ata_device *adev = sas_to_ata_dev(ata_dev);
++			unsigned int class = ata_dev->sata_dev.class;
++			u16 *id = ata_dev->sata_dev.id;
 +
-+		if (SAS_ADDR(phy->attached_sas_addr) != 0) {
-+			res = sas_rediscover(dev, changed_phy[i]);
-+			changed_phy[i] = 0xff;
-+			unregistered++;
- 		}
--		res = sas_rediscover_dev(dev, phy_id, last);
--	} else
--		res = sas_discover_new(dev, phy_id);
-+	}
-+
-+	return unregistered;
-+}
-+
-+static inline int sas_ex_register(struct domain_device *dev,
-+				 u8 *changed_phy,
-+				 int nr)
-+{
-+	struct expander_device *ex = &dev->ex_dev;
-+	struct ex_phy *phy;
-+	int res = 0;
-+	int i;
-+
-+	for (i = 0; i < nr; i++) {
-+		if (changed_phy[i] == 0xff)
-+			continue;
-+
-+		phy = &ex->ex_phy[changed_phy[i]];
-+
-+		WARN(SAS_ADDR(phy->attached_sas_addr) != 0,
-+		     "phy%02d impossible attached_sas_addr %016llx\n",
-+		     changed_phy[i],
-+		     SAS_ADDR(phy->attached_sas_addr));
-+
-+		res = sas_discover_new(dev, changed_phy[i]);
-+	}
-+
- 	return res;
- }
- 
-@@ -2166,23 +2204,60 @@ static int sas_rediscover(struct domain_device *dev, const int phy_id)
- int sas_ex_revalidate_domain(struct domain_device *port_dev)
- {
- 	int res;
-+	struct expander_device *ex;
- 	struct domain_device *dev = NULL;
-+	u8 changed_phy[MAX_EXPANDER_PHYS];
-+	int unregistered = 0;
-+	int phy_id;
-+	int nr = 0;
-+	int i = 0;
- 
- 	res = sas_find_bcast_dev(port_dev, &dev);
--	if (res == 0 && dev) {
--		struct expander_device *ex = &dev->ex_dev;
--		int i = 0, phy_id;
--
--		do {
--			phy_id = -1;
--			res = sas_find_bcast_phy(dev, &phy_id, i, true);
--			if (phy_id == -1)
--				break;
--			res = sas_rediscover(dev, phy_id);
--			i = phy_id + 1;
--		} while (i < ex->num_phys);
-+	if (res != 0 || !dev)
-+		return res;
-+
-+	memset(changed_phy, 0xff, MAX_EXPANDER_PHYS);
-+	ex = &dev->ex_dev;
-+
-+	do {
-+		phy_id = -1;
-+		res = sas_find_bcast_phy(dev, &phy_id, i, true);
-+		if (phy_id == -1)
-+			break;
-+		changed_phy[nr++] = phy_id;
-+		i = phy_id + 1;
-+	} while (i < dev->ex_dev.num_phys);
-+
-+	if (nr == 0)
-+		return res;
-+
-+	unregistered = sas_ex_unregister(dev, changed_phy, nr);
-+
-+	/* we have unregistered some devices in this pass and need to
-+	 * go again to pick up on any new devices on a separate pass
-+	 */
-+	if (unregistered > 0) {
-+		struct asd_sas_port *port = dev->port;
-+		struct asd_sas_phy *sas_phy;
-+		struct ex_phy *phy;
-+
-+		for (i = 0; i < nr; i++) {
-+			if (changed_phy[i] == 0xff)
-+				continue;
-+			phy = &ex->ex_phy[changed_phy[i]];
-+			phy->phy_change_count = -1;
++			/* to see if the disk is replaced with another one */
++			if (!ata_dev_same_device(adev, class, id))
++				goto unregister;
 +		}
-+		ex->ex_change_count = -1;
 +
-+		sas_phy = container_of(dev->port->phy_list.next,
-+				struct asd_sas_phy,
-+				port_phy_el);
-+		port->ha->notify_port_event(sas_phy, PORTE_BROADCAST_RCVD);
-+
-+		return 0;
+ 		return res;
  	}
--	return res;
-+
-+	return sas_ex_register(dev, changed_phy, nr);
- }
  
- void sas_smp_handler(struct bsg_job *job, struct Scsi_Host *shost,
++unregister:
+ 	/* we always have to delete the old device when we went here */
+ 	SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
+ 		    SAS_ADDR(dev->sas_addr), phy_id,
+diff --git a/include/linux/libata.h b/include/linux/libata.h
+index 1795fecdea17..a1aff2fdf11b 100644
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -1140,6 +1140,8 @@ extern int sata_scr_write(struct ata_link *link, int reg, u32 val);
+ extern int sata_scr_write_flush(struct ata_link *link, int reg, u32 val);
+ extern bool ata_link_online(struct ata_link *link);
+ extern bool ata_link_offline(struct ata_link *link);
++extern int ata_dev_same_device(struct ata_device *dev, unsigned int new_class,
++			     const u16 *new_id);
+ #ifdef CONFIG_PM
+ extern int ata_host_suspend(struct ata_host *host, pm_message_t mesg);
+ extern void ata_host_resume(struct ata_host *host);
+diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
+index 225ab7783dfd..8f403b7bb552 100644
+--- a/include/scsi/libsas.h
++++ b/include/scsi/libsas.h
+@@ -164,6 +164,7 @@ struct sata_device {
+ 	struct ata_host ata_host;
+ 	struct smp_resp rps_resp ____cacheline_aligned; /* report_phy_sata_resp */
+ 	u8     fis[ATA_RESP_FIS_SIZE];
++	u16    id[ATA_ID_WORDS];
+ };
+ 
+ struct ssp_device {
 -- 
 2.13.6
