@@ -1,104 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937368AbeE2Bh2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 21:37:28 -0400
-Received: from gate.crashing.org ([63.228.1.57]:53036 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937311AbeE2Bh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 21:37:26 -0400
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
-        Christopher Bostic <cbostic@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: [PATCH 12/15] fsi/fsi-master-gpio: More error handling cleanup
-Date: Tue, 29 May 2018 11:30:41 +1000
-Message-Id: <20180529013044.23815-13-benh@kernel.crashing.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180529013044.23815-1-benh@kernel.crashing.org>
-References: <20180529013044.23815-1-benh@kernel.crashing.org>
+        id S1033081AbeE2BjO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 21:39:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43926 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S936769AbeE2BjK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 21:39:10 -0400
+From: Stewart Smith <stewart@linux.ibm.com>
+To: Abhishek Goel <huntbag@linux.vnet.ibm.com>, rjw@rjwysocki.net,
+        daniel.lezcano@linaro.org, benh@kernel.crashing.org, paulus@samba.org,
+        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Subject: Re: [PATCH] cpuidle/powernv : Add Description for cpuidle state
+In-Reply-To: <20180528173442.100642-1-huntbag@linux.vnet.ibm.com>
+References: <20180528173442.100642-1-huntbag@linux.vnet.ibm.com>
+Date: Tue, 29 May 2018 11:39:01 +1000
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18052901-0044-0000-0000-0000041EBA68
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009096; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000263; SDB=6.01039142; UDB=6.00531818; IPR=6.00818269;
+ MB=3.00021349; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-29 01:39:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052901-0045-0000-0000-00000850DDAF
+Message-Id: <87d0xf6y16.fsf@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-28_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805290017
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove calls to the empty and useless fsi_master_gpio_error()
-function, and report CRC errors as "FSI_ERR_NO_SLAVE" when
-reading an all 1's response.
+Abhishek Goel <huntbag@linux.vnet.ibm.com> writes:
+> @@ -215,7 +216,7 @@ static inline void add_powernv_state(int index, const char *name,
+>  				     u64 psscr_val, u64 psscr_mask)
+>  {
+>  	strlcpy(powernv_states[index].name, name, CPUIDLE_NAME_LEN);
+> -	strlcpy(powernv_states[index].desc, name, CPUIDLE_NAME_LEN);
+> +	strlcpy(powernv_states[index].desc, desc, CPUIDLE_DESC_LEN);
 
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
----
- drivers/fsi/fsi-master-gpio.c | 26 +++++---------------------
- 1 file changed, 5 insertions(+), 21 deletions(-)
+We should still fall back to using name in the event of desc being null,
+as not all firmware will expose the descriptions.
 
-diff --git a/drivers/fsi/fsi-master-gpio.c b/drivers/fsi/fsi-master-gpio.c
-index 351c12f2ac55..da556da62846 100644
---- a/drivers/fsi/fsi-master-gpio.c
-+++ b/drivers/fsi/fsi-master-gpio.c
-@@ -41,13 +41,6 @@
- #define	FSI_GPIO_RESP_BUSY	1	/* Slave busy */
- #define	FSI_GPIO_RESP_ERRA	2	/* Any (misc) Error */
- #define	FSI_GPIO_RESP_ERRC	3	/* Slave reports master CRC error */
--#define	FSI_GPIO_MTOE		4	/* Master time out error */
--#define	FSI_GPIO_CRC_INVAL	5	/* Master reports slave CRC error */
--
--/* Normal slave responses */
--#define	FSI_GPIO_RESP_BUSY	1
--#define	FSI_GPIO_RESP_ACK	0
--#define	FSI_GPIO_RESP_ACKD	4
- 
- #define	FSI_GPIO_MAX_BUSY	200
- #define	FSI_GPIO_MTOE_COUNT	1000
-@@ -359,15 +352,6 @@ static void build_term_command(struct fsi_gpio_msg *cmd, uint8_t slave_id)
- 	msg_push_crc(cmd);
- }
- 
--/*
-- * Store information on master errors so handler can detect and clean
-- * up the bus
-- */
--static void fsi_master_gpio_error(struct fsi_master_gpio *master, int error)
--{
--
--}
--
- /*
-  * Note: callers rely specifically on this returning -EAGAIN for
-  * a CRC error detected in the response. Use other error code
-@@ -396,7 +380,6 @@ static int read_one_response(struct fsi_master_gpio *master,
- 	if (i == FSI_GPIO_MTOE_COUNT) {
- 		dev_dbg(master->dev,
- 			"Master time out waiting for response\n");
--		fsi_master_gpio_error(master, FSI_GPIO_MTOE);
- 		spin_unlock_irqrestore(&master->bit_lock, flags);
- 		return -ETIMEDOUT;
- 	}
-@@ -422,8 +405,11 @@ static int read_one_response(struct fsi_master_gpio *master,
- 	crc = crc4(0, 1, 1);
- 	crc = crc4(crc, msg.msg, msg.bits);
- 	if (crc) {
--		dev_dbg(master->dev, "ERR response CRC\n");
--		fsi_master_gpio_error(master, FSI_GPIO_CRC_INVAL);
-+		/* Check if it's all 1's, that probably means the host is off */
-+		if (((~msg.msg) & ((1ull << msg.bits) - 1)) == 0)
-+			return -ENODEV;
-+		dev_dbg(master->dev, "ERR response CRC msg: 0x%016llx (%d bits)\n",
-+			msg.msg, msg.bits);
- 		return -EAGAIN;
- 	}
- 
-@@ -538,12 +524,10 @@ static int poll_for_response(struct fsi_master_gpio *master,
- 
- 	case FSI_GPIO_RESP_ERRA:
- 		dev_dbg(master->dev, "ERRA received: 0x%x\n", (int)response.msg);
--		fsi_master_gpio_error(master, response.msg);
- 		rc = -EIO;
- 		break;
- 	case FSI_GPIO_RESP_ERRC:
- 		dev_dbg(master->dev, "ERRC received: 0x%x\n", (int)response.msg);
--		fsi_master_gpio_error(master, response.msg);
- 		trace_fsi_master_gpio_crc_cmd_error(master);
- 		rc = -EAGAIN;
- 		break;
+> @@ -311,6 +313,11 @@ static int powernv_add_idle_states(void)
+>  		pr_warn("cpuidle-powernv: missing ibm,cpu-idle-state-names in DT\n");
+>  		goto out;
+>  	}
+> +	if (of_property_read_string_array(power_mgt,
+> +		"ibm,cpu-idle-state-descs", descs, dt_idle_states) < 0) {
+> +		pr_warn("cpuidle-powernv: missing ibm,cpu-idle-state-descs in DT\n");
+> +		goto out;
+> +	}
+
+I don't think pr_warn is appropriate here, as for all current released
+firmware we don't have that property. I think perhaps just silently
+continuing on is okay, as we have to keep compatibility with that firmware.
+
+> --- a/include/linux/cpuidle.h
+> +++ b/include/linux/cpuidle.h
+> @@ -17,7 +17,7 @@
+>
+>  #define CPUIDLE_STATE_MAX	10
+>  #define CPUIDLE_NAME_LEN	16
+> -#define CPUIDLE_DESC_LEN	32
+> +#define CPUIDLE_DESC_LEN	60
+
+Do we really get that long?
+
 -- 
-2.17.0
+Stewart Smith
+OPAL Architect, IBM.
