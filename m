@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933769AbeE2MLy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:11:54 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38468 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933675AbeE2MLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:11:46 -0400
+        id S933938AbeE2MOw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:14:52 -0400
+Received: from foss.arm.com ([217.140.101.70]:38554 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933778AbeE2ML4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:11:56 -0400
 From: Marc Zyngier <marc.zyngier@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu
@@ -19,9 +19,9 @@ Cc: Will Deacon <will.deacon@arm.com>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         Julien Grall <julien.grall@arm.com>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 06/17] arm64: ssbd: Add global mitigation state accessor
-Date: Tue, 29 May 2018 13:11:10 +0100
-Message-Id: <20180529121121.24927-7-marc.zyngier@arm.com>
+Subject: [PATCH v2 10/17] arm64: ssbd: Add prctl interface for per-thread mitigation
+Date: Tue, 29 May 2018 13:11:14 +0100
+Message-Id: <20180529121121.24927-11-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180529121121.24927-1-marc.zyngier@arm.com>
 References: <20180529121121.24927-1-marc.zyngier@arm.com>
@@ -29,39 +29,142 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We're about to need the mitigation state in various parts of the
-kernel in order to do the right thing for userspace and guests.
+If running on a system that performs dynamic SSBD mitigation, allow
+userspace to request the mitigation for itself. This is implemented
+as a prctl call, allowing the mitigation to be enabled or disabled at
+will for this particular thread.
 
-Let's expose an accessor that will let other subsystems know
-about the state.
-
-Reviewed-by: Julien Grall <julien.grall@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- arch/arm64/include/asm/cpufeature.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/kernel/Makefile |   1 +
+ arch/arm64/kernel/ssbd.c   | 107 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 108 insertions(+)
+ create mode 100644 arch/arm64/kernel/ssbd.c
 
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index b50650f3e496..b0fc3224ce8a 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -543,6 +543,16 @@ static inline u64 read_zcr_features(void)
- #define ARM64_SSBD_FORCE_ENABLE		2
- #define ARM64_SSBD_MITIGATED		3
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index bf825f38d206..0025f8691046 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -54,6 +54,7 @@ arm64-obj-$(CONFIG_ARM64_RELOC_TEST)	+= arm64-reloc-test.o
+ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
+ arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
+ arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)	+= sdei.o
++arm64-obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
  
-+static inline int arm64_get_ssbd_state(void)
+ obj-y					+= $(arm64-obj-y) vdso/ probes/
+ obj-m					+= $(arm64-obj-m)
+diff --git a/arch/arm64/kernel/ssbd.c b/arch/arm64/kernel/ssbd.c
+new file mode 100644
+index 000000000000..07b12c034ec2
+--- /dev/null
++++ b/arch/arm64/kernel/ssbd.c
+@@ -0,0 +1,107 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018 ARM Ltd, All Rights Reserved.
++ */
++
++#include <linux/errno.h>
++#include <linux/sched.h>
++#include <linux/thread_info.h>
++
++#include <asm/cpufeature.h>
++
++/*
++ * prctl interface for SSBD
++ */
++static int ssbd_prctl_set(struct task_struct *task, unsigned long ctrl)
 +{
-+#ifdef CONFIG_ARM64_SSBD
-+	extern int ssbd_state;
-+	return ssbd_state;
-+#else
-+	return ARM64_SSBD_UNKNOWN;
-+#endif
++	int state = arm64_get_ssbd_state();
++
++	/* Unsupported */
++	if (state == ARM64_SSBD_UNKNOWN)
++		return -EINVAL;
++
++	/* Treat the unaffected/mitigated state separately */
++	if (state == ARM64_SSBD_MITIGATED) {
++		switch (ctrl) {
++		case PR_SPEC_ENABLE:
++			return -EPERM;
++		case PR_SPEC_DISABLE:
++		case PR_SPEC_FORCE_DISABLE:
++			return 0;
++		}
++	}
++
++	/*
++	 * Things are a bit backward here: the arm64 internal API
++	 * *enables the mitigation* when the userspace API *disables
++	 * speculation*. So much fun.
++	 */
++	switch (ctrl) {
++	case PR_SPEC_ENABLE:
++		/* If speculation is force disabled, enable is not allowed */
++		if (state == ARM64_SSBD_FORCE_ENABLE ||
++		    task_spec_ssb_force_disable(task))
++			return -EPERM;
++		task_clear_spec_ssb_disable(task);
++		clear_tsk_thread_flag(task, TIF_SSBD);
++		break;
++	case PR_SPEC_DISABLE:
++		if (state == ARM64_SSBD_FORCE_DISABLE)
++			return -EPERM;
++		task_set_spec_ssb_disable(task);
++		set_tsk_thread_flag(task, TIF_SSBD);
++		break;
++	case PR_SPEC_FORCE_DISABLE:
++		if (state == ARM64_SSBD_FORCE_DISABLE)
++			return -EPERM;
++		task_set_spec_ssb_disable(task);
++		task_set_spec_ssb_force_disable(task);
++		set_tsk_thread_flag(task, TIF_SSBD);
++		break;
++	default:
++		return -ERANGE;
++	}
++
++	return 0;
 +}
 +
- #endif /* __ASSEMBLY__ */
- 
- #endif
++int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
++			     unsigned long ctrl)
++{
++	switch (which) {
++	case PR_SPEC_STORE_BYPASS:
++		return ssbd_prctl_set(task, ctrl);
++	default:
++		return -ENODEV;
++	}
++}
++
++static int ssbd_prctl_get(struct task_struct *task)
++{
++	switch (arm64_get_ssbd_state()) {
++	case ARM64_SSBD_UNKNOWN:
++		return -EINVAL;
++	case ARM64_SSBD_FORCE_ENABLE:
++		return PR_SPEC_DISABLE;
++	case ARM64_SSBD_KERNEL:
++		if (task_spec_ssb_force_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
++		if (task_spec_ssb_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
++		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
++	case ARM64_SSBD_FORCE_DISABLE:
++		return PR_SPEC_ENABLE;
++	default:
++		return PR_SPEC_NOT_AFFECTED;
++	}
++}
++
++int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
++{
++	switch (which) {
++	case PR_SPEC_STORE_BYPASS:
++		return ssbd_prctl_get(task);
++	default:
++		return -ENODEV;
++	}
++}
 -- 
 2.14.2
