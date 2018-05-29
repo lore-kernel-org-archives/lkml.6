@@ -1,73 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964901AbeE2Oum (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:50:42 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54341 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936639AbeE2Oqk (ORCPT
+        id S936586AbeE2OvL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:51:11 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:62951 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935308AbeE2OvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:46:40 -0400
-X-Google-Smtp-Source: ADUXVKKBHtH6nlm7hGsEnNqY4+gibvYi9kQqajzpvcBmboW9aNWrHiLxjxUv5wUQgNI5K/Ims6RuLQ==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 20/28] ovl: Add an inode flag OVL_CONST_INO
-Date: Tue, 29 May 2018 16:46:04 +0200
-Message-Id: <20180529144612.16675-21-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
-References: <20180529144612.16675-1-mszeredi@redhat.com>
+        Tue, 29 May 2018 10:51:05 -0400
+From: Sekhar Nori <nsekhar@ti.com>
+To: Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>
+CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: [PATCH] gpio: davinci: fix build warning when !CONFIG_OF
+Date: Tue, 29 May 2018 20:21:01 +0530
+Message-ID: <20180529145101.20808-1-nsekhar@ti.com>
+X-Mailer: git-send-email 2.16.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivek Goyal <vgoyal@redhat.com>
+This nukes the following warning that is seen when building without
+OF support:
 
-Add an ovl_inode flag OVL_CONST_INO.  This flag signifies if inode number
-will remain constant over copy up or not.  This flag does not get updated
-over copy up and remains unmodifed after setting once.
-
-Next patch in the series will make use of this flag.  It will basically
-figure out if dentry is of type ORIGIN or not.  And this can be derived by
-this flag.
-
-ORIGIN = (upperdentry && ovl_test_flag(OVL_CONST_INO, inode)).
-
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+drivers/gpio/gpio-davinci.c:437:25: warning: ‘keystone_gpio_get_irq_chip’ defined but not used [-Wunused-function]
+ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 ---
- fs/overlayfs/inode.c     | 3 +++
- fs/overlayfs/overlayfs.h | 2 ++
- 2 files changed, 5 insertions(+)
+ drivers/gpio/gpio-davinci.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index d4e643e9098b..ac1d2a581a6e 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -883,6 +883,9 @@ struct inode *ovl_get_inode(struct super_block *sb,
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 987126c4c6f6..b574ecff7761 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -610,14 +610,12 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 	return 0;
+ }
  
- 	OVL_I(inode)->redirect = oip->redirect;
- 
-+	if (bylower)
-+		ovl_set_flag(OVL_CONST_INO, inode);
-+
- 	/* Check for non-merge dir that may have whiteouts */
- 	if (is_dir) {
- 		if (((upperdentry && lowerdentry) || oip->numlower > 1) ||
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index dcd600201ec8..bde352e414e7 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -38,6 +38,8 @@ enum ovl_inode_flag {
- 	OVL_WHITEOUTS,
- 	OVL_INDEX,
- 	OVL_UPPERDATA,
-+	/* Inode number will remain constant over copy up. */
-+	OVL_CONST_INO,
+-#if IS_ENABLED(CONFIG_OF)
+ static const struct of_device_id davinci_gpio_ids[] = {
+ 	{ .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
+ 	{ .compatible = "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
+ 	{ /* sentinel */ },
  };
+ MODULE_DEVICE_TABLE(of, davinci_gpio_ids);
+-#endif
  
- enum ovl_entry_flag {
+ static struct platform_driver davinci_gpio_driver = {
+ 	.probe		= davinci_gpio_probe,
 -- 
-2.14.3
+2.16.2
