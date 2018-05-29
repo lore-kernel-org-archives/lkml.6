@@ -1,66 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935293AbeE2OXb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:23:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50720 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934472AbeE2OX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:23:27 -0400
-Date: Tue, 29 May 2018 16:23:24 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH] KVM: VMX: Optimize tscdeadline timer latency
-Message-ID: <20180529142324.GA7819@flask>
-References: <1527576797-5738-1-git-send-email-wanpengli@tencent.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1527576797-5738-1-git-send-email-wanpengli@tencent.com>
+        id S935279AbeE2OWi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:22:38 -0400
+Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38208 "EHLO
+        smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935220AbeE2OWe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:22:34 -0400
+From: James Simmons <jsimmons@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>,
+        Dmitry Eremin <dmitry.eremin@intel.com>,
+        James Simmons <jsimmons@infradead.org>
+Subject: [PATCH v2 18/25] staging: lustre: libcfs: rename goto label in cfs_cpt_table_print
+Date: Tue, 29 May 2018 10:21:58 -0400
+Message-Id: <1527603725-30560-19-git-send-email-jsimmons@infradead.org>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
+References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-29 14:53+0800, Wanpeng Li:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> 'Commit d0659d946be0 ("KVM: x86: add option to advance tscdeadline 
-> hrtimer expiration")' advances the tscdeadline (the timer is emulated 
-> by hrtimer) expiration in order that the latency which is incurred 
-> by hypervisor (apic_timer_fn -> vmentry) can be avoided. This patch 
-> adds the advance tscdeadline expiration support to which the tscdeadline 
-> timer is emulated by VMX preemption timer to reduce the hypervisor 
-> lantency (handle_preemption_timer -> vmentry). clockevents infrastruture 
-> can program minimum delay if hrtimer feeds a expiration in the past, 
-> we set delta_tsc to 1(which will be converted to 0 before vmentry) 
-> which can lead to an immediately vmexit when delta_tsc is not bigger 
-> than advance ns. 
-> 
-> This patch can reduce ~63% latency (~4450 cycles to ~1660 cycles on 
-> a haswell desktop) for kvm-unit-tests/tscdeadline_latency when testing
-> busy waits.
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> @@ -12444,6 +12444,12 @@ static int vmx_set_hv_timer(struct kvm_vcpu *vcpu, u64 guest_deadline_tsc)
->  	tscl = rdtsc();
->  	guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
->  	delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
-> +	lapic_timer_advance_cycles = nsec_to_cycles(vcpu, lapic_timer_advance_ns);
-> +	if (delta_tsc > lapic_timer_advance_cycles)
-> +		delta_tsc -= lapic_timer_advance_cycles;
-> +	else
-> +		delta_tsc = 1;
+From: Dmitry Eremin <dmitry.eremin@intel.com>
 
-Why don't we just "return 1" to say that the timer has expired?
+Change goto label out to err.
 
-I think "delta_tsc = 1" would just force an immediate VM exit and
-a re-entry, which seems wasteful as we could just be delaying the entry
-until the deadline has really passed,
+Signed-off-by: Dmitry Eremin <dmitry.eremin@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8703
+Reviewed-on: https://review.whamcloud.com/23222
+Reviewed-by: Amir Shehata <amir.shehata@intel.com>
+Reviewed-by: James Simmons <uja.ornl@yahoo.com>
+Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
+Signed-off-by: James Simmons <jsimmons@infradead.org>
+---
+Changelog:
 
-thanks.
+v1) Initial patch
+v2) Rebased patch. No changes in code from earlier patch
+
+ drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
+index fb27dac..e12d337 100644
+--- a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
++++ b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
+@@ -193,20 +193,20 @@ int cfs_cpt_table_print(struct cfs_cpt_table *cptab, char *buf, int len)
+ 
+ 	for (i = 0; i < cptab->ctb_nparts; i++) {
+ 		if (len <= 0)
+-			goto out;
++			goto err;
+ 
+ 		rc = snprintf(tmp, len, "%d\t:", i);
+ 		len -= rc;
+ 
+ 		if (len <= 0)
+-			goto out;
++			goto err;
+ 
+ 		tmp += rc;
+ 		for_each_cpu(j, cptab->ctb_parts[i].cpt_cpumask) {
+ 			rc = snprintf(tmp, len, "%d ", j);
+ 			len -= rc;
+ 			if (len <= 0)
+-				goto out;
++				goto err;
+ 			tmp += rc;
+ 		}
+ 
+@@ -216,7 +216,7 @@ int cfs_cpt_table_print(struct cfs_cpt_table *cptab, char *buf, int len)
+ 	}
+ 
+ 	return tmp - buf;
+-out:
++err:
+ 	return -E2BIG;
+ }
+ EXPORT_SYMBOL(cfs_cpt_table_print);
+-- 
+1.8.3.1
