@@ -1,64 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966525AbeE2TvD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:51:03 -0400
-Received: from www62.your-server.de ([213.133.104.62]:41881 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966455AbeE2Tu6 (ORCPT
+        id S966670AbeE2Tvh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:51:37 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:36521 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966638AbeE2Tvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:50:58 -0400
-Subject: Re: [PATCH bpf-next] bpf: hide the unused 'off' variable
-To: Song Liu <liu.song.a23@gmail.com>,
-        John Fastabend <john.fastabend@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, YueHaibing <yuehaibing@huawei.com>,
-        David Miller <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180529024018.12740-1-yuehaibing@huawei.com>
- <CAK8P3a0jnU69RQ8jLF82GofE=fgENMVoWkObYvro82f+q=p_XA@mail.gmail.com>
- <4a060ed5-f147-6778-caa2-7866b1f04479@gmail.com>
- <CAPhsuW7tkQVY0rVRt2=cAHf_fif7W_73Ns7_mnt3CriMbGEhrg@mail.gmail.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <2b40c9d1-d8c7-ae0a-7339-aac2a20ba1b2@iogearbox.net>
-Date: Tue, 29 May 2018 21:50:50 +0200
+        Tue, 29 May 2018 15:51:33 -0400
+Subject: Re: [PATCH 4.4 000/268] 4.4.134-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <06f53cc8-1754-a0e5-daa1-6a92afa540c6@kernel.org>
+Date: Tue, 29 May 2018 13:51:18 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAPhsuW7tkQVY0rVRt2=cAHf_fif7W_73Ns7_mnt3CriMbGEhrg@mail.gmail.com>
+In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 08:18 PM, Song Liu wrote:
-> On Tue, May 29, 2018 at 8:53 AM, John Fastabend
-> <john.fastabend@gmail.com> wrote:
->> On 05/29/2018 03:35 AM, Arnd Bergmann wrote:
->>> On Tue, May 29, 2018 at 4:40 AM, YueHaibing <yuehaibing@huawei.com> wrote:
->>>> The local variable is only used while CONFIG_IPV6 enabled
->>>>
->>>> net/core/filter.c: In function ‘sk_msg_convert_ctx_access’:
->>>> net/core/filter.c:6489:6: warning: unused variable ‘off’ [-Wunused-variable]
->>>>   int off;
->>>>       ^
->>>> This puts it into #ifdef.
->>>>
->>>> Fixes: 303def35f64e ("bpf: allow sk_msg programs to read sock fields")
->>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>>
->>> I was about to send the same patch and found you had already sent one.
->>>
->>> Acked-by: Arnd Bergmann <arnd@arndb.de>
->>
->> Thanks! I'm curious why kbuild bot didn't catch this. Will
->> try to dig into that in a bit.
->>
->> Acked-by: John Fastabend <john.fastabend@gmail.com>
+On 05/28/2018 03:59 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.134 release.
+> There are 268 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Acked-by: Song Liu <songliubraving@fb.com>
+> Responses should be made by Wed May 30 10:00:40 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.134-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Applied to bpf-next, thanks Yue!
+Compiled and booted on my test system. No dmesg regressions.
+
+thanks,
+-- Shuah
