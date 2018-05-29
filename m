@@ -1,52 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935105AbeE2PZM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:25:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38344 "EHLO mail.kernel.org"
+        id S936694AbeE2PZY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:25:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935606AbeE2PXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S935577AbeE2PXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 May 2018 11:23:35 -0400
-Message-Id: <20180529152328.804425982@goodmis.org>
+Message-Id: <20180529152328.213507301@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Tue, 29 May 2018 11:23:23 -0400
+Date: Tue, 29 May 2018 11:23:20 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Vasyl Gomonovych <gomonovych@gmail.com>
-Subject: [for-next][PATCH 19/19] ring-buffer: Fix typo in comment
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [for-next][PATCH 16/19] tracing/selftest: Add test to test hist trigger between kernel event
+ and trace_marker
 References: <20180529152304.885389740@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=0019-ring-buffer-Fix-typo-in-comment.patch
+Content-Disposition: inline; filename=0016-tracing-selftest-Add-test-to-test-hist-trigger-betwe.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasyl Gomonovych <gomonovych@gmail.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Fix typo of the word 'been'
+Add a test that tests a trigger that is initiated by a kernel event
+(sched_waking) and compared to a write to the trace_marker.
 
-Link: http://lkml.kernel.org/r/20180518203130.2011-1-gomonovych@gmail.com
-
-Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/ring_buffer.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../trigger-trace-marker-synthetic-kernel.tc  | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
 
-diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
-index a0233edc0718..b72ebdff0b77 100644
---- a/include/linux/ring_buffer.h
-+++ b/include/linux/ring_buffer.h
-@@ -65,7 +65,7 @@ u64 ring_buffer_event_time_stamp(struct ring_buffer_event *event);
- 
- /*
-  * ring_buffer_discard_commit will remove an event that has not
-- *   ben committed yet. If this is used, then ring_buffer_unlock_commit
-+ *   been committed yet. If this is used, then ring_buffer_unlock_commit
-  *   must not be called on the discarded event. This function
-  *   will try to remove the event from the ring buffer completely
-  *   if another event has not been written after it.
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
+new file mode 100644
+index 000000000000..0a69c5d1cda8
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic-kernel.tc
+@@ -0,0 +1,68 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: trace_marker trigger - test histogram with synthetic event against kernel event
++# flags:
++
++do_reset() {
++    reset_trigger
++    echo > set_event
++    echo > synthetic_events
++    clear_trace
++}
++
++fail() { #msg
++    do_reset
++    echo $1
++    exit_fail
++}
++
++if [ ! -f set_event ]; then
++    echo "event tracing is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f synthetic_events ]; then
++    echo "synthetic events not supported"
++    exit_unsupported
++fi
++
++if [ ! -d events/ftrace/print ]; then
++    echo "event trace_marker is not supported"
++    exit_unsupported
++fi
++
++if [ ! -d events/sched/sched_waking ]; then
++    echo "event sched_waking is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f events/ftrace/print/trigger ]; then
++    echo "event trigger is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f events/ftrace/print/hist ]; then
++    echo "hist trigger is not supported"
++    exit_unsupported
++fi
++
++do_reset
++
++echo "Test histogram kernel event to trace_marker latency histogram trigger"
++
++echo 'latency u64 lat' > synthetic_events
++echo 'hist:keys=pid:ts0=common_timestamp.usecs' > events/sched/sched_waking/trigger
++echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).latency($lat)' > events/ftrace/print/trigger
++echo 'hist:keys=common_pid,lat:sort=lat' > events/synthetic/latency/trigger
++sleep 1
++echo "hello" > trace_marker
++
++grep 'hitcount: *1$' events/ftrace/print/hist > /dev/null || \
++    fail "hist trigger did not trigger correct times on trace_marker"
++
++grep 'hitcount: *1$' events/synthetic/latency/hist > /dev/null || \
++    fail "hist trigger did not trigger "
++
++do_reset
++
++exit 0
 -- 
 2.17.0
