@@ -1,69 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932437AbeE2Isw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:48:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51528 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755458AbeE2Iss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:48:48 -0400
-Date: Tue, 29 May 2018 10:48:45 +0200
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>, Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK"
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v3] Add udmabuf misc device
-Message-ID: <20180529084845.2al2dmpvjpz6eexp@sirius.home.kraxel.org>
-References: <20180525140808.12714-1-kraxel@redhat.com>
- <20180529082327.GF3438@phenom.ffwll.local>
+        id S932524AbeE2ItF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:49:05 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:38127 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932449AbeE2Is7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 04:48:59 -0400
+X-Google-Smtp-Source: AB8JxZqObOnPCvKVEevx8hI2SIEfyTKuyLXSMaWo1oa39sX+sjSn6n2fb+Fbb5z6CZv8fSrhqsZTRwLjwkTm8n9vo6E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529082327.GF3438@phenom.ffwll.local>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <1527171551-21979-5-git-send-email-gilad@benyossef.com>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com> <1527171551-21979-5-git-send-email-gilad@benyossef.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 May 2018 10:48:58 +0200
+X-Google-Sender-Auth: JvEZTeww1e3ZzBMLaeuskkobfY4
+Message-ID: <CAMuHMdVxcnw5Qy4JPo5r-VvgSxDpp==g6sandNeNji+8CgKOqQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] clk: renesas: r8a7795: add ccree clock bindings
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+On Thu, May 24, 2018 at 4:19 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> This patch adds the clock used by the CryptoCell 630p instance in the SoC.
+>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-> > +static void *kmap_atomic_udmabuf(struct dma_buf *buf, unsigned long page_num)
-> > +{
-> > +	struct udmabuf *ubuf = buf->priv;
-> > +	struct page *page = ubuf->pages[page_num];
-> > +
-> > +	return kmap_atomic(page);
-> > +}
-> > +
-> > +static void *kmap_udmabuf(struct dma_buf *buf, unsigned long page_num)
-> > +{
-> > +	struct udmabuf *ubuf = buf->priv;
-> > +	struct page *page = ubuf->pages[page_num];
-> > +
-> > +	return kmap(page);
-> > +}
-> 
-> The above leaks like mad since no kunamp?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks, queueing in clk-renesas-for-v4.19, with "bindings" dropped from the
+one-line summary.
 
-/me checks code.  Oops.  Yes.
+Gr{oetje,eeting}s,
 
-The docs say map() is required and unmap() is not (for both atomic and
-non-atomic cases), so I assumed there is a default implementation just
-doing kunmap(page).  Which is not the case.  /me looks a bit surprised.
+                        Geert
 
-I'll fix it for v4.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> Also I think we have 0 users of the kmap atomic interfaces ... so not sure
-> whether it's worth it to implement those.
-
-Well, the docs are correct.  kmap_atomic() is required, dma-buf.c calls
-the function pointer without checking it exists beforehand ...
-
-cheers,
-  Gerd
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
