@@ -1,810 +1,605 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932957AbeE2J60 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:58:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42214 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932476AbeE2J6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:58:13 -0400
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To: Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mario.Limonciello@dell.com, Peter Hutterer <peter.hutterer@who-t.net>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 3/9] HID: multitouch: Store per collection multitouch data
-Date: Tue, 29 May 2018 11:57:54 +0200
-Message-Id: <20180529095800.13504-4-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180529095800.13504-1-benjamin.tissoires@redhat.com>
-References: <20180529095800.13504-1-benjamin.tissoires@redhat.com>
+        id S932990AbeE2J65 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:58:57 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37028 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932476AbeE2J6v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 05:58:51 -0400
+X-Google-Smtp-Source: ADUXVKKHNCGxQPa1jE9aNvqF8q5f4nBWrV0hfVLs8tlNb/Usg4H3KZ/nEuXC59sNBgum1DNgttnO5A==
+Date: Tue, 29 May 2018 12:58:42 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v3 1/6] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <bc313ddba5163b1999f8a7f201b0b73285b7991d.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, hid-multitouch can only handle one multitouch collection at
-a time. This is an issue for the Dell Canvas, as the Totem (a dial tool)
-is also using a multitouch-like collection.
+ROHM BD71837 PMIC MFD driver providing interrupts and support
+for two subsystems:
+- clk
+- Regulators
 
-Factor out the multitouch collection data in their own struct.
-
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/hid/hid-multitouch.c | 376 ++++++++++++++++++++++++++-----------------
- 1 file changed, 230 insertions(+), 146 deletions(-)
+ drivers/mfd/Kconfig         |  13 ++
+ drivers/mfd/Makefile        |   1 +
+ drivers/mfd/bd71837.c       | 224 ++++++++++++++++++++++++++++++++++
+ include/linux/mfd/bd71837.h | 288 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 526 insertions(+)
+ create mode 100644 drivers/mfd/bd71837.c
+ create mode 100644 include/linux/mfd/bd71837.h
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 187d27f26eec..b3eb43ce2969 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -28,14 +28,11 @@
-  */
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b860eb5aa194..7aa05fc9ed8e 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1787,6 +1787,19 @@ config MFD_STW481X
+ 	  in various ST Microelectronics and ST-Ericsson embedded
+ 	  Nomadik series.
  
- /*
-- * This driver is regularly tested thanks to the tool hid-test[1].
-- * This tool relies on hid-replay[2] and a database of hid devices[3].
-+ * This driver is regularly tested thanks to the test suite in hid-tools[1].
-  * Please run these regression tests before patching this module so that
-  * your patch won't break existing known devices.
-  *
-- * [1] https://github.com/bentiss/hid-test
-- * [2] https://github.com/bentiss/hid-replay
-- * [3] https://github.com/bentiss/hid-devices
-+ * [1] https://github.com/bentiss/hid-tools
-  */
++config MFD_BD71837
++	bool "BD71837 Power Management chip"
++	depends on I2C=y
++	depends on OF
++	select REGMAP_I2C
++	select REGMAP_IRQ
++	select MFD_CORE
++	help
++	  Select this option to get support for the ROHM BD71837
++	  Power Management chips. BD71837 is designed to power processors like
++	  NXP i.MX8. It contains 8 BUCK outputs and 7 LDOs, voltage monitoring
++	  and emergency shut down as well as 32,768KHz clock output.
++
+ config MFD_STM32_LPTIMER
+ 	tristate "Support for STM32 Low-Power Timer"
+ 	depends on (ARCH_STM32 && OF) || COMPILE_TEST
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index e9fd20dba18d..09dc9eb3782c 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -227,4 +227,5 @@ obj-$(CONFIG_MFD_STM32_TIMERS) 	+= stm32-timers.o
+ obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
+ obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
+ obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
++obj-$(CONFIG_MFD_BD71837)	+= bd71837.o
  
- #include <linux/device.h>
-@@ -99,6 +96,37 @@ struct mt_slot {
- 	bool has_azimuth;       /* the contact reports azimuth */
- };
- 
-+struct mt_application {
-+	struct list_head list;
-+	unsigned int application;
-+	struct mt_slot curdata;		/* placeholder of incoming data */
+diff --git a/drivers/mfd/bd71837.c b/drivers/mfd/bd71837.c
+new file mode 100644
+index 000000000000..0200bbdbefa3
+--- /dev/null
++++ b/drivers/mfd/bd71837.c
+@@ -0,0 +1,224 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (C) 2018 ROHM Semiconductors */
++/*
++ * bd71837.c  --  ROHM BD71837MWV mfd driver
++ */
 +
-+	int cc_index;	/* contact count field index in the report */
-+	int cc_value_index;	/* contact count value index in the field */
-+	int scantime_index;	/* scantime field index in the report */
-+	int scantime_val_index;	/* scantime value index in the field */
-+	unsigned int last_slot_field;	/* the last field of a slot */
-+	bool curvalid;		/* is the current contact valid? */
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/init.h>
++#include <linux/slab.h>
++#include <linux/i2c.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqdomain.h>
++#include <linux/gpio.h>
++#include <linux/regmap.h>
++#include <linux/of_device.h>
++#include <linux/of_gpio.h>
++#include <linux/mfd/core.h>
++#include <linux/mfd/bd71837.h>
 +
-+	int left_button_state;		/* left button state */
-+	unsigned int mt_flags;		/* flags to pass to input-mt */
-+
-+	__u8 num_received;	/* how many contacts we received */
-+	__u8 num_expected;	/* expected last contact index */
-+	__u8 buttons_count;	/* number of physical buttons per touchpad */
-+	__u8 touches_by_report;	/* how many touches are present in one report:
-+				 * 1 means we should use a serial protocol
-+				 * > 1 means hybrid (multitouch) protocol
-+				 */
-+
-+	__s32 dev_time;		/* the scan time provided by the device */
-+	unsigned long jiffies;	/* the frame's jiffies */
-+	int timestamp;		/* the timestamp to be sent */
-+	int prev_scantime;		/* scantime reported previously */
-+
-+	bool have_contact_count;
++/* bd71837 multi function cells */
++static struct mfd_cell bd71837_mfd_cells[] = {
++	{
++		.name = "bd71837-clk",
++		.of_compatible = "rohm,bd71837-clk",
++	}, {
++		.name = "bd71837-pmic",
++	},
 +};
 +
- struct mt_class {
- 	__s32 name;	/* MT_CLS */
- 	__s32 quirks;
-@@ -117,40 +145,24 @@ struct mt_fields {
- };
- 
- struct mt_device {
--	struct mt_slot curdata;	/* placeholder of incoming data */
- 	struct mt_class mtclass;	/* our mt device class */
- 	struct timer_list release_timer;	/* to release sticky fingers */
- 	struct hid_device *hdev;	/* hid_device we're attached to */
- 	struct mt_fields *fields;	/* temporary placeholder for storing the
- 					   multitouch fields */
- 	unsigned long mt_io_flags;	/* mt flags (MT_IO_FLAGS_*) */
--	int cc_index;	/* contact count field index in the report */
--	int cc_value_index;	/* contact count value index in the field */
--	int scantime_index;	/* scantime field index in the report */
--	int scantime_val_index;	/* scantime value index in the field */
--	int prev_scantime;	/* scantime reported in the previous packet */
--	int left_button_state;	/* left button state */
--	unsigned last_slot_field;	/* the last field of a slot */
- 	unsigned mt_report_id;	/* the report ID of the multitouch device */
- 	__u8 inputmode_value;	/* InputMode HID feature value */
--	__u8 num_received;	/* how many contacts we received */
--	__u8 num_expected;	/* expected last contact index */
- 	__u8 maxcontacts;
--	__u8 touches_by_report;	/* how many touches are present in one report:
--				* 1 means we should use a serial protocol
--				* > 1 means hybrid (multitouch) protocol */
--	__u8 buttons_count;	/* number of physical buttons per touchpad */
- 	bool is_buttonpad;	/* is this device a button pad? */
- 	bool serial_maybe;	/* need to check for serial protocol */
--	bool curvalid;		/* is the current contact valid? */
--	unsigned mt_flags;	/* flags to pass to input-mt */
--	__s32 dev_time;		/* the scan time provided by the device */
--	unsigned long jiffies;	/* the frame's jiffies */
--	int timestamp;		/* the timestamp to be sent */
++static const struct regmap_irq bd71837_irqs[] = {
++	REGMAP_IRQ_REG(BD71837_INT_SWRST, 0, BD71837_INT_SWRST_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_S, 0, BD71837_INT_PWRBTN_S_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_L, 0, BD71837_INT_PWRBTN_L_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_PWRBTN, 0, BD71837_INT_PWRBTN_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_WDOG, 0, BD71837_INT_WDOG_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_ON_REQ, 0, BD71837_INT_ON_REQ_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_STBY_REQ, 0, BD71837_INT_STBY_REQ_MASK),
++};
 +
-+	struct list_head applications;
- };
- 
--static void mt_post_parse_default_settings(struct mt_device *td);
--static void mt_post_parse(struct mt_device *td);
-+static void mt_post_parse_default_settings(struct mt_device *td,
-+					   struct mt_application *app);
-+static void mt_post_parse(struct mt_device *td, struct mt_application *app);
- 
- /* classes of device behavior */
- #define MT_CLS_DEFAULT				0x0001
-@@ -203,10 +215,10 @@ static void mt_post_parse(struct mt_device *td);
-  * to a valid contact that was just read.
-  */
- 
--static int cypress_compute_slot(struct mt_device *td)
-+static int cypress_compute_slot(struct mt_application *app)
- {
--	if (td->curdata.contactid != 0 || td->num_received == 0)
--		return td->curdata.contactid;
-+	if (app->curdata.contactid != 0 || app->num_received == 0)
-+		return app->curdata.contactid;
- 	else
- 		return -1;
- }
-@@ -353,15 +365,22 @@ static ssize_t mt_set_quirks(struct device *dev,
- {
- 	struct hid_device *hdev = to_hid_device(dev);
- 	struct mt_device *td = hid_get_drvdata(hdev);
-+	struct mt_application *application;
- 
- 	unsigned long val;
-+	bool confidence_found = false;
- 
- 	if (kstrtoul(buf, 0, &val))
- 		return -EINVAL;
- 
- 	td->mtclass.quirks = val;
- 
--	if (td->cc_index < 0)
-+	list_for_each_entry(application, &td->applications, list) {
-+		if (application->have_contact_count)
-+			confidence_found = true;
-+	}
++static struct regmap_irq_chip bd71837_irq_chip = {
++	.name = "bd71837-irq",
++	.irqs = bd71837_irqs,
++	.num_irqs = ARRAY_SIZE(bd71837_irqs),
++	.num_regs = 1,
++	.irq_reg_stride = 1,
++	.status_base = BD71837_REG_IRQ,
++	.mask_base = BD71837_REG_MIRQ,
++	.mask_invert = false,
++};
 +
-+	if (!confidence_found)
- 		td->mtclass.quirks &= ~MT_QUIRK_CONTACT_CNT_ACCURATE;
- 
- 	return count;
-@@ -457,6 +476,55 @@ static void set_abs(struct input_dev *input, unsigned int code,
- 	input_abs_set_res(input, code, hidinput_calc_abs_res(field, code));
- }
- 
-+static struct mt_application *mt_allocate_application(struct mt_device *td,
-+						      unsigned int application)
++static int bd71837_irq_exit(struct bd71837 *bd71837)
 +{
-+	struct mt_application *mt_application;
-+
-+	mt_application = devm_kzalloc(&td->hdev->dev, sizeof(*mt_application),
-+				      GFP_KERNEL);
-+	if (!mt_application)
-+		return NULL;
-+
-+	mt_application->application = application;
-+
-+	if (application == HID_DG_TOUCHSCREEN)
-+		mt_application->mt_flags |= INPUT_MT_DIRECT;
-+
-+	/*
-+	 * Model touchscreens providing buttons as touchpads.
-+	 */
-+	if (application == HID_DG_TOUCHPAD) {
-+		mt_application->mt_flags |= INPUT_MT_POINTER;
-+		td->inputmode_value = MT_INPUTMODE_TOUCHPAD;
-+	}
-+
-+	mt_application->cc_index = -1;
-+	mt_application->scantime_index = -1;
-+
-+	list_add_tail(&mt_application->list, &td->applications);
-+
-+	return mt_application;
++	if (bd71837->chip_irq > 0)
++		regmap_del_irq_chip(bd71837->chip_irq, bd71837->irq_data);
++	return 0;
 +}
 +
-+static struct mt_application *mt_find_application(struct mt_device *td,
-+						  unsigned int application)
-+{
-+	struct mt_application *tmp, *mt_application = NULL;
++static const struct regmap_range pmic_status_range = {
++	.range_min = BD71837_REG_IRQ,
++	.range_max = BD71837_REG_POW_STATE,
++};
 +
-+	list_for_each_entry(tmp, &td->applications, list) {
-+		if (application == tmp->application) {
-+			mt_application = tmp;
-+			break;
-+		}
++static const struct regmap_access_table volatile_regs = {
++	.yes_ranges = &pmic_status_range,
++	.n_yes_ranges = 1,
++};
++
++static const struct regmap_config bd71837_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.volatile_table = &volatile_regs,
++	.max_register = BD71837_MAX_REGISTER - 1,
++	.cache_type = REGCACHE_RBTREE,
++};
++
++#ifdef CONFIG_OF
++static const struct of_device_id bd71837_of_match[] = {
++	{ .compatible = "rohm,bd71837", .data = (void *)0},
++	{ },
++};
++MODULE_DEVICE_TABLE(of, bd71837_of_match);
++
++static int bd71837_parse_dt(struct i2c_client *client, struct bd71837_board **b)
++{
++	struct device_node *np = client->dev.of_node;
++	struct bd71837_board *board_info;
++	unsigned int prop;
++	int r;
++	int rv = -ENOMEM;
++
++	board_info = devm_kzalloc(&client->dev, sizeof(*board_info),
++			GFP_KERNEL);
++	if (!board_info)
++		goto err_out;
++
++	if (client->irq) {
++		dev_dbg(&client->dev, "Got irq %d\n", client->irq);
++		board_info->gpio_intr = client->irq;
++	} else {
++		dev_err(&client->dev, "no pmic intr pin available\n");
++		rv = -ENOENT;
++		goto err_intr;
++	}
++	r = of_property_read_u32(np, "irq_base", &prop);
++	if (!r)
++		board_info->irq_base = prop;
++	else
++		board_info->irq_base = 0;
++
++	rv = 0;
++	*b = board_info;
++	if (0) {
++err_intr:
++		devm_kfree(&client->dev, board_info);
++err_out:
++		dev_err(&client->dev, "failed to parse device-tree (%d)\n", rv);
++	}
++	return rv;
++}
++#endif //CONFIG_OF
++
++static int bd71837_i2c_probe(struct i2c_client *i2c,
++			    const struct i2c_device_id *id)
++{
++	struct bd71837 *bd71837;
++	struct bd71837_board *pmic_plat_data;
++	int ret = -EINVAL;
++
++	pmic_plat_data = dev_get_platdata(&i2c->dev);
++
++	if (!pmic_plat_data && i2c->dev.of_node)
++		ret = bd71837_parse_dt(i2c, &pmic_plat_data);
++
++	if (!pmic_plat_data)
++		return ret;
++
++	bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
++	if (bd71837 == NULL)
++		return -ENOMEM;
++
++	bd71837->of_plat_data = pmic_plat_data;
++	i2c_set_clientdata(i2c, bd71837);
++	bd71837->dev = &i2c->dev;
++	bd71837->i2c_client = i2c;
++	bd71837->chip_irq = pmic_plat_data->gpio_intr;
++
++	bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
++	if (IS_ERR(bd71837->regmap)) {
++		ret = PTR_ERR(bd71837->regmap);
++		dev_err(&i2c->dev, "regmap initialization failed: %d\n", ret);
++		goto err_out;
 +	}
 +
-+	if (!mt_application)
-+		mt_application = mt_allocate_application(td, application);
++	ret = bd71837_reg_read(bd71837, BD71837_REG_REV);
++	if (ret < 0) {
++		dev_err(bd71837->dev,
++			"%s(): Read BD71837_REG_DEVICE failed!\n", __func__);
++		goto err_out;
++	}
 +
-+	return mt_application;
++	ret = regmap_add_irq_chip(bd71837->regmap, bd71837->chip_irq,
++		IRQF_ONESHOT, 0,
++		&bd71837_irq_chip, &bd71837->irq_data);
++	if (ret < 0) {
++		dev_err(bd71837->dev, "Failed to add irq_chip %d\n", ret);
++		goto err_out;
++	}
++
++	ret = mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
++			      bd71837_mfd_cells, ARRAY_SIZE(bd71837_mfd_cells),
++			      NULL, 0,
++			      regmap_irq_get_domain(bd71837->irq_data));
++	if (ret)
++		regmap_del_irq_chip(bd71837->chip_irq, bd71837->irq_data);
++err_out:
++
++	return ret;
 +}
 +
- static void mt_store_field(struct hid_usage *usage, struct mt_device *td,
- 		struct hid_input *hi)
- {
-@@ -470,28 +538,24 @@ static void mt_store_field(struct hid_usage *usage, struct mt_device *td,
- 
- static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		struct hid_field *field, struct hid_usage *usage,
--		unsigned long **bit, int *max)
-+		unsigned long **bit, int *max, struct mt_application *app)
- {
- 	struct mt_device *td = hid_get_drvdata(hdev);
- 	struct mt_class *cls = &td->mtclass;
- 	int code;
- 	struct hid_usage *prev_usage = NULL;
- 
--	if (field->application == HID_DG_TOUCHSCREEN)
--		td->mt_flags |= INPUT_MT_DIRECT;
--
- 	/*
- 	 * Model touchscreens providing buttons as touchpads.
- 	 */
--	if (field->application == HID_DG_TOUCHPAD ||
--	    (usage->hid & HID_USAGE_PAGE) == HID_UP_BUTTON) {
--		td->mt_flags |= INPUT_MT_POINTER;
-+	if ((usage->hid & HID_USAGE_PAGE) == HID_UP_BUTTON) {
-+		app->mt_flags |= INPUT_MT_POINTER;
- 		td->inputmode_value = MT_INPUTMODE_TOUCHPAD;
- 	}
- 
- 	/* count the buttons on touchpads */
- 	if ((usage->hid & HID_USAGE_PAGE) == HID_UP_BUTTON)
--		td->buttons_count++;
-+		app->buttons_count++;
- 
- 	if (usage->usage_index)
- 		prev_usage = &field->usage[usage->usage_index - 1];
-@@ -501,33 +565,23 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 	case HID_UP_GENDESK:
- 		switch (usage->hid) {
- 		case HID_GD_X:
--			if (prev_usage && (prev_usage->hid == usage->hid)) {
--				hid_map_usage(hi, usage, bit, max,
--					EV_ABS, ABS_MT_TOOL_X);
--				set_abs(hi->input, ABS_MT_TOOL_X, field,
--					cls->sn_move);
--			} else {
--				hid_map_usage(hi, usage, bit, max,
--					EV_ABS, ABS_MT_POSITION_X);
--				set_abs(hi->input, ABS_MT_POSITION_X, field,
--					cls->sn_move);
--			}
-+			if (prev_usage && (prev_usage->hid == usage->hid))
-+				code = ABS_MT_TOOL_X;
-+			else
-+				code = ABS_MT_POSITION_X;
- 
-+			hid_map_usage(hi, usage, bit, max, EV_ABS, code);
-+			set_abs(hi->input, code, field, cls->sn_move);
- 			mt_store_field(usage, td, hi);
- 			return 1;
- 		case HID_GD_Y:
--			if (prev_usage && (prev_usage->hid == usage->hid)) {
--				hid_map_usage(hi, usage, bit, max,
--					EV_ABS, ABS_MT_TOOL_Y);
--				set_abs(hi->input, ABS_MT_TOOL_Y, field,
--					cls->sn_move);
--			} else {
--				hid_map_usage(hi, usage, bit, max,
--					EV_ABS, ABS_MT_POSITION_Y);
--				set_abs(hi->input, ABS_MT_POSITION_Y, field,
--					cls->sn_move);
--			}
-+			if (prev_usage && (prev_usage->hid == usage->hid))
-+				code = ABS_MT_TOOL_Y;
-+			else
-+				code = ABS_MT_POSITION_Y;
- 
-+			hid_map_usage(hi, usage, bit, max, EV_ABS, code);
-+			set_abs(hi->input, code, field, cls->sn_move);
- 			mt_store_field(usage, td, hi);
- 			return 1;
- 		}
-@@ -558,7 +612,7 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 			return 1;
- 		case HID_DG_CONTACTID:
- 			mt_store_field(usage, td, hi);
--			td->touches_by_report++;
-+			app->touches_by_report++;
- 			td->mt_report_id = field->report->id;
- 			return 1;
- 		case HID_DG_WIDTH:
-@@ -603,16 +657,16 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 			if (field->index >= field->report->maxfield ||
- 			    usage->usage_index >= field->report_count)
- 				return 1;
--			td->scantime_index = field->index;
--			td->scantime_val_index = usage->usage_index;
-+			app->scantime_index = field->index;
-+			app->scantime_val_index = usage->usage_index;
- 			return 1;
- 		case HID_DG_CONTACTCOUNT:
- 			/* Ignore if indexes are out of bounds. */
- 			if (field->index >= field->report->maxfield ||
- 			    usage->usage_index >= field->report_count)
- 				return 1;
--			td->cc_index = field->index;
--			td->cc_value_index = usage->usage_index;
-+			app->cc_index = field->index;
-+			app->cc_value_index = usage->usage_index;
- 			return 1;
- 		case HID_DG_AZIMUTH:
- 			hid_map_usage(hi, usage, bit, max,
-@@ -663,39 +717,41 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 	return 0;
- }
- 
--static int mt_compute_slot(struct mt_device *td, struct input_dev *input)
-+static int mt_compute_slot(struct mt_device *td, struct mt_application *app,
-+			   struct input_dev *input)
- {
- 	__s32 quirks = td->mtclass.quirks;
- 
- 	if (quirks & MT_QUIRK_SLOT_IS_CONTACTID)
--		return td->curdata.contactid;
-+		return app->curdata.contactid;
- 
- 	if (quirks & MT_QUIRK_CYPRESS)
--		return cypress_compute_slot(td);
-+		return cypress_compute_slot(app);
- 
- 	if (quirks & MT_QUIRK_SLOT_IS_CONTACTNUMBER)
--		return td->num_received;
-+		return app->num_received;
- 
- 	if (quirks & MT_QUIRK_SLOT_IS_CONTACTID_MINUS_ONE)
--		return td->curdata.contactid - 1;
-+		return app->curdata.contactid - 1;
- 
--	return input_mt_get_slot_by_key(input, td->curdata.contactid);
-+	return input_mt_get_slot_by_key(input, app->curdata.contactid);
- }
- 
- /*
-  * this function is called when a whole contact has been processed,
-  * so that it can assign it to a slot and store the data there
-  */
--static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
-+static void mt_complete_slot(struct mt_device *td, struct mt_application *app,
-+			     struct input_dev *input)
- {
- 	if ((td->mtclass.quirks & MT_QUIRK_CONTACT_CNT_ACCURATE) &&
--	    td->num_received >= td->num_expected)
-+	    app->num_received >= app->num_expected)
- 		return;
- 
--	if (td->curvalid || (td->mtclass.quirks & MT_QUIRK_ALWAYS_VALID)) {
-+	if (app->curvalid || (td->mtclass.quirks & MT_QUIRK_ALWAYS_VALID)) {
- 		int active;
--		int slotnum = mt_compute_slot(td, input);
--		struct mt_slot *s = &td->curdata;
-+		int slotnum = mt_compute_slot(td, app, input);
-+		struct mt_slot *s = &app->curdata;
- 		struct input_mt *mt = input->mt;
- 
- 		if (slotnum < 0 || slotnum >= td->maxcontacts)
-@@ -750,23 +806,25 @@ static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
- 		}
- 	}
- 
--	td->num_received++;
-+	app->num_received++;
- }
- 
- /*
-  * this function is called when a whole packet has been received and processed,
-  * so that it can decide what to send to the input layer.
-  */
--static void mt_sync_frame(struct mt_device *td, struct input_dev *input)
-+static void mt_sync_frame(struct mt_device *td, struct mt_application *app,
-+			  struct input_dev *input)
- {
- 	if (td->mtclass.quirks & MT_QUIRK_WIN8_PTP_BUTTONS)
--		input_event(input, EV_KEY, BTN_LEFT, td->left_button_state);
-+		input_event(input, EV_KEY, BTN_LEFT, app->left_button_state);
- 
- 	input_mt_sync_frame(input);
--	input_event(input, EV_MSC, MSC_TIMESTAMP, td->timestamp);
-+	input_event(input, EV_MSC, MSC_TIMESTAMP, app->timestamp);
- 	input_sync(input);
--	td->num_received = 0;
--	td->left_button_state = 0;
-+	app->num_received = 0;
-+	app->left_button_state = 0;
++static int bd71837_i2c_remove(struct i2c_client *i2c)
++{
++	struct bd71837 *bd71837 = i2c_get_clientdata(i2c);
 +
- 	if (test_bit(MT_IO_FLAGS_ACTIVE_SLOTS, &td->mt_io_flags))
- 		set_bit(MT_IO_FLAGS_PENDING_SLOTS, &td->mt_io_flags);
- 	else
-@@ -774,14 +832,13 @@ static void mt_sync_frame(struct mt_device *td, struct input_dev *input)
- 	clear_bit(MT_IO_FLAGS_ACTIVE_SLOTS, &td->mt_io_flags);
- }
- 
--static int mt_compute_timestamp(struct mt_device *td, struct hid_field *field,
--		__s32 value)
-+static int mt_compute_timestamp(struct mt_application *app,
-+				struct hid_field *field, __s32 value)
- {
--	long delta = value - td->dev_time;
--	unsigned long jdelta = jiffies_to_usecs(jiffies - td->jiffies);
-+	long delta = value - app->prev_scantime;
-+	unsigned long jdelta = jiffies_to_usecs(jiffies - app->jiffies);
- 
--	td->jiffies = jiffies;
--	td->dev_time = value;
-+	app->jiffies = jiffies;
- 
- 	if (delta < 0)
- 		delta += field->logical_maximum;
-@@ -793,7 +850,7 @@ static int mt_compute_timestamp(struct mt_device *td, struct hid_field *field,
- 		/* No data received for a while, resync the timestamp. */
- 		return 0;
- 	else
--		return td->timestamp + delta;
-+		return app->timestamp + delta;
- }
- 
- static int mt_touch_event(struct hid_device *hid, struct hid_field *field,
-@@ -808,7 +865,7 @@ static int mt_touch_event(struct hid_device *hid, struct hid_field *field,
- 
- static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- 				struct hid_usage *usage, __s32 value,
--				bool first_packet)
-+				struct mt_application *app, bool first_packet)
- {
- 	struct mt_device *td = hid_get_drvdata(hid);
- 	__s32 quirks = td->mtclass.quirks;
-@@ -818,47 +875,48 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- 		switch (usage->hid) {
- 		case HID_DG_INRANGE:
- 			if (quirks & MT_QUIRK_VALID_IS_INRANGE)
--				td->curvalid = value;
-+				app->curvalid = value;
- 			if (quirks & MT_QUIRK_HOVERING)
--				td->curdata.inrange_state = value;
-+				app->curdata.inrange_state = value;
- 			break;
- 		case HID_DG_TIPSWITCH:
- 			if (quirks & MT_QUIRK_NOT_SEEN_MEANS_UP)
--				td->curvalid = value;
--			td->curdata.touch_state = value;
-+				app->curvalid = value;
-+			app->curdata.touch_state = value;
- 			break;
- 		case HID_DG_CONFIDENCE:
- 			if (quirks & MT_QUIRK_CONFIDENCE)
--				td->curdata.confidence_state = value;
-+				app->curdata.confidence_state = value;
- 			if (quirks & MT_QUIRK_VALID_IS_CONFIDENCE)
--				td->curvalid = value;
-+				app->curvalid = value;
- 			break;
- 		case HID_DG_CONTACTID:
--			td->curdata.contactid = value;
-+			app->curdata.contactid = value;
- 			break;
- 		case HID_DG_TIPPRESSURE:
--			td->curdata.p = value;
-+			app->curdata.p = value;
- 			break;
- 		case HID_GD_X:
- 			if (usage->code == ABS_MT_TOOL_X)
--				td->curdata.cx = value;
-+				app->curdata.cx = value;
- 			else
--				td->curdata.x = value;
-+				app->curdata.x = value;
- 			break;
- 		case HID_GD_Y:
- 			if (usage->code == ABS_MT_TOOL_Y)
--				td->curdata.cy = value;
-+				app->curdata.cy = value;
- 			else
--				td->curdata.y = value;
-+				app->curdata.y = value;
- 			break;
- 		case HID_DG_WIDTH:
--			td->curdata.w = value;
-+			app->curdata.w = value;
- 			break;
- 		case HID_DG_HEIGHT:
--			td->curdata.h = value;
-+			app->curdata.h = value;
- 			break;
- 		case HID_DG_SCANTIME:
--			td->timestamp = mt_compute_timestamp(td, field, value);
-+			app->timestamp = mt_compute_timestamp(app, field,
-+							      value);
- 			break;
- 		case HID_DG_CONTACTCOUNT:
- 			break;
-@@ -875,8 +933,8 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- 			 */
- 			if (value > field->logical_maximum / 2)
- 				value -= field->logical_maximum;
--			td->curdata.a = -value;
--			td->curdata.has_azimuth = true;
-+			app->curdata.a = -value;
-+			app->curdata.has_azimuth = true;
- 			break;
- 		case HID_DG_TOUCH:
- 			/* do nothing */
-@@ -901,7 +959,7 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- 			 */
- 			if ((quirks & MT_QUIRK_WIN8_PTP_BUTTONS) &&
- 			    usage->type == EV_KEY && usage->code == BTN_LEFT) {
--				td->left_button_state |= value;
-+				app->left_button_state |= value;
- 				return;
- 			}
- 
-@@ -913,8 +971,9 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- 
- 		if (usage->usage_index + 1 == field->report_count) {
- 			/* we only take into account the last report. */
--			if (usage->hid == td->last_slot_field)
--				mt_complete_slot(td, field->hidinput->input);
-+			if (usage->hid == app->last_slot_field)
-+				mt_complete_slot(td, app,
-+						 field->hidinput->input);
- 		}
- 
- 	}
-@@ -923,26 +982,34 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
- static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
- {
- 	struct mt_device *td = hid_get_drvdata(hid);
-+	struct mt_application *app;
- 	struct hid_field *field;
- 	bool first_packet;
- 	unsigned count;
--	int r, n, scantime = 0;
-+	int r, n;
-+	int scantime = 0;
-+	int contact_count = -1;
- 
- 	/* sticky fingers release in progress, abort */
- 	if (test_and_set_bit(MT_IO_FLAGS_RUNNING, &td->mt_io_flags))
- 		return;
- 
-+	app = mt_find_application(td, report->application);
++	bd71837_irq_exit(bd71837);
++	mfd_remove_devices(bd71837->dev);
 +
-+	if (!app)
-+		return;
++	return 0;
++}
 +
- 	/*
- 	 * Includes multi-packet support where subsequent
- 	 * packets are sent with zero contactcount.
- 	 */
--	if (td->scantime_index >= 0) {
--		field = report->field[td->scantime_index];
--		scantime = field->value[td->scantime_val_index];
-+	if (app->scantime_index >= 0) {
-+		field = report->field[app->scantime_index];
-+		scantime = field->value[app->scantime_val_index];
- 	}
--	if (td->cc_index >= 0) {
--		struct hid_field *field = report->field[td->cc_index];
--		int value = field->value[td->cc_value_index];
-+	if (app->cc_index >= 0) {
-+		field = report->field[app->cc_index];
-+		contact_count = field->value[app->cc_value_index];
- 
- 		/*
- 		 * For Win8 PTPs the first packet (td->num_received == 0) may
-@@ -952,15 +1019,16 @@ static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
- 		 * timestamp has changed.
- 		 */
- 		if ((td->mtclass.quirks & MT_QUIRK_WIN8_PTP_BUTTONS) &&
--		    td->num_received == 0 && td->prev_scantime != scantime)
--			td->num_expected = value;
-+		    app->num_received == 0 &&
-+		    app->prev_scantime != scantime)
-+			app->num_expected = contact_count;
- 		/* A non 0 contact count always indicates a first packet */
--		else if (value)
--			td->num_expected = value;
-+		else if (contact_count)
-+			app->num_expected = contact_count;
- 	}
--	td->prev_scantime = scantime;
-+	app->prev_scantime = scantime;
- 
--	first_packet = td->num_received == 0;
-+	first_packet = app->num_received == 0;
- 	for (r = 0; r < report->maxfield; r++) {
- 		field = report->field[r];
- 		count = field->report_count;
-@@ -970,11 +1038,11 @@ static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
- 
- 		for (n = 0; n < count; n++)
- 			mt_process_mt_event(hid, field, &field->usage[n],
--					    field->value[n], first_packet);
-+					    field->value[n], app, first_packet);
- 	}
- 
--	if (td->num_received >= td->num_expected)
--		mt_sync_frame(td, report->field[0]->hidinput->input);
-+	if (app->num_received >= app->num_expected)
-+		mt_sync_frame(td, app, report->field[0]->hidinput->input);
- 
- 	/*
- 	 * Windows 8 specs says 2 things:
-@@ -1006,7 +1074,8 @@ static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
- }
- 
- static int mt_touch_input_configured(struct hid_device *hdev,
--					struct hid_input *hi)
-+				     struct hid_input *hi,
-+				     struct mt_application *app)
- {
- 	struct mt_device *td = hid_get_drvdata(hdev);
- 	struct mt_class *cls = &td->mtclass;
-@@ -1016,28 +1085,29 @@ static int mt_touch_input_configured(struct hid_device *hdev,
- 	if (!td->maxcontacts)
- 		td->maxcontacts = MT_DEFAULT_MAXCONTACT;
- 
--	mt_post_parse(td);
-+	mt_post_parse(td, app);
- 	if (td->serial_maybe)
--		mt_post_parse_default_settings(td);
-+		mt_post_parse_default_settings(td, app);
- 
- 	if (cls->is_indirect)
--		td->mt_flags |= INPUT_MT_POINTER;
-+		app->mt_flags |= INPUT_MT_POINTER;
- 
- 	if (cls->quirks & MT_QUIRK_NOT_SEEN_MEANS_UP)
--		td->mt_flags |= INPUT_MT_DROP_UNUSED;
-+		app->mt_flags |= INPUT_MT_DROP_UNUSED;
- 
- 	/* check for clickpads */
--	if ((td->mt_flags & INPUT_MT_POINTER) && (td->buttons_count == 1))
-+	if ((app->mt_flags & INPUT_MT_POINTER) &&
-+	    (app->buttons_count == 1))
- 		td->is_buttonpad = true;
- 
- 	if (td->is_buttonpad)
- 		__set_bit(INPUT_PROP_BUTTONPAD, input->propbit);
- 
--	ret = input_mt_init_slots(input, td->maxcontacts, td->mt_flags);
-+	ret = input_mt_init_slots(input, td->maxcontacts, app->mt_flags);
- 	if (ret)
- 		return ret;
- 
--	td->mt_flags = 0;
-+	app->mt_flags = 0;
- 	return 0;
- }
- 
-@@ -1048,6 +1118,7 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		unsigned long **bit, int *max)
- {
- 	struct mt_device *td = hid_get_drvdata(hdev);
-+	struct mt_application *application;
- 
- 	/*
- 	 * If mtclass.export_all_inputs is not set, only map fields from
-@@ -1090,6 +1161,8 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		return 1;
- 	}
- 
-+	application = mt_find_application(td, field->application);
++static const struct i2c_device_id bd71837_i2c_id[] = {
++	{ .name = "bd71837", },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, bd71837_i2c_id);
 +
- 	/*
- 	 * some egalax touchscreens have "application == HID_DG_TOUCHSCREEN"
- 	 * for the stylus.
-@@ -1106,7 +1179,8 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 
- 	if (field->application == HID_DG_TOUCHSCREEN ||
- 	    field->application == HID_DG_TOUCHPAD)
--		return mt_touch_input_mapping(hdev, hi, field, usage, bit, max);
-+		return mt_touch_input_mapping(hdev, hi, field, usage, bit, max,
-+					      application);
- 
- 	/* let hid-core decide for the others */
- 	return 0;
-@@ -1256,12 +1330,13 @@ static void mt_set_modes(struct hid_device *hdev, enum latency_mode latency,
- 	}
- }
- 
--static void mt_post_parse_default_settings(struct mt_device *td)
-+static void mt_post_parse_default_settings(struct mt_device *td,
-+					   struct mt_application *app)
- {
- 	__s32 quirks = td->mtclass.quirks;
- 
- 	/* unknown serial device needs special quirks */
--	if (td->touches_by_report == 1) {
-+	if (app->touches_by_report == 1) {
- 		quirks |= MT_QUIRK_ALWAYS_VALID;
- 		quirks &= ~MT_QUIRK_NOT_SEEN_MEANS_UP;
- 		quirks &= ~MT_QUIRK_VALID_IS_INRANGE;
-@@ -1272,17 +1347,19 @@ static void mt_post_parse_default_settings(struct mt_device *td)
- 	td->mtclass.quirks = quirks;
- }
- 
--static void mt_post_parse(struct mt_device *td)
-+static void mt_post_parse(struct mt_device *td, struct mt_application *app)
- {
- 	struct mt_fields *f = td->fields;
- 	struct mt_class *cls = &td->mtclass;
- 
--	if (td->touches_by_report > 0) {
--		int field_count_per_touch = f->length / td->touches_by_report;
--		td->last_slot_field = f->usages[field_count_per_touch - 1];
-+	if (app->touches_by_report > 0) {
-+		int field_count_per_touch;
++static struct i2c_driver bd71837_i2c_driver = {
++	.driver = {
++		.name = "bd71837-mfd",
++		.owner = THIS_MODULE,
++		.of_match_table = of_match_ptr(bd71837_of_match),
++	},
++	.probe = bd71837_i2c_probe,
++	.remove = bd71837_i2c_remove,
++	.id_table = bd71837_i2c_id,
++};
 +
-+		field_count_per_touch = f->length / app->touches_by_report;
-+		app->last_slot_field = f->usages[field_count_per_touch - 1];
- 	}
- 
--	if (td->cc_index < 0)
-+	if (app->cc_index < 0)
- 		cls->quirks &= ~MT_QUIRK_CONTACT_CNT_ACCURATE;
- }
- 
-@@ -1292,13 +1369,17 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
- 	char *name;
- 	const char *suffix = NULL;
- 	unsigned int application = 0;
-+	struct mt_application *mt_application = NULL;
- 	struct hid_report *report;
- 	int ret;
- 
- 	list_for_each_entry(report, &hi->reports, hidinput_list) {
- 		application = report->application;
-+		mt_application = mt_find_application(td, application);
++static int __init bd71837_i2c_init(void)
++{
++	return i2c_add_driver(&bd71837_i2c_driver);
++}
++/* init early so consumer devices can complete system boot */
++subsys_initcall(bd71837_i2c_init);
 +
- 		if (report->id == td->mt_report_id) {
--			ret = mt_touch_input_configured(hdev, hi);
-+			ret = mt_touch_input_configured(hdev, hi,
-+							mt_application);
- 			if (ret)
- 				return ret;
- 		}
-@@ -1387,6 +1468,7 @@ static void mt_fix_const_fields(struct hid_device *hdev, unsigned int usage)
- static void mt_release_contacts(struct hid_device *hid)
- {
- 	struct hid_input *hidinput;
-+	struct mt_application *application;
- 	struct mt_device *td = hid_get_drvdata(hid);
- 
- 	list_for_each_entry(hidinput, &hid->inputs, list) {
-@@ -1406,7 +1488,9 @@ static void mt_release_contacts(struct hid_device *hid)
- 		}
- 	}
- 
--	td->num_received = 0;
-+	list_for_each_entry(application, &td->applications, list) {
-+		application->num_received = 0;
-+	}
- }
- 
- static void mt_expired_timeout(struct timer_list *t)
-@@ -1446,11 +1530,11 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	td->hdev = hdev;
- 	td->mtclass = *mtclass;
- 	td->inputmode_value = MT_INPUTMODE_TOUCHSCREEN;
--	td->cc_index = -1;
--	td->scantime_index = -1;
- 	td->mt_report_id = -1;
- 	hid_set_drvdata(hdev, td);
- 
-+	INIT_LIST_HEAD(&td->applications);
++static void __exit bd71837_i2c_exit(void)
++{
++	i2c_del_driver(&bd71837_i2c_driver);
++}
++module_exit(bd71837_i2c_exit);
 +
- 	td->fields = devm_kzalloc(&hdev->dev, sizeof(struct mt_fields),
- 				  GFP_KERNEL);
- 	if (!td->fields) {
++MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
++MODULE_DESCRIPTION("BD71837 chip multi-function driver");
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/mfd/bd71837.h b/include/linux/mfd/bd71837.h
+new file mode 100644
+index 000000000000..4475914fa3a9
+--- /dev/null
++++ b/include/linux/mfd/bd71837.h
+@@ -0,0 +1,288 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (C) 2018 ROHM Semiconductors */
++
++/*
++ * ROHM BD71837MWV header file
++ */
++
++#ifndef __LINUX_MFD_BD71837_H__
++#define __LINUX_MFD_BD71837_H__
++
++#include <linux/regmap.h>
++
++enum {
++	BD71837_BUCK1	=	0,
++	BD71837_BUCK2,
++	BD71837_BUCK3,
++	BD71837_BUCK4,
++	BD71837_BUCK5,
++	BD71837_BUCK6,
++	BD71837_BUCK7,
++	BD71837_BUCK8,
++	BD71837_LDO1,
++	BD71837_LDO2,
++	BD71837_LDO3,
++	BD71837_LDO4,
++	BD71837_LDO5,
++	BD71837_LDO6,
++	BD71837_LDO7,
++	BD71837_REGULATOR_CNT,
++};
++
++#define BD71837_BUCK1_VOLTAGE_NUM	0x40
++#define BD71837_BUCK2_VOLTAGE_NUM	0x40
++#define BD71837_BUCK3_VOLTAGE_NUM	0x40
++#define BD71837_BUCK4_VOLTAGE_NUM	0x40
++
++#define BD71837_BUCK5_VOLTAGE_NUM	0x08
++#define BD71837_BUCK6_VOLTAGE_NUM	0x04
++#define BD71837_BUCK7_VOLTAGE_NUM	0x08
++#define BD71837_BUCK8_VOLTAGE_NUM	0x40
++
++#define BD71837_LDO1_VOLTAGE_NUM	0x04
++#define BD71837_LDO2_VOLTAGE_NUM	0x02
++#define BD71837_LDO3_VOLTAGE_NUM	0x10
++#define BD71837_LDO4_VOLTAGE_NUM	0x10
++#define BD71837_LDO5_VOLTAGE_NUM	0x10
++#define BD71837_LDO6_VOLTAGE_NUM	0x10
++#define BD71837_LDO7_VOLTAGE_NUM	0x10
++
++enum {
++	BD71837_REG_REV                = 0x00,
++	BD71837_REG_SWRESET            = 0x01,
++	BD71837_REG_I2C_DEV            = 0x02,
++	BD71837_REG_PWRCTRL0           = 0x03,
++	BD71837_REG_PWRCTRL1           = 0x04,
++	BD71837_REG_BUCK1_CTRL         = 0x05,
++	BD71837_REG_BUCK2_CTRL         = 0x06,
++	BD71837_REG_BUCK3_CTRL         = 0x07,
++	BD71837_REG_BUCK4_CTRL         = 0x08,
++	BD71837_REG_BUCK5_CTRL         = 0x09,
++	BD71837_REG_BUCK6_CTRL         = 0x0A,
++	BD71837_REG_BUCK7_CTRL         = 0x0B,
++	BD71837_REG_BUCK8_CTRL         = 0x0C,
++	BD71837_REG_BUCK1_VOLT_RUN     = 0x0D,
++	BD71837_REG_BUCK1_VOLT_IDLE    = 0x0E,
++	BD71837_REG_BUCK1_VOLT_SUSP    = 0x0F,
++	BD71837_REG_BUCK2_VOLT_RUN     = 0x10,
++	BD71837_REG_BUCK2_VOLT_IDLE    = 0x11,
++	BD71837_REG_BUCK3_VOLT_RUN     = 0x12,
++	BD71837_REG_BUCK4_VOLT_RUN     = 0x13,
++	BD71837_REG_BUCK5_VOLT         = 0x14,
++	BD71837_REG_BUCK6_VOLT         = 0x15,
++	BD71837_REG_BUCK7_VOLT         = 0x16,
++	BD71837_REG_BUCK8_VOLT         = 0x17,
++	BD71837_REG_LDO1_VOLT          = 0x18,
++	BD71837_REG_LDO2_VOLT          = 0x19,
++	BD71837_REG_LDO3_VOLT          = 0x1A,
++	BD71837_REG_LDO4_VOLT          = 0x1B,
++	BD71837_REG_LDO5_VOLT          = 0x1C,
++	BD71837_REG_LDO6_VOLT          = 0x1D,
++	BD71837_REG_LDO7_VOLT          = 0x1E,
++	BD71837_REG_TRANS_COND0        = 0x1F,
++	BD71837_REG_TRANS_COND1        = 0x20,
++	BD71837_REG_VRFAULTEN          = 0x21,
++	BD71837_REG_MVRFLTMASK0        = 0x22,
++	BD71837_REG_MVRFLTMASK1        = 0x23,
++	BD71837_REG_MVRFLTMASK2        = 0x24,
++	BD71837_REG_RCVCFG             = 0x25,
++	BD71837_REG_RCVNUM             = 0x26,
++	BD71837_REG_PWRONCONFIG0       = 0x27,
++	BD71837_REG_PWRONCONFIG1       = 0x28,
++	BD71837_REG_RESETSRC           = 0x29,
++	BD71837_REG_MIRQ               = 0x2A,
++	BD71837_REG_IRQ                = 0x2B,
++	BD71837_REG_IN_MON             = 0x2C,
++	BD71837_REG_POW_STATE          = 0x2D,
++	BD71837_REG_OUT32K             = 0x2E,
++	BD71837_REG_REGLOCK            = 0x2F,
++	BD71837_REG_OTPVER             = 0xFF,
++	BD71837_MAX_REGISTER           = 0x100,
++};
++
++#define REGLOCK_PWRSEQ	0x1
++#define REGLOCK_VREG	0x10
++
++/* Generic BUCK control masks */
++#define BD71837_BUCK_SEL	0x02
++#define BD71837_BUCK_EN		0x01
++#define BD71837_BUCK_RUN_ON	0x04
++
++/* Generic LDO masks */
++#define BD71837_LDO_SEL		0x80
++#define BD71837_LDO_EN		0x40
++
++/* BD71837 BUCK ramp rate CTRL reg bits */
++#define BUCK_RAMPRATE_MASK	0xC0
++#define BUCK_RAMPRATE_10P00MV	0x0
++#define BUCK_RAMPRATE_5P00MV	0x1
++#define BUCK_RAMPRATE_2P50MV	0x2
++#define BUCK_RAMPRATE_1P25MV	0x3
++
++/* BD71837_REG_BUCK1_VOLT_RUN bits */
++#define BUCK1_RUN_MASK		0x3F
++#define BUCK1_RUN_DEFAULT	0x14
++
++/* BD71837_REG_BUCK1_VOLT_SUSP bits */
++#define BUCK1_SUSP_MASK		0x3F
++#define BUCK1_SUSP_DEFAULT	0x14
++
++/* BD71837_REG_BUCK1_VOLT_IDLE bits */
++#define BUCK1_IDLE_MASK		0x3F
++#define BUCK1_IDLE_DEFAULT	0x14
++
++/* BD71837_REG_BUCK2_VOLT_RUN bits */
++#define BUCK2_RUN_MASK		0x3F
++#define BUCK2_RUN_DEFAULT	0x1E
++
++/* BD71837_REG_BUCK2_VOLT_IDLE bits */
++#define BUCK2_IDLE_MASK		0x3F
++#define BUCK2_IDLE_DEFAULT	0x14
++
++/* BD71837_REG_BUCK3_VOLT_RUN bits */
++#define BUCK3_RUN_MASK		0x3F
++#define BUCK3_RUN_DEFAULT	0x1E
++
++/* BD71837_REG_BUCK4_VOLT_RUN bits */
++#define BUCK4_RUN_MASK		0x3F
++#define BUCK4_RUN_DEFAULT	0x1E
++
++/* BD71837_REG_BUCK5_VOLT bits */
++#define BUCK5_MASK		0x07
++#define BUCK5_DEFAULT		0x02
++
++/* BD71837_REG_BUCK6_VOLT bits */
++#define BUCK6_MASK		0x03
++#define BUCK6_DEFAULT		0x03
++
++/* BD71837_REG_BUCK7_VOLT bits */
++#define BUCK7_MASK		0x07
++#define BUCK7_DEFAULT		0x03
++
++/* BD71837_REG_BUCK8_VOLT bits */
++#define BUCK8_MASK		0x3F
++#define BUCK8_DEFAULT		0x1E
++
++/* BD71837_REG_IRQ bits */
++#define IRQ_SWRST		0x40
++#define IRQ_PWRON_S		0x20
++#define IRQ_PWRON_L		0x10
++#define IRQ_PWRON		0x08
++#define IRQ_WDOG		0x04
++#define IRQ_ON_REQ		0x02
++#define IRQ_STBY_REQ		0x01
++
++/* BD71837_REG_OUT32K bits */
++#define BD71837_OUT32K_EN	0x01
++
++/* BD71837 gated clock rate */
++#define BD71837_CLK_RATE 32768
++
++/* BD71837 irqs */
++enum {
++	BD71837_INT_STBY_REQ,
++	BD71837_INT_ON_REQ,
++	BD71837_INT_WDOG,
++	BD71837_INT_PWRBTN,
++	BD71837_INT_PWRBTN_L,
++	BD71837_INT_PWRBTN_S,
++	BD71837_INT_SWRST
++};
++
++/* BD71837 interrupt masks */
++#define BD71837_INT_SWRST_MASK		0x40
++#define BD71837_INT_PWRBTN_S_MASK	0x20
++#define BD71837_INT_PWRBTN_L_MASK	0x10
++#define BD71837_INT_PWRBTN_MASK		0x8
++#define BD71837_INT_WDOG_MASK		0x4
++#define BD71837_INT_ON_REQ_MASK		0x2
++#define BD71837_INT_STBY_REQ_MASK	0x1
++
++/* BD71837_REG_LDO1_VOLT bits */
++#define LDO1_MASK		0x03
++
++/* BD71837_REG_LDO1_VOLT bits */
++#define LDO2_MASK		0x20
++
++/* BD71837_REG_LDO3_VOLT bits */
++#define LDO3_MASK		0x0F
++
++/* BD71837_REG_LDO4_VOLT bits */
++#define LDO4_MASK		0x0F
++
++/* BD71837_REG_LDO5_VOLT bits */
++#define LDO5_MASK		0x0F
++
++/* BD71837_REG_LDO6_VOLT bits */
++#define LDO6_MASK		0x0F
++
++/* BD71837_REG_LDO7_VOLT bits */
++#define LDO7_MASK		0x0F
++
++struct bd71837;
++struct bd71837_pmic;
++struct bd71837_clk;
++
++/*
++ * Board platform data may be used to initialize regulators.
++ */
++
++struct bd71837_board {
++	struct regulator_init_data *init_data[BD71837_REGULATOR_CNT];
++	int	gpio_intr;
++	int	irq_base;
++};
++
++struct bd71837 {
++	struct device *dev;
++	struct i2c_client *i2c_client;
++	struct regmap *regmap;
++	unsigned long int id;
++
++	int chip_irq;
++	struct regmap_irq_chip_data *irq_data;
++
++	struct bd71837_pmic *pmic;
++	struct bd71837_clk *clk;
++
++	struct bd71837_board *of_plat_data;
++};
++
++/*
++ * bd71837 sub-driver chip access routines
++ */
++
++static inline int bd71837_reg_read(struct bd71837 *bd71837, u8 reg)
++{
++	int r, val;
++
++	r = regmap_read(bd71837->regmap, reg, &val);
++	if (r < 0)
++		return r;
++	return val;
++}
++
++static inline int bd71837_reg_write(struct bd71837 *bd71837, u8 reg,
++		unsigned int val)
++{
++	return regmap_write(bd71837->regmap, reg, val);
++}
++
++static inline int bd71837_set_bits(struct bd71837 *bd71837, u8 reg,	u8 mask)
++{
++	return regmap_update_bits(bd71837->regmap, reg, mask, mask);
++}
++
++static inline int bd71837_clear_bits(struct bd71837 *bd71837, u8 reg,
++		u8 mask)
++{
++	return regmap_update_bits(bd71837->regmap, reg, mask, 0);
++}
++
++static inline int bd71837_update_bits(struct bd71837 *bd71837, u8 reg,
++					   u8 mask, u8 val)
++{
++	return regmap_update_bits(bd71837->regmap, reg, mask, val);
++}
++
++#endif /* __LINUX_MFD_BD71837_H__ */
 -- 
 2.14.3
