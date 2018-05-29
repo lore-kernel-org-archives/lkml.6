@@ -1,75 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754894AbeE2HmJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:42:09 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57911 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750831AbeE2HmH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:42:07 -0400
-Subject: Re: linux-next: manual merge of the irqchip tree with the arm-soc
- tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Marc Zyngier <marc.zyngier@arm.com>, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-CC: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ludovic Barre <ludovic.barre@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-References: <20180529155257.5ae48830@canb.auug.org.au>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <1bedc0b7-21f9-1e15-a11c-3de06e81b5ba@st.com>
-Date: Tue, 29 May 2018 09:41:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754967AbeE2HnE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:43:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40020 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754797AbeE2HnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:43:02 -0400
+Date: Tue, 29 May 2018 09:43:00 +0200
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Jason Yan <yanaijie@huawei.com>
+Cc: martin.petersen@oracle.com, jejb@linux.vnet.ibm.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        john.garry@huawei.com, zhaohongjiang@huawei.com, hare@suse.com,
+        dan.j.williams@intel.com, hch@lst.de, huangdaode@hisilicon.com,
+        chenxiang66@hisilicon.com, xiexiuqi@huawei.com, tj@kernel.org,
+        miaoxie@huawei.com, Ewan Milne <emilne@redhat.com>,
+        Tomas Henzl <thenzl@redhat.com>
+Subject: Re: [PATCH 4/8] scsi: libsas: trigger a new revalidation to discover
+ the device
+Message-ID: <20180529074300.x7g7utdtncxh6pfq@linux-x5ow.site>
+References: <20180529022309.21071-1-yanaijie@huawei.com>
+ <20180529022309.21071-5-yanaijie@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529155257.5ae48830@canb.auug.org.au>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG6NODE3.st.com (10.75.127.18) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_02:,,
- signatures=0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180529022309.21071-5-yanaijie@huawei.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen
-
-On 05/29/2018 07:52 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the irqchip tree got a conflict in:
-> 
->    arch/arm/boot/dts/stm32mp157c.dtsi
-> 
-> between commit:
-> 
->    3c00436fdb20 ("ARM: dts: stm32: add USBPHYC support to stm32mp157c")
-> 
-> from the arm-soc tree and commit:
-> 
->    5f0e9d2557d7 ("ARM: dts: stm32: Add exti support for stm32mp157c")
-> 
-> from the irqchip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-
-Thanks for the fix (I will reorder nodes in a future patch). My opinion 
-is that all STM32 DT patches should come through my STM32 tree. It is my 
-role to fix this kind of conflicts. I thought it was a common rule 
-(driver patches go to sub-system maintainer tree and DT to the Machine 
-maintainer). For incoming next-series which contain DT+driver patches I 
-will indicate clearly that I take DT patch. I'm right ?
-
-Regards
-Alex
+Looks good,
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
