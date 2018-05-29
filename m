@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932573AbeE2JBP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:01:15 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:16664 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932435AbeE2JBI (ORCPT
+        id S932620AbeE2JBm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:01:42 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:16935 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932543AbeE2JBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:01:08 -0400
+        Tue, 29 May 2018 05:01:14 -0400
 From: Roger Quadros <rogerq@ti.com>
 To: <tony@atomide.com>
 CC: <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>,
-        "[4.16+]" <stable@vger.kernel.org>
-Subject: [PATCH 1/5] ARM: dts: dra7: Disable metastability workaround for USB2
-Date: Tue, 29 May 2018 12:00:54 +0300
-Message-ID: <1527584458-6257-2-git-send-email-rogerq@ti.com>
+        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 4/5] ARM: dts: dra71-evm: Add VBUS GPIO to USB1/USB2 extcon
+Date: Tue, 29 May 2018 12:00:57 +0300
+Message-ID: <1527584458-6257-5-git-send-email-rogerq@ti.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527584458-6257-1-git-send-email-rogerq@ti.com>
 References: <1527584458-6257-1-git-send-email-rogerq@ti.com>
@@ -25,36 +24,30 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Disable the metastability workaround for USB2. The original
-patch disabled the workaround on the wrong USB port.
+The board has USB VBUS detection available over GPIO. Plug it to
+extcon node of USB1 and USB2 ports.
 
-Fixes: b8c9c6fa2002 ("ARM: dts: dra7: Disable USB metastability workaround for USB2")
-Cc: <stable@vger.kernel.org>        [4.16+]
 Signed-off-by: Roger Quadros <rogerq@ti.com>
 ---
- arch/arm/boot/dts/dra7.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/dra71-evm.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
-index f4ddd86..9cace9f 100644
---- a/arch/arm/boot/dts/dra7.dtsi
-+++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -1582,7 +1582,6 @@
- 				dr_mode = "otg";
- 				snps,dis_u3_susphy_quirk;
- 				snps,dis_u2_susphy_quirk;
--				snps,dis_metastability_quirk;
- 			};
- 		};
- 
-@@ -1610,6 +1609,7 @@
- 				dr_mode = "otg";
- 				snps,dis_u3_susphy_quirk;
- 				snps,dis_u2_susphy_quirk;
-+				snps,dis_metastability_quirk;
- 			};
- 		};
- 
+diff --git a/arch/arm/boot/dts/dra71-evm.dts b/arch/arm/boot/dts/dra71-evm.dts
+index ebc4bba..c513399 100644
+--- a/arch/arm/boot/dts/dra71-evm.dts
++++ b/arch/arm/boot/dts/dra71-evm.dts
+@@ -276,3 +276,11 @@
+ 	/* Supplied by VDA_1V8_PHY */
+ 	vdda_video-supply = <&lp8732_ldo1_reg>;
+ };
++
++&extcon_usb1 {
++	vbus-gpio = <&pcf_lcd 14 GPIO_ACTIVE_HIGH>;
++};
++
++&extcon_usb2 {
++	vbus-gpio = <&pcf_lcd 15 GPIO_ACTIVE_HIGH>;
++};
 -- 
 cheers,
 -roger
