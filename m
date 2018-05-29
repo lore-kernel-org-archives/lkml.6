@@ -1,58 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965356AbeE2R1S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 13:27:18 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34730 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937187AbeE2R1O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 13:27:14 -0400
-X-Google-Smtp-Source: AB8JxZrmq5rzdrQsw07Jci8S7LfyyIW3y24YMCWniTzvim2tzzPLkDXICedHu5fkjJwenRFuxoj4OA==
-From: Jeffrin Jose T <ahiliation@gmail.com>
-To: shuah@kernel.org, kstewart@linuxfoundation.org, tglx@linutronix.de,
-        pombredanne@nexb.com, gregkh@linuxfoundation.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrin Jose T <ahiliation@gmail.com>
-Subject: [PATCH] [RESEND] selftest: intel_pstate: debug support message from aperf.c and return value fix.
-Date: Tue, 29 May 2018 22:54:36 +0530
-Message-Id: <20180529172436.4432-1-ahiliation@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S965414AbeE2R2R (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 13:28:17 -0400
+Received: from mga06.intel.com ([134.134.136.31]:65371 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965363AbeE2R2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 13:28:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
+   d="scan'208";a="60077698"
+Subject: Re: [RFC PATCH 00/16] x86/split_lock: Enable #AC exception for split
+ locked accesses
+To: Fenghua Yu <fenghua.yu@intel.com>
+References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
+ <f43f6139-7303-b469-a8b9-fe65e1cd9aed@intel.com>
+ <20180529172511.GA212416@romley-ivt3.sc.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>, Alan Cox <alan@linux.intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <43c11ed3-c0a6-03cb-51b5-075595f9be12@intel.com>
+Date: Tue, 29 May 2018 10:28:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180529172511.GA212416@romley-ivt3.sc.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Additional message along with an error message which is more
-verbose for debug support from aperf.c and updated with the
-new return value "KSFT_SKIP".
+On 05/29/2018 10:25 AM, Fenghua Yu wrote:
+> (By the way, ISE and SDM don't mention other important details, e.g. 
+> the fact that operand is fetched to cache before split lock is
+> checked. Without the fact, it's hard to explain that only split lock
+> generates bus lock in chapter 8.1.4 in SDM vol3.)
 
-Signed-off-by: Jeffrin Jose T [Rajagiri SET] <ahiliation@gmail.com>
----
- tools/testing/selftests/intel_pstate/aperf.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+That's a bummer.  You're working with the folks that own those documents
+to get that fixed up, right?
 
-diff --git a/tools/testing/selftests/intel_pstate/aperf.c b/tools/testing/selftests/intel_pstate/aperf.c
-index d21edea9c560..f6cd03a87493 100644
---- a/tools/testing/selftests/intel_pstate/aperf.c
-+++ b/tools/testing/selftests/intel_pstate/aperf.c
-@@ -9,6 +9,8 @@
- #include <sys/timeb.h>
- #include <sched.h>
- #include <errno.h>
-+#include <string.h>
-+#include "../kselftest.h"
- 
- void usage(char *name) {
- 	printf ("Usage: %s cpunum\n", name);
-@@ -41,8 +43,8 @@ int main(int argc, char **argv) {
- 	fd = open(msr_file_name, O_RDONLY);
- 
- 	if (fd == -1) {
--		perror("Failed to open");
--		return 1;
-+		printf("/dev/cpu/%d/msr: %s\n", cpu, strerror(errno));
-+		return KSFT_SKIP;
- 	}
- 
- 	CPU_ZERO(&cpuset);
--- 
-2.17.0
+> Maybe I can add "Current TEST_CTL implementation is per-core. The patches
+> are supposed to work even when TEST_CTL is per-thread (or even per-
+> socket) in future as well."?
+
+Yes, that would be a very important part of the software implementation
+to mention.
