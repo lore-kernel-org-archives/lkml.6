@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967513AbeE2VSs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:18:48 -0400
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:34464 "EHLO
+        id S967330AbeE2VTu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:19:50 -0400
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:44848 "EHLO
         mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967319AbeE2VSD (ORCPT
+        with ESMTP id S966952AbeE2VTl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:18:03 -0400
-X-Google-Smtp-Source: ADUXVKLtY26g2NFGPXaYAEoGpL51Nr4bAFeLeXqeyVWZMYL2puHXXMWx+TYr6wUuy0UzcsuTtCntuhY1rxLG3h/e/us=
+        Tue, 29 May 2018 17:19:41 -0400
+X-Google-Smtp-Source: ADUXVKIfx3l7S8Jp/dkwCKszV4FlXxrXJPb1VDE8E3VaHReFXj3TEPTDG3KWm8cs+3qjri9dx6iwJTd2mxKSEbPBekQ=
 MIME-Version: 1.0
 X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180524201105.3179904-5-stefanb@linux.vnet.ibm.com>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <20180524201105.3179904-5-stefanb@linux.vnet.ibm.com>
+In-Reply-To: <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com>
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 29 May 2018 17:18:01 -0400
-Message-ID: <CAHC9VhQk8wEsrGdzUBeT7FPkSrs8SRmCDwpS5Ae8oXyV_m3NYQ@mail.gmail.com>
-Subject: Re: [PATCH 4/8] audit: Allow others to call audit_log_d_path_exe()
+Date: Tue, 29 May 2018 17:19:39 -0400
+Message-ID: <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
+Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to integrity audits
 To: Stefan Berger <stefanb@linux.vnet.ibm.com>
 Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
         linux-integrity@vger.kernel.org, linux-audit@redhat.com,
@@ -27,49 +27,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
 <stefanb@linux.vnet.ibm.com> wrote:
-> Add the prototype for audit_log_d_path_exe() so that it can be
-> called by IMA later in this series.
+> Use the new public audit functions to add the exe= and tty=
+> parts to the integrity audit records. We place them before
+> res=.
 >
 > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Suggested-by: Steve Grubb <sgrubb@redhat.com>
 > ---
->  include/linux/audit.h | 5 +++++
->  1 file changed, 5 insertions(+)
-
-Acked-by: Paul Moore <paul@paul-moore.com>
-
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 2deb76c74d10..65eca0795308 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -144,6 +144,8 @@ extern void             audit_log_untrustedstring(struct audit_buffer *ab,
->  extern void                audit_log_d_path(struct audit_buffer *ab,
->                                              const char *prefix,
->                                              const struct path *path);
-> +extern void                audit_log_d_path_exe(struct audit_buffer *ab,
-> +                                                struct mm_struct *mm);
->  extern void                audit_log_key(struct audit_buffer *ab,
->                                           char *key);
->  extern void                audit_log_link_denied(const char *operation);
-> @@ -192,6 +194,9 @@ static inline void audit_log_d_path(struct audit_buffer *ab,
->                                     const char *prefix,
->                                     const struct path *path)
->  { }
-> +static inline void audit_log_d_path_exe(struct audit_buffer *ab,
-> +                                       struct mm_struct *mm)
-> +{}
->  static inline void audit_log_key(struct audit_buffer *ab, char *key)
->  { }
->  static inline void audit_log_link_denied(const char *string)
-> --
-> 2.13.6
+>  security/integrity/integrity_audit.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://www.redhat.com/mailman/listinfo/linux-audit
+> diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
+> index db30763d5525..8d25d3c4dcca 100644
+> --- a/security/integrity/integrity_audit.c
+> +++ b/security/integrity/integrity_audit.c
+> @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode *inode,
+>                 audit_log_untrustedstring(ab, inode->i_sb->s_id);
+>                 audit_log_format(ab, " ino=%lu", inode->i_ino);
+>         }
+> +       audit_log_d_path_exe(ab, current->mm);
+> +       audit_log_tty(ab, current);
 
+NACK
 
+Please add the new fields to the end of the audit record, thank you.
+
+>         audit_log_format(ab, " res=%d", !result);
+>         audit_log_end(ab);
+>  }
 
 -- 
 paul moore
