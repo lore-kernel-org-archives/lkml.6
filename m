@@ -1,106 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932566AbeE2Iua (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:50:30 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34420 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755356AbeE2IsW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:48:22 -0400
-X-Google-Smtp-Source: AB8JxZrBfnIEfJ2hH99aukYHfv1gVQOx3ZNAQVEw673LqOAn2X3hZSz4wsGGRE0R2ElmleSZeJMy3w==
-Date: Tue, 29 May 2018 14:18:19 +0530
-From: Vinod Koul <vinod.koul@linaro.org>
-To: Mukesh Ojha <mojha@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] time: Fix sleeptime injection for non-stop clocksource &
- persistent clock
-Message-ID: <20180529084819.GI5666@vkoul-mobl>
-References: <1527581718-5624-1-git-send-email-mojha@codeaurora.org>
+        id S1755401AbeE2IzG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:55:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755257AbeE2IzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 04:55:03 -0400
+Date: Tue, 29 May 2018 11:54:59 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Hakon Bugge <haakon.bugge@oracle.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] IB/mad: Use ID allocator routines to allocate agent
+ number
+Message-ID: <20180529085459.GF3697@mtr-leonro.mtl.com>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="4jXrM3lyYWu4nBt5"
 Content-Disposition: inline
-In-Reply-To: <1527581718-5624-1-git-send-email-mojha@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-05-18, 13:45, Mukesh Ojha wrote:
-> Currently, for both non-stop clocksource and persistent clock
-> there is a corner case, when a driver failed to go suspend mode
-> rtc_resume injects the sleeptime as timekeeping_rtc_skipresume
-> returned 'false' due to which we can see mismatch in time with
-> system clock.
-> 
-> Success case:
->                                          {sleeptime_injected=true}
-> rtc_suspend() => timekeeping_suspend() => timekeeping_resume() => rtc_resume()
-> 
-> Failure case:
->              {failure in sleep path} {sleeptime_injected=false}
-> rtc_suspend()       =>             rtc_resume()
-> 
-> Change-Id: I98928761c98cec21a3033a55d3e10fb34138f38c
 
-This does not belong in upstream please remove. I think checkpatch warns.
+--4jXrM3lyYWu4nBt5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Also I see that you have sent to lkml and arm-msm mailing list, but have not
-CCed any maintainers. Please run ./scripts/get_maintainer.pl to find who to send
-patches to. Chances are it will get ignored...
+On Tue, May 29, 2018 at 09:38:08AM +0200, Hans Westgaard Ry wrote:
+> The agent TID is a 64 bit value split in two dwords.  The least
+> significant dword is the TID running counter. The most significant
+> dword is the agent number. In the CX-3 shared port model, the mlx4
+> driver uses the most significant byte of the agent number to store the
+> slave number, making agent numbers greater and equal to 2^24 (3 bytes)
+> unusable.  The current codebase uses a variable which is incremented
+> atomically for each new agent number giving too large agent numbers
+> over time.  The IDA set of functions are used instead of the simple
+> counter approach. This allows re-use of agent numbers. A sysctl
+> variable is also introduced, to control the max agent number.
 
-> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-> ---
->  kernel/time/timekeeping.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> index 427e33d..c022d82 100644
-> --- a/kernel/time/timekeeping.c
-> +++ b/kernel/time/timekeeping.c
-> @@ -1511,9 +1511,6 @@ void __weak read_boot_clock64(struct timespec64 *ts)
->  	ts->tv_nsec = 0;
->  }
->  
-> -/* Flag for if timekeeping_resume() has injected sleeptime */
-> -static bool sleeptime_injected;
-> -
->  /* Flag for if there is a persistent clock on this platform */
->  static bool persistent_clock_exists;
->  
-> @@ -1611,7 +1608,14 @@ static void __timekeeping_inject_sleeptime(struct timekeeper *tk,
->   */
->  bool timekeeping_rtc_skipresume(void)
->  {
-> -	return sleeptime_injected;
-> +	struct timekeeper *tk = &tk_core.timekeeper;
-> +	bool skip_rtc_resume = false;
-> +
-> +	skip_rtc_resume = ((tk->tkr_mono.clock->flags &
-> +			CLOCK_SOURCE_SUSPEND_NONSTOP) ||
-> +			(persistent_clock_exists)) ? true : false;
-> +
-> +	return skip_rtc_resume;
->  }
->  
->  /**
-> @@ -1671,8 +1675,8 @@ void timekeeping_resume(void)
->  	unsigned long flags;
->  	struct timespec64 ts_new, ts_delta;
->  	cycle_t cycle_now, cycle_delta;
-> +	bool sleeptime_injected = false;
->  
-> -	sleeptime_injected = false;
->  	read_persistent_clock64(&ts_new);
->  
->  	clockevents_resume();
-> -- 
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-> Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Why don't you simply limit this number per-driver? By default, any
+variable is allowed and mlx4_ib will set something else.
 
--- 
-~Vinod
+What is the advantage of having sysctl?
+
+Thanks
+
+--4jXrM3lyYWu4nBt5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbDRVjAAoJEORje4g2clinN0AP/idsbMxwIzDg+gKlb2EZQsNc
+B0j6QICUQKz4wqHuqghozSA2hjyTwcWRzmjFkf5VNaI0T6g93pOf3FcdFGFHlz+/
+dhwDZsHa/EwJqFIbGDc/ch7XNMwAsLBXvllU3eq+dno5jdkjVJ9Vsvuc11pX6ttI
+N0sxuYhe4gaNE5OnBpASXmk58D+P4uAqlFdbcjTYyYlG3B0W3aapVk15Dii83dSa
+Ny8XPBMY1RgjI2txEVMwDjTLXNfvkSg7w+FfgkZA4m5VwyEK4BnQJSmoFidxEWjv
+20OkzehDteZDI21BBNtQQxj0a5zdzGPSTnv/8RxkLOr7q6k8bYHXswcag99LjciD
+pcG59IVIJR9//tNw48Ey0uRdJwWfAiiBw6uA1fTOWWQjyg/5QwkVjlh2y/TT2Tfv
+4AcDOjhDjhUrCSgEwYtetzXYUQRg6/z2GWps9oCVvHOXE/tC4EvXUGBwYRp62yIv
+rcN+FDhYcRjowLnIGuWOQUuOWucg7DDVC4T0gh05Tax3rvtw1wqz6plO+i5Shlag
+nQQj7VNElA1tcoIFJkWvRK+qLoaUkJLiuW0vRTMyqm7LeN1WdC2GvPCKTv5STeMC
+Ik2iSeoIm5WzYOUGdFoetdvBVL9sLZXXIy6bwtp84+ultwwWbVfSNn2gtkgPthR3
+ZrnBiholSjKN79fe9s54
+=4dh0
+-----END PGP SIGNATURE-----
+
+--4jXrM3lyYWu4nBt5--
