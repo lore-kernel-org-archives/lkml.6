@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964798AbeE2Ox2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:53:28 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34211 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936610AbeE2Oqd (ORCPT
+        id S936555AbeE2OqY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:46:24 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:54527 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935652AbeE2OqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:46:33 -0400
-X-Google-Smtp-Source: ADUXVKJhSFZinTq5jhqvozcROLaRYg9NNPA5FJI0sZKsz2sbBzHeEb8CVxGiKSOsoawzPil/LuurtQ==
+        Tue, 29 May 2018 10:46:18 -0400
+X-Google-Smtp-Source: ADUXVKIX5N98TCs/g4mq/qYqer5WZPEN1rRwbj1vWFkdtaMbvcOwakOySzs1JDdR6vrmd/GpUZpfCA==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 14/28] ovl: Add helper ovl_inode_realdata()
-Date: Tue, 29 May 2018 16:45:58 +0200
-Message-Id: <20180529144612.16675-15-mszeredi@redhat.com>
+Subject: [PATCH 02/28] ovl: Move the copy up helpers to copy_up.c
+Date: Tue, 29 May 2018 16:45:46 +0200
+Message-Id: <20180529144612.16675-3-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
 References: <20180529144612.16675-1-mszeredi@redhat.com>
@@ -23,52 +23,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vivek Goyal <vgoyal@redhat.com>
 
-Add an helper to retrieve real data inode associated with overlay inode.
-This helper will ignore all metacopy inodes and will return only the real
-inode which has data.
+Right now two copy up helpers are in inode.c.  Amir suggested it might be
+better to move these to copy_up.c.
+
+There will one more related function which will come in later patch.
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/overlayfs.h |  1 +
- fs/overlayfs/util.c      | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
+ fs/overlayfs/copy_up.c   | 32 ++++++++++++++++++++++++++++++++
+ fs/overlayfs/inode.c     | 32 --------------------------------
+ fs/overlayfs/overlayfs.h |  2 +-
+ 3 files changed, 33 insertions(+), 33 deletions(-)
 
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 558a1b444286..dcd600201ec8 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -229,6 +229,7 @@ struct inode *ovl_inode_upper(struct inode *inode);
- struct inode *ovl_inode_lower(struct inode *inode);
- struct inode *ovl_inode_lowerdata(struct inode *inode);
- struct inode *ovl_inode_real(struct inode *inode);
-+struct inode *ovl_inode_realdata(struct inode *inode);
- struct ovl_dir_cache *ovl_dir_cache(struct inode *inode);
- void ovl_set_dir_cache(struct inode *inode, struct ovl_dir_cache *cache);
- void ovl_dentry_set_flag(unsigned long flag, struct dentry *dentry);
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index 63311c536216..73939e08d8bf 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -256,6 +256,18 @@ struct inode *ovl_inode_lowerdata(struct inode *inode)
- 	return OVL_I(inode)->lowerdata ?: ovl_inode_lower(inode);
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index e675e8349e71..91b3b668482b 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -779,6 +779,38 @@ int ovl_copy_up_flags(struct dentry *dentry, int flags)
+ 	return err;
  }
  
-+/* Return real inode which contains data. Does not return metacopy inode */
-+struct inode *ovl_inode_realdata(struct inode *inode)
++static bool ovl_open_need_copy_up(struct dentry *dentry, int flags)
 +{
-+	struct inode *upperinode;
++	/* Copy up of disconnected dentry does not set upper alias */
++	if (ovl_dentry_upper(dentry) &&
++	    (ovl_dentry_has_upper_alias(dentry) ||
++	     (dentry->d_flags & DCACHE_DISCONNECTED)))
++		return false;
 +
-+	upperinode = ovl_inode_upper(inode);
-+	if (upperinode && ovl_has_upperdata(inode))
-+		return upperinode;
++	if (special_file(d_inode(dentry)->i_mode))
++		return false;
 +
-+	return ovl_inode_lowerdata(inode);
++	if (!(OPEN_FMODE(flags) & FMODE_WRITE) && !(flags & O_TRUNC))
++		return false;
++
++	return true;
 +}
 +
- struct ovl_dir_cache *ovl_dir_cache(struct inode *inode)
++int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags)
++{
++	int err = 0;
++
++	if (ovl_open_need_copy_up(dentry, file_flags)) {
++		err = ovl_want_write(dentry);
++		if (!err) {
++			err = ovl_copy_up_flags(dentry, file_flags);
++			ovl_drop_write(dentry);
++		}
++	}
++
++	return err;
++}
++
+ int ovl_copy_up(struct dentry *dentry)
  {
- 	return OVL_I(inode)->cache;
+ 	return ovl_copy_up_flags(dentry, 0);
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index c365b94fa158..60c88a09a3f3 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -399,38 +399,6 @@ struct posix_acl *ovl_get_acl(struct inode *inode, int type)
+ 	return acl;
+ }
+ 
+-static bool ovl_open_need_copy_up(struct dentry *dentry, int flags)
+-{
+-	/* Copy up of disconnected dentry does not set upper alias */
+-	if (ovl_dentry_upper(dentry) &&
+-	    (ovl_dentry_has_upper_alias(dentry) ||
+-	     (dentry->d_flags & DCACHE_DISCONNECTED)))
+-		return false;
+-
+-	if (special_file(d_inode(dentry)->i_mode))
+-		return false;
+-
+-	if (!(OPEN_FMODE(flags) & FMODE_WRITE) && !(flags & O_TRUNC))
+-		return false;
+-
+-	return true;
+-}
+-
+-int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags)
+-{
+-	int err = 0;
+-
+-	if (ovl_open_need_copy_up(dentry, file_flags)) {
+-		err = ovl_want_write(dentry);
+-		if (!err) {
+-			err = ovl_copy_up_flags(dentry, file_flags);
+-			ovl_drop_write(dentry);
+-		}
+-	}
+-
+-	return err;
+-}
+-
+ int ovl_update_time(struct inode *inode, struct timespec *ts, int flags)
+ {
+ 	if (flags & S_ATIME) {
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 1948e38c3c95..9172d3d5d870 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -332,7 +332,6 @@ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+ 		  void *value, size_t size);
+ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size);
+ struct posix_acl *ovl_get_acl(struct inode *inode, int type);
+-int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags);
+ int ovl_update_time(struct inode *inode, struct timespec *ts, int flags);
+ bool ovl_is_private_xattr(const char *name);
+ 
+@@ -391,6 +390,7 @@ extern const struct file_operations ovl_file_operations;
+ /* copy_up.c */
+ int ovl_copy_up(struct dentry *dentry);
+ int ovl_copy_up_flags(struct dentry *dentry, int flags);
++int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags);
+ int ovl_copy_xattr(struct dentry *old, struct dentry *new);
+ int ovl_set_attr(struct dentry *upper, struct kstat *stat);
+ struct ovl_fh *ovl_encode_real_fh(struct dentry *real, bool is_upper);
 -- 
 2.14.3
