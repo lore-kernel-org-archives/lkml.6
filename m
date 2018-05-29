@@ -1,70 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967415AbeE2Vkf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:40:35 -0400
-Received: from ozlabs.org ([203.11.71.1]:45787 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967178AbeE2Vkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:40:32 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 30 May 2018 07:40:12 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>
-Subject: Re: linux-next: manual merge of the block tree with the vfs tree
-Message-ID: <20180530074012.393b74b1@canb.auug.org.au>
-In-Reply-To: <83024e98-8719-7ed2-a5d5-e1653162bacc@kernel.dk>
-References: <20180529143357.2a66b0af@canb.auug.org.au>
-        <20180529081205.GB1416@lst.de>
-        <83024e98-8719-7ed2-a5d5-e1653162bacc@kernel.dk>
+        id S967361AbeE2VsA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:48:00 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45532 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966504AbeE2Vr5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 17:47:57 -0400
+X-Google-Smtp-Source: ADUXVKJMBOlmkxp5vzZuOclqZUTCDw8jhFQvZYlLVyYI2V7xciPAN8aiFicNSMXMJFVNLtJQRq/2WF/BPmi2jXJuP2Q=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SqvX5CREKlQODG_3uzAwLJY"; protocol="application/pgp-signature"
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <4331521.GQBdaJNAj6@x2>
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
+ <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com> <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
+ <4331521.GQBdaJNAj6@x2>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 29 May 2018 17:47:55 -0400
+Message-ID: <CAHC9VhRp82u4puDt82E0G4ax4tb9301U7XK6+0ZT1rrP-ZgaRw@mail.gmail.com>
+Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to integrity audits
+To: Steve Grubb <sgrubb@redhat.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
+        linux-audit@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/SqvX5CREKlQODG_3uzAwLJY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jens,
-
-On Tue, 29 May 2018 08:22:43 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+On Tue, May 29, 2018 at 5:35 PM, Steve Grubb <sgrubb@redhat.com> wrote:
+> On Tuesday, May 29, 2018 5:19:39 PM EDT Paul Moore wrote:
+>> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
+>>
+>> <stefanb@linux.vnet.ibm.com> wrote:
+>> > Use the new public audit functions to add the exe= and tty=
+>> > parts to the integrity audit records. We place them before
+>> > res=.
+>> >
+>> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> > Suggested-by: Steve Grubb <sgrubb@redhat.com>
+>> > ---
+>> >
+>> >  security/integrity/integrity_audit.c | 2 ++
+>> >  1 file changed, 2 insertions(+)
+>> >
+>> > diff --git a/security/integrity/integrity_audit.c
+>> > b/security/integrity/integrity_audit.c index db30763d5525..8d25d3c4dcca
+>> > 100644
+>> > --- a/security/integrity/integrity_audit.c
+>> > +++ b/security/integrity/integrity_audit.c
+>> > @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode
+>> > *inode,>
+>> >                 audit_log_untrustedstring(ab, inode->i_sb->s_id);
+>> >                 audit_log_format(ab, " ino=%lu", inode->i_ino);
+>> >
+>> >         }
+>> >
+>> > +       audit_log_d_path_exe(ab, current->mm);
+>> > +       audit_log_tty(ab, current);
+>>
+>> NACK
+>>
+>> Please add the new fields to the end of the audit record, thank you.
 >
-> On 5/29/18 2:12 AM, Christoph Hellwig wrote:
-> > Meh.  Do we really need these switch to octal patches to start
-> > with?  I mean, I personally prefer octal, but just switching around
-> > in random code that isn't otherwise changed creates nothing but churn. =
-=20
->=20
-> This is exactly why I hesitated doing it, I knew it would end up
-> with conflicts. The main reason was to get rid of the inconsistency,
-> since we had a fair mix of octal and symbolic names.
+> Let's see what an example event looks like before NACK'ing this. Way back in
+> 2013 the IMA events were good. I think this is repairing the event after some
+> drift.
 
-But the conflicts are all trivial ...
+Can you reference a specific commit, or point in time during 2013?
+Looking at the git log quickly, if I go back to commit d726d8d719b6
+("integrity: move integrity_audit_msg()") from March 18, 2013 (the
+commit that created integrity_audit.c) the field ordering appears to
+be the same as it today.
 
---=20
-Cheers,
-Stephen Rothwell
+My NACK still stands.
 
---Sig_/SqvX5CREKlQODG_3uzAwLJY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNyLwACgkQAVBC80lX
-0Gx2qwf/YkMzvHbny1c26A2RmIIr+VRQYUDpUXCpTGhrQpAAwLLgOACPmyJDHNbF
-5Vvk34hPq74T13Qm8IrmpblfD0N4g4gSxaBvsIHYjzoKwGxz9KiKhkP0uiCo2zZ2
-a9E1IEc/u9rr2EMXqJ8ajD06a7Z56zJm0Vj8eYwOPP72ezCX0tOA3X6fuSQSl7Qw
-OOAClSbgSWU5DDma7Nf9695NCcO9UdEeY6DEflSF4QOV2uhQnANGWuz/FkWBsPSx
-Y377Xmoubm7woiVIf+gn6Js87ApmmApo2nNb81KRvr49U/qhH2G+Ex4R9BM7K2ub
-LIVwTv1qcLzGOY9IFS1pqx/eysMzRg==
-=Gfao
------END PGP SIGNATURE-----
-
---Sig_/SqvX5CREKlQODG_3uzAwLJY--
+-- 
+paul moore
+www.paul-moore.com
