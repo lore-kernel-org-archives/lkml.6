@@ -1,73 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965183AbeE2QQq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:16:46 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:58562 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964848AbeE2QQo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:16:44 -0400
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] IB/mad: Use ID allocator routines to allocate agent
- number
-From: =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
-In-Reply-To: <20180529154922.GA18457@ziepe.ca>
-Date: Tue, 29 May 2018 18:16:14 +0200
-Cc: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Message-Id: <A470D739-D0CD-42EE-9196-8E7610B6DAF4@oracle.com>
-References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
- <20180529154922.GA18457@ziepe.ca>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-X-Mailer: Apple Mail (2.3445.6.18)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=15 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=906
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805290179
+        id S935816AbeE2QSF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:18:05 -0400
+Received: from mga05.intel.com ([192.55.52.43]:44429 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934877AbeE2QSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 12:18:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
+   d="scan'208";a="43701136"
+Date: Tue, 29 May 2018 09:20:58 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux-foundation.org, LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>, Jean Delvare <khali@linux-fr.org>,
+        Christoph Hellwig <hch@infradead.org>, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v5 15/23] iommu: handle page response timeout
+Message-ID: <20180529092058.1942b223@jacob-builder>
+In-Reply-To: <5AF93E3A.2040902@linux.intel.com>
+References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1526072055-86990-16-git-send-email-jacob.jun.pan@linux.intel.com>
+        <5AF93E3A.2040902@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TGGqur005069
 
+On Mon, 14 May 2018 15:43:54 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-
-> On 29 May 2018, at 17:49, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> Hi,
 > 
-> On Tue, May 29, 2018 at 09:38:08AM +0200, Hans Westgaard Ry wrote:
->> The agent TID is a 64 bit value split in two dwords.  The least
->> significant dword is the TID running counter. The most significant
->> dword is the agent number. In the CX-3 shared port model, the mlx4
->> driver uses the most significant byte of the agent number to store the
->> slave number, making agent numbers greater and equal to 2^24 (3 bytes)
->> unusable.
+> On 05/12/2018 04:54 AM, Jacob Pan wrote:
+> > When IO page faults are reported outside IOMMU subsystem, the page
+> > request handler may fail for various reasons. E.g. a guest received
+> > page requests but did not have a chance to run for a long time. The
+> > irresponsive behavior could hold off limited resources on the
+> > pending device.
+> > There can be hardware or credit based software solutions as
+> > suggested in the PCI ATS Ch-4. To provide a basic safty net this
+> > patch introduces a per device deferrable timer which monitors the
+> > longest pending page fault that requires a response. Proper action
+> > such as sending failure response code could be taken when timer
+> > expires but not included in this patch. We need to consider the
+> > life cycle of page groupd ID to prevent confusion with reused group
+> > ID by a device. For now, a warning message provides clue of such
+> > failure.
+> >
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+> > ---
+> >  drivers/iommu/iommu.c | 53
+> > +++++++++++++++++++++++++++++++++++++++++++++++++++
+> > include/linux/iommu.h |  4 ++++ 2 files changed, 57 insertions(+)
+> >
+> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> > index 02fed3e..1f2f49e 100644
+> > --- a/drivers/iommu/iommu.c
+> > +++ b/drivers/iommu/iommu.c
+> > @@ -827,6 +827,37 @@ int iommu_group_unregister_notifier(struct
+> > iommu_group *group, }
+> >  EXPORT_SYMBOL_GPL(iommu_group_unregister_notifier);
+> >  
+> > +static void iommu_dev_fault_timer_fn(struct timer_list *t)
+> > +{
+> > +	struct iommu_fault_param *fparam = from_timer(fparam, t,
+> > timer);
+> > +	struct iommu_fault_event *evt;
+> > +
+> > +	u64 now;
+> > +
+> > +	now = get_jiffies_64();
+> > +
+> > +	/* The goal is to ensure driver or guest page fault
+> > handler(via vfio)
+> > +	 * send page response on time. Otherwise, limited queue
+> > resources
+> > +	 * may be occupied by some irresponsive guests or drivers.
+> > +	 * When per device pending fault list is not empty, we
+> > periodically checks
+> > +	 * if any anticipated page response time has expired.
+> > +	 *
+> > +	 * TODO:
+> > +	 * We could do the following if response time expires:
+> > +	 * 1. send page response code FAILURE to all pending PRQ
+> > +	 * 2. inform device driver or vfio
+> > +	 * 3. drain in-flight page requests and responses for this
+> > device
+> > +	 * 4. clear pending fault list such that driver can
+> > unregister fault
+> > +	 *    handler(otherwise blocked when pending faults are
+> > present).
+> > +	 */
+> > +	list_for_each_entry(evt, &fparam->faults, list) {
+> > +		if (time_after64(now, evt->expire))
+> > +			pr_err("Page response time expired!, pasid
+> > %d gid %d exp %llu now %llu\n",
+> > +				evt->pasid,
+> > evt->page_req_group_id, evt->expire, now);
+> > +	}
+> > +	mod_timer(t, now + prq_timeout);
+> > +}
+> > +  
 > 
-> There is no reason for this to be an ida, just do something like
+> This timer scheme is very rough.
 > 
-> mad_agent_priv->agent.hi_tid = atomic_inc_return(&ib_mad_client_id) & mad_agent_priv->ib_dev->tid_mask;
+yes, the timer is a rough safety net for misbehaved PRQ handlers such
+as a guest.
+> The timer expires every 10 seconds (by default).
 > 
-> And have the driver set tid_mask to 3 bytes of 0xFF
-
-The issue is that some of the mad agents are long-lived, so you will wrap and use the same TID twice.
-
-
-Thxs, Håkon
-
-
+> 0                   10                 20
+> 30                 40
+> +---------------+---------------+---------------+---------------+ ^
+> ^   ^  ^                        ^ |   |     |
+> |                         | F0 F1  F2 F3
+> (F1,F2,F3 will not be handled until here!)
 > 
-> And no sysctl.
+> F0, F1, F2, F3 are four page faults happens during [0, 10s) time
+> window. F1, F2, F3 timeout won't be handled until the timer expires
+> again at 20s. That means a fault might be pending there until about
+> (2 * prq_timeout) seconds later.
 > 
-> Jason
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+correct. it could be 2x for the worst case. I should explain in
+comments.
+> Out of curiosity, Why not adding a timer in iommu_fault_event,
+> starting it in iommu_report_device_fault() and removing it in
+> iommu_page_response()?
+> 
+I thought about that also but since we are just trying to have a broad
+and rough safety net (in addition to potential HW mechanism or credit
+based solution), my thought was that having a per device timer is more
+economical than per event.
+Thanks for the in-depth check!
+
+> Best regards,
+> Lu Baolu
+> 
+> 
+>  [...]  
+> 
+
+[Jacob Pan]
