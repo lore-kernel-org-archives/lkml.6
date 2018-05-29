@@ -1,172 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755467AbeE2It7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:49:59 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:47533 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755392AbeE2Itt (ORCPT
+        id S932566AbeE2Iua (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:50:30 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:34420 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755356AbeE2IsW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:49:49 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>, Len Brown <len.brown@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4 v2] PM / suspend: Prevent might sleep splats
-Date: Tue, 29 May 2018 10:49:01 +0200
-Message-ID: <3248611.5SzSOzXIZe@aspire.rjw.lan>
-In-Reply-To: <20180525155440.jwqrpu3shocwcwjy@linutronix.de>
-References: <20180525094648.15464-1-bigeasy@linutronix.de> <CAJZ5v0j8zf36HdxH-YR_jTS02tF-BF3w7f9tLjf6UJoqCPG+mQ@mail.gmail.com> <20180525155440.jwqrpu3shocwcwjy@linutronix.de>
+        Tue, 29 May 2018 04:48:22 -0400
+X-Google-Smtp-Source: AB8JxZrBfnIEfJ2hH99aukYHfv1gVQOx3ZNAQVEw673LqOAn2X3hZSz4wsGGRE0R2ElmleSZeJMy3w==
+Date: Tue, 29 May 2018 14:18:19 +0530
+From: Vinod Koul <vinod.koul@linaro.org>
+To: Mukesh Ojha <mojha@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] time: Fix sleeptime injection for non-stop clocksource &
+ persistent clock
+Message-ID: <20180529084819.GI5666@vkoul-mobl>
+References: <1527581718-5624-1-git-send-email-mojha@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527581718-5624-1-git-send-email-mojha@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, May 25, 2018 5:54:41 PM CEST Sebastian Andrzej Siewior wrote:
-> From: Thomas Gleixner <tglx@linutronix.de>
+On 29-05-18, 13:45, Mukesh Ojha wrote:
+> Currently, for both non-stop clocksource and persistent clock
+> there is a corner case, when a driver failed to go suspend mode
+> rtc_resume injects the sleeptime as timekeeping_rtc_skipresume
+> returned 'false' due to which we can see mismatch in time with
+> system clock.
 > 
-> timekeeping suspend/resume calls read_persistent_clock() which takes
-> rtc_lock. That results in might sleep warnings because at that point
-> we run with interrupts disabled.
+> Success case:
+>                                          {sleeptime_injected=true}
+> rtc_suspend() => timekeeping_suspend() => timekeeping_resume() => rtc_resume()
 > 
-> We cannot convert rtc_lock to a raw spinlock as that would trigger
-> other might sleep warnings.
+> Failure case:
+>              {failure in sleep path} {sleeptime_injected=false}
+> rtc_suspend()       =>             rtc_resume()
 > 
-> As a workaround we disable the might sleep warnings by setting
-> system_state to SYSTEM_SUSPEND before calling sysdev_suspend() and
-> restoring it to SYSTEM_RUNNING afer sysdev_resume(). There is no lock
-> contention because hibernate / suspend to RAM is single-CPU at this
-> point.
-> 
-> In s2idle's case the system_state is set to SYSTEM_SUSPEND before
-> timekeeping_suspend() which is invoked by the last CPU. In the resume
-> case it set back to SYSTEM_RUNNING after timekeeping_resume() which is
-> invoked by the first CPU in the resume case. The other CPUs will block
-> on tick_freeze_lock.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> [bigeasy: cover s2idle in tick_freeze() / tick_unfreeze()]
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
-> v1…v2: Moved the s2idle case into tick_freeze()/unfreeze() as suggested
->        by Rafael (tglx was okay with this).
-> 
->  include/linux/kernel.h    | 1 +
->  kernel/power/hibernate.c  | 7 +++++++
->  kernel/power/suspend.c    | 4 ++++
->  kernel/time/tick-common.c | 2 ++
->  4 files changed, 14 insertions(+)
-> 
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> index 6a1eb0b0aad9..7aed92624531 100644
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -542,6 +542,7 @@ extern enum system_states {
->  	SYSTEM_HALT,
->  	SYSTEM_POWER_OFF,
->  	SYSTEM_RESTART,
-> +	SYSTEM_SUSPEND,
->  } system_state;
->  
->  /* This cannot be an enum because some may be used in assembly source. */
-> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-> index 5454cc639a8d..9c85c7822383 100644
-> --- a/kernel/power/hibernate.c
-> +++ b/kernel/power/hibernate.c
-> @@ -287,6 +287,8 @@ static int create_image(int platform_mode)
->  
->  	local_irq_disable();
->  
-> +	system_state = SYSTEM_SUSPEND;
-> +
->  	error = syscore_suspend();
->  	if (error) {
->  		pr_err("Some system devices failed to power down, aborting hibernation\n");
-> @@ -317,6 +319,7 @@ static int create_image(int platform_mode)
->  	syscore_resume();
->  
->   Enable_irqs:
-> +	system_state = SYSTEM_RUNNING;
->  	local_irq_enable();
->  
->   Enable_cpus:
-> @@ -445,6 +448,7 @@ static int resume_target_kernel(bool platform_mode)
->  		goto Enable_cpus;
->  
->  	local_irq_disable();
-> +	system_state = SYSTEM_SUSPEND;
->  
->  	error = syscore_suspend();
->  	if (error)
-> @@ -478,6 +482,7 @@ static int resume_target_kernel(bool platform_mode)
->  	syscore_resume();
->  
->   Enable_irqs:
-> +	system_state = SYSTEM_RUNNING;
->  	local_irq_enable();
->  
->   Enable_cpus:
-> @@ -563,6 +568,7 @@ int hibernation_platform_enter(void)
->  		goto Enable_cpus;
->  
->  	local_irq_disable();
-> +	system_state = SYSTEM_SUSPEND;
->  	syscore_suspend();
->  	if (pm_wakeup_pending()) {
->  		error = -EAGAIN;
-> @@ -575,6 +581,7 @@ int hibernation_platform_enter(void)
->  
->   Power_up:
->  	syscore_resume();
-> +	system_state = SYSTEM_RUNNING;
->  	local_irq_enable();
->  
->   Enable_cpus:
-> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> index 4c10be0f4843..5149c77506b3 100644
-> --- a/kernel/power/suspend.c
-> +++ b/kernel/power/suspend.c
-> @@ -428,6 +428,8 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
->  	arch_suspend_disable_irqs();
->  	BUG_ON(!irqs_disabled());
->  
-> +	system_state = SYSTEM_SUSPEND;
-> +
->  	error = syscore_suspend();
->  	if (!error) {
->  		*wakeup = pm_wakeup_pending();
-> @@ -443,6 +445,8 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
->  		syscore_resume();
->  	}
->  
-> +	system_state = SYSTEM_RUNNING;
-> +
->  	arch_suspend_enable_irqs();
->  	BUG_ON(irqs_disabled());
->  
-> diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
-> index 49edc1c4f3e6..14de3727b18e 100644
-> --- a/kernel/time/tick-common.c
-> +++ b/kernel/time/tick-common.c
-> @@ -490,6 +490,7 @@ void tick_freeze(void)
->  	if (tick_freeze_depth == num_online_cpus()) {
->  		trace_suspend_resume(TPS("timekeeping_freeze"),
->  				     smp_processor_id(), true);
-> +		system_state = SYSTEM_SUSPEND;
->  		timekeeping_suspend();
->  	} else {
->  		tick_suspend_local();
-> @@ -513,6 +514,7 @@ void tick_unfreeze(void)
->  
->  	if (tick_freeze_depth == num_online_cpus()) {
->  		timekeeping_resume();
-> +		system_state = SYSTEM_RUNNING;
->  		trace_suspend_resume(TPS("timekeeping_freeze"),
->  				     smp_processor_id(), false);
->  	} else {
-> 
+> Change-Id: I98928761c98cec21a3033a55d3e10fb34138f38c
 
-Applied along with the rest of the series, thanks!
+This does not belong in upstream please remove. I think checkpatch warns.
+
+Also I see that you have sent to lkml and arm-msm mailing list, but have not
+CCed any maintainers. Please run ./scripts/get_maintainer.pl to find who to send
+patches to. Chances are it will get ignored...
+
+> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
+> ---
+>  kernel/time/timekeeping.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+> index 427e33d..c022d82 100644
+> --- a/kernel/time/timekeeping.c
+> +++ b/kernel/time/timekeeping.c
+> @@ -1511,9 +1511,6 @@ void __weak read_boot_clock64(struct timespec64 *ts)
+>  	ts->tv_nsec = 0;
+>  }
+>  
+> -/* Flag for if timekeeping_resume() has injected sleeptime */
+> -static bool sleeptime_injected;
+> -
+>  /* Flag for if there is a persistent clock on this platform */
+>  static bool persistent_clock_exists;
+>  
+> @@ -1611,7 +1608,14 @@ static void __timekeeping_inject_sleeptime(struct timekeeper *tk,
+>   */
+>  bool timekeeping_rtc_skipresume(void)
+>  {
+> -	return sleeptime_injected;
+> +	struct timekeeper *tk = &tk_core.timekeeper;
+> +	bool skip_rtc_resume = false;
+> +
+> +	skip_rtc_resume = ((tk->tkr_mono.clock->flags &
+> +			CLOCK_SOURCE_SUSPEND_NONSTOP) ||
+> +			(persistent_clock_exists)) ? true : false;
+> +
+> +	return skip_rtc_resume;
+>  }
+>  
+>  /**
+> @@ -1671,8 +1675,8 @@ void timekeeping_resume(void)
+>  	unsigned long flags;
+>  	struct timespec64 ts_new, ts_delta;
+>  	cycle_t cycle_now, cycle_delta;
+> +	bool sleeptime_injected = false;
+>  
+> -	sleeptime_injected = false;
+>  	read_persistent_clock64(&ts_new);
+>  
+>  	clockevents_resume();
+> -- 
+> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+> Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+~Vinod
