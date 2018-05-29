@@ -1,74 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934217AbeE2Mhs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:37:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47426 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933755AbeE2MfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:35:16 -0400
-From: Cornelia Huck <cohuck@redhat.com>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Subject: [PULL 1/6] vfio: ccw: fix error return in vfio_ccw_sch_event
-Date: Tue, 29 May 2018 14:35:07 +0200
-Message-Id: <20180529123512.14393-2-cohuck@redhat.com>
-In-Reply-To: <20180529123512.14393-1-cohuck@redhat.com>
-References: <20180529123512.14393-1-cohuck@redhat.com>
+        id S934245AbeE2MiR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:38:17 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:9424 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933565AbeE2MiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:38:11 -0400
+Date: Tue, 29 May 2018 14:38:04 +0200
+From: Christian Brauner <christian@brauner.io>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@kernel.org, james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, oleg@redhat.com
+Subject: Re: [PATCH v1 05/20] signal: flatten do_send_sig_info()
+Message-ID: <20180529123804.GA11221@mailbox.org>
+References: <20180528215355.16119-1-christian@brauner.io>
+ <20180528215355.16119-6-christian@brauner.io>
+ <87fu2asl1w.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87fu2asl1w.fsf@xmission.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+On Tue, May 29, 2018 at 07:28:27AM -0500, Eric W. Biederman wrote:
+> Christian Brauner <christian@brauner.io> writes:
+> 
+> > Let's return early when lock_task_sighand() fails and move send_signal()
+> > and unlock_task_sighand() out of the if block.
+> 
+> Introducing multiple exits into a function.  Ick.
+> You do know that is what Dijkstra was arguing against in his paper
+> "Goto Considered Harmful"
+> 
+> That introduces mutiple exits and makes the function harder to analyze.
+> It is especially a pain as I have something in my queue that will
+> shuffle things around and remove the possibility of lock_task_sighand
+> failing.
 
-If the device has not been registered, or there is work pending,
-we should reschedule a sch_event call again.
+I'm happy to drop this one if you have a fix for this in your tree
+anyway.
 
-Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Message-Id: <20180502072559.50691-1-bjsdjshi@linux.vnet.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
----
- drivers/s390/cio/vfio_ccw_drv.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Aside from that, I think it might make sense to route this patch series
+through your tree though since you're doing the siginfo rework
+currently.(?)
 
-diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
-index ea6a2d0b2894..770fa9cfc310 100644
---- a/drivers/s390/cio/vfio_ccw_drv.c
-+++ b/drivers/s390/cio/vfio_ccw_drv.c
-@@ -177,6 +177,7 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
- {
- 	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
- 	unsigned long flags;
-+	int rc = -EAGAIN;
- 
- 	spin_lock_irqsave(sch->lock, flags);
- 	if (!device_is_registered(&sch->dev))
-@@ -187,6 +188,7 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
- 
- 	if (cio_update_schib(sch)) {
- 		vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_NOT_OPER);
-+		rc = 0;
- 		goto out_unlock;
- 	}
- 
-@@ -195,11 +197,12 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
- 		private->state = private->mdev ? VFIO_CCW_STATE_IDLE :
- 				 VFIO_CCW_STATE_STANDBY;
- 	}
-+	rc = 0;
- 
- out_unlock:
- 	spin_unlock_irqrestore(sch->lock, flags);
- 
--	return 0;
-+	return rc;
- }
- 
- static struct css_device_id vfio_ccw_sch_ids[] = {
--- 
-2.14.3
+Christian
+
+> 
+> Eric
+> 
+> > Signed-off-by: Christian Brauner <christian@brauner.io>
+> > ---
+> > v0->v1:
+> > * patch unchanged
+> > ---
+> >  kernel/signal.c | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/kernel/signal.c b/kernel/signal.c
+> > index baae137455eb..a628b56415e6 100644
+> > --- a/kernel/signal.c
+> > +++ b/kernel/signal.c
+> > @@ -1167,16 +1167,16 @@ specific_send_sig_info(int sig, struct siginfo *info, struct task_struct *t)
+> >  }
+> >  
+> >  int do_send_sig_info(int sig, struct siginfo *info, struct task_struct *p,
+> > -			bool group)
+> > +		     bool group)
+> >  {
+> >  	unsigned long flags;
+> >  	int ret = -ESRCH;
+> >  
+> > -	if (lock_task_sighand(p, &flags)) {
+> > -		ret = send_signal(sig, info, p, group);
+> > -		unlock_task_sighand(p, &flags);
+> > -	}
+> > +	if (!lock_task_sighand(p, &flags))
+> > +		return ret;
+> >  
+> > +	ret = send_signal(sig, info, p, group);
+> > +	unlock_task_sighand(p, &flags);
+> >  	return ret;
+> >  }
