@@ -1,151 +1,131 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2321724-1527820232-2-9866895311203669031
+X-Cyrus-Session-Id: sloti22d1t05-2266183-1527606553-2-561412793083171118
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='us-ascii'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527820231; b=HJ0lJMdGoU1Yuqh/0S3NU4JB4AcCZfUDHDPwlLfOsbldMhG/Dl
-    NSDfQIH+G6bg/dLSP/bY/PFf1nJwN6QpPsLyIQtICe1NnIY8BmWc7VHqi8chBA/Z
-    l3BthLtm2L997ir+7Bf7sYgf1Z3yGWxLli42PE8hASTGqjKHPKzVF4RD2aTEYa6H
-    9yfd1JVnobxHL/Xc8fGY4vqeZu9BhTqbcMLfnjrSRa4Fm3pQ4heaP3C7Od94cNP2
-    j8hmtjoO9P93GvOM+BiHUvTOoOIqK6NZhoF6t7JwnwFeAmRlWJVRvSOWin6F2iIl
-    JKl2nY9zaqPqxHr3oqrkBZV0dMhh/aqWUaUw==
+    1527606553; b=WigBDub3nGt8ZnOD3lxCBn8nZLjKIEUwSOCVtTWQVVWfhYnwY2
+    W61/jVakGLLpPf3HIy2AOQ9YrLjWqbQ7kaUjIMZJ/Pt6qO8U4vfVTgyobcfqqU1w
+    iE9z/B27A3MkjN94UthN6kTSX+1yUJWoPpB+24PsXp761ihh5LvIRv8r83uXW+mT
+    YPFaf3We2ENL+tHGR77t3OlwUnUzM2aU8O64PGtZER0iwa9XnOcIMTYG4n9qZ7Ot
+    G772iBeTFDoWhqx3t7AgjjSPXyX4lBT2PFhI0SiB7G2OcR5K/2Cv347jvHbJrN2s
+    kQQgCrLYNsga1Ke7av2Ih+PqvaKvJTEfhrCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527820231; bh=oL1OchHkpq77l+sCzi7IFvlOxJpBOP
-    dtQyD39bY/Amo=; b=heg1yrkBlRC3S5GQqEh4HB3P2vDV8/zxcrSu39WoDh6hGN
-    Q4wfsnhhVezdzHaP13i82lWmf0ZjIzwceLn7arn7pWB/ZYAfNGUulNrCajhoKZUv
-    Z/ytIuOdnZrqPmNCHlelCjCxyZ5nU3ctRfWwpANsAezjLYqkR24gDy5Sjn/ahbQu
-    phQifXz0aMIMAYhwGSfseT5cI1eq0t8JvBYZI98c0JrrRjwbOGr6hESzwETK77RR
-    pMihM1jS1Sv8Ys4q8ut22anRRJEZEGu24cOPwMoYkWSt1AfO9iiGpx+Cfstt2+T+
-    TwgO2QDxgOW+lq2KsJmt9ZKH5zEHmcjYQEd+Kc/g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1527606553; bh=
+    RGIJZSifsy2xeQFppSvaFIOe9Z45/3FzZqM+RWq8UFE=; b=Hap4lnPY7En0vCBN
+    sFN2LliqVJw7LCKLO/KfbkJ/0PDrx69XF5I9VSsQWkiZjbOAiayEfynnY4M6KRI6
+    vA+sHuag4i8bbx9YrD2I/3UNiXze3zOEsnD10H1mul+I1EcIQb87uuI0FVp44IhJ
+    kr3zUE+OSqUC5zHi2kU8lxVD0sLiWo0lv8NpcELo2EXZM/CM4x38DgICy8dTnzY+
+    2WxQ3ceO2o5xrtWriHSWv3hUWR3bJ5uhgqN9vo9Tk0lod+IW8jiDJcfJ8ScfylLg
+    Gta9kzF+e1q3/7GJOdQ+4QECP5y7yscn7f6ZI2Ref2QSlDyYjQjcL89HPxfFsZ1S
+    sL9drg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=fromorbit.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=mps6yMXr;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=fromorbit.com header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
-Authentication-Results: mx1.messagingengine.com;
+    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=fromorbit.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=mps6yMXr;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=fromorbit.com header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
+      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfN9gcwwwLTvyEcu7F/R1NUJS8KexfapI3GGw9FQLGOmzLLqQ4LbgI/8LIXB+ucLmksCzdgzSpa0hawGuNjB0YepdAPPtjPn3skIvTdqBPEBZL3HVRS2N
-    Yek0Gy+mLbPIj70cVeOdHNNUElpmZSBc77djlUeJdv2rKozk1TKcwvWcWkPVuejtasqLi8cM8O4IUPCrOYGADONO7AL8nVjgPqO1CUZ0ub8oX/E4SVAixnnP
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=edf1wS77AAAA:8 a=7-415B0cAAAA:8 a=P4K4W6Fyn4NAIot7mhgA:9 a=CjuIK1q_8ugA:10
-    a=DcSpbTIhAlouE1Uv7lRv:22 a=biEYGPWJfzWAr4FL6Ov7:22
+X-CM-Envelope: MS4wfElVcW9u3ERd8t0RBOT0gBr/4N7tup+JFARlvbA/HOQLbuaWE0bCRnsVLWuuYLHluweii5GLondWB+cx41bLxr+mIDIwfIe6p9hdVZEnumW/jSF1tV1Y
+    +FD4W8PrQK9jdtC71Pvxyyz9X1kAqOxmj2VnEq0r18K5AzQGAx2N4z4HD5vkmJSsbdYV/LW+Jant/K6ozq3PmC3zSyjJejxMlXtZoe8KkGe4m4tVoJ+JHtzd
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8
+    a=20KFwNOVAAAA:8 a=8AGs6ylmPEHxZOE-dfkA:9
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751005AbeFACaQ (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 31 May 2018 22:30:16 -0400
-Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:18615 "EHLO
-        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750990AbeFACaN (ORCPT
+        id S936649AbeE2PJH (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 11:09:07 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53951 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935816AbeE2OoW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 May 2018 22:30:13 -0400
-Date: Fri, 1 Jun 2018 12:30:02 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, tj@kernel.org, linux-block@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: general protection fault in wb_workfn (2)
-Message-ID: <20180601023002.GA10972@dastard>
-References: <000000000000cbd959056d1851ca@google.com>
- <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
- <20180528133503.awomzj6djozbo5bv@quack2.suse.cz>
- <2dda7a11-3f6b-bdba-a68a-7c0694806cc4@I-love.SAKURA.ne.jp>
- <20180531114228.6zx27xxurmz27pke@quack2.suse.cz>
- <c0fc1c47-0efb-5ded-7f6c-79074ad4deac@i-love.sakura.ne.jp>
- <20180531134212.oo4ra4ypuruab3xp@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531134212.oo4ra4ypuruab3xp@quack2.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Tue, 29 May 2018 10:44:22 -0400
+X-Google-Smtp-Source: ADUXVKIISOBlNycqYriEosiG6vWyVH1ZRUpgbfFyhYdu29BoIX69fYkqfn+GomVOUEZ2lVdjP+1xpQ==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 32/39] vfs: fix freeze protection in mnt_want_write_file() for overlayfs
+Date: Tue, 29 May 2018 16:43:32 +0200
+Message-Id: <20180529144339.16538-33-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
+References: <20180529144339.16538-1-mszeredi@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 31, 2018 at 03:42:12PM +0200, Jan Kara wrote:
-> On Thu 31-05-18 22:19:44, Tetsuo Handa wrote:
-> > On 2018/05/31 20:42, Jan Kara wrote:
-> > > On Thu 31-05-18 01:00:08, Tetsuo Handa wrote:
-> > >> So, we have no idea what is happening...
-> > >> Then, what about starting from temporary debug printk() patch shown below?
-> > >>
-> > >> >From 4f70f72ad3c9ae6ce1678024ef740aca4958e5b0 Mon Sep 17 00:00:00 2001
-> > >> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > >> Date: Wed, 30 May 2018 09:57:10 +0900
-> > >> Subject: [PATCH] bdi: Add temporary config for debugging wb_workfn() versus
-> > >>  bdi_unregister() race bug.
-> > >>
-> > >> syzbot is hitting NULL pointer dereference at wb_workfn() [1]. But due to
-> > >> limitations that syzbot cannot find reproducer for this bug (frequency is
-> > >> once or twice per a day) nor we can't capture vmcore in the environment
-> > >> which syzbot is using, for now we need to rely on printk() debugging.
-> > >>
-> > >> [1] https://syzkaller.appspot.com/bug?id=e0818ccb7e46190b3f1038b0c794299208ed4206
-> > >>
-> > >> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > > 
-> > > Hum a bit ugly solution but if others are fine with this, I can live with
-> > > it for a while as well. Or would it be possible for syzkaller to just test
-> > > some git tree where this patch is included? Then we would not even have to
-> > > have the extra config option...
-> > 
-> > If syzbot can reproduce this bug that way. While it is possible to add/remove
-> > git trees syzbot tests, frequently adding/removing trees is bothering.
-> > 
-> > syzbot can enable extra config option. Maybe the config name should be
-> > something like CONFIG_DEBUG_FOR_SYZBOT rather than individual topic.
-> > 
-> > I think that syzbot is using many VM instances. I don't know how many
-> > instances will be needed for reproducing this bug within reasonable period.
-> > More git trees syzbot tests, (I assume that) longer period will be needed
-> > for reproducing this bug. The most reliable way is to use the shared part
-> > of all trees (i.e. linux.git).
-> 
-> I understand this, I'd be just a bit reluctant to merge temporary debug
-> patches like this to Linus' tree only to revert them later just because
-> syzkaller... What do others think?
+The underlying real file used by overlayfs still contains the overlay path.
+This results in mnt_want_write_file() calls by the filesystem getting
+freeze protection on the wrong inode (the overlayfs one instead of the real
+one).
 
-Don't commit temporary debug crap to the mainline kernel. Enable
-syzkaller to run against a user supplied git tree specification if
-it needs special debug to track down a problem.
+Fix by using file_inode(file)->i_sb instead of file->f_path.mnt->mnt_sb.
 
--Dave.
+Reported-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/namespace.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 5286c5313e67..0d9023a9af4f 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -441,10 +441,10 @@ int mnt_want_write_file(struct file *file)
+ {
+ 	int ret;
+ 
+-	sb_start_write(file->f_path.mnt->mnt_sb);
++	sb_start_write(file_inode(file)->i_sb);
+ 	ret = __mnt_want_write_file(file);
+ 	if (ret)
+-		sb_end_write(file->f_path.mnt->mnt_sb);
++		sb_end_write(file_inode(file)->i_sb);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(mnt_want_write_file);
+@@ -486,7 +486,8 @@ void __mnt_drop_write_file(struct file *file)
+ 
+ void mnt_drop_write_file(struct file *file)
+ {
+-	mnt_drop_write(file->f_path.mnt);
++	__mnt_drop_write_file(file);
++	sb_end_write(file_inode(file)->i_sb);
+ }
+ EXPORT_SYMBOL(mnt_drop_write_file);
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.14.3
