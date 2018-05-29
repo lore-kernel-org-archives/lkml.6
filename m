@@ -1,108 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965316AbeE2RPg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 13:15:36 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:46462 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936855AbeE2RPa (ORCPT
+        id S965374AbeE2RRj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 13:17:39 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:38644 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965010AbeE2RRf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 13:15:30 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4] vfio: platform: Fix using devices in PM Domains
-Date: Tue, 29 May 2018 19:15:28 +0200
-Message-Id: <1527614128-30196-1-git-send-email-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.7.4
+        Tue, 29 May 2018 13:17:35 -0400
+X-Google-Smtp-Source: ADUXVKJ5cz1ubPgYyJ78P/Q7GXPNAErkGzAFFO3Mato7jakRsgto0aLFY2nfbkQjYT4HktokWrSC6FJ2qavHDgu8FIU=
+MIME-Version: 1.0
+In-Reply-To: <20180527112842.GA18204@asgard.redhat.com>
+References: <20180527112842.GA18204@asgard.redhat.com>
+From: Song Liu <liu.song.a23@gmail.com>
+Date: Tue, 29 May 2018 10:17:34 -0700
+Message-ID: <CAPhsuW4v=V0mbz07xe_shd68WP3BoV8iofxyVGApi+sL9kgzWQ@mail.gmail.com>
+Subject: Re: [PATCH bpf 1/2] bpf: fix alignment of netns_dev/netns_ino fields
+ in bpf_{map,prog}_info
+To: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: netdev@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, Jiri Olsa <jolsa@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Lawrence Brakmo <brakmo@fb.com>,
+        Andrey Ignatov <rdna@fb.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a device is part of a PM Domain (e.g. power and/or clock domain), its
-power state is managed using Runtime PM.  Without Runtime PM, the device
-may not be powered up or clocked, causing subtle failures, crashes, or
-system lock-ups when the device is accessed by the guest.
+On Sun, May 27, 2018 at 4:28 AM, Eugene Syromiatnikov <esyr@redhat.com> wrote:
+> Recent introduction of netns_dev/netns_ino to bpf_map_info/bpf_prog info
+> has broken compat, as offsets of these fields are different in 32-bit
+> and 64-bit ABIs.  One fix (other than implementing compat support in
+> syscall in order to handle this discrepancy) is to use __aligned_u64
+> instead of __u64 for these fields.
+>
+> Reported-by: Dmitry V. Levin <ldv@altlinux.org>
+> Fixes: 52775b33bb507 ("bpf: offload: report device information about
+> offloaded maps")
+> Fixes: 675fc275a3a2d ("bpf: offload: report device information for
+> offloaded programs")
+>
+> Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+> ---
+>  include/uapi/linux/bpf.h       | 8 ++++----
+>  tools/include/uapi/linux/bpf.h | 8 ++++----
+>  2 files changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index c5ec897..903010a 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -1017,8 +1017,8 @@ struct bpf_prog_info {
+>         __aligned_u64 map_ids;
+>         char name[BPF_OBJ_NAME_LEN];
+>         __u32 ifindex;
+> -       __u64 netns_dev;
+> -       __u64 netns_ino;
+> +       __aligned_u64 netns_dev;
+> +       __aligned_u64 netns_ino;
+>  } __attribute__((aligned(8)));
 
-Fix this by adding Runtime PM support, powering the device when the VFIO
-device is opened by the guest.
+Shall we add a __u32 padding variable before netns_dev? We can use it
+for in the future.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
-Against linux-vfio/next
+Thanks,
+Song
 
-v4:
-  - Keep device powered while issuing reset,
-
-v3:
-  - Drop controversial note about unsafeness of exporting fine-grained
-    power management from host to guest,
-
-v2:
-  - Improve wording,
-  - Add Reviewed-by.
----
- drivers/vfio/platform/vfio_platform_common.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-index b60bb5326668498c..c0cd824be2b767be 100644
---- a/drivers/vfio/platform/vfio_platform_common.c
-+++ b/drivers/vfio/platform/vfio_platform_common.c
-@@ -17,6 +17,7 @@
- #include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/pm_runtime.h>
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/uaccess.h>
-@@ -239,6 +240,7 @@ static void vfio_platform_release(void *device_data)
- 				 ret, extra_dbg ? extra_dbg : "");
- 			WARN_ON(1);
- 		}
-+		pm_runtime_put(vdev->device);
- 		vfio_platform_regions_cleanup(vdev);
- 		vfio_platform_irq_cleanup(vdev);
- 	}
-@@ -269,6 +271,10 @@ static int vfio_platform_open(void *device_data)
- 		if (ret)
- 			goto err_irq;
- 
-+		ret = pm_runtime_get_sync(vdev->device);
-+		if (ret < 0)
-+			goto err_pm;
-+
- 		ret = vfio_platform_call_reset(vdev, &extra_dbg);
- 		if (ret && vdev->reset_required) {
- 			dev_warn(vdev->device, "reset driver is required and reset call failed in open (%d) %s\n",
-@@ -283,6 +289,8 @@ static int vfio_platform_open(void *device_data)
- 	return 0;
- 
- err_rst:
-+	pm_runtime_put(vdev->device);
-+err_pm:
- 	vfio_platform_irq_cleanup(vdev);
- err_irq:
- 	vfio_platform_regions_cleanup(vdev);
-@@ -690,6 +698,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
- 
- 	mutex_init(&vdev->igate);
- 
-+	pm_runtime_enable(vdev->device);
- 	return 0;
- 
- put_iommu:
-@@ -707,6 +716,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
- 	vdev = vfio_del_group_dev(dev);
- 
- 	if (vdev) {
-+		pm_runtime_disable(vdev->device);
- 		vfio_platform_put_reset(vdev);
- 		vfio_iommu_group_put(dev->iommu_group, dev);
- 	}
--- 
-2.7.4
+>
+>  struct bpf_map_info {
+> @@ -1030,8 +1030,8 @@ struct bpf_map_info {
+>         __u32 map_flags;
+>         char  name[BPF_OBJ_NAME_LEN];
+>         __u32 ifindex;
+> -       __u64 netns_dev;
+> -       __u64 netns_ino;
+> +       __aligned_u64 netns_dev;
+> +       __aligned_u64 netns_ino;
+>  } __attribute__((aligned(8)));
+>
+>  /* User bpf_sock_addr struct to access socket fields and sockaddr struct passed
+> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+> index c5ec897..903010a 100644
+> --- a/tools/include/uapi/linux/bpf.h
+> +++ b/tools/include/uapi/linux/bpf.h
+> @@ -1017,8 +1017,8 @@ struct bpf_prog_info {
+>         __aligned_u64 map_ids;
+>         char name[BPF_OBJ_NAME_LEN];
+>         __u32 ifindex;
+> -       __u64 netns_dev;
+> -       __u64 netns_ino;
+> +       __aligned_u64 netns_dev;
+> +       __aligned_u64 netns_ino;
+>  } __attribute__((aligned(8)));
+>
+>  struct bpf_map_info {
+> @@ -1030,8 +1030,8 @@ struct bpf_map_info {
+>         __u32 map_flags;
+>         char  name[BPF_OBJ_NAME_LEN];
+>         __u32 ifindex;
+> -       __u64 netns_dev;
+> -       __u64 netns_ino;
+> +       __aligned_u64 netns_dev;
+> +       __aligned_u64 netns_ino;
+>  } __attribute__((aligned(8)));
+>
+>  /* User bpf_sock_addr struct to access socket fields and sockaddr struct passed
+> --
+> 2.1.4
+>
