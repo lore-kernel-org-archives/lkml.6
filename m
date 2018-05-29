@@ -1,133 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754780AbeE2HQ4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:16:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38208 "EHLO mail.kernel.org"
+        id S1754839AbeE2HRv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:17:51 -0400
+Received: from mga02.intel.com ([134.134.136.20]:27409 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750831AbeE2HQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:16:54 -0400
-Date: Tue, 29 May 2018 09:16:33 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Oleksandr Shamray <oleksandrs@mellanox.com>
-Cc: "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-        "joel@jms.id.au" <joel@jms.id.au>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "tklauser@distanz.ch" <tklauser@distanz.ch>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        system-sw-low-level <system-sw-low-level@mellanox.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "openocd-devel-owner@lists.sourceforge.net"
-        <openocd-devel-owner@lists.sourceforge.net>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "mchehab@kernel.org" <mchehab@kernel.org>
-Subject: Re: [patch v22 1/4] drivers: jtag: Add JTAG core driver
-Message-ID: <20180529071633.GB20427@kroah.com>
-References: <1527503652-21975-1-git-send-email-oleksandrs@mellanox.com>
- <1527503652-21975-2-git-send-email-oleksandrs@mellanox.com>
- <20180528123527.GA17613@kroah.com>
- <AM5PR0501MB24490173AD50A2E478DFCF35B16E0@AM5PR0501MB2449.eurprd05.prod.outlook.com>
+        id S1750831AbeE2HRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:17:49 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,455,1520924400";
+   d="scan'208";a="62508557"
+Date: Tue, 29 May 2018 10:17:42 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
+        Russell King <linux@armlinux.org.uk>, Ben Skeggs <bskeggs@redhat.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
+Message-ID: <20180529071742.GM23723@intel.com>
+References: <20180526155623.12610-1-digetx@gmail.com>
+ <20180526155623.12610-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <AM5PR0501MB24490173AD50A2E478DFCF35B16E0@AM5PR0501MB2449.eurprd05.prod.outlook.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180526155623.12610-2-digetx@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 03:59:46PM +0000, Oleksandr Shamray wrote:
-> > > +	const struct jtag_ops *ops;
-> > > +	int id;
-> > > +	bool opened;
-> > 
-> > You shouldn't care about this, but ok...
+On Sat, May 26, 2018 at 06:56:22PM +0300, Dmitry Osipenko wrote:
+> Color keying is the action of replacing pixels matching a given color
+> (or range of colors) with transparent pixels in an overlay when
+> performing blitting. Depending on the hardware capabilities, the
+> matching pixel can either become fully transparent or gain adjustment
+> of the pixels component values.
 > 
-> Jtag HW not support to using with multiple requests from different users. So we prohibit this.
-
-Ok, but then that's a userspace problem, not your driver's problem.
-Serial ports can't handle multiple requests in a sane way either, and so
-it's a userspace bug if they do that.  It's not up to the kernel to try
-to prevent it, and really, you are not preventing this from happening at
-all, you are only keeping more than one open() call from happening.  You
-aren't serializing the device access at all.
-
-So you are giving yourself a false sense of "We are protecting the
-device" here.  Just drop the whole "only one open() call" logic
-entirely.  It will make your kernel code simpler and you aren't giving
-yourself false-hope that you really prevented userspace from doing
-something stupid :)
-
-> > > +	case JTAG_IOCRUNTEST:
-> > > +		if (copy_from_user(&idle, (const void __user *)arg,
-> > > +				   sizeof(struct jtag_run_test_idle)))
-> > > +			return -EFAULT;
-> > > +
-> > > +		if (idle.endstate > JTAG_STATE_PAUSEDR)
-> > > +			return -EINVAL;
-> > 
-> > No validation that idle contains sane values?  Don't make every jtag driver
-> > have to do this type of validation please.
-> > 
+> Color keying is found in a large number of devices whose capabilities
+> often differ, but they still have enough common features in range to
+> standardize color key properties. This commit adds nine generic DRM plane
+> properties related to the color keying to cover various HW capabilities.
 > 
-> I have partially validation of idle structure  (if (idle.endstate > JTAG_STATE_PAUSEDR)).
-> But I will add more validation.
-
-Go to the nearest whiteboard and write this at the top:
-	ALL INPUT IS EVIL
-
-Don't erase it.  You have to validate all the things, otherwise
-something bad will happen, I guarantee it.  Wait until the syzbot gets
-ahold of this layer if you don't believe me :)
-
-> > > +static int jtag_open(struct inode *inode, struct file *file) {
-> > > +	struct jtag *jtag = container_of(file->private_data, struct jtag,
-> > > +miscdev);
-> > > +
-> > > +	if (mutex_lock_interruptible(&jtag->open_lock))
-> > > +		return -ERESTARTSYS;
-> > 
-> > Why restart?  Just grab the lock, you don't want to have to do restartable
-> > logic in userspace, right?
+> This patch is based on the initial work done by Laurent Pinchart, most of
+> credits for this patch goes to him.
 > 
-> Will change like:
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_atomic.c |  36 ++++++
+>  drivers/gpu/drm/drm_blend.c  | 229 +++++++++++++++++++++++++++++++++++
+>  include/drm/drm_blend.h      |   3 +
+>  include/drm/drm_plane.h      |  77 ++++++++++++
+>  4 files changed, 345 insertions(+)
 > 
-> ret = mutex_lock_interruptible(&jtag->open_lock);
-> if (ret)
-> 	return ret;
+> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> index 895741e9cd7d..5b808cb68654 100644
+> @@ -124,6 +175,19 @@ struct drm_plane_state {
+>  	unsigned int zpos;
+>  	unsigned int normalized_zpos;
+>  
+> +	/* Plane colorkey */
+> +	struct {
+> +		enum drm_plane_colorkey_mode mode;
+> +		u64 min;
+> +		u64 max;
+> +		u64 mask;
+> +		u32 format;
+> +		bool inverted_match;
+> +		u64 replacement_mask;
+> +		u64 replacement_value;
+> +		u32 replacement_format;
+> +	} colorkey;
 
-No, what's wrong with a simple:
-	mutex_lock();
-?
+After a quick stab at implementing this for i915 I came to the
+conclusion that I'd like this struct to have a name so that I can pass
+it around/consult it easily without having to mess about with the entire
+plane state.
 
-You are only holding it for a very short time, people can wait, there is
-no rush here or "fast path" happening.
+One extra question that came up is how are we going to define the
+destination color key? Is it to be a) enabled on the plane that has the
+colorkey painted on it, or is it to be b) enabled on a plane that sits
+above the plane that is going to be covering up the colorkey? Modern
+Intel hardware defines it the a) way, whereas older hw used the b)
+method. Thinking about it I do think the a) method seems nicer because
+it removes the ambiguity as to which plane's pixels are going to be
+compared again the colorkey. So kinda matches the src colorkey case
+better.
 
-Anyway, this whole lock should just go away entirely, due to the lack of
-needing to track open() calls.  But in the future, keep locks simple, no
-need to add complexity when it is not warranted.
+Oh and this also brings up the question as to which other plane(s) are
+taking part in the colorkey process. Looks like on modern Intel hw it's
+supposed to be just the plane immediately above the plane with
+dst keying enabled. On some really old hw there were some more
+complicated rules as to which pair of planes are involved. On middle
+aged hw the situation is simpler a there are only ever two
+(non-cursor) planes on the same crtc. The cursor doesn't seem to
+participate in the colorkeing ever. Not sure there's a sane way to
+fully abstract this all.
 
-> > > +	if (jtag->opened) {
-> > > +		mutex_unlock(&jtag->open_lock);
-> > > +		return -EBUSY;
-> > 
-> > Why do you care about only 1 userspace open call?  What does that buy you?
-> > Userspace can always pass around that file descriptor and use it in multiple
-> > places, so you are not really "protecting" yourself from anything.
-> > 
-> 
-> Accessing to JTAG HW from multiple processes will make confusion in the work of the JTAG protocol.
-> And I want to prohibit this.
+I should probably poke at the hardware a bit more to figure out how
+this really works when there are more than two active planes on the
+crtc. <day later> I did poke at one particular class of hw which is
+a bit of a mix of old and middle aged hw, and there it seems I can
+also do dst colorkeying the a) way. And in this case there are three
+planes taking part in the dst colorkey match (the primary that
+has the colorkey painted on it, and two overlay planes that cover
+up the matched pixels). So for that case definitely the a) approach
+in the uapi would make more sense as trying to specify conflicting
+dst colorkey settings for each of the overlay planes wouldn't make
+any sense. I'll need to poke at the modern hw a bit more still...
 
-See my previous comments for why your attempt at protecting open() does
-not prevent this from happening.  Hint, you forgot about dup(3) :(
-
-thanks,
-
-greg k-h
+-- 
+Ville Syrjälä
+Intel
