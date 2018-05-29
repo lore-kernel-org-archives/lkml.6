@@ -1,54 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965856AbeE2SPT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 14:15:19 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:45696 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965607AbeE2SPR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 14:15:17 -0400
-Date: Wed, 30 May 2018 02:15:10 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        tgraf@suug.ch, manfred@colorfullife.com,
-        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 2/6] lib/rhashtable: guarantee initial hashtable
- allocation
-Message-ID: <20180529181510.ttlmndxk36rmkwcy@gondor.apana.org.au>
-References: <20180524211135.27760-1-dave@stgolabs.net>
- <20180524211135.27760-3-dave@stgolabs.net>
- <20180528100237.needq2u5e3v2n642@gondor.apana.org.au>
- <20180529164231.yoj57nqhghtmy54v@linux-n805>
- <20180529180345.jwu2bzax764gtof5@gondor.apana.org.au>
- <20180529175513.s7iju6rkoya3hvsf@linux-n805>
+        id S965813AbeE2SOO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 14:14:14 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:52622 "EHLO gum.cmpxchg.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936850AbeE2SON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 14:14:13 -0400
+Date: Tue, 29 May 2018 14:16:16 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Subject: Re: [PATCH 0/7] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180529181616.GB28689@cmpxchg.org>
+References: <20180507210135.1823-1-hannes@cmpxchg.org>
+ <CAJuCfpF4q+1aSg4WQn_p-1-zEDhh-iqST6dc1DkxnDofSPBKGw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529175513.s7iju6rkoya3hvsf@linux-n805>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAJuCfpF4q+1aSg4WQn_p-1-zEDhh-iqST6dc1DkxnDofSPBKGw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:55:13AM -0700, Davidlohr Bueso wrote:
-> On Wed, 30 May 2018, Herbert Xu wrote:
-> 
-> > On Tue, May 29, 2018 at 09:42:31AM -0700, Davidlohr Bueso wrote:
-> > > 
-> > > For the sake of simplicity, Linus suggested directly using HASH_MIN_SIZE
-> > > such that we have a single fallback.
-> > 
-> > Where did he suggest that?
-> 
-> https://lkml.org/lkml/2018/5/24/1265
+Hi Suren,
 
-Well I think we should respect min_size.  rhashtable users may
-fail at insertion time if the table is too small.
+On Fri, May 25, 2018 at 05:29:30PM -0700, Suren Baghdasaryan wrote:
+> Hi Johannes,
+> I tried your previous memdelay patches before this new set was posted
+> and results were promising for predicting when Android system is close
+> to OOM. I'm definitely going to try this one after I backport it to
+> 4.9.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I'm happy to hear that!
+
+> Would it make sense to split CONFIG_PSI into CONFIG_PSI_CPU,
+> CONFIG_PSI_MEM and CONFIG_PSI_IO since one might need only specific
+> subset of this feature?
+
+Yes, that should be doable. I'll split them out in the next version.
+
+> > The total= value gives the absolute stall time in microseconds. This
+> > allows detecting latency spikes that might be too short to sway the
+> > running averages. It also allows custom time averaging in case the
+> > 10s/1m/5m windows aren't adequate for the usecase (or are too coarse
+> > with future hardware).
+> 
+> Any reasons these specific windows were chosen (empirical
+> data/historical reasons)? I'm worried that with the smallest window
+> being 10s the signal might be too inert to detect fast memory pressure
+> buildup before OOM kill happens. I'll have to experiment with that
+> first, however if you have some insights into this already please
+> share them.
+
+They were chosen empirically. We started out with the loadavg window
+sizes, but had to reduce them for exactly the reason you mention -
+they're way too coarse to detect acute pressure buildup.
+
+10s has been working well for us. We could make it smaller, but there
+is some worry that we don't have enough samples then and the average
+becomes too erratic - whereas monitoring total= directly would allow
+you to detect accute spikes and handle this erraticness explicitly.
+
+Let me know how it works out in your tests.
+
+Thanks for your feedback.
