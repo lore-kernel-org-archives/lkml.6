@@ -1,96 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753967AbeE2EeH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 00:34:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:40097 "EHLO ozlabs.org"
+        id S1754382AbeE2EeY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 00:34:24 -0400
+Received: from mga18.intel.com ([134.134.136.126]:54448 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750861AbeE2EeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 00:34:03 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 29 May 2018 14:33:57 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Joe Perches <joe@perches.com>
-Subject: linux-next: manual merge of the block tree with the vfs tree
-Message-ID: <20180529143357.2a66b0af@canb.auug.org.au>
+        id S1750861AbeE2EeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 00:34:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,455,1520924400";
+   d="scan'208";a="59895285"
+From: "Lu, Aaron" <aaron.lu@intel.com>
+To: "mhocko@kernel.org" <mhocko@kernel.org>,
+        "Ye, Xiaolong" <xiaolong.ye@intel.com>
+CC: "tj@kernel.org" <tj@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lkp@01.org" <lkp@01.org>, "hannes@cmpxchg.org" <hannes@cmpxchg.org>
+Subject: Re: [LKP] [lkp-robot] [mm, memcontrol] 309fe96bfc:
+ vm-scalability.throughput +23.0% improvement
+Thread-Topic: [LKP] [lkp-robot] [mm, memcontrol] 309fe96bfc:
+ vm-scalability.throughput +23.0% improvement
+Thread-Index: AQHT9nk1DFpK5n5lQ0aJAjUphuX/f6REhKwAgAD+9QA=
+Date: Tue, 29 May 2018 03:15:51 +0000
+Message-ID: <dbd727326f53648ed114e03a85085b6b4655fda2.camel@intel.com>
+References: <20180528114019.GF9904@yexl-desktop>
+         <20180528120318.GB27180@dhcp22.suse.cz>
+In-Reply-To: <20180528120318.GB27180@dhcp22.suse.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.159.135]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9AB02E2F7091CD47ADF1DC6B3598E1CD@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bUzOcQuARamVCAf7sLtL+NB"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4T4YZpE023400
 
---Sig_/bUzOcQuARamVCAf7sLtL+NB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2018-05-28 at 14:03 +0200, Michal Hocko wrote:
+> On Mon 28-05-18 19:40:19, kernel test robot wrote:
+> > 
+> > Greeting,
+> > 
+> > FYI, we noticed a +23.0% improvement of vm-scalability.throughput due to commit:
+> > 
+> > 
+> > commit: 309fe96bfc0ae387f53612927a8f0dc3eb056efd ("mm, memcontrol: implement memory.swap.events")
+> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> This doesn't make any sense to me. The patch merely adds an accounting.
+> It doesn't optimize anything. So I strongly suspect the result is just
+> misleading or the test (environment) misconfigured. Not the first time
+> I am seeing something like that I am afraid.
+> 
 
-Hi all,
+Most likely the same situation as:
+"
+FYI, we noticed a -27.2% regression of will-it-scale.per_process_ops
+due to commit:
 
-Today's linux-next merge of the block tree got a conflict in:
 
-  drivers/block/DAC960.c
+commit: e27be240df53f1a20c659168e722b5d9f16cc7f4 ("mm: memcg: make sure
+memory.events is uptodate when waking pollers")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+"
 
-between commit:
-
-  3f3942aca6da ("proc: introduce proc_create_single{,_data}")
-
-from the vfs tree and commit:
-
-  5657a819a8d9 ("block drivers/block: Use octal not symbolic permissions")
-
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/block/DAC960.c
-index 6918c3d9482e,7c3887a7e534..000000000000
---- a/drivers/block/DAC960.c
-+++ b/drivers/block/DAC960.c
-@@@ -6553,11 -6587,9 +6548,11 @@@ static void DAC960_CreateProcEntries(DA
-  		 "c%d", Controller->ControllerNumber);
-  	ControllerProcEntry =3D proc_mkdir(Controller->ControllerName,
-  					 DAC960_ProcDirectoryEntry);
- -	proc_create_data("initial_status", 0, ControllerProcEntry, &dac960_initi=
-al_status_proc_fops, Controller);
- -	proc_create_data("current_status", 0, ControllerProcEntry, &dac960_curre=
-nt_status_proc_fops, Controller);
- +	proc_create_single_data("initial_status", 0, ControllerProcEntry,
- +			dac960_initial_status_proc_show, Controller);
- +	proc_create_single_data("current_status", 0, ControllerProcEntry,
- +			dac960_current_status_proc_show, Controller);
-- 	proc_create_data("user_command", S_IWUSR | S_IRUSR, ControllerProcEntry,=
- &dac960_user_command_proc_fops, Controller);
-+ 	proc_create_data("user_command", 0600, ControllerProcEntry, &dac960_user=
-_command_proc_fops, Controller);
-  	Controller->ControllerProcEntry =3D ControllerProcEntry;
-  }
- =20
-
---Sig_/bUzOcQuARamVCAf7sLtL+NB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsM2DUACgkQAVBC80lX
-0Gz6GAf/WZYKnCsIwE/4KiwtJOZLgnTjjOwmBEZvyrZMkoF627hyK03uxllo7qHP
-eXBLiUQahcJPzAkangGEAUWapNMN1hlNSOKDpIqUDicIS7bXUrhzliXxutgjSjWP
-Z22xOTYfMVTeFrN5k6zwk1QJEAIWdsr6y0I6UPLgsv8ojibvhFawyEmzVXFTYLEn
-M0gIYKhpd/dtGfx9xnINu7AThqlPNXVEwnAuD7OsqpRxvDMhpIWhutvsue69RV7R
-1sQsncK+kxiNf3k1A8Y+FPe6stnFhJEqgvVz633LYXkmkewcZZS5v1N77rdIfcJC
-aeJ5HMigSvaM+xpnIvQJMNBvUm+SPw==
-=ELzd
------END PGP SIGNATURE-----
-
---Sig_/bUzOcQuARamVCAf7sLtL+NB--
+Where the performance change is due to layout change of
+'struct mem_cgroup':
+http://lkml.kernel.org/r/20180528085201.GA2918@intel.com
