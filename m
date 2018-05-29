@@ -1,60 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932306AbeE2Jce (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:32:34 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49708 "EHLO mail.bootlin.com"
+        id S932486AbeE2JhS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:37:18 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:32889 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932612AbeE2JcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:32:02 -0400
-Date: Tue, 29 May 2018 11:32:00 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Radu Pirea <radu.pirea@microchip.com>, Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        id S932322AbeE2JhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 05:37:13 -0400
+Subject: Re: [PATCH v2] powerpc/64: Fix build failure with GCC 8.1
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH v4 3/6] mfd: at91-usart: added mfd driver for usart
-Message-ID: <20180529093200.GB4793@piout.net>
-References: <20180525171941.26766-1-radu.pirea@microchip.com>
- <20180525171941.26766-4-radu.pirea@microchip.com>
- <CAHp75VeeiFhShuMOVzuy2FjxrkfsxxzhyfAnwQNOoeaRwZ103Q@mail.gmail.com>
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Geoff Levand <geoff@infradead.org>
+References: <f5f2de3e1a39613f7303bfdc0d2f2210d4c91910.1527573345.git.christophe.leroy@c-s.fr>
+ <CAMuHMdVSKigQPUQH=BVc2fRSRmuEThLaf+V9ghMPDT9_m1C6BA@mail.gmail.com>
+ <1fa5b220-4d21-b4cd-33bf-8a3ce3178063@c-s.fr>
+ <CAMuHMdXwO1_wrrTi40UmZC4o6KjvP0LF38m45n0ZNA2pDb_7Qg@mail.gmail.com>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <3a438dd8-49c3-ad39-e2a1-040e0ce67279@c-s.fr>
+Date: Tue, 29 May 2018 11:37:11 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VeeiFhShuMOVzuy2FjxrkfsxxzhyfAnwQNOoeaRwZ103Q@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAMuHMdXwO1_wrrTi40UmZC4o6KjvP0LF38m45n0ZNA2pDb_7Qg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/05/2018 11:00:49+0300, Andy Shevchenko wrote:
-> On Fri, May 25, 2018 at 8:19 PM, Radu Pirea <radu.pirea@microchip.com> wrote:
-> > This mfd driver is just a wrapper over atmel_serial driver and
-> > spi-at91-usart driver. Selection of one of the drivers is based on a
-> > property from device tree. If the property is not specified, the default
-> > driver is atmel_serial.
-> 
-> > +       depends on OF
-> 
-> What makes this driver OF specific?
-> 
-> > +       err = of_property_read_u32(np, "atmel,usart-mode", &opmode);
-> 
-> Check unified device property API.
-> 
-
-We don't care, this makes the driver OF specific and this is the correct
-thing to do.
 
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Le 29/05/2018 à 11:05, Geert Uytterhoeven a écrit :
+> Hi Christophe,
+> 
+> On Tue, May 29, 2018 at 10:56 AM, Christophe LEROY
+> <christophe.leroy@c-s.fr> wrote:
+>> Le 29/05/2018 à 09:47, Geert Uytterhoeven a écrit :
+>>> On Tue, May 29, 2018 at 8:03 AM, Christophe Leroy
+>>> <christophe.leroy@c-s.fr> wrote:
+>>>>
+>>>>     CC      arch/powerpc/kernel/nvram_64.o
+>>>> arch/powerpc/kernel/nvram_64.c: In function 'nvram_create_partition':
+>>>> arch/powerpc/kernel/nvram_64.c:1042:2: error: 'strncpy' specified bound
+>>>> 12 equals destination size [-Werror=stringop-truncation]
+>>>>     strncpy(new_part->header.name, name, 12);
+>>>>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>
+>>>>     CC      arch/powerpc/kernel/trace/ftrace.o
+>>>> In function 'make_field',
+>>>>       inlined from 'ps3_repository_read_boot_dat_address' at
+>>>> arch/powerpc/platforms/ps3/repository.c:900:9:
+>>>> arch/powerpc/platforms/ps3/repository.c:106:2: error: 'strncpy' output
+>>>> truncated before terminating nul copying 8 bytes from a string of the same
+>>>> length [-Werror=stringop-truncation]
+>>>>     strncpy((char *)&n, text, 8);
+>>>>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>
+>>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>>
+>>>
+>>> Thanks for your patch!
+>>>
+>>>> --- a/arch/powerpc/kernel/nvram_64.c
+>>>> +++ b/arch/powerpc/kernel/nvram_64.c
+>>>> @@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char
+>>>> *name, int sig,
+>>>>           new_part->index = free_part->index;
+>>>>           new_part->header.signature = sig;
+>>>>           new_part->header.length = size;
+>>>> -       strncpy(new_part->header.name, name, 12);
+>>>> +       memcpy(new_part->header.name, name, strnlen(name,
+>>>> sizeof(new_part->header.name)));
+>>>
+>>>
+>>> The comment for nvram_header.lgnth says:
+>>>
+>>>           /* Terminating null required only for names < 12 chars. */
+>>>
+>>> This will not terminate the string with a zero (the struct is
+>>> allocated with kmalloc).
+>>> So the original code is correct, the new one isn't.
+>>
+>> Right, then I have to first zeroize the destination.
+> 
+> Using kzalloc() instead of kmalloc() will do.
+> 
+> Still, papering around these warnings seems to obscure things, IMHO.
+> And it increases code size, as you had to add a call to strnlen().
+
+Right but then, what is the best solution to elimate that warning ?
+
+Would it be better to enclose those two lines in:
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
+...
+#pragma GCC diagnostic pop
+
+
+Christophe
+
+> 
+>>>>           new_part->header.checksum = nvram_checksum(&new_part->header);
+>>>>
+>>>>           rc = nvram_write_header(new_part);
+>>>> diff --git a/arch/powerpc/platforms/ps3/repository.c
+>>>> b/arch/powerpc/platforms/ps3/repository.c
+>>>> index 50dbaf24b1ee..e49c887787c4 100644
+>>>> --- a/arch/powerpc/platforms/ps3/repository.c
+>>>> +++ b/arch/powerpc/platforms/ps3/repository.c
+>>>> @@ -101,9 +101,9 @@ static u64 make_first_field(const char *text, u64
+>>>> index)
+>>>>
+>>>>    static u64 make_field(const char *text, u64 index)
+>>>>    {
+>>>> -       u64 n;
+>>>> +       u64 n = 0;
+>>>>
+>>>> -       strncpy((char *)&n, text, 8);
+>>>> +       memcpy((char *)&n, text, strnlen(text, sizeof(n)));
+>>>
+>>>
+>>> This changes behavior: strncpy() fills the remainder of the buffer with
+>>> zeroes.  I don't remember the details of the PS3 repository structure,
+>>> but given this writes to a fixed size u64 buffer, I'd expect the PS3
+>>> hypervisor code to (1) rely on the zero padding, and (2) not need a zero
+>>> terminator if there are 8 characters in the buffer, so probably the
+>>> original code is correct, and the "fixed" code isn't.
+>>
+>> Here I have set n to 0 prior to the copy, so the buffer IS zero padded.
+> 
+> Sorry, I missed that part.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
