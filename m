@@ -1,90 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935190AbeE2O0S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:26:18 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41556 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934882AbeE2O0J (ORCPT
+        id S935292AbeE2O0p (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:26:45 -0400
+Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38208 "EHLO
+        smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935092AbeE2OW0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:26:09 -0400
-X-Google-Smtp-Source: ADUXVKLzdcH9wSRvqp7CBI2HEn+jXQ7T2WNF9g8TRKKBfnKAXuQMG97EguGIhGy7phW+bX4cLjEinA==
-Date: Tue, 29 May 2018 16:26:06 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 RESEND] display: panel: Add AUO g070vvn01 display
- support (800x480)
-Message-ID: <20180529142606.GA22634@ulmo>
-References: <20180410102927.17787-1-lukma@denx.de>
- <20180514190849.18723-1-lukma@denx.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
-Content-Disposition: inline
-In-Reply-To: <20180514190849.18723-1-lukma@denx.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 29 May 2018 10:22:26 -0400
+From: James Simmons <jsimmons@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>,
+        Amir Shehata <amir.shehata@intel.com>,
+        James Simmons <jsimmons@infradead.org>
+Subject: [PATCH v2 11/25] staging: lustre: libcfs: provide debugfs files for distance handling
+Date: Tue, 29 May 2018 10:21:51 -0400
+Message-Id: <1527603725-30560-12-git-send-email-jsimmons@infradead.org>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
+References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Amir Shehata <amir.shehata@intel.com>
 
---zYM0uCDKw75PZbzx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On systems with large number of NUMA nodes and cores it is easy
+to incorrectly configure their use with Lustre. Provide debugfs
+files which can help track down any issues.
 
-On Mon, May 14, 2018 at 09:08:49PM +0200, Lukasz Majewski wrote:
-> This commit adds support for AUO's 7.0" display.
->=20
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> Reviewed-by: Rob Herring <robh@kernel.org>
->=20
-> ---
-> Changes for v3:
-> - Remove not used 'bus-format-override =3D "rgb565";' property
->=20
-> Changes for v2:
-> - Add *.txt suffix to the auo,g070wn01 file
-> ---
->  .../bindings/display/panel/auo,g070vvn01.txt       | 29 ++++++++++++++++=
-++++
->  drivers/gpu/drm/panel/panel-simple.c               | 31 ++++++++++++++++=
-++++++
->  2 files changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/auo,g=
-070vvn01.txt
+Signed-off-by: Amir Shehata <amir.shehata@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-7734
+Reviewed-on: http://review.whamcloud.com/18916
+Reviewed-by: Olaf Weber <olaf@sgi.com>
+Reviewed-by: Doug Oucharek <dougso@me.com>
+Signed-off-by: James Simmons <jsimmons@infradead.org>
+---
+Changelog:
 
-Next time, please use the standard "drm/panel: " prefix, which increases
-the chances of me seeing the patch.
+v1) Initial patch
+v2) Rebased patch. No code changes from original patch
 
-Also, it's usually a good idea to split patches up into one that has the
-device tree bindings and another one that has the driver changes.
+ drivers/staging/lustre/lnet/libcfs/module.c | 53 +++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-Applied, thanks.
-
-Thierry
-
---zYM0uCDKw75PZbzx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsNYvsACgkQ3SOs138+
-s6EJ3A/7B3hYtcRF8nz6PhemNmpyvVMmtIkKN1VuUTw1ywWKe3sdv8mN3w3Hs25t
-wOyRJKKvV5uOPMfWtyA8FIp/IaR+HCJABlYp/KQkAGsV5C0qRVSYBrLtPvCtM9c3
-RsAsSN3Lg7hsA/W1IiNMt2JWBpeY7xGmk7HHXJWMKJjCmHelBKi3y/RMxAXejBs+
-+RkDbTi7+g90b8pxQY/IjOsvSA3kIRQTrzqwXE8MmUQLLvGXwdkkd4bXBsmYA88I
-kHpEAqo0eJC+bwtSjt/HZAtt1atiXMclzGwGdYzH/HjEk9/LZZ2AIHFS2YPtNKmr
-AHza597m8P9UPp5lIzcG7s7AoPyNNTx8neblLCVMuJvSvGIFFJNLJ9vhHELRG1yb
-2O21sdsAK0k/9ALOiOxgcDiZhijzgTl6H1RUCuIBDF8QLmObpgSxKhrqvyorjNHS
-INCW0qOKL2OWkZR643OpWgV9gDujS3yah0Zaoj5G2h97J88SuCqKIlzJL8he8iWC
-kV8tWSxUZ9p0x74kVNmvwFAGhJAYoySilxQ3j2VgDAxZh0kbCsL/EeP94MRp1f2v
-+jam7fOGciLQ+XSWnC5J4VttBO64/oIsDx29CRZHBYqFwQ1vMxP26xcycNwsk/2R
-+9kBLhcYeFguVGqjvJcX0jDpW2hxU0BSIKQfKrBP6IAvV2Ec6SU=
-=vYjZ
------END PGP SIGNATURE-----
-
---zYM0uCDKw75PZbzx--
+diff --git a/drivers/staging/lustre/lnet/libcfs/module.c b/drivers/staging/lustre/lnet/libcfs/module.c
+index b438d456..d2dfc29 100644
+--- a/drivers/staging/lustre/lnet/libcfs/module.c
++++ b/drivers/staging/lustre/lnet/libcfs/module.c
+@@ -468,6 +468,53 @@ static int proc_cpt_table(struct ctl_table *table, int write,
+ 				    __proc_cpt_table);
+ }
+ 
++static int __proc_cpt_distance(void *data, int write,
++			       loff_t pos, void __user *buffer, int nob)
++{
++	char *buf = NULL;
++	int len = 4096;
++	int rc = 0;
++
++	if (write)
++		return -EPERM;
++
++	LASSERT(cfs_cpt_tab);
++
++	while (1) {
++		buf = kzalloc(len, GFP_KERNEL);
++		if (!buf)
++			return -ENOMEM;
++
++		rc = cfs_cpt_distance_print(cfs_cpt_tab, buf, len);
++		if (rc >= 0)
++			break;
++
++		if (rc == -EFBIG) {
++			kfree(buf);
++			len <<= 1;
++			continue;
++		}
++		goto out;
++	}
++
++	if (pos >= rc) {
++		rc = 0;
++		goto out;
++	}
++
++	rc = cfs_trace_copyout_string(buffer, nob, buf + pos, NULL);
++out:
++	kfree(buf);
++	return rc;
++}
++
++static int proc_cpt_distance(struct ctl_table *table, int write,
++			     void __user *buffer, size_t *lenp, loff_t *ppos)
++{
++	return lprocfs_call_handler(table->data, write, ppos, buffer, lenp,
++				    __proc_cpt_distance);
++}
++
+ static struct ctl_table lnet_table[] = {
+ 	{
+ 		.procname = "debug",
+@@ -497,6 +544,12 @@ static int proc_cpt_table(struct ctl_table *table, int write,
+ 		.proc_handler = &proc_cpt_table,
+ 	},
+ 	{
++		.procname = "cpu_partition_distance",
++		.maxlen	  = 128,
++		.mode	  = 0444,
++		.proc_handler = &proc_cpt_distance,
++	},
++	{
+ 		.procname = "debug_log_upcall",
+ 		.data     = lnet_debug_log_upcall,
+ 		.maxlen   = sizeof(lnet_debug_log_upcall),
+-- 
+1.8.3.1
