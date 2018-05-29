@@ -1,77 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755401AbeE2IzG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:55:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755257AbeE2IzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:55:03 -0400
-Date: Tue, 29 May 2018 11:54:59 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Hakon Bugge <haakon.bugge@oracle.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IB/mad: Use ID allocator routines to allocate agent
- number
-Message-ID: <20180529085459.GF3697@mtr-leonro.mtl.com>
-References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+        id S1755430AbeE2I4B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:56:01 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41795 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755257AbeE2Iz7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 04:55:59 -0400
+Subject: Re: linux-next: manual merge of the irqchip tree with the arm-soc
+ tree
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+CC: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+References: <20180529155257.5ae48830@canb.auug.org.au>
+ <1bedc0b7-21f9-1e15-a11c-3de06e81b5ba@st.com>
+ <c306fbd9-21d9-5345-e820-52bc23d1b7c7@arm.com>
+ <b01f3226-5bb8-071a-e825-73bec913ffa8@st.com>
+ <2d647302-0be8-555b-8063-06b0d2d72772@arm.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <b8fa6cc9-5d73-81a2-25b8-f0c858ef0c62@st.com>
+Date: Tue, 29 May 2018 10:55:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4jXrM3lyYWu4nBt5"
-Content-Disposition: inline
-In-Reply-To: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <2d647302-0be8-555b-8063-06b0d2d72772@arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---4jXrM3lyYWu4nBt5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, May 29, 2018 at 09:38:08AM +0200, Hans Westgaard Ry wrote:
-> The agent TID is a 64 bit value split in two dwords.  The least
-> significant dword is the TID running counter. The most significant
-> dword is the agent number. In the CX-3 shared port model, the mlx4
-> driver uses the most significant byte of the agent number to store the
-> slave number, making agent numbers greater and equal to 2^24 (3 bytes)
-> unusable.  The current codebase uses a variable which is incremented
-> atomically for each new agent number giving too large agent numbers
-> over time.  The IDA set of functions are used instead of the simple
-> counter approach. This allows re-use of agent numbers. A sysctl
-> variable is also introduced, to control the max agent number.
+On 05/29/2018 10:39 AM, Marc Zyngier wrote:
+> On 29/05/18 09:16, Alexandre Torgue wrote:
+>> Hi Marc
+>>
+>> On 05/29/2018 09:47 AM, Marc Zyngier wrote:
+>>> On 29/05/18 08:41, Alexandre Torgue wrote:
+>>>> Hi Stephen
+>>>>
+>>>> On 05/29/2018 07:52 AM, Stephen Rothwell wrote:
+>>>>> Hi all,
+>>>>>
+>>>>> Today's linux-next merge of the irqchip tree got a conflict in:
+>>>>>
+>>>>>      arch/arm/boot/dts/stm32mp157c.dtsi
+>>>>>
+>>>>> between commit:
+>>>>>
+>>>>>      3c00436fdb20 ("ARM: dts: stm32: add USBPHYC support to stm32mp157c")
+>>>>>
+>>>>> from the arm-soc tree and commit:
+>>>>>
+>>>>>      5f0e9d2557d7 ("ARM: dts: stm32: Add exti support for stm32mp157c")
+>>>>>
+>>>>> from the irqchip tree.
+>>>>>
+>>>>> I fixed it up (see below) and can carry the fix as necessary. This
+>>>>> is now fixed as far as linux-next is concerned, but any non trivial
+>>>>> conflicts should be mentioned to your upstream maintainer when your tree
+>>>>> is submitted for merging.  You may also want to consider cooperating
+>>>>> with the maintainer of the conflicting tree to minimise any particularly
+>>>>> complex conflicts.
+>>>>>
+>>>>
+>>>> Thanks for the fix (I will reorder nodes in a future patch). My opinion
+>>>> is that all STM32 DT patches should come through my STM32 tree. It is my
+>>>> role to fix this kind of conflicts. I thought it was a common rule
+>>>> (driver patches go to sub-system maintainer tree and DT to the Machine
+>>>> maintainer). For incoming next-series which contain DT+driver patches I
+>>>> will indicate clearly that I take DT patch. I'm right ?
+>>> Happy to oblige. Can you make sure you sync up with Ludovic and define
+>>> what you want to do?
+>>
+>> Sorry I don't understand your reply. I just say that for series
+>> containing DT patches + drivers patches, to my point of view it is more
+>> safe that driver patches are taken by sub-system maintainer (you in this
+>> case) and that I take DT patches in my tree.
+> And I'm happy to let you deal with these patches. I'm just asking you
+> sync with Ludovic to split the series on whichever boundary you wish to
+> enforce.
+ok
 
-Why don't you simply limit this number per-driver? By default, any
-variable is allowed and mlx4_ib will set something else.
+> 
+>>> In the meantime, I'm dropping the series altogether.
+>>>
+>> Why? We could keep it as Stephen fixed the merge issue.
+> Well, you seem to have a strong opinion about who deals with what. I'll
+> let Ludovic repost what you and him decide should go via the irqchip tree.
 
-What is the advantage of having sysctl?
+It's not a "strong" opinion just my point of view and maybe not the good 
+one. I thought that's the way of working was like I explained. If you 
+prefer 2 series (one for driver patches and another one for DT patches) 
+I will be happy with that.
 
-Thanks
+Ludovic, what is your opinion ?
 
---4jXrM3lyYWu4nBt5
-Content-Type: application/pgp-signature; name="signature.asc"
+Regards
+Alexandre
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbDRVjAAoJEORje4g2clinN0AP/idsbMxwIzDg+gKlb2EZQsNc
-B0j6QICUQKz4wqHuqghozSA2hjyTwcWRzmjFkf5VNaI0T6g93pOf3FcdFGFHlz+/
-dhwDZsHa/EwJqFIbGDc/ch7XNMwAsLBXvllU3eq+dno5jdkjVJ9Vsvuc11pX6ttI
-N0sxuYhe4gaNE5OnBpASXmk58D+P4uAqlFdbcjTYyYlG3B0W3aapVk15Dii83dSa
-Ny8XPBMY1RgjI2txEVMwDjTLXNfvkSg7w+FfgkZA4m5VwyEK4BnQJSmoFidxEWjv
-20OkzehDteZDI21BBNtQQxj0a5zdzGPSTnv/8RxkLOr7q6k8bYHXswcag99LjciD
-pcG59IVIJR9//tNw48Ey0uRdJwWfAiiBw6uA1fTOWWQjyg/5QwkVjlh2y/TT2Tfv
-4AcDOjhDjhUrCSgEwYtetzXYUQRg6/z2GWps9oCVvHOXE/tC4EvXUGBwYRp62yIv
-rcN+FDhYcRjowLnIGuWOQUuOWucg7DDVC4T0gh05Tax3rvtw1wqz6plO+i5Shlag
-nQQj7VNElA1tcoIFJkWvRK+qLoaUkJLiuW0vRTMyqm7LeN1WdC2GvPCKTv5STeMC
-Ik2iSeoIm5WzYOUGdFoetdvBVL9sLZXXIy6bwtp84+ultwwWbVfSNn2gtkgPthR3
-ZrnBiholSjKN79fe9s54
-=4dh0
------END PGP SIGNATURE-----
-
---4jXrM3lyYWu4nBt5--
+> 
+> Thanks,
+> 
+> 	M.
+> 
