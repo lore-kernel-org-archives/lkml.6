@@ -1,98 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755944AbeE2CLh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 22:11:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36998 "EHLO mx1.redhat.com"
+        id S932264AbeE2CLr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 22:11:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34704 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754783AbeE2CL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 22:11:28 -0400
+        id S1754094AbeE2CLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 22:11:40 -0400
 From: Jason Wang <jasowang@redhat.com>
 To: mst@redhat.com, jasowang@redhat.com
 Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         jfreimann@redhat.com, wexu@redhat.com, tiwei.bie@intel.com
-Subject: [RFC V5 PATCH 5/8] vhost: vhost_put_user() can accept metadata type
-Date: Tue, 29 May 2018 10:10:27 +0800
-Message-Id: <1527559830-8133-6-git-send-email-jasowang@redhat.com>
+Subject: [RFC V5 PATCH 6/8] virtio: introduce packed ring defines
+Date: Tue, 29 May 2018 10:10:28 +0800
+Message-Id: <1527559830-8133-7-git-send-email-jasowang@redhat.com>
 In-Reply-To: <1527559830-8133-1-git-send-email-jasowang@redhat.com>
 References: <1527559830-8133-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We assumes used ring update is the only user for vhost_put_user() in
-the past. This may not be the case for the incoming packed ring which
-may update the descriptor ring for used. So introduce a new type
-parameter.
-
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/vhost/vhost.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ include/uapi/linux/virtio_config.h |  9 +++++++++
+ include/uapi/linux/virtio_ring.h   | 13 +++++++++++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index e0fcfec..4031a8f 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -811,7 +811,7 @@ static inline void __user *__vhost_get_user(struct vhost_virtqueue *vq,
- 	return __vhost_get_user_slow(vq, addr, size, type);
- }
+diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+index 308e209..5903d51 100644
+--- a/include/uapi/linux/virtio_config.h
++++ b/include/uapi/linux/virtio_config.h
+@@ -71,4 +71,13 @@
+  * this is for compatibility with legacy systems.
+  */
+ #define VIRTIO_F_IOMMU_PLATFORM		33
++
++#define VIRTIO_F_RING_PACKED		34
++
++/*
++ * This feature indicates that all buffers are used by the device in
++ * the same order in which they have been made available.
++ */
++#define VIRTIO_F_IN_ORDER		35
++
+ #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
+index 6d5d5fa..e297580 100644
+--- a/include/uapi/linux/virtio_ring.h
++++ b/include/uapi/linux/virtio_ring.h
+@@ -43,6 +43,8 @@
+ #define VRING_DESC_F_WRITE	2
+ /* This means the buffer contains a list of buffer descriptors. */
+ #define VRING_DESC_F_INDIRECT	4
++#define VRING_DESC_F_AVAIL      7
++#define VRING_DESC_F_USED	15
  
--#define vhost_put_user(vq, x, ptr)		\
-+#define vhost_put_user(vq, x, ptr, type)		\
- ({ \
- 	int ret = -EFAULT; \
- 	if (!vq->iotlb) { \
-@@ -819,7 +819,7 @@ static inline void __user *__vhost_get_user(struct vhost_virtqueue *vq,
- 	} else { \
- 		__typeof__(ptr) to = \
- 			(__typeof__(ptr)) __vhost_get_user(vq, ptr,	\
--					  sizeof(*ptr), VHOST_ADDR_USED); \
-+					  sizeof(*ptr), type); \
- 		if (to != NULL) \
- 			ret = __put_user(x, to); \
- 		else \
-@@ -1683,7 +1683,7 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
- {
- 	void __user *used;
- 	if (vhost_put_user(vq, cpu_to_vhost16(vq, vq->used_flags),
--			   &vq->used->flags) < 0)
-+			   &vq->used->flags, VHOST_ADDR_USED) < 0)
- 		return -EFAULT;
- 	if (unlikely(vq->log_used)) {
- 		/* Make sure the flag is seen before log. */
-@@ -1702,7 +1702,7 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
- static int vhost_update_avail_event(struct vhost_virtqueue *vq, u16 avail_event)
- {
- 	if (vhost_put_user(vq, cpu_to_vhost16(vq, vq->avail_idx),
--			   vhost_avail_event(vq)))
-+			   vhost_avail_event(vq), VHOST_ADDR_USED))
- 		return -EFAULT;
- 	if (unlikely(vq->log_used)) {
- 		void __user *used;
-@@ -2185,12 +2185,12 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
- 	used = vq->used->ring + start;
- 	for (i = 0; i < count; i++) {
- 		if (unlikely(vhost_put_user(vq, heads[i].elem.id,
--					    &used[i].id))) {
-+					    &used[i].id, VHOST_ADDR_USED))) {
- 			vq_err(vq, "Failed to write used id");
- 			return -EFAULT;
- 		}
- 		if (unlikely(vhost_put_user(vq, heads[i].elem.len,
--					    &used[i].len))) {
-+					    &used[i].len, VHOST_ADDR_USED))) {
- 			vq_err(vq, "Failed to write used len");
- 			return -EFAULT;
- 		}
-@@ -2236,7 +2236,7 @@ int vhost_add_used_n(struct vhost_virtqueue *vq, struct vhost_used_elem *heads,
- 	/* Make sure buffer is written before we update index. */
- 	smp_wmb();
- 	if (vhost_put_user(vq, cpu_to_vhost16(vq, vq->last_used_idx),
--			   &vq->used->idx)) {
-+			   &vq->used->idx, VHOST_ADDR_USED)) {
- 		vq_err(vq, "Failed to increment used idx");
- 		return -EFAULT;
- 	}
+ /* The Host uses this in used->flags to advise the Guest: don't kick me when
+  * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
+@@ -62,6 +64,17 @@
+  * at the end of the used ring. Guest should ignore the used->flags field. */
+ #define VIRTIO_RING_F_EVENT_IDX		29
+ 
++struct vring_desc_packed {
++	/* Buffer Address. */
++	__virtio64 addr;
++	/* Buffer Length. */
++	__virtio32 len;
++	/* Buffer ID. */
++	__virtio16 id;
++	/* The flags depending on descriptor type. */
++	__virtio16 flags;
++};
++
+ /* Virtio ring descriptors: 16 bytes.  These can chain together via "next". */
+ struct vring_desc {
+ 	/* Address (guest-physical). */
 -- 
 2.7.4
