@@ -1,76 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967866AbeE2Wkx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:40:53 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:33127 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967588AbeE2Wkv (ORCPT
+        id S967891AbeE2Wld (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:41:33 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38612 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967570AbeE2Wlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:40:51 -0400
-X-Google-Smtp-Source: ADUXVKKGgWWSIIYpENJmwg4fYj0rYIcVsIbUztB+Z7/UvMVY+3TG0FjHfSCdV1DhYLb37kPajmCdn3EzrthWYiqvcrw=
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4i__AQmCxM1rVBrLqXreMxQ5u9uRHRyJ=XZjDELxxJTzw@mail.gmail.com>
-References: <20180505075854.192237-1-ksspiers@google.com> <CAPcyv4i__AQmCxM1rVBrLqXreMxQ5u9uRHRyJ=XZjDELxxJTzw@mail.gmail.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 29 May 2018 15:40:50 -0700
-Message-ID: <CAPcyv4jrUwXFrF7aB-bKqfZ=17T5ie27KEO0JYWD=ETAqOqA4g@mail.gmail.com>
-Subject: Re: [PATCH v2] async_pq: Remove VLA usage
-To: Kyle Spiers <ksspiers@google.com>
-Cc: David Miller <davem@davemloft.net>, Kees Cook <keescook@chromium.org>,
-        ray.jui@broadcom.com, linux-crypto@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-raid <linux-raid@vger.kernel.org>, vkoul@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 May 2018 18:41:31 -0400
+X-Google-Smtp-Source: ADUXVKIbl7bEqaEtd/otI6JpbPODQCkELi2Z83boZ7AakYYl0YOksRGm8WqFwsHB3oi1GXY/o+fxZg==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1] media: staging: tegra-vde: Reset VDE regardless of memory client resetting failure
+Date: Wed, 30 May 2018 01:41:06 +0300
+Message-Id: <20180529224106.31565-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ add Vinod's korg address ]
+A failed memory client reset doesn't prevent VDE from resetting, hence
+reset VDE regardless of preceding memory client resetting failure.
 
-On Tue, May 29, 2018 at 3:37 PM, Dan Williams <dan.j.williams@intel.com> wrote:
-> [ adding linux-raid ]
->
-> Apologies for the delay, the recent ping from Kees made me take a closer look.
->
-> On Sat, May 5, 2018 at 12:58 AM, Kyle Spiers <ksspiers@google.com> wrote:
->> In the quest to remove VLAs from the kernel[1], this moves the
->> allocation of coefs and blocks from the stack to being kmalloc()ed.
->>
->> [1] https://lkml.org/lkml/2018/3/7/621
->>
->> Signed-off-by: Kyle Spiers <ksspiers@google.com>
->> ---
->> Forgot to add slab.h
->> ---
->>  crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
->>  crypto/async_tx/raid6test.c |  9 ++++++++-
->>  2 files changed, 22 insertions(+), 5 deletions(-)
->>
->> diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
->> index 56bd612927ab..af1912313a23 100644
->> --- a/crypto/async_tx/async_pq.c
->> +++ b/crypto/async_tx/async_pq.c
->> @@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
->>             (src_cnt <= dma_maxpq(device, 0) ||
->>              dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
->>             is_dma_pq_aligned(device, offset, 0, len)) {
->> -               struct dma_async_tx_descriptor *tx;
->> +               struct dma_async_tx_descriptor *tx = NULL;
->>                 enum dma_ctrl_flags dma_flags = 0;
->> -               unsigned char coefs[src_cnt];
->> +               unsigned char *coefs;
->>                 int i, j;
->>
->>                 /* run the p+q asynchronously */
->> @@ -207,6 +207,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
->>                  * sources and update the coefficients accordingly
->>                  */
->>                 unmap->len = len;
->> +               coefs = kmalloc_array(src_cnt, sizeof(*coefs), GFP_KERNEL);
->
-> At a minimum this needs to be GFP_NOIO since raid may be in the
-> page-reclaim path.
->
-> However, I think it may be better to allocate this with the rest of
-> the stripe resources and pass it in as a scratch buffer. See the usage
-> / implementation of scribble_alloc() in drivers/md/raid5.c.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/staging/media/tegra-vde/tegra-vde.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+index 6dd3bf4481be..6f06061a40d9 100644
+--- a/drivers/staging/media/tegra-vde/tegra-vde.c
++++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+@@ -901,15 +901,12 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
+ 	 * the whole system.
+ 	 */
+ 	err = reset_control_assert(vde->rst_mc);
+-	if (!err) {
+-		err = reset_control_assert(vde->rst);
+-		if (err)
+-			dev_err(dev,
+-				"DEC end: Failed to assert HW reset: %d\n",
+-				err);
+-	} else {
++	if (err)
+ 		dev_err(dev, "DEC end: Failed to assert MC reset: %d\n", err);
+-	}
++
++	err = reset_control_assert(vde->rst);
++	if (err)
++		dev_err(dev, "DEC end: Failed to assert HW reset: %d\n", err);
+ 
+ put_runtime_pm:
+ 	pm_runtime_mark_last_busy(dev);
+-- 
+2.17.0
