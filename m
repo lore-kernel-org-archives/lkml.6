@@ -1,69 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967822AbeE2W5O (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:57:14 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38978 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935806AbeE2W5K (ORCPT
+        id S967920AbeE2W6P (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:58:15 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53290 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S967857AbeE2W6M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:57:10 -0400
-X-Google-Smtp-Source: ADUXVKIhj7oWmCeowd4sao/kPnf7llaKO7YKWeArWN2EhLbnufMJ3SDYi3JWlHyLtEcKv1Tw5DcgwQ==
-From: Ben Chan <benchan@chromium.org>
-To: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>, dtor@chromium.org,
-        drinkcat@chromium.org
-Subject: [PATCH] HID: multitouch: fix calculation of last slot field in multi-touch reports
-Date: Tue, 29 May 2018 15:56:55 -0700
-Message-Id: <20180529225655.214380-1-benchan@chromium.org>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
+        Tue, 29 May 2018 18:58:12 -0400
+Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to
+ integrity audits
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+Date: Tue, 29 May 2018 18:58:06 -0400
+In-Reply-To: <CAHC9VhRp82u4puDt82E0G4ax4tb9301U7XK6+0ZT1rrP-ZgaRw@mail.gmail.com>
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
+         <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com>
+         <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
+         <4331521.GQBdaJNAj6@x2>
+         <CAHC9VhRp82u4puDt82E0G4ax4tb9301U7XK6+0ZT1rrP-ZgaRw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18052922-0040-0000-0000-0000043F15A1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052922-0041-0000-0000-0000264466AF
+Message-Id: <1527634686.3534.27.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805290243
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to [1] and also seemingly agreed by [2], the Scan Time usage
-(0x0D 0x56) is a report level usage, not a contact level usage.
+On Tue, 2018-05-29 at 17:47 -0400, Paul Moore wrote:
+> On Tue, May 29, 2018 at 5:35 PM, Steve Grubb <sgrubb@redhat.com> wrote:
+> > On Tuesday, May 29, 2018 5:19:39 PM EDT Paul Moore wrote:
+> >> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
+> >>
+> >> <stefanb@linux.vnet.ibm.com> wrote:
+> >> > Use the new public audit functions to add the exe= and tty=
+> >> > parts to the integrity audit records. We place them before
+> >> > res=.
+> >> >
+> >> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> >> > Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> >> > ---
+> >> >
+> >> >  security/integrity/integrity_audit.c | 2 ++
+> >> >  1 file changed, 2 insertions(+)
+> >> >
+> >> > diff --git a/security/integrity/integrity_audit.c
+> >> > b/security/integrity/integrity_audit.c index db30763d5525..8d25d3c4dcca
+> >> > 100644
+> >> > --- a/security/integrity/integrity_audit.c
+> >> > +++ b/security/integrity/integrity_audit.c
+> >> > @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode
+> >> > *inode,>
+> >> >                 audit_log_untrustedstring(ab, inode->i_sb->s_id);
+> >> >                 audit_log_format(ab, " ino=%lu", inode->i_ino);
+> >> >
+> >> >         }
+> >> >
+> >> > +       audit_log_d_path_exe(ab, current->mm);
+> >> > +       audit_log_tty(ab, current);
+> >>
+> >> NACK
+> >>
+> >> Please add the new fields to the end of the audit record, thank you.
+> >
+> > Let's see what an example event looks like before NACK'ing this. Way back in
+> > 2013 the IMA events were good. I think this is repairing the event after some
+> > drift.
+> 
+> Can you reference a specific commit, or point in time during 2013?
+> Looking at the git log quickly, if I go back to commit d726d8d719b6
+> ("integrity: move integrity_audit_msg()") from March 18, 2013 (the
+> commit that created integrity_audit.c) the field ordering appears to
+> be the same as it today.
+> 
+> My NACK still stands.
 
-However, the hid-multitouch driver currently includes HID_DG_SCANTIME
-when calculating `td->last_slot_field', which may lead to
-mt_complete_slot() being prematurely called in certain cases (e.g. when
-each touch input report includes more than one contact and the Scan Time
-usage appears before any contact logical collection).
+There hasn't been any changes up to now.  This patch set refactors
+integrity_audit_msg(), creating integrity_audit_msg_common(), which
+will be called from both ima_audit_measurement() and
+ima_parse_rule(). 
 
-This patch fixes the issue by skipping mt_store_field() on
-HID_DG_SCANTIME, similar to how HID_DG_CONTACTCOUNT and
-HID_DG_CONTACTMAX are handled.
+Previously the audit record generated by ima_parse_rule() did not
+include this info.  The change in this patch will affect both the
+existing and the new INTEGRITY_AUDIT_POLICY_RULE audit records.
 
-[1] https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/windows-precision-touchpad-required-hid-top-level-collections#windows-precision-touchpad-input-reports
-[2] https://patchwork.kernel.org/patch/1742181/
-
-Fixes: 29cc309d8bf19 ("HID: hid-multitouch: forward MSC_TIMESTAMP")
-Signed-off-by: Ben Chan <benchan@chromium.org>
----
- drivers/hid/hid-multitouch.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index dad2fbb0e3f8..161551aab496 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -620,13 +620,16 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 			hid_map_usage(hi, usage, bit, max,
- 				EV_MSC, MSC_TIMESTAMP);
- 			input_set_capability(hi->input, EV_MSC, MSC_TIMESTAMP);
--			mt_store_field(usage, td, hi);
- 			/* Ignore if indexes are out of bounds. */
- 			if (field->index >= field->report->maxfield ||
- 			    usage->usage_index >= field->report_count)
- 				return 1;
- 			td->scantime_index = field->index;
- 			td->scantime_val_index = usage->usage_index;
-+			/*
-+			 * We don't set td->last_slot_field as scan time is
-+			 * global to the report.
-+			 */
- 			return 1;
- 		case HID_DG_CONTACTCOUNT:
- 			/* Ignore if indexes are out of bounds. */
--- 
-2.17.0.921.gf22659ad46-goog
+Mimi
