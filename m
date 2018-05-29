@@ -1,46 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934950AbeE2OEG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:04:06 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:55606 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751041AbeE2OEE (ORCPT
+        id S934814AbeE2OF7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:05:59 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39882 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934316AbeE2OF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:04:04 -0400
-Date: Tue, 29 May 2018 10:04:02 -0400 (EDT)
-Message-Id: <20180529.100402.330737400285261138.davem@davemloft.net>
-To: arnd@arndb.de
-Cc: saeedm@mellanox.com, leon@kernel.org, borisp@mellanox.com,
-        ilant@mellanox.com, ogerlitz@mellanox.com, ilyal@mellanox.com,
-        ferasda@mellanox.com, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH, net-next] net/mlx5e: fix TLS dependency
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180525213630.2119214-1-arnd@arndb.de>
-References: <20180525213630.2119214-1-arnd@arndb.de>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Tue, 29 May 2018 10:05:57 -0400
+X-Google-Smtp-Source: AB8JxZpS1OK8CXRF6oy2F6baaBCFpgkVCI6sBCzvas9I1hwyYvlS39AFyZeSP6jms5Dv1xVbjA6CHCe32rn12meaUcs=
+MIME-Version: 1.0
+In-Reply-To: <20180529140219.auat656qcl5jdru7@flea.home>
+References: <20180528075032.6769-1-jagan@amarulasolutions.com> <20180529140219.auat656qcl5jdru7@flea.home>
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Tue, 29 May 2018 16:05:55 +0200
+Message-ID: <CAOf5uwkQE2Mv3vhMVFPk69VQRptLpqjC0BkFxucf+VuGyOd2Pw@mail.gmail.com>
+Subject: Re: [PATCH] rtc: sun6i: Fix bit_idx value for clk_register_gate
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Jagan Teki <jagan@amarulasolutions.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-rtc@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 25 May 2018 23:36:06 +0200
+Hi
 
-> With CONFIG_TLS=m and MLX5_CORE_EN=y, we get a link failure:
-> 
-> drivers/net/ethernet/mellanox/mlx5/core/en_accel/tls_rxtx.o: In function `mlx5e_tls_handle_ooo':
-> tls_rxtx.c:(.text+0x24c): undefined reference to `tls_get_record'
-> drivers/net/ethernet/mellanox/mlx5/core/en_accel/tls_rxtx.o: In function `mlx5e_tls_handle_tx_skb':
-> tls_rxtx.c:(.text+0x9a8): undefined reference to `tls_device_sk_destruct'
-> 
-> This narrows down the dependency to only allow the configurations
-> that will actually work. The existing dependency on TLS_DEVICE is
-> not sufficient here since MLX5_EN_TLS is a 'bool' symbol.
-> 
-> Fixes: c83294b9efa5 ("net/mlx5e: TLS, Add Innova TLS TX support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Tue, May 29, 2018 at 4:02 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> Hi,
+>
+> On Mon, May 28, 2018 at 01:20:32PM +0530, Jagan Teki wrote:
+>> From: Michael Trimarchi <michael@amarulasolutions.com>
+>>
+>> clk-gate core will take bit_idx through clk_register_gate
+>> and then do clk_gate_ops by using BIT(bit_idx), but rtc-sun6i
+>> is passing bit_idx as BIT(bit_idx) it becomes BIT(BIT(bit_idx)
+>> which is wrong and eventually external gate clock is not enabling.
+>>
+>> This patch fixed by passing bit index and the original change
+>> introduced from below commit.
+>> "rtc: sun6i: Add support for the external oscillator gate"
+>> (sha1:        17ecd246414b3a0fe0cb248c86977a8bda465b7b)
+>>
+>> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>
+> Cc'ing to stable and adding a Fixes tag would be great.
+>
+>> ---
+>>  drivers/rtc/rtc-sun6i.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+>> index 2e6fb275acc8..a66f40c96582 100644
+>> --- a/drivers/rtc/rtc-sun6i.c
+>> +++ b/drivers/rtc/rtc-sun6i.c
+>> @@ -74,7 +74,7 @@
+>>  #define SUN6I_ALARM_CONFIG_WAKEUP            BIT(0)
+>>
+>>  #define SUN6I_LOSC_OUT_GATING                        0x0060
+>> -#define SUN6I_LOSC_OUT_GATING_EN             BIT(0)
+>> +#define SUN6I_LOSC_OUT_GATING_EN             0
+>
+> All the other register definitions in that driver are the actual value
+> needed, and not the offset. Just to make it obvious that it shouldn't
+> be used as is, please add an _OFFSET at the end of the defined name
+>
 
-Applied, thank you.
+Make sense
+
+Michael
+
+> Thanks!
+> Maxime
+>
+> --
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+
+
+
+-- 
+| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
+| COO  -  Founder                                      Cruquiuskade 47 |
+| +31(0)851119172                                 Amsterdam 1018 AM NL |
+|                  [`as] http://www.amarulasolutions.com               |
