@@ -1,32 +1,31 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1958875-1527594736-2-17153259761046780319
+X-Cyrus-Session-Id: sloti22d1t05-1907279-1527589378-2-317178269963881877
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527594736; b=Kul7RJCjdiTt2f6nthk1c92YaZwyovwQs4Bc8uPLDrqRkOk+n3
-    jMBHJdoN27Pw4Ey4cMyQ+SJgO3/seXsz+KdYLhafTK1QcvbqcdLhtWFdrwCUvtCD
-    HsS6qvaITA5HLOCVxBkJOU+6rWduHztX0wWxZzRkCT6/yQA8L2wx7U+1vWiXSSy1
-    cGqDzt1BvW5WnnV3kU64hQpuCUekzNtMqZpDtu0RZsAW+84COODcWl2k45ZgbjGs
-    mPBd6q2553o4wpBSC66dZUDQgXZ0CNe0GeBuJ6W/+ED2GEvViN0HHQykT9JLORLU
-    RKx7W1jQqj9n7gULzTruinttCouc5kvBzCpQ==
+    1527589378; b=Or/7+LHRm5ej2mfIwOWPbP/ZHzEDxAoEWpiTXjlSAUh/JLvL0/
+    lW+Uf9WxbLcqVs8yjH6xwkZ6utFICFQMGNUE+1TvzUd6l/WhtIYWmUvSacmEFV8s
+    XLf92Yc+eKS+Je0h5WjaS4R6vRq4n+vcJW5E93/yEMVff2wy4jGUXPGpml1vSD7O
+    YA5JLCN+sI2DBejdGOaoUAbXo6i5/BUbg7WeLhR2/gclJFRKv43wlKL5UD5ix1sV
+    RoZXOG60If0+qGJUAhf/lfaHoO4Gm8JX1qTlYgxxnSCkKDHZaaGIP5whUzuTXfdR
+    lkCmy0pl1G7lOf+cwpMq+OAv5Dq0lvpSiyew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527594736;
-    bh=teFwHQrrqm8x4ZLUQ/m1MOb9Wr76Q1wYl69r6/AK5Ac=; b=KeBvxJ5Wa6Zn
-    Y5zO4ox3JUbYl5tCbjwfA63hclfuMZKNg2rxA45xu+INCkDi20v2WhSvAybw6na2
-    JFERNkvhevzP2clhxKbthZ7fkIgU95xmwHph1iXbpIPGtvnZSx7pkFSZov3OxV1D
-    2UNhLCECWza1b4B/fztV3nrH9iODoUOzXDNMWnngNW0yzOLjtQlg4Rb5tYdpG2Ze
-    b08KxDMG4/F68pt6v3JHtHT19IQPg0uJ25Q9+cet75JIPsWc6EyehNmcirYNwtuV
-    RwSi16nk5wPQSo3SfD+/U9h2+DzHAfUHOh8NnALvz/ldBfxWseb0sgY6GxB09NHF
-    MKZvsFhwDQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1527589378; bh=Wb582MidCFQLEGRlRz5tZmDTuRIWE/
+    rmDPGOa9jv1Ek=; b=KmdUf+JgeUJcEzmJejJDR4UO1E1CFLWxq2Hs5wu9Cp2HHA
+    Fv2kTUS+CIn0rto0xYPdTSjSM3HD1sGtA2DnxSe3yO/Yn5C3FZNpmTGkVbppTeCg
+    ih5wpxUytvCRvB76YyHO54ZqLTdvXdqAgurzMbognUu6T2E54psVI6MhPNRJysBZ
+    AS4opyxHdCtwXC3OVarfGfANLn4Ef/YsKpFMCkbTqhCB9pdPkjQOYjM0PIAslSUQ
+    dwH5zYqHMRYbSo/Aqeqk/Q+KFke5YgWqAe69LaUNl1A8xgP3ThRhoG316oFCYEOE
+    D3FYhrh8DcScBfZv0mDQiX0H1mIICIyDhorYYVnQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lwn.net;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=fromorbit.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -35,12 +34,13 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=lwn.net header.result=pass header_is_org_domain=yes;
+    header.domain=fromorbit.com header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lwn.net;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=fromorbit.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -49,99 +49,73 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=lwn.net header.result=pass header_is_org_domain=yes;
+      header.domain=fromorbit.com header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIyYPRBA50ajYo2CZ/IttZCciPJB/sovkqHmw/ZMoboMGMRRFDOO49xrFzAI8oUURM8aZBIckVetXvFMVlP5gzOaFhI6x5bEthTXDLWVJ6UIY9+kU4hP
-    xASP3q/SODjYR+lX4uDK9FjNYJASArE1zWIMF/Rcbey2LkBLvXYmwa1xHaRQ3jbhF62EvVDRryLwfVC1Vgbp57SAM6HHtX7YhnWh9+YJBYq4xU+rtDNsMYCX
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNCzBoNtaBi0kiBV5sKd0C+Na/DsBhyI3V11Mr51U9LYl9wSdU4P+shhRnCQLjAx6coP71GBugEK3naQoeH1Lrfp+wzGeZWQy7I/BcKM69UKT40qYH2J
+    ZkyYVQN9V89iVtC++AbStFG4iIprN02mNDNOA5DLxa7yYzfC1KjxJQxGPiS6jtMtwDgmHE2BkD+amwrtHonnnX/u1D/dJyBKq5NEJx2xGVNFu+6qTHLZ2SsR
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=07d9gI8wAAAA:8 a=VwXke4_Me_QSIZ1KxZoA:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=e2CUPOnPG4QKp8I52DXD:22
+    a=iox4zFpeAAAA:8 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=6slmQGIbPVgDHH9m3fUA:9
+    a=CjuIK1q_8ugA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=biEYGPWJfzWAr4FL6Ov7:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933535AbeE2LwO (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 07:52:14 -0400
-Received: from ms.lwn.net ([45.79.88.28]:34472 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933395AbeE2LwD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 May 2018 07:52:03 -0400
-Date: Tue, 29 May 2018 05:51:58 -0600
-From: Jonathan Corbet <corbet@lwn.net>
+        id S932900AbeE2KWz (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 06:22:55 -0400
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:61807 "EHLO
+        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932476AbeE2KWT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 May 2018 06:22:19 -0400
+Date: Tue, 29 May 2018 20:22:15 +1000
+From: Dave Chinner <david@fromorbit.com>
 To: Michal Hocko <mhocko@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>,
+Cc: Jonathan Corbet <corbet@lwn.net>,
         Randy Dunlap <rdunlap@infradead.org>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Michal Hocko <mhocko@suse.com>
 Subject: Re: [PATCH v2] doc: document scope NOFS, NOIO APIs
-Message-ID: <20180529055158.0170231e@lwn.net>
-In-Reply-To: <20180529082644.26192-1-mhocko@kernel.org>
+Message-ID: <20180529102215.GL23861@dastard>
 References: <20180524114341.1101-1-mhocko@kernel.org>
-        <20180529082644.26192-1-mhocko@kernel.org>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+ <20180529082644.26192-1-mhocko@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529082644.26192-1-mhocko@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 29 May 2018 10:26:44 +0200
-Michal Hocko <mhocko@kernel.org> wrote:
-
+On Tue, May 29, 2018 at 10:26:44AM +0200, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
 > Although the api is documented in the source code Ted has pointed out
 > that there is no mention in the core-api Documentation and there are
 > people looking there to find answers how to use a specific API.
+> 
+> Changes since v1
+> - add kerneldoc for the api - suggested by Johnatan
+> - review feedback from Dave and Johnatan
+> - feedback from Dave about more general critical context rather than
+>   locking
+> - feedback from Mike
+> - typo fixed - Randy, Dave
+> 
+> Requested-by: "Theodore Y. Ts'o" <tytso@mit.edu>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-So, I still think that this:
+We could bikeshed forever about the exact wording, but it covers
+everything I think needs to be documented.
 
-> +The traditional way to avoid this deadlock problem is to clear __GFP_FS
-> +respectively __GFP_IO (note the latter implies clearing the first as well) in
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
 
-doesn't read the way you intend it to.  But we've sent you in more
-than enough circles on this already, so I went ahead and applied it;
-wording can always be tweaked later.
-
-You added the kerneldoc comments, but didn't bring them into your new
-document.  I'm going to tack this on afterward, hopefully nobody will
-object.
-
-Thanks,
-
-jon
-
----
-docs: Use the kerneldoc comments for memalloc_no*()
-
-Now that we have kerneldoc comments for
-memalloc_no{fs,io}_{save_restore}(), go ahead and pull them into the docs.
-
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/core-api/gfp_mask-from-fs-io.rst | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
-index 2dc442b04a77..e0df8f416582 100644
---- a/Documentation/core-api/gfp_mask-from-fs-io.rst
-+++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
-@@ -33,6 +33,11 @@ section from a filesystem or I/O point of view. Any allocation from that
- scope will inherently drop __GFP_FS respectively __GFP_IO from the given
- mask so no memory allocation can recurse back in the FS/IO.
- 
-+.. kernel-doc:: include/linux/sched/mm.h
-+   :functions: memalloc_nofs_save memalloc_nofs_restore
-+.. kernel-doc:: include/linux/sched/mm.h
-+   :functions: memalloc_noio_save memalloc_noio_restore
-+
- FS/IO code then simply calls the appropriate save function before
- any critical section with respect to the reclaim is started - e.g.
- lock shared with the reclaim context or when a transaction context
 -- 
-2.14.3
+Dave Chinner
+david@fromorbit.com
