@@ -1,109 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966896AbeE2Usk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 16:48:40 -0400
-Received: from foss.arm.com ([217.140.101.70]:47702 "EHLO foss.arm.com"
+        id S966911AbeE2Uu7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 16:50:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966175AbeE2Usi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 16:48:38 -0400
-Subject: Re: [PATCH v9 00/12] Support PPTT for ARM64
-To: Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>, austinwc@codeaurora.org,
-        tnowicki@caviumnetworks.com, Palmer Dabbelt <palmer@sifive.com>,
-        linux-riscv@lists.infradead.org, Morten.Rasmussen@arm.com,
-        vkilari@codeaurora.org, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        jhugo@codeaurora.org, Al Stone <ahs3@redhat.com>,
-        Len Brown <lenb@kernel.org>, John Garry <john.garry@huawei.com>,
-        wangxiongfeng2@huawei.com, Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20180511235807.30834-1-jeremy.linton@arm.com>
- <20180517170523.h7tuvbzdfluuidcz@armageddon.cambridge.arm.com>
- <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com>
- <09fb3fe7-d703-43f1-74f7-f8cb5ff1f67a@arm.com>
- <CAMuHMdXgiMeD4uF+j8W+CpNwYYK2W_8xqk_=vGBiW=bUvKeq7w@mail.gmail.com>
- <551905a6-eaa8-97df-06ec-1ceedfbc164f@arm.com>
- <20180529150823.GD17159@arm.com>
- <CAMuHMdU0yET6+-FfS8e9HJdKB7h0gDn7kzWGpJZV=UiWn5fLkA@mail.gmail.com>
- <20180529201623.GA591@arm.com>
-From: Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <18579a87-0154-ff90-5ee6-02453c97c47b@arm.com>
-Date: Tue, 29 May 2018 15:48:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180529201623.GA591@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S966770AbeE2Uu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 16:50:56 -0400
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: issue discard commands proactively in high fs utilization
+Date: Tue, 29 May 2018 13:50:48 -0700
+Message-Id: <20180529205048.39694-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 03:16 PM, Will Deacon wrote:
-> Hi Geert,
-> 
-> On Tue, May 29, 2018 at 05:51:29PM +0200, Geert Uytterhoeven wrote:
->> On Tue, May 29, 2018 at 5:08 PM, Will Deacon <will.deacon@arm.com> wrote:
->>> On Tue, May 29, 2018 at 02:18:40PM +0100, Sudeep Holla wrote:
->>>> On 29/05/18 12:56, Geert Uytterhoeven wrote:
->>>>> On Tue, May 29, 2018 at 1:14 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>>>>> On 29/05/18 11:48, Geert Uytterhoeven wrote:
->>>>>>> System supend still works fine on systems with big cores only:
->>>>>>>
->>>>>>>      R-Car H3 ES1.0 (4xCA57 (4xCA53 disabled in firmware))
->>>>>>>      R-Car M3-N (2xCA57)
->>>>>>>
->>>>>>> Reverting this commit fixes the issue for me.
->>>>>>
->>>>>> I can't find anything that relates to system suspend in these patches
->>>>>> unless they are messing with something during CPU hot plug-in back
->>>>>> during resume.
->>>>>
->>>>> It's only the last patch that introduces the breakage.
->>>>>
->>>>
->>>> As specified in the commit log, it won't change any behavior for DT
->>>> systems if it's non-NUMA or single node system. So I am still wondering
->>>> what could trigger this regression.
->>>
->>> I wonder if we're somehow giving an uninitialised/invalid NUMA configuration
->>> to the scheduler, although I can't see how this would happen.
->>>
->>> Geert -- if you enable CONFIG_DEBUG_PER_CPU_MAPS=y and apply the diff below
->>> do you see anything shouting in dmesg?
->>
->> Thanks, but unfortunately it doesn't help.
->> I added some debug code to print cpumask, but so far I don't see anything
->> suspicious.
-> 
-> Damn, sorry for wasting your time. For the record, Catalin's been seeing
-> boot failures under KVM on a non-big/LITTLE machine that bisect reliably
-> to this patch, but we've also not been able to explain them. Worse, adding
-> so much as a printk makes the problem disappear.
+In the high utilization like over 80%, we don't expect huge # of large discard
+commands, but do many small pending discards which affects FTL GCs a lot.
+Let's issue them in that case.
 
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h    |  3 +-
+ fs/f2fs/segment.c | 71 ++++++++++++++++++++++++++---------------------
+ 2 files changed, 40 insertions(+), 34 deletions(-)
 
-
-I was about to post a patch to remove the numa check if CONFIG_NUMA 
-disabled. But that seems pointless if the its happening with numa 
-enabled. So assuming, its the removal of the core from the numa mask 
-which is causing problems. It looks like numa_clear_node() might cause 
-similar problems when numa is enabled. In my case the problem I see is 
-NULL dereference in __bitmap_intersect called from select_task_rq_fair. 
-That said, I only see the problem when CONFIG_NUMA isn't set.
-
-So, I've also got another work around which caches the numa node to the 
-cpu_topology and then only builds it when store_cpu_topology() is 
-called. That should stabilize the numa mask, and assure that the bit 
-maps are correct when the scheduler requests them.
-
-Do you guys want that patch, or are we looking for a deeper root cause?
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e852ac9472c6..27231fe8a6b2 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -186,6 +186,7 @@ enum {
+ #define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+ #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+ #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
++#define DEF_DISCARD_URGENT_UTIL		80	/* do more discard over 80% */
+ #define DEF_CP_INTERVAL			60	/* 60 secs */
+ #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+ 
+@@ -2777,8 +2778,6 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
+ void destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free);
+ void invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
+ bool is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
+-void init_discard_policy(struct discard_policy *dpolicy, int discard_type,
+-						unsigned int granularity);
+ void drop_discard_cmd(struct f2fs_sb_info *sbi);
+ void stop_discard_thread(struct f2fs_sb_info *sbi);
+ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6e40e536dae0..8c1f7a6bf178 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -915,6 +915,38 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
+ #endif
+ }
+ 
++static void __init_discard_policy(struct f2fs_sb_info *sbi,
++				struct discard_policy *dpolicy,
++				int discard_type, unsigned int granularity)
++{
++	/* common policy */
++	dpolicy->type = discard_type;
++	dpolicy->sync = true;
++	dpolicy->granularity = granularity;
++
++	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
++	dpolicy->io_aware_gran = MAX_PLIST_NUM;
++
++	if (discard_type == DPOLICY_BG) {
++		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
++		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
++		dpolicy->io_aware = true;
++		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
++			dpolicy->granularity = 1;
++			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
++		}
++	} else if (discard_type == DPOLICY_FORCE) {
++		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
++		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
++		dpolicy->io_aware = false;
++	} else if (discard_type == DPOLICY_FSTRIM) {
++		dpolicy->io_aware = false;
++	} else if (discard_type == DPOLICY_UMOUNT) {
++		dpolicy->io_aware = false;
++	}
++}
++
++
+ /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
+ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 						struct discard_policy *dpolicy,
+@@ -1278,9 +1310,9 @@ static void __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	/* wait all */
+-	init_discard_policy(&dp, DPOLICY_FSTRIM, 1);
++	__init_discard_policy(sbi, &dp, DPOLICY_FSTRIM, 1);
+ 	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
+-	init_discard_policy(&dp, DPOLICY_UMOUNT, 1);
++	__init_discard_policy(sbi, &dp, DPOLICY_UMOUNT, 1);
+ 	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
+ }
+ 
+@@ -1326,7 +1358,8 @@ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
+ 	struct discard_policy dpolicy;
+ 	bool dropped;
+ 
+-	init_discard_policy(&dpolicy, DPOLICY_UMOUNT, dcc->discard_granularity);
++	__init_discard_policy(sbi, &dpolicy, DPOLICY_UMOUNT,
++					dcc->discard_granularity);
+ 	__issue_discard_cmd(sbi, &dpolicy);
+ 	dropped = __drop_discard_cmd(sbi);
+ 
+@@ -1347,7 +1380,7 @@ static int issue_discard_thread(void *data)
+ 	set_freezable();
+ 
+ 	do {
+-		init_discard_policy(&dpolicy, DPOLICY_BG,
++		__init_discard_policy(sbi, &dpolicy, DPOLICY_BG,
+ 					dcc->discard_granularity);
+ 
+ 		wait_event_interruptible_timeout(*q,
+@@ -1365,7 +1398,7 @@ static int issue_discard_thread(void *data)
+ 			dcc->discard_wake = 0;
+ 
+ 		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+-			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
++			__init_discard_policy(sbi, &dpolicy, DPOLICY_FORCE, 1);
+ 
+ 		sb_start_intwrite(sbi->sb);
+ 
+@@ -1658,32 +1691,6 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	wake_up_discard_thread(sbi, false);
+ }
+ 
+-void init_discard_policy(struct discard_policy *dpolicy,
+-				int discard_type, unsigned int granularity)
+-{
+-	/* common policy */
+-	dpolicy->type = discard_type;
+-	dpolicy->sync = true;
+-	dpolicy->granularity = granularity;
+-
+-	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
+-	dpolicy->io_aware_gran = MAX_PLIST_NUM;
+-
+-	if (discard_type == DPOLICY_BG) {
+-		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+-		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+-		dpolicy->io_aware = true;
+-	} else if (discard_type == DPOLICY_FORCE) {
+-		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+-		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+-		dpolicy->io_aware = false;
+-	} else if (discard_type == DPOLICY_FSTRIM) {
+-		dpolicy->io_aware = false;
+-	} else if (discard_type == DPOLICY_UMOUNT) {
+-		dpolicy->io_aware = false;
+-	}
+-}
+-
+ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+ {
+ 	dev_t dev = sbi->sb->s_bdev->bd_dev;
+@@ -2442,7 +2449,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	start_block = START_BLOCK(sbi, start_segno);
+ 	end_block = START_BLOCK(sbi, min(cur_segno, end_segno) + 1);
+ 
+-	init_discard_policy(&dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
++	__init_discard_policy(sbi, &dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
+ 	__issue_discard_cmd_range(sbi, &dpolicy, start_block, end_block);
+ 	trimmed = __wait_discard_cmd_range(sbi, &dpolicy,
+ 					start_block, end_block);
+-- 
+2.17.0.441.gb46fe60e1d-goog
