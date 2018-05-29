@@ -1,34 +1,32 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1708975-1527783748-2-4605477526147645060
+X-Cyrus-Session-Id: sloti22d1t05-2486798-1527616949-2-17117936540803469022
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='utf-8'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527783748; b=fPRbTx5U5RB4KqhCWizpsjwu7DEU5DLGv9YadH/22EnhwROJM3
-    b63YF7XG5Rjw86dqFlrsSeqriZHIjGx/z2HYt4LAYyzTUIFVY0USndItyQbeC5Ti
-    qXOsIC5Wn7gXiGDiwKPfQe/Wy4GFSL8RywUKXW9XilB3xsafqfXIu+O5d4XKg1rk
-    pArnAIudLIe8Imv2h8qoyWCzswH+r9rE1l5mtGwPLWM9DBuv9qQnb550XnnGojcf
-    f3JeU60L3MshzxaJvxsgQaCq2gC3C4vpdkWNdN+iZlAVWVReZGExj4mpycJ9gr86
-    bUwObOxsGlMmrEW/M/mY+7IhS8/0UKaqreHQ==
+    1527616948; b=UfAZukC/fuAN/HFmh0PDcvPqIuSKzdKFBXErW6w+t4uVksRz1v
+    utzVQNlq9IQuCsUYOS2kUPmygNZVE3XOZMGr4yYU8q/63JvgbijA5gO7vEWzuZBy
+    S8mklDPrHsdp7SdWTOj5oWnhLKS//eGuI15wg9eWFbz8djIFsxtppoO/XX9hPw4T
+    wOnM90Yqz75XaT6htPw8hIN/n5cugPb+P33xLhC7JsAdUfC2aRIkCC493OIl2fBO
+    rhwIAWZBv7iqRLb72aXU6q9SAxRY8GqiNg7TeV7d9UFBo8YowIeRyU/NtqrcqX5F
+    Q1aNoD4jBjcs0u6NDN6FBUVKmIm8Ua+io/NA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527783748;
-    bh=AgXj8AArfBcW9SMKhn6tAyeWgVAT0/cBt0S6wV38W3c=; b=Ow/SDv0X2Qu1
-    HdTNX8qtR9PrT2EnrNRmzOdJcOnlhvq5ahiymBbvOKh5ynmQNJb4KDZBnszmOX6J
-    Odpy3yu5EaL/NkAZrVuC/3G102FLNT4L0Y7nmkbJA7qViPXhCdNO2/6NMK+qcXsB
-    0aJlhccG9v4adVoCVEY08Y8+umEB1eiO8uJFPGSYH24/H0uLkG+QvKImJVkoyxUf
-    Iy77QdBy+70M85WwFO/7+O7oiQ8YOYmQHmN1RJKQKiVuxMITbfHi6xC9tfndMKet
-    HdcYYSdsJFuIe57nS1QRvrwpqexfhHw3Msnx6qW2E+PhtBUqXr8WMbGzCw0sHTrz
-    5ajqK2q+RQ==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1527616948; bh=1vEJnH9Z7wgyIECeiWEtJI2aeU6neZ
+    Y05jObOQz6D+0=; b=IWfhk4+yXeZPmanXm1ei5zpC+dhSR11HqivVKD2ZSpKMp4
+    KkpNUXCjCqjIJvpAtFK7xZidrrRrd+j/GEmjfG/Iy8bxzoKTH+VftvUIRJAGDuoG
+    izfDPIQUDFiHk0o+jU4sSpSH7u+bixz5LNIsIT53V7WvPL9O/A0Xs9Emq093H3Rz
+    +lh3iXmEeP/EIywg2Uh1SnFcEfBgTKSgdxa7KPtw2hAsgrMyIRgkRXXvkm12sUue
+    qIJzwXbeBTnq1U6lmXVwbC9tLDQHGjzQn7IY11Nqk9tfRaBg3Ezg13wNeEqMpyIn
+    4Y9PeygiXMO6cJJI/Bz41OD5O1h0WES694W/piUg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=yahoo.com header.i=@yahoo.com header.b=QMO9A2oM
-    header.a=rsa-sha256 header.s=s2048 x-bits=2048;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=schaufler-ca.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+    header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -37,15 +35,15 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=schaufler-ca.com header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-80 state=0
+    header.domain=linux.vnet.ibm.com header.result=pass
+    header_org.domain=ibm.com header_org.result=pass
+    header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=yahoo.com header.i=@yahoo.com header.b=QMO9A2oM
-      header.a=rsa-sha256 header.s=s2048 x-bits=2048;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=schaufler-ca.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+      header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -54,101 +52,137 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=schaufler-ca.com header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-80 state=0
+      header.domain=linux.vnet.ibm.com header.result=pass
+      header_org.domain=ibm.com header_org.result=pass
+      header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAU8FaZWue72/Sw4/awaNWjVJ8pIdQ/9O39yM4Y/1z6IWSjrOH2WCjInnKKtgcoQWVyCGlqP22bc2X0Jul2eyTbw8hEHgNVBYAR6+4mlFw1Gp9SfnQVF
-    /bv+TGSqzTEVrPjTIAyLCmhT1vWqQXAaswZ6RwdrfkAi/wFiSW9ccEGT1JQAwn9UADQldfIchM9TdEYT7G2IoXcuQRTDT1mSINY41MLJBJmSpqJHVCdfhwf4
-    3HGpCX6CJC9+AZE19dkbRQ==
+X-CM-Envelope: MS4wfJaHLf272ucTnoRegYJ0mPtE41HzKSDHzZkqBLWdjNzFLo2tJDUXIpXyDkgB/bSGM9qUXCpGa4giZ1mUiAxOjHWedobMQYjcIAjIByKhD7ofZt7NLutd
+    MP3GJsJFLQHpY6n6h4RqISTb2QQjh/PUneAjggQ7mEWRpt4lNtavJF7VyoY7lTC/z+x5e5uCriN/rGT14OhHyNJCy3Fg3EYQCX07nlzeruWqtZ1BVChhkzkw
+    YbVwfWgayKfR466CMCw9DA==
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=5HJ6KZJP-kkA:10
-    a=VUJBJC2UJ8kA:10 a=We03CPWqHyUA:10 a=3NGxsLzzGfgA:10 a=ZZnuYtJkoWoA:10
-    a=VwQbUJbxAAAA:8 a=fpOHQEl9X1u3KMRq2TkA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
+    a=pfepmeDxbJN8zshhl1AA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755636AbeEaQWY (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 31 May 2018 12:22:24 -0400
-Received: from sonic306-26.consmr.mail.gq1.yahoo.com ([98.137.68.89]:42772
-        "EHLO sonic306-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755632AbeEaQWX (ORCPT
+        id S965740AbeE2SCV (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 14:02:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41834 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S965705AbeE2SCT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 May 2018 12:22:23 -0400
-X-YMail-OSG: 4QD9H7UVM1leSF1nzd4B3LsQ_GyF6b62rjBPUqgXWHWCEIVmehnvYm7illxkI.D
- 4AICOMyfutbwba1aLNahbKxkPS6ct23c1cFpN7O101otRJJiAb0MW6Fhno68y66f1d.FWgvUmhJm
- 9e7UXCPvBp6mrBEl78idF9xLxKIMVWLGMG7E8wim.PmWotXuZmyLRtO3cUM5J8ldsBM5ygQNsDpz
- iQsn4K9Xvt0LvSU4dqmTbMqmDvbEqMyn2MG6UXqB3FoZAtpV2FQ_GOb_i7rye.SZ2_tUAoyyYayY
- bUWvJCX2YI6IxvDuELg1C1LsXbxCTYydVUaU_ARdyIPUl1eYr4gURdMPV0UdUEqKRNDgrPqfoNsZ
- CdPalXForSmR4kvVbwL0VviA3.eBDwtYCJcbpJ0th48xCj83qgEYbznr4GYhFPOHvJ_iE7Nw3EHh
- ILGQKR8.j3DiDzl_2w4NoIA93SAd6teuFovFjc1.fGH2dpU.nbnkKqzPekStyIN6a5alz4fHtccR
- qoVR1bJKoYN6g_QlY7TdrNrmesriBDIygL30RwrDPE8z03CtVUO9rJuYEb1oU5saUlZ3mDNINUln
- 492wB88RR7fTdi9rhrsQLw0g1y5qBziXaHOJ90iKDAtfl8u39BBDn8erToanuLyCdCNAfW.QXonQ
- arlaFX7zg2g5FFLgohIc459n5Q8pTpobDirTKbKEZSZk-
-Subject: Re: [PATCH 1/1] Fix memory leak in kernfs_security_xattr_set and
- kernfs_security_xattr_set
-To: Tejun Heo <tj@kernel.org>
-Cc: CHANDAN VN <chandan.vn@samsung.com>, gregkh@linuxfoundation.org,
-        bfields@fieldses.org, jlayton@kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        cpgs@samsung.com, sireesha.t@samsung.com,
-        Chris Wright <chrisw@sous-sol.org>,
+        Tue, 29 May 2018 14:02:19 -0400
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <CGME20180531092848epcas1p24b638ccd6da00f1e039bdb64de7e1a5b@epcas1p2.samsung.com>
- <1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
- <20180531153943.GR1351649@devbig577.frc2.facebook.com>
- <4f00f9ae-3302-83b9-c083-d21ade380eb2@schaufler-ca.com>
- <20180531161107.GV1351649@devbig577.frc2.facebook.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <1ced6bce-92cc-7e0c-fab4-0aaa3d03b82f@schaufler-ca.com>
-Date: Thu, 31 May 2018 09:22:18 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180531161107.GV1351649@devbig577.frc2.facebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v4 0/8] kexec/firmware: support system wide policy requiring signatures
+Date: Tue, 29 May 2018 14:01:52 -0400
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 18052918-0044-0000-0000-00000558109A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052918-0045-0000-0000-0000289A2019
+Message-Id: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805290195
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 5/31/2018 9:11 AM, Tejun Heo wrote:
-> On Thu, May 31, 2018 at 09:04:25AM -0700, Casey Schaufler wrote:
->> On 5/31/2018 8:39 AM, Tejun Heo wrote:
->>> (cc'ing more security folks and copying whole body)
->>>
->>> So, I'm sure the patch fixes the memory leak but API wise it looks
->>> super confusing.  Can security folks chime in here?  Is this the right
->>> fix?
->> security_inode_getsecctx() provides a security context. Technically,
->> this is a data blob, although both provider provide a null terminated
->> string. security_inode_getsecurity(), on the other hand, provides a
->> string to match an attribute name. The former releases the security
->> context with security_release_secctx(), where the later releases the
->> string with kfree().
->>
->> When the Smack hook smack_inode_getsecctx() was added in 2009
->> for use by labeled NFS the alloc value passed to
->> smack_inode_getsecurity() was set incorrectly. This wasn't a
->> major issue, since labeled NFS is a fringe case. When kernfs
->> started using the hook, it became the issue you discovered.
->>
->> The reason that we have all this confusion is that SELinux
->> generates security contexts as needed, while Smack keeps them
->> around all the time. Releasing an SELinux context frees memory,
->> while releasing a Smack context is a null operation.
-> Any chance this detail can be hidden behind security api?  This looks
-> pretty error-prone, no?
+Instead of adding the security_kernel_read_file LSM hook - or defining a
+wrapper for security_kernel_read_file LSM hook and adding it, or
+renaming the existing hook to security_kernel_read_data() and adding it
+- in places where the kernel isn't reading a file, this version of the
+patch set defines a new LSM hook named security_kernel_load_data().
 
-It *is* hidden behind the security API. The problem is strictly
-within the Smack code, where the implementer of smack_inode_getsecctx()
-made an error.
+The new LSM hook does not replace the existing security_kernel_read_file
+LSM hook, which is still needed, but defines a new LSM hook allowing
+LSMs and IMA-appraisal the opportunity to fail loading userspace
+provided file/data.
 
->
-> Thanks.
->
+The only difference between the two LSM hooks is the LSM hook name and a
+file descriptor.  Whether this is cause enough for requiring a new LSM
+hook, is left to the security community.
+
+---
+
+IMA-appraisal is mostly being used in the embedded or single purpose
+closed system environments.  In these environments, both the Kconfig
+options and the userspace tools can be modified appropriately to limit
+syscalls.  For stock kernels, userspace applications need to continue to
+work with older kernels as well as with newer kernels.
+
+In this environment, the customer needs the ability to define a system
+wide IMA policy, such as requiring all kexec'ed images, firmware, kernel
+modules to be signed, without being dependent on either the Kconfig
+options or the userspace tools.[1]
+
+This patch set allows the customer to define a policy which requires
+the kexec'ed kernel images, firmware, and/or kernel modules to be
+signed.
+
+In addition, this patch set includes the ability to configure a build
+time IMA policy, which is automatically loaded at run time without
+needing to specify it on the boot command line and persists after
+loading a custom kernel policy.
+
+[1] kexec-tools suupports the new syscall based on a flag (-s).
+
+Changelog v4:
+- Define a new LSM hook named security_kernel_load_data().
+- Define kernel_load_data_id enumeration.
+- Replace the existing LSM hook in init_module syscall.
+
+Changelog v3:
+Based on James' feedback:
+- Renamed security_kernel_read_file() to security_kernel_read_data().
+- Defined new kernel_load_data_id enumeration.
+- Cleaned up ima_read_data(), replacing if's with switch.
+
+Changelog v2:
+- combined "kexec: limit kexec_load syscall" and "firmware: kernel
+signature verification" patch sets.
+- add support for build time policy.
+- defined generic security_kernel_read_blob() wrapper for
+  security_kernel_read_file(). Suggested by Luis.
+
+Mimi Zohar (8):
+  security: define new LSM hook named security_kernel_load_data
+  kexec: add call to LSM hook in original kexec_load syscall
+  ima: based on policy require signed kexec kernel images
+  firmware: add call to LSM hook before firmware sysfs fallback
+  ima: based on policy require signed firmware (sysfs fallback)
+  ima: add build time policy
+  ima: based on policy prevent loading firmware (pre-allocated buffer)
+  module: replace the existing LSM hook in init_module
+
+ drivers/base/firmware_loader/fallback.c |  7 +++
+ include/linux/ima.h                     |  7 +++
+ include/linux/lsm_hooks.h               |  6 +++
+ include/linux/security.h                | 33 ++++++++++++++
+ kernel/kexec.c                          |  8 ++++
+ kernel/module.c                         |  2 +-
+ security/integrity/ima/Kconfig          | 58 ++++++++++++++++++++++++
+ security/integrity/ima/ima.h            |  1 +
+ security/integrity/ima/ima_main.c       | 79 ++++++++++++++++++++++++---------
+ security/integrity/ima/ima_policy.c     | 48 ++++++++++++++++++--
+ security/security.c                     | 10 +++++
+ security/selinux/hooks.c                | 26 ++++++++---
+ 12 files changed, 255 insertions(+), 30 deletions(-)
+-- 
+2.7.5
 
