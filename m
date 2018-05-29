@@ -1,61 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932168AbeE2Ejc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 00:39:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45212 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754531AbeE2EjY (ORCPT
+        id S1751032AbeE2EqB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 00:46:01 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:46344 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750747AbeE2Ep7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 00:39:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CEAC360242
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From: Can Guo <cang@codeaurora.org>
-To: subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        vivek.gautam@codeaurora.org, mgautam@codeaurora.org, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Can Guo <cang@codeaurora.org>
-Subject: [PATCH v6 3/3] dt-bindings: phy-qcom-qmp: Add UFS phy compatible string for sdm845
-Date: Tue, 29 May 2018 12:37:51 +0800
-Message-Id: <20180529043751.10580-4-cang@codeaurora.org>
-X-Mailer: git-send-email 2.15.0.windows.1
-In-Reply-To: <20180529043751.10580-1-cang@codeaurora.org>
-References: <20180529043751.10580-1-cang@codeaurora.org>
+        Tue, 29 May 2018 00:45:59 -0400
+X-Google-Smtp-Source: AB8JxZpPh8xrEkF/7AP4QX9S2DoHuMUIKdIiHSRnvKQS/EJtFkuFibSRSYcJCFb/Nh6TjvCBhkRBdQ==
+Date: Tue, 29 May 2018 10:15:56 +0530
+From: Vinod Koul <vinod.koul@linaro.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: dan.j.williams@intel.com, eric.long@spreadtrum.com, broonie@kernel.org,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 1/2] dmaengine: sprd: Optimize the
+ sprd_dma_prep_dma_memcpy()
+Message-ID: <20180529044556.GC5666@vkoul-mobl>
+References: <08819489e52add194fecf2b4b234fff9deecdb4c.1527065569.git.baolin.wang@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <08819489e52add194fecf2b4b234fff9deecdb4c.1527065569.git.baolin.wang@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the compatible string for UFS QMP PHY on SDM845.
+On 23-05-18, 17:31, Baolin Wang wrote:
+> From: Eric Long <eric.long@spreadtrum.com>
+> 
+> This is one preparation patch, we can use default DMA configuration to
+> implement the device_prep_dma_memcpy() interface instead of issuing
+> sprd_dma_config().
+> 
+> We will implement one new sprd_dma_config() function with introducing
+> device_prep_slave_sg() interface in following patch. So we can remove
+> the obsolete sprd_dma_config() firstly.
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Applied both, thanks
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-index cef8765..930d94c 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-@@ -11,7 +11,8 @@ Required properties:
- 	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
- 	       "qcom,qmp-v3-usb3-phy" for USB3 QMP V3 phy,
- 	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
--	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845.
-+	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
-+	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
- 
-  - reg: offset and length of register set for PHY's common serdes block.
- 
-@@ -29,6 +30,7 @@ Required properties:
- 		"aux" for phy aux clock,
- 		"ref" for 19.2 MHz ref clk,
- 		"com_aux" for phy common block aux clock,
-+		"ref_aux" for phy reference aux clock,
- 		For "qcom,msm8996-qmp-pcie-phy" must contain:
- 			"aux", "cfg_ahb", "ref".
- 		For "qcom,msm8996-qmp-usb3-phy" must contain:
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+~Vinod
