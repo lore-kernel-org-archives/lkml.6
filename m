@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935340AbeE2OWv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:22:51 -0400
+        id S935357AbeE2OW5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:22:57 -0400
 Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38208 "EHLO
         smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935249AbeE2OWm (ORCPT
+        with ESMTP id S935325AbeE2OWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:22:42 -0400
+        Tue, 29 May 2018 10:22:46 -0400
 From: James Simmons <jsimmons@infradead.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
@@ -14,11 +14,10 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Lustre Development List <lustre-devel@lists.lustre.org>,
         Dmitry Eremin <dmitry.eremin@intel.com>,
-        Amir Shehata <amir.shehata@intel.com>,
         James Simmons <jsimmons@infradead.org>
-Subject: [PATCH v2 23/25] staging: lustre: libcfs: rework CPU pattern parsing code
-Date: Tue, 29 May 2018 10:22:03 -0400
-Message-Id: <1527603725-30560-24-git-send-email-jsimmons@infradead.org>
+Subject: [PATCH v2 25/25] staging: lustre: ptlrpc: use current CPU instead of hardcoded 0
+Date: Tue, 29 May 2018 10:22:05 -0400
+Message-Id: <1527603725-30560-26-git-send-email-jsimmons@infradead.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
 References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
@@ -28,365 +27,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dmitry Eremin <dmitry.eremin@intel.com>
 
-Currently the module param string for CPU pattern can be
-modified which is wrong. Rewrite CPU pattern parsing code
-to avoid the passed buffer from being changed. This change
-also enables us to add real errors propogation to the caller
-functions.
+fix crash if CPU 0 disabled.
 
 Signed-off-by: Dmitry Eremin <dmitry.eremin@intel.com>
-Signed-off-by: Amir Shehata <amir.shehata@intel.com>
-Signed-off-by: Andreas Dilger <andreas.dilger@intel.com>
-Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8703
-Reviewed-on: https://review.whamcloud.com/23306
-Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-9715
-Reviewed-on: https://review.whamcloud.com/27872
-Reviewed-by: James Simmons <uja.ornl@yahoo.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8710
+Reviewed-on: https://review.whamcloud.com/23305
+Reviewed-by: Doug Oucharek <doug.s.oucharek@intel.com>
 Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
-Reviewed-by: Patrick Farrell <paf@cray.com>
-Reviewed-by: Olaf Weber <olaf.weber@hpe.com>
-Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
 Signed-off-by: James Simmons <jsimmons@infradead.org>
 ---
 Changelog:
 
-v1) Initial patch
-v2) Rebased patch. No changes in code from earlier patch
+v1) New patch to address crash in ptlrpc
 
- .../lustre/include/linux/libcfs/libcfs_cpu.h       |   2 +-
- drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c    | 146 ++++++++++++---------
- 2 files changed, 87 insertions(+), 61 deletions(-)
+ drivers/staging/lustre/lustre/ptlrpc/service.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h
-index c0aa0b3..12ed0a9 100644
---- a/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h
-+++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_cpu.h
-@@ -393,7 +393,7 @@ static inline int cfs_cpu_init(void)
- 
- static inline void cfs_cpu_fini(void)
- {
--	if (cfs_cpt_tab) {
-+	if (!IS_ERR_OR_NULL(cfs_cpt_tab)) {
- 		cfs_cpt_table_free(cfs_cpt_tab);
- 		cfs_cpt_tab = NULL;
- 	}
-diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-index 649f7f9..aed48de 100644
---- a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-+++ b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-@@ -692,11 +692,11 @@ int cfs_cpt_bind(struct cfs_cpt_table *cptab, int cpt)
- 		nodemask = cptab->ctb_parts[cpt].cpt_nodemask;
- 	}
- 
--	if (cpumask_any_and(*cpumask, cpu_online_mask) >= nr_cpu_ids) {
-+	if (!cpumask_intersects(*cpumask, cpu_online_mask)) {
- 		CDEBUG(D_INFO,
- 		       "No online CPU found in CPU partition %d, did someone do CPU hotplug on system? You might need to reload Lustre modules to keep system working well.\n",
- 		       cpt);
--		return -EINVAL;
-+		return -ENODEV;
- 	}
- 
- 	for_each_online_cpu(cpu) {
-@@ -860,11 +860,13 @@ static struct cfs_cpt_table *cfs_cpt_table_create(int ncpt)
- 	cptab = cfs_cpt_table_alloc(ncpt);
- 	if (!cptab) {
- 		CERROR("Failed to allocate CPU map(%d)\n", ncpt);
-+		rc = -ENOMEM;
- 		goto failed;
- 	}
- 
- 	if (!zalloc_cpumask_var(&node_mask, GFP_NOFS)) {
- 		CERROR("Failed to allocate scratch cpumask\n");
-+		rc = -ENOMEM;
- 		goto failed;
- 	}
- 
-@@ -879,8 +881,10 @@ static struct cfs_cpt_table *cfs_cpt_table_create(int ncpt)
- 
- 			rc = cfs_cpt_choose_ncpus(cptab, cpt, node_mask,
- 						  num - ncpu);
--			if (rc < 0)
-+			if (rc < 0) {
-+				rc = -EINVAL;
- 				goto failed_mask;
-+			}
- 
- 			ncpu = cpumask_weight(part->cpt_cpumask);
- 			if (ncpu == num + !!(rem > 0)) {
-@@ -903,37 +907,51 @@ static struct cfs_cpt_table *cfs_cpt_table_create(int ncpt)
- 	if (cptab)
- 		cfs_cpt_table_free(cptab);
- 
--	return NULL;
-+	return ERR_PTR(rc);
- }
- 
--static struct cfs_cpt_table *cfs_cpt_table_create_pattern(char *pattern)
-+static struct cfs_cpt_table *cfs_cpt_table_create_pattern(const char *pattern)
- {
- 	struct cfs_cpt_table *cptab;
-+	char *pattern_dup;
-+	char *bracket;
- 	char *str;
- 	int node = 0;
--	int high;
- 	int ncpt = 0;
--	int cpt;
-+	int cpt = 0;
-+	int high;
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/service.c b/drivers/staging/lustre/lustre/ptlrpc/service.c
+index 3fd8c74..8e74a45 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/service.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/service.c
+@@ -421,7 +421,7 @@ static void ptlrpc_at_timer(struct timer_list *t)
+ 		 * there are.
+ 		 */
+ 		/* weight is # of HTs */
+-		if (cpumask_weight(topology_sibling_cpumask(0)) > 1) {
++		if (cpumask_weight(topology_sibling_cpumask(smp_processor_id())) > 1) {
+ 			/* depress thread factor for hyper-thread */
+ 			factor = factor - (factor >> 1) + (factor >> 3);
+ 		}
+@@ -2221,15 +2221,16 @@ static int ptlrpc_hr_main(void *arg)
+ 	struct ptlrpc_hr_thread	*hrt = arg;
+ 	struct ptlrpc_hr_partition *hrp = hrt->hrt_partition;
+ 	LIST_HEAD(replies);
+-	char threadname[20];
  	int rc;
- 	int c;
- 	int i;
  
--	str = strim(pattern);
-+	pattern_dup = kstrdup(pattern, GFP_KERNEL);
-+	if (!pattern_dup) {
-+		CERROR("Failed to duplicate pattern '%s'\n", pattern);
-+		return ERR_PTR(-ENOMEM);
-+	}
+-	snprintf(threadname, sizeof(threadname), "ptlrpc_hr%02d_%03d",
+-		 hrp->hrp_cpt, hrt->hrt_id);
+ 	unshare_fs_struct();
+ 
+ 	rc = cfs_cpt_bind(ptlrpc_hr.hr_cpt_table, hrp->hrp_cpt);
+ 	if (rc != 0) {
++		char threadname[20];
 +
-+	str = strim(pattern_dup);
- 	if (*str == 'n' || *str == 'N') {
--		pattern = str + 1;
--		if (*pattern != '\0') {
--			node = 1;
--		} else { /* shortcut to create CPT from NUMA & CPU topology */
-+		str++; /* skip 'N' char */
-+		node = 1; /* NUMA pattern */
-+		if (*str == '\0') {
- 			node = -1;
--			ncpt = num_online_nodes();
-+			for_each_online_node(i) {
-+				if (!cpumask_empty(cpumask_of_node(i)))
-+					ncpt++;
-+			}
-+			if (ncpt == 1) { /* single NUMA node */
-+				kfree(pattern_dup);
-+				return cfs_cpt_table_create(cpu_npartitions);
-+			}
- 		}
++		snprintf(threadname, sizeof(threadname), "ptlrpc_hr%02d_%03d",
++			 hrp->hrp_cpt, hrt->hrt_id);
+ 		CWARN("Failed to bind %s on CPT %d of CPT table %p: rc = %d\n",
+ 		      threadname, hrp->hrp_cpt, ptlrpc_hr.hr_cpt_table, rc);
  	}
+@@ -2528,7 +2529,7 @@ int ptlrpc_hr_init(void)
  
- 	if (!ncpt) { /* scanning bracket which is mark of partition */
--		for (str = pattern;; str++, ncpt++) {
--			str = strchr(str, '[');
--			if (!str)
--				break;
-+		bracket = str;
-+		while ((bracket = strchr(bracket, '['))) {
-+			bracket++;
-+			ncpt++;
- 		}
- 	}
+ 	init_waitqueue_head(&ptlrpc_hr.hr_waitq);
  
-@@ -941,87 +959,96 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(char *pattern)
- 	    (node && ncpt > num_online_nodes()) ||
- 	    (!node && ncpt > num_online_cpus())) {
- 		CERROR("Invalid pattern '%s', or too many partitions %d\n",
--		       pattern, ncpt);
--		return NULL;
-+		       pattern_dup, ncpt);
-+		rc = -EINVAL;
-+		goto err_free_str;
- 	}
+-	weight = cpumask_weight(topology_sibling_cpumask(0));
++	weight = cpumask_weight(topology_sibling_cpumask(smp_processor_id()));
  
- 	cptab = cfs_cpt_table_alloc(ncpt);
- 	if (!cptab) {
- 		CERROR("Failed to allocate CPU partition table\n");
--		return NULL;
-+		rc = -ENOMEM;
-+		goto err_free_str;
- 	}
- 
- 	if (node < 0) { /* shortcut to create CPT from NUMA & CPU topology */
--		cpt = 0;
--
- 		for_each_online_node(i) {
--			if (cpt >= ncpt) {
--				CERROR("CPU changed while setting CPU partition table, %d/%d\n",
--				       cpt, ncpt);
--				goto failed;
--			}
-+			if (cpumask_empty(cpumask_of_node(i)))
-+				continue;
- 
- 			rc = cfs_cpt_set_node(cptab, cpt++, i);
--			if (!rc)
--				goto failed;
-+			if (!rc) {
-+				rc = -EINVAL;
-+				goto err_free_table;
-+			}
- 		}
-+		kfree(pattern_dup);
- 		return cptab;
- 	}
- 
- 	high = node ? nr_node_ids - 1 : nr_cpu_ids - 1;
- 
--	for (str = strim(pattern), c = 0;; c++) {
-+	for (str = strim(str), c = 0; /* until break */; c++) {
- 		struct cfs_range_expr *range;
- 		struct cfs_expr_list *el;
--		char *bracket = strchr(str, '[');
- 		int n;
- 
-+		bracket = strchr(str, '[');
- 		if (!bracket) {
- 			if (*str) {
- 				CERROR("Invalid pattern '%s'\n", str);
--				goto failed;
-+				rc = -EINVAL;
-+				goto err_free_table;
- 			}
- 			if (c != ncpt) {
- 				CERROR("Expect %d partitions but found %d\n",
- 				       ncpt, c);
--				goto failed;
-+				rc = -EINVAL;
-+				goto err_free_table;
- 			}
- 			break;
- 		}
- 
- 		if (sscanf(str, "%d%n", &cpt, &n) < 1) {
- 			CERROR("Invalid CPU pattern '%s'\n", str);
--			goto failed;
-+			rc = -EINVAL;
-+			goto err_free_table;
- 		}
- 
- 		if (cpt < 0 || cpt >= ncpt) {
- 			CERROR("Invalid partition id %d, total partitions %d\n",
- 			       cpt, ncpt);
--			goto failed;
-+			rc = -EINVAL;
-+			goto err_free_table;
- 		}
- 
- 		if (cfs_cpt_weight(cptab, cpt)) {
- 			CERROR("Partition %d has already been set.\n", cpt);
--			goto failed;
-+			rc = -EPERM;
-+			goto err_free_table;
- 		}
- 
- 		str = strim(str + n);
- 		if (str != bracket) {
- 			CERROR("Invalid pattern '%s'\n", str);
--			goto failed;
-+			rc = -EINVAL;
-+			goto err_free_table;
- 		}
- 
- 		bracket = strchr(str, ']');
- 		if (!bracket) {
- 			CERROR("Missing right bracket for partition %d in '%s'\n",
- 			       cpt, str);
--			goto failed;
-+			rc = -EINVAL;
-+			goto err_free_table;
- 		}
- 
--		if (cfs_expr_list_parse(str, (bracket - str) + 1,
--					0, high, &el)) {
-+		rc = cfs_expr_list_parse(str, (bracket - str) + 1, 0, high,
-+					 &el);
-+		if (rc) {
- 			CERROR("Can't parse number range in '%s'\n", str);
--			goto failed;
-+			rc = -ERANGE;
-+			goto err_free_table;
- 		}
- 
- 		list_for_each_entry(range, &el->el_exprs, re_link) {
-@@ -1033,7 +1060,8 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(char *pattern)
- 					    cfs_cpt_set_cpu(cptab, cpt, i);
- 				if (!rc) {
- 					cfs_expr_list_free(el);
--					goto failed;
-+					rc = -EINVAL;
-+					goto err_free_table;
- 				}
- 			}
- 		}
-@@ -1042,17 +1070,21 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(char *pattern)
- 
- 		if (!cfs_cpt_online(cptab, cpt)) {
- 			CERROR("No online CPU is found on partition %d\n", cpt);
--			goto failed;
-+			rc = -ENODEV;
-+			goto err_free_table;
- 		}
- 
- 		str = strim(bracket + 1);
- 	}
- 
-+	kfree(pattern_dup);
- 	return cptab;
- 
--failed:
-+err_free_table:
- 	cfs_cpt_table_free(cptab);
--	return NULL;
-+err_free_str:
-+	kfree(pattern_dup);
-+	return ERR_PTR(rc);
- }
- 
- #ifdef CONFIG_HOTPLUG_CPU
-@@ -1079,7 +1111,7 @@ static int cfs_cpu_dead(unsigned int cpu)
- 
- void cfs_cpu_fini(void)
- {
--	if (cfs_cpt_tab)
-+	if (!IS_ERR_OR_NULL(cfs_cpt_tab))
- 		cfs_cpt_table_free(cfs_cpt_tab);
- 
- #ifdef CONFIG_HOTPLUG_CPU
-@@ -1112,26 +1144,20 @@ int cfs_cpu_init(void)
- #endif
- 	get_online_cpus();
- 	if (*cpu_pattern) {
--		char *cpu_pattern_dup = kstrdup(cpu_pattern, GFP_KERNEL);
--
--		if (!cpu_pattern_dup) {
--			CERROR("Failed to duplicate cpu_pattern\n");
--			goto failed_alloc_table;
--		}
--
--		cfs_cpt_tab = cfs_cpt_table_create_pattern(cpu_pattern_dup);
--		kfree(cpu_pattern_dup);
--		if (!cfs_cpt_tab) {
--			CERROR("Failed to create cptab from pattern %s\n",
-+		cfs_cpt_tab = cfs_cpt_table_create_pattern(cpu_pattern);
-+		if (IS_ERR(cfs_cpt_tab)) {
-+			CERROR("Failed to create cptab from pattern '%s'\n",
- 			       cpu_pattern);
-+			ret = PTR_ERR(cfs_cpt_tab);
- 			goto failed_alloc_table;
- 		}
- 
- 	} else {
- 		cfs_cpt_tab = cfs_cpt_table_create(cpu_npartitions);
--		if (!cfs_cpt_tab) {
--			CERROR("Failed to create ptable with npartitions %d\n",
-+		if (IS_ERR(cfs_cpt_tab)) {
-+			CERROR("Failed to create cptab with npartitions %d\n",
- 			       cpu_npartitions);
-+			ret = PTR_ERR(cfs_cpt_tab);
- 			goto failed_alloc_table;
- 		}
- 	}
-@@ -1146,7 +1172,7 @@ int cfs_cpu_init(void)
- failed_alloc_table:
- 	put_online_cpus();
- 
--	if (cfs_cpt_tab)
-+	if (!IS_ERR_OR_NULL(cfs_cpt_tab))
- 		cfs_cpt_table_free(cfs_cpt_tab);
- 
- 	ret = -EINVAL;
+ 	cfs_percpt_for_each(hrp, i, ptlrpc_hr.hr_partitions) {
+ 		hrp->hrp_cpt = i;
 -- 
 1.8.3.1
