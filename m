@@ -1,56 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932677AbeE2JOS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:14:18 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:32900 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932284AbeE2JOO (ORCPT
+        id S932724AbeE2JO0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:14:26 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35601 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932284AbeE2JOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:14:14 -0400
-From: avifishman70@gmail.com
-To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
-        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
-        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
-        digetx@gmail.com, kstewart@linuxfoundation.org, hdegoede@redhat.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        openbmc@lists.ozlabs.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, davem@davemloft.net,
-        mchehab+samsung@kernel.org, akpm@linux-foundation.org,
-        rdunlap@infradead.org, Avi Fishman <AviFishman70@gmail.com>
-Subject: [PATCH v1 3/3] MAINTAINERS: add subfolders for nuvoton *npcm*
-Date: Tue, 29 May 2018 11:35:35 +0300
-Message-Id: <1527582935-31175-4-git-send-email-avifishman70@gmail.com>
-X-Mailer: git-send-email 1.8.3.4
-In-Reply-To: <1527582935-31175-1-git-send-email-avifishman70@gmail.com>
-References: <1527582935-31175-1-git-send-email-avifishman70@gmail.com>
+        Tue, 29 May 2018 05:14:19 -0400
+From: Colin King <colin.king@canonical.com>
+To: Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mac80211_hwsim: add error check to call to rhashtable_init
+Date: Tue, 29 May 2018 10:14:12 +0100
+Message-Id: <20180529091412.8530-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avi Fishman <AviFishman70@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
+The call to rhashtable_init is missing an error return check, it is
+possible for this to fail various different ways, so fix this by adding
+an error check.
+
+Detected by: CoverityScan, CID#1469446 ("Unchecked return value")
+
+Fixes: c6509cc3b3e8 ("mac80211_hwsim: add hashtable with mac address keys for faster lookup")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/mac80211_hwsim.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e0ce3c5f32e5..23c450adad44 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1727,7 +1727,10 @@ F:	arch/arm/mach-npcm/
- F:	arch/arm/boot/dts/nuvoton-npcm*
- F:	include/dt-bindings/clock/nuvoton,npcm7xx-clks.h
- F:	drivers/*/*npcm*
-+F:	drivers/*/*/*npcm*
- F:	Documentation/*/*npcm*
-+F:	Documentation/*/*/*npcm*
-+F:	Documentation/*/*/*/*npcm*
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index 89fc22520d40..f4b4f5690b16 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3573,7 +3573,9 @@ static int __init init_mac80211_hwsim(void)
+ 	hwsim_wq = alloc_workqueue("hwsim_wq", 0, 0);
+ 	if (!hwsim_wq)
+ 		return -ENOMEM;
+-	rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
++	err = rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
++	if (err)
++		return err;
  
- ARM/NUVOTON W90X900 ARM ARCHITECTURE
- M:	Wan ZongShun <mcuos.com@gmail.com>
+ 	err = register_pernet_device(&hwsim_net_ops);
+ 	if (err)
 -- 
-2.14.1
+2.17.0
