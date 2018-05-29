@@ -1,74 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933284AbeE2LTD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 07:19:03 -0400
-Received: from ozlabs.org ([203.11.71.1]:55993 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932949AbeE2LTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 07:19:02 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 29 May 2018 21:18:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for May 24
-Message-ID: <20180529211859.583d7a48@canb.auug.org.au>
-In-Reply-To: <20180529103850.GA23509@sirena.org.uk>
-References: <20180525173025.GO4828@sirena.org.uk>
-        <CAHp75VdV-rpqjkGxjAa_7q2rpkuGgy+6OScsP8BGCgRcbtgiaA@mail.gmail.com>
-        <20180529103850.GA23509@sirena.org.uk>
+        id S933302AbeE2LXH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 07:23:07 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39944 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932949AbeE2LXF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 07:23:05 -0400
+X-Google-Smtp-Source: ADUXVKI74yemu+K9kluOhjN8ujp+F0ygcNDcHlY0WnUicjCe5toexYjA3EIRQ33FMuDFRfx3W90OPvEMUHmb5jMlXGw=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bZuqaJ/OhFRhIYrvgdywg2."; protocol="application/pgp-signature"
+In-Reply-To: <2775439f-a37a-3118-3532-a4c2260db53e@linaro.org>
+References: <1527030306-3791-1-git-send-email-festevam@gmail.com>
+ <1527030306-3791-2-git-send-email-festevam@gmail.com> <2775439f-a37a-3118-3532-a4c2260db53e@linaro.org>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Tue, 29 May 2018 13:22:23 +0200
+Message-ID: <CAOFm3uFRkDTTpo8ecRXy_gpgpB8f7jGr9EuxTGwcJMZ14UOY+Q@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clocksource: timer-imx-gpt: Switch to SPDX identifier
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Fabio Estevam <festevam@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/bZuqaJ/OhFRhIYrvgdywg2.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Daniel,
 
-Hi Mark,
-
-On Tue, 29 May 2018 11:38:50 +0100 Mark Brown <broonie@kernel.org> wrote:
+On Wed, May 23, 2018 at 10:06 AM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+> On 23/05/2018 01:05, Fabio Estevam wrote:
+>> From: Fabio Estevam <fabio.estevam@nxp.com>
+>>
+>> Adopt the SPDX license identifier headers to ease license compliance
+>> management.
+>>
+>> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+>> ---
+>>  drivers/clocksource/timer-imx-gpt.c | 26 ++++++--------------------
+>>  1 file changed, 6 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/clocksource/timer-imx-gpt.c b/drivers/clocksource/timer-imx-gpt.c
+>> index b63b834..165fbbb 100644
+>> --- a/drivers/clocksource/timer-imx-gpt.c
+>> +++ b/drivers/clocksource/timer-imx-gpt.c
+>> @@ -1,23 +1,9 @@
+>> -/*
+>> - *  Copyright (C) 2000-2001 Deep Blue Solutions
+>> - *  Copyright (C) 2002 Shane Nay (shane@minirl.com)
+>> - *  Copyright (C) 2006-2007 Pavel Pisa (ppisa@pikron.com)
+>> - *  Copyright (C) 2008 Juergen Beisert (kernel@pengutronix.de)
+>> - *
+>> - * This program is free software; you can redistribute it and/or
+>> - * modify it under the terms of the GNU General Public License
+>> - * as published by the Free Software Foundation; either version 2
+>> - * of the License, or (at your option) any later version.
+>> - * This program is distributed in the hope that it will be useful,
+>> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> - * GNU General Public License for more details.
+>> - *
+>> - * You should have received a copy of the GNU General Public License
+>> - * along with this program; if not, write to the Free Software
+>> - * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+>> - * MA 02110-1301, USA.
+>> - */
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +//
+>> +//  Copyright (C) 2000-2001 Deep Blue Solutions
+>> +//  Copyright (C) 2002 Shane Nay (shane@minirl.com)
+>> +//  Copyright (C) 2006-2007 Pavel Pisa (ppisa@pikron.com)
+>> +//  Copyright (C) 2008 Juergen Beisert (kernel@pengutronix.de)
 >
-> On Mon, May 28, 2018 at 03:23:26PM +0300, Andy Shevchenko wrote:
-> > On Fri, May 25, 2018 at 8:30 PM, Mark Brown <broonie@kernel.org> wrote:=
- =20
->=20
-> > > Stephen should be back on Monday. =20
->=20
-> > Your version has no tag which is crucial detail for easily getting
-> > info what the current version is. =20
->=20
-> That's generated by the scripts.  They didn't complain about anything so
-> I'm assuming it's somewhere in the kernel.org system and will appear at
-> some point.
+> Hi Philippe,
+>
+> I went through the code and didn't find any information about the format
+> of the lines following the SPDX, it seems it is relatively free.
+>
+> Can you confirm the above changes are ok ?
 
-I have now created a tag for next-20180525.  It is an annotated tag but
-not signed.  It may be that my scripts error checking is not up to
-scratch, sorry. :-(
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/bZuqaJ/OhFRhIYrvgdywg2.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNNyMACgkQAVBC80lX
-0Gxp1gf/aUkW+DyHsvjiqI13xdH8lNVWeM4jeoJhwbocARGRmQ1eMEbGh3zrVixC
-xjTGCTCZzWkXfgAUKDTGFJbWCw3NgXj0ZkwIiaVQv8BUOc/HW6WR4yXwDdoBuPi6
-absV3eAL903au8ipHVACgzo9jyQ3E2QMHSuCzKIp/g+fpLnu0rd3xV384Ud7ody1
-m5CRq5v71gcrO2VeDtT92A3iqBPBOK/JY6LykYnL4q35kWaweChYaIbR8PN/6jsW
-6nwrOR2Jchnlb0qGcDG2RCqLnNjhalr0g+pNMLz7B2f8ZToeubVbnhU9k52g3q0w
-cv+0sqJD/zQ0fvXbHUO5ynByA8n6RA==
-=ua0T
------END PGP SIGNATURE-----
-
---Sig_/bZuqaJ/OhFRhIYrvgdywg2.--
+This looks fine to me especially if this all you have in terms of top
+level comment. (e.g. license then copyrights)
+Some may not agree with me on using C++ style comments beyond the SPDX
+license line though ;)
+-- 
+Cordially
+Philippe Ombredanne
