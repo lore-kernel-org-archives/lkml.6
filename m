@@ -1,95 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933394AbeE2Lrs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 07:47:48 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58430 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933288AbeE2Lrp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 07:47:45 -0400
-Date: Tue, 29 May 2018 12:47:40 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
-Message-ID: <20180529114740.GG23509@sirena.org.uk>
-References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
- <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+        id S933420AbeE2Lsd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 07:48:33 -0400
+Received: from 8bytes.org ([81.169.241.247]:46852 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933288AbeE2Lsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 07:48:30 -0400
+Date: Tue, 29 May 2018 13:48:26 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, boot-architecture@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/8] Make deferring probe forever optional
+Message-ID: <20180529114825.GH18595@8bytes.org>
+References: <20180524175024.19874-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="64j1qyTOoGvYcHb1"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
-X-Cookie: Variables don't
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180524175024.19874-1-robh@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 24, 2018 at 12:50:16PM -0500, Rob Herring wrote:
+> Rob Herring (8):
+>   driver core: make deferring probe after init optional
+>   driver core: add a deferred probe timeout
+>   dt-bindings: pinctrl: add a 'pinctrl-use-default' property
+>   arm: dts: bcm283x: mark the UART pin muxing nodes with
+>     pinctrl-use-default
+>   pinctrl: optionally stop deferring probe at end of initcalls
+>   iommu: Stop deferring probe at end of initcalls
+>   iommu: Remove IOMMU_OF_DECLARE
+>   PM / Domains: Stop deferring probe at the end of initcall
+> 
+>  .../admin-guide/kernel-parameters.txt         |  7 +++
+>  .../bindings/pinctrl/pinctrl-bindings.txt     |  6 +++
+>  arch/arm/boot/dts/bcm283x.dtsi                |  2 +
+>  drivers/base/dd.c                             | 43 +++++++++++++++++++
+>  drivers/base/power/domain.c                   |  2 +-
+>  drivers/iommu/arm-smmu-v3.c                   |  2 -
+>  drivers/iommu/arm-smmu.c                      |  7 ---
+>  drivers/iommu/exynos-iommu.c                  |  2 -
+>  drivers/iommu/ipmmu-vmsa.c                    |  3 --
+>  drivers/iommu/msm_iommu.c                     |  2 -
+>  drivers/iommu/of_iommu.c                      | 21 +--------
+>  drivers/iommu/qcom_iommu.c                    |  2 -
+>  drivers/iommu/rockchip-iommu.c                |  2 -
+>  drivers/pinctrl/devicetree.c                  | 14 ++++--
+>  include/linux/device.h                        |  2 +
+>  include/linux/of_iommu.h                      |  4 --
+>  16 files changed, 73 insertions(+), 48 deletions(-)
 
---64j1qyTOoGvYcHb1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+For the IOMMU bits:
 
-On Tue, May 29, 2018 at 01:02:15PM +0300, Matti Vaittinen wrote:
-
-> @@ -0,0 +1,677 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Copyright (C) 2018 ROHM Semiconductors */
-> +/*
-> + * bd71837-regulator.c ROHM BD71837MWV regulator driver
-> + */
-
-The SPDX header (and the rest of the block) need to be C++ comments.
-
-> +static int bd71837_regulator_set_regmap(struct regulator_dev *rdev, int set)
-> +{
-> +	int ret = -EINVAL;
-> +	struct bd71837_pmic *pmic = rdev->reg_data;
-> +
-> +	/* According to the data sheet we must not change regulator voltage
-> +	 * when it is enabled. Thus we need to check if regulator is enabled
-> +	 * before changing the voltage. This mutex is used to avoid race where
-> +	 * we might enable regulator after it's state has been checked but
-> +	 * before the voltage is changed
-> +	 */
-> +	mutex_lock(&pmic->mtx);
-> +	if (!set)
-> +		ret = regulator_disable_regmap(rdev);
-> +	else
-> +		ret = regulator_enable_regmap(rdev);
-> +	mutex_unlock(&pmic->mtx);
-> +
-
-This still has the weird locking/wrapper thing going on.  The regulator
-core will ensure that only one operation is called on a given regulator
-at once.
-
-> +static const struct regulator_desc bd71837_regulators[] = {
-> +	{
-> +	 .name = "buck1",
-
-The indentation style here is weird, please follow CodingStyle.  Looks
-like the second level is just indented by a space for some reason, and
-there's similar problems elsewhere.
-
---64j1qyTOoGvYcHb1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsNPdsACgkQJNaLcl1U
-h9DIMwf9Gko/cLaIOR7E6jd5feuDxB3vTjXfFNZPaTspdh0DO16BEpXHpqfVKEfU
-J8h+FlYeXeaiGA6PGN8hqVSR/VV4duOTRzstjYYeTNpBeYTDeL8KBP2JyqTd5rcO
-r+Wup8DMwGXZi7DbPcCYWef3KBe01tRvijThMkouhfu+6SUpc8jgaeNAQlcAw4O/
-cbNIseTZs82gJAeAp3QJq4qvPNn7LpUjrZh85A0Xp9lVi0h4H/x60LDVPB+EmsII
-gzwDVmIopWv2U+75lkYXSVA0q+fYgzUpT6Cv5eaa19xL1E5KDquvp6CqTNwrjbhX
-s/D6TS6ufJyFzVUuAp59DT2LhrZXwQ==
-=Zutn
------END PGP SIGNATURE-----
-
---64j1qyTOoGvYcHb1--
+Acked-by: Joerg Roedel <jroedel@suse.de>
