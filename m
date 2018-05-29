@@ -1,32 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933176AbeE2Kuc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:50:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36990 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932847AbeE2Kua (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:50:30 -0400
-Date: Tue, 29 May 2018 12:49:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH 13/13] atomics/treewide: make test ops optional
-Message-ID: <20180529104959.GA12180@hirez.programming.kicks-ass.net>
-References: <20180523133533.1076-1-mark.rutland@arm.com>
- <20180523133533.1076-14-mark.rutland@arm.com>
- <20180529091047.kg3et36pxzwohhat@lakrids.cambridge.arm.com>
+        id S933264AbeE2Kuo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:50:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48662 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932847AbeE2Kuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 06:50:40 -0400
+Date: Tue, 29 May 2018 12:50:37 +0200
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK"
+        <linux-kselftest@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>
+Subject: Re: [PATCH v3] Add udmabuf misc device
+Message-ID: <20180529105037.uog4tvcckqp5q6fe@sirius.home.kraxel.org>
+References: <20180525140808.12714-1-kraxel@redhat.com>
+ <0ad0606e-3201-e203-ec93-8718d7938751@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529091047.kg3et36pxzwohhat@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <0ad0606e-3201-e203-ec93-8718d7938751@gmail.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:11:19AM +0100, Mark Rutland wrote:
-> Peter, does your ack still stand if I fold in the below?
+  Hi,
 
-Yep, thanks for the cleanup.
+> > +config UDMABUF
+> > +	bool "userspace dmabuf misc driver"
+> > +	default n
+> > +	depends on DMA_SHARED_BUFFER
+> Don't you want "select DMA_SHARED_BUFFER" here instead?
+
+Why do you think so?
+
+cheers,
+  Gerd
