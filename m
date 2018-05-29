@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937199AbeE2VFN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:05:13 -0400
-Received: from mga01.intel.com ([192.55.52.88]:53965 "EHLO mga01.intel.com"
+        id S937166AbeE2VEj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:04:39 -0400
+Received: from mga01.intel.com ([192.55.52.88]:53962 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937164AbeE2VBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S937165AbeE2VBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 May 2018 17:01:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
-   d="scan'208";a="60127700"
+   d="scan'208";a="60127702"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V5 11/38] x86/intel_rdt: Support flexible data to parsing callbacks
-Date: Tue, 29 May 2018 05:57:36 -0700
-Message-Id: <acc9cc5919df395755fc945dee4fcf1ed1484867.1527593970.git.reinette.chatre@intel.com>
+Subject: [PATCH V5 12/38] x86/intel_rdt: Ensure requested schemata respects mode
+Date: Tue, 29 May 2018 05:57:37 -0700
+Message-Id: <cbe23984ec51299f63aba3b4b07f90d1cb5a3d24.1527593970.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1527593970.git.reinette.chatre@intel.com>
 References: <cover.1527593970.git.reinette.chatre@intel.com>
@@ -30,73 +30,175 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each resource is associated with a configurable callback that should be
-used to parse the information provided for the particular resource from
-user space. In addition to the resource and domain pointers this callback
-is provided with just the character buffer being parsed.
+When the administrator requests a change in a resource group's schemata
+we have to ensure that the new schemata respects the current resource
+group as well as the other active resource groups' schemata.
 
-In support of flexible parsing the callback is modified to support a
-void pointer as argument. This enables resources that need more data
-than just the user provided data to pass its required data to the
-callback without affecting the signatures for the callbacks of all the
-other resources.
+The new schemata is not allowed to overlap with the schemata of any
+exclusive resource groups. Similarly, if the resource group being
+changed is exclusive then its new schemata is not allowed to overlap
+with any schemata of any other active resource group.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.h             | 6 +++---
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 6 ++++--
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.h             |  2 ++
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 49 ++++++++++++++++++++++-------
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    |  4 +--
+ 3 files changed, 41 insertions(+), 14 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 399bb94e865b..c0c0ef817f11 100644
+index c0c0ef817f11..68d398bc2942 100644
 --- a/arch/x86/kernel/cpu/intel_rdt.h
 +++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -371,7 +371,7 @@ struct rdt_resource {
- 	struct rdt_cache	cache;
- 	struct rdt_membw	membw;
- 	const char		*format_str;
--	int (*parse_ctrlval)	(char *buf, struct rdt_resource *r,
-+	int (*parse_ctrlval)	(void *data, struct rdt_resource *r,
- 				 struct rdt_domain *d);
- 	struct list_head	evt_list;
- 	int			num_rmid;
-@@ -379,8 +379,8 @@ struct rdt_resource {
- 	unsigned long		fflags;
- };
- 
--int parse_cbm(char *buf, struct rdt_resource *r, struct rdt_domain *d);
--int parse_bw(char *buf, struct rdt_resource *r,  struct rdt_domain *d);
-+int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d);
-+int parse_bw(void *_buf, struct rdt_resource *r,  struct rdt_domain *d);
- 
- extern struct mutex rdtgroup_mutex;
- 
+@@ -465,6 +465,8 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 				char *buf, size_t nbytes, loff_t off);
+ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 			   struct seq_file *s, void *v);
++bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
++			   u32 _cbm, int closid, bool exclusive);
+ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
+ int update_domains(struct rdt_resource *r, int closid);
 diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index b3da5b981dd8..ab4bb8731825 100644
+index ab4bb8731825..0e6210a043f0 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -64,9 +64,10 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+@@ -123,13 +123,19 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
  	return true;
  }
  
--int parse_bw(char *buf, struct rdt_resource *r, struct rdt_domain *d)
-+int parse_bw(void *_buf, struct rdt_resource *r, struct rdt_domain *d)
- {
- 	unsigned long data;
-+	char *buf = _buf;
- 
- 	if (d->have_new_ctrl) {
- 		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
-@@ -126,8 +127,9 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
++struct rdt_cbm_parse_data {
++	struct rdtgroup		*rdtgrp;
++	char			*buf;
++};
++
+ /*
   * Read one cache bit mask (hex). Check that it is valid for the current
   * resource type.
   */
--int parse_cbm(char *buf, struct rdt_resource *r, struct rdt_domain *d)
-+int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
+ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
  {
-+	char *buf = _data;
+-	char *buf = _data;
++	struct rdt_cbm_parse_data *data = _data;
++	struct rdtgroup *rdtgrp = data->rdtgrp;
  	u32 cbm_val;
  
  	if (d->have_new_ctrl) {
+@@ -137,8 +143,24 @@ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (!cbm_validate(buf, &cbm_val, r))
++	if (!cbm_validate(data->buf, &cbm_val, r))
++		return -EINVAL;
++
++	/*
++	 * The CBM may not overlap with the CBM of another closid if
++	 * either is exclusive.
++	 */
++	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true)) {
++		rdt_last_cmd_printf("overlaps with exclusive group\n");
+ 		return -EINVAL;
++	}
++
++	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, false)) {
++		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE) {
++			rdt_last_cmd_printf("overlaps with other group\n");
++			return -EINVAL;
++		}
++	}
+ 
+ 	d->new_ctrl = cbm_val;
+ 	d->have_new_ctrl = true;
+@@ -152,8 +174,10 @@ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
+  * separated by ";". The "id" is in decimal, and must match one of
+  * the "id"s for this resource.
+  */
+-static int parse_line(char *line, struct rdt_resource *r)
++static int parse_line(char *line, struct rdt_resource *r,
++		      struct rdtgroup *rdtgrp)
+ {
++	struct rdt_cbm_parse_data data;
+ 	char *dom = NULL, *id;
+ 	struct rdt_domain *d;
+ 	unsigned long dom_id;
+@@ -170,7 +194,9 @@ static int parse_line(char *line, struct rdt_resource *r)
+ 	dom = strim(dom);
+ 	list_for_each_entry(d, &r->domains, list) {
+ 		if (d->id == dom_id) {
+-			if (r->parse_ctrlval(dom, r, d))
++			data.buf = dom;
++			data.rdtgrp = rdtgrp;
++			if (r->parse_ctrlval(&data, r, d))
+ 				return -EINVAL;
+ 			goto next;
+ 		}
+@@ -223,13 +249,14 @@ int update_domains(struct rdt_resource *r, int closid)
+ 	return 0;
+ }
+ 
+-static int rdtgroup_parse_resource(char *resname, char *tok, int closid)
++static int rdtgroup_parse_resource(char *resname, char *tok,
++				   struct rdtgroup *rdtgrp)
+ {
+ 	struct rdt_resource *r;
+ 
+ 	for_each_alloc_enabled_rdt_resource(r) {
+-		if (!strcmp(resname, r->name) && closid < r->num_closid)
+-			return parse_line(tok, r);
++		if (!strcmp(resname, r->name) && rdtgrp->closid < r->num_closid)
++			return parse_line(tok, r, rdtgrp);
+ 	}
+ 	rdt_last_cmd_printf("unknown/unsupported resource name '%s'\n", resname);
+ 	return -EINVAL;
+@@ -242,7 +269,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 	struct rdt_domain *dom;
+ 	struct rdt_resource *r;
+ 	char *tok, *resname;
+-	int closid, ret = 0;
++	int ret = 0;
+ 
+ 	/* Valid input requires a trailing newline */
+ 	if (nbytes == 0 || buf[nbytes - 1] != '\n')
+@@ -256,8 +283,6 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 	}
+ 	rdt_last_cmd_clear();
+ 
+-	closid = rdtgrp->closid;
+-
+ 	for_each_alloc_enabled_rdt_resource(r) {
+ 		list_for_each_entry(dom, &r->domains, list)
+ 			dom->have_new_ctrl = false;
+@@ -275,13 +300,13 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-		ret = rdtgroup_parse_resource(resname, tok, closid);
++		ret = rdtgroup_parse_resource(resname, tok, rdtgrp);
+ 		if (ret)
+ 			goto out;
+ 	}
+ 
+ 	for_each_alloc_enabled_rdt_resource(r) {
+-		ret = update_domains(r, closid);
++		ret = update_domains(r, rdtgrp->closid);
+ 		if (ret)
+ 			goto out;
+ 	}
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 3701b1cb0f73..5b78b4aa1a50 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -829,8 +829,8 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
+  *
+  * Return: false if CBM does not overlap, true if it does.
+  */
+-static bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+-				  u32 _cbm, int closid, bool exclusive)
++bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
++			   u32 _cbm, int closid, bool exclusive)
+ {
+ 	unsigned long *cbm = (unsigned long *)&_cbm;
+ 	unsigned long *ctrl_b;
 -- 
 2.13.6
