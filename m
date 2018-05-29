@@ -1,42 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934502AbeE2Neb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:34:31 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:51473 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934136AbeE2Ne1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:34:27 -0400
-X-Google-Smtp-Source: ADUXVKIn4HcewKUXctOoUnaPIXCVMPRHhIJWD4wAo9knqITjRVijRo1Vtu3JAjNXSQRo8aCFkH6iZdvwRq0+HjoGjDo=
+        id S934544AbeE2NfE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:35:04 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8162 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934136AbeE2NfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:35:02 -0400
+Subject: Re: [PATCH net-next] net: davinci_mdio: fix building error without
+ CONFIG_OF
+To: <davem@davemloft.net>, <grygorii.strashko@ti.com>, <muvarov@gmail.com>
+References: <20180529115651.3420-1-yuehaibing@huawei.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <andrew@lunn.ch>, <fugang.duan@nxp.com>, <linux-omap@vger.kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Message-ID: <747c9847-8e54-fa2e-231d-ac8b64d7ff47@huawei.com>
+Date: Tue, 29 May 2018 21:34:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-From: shankarapailoor <shankarapailoor@gmail.com>
-Date: Tue, 29 May 2018 06:34:25 -0700
-Message-ID: <CAB+yDaZ1SCDWs7budkTDh0OL0Pvmpf0Eh94koT8+B=8p5c3Dyg@mail.gmail.com>
-Subject: 2 BUG_ON crashes
-To: clm@fb.com, jbacik@fb.com
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180529115651.3420-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+pls ignore this, there has been a Patch from Arnd Bergmann <arnd@arndb.de>
 
-I have been fuzzing linux 4.17-rc4 with Syzkaller and it triggered the
-following BUG_ONs.
+[PATCH] net: davinci: fix building davinci mdio code without CONFIG_OF
 
-1. kernel BUG at fs/btrfs/file.c:997
-(https://elixir.bootlin.com/linux/v4.17-rc4/source/fs/btrfs/file.c#L997)
 
-Stack Trace: https://pastebin.com/QZeDnRvm
-
-2. kernel BUG at fs/btrfs/extent_io.c:4049
-(https://elixir.bootlin.com/linux/v4.17-rc4/source/fs/btrfs/extent_io.c#L4049)
-
-Stack Trace: https://pastebin.com/qZN5qF3e
-
-Both bugs appear to be triggered by fault injections but can the
-BUG_ON's be changed to Warnings?
-
-Regards,
-Shankara Pailoor
+On 2018/5/29 19:56, YueHaibing wrote:
+> gcc report a build error when compiling without CONFIG_OF
+> drivers/net/ethernet/ti/davinci_mdio.c: In function ‘davinci_mdio_probe’:
+> drivers/net/ethernet/ti/davinci_mdio.c:380:9: error: implicit declaration of function ‘davinci_mdio_probe_dt’ [-Werror=implicit-function-declaration]
+>    ret = davinci_mdio_probe_dt(&data->pdata, pdev);
+>          ^
+> Fixes: 9eae9c7d0875 ("drivers: net: davinci_mdio: enable pm runtime auto for ti cpsw-mdio")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/net/ethernet/ti/davinci_mdio.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/davinci_mdio.c b/drivers/net/ethernet/ti/davinci_mdio.c
+> index 8ac7283..6e544d9 100644
+> --- a/drivers/net/ethernet/ti/davinci_mdio.c
+> +++ b/drivers/net/ethernet/ti/davinci_mdio.c
+> @@ -339,9 +339,7 @@ static int davinci_mdio_probe_dt(struct mdio_platform_data *data,
+>  
+>  	return 0;
+>  }
+> -#endif
+>  
+> -#if IS_ENABLED(CONFIG_OF)
+>  static const struct davinci_mdio_of_param of_cpsw_mdio_data = {
+>  	.autosuspend_delay_ms = 100,
+>  };
+> @@ -352,6 +350,12 @@ static const struct of_device_id davinci_mdio_of_mtable[] = {
+>  	{ /* sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, davinci_mdio_of_mtable);
+> +#else
+> +static int davinci_mdio_probe_dt(struct mdio_platform_data *data,
+> +				 struct platform_device *pdev)
+> +{
+> +	return -EINVAL;
+> +}
+>  #endif
+>  
+>  static int davinci_mdio_probe(struct platform_device *pdev)
+> 
