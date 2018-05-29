@@ -1,168 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935751AbeE2OxN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:53:13 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:44695 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934836AbeE2OxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:53:08 -0400
-To: Joel Stanley <joel@jms.id.au>
-Cc: openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Gunnar Mills <gmills@us.ibm.com>
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: Status of aspeed-bmc-opp-firestone (IBM S822LC)
-Message-ID: <287c6a85-65ba-5782-e532-d17d517614f5@molgen.mpg.de>
-Date: Tue, 29 May 2018 16:53:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090503030103020407070104"
+        id S964828AbeE2Oxe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:53:34 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35678 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936600AbeE2Oqc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:46:32 -0400
+X-Google-Smtp-Source: AB8JxZpdIDQvl7YdA/CBU0s4uTqpIso49g8VtgYcIiMcHSA++X78VOMjKsi3q6pFNLqB9ySNC5YNcQ==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 13/28] ovl: Store lower data inode in ovl_inode
+Date: Tue, 29 May 2018 16:45:57 +0200
+Message-Id: <20180529144612.16675-14-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
+References: <20180529144612.16675-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a cryptographically signed message in MIME format.
+From: Vivek Goyal <vgoyal@redhat.com>
 
---------------ms090503030103020407070104
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Right now ovl_inode stores inode pointer for lower inode.  This helps with
+quickly getting lower inode given overlay inode (ovl_inode_lower()).
 
-Dear Joel, dear Linux folks,
+Now with metadata only copy-up, we can have metacopy inode in middle layer
+as well and inode containing data can be different from ->lower.  I need to
+be able to open the real file in ovl_open_realfile() and for that I need to
+quickly find the lower data inode.
 
+Hence store lower data inode also in ovl_inode.  Also provide an helper
+ovl_inode_lowerdata() to access this field.
 
-We have an IBM S822LC system (Firestone(?)). Building of OpenBMC=20
-currently fails, as the not everything was ported from dev-4.10 to=20
-dev-4.13 [1], and therefore a file cannot be found.
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/overlayfs/inode.c     |  2 +-
+ fs/overlayfs/namei.c     |  2 ++
+ fs/overlayfs/overlayfs.h |  4 +++-
+ fs/overlayfs/ovl_entry.h |  5 ++++-
+ fs/overlayfs/super.c     |  8 ++++++--
+ fs/overlayfs/util.c      | 12 +++++++++++-
+ 6 files changed, 27 insertions(+), 6 deletions(-)
 
-Looking at upstream Linux, there are BMCs for Power 8 systems, like=20
-Palmetto, included.
-
-```
-$ ls arch/arm/boot/dts/aspeed-bmc-opp-*
-arch/arm/boot/dts/aspeed-bmc-opp-palmetto.dts
-arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts
-arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
-arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts
-```
-
-Does somebody know, why Firestone was not upstreamed? Is somebody=20
-working on upstreaming it? If not, do you have scripts to port such=20
-work? Manually cherry-picking stuff in this case is hard, as there are a =
-
-lot of conflicts.
-
-
-Kind regards,
-
-Paul
-
-
-[1]: https://github.com/openbmc/openbmc/issues/3206
-
-
---------------ms090503030103020407070104
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
-AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
-VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
-Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
-BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
-IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
-Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
-FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
-eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
-WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
-xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
-AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
-4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
-/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
-AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
-ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
-MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
-Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
-ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
-eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
-MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
-PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
-2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
-ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
-CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
-dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
-BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
-NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
-BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
-A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
-59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
-G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
-rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
-OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
-Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
-VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
-IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
-BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
-dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
-Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
-Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
-L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
-Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
-dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
-YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
-/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
-jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
-dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
-wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
-qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
-/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
-A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
-VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
-MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
-DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
-DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
-enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
-peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
-6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
-+2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
-ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
-AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
-FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
-ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
-dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
-Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
-dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
-dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
-BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
-dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
-AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
-Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
-aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
-GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
-fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
-1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
-EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
-LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
-RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
-SIb3DQEJBTEPFw0xODA1MjkxNDUzMDRaMC8GCSqGSIb3DQEJBDEiBCD4Bbm3ThFy963FzWwS
-Nf0LqlJJCfFMs73TrCAu2M90VjBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
-BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
-MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
-bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
-gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
-DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
-BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAAoy
-vveJk5gZFccllE7Xixqq/qoz+5juWeJ5eaC7I+q+jlKbupe7+wcE/VK9W0tfDhglBcGA8+O8
-wp1NfCEoXqVg/IMfnypW86TusIzH9/ImUFpNGyN/F85wjif0cGXRsQdCNeSyn/Wt8aNQzgRl
-u1LxyAx4UmpqhF7eWXP+xjs8mpkOg1e9x/aTilSH+uukA0Pfoa2A34n3R7TtJ/b9LUUiq5PX
-IK0+qGl9Mq434ts2+wYUtSnrP3pUnhmtJe4XWxb5ueyiNz9+Q4l9/+az785IwfFti6fLRK2o
-y/38QO5FeG6dZ29/rdcGslGvyuDYwDSVYAe7hM/3Wo+3KEOQDsMAAAAAAAA=
---------------ms090503030103020407070104--
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index 6a6693150c37..d4e643e9098b 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -864,7 +864,7 @@ struct inode *ovl_get_inode(struct super_block *sb,
+ 		}
+ 	}
+ 	ovl_fill_inode(inode, realinode->i_mode, realinode->i_rdev, ino, fsid);
+-	ovl_inode_init(inode, upperdentry, lowerdentry);
++	ovl_inode_init(inode, upperdentry, lowerdentry, oip->lowerdata);
+ 
+ 	if (upperdentry && ovl_is_impuredir(upperdentry))
+ 		ovl_set_flag(OVL_IMPURE, inode);
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index fcf0eb40d94b..b28b255ea8e2 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -1080,6 +1080,8 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 			.index = index,
+ 			.numlower = ctr,
+ 			.redirect = upperredirect,
++			.lowerdata = (ctr > 1 && !d.is_dir) ?
++				      stack[ctr - 1].dentry : NULL,
+ 		};
+ 
+ 		inode = ovl_get_inode(dentry->d_sb, &oip);
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index ae06fd531b75..558a1b444286 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -227,6 +227,7 @@ struct dentry *ovl_dentry_real(struct dentry *dentry);
+ struct dentry *ovl_i_dentry_upper(struct inode *inode);
+ struct inode *ovl_inode_upper(struct inode *inode);
+ struct inode *ovl_inode_lower(struct inode *inode);
++struct inode *ovl_inode_lowerdata(struct inode *inode);
+ struct inode *ovl_inode_real(struct inode *inode);
+ struct ovl_dir_cache *ovl_dir_cache(struct inode *inode);
+ void ovl_set_dir_cache(struct inode *inode, struct ovl_dir_cache *cache);
+@@ -246,7 +247,7 @@ bool ovl_redirect_dir(struct super_block *sb);
+ const char *ovl_dentry_get_redirect(struct dentry *dentry);
+ void ovl_dentry_set_redirect(struct dentry *dentry, const char *redirect);
+ void ovl_inode_init(struct inode *inode, struct dentry *upperdentry,
+-		    struct dentry *lowerdentry);
++		    struct dentry *lowerdentry, struct dentry *lowerdata);
+ void ovl_inode_update(struct inode *inode, struct dentry *upperdentry);
+ void ovl_dir_modified(struct dentry *dentry, bool impurity);
+ u64 ovl_dentry_version_get(struct dentry *dentry);
+@@ -361,6 +362,7 @@ struct ovl_inode_params {
+ 	struct dentry *index;
+ 	unsigned int numlower;
+ 	char *redirect;
++	struct dentry *lowerdata;
+ };
+ struct inode *ovl_new_inode(struct super_block *sb, umode_t mode, dev_t rdev);
+ struct inode *ovl_lookup_inode(struct super_block *sb, struct dentry *real,
+diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+index da65118a0567..6d02ab1f8811 100644
+--- a/fs/overlayfs/ovl_entry.h
++++ b/fs/overlayfs/ovl_entry.h
+@@ -90,7 +90,10 @@ static inline struct ovl_entry *OVL_E(struct dentry *dentry)
+ }
+ 
+ struct ovl_inode {
+-	struct ovl_dir_cache *cache;
++	union {
++		struct ovl_dir_cache *cache;	/* directory */
++		struct inode *lowerdata;	/* regular file */
++	};
+ 	const char *redirect;
+ 	u64 version;
+ 	unsigned long flags;
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index d96530717702..e0326a686f45 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -187,6 +187,7 @@ static struct inode *ovl_alloc_inode(struct super_block *sb)
+ 	oi->flags = 0;
+ 	oi->__upperdentry = NULL;
+ 	oi->lower = NULL;
++	oi->lowerdata = NULL;
+ 	mutex_init(&oi->lock);
+ 
+ 	return &oi->vfs_inode;
+@@ -205,8 +206,11 @@ static void ovl_destroy_inode(struct inode *inode)
+ 
+ 	dput(oi->__upperdentry);
+ 	iput(oi->lower);
++	if (S_ISDIR(inode->i_mode))
++		ovl_dir_cache_free(inode);
++	else
++		iput(oi->lowerdata);
+ 	kfree(oi->redirect);
+-	ovl_dir_cache_free(inode);
+ 	mutex_destroy(&oi->lock);
+ 
+ 	call_rcu(&inode->i_rcu, ovl_i_callback);
+@@ -1509,7 +1513,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+ 	ovl_dentry_set_flag(OVL_E_CONNECTED, root_dentry);
+ 	ovl_set_upperdata(d_inode(root_dentry));
+ 	ovl_inode_init(d_inode(root_dentry), upperpath.dentry,
+-		       ovl_dentry_lower(root_dentry));
++		       ovl_dentry_lower(root_dentry), NULL);
+ 
+ 	sb->s_root = root_dentry;
+ 
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 4f9c2ecee74c..63311c536216 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -247,6 +247,14 @@ struct inode *ovl_inode_real(struct inode *inode)
+ 	return ovl_inode_upper(inode) ?: ovl_inode_lower(inode);
+ }
+ 
++/* Return inode which contains lower data. Do not return metacopy */
++struct inode *ovl_inode_lowerdata(struct inode *inode)
++{
++	if (WARN_ON(!S_ISREG(inode->i_mode)))
++		return NULL;
++
++	return OVL_I(inode)->lowerdata ?: ovl_inode_lower(inode);
++}
+ 
+ struct ovl_dir_cache *ovl_dir_cache(struct inode *inode)
+ {
+@@ -381,7 +389,7 @@ void ovl_dentry_set_redirect(struct dentry *dentry, const char *redirect)
+ }
+ 
+ void ovl_inode_init(struct inode *inode, struct dentry *upperdentry,
+-		    struct dentry *lowerdentry)
++		    struct dentry *lowerdentry, struct dentry *lowerdata)
+ {
+ 	struct inode *realinode = d_inode(upperdentry ?: lowerdentry);
+ 
+@@ -389,6 +397,8 @@ void ovl_inode_init(struct inode *inode, struct dentry *upperdentry,
+ 		OVL_I(inode)->__upperdentry = upperdentry;
+ 	if (lowerdentry)
+ 		OVL_I(inode)->lower = igrab(d_inode(lowerdentry));
++	if (lowerdata)
++		OVL_I(inode)->lowerdata = igrab(d_inode(lowerdata));
+ 
+ 	ovl_copyattr(realinode, inode);
+ 	ovl_copyflags(realinode, inode);
+-- 
+2.14.3
