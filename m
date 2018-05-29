@@ -1,110 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936563AbeE2PuS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:50:18 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:5150 "EHLO pegase1.c-s.fr"
+        id S965129AbeE2Pul (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:50:41 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:34319 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935212AbeE2PuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:50:17 -0400
-Message-Id: <cover.1527608397.git.christophe.leroy@c-s.fr>
+        id S935090AbeE2Pua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:50:30 -0400
+Message-Id: <83a287cf2f4258b9993415ebbb3e9a9ffc6d37e7.1527608397.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1527608397.git.christophe.leroy@c-s.fr>
+References: <cover.1527608397.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 00/14] Implement use of HW assistance on TLB table walk on 8xx
+Subject: [PATCH v3 07/14] powerpc/8xx: set GUARDED attribute in the PMD
+ directly
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue, 29 May 2018 15:50:14 +0000 (UTC)
+Date: Tue, 29 May 2018 15:50:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this serie is to implement hardware assistance for TLB table walk
-on the 8xx.
+On the 8xx, the GUARDED attribute of the pages is managed in the
+L1 entry, therefore to avoid having to copy it into L1 entry
+at each TLB miss, we set it in the PMD.
 
-First part is to make L1 entries and L2 entries independant.
-For that, we need to alter ioremap functions in order to handle GUARD attribute
-at the PGD/PMD level.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/nohash/32/pte-8xx.h |  3 ++-
+ arch/powerpc/kernel/head_8xx.S               | 18 +++++++-----------
+ arch/powerpc/platforms/Kconfig.cputype       |  1 +
+ 3 files changed, 10 insertions(+), 12 deletions(-)
 
-Last part is to reuse PTE fragment implemented on PPC64 in order to
-not waste 16k Pages for page tables as only 4k are used.
-
-Tested successfully on 8xx.
-
-Successfull compilation on following defconfigs (v3):
-ppc64_defconfig
-ppc64e_defconfig
-
-Successfull compilation on following defconfigs (v2):
-ppc64_defconfig
-ppc64e_defconfig
-pseries_defconfig
-pmac32_defconfig
-linkstation_defconfig
-corenet32_smp_defconfig
-ppc40x_defconfig
-storcenter_defconfig
-ppc44x_defconfig
-
-Changes in v3:
- - Fixed an issue in the 09/14 when CONFIG_PIN_TLB_TEXT was not enabled
- - Added performance measurement in the 09/14 commit log
- - Rebased on latest 'powerpc/merge' tree, which conflicted with 13/14
-
-Changes in v2:
- - Removed the 3 first patchs which have been applied already
- - Fixed compilation errors reported by Michael
- - Squashed the commonalisation of ioremap functions into a single patch
- - Fixed the use of pte_fragment
- - Added a patch optimising perf counting of TLB misses and instructions
-
-Christophe Leroy (14):
-  Revert "powerpc/8xx: Use L1 entry APG to handle _PAGE_ACCESSED for
-    CONFIG_SWAP"
-  powerpc: move io mapping functions into ioremap.c
-  powerpc: make ioremap_bot common to PPC32 and PPC64
-  powerpc: common ioremap functions.
-  powerpc: use _ALIGN_DOWN macro for VMALLOC_BASE
-  powerpc/nohash32: allow setting GUARDED attribute in the PMD directly
-  powerpc/8xx: set GUARDED attribute in the PMD directly
-  powerpc/8xx: Remove PTE_ATOMIC_UPDATES
-  powerpc/mm: Use hardware assistance in TLB handlers on the 8xx
-  powerpc/8xx: reunify TLB handler routines
-  powerpc/8xx: Free up SPRN_SPRG_SCRATCH2
-  powerpc/mm: Make pte_fragment_alloc() common to PPC32 and PPC64
-  powerpc/mm: Use pte_fragment_alloc() on 8xx
-  powerpc/8xx: Move SW perf counters in first 32kb of memory
-
- arch/powerpc/include/asm/book3s/32/pgtable.h |  29 +-
- arch/powerpc/include/asm/book3s/64/pgtable.h |   2 +
- arch/powerpc/include/asm/highmem.h           |  11 -
- arch/powerpc/include/asm/hugetlb.h           |   4 +-
- arch/powerpc/include/asm/machdep.h           |   2 +-
- arch/powerpc/include/asm/mmu-8xx.h           |  38 +--
- arch/powerpc/include/asm/mmu_context.h       |  53 ++++
- arch/powerpc/include/asm/nohash/32/pgalloc.h |  56 +++-
- arch/powerpc/include/asm/nohash/32/pgtable.h |  77 +++--
- arch/powerpc/include/asm/nohash/32/pte-8xx.h |   6 +-
- arch/powerpc/include/asm/nohash/pgtable.h    |   4 +
- arch/powerpc/include/asm/page.h              |   2 +-
- arch/powerpc/include/asm/pgtable-types.h     |   4 +
- arch/powerpc/kernel/head_8xx.S               | 409 +++++++++++----------------
- arch/powerpc/mm/8xx_mmu.c                    |  12 +-
- arch/powerpc/mm/Makefile                     |   2 +-
- arch/powerpc/mm/dma-noncoherent.c            |   2 +-
- arch/powerpc/mm/dump_linuxpagetables.c       |  32 ++-
- arch/powerpc/mm/hugetlbpage.c                |  12 +
- arch/powerpc/mm/init_32.c                    |   6 +-
- arch/powerpc/mm/{pgtable_64.c => ioremap.c}  | 239 ++++++----------
- arch/powerpc/mm/mem.c                        |  16 +-
- arch/powerpc/mm/mmu_context_book3s64.c       |  44 ---
- arch/powerpc/mm/mmu_context_nohash.c         |   4 +
- arch/powerpc/mm/pgtable-book3s64.c           |  72 -----
- arch/powerpc/mm/pgtable.c                    |  82 ++++++
- arch/powerpc/mm/pgtable_32.c                 | 167 +++--------
- arch/powerpc/mm/pgtable_64.c                 | 177 ------------
- arch/powerpc/platforms/Kconfig.cputype       |  19 ++
- 29 files changed, 657 insertions(+), 926 deletions(-)
- copy arch/powerpc/mm/{pgtable_64.c => ioremap.c} (53%)
-
+diff --git a/arch/powerpc/include/asm/nohash/32/pte-8xx.h b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+index f04cb46ae8a1..a9a2919251e0 100644
+--- a/arch/powerpc/include/asm/nohash/32/pte-8xx.h
++++ b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
+@@ -47,10 +47,11 @@
+ #define _PAGE_RO	0x0600	/* Supervisor RO, User no access */
+ 
+ #define _PMD_PRESENT	0x0001
+-#define _PMD_BAD	0x0fd0
++#define _PMD_BAD	0x0fc0
+ #define _PMD_PAGE_MASK	0x000c
+ #define _PMD_PAGE_8M	0x000c
+ #define _PMD_PAGE_512K	0x0004
++#define _PMD_GUARDED	0x0010
+ #define _PMD_USER	0x0020	/* APG 1 */
+ 
+ /* Until my rework is finished, 8xx still needs atomic PTE updates */
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index 19bdc65d05b8..c310cc9ef489 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -345,6 +345,10 @@ _ENTRY(ITLBMiss_cmp)
+ 	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
+ #ifdef CONFIG_HUGETLB_PAGE
+ 	mtcr	r11
++#endif
++	/* Load the MI_TWC with the attributes for this "segment." */
++	mtspr	SPRN_MI_TWC, r11	/* Set segment attributes */
++#ifdef CONFIG_HUGETLB_PAGE
+ 	bt-	28, 10f		/* bit 28 = Large page (8M) */
+ 	bt-	29, 20f		/* bit 29 = Large page (8M or 512k) */
+ #endif
+@@ -354,8 +358,6 @@ _ENTRY(ITLBMiss_cmp)
+ #if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
+ 	mtcr	r12
+ #endif
+-	/* Load the MI_TWC with the attributes for this "segment." */
+-	mtspr	SPRN_MI_TWC, r11	/* Set segment attributes */
+ 
+ #ifdef CONFIG_SWAP
+ 	rlwinm	r11, r10, 32-5, _PAGE_PRESENT
+@@ -457,6 +459,9 @@ _ENTRY(DTLBMiss_jmp)
+ 	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
+ #ifdef CONFIG_HUGETLB_PAGE
+ 	mtcr	r11
++#endif
++	mtspr	SPRN_MD_TWC, r11
++#ifdef CONFIG_HUGETLB_PAGE
+ 	bt-	28, 10f		/* bit 28 = Large page (8M) */
+ 	bt-	29, 20f		/* bit 29 = Large page (8M or 512k) */
+ #endif
+@@ -465,15 +470,6 @@ _ENTRY(DTLBMiss_jmp)
+ 4:
+ 	mtcr	r12
+ 
+-	/* Insert the Guarded flag into the TWC from the Linux PTE.
+-	 * It is bit 27 of both the Linux PTE and the TWC (at least
+-	 * I got that right :-).  It will be better when we can put
+-	 * this into the Linux pgd/pmd and load it in the operation
+-	 * above.
+-	 */
+-	rlwimi	r11, r10, 0, _PAGE_GUARDED
+-	mtspr	SPRN_MD_TWC, r11
+-
+ 	/* Both _PAGE_ACCESSED and _PAGE_PRESENT has to be set.
+ 	 * We also need to know if the insn is a load/store, so:
+ 	 * Clear _PAGE_PRESENT and load that which will
+diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+index ac7cab9c28e8..09ed04377a98 100644
+--- a/arch/powerpc/platforms/Kconfig.cputype
++++ b/arch/powerpc/platforms/Kconfig.cputype
+@@ -34,6 +34,7 @@ config PPC_8xx
+ 	bool "Freescale 8xx"
+ 	select FSL_SOC
+ 	select SYS_SUPPORTS_HUGETLBFS
++	select PPC_GUARDED_PAGE_IN_PMD
+ 
+ config 40x
+ 	bool "AMCC 40x"
 -- 
 2.13.3
