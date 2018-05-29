@@ -1,70 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755067AbeE2HkE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:40:04 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:44833 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754902AbeE2HkB (ORCPT
+        id S1754894AbeE2HmJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:42:09 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57911 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750831AbeE2HmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:40:01 -0400
-X-Google-Smtp-Source: AB8JxZq/qNUSr9fRaeyMgBFNGVSK6c/iV2LQVu7jPRMSjYgdMqyPOJr/08I4FL8QfAHh3UBG25X2vQ==
-Date: Tue, 29 May 2018 08:39:58 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-        mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
- driver
-Message-ID: <20180529073958.GB4790@dell>
-References: <20180528090003.GA8778@localhost.localdomain>
+        Tue, 29 May 2018 03:42:07 -0400
+Subject: Re: linux-next: manual merge of the irqchip tree with the arm-soc
+ tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Marc Zyngier <marc.zyngier@arm.com>, Olof Johansson <olof@lixom.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+CC: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+References: <20180529155257.5ae48830@canb.auug.org.au>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <1bedc0b7-21f9-1e15-a11c-3de06e81b5ba@st.com>
+Date: Tue, 29 May 2018 09:41:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180528090003.GA8778@localhost.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180529155257.5ae48830@canb.auug.org.au>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG6NODE3.st.com (10.75.127.18) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_02:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 May 2018, Matti Vaittinen wrote:
+Hi Stephen
 
-> Patch series adding support for ROHM BD71837 PMIC.
+On 05/29/2018 07:52 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> BD71837 is a programmable Power Management IC for powering single-core,
-> dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-> low BOM cost and compact solution footprint. It integrates 8 buck
-> regulators and 7 LDO’s to provide all the power rails required by the
-> SoC and the commonly used peripherals.
+> Today's linux-next merge of the irqchip tree got a conflict in:
 > 
-> The driver aims to not limit the usage of PMIC. Thus the buck and LDO
-> naming is generic and not tied to any specific purposes. However there
-> is following limitations which make it mostly suitable for use cases
-> where the processor where PMIC driver is running is powered by the PMIC:
+>    arch/arm/boot/dts/stm32mp157c.dtsi
 > 
-> - The PMIC is not re-initialized if it resets. PMIC may reset as a
->   result of voltage monitoring (over/under voltage) or due to reset
->   request. Driver is only initializing PMIC at probe. This is not
->   problem as long as processor controlling PMIC is powered by PMIC.
+> between commit:
 > 
-> - The PMIC internal state machine is ignored by driver. Driver assumes
->   the PMIC is wired so that it is always in "run" state when controlled
->   by the driver.
+>    3c00436fdb20 ("ARM: dts: stm32: add USBPHYC support to stm32mp157c")
+> 
+> from the arm-soc tree and commit:
+> 
+>    5f0e9d2557d7 ("ARM: dts: stm32: Add exti support for stm32mp157c")
+> 
+> from the irqchip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
 
-FYI, this patch-set is going to be difficult to manage since it was
-not sent 'threaded'.  As people start replying to different patches,
-they are going to scatter-bomb throughout all of the recipient's
-inboxes.
+Thanks for the fix (I will reorder nodes in a future patch). My opinion 
+is that all STM32 DT patches should come through my STM32 tree. It is my 
+role to fix this kind of conflicts. I thought it was a common rule 
+(driver patches go to sub-system maintainer tree and DT to the Machine 
+maintainer). For incoming next-series which contain DT+driver patches I 
+will indicate clearly that I take DT patch. I'm right ?
 
-If/when you send a subsequent version, could you please ensure you
-send the set threaded so the patches keep in relation to one another
-as they are reviewed?
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Regards
+Alex
