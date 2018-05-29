@@ -1,96 +1,197 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934871AbeE2OHL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:07:11 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:45510 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S934175AbeE2OHJ (ORCPT
+        id S934649AbeE2OKV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:10:21 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:45102 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934175AbeE2OKT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:07:09 -0400
-Date: Tue, 29 May 2018 10:07:07 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: martin_liu <liumartin@google.com>
-cc: heikki.krogerus@linux.intel.com, <johan@kernel.org>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <jenhaochen@google.com>
-Subject: Re: [RFC PATCH v2] driver core: hold dev's parent lock when needed
-In-Reply-To: <20180529070719.164626-1-liumartin@google.com>
-Message-ID: <Pine.LNX.4.44L0.1805291003470.1458-100000@iolanthe.rowland.org>
+        Tue, 29 May 2018 10:10:19 -0400
+X-Auth-Info: L4rxpjMDS63G9o2WxQxKZN/zgrjvD21VpCU/nNY/SCY=
+Date: Tue, 29 May 2018 16:08:59 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 RESEND] display: panel: Add AUO g070vvn01 display
+ support (800x480)
+Message-ID: <20180529160859.2625eb6d@jawa>
+In-Reply-To: <20180519130657.4904c90f@jawa>
+References: <20180410102927.17787-1-lukma@denx.de>
+        <20180514190849.18723-1-lukma@denx.de>
+        <20180519130657.4904c90f@jawa>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jGzXu0yovG2eCogYhXDqLiZ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 May 2018, martin_liu wrote:
+--Sig_/jGzXu0yovG2eCogYhXDqLiZ
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> SOC have internal I/O buses that can't be proved for devices. The
-> devices on the buses can be accessed directly without additinal
-> configuration required. This type of bus is represented as
-> "simple-bus". In some platforms, we name "soc" with "simple-bus"
-> attribute and many devices are hooked under it desribed in DT
-> (device tree).
-> 
-> In commit 'bf74ad5bc417 introduce ("[PATCH] Hold the device's
-> parent's lock during probe and remove")' to solve USB subsystem
-> lock sequence since usb device's characteristic. Thus "soc"
-> needs to be locked whenever a device and driver's probing
-> happen under "soc" bus. During this period, an async driver
-> tries to probe a device which is under the "soc" bus would be
-> blocked until previous driver finish the probing and release "soc"
-> lock. And the next probing under the "soc" bus need to wait for
-> async finish. Because of that, driver's async probe for init
-> time improvement will be shadowed.
-> 
-> Since many devices don't have USB devices' characteristic, they
-> actually don't need parent's lock. Thus, we introduce a lock flag
-> in device struct and driver core would lock the parent lock base
-> on the flag. For usbsystem, we set this flag when its device and
-> driver is matched and to keep original lock behavior in driver
-> core.
-> 
-> Async probe could have more benefit after this patch.
-> 
-> Signed-off-by: martin_liu <liumartin@google.com>
-> Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-> ---
-> Changes in v2:
->  - take Alan's suggestion to introudce a flag to guide driver
->    core to hold device parent's lock.
-> 
-> [v1]: https://lkml.org/lkml/2018/5/22/545
-> 
-> Currently, I have the flag set in USB subsystem match function.
-> Since I'm not familar with USB part, need some feedback to know
-> if they cover all the cases that original case driver core
-> protects.
+Hi,
 
-The match function is not the right place.  Take Greg's suggestion and 
-put the new flag in the bus_type structure instead.
+> Hi Thierry,
+>=20
+> > This commit adds support for AUO's 7.0" display.
+> >  =20
+>=20
+> Thierry, shall I perform some more work on this code, or is it
+> eligible for applying to your tree?
 
->  drivers/base/bus.c          | 16 ++++++++--------
->  drivers/base/dd.c           |  8 ++++----
->  drivers/usb/common/ulpi.c   | 16 ++++++++++++----
->  drivers/usb/core/driver.c   |  9 +++++++--
->  drivers/usb/core/usb-acpi.c |  6 +++++-
->  drivers/usb/serial/bus.c    |  4 +++-
->  include/linux/device.h      |  1 +
->  7 files changed, 40 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-> index ef6183306b40..18ea94caec02 100644
-> --- a/drivers/base/bus.c
-> +++ b/drivers/base/bus.c
-> @@ -184,10 +184,10 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
->  
->  	dev = bus_find_device_by_name(bus, NULL, buf);
->  	if (dev && dev->driver == drv) {
-> -		if (dev->parent)	/* Needed for USB */
-> +		if (dev->parent && dev->need_parent_lock)/* Needed for USB */
+If I may put a gentle remaining on this patch.....
 
-The new need_parent_lock flag is self-explanatory.  You can remove the 
-"Needed for USB" comments here and elsewhere; instead just have a 
-single comment where the flag is defined.
+>=20
+> Best regards,
+> =C5=81ukasz
+>=20
+> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> >=20
+> > ---
+> > Changes for v3:
+> > - Remove not used 'bus-format-override =3D "rgb565";' property
+> >=20
+> > Changes for v2:
+> > - Add *.txt suffix to the auo,g070wn01 file
+> > ---
+> >  .../bindings/display/panel/auo,g070vvn01.txt       | 29
+> > ++++++++++++++++++++
+> > drivers/gpu/drm/panel/panel-simple.c               | 31
+> > ++++++++++++++++++++++ 2 files changed, 60 insertions(+) create mode
+> > 100644
+> > Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+> >=20
+> > diff --git
+> > a/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+> > b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+> > new file mode 100644 index 000000000000..49e4105378f6 --- /dev/null
+> > +++
+> > b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+> > @@ -0,0 +1,29 @@ +AU Optronics Corporation 7.0" FHD (800 x 480) TFT
+> > LCD panel +
+> > +Required properties:
+> > +- compatible: should be "auo,g070vvn01"
+> > +- backlight: phandle of the backlight device attached to the panel
+> > +- power-supply: single regulator to provide the supply voltage
+> > +
+> > +Required nodes:
+> > +- port: Parallel port mapping to connect this display
+> > +
+> > +This panel needs single power supply voltage. Its backlight is
+> > conntrolled +via PWM signal.
+> > +
+> > +Example:
+> > +--------
+> > +
+> > +Example device-tree definition when connected to iMX6Q based board
+> > +
+> > +	lcd_panel: lcd-panel {
+> > +		compatible =3D "auo,g070vvn01";
+> > +		backlight =3D <&backlight_lcd>;
+> > +		power-supply =3D <&reg_display>;
+> > +
+> > +		port {
+> > +			lcd_panel_in: endpoint {
+> > +				remote-endpoint =3D
+> > <&lcd_display_out>;
+> > +			};
+> > +		};
+> > +	};
+> > diff --git a/drivers/gpu/drm/panel/panel-simple.c
+> > b/drivers/gpu/drm/panel/panel-simple.c index
+> > cbf1ab404ee7..d9984bdb5bb5 100644 ---
+> > a/drivers/gpu/drm/panel/panel-simple.c +++
+> > b/drivers/gpu/drm/panel/panel-simple.c @@ -581,6 +581,34 @@ static
+> > const struct panel_desc auo_b133htn01 =3D { },
+> >  };
+> > =20
+> > +static const struct display_timing auo_g070vvn01_timings =3D {
+> > +	.pixelclock =3D { 33300000, 34209000, 45000000 },
+> > +	.hactive =3D { 800, 800, 800 },
+> > +	.hfront_porch =3D { 20, 40, 200 },
+> > +	.hback_porch =3D { 87, 40, 1 },
+> > +	.hsync_len =3D { 1, 48, 87 },
+> > +	.vactive =3D { 480, 480, 480 },
+> > +	.vfront_porch =3D { 5, 13, 200 },
+> > +	.vback_porch =3D { 31, 31, 29 },
+> > +	.vsync_len =3D { 1, 1, 3 },
+> > +};
+> > +
+> > +static const struct panel_desc auo_g070vvn01 =3D {
+> > +	.timings =3D &auo_g070vvn01_timings,
+> > +	.num_timings =3D 1,
+> > +	.bpc =3D 8,
+> > +	.size =3D {
+> > +		.width =3D 152,
+> > +		.height =3D 91,
+> > +	},
+> > +	.delay =3D {
+> > +		.prepare =3D 200,
+> > +		.enable =3D 50,
+> > +		.disable =3D 50,
+> > +		.unprepare =3D 1000,
+> > +	},
+> > +};
+> > +
+> >  static const struct drm_display_mode auo_g104sn02_mode =3D {
+> >  	.clock =3D 40000,
+> >  	.hdisplay =3D 800,
+> > @@ -2095,6 +2123,9 @@ static const struct of_device_id
+> > platform_of_match[] =3D { .compatible =3D "auo,b133xtn01",
+> >  		.data =3D &auo_b133xtn01,
+> >  	}, {
+> > +		.compatible =3D "auo,g070vvn01",
+> > +		.data =3D &auo_g070vvn01,
+> > +	}, {
+> >  		.compatible =3D "auo,g104sn02",
+> >  		.data =3D &auo_g104sn02,
+> >  	}, { =20
+>=20
+>=20
+>=20
+>=20
+> Best regards,
+>=20
+> Lukasz Majewski
+>=20
+> --
+>=20
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
 
-Alan Stern
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/jGzXu0yovG2eCogYhXDqLiZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlsNXvsACgkQAR8vZIA0
+zr0O1ggAt5glMaWJvPtd4KmVjsOzgMS8wS8USN7VUUNg3c9bECqQMUmO/EdV2AgJ
+9u4rvJxMDTHFlwB0SwD2Hoye5nGlytL8EdDQ9KoTverPtJGchkx89z52b+nMwTZQ
+u2kQInAYPJx5CIc0iemiSCLV8ntHz0znuOordNmgvABEwy0vcfr7uRZrLm2AXmKm
+vutcYpPBwkWpEyARNuFj2umOyrf2bl5mt6q5oLuS6FRww1PFF0aX778N8jHyBMLK
+eyJ8aoAFBkkECYbZD+1ZLF6IkxUAYA3S542wZHAJn0i+w/Q6ySZq+F+cYol5jp+u
+9uRI24WwudvOU5sUkfGgzPQNUQ7Deg==
+=psu0
+-----END PGP SIGNATURE-----
+
+--Sig_/jGzXu0yovG2eCogYhXDqLiZ--
