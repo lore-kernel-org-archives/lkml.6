@@ -1,119 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968028AbeE2WRS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:17:18 -0400
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:44008 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S967977AbeE2WRN (ORCPT
+        id S968221AbeE2WSP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:18:15 -0400
+Received: from mail-pf0-f180.google.com ([209.85.192.180]:39225 "EHLO
+        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030224AbeE2WR4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:17:13 -0400
-Date: Wed, 30 May 2018 08:17:10 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>, linux-kernel@vger.kernel.org
-Subject: Re: [REVIEW][PATCH 0/6] Wrapping up the vfs support for unprivileged
- mounts
-Message-ID: <20180529221710.GM23861@dastard>
-References: <87o9h6554f.fsf@xmission.com>
- <20180524214617.GG7712@thunk.org>
- <87y3g8y6x9.fsf@xmission.com>
- <20180525035716.GE10363@dastard>
- <8736yar4g3.fsf@xmission.com>
+        Tue, 29 May 2018 18:17:56 -0400
+X-Google-Smtp-Source: ADUXVKKGv+kqs7VkJxjZW3yMzU4D1hvicgQ57r87dxtHSQykVc2ayosduorR2jIdi/GtvLEb5gb/BA==
+Subject: Re: linux-next: manual merge of the block tree with the vfs tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>
+References: <20180529143357.2a66b0af@canb.auug.org.au>
+ <20180529081205.GB1416@lst.de>
+ <83024e98-8719-7ed2-a5d5-e1653162bacc@kernel.dk>
+ <20180530074012.393b74b1@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <20d640dc-77df-1eb1-7310-8282a542cb59@kernel.dk>
+Date: Tue, 29 May 2018 16:17:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8736yar4g3.fsf@xmission.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180530074012.393b74b1@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 08:12:28AM -0500, Eric W. Biederman wrote:
-> Dave Chinner <david@fromorbit.com> writes:
+On 5/29/18 3:40 PM, Stephen Rothwell wrote:
+> Hi Jens,
 > 
-> > On Thu, May 24, 2018 at 06:23:30PM -0500, Eric W. Biederman wrote:
-> >> "Theodore Y. Ts'o" <tytso@mit.edu> writes:
-> >> 
-> >> > On Wed, May 23, 2018 at 06:22:56PM -0500, Eric W. Biederman wrote:
-> >> >> 
-> >> >> Very slowly the work has been progressing to ensure the vfs has the
-> >> >> necessary support for mounting filesystems without privilege.
-> >> >
-> >> > What's the thinking behind how system administrators and/or file
-> >> > systems would configure whether or not a particular file system type
-> >> > will be allowed to be mounted w/o privilege?
-> >> 
-> >> The mechanism is .fs_flags in file_system_type.   If the FS_USERNS_MOUNT
-> >> flag is set then root in a user namespace (AKA an unprivileged user)
-> >> will be allowed to mount to mount the filesystem.
-> >> 
-> >> There are very real concerns about attacking a filesystem with an
-> >> invalid filesystem image, or by a malicious protocol speaker.  So I
-> >> don't want to enable anything without the file system maintainers
-> >> consent and without a reasonable expecation that neither a system wide
-> >> denial of service attack nor a privilege escalation attack is possible
-> >> from if the filesystem is enabled.
-> >> 
-> >> So at a practical level what we have in the vfs is the non-fuse specific
-> >> bits that enable unprivileged mounts of fuse.  Things like handling
-> >> of unmapped uid and gids, how normally trusted xattrs are dealt with,
-> >> etc.
-> >> 
-> >> A big practical one for me is that if either the uid or gid is not
-> >> mapped the vfs avoids writing to the inode.
-> >> 
-> >> Right now my practical goal is to be able to say: "Go run your
-> >> filesystem in userspace with fuse if you want stronger security
-> >> guarantees."  I think that will be enough to make removable media
-> >> reasonably safe from privilege escalation attacks.
-> >> 
-> >> There is enough code in most filesystems that I don't know what our
-> >> chances of locking down very many of them are.  But I figure a few more
-> >> of them are possible.
-> >
-> > I'm not sure we need to - fusefs-lkl gives users the ability to
-> > mount any of the kernel filesystems via fuse without us needing to
-> > support unprivileged kernel mounts for those filesystems.
+> On Tue, 29 May 2018 08:22:43 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 5/29/18 2:12 AM, Christoph Hellwig wrote:
+>>> Meh.  Do we really need these switch to octal patches to start
+>>> with?  I mean, I personally prefer octal, but just switching around
+>>> in random code that isn't otherwise changed creates nothing but churn.  
+>>
+>> This is exactly why I hesitated doing it, I knew it would end up
+>> with conflicts. The main reason was to get rid of the inconsistency,
+>> since we had a fair mix of octal and symbolic names.
 > 
-> Maybe.
-> 
-> That certainly seems like a good proof of concept for running
-> ordinary filesystems with fuse.  If we are going to rely on it
-> someone probably needs to do the work to merge arch/lkl into the
-> main tree.  My quick look suggests that the lkl port lags behind
-> a little bit and has just made it to 4.16.
+> But the conflicts are all trivial ...
 
-Yeah, the are some fairly big process and policy things that need
-to be decided here. Not just at the kernel level, but at distro and
-app infrastructure level too.
+Yep, that certainly does help.
 
-I was originally sceptical of supporting kernel filesystems via lkl,
-but the desire for unprivileged mounts has not gone away and so I'm
-less worried about accessing filesystems that way than I am of
-letting the kernel parse untrusted images from untrusted users...
-
-I'm not sure what the correct forum for this is - wasn't this
-something the Plumbers conference was supposed to facilitate?
-
-> Is fusefs-lkl valuable for testing filesystems?  If xfs-tests were to
-> have a mode that used that used the fuse protocol for testing and
-> fuzzing filesystems without the full weight of the kernel in the middle
-> that might encourage people to suppor this kind of things as well.
-
-Getting lkl-fuse to run under fstests would be a great way to ensure
-we have some level of confidence that it will do the right thing and
-users can expect that it won't eat their data. I think this would
-need to be a part of a recommendation for wider deploy of such a
-solution...
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Jens Axboe
