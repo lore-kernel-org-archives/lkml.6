@@ -1,26 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967848AbeE2WQw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:16:52 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:38956 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967778AbeE2WQm (ORCPT
+        id S967875AbeE2WQ4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:16:56 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:43439 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967788AbeE2WQp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:16:42 -0400
-X-Google-Smtp-Source: ADUXVKL34RpEedao1HkBLjkEi/QXiAx7670a2kB8yU0+lQlqt9EEszzrl7zdiULNUxsA0u2f+FpN5g==
+        Tue, 29 May 2018 18:16:45 -0400
+X-Google-Smtp-Source: ADUXVKJ+xHvtb2UfGYj/Qm8yagmYDw6VL8cLgrarcmEy4Dyp8gh9RJSTbL/07ucRLArPmO4dQPX0eA==
 From: Thomas Garnier <thgarnie@google.com>
 To: kernel-hardening@lists.openwall.com
 Cc: Thomas Garnier <thgarnie@google.com>,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
         Philippe Ombredanne <pombredanne@nexb.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 02/27] x86: Use symbol name on bug table for PIE support
-Date: Tue, 29 May 2018 15:15:03 -0700
-Message-Id: <20180529221625.33541-3-thgarnie@google.com>
+Subject: [PATCH v4 03/27] x86: Use symbol name in jump table for PIE support
+Date: Tue, 29 May 2018 15:15:04 -0700
+Message-Id: <20180529221625.33541-4-thgarnie@google.com>
 X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 In-Reply-To: <20180529221625.33541-1-thgarnie@google.com>
 References: <20180529221625.33541-1-thgarnie@google.com>
@@ -36,21 +35,36 @@ KASLR randomization range 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/include/asm/bug.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/jump_label.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 6804d6642767..3d690a4abf50 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -35,7 +35,7 @@ do {									\
- 	asm volatile("1:\t" ins "\n"					\
- 		     ".pushsection __bug_table,\"aw\"\n"		\
- 		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
-+		     "\t"  __BUG_REL(%P0) "\t# bug_entry::file\n"	\
- 		     "\t.word %c1"        "\t# bug_entry::line\n"	\
- 		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
- 		     "\t.org 2b+%c3\n"					\
+diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+index 8c0de4282659..dfdcdc39604a 100644
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -37,9 +37,9 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
+ 		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
+ 		".pushsection __jump_table,  \"aw\" \n\t"
+ 		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
++		_ASM_PTR "1b, %l[l_yes], %P0 \n\t"
+ 		".popsection \n\t"
+-		: :  "i" (key), "i" (branch) : : l_yes);
++		: :  "X" (&((char *)key)[branch]) : : l_yes);
+ 
+ 	return false;
+ l_yes:
+@@ -53,9 +53,9 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
+ 		"2:\n\t"
+ 		".pushsection __jump_table,  \"aw\" \n\t"
+ 		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
++		_ASM_PTR "1b, %l[l_yes], %P0 \n\t"
+ 		".popsection \n\t"
+-		: :  "i" (key), "i" (branch) : : l_yes);
++		: :  "X" (&((char *)key)[branch]) : : l_yes);
+ 
+ 	return false;
+ l_yes:
 -- 
 2.17.0.921.gf22659ad46-goog
