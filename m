@@ -1,80 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932587AbeE2JFO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:05:14 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:46842 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932288AbeE2JFL (ORCPT
+        id S932609AbeE2JFw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:05:52 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:33567 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932288AbeE2JFs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:05:11 -0400
-Date: Tue, 29 May 2018 12:05:04 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Matthew Garrett <mjg59@google.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] EVM: Fix null dereference on xattr when xattr fails to
- allocate
-Message-ID: <20180529090504.6dpdadjyjxo45nu2@mwanda>
-References: <20180527225510.25612-1-colin.king@canonical.com>
+        Tue, 29 May 2018 05:05:48 -0400
+X-Google-Smtp-Source: ADUXVKI0092/+7M9vD9xWjutqVp/3hzVaHiilPtGZquHkCyTQoUrONvm3t0HIkffen8PlWRXrAm2Vojb05pO4likRHA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180527225510.25612-1-colin.king@canonical.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8907 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=580
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805290106
+In-Reply-To: <1fa5b220-4d21-b4cd-33bf-8a3ce3178063@c-s.fr>
+References: <f5f2de3e1a39613f7303bfdc0d2f2210d4c91910.1527573345.git.christophe.leroy@c-s.fr>
+ <CAMuHMdVSKigQPUQH=BVc2fRSRmuEThLaf+V9ghMPDT9_m1C6BA@mail.gmail.com> <1fa5b220-4d21-b4cd-33bf-8a3ce3178063@c-s.fr>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 May 2018 11:05:47 +0200
+X-Google-Sender-Auth: gbmV-9g6R5xjBsuVlzQ9mAWA7Vg
+Message-ID: <CAMuHMdXwO1_wrrTi40UmZC4o6KjvP0LF38m45n0ZNA2pDb_7Qg@mail.gmail.com>
+Subject: Re: [PATCH v2] powerpc/64: Fix build failure with GCC 8.1
+To: Christophe LEROY <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Geoff Levand <geoff@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4T95vBc009184
 
-Not really related to this patch except I was looking at the function:
+Hi Christophe,
 
-security/integrity/evm/evm_secfs.c
-   191          ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
-   192          if (IS_ERR(ab))
-   193                  return PTR_ERR(ab);
-   194  
-   195          xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
-   196          if (!xattr) {
-   197                  err = -ENOMEM;
-   198                  goto out;
-   199          }
-   200  
-   201          xattr->name = memdup_user_nul(buf, count);
-   202          if (IS_ERR(xattr->name)) {
-   203                  err = PTR_ERR(xattr->name);
-   204                  xattr->name = NULL;
-   205                  goto out;
-   206          }
-   207  
-   208          /* Remove any trailing newline */
-   209          len = strlen(xattr->name);
-   210          if (xattr->name[len-1] == '\n')
+On Tue, May 29, 2018 at 10:56 AM, Christophe LEROY
+<christophe.leroy@c-s.fr> wrote:
+> Le 29/05/2018 à 09:47, Geert Uytterhoeven a écrit :
+>> On Tue, May 29, 2018 at 8:03 AM, Christophe Leroy
+>> <christophe.leroy@c-s.fr> wrote:
+>>>
+>>>    CC      arch/powerpc/kernel/nvram_64.o
+>>> arch/powerpc/kernel/nvram_64.c: In function 'nvram_create_partition':
+>>> arch/powerpc/kernel/nvram_64.c:1042:2: error: 'strncpy' specified bound
+>>> 12 equals destination size [-Werror=stringop-truncation]
+>>>    strncpy(new_part->header.name, name, 12);
+>>>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>
+>>>    CC      arch/powerpc/kernel/trace/ftrace.o
+>>> In function 'make_field',
+>>>      inlined from 'ps3_repository_read_boot_dat_address' at
+>>> arch/powerpc/platforms/ps3/repository.c:900:9:
+>>> arch/powerpc/platforms/ps3/repository.c:106:2: error: 'strncpy' output
+>>> truncated before terminating nul copying 8 bytes from a string of the same
+>>> length [-Werror=stringop-truncation]
+>>>    strncpy((char *)&n, text, 8);
+>>>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>
+>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>
+>>
+>> Thanks for your patch!
+>>
+>>> --- a/arch/powerpc/kernel/nvram_64.c
+>>> +++ b/arch/powerpc/kernel/nvram_64.c
+>>> @@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char
+>>> *name, int sig,
+>>>          new_part->index = free_part->index;
+>>>          new_part->header.signature = sig;
+>>>          new_part->header.length = size;
+>>> -       strncpy(new_part->header.name, name, 12);
+>>> +       memcpy(new_part->header.name, name, strnlen(name,
+>>> sizeof(new_part->header.name)));
+>>
+>>
+>> The comment for nvram_header.lgnth says:
+>>
+>>          /* Terminating null required only for names < 12 chars. */
+>>
+>> This will not terminate the string with a zero (the struct is
+>> allocated with kmalloc).
+>> So the original code is correct, the new one isn't.
+>
+> Right, then I have to first zeroize the destination.
 
-strlen() could be zero, leading to a read underflow here.
+Using kzalloc() instead of kmalloc() will do.
 
-   211                  xattr->name[len-1] = '\0';
-   212  
-   213          if (strcmp(xattr->name, ".") == 0) {
-   214                  evm_xattrs_locked = 1;
-   215                  newattrs.ia_mode = S_IFREG | 0440;
-   216                  newattrs.ia_valid = ATTR_MODE;
-   217                  inode = evm_xattrs->d_inode;
-   218                  inode_lock(inode);
-   219                  err = simple_setattr(evm_xattrs, &newattrs);
-   220                  inode_unlock(inode);
-   221                  audit_log_format(ab, "locked");
-   222                  if (!err)
-   223                          err = count;
-   224                  goto out;
-   225          }
+Still, papering around these warnings seems to obscure things, IMHO.
+And it increases code size, as you had to add a call to strnlen().
 
-regards,
-dan carpenter
+>>>          new_part->header.checksum = nvram_checksum(&new_part->header);
+>>>
+>>>          rc = nvram_write_header(new_part);
+>>> diff --git a/arch/powerpc/platforms/ps3/repository.c
+>>> b/arch/powerpc/platforms/ps3/repository.c
+>>> index 50dbaf24b1ee..e49c887787c4 100644
+>>> --- a/arch/powerpc/platforms/ps3/repository.c
+>>> +++ b/arch/powerpc/platforms/ps3/repository.c
+>>> @@ -101,9 +101,9 @@ static u64 make_first_field(const char *text, u64
+>>> index)
+>>>
+>>>   static u64 make_field(const char *text, u64 index)
+>>>   {
+>>> -       u64 n;
+>>> +       u64 n = 0;
+>>>
+>>> -       strncpy((char *)&n, text, 8);
+>>> +       memcpy((char *)&n, text, strnlen(text, sizeof(n)));
+>>
+>>
+>> This changes behavior: strncpy() fills the remainder of the buffer with
+>> zeroes.  I don't remember the details of the PS3 repository structure,
+>> but given this writes to a fixed size u64 buffer, I'd expect the PS3
+>> hypervisor code to (1) rely on the zero padding, and (2) not need a zero
+>> terminator if there are 8 characters in the buffer, so probably the
+>> original code is correct, and the "fixed" code isn't.
+>
+> Here I have set n to 0 prior to the copy, so the buffer IS zero padded.
+
+Sorry, I missed that part.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
