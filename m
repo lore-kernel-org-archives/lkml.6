@@ -1,43 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032773AbeE2Cyx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 22:54:53 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:48860 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030894AbeE2Cyr (ORCPT
+        id S1033144AbeE2C5a (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 22:57:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53128 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935511AbeE2C52 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 22:54:47 -0400
-Date: Mon, 28 May 2018 22:54:45 -0400 (EDT)
-Message-Id: <20180528.225445.996478506804495385.davem@davemloft.net>
-To: thierry.reding@gmail.com
-Cc: peppe.cavallaro@st.com, alexandre.torgue@st.com, jonathanh@nvidia.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: stmmac: Use mutex instead of spinlock
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180524140907.24197-1-thierry.reding@gmail.com>
-References: <20180524140907.24197-1-thierry.reding@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 28 May 2018 22:57:28 -0400
+Date: Mon, 28 May 2018 19:57:22 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Greg Thelen <gthelen@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: convert scan_control.priority int => byte
+Message-ID: <20180529025722.GA25784@bombadil.infradead.org>
+References: <20180529024025.58353-1-gthelen@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529024025.58353-1-gthelen@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Thu, 24 May 2018 16:09:07 +0200
-
-> From: Thierry Reding <treding@nvidia.com>
+On Mon, May 28, 2018 at 07:40:25PM -0700, Greg Thelen wrote:
+> Reclaim priorities range from 0..12(DEF_PRIORITY).
+> scan_control.priority is a 4 byte int, which is overkill.
 > 
-> Some drivers, such as DWC EQOS on Tegra, need to perform operations that
-> can sleep under this lock (clk_set_rate() in tegra_eqos_fix_speed()) for
-> proper operation. Since there is no need for this lock to be a spinlock,
-> convert it to a mutex instead.
-> 
-> Fixes: e6ea2d16fc61 ("net: stmmac: dwc-qos: Add Tegra186 support")
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> This applies on top of net-next.
+> Since commit 6538b8ea886e ("x86_64: expand kernel stack to 16K") x86_64
+> stack overflows are not an issue.  But it's inefficient to use 4 bytes
+> for priority.
 
-Applied to net-next.
+If you're looking to shave a few more bytes, allocation order can fit
+in a u8 too (can't be more than 6 bits, and realistically won't be more
+than 4 bits).  reclaim_idx likewise will fit in a u8, and actually won't
+be more than 3 bits.
+
+I am sceptical that nr_to_reclaim should really be an unsigned long; I
+don't think we should be trying to free 4 billion pages in a single call.
+nr_scanned might be over 4 billion (!) but nr_reclaimed can probably
+shrink to unsigned int along with nr_to_reclaim.
