@@ -1,154 +1,280 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754885AbeE2Hgc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:36:32 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50755 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754759AbeE2Hga (ORCPT
+        id S1754952AbeE2Hgv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:36:51 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44697 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754759AbeE2Hgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:36:30 -0400
-X-Google-Smtp-Source: AB8JxZowrJohu384IqkWd+QYbvaHrwC2RLmgRP5LhKlK+y45YiHdiG1IzPnT1s3ApSNKC2P7d7jUEg==
-Date: Tue, 29 May 2018 08:36:25 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Amelie DELAUNAY <amelie.delaunay@st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
- bindings
-Message-ID: <20180529073625.GA4790@dell>
-References: <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
- <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
- <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
- <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
- <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
- <b9005dd8-8214-ceab-0f88-ff1a51b44e34@st.com>
- <20180517063640.GK5130@dell>
- <28c374e6-b440-f785-b371-03fe15c8bc4b@st.com>
- <CACRpkdbZ2Hr7cc5+dyPaL0CKYuy2-oosEr=UPo60+3beDCVi9A@mail.gmail.com>
- <8d8b0f05-7f04-e718-7a45-148af38a03d4@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8d8b0f05-7f04-e718-7a45-148af38a03d4@st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 29 May 2018 03:36:46 -0400
+X-Google-Smtp-Source: AB8JxZocbVq2d64OT+N6khDJiJr2gI9Z3WYdOetsD2U5LSokRHTHUpfoINAqVFgf2maiOqcEPld4qA==
+From: martin_liu <liumartin@google.com>
+To: stern@rowland.harvard.edu
+Cc: heikki.krogerus@linux.intel.com, johan@kernel.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, jenhaochen@google.com,
+        martin_liu <liumartin@google.com>
+Subject: [RFC PATCH v2] driver core: hold dev's parent lock when needed
+Date: Tue, 29 May 2018 15:07:20 +0800
+Message-Id: <20180529070719.164626-1-liumartin@google.com>
+X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
+In-Reply-To: <Pine.LNX.4.44L0.1805241100000.1871-100000@iolanthe.rowland.org>
+References: <Pine.LNX.4.44L0.1805241100000.1871-100000@iolanthe.rowland.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 May 2018, Amelie DELAUNAY wrote:
+SOC have internal I/O buses that can't be proved for devices. The
+devices on the buses can be accessed directly without additinal
+configuration required. This type of bus is represented as
+"simple-bus". In some platforms, we name "soc" with "simple-bus"
+attribute and many devices are hooked under it desribed in DT
+(device tree).
 
-> On 05/24/2018 09:13 AM, Linus Walleij wrote:
-> > On Fri, May 18, 2018 at 9:29 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
-> >> On 05/17/2018 08:36 AM, Lee Jones wrote:
-> >>> On Wed, 16 May 2018, Amelie DELAUNAY wrote:
-> >>>> On 05/16/2018 04:20 PM, Linus Walleij wrote:
-> >>>>> On Wed, May 9, 2018 at 9:56 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
-> >>>>>
-> >>>>>> Indeed, stmfx has other functions than GPIO. But, after comments done
-> >>>>>> here: [1] and there: [2], it has been decided to move MFD parent/GPIO
-> >>>>>> child drivers into a single PINCTRL/GPIO driver because of the following
-> >>>>>> reasons:
-> >>>>>> - Other stmfx functions (IDD measurement and TouchScreen controller) are
-> >>>>>> not used on any of the boards using an stmfx and supported by Linux, so
-> >>>>>> no way to test these functions, and no need to maintain them while they
-> >>>>>> are not being used.
-> >>>>>> - But, in the case a new board will use more than GPIO function on
-> >>>>>> stmfx, the actual implementation allow to easily extract common init
-> >>>>>> part of stmfx and put it in an MFD driver.
-> >>>>>>
-> >>>>>> So I could remove gpio sub-node and put its contents in stmfx node and
-> >>>>>> keep single PINCTRL/GPIO driver for the time being.
-> >>>>>> Please advise,
-> >>>>>
-> >>>>> I would normally advice to use the right modeling from the start, create
-> >>>>> the MFD driver and spawn the devices from there. It is confusing
-> >>>>> if the layout of the driver(s) doesn't really match the layout of the
-> >>>>> hardware.
-> >>>>>
-> >>>>> I understand that it is a pain to write new MFD drivers to get your
-> >>>>> things going and it would be "nice to get this working really quick
-> >>>>> now" but in my experience it is better to do it right from the start.
-> >>>>>
-> >>>>
-> >>>> Hi Linus,
-> >>>>
-> >>>> Thanks for your advice. I understand the point.
-> >>>> So, the right modeling would be to:
-> >>>> - create an MFD driver with the common init part of stmfx
-> >>>> - remove all common init part of stmfx-pinctrl driver and keep only all
-> >>>> gpio/pinctrl functions.
-> >>>>
-> >>>> I will not develop the other stmfx functions (IDD measurement driver and
-> >>>> TouchScreen controller driver) because, as explained ealier, they are
-> >>>> not used on any of the boards using an stmfx and supported by Linux, so
-> >>>> no way to test these functions, and no need to maintain them while they
-> >>>> are not being used.
-> >>>>
-> >>>> Lee, are you OK with that ?
-> >>>
-> >>> I missed a lot of this conversation I think, but from what I've read,
-> >>> it sounds fine.
-> >>>
-> >>
-> >> I summarize the situation:
-> >> - I still don't have an official datasheet for STMFX device which could
-> >> justify the use of an MFD driver;
-> >> - the MFD driver will contain the STMFX chip initialization stuff such
-> >> as regmap initialization (regmap structure will be shared with the
-> >> child), chip initialization, global interrupt management;
-> >> - there will be only one child (GPIO/PINCTRL node) for the time being.
-> > 
-> > But there will be more devices in it. And they will invariably be put
-> > to use later, and there will be new versions of the chip as well, and
-> > then you will be happy about doing the MFD core, which makes it
-> > easy to add new variants with different subdevices.
-> > 
-> >> So, is "MFD driver + GPIO/PINCTRL driver" the right modeling, and does
-> >> it still sound fine after this summary ? :)
-> > 
-> > No I think it should use an MFD core.
-> > 
-> > Mainly because of device tree concerns.
-> > 
-> > The main reason is that the device tree bindings will be different if
-> > you add an MFD core later, the GPIO and pinctrl driver will
-> > move to a child node, making old device trees incompatible.
-> > 
-> > We could have a single driver in GPIO+pin control if it is a child
-> > of an MFD node in the device tree, but it doesn't make much
-> > sense as the I2C device need to be probing to the MFD core.
-> > 
-> 
-> I agree with you Linus, and that's why all STMFX chip initialization 
-> stuff was decorrelated in pinctrl-stmfx. This shows that this stuff 
-> needs to be in an MFD core.
-> 
-> But as there is only one child for now (due to the reasons mentioned 
-> earlier), it can suggest that it is not a Multi-Function Device.
-> 
-> I'm not able to target when IDD or TS functions will be required on a 
-> Linux product, but it still makes sense to consider that these functions 
-> will be used on a Linux product.
-> 
-> So, I think MFD core + GPIO/pinctrl driver is the right modeling, but I 
-> wanted to be sure that this is okay for everyone. I don't want to spend 
-> time on something that will not be accepted due to its modeling.
+In commit 'bf74ad5bc417 introduce ("[PATCH] Hold the device's
+parent's lock during probe and remove")' to solve USB subsystem
+lock sequence since usb device's characteristic. Thus "soc"
+needs to be locked whenever a device and driver's probing
+happen under "soc" bus. During this period, an async driver
+tries to probe a device which is under the "soc" bus would be
+blocked until previous driver finish the probing and release "soc"
+lock. And the next probing under the "soc" bus need to wait for
+async finish. Because of that, driver's async probe for init
+time improvement will be shadowed.
 
-It's fine.  Go ahead.
+Since many devices don't have USB devices' characteristic, they
+actually don't need parent's lock. Thus, we introduce a lock flag
+in device struct and driver core would lock the parent lock base
+on the flag. For usbsystem, we set this flag when its device and
+driver is matched and to keep original lock behavior in driver
+core.
 
-Thanks for seeing this through to a reasonable conclusion.
+Async probe could have more benefit after this patch.
 
+Signed-off-by: martin_liu <liumartin@google.com>
+Suggested-by: Alan Stern <stern@rowland.harvard.edu>
+---
+Changes in v2:
+ - take Alan's suggestion to introudce a flag to guide driver
+   core to hold device parent's lock.
+
+[v1]: https://lkml.org/lkml/2018/5/22/545
+
+Currently, I have the flag set in USB subsystem match function.
+Since I'm not familar with USB part, need some feedback to know
+if they cover all the cases that original case driver core
+protects.
+
+ drivers/base/bus.c          | 16 ++++++++--------
+ drivers/base/dd.c           |  8 ++++----
+ drivers/usb/common/ulpi.c   | 16 ++++++++++++----
+ drivers/usb/core/driver.c   |  9 +++++++--
+ drivers/usb/core/usb-acpi.c |  6 +++++-
+ drivers/usb/serial/bus.c    |  4 +++-
+ include/linux/device.h      |  1 +
+ 7 files changed, 40 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index ef6183306b40..18ea94caec02 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -184,10 +184,10 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
+ 
+ 	dev = bus_find_device_by_name(bus, NULL, buf);
+ 	if (dev && dev->driver == drv) {
+-		if (dev->parent)	/* Needed for USB */
++		if (dev->parent && dev->need_parent_lock)/* Needed for USB */
+ 			device_lock(dev->parent);
+ 		device_release_driver(dev);
+-		if (dev->parent)
++		if (dev->parent && dev->need_parent_lock)
+ 			device_unlock(dev->parent);
+ 		err = count;
+ 	}
+@@ -211,12 +211,12 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
+ 
+ 	dev = bus_find_device_by_name(bus, NULL, buf);
+ 	if (dev && dev->driver == NULL && driver_match_device(drv, dev)) {
+-		if (dev->parent)	/* Needed for USB */
++		if (dev->parent && dev->need_parent_lock)/* Needed for USB */
+ 			device_lock(dev->parent);
+ 		device_lock(dev);
+ 		err = driver_probe_device(drv, dev);
+ 		device_unlock(dev);
+-		if (dev->parent)
++		if (dev->parent && dev->need_parent_lock)
+ 			device_unlock(dev->parent);
+ 
+ 		if (err > 0) {
+@@ -735,10 +735,10 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
+ 	int ret = 0;
+ 
+ 	if (!dev->driver) {
+-		if (dev->parent)	/* Needed for USB */
++		if (dev->parent && dev->need_parent_lock)/* Needed for USB */
+ 			device_lock(dev->parent);
+ 		ret = device_attach(dev);
+-		if (dev->parent)
++		if (dev->parent && dev->need_parent_lock)
+ 			device_unlock(dev->parent);
+ 	}
+ 	return ret < 0 ? ret : 0;
+@@ -770,10 +770,10 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
+ int device_reprobe(struct device *dev)
+ {
+ 	if (dev->driver) {
+-		if (dev->parent)        /* Needed for USB */
++		if (dev->parent && dev->need_parent_lock)/* Needed for USB */
+ 			device_lock(dev->parent);
+ 		device_release_driver(dev);
+-		if (dev->parent)
++		if (dev->parent && dev->need_parent_lock)
+ 			device_unlock(dev->parent);
+ 	}
+ 	return bus_rescan_devices_helper(dev, NULL);
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index c9f54089429b..c9a118568775 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -817,13 +817,13 @@ static int __driver_attach(struct device *dev, void *data)
+ 		return ret;
+ 	} /* ret > 0 means positive match */
+ 
+-	if (dev->parent)	/* Needed for USB */
++	if (dev->parent && dev->need_parent_lock)/* Needed for USB */
+ 		device_lock(dev->parent);
+ 	device_lock(dev);
+ 	if (!dev->driver)
+ 		driver_probe_device(drv, dev);
+ 	device_unlock(dev);
+-	if (dev->parent)
++	if (dev->parent && dev->need_parent_lock)
+ 		device_unlock(dev->parent);
+ 
+ 	return 0;
+@@ -919,7 +919,7 @@ void device_release_driver_internal(struct device *dev,
+ 				    struct device_driver *drv,
+ 				    struct device *parent)
+ {
+-	if (parent)
++	if (parent && dev->need_parent_lock)
+ 		device_lock(parent);
+ 
+ 	device_lock(dev);
+@@ -927,7 +927,7 @@ void device_release_driver_internal(struct device *dev,
+ 		__device_release_driver(dev, parent);
+ 
+ 	device_unlock(dev);
+-	if (parent)
++	if (parent && dev->need_parent_lock)
+ 		device_unlock(parent);
+ }
+ 
+diff --git a/drivers/usb/common/ulpi.c b/drivers/usb/common/ulpi.c
+index 9a2ab6751a23..609566396bf8 100644
+--- a/drivers/usb/common/ulpi.c
++++ b/drivers/usb/common/ulpi.c
+@@ -40,13 +40,21 @@ static int ulpi_match(struct device *dev, struct device_driver *driver)
+ 	const struct ulpi_device_id *id;
+ 
+ 	/* Some ULPI devices don't have a vendor id so rely on OF match */
+-	if (ulpi->id.vendor == 0)
+-		return of_driver_match_device(dev, driver);
++	if (ulpi->id.vendor == 0) {
++		if (of_driver_match_device(dev, driver)) {
++			dev->need_parent_lock = 1;
++			return 1;
++		}
++		return o;
++	}
+ 
+-	for (id = drv->id_table; id->vendor; id++)
++	for (id = drv->id_table; id->vendor; id++) {
+ 		if (id->vendor == ulpi->id.vendor &&
+-		    id->product == ulpi->id.product)
++		    id->product == ulpi->id.product) {
++			dev->need_parent_lock = 1;
+ 			return 1;
++		}
++	}
+ 
+ 	return 0;
+ }
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index 9792cedfc351..3dbabf8d3cb8 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -808,6 +808,7 @@ static int usb_device_match(struct device *dev, struct device_driver *drv)
+ 			return 0;
+ 
+ 		/* TODO: Add real matching code */
++		dev->need_parent_lock = 1;
+ 		return 1;
+ 
+ 	} else if (is_usb_interface(dev)) {
+@@ -823,12 +824,16 @@ static int usb_device_match(struct device *dev, struct device_driver *drv)
+ 		usb_drv = to_usb_driver(drv);
+ 
+ 		id = usb_match_id(intf, usb_drv->id_table);
+-		if (id)
++		if (id) {
++			dev->need_parent_lock = 1;
+ 			return 1;
++		}
+ 
+ 		id = usb_match_dynamic_id(intf, usb_drv);
+-		if (id)
++		if (id) {
++			dev->need_parent_lock = 1;
+ 			return 1;
++		}
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/usb/core/usb-acpi.c b/drivers/usb/core/usb-acpi.c
+index e221861b3187..03901fc86227 100644
+--- a/drivers/usb/core/usb-acpi.c
++++ b/drivers/usb/core/usb-acpi.c
+@@ -224,7 +224,11 @@ static struct acpi_device *usb_acpi_find_companion(struct device *dev)
+ 
+ static bool usb_acpi_bus_match(struct device *dev)
+ {
+-	return is_usb_device(dev) || is_usb_port(dev);
++	if (is_usb_device(dev) || is_usb_port(dev)) {
++		dev->need_parent_lock = 1;
++		return 1;
++	}
++	return 0;
+ }
+ 
+ static struct acpi_bus_type usb_acpi_bus = {
+diff --git a/drivers/usb/serial/bus.c b/drivers/usb/serial/bus.c
+index 9e265eb92611..599ba0046f8e 100644
+--- a/drivers/usb/serial/bus.c
++++ b/drivers/usb/serial/bus.c
+@@ -29,8 +29,10 @@ static int usb_serial_device_match(struct device *dev,
+ 
+ 	driver = to_usb_serial_driver(drv);
+ 
+-	if (driver == port->serial->type)
++	if (driver == port->serial->type) {
++		dev->need_parent_lock = 1;
+ 		return 1;
++	}
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 477956990f5e..a96194f39dbe 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -992,6 +992,7 @@ struct device {
+ 	bool			offline_disabled:1;
+ 	bool			offline:1;
+ 	bool			of_node_reused:1;
++	bool			need_parent_lock:1;
+ };
+ 
+ static inline struct device *kobj_to_dev(struct kobject *kobj)
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.0.921.gf22659ad46-goog
