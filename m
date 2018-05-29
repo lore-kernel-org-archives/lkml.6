@@ -1,82 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934977AbeE2Of2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:35:28 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37008 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934533AbeE2Of0 (ORCPT
+        id S934983AbeE2Ogm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:36:42 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:22292 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754903AbeE2Ogk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:35:26 -0400
-X-Google-Smtp-Source: AB8JxZpmHQpHrNevo29HojJGH7q1FGBU9n+GswAqpyARzSMl5Za3HU0EgYrY4BV65OC/DIPb64Kwnw==
-Date: Tue, 29 May 2018 16:35:23 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, arm@kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: tegra: fix compile-testing PCI host driver
-Message-ID: <20180529143523.GC22634@ulmo>
-References: <20180528155603.2897776-1-arnd@arndb.de>
+        Tue, 29 May 2018 10:36:40 -0400
+X-IronPort-AV: E=Sophos;i="5.49,456,1520924400";
+   d="scan'208";a="14656652"
+Subject: Re: [PATCH v4 5/6] spi: at91-usart: add driver for at91-usart as spi
+To: Radu Pirea <radu.pirea@microchip.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Mark Brown <broonie@kernel.org>, <alexandre.belloni@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+References: <20180525171941.26766-1-radu.pirea@microchip.com>
+ <20180525171941.26766-6-radu.pirea@microchip.com>
+ <CAHp75Vc0e=+2YptoFAUuPSpAyxaCUJJqjQPPY5VZHV=MEMOqHQ@mail.gmail.com>
+ <110bb353-b131-348c-8e26-9863b074142d@microchip.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <0c529082-722c-14d8-7a04-dfeb63d5de92@microchip.com>
+Date: Tue, 29 May 2018 16:34:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="B4IIlcmfBL/1gGOG"
-Content-Disposition: inline
-In-Reply-To: <20180528155603.2897776-1-arnd@arndb.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <110bb353-b131-348c-8e26-9863b074142d@microchip.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 29/05/2018 at 16:28, Radu Pirea wrote:
+> 
+> 
+> On 05/28/2018 11:21 AM, Andy Shevchenko wrote:
+>> On Fri, May 25, 2018 at 8:19 PM, Radu Pirea <radu.pirea@microchip.com> wrote:
+>>> This is the driver for at91-usart in spi mode. The USART IP can be configured
+>>> to work in many modes and one of them is SPI.
 
---B4IIlcmfBL/1gGOG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[..]
 
-On Mon, May 28, 2018 at 05:55:29PM +0200, Arnd Bergmann wrote:
-> The tegra_cpuidle_pcie_irqs_in_use() function is stubbed out for non-ARM
-> builds, but now we can compile-test the Tegra pci driver on non-Tegra
-> ARM platforms as well, which results in a new link error:
->=20
-> drivers/pci/host/pci-tegra.o: In function `tegra_pcie_map_irq':
-> pci-tegra.c:(.text+0x288): undefined reference to `tegra_cpuidle_pcie_irq=
-s_in_use'
-> drivers/pci/host/pci-tegra.o: In function `tegra_msi_map':
-> pci-tegra.c:(.text+0xba0): undefined reference to `tegra_cpuidle_pcie_irq=
-s_in_use'
->=20
-> This adapts the #ifdef statement to match the exact condition under which
-> the function can be called.
->=20
-> Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  include/soc/tegra/cpuidle.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>>> +static int at91_usart_gpio_setup(struct platform_device *pdev)
+>>> +{
+>>
+>>> +       struct device_node      *np = pdev->dev.parent->of_node;
+>>
+>> Your driver is not OF specific as far as I can see. Drop all these
+>> device_node stuff and change API calls respectively.
+> 
+> Ok. What do you suggest to use instead of OF API to get the count of
+> cs-gpios and to read their values one by one?
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+As Alexandre said, we can make this driver OF specific.
 
---B4IIlcmfBL/1gGOG
-Content-Type: application/pgp-signature; name="signature.asc"
+What could be interesting is to use the gpio descriptors API and not the 
+older one. This would allow us to have far more control over the gpio 
+that we use in our drivers (Ludovic is converting our drivers to only 
+use gpiod structures).
 
------BEGIN PGP SIGNATURE-----
+Regards,
+   Nicolas
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsNZSoACgkQ3SOs138+
-s6Ec3A//Zw0zUyLLCkCndx7u2+S72eIFGD3MuGqe0POjx0YF6R5XOtJRjlIoFW2s
-9L9srM7kuRjDCcfRamywQA28RbqHm9nrfP7ZrC9bMg2nUsN6rY43OexWNRuko1Z5
-F490DiSy7OmJWklqaoUEyKTfJlhAHA+P+ybLniW7tA6swsG/yvVnPjwB/QtsDsnH
-nP7e2BupmuQkwqP6BZiPVgfmAPRE1oqFTkqthQr6Y7g5T7ruo/5RqYl3kSuK9Jwq
-+QBRbO6H+S0rfmiehhN6dpdeU79W6t4kKipiLQ1lxim04zh0je8owxcUjtP44I9V
-LFImmaoHCGNCX/sQDSYeT+pN6fyIZV9YZeUsHpF7epCL3f3HO8hIRV+FG8pNHF9t
-BxhefiwMH4P2d6B5/NzsLAEZzHS/FaWYygUTiFRaa3RoUhs28HXmcNiOzpEj1nTB
-VvYTc0RKGI82CBSuXt75BQPbOcWqKW0dgM/dwQIqVkagDqgiRisys1FcgAOzUkII
-hAfjs6Qg9rHeMR3Eecb7GbFrxvw7OeLobSCznGow0uP1aI3J/n537AeTZ1UCENEl
-0EDbgdd/fLNvGBGSdSFapM5HsyAHtVZss50qdPjBr95/XjySNOMroVCgzC+F8Ewv
-lNuKbfI79fjmRi3N7RhVb6lcjkX+h0RhiWsQbH9SI5eu0MAP7wU=
-=dY5R
------END PGP SIGNATURE-----
+> 
+>>
+>>> +       int                     i;
+>>
+>>> +       int                     ret = 0;
+>>> +       int                     nb = 0;
+>>
+>> What happened to indentation?
+>>
+>> Redundnant assignment for both.
+>>
+>>> +       if (!np)
+>>> +               return -EINVAL;
+>>> +
+>>> +       nb = of_gpio_named_count(np, "cs-gpios");
+>>> +       for (i = 0; i < nb; i++) {
+>>> +               int cs_gpio = of_get_named_gpio(np, "cs-gpios", i);
+>>> +
+>>> +               if (cs_gpio < 0)
+>>> +                       return cs_gpio;
+>>> +
+>>> +               if (gpio_is_valid(cs_gpio)) {
+>>> +                       ret = devm_gpio_request_one(&pdev->dev, cs_gpio,
+>>> +                                                   GPIOF_DIR_OUT,
+>>> +                                                   dev_name(&pdev->dev));
+>>> +                       if (ret)
+>>> +                               return ret;
+>>> +               }
+>>> +       }
+>>> +
+>>> +       return 0;
+>>> +}
+[..]
 
---B4IIlcmfBL/1gGOG--
+-- 
+Nicolas Ferre
