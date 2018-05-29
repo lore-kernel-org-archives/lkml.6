@@ -1,166 +1,939 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965621AbeE2R6I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 13:58:08 -0400
-Received: from mail-cys01nam02on0051.outbound.protection.outlook.com ([104.47.37.51]:8216
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965391AbeE2R6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 13:58:05 -0400
-From: Javier Gonzalez <javier@cnexlabs.com>
-To: "Konopko, Igor J" <igor.j.konopko@intel.com>
-CC: =?iso-8859-1?Q?Matias_Bj=F8rling?= <mb@lightnvm.io>,
-        Jens Axboe <axboe@fb.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Dziegielewski, Marcin" <marcin.dziegielewski@intel.com>
-Subject: Re: [GIT PULL 20/20] lightnvm: pblk: sync RB and RL states during GC
-Thread-Topic: [GIT PULL 20/20] lightnvm: pblk: sync RB and RL states during GC
-Thread-Index: AQHT9nHUs6xdt5lKsUCPVeEXWKblWKRGrv6AgABRRoA=
-Date: Tue, 29 May 2018 17:58:01 +0000
-Message-ID: <C700A382-1588-41B2-A1DE-7F6C1C5E1F29@cnexlabs.com>
-References: <20180528085841.26684-1-mb@lightnvm.io>
- <20180528085841.26684-21-mb@lightnvm.io>
- <23C83C0A-B4FC-4472-B88B-4C7725F793FD@cnexlabs.com>
- <76C92B909A93A84C99173B331AB578DAC7AB520A@irsmsx111.ger.corp.intel.com>
-In-Reply-To: <76C92B909A93A84C99173B331AB578DAC7AB520A@irsmsx111.ger.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com;
-x-originating-ip: [193.106.164.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR06MB588;7:u0F82GPqx7vi9K4r7BUTehXKomrHiVistA4b8sOGszPtGljZIeY+JKH+3adVdwLFIDd6KIJNMWo9VAoQsExwptKkMftRIqT6pvdx7c4GxcEDD2botbOhy1K4k0P42OIWZJpY8xHzXd/HbqwOUflixNVMwpOoMb6P9/RQObmQnlOBGCpBJ+m/YoyvJckReHKzqZMVaZ1/4kR+MbtMMm2nt69zvxYRd59lzAkeo6HxTvnAMCmGWgI/OkFZiri1zH25
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB588;
-x-ms-traffictypediagnostic: CO2PR06MB588:
-x-microsoft-antispam-prvs: <CO2PR06MB588D46B38055F03C046D0C3BA6D0@CO2PR06MB588.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(131327999870524)(228905959029699)(17755550239193);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:CO2PR06MB588;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB588;
-x-forefront-prvs: 0687389FB0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(346002)(366004)(376002)(39380400002)(396003)(39830400003)(51444003)(189003)(199004)(5250100002)(2900100001)(53936002)(5660300001)(68736007)(99936001)(6246003)(6916009)(25786009)(6512007)(76176011)(33656002)(446003)(11346002)(2616005)(4326008)(476003)(106356001)(486006)(105586002)(3280700002)(54906003)(102836004)(66066001)(3660700001)(14454004)(83716003)(8936002)(36756003)(81166006)(81156014)(8676002)(99286004)(478600001)(82746002)(26005)(186003)(93886005)(7736002)(2906002)(6486002)(59450400001)(6506007)(6436002)(86362001)(305945005)(316002)(6116002)(3846002)(97736004)(229853002)(217873001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB588;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: jUXdfLYVP5x1ustTDJ4fU5X2fCJk0rSomOyhCxhasJqYu3xvNA5NJYQ9ZGJAftF0HyHteglgkFMJWaqmskTOyqP/Ilp8B85iG4FcH7z/2F0l73vJHmXoVzRJQwYjoRXjuBASG+JiF/BFCSdWGMuYemYOrQJ6yulNs3mKkecOYj7xBa+fxwB4/H3Q0PVg9aBo
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_C0CE675C-FC26-43CA-8AFB-4BF7FB8DA228";
-        protocol="application/pgp-signature"; micalg=pgp-sha512
+        id S965665AbeE2R70 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 13:59:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60566 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S965391AbeE2R7Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 13:59:24 -0400
+Date: Tue, 29 May 2018 11:01:00 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH] tools/memory-model: Rename litmus tests to comply to
+ norm7
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1527596413-11501-1-git-send-email-andrea.parri@amarulasolutions.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: e1dae6b6-cc93-419e-5887-08d5c58db893
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1dae6b6-cc93-419e-5887-08d5c58db893
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2018 17:58:01.9424
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB588
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527596413-11501-1-git-send-email-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18052917-0040-0000-0000-000004365C03
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009097; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039468; UDB=6.00530820; IPR=6.00818596;
+ MB=3.00021361; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-29 17:59:21
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052917-0041-0000-0000-0000083C80D7
+Message-Id: <20180529180100.GN3803@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805290195
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_C0CE675C-FC26-43CA-8AFB-4BF7FB8DA228
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
-
-
-> On 29 May 2018, at 15.07, Konopko, Igor J <igor.j.konopko@intel.com> wrote:
+On Tue, May 29, 2018 at 02:20:13PM +0200, Andrea Parri wrote:
+> norm7 produces the 'normalized' name of a litmus test,  when the test
+> can be generated from a single cycle that passes through each process
+> exactly once. The commit renames such tests in order to comply to the
+> naming scheme implemented by this tool.
 > 
->> From: Javier Gonzalez [mailto:javier@cnexlabs.com]
->> Do you mean random writes? On fully sequential, a line will either be
->> fully written, fully invalidated or on its way to be written. When
->> invalidating the line, then the whole line will be invalidated and GC
->> will free it without having to move valid data.
+> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+
+Queued and pushed, most likely for 4.19, thank you!
+
+							Thanx, Paul
+
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> Cc: Luc Maranget <luc.maranget@inria.fr>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: Akira Yokosawa <akiyks@gmail.com>
+> ---
+>  tools/memory-model/Documentation/recipes.txt       |  8 ++--
+>  tools/memory-model/README                          | 20 +++++-----
+>  .../IRIW+fencembonceonces+OnceOnce.litmus          | 45 ++++++++++++++++++++++
+>  .../litmus-tests/IRIW+mbonceonces+OnceOnce.litmus  | 45 ----------------------
+>  .../litmus-tests/LB+ctrlonceonce+mbonceonce.litmus | 34 ----------------
+>  .../LB+fencembonceonce+ctrlonceonce.litmus         | 34 ++++++++++++++++
+>  .../MP+fencewmbonceonce+fencermbonceonce.litmus    | 30 +++++++++++++++
+>  .../litmus-tests/MP+wmbonceonce+rmbonceonce.litmus | 30 ---------------
+>  .../litmus-tests/R+fencembonceonces.litmus         | 30 +++++++++++++++
+>  .../memory-model/litmus-tests/R+mbonceonces.litmus | 30 ---------------
+>  tools/memory-model/litmus-tests/README             | 16 ++++----
+>  .../S+fencewmbonceonce+poacquireonce.litmus        | 27 +++++++++++++
+>  .../S+wmbonceonce+poacquireonce.litmus             | 27 -------------
+>  .../litmus-tests/SB+fencembonceonces.litmus        | 32 +++++++++++++++
+>  .../litmus-tests/SB+mbonceonces.litmus             | 32 ---------------
+>  .../WRC+pooncerelease+fencermbonceonce+Once.litmus | 38 ++++++++++++++++++
+>  .../WRC+pooncerelease+rmbonceonce+Once.litmus      | 38 ------------------
+>  ...release+poacquirerelease+fencembonceonce.litmus | 42 ++++++++++++++++++++
+>  ...ooncerelease+poacquirerelease+mbonceonce.litmus | 42 --------------------
+>  19 files changed, 300 insertions(+), 300 deletions(-)
+>  create mode 100644 tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
+>  delete mode 100644 tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
+>  delete mode 100644 tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
+>  create mode 100644 tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
+>  create mode 100644 tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
+>  delete mode 100644 tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
+>  create mode 100644 tools/memory-model/litmus-tests/R+fencembonceonces.litmus
+>  delete mode 100644 tools/memory-model/litmus-tests/R+mbonceonces.litmus
+>  create mode 100644 tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
+>  delete mode 100644 tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
+>  create mode 100644 tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
+>  delete mode 100644 tools/memory-model/litmus-tests/SB+mbonceonces.litmus
+>  create mode 100644 tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
+>  delete mode 100644 tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
+>  create mode 100644 tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
+>  delete mode 100644 tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
 > 
-> I meant sequential writes, since this is the easiest way to reach
-> rl->rb_state = PBLK_RL_LOW. When we updating this values inside
-> __pblk_rl_update_rates(), most of the times rl->rb_user_cnt will
-> became equal to rl->rb_user_max - which means that we cannot handle
-> any more user IOs. In that case pblk_rl_user_may_insert() will return
-> false, no one will call pblk_rb_update_l2p(), rl->rb_user_cnt will not
-> be decreased, so user IOs will stuck for forever.
+> diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
+> index ee4309a87fc45..a40802fa1099e 100644
+> --- a/tools/memory-model/Documentation/recipes.txt
+> +++ b/tools/memory-model/Documentation/recipes.txt
+> @@ -126,7 +126,7 @@ However, it is not necessarily the case that accesses ordered by
+>  locking will be seen as ordered by CPUs not holding that lock.
+>  Consider this example:
 > 
-
-What OP are you using? Even with a 5%, full lines should start being
-freed as they are completely invalid. But fair enough, if you decide to
-optimize for a guaranteed sequential workload where the OP is only to
-support grown bad blocks, you will run into this issue.
-
->> I can see why you might have problems with very low OP due to the rate
->> limiter, but unfortunately this is not a good way of solving the
->> problem. When you do this, you basically make the L2P to point to the
->> device instead of pointing to the write cache, which in essence bypasses
->> mw_cuints. As a result, if a read comes in to one of the synced entries,
->> it will violate the device-host contract and most probably fail (for
->> sure fail on > SLC).
+> -	/* See Z6.0+pooncelock+pooncelock+pombonce.litmus. */
+> +	/* See Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus. */
+>  	void CPU0(void)
+>  	{
+>  		spin_lock(&mylock);
+> @@ -292,7 +292,7 @@ and to use smp_load_acquire() instead of smp_rmb().  However, the older
+>  smp_wmb() and smp_rmb() APIs are still heavily used, so it is important
+>  to understand their use cases.  The general approach is shown below:
 > 
-> What about using on that path some modified version of
-> pblk_rb_sync_l2p() which will synchronize all the RB entries except
-> last mw_cunits number of elements?
+> -	/* See MP+wmbonceonce+rmbonceonce.litmus. */
+> +	/* See MP+fencewmbonceonce+fencermbonceonce.litmus. */
+>  	void CPU0(void)
+>  	{
+>  		WRITE_ONCE(x, 1);
+> @@ -360,7 +360,7 @@ can be seen in the LB+poonceonces.litmus litmus test.
+>  One way of avoiding the counter-intuitive outcome is through the use of a
+>  control dependency paired with a full memory barrier:
 > 
-
-Typically, the size of the buffer is the closest upper power of two to
-nr_luns * mw_cuints. So in essence, we only update the L2P as we wrap
-up. You could go down to match nr_luns * mw_cuints exactly, which
-depending on the media geometry can gain you some extra user entries.
-
-> Also you wrote about mw_cuints definitely makes sense, but even
-> without my changes I believe that we can lead into such a situation -
-> especially for pblk with small number of LUNs assigned under write IOs
-> with high sector count. Pblk_rb_update_l2p() does not explicitly takes
-> mw_cunints this value into consideration right now.
+> -	/* See LB+ctrlonceonce+mbonceonce.litmus. */
+> +	/* See LB+fencembonceonce+ctrlonceonce.litmus. */
+>  	void CPU0(void)
+>  	{
+>  		r0 = READ_ONCE(x);
+> @@ -476,7 +476,7 @@ that one CPU first stores to one variable and then loads from a second,
+>  while another CPU stores to the second variable and then loads from the
+>  first.  Preserving order requires nothing less than full barriers:
 > 
-
-As mentioned, the size of the buffer is always over nr_luns * mw_cuints
-and we only update when we wrap up - this is, when the mem pointer
-(which writes new data to the write buffer), wraps and starts writing
-new data. So this case is guaranteed not to happen. In fact, this
-particular case is what inspired the design of the write buffer and the
-current 5 pointers to extend the typical head and tail.
-
->> I think that the right way of solving this problem is separating the
->> write and GC buffers and then assigning tokens to them. The write thread
->> will then consume both buffers based on these tokens. In this case, user
->> I/O will have a buffer for itself, which will be guaranteed to advance
->> at the rate the rate-limiter is allowing it to. Note that the 2 buffers
->> can be a single buffer with a new set of pointers so that the lookup can
->> be done with a single bit.
->> 
->> I have been looking for time to implement this for a while. If you want
->> to give it a go, we can talk and I can give you some pointers on
->> potential issues I have thought about.
+> -	/* See SB+mbonceonces.litmus. */
+> +	/* See SB+fencembonceonces.litmus. */
+>  	void CPU0(void)
+>  	{
+>  		WRITE_ONCE(x, 1);
+> diff --git a/tools/memory-model/README b/tools/memory-model/README
+> index 734f7feaa5dc5..ee987ce20aaec 100644
+> --- a/tools/memory-model/README
+> +++ b/tools/memory-model/README
+> @@ -35,13 +35,13 @@ BASIC USAGE: HERD7
+>  The memory model is used, in conjunction with "herd7", to exhaustively
+>  explore the state space of small litmus tests.
 > 
-> I believe this is interesting option - we can discuss this for one of
-> next releases.
-
-Sure. Ping me if you want to discuss in more detail.
-
-Javier
-
---Apple-Mail=_C0CE675C-FC26-43CA-8AFB-4BF7FB8DA228
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlsNlKcACgkQIX4xUKFR
-nnTIMw/8Dw5SZSWEWPhMqGQCRosEbHL/1UhKTSweep/rRtD5FJoy2c6jGzAh7s2E
-FanY5jkoyA5xTnFDNCmMQopFupiMMaCDPzUjLF8g31Pssc/d8YVRNFlSXRRyM5dC
-7TQCFQZj1E5+KcGsWo5CnQHnKN7wb1OUA8r/GIUAJ2bwiAxuWOxB7RVgCtljhKik
-BEvhapSPzxUkwyg8hOHqGCrHMvg3InDdrHpXUcTZEEBqwVCZW6w8sWPSBJ1WjEEj
-SBXYtu1zrXd57nlhuZKBBQf9hEJ+W84hfSGB4gr916IMeIwoR8d2OyRHvHaWixx1
-R+S5o5EYhZq4c3CjbDBHBlHl3jkpK/apdy6xnl1mGEueJdfBsFKv3zRk25TOETF2
-rs/ETSs7aB4ipr27Ra0IIWe3RnxnTf40ea85NhUIndNzjzhmHPAZpVdfqLo2WmT1
-hG0qcfpjwkmTqnfmRlm7BhhIAoSU5lCh4DCQCw7EUiB3TqdwBCAE3KFfofHPMEab
-1dpq6+VKc6KQ5rKgErU/FFP2KHcr7L3+LPvYNOarHsIvePkVVhEhgyowD9lvHEVj
-Ol7vfOwJcz8jTHKGAy0LAdxj1PGLoMeAXBZEcv6GU4LGoIMO1VQvnYd8O7rt6IDl
-41/3z5DCQQPSIPLcersfXr0fGbFI9dwaD5ReF/mbmoNTlER2RNM=
-=PDNr
------END PGP SIGNATURE-----
-
---Apple-Mail=_C0CE675C-FC26-43CA-8AFB-4BF7FB8DA228--
+> -For example, to run SB+mbonceonces.litmus against the memory model:
+> +For example, to run SB+fencembonceonces.litmus against the memory model:
+> 
+> -  $ herd7 -conf linux-kernel.cfg litmus-tests/SB+mbonceonces.litmus
+> +  $ herd7 -conf linux-kernel.cfg litmus-tests/SB+fencembonceonces.litmus
+> 
+>  Here is the corresponding output:
+> 
+> -  Test SB+mbonceonces Allowed
+> +  Test SB+fencembonceonces Allowed
+>    States 3
+>    0:r0=0; 1:r0=1;
+>    0:r0=1; 1:r0=0;
+> @@ -50,8 +50,8 @@ Here is the corresponding output:
+>    Witnesses
+>    Positive: 0 Negative: 3
+>    Condition exists (0:r0=0 /\ 1:r0=0)
+> -  Observation SB+mbonceonces Never 0 3
+> -  Time SB+mbonceonces 0.01
+> +  Observation SB+fencembonceonces Never 0 3
+> +  Time SB+fencembonceonces 0.01
+>    Hash=d66d99523e2cac6b06e66f4c995ebb48
+> 
+>  The "Positive: 0 Negative: 3" and the "Never 0 3" each indicate that
+> @@ -67,16 +67,16 @@ BASIC USAGE: KLITMUS7
+>  The "klitmus7" tool converts a litmus test into a Linux kernel module,
+>  which may then be loaded and run.
+> 
+> -For example, to run SB+mbonceonces.litmus against hardware:
+> +For example, to run SB+fencembonceonces.litmus against hardware:
+> 
+>    $ mkdir mymodules
+> -  $ klitmus7 -o mymodules litmus-tests/SB+mbonceonces.litmus
+> +  $ klitmus7 -o mymodules litmus-tests/SB+fencembonceonces.litmus
+>    $ cd mymodules ; make
+>    $ sudo sh run.sh
+> 
+>  The corresponding output includes:
+> 
+> -  Test SB+mbonceonces Allowed
+> +  Test SB+fencembonceonces Allowed
+>    Histogram (3 states)
+>    644580  :>0:r0=1; 1:r0=0;
+>    644328  :>0:r0=0; 1:r0=1;
+> @@ -86,8 +86,8 @@ The corresponding output includes:
+>    Positive: 0, Negative: 2000000
+>    Condition exists (0:r0=0 /\ 1:r0=0) is NOT validated
+>    Hash=d66d99523e2cac6b06e66f4c995ebb48
+> -  Observation SB+mbonceonces Never 0 2000000
+> -  Time SB+mbonceonces 0.16
+> +  Observation SB+fencembonceonces Never 0 2000000
+> +  Time SB+fencembonceonces 0.16
+> 
+>  The "Positive: 0 Negative: 2000000" and the "Never 0 2000000" indicate
+>  that during two million trials, the state specified in this litmus
+> diff --git a/tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus b/tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
+> new file mode 100644
+> index 0000000000000..e729d2776e89a
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
+> @@ -0,0 +1,45 @@
+> +C IRIW+fencembonceonces+OnceOnce
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * Test of independent reads from independent writes with smp_mb()
+> + * between each pairs of reads.  In other words, is smp_mb() sufficient to
+> + * cause two different reading processes to agree on the order of a pair
+> + * of writes, where each write is to a different variable by a different
+> + * process?  This litmus test exercises LKMM's "propagation" rule.
+> + *)
+> +
+> +{}
+> +
+> +P0(int *x)
+> +{
+> +	WRITE_ONCE(*x, 1);
+> +}
+> +
+> +P1(int *x, int *y)
+> +{
+> +	int r0;
+> +	int r1;
+> +
+> +	r0 = READ_ONCE(*x);
+> +	smp_mb();
+> +	r1 = READ_ONCE(*y);
+> +}
+> +
+> +P2(int *y)
+> +{
+> +	WRITE_ONCE(*y, 1);
+> +}
+> +
+> +P3(int *x, int *y)
+> +{
+> +	int r0;
+> +	int r1;
+> +
+> +	r0 = READ_ONCE(*y);
+> +	smp_mb();
+> +	r1 = READ_ONCE(*x);
+> +}
+> +
+> +exists (1:r0=1 /\ 1:r1=0 /\ 3:r0=1 /\ 3:r1=0)
+> diff --git a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus b/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
+> deleted file mode 100644
+> index 98a3716efa37e..0000000000000
+> --- a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
+> +++ /dev/null
+> @@ -1,45 +0,0 @@
+> -C IRIW+mbonceonces+OnceOnce
+> -
+> -(*
+> - * Result: Never
+> - *
+> - * Test of independent reads from independent writes with smp_mb()
+> - * between each pairs of reads.  In other words, is smp_mb() sufficient to
+> - * cause two different reading processes to agree on the order of a pair
+> - * of writes, where each write is to a different variable by a different
+> - * process?  This litmus test exercises LKMM's "propagation" rule.
+> - *)
+> -
+> -{}
+> -
+> -P0(int *x)
+> -{
+> -	WRITE_ONCE(*x, 1);
+> -}
+> -
+> -P1(int *x, int *y)
+> -{
+> -	int r0;
+> -	int r1;
+> -
+> -	r0 = READ_ONCE(*x);
+> -	smp_mb();
+> -	r1 = READ_ONCE(*y);
+> -}
+> -
+> -P2(int *y)
+> -{
+> -	WRITE_ONCE(*y, 1);
+> -}
+> -
+> -P3(int *x, int *y)
+> -{
+> -	int r0;
+> -	int r1;
+> -
+> -	r0 = READ_ONCE(*y);
+> -	smp_mb();
+> -	r1 = READ_ONCE(*x);
+> -}
+> -
+> -exists (1:r0=1 /\ 1:r1=0 /\ 3:r0=1 /\ 3:r1=0)
+> diff --git a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus b/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
+> deleted file mode 100644
+> index de6708229dd11..0000000000000
+> --- a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
+> +++ /dev/null
+> @@ -1,34 +0,0 @@
+> -C LB+ctrlonceonce+mbonceonce
+> -
+> -(*
+> - * Result: Never
+> - *
+> - * This litmus test demonstrates that lightweight ordering suffices for
+> - * the load-buffering pattern, in other words, preventing all processes
+> - * reading from the preceding process's write.  In this example, the
+> - * combination of a control dependency and a full memory barrier are enough
+> - * to do the trick.  (But the full memory barrier could be replaced with
+> - * another control dependency and order would still be maintained.)
+> - *)
+> -
+> -{}
+> -
+> -P0(int *x, int *y)
+> -{
+> -	int r0;
+> -
+> -	r0 = READ_ONCE(*x);
+> -	if (r0)
+> -		WRITE_ONCE(*y, 1);
+> -}
+> -
+> -P1(int *x, int *y)
+> -{
+> -	int r0;
+> -
+> -	r0 = READ_ONCE(*y);
+> -	smp_mb();
+> -	WRITE_ONCE(*x, 1);
+> -}
+> -
+> -exists (0:r0=1 /\ 1:r0=1)
+> diff --git a/tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus b/tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
+> new file mode 100644
+> index 0000000000000..4727f5aaf03b0
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
+> @@ -0,0 +1,34 @@
+> +C LB+fencembonceonce+ctrlonceonce
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * This litmus test demonstrates that lightweight ordering suffices for
+> + * the load-buffering pattern, in other words, preventing all processes
+> + * reading from the preceding process's write.  In this example, the
+> + * combination of a control dependency and a full memory barrier are enough
+> + * to do the trick.  (But the full memory barrier could be replaced with
+> + * another control dependency and order would still be maintained.)
+> + *)
+> +
+> +{}
+> +
+> +P0(int *x, int *y)
+> +{
+> +	int r0;
+> +
+> +	r0 = READ_ONCE(*x);
+> +	if (r0)
+> +		WRITE_ONCE(*y, 1);
+> +}
+> +
+> +P1(int *x, int *y)
+> +{
+> +	int r0;
+> +
+> +	r0 = READ_ONCE(*y);
+> +	smp_mb();
+> +	WRITE_ONCE(*x, 1);
+> +}
+> +
+> +exists (0:r0=1 /\ 1:r0=1)
+> diff --git a/tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus b/tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
+> new file mode 100644
+> index 0000000000000..a273da9faa6d3
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
+> @@ -0,0 +1,30 @@
+> +C MP+fencewmbonceonce+fencermbonceonce
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * This litmus test demonstrates that smp_wmb() and smp_rmb() provide
+> + * sufficient ordering for the message-passing pattern.  However, it
+> + * is usually better to use smp_store_release() and smp_load_acquire().
+> + *)
+> +
+> +{}
+> +
+> +P0(int *x, int *y)
+> +{
+> +	WRITE_ONCE(*x, 1);
+> +	smp_wmb();
+> +	WRITE_ONCE(*y, 1);
+> +}
+> +
+> +P1(int *x, int *y)
+> +{
+> +	int r0;
+> +	int r1;
+> +
+> +	r0 = READ_ONCE(*y);
+> +	smp_rmb();
+> +	r1 = READ_ONCE(*x);
+> +}
+> +
+> +exists (1:r0=1 /\ 1:r1=0)
+> diff --git a/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus b/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
+> deleted file mode 100644
+> index c078f38ff27ac..0000000000000
+> --- a/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
+> +++ /dev/null
+> @@ -1,30 +0,0 @@
+> -C MP+wmbonceonce+rmbonceonce
+> -
+> -(*
+> - * Result: Never
+> - *
+> - * This litmus test demonstrates that smp_wmb() and smp_rmb() provide
+> - * sufficient ordering for the message-passing pattern.  However, it
+> - * is usually better to use smp_store_release() and smp_load_acquire().
+> - *)
+> -
+> -{}
+> -
+> -P0(int *x, int *y)
+> -{
+> -	WRITE_ONCE(*x, 1);
+> -	smp_wmb();
+> -	WRITE_ONCE(*y, 1);
+> -}
+> -
+> -P1(int *x, int *y)
+> -{
+> -	int r0;
+> -	int r1;
+> -
+> -	r0 = READ_ONCE(*y);
+> -	smp_rmb();
+> -	r1 = READ_ONCE(*x);
+> -}
+> -
+> -exists (1:r0=1 /\ 1:r1=0)
+> diff --git a/tools/memory-model/litmus-tests/R+fencembonceonces.litmus b/tools/memory-model/litmus-tests/R+fencembonceonces.litmus
+> new file mode 100644
+> index 0000000000000..222a0b850b4a5
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/R+fencembonceonces.litmus
+> @@ -0,0 +1,30 @@
+> +C R+fencembonceonces
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * This is the fully ordered (via smp_mb()) version of one of the classic
+> + * counterintuitive litmus tests that illustrates the effects of store
+> + * propagation delays.  Note that weakening either of the barriers would
+> + * cause the resulting test to be allowed.
+> + *)
+> +
+> +{}
+> +
+> +P0(int *x, int *y)
+> +{
+> +	WRITE_ONCE(*x, 1);
+> +	smp_mb();
+> +	WRITE_ONCE(*y, 1);
+> +}
+> +
+> +P1(int *x, int *y)
+> +{
+> +	int r0;
+> +
+> +	WRITE_ONCE(*y, 2);
+> +	smp_mb();
+> +	r0 = READ_ONCE(*x);
+> +}
+> +
+> +exists (y=2 /\ 1:r0=0)
+> diff --git a/tools/memory-model/litmus-tests/R+mbonceonces.litmus b/tools/memory-model/litmus-tests/R+mbonceonces.litmus
+> deleted file mode 100644
+> index a0e884ad21321..0000000000000
+> --- a/tools/memory-model/litmus-tests/R+mbonceonces.litmus
+> +++ /dev/null
+> @@ -1,30 +0,0 @@
+> -C R+mbonceonces
+> -
+> -(*
+> - * Result: Never
+> - *
+> - * This is the fully ordered (via smp_mb()) version of one of the classic
+> - * counterintuitive litmus tests that illustrates the effects of store
+> - * propagation delays.  Note that weakening either of the barriers would
+> - * cause the resulting test to be allowed.
+> - *)
+> -
+> -{}
+> -
+> -P0(int *x, int *y)
+> -{
+> -	WRITE_ONCE(*x, 1);
+> -	smp_mb();
+> -	WRITE_ONCE(*y, 1);
+> -}
+> -
+> -P1(int *x, int *y)
+> -{
+> -	int r0;
+> -
+> -	WRITE_ONCE(*y, 2);
+> -	smp_mb();
+> -	r0 = READ_ONCE(*x);
+> -}
+> -
+> -exists (y=2 /\ 1:r0=0)
+> diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
+> index 9c0ea65c53621..a41b027234286 100644
+> --- a/tools/memory-model/litmus-tests/README
+> +++ b/tools/memory-model/litmus-tests/README
+> @@ -20,7 +20,7 @@ CoWW+poonceonce.litmus
+>  	Test of write-write coherence, that is, whether or not two
+>  	successive writes to the same variable are ordered.
+> 
+> -IRIW+mbonceonces+OnceOnce.litmus
+> +IRIW+fencembonceonces+OnceOnce.litmus
+>  	Test of independent reads from independent writes with smp_mb()
+>  	between each pairs of reads.  In other words, is smp_mb()
+>  	sufficient to cause two different reading processes to agree on
+> @@ -49,7 +49,7 @@ ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
+>  	Can a release-acquire chain order a prior store against
+>  	a later load?
+> 
+> -LB+ctrlonceonce+mbonceonce.litmus
+> +LB+fencembonceonce+ctrlonceonce.litmus
+>  	Does a control dependency and an smp_mb() suffice for the
+>  	load-buffering litmus test, where each process reads from one
+>  	of two variables then writes to the other?
+> @@ -90,14 +90,14 @@ MP+porevlocks.litmus
+>  	As below, but with the first access of the writer process
+>  	and the second access of reader process protected by a lock.
+> 
+> -MP+wmbonceonce+rmbonceonce.litmus
+> +MP+fencewmbonceonce+fencermbonceonce.litmus
+>  	Does a smp_wmb() (between the stores) and an smp_rmb() (between
+>  	the loads) suffice for the message-passing litmus test, where one
+>  	process writes data and then a flag, and the other process reads
+>  	the flag and then the data.  (This is similar to the ISA2 tests,
+>  	but with two processes instead of three.)
+> 
+> -R+mbonceonces.litmus
+> +R+fencembonceonces.litmus
+>  	This is the fully ordered (via smp_mb()) version of one of
+>  	the classic counterintuitive litmus tests that illustrates the
+>  	effects of store propagation delays.
+> @@ -105,7 +105,7 @@ R+mbonceonces.litmus
+>  R+poonceonces.litmus
+>  	As above, but without the smp_mb() invocations.
+> 
+> -SB+mbonceonces.litmus
+> +SB+fencembonceonces.litmus
+>  	This is the fully ordered (again, via smp_mb() version of store
+>  	buffering, which forms the core of Dekker's mutual-exclusion
+>  	algorithm.
+> @@ -125,12 +125,12 @@ SB+rfionceonce-poonceonces.litmus
+>  S+poonceonces.litmus
+>  	As below, but without the smp_wmb() and acquire load.
+> 
+> -S+wmbonceonce+poacquireonce.litmus
+> +S+fencewmbonceonce+poacquireonce.litmus
+>  	Can a smp_wmb(), instead of a release, and an acquire order
+>  	a prior store against a subsequent store?
+> 
+>  WRC+poonceonces+Once.litmus
+> -WRC+pooncerelease+rmbonceonce+Once.litmus
+> +WRC+pooncerelease+fencermbonceonce+Once.litmus
+>  	These two are members of an extension of the MP litmus-test
+>  	class in which the first write is moved to a separate process.
+>  	The second is forbidden because smp_store_release() is
+> @@ -145,7 +145,7 @@ Z6.0+pooncelock+poonceLock+pombonce.litmus
+>  	As above, but with smp_mb__after_spinlock() immediately
+>  	following the spin_lock().
+> 
+> -Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
+> +Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
+>  	Is the ordering provided by a release-acquire chain sufficient
+>  	to make ordering apparent to accesses by a process that does
+>  	not participate in that release-acquire chain?
+> diff --git a/tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus b/tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
+> new file mode 100644
+> index 0000000000000..18479823cd6cc
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
+> @@ -0,0 +1,27 @@
+> +C S+fencewmbonceonce+poacquireonce
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * Can a smp_wmb(), instead of a release, and an acquire order a prior
+> + * store against a subsequent store?
+> + *)
+> +
+> +{}
+> +
+> +P0(int *x, int *y)
+> +{
+> +	WRITE_ONCE(*x, 2);
+> +	smp_wmb();
+> +	WRITE_ONCE(*y, 1);
+> +}
+> +
+> +P1(int *x, int *y)
+> +{
+> +	int r0;
+> +
+> +	r0 = smp_load_acquire(y);
+> +	WRITE_ONCE(*x, 1);
+> +}
+> +
+> +exists (x=2 /\ 1:r0=1)
+> diff --git a/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus b/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
+> deleted file mode 100644
+> index c53350205d282..0000000000000
+> --- a/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
+> +++ /dev/null
+> @@ -1,27 +0,0 @@
+> -C S+wmbonceonce+poacquireonce
+> -
+> -(*
+> - * Result: Never
+> - *
+> - * Can a smp_wmb(), instead of a release, and an acquire order a prior
+> - * store against a subsequent store?
+> - *)
+> -
+> -{}
+> -
+> -P0(int *x, int *y)
+> -{
+> -	WRITE_ONCE(*x, 2);
+> -	smp_wmb();
+> -	WRITE_ONCE(*y, 1);
+> -}
+> -
+> -P1(int *x, int *y)
+> -{
+> -	int r0;
+> -
+> -	r0 = smp_load_acquire(y);
+> -	WRITE_ONCE(*x, 1);
+> -}
+> -
+> -exists (x=2 /\ 1:r0=1)
+> diff --git a/tools/memory-model/litmus-tests/SB+fencembonceonces.litmus b/tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
+> new file mode 100644
+> index 0000000000000..ed5fff18d2232
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
+> @@ -0,0 +1,32 @@
+> +C SB+fencembonceonces
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * This litmus test demonstrates that full memory barriers suffice to
+> + * order the store-buffering pattern, where each process writes to the
+> + * variable that the preceding process reads.  (Locking and RCU can also
+> + * suffice, but not much else.)
+> + *)
+> +
+> +{}
+> +
+> +P0(int *x, int *y)
+> +{
+> +	int r0;
+> +
+> +	WRITE_ONCE(*x, 1);
+> +	smp_mb();
+> +	r0 = READ_ONCE(*y);
+> +}
+> +
+> +P1(int *x, int *y)
+> +{
+> +	int r0;
+> +
+> +	WRITE_ONCE(*y, 1);
+> +	smp_mb();
+> +	r0 = READ_ONCE(*x);
+> +}
+> +
+> +exists (0:r0=0 /\ 1:r0=0)
+> diff --git a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus b/tools/memory-model/litmus-tests/SB+mbonceonces.litmus
+> deleted file mode 100644
+> index 74b874ffa8dad..0000000000000
+> --- a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus
+> +++ /dev/null
+> @@ -1,32 +0,0 @@
+> -C SB+mbonceonces
+> -
+> -(*
+> - * Result: Never
+> - *
+> - * This litmus test demonstrates that full memory barriers suffice to
+> - * order the store-buffering pattern, where each process writes to the
+> - * variable that the preceding process reads.  (Locking and RCU can also
+> - * suffice, but not much else.)
+> - *)
+> -
+> -{}
+> -
+> -P0(int *x, int *y)
+> -{
+> -	int r0;
+> -
+> -	WRITE_ONCE(*x, 1);
+> -	smp_mb();
+> -	r0 = READ_ONCE(*y);
+> -}
+> -
+> -P1(int *x, int *y)
+> -{
+> -	int r0;
+> -
+> -	WRITE_ONCE(*y, 1);
+> -	smp_mb();
+> -	r0 = READ_ONCE(*x);
+> -}
+> -
+> -exists (0:r0=0 /\ 1:r0=0)
+> diff --git a/tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus b/tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
+> new file mode 100644
+> index 0000000000000..e9947250d7de6
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
+> @@ -0,0 +1,38 @@
+> +C WRC+pooncerelease+fencermbonceonce+Once
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * This litmus test is an extension of the message-passing pattern, where
+> + * the first write is moved to a separate process.  Because it features
+> + * a release and a read memory barrier, it should be forbidden.  More
+> + * specifically, this litmus test is forbidden because smp_store_release()
+> + * is A-cumulative in LKMM.
+> + *)
+> +
+> +{}
+> +
+> +P0(int *x)
+> +{
+> +	WRITE_ONCE(*x, 1);
+> +}
+> +
+> +P1(int *x, int *y)
+> +{
+> +	int r0;
+> +
+> +	r0 = READ_ONCE(*x);
+> +	smp_store_release(y, 1);
+> +}
+> +
+> +P2(int *x, int *y)
+> +{
+> +	int r0;
+> +	int r1;
+> +
+> +	r0 = READ_ONCE(*y);
+> +	smp_rmb();
+> +	r1 = READ_ONCE(*x);
+> +}
+> +
+> +exists (1:r0=1 /\ 2:r0=1 /\ 2:r1=0)
+> diff --git a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus b/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
+> deleted file mode 100644
+> index ad3448b941e68..0000000000000
+> --- a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
+> +++ /dev/null
+> @@ -1,38 +0,0 @@
+> -C WRC+pooncerelease+rmbonceonce+Once
+> -
+> -(*
+> - * Result: Never
+> - *
+> - * This litmus test is an extension of the message-passing pattern, where
+> - * the first write is moved to a separate process.  Because it features
+> - * a release and a read memory barrier, it should be forbidden.  More
+> - * specifically, this litmus test is forbidden because smp_store_release()
+> - * is A-cumulative in LKMM.
+> - *)
+> -
+> -{}
+> -
+> -P0(int *x)
+> -{
+> -	WRITE_ONCE(*x, 1);
+> -}
+> -
+> -P1(int *x, int *y)
+> -{
+> -	int r0;
+> -
+> -	r0 = READ_ONCE(*x);
+> -	smp_store_release(y, 1);
+> -}
+> -
+> -P2(int *x, int *y)
+> -{
+> -	int r0;
+> -	int r1;
+> -
+> -	r0 = READ_ONCE(*y);
+> -	smp_rmb();
+> -	r1 = READ_ONCE(*x);
+> -}
+> -
+> -exists (1:r0=1 /\ 2:r0=1 /\ 2:r1=0)
+> diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
+> new file mode 100644
+> index 0000000000000..88e70b87a683e
+> --- /dev/null
+> +++ b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
+> @@ -0,0 +1,42 @@
+> +C Z6.0+pooncerelease+poacquirerelease+fencembonceonce
+> +
+> +(*
+> + * Result: Sometimes
+> + *
+> + * This litmus test shows that a release-acquire chain, while sufficient
+> + * when there is but one non-reads-from (AKA non-rf) link, does not suffice
+> + * if there is more than one.  Of the three processes, only P1() reads from
+> + * P0's write, which means that there are two non-rf links: P1() to P2()
+> + * is a write-to-write link (AKA a "coherence" or just "co" link) and P2()
+> + * to P0() is a read-to-write link (AKA a "from-reads" or just "fr" link).
+> + * When there are two or more non-rf links, you typically will need one
+> + * full barrier for each non-rf link.  (Exceptions include some cases
+> + * involving locking.)
+> + *)
+> +
+> +{}
+> +
+> +P0(int *x, int *y)
+> +{
+> +	WRITE_ONCE(*x, 1);
+> +	smp_store_release(y, 1);
+> +}
+> +
+> +P1(int *y, int *z)
+> +{
+> +	int r0;
+> +
+> +	r0 = smp_load_acquire(y);
+> +	smp_store_release(z, 1);
+> +}
+> +
+> +P2(int *x, int *z)
+> +{
+> +	int r1;
+> +
+> +	WRITE_ONCE(*z, 2);
+> +	smp_mb();
+> +	r1 = READ_ONCE(*x);
+> +}
+> +
+> +exists (1:r0=1 /\ z=2 /\ 2:r1=0)
+> diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
+> deleted file mode 100644
+> index a20fc3fafb536..0000000000000
+> --- a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
+> +++ /dev/null
+> @@ -1,42 +0,0 @@
+> -C Z6.0+pooncerelease+poacquirerelease+mbonceonce
+> -
+> -(*
+> - * Result: Sometimes
+> - *
+> - * This litmus test shows that a release-acquire chain, while sufficient
+> - * when there is but one non-reads-from (AKA non-rf) link, does not suffice
+> - * if there is more than one.  Of the three processes, only P1() reads from
+> - * P0's write, which means that there are two non-rf links: P1() to P2()
+> - * is a write-to-write link (AKA a "coherence" or just "co" link) and P2()
+> - * to P0() is a read-to-write link (AKA a "from-reads" or just "fr" link).
+> - * When there are two or more non-rf links, you typically will need one
+> - * full barrier for each non-rf link.  (Exceptions include some cases
+> - * involving locking.)
+> - *)
+> -
+> -{}
+> -
+> -P0(int *x, int *y)
+> -{
+> -	WRITE_ONCE(*x, 1);
+> -	smp_store_release(y, 1);
+> -}
+> -
+> -P1(int *y, int *z)
+> -{
+> -	int r0;
+> -
+> -	r0 = smp_load_acquire(y);
+> -	smp_store_release(z, 1);
+> -}
+> -
+> -P2(int *x, int *z)
+> -{
+> -	int r1;
+> -
+> -	WRITE_ONCE(*z, 2);
+> -	smp_mb();
+> -	r1 = READ_ONCE(*x);
+> -}
+> -
+> -exists (1:r0=1 /\ z=2 /\ 2:r1=0)
+> -- 
+> 2.7.4
+> 
