@@ -1,79 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933920AbeE2Mjd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:39:33 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:39652 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933447AbeE2Mj1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:39:27 -0400
-X-Google-Smtp-Source: ADUXVKJITbWnSpwlkSdrukhuE4YWOJJc4HLW5wASurfKk3D7k7HhbPdDk9Vv4t0viDPJqpE0OH0jZggvHfAwXbygHQk=
+        id S934030AbeE2Mka convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:40:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34356 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933697AbeE2MkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:40:24 -0400
+Subject: Re: [PATCH v8 4/6] cpuset: Make generate_sched_domains() recognize
+ isolated_cpus
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
+References: <1526590545-3350-1-git-send-email-longman@redhat.com>
+ <1526590545-3350-5-git-send-email-longman@redhat.com>
+ <20180524102837.GA3948@localhost.localdomain>
+ <45d70c88-e9f5-716a-ee9a-33dc111159cc@redhat.com>
+ <8e610b98-970c-a309-5821-fc8e6aca892f@redhat.com>
+ <20180529062703.GA8985@localhost.localdomain>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <8164a41b-3218-c618-64a6-52747344c4db@redhat.com>
+Date: Tue, 29 May 2018 08:40:21 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180529222327.29d16eb6@canb.auug.org.au>
-References: <20180529210257.26da8de7@canb.auug.org.au> <CA+7wUsw4Us749j8yO5zpqfMcYWPMujwkNq0CRSSWWVFDJXLS0w@mail.gmail.com>
- <20180529222327.29d16eb6@canb.auug.org.au>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 29 May 2018 14:39:06 +0200
-X-Google-Sender-Auth: eFGBR2LEosHAOe8QSWee9Ft9YQk
-Message-ID: <CA+7wUsy8V9zyH+-nU_X+tpXnN3VYGctErquqSX3g7kQGZsvupQ@mail.gmail.com>
-Subject: Re: linux-next: boot messages from today's linux-next
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180529062703.GA8985@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen,
+On 05/29/2018 02:27 AM, Juri Lelli wrote:
+> On 28/05/18 21:24, Waiman Long wrote:
+>> On 05/28/2018 09:12 PM, Waiman Long wrote:
+>>> On 05/24/2018 06:28 AM, Juri Lelli wrote:
+>>>> On 17/05/18 16:55, Waiman Long wrote:
+>>>>
+>>>> [...]
+>>>>
+>>>>> @@ -849,7 +860,12 @@ static void rebuild_sched_domains_locked(void)
+>>>>>  	 * passing doms with offlined cpu to partition_sched_domains().
+>>>>>  	 * Anyways, hotplug work item will rebuild sched domains.
+>>>>>  	 */
+>>>>> -	if (!cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
+>>>>> +	if (!top_cpuset.isolation_count &&
+>>>>> +	    !cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
+>>>>> +		goto out;
+>>>>> +
+>>>>> +	if (top_cpuset.isolation_count &&
+>>>>> +	   !cpumask_subset(top_cpuset.effective_cpus, cpu_active_mask))
+>>>>>  		goto out;
+>>>> Do we cover the case in which hotplug removed one of the isolated cpus
+>>>> from cpu_active_mask?
+>>> Yes, you are right. That is the remnant of my original patch that allows
+>>> only one isolated_cpus at root. Thanks for spotting that.
+>> I am sorry. I would like to take it back my previous comment. The code
+>> above looks for inconsistency in the state of the effective_cpus mask to
+>> find out if it is racing with a hotplug event. If it is, we can skip the
+>> domain generation as the hotplug event will do that too. The checks are
+>> still valid with the current patchset. So I don't think we need to make
+>> any change here.
+> Yes, these checks are valid, but don't we also need to check for hotplug
+> races w.r.t. isolated CPUs (of some other sub domain)?
 
-On Tue, May 29, 2018 at 2:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Mathieu,
->
-> On Tue, 29 May 2018 13:56:48 +0200 Mathieu Malaterre <malat@debian.org> wrote:
->>
->> On Tue, May 29, 2018 at 1:02 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> > Hi all,
->> >
->> > My qemu boots of today's powerpc linux-next kernel produced the following
->> > boot message differences:
->> >
->> > -Max number of cores passed to firmware: 2048 (NR_CPUS = 2048)
->> > +Max number of cores passed to firmware: u (NR_CPUS = 2048)
->> >
->> > Seemingly caused by commit
->> >
->> >   eae5f709a4d7 ("powerpc: Add __printf verification to prom_printf")
->>
->> My bad. Patch is pending (thanks Michael!):
->>
->> https://patchwork.ozlabs.org/patch/921948/
->
-> Umm, that fixes some other messages, but not this particular one.
+It is not actually a race. Both the hotplug event and any changes to cpu
+lists or flags are serialized by the cpuset_mutex. It is just that we
+may be doing the same work twice that we are wasting cpu cycles. So we
+are doing a quick check to avoid this. The check isn't exhaustive and we
+can certainly miss some cases. Doing a more throughout check may need as
+much time as doing the sched domain generation itself and so you are
+actually wasting more CPU cycles on average as the chance of a hotplug
+event is very low.
 
-Here is what I tried to say:
-
-diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-index 4d62f561f272..72ebe5896c1d 100644
---- a/arch/powerpc/kernel/prom_init.c
-+++ b/arch/powerpc/kernel/prom_init.c
-@@ -379,6 +379,11 @@ static void __init prom_printf(const char *format, ...)
-                        }
-                        prom_print_dec(vs);
-                        break;
-+               case 'u':
-+                       ++q;
-+                       vs = va_arg(args, unsigned long);
-+                       prom_print_dec(vs);
-+                       break;
-                case 'l':
-                        ++q;
-                        if (*q == 0)
-
-
-> --
-> Cheers,
-> Stephen Rothwell
+Cheers,
+Longman
