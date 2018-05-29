@@ -1,70 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754725AbeE2Gss (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 02:48:48 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:34928 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754466AbeE2Gsq (ORCPT
+        id S1754744AbeE2GtT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 02:49:19 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:44938 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754466AbeE2GtQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 02:48:46 -0400
-X-Google-Smtp-Source: ADUXVKLfBVGNzE67smH4PxdQjRABcxedlrbzYiWaK9nwQSfL5O2pcJ/S+0FrJMngrvfgp29c1wQP8p8nJ46hP5trGTI=
+        Tue, 29 May 2018 02:49:16 -0400
+X-Google-Smtp-Source: ADUXVKICMl+8wgOoNaRkTrlozTs3gtc9LWzVFijsU+W0E+sH9KJ9dNoqVrhF7rSf5iAwYH6Bbpw6/0QdAY8GqQv5ZKU=
 MIME-Version: 1.0
-In-Reply-To: <8736yb5jez.wl%kuninori.morimoto.gx@renesas.com>
-References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
- <20180427165722.19445-11-kieran.bingham+renesas@ideasonboard.com>
- <CAMuHMdW6HeWMwRDcn6PLnwzgxvYz-h=jx=1qvYEK9okwqY0itg@mail.gmail.com> <8736yb5jez.wl%kuninori.morimoto.gx@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 May 2018 08:48:43 +0200
-X-Google-Sender-Auth: kcNBHqfAhSy1_bjbdSIMhka9di0
-Message-ID: <CAMuHMdWPFOjT9qk0Z4+-nSTumjhN_Q6Ntwh3__CgBCobquX8Rg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] arm64: dts: r8a77965-salvator-x: Enable DU
- external clocks and HDMI
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <20180529063158.GB8985@localhost.localdomain>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
+ <20180528101234.GA1293@localhost.localdomain> <20180529050833.GA226378@joelaf.mtv.corp.google.com>
+ <20180529063158.GB8985@localhost.localdomain>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 29 May 2018 08:48:55 +0200
+Message-ID: <CAKfTPtBuB42SX4HoPcCc02fWKoL=TULEci0-bFRrXT=jvMQTtA@mail.gmail.com>
+Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Alessio Balsini <alessio.balsini@santannapisa.it>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Morimoto-san,
-
-On Tue, May 29, 2018 at 3:44 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
->> > +&hdmi0_con {
->> > +       remote-endpoint = <&rcar_dw_hdmi0_out>;
->> > +};
+On 29 May 2018 at 08:31, Juri Lelli <juri.lelli@redhat.com> wrote:
+> On 28/05/18 22:08, Joel Fernandes wrote:
+>> On Mon, May 28, 2018 at 12:12:34PM +0200, Juri Lelli wrote:
+>> [..]
+>> > > +
+>> > > + util = max_t(unsigned long, util, READ_ONCE(rq->avg_dl.util_avg));
+>> > > +
+>> > > + return util;
+>> >
+>> > Anyway, just a quick thought. I guess we should experiment with this a
+>> > bit. Now, I don't unfortunately have a Arm platform at hand for testing.
+>> > Claudio, Luca (now Cc-ed), would you be able to fire some tests with
+>> > this change?
+>> >
+>> > Oh, adding Joel and Alessio as well that experimented with DEADLINE
+>> > lately.
 >>
->> I think the hdmi0 and hdmi0_con parts can be moved to salvator-common.dtsi.
->> Can we do that now (with stubs?), or does this have to wait until r8a77965 has
->> received HDMI sound support?
+>> I also feel that for power reasons, dl.util_avg shouldn't drive the OPP
+>> beyond what the running bandwidth is, or atleast do that only if CFS tasks
+>> are running and being preempted as you/Vincent mentioned in one of the
+>> threads.
 >
-> HDMI sound doesn't use hdmi0_con.
-> You can do it now, thanks
+> It's however a bit awkward that we might be running at a higher OPP when
+> CFS tasks are running (even though they are of less priority). :/
 
-Thanks, so hdmi0_con can be moved now.
+Even if cfs task has lower priority that doesn't mean that we should
+not take their needs into account.
+In the same way, we run at max OPP as soon as a RT task is runnable
 
-But HDMI sound does use hdmi0/ports/port@2. right?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+>> With our DL experiments, I didn't measure power but got it to a point where
+>> the OPP is scaling correctly based on DL parameters. I think Alessio did
+>> measure power at his setup but I can't recall now. Alessio?
+>
+> I see. Thanks.
