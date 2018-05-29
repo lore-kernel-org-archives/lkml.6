@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933334AbeE2K4Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:56:24 -0400
-Received: from foss.arm.com ([217.140.101.70]:37378 "EHLO foss.arm.com"
+        id S933317AbeE2K4U (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:56:20 -0400
+Received: from foss.arm.com ([217.140.101.70]:37368 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933158AbeE2K4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:56:16 -0400
+        id S932763AbeE2K4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 06:56:13 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com,
         mark.rutland@arm.com, robin.murphy@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 4/5] arm_pmu: Tidy up clear_event_idx call backs
-Date: Tue, 29 May 2018 11:55:55 +0100
-Message-Id: <1527591356-10934-5-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 2/5] arm_pmu: Change API to support 64bit counter values
+Date: Tue, 29 May 2018 11:55:53 +0100
+Message-Id: <1527591356-10934-3-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
 References: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
@@ -21,77 +21,155 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The armpmu uses get_event_idx callback to allocate an event
-counter for a given event, which marks the selected counter
-as "used". Now, when we delete the counter, the arm_pmu goes
-ahead and clears the "used" bit and then invokes the "clear_event_idx"
-call back, which kind of splits the job between the core code
-and the backend. Tidy this up by relying on the clear_event_idx
-to do the book keeping, if available. Otherwise, let the core
-driver do the default "clear" bit operation. This will be useful
-for adding the chained event support, where we leave the event
-idx maintenance to the backend.
+Convert the {read/write}_counter APIs to handle 64bit values
+to enable supporting chained event counters.
 
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm/kernel/perf_event_v7.c |  2 ++
- drivers/perf/arm_pmu.c          | 15 +++++++++++----
- 2 files changed, 13 insertions(+), 4 deletions(-)
+Changes since v1:
+ - Fix build break on xcale (Thanks kbuild-robot)
+---
+ arch/arm/kernel/perf_event_v6.c     | 4 ++--
+ arch/arm/kernel/perf_event_v7.c     | 4 ++--
+ arch/arm/kernel/perf_event_xscale.c | 8 ++++----
+ arch/arm64/kernel/perf_event.c      | 9 ++++-----
+ include/linux/perf/arm_pmu.h        | 4 ++--
+ 5 files changed, 14 insertions(+), 15 deletions(-)
 
+diff --git a/arch/arm/kernel/perf_event_v6.c b/arch/arm/kernel/perf_event_v6.c
+index 89d6f35..24eb94f 100644
+--- a/arch/arm/kernel/perf_event_v6.c
++++ b/arch/arm/kernel/perf_event_v6.c
+@@ -233,7 +233,7 @@ armv6_pmcr_counter_has_overflowed(unsigned long pmcr,
+ 	return ret;
+ }
+ 
+-static inline u32 armv6pmu_read_counter(struct perf_event *event)
++static inline u64 armv6pmu_read_counter(struct perf_event *event)
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	int counter = hwc->idx;
+@@ -251,7 +251,7 @@ static inline u32 armv6pmu_read_counter(struct perf_event *event)
+ 	return value;
+ }
+ 
+-static inline void armv6pmu_write_counter(struct perf_event *event, u32 value)
++static inline void armv6pmu_write_counter(struct perf_event *event, u64 value)
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	int counter = hwc->idx;
 diff --git a/arch/arm/kernel/perf_event_v7.c b/arch/arm/kernel/perf_event_v7.c
-index 5f342fc..5e78faa 100644
+index 18c038e..5f342fc 100644
 --- a/arch/arm/kernel/perf_event_v7.c
 +++ b/arch/arm/kernel/perf_event_v7.c
-@@ -1638,6 +1638,7 @@ static void krait_pmu_clear_event_idx(struct pmu_hw_events *cpuc,
- 	bool venum_event = EVENT_VENUM(hwc->config_base);
- 	bool krait_event = EVENT_CPU(hwc->config_base);
- 
-+	clear_bit(hwc->idx, cpuc->used_mask);
- 	if (venum_event || krait_event) {
- 		bit = krait_event_to_bit(event, region, group);
- 		clear_bit(bit, cpuc->used_mask);
-@@ -1967,6 +1968,7 @@ static void scorpion_pmu_clear_event_idx(struct pmu_hw_events *cpuc,
- 	bool venum_event = EVENT_VENUM(hwc->config_base);
- 	bool scorpion_event = EVENT_CPU(hwc->config_base);
- 
-+	clear_bit(hwc->idx, cpuc->used_mask);
- 	if (venum_event || scorpion_event) {
- 		bit = scorpion_event_to_bit(event, region, group);
- 		clear_bit(bit, cpuc->used_mask);
-diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-index ff858e6..9ae7e68 100644
---- a/drivers/perf/arm_pmu.c
-+++ b/drivers/perf/arm_pmu.c
-@@ -226,6 +226,16 @@ static void armpmu_start(struct perf_event *event, int flags)
- 	armpmu->enable(event);
+@@ -743,7 +743,7 @@ static inline void armv7_pmnc_select_counter(int idx)
+ 	isb();
  }
  
-+static void armpmu_clear_event_idx(struct arm_pmu *armpmu,
-+				   struct pmu_hw_events *hw_events,
-+				   struct perf_event *event)
-+{
-+	if (armpmu->clear_event_idx)
-+		armpmu->clear_event_idx(hw_events, event);
-+	else
-+		clear_bit(event->hw.idx, hw_events->used_mask);
-+}
-+
- static void
- armpmu_del(struct perf_event *event, int flags)
+-static inline u32 armv7pmu_read_counter(struct perf_event *event)
++static inline u64 armv7pmu_read_counter(struct perf_event *event)
  {
-@@ -236,10 +246,7 @@ armpmu_del(struct perf_event *event, int flags)
- 
- 	armpmu_stop(event, PERF_EF_UPDATE);
- 	hw_events->events[idx] = NULL;
--	clear_bit(idx, hw_events->used_mask);
--	if (armpmu->clear_event_idx)
--		armpmu->clear_event_idx(hw_events, event);
--
-+	armpmu_clear_event_idx(armpmu, hw_events, event);
- 	perf_event_update_userpage(event);
+ 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
+ 	struct hw_perf_event *hwc = &event->hw;
+@@ -763,7 +763,7 @@ static inline u32 armv7pmu_read_counter(struct perf_event *event)
+ 	return value;
  }
  
+-static inline void armv7pmu_write_counter(struct perf_event *event, u32 value)
++static inline void armv7pmu_write_counter(struct perf_event *event, u64 value)
+ {
+ 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
+ 	struct hw_perf_event *hwc = &event->hw;
+diff --git a/arch/arm/kernel/perf_event_xscale.c b/arch/arm/kernel/perf_event_xscale.c
+index 8ba0e14..b9b9376 100644
+--- a/arch/arm/kernel/perf_event_xscale.c
++++ b/arch/arm/kernel/perf_event_xscale.c
+@@ -317,7 +317,7 @@ static void xscale1pmu_stop(struct arm_pmu *cpu_pmu)
+ 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+ }
+ 
+-static inline u32 xscale1pmu_read_counter(struct perf_event *event)
++static inline u64 xscale1pmu_read_counter(struct perf_event *event)
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	int counter = hwc->idx;
+@@ -338,7 +338,7 @@ static inline u32 xscale1pmu_read_counter(struct perf_event *event)
+ 	return val;
+ }
+ 
+-static inline void xscale1pmu_write_counter(struct perf_event *event, u32 val)
++static inline void xscale1pmu_write_counter(struct perf_event *event, u64 val)
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	int counter = hwc->idx;
+@@ -680,7 +680,7 @@ static void xscale2pmu_stop(struct arm_pmu *cpu_pmu)
+ 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+ }
+ 
+-static inline u32 xscale2pmu_read_counter(struct perf_event *event)
++static inline u64 xscale2pmu_read_counter(struct perf_event *event)
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	int counter = hwc->idx;
+@@ -707,7 +707,7 @@ static inline u32 xscale2pmu_read_counter(struct perf_event *event)
+ 	return val;
+ }
+ 
+-static inline void xscale2pmu_write_counter(struct perf_event *event, u32 val)
++static inline void xscale2pmu_write_counter(struct perf_event *event, u64 val)
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	int counter = hwc->idx;
+diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+index 2c42f88..74d30d9 100644
+--- a/arch/arm64/kernel/perf_event.c
++++ b/arch/arm64/kernel/perf_event.c
+@@ -512,7 +512,7 @@ static inline int armv8pmu_select_counter(int idx)
+ 	return idx;
+ }
+ 
+-static inline u32 armv8pmu_read_counter(struct perf_event *event)
++static inline u64 armv8pmu_read_counter(struct perf_event *event)
+ {
+ 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
+ 	struct hw_perf_event *hwc = &event->hw;
+@@ -530,7 +530,7 @@ static inline u32 armv8pmu_read_counter(struct perf_event *event)
+ 	return value;
+ }
+ 
+-static inline void armv8pmu_write_counter(struct perf_event *event, u32 value)
++static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
+ {
+ 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
+ 	struct hw_perf_event *hwc = &event->hw;
+@@ -545,9 +545,8 @@ static inline void armv8pmu_write_counter(struct perf_event *event, u32 value)
+ 		 * count using the lower 32bits and we want an interrupt when
+ 		 * it overflows.
+ 		 */
+-		u64 value64 = 0xffffffff00000000ULL | value;
+-
+-		write_sysreg(value64, pmccntr_el0);
++		value |= 0xffffffff00000000ULL;
++		write_sysreg(value, pmccntr_el0);
+ 	} else if (armv8pmu_select_counter(idx) == idx)
+ 		write_sysreg(value, pmxevcntr_el0);
+ }
+diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+index 2ee62bc..f1cfe12 100644
+--- a/include/linux/perf/arm_pmu.h
++++ b/include/linux/perf/arm_pmu.h
+@@ -87,8 +87,8 @@ struct arm_pmu {
+ 					 struct perf_event *event);
+ 	int		(*set_event_filter)(struct hw_perf_event *evt,
+ 					    struct perf_event_attr *attr);
+-	u32		(*read_counter)(struct perf_event *event);
+-	void		(*write_counter)(struct perf_event *event, u32 val);
++	u64		(*read_counter)(struct perf_event *event);
++	void		(*write_counter)(struct perf_event *event, u64 val);
+ 	void		(*start)(struct arm_pmu *);
+ 	void		(*stop)(struct arm_pmu *);
+ 	void		(*reset)(void *);
 -- 
 2.7.4
