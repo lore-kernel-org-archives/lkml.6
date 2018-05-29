@@ -1,92 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966338AbeE2TOP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:14:15 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:44559 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965614AbeE2TON (ORCPT
+        id S966401AbeE2TPB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:15:01 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:33284 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965614AbeE2TO4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:14:13 -0400
-X-Google-Smtp-Source: ADUXVKKWRyGS7K6evp7ko8vMltWRpV0oKmPOXC54LDa0nOPM3Dh0sxlaa+cfidzJzs+WVCfWki4v/n5NNmlqn2eFg64=
+        Tue, 29 May 2018 15:14:56 -0400
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Tue, 29 May 2018 21:14:53 +0200
+X-ME-IP: 90.55.202.35
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Vinod <vkoul@kernel.org>
+Cc: Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RESEND PATCH] dmaengine: pxa: add a default requestor policy
+References: <20180526095418.22960-1-robert.jarzmik@free.fr>
+        <20180529072401.GG5666@vkoul-mobl>
+X-URL: http://belgarath.falguerolles.org/
+Date: Tue, 29 May 2018 21:13:54 +0200
+In-Reply-To: <20180529072401.GG5666@vkoul-mobl> (Vinod's message of "Tue, 29
+        May 2018 12:54:01 +0530")
+Message-ID: <874liqtgul.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Tue, 29 May 2018 12:14:01 -0700
-Message-ID: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
-Subject: PostgreSQL licensed code on Linux
-To: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Coly Li <colyli@suse.de>, Ciaran Farrell <ciaran.farrell@suse.com>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        linux-bcache@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tso Ted <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jonas Oberg <jonas@fsfe.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The question over future possible PostgreSQL licensed code on Linux came up
-to me recently. While doing some quick of digging around I found code
-already under such license it seems:
+Vinod <vkoul@kernel.org> writes:
 
-The file drivers/md/bcache/util.c has:
+> On 26-05-18, 11:54, Robert Jarzmik wrote:
+>> @@ -762,6 +762,8 @@ static void pxad_free_chan_resources(struct dma_chan *dchan)
+>>  	dma_pool_destroy(chan->desc_pool);
+>>  	chan->desc_pool = NULL;
+>>  
+>> +	chan->drcmr = (u32)-1;
+>
+> why not use U32_MAX for this?
+But of course, anything else you see ?
 
-cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 318) /*
-cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 319)  * Portions
-Copyright (c) 1996-2001, PostgreSQL Global Development Group (Any
-cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 320)  * use
-permitted, subject to terms of PostgreSQL license; see.)
+Cheers.
 
-That seems to indicate that we've had already PostgreSQL licensed code on
-Linux since Kent's addition of bcache to Linux in 2013. The portion of code
-is rather small though, to me it seems to cover only crc_table[],
-bch_crc64_update(), and bch_crc64(). Four things:
-
-a) This is the only code on Linux which seems to use PostgreSQL
-b) The language for license seem to be cut off, 'see.' seems incomplete,
-whereas typically it would point to a file with the full language text.
-c) We can only infer what portions of the file are under this license
-d) Even though some licenses claim to be GPL-Compatible, if possible we
-should dual license such with the GPL if possible (*)
-
-If some folks are considering adding yet more code to Linux which is
-currently under a PostgreSQL license I figured reviewing the existing
-PostgreSQL code's use may be a good start to set precedent for future work.
-Since we already have at least one file with a PostgreSQL-sort-of boiler
-plate it at least sets the precedent we have already sort of dealt with
-PostgreSQL.
-
-My recommendations:
-
-As silly as it may be we should split out the PostgreSQL licensed code from
-drivers/md/bcache/util.c into its own file and while at it clarify the
-license.
-
-If possible, if we can dual license this code with GPL it would be good as
-it would do two things:
-
-1) Removes any ambiguity in case of questions over GPL Compatibility in the
-future about the PostgreSQL license
-
-2) Other folks considering using PostgreSQL licensed code on Linux have a
-template they can use
-
-Other thoughts?
-
-* Although some websites / organizations may state a license is GPL
-compatible we have to be careful in the kernel as some companies or
-organizations may disagree with some of these views (example is FSF's
-website and position -- an example was one of the old BSD licenses which
-some folks questioned its GPL compatibility with); despite the ambiguity
-possible with dual licensing language [0], if  one chooses a clear language
-it can be extremely useful and cautious on the kernel community's part.
-
-[0]
-https://www.softwarefreedom.org/resources/2007/gpl-non-gpl-collaboration.html
-
-   Luis
+-- 
+Robert
