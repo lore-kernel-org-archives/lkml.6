@@ -1,92 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030219AbeE2XUu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 19:20:50 -0400
-Received: from ozlabs.org ([203.11.71.1]:58487 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965084AbeE2XUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 19:20:48 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 30 May 2018 09:20:27 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greentime Hu <greentime@andestech.com>
-Subject: linux-next: manual merge of the dma-mapping tree with Linus' tree
-Message-ID: <20180530092027.510bd34a@canb.auug.org.au>
+        id S968042AbeE2XWR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 19:22:17 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42678 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965249AbeE2XWP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 19:22:15 -0400
+X-Google-Smtp-Source: ADUXVKI8dCxBnvKs2hKni7g2EIZG5kVx/cIUOJRCXTSYBubUN7th2FTcXTRkjOYsz63j3GJq061klr4wFzqYgKaaS1M=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6CfB4MlC/ShTASRvm=ezsW="; protocol="application/pgp-signature"
+In-Reply-To: <CAB=NE6XBPjcGCbK2L_ELjMVVSO34BeJQv8cSiC6M_r7MDVFLvQ@mail.gmail.com>
+References: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
+ <20180529192643.GA3487@kmo-pixel> <20180529205143.GB7381@thunk.org>
+ <20180529210025.GB3487@kmo-pixel> <20180529225928.GI31712@garbanzo.do-not-panic.com>
+ <CAB=NE6XBPjcGCbK2L_ELjMVVSO34BeJQv8cSiC6M_r7MDVFLvQ@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 30 May 2018 02:22:14 +0300
+Message-ID: <CAHp75Vefx7zwrn4CwhDYZrMSLdaaqta1uJHJrqD7c40MQ_N0ZA@mail.gmail.com>
+Subject: Re: PostgreSQL licensed code on Linux
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        Jessica Yu <jeyu@kernel.org>, Tso Ted <tytso@mit.edu>,
+        Coly Li <colyli@suse.de>, Ciaran Farrell <ciaran.farrell@suse.com>,
+        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+        linux-bcache@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jonas Oberg <jonas@fsfe.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/6CfB4MlC/ShTASRvm=ezsW=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 30, 2018 at 2:12 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+> It would seem I did follow up with a v3 patch and Rusty noted that although
+> I may be right, its hard to care [0]. But of relevance here is again if one
+> of the MODULE_LICENSE() dual tags should be used or the GPL tag. I'll
+> continue to side recommending with the MODULE_LICENSE("GPL") tag even on
+> files with permissive licenses, and even if it we haven't clarified this in
+> documentation as I think scaling these tags further is just silly.
+>
+> [0] http://lkml.kernel.org/r/87bom0hf0f.fsf@rustcorp.com.au
 
-Hi Christoph,
+https://www.spinics.net/lists/linux-bcache/msg06048.html
 
-Today's linux-next merge of the dma-mapping tree got a conflict in:
+https://www.spinics.net/lists/linux-bcache/msg06058.html
 
-  arch/nds32/Kconfig
-
-between commit:
-
-  aeaa7af744fa ("nds32: lib: To use generic lib instead of libgcc to preven=
-t the symbol undefined issue.")
-
-from Linus' tree and commit:
-
-  267d2e18a281 ("nds32: use generic dma_noncoherent_ops")
-
-from the dma-mapping tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/nds32/Kconfig
-index b7404f2dcf5b,67d0ac0a989c..000000000000
---- a/arch/nds32/Kconfig
-+++ b/arch/nds32/Kconfig
-@@@ -9,12 -11,7 +11,13 @@@ config NDS3
-  	select CLKSRC_MMIO
-  	select CLONE_BACKWARDS
-  	select COMMON_CLK
-+ 	select DMA_NONCOHERENT_OPS
- +	select GENERIC_ASHLDI3
- +	select GENERIC_ASHRDI3
- +	select GENERIC_LSHRDI3
- +	select GENERIC_CMPDI2
- +	select GENERIC_MULDI3
- +	select GENERIC_UCMPDI2
-  	select GENERIC_ATOMIC64
-  	select GENERIC_CPU_DEVICES
-  	select GENERIC_CLOCKEVENTS
-
---Sig_/6CfB4MlC/ShTASRvm=ezsW=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsN4DsACgkQAVBC80lX
-0GzFAAf+NQxEvchUDErdqIPcuX8NSsb7gnMqqY0bTSv7Gcgb43GZibYUxulYi9/w
-fTt4QNhIMzePHeJN1PNnDhPlwXT7pQ98o8i6PNzWbPoBZp6Cq/pXLV90Zf9o/e3h
-xGPYkxGEWyFIAY/w6cxLyaTsmO0QKD2iK+rk5fCGQwSjBahAj/JHwBhaXb4eyy+B
-QbZJPHGvAtMVFqB01+B5n5Pw/c32wHvbBAOhk5NczbIKWrenQa7PZBH2D0RNbB4Y
-YKKrQwScsd/SeKXgNtsKumzlvw6cl2rTTHOIyw4zT7KgF/h4j0Ur+uN7vD1Y06vX
-Mjlt73cLMWupSUG6xnCzjyHxBzh6Eg==
-=6ZQM
------END PGP SIGNATURE-----
-
---Sig_/6CfB4MlC/ShTASRvm=ezsW=--
+-- 
+With Best Regards,
+Andy Shevchenko
