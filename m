@@ -1,92 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932559AbeE2JEc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:04:32 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:45354 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932288AbeE2JEa (ORCPT
+        id S932587AbeE2JFO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:05:14 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46842 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932288AbeE2JFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:04:30 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        Erik Schmauss <erik.schmauss@intel.com>
-Subject: Re: [RFC] acpi: Declare memory allocations in acpi_ut_create_internal_object_dbg as non-leaks
-Date: Tue, 29 May 2018 11:03:43 +0200
-Message-ID: <2350680.J6FZTH4xBM@aspire.rjw.lan>
-In-Reply-To: <20180512145938.7936-1-Larry.Finger@lwfinger.net>
-References: <20180512145938.7936-1-Larry.Finger@lwfinger.net>
+        Tue, 29 May 2018 05:05:11 -0400
+Date: Tue, 29 May 2018 12:05:04 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Matthew Garrett <mjg59@google.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EVM: Fix null dereference on xattr when xattr fails to
+ allocate
+Message-ID: <20180529090504.6dpdadjyjxo45nu2@mwanda>
+References: <20180527225510.25612-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180527225510.25612-1-colin.king@canonical.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8907 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=580
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805290106
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday, May 12, 2018 4:59:38 PM CEST Larry Finger wrote:
-> In kernel 4.17.0-rcX, kmemleak reports 9 leaks with tracebacks similat to
-> the following:
-> 
-> unreferenced object 0xffff880224a077e0 (size 72):
->   comm "swapper/0", pid 1, jiffies 4294892358 (age 1022.636s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 0e 01 01 00 00 00 00 01  ................
->     00 00 00 80 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<000000004f506615>] acpi_ut_create_internal_object_dbg+0x4d/0x10e
->     [<000000006e7730e3>] acpi_ds_build_internal_object+0xed/0x1cd
->     [<00000000272b7c73>] acpi_ds_build_internal_package_obj+0x245/0x3a2
->     [<000000000b64c50e>] acpi_ds_eval_data_object_operands+0x17b/0x21b
->     [<00000000589647ac>] acpi_ds_exec_end_op+0x433/0x6c1
->     [<000000001d69bcbf>] acpi_ps_parse_loop+0x926/0x9be
->     [<000000005d6fa97d>] acpi_ps_parse_aml+0x1a2/0x4af
->     [<00000000c4bef823>] acpi_ps_execute_table+0xbb/0x119
->     [<00000000fd9632e4>] acpi_ns_execute_table+0x20c/0x260
->     [<00000000e6ae17ac>] acpi_ns_parse_table+0x7d/0x1b3
->     [<0000000008e1e148>] acpi_ns_load_table+0x8d/0x1c0
->     [<000000009fc8346f>] acpi_tb_load_namespace+0x176/0x278
->     [<0000000073f98b3b>] acpi_load_tables+0x6e/0xfd
->     [<00000000d2ef13d2>] acpi_init+0x8c/0x340
->     [<000000007da19d8d>] do_one_initcall+0x46/0x1fa
->     [<0000000024681a1d>] kernel_init_freeable+0x1a2/0x237
-> 
-> According to gdb, the offending code is
->               object =
->                   acpi_ut_allocate_object_desc_dbg(module_name, line_number,
->                                                    component_id);
-> 
-> As it is not possible to unload the acpi code to test that this is a real
-> leak and not a false positive, and that only these 9 appear no matter how
-> long the system is up, a kmemleak_not_leak(object) call is inserted.
-> 
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: linux-acpi@vger.kernel.org
-> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-> ---
->  drivers/acpi/acpica/utobject.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/acpi/acpica/utobject.c b/drivers/acpi/acpica/utobject.c
-> index 5b78fe08d7d7..ae6d8cc18cec 100644
-> --- a/drivers/acpi/acpica/utobject.c
-> +++ b/drivers/acpi/acpica/utobject.c
-> @@ -8,6 +8,7 @@
->   *****************************************************************************/
->  
->  #include <acpi/acpi.h>
-> +#include <linux/kmemleak.h>
->  #include "accommon.h"
->  #include "acnamesp.h"
->  
-> @@ -70,6 +71,7 @@ union acpi_operand_object *acpi_ut_create_internal_object_dbg(const char
->  	if (!object) {
->  		return_PTR(NULL);
->  	}
-> +	kmemleak_not_leak(object);
->  
->  	switch (type) {
->  	case ACPI_TYPE_REGION:
-> 
+Not really related to this patch except I was looking at the function:
 
-I've decided to apply this patch, thanks!
+security/integrity/evm/evm_secfs.c
+   191          ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
+   192          if (IS_ERR(ab))
+   193                  return PTR_ERR(ab);
+   194  
+   195          xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
+   196          if (!xattr) {
+   197                  err = -ENOMEM;
+   198                  goto out;
+   199          }
+   200  
+   201          xattr->name = memdup_user_nul(buf, count);
+   202          if (IS_ERR(xattr->name)) {
+   203                  err = PTR_ERR(xattr->name);
+   204                  xattr->name = NULL;
+   205                  goto out;
+   206          }
+   207  
+   208          /* Remove any trailing newline */
+   209          len = strlen(xattr->name);
+   210          if (xattr->name[len-1] == '\n')
+
+strlen() could be zero, leading to a read underflow here.
+
+   211                  xattr->name[len-1] = '\0';
+   212  
+   213          if (strcmp(xattr->name, ".") == 0) {
+   214                  evm_xattrs_locked = 1;
+   215                  newattrs.ia_mode = S_IFREG | 0440;
+   216                  newattrs.ia_valid = ATTR_MODE;
+   217                  inode = evm_xattrs->d_inode;
+   218                  inode_lock(inode);
+   219                  err = simple_setattr(evm_xattrs, &newattrs);
+   220                  inode_unlock(inode);
+   221                  audit_log_format(ab, "locked");
+   222                  if (!err)
+   223                          err = count;
+   224                  goto out;
+   225          }
+
+regards,
+dan carpenter
