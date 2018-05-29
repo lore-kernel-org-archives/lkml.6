@@ -1,108 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755923AbeE2CL0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 22:11:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57264 "EHLO mx1.redhat.com"
+        id S1755944AbeE2CLh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 22:11:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36998 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752647AbeE2CLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 22:11:21 -0400
+        id S1754783AbeE2CL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 22:11:28 -0400
 From: Jason Wang <jasowang@redhat.com>
 To: mst@redhat.com, jasowang@redhat.com
 Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         jfreimann@redhat.com, wexu@redhat.com, tiwei.bie@intel.com
-Subject: [RFC V5 PATCH 4/8] vhost_net: do not explicitly manipulate vhost_used_elem
-Date: Tue, 29 May 2018 10:10:26 +0800
-Message-Id: <1527559830-8133-5-git-send-email-jasowang@redhat.com>
+Subject: [RFC V5 PATCH 5/8] vhost: vhost_put_user() can accept metadata type
+Date: Tue, 29 May 2018 10:10:27 +0800
+Message-Id: <1527559830-8133-6-git-send-email-jasowang@redhat.com>
 In-Reply-To: <1527559830-8133-1-git-send-email-jasowang@redhat.com>
 References: <1527559830-8133-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two helpers of setting/getting used len were introduced to avoid
-explicitly manipulating vhost_used_elem in zerocopy code. This will be
-used to hide used_elem internals and simplify packed ring
-implementation.
+We assumes used ring update is the only user for vhost_put_user() in
+the past. This may not be the case for the incoming packed ring which
+may update the descriptor ring for used. So introduce a new type
+parameter.
 
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/vhost/net.c   | 11 +++++------
- drivers/vhost/vhost.c | 12 ++++++++++--
- drivers/vhost/vhost.h |  5 +++++
- 3 files changed, 20 insertions(+), 8 deletions(-)
+ drivers/vhost/vhost.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 3826f1f..30273ad 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -341,9 +341,10 @@ static void vhost_zerocopy_signal_used(struct vhost_net *net,
- 	int j = 0;
- 
- 	for (i = nvq->done_idx; i != nvq->upend_idx; i = (i + 1) % UIO_MAXIOV) {
--		if (vq->heads[i].elem.len == VHOST_DMA_FAILED_LEN)
-+		if (vhost_get_used_len(vq, &vq->heads[i]) ==
-+		    VHOST_DMA_FAILED_LEN)
- 			vhost_net_tx_err(net);
--		if (VHOST_DMA_IS_DONE(vq->heads[i].elem.len)) {
-+		if (VHOST_DMA_IS_DONE(vhost_get_used_len(vq, &vq->heads[i]))) {
- 			vq->heads[i].elem.len = VHOST_DMA_CLEAR_LEN;
- 			++j;
- 		} else
-@@ -542,10 +543,8 @@ static void handle_tx(struct vhost_net *net)
- 			struct ubuf_info *ubuf;
- 			ubuf = nvq->ubuf_info + nvq->upend_idx;
- 
--			vq->heads[nvq->upend_idx].elem.id =
--				cpu_to_vhost32(vq, used.elem.id);
--			vq->heads[nvq->upend_idx].elem.len =
--				VHOST_DMA_IN_PROGRESS;
-+			vhost_set_used_len(vq, &used, VHOST_DMA_IN_PROGRESS);
-+			vq->heads[nvq->upend_idx] = used;
- 			ubuf->callback = vhost_zerocopy_callback;
- 			ubuf->ctx = nvq->ubufs;
- 			ubuf->desc = nvq->upend_idx;
 diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 2b2a776..e0fcfec 100644
+index e0fcfec..4031a8f 100644
 --- a/drivers/vhost/vhost.c
 +++ b/drivers/vhost/vhost.c
-@@ -2067,11 +2067,19 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+@@ -811,7 +811,7 @@ static inline void __user *__vhost_get_user(struct vhost_virtqueue *vq,
+ 	return __vhost_get_user_slow(vq, addr, size, type);
  }
- EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
  
--static void vhost_set_used_len(struct vhost_virtqueue *vq,
--			       struct vhost_used_elem *used, int len)
-+void vhost_set_used_len(struct vhost_virtqueue *vq,
-+			struct vhost_used_elem *used, int len)
+-#define vhost_put_user(vq, x, ptr)		\
++#define vhost_put_user(vq, x, ptr, type)		\
+ ({ \
+ 	int ret = -EFAULT; \
+ 	if (!vq->iotlb) { \
+@@ -819,7 +819,7 @@ static inline void __user *__vhost_get_user(struct vhost_virtqueue *vq,
+ 	} else { \
+ 		__typeof__(ptr) to = \
+ 			(__typeof__(ptr)) __vhost_get_user(vq, ptr,	\
+-					  sizeof(*ptr), VHOST_ADDR_USED); \
++					  sizeof(*ptr), type); \
+ 		if (to != NULL) \
+ 			ret = __put_user(x, to); \
+ 		else \
+@@ -1683,7 +1683,7 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
  {
- 	used->elem.len = cpu_to_vhost32(vq, len);
- }
-+EXPORT_SYMBOL_GPL(vhost_set_used_len);
-+
-+int vhost_get_used_len(struct vhost_virtqueue *vq,
-+		       struct vhost_used_elem *used)
-+{
-+	return vhost32_to_cpu(vq, used->elem.len);
-+}
-+EXPORT_SYMBOL_GPL(vhost_get_used_len);
- 
- /* This is a multi-buffer version of vhost_get_desc, that works if
-  *	vq has read descriptors only.
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 8dea44b..604821b 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -198,6 +198,11 @@ int vhost_get_bufs(struct vhost_virtqueue *vq,
- 		   unsigned *log_num,
- 		   unsigned int quota,
- 		   s16 *count);
-+void vhost_set_used_len(struct vhost_virtqueue *vq,
-+			struct vhost_used_elem *used,
-+			int len);
-+int vhost_get_used_len(struct vhost_virtqueue *vq,
-+		       struct vhost_used_elem *used);
- void vhost_discard_vq_desc(struct vhost_virtqueue *, int n);
- 
- int vhost_vq_init_access(struct vhost_virtqueue *);
+ 	void __user *used;
+ 	if (vhost_put_user(vq, cpu_to_vhost16(vq, vq->used_flags),
+-			   &vq->used->flags) < 0)
++			   &vq->used->flags, VHOST_ADDR_USED) < 0)
+ 		return -EFAULT;
+ 	if (unlikely(vq->log_used)) {
+ 		/* Make sure the flag is seen before log. */
+@@ -1702,7 +1702,7 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
+ static int vhost_update_avail_event(struct vhost_virtqueue *vq, u16 avail_event)
+ {
+ 	if (vhost_put_user(vq, cpu_to_vhost16(vq, vq->avail_idx),
+-			   vhost_avail_event(vq)))
++			   vhost_avail_event(vq), VHOST_ADDR_USED))
+ 		return -EFAULT;
+ 	if (unlikely(vq->log_used)) {
+ 		void __user *used;
+@@ -2185,12 +2185,12 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
+ 	used = vq->used->ring + start;
+ 	for (i = 0; i < count; i++) {
+ 		if (unlikely(vhost_put_user(vq, heads[i].elem.id,
+-					    &used[i].id))) {
++					    &used[i].id, VHOST_ADDR_USED))) {
+ 			vq_err(vq, "Failed to write used id");
+ 			return -EFAULT;
+ 		}
+ 		if (unlikely(vhost_put_user(vq, heads[i].elem.len,
+-					    &used[i].len))) {
++					    &used[i].len, VHOST_ADDR_USED))) {
+ 			vq_err(vq, "Failed to write used len");
+ 			return -EFAULT;
+ 		}
+@@ -2236,7 +2236,7 @@ int vhost_add_used_n(struct vhost_virtqueue *vq, struct vhost_used_elem *heads,
+ 	/* Make sure buffer is written before we update index. */
+ 	smp_wmb();
+ 	if (vhost_put_user(vq, cpu_to_vhost16(vq, vq->last_used_idx),
+-			   &vq->used->idx)) {
++			   &vq->used->idx, VHOST_ADDR_USED)) {
+ 		vq_err(vq, "Failed to increment used idx");
+ 		return -EFAULT;
+ 	}
 -- 
 2.7.4
