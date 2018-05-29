@@ -1,165 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965708AbeE2R4c (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 13:56:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36124 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965453AbeE2R4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 13:56:05 -0400
-From: Alan Tull <atull@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-fpga@vger.kernel.org, Alan Tull <atull@kernel.org>
-Subject: [PATCH] Documentation: fpga: cleanup
-Date: Tue, 29 May 2018 12:56:00 -0500
-Message-Id: <20180529175600.3672-2-atull@kernel.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180529175600.3672-1-atull@kernel.org>
-References: <20180529175600.3672-1-atull@kernel.org>
+        id S965741AbeE2R4l (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 13:56:41 -0400
+Received: from smtprelay0023.hostedemail.com ([216.40.44.23]:37349 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S965453AbeE2R4j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 13:56:39 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3865:3867:3870:3872:3874:4321:5007:10004:10400:10848:11026:11232:11657:11658:11914:12555:12760:12986:13069:13311:13357:13439:14181:14659:14721:21080:21627:30054:30070,0,RBL:172.56.40.139:@perches.com:.lbl8.mailshell.net-62.8.0.190 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
+X-HE-Tag: pump72_56ece9852f51f
+X-Filterd-Recvd-Size: 1489
+Message-ID: <af44c893f6973393f2a5b11f1a8e5cd4c8bbbba5.camel@perches.com>
+Subject: [-next fix PATCH] checkpatch: Fix missing close parenthesis
+From: Joe Perches <joe@perches.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Date: Tue, 29 May 2018 10:56:34 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Minor fixes including:
+Latest -next has a missing close parenthesis in the
+patch that adds better recognition for rename only patches.
 
-* fix some typos
-* correct use of a/an
-* rephrase explanation of .state ops function
-* s/re-use/reuse/ (use only one spelling of 'reuse' in these docs)
-* s/cpu/CPU/
+Add it.
 
-Signed-off-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Joe Perches <joe@perches.com>
 ---
- Documentation/driver-api/fpga/fpga-mgr.rst    | 12 ++++++------
- Documentation/driver-api/fpga/fpga-region.rst | 12 ++++++------
- Documentation/driver-api/fpga/intro.rst       | 14 +++++++-------
- 3 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/driver-api/fpga/fpga-mgr.rst b/Documentation/driver-api/fpga/fpga-mgr.rst
-index bcf2dd2..4b3825d 100644
---- a/Documentation/driver-api/fpga/fpga-mgr.rst
-+++ b/Documentation/driver-api/fpga/fpga-mgr.rst
-@@ -83,7 +83,7 @@ The programming sequence is::
-  3. .write_complete
+Dunno how that happened.
+
+Maybe this could be rolled into the appropriate patch
+that added this change.
+
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index f1fecd8aa4d7..3f936b046213 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2379,7 +2379,7 @@ sub process {
+ 		if (!$in_commit_log &&
+ 		    ($line =~ /^ mode change [0-7]+ => [0-7]+ \S+\s*$/ ||
+ 		    ($line =~ /^rename (?:from|to) \S+\s*$/ ||
+-		     $line =~ /^diff --git a\/[\w\/\.\_\-]+ b\/\S+\s*$/)) {
++		     $line =~ /^diff --git a\/[\w\/\.\_\-]+ b\/\S+\s*$/))) {
+ 			$is_patch = 1;
+ 		}
  
- The .write_init function will prepare the FPGA to receive the image data.  The
--buffer passed into .write_init will be atmost .initial_header_size bytes long,
-+buffer passed into .write_init will be at most .initial_header_size bytes long;
- if the whole bitstream is not immediately available then the core code will
- buffer up at least this much before starting.
- 
-@@ -98,9 +98,9 @@ scatter list. This interface is suitable for drivers which use DMA.
- The .write_complete function is called after all the image has been written
- to put the FPGA into operating mode.
- 
--The ops include a .state function which will read the hardware FPGA manager and
--return a code of type enum fpga_mgr_states.  It doesn't result in a change in
--hardware state.
-+The ops include a .state function which will determine the state the FPGA is in
-+and return a code of type enum fpga_mgr_states.  It doesn't result in a change
-+in state.
- 
- How to write an image buffer to a supported FPGA
- ------------------------------------------------
-@@ -181,8 +181,8 @@ API for implementing a new FPGA Manager driver
- .. kernel-doc:: drivers/fpga/fpga-mgr.c
-    :functions: fpga_mgr_unregister
- 
--API for programming a FPGA
----------------------------
-+API for programming an FPGA
-+---------------------------
- 
- .. kernel-doc:: include/linux/fpga/fpga-mgr.h
-    :functions: fpga_image_info
-diff --git a/Documentation/driver-api/fpga/fpga-region.rst b/Documentation/driver-api/fpga/fpga-region.rst
-index f89e4a3..f30333c 100644
---- a/Documentation/driver-api/fpga/fpga-region.rst
-+++ b/Documentation/driver-api/fpga/fpga-region.rst
-@@ -4,7 +4,7 @@ FPGA Region
- Overview
- --------
- 
--This document is meant to be an brief overview of the FPGA region API usage.  A
-+This document is meant to be a brief overview of the FPGA region API usage.  A
- more conceptual look at regions can be found in the Device Tree binding
- document [#f1]_.
- 
-@@ -31,11 +31,11 @@ fpga_image_info including:
-  * pointers to the image as either a scatter-gather buffer, a contiguous
-    buffer, or the name of firmware file
- 
-- * flags indicating specifics such as whether the image if for partial
-+ * flags indicating specifics such as whether the image is for partial
-    reconfiguration.
- 
--How to program a FPGA using a region
--------------------------------------
-+How to program an FPGA using a region
-+-------------------------------------
- 
- First, allocate the info struct::
- 
-@@ -77,8 +77,8 @@ An example of usage can be seen in the probe function of [#f2]_.
- .. [#f1] ../devicetree/bindings/fpga/fpga-region.txt
- .. [#f2] ../../drivers/fpga/of-fpga-region.c
- 
--API to program a FGPA
-----------------------
-+API to program an FPGA
-+----------------------
- 
- .. kernel-doc:: drivers/fpga/fpga-region.c
-    :functions: fpga_region_program_fpga
-diff --git a/Documentation/driver-api/fpga/intro.rst b/Documentation/driver-api/fpga/intro.rst
-index 51cd81d..50d1cab 100644
---- a/Documentation/driver-api/fpga/intro.rst
-+++ b/Documentation/driver-api/fpga/intro.rst
-@@ -12,18 +12,18 @@ Linux.  Some of the core intentions of the FPGA subsystems are:
- 
- * Code should not be shared between upper and lower layers.  This
-   should go without saying.  If that seems necessary, there's probably
--  framework functionality that that can be added that will benefit
-+  framework functionality that can be added that will benefit
-   other users.  Write the linux-fpga mailing list and maintainers and
-   seek out a solution that expands the framework for broad reuse.
- 
--* Generally, when adding code, think of the future.  Plan for re-use.
-+* Generally, when adding code, think of the future.  Plan for reuse.
- 
- The framework in the kernel is divided into:
- 
- FPGA Manager
- ------------
- 
--If you are adding a new FPGA or a new method of programming a FPGA,
-+If you are adding a new FPGA or a new method of programming an FPGA,
- this is the subsystem for you.  Low level FPGA manager drivers contain
- the knowledge of how to program a specific device.  This subsystem
- includes the framework in fpga-mgr.c and the low level drivers that
-@@ -32,10 +32,10 @@ are registered with it.
- FPGA Bridge
- -----------
- 
--FPGA Bridges prevent spurious signals from going out of a FPGA or a
--region of a FPGA during programming.  They are disabled before
-+FPGA Bridges prevent spurious signals from going out of an FPGA or a
-+region of an FPGA during programming.  They are disabled before
- programming begins and re-enabled afterwards.  An FPGA bridge may be
--actual hard hardware that gates a bus to a cpu or a soft ("freeze")
-+actual hard hardware that gates a bus to a CPU or a soft ("freeze")
- bridge in FPGA fabric that surrounds a partial reconfiguration region
- of an FPGA.  This subsystem includes fpga-bridge.c and the low level
- drivers that are registered with it.
-@@ -44,7 +44,7 @@ FPGA Region
- -----------
- 
- If you are adding a new interface to the FPGA framework, add it on top
--of a FPGA region to allow the most reuse of your interface.
-+of an FPGA region to allow the most reuse of your interface.
- 
- The FPGA Region framework (fpga-region.c) associates managers and
- bridges as reconfigurable regions.  A region may refer to the whole
--- 
-2.7.4
