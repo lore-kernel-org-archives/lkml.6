@@ -1,32 +1,33 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-68338-1527703826-2-14899480377912126901
+X-Cyrus-Session-Id: sloti22d1t05-2837379-1527634310-2-13128677994902363162
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: 
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527703826; b=faNFkZ19ULdADAJxeWSMylCrKxq8D6f8qsP8z2p26Vl234kxap
-    ygkeKqMZeWhhewYyHjWraOytJYpxRd3FYdkpfnIsdCgsOOUM0ASl+ZRat5GiMGI0
-    3noL+22rAJ7fCBmV7A9fCVtDFtqnaKm3QVb15NCLifA3WENbFg1ogHCaApq6K2gx
-    noUQLYVCizkVadFyOIgaatJ+NypKguPwPOQXI9w+TSNNqp502thw13JxY7H5nvy1
-    6UcogwYB88kHe6nhGY9o57vXb9Fj+9q7Gkkd/L2Q8DSqDtiqGfexHBcH4wqUoPIx
-    eKTcFgnTqYglSFOjV8xH3Chbuz/TVBxFWgbA==
+    1527634310; b=egq3gY1/h+87ZGhgefN0a4x20Xlkspza49vRusmtWTJfebWUjE
+    8IH39I56oX85kb1Tt5UYiLwoKuVS9RsBlsB03QMLPJYJw6Tko+SWtnuuEvof/c03
+    SkSOjaE5HxJqPXpt6icxpG4HLwJzObXFIdPg66St4RvWAyofJWnd8IX5QMqIzGG3
+    AzbARr5d19Zy/hB0nwuQ7MUjRNsJyWd/Tly7Xy5NRlDVMO0TZh5w+cXLjLZbvx2Z
+    vgQKsWicPUS1Btap27qwI3kbA+4IksZtYsxj+67OS7P+leYTO+9Mv949TRDDwREo
+    aM6gusSNJ/c6hYEUhxWEy9vqUktgl1lDAj2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
-    :message-id:mime-version:content-type:sender:list-id; s=fm2; t=
-    1527703826; bh=M8Y3PK/7sR/+WH6jCS9oysmo7YvYh8iCfVmKQtkE6cI=; b=J
-    781JIDH1XNczPLj+lMvVcZrAlvzAE7TAFqOuVeuJWIN9gB/fXaExZQ157SkcguQl
-    69/bOlQAihX2fo5TD0mBdRfsBkQLcs1aPXOJzBYGPUOpG+ll6HesFKz+WA6Oi6cX
-    73db2iGKXNrrHG0dI9uo1fDHUDM3YMNhB3x6hNwudQF/Mf4E63jO5rTmSvah6zdu
-    UyVabu4HcYzuXQiCuTqZK0pWSAh9CD80qc3b/ldQRg/grC3Rf6LBNi2wXER3bRNL
-    S6k2ISYe61lGFfFyl5o3pfYOMoqWtHNA7/UtC+G0Zt4ViS1kApo/RFVPjjuvnk/m
-    w+TI8vgT+nEdBo38lYE0w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:reply-to
+    :references:mime-version:content-type:in-reply-to:message-id
+    :sender:list-id; s=fm2; t=1527634310; bh=xjnkwHNmMyBN2b1Upe9qVBu
+    nq91xsxZDoF76aKvBaH0=; b=DfA5nAEBuf7pebDYU1vqsgfgCbLu7W/oprFidFo
+    YikJOvZUpTwzq8Bc0sEsJz0nTWMzdz5qQBfMu/Kg4hos58nZcJF857W2tH5vrvzf
+    Snq4zewOMIFXHB9F0KMPgmsqUJ5neQsExQM7xoWWFGFHGDmFIQN0qYBsGUnOC3Yd
+    aKKO4OGycLcufwwAduONPN2CJMMZ7cbEt/RdisnFJiYg6ed3RlAuU7NuFup8H8eE
+    0pwwXOxoXoR+4w5MgVZDmTKFD2QujYWETyogFv5T7plnkzkNi37p0GkXJ0KaVVOA
+    a0sxGzC+b2mc0OktZLb1Sb8CxK22ahjL/ZSRA/DfO0bLyWQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=rowland.harvard.edu;
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+    header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -35,15 +36,15 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=rowland.harvard.edu header.result=pass
-    header_org.domain=harvard.edu header_org.result=pass
+    header.domain=linux.vnet.ibm.com header.result=pass
+    header_org.domain=ibm.com header_org.result=pass
     header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=rowland.harvard.edu;
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+      header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -52,33 +53,33 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=rowland.harvard.edu header.result=pass
-      header_org.domain=harvard.edu header_org.result=pass
+      header.domain=linux.vnet.ibm.com header.result=pass
+      header_org.domain=ibm.com header_org.result=pass
       header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJ20YL79S1hZi5Jrdd8jDmH6TuUDnuHo9QvJkr36EISwhaGrSjTK4pUfGz4OnFC3ZdPdiHop05DpCzjUhPAdti9nczQqiHhx5iymLx9V9nbZmWD8RUt6
-    go9G/F2X4SdiPGpB7XX8ThfdW0Gp57uq6hP9vMOI+07BvhQ77+e/TBIOVTIbMcG8J8TUcq4nxhj9Z4xXIl8bu3e88BjQAZGKubVGyukIwKWUUzW+l4LNvHHk
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFVGVKIYozXrczUt0EtkdfoGZakh/m8WmzBSvoLyyZsb3fVmY86wiKeIeqmoS6hj3NnLKDr4f4eoWLabFAFdfyF/+OfGThs+9M1jNmbitvBQuFZSRSri
+    gdmqzcfjTTMDpZ63/hnD6QH9j3lWCGETaeJ7svKoM75qlJ+DdnZC1VhT9uarzhDnYFkoAwuhUfg9OxG1Ta0SdyOse9zfpp77e/LaDPm3pG+m2UTqE9Lnx76D
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=uvHe_gaIcESmQfz8orsA:9 a=CjuIK1q_8ugA:10
+    a=-KG_OBUHnIVKuRwLwd8A:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753073AbeE3SKZ (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 30 May 2018 14:10:25 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:37146 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1750752AbeE3SKY (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Wed, 30 May 2018 14:10:24 -0400
-Date: Wed, 30 May 2018 14:10:23 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
+        id S935848AbeE2Wvq (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 18:51:46 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50894 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935806AbeE2Wvp (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>);
+        Tue, 29 May 2018 18:51:45 -0400
+Date: Tue, 29 May 2018 15:53:21 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Paul McKenney <paulmck@linux.vnet.ibm.com>,
+Cc: Alan Stern <stern@rowland.harvard.edu>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-arch <linux-arch@vger.kernel.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        andrea.parri@amarulasolutions.com,
         Will Deacon <will.deacon@arm.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Boqun Feng <boqun.feng@gmail.com>,
@@ -90,200 +91,100 @@ cc: Paul McKenney <paulmck@linux.vnet.ibm.com>,
         Ingo Molnar <mingo@kernel.org>,
         Roman Pen <roman.penyaev@profitbricks.com>
 Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
-In-Reply-To: <CA+55aFy2SqVr3XggBS6_N+EUZMABa0xwpme5BW4qmLQ1h6J3pQ@mail.gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1805301204590.1502-100000@iolanthe.rowland.org>
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180529190332.GO3803@linux.vnet.ibm.com>
+ <Pine.LNX.4.44L0.1805291521570.1458-100000@iolanthe.rowland.org>
+ <CA+55aFzYca7EBTEbhJMoJcGspVGhmty243WQR_w7Eykmw9HX9w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFzYca7EBTEbhJMoJcGspVGhmty243WQR_w7Eykmw9HX9w@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18052922-2213-0000-0000-000002AF3E5E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009097; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039566; UDB=6.00530826; IPR=6.00818694;
+ MB=3.00021364; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-29 22:51:42
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052922-2214-0000-0000-00005A499796
+Message-Id: <20180529225321.GQ3803@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805290242
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 30 May 2018, Linus Torvalds wrote:
-
-> On Wed, May 30, 2018 at 9:29 AM Alan Stern <stern@rowland.harvard.edu>
+On Tue, May 29, 2018 at 04:10:02PM -0500, Linus Torvalds wrote:
+> On Tue, May 29, 2018 at 3:49 PM Alan Stern <stern@rowland.harvard.edu>
 > wrote:
 > 
-> > >
-> > > Can't we simplify the whole sequence as basically
-> > >
-> > >      A
-> > >      if (!B)
-> > >          D
-> > >
-> > > for that "not B" case, and just think about that. IOW, let's ignore the
-> > > whole "not executed" code.
-> 
-> > Your listing is slightly misleading.
-> 
-> No. You're confused.
-> 
-> You're confused because you're conflating two *entirely* different things.
-> 
-> You're conflating the static source code with the dynamic execution. They
-> are NOT THE SAME.
+> > Putting this into herd would be extremely difficult, if not impossible,
+> > because it involves analyzing code that was not executed.
 
-I'll do my best not to conflate them.
+One (ugly) way to handle it, assuming we are correct about what it
+happening, would be to place ordering on the other side of the "if"
+that is at least as strong as on the first side.  Probably some example
+that completely breaks this approach, though...
 
-Your phrasing was not the greatest in this regard; it looked like you
-were trying to talk about a different static source program.
-
->    It really should be:
+> Does it?
 > 
-> >          A
-> >          if (!B)
-> >                  ; // NOP
-> >          D
-> 
-> No it really really shouldn't.
-> 
-> There are two completely different situations:
-> 
-> (1) there is the source code:
-> 
->      A
->      if (B)
->           C
->      D
-> 
-> where  C contains a barrier, and B depends on A and is not statically
-> determinable.
-> 
-> In the source code, 'D' looks unconditional BUT IT DAMN WELL IS NOT.
-> 
-> It's not unconditional - it's just done in both conditions! That's a big
-> big difference.
-
-Can you explain in greater detail?  A lot of people would say that
-something which occurs under either condition _is_ unconditional, by
-definition.
-
-> > In other words, D should be beyond the end of the "if" statement, not
-> > inside one of the branches.
-> 
-> You're just completely confused.
-> 
-> What you are stating makes no sense at all.
-> 
-> Seriously, your reading of the code is entirely monsenscal, and seems to be
-> about syntax, not about semantics. Which is crazy.
-> 
-> Lookie here, you can change the syntactic model of that code to just be
-> 
->      A
->      if (B)
->          C
->          D
->      else
->          D
-> 
-> and that code obviously has the EXACT SAME SEMANTICS.
-
-That is not entirely clear.  The semantics of a source program are
-partly determined by the memory model, and the quality of the memory
-model is exactly what this email thread is about.  Under a defective
-memory model, this code might indeed have different semantics from the
-original.
-
-Granted, it _shouldn't_ -- but our LKMM is not ideal.  As an example,
-one of the known defects of the memory model (we have pointed it out
-repeatedly from the very beginning) is that when identical writes occur
-in the two branches of an "if" statement, just as in your code above,
-the model does not allow for the possibility that the compiler may
-combine the two writes into one and move it up before the "if".
-
-That's not the issue in this case, but it does show that the memory
-model we are working with isn't perfect.  The subject of this
-discussion is another example in which the memory model fails to give
-the desired result.
-
-[It's also worth pointing out that semantics vary with context.  Is
-"x = 1; y = 2;" semantically equivalent to "y = 2; x = 1;"?  It is in
-a single-threaded setting.  But in a multi-threaded setting it need not
-be.]
-
-> So if you get hung up on trivial syntactic issues, you are by definition
-> confused, and your tool is garbage. You're doing memory ordering analysis,
-> not syntax parsing, for chrissake!
-
-To be fair, we are (or rather, herd is) doing both.
-
-> >   At run time, of course, it doesn't matter;
-> > CPUs don't try to detect where the two branches of an "if" recombine.
-> > (Leaving aside issues like implementing an "if" as a move-conditional.)
-> 
-> You cannot do it as a move-conditional, since that code generation would
-> have been buggy shit, exactly because of C. But that's a code generation
-> issue, not a run-time decision.
-> 
-> So at run-time, the code ends up being
+> Can't we simplify the whole sequence as basically
 > 
 >      A
 >      if (!B)
 >          D
-
-Sorry, not clear enough.  Do you mean that the CPU ends up executing
-essentially the same sequence of assembly instructions as you would get
-from a naive compilation of this source code?  If so, then I agree.
-
-By the same reasoning, at run-time the code also ends up being
-
-	A
-	if (B)
-		;
-	D
-
-(that is, the sequence of executed assembly instructions would be
-essentially the same).
-
-> and D cannot be written before A has been read, because B depends on A, and
-> you cannot expose specutive writes before the preconditions have been
-> evaluated.
 > 
-> > Remember, the original code was:
+> for that "not B" case, and just think about that. IOW, let's ignore the
+> whole "not executed" code.
 > 
-> >          A
-> >          if (!B)
-> >                  C
-> >          D
+> If B depends on A like you state, then that already implies that the write
+> in D cannot come before the read of A.
 > 
-> > So the execution of D is _not_ conditional, and it doesn't depend on A
-> > or B.  (Again, CPUs don't make this distinction, but compilers do.)
+> You fundamentally cannot do a conditional write before the read that the
+> write condition depends on. So *any* write after a conditional is dependent
+> on the read.
 > 
-> Again, the above is nothing but confused bullshit.
+> So the existence of C - whether it has a barrier or not - is entirely
+> immaterial at run-time.
 > 
-> D depends on B, which depends on A.
+> Now, the *compiler* can use the whole existence of that memory barrier in C
+> to determine whether it can re-order the write to D or not, of course, but
+> that's a separate issue, and then the whole "code that isn't executed" is
+> not the issue any more. The compiler obviously sees all code, whether
+> executing or not.
 > 
-> Really. Really really.
+> Or am I being stupid and missing something entirely? That's possible.
 
-Sure, in the code you wrote there is a control dependency from A to D.  
-I would never say otherwise.
+This will take some analysis, both to make sure that I got Roman's
+example correct and to get to the bottom of exactly what LKMM thinks
+can be reordered.  I am shifting timezones eastward, so I am not going
+to dig into it today.
 
-But my earlier email concerned the original source code outline.  
-Whether the two are semantically equivalent or not, they are certainly
-different syntactically.  herd's analysis has a large syntactic
-component; given the original source code, LKMM does not generate a
-control dependency from A to D.
+But here are a couple of things that take some getting used to:
 
-You may think this is a weakness in LKMM: It treats two semantically
-equivalent programs differently just because of syntactic variations.  
-I wouldn't disagree.  (Much the same could be said of real C
-compilers.)
+1.	The "if (r1 == x)" would likely be "if (r1 == &x)" in the Linux
+	kernel.
 
-In fact, the whole point of my original email was that this code 
-pattern illustrates a weakness in LKMM.
+2.	Unless there is something explicit stopping the reordering, the
+	herd tool assumes that the compiler can reorder unrelated code
+	completely across the entirety of an "if" statement.  It might
+	well have decided that it could do so in this case, due to the
+	fact that the "if" statement isn't doing anything with x (just
+	with its address).
 
-> Anybody - or any tool - that doesn't see that is fundamentally wrong, and
-> has been confused by syntax.
-> 
-> A *compiler* will very much also make that distinction. If it doesn't make
-> that distinction, it's not a compiler, it's a buggy piece of shit.
-> 
-> Because semantics matter.
-> 
-> Think about it.
+	But yes, given that r1 comes from the load from *c, it would
+	be difficult (at best) to actually apply that optimization in
+	this case.
 
-In the end, it seems that we are in violent agreement.  :-)
+But let's find out what is really happening.  Easy to speculate, but
+much harder to speculate correctly.  ;-)
 
-Alan
+							Thanx, Paul
