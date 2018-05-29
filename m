@@ -1,99 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936548AbeE2PBG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:01:06 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:57534 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935244AbeE2PBA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:01:00 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rich Felker <dalias@libc.org>, Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-References: <87604mhrnb.fsf@xmission.com>
-        <20180420143811.9994-16-ebiederm@xmission.com>
-        <20180420145514.GP3094@brightrain.aerifal.cx>
-        <CAMuHMdXxL+k_SitLXV1LJDHJmCY1HiUnZSk7MM64rcgs75nLiw@mail.gmail.com>
-Date: Tue, 29 May 2018 10:00:42 -0500
-In-Reply-To: <CAMuHMdXxL+k_SitLXV1LJDHJmCY1HiUnZSk7MM64rcgs75nLiw@mail.gmail.com>
-        (Geert Uytterhoeven's message of "Mon, 28 May 2018 11:19:55 +0200")
-Message-ID: <87h8mqo6at.fsf_-_@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S936604AbeE2PBQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:01:16 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935576AbeE2PBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:01:11 -0400
+Subject: Re: [PATCH] x86, random: Fix get_random_bytes() warning in x86
+ start_kernel
+To: Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rik van Riel <riel@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+References: <20180529123800.19627-1-prarit@redhat.com>
+ <CAGXu5jJvJbTZT5=u7TJtLsN-TsuSEfw8h2EwV8w-oefJkADoBg@mail.gmail.com>
+From: Prarit Bhargava <prarit@redhat.com>
+Message-ID: <71b5df93-2e21-f3c3-fa22-4488729daeb5@redhat.com>
+Date: Tue, 29 May 2018 11:01:07 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fNg7M-0005BO-4e;;;mid=<87h8mqo6at.fsf_-_@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+IzCyZ7sfx9HjChTQEsrHLohqqvtTCE7s=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4934]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Geert Uytterhoeven <geert@linux-m68k.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1062 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.8 (0.3%), b_tie_ro: 1.97 (0.2%), parse: 1.15 (0.1%),
-        extract_message_metadata: 19 (1.8%), get_uri_detail_list: 1.73 (0.2%),
-        tests_pri_-1000: 10 (1.0%), tests_pri_-950: 1.71 (0.2%), tests_pri_-900: 1.45
-        (0.1%), tests_pri_-400: 24 (2.3%), check_bayes: 22 (2.1%), b_tokenize: 10
-        (0.9%), b_tok_get_all: 6 (0.5%), b_comp_prob: 2.8 (0.3%), b_tok_touch_all:
-        2.2 (0.2%), b_finish: 0.63 (0.1%), tests_pri_0: 177 (16.7%),
-        check_dkim_signature: 0.71 (0.1%), check_dkim_adsp: 3.2 (0.3%),
-        tests_pri_500: 820 (77.3%), poll_dns_idle: 816 (76.8%), rewrite_mail: 0.00
-        (0.0%)
-Subject: [PATCH] signal/sh: Stop gcc warning about an impossible case in do_divide_error
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <CAGXu5jJvJbTZT5=u7TJtLsN-TsuSEfw8h2EwV8w-oefJkADoBg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Geert Uytterhoeven <geert@linux-m68k.org> reported:
->   HOSTLD  scripts/mod/modpost
->   CC      arch/sh/kernel/traps_32.o
-> arch/sh/kernel/traps_32.c: In function 'do_divide_error':
-> arch/sh/kernel/traps_32.c:606:17: error: 'code' may be used uninitialized in this function [-Werror=uninitialized]
-> cc1: all warnings being treated as errors
 
-It is clear from inspection that do_divide_error is only called with
-TRAP_DIVZERO_ERROR or TRAP_DIVOVF_ERROR, as that is the way
-set_exception_table_vec is called.  So let gcc know the other cases
-should not be considered by returning in all other cases.
+On 05/29/2018 10:49 AM, Kees Cook wrote:
+> On Tue, May 29, 2018 at 5:38 AM, Prarit Bhargava <prarit@redhat.com> wrote:
+>> After 43838a23a05f ("random: fix crng_ready() test") early boot calls
+>> to get_random_bytes() will warn on each cpu on x86 because the crng
+>> is not initialized.  For example,
+>>
+>> random: get_random_bytes called from start_kernel+0x8e/0x587 with crng_init=0
+>>
+>> x86 only uses get_random_bytes() for better randomization of the stack
+>> canary value so the warning is of no consequence.
+>>
+>> Export crng_ready() for x86 and test if the crng is initialized before
+>> calling get_random_bytes().
+> 
+> NAK. This leaves the stack canary with very little entropy. This needs
+> to pull from whatever pool is available, not skip it.
+> 
 
-This removes the warning and let's the code continue to build.
+Kees, in early boot no pool is available so the stack canary is initialized from
+the TSC.  Later in boot, the stack canary will use the the crng.
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Fixes: c65626c0cd4d ("signal/sh: Use force_sig_fault where appropriate")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
+The existing comment in the code (cut-off in the patch below) reads
 
-I am adding this fix to my tree to at least let the code build.
+        /*
+         * We both use the random pool and the current TSC as a source
+         * of randomness. The TSC only matters for very early init,
+         * there it already has some randomness on most systems. Later
+         * on during the bootup the random pool has true entropy too.
+         */
 
- arch/sh/kernel/traps_32.c | 3 +++
- 1 file changed, 3 insertions(+)
+ie) in early boot only TSC is okay, and late boot (when crng_ready() is true)
+the pool will be used.
 
-diff --git a/arch/sh/kernel/traps_32.c b/arch/sh/kernel/traps_32.c
-index 660a4bc17698..60709ad17fc7 100644
---- a/arch/sh/kernel/traps_32.c
-+++ b/arch/sh/kernel/traps_32.c
-@@ -602,6 +602,9 @@ asmlinkage void do_divide_error(unsigned long r4)
- 	case TRAP_DIVOVF_ERROR:
- 		code = FPE_INTOVF;
- 		break;
-+	default:
-+		/* Let gcc know unhandled cases don't make it past here */
-+		return;
- 	}
- 	force_sig_fault(SIGFPE, code, NULL, current);
- }
--- 
-2.14.1
+P.
+
+> -Kees
+> 
+>>
+>> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: "H. Peter Anvin" <hpa@zytor.com>
+>> Cc: x86@kernel.org
+>> Cc: "Theodore Ts'o" <tytso@mit.edu>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Rik van Riel <riel@redhat.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Philippe Ombredanne <pombredanne@nexb.com>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Cc: Prarit Bhargava <prarit@redhat.com>
+>> Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+>> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+>> ---
+>>  arch/x86/include/asm/stackprotector.h | 3 ++-
+>>  drivers/char/random.c                 | 5 ++++-
+>>  include/linux/random.h                | 1 +
+>>  3 files changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/stackprotector.h b/arch/x86/include/asm/stackprotector.h
+>> index 371b3a4af000..4e2223aa34fc 100644
+>> --- a/arch/x86/include/asm/stackprotector.h
+>> +++ b/arch/x86/include/asm/stackprotector.h
+>> @@ -72,7 +72,8 @@ static __always_inline void boot_init_stack_canary(void)
+>>          * there it already has some randomness on most systems. Later
+>>          * on during the bootup the random pool has true entropy too.
+>>          */
+>> -       get_random_bytes(&canary, sizeof(canary));
+>> +       if (crng_ready())
+>> +               get_random_bytes(&canary, sizeof(canary));
+>>         tsc = rdtsc();
+>>         canary += tsc + (tsc << 32UL);
+>>         canary &= CANARY_MASK;
+>> diff --git a/drivers/char/random.c b/drivers/char/random.c
+>> index cd888d4ee605..003091d104bf 100644
+>> --- a/drivers/char/random.c
+>> +++ b/drivers/char/random.c
+>> @@ -428,7 +428,10 @@ struct crng_state primary_crng = {
+>>   * its value (from 0->1->2).
+>>   */
+>>  static int crng_init = 0;
+>> -#define crng_ready() (likely(crng_init > 1))
+>> +int crng_ready(void)
+>> +{
+>> +       return likely(crng_init > 1);
+>> +}
+>>  static int crng_init_cnt = 0;
+>>  static unsigned long crng_global_init_time = 0;
+>>  #define CRNG_INIT_CNT_THRESH (2*CHACHA20_KEY_SIZE)
+>> diff --git a/include/linux/random.h b/include/linux/random.h
+>> index 2ddf13b4281e..45616513abd9 100644
+>> --- a/include/linux/random.h
+>> +++ b/include/linux/random.h
+>> @@ -196,4 +196,5 @@ static inline u32 next_pseudo_random32(u32 seed)
+>>         return seed * 1664525 + 1013904223;
+>>  }
+>>
+>> +extern int crng_ready(void);
+>>  #endif /* _LINUX_RANDOM_H */
+>> --
+>> 2.14.3
+>>
+> 
+> 
+> 
