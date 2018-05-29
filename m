@@ -1,68 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966334AbeE2THH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:07:07 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43279 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965311AbeE2THD (ORCPT
+        id S966171AbeE2TJM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:09:12 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55750 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965614AbeE2TJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:07:03 -0400
-X-Google-Smtp-Source: AB8JxZrBNh0lMuHKPIO+Azan73DMHb73fX6abINfv1i6y8xczkkYFw3HPikyfptESK5T5LZoG/w6rA==
-Date: Tue, 29 May 2018 12:06:59 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Benson Leung <bleung@chromium.org>
-Cc: Sultan Alsawaf <sultanxda@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/chrome: chromeos_laptop: fix touchpad button
- mapping on Celes
-Message-ID: <20180529190659.GA261828@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 29 May 2018 15:09:11 -0400
+X-Google-Smtp-Source: ADUXVKJUifOCwKVaTiAHxhfcz1I+jBpKa/7spLO7qqb0IaYS/WSpbqDg5RDAUocDydBGUKi37O/bJA==
+From: Thibaut Robert <thibaut.robert@gmail.com>
+To: Aditya Shankar <aditya.shankar@microchip.com>,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Thibaut Robert <thibaut.robert@gmail.com>
+Subject: [PATCH 1/1] staging: wilc1000: Use common structs to parse ip packets
+Date: Tue, 29 May 2018 21:08:39 +0200
+Message-Id: <20180529190839.12818-1-thibaut.robert@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Celes has newer touch controller (compared to the controllers used in
-older BayTrail-based devices) and so uses the same button mapping as
-Samus.
+Use structs ethhdr, iphdr and tcphdr instead of manual parsing in
+tcp_process.
+This commit fix handling of ip packets containing options.
+It also fixes the following sparse warning:
 
-This fixes the issue with mouse button being stuck in pressed state
-after the first click.
+drivers/staging/wilc1000//wilc_wlan.c:201:19: warning: cast to restricted __be16
 
-Reported-by: Sultan Alsawaf <sultanxda@gmail.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Thibaut Robert <thibaut.robert@gmail.com>
 ---
- drivers/platform/chrome/chromeos_laptop.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/staging/wilc1000/wilc_wlan.c | 44 +++++++++++-----------------
+ 1 file changed, 17 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/platform/chrome/chromeos_laptop.c b/drivers/platform/chrome/chromeos_laptop.c
-index 3cecf7933f751..24326eecd7876 100644
---- a/drivers/platform/chrome/chromeos_laptop.c
-+++ b/drivers/platform/chrome/chromeos_laptop.c
-@@ -620,10 +620,18 @@ static const struct dmi_system_id chromeos_laptop_dmi_table[] __initconst = {
- 		},
- 		.driver_data = (void *)&samus,
- 	},
-+	{
-+		.ident = "Samsung Chromebook 3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
-+		},
-+		.driver_data = (void *)&samus,
-+	},
- 	{
- 		/*
- 		 * Other Chromebooks with Atmel touch controllers:
--		 * - Celes, Winky (touchpad)
-+		 * - Winky (touchpad)
- 		 * - Clapper, Expresso, Rambi, Glimmer (touchscreen)
- 		 */
- 		.ident = "Other Chromebook",
+diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
+index d4ebbf67e50b..28c93f3f846e 100644
+--- a/drivers/staging/wilc1000/wilc_wlan.c
++++ b/drivers/staging/wilc1000/wilc_wlan.c
+@@ -1,4 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/if_ether.h>
++#include <linux/ip.h>
+ #include "wilc_wfi_netdevice.h"
+ #include "wilc_wlan_cfg.h"
+ 
+@@ -184,9 +186,9 @@ static inline int add_tcp_pending_ack(u32 ack, u32 session_index,
+ 
+ static inline void tcp_process(struct net_device *dev, struct txq_entry_t *tqe)
+ {
+-	u8 *eth_hdr_ptr;
++	const struct ethhdr *eth_hdr_ptr = (const struct ethhdr *)tqe->buffer;
++
+ 	u8 *buffer = tqe->buffer;
+-	unsigned short h_proto;
+ 	int i;
+ 	unsigned long flags;
+ 	struct wilc_vif *vif;
+@@ -197,37 +199,25 @@ static inline void tcp_process(struct net_device *dev, struct txq_entry_t *tqe)
+ 
+ 	spin_lock_irqsave(&wilc->txq_spinlock, flags);
+ 
+-	eth_hdr_ptr = &buffer[0];
+-	h_proto = ntohs(*((unsigned short *)&eth_hdr_ptr[12]));
+-	if (h_proto == ETH_P_IP) {
+-		u8 *ip_hdr_ptr;
+-		u8 protocol;
+-
+-		ip_hdr_ptr = &buffer[ETHERNET_HDR_LEN];
+-		protocol = ip_hdr_ptr[9];
++	if (eth_hdr_ptr->h_proto == htons(ETH_P_IP)) {
++		const struct iphdr *ip_hdr_ptr = (const struct iphdr *)
++		  (buffer + ETH_HLEN);
+ 
+-		if (protocol == 0x06) {
+-			u8 *tcp_hdr_ptr;
++		if (ip_hdr_ptr->protocol == IPPROTO_TCP) {
++			const struct tcphdr *tcp_hdr_ptr;
+ 			u32 IHL, total_length, data_offset;
+ 
+-			tcp_hdr_ptr = &ip_hdr_ptr[IP_HDR_LEN];
+-			IHL = (ip_hdr_ptr[0] & 0xf) << 2;
+-			total_length = ((u32)ip_hdr_ptr[2] << 8) +
+-					(u32)ip_hdr_ptr[3];
+-			data_offset = ((u32)tcp_hdr_ptr[12] & 0xf0) >> 2;
++			IHL = ip_hdr_ptr->ihl << 2;
++			tcp_hdr_ptr = (const struct tcphdr *)
++			  ((u8 *)ip_hdr_ptr + IHL);
++			total_length = ntohs(ip_hdr_ptr->tot_len);
++
++			data_offset = tcp_hdr_ptr->doff << 2;
+ 			if (total_length == (IHL + data_offset)) {
+ 				u32 seq_no, ack_no;
+ 
+-				seq_no = ((u32)tcp_hdr_ptr[4] << 24) +
+-					 ((u32)tcp_hdr_ptr[5] << 16) +
+-					 ((u32)tcp_hdr_ptr[6] << 8) +
+-					 (u32)tcp_hdr_ptr[7];
+-
+-				ack_no = ((u32)tcp_hdr_ptr[8] << 24) +
+-					 ((u32)tcp_hdr_ptr[9] << 16) +
+-					 ((u32)tcp_hdr_ptr[10] << 8) +
+-					 (u32)tcp_hdr_ptr[11];
+-
++				seq_no = ntohl(tcp_hdr_ptr->seq);
++				ack_no = ntohl(tcp_hdr_ptr->ack_seq);
+ 				for (i = 0; i < tcp_session; i++) {
+ 					u32 j = ack_session_info[i].seq_num;
+ 
 -- 
-2.17.0.921.gf22659ad46-goog
-
-
--- 
-Dmitry
+2.17.0
