@@ -1,288 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754854AbeE2HDw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:03:52 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35837 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754702AbeE2HDY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:03:24 -0400
-From: Vadim Pasternak <vadimp@mellanox.com>
-To: dvhart@infradead.org, andy.shevchenko@gmail.com,
-        gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com,
-        Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH v4 6/8] platform/mellanox: Introduce support for Mellanox register access driver
-Date: Tue, 29 May 2018 08:59:05 +0000
-Message-Id: <1527584347-167548-1-git-send-email-vadimp@mellanox.com>
-X-Mailer: git-send-email 2.1.4
+        id S1754767AbeE2HFN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:05:13 -0400
+Received: from verein.lst.de ([213.95.11.211]:53585 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754661AbeE2HFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:05:09 -0400
+Date: Tue, 29 May 2018 09:11:19 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Finn Thain <fthain@telegraphics.com.au>
+Cc: Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Christoph Hellwig <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>,
+        Joshua Thompson <funaho@jurai.org>, Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh
+        SONIC based ethernet
+Message-ID: <20180529071119.GB32615@lst.de>
+References: <1527378785-13326-1-git-send-email-linux@roeck-us.net> <alpine.LNX.2.21.1805271212480.9@nippy.intranet> <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com> <alpine.LNX.2.21.1805271547090.9@nippy.intranet> <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com> <alpine.LNX.2.21.1805281521420.10@nippy.intranet> <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com> <alpine.LNX.2.21.1805291047230.13@nippy.intranet> <b4f0d2d7-fcd5-b68f-0bc6-cd41c353aba7@gmail.com> <alpine.LNX.2.21.1805291524080.16@nippy.intranet>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LNX.2.21.1805291524080.16@nippy.intranet>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce new Mellanox platform driver to allow access to Mellanox
-programmable device register space trough sysfs interface.
-The driver purpose is to provide sysfs interface for user space for the
-registers essential for system control and monitoring.
-The sets of registers for sysfs access are supposed to be defined per
-system type bases and include the registers related to system resets
-operation, system reset causes monitoring and some kinds of mux selection.
+On Tue, May 29, 2018 at 03:38:23PM +1000, Finn Thain wrote:
+> On Tue, 29 May 2018, Michael Schmitz wrote:
+> 
+> > > 
+> > > Since an arch gets to apply limits in the dma ops it implements, why 
+> > > would arch code also have to set a limit in the form of default 
+> > > platform device masks? Powerpc seems to be the only arch that does 
+> > > this.
+> > 
+> > One of Christoph's recent patches removed most of arches' dma ops, 
+> > replacing them by one generic implementation instead. m68k was one of 
+> > the affected arches. I concede his patch series is experimental still 
+> > and not in mainline, but may be included at some time.
+> 
+> I found some patches here,
+> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/generic-dma-noncoherent.2
+> 
+> Looks like m68k_dma_alloc() gets renamed arch_dma_alloc() and the generic 
+> ops don't use the dma masks.
 
-Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
----
-v1->v2:
- Changed added by Vadim:
- - Change ---help--- to help in Kconfig, according to new requirements;
-v2->v3:
- Comments pointed out by Darren:
- - Remove conditional assignment per attribute mode type, because mode
-   will guard against not permitted access.
-   Verified by Vadim.
----
- drivers/platform/mellanox/Kconfig     |  11 ++
- drivers/platform/mellanox/Makefile    |   1 +
- drivers/platform/mellanox/mlxreg-io.c | 203 ++++++++++++++++++++++++++++++++++
- 3 files changed, 215 insertions(+)
- create mode 100644 drivers/platform/mellanox/mlxreg-io.c
+This is for the 'coherent' allocations, and literatelly nothing changes
+for those yet.
 
-diff --git a/drivers/platform/mellanox/Kconfig b/drivers/platform/mellanox/Kconfig
-index 591bccd..ddfae9fc 100644
---- a/drivers/platform/mellanox/Kconfig
-+++ b/drivers/platform/mellanox/Kconfig
-@@ -23,4 +23,15 @@ config MLXREG_HOTPLUG
- 	  This driver handles hot-plug events for the power suppliers, power
- 	  cables and fans on the wide range Mellanox IB and Ethernet systems.
- 
-+config MLXREG_IO
-+	tristate "Mellanox platform register access driver support"
-+	depends on REGMAP
-+	depends on HWMON
-+	help
-+	  This driver allows access to Mellanox programmable device register
-+	  space trough sysfs interface. The sets of registers for sysfs access
-+	  are defined per system type bases and includes the registers related
-+	  to system resets operation, system reset causes monitoring and some
-+	  kinds of mux selection.
-+
- endif # MELLANOX_PLATFORM
-diff --git a/drivers/platform/mellanox/Makefile b/drivers/platform/mellanox/Makefile
-index 7c8385e..57074d9c 100644
---- a/drivers/platform/mellanox/Makefile
-+++ b/drivers/platform/mellanox/Makefile
-@@ -4,3 +4,4 @@
- # Mellanox Platform-Specific Drivers
- #
- obj-$(CONFIG_MLXREG_HOTPLUG)	+= mlxreg-hotplug.o
-+obj-$(CONFIG_MLXREG_IO) += mlxreg-io.o
-diff --git a/drivers/platform/mellanox/mlxreg-io.c b/drivers/platform/mellanox/mlxreg-io.c
-new file mode 100644
-index 0000000..b85452f
---- /dev/null
-+++ b/drivers/platform/mellanox/mlxreg-io.c
-@@ -0,0 +1,203 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Mellanox register access driver
-+ *
-+ * Copyright (C) 2018 Mellanox Technologies
-+ * Copyright (C) 2018 Vadim Pasternak <vadimp@mellanox.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/hwmon.h>
-+#include <linux/hwmon-sysfs.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_data/mlxreg.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+/* Attribute parameters. */
-+#define MLXREG_IO_ATT_SIZE	10
-+#define MLXREG_IO_ATT_NUM	48
-+
-+/**
-+ * struct mlxreg_io_priv_data - driver's private data:
-+ *
-+ * @pdev: platform device;
-+ * @pdata: platform data;
-+ * @hwmon: hwmon device;
-+ * @mlxreg_io_attr: sysfs attributes array;
-+ * @mlxreg_io_dev_attr: sysfs sensor device attribute array;
-+ * @group: sysfs attribute group;
-+ * @groups: list of sysfs attribute group for hwmon registration;
-+ */
-+struct mlxreg_io_priv_data {
-+	struct platform_device *pdev;
-+	struct mlxreg_core_platform_data *pdata;
-+	struct device *hwmon;
-+	struct attribute *mlxreg_io_attr[MLXREG_IO_ATT_NUM + 1];
-+	struct sensor_device_attribute mlxreg_io_dev_attr[MLXREG_IO_ATT_NUM];
-+	struct attribute_group group;
-+	const struct attribute_group *groups[2];
-+};
-+
-+static ssize_t
-+mlxreg_io_attr_show(struct device *dev, struct device_attribute *attr,
-+		    char *buf)
-+{
-+	struct mlxreg_io_priv_data *priv = dev_get_drvdata(dev);
-+	int index = to_sensor_dev_attr(attr)->index;
-+	struct mlxreg_core_data *data = priv->pdata->data + index;
-+	u32 regval = 0;
-+	int ret;
-+
-+	ret = regmap_read(priv->pdata->regmap, data->reg, &regval);
-+	if (ret)
-+		goto access_error;
-+
-+	if (!data->bit)
-+		regval = !!(regval & ~data->mask);
-+
-+	return sprintf(buf, "%u\n", regval);
-+
-+access_error:
-+	return ret;
-+}
-+
-+static ssize_t
-+mlxreg_io_attr_store(struct device *dev, struct device_attribute *attr,
-+		     const char *buf, size_t len)
-+{
-+	struct mlxreg_io_priv_data *priv = dev_get_drvdata(dev);
-+	int index = to_sensor_dev_attr(attr)->index;
-+	struct mlxreg_core_data *data = priv->pdata->data + index;
-+	u32 val, regval;
-+	int ret;
-+
-+	ret = kstrtou32(buf, MLXREG_IO_ATT_SIZE, &val);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(priv->pdata->regmap, data->reg, &regval);
-+	if (ret)
-+		goto access_error;
-+
-+	regval &= data->mask;
-+
-+	val = !!val;
-+	if (val)
-+		regval |= ~data->mask;
-+	else
-+		regval &= data->mask;
-+
-+	ret = regmap_write(priv->pdata->regmap, data->reg, regval);
-+	if (ret)
-+		goto access_error;
-+
-+	return len;
-+
-+access_error:
-+	dev_err(&priv->pdev->dev, "Bus access error\n");
-+	return ret;
-+}
-+
-+static struct device_attribute mlxreg_io_devattr_rw = {
-+	.show	= mlxreg_io_attr_show,
-+	.store	= mlxreg_io_attr_store,
-+};
-+
-+static int mlxreg_io_attr_init(struct mlxreg_io_priv_data *priv)
-+{
-+	int i;
-+
-+	priv->group.attrs = devm_kzalloc(&priv->pdev->dev,
-+					 priv->pdata->counter *
-+					 sizeof(struct attribute *),
-+					 GFP_KERNEL);
-+	if (!priv->group.attrs)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < priv->pdata->counter; i++) {
-+		priv->mlxreg_io_attr[i] =
-+				&priv->mlxreg_io_dev_attr[i].dev_attr.attr;
-+		memcpy(&priv->mlxreg_io_dev_attr[i].dev_attr,
-+		       &mlxreg_io_devattr_rw, sizeof(struct device_attribute));
-+
-+		/* Set attribute name as a label. */
-+		priv->mlxreg_io_attr[i]->name =
-+				devm_kasprintf(&priv->pdev->dev, GFP_KERNEL,
-+					       priv->pdata->data[i].label);
-+
-+		if (!priv->mlxreg_io_attr[i]->name) {
-+			dev_err(&priv->pdev->dev, "Memory allocation failed for sysfs attribute %d.\n",
-+				i + 1);
-+			return -ENOMEM;
-+		}
-+
-+		priv->mlxreg_io_dev_attr[i].dev_attr.attr.mode =
-+						priv->pdata->data[i].mode;
-+		priv->mlxreg_io_dev_attr[i].dev_attr.attr.name =
-+					priv->mlxreg_io_attr[i]->name;
-+		priv->mlxreg_io_dev_attr[i].index = i;
-+		sysfs_attr_init(&priv->mlxreg_io_dev_attr[i].dev_attr.attr);
-+	}
-+
-+	priv->group.attrs = priv->mlxreg_io_attr;
-+	priv->groups[0] = &priv->group;
-+	priv->groups[1] = NULL;
-+
-+	return 0;
-+}
-+
-+static int mlxreg_io_probe(struct platform_device *pdev)
-+{
-+	struct mlxreg_io_priv_data *priv;
-+	int err;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->pdata = dev_get_platdata(&pdev->dev);
-+	if (!priv->pdata) {
-+		dev_err(&pdev->dev, "Failed to get platform data.\n");
-+		return -EINVAL;
-+	}
-+
-+	priv->pdev = pdev;
-+
-+	err = mlxreg_io_attr_init(priv);
-+	if (err) {
-+		dev_err(&priv->pdev->dev, "Failed to allocate attributes: %d\n",
-+			err);
-+		return err;
-+	}
-+
-+	priv->hwmon = devm_hwmon_device_register_with_groups(&pdev->dev,
-+							     "mlxreg_io",
-+							      priv,
-+							      priv->groups);
-+	if (IS_ERR(priv->hwmon)) {
-+		dev_err(&pdev->dev, "Failed to register hwmon device %ld\n",
-+			PTR_ERR(priv->hwmon));
-+		return PTR_ERR(priv->hwmon);
-+	}
-+
-+	dev_set_drvdata(&pdev->dev, priv);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver mlxreg_io_driver = {
-+	.driver = {
-+	    .name = "mlxreg-io",
-+	},
-+	.probe = mlxreg_io_probe,
-+};
-+
-+module_platform_driver(mlxreg_io_driver);
-+
-+MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
-+MODULE_DESCRIPTION("Mellanox regmap I/O access driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:mlxreg-io");
--- 
-2.1.4
+But for the mapping path this switches m68k to use the dma-direct
+path, wrapped by dma-noncoherent.  And these do check dev->dma_mask,
+although only really for sanity checking.
+
+Btw, can I get a review and testing for the above?  They aren't really
+experimental any more, and I'd like to move architectures over as soon
+as possible.
