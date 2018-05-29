@@ -1,233 +1,477 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937001AbeE2Q4H (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:56:07 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:33230 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935486AbeE2Q4E (ORCPT
+        id S965170AbeE2Q4X (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:56:23 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:33580 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936967AbeE2Q4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:56:04 -0400
-Subject: Re: [PATCH] cpupower : Fix header name to read idle state name
-To: Abhishek Goel <huntbag@linux.vnet.ibm.com>, trenn@suse.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: s1seetee@linux.vnet.ibm.com, Shuah Khan <shuah@kernel.org>
-References: <20180528110303.12860-1-huntbag@linux.vnet.ibm.com>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <bc47aebe-cfa4-6a33-b503-311e5088f33b@kernel.org>
-Date: Tue, 29 May 2018 10:55:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 29 May 2018 12:56:20 -0400
+Date: Tue, 29 May 2018 09:56:17 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, jdelvare@suse.com,
+        avifishman70@gmail.com, yuenn@google.com, brendanhiggins@google.com,
+        venture@google.com, joel@jms.id.au, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-pwm@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v1 2/2] hwmon: npcm-pwm: add NPCM7xx PWM driver
+Message-ID: <20180529165617.GD2162@roeck-us.net>
+References: <1527588141-18639-1-git-send-email-tmaimon77@gmail.com>
+ <1527588141-18639-3-git-send-email-tmaimon77@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180528110303.12860-1-huntbag@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527588141-18639-3-git-send-email-tmaimon77@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 05:03 AM, Abhishek Goel wrote:
-> The names of the idle states in the output of cpupower monitor command are
-> truncated to 4 characters. On POWER9, this creates ambiguity as the states
-> are named "stop0", "stop1", etc.
+On Tue, May 29, 2018 at 01:02:21PM +0300, Tomer Maimon wrote:
+> Add Nuvoton BMC NPCM7xx Pulse Width Modulation (PWM) driver.
 > 
-> root:~# cpupower monitor
->               |Idle_Stats
-> PKG |CORE|CPU | snoo | stop | stop | stop | stop | stop | stop
->    0|   0|   0|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  1.90
->    0|   0|   1|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
->    0|   0|   2|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
->    0|   0|   3|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
+> The Nuvoton BMC NPCM7xx has two identical PWM controller modules,
+> each module has four PWM controller outputs.
 > 
-> This patch modifies the output to print the state name that results in a
-> legible output. The names will be printed with atmost 1 padding in left.
-> 
-> root:~# cpupower monitor
->               | Idle_Stats
->  PKG|CORE| CPU|snooze|stop0L| stop0|stop1L| stop1|stop2L| stop2
->    0|   0|   0|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.72
->    0|   0|   1|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
->    0|   0|   2|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
->    0|   0|   3|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
-> 
-> This patch does not affect the output for intel.
-> Output for intel before applying the patch:
-> 
-> root:~# cpupower monitor
->     |Idle_Stats
-> CPU | POLL | C1-S | C1E- | C3-S | C6-S | C7s- | C8-S | C9-S | C10-
->    0|  0.00|  0.14|  0.39|  0.35|  7.41|  0.00| 17.67|  1.01| 70.03
->    2|  0.00|  0.19|  0.47|  0.10|  6.50|  0.00| 29.66|  2.17| 58.07
->    1|  0.00|  0.11|  0.50|  1.50|  9.11|  0.18| 18.19|  0.40| 66.63
->    3|  0.00|  0.67|  0.42|  0.03|  5.84|  0.00| 12.58|  0.77| 77.14
-> 
-> Output for intel after applying the patch:
-> 
-> root:~# cpupower monitor
->     | Idle_Stats
->  CPU| POLL | C1-S | C1E- | C3-S | C6-S | C7s- | C8-S | C9-S | C10-
->    0|  0.03|  0.33|  1.01|  0.27|  3.03|  0.00| 19.18|  0.00| 71.24
->    2|  0.00|  1.58|  0.58|  0.42|  8.55|  0.09| 21.11|  0.99| 63.32
->    1|  0.00|  1.26|  0.88|  0.43|  9.00|  0.02|  7.78|  4.65| 71.91
->    3|  0.00|  0.30|  0.42|  0.06| 13.62|  0.21| 30.29|  0.00| 52.45
-> 
-> Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+
+I don't see it guaranteed that all future NPCM7xx devices will be PWM
+controllers, much less that they will be compatible to the chip really
+supported here. NPCM750, I presume ? I would suggest name the driver
+accordingly.
+
+As a generic pwm driver, not specifically tied to a fan controller,
+this driver does not belong into hwmon. It should be added to the pwm
+subsystem. Copying the maintainer and mailing list.
+
+If the pwm chip is used to control fans, the existing pwm-fan driver can
+then be used to create the necessary mapping from pwm controls to fans.
+
+Guenter
+
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 > ---
+>  drivers/hwmon/Kconfig       |   6 +
+>  drivers/hwmon/Makefile      |   1 +
+>  drivers/hwmon/npcm7xx-pwm.c | 363 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 370 insertions(+)
+>  create mode 100644 drivers/hwmon/npcm7xx-pwm.c
 > 
-> Previous attempt was made by Seeteena Thoufeek. This is the patch list
-> link: https://patchwork.kernel.org/project/linux-pm/list/?submitter=
-> 172041&state=*&archive=both
-> 
->  .../utils/idle_monitor/cpuidle_sysfs.c        | 15 ++++++++
->  .../utils/idle_monitor/cpupower-monitor.c     | 35 +++++++++++--------
->  .../utils/idle_monitor/cpupower-monitor.h     |  9 +++++
->  3 files changed, 44 insertions(+), 15 deletions(-)
-> 
-> diff --git a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
-> index 5b3205f16217..5b8c4956ff9a 100644
-> --- a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
-> +++ b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
-> @@ -126,6 +126,20 @@ void fix_up_intel_idle_driver_name(char *tmp, int num)
->  	}
->  }
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index 6ec307c93ece..693ba09cff8e 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -1891,6 +1891,12 @@ config SENSORS_XGENE
+>  	  If you say yes here you get support for the temperature
+>  	  and power sensors for APM X-Gene SoC.
 >  
-> +#ifdef __powerpc__
-> +void map_power_idle_state_name(char *tmp)
+> +config SENSORS_NPCM7XX
+> +	tristate "Nuvoton NPCM7XX PWM driver"
+> +	help
+> +	  This driver provides support for Nuvoton NPCM7XX PWM
+> +	  controller.
+> +
+>  if ACPI
+>  
+>  comment "ACPI drivers"
+> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+> index e7d52a36e6c4..24aad895a3bb 100644
+> --- a/drivers/hwmon/Makefile
+> +++ b/drivers/hwmon/Makefile
+> @@ -174,6 +174,7 @@ obj-$(CONFIG_SENSORS_W83L786NG)	+= w83l786ng.o
+>  obj-$(CONFIG_SENSORS_WM831X)	+= wm831x-hwmon.o
+>  obj-$(CONFIG_SENSORS_WM8350)	+= wm8350-hwmon.o
+>  obj-$(CONFIG_SENSORS_XGENE)	+= xgene-hwmon.o
+> +obj-$(CONFIG_SENSORS_NPCM7XX)	+= npcm7xx-pwm.o
+>  
+>  obj-$(CONFIG_PMBUS)		+= pmbus/
+>  
+> diff --git a/drivers/hwmon/npcm7xx-pwm.c b/drivers/hwmon/npcm7xx-pwm.c
+> new file mode 100644
+> index 000000000000..6122ca82b94d
+> --- /dev/null
+> +++ b/drivers/hwmon/npcm7xx-pwm.c
+> @@ -0,0 +1,363 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2014-2018 Nuvoton Technology corporation.
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/device.h>
+> +#include <linux/clk.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/hwmon.h>
+> +#include <linux/hwmon-sysfs.h>
+> +#include <linux/sysfs.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/of_address.h>
+> +
+> +/* NPCM7XX PWM port base address */
+> +#define NPCM7XX_PWM_REG_PR		0x0
+> +#define NPCM7XX_PWM_REG_CSR		0x4
+> +#define NPCM7XX_PWM_REG_CR		0x8
+> +#define NPCM7XX_PWM_REG_CNRx(PORT)	(0xC + (12 * PORT))
+> +#define NPCM7XX_PWM_REG_CMRx(PORT)	(0x10 + (12 * PORT))
+> +#define NPCM7XX_PWM_REG_PDRx(PORT)	(0x14 + (12 * PORT))
+> +#define NPCM7XX_PWM_REG_PIER		0x3C
+> +#define NPCM7XX_PWM_REG_PIIR		0x40
+> +
+> +#define NPCM7XX_PWM_CTRL_CH0_MODE_BIT		BIT(3)
+> +#define NPCM7XX_PWM_CTRL_CH1_MODE_BIT		BIT(11)
+> +#define NPCM7XX_PWM_CTRL_CH2_MODE_BIT		BIT(15)
+> +#define NPCM7XX_PWM_CTRL_CH3_MODE_BIT		BIT(19)
+> +
+> +#define NPCM7XX_PWM_CTRL_CH0_INV_BIT		BIT(2)
+> +#define NPCM7XX_PWM_CTRL_CH1_INV_BIT		BIT(10)
+> +#define NPCM7XX_PWM_CTRL_CH2_INV_BIT		BIT(14)
+> +#define NPCM7XX_PWM_CTRL_CH3_INV_BIT		BIT(18)
+> +
+> +#define NPCM7XX_PWM_CTRL_CH0_EN_BIT		BIT(0)
+> +#define NPCM7XX_PWM_CTRL_CH1_EN_BIT		BIT(8)
+> +#define NPCM7XX_PWM_CTRL_CH2_EN_BIT		BIT(12)
+> +#define NPCM7XX_PWM_CTRL_CH3_EN_BIT		BIT(16)
+> +
+> +/* Define the maximum PWM channel number */
+> +#define NPCM7XX_PWM_MAX_CHN_NUM			8
+> +#define NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE	4
+> +#define NPCM7XX_PWM_MAX_MODULES                 2
+> +
+> +/* Define the Counter Register, value = 100 for match 100% */
+> +#define NPCM7XX_PWM_COUNTER_DEFALUT_NUM		255
+> +#define NPCM7XX_PWM_COMPARATOR_DEFALUT_NUM	127
+> +
+> +#define NPCM7XX_PWM_COMPARATOR_MAX		255
+> +
+> +
+> +/* default all PWM channels PRESCALE2 = 1 */
+> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH0	0x4
+> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH1	0x40
+> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH2	0x400
+> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH3	0x4000
+> +
+> +#define PWM_OUTPUT_FREQ_25KHZ			25000
+> +#define PWN_CNT_DEFAULT				256
+> +#define MIN_PRESCALE1				2
+> +#define NPCM7XX_PWM_PRESCALE_SHIFT_CH01		8
+> +
+> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT	(NPCM7XX_PWM_PRESCALE2_DEFALUT_CH0 | \
+> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH1 | \
+> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH2 | \
+> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH3)
+> +
+> +#define NPCM7XX_PWM_CTRL_MODE_DEFALUT	(NPCM7XX_PWM_CTRL_CH0_MODE_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH1_MODE_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH2_MODE_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH3_MODE_BIT)
+> +
+> +#define NPCM7XX_PWM_CTRL_EN_DEFALUT	(NPCM7XX_PWM_CTRL_CH0_EN_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH1_EN_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH2_EN_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH3_EN_BIT)
+> +
+> +struct npcm7xx_pwm_data {
+> +	unsigned long clk_freq;
+> +	void __iomem *pwm_base[NPCM7XX_PWM_MAX_MODULES];
+> +	struct mutex npcm7xx_pwm_lock[NPCM7XX_PWM_MAX_CHN_NUM];
+> +};
+> +
+> +static const struct of_device_id pwm_dt_id[];
+> +
+> +static int npcm7xx_pwm_config_set(struct npcm7xx_pwm_data *data, int channel,
+> +				  u16 val)
 > +{
-> +	if (!strncmp(tmp, "stop0_lite", CSTATE_NAME_LEN))
-> +		strcpy(tmp, "stop0L");
-> +	else if (!strncmp(tmp, "stop1_lite", CSTATE_NAME_LEN))
-> +		strcpy(tmp, "stop1L");
-> +	else if (!strncmp(tmp, "stop2_lite", CSTATE_NAME_LEN))
-> +		strcpy(tmp, "stop2L");
+> +	u32 PWMChannel = (channel % NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
+> +	u32 n_module = (channel / NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
+> +	u32 u32TmpBuf = 0, ctrl_en_bit;
+> +
+> +	/*
+> +	 * Config PWM Comparator register for setting duty cycle
+> +	 */
+> +	if (val < 0 || val > NPCM7XX_PWM_COMPARATOR_MAX)
+> +		return -EINVAL;
+> +
+> +	/* write new CMR value  */
+> +	iowrite32(val, data->pwm_base[n_module] +
+> +		  NPCM7XX_PWM_REG_CMRx(PWMChannel));
+> +
+> +	u32TmpBuf = ioread32(data->pwm_base[n_module] + NPCM7XX_PWM_REG_CR);
+> +
+> +	switch (PWMChannel) {
+> +	case 0:
+> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH0_EN_BIT;
+> +		break;
+> +	case 1:
+> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH1_EN_BIT;
+> +		break;
+> +	case 2:
+> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH2_EN_BIT;
+> +		break;
+> +	case 3:
+> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH3_EN_BIT;
+> +		break;
+> +	default:
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (val == 0)
+> +		/* Disable PWM */
+> +		u32TmpBuf &= ~(ctrl_en_bit);
+> +	else
+> +		/* Enable PWM */
+> +		u32TmpBuf |= ctrl_en_bit;
+> +
+> +	mutex_lock(&data->npcm7xx_pwm_lock[n_module]);
+> +	iowrite32(u32TmpBuf, data->pwm_base[n_module] + NPCM7XX_PWM_REG_CR);
+> +	mutex_unlock(&data->npcm7xx_pwm_lock[n_module]);
+> +
+> +	return 0;
 > +}
-> +#else
-> +void map_power_idle_state_name(char *tmp) { }
-> +#endif
 > +
->  static struct cpuidle_monitor *cpuidle_register(void)
->  {
->  	int num;
-> @@ -145,6 +159,7 @@ static struct cpuidle_monitor *cpuidle_register(void)
->  		if (tmp == NULL)
->  			continue;
->  
-> +		map_power_idle_state_name(tmp);
->  		fix_up_intel_idle_driver_name(tmp, num);
->  		strncpy(cpuidle_cstates[num].name, tmp, CSTATE_NAME_LEN - 1);
->  		free(tmp);
-> diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
-> index 05f953f0f0a0..051da0a7c454 100644
-> --- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
-> +++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
-> @@ -70,36 +70,43 @@ void print_n_spaces(int n)
->  		printf(" ");
->  }
->  
-> -/* size of s must be at least n + 1 */
-> +/*s is filled with left and right spaces
-> + *to make its length atleast n+1
-> + */
->  int fill_string_with_spaces(char *s, int n)
->  {
-> +	char *temp;
->  	int len = strlen(s);
-> -	if (len > n)
+> +static int npcm7xx_read_pwm(struct device *dev, u32 attr, int channel,
+> +			     long *val)
+> +{
+> +	struct npcm7xx_pwm_data *data = dev_get_drvdata(dev);
+> +	u32 PWMChannel = (channel % NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
+> +	u32 n_module = (channel / NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
 > +
-> +	if (len >= n)
->  		return -1;
+> +	if (IS_ERR(data))
+> +		return PTR_ERR(data);
 > +
-> +	temp = malloc(sizeof(char) * (n+1));
->  	for (; len < n; len++)
->  		s[len] = ' ';
->  	s[len] = '\0';
-> +	snprintf(temp, n+1, " %s", s);
-> +	strcpy(s, temp);
-> +	free(temp);
->  	return 0;
->  }
->  
-> +#define MAX_COL_WIDTH 6
->  void print_header(int topology_depth)
->  {
->  	int unsigned mon;
->  	int state, need_len;
->  	cstate_t s;
->  	char buf[128] = "";
-> -	int percent_width = 4;
->  
->  	fill_string_with_spaces(buf, topology_depth * 5 - 1);
->  	printf("%s|", buf);
->  
->  	for (mon = 0; mon < avail_monitors; mon++) {
-> -		need_len = monitors[mon]->hw_states_num * (percent_width + 3)
-> +		need_len = monitors[mon]->hw_states_num * (MAX_COL_WIDTH + 1)
->  			- 1;
-> -		if (mon != 0) {
-> -			printf("|| ");
-> -			need_len--;
-> -		}
-> +		if (mon != 0)
-> +			printf("||");
->  		sprintf(buf, "%s", monitors[mon]->name);
->  		fill_string_with_spaces(buf, need_len);
->  		printf("%s", buf);
-> @@ -107,23 +114,21 @@ void print_header(int topology_depth)
->  	printf("\n");
->  
->  	if (topology_depth > 2)
-> -		printf("PKG |");
-> +		printf(" PKG|");
->  	if (topology_depth > 1)
->  		printf("CORE|");
->  	if (topology_depth > 0)
-> -		printf("CPU |");
-> +		printf(" CPU|");
->  
->  	for (mon = 0; mon < avail_monitors; mon++) {
->  		if (mon != 0)
-> -			printf("|| ");
-> -		else
-> -			printf(" ");
-> +			printf("||");
->  		for (state = 0; state < monitors[mon]->hw_states_num; state++) {
->  			if (state != 0)
-> -				printf(" | ");
-> +				printf("|");
->  			s = monitors[mon]->hw_states[state];
->  			sprintf(buf, "%s", s.name);
-> -			fill_string_with_spaces(buf, percent_width);
-> +			fill_string_with_spaces(buf, MAX_COL_WIDTH);
->  			printf("%s", buf);
->  		}
->  		printf(" ");
-> diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
-> index 9e43f3371fbc..2ae50b499e0a 100644
-> --- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
-> +++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
-> @@ -15,7 +15,16 @@
->  
->  #define MONITORS_MAX 20
->  #define MONITOR_NAME_LEN 20
+> +	switch (attr) {
+> +	case hwmon_pwm_input:
+> +		*val = (long)ioread32(data->pwm_base[n_module] +
+> +				      NPCM7XX_PWM_REG_CMRx(PWMChannel));
+> +		return 0;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
 > +
-> +/* CSTATE_NAME_LEN is limited by header field width defined
-> + * in cpupower-monitor.c. Header field width is defined to be
-> + * sum of percent width and two spaces for padding.
-> + */
-> +#ifdef __powerpc__
-> +#define CSTATE_NAME_LEN 7
-> +#else
->  #define CSTATE_NAME_LEN 5
-> +#endif
->  #define CSTATE_DESC_LEN 60
->  
->  int cpu_count;
+> +static int npcm7xx_write_pwm(struct device *dev, u32 attr, int channel,
+> +			      long val)
+> +{
+> +	struct npcm7xx_pwm_data *data = dev_get_drvdata(dev);
+> +	int err = 0;
+> +
+> +	switch (attr) {
+> +	case hwmon_pwm_input:
+> +		err = npcm7xx_pwm_config_set(data, channel, (u16)val);
+> +		break;
+> +	default:
+> +		err = -EOPNOTSUPP;
+> +		break;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +static umode_t npcm7xx_pwm_is_visible(const void *_data, u32 attr, int channel)
+> +{
+> +	switch (attr) {
+> +	case hwmon_pwm_input:
+> +		return 0644;
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +static int npcm7xx_read(struct device *dev, enum hwmon_sensor_types type,
+> +			 u32 attr, int channel, long *val)
+> +{
+> +	switch (type) {
+> +	case hwmon_pwm:
+> +		return npcm7xx_read_pwm(dev, attr, channel, val);
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+> +static int npcm7xx_write(struct device *dev, enum hwmon_sensor_types type,
+> +			  u32 attr, int channel, long val)
+> +{
+> +	switch (type) {
+> +	case hwmon_pwm:
+> +		return npcm7xx_write_pwm(dev, attr, channel, val);
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+> +static umode_t npcm7xx_is_visible(const void *data,
+> +				   enum hwmon_sensor_types type,
+> +				   u32 attr, int channel)
+> +{
+> +	switch (type) {
+> +	case hwmon_pwm:
+> +		return npcm7xx_pwm_is_visible(data, attr, channel);
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +static const u32 npcm7xx_pwm_config[] = {
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	0
+> +};
+> +
+> +static const struct hwmon_channel_info npcm7xx_pwm = {
+> +	.type = hwmon_pwm,
+> +	.config = npcm7xx_pwm_config,
+> +};
+> +
+> +static const struct hwmon_channel_info *npcm7xx_info[] = {
+> +	&npcm7xx_pwm,
+> +	NULL
+> +};
+> +
+> +static const struct hwmon_ops npcm7xx_hwmon_ops = {
+> +	.is_visible = npcm7xx_is_visible,
+> +	.read = npcm7xx_read,
+> +	.write = npcm7xx_write,
+> +};
+> +
+> +static const struct hwmon_chip_info npcm7xx_chip_info = {
+> +	.ops = &npcm7xx_hwmon_ops,
+> +	.info = npcm7xx_info,
+> +};
+> +
+> +static int npcm7xx_pwm_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct npcm7xx_pwm_data *data;
+> +	struct resource res[NPCM7XX_PWM_MAX_MODULES];
+> +	struct device *hwmon;
+> +	struct clk *clk;
+> +	int m, ch, res_cnt, ret;
+> +	u32 Prescale_val, output_freq;
+> +
+> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	for (res_cnt = 0; res_cnt < NPCM7XX_PWM_MAX_MODULES  ; res_cnt++) {
+> +		ret = of_address_to_resource(dev->of_node, res_cnt,
+> +					     &res[res_cnt]);
+> +		if (ret) {
+> +			pr_err("PWM of_address_to_resource fail ret %d\n",
+> +			       ret);
+> +			return -EINVAL;
+> +		}
+> +
+> +		data->pwm_base[res_cnt] =
+> +			devm_ioremap_resource(dev, &(res[res_cnt]));
+> +		pr_debug("pwm%d base is 0x%08X, res.start 0x%08X , size 0x%08X\n",
+> +			 res_cnt, (u32)data->pwm_base[res_cnt],
+> +			 res[res_cnt].start, resource_size(&(res[res_cnt])));
+> +
+> +		if (!data->pwm_base[res_cnt]) {
+> +			pr_err("pwm probe failed: can't read pwm base address for resource %d.\n",
+> +			       res_cnt);
+> +			return -ENOMEM;
+> +		}
+> +
+> +		mutex_init(&data->npcm7xx_pwm_lock[res_cnt]);
+> +	}
+> +
+> +	clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(clk))
+> +		return -ENODEV;
+> +
+> +	data->clk_freq = clk_get_rate(clk);
+> +
+> +	/* Adjust NPCM7xx PWMs output frequency to ~25Khz */
+> +	output_freq = data->clk_freq / PWN_CNT_DEFAULT;
+> +	Prescale_val = DIV_ROUND_CLOSEST(output_freq, PWM_OUTPUT_FREQ_25KHZ);
+> +
+> +	/* If Prescale_val = 0, then the prescale output clock is stopped */
+> +	if (Prescale_val < MIN_PRESCALE1)
+> +		Prescale_val = MIN_PRESCALE1;
+> +	/*
+> +	 * Prescale_val need to decrement in one because in the PWM Prescale
+> +	 * register the Prescale value increment by one
+> +	 */
+> +	Prescale_val--;
+> +
+> +	/* Setting PWM Prescale Register value register to both modules */
+> +	Prescale_val |= (Prescale_val << NPCM7XX_PWM_PRESCALE_SHIFT_CH01);
+> +
+> +	for (m = 0; m < NPCM7XX_PWM_MAX_MODULES  ; m++) {
+> +		iowrite32(Prescale_val,
+> +			  data->pwm_base[m] + NPCM7XX_PWM_REG_PR);
+> +		iowrite32(NPCM7XX_PWM_PRESCALE2_DEFALUT,
+> +			  data->pwm_base[m] + NPCM7XX_PWM_REG_CSR);
+> +		iowrite32(NPCM7XX_PWM_CTRL_MODE_DEFALUT,
+> +			  data->pwm_base[m] + NPCM7XX_PWM_REG_CR);
+> +
+> +		for (ch = 0; ch < NPCM7XX_PWM_MAX_CHN_NUM; ch++) {
+> +			iowrite32(NPCM7XX_PWM_COUNTER_DEFALUT_NUM,
+> +				  data->pwm_base[m] + NPCM7XX_PWM_REG_CNRx(ch));
+> +			iowrite32(NPCM7XX_PWM_COMPARATOR_DEFALUT_NUM,
+> +				  data->pwm_base[m] + NPCM7XX_PWM_REG_CMRx(ch));
+> +		}
+> +
+> +		iowrite32(NPCM7XX_PWM_CTRL_MODE_DEFALUT |
+> +			  NPCM7XX_PWM_CTRL_EN_DEFALUT,
+> +			  data->pwm_base[m] + NPCM7XX_PWM_REG_CR);
+> +	}
+> +
+> +	hwmon = devm_hwmon_device_register_with_info(dev, "npcm7xx_pwm", data,
+> +						     &npcm7xx_chip_info, NULL);
+> +
+> +	if (IS_ERR(hwmon)) {
+> +		pr_err("PWM Driver failed - devm_hwmon_device_register_with_groups failed\n");
+> +		return PTR_ERR(hwmon);
+> +	}
+> +
+> +	pr_info("NPCM7XX PWM Driver probed, PWM output Freq %dHz\n",
+> +		output_freq / ((Prescale_val & 0xf) + 1));
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id of_pwm_match_table[] = {
+> +	{ .compatible = "nuvoton,npcm750-pwm", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, of_pwm_match_table);
+> +
+> +static struct platform_driver npcm7xx_pwm_driver = {
+> +	.probe		= npcm7xx_pwm_probe,
+> +	.driver		= {
+> +		.name	= "npcm7xx_pwm",
+> +		.of_match_table = of_pwm_match_table,
+> +	},
+> +};
+> +
+> +module_platform_driver(npcm7xx_pwm_driver);
+> +
+> +MODULE_DESCRIPTION("Nuvoton NPCM7XX PWM Driver");
+> +MODULE_AUTHOR("Tomer Maimon <tomer.maimon@nuvoton.com>");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.14.1
 > 
-
-Thanks for the patch. Applied to 
-
-git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git cpupower
-for 4.18-rc1
-
-thanks,
--- Shuah
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
