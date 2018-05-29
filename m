@@ -1,154 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932703AbeE2JX1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:23:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49409 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932434AbeE2JXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:23:19 -0400
-Date: Tue, 29 May 2018 11:23:16 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/3] drm/panel: Add Ilitek ILI9881c panel driver
-Message-ID: <20180529092316.twbwhjqutvnzzfse@flea>
-References: <cover.0c9a2cb0b38deb7304c60c507f45cf50352b752a.1525447375.git-series.maxime.ripard@bootlin.com>
- <e9348b12b59e6236a7965ceba94011a1e5b72720.1525447375.git-series.maxime.ripard@bootlin.com>
- <CACRpkdY+W02YfJb1zswy40Q0TGKupCFEG7=w78_A3VmFJ97GaA@mail.gmail.com>
+        id S932757AbeE2JXq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:23:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35781 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932434AbeE2JXm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 05:23:42 -0400
+Subject: Re: [PATCH] mac80211_hwsim: add error check to call to
+ rhashtable_init
+To: Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180529091412.8530-1-colin.king@canonical.com>
+ <1527585428.6955.7.camel@sipsolutions.net>
+From: Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c42f3558-a126-5b68-8203-b937998ec8db@canonical.com>
+Date: Tue, 29 May 2018 10:23:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <CACRpkdY+W02YfJb1zswy40Q0TGKupCFEG7=w78_A3VmFJ97GaA@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <1527585428.6955.7.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
-
-On Fri, May 11, 2018 at 05:54:27PM +0200, Linus Walleij wrote:
-> Hi Maxime,
+On 29/05/18 10:17, Johannes Berg wrote:
+> On Tue, 2018-05-29 at 10:14 +0100, Colin King wrote:
+>>
+>> @@ -3573,7 +3573,9 @@ static int __init init_mac80211_hwsim(void)
+>>  	hwsim_wq = alloc_workqueue("hwsim_wq", 0, 0);
+>>  	if (!hwsim_wq)
+>>  		return -ENOMEM;
+>> -	rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
+>> +	err = rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
+>> +	if (err)
+>> +		return err;
 > 
-> sorry that noone had much time to look at the driver.
-> But I can help out, hopefully.
+> That's missing a workqueue free, but I can fix that while applying if
+> you prefer.
 
-Thanks for your feedback :)
-
-> On Fri, May 4, 2018 at 5:23 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+Please do. Thanks
 > 
-> > The LHR050H41 panel is the panel shipped with the BananaPi M2-Magic, and is
-> > based on the Ilitek ILI9881c Controller. Add a driver for it, modelled
-> > after the other Ilitek controller drivers.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> johannes
 > 
-> Nice, I have some experience with those.
-> 
-> > +config DRM_PANEL_ILITEK_ILI9881C
-> > +       tristate "Ilitek ILI9881C-based panels"
-> > +       depends on OF
-> > +       depends on DRM_MIPI_DSI
-> > +       depends on BACKLIGHT_CLASS_DEVICE
-> 
-> If it absolutely needs DRM_MIPI_DSI and
-> BACKLIGHT_CLASS_DEVICE it maybe you should
-> be more helpful to the user to just select it?
-> 
-> Depending on OF is fine, that is more of a platform
-> property.
-
-All the other panels in this file seems to be using a depends on for
-these two, so I'd rather remain consistent on this.
-
-> > +struct ili9881c {
-> > +       struct drm_panel        panel;
-> > +       struct mipi_dsi_device  *dsi;
-> > +
-> > +       struct backlight_device *backlight;
-> > +       struct gpio_desc        *power;
-> 
-> Should this not be modeled using a fixed regulator instead?
-
-Probably, yes. On my board it's a GPIO that goes through the
-connector, but it seems like the controller itself takes a regulator,
-so there's probably a GPIO-controlled regulator on the display PCB
-somewhere. I'll change it.
-
-> > +static const struct ili9881c_instr ili9881c_init[] = {
-> > +       ILI9881C_SWITCH_PAGE_INSTR(3),
-> > +       ILI9881C_COMMAND_INSTR(0x01, 0x00),
-> > +       ILI9881C_COMMAND_INSTR(0x02, 0x00),
-> > +       ILI9881C_COMMAND_INSTR(0x03, 0x73),
-> > +       ILI9881C_COMMAND_INSTR(0x04, 0x03),
-> > +       ILI9881C_COMMAND_INSTR(0x05, 0x00),
-> > +       ILI9881C_COMMAND_INSTR(0x06, 0x06),
-> > +       ILI9881C_COMMAND_INSTR(0x07, 0x06),
-> (...)
-> 
-> This is a bit hard to understand to say the least.
-
-I know :/
-
-> If this comes from a datasheet some more elaborate construction of
-> the commands would be nice, maybe using some #defines?
-> 
-> If this just comes from some code drop or reverse engineering,
-> OK bad luck, I can live with it :)
-
-This comes from a code drop (or rather, an obscure initialisation
-sequence coming straight from the vendor without any documentation or
-comment associated to it).
-
-> It looks a bit like you're uploading a small firmware.
-> 
-> > +static int ili9881c_switch_page(struct ili9881c *ctx, u8 page)
-> > +{
-> > +       u8 buf[4] = { 0xff, 0x98, 0x81, page };
-> 
-> That is also a bit unclear wrt what is going on.
-
-My understanding is that the controller maps some registers (that
-might be accessible through other buses if the controller is setup to
-use something other than DCS) to DCS commands. Since there's more
-commands than DCS would allow, it's setup in several pages, with each
-pages having its own set of commands, and the page 0 accepting the
-usual standard DCS commands.
-
-It really doesn't look to me like a firmware, but just a poorly
-documented initialisation sequence.. I'll add a comment
-
-> > +static const struct drm_display_mode default_mode = {
-> > +       .clock          = 62000,
-> > +       .vrefresh       = 60,
-> > +
-> > +       .hdisplay       = 720,
-> > +       .hsync_start    = 720 + 10,
-> > +       .hsync_end      = 720 + 10 + 20,
-> > +       .htotal         = 720 + 10 + 20 + 30,
-> > +
-> > +       .vdisplay       = 1280,
-> > +       .vsync_start    = 1280 + 10,
-> > +       .vsync_end      = 1280 + 10 + 10,
-> > +       .vtotal         = 1280 + 10 + 10 + 20,
-> > +};
-> 
-> Is that the default mode for this Ilitek device or just for the
-> BananaPi? If it is the latter it should be named
-> bananapi_default_mode or something so as not to confuse
-> the next user of this driver.
-
-I'll do it, thanks!
-Maxime
-
--- 
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
