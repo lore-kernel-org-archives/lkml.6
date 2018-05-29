@@ -1,155 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935816AbeE2QSF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:18:05 -0400
-Received: from mga05.intel.com ([192.55.52.43]:44429 "EHLO mga05.intel.com"
+        id S936515AbeE2QTR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:19:17 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:44023 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934877AbeE2QSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:18:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
-   d="scan'208";a="43701136"
-Date: Tue, 29 May 2018 09:20:58 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux-foundation.org, LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Jean Delvare <khali@linux-fr.org>,
-        Christoph Hellwig <hch@infradead.org>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v5 15/23] iommu: handle page response timeout
-Message-ID: <20180529092058.1942b223@jacob-builder>
-In-Reply-To: <5AF93E3A.2040902@linux.intel.com>
-References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1526072055-86990-16-git-send-email-jacob.jun.pan@linux.intel.com>
-        <5AF93E3A.2040902@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S934877AbeE2QTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 12:19:16 -0400
+Message-Id: <2e937890abac10677aae3c1e345dd934a6794c37.1527610536.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 1/3] powerpc/time: inline arch_vtime_task_switch()
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Tue, 29 May 2018 16:19:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 May 2018 15:43:54 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+arch_vtime_task_switch() is a small function which is called
+only from vtime_common_task_switch(), so it is worth inlining
 
-> Hi,
-> 
-> On 05/12/2018 04:54 AM, Jacob Pan wrote:
-> > When IO page faults are reported outside IOMMU subsystem, the page
-> > request handler may fail for various reasons. E.g. a guest received
-> > page requests but did not have a chance to run for a long time. The
-> > irresponsive behavior could hold off limited resources on the
-> > pending device.
-> > There can be hardware or credit based software solutions as
-> > suggested in the PCI ATS Ch-4. To provide a basic safty net this
-> > patch introduces a per device deferrable timer which monitors the
-> > longest pending page fault that requires a response. Proper action
-> > such as sending failure response code could be taken when timer
-> > expires but not included in this patch. We need to consider the
-> > life cycle of page groupd ID to prevent confusion with reused group
-> > ID by a device. For now, a warning message provides clue of such
-> > failure.
-> >
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-> > ---
-> >  drivers/iommu/iommu.c | 53
-> > +++++++++++++++++++++++++++++++++++++++++++++++++++
-> > include/linux/iommu.h |  4 ++++ 2 files changed, 57 insertions(+)
-> >
-> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> > index 02fed3e..1f2f49e 100644
-> > --- a/drivers/iommu/iommu.c
-> > +++ b/drivers/iommu/iommu.c
-> > @@ -827,6 +827,37 @@ int iommu_group_unregister_notifier(struct
-> > iommu_group *group, }
-> >  EXPORT_SYMBOL_GPL(iommu_group_unregister_notifier);
-> >  
-> > +static void iommu_dev_fault_timer_fn(struct timer_list *t)
-> > +{
-> > +	struct iommu_fault_param *fparam = from_timer(fparam, t,
-> > timer);
-> > +	struct iommu_fault_event *evt;
-> > +
-> > +	u64 now;
-> > +
-> > +	now = get_jiffies_64();
-> > +
-> > +	/* The goal is to ensure driver or guest page fault
-> > handler(via vfio)
-> > +	 * send page response on time. Otherwise, limited queue
-> > resources
-> > +	 * may be occupied by some irresponsive guests or drivers.
-> > +	 * When per device pending fault list is not empty, we
-> > periodically checks
-> > +	 * if any anticipated page response time has expired.
-> > +	 *
-> > +	 * TODO:
-> > +	 * We could do the following if response time expires:
-> > +	 * 1. send page response code FAILURE to all pending PRQ
-> > +	 * 2. inform device driver or vfio
-> > +	 * 3. drain in-flight page requests and responses for this
-> > device
-> > +	 * 4. clear pending fault list such that driver can
-> > unregister fault
-> > +	 *    handler(otherwise blocked when pending faults are
-> > present).
-> > +	 */
-> > +	list_for_each_entry(evt, &fparam->faults, list) {
-> > +		if (time_after64(now, evt->expire))
-> > +			pr_err("Page response time expired!, pasid
-> > %d gid %d exp %llu now %llu\n",
-> > +				evt->pasid,
-> > evt->page_req_group_id, evt->expire, now);
-> > +	}
-> > +	mod_timer(t, now + prq_timeout);
-> > +}
-> > +  
-> 
-> This timer scheme is very rough.
-> 
-yes, the timer is a rough safety net for misbehaved PRQ handlers such
-as a guest.
-> The timer expires every 10 seconds (by default).
-> 
-> 0                   10                 20
-> 30                 40
-> +---------------+---------------+---------------+---------------+ ^
-> ^   ^  ^                        ^ |   |     |
-> |                         | F0 F1  F2 F3
-> (F1,F2,F3 will not be handled until here!)
-> 
-> F0, F1, F2, F3 are four page faults happens during [0, 10s) time
-> window. F1, F2, F3 timeout won't be handled until the timer expires
-> again at 20s. That means a fault might be pending there until about
-> (2 * prq_timeout) seconds later.
-> 
-correct. it could be 2x for the worst case. I should explain in
-comments.
-> Out of curiosity, Why not adding a timer in iommu_fault_event,
-> starting it in iommu_report_device_fault() and removing it in
-> iommu_page_response()?
-> 
-I thought about that also but since we are just trying to have a broad
-and rough safety net (in addition to potential HW mechanism or credit
-based solution), my thought was that having a per device timer is more
-economical than per event.
-Thanks for the in-depth check!
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v3: no change
+ v2: added a local pointer for get_accounting(prev) to avoid GCC to read it twice
 
-> Best regards,
-> Lu Baolu
-> 
-> 
->  [...]  
-> 
+ arch/powerpc/include/asm/cputime.h | 16 +++++++++++++++-
+ arch/powerpc/kernel/time.c         | 21 ---------------------
+ 2 files changed, 15 insertions(+), 22 deletions(-)
 
-[Jacob Pan]
+diff --git a/arch/powerpc/include/asm/cputime.h b/arch/powerpc/include/asm/cputime.h
+index 99b541865d8d..bc4903badb3f 100644
+--- a/arch/powerpc/include/asm/cputime.h
++++ b/arch/powerpc/include/asm/cputime.h
+@@ -47,9 +47,23 @@ static inline unsigned long cputime_to_usecs(const cputime_t ct)
+  * has to be populated in the new task
+  */
+ #ifdef CONFIG_PPC64
++#define get_accounting(tsk)	(&get_paca()->accounting)
+ static inline void arch_vtime_task_switch(struct task_struct *tsk) { }
+ #else
+-void arch_vtime_task_switch(struct task_struct *tsk);
++#define get_accounting(tsk)	(&task_thread_info(tsk)->accounting)
++/*
++ * Called from the context switch with interrupts disabled, to charge all
++ * accumulated times to the current process, and to prepare accounting on
++ * the next process.
++ */
++static inline void arch_vtime_task_switch(struct task_struct *prev)
++{
++	struct cpu_accounting_data *acct = get_accounting(current);
++	struct cpu_accounting_data *acct0 = get_accounting(prev);
++
++	acct->starttime = acct0->starttime;
++	acct->startspurr = acct0->startspurr;
++}
+ #endif
+ 
+ #endif /* __KERNEL__ */
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index 360e71d455cc..a3ed2eb99d88 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -163,12 +163,6 @@ EXPORT_SYMBOL(__cputime_usec_factor);
+ void (*dtl_consumer)(struct dtl_entry *, u64);
+ #endif
+ 
+-#ifdef CONFIG_PPC64
+-#define get_accounting(tsk)	(&get_paca()->accounting)
+-#else
+-#define get_accounting(tsk)	(&task_thread_info(tsk)->accounting)
+-#endif
+-
+ static void calc_cputime_factors(void)
+ {
+ 	struct div_result res;
+@@ -421,21 +415,6 @@ void vtime_flush(struct task_struct *tsk)
+ 	acct->softirq_time = 0;
+ }
+ 
+-#ifdef CONFIG_PPC32
+-/*
+- * Called from the context switch with interrupts disabled, to charge all
+- * accumulated times to the current process, and to prepare accounting on
+- * the next process.
+- */
+-void arch_vtime_task_switch(struct task_struct *prev)
+-{
+-	struct cpu_accounting_data *acct = get_accounting(current);
+-
+-	acct->starttime = get_accounting(prev)->starttime;
+-	acct->startspurr = get_accounting(prev)->startspurr;
+-}
+-#endif /* CONFIG_PPC32 */
+-
+ #else /* ! CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
+ #define calc_cputime_factors()
+ #endif
+-- 
+2.13.3
