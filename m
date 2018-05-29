@@ -1,55 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966814AbeE2TyI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:54:08 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:41844 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966628AbeE2Txu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:53:50 -0400
-Subject: Re: [PATCH 3.18 000/185] 3.18.111-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180528100050.700971285@linuxfoundation.org>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <e965f827-c739-93de-846e-9a5b07c416c1@kernel.org>
-Date: Tue, 29 May 2018 13:53:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180528100050.700971285@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S966872AbeE2TxE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:53:04 -0400
+Received: from mga06.intel.com ([134.134.136.31]:7360 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966530AbeE2TvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 15:51:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
+   d="scan'208";a="232924725"
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com
+Cc: Dave Jiang <dave.jiang@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
+Subject: [PATCH v2 2/7] dax: change bdev_dax_supported() to support boolean returns
+Date: Tue, 29 May 2018 13:51:01 -0600
+Message-Id: <20180529195106.14268-3-ross.zwisler@linux.intel.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 04:00 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 3.18.111 release.
-> There are 185 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed May 30 10:00:18 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.111-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+From: Dave Jiang <dave.jiang@intel.com>
 
-Compiled and booted on my test system. No dmesg regressions.
+The function return values are confusing with the way the function is
+named. We expect a true or false return value but it actually returns
+0/-errno.  This makes the code very confusing. Changing the return values
+to return a bool where if DAX is supported then return true and no DAX
+support returns false.
 
-thanks,
--- Shuah
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+---
+ drivers/dax/super.c | 16 ++++++++--------
+ fs/ext2/super.c     |  3 +--
+ fs/ext4/super.c     |  3 +--
+ fs/xfs/xfs_ioctl.c  |  4 ++--
+ fs/xfs/xfs_super.c  | 12 ++++++------
+ include/linux/dax.h |  8 ++++----
+ 6 files changed, 22 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 3943feb9a090..1d7bd96511f0 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -80,9 +80,9 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
+  * This is a library function for filesystems to check if the block device
+  * can be mounted with dax option.
+  *
+- * Return: negative errno if unsupported, 0 if supported.
++ * Return: true if supported, false if unsupported
+  */
+-int __bdev_dax_supported(struct block_device *bdev, int blocksize)
++bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ {
+ 	struct dax_device *dax_dev;
+ 	pgoff_t pgoff;
+@@ -95,21 +95,21 @@ int __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 	if (blocksize != PAGE_SIZE) {
+ 		pr_debug("%s: error: unsupported blocksize for dax\n",
+ 				bdevname(bdev, buf));
+-		return -EINVAL;
++		return false;
+ 	}
+ 
+ 	err = bdev_dax_pgoff(bdev, 0, PAGE_SIZE, &pgoff);
+ 	if (err) {
+ 		pr_debug("%s: error: unaligned partition for dax\n",
+ 				bdevname(bdev, buf));
+-		return err;
++		return false;
+ 	}
+ 
+ 	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+ 	if (!dax_dev) {
+ 		pr_debug("%s: error: device does not support dax\n",
+ 				bdevname(bdev, buf));
+-		return -EOPNOTSUPP;
++		return false;
+ 	}
+ 
+ 	id = dax_read_lock();
+@@ -121,7 +121,7 @@ int __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 	if (len < 1) {
+ 		pr_debug("%s: error: dax access failed (%ld)\n",
+ 				bdevname(bdev, buf), len);
+-		return len < 0 ? len : -EIO;
++		return false;
+ 	}
+ 
+ 	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED) && pfn_t_special(pfn)) {
+@@ -139,10 +139,10 @@ int __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 	} else {
+ 		pr_debug("%s: error: dax support not enabled\n",
+ 				bdevname(bdev, buf));
+-		return -EOPNOTSUPP;
++		return false;
+ 	}
+ 
+-	return 0;
++	return true;
+ }
+ EXPORT_SYMBOL_GPL(__bdev_dax_supported);
+ #endif
+diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+index 9627c3054b5c..c09289a42dc5 100644
+--- a/fs/ext2/super.c
++++ b/fs/ext2/super.c
+@@ -961,8 +961,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+ 	blocksize = BLOCK_SIZE << le32_to_cpu(sbi->s_es->s_log_block_size);
+ 
+ 	if (sbi->s_mount_opt & EXT2_MOUNT_DAX) {
+-		err = bdev_dax_supported(sb->s_bdev, blocksize);
+-		if (err) {
++		if (!bdev_dax_supported(sb->s_bdev, blocksize)) {
+ 			ext2_msg(sb, KERN_ERR,
+ 				"DAX unsupported by block device. Turning off DAX.");
+ 			sbi->s_mount_opt &= ~EXT2_MOUNT_DAX;
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 089170e99895..2e1622907f4a 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3732,8 +3732,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 					" that may contain inline data");
+ 			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX;
+ 		}
+-		err = bdev_dax_supported(sb->s_bdev, blocksize);
+-		if (err) {
++		if (!bdev_dax_supported(sb->s_bdev, blocksize)) {
+ 			ext4_msg(sb, KERN_ERR,
+ 				"DAX unsupported by block device. Turning off DAX.");
+ 			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX;
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 0effd46b965f..2c70a0a4f59f 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1103,8 +1103,8 @@ xfs_ioctl_setattr_dax_invalidate(
+ 	if (fa->fsx_xflags & FS_XFLAG_DAX) {
+ 		if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+ 			return -EINVAL;
+-		if (bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
+-				sb->s_blocksize) < 0)
++		if (!bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
++				sb->s_blocksize))
+ 			return -EINVAL;
+ 	}
+ 
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 62188c2a4c36..86915dc40eed 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1690,17 +1690,17 @@ xfs_fs_fill_super(
+ 		sb->s_flags |= SB_I_VERSION;
+ 
+ 	if (mp->m_flags & XFS_MOUNT_DAX) {
+-		int	error2 = 0;
++		bool rtdev_is_dax = false, datadev_is_dax;
+ 
+ 		xfs_warn(mp,
+ 		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
+ 
+-		error = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
+-				sb->s_blocksize);
++		datadev_is_dax = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
++			sb->s_blocksize);
+ 		if (mp->m_rtdev_targp)
+-			error2 = bdev_dax_supported(mp->m_rtdev_targp->bt_bdev,
+-					sb->s_blocksize);
+-		if (error && error2) {
++			rtdev_is_dax = bdev_dax_supported(
++				mp->m_rtdev_targp->bt_bdev, sb->s_blocksize);
++		if (!rtdev_is_dax && !datadev_is_dax) {
+ 			xfs_alert(mp,
+ 			"DAX unsupported by block device. Turning off DAX.");
+ 			mp->m_flags &= ~XFS_MOUNT_DAX;
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 2a4f7295c12b..c99692ddd4b5 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -64,8 +64,8 @@ static inline bool dax_write_cache_enabled(struct dax_device *dax_dev)
+ struct writeback_control;
+ int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
+ #if IS_ENABLED(CONFIG_FS_DAX)
+-int __bdev_dax_supported(struct block_device *bdev, int blocksize);
+-static inline int bdev_dax_supported(struct block_device *bdev, int blocksize)
++bool __bdev_dax_supported(struct block_device *bdev, int blocksize);
++static inline bool bdev_dax_supported(struct block_device *bdev, int blocksize)
+ {
+ 	return __bdev_dax_supported(bdev, blocksize);
+ }
+@@ -84,10 +84,10 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+ int dax_writeback_mapping_range(struct address_space *mapping,
+ 		struct block_device *bdev, struct writeback_control *wbc);
+ #else
+-static inline int bdev_dax_supported(struct block_device *bdev,
++static inline bool bdev_dax_supported(struct block_device *bdev,
+ 		int blocksize)
+ {
+-	return -EOPNOTSUPP;
++	return false;
+ }
+ 
+ static inline struct dax_device *fs_dax_get_by_host(const char *host)
+-- 
+2.14.3
