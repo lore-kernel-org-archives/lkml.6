@@ -1,74 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967796AbeE2WqC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:46:02 -0400
-Received: from a9-54.smtp-out.amazonses.com ([54.240.9.54]:42832 "EHLO
-        a9-54.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935806AbeE2WqB (ORCPT
+        id S937063AbeE2WzW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:55:22 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:42178 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935806AbeE2WzU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:46:01 -0400
-Date: Tue, 29 May 2018 22:46:00 +0000
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Thomas Garnier <thgarnie@google.com>
-cc: kernel-hardening@lists.openwall.com,
-        Skip Dave Hansen <dave.hansen@linux.intel.com>,
-        Skip Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Skip Tom Lendacky <thomas.lendacky@amd.com>,
-        Skip Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Skip Frederic Weisbecker <frederic@kernel.org>,
-        Skip Nicholas Piggin <npiggin@gmail.com>,
-        Skip Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Tejun Heo <tj@kernel.org>, Dennis Zhou <dennisszhou@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Borislav Petkov <bp@suse.de>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        Tue, 29 May 2018 18:55:20 -0400
+X-Google-Smtp-Source: ADUXVKKjthYRjsMDU2FO3eyZqoebeh8hpFX0FcEwW9zLmvnoXw++/zBEdSPIHBjsskpEBcztFzhe3g==
+Date: Tue, 29 May 2018 15:55:16 -0700
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: Coly Li <colyli@suse.de>, Ciaran Farrell <ciaran.farrell@suse.com>,
+        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+        linux-bcache@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Francis Deslauriers <francis.deslauriers@efficios.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v4 14/27] x86/percpu: Adapt percpu for PIE support
-In-Reply-To: <20180529221625.33541-15-thgarnie@google.com>
-Message-ID: <01000163ae145cac-5ac07b51-8f08-4da5-bb93-0238d59756d3-000000@email.amazonses.com>
-References: <20180529221625.33541-1-thgarnie@google.com> <20180529221625.33541-15-thgarnie@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tso Ted <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jonas Oberg <jonas@fsfe.org>
+Subject: Re: PostgreSQL licensed code on Linux
+Message-ID: <20180529225516.GH31712@garbanzo.do-not-panic.com>
+References: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
+ <20180529192643.GA3487@kmo-pixel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.05.29-54.240.9.54
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529192643.GA3487@kmo-pixel>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 May 2018, Thomas Garnier wrote:
+On Tue, May 29, 2018 at 03:26:43PM -0400, Kent Overstreet wrote:
+> On Tue, May 29, 2018 at 12:14:01PM -0700, Luis R. Rodriguez wrote:
+> > The question over future possible PostgreSQL licensed code on Linux came up
+> > to me recently. While doing some quick of digging around I found code
+> > already under such license it seems:
+> > 
+> > The file drivers/md/bcache/util.c has:
+> > 
+> > cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 318) /*
+> > cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 319)  * Portions
+> > Copyright (c) 1996-2001, PostgreSQL Global Development Group (Any
+> > cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 320)  * use
+> > permitted, subject to terms of PostgreSQL license; see.)
+> > 
+> > That seems to indicate that we've had already PostgreSQL licensed code on
+> > Linux since Kent's addition of bcache to Linux in 2013. The portion of code
+> > is rather small though, to me it seems to cover only crc_table[],
+> > bch_crc64_update(), and bch_crc64(). Four things:
+> 
+> Yep, it's just that code.
 
-> Perpcu uses a clever design where the .percu ELF section has a virtual
-> address of zero and the relocation code avoid relocating specific
-> symbols. It makes the code simple and easily adaptable with or without
-> SMP support.
->
-> This design is incompatible with PIE because generated code always try to
-> access the zero virtual address relative to the default mapping address.
+Great, thanks for the confirmation.
 
-We always access relative to the "segment register".
+> > a) This is the only code on Linux which seems to use PostgreSQL
+> > b) The language for license seem to be cut off, 'see.' seems incomplete,
+> > whereas typically it would point to a file with the full language text.
+> > c) We can only infer what portions of the file are under this license
+> > d) Even though some licenses claim to be GPL-Compatible, if possible we
+> > should dual license such with the GPL if possible (*)
+> > 
+> > If some folks are considering adding yet more code to Linux which is
+> > currently under a PostgreSQL license I figured reviewing the existing
+> > PostgreSQL code's use may be a good start to set precedent for future work.
+> > Since we already have at least one file with a PostgreSQL-sort-of boiler
+> > plate it at least sets the precedent we have already sort of dealt with
+> > PostgreSQL.
+> > 
+> > My recommendations:
+> > 
+> > As silly as it may be we should split out the PostgreSQL licensed code from
+> > drivers/md/bcache/util.c into its own file and while at it clarify the
+> > license.
+> > 
+> > If possible, if we can dual license this code with GPL it would be good as
+> > it would do two things:
+> > 
+> > 1) Removes any ambiguity in case of questions over GPL Compatibility in the
+> > future about the PostgreSQL license
+> > 
+> > 2) Other folks considering using PostgreSQL licensed code on Linux have a
+> > template they can use
+> 
+> Sounds good to me, I'll defer to your judgement since you have more experience
+> with these things than me :) Let me know if there's anything you need from me. I
+> never modified that code besides renaming the functions, but dual licensing
+> would be fine by me.
 
-You can already change the segment register to relocate the per cpu
-sections arbitrarily since all per cpu "addresses" are offsets relative to
-the segment register. I am not sure what exactly you are trying to
-accomplish here?
+IANAL, but my recommendations below.
 
-Maybe you need to explain it better?
+Trying to get all interested parties on Linux to agree PostgreSQL is
+indeed GPL-Compatible is certainly possible but may require a bit of
+legal billable hours on quite a bit of parts in the community. It takes
+a long time...
+
+Dual licensing would be preferred to avoid adding yet-another-license
+and possibile ambiguities over compatibility, however, that would
+require the original copyright holder's permission.
+
+You can poke if you'd like, however there are two other alternatives.
+
+a) License new code to GPL and add provenance notice for PostgreSQL
+	-  Useful if we know upstream PostgreSQL does not care for our
+	   own changes
+
+b) Dual license GPL/PostgreSQL with provenance notice for the original
+   PostgreSQL code.
+
+   	- Useful if we know PostgreSQL may be interested in reaping
+	  benefit of our own changes on Linux as well.
+
+a) and b) are possible if you made changes to the code (even space and
+style changes count). If you opt for a) our code on Linux and evolutions of it
+remains GPL, but would annotate provenance from the PostgreSQL license.
+It'd include language such as:
+
+-------------------------------------------------------------------------------
+<GPL header>
+
+  * This file incorporates work covered by the following copyright and
+  * permission notice: 
+
+<Original PostgreSQL header and copyrght notice>
+-------------------------------------------------------------------------------
+
+So for instance this strategy was done on the carl9170 device driver rewrite
+where Johannes took ISC licensed otus device driver from staging and
+rewrote the driver based on it, an example file with the notice:
+
+drivers/net/wireless/ath/carl9170/phy.c
+
+This followed the guidence previously provided by SFLC on dealing with
+this [0].
+
+But since there may be other code coming up we have to consider what the
+goals are.
+
+  - Is the plan to consider incorporating more PostgreSQL
+    licensed code on Linux? 
+
+  - Is the goal to also let the PostgreSQL reap benefit of our own
+    enhancements?
+    
+If so for both then, and we if we really dont' want to get a good set of
+company attorneys to say "PostgreSQL is GPL compatible", then b)
+should work. It would be something like:
+
+-------------------------------------------------------------------------------
+<GPL header>
+etc... later version; or, when distributed separately from the Linux kernel or      
+when incorporated into other software packages, subject to the license:    
+
+<latest PostgreSQL header and copyrght notice with your name>
+
+  * This file incorporates work covered by the following copyright and
+  * permission notice: 
+
+<Original PostgreSQL header and copyrght notice>
+-------------------------------------------------------------------------------
+
+[0] https://www.softwarefreedom.org/resources/2007/gpl-non-gpl-collaboration.html
+
+  Luis
