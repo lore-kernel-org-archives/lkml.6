@@ -1,78 +1,232 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967051AbeE2VYN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:24:13 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44401 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966914AbeE2VYK (ORCPT
+        id S967076AbeE2V0d (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:26:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47916 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966689AbeE2V0a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:24:10 -0400
-X-Google-Smtp-Source: ADUXVKI9NwvdHGa2monDn2GSETW87VyZX+uSrU3bW031QwTLVsuinWWAEB/IkddrMOJ4u9g/lJqmJ1J4jKzy9qR2N8Q=
+        Tue, 29 May 2018 17:26:30 -0400
+Date: Tue, 29 May 2018 14:25:10 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Dave Jiang <dave.jiang@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
+ boolean returns
+Message-ID: <20180529212510.GJ30110@magnolia>
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-3-ross.zwisler@linux.intel.com>
 MIME-Version: 1.0
-References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
- <20180529131014.18641-8-ricardo.ribalda@gmail.com> <CAHp75Ve_=euX83qVfArU+ZbcU2Z_PnBdtQGi7XbA7AVfM1XO-w@mail.gmail.com>
-In-Reply-To: <CAHp75Ve_=euX83qVfArU+ZbcU2Z_PnBdtQGi7XbA7AVfM1XO-w@mail.gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date: Tue, 29 May 2018 23:23:51 +0200
-Message-ID: <CAPybu_3tZ2z7sk5tSwgXdqNyiTm_31UwdUsWNL1_eNHBDQyCiw@mail.gmail.com>
-Subject: Re: [PATCH 07/19] serdev: Allows dynamic creation of devices via sysfs
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529195106.14268-3-ross.zwisler@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805290226
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On Tue, May 29, 2018 at 01:51:01PM -0600, Ross Zwisler wrote:
+> From: Dave Jiang <dave.jiang@intel.com>
+> 
+> The function return values are confusing with the way the function is
+> named. We expect a true or false return value but it actually returns
+> 0/-errno.  This makes the code very confusing. Changing the return values
+> to return a bool where if DAX is supported then return true and no DAX
+> support returns false.
+> 
+> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
 
-On Tue, May 29, 2018 at 10:35 PM Andy Shevchenko <andy.shevchenko@gmail.com>
-wrote:
+Looks ok, do you want me to pull the first two patches through the xfs
+tree?
 
-> On Tue, May 29, 2018 at 4:10 PM, Ricardo Ribalda Delgado
-> <ricardo.ribalda@gmail.com> wrote:
-> > Allow creating and deleting devices via sysfs. Devices created will be
-> > matched to serdev drivers via modalias (the string provided by the user)
-> > and deleted via their name.
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-> > +       int err;
-> > +       char *nline;
+--D
 
-> Better to read in reversed order.
-
-> > +       nline = strchr(buf, '\n');
-> > +       if (nline)
-> > +               *nline = '\0';
-
-> strim() / strstrip() ?
-
-> > +       nline = strchr(buf, '\n');
-> > +       if (nline)
-> > +               *nline = '\0';
-
-> Ditto.
-
-> > +static DEVICE_ATTR_IGNORE_LOCKDEP(delete_device, 0200, NULL,
-> > +                                 delete_device_store);
-
-> Perhaps leave it on one line?
-
+> ---
+>  drivers/dax/super.c | 16 ++++++++--------
+>  fs/ext2/super.c     |  3 +--
+>  fs/ext4/super.c     |  3 +--
+>  fs/xfs/xfs_ioctl.c  |  4 ++--
+>  fs/xfs/xfs_super.c  | 12 ++++++------
+>  include/linux/dax.h |  8 ++++----
+>  6 files changed, 22 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index 3943feb9a090..1d7bd96511f0 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -80,9 +80,9 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
+>   * This is a library function for filesystems to check if the block device
+>   * can be mounted with dax option.
+>   *
+> - * Return: negative errno if unsupported, 0 if supported.
+> + * Return: true if supported, false if unsupported
+>   */
+> -int __bdev_dax_supported(struct block_device *bdev, int blocksize)
+> +bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+>  {
+>  	struct dax_device *dax_dev;
+>  	pgoff_t pgoff;
+> @@ -95,21 +95,21 @@ int __bdev_dax_supported(struct block_device *bdev, int blocksize)
+>  	if (blocksize != PAGE_SIZE) {
+>  		pr_debug("%s: error: unsupported blocksize for dax\n",
+>  				bdevname(bdev, buf));
+> -		return -EINVAL;
+> +		return false;
+>  	}
+>  
+>  	err = bdev_dax_pgoff(bdev, 0, PAGE_SIZE, &pgoff);
+>  	if (err) {
+>  		pr_debug("%s: error: unaligned partition for dax\n",
+>  				bdevname(bdev, buf));
+> -		return err;
+> +		return false;
+>  	}
+>  
+>  	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+>  	if (!dax_dev) {
+>  		pr_debug("%s: error: device does not support dax\n",
+>  				bdevname(bdev, buf));
+> -		return -EOPNOTSUPP;
+> +		return false;
+>  	}
+>  
+>  	id = dax_read_lock();
+> @@ -121,7 +121,7 @@ int __bdev_dax_supported(struct block_device *bdev, int blocksize)
+>  	if (len < 1) {
+>  		pr_debug("%s: error: dax access failed (%ld)\n",
+>  				bdevname(bdev, buf), len);
+> -		return len < 0 ? len : -EIO;
+> +		return false;
+>  	}
+>  
+>  	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED) && pfn_t_special(pfn)) {
+> @@ -139,10 +139,10 @@ int __bdev_dax_supported(struct block_device *bdev, int blocksize)
+>  	} else {
+>  		pr_debug("%s: error: dax support not enabled\n",
+>  				bdevname(bdev, buf));
+> -		return -EOPNOTSUPP;
+> +		return false;
+>  	}
+>  
+> -	return 0;
+> +	return true;
+>  }
+>  EXPORT_SYMBOL_GPL(__bdev_dax_supported);
+>  #endif
+> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+> index 9627c3054b5c..c09289a42dc5 100644
+> --- a/fs/ext2/super.c
+> +++ b/fs/ext2/super.c
+> @@ -961,8 +961,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+>  	blocksize = BLOCK_SIZE << le32_to_cpu(sbi->s_es->s_log_block_size);
+>  
+>  	if (sbi->s_mount_opt & EXT2_MOUNT_DAX) {
+> -		err = bdev_dax_supported(sb->s_bdev, blocksize);
+> -		if (err) {
+> +		if (!bdev_dax_supported(sb->s_bdev, blocksize)) {
+>  			ext2_msg(sb, KERN_ERR,
+>  				"DAX unsupported by block device. Turning off DAX.");
+>  			sbi->s_mount_opt &= ~EXT2_MOUNT_DAX;
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 089170e99895..2e1622907f4a 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -3732,8 +3732,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+>  					" that may contain inline data");
+>  			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX;
+>  		}
+> -		err = bdev_dax_supported(sb->s_bdev, blocksize);
+> -		if (err) {
+> +		if (!bdev_dax_supported(sb->s_bdev, blocksize)) {
+>  			ext4_msg(sb, KERN_ERR,
+>  				"DAX unsupported by block device. Turning off DAX.");
+>  			sbi->s_mount_opt &= ~EXT4_MOUNT_DAX;
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index 0effd46b965f..2c70a0a4f59f 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -1103,8 +1103,8 @@ xfs_ioctl_setattr_dax_invalidate(
+>  	if (fa->fsx_xflags & FS_XFLAG_DAX) {
+>  		if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+>  			return -EINVAL;
+> -		if (bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
+> -				sb->s_blocksize) < 0)
+> +		if (!bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
+> +				sb->s_blocksize))
+>  			return -EINVAL;
+>  	}
+>  
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 62188c2a4c36..86915dc40eed 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1690,17 +1690,17 @@ xfs_fs_fill_super(
+>  		sb->s_flags |= SB_I_VERSION;
+>  
+>  	if (mp->m_flags & XFS_MOUNT_DAX) {
+> -		int	error2 = 0;
+> +		bool rtdev_is_dax = false, datadev_is_dax;
+>  
+>  		xfs_warn(mp,
+>  		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
+>  
+> -		error = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
+> -				sb->s_blocksize);
+> +		datadev_is_dax = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
+> +			sb->s_blocksize);
+>  		if (mp->m_rtdev_targp)
+> -			error2 = bdev_dax_supported(mp->m_rtdev_targp->bt_bdev,
+> -					sb->s_blocksize);
+> -		if (error && error2) {
+> +			rtdev_is_dax = bdev_dax_supported(
+> +				mp->m_rtdev_targp->bt_bdev, sb->s_blocksize);
+> +		if (!rtdev_is_dax && !datadev_is_dax) {
+>  			xfs_alert(mp,
+>  			"DAX unsupported by block device. Turning off DAX.");
+>  			mp->m_flags &= ~XFS_MOUNT_DAX;
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index 2a4f7295c12b..c99692ddd4b5 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -64,8 +64,8 @@ static inline bool dax_write_cache_enabled(struct dax_device *dax_dev)
+>  struct writeback_control;
+>  int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
+>  #if IS_ENABLED(CONFIG_FS_DAX)
+> -int __bdev_dax_supported(struct block_device *bdev, int blocksize);
+> -static inline int bdev_dax_supported(struct block_device *bdev, int blocksize)
+> +bool __bdev_dax_supported(struct block_device *bdev, int blocksize);
+> +static inline bool bdev_dax_supported(struct block_device *bdev, int blocksize)
+>  {
+>  	return __bdev_dax_supported(bdev, blocksize);
+>  }
+> @@ -84,10 +84,10 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+>  int dax_writeback_mapping_range(struct address_space *mapping,
+>  		struct block_device *bdev, struct writeback_control *wbc);
+>  #else
+> -static inline int bdev_dax_supported(struct block_device *bdev,
+> +static inline bool bdev_dax_supported(struct block_device *bdev,
+>  		int blocksize)
+>  {
+> -	return -EOPNOTSUPP;
+> +	return false;
+>  }
+>  
+>  static inline struct dax_device *fs_dax_get_by_host(const char *host)
+> -- 
+> 2.14.3
+> 
 > --
-> With Best Regards,
-> Andy Shevchenko
-
-Thanks for your review. I am working on v2 at
-https://github.com/ribalda/linux/tree/serdev2 it fixes your comments except
-the line cut for DEVICE_ATTR, I want also to make checkpatch happy ;)
-
-Will send v2  to the list after I got more feedback, you can of course ping
-me if there is something in my tree that it is not fixed properly.
-
-Cheers
-
-
--- 
-Ricardo Ribalda
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
