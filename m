@@ -1,57 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933299AbeE2LJm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 07:09:42 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38408 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932949AbeE2LJj (ORCPT
+        id S933348AbeE2LLH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 07:11:07 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:45002 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933009AbeE2LLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 07:09:39 -0400
-X-Google-Smtp-Source: ADUXVKK8ChoTEH0H3q8sMZFbijERcLswolwNnNFDn9BqUh07YeqFdfwgLXDPr+pqS7OUEVQ5FkjzSxjQTgJXIPMWu7E=
+        Tue, 29 May 2018 07:11:05 -0400
+X-Google-Smtp-Source: ADUXVKIWtt4USt+zBigGTdU0uUxbR//bTQy3tj/bTS7OFjzK0eM8rNuLxQXni3ZE5e9UKojmitJEPut4Ajf9eRl7v7c=
 MIME-Version: 1.0
-In-Reply-To: <68b62912-21d5-c238-7536-12928670a08a@gmail.com>
-References: <1527521753-17963-1-git-send-email-laoar.shao@gmail.com>
- <1527521753-17963-2-git-send-email-laoar.shao@gmail.com> <CANn89iKU49yBRq4x8xHGXiWZ9h0PNAmyWnMoNDFmSm9oKXsbqw@mail.gmail.com>
- <CALOAHbAbw6nXggT4ZF-=L_tQqsm-EQ==Qd9aeLys2mwQizFnkw@mail.gmail.com> <68b62912-21d5-c238-7536-12928670a08a@gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 29 May 2018 19:08:58 +0800
-Message-ID: <CALOAHbBJs_8iTX+JbcG3bbqnH+xY6F16ii7N22y2cwmDzb8HFQ@mail.gmail.com>
-Subject: Re: [PATCH v3 net-next 2/2] tcp: minor optimization around tcp_hdr()
- usage in tcp receive path
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>, Song Liu <songliubraving@fb.com>,
-        David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>,
+In-Reply-To: <1527250067-1256-1-git-send-email-ilialin@codeaurora.org>
+References: <1527250067-1256-1-git-send-email-ilialin@codeaurora.org>
+From: Amit Kucheria <amit.kucheria@verdurent.com>
+Date: Tue, 29 May 2018 14:11:02 +0300
+Message-ID: <CAHLCerNAGNWdYbRTmStJcrAw7jj5nmowqvaNCtHA6LEnRpParw@mail.gmail.com>
+Subject: Re: [PATCH v14 0/2] Kryo CPU scaling driver
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org,
+        Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM list <linux-pm@vger.kernel.org>, devicetree@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 12:53 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+On Fri, May 25, 2018 at 3:07 PM, Ilia Lin <ilialin@codeaurora.org> wrote:
+> [v14]
+>  * Addressed comment from Sudeep about DT compatible
+>  * Added MAINTAINERS entry
 >
+> [v13]
+>  * Addressed comment from Sudeep about DT compatible check on init
 >
-> On 05/28/2018 05:41 PM, Yafang Shao wrote:
+> [v12]
+>  * Addressed comments from Sudeep and Viresh about the single init
 >
->> OK.
->>
->> And what about introducing a new helper tcp_hdr_fast() ?
->>
->> /* use it when tcp header has not been pulled yet */
->> static inline struct tcphdr *tcp_hdr_fast(const struct sk_buff *skb)
->>
->> {
->>
->>         return (const struct tcphdr *)skb->data;
->>
->> }
->>
->>
->> That could help us to use this optimized one instead of the original
->> one if possilbe.
+> [v11]
+>  * Addressed comment from Russel about device_node reference
+>  * Addressed comment from Sudeep about the late_initcall
+>  * Transformed init into probe to take care of deferals
 >
+> [v10]
+>  * Split the series into domains
+>  * Addressed comments from Viresh and Sudeep about logical CPU numbering.
 >
-> I would rather not add such macro...
+> The qcom-cpufreq-kryo driver is aimed to support different SOC versions.
+> The driver reads eFuse information and chooses the required OPP subset
+> by passing the OPP supported-hw parameter.
 >
-> The call site needs to know what is going on, so having a macro like that would not help.
+> The series depends on the series from Viresh:
+> https://patchwork.kernel.org/patch/10418139/
+>
+> The previous spin was here:
+> https://patchwork.kernel.org/patch/10424949/
+>
+> Ilia Lin (2):
+>   cpufreq: Add Kryo CPU scaling driver
+>   dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
+>
+>  .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
+>  MAINTAINERS                                        |   7 +
+>  drivers/cpufreq/Kconfig.arm                        |  10 +
+>  drivers/cpufreq/Makefile                           |   1 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+>  drivers/cpufreq/qcom-cpufreq-kryo.c                | 206 +++++++
+>  6 files changed, 907 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+>
+FWIW,
 
-OK
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
