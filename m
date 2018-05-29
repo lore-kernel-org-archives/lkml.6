@@ -1,102 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933228AbeE2KsR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:48:17 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:41736 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932847AbeE2KsO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:48:14 -0400
-X-Google-Smtp-Source: ADUXVKJUAv7Y0AFigMaIPV4leCt0w+OCUD1So0q34msEv2/2WMK8hz74LgzY7//OU2WqDSIzrEvTDJgeoF7rjE/ZBIc=
+        id S933235AbeE2KtA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:49:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48482 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932847AbeE2Ks4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 06:48:56 -0400
+Date: Tue, 29 May 2018 12:48:55 +0200
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>, Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK"
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v3] Add udmabuf misc device
+Message-ID: <20180529104855.vvrfdtbgrsqj27ga@sirius.home.kraxel.org>
+References: <20180525140808.12714-1-kraxel@redhat.com>
+ <20180529082327.GF3438@phenom.ffwll.local>
+ <20180529084406.GI3438@phenom.ffwll.local>
 MIME-Version: 1.0
-In-Reply-To: <20180517170523.h7tuvbzdfluuidcz@armageddon.cambridge.arm.com>
-References: <20180511235807.30834-1-jeremy.linton@arm.com> <20180517170523.h7tuvbzdfluuidcz@armageddon.cambridge.arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 May 2018 12:48:12 +0200
-X-Google-Sender-Auth: QtL6nt0OgAEXZ4KuIxy3cCn9v0E
-Message-ID: <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com>
-Subject: Re: [PATCH v9 00/12] Support PPTT for ARM64
-To: Catalin Marinas <catalin.marinas@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>, austinwc@codeaurora.org,
-        tnowicki@caviumnetworks.com, Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <Will.Deacon@arm.com>, linux-riscv@lists.infradead.org,
-        Morten.Rasmussen@arm.com, vkilari@codeaurora.org,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, jhugo@codeaurora.org,
-        Al Stone <ahs3@redhat.com>, Len Brown <lenb@kernel.org>,
-        John Garry <john.garry@huawei.com>, wangxiongfeng2@huawei.com,
-        Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Sudeep Holla <Sudeep.Holla@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529084406.GI3438@phenom.ffwll.local>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Catalin, Jeremy,
+  Hi,
 
-On Thu, May 17, 2018 at 7:05 PM, Catalin Marinas
-<catalin.marinas@arm.com> wrote:
-> On Fri, May 11, 2018 at 06:57:55PM -0500, Jeremy Linton wrote:
->> Jeremy Linton (12):
->>   drivers: base: cacheinfo: move cache_setup_of_node()
->>   drivers: base: cacheinfo: setup DT cache properties early
->>   cacheinfo: rename of_node to fw_token
->>   arm64/acpi: Create arch specific cpu to acpi id helper
->>   ACPI/PPTT: Add Processor Properties Topology Table parsing
->>   ACPI: Enable PPTT support on ARM64
->>   drivers: base cacheinfo: Add support for ACPI based firmware tables
->>   arm64: Add support for ACPI based firmware tables
->>   arm64: topology: rename cluster_id
->>   arm64: topology: enable ACPI/PPTT based CPU topology
->>   ACPI: Add PPTT to injectable table list
->>   arm64: topology: divorce MC scheduling domain from core_siblings
->
-> Queued for 4.18 (without Sudeep's latest property_read_u64 cacheinfo
-> patch - http://lkml.kernel.org/r/20180517154701.GA20281@e107155-lin; I
-> can add it separately).
+> > > qemu test branch:
+> > >   https://git.kraxel.org/cgit/qemu/log/?h=sirius/udmabuf
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This is now commit 37c3ec2d810f87ea ("arm64: topology: divorce MC
-scheduling domain from core_siblings") in arm64/for-next/core, causing
-system suspend on big.LITTLE systems to hang after shutting down the first
-CPU:
+> > > +	if (!shmem_mapping(file_inode(ubuf->filp)->i_mapping))
+> > > +		goto err_free_ubuf;
+> 
+> Can/should we test here that the memfd has a locked down size here?
 
-    $ echo mem > /sys/power/state
-    PM: suspend entry (deep)
-    PM: Syncing filesystems ... done.
-    Freezing user space processes ... (elapsed 0.001 seconds) done.
-    OOM killer disabled.
-    Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-    Disabling non-boot CPUs ...
-    CPU1: shutdown
-    psci: CPU1 killed.
+Makes sense.  Suggested way to check that?  unstatic memfd_get_seals()
+function (mm/shmem.c)?  Or is there some better way?
 
-For me, it fails on the following big.LITTLE systems:
+Also which seals should we require?  Is F_SEAL_SHRINK enough?
 
-    R-Car H3 ES2.0 (4xCA57 + 4xCA53)
-    R-Car M3-W (2xCA57 + 4xCA53)
+> On that: Link to userspace patches/git tree using this would be nice.
 
-System supend still works fine on systems with big cores only:
+See above.
 
-    R-Car H3 ES1.0 (4xCA57 (4xCA53 disabled in firmware))
-    R-Car M3-N (2xCA57)
-
-Reverting this commit fixes the issue for me.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+cheers,
+  Gerd
