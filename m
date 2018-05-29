@@ -1,66 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933750AbeE2M3R (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:29:17 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8203 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933652AbeE2M3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:29:13 -0400
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <bhelgaas@google.com>, <rjw@rjwysocki.net>, <lenb@kernel.org>,
-        <guohanjun@huawei.com>, <jcm@redhat.com>, <toshi.kani@hpe.com>,
-        <tanxiaojun@huawei.com>, <wangzhou1@hisilicon.com>
-CC: <linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Yisheng Xie <xieyisheng1@huawei.com>
-Subject: [PATCH v3 2/2] PCI: Check phys_addr for pci_remap_iospace
-Date: Tue, 29 May 2018 20:18:19 +0800
-Message-ID: <1527596299-57567-2-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1527596299-57567-1-git-send-email-xieyisheng1@huawei.com>
-References: <1527596299-57567-1-git-send-email-xieyisheng1@huawei.com>
+        id S933843AbeE2M3r (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:29:47 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:46037 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933675AbeE2M3o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:29:44 -0400
+X-Google-Smtp-Source: ADUXVKKyW2QtNz2FvGwnrsD4v2v7Y8stgz6Huq6qF1ieDtoEmK7l2x4Nt/rZU425fu11V2l8QEacAu/5NaK39W6l5Zs=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+X-Originating-IP: [2a02:168:5628:0:d0c7:bcda:eea:9e5d]
+In-Reply-To: <20180529104855.vvrfdtbgrsqj27ga@sirius.home.kraxel.org>
+References: <20180525140808.12714-1-kraxel@redhat.com> <20180529082327.GF3438@phenom.ffwll.local>
+ <20180529084406.GI3438@phenom.ffwll.local> <20180529104855.vvrfdtbgrsqj27ga@sirius.home.kraxel.org>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date: Tue, 29 May 2018 14:29:43 +0200
+Message-ID: <CAKMK7uEUrgKkmPTtku5otN++H3SW7xLaGEn0S9nGEpGAA_Uy+A@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] [PATCH v3] Add udmabuf misc device
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>, Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK"
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If phys_addr is not page aligned, ioremap_page_range() will align down it
-when get pfn by phys_addr >> PAGE_SHIFT. An example in arm64 system with
-64KB page size:
+On Tue, May 29, 2018 at 12:48 PM, Gerd Hoffmann <kraxel@redhat.com> wrote:
+>   Hi,
+>
+>> > > qemu test branch:
+>> > >   https://git.kraxel.org/cgit/qemu/log/?h=sirius/udmabuf
+>         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>
+>> > > + if (!shmem_mapping(file_inode(ubuf->filp)->i_mapping))
+>> > > +         goto err_free_ubuf;
+>>
+>> Can/should we test here that the memfd has a locked down size here?
+>
+> Makes sense.  Suggested way to check that?  unstatic memfd_get_seals()
+> function (mm/shmem.c)?  Or is there some better way?
+>
+> Also which seals should we require?  Is F_SEAL_SHRINK enough?
 
- phys_addr:  0xefff8000
- res->start: 0x0
- res->end:   0x0ffff
- PCI_IOBASE: 0xffff7fdffee00000
+Yes I think that's enough.
 
-This will remap virtual address 0xffff7fdffee00000 to phys_addr 0xefff0000,
-but what we really want is 0xefff8000, which makes later IO access to a
-mess. And users may even donot know this until find some odd phenemenon.
+Hm ... I think we also need to prevent the F_SEAL_WRITE, because
+there's no way to stop dma from tampering with the buffer once it's a
+dma-buf. Otherwise evil userspace could create a memfd, F_SEAL_SHRINK
+it, make a dma-buf out of it, F_SEAL_WRITE it, hand it to some
+unsuspecting priviledged service and then pull it over the table with
+a few dma-buf writes.
 
-This patch checks whether phys_addr is PAGE_ALIGNED or not to find the
-primary scene.
+>> On that: Link to userspace patches/git tree using this would be nice.
+>
+> See above.
 
-Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- drivers/pci/pci.c | 3 +++
- 1 file changed, 3 insertions(+)
+Ow, I was blind :-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 0eb0381..117ca6a 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3547,6 +3547,9 @@ int pci_remap_iospace(const struct resource *res, phys_addr_t phys_addr)
- 	if (!PAGE_ALIGNED(vaddr) || !PAGE_ALIGNED(resource_size(res)))
- 		return -EINVAL;
- 
-+	if (!PAGE_ALIGNED(phys_addr))
-+		return -EINVAL;
-+
- 	return ioremap_page_range(vaddr, vaddr + resource_size(res), phys_addr,
- 				  pgprot_device(PAGE_KERNEL));
- #else
+Thanks, Daniel
 -- 
-1.7.12.4
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
