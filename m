@@ -1,77 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934961AbeE2OU5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:20:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44910 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934924AbeE2OUv (ORCPT
+        id S934846AbeE2OVw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:21:52 -0400
+Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38120 "EHLO
+        smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934304AbeE2OVu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:20:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1ADAC60261
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-To: architt@codeaurora.org, robdclark@gmail.com, jcrouse@codeaurora.org
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 1/3] drm/msm/dsi: add dsi host helper functions support
-Date: Tue, 29 May 2018 19:50:31 +0530
-Message-Id: <20180529142033.12989-2-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180529142033.12989-1-sibis@codeaurora.org>
-References: <20180529142033.12989-1-sibis@codeaurora.org>
+        Tue, 29 May 2018 10:21:50 -0400
+From: James Simmons <jsimmons@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>,
+        James Simmons <uja.ornl@yahoo.com>
+Subject: [PATCH v2 0/6] staging: lustre: llite: remaining xattr patches
+Date: Tue, 29 May 2018 10:21:39 -0400
+Message-Id: <1527603705-30450-1-git-send-email-jsimmons@infradead.org>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add dsi host helper functions support for DSI v2 and DSI 6G 1.x
-controllers that are under version checks
+From: James Simmons <uja.ornl@yahoo.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/gpu/drm/msm/dsi/dsi.h     |  1 +
- drivers/gpu/drm/msm/dsi/dsi_cfg.h | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
+Fixed the bugs in the set_acl patch pointed out by Dan Carpenter.
+Rebased the next patch 'remove unused parameter..." on the parent
+patch. Created new acl.c file to match what other linx kernel file
+systems do. Added newer xattr fixes that were recently pushed.
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi.h b/drivers/gpu/drm/msm/dsi/dsi.h
-index 70d9a9a47acd..80be83e8fdec 100644
---- a/drivers/gpu/drm/msm/dsi/dsi.h
-+++ b/drivers/gpu/drm/msm/dsi/dsi.h
-@@ -149,6 +149,7 @@ static inline int msm_dsi_pll_set_usecase(struct msm_dsi_pll *pll,
- #endif
- 
- /* dsi host */
-+struct msm_dsi_host;
- int msm_dsi_host_xfer_prepare(struct mipi_dsi_host *host,
- 					const struct mipi_dsi_msg *msg);
- void msm_dsi_host_xfer_restore(struct mipi_dsi_host *host,
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.h b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-index 9cfdcf1c95d5..a795a062b779 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-+++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-@@ -40,10 +40,22 @@ struct msm_dsi_config {
- 	const int num_dsi;
- };
- 
-+struct msm_dsi_host_cfg_ops {
-+	int (*link_clk_enable)(struct msm_dsi_host *msm_host);
-+	void (*link_clk_disable)(struct msm_dsi_host *msm_host);
-+	int (*clk_init_ver)(struct msm_dsi_host *msm_host);
-+	int (*tx_buf_alloc)(struct msm_dsi_host *msm_host, int size);
-+	void* (*tx_buf_get)(struct msm_dsi_host *msm_host);
-+	void (*tx_buf_put)(struct msm_dsi_host *msm_host);
-+	int (*dma_base_get)(struct msm_dsi_host *msm_host, uint64_t *iova);
-+	int (*calc_clk_rate)(struct msm_dsi_host *msm_host);
-+};
-+
- struct msm_dsi_cfg_handler {
- 	u32 major;
- 	u32 minor;
- 	const struct msm_dsi_config *cfg;
-+	const struct msm_dsi_host_cfg_ops *ops;
- };
- 
- const struct msm_dsi_cfg_handler *msm_dsi_cfg_get(u32 major, u32 minor);
+Andrew Perepechko (1):
+  staging: lustre: mdc: excessive memory consumption by the xattr cache
+
+Dmitry Eremin (1):
+  staging: lustre: llite: add support set_acl method in inode operations
+
+Fan Yong (1):
+  staging: lustre: acl: increase ACL entries limitation
+
+James Simmons (1):
+  staging: lustre: llite: create acl.c file
+
+John L. Hammond (2):
+  staging: lustre: llite: remove unused parameters from md_{get,set}xattr()
+  staging: lustre: mdc: use large xattr buffers for old servers
+
+ .../lustre/include/uapi/linux/lustre/lustre_idl.h  |   2 +-
+ drivers/staging/lustre/lustre/include/lustre_acl.h |   7 +-
+ drivers/staging/lustre/lustre/include/obd.h        |   7 +-
+ drivers/staging/lustre/lustre/include/obd_class.h  |  21 ++--
+ drivers/staging/lustre/lustre/llite/Makefile       |   2 +
+ drivers/staging/lustre/lustre/llite/acl.c          | 108 +++++++++++++++++++++
+ drivers/staging/lustre/lustre/llite/file.c         |  16 +--
+ .../staging/lustre/lustre/llite/llite_internal.h   |   7 ++
+ drivers/staging/lustre/lustre/llite/llite_lib.c    |   3 +-
+ drivers/staging/lustre/lustre/llite/xattr.c        |   6 +-
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c        |  22 ++---
+ drivers/staging/lustre/lustre/mdc/mdc_locks.c      |  42 ++++++--
+ drivers/staging/lustre/lustre/mdc/mdc_reint.c      |   2 +
+ drivers/staging/lustre/lustre/mdc/mdc_request.c    |  38 +++++---
+ drivers/staging/lustre/lustre/ptlrpc/layout.c      |   4 +-
+ drivers/staging/lustre/lustre/ptlrpc/wiretest.c    |   4 +-
+ 16 files changed, 214 insertions(+), 77 deletions(-)
+ create mode 100644 drivers/staging/lustre/lustre/llite/acl.c
+----------
+Changelog:
+
+v1) Initial patch set with fixes to address issues pointed by Dan.
+v2) Created new acl.c file and rebased the patches due to that change
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.8.3.1
