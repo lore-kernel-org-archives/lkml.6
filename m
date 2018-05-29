@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965046AbeE2O7e (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:59:34 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41212 "EHLO
+        id S965080AbeE2O7n (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:59:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41450 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935773AbeE2O73 (ORCPT
+        with ESMTP id S965048AbeE2O7g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:59:29 -0400
+        Tue, 29 May 2018 10:59:36 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
@@ -16,17 +16,17 @@ Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
         linux-kernel@vger.kernel.org, plai@codeaurora.org, tiwai@suse.com,
         lgirdwood@gmail.com, spatakok@qti.qualcomm.com,
         linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: q6afe-dai: use q6afe_dai_prepare() for MI2S" to the asoc tree
-In-Reply-To: <20180529101833.30489-4-srinivas.kandagatla@linaro.org>
-Message-Id: <E1fNg5s-00062B-N9@debutante>
-Date: Tue, 29 May 2018 15:59:24 +0100
+Subject: Applied "ASoC: qdsp6: dt-bindings: Add q6afe tdm dt binding" to the asoc tree
+In-Reply-To: <20180529101833.30489-2-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fNg5z-00066C-U0@debutante>
+Date: Tue, 29 May 2018 15:59:31 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qdsp6: q6afe-dai: use q6afe_dai_prepare() for MI2S
+   ASoC: qdsp6: dt-bindings: Add q6afe tdm dt binding
 
 has been applied to the asoc tree at
 
@@ -51,102 +51,196 @@ to this mail.
 Thanks,
 Mark
 
->From b916449c5e0129858320e313bbcfff05ae4cde6d Mon Sep 17 00:00:00 2001
+>From ad7a9b34fa532b95a7eae1a1708408a4e435a71c Mon Sep 17 00:00:00 2001
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 29 May 2018 11:18:30 +0100
-Subject: [PATCH] ASoC: qdsp6: q6afe-dai: use q6afe_dai_prepare() for MI2S
+Date: Tue, 29 May 2018 11:18:28 +0100
+Subject: [PATCH] ASoC: qdsp6: dt-bindings: Add q6afe tdm dt binding
 
-Use common q6afe_dai_prepare() for MI2S dais, this will remove
-some code duplication. Also make the if statement to switch to
-make the code look neater.
+This patch adds bindings required for TDM ports on AFE.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6afe-dai.c | 53 +++++++++++---------------------
- 1 file changed, 18 insertions(+), 35 deletions(-)
+ .../devicetree/bindings/sound/qcom,q6afe.txt  | 68 ++++++++++++++++
+ include/dt-bindings/sound/qcom,q6afe.h        | 80 +++++++++++++++++++
+ 2 files changed, 148 insertions(+)
 
-diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
-index 4378e29a95c5..e529edfd8001 100644
---- a/sound/soc/qcom/qdsp6/q6afe-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
-@@ -144,38 +144,6 @@ static void q6afe_dai_shutdown(struct snd_pcm_substream *substream,
+diff --git a/Documentation/devicetree/bindings/sound/qcom,q6afe.txt b/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
+index 14335a08b963..bdbf87df8c0b 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
++++ b/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
+@@ -46,6 +46,53 @@ configuration of each dai. Must contain the following properties.
+ 	Definition: Must be list of serial data lines used by this dai.
+ 	should be one or more of the 1-4 sd lines.
  
- }
++ - qcom,tdm-sync-mode:
++	Usage: required for tdm interface
++	Value type: <prop-encoded-array>
++	Definition: Synchronization mode.
++		0 - Short sync bit mode
++		1 - Long sync mode
++		2 - Short sync slot mode
++
++ - qcom,tdm-sync-src:
++	Usage: required for tdm interface
++	Value type: <prop-encoded-array>
++	Definition: Synchronization source.
++		0 - External source
++		1 - Internal source
++
++ - qcom,tdm-data-out:
++	Usage: required for tdm interface
++	Value type: <prop-encoded-array>
++	Definition: Data out signal to drive with other masters.
++		0 - Disable
++		1 - Enable
++
++ - qcom,tdm-invert-sync:
++	Usage: required for tdm interface
++	Value type: <prop-encoded-array>
++	Definition: Invert the sync.
++		0 - Normal
++		1 - Invert
++
++ - qcom,tdm-data-delay:
++	Usage: required for tdm interface
++	Value type: <prop-encoded-array>
++	Definition: Number of bit clock to delay data
++		with respect to sync edge.
++		0 - 0 bit clock cycle
++		1 - 1 bit clock cycle
++		2 - 2 bit clock cycle
++
++ - qcom,tdm-data-align:
++	Usage: required for tdm interface
++	Value type: <prop-encoded-array>
++	Definition: Indicate how data is packed
++		within the slot. For example, 32 slot width in case of
++		sample bit width is 24.
++		0 - MSB
++		1 - LSB
++
+ = EXAMPLE
  
--static int q6afe_mi2s_prepare(struct snd_pcm_substream *substream,
--		struct snd_soc_dai *dai)
--{
--	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
--	int rc;
--
--	if (dai_data->is_port_started[dai->id]) {
--		/* stop the port and restart with new port config */
--		rc = q6afe_port_stop(dai_data->port[dai->id]);
--		if (rc < 0) {
--			dev_err(dai->dev, "fail to close AFE port (%d)\n", rc);
--			return rc;
--		}
--	}
--
--	rc = q6afe_i2s_port_prepare(dai_data->port[dai->id],
--			       &dai_data->port_config[dai->id].i2s_cfg);
--	if (rc < 0) {
--		dev_err(dai->dev, "fail to prepare AFE port %x\n", dai->id);
--		return rc;
--	}
--
--	rc = q6afe_port_start(dai_data->port[dai->id]);
--	if (rc < 0) {
--		dev_err(dai->dev, "fail to start AFE port %x\n", dai->id);
--		return rc;
--	}
--	dai_data->is_port_started[dai->id] = true;
--
--	return 0;
--}
--
- static int q6afe_dai_prepare(struct snd_pcm_substream *substream,
- 		struct snd_soc_dai *dai)
- {
-@@ -191,12 +159,27 @@ static int q6afe_dai_prepare(struct snd_pcm_substream *substream,
- 		}
- 	}
+ q6afe@4 {
+@@ -61,6 +108,27 @@ q6afe@4 {
+ 			reg = <1>;
+ 		};
  
--	if (dai->id == HDMI_RX)
-+	switch (dai->id) {
-+	case HDMI_RX:
- 		q6afe_hdmi_port_prepare(dai_data->port[dai->id],
- 					&dai_data->port_config[dai->id].hdmi);
--	else if (dai->id >= SLIMBUS_0_RX && dai->id <= SLIMBUS_6_TX)
-+		break;
-+	case SLIMBUS_0_RX ... SLIMBUS_6_TX:
- 		q6afe_slim_port_prepare(dai_data->port[dai->id],
- 					&dai_data->port_config[dai->id].slim);
-+		break;
-+	case PRIMARY_MI2S_RX ... QUATERNARY_MI2S_TX:
-+		rc = q6afe_i2s_port_prepare(dai_data->port[dai->id],
-+			       &dai_data->port_config[dai->id].i2s_cfg);
-+		if (rc < 0) {
-+			dev_err(dai->dev, "fail to prepare AFE port %x\n",
-+				dai->id);
-+			return rc;
-+		}
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
++		tdm@24 {
++			reg = <24>;
++			qcom,tdm-sync-mode = <1>:
++			qcom,tdm-sync-src = <1>;
++			qcom,tdm-data-out = <0>;
++			qcom,tdm-invert-sync = <1>;
++			qcom,tdm-data-delay = <1>;
++			qcom,tdm-data-align = <0>;
++
++		};
++
++		tdm@25 {
++			reg = <25>;
++			qcom,tdm-sync-mode = <1>:
++			qcom,tdm-sync-src = <1>;
++			qcom,tdm-data-out = <0>;
++			qcom,tdm-invert-sync = <1>;
++			qcom,tdm-data-delay <1>:
++			qcom,tdm-data-align = <0>;
++		};
++
+ 		prim-mi2s-rx@16 {
+ 			reg = <16>;
+ 			qcom,sd-lines = <1 3>;
+diff --git a/include/dt-bindings/sound/qcom,q6afe.h b/include/dt-bindings/sound/qcom,q6afe.h
+index e162045f5dc9..e2d3892240b8 100644
+--- a/include/dt-bindings/sound/qcom,q6afe.h
++++ b/include/dt-bindings/sound/qcom,q6afe.h
+@@ -26,6 +26,86 @@
+ #define TERTIARY_MI2S_TX	21
+ #define QUATERNARY_MI2S_RX	22
+ #define QUATERNARY_MI2S_TX	23
++#define PRIMARY_TDM_RX_0	24
++#define PRIMARY_TDM_TX_0	25
++#define PRIMARY_TDM_RX_1	26
++#define PRIMARY_TDM_TX_1	27
++#define PRIMARY_TDM_RX_2	28
++#define PRIMARY_TDM_TX_2	29
++#define PRIMARY_TDM_RX_3	30
++#define PRIMARY_TDM_TX_3	31
++#define PRIMARY_TDM_RX_4	32
++#define PRIMARY_TDM_TX_4	33
++#define PRIMARY_TDM_RX_5	34
++#define PRIMARY_TDM_TX_5	35
++#define PRIMARY_TDM_RX_6	36
++#define PRIMARY_TDM_TX_6	37
++#define PRIMARY_TDM_RX_7	38
++#define PRIMARY_TDM_TX_7	39
++#define SECONDARY_TDM_RX_0	40
++#define SECONDARY_TDM_TX_0	41
++#define SECONDARY_TDM_RX_1	42
++#define SECONDARY_TDM_TX_1	43
++#define SECONDARY_TDM_RX_2	44
++#define SECONDARY_TDM_TX_2	45
++#define SECONDARY_TDM_RX_3	46
++#define SECONDARY_TDM_TX_3	47
++#define SECONDARY_TDM_RX_4	48
++#define SECONDARY_TDM_TX_4	49
++#define SECONDARY_TDM_RX_5	50
++#define SECONDARY_TDM_TX_5	51
++#define SECONDARY_TDM_RX_6	52
++#define SECONDARY_TDM_TX_6	53
++#define SECONDARY_TDM_RX_7	54
++#define SECONDARY_TDM_TX_7	55
++#define TERTIARY_TDM_RX_0	56
++#define TERTIARY_TDM_TX_0	57
++#define TERTIARY_TDM_RX_1	58
++#define TERTIARY_TDM_TX_1	59
++#define TERTIARY_TDM_RX_2	60
++#define TERTIARY_TDM_TX_2	61
++#define TERTIARY_TDM_RX_3	62
++#define TERTIARY_TDM_TX_3	63
++#define TERTIARY_TDM_RX_4	64
++#define TERTIARY_TDM_TX_4	65
++#define TERTIARY_TDM_RX_5	66
++#define TERTIARY_TDM_TX_5	67
++#define TERTIARY_TDM_RX_6	68
++#define TERTIARY_TDM_TX_6	69
++#define TERTIARY_TDM_RX_7	70
++#define TERTIARY_TDM_TX_7	71
++#define QUATERNARY_TDM_RX_0	72
++#define QUATERNARY_TDM_TX_0	73
++#define QUATERNARY_TDM_RX_1	74
++#define QUATERNARY_TDM_TX_1	75
++#define QUATERNARY_TDM_RX_2	76
++#define QUATERNARY_TDM_TX_2	77
++#define QUATERNARY_TDM_RX_3	78
++#define QUATERNARY_TDM_TX_3	79
++#define QUATERNARY_TDM_RX_4	80
++#define QUATERNARY_TDM_TX_4	81
++#define QUATERNARY_TDM_RX_5	82
++#define QUATERNARY_TDM_TX_5	83
++#define QUATERNARY_TDM_RX_6	84
++#define QUATERNARY_TDM_TX_6	85
++#define QUATERNARY_TDM_RX_7	86
++#define QUATERNARY_TDM_TX_7	87
++#define QUINARY_TDM_RX_0	88
++#define QUINARY_TDM_TX_0	89
++#define QUINARY_TDM_RX_1	90
++#define QUINARY_TDM_TX_1	91
++#define QUINARY_TDM_RX_2	92
++#define QUINARY_TDM_TX_2	93
++#define QUINARY_TDM_RX_3	94
++#define QUINARY_TDM_TX_3	95
++#define QUINARY_TDM_RX_4	96
++#define QUINARY_TDM_TX_4	97
++#define QUINARY_TDM_RX_5	98
++#define QUINARY_TDM_TX_5	99
++#define QUINARY_TDM_RX_6	100
++#define QUINARY_TDM_TX_6	101
++#define QUINARY_TDM_RX_7	102
++#define QUINARY_TDM_TX_7	103
  
- 	rc = q6afe_port_start(dai_data->port[dai->id]);
- 	if (rc < 0) {
-@@ -289,7 +272,7 @@ static struct snd_soc_dai_ops q6hdmi_ops = {
- };
+ #endif /* __DT_BINDINGS_Q6_AFE_H__ */
  
- static struct snd_soc_dai_ops q6i2s_ops = {
--	.prepare	= q6afe_mi2s_prepare,
-+	.prepare	= q6afe_dai_prepare,
- 	.hw_params	= q6i2s_hw_params,
- 	.set_fmt	= q6i2s_set_fmt,
- 	.shutdown	= q6afe_dai_shutdown,
 -- 
 2.17.0
