@@ -1,58 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965630AbeE2RxS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 13:53:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45251 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965391AbeE2RxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 13:53:17 -0400
-Date: Tue, 29 May 2018 19:53:14 +0200
-From: Borislav Petkov <bp@suse.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "Williams, Dan J" <dan.j.williams@intel.com>,
-        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>, "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3 V2] x86/mce: Fix incorrect "Machine check from
- unknown source" message
-Message-ID: <20180529175313.GG19870@zn.tnic>
-References: <cover.1527283897.git.tony.luck@intel.com>
- <52e049a497e86fd0b71c529651def8871c804df0.1527283897.git.tony.luck@intel.com>
- <20180528204923.GB30792@zn.tnic>
- <20180529161549.GB935@agluck-desk>
- <20180529174105.GF19870@zn.tnic>
- <3908561D78D1C84285E8C5FCA982C28F7D31E24F@ORSMSX110.amr.corp.intel.com>
+        id S965602AbeE2Ryq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 13:54:46 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:36114 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965349AbeE2Ryn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 13:54:43 -0400
+Subject: Re: [PATCH] [RESEND] selftest: intel_pstate: debug support message
+ from aperf.c and return value fix.
+To: Jeffrin Jose T <ahiliation@gmail.com>, kstewart@linuxfoundation.org,
+        tglx@linutronix.de, pombredanne@nexb.com, gregkh@linuxfoundation.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <20180529172436.4432-1-ahiliation@gmail.com>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <e68e630d-c8fd-41cd-b579-1bfffa8a1042@kernel.org>
+Date: Tue, 29 May 2018 11:54:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180529172436.4432-1-ahiliation@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D31E24F@ORSMSX110.amr.corp.intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 05:50:48PM +0000, Luck, Tony wrote:
-> Ah. That would be because I forgot to "git add" before "git commit --amend" :-(
-
-Oh, I know the situation very well. :)
-
-> I had put:
+On 05/29/2018 11:24 AM, Jeffrin Jose T wrote:
+> Additional message along with an error message which is more
+> verbose for debug support from aperf.c and updated with the
+> new return value "KSFT_SKIP".
 > 
-> 		(void) mce_severity(&m, cfg->tolerant, &msg, true);
+> Signed-off-by: Jeffrin Jose T [Rajagiri SET] <ahiliation@gmail.com>
+> ---
+>  tools/testing/selftests/intel_pstate/aperf.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> but either works.
+> diff --git a/tools/testing/selftests/intel_pstate/aperf.c b/tools/testing/selftests/intel_pstate/aperf.c
+> index d21edea9c560..f6cd03a87493 100644
+> --- a/tools/testing/selftests/intel_pstate/aperf.c
+> +++ b/tools/testing/selftests/intel_pstate/aperf.c
+> @@ -9,6 +9,8 @@
+>  #include <sys/timeb.h>
+>  #include <sched.h>
+>  #include <errno.h>
+> +#include <string.h>
+> +#include "../kselftest.h"
+>  
+>  void usage(char *name) {
+>  	printf ("Usage: %s cpunum\n", name);
+> @@ -41,8 +43,8 @@ int main(int argc, char **argv) {
+>  	fd = open(msr_file_name, O_RDONLY);
+>  
+>  	if (fd == -1) {
+> -		perror("Failed to open");
+> -		return 1;
+> +		printf("/dev/cpu/%d/msr: %s\n", cpu, strerror(errno));
+> +		return KSFT_SKIP;
+>  	}
+>  
+>  	CPU_ZERO(&cpuset);
+> 
 
-Right.
+Thanks, Applied to linux-kselftest next for 4.18-rc1
 
-> Will look. I hope you didn't do too much to make the stable backport more difficult.
-
-Nah, the cleanups will all go ontop. This is just a dirty branch to show
-my intention but yours go first and then the cleanup.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+-- Shuah
