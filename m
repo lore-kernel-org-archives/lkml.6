@@ -1,49 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933484AbeE2LwF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 07:52:05 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:39609 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933315AbeE2Lv7 (ORCPT
+        id S933630AbeE2Lwa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 07:52:30 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:32769 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933372AbeE2Lw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 07:51:59 -0400
-X-Google-Smtp-Source: ADUXVKLo7WqkKJaXALLEq0A+rjSm2DwnYNbKGEpGyYPcN5h5fdJNsc138EeaS6rxRDDovrkOmOm2gw==
-Subject: Re: [PATCH 5/5] remoteproc: Introduce prepare and unprepare for
- subdevices
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, ohad@wizery.com,
-        bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180515205345.8090-1-elder@linaro.org>
- <20180515205345.8090-6-elder@linaro.org>
- <3580eff5-56ef-c2a0-c8eb-c27850598587@st.com>
-From: Alex Elder <elder@linaro.org>
-Message-ID: <d2d120c3-a875-7feb-00a9-e8e4d3e4dfbe@linaro.org>
-Date: Tue, 29 May 2018 06:51:57 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 29 May 2018 07:52:26 -0400
+X-Google-Smtp-Source: AB8JxZrZwJwUK9FuWyXiehlJk6ivZ3zDeAX6uqpS1c5XFQIDESwLwwxWBIUDNfSXZ/PTOevVoBb7qmZI7/Vh1I8e36E=
 MIME-Version: 1.0
-In-Reply-To: <3580eff5-56ef-c2a0-c8eb-c27850598587@st.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <eba350219d6521c5c84986c68f7f0045dcac9aea.1527587352.git-series.maxime.ripard@bootlin.com>
+References: <cover.e73f3ed1a9adc36fc1648d563cd967ec99219839.1527587352.git-series.maxime.ripard@bootlin.com>
+ <eba350219d6521c5c84986c68f7f0045dcac9aea.1527587352.git-series.maxime.ripard@bootlin.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 29 May 2018 13:52:25 +0200
+Message-ID: <CACRpkdaBQk9WbH8c=wZuJ1E_2trn9kVQogpBRNA9jQpcwkXhXA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] [DO NOT MERGE] arm: dts: sun8i: bpi-m2m: Add DSI display
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 04:16 AM, Arnaud Pouliquen wrote:
-. . .
+On Tue, May 29, 2018 at 11:49 AM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
 
->> +unroll_preparation:
->> +	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
->> +		if (subdev->unprepare)
->> +			subdev->unprepare(subdev);
->> +	}
-> Here you could call rproc_unprepare_subdevices instead of duplicating
-> the code.
+> The BananaPi M2M has an optional 1280x720 DSI panel. Since that panel is
+> optional, we can only show a DT patch that would show how to enable it.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-I thought the same thing, but it won't work because we only want to
-unprepare those devices that were successfully prepared.  Here we are
-unwinding the work that was partially done; in rproc_unprepare_subdevices()
-*all* subdevices have their unprepare function called.
+This looks very nice.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-					-Alex
+Yours,
+Linus Walleij
