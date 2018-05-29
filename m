@@ -1,226 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936521AbeE2OpE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:45:04 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42085 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935745AbeE2OoN (ORCPT
+        id S935738AbeE2Op3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:45:29 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:56033 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935287AbeE2OpW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:44:13 -0400
-X-Google-Smtp-Source: ADUXVKJjY32ILr9QssVr0vxgPnRrP2YbPkMBMx4cyUvmv2pMmVt8XlSv17/xYqI0KVG+anjPcfuRnQ==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 26/39] ovl: copy-up on MAP_SHARED
-Date: Tue, 29 May 2018 16:43:26 +0200
-Message-Id: <20180529144339.16538-27-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
-References: <20180529144339.16538-1-mszeredi@redhat.com>
+        Tue, 29 May 2018 10:45:22 -0400
+From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+To: William Wu <william.wu@rock-chips.com>,
+        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>,
+        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "sergei.shtylyov@cogentembedded.com"
+        <sergei.shtylyov@cogentembedded.com>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org"
+        <linux-rockchip@lists.infradead.org>,
+        "frank.wang@rock-chips.com" <frank.wang@rock-chips.com>,
+        "huangtao@rock-chips.com" <huangtao@rock-chips.com>,
+        "dianders@google.com" <dianders@google.com>,
+        "daniel.meng@rock-chips.com" <daniel.meng@rock-chips.com>,
+        "John.Youn@synopsys.com" <John.Youn@synopsys.com>,
+        "fml@rock-chips.com" <fml@rock-chips.com>
+Subject: Re: [PATCH] usb: dwc2: fix the incorrect bitmaps for the ports of
+ multi_tt hub
+Thread-Topic: [PATCH] usb: dwc2: fix the incorrect bitmaps for the ports of
+ multi_tt hub
+Thread-Index: AQHT8OxXMtSRTMYeG0CT9CelkWDIlA==
+Date: Tue, 29 May 2018 14:45:10 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013135A5A0@am04wembxa.internal.synopsys.com>
+References: <1526897520-9340-1-git-send-email-william.wu@rock-chips.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.165]
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TEjYTF029222
 
-A corner case of a corner case is when
+Acked-by Minas Harutyunyan hminas@synopsys.com>
 
- - file opened for O_RDONLY
- - which is then memory mapped SHARED
- - file opened for O_WRONLY
- - contents modified
- - contents read back though the shared mapping
-
-Unfortunately it looks very difficult to do anything about the established
-shared map after the file is copied up.
-
-Instead, when a read-only file is mapped shared, copy up the file before
-actually doing the map.  This may result in unnecessary copy-ups (but so
-may copy-up on open(O_RDWR) for exampe).
-
-We can revisit this later if it turns out to be a performance problem in
-real life.
-
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/overlayfs/Kconfig     | 21 +++++++++++++++++++++
- fs/overlayfs/file.c      | 22 ++++++++++++++++++++++
- fs/overlayfs/overlayfs.h |  7 +++++++
- fs/overlayfs/ovl_entry.h |  1 +
- fs/overlayfs/super.c     | 22 ++++++++++++++++++++++
- 5 files changed, 73 insertions(+)
-
-diff --git a/fs/overlayfs/Kconfig b/fs/overlayfs/Kconfig
-index 17032631c5cf..5d1d40d745c5 100644
---- a/fs/overlayfs/Kconfig
-+++ b/fs/overlayfs/Kconfig
-@@ -103,3 +103,24 @@ config OVERLAY_FS_XINO_AUTO
- 	  For more information, see Documentation/filesystems/overlayfs.txt
- 
- 	  If unsure, say N.
-+
-+config OVERLAY_FS_COPY_UP_SHARED
-+	bool "Overlayfs: copy up when mapping a file shared"
-+	default n
-+	depends on OVERLAY_FS
-+	help
-+	  If this option is enabled then on mapping a file with MAP_SHARED
-+	  overlayfs copies up the file in anticipation of it being modified
-+	  (just like we copy up the file on O_WRONLY and O_RDWR in anticipation
-+	  of modification).  This does not interfere with shared library
-+	  loading, as that uses MAP_PRIVATE.  But there might be use cases out
-+	  there where this impacts performance and disk usage.
-+
-+	  This just selects the default, the feature can also be enabled or
-+	  disabled in the running kernel or individually on each overlay mount.
-+
-+	  To get maximally standard compliant behavior, enable this option.
-+
-+	  To get a maximally backward compatible kernel, disable this option.
-+
-+	  If unsure, say N.
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index ef4bcc80572f..266692ce9a9a 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -10,6 +10,7 @@
- #include <linux/file.h>
- #include <linux/mount.h>
- #include <linux/xattr.h>
-+#include <linux/mman.h>
- #include <linux/uio.h>
- #include "overlayfs.h"
- 
-@@ -259,6 +260,26 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- 	return ret;
- }
- 
-+static int ovl_pre_mmap(struct file *file, unsigned long prot,
-+			unsigned long flag)
-+{
-+	int err = 0;
-+
-+	/*
-+	 * Take MAP_SHARED as hint about future writes to the file (through
-+	 * another file descriptor).  Caller might not have had such an intent,
-+	 * but we hope MAP_PRIVATE will be used in most such cases.
-+	 *
-+	 * If we don't copy up now and the file is modified, it becomes really
-+	 * difficult to change the mapping to match that of the file's content
-+	 * later.
-+	 */
-+	if ((flag & MAP_SHARED) && ovl_copy_up_shared(file_inode(file)->i_sb))
-+		err = ovl_copy_up(file_dentry(file));
-+
-+	return err;
-+}
-+
- static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	struct fd real;
-@@ -476,6 +497,7 @@ const struct file_operations ovl_file_operations = {
- 	.read_iter	= ovl_read_iter,
- 	.write_iter	= ovl_write_iter,
- 	.fsync		= ovl_fsync,
-+	.pre_mmap	= ovl_pre_mmap,
- 	.mmap		= ovl_mmap,
- 	.fallocate	= ovl_fallocate,
- 	.unlocked_ioctl	= ovl_ioctl,
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 3f6e39a2f51e..be4f1664f662 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -266,6 +266,13 @@ static inline unsigned int ovl_xino_bits(struct super_block *sb)
- 	return ofs->xino_bits;
- }
- 
-+static inline bool ovl_copy_up_shared(struct super_block *sb)
-+{
-+	struct ovl_fs *ofs = sb->s_fs_info;
-+
-+	return !(sb->s_flags & SB_RDONLY) && ofs->config.copy_up_shared;
-+}
-+
- 
- /* namei.c */
- int ovl_check_fh_len(struct ovl_fh *fh, int fh_len);
-diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-index 41655a7d6894..3bea47c63fd9 100644
---- a/fs/overlayfs/ovl_entry.h
-+++ b/fs/overlayfs/ovl_entry.h
-@@ -18,6 +18,7 @@ struct ovl_config {
- 	const char *redirect_mode;
- 	bool index;
- 	bool nfs_export;
-+	bool copy_up_shared;
- 	int xino;
- };
- 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 211975921a90..900ed4c39919 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -56,6 +56,12 @@ module_param_named(xino_auto, ovl_xino_auto_def, bool, 0644);
- MODULE_PARM_DESC(ovl_xino_auto_def,
- 		 "Auto enable xino feature");
- 
-+static bool ovl_copy_up_shared_def =
-+	IS_ENABLED(CONFIG_OVERLAY_FS_COPY_UP_SHARED);
-+module_param_named(copy_up_shared, ovl_copy_up_shared_def, bool, 0644);
-+MODULE_PARM_DESC(ovl_copy_up_shared_def,
-+		 "Copy up when mapping a file shared");
-+
- static void ovl_entry_stack_free(struct ovl_entry *oe)
- {
- 	unsigned int i;
-@@ -380,6 +386,9 @@ static int ovl_show_options(struct seq_file *m, struct dentry *dentry)
- 						"on" : "off");
- 	if (ofs->config.xino != ovl_xino_def())
- 		seq_printf(m, ",xino=%s", ovl_xino_str[ofs->config.xino]);
-+	if (ofs->config.copy_up_shared != ovl_copy_up_shared_def)
-+		seq_printf(m, ",copy_up_shared=%s",
-+			   ofs->config.copy_up_shared ? "on" : "off");
- 	return 0;
- }
- 
-@@ -417,6 +426,8 @@ enum {
- 	OPT_XINO_ON,
- 	OPT_XINO_OFF,
- 	OPT_XINO_AUTO,
-+	OPT_COPY_UP_SHARED_ON,
-+	OPT_COPY_UP_SHARED_OFF,
- 	OPT_ERR,
- };
- 
-@@ -433,6 +444,8 @@ static const match_table_t ovl_tokens = {
- 	{OPT_XINO_ON,			"xino=on"},
- 	{OPT_XINO_OFF,			"xino=off"},
- 	{OPT_XINO_AUTO,			"xino=auto"},
-+	{OPT_COPY_UP_SHARED_ON,		"copy_up_shared=on"},
-+	{OPT_COPY_UP_SHARED_OFF,	"copy_up_shared=off"},
- 	{OPT_ERR,			NULL}
- };
- 
-@@ -559,6 +572,14 @@ static int ovl_parse_opt(char *opt, struct ovl_config *config)
- 			config->xino = OVL_XINO_AUTO;
- 			break;
- 
-+		case OPT_COPY_UP_SHARED_ON:
-+			config->copy_up_shared = true;
-+			break;
-+
-+		case OPT_COPY_UP_SHARED_OFF:
-+			config->copy_up_shared = false;
-+			break;
-+
- 		default:
- 			pr_err("overlayfs: unrecognized mount option \"%s\" or missing value\n", p);
- 			return -EINVAL;
-@@ -1379,6 +1400,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
- 	ofs->config.index = ovl_index_def;
- 	ofs->config.nfs_export = ovl_nfs_export_def;
- 	ofs->config.xino = ovl_xino_def();
-+	ofs->config.copy_up_shared = ovl_copy_up_shared_def;
- 	err = ovl_parse_opt((char *) data, &ofs->config);
- 	if (err)
- 		goto out_err;
--- 
-2.14.3
+On 5/21/2018 2:13 PM, William Wu wrote:
+> The dwc2_get_ls_map() use ttport to reference into the
+> bitmap if we're on a multi_tt hub. But the bitmaps index
+> from 0 to (hub->maxchild - 1), while the ttport index from
+> 1 to hub->maxchild. This will cause invalid memory access
+> when the number of ttport is hub->maxchild.
+> 
+> Without this patch, I can easily meet a Kernel panic issue
+> if connect a low-speed USB mouse with the max port of FE2.1
+> multi-tt hub (1a40:0201) on rk3288 platform.
+> 
+> Signed-off-by: William Wu <william.wu@rock-chips.com>
+> ---
+>   drivers/usb/dwc2/hcd_queue.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/dwc2/hcd_queue.c b/drivers/usb/dwc2/hcd_queue.c
+> index d7c3d6c..9c55d1a 100644
+> --- a/drivers/usb/dwc2/hcd_queue.c
+> +++ b/drivers/usb/dwc2/hcd_queue.c
+> @@ -383,7 +383,7 @@ static unsigned long *dwc2_get_ls_map(struct dwc2_hsotg *hsotg,
+>   	/* Get the map and adjust if this is a multi_tt hub */
+>   	map = qh->dwc_tt->periodic_bitmaps;
+>   	if (qh->dwc_tt->usb_tt->multi)
+> -		map += DWC2_ELEMENTS_PER_LS_BITMAP * qh->ttport;
+> +		map += DWC2_ELEMENTS_PER_LS_BITMAP * (qh->ttport - 1);
+>   
+>   	return map;
+>   }
+> 
