@@ -1,114 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934317AbeE2N13 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:27:29 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46673 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934178AbeE2N10 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:27:26 -0400
-X-Google-Smtp-Source: ADUXVKL+YbGCs7uR4kQqnw36YhBL4A0SpJGE3G+Am+GCmmwWBqm0qk9ljuq0X5aSmvk1KIa/vB7SGQ==
-Date: Tue, 29 May 2018 14:27:22 +0100
-From: Andy Whitcroft <robobotbotbot@gmail.com>
-To: Brian Belleville <bbellevi@uci.edu>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] floppy: Do not copy a kernel pointer to user memory in
- FDGETPRM ioctl
-Message-ID: <20180529132722.GH7445@brain>
-References: <1520467365-7194-1-git-send-email-bbellevi@uci.edu>
+        id S934378AbeE2N1q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:27:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50268 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934320AbeE2N1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:27:42 -0400
+Date: Tue, 29 May 2018 09:27:37 -0400
+From: Luiz Capitulino <lcapitulino@redhat.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, tglx@linutronix.de, x86@kernel.org,
+        hpa@zytor.com, fanc.fnst@cn.fujitsu.com, yasu.isimatu@gmail.com,
+        indou.takao@jp.fujitsu.com, douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH 0/2] x86/boot/KASLR: Skip specified number of 1GB huge
+ pages when do physical randomization
+Message-ID: <20180529092737.10a8138b@doriath>
+In-Reply-To: <20180528095418.GD31261@MiWiFi-R3L-srv>
+References: <20180516100532.14083-1-bhe@redhat.com>
+        <20180518070046.GA18660@gmail.com>
+        <20180518074359.GR24627@MiWiFi-R3L-srv>
+        <20180518081919.GB11379@gmail.com>
+        <20180518112836.GS24627@MiWiFi-R3L-srv>
+        <20180523151022.102e3565@doriath>
+        <20180528095418.GD31261@MiWiFi-R3L-srv>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520467365-7194-1-git-send-email-bbellevi@uci.edu>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 04:02:45PM -0800, Brian Belleville wrote:
-> The final field of a floppy_struct is the field "name", which is a
-> pointer to a string in kernel memory. The kernel pointer should not be
-> copied to user memory. The FDGETPRM ioctl copies a floppy_struct to
-> user memory, including the "name" field. This pointer cannot be used
-> by the user, and it will leak a kernel address to user-space, which
-> will reveal the location of kernel code and data and undermine KASLR
-> protection. Instead, copy the floppy_struct except for the "name"
-> field.
+On Mon, 28 May 2018 17:54:18 +0800
+Baoquan He <bhe@redhat.com> wrote:
+
+> On 05/23/18 at 03:10pm, Luiz Capitulino wrote:
+> > On Fri, 18 May 2018 19:28:36 +0800
+> > Baoquan He <bhe@redhat.com> wrote:
+> >   
+> > > > Note that it's not KASLR specific: if we had some other kernel feature that tried 
+> > > > to allocate a piece of memory from what appears to be perfectly usable generic RAM 
+> > > > we'd have the same problems!    
+> > > 
+> > > Hmm, this may not be the situation for 1GB huge pages. For 1GB huge
+> > > pages, the bug is that on KVM guest with 4GB ram, when user adds
+> > > 'default_hugepagesz=1G hugepagesz=1G hugepages=1' to kernel
+> > > command-line, if 'nokaslr' is specified, they can get 1GB huge page
+> > > allocated successfully. If remove 'nokaslr', namely KASLR is enabled,
+> > > the 1GB huge page allocation failed.  
+> > 
+> > Let me clarify that this issue is not specific to KVM in any way. The same
+> > issue happens on bare-metal, but if you have lots of memory you'll hardly
+> > notice it. On the other hand, it's common to create KVM guests with a few
+> > GBs of memory. In those guests, you may not be able to get a 1GB hugepage
+> > at all if kaslr is enabled.
+> > 
+> > This series is a simple fix for this bug. It hooks up into already existing
+> > KASLR code that scans memory regions to be avoided. The memory hotplug
+> > issue is left for another day.  
 > 
-> Signed-off-by: Brian Belleville <bbellevi@uci.edu>
-> ---
->  drivers/block/floppy.c | 1 +
->  1 file changed, 1 insertion(+)
+> Exactly. 
 > 
-> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-> index eae484a..4d4a422 100644
-> --- a/drivers/block/floppy.c
-> +++ b/drivers/block/floppy.c
-> @@ -3470,6 +3470,7 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
->  					  (struct floppy_struct **)&outparam);
->  		if (ret)
->  			return ret;
-> +		size = offsetof(struct floppy_struct, name);
->  		break;
->  	case FDMSGON:
->  		UDP->flags |= FTD_MSG;
+> This issue is about kernel being randomized into good 1GB huge pages to
+> break later huge page allocation, and we can only scan memory to know
+> where 1GB huge page is located and avoid them.
+> 
+> The memory hotplug issue is about kernel being randomized into movable
+> memory regions, and we need read ACPI SRAT table to retrieve the
+> attribute of memory regions to know if it's movable, then avoid it if
+> yes.
 
-I am not sure it is reasonable to simply set size here to the length of the
-valid data.  Though in the real world everyonne should be using the defines
-and those should include the full length, the code itself does not require
-this, it only prevents overly long reads.  So I think it is possible to do
-this read with a shorter userspace buffer; with this change we would
-then write beyond the end of the buffer.
+Makes sense. Since the KASLR code already scans memory regions looking
+for regions to skip and since this series just uses that, I think this
+is a good solution to the problem:
 
-This also seems to introduce a slight behavioural difference between the
-primary and compat calls.  The compat call already elides the name but it
-also is copying into a new structure for return and this is pre-cleared,
-so the name will always be null for the compat case and undefined for
-the primary ioctl.
+Reviewed-and-Tested-by: Luiz Capitulino <lcapitulino@redhat.com>
 
-Perhaps the below patch would be more appropriate.
-
--apw
-
->From ddb8c77229a9507fa5575c910d2847e123a9c94c Mon Sep 17 00:00:00 2001
-From: Andy Whitcroft <apw@canonical.com>
-Date: Tue, 29 May 2018 13:04:15 +0100
-Subject: [PATCH 1/1] floppy: Do not copy a kernel pointer to user memory in
- FDGETPRM ioctl
-
-The final field of a floppy_struct is the field "name", which is a pointer
-to a string in kernel memory.  The kernel pointer should not be copied to
-user memory.  The FDGETPRM ioctl copies a floppy_struct to user memory,
-including this "name" field.  This pointer cannot be used by the user
-and it will leak a kernel address to user-space, which will reveal the
-location of kernel code and data and undermine KASLR protection.
-
-Model this code after the compat ioctl which copies the returned data
-to a previously cleared temporary structure on the stack (excluding the
-name pointer) and copy out to userspace from there.  As we already have
-an inparam union with an appropriate member and that memory is already
-cleared even for read only calls make use of that as a temporary store.
-
-Based on an initial patch by Brian Belleville.
-
-CVE-2018-7755
-Signed-off-by: Andy Whitcroft <apw@canonical.com>
----
- drivers/block/floppy.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index 8ec7235fc93b..7512f6ff7c43 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3470,6 +3470,8 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
- 					  (struct floppy_struct **)&outparam);
- 		if (ret)
- 			return ret;
-+		memcpy(&inparam.g, outparam, offsetof(struct floppy_struct, name));
-+		outparam = &inparam.g;
- 		break;
- 	case FDMSGON:
- 		UDP->flags |= FTD_MSG;
--- 
-2.17.0
+> 
+> > 
+> > Now, if I understand what Ingo is saying is that he wants to see all problems
+> > solved with a generic solution vs. a specific solution for each problem.  
+> 
+> Hmm, if we understand Ingo's words correctly, for these two issues,
+> seems there isn't a generic solution to solve both of them. We can only
+> fix them separately.
+> 
+> Hi Ingo,
+> 
+> Ping!
+> 
+> Not sure if my above understanding is correct. Could you confirm if I
+> have understood your comments and if the solution of this patchset is
+> right?
+> 
+> Thanks
+> Baoquan
+> 
