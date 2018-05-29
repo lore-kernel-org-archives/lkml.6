@@ -1,280 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754952AbeE2Hgv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:36:51 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44697 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754759AbeE2Hgq (ORCPT
+        id S1755041AbeE2HhR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:37:17 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:42454 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754894AbeE2HhP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:36:46 -0400
-X-Google-Smtp-Source: AB8JxZocbVq2d64OT+N6khDJiJr2gI9Z3WYdOetsD2U5LSokRHTHUpfoINAqVFgf2maiOqcEPld4qA==
-From: martin_liu <liumartin@google.com>
-To: stern@rowland.harvard.edu
-Cc: heikki.krogerus@linux.intel.com, johan@kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, jenhaochen@google.com,
-        martin_liu <liumartin@google.com>
-Subject: [RFC PATCH v2] driver core: hold dev's parent lock when needed
-Date: Tue, 29 May 2018 15:07:20 +0800
-Message-Id: <20180529070719.164626-1-liumartin@google.com>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
-In-Reply-To: <Pine.LNX.4.44L0.1805241100000.1871-100000@iolanthe.rowland.org>
-References: <Pine.LNX.4.44L0.1805241100000.1871-100000@iolanthe.rowland.org>
+        Tue, 29 May 2018 03:37:15 -0400
+X-Google-Smtp-Source: ADUXVKIZmaXP05dnEsLbx0g9Dgd7eEsiJlOVC2V1WZb5KFe+OmJ3qqd1AfksD8w/8BnVNoPI1J+ihn2ZFkAc9AIv098=
+MIME-Version: 1.0
+In-Reply-To: <20180524014738.52924-4-srinivas.pandruvada@linux.intel.com>
+References: <20180524014738.52924-1-srinivas.pandruvada@linux.intel.com> <20180524014738.52924-4-srinivas.pandruvada@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 29 May 2018 09:37:13 +0200
+X-Google-Sender-Auth: 2DK4sk5KRCFzOBhkle1MiOz7F2c
+Message-ID: <CAJZ5v0hHD-qH45bnw91w+ky=rnrTW4yTYMdizU47S8Y8Avqc_g@mail.gmail.com>
+Subject: Re: [RFC/RFT] [PATCH v2 3/6] cpufreq: intel_pstate: Add
+ update_util_hook for HWP
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SOC have internal I/O buses that can't be proved for devices. The
-devices on the buses can be accessed directly without additinal
-configuration required. This type of bus is represented as
-"simple-bus". In some platforms, we name "soc" with "simple-bus"
-attribute and many devices are hooked under it desribed in DT
-(device tree).
+On Thu, May 24, 2018 at 3:47 AM, Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+> When HWP dynamic boost is active then set the HWP specific update util
+> hook.
+>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-In commit 'bf74ad5bc417 introduce ("[PATCH] Hold the device's
-parent's lock during probe and remove")' to solve USB subsystem
-lock sequence since usb device's characteristic. Thus "soc"
-needs to be locked whenever a device and driver's probing
-happen under "soc" bus. During this period, an async driver
-tries to probe a device which is under the "soc" bus would be
-blocked until previous driver finish the probing and release "soc"
-lock. And the next probing under the "soc" bus need to wait for
-async finish. Because of that, driver's async probe for init
-time improvement will be shadowed.
+Splitting this patch out of the next one is sort of artificial.
 
-Since many devices don't have USB devices' characteristic, they
-actually don't need parent's lock. Thus, we introduce a lock flag
-in device struct and driver core would lock the parent lock base
-on the flag. For usbsystem, we set this flag when its device and
-driver is matched and to keep original lock behavior in driver
-core.
+> ---
+>  drivers/cpufreq/intel_pstate.c | 21 +++++++++++++++++----
+>  1 file changed, 17 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> index 6ad46e07cad6..382160570b5f 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -291,6 +291,7 @@ static struct pstate_funcs pstate_funcs __read_mostly;
+>
+>  static int hwp_active __read_mostly;
+>  static bool per_cpu_limits __read_mostly;
+> +static bool hwp_boost __read_mostly;
 
-Async probe could have more benefit after this patch.
+Because of this, among other things.
 
-Signed-off-by: martin_liu <liumartin@google.com>
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
----
-Changes in v2:
- - take Alan's suggestion to introudce a flag to guide driver
-   core to hold device parent's lock.
-
-[v1]: https://lkml.org/lkml/2018/5/22/545
-
-Currently, I have the flag set in USB subsystem match function.
-Since I'm not familar with USB part, need some feedback to know
-if they cover all the cases that original case driver core
-protects.
-
- drivers/base/bus.c          | 16 ++++++++--------
- drivers/base/dd.c           |  8 ++++----
- drivers/usb/common/ulpi.c   | 16 ++++++++++++----
- drivers/usb/core/driver.c   |  9 +++++++--
- drivers/usb/core/usb-acpi.c |  6 +++++-
- drivers/usb/serial/bus.c    |  4 +++-
- include/linux/device.h      |  1 +
- 7 files changed, 40 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index ef6183306b40..18ea94caec02 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -184,10 +184,10 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
- 
- 	dev = bus_find_device_by_name(bus, NULL, buf);
- 	if (dev && dev->driver == drv) {
--		if (dev->parent)	/* Needed for USB */
-+		if (dev->parent && dev->need_parent_lock)/* Needed for USB */
- 			device_lock(dev->parent);
- 		device_release_driver(dev);
--		if (dev->parent)
-+		if (dev->parent && dev->need_parent_lock)
- 			device_unlock(dev->parent);
- 		err = count;
- 	}
-@@ -211,12 +211,12 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
- 
- 	dev = bus_find_device_by_name(bus, NULL, buf);
- 	if (dev && dev->driver == NULL && driver_match_device(drv, dev)) {
--		if (dev->parent)	/* Needed for USB */
-+		if (dev->parent && dev->need_parent_lock)/* Needed for USB */
- 			device_lock(dev->parent);
- 		device_lock(dev);
- 		err = driver_probe_device(drv, dev);
- 		device_unlock(dev);
--		if (dev->parent)
-+		if (dev->parent && dev->need_parent_lock)
- 			device_unlock(dev->parent);
- 
- 		if (err > 0) {
-@@ -735,10 +735,10 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
- 	int ret = 0;
- 
- 	if (!dev->driver) {
--		if (dev->parent)	/* Needed for USB */
-+		if (dev->parent && dev->need_parent_lock)/* Needed for USB */
- 			device_lock(dev->parent);
- 		ret = device_attach(dev);
--		if (dev->parent)
-+		if (dev->parent && dev->need_parent_lock)
- 			device_unlock(dev->parent);
- 	}
- 	return ret < 0 ? ret : 0;
-@@ -770,10 +770,10 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
- int device_reprobe(struct device *dev)
- {
- 	if (dev->driver) {
--		if (dev->parent)        /* Needed for USB */
-+		if (dev->parent && dev->need_parent_lock)/* Needed for USB */
- 			device_lock(dev->parent);
- 		device_release_driver(dev);
--		if (dev->parent)
-+		if (dev->parent && dev->need_parent_lock)
- 			device_unlock(dev->parent);
- 	}
- 	return bus_rescan_devices_helper(dev, NULL);
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index c9f54089429b..c9a118568775 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -817,13 +817,13 @@ static int __driver_attach(struct device *dev, void *data)
- 		return ret;
- 	} /* ret > 0 means positive match */
- 
--	if (dev->parent)	/* Needed for USB */
-+	if (dev->parent && dev->need_parent_lock)/* Needed for USB */
- 		device_lock(dev->parent);
- 	device_lock(dev);
- 	if (!dev->driver)
- 		driver_probe_device(drv, dev);
- 	device_unlock(dev);
--	if (dev->parent)
-+	if (dev->parent && dev->need_parent_lock)
- 		device_unlock(dev->parent);
- 
- 	return 0;
-@@ -919,7 +919,7 @@ void device_release_driver_internal(struct device *dev,
- 				    struct device_driver *drv,
- 				    struct device *parent)
- {
--	if (parent)
-+	if (parent && dev->need_parent_lock)
- 		device_lock(parent);
- 
- 	device_lock(dev);
-@@ -927,7 +927,7 @@ void device_release_driver_internal(struct device *dev,
- 		__device_release_driver(dev, parent);
- 
- 	device_unlock(dev);
--	if (parent)
-+	if (parent && dev->need_parent_lock)
- 		device_unlock(parent);
- }
- 
-diff --git a/drivers/usb/common/ulpi.c b/drivers/usb/common/ulpi.c
-index 9a2ab6751a23..609566396bf8 100644
---- a/drivers/usb/common/ulpi.c
-+++ b/drivers/usb/common/ulpi.c
-@@ -40,13 +40,21 @@ static int ulpi_match(struct device *dev, struct device_driver *driver)
- 	const struct ulpi_device_id *id;
- 
- 	/* Some ULPI devices don't have a vendor id so rely on OF match */
--	if (ulpi->id.vendor == 0)
--		return of_driver_match_device(dev, driver);
-+	if (ulpi->id.vendor == 0) {
-+		if (of_driver_match_device(dev, driver)) {
-+			dev->need_parent_lock = 1;
-+			return 1;
-+		}
-+		return o;
-+	}
- 
--	for (id = drv->id_table; id->vendor; id++)
-+	for (id = drv->id_table; id->vendor; id++) {
- 		if (id->vendor == ulpi->id.vendor &&
--		    id->product == ulpi->id.product)
-+		    id->product == ulpi->id.product) {
-+			dev->need_parent_lock = 1;
- 			return 1;
-+		}
-+	}
- 
- 	return 0;
- }
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index 9792cedfc351..3dbabf8d3cb8 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -808,6 +808,7 @@ static int usb_device_match(struct device *dev, struct device_driver *drv)
- 			return 0;
- 
- 		/* TODO: Add real matching code */
-+		dev->need_parent_lock = 1;
- 		return 1;
- 
- 	} else if (is_usb_interface(dev)) {
-@@ -823,12 +824,16 @@ static int usb_device_match(struct device *dev, struct device_driver *drv)
- 		usb_drv = to_usb_driver(drv);
- 
- 		id = usb_match_id(intf, usb_drv->id_table);
--		if (id)
-+		if (id) {
-+			dev->need_parent_lock = 1;
- 			return 1;
-+		}
- 
- 		id = usb_match_dynamic_id(intf, usb_drv);
--		if (id)
-+		if (id) {
-+			dev->need_parent_lock = 1;
- 			return 1;
-+		}
- 	}
- 
- 	return 0;
-diff --git a/drivers/usb/core/usb-acpi.c b/drivers/usb/core/usb-acpi.c
-index e221861b3187..03901fc86227 100644
---- a/drivers/usb/core/usb-acpi.c
-+++ b/drivers/usb/core/usb-acpi.c
-@@ -224,7 +224,11 @@ static struct acpi_device *usb_acpi_find_companion(struct device *dev)
- 
- static bool usb_acpi_bus_match(struct device *dev)
- {
--	return is_usb_device(dev) || is_usb_port(dev);
-+	if (is_usb_device(dev) || is_usb_port(dev)) {
-+		dev->need_parent_lock = 1;
-+		return 1;
-+	}
-+	return 0;
- }
- 
- static struct acpi_bus_type usb_acpi_bus = {
-diff --git a/drivers/usb/serial/bus.c b/drivers/usb/serial/bus.c
-index 9e265eb92611..599ba0046f8e 100644
---- a/drivers/usb/serial/bus.c
-+++ b/drivers/usb/serial/bus.c
-@@ -29,8 +29,10 @@ static int usb_serial_device_match(struct device *dev,
- 
- 	driver = to_usb_serial_driver(drv);
- 
--	if (driver == port->serial->type)
-+	if (driver == port->serial->type) {
-+		dev->need_parent_lock = 1;
- 		return 1;
-+	}
- 
- 	return 0;
- }
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 477956990f5e..a96194f39dbe 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -992,6 +992,7 @@ struct device {
- 	bool			offline_disabled:1;
- 	bool			offline:1;
- 	bool			of_node_reused:1;
-+	bool			need_parent_lock:1;
- };
- 
- static inline struct device *kobj_to_dev(struct kobject *kobj)
--- 
-2.17.0.921.gf22659ad46-goog
+>
+>  static struct cpufreq_driver *intel_pstate_driver __read_mostly;
+>
+> @@ -1461,6 +1462,11 @@ static inline bool intel_pstate_hwp_boost_down(struct cpudata *cpu)
+>         return false;
+>  }
+>
+> +static inline void intel_pstate_update_util_hwp(struct update_util_data *data,
+> +                                               u64 time, unsigned int flags)
+> +{
+> +}
+> +
+>  static inline void intel_pstate_calc_avg_perf(struct cpudata *cpu)
+>  {
+>         struct sample *sample = &cpu->sample;
+> @@ -1764,7 +1770,7 @@ static void intel_pstate_set_update_util_hook(unsigned int cpu_num)
+>  {
+>         struct cpudata *cpu = all_cpu_data[cpu_num];
+>
+> -       if (hwp_active)
+> +       if (hwp_active && !hwp_boost)
+>                 return;
+>
+>         if (cpu->update_util_set)
+> @@ -1772,8 +1778,12 @@ static void intel_pstate_set_update_util_hook(unsigned int cpu_num)
+>
+>         /* Prevent intel_pstate_update_util() from using stale data. */
+>         cpu->sample.time = 0;
+> -       cpufreq_add_update_util_hook(cpu_num, &cpu->update_util,
+> -                                    intel_pstate_update_util);
+> +       if (hwp_active)
+> +               cpufreq_add_update_util_hook(cpu_num, &cpu->update_util,
+> +                                            intel_pstate_update_util_hwp);
+> +       else
+> +               cpufreq_add_update_util_hook(cpu_num, &cpu->update_util,
+> +                                            intel_pstate_update_util);
+>         cpu->update_util_set = true;
+>  }
+>
+> @@ -1885,8 +1895,11 @@ static int intel_pstate_set_policy(struct cpufreq_policy *policy)
+>                 intel_pstate_set_update_util_hook(policy->cpu);
+>         }
+>
+> -       if (hwp_active)
+> +       if (hwp_active) {
+> +               if (!hwp_boost)
+> +                       intel_pstate_clear_update_util_hook(policy->cpu);
+>                 intel_pstate_hwp_set(policy->cpu);
+> +       }
+>
+>         mutex_unlock(&intel_pstate_limits_lock);
+>
+> --
+> 2.13.6
+>
