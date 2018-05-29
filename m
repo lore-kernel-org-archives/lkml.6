@@ -1,92 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933171AbeE2LBF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 07:01:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52744 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932840AbeE2LBC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 07:01:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 79B18602A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-X-Google-Smtp-Source: ADUXVKL/j14ziPQi0s18FMvsZqqt9KWW05kILzU3hbSD8BasmrdDaxYftukkCMYrsSsh3tHTXvGjJhvDCmYS8FIBME0=
+        id S933232AbeE2LDC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 07:03:02 -0400
+Received: from ozlabs.org ([203.11.71.1]:37647 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932840AbeE2LDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 07:03:00 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 29 May 2018 21:02:57 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mathieu Malaterre <malat@debian.org>
+Subject: linux-next: boot messages from today's linux-next
+Message-ID: <20180529210257.26da8de7@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180525184525.355-1-bjorn.andersson@linaro.org>
-References: <20180524223122.12601-1-bjorn.andersson@linaro.org> <20180525184525.355-1-bjorn.andersson@linaro.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Tue, 29 May 2018 16:31:00 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iGAhOyC8pM57rGNyVS_zpi3XBoZzcExY=BYVrWRgt4GLQ@mail.gmail.com>
-Message-ID: <CAFp+6iGAhOyC8pM57rGNyVS_zpi3XBoZzcExY=BYVrWRgt4GLQ@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: msm8996: Move UFS_GDSC to UFS HCD
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/qW63_4G3s+Rn81/meypW38y"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 26, 2018 at 12:15 AM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> The UFS_GDSC backs the resources needed by the UFS HCD, rather than the
-> PHY. This results in the UFS HCD occationally failing to enable some of
-> its clocks.
->
-> Move the UFS_GDSC reference to the UFS HCD node instead, to correct
-> this.
->
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->
-> Changes since v1:
-> - Dropped UFS_GDSC from phy node
->
->  arch/arm64/boot/dts/qcom/msm8996.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index 380e14591686..8c7f9ca25b53 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -654,8 +654,6 @@
->                         clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
->                                  <&gcc GCC_UFS_CLKREF_CLK>;
->                         status = "disabled";
-> -
-> -                       power-domains = <&gcc UFS_GDSC>;
->                 };
->
->                 ufshc@624000 {
-> @@ -674,6 +672,8 @@
->                         vccq-max-microamp = <450000>;
->                         vccq2-max-microamp = <450000>;
->
-> +                       power-domains = <&gcc UFS_GDSC>;
-> +
+--Sig_/qW63_4G3s+Rn81/meypW38y
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks good.
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Hi all,
 
-Regards
-Vivek
->                         clock-names =
->                                 "core_clk_src",
->                                 "core_clk",
-> --
-> 2.17.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+My qemu boots of today's powerpc linux-next kernel produced the following
+boot message differences:
 
+-Max number of cores passed to firmware: 2048 (NR_CPUS =3D 2048)
++Max number of cores passed to firmware: u (NR_CPUS =3D 2048)
 
+Seemingly caused by commit
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+  eae5f709a4d7 ("powerpc: Add __printf verification to prom_printf")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/qW63_4G3s+Rn81/meypW38y
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNM2EACgkQAVBC80lX
+0GyCXwgApP8ZwkJRONX4Vk1eCSzCXxDkYm5ZEP7inV2Ur/wshd8dm/C/1GLVGmkM
+1ilp4TFgULSCLEqJL7OxEU9ivjZBj+78zvzJaXBSt4Vr78eyrYxvpH7FQggpBn5H
+en1Oyc2yeBur74e+aPw2wKtSWYwPU5gj8lP6+OwQwkYjKk8VBQbYXiYbjMvrTzlG
+rtdMqGTkX9FY4f29bqayLHsnj61nwkZlSrQ6KwoVRv9aiol6uMttTLpSLp4xmTxF
+/rP5S3+Ps2S7rzbu+m9BYdMMOI9KfCTUMo6OiDdbSLcPEEyiNjwCsGyD1+fzv2Uv
+dV8kNTNlzJahxQFqzEFpqlx9a7lFjA==
+=LcnE
+-----END PGP SIGNATURE-----
+
+--Sig_/qW63_4G3s+Rn81/meypW38y--
