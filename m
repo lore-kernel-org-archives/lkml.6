@@ -1,101 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964868AbeE2PPV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:15:21 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46520 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935547AbeE2Ont (ORCPT
+        id S935843AbeE2PPM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:15:12 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:40101 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935212AbeE2PPF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:43:49 -0400
-X-Google-Smtp-Source: AB8JxZqrvYhf0r5KxZ3z+v0JO7bXzfGKMLc304QA16sVQszPgEWDXe4UbZAfTmawmJTBjFwTZ5VE3Q==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/39] vfs: add f_op->pre_mmap()
-Date: Tue, 29 May 2018 16:43:06 +0200
-Message-Id: <20180529144339.16538-7-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
-References: <20180529144339.16538-1-mszeredi@redhat.com>
+        Tue, 29 May 2018 11:15:05 -0400
+X-Google-Smtp-Source: AB8JxZpTFmH/pCH2OZyk0R3jU9GwASsl2j+iRbJ0aw+YsPh7yxzBEH01NtiGQnEGPNkACV7WLKVrwbs7uRayYQiOXsg=
+MIME-Version: 1.0
+In-Reply-To: <20180529150455.17300-4-peron.clem@gmail.com>
+References: <20180529150455.17300-1-peron.clem@gmail.com> <20180529150455.17300-4-peron.clem@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 29 May 2018 12:15:04 -0300
+Message-ID: <CAOMZO5CPUcTVkRhLDbBoZ2_WHy0UBOPDvEWBvTDp4DcCEjo6pw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] Documentation: DT: add i.MX EPIT timer binding
+To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TFFhnR000837
 
-This is needed by overlayfs to be able to copy up a file from a read-only
-lower layer to a writable layer when being mapped shared.  When copying up,
-overlayfs takes VFS locks that would violate locking order when nested
-inside mmap_sem.
+On Tue, May 29, 2018 at 12:04 PM, Clément Péron <peron.clem@gmail.com> wrote:
+> From: Clément Peron <clement.peron@devialet.com>
+>
+> Add devicetree binding document for NXP's i.MX SoC specific
+> EPIT timer driver.
+>
+> Signed-off-by: Clément Peron <clement.peron@devialet.com>
+> ---
+>  .../devicetree/bindings/clock/imx6q,epit.txt  | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.txt
+>
+> diff --git a/Documentation/devicetree/bindings/clock/imx6q,epit.txt b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
+> new file mode 100644
+> index 000000000000..d54d455cebdc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
+> @@ -0,0 +1,25 @@
+> +Binding for the i.MX6 EPIT timer
+> +
+> +This binding uses the common clock binding[1].
+> +
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Required properties:
+> +- compatible: should be "fsl,imx6q-epit"
+> +- reg: physical base address of the controller and length of memory mapped
+> +  region.
+> +- interrupts: Should contain EPIT controller interrupt
+> +- clocks: list of clock specifiers, must contain an entry for each required
+> +  entry in clock-names
+> +- clock-names : as described in the clock bindings
 
-Add a new f_op->pre_mmap method, which is called before taking mmap_sem.
+Please list the name of each required clock here.
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- Documentation/filesystems/Locking | 1 +
- Documentation/filesystems/vfs.txt | 3 +++
- include/linux/fs.h                | 1 +
- mm/util.c                         | 5 +++++
- 4 files changed, 10 insertions(+)
-
-diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
-index 75d2d57e2c44..60e76060baff 100644
---- a/Documentation/filesystems/Locking
-+++ b/Documentation/filesystems/Locking
-@@ -442,6 +442,7 @@ prototypes:
- 	unsigned int (*poll) (struct file *, struct poll_table_struct *);
- 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
- 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
-+	int (*pre_mmap) (struct file *, unsigned long, unsigned long);
- 	int (*mmap) (struct file *, struct vm_area_struct *);
- 	int (*open) (struct inode *, struct file *);
- 	int (*flush) (struct file *);
-diff --git a/Documentation/filesystems/vfs.txt b/Documentation/filesystems/vfs.txt
-index 5fd325df59e2..2bc77ea8aef4 100644
---- a/Documentation/filesystems/vfs.txt
-+++ b/Documentation/filesystems/vfs.txt
-@@ -859,6 +859,7 @@ struct file_operations {
- 	unsigned int (*poll) (struct file *, struct poll_table_struct *);
- 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
- 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
-+	int (*pre_mmap) (struct file *, unsigned long, unsigned long);
- 	int (*mmap) (struct file *, struct vm_area_struct *);
- 	int (*mremap)(struct file *, struct vm_area_struct *);
- 	int (*open) (struct inode *, struct file *);
-@@ -906,6 +907,8 @@ otherwise noted.
-   compat_ioctl: called by the ioctl(2) system call when 32 bit system calls
-  	 are used on 64 bit kernels.
- 
-+  pre_mmap: called before mmap, without mmap_sem being held yet.
-+
-   mmap: called by the mmap(2) system call
- 
-   open: called by the VFS when an inode should be opened. When the VFS
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ecc854c75611..1ea3f153b7f8 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1716,6 +1716,7 @@ struct file_operations {
- 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
- 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
- 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
-+	int (*pre_mmap) (struct file *, unsigned long, unsigned long);
- 	int (*mmap) (struct file *, struct vm_area_struct *);
- 	unsigned long mmap_supported_flags;
- 	int (*open) (struct inode *, struct file *);
-diff --git a/mm/util.c b/mm/util.c
-index 45fc3169e7b0..11cd375e1a19 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -352,6 +352,11 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
- 
- 	ret = security_mmap_file(file, prot, flag);
- 	if (!ret) {
-+		if (file && file->f_op->pre_mmap) {
-+			ret = file->f_op->pre_mmap(file, prot, flag);
-+			if (ret)
-+				return ret;
-+		}
- 		if (down_write_killable(&mm->mmap_sem))
- 			return -EINTR;
- 		ret = do_mmap_pgoff(file, addr, len, prot, flag, pgoff,
--- 
-2.14.3
+I see that the driver does not request a "ckil" clock.
