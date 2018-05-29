@@ -1,84 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933050AbeE2KBJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:01:09 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35384 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932737AbeE2KBC (ORCPT
+        id S933062AbeE2KBT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:01:19 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:35126 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933052AbeE2KBL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:01:02 -0400
-X-Google-Smtp-Source: ADUXVKLA+amtRos3P8QZQgH6Pj+H66Chyva1nn7EZKXiktQ9VzZUHp+OKxEPln4ow1bNy393btfwVw==
-Date: Tue, 29 May 2018 13:00:51 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v3 4/6] clk: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <ae6e4d5cb4c5fb49ea61e49c8958d5b14d676b34.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+        Tue, 29 May 2018 06:01:11 -0400
+Date: Tue, 29 May 2018 13:00:49 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Colin King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mac80211_hwsim: add error check to call to
+ rhashtable_init
+Message-ID: <20180529100049.up6wzjkzmd5a3v2q@mwanda>
+References: <20180529091412.8530-1-colin.king@canonical.com>
+ <1527585428.6955.7.camel@sipsolutions.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1527585428.6955.7.camel@sipsolutions.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8907 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=540
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805290115
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document devicetree bindings for ROHM BD71837 PMIC clock output.
+On Tue, May 29, 2018 at 11:17:08AM +0200, Johannes Berg wrote:
+> On Tue, 2018-05-29 at 10:14 +0100, Colin King wrote:
+> > 
+> > @@ -3573,7 +3573,9 @@ static int __init init_mac80211_hwsim(void)
+> >  	hwsim_wq = alloc_workqueue("hwsim_wq", 0, 0);
+> >  	if (!hwsim_wq)
+> >  		return -ENOMEM;
+> > -	rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
+> > +	err = rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
+> > +	if (err)
+> > +		return err;
+> 
+> That's missing a workqueue free, but I can fix that while applying if
+> you prefer.
+> 
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../bindings/clock/rohm,bd71837-clock.txt          | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+And we don't free the hashtable on error either.
 
-diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-new file mode 100644
-index 000000000000..9759fd145781
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-@@ -0,0 +1,37 @@
-+ROHM BD71837 Power Management Integrated Circuit clock bindings
-+
-+BD71837 clock node should be sub node of the BD71837 MFD node.
-+See BD71837 MFD bindings at
-+Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-+
-+Required properties:
-+- compatible		: Should be "rohm,bd71837-clk"
-+- clock-frequency	: Should be 32768
-+- #clock-cells		: Should be 0
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+  Name "bd71837-32k-out" is used if this is not given.
-+
-+
-+Example:
-+
-+pmic: bd71837@4b {
-+	compatible = "rohm,bd71837";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	reg = <0x4b>;
-+	interrupt-parent = <&gpio1>;
-+	interrupts = <29 GPIO_ACTIVE_LOW>;
-+	interrupt-names = "irq";
-+	#interrupt-cells = <1>;
-+	interrupt-controller;
-+
-+	/* Clock node */
-+	clk: bd71837-32k-out {
-+		compatible = "rohm,bd71837-clk";
-+		#clock-cells = <0>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "bd71837-32k-out";
-+	};
-+};
--- 
-2.14.3
+regards,
+dan carpenter
