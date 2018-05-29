@@ -1,46 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932953AbeE2KlH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:41:07 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33510 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932629AbeE2KlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:41:02 -0400
-Date: Tue, 29 May 2018 12:40:50 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Paul Burton <paul.burton@mips.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH 2/2] sched: Warn if we fail to migrate a task
-Message-ID: <20180529104050.GY12180@hirez.programming.kicks-ass.net>
-References: <20180526154648.11635-1-paul.burton@mips.com>
- <20180526154648.11635-3-paul.burton@mips.com>
- <20180528150656.GF12217@hirez.programming.kicks-ass.net>
- <20180528155932.rcyipmxc5kshjvsy@pburton-laptop>
+        id S933990AbeE2KnG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:43:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45643 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933540AbeE2Km0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 06:42:26 -0400
+Date: Tue, 29 May 2018 12:42:22 +0200
+From: Borislav Petkov <bp@suse.de>
+To: Tony Luck <tony.luck@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Ashok Raj <ashok.raj@intel.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] x86/mce: Fix incorrect "Machine check from unknown
+ source" message
+Message-ID: <20180529104222.GA19870@zn.tnic>
+References: <cover.1527283897.git.tony.luck@intel.com>
+ <52e049a497e86fd0b71c529651def8871c804df0.1527283897.git.tony.luck@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180528155932.rcyipmxc5kshjvsy@pburton-laptop>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <52e049a497e86fd0b71c529651def8871c804df0.1527283897.git.tony.luck@intel.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 08:59:32AM -0700, Paul Burton wrote:
+On Fri, May 25, 2018 at 02:41:55PM -0700, Tony Luck wrote:
+> @@ -1287,12 +1292,17 @@ void do_machine_check(struct pt_regs *regs, long error_code)
+>  			no_way_out = worst >= MCE_PANIC_SEVERITY;
+>  	} else {
+>  		/*
+> -		 * Local MCE skipped calling mce_reign()
+> -		 * If we found a fatal error, we need to panic here.
+> +		 * If there was a fatal machine check we should have
+> +		 * already called mce_panic earlier in this function.
+> +		 * Since we re-read the banks, we might have found
+> +		 * something new. Check again to see if we found a
+> +		 * fatal error. We call "mce_severity()" again to
+> +		 * make sure we have the right "msg".
+>  		 */
+> -		 if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3)
+> -			mce_panic("Machine check from unknown source",
+> -				NULL, NULL);
+> +		if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3) {
+> +			severity = mce_severity(&m, cfg->tolerant, &msg, true);
 
-> I agree userspace shouldn't need to care about this but in my case
-> (using the test program I linked from the previous patch) this triggers
-> whilst the CPU is being brought online, not taken offline. That means
-> migrate_tasks() is not involved, and we actually just return from here
-> back out from a sched_setaffinity syscall & continue running the user
-> task on a CPU that is no longer present in the task's cpus_allowed.
-> 
-> I can't think of a good qualifier to limit the warning to only trigger
-> in that scenario though, so in reality perhaps we're best to just trust
-> that with patch 1 applied the problem will go away.
+Looking at this more while cleaning the whole thing up, that severity
+doesn't get read anywhere past this line, AFAICT...
 
-Yeah, I'm struggling too.. re-taking task_rq_lock and testing if
-task_cpu(p) is inside it's own cpus_allowed (which at that time might be
-different from new_mask) might be the best we can do, but it is fairly
-expensive for a sanity check.
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
