@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936503AbeE2PJE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:09:04 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:32957 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935830AbeE2OoY (ORCPT
+        id S935749AbeE2PKp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:10:45 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46573 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935691AbeE2OoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:44:24 -0400
-X-Google-Smtp-Source: AB8JxZoWd/I1Pi3VJzGFuyf6WBk3nIvJZEaHEFAcPFmQFvrnzELUC87TZE6t/KIzp0VeNA6nogeytA==
+        Tue, 29 May 2018 10:44:08 -0400
+X-Google-Smtp-Source: AB8JxZqcgLiFkcjUXAW4wCYwyUnJ5NRDCdIkVXrSfPQK6MmIZ0spo5mGlg7/zqmChC7GIA7/bOZzcg==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 34/39] Revert "vfs: update ovl inode before relatime check"
-Date: Tue, 29 May 2018 16:43:34 +0200
-Message-Id: <20180529144339.16538-35-mszeredi@redhat.com>
+Subject: [PATCH 22/39] ovl: add ovl_fiemap()
+Date: Tue, 29 May 2018 16:43:22 +0200
+Message-Id: <20180529144339.16538-23-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
 References: <20180529144339.16538-1-mszeredi@redhat.com>
@@ -21,133 +21,76 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 598e3c8f72f5b77c84d2cb26cfd936ffb3cfdbaa.
+Implement stacked fiemap().
 
-Overlayfs no longer relies on the vfs correct atime handling.
+Need to split inode operations for regular file (which has fiemap) and
+special file (which doesn't have fiemap).
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/inode.c         | 33 ++++++---------------------------
- fs/internal.h      |  7 -------
- fs/namei.c         |  2 +-
- include/linux/fs.h |  1 +
- 4 files changed, 8 insertions(+), 35 deletions(-)
+ fs/overlayfs/inode.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index ad0259bafe2d..348e93f468cc 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1553,37 +1553,17 @@ sector_t bmap(struct inode *inode, sector_t block)
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index d6a13da0740f..cd46dd8e7e54 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -448,6 +448,23 @@ int ovl_update_time(struct inode *inode, struct timespec *ts, int flags)
+ 	return 0;
  }
- EXPORT_SYMBOL(bmap);
  
--/*
-- * Update times in overlayed inode from underlying real inode
-- */
--static void update_ovl_inode_times(struct dentry *dentry, struct inode *inode,
--			       bool rcu)
--{
--	if (!rcu) {
--		struct inode *realinode = d_real_inode(dentry);
--
--		if (unlikely(inode != realinode) &&
--		    (!timespec_equal(&inode->i_mtime, &realinode->i_mtime) ||
--		     !timespec_equal(&inode->i_ctime, &realinode->i_ctime))) {
--			inode->i_mtime = realinode->i_mtime;
--			inode->i_ctime = realinode->i_ctime;
--		}
--	}
--}
--
- /*
-  * With relative atime, only update atime if the previous atime is
-  * earlier than either the ctime or mtime or if at least a day has
-  * passed since the last atime update.
-  */
--static int relatime_need_update(const struct path *path, struct inode *inode,
--				struct timespec now, bool rcu)
-+static int relatime_need_update(struct vfsmount *mnt, struct inode *inode,
-+			     struct timespec now)
- {
- 
--	if (!(path->mnt->mnt_flags & MNT_RELATIME))
-+	if (!(mnt->mnt_flags & MNT_RELATIME))
- 		return 1;
--
--	update_ovl_inode_times(path->dentry, inode, rcu);
- 	/*
- 	 * Is mtime younger than atime? If yes, update atime:
- 	 */
-@@ -1654,8 +1634,7 @@ static int update_time(struct inode *inode, struct timespec *time, int flags)
-  *	This function automatically handles read only file systems and media,
-  *	as well as the "noatime" flag and inode specific "noatime" markers.
-  */
--bool __atime_needs_update(const struct path *path, struct inode *inode,
--			  bool rcu)
-+bool atime_needs_update(const struct path *path, struct inode *inode)
- {
- 	struct vfsmount *mnt = path->mnt;
- 	struct timespec now;
-@@ -1681,7 +1660,7 @@ bool __atime_needs_update(const struct path *path, struct inode *inode,
- 
- 	now = current_time(inode);
- 
--	if (!relatime_need_update(path, inode, now, rcu))
-+	if (!relatime_need_update(mnt, inode, now))
- 		return false;
- 
- 	if (timespec_equal(&inode->i_atime, &now))
-@@ -1696,7 +1675,7 @@ void touch_atime(const struct path *path)
- 	struct inode *inode = d_inode(path->dentry);
- 	struct timespec now;
- 
--	if (!__atime_needs_update(path, inode, false))
-+	if (!atime_needs_update(path, inode))
- 		return;
- 
- 	if (!sb_start_write_trylock(inode->i_sb))
-diff --git a/fs/internal.h b/fs/internal.h
-index 29c9a2fab592..6ada1f356da6 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -138,13 +138,6 @@ extern long prune_icache_sb(struct super_block *sb, struct shrink_control *sc);
- extern void inode_add_lru(struct inode *inode);
- extern int dentry_needs_remove_privs(struct dentry *dentry);
- 
--extern bool __atime_needs_update(const struct path *, struct inode *, bool);
--static inline bool atime_needs_update_rcu(const struct path *path,
--					  struct inode *inode)
--{
--	return __atime_needs_update(path, inode, true);
--}
--
- /*
-  * fs-writeback.c
-  */
-diff --git a/fs/namei.c b/fs/namei.c
-index 186bd2464fd5..54ab8ccb8d6d 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1013,7 +1013,7 @@ const char *get_link(struct nameidata *nd)
- 	if (!(nd->flags & LOOKUP_RCU)) {
- 		touch_atime(&last->link);
- 		cond_resched();
--	} else if (atime_needs_update_rcu(&last->link, inode)) {
-+	} else if (atime_needs_update(&last->link, inode)) {
- 		if (unlikely(unlazy_walk(nd)))
- 			return ERR_PTR(-ECHILD);
- 		touch_atime(&last->link);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6961feda6915..96a4b9fd1f5f 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2066,6 +2066,7 @@ enum file_time_flags {
- 	S_VERSION = 8,
++static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
++		      u64 start, u64 len)
++{
++	int err;
++	struct inode *realinode = ovl_inode_real(inode);
++	const struct cred *old_cred;
++
++	if (!realinode->i_op->fiemap)
++		return -EOPNOTSUPP;
++
++	old_cred = ovl_override_creds(inode->i_sb);
++	err = realinode->i_op->fiemap(realinode, fieinfo, start, len);
++	revert_creds(old_cred);
++
++	return err;
++}
++
+ static const struct inode_operations ovl_file_inode_operations = {
+ 	.setattr	= ovl_setattr,
+ 	.permission	= ovl_permission,
+@@ -455,6 +472,7 @@ static const struct inode_operations ovl_file_inode_operations = {
+ 	.listxattr	= ovl_listxattr,
+ 	.get_acl	= ovl_get_acl,
+ 	.update_time	= ovl_update_time,
++	.fiemap		= ovl_fiemap,
  };
  
-+extern bool atime_needs_update(const struct path *, struct inode *);
- extern void touch_atime(const struct path *);
- static inline void file_accessed(struct file *file)
- {
+ static const struct inode_operations ovl_symlink_inode_operations = {
+@@ -465,6 +483,15 @@ static const struct inode_operations ovl_symlink_inode_operations = {
+ 	.update_time	= ovl_update_time,
+ };
+ 
++static const struct inode_operations ovl_special_inode_operations = {
++	.setattr	= ovl_setattr,
++	.permission	= ovl_permission,
++	.getattr	= ovl_getattr,
++	.listxattr	= ovl_listxattr,
++	.get_acl	= ovl_get_acl,
++	.update_time	= ovl_update_time,
++};
++
+ /*
+  * It is possible to stack overlayfs instance on top of another
+  * overlayfs instance as lower layer. We need to annonate the
+@@ -548,7 +575,7 @@ static void ovl_fill_inode(struct inode *inode, umode_t mode, dev_t rdev,
+ 		break;
+ 
+ 	default:
+-		inode->i_op = &ovl_file_inode_operations;
++		inode->i_op = &ovl_special_inode_operations;
+ 		init_special_inode(inode, mode, rdev);
+ 		break;
+ 	}
 -- 
 2.14.3
