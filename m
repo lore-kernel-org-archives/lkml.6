@@ -1,105 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936627AbeE2PCw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:02:52 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41853 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935402AbeE2OqQ (ORCPT
+        id S936636AbeE2PDI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:03:08 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:38030 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935483AbeE2PCv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:46:16 -0400
-X-Google-Smtp-Source: ADUXVKI4SyQXHdiuE2q7t5bmirIsw1Xhl79vLlCLMhSYx8nmLIanwZUdExeEQe6C8DRSQX7UxPS8Nw==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/28] ovl: Initialize ovl_inode->redirect in ovl_get_inode()
-Date: Tue, 29 May 2018 16:45:45 +0200
-Message-Id: <20180529144612.16675-2-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
-References: <20180529144612.16675-1-mszeredi@redhat.com>
+        Tue, 29 May 2018 11:02:51 -0400
+X-Google-Smtp-Source: ADUXVKISRVKTJ/EcW4aGTpTY5GU9wIbDgGw5WmGwjFajUFLfJiFNgwvlkr5PFnf5cL3CZOyzguAU6wRRhN3QONAn9KQ=
+MIME-Version: 1.0
+In-Reply-To: <20180529145506.GF15173@e108498-lin.cambridge.arm.com>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-2-git-send-email-vincent.guittot@linaro.org>
+ <20180525142648.GC15173@e108498-lin.cambridge.arm.com> <20180525180455.GF30654@e110439-lin>
+ <20180529145506.GF15173@e108498-lin.cambridge.arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 29 May 2018 17:02:29 +0200
+Message-ID: <CAKfTPtCrPfpREESbH+D7h71yupchcm-TQ8nx=TADuzVysqNfSA@mail.gmail.com>
+Subject: Re: [PATCH v5 01/10] sched/pelt: Move pelt related code in a
+ dedicated file
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Patrick Bellasi <patrick.bellasi@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivek Goyal <vgoyal@redhat.com>
+Hi Quentin,
 
-ovl_inode->redirect is an inode property and should be initialized in
-ovl_get_inode() only when we are adding a new inode to cache.  If inode is
-already in cache, it is already initialized and we should not be touching
-ovl_inode->redirect field.
+On 29 May 2018 at 16:55, Quentin Perret <quentin.perret@arm.com> wrote:
+>
+> On Friday 25 May 2018 at 19:04:55 (+0100), Patrick Bellasi wrote:
+> > On 25-May 15:26, Quentin Perret wrote:
+> > > And also, I understand these functions are large, but if we _really_
+> > > want to inline them even though they're big, why not putting them in
+> > > sched-pelt.h ?
+> >
+> > Had the same tought at first... but then I recalled that header is
+> > generated from a script. Thus, eventually, it should be a different one.
+>
+> Ah, good point. This patch already introduces a pelt.h so I guess that
+> could work as well.
+>
+> >
+> > > We probably wouldn't accept that for everything, but
+> > > those PELT functions are used all over the place, including latency
+> > > sensitive code paths (e.g. task wake-up).
+> >
+> > We should better measure the overheads, if any, and check what
+> > (a modern) compiler does. Maybe some hackbench run could help on the
+> > first point.
+>
+> FWIW, I ran a few hackbench tests today on my Intel box:
+>  - Intel i7-6700 (4 cores / 8 threads) @ 3.40GHz
+>  - Base kernel: today's tip/sched/core "2539fc82aa9b sched/fair: Update
+>    util_est before updating schedutil"
+>  - Compiler: GCC 7.3.0
 
-As of now this is not a problem as redirects are used only for directories
-which don't share inode.  But soon I want to use redirects for regular
-files also and there it can become an issue.
+Which cpufreq governor are you using ?
 
-Hence, move ->redirect initialization in ovl_get_inode().
+>
+> The tables below summarize the results for:
+> perf stat --repeat 10 perf bench sched messaging --pipe --thread -l 50000 --group G
+>
+> Without patch:
+>   +---+-------+----------+---------+
+>   | G | Tasks | Duration | Stddev  |
+>   +---+-------+----------+---------+
+>   | 1 | 40    | 3.906    | +-0.84% |
+>   | 2 | 80    | 8.569    | +-0.77% |
+>   | 4 | 160   | 16.384   | +-0.46% |
+>   | 8 | 320   | 33.686   | +-0.42% |
+>   +---+-------+----------+---------+
+>
+> With patch:
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/overlayfs/inode.c     | 3 +++
- fs/overlayfs/namei.c     | 8 +-------
- fs/overlayfs/overlayfs.h | 1 +
- 3 files changed, 5 insertions(+), 7 deletions(-)
+Just to make sure. You mean only this patch and not the whole patchset ?
 
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index cd46dd8e7e54..c365b94fa158 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -844,6 +844,7 @@ struct inode *ovl_get_inode(struct super_block *sb,
- 			}
- 
- 			dput(upperdentry);
-+			kfree(oip->redirect);
- 			goto out;
- 		}
- 
-@@ -867,6 +868,8 @@ struct inode *ovl_get_inode(struct super_block *sb,
- 	if (oip->index)
- 		ovl_set_flag(OVL_INDEX, inode);
- 
-+	OVL_I(inode)->redirect = oip->redirect;
-+
- 	/* Check for non-merge dir that may have whiteouts */
- 	if (is_dir) {
- 		if (((upperdentry && lowerdentry) || oip->numlower > 1) ||
-diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-index 08801b45df00..54f206485ab8 100644
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -1009,19 +1009,13 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
- 			.lowerpath = stack,
- 			.index = index,
- 			.numlower = ctr,
-+			.redirect = upperredirect,
- 		};
- 
- 		inode = ovl_get_inode(dentry->d_sb, &oip);
- 		err = PTR_ERR(inode);
- 		if (IS_ERR(inode))
- 			goto out_free_oe;
--
--		/*
--		 * NB: handle redirected hard links when non-dir redirects
--		 * become possible
--		 */
--		WARN_ON(OVL_I(inode)->redirect);
--		OVL_I(inode)->redirect = upperredirect;
- 	}
- 
- 	revert_creds(old_cred);
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index be4f1664f662..1948e38c3c95 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -342,6 +342,7 @@ struct ovl_inode_params {
- 	struct ovl_path *lowerpath;
- 	struct dentry *index;
- 	unsigned int numlower;
-+	char *redirect;
- };
- struct inode *ovl_new_inode(struct super_block *sb, umode_t mode, dev_t rdev);
- struct inode *ovl_lookup_inode(struct super_block *sb, struct dentry *real,
--- 
-2.14.3
+>   +---+-------+----------------+---------+
+>   | G | Tasks | Duration       | Stddev  |
+>   +---+-------+----------------+---------+
+>   | 1 | 40    | 3.953 (+1.2%)  | +-1.43% |
+>   | 2 | 80    | 8.646 (+0.9%)  | +-0.32% |
+>   | 4 | 160   | 16.390 (+0.0%) | +-0.38% |
+>   | 8 | 320   | 33.992 (+0.9%) | +-0.27% |
+>   +---+-------+----------------+---------+
+>
+> So there is (maybe) a little something on my box, but not so significant
+> IMHO ... :)
+>
+> Thanks,
+> Quentin
