@@ -1,61 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967330AbeE2VTu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:19:50 -0400
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:44848 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966952AbeE2VTl (ORCPT
+        id S967516AbeE2VVE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:21:04 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:45802 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966946AbeE2VU7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:19:41 -0400
-X-Google-Smtp-Source: ADUXVKIfx3l7S8Jp/dkwCKszV4FlXxrXJPb1VDE8E3VaHReFXj3TEPTDG3KWm8cs+3qjri9dx6iwJTd2mxKSEbPBekQ=
+        Tue, 29 May 2018 17:20:59 -0400
+X-Google-Smtp-Source: ADUXVKIye5USyjX8GB/e7J3t1EEGKURZxSg2F14zcWzbILFLy4g8SN7vVn9D84y+AclPyygiBIBv6DPEG+X3sYf6p6o=
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 29 May 2018 17:19:39 -0400
-Message-ID: <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
-Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to integrity audits
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
-        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <KL1P15301MB0006DF4209AEE3809ABD303FBF6B0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
+References: <KL1P15301MB0006DF4209AEE3809ABD303FBF6B0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 30 May 2018 00:20:57 +0300
+Message-ID: <CAHp75Vd9kiyOaSbaK6c4b7ucF23kgP0yQxKpUAGrjHgKfJprXA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: hv: Do not wait forever on a device that has disappeared
+To: Dexuan Cui <decui@microsoft.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "driverdev-devel@linuxdriverproject.org"
+        <driverdev-devel@linuxdriverproject.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
-<stefanb@linux.vnet.ibm.com> wrote:
-> Use the new public audit functions to add the exe= and tty=
-> parts to the integrity audit records. We place them before
-> res=.
+On Thu, May 24, 2018 at 12:12 AM, Dexuan Cui <decui@microsoft.com> wrote:
 >
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> ---
->  security/integrity/integrity_audit.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
-> index db30763d5525..8d25d3c4dcca 100644
-> --- a/security/integrity/integrity_audit.c
-> +++ b/security/integrity/integrity_audit.c
-> @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode *inode,
->                 audit_log_untrustedstring(ab, inode->i_sb->s_id);
->                 audit_log_format(ab, " ino=%lu", inode->i_ino);
->         }
-> +       audit_log_d_path_exe(ab, current->mm);
-> +       audit_log_tty(ab, current);
+> Before the guest finishes the device initialization, the device can be
+> removed anytime by the host, and after that the host won't respond to
+> the guest's request, so the guest should be prepared to handle this
+> case.
 
-NACK
+> +       while (true) {
+> +               if (hdev->channel->rescind) {
+> +                       dev_warn_once(&hdev->device, "The device is gone.\n");
+> +                       return -ENODEV;
+> +               }
+> +
+> +               if (wait_for_completion_timeout(comp, HZ / 10))
+> +                       break;
+> +       }
 
-Please add the new fields to the end of the audit record, thank you.
+Infinite loops are usually a red flags.
 
->         audit_log_format(ab, " res=%d", !result);
->         audit_log_end(ab);
->  }
+What's wrong with simple:
+
+do {
+  ...
+} while (wait_...(...) == 0);
+
+?
+
+> +       if (!ret)
+> +               ret = wait_for_response(hdev, &comp);
+
+Better to use well established patterns, i.e.
+
+if (ret)
+ return ret;
+
+> +               if (!ret)
+> +                       ret = wait_for_response(hdev, &comp_pkt.host_event);
+
+Here it looks okay on the first glance, but better to think about it
+again and refactor.
 
 -- 
-paul moore
-www.paul-moore.com
+With Best Regards,
+Andy Shevchenko
