@@ -1,90 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935519AbeE2OnZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:43:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54156 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935077AbeE2OnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:43:20 -0400
-Date: Tue, 29 May 2018 16:43:17 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        guillaume.knispel@supersonicimagine.com,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
-Message-ID: <20180529144317.GA20910@dhcp22.suse.cz>
-References: <20180524211135.27760-1-dave@stgolabs.net>
- <20180524211135.27760-4-dave@stgolabs.net>
- <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S935461AbeE2OnK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:43:10 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39995 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935145AbeE2Ol6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:41:58 -0400
+X-Google-Smtp-Source: ADUXVKJGkat9eNCT3Ns0vYw+T/MZd2FqxNmded6qJ+kS3bu4yMJI1noSXuhPD3ilW3aRX0CbFkT75Q==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 08/11] ovl: clean up copy-up error paths
+Date: Tue, 29 May 2018 16:41:40 +0200
+Message-Id: <20180529144143.16378-9-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529144143.16378-1-mszeredi@redhat.com>
+References: <20180529144143.16378-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 24-05-18 14:37:36, Linus Torvalds wrote:
-> On Thu, May 24, 2018 at 2:28 PM Davidlohr Bueso <dave@stgolabs.net> wrote:
-> 
-> >                  if (gfpflags_allow_blocking(gfp))
-> > -                       tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
-> > +                       tlocks = kvmalloc_array(size, sizeof(spinlock_t),
-> gfp);
-> >                  else
-> >                          tlocks = kmalloc_array(size, sizeof(spinlock_t),
-> gfp);
-> 
-> Side note: how about we just move that "gfpflags_allow_blocking()" into
-> kvmalloc() instead, and make kvmalloc() generally usable?
-> 
-> Now we have that really odd situation where kvmalloc() takes gfp flags, but
-> to quote the comment:
-> 
->   * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm
-> people.
-> 
-> and the code:
-> 
->          /*
->           * vmalloc uses GFP_KERNEL for some internal allocations (e.g page
-> tables)
->           * so the given set of flags has to be compatible.
->           */
->          WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
-> 
-> which isn't really all that helpful. Do mm people really want to be
-> consulted about random uses?
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/overlayfs/copy_up.c | 54 +++++++++++++++++---------------------------------
+ 1 file changed, 18 insertions(+), 36 deletions(-)
 
-The purpose was to have a clean usage base after the conversion. If we
-are growing a non-trivial use base which wants to use GFP_NOWAIT semantic
-then sure we can make kvmalloc never fallback to vmallock. But see
-below...
-
-> Maybe we could just make the rule for kvmalloc() be to only fall back on
-> vmalloc for allocations that are
-> 
->   - larger than page size
-> 
->   - blocking and allow GFP_KERNEL (so basically that WARN_ON_ONCE() logic in
-> kvmalloc_node).
-> 
-> Hmm? Isn't that what everybody really *wants* kvmalloc() and friends to do?
-
-... Well, there are users who would like to use kvmalloc for
-GFP_NOFS/GFP_NOIO context. Do we want them to fail more likely for
-larger order rather than have them fixed (to either drop the NOFS
-because it just has been blindly copied from a different code without
-too much thinking or use the scope NOFS/NOIO API)? A warn_on tends to be
-rather harsh but effective way to push maintainers fix their broken
-code...
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index 1b442c14c531..ddaddb4ce4c3 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -366,12 +366,13 @@ static int ovl_create_index(struct dentry *dentry, struct dentry *origin,
+ 		return err;
+ 
+ 	temp = ovl_create_temp(indexdir, OVL_CATTR(S_IFDIR | 0));
++	err = PTR_ERR(temp);
+ 	if (IS_ERR(temp))
+-		goto temp_err;
++		goto free_name;
+ 
+ 	err = ovl_set_upper_fh(upper, temp);
+ 	if (err)
+-		goto out_cleanup;
++		goto out;
+ 
+ 	index = lookup_one_len(name.name, indexdir, name.len);
+ 	if (IS_ERR(index)) {
+@@ -380,23 +381,13 @@ static int ovl_create_index(struct dentry *dentry, struct dentry *origin,
+ 		err = ovl_do_rename(dir, temp, dir, index, 0);
+ 		dput(index);
+ 	}
+-
+-	if (err)
+-		goto out_cleanup;
+-
+ out:
++	if (err)
++		ovl_cleanup(dir, temp);
+ 	dput(temp);
++free_name:
+ 	kfree(name.name);
+ 	return err;
+-
+-temp_err:
+-	err = PTR_ERR(temp);
+-	temp = NULL;
+-	goto out;
+-
+-out_cleanup:
+-	ovl_cleanup(dir, temp);
+-	goto out;
+ }
+ 
+ struct ovl_copy_up_ctx {
+@@ -476,7 +467,7 @@ static int ovl_install_temp(struct ovl_copy_up_ctx *c, struct dentry *temp,
+ 	return err;
+ }
+ 
+-static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
++static struct dentry *ovl_get_tmpfile(struct ovl_copy_up_ctx *c)
+ {
+ 	int err;
+ 	struct dentry *temp;
+@@ -490,6 +481,7 @@ static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
+ 	};
+ 
+ 	err = security_inode_copy_up(c->dentry, &new_creds);
++	temp = ERR_PTR(err);
+ 	if (err < 0)
+ 		goto out;
+ 
+@@ -500,21 +492,13 @@ static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
+ 		temp = ovl_do_tmpfile(c->workdir, c->stat.mode);
+ 	else
+ 		temp = ovl_create_temp(c->workdir, &cattr);
+-	if (IS_ERR(temp))
+-		goto temp_err;
+-	err = 0;
+-	*tempp = temp;
+ out:
+ 	if (new_creds) {
+ 		revert_creds(old_creds);
+ 		put_cred(new_creds);
+ 	}
+ 
+-	return err;
+-
+-temp_err:
+-	err = PTR_ERR(temp);
+-	goto out;
++	return temp;
+ }
+ 
+ static int ovl_copy_up_inode(struct ovl_copy_up_ctx *c, struct dentry *temp)
+@@ -564,21 +548,21 @@ static int ovl_copy_up_locked(struct ovl_copy_up_ctx *c)
+ 	struct inode *udir = c->destdir->d_inode;
+ 	struct inode *inode;
+ 	struct dentry *newdentry = NULL;
+-	struct dentry *temp = NULL;
++	struct dentry *temp;
+ 	int err;
+ 
+-	err = ovl_get_tmpfile(c, &temp);
+-	if (err)
+-		goto out;
++	temp = ovl_get_tmpfile(c);
++	if (IS_ERR(temp))
++		return PTR_ERR(temp);
+ 
+ 	err = ovl_copy_up_inode(c, temp);
+ 	if (err)
+-		goto out_cleanup;
++		goto out;
+ 
+ 	if (S_ISDIR(c->stat.mode) && c->indexed) {
+ 		err = ovl_create_index(c->dentry, c->lowerpath.dentry, temp);
+ 		if (err)
+-			goto out_cleanup;
++			goto out;
+ 	}
+ 
+ 	if (c->tmpfile) {
+@@ -589,7 +573,7 @@ static int ovl_copy_up_locked(struct ovl_copy_up_ctx *c)
+ 		err = ovl_install_temp(c, temp, &newdentry);
+ 	}
+ 	if (err)
+-		goto out_cleanup;
++		goto out;
+ 
+ 	inode = d_inode(c->dentry);
+ 	ovl_inode_update(inode, newdentry);
+@@ -597,13 +581,11 @@ static int ovl_copy_up_locked(struct ovl_copy_up_ctx *c)
+ 		ovl_set_flag(OVL_WHITEOUTS, inode);
+ 
+ out:
++	if (err && !c->tmpfile)
++		ovl_cleanup(d_inode(c->workdir), temp);
+ 	dput(temp);
+ 	return err;
+ 
+-out_cleanup:
+-	if (!c->tmpfile)
+-		ovl_cleanup(d_inode(c->workdir), temp);
+-	goto out;
+ }
+ 
+ /*
 -- 
-Michal Hocko
-SUSE Labs
+2.14.3
