@@ -1,95 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937059AbeE2Sbv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 14:31:51 -0400
-Received: from sauhun.de ([88.99.104.3]:57120 "EHLO pokefinder.org"
+        id S965836AbeE2SfZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 14:35:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932652AbeE2Sbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 14:31:46 -0400
-Date: Tue, 29 May 2018 20:31:43 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
-        <u.kleine-koenig@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Peter Korsgaard <jacmet@sunsite.dk>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] i2c: busses: make use of i2c_8bit_addr_from_msg
-Message-ID: <20180529183143.ker46to34gr5hx3w@ninjato>
-References: <20180516071647.29277-1-peda@axentia.se>
- <20180516071647.29277-3-peda@axentia.se>
+        id S1754646AbeE2SfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 14:35:20 -0400
+Date: Tue, 29 May 2018 20:34:59 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        stable@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3] rtc: sun6i: Fix bit_idx value for clk_register_gate
+Message-ID: <20180529183459.GB10359@kroah.com>
+References: <20180529173913.12386-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ywla3ypxi7fbwfzy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180516071647.29277-3-peda@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180529173913.12386-1-jagan@amarulasolutions.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 29, 2018 at 11:09:13PM +0530, Jagan Teki wrote:
+> From: Michael Trimarchi <michael@amarulasolutions.com>
+> 
+> clk-gate core will take bit_idx through clk_register_gate
+> and then do clk_gate_ops by using BIT(bit_idx), but rtc-sun6i
+> is passing bit_idx as BIT(bit_idx) it becomes BIT(BIT(bit_idx)
+> which is wrong and eventually external gate clock is not enabling.
+> 
+> This patch fixed by passing bit index and the original change
+> introduced from below commit.
+> "rtc: sun6i: Add support for the external oscillator gate"
+> (sha1: 17ecd246414b3a0fe0cb248c86977a8bda465b7b)
+> 
+> Fixes: 17ecd246414b ("rtc: sun6i: Add support for the external oscillator
+> gate")
+> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes for v3:
+> - add fixes tag
+> - Cced stable ML
+> Changes for v2:
+> - add suffix _OFFSET with macro name to distinguish b/w
+>   register actual values vs offset.
+> 
+>  drivers/rtc/rtc-sun6i.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
---ywla3ypxi7fbwfzy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+<formletter>
 
-On Wed, May 16, 2018 at 09:16:47AM +0200, Peter Rosin wrote:
-> Because it looks neater.
->=20
-> For diolan, this allows factoring out some code that is now common
-> between if and else.
->=20
-> For eg20t, pch_i2c_writebytes is always called with a write in
-> msgs->flags, and pch_i2c_readbytes with a read.
->=20
-> For imx, i2c_imx_dma_write and i2c_imx_write are always called with a
-> write in msgs->flags, and i2c_imx_read with a read.
->=20
-> For qup, qup_i2c_write_tx_fifo_v1 is always called with a write in
-> qup->msg->flags.
->=20
-> For stu300, also restructure debug output for resends, since that
-> code as a result is only handling debug output.
->=20
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net> [diolan]
-> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> [emf32 a=
-nd imx]
-> Acked-by: Linus Walleij <linus.walleij@linaro.org> [stu300]
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
-Applied to for-next, thanks!
-
-
---ywla3ypxi7fbwfzy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsNnI8ACgkQFA3kzBSg
-KbZC4A/7B0QIKCSquWwTUwVg/hBiXgsZTb1tAbuqsmSLFLUN0S/GD2du/zLhpqlc
-tQwrw4SPFDEbDHTLLgu9YOI7Gxfn6IcNm5BEJ3tL7ef1A1Yy/PCpv3/UPAG2QXBd
-Q019MAuoQpanhU3k7L7XSbVAXrPcmspeuYJzSsCvNKnk5/Io8uJ77hl5K8NWryKQ
-MP9Tw8CRaH/vihI+4ZnhU0YUqKJBlFnRXcHThcda1baF6HsNFlqM2PT5XP9TtDvp
-3+Q+g8OCV9TRCFhAeDvJ84CR8TwdXwK0qftlbH4QVl2eq480CBi9r9+Ze5TuaIlH
-4kTJvS+IyRT29GJ+u3VlaD12ZdkcRTW5WQghGhQlTVkmGSSxpybNs3cVoha37/Es
-ntiSMG7YurcXD68hnMkAPpI7cUINMY6/y9mkgTE8Jae/AKf4qTIWtpkDwYiBa+Jh
-SY1WJFPAAhY0Avz/0h13ZZaAu0eeTVbM4kGNiHtV8OTl6FnCmLEfm3gtUE/a2Cnx
-3WdhkQFDlbl2/J3P/MLJcik+fPTSWZPrHblHVn9wtMt++2uCr88R5XCcpJ08pkcH
-F5adRaRAVoI5MDpDT7VifZ7zqVyvfdwjIHEQrjrRnDDIsmo9R+P1+C9WiWsMwLdB
-St94YeEV2gbxn+XFd1SliCKEaoKtu9lnsE2hQGLGwujq1rKyyt8=
-=qpJp
------END PGP SIGNATURE-----
-
---ywla3ypxi7fbwfzy--
+</formletter>
