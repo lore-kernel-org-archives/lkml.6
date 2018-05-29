@@ -1,59 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934096AbeE2Mhe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:37:34 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58986 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933712AbeE2MgU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:36:20 -0400
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-To: Ingo Molnar <mingo@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Josef Bacik <jbacik@fb.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] error-injection: simplify code and powerpc support
-Date: Tue, 29 May 2018 18:06:01 +0530
-X-Mailer: git-send-email 2.17.0
-X-TM-AS-GCONF: 00
-x-cbid: 18052912-0008-0000-0000-000004FC2EF8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052912-0009-0000-0000-00001E904C46
-Message-Id: <cover.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805290144
+        id S934217AbeE2Mhs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:37:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47426 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933755AbeE2MfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:35:16 -0400
+From: Cornelia Huck <cohuck@redhat.com>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: [PULL 1/6] vfio: ccw: fix error return in vfio_ccw_sch_event
+Date: Tue, 29 May 2018 14:35:07 +0200
+Message-Id: <20180529123512.14393-2-cohuck@redhat.com>
+In-Reply-To: <20180529123512.14393-1-cohuck@redhat.com>
+References: <20180529123512.14393-1-cohuck@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The first patch simplifies code around function error-injection by 
-limiting the need for arch-specific helpers. The second patch adds 
-support for powerpc.
+From: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
 
-- Naveen
+If the device has not been registered, or there is work pending,
+we should reschedule a sch_event call again.
 
-Naveen N. Rao (2):
-  error-injection: Simplify arch specific helpers
-  powerpc: Add support for function error injection
+Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+Message-Id: <20180502072559.50691-1-bjsdjshi@linux.vnet.ibm.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+---
+ drivers/s390/cio/vfio_ccw_drv.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
- arch/powerpc/Kconfig                       |  1 +
- arch/powerpc/include/asm/error-injection.h |  9 +++++++++
- arch/powerpc/include/asm/ptrace.h          |  5 +++++
- arch/x86/include/asm/error-injection.h     |  6 +-----
- arch/x86/lib/Makefile                      |  1 -
- arch/x86/lib/error-inject.c                | 20 --------------------
- include/asm-generic/error-injection.h      |  6 ++++++
- include/linux/error-injection.h            |  1 +
- kernel/fail_function.c                     |  2 +-
- kernel/trace/bpf_trace.c                   |  2 +-
- lib/error-inject.c                         |  8 ++++++++
- 11 files changed, 33 insertions(+), 28 deletions(-)
- create mode 100644 arch/powerpc/include/asm/error-injection.h
- delete mode 100644 arch/x86/lib/error-inject.c
-
+diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
+index ea6a2d0b2894..770fa9cfc310 100644
+--- a/drivers/s390/cio/vfio_ccw_drv.c
++++ b/drivers/s390/cio/vfio_ccw_drv.c
+@@ -177,6 +177,7 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+ {
+ 	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
+ 	unsigned long flags;
++	int rc = -EAGAIN;
+ 
+ 	spin_lock_irqsave(sch->lock, flags);
+ 	if (!device_is_registered(&sch->dev))
+@@ -187,6 +188,7 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+ 
+ 	if (cio_update_schib(sch)) {
+ 		vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_NOT_OPER);
++		rc = 0;
+ 		goto out_unlock;
+ 	}
+ 
+@@ -195,11 +197,12 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+ 		private->state = private->mdev ? VFIO_CCW_STATE_IDLE :
+ 				 VFIO_CCW_STATE_STANDBY;
+ 	}
++	rc = 0;
+ 
+ out_unlock:
+ 	spin_unlock_irqrestore(sch->lock, flags);
+ 
+-	return 0;
++	return rc;
+ }
+ 
+ static struct css_device_id vfio_ccw_sch_ids[] = {
 -- 
-2.17.0
+2.14.3
