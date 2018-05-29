@@ -1,49 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965598AbeE2RiP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 13:38:15 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37950 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965416AbeE2RiD (ORCPT
+        id S965398AbeE2Rje (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 13:39:34 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:42575 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965377AbeE2Rja (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 13:38:03 -0400
-X-Google-Smtp-Source: AB8JxZpSvjh2Y2qUmZjaIy+sNpMzh+69RlEEOuyVu/oP0a5a1FOEY6YeXgD28PJhxkq7w8Dsqc/7aw==
-Date: Tue, 29 May 2018 23:07:57 +0530
-From: Sankalp Negi <sankalpnegi2310@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc: NeilBrown <neil@brown.name>, Sankalp Negi <sankalpnegi2310@gmail.com>
-Subject: [PATCH] staging: mt7621-mmc: Fix line size exceeding 80 columns.
-Message-ID: <20180529173757.nmw46a6xbrgh35wd@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 29 May 2018 13:39:30 -0400
+X-Google-Smtp-Source: AB8JxZo2ODSWvQJwXctr89dG0p403WZFHutkFyfYpLNNs5CG4fuynewUsZWChHFiGo6MI+jv/kSc/Q==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3] rtc: sun6i: Fix bit_idx value for clk_register_gate
+Date: Tue, 29 May 2018 23:09:13 +0530
+Message-Id: <20180529173913.12386-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl warning:
+From: Michael Trimarchi <michael@amarulasolutions.com>
 
-WARNING: line over 80 characters
+clk-gate core will take bit_idx through clk_register_gate
+and then do clk_gate_ops by using BIT(bit_idx), but rtc-sun6i
+is passing bit_idx as BIT(bit_idx) it becomes BIT(BIT(bit_idx)
+which is wrong and eventually external gate clock is not enabling.
 
-Signed-off-by: Sankalp Negi <sankalpnegi2310@gmail.com>
+This patch fixed by passing bit index and the original change
+introduced from below commit.
+"rtc: sun6i: Add support for the external oscillator gate"
+(sha1: 17ecd246414b3a0fe0cb248c86977a8bda465b7b)
+
+Fixes: 17ecd246414b ("rtc: sun6i: Add support for the external oscillator
+gate")
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/staging/mt7621-mmc/dbg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes for v3:
+- add fixes tag
+- Cced stable ML
+Changes for v2:
+- add suffix _OFFSET with macro name to distinguish b/w
+  register actual values vs offset.
 
-diff --git a/drivers/staging/mt7621-mmc/dbg.c b/drivers/staging/mt7621-mmc/dbg.c
-index d897b1216348..0b007e060ddc 100644
---- a/drivers/staging/mt7621-mmc/dbg.c
-+++ b/drivers/staging/mt7621-mmc/dbg.c
-@@ -229,7 +229,7 @@ static int msdc_debug_proc_read(struct seq_file *s, void *p)
- }
+ drivers/rtc/rtc-sun6i.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+index 2e6fb275acc8..2cd5a7b1a2e3 100644
+--- a/drivers/rtc/rtc-sun6i.c
++++ b/drivers/rtc/rtc-sun6i.c
+@@ -74,7 +74,7 @@
+ #define SUN6I_ALARM_CONFIG_WAKEUP		BIT(0)
  
- static ssize_t msdc_debug_proc_write(struct file *file,
--				const char __user *buf, size_t count, loff_t *data)
-+			const char __user *buf, size_t count, loff_t *data)
- {
- 	int ret;
+ #define SUN6I_LOSC_OUT_GATING			0x0060
+-#define SUN6I_LOSC_OUT_GATING_EN		BIT(0)
++#define SUN6I_LOSC_OUT_GATING_EN_OFFSET		0
  
+ /*
+  * Get date values
+@@ -255,7 +255,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
+ 				      &clkout_name);
+ 	rtc->ext_losc = clk_register_gate(NULL, clkout_name, rtc->hw.init->name,
+ 					  0, rtc->base + SUN6I_LOSC_OUT_GATING,
+-					  SUN6I_LOSC_OUT_GATING_EN, 0,
++					  SUN6I_LOSC_OUT_GATING_EN_OFFSET, 0,
+ 					  &rtc->lock);
+ 	if (IS_ERR(rtc->ext_losc)) {
+ 		pr_crit("Couldn't register the LOSC external gate\n");
 -- 
-2.11.0
+2.14.3
