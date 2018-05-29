@@ -1,5 +1,5 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2266183-1527607048-2-9110496217603046169
+X-Cyrus-Session-Id: sloti22d1t05-2220212-1527605101-2-10069253186500047003
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
@@ -8,23 +8,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527607048; b=MZchIb9uSmdyS1pfrYdIsP02UTKSaMMCHdBdNuuIalj21d9kLf
-    sRFNGhA2999k1h6ae4mVHOgWW1NevSmNpMHUM1ZrWp4AZiHELE+Q03EDhJb5ROg6
-    9+FkNBv1GzW21b0A4WsVHBqqxjdE+q6Ui/ZyQLBz5EvN3RI+LtoHla/e+FUHg/tU
-    1mTvs0RiEpRJncpLnzBWkZO4WK37DVE9EbeYhiJvaHZq57ecpIOZZHwp/XBQsSaT
-    HCtPmsTHJkfq2t6r9Tn5UTBbyDBNXMs1+3S1ufjWsZ8sZMkr7tAVwiTuDmef96xf
-    djODIFKhS66Pke8kBdr+2+pgBjwC8oxSbsEg==
+    1527605101; b=fRtMKj+h/kQts58/LEN5/pqQBOpSmVYkpsU1pFLLU4ErVcPHnt
+    IchUsRFj3dPLUGfuv+FEqOzpXABfB8sDGV3vFf23oGY4kffALEquK0FzYH6Kz0DF
+    dLVkfRTxrGszNl4mPxhe0S7G4Wyvxl4htKCOSoZNS+7PnW+gk3u6endwW3iuegz2
+    5t58JYJN63p7RBhnOMmxdqNHmCYep9H4kzgCTeyu+9UVsF8Qq64c6GRBnrfRH1mZ
+    omcmI8pKmnobJcsdnrAMq1rbUTSOnx03aCSoeMzlL6MJ/IVG8dvKweWJ8wvbO0zr
+    2cMKrV6oisnPJdgWnEBoUqnHca7Ftzf+Bgcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1527607048; bh=
-    j3FkgtHWNO7DF/r/Zz49vsxAaVEsFcvlr1N8qV55l0s=; b=kDBx/GOQ7eK+seR3
-    9gZuwAwMq5a4Mkard8ojyGssQR6vrTzlRkhbUdTlJc8T5wbhzYnsFfVws3QMnqjY
-    S6pIP2wiWw5z8tIZF+u3B/IPRHWe8lR6jxQU2hVvXI9voc9XtrysisOFVdo6yU3o
-    qB23MAnoR5GU//ZsDRq+IEaI35/QVyZ0dh2UvQB9PBzS6e8hE3Xz3qzLDSY0XvIm
-    aAPyvrk6Lo+0Ik82K88iXCD6Mk3ifbnevTj3lwSpuOhCJe7h3FcqSdqqgUF+pBHu
-    U48n+GsrUHAWUlNzPXqro+mIZ3gIT9RLh07rfNZS28d9FM0VAH+xcMYBPR/e7LWs
-    5uBg+A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1527605101; bh=
+    V/1pIqtkWVkqTv4djh78D3dqKvql5BPCQRkLZlzk72o=; b=K6UKDnqWjgEsVECn
+    eelASc7a+6DJVCr0dqT5zlUj61mPbIHqf2BfxyJnef+LrhyzaTdWuguZ/cG/3aHA
+    uiE21GeIDrBfNi/M5nhEcE/nvjJWHBKx1vJZ5Rddg3VO7eIAT64NaCHo03wRfWOE
+    5MuR87GFgjzajRcFptZWbELaDraUQzYBeGX6V+pYmqMOilgH3o3/PznMrnGCSJgW
+    S4gYkLIUuy4EhVfsiusmhBKBmPv3hlvclDPSr1LXE53g4QWe2pOGgiOQhQb6w50J
+    oHoqPZRRRVtYXjrMcQSygD9Tap0xz/Lf8wnwkqz65mdIGJTsp/0SClbh3b7kCbjl
+    +hfBSw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -33,13 +33,13 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=CSiOdt+1;
+    header.i=@1e100.net header.b=kVZtbNUw;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -49,35 +49,35 @@ Authentication-Results: mx5.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=CSiOdt+1;
+      header.i=@1e100.net header.b=kVZtbNUw;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNB2ifOvWzlX5W31uBtJO32FocMkwiCn/uzpg5b7DR8UWgDNx+XCbXVCh6mqAqKIemppcJ7IGsn/4z767jL8v5Ebd6JXk3G0Wt9gdRywqqxDo2Hg0VWi
-    fqrr6XBcSK04Q0ndHhQhqvZ0+CBcIA1IgJLIyBGVWQ5H1yDAXATfq3+aw1ZQz1McpdD/n5RTauVjauIbFX7W4eUFfGNW/0OoygXW1aGfXAiFPvT/9yPgGE03
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJFFIuMdp3+D3lAPJ+ePZe3FxQBFA5Gb0KHwh7d+aflXF51Z0LoEIdqALRzi8NBDMf/SFbTzLi8n1doij3ypfD3qvB3PShr7B4lvtJ2yLl3qNi0YdcKo
+    E2fPSpyrF9G5XSmFNyFRa+VxgEa1Kawze2hcCrdqpowoaC3Bz40roq3BziHoQYXhHWR2iD48Xo68tTD8kQ3GfpKM038DOqYvD8xdfSPT9Vpe9dT10rxk+Kw8
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
-    a=gVocdEXu7pXj5AOg9YQA:9
+    a=nW1f2riJtgJUCLueMDkA:9
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935233AbeE2PQu (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 11:16:50 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41450 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935243AbeE2Onp (ORCPT
+        id S935764AbeE2Oo6 (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 10:44:58 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33265 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935760AbeE2OoO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 May 2018 10:43:45 -0400
-X-Google-Smtp-Source: AB8JxZqVHmFFKyS2ihngK7X4slfDu5HB/uKBzdkfL97l8JWhVCV00M407zf1esjVhWFRua2I+UnOzQ==
+        Tue, 29 May 2018 10:44:14 -0400
+X-Google-Smtp-Source: AB8JxZosEukNZvAWtYb29Kbt7hpbwre9cYNOH5TL4LpLr8imKa37dldqOAvfE1zzDB4v6sUcCKlLDw==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/39] vfs: dedupe: extract helper for a single dedup
-Date: Tue, 29 May 2018 16:43:03 +0200
-Message-Id: <20180529144339.16538-4-mszeredi@redhat.com>
+Subject: [PATCH 27/39] ovl: obsolete "check_copy_up" module option
+Date: Tue, 29 May 2018 16:43:27 +0200
+Message-Id: <20180529144339.16538-28-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
 References: <20180529144339.16538-1-mszeredi@redhat.com>
@@ -87,139 +87,68 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Extract vfs_dedupe_file_range_one() helper to deal with a single dedup
-request.
+This was provided for debugging the ro/rw inconsistecy.  The inconsitency
+is now gone so this option is obsolete.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/read_write.c | 89 +++++++++++++++++++++++++++++++--------------------------
- 1 file changed, 49 insertions(+), 40 deletions(-)
+ fs/overlayfs/copy_up.c | 30 +++++++-----------------------
+ 1 file changed, 7 insertions(+), 23 deletions(-)
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 1818581cadf6..82a53c44c0aa 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1964,6 +1964,44 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
- }
- EXPORT_SYMBOL(vfs_dedupe_file_range_compare);
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index ddaddb4ce4c3..e675e8349e71 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -25,35 +25,20 @@
  
-+static s64 vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
-+				     struct file *dst_file, loff_t dst_pos,
-+				     u64 len)
-+{
-+	s64 ret;
-+
-+	ret = mnt_want_write_file(dst_file);
-+	if (ret)
-+		return ret;
-+
-+	ret = clone_verify_area(dst_file, dst_pos, len, true);
-+	if (ret < 0)
-+		goto out_drop_write;
-+
-+	ret = -EINVAL;
-+	if (!(capable(CAP_SYS_ADMIN) || (dst_file->f_mode & FMODE_WRITE)))
-+		goto out_drop_write;
-+
-+	ret = -EXDEV;
-+	if (src_file->f_path.mnt != dst_file->f_path.mnt)
-+		goto out_drop_write;
-+
-+	ret = -EISDIR;
-+	if (S_ISDIR(file_inode(dst_file)->i_mode))
-+		goto out_drop_write;
-+
-+	ret = -EINVAL;
-+	if (!dst_file->f_op->dedupe_file_range)
-+		goto out_drop_write;
-+
-+	ret = dst_file->f_op->dedupe_file_range(src_file, src_pos,
-+						dst_file, dst_pos, len);
-+out_drop_write:
-+	mnt_drop_write_file(dst_file);
-+
-+	return ret;
-+}
-+
- int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
+ #define OVL_COPY_UP_CHUNK_SIZE (1 << 20)
+ 
+-static bool __read_mostly ovl_check_copy_up;
+-module_param_named(check_copy_up, ovl_check_copy_up, bool,
+-		   S_IWUSR | S_IRUGO);
+-MODULE_PARM_DESC(ovl_check_copy_up,
+-		 "Warn on copy-up when causing process also has a R/O fd open");
+-
+-static int ovl_check_fd(const void *data, struct file *f, unsigned int fd)
++static int ovl_ccup_set(const char *buf, const struct kernel_param *param)
  {
- 	struct file_dedupe_range_info *info;
-@@ -1972,10 +2010,7 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
- 	u64 len;
- 	int i;
- 	int ret;
--	bool is_admin = capable(CAP_SYS_ADMIN);
- 	u16 count = same->dest_count;
--	struct file *dst_file;
--	loff_t dst_off;
- 	loff_t deduped;
- 
- 	if (!(file->f_mode & FMODE_READ))
-@@ -2010,54 +2045,28 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
- 	}
- 
- 	for (i = 0, info = same->info; i < count; i++, info++) {
--		struct inode *dst;
- 		struct fd dst_fd = fdget(info->dest_fd);
-+		struct file *dst_file = dst_fd.file;
- 
--		dst_file = dst_fd.file;
- 		if (!dst_file) {
- 			info->status = -EBADF;
- 			goto next_loop;
- 		}
--		dst = file_inode(dst_file);
+-	const struct dentry *dentry = data;
 -
--		ret = mnt_want_write_file(dst_file);
--		if (ret) {
--			info->status = ret;
--			goto next_loop;
--		}
--
--		dst_off = info->dest_offset;
--		ret = clone_verify_area(dst_file, dst_off, len, true);
--		if (ret < 0) {
--			info->status = ret;
--			goto next_file;
--		}
--		ret = 0;
+-	if (file_inode(f) == d_inode(dentry))
+-		pr_warn_ratelimited("overlayfs: Warning: Copying up %pD, but open R/O on fd %u which will cease to be coherent [pid=%d %s]\n",
+-				    f, fd, current->pid, current->comm);
++	WARN(1, "overlayfs: \"check_copy_up\" module option is obsolete\n");
+ 	return 0;
+ }
  
- 		if (info->reserved) {
- 			info->status = -EINVAL;
--		} else if (!(is_admin || (dst_file->f_mode & FMODE_WRITE))) {
--			info->status = -EINVAL;
--		} else if (file->f_path.mnt != dst_file->f_path.mnt) {
--			info->status = -EXDEV;
--		} else if (S_ISDIR(dst->i_mode)) {
--			info->status = -EISDIR;
--		} else if (dst_file->f_op->dedupe_file_range == NULL) {
--			info->status = -EINVAL;
--		} else {
--			deduped = dst_file->f_op->dedupe_file_range(file, off,
--							dst_file,
--							info->dest_offset, len);
--			if (deduped == -EBADE)
--				info->status = FILE_DEDUPE_RANGE_DIFFERS;
--			else if (deduped < 0)
--				info->status = deduped;
--			else
--				info->bytes_deduped += deduped;
-+			goto next_loop;
- 		}
+-/*
+- * Check the fds open by this process and warn if something like the following
+- * scenario is about to occur:
+- *
+- *	fd1 = open("foo", O_RDONLY);
+- *	fd2 = open("foo", O_RDWR);
+- */
+-static void ovl_do_check_copy_up(struct dentry *dentry)
++static int ovl_ccup_get(char *buf, const struct kernel_param *param)
+ {
+-	if (ovl_check_copy_up)
+-		iterate_fd(current->files, 0, ovl_check_fd, dentry);
++	return sprintf(buf, "N\n");
+ }
  
--next_file:
--		mnt_drop_write_file(dst_file);
-+		deduped = vfs_dedupe_file_range_one(file, off, dst_file,
-+						    info->dest_offset, len);
-+		if (deduped == -EBADE)
-+			info->status = FILE_DEDUPE_RANGE_DIFFERS;
-+		else if (deduped < 0)
-+			info->status = deduped;
-+		else
-+			info->bytes_deduped += deduped;
++module_param_call(check_copy_up, ovl_ccup_set, ovl_ccup_get, NULL, 0644);
++MODULE_PARM_DESC(ovl_check_copy_up, "Obsolete; does nothing");
 +
- next_loop:
- 		fdput(dst_fd);
+ int ovl_copy_xattr(struct dentry *old, struct dentry *new)
+ {
+ 	ssize_t list_size, size, value_size = 0;
+@@ -719,7 +704,6 @@ static int ovl_copy_up_one(struct dentry *parent, struct dentry *dentry,
+ 		if (IS_ERR(ctx.link))
+ 			return PTR_ERR(ctx.link);
+ 	}
+-	ovl_do_check_copy_up(ctx.lowerpath.dentry);
  
+ 	err = ovl_copy_up_start(dentry);
+ 	/* err < 0: interrupted, err > 0: raced with another copy-up */
 -- 
 2.14.3
