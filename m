@@ -1,88 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965615AbeE2RmJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 13:42:09 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40210 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965376AbeE2RmI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 13:42:08 -0400
-X-Google-Smtp-Source: ADUXVKKqhI9OHHg2HE990EqLZs+LHovxluOHK7A38p0MWWQsEZahtltYd7U38aga3HWuNCLznuUixrLaKFD8NgAMWew=
+        id S965524AbeE2Ruw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 13:50:52 -0400
+Received: from mga05.intel.com ([192.55.52.43]:49624 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965391AbeE2Ruu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 13:50:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
+   d="scan'208";a="60084035"
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Borislav Petkov <bp@suse.de>
+CC: "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>, "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/3 V2] x86/mce: Fix incorrect "Machine check from
+ unknown source" message
+Thread-Topic: [PATCH 2/3 V2] x86/mce: Fix incorrect "Machine check from
+ unknown source" message
+Thread-Index: AQHT92hO7MtQ6LEHR0WNUWwbTC53lqRHbveA//+MfVA=
+Date: Tue, 29 May 2018 17:50:48 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7D31E24F@ORSMSX110.amr.corp.intel.com>
+References: <cover.1527283897.git.tony.luck@intel.com>
+ <52e049a497e86fd0b71c529651def8871c804df0.1527283897.git.tony.luck@intel.com>
+ <20180528204923.GB30792@zn.tnic> <20180529161549.GB935@agluck-desk>
+ <20180529174105.GF19870@zn.tnic>
+In-Reply-To: <20180529174105.GF19870@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTAwZTc2NzktOTBhYS00YTdhLWEzNTYtNjgyNDUxNDc4ZGM5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWkFDakYzaXo3U1lwNmR5ZW9EbWdkUXJRV0tzaVpnRVZwN0tsbTd6VkloWWMwMmxqb2Y4SWY2RzlaNnNodmJyMiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: timeout-no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180529105343.26870-1-mlichvar@redhat.com>
-References: <20180529105343.26870-1-mlichvar@redhat.com>
-From: John Stultz <john.stultz@linaro.org>
-Date: Tue, 29 May 2018 10:42:05 -0700
-Message-ID: <CALAqxLWV2d6yTeAK7j31Nvu33TqLmPLNDvzzSu0TSnDEUhVc1A@mail.gmail.com>
-Subject: Re: [PATCHv1] timekeeping: Update multiplier when NTP frequency is
- set directly
-To: Miroslav Lichvar <mlichvar@redhat.com>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4THp8NZ012421
 
-On Tue, May 29, 2018 at 3:53 AM, Miroslav Lichvar <mlichvar@redhat.com> wrote:
-> When the NTP frequency is set directly from userspace using the
-> ADJ_FREQUENCY or ADJ_TICK timex mode, immediately update the
-> timekeeper's multiplier instead of waiting for the next tick.
->
-> This removes a hidden non-deterministic delay in setting of the
-> frequency and allows an extremely tight control of the system clock
-> with update rates close to or even exceeding the kernel HZ.
->
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: Richard Cochran <richardcochran@gmail.com>
-> Cc: Prarit Bhargava <prarit@redhat.com>
-> Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
-> ---
->
-> Notes:
->     RFC->v1:
->     - added a new parameter to force the update of the timekeeper to the current
->       NTP tick length only from adjtimex()
->     - added timekeeping_advance() to keep the parameter local to timekeeping.c
->
->  kernel/time/timekeeping.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
->
-> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> index 49cbceef5deb..5524c07d43e3 100644
-> --- a/kernel/time/timekeeping.c
-> +++ b/kernel/time/timekeeping.c
-> @@ -2021,11 +2021,11 @@ static u64 logarithmic_accumulation(struct timekeeper *tk, u64 offset,
->         return offset;
->  }
->
-> -/**
-> - * update_wall_time - Uses the current clocksource to increment the wall time
-> - *
-> +/*
-> + * timekeeping_advance - Updates the timekeeper to the current time and
-> + * current NTP tick length
->   */
-> -void update_wall_time(void)
-> +static void timekeeping_advance(bool force_update)
+> It is still assigning.
 
-This is kind of a nit, but mind switching out bool for an enum?  Using
-something like TK_ADV_NORMAL and TK_ADV_FORCE?
+Ah. That would be because I forgot to "git add" before "git commit --amend" :-(
 
-> +void update_wall_time(void)
-> +{
-> +       timekeeping_advance(false);
-> +}
+> I'll simply do:
+>
+>       if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3) {
+>               mce_severity(&m, cfg->tolerant, &msg, true);
+>               mce_panic("Local fatal machine check!", &m, msg);
+>       }
+>
+> when committing.
 
-The enum makes usage like timekeeping_advance(false) a little less
-opaque to the reader ("Wait, don't advance? Let me go look at the
-function").
+I had put:
 
-We got bitten by this earlier when we had the old
-"timekeeping_update(tk, true, false, true)" usage.
+		(void) mce_severity(&m, cfg->tolerant, &msg, true);
 
-thanks
--john
+but either works.
+
+> Btw, I did some cleaning up ontop. Please have a look and let me know if
+> it is too ugly to live... :)
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=rc7%2b0-ras
+
+Will look. I hope you didn't do too much to make the stable backport more difficult.
+
+-Tony
+ 
