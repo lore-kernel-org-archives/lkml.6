@@ -1,136 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934578AbeE2NfY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:35:24 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40570 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934136AbeE2NfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:35:19 -0400
-Date: Tue, 29 May 2018 14:35:13 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Julien Grall <julien.grall@arm.com>
-Subject: Re: [PATCH v2 08/17] arm64: ssbd: Restore mitigation status on CPU
- resume
-Message-ID: <20180529133510.xopxpmxf7ypjeksc@lakrids.cambridge.arm.com>
-References: <20180529121121.24927-1-marc.zyngier@arm.com>
- <20180529121121.24927-9-marc.zyngier@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529121121.24927-9-marc.zyngier@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S934651AbeE2Nfg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:35:36 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43285 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934294AbeE2Nfa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:35:30 -0400
+X-Google-Smtp-Source: AB8JxZq3c93tnWH409JnltS9F+Kl43yfjvlRW7Bc0zQ9iMnev4ESGce9zE6qzhJKUQ12qsxtMY1kkw==
+From: Yafang Shao <laoar.shao@gmail.com>
+To: songliubraving@fb.com, edumazet@google.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v4 net-next 1/2] tcp: use data length instead of skb->len in tcp_probe
+Date: Tue, 29 May 2018 21:35:14 +0800
+Message-Id: <1527600915-10955-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 01:11:12PM +0100, Marc Zyngier wrote:
-> On a system where firmware can dynamically change the state of the
-> mitigation, the CPU will always come up with the mitigation enabled,
-> including when coming back from suspend.
-> 
-> If the user has requested "no mitigation" via a command line option,
-> let's enforce it by calling into the firmware again to disable it.
-> 
-> Similarily, for a resume from hibernate, the mitigation could have
-> been disabled by the boot kernel. Let's ensure that it is set
-> back on in that case.
-> 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+At this point skb->len is including tcp header length, so it is meaningless
+to user. data length could be more helpful, with which we can easily filter
+out the packet without payload.
 
-With teh fixup in swsusp_arch_suspend(), this looks good to me. FWIW:
+Cc: Eric Dumazet <edumazet@google.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+---
+v4: no change on this patch
+v3: tcp_hdr() is a little expensive than skb->data, so replace it with
+    skb->data.
 
-Mark.
+---
+ include/trace/events/tcp.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-> ---
->  arch/arm64/include/asm/cpufeature.h |  6 ++++++
->  arch/arm64/kernel/cpu_errata.c      |  2 +-
->  arch/arm64/kernel/hibernate.c       | 11 +++++++++++
->  arch/arm64/kernel/suspend.c         |  8 ++++++++
->  4 files changed, 26 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index b0fc3224ce8a..55bc1f073bfb 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -553,6 +553,12 @@ static inline int arm64_get_ssbd_state(void)
->  #endif
->  }
->  
-> +#ifdef CONFIG_ARM64_SSBD
-> +void arm64_set_ssbd_mitigation(bool state);
-> +#else
-> +static inline void arm64_set_ssbd_mitigation(bool state) {}
-> +#endif
-> +
->  #endif /* __ASSEMBLY__ */
->  
->  #endif
-> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-> index 2fef634e6953..2b9a31a6a16a 100644
-> --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@ -303,7 +303,7 @@ void __init arm64_enable_wa2_handling(struct alt_instr *alt,
->  		*updptr = cpu_to_le32(aarch64_insn_gen_nop());
->  }
->  
-> -static void arm64_set_ssbd_mitigation(bool state)
-> +void arm64_set_ssbd_mitigation(bool state)
->  {
->  	switch (psci_ops.conduit) {
->  	case PSCI_CONDUIT_HVC:
-> diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
-> index 1ec5f28c39fc..6b2686d54411 100644
-> --- a/arch/arm64/kernel/hibernate.c
-> +++ b/arch/arm64/kernel/hibernate.c
-> @@ -313,6 +313,17 @@ int swsusp_arch_suspend(void)
->  
->  		sleep_cpu = -EINVAL;
->  		__cpu_suspend_exit();
-> +
-> +		/*
-> +		 * Just in case the boot kernel did turn the SSBD
-> +		 * mitigation off behind our back, let's set the state
-> +		 * to what we expect it to be.
-> +		 */
-> +		switch (arm64_get_ssbd_state()) {
-> +		case ARM64_SSBD_FORCE_ENABLE:
-> +		case ARM64_SSBD_KERNEL:
-> +			arm64_set_ssbd_mitigation(true);
-> +		}
->  	}
->  
->  	local_daif_restore(flags);
-> diff --git a/arch/arm64/kernel/suspend.c b/arch/arm64/kernel/suspend.c
-> index a307b9e13392..70c283368b64 100644
-> --- a/arch/arm64/kernel/suspend.c
-> +++ b/arch/arm64/kernel/suspend.c
-> @@ -62,6 +62,14 @@ void notrace __cpu_suspend_exit(void)
->  	 */
->  	if (hw_breakpoint_restore)
->  		hw_breakpoint_restore(cpu);
-> +
-> +	/*
-> +	 * On resume, firmware implementing dynamic mitigation will
-> +	 * have turned the mitigation on. If the user has forcefully
-> +	 * disabled it, make sure their wishes are obeyed.
-> +	 */
-> +	if (arm64_get_ssbd_state() == ARM64_SSBD_FORCE_DISABLE)
-> +		arm64_set_ssbd_mitigation(false);
->  }
->  
->  /*
-> -- 
-> 2.14.2
-> 
+diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+index c1a5284..7ff0446 100644
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@ -236,7 +236,7 @@
+ 		__field(__u16, sport)
+ 		__field(__u16, dport)
+ 		__field(__u32, mark)
+-		__field(__u16, length)
++		__field(__u16, data_len)
+ 		__field(__u32, snd_nxt)
+ 		__field(__u32, snd_una)
+ 		__field(__u32, snd_cwnd)
+@@ -250,6 +250,7 @@
+ 	TP_fast_assign(
+ 		const struct tcp_sock *tp = tcp_sk(sk);
+ 		const struct inet_sock *inet = inet_sk(sk);
++		const struct tcphdr *th = (const struct tcphdr *)skb->data;
+ 
+ 		memset(__entry->saddr, 0, sizeof(struct sockaddr_in6));
+ 		memset(__entry->daddr, 0, sizeof(struct sockaddr_in6));
+@@ -261,7 +262,7 @@
+ 		__entry->dport = ntohs(inet->inet_dport);
+ 		__entry->mark = skb->mark;
+ 
+-		__entry->length = skb->len;
++		__entry->data_len = skb->len - __tcp_hdrlen(th);
+ 		__entry->snd_nxt = tp->snd_nxt;
+ 		__entry->snd_una = tp->snd_una;
+ 		__entry->snd_cwnd = tp->snd_cwnd;
+@@ -272,9 +273,9 @@
+ 		__entry->sock_cookie = sock_gen_cookie(sk);
+ 	),
+ 
+-	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llx",
++	TP_printk("src=%pISpc dest=%pISpc mark=%#x data_len=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llx",
+ 		  __entry->saddr, __entry->daddr, __entry->mark,
+-		  __entry->length, __entry->snd_nxt, __entry->snd_una,
++		  __entry->data_len, __entry->snd_nxt, __entry->snd_una,
+ 		  __entry->snd_cwnd, __entry->ssthresh, __entry->snd_wnd,
+ 		  __entry->srtt, __entry->rcv_wnd, __entry->sock_cookie)
+ );
+-- 
+1.8.3.1
