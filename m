@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936555AbeE2OqY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:46:24 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:54527 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935652AbeE2OqS (ORCPT
+        id S964854AbeE2O6e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:58:34 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39398 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936531AbeE2OqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:46:18 -0400
-X-Google-Smtp-Source: ADUXVKIX5N98TCs/g4mq/qYqer5WZPEN1rRwbj1vWFkdtaMbvcOwakOySzs1JDdR6vrmd/GpUZpfCA==
+        Tue, 29 May 2018 10:46:23 -0400
+X-Google-Smtp-Source: ADUXVKK7yOXRFaZumHQMDzHMe7EBhSDvMpUiIoTwAcZQyoefcLLF1FYbT3IKu/RzIMPb2UWyWIhEeA==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 02/28] ovl: Move the copy up helpers to copy_up.c
-Date: Tue, 29 May 2018 16:45:46 +0200
-Message-Id: <20180529144612.16675-3-mszeredi@redhat.com>
+Subject: [PATCH 06/28] ovl: Add helper ovl_already_copied_up()
+Date: Tue, 29 May 2018 16:45:50 +0200
+Message-Id: <20180529144612.16675-7-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
 References: <20180529144612.16675-1-mszeredi@redhat.com>
@@ -23,125 +23,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vivek Goyal <vgoyal@redhat.com>
 
-Right now two copy up helpers are in inode.c.  Amir suggested it might be
-better to move these to copy_up.c.
-
-There will one more related function which will come in later patch.
+There are couple of places where we need to know if file is already copied
+up (in lockless manner).  Right now its open coded and there are only two
+conditions to check.  Soon this patch series will introduce another
+condition to check and Amir wants to introduce one more.  So introduce a
+helper instead to check this so that code is easier to read.
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/copy_up.c   | 32 ++++++++++++++++++++++++++++++++
- fs/overlayfs/inode.c     | 32 --------------------------------
- fs/overlayfs/overlayfs.h |  2 +-
- 3 files changed, 33 insertions(+), 33 deletions(-)
+ fs/overlayfs/copy_up.c   | 20 ++------------------
+ fs/overlayfs/overlayfs.h |  1 +
+ fs/overlayfs/util.c      | 26 +++++++++++++++++++++++++-
+ 3 files changed, 28 insertions(+), 19 deletions(-)
 
 diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index e675e8349e71..91b3b668482b 100644
+index 38cfd1acc196..6247617fea0b 100644
 --- a/fs/overlayfs/copy_up.c
 +++ b/fs/overlayfs/copy_up.c
-@@ -779,6 +779,38 @@ int ovl_copy_up_flags(struct dentry *dentry, int flags)
- 	return err;
- }
+@@ -761,21 +761,7 @@ int ovl_copy_up_flags(struct dentry *dentry, int flags)
+ 		struct dentry *next;
+ 		struct dentry *parent = NULL;
  
-+static bool ovl_open_need_copy_up(struct dentry *dentry, int flags)
-+{
-+	/* Copy up of disconnected dentry does not set upper alias */
-+	if (ovl_dentry_upper(dentry) &&
-+	    (ovl_dentry_has_upper_alias(dentry) ||
-+	     (dentry->d_flags & DCACHE_DISCONNECTED)))
-+		return false;
-+
-+	if (special_file(d_inode(dentry)->i_mode))
-+		return false;
-+
-+	if (!(OPEN_FMODE(flags) & FMODE_WRITE) && !(flags & O_TRUNC))
-+		return false;
-+
-+	return true;
-+}
-+
-+int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags)
-+{
-+	int err = 0;
-+
-+	if (ovl_open_need_copy_up(dentry, file_flags)) {
-+		err = ovl_want_write(dentry);
-+		if (!err) {
-+			err = ovl_copy_up_flags(dentry, file_flags);
-+			ovl_drop_write(dentry);
-+		}
-+	}
-+
-+	return err;
-+}
-+
- int ovl_copy_up(struct dentry *dentry)
+-		/*
+-		 * Check if copy-up has happened as well as for upper alias (in
+-		 * case of hard links) is there.
+-		 *
+-		 * Both checks are lockless:
+-		 *  - false negatives: will recheck under oi->lock
+-		 *  - false positives:
+-		 *    + ovl_dentry_upper() uses memory barriers to ensure the
+-		 *      upper dentry is up-to-date
+-		 *    + ovl_dentry_has_upper_alias() relies on locking of
+-		 *      upper parent i_rwsem to prevent reordering copy-up
+-		 *      with rename.
+-		 */
+-		if (ovl_dentry_upper(dentry) &&
+-		    (ovl_dentry_has_upper_alias(dentry) || disconnected))
++		if (ovl_already_copied_up(dentry))
+ 			break;
+ 
+ 		next = dget(dentry);
+@@ -803,9 +789,7 @@ int ovl_copy_up_flags(struct dentry *dentry, int flags)
+ static bool ovl_open_need_copy_up(struct dentry *dentry, int flags)
  {
- 	return ovl_copy_up_flags(dentry, 0);
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index c365b94fa158..60c88a09a3f3 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -399,38 +399,6 @@ struct posix_acl *ovl_get_acl(struct inode *inode, int type)
- 	return acl;
- }
- 
--static bool ovl_open_need_copy_up(struct dentry *dentry, int flags)
--{
--	/* Copy up of disconnected dentry does not set upper alias */
+ 	/* Copy up of disconnected dentry does not set upper alias */
 -	if (ovl_dentry_upper(dentry) &&
 -	    (ovl_dentry_has_upper_alias(dentry) ||
 -	     (dentry->d_flags & DCACHE_DISCONNECTED)))
--		return false;
--
--	if (special_file(d_inode(dentry)->i_mode))
--		return false;
--
--	if (!(OPEN_FMODE(flags) & FMODE_WRITE) && !(flags & O_TRUNC))
--		return false;
--
--	return true;
--}
--
--int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags)
--{
--	int err = 0;
--
--	if (ovl_open_need_copy_up(dentry, file_flags)) {
--		err = ovl_want_write(dentry);
--		if (!err) {
--			err = ovl_copy_up_flags(dentry, file_flags);
--			ovl_drop_write(dentry);
--		}
--	}
--
--	return err;
--}
--
- int ovl_update_time(struct inode *inode, struct timespec *ts, int flags)
- {
- 	if (flags & S_ATIME) {
++	if (ovl_already_copied_up(dentry))
+ 		return false;
+ 
+ 	if (special_file(d_inode(dentry)->i_mode))
 diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 1948e38c3c95..9172d3d5d870 100644
+index 9172d3d5d870..2a9c5a80ae48 100644
 --- a/fs/overlayfs/overlayfs.h
 +++ b/fs/overlayfs/overlayfs.h
-@@ -332,7 +332,6 @@ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
- 		  void *value, size_t size);
- ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size);
- struct posix_acl *ovl_get_acl(struct inode *inode, int type);
--int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags);
- int ovl_update_time(struct inode *inode, struct timespec *ts, int flags);
- bool ovl_is_private_xattr(const char *name);
+@@ -238,6 +238,7 @@ bool ovl_is_whiteout(struct dentry *dentry);
+ struct file *ovl_path_open(struct path *path, int flags);
+ int ovl_copy_up_start(struct dentry *dentry);
+ void ovl_copy_up_end(struct dentry *dentry);
++bool ovl_already_copied_up(struct dentry *dentry);
+ bool ovl_check_origin_xattr(struct dentry *dentry);
+ bool ovl_check_dir_xattr(struct dentry *dentry, const char *name);
+ int ovl_check_setxattr(struct dentry *dentry, struct dentry *upperdentry,
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 25d202b47326..43235294e77b 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -377,13 +377,37 @@ struct file *ovl_path_open(struct path *path, int flags)
+ 	return dentry_open(path, flags | O_NOATIME, current_cred());
+ }
  
-@@ -391,6 +390,7 @@ extern const struct file_operations ovl_file_operations;
- /* copy_up.c */
- int ovl_copy_up(struct dentry *dentry);
- int ovl_copy_up_flags(struct dentry *dentry, int flags);
-+int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags);
- int ovl_copy_xattr(struct dentry *old, struct dentry *new);
- int ovl_set_attr(struct dentry *upper, struct kstat *stat);
- struct ovl_fh *ovl_encode_real_fh(struct dentry *real, bool is_upper);
++bool ovl_already_copied_up(struct dentry *dentry)
++{
++	bool disconnected = dentry->d_flags & DCACHE_DISCONNECTED;
++
++	/*
++	 * Check if copy-up has happened as well as for upper alias (in
++	 * case of hard links) is there.
++	 *
++	 * Both checks are lockless:
++	 *  - false negatives: will recheck under oi->lock
++	 *  - false positives:
++	 *    + ovl_dentry_upper() uses memory barriers to ensure the
++	 *      upper dentry is up-to-date
++	 *    + ovl_dentry_has_upper_alias() relies on locking of
++	 *      upper parent i_rwsem to prevent reordering copy-up
++	 *      with rename.
++	 */
++	if (ovl_dentry_upper(dentry) &&
++	    (ovl_dentry_has_upper_alias(dentry) || disconnected))
++		return true;
++
++	return false;
++}
++
+ int ovl_copy_up_start(struct dentry *dentry)
+ {
+ 	struct ovl_inode *oi = OVL_I(d_inode(dentry));
+ 	int err;
+ 
+ 	err = mutex_lock_interruptible(&oi->lock);
+-	if (!err && ovl_dentry_has_upper_alias(dentry)) {
++	if (!err && ovl_already_copied_up(dentry)) {
+ 		err = 1; /* Already copied up */
+ 		mutex_unlock(&oi->lock);
+ 	}
 -- 
 2.14.3
