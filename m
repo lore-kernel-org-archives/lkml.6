@@ -1,126 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754839AbeE2HRv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:17:51 -0400
-Received: from mga02.intel.com ([134.134.136.20]:27409 "EHLO mga02.intel.com"
+        id S1754865AbeE2HS7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:18:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36964 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750831AbeE2HRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:17:49 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,455,1520924400";
-   d="scan'208";a="62508557"
-Date: Tue, 29 May 2018 10:17:42 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
-        Russell King <linux@armlinux.org.uk>, Ben Skeggs <bskeggs@redhat.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
-Message-ID: <20180529071742.GM23723@intel.com>
-References: <20180526155623.12610-1-digetx@gmail.com>
- <20180526155623.12610-2-digetx@gmail.com>
+        id S1750831AbeE2HS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:18:57 -0400
+Date: Tue, 29 May 2018 09:18:55 +0200
+From: Hannes Reinecke <hare@suse.de>
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
+        James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+Message-ID: <20180529091855.27e6042b@pentland.suse.de>
+In-Reply-To: <20180529030236.GA28895@redhat.com>
+References: <20180525125322.15398-1-jthumshirn@suse.de>
+        <20180525130535.GA24239@lst.de>
+        <20180525135813.GB9591@redhat.com>
+        <20180525141211.GA25971@lst.de>
+        <20180525145056.GD9591@redhat.com>
+        <yq1muwj45sg.fsf@oracle.com>
+        <20180529030236.GA28895@redhat.com>
+Organization: SUSE Linux GmbH
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180526155623.12610-2-digetx@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 26, 2018 at 06:56:22PM +0300, Dmitry Osipenko wrote:
-> Color keying is the action of replacing pixels matching a given color
-> (or range of colors) with transparent pixels in an overlay when
-> performing blitting. Depending on the hardware capabilities, the
-> matching pixel can either become fully transparent or gain adjustment
-> of the pixels component values.
+On Mon, 28 May 2018 23:02:36 -0400
+Mike Snitzer <snitzer@redhat.com> wrote:
+
+> On Mon, May 28 2018 at  9:19pm -0400,
+> Martin K. Petersen <martin.petersen@oracle.com> wrote:
 > 
-> Color keying is found in a large number of devices whose capabilities
-> often differ, but they still have enough common features in range to
-> standardize color key properties. This commit adds nine generic DRM plane
-> properties related to the color keying to cover various HW capabilities.
+> > 
+> > Mike,
+> > 
+> > I understand and appreciate your position but I still don't think
+> > the arguments for enabling DM multipath are sufficiently
+> > compelling. The whole point of ANA is for things to be plug and
+> > play without any admin intervention whatsoever.
+> > 
+> > I also think we're getting ahead of ourselves a bit. The assumption
+> > seems to be that NVMe ANA devices are going to be broken--or that
+> > they will require the same amount of tweaking as SCSI devices--and
+> > therefore DM multipath support is inevitable. However, I'm not sure
+> > that will be the case.
+> >   
+> > > Thing is you really don't get to dictate that to the industry.
+> > > Sorry.  
+> > 
+> > We are in the fortunate position of being able to influence how the
+> > spec is written. It's a great opportunity to fix the mistakes of
+> > the past in SCSI. And to encourage the industry to ship products
+> > that don't need the current level of manual configuration and
+> > complex management.
+> > 
+> > So I am in favor of Johannes' patches *if* we get to the point
+> > where a Plan B is needed. But I am not entirely convinced that's
+> > the case just yet. Let's see some more ANA devices first. And once
+> > we do, we are also in a position where we can put some pressure on
+> > the vendors to either amend the specification or fix their
+> > implementations to work with ANA.  
 > 
-> This patch is based on the initial work done by Laurent Pinchart, most of
-> credits for this patch goes to him.
+> ANA really isn't a motivating factor for whether or not to apply this
+> patch.  So no, I don't have any interest in waiting to apply it.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpu/drm/drm_atomic.c |  36 ++++++
->  drivers/gpu/drm/drm_blend.c  | 229 +++++++++++++++++++++++++++++++++++
->  include/drm/drm_blend.h      |   3 +
->  include/drm/drm_plane.h      |  77 ++++++++++++
->  4 files changed, 345 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 895741e9cd7d..5b808cb68654 100644
-> @@ -124,6 +175,19 @@ struct drm_plane_state {
->  	unsigned int zpos;
->  	unsigned int normalized_zpos;
->  
-> +	/* Plane colorkey */
-> +	struct {
-> +		enum drm_plane_colorkey_mode mode;
-> +		u64 min;
-> +		u64 max;
-> +		u64 mask;
-> +		u32 format;
-> +		bool inverted_match;
-> +		u64 replacement_mask;
-> +		u64 replacement_value;
-> +		u32 replacement_format;
-> +	} colorkey;
+Correct. That patch is _not_ to work around any perceived incompability
+on the OS side.
+The patch is primarily to give _admins_ a choice.
+Some installations like hosting providers etc are running quite complex
+scenarios, most of which are highly automated.
+So for those there is a real benefit to be able to use dm-multipathing
+for NVMe; they are totally fine with having a performance impact if
+they can avoid to rewrite their infrastructure.
 
-After a quick stab at implementing this for i915 I came to the
-conclusion that I'd like this struct to have a name so that I can pass
-it around/consult it easily without having to mess about with the entire
-plane state.
+Cheers,
 
-One extra question that came up is how are we going to define the
-destination color key? Is it to be a) enabled on the plane that has the
-colorkey painted on it, or is it to be b) enabled on a plane that sits
-above the plane that is going to be covering up the colorkey? Modern
-Intel hardware defines it the a) way, whereas older hw used the b)
-method. Thinking about it I do think the a) method seems nicer because
-it removes the ambiguity as to which plane's pixels are going to be
-compared again the colorkey. So kinda matches the src colorkey case
-better.
-
-Oh and this also brings up the question as to which other plane(s) are
-taking part in the colorkey process. Looks like on modern Intel hw it's
-supposed to be just the plane immediately above the plane with
-dst keying enabled. On some really old hw there were some more
-complicated rules as to which pair of planes are involved. On middle
-aged hw the situation is simpler a there are only ever two
-(non-cursor) planes on the same crtc. The cursor doesn't seem to
-participate in the colorkeing ever. Not sure there's a sane way to
-fully abstract this all.
-
-I should probably poke at the hardware a bit more to figure out how
-this really works when there are more than two active planes on the
-crtc. <day later> I did poke at one particular class of hw which is
-a bit of a mix of old and middle aged hw, and there it seems I can
-also do dst colorkeying the a) way. And in this case there are three
-planes taking part in the dst colorkey match (the primary that
-has the colorkey painted on it, and two overlay planes that cover
-up the matched pixels). So for that case definitely the a) approach
-in the uapi would make more sense as trying to specify conflicting
-dst colorkey settings for each of the overlay planes wouldn't make
-any sense. I'll need to poke at the modern hw a bit more still...
-
--- 
-Ville Syrjälä
-Intel
+Hannes
