@@ -1,81 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755357AbeE2Hr5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:47:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755179AbeE2Hru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:47:50 -0400
-Date: Tue, 29 May 2018 09:47:30 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: martin_liu <liumartin@google.com>
-Cc: stern@rowland.harvard.edu, heikki.krogerus@linux.intel.com,
-        johan@kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, jenhaochen@google.com
-Subject: Re: [RFC PATCH v2] driver core: hold dev's parent lock when needed
-Message-ID: <20180529074730.GA23486@kroah.com>
-References: <Pine.LNX.4.44L0.1805241100000.1871-100000@iolanthe.rowland.org>
- <20180529070719.164626-1-liumartin@google.com>
+        id S932155AbeE2HsC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:48:02 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:7952 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754922AbeE2Hrs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:47:48 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 29 May 2018 00:47:51 -0700
+Date: Tue, 29 May 2018 10:48:04 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Stefan Agner <stefan@agner.ch>
+CC: <boris.brezillon@bootlin.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <marek.vasut@gmail.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <thierry.reding@gmail.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <dev@lynxeye.de>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <marcel@ziswiler.com>, <krzk@kernel.org>,
+        <digetx@gmail.com>, <benjamin.lindqvist@endian.se>,
+        <jonathanh@nvidia.com>, <pgaikwad@nvidia.com>, <mirza.krak@gmail.com>,
+        <linux-mtd@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
+Message-ID: <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
+References: <20180527215442.14760-5-stefan@agner.ch>
+ <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
+ <5665b799f763daa82dced238fb494863@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180529070719.164626-1-liumartin@google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <5665b799f763daa82dced238fb494863@agner.ch>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 03:07:20PM +0800, martin_liu wrote:
-> SOC have internal I/O buses that can't be proved for devices. The
-> devices on the buses can be accessed directly without additinal
-> configuration required. This type of bus is represented as
-> "simple-bus". In some platforms, we name "soc" with "simple-bus"
-> attribute and many devices are hooked under it desribed in DT
-> (device tree).
+On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
+> On 28.05.2018 09:55, Peter De Schrijver wrote:
+> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
+> >> From: Lucas Stach <dev@lynxeye.de>
+> >>
+> >> Set up the NAND Flash controller clock to run at 150MHz
+> >> instead of the rate set by the bootloader. This is a
+> >> conservative rate which also yields good performance.
+> >>
+> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >> ---
+> >>  drivers/clk/tegra/clk-tegra20.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> >> index 0ee56dd04cec..dff8c425cd28 100644
+> >> --- a/drivers/clk/tegra/clk-tegra20.c
+> >> +++ b/drivers/clk/tegra/clk-tegra20.c
+> >> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+> >>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> >>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> >>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+> >> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
+> >>  	/* must be the last entry */
+> >>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+> >>  };
+> >> --
+> >> 2.17.0
+> >>
+> > 
+> > Maybe better to specify this in the Tegra20 dtsi? See 
+> > "Assigned clock parents and rates" in
+> > Documentation/devicetree/bindings/clock/clock-bindings.txt
 > 
-> In commit 'bf74ad5bc417 introduce ("[PATCH] Hold the device's
-> parent's lock during probe and remove")' to solve USB subsystem
-> lock sequence since usb device's characteristic. Thus "soc"
-> needs to be locked whenever a device and driver's probing
-> happen under "soc" bus. During this period, an async driver
-> tries to probe a device which is under the "soc" bus would be
-> blocked until previous driver finish the probing and release "soc"
-> lock. And the next probing under the "soc" bus need to wait for
-> async finish. Because of that, driver's async probe for init
-> time improvement will be shadowed.
+> assigned-clocks indeed works just fine for this case. Thanks for
+> bringing this up, will drop this patch and add the device tree
+> properties in v3.
 > 
-> Since many devices don't have USB devices' characteristic, they
-> actually don't need parent's lock. Thus, we introduce a lock flag
-> in device struct and driver core would lock the parent lock base
-> on the flag. For usbsystem, we set this flag when its device and
-> driver is matched and to keep original lock behavior in driver
-> core.
+> Hm, interesting that none of the Tegra device tree make use of the
+> feature so far. I guess there would be other cases where this would be
+> useful as well (the one just above, VDE?).
 > 
-> Async probe could have more benefit after this patch.
-> 
-> Signed-off-by: martin_liu <liumartin@google.com>
 
-Nit, your name here is probably not what you sign legal documents with.
-Please use your "real name" in this line, and in your From: email line
-(hint, no '_').  This prevents me from accepting the patch at all.
+Yes, historically this feature wasn't available, so we used these init tables.
+Unfortunately it's not easy to get rid of them for parent and rate
+configuration, because new kernels should also work with existing DTBs, so we
+can't just add assigned-clock properties and remove the existing table
+entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
+are only enabled by the init table. For not yet merged blocks, this is
+ofcourse not a concern.
 
-> Suggested-by: Alan Stern <stern@rowland.harvard.edu>
+Cheers,
 
-Changes were suggested, I don't know if the whole idea was :)
-
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -992,6 +992,7 @@ struct device {
->  	bool			offline_disabled:1;
->  	bool			offline:1;
->  	bool			of_node_reused:1;
-> +	bool			need_parent_lock:1;
-
-Shouldn't this be a bus type flag, and not a device-specific flag?  You
-are only ever caring about this based on the type of bus the device is
-on, the rule would not be different for different devices on the same
-bus from what I can tell.
-
-thanks,
-
-greg k-h
+Peter.
