@@ -1,79 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936680AbeE2PzK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:55:10 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54637 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934836AbeE2PzI (ORCPT
+        id S935492AbeE2QAI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:00:08 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:41667 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934836AbeE2QAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:55:08 -0400
-X-Google-Smtp-Source: ADUXVKKoAUj5TFCDaQNhsvXRpEDPt35HIwWyzF6iMFztPR2YBrbJvl+iwk5nbwXWotXzy2QBC2VFUugxd9+byseUDUI=
+        Tue, 29 May 2018 12:00:03 -0400
+X-Google-Smtp-Source: ADUXVKL5m/0IdYzoh4lbqLGecyqqt8k07fLtjKx/oJC447Fp4FC/UnYaUUdDAav8dTR3CY+wIqZX35jFhgEXVTG4F8o=
 MIME-Version: 1.0
-In-Reply-To: <20180529145055.GA15148@bombadil.infradead.org>
-References: <20180529143126.GA19698@jordon-HP-15-Notebook-PC> <20180529145055.GA15148@bombadil.infradead.org>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Tue, 29 May 2018 21:25:05 +0530
-Message-ID: <CAFqt6zaxt=wXjvKV0qA+OwU1iUyoBdW2cJSLFqXupVWRpKdqEA@mail.gmail.com>
-Subject: Re: [PATCH] mm: Change return type to vm_fault_t
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, zi.yan@cs.rutgers.edu,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>, riel@redhat.com,
-        pasha.tatashin@oracle.com, jschoenh@amazon.de,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        David Rientjes <rientjes@google.com>, tglx@linutronix.de,
-        Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>,
-        yang.s@alibaba-inc.com, Minchan Kim <minchan@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
+References: <20180529150455.17300-1-peron.clem@gmail.com> <20180529150455.17300-5-peron.clem@gmail.com>
+ <CAOMZO5AMK=vn7NCiQs-Ps-q=UyBro1J_+P4rTooU7nmHK20TjQ@mail.gmail.com>
+In-Reply-To: <CAOMZO5AMK=vn7NCiQs-Ps-q=UyBro1J_+P4rTooU7nmHK20TjQ@mail.gmail.com>
+From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date: Tue, 29 May 2018 17:59:51 +0200
+Message-ID: <CAJiuCccEyrUfoKV4bh4qamn-MQntcFUdvHiLu2Y8aeQ--HdiDg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] clocksource: add driver for i.MX EPIT timer
+To: festevam@gmail.com
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TG0CVc004950
 
-On Tue, May 29, 2018 at 8:20 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Tue, May 29, 2018 at 08:01:26PM +0530, Souptick Joarder wrote:
->> Use new return type vm_fault_t for fault handler. For
->> now, this is just documenting that the function returns
->> a VM_FAULT value rather than an errno. Once all instances
->> are converted, vm_fault_t will become a distinct type.
->
-> I don't believe you've checked this with sparse.
->
->> @@ -802,7 +802,8 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
->>                    bool *unlocked)
->>  {
->>       struct vm_area_struct *vma;
->> -     int ret, major = 0;
->> +     int major = 0;
->> +     vm_fault_t ret;
->>
->>       if (unlocked)
->>               fault_flags |= FAULT_FLAG_ALLOW_RETRY;
->
-> ...
->         major |= ret & VM_FAULT_MAJOR;
->
-> That should be throwing a warning.
+Hi Fabio,
+On Tue, 29 May 2018 at 17:20, Fabio Estevam <festevam@gmail.com> wrote:
 
-Sorry, but I verified again and didn't see similar warnings.
+> On Tue, May 29, 2018 at 12:04 PM, Clément Péron <peron.clem@gmail.com>
+wrote:
 
-steps followed -
+> > +static int __init epit_timer_init(struct device_node *np)
+> > +{
+> > +       struct epit_timer *epittm;
+> > +       struct clk *clk_ipg;
+> > +       int ret;
+> > +
+> > +       epittm = kzalloc(sizeof(*epittm), GFP_KERNEL);
+> > +       if (!epittm)
+> > +               return -ENOMEM;
+> > +
+> > +       epittm->base = of_iomap(np, 0);
+> > +       if (!epittm->base) {
+> > +               ret = -ENXIO;
+> > +               goto out_kfree;
+> > +       }
+> > +
+> > +       epittm->irq = irq_of_parse_and_map(np, 0);
+> > +       if (!epittm->irq) {
+> > +               ret = -EINVAL;
+> > +               goto out_kfree;
 
-apply the patch
-make c=2 -j4 ( build for x86_64)
-looking for warnings in files because of this patch.
+> You should jump to out_iounmap and call of_iounmap().
 
-The only error I am seeing "error: undefined identifier '__COUNTER__' "
-which is pointing to BUG(). There are few warnings but those are not
-related to this patch.
+> > +       }
+> > +
+> > +       clk_ipg = of_clk_get_by_name(np, "ipg");
+> > +       if (IS_ERR(clk_ipg)) {
+> > +               pr_err("i.MX EPIT: unable to get clk_ipg\n");
+> > +               ret = PTR_ERR(clk_ipg);
+> > +               goto out_kfree;
+> > +       }
+> > +       clk_prepare_enable(clk_ipg);
 
-In my test tree the final patch to create new vm_fault_t type is
-already applied.
+> clk_prepare_enable() may fail, so better check its return value and
+> propagate it in the case of error.
 
-Do you want me to verify in some other way ?
+> > +
+> > +       epittm->clk_per = of_clk_get_by_name(np, "per");
+> > +       if (IS_ERR(epittm->clk_per)) {
+> > +               pr_err("i.MX EPIT: unable to get clk_per\n");
+> > +               ret = PTR_ERR(epittm->clk_per);
+> > +               goto out_clk_ipg_disable;
+> > +       }
+> > +       clk_prepare_enable(epittm->clk_per);
+
+> Ditto.
+
+> > +
+> > +       /*
+> > +        * Initialise to a known state (all timers off, and timing
+reset)
+> > +        */
+
+> For a single line of comment you could simply write:
+
+> /* bla bla */
+
+Thanks for the review, i will send a new version
+
+Clement
