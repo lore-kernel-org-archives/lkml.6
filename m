@@ -1,166 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935337AbeE2Om2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:42:28 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38513 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935209AbeE2OmB (ORCPT
+        id S935398AbeE2Ome (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:42:34 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36313 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935324AbeE2Om1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:42:01 -0400
-X-Google-Smtp-Source: ADUXVKIIULcCPMTddCx4gPaAABI1vO01iPQm2LZnR25Doy8ULkJ31M6osvyxjul7yMgQvWlu3Q2TGg==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/11] ovl: Pass argument to ovl_get_inode() in a structure
-Date: Tue, 29 May 2018 16:41:42 +0200
-Message-Id: <20180529144143.16378-11-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144143.16378-1-mszeredi@redhat.com>
-References: <20180529144143.16378-1-mszeredi@redhat.com>
+        Tue, 29 May 2018 10:42:27 -0400
+X-Google-Smtp-Source: ADUXVKJOFdVJcs5zvZoqyeRgTSeL6xC9ABAb/iPPsPRZf8HyHVjRAGznZ9q7DuVIU82q6VZZ3/lhuQ==
+Subject: Re: [PATCH v2 net-next] tcp: use data length instead of skb->len in
+ tcp_probe
+To: Yafang Shao <laoar.shao@gmail.com>, David Miller <davem@davemloft.net>
+Cc: Song Liu <songliubraving@fb.com>, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1527243245-29582-1-git-send-email-laoar.shao@gmail.com>
+ <20180529.101553.694799514284747444.davem@davemloft.net>
+ <CALOAHbAzy_KfT0FcU9fumPKZgSaSOAAfY755TGxsJU7toB_1dA@mail.gmail.com>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <98df6d86-f237-b2d4-9f85-ce6d11c1ac4f@gmail.com>
+Date: Tue, 29 May 2018 07:42:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CALOAHbAzy_KfT0FcU9fumPKZgSaSOAAfY755TGxsJU7toB_1dA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivek Goyal <vgoyal@redhat.com>
 
-ovl_get_inode() right now has 5 parameters. Soon this patch series will
-add 2 more and suddenly argument list starts looking too long.
 
-Hence pass arguments to ovl_get_inode() in a structure and it looks
-little cleaner.
+On 05/29/2018 07:36 AM, Yafang Shao wrote:
+> On Tue, May 29, 2018 at 10:15 PM, David Miller <davem@davemloft.net> wrote:
+>> From: Yafang Shao <laoar.shao@gmail.com>
+>> Date: Fri, 25 May 2018 18:14:05 +0800
+>>
+>>> skb->len is meaningless to user.
+>>> data length could be more helpful, with which we can easily filter out
+>>> the packet without payload.
+>>>
+>>> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+>>
+>> Applied, thank you.
+> 
+> Hi Dave,
+> 
+> There's an update on this patch.
+> Pls.  see V4.
+> 
+> And I will send a V5 patch per Eric's suggestion.
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/overlayfs/export.c    |  8 +++++++-
- fs/overlayfs/inode.c     | 20 +++++++++++---------
- fs/overlayfs/namei.c     | 10 ++++++++--
- fs/overlayfs/overlayfs.h | 11 ++++++++---
- 4 files changed, 34 insertions(+), 15 deletions(-)
+Ah, if it is merged it might be too late.
 
-diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-index 425a94672300..9941ece61a14 100644
---- a/fs/overlayfs/export.c
-+++ b/fs/overlayfs/export.c
-@@ -300,12 +300,18 @@ static struct dentry *ovl_obtain_alias(struct super_block *sb,
- 	struct dentry *dentry;
- 	struct inode *inode;
- 	struct ovl_entry *oe;
-+	struct ovl_inode_params oip = {
-+		.lowerpath = lowerpath,
-+		.index = index,
-+		.numlower = !!lower
-+	};
- 
- 	/* We get overlay directory dentries with ovl_lookup_real() */
- 	if (d_is_dir(upper ?: lower))
- 		return ERR_PTR(-EIO);
- 
--	inode = ovl_get_inode(sb, dget(upper), lowerpath, index, !!lower);
-+	oip.upperdentry = dget(upper);
-+	inode = ovl_get_inode(sb, &oip);
- 	if (IS_ERR(inode)) {
- 		dput(upper);
- 		return ERR_CAST(inode);
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index 6e3815fb006b..2b9e8370500c 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -749,15 +749,17 @@ static bool ovl_hash_bylower(struct super_block *sb, struct dentry *upper,
- 	return true;
- }
- 
--struct inode *ovl_get_inode(struct super_block *sb, struct dentry *upperdentry,
--			    struct ovl_path *lowerpath, struct dentry *index,
--			    unsigned int numlower)
-+struct inode *ovl_get_inode(struct super_block *sb,
-+			    struct ovl_inode_params *oip)
- {
-+	struct dentry *upperdentry = oip->upperdentry;
-+	struct ovl_path *lowerpath = oip->lowerpath;
- 	struct inode *realinode = upperdentry ? d_inode(upperdentry) : NULL;
- 	struct inode *inode;
- 	struct dentry *lowerdentry = lowerpath ? lowerpath->dentry : NULL;
--	bool bylower = ovl_hash_bylower(sb, upperdentry, lowerdentry, index);
--	int fsid = bylower ? lowerpath->layer->fsid : 0;
-+	bool bylower = ovl_hash_bylower(sb, upperdentry, lowerdentry,
-+					oip->index);
-+	int fsid = bylower ? oip->lowerpath->layer->fsid : 0;
- 	bool is_dir;
- 	unsigned long ino = 0;
- 
-@@ -774,8 +776,8 @@ struct inode *ovl_get_inode(struct super_block *sb, struct dentry *upperdentry,
- 						      upperdentry);
- 		unsigned int nlink = is_dir ? 1 : realinode->i_nlink;
- 
--		inode = iget5_locked(sb, (unsigned long) key,
--				     ovl_inode_test, ovl_inode_set, key);
-+		inode = iget5_locked(sb, (unsigned long) key, ovl_inode_test,
-+				     ovl_inode_set, key);
- 		if (!inode)
- 			goto out_nomem;
- 		if (!(inode->i_state & I_NEW)) {
-@@ -811,12 +813,12 @@ struct inode *ovl_get_inode(struct super_block *sb, struct dentry *upperdentry,
- 	if (upperdentry && ovl_is_impuredir(upperdentry))
- 		ovl_set_flag(OVL_IMPURE, inode);
- 
--	if (index)
-+	if (oip->index)
- 		ovl_set_flag(OVL_INDEX, inode);
- 
- 	/* Check for non-merge dir that may have whiteouts */
- 	if (is_dir) {
--		if (((upperdentry && lowerdentry) || numlower > 1) ||
-+		if (((upperdentry && lowerdentry) || oip->numlower > 1) ||
- 		    ovl_check_origin_xattr(upperdentry ?: lowerdentry)) {
- 			ovl_set_flag(OVL_WHITEOUTS, inode);
- 		}
-diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-index 2dba29eadde6..08801b45df00 100644
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -1004,8 +1004,14 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
- 		upperdentry = dget(index);
- 
- 	if (upperdentry || ctr) {
--		inode = ovl_get_inode(dentry->d_sb, upperdentry, stack, index,
--				      ctr);
-+		struct ovl_inode_params oip = {
-+			.upperdentry = upperdentry,
-+			.lowerpath = stack,
-+			.index = index,
-+			.numlower = ctr,
-+		};
-+
-+		inode = ovl_get_inode(dentry->d_sb, &oip);
- 		err = PTR_ERR(inode);
- 		if (IS_ERR(inode))
- 			goto out_free_oe;
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 3f13d0965e03..b8a0160742b2 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -328,12 +328,17 @@ int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags);
- int ovl_update_time(struct inode *inode, struct timespec *ts, int flags);
- bool ovl_is_private_xattr(const char *name);
- 
-+struct ovl_inode_params {
-+	struct dentry *upperdentry;
-+	struct ovl_path *lowerpath;
-+	struct dentry *index;
-+	unsigned int numlower;
-+};
- struct inode *ovl_new_inode(struct super_block *sb, umode_t mode, dev_t rdev);
- struct inode *ovl_lookup_inode(struct super_block *sb, struct dentry *real,
- 			       bool is_upper);
--struct inode *ovl_get_inode(struct super_block *sb, struct dentry *upperdentry,
--			    struct ovl_path *lowerpath, struct dentry *index,
--			    unsigned int numlower);
-+struct inode *ovl_get_inode(struct super_block *sb,
-+			    struct ovl_inode_params *oip);
- static inline void ovl_copyattr(struct inode *from, struct inode *to)
- {
- 	to->i_uid = from->i_uid;
--- 
-2.14.3
+No big deal.
