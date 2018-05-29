@@ -1,32 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965080AbeE2O7n (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:59:43 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41450 "EHLO
+        id S965099AbeE2O7x (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:59:53 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41762 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965048AbeE2O7g (ORCPT
+        with ESMTP id S965048AbeE2O7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:59:36 -0400
+        Tue, 29 May 2018 10:59:45 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
-        robh+dt@kernel.org, bgoswami@codeaurora.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com,
-        linux-kernel@vger.kernel.org, plai@codeaurora.org, tiwai@suse.com,
-        lgirdwood@gmail.com, spatakok@qti.qualcomm.com,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: dt-bindings: Add q6afe tdm dt binding" to the asoc tree
-In-Reply-To: <20180529101833.30489-2-srinivas.kandagatla@linaro.org>
-Message-Id: <E1fNg5z-00066C-U0@debutante>
-Date: Tue, 29 May 2018 15:59:31 +0100
+To: Agrawal@sirena.org.uk, Akshu <Akshu.Agrawal@amd.com>
+Cc: Akshu Agrawal <akshu.agrawal@amd.com>,
+        Daniel Kurtz <djkurtz@chromium.org>, Mark Brown <broonie@kernel.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        djkurtz@chromium.org, Mark Brown <broonie@kernel.org>,
+        "Mukunda,, Vijendar" <Vijendar.Mukunda@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>, akshu.agrawal@amd.com,
+        Guenter Roeck <linux@roeck-us.net>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: AMD: make channel 1 dma as circular" to the asoc tree
+In-Reply-To: <1527479306-12658-1-git-send-email-akshu.agrawal@amd.com>
+Message-Id: <E1fNg6A-00069N-NV@debutante>
+Date: Tue, 29 May 2018 15:59:42 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qdsp6: dt-bindings: Add q6afe tdm dt binding
+   ASoC: AMD: make channel 1 dma as circular
 
 has been applied to the asoc tree at
 
@@ -51,196 +54,182 @@ to this mail.
 Thanks,
 Mark
 
->From ad7a9b34fa532b95a7eae1a1708408a4e435a71c Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Tue, 29 May 2018 11:18:28 +0100
-Subject: [PATCH] ASoC: qdsp6: dt-bindings: Add q6afe tdm dt binding
+>From 6b116dfb4633a7efce7f96355c2d272d8b16f0fb Mon Sep 17 00:00:00 2001
+From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
+Date: Mon, 28 May 2018 11:48:22 +0800
+Subject: [PATCH] ASoC: AMD: make channel 1 dma as circular
 
-This patch adds bindings required for TDM ports on AFE.
+channel 1: SYSMEM<->ACP
+channel 2: ACP<->I2S
+Instead of waiting on period interrupt of ch 2 and then starting
+dma on ch1, we make ch1 dma as circular.
+This removes dependency of period granularity on hw pointer.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+Tested-by: Daniel Kurtz <djkurtz@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/sound/qcom,q6afe.txt  | 68 ++++++++++++++++
- include/dt-bindings/sound/qcom,q6afe.h        | 80 +++++++++++++++++++
- 2 files changed, 148 insertions(+)
+ sound/soc/amd/acp-pcm-dma.c | 74 +++++--------------------------------
+ 1 file changed, 10 insertions(+), 64 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/qcom,q6afe.txt b/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
-index 14335a08b963..bdbf87df8c0b 100644
---- a/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
-+++ b/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
-@@ -46,6 +46,53 @@ configuration of each dai. Must contain the following properties.
- 	Definition: Must be list of serial data lines used by this dai.
- 	should be one or more of the 1-4 sd lines.
+diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
+index ac32deaa9541..77203841c535 100644
+--- a/sound/soc/amd/acp-pcm-dma.c
++++ b/sound/soc/amd/acp-pcm-dma.c
+@@ -337,8 +337,7 @@ static void config_acp_dma(void __iomem *acp_mmio,
+ }
  
-+ - qcom,tdm-sync-mode:
-+	Usage: required for tdm interface
-+	Value type: <prop-encoded-array>
-+	Definition: Synchronization mode.
-+		0 - Short sync bit mode
-+		1 - Long sync mode
-+		2 - Short sync slot mode
-+
-+ - qcom,tdm-sync-src:
-+	Usage: required for tdm interface
-+	Value type: <prop-encoded-array>
-+	Definition: Synchronization source.
-+		0 - External source
-+		1 - Internal source
-+
-+ - qcom,tdm-data-out:
-+	Usage: required for tdm interface
-+	Value type: <prop-encoded-array>
-+	Definition: Data out signal to drive with other masters.
-+		0 - Disable
-+		1 - Enable
-+
-+ - qcom,tdm-invert-sync:
-+	Usage: required for tdm interface
-+	Value type: <prop-encoded-array>
-+	Definition: Invert the sync.
-+		0 - Normal
-+		1 - Invert
-+
-+ - qcom,tdm-data-delay:
-+	Usage: required for tdm interface
-+	Value type: <prop-encoded-array>
-+	Definition: Number of bit clock to delay data
-+		with respect to sync edge.
-+		0 - 0 bit clock cycle
-+		1 - 1 bit clock cycle
-+		2 - 2 bit clock cycle
-+
-+ - qcom,tdm-data-align:
-+	Usage: required for tdm interface
-+	Value type: <prop-encoded-array>
-+	Definition: Indicate how data is packed
-+		within the slot. For example, 32 slot width in case of
-+		sample bit width is 24.
-+		0 - MSB
-+		1 - LSB
-+
- = EXAMPLE
+ /* Start a given DMA channel transfer */
+-static void acp_dma_start(void __iomem *acp_mmio,
+-			  u16 ch_num, bool is_circular)
++static void acp_dma_start(void __iomem *acp_mmio, u16 ch_num)
+ {
+ 	u32 dma_ctrl;
  
- q6afe@4 {
-@@ -61,6 +108,27 @@ q6afe@4 {
- 			reg = <1>;
- 		};
+@@ -369,11 +368,8 @@ static void acp_dma_start(void __iomem *acp_mmio,
+ 		break;
+ 	}
  
-+		tdm@24 {
-+			reg = <24>;
-+			qcom,tdm-sync-mode = <1>:
-+			qcom,tdm-sync-src = <1>;
-+			qcom,tdm-data-out = <0>;
-+			qcom,tdm-invert-sync = <1>;
-+			qcom,tdm-data-delay = <1>;
-+			qcom,tdm-data-align = <0>;
-+
-+		};
-+
-+		tdm@25 {
-+			reg = <25>;
-+			qcom,tdm-sync-mode = <1>:
-+			qcom,tdm-sync-src = <1>;
-+			qcom,tdm-data-out = <0>;
-+			qcom,tdm-invert-sync = <1>;
-+			qcom,tdm-data-delay <1>:
-+			qcom,tdm-data-align = <0>;
-+		};
-+
- 		prim-mi2s-rx@16 {
- 			reg = <16>;
- 			qcom,sd-lines = <1 3>;
-diff --git a/include/dt-bindings/sound/qcom,q6afe.h b/include/dt-bindings/sound/qcom,q6afe.h
-index e162045f5dc9..e2d3892240b8 100644
---- a/include/dt-bindings/sound/qcom,q6afe.h
-+++ b/include/dt-bindings/sound/qcom,q6afe.h
-@@ -26,6 +26,86 @@
- #define TERTIARY_MI2S_TX	21
- #define QUATERNARY_MI2S_RX	22
- #define QUATERNARY_MI2S_TX	23
-+#define PRIMARY_TDM_RX_0	24
-+#define PRIMARY_TDM_TX_0	25
-+#define PRIMARY_TDM_RX_1	26
-+#define PRIMARY_TDM_TX_1	27
-+#define PRIMARY_TDM_RX_2	28
-+#define PRIMARY_TDM_TX_2	29
-+#define PRIMARY_TDM_RX_3	30
-+#define PRIMARY_TDM_TX_3	31
-+#define PRIMARY_TDM_RX_4	32
-+#define PRIMARY_TDM_TX_4	33
-+#define PRIMARY_TDM_RX_5	34
-+#define PRIMARY_TDM_TX_5	35
-+#define PRIMARY_TDM_RX_6	36
-+#define PRIMARY_TDM_TX_6	37
-+#define PRIMARY_TDM_RX_7	38
-+#define PRIMARY_TDM_TX_7	39
-+#define SECONDARY_TDM_RX_0	40
-+#define SECONDARY_TDM_TX_0	41
-+#define SECONDARY_TDM_RX_1	42
-+#define SECONDARY_TDM_TX_1	43
-+#define SECONDARY_TDM_RX_2	44
-+#define SECONDARY_TDM_TX_2	45
-+#define SECONDARY_TDM_RX_3	46
-+#define SECONDARY_TDM_TX_3	47
-+#define SECONDARY_TDM_RX_4	48
-+#define SECONDARY_TDM_TX_4	49
-+#define SECONDARY_TDM_RX_5	50
-+#define SECONDARY_TDM_TX_5	51
-+#define SECONDARY_TDM_RX_6	52
-+#define SECONDARY_TDM_TX_6	53
-+#define SECONDARY_TDM_RX_7	54
-+#define SECONDARY_TDM_TX_7	55
-+#define TERTIARY_TDM_RX_0	56
-+#define TERTIARY_TDM_TX_0	57
-+#define TERTIARY_TDM_RX_1	58
-+#define TERTIARY_TDM_TX_1	59
-+#define TERTIARY_TDM_RX_2	60
-+#define TERTIARY_TDM_TX_2	61
-+#define TERTIARY_TDM_RX_3	62
-+#define TERTIARY_TDM_TX_3	63
-+#define TERTIARY_TDM_RX_4	64
-+#define TERTIARY_TDM_TX_4	65
-+#define TERTIARY_TDM_RX_5	66
-+#define TERTIARY_TDM_TX_5	67
-+#define TERTIARY_TDM_RX_6	68
-+#define TERTIARY_TDM_TX_6	69
-+#define TERTIARY_TDM_RX_7	70
-+#define TERTIARY_TDM_TX_7	71
-+#define QUATERNARY_TDM_RX_0	72
-+#define QUATERNARY_TDM_TX_0	73
-+#define QUATERNARY_TDM_RX_1	74
-+#define QUATERNARY_TDM_TX_1	75
-+#define QUATERNARY_TDM_RX_2	76
-+#define QUATERNARY_TDM_TX_2	77
-+#define QUATERNARY_TDM_RX_3	78
-+#define QUATERNARY_TDM_TX_3	79
-+#define QUATERNARY_TDM_RX_4	80
-+#define QUATERNARY_TDM_TX_4	81
-+#define QUATERNARY_TDM_RX_5	82
-+#define QUATERNARY_TDM_TX_5	83
-+#define QUATERNARY_TDM_RX_6	84
-+#define QUATERNARY_TDM_TX_6	85
-+#define QUATERNARY_TDM_RX_7	86
-+#define QUATERNARY_TDM_TX_7	87
-+#define QUINARY_TDM_RX_0	88
-+#define QUINARY_TDM_TX_0	89
-+#define QUINARY_TDM_RX_1	90
-+#define QUINARY_TDM_TX_1	91
-+#define QUINARY_TDM_RX_2	92
-+#define QUINARY_TDM_TX_2	93
-+#define QUINARY_TDM_RX_3	94
-+#define QUINARY_TDM_TX_3	95
-+#define QUINARY_TDM_RX_4	96
-+#define QUINARY_TDM_TX_4	97
-+#define QUINARY_TDM_RX_5	98
-+#define QUINARY_TDM_TX_5	99
-+#define QUINARY_TDM_RX_6	100
-+#define QUINARY_TDM_TX_6	101
-+#define QUINARY_TDM_RX_7	102
-+#define QUINARY_TDM_TX_7	103
+-	/* enable  for ACP SRAM to/from I2S DMA channel */
+-	if (is_circular == true)
+-		dma_ctrl |= ACP_DMA_CNTL_0__Circular_DMA_En_MASK;
+-	else
+-		dma_ctrl &= ~ACP_DMA_CNTL_0__Circular_DMA_En_MASK;
++	/* circular for both DMA channel */
++	dma_ctrl |= ACP_DMA_CNTL_0__Circular_DMA_En_MASK;
  
- #endif /* __DT_BINDINGS_Q6_AFE_H__ */
+ 	acp_reg_write(dma_ctrl, acp_mmio, mmACP_DMA_CNTL_0 + ch_num);
+ }
+@@ -617,7 +613,6 @@ static int acp_deinit(void __iomem *acp_mmio)
+ /* ACP DMA irq handler routine for playback, capture usecases */
+ static irqreturn_t dma_irq_handler(int irq, void *arg)
+ {
+-	u16 dscr_idx;
+ 	u32 intr_flag, ext_intr_status;
+ 	struct audio_drv_data *irq_data;
+ 	void __iomem *acp_mmio;
+@@ -634,33 +629,13 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
  
+ 	if ((intr_flag & BIT(ACP_TO_I2S_DMA_CH_NUM)) != 0) {
+ 		valid_irq = true;
+-		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_13) ==
+-				PLAYBACK_START_DMA_DESCR_CH13)
+-			dscr_idx = PLAYBACK_END_DMA_DESCR_CH12;
+-		else
+-			dscr_idx = PLAYBACK_START_DMA_DESCR_CH12;
+-		config_acp_dma_channel(acp_mmio, SYSRAM_TO_ACP_CH_NUM, dscr_idx,
+-				       1, 0);
+-		acp_dma_start(acp_mmio, SYSRAM_TO_ACP_CH_NUM, false);
+-
+ 		snd_pcm_period_elapsed(irq_data->play_i2ssp_stream);
+-
+ 		acp_reg_write((intr_flag & BIT(ACP_TO_I2S_DMA_CH_NUM)) << 16,
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+ 	}
+ 
+ 	if ((intr_flag & BIT(ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM)) != 0) {
+ 		valid_irq = true;
+-		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_9) ==
+-			PLAYBACK_START_DMA_DESCR_CH9)
+-			dscr_idx = PLAYBACK_END_DMA_DESCR_CH8;
+-		else
+-			dscr_idx = PLAYBACK_START_DMA_DESCR_CH8;
+-		config_acp_dma_channel(acp_mmio,
+-				       SYSRAM_TO_ACP_BT_INSTANCE_CH_NUM,
+-				       dscr_idx, 1, 0);
+-		acp_dma_start(acp_mmio, SYSRAM_TO_ACP_BT_INSTANCE_CH_NUM,
+-			      false);
+ 		snd_pcm_period_elapsed(irq_data->play_i2sbt_stream);
+ 		acp_reg_write((intr_flag &
+ 			      BIT(ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM)) << 16,
+@@ -669,38 +644,20 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
+ 
+ 	if ((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) != 0) {
+ 		valid_irq = true;
+-		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_15) ==
+-				CAPTURE_START_DMA_DESCR_CH15)
+-			dscr_idx = CAPTURE_END_DMA_DESCR_CH14;
+-		else
+-			dscr_idx = CAPTURE_START_DMA_DESCR_CH14;
+-		config_acp_dma_channel(acp_mmio, ACP_TO_SYSRAM_CH_NUM, dscr_idx,
+-				       1, 0);
+-		acp_dma_start(acp_mmio, ACP_TO_SYSRAM_CH_NUM, false);
+-
++		snd_pcm_period_elapsed(irq_data->capture_i2ssp_stream);
+ 		acp_reg_write((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) << 16,
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+ 	}
+ 
+ 	if ((intr_flag & BIT(ACP_TO_SYSRAM_CH_NUM)) != 0) {
+ 		valid_irq = true;
+-		snd_pcm_period_elapsed(irq_data->capture_i2ssp_stream);
+ 		acp_reg_write((intr_flag & BIT(ACP_TO_SYSRAM_CH_NUM)) << 16,
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+ 	}
+ 
+ 	if ((intr_flag & BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) != 0) {
+ 		valid_irq = true;
+-		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_11) ==
+-			CAPTURE_START_DMA_DESCR_CH11)
+-			dscr_idx = CAPTURE_END_DMA_DESCR_CH10;
+-		else
+-			dscr_idx = CAPTURE_START_DMA_DESCR_CH10;
+-		config_acp_dma_channel(acp_mmio,
+-				       ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM,
+-				       dscr_idx, 1, 0);
+-		acp_dma_start(acp_mmio, ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM,
+-			      false);
++		snd_pcm_period_elapsed(irq_data->capture_i2sbt_stream);
+ 		acp_reg_write((intr_flag &
+ 			      BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) << 16,
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+@@ -708,7 +665,6 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
+ 
+ 	if ((intr_flag & BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) != 0) {
+ 		valid_irq = true;
+-		snd_pcm_period_elapsed(irq_data->capture_i2sbt_stream);
+ 		acp_reg_write((intr_flag &
+ 			      BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) << 16,
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+@@ -1015,14 +971,10 @@ static int acp_dma_prepare(struct snd_pcm_substream *substream)
+ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ {
+ 	int ret;
+-	u32 loops = 4000;
+ 	u64 bytescount = 0;
+ 
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct snd_soc_pcm_runtime *prtd = substream->private_data;
+ 	struct audio_substream_data *rtd = runtime->private_data;
+-	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
+-								    DRV_NAME);
+ 
+ 	if (!rtd)
+ 		return -EINVAL;
+@@ -1034,18 +986,12 @@ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 		if (rtd->bytescount == 0)
+ 			rtd->bytescount = bytescount;
+ 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-			acp_dma_start(rtd->acp_mmio, rtd->ch1, false);
+-			while (acp_reg_read(rtd->acp_mmio, mmACP_DMA_CH_STS) &
+-				BIT(rtd->ch1)) {
+-				if (!loops--) {
+-					dev_err(component->dev,
+-						"acp dma start timeout\n");
+-					return -ETIMEDOUT;
+-				}
+-				cpu_relax();
+-			}
++			acp_dma_start(rtd->acp_mmio, rtd->ch1);
++			acp_dma_start(rtd->acp_mmio, rtd->ch2);
++		} else {
++			acp_dma_start(rtd->acp_mmio, rtd->ch2);
++			acp_dma_start(rtd->acp_mmio, rtd->ch1);
+ 		}
+-		acp_dma_start(rtd->acp_mmio, rtd->ch2, true);
+ 		ret = 0;
+ 		break;
+ 	case SNDRV_PCM_TRIGGER_STOP:
 -- 
 2.17.0
