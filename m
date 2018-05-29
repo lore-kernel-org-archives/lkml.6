@@ -1,66 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934267AbeE2NTt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:19:49 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39960 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934240AbeE2NQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:16:21 -0400
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
-        mike.leach@linaro.org, robert.walker@arm.com,
-        coresight@lists.linaro.org, devicetree@vger.kernel.org,
-        robh@kernel.org, frowand.list@gmail.com,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 03/12] coresight: tmc-etr: Do not clean trace buffer
-Date: Tue, 29 May 2018 14:15:28 +0100
-Message-Id: <1527599737-28408-4-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527599737-28408-1-git-send-email-suzuki.poulose@arm.com>
-References: <1527599737-28408-1-git-send-email-suzuki.poulose@arm.com>
+        id S934662AbeE2NUX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:20:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49536 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934304AbeE2NUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:20:17 -0400
+Date: Tue, 29 May 2018 08:20:15 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH v4 4/8] PCI: Replace dev_node parameter of
+ of_pci_get_host_bridge_resources with device
+Message-ID: <20180529132015.GA79098@bhelgaas-glaptop.roam.corp.google.com>
+References: <cover.1526375226.git.jan.kiszka@siemens.com>
+ <5f2226585c6af9920b266d0503e32042d4c9e440.1526375226.git.jan.kiszka@siemens.com>
+ <a74db976-d330-80b9-939e-dd164a20c8c3@mentor.com>
+ <eb9b477a-33c9-db45-9e62-101e3606e8ff@siemens.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb9b477a-33c9-db45-9e62-101e3606e8ff@siemens.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We zero out the entire trace buffer used for ETR before it is enabled,
-for helping with debugging. With the addition of scatter-gather mode,
-the buffer could be bigger and non-contiguous.
+On Mon, May 28, 2018 at 12:46:35PM +0200, Jan Kiszka wrote:
+> On 2018-05-28 12:00, Vladimir Zapolskiy wrote:
+> > Hi Jan, Bjorn,
+> > 
+> > On 05/15/2018 12:07 PM, Jan Kiszka wrote:
+> >> From: Jan Kiszka <jan.kiszka@siemens.com>
+> >>
+> >> Another step towards a managed version of
+> >> of_pci_get_host_bridge_resources(): Feed in the underlying device,
+> >> rather than just the OF node. This will allow to use managed resource
+> >> allocation internally later on.
+> >>
+> >> CC: Jingoo Han <jingoohan1@gmail.com>
+> >> CC: Joao Pinto <Joao.Pinto@synopsys.com>
+> >> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> >> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> > 
+> > [snip]
+> > 
+> >> diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
+> >> index a6af62e0256d..61802e55a00c 100644
+> >> --- a/drivers/pci/host/pcie-altera.c
+> >> +++ b/drivers/pci/host/pcie-altera.c
+> >> @@ -488,11 +488,10 @@ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
+> >>  {
+> >>  	int err, res_valid = 0;
+> >>  	struct device *dev = &pcie->pdev->dev;
+> >> -	struct device_node *np = dev->of_node;
+> >>  	struct resource_entry *win;
+> >>  
+> >> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pcie->resources,
+> >> -					       NULL);
+> >> +	err = of_pci_get_host_bridge_resources(dev, 0, 0xff
+> >> +						    &pcie->resources, NULL);
+> >>  	if (err)
+> >>  		return err;
+> >>  
+> > 
+> > In case if it is an undiscovered issue, a comma was mistakenly removed,
+> > which will result it compilation error.
+> > 
+> > The problem is also found in pci/next , see commit 88e3909aa125.
+> 
+> Yes, that's known. We have a bisection breakage: The issue was fixed
+> again by patch 6 in that series.
 
-Get rid of this step; if someone wants to debug, they can always add it
-as and when needed.
-
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/hwtracing/coresight/coresight-tmc-etr.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index f88342d..1de05c9 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -13,9 +13,6 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
- {
- 	u32 axictl, sts;
- 
--	/* Zero out the memory to help with debug */
--	memset(drvdata->vaddr, 0, drvdata->size);
--
- 	CS_UNLOCK(drvdata->base);
- 
- 	/* Wait for TMCSReady bit to be set */
-@@ -340,9 +337,8 @@ int tmc_read_unprepare_etr(struct tmc_drvdata *drvdata)
- 	if (drvdata->mode == CS_MODE_SYSFS) {
- 		/*
- 		 * The trace run will continue with the same allocated trace
--		 * buffer. The trace buffer is cleared in tmc_etr_enable_hw(),
--		 * so we don't have to explicitly clear it. Also, since the
--		 * tracer is still enabled drvdata::buf can't be NULL.
-+		 * buffer. Since the tracer is still enabled drvdata::buf can't
-+		 * be NULL.
- 		 */
- 		tmc_etr_enable_hw(drvdata);
- 	} else {
--- 
-2.7.4
+I updated 88e3909aa125 to fix the bisection issue.  I'll rebuild
+pci/next later today or tomorrow.
