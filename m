@@ -1,5 +1,5 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2220212-1527604924-2-2081357178467812318
+X-Cyrus-Session-Id: sloti22d1t05-2228598-1527604923-2-6818689519678979118
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
@@ -8,22 +8,22 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527604923; b=gWWeYjrORA93+iAU3lZknQhpf+gvHa3I5NRb7XLq66MlTF+j49
-    PwHJQtRd0qp/tQo4AFjPLOMnYwAnb0kNDi1Qj+yO7aSimpTJqZCiapSIyrKD8fKw
-    LWr3+6ShFDePh+/EQtgn8wAuhKxpSGEAjRj1b8USNO7uMmzFwO4/NOIDsTz3PFM8
-    y7VgWF3Tb5ULmG1XXJtnpdJONiIE8i/RghlTq9NUFyKN3TpfZTaFcJl0RV9U3vHH
-    djItOF9jueuogGLB7ymqDOP2xVhFOmiYxfVDgoiQ6xIlvsqj02Pq3itlrXegW/fQ
-    c1x0spkvgO8W+MNLt0GCAKptzxcL/qaQB8Lg==
+    1527604923; b=GQmkZLMGe3pojX0anpKYGfKwaTcj7yVSiIG0H9GbiTaKi/S+2Q
+    +9IdfrozprRVdN5GbJMebqVOQVGjCStcw9kD40TqVJg0GEDJyPVchpV9mrGi0LF4
+    poejbHOH84WD6m0cRGP3pxDFuw1T0LYM9DBcpW46Eh7zFGj8stNfPT/nATFmKJZm
+    WupXO6puzDuSwyGNwPH4bx7FJd6EvrRezfte8yxlkpxzN/ssmQXi3fCBNnQnheUC
+    c9fBp5sNHxPEQanue6UmlyebfO2v4XNmajYfAc2iSi8o5W8x1nZy8E+vwCCqPD5J
+    raaqGhPcrKW0E2X0MIe6tyKe+0+HSewhLYAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:sender:list-id; s=fm2; t=1527604923; bh=
-    pjoTm5CYV4nb2qhsrTIdwHx0lB/iWRymez4b2PmeHY8=; b=H7+JxWOOy0aA/UBb
-    VmHiNunzDEnWtDAlasExHh76bowwWJ7KnxXlRWOVUBG2pwy3IbwxPYLbac+l5roL
-    O+RZLKMa8WvdVl/pvzKWJ6AEjxbRUNIOT19ONl/mq+rhy3BWBjBiopXGO8sSl+Zn
-    X/sh0HBGyENZ3XzVK3yUQd0X26yYWzYO//DGbmcbTCNAhrhzAFCJoz+hSfiyC4yg
-    OvEt/CeO7d5OsdXEGtzbyH7elnPCUanpOjV5YfysTxAOwk3mOn/6l4w5VAtFdNKp
-    XopX/m2ZxmHN67hglwLdDXvPRZVv596j3B0bgsOyPRikLuf5PjgoUjq9XgdjjS11
-    C+v0ow==
+    8zNZrCfqGENqCL0Jm6hT8IySzx5C0iIC2jVl81TMwyc=; b=M8EeC7GjIG52FSoB
+    ca1bXGjNQl/qlY9ctTX0+I0vsiybpj9FNiz+caOLd9wER2fiGoOA+cMeQaxVycK6
+    UK5muH/tPonIatVZ2hBHLbYT+EU2NpQ8cee8GI6mGbPSzSZlWKhdnuVnnsCZ+DUF
+    xsCFIwhcU2N74pqtHmK+CsMEna0qUarGPq3DbFv8id/r5Lx98r18hIWPK1ReNObQ
+    AiZgpog/mU/R/qx32AQjl6cHdONCiugqMVuaFdJfdNoC1e7RFtjKXcTt+b4o4PJ4
+    yMSHk14quSuNJKISDvyVE2HBNCIedbTZKy/xPqhTremcjBHEjzMAhL74uWtlRqm1
+    KkquxA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -33,7 +33,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=el/Z3mTO;
+    header.i=@1e100.net header.b=UgZRqJJH;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
@@ -49,36 +49,35 @@ Authentication-Results: mx2.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=el/Z3mTO;
+      header.i=@1e100.net header.b=UgZRqJJH;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLOZ3sm+FcdAiV0Uy/G1pNa156v0uuF5quOFyCY3Ne7QAvZbICd846swKmCPrGrnFJu8hkBQFtIFfg+Y5aaJ7f8GATwaZJ08Ju8NB/MCE7ykPBBj9GO0
-    PieROzBbc/H9ZHadacgqaozZATRnO/AzYS+OYIBRn2mLQE5kMmnmA2HtWQxPK5Muo1fMAHYNrJXUbbciV4g9WD60PXz+RM/nXKzOfJljKIEl4GJ6N4Nh8scc
+X-CM-Envelope: MS4wfCRNIcn6aQrIJo06XZRSRGXMevSQ747ar0iP+iIso2QUE/x2J+o3dGFa6/l4EfsbOwGF0F0Lz5L11Y7eakOrmxFbcFfCS7cyGXPwnZ2Tfh2L2OaFEgq3
+    ch/eMIAOOLPzF+GQK/dUc0raRSS/W9Sm9aE9sJYkM+PlRpJubI9pNf2rrxwB9UwzcUZmupTf2EyUUymBSTmpQl1dsh/D7iJTAAq5hlK1RUPJ0zHTks0oXHcG
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8
-    a=20KFwNOVAAAA:8 a=JfrnYn6hAAAA:8 a=NEAV23lmAAAA:8 a=6u6tklEL0JwnnX2e5HgA:9
-    a=1CNFftbPRP8L7MoqJWF3:22
+    a=20KFwNOVAAAA:8 a=o-RSvVeydOcGQp-WhVMA:9 a=Q8HEMPcRX8kA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935181AbeE2Ol7 (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 10:41:59 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45214 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934933AbeE2Olu (ORCPT
+        id S935176AbeE2Ol6 (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 10:41:58 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43846 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755032AbeE2Olw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 May 2018 10:41:50 -0400
-X-Google-Smtp-Source: AB8JxZqPX/fZSzmg2lTQ+pFohVem23JkTC012torgPl0wYDr6hwEPZu29mdwe1QjV1WZO9UdI5BTyg==
+        Tue, 29 May 2018 10:41:52 -0400
+X-Google-Smtp-Source: AB8JxZp33h2x8RJ19taM0DrCXZWTHB540AzL7+7R8yh1Wv+Gl7Ga6EYyQkogC5Ea+FiZDDgKGUQPEQ==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] ovl: update documentation for unionmount-testsuite
-Date: Tue, 29 May 2018 16:41:33 +0200
-Message-Id: <20180529144143.16378-2-mszeredi@redhat.com>
+Subject: [PATCH 03/11] ovl: strip debug argument from ovl_do_ helpers
+Date: Tue, 29 May 2018 16:41:35 +0200
+Message-Id: <20180529144143.16378-4-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144143.16378-1-mszeredi@redhat.com>
 References: <20180529144143.16378-1-mszeredi@redhat.com>
@@ -90,37 +89,250 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Amir Goldstein <amir73il@gmail.com>
 
-David's tree is no longer maintained, so point to my maintained fork.
-
-Add --verify flag to the run example, which enables all latest features
-and provides test coverage for constant st_ino/st_dev.
+It did not prove to be useful.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Acked-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- Documentation/filesystems/overlayfs.txt | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/overlayfs/copy_up.c   |  9 ++++-----
+ fs/overlayfs/dir.c       | 20 ++++++++++----------
+ fs/overlayfs/overlayfs.h | 42 ++++++++++++++++++------------------------
+ fs/overlayfs/super.c     |  2 +-
+ 4 files changed, 33 insertions(+), 40 deletions(-)
 
-diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
-index 961b287ef323..72615a2c0752 100644
---- a/Documentation/filesystems/overlayfs.txt
-+++ b/Documentation/filesystems/overlayfs.txt
-@@ -429,11 +429,12 @@ This verification may cause significant overhead in some cases.
- Testsuite
- ---------
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index 8bede0742619..a8273dec0fb8 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -369,7 +369,7 @@ static int ovl_create_index(struct dentry *dentry, struct dentry *origin,
+ 	if (IS_ERR(temp))
+ 		goto temp_err;
  
--There's testsuite developed by David Howells at:
-+There's a testsuite originally developed by David Howells and currently
-+maintained by Amir Goldstein at:
+-	err = ovl_do_mkdir(dir, temp, S_IFDIR, true);
++	err = ovl_do_mkdir(dir, temp, S_IFDIR);
+ 	if (err)
+ 		goto out;
  
--  git://git.infradead.org/users/dhowells/unionmount-testsuite.git
-+  https://github.com/amir73il/unionmount-testsuite.git
+@@ -439,8 +439,7 @@ static int ovl_link_up(struct ovl_copy_up_ctx *c)
+ 			       c->dentry->d_name.len);
+ 	err = PTR_ERR(upper);
+ 	if (!IS_ERR(upper)) {
+-		err = ovl_do_link(ovl_dentry_upper(c->dentry), udir, upper,
+-				  true);
++		err = ovl_do_link(ovl_dentry_upper(c->dentry), udir, upper);
+ 		dput(upper);
  
- Run as root:
+ 		if (!err) {
+@@ -470,7 +469,7 @@ static int ovl_install_temp(struct ovl_copy_up_ctx *c, struct dentry *temp,
+ 		return PTR_ERR(upper);
  
-   # cd unionmount-testsuite
--  # ./run --ov
-+  # ./run --ov --verify
+ 	if (c->tmpfile)
+-		err = ovl_do_link(temp, udir, upper, true);
++		err = ovl_do_link(temp, udir, upper);
+ 	else
+ 		err = ovl_do_rename(d_inode(c->workdir), temp, udir, upper, 0);
+ 
+@@ -511,7 +510,7 @@ static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
+ 			goto temp_err;
+ 
+ 		err = ovl_create_real(d_inode(c->workdir), temp, &cattr,
+-				      NULL, true);
++				      NULL);
+ 		if (err) {
+ 			dput(temp);
+ 			goto out;
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 01902adc7153..4d431a3f7a0a 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -115,7 +115,7 @@ int ovl_cleanup_and_whiteout(struct dentry *workdir, struct inode *dir,
+ }
+ 
+ int ovl_create_real(struct inode *dir, struct dentry *newdentry,
+-		    struct cattr *attr, struct dentry *hardlink, bool debug)
++		    struct cattr *attr, struct dentry *hardlink)
+ {
+ 	int err;
+ 
+@@ -123,27 +123,27 @@ int ovl_create_real(struct inode *dir, struct dentry *newdentry,
+ 		return -ESTALE;
+ 
+ 	if (hardlink) {
+-		err = ovl_do_link(hardlink, dir, newdentry, debug);
++		err = ovl_do_link(hardlink, dir, newdentry);
+ 	} else {
+ 		switch (attr->mode & S_IFMT) {
+ 		case S_IFREG:
+-			err = ovl_do_create(dir, newdentry, attr->mode, debug);
++			err = ovl_do_create(dir, newdentry, attr->mode);
+ 			break;
+ 
+ 		case S_IFDIR:
+-			err = ovl_do_mkdir(dir, newdentry, attr->mode, debug);
++			err = ovl_do_mkdir(dir, newdentry, attr->mode);
+ 			break;
+ 
+ 		case S_IFCHR:
+ 		case S_IFBLK:
+ 		case S_IFIFO:
+ 		case S_IFSOCK:
+-			err = ovl_do_mknod(dir, newdentry,
+-					   attr->mode, attr->rdev, debug);
++			err = ovl_do_mknod(dir, newdentry, attr->mode,
++					   attr->rdev);
+ 			break;
+ 
+ 		case S_IFLNK:
+-			err = ovl_do_symlink(dir, newdentry, attr->link, debug);
++			err = ovl_do_symlink(dir, newdentry, attr->link);
+ 			break;
+ 
+ 		default:
+@@ -229,7 +229,7 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
+ 	err = PTR_ERR(newdentry);
+ 	if (IS_ERR(newdentry))
+ 		goto out_unlock;
+-	err = ovl_create_real(udir, newdentry, attr, hardlink, false);
++	err = ovl_create_real(udir, newdentry, attr, hardlink);
+ 	if (err)
+ 		goto out_dput;
+ 
+@@ -286,7 +286,7 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
+ 		goto out_unlock;
+ 
+ 	err = ovl_create_real(wdir, opaquedir,
+-			      &(struct cattr){.mode = stat.mode}, NULL, true);
++			      &(struct cattr){.mode = stat.mode}, NULL);
+ 	if (err)
+ 		goto out_dput;
+ 
+@@ -391,7 +391,7 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+ 	if (IS_ERR(upper))
+ 		goto out_dput;
+ 
+-	err = ovl_create_real(wdir, newdentry, cattr, hardlink, true);
++	err = ovl_create_real(wdir, newdentry, cattr, hardlink);
+ 	if (err)
+ 		goto out_dput2;
+ 
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index e0b7de799f6b..1c30d60cc290 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -86,6 +86,7 @@ struct ovl_fh {
+ static inline int ovl_do_rmdir(struct inode *dir, struct dentry *dentry)
+ {
+ 	int err = vfs_rmdir(dir, dentry);
++
+ 	pr_debug("rmdir(%pd2) = %i\n", dentry, err);
+ 	return err;
+ }
+@@ -93,56 +94,52 @@ static inline int ovl_do_rmdir(struct inode *dir, struct dentry *dentry)
+ static inline int ovl_do_unlink(struct inode *dir, struct dentry *dentry)
+ {
+ 	int err = vfs_unlink(dir, dentry, NULL);
++
+ 	pr_debug("unlink(%pd2) = %i\n", dentry, err);
+ 	return err;
+ }
+ 
+ static inline int ovl_do_link(struct dentry *old_dentry, struct inode *dir,
+-			      struct dentry *new_dentry, bool debug)
++			      struct dentry *new_dentry)
+ {
+ 	int err = vfs_link(old_dentry, dir, new_dentry, NULL);
+-	if (debug) {
+-		pr_debug("link(%pd2, %pd2) = %i\n",
+-			 old_dentry, new_dentry, err);
+-	}
++
++	pr_debug("link(%pd2, %pd2) = %i\n", old_dentry, new_dentry, err);
+ 	return err;
+ }
+ 
+ static inline int ovl_do_create(struct inode *dir, struct dentry *dentry,
+-			     umode_t mode, bool debug)
++				umode_t mode)
+ {
+ 	int err = vfs_create(dir, dentry, mode, true);
+-	if (debug)
+-		pr_debug("create(%pd2, 0%o) = %i\n", dentry, mode, err);
++
++	pr_debug("create(%pd2, 0%o) = %i\n", dentry, mode, err);
+ 	return err;
+ }
+ 
+ static inline int ovl_do_mkdir(struct inode *dir, struct dentry *dentry,
+-			       umode_t mode, bool debug)
++			       umode_t mode)
+ {
+ 	int err = vfs_mkdir(dir, dentry, mode);
+-	if (debug)
+-		pr_debug("mkdir(%pd2, 0%o) = %i\n", dentry, mode, err);
++	pr_debug("mkdir(%pd2, 0%o) = %i\n", dentry, mode, err);
+ 	return err;
+ }
+ 
+ static inline int ovl_do_mknod(struct inode *dir, struct dentry *dentry,
+-			       umode_t mode, dev_t dev, bool debug)
++			       umode_t mode, dev_t dev)
+ {
+ 	int err = vfs_mknod(dir, dentry, mode, dev);
+-	if (debug) {
+-		pr_debug("mknod(%pd2, 0%o, 0%o) = %i\n",
+-			 dentry, mode, dev, err);
+-	}
++
++	pr_debug("mknod(%pd2, 0%o, 0%o) = %i\n", dentry, mode, dev, err);
+ 	return err;
+ }
+ 
+ static inline int ovl_do_symlink(struct inode *dir, struct dentry *dentry,
+-				 const char *oldname, bool debug)
++				 const char *oldname)
+ {
+ 	int err = vfs_symlink(dir, dentry, oldname);
+-	if (debug)
+-		pr_debug("symlink(\"%s\", %pd2) = %i\n", oldname, dentry, err);
++
++	pr_debug("symlink(\"%s\", %pd2) = %i\n", oldname, dentry, err);
+ 	return err;
+ }
+ 
+@@ -168,11 +165,8 @@ static inline int ovl_do_rename(struct inode *olddir, struct dentry *olddentry,
+ {
+ 	int err;
+ 
+-	pr_debug("rename(%pd2, %pd2, 0x%x)\n",
+-		 olddentry, newdentry, flags);
+-
++	pr_debug("rename(%pd2, %pd2, 0x%x)\n", olddentry, newdentry, flags);
+ 	err = vfs_rename(olddir, olddentry, newdir, newdentry, NULL, flags);
+-
+ 	if (err) {
+ 		pr_debug("...rename(%pd2, %pd2, ...) = %i\n",
+ 			 olddentry, newdentry, err);
+@@ -362,7 +356,7 @@ struct cattr {
+ };
+ int ovl_create_real(struct inode *dir, struct dentry *newdentry,
+ 		    struct cattr *attr,
+-		    struct dentry *hardlink, bool debug);
++		    struct dentry *hardlink);
+ int ovl_cleanup(struct inode *dir, struct dentry *dentry);
+ 
+ /* copy_up.c */
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index e8551c97de51..94a7a654b0b8 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -613,7 +613,7 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
+ 
+ 		err = ovl_create_real(dir, work,
+ 				      &(struct cattr){.mode = S_IFDIR | 0},
+-				      NULL, true);
++				      NULL);
+ 		if (err)
+ 			goto out_dput;
+ 
 -- 
 2.14.3
