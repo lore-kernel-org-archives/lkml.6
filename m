@@ -1,166 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967406AbeE2VwK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:52:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48228 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966304AbeE2VwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:52:07 -0400
-Subject: Re: [PATCH v9 00/12] Support PPTT for ARM64
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>, austinwc@codeaurora.org,
-        tnowicki@caviumnetworks.com, Palmer Dabbelt <palmer@sifive.com>,
-        linux-riscv@lists.infradead.org, Morten.Rasmussen@arm.com,
-        vkilari@codeaurora.org, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        jhugo@codeaurora.org, Al Stone <ahs3@redhat.com>,
-        Len Brown <lenb@kernel.org>, John Garry <john.garry@huawei.com>,
-        wangxiongfeng2@huawei.com, Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20180511235807.30834-1-jeremy.linton@arm.com>
- <20180517170523.h7tuvbzdfluuidcz@armageddon.cambridge.arm.com>
- <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com>
- <09fb3fe7-d703-43f1-74f7-f8cb5ff1f67a@arm.com>
- <CAMuHMdXgiMeD4uF+j8W+CpNwYYK2W_8xqk_=vGBiW=bUvKeq7w@mail.gmail.com>
- <551905a6-eaa8-97df-06ec-1ceedfbc164f@arm.com>
- <20180529150823.GD17159@arm.com>
- <CAMuHMdU0yET6+-FfS8e9HJdKB7h0gDn7kzWGpJZV=UiWn5fLkA@mail.gmail.com>
-From: Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <a79f5acc-51f2-cd7c-5abf-c7c1df8064a1@arm.com>
-Date: Tue, 29 May 2018 16:52:04 -0500
+        id S967436AbeE2VtX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:49:23 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:34086 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966504AbeE2VtT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 17:49:19 -0400
+Subject: Re: [PATCH 4/8] xen/gntdev: Allow mappings for DMA buffers
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180525153331.31188-1-andr2000@gmail.com>
+ <20180525153331.31188-5-andr2000@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <9f2999a8-7786-5811-bdf0-ff7f30301cf2@oracle.com>
+Date: Tue, 29 May 2018 17:52:14 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdU0yET6+-FfS8e9HJdKB7h0gDn7kzWGpJZV=UiWn5fLkA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180525153331.31188-5-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805290231
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 05/25/2018 11:33 AM, Oleksandr Andrushchenko wrote:
+>  
+>  struct unmap_notify {
+> @@ -96,10 +104,28 @@ struct grant_map {
+>  	struct gnttab_unmap_grant_ref *kunmap_ops;
+>  	struct page **pages;
+>  	unsigned long pages_vm_start;
+> +
+> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+> +	/*
+> +	 * If dmabuf_vaddr is not NULL then this mapping is backed by DMA
+> +	 * capable memory.
+> +	 */
+> +
+> +	/* Device for which DMA memory is allocated. */
+> +	struct device *dma_dev;
+> +	/* Flags used to create this DMA buffer: GNTDEV_DMABUF_FLAG_XXX. */
+> +	bool dma_flags;
 
-On 05/29/2018 10:51 AM, Geert Uytterhoeven wrote:
-> Hi Will,
-> 
-> On Tue, May 29, 2018 at 5:08 PM, Will Deacon <will.deacon@arm.com> wrote:
->> On Tue, May 29, 2018 at 02:18:40PM +0100, Sudeep Holla wrote:
->>> On 29/05/18 12:56, Geert Uytterhoeven wrote:
->>>> On Tue, May 29, 2018 at 1:14 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>>>> On 29/05/18 11:48, Geert Uytterhoeven wrote:
->>>>>> System supend still works fine on systems with big cores only:
->>>>>>
->>>>>>      R-Car H3 ES1.0 (4xCA57 (4xCA53 disabled in firmware))
->>>>>>      R-Car M3-N (2xCA57)
->>>>>>
->>>>>> Reverting this commit fixes the issue for me.
->>>>>
->>>>> I can't find anything that relates to system suspend in these patches
->>>>> unless they are messing with something during CPU hot plug-in back
->>>>> during resume.
->>>>
->>>> It's only the last patch that introduces the breakage.
->>>>
->>>
->>> As specified in the commit log, it won't change any behavior for DT
->>> systems if it's non-NUMA or single node system. So I am still wondering
->>> what could trigger this regression.
->>
->> I wonder if we're somehow giving an uninitialised/invalid NUMA configuration
->> to the scheduler, although I can't see how this would happen.
->>
->> Geert -- if you enable CONFIG_DEBUG_PER_CPU_MAPS=y and apply the diff below
->> do you see anything shouting in dmesg?
-> 
-> Thanks, but unfortunately it doesn't help.
-> I added some debug code to print cpumask, but so far I don't see anything
-> suspicious.
+Again, I think most of the comments here can be dropped. Except possibly
+for the flags.
 
-I suspect most of the problem is related to the node mask changing at 
-unexpected times (particularly cores being removed from the mask). Once 
-I understand that more, there may be a simpler patch.
+> +	/* Virtual/CPU address of the DMA buffer. */
+> +	void *dma_vaddr;
+> +	/* Bus address of the DMA buffer. */
+> +	dma_addr_t dma_bus_addr;
+> +#endif
+>  };
+>  
+>  static int unmap_grant_pages(struct grant_map *map, int offset, int pages);
+>  
+> +static struct miscdevice gntdev_miscdev;
+> +
+>  /* ------------------------------------------------------------------ */
+>  
+>  static void gntdev_print_maps(struct gntdev_priv *priv,
+> @@ -121,8 +147,26 @@ static void gntdev_free_map(struct grant_map *map)
+>  	if (map == NULL)
+>  		return;
+>  
+> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+> +	if (map->dma_vaddr) {
+> +		struct gnttab_dma_alloc_args args;
+> +
+> +		args.dev = map->dma_dev;
+> +		args.coherent = map->dma_flags & GNTDEV_DMA_FLAG_COHERENT;
+> +		args.nr_pages = map->count;
+> +		args.pages = map->pages;
+> +		args.vaddr = map->dma_vaddr;
+> +		args.dev_bus_addr = map->dma_bus_addr;
+> +
+> +		gnttab_dma_free_pages(&args);
+> +	} else if (map->pages) {
+> +		gnttab_free_pages(map->count, map->pages);
+> +	}
+> +#else
+>  	if (map->pages)
+>  		gnttab_free_pages(map->count, map->pages);
+> +#endif
+> +
 
-OTOH, I've been testing with this, and with it, I can't seem to 
-duplicate the problem with CONFIG_NUMA disabled I found.
+} else
+#endif
+    if (map->pages)
+        gnttab_free_pages(map->count, map->pages);
 
-diff --git a/arch/arm64/include/asm/topology.h 
-b/arch/arm64/include/asm/topology.h
-index df48212f767b..7450ef5ed733 100644
---- a/arch/arm64/include/asm/topology.h
-+++ b/arch/arm64/include/asm/topology.h
-@@ -12,6 +12,7 @@ struct cpu_topology {
-         cpumask_t thread_sibling;
-         cpumask_t core_sibling;
-         cpumask_t llc_siblings;
-+       cpumask_t node_siblings; /* maintain a stable node sibling list */
-  };
 
-  extern struct cpu_topology cpu_topology[NR_CPUS];
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index f3e2e3aec0b0..f4eb80852d78 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -677,8 +677,9 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
-         init_cpu_topology();
+(and elsewhere)
 
-         this_cpu = smp_processor_id();
--       store_cpu_topology(this_cpu);
-         numa_store_cpu_info(this_cpu);
-+       store_cpu_topology(this_cpu);
-+
+>  	kfree(map->pages);
+>  	kfree(map->grants);
+>  	kfree(map->map_ops);
 
-         /*
-          * If UP is mandated by "nosmp" (which implies "maxcpus=0"), 
-don't set
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 7415c166281f..6819c764537d 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -215,7 +215,7 @@ EXPORT_SYMBOL_GPL(cpu_topology);
 
-  const struct cpumask *cpu_coregroup_mask(int cpu)
-  {
--       const cpumask_t *core_mask = cpumask_of_node(cpu_to_node(cpu));
-+       const cpumask_t *core_mask = &cpu_topology[cpu].node_siblings;
 
-         /* Find the smaller of NUMA, core or LLC siblings */
-         if (cpumask_subset(&cpu_topology[cpu].core_sibling, core_mask)) {
-@@ -233,12 +233,16 @@ const struct cpumask *cpu_coregroup_mask(int cpu)
-  static void update_siblings_masks(unsigned int cpuid)
-  {
-         struct cpu_topology *cpu_topo, *cpuid_topo = &cpu_topology[cpuid];
-+       int node = cpu_to_node(cpuid);
-         int cpu;
+>  
+> diff --git a/include/uapi/xen/gntdev.h b/include/uapi/xen/gntdev.h
+> index 6d1163456c03..2d5a4672f07c 100644
+> --- a/include/uapi/xen/gntdev.h
+> +++ b/include/uapi/xen/gntdev.h
+> @@ -200,4 +200,19 @@ struct ioctl_gntdev_grant_copy {
+>  /* Send an interrupt on the indicated event channel */
+>  #define UNMAP_NOTIFY_SEND_EVENT 0x2
+>  
+> +/*
+> + * Flags to be used while requesting memory mapping's backing storage
+> + * to be allocated with DMA API.
+> + */
+> +
+> +/*
+> + * The buffer is backed with memory allocated with dma_alloc_wc.
+> + */
+> +#define GNTDEV_DMA_FLAG_WC		(1 << 1)
 
-         /* update core and thread sibling masks */
-         for_each_possible_cpu(cpu) {
-                 cpu_topo = &cpu_topology[cpu];
 
-+               if (cpu_to_node(cpu) == node)
-+                       cpumask_set_cpu(cpu, &cpu_topo->node_siblings);
-+
-                 if (cpuid_topo->llc_id == cpu_topo->llc_id)
-                         cpumask_set_cpu(cpu, &cpuid_topo->llc_siblings);
+Is there a reason you are not using bit 0?
 
-@@ -311,6 +315,9 @@ static void __init reset_cpu_topology(void)
-                 cpumask_clear(&cpu_topo->llc_siblings);
-                 cpumask_set_cpu(cpu, &cpu_topo->llc_siblings);
+-boris
 
-+               cpumask_clear(&cpu_topo->node_siblings);
-+               cpumask_set_cpu(cpu, &cpu_topo->node_siblings);
-+
-                 cpumask_clear(&cpu_topo->core_sibling);
-                 cpumask_set_cpu(cpu, &cpu_topo->core_sibling);
-                 cpumask_clear(&cpu_topo->thread_sibling);
--- 
-2.14.3
+> +
+> +/*
+> + * The buffer is backed with memory allocated with dma_alloc_coherent.
+> + */
+> +#define GNTDEV_DMA_FLAG_COHERENT	(1 << 2)
+> +
+>  #endif /* __LINUX_PUBLIC_GNTDEV_H__ */
