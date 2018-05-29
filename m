@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967714AbeE2WAI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:00:08 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:46533 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967488AbeE2V7L (ORCPT
+        id S967602AbeE2V7V (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:59:21 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:38063 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967524AbeE2V7P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:59:11 -0400
-X-Google-Smtp-Source: ADUXVKIgpNld52eKIA49Wamso4avSxfbAyfq+2knoIdVg3189FsfkAhUolwOvZzKRZQCSEpy+ujbnw==
+        Tue, 29 May 2018 17:59:15 -0400
+X-Google-Smtp-Source: ADUXVKImo5JShAOli3iTqN3Je6hMAcvIEQZexL0U/dZHxV79ObHsrUk8aiDLd/lKVB7EyeDdxPakug==
 From: Ray Jui <ray.jui@broadcom.com>
 To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>,
@@ -15,9 +15,9 @@ To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
 Cc: linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
         linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH 3/6] arm: dts: Change PCIe INTx mapping for Cygnus
-Date: Tue, 29 May 2018 14:58:47 -0700
-Message-Id: <1527631130-20045-4-git-send-email-ray.jui@broadcom.com>
+Subject: [PATCH 4/6] arm: dts: Change PCIe INTx mapping for NSP
+Date: Tue, 29 May 2018 14:58:48 -0700
+Message-Id: <1527631130-20045-5-git-send-email-ray.jui@broadcom.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1527631130-20045-1-git-send-email-ray.jui@broadcom.com>
 References: <1527631130-20045-1-git-send-email-ray.jui@broadcom.com>
@@ -30,46 +30,63 @@ IRQ domain of the iProc PCIe controller itself
 
 Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 ---
- arch/arm/boot/dts/bcm-cygnus.dtsi | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/bcm-nsp.dtsi | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-cygnus.dtsi
-index 699fdf9..6de21ef 100644
---- a/arch/arm/boot/dts/bcm-cygnus.dtsi
-+++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-@@ -254,9 +254,14 @@
- 			compatible = "brcm,iproc-pcie";
- 			reg = <0x18012000 0x1000>;
+diff --git a/arch/arm/boot/dts/bcm-nsp.dtsi b/arch/arm/boot/dts/bcm-nsp.dtsi
+index dcc55aa..8c4c8b2 100644
+--- a/arch/arm/boot/dts/bcm-nsp.dtsi
++++ b/arch/arm/boot/dts/bcm-nsp.dtsi
+@@ -494,9 +494,14 @@
+ 		compatible = "brcm,iproc-pcie";
+ 		reg = <0x18012000 0x1000>;
  
-+			interrupt-controller;
- 			#interrupt-cells = <1>;
--			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_NONE>;
-+			interrupt-map-mask = <0 0 0 7>;
-+			interrupt-map = <0 0 0 1 &pcie0 1>,
-+					<0 0 0 2 &pcie0 2>,
-+					<0 0 0 3 &pcie0 3>,
-+					<0 0 0 4 &pcie0 4>;
-+			interrupts = <GIC_SPI 100 IRQ_TYPE_NONE>;
++		interrupt-controller;
+ 		#interrupt-cells = <1>;
+-		interrupt-map-mask = <0 0 0 0>;
+-		interrupt-map = <0 0 0 0 &gic GIC_SPI 131 IRQ_TYPE_NONE>;
++		interrupt-map-mask = <0 0 0 7>;
++		interrupt-map = <0 0 0 1 &pcie0 1>,
++				<0 0 0 2 &pcie0 2>,
++				<0 0 0 3 &pcie0 3>,
++				<0 0 0 4 &pcie0 4>;
++		interrupts = <GIC_SPI 131 IRQ_TYPE_NONE>;
  
- 			linux,pci-domain = <0>;
+ 		linux,pci-domain = <0>;
  
-@@ -289,9 +294,14 @@
- 			compatible = "brcm,iproc-pcie";
- 			reg = <0x18013000 0x1000>;
+@@ -531,9 +536,14 @@
+ 		compatible = "brcm,iproc-pcie";
+ 		reg = <0x18013000 0x1000>;
  
-+			interrupt-controller;
- 			#interrupt-cells = <1>;
--			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &gic GIC_SPI 106 IRQ_TYPE_NONE>;
-+			interrupt-map-mask = <0 0 0 7>;
-+			interrupt-map = <0 0 0 1 &pcie1 1>,
-+					<0 0 0 2 &pcie1 2>,
-+					<0 0 0 3 &pcie1 3>,
-+					<0 0 0 4 &pcie1 4>;
-+			interrupts = <GIC_SPI 106 IRQ_TYPE_NONE>;
++		interrupt-controller;
+ 		#interrupt-cells = <1>;
+-		interrupt-map-mask = <0 0 0 0>;
+-		interrupt-map = <0 0 0 0 &gic GIC_SPI 137 IRQ_TYPE_NONE>;
++		interrupt-map-mask = <0 0 0 7>;
++		interrupt-map = <0 0 0 1 &pcie1 1>,
++				<0 0 0 2 &pcie1 2>,
++				<0 0 0 3 &pcie1 3>,
++				<0 0 0 4 &pcie1 4>;
++		interrupts = <GIC_SPI 137 IRQ_TYPE_NONE>;
  
- 			linux,pci-domain = <1>;
+ 		linux,pci-domain = <1>;
+ 
+@@ -568,9 +578,14 @@
+ 		compatible = "brcm,iproc-pcie";
+ 		reg = <0x18014000 0x1000>;
+ 
++		interrupt-controller;
+ 		#interrupt-cells = <1>;
+-		interrupt-map-mask = <0 0 0 0>;
+-		interrupt-map = <0 0 0 0 &gic GIC_SPI 143 IRQ_TYPE_NONE>;
++		interrupt-map-mask = <0 0 0 7>;
++		interrupt-map = <0 0 0 1 &pcie2 1>,
++				<0 0 0 2 &pcie2 2>,
++				<0 0 0 3 &pcie2 3>,
++				<0 0 0 4 &pcie2 4>;
++		interrupts = <GIC_SPI 143 IRQ_TYPE_NONE>;
+ 
+ 		linux,pci-domain = <2>;
  
 -- 
 2.1.4
