@@ -1,71 +1,242 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754627AbeE2D5r (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 23:57:47 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:46773 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754409AbeE2D51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 23:57:27 -0400
-From: Yangbo Lu <yangbo.lu@nxp.com>
-To: netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Richard Cochran <richardcochran@gmail.com>, claudiu.manoil@nxp.com,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v2] MAINTAINERS: add myself as maintainer for QorIQ PTP clock driver
-Date: Tue, 29 May 2018 11:47:44 +0800
-Message-Id: <20180529034744.44590-1-yangbo.lu@nxp.com>
-X-Mailer: git-send-email 2.14.1
+        id S1754409AbeE2EBz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 00:01:55 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:51285 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750711AbeE2EBs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 00:01:48 -0400
+X-ME-Proxy: <xmx:q9AMWyoC5VUhwrs3YhETgy561shukaX7alB1A-maYhSvJC9s9uXzAg>
+X-ME-Proxy: <xmx:q9AMW65-w4CMJjGqCyhqymJcwstKK4sUBFSibrzIaLukdyM3m3QlEg>
+X-ME-Proxy: <xmx:q9AMWwjntrw37QVGlcnf7dNQ-rIuQTaeF9ysZK3YbNymP4z2vj9YzQ>
+X-ME-Proxy: <xmx:q9AMW1N8zIcokvh7yrvS65N91zXe9kLSuFMdLdzRScydSkaLyDK81g>
+X-ME-Proxy: <xmx:q9AMW6835pocPXk12qlSSiOcTxXKIB14TOVhSLA5Rc_EgDe4UyC8xw>
+X-ME-Proxy: <xmx:q9AMWwbIVPLix-hATifVeCcFH3bWPZV78xdnYSorUotZVezxJwlA2g>
+X-ME-Sender: <xms:q9AMW6KivA6zASiYYgz50aF8UoDU5oJlWN7YRMmPddzosGL1C1260Q>
+Message-ID: <1527566501.2723.22.camel@themaw.net>
+Subject: Re: [PATCH] mm-kasan-dont-vfree-nonexistent-vm_area-fix
+From: Ian Kent <raven@themaw.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Paul Menzel <pmenzel+linux-kasan-dev@molgen.mpg.de>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Matthew Wilcox <willy@infradead.org>
+Date: Tue, 29 May 2018 12:01:41 +0800
+In-Reply-To: <1527482351.2693.12.camel@themaw.net>
+References: <dabee6ab-3a7a-51cd-3b86-5468718e0390@virtuozzo.com>
+         <201805261122.HdUpobQm%fengguang.wu@intel.com>
+         <20180525204804.3a655370ef4b41e0d96e03f3@linux-foundation.org>
+         <1527480795.2693.4.camel@themaw.net> <1527482351.2693.12.camel@themaw.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added myself as maintainer for QorIQ PTP clock driver.
-Since gianfar_ptp.c was renamed to ptp_qoriq.c, let's
-maintain it under QorIQ PTP clock driver.
+On Mon, 2018-05-28 at 12:39 +0800, Ian Kent wrote:
+> On Mon, 2018-05-28 at 12:13 +0800, Ian Kent wrote:
+> > On Fri, 2018-05-25 at 20:48 -0700, Andrew Morton wrote:
+> > > On Sat, 26 May 2018 11:31:35 +0800 kbuild test robot <lkp@intel.com>
+> > > wrote:
+> > > 
+> > > > Hi Andrey,
+> > > > 
+> > > > I love your patch! Yet something to improve:
+> > > > 
+> > > > [auto build test ERROR on mmotm/master]
+> > > > [cannot apply to v4.17-rc6]
+> > > > [if your patch is applied to the wrong git tree, please drop us a note
+> > > > to
+> > > > help improve the system]
+> > > > 
+> > > > url:    https://github.com/0day-ci/linux/commits/Andrey-Ryabinin/mm-kasa
+> > > > n-
+> > > > do
+> > > > nt-vfree-nonexistent-vm_area-fix/20180526-093255
+> > > > base:   git://git.cmpxchg.org/linux-mmotm.git master
+> > > > config: sparc-allyesconfig (attached as .config)
+> > > > compiler: sparc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> > > > reproduce:
+> > > >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sb
+> > > > in
+> > > > /m
+> > > > ake.cross -O ~/bin/make.cross
+> > > >         chmod +x ~/bin/make.cross
+> > > >         # save the attached .config to linux build tree
+> > > >         make.cross ARCH=sparc 
+> > > > 
+> > > > All errors (new ones prefixed by >>):
+> > > > 
+> > > >    fs/autofs/inode.o: In function `autofs_new_ino':
+> > > >    inode.c:(.text+0x220): multiple definition of `autofs_new_ino'
+> > > >    fs/autofs/inode.o:inode.c:(.text+0x220): first defined here
+> > > >    fs/autofs/inode.o: In function `autofs_clean_ino':
+> > > >    inode.c:(.text+0x280): multiple definition of `autofs_clean_ino'
+> > > >    fs/autofs/inode.o:inode.c:(.text+0x280): first defined here
+> > > 
+> > > There's bot breakage here - clearly that patch didn't cause this error.
+> > > 
+> > > Ian, this autofs glitch may still not be fixed.
+> > 
+> > Yes, autofs-make-autofs4-Kconfig-depend-on-AUTOFS_FS.patch should have
+> > fixed that.
+> > 
+> > I tied a bunch of .config combinations and I was unable to find any that
+> > lead to both CONFIG_AUTOFS_FS and CONFIG_AUTOFS4_FS being defined.
+> 
+> Oh, autofs-make-autofs4-Kconfig-depend-on-AUTOFS_FS.patch was sent as
+> a follow up patch which means it's still possible to have both
+> CONFIG_AUTOFS_FS and CONFIG_AUTOFS4_FS set between 
+> autofs-create-autofs-Kconfig-and-Makefile.patch and the above patch.
+> 
+> Perhaps all that's needed is to fold the follow up patch into
+> autofs-create-autofs-Kconfig-and-Makefile.patch to close that
+> possibility.
+> 
+> I'll check that can be done without problem.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
-Changes for v2:
-	- Dropped dpaa2/rtc part.
----
- MAINTAINERS |   10 ++++++++--
- 1 files changed, 8 insertions(+), 2 deletions(-)
+I've had a look and I can't see any reason for this other than
+CONFIG_AUTOFS_FS and CONFIG_AUTOFS4_FS both being set which isn't
+ok because the file system name is the same for both.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f492431..c16340c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5620,7 +5620,6 @@ M:	Claudiu Manoil <claudiu.manoil@nxp.com>
- L:	netdev@vger.kernel.org
- S:	Maintained
- F:	drivers/net/ethernet/freescale/gianfar*
--X:	drivers/net/ethernet/freescale/gianfar_ptp.c
- F:	Documentation/devicetree/bindings/net/fsl-tsec-phy.txt
+I have seen build system configs that have both of these set even
+though the "autofs" module was removed years ago so that's probably
+still present in some site build systems.
+
+I see you've added the follow up patch I mentioned above as
+"autofs-update-fs-autofs4-kconfig-fix.patch"
+with title
+"autofs - make autofs4 Kconfig depend on AUTOFS_FS"
+
+Folding this patch into the patch
+"autofs-create-autofs-kconfig-and-makefile.patch"
+with title
+"autofs: create autofs Kconfig and Makefile"
+
+I'm unable to reproduce the breakage which leads me to think
+the problem must be due to .config having both the CONFIG_AUTOFS*
+entries defined to something other than n (which certainly does
+produce the breakage if the follow up patch is not present, so
+the result is not bisectable until the follow up patch is added).
+
+Also, I don't think there is a need to update the description of
+"autofs: create autofs Kconfig and Makefile"
+because the patch that is folded into it adds a NOTE to the
+fs/autofs4/Kconfig help that essentially re-states what is in
+the description.
+
+If this continues to happen I'll need more information about
+applied patches and kernel config used to work out what's going
+on.
+
+For completeness here's the resulting patch after folding in the
+follow up patch above:
+
+autofs - create autofs Kconfig and Makefile
+
+From: Ian Kent <raven@themaw.net>
+
+Create Makefile and Kconfig for autofs module.
+
+Signed-off-by: Ian Kent <raven@themaw.net>
+---
+ fs/Kconfig         |    1 +
+ fs/Makefile        |    1 +
+ fs/autofs/Kconfig  |   20 ++++++++++++++++++++
+ fs/autofs/Makefile |    7 +++++++
+ fs/autofs4/Kconfig |    8 ++++++++
+ 5 files changed, 37 insertions(+)
+ create mode 100644 fs/autofs/Kconfig
+ create mode 100644 fs/autofs/Makefile
+
+diff --git a/fs/Kconfig b/fs/Kconfig
+index bc821a86d965..e712e62afe59 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -108,6 +108,7 @@ source "fs/notify/Kconfig"
  
- FREESCALE GPMI NAND DRIVER
-@@ -5667,6 +5666,14 @@ S:	Maintained
- F:	drivers/net/ethernet/freescale/fman
- F:	Documentation/devicetree/bindings/powerpc/fsl/fman.txt
+ source "fs/quota/Kconfig"
  
-+FREESCALE QORIQ PTP CLOCK DRIVER
-+M:	Yangbo Lu <yangbo.lu@nxp.com>
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+F:	drivers/ptp/ptp_qoriq.c
-+F:	include/linux/fsl/ptp_qoriq.h
-+F:	Documentation/devicetree/bindings/ptp/ptp-qoriq.txt
++source "fs/autofs/Kconfig"
+ source "fs/autofs4/Kconfig"
+ source "fs/fuse/Kconfig"
+ source "fs/overlayfs/Kconfig"
+diff --git a/fs/Makefile b/fs/Makefile
+index c9375fd2c8c4..2e005525cc19 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -102,6 +102,7 @@ obj-$(CONFIG_AFFS_FS)		+= affs/
+ obj-$(CONFIG_ROMFS_FS)		+= romfs/
+ obj-$(CONFIG_QNX4FS_FS)		+= qnx4/
+ obj-$(CONFIG_QNX6FS_FS)		+= qnx6/
++obj-$(CONFIG_AUTOFS_FS)		+= autofs/
+ obj-$(CONFIG_AUTOFS4_FS)	+= autofs4/
+ obj-$(CONFIG_ADFS_FS)		+= adfs/
+ obj-$(CONFIG_FUSE_FS)		+= fuse/
+diff --git a/fs/autofs/Kconfig b/fs/autofs/Kconfig
+new file mode 100644
+index 000000000000..6a2064eb3b27
+--- /dev/null
++++ b/fs/autofs/Kconfig
+@@ -0,0 +1,20 @@
++config AUTOFS_FS
++	tristate "Kernel automounter support (supports v3, v4 and v5)"
++	default n
++	help
++	   The automounter is a tool to automatically mount remote file systems
++	   on demand. This implementation is partially kernel-based to reduce
++	   overhead in the already-mounted case; this is unlike the BSD
++	   automounter (amd), which is a pure user space daemon.
 +
- FREESCALE QUAD SPI DRIVER
- M:	Han Xu <han.xu@nxp.com>
- L:	linux-mtd@lists.infradead.org
-@@ -11405,7 +11412,6 @@ S:	Maintained
- W:	http://linuxptp.sourceforge.net/
- F:	Documentation/ABI/testing/sysfs-ptp
- F:	Documentation/ptp/*
--F:	drivers/net/ethernet/freescale/gianfar_ptp.c
- F:	drivers/net/phy/dp83640*
- F:	drivers/ptp/*
- F:	include/linux/ptp_cl*
--- 
-1.7.1
++	   To use the automounter you need the user-space tools from
++	   <https://www.kernel.org/pub/linux/daemons/autofs/>; you also want
++	   to answer Y to "NFS file system support", below.
++
++	   To compile this support as a module, choose M here: the module will be
++	   called autofs.
++
++	   If you are not a part of a fairly large, distributed network or
++	   don't have a laptop which needs to dynamically reconfigure to the
++	   local network, you probably do not need an automounter, and can say
++	   N here.
+diff --git a/fs/autofs/Makefile b/fs/autofs/Makefile
+new file mode 100644
+index 000000000000..43fedde15c26
+--- /dev/null
++++ b/fs/autofs/Makefile
+@@ -0,0 +1,7 @@
++#
++# Makefile for the linux autofs-filesystem routines.
++#
++
++obj-$(CONFIG_AUTOFS_FS) += autofs.o
++
++autofs-objs := init.o inode.o root.o symlink.o waitq.o expire.o dev-ioctl.o
+diff --git a/fs/autofs4/Kconfig b/fs/autofs4/Kconfig
+index 53bc592a250d..2c2fdf989f90 100644
+--- a/fs/autofs4/Kconfig
++++ b/fs/autofs4/Kconfig
+@@ -1,6 +1,7 @@
+ config AUTOFS4_FS
+ 	tristate "Kernel automounter version 4 support (also supports v3 and v5)"
+ 	default n
++	depends on AUTOFS_FS = n
+ 	help
+ 	  The automounter is a tool to automatically mount remote file systems
+ 	  on demand. This implementation is partially kernel-based to reduce
+@@ -30,3 +31,10 @@ config AUTOFS4_FS
+ 	  - any "alias autofs autofs4" will need to be removed.
+ 
+ 	  Please configure AUTOFS_FS instead of AUTOFS4_FS from now on.
++
++	  NOTE: Since the modules autofs and autofs4 use the same file system
++		type name of "autofs" only one can be built. The "depends"
++		above will result in AUTOFS4_FS not appearing in .config for
++		any setting of AUTOFS_FS other than n and AUTOFS4_FS will
++		appear under the AUTOFS_FS entry otherwise which is intended
++		to draw attention to the module rename change.
