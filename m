@@ -1,88 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936718AbeE2PEd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:04:33 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:29162 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965033AbeE2PEV (ORCPT
+        id S965020AbeE2PES (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:04:18 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51136 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935382AbeE2Oo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:04:21 -0400
-Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
- to netdev dma client
-To: Radhey Shyam Pandey <radheys@xilinx.com>,
-        Vinod Koul <vinod.koul@intel.com>
-CC: Lars-Peter Clausen <lars@metafoo.de>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180411090854.GY6014@localhost>
- <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
- <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
- <4ba085c7-5256-6c8a-5697-c0d5736a6e46@ti.com>
- <1fc10bec-5c2c-98f1-1d5b-b768dea844ed@metafoo.de>
- <78828d31-e4cd-5211-f1b6-8918ac38f599@ti.com>
- <e5a6c1ad-e263-7b9d-a5e2-744884c9d6de@metafoo.de>
- <a6ac9ca8-91b4-c7b1-0f0c-c04dd10048e2@ti.com>
- <d7432292-cedd-7d61-f219-8b63eb6c1d50@metafoo.de>
- <8c7a5ac8-0747-9dad-f6e5-74890b64f618@ti.com>
- <20180424035548.GA6014@localhost>
- <ee1dc551-7c11-6d10-651d-01bf6520f049@ti.com>
- <MWHPR02MB3293486390485A6FCCEA7DECC7910@MWHPR02MB3293.namprd02.prod.outlook.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <99581088-7ef8-6fac-c934-91eadddfb04e@ti.com>
-Date: Tue, 29 May 2018 18:04:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <MWHPR02MB3293486390485A6FCCEA7DECC7910@MWHPR02MB3293.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 29 May 2018 10:44:28 -0400
+X-Google-Smtp-Source: AB8JxZqcFq3SGuGJxPkc2VHkkECuf09G5Y5EXzmSaPWE63/8OU+oNivL/rN6AJkLAVat7xkvh3UQ9w==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 37/39] Partially revert "locks: fix file locking on overlayfs"
+Date: Tue, 29 May 2018 16:43:37 +0200
+Message-Id: <20180529144339.16538-38-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
+References: <20180529144339.16538-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This partially reverts commit c568d68341be7030f5647def68851e469b21ca11.
 
-On 2018-05-17 09:39, Radhey Shyam Pandey wrote:
->> Well, let's see where this is going to go when I can send the patches
->> for review.
-> Thanks all. @Peter: If we have metadata patchset ready may be good
-> to send an RFC?
+Overlayfs files will now automatically get the correct locks, no need to
+hack overlay support in VFS.
 
-Sorry for the delay, I got distracted by this:
-http://www.ti.com/lit/pdf/spruid7 Chapter 10.
+It is a partial revert, because it leaves the locks_inode() calls in place
+and defines locks_inode() to file_inode().  We could revert those as well,
+but it would be unnecessary code churn and it makes sense to document that
+we are getting the inode for locking purposes.
 
-I have given some tough to the metadata attach patches.
-In my case the 'metadata' is more like private data section within the
-DMA descriptor (10.1.2.2.1) which is used by the remote peripheral and
-the driver for the given peripheral and it is optional.
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Acked-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/locks.c              | 17 ++++++-----------
+ fs/overlayfs/super.c    |  2 +-
+ include/linux/fs.h      | 13 +------------
+ include/uapi/linux/fs.h |  1 -
+ 4 files changed, 8 insertions(+), 25 deletions(-)
 
-I liked the idea of treating it as metadata as it gives more generic API
-which can be adopted by other drivers if they need something similar.
-
-Another issue I have with the attach metadata way is that it would
-require one memcpy to copy the data to the DMA descriptor and in high
-throughput case it is not acceptable.
-
-For me probably a .get_private_area / .put_private_area like API would
-be desirable where I can give the pointer of the 'metadata' are (and
-size) to the user.
-
-But these can co-exist in my opinion and DMA drivers can opt to
-implement none, either or both of the callbacks.
-
-In couple of days I can update the metadata patches I have atm and send
-as RFC.
-
-Is there anything from your side I should take into account when doing that?
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/fs/locks.c b/fs/locks.c
+index 9c0e5f3da66c..40bcbaaa3f52 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -139,11 +139,6 @@
+ #define IS_OFDLCK(fl)	(fl->fl_flags & FL_OFDLCK)
+ #define IS_REMOTELCK(fl)	(fl->fl_pid <= 0)
+ 
+-static inline bool is_remote_lock(struct file *filp)
+-{
+-	return likely(!(filp->f_path.dentry->d_sb->s_flags & SB_NOREMOTELOCK));
+-}
+-
+ static bool lease_breaking(struct file_lock *fl)
+ {
+ 	return fl->fl_flags & (FL_UNLOCK_PENDING | FL_DOWNGRADE_PENDING);
+@@ -1875,7 +1870,7 @@ EXPORT_SYMBOL(generic_setlease);
+ int
+ vfs_setlease(struct file *filp, long arg, struct file_lock **lease, void **priv)
+ {
+-	if (filp->f_op->setlease && is_remote_lock(filp))
++	if (filp->f_op->setlease)
+ 		return filp->f_op->setlease(filp, arg, lease, priv);
+ 	else
+ 		return generic_setlease(filp, arg, lease, priv);
+@@ -2022,7 +2017,7 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+ 	if (error)
+ 		goto out_free;
+ 
+-	if (f.file->f_op->flock && is_remote_lock(f.file))
++	if (f.file->f_op->flock)
+ 		error = f.file->f_op->flock(f.file,
+ 					  (can_sleep) ? F_SETLKW : F_SETLK,
+ 					  lock);
+@@ -2048,7 +2043,7 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+  */
+ int vfs_test_lock(struct file *filp, struct file_lock *fl)
+ {
+-	if (filp->f_op->lock && is_remote_lock(filp))
++	if (filp->f_op->lock)
+ 		return filp->f_op->lock(filp, F_GETLK, fl);
+ 	posix_test_lock(filp, fl);
+ 	return 0;
+@@ -2191,7 +2186,7 @@ int fcntl_getlk(struct file *filp, unsigned int cmd, struct flock *flock)
+  */
+ int vfs_lock_file(struct file *filp, unsigned int cmd, struct file_lock *fl, struct file_lock *conf)
+ {
+-	if (filp->f_op->lock && is_remote_lock(filp))
++	if (filp->f_op->lock)
+ 		return filp->f_op->lock(filp, cmd, fl);
+ 	else
+ 		return posix_lock_file(filp, fl, conf);
+@@ -2513,7 +2508,7 @@ locks_remove_flock(struct file *filp, struct file_lock_context *flctx)
+ 	if (list_empty(&flctx->flc_flock))
+ 		return;
+ 
+-	if (filp->f_op->flock && is_remote_lock(filp))
++	if (filp->f_op->flock)
+ 		filp->f_op->flock(filp, F_SETLKW, &fl);
+ 	else
+ 		flock_lock_inode(inode, &fl);
+@@ -2600,7 +2595,7 @@ EXPORT_SYMBOL(posix_unblock_lock);
+  */
+ int vfs_cancel_lock(struct file *filp, struct file_lock *fl)
+ {
+-	if (filp->f_op->lock && is_remote_lock(filp))
++	if (filp->f_op->lock)
+ 		return filp->f_op->lock(filp, F_CANCELLK, fl);
+ 	return 0;
+ }
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 4bca84a17c43..d7df69e5b674 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -1478,7 +1478,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_op = &ovl_super_operations;
+ 	sb->s_xattr = ovl_xattr_handlers;
+ 	sb->s_fs_info = ofs;
+-	sb->s_flags |= SB_POSIXACL | SB_NOREMOTELOCK;
++	sb->s_flags |= SB_POSIXACL;
+ 
+ 	err = -ENOMEM;
+ 	root_dentry = d_make_root(ovl_new_inode(sb, S_IFDIR, 0));
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 797d6f28a8f0..7471a4208fdc 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1050,17 +1050,7 @@ struct file_lock_context {
+ 
+ extern void send_sigio(struct fown_struct *fown, int fd, int band);
+ 
+-/*
+- * Return the inode to use for locking
+- *
+- * For overlayfs this should be the overlay inode, not the real inode returned
+- * by file_inode().  For any other fs file_inode(filp) and locks_inode(filp) are
+- * equal.
+- */
+-static inline struct inode *locks_inode(const struct file *f)
+-{
+-	return f->f_path.dentry->d_inode;
+-}
++#define locks_inode(f) file_inode(f)
+ 
+ #ifdef CONFIG_FILE_LOCKING
+ extern int fcntl_getlk(struct file *, unsigned int, struct flock *);
+@@ -1300,7 +1290,6 @@ extern int send_sigurg(struct fown_struct *fown);
+ 
+ /* These sb flags are internal to the kernel */
+ #define SB_SUBMOUNT     (1<<26)
+-#define SB_NOREMOTELOCK	(1<<27)
+ #define SB_NOSEC	(1<<28)
+ #define SB_BORN		(1<<29)
+ #define SB_ACTIVE	(1<<30)
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index d2a8313fabd7..2840ddcece73 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -134,7 +134,6 @@ struct inodes_stat_t {
+ 
+ /* These sb flags are internal to the kernel */
+ #define MS_SUBMOUNT     (1<<26)
+-#define MS_NOREMOTELOCK	(1<<27)
+ #define MS_NOSEC	(1<<28)
+ #define MS_BORN		(1<<29)
+ #define MS_ACTIVE	(1<<30)
+-- 
+2.14.3
