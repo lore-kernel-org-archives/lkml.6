@@ -1,293 +1,362 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965180AbeE2Pup (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:50:45 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:12555 "EHLO pegase1.c-s.fr"
+        id S965244AbeE2Pu4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:50:56 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:32570 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965039AbeE2Pu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:50:29 -0400
-Message-Id: <db55357cc43cb7859a4c2200a6a007f5359a7b1f.1527608397.git.christophe.leroy@c-s.fr>
+        id S965098AbeE2Pul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:50:41 -0400
+Message-Id: <460641f4a6e977faa7b087f1ce0337931cd101d3.1527608397.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1527608397.git.christophe.leroy@c-s.fr>
 References: <cover.1527608397.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 06/14] powerpc/nohash32: allow setting GUARDED attribute in
- the PMD directly
+Subject: [PATCH v3 12/14] powerpc/mm: Make pte_fragment_alloc() common to
+ PPC32 and PPC64
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue, 29 May 2018 15:50:26 +0000 (UTC)
+Date: Tue, 29 May 2018 15:50:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the 8xx, the GUARDED attribute of the pages is managed in the
-L1 entry, therefore to avoid having to copy it into L1 entry
-at each TLB miss, we have to set it in the PMD
-
-In order to allow this, this patch splits the VM alloc space in two
-parts, one for VM alloc and non Guarded IO, and one for Guarded IO.
+In order to allow the 8xx to handle pte_fragments, this patch
+makes it common to PPC32 and PPC64 by moving the related code
+to common files and by defining a new config item called
+CONFIG_NEED_PTE_FRAG
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/nohash/32/pgalloc.h | 12 ++++++++++++
- arch/powerpc/include/asm/nohash/32/pgtable.h | 18 ++++++++++++++++--
- arch/powerpc/mm/dump_linuxpagetables.c       | 26 ++++++++++++++++++++++++--
- arch/powerpc/mm/ioremap.c                    | 13 ++++++++++---
- arch/powerpc/mm/mem.c                        |  9 +++++++++
- arch/powerpc/mm/pgtable_32.c                 | 28 +++++++++++++++++++++++++++-
- arch/powerpc/platforms/Kconfig.cputype       |  2 ++
- 7 files changed, 100 insertions(+), 8 deletions(-)
+ arch/powerpc/include/asm/mmu_context.h | 53 ++++++++++++++++++++++++
+ arch/powerpc/include/asm/page.h        |  2 +-
+ arch/powerpc/mm/mmu_context_book3s64.c | 44 --------------------
+ arch/powerpc/mm/pgtable-book3s64.c     | 72 ---------------------------------
+ arch/powerpc/mm/pgtable.c              | 74 ++++++++++++++++++++++++++++++++++
+ arch/powerpc/platforms/Kconfig.cputype | 15 +++++++
+ 6 files changed, 143 insertions(+), 117 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/nohash/32/pgalloc.h b/arch/powerpc/include/asm/nohash/32/pgalloc.h
-index 29d37bd1f3b3..81c19d6460bd 100644
---- a/arch/powerpc/include/asm/nohash/32/pgalloc.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgalloc.h
-@@ -58,6 +58,14 @@ static inline void pmd_populate_kernel(struct mm_struct *mm, pmd_t *pmdp,
- 	*pmdp = __pmd(__pa(pte) | _PMD_PRESENT);
- }
+diff --git a/arch/powerpc/include/asm/mmu_context.h b/arch/powerpc/include/asm/mmu_context.h
+index 1835ca1505d6..aa098b640f74 100644
+--- a/arch/powerpc/include/asm/mmu_context.h
++++ b/arch/powerpc/include/asm/mmu_context.h
+@@ -262,5 +262,58 @@ static inline u64 pte_to_hpte_pkey_bits(u64 pteflags)
  
-+#ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
-+static inline void pmd_populate_kernel_g(struct mm_struct *mm, pmd_t *pmdp,
-+					 pte_t *pte)
+ #endif /* CONFIG_PPC_MEM_KEYS */
+ 
++#ifdef CONFIG_NEED_PTE_FRAG
++static inline void pte_frag_destroy(void *pte_frag)
 +{
-+	*pmdp = __pmd(__pa(pte) | _PMD_PRESENT | _PMD_GUARDED);
-+}
-+#endif
++	int count;
++	struct page *page;
 +
- static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmdp,
- 				pgtable_t pte_page)
- {
-@@ -83,6 +91,10 @@ static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmdp,
- #define pmd_pgtable(pmd) pmd_page(pmd)
- #endif
- 
-+#define pte_alloc_kernel_g(pmd, address)			\
-+	((unlikely(pmd_none(*(pmd))) && __pte_alloc_kernel_g(pmd, address))? \
-+		NULL: pte_offset_kernel(pmd, address))
-+
- extern pte_t *pte_alloc_one_kernel(struct mm_struct *mm, unsigned long addr);
- extern pgtable_t pte_alloc_one(struct mm_struct *mm, unsigned long addr);
- 
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 810945afe677..7873722198e1 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -80,9 +80,14 @@ extern int icache_44x_need_flush;
- #else
- #define PKMAP_BASE	((FIXADDR_START - PAGE_SIZE*(LAST_PKMAP + 1)) & PMD_MASK)
- #endif
--#define KVIRT_TOP	PKMAP_BASE
-+#define _KVIRT_TOP	PKMAP_BASE
- #else
--#define KVIRT_TOP	(0xfe000000UL)	/* for now, could be FIXMAP_BASE ? */
-+#define _KVIRT_TOP	(0xfe000000UL)	/* for now, could be FIXMAP_BASE ? */
-+#endif
-+#ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
-+#define KVIRT_TOP	_ALIGN_DOWN(_KVIRT_TOP, PGDIR_SIZE)
-+#else
-+#define KVIRT_TOP	_KVIRT_TOP
- #endif
- 
- /*
-@@ -95,7 +100,11 @@ extern int icache_44x_need_flush;
- #else
- #define IOREMAP_END	KVIRT_TOP
- #endif
-+#ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
-+#define IOREMAP_BASE	_ALIGN_UP(VMALLOC_BASE + (IOREMAP_END - VMALLOC_BASE) / 2, PGDIR_SIZE)
-+#else
- #define IOREMAP_BASE	VMALLOC_BASE
-+#endif
- 
- /*
-  * Just any arbitrary offset to the start of the vmalloc VM area: the
-@@ -114,8 +123,13 @@ extern int icache_44x_need_flush;
- #else
- #define VMALLOC_BASE _ALIGN_DOWN((long)high_memory + VMALLOC_OFFSET, VMALLOC_OFFSET)
- #endif
-+#ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
-+#define VMALLOC_START	VMALLOC_BASE
-+#define VMALLOC_END	IOREMAP_BASE
-+#else
- #define VMALLOC_START	ioremap_bot
- #define VMALLOC_END	IOREMAP_END
-+#endif
- 
- /*
-  * Bits in a linux-style PTE.  These match the bits in the
-diff --git a/arch/powerpc/mm/dump_linuxpagetables.c b/arch/powerpc/mm/dump_linuxpagetables.c
-index 6022adb899b7..cd3797be5e05 100644
---- a/arch/powerpc/mm/dump_linuxpagetables.c
-+++ b/arch/powerpc/mm/dump_linuxpagetables.c
-@@ -74,9 +74,9 @@ struct addr_marker {
- 
- static struct addr_marker address_markers[] = {
- 	{ 0,	"Start of kernel VM" },
-+#ifdef CONFIG_PPC64
- 	{ 0,	"vmalloc() Area" },
- 	{ 0,	"vmalloc() End" },
--#ifdef CONFIG_PPC64
- 	{ 0,	"isa I/O start" },
- 	{ 0,	"isa I/O end" },
- 	{ 0,	"phb I/O start" },
-@@ -85,8 +85,19 @@ static struct addr_marker address_markers[] = {
- 	{ 0,	"I/O remap end" },
- 	{ 0,	"vmemmap start" },
- #else
-+#ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
-+	{ 0,	"vmalloc() Area" },
-+	{ 0,	"vmalloc() End" },
- 	{ 0,	"Early I/O remap start" },
- 	{ 0,	"Early I/O remap end" },
-+	{ 0,	"I/O remap start" },
-+	{ 0,	"I/O remap end" },
-+#else
-+	{ 0,	"Early I/O remap start" },
-+	{ 0,	"Early I/O remap end" },
-+	{ 0,	"vmalloc() I/O remap start" },
-+	{ 0,	"vmalloc() I/O remap end" },
-+#endif
- #ifdef CONFIG_NOT_COHERENT_CACHE
- 	{ 0,	"Consistent mem start" },
- 	{ 0,	"Consistent mem end" },
-@@ -437,9 +448,9 @@ static void populate_markers(void)
- 	int i = 0;
- 
- 	address_markers[i++].start_address = PAGE_OFFSET;
-+#ifdef CONFIG_PPC64
- 	address_markers[i++].start_address = VMALLOC_START;
- 	address_markers[i++].start_address = VMALLOC_END;
--#ifdef CONFIG_PPC64
- 	address_markers[i++].start_address = ISA_IO_BASE;
- 	address_markers[i++].start_address = ISA_IO_END;
- 	address_markers[i++].start_address = PHB_IO_BASE;
-@@ -452,8 +463,19 @@ static void populate_markers(void)
- 	address_markers[i++].start_address =  VMEMMAP_BASE;
- #endif
- #else /* !CONFIG_PPC64 */
-+#ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
-+	address_markers[i++].start_address = VMALLOC_START;
-+	address_markers[i++].start_address = VMALLOC_END;
- 	address_markers[i++].start_address = IOREMAP_BASE;
- 	address_markers[i++].start_address = ioremap_bot;
-+	address_markers[i++].start_address = ioremap_bot;
-+	address_markers[i++].start_address = IOREMAP_END;
-+#else
-+	address_markers[i++].start_address = IOREMAP_BASE;
-+	address_markers[i++].start_address = ioremap_bot;
-+	address_markers[i++].start_address = ioremap_bot;
-+	address_markers[i++].start_address = IOREMAP_END;
-+#endif
- #ifdef CONFIG_NOT_COHERENT_CACHE
- 	address_markers[i++].start_address = IOREMAP_END;
- 	address_markers[i++].start_address = IOREMAP_END +
-diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
-index a140feec2f8a..3eecf82ff93e 100644
---- a/arch/powerpc/mm/ioremap.c
-+++ b/arch/powerpc/mm/ioremap.c
-@@ -134,9 +134,16 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
- 	if (slab_is_available()) {
- 		struct vm_struct *area;
- 
--		area = __get_vm_area_caller(size, VM_IOREMAP,
--					    ioremap_bot, IOREMAP_END,
--					    caller);
-+#ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
-+		if (!(flags & _PAGE_GUARDED))
-+			area = __get_vm_area_caller(size, VM_IOREMAP,
-+						    VMALLOC_START, VMALLOC_END,
-+						    caller);
-+		else
-+#endif
-+			area = __get_vm_area_caller(size, VM_IOREMAP,
-+						    ioremap_bot, IOREMAP_END,
-+						    caller);
- 		if (area == NULL)
- 			return NULL;
- 
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index b680aa78a4ac..fd7af7af5b58 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -386,10 +386,19 @@ void __init mem_init(void)
- 	pr_info("  * 0x%08lx..0x%08lx  : consistent mem\n",
- 		IOREMAP_END, IOREMAP_END + CONFIG_CONSISTENT_SIZE);
- #endif /* CONFIG_NOT_COHERENT_CACHE */
-+#ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
-+	pr_info("  * 0x%08lx..0x%08lx  : ioremap\n",
-+		ioremap_bot, IOREMAP_END);
- 	pr_info("  * 0x%08lx..0x%08lx  : early ioremap\n",
- 		IOREMAP_BASE, ioremap_bot);
-+	pr_info("  * 0x%08lx..0x%08lx  : vmalloc\n",
-+		VMALLOC_START, VMALLOC_END);
-+#else
- 	pr_info("  * 0x%08lx..0x%08lx  : vmalloc & ioremap\n",
- 		VMALLOC_START, VMALLOC_END);
-+	pr_info("  * 0x%08lx..0x%08lx  : early ioremap\n",
-+		IOREMAP_BASE, ioremap_bot);
-+#endif
- #endif /* CONFIG_PPC32 */
- }
- 
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index 54a5bc0767a9..3aa0c78db95d 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -70,6 +70,27 @@ pgtable_t pte_alloc_one(struct mm_struct *mm, unsigned long address)
- 	return ptepage;
- }
- 
-+#ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
-+int __pte_alloc_kernel_g(pmd_t *pmd, unsigned long address)
-+{
-+	pte_t *new = pte_alloc_one_kernel(&init_mm, address);
-+	if (!new)
-+		return -ENOMEM;
-+
-+	smp_wmb(); /* See comment in __pte_alloc */
-+
-+	spin_lock(&init_mm.page_table_lock);
-+	if (likely(pmd_none(*pmd))) {	/* Has another populated it ? */
-+		pmd_populate_kernel_g(&init_mm, pmd, new);
-+		new = NULL;
++	page = virt_to_page(pte_frag);
++	/* drop all the pending references */
++	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
++	/* We allow PTE_FRAG_NR fragments from a PTE page */
++	if (page_ref_sub_and_test(page, PTE_FRAG_NR - count)) {
++		pgtable_page_dtor(page);
++		free_unref_page(page);
 +	}
-+	spin_unlock(&init_mm.page_table_lock);
-+	if (new)
-+		pte_free_kernel(&init_mm, new);
-+	return 0;
 +}
 +#endif
 +
- int map_kernel_page(unsigned long va, phys_addr_t pa, int flags)
- {
- 	pmd_t *pd;
-@@ -79,7 +100,12 @@ int map_kernel_page(unsigned long va, phys_addr_t pa, int flags)
- 	/* Use upper 10 bits of VA to index the first level map */
- 	pd = pmd_offset(pud_offset(pgd_offset_k(va), va), va);
- 	/* Use middle 10 bits of VA to index the second-level map */
--	pg = pte_alloc_kernel(pd, va);
-+#ifdef CONFIG_PPC_GUARDED_PAGE_IN_PMD
-+	if (flags & _PAGE_GUARDED)
-+		pg = pte_alloc_kernel_g(pd, va);
-+	else
++#ifdef CONFIG_NEED_PMD_FRAG
++static inline void pmd_frag_destroy(void *pmd_frag)
++{
++	int count;
++	struct page *page;
++
++	page = virt_to_page(pmd_frag);
++	/* drop all the pending references */
++	count = ((unsigned long)pmd_frag & ~PAGE_MASK) >> PMD_FRAG_SIZE_SHIFT;
++	/* We allow PTE_FRAG_NR fragments from a PTE page */
++	if (page_ref_sub_and_test(page, PMD_FRAG_NR - count)) {
++		pgtable_pmd_page_dtor(page);
++		free_unref_page(page);
++	}
++}
 +#endif
-+		pg = pte_alloc_kernel(pd, va);
- 	if (pg != 0) {
- 		err = 0;
- 		/* The PTE should never be already set nor present in the
++
++static inline void destroy_pagetable_page(struct mm_struct *mm)
++{
++#ifdef CONFIG_NEED_PAGE_FRAG
++	void *frag;
++
++#ifdef CONFIG_NEED_PTE_FRAG
++	frag = mm->context.pte_frag;
++	if (frag)
++		pte_frag_destroy(frag);
++#endif
++
++#ifdef CONFIG_NEED_PMD_FRAG
++	frag = mm->context.pmd_frag;
++	if (frag)
++		pmd_frag_destroy(frag);
++#endif
++#endif
++}
++
+ #endif /* __KERNEL__ */
+ #endif /* __ASM_POWERPC_MMU_CONTEXT_H */
+diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+index db7be0779d55..cd10564ff7df 100644
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -344,7 +344,7 @@ struct vm_area_struct;
+  */
+ typedef pte_t *pgtable_t;
+ #else
+-#if defined(CONFIG_PPC_64K_PAGES) && defined(CONFIG_PPC64)
++#if defined(CONFIG_NEED_PTE_FRAG)
+ typedef pte_t *pgtable_t;
+ #else
+ typedef struct page *pgtable_t;
+diff --git a/arch/powerpc/mm/mmu_context_book3s64.c b/arch/powerpc/mm/mmu_context_book3s64.c
+index f3d4b4a0e561..98e6906dbc7a 100644
+--- a/arch/powerpc/mm/mmu_context_book3s64.c
++++ b/arch/powerpc/mm/mmu_context_book3s64.c
+@@ -191,50 +191,6 @@ static void destroy_contexts(mm_context_t *ctx)
+ 	spin_unlock(&mmu_context_lock);
+ }
+ 
+-static void pte_frag_destroy(void *pte_frag)
+-{
+-	int count;
+-	struct page *page;
+-
+-	page = virt_to_page(pte_frag);
+-	/* drop all the pending references */
+-	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
+-	/* We allow PTE_FRAG_NR fragments from a PTE page */
+-	if (page_ref_sub_and_test(page, PTE_FRAG_NR - count)) {
+-		pgtable_page_dtor(page);
+-		free_unref_page(page);
+-	}
+-}
+-
+-static void pmd_frag_destroy(void *pmd_frag)
+-{
+-	int count;
+-	struct page *page;
+-
+-	page = virt_to_page(pmd_frag);
+-	/* drop all the pending references */
+-	count = ((unsigned long)pmd_frag & ~PAGE_MASK) >> PMD_FRAG_SIZE_SHIFT;
+-	/* We allow PTE_FRAG_NR fragments from a PTE page */
+-	if (page_ref_sub_and_test(page, PMD_FRAG_NR - count)) {
+-		pgtable_pmd_page_dtor(page);
+-		free_unref_page(page);
+-	}
+-}
+-
+-static void destroy_pagetable_page(struct mm_struct *mm)
+-{
+-	void *frag;
+-
+-	frag = mm->context.pte_frag;
+-	if (frag)
+-		pte_frag_destroy(frag);
+-
+-	frag = mm->context.pmd_frag;
+-	if (frag)
+-		pmd_frag_destroy(frag);
+-	return;
+-}
+-
+ void destroy_context(struct mm_struct *mm)
+ {
+ #ifdef CONFIG_SPAPR_TCE_IOMMU
+diff --git a/arch/powerpc/mm/pgtable-book3s64.c b/arch/powerpc/mm/pgtable-book3s64.c
+index abda2b92f1ba..6a0e0fb1f842 100644
+--- a/arch/powerpc/mm/pgtable-book3s64.c
++++ b/arch/powerpc/mm/pgtable-book3s64.c
+@@ -310,78 +310,6 @@ void pmd_fragment_free(unsigned long *pmd)
+ 	}
+ }
+ 
+-static pte_t *get_pte_from_cache(struct mm_struct *mm)
+-{
+-	void *pte_frag, *ret;
+-
+-	spin_lock(&mm->page_table_lock);
+-	ret = mm->context.pte_frag;
+-	if (ret) {
+-		pte_frag = ret + PTE_FRAG_SIZE;
+-		/*
+-		 * If we have taken up all the fragments mark PTE page NULL
+-		 */
+-		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
+-			pte_frag = NULL;
+-		mm->context.pte_frag = pte_frag;
+-	}
+-	spin_unlock(&mm->page_table_lock);
+-	return (pte_t *)ret;
+-}
+-
+-static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
+-{
+-	void *ret = NULL;
+-	struct page *page;
+-
+-	if (!kernel) {
+-		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
+-		if (!page)
+-			return NULL;
+-		if (!pgtable_page_ctor(page)) {
+-			__free_page(page);
+-			return NULL;
+-		}
+-	} else {
+-		page = alloc_page(PGALLOC_GFP);
+-		if (!page)
+-			return NULL;
+-	}
+-
+-
+-	ret = page_address(page);
+-	/*
+-	 * if we support only one fragment just return the
+-	 * allocated page.
+-	 */
+-	if (PTE_FRAG_NR == 1)
+-		return ret;
+-	spin_lock(&mm->page_table_lock);
+-	/*
+-	 * If we find pgtable_page set, we return
+-	 * the allocated page with single fragement
+-	 * count.
+-	 */
+-	if (likely(!mm->context.pte_frag)) {
+-		set_page_count(page, PTE_FRAG_NR);
+-		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
+-	}
+-	spin_unlock(&mm->page_table_lock);
+-
+-	return (pte_t *)ret;
+-}
+-
+-pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
+-{
+-	pte_t *pte;
+-
+-	pte = get_pte_from_cache(mm);
+-	if (pte)
+-		return pte;
+-
+-	return __alloc_for_ptecache(mm, kernel);
+-}
+-
+ void pte_fragment_free(unsigned long *table, int kernel)
+ {
+ 	struct page *page = virt_to_page(table);
+diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
+index 9f361ae571e9..3b3e51e9e431 100644
+--- a/arch/powerpc/mm/pgtable.c
++++ b/arch/powerpc/mm/pgtable.c
+@@ -264,3 +264,77 @@ unsigned long vmalloc_to_phys(void *va)
+ 	return __pa(pfn_to_kaddr(pfn)) + offset_in_page(va);
+ }
+ EXPORT_SYMBOL_GPL(vmalloc_to_phys);
++
++#ifdef CONFIG_NEED_PTE_FRAG
++static pte_t *get_pte_from_cache(struct mm_struct *mm)
++{
++	void *pte_frag, *ret;
++
++	spin_lock(&mm->page_table_lock);
++	ret = mm->context.pte_frag;
++	if (ret) {
++		pte_frag = ret + PTE_FRAG_SIZE;
++		/*
++		 * If we have taken up all the fragments mark PTE page NULL
++		 */
++		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
++			pte_frag = NULL;
++		mm->context.pte_frag = pte_frag;
++	}
++	spin_unlock(&mm->page_table_lock);
++	return (pte_t *)ret;
++}
++
++static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
++{
++	void *ret = NULL;
++	struct page *page;
++
++	if (!kernel) {
++		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
++		if (!page)
++			return NULL;
++		if (!pgtable_page_ctor(page)) {
++			__free_page(page);
++			return NULL;
++		}
++	} else {
++		page = alloc_page(PGALLOC_GFP);
++		if (!page)
++			return NULL;
++	}
++
++
++	ret = page_address(page);
++	/*
++	 * if we support only one fragment just return the
++	 * allocated page.
++	 */
++	if (PTE_FRAG_NR == 1)
++		return ret;
++	spin_lock(&mm->page_table_lock);
++	/*
++	 * If we find pgtable_page set, we return
++	 * the allocated page with single fragement
++	 * count.
++	 */
++	if (likely(!mm->context.pte_frag)) {
++		set_page_count(page, PTE_FRAG_NR);
++		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
++	}
++	spin_unlock(&mm->page_table_lock);
++
++	return (pte_t *)ret;
++}
++
++pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
++{
++	pte_t *pte;
++
++	pte = get_pte_from_cache(mm);
++	if (pte)
++		return pte;
++
++	return __alloc_for_ptecache(mm, kernel);
++}
++#endif
 diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-index cc892dcfa114..ac7cab9c28e8 100644
+index 09ed04377a98..ddccae5ed192 100644
 --- a/arch/powerpc/platforms/Kconfig.cputype
 +++ b/arch/powerpc/platforms/Kconfig.cputype
-@@ -323,6 +323,8 @@ config ARCH_ENABLE_HUGEPAGE_MIGRATION
- 	def_bool y
- 	depends on PPC_BOOK3S_64 && HUGETLB_PAGE && MIGRATION
+@@ -341,6 +341,21 @@ config PPC_MM_SLICES
+ 	default y if PPC_8xx && HUGETLB_PAGE
+ 	default n
  
-+config PPC_GUARDED_PAGE_IN_PMD
++config NEED_PAGE_FRAG
 +	bool
++
++config NEED_PTE_FRAG
++	bool
++	default y if PPC_BOOK3S_64
++	default n
++	select NEED_PAGE_FRAG
++
++config NEED_PMD_FRAG
++	bool
++	default y if PPC_BOOK3S_64
++	default n
++	select NEED_PAGE_FRAG
++
+ config PPC_HAVE_PMU_SUPPORT
+        bool
  
- config PPC_MMU_NOHASH
- 	def_bool y
 -- 
 2.13.3
