@@ -1,25 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967875AbeE2WQ4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:16:56 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:43439 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967788AbeE2WQp (ORCPT
+        id S967916AbeE2W1K (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:27:10 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42863 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967502AbeE2WQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:16:45 -0400
-X-Google-Smtp-Source: ADUXVKJ+xHvtb2UfGYj/Qm8yagmYDw6VL8cLgrarcmEy4Dyp8gh9RJSTbL/07ucRLArPmO4dQPX0eA==
+        Tue, 29 May 2018 18:16:47 -0400
+X-Google-Smtp-Source: ADUXVKIm+JwmqDDPN0aS9nBIZ0mQV8xxm8beahFGZT2RIVjMiznmh8UoErNeK6/TOanWtwVDsUTjEg==
 From: Thomas Garnier <thgarnie@google.com>
 To: kernel-hardening@lists.openwall.com
 Cc: Thomas Garnier <thgarnie@google.com>,
+        Skip Kees Cook <keescook@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 03/27] x86: Use symbol name in jump table for PIE support
-Date: Tue, 29 May 2018 15:15:04 -0700
-Message-Id: <20180529221625.33541-4-thgarnie@google.com>
+Subject: [PATCH v4 04/27] x86: Add macro to get symbol address for PIE support
+Date: Tue, 29 May 2018 15:15:05 -0700
+Message-Id: <20180529221625.33541-5-thgarnie@google.com>
 X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 In-Reply-To: <20180529221625.33541-1-thgarnie@google.com>
 References: <20180529221625.33541-1-thgarnie@google.com>
@@ -27,44 +29,26 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the %c constraint with %P. The %c is incompatible with PIE
-because it implies an immediate value whereas %P reference a symbol.
-
-Position Independent Executable (PIE) support will allow to extend the
-KASLR randomization range 0xffffffff80000000.
+Add a new _ASM_MOVABS macro to fetch a symbol address. It will be used
+to replace "_ASM_MOV $<symbol>, %dst" code construct that are not compatible
+with PIE.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
 ---
- arch/x86/include/asm/jump_label.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/asm.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index 8c0de4282659..dfdcdc39604a 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -37,9 +37,9 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
- 		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
- 		".pushsection __jump_table,  \"aw\" \n\t"
- 		_ASM_ALIGN "\n\t"
--		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
-+		_ASM_PTR "1b, %l[l_yes], %P0 \n\t"
- 		".popsection \n\t"
--		: :  "i" (key), "i" (branch) : : l_yes);
-+		: :  "X" (&((char *)key)[branch]) : : l_yes);
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 219faaec51df..4492a35fad69 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -30,6 +30,7 @@
+ #define _ASM_ALIGN	__ASM_SEL(.balign 4, .balign 8)
  
- 	return false;
- l_yes:
-@@ -53,9 +53,9 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
- 		"2:\n\t"
- 		".pushsection __jump_table,  \"aw\" \n\t"
- 		_ASM_ALIGN "\n\t"
--		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
-+		_ASM_PTR "1b, %l[l_yes], %P0 \n\t"
- 		".popsection \n\t"
--		: :  "i" (key), "i" (branch) : : l_yes);
-+		: :  "X" (&((char *)key)[branch]) : : l_yes);
- 
- 	return false;
- l_yes:
+ #define _ASM_MOV	__ASM_SIZE(mov)
++#define _ASM_MOVABS	__ASM_SEL(movl, movabsq)
+ #define _ASM_INC	__ASM_SIZE(inc)
+ #define _ASM_DEC	__ASM_SIZE(dec)
+ #define _ASM_ADD	__ASM_SIZE(add)
 -- 
 2.17.0.921.gf22659ad46-goog
