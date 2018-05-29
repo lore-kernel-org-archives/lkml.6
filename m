@@ -1,55 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933108AbeE2KCA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:02:00 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:59786 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933079AbeE2KBx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:01:53 -0400
-Message-ID: <1527588104.6955.10.camel@sipsolutions.net>
-Subject: Re: [PATCH] mac80211_hwsim: add error check to call to
- rhashtable_init
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Colin King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 29 May 2018 12:01:44 +0200
-In-Reply-To: <20180529100049.up6wzjkzmd5a3v2q@mwanda>
-References: <20180529091412.8530-1-colin.king@canonical.com>
-         <1527585428.6955.7.camel@sipsolutions.net>
-         <20180529100049.up6wzjkzmd5a3v2q@mwanda>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S933123AbeE2KCJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:02:09 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36486 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933026AbeE2KCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 06:02:04 -0400
+Date: Tue, 29 May 2018 11:02:00 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: YaoJun <yaojun8558363@gmail.com>
+Cc: kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+Subject: Re: [PATCH] mark tramp_pg_dir read-only
+Message-ID: <20180529100200.ntfppwx4i26arwa5@lakrids.cambridge.arm.com>
+References: <20180529091609.9830-1-yaojun8558363@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529091609.9830-1-yaojun8558363@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-29 at 13:00 +0300, Dan Carpenter wrote:
-> On Tue, May 29, 2018 at 11:17:08AM +0200, Johannes Berg wrote:
-> > On Tue, 2018-05-29 at 10:14 +0100, Colin King wrote:
-> > > 
-> > > @@ -3573,7 +3573,9 @@ static int __init init_mac80211_hwsim(void)
-> > >  	hwsim_wq = alloc_workqueue("hwsim_wq", 0, 0);
-> > >  	if (!hwsim_wq)
-> > >  		return -ENOMEM;
-> > > -	rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
-> > > +	err = rhashtable_init(&hwsim_radios_rht, &hwsim_rht_params);
-> > > +	if (err)
-> > > +		return err;
-> > 
-> > That's missing a workqueue free, but I can fix that while applying if
-> > you prefer.
-> > 
+Hi,
+
+For patches to arm64, please CC the arm64 maintainers, and the
+linux-arm-kernel mailing list.
+
+Generally, please try to follow the guidance of
+Documentation/process/submitting-patches.rst
+
+e.g. you can use get_maintainer.pl to figure out who to Cc:
+
+[mark@lakrids:~/src/linux]% ./scripts/get_maintainer.pl arch/arm64/mm/mmu.c
+Catalin Marinas <catalin.marinas@arm.com> (maintainer:ARM64 PORT (AARCH64 ARCHITECTURE),commit_signer:8/16=50%)
+Will Deacon <will.deacon@arm.com> (maintainer:ARM64 PORT (AARCH64 ARCHITECTURE),commit_signer:9/16=56%,authored:6/16=38%,added_lines:205/242=85%,removed_lines:142/157=90%)
+Ard Biesheuvel <ard.biesheuvel@linaro.org> (commit_signer:5/16=31%)
+Marc Zyngier <marc.zyngier@arm.com> (commit_signer:4/16=25%)
+Dan Williams <dan.j.williams@intel.com> (commit_signer:2/16=12%)
+Kristina Martsenko <kristina.martsenko@arm.com> (authored:2/16=12%)
+James Morse <james.morse@arm.com> (authored:2/16=12%)
+Tobias Klauser <tklauser@distanz.ch> (authored:1/16=6%)
+Steve Capper <steve.capper@arm.com> (authored:1/16=6%)
+linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT (AARCH64 ARCHITECTURE))
+linux-kernel@vger.kernel.org (open list)
+
+Thanks,
+Mark.
+
+On Tue, May 29, 2018 at 05:16:09PM +0800, YaoJun wrote:
+> To prevent KSMA(Kernel Space Mirroring Attack), it's necessary
+> to set tramp_pg_dir read-only after initialization.
 > 
-> And we don't free the hashtable on error either.
-
-Heh. Ok, I guess I'll make a whole new commit to fix up all the things
-here.
-
-johannes
+> ---
+>  arch/arm64/mm/mmu.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 2dbb2c9f1ec1..964520e4e675 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -551,6 +551,9 @@ static int __init map_entry_trampoline(void)
+>  	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
+>  			     prot, pgd_pgtable_alloc, 0);
+>  
+> +	update_mapping_prot(__pa_symbol(tramp_pg_dir), (unsigned long)tramp_pg_dir,
+> +			    PGD_SIZE, PAGE_KERNEL_RO);
+> +
+>  	/* Map both the text and data into the kernel page table */
+>  	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
+>  	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
+> -- 
+> 2.17.0
+> 
