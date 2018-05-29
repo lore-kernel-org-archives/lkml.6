@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964860AbeE2OuL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:50:11 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:36449 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936648AbeE2Oqn (ORCPT
+        id S964901AbeE2Oum (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:50:42 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54341 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936639AbeE2Oqk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:46:43 -0400
-X-Google-Smtp-Source: ADUXVKJ9Zvyh5Rp7ONzSTIyjEvfF3E0Kd14Ery/TSY4WtW4IeNFIgoOls4Tl0myYqqFFD+fnDiTHTg==
+        Tue, 29 May 2018 10:46:40 -0400
+X-Google-Smtp-Source: ADUXVKKBHtH6nlm7hGsEnNqY4+gibvYi9kQqajzpvcBmboW9aNWrHiLxjxUv5wUQgNI5K/Ims6RuLQ==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 22/28] ovl: Set redirect on metacopy files upon rename
-Date: Tue, 29 May 2018 16:46:06 +0200
-Message-Id: <20180529144612.16675-23-mszeredi@redhat.com>
+Subject: [PATCH 20/28] ovl: Add an inode flag OVL_CONST_INO
+Date: Tue, 29 May 2018 16:46:04 +0200
+Message-Id: <20180529144612.16675-21-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
 References: <20180529144612.16675-1-mszeredi@redhat.com>
@@ -23,118 +23,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vivek Goyal <vgoyal@redhat.com>
 
-Set redirect on metacopy files upon rename.  This will help find data
-dentry in lower dirs.
+Add an ovl_inode flag OVL_CONST_INO.  This flag signifies if inode number
+will remain constant over copy up or not.  This flag does not get updated
+over copy up and remains unmodifed after setting once.
 
+Next patch in the series will make use of this flag.  It will basically
+figure out if dentry is of type ORIGIN or not.  And this can be derived by
+this flag.
+
+ORIGIN = (upperdentry && ovl_test_flag(OVL_CONST_INO, inode)).
+
+Suggested-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/dir.c | 66 +++++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 46 insertions(+), 20 deletions(-)
+ fs/overlayfs/inode.c     | 3 +++
+ fs/overlayfs/overlayfs.h | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 8d8e063e4706..1658961a9762 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -873,13 +873,13 @@ static bool ovl_can_move(struct dentry *dentry)
- 		!d_is_dir(dentry) || !ovl_type_merge_or_lower(dentry);
- }
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index d4e643e9098b..ac1d2a581a6e 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -883,6 +883,9 @@ struct inode *ovl_get_inode(struct super_block *sb,
  
--static char *ovl_get_redirect(struct dentry *dentry, bool samedir)
-+static char *ovl_get_redirect(struct dentry *dentry, bool abs_redirect)
- {
- 	char *buf, *ret;
- 	struct dentry *d, *tmp;
- 	int buflen = ovl_redirect_max + 1;
+ 	OVL_I(inode)->redirect = oip->redirect;
  
--	if (samedir) {
-+	if (!abs_redirect) {
- 		ret = kstrndup(dentry->d_name.name, dentry->d_name.len,
- 			       GFP_KERNEL);
- 		goto out;
-@@ -933,15 +933,43 @@ static char *ovl_get_redirect(struct dentry *dentry, bool samedir)
- 	return ret ? ret : ERR_PTR(-ENOMEM);
- }
- 
-+static bool ovl_need_absolute_redirect(struct dentry *dentry, bool samedir)
-+{
-+	struct dentry *lowerdentry;
++	if (bylower)
++		ovl_set_flag(OVL_CONST_INO, inode);
 +
-+	if (!samedir)
-+		return true;
-+
-+	if (d_is_dir(dentry))
-+		return false;
-+
-+	/*
-+	 * For non-dir hardlinked files, we need absolute redirects
-+	 * in general as two upper hardlinks could be in different
-+	 * dirs. We could put a relative redirect now and convert
-+	 * it to absolute redirect later. But when nlink > 1 and
-+	 * indexing is on, that means relative redirect needs to be
-+	 * converted to absolute during copy up of another lower
-+	 * hardllink as well.
-+	 *
-+	 * So without optimizing too much, just check if lower is
-+	 * a hard link or not. If lower is hard link, put absolute
-+	 * redirect.
-+	 */
-+	lowerdentry = ovl_dentry_lower(dentry);
-+	return (d_inode(lowerdentry)->i_nlink > 1);
-+}
-+
- static int ovl_set_redirect(struct dentry *dentry, bool samedir)
- {
- 	int err;
- 	const char *redirect = ovl_dentry_get_redirect(dentry);
-+	bool absolute_redirect = ovl_need_absolute_redirect(dentry, samedir);
+ 	/* Check for non-merge dir that may have whiteouts */
+ 	if (is_dir) {
+ 		if (((upperdentry && lowerdentry) || oip->numlower > 1) ||
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index dcd600201ec8..bde352e414e7 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -38,6 +38,8 @@ enum ovl_inode_flag {
+ 	OVL_WHITEOUTS,
+ 	OVL_INDEX,
+ 	OVL_UPPERDATA,
++	/* Inode number will remain constant over copy up. */
++	OVL_CONST_INO,
+ };
  
--	if (redirect && (samedir || redirect[0] == '/'))
-+	if (redirect && (!absolute_redirect || redirect[0] == '/'))
- 		return 0;
- 
--	redirect = ovl_get_redirect(dentry, samedir);
-+	redirect = ovl_get_redirect(dentry, absolute_redirect);
- 	if (IS_ERR(redirect))
- 		return PTR_ERR(redirect);
- 
-@@ -1117,22 +1145,20 @@ static int ovl_rename(struct inode *olddir, struct dentry *old,
- 		goto out_dput;
- 
- 	err = 0;
--	if (is_dir) {
--		if (ovl_type_merge_or_lower(old))
--			err = ovl_set_redirect(old, samedir);
--		else if (!old_opaque && ovl_type_merge(new->d_parent))
--			err = ovl_set_opaque_xerr(old, olddentry, -EXDEV);
--		if (err)
--			goto out_dput;
--	}
--	if (!overwrite && new_is_dir) {
--		if (ovl_type_merge_or_lower(new))
--			err = ovl_set_redirect(new, samedir);
--		else if (!new_opaque && ovl_type_merge(old->d_parent))
--			err = ovl_set_opaque_xerr(new, newdentry, -EXDEV);
--		if (err)
--			goto out_dput;
--	}
-+	if (ovl_type_merge_or_lower(old))
-+		err = ovl_set_redirect(old, samedir);
-+	else if (is_dir && !old_opaque && ovl_type_merge(new->d_parent))
-+		err = ovl_set_opaque_xerr(old, olddentry, -EXDEV);
-+	if (err)
-+		goto out_dput;
-+
-+	if (!overwrite && ovl_type_merge_or_lower(new))
-+		err = ovl_set_redirect(new, samedir);
-+	else if (!overwrite && new_is_dir && !new_opaque &&
-+		 ovl_type_merge(old->d_parent))
-+		err = ovl_set_opaque_xerr(new, newdentry, -EXDEV);
-+	if (err)
-+		goto out_dput;
- 
- 	err = ovl_do_rename(old_upperdir->d_inode, olddentry,
- 			    new_upperdir->d_inode, newdentry, flags);
+ enum ovl_entry_flag {
 -- 
 2.14.3
