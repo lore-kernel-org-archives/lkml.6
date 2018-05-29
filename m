@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966108AbeE2STO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 14:19:14 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35315 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937033AbeE2SSU (ORCPT
+        id S965995AbeE2STH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 14:19:07 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:33652 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937018AbeE2SSX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 14:18:20 -0400
-X-Google-Smtp-Source: ADUXVKKjt0KDKNKLGj5i22DdJzBmzqxHpiXgLRJQff7pGGsdO9RXeLqCDjPluOf+vt/dQHZNQ2Zl1g==
+        Tue, 29 May 2018 14:18:23 -0400
+X-Google-Smtp-Source: AB8JxZoMFwn0IEmMEFb9rOVbsu5oX68FcaGCvBeqKrxi9B4wunJjQTBNlqref7RD4HyhAjNopNFmtw==
 From: Evan Green <evgreen@chromium.org>
 To: Vinayak Holikatti <vinholikatti@gmail.com>,
         "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
@@ -16,9 +16,9 @@ To: Vinayak Holikatti <vinholikatti@gmail.com>,
         linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
 Cc: Gwendal Grignou <gwendal@chromium.org>,
         Evan Green <evgreen@chromium.org>
-Subject: [PATCH 5/7] scsi: ufs: Refactor descriptor read for write
-Date: Tue, 29 May 2018 11:17:38 -0700
-Message-Id: <20180529181740.195362-6-evgreen@chromium.org>
+Subject: [PATCH 7/7] scsi: ufs: Update config descriptor documentation
+Date: Tue, 29 May 2018 11:17:40 -0700
+Message-Id: <20180529181740.195362-8-evgreen@chromium.org>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180529181740.195362-1-evgreen@chromium.org>
 References: <20180529181740.195362-1-evgreen@chromium.org>
@@ -26,204 +26,153 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change refactors the ufshcd_read_desc_param function into
-one that can both read and write descriptors. Most of the low-level
-plumbing for writing to descriptors was already there, this change
-simply enables that code path, and manages the incoming data buffer
-appropriately.
+This change updates the sysfs documentation for the UFS config
+descriptor, now that config descriptor fields are writable.
 
 Signed-off-by: Evan Green <evgreen@chromium.org>
 ---
- drivers/scsi/ufs/ufs-sysfs.c |  4 +-
- drivers/scsi/ufs/ufshcd.c    | 89 ++++++++++++++++++++++++++++++++------------
- drivers/scsi/ufs/ufshcd.h    | 13 ++++---
- 3 files changed, 74 insertions(+), 32 deletions(-)
+ Documentation/ABI/testing/sysfs-driver-ufs | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-index 51bf54e6b47a..623c56074572 100644
---- a/drivers/scsi/ufs/ufs-sysfs.c
-+++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -227,8 +227,8 @@ static ssize_t ufs_sysfs_read_desc_param(struct ufs_hba *hba,
- 	if (param_size > 8)
- 		return -EINVAL;
+diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
+index da154a0d4b4f..d11b0a91f4b2 100644
+--- a/Documentation/ABI/testing/sysfs-driver-ufs
++++ b/Documentation/ABI/testing/sysfs-driver-ufs
+@@ -244,7 +244,6 @@ Description:	This file shows whether or not the UFS boot feature is enabled.
+ 		This is one of the UFS configuration descriptor parameters.
+ 		More information about the descriptor can be found in the UFS
+ 		2.1 specification.
+-		The file is read only.
  
--	ret = ufshcd_read_desc_param(hba, desc_id, desc_index,
--				param_offset, desc_buf, param_size);
-+	ret = ufshcd_rw_desc_param(hba, UPIU_QUERY_OPCODE_READ_DESC, desc_id,
-+				desc_index, param_offset, desc_buf, param_size);
- 	if (ret)
- 		return -EINVAL;
- 	switch (param_size) {
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 00e79057f870..6a5939fb5da3 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -3004,22 +3004,24 @@ int ufshcd_map_desc_id_to_length(struct ufs_hba *hba,
- EXPORT_SYMBOL(ufshcd_map_desc_id_to_length);
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_descriptor_access_enable
+ Date:		May 2018
+@@ -254,7 +253,6 @@ Description:	This file shows whether or not access will be permitted to the
+ 		boot sequence. This is one of the UFS configuration descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
  
- /**
-- * ufshcd_read_desc_param - read the specified descriptor parameter
-+ * ufshcd_rw_desc_param - read or write the specified descriptor parameter
-  * @hba: Pointer to adapter instance
-+ * @opcode: indicates whether to read or write
-  * @desc_id: descriptor idn value
-  * @desc_index: descriptor index
-- * @param_offset: offset of the parameter to read
-- * @param_read_buf: pointer to buffer where parameter would be read
-- * @param_size: sizeof(param_read_buf)
-+ * @param_offset: offset of the parameter to read or write
-+ * @param_buf: pointer to buffer to be read or written
-+ * @param_size: sizeof(param_buf)
-  *
-  * Return 0 in case of success, non-zero otherwise
-  */
--int ufshcd_read_desc_param(struct ufs_hba *hba,
--			   enum desc_idn desc_id,
--			   int desc_index,
--			   u8 param_offset,
--			   u8 *param_read_buf,
--			   u8 param_size)
-+int ufshcd_rw_desc_param(struct ufs_hba *hba,
-+			 enum query_opcode opcode,
-+			 enum desc_idn desc_id,
-+			 int desc_index,
-+			 u8 param_offset,
-+			 u8 *param_buf,
-+			 u8 param_size)
- {
- 	int ret;
- 	u8 *desc_buf;
-@@ -3042,24 +3044,57 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
- 		return ret;
- 	}
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_high_priority_lun
+ Date:		May 2018
+@@ -263,7 +261,6 @@ Description:	This file shows the identifier of the high priority logical
+ 		unit. This is one of the UFS configuration descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
  
-+	if (param_offset > buff_len)
-+		return 0;
-+
- 	/* Check whether we need temp memory */
- 	if (param_offset != 0 || param_size < buff_len) {
--		desc_buf = kmalloc(buff_len, GFP_KERNEL);
-+		desc_buf = kzalloc(buff_len, GFP_KERNEL);
- 		if (!desc_buf)
- 			return -ENOMEM;
-+
-+		/* If it's a write, first read the complete descriptor, then
-+		 * copy in the parts being changed.
-+		 */
-+		if (opcode == UPIU_QUERY_OPCODE_WRITE_DESC) {
-+			if ((int)param_offset + (int)param_size > buff_len) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+
-+			ret = ufshcd_query_descriptor_retry(hba,
-+						UPIU_QUERY_OPCODE_READ_DESC,
-+						desc_id, desc_index, 0,
-+						desc_buf, &buff_len);
-+
-+			if (ret) {
-+				dev_err(hba->dev,
-+					"%s: Failed reading descriptor. desc_id %d, desc_index %d, param_offset %d, ret %d",
-+					__func__, desc_id, desc_index,
-+					param_offset, ret);
-+
-+				goto out;
-+			}
-+
-+			memcpy(desc_buf + param_offset, param_buf, param_size);
-+		}
-+
- 	} else {
--		desc_buf = param_read_buf;
-+		desc_buf = param_buf;
- 		is_kmalloc = false;
- 	}
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_init_active_icc_level
+ Date:		May 2018
+@@ -272,7 +269,6 @@ Description:	This file shows the ICC level in active mode after device
+ 		initialization or hardware reset. This is one of the UFS
+ 		configuration descriptor parameters. More information about the
+ 		descriptor can be found in the UFS 2.1 specification.
+-		The file is read only.
  
--	/* Request for full descriptor */
--	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
-+	/* Read or write the entire descriptor. */
-+	ret = ufshcd_query_descriptor_retry(hba, opcode,
- 					desc_id, desc_index, 0,
- 					desc_buf, &buff_len);
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_initial_power_mode
+ Date:		May 2018
+@@ -281,7 +277,6 @@ Description:	This file shows the power mode after device initialization or
+ 		hardware reset. This is one of the UFS configuration descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
  
- 	if (ret) {
--		dev_err(hba->dev, "%s: Failed reading descriptor. desc_id %d, desc_index %d, param_offset %d, ret %d",
--			__func__, desc_id, desc_index, param_offset, ret);
-+		dev_err(hba->dev, "%s: Failed %s descriptor. desc_id %d, desc_index %d, param_offset %d, ret %d",
-+			__func__,
-+			opcode == UPIU_QUERY_OPCODE_READ_DESC ?
-+			"reading" : "writing",
-+			desc_id, desc_index, param_offset, ret);
- 		goto out;
- 	}
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_number_of_luns
+ Date:		May 2018
+@@ -290,7 +285,6 @@ Description:	This file shows the number of logical units that the device will
+ 		support. This is one of the UFS configuration descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
  
-@@ -3071,12 +3106,16 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
- 		goto out;
- 	}
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_periodic_rtc_update
+ Date:		May 2018
+@@ -299,7 +293,6 @@ Description:	This file shows the frequency and method of real time clock
+ 		updates. This is one of the UFS configuration descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
  
--	/* Check wherher we will not copy more data, than available */
--	if (is_kmalloc && param_size > buff_len)
--		param_size = buff_len;
-+	/* Copy data to the output. The offset is already validated to be
-+	 * within the buffer.
-+	 */
-+	if (is_kmalloc && (opcode == UPIU_QUERY_OPCODE_READ_DESC)) {
-+		if ((int)param_offset + (int)param_size > buff_len)
-+			param_size = buff_len - param_offset;
-+
-+		memcpy(param_buf, &desc_buf[param_offset], param_size);
-+	}
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_secure_removal_type
+ Date:		May 2018
+@@ -308,7 +301,6 @@ Description:	This file shows the secure removal type of the UFS device. This
+ 		is one of the UFS configuration descriptor parameters. More
+ 		information about the descriptor can be found in the UFS 2.1
+ 		specification.
+-		The file is read only.
  
--	if (is_kmalloc)
--		memcpy(param_read_buf, &desc_buf[param_offset], param_size);
- out:
- 	if (is_kmalloc)
- 		kfree(desc_buf);
-@@ -3089,7 +3128,8 @@ static inline int ufshcd_read_desc(struct ufs_hba *hba,
- 				   u8 *buf,
- 				   u32 size)
- {
--	return ufshcd_read_desc_param(hba, desc_id, desc_index, 0, buf, size);
-+	return ufshcd_rw_desc_param(hba, UPIU_QUERY_OPCODE_READ_DESC, desc_id,
-+					desc_index, 0, buf, size);
- }
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/cfg_unit
+ Date:		May 2018
+@@ -327,7 +319,6 @@ Description:	This file shows the number of allocation units assigned to the
+ 		being displayed. This is one of the UFS configuration unit
+ 		descriptor parameters. More information about the descriptor
+ 		can be found in the UFS 2.1 specification.
+-		The file is read only.
  
- static inline int ufshcd_read_power_desc(struct ufs_hba *hba,
-@@ -3195,8 +3235,9 @@ static inline int ufshcd_read_unit_desc_param(struct ufs_hba *hba,
- 	if (!ufs_is_valid_unit_desc_lun(lun))
- 		return -EOPNOTSUPP;
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_boot_lun_id
+ Date:		May 2018
+@@ -338,7 +329,6 @@ Description:	This file shows the boot LUN ID for this logical unit,
+ 		This is one of the UFS configuration unit descriptor parameters.
+ 		More information about the descriptor can be found in the UFS
+ 		2.1 specification.
+-		The file is read only.
  
--	return ufshcd_read_desc_param(hba, QUERY_DESC_IDN_UNIT, lun,
--				      param_offset, param_read_buf, param_size);
-+	return ufshcd_rw_desc_param(hba, UPIU_QUERY_OPCODE_READ_DESC,
-+				    QUERY_DESC_IDN_UNIT, lun, param_offset,
-+				    param_read_buf, param_size);
- }
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_context_capabilities
+ Date:		May 2018
+@@ -348,7 +338,6 @@ Description:	This file shows the context capabilities for the logical unit.
+ 		being displayed. This is one of the UFS configuration unit
+ 		descriptor parameters. More information about the descriptor
+ 		can be found in the UFS 2.1 specification.
+-		The file is read only.
  
- /**
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index fb6dcc490f21..ebbd9d580c4b 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -853,12 +853,13 @@ int ufshcd_query_descriptor_retry(struct ufs_hba *hba,
- 				  enum desc_idn idn, u8 index,
- 				  u8 selector,
- 				  u8 *desc_buf, int *buf_len);
--int ufshcd_read_desc_param(struct ufs_hba *hba,
--			   enum desc_idn desc_id,
--			   int desc_index,
--			   u8 param_offset,
--			   u8 *param_read_buf,
--			   u8 param_size);
-+int ufshcd_rw_desc_param(struct ufs_hba *hba,
-+			 enum query_opcode opcode,
-+			 enum desc_idn desc_id,
-+			 int desc_index,
-+			 u8 param_offset,
-+			 u8 *param_read_buf,
-+			 u8 param_size);
- int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
- 		      enum attr_idn idn, u8 index, u8 selector, u32 *attr_val);
- int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_data_reliability
+ Date:		May 2018
+@@ -358,7 +347,6 @@ Description:	This file shows the data reliability for the logical unit.
+ 		being displayed. This is one of the UFS configuration unit
+ 		descriptor parameters. More information about the descriptor
+ 		can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_logical_block_size
+ Date:		May 2018
+@@ -368,7 +356,6 @@ Description:	This file shows the logical block size for the logical unit as
+ 		being displayed. This is one of the UFS configuration unit
+ 		descriptor parameters. More information about the descriptor
+ 		can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_lu_enable
+ Date:		May 2018
+@@ -378,7 +365,6 @@ Description:	This file shows whether or not the logical unit is enabled.
+ 		being displayed. This is one of the UFS configuration unit
+ 		descriptor parameters. More information about the descriptor
+ 		can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_lu_write_protect
+ Date:		May 2018
+@@ -388,7 +374,6 @@ Description:	This file shows the write protect status for the logical unit.
+ 		being displayed. This is one of the UFS configuration unit
+ 		descriptor parameters. More information about the descriptor
+ 		can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_memory_type
+ Date:		May 2018
+@@ -398,7 +383,6 @@ Description:	This file shows the memory type for the logical unit.
+ 		being displayed. This is one of the UFS configuration unit
+ 		descriptor parameters. More information about the descriptor
+ 		can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit_provisioning_type
+ Date:		May 2018
+@@ -408,7 +392,6 @@ Description:	This file shows the provisioning type information for the
+ 		being displayed. This is one of the UFS configuration unit
+ 		descriptor parameters. More information about the descriptor
+ 		can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/interconnect_descriptor/unipro_version
 -- 
 2.13.5
