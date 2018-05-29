@@ -1,100 +1,197 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968149AbeE2Xko (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 19:40:44 -0400
-Received: from ozlabs.org ([203.11.71.1]:45181 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967772AbeE2Xkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 19:40:43 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 30 May 2018 09:40:40 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Russell King <rmk@armlinux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Doug Berger <opendmb@gmail.com>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Message-ID: <20180530094040.5fa6dcdd@canb.auug.org.au>
+        id S1755282AbeE2Xmi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 19:42:38 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:33959 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755165AbeE2Xmf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 19:42:35 -0400
+X-Google-Smtp-Source: ADUXVKJ4DboUIujZ46mcWW23XZ8x6gpZnYSerWk/Z7rbdaLQm3lpml6BBkSJejPT1d585eq+i6DDaAs+V5lMde8vzz8=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/oa+IXDveZvT0czFmcgKEI11"; protocol="application/pgp-signature"
+In-Reply-To: <1527632665-25707-3-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1527632665-25707-1-git-send-email-eajames@linux.vnet.ibm.com> <1527632665-25707-3-git-send-email-eajames@linux.vnet.ibm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 30 May 2018 02:42:34 +0300
+Message-ID: <CAHp75VexBiRQ1SPYK6=N-vmCAC9DhtpNKanYXrFshSM9WZb+UA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/7] drivers/i2c: Add FSI-attached I2C master algorithm
+To: Eddie James <eajames@linux.vnet.ibm.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Edward A. James" <eajames@us.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/oa+IXDveZvT0czFmcgKEI11
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 30, 2018 at 1:24 AM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+> From: "Edward A. James" <eajames@us.ibm.com>
+>
+> Add register definitions for FSI-attached I2C master and functions to
+> access those registers over FSI. Add an FSI driver so that our I2C bus
+> is probed up during an FSI scan.
 
-Hi all,
+This looks like reinventing a wheel in some ways.
 
-Today's linux-next merge of the arm-soc tree got a conflict in:
+See my comments below.
 
-  arch/arm/include/asm/cputype.h
+> +/*
+> + * Copyright 2017 IBM Corporation
+> + *
+> + * Eddie James <eajames@us.ibm.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * as published by the Free Software Foundation; either version
+> + * 2 of the License, or (at your option) any later version.
+> + */
 
-between commit:
+We are using SPDX identifiers. Can you?
 
-  1067a8130b17 ("ARM: add more CPU part numbers for Cortex and Brahma B15 C=
-PUs")
+> +/* Find left shift from first set bit in m */
+> +#define MASK_TO_LSH(m)         (__builtin_ffsll(m) - 1ULL)
 
-from the arm tree and commits:
+Oh. What about GENMASK()?
 
-  9e35ddc962a6 ("ARM: add Broadcom Brahma-B53 main ID definition")
-  842fa17d6c95 ("ARM: add Broadcom Brahma-B15 main ID definition")
+> +/* Extract field m from v */
+> +#define GETFIELD(m, v)         (((v) & (m)) >> MASK_TO_LSH(m))
+> +
+> +/* Set field m of v to val */
+> +#define SETFIELD(m, v, val)    \
+> +       (((v) & ~(m)) | ((((typeof(v))(val)) << MASK_TO_LSH(m)) & (m)))
 
-from the arm-soc tree.
+Oh, what about https://elixir.bootlin.com/linux/latest/source/include/linux/bitfield.h
+?
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+> +#define I2C_CMD_WITH_START     0x80000000
+> +#define I2C_CMD_WITH_ADDR      0x40000000
+> +#define I2C_CMD_RD_CONT                0x20000000
+> +#define I2C_CMD_WITH_STOP      0x10000000
+> +#define I2C_CMD_FORCELAUNCH    0x08000000
 
---=20
-Cheers,
-Stephen Rothwell
+BIT() ?
 
-diff --cc arch/arm/include/asm/cputype.h
-index 26021980504d,d1b62ee69f3b..000000000000
---- a/arch/arm/include/asm/cputype.h
-+++ b/arch/arm/include/asm/cputype.h
-@@@ -77,15 -75,11 +75,16 @@@
-  #define ARM_CPU_PART_CORTEX_A12		0x4100c0d0
-  #define ARM_CPU_PART_CORTEX_A17		0x4100c0e0
-  #define ARM_CPU_PART_CORTEX_A15		0x4100c0f0
- +#define ARM_CPU_PART_CORTEX_A53		0x4100d030
- +#define ARM_CPU_PART_CORTEX_A57		0x4100d070
- +#define ARM_CPU_PART_CORTEX_A72		0x4100d080
- +#define ARM_CPU_PART_CORTEX_A73		0x4100d090
- +#define ARM_CPU_PART_CORTEX_A75		0x4100d0a0
-  #define ARM_CPU_PART_MASK		0xff00fff0
- =20
-- /* Broadcom cores */
-+ /* Broadcom implemented processors */
-  #define ARM_CPU_PART_BRAHMA_B15		0x420000f0
-+ #define ARM_CPU_PART_BRAHMA_B53		0x42001000
- =20
-  /* DEC implemented cores */
-  #define ARM_CPU_PART_SA1100		0x4400a110
+> +#define I2C_CMD_ADDR           0x00fe0000
+> +#define I2C_CMD_READ           0x00010000
 
---Sig_/oa+IXDveZvT0czFmcgKEI11
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+GENMASK()? Though precisely here it might be good to leave explicit values.
 
------BEGIN PGP SIGNATURE-----
+> +#define I2C_CMD_LEN            0x0000ffff
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsN5PgACgkQAVBC80lX
-0Gx81QgAgJ03X4xrOqGH1jZFJVvCz5nIAKT76vu841k/k/OiJV7o5o4j7ahN+9hr
-DVIFUNA5legOjkCgkWRZboPlUPu9nnOeJfrHFgHGE03u82D3UOddeUBHpFlSOaL1
-B7zej2NWFsIS6HuLRCAVuOY9Qj0DfdFtr+dLEg60AqMw2vtKEnbaTvoJb7Wo0AOx
-AJCMiaxH2CEvWlLvZkwdR7UJDZd3EwO+Qsi2XPoK1Ag4IZRJISeoBPlQZV/sBx/B
-kDyYLKqz7Dx+Io5KpsT3M9VCHI5C9tHPTe/ahlbvnXopJRzDEr77cZkfj1xm0Rb6
-0WVSKgPNcoXDRTC68K7gGIaRKwDkLQ==
-=DVNz
------END PGP SIGNATURE-----
+> +#define I2C_MODE_CLKDIV                0xffff0000
+> +#define I2C_MODE_PORT          0x0000fc00
+> +#define I2C_MODE_ENHANCED      0x00000008
+> +#define I2C_MODE_DIAG          0x00000004
+> +#define I2C_MODE_PACE_ALLOW    0x00000002
+> +#define I2C_MODE_WRAP          0x00000001
 
---Sig_/oa+IXDveZvT0czFmcgKEI11--
+What are they? Masks? Bit fields? Just plain numbers?
+
+> +#define I2C_WATERMARK_HI       0x0000f000
+> +#define I2C_WATERMARK_LO       0x000000f0
+
+GENMASK() ?
+
+> +#define I2C_INT_INV_CMD                0x00008000
+> +#define I2C_INT_PARITY         0x00004000
+> +#define I2C_INT_BE_OVERRUN     0x00002000
+> +#define I2C_INT_BE_ACCESS      0x00001000
+> +#define I2C_INT_LOST_ARB       0x00000800
+> +#define I2C_INT_NACK           0x00000400
+> +#define I2C_INT_DAT_REQ                0x00000200
+> +#define I2C_INT_CMD_COMP       0x00000100
+> +#define I2C_INT_STOP_ERR       0x00000080
+> +#define I2C_INT_BUSY           0x00000040
+> +#define I2C_INT_IDLE           0x00000020
+
+BIT()
+
+> +#define I2C_INT_ENABLE         0x0000ff80
+> +#define I2C_INT_ERR            0x0000fcc0
+
+> +#define I2C_STAT_INV_CMD       0x80000000
+> +#define I2C_STAT_PARITY                0x40000000
+> +#define I2C_STAT_BE_OVERRUN    0x20000000
+> +#define I2C_STAT_BE_ACCESS     0x10000000
+> +#define I2C_STAT_LOST_ARB      0x08000000
+> +#define I2C_STAT_NACK          0x04000000
+> +#define I2C_STAT_DAT_REQ       0x02000000
+> +#define I2C_STAT_CMD_COMP      0x01000000
+> +#define I2C_STAT_STOP_ERR      0x00800000
+> +#define I2C_STAT_MAX_PORT      0x000f0000
+> +#define I2C_STAT_ANY_INT       0x00008000
+> +#define I2C_STAT_SCL_IN                0x00000800
+> +#define I2C_STAT_SDA_IN                0x00000400
+> +#define I2C_STAT_PORT_BUSY     0x00000200
+> +#define I2C_STAT_SELF_BUSY     0x00000100
+
+BIT()
+
+> +#define I2C_STAT_FIFO_COUNT    0x000000ff
+
+GENMASK()
+
+> +
+> +#define I2C_STAT_ERR           0xfc800000
+> +#define I2C_STAT_ANY_RESP      0xff800000
+
+> +#define I2C_ESTAT_FIFO_SZ      0xff000000
+
+GENMASK()
+
+> +#define I2C_ESTAT_SCL_IN_SY    0x00008000
+> +#define I2C_ESTAT_SDA_IN_SY    0x00004000
+> +#define I2C_ESTAT_S_SCL                0x00002000
+> +#define I2C_ESTAT_S_SDA                0x00001000
+> +#define I2C_ESTAT_M_SCL                0x00000800
+> +#define I2C_ESTAT_M_SDA                0x00000400
+> +#define I2C_ESTAT_HI_WATER     0x00000200
+> +#define I2C_ESTAT_LO_WATER     0x00000100
+> +#define I2C_ESTAT_PORT_BUSY    0x00000080
+> +#define I2C_ESTAT_SELF_BUSY    0x00000040
+
+BIT()
+
+> +#define I2C_ESTAT_VERSION      0x0000001f
+
+GENMASK()
+
+> +       __be32 data_be;
+
+No need to have a suffix. If anything can go wrong we have a tool,
+it's called sparse. It will catch out inappropriate use of __bitwise
+types.
+
+> +       __be32 data_be = cpu_to_be32(*data);
+
+cpu_to_be32p()  IIUC?
+
+> +static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
+> +{
+> +       int rc;
+> +       u32 mode = I2C_MODE_ENHANCED, extended_status, watermark = 0;
+
+> +       u32 interrupt = 0;
+
+Redundant assignment.
+
+> +
+> +       /* since we use polling, disable interrupts */
+> +       rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_INT_MASK, &interrupt);
+> +       if (rc)
+> +               return rc;
+
+> +       return rc;
+
+Would be non-zero?
+
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
