@@ -1,170 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935461AbeE2OnK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:43:10 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39995 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935145AbeE2Ol6 (ORCPT
+        id S935548AbeE2Ont (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:43:49 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46507 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934981AbeE2Onm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:41:58 -0400
-X-Google-Smtp-Source: ADUXVKJGkat9eNCT3Ns0vYw+T/MZd2FqxNmded6qJ+kS3bu4yMJI1noSXuhPD3ilW3aRX0CbFkT75Q==
+        Tue, 29 May 2018 10:43:42 -0400
+X-Google-Smtp-Source: AB8JxZqIx2LEb4jmH1G94vZpJWVd9JO1hTBdmcCMNEpdVg2FFJJD9RvRS4VEmOFnFt2UwXv8IdVvAw==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/11] ovl: clean up copy-up error paths
-Date: Tue, 29 May 2018 16:41:40 +0200
-Message-Id: <20180529144143.16378-9-mszeredi@redhat.com>
+Subject: [PATCH 00/39] overlayfs: stack file operations
+Date: Tue, 29 May 2018 16:43:00 +0200
+Message-Id: <20180529144339.16538-1-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144143.16378-1-mszeredi@redhat.com>
-References: <20180529144143.16378-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/overlayfs/copy_up.c | 54 +++++++++++++++++---------------------------------
- 1 file changed, 18 insertions(+), 36 deletions(-)
+Up till now overlayfs didn't stack regular file operations.  Instead, when
+a file was opened on an overlay, the file from one of the underlying layers
+would be opened and any file operations performed would directly go to the
+underlying file on a real filesystem.
 
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 1b442c14c531..ddaddb4ce4c3 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -366,12 +366,13 @@ static int ovl_create_index(struct dentry *dentry, struct dentry *origin,
- 		return err;
- 
- 	temp = ovl_create_temp(indexdir, OVL_CATTR(S_IFDIR | 0));
-+	err = PTR_ERR(temp);
- 	if (IS_ERR(temp))
--		goto temp_err;
-+		goto free_name;
- 
- 	err = ovl_set_upper_fh(upper, temp);
- 	if (err)
--		goto out_cleanup;
-+		goto out;
- 
- 	index = lookup_one_len(name.name, indexdir, name.len);
- 	if (IS_ERR(index)) {
-@@ -380,23 +381,13 @@ static int ovl_create_index(struct dentry *dentry, struct dentry *origin,
- 		err = ovl_do_rename(dir, temp, dir, index, 0);
- 		dput(index);
- 	}
--
--	if (err)
--		goto out_cleanup;
--
- out:
-+	if (err)
-+		ovl_cleanup(dir, temp);
- 	dput(temp);
-+free_name:
- 	kfree(name.name);
- 	return err;
--
--temp_err:
--	err = PTR_ERR(temp);
--	temp = NULL;
--	goto out;
--
--out_cleanup:
--	ovl_cleanup(dir, temp);
--	goto out;
- }
- 
- struct ovl_copy_up_ctx {
-@@ -476,7 +467,7 @@ static int ovl_install_temp(struct ovl_copy_up_ctx *c, struct dentry *temp,
- 	return err;
- }
- 
--static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
-+static struct dentry *ovl_get_tmpfile(struct ovl_copy_up_ctx *c)
- {
- 	int err;
- 	struct dentry *temp;
-@@ -490,6 +481,7 @@ static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
- 	};
- 
- 	err = security_inode_copy_up(c->dentry, &new_creds);
-+	temp = ERR_PTR(err);
- 	if (err < 0)
- 		goto out;
- 
-@@ -500,21 +492,13 @@ static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
- 		temp = ovl_do_tmpfile(c->workdir, c->stat.mode);
- 	else
- 		temp = ovl_create_temp(c->workdir, &cattr);
--	if (IS_ERR(temp))
--		goto temp_err;
--	err = 0;
--	*tempp = temp;
- out:
- 	if (new_creds) {
- 		revert_creds(old_creds);
- 		put_cred(new_creds);
- 	}
- 
--	return err;
--
--temp_err:
--	err = PTR_ERR(temp);
--	goto out;
-+	return temp;
- }
- 
- static int ovl_copy_up_inode(struct ovl_copy_up_ctx *c, struct dentry *temp)
-@@ -564,21 +548,21 @@ static int ovl_copy_up_locked(struct ovl_copy_up_ctx *c)
- 	struct inode *udir = c->destdir->d_inode;
- 	struct inode *inode;
- 	struct dentry *newdentry = NULL;
--	struct dentry *temp = NULL;
-+	struct dentry *temp;
- 	int err;
- 
--	err = ovl_get_tmpfile(c, &temp);
--	if (err)
--		goto out;
-+	temp = ovl_get_tmpfile(c);
-+	if (IS_ERR(temp))
-+		return PTR_ERR(temp);
- 
- 	err = ovl_copy_up_inode(c, temp);
- 	if (err)
--		goto out_cleanup;
-+		goto out;
- 
- 	if (S_ISDIR(c->stat.mode) && c->indexed) {
- 		err = ovl_create_index(c->dentry, c->lowerpath.dentry, temp);
- 		if (err)
--			goto out_cleanup;
-+			goto out;
- 	}
- 
- 	if (c->tmpfile) {
-@@ -589,7 +573,7 @@ static int ovl_copy_up_locked(struct ovl_copy_up_ctx *c)
- 		err = ovl_install_temp(c, temp, &newdentry);
- 	}
- 	if (err)
--		goto out_cleanup;
-+		goto out;
- 
- 	inode = d_inode(c->dentry);
- 	ovl_inode_update(inode, newdentry);
-@@ -597,13 +581,11 @@ static int ovl_copy_up_locked(struct ovl_copy_up_ctx *c)
- 		ovl_set_flag(OVL_WHITEOUTS, inode);
- 
- out:
-+	if (err && !c->tmpfile)
-+		ovl_cleanup(d_inode(c->workdir), temp);
- 	dput(temp);
- 	return err;
- 
--out_cleanup:
--	if (!c->tmpfile)
--		ovl_cleanup(d_inode(c->workdir), temp);
--	goto out;
- }
- 
- /*
+This works well mostly, but various hacks were added to the VFS to work
+around issues with this:
+
+ - d_path() and friends
+ - relatime handling
+ - file locking
+ - fsnotify
+ - writecount handling
+
+There are also issues that are unresolved before this patchset:
+
+ - ioctl's that need write access but can be performed on a O_RDONLY fd
+ - ro/rw inconsistency: file on lower layer opened for read-only will
+   return stale data on read after copy-up and modification
+ - ro/rw inconsistency for mmap: file on lower layer mapped shared will
+   contain stale data after copy-up and modification
+
+This patch series reverts the VFS hacks (with the exception of d_path) and
+fixes the unresoved issues.  We need to keep d_path related hacks, because
+memory maps are still not stacked, yet d_path() should keep working on
+vma->vm_file->f_path.
+
+No regressions were observed after running various test suites (xfstests,
+ltp, unionmount-testsuite, pjd-fstest).
+
+Performance impact of stacking was found to be minimal.  Memory use for
+open overlay files increases by about 256bytes or 12%.
+
+Git tree is here:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-rorw
+
+---
+Miklos Szeredi (39):
+  vfs: dedpue: return loff_t
+  vfs: dedupe: rationalize args
+  vfs: dedupe: extract helper for a single dedup
+  vfs: add path_open()
+  vfs: optionally don't account file in nr_files
+  vfs: add f_op->pre_mmap()
+  vfs: export vfs_ioctl() to modules
+  vfs: export vfs_dedupe_file_range_one() to modules
+  ovl: copy up times
+  ovl: copy up inode flags
+  Revert "Revert "ovl: get_write_access() in truncate""
+  ovl: copy up file size as well
+  ovl: deal with overlay files in ovl_d_real()
+  ovl: stack file ops
+  ovl: add helper to return real file
+  ovl: add ovl_read_iter()
+  ovl: add ovl_write_iter()
+  ovl: add ovl_fsync()
+  ovl: add ovl_mmap()
+  ovl: add ovl_fallocate()
+  ovl: add lsattr/chattr support
+  ovl: add ovl_fiemap()
+  ovl: add O_DIRECT support
+  ovl: add reflink/copyfile/dedup support
+  vfs: don't open real
+  ovl: copy-up on MAP_SHARED
+  ovl: obsolete "check_copy_up" module option
+  ovl: fix documentation of non-standard behavior
+  vfs: simplify dentry_open()
+  Revert "ovl: fix may_write_real() for overlayfs directories"
+  Revert "ovl: don't allow writing ioctl on lower layer"
+  vfs: fix freeze protection in mnt_want_write_file() for overlayfs
+  Revert "ovl: fix relatime for directories"
+  Revert "vfs: update ovl inode before relatime check"
+  Revert "vfs: add flags to d_real()"
+  Revert "vfs: do get_write_access() on upper layer of overlayfs"
+  Partially revert "locks: fix file locking on overlayfs"
+  Revert "fsnotify: support overlayfs"
+  vfs: remove open_flags from d_real()
+
+ Documentation/filesystems/Locking       |   4 +-
+ Documentation/filesystems/overlayfs.txt |  60 ++--
+ Documentation/filesystems/vfs.txt       |  19 +-
+ fs/btrfs/ctree.h                        |   5 +-
+ fs/btrfs/ioctl.c                        |   7 +-
+ fs/file_table.c                         |  13 +-
+ fs/inode.c                              |  46 +--
+ fs/internal.h                           |  17 +-
+ fs/ioctl.c                              |   1 +
+ fs/locks.c                              |  20 +-
+ fs/namei.c                              |   2 +-
+ fs/namespace.c                          |  69 +----
+ fs/ocfs2/file.c                         |  10 +-
+ fs/open.c                               |  74 ++---
+ fs/overlayfs/Kconfig                    |  21 ++
+ fs/overlayfs/Makefile                   |   4 +-
+ fs/overlayfs/copy_up.c                  |  30 +-
+ fs/overlayfs/dir.c                      |  31 +-
+ fs/overlayfs/file.c                     | 509 ++++++++++++++++++++++++++++++++
+ fs/overlayfs/inode.c                    |  63 +++-
+ fs/overlayfs/overlayfs.h                |  21 +-
+ fs/overlayfs/ovl_entry.h                |   1 +
+ fs/overlayfs/super.c                    |  65 ++--
+ fs/overlayfs/util.c                     |  11 +-
+ fs/read_write.c                         |  91 +++---
+ fs/xattr.c                              |   9 +-
+ fs/xfs/xfs_file.c                       |   8 +-
+ include/linux/dcache.h                  |  15 +-
+ include/linux/fs.h                      |  32 +-
+ include/linux/fsnotify.h                |  14 +-
+ include/uapi/linux/fs.h                 |   1 -
+ mm/util.c                               |   5 +
+ 32 files changed, 898 insertions(+), 380 deletions(-)
+ create mode 100644 fs/overlayfs/file.c
+
 -- 
 2.14.3
