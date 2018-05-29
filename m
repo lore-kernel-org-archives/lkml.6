@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937160AbeE2VBD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:01:03 -0400
-Received: from mga14.intel.com ([192.55.52.115]:46446 "EHLO mga14.intel.com"
+        id S967059AbeE2VE3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:04:29 -0400
+Received: from mga01.intel.com ([192.55.52.88]:53956 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936896AbeE2VA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:00:56 -0400
+        id S937168AbeE2VBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 17:01:10 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
-   d="scan'208";a="60127706"
+   d="scan'208";a="60127709"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V5 13/38] x86/intel_rdt: Introduce "bit_usage" to display cache allocations details
-Date: Tue, 29 May 2018 05:57:38 -0700
-Message-Id: <0108de9c39225ff2e8359115f9283c4e410510de.1527593970.git.reinette.chatre@intel.com>
+Subject: [PATCH V5 14/38] x86/intel_rdt: Display resource groups' allocations' size in bytes
+Date: Tue, 29 May 2018 05:57:39 -0700
+Message-Id: <4dbd77fceeaddf9e1649f1c69aa45d223e60d58e.1527593970.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1527593970.git.reinette.chatre@intel.com>
 References: <cover.1527593970.git.reinette.chatre@intel.com>
@@ -30,123 +30,141 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With cache regions now explicitly marked as "shareable" or "exclusive"
-we would like to communicate to the user how portions of the cache
-are used.
+The schemata file displays the allocations associated with each domain
+of each resource. The syntax of this file reflects the capacity bitmask
+(CBM) of the actual allocation. In order to determine the actual size of
+an allocation the user needs to dig through three different files to query
+the variables needed to compute it (the cache size, the CBM length, and
+the schemata).
 
-Introduce "bit_usage" that indicates for each resource
-how portions of the cache are configured to be used.
-
-To assist the user to distinguish whether the sharing is from software or
-hardware we add the following annotation:
-
-0 - currently unused
-X - currently available for sharing and used by software and hardware
-H - currently used by hardware only but available for software use
-S - currently used and shareable by software only
-E - currently used exclusively by one resource group
+Introduce a new file "size" associated with each resource group that
+will mirror the schemata file syntax and display the size in bytes of
+each allocation.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 79 ++++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt.h          |  2 +
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 81 ++++++++++++++++++++++++++++++++
+ 2 files changed, 83 insertions(+)
 
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 68d398bc2942..8bbb047bf37c 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -467,6 +467,8 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 			   struct seq_file *s, void *v);
+ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+ 			   u32 _cbm, int closid, bool exclusive);
++unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
++				  u32 cbm);
+ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
+ int update_domains(struct rdt_resource *r, int closid);
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 5b78b4aa1a50..1097b02c9e85 100644
+index 1097b02c9e85..ef86264cf5a9 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -714,6 +714,78 @@ static int rdt_shareable_bits_show(struct kernfs_open_file *of,
- 	return 0;
+@@ -20,6 +20,7 @@
+ 
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+ 
++#include <linux/cacheinfo.h>
+ #include <linux/cpu.h>
+ #include <linux/fs.h>
+ #include <linux/sysfs.h>
+@@ -1016,6 +1017,78 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
+ 	return ret ?: nbytes;
  }
  
 +/**
-+ * rdt_bit_usage_show - Display current usage of resources
++ * rdtgroup_cbm_to_size - Translate CBM to size in bytes
++ * @r: RDT resource to which @d belongs.
++ * @d: RDT domain instance.
++ * @cbm: bitmask for which the size should be computed.
 + *
-+ * A domain is a shared resource that can now be allocated differently. Here
-+ * we display the current regions of the domain as an annotated bitmask.
-+ * For each domain of this resource its allocation bitmask
-+ * is annotated as below to indicate the current usage of the corresponding bit:
-+ *   0 - currently unused
-+ *   X - currently available for sharing and used by software and hardware
-+ *   H - currently used by hardware only but available for software use
-+ *   S - currently used and shareable by software only
-+ *   E - currently used exclusively by one resource group
++ * The bitmask provided associated with the RDT domain instance @d will be
++ * translated into how many bytes it represents. The size in bytes is
++ * computed by first dividing the total cache size by the CBM length to
++ * determine how many bytes each bit in the bitmask represents. The result
++ * is multiplied with the number of bits set in the bitmask.
 + */
-+static int rdt_bit_usage_show(struct kernfs_open_file *of,
-+			      struct seq_file *seq, void *v)
++unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r,
++				  struct rdt_domain *d, u32 cbm)
 +{
-+	struct rdt_resource *r = of->kn->parent->priv;
-+	u32 sw_shareable, hw_shareable, exclusive;
-+	struct rdt_domain *dom;
-+	int i, hwb, swb, excl;
-+	enum rdtgrp_mode mode;
-+	bool sep = false;
-+	u32 *ctrl;
++	struct cpu_cacheinfo *ci;
++	unsigned int size = 0;
++	int num_b, i;
 +
-+	mutex_lock(&rdtgroup_mutex);
-+	hw_shareable = r->cache.shareable_bits;
-+	list_for_each_entry(dom, &r->domains, list) {
-+		if (sep)
-+			seq_putc(seq, ';');
-+		ctrl = dom->ctrl_val;
-+		sw_shareable = 0;
-+		exclusive = 0;
-+		seq_printf(seq, "%d=", dom->id);
-+		for (i = 0; i < r->num_closid; i++, ctrl++) {
-+			if (!closid_allocated(i))
-+				continue;
-+			mode = rdtgroup_mode_by_closid(i);
-+			switch (mode) {
-+			case RDT_MODE_SHAREABLE:
-+				sw_shareable |= *ctrl;
-+				break;
-+			case RDT_MODE_EXCLUSIVE:
-+				exclusive |= *ctrl;
-+				break;
-+			case RDT_NUM_MODES:
-+				WARN(1,
-+				     "invalid mode for closid %d\n", i);
-+				break;
-+			}
++	num_b = bitmap_weight((unsigned long *)&cbm, r->cache.cbm_len);
++	ci = get_cpu_cacheinfo(cpumask_any(&d->cpu_mask));
++	for (i = 0; i < ci->num_leaves; i++) {
++		if (ci->info_list[i].level == r->cache_level) {
++			size = ci->info_list[i].size / r->cache.cbm_len * num_b;
++			break;
 +		}
-+		for (i = r->cache.cbm_len - 1; i >= 0; i--) {
-+			hwb = test_bit(i, (unsigned long *)&hw_shareable);
-+			swb = test_bit(i, (unsigned long *)&sw_shareable);
-+			excl = test_bit(i, (unsigned long *)&exclusive);
-+			if (hwb && swb)
-+				seq_putc(seq, 'X');
-+			else if (hwb && !swb)
-+				seq_putc(seq, 'H');
-+			else if (!hwb && swb)
-+				seq_putc(seq, 'S');
-+			else if (excl)
-+				seq_putc(seq, 'E');
-+			else /* Unused bits remain */
-+				seq_putc(seq, '0');
-+		}
-+		sep = true;
 +	}
-+	seq_putc(seq, '\n');
-+	mutex_unlock(&rdtgroup_mutex);
++
++	return size;
++}
++
++/**
++ * rdtgroup_size_show - Display size in bytes of allocated regions
++ *
++ * The "size" file mirrors the layout of the "schemata" file, printing the
++ * size in bytes of each region instead of the capacity bitmask.
++ *
++ */
++static int rdtgroup_size_show(struct kernfs_open_file *of,
++			      struct seq_file *s, void *v)
++{
++	struct rdtgroup *rdtgrp;
++	struct rdt_resource *r;
++	struct rdt_domain *d;
++	unsigned int size;
++	bool sep = false;
++	u32 cbm;
++
++	rdtgrp = rdtgroup_kn_lock_live(of->kn);
++	if (!rdtgrp) {
++		rdtgroup_kn_unlock(of->kn);
++		return -ENOENT;
++	}
++
++	for_each_alloc_enabled_rdt_resource(r) {
++		seq_printf(s, "%*s:", max_name_width, r->name);
++		list_for_each_entry(d, &r->domains, list) {
++			if (sep)
++				seq_putc(s, ';');
++			cbm = d->ctrl_val[rdtgrp->closid];
++			size = rdtgroup_cbm_to_size(r, d, cbm);
++			seq_printf(s, "%d=%u", d->id, size);
++			sep = true;
++		}
++		seq_putc(s, '\n');
++	}
++
++	rdtgroup_kn_unlock(of->kn);
++
 +	return 0;
 +}
 +
- static int rdt_min_bw_show(struct kernfs_open_file *of,
- 			     struct seq_file *seq, void *v)
- {
-@@ -996,6 +1068,13 @@ static struct rftype res_common_files[] = {
- 		.fflags		= RF_CTRL_INFO | RFTYPE_RES_CACHE,
- 	},
+ /* rdtgroup information files for one cache resource. */
+ static struct rftype res_common_files[] = {
  	{
-+		.name		= "bit_usage",
+@@ -1144,6 +1217,14 @@ static struct rftype res_common_files[] = {
+ 		.seq_show	= rdtgroup_mode_show,
+ 		.fflags		= RF_CTRL_BASE,
+ 	},
++	{
++		.name		= "size",
 +		.mode		= 0444,
 +		.kf_ops		= &rdtgroup_kf_single_ops,
-+		.seq_show	= rdt_bit_usage_show,
-+		.fflags		= RF_CTRL_INFO | RFTYPE_RES_CACHE,
++		.seq_show	= rdtgroup_size_show,
++		.fflags		= RF_CTRL_BASE,
 +	},
-+	{
- 		.name		= "min_bandwidth",
- 		.mode		= 0444,
- 		.kf_ops		= &rdtgroup_kf_single_ops,
++
+ };
+ 
+ static int rdtgroup_add_files(struct kernfs_node *kn, unsigned long fflags)
 -- 
 2.13.6
