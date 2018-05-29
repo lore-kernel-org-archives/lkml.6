@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756038AbeE2COV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 22:14:21 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51314 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756001AbeE2COQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 22:14:16 -0400
+        id S934596AbeE2COd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 22:14:33 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8199 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756024AbeE2COU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 22:14:20 -0400
 From: Jason Yan <yanaijie@huawei.com>
 To: <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
 CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
@@ -15,9 +15,9 @@ CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
         Jason Yan <yanaijie@huawei.com>, Ewan Milne <emilne@redhat.com>,
         Tomas Henzl <thenzl@redhat.com>
-Subject: [PATCH 4/8] scsi: libsas: trigger a new revalidation to discover the device
-Date: Tue, 29 May 2018 10:23:05 +0800
-Message-ID: <20180529022309.21071-5-yanaijie@huawei.com>
+Subject: [PATCH 3/8] scsi: libsas: always unregister the old device if going to discover new
+Date: Tue, 29 May 2018 10:23:04 +0800
+Message-ID: <20180529022309.21071-4-yanaijie@huawei.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180529022309.21071-1-yanaijie@huawei.com>
 References: <20180529022309.21071-1-yanaijie@huawei.com>
@@ -29,15 +29,13 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now if a new device replaced a old device, the sas address will change.
-We unregister the old device and discover the new device in one
-revalidation process. But after we deferred the sas_port_delete(), the
-sas port is not deleted when we registering the new port and device.
-This will make the sysfs complain of creating duplicate filename.
+If we went into sas_rediscover_dev() the attached_sas_addr was already
+insured not to be zero. So it's unnecessary to check if the
+attached_sas_addr is zero.
 
-Fix this by doing the replacement in two steps. The first revalidation
-only delete the old device and trigger a new revalidation. The second
-revalidation discover the new device.
+And although if the sas address is not changed, we always have to
+unregister the old device when we are going to register a new one. We
+cannot just leave the device there and bring up the new.
 
 Signed-off-by: Jason Yan <yanaijie@huawei.com>
 CC: chenxiang <chenxiang66@hisilicon.com>
@@ -49,37 +47,32 @@ CC: Tomas Henzl <thenzl@redhat.com>
 CC: Dan Williams <dan.j.williams@intel.com>
 CC: Hannes Reinecke <hare@suse.com>
 ---
- drivers/scsi/libsas/sas_expander.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/scsi/libsas/sas_expander.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-index 629c580d906b..25ad9ef54e6c 100644
+index 8b7114348def..629c580d906b 100644
 --- a/drivers/scsi/libsas/sas_expander.c
 +++ b/drivers/scsi/libsas/sas_expander.c
-@@ -2013,6 +2013,8 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
- {
- 	struct expander_device *ex = &dev->ex_dev;
- 	struct ex_phy *phy = &ex->ex_phy[phy_id];
-+	struct asd_sas_port *port = dev->port;
-+	struct asd_sas_phy *sas_phy;
- 	enum sas_device_type type = SAS_PHY_UNUSED;
- 	u8 sas_addr[8];
- 	int res;
-@@ -2060,7 +2062,14 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
- 		    SAS_ADDR(phy->attached_sas_addr));
- 	sas_unregister_devs_sas_addr(dev, phy_id, last);
+@@ -2054,14 +2054,11 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
+ 		return res;
+ 	}
  
--	return sas_discover_new(dev, phy_id);
-+	/* force the next revalidation find this phy and bring it up */
-+	phy->phy_change_count = -1;
-+	ex->ex_change_count = -1;
-+	sas_phy = container_of(port->phy_list.next, struct asd_sas_phy,
-+			port_phy_el);
-+	port->ha->notify_port_event(sas_phy, PORTE_BROADCAST_RCVD);
-+
-+	return 0;
+-	/* delete the old link */
+-	if (SAS_ADDR(phy->attached_sas_addr) &&
+-	    SAS_ADDR(sas_addr) != SAS_ADDR(phy->attached_sas_addr)) {
+-		SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
+-			    SAS_ADDR(dev->sas_addr), phy_id,
+-			    SAS_ADDR(phy->attached_sas_addr));
+-		sas_unregister_devs_sas_addr(dev, phy_id, last);
+-	}
++	/* we always have to delete the old device when we went here */
++	SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
++		    SAS_ADDR(dev->sas_addr), phy_id,
++		    SAS_ADDR(phy->attached_sas_addr));
++	sas_unregister_devs_sas_addr(dev, phy_id, last);
+ 
+ 	return sas_discover_new(dev, phy_id);
  }
- 
- /**
 -- 
 2.13.6
