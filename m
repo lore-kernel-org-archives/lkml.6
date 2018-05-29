@@ -1,55 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966907AbeE2TxR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:53:17 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:36624 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966530AbeE2TxM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:53:12 -0400
-Subject: Re: [PATCH 4.14 000/496] 4.14.45-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180528100319.498712256@linuxfoundation.org>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <53dea01c-17fd-d687-0bac-406e748ad69c@kernel.org>
-Date: Tue, 29 May 2018 13:52:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S966529AbeE2T5o (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:57:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60988 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966175AbeE2T5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 15:57:42 -0400
+Date: Tue, 29 May 2018 15:57:40 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Mikulas Patocka <mpatocka@redhat.com>,
+        Shaohua Li <shli@kernel.org>, Alasdair Kergon <agk@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Heinz Mauelshagen <heinzm@redhat.com>,
+        linux-raid <linux-raid@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: dm-writecache: fix compilation issue with !DAX
+Message-ID: <20180529195740.GA386@redhat.com>
+References: <20180528153834.2268557-1-arnd@arndb.de>
+ <20180529175216.24937-1-ross.zwisler@linux.intel.com>
+ <20180529180823.GA32763@redhat.com>
+ <CAPcyv4iF8oAGDKcWP++-bw5OcfmkSTPHCAw1XZvVRTz4evJvGw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180528100319.498712256@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4iF8oAGDKcWP++-bw5OcfmkSTPHCAw1XZvVRTz4evJvGw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 03:56 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.45 release.
-> There are 496 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed May 30 10:00:57 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.45-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Tue, May 29 2018 at  2:40pm -0400,
+Dan Williams <dan.j.williams@intel.com> wrote:
 
-Compiled and booted on my test system. No dmesg regressions.
+> On Tue, May 29, 2018 at 11:08 AM, Mike Snitzer <snitzer@redhat.com> wrote:
+> > On Tue, May 29 2018 at  1:52pm -0400,
+> > Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+> >
+> >> As reported by Arnd (https://lkml.org/lkml/2018/5/28/1697), dm-writecache
+> >> will fail with link errors in configs where DAX isn't present:
+> >>
+> >> drivers/md/dm-writecache.o: In function `writecache_ctr':
+> >> dm-writecache.c:(.text+0x1fdc): undefined reference to `dax_read_lock'
+> >> dm-writecache.c:(.text+0x2004): undefined reference to `dax_direct_access'
+> >> dm-writecache.c:(.text+0x21cc): undefined reference to `dax_read_unlock'
+> >>
+> >> Fix this by following the lead of the other DM modules and wrapping calls
+> >> to the generic DAX code in #if IS_ENABLED(CONFIG_DAX_DRIVER) blocks.
+> >>
+> >> We also expand the failure case for the 'p' (persistent memory) flag so
+> >> that fails on both architectures that don't support persistent memory and
+> >> on kernels that don't have DAX support configured.  This prevents us from
+> >> ever hitting the BUG() in the persistent_memory_claim() stub.
+> >>
+> >> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+> >> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > Thanks, I've picked this up.
+> 
+> ...I assume you're also going to let the 'pmem api' discussion resolve
+> before this all goes upstream?
 
-thanks,
--- Shuah
+Yeah, I'm going to pivot back to that and put time to it shortly.  If
+dm-writecache has to wait another cycle (so 4.19 inclusion), while
+unfortunate, it wouldn't be the end of the world.
+
+I look forward to your continued help, thanks.
+Mike
