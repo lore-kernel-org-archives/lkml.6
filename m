@@ -1,69 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964793AbeE2Ord (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:47:33 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49112 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935764AbeE2OrY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:47:24 -0400
-Date: Tue, 29 May 2018 15:47:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 10/19 v3] regulator: s2mps11: Pass descriptor instead of
- GPIO number
-Message-ID: <20180529144720.GI23509@sirena.org.uk>
-References: <20180514080640.12515-1-linus.walleij@linaro.org>
- <20180526100243.GA1564@sirena.org.uk>
- <CACRpkdZFrFuNnP=uJyREckr8EXW6L2ku+=QwVA7Tva3CpfrpCQ@mail.gmail.com>
- <CGME20180528112908eucas1p2946a9b6385fcaf6c19921c9767420405@eucas1p2.samsung.com>
- <2026891.KGZ2uNuXyI@amdc3058>
+        id S935700AbeE2OrO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:47:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54873 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936654AbeE2Oqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:46:44 -0400
+Date: Tue, 29 May 2018 16:46:40 +0200
+From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To: Christophe LEROY <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Neuling <mikey@neuling.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/64s: Enhance the information in
+ cpu_show_spectre_v1()
+Message-ID: <20180529164640.02faedcd@kitsune.suse.cz>
+In-Reply-To: <1b720765-faf1-719e-ab76-b3eafa559896@c-s.fr>
+References: <20180424041559.32410-1-mpe@ellerman.id.au>
+        <20180528131914.32231-1-msuchanek@suse.de>
+        <1b720765-faf1-719e-ab76-b3eafa559896@c-s.fr>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nO3oAMapP4dBpMZi"
-Content-Disposition: inline
-In-Reply-To: <2026891.KGZ2uNuXyI@amdc3058>
-X-Cookie: Variables don't
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 29 May 2018 16:13:49 +0200
+Christophe LEROY <christophe.leroy@c-s.fr> wrote:
 
---nO3oAMapP4dBpMZi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Le 28/05/2018 à 15:19, Michal Suchanek a écrit :
+> > We now have barrier_nospec as mitigation so print it in
+> > cpu_show_spectre_v1 when enabled.
+> > 
+> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > ---
+> >   arch/powerpc/kernel/security.c | 5 ++++-
+> >   1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/powerpc/kernel/security.c
+> > b/arch/powerpc/kernel/security.c index 0239383c7e4d..a0c32d53980b
+> > 100644 --- a/arch/powerpc/kernel/security.c
+> > +++ b/arch/powerpc/kernel/security.c
+> > @@ -120,7 +120,10 @@ ssize_t cpu_show_spectre_v1(struct device
+> > *dev, struct device_attribute *attr, c if
+> > (!security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR)) return
+> > sprintf(buf, "Not affected\n"); 
+> > -	return sprintf(buf, "Vulnerable\n");
+> > +	if (barrier_nospec_enabled)  
+> 
+> > +		return sprintf(buf, "Mitigation: __user pointer
+> > sanitization\n");
+> > +	else
+> > +		return sprintf(buf, "Vulnerable\n");  
+> 
+> Checkpatch would tell you that an else is unneeded after a return. So 
+> just leave it as it was before.
 
-On Mon, May 28, 2018 at 01:29:07PM +0200, Bartlomiej Zolnierkiewicz wrote:
+Where did you get your copy of checkpatch? The one in Linux tree does
+not do that.
 
-> I've also tested the new code (with fixup) on Artik5 board (which
-> actually uses GPIO properties) and discovered the other problem,
-> the GPIO core code doesn't handle shared GPIOs which are used by
-> many platforms.
+Thanks
 
-If the GPIO code is moved to use the regulator API GPIO support that
-should hopefully deal with it (or we have a lot more boards with
-problems).
-
---nO3oAMapP4dBpMZi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsNZ/cACgkQJNaLcl1U
-h9CQvAf+JXWL9Rylcy3kh40Nn6bBLR+zqVNyElRktkpAmSbklSnL77rwpjbPUhYV
-xAu6vdjDp/RfrSeENiE6VdB8eMSHc5h3dLMObS4GXTrpIFDRmqE7Gjpw+52KS1dI
-R6gCTO+hSKC/WfNdwe5L8c3QXG2DbVqOgZI/c9ni/M0RltXPne2lORrPcCD1w+nm
-gHN4DsxaXszPMU06gsYwdC6M0m8ISXPknluHmVI37Z/VM2xHTsiW1oOIwssU0rCG
-ZspLKpNWRF151HBAlEEbI3it1h7VehRcSN5t+5kIYfX18li8s3BzqNb5zDUtAfmg
-8R5clcPS9QdkLYzkHfejWxt5SixL9Q==
-=KJk3
------END PGP SIGNATURE-----
-
---nO3oAMapP4dBpMZi--
+Michal
