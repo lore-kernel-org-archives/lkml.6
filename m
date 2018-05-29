@@ -1,44 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934014AbeE2MO3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:14:29 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:54022 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933605AbeE2MOY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:14:24 -0400
-Date: Tue, 29 May 2018 08:14:19 -0400 (EDT)
-Message-Id: <20180529.081419.463698377540876485.davem@davemloft.net>
-To: arnd@arndb.de
-Cc: ast@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bpfilter: fix building without CONFIG_INET
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180529095535.81934-1-arnd@arndb.de>
-References: <20180529095535.81934-1-arnd@arndb.de>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S933769AbeE2MLy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:11:54 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38468 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933675AbeE2MLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:11:46 -0400
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc: Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Julien Grall <julien.grall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 06/17] arm64: ssbd: Add global mitigation state accessor
+Date: Tue, 29 May 2018 13:11:10 +0100
+Message-Id: <20180529121121.24927-7-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180529121121.24927-1-marc.zyngier@arm.com>
+References: <20180529121121.24927-1-marc.zyngier@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 29 May 2018 11:55:06 +0200
+We're about to need the mitigation state in various parts of the
+kernel in order to do the right thing for userspace and guests.
 
-> bpfilter_process_sockopt is a callback that gets called from
-> ip_setsockopt() and ip_getsockopt(). However, when CONFIG_INET is
-> disabled, it never gets called at all, and assigning a function to the
-> callback pointer results in a link failure:
-> 
-> net/bpfilter/bpfilter_kern.o: In function `__stop_umh':
-> bpfilter_kern.c:(.text.unlikely+0x3): undefined reference to `bpfilter_process_sockopt'
-> net/bpfilter/bpfilter_kern.o: In function `load_umh':
-> bpfilter_kern.c:(.init.text+0x73): undefined reference to `bpfilter_process_sockopt'
-> 
-> Since there is no caller in this configuration, I assume we can
-> simply make the assignment conditional.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Let's expose an accessor that will let other subsystems know
+about the state.
 
-Applied, thanks Arnd.
+Reviewed-by: Julien Grall <julien.grall@arm.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+ arch/arm64/include/asm/cpufeature.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index b50650f3e496..b0fc3224ce8a 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -543,6 +543,16 @@ static inline u64 read_zcr_features(void)
+ #define ARM64_SSBD_FORCE_ENABLE		2
+ #define ARM64_SSBD_MITIGATED		3
+ 
++static inline int arm64_get_ssbd_state(void)
++{
++#ifdef CONFIG_ARM64_SSBD
++	extern int ssbd_state;
++	return ssbd_state;
++#else
++	return ARM64_SSBD_UNKNOWN;
++#endif
++}
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #endif
+-- 
+2.14.2
