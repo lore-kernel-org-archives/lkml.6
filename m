@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936692AbeE2Ovo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:51:44 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:40199 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936627AbeE2Oqi (ORCPT
+        id S936757AbeE2Ov4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:51:56 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53618 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935452AbeE2Oqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:46:38 -0400
-X-Google-Smtp-Source: ADUXVKKzNyhohHh8NqQst/Bq2V9YmKrnEOkKrzhUAtBVucc6qixMBDvMw8mGK64Z+gTnbCkmK1QSlQ==
+        Tue, 29 May 2018 10:46:34 -0400
+X-Google-Smtp-Source: ADUXVKLUqgQAm7kOKQn/3Wjz0YCGaPHZiGGv/ZVJA2tOS/UZ+wevAE7zr223MhN+XvEBD9eQ8+gg6A==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 18/28] ovl: Check redirects for metacopy files
-Date: Tue, 29 May 2018 16:46:02 +0200
-Message-Id: <20180529144612.16675-19-mszeredi@redhat.com>
+Subject: [PATCH 15/28] ovl: Open file with data except for the case of fsync
+Date: Tue, 29 May 2018 16:45:59 +0200
+Message-Id: <20180529144612.16675-16-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
 References: <20180529144612.16675-1-mszeredi@redhat.com>
@@ -23,41 +23,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vivek Goyal <vgoyal@redhat.com>
 
-Right now we rely on path based lookup for data origin of metacopy upper.
-This will work only if upper has not been renamed.  We solved this problem
-already for merged directories using redirect.  Use same logic for metacopy
-files.
+ovl_open() should open file which contains data and not open metacopy
+inode.  With the introduction of metacopy inodes, with current
+implementaion we will end up opening metacopy inode as well.
 
-This patch just goes on to check redirects for metacopy files.
+But there can be certain circumstances like ovl_fsync() where we want to
+allow opening a metacopy inode instead.
+
+Hence, change ovl_open_realfile() and add _ovl_open_real() and add extra
+parameter which specifies whether to allow opening metacopy inode or not.
+If this parameter is false, we look for data inode and open that.
+
+This should allow covering both the cases.
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/namei.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/overlayfs/file.c | 39 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 30 insertions(+), 9 deletions(-)
 
-diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-index 451cd6effcf6..e38fa61e08df 100644
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -272,7 +272,8 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index 266692ce9a9a..c7738ef492c8 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -14,11 +14,20 @@
+ #include <linux/uio.h>
+ #include "overlayfs.h"
  
- 		d->metacopy = err;
- 		d->stop = !d->metacopy;
--		goto out;
-+		if (!d->metacopy || d->last)
-+			goto out;
- 	} else {
- 		if (last_element)
- 			d->is_dir = true;
-@@ -874,7 +875,6 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
- 		if (upperdentry && !d.is_dir) {
- 			unsigned int origin_ctr = 0;
+-static struct file *ovl_open_realfile(const struct file *file)
++static char ovl_whatisit(struct inode *inode, struct inode *realinode)
++{
++	if (realinode != ovl_inode_upper(inode))
++		return 'l';
++	if (ovl_has_upperdata(inode))
++		return 'u';
++	else
++		return 'm';
++}
++
++static struct file *ovl_open_realfile(const struct file *file,
++				      struct inode *realinode)
+ {
+ 	struct inode *inode = file_inode(file);
+-	struct inode *upperinode = ovl_inode_upper(inode);
+-	struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
+ 	struct file *realfile;
+ 	const struct cred *old_cred;
  
--			BUG_ON(d.redirect);
- 			/*
- 			 * Lookup copy up origin by decoding origin file handle.
- 			 * We may get a disconnected dentry, which is fine,
+@@ -28,7 +37,7 @@ static struct file *ovl_open_realfile(const struct file *file)
+ 	revert_creds(old_cred);
+ 
+ 	pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
+-		 file, file, upperinode ? 'u' : 'l', file->f_flags,
++		 file, file, ovl_whatisit(inode, realinode), file->f_flags,
+ 		 realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
+ 
+ 	return realfile;
+@@ -72,17 +81,24 @@ static int ovl_change_flags(struct file *file, unsigned int flags)
+ 	return 0;
+ }
+ 
+-static int ovl_real_fdget(const struct file *file, struct fd *real)
++static int ovl_real_fdget_meta(const struct file *file, struct fd *real,
++			       bool allow_meta)
+ {
+ 	struct inode *inode = file_inode(file);
++	struct inode *realinode;
+ 
+ 	real->flags = 0;
+ 	real->file = file->private_data;
+ 
++	if (allow_meta)
++		realinode = ovl_inode_real(inode);
++	else
++		realinode = ovl_inode_realdata(inode);
++
+ 	/* Has it been copied up since we'd opened it? */
+-	if (unlikely(file_inode(real->file) != ovl_inode_real(inode))) {
++	if (unlikely(file_inode(real->file) != realinode)) {
+ 		real->flags = FDPUT_FPUT;
+-		real->file = ovl_open_realfile(file);
++		real->file = ovl_open_realfile(file, realinode);
+ 
+ 		return PTR_ERR_OR_ZERO(real->file);
+ 	}
+@@ -94,6 +110,11 @@ static int ovl_real_fdget(const struct file *file, struct fd *real)
+ 	return 0;
+ }
+ 
++static int ovl_real_fdget(const struct file *file, struct fd *real)
++{
++	return ovl_real_fdget_meta(file, real, false);
++}
++
+ static int ovl_open(struct inode *inode, struct file *file)
+ {
+ 	struct dentry *dentry = file_dentry(file);
+@@ -107,7 +128,7 @@ static int ovl_open(struct inode *inode, struct file *file)
+ 	/* No longer need these flags, so don't pass them on to underlying fs */
+ 	file->f_flags &= ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);
+ 
+-	realfile = ovl_open_realfile(file);
++	realfile = ovl_open_realfile(file, ovl_inode_real(file_inode(file)));
+ 	if (IS_ERR(realfile))
+ 		return PTR_ERR(realfile);
+ 
+@@ -244,7 +265,7 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ 	const struct cred *old_cred;
+ 	int ret;
+ 
+-	ret = ovl_real_fdget(file, &real);
++	ret = ovl_real_fdget_meta(file, &real, !datasync);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.14.3
