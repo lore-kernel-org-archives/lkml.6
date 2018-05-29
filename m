@@ -1,65 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934186AbeE2MhL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:37:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34785 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933778AbeE2MhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:37:07 -0400
-Date: Tue, 29 May 2018 14:37:04 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v2] doc: document scope NOFS, NOIO APIs
-Message-ID: <20180529123704.GT27180@dhcp22.suse.cz>
-References: <20180524114341.1101-1-mhocko@kernel.org>
- <20180529082644.26192-1-mhocko@kernel.org>
- <20180529055158.0170231e@lwn.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529055158.0170231e@lwn.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S934096AbeE2Mhe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:37:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58986 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933712AbeE2MgU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:36:20 -0400
+From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+To: Ingo Molnar <mingo@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Josef Bacik <jbacik@fb.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] error-injection: simplify code and powerpc support
+Date: Tue, 29 May 2018 18:06:01 +0530
+X-Mailer: git-send-email 2.17.0
+X-TM-AS-GCONF: 00
+x-cbid: 18052912-0008-0000-0000-000004FC2EF8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052912-0009-0000-0000-00001E904C46
+Message-Id: <cover.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805290144
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 29-05-18 05:51:58, Jonathan Corbet wrote:
-> On Tue, 29 May 2018 10:26:44 +0200
-> Michal Hocko <mhocko@kernel.org> wrote:
-> 
-> > Although the api is documented in the source code Ted has pointed out
-> > that there is no mention in the core-api Documentation and there are
-> > people looking there to find answers how to use a specific API.
-> 
-> So, I still think that this:
-> 
-> > +The traditional way to avoid this deadlock problem is to clear __GFP_FS
-> > +respectively __GFP_IO (note the latter implies clearing the first as well) in
-> 
-> doesn't read the way you intend it to.  But we've sent you in more
-> than enough circles on this already, so I went ahead and applied it;
-> wording can always be tweaked later.
+The first patch simplifies code around function error-injection by 
+limiting the need for arch-specific helpers. The second patch adds 
+support for powerpc.
 
-Thanks a lot Jonathan! I am open to any suggestions of course and can
-follow up with some refinements. Just for the background. The above
-paragraph is meant to say that:
-- clearing __GFP_FS is a way to avoid reclaim recursion into filesystems
-  deadlocks
-- clearing __GFP_IO is a way to avoid reclaim recursion into the IO
-  layer deadlocks
-- GFP_NOIO implies __GFP_NOFS
+- Naveen
 
-> You added the kerneldoc comments, but didn't bring them into your new
-> document.  I'm going to tack this on afterward, hopefully nobody will
-> object.
+Naveen N. Rao (2):
+  error-injection: Simplify arch specific helpers
+  powerpc: Add support for function error injection
 
-I have to confess I've never studied how the rst and kerneldoc should be
-interlinked so thanks for the fix up!
+ arch/powerpc/Kconfig                       |  1 +
+ arch/powerpc/include/asm/error-injection.h |  9 +++++++++
+ arch/powerpc/include/asm/ptrace.h          |  5 +++++
+ arch/x86/include/asm/error-injection.h     |  6 +-----
+ arch/x86/lib/Makefile                      |  1 -
+ arch/x86/lib/error-inject.c                | 20 --------------------
+ include/asm-generic/error-injection.h      |  6 ++++++
+ include/linux/error-injection.h            |  1 +
+ kernel/fail_function.c                     |  2 +-
+ kernel/trace/bpf_trace.c                   |  2 +-
+ lib/error-inject.c                         |  8 ++++++++
+ 11 files changed, 33 insertions(+), 28 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/error-injection.h
+ delete mode 100644 arch/x86/lib/error-inject.c
+
 -- 
-Michal Hocko
-SUSE Labs
+2.17.0
