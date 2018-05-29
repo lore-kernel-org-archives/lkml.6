@@ -1,241 +1,278 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933646AbeE2LvB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 07:51:01 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37946 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933410AbeE2Lu5 (ORCPT
+        id S933498AbeE2LtS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 07:49:18 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:50099 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933441AbeE2LtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 07:50:57 -0400
-Date: Tue, 29 May 2018 14:50:47 +0300
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2] doc: document scope NOFS, NOIO APIs
-References: <20180524114341.1101-1-mhocko@kernel.org>
- <20180529082644.26192-1-mhocko@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529082644.26192-1-mhocko@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18052911-0008-0000-0000-000004FC2B3B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052911-0009-0000-0000-00001E904834
-Message-Id: <20180529115047.GC13092@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805290136
+        Tue, 29 May 2018 07:49:13 -0400
+From: Oleksandr Shamray <oleksandrs@mellanox.com>
+To: gregkh@linuxfoundation.org, arnd@arndb.de
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
+        jiri@resnulli.us, tklauser@distanz.ch, linux-serial@vger.kernel.org,
+        vadimp@mellanox.com, system-sw-low-level@mellanox.com,
+        robh+dt@kernel.org, openocd-devel-owner@lists.sourceforge.net,
+        linux-api@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+        Oleksandr Shamray <oleksandrs@mellanox.com>
+Subject: [patch v23 4/4] Documentation: jtag: Add ABI documentation
+Date: Tue, 29 May 2018 14:49:05 +0300
+Message-Id: <1527594545-19870-5-git-send-email-oleksandrs@mellanox.com>
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1527594545-19870-1-git-send-email-oleksandrs@mellanox.com>
+References: <1527594545-19870-1-git-send-email-oleksandrs@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:26:44AM +0200, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> Although the api is documented in the source code Ted has pointed out
-> that there is no mention in the core-api Documentation and there are
-> people looking there to find answers how to use a specific API.
-> 
-> Changes since v1
-> - add kerneldoc for the api - suggested by Johnatan
-> - review feedback from Dave and Johnatan
-> - feedback from Dave about more general critical context rather than
->   locking
-> - feedback from Mike
-> - typo fixed - Randy, Dave
-> 
-> Requested-by: "Theodore Y. Ts'o" <tytso@mit.edu>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+Added document that describe the ABI for JTAG class drivrer
 
-I believe it's worth linking the kernel-doc part with the text. e.g.:
+Signed-off-by: Oleksandr Shamray <oleksandrs@mellanox.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+---
+v22->v23
+Comments pointed by Randy Dunlap <rdunlap@infradead.org>
+- fix spell in ABI doccumentation
 
-diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
-index 2dc442b..b001f5f 100644
---- a/Documentation/core-api/gfp_mask-from-fs-io.rst
-+++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
-@@ -59,3 +59,10 @@ and so no special care is required and vmalloc should be called without
- any problems. Sometimes if the context is not really clear or there are
- layering violations then the recommended way around that is to wrap ``vmalloc``
- by the scope API with a comment explaining the problem.
+v21->v22
+Comments pointed by Randy Dunlap <rdunlap@infradead.org>
+- fix spell in ABI doccumentation
+
+v20->v21
+Comments pointed by Randy Dunlap <rdunlap@infradead.org>
+- Fix JTAG dirver help in Kconfig
+
+v19->v20
+Comments pointed by Randy Dunlap <rdunlap@infradead.org>
+- Fix JTAG doccumentation
+
+v18->v19
+Pavel Machek <pavel@ucw.cz>
+- Added JTAG doccumentation to Documentation/jtag
+
+v17->v18
+v16->v17
+v15->v16
+v14->v15
+v13->v14
+v12->v13
+v11->v12 Tobias Klauser <tklauser@distanz.ch>
+Comments pointed by
+- rename /Documentation/ABI/testing/jatg-dev -> jtag-dev
+- Typo: s/interfase/interface
+v10->v11
+v9->v10
+Fixes added by Oleksandr:
+- change jtag-cdev to jtag-dev in documentation
+- update KernelVersion and Date in jtag-dev documentation;
+v8->v9
+v7->v8
+v6->v7
+Comments pointed by Pavel Machek <pavel@ucw.cz>
+- Added jtag-cdev documentation to Documentation/ABI/testing folder
+---
+ Documentation/ABI/testing/jtag-dev |   27 +++++++++
+ Documentation/jtag/overview        |   27 +++++++++
+ Documentation/jtag/transactions    |  109 ++++++++++++++++++++++++++++++++++++
+ MAINTAINERS                        |    1 +
+ 4 files changed, 164 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/ABI/testing/jtag-dev
+ create mode 100644 Documentation/jtag/overview
+ create mode 100644 Documentation/jtag/transactions
+
+diff --git a/Documentation/ABI/testing/jtag-dev b/Documentation/ABI/testing/jtag-dev
+new file mode 100644
+index 0000000..4325316
+--- /dev/null
++++ b/Documentation/ABI/testing/jtag-dev
+@@ -0,0 +1,27 @@
++What:		/dev/jtag[0-9]+
++Date:		May 2018
++KernelVersion:	4.18
++Contact:	oleksandrs@mellanox.com
++Description:
++		The misc device files /dev/jtag* are the interface
++		between JTAG master interface and userspace.
 +
-+Reference
-+=========
++		The ioctl(2)-based ABI is defined and documented in
++		[include/uapi]<linux/jtag.h>.
 +
-+.. kernel-doc:: include/linux/sched/mm.h
-+   :functions: memalloc_nofs_save memalloc_nofs_restore \
-+	       memalloc_noio_save memalloc_noio_restore
-
-Except that, all looks good to me
-
-Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-
-> ---
->  .../core-api/gfp_mask-from-fs-io.rst          | 61 +++++++++++++++++++
->  Documentation/core-api/index.rst              |  1 +
->  include/linux/sched/mm.h                      | 38 ++++++++++++
->  3 files changed, 100 insertions(+)
->  create mode 100644 Documentation/core-api/gfp_mask-from-fs-io.rst
-> 
-> diff --git a/Documentation/core-api/gfp_mask-from-fs-io.rst b/Documentation/core-api/gfp_mask-from-fs-io.rst
-> new file mode 100644
-> index 000000000000..2dc442b04a77
-> --- /dev/null
-> +++ b/Documentation/core-api/gfp_mask-from-fs-io.rst
-> @@ -0,0 +1,61 @@
-> +=================================
-> +GFP masks used from FS/IO context
-> +=================================
-> +
-> +:Date: May, 2018
-> +:Author: Michal Hocko <mhocko@kernel.org>
-> +
-> +Introduction
-> +============
-> +
-> +Code paths in the filesystem and IO stacks must be careful when
-> +allocating memory to prevent recursion deadlocks caused by direct
-> +memory reclaim calling back into the FS or IO paths and blocking on
-> +already held resources (e.g. locks - most commonly those used for the
-> +transaction context).
-> +
-> +The traditional way to avoid this deadlock problem is to clear __GFP_FS
-> +respectively __GFP_IO (note the latter implies clearing the first as well) in
-> +the gfp mask when calling an allocator. GFP_NOFS respectively GFP_NOIO can be
-> +used as shortcut. It turned out though that above approach has led to
-> +abuses when the restricted gfp mask is used "just in case" without a
-> +deeper consideration which leads to problems because an excessive use
-> +of GFP_NOFS/GFP_NOIO can lead to memory over-reclaim or other memory
-> +reclaim issues.
-> +
-> +New API
-> +========
-> +
-> +Since 4.12 we do have a generic scope API for both NOFS and NOIO context
-> +``memalloc_nofs_save``, ``memalloc_nofs_restore`` respectively ``memalloc_noio_save``,
-> +``memalloc_noio_restore`` which allow to mark a scope to be a critical
-> +section from a filesystem or I/O point of view. Any allocation from that
-> +scope will inherently drop __GFP_FS respectively __GFP_IO from the given
-> +mask so no memory allocation can recurse back in the FS/IO.
-> +
-> +FS/IO code then simply calls the appropriate save function before
-> +any critical section with respect to the reclaim is started - e.g.
-> +lock shared with the reclaim context or when a transaction context
-> +nesting would be possible via reclaim. The restore function should be
-> +called when the critical section ends. All that ideally along with an
-> +explanation what is the reclaim context for easier maintenance.
-> +
-> +Please note that the proper pairing of save/restore functions
-> +allows nesting so it is safe to call ``memalloc_noio_save`` or
-> +``memalloc_noio_restore`` respectively from an existing NOIO or NOFS
-> +scope.
-> +
-> +What about __vmalloc(GFP_NOFS)
-> +==============================
-> +
-> +vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
-> +GFP_KERNEL allocations deep inside the allocator which are quite non-trivial
-> +to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
-> +almost always a bug. The good news is that the NOFS/NOIO semantic can be
-> +achieved by the scope API.
-> +
-> +In the ideal world, upper layers should already mark dangerous contexts
-> +and so no special care is required and vmalloc should be called without
-> +any problems. Sometimes if the context is not really clear or there are
-> +layering violations then the recommended way around that is to wrap ``vmalloc``
-> +by the scope API with a comment explaining the problem.
-> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-> index c670a8031786..8a5f48ef16f2 100644
-> --- a/Documentation/core-api/index.rst
-> +++ b/Documentation/core-api/index.rst
-> @@ -25,6 +25,7 @@ Core utilities
->     genalloc
->     errseq
->     printk-formats
-> +   gfp_mask-from-fs-io
-> 
->  Interfaces for kernel debugging
->  ===============================
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index e1f8411e6b80..af5ba077bbc4 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -166,6 +166,17 @@ static inline void fs_reclaim_acquire(gfp_t gfp_mask) { }
->  static inline void fs_reclaim_release(gfp_t gfp_mask) { }
->  #endif
-> 
-> +/**
-> + * memalloc_noio_save - Marks implicit GFP_NOIO allocation scope.
-> + *
-> + * This functions marks the beginning of the GFP_NOIO allocation scope.
-> + * All further allocations will implicitly drop __GFP_IO flag and so
-> + * they are safe for the IO critical section from the allocation recursion
-> + * point of view. Use memalloc_noio_restore to end the scope with flags
-> + * returned by this function.
-> + *
-> + * This function is safe to be used from any context.
-> + */
->  static inline unsigned int memalloc_noio_save(void)
->  {
->  	unsigned int flags = current->flags & PF_MEMALLOC_NOIO;
-> @@ -173,11 +184,30 @@ static inline unsigned int memalloc_noio_save(void)
->  	return flags;
->  }
-> 
-> +/**
-> + * memalloc_noio_restore - Ends the implicit GFP_NOIO scope.
-> + * @flags: Flags to restore.
-> + *
-> + * Ends the implicit GFP_NOIO scope started by memalloc_noio_save function.
-> + * Always make sure that that the given flags is the return value from the
-> + * pairing memalloc_noio_save call.
-> + */
->  static inline void memalloc_noio_restore(unsigned int flags)
->  {
->  	current->flags = (current->flags & ~PF_MEMALLOC_NOIO) | flags;
->  }
-> 
-> +/**
-> + * memalloc_nofs_save - Marks implicit GFP_NOFS allocation scope.
-> + *
-> + * This functions marks the beginning of the GFP_NOFS allocation scope.
-> + * All further allocations will implicitly drop __GFP_FS flag and so
-> + * they are safe for the FS critical section from the allocation recursion
-> + * point of view. Use memalloc_nofs_restore to end the scope with flags
-> + * returned by this function.
-> + *
-> + * This function is safe to be used from any context.
-> + */
->  static inline unsigned int memalloc_nofs_save(void)
->  {
->  	unsigned int flags = current->flags & PF_MEMALLOC_NOFS;
-> @@ -185,6 +215,14 @@ static inline unsigned int memalloc_nofs_save(void)
->  	return flags;
->  }
-> 
-> +/**
-> + * memalloc_nofs_restore - Ends the implicit GFP_NOFS scope.
-> + * @flags: Flags to restore.
-> + *
-> + * Ends the implicit GFP_NOFS scope started by memalloc_nofs_save function.
-> + * Always make sure that that the given flags is the return value from the
-> + * pairing memalloc_nofs_save call.
-> + */
->  static inline void memalloc_nofs_restore(unsigned int flags)
->  {
->  	current->flags = (current->flags & ~PF_MEMALLOC_NOFS) | flags;
-> -- 
-> 2.17.0
-> 
-
++		The following file operations are supported:
++
++		open(2)
++		The argument flag currently support only one access
++		mode O_RDWR.
++
++		ioctl(2)
++		Initiate various actions.
++		See the inline documentation in [include/uapi]<linux/jtag.h>
++		for descriptions of all ioctls.
++
++		close(2)
++		Stops and free up the I/O contexts that was associated
++		with the file descriptor.
++
++Users:		TBD
+diff --git a/Documentation/jtag/overview b/Documentation/jtag/overview
+new file mode 100644
+index 0000000..f179095
+--- /dev/null
++++ b/Documentation/jtag/overview
+@@ -0,0 +1,27 @@
++Linux kernel JTAG support
++=========================
++
++JTAG is an industry standard for verifying hardware.JTAG provides access to
++many logic signals of a complex integrated circuit, including the device pins.
++
++A JTAG interface is a special interface added to a chip.
++Depending on the version of JTAG, two, four, or five pins are added.
++
++The connector pins are:
++	TDI (Test Data In)
++	TDO (Test Data Out)
++	TCK (Test Clock)
++	TMS (Test Mode Select)
++	TRST (Test Reset) optional
++
++JTAG interface is designed to have two parts - basic core driver and
++hardware specific driver. The basic driver introduces a general interface
++which is not dependent of specific hardware. It provides communication
++between user space and hardware specific driver.
++Each JTAG device is represented as a char device from (jtag0, jtag1, ...).
++Access to a JTAG device is performed through IOCTL calls.
++
++Call flow example:
++User: open  -> /dev/jatgX
++User: ioctl -> /dev/jtagX -> JTAG core driver -> JTAG hardware specific driver
++User: close -> /dev/jatgX
+diff --git a/Documentation/jtag/transactions b/Documentation/jtag/transactions
+new file mode 100644
+index 0000000..ffabde0
+--- /dev/null
++++ b/Documentation/jtag/transactions
+@@ -0,0 +1,109 @@
++The JTAG API
++=============
++
++JTAG master devices can be accessed through a character misc-device.
++Each JTAG master interface can be accessed by using /dev/jtagN.
++
++JTAG system calls set:
++- SIR (Scan Instruction Register, IEEE 1149.1 Instruction Register scan);
++- SDR (Scan Data Register, IEEE 1149.1 Data Register scan);
++- RUNTEST (Forces the IEEE 1149.1 bus to a run state for a specified
++number of clocks.
++
++open(), close()
++-------
++open() opens JTAG device. Only one open operation per JTAG device
++can be performed. Two or more open for one device will return error.
++
++Open/Close  device:
++- jtag_fd = open("/dev/jtag0", O_RDWR);
++- close(jtag_fd);
++
++ioctl()
++-------
++All access operations to JTAG devices are erformed through ioctl interface.
++The IOCTL interface supports these requests:
++	JTAG_IOCRUNTEST - Force JTAG state machine to RUN_TEST/IDLE state
++	JTAG_SIOCFREQ - Set JTAG TCK frequency
++	JTAG_GIOCFREQ - Get JTAG TCK frequency
++	JTAG_IOCXFER - send JTAG data Xfer
++	JTAG_GIOCSTATUS - get current JTAG TAP status
++	JTAG_SIOCMODE - set JTAG mode flags.
++
++JTAG_SIOCFREQ, JTAG_GIOCFREQ
++------
++Set/Get JTAG clock speed:
++
++	unsigned int jtag_fd;
++	ioctl(jtag_fd, JTAG_SIOCFREQ, &frq);
++	ioctl(jtag_fd, JTAG_GIOCFREQ, &frq);
++
++JTAG_IOCRUNTEST
++------
++Force JTAG state machine to RUN_TEST/IDLE state
++
++struct jtag_run_test_idle {
++	__u8	reset;
++	__u8	endstate;
++	__u8	tck;
++};
++
++reset: 0 - run IDLE/PAUSE from current state
++	   1 - go through TEST_LOGIC/RESET state before IDLE/PAUSE
++endstate: completion flag
++tck: clock counter
++
++Example:
++	struct jtag_run_test_idle runtest;
++
++	runtest.endstate = JTAG_STATE_IDLE;
++	runtest.reset = 0;
++	runtest.tck = data_p->tck;
++	usleep(25 * 1000);
++	ioctl(jtag_fd, JTAG_IOCRUNTEST, &runtest);
++
++JTAG_IOCXFER
++------
++Send SDR/SIR transaction
++
++struct jtag_xfer {
++	__u8	type;
++	__u8	direction;
++	__u8	endstate;
++	__u8	padding;
++	__u32	length;
++	__u64	tdio;
++};
++
++type: transfer type - JTAG_SIR_XFER/JTAG_SDR_XFER
++direction: xfer direction - JTAG_SIR_XFER/JTAG_SDR_XFER
++length: xfer data length in bits
++tdio : xfer data array
++endstate: xfer end state after transaction finish
++	   can be: JTAG_STATE_IDLE/JTAG_STATE_PAUSEIR/JTAG_STATE_PAUSEDR
++
++Example:
++	struct jtag_xfer xfer;
++	static char buf[64];
++	static unsigned int buf_len = 0;
++	[...]
++	xfer.type = JTAG_SDR_XFER;
++	xfer.tdio = (__u64)buf;
++	xfer.length = buf_len;
++	xfer.endstate = JTAG_STATE_IDLE;
++
++	if (is_read)
++		xfer.direction = JTAG_READ_XFER;
++	else
++		xfer.direction = JTAG_WRITE_XFER;
++
++	ioctl(jtag_fd, JTAG_IOCXFER, &xfer);
++
++JTAG_SIOCMODE
++------
++If hardware driver can support different running modes you can change it.
++
++Example:
++	unsigned int mode;
++	mode = JTAG_XFER_HW_MODE;
++	ioctl(jtag_fd, JTAG_SIOCMODE, &mode);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a5e5f75..e067eda 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7618,6 +7618,7 @@ F:	include/linux/jtag.h
+ F:	include/uapi/linux/jtag.h
+ F:	drivers/jtag/
+ F:	Documentation/devicetree/bindings/jtag/
++F:	Documentation/ABI/testing/jtag-dev
+ 
+ K10TEMP HARDWARE MONITORING DRIVER
+ M:	Clemens Ladisch <clemens@ladisch.de>
 -- 
-Sincerely yours,
-Mike.
+1.7.1
