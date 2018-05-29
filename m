@@ -1,67 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967938AbeE2XTH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 19:19:07 -0400
-Received: from smtprelay0201.hostedemail.com ([216.40.44.201]:39025 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965084AbeE2XTG (ORCPT
+        id S968056AbeE2XT2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 19:19:28 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:35225 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965084AbeE2XT0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 19:19:06 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:599:967:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:8957:9025:10004:10400:10848:11026:11232:11658:11914:12043:12296:12438:12740:12760:12895:13069:13095:13181:13229:13311:13357:13439:14181:14659:14721:14777:21080:21433:21627:30012:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: light81_89666080e2e5a
-X-Filterd-Recvd-Size: 2054
-Message-ID: <56a8f4d988151f94950b355dba6ab83b5dfdb9c2.camel@perches.com>
-Subject: Re: [PATCH] mdio-mux-gpio: Remove VLA usage
-From: Joe Perches <joe@perches.com>
-To: Kees Cook <keescook@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Pramod Kumar <pramod.kumar@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 29 May 2018 16:19:02 -0700
-In-Reply-To: <20180529225901.GA30464@beast>
-References: <20180529225901.GA30464@beast>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 29 May 2018 19:19:26 -0400
+X-Google-Smtp-Source: ADUXVKIxhWpceYkdBFRgGnpy7qur8ao3tijCUGw7o8uZvC2PyZLRKVUlqXeocklLsFfCVN810kxmrTl/3B21imRY47w=
+MIME-Version: 1.0
+In-Reply-To: <1527632665-25707-4-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1527632665-25707-1-git-send-email-eajames@linux.vnet.ibm.com> <1527632665-25707-4-git-send-email-eajames@linux.vnet.ibm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 30 May 2018 02:19:25 +0300
+Message-ID: <CAHp75Vd38BrJcULxoqj1mTKCEvMh9ZVYEvzCMAg2t9onZrSR6w@mail.gmail.com>
+Subject: Re: [PATCH v7 3/7] drivers/i2c: Add port structure to FSI algorithm
+To: Eddie James <eajames@linux.vnet.ibm.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Edward A. James" <eajames@us.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-29 at 15:59 -0700, Kees Cook wrote:
-> In the quest to remove all stack VLA usage from the kernel[1], this
-> allocates the values buffer during the callback instead of putting it
-> on the stack.
-> 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-[]
-> diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
-[]
-> @@ -26,18 +26,23 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
->  				   void *data)
+On Wed, May 30, 2018 at 1:24 AM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+> From: "Edward A. James" <eajames@us.ibm.com>
+>
+> Add and initialize I2C adapters for each port on the FSI-attached I2C
+> master. Ports for each master are defined in the devicetree.
+
+> +#include <linux/of.h>
+
+
+> +static int fsi_i2c_set_port(struct fsi_i2c_port *port)
+> +{
+> +       int rc;
+> +       struct fsi_device *fsi = port->master->fsi;
+> +       u32 mode, dummy = 0;
+> +       u16 old_port;
+> +
+> +       rc = fsi_i2c_read_reg(fsi, I2C_FSI_MODE, &mode);
+> +       if (rc)
+> +               return rc;
+> +
+
+> +       old_port = GETFIELD(I2C_MODE_PORT, mode);
+> +
+> +       if (old_port != port->port) {
+
+Why not simple
+
+if (port->port == GETFIELD())
+  return 0;
+
+?
+
+> +               /* reset engine when port is changed */
+> +               rc = fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
+> +               if (rc)
+> +                       return rc;
+> +       }
+
+> +       return rc;
+
+It's hardly would be non-zero, right?
+
+> +}
+
+>  static int fsi_i2c_probe(struct device *dev)
 >  {
->  	struct mdio_mux_gpio_state *s = data;
-> -	int values[s->gpios->ndescs];
-> +	int *values;
->  	unsigned int n;
->  
->  	if (current_child == desired_child)
->  		return 0;
->  
-> +	values = kmalloc_array(s->gpios->ndescs, sizeof(*values), GFP_KERNEL);
-> +	if (!values)
-> +		return -ENOMEM;
 
-This function previously only returned 0
-and now it can return -ENOMEM.
+Isn't below somehow repeats of_i2c_register_devices() ?
+Why not to use it?
 
-How do you know all the indirect callers
-via the switch_fn stored in mdio_mux_init
-can handle the new return value?
+> +       /* Add adapter for each i2c port of the master. */
+> +       for_each_available_child_of_node(dev->of_node, np) {
+> +               rc = of_property_read_u32(np, "reg", &port_no);
+> +               if (rc || port_no > USHRT_MAX)
+> +                       continue;
+> +
+> +               port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
+> +               if (!port)
+> +                       break;
+> +
+> +               port->master = i2c;
+> +               port->port = port_no;
+> +
+> +               port->adapter.owner = THIS_MODULE;
+> +               port->adapter.dev.of_node = np;
+> +               port->adapter.dev.parent = dev;
+> +               port->adapter.algo = &fsi_i2c_algorithm;
+> +               port->adapter.algo_data = port;
+> +
+> +               snprintf(port->adapter.name, sizeof(port->adapter.name),
+> +                        "i2c_bus-%u", port_no);
+> +
+> +               rc = i2c_add_adapter(&port->adapter);
+> +               if (rc < 0) {
 
-If you have explored these code paths, it
-would be good to explain that in the commit
-message.
+> +                       dev_err(dev, "Failed to register adapter: %d\n", rc);
+
+> +                       devm_kfree(dev, port);
+
+This hurts my eyes. Why?!
+
+> +                       continue;
+> +               }
+> +
+> +               list_add(&port->list, &i2c->ports);
+> +       }
+> +
+>         dev_set_drvdata(dev, i2c);
+>
+>         return 0;
+>  }
+
+> +       if (!list_empty(&i2c->ports)) {
+
+My gosh, this is done already in list_for_each*()
+
+> +               list_for_each_entry(port, &i2c->ports, list) {
+> +                       i2c_del_adapter(&port->adapter);
+> +               }
+
+> +       }
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
