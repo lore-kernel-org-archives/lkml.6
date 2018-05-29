@@ -1,61 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967667AbeE2WNi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:13:38 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:54295 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966170AbeE2WNc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:13:32 -0400
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-To: shuah@kernel.org, valentina.manea.m@gmail.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org
-Subject: [PATCH] usbip: usbip_detach: Fix memory, udev context and udev leak
-Date: Tue, 29 May 2018 16:13:03 -0600
-Message-Id: <20180529221303.27042-1-shuah@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        id S967742AbeE2WPM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:15:12 -0400
+Received: from gate.crashing.org ([63.228.1.57]:45183 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967686AbeE2WPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 18:15:06 -0400
+Message-ID: <230075a7760a9cf878355e2b8abe4cdb967a482a.camel@kernel.crashing.org>
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, luto@kernel.org
+Date: Wed, 30 May 2018 08:13:54 +1000
+In-Reply-To: <20180529140319.GA19972@infradead.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+         <20180523213703-mutt-send-email-mst@kernel.org>
+         <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
+         <20180525202300-mutt-send-email-mst@kernel.org>
+         <6fff9f5d67361653e6072570a857cf0d1009a123.camel@kernel.crashing.org>
+         <2f1d48cf029c1f0903f3cffea946ae5b85f60ec0.camel@kernel.crashing.org>
+         <20180529140319.GA19972@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-detach_port() fails to call usbip_vhci_driver_close() from its error
-path after usbip_vhci_detach_device() returns failure, leaking memory
-allocated in usbip_vhci_driver_open() and holding udev_context and udev
-references. Fix it to call usbip_vhci_driver_close().
+On Tue, 2018-05-29 at 07:03 -0700, Christoph Hellwig wrote:
+> On Tue, May 29, 2018 at 09:56:24AM +1000, Benjamin Herrenschmidt wrote:
+> > I don't think forcing the addition of an emulated iommu in the middle
+> > just to work around the fact that virtio "cheats" and doesn't use the
+> > dma API unless there is one, is the right "fix".
+> 
+> Agreed.
+> 
+> > The right long term fix is to always use the DMA API, reducing code
+> > path etc... and just have a single point where virtio can "chose"
+> > alternate DMA ops (via an arch hook to deal with our case).
+> 
+> Also agreed.
+> 
+> When Andi added vring_use_dma_api it was marked as temporary.
+> 
+> So I'd much rather move to blacklisting platforms that needs this
+> hack now than adding another exception.
+> 
+> And then once we have the blacklist move it to a quirk in the arch
+> code that just forces dma_direct_ops as the per-device dma ops.
+> 
+> I don't really think this is crazy long term, but something we could
+> do relatively quickly.  Interestingly enough the original commit
+> mentions PPC64 as a case where this quirk is needed.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
----
- tools/usb/usbip/src/usbip_detach.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Not sure why, it's not so much a platform issue today. It's qemu itself
+who by defaults bypasses any iommu. I suppose ppc64 stood out because
+unlike x86 we always have an iommu by default.
 
-diff --git a/tools/usb/usbip/src/usbip_detach.c b/tools/usb/usbip/src/usbip_detach.c
-index 9db9d21bb2ec..6a8db858caa5 100644
---- a/tools/usb/usbip/src/usbip_detach.c
-+++ b/tools/usb/usbip/src/usbip_detach.c
-@@ -43,7 +43,7 @@ void usbip_detach_usage(void)
- 
- static int detach_port(char *port)
- {
--	int ret;
-+	int ret = 0;
- 	uint8_t portnum;
- 	char path[PATH_MAX+1];
- 
-@@ -73,9 +73,12 @@ static int detach_port(char *port)
- 	}
- 
- 	ret = usbip_vhci_detach_device(portnum);
--	if (ret < 0)
--		return -1;
-+	if (ret < 0) {
-+		ret = -1;
-+		goto call_driver_close;
-+	}
- 
-+call_driver_close:
- 	usbip_vhci_driver_close();
- 
- 	return ret;
--- 
-2.14.1
+Anyway, Anshuman, I think that's the right approach, first make virtio
+always use the DMA API with a quirk early to override the ops.
+
+Christoph: the overriding of the ops isn't a platform thing. It's a
+qemu thing, ie, from a Linux perspective, it's a feature of the
+"device". So it should be done in virtio itself, not the platform code.
+
+However, we do want the ability in platform code to force the bounce
+buffering to solve our secure VM issue.
+
+Cheers,
+Ben.
