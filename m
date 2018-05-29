@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934904AbeE2OAJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:00:09 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43594 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934802AbeE2OAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:00:06 -0400
+        id S934925AbeE2OAS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:00:18 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8204 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934802AbeE2OAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:00:12 -0400
 From: nixiaoming <nixiaoming@huawei.com>
 To: <catalin.marinas@arm.com>, <will.deacon@arm.com>,
         <ard.biesheuvel@linaro.org>, <marc.zyngier@arm.com>,
@@ -19,9 +19,9 @@ To: <catalin.marinas@arm.com>, <will.deacon@arm.com>,
 CC: <nixiaoming@huawei.com>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <x86@kernel.org>,
         <linux-s390@vger.kernel.org>
-Subject: [PATCH 3/3] s390:add missing CONFIG_STRICT_KERNEL_RWX for mark_rodata_ro
-Date: Tue, 29 May 2018 21:36:28 +0800
-Message-ID: <20180529133628.27055-1-nixiaoming@huawei.com>
+Subject: [PATCH 2/3] x86:add missing CONFIG_STRICT_KERNEL_RWX for mark_rodata_ro
+Date: Tue, 29 May 2018 21:36:22 +0800
+Message-ID: <20180529133622.26982-1-nixiaoming@huawei.com>
 X-Mailer: git-send-email 2.10.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -39,28 +39,46 @@ a compile warning may be triggered: unused function
 
 Signed-off-by: nixiaoming <nixiaoming@huawei.com>
 ---
- arch/s390/mm/init.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/mm/init_32.c | 2 ++
+ arch/x86/mm/init_64.c | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
-index 3fa3e53..a96fc3f 100644
---- a/arch/s390/mm/init.c
-+++ b/arch/s390/mm/init.c
-@@ -116,6 +116,7 @@ void __init paging_init(void)
- 	free_area_init_nodes(max_zone_pfns);
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index c893c6a..121c567 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -920,6 +920,7 @@ static void mark_nxdata_nx(void)
+ 	set_pages_nx(virt_to_page(start), size >> PAGE_SHIFT);
  }
  
 +#ifdef CONFIG_STRICT_KERNEL_RWX
  void mark_rodata_ro(void)
  {
- 	unsigned long size = __end_ro_after_init - __start_ro_after_init;
-@@ -123,6 +124,7 @@ void mark_rodata_ro(void)
- 	set_memory_ro((unsigned long)__start_ro_after_init, size >> PAGE_SHIFT);
- 	pr_info("Write protected read-only-after-init data: %luk\n", size >> 10);
+ 	unsigned long start = PFN_ALIGN(_text);
+@@ -957,3 +958,4 @@ void mark_rodata_ro(void)
+ 	if (__supported_pte_mask & _PAGE_NX)
+ 		debug_checkwx();
+ }
++#endif /*end of CONFIG_STRICT_KERNEL_RWX*/
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 0a40060..1b7a1a7 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -1245,6 +1245,7 @@ void set_kernel_text_ro(void)
+ 	set_memory_ro(start, (end - start) >> PAGE_SHIFT);
+ }
+ 
++#ifdef CONFIG_STRICT_KERNEL_RWX
+ void mark_rodata_ro(void)
+ {
+ 	unsigned long start = PFN_ALIGN(_text);
+@@ -1298,6 +1299,7 @@ void mark_rodata_ro(void)
+ 	 */
+ 	pti_clone_kernel_text();
  }
 +#endif
  
- void __init mem_init(void)
+ int kern_addr_valid(unsigned long addr)
  {
 -- 
 2.10.1
