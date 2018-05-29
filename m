@@ -1,86 +1,76 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2099817-1527598531-2-11176543516550391566
+X-Cyrus-Session-Id: sloti22d1t05-2182782-1527602544-2-5718588531644115997
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527598531; b=RVw2UKcut9xUUiXABqAEzNdiDHNZfKWKhiCQd0o3XFl6oAUrEj
-    LSfELCKQ5Uh7bUmDdcVhCiZ2Yjmtt1bVBNk/RCIpwWmBbf6IwG9dqZ/sXUWomnXt
-    2z2kqQFWvO2yIlHCIdRiVoP+34iYWJEzWf2xrb4IbZdWa9tQ3Si0Rix+AZJHnODk
-    QH8lOcZkg7iiflNLmKMnQjZAcTWlX7qLLwGk+N6YH6x7B3RhwMNbm/vjW70Sokef
-    gN6F9Zc2hkqP87+zpvH23G8FhGq9eBdBYHohFYmLvTe14vNkj6+gG2Kw2mGidRrI
-    fjRuzPY8DdOx1e+7oHPa352kDqT7pfir70ig==
+    1527602544; b=Za3pgCNoNZMTGNpK6Zus1qvBk/ks4MqXSglvT4dKNIgYMMsJwx
+    Zfew6xHsXeSVGh/2pJMQJbCpeavvYkKJIJxblEf6/RDkFhKnCyAw49rRHOTDYNtQ
+    AOUs6AxO2eYxQRfitMNuk8ztxpMecHt0J8/luD+icbJpIoPpK4ivLQMLcyI/z5xr
+    94kGpiTSZXM6E1yoHd3yuoTMcYbIUI4FrxSXLOkIylRvH88xp++bGo6Zb3Y2fi1c
+    h3TbCHk66JM7GLldS6RGPegIBayhhokQB85voS4mtrOoy7J5+4ZK+ehxyFKNxyBg
+    aLRdAnUfM9h141db9y++pZ3FM56e1qn5fQFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1527598531; bh=CJ9A7wwRn/soQIYJNZjiGGgvO6ixXUyEOI79kqTHTm
-    M=; b=TFtodwg3NmHtVobbliW5S/FqVXT7IatyHMCeGN9KYKUVSYPPCYghAnPjjp
-    pOYx9wJrwJfwc893Y/xCYmH5DHX+Kv/thigX7PdMQNH35HM26o08AKymrpAK6f2Z
-    EK8T5FJsFfR7paB+Rc3wAFFy2dOyFbsQM7EjrPBx/b92ci5r9vs+8L0wWILOP/pF
-    2Fey0Wqw/zMva8OcfPjV3HYqGWQWWb67Ill9Lrk9DJXmmxKYAU+moCmB7RmjwzFW
-    BGts6zT9ubz6hjR2gwVOl/yXpxcGKPAwj8lToT/tXPgjf9tTDzwhLJfAOq8chaea
-    Ou8ZvhMEJ/gveelbFJTNL43y3fVQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:references:date:in-reply-to
+    :message-id:mime-version:content-type:subject:sender:list-id; s=
+    fm2; t=1527602544; bh=wcKzi7khozt94hHKnXU+sUi5va8ptu6Ar6BmfYpBDO
+    w=; b=PRjZyDII/hkwYcQDSahkNmvAElJVpQT2HI9idql0nh4DuabWPjcZRC8VmH
+    dZlFN6MGBkMykSC14VfZH9dj6ClFm3Rn0iUloCcBCNqLxYqWQKP3CuJiPGtUypck
+    SI9Jo8x90gkYl/whYhrrqDtKzYVqUhuYB/vc6E8mlTGiEHbvob/S+Zfp84jAf0ki
+    owVreaWkBQ59oQQUrIGD+A/3isowZcT5EdrmxzUccIKqMZSpPT6QAh6z6GttImHQ
+    akI2hn9cRR3SZ6ofnL7sENOzj29N+Thxf1ZHkZCMTqPgacFLwkeaqZ0QnRdUJoYd
+    weonlpiW1z96CdJm7yQmhKA5TdAg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=qAOgCIP+;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    header.domain=xmission.com header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=qAOgCIP+;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+      header.domain=xmission.com header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHteDRQQLBi1pkEsplNCdes5mwQ5EbgBzfPKZYVNXj/PghVK3zQ8bvKuOkp3ZuzF954nKFM8jKxBiczRqYyK2eyN4tX+Y06tYn8jIvovgo/mvLd8e7+M
-    j3+zKQkC9YkXR/pKdtniyg/mBTf2f0wMJt8V4iyPqLKlZLeeHba5RiMARJ9yOPDxX7xNTrVBHuK+hxpGVdMyDZzi5B74cyzSVXp1CSrATeRF0aBY4lANsZv7
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=PtDNVHqPAAAA:8 a=6-X8RuxaUqMGMgnIRgEA:9 a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19
-    a=QEXdDO2ut3YA:10 a=SsLxlLYP9IwA:10 a=BpimnaHY1jUKGyF_4-AF:22
+X-CM-Envelope: MS4wfOGYosgFstpI549yxusRIIhRBfmldhRxiaGlGpvLkZ5j3H/Lwayc4oxG1fXMuL/N0+yhahmVHKXXUcwMFks6dpY4XTssczomYyDIfV1DbX2U++2vb3Jz
+    1SeVYeKuiULURr4mN70eZiILNXAQYw2U8wEI7pd8NRWxI9Rx/fMQUSd64mz0RWzj5hgOwhqhhS5vT3h+yQ+aT5S2RnqhyGxMe9tk6JB5C6YHpq+rAdGWAFl9
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
+    a=PtDNVHqPAAAA:8 a=7nb9Ao8528kwGKcT9hIA:9 a=SsLxlLYP9IwA:10
+    a=BpimnaHY1jUKGyF_4-AF:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933701AbeE2Mz1 (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 08:55:27 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:45600 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933592AbeE2Mz1 (ORCPT
+        id S934158AbeE2OCT (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 10:02:19 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:47714 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933858AbeE2OCS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 May 2018 08:55:27 -0400
-X-Google-Smtp-Source: ADUXVKLtgPfw7Qg9UIckUUVw4CmewPsD808iD7MdSQBx1yqi9mYlKYKm2mVEpgcZyNm+C5ogCCmvrxZb2n0p+dXaqd0=
-MIME-Version: 1.0
-In-Reply-To: <877enmskec.fsf@xmission.com>
-References: <87r2mre5b3.fsf@xmission.com> <87wovubbdf.fsf@xmission.com> <877enmskec.fsf@xmission.com>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Tue, 29 May 2018 14:55:25 +0200
-Message-ID: <CAOssrKdS9gOsZrNfqJbk_j0Z8-hrqrYWW+=_Z5mUEX1KE-Kw6Q@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Ensure posix acls are translated outside of init_user_ns
-To: "Eric W. Biederman" <ebiederm@xmission.com>
+        Tue, 29 May 2018 10:02:18 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Miklos Szeredi <mszeredi@redhat.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>,
         lkml <linux-kernel@vger.kernel.org>,
         Linux Containers <containers@lists.linux-foundation.org>,
@@ -90,143 +80,84 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>,
         Sargun Dhillon <sargun@sargun.me>,
         Dongsu Park <dongsu@kinvolk.io>,
         "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <87r2mre5b3.fsf@xmission.com> <87wovubbdf.fsf@xmission.com>
+        <877enmskec.fsf@xmission.com>
+        <CAOssrKdS9gOsZrNfqJbk_j0Z8-hrqrYWW+=_Z5mUEX1KE-Kw6Q@mail.gmail.com>
+Date: Tue, 29 May 2018 09:02:03 -0500
+In-Reply-To: <CAOssrKdS9gOsZrNfqJbk_j0Z8-hrqrYWW+=_Z5mUEX1KE-Kw6Q@mail.gmail.com>
+        (Miklos Szeredi's message of "Tue, 29 May 2018 14:55:25 +0200")
+Message-ID: <87zi0io90k.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fNfCa-0006IB-MN;;;mid=<87zi0io90k.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/5jC3kvwtq7wXp65tT4TqcSCj++Ss7wy0=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Miklos Szeredi <mszeredi@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 232 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.6 (1.1%), b_tie_ro: 1.77 (0.8%), parse: 1.28 (0.6%),
+        extract_message_metadata: 16 (6.9%), get_uri_detail_list: 1.89 (0.8%),
+        tests_pri_-1000: 9 (4.0%), tests_pri_-950: 1.76 (0.8%), tests_pri_-900: 1.64
+        (0.7%), tests_pri_-400: 28 (12.0%), check_bayes: 26 (11.4%), b_tokenize: 10
+        (4.4%), b_tok_get_all: 6 (2.6%), b_comp_prob: 3.0 (1.3%), b_tok_touch_all:
+        4.1 (1.8%), b_finish: 2.1 (0.9%), tests_pri_0: 163 (70.3%),
+        check_dkim_signature: 0.46 (0.2%), check_dkim_adsp: 3.1 (1.3%),
+        tests_pri_500: 4.6 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] fuse: Ensure posix acls are translated outside of init_user_ns
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 29, 2018 at 2:42 PM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
-> ebiederm@xmission.com (Eric W. Biederman) writes:
->
+Miklos Szeredi <mszeredi@redhat.com> writes:
+
+> On Tue, May 29, 2018 at 2:42 PM, Eric W. Biederman
+> <ebiederm@xmission.com> wrote:
 >> ebiederm@xmission.com (Eric W. Biederman) writes:
 >>
->>> Ensure the translation happens by failing to read or write
->>> posix acls when the filesystem has not indicated it supports
->>> posix acls.
+>>> ebiederm@xmission.com (Eric W. Biederman) writes:
 >>>
->>> This ensures that modern cached posix acl support is available
->>> and used when dealing with posix acls.  This is important
->>> because only that path has the code to convernt the uids and
->>> gids in posix acls into the user namespace of a fuse filesystem.
+>>>> Ensure the translation happens by failing to read or write
+>>>> posix acls when the filesystem has not indicated it supports
+>>>> posix acls.
+>>>>
+>>>> This ensures that modern cached posix acl support is available
+>>>> and used when dealing with posix acls.  This is important
+>>>> because only that path has the code to convernt the uids and
+>>>> gids in posix acls into the user namespace of a fuse filesystem.
+>>>>
+>>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>>>> ---
 >>>
->>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->>> ---
+>>> ping.
+>>>
+>>> Miklos are you around where you can look at this?
 >>
->> ping.
->>
->> Miklos are you around where you can look at this?
+>> Perhaps I got the wrong email address.
 >
-> Perhaps I got the wrong email address.
-
-
-No, sorry.  I'll queue this up for 4.18.
-
-Just wanted to finish off overlayfs stuff before getting into fuse.
-
-Thanks,
-Miklos
-
 >
->>
->>> Miklos after several attempts to handle this better last cycle.  I
->>> figure we should go with the stupid version for now.  I think I know
->>> how to do better but I don't want that to gate forward progress on
->>> fully unprivileged fuse mounts.  Especially as this is the last known
->>> issue to deal with.
->>>
->>>  fs/fuse/fuse_i.h |  1 +
->>>  fs/fuse/inode.c  |  7 +++++++
->>>  fs/fuse/xattr.c  | 43 +++++++++++++++++++++++++++++++++++++++++++
->>>  3 files changed, 51 insertions(+)
->>>
->>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
->>> index f630951df8dc..5256ad333b05 100644
->>> --- a/fs/fuse/fuse_i.h
->>> +++ b/fs/fuse/fuse_i.h
->>> @@ -985,6 +985,7 @@ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size);
->>>  int fuse_removexattr(struct inode *inode, const char *name);
->>>  extern const struct xattr_handler *fuse_xattr_handlers[];
->>>  extern const struct xattr_handler *fuse_acl_xattr_handlers[];
->>> +extern const struct xattr_handler *fuse_no_acl_xattr_handlers[];
->>>
->>>  struct posix_acl;
->>>  struct posix_acl *fuse_get_acl(struct inode *inode, int type);
->>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->>> index 1643043d4fe5..22c76cf8c2e3 100644
->>> --- a/fs/fuse/inode.c
->>> +++ b/fs/fuse/inode.c
->>> @@ -1100,6 +1100,13 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
->>>          file->f_cred->user_ns != sb->s_user_ns)
->>>              goto err_fput;
->>>
->>> +    /*
->>> +     * If we are not in the initial user namespace posix
->>> +     * acls must be translated.
->>> +     */
->>> +    if (sb->s_user_ns != &init_user_ns)
->>> +            sb->s_xattr = fuse_no_acl_xattr_handlers;
->>> +
->>>      fc = kmalloc(sizeof(*fc), GFP_KERNEL);
->>>      err = -ENOMEM;
->>>      if (!fc)
->>> diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
->>> index 3caac46b08b0..433717640f78 100644
->>> --- a/fs/fuse/xattr.c
->>> +++ b/fs/fuse/xattr.c
->>> @@ -192,6 +192,26 @@ static int fuse_xattr_set(const struct xattr_handler *handler,
->>>      return fuse_setxattr(inode, name, value, size, flags);
->>>  }
->>>
->>> +static bool no_xattr_list(struct dentry *dentry)
->>> +{
->>> +    return false;
->>> +}
->>> +
->>> +static int no_xattr_get(const struct xattr_handler *handler,
->>> +                    struct dentry *dentry, struct inode *inode,
->>> +                    const char *name, void *value, size_t size)
->>> +{
->>> +    return -EOPNOTSUPP;
->>> +}
->>> +
->>> +static int no_xattr_set(const struct xattr_handler *handler,
->>> +                    struct dentry *dentry, struct inode *nodee,
->>> +                    const char *name, const void *value,
->>> +                    size_t size, int flags)
->>> +{
->>> +    return -EOPNOTSUPP;
->>> +}
->>> +
->>>  static const struct xattr_handler fuse_xattr_handler = {
->>>      .prefix = "",
->>>      .get    = fuse_xattr_get,
->>> @@ -209,3 +229,26 @@ const struct xattr_handler *fuse_acl_xattr_handlers[] = {
->>>      &fuse_xattr_handler,
->>>      NULL
->>>  };
->>> +
->>> +static const struct xattr_handler fuse_no_acl_access_xattr_handler = {
->>> +    .name  = XATTR_NAME_POSIX_ACL_ACCESS,
->>> +    .flags = ACL_TYPE_ACCESS,
->>> +    .list  = no_xattr_list,
->>> +    .get   = no_xattr_get,
->>> +    .set   = no_xattr_set,
->>> +};
->>> +
->>> +static const struct xattr_handler fuse_no_acl_default_xattr_handler = {
->>> +    .name  = XATTR_NAME_POSIX_ACL_DEFAULT,
->>> +    .flags = ACL_TYPE_ACCESS,
->>> +    .list  = no_xattr_list,
->>> +    .get   = no_xattr_get,
->>> +    .set   = no_xattr_set,
->>> +};
->>> +
->>> +const struct xattr_handler *fuse_no_acl_xattr_handlers[] = {
->>> +    &fuse_no_acl_access_xattr_handler,
->>> +    &fuse_no_acl_default_xattr_handler,
->>> +    &fuse_xattr_handler,
->>> +    NULL
->>> +};
+> No, sorry.  I'll queue this up for 4.18.
+>
+> Just wanted to finish off overlayfs stuff before getting into fuse.
+
+After reading your overlayfs pull it looks like those were some tricky
+issues you were dealing with so it makes complete sense.
+
+Then I am going to send you the enablement patch as I think the initial
+round of work is done and you can apply them when you are ready.
+
+Eric
