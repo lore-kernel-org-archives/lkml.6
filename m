@@ -1,5 +1,5 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2486798-1527616949-2-17117936540803469022
+X-Cyrus-Session-Id: sloti22d1t05-2473614-1527616982-2-6390358731940272760
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
@@ -8,22 +8,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527616948; b=UfAZukC/fuAN/HFmh0PDcvPqIuSKzdKFBXErW6w+t4uVksRz1v
-    utzVQNlq9IQuCsUYOS2kUPmygNZVE3XOZMGr4yYU8q/63JvgbijA5gO7vEWzuZBy
-    S8mklDPrHsdp7SdWTOj5oWnhLKS//eGuI15wg9eWFbz8djIFsxtppoO/XX9hPw4T
-    wOnM90Yqz75XaT6htPw8hIN/n5cugPb+P33xLhC7JsAdUfC2aRIkCC493OIl2fBO
-    rhwIAWZBv7iqRLb72aXU6q9SAxRY8GqiNg7TeV7d9UFBo8YowIeRyU/NtqrcqX5F
-    Q1aNoD4jBjcs0u6NDN6FBUVKmIm8Ua+io/NA==
+    1527616982; b=bJ/JPT/EAqWWQYAF1wuUOB3+lGKAzKLmgadLF6ETl90zBn0/pi
+    DiLkKk1qTEnm60bFEfvdDeZwP38H+6lNG1jEFWUWLlVQ3UOMov0qp7egiQMrNzDU
+    qL8C+IjJ4FSjeqvLGz9EJUkWCHFNGNwknp6yzClFFf5fs/6j+Cz6ZlS7cZVVu5yT
+    BmGQWgJ2+HKAb9dp02UYn68wpscu1DwhBank0UjqQiYVr8tp/nV71bCYudTzHfeH
+    qG1vO2GMm9dHT27x1sgweBVyEp8nBQWGPDPKSLINqMl41V/A4DVg09YDvig85oMf
+    oyHgPBmY7OeWmXi+tzniHMXiuo752GI5s5GA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1527616948; bh=1vEJnH9Z7wgyIECeiWEtJI2aeU6neZ
-    Y05jObOQz6D+0=; b=IWfhk4+yXeZPmanXm1ei5zpC+dhSR11HqivVKD2ZSpKMp4
-    KkpNUXCjCqjIJvpAtFK7xZidrrRrd+j/GEmjfG/Iy8bxzoKTH+VftvUIRJAGDuoG
-    izfDPIQUDFiHk0o+jU4sSpSH7u+bixz5LNIsIT53V7WvPL9O/A0Xs9Emq093H3Rz
-    +lh3iXmEeP/EIywg2Uh1SnFcEfBgTKSgdxa7KPtw2hAsgrMyIRgkRXXvkm12sUue
-    qIJzwXbeBTnq1U6lmXVwbC9tLDQHGjzQn7IY11Nqk9tfRaBg3Ezg13wNeEqMpyIn
-    4Y9PeygiXMO6cJJI/Bz41OD5O1h0WES694W/piUg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:in-reply-to
+    :references:message-id:sender:list-id; s=fm2; t=1527616982; bh=f
+    EfwzyU6nPh8x7I2Nnn4h0UGuIAH3vG4vdXv96s9ujw=; b=QcmvShOf7QqU3rcbV
+    bTKpfkEH00GlMEPCseSZcgOfzGkakn8Kbwu3Tz6dlwKYhMwb/nbr6K1KOHLXY+pc
+    fGXcDxgl9eu7IdmuzTIYnIorV0yuXY9Ss322ZNUoO2GgKTMwC95dpvMD/opnuLYs
+    FufReMA8CJZc1K4bBnGEyy2bvN7vr6a9SGJCTzBi/PDkQ4WOLJg2kUL+5zsCzGnh
+    R+seTHMD2W9oKE7MyhPXk9f7/UcH/ux1pXFdEeWmPNYuWUGZtYf0dPneepfwkfeG
+    oBScP0ZFpgnzpBSjxw6yCICnumAaiEvpH84GumgaZedUkrQ63q5lLReVWVOhJtg5
+    Vsgjw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
     header.from=linux.vnet.ibm.com;
@@ -39,7 +40,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header_org.domain=ibm.com header_org.result=pass
     header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
@@ -57,22 +58,24 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJaHLf272ucTnoRegYJ0mPtE41HzKSDHzZkqBLWdjNzFLo2tJDUXIpXyDkgB/bSGM9qUXCpGa4giZ1mUiAxOjHWedobMQYjcIAjIByKhD7ofZt7NLutd
-    MP3GJsJFLQHpY6n6h4RqISTb2QQjh/PUneAjggQ7mEWRpt4lNtavJF7VyoY7lTC/z+x5e5uCriN/rGT14OhHyNJCy3Fg3EYQCX07nlzeruWqtZ1BVChhkzkw
-    YbVwfWgayKfR466CMCw9DA==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=pfepmeDxbJN8zshhl1AA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfD9Y/5wDGzaztvf0WGAPJxdmQjiANsMMmXuftX0kNetdvFo2JgRSk78OFr7sMOHAFJONB+vp3h/pFZVEHNQejMgXYPAEsqTQVWueBGLlq2FsxVz39/gr
+    Mc59UjmLYXfJmwxDI7jMyy5NnfiXmUTcRhIyAGpl7kJE9PdTcSW0szUd1UPLJ9aGkdo2loYbObowJWKtE4daUSdYlGoY9UjmyEjmZmtJm+10rk/DMBgfBMNw
+    9vAIHHkAiM4v05Wx0eqPFg==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VnNF1IyMAAAA:8
+    a=1XWaLZrsAAAA:8 a=xVhDTqbCAAAA:8 a=vpqfxihKAAAA:8 a=VwQbUJbxAAAA:8
+    a=wXcipsOM8ntSdkT-vb8A:9 a=x8gzFH9gYPwA:10 a=GrmWmAYt4dzCMttCBZOh:22
+    a=AULIiLoY-XQsE5F6gcqX:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965740AbeE2SCV (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 14:02:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41834 "EHLO
+        id S965540AbeE2SC6 (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 14:02:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34934 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965705AbeE2SCT (ORCPT
+        by vger.kernel.org with ESMTP id S965857AbeE2SCh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 May 2018 14:02:19 -0400
+        Tue, 29 May 2018 14:02:37 -0400
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -82,15 +85,20 @@ Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Eric Biederman <ebiederm@xmission.com>,
         kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v4 0/8] kexec/firmware: support system wide policy requiring signatures
-Date: Tue, 29 May 2018 14:01:52 -0400
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH v4 8/8] module: replace the existing LSM hook in init_module
+Date: Tue, 29 May 2018 14:02:00 -0400
 X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18052918-0044-0000-0000-00000558109A
+x-cbid: 18052918-0008-0000-0000-000004FC48D4
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052918-0045-0000-0000-0000289A2019
-Message-Id: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+x-cbparentid: 18052918-0009-0000-0000-00001E906786
+Message-Id: <1527616920-5415-9-git-send-email-zohar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -103,86 +111,142 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Instead of adding the security_kernel_read_file LSM hook - or defining a
-wrapper for security_kernel_read_file LSM hook and adding it, or
-renaming the existing hook to security_kernel_read_data() and adding it
-- in places where the kernel isn't reading a file, this version of the
-patch set defines a new LSM hook named security_kernel_load_data().
+Both the init_module and finit_module syscalls call either directly
+or indirectly the security_kernel_read_file LSM hook.  This patch
+replaces the direct call in init_module with a call to the new
+security_kernel_load_data hook and makes the corresponding changes in
+SELinux and IMA.
 
-The new LSM hook does not replace the existing security_kernel_read_file
-LSM hook, which is still needed, but defines a new LSM hook allowing
-LSMs and IMA-appraisal the opportunity to fail loading userspace
-provided file/data.
-
-The only difference between the two LSM hooks is the LSM hook name and a
-file descriptor.  Whether this is cause enough for requiring a new LSM
-hook, is left to the security community.
-
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Jeff Vander Stoep <jeffv@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
 ---
+ kernel/module.c                   |  2 +-
+ security/integrity/ima/ima_main.c | 24 ++++++++++--------------
+ security/selinux/hooks.c          | 26 ++++++++++++++++++++------
+ 3 files changed, 31 insertions(+), 21 deletions(-)
 
-IMA-appraisal is mostly being used in the embedded or single purpose
-closed system environments.  In these environments, both the Kconfig
-options and the userspace tools can be modified appropriately to limit
-syscalls.  For stock kernels, userspace applications need to continue to
-work with older kernels as well as with newer kernels.
-
-In this environment, the customer needs the ability to define a system
-wide IMA policy, such as requiring all kexec'ed images, firmware, kernel
-modules to be signed, without being dependent on either the Kconfig
-options or the userspace tools.[1]
-
-This patch set allows the customer to define a policy which requires
-the kexec'ed kernel images, firmware, and/or kernel modules to be
-signed.
-
-In addition, this patch set includes the ability to configure a build
-time IMA policy, which is automatically loaded at run time without
-needing to specify it on the boot command line and persists after
-loading a custom kernel policy.
-
-[1] kexec-tools suupports the new syscall based on a flag (-s).
-
-Changelog v4:
-- Define a new LSM hook named security_kernel_load_data().
-- Define kernel_load_data_id enumeration.
-- Replace the existing LSM hook in init_module syscall.
-
-Changelog v3:
-Based on James' feedback:
-- Renamed security_kernel_read_file() to security_kernel_read_data().
-- Defined new kernel_load_data_id enumeration.
-- Cleaned up ima_read_data(), replacing if's with switch.
-
-Changelog v2:
-- combined "kexec: limit kexec_load syscall" and "firmware: kernel
-signature verification" patch sets.
-- add support for build time policy.
-- defined generic security_kernel_read_blob() wrapper for
-  security_kernel_read_file(). Suggested by Luis.
-
-Mimi Zohar (8):
-  security: define new LSM hook named security_kernel_load_data
-  kexec: add call to LSM hook in original kexec_load syscall
-  ima: based on policy require signed kexec kernel images
-  firmware: add call to LSM hook before firmware sysfs fallback
-  ima: based on policy require signed firmware (sysfs fallback)
-  ima: add build time policy
-  ima: based on policy prevent loading firmware (pre-allocated buffer)
-  module: replace the existing LSM hook in init_module
-
- drivers/base/firmware_loader/fallback.c |  7 +++
- include/linux/ima.h                     |  7 +++
- include/linux/lsm_hooks.h               |  6 +++
- include/linux/security.h                | 33 ++++++++++++++
- kernel/kexec.c                          |  8 ++++
- kernel/module.c                         |  2 +-
- security/integrity/ima/Kconfig          | 58 ++++++++++++++++++++++++
- security/integrity/ima/ima.h            |  1 +
- security/integrity/ima/ima_main.c       | 79 ++++++++++++++++++++++++---------
- security/integrity/ima/ima_policy.c     | 48 ++++++++++++++++++--
- security/security.c                     | 10 +++++
- security/selinux/hooks.c                | 26 ++++++++---
- 12 files changed, 255 insertions(+), 30 deletions(-)
+diff --git a/kernel/module.c b/kernel/module.c
+index ce8066b88178..b97c642b5b4d 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2879,7 +2879,7 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
+ 	if (info->len < sizeof(*(info->hdr)))
+ 		return -ENOEXEC;
+ 
+-	err = security_kernel_read_file(NULL, READING_MODULE);
++	err = security_kernel_load_data(LOADING_MODULE);
+ 	if (err)
+ 		return err;
+ 
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 3dae605a1604..0ff1d8152f6e 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -441,17 +441,6 @@ static int read_idmap[READING_MAX_ID] = {
+  */
+ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ {
+-	bool sig_enforce = is_module_sig_enforced();
+-
+-	if (!file && read_id == READING_MODULE) {
+-		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
+-		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
+-			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
+-			return -EACCES;	/* INTEGRITY_UNKNOWN */
+-		}
+-		return 0;	/* We rely on module signature checking */
+-	}
+-
+ 	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
+ 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+ 		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
+@@ -490,9 +479,6 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 		return 0;
+ 	}
+ 
+-	if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
+-		return 0;
+-
+ 	/* permit signed certs */
+ 	if (!file && read_id == READING_X509_CERTIFICATE)
+ 		return 0;
+@@ -521,6 +507,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+  */
+ int ima_load_data(enum kernel_load_data_id id)
+ {
++	bool sig_enforce;
++
+ 	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
+ 		return 0;
+ 
+@@ -536,6 +524,14 @@ int ima_load_data(enum kernel_load_data_id id)
+ 			pr_err("Prevent firmware sysfs fallback loading.\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
++		break;
++	case LOADING_MODULE:
++		sig_enforce = is_module_sig_enforced();
++
++		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
++			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
++			return -EACCES;	/* INTEGRITY_UNKNOWN */
++		}
+ 	default:
+ 		break;
+ 	}
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 02ebd1585eaf..e02186470fc5 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4018,12 +4018,6 @@ static int selinux_kernel_module_from_file(struct file *file)
+ 	u32 sid = current_sid();
+ 	int rc;
+ 
+-	/* init_module */
+-	if (file == NULL)
+-		return avc_has_perm(&selinux_state,
+-				    sid, sid, SECCLASS_SYSTEM,
+-					SYSTEM__MODULE_LOAD, NULL);
+-
+ 	/* finit_module */
+ 
+ 	ad.type = LSM_AUDIT_DATA_FILE;
+@@ -4043,6 +4037,25 @@ static int selinux_kernel_module_from_file(struct file *file)
+ 				SYSTEM__MODULE_LOAD, &ad);
+ }
+ 
++static int selinux_kernel_load_data(enum kernel_load_data_id id)
++{
++	u32 sid;
++	int rc = 0;
++
++	switch (id) {
++	case LOADING_MODULE:
++		sid = current_sid();
++
++		/* init_module */
++		return avc_has_perm(&selinux_state, sid, sid, SECCLASS_SYSTEM,
++				    SYSTEM__MODULE_LOAD, NULL);
++	default:
++		break;
++	}
++
++	return rc;
++}
++
+ static int selinux_kernel_read_file(struct file *file,
+ 				    enum kernel_read_file_id id)
+ {
+@@ -6950,6 +6963,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
+ 	LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
+ 	LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
++	LSM_HOOK_INIT(kernel_load_data, selinux_kernel_load_data),
+ 	LSM_HOOK_INIT(kernel_read_file, selinux_kernel_read_file),
+ 	LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
+ 	LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
 -- 
 2.7.5
 
