@@ -1,177 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965135AbeE2QQE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:16:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934877AbeE2QQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:16:00 -0400
-X-Google-Smtp-Source: ADUXVKLjyAo7yb/in9FLhQjZ7J1faDmQMAZp0Np414OiJAWJkEaKw8ngF4y7ac0NAj9r+R1rTnDL9+J2eafejq9kTxI=
-MIME-Version: 1.0
-In-Reply-To: <970da65f-2026-246a-38ba-ccf2a5daa598@infradead.org>
-References: <20180516235007.3951-1-atull@kernel.org> <20180516235007.3951-13-atull@kernel.org>
- <970da65f-2026-246a-38ba-ccf2a5daa598@infradead.org>
-From: Alan Tull <atull@kernel.org>
-Date: Tue, 29 May 2018 11:15:18 -0500
-X-Gmail-Original-Message-ID: <CANk1AXRBw1hG7X_=67haH30i179By2svYnU1pciaB37UkE37Xg@mail.gmail.com>
-Message-ID: <CANk1AXRBw1hG7X_=67haH30i179By2svYnU1pciaB37UkE37Xg@mail.gmail.com>
-Subject: Re: [PATCH 12/14] documentation: fpga: move fpga-region.txt to driver-api
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Moritz Fischer <mdf@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S965183AbeE2QQq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:16:46 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:58562 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964848AbeE2QQo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 12:16:44 -0400
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH] IB/mad: Use ID allocator routines to allocate agent
+ number
+From: =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
+In-Reply-To: <20180529154922.GA18457@ziepe.ca>
+Date: Tue, 29 May 2018 18:16:14 +0200
+Cc: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Message-Id: <A470D739-D0CD-42EE-9196-8E7610B6DAF4@oracle.com>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+ <20180529154922.GA18457@ziepe.ca>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+X-Mailer: Apple Mail (2.3445.6.18)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=15 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=906
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805290179
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TGGqur005069
 
-On Fri, May 25, 2018 at 9:33 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Hi Randy,
 
-Thanks for the reviews.  These are up on char-misc-next already, so
-I'll send a patch to fix.
+> On 29 May 2018, at 17:49, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> 
+> On Tue, May 29, 2018 at 09:38:08AM +0200, Hans Westgaard Ry wrote:
+>> The agent TID is a 64 bit value split in two dwords.  The least
+>> significant dword is the TID running counter. The most significant
+>> dword is the agent number. In the CX-3 shared port model, the mlx4
+>> driver uses the most significant byte of the agent number to store the
+>> slave number, making agent numbers greater and equal to 2^24 (3 bytes)
+>> unusable.
+> 
+> There is no reason for this to be an ida, just do something like
+> 
+> mad_agent_priv->agent.hi_tid = atomic_inc_return(&ib_mad_client_id) & mad_agent_priv->ib_dev->tid_mask;
+> 
+> And have the driver set tid_mask to 3 bytes of 0xFF
 
-Alan
+The issue is that some of the mad agents are long-lived, so you will wrap and use the same TID twice.
 
-> On 05/16/2018 04:50 PM, Alan Tull wrote:
->> Move Documentation/fpga/fpga-region.txt to
->> driver-api/fpga/fpga-region.rst.  Including:
->>  - Add it to driver-api/fpga/index.rst
->>  - Formatting changes to build cleanly as ReST documentation
->>  - Some rewrites for better flow as a ReST doc such as moving
->>    API reference to the end of the doc
->>  - Rewrite API reference section to refer to kernel-doc
->>    documentation in fpga-region.c driver code
->>
->> Signed-off-by: Alan Tull <atull@kernel.org>
->> ---
->>  Documentation/driver-api/fpga/fpga-region.rst | 102 ++++++++++++++++++++++++++
->>  Documentation/driver-api/fpga/index.rst       |   1 +
->>  Documentation/fpga/fpga-region.txt            |  94 ------------------------
->>  3 files changed, 103 insertions(+), 94 deletions(-)
->>  create mode 100644 Documentation/driver-api/fpga/fpga-region.rst
->>  delete mode 100644 Documentation/fpga/fpga-region.txt
->>
->> diff --git a/Documentation/driver-api/fpga/fpga-region.rst b/Documentation/driver-api/fpga/fpga-region.rst
->> new file mode 100644
->> index 0000000..f89e4a3
->> --- /dev/null
->> +++ b/Documentation/driver-api/fpga/fpga-region.rst
->> @@ -0,0 +1,102 @@
->> +FPGA Region
->> +===========
->> +
->> +Overview
->> +--------
->> +
->> +This document is meant to be an brief overview of the FPGA region API usage.  A
->
->                                 a brief overview
->
->> +more conceptual look at regions can be found in the Device Tree binding
->> +document [#f1]_.
->> +
->> +For the purposes of this API document, let's just say that a region associates
->> +an FPGA Manager and a bridge (or bridges) with a reprogrammable region of an
->> +FPGA or the whole FPGA.  The API provides a way to register a region and to
->> +program a region.
->> +
->> +Currently the only layer above fpga-region.c in the kernel is the Device Tree
->> +support (of-fpga-region.c) described in [#f1]_.  The DT support layer uses regions
->> +to program the FPGA and then DT to handle enumeration.  The common region code
->> +is intended to be used by other schemes that have other ways of accomplishing
->> +enumeration after programming.
->> +
->> +An fpga-region can be set up to know the following things:
->> +
->> + * which FPGA manager to use to do the programming
->> +
->> + * which bridges to disable before programming and enable afterwards.
->> +
->> +Additional info needed to program the FPGA image is passed in the struct
->> +fpga_image_info including:
->> +
->> + * pointers to the image as either a scatter-gather buffer, a contiguous
->> +   buffer, or the name of firmware file
->> +
->> + * flags indicating specifics such as whether the image if for partial
->
->                                                            is for
->
->> +   reconfiguration.
->> +
->> +How to program a FPGA using a region
->
->                   an FPGA
->
->> +------------------------------------
->> +
->> +First, allocate the info struct::
->> +
->> +     info = fpga_image_info_alloc(dev);
->> +     if (!info)
->> +             return -ENOMEM;
->> +
->> +Set flags as needed, i.e.::
->> +
->> +     info->flags |= FPGA_MGR_PARTIAL_RECONFIG;
->> +
->> +Point to your FPGA image, such as::
->> +
->> +     info->sgt = &sgt;
->> +
->> +Add info to region and do the programming::
->> +
->> +     region->info = info;
->> +     ret = fpga_region_program_fpga(region);
->> +
->> +:c:func:`fpga_region_program_fpga()` operates on info passed in the
->> +fpga_image_info (region->info).  This function will attempt to:
->> +
->> + * lock the region's mutex
->> + * lock the region's FPGA manager
->> + * build a list of FPGA bridges if a method has been specified to do so
->> + * disable the bridges
->> + * program the FPGA
->> + * re-enable the bridges
->> + * release the locks
->> +
->> +Then you will want to enumerate whatever hardware has appeared in the FPGA.
->> +
->> +How to add a new FPGA region
->> +----------------------------
->> +
->> +An example of usage can be seen in the probe function of [#f2]_.
->> +
->> +.. [#f1] ../devicetree/bindings/fpga/fpga-region.txt
->> +.. [#f2] ../../drivers/fpga/of-fpga-region.c
->> +
->> +API to program a FGPA
->> +---------------------
->> +
->> +.. kernel-doc:: drivers/fpga/fpga-region.c
->> +   :functions: fpga_region_program_fpga
->> +
->> +API to add a new FPGA region
->> +----------------------------
->> +
->> +.. kernel-doc:: include/linux/fpga/fpga-region.h
->> +   :functions: fpga_region
->> +
->> +.. kernel-doc:: drivers/fpga/fpga-region.c
->> +   :functions: fpga_region_create
->> +
->> +.. kernel-doc:: drivers/fpga/fpga-region.c
->> +   :functions: fpga_region_free
->> +
->> +.. kernel-doc:: drivers/fpga/fpga-region.c
->> +   :functions: fpga_region_register
->> +
->> +.. kernel-doc:: drivers/fpga/fpga-region.c
->> +   :functions: fpga_region_unregister
->
->
+
+Thxs, Håkon
+
+
+> 
+> And no sysctl.
+> 
+> Jason
 > --
-> ~Randy
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
