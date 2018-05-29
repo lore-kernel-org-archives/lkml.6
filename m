@@ -1,56 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937045AbeE2VAc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:00:32 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:36038 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935793AbeE2VAa (ORCPT
+        id S937246AbeE2VH2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:07:28 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43892 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937149AbeE2VHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:00:30 -0400
-X-Google-Smtp-Source: ADUXVKIAyRPxaCaCUfQiv+pOJerUCDpAeQFN4kzkqVQRH+tUOTwH1zvGdW6fEHG/mwdmpRMB1LrZ/w==
-Date: Tue, 29 May 2018 17:00:25 -0400
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-        Coly Li <colyli@suse.de>, Ciaran Farrell <ciaran.farrell@suse.com>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        linux-bcache@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jonas Oberg <jonas@fsfe.org>
-Subject: Re: PostgreSQL licensed code on Linux
-Message-ID: <20180529210025.GB3487@kmo-pixel>
-References: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
- <20180529192643.GA3487@kmo-pixel>
- <20180529205143.GB7381@thunk.org>
+        Tue, 29 May 2018 17:07:22 -0400
+X-Google-Smtp-Source: ADUXVKIskURxgWBsLrFZP3uC/Qf9acR8RYKYUOvywuZDWs6s3hlbtnKkNPRq70cSB2zyTq37I8V7SAU0FCKoNmmBUkY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529205143.GB7381@thunk.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180524201105.3179904-4-stefanb@linux.vnet.ibm.com>
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <20180524201105.3179904-4-stefanb@linux.vnet.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 29 May 2018 17:07:19 -0400
+Message-ID: <CAHC9VhRjYhSgd_YCmgaOU_MEKuNKbHvPCVotmxyZRzSc2E6-Wg@mail.gmail.com>
+Subject: Re: [PATCH 3/8] audit: Implement audit_log_tty()
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
+        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 04:51:44PM -0400, Theodore Y. Ts'o wrote:
-> On Tue, May 29, 2018 at 03:26:43PM -0400, Kent Overstreet wrote:
-> > > That seems to indicate that we've had already PostgreSQL licensed code on
-> > > Linux since Kent's addition of bcache to Linux in 2013. The portion of code
-> > > is rather small though, to me it seems to cover only crc_table[],
-> > > bch_crc64_update(), and bch_crc64().
-> >
-> > > As silly as it may be we should split out the PostgreSQL licensed code from
-> > > drivers/md/bcache/util.c into its own file and while at it clarify the
-> > > license.
-> 
-> While we're at it maybe we should move the crc-64 code to lib and/or
-> crypto, alongside our support for crc-8, crc-16, and crc-32
-> algorithms?  That way if there are other potential users for crc-64,
-> they will be less likely to re-invent the wheel....
+On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
+<stefanb@linux.vnet.ibm.com> wrote:
+> Implement audit_log_tty() so that IMA can add tty= to its audit records.
+>
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> ---
+>  include/linux/audit.h | 5 +++++
+>  kernel/audit.c        | 8 ++++++++
+>  2 files changed, 13 insertions(+)
+>
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index 90aa63ddc9be..2deb76c74d10 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -154,6 +154,7 @@ extern void audit_log_task_info(struct audit_buffer *ab,
+>                                 struct task_struct *tsk);
+>
+>  extern int                 audit_update_lsm_rules(void);
+> +extern void audit_log_tty(struct audit_buffer *ab, struct task_struct *tsk);
+>
+>                                 /* Private API (for audit.c only) */
+>  extern int audit_rule_change(int type, int seq, void *data, size_t datasz);
+> @@ -202,6 +203,10 @@ static inline int audit_log_task_context(struct audit_buffer *ab)
+>  static inline void audit_log_task_info(struct audit_buffer *ab,
+>                                        struct task_struct *tsk)
+>  { }
+> +
+> +static inline void audit_log_tty(struct audit_buffer *ab,
+> +                                struct task_struct *tsk)
+> +{ }
+>  #define audit_enabled 0
+>  #endif /* CONFIG_AUDIT */
+>
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 670665c6e2a6..fa54695962b4 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -2305,6 +2305,14 @@ void audit_log_task_info(struct audit_buffer *ab, struct task_struct *tsk)
+>  }
+>  EXPORT_SYMBOL(audit_log_task_info);
+>
+> +void audit_log_tty(struct audit_buffer *ab, struct task_struct *tsk)
+> +{
+> +       struct tty_struct *tty = audit_get_tty(tsk);
+> +
+> +       audit_log_format(ab, " tty=%s", tty ? tty_name(tty) : "(none)");
+> +       audit_put_tty(tty);
+> +}
 
-Yeah, this came up because Coly wanted to do that, but needed to know what to
-put in MODULE_LICENSE().
+Perhaps I missed it, but your IMA patches only ever call this to log
+current's tty, yes?  If so, I would prefer if we dropped the
+task_struct argument and always had audit_log_tty() use current.
+
+-- 
+paul moore
+www.paul-moore.com
