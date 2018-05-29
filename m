@@ -1,86 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966414AbeE2TPa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:15:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45653 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965614AbeE2TP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:15:28 -0400
-Date: Tue, 29 May 2018 21:15:26 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <richard@nod.at>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] mtd: atmel-quadspi: add suspend/resume hooks
-Message-ID: <20180529211526.7653c6eb@bbrezillon>
-In-Reply-To: <1527091728-19895-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1527091728-19895-1-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S966150AbeE2TTn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:19:43 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:33050 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965541AbeE2TTk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 15:19:40 -0400
+X-Google-Smtp-Source: ADUXVKKXQnH5aPG2nH4lWHZmnKtfdUHBMJo9j6z6yBVRrR83sqZ0qsLysH5tF+kiXVf7mS7LEvqd4A==
+Content-Type: text/plain;
+        charset=utf-8
+Subject: Re: [PATCH 4.16 000/272] 4.16.13-stable review
+From: Rafael Tinoco <rafael.tinoco@linaro.org>
+In-Reply-To: <20180529070815.GB20225@kroah.com>
+Date: Tue, 29 May 2018 16:19:34 -0300
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux- stable <stable@vger.kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Message-Id: <BBE1C638-60BE-4F73-820C-D1E1EFBD33E3@linaro.org>
+References: <20180528100240.256525891@linuxfoundation.org>
+ <CA+G9fYu1NuW6vB+bHEsYSmyJAB27kw8vP=0uwhVR962Yq4C43g@mail.gmail.com>
+ <20180529070815.GB20225@kroah.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TJK5f8016542
 
-On Wed, 23 May 2018 19:08:48 +0300
-Claudiu Beznea <claudiu.beznea@microchip.com> wrote:
+The following bug has been opened for LTP:
 
-> Implement suspend/resume hooks.
+https://github.com/linux-test-project/ltp/issues/319
+
+for the CVE-2017-5669's wrong assumptions (based on Davidlohr's work). 
+
+I'll change the test to cover both scenarios and expect the right results from them.
+
+> On 29 May 2018, at 04:08, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  drivers/mtd/spi-nor/atmel-quadspi.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+> On Tue, May 29, 2018 at 10:55:34AM +0530, Naresh Kamboju wrote:
+>> On 28 May 2018 at 15:30, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>>> This is the start of the stable review cycle for the 4.16.13 release.
+>>> There are 272 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>> 
+>>> Responses should be made by Wed May 30 10:01:02 UTC 2018.
+>>> Anything received after that time might be too late.
+>>> 
+>>> The whole patch series can be found in one patch at:
+>>>        https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.13-rc1.gz
+>>> or in the git tree and branch at:
+>>>        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
+>>> and the diffstat can be found below.
+>>> 
+>>> thanks,
+>>> 
+>>> greg k-h
+>> 
+>> Results from Linaro’s test farm.
+>> No regressions on arm64, arm and x86_64.
+>> 
+>> NOTE:
+>> The failed LTP test case "cve-2017-5669" is a waiver here.
 > 
-> diff --git a/drivers/mtd/spi-nor/atmel-quadspi.c b/drivers/mtd/spi-nor/atmel-quadspi.c
-> index 6c5708bacad8..85d7610fb920 100644
-> --- a/drivers/mtd/spi-nor/atmel-quadspi.c
-> +++ b/drivers/mtd/spi-nor/atmel-quadspi.c
-> @@ -737,6 +737,28 @@ static int atmel_qspi_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +static int atmel_qspi_suspend(struct device *dev)
-> +{
-> +	struct atmel_qspi *aq = dev_get_drvdata(dev);
-> +
-> +	clk_disable_unprepare(aq->clk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int atmel_qspi_resume(struct device *dev)
-> +{
-> +	struct atmel_qspi *aq = dev_get_drvdata(dev);
-> +
-> +	clk_prepare_enable(aq->clk);
-> +
-> +	return atmel_qspi_init(aq);
-> +}
-> +#endif
-
-You can avoid this #ifdef section if you use the __maybe_unused
-specifier:
-
-static __maybe_unused int atmel_qspi_suspend(struct device *dev)
-...
-
-> +
-> +static SIMPLE_DEV_PM_OPS(atmel_qspi_pm_ops, atmel_qspi_suspend,
-> +			 atmel_qspi_resume);
->  
->  static const struct of_device_id atmel_qspi_dt_ids[] = {
->  	{ .compatible = "atmel,sama5d2-qspi" },
-> @@ -749,6 +771,7 @@ static struct platform_driver atmel_qspi_driver = {
->  	.driver = {
->  		.name	= "atmel_qspi",
->  		.of_match_table	= atmel_qspi_dt_ids,
-> +		.pm	= &atmel_qspi_pm_ops,
->  	},
->  	.probe		= atmel_qspi_probe,
->  	.remove		= atmel_qspi_remove,
+> Thanks for figuring that one out :)
+> 
+> Also, thanks for testing all of these and letting me know.
