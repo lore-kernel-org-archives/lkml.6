@@ -1,204 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935198AbeE2O2c (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:28:32 -0400
-Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38208 "EHLO
+        id S935355AbeE2O3U (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:29:20 -0400
+Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38132 "EHLO
         smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935086AbeE2OWO (ORCPT
+        with ESMTP id S934980AbeE2OV7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:22:14 -0400
+        Tue, 29 May 2018 10:21:59 -0400
 From: James Simmons <jsimmons@infradead.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
         Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Lustre Development List <lustre-devel@lists.lustre.org>,
-        James Simmons <jsimmons@infradead.org>,
-        James Simmons <uja.ornl@yahoo.com>
-Subject: [PATCH v2 04/25] staging: lustre: libcfs: properly handle failure cases in SMP code
-Date: Tue, 29 May 2018 10:21:44 -0400
-Message-Id: <1527603725-30560-5-git-send-email-jsimmons@infradead.org>
+        "John L. Hammond" <john.hammond@intel.com>,
+        James Simmons <jsimmons@infradead.org>
+Subject: [PATCH v2 6/6] staging: lustre: mdc: use large xattr buffers for old servers
+Date: Tue, 29 May 2018 10:21:45 -0400
+Message-Id: <1527603705-30450-7-git-send-email-jsimmons@infradead.org>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
-References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
+In-Reply-To: <1527603705-30450-1-git-send-email-jsimmons@infradead.org>
+References: <1527603705-30450-1-git-send-email-jsimmons@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While pushing the SMP work some bugs were pointed out by Dan
-Carpenter in the code. Due to single err label in cfs_cpu_init()
-and cfs_cpt_table_alloc() a few items were being cleaned up that
-were never initialized. This can lead to crashed and other problems.
-In those initialization function introduce individual labels to
-jump to only the thing initialized get freed on failure.
+From: "John L. Hammond" <john.hammond@intel.com>
 
-Signed-off-by: James Simmons <uja.ornl@yahoo.com>
-Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10932
-Reviewed-on: https://review.whamcloud.com/32085
-Reviewed-by: Dmitry Eremin <dmitry.eremin@intel.com>
+Pre 2.10.1 MDTs will crash when they receive a listxattr (MDS_GETXATTR
+with OBD_MD_FLXATTRLS) RPC for an orphan or dead object. So for
+clients connected to these older MDTs, try to avoid sending listxattr
+RPCs by making the bulk getxattr (MDS_GETXATTR with OBD_MD_FLXATTRALL)
+more likely to succeed and thereby reducing the chances of falling
+back to listxattr.
+
+Signed-off-by: John L. Hammond <john.hammond@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10912
+Reviewed-on: https://review.whamcloud.com/31990
 Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+Reviewed-by: Fan Yong <fan.yong@intel.com>
+Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
 Signed-off-by: James Simmons <jsimmons@infradead.org>
 ---
 Changelog:
 
-v1) New patch to make libcfs SMP code handle failure paths correctly.
+v1) Initial patch
+v2) Rebased patch. No changes
 
- drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c | 72 ++++++++++++++++++-------
- 1 file changed, 52 insertions(+), 20 deletions(-)
+ drivers/staging/lustre/lustre/mdc/mdc_locks.c | 31 +++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-index 34df7ed..b67a60c 100644
---- a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-+++ b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-@@ -81,17 +81,19 @@ struct cfs_cpt_table *
- 
- 	cptab->ctb_nparts = ncpt;
- 
-+	if (!zalloc_cpumask_var(&cptab->ctb_cpumask, GFP_NOFS))
-+		goto failed_alloc_cpumask;
-+
- 	cptab->ctb_nodemask = kzalloc(sizeof(*cptab->ctb_nodemask),
- 				      GFP_NOFS);
--	if (!zalloc_cpumask_var(&cptab->ctb_cpumask, GFP_NOFS) ||
--	    !cptab->ctb_nodemask)
--		goto failed;
-+	if (!cptab->ctb_nodemask)
-+		goto failed_alloc_nodemask;
- 
- 	cptab->ctb_cpu2cpt = kvmalloc_array(num_possible_cpus(),
- 					    sizeof(cptab->ctb_cpu2cpt[0]),
- 					    GFP_KERNEL);
- 	if (!cptab->ctb_cpu2cpt)
--		goto failed;
-+		goto failed_alloc_cpu2cpt;
- 
- 	memset(cptab->ctb_cpu2cpt, -1,
- 	       num_possible_cpus() * sizeof(cptab->ctb_cpu2cpt[0]));
-@@ -99,22 +101,41 @@ struct cfs_cpt_table *
- 	cptab->ctb_parts = kvmalloc_array(ncpt, sizeof(cptab->ctb_parts[0]),
- 					  GFP_KERNEL);
- 	if (!cptab->ctb_parts)
--		goto failed;
-+		goto failed_alloc_ctb_parts;
-+
-+	memset(cptab->ctb_parts, -1, ncpt * sizeof(cptab->ctb_parts[0]));
- 
- 	for (i = 0; i < ncpt; i++) {
- 		struct cfs_cpu_partition *part = &cptab->ctb_parts[i];
- 
-+		if (!zalloc_cpumask_var(&part->cpt_cpumask, GFP_NOFS))
-+			goto failed_setting_ctb_parts;
-+
- 		part->cpt_nodemask = kzalloc(sizeof(*part->cpt_nodemask),
- 					     GFP_NOFS);
--		if (!zalloc_cpumask_var(&part->cpt_cpumask, GFP_NOFS) ||
--		    !part->cpt_nodemask)
--			goto failed;
-+		if (!part->cpt_nodemask)
-+			goto failed_setting_ctb_parts;
- 	}
- 
- 	return cptab;
- 
-- failed:
--	cfs_cpt_table_free(cptab);
-+failed_setting_ctb_parts:
-+	while (i-- >= 0) {
-+		struct cfs_cpu_partition *part = &cptab->ctb_parts[i];
-+
-+		kfree(part->cpt_nodemask);
-+		free_cpumask_var(part->cpt_cpumask);
-+	}
-+
-+	kvfree(cptab->ctb_parts);
-+failed_alloc_ctb_parts:
-+	kvfree(cptab->ctb_cpu2cpt);
-+failed_alloc_cpu2cpt:
-+	kfree(cptab->ctb_nodemask);
-+failed_alloc_nodemask:
-+	free_cpumask_var(cptab->ctb_cpumask);
-+failed_alloc_cpumask:
-+	kfree(cptab);
- 	return NULL;
- }
- EXPORT_SYMBOL(cfs_cpt_table_alloc);
-@@ -940,7 +961,7 @@ static int cfs_cpu_dead(unsigned int cpu)
- int
- cfs_cpu_init(void)
+diff --git a/drivers/staging/lustre/lustre/mdc/mdc_locks.c b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+index a8aa0fa..b991c6f 100644
+--- a/drivers/staging/lustre/lustre/mdc/mdc_locks.c
++++ b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+@@ -326,8 +326,10 @@ static void mdc_realloc_openmsg(struct ptlrpc_request *req,
  {
--	int ret = 0;
-+	int ret;
+ 	struct ptlrpc_request	*req;
+ 	struct ldlm_intent	*lit;
++	u32 min_buf_size = 0;
+ 	int rc, count = 0;
+ 	LIST_HEAD(cancels);
++	u32 buf_size = 0;
  
- 	LASSERT(!cfs_cpt_tab);
+ 	req = ptlrpc_request_alloc(class_exp2cliimp(exp),
+ 				   &RQF_LDLM_INTENT_GETXATTR);
+@@ -344,18 +346,33 @@ static void mdc_realloc_openmsg(struct ptlrpc_request *req,
+ 	lit = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
+ 	lit->opc = IT_GETXATTR;
  
-@@ -949,23 +970,23 @@ static int cfs_cpu_dead(unsigned int cpu)
- 					"staging/lustre/cfe:dead", NULL,
- 					cfs_cpu_dead);
- 	if (ret < 0)
--		goto failed;
-+		goto failed_cpu_dead;
-+
- 	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
- 					"staging/lustre/cfe:online",
- 					cfs_cpu_online, NULL);
- 	if (ret < 0)
--		goto failed;
-+		goto failed_cpu_online;
-+
- 	lustre_cpu_online = ret;
- #endif
--	ret = -EINVAL;
--
- 	get_online_cpus();
- 	if (*cpu_pattern) {
- 		char *cpu_pattern_dup = kstrdup(cpu_pattern, GFP_KERNEL);
- 
- 		if (!cpu_pattern_dup) {
- 			CERROR("Failed to duplicate cpu_pattern\n");
--			goto failed;
-+			goto failed_alloc_table;
- 		}
- 
- 		cfs_cpt_tab = cfs_cpt_table_create_pattern(cpu_pattern_dup);
-@@ -973,7 +994,7 @@ static int cfs_cpu_dead(unsigned int cpu)
- 		if (!cfs_cpt_tab) {
- 			CERROR("Failed to create cptab from pattern %s\n",
- 			       cpu_pattern);
--			goto failed;
-+			goto failed_alloc_table;
- 		}
- 
- 	} else {
-@@ -981,7 +1002,7 @@ static int cfs_cpu_dead(unsigned int cpu)
- 		if (!cfs_cpt_tab) {
- 			CERROR("Failed to create ptable with npartitions %d\n",
- 			       cpu_npartitions);
--			goto failed;
-+			goto failed_alloc_table;
- 		}
- 	}
- 
-@@ -992,8 +1013,19 @@ static int cfs_cpu_dead(unsigned int cpu)
- 		 cfs_cpt_number(cfs_cpt_tab));
- 	return 0;
- 
-- failed:
-+failed_alloc_table:
- 	put_online_cpus();
--	cfs_cpu_fini();
-+
-+	if (cfs_cpt_tab)
-+		cfs_cpt_table_free(cfs_cpt_tab);
-+
-+	ret = -EINVAL;
-+#ifdef CONFIG_HOTPLUG_CPU
-+	if (lustre_cpu_online > 0)
-+		cpuhp_remove_state_nocalls(lustre_cpu_online);
-+failed_cpu_online:
-+	cpuhp_remove_state_nocalls(CPUHP_LUSTRE_CFS_DEAD);
-+failed_cpu_dead:
++#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
++	/* If the supplied buffer is too small then the server will
++	 * return -ERANGE and llite will fallback to using non cached
++	 * xattr operations. On servers before 2.10.1 a (non-cached)
++	 * listxattr RPC for an orphan or dead file causes an oops. So
++	 * let's try to avoid sending too small a buffer to too old a
++	 * server. This is effectively undoing the memory conservation
++	 * of LU-9417 when it would be *more* likely to crash the
++	 * server. See LU-9856.
++	 */
++	if (exp->exp_connect_data.ocd_version < OBD_OCD_VERSION(2, 10, 1, 0))
++		min_buf_size = exp->exp_connect_data.ocd_max_easize;
 +#endif
- 	return ret;
- }
++	buf_size = max_t(u32, min_buf_size,
++			 GA_DEFAULT_EA_NAME_LEN * GA_DEFAULT_EA_NUM);
++
+ 	/* pack the intended request */
+-	mdc_pack_body(req, &op_data->op_fid1, op_data->op_valid,
+-		      GA_DEFAULT_EA_NAME_LEN * GA_DEFAULT_EA_NUM, -1, 0);
++	mdc_pack_body(req, &op_data->op_fid1, op_data->op_valid, buf_size,
++		      -1, 0);
+ 
+-	req_capsule_set_size(&req->rq_pill, &RMF_EADATA, RCL_SERVER,
+-			     GA_DEFAULT_EA_NAME_LEN * GA_DEFAULT_EA_NUM);
++	req_capsule_set_size(&req->rq_pill, &RMF_EADATA, RCL_SERVER, buf_size);
+ 
+-	req_capsule_set_size(&req->rq_pill, &RMF_EAVALS, RCL_SERVER,
+-			     GA_DEFAULT_EA_NAME_LEN * GA_DEFAULT_EA_NUM);
++	req_capsule_set_size(&req->rq_pill, &RMF_EAVALS, RCL_SERVER, buf_size);
+ 
+ 	req_capsule_set_size(&req->rq_pill, &RMF_EAVALS_LENS, RCL_SERVER,
+-			     sizeof(u32) * GA_DEFAULT_EA_NUM);
++			     max_t(u32, min_buf_size,
++				   sizeof(u32) * GA_DEFAULT_EA_NUM));
+ 
+ 	req_capsule_set_size(&req->rq_pill, &RMF_ACL, RCL_SERVER, 0);
+ 
 -- 
 1.8.3.1
