@@ -1,106 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966902AbeE2UpZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 16:45:25 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49315 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966768AbeE2UpW (ORCPT
+        id S966768AbeE2UqA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 16:46:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42724 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S966767AbeE2Up6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 16:45:22 -0400
-Date: Tue, 29 May 2018 22:45:17 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>, laurent.pinchart@ideasonboard.com,
-        sebastian.reichel@collabora.co.uk
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, khilman@kernel.org,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: v4.17-rc1: regressions on N900, N950
-Message-ID: <20180529204517.GA6765@amd>
-References: <20180423202940.ig6iud5lrbgnu35a@darkstar.musicnaut.iki.fi>
- <20180521213952.GA11596@amd>
- <20180522080250.4fzyvqrgw5oigexn@pali>
- <20180522194139.GB2299@darkstar.musicnaut.iki.fi>
- <20180522205824.GA24927@amd>
- <20180522215638.GC2299@darkstar.musicnaut.iki.fi>
- <20180523140615.GA27180@amd>
- <20180523201208.GA31731@amd>
- <20180523220456.GY98604@atomide.com>
- <20180524094705.GA16705@amd>
+        Tue, 29 May 2018 16:45:58 -0400
+Subject: Re: [PATCH v4 5/7] scsi: ipr: Eliminate duplicate barriers on
+ weakly-ordered archs
+To: Sinan Kaya <okaya@codeaurora.org>, linux-scsi@vger.kernel.org,
+        timur@codeaurora.org, sulrich@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Brian King <brking@us.ibm.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org
+References: <1521514207-10695-1-git-send-email-okaya@codeaurora.org>
+ <1521514207-10695-6-git-send-email-okaya@codeaurora.org>
+From: Brian King <brking@linux.ibm.com>
+Date: Tue, 29 May 2018 15:45:52 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
-Content-Disposition: inline
-In-Reply-To: <20180524094705.GA16705@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1521514207-10695-6-git-send-email-okaya@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18052920-0016-0000-0000-000008D403A0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009097; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039523; UDB=6.00532045; IPR=6.00818652;
+ MB=3.00021362; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-29 20:45:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18052920-0017-0000-0000-00003EFC8DE1
+Message-Id: <a10fa941-1729-2890-50cb-59c4a5b5e596@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=801 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805290219
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/19/2018 09:50 PM, Sinan Kaya wrote:
+> Code includes barrier() followed by writel(). writel() already has a
+> barrier
+> on some architectures like arm64.
+> 
+> This ends up CPU observing two barriers back to back before executing the
+> register write.
+> 
+> Since code already has an explicit barrier call, changing writeX() to
+> writeX_relaxed().
+> 
+> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> ---
+>  drivers/scsi/ipr.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
+> index e07dd99..209adac 100644
+> --- a/drivers/scsi/ipr.c
+> +++ b/drivers/scsi/ipr.c
+> @@ -762,9 +762,9 @@ static void ipr_mask_and_clear_interrupts(struct ipr_ioa_cfg *ioa_cfg,
+> 
+>  	/* Set interrupt mask to stop all new interrupts */
+>  	if (ioa_cfg->sis64)
+> -		writeq(~0, ioa_cfg->regs.set_interrupt_mask_reg);
+> +		writeq_relaxed(~0, ioa_cfg->regs.set_interrupt_mask_reg);
+>  	else
+> -		writel(~0, ioa_cfg->regs.set_interrupt_mask_reg);
+> +		writel_relaxed(~0, ioa_cfg->regs.set_interrupt_mask_reg);
+> 
+>  	/* Clear any pending interrupts */
+>  	if (ioa_cfg->sis64)
+> @@ -8435,7 +8435,8 @@ static int ipr_reset_enable_ioa(struct ipr_cmnd *ipr_cmd)
+>  	wmb();
+>  	if (ioa_cfg->sis64) {
+>  		/* Set the adapter to the correct endian mode. */
+> -		writel(IPR_ENDIAN_SWAP_KEY, ioa_cfg->regs.endian_swap_reg);
+> +		writel_relaxed(IPR_ENDIAN_SWAP_KEY,
+> +			       ioa_cfg->regs.endian_swap_reg);
+>  		int_reg = readl(ioa_cfg->regs.endian_swap_reg);
+>  	}
+> 
 
---cWoXeonUoKmBZSoM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks fine to me. Thanks.
 
-Hi!
+Acked-by: Brian King <brking@linux.vnet.ibm.com>
 
-> > > still results in working touchscreen, removing any of the three fields
-> > > breaks it again.
-> >=20
-> > I bisected one regression down, see "omapdrm regression in v4.17-rc ser=
-ies"
-> > not sure if it covers all the issues being discussed here though.
->=20
-> Reverting 24aac6011f70 fixes screen on n900 in v4.17-rc for me. (But
-> strange dependency on tsc2005@0 is still there).
-
-Laurent, your patch looks pretty obvious, but unfortunately breaks
-display on Nokia N900.
-
-The patch is pretty big as is, perhaps you have version split to sdi
-=3D> *sdi and then static =3D> dynamic allocation?
-
-Thanks,
-								Pavel
-
-commit 24aac6011f704d69b5f34514923413f85669f282
-Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date:   Tue Feb 13 14:00:47 2018 +0200
-
-    drm: omapdrm: sdi: Allocate the sdi private data structure
-    dynamically
-
-    The sdi private data structure is currently stored as a global
-        variable. While no platform with multiple SDI encoders
-        currently exists
-	    nor is planned, this doesn't comply with the kernel device
-        model and
-	    should thus be fixed.
-   =20
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---cWoXeonUoKmBZSoM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsNu90ACgkQMOfwapXb+vL0LwCgsJGrRsTD6Pg7Yc6Xzu9dL0Ry
-KIIAoMFfIOLGvB8Gq+XC8w0ly8rFbRe+
-=x9u2
------END PGP SIGNATURE-----
-
---cWoXeonUoKmBZSoM--
+-- 
+Brian King
+Power Linux I/O
+IBM Linux Technology Center
