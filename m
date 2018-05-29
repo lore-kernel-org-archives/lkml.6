@@ -1,102 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964929AbeE2PDS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:03:18 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:57836 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935402AbeE2PDH (ORCPT
+        id S936695AbeE2PEI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:04:08 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36155 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935368AbeE2Oob (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:03:07 -0400
-X-Auth-Info: 7APcx65RXkIeKLUNRI9b1JEWArF1frBcOasCsvPmP7U=
-Date: Tue, 29 May 2018 17:01:48 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] display: panel: Add KOE tx14d24vm1bpa display
- support (320x240)
-Message-ID: <20180529170148.7a0363f2@jawa>
-In-Reply-To: <20180529143047.GB22634@ulmo>
-References: <20180412143715.6828-1-lukma@denx.de>
-        <20180509154338.2841-1-lukma@denx.de>
-        <20180519130533.2494bceb@jawa>
-        <20180528095519.799adadc@jawa>
-        <20180529143047.GB22634@ulmo>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tHq26l+A4cfRq+LLu7/Txwg"; protocol="application/pgp-signature"
+        Tue, 29 May 2018 10:44:31 -0400
+X-Google-Smtp-Source: ADUXVKJRXUcbi628YeDKGa1i/s12b8GBvZRLFt+RPs4SdxWlxXOOxriwBco0SsRrFjOWmO9F9+gSkg==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 39/39] vfs: remove open_flags from d_real()
+Date: Tue, 29 May 2018 16:43:39 +0200
+Message-Id: <20180529144339.16538-40-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
+References: <20180529144339.16538-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/tHq26l+A4cfRq+LLu7/Txwg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Opening regular files on overlayfs is now handled via ovl_open().  Remove
+the now unused "open_flags" argument from d_op->d_real() and the d_real()
+helper.
 
-Hi Thierry,
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ Documentation/filesystems/Locking |  3 +--
+ Documentation/filesystems/vfs.txt | 16 ++++------------
+ fs/overlayfs/super.c              | 36 +++---------------------------------
+ include/linux/dcache.h            | 11 ++++-------
+ include/linux/fs.h                |  2 +-
+ 5 files changed, 13 insertions(+), 55 deletions(-)
 
-> On Mon, May 28, 2018 at 09:55:19AM +0200, Lukasz Majewski wrote:
-> > Hi,
-> >  =20
-> > > Hi Thierry,
-> > >  =20
-> > > > This commit adds support for KOE's 5.7" display.
-> > > >    =20
-> > >=20
-> > > Thierry, shall I perform some more work on this code, or is it
-> > > eligible for applying to your tree? =20
-> >=20
-> > Gentle ping. If Thierry is overworked - maybe there is a
-> > co-maintainer so he/she could apply this patch? =20
->=20
-> Please use the proper prefix for the commit subject to increase the
-> chances of this being noticed.
-
-Ok. Is there any list of prefixes in the kernel repository, so I could
-look for them (like get_prefix.py - similar to get_maintainer script)?
-
-I've used "display: panel" prefix, but I should have used "drm/panel"
-
->=20
-> This is also still missing a Reviewed-by or Acked-by from Rob.
-
-Rob has already reviewed this patch. I will send v2
-with Rob's Reviewed-by tag.
-
->=20
-> Thierry
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_/tHq26l+A4cfRq+LLu7/Txwg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlsNa1wACgkQAR8vZIA0
-zr2z8wf/TUucokRWD5MrIG/ev5C1iypB/u/gLpKcYCnEvzCysyOFKciaKEeAIyeC
-SpnH6nYkSsEcP8pS65QOqaPQVH79MXwqBTP/vBNI14N1H0VUPy+CZOTiSVnkzri2
-B1gkDXnoQ3ccLTO0H0RLr1/qbqDQ6LWlNTktV7U8qN7ETMVXx1jiirxIriMMrmJH
-yhPMJ+3cb0gXiv2s63ZrOLT9uh9gezcPvFvvhpxwQITEeUzcC9qnaa3/+gDWcaTR
-gXv/L/mXucs4FZ/F9NGKvslEmXiNAlCgNFkEd/vX9jKNVmbCK0WLmh5FTxQJxrVx
-qiF1HpdB6xUSbQU3anM1jE5QvTPU+w==
-=L+33
------END PGP SIGNATURE-----
-
---Sig_/tHq26l+A4cfRq+LLu7/Txwg--
+diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
+index a4afe96f0112..e1d7e43d302c 100644
+--- a/Documentation/filesystems/Locking
++++ b/Documentation/filesystems/Locking
+@@ -21,8 +21,7 @@ prototypes:
+ 	char *(*d_dname)((struct dentry *dentry, char *buffer, int buflen);
+ 	struct vfsmount *(*d_automount)(struct path *path);
+ 	int (*d_manage)(const struct path *, bool);
+-	struct dentry *(*d_real)(struct dentry *, const struct inode *,
+-				 unsigned int);
++	struct dentry *(*d_real)(struct dentry *, const struct inode *);
+ 
+ locking rules:
+ 		rename_lock	->d_lock	may block	rcu-walk
+diff --git a/Documentation/filesystems/vfs.txt b/Documentation/filesystems/vfs.txt
+index af54d3651ff8..8b03c5e675bf 100644
+--- a/Documentation/filesystems/vfs.txt
++++ b/Documentation/filesystems/vfs.txt
+@@ -990,8 +990,7 @@ struct dentry_operations {
+ 	char *(*d_dname)(struct dentry *, char *, int);
+ 	struct vfsmount *(*d_automount)(struct path *);
+ 	int (*d_manage)(const struct path *, bool);
+-	struct dentry *(*d_real)(struct dentry *, const struct inode *,
+-				 unsigned int);
++	struct dentry *(*d_real)(struct dentry *, const struct inode *);
+ };
+ 
+   d_revalidate: called when the VFS needs to revalidate a dentry. This
+@@ -1125,22 +1124,15 @@ struct dentry_operations {
+ 	dentry being transited from.
+ 
+   d_real: overlay/union type filesystems implement this method to return one of
+-	the underlying dentries hidden by the overlay.  It is used in three
++	the underlying dentries hidden by the overlay.  It is used in two
+ 	different modes:
+ 
+-	Called from open it may need to copy-up the file depending on the
+-	supplied open flags.  This mode is selected with a non-zero flags
+-	argument.  In this mode the d_real method can return an error.
+-
+ 	Called from file_dentry() it returns the real dentry matching the inode
+ 	argument.  The real dentry may be from a lower layer already copied up,
+ 	but still referenced from the file.  This mode is selected with a
+-	non-NULL inode argument.  This will always succeed.
+-
+-	With NULL inode and zero flags the topmost real underlying dentry is
+-	returned.  This will always succeed.
++	non-NULL inode argument.
+ 
+-	This method is never called with both non-NULL inode and non-zero flags.
++	With NULL inode the topmost real underlying dentry is returned.
+ 
+ Each dentry has a pointer to its parent dentry, as well as a hash list
+ of child dentries. Child dentries are basically like files in a
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index d7df69e5b674..cd5c82f105d6 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -80,28 +80,10 @@ static void ovl_dentry_release(struct dentry *dentry)
+ 	}
+ }
+ 
+-static int ovl_check_append_only(struct inode *inode, int flag)
+-{
+-	/*
+-	 * This test was moot in vfs may_open() because overlay inode does
+-	 * not have the S_APPEND flag, so re-check on real upper inode
+-	 */
+-	if (IS_APPEND(inode)) {
+-		if  ((flag & O_ACCMODE) != O_RDONLY && !(flag & O_APPEND))
+-			return -EPERM;
+-		if (flag & O_TRUNC)
+-			return -EPERM;
+-	}
+-
+-	return 0;
+-}
+-
+ static struct dentry *ovl_d_real(struct dentry *dentry,
+-				 const struct inode *inode,
+-				 unsigned int open_flags)
++				 const struct inode *inode)
+ {
+ 	struct dentry *real;
+-	int err;
+ 
+ 	/* It's an overlay file */
+ 	if (inode && d_inode(dentry) == inode)
+@@ -113,28 +95,16 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
+ 		goto bug;
+ 	}
+ 
+-	if (open_flags) {
+-		err = ovl_open_maybe_copy_up(dentry, open_flags);
+-		if (err)
+-			return ERR_PTR(err);
+-	}
+-
+ 	real = ovl_dentry_upper(dentry);
+-	if (real && (!inode || inode == d_inode(real))) {
+-		if (!inode) {
+-			err = ovl_check_append_only(d_inode(real), open_flags);
+-			if (err)
+-				return ERR_PTR(err);
+-		}
++	if (real && (!inode || inode == d_inode(real)))
+ 		return real;
+-	}
+ 
+ 	real = ovl_dentry_lower(dentry);
+ 	if (!real)
+ 		goto bug;
+ 
+ 	/* Handle recursion */
+-	real = d_real(real, inode, open_flags);
++	real = d_real(real, inode);
+ 
+ 	if (!inode || inode == d_inode(real))
+ 		return real;
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 8fe4efa94af6..78cea80423a3 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -145,8 +145,7 @@ struct dentry_operations {
+ 	char *(*d_dname)(struct dentry *, char *, int);
+ 	struct vfsmount *(*d_automount)(struct path *);
+ 	int (*d_manage)(const struct path *, bool);
+-	struct dentry *(*d_real)(struct dentry *, const struct inode *,
+-				 unsigned int);
++	struct dentry *(*d_real)(struct dentry *, const struct inode *);
+ } ____cacheline_aligned;
+ 
+ /*
+@@ -568,7 +567,6 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
+  * d_real - Return the real dentry
+  * @dentry: the dentry to query
+  * @inode: inode to select the dentry from multiple layers (can be NULL)
+- * @flags: open flags to control copy-up behavior
+  *
+  * If dentry is on a union/overlay, then return the underlying, real dentry.
+  * Otherwise return the dentry itself.
+@@ -576,11 +574,10 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
+  * See also: Documentation/filesystems/vfs.txt
+  */
+ static inline struct dentry *d_real(struct dentry *dentry,
+-				    const struct inode *inode,
+-				    unsigned int flags)
++				    const struct inode *inode)
+ {
+ 	if (unlikely(dentry->d_flags & DCACHE_OP_REAL))
+-		return dentry->d_op->d_real(dentry, inode, flags);
++		return dentry->d_op->d_real(dentry, inode);
+ 	else
+ 		return dentry;
+ }
+@@ -595,7 +592,7 @@ static inline struct dentry *d_real(struct dentry *dentry,
+ static inline struct inode *d_real_inode(const struct dentry *dentry)
+ {
+ 	/* This usage of d_real() results in const dentry */
+-	return d_backing_inode(d_real((struct dentry *) dentry, NULL, 0));
++	return d_backing_inode(d_real((struct dentry *) dentry, NULL));
+ }
+ 
+ struct name_snapshot {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7471a4208fdc..eb4c189d34ba 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1234,7 +1234,7 @@ static inline struct inode *file_inode(const struct file *f)
+ 
+ static inline struct dentry *file_dentry(const struct file *file)
+ {
+-	return d_real(file->f_path.dentry, file_inode(file), 0);
++	return d_real(file->f_path.dentry, file_inode(file));
+ }
+ 
+ static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
+-- 
+2.14.3
