@@ -1,159 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933618AbeE2Lxq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 07:53:46 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:39812 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933428AbeE2Lxn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 07:53:43 -0400
-X-Google-Smtp-Source: AB8JxZrptg8JGxfobwzL8Mi1ZRyQhT2POUCil0Tp6aCghUG0UM89/TBLlTqxwk1R4ANVsoaZIzXlbg==
-Subject: Re: [PATCH 4/5] remoteproc: rename subdev probe and remove functions
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, ohad@wizery.com,
-        bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180515205345.8090-1-elder@linaro.org>
- <20180515205345.8090-5-elder@linaro.org>
- <dc10f869-48fb-84da-9df2-409d6c3568dc@st.com>
-From: Alex Elder <elder@linaro.org>
-Message-ID: <726fa7c1-dab8-c1e5-721a-2f60d7f967d8@linaro.org>
-Date: Tue, 29 May 2018 06:53:41 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933636AbeE2Ly3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 07:54:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933410AbeE2LyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 07:54:25 -0400
+Message-Id: <20180529115423.611643808@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Tue, 29 May 2018 07:53:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org
+Subject: [PATCH 1/2] tracing: Fix crash when freeing instances with event triggers
+References: <20180529115329.698052604@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <dc10f869-48fb-84da-9df2-409d6c3568dc@st.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=0001-tracing-Fix-crash-when-freeing-instances-with-event-.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 04:12 AM, Arnaud Pouliquen wrote:
-> Hello Alex
-> 
-> 
-> We have the same needs (prepare unprepare steps) on our platform. We
-> tested you core patches and they answers to our need.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-I'm very glad to hear that.  Would you offer your "Tested-by" on these?
+If a instance has an event trigger enabled when it is freed, it could cause
+an access of free memory. Here's the case that crashes:
 
-On your comment below, yes, I will re-send v2 and will separate the
-core from the glink code.
+ # cd /sys/kernel/tracing
+ # mkdir instances/foo
+ # echo snapshot > instances/foo/events/initcall/initcall_start/trigger
+ # rmdir instances/foo
 
-Thanks.
+Would produce:
 
-					-Alex
+ general protection fault: 0000 [#1] PREEMPT SMP PTI
+ Modules linked in: tun bridge ...
+ CPU: 5 PID: 6203 Comm: rmdir Tainted: G        W         4.17.0-rc4-test+ #933
+ Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+ RIP: 0010:clear_event_triggers+0x3b/0x70
+ RSP: 0018:ffffc90003783de0 EFLAGS: 00010286
+ RAX: 0000000000000000 RBX: 6b6b6b6b6b6b6b2b RCX: 0000000000000000
+ RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8800c7130ba0
+ RBP: ffffc90003783e00 R08: ffff8801131993f8 R09: 0000000100230016
+ R10: ffffc90003783d80 R11: 0000000000000000 R12: ffff8800c7130ba0
+ R13: ffff8800c7130bd8 R14: ffff8800cc093768 R15: 00000000ffffff9c
+ FS:  00007f6f4aa86700(0000) GS:ffff88011eb40000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 00007f6f4a5aed60 CR3: 00000000cd552001 CR4: 00000000001606e0
+ Call Trace:
+  event_trace_del_tracer+0x2a/0xc5
+  instance_rmdir+0x15c/0x200
+  tracefs_syscall_rmdir+0x52/0x90
+  vfs_rmdir+0xdb/0x160
+  do_rmdir+0x16d/0x1c0
+  __x64_sys_rmdir+0x17/0x20
+  do_syscall_64+0x55/0x1a0
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-> Just a remark below
-> 
-> On 05/15/2018 10:53 PM, Alex Elder wrote:
->> Rename functions used when subdevices are started and stopped to
->> reflect the new naming scheme.
->>
->> Signed-off-by: Alex Elder <elder@linaro.org>
->> ---
->>  drivers/remoteproc/qcom_common.c     | 16 ++++++++--------
->>  drivers/remoteproc/remoteproc_core.c |  8 ++++----
->>  2 files changed, 12 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
->> index 4ae87c5b8793..6f77840140bf 100644
->> --- a/drivers/remoteproc/qcom_common.c
->> +++ b/drivers/remoteproc/qcom_common.c
->> @@ -33,7 +33,7 @@
->>  
->>  static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
->>  
->> -static int glink_subdev_probe(struct rproc_subdev *subdev)
->> +static int glink_subdev_start(struct rproc_subdev *subdev)
->>  {
->>  	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
->>  
->> @@ -42,7 +42,7 @@ static int glink_subdev_probe(struct rproc_subdev *subdev)
->>  	return PTR_ERR_OR_ZERO(glink->edge);
->>  }
->>  
->> -static void glink_subdev_remove(struct rproc_subdev *subdev, bool crashed)
->> +static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
->>  {
->>  	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
->>  
->> @@ -64,8 +64,8 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
->>  		return;
->>  
->>  	glink->dev = dev;
->> -	glink->subdev.start = glink_subdev_probe;
->> -	glink->subdev.stop = glink_subdev_remove;
->> +	glink->subdev.start = glink_subdev_start;
->> +	glink->subdev.stop = glink_subdev_stop;
->>  
->>  	rproc_add_subdev(rproc, &glink->subdev);
->>  }
->> @@ -129,7 +129,7 @@ int qcom_register_dump_segments(struct rproc *rproc,
->>  }
->>  EXPORT_SYMBOL_GPL(qcom_register_dump_segments);
->>  
->> -static int smd_subdev_probe(struct rproc_subdev *subdev)
->> +static int smd_subdev_start(struct rproc_subdev *subdev)
->>  {
->>  	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
->>  
->> @@ -138,7 +138,7 @@ static int smd_subdev_probe(struct rproc_subdev *subdev)
->>  	return PTR_ERR_OR_ZERO(smd->edge);
->>  }
->>  
->> -static void smd_subdev_remove(struct rproc_subdev *subdev, bool crashed)
->> +static void smd_subdev_stop(struct rproc_subdev *subdev, bool crashed)
->>  {
->>  	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
->>  
->> @@ -160,8 +160,8 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
->>  		return;
->>  
->>  	smd->dev = dev;
->> -	smd->subdev.start = smd_subdev_probe;
->> -	smd->subdev.stop = smd_subdev_remove;
->> +	smd->subdev.start = smd_subdev_start;
->> +	smd->subdev.stop = smd_subdev_stop;
->>  
->>  	rproc_add_subdev(rproc, &smd->subdev);
->>  }
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index ca39fad175f2..2ede7ae6f5bc 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -301,14 +301,14 @@ void rproc_free_vring(struct rproc_vring *rvring)
->>  	rsc->vring[idx].notifyid = -1;
->>  }
->>  
->> -static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
->> +static int rproc_vdev_do_start(struct rproc_subdev *subdev)
->>  {
->>  	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
->>  
->>  	return rproc_add_virtio_dev(rvdev, rvdev->id);
->>  }
->>  
->> -static void rproc_vdev_do_remove(struct rproc_subdev *subdev, bool crashed)
->> +static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
->>  {
->>  	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
->>  
->> @@ -399,8 +399,8 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
->>  
->>  	list_add_tail(&rvdev->node, &rproc->rvdevs);
->>  
->> -	rvdev->subdev.start = rproc_vdev_do_probe;
->> -	rvdev->subdev.stop = rproc_vdev_do_remove;
->> +	rvdev->subdev.start = rproc_vdev_do_start;
->> +	rvdev->subdev.stop = rproc_vdev_do_stop;
->>  
->>  	rproc_add_subdev(rproc, &rvdev->subdev);
-> 
-> Could you split in 2 patches one for the core another, the other for the
-> glink driver?
-> 
-> Regards
-> Arnaud
-> 
+This was due to the call the clears out the triggers when an instance is
+being deleted not removing the trigger from the link list.
+
+Cc: stable@vger.kernel.org
+Fixes: 85f2b08268c01 ("tracing: Add basic event trigger framework")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_events_trigger.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index d251cabcf69a..9be317d388c5 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -483,9 +483,10 @@ clear_event_triggers(struct trace_array *tr)
+ 	struct trace_event_file *file;
+ 
+ 	list_for_each_entry(file, &tr->events, list) {
+-		struct event_trigger_data *data;
+-		list_for_each_entry_rcu(data, &file->triggers, list) {
++		struct event_trigger_data *data, *n;
++		list_for_each_entry_safe(data, n, &file->triggers, list) {
+ 			trace_event_trigger_enable_disable(file, 0);
++			list_del_rcu(&data->list);
+ 			if (data->ops->free)
+ 				data->ops->free(data->ops, data);
+ 		}
+-- 
+2.17.0
