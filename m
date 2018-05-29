@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967045AbeE2VDn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:03:43 -0400
-Received: from mga01.intel.com ([192.55.52.88]:53956 "EHLO mga01.intel.com"
+        id S937309AbeE2VIG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:08:06 -0400
+Received: from mga14.intel.com ([192.55.52.115]:46449 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966499AbeE2VBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:01:12 -0400
+        id S937064AbeE2VA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 17:00:57 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
-   d="scan'208";a="60127724"
+   d="scan'208";a="60127727"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V5 19/38] x86/intel_rdt: Add utility to restrict/restore access to resctrl files
-Date: Tue, 29 May 2018 05:57:44 -0700
-Message-Id: <d4782f79e0bf2cd7a438a45c46bf4427c9d813aa.1527593970.git.reinette.chatre@intel.com>
+Subject: [PATCH V5 20/38] x86/intel_rdt: Protect against resource group changes during locking
+Date: Tue, 29 May 2018 05:57:45 -0700
+Message-Id: <14b7a6e8ab2991130a98381d7075bb254e761050.1527593971.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1527593970.git.reinette.chatre@intel.com>
 References: <cover.1527593970.git.reinette.chatre@intel.com>
@@ -30,143 +30,103 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a resource group is used for Cache Pseudo-Locking then the region
-of cache ends up being orphaned with no class of service referring to
-it. The resctrl files intended to manage how the classes of services are
-utilized thus become irrelevant.
+We intend to modify file permissions to make the "tasks", "cpus", and
+"cpus_list" not accessible to the user when cache pseudo-locking in
+progress. Even so, it is still possible for the user to force the file
+permissions (using chmod) to make them writeable. Similarly, directory
+permissions will be modified to prevent future monitor group creation
+but the user can override these restrictions also.
 
-The fact that a resctrl file is not relevant can be communicated to the
-user by setting all of its permissions to zero. That is, its read,
-write, and execute permissions are unset for all users.
-
-Introduce two utilities, rdtgroup_kn_mode_restrict() and
-rdtgroup_kn_mode_restore(), that can be used to restrict and restore
-the permissions of a file or directory belonging to a resource group.
+Add additional checks to the files we intend to restrict to ensure that
+no modifications from user space are attempted while setting up a
+pseudo-locking or after a pseudo-locked region is set up.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.h          |  2 +
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 95 ++++++++++++++++++++++++++++++++
- 2 files changed, 97 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 10 +++++++++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 32 +++++++++++++++++++++++++----
+ 2 files changed, 38 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 10a1539cbec6..c9b8d3d1d413 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -469,6 +469,8 @@ void rdt_last_cmd_printf(const char *fmt, ...);
- void rdt_ctrl_update(void *arg);
- struct rdtgroup *rdtgroup_kn_lock_live(struct kernfs_node *kn);
- void rdtgroup_kn_unlock(struct kernfs_node *kn);
-+int rdtgroup_kn_mode_restrict(struct rdtgroup *r, const char *name);
-+int rdtgroup_kn_mode_restore(struct rdtgroup *r, const char *name);
- struct rdt_domain *rdt_find_domain(struct rdt_resource *r, int id,
- 				   struct list_head **pos);
- ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 0e6210a043f0..bc79396c5dad 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -283,6 +283,16 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 	}
+ 	rdt_last_cmd_clear();
+ 
++	/*
++	 * No changes to pseudo-locked region allowed. It has to be removed
++	 * and re-created instead.
++	 */
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("resource group is pseudo-locked\n");
++		goto out;
++	}
++
+ 	for_each_alloc_enabled_rdt_resource(r) {
+ 		list_for_each_entry(dom, &r->domains, list)
+ 			dom->have_new_ctrl = false;
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 8f754a05d44d..0337197dcde3 100644
+index 0337197dcde3..178990850b03 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1290,6 +1290,101 @@ static int rdtgroup_add_files(struct kernfs_node *kn, unsigned long fflags)
- 	return ret;
- }
+@@ -449,6 +449,13 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
+ 		goto unlock;
+ 	}
  
-+/**
-+ * rdtgroup_kn_mode_restrict - Restrict user access to named resctrl file
-+ * @r: The resource group with which the file is associated.
-+ * @name: Name of the file
-+ *
-+ * The permissions of named resctrl file, directory, or link are modified
-+ * to not allow read, write, or execute by any user.
-+ *
-+ * WARNING: This function is intended to communicate to the user that the
-+ * resctrl file has been locked down - that it is not relevant to the
-+ * particular state the system finds itself in. It should not be relied
-+ * on to protect from user access because after the file's permissions
-+ * are restricted the user can still change the permissions using chmod
-+ * from the command line.
-+ *
-+ * Return: 0 on success, <0 on failure.
-+ */
-+int rdtgroup_kn_mode_restrict(struct rdtgroup *r, const char *name)
-+{
-+	struct iattr iattr = {.ia_valid = ATTR_MODE,};
-+	struct kernfs_node *kn;
-+	int ret = 0;
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
++	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		goto unlock;
++	}
 +
-+	kn = kernfs_find_and_get_ns(r->kn, name, NULL);
-+	if (!kn)
+ 	if (is_cpu_list(of))
+ 		ret = cpulist_parse(buf, newmask);
+ 	else
+@@ -651,13 +658,22 @@ static ssize_t rdtgroup_tasks_write(struct kernfs_open_file *of,
+ 	if (kstrtoint(strstrip(buf), 0, &pid) || pid < 0)
+ 		return -EINVAL;
+ 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
++	if (!rdtgrp) {
++		rdtgroup_kn_unlock(of->kn);
 +		return -ENOENT;
-+
-+	switch (kernfs_type(kn)) {
-+	case KERNFS_DIR:
-+		iattr.ia_mode = S_IFDIR;
-+		break;
-+	case KERNFS_FILE:
-+		iattr.ia_mode = S_IFREG;
-+		break;
-+	case KERNFS_LINK:
-+		iattr.ia_mode = S_IFLNK;
-+		break;
++	}
+ 	rdt_last_cmd_clear();
+ 
+-	if (rdtgrp)
+-		ret = rdtgroup_move_task(pid, rdtgrp, of);
+-	else
+-		ret = -ENOENT;
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
++	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		goto unlock;
 +	}
 +
-+	ret = kernfs_setattr(kn, &iattr);
-+	kernfs_put(kn);
-+	return ret;
-+}
-+
-+/**
-+ * rdtgroup_kn_mode_restore - Restore user access to named resctrl file
-+ * @r: The resource group with which the file is associated.
-+ * @name: Name of the file
-+ *
-+ * Restore the permissions of the named file. If @name is a directory the
-+ * permissions of its parent will be used.
-+ *
-+ * Return: 0 on success, <0 on failure.
-+ */
-+int rdtgroup_kn_mode_restore(struct rdtgroup *r, const char *name)
-+{
-+	struct iattr iattr = {.ia_valid = ATTR_MODE,};
-+	struct kernfs_node *kn, *parent;
-+	struct rftype *rfts, *rft;
-+	int ret, len;
-+
-+	rfts = res_common_files;
-+	len = ARRAY_SIZE(res_common_files);
-+
-+	for (rft = rfts; rft < rfts + len; rft++) {
-+		if (!strcmp(rft->name, name))
-+			iattr.ia_mode = rft->mode;
++	ret = rdtgroup_move_task(pid, rdtgrp, of);
+ 
++unlock:
+ 	rdtgroup_kn_unlock(of->kn);
+ 
+ 	return ret ?: nbytes;
+@@ -2261,6 +2277,14 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 		goto out_unlock;
+ 	}
+ 
++	if (rtype == RDTMON_GROUP &&
++	    (prdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP ||
++	     prdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)) {
++		ret = -EINVAL;
++		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		goto out_unlock;
 +	}
 +
-+	kn = kernfs_find_and_get_ns(r->kn, name, NULL);
-+	if (!kn)
-+		return -ENOENT;
-+
-+	switch (kernfs_type(kn)) {
-+	case KERNFS_DIR:
-+		parent = kernfs_get_parent(kn);
-+		if (parent) {
-+			iattr.ia_mode |= parent->mode;
-+			kernfs_put(parent);
-+		}
-+		iattr.ia_mode |= S_IFDIR;
-+		break;
-+	case KERNFS_FILE:
-+		iattr.ia_mode |= S_IFREG;
-+		break;
-+	case KERNFS_LINK:
-+		iattr.ia_mode |= S_IFLNK;
-+		break;
-+	}
-+
-+	ret = kernfs_setattr(kn, &iattr);
-+	kernfs_put(kn);
-+	return ret;
-+}
-+
- static int rdtgroup_mkdir_info_resdir(struct rdt_resource *r, char *name,
- 				      unsigned long fflags)
- {
+ 	/* allocate the rdtgroup. */
+ 	rdtgrp = kzalloc(sizeof(*rdtgrp), GFP_KERNEL);
+ 	if (!rdtgrp) {
 -- 
 2.13.6
