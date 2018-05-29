@@ -1,59 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932891AbeE2DX6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 23:23:58 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:32928 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932475AbeE2DXt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 23:23:49 -0400
-X-Google-Smtp-Source: AB8JxZq0/RElQt/Ibwj2jl934O2woJTwplQ5b8Hi4Mb/9+5ixhnHadDprhgT7gMP0gSfWirAq/FrAQ==
-Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC
- based ethernet
-To: Finn Thain <fthain@telegraphics.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
- <alpine.LNX.2.21.1805271212480.9@nippy.intranet>
- <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com>
- <alpine.LNX.2.21.1805271547090.9@nippy.intranet>
- <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com>
- <alpine.LNX.2.21.1805281521420.10@nippy.intranet>
- <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
- <alpine.LNX.2.21.1805291047230.13@nippy.intranet>
-Cc: Christoph Hellwig <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>,
-        Joshua Thompson <funaho@jurai.org>, Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Michael Schmitz <schmitzmic@gmail.com>
-X-Enigmail-Draft-Status: N1110
-Message-ID: <b4f0d2d7-fcd5-b68f-0bc6-cd41c353aba7@gmail.com>
-Date: Tue, 29 May 2018 15:23:39 +1200
-User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
- Icedove/45.4.0
+        id S937517AbeE2DZy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 23:25:54 -0400
+Received: from ozlabs.org ([203.11.71.1]:41143 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932463AbeE2DZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 23:25:52 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 29 May 2018 13:25:48 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: linux-next: build failure after merge of the net-next tree
+Message-ID: <20180529132548.7f71c2ff@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.21.1805291047230.13@nippy.intranet>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/0tK3ll5x8Ha1Nll4mTtSUBw"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
+--Sig_/0tK3ll5x8Ha1Nll4mTtSUBw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Am 29.05.2018 um 14:15 schrieb Finn Thain:
-> 
-> Since an arch gets to apply limits in the dma ops it implements, why would 
-> arch code also have to set a limit in the form of default platform device 
-> masks? Powerpc seems to be the only arch that does this.
+Hi all,
 
-One of Christoph's recent patches removed most of arches' dma ops,
-replacing them by one generic implementation instead. m68k was one of
-the affected arches. I concede his patch series is experimental still
-and not in mainline, but may be included at some time.
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Otherwise - your patches, so if you prefer to have each driver handle
-this on an as-needed basis, I'm not objecting.
+x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpfilter_=
+umh.o' is incompatible with i386:x86-64 output
 
+Caused by commit
+
+  d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+
+In my builds, the host is PowerPC 64 LE ...
+
+I have reverted that commit along with
+
+  61a552eb487f ("bpfilter: fix build dependency")
+  13405468f49d ("bpfilter: don't pass O_CREAT when opening console for debu=
+g")
+
+for today.
+
+--=20
 Cheers,
+Stephen Rothwell
 
-	Michael
+--Sig_/0tK3ll5x8Ha1Nll4mTtSUBw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsMyDwACgkQAVBC80lX
+0GxKdAf/UMaaj2S350stVP/Rpt4Y9DGTKl8D/EQpZSpfZ+eUnIsutZTCVEjo6yYW
+LB237YXsHQUMr28YpN8F2std5nPgUuFRtWdLHzUoqpzvcRmoXlJn9hZj7wu3DK24
+8CFVvPwG1a/gu9Zg8qsfTHIPWHU/I0tNXB+joY+0jYfzn//nGjn3S5CQCsoAnZGM
+spEYiZ1M5CnLLfgFqD2XmhmsNv5JazsbEPETgHrWvsdXTK2v6iJ5xo6iGUMqmel/
+K5dJjJWufZhnLf7amlVthptCfNfjdMGO2t9EyIS/iLygg462xLNWPcN1FV5ysuQR
+XynQvyVsuChTo2m/6SX7qXD+Smc6hQ==
+=r6JH
+-----END PGP SIGNATURE-----
+
+--Sig_/0tK3ll5x8Ha1Nll4mTtSUBw--
