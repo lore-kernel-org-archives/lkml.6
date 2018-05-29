@@ -1,83 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935663AbeE2Pnl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:43:41 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:59326 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934948AbeE2Pni (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:43:38 -0400
-Date: Tue, 29 May 2018 16:42:51 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org,
-        robin.murphy@arm.com
-Subject: Re: [PATCH] ARM: mcpm, perf/arm-cci: export mcpm_is_available
-Message-ID: <20180529154251.GM17671@n2100.armlinux.org.uk>
-References: <20180528154448.2494709-1-arnd@arndb.de>
- <20180529153013.GH17159@arm.com>
- <20180529153324.GL17671@n2100.armlinux.org.uk>
- <20180529154120.GI17159@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529154120.GI17159@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S936423AbeE2PoB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:44:01 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43342 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934948AbeE2Pn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:43:59 -0400
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@synopsys.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>
+Subject: [PATCHv2 00/16] atomics: API cleanups
+Date: Tue, 29 May 2018 16:43:30 +0100
+Message-Id: <20180529154346.3168-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 04:41:20PM +0100, Will Deacon wrote:
-> Hi Russell,
-> 
-> On Tue, May 29, 2018 at 04:33:24PM +0100, Russell King - ARM Linux wrote:
-> > On Tue, May 29, 2018 at 04:30:14PM +0100, Will Deacon wrote:
-> > > Hi Arnd, Russell, [+Nico and Robin]
-> > > 
-> > > On Mon, May 28, 2018 at 05:44:36PM +0200, Arnd Bergmann wrote:
-> > > > Now that the ARM CCI PMU driver can be built as a loadable module,
-> > > > we get a link failure when MCPM is enabled:
-> > > > 
-> > > > ERROR: "mcpm_is_available" [drivers/perf/arm-cci.ko] undefined!
-> > > > 
-> > > > The simplest fix is to export that helper function.
-> > > > 
-> > > > Fixes: 8b0c93c20ef7 ("perf/arm-cci: Allow building as a module")
-> > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > > ---
-> > > > The patch that caused this is currently part of the arm-perf/for-next/perf
-> > > > branch, it would be good to have the fix there as well.
-> > > > ---
-> > > >  arch/arm/common/mcpm_entry.c | 2 ++
-> > > >  1 file changed, 2 insertions(+)
-> > > 
-> > > I'm happy to take this via the arm perf tree if others are ok with that.
-> > > Alternatively, I can revert the offending commit if there are objections
-> > > to exporting the symbol.
-> > > 
-> > > Russell: do you any preference?
-> > 
-> > As it claims to fix 8b0c93c20ef7, which I don't have, I can't take this
-> > patch.  Do we know which tree has this?
-> 
-> Yes, sorry, it's in my for-next/perf branch:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/commit/?h=for-next/perf&id=8b0c93c20ef78f15d8b760964ff79bda7f68c610
-> 
-> which is now in -next.
-> 
-> I'm happy to take the mcpm patch on top with your ack, but if you have
-> conflicting changes (or would prefer not to export the symbol to modules)
-> then I can just revert the patch in my tree for now.
+This series contains a few cleanups of the atomic API, fixing
+inconsistencies between atomic_* and atomic64_*, and minimizing
+repetition in arch code. This is nicer for arch code, and the improved
+regularity will help when generating the atomic headers in future.
 
-I have no changes to that file, so:
+Since v1 [1]:
+* Add missing inc_not_zero #define for x86_32
+* Remove newly redundant test op definitions for riscv
+* Remove atomic_inc_not_zero_hint()
+* Make inc/dec ops optional
 
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+The bulk of the patches reorganise things so architectures consistently
+provide <atomic>_fetch_add_unless(), with atomic_fetch_add_unless()
+provided as a wrapper by core code. A generic fallback is provided for
+<atomic>_fetch_add_unless(), based on <atomic>_read() and
+<atomic>_try_cmpxchg().
 
-Thanks.
+Other patches in the series add common fallbacks for:
+
+* atomic64_inc_not_zero() 
+* <atomic>_inc_and_test()
+* <atomic>_dec_and_test()
+* <atomic>_sub_and_test()
+* <atomic>add_negative()
+* <atomic>_*inc*()
+* <atomic>_*dec*()
+
+... as almost all architectures provide (near-)identical implementation
+of these today. Where an architecture provides a non-trivial definition,
+it is updated to provide a matching preprocessor symbol, and the
+instrumented atomics are updated correspondingly.
+
+The end result is a strongly negative diffstat, though <linux/atomic.h>
+grows by a reasonable amount. We could halve this in future by
+templating the various fallbacks for atomic{,64}_t with code generation.
+
+I've pushed this out to my atomics/api-cleanup branch [2] on kernel.org.
+
+Thanks,
+Mark.
+
+[1] https://lkml.kernel.org/r/20180523133533.1076-1-mark.rutland@arm.com
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git atomics/api-cleanup
+
+Mark Rutland (16):
+  atomics/treewide: s/__atomic_add_unless/atomic_fetch_add_unless/
+  atomics/treewide: remove redundant atomic_inc_not_zero() definitions
+  atomics/treewide: make atomic64_inc_not_zero() optional
+  atomics/treewide: make atomic_fetch_add_unless() optional
+  atomics: prepare for atomic64_fetch_add_unless()
+  atomics/generic: define atomic64_fetch_add_unless()
+  atomics/alpha: define atomic64_fetch_add_unless()
+  atomics/arc: define atomic64_fetch_add_unless()
+  atomics/arm: define atomic64_fetch_add_unless()
+  atomics/powerpc: define atomic64_fetch_add_unless()
+  atomics/riscv: define atomic64_fetch_add_unless()
+  atomics/treewide: make atomic64_fetch_add_unless() optional
+  atomics/treewide: make test ops optional
+  atomics/treewide: remove atomic_inc_not_zero_hint()
+  atomics/treewide: make unconditional inc/dec ops optional
+  atomics/treewide: make conditional inc/dec ops optional
+
+ arch/alpha/include/asm/atomic.h           |  56 ++---
+ arch/arc/include/asm/atomic.h             |  78 ++-----
+ arch/arm/include/asm/atomic.h             |  55 ++---
+ arch/arm64/include/asm/atomic.h           |  47 +---
+ arch/h8300/include/asm/atomic.h           |  15 +-
+ arch/hexagon/include/asm/atomic.h         |  18 +-
+ arch/ia64/include/asm/atomic.h            |  81 -------
+ arch/m68k/include/asm/atomic.h            |  24 +-
+ arch/mips/include/asm/atomic.h            | 172 --------------
+ arch/openrisc/include/asm/atomic.h        |   4 +-
+ arch/parisc/include/asm/atomic.h          | 107 ---------
+ arch/powerpc/include/asm/atomic.h         |  52 ++---
+ arch/riscv/include/asm/atomic.h           | 149 +-----------
+ arch/s390/include/asm/atomic.h            |  65 ------
+ arch/sh/include/asm/atomic.h              |  35 ---
+ arch/sparc/include/asm/atomic_32.h        |  24 +-
+ arch/sparc/include/asm/atomic_64.h        |  65 +-----
+ arch/sparc/lib/atomic32.c                 |   4 +-
+ arch/x86/include/asm/atomic.h             |  30 +--
+ arch/x86/include/asm/atomic64_32.h        |  61 +----
+ arch/x86/include/asm/atomic64_64.h        |  48 +---
+ arch/xtensa/include/asm/atomic.h          |  98 --------
+ drivers/block/rbd.c                       |   2 +-
+ drivers/infiniband/core/rdma_core.c       |   2 +-
+ fs/afs/rxrpc.c                            |   2 +-
+ include/asm-generic/atomic-instrumented.h |  69 +++++-
+ include/asm-generic/atomic.h              |  33 ---
+ include/asm-generic/atomic64.h            |  14 +-
+ include/linux/atomic.h                    | 371 +++++++++++++++++++++++++-----
+ kernel/bpf/syscall.c                      |   4 +-
+ lib/atomic64.c                            |  13 +-
+ net/atm/pppoatm.c                         |   2 +-
+ net/rxrpc/call_object.c                   |   2 +-
+ net/rxrpc/conn_object.c                   |   4 +-
+ net/rxrpc/local_object.c                  |   2 +-
+ net/rxrpc/peer_object.c                   |   2 +-
+ 36 files changed, 499 insertions(+), 1311 deletions(-)
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+2.11.0
