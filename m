@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935069AbeE2OYJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:24:09 -0400
+        id S934645AbeE2OYq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:24:46 -0400
 Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38208 "EHLO
         smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935281AbeE2OWi (ORCPT
+        with ESMTP id S935255AbeE2OWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:22:38 -0400
+        Tue, 29 May 2018 10:22:35 -0400
 From: James Simmons <jsimmons@infradead.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
@@ -15,9 +15,9 @@ Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Lustre Development List <lustre-devel@lists.lustre.org>,
         Dmitry Eremin <dmitry.eremin@intel.com>,
         James Simmons <jsimmons@infradead.org>
-Subject: [PATCH v2 21/25] staging: lustre: libcfs: report NUMA node instead of just node
-Date: Tue, 29 May 2018 10:22:01 -0400
-Message-Id: <1527603725-30560-22-git-send-email-jsimmons@infradead.org>
+Subject: [PATCH v2 19/25] staging: lustre: libcfs: update debug messages
+Date: Tue, 29 May 2018 10:21:59 -0400
+Message-Id: <1527603725-30560-20-git-send-email-jsimmons@infradead.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
 References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
@@ -27,16 +27,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dmitry Eremin <dmitry.eremin@intel.com>
 
-Reporting "HW nodes" is too generic. It really is reporting
-"HW NUMA nodes". Update the debug message.
+For cfs_cpt_bind() change the CERROR to CDEBUG. Make the debug
+message in cfs_cpt_table_create_pattern() more understandable.
+Report rc value for when cfs_cpt_create_table() fails.
 
 Signed-off-by: Dmitry Eremin <dmitry.eremin@intel.com>
 Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8703
-Reviewed-on: https://review.whamcloud.com/23306
+Reviewed-on: https://review.whamcloud.com/23222
+Reviewed-by: Amir Shehata <amir.shehata@intel.com>
 Reviewed-by: James Simmons <uja.ornl@yahoo.com>
-Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
-Reviewed-by: Patrick Farrell <paf@cray.com>
-Reviewed-by: Olaf Weber <olaf.weber@hpe.com>
 Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
 Signed-off-by: James Simmons <jsimmons@infradead.org>
 ---
@@ -45,21 +44,62 @@ Changelog:
 v1) Initial patch
 v2) Rebased patch. No changes in code from earlier patch
 
- drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-index 99a9494..0fc102c 100644
+index e12d337..7f1061e 100644
 --- a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
 +++ b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-@@ -1138,7 +1138,7 @@ int cfs_cpu_init(void)
+@@ -480,7 +480,8 @@ void cfs_cpt_unset_cpu(struct cfs_cpt_table *cptab, int cpt, int cpu)
+ 		/* caller doesn't know the partition ID */
+ 		cpt = cptab->ctb_cpu2cpt[cpu];
+ 		if (cpt < 0) { /* not set in this CPT-table */
+-			CDEBUG(D_INFO, "Try to unset cpu %d which is not in CPT-table %p\n",
++			CDEBUG(D_INFO,
++			       "Try to unset cpu %d which is not in CPT-table %p\n",
+ 			       cpt, cptab);
+ 			return;
+ 		}
+@@ -506,7 +507,8 @@ int cfs_cpt_set_cpumask(struct cfs_cpt_table *cptab, int cpt,
  
- 	put_online_cpus();
+ 	if (!cpumask_weight(mask) ||
+ 	    cpumask_any_and(mask, cpu_online_mask) >= nr_cpu_ids) {
+-		CDEBUG(D_INFO, "No online CPU is found in the CPU mask for CPU partition %d\n",
++		CDEBUG(D_INFO,
++		       "No online CPU is found in the CPU mask for CPU partition %d\n",
+ 		       cpt);
+ 		return 0;
+ 	}
+@@ -683,7 +685,8 @@ int cfs_cpt_bind(struct cfs_cpt_table *cptab, int cpt)
+ 	}
  
--	LCONSOLE(0, "HW nodes: %d, HW CPU cores: %d, npartitions: %d\n",
-+	LCONSOLE(0, "HW NUMA nodes: %d, HW CPU cores: %d, npartitions: %d\n",
- 		 num_online_nodes(), num_online_cpus(),
- 		 cfs_cpt_number(cfs_cpt_tab));
- 	return 0;
+ 	if (cpumask_any_and(*cpumask, cpu_online_mask) >= nr_cpu_ids) {
+-		CERROR("No online CPU found in CPU partition %d, did someone do CPU hotplug on system? You might need to reload Lustre modules to keep system working well.\n",
++		CDEBUG(D_INFO,
++		       "No online CPU found in CPU partition %d, did someone do CPU hotplug on system? You might need to reload Lustre modules to keep system working well.\n",
+ 		       cpt);
+ 		return -EINVAL;
+ 	}
+@@ -914,8 +917,8 @@ static struct cfs_cpt_table *cfs_cpt_table_create(int ncpt)
+ failed_mask:
+ 	free_cpumask_var(node_mask);
+ failed:
+-	CERROR("Failed to setup CPU-partition-table with %d CPU-partitions, online HW nodes: %d, HW cpus: %d.\n",
+-	       ncpt, num_online_nodes(), num_online_cpus());
++	CERROR("Failed (rc = %d) to setup CPU partition table with %d partitions, online HW NUMA nodes: %d, HW CPU cores: %d.\n",
++	       rc, ncpt, num_online_nodes(), num_online_cpus());
+ 
+ 	if (cptab)
+ 		cfs_cpt_table_free(cptab);
+@@ -1030,7 +1033,7 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(char *pattern)
+ 
+ 		bracket = strchr(str, ']');
+ 		if (!bracket) {
+-			CERROR("missing right bracket for cpt %d, %s\n",
++			CERROR("Missing right bracket for partition %d, %s\n",
+ 			       cpt, str);
+ 			goto failed;
+ 		}
 -- 
 1.8.3.1
