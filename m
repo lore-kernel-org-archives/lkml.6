@@ -1,81 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754452AbeE2F51 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 01:57:27 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:35455 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751852AbeE2F5Y (ORCPT
+        id S1754518AbeE2F7E (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 01:59:04 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55769 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752282AbeE2F7C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 01:57:24 -0400
-X-Google-Smtp-Source: AB8JxZoc4ZAMWR1kxwcV1KgPy1XRC1QjcoDRFmbmvAhmf+7A7gBG94R0jxexUTKjLydf1bJnUT62eA==
-From: Nick Desaulniers <nick.desaulniers@gmail.com>
-To: jason.wessel@windriver.com, daniel.thompson@linaro.org
-Cc: Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: [PATCH] kdb: prefer strlcpy to strncpy
-Date: Mon, 28 May 2018 22:57:04 -0700
-Message-Id: <1527573427-16569-1-git-send-email-nick.desaulniers@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 29 May 2018 01:59:02 -0400
+X-Google-Smtp-Source: ADUXVKIfXmPCQjj2aSgJne+/L66T2+dFr8VJSW8tXly1S56TtsMLp8dSdGrpGnj6EM7Yw42K3WTGfA==
+Subject: Re: [Xen-devel] [PATCH 3/8] drm/xen-front: fix 32-bit build warning
+To: Arnd Bergmann <arnd@arndb.de>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+References: <20180525155030.3667352-1-arnd@arndb.de>
+ <20180525155030.3667352-3-arnd@arndb.de>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <d08e0200-f431-8713-0286-cd5bbf3441c8@gmail.com>
+Date: Tue, 29 May 2018 08:58:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180525155030.3667352-3-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes stringop-truncation and stringop-overflow warnings from gcc-8.
+Hi,
 
-Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
----
- kernel/debug/kdb/kdb_io.c      | 2 +-
- kernel/debug/kdb/kdb_main.c    | 4 ++--
- kernel/debug/kdb/kdb_support.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+On 05/25/2018 06:50 PM, Arnd Bergmann wrote:
+> In 32-bit kernel builds, we cannot cast between a pointer and a 64-bit
+> type:
+>
+> In file included from drivers/gpu/drm/xen/xen_drm_front_cfg.c:18:
+> drivers/gpu/drm/xen/xen_drm_front.h: In function 'xen_drm_front_fb_to_cookie':
+> drivers/gpu/drm/xen/xen_drm_front.h:129:9: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+>    return (u64)fb;
+>
+> drivers/gpu/drm/xen/xen_drm_front.h: In function 'xen_drm_front_dbuf_to_cookie':
+> drivers/gpu/drm/xen/xen_drm_front.h:134:9: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+>    return (u64)gem_obj;
+>
+> drivers/gpu/drm/xen/xen_drm_front_shbuf.c: In function 'backend_unmap':
+> drivers/gpu/drm/xen/xen_drm_front_shbuf.c:125:4: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+>     ((phys_addr_t)pfn_to_kaddr(page_to_xen_pfn(page)))
+>
+> Using uintptr_t instead probably does what we want here, although it's
+> not clear to me why we assign a virtual address pointer to a phys_addr_t
+> in backend_unmap().
+>
+> Fixes: c575b7eeb89f ("drm/xen-front: Add support for Xen PV display frontend")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/gpu/drm/xen/xen_drm_front.h       | 4 ++--
+>   drivers/gpu/drm/xen/xen_drm_front_shbuf.c | 2 +-
+>   2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen/xen_drm_front.h
+> index 2c2479b571ae..5693b4a4b02b 100644
+> --- a/drivers/gpu/drm/xen/xen_drm_front.h
+> +++ b/drivers/gpu/drm/xen/xen_drm_front.h
+> @@ -126,12 +126,12 @@ struct xen_drm_front_drm_info {
+>   
+>   static inline u64 xen_drm_front_fb_to_cookie(struct drm_framebuffer *fb)
+>   {
+> -	return (u64)fb;
+> +	return (uintptr_t)fb;
+>   }
+>   
+>   static inline u64 xen_drm_front_dbuf_to_cookie(struct drm_gem_object *gem_obj)
+>   {
+> -	return (u64)gem_obj;
+> +	return (uintptr_t)gem_obj;
+>   }
+>   
+>   int xen_drm_front_mode_set(struct xen_drm_front_drm_pipeline *pipeline,
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+> index 8099cb343ae3..d333b67cc1a0 100644
+> --- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+> +++ b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+> @@ -122,7 +122,7 @@ static void guest_calc_num_grefs(struct xen_drm_front_shbuf *buf)
+>   }
+>   
+>   #define xen_page_to_vaddr(page) \
+> -		((phys_addr_t)pfn_to_kaddr(page_to_xen_pfn(page)))
+> +		((uintptr_t)pfn_to_kaddr(page_to_xen_pfn(page)))
+>   
+>   static int backend_unmap(struct xen_drm_front_shbuf *buf)
+>   {
+Thank you for your patch: this issue was already discussed [1] and 
+applied [2] to
+drm-misc-next.
 
-diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-index ed5d349..b5dfff1 100644
---- a/kernel/debug/kdb/kdb_io.c
-+++ b/kernel/debug/kdb/kdb_io.c
-@@ -443,7 +443,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
- char *kdb_getstr(char *buffer, size_t bufsize, const char *prompt)
- {
- 	if (prompt && kdb_prompt_str != prompt)
--		strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
-+		strlcpy(kdb_prompt_str, prompt, CMD_BUFLEN);
- 	kdb_printf(kdb_prompt_str);
- 	kdb_nextline = 1;	/* Prompt and input resets line number */
- 	return kdb_read(buffer, bufsize);
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index e405677..c30a0d8 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -1103,12 +1103,12 @@ static int handle_ctrl_cmd(char *cmd)
- 	case CTRL_P:
- 		if (cmdptr != cmd_tail)
- 			cmdptr = (cmdptr-1) % KDB_CMD_HISTORY_COUNT;
--		strncpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
-+		strlcpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
- 		return 1;
- 	case CTRL_N:
- 		if (cmdptr != cmd_head)
- 			cmdptr = (cmdptr+1) % KDB_CMD_HISTORY_COUNT;
--		strncpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
-+		strlcpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
- 		return 1;
- 	}
- 	return 0;
-diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
-index 990b3cc..dcfbf8f 100644
---- a/kernel/debug/kdb/kdb_support.c
-+++ b/kernel/debug/kdb/kdb_support.c
-@@ -236,7 +236,7 @@ int kallsyms_symbol_next(char *prefix_name, int flag)
- 
- 	while ((name = kdb_walk_kallsyms(&pos))) {
- 		if (strncmp(name, prefix_name, prefix_len) == 0) {
--			strncpy(prefix_name, name, strlen(name)+1);
-+			strlcpy(prefix_name, name, prefix_len);
- 			return 1;
- 		}
- 	}
--- 
-2.7.4
+Thank you,
+Oleksandr
+
+[1] https://patchwork.freedesktop.org/patch/224359/
+[2] https://patchwork.freedesktop.org/patch/224920/
