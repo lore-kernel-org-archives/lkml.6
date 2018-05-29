@@ -1,90 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966250AbeE2T0v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:26:51 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:42599 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965759AbeE2T0s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:26:48 -0400
-X-Google-Smtp-Source: ADUXVKKJbqz8ASXc02XkpqcgUludGYO4sIxSZ3GAwbbgwc1hRbCJ7tbvK3sTcAZtgmu/RyCXynCL5g==
-Date: Tue, 29 May 2018 15:26:43 -0400
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: Coly Li <colyli@suse.de>, Ciaran Farrell <ciaran.farrell@suse.com>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        linux-bcache@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tso Ted <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jonas Oberg <jonas@fsfe.org>
-Subject: Re: PostgreSQL licensed code on Linux
-Message-ID: <20180529192643.GA3487@kmo-pixel>
-References: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
+        id S966191AbeE2Tal (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 15:30:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46010 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965761AbeE2Taj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 15:30:39 -0400
+Date: Tue, 29 May 2018 21:30:36 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Abhishek Sahu <absahu@codeaurora.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v3 01/16] mtd: rawnand: helper function for setting up
+ ECC configuration
+Message-ID: <20180529213036.150ed16a@bbrezillon>
+In-Reply-To: <20180526095807.5caf5800@xps13>
+References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
+        <1527250904-21988-2-git-send-email-absahu@codeaurora.org>
+        <20180526095807.5caf5800@xps13>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 12:14:01PM -0700, Luis R. Rodriguez wrote:
-> The question over future possible PostgreSQL licensed code on Linux came up
-> to me recently. While doing some quick of digging around I found code
-> already under such license it seems:
-> 
-> The file drivers/md/bcache/util.c has:
-> 
-> cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 318) /*
-> cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 319)  * Portions
-> Copyright (c) 1996-2001, PostgreSQL Global Development Group (Any
-> cafe563591446 (Kent Overstreet 2013-03-23 16:11:31 -0700 320)  * use
-> permitted, subject to terms of PostgreSQL license; see.)
-> 
-> That seems to indicate that we've had already PostgreSQL licensed code on
-> Linux since Kent's addition of bcache to Linux in 2013. The portion of code
-> is rather small though, to me it seems to cover only crc_table[],
-> bch_crc64_update(), and bch_crc64(). Four things:
+On Sat, 26 May 2018 10:42:47 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-Yep, it's just that code.
+> Hi Abhishek,
+> 
+> On Fri, 25 May 2018 17:51:29 +0530, Abhishek Sahu
+> <absahu@codeaurora.org> wrote:
+> 
+> > commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,
+> > match, maximize ECC settings") provides generic helpers which
+> > drivers can use for setting up ECC parameters.
+> > 
+> > Since same board can have different ECC strength nand chips so
+> > following is the logic for setting up ECC strength and ECC step
+> > size, which can be used by most of the drivers.
+> > 
+> > 1. If both ECC step size and ECC strength are already set
+> >    (usually by DT) then just check whether this setting
+> >    is supported by NAND controller.
+> > 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
+> >    supported by NAND controller.
+> > 3. Otherwise, try to match the ECC step size and ECC strength closest
+> >    to the chip's requirement. If available OOB size can't fit the chip
+> >    requirement then select maximum ECC strength which can be fit with
+> >    available OOB size.
+> > 
+> > This patch introduces nand_ecc_choose_conf function which calls the
+> > required helper functions for the above logic. The drivers can use
+> > this single function instead of calling the 3 helper functions
+> > individually.
+> > 
+> > CC: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> > ---
+> > * Changes from v2:
+> > 
+> >   1. Renamed function to nand_ecc_choose_conf.
+> >   2. Minor code reorganization to remove warning and 2 function calls
+> >      for nand_maximize_ecc.
+> > 
+> > * Changes from v1:
+> >   NEW PATCH
+> > 
+> >  drivers/mtd/nand/raw/nand_base.c | 42 ++++++++++++++++++++++++++++++++++++++++
+> >  drivers/mtd/nand/raw/nand_base.c | 31 +++++++++++++++++++++++++++++++
+> >  include/linux/mtd/rawnand.h      |  3 +++
+> >  2 files changed, 34 insertions(+)
+> > 
+> > diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> > index 72f3a89..e52019d 100644
+> > --- a/drivers/mtd/nand/raw/nand_base.c
+> > +++ b/drivers/mtd/nand/raw/nand_base.c
+> > @@ -6249,6 +6249,37 @@ int nand_maximize_ecc(struct nand_chip *chip,
+> >  }
+> >  EXPORT_SYMBOL_GPL(nand_maximize_ecc);
+> >  
+> > +/**
+> > + * nand_ecc_choose_conf - Set the ECC strength and ECC step size
+> > + * @chip: nand chip info structure
+> > + * @caps: ECC engine caps info structure
+> > + * @oobavail: OOB size that the ECC engine can use
+> > + *
+> > + * Choose the ECC configuration according to following logic
+> > + *
+> > + * 1. If both ECC step size and ECC strength are already set (usually by DT)
+> > + *    then check if it is supported by this controller.
+> > + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
+> > + * 3. Otherwise, try to match the ECC step size and ECC strength closest
+> > + *    to the chip's requirement. If available OOB size can't fit the chip
+> > + *    requirement then fallback to the maximum ECC step size and ECC strength.
+> > + *
+> > + * On success, the chosen ECC settings are set.
+> > + */
+> > +int nand_ecc_choose_conf(struct nand_chip *chip,
+> > +			 const struct nand_ecc_caps *caps, int oobavail)
+> > +{
+> > +	if (chip->ecc.size && chip->ecc.strength)
+> > +		return nand_check_ecc_caps(chip, caps, oobavail);
+> > +
+> > +	if (!(chip->ecc.options & NAND_ECC_MAXIMIZE) &&
+> > +	    !nand_match_ecc_req(chip, caps, oobavail))
+> > +		return 0;
+> > +
+> > +	return nand_maximize_ecc(chip, caps, oobavail);  
+> 
+> I personally don't mind if nand_maximize_ecc() is called twice in
+> the function if it clarifies the logic. Maybe the following will be
+> more clear for the user?
+> 
+> 	if (chip->ecc.size && chip->ecc.strength)
+> 		return nand_check_ecc_caps(chip, caps, oobavail);
+> 
+> 	if (chip->ecc.options & NAND_ECC_MAXIMIZE)
+> 		return nand_maximize_ecc(chip, caps, oobavail);
+> 
+> 	if (!nand_match_ecc_req(chip, caps, oobavail))
+> 		return 0;
+> 
+> 	return nand_maximize_ecc(chip, caps, oobavail);
+
+I personally don't mind, and it seems Masahiro wanted to keep the logic
+he had used in the denali driver.
 
 > 
-> a) This is the only code on Linux which seems to use PostgreSQL
-> b) The language for license seem to be cut off, 'see.' seems incomplete,
-> whereas typically it would point to a file with the full language text.
-> c) We can only infer what portions of the file are under this license
-> d) Even though some licenses claim to be GPL-Compatible, if possible we
-> should dual license such with the GPL if possible (*)
+> Also, I'm not sure we should just error out when nand_check_ecc_caps()
+> fails. What about something more robust, like:
 > 
-> If some folks are considering adding yet more code to Linux which is
-> currently under a PostgreSQL license I figured reviewing the existing
-> PostgreSQL code's use may be a good start to set precedent for future work.
-> Since we already have at least one file with a PostgreSQL-sort-of boiler
-> plate it at least sets the precedent we have already sort of dealt with
-> PostgreSQL.
+> 	int ret;
 > 
-> My recommendations:
-> 
-> As silly as it may be we should split out the PostgreSQL licensed code from
-> drivers/md/bcache/util.c into its own file and while at it clarify the
-> license.
-> 
-> If possible, if we can dual license this code with GPL it would be good as
-> it would do two things:
-> 
-> 1) Removes any ambiguity in case of questions over GPL Compatibility in the
-> future about the PostgreSQL license
-> 
-> 2) Other folks considering using PostgreSQL licensed code on Linux have a
-> template they can use
+> 	if (chip->ecc.size && chip->ecc.strength) {
+> 		ret = nand_check_ecc_caps(chip, caps, oobavail);
+> 		if (ret)
+> 			goto maximize_ecc;
 
-Sounds good to me, I'll defer to your judgement since you have more experience
-with these things than me :) Let me know if there's anything you need from me. I
-never modified that code besides renaming the functions, but dual licensing
-would be fine by me.
+Nope. When someone asked for a specific ECC config by passing the
+nand-ecc-xxx props we should apply it or return an erro if it's not
+supported. People passing those props should now what the ECC engine
+supports and pick one valid values.
+
+> 
+> 		return 0;
+> 	}
+> 
+> 	if (chip->ecc.options & NAND_ECC_MAXIMIZE)
+> 		goto maximize_ecc;
+> 
+> 	ret = nand_match_ecc_req(chip, caps, oobavail);
+> 	if (ret)
+> 		goto maximize_ecc;
+> 
+> 	return 0;
+> 
+> maximize_ecc:
+> 	return nand_maximize_ecc(chip, caps, oobavail);
+> 
