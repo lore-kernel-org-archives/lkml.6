@@ -1,100 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932332AbeE2Ic3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 04:32:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56796 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932121AbeE2IcZ (ORCPT
+        id S932419AbeE2IdL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 04:33:11 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:41099 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932121AbeE2IdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 04:32:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0BAB360541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [RFC PATCH 5/5] remoteproc: qcom: Introduce Hexagon V5 based WCSS
- driver
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Vinod <vkoul@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
- <20180523052054.19025-6-bjorn.andersson@linaro.org>
- <20180523060516.GD20991@vkoul-mobl> <20180523065815.GZ14924@minitux>
- <20180523073723.GF20991@vkoul-mobl>
- <fa0af8c1-f635-13e7-e600-4c1f91a48351@codeaurora.org>
- <20180529040742.GD2259@tuxbook-pro>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <7a2e86a2-00bc-cd64-6d86-4c5e8c7a7b0e@codeaurora.org>
-Date: Tue, 29 May 2018 14:02:18 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 29 May 2018 04:33:07 -0400
+X-Google-Smtp-Source: AB8JxZpMQxpJfeXRRscxkkGw8U35TXWvoLWwa9b2+MDvMlqDllAZ7Eu0y5V9NwKz5r0FAV+rOkTf8w==
+Date: Tue, 29 May 2018 09:33:03 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Radu Pirea <radu.pirea@microchip.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        broonie@kernel.org, alexandre.belloni@bootlin.com,
+        nicolas.ferre@microchip.com, jslaby@suse.com,
+        gregkh@linuxfoundation.org, richard.genoud@gmail.com
+Subject: Re: [PATCH v2 0/6] Driver for at91 usart in spi mode
+Message-ID: <20180529083303.GF4790@dell>
+References: <20180504154714.5109-1-radu.pirea@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529040742.GD2259@tuxbook-pro>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180504154714.5109-1-radu.pirea@microchip.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On Fri, 04 May 2018, Radu Pirea wrote:
 
-On 5/29/2018 9:37 AM, Bjorn Andersson wrote:
-> On Wed 23 May 07:48 PDT 2018, Sricharan R wrote:
->> On 5/23/2018 1:07 PM, Vinod wrote:
->>> On 22-05-18, 23:58, Bjorn Andersson wrote:
->>>> On Tue 22 May 23:05 PDT 2018, Vinod wrote:
->>>>> On 22-05-18, 22:20, Bjorn Andersson wrote:
-> [..]
->>>>> Looking at the patch, few other comments would be applicable too, so would be
->>>>> great if you/Sricharan can update this
->>>>>
->>>>
->>>> I agree, the primary purpose of this patch was rather to get feedback on
->>>> the structure of the drivers, I do expect this to take another round
->>>> through the editor to get some polishing touches. Sorry if this wasn't
->>>> clear from the description.
->>>
->>> Since Sricharan replied to comments, I though they would be fixed. Yeah this is
->>> fine from RFC..
->>>
->>
->>  Thanks for this.
->>
->>  Tested this on ipq8074 and wcss rproc is up with this.
->>
->>  Tested-by: Sricharan R <sricharan@codeaurora.org>
->>
+> Hello,
 > 
-> Thanks Sricharan!
+> This is the second version of driver. I added a mfd driver which by
+> default probes atmel_serial driver and if in dt is specified to probe
+> the spi driver, then the spi-at91-usart driver will be probed. The
+> compatible for atmel_serial is now the compatible for at91-usart mfd
+> driver and compatilbe for atmel_serial driver was changed in order to
+> keep the bindings for serial as they are.
 > 
->>  So regarding the cleanup, as i see, this consolidates the code much better.
->>
->>  so about the point of avoiding duplication for soc specific functions like
->>  qcv5_wcss_reset common between qcv5_wcss and qcv5_pil drivers as done in my
->>  series, with a second thought that feels it might be difficult to maintain
->>  in the longer run. Since the sequences are specific to each soc and for now
->>  although some part of it is common, for a minor update in one soc, common
->>  code needs to reworked every time and tested on all boards that share them.
->>
->>  So feels like having the duplication for hw init sequences is the cleaner way.
->>
+> Changes in v1:
+> - added spi-at91-usart driver
 > 
-> Sounds good, then let's go with this approach!
+> Changes in v2:
+> - added at91-usart mfd driver
+> - modified spi-at91-usart driver to work as mfd driver child
+> - modified atmel_serial driver to work as mfd driver child
 > 
->>  Apart from that for other comments on the q6v5 wcss driver, i can address them
->>  on this final patch that you have posted and same can be included in your
->>  next version. Please let me know how you want to go about it.
->>
+> Radu Pirea (6):
+>   MAINTAINERS: add at91 usart mfd driver
+>   mfd: at91-usart: added mfd driver for usart
+>   MAINTAINERS: add at91 usart spi driver
+>   dt-bindings: add binding for at91-usart in spi mode
+>   spi: at91-usart: add driver for at91-usart as spi
+>   tty/serial: atmel: changed the driver to work under at91-usart mfd
 > 
-> If you can help me review the first 4 patches and fix up and resend the
-> 5th that would be greatly appreciated.
+>  .../bindings/spi/microchip,at91-usart-spi.txt |  28 +
+>  MAINTAINERS                                   |  14 +
+>  drivers/mfd/Kconfig                           |  10 +
+>  drivers/mfd/Makefile                          |   1 +
+>  drivers/mfd/at91-usart.c                      |  81 +++
+>  drivers/spi/Kconfig                           |   9 +
+>  drivers/spi/Makefile                          |   1 +
+>  drivers/spi/spi-at91-usart.c                  | 545 ++++++++++++++++++
+>  drivers/tty/serial/Kconfig                    |   1 +
+>  drivers/tty/serial/atmel_serial.c             |  29 +-
+>  include/dt-bindings/mfd/at91-usart.h          |  17 +
+>  11 files changed, 722 insertions(+), 14 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/spi/microchip,at91-usart-spi.txt
+>  create mode 100644 drivers/mfd/at91-usart.c
+>  create mode 100644 drivers/spi/spi-at91-usart.c
+>  create mode 100644 include/dt-bindings/mfd/at91-usart.h
 
- Sure, will do.
-
-Regards,
- Sricharan
+Applied, thanks.
 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
