@@ -1,73 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752468AbeE2FpE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 01:45:04 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:38644 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751250AbeE2FpD (ORCPT
+        id S1754243AbeE2Fs5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 01:48:57 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38617 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751250AbeE2Fsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 01:45:03 -0400
-X-Google-Smtp-Source: AB8JxZomtjqjPf+7XnxdUxQyEnR9VZy4pwpUay6RTMl2affCayOanIBA6EV+flIBdDwbY9slNfqyDw==
-From: Nick Desaulniers <nick.desaulniers@gmail.com>
-To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: Nick Desaulniers <nick.desaulniers@gmail.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: blkcipher: prefer strlcpy to strncpy
-Date: Mon, 28 May 2018 22:44:43 -0700
-Message-Id: <1527572683-26098-1-git-send-email-nick.desaulniers@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 29 May 2018 01:48:55 -0400
+X-Google-Smtp-Source: ADUXVKLw1KCC/HCZFmIe6Pzmrtw3bgFau8caRlF5M9aDkpGTDKhoOZ46Ng62uerjZpAC8qk07qKqaQ==
+Subject: Re: [alsa-devel] [PATCH] ALSA: xen: ensure nul-terminated device name
+To: Arnd Bergmann <arnd@arndb.de>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: xen-devel@lists.xenproject.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+References: <20180528160011.2989632-1-arnd@arndb.de>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <2469af3f-df85-fbca-a486-566f9aaa436d@gmail.com>
+Date: Tue, 29 May 2018 08:48:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180528160011.2989632-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes stringop-truncation warnings from gcc-8.
-
-Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
----
- crypto/ablkcipher.c | 8 ++++----
- crypto/blkcipher.c  | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/crypto/ablkcipher.c b/crypto/ablkcipher.c
-index d880a48..e38867f 100644
---- a/crypto/ablkcipher.c
-+++ b/crypto/ablkcipher.c
-@@ -370,8 +370,8 @@ static int crypto_ablkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_blkcipher rblkcipher;
- 
--	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
--	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
-+	strlcpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
-+	strlcpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
- 		sizeof(rblkcipher.geniv));
- 
- 	rblkcipher.blocksize = alg->cra_blocksize;
-@@ -444,8 +444,8 @@ static int crypto_givcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_blkcipher rblkcipher;
- 
--	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
--	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
-+	strlcpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
-+	strlcpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
- 		sizeof(rblkcipher.geniv));
- 
- 	rblkcipher.blocksize = alg->cra_blocksize;
-diff --git a/crypto/blkcipher.c b/crypto/blkcipher.c
-index 01c0d4a..ee88e48 100644
---- a/crypto/blkcipher.c
-+++ b/crypto/blkcipher.c
-@@ -509,8 +509,8 @@ static int crypto_blkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
- {
- 	struct crypto_report_blkcipher rblkcipher;
- 
--	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
--	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
-+	strlcpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
-+	strlcpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
- 		sizeof(rblkcipher.geniv));
- 
- 	rblkcipher.blocksize = alg->cra_blocksize;
--- 
-2.7.4
+On 05/28/2018 06:59 PM, Arnd Bergmann wrote:
+> gcc-8 warns that pcm_instance->name is not necessarily terminated correctly
+> if the input is more than 80 characters long or lacks a termination byte
+> itself:
+>
+> In function 'strncpy',
+>      inlined from 'cfg_device' at sound/xen/xen_snd_front_cfg.c:399:3,
+>      inlined from 'xen_snd_front_cfg_card' at sound/xen/xen_snd_front_cfg.c:509:9:
+> include/linux/string.h:254:9: error: '__builtin_strncpy' specified bound 80 equals destination size [-Werror=stringop-truncation]
+>    return __builtin_strncpy(p, q, size);
+>
+> Using strlcpy() instead of strncpy() makes this a bit safer.
+>
+> Fixes: fd3b36045c2c ("ALSA: xen-front: Read sound driver configuration from Xen store")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   sound/xen/xen_snd_front_cfg.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/xen/xen_snd_front_cfg.c b/sound/xen/xen_snd_front_cfg.c
+> index 38c7e1eefbb9..684b5f1d51ac 100644
+> --- a/sound/xen/xen_snd_front_cfg.c
+> +++ b/sound/xen/xen_snd_front_cfg.c
+> @@ -396,7 +396,7 @@ static int cfg_device(struct xen_snd_front_info *front_info,
+>   
+>   	str = xenbus_read(XBT_NIL, device_path, XENSND_FIELD_DEVICE_NAME, NULL);
+>   	if (!IS_ERR(str)) {
+> -		strncpy(pcm_instance->name, str, sizeof(pcm_instance->name));
+> +		strlcpy(pcm_instance->name, str, sizeof(pcm_instance->name));
+>   		kfree(str);
+>   	}
+>   
+Thank you for your patch,
+Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
