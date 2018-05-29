@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937204AbeE2VID (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:08:03 -0400
-Received: from mga01.intel.com ([192.55.52.88]:53956 "EHLO mga01.intel.com"
+        id S937260AbeE2VHn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:07:43 -0400
+Received: from mga01.intel.com ([192.55.52.88]:53962 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937065AbeE2VA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:00:57 -0400
+        id S937075AbeE2VA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 17:00:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
-   d="scan'208";a="60127670"
+   d="scan'208";a="60127671"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,295 +18,171 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V5 00/38] Intel(R) Resource Director Technology Cache Pseudo-Locking enabling
-Date: Tue, 29 May 2018 05:57:25 -0700
-Message-Id: <cover.1527593970.git.reinette.chatre@intel.com>
+Subject: [PATCH V5 01/38] x86/intel_rdt: Document new mode, size, and bit_usage
+Date: Tue, 29 May 2018 05:57:26 -0700
+Message-Id: <cc1e6234f80e07eef65529bd6c25db0a688bba12.1527593970.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1527593970.git.reinette.chatre@intel.com>
+References: <cover.1527593970.git.reinette.chatre@intel.com>
+In-Reply-To: <cover.1527593970.git.reinette.chatre@intel.com>
+References: <cover.1527593970.git.reinette.chatre@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Maintainers,
+By default resource groups allow sharing of their cache allocations.
+There is nothing that prevents a resource group from configuring
+a cache allocation that overlaps with that of an existing resource
+group.
 
-This fifth series of Cache Pseudo-Locking enabling addresses all feedback
-received up to and including the review of v4. Thank you very much for the
-great feedback.
+To enable resource groups to specify that their cache allocations cannot
+be shared a resource group "mode" is introduced to support two possible
+modes: "shareable" and "exclusive". A "shareable" resource group allows
+sharing of its cache allocations, an "exclusive" resource group does
+not. A new resctrl file "mode" associated with each resource group is
+used to communicate its (the associated resource group's) mode setting
+and allow the mode to be changed.  The new "mode" file as well as two
+other resctrl files, "bit_usage" and "size", are introduced in this
+series.
 
-Changes since v4:
-- All occurrences of seq_puts(f, one_char_string) replaced with
-  seq_putc(f, one_char).
-- Do not use unlikely() after debugfs_file_get().
-- No error checking of debugfs directory and file creation return values.
-  Specifically, do not let failures in debugging affect core
-  functionality.
-- Always include debug functionality. CONFIG_INTEL_RDT_DEBUGFS has been
-  removed in this series.
+Add documentation for the three new resctrl files as well as one example
+demonstrating their use.
 
-No changes below. It is verbatim from previous submission (except for
-diffstat at the end that reflects v5).
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+ Documentation/x86/intel_rdt_ui.txt | 99 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 97 insertions(+), 2 deletions(-)
 
-Changes since v3:
-- Rebase series on top of tip::x86/cache with HEAD:
-  commit de73f38f768021610bd305cf74ef3702fcf6a1eb (tip/x86/cache)
-  Author: Vikas Shivappa <vikas.shivappa@linux.intel.com>
-  Date:   Fri Apr 20 15:36:21 2018 -0700
-
-    x86/intel_rdt/mba_sc: Feedback loop to dynamically update mem bandwidth
-- The final patch from the v3 submission is not included in this series.
-  The large contiguous allocation work it depends on is actively discussed
-  and patches now at v2:
-  http://lkml.kernel.org/r/20180503232935.22539-1-mike.kravetz@oracle.com
-  At this time it seems that the large contiguous allocation API may change
-  in future versions so I plan to resubmit the final patch when that is
-  finalized. Until then we are limited to Cache Pseudo-Locked regions of 4MB.
-- rdtgroup_cbm_overlaps() now returns bool instead of int.
-- rdtgroup_mode_test_exclusive() now returns bool instead of int.
-- Respect the tabular formatting in rdt_cbm_parse_data struct declaration.
-- In rdt_bit_usage_show() use test to exit loop earlier and thus spare an
-  indentation level of code that follows.
-- Follow recommendations of recent additions to checkpatch.pl:
-  -- Prefer 'help' over '---help---' for new Kconfig help texts.
-  -- Include SPDX-License-Identifier tag in new files.
-
-
-The last patch of this series depends on the series:
-"[RFC PATCH 0/3] Interface for higher order contiguous allocations"
-submitted at:
-http://lkml.kernel.org/r/20180212222056.9735-1-mike.kravetz@oracle.com
-A new version of this was submitted recently and currently being discussed
-at:
-http://lkml.kernel.org/r/20180417020915.11786-1-mike.kravetz@oracle.com
-Without this upstream MM work (and patch 39/39 of this series) it would
-just not be possible to create pseudo-locked regions larger than 4MB. To
-simplify this work we could temporarily drop the last patch of this
-series until the upstream MM work is complete.
-
-Changes since v2:
-- Introduce resource group "modes" and a new resctrl file "mode" associated
-  with each resource group that exposes the associated resource group's mode.
-  A resource group's mode is used by the system administrator to enable or
-  disable resource sharing between resource groups. A resource group in
-  "shareable" mode allows its allocations to be shared with other resource
-  groups. This is the default mode and reflects existing behavior. A resource
-  group in "exclusive" mode does not allow any sharing of its allocated
-  resources. When a schemata is written to any resource group it is not
-  allowed to overlap with allocations of any resource group that is in
-  "exclusive" mode. A resource group's allocations are not allowed to overlap
-  at the time it is set to be "exclusive".  Cache pseudo-locking builds on
-  "exclusive" mode and is supported using two new modes: "pseudo-locksetup"
-  lets the user indicate that this resource group will be used by a
-  pseudo-locked region. A subsequent write of a schemata to the "schemata"
-  file will create the corresponding pseudo-locked region and the mode will
-  then automatically change to "pseudo-locked".
-- A resource group's mode can only be changed to "pseudo-locksetup" if the
-  platform has been verified to support cache pseudo-locking and the
-  resource group is unused. Unused means that, no monitoring is in progress,
-  and no tasks or cpus are assigned to the resource group. Once a resource
-  group enters "pseudo-locksetup" it becomes "locked down" such that no
-  new tasks or cpus can be assigned to it. Neither can any new monitoring
-  be started.
-- Each resource group obtains a new "size" file that mirrors the schemata
-  file to display the size in bytes of each allocation. There is a difference
-  in the implementation from the review feedback. In the review feedback an
-  example of output was:
-     L2:0=128K;1=256K;
-     L3:0=1M;1=2M;
-  Within the kernel I could find many examples of support for user _input_ with
-  mem suffixes. This is broadly supported with lib/cmdline.c:memparse().
-  I was not able to find as clear support or usage of such flexible
-  _output_ of size. My conclusion was that the output of size tends to always
-  be using the same unit. I also found that printing the size in one unit, in
-  this case bytes, does simplify validation.
-- A new "bit_usage" file within the info/<resource> sub-directories contain
-  annotated bitmaps of how the resources are used.
-- Cache pseudo-locked regions are now associated 1:1 with a resource group.
-- Do not make any changes to capacity bitmask (CBM) associated with the
-  default class-of-service (CLOS). If a pseudo-locked region is requested its
-  cache region has to be unused at the time of request.
-- Second mutex removed.
-- Tabular fashion respected when making struct changes.
-- Lifetime of pseudo-locked region (by extension the resource group it
-  belongs to) connected to mmap region.
-- Do not call preempt_disable() and local_irq_save(). Only local_irq_disable().
-- Improve comments in pseudo-locking loop to explain why prefetcher needs
-  disabling.
-- Ensure that possibility of pseudo-locked region success takes into
-  account all levels of cache in the hierarchy, not just the level at which
-  it is requested.
-- Preloading of code was suggested in review to improve pseudo-locking
-  success. We have since been able to connect a hardware debugger to our
-  target platform and with current locking flow we are able to lock 100%
-  of kernel memory into the cache of an Intel(R) Celeron(R) Processor J3455.
-- Above testing with hardware debugger revealed that speculative execution
-  of the loop loads data beyond the end of the buffer. Add a read barrier
-  to the locking loops to prevent this speculation.
-- The name of the debugfs file used to trigger measurements was changed
-  from "measure_trigger" to "pseudo_lock_measure".
-
-Changes since v1:
-- Enable allocation of contiguous regions larger than what SLAB allocators
-  can support. This removes the 4MB Cache Pseudo-Locking limitation
-  documented in v1 submission.
-  This depends on "mm: drop hotplug lock from lru_add_drain_all",
-  now in v4.16-rc1 as 9852a7212324fd25f896932f4f4607ce47b0a22f.
-- Convert to debugfs_file_get() and -put() from the now obsolete
-  debugfs_use_file_start() and debugfs_use_file_finish() calls.
-- Rebase on top of, and take into account, recent L2 CDP enabling.
-- Simplify tracing output to print cache hits and miss counts on same line.
-
-
-Dear Maintainers,
-
-Cache Allocation Technology (CAT), part of Intel(R) Resource Director
-Technology (Intel(R) RDT), enables a user to specify the amount of cache
-space into which an application can fill. Cache pseudo-locking builds on
-the fact that a CPU can still read and write data pre-allocated outside
-its current allocated area on cache hit. With cache pseudo-locking data
-can be preloaded into a reserved portion of cache that no application can
-fill, and from that point on will only serve cache hits. The cache
-pseudo-locked memory is made accessible to user space where an application
-can map it into its virtual address space and thus have a region of
-memory with reduced average read latency.
-
-The cache pseudo-locking approach relies on generation-specific behavior
-of processors. It may provide benefits on certain processor generations,
-but is not guaranteed to be supported in the future. It is not a guarantee
-that data will remain in the cache. It is not a guarantee that data will
-remain in certain levels or certain regions of the cache. Rather, cache
-pseudo-locking increases the probability that data will remain in a certain
-level of the cache via carefully configuring the CAT feature and carefully
-controlling application behavior.
-
-Known limitations:
-Instructions like INVD, WBINVD, CLFLUSH, etc. can still evict pseudo-locked
-memory from the cache. Power management C-states may still shrink or power
-off cache causing eviction of cache pseudo-locked memory. We utilize
-PM QoS to prevent entering deeper C-states on cores associated with cache
-pseudo-locked regions at the time they (the pseudo-locked regions) are
-created.
-
-Known software limitation (FIXED IN V2):
-Cache pseudo-locked regions are currently limited to 4MB, even on
-platforms that support larger cache sizes. Work is in progress to
-support larger regions.
-
-Graphs visualizing the benefits of cache pseudo-locking on an Intel(R)
-NUC NUC6CAYS (it has an Intel(R) Celeron(R) Processor J3455) with the
-default 2GB DDR3L-1600 memory are available. In these tests the patches
-from this series were applied on the x86/cache branch of tip.git at the
-time the HEAD was:
-
-commit 87943db7dfb0c5ee5aa74a9ac06346fadd9695c8 (tip/x86/cache)
-Author: Reinette Chatre <reinette.chatre@intel.com>
-Date:   Fri Oct 20 02:16:59 2017 -0700
-    x86/intel_rdt: Fix potential deadlock during resctrl mount
-
-DISCLAIMER: Tests document performance of components on a particular test,
-in specific systems. Differences in hardware, software, or configuration
-will affect actual performance. Performance varies depending on system
-configuration.
-
-- https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/perfcount.png
-Above shows the few L2 cache misses possible with cache pseudo-locking
-on the Intel(R) NUC with default configuration. Each test, which is
-repeated 100 times, pseudo-locks schemata shown and then measure from
-the kernel via precision counters the number of cache misses when
-accessing the memory afterwards. This test is run on an idle system as
-well as a system with significant noise (using stress-ng) from a
-neighboring core associated with the same cache. This plot shows us that:
-(1) the number of cache misses remain consistent irrespective of the size
-of region being pseudo-locked, and (2) the number of cache misses for a
-pseudo-locked region remains low when traversing memory regions ranging
-in size from 256KB (4096 cache lines) to 896KB (14336 cache lines).
-
-- https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/userspace_malloc_with_load.png
-Above shows the read latency experienced by an application running with
-default CAT CLOS after it allocated 256KB memory with malloc() (and using
-mlockall()). In this example the application reads randomly (to not trigger
-hardware prefetcher) from its entire allocated region at 2 second intervals
-while there is a noisy neighbor present. Each individual access is 32 bytes
-in size and the latency of each access is measured using the rdtsc
-instruction. In this visualization we can observe two groupings of data,
-the group with lower latency indicating cache hits, and the group with
-higher latency indicating cache misses. We can see a significant portion
-of memory reads experience larger latencies.
-
-- https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/userspace_psl_with_load.png
-Above plots a similar test as the previous, but instead of the application
-reading from a 256KB malloc() region it reads from a 256KB pseudo-locked
-region that was mmap()'ed into its address space. When comparing these
-latencies to that of regular malloc() latencies we do see a significant
-improvement in latencies experienced.
-
-https://github.com/rchatre/data/blob/master/cache_pseudo_locking/rfc_v1/userspace_malloc_and_cat_with_load_clos0_fixed.png
-Applications that are sensitive to latencies may use existing CAT
-technology to isolate the sensitive application. In this plot we show an
-application running with a dedicated CAT CLOS double the size (512KB) of
-the memory being tested (256KB). A dedicated CLOS with CBM 0x0f is created and
-the default CLOS changed to CBM 0xf0. We see in this plot that even though
-the application runs within a dedicated portion of cache it still
-experiences significant latency accessing its memory (when compared to
-pseudo-locking).
-
-Your feedback about this proposal for enabling of Cache Pseudo-Locking
-will be greatly appreciated.
-
-Regards,
-
-Reinette
-
-Reinette Chatre (38):
-  x86/intel_rdt: Document new mode, size, and bit_usage
-  x86/intel_rdt: Introduce RDT resource group mode
-  x86/intel_rdt: Associate mode with each RDT resource group
-  x86/intel_rdt: Introduce resource group's mode resctrl file
-  x86/intel_rdt: Introduce test to determine if closid is in use
-  x86/intel_rdt: Make useful functions available internally
-  x86/intel_rdt: Initialize new resource group with sane defaults
-  x86/intel_rdt: Introduce new "exclusive" mode
-  x86/intel_rdt: Enable setting of exclusive mode
-  x86/intel_rdt: Making CBM name and type more explicit
-  x86/intel_rdt: Support flexible data to parsing callbacks
-  x86/intel_rdt: Ensure requested schemata respects mode
-  x86/intel_rdt: Introduce "bit_usage" to display cache allocations
-    details
-  x86/intel_rdt: Display resource groups' allocations' size in bytes
-  x86/intel_rdt: Documentation for Cache Pseudo-Locking
-  x86/intel_rdt: Introduce the Cache Pseudo-Locking modes
-  x86/intel_rdt: Respect read and write access
-  x86/intel_rdt: Add utility to test if tasks assigned to resource group
-  x86/intel_rdt: Add utility to restrict/restore access to resctrl files
-  x86/intel_rdt: Protect against resource group changes during locking
-  x86/intel_rdt: Utilities to restrict/restore access to specific files
-  x86/intel_rdt: Add check to determine if monitoring in progress
-  x86/intel_rdt: Introduce pseudo-locked region
-  x86/intel_rdt: Support enter/exit of locksetup mode
-  x86/intel_rdt: Enable entering of pseudo-locksetup mode
-  x86/intel_rdt: Split resource group removal in two
-  x86/intel_rdt: Add utilities to test pseudo-locked region possibility
-  x86/intel_rdt: Discover supported platforms via prefetch disable bits
-  x86/intel_rdt: Pseudo-lock region creation/removal core
-  x86/intel_rdt: Support creation/removal of pseudo-locked region
-  x86/intel_rdt: resctrl files reflect pseudo-locked information
-  x86/intel_rdt: Ensure RDT cleanup on exit
-  x86/intel_rdt: Create resctrl debug area
-  x86/intel_rdt: Create debugfs files for pseudo-locking testing
-  x86/intel_rdt: Create character device exposing pseudo-locked region
-  x86/intel_rdt: More precise L2 hit/miss measurements
-  x86/intel_rdt: Support L3 cache performance event of Broadwell
-  x86/intel_rdt: Limit C-states dynamically when pseudo-locking active
-
- Documentation/x86/intel_rdt_ui.txt                |  377 +++++-
- arch/x86/kernel/cpu/Makefile                      |    4 +-
- arch/x86/kernel/cpu/intel_rdt.c                   |   11 +
- arch/x86/kernel/cpu/intel_rdt.h                   |  142 +-
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c       |  129 +-
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c       | 1485 +++++++++++++++++++++
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h |   43 +
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c          |  751 ++++++++++-
- 8 files changed, 2869 insertions(+), 73 deletions(-)
- create mode 100644 arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
- create mode 100644 arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
-
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
+index a16aa2113840..de913e00e922 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/intel_rdt_ui.txt
+@@ -65,6 +65,27 @@ related to allocation:
+ 			some platforms support devices that have their
+ 			own settings for cache use which can over-ride
+ 			these bits.
++"bit_usage":		Annotated capacity bitmasks showing how all
++			instances of the resource are used. The legend is:
++			"0" - Corresponding region is unused. When the system's
++			      resources have been allocated and a "0" is found
++			      in "bit_usage" it is a sign that resources are
++			      wasted.
++			"H" - Corresponding region is used by hardware only
++			      but available for software use. If a resource
++			      has bits set in "shareable_bits" but not all
++			      of these bits appear in the resource groups'
++			      schematas then the bits appearing in
++			      "shareable_bits" but no resource group will
++			      be marked as "H".
++			"X" - Corresponding region is available for sharing and
++			      used by hardware and software. These are the
++			      bits that appear in "shareable_bits" as
++			      well as a resource group's allocation.
++			"S" - Corresponding region is used by software
++			      and available for sharing.
++			"E" - Corresponding region is used exclusively by
++			      one resource group. No sharing allowed.
+ 
+ Memory bandwitdh(MB) subdirectory contains the following files
+ with respect to allocation:
+@@ -163,6 +184,16 @@ When control is enabled all CTRL_MON groups will also contain:
+ 	A list of all the resources available to this group.
+ 	Each resource has its own line and format - see below for details.
+ 
++"size":
++	Mirrors the display of the "schemata" file to display the size in
++	bytes of each allocation instead of the bits representing the
++	allocation.
++
++"mode":
++	The "mode" of the resource group dictates the sharing of its
++	allocations. A "shareable" resource group allows sharing of its
++	allocations while an "exclusive" resource group does not.
++
+ When monitoring is enabled all MON groups will also contain:
+ 
+ "mon_data":
+@@ -502,7 +533,71 @@ siblings and only the real time threads are scheduled on the cores 4-7.
+ 
+ # echo F0 > p0/cpus
+ 
+-4) Locking between applications
++Example 4
++---------
++
++The resource groups in previous examples were all in the default "shareable"
++mode allowing sharing of their cache allocations. If one resource group
++configures a cache allocation then nothing prevents another resource group
++to overlap with that allocation.
++
++In this example a new exclusive resource group will be created on a L2 CAT
++system with two L2 cache instances that can be configured with an 8-bit
++capacity bitmask. The new exclusive resource group will be configured to use
++25% of each cache instance.
++
++# mount -t resctrl resctrl /sys/fs/resctrl/
++# cd /sys/fs/resctrl
++
++First, we observe that the default group is configured to allocate to all L2
++cache:
++
++# cat schemata
++L2:0=ff;1=ff
++
++We could attempt to create the new resource group at this point, but it will
++fail because of the overlap with the schemata of the default group:
++# mkdir p0
++# echo 'L2:0=0x3;1=0x3' > p0/schemata
++# cat p0/mode
++shareable
++# echo exclusive > p0/mode
++-sh: echo: write error: Invalid argument
++# cat info/last_cmd_status
++schemata overlaps
++
++To ensure that there is no overlap with another resource group the default
++resource group's schemata has to change, making it possible for the new
++resource group to become exclusive.
++# echo 'L2:0=0xfc;1=0xfc' > schemata
++# echo exclusive > p0/mode
++# grep . p0/*
++p0/cpus:0
++p0/mode:exclusive
++p0/schemata:L2:0=03;1=03
++p0/size:L2:0=262144;1=262144
++
++A new resource group will on creation not overlap with an exclusive resource
++group:
++# mkdir p1
++# grep . p1/*
++p1/cpus:0
++p1/mode:shareable
++p1/schemata:L2:0=fc;1=fc
++p1/size:L2:0=786432;1=786432
++
++The bit_usage will reflect how the cache is used:
++# cat info/L2/bit_usage
++0=SSSSSSEE;1=SSSSSSEE
++
++A resource group cannot be forced to overlap with an exclusive resource group:
++# echo 'L2:0=0x1;1=0x1' > p1/schemata
++-sh: echo: write error: Invalid argument
++# cat info/last_cmd_status
++overlaps with exclusive group
++
++Locking between applications
++----------------------------
+ 
+ Certain operations on the resctrl filesystem, composed of read/writes
+ to/from multiple files, must be atomic.
+@@ -510,7 +605,7 @@ to/from multiple files, must be atomic.
+ As an example, the allocation of an exclusive reservation of L3 cache
+ involves:
+ 
+-  1. Read the cbmmasks from each directory
++  1. Read the cbmmasks from each directory or the per-resource "bit_usage"
+   2. Find a contiguous set of bits in the global CBM bitmask that is clear
+      in any of the directory cbmmasks
+   3. Create a new directory
 -- 
 2.13.6
