@@ -1,82 +1,355 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935585AbeE2OqR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:46:17 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:56039 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935077AbeE2OqL (ORCPT
+        id S936670AbeE2Oqo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:46:44 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55814 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936564AbeE2Oq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:46:11 -0400
-From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-To: William Wu <william.wu@rock-chips.com>,
-        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC: "sergei.shtylyov@cogentembedded.com"
-        <sergei.shtylyov@cogentembedded.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-rockchip@lists.infradead.org"
-        <linux-rockchip@lists.infradead.org>,
-        "frank.wang@rock-chips.com" <frank.wang@rock-chips.com>,
-        "huangtao@rock-chips.com" <huangtao@rock-chips.com>,
-        "dianders@google.com" <dianders@google.com>,
-        "daniel.meng@rock-chips.com" <daniel.meng@rock-chips.com>,
-        "John.Youn@synopsys.com" <John.Youn@synopsys.com>,
-        "wzz@rock-chips.com" <wzz@rock-chips.com>,
-        "zsq@rock-chips.com" <zsq@rock-chips.com>,
-        "Allen.Hsu@quantatw.com" <Allen.Hsu@quantatw.com>,
-        "StanTsui@AOPEN.com" <StanTsui@AOPEN.com>,
-        "Spruce.Wu@quantatw.com" <Spruce.Wu@quantatw.com>,
-        "Martin.Tsai@quantatw.com" <Martin.Tsai@quantatw.com>,
-        "Kevin.Shai@quantatw.com" <Kevin.Shai@quantatw.com>,
-        "Mon-Jer.Wu@quantatw.com" <Mon-Jer.Wu@quantatw.com>,
-        "Claud.Chang@quantatw.com" <Claud.Chang@quantatw.com>,
-        "San.Lin@quantatw.com" <San.Lin@quantatw.com>,
-        "Ren.Kuo@quantatw.com" <Ren.Kuo@quantatw.com>,
-        "davidhtwang@aopen.com" <davidhtwang@AOPEN.com>,
-        "fonglin@aopen.com" <fonglin@AOPEN.com>,
-        "stevencheng@aopen.com" <stevencheng@AOPEN.com>,
-        "tomchen@aopen.com" <tomchen@AOPEN.com>,
-        "donchang@aopen.com" <donchang@AOPEN.com>,
-        "milesschofield@aopen.com" <milesschofield@AOPEN.com>
-Subject: Re: [PATCH v5 0/2] usb: dwc2: fix isoc split in transfer issue
-Thread-Topic: [PATCH v5 0/2] usb: dwc2: fix isoc split in transfer issue
-Thread-Index: AQHT6Q0p0EAJwXN+RESxmw6vChgslA==
-Date: Tue, 29 May 2018 14:44:44 +0000
-Message-ID: <410670D7E743164D87FA6160E7907A56013135A58D@am04wembxa.internal.synopsys.com>
-References: <1526031992-16565-1-git-send-email-william.wu@rock-chips.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.116.70.165]
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+        Tue, 29 May 2018 10:46:27 -0400
+X-Google-Smtp-Source: ADUXVKKVbWYN/I6RpvaxjeogDQQhIeqQ5OJwg8a65enRMAi9O7fXan3riflei2l3VZP2NLxzC8bARg==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 09/28] ovl: Modify ovl_lookup() and friends to lookup metacopy dentry
+Date: Tue, 29 May 2018 16:45:53 +0200
+Message-Id: <20180529144612.16675-10-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
+References: <20180529144612.16675-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4TEkMNP029241
 
-Acked-by Minas Harutyunyan hminas@synopsys.com>
+From: Vivek Goyal <vgoyal@redhat.com>
 
-On 5/11/2018 1:48 PM, William Wu wrote:
-> This patch fix dma unaligned problem and data lost problem for
-> isoc split in transfer.
-> 
-> Test on rk3288 platform, use an usb hs Hub (GL852G-12) and an usb
-> fs audio device (Plantronics headset) to capture and playback.
-> 
-> William Wu (2):
->    usb: dwc2: alloc dma aligned buffer for isoc split in
->    usb: dwc2: fix isoc split in transfer with no data
-> 
->   drivers/usb/dwc2/core.h      |  3 ++
->   drivers/usb/dwc2/hcd.c       | 89 +++++++++++++++++++++++++++++++++++++++++---
->   drivers/usb/dwc2/hcd.h       |  8 ++++
->   drivers/usb/dwc2/hcd_intr.c  | 11 +++++-
->   drivers/usb/dwc2/hcd_queue.c |  3 ++
->   5 files changed, 107 insertions(+), 7 deletions(-)
-> 
+This patch modifies ovl_lookup() and friends to lookup metacopy dentries.
+It also allows for presence of metacopy dentries in lower layer.
+
+During lookup, check for presence of OVL_XATTR_METACOPY and if not present,
+set OVL_UPPERDATA bit in flags.
+
+We don't support metacopy feature with nfs_export.  So in nfs_export code,
+we set OVL_UPPERDATA flag set unconditionally if upper inode exists.
+
+Do not follow metacopy origin if we find a metacopy only inode and metacopy
+feature is not enabled for that mount.  Like redirect, this can have
+security implications where an attacker could hand craft upper and try to
+gain access to file on lower which it should not have to begin with.
+
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/overlayfs/export.c    |   3 ++
+ fs/overlayfs/inode.c     |  11 ++++-
+ fs/overlayfs/namei.c     | 112 ++++++++++++++++++++++++++++++++++++++++-------
+ fs/overlayfs/overlayfs.h |   1 +
+ fs/overlayfs/util.c      |  22 ++++++++++
+ 5 files changed, 131 insertions(+), 18 deletions(-)
+
+diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+index 9941ece61a14..8fa37cd7818a 100644
+--- a/fs/overlayfs/export.c
++++ b/fs/overlayfs/export.c
+@@ -317,6 +317,9 @@ static struct dentry *ovl_obtain_alias(struct super_block *sb,
+ 		return ERR_CAST(inode);
+ 	}
+ 
++	if (upper)
++		ovl_set_flag(OVL_UPPERDATA, inode);
++
+ 	dentry = d_find_any_alias(inode);
+ 	if (!dentry) {
+ 		dentry = d_alloc_anon(inode->i_sb);
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index 0d5615b80422..350e38c5ce7d 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -780,7 +780,7 @@ struct inode *ovl_get_inode(struct super_block *sb,
+ 	bool bylower = ovl_hash_bylower(sb, upperdentry, lowerdentry,
+ 					oip->index);
+ 	int fsid = bylower ? oip->lowerpath->layer->fsid : 0;
+-	bool is_dir;
++	bool is_dir, metacopy = false;
+ 	unsigned long ino = 0;
+ 	int err = -ENOMEM;
+ 
+@@ -839,6 +839,15 @@ struct inode *ovl_get_inode(struct super_block *sb,
+ 	if (oip->index)
+ 		ovl_set_flag(OVL_INDEX, inode);
+ 
++	if (upperdentry) {
++		err = ovl_check_metacopy_xattr(upperdentry);
++		if (err < 0)
++			goto out_err;
++		metacopy = err;
++		if (!metacopy)
++			ovl_set_flag(OVL_UPPERDATA, inode);
++	}
++
+ 	OVL_I(inode)->redirect = oip->redirect;
+ 
+ 	/* Check for non-merge dir that may have whiteouts */
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index 54f206485ab8..fcf0eb40d94b 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -24,6 +24,7 @@ struct ovl_lookup_data {
+ 	bool stop;
+ 	bool last;
+ 	char *redirect;
++	bool metacopy;
+ };
+ 
+ static int ovl_check_redirect(struct dentry *dentry, struct ovl_lookup_data *d,
+@@ -252,16 +253,25 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
+ 		d->stop = d->opaque = true;
+ 		goto put_and_out;
+ 	}
+-	if (!d_can_lookup(this)) {
++	/*
++	 * This dentry should be a regular file if previous layer lookup
++	 * found a metacopy dentry.
++	 */
++	if (last_element && d->metacopy && !d_is_reg(this)) {
+ 		d->stop = true;
+-		if (d->is_dir)
++		goto put_and_out;
++	}
++	if (!d_can_lookup(this)) {
++		if (d->is_dir || !last_element) {
++			d->stop = true;
+ 			goto put_and_out;
++		}
++		err = ovl_check_metacopy_xattr(this);
++		if (err < 0)
++			goto out_err;
+ 
+-		/*
+-		 * NB: handle failure to lookup non-last element when non-dir
+-		 * redirects become possible
+-		 */
+-		WARN_ON(!last_element);
++		d->metacopy = err;
++		d->stop = !d->metacopy;
+ 		goto out;
+ 	}
+ 	if (last_element)
+@@ -823,7 +833,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 	struct ovl_fs *ofs = dentry->d_sb->s_fs_info;
+ 	struct ovl_entry *poe = dentry->d_parent->d_fsdata;
+ 	struct ovl_entry *roe = dentry->d_sb->s_root->d_fsdata;
+-	struct ovl_path *stack = NULL;
++	struct ovl_path *stack = NULL, *origin_path = NULL;
+ 	struct dentry *upperdir, *upperdentry = NULL;
+ 	struct dentry *origin = NULL;
+ 	struct dentry *index = NULL;
+@@ -834,6 +844,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 	struct dentry *this;
+ 	unsigned int i;
+ 	int err;
++	bool metacopy = false;
+ 	struct ovl_lookup_data d = {
+ 		.name = dentry->d_name,
+ 		.is_dir = false,
+@@ -841,6 +852,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		.stop = false,
+ 		.last = ofs->config.redirect_follow ? false : !poe->numlower,
+ 		.redirect = NULL,
++		.metacopy = false,
+ 	};
+ 
+ 	if (dentry->d_name.len > ofs->namelen)
+@@ -859,7 +871,9 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 			goto out;
+ 		}
+ 		if (upperdentry && !d.is_dir) {
+-			BUG_ON(!d.stop || d.redirect);
++			unsigned int origin_ctr = 0;
++
++			BUG_ON(d.redirect);
+ 			/*
+ 			 * Lookup copy up origin by decoding origin file handle.
+ 			 * We may get a disconnected dentry, which is fine,
+@@ -870,9 +884,13 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 			 * number - it's the same as if we held a reference
+ 			 * to a dentry in lower layer that was moved under us.
+ 			 */
+-			err = ovl_check_origin(ofs, upperdentry, &stack, &ctr);
++			err = ovl_check_origin(ofs, upperdentry, &origin_path,
++					       &origin_ctr);
+ 			if (err)
+ 				goto out_put_upper;
++
++			if (d.metacopy)
++				metacopy = true;
+ 		}
+ 
+ 		if (d.redirect) {
+@@ -913,7 +931,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		 * If no origin fh is stored in upper of a merge dir, store fh
+ 		 * of lower dir and set upper parent "impure".
+ 		 */
+-		if (upperdentry && !ctr && !ofs->noxattr) {
++		if (upperdentry && !ctr && !ofs->noxattr && d.is_dir) {
+ 			err = ovl_fix_origin(dentry, this, upperdentry);
+ 			if (err) {
+ 				dput(this);
+@@ -925,18 +943,35 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		 * When "verify_lower" feature is enabled, do not merge with a
+ 		 * lower dir that does not match a stored origin xattr. In any
+ 		 * case, only verified origin is used for index lookup.
++		 *
++		 * For non-dir dentry, if index=on, then ensure origin
++		 * matches the dentry found using path based lookup,
++		 * otherwise error out.
+ 		 */
+-		if (upperdentry && !ctr && ovl_verify_lower(dentry->d_sb)) {
++		if (upperdentry && !ctr &&
++		    ((d.is_dir && ovl_verify_lower(dentry->d_sb)) ||
++		     (!d.is_dir && ofs->config.index && origin_path))) {
+ 			err = ovl_verify_origin(upperdentry, this, false);
+ 			if (err) {
+ 				dput(this);
+-				break;
++				if (d.is_dir)
++					break;
++				goto out_put;
+ 			}
+-
+-			/* Bless lower dir as verified origin */
+ 			origin = this;
+ 		}
+ 
++		if (d.metacopy)
++			metacopy = true;
++		/*
++		 * Do not store intermediate metacopy dentries in chain,
++		 * except top most lower metacopy dentry
++		 */
++		if (d.metacopy && ctr) {
++			dput(this);
++			continue;
++		}
++
+ 		stack[ctr].dentry = this;
+ 		stack[ctr].layer = lower.layer;
+ 		ctr++;
+@@ -968,13 +1003,48 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		}
+ 	}
+ 
++	if (metacopy) {
++		/*
++		 * Found a metacopy dentry but did not find corresponding
++		 * data dentry
++		 */
++		if (d.metacopy) {
++			err = -EIO;
++			goto out_put;
++		}
++
++		err = -EPERM;
++		if (!ofs->config.metacopy) {
++			pr_warn_ratelimited("overlay: refusing to follow metacopy origin for (%pd2)\n",
++					    dentry);
++			goto out_put;
++		}
++	} else if (!d.is_dir && upperdentry && !ctr && origin_path) {
++		if (WARN_ON(stack != NULL)) {
++			err = -EIO;
++			goto out_put;
++		}
++		stack = origin_path;
++		ctr = 1;
++		origin_path = NULL;
++	}
++
+ 	/*
+ 	 * Lookup index by lower inode and verify it matches upper inode.
+ 	 * We only trust dir index if we verified that lower dir matches
+ 	 * origin, otherwise dir index entries may be inconsistent and we
+-	 * ignore them. Always lookup index of non-dir and non-upper.
++	 * ignore them.
++	 *
++	 * For non-dir upper metacopy dentry, we already set "origin" if we
++	 * verified that lower matched upper origin. If upper origin was
++	 * not present (because lower layer did not support fh encode/decode),
++	 * or indexing is not enabled, do not set "origin" and skip looking up
++	 * index. This case should be handled in same way as a non-dir upper
++	 * without ORIGIN is handled.
++	 *
++	 * Always lookup index of non-dir non-metacopy and non-upper.
+ 	 */
+-	if (ctr && (!upperdentry || !d.is_dir))
++	if (ctr && (!upperdentry || (!d.is_dir && !metacopy)))
+ 		origin = stack[0].dentry;
+ 
+ 	if (origin && ovl_indexdir(dentry->d_sb) &&
+@@ -1019,6 +1089,10 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 	}
+ 
+ 	revert_creds(old_cred);
++	if (origin_path) {
++		dput(origin_path->dentry);
++		kfree(origin_path);
++	}
+ 	dput(index);
+ 	kfree(stack);
+ 	kfree(d.redirect);
+@@ -1033,6 +1107,10 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 		dput(stack[i].dentry);
+ 	kfree(stack);
+ out_put_upper:
++	if (origin_path) {
++		dput(origin_path->dentry);
++		kfree(origin_path);
++	}
+ 	dput(upperdentry);
+ 	kfree(upperredirect);
+ out:
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 45e4a581a9fe..b1f6591b9af4 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -268,6 +268,7 @@ bool ovl_need_index(struct dentry *dentry);
+ int ovl_nlink_start(struct dentry *dentry, bool *locked);
+ void ovl_nlink_end(struct dentry *dentry, bool locked);
+ int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *upperdir);
++int ovl_check_metacopy_xattr(struct dentry *dentry);
+ 
+ static inline bool ovl_is_impuredir(struct dentry *dentry)
+ {
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index f8e3c95711b8..ab9a8fae0f99 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -778,3 +778,25 @@ int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *upperdir)
+ 	pr_err("overlayfs: failed to lock workdir+upperdir\n");
+ 	return -EIO;
+ }
++
++/* err < 0, 0 if no metacopy xattr, 1 if metacopy xattr found */
++int ovl_check_metacopy_xattr(struct dentry *dentry)
++{
++	int res;
++
++	/* Only regular files can have metacopy xattr */
++	if (!S_ISREG(d_inode(dentry)->i_mode))
++		return 0;
++
++	res = vfs_getxattr(dentry, OVL_XATTR_METACOPY, NULL, 0);
++	if (res < 0) {
++		if (res == -ENODATA || res == -EOPNOTSUPP)
++			return 0;
++		goto out;
++	}
++
++	return 1;
++out:
++	pr_warn_ratelimited("overlayfs: failed to get metacopy (%i)\n", res);
++	return res;
++}
+-- 
+2.14.3
