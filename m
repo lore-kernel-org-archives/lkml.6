@@ -1,64 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934944AbeE2OZC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:25:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935257AbeE2OYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:24:38 -0400
-X-Google-Smtp-Source: ADUXVKJnVADeXbSLQk0Qe76Mvgbcnay7NN7rAM5M/TexzzoQjNZPc7dXZvz4LBqneCH6/PvhuWV6lQA1EHELbXHHw+M=
-MIME-Version: 1.0
-In-Reply-To: <20180529094204.3945660-1-arnd@arndb.de>
-References: <20180529094204.3945660-1-arnd@arndb.de>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 29 May 2018 09:24:16 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKf0nyw0yvw=4brGRvMHgZrrt+nJnBs5KWATcfijhiyug@mail.gmail.com>
-Message-ID: <CAL_JsqKf0nyw0yvw=4brGRvMHgZrrt+nJnBs5KWATcfijhiyug@mail.gmail.com>
-Subject: Re: [PATCH] pci: mvebu: add MVEBU_MBUS dependency
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Marc Gonzalez <marc_gonzalez@sigmadesigns.com>,
-        linux-pci@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S935195AbeE2OW0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:22:26 -0400
+Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38208 "EHLO
+        smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935092AbeE2OWO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:22:14 -0400
+From: James Simmons <jsimmons@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>,
+        Amir Shehata <amir.shehata@intel.com>,
+        James Simmons <jsimmons@infradead.org>
+Subject: [PATCH v2 05/25] staging: lustre: libcfs: replace MAX_NUMNODES with nr_node_ids
+Date: Tue, 29 May 2018 10:21:45 -0400
+Message-Id: <1527603725-30560-6-git-send-email-jsimmons@infradead.org>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
+References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 4:41 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> Enabling the PCI_MVEBU driver for compile testing caused a build failure
-> on ARM randconfig builds:
->
-> drivers/pci/host/pci-mvebu.c: In function 'mvebu_pcie_del_windows':
-> drivers/pci/host/pci-mvebu.c:341:3: error: implicit declaration of function 'mvebu_mbus_del_window'; did you mean 'mvebu_pcie_del_windows'? [-Werror=implicit-function-declaration]
->    mvebu_mbus_del_window(base, sz);
->    ^~~~~~~~~~~~~~~~~~~~~
->    mvebu_pcie_del_windows
-> drivers/pci/host/pci-mvebu.c: In function 'mvebu_pcie_add_windows':
-> drivers/pci/host/pci-mvebu.c:364:9: error: implicit declaration of function 'mvebu_mbus_add_window_remap_by_id'; did you mean 'mvebu_pcie_add_windows'? [-Werror=implicit-function-declaration]
->    ret = mvebu_mbus_add_window_remap_by_id(target, attribute, base,
->          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->          mvebu_pcie_add_windows
-> drivers/pci/host/pci-mvebu.c: In function 'mvebu_pcie_probe':
-> drivers/pci/host/pci-mvebu.c:1209:2: error: implicit declaration of function 'mvebu_mbus_get_pcie_mem_aperture'; did you mean 'mvebu_mbus_get_io_win_info'? [-Werror=implicit-function-declaration]
-> drivers/pci/host/pci-mvebu.c:1215:2: error: implicit declaration of function 'mvebu_mbus_get_pcie_io_aperture'; did you mean 'mvebu_mbus_get_io_win_info'? [-Werror=implicit-function-declaration]
->
-> The problem is that the mbus helper functions are not declared in the
-> header. There are two ways of solving this: we can change the header
-> to provide empty stub functions for CONFIG_MVEBU_MBUS=n, or we can
-> add back the dependency here.
+From: Amir Shehata <amir.shehata@intel.com>
 
-Probably better to just make these non-standard dependencies explicit.
+Replace MAX_NUMNODES which is considered deprocated with
+nr_nodes_ids. Looking at page_malloc.c you will see that
+nr_nodes_ids is equal to MAX_NUMNODES. MAX_NUMNODES is
+actually setup with Kconfig.
 
-> I picked the second option since that is simpler, but it somewhat
-> defeats the purpose of the original patch because we still cannot
-> compile test on other platforms this way.
->
-> Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Amir Shehata <amir.shehata@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-7734
+Reviewed-on: http://review.whamcloud.com/18916
+Reviewed-by: Olaf Weber <olaf@sgi.com>
+Reviewed-by: Doug Oucharek <dougso@me.com>
+Signed-off-by: James Simmons <jsimmons@infradead.org>
+---
+Changelog:
 
-Acked-by: Rob Herring <robh@kernel.org>
+v1) Initial patch
+v2) Same code but added in more details in commit message
+
+ drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
+index b67a60c..d3017e8 100644
+--- a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
++++ b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
+@@ -395,7 +395,7 @@ struct cfs_cpt_table *
+ {
+ 	const cpumask_t *mask;
+ 
+-	if (node < 0 || node >= MAX_NUMNODES) {
++	if (node < 0 || node >= nr_node_ids) {
+ 		CDEBUG(D_INFO,
+ 		       "Invalid NUMA id %d for CPU partition %d\n", node, cpt);
+ 		return 0;
+@@ -412,7 +412,7 @@ struct cfs_cpt_table *
+ {
+ 	const cpumask_t *mask;
+ 
+-	if (node < 0 || node >= MAX_NUMNODES) {
++	if (node < 0 || node >= nr_node_ids) {
+ 		CDEBUG(D_INFO,
+ 		       "Invalid NUMA id %d for CPU partition %d\n", node, cpt);
+ 		return;
+@@ -836,7 +836,7 @@ struct cfs_cpt_table *
+ 		return cptab;
+ 	}
+ 
+-	high = node ? MAX_NUMNODES - 1 : nr_cpu_ids - 1;
++	high = node ? nr_node_ids - 1 : nr_cpu_ids - 1;
+ 
+ 	for (str = strim(pattern), c = 0;; c++) {
+ 		struct cfs_range_expr *range;
+-- 
+1.8.3.1
