@@ -1,38 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966738AbeE2URq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 16:17:46 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36853 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966179AbeE2URp (ORCPT
+        id S966598AbeE2U0b (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 16:26:31 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:40799 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966179AbeE2U03 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 16:17:45 -0400
-X-Google-Smtp-Source: ADUXVKIitKuSDHsZtkgZ3HKf7M3RbAtAjqoRXgiewkSrcAtwGj9UbYAhNmr55M4C+wjQmRuDRxfnt35h1PcdKJQffYc=
+        Tue, 29 May 2018 16:26:29 -0400
+From: Dan Murphy <dmurphy@ti.com>
+To: <socketcan@hartkopp.net>, <mkl@pengutronix.de>,
+        <linux-can@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH] can.h: Fix can error class mask dir path
+Date: Tue, 29 May 2018 15:26:12 -0500
+Message-ID: <20180529202612.4873-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.12.2
 MIME-Version: 1.0
-In-Reply-To: <20180529185425.GA4174@agluck-desk>
-References: <cover.1527283897.git.tony.luck@intel.com> <52e049a497e86fd0b71c529651def8871c804df0.1527283897.git.tony.luck@intel.com>
- <20180528204923.GB30792@zn.tnic> <20180529161549.GB935@agluck-desk>
- <20180529174105.GF19870@zn.tnic> <3908561D78D1C84285E8C5FCA982C28F7D31E24F@ORSMSX110.amr.corp.intel.com>
- <20180529175313.GG19870@zn.tnic> <20180529185425.GA4174@agluck-desk>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 29 May 2018 13:17:44 -0700
-Message-ID: <CAPcyv4gUSswBdmda9_=A_Ls-EPh4kH1LewJHZSWKuM5-sHdyUg@mail.gmail.com>
-Subject: Re: [PATCH 2/3 V2] x86/mce: Fix incorrect "Machine check from unknown
- source" message
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@suse.de>, "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>, "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 11:54 AM, Luck, Tony <tony.luck@intel.com> wrote:
-> On Tue, May 29, 2018 at 07:53:14PM +0200, Borislav Petkov wrote:
-[..]
-> P.S. What happened to my "part 3/3" (updating the Skylake quirk)
-> ... does that belong in somebody else's tree?
+The CAN error masks header file is in the
+include/uapi directory.
 
-I have no qualms taking it through the nvdimm tree with the rest of
-the pending memcpy_mcsafe() updates. Just need an x86 maintainer ack.
+Fix the path in the header to the correct location.
+
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ include/uapi/linux/can.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/can.h b/include/uapi/linux/can.h
+index d7f97ac197a9..0afb7d8e867f 100644
+--- a/include/uapi/linux/can.h
++++ b/include/uapi/linux/can.h
+@@ -77,7 +77,7 @@ typedef __u32 canid_t;
+ /*
+  * Controller Area Network Error Message Frame Mask structure
+  *
+- * bit 0-28	: error class mask (see include/linux/can/error.h)
++ * bit 0-28	: error class mask (see include/uapi/linux/can/error.h)
+  * bit 29-31	: set to zero
+  */
+ typedef __u32 can_err_mask_t;
+-- 
+2.17.0.582.gccdcbd54c
