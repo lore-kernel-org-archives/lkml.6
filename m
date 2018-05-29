@@ -1,5 +1,5 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1090829-1526924330-2-7395866270724189151
+X-Cyrus-Session-Id: sloti22d1t05-2266183-1527606170-2-7134868944380034300
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
@@ -8,181 +8,140 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526924330; b=ZacsHVpLtZPYkpBGqcknqF2QC7z59bje7Y4lF8gjWiJOREX6GN
-    A19M8x7umE+gc+4xrqsIHEh3MfmDxNWBCJYyfmmaoqMQkMReaRiaDMFjcibf+8T5
-    m5Ttn+9DDdIQFpBh5O9M4U3+Itw7RGe5r6NQpcIZO+D0Oac8BmnBr71XPBRALF+r
-    qWxU2W1PyuMnjnW/oCzDvlSKHXWTzmmj1UeHRkH2bq3lUqz5bMx9hIk8kPAB8rX/
-    LIwfp99VHKfXiO2mtbGOzGDxmrZjuqr8yeDceRVgs2T5N9r0sDIf+/kbs+qg1xDu
-    jwaDwtNHg/g+6SFqmbfJWAVKoIzz+stHPyIA==
+    1527606170; b=IpWTF0lgfQMbMMgJiBBDk7cEJYTT88pVedIbAT8qa0G6M3NdgU
+    fZRqfVPkVuksJ2ojN9nrUNRve4hLPNz2tyB12uzT1Ki0eAC/IS0B9DE3OMaYpMf2
+    MbZZJZkgnlqHLovF98Y8WG95pMZhioKVL2JpQ1wAOgUK7T4vAt7bQXV10m+tFBrP
+    jymF/MXrD9Aj89SUDqZ9VeoxIoiKg9uR43LNRYVRLbv5Ex6bwg9Ox0Fcr1deJw2B
+    WEIJ4dDVdkS+CuY1Mu0fpeDCNfwXh3HJJpitYleYI0iHUq2j/TzHvkCR0KgH9yZw
+    ISNQ8bO4Eim4TcqcuN+UGHTAfkpHBS7Hdk7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526924330; bh=
-    Ri8OfKFGPSZI4aAnvvLfDBES7Xz7blRu/lt3o/nDYR4=; b=V1j6PJ0KtR31JYTF
-    c1t32EI0/DmdCau9DlAAz1y35bWK8MhVrL9xE2dhX+gQ3wKOSCCasCG2oHpzkzd+
-    N3vVRCVmL42ejJ7ZWDW42Dlp7k5ZlKdnSMDwhkUf+LPZe7bLneHqdmRPOCJEeLBE
-    +0Fn8WM4jvYdlDtI/gtOhOMEMsgwi0p5LLBjoCKM4yeqSWl5us6MWcVwI4DWSQ+8
-    iqXvDNnBuNCZ4UAuuJpv2Gtkhdp8GFcHLyW6s6dFm9o28XdohJdEKSKN30h4mEUP
-    fyIYHacz6yZU4ai/DbdplMS024laYeLgOtJKujqx6Bf0i6wqL21sDelaXFMtu7U4
-    nMj2Gg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1527606170; bh=xFlCErCmH+lISq+vSL/pIbET5PEG4w
+    u3w+qxw+1ObJo=; b=JbjUgZKK4NtrNgy1wNyl7sG2dE76sNTcNEG+i5HPrdXHn3
+    uUsSZIlkxBKNt9OoLHK5n6dZDzFQhC5aDCiCxlW5djVOwomPzuTp3D/hAtmNbSPj
+    to4b7zpE8zIyR1nGHQVw6TYM9T9FCFuYLldMr3SydMBaGY/ViTct4v+0GLMXI3Fm
+    HaAEmbWbAbiW8tnlW8KBqH1IysByvUgTV/umru6BMY2aRy9vVyfBw+9u43wLzJAO
+    IImYJcEIEH2GAzMLUVev97gWNBI/lxWJ1JRCOcQd3xXnwSyssHP5wjHC46bgIjOU
+    sDghqrDZZ9bILSWiK6jN80l724eFoN1zMGGuXjeA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=collabora.co.uk;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=iPCl0i5R;
+    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=collabora.co.uk header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=51 state=0
-Authentication-Results: mx5.messagingengine.com;
+    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=collabora.co.uk;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=iPCl0i5R;
+    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=collabora.co.uk header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=51 state=0
+      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAbmgcCrFf+ZCqgqSKxrsgsypKWe0aeD1sErjtnsRcz/Q3upDdqg9hGvM+DhpX014xdRRgWCw6EKMQNdK2KnwvOCx8nUmfh16kToLEae/hJIwINLUVoI
-    kfk01g6xdEwoO9aNKIRvpVl48pH+wTq4Zfy4AEqME8IzcWqG33LzjAVV7fyABnDPAHjItbX2/93T5ziL/0hCJDF8XoQMEtD8TVwwUdmOoDu98j3xnHD0gmIE
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=gvl4HP8tAAAA:8
-    a=cB4x_MgwbXJPB_XIh0oA:9 a=vuHTdfj5eMjVIoR3:21 a=NhMaoaTJU3GiQ-p4:21
-    a=tRkgsvjveJ3YVe9fnr1q:22
+X-CM-Envelope: MS4wfA41ga+L1qzrk9DLPGe6Riu4Ih/IYCpSAxYO0dhHyY4rPN28xllG/Yepj5OSZaaOp2hxvP2JCuHp+iWa/Svf8rsGbl1jsMekK7oYXe+GoCu5ywd5Nr64
+    eTHaXtr7IA5Ue661ao45akjuMY43sAX9TbBdCwGkTv+x84ctRQ3qYc9VbhULemvZY7eZaWQYydwnh3HiAoFnNS2swT1p6dL1ECup8/3JtjmWWGsPnFz0ETeR
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=377o92pKoen1FR3zB3wA:9
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753240AbeEURiq (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 21 May 2018 13:38:46 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:45366 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753683AbeEURgq (ORCPT
+        id S935574AbeE2OqR (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 10:46:17 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46907 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935276AbeE2OqP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 May 2018 13:36:46 -0400
-From: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-To: viro@ZenIV.linux.org.uk
-Cc: jra@google.com, tytso@mit.edu, olaf@sgi.com,
-        darrick.wong@oracle.com, kernel@lists.collabora.co.uk,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com, jack@suse.cz,
-        linux-kernel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-Subject: [PATCH v2 07/15] nls: Add new interface for string comparisons
-Date: Mon, 21 May 2018 14:36:09 -0300
-Message-Id: <20180521173617.31625-8-krisman@collabora.co.uk>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180521173617.31625-1-krisman@collabora.co.uk>
-References: <20180521173617.31625-1-krisman@collabora.co.uk>
+        Tue, 29 May 2018 10:46:15 -0400
+X-Google-Smtp-Source: AB8JxZopv9SZMK8H1PtoZ41SLnYSXszPAfMCTKv23UZ94789TxU1rBzvK+fna566WsHbl/0cBlND7A==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/28] overlayfs: Delayed copy up of data
+Date: Tue, 29 May 2018 16:45:44 +0200
+Message-Id: <20180529144612.16675-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The existing stricmp() interface is limited by not accepting separated
-length parameters for each string being compared.  This is a problem for
-charsets doing normalization or full casefold comparison, since
-different sized strings can still be matched.  To resolve this problem,
-this patch implements a new interface, allowing charsets to do the
-comparison, if needed.
+In one of the recent converstions, people mentioned that chown/chmod
+lead to copy up files as well as data. We could optimize it so that
+only metadata is copied up during chown/chmod and data is copied up when
+file is opened for WRITE.
 
-The original stricmp is left in the code, while all callers are not
-converted, but was rewritten the new interface.
+This optimization potentially could be useful with containers and user
+namespaces. In popular scenario, people end up doing chown() on whole
+image directory tree based on container mappings. And this chown copies
+up everything, breaking sharing of page cache between containers.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+With these patches, only metadat is copied up during chown() and if file
+is opened for READ, d_real() returns lower dentry/inode. That way,
+different containers can still continue to use page cache. That's the
+use case I have in mind.
+
 ---
- include/linux/nls.h | 42 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 3 deletions(-)
+Vivek Goyal (28):
+  ovl: Initialize ovl_inode->redirect in ovl_get_inode()
+  ovl: Move the copy up helpers to copy_up.c
+  ovl: Provide a mount option metacopy=on/off for metadata copyup
+  ovl: During copy up, first copy up metadata and then data
+  ovl: Copy up only metadata during copy up where it makes sense
+  ovl: Add helper ovl_already_copied_up()
+  ovl: A new xattr OVL_XATTR_METACOPY for file on upper
+  ovl: Use out_err instead of out_nomem
+  ovl: Modify ovl_lookup() and friends to lookup metacopy dentry
+  ovl: Copy up meta inode data from lowest data inode
+  ovl: Add helper ovl_dentry_lowerdata() to get lower data dentry
+  ovl: Fix ovl_getattr() to get number of blocks from lower
+  ovl: Store lower data inode in ovl_inode
+  ovl: Add helper ovl_inode_realdata()
+  ovl: Open file with data except for the case of fsync
+  ovl: Do not expose metacopy only dentry from d_real()
+  ovl: Move some dir related ovl_lookup_single() code in else block
+  ovl: Check redirects for metacopy files
+  ovl: Treat metacopy dentries as type OVL_PATH_MERGE
+  ovl: Add an inode flag OVL_CONST_INO
+  ovl: Do not set dentry type ORIGIN for broken hardlinks
+  ovl: Set redirect on metacopy files upon rename
+  ovl: Set redirect on upper inode when it is linked
+  ovl: Check redirect on index as well
+  ovl: Disbale metacopy for MAP_SHARED mmap()
+  ovl: Do not do metadata only copy-up for truncate operation
+  ovl: Do not do metacopy only for ioctl modifying file attr
+  ovl: Enable metadata only feature
 
-diff --git a/include/linux/nls.h b/include/linux/nls.h
-index 3766fbe6efc3..1a653b866a64 100644
---- a/include/linux/nls.h
-+++ b/include/linux/nls.h
-@@ -3,6 +3,7 @@
- #define _LINUX_NLS_H
- 
- #include <linux/init.h>
-+#include <linux/string.h>
- 
- /* Unicode has changed over the years.  Unicode code points no longer
-  * fit into 16 bits; as of Unicode 5 valid code points range from 0
-@@ -21,11 +22,18 @@ typedef u16 wchar_t;
- 
- /* Arbitrary Unicode character */
- typedef u32 unicode_t;
-+struct nls_table;
- 
- struct nls_ops {
- 	int (*uni2char) (wchar_t uni, unsigned char *out, int boundlen);
- 	int (*char2uni) (const unsigned char *rawstring, int boundlen,
- 			 wchar_t *uni);
-+	int (*strncmp)(const struct nls_table *charset,
-+		       const unsigned char *str1, size_t len1,
-+		       const unsigned char *str2, size_t len2);
-+	int (*strncasecmp)(const struct nls_table *charset,
-+			   const unsigned char *str1, size_t len1,
-+			   const unsigned char *str2, size_t len2);
- };
- 
- struct nls_table {
-@@ -105,10 +113,17 @@ static inline unsigned char nls_toupper(struct nls_table *t, unsigned char c)
- 	return nc ? nc : c;
- }
- 
--static inline int nls_strnicmp(struct nls_table *t, const unsigned char *s1,
--		const unsigned char *s2, int len)
-+static inline int nls_strncasecmp(struct nls_table *t,
-+				  const unsigned char *s1, size_t len1,
-+				  const unsigned char *s2, size_t len2)
- {
--	while (len--) {
-+	if (t->ops->strncasecmp)
-+		return t->ops->strncasecmp(t, s1, len1, s2, len2);
-+
-+	if (len1 != len2)
-+		return 1;
-+
-+	while (len1--) {
- 		if (nls_tolower(t, *s1++) != nls_tolower(t, *s2++))
- 			return 1;
- 	}
-@@ -116,6 +131,27 @@ static inline int nls_strnicmp(struct nls_table *t, const unsigned char *s1,
- 	return 0;
- }
- 
-+static inline int nls_strncmp(struct nls_table *t,
-+			      const unsigned char *s1, size_t len1,
-+			      const unsigned char *s2, size_t len2)
-+{
-+	if (t->ops->strncmp)
-+		return t->ops->strncmp(t, s1, len1, s2, len2);
-+
-+	if (len1 != len2)
-+		return 1;
-+
-+	/* strnicmp did not return negative values. So let's keep the
-+	 * abi for now */
-+	return !!memcmp(s1, s2, len1);
-+}
-+
-+static inline int nls_strnicmp(struct nls_table *t, const unsigned char *s1,
-+		const unsigned char *s2, int len)
-+{
-+	return nls_strncasecmp(t, s1, len, s2, len);
-+}
-+
- /*
-  * nls_nullsize - return length of null character for codepage
-  * @codepage - codepage for which to return length of NULL terminator
+ Documentation/filesystems/overlayfs.txt |  30 +++-
+ fs/overlayfs/Kconfig                    |  19 +++
+ fs/overlayfs/copy_up.c                  | 160 ++++++++++++++++-----
+ fs/overlayfs/dir.c                      |  74 +++++++---
+ fs/overlayfs/export.c                   |   3 +
+ fs/overlayfs/file.c                     |  43 ++++--
+ fs/overlayfs/inode.c                    | 112 +++++++++------
+ fs/overlayfs/namei.c                    | 195 ++++++++++++++++----------
+ fs/overlayfs/overlayfs.h                |  33 ++++-
+ fs/overlayfs/ovl_entry.h                |   6 +-
+ fs/overlayfs/super.c                    |  62 +++++++-
+ fs/overlayfs/util.c                     | 241 +++++++++++++++++++++++++++++++-
+ 12 files changed, 780 insertions(+), 198 deletions(-)
+
 -- 
-2.17.0
+2.14.3
