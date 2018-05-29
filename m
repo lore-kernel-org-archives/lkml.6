@@ -1,58 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754319AbeE2Exx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 00:53:53 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44325 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751684AbeE2Exs (ORCPT
+        id S1753169AbeE2Exq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 00:53:46 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38788 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751684AbeE2Exc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 00:53:48 -0400
-X-Google-Smtp-Source: AB8JxZov3LICY2cOMoHI8zGG+D2/P5IKNDdwTLnXByQp4MlS8fYSZIx6dJ3yO7LVPO2hz1poaZtAHw==
-Subject: Re: [PATCH v3 net-next 2/2] tcp: minor optimization around tcp_hdr()
- usage in tcp receive path
-To: Yafang Shao <laoar.shao@gmail.com>, Eric Dumazet <edumazet@google.com>
-Cc: Song Liu <songliubraving@fb.com>, David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <1527521753-17963-1-git-send-email-laoar.shao@gmail.com>
- <1527521753-17963-2-git-send-email-laoar.shao@gmail.com>
- <CANn89iKU49yBRq4x8xHGXiWZ9h0PNAmyWnMoNDFmSm9oKXsbqw@mail.gmail.com>
- <CALOAHbAbw6nXggT4ZF-=L_tQqsm-EQ==Qd9aeLys2mwQizFnkw@mail.gmail.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <68b62912-21d5-c238-7536-12928670a08a@gmail.com>
-Date: Mon, 28 May 2018 21:53:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CALOAHbAbw6nXggT4ZF-=L_tQqsm-EQ==Qd9aeLys2mwQizFnkw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 29 May 2018 00:53:32 -0400
+X-Google-Smtp-Source: AB8JxZpIepWJHGd8sgU8evg6t9L8i42AUzAUC5Ul0F4xS0ZkXX3TFvh5MT9jXBa4Aw5NN8Ok20bfYg==
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: matthias.bgg@gmail.com, robh+dt@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, taiten.peng@linaro.org,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        manivannanece23@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 2/2] arm64: dts: Add Mediatek X20 Development Board support
+Date: Tue, 29 May 2018 10:22:58 +0530
+Message-Id: <20180529045258.1415-3-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180529045258.1415-1-manivannan.sadhasivam@linaro.org>
+References: <20180529045258.1415-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add initial device tree support for Mediatek X20 Development Board
+based on MT6797 Deca core SoC. This board is one of the 96Boards
+Consumer Edition platform.
 
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/mediatek/Makefile         |  1 +
+ .../boot/dts/mediatek/mt6797-x20-dev.dts      | 33 +++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
 
-On 05/28/2018 05:41 PM, Yafang Shao wrote:
-
-> OK.
-> 
-> And what about introducing a new helper tcp_hdr_fast() ?
-> 
-> /* use it when tcp header has not been pulled yet */
-> static inline struct tcphdr *tcp_hdr_fast(const struct sk_buff *skb)
-> 
-> {
-> 
->         return (const struct tcphdr *)skb->data;
-> 
-> }
-> 
-> 
-> That could help us to use this optimized one instead of the original
-> one if possilbe.
-
-
-I would rather not add such macro...
-
-The call site needs to know what is going on, so having a macro like that would not help.
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index ac17f60f998c..5b7fd6ad96e4 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -3,5 +3,6 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
+diff --git a/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts b/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
+new file mode 100644
+index 000000000000..2c09ca95d9e2
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for MediaTek X20 Development Board
++ *
++ * Copyright (C) 2018, Linaro Ltd.
++ *
++ */
++
++/dts-v1/;
++
++#include "mt6797.dtsi"
++
++/ {
++	model = "Mediatek X20 Development Board";
++	compatible = "archermind,mt6797-x20-dev", "mediatek,mt6797";
++
++	aliases {
++		serial0 = &uart1;
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x1e605000>;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&uart1 {
++	status = "okay";
++};
+-- 
+2.17.0
