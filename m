@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964955AbeE2PIu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:08:50 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38261 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935844AbeE2OoZ (ORCPT
+        id S965091AbeE2PJW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:09:22 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33816 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935718AbeE2OoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:44:25 -0400
-X-Google-Smtp-Source: ADUXVKI//REwUecIZuk/nJgf3gszAFMNm8LsONV9CjkNxaTwUK2g7Wwr5+i7pQPIxRNsMpXYcjfWLQ==
+        Tue, 29 May 2018 10:44:11 -0400
+X-Google-Smtp-Source: AB8JxZoamJPZsTrJ1QgyPUQDjJkS3LZ6z8zP4zoaaCzwgR4aGURZlECrI6iuCgY/Lx+5sa3nZlNIVw==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 35/39] Revert "vfs: add flags to d_real()"
-Date: Tue, 29 May 2018 16:43:35 +0200
-Message-Id: <20180529144339.16538-36-mszeredi@redhat.com>
+Subject: [PATCH 24/39] ovl: add reflink/copyfile/dedup support
+Date: Tue, 29 May 2018 16:43:24 +0200
+Message-Id: <20180529144339.16538-25-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
 References: <20180529144339.16538-1-mszeredi@redhat.com>
@@ -21,138 +21,116 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 495e642939114478a5237a7d91661ba93b76f15a.
-
-No user of "flags" argument of d_real() remain.
+Since set of arguments are so similar, handle in a common helper.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- Documentation/filesystems/Locking |  2 +-
- Documentation/filesystems/vfs.txt |  2 +-
- fs/open.c                         |  2 +-
- fs/overlayfs/super.c              |  4 ++--
- include/linux/dcache.h            | 11 +++++------
- include/linux/fs.h                |  2 +-
- 6 files changed, 11 insertions(+), 12 deletions(-)
+ fs/overlayfs/file.c | 88 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
 
-diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
-index 60e76060baff..a4afe96f0112 100644
---- a/Documentation/filesystems/Locking
-+++ b/Documentation/filesystems/Locking
-@@ -22,7 +22,7 @@ prototypes:
- 	struct vfsmount *(*d_automount)(struct path *path);
- 	int (*d_manage)(const struct path *, bool);
- 	struct dentry *(*d_real)(struct dentry *, const struct inode *,
--				 unsigned int, unsigned int);
-+				 unsigned int);
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index e5e7ccaaf9ec..ef4bcc80572f 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -385,6 +385,90 @@ static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
+ 	return ovl_ioctl(file, cmd, arg);
+ }
  
- locking rules:
- 		rename_lock	->d_lock	may block	rcu-walk
-diff --git a/Documentation/filesystems/vfs.txt b/Documentation/filesystems/vfs.txt
-index 2bc77ea8aef4..af54d3651ff8 100644
---- a/Documentation/filesystems/vfs.txt
-+++ b/Documentation/filesystems/vfs.txt
-@@ -991,7 +991,7 @@ struct dentry_operations {
- 	struct vfsmount *(*d_automount)(struct path *);
- 	int (*d_manage)(const struct path *, bool);
- 	struct dentry *(*d_real)(struct dentry *, const struct inode *,
--				 unsigned int, unsigned int);
-+				 unsigned int);
++enum ovl_copyop {
++	OVL_COPY,
++	OVL_CLONE,
++	OVL_DEDUPE,
++};
++
++static s64 ovl_copyfile(struct file *file_in, loff_t pos_in,
++			struct file *file_out, loff_t pos_out,
++			u64 len, unsigned int flags, enum ovl_copyop op)
++{
++	struct inode *inode_out = file_inode(file_out);
++	struct fd real_in, real_out;
++	const struct cred *old_cred;
++	s64 ret;
++
++	ret = ovl_real_fdget(file_out, &real_out);
++	if (ret)
++		return ret;
++
++	ret = ovl_real_fdget(file_in, &real_in);
++	if (ret) {
++		fdput(real_out);
++		return ret;
++	}
++
++	old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
++	switch (op) {
++	case OVL_COPY:
++		ret = vfs_copy_file_range(real_in.file, pos_in,
++					  real_out.file, pos_out, len, flags);
++		break;
++
++	case OVL_CLONE:
++		ret = vfs_clone_file_range(real_in.file, pos_in,
++					   real_out.file, pos_out, len);
++		break;
++
++	case OVL_DEDUPE:
++		ret = vfs_dedupe_file_range_one(real_in.file, pos_in,
++						real_out.file, pos_out, len);
++		break;
++	}
++	revert_creds(old_cred);
++
++	/* Update size */
++	ovl_copyattr(ovl_inode_real(inode_out), inode_out);
++
++	fdput(real_in);
++	fdput(real_out);
++
++	return ret;
++}
++
++static ssize_t ovl_copy_file_range(struct file *file_in, loff_t pos_in,
++				   struct file *file_out, loff_t pos_out,
++				   size_t len, unsigned int flags)
++{
++	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, flags,
++			    OVL_COPY);
++}
++
++static int ovl_clone_file_range(struct file *file_in, loff_t pos_in,
++				struct file *file_out, loff_t pos_out, u64 len)
++{
++	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, 0,
++			    OVL_CLONE);
++}
++
++static loff_t ovl_dedupe_file_range(struct file *file_in, loff_t pos_in,
++				    struct file *file_out, loff_t pos_out,
++				    loff_t len)
++{
++	/*
++	 * Don't copy up because of a dedupe request, this wouldn't make sense
++	 * most of the time (data would be duplicated instead of deduplicated).
++	 */
++	if (!ovl_inode_upper(file_inode(file_in)) ||
++	    !ovl_inode_upper(file_inode(file_out)))
++		return -EPERM;
++
++	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, 0,
++			    OVL_DEDUPE);
++}
++
+ const struct file_operations ovl_file_operations = {
+ 	.open		= ovl_open,
+ 	.release	= ovl_release,
+@@ -396,4 +480,8 @@ const struct file_operations ovl_file_operations = {
+ 	.fallocate	= ovl_fallocate,
+ 	.unlocked_ioctl	= ovl_ioctl,
+ 	.compat_ioctl	= ovl_compat_ioctl,
++
++	.copy_file_range	= ovl_copy_file_range,
++	.clone_file_range	= ovl_clone_file_range,
++	.dedupe_file_range	= ovl_dedupe_file_range,
  };
- 
-   d_revalidate: called when the VFS needs to revalidate a dentry. This
-diff --git a/fs/open.c b/fs/open.c
-index 2db39216c393..127b49819afb 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -96,7 +96,7 @@ long vfs_truncate(const struct path *path, loff_t length)
- 	 * write access on the upper inode, not on the overlay inode.  For
- 	 * non-overlay filesystems d_real() is an identity function.
- 	 */
--	upperdentry = d_real(path->dentry, NULL, O_WRONLY, 0);
-+	upperdentry = d_real(path->dentry, NULL, O_WRONLY);
- 	error = PTR_ERR(upperdentry);
- 	if (IS_ERR(upperdentry))
- 		goto mnt_drop_write_and_out;
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 65ec661c60e6..4bca84a17c43 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -98,7 +98,7 @@ static int ovl_check_append_only(struct inode *inode, int flag)
- 
- static struct dentry *ovl_d_real(struct dentry *dentry,
- 				 const struct inode *inode,
--				 unsigned int open_flags, unsigned int flags)
-+				 unsigned int open_flags)
- {
- 	struct dentry *real;
- 	int err;
-@@ -134,7 +134,7 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
- 		goto bug;
- 
- 	/* Handle recursion */
--	real = d_real(real, inode, open_flags, 0);
-+	real = d_real(real, inode, open_flags);
- 
- 	if (!inode || inode == d_inode(real))
- 		return real;
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index ddae4103d324..8fe4efa94af6 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -146,7 +146,7 @@ struct dentry_operations {
- 	struct vfsmount *(*d_automount)(struct path *);
- 	int (*d_manage)(const struct path *, bool);
- 	struct dentry *(*d_real)(struct dentry *, const struct inode *,
--				 unsigned int, unsigned int);
-+				 unsigned int);
- } ____cacheline_aligned;
- 
- /*
-@@ -568,8 +568,7 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
-  * d_real - Return the real dentry
-  * @dentry: the dentry to query
-  * @inode: inode to select the dentry from multiple layers (can be NULL)
-- * @open_flags: open flags to control copy-up behavior
-- * @flags: flags to control what is returned by this function
-+ * @flags: open flags to control copy-up behavior
-  *
-  * If dentry is on a union/overlay, then return the underlying, real dentry.
-  * Otherwise return the dentry itself.
-@@ -578,10 +577,10 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
-  */
- static inline struct dentry *d_real(struct dentry *dentry,
- 				    const struct inode *inode,
--				    unsigned int open_flags, unsigned int flags)
-+				    unsigned int flags)
- {
- 	if (unlikely(dentry->d_flags & DCACHE_OP_REAL))
--		return dentry->d_op->d_real(dentry, inode, open_flags, flags);
-+		return dentry->d_op->d_real(dentry, inode, flags);
- 	else
- 		return dentry;
- }
-@@ -596,7 +595,7 @@ static inline struct dentry *d_real(struct dentry *dentry,
- static inline struct inode *d_real_inode(const struct dentry *dentry)
- {
- 	/* This usage of d_real() results in const dentry */
--	return d_backing_inode(d_real((struct dentry *) dentry, NULL, 0, 0));
-+	return d_backing_inode(d_real((struct dentry *) dentry, NULL, 0));
- }
- 
- struct name_snapshot {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 96a4b9fd1f5f..797d6f28a8f0 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1244,7 +1244,7 @@ static inline struct inode *file_inode(const struct file *f)
- 
- static inline struct dentry *file_dentry(const struct file *file)
- {
--	return d_real(file->f_path.dentry, file_inode(file), 0, 0);
-+	return d_real(file->f_path.dentry, file_inode(file), 0);
- }
- 
- static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
 -- 
 2.14.3
