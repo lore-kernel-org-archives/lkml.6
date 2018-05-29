@@ -1,101 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932594AbeE2Jhc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 05:37:32 -0400
-Received: from ozlabs.org ([203.11.71.1]:49705 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932354AbeE2JhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:37:16 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 29 May 2018 19:37:13 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Subject: linux-next: manual merge of the akpm-current tree with the vfs tree
-Message-ID: <20180529193713.317619d5@canb.auug.org.au>
+        id S932619AbeE2JjV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 05:39:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59584 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932354AbeE2JjQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 05:39:16 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6F006031A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+Subject: Re: [PATCH] time: Fix sleeptime injection for non-stop clocksource &
+ persistent clock
+To: Vinod Koul <vinod.koul@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1527581718-5624-1-git-send-email-mojha@codeaurora.org>
+ <20180529084819.GI5666@vkoul-mobl>
+From: Mukesh Ojha <mojha@codeaurora.org>
+Message-ID: <6a7557ac-9660-0cb6-c76b-008a3e28b2b6@codeaurora.org>
+Date: Tue, 29 May 2018 15:09:06 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZrbYxbM/.RU+1pgQj4E_.=e"; protocol="application/pgp-signature"
+In-Reply-To: <20180529084819.GI5666@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ZrbYxbM/.RU+1pgQj4E_.=e
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+On 5/29/2018 2:18 PM, Vinod Koul wrote:
+> On 29-05-18, 13:45, Mukesh Ojha wrote:
+>> Currently, for both non-stop clocksource and persistent clock
+>> there is a corner case, when a driver failed to go suspend mode
+>> rtc_resume injects the sleeptime as timekeeping_rtc_skipresume
+>> returned 'false' due to which we can see mismatch in time with
+>> system clock.
+>>
+>> Success case:
+>>                                           {sleeptime_injected=true}
+>> rtc_suspend() => timekeeping_suspend() => timekeeping_resume() => rtc_resume()
+>>
+>> Failure case:
+>>               {failure in sleep path} {sleeptime_injected=false}
+>> rtc_suspend()       =>             rtc_resume()
+>>
+>> Change-Id: I98928761c98cec21a3033a55d3e10fb34138f38c
+> This does not belong in upstream please remove. I think checkpatch warns.
+>
+> Also I see that you have sent to lkml and arm-msm mailing list, but have not
+> CCed any maintainers. Please run ./scripts/get_maintainer.pl to find who to send
+> patches to. Chances are it will get ignored...
 
-  fs/proc/base.c
+Thanks Vinod.
+Will resend it after including maintainers.
 
-between commit:
-
-  0168b9e38c42 ("procfs: switch instantiate_t to d_splice_alias()")
-
-from the vfs tree and commit:
-
-  a1cb629945be ("proc: skip branch in /proc/*/* lookup")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/proc/base.c
-index af128b374143,9b02b88e0b91..000000000000
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@@ -2479,17 -2457,14 +2451,14 @@@ static struct dentry *proc_pident_looku
-  	for (p =3D ents; p < last; p++) {
-  		if (p->len !=3D dentry->d_name.len)
-  			continue;
-- 		if (!memcmp(dentry->d_name.name, p->name, p->len))
-+ 		if (!memcmp(dentry->d_name.name, p->name, p->len)) {
- -			error =3D proc_pident_instantiate(dir, dentry, task, p);
-++			res =3D proc_pident_instantiate(dentry, task, p);
-  			break;
-+ 		}
-  	}
-- 	if (p >=3D last)
-- 		goto out;
--=20
-- 	res =3D proc_pident_instantiate(dentry, task, p);
-- out:
-  	put_task_struct(task);
-  out_no_task:
- -	return ERR_PTR(error);
- +	return res;
-  }
- =20
-  static int proc_pident_readdir(struct file *file, struct dir_context *ctx,
-
---Sig_/ZrbYxbM/.RU+1pgQj4E_.=e
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNH0kACgkQAVBC80lX
-0Gzerwf/eH1X4aMft7XXlVcUNdzE4TbP/5c3DR6uYrDsP8FmWpU9KS2nbia18a05
-Q45scT7fFWiRMuQQIAZV4z3JMJNBPzoTKEN/ruuQajE6LYht0AkuwNgYwFIWKZH2
-xsK+1u0gK8cHXanWGdwFwE0USRtcYUZdpVrsisaJ2z86yMlbhSlXZYhEZdgc9GON
-YyZMR4AILnzt/+ICDrbJ0xbWQAfKnkEUY/L9QeckiGk+X1MJu/Mi9r+U3wXT7++l
-Mjj5/pFUVL2nAxpl+SxMVCTS6erDi4OA1k5WB5AsXAtjY/GIYzJxpQwdtBEkb0Tq
-pfS7R64mmVOYf9qtw1OopIRGGFoICw==
-=bEu0
------END PGP SIGNATURE-----
-
---Sig_/ZrbYxbM/.RU+1pgQj4E_.=e--
+-Mukesh
+>
+>> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
+>> ---
+>>   kernel/time/timekeeping.c | 14 +++++++++-----
+>>   1 file changed, 9 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+>> index 427e33d..c022d82 100644
+>> --- a/kernel/time/timekeeping.c
+>> +++ b/kernel/time/timekeeping.c
+>> @@ -1511,9 +1511,6 @@ void __weak read_boot_clock64(struct timespec64 *ts)
+>>   	ts->tv_nsec = 0;
+>>   }
+>>   
+>> -/* Flag for if timekeeping_resume() has injected sleeptime */
+>> -static bool sleeptime_injected;
+>> -
+>>   /* Flag for if there is a persistent clock on this platform */
+>>   static bool persistent_clock_exists;
+>>   
+>> @@ -1611,7 +1608,14 @@ static void __timekeeping_inject_sleeptime(struct timekeeper *tk,
+>>    */
+>>   bool timekeeping_rtc_skipresume(void)
+>>   {
+>> -	return sleeptime_injected;
+>> +	struct timekeeper *tk = &tk_core.timekeeper;
+>> +	bool skip_rtc_resume = false;
+>> +
+>> +	skip_rtc_resume = ((tk->tkr_mono.clock->flags &
+>> +			CLOCK_SOURCE_SUSPEND_NONSTOP) ||
+>> +			(persistent_clock_exists)) ? true : false;
+>> +
+>> +	return skip_rtc_resume;
+>>   }
+>>   
+>>   /**
+>> @@ -1671,8 +1675,8 @@ void timekeeping_resume(void)
+>>   	unsigned long flags;
+>>   	struct timespec64 ts_new, ts_delta;
+>>   	cycle_t cycle_now, cycle_delta;
+>> +	bool sleeptime_injected = false;
+>>   
+>> -	sleeptime_injected = false;
+>>   	read_persistent_clock64(&ts_new);
+>>   
+>>   	clockevents_resume();
+>> -- 
+>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+>> Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
