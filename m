@@ -1,68 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754815AbeE2HGq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:06:46 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35311 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754668AbeE2HGn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:06:43 -0400
-X-Google-Smtp-Source: ADUXVKJcg30nazZn7XWft15LrX0Xb3o7iShgjbkSGOy/yNvKtq+Pi+J7tIvduJcNwmyEvjnrayB/Sa8DP4CX6MI/91Q=
+        id S1754820AbeE2HHf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:07:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36964 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754668AbeE2HHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:07:32 -0400
+Date: Tue, 29 May 2018 09:07:11 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.16 000/272] 4.16.13-stable review
+Message-ID: <20180529070711.GA20225@kroah.com>
+References: <20180528100240.256525891@linuxfoundation.org>
+ <b1529156-a65e-1aa6-43e4-88c895befefc@roeck-us.net>
 MIME-Version: 1.0
-X-Originating-IP: [90.77.100.34]
-In-Reply-To: <20180528191327.23772-1-krzk@kernel.org>
-References: <20180528191327.23772-1-krzk@kernel.org>
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Date: Tue, 29 May 2018 09:06:42 +0200
-Message-ID: <CABxcv=mMEa9Y77CvMsrLXGnfF60L84rthhrR3ZWEfeTSosw2Qg@mail.gmail.com>
-Subject: Re: [PATCH v2] Documentation: dt-bindings: Explicitly mark Samsung
- Exynos SoC bindings as unstable
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b1529156-a65e-1aa6-43e4-88c895befefc@roeck-us.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 9:13 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> Samsung Exynos SoCs and boards related bindings evolved since the initial
-> introduction, but initially the bindings were minimal and a bit incomplete
-> (they never described all the hardware modules available in the SoCs).
-> Since then some significant (not fully compatible) changes have been
-> already committed a few times (like gpio replaced by pinctrl, display ddc,
-> mfc reserved memory, some core clocks added to various hardware modules,
-> added more required nodes).
->
-> On the other side there are no boards which have device tree embedded in
-> the bootloader. Device tree blob is always compiled from the kernel tree
-> and updated together with the kernel image.
->
-> Thus to avoid further adding a bunch of workarounds for old/missing
-> bindings, make development of new platforms easier and allow to make
-> cleanup of the existing code and device tree files, lets mark some
-> Samsung Exynos SoC platform bindings as unstable. This means that
-> bindings can may change at any time and users should use the dtb file
-> compiled from the same kernel source tree as the kernel image.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
+On Mon, May 28, 2018 at 05:46:26PM -0700, Guenter Roeck wrote:
+> On 05/28/2018 03:00 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.16.13 release.
+> > There are 272 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed May 30 10:01:02 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> 
+> Build results:
+> 	total: 143 pass: 143 fail: 0
+> Qemu test results:
+> 	total: 141 pass: 141 fail: 0
+> 
+> Details are available at http://kerneltests.org/builders.
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+Wonderful, everything passed.  Thanks for testing all of these and
+letting me know.
 
-Best regards,
-Javier
+greg k-h
