@@ -1,82 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966569AbeE2T7Z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 15:59:25 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58072 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966362AbeE2T7V (ORCPT
+        id S966613AbeE2UAP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 16:00:15 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53402 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966179AbeE2UAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 15:59:21 -0400
-Subject: Re: [PATCH 2/2] media: v4l: xilinx: Add Xilinx MIPI CSI-2 Rx
- Subsystem driver
-To: Vishal Sagar <vishal.sagar@xilinx.com>, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org
-Cc: sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dineshk@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1527620084-94864-1-git-send-email-vishal.sagar@xilinx.com>
- <1527620084-94864-3-git-send-email-vishal.sagar@xilinx.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5bf470c0-8737-273e-c138-58a05d7d9a30@infradead.org>
-Date: Tue, 29 May 2018 12:59:15 -0700
+        Tue, 29 May 2018 16:00:13 -0400
+Subject: Re: [PATCH 2/8] xen/balloon: Move common memory reservation routines
+ to a module
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180525153331.31188-1-andr2000@gmail.com>
+ <20180525153331.31188-3-andr2000@gmail.com>
+ <59ab73b0-967b-a82f-3b0d-95f1b0dc40a5@oracle.com>
+ <89de7bdb-8759-419f-63bf-8ed0d57650f0@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <edfa937b-3311-98db-2e6f-b4083598f796@oracle.com>
+Date: Tue, 29 May 2018 16:03:09 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1527620084-94864-3-git-send-email-vishal.sagar@xilinx.com>
+In-Reply-To: <89de7bdb-8759-419f-63bf-8ed0d57650f0@gmail.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805290211
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 11:54 AM, Vishal Sagar wrote:
-> 
-> Signed-off-by: Vishal Sagar <vishal.sagar@xilinx.com>
-> ---
->  drivers/media/platform/xilinx/Kconfig           |   12 +
->  drivers/media/platform/xilinx/Makefile          |    1 +
->  drivers/media/platform/xilinx/xilinx-csi2rxss.c | 1751 +++++++++++++++++++++++
->  include/uapi/linux/xilinx-csi2rxss.h            |   25 +
->  include/uapi/linux/xilinx-v4l2-controls.h       |   14 +
->  5 files changed, 1803 insertions(+)
->  create mode 100644 drivers/media/platform/xilinx/xilinx-csi2rxss.c
->  create mode 100644 include/uapi/linux/xilinx-csi2rxss.h
-> 
-> diff --git a/drivers/media/platform/xilinx/Kconfig b/drivers/media/platform/xilinx/Kconfig
-> index a5d21b7..06d5944 100644
-> --- a/drivers/media/platform/xilinx/Kconfig
-> +++ b/drivers/media/platform/xilinx/Kconfig
-> @@ -8,6 +8,18 @@ config VIDEO_XILINX
-> 
->  if VIDEO_XILINX
-> 
-> +config VIDEO_XILINX_CSI2RXSS
-> +       tristate "Xilinx CSI2 Rx Subsystem"
-> +       depends on VIDEO_XILINX
-> +       help
-> +         Driver for Xilinx MIPI CSI2 Rx Subsystem. This is a V4L sub-device
-> +         based driver that takes input from CSI2 Tx source and converts
-> +         it into an AXI4-Stream. It has a DPHY (whose register interface
-> +         can be enabled, an optional I2C controller and an optional Video
+On 05/29/2018 02:22 PM, Oleksandr Andrushchenko wrote:
+> On 05/29/2018 09:04 PM, Boris Ostrovsky wrote:
+>> On 05/25/2018 11:33 AM, Oleksandr Andrushchenko wrote:
 
-	    can be enabled),
+>> @@ -463,11 +457,6 @@ static enum bp_state
+>> increase_reservation(unsigned long nr_pages)
+>>       int rc;
+>>       unsigned long i;
+>>       struct page   *page;
+>> -    struct xen_memory_reservation reservation = {
+>> -        .address_bits = 0,
+>> -        .extent_order = EXTENT_ORDER,
+>> -        .domid        = DOMID_SELF
+>> -    };
+>>         if (nr_pages > ARRAY_SIZE(frame_list))
+>>           nr_pages = ARRAY_SIZE(frame_list);
+>> @@ -486,9 +475,7 @@ static enum bp_state
+>> increase_reservation(unsigned long nr_pages)
+>>           page = balloon_next_page(page);
+>>       }
+>>   -    set_xen_guest_handle(reservation.extent_start, frame_list);
+>> -    reservation.nr_extents = nr_pages;
+>> -    rc = HYPERVISOR_memory_op(XENMEM_populate_physmap, &reservation);
+>> +    rc = xenmem_reservation_increase(nr_pages, frame_list);
+>>       if (rc <= 0)
+>>           return BP_EAGAIN;
+>>   @@ -496,29 +483,7 @@ static enum bp_state
+>> increase_reservation(unsigned long nr_pages)
+>>           page = balloon_retrieve(false);
+>>           BUG_ON(page == NULL);
+>>   -#ifdef CONFIG_XEN_HAVE_PVMMU
+>> -        /*
+>> -         * We don't support PV MMU when Linux and Xen is using
+>> -         * different page granularity.
+>> -         */
+>> -        BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
+>> -
+>> -        if (!xen_feature(XENFEAT_auto_translated_physmap)) {
+>> -            unsigned long pfn = page_to_pfn(page);
+>> -
+>> -            set_phys_to_machine(pfn, frame_list[i]);
+>> -
+>> -            /* Link back into the page tables if not highmem. */
+>> -            if (!PageHighMem(page)) {
+>> -                int ret;
+>> -                ret = HYPERVISOR_update_va_mapping(
+>> -                        (unsigned long)__va(pfn << PAGE_SHIFT),
+>> -                        mfn_pte(frame_list[i], PAGE_KERNEL),
+>> -                        0);
+>> -                BUG_ON(ret);
+>> -            }
+>> -        }
+>> -#endif
+>> +        xenmem_reservation_va_mapping_update(1, &page, &frame_list[i]);
+>>
+>> Can you make a single call to xenmem_reservation_va_mapping_update(rc,
+>> ...)? You need to keep track of pages but presumable they can be put
+>> into an array (or a list). In fact, perhaps we can have
+>> balloon_retrieve() return a set of pages.
+> This is actually how it is used later on for dma-buf, but I just
+> didn't want
+> to alter original balloon code too much, but this can be done, in
+> order of simplicity:
+>
+> 1. Similar to frame_list, e.g. static array of struct page* of size
+> ARRAY_SIZE(frame_list):
+> more static memory is used, but no allocations
+>
+> 2. Allocated at run-time with kcalloc: allocation can fail
 
-> +         Format Bridge which converts the AXI4-Stream data to Xilinx Video
-> +         Bus formats based on UG934. The driver is used to set the number
-> +         of active lanes and get short packet data.
-> +
->  config VIDEO_XILINX_TPG
->         tristate "Xilinx Video Test Pattern Generator"
->         depends on VIDEO_XILINX
+
+If this is called in freeing DMA buffer code path or in error path then
+we shouldn't do it.
 
 
+>
+> 3. Make balloon_retrieve() return a set of pages: will require
+> list/array allocation
+> and handling, allocation may fail, balloon_retrieve prototype change
 
-> This email and any attachments are intended for the sole use of the named recipient(s) and contain(s) confidential information that may be proprietary, privileged or copyrighted under applicable law. If you are not the intended recipient, do not read, copy, or forward this email message or any attachments. Delete this email message and any attachments immediately.
 
-:(
+balloon pages are strung on the lru list. Can we keep have
+balloon_retrieve return a list of pages on that list?
 
--- 
-~Randy
+-boris
+
+
+>
+> Could you please tell which of the above will fit better?
+>
+>>
+>>
