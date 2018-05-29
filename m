@@ -1,69 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755210AbeE2HrF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:47:05 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45155 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755176AbeE2HrC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:47:02 -0400
-X-Google-Smtp-Source: ADUXVKKGdRNewDltD4gNYd3y7x/vboxzZ6CIIuhNEinB/lYDSOnXg1ZsFj44nWUwOPJ42jvU431dZA==
-Date: Tue, 29 May 2018 08:46:59 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 6/6] mfd: da9063: Add DA9063L support
-Message-ID: <20180529074659.GC4790@dell>
-References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
- <20180523114230.10109-6-marek.vasut+renesas@gmail.com>
- <6ED8E3B22081A4459DAC7699F3695FB701941A47F0@SW-EX-MBX02.diasemi.com>
- <6ED8E3B22081A4459DAC7699F3695FB701941A4866@SW-EX-MBX02.diasemi.com>
- <3d81a469-e54f-953d-7600-7ddf3d026ca1@gmail.com>
+        id S1755253AbeE2HrO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:47:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:34680 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755176AbeE2HrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:47:08 -0400
+Subject: Re: linux-next: manual merge of the irqchip tree with the arm-soc
+ tree
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+References: <20180529155257.5ae48830@canb.auug.org.au>
+ <1bedc0b7-21f9-1e15-a11c-3de06e81b5ba@st.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <c306fbd9-21d9-5345-e820-52bc23d1b7c7@arm.com>
+Date: Tue, 29 May 2018 08:47:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3d81a469-e54f-953d-7600-7ddf3d026ca1@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1bedc0b7-21f9-1e15-a11c-3de06e81b5ba@st.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018, Marek Vasut wrote:
-> On 05/24/2018 02:32 PM, Steve Twiss wrote:
-> > On 24 May 2018 @ 12:49 Steve Twiss wrote:
-
-[...]
-
-> > static const struct regmap_irq da9063l_irqs[] = {
-> > 	/* DA9063 event A register */
-> > 	[DA9063L_IRQ_ONKEY] = {
-> > 		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> > 		.mask = DA9063_M_ONKEY,
-> > 	},
-
-[...]
-
-> > 	[DA9063L_IRQ_GPI15] = {
-> > 		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> > 		.mask = DA9063_M_GPI15,
-> > 	},
-> > };
+On 29/05/18 08:41, Alexandre Torgue wrote:
+> Hi Stephen
 > 
-> We can probably do the same trick with the regmaps and irqmaps as with
-> the rest, that is, reorder them and register only a smaller portion ?
+> On 05/29/2018 07:52 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Today's linux-next merge of the irqchip tree got a conflict in:
+>>
+>>    arch/arm/boot/dts/stm32mp157c.dtsi
+>>
+>> between commit:
+>>
+>>    3c00436fdb20 ("ARM: dts: stm32: add USBPHYC support to stm32mp157c")
+>>
+>> from the arm-soc tree and commit:
+>>
+>>    5f0e9d2557d7 ("ARM: dts: stm32: Add exti support for stm32mp157c")
+>>
+>> from the irqchip tree.
+>>
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
+>>
+> 
+> Thanks for the fix (I will reorder nodes in a future patch). My opinion 
+> is that all STM32 DT patches should come through my STM32 tree. It is my 
+> role to fix this kind of conflicts. I thought it was a common rule 
+> (driver patches go to sub-system maintainer tree and DT to the Machine 
+> maintainer). For incoming next-series which contain DT+driver patches I 
+> will indicate clearly that I take DT patch. I'm right ?
+Happy to oblige. Can you make sure you sync up with Ludovic and define
+what you want to do?
 
-Please also consider using REGMAP_IRQ_REG().
+In the meantime, I'm dropping the series altogether.
 
+Thanks,
+
+	M.
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Jazz is not dead. It just smells funny...
