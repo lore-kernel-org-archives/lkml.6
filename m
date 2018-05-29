@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967155AbeE2VGX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:06:23 -0400
-Received: from mga14.intel.com ([192.55.52.115]:46453 "EHLO mga14.intel.com"
+        id S967168AbeE2VCk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:02:40 -0400
+Received: from mga01.intel.com ([192.55.52.88]:53965 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937112AbeE2VBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:01:00 -0400
+        id S966829AbeE2VBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 17:01:14 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,457,1520924400";
-   d="scan'208";a="60127744"
+   d="scan'208";a="60127746"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V5 25/38] x86/intel_rdt: Enable entering of pseudo-locksetup mode
-Date: Tue, 29 May 2018 05:57:50 -0700
-Message-Id: <2d019e91959799576299ff6974e0716163aad052.1527593971.git.reinette.chatre@intel.com>
+Subject: [PATCH V5 26/38] x86/intel_rdt: Split resource group removal in two
+Date: Tue, 29 May 2018 05:57:51 -0700
+Message-Id: <cf83951ef28f138aeb9a9242cd074a6e01a1fbb2.1527593971.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1527593970.git.reinette.chatre@intel.com>
 References: <cover.1527593970.git.reinette.chatre@intel.com>
@@ -30,129 +30,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The user can request entering pseudo-locksetup mode by writing
-"pseudo-locksetup" to the mode file. Act on this request as well as
-support switching from a pseudo-locksetup mode (before pseudo-locked
-mode was entered). It is not supported to modify the mode once
-pseudo-locked mode has been entered.
+Resource groups used for pseudo-locking do not require the same work on
+removal as the other resource groups.
 
-The schemata reflects the new mode by adding "uninitialized" to all
-resources. The size resctrl file reports zero for all cache domains in
-support of the uninitialized nature. Since there are no users of this
-class of service its allocations can be ignored when searching for
-appropriate default allocations for new resource groups.
+The resource group removal is split in two in preparation for support of
+pseudo-locking resource groups. A single re-ordering occurs - the
+setting of the rdtgrp flag is moved to later. This flag is not used by
+any of the code between its original and new location.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 16 +++++++++----
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 36 ++++++++++++++++++++++++++---
- 2 files changed, 44 insertions(+), 8 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index bc79396c5dad..1ed273220ffa 100644
---- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -156,7 +156,8 @@ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
- 	}
- 
- 	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, false)) {
--		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE) {
-+		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE ||
-+		    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
- 			rdt_last_cmd_printf("overlaps with other group\n");
- 			return -EINVAL;
- 		}
-@@ -356,10 +357,15 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
- 
- 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
- 	if (rdtgrp) {
--		closid = rdtgrp->closid;
--		for_each_alloc_enabled_rdt_resource(r) {
--			if (closid < r->num_closid)
--				show_doms(s, r, closid);
-+		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
-+			for_each_alloc_enabled_rdt_resource(r)
-+				seq_printf(s, "%s:uninitialized\n", r->name);
-+		} else {
-+			closid = rdtgrp->closid;
-+			for_each_alloc_enabled_rdt_resource(r) {
-+				if (closid < r->num_closid)
-+					show_doms(s, r, closid);
-+			}
- 		}
- 	} else {
- 		ret = -ENOENT;
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 178990850b03..f0213fa5d630 100644
+index f0213fa5d630..a24a5ca41692 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1046,10 +1046,24 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
- 	mode = rdtgrp->mode;
+@@ -2565,6 +2565,21 @@ static int rdtgroup_rmdir_mon(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
+ 	return 0;
+ }
  
- 	if ((!strcmp(buf, "shareable") && mode == RDT_MODE_SHAREABLE) ||
--	    (!strcmp(buf, "exclusive") && mode == RDT_MODE_EXCLUSIVE))
-+	    (!strcmp(buf, "exclusive") && mode == RDT_MODE_EXCLUSIVE) ||
-+	    (!strcmp(buf, "pseudo-locksetup") &&
-+	     mode == RDT_MODE_PSEUDO_LOCKSETUP) ||
-+	    (!strcmp(buf, "pseudo-locked") && mode == RDT_MODE_PSEUDO_LOCKED))
- 		goto out;
- 
-+	if (mode == RDT_MODE_PSEUDO_LOCKED) {
-+		rdt_last_cmd_printf("cannot change pseudo-locked group\n");
-+		ret = -EINVAL;
-+		goto out;
-+	}
++static int rdtgroup_ctrl_remove(struct kernfs_node *kn,
++				struct rdtgroup *rdtgrp)
++{
++	rdtgrp->flags = RDT_DELETED;
++	list_del(&rdtgrp->rdtgroup_list);
 +
- 	if (!strcmp(buf, "shareable")) {
-+		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
-+			ret = rdtgroup_locksetup_exit(rdtgrp);
-+			if (ret)
-+				goto out;
-+		}
- 		rdtgrp->mode = RDT_MODE_SHAREABLE;
- 	} else if (!strcmp(buf, "exclusive")) {
- 		if (!rdtgroup_mode_test_exclusive(rdtgrp)) {
-@@ -1057,7 +1071,17 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
- 			ret = -EINVAL;
- 			goto out;
- 		}
-+		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
-+			ret = rdtgroup_locksetup_exit(rdtgrp);
-+			if (ret)
-+				goto out;
-+		}
- 		rdtgrp->mode = RDT_MODE_EXCLUSIVE;
-+	} else if (!strcmp(buf, "pseudo-locksetup")) {
-+		ret = rdtgroup_locksetup_enter(rdtgrp);
-+		if (ret)
-+			goto out;
-+		rdtgrp->mode = RDT_MODE_PSEUDO_LOCKSETUP;
- 	} else {
- 		rdt_last_cmd_printf("unknown/unsupported mode\n");
- 		ret = -EINVAL;
-@@ -1127,8 +1151,12 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
- 		list_for_each_entry(d, &r->domains, list) {
- 			if (sep)
- 				seq_putc(s, ';');
--			cbm = d->ctrl_val[rdtgrp->closid];
--			size = rdtgroup_cbm_to_size(r, d, cbm);
-+			if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
-+				size = 0;
-+			} else {
-+				cbm = d->ctrl_val[rdtgrp->closid];
-+				size = rdtgroup_cbm_to_size(r, d, cbm);
-+			}
- 			seq_printf(s, "%d=%u", d->id, size);
- 			sep = true;
- 		}
-@@ -2230,6 +2258,8 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
- 			for (i = 0; i < r->num_closid; i++, ctrl++) {
- 				if (closid_allocated(i) && i != closid) {
- 					mode = rdtgroup_mode_by_closid(i);
-+					if (mode == RDT_MODE_PSEUDO_LOCKSETUP)
-+						break;
- 					used_b |= *ctrl;
- 					if (mode == RDT_MODE_SHAREABLE)
- 						d->new_ctrl |= *ctrl;
++	/*
++	 * one extra hold on this, will drop when we kfree(rdtgrp)
++	 * in rdtgroup_kn_unlock()
++	 */
++	kernfs_get(kn);
++	kernfs_remove(rdtgrp->kn);
++	return 0;
++}
++
+ static int rdtgroup_rmdir_ctrl(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
+ 			       cpumask_var_t tmpmask)
+ {
+@@ -2590,7 +2605,6 @@ static int rdtgroup_rmdir_ctrl(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
+ 	cpumask_or(tmpmask, tmpmask, &rdtgrp->cpu_mask);
+ 	update_closid_rmid(tmpmask, NULL);
+ 
+-	rdtgrp->flags = RDT_DELETED;
+ 	closid_free(rdtgrp->closid);
+ 	free_rmid(rdtgrp->mon.rmid);
+ 
+@@ -2599,14 +2613,7 @@ static int rdtgroup_rmdir_ctrl(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
+ 	 */
+ 	free_all_child_rdtgrp(rdtgrp);
+ 
+-	list_del(&rdtgrp->rdtgroup_list);
+-
+-	/*
+-	 * one extra hold on this, will drop when we kfree(rdtgrp)
+-	 * in rdtgroup_kn_unlock()
+-	 */
+-	kernfs_get(kn);
+-	kernfs_remove(rdtgrp->kn);
++	rdtgroup_ctrl_remove(kn, rdtgrp);
+ 
+ 	return 0;
+ }
 -- 
 2.13.6
