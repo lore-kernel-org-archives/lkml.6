@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936481AbeE2Oo5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:44:57 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:40108 "EHLO
+        id S936463AbeE2Oox (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:44:53 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:35535 "EHLO
         mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935402AbeE2OoR (ORCPT
+        with ESMTP id S935798AbeE2OoS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:44:17 -0400
-X-Google-Smtp-Source: AB8JxZrl6BBkjJIvT7jgozrBqOIiXcXU9+MYKh1SMuPLFSeu44amU6Pq8Ax5u7FEsi0HW0nUB65kWQ==
+        Tue, 29 May 2018 10:44:18 -0400
+X-Google-Smtp-Source: AB8JxZpItVtQCvRGPAU/QxEQKxJiHAhb1lS6Rz7kpvwGQqAoUm9SZAEqVB7cSlfxn+dlmYYRpQ2iwA==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 28/39] ovl: fix documentation of non-standard behavior
-Date: Tue, 29 May 2018 16:43:28 +0200
-Message-Id: <20180529144339.16538-29-mszeredi@redhat.com>
+Subject: [PATCH 29/39] vfs: simplify dentry_open()
+Date: Tue, 29 May 2018 16:43:29 +0200
+Message-Id: <20180529144339.16538-30-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
 References: <20180529144339.16538-1-mszeredi@redhat.com>
@@ -21,98 +21,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can now drop description of the ro/rw inconsistency from the
-documentation.
-
-Also clarify, that now fully standard compliant behavior can be enabled
-with kernel/module/mount options.
+dentry_open() can now just call path_open().
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- Documentation/filesystems/overlayfs.txt | 60 +++++++++++++++++++++------------
- 1 file changed, 39 insertions(+), 21 deletions(-)
+ fs/open.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
-diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
-index 72615a2c0752..f087bc40c6a5 100644
---- a/Documentation/filesystems/overlayfs.txt
-+++ b/Documentation/filesystems/overlayfs.txt
-@@ -10,10 +10,6 @@ union-filesystems).  An overlay-filesystem tries to present a
- filesystem which is the result over overlaying one filesystem on top
- of the other.
- 
--The result will inevitably fail to look exactly like a normal
--filesystem for various technical reasons.  The expectation is that
--many use cases will be able to ignore these differences.
+diff --git a/fs/open.c b/fs/open.c
+index 244cd2ecfefd..1d4bc541c619 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -935,25 +935,12 @@ EXPORT_SYMBOL(path_open);
+ struct file *dentry_open(const struct path *path, int flags,
+ 			 const struct cred *cred)
+ {
+-	int error;
+-	struct file *f;
 -
+ 	validate_creds(cred);
  
- Overlay objects
- ---------------
-@@ -306,27 +302,49 @@ the copied layers will fail the verification of the lower root file handle.
- Non-standard behavior
- ---------------------
+ 	/* We must always pass in a valid mount pointer. */
+ 	BUG_ON(!path->mnt);
  
--The copy_up operation essentially creates a new, identical file and
--moves it over to the old name.  Any open files referring to this inode
--will access the old data.
-+Overlayfs can now act as a POSIX compliant filesystem with the following
-+features turned on:
-+
-+1) "redirect_dir"
-+
-+Enabled with the mount option or module option: "redirect_dir=on" or with
-+the kernel config option CONFIG_OVERLAY_FS_REDIRECT_DIR=y.
-+
-+If this feature is disabled, then rename(2) on a lower or merged directory
-+will fail with EXDEV ("Invalid cross-device link").
-+
-+2) "inode index"
-+
-+Enabled with the mount option or module option "index=on" or with the
-+kernel config option CONFIG_OVERLAY_FS_INDEX=y.
-+
-+If this feature is disabled and a file with multiple hard links is copied
-+up, then this will "break" the link.  Changes will not be propagated to
-+other names referring to the same inode.
-+
-+3) "xino"
-+
-+Enabled with the mount option "xino=auto" or "xino=on", with the module
-+option "xino_auto=on" or with the kernel config option
-+CONFIG_OVERLAY_FS_XINO_AUTO=y.  Also implicitly enabled by using the same
-+underlying filesystem for all layers making up the overlay.
+-	f = get_empty_filp();
+-	if (IS_ERR(f))
+-		return f;
+-
+-	f->f_flags = flags;
+-	error = vfs_open(path, f, cred);
+-	if (error) {
+-		put_filp(f);
+-		return ERR_PTR(error);
+-	}
+-	return f;
++	return path_open(path, flags, d_backing_inode(path->dentry), cred, true);
+ }
+ EXPORT_SYMBOL(dentry_open);
  
--The new file may be on a different filesystem, so both st_dev and st_ino
--of the real file may change.  The values of st_dev and st_ino returned by
--stat(2) on an overlay object are often not the same as the real file
--stat(2) values to prevent the values from changing on copy_up.
-+If this feature is disabled or the underlying filesystem doesn't have
-+enough free bits in the inode number, then overlayfs will not be able to
-+guarantee that the values of st_ino and st_dev returned by stat(2) and the
-+value of d_ino returned by readdir(3) will act like on a normal filesystem.
-+E.g. the value of st_dev may be different for two objects in the same
-+overlay filesystem and the value of st_ino for directory objects may not be
-+persistent and could change even while the overlay filesystem is mounted.
- 
--Unless "xino" feature is enabled, when overlay layers are not all on the
--same underlying filesystem, the value of st_dev may be different for two
--non-directory objects in the same overlay filesystem and the value of
--st_ino for directory objects may be non persistent and could change even
--while the overlay filesystem is still mounted.
-+4) "copy_up_shared"
- 
--Unless "inode index" feature is enabled, if a file with multiple hard
--links is copied up, then this will "break" the link.  Changes will not be
--propagated to other names referring to the same inode.
-+Enabled with the mount option or module option "copy_up_shared=on" or with
-+the kernel config option CONFIG_OVERLAY_FS_COPY_UP_SHARED=y.
- 
--Unless "redirect_dir" feature is enabled, rename(2) on a lower or merged
--directory will fail with EXDEV.
-+If this feature is disabled, then a memory mapping created with MAP_SHARED
-+might contain stale data if the file has been copied up and modified in the
-+meantime.
- 
- 
- Changes to underlying filesystems
 -- 
 2.14.3
