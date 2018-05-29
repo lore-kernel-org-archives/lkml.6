@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936642AbeE2Oxk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:53:40 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41892 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935486AbeE2Oqb (ORCPT
+        id S936796AbeE2Oxt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:53:49 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39409 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935652AbeE2OqZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:46:31 -0400
-X-Google-Smtp-Source: AB8JxZoMpK+eS6Qq0RGJl5TgtkRm/fAmCcx5F5QagfBGWBcxMpnJ4EcHDCVeZg+GljPIEWMHjsII8Q==
+        Tue, 29 May 2018 10:46:25 -0400
+X-Google-Smtp-Source: ADUXVKLK6D4TRalg5VQXMQh/uS7I2HQDdIGTVH4kkD1Spk/r1S2yy86WONcc6vbFrlzU8pfp42SQbQ==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 12/28] ovl: Fix ovl_getattr() to get number of blocks from lower
-Date: Tue, 29 May 2018 16:45:56 +0200
-Message-Id: <20180529144612.16675-13-mszeredi@redhat.com>
+Subject: [PATCH 08/28] ovl: Use out_err instead of out_nomem
+Date: Tue, 29 May 2018 16:45:52 +0200
+Message-Id: <20180529144612.16675-9-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
 References: <20180529144612.16675-1-mszeredi@redhat.com>
@@ -23,124 +23,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vivek Goyal <vgoyal@redhat.com>
 
-If an inode has been copied up metadata only, then we need to query the
-number of blocks from lower and fill up the stat->st_blocks.
+Right now we use goto out_nomem which assumes error code is -ENOMEM.  But
+there are other errors returned like -ESTALE as well.  So instead of
+out_nomem, use out_err which will do ERR_PTR(err).  That way one can put
+error code in err and jump to out_err.
 
-We need to be careful about races where we are doing stat on one cpu and
-data copy up is taking place on other cpu.  We want to return
-stat->st_blocks either from lower or stable upper and not something in
-between.  Hence, ovl_has_upperdata() is called first to figure out whether
-block reporting will take place from lower or upper.
+This just code reorganization and no change of functionality.
 
-We now support metacopy dentries in middle layer.  That means number of
-blocks reporting needs to come from lowest data dentry and this could be
-different from lower dentry.  Hence we end up making a separate
-vfs_getxattr() call for metacopy dentries to get number of blocks.
+I am about to add more code and this organization helps laying more code
+and error paths on top of it.
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/inode.c     | 35 ++++++++++++++++++++++++++++++++++-
- fs/overlayfs/overlayfs.h |  1 +
- fs/overlayfs/util.c      | 16 ++++++++++++++++
- 3 files changed, 51 insertions(+), 1 deletion(-)
+ fs/overlayfs/inode.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index 350e38c5ce7d..6a6693150c37 100644
+index 60c88a09a3f3..0d5615b80422 100644
 --- a/fs/overlayfs/inode.c
 +++ b/fs/overlayfs/inode.c
-@@ -145,6 +145,9 @@ int ovl_getattr(const struct path *path, struct kstat *stat,
- 	bool samefs = ovl_same_sb(dentry->d_sb);
- 	struct ovl_layer *lower_layer = NULL;
- 	int err;
-+	bool metacopy_blocks = false;
-+
-+	metacopy_blocks = ovl_is_metacopy_dentry(dentry);
+@@ -782,6 +782,7 @@ struct inode *ovl_get_inode(struct super_block *sb,
+ 	int fsid = bylower ? oip->lowerpath->layer->fsid : 0;
+ 	bool is_dir;
+ 	unsigned long ino = 0;
++	int err = -ENOMEM;
  
- 	type = ovl_path_real(dentry, &realpath);
- 	old_cred = ovl_override_creds(dentry->d_sb);
-@@ -166,7 +169,8 @@ int ovl_getattr(const struct path *path, struct kstat *stat,
- 			lower_layer = ovl_layer_lower(dentry);
- 		} else if (OVL_TYPE_ORIGIN(type)) {
- 			struct kstat lowerstat;
--			u32 lowermask = STATX_INO | (!is_dir ? STATX_NLINK : 0);
-+			u32 lowermask = STATX_INO | STATX_BLOCKS |
-+					(!is_dir ? STATX_NLINK : 0);
+ 	if (!realinode)
+ 		realinode = d_inode(lowerdentry);
+@@ -798,7 +799,7 @@ struct inode *ovl_get_inode(struct super_block *sb,
  
- 			ovl_path_lower(dentry, &realpath);
- 			err = vfs_getattr(&realpath, &lowerstat,
-@@ -195,6 +199,35 @@ int ovl_getattr(const struct path *path, struct kstat *stat,
- 				stat->ino = lowerstat.ino;
- 				lower_layer = ovl_layer_lower(dentry);
+ 		inode = ovl_iget5(sb, oip->newinode, key);
+ 		if (!inode)
+-			goto out_nomem;
++			goto out_err;
+ 		if (!(inode->i_state & I_NEW)) {
+ 			/*
+ 			 * Verify that the underlying files stored in the inode
+@@ -807,8 +808,8 @@ struct inode *ovl_get_inode(struct super_block *sb,
+ 			if (!ovl_verify_inode(inode, lowerdentry, upperdentry,
+ 					      true)) {
+ 				iput(inode);
+-				inode = ERR_PTR(-ESTALE);
+-				goto out;
++				err = -ESTALE;
++				goto out_err;
  			}
-+
-+			/*
-+			 * If we are querying a metacopy dentry and lower
-+			 * dentry is data dentry, then use the blocks we
-+			 * queried just now. We don't have to do additional
-+			 * vfs_getattr(). If lower itself is metacopy, then
-+			 * additional vfs_getattr() is unavoidable.
-+			 */
-+			if (metacopy_blocks &&
-+			    realpath.dentry == ovl_dentry_lowerdata(dentry)) {
-+				stat->blocks = lowerstat.blocks;
-+				metacopy_blocks = false;
-+			}
+ 
+ 			dput(upperdentry);
+@@ -824,8 +825,10 @@ struct inode *ovl_get_inode(struct super_block *sb,
+ 	} else {
+ 		/* Lower hardlink that will be broken on copy up */
+ 		inode = new_inode(sb);
+-		if (!inode)
+-			goto out_nomem;
++		if (!inode) {
++			err = -ENOMEM;
++			goto out_err;
 +		}
-+
-+		if (metacopy_blocks) {
-+			/*
-+			 * If lower is not same as lowerdata or if there was
-+			 * no origin on upper, we can end up here.
-+			 */
-+			struct kstat lowerdatastat;
-+			u32 lowermask = STATX_BLOCKS;
-+
-+			ovl_path_lowerdata(dentry, &realpath);
-+			err = vfs_getattr(&realpath, &lowerdatastat,
-+					  lowermask, flags);
-+			if (err)
-+				goto out;
-+			stat->blocks = lowerdatastat.blocks;
- 		}
  	}
+ 	ovl_fill_inode(inode, realinode->i_mode, realinode->i_rdev, ino, fsid);
+ 	ovl_inode_init(inode, upperdentry, lowerdentry);
+@@ -851,7 +854,7 @@ struct inode *ovl_get_inode(struct super_block *sb,
+ out:
+ 	return inode;
  
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 13b2151cf4df..ae06fd531b75 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -271,6 +271,7 @@ int ovl_nlink_start(struct dentry *dentry, bool *locked);
- void ovl_nlink_end(struct dentry *dentry, bool locked);
- int ovl_lock_rename_workdir(struct dentry *workdir, struct dentry *upperdir);
- int ovl_check_metacopy_xattr(struct dentry *dentry);
-+bool ovl_is_metacopy_dentry(struct dentry *dentry);
- 
- static inline bool ovl_is_impuredir(struct dentry *dentry)
- {
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index 7c7b95d5da1f..4f9c2ecee74c 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -825,3 +825,19 @@ int ovl_check_metacopy_xattr(struct dentry *dentry)
- 	pr_warn_ratelimited("overlayfs: failed to get metacopy (%i)\n", res);
- 	return res;
+-out_nomem:
+-	inode = ERR_PTR(-ENOMEM);
++out_err:
++	inode = ERR_PTR(err);
+ 	goto out;
  }
-+
-+bool ovl_is_metacopy_dentry(struct dentry *dentry)
-+{
-+	struct ovl_entry *oe = dentry->d_fsdata;
-+
-+	if (!d_is_reg(dentry))
-+		return false;
-+
-+	if (ovl_dentry_upper(dentry)) {
-+		if (!ovl_has_upperdata(d_inode(dentry)))
-+			return true;
-+		return false;
-+	}
-+
-+	return (oe->numlower > 1);
-+}
 -- 
 2.14.3
