@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965845AbeE2SCc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 14:02:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36956 "EHLO
+        id S965897AbeE2SCl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 14:02:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43096 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965720AbeE2SCV (ORCPT
+        by vger.kernel.org with ESMTP id S965849AbeE2SCf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 14:02:21 -0400
+        Tue, 29 May 2018 14:02:35 -0400
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -17,17 +17,19 @@ Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v4 2/8] kexec: add call to LSM hook in original kexec_load syscall
-Date: Tue, 29 May 2018 14:01:54 -0400
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, Stephen Boyd <sboyd@kernel.org>
+Subject: [RFC PATCH v4 7/8] ima: based on policy prevent loading firmware (pre-allocated buffer)
+Date: Tue, 29 May 2018 14:01:59 -0400
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18052918-0008-0000-0000-000004FC48D1
+x-cbid: 18052918-0040-0000-0000-0000043F061F
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052918-0009-0000-0000-00001E906782
-Message-Id: <1527616920-5415-3-git-send-email-zohar@linux.vnet.ibm.com>
+x-cbparentid: 18052918-0041-0000-0000-0000264456B3
+Message-Id: <1527616920-5415-8-git-send-email-zohar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -39,49 +41,90 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order for LSMs and IMA-appraisal to differentiate between kexec_load
-and kexec_file_load syscalls, both the original and new syscalls must
-call an LSM hook.  This patch adds a call to security_kernel_load_data()
-in the original kexec_load syscall.
+Some systems are memory constrained but they need to load very large
+firmwares.  The firmware subsystem allows drivers to request this
+firmware be loaded from the filesystem, but this requires that the
+entire firmware be loaded into kernel memory first before it's provided
+to the driver.  This can lead to a situation where we map the firmware
+twice, once to load the firmware into kernel memory and once to copy the
+firmware into the final resting place.
+
+To resolve this problem, commit a098ecd2fa7d ("firmware: support loading
+into a pre-allocated buffer") introduced request_firmware_into_buf() API
+that allows drivers to request firmware be loaded directly into a
+pre-allocated buffer.  The QCOM_MDT_LOADER calls dma_alloc_coherent() to
+allocate this buffer.  According to Documentation/DMA-API.txt,
+
+     Consistent memory is memory for which a write by either the
+     device or the processor can immediately be read by the processor
+     or device without having to worry about caching effects.  (You
+     may however need to make sure to flush the processor's write
+     buffers before telling devices to read that memory.)
+
+Devices using pre-allocated DMA memory run the risk of the firmware
+being accessible by the device prior to the kernel's firmware signature
+verification has completed.
+
+Loading firmware already calls the security_kernel_read_file LSM hook.
+With an IMA policy requiring signed firmware, this patch prevents
+loading firmware into a pre-allocated buffer.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
+Cc: Luis R. Rodriguez <mcgrof@suse.com>
 Cc: David Howells <dhowells@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
 ---
- kernel/kexec.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ security/integrity/ima/ima_main.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index aed8fb2564b3..68559808fdfa 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -11,6 +11,7 @@
- #include <linux/capability.h>
- #include <linux/mm.h>
- #include <linux/file.h>
-+#include <linux/security.h>
- #include <linux/kexec.h>
- #include <linux/mutex.h>
- #include <linux/list.h>
-@@ -195,10 +196,17 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
- static inline int kexec_load_check(unsigned long nr_segments,
- 				   unsigned long flags)
- {
-+	int result;
-+
- 	/* We only trust the superuser with rebooting the system. */
- 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
- 		return -EPERM;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 4a87f78098c8..3dae605a1604 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -419,6 +419,15 @@ void ima_post_path_mknod(struct dentry *dentry)
+ 		iint->flags |= IMA_NEW_FILE;
+ }
  
-+	/* Permit LSMs and IMA to fail the kexec */
-+	result = security_kernel_load_data(LOADING_KEXEC_IMAGE);
-+	if (result < 0)
-+		return result;
++static int read_idmap[READING_MAX_ID] = {
++	[READING_FIRMWARE] = FIRMWARE_CHECK,
++	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
++	[READING_MODULE] = MODULE_CHECK,
++	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
++	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
++	[READING_POLICY] = POLICY_CHECK
++};
 +
- 	/*
- 	 * Verify we have a legal set of flags
- 	 * This leaves us room for future extensions.
+ /**
+  * ima_read_file - pre-measure/appraise hook decision based on policy
+  * @file: pointer to the file to be measured/appraised/audit
+@@ -442,18 +451,17 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ 		}
+ 		return 0;	/* We rely on module signature checking */
+ 	}
++
++	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
++		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
++		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++			pr_err("Prevent device from accessing firmware prior to verifying the firmware signature.\n");
++			return -EACCES;
++		}
++	}
+ 	return 0;
+ }
+ 
+-static int read_idmap[READING_MAX_ID] = {
+-	[READING_FIRMWARE] = FIRMWARE_CHECK,
+-	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+-	[READING_MODULE] = MODULE_CHECK,
+-	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+-	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
+-	[READING_POLICY] = POLICY_CHECK
+-};
+-
+ /**
+  * ima_post_read_file - in memory collect/appraise/audit measurement
+  * @file: pointer to the file to be measured/appraised/audit
 -- 
 2.7.5
