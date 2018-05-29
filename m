@@ -1,65 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932298AbeE2HJY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:09:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37340 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932114AbeE2HJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:09:19 -0400
-Date: Tue, 29 May 2018 12:39:15 +0530
-From: Vinod <vkoul@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Frank Mori Hess <fmh6jj@gmail.com>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
-Message-ID: <20180529070915.GF5666@vkoul-mobl>
-References: <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com>
- <20180515062144.GC13271@vkoul-mobl>
- <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
- <20180517041946.GQ13271@vkoul-mobl>
- <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
- <CGME20180518040358epcas2p353b0096d33116ca78a03b16d24569813@epcas2p3.samsung.com>
- <20180518040349.GB2932@vkoul-mobl>
- <7f0b7404-ee12-977f-02a4-a463d1873aee@samsung.com>
- <20180518072112.GG2932@vkoul-mobl>
- <20180529051745eucas1p2ee6ec3e34f075d255c87f8f54a626784~zBcpaqmAb1928519285eucas1p2H@eucas1p2.samsung.com>
+        id S932324AbeE2HKC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:10:02 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35426 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932081AbeE2HKA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:10:00 -0400
+X-Google-Smtp-Source: ADUXVKLlJapPYVr6W2N2mZS8PJeUXHYtjUEF14QgcAaydgaQ0ouPSZtVsqtxkcuAgEWlKgma4XytaQ==
+Subject: Re: [PATCH] drm: Fix possible race conditions while unplugging DRM
+ device
+To: "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        airlied@linux.ie, daniel.vetter@intel.com, seanpaul@chromium.org,
+        gustavo@padovan.org,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+References: <20180522141304.18646-1-andr2000@gmail.com>
+ <20180529070200.GW3438@phenom.ffwll.local>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <3427121e-ddd9-d2ba-b684-61338f0207ce@gmail.com>
+Date: Tue, 29 May 2018 10:09:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529051745eucas1p2ee6ec3e34f075d255c87f8f54a626784~zBcpaqmAb1928519285eucas1p2H@eucas1p2.samsung.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180529070200.GW3438@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-05-18, 07:17, Marek Szyprowski wrote:
-> Hi Vinod,
-> 
-> On 2018-05-18 09:21, Vinod wrote:
-> > On 18-05-18, 08:28, Marek Szyprowski wrote:
-> >> Hi Vinod,
-> >>
-> >> Okay, I see that in theory, there are some tricky bits in implementing DMA
-> >> support in UART drivers. On the other hand there are already drivers
-> >> with seems
-> >> to be working fine. This discussion is about revert of the feature
-> >> present in
-> >> pl330 driver, which is required by other in-kernel driver without proper
-> >> fix to
-> >> them.
-> >>
-> >> Can we drop it for now and discuss what and how should be implemented to
-> >> make
-> >> everyone happy, without any regressions?
-> > Sure am dropping the revert, we can always bring it back if it is required
-> 
-> This revert is still in your -next branch. Do you plan to update it as well?
-
-I dont send it to linus and merge topic/* into for-linus and send. It gets
-updated on rebase on -rc1.
-
--- 
-~Vinod
+On 05/29/2018 10:02 AM, Daniel Vetter wrote:
+> On Tue, May 22, 2018 at 05:13:04PM +0300, Oleksandr Andrushchenko wrote:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>
+>> When unplugging a hotpluggable DRM device we first unregister it
+>> with drm_dev_unregister and then set drm_device.unplugged flag which
+>> is used to mark device critical sections with drm_dev_enter()/
+>> drm_dev_exit() preventing access to device resources that are not
+>> available after the device is gone.
+>> But drm_dev_unregister may lead to hotplug uevent(s) fired to
+>> user-space on card and/or connector removal, thus making it possible
+>> for user-space to try accessing a disconnected device.
+>>
+>> Fix this by first making sure device is properly marked as
+>> disconnected and only then unregister it.
+>>
+>> Fixes: bee330f3d672 ("drm: Use srcu to protect drm_device.unplugged")
+>>
+>> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> Reported-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+>> Cc: "Noralf Trønnes" <noralf@tronnes.org>
+> Nice catch.
+>
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+>
+> I think you need to push this to drm-misc-next-fixes to make sure it's on
+> the 4.17 train.
+Sure, after I have r-b from Noralf
+> -Daniel
+>
+>> ---
+>>   drivers/gpu/drm/drm_drv.c | 14 +++++++-------
+>>   1 file changed, 7 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+>> index b553a6f2ff0e..7af748ed1c58 100644
+>> --- a/drivers/gpu/drm/drm_drv.c
+>> +++ b/drivers/gpu/drm/drm_drv.c
+>> @@ -369,13 +369,6 @@ EXPORT_SYMBOL(drm_dev_exit);
+>>    */
+>>   void drm_dev_unplug(struct drm_device *dev)
+>>   {
+>> -	drm_dev_unregister(dev);
+>> -
+>> -	mutex_lock(&drm_global_mutex);
+>> -	if (dev->open_count == 0)
+>> -		drm_dev_put(dev);
+>> -	mutex_unlock(&drm_global_mutex);
+>> -
+>>   	/*
+>>   	 * After synchronizing any critical read section is guaranteed to see
+>>   	 * the new value of ->unplugged, and any critical section which might
+>> @@ -384,6 +377,13 @@ void drm_dev_unplug(struct drm_device *dev)
+>>   	 */
+>>   	dev->unplugged = true;
+>>   	synchronize_srcu(&drm_unplug_srcu);
+>> +
+>> +	drm_dev_unregister(dev);
+>> +
+>> +	mutex_lock(&drm_global_mutex);
+>> +	if (dev->open_count == 0)
+>> +		drm_dev_put(dev);
+>> +	mutex_unlock(&drm_global_mutex);
+>>   }
+>>   EXPORT_SYMBOL(drm_dev_unplug);
+>>   
+>> -- 
+>> 2.17.0
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
