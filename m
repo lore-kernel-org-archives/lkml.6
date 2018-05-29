@@ -1,130 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935326AbeE2OWp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:22:45 -0400
-Received: from smtp4.ccs.ornl.gov ([160.91.203.40]:38208 "EHLO
-        smtp4.ccs.ornl.gov" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935293AbeE2OWl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:22:41 -0400
-From: James Simmons <jsimmons@infradead.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
-        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>,
-        Dmitry Eremin <dmitry.eremin@intel.com>,
-        James Simmons <jsimmons@infradead.org>
-Subject: [PATCH v2 22/25] staging: lustre: libcfs: update debug messages in CPT code
-Date: Tue, 29 May 2018 10:22:02 -0400
-Message-Id: <1527603725-30560-23-git-send-email-jsimmons@infradead.org>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
-References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
+        id S935293AbeE2OXb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:23:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50720 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934472AbeE2OX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:23:27 -0400
+Date: Tue, 29 May 2018 16:23:24 +0200
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH] KVM: VMX: Optimize tscdeadline timer latency
+Message-ID: <20180529142324.GA7819@flask>
+References: <1527576797-5738-1-git-send-email-wanpengli@tencent.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1527576797-5738-1-git-send-email-wanpengli@tencent.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Eremin <dmitry.eremin@intel.com>
+2018-05-29 14:53+0800, Wanpeng Li:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> 'Commit d0659d946be0 ("KVM: x86: add option to advance tscdeadline 
+> hrtimer expiration")' advances the tscdeadline (the timer is emulated 
+> by hrtimer) expiration in order that the latency which is incurred 
+> by hypervisor (apic_timer_fn -> vmentry) can be avoided. This patch 
+> adds the advance tscdeadline expiration support to which the tscdeadline 
+> timer is emulated by VMX preemption timer to reduce the hypervisor 
+> lantency (handle_preemption_timer -> vmentry). clockevents infrastruture 
+> can program minimum delay if hrtimer feeds a expiration in the past, 
+> we set delta_tsc to 1(which will be converted to 0 before vmentry) 
+> which can lead to an immediately vmexit when delta_tsc is not bigger 
+> than advance ns. 
+> 
+> This patch can reduce ~63% latency (~4450 cycles to ~1660 cycles on 
+> a haswell desktop) for kvm-unit-tests/tscdeadline_latency when testing
+> busy waits.
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> @@ -12444,6 +12444,12 @@ static int vmx_set_hv_timer(struct kvm_vcpu *vcpu, u64 guest_deadline_tsc)
+>  	tscl = rdtsc();
+>  	guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
+>  	delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
+> +	lapic_timer_advance_cycles = nsec_to_cycles(vcpu, lapic_timer_advance_ns);
+> +	if (delta_tsc > lapic_timer_advance_cycles)
+> +		delta_tsc -= lapic_timer_advance_cycles;
+> +	else
+> +		delta_tsc = 1;
 
-Update the debug messages for the CPT table creation code. Place
-the passed in string in quotes to make it clear what it is.
-Captialize cpu in the debug strings.
+Why don't we just "return 1" to say that the timer has expired?
 
-Signed-off-by: Dmitry Eremin <dmitry.eremin@intel.com>
-Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8703
-Reviewed-on: https://review.whamcloud.com/23306
-Reviewed-by: James Simmons <uja.ornl@yahoo.com>
-Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
-Reviewed-by: Patrick Farrell <paf@cray.com>
-Reviewed-by: Olaf Weber <olaf.weber@hpe.com>
-Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
-Signed-off-by: James Simmons <jsimmons@infradead.org>
----
-Changelog:
+I think "delta_tsc = 1" would just force an immediate VM exit and
+a re-entry, which seems wasteful as we could just be delaying the entry
+until the deadline has really passed,
 
-v1) Initial patch
-v2) Rebased patch. No changes in code from earlier patch
-
- drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-index 0fc102c..649f7f9 100644
---- a/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-+++ b/drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c
-@@ -496,7 +496,7 @@ void cfs_cpt_unset_cpu(struct cfs_cpt_table *cptab, int cpt, int cpu)
- 
- 	} else if (cpt != cptab->ctb_cpu2cpt[cpu]) {
- 		CDEBUG(D_INFO,
--		       "CPU %d is not in cpu-partition %d\n", cpu, cpt);
-+		       "CPU %d is not in CPU partition %d\n", cpu, cpt);
- 		return;
- 	}
- 
-@@ -940,14 +940,14 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(char *pattern)
- 	if (!ncpt ||
- 	    (node && ncpt > num_online_nodes()) ||
- 	    (!node && ncpt > num_online_cpus())) {
--		CERROR("Invalid pattern %s, or too many partitions %d\n",
-+		CERROR("Invalid pattern '%s', or too many partitions %d\n",
- 		       pattern, ncpt);
- 		return NULL;
- 	}
- 
- 	cptab = cfs_cpt_table_alloc(ncpt);
- 	if (!cptab) {
--		CERROR("Failed to allocate cpu partition table\n");
-+		CERROR("Failed to allocate CPU partition table\n");
- 		return NULL;
- 	}
- 
-@@ -978,11 +978,11 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(char *pattern)
- 
- 		if (!bracket) {
- 			if (*str) {
--				CERROR("Invalid pattern %s\n", str);
-+				CERROR("Invalid pattern '%s'\n", str);
- 				goto failed;
- 			}
- 			if (c != ncpt) {
--				CERROR("expect %d partitions but found %d\n",
-+				CERROR("Expect %d partitions but found %d\n",
- 				       ncpt, c);
- 				goto failed;
- 			}
-@@ -990,7 +990,7 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(char *pattern)
- 		}
- 
- 		if (sscanf(str, "%d%n", &cpt, &n) < 1) {
--			CERROR("Invalid cpu pattern %s\n", str);
-+			CERROR("Invalid CPU pattern '%s'\n", str);
- 			goto failed;
- 		}
- 
-@@ -1007,20 +1007,20 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(char *pattern)
- 
- 		str = strim(str + n);
- 		if (str != bracket) {
--			CERROR("Invalid pattern %s\n", str);
-+			CERROR("Invalid pattern '%s'\n", str);
- 			goto failed;
- 		}
- 
- 		bracket = strchr(str, ']');
- 		if (!bracket) {
--			CERROR("Missing right bracket for partition %d, %s\n",
-+			CERROR("Missing right bracket for partition %d in '%s'\n",
- 			       cpt, str);
- 			goto failed;
- 		}
- 
- 		if (cfs_expr_list_parse(str, (bracket - str) + 1,
- 					0, high, &el)) {
--			CERROR("Can't parse number range: %s\n", str);
-+			CERROR("Can't parse number range in '%s'\n", str);
- 			goto failed;
- 		}
- 
--- 
-1.8.3.1
+thanks.
