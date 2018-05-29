@@ -1,153 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754529AbeE2GN0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 02:13:26 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36159 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751800AbeE2GNX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 02:13:23 -0400
-X-Google-Smtp-Source: ADUXVKIVMCYm0yQZONR/yid8lE5TvwEVH0chm1LXrmUWRusMvluDC8DVavcY+d3hSep9Y0n87z4+OKS0sWqXsYLp4Wk=
+        id S1754581AbeE2GNn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 02:13:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41178 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751800AbeE2GNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 02:13:40 -0400
+Subject: Re: [RFC v5 2/5] virtio_ring: support creating packed ring
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com, Cornelia Huck <cohuck@redhat.com>
+References: <20180522081648.14768-1-tiwei.bie@intel.com>
+ <20180522081648.14768-3-tiwei.bie@intel.com>
+ <654feee2-3414-e304-0aec-2bb19a7e0c87@redhat.com>
+ <20180529052418.GB2976@debian>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <df36b345-38f9-5474-4be1-6792e2e25efb@redhat.com>
+Date: Tue, 29 May 2018 14:13:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180528100202.045206534@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 29 May 2018 11:43:21 +0530
-Message-ID: <CA+G9fYu1c7-Lvp33kMdkvbA-easRh8=qKuM-3ErDEdLUiwV8Aw@mail.gmail.com>
-Subject: Re: [PATCH 4.4 000/268] 4.4.134-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>, Shuah Khan <shuah@kernel.org>,
-        patches@kernelci.org, Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180529052418.GB2976@debian>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4T6Dex5030487
 
-On 28 May 2018 at 15:29, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.4.134 release.
-> There are 268 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+
+On 2018年05月29日 13:24, Tiwei Bie wrote:
+> On Tue, May 29, 2018 at 10:49:11AM +0800, Jason Wang wrote:
+>> On 2018年05月22日 16:16, Tiwei Bie wrote:
+>>> This commit introduces the support for creating packed ring.
+>>> All split ring specific functions are added _split suffix.
+>>> Some necessary stubs for packed ring are also added.
+>>>
+>>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+>>> ---
+>>>    drivers/virtio/virtio_ring.c | 801 +++++++++++++++++++++++------------
+>>>    include/linux/virtio_ring.h  |   8 +-
+>>>    2 files changed, 546 insertions(+), 263 deletions(-)
+>>>
+>>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+>>> index 71458f493cf8..f5ef5f42a7cf 100644
+>>> --- a/drivers/virtio/virtio_ring.c
+>>> +++ b/drivers/virtio/virtio_ring.c
+>>> @@ -61,11 +61,15 @@ struct vring_desc_state {
+>>>    	struct vring_desc *indir_desc;	/* Indirect descriptor, if any. */
+>>>    };
+>>> +struct vring_desc_state_packed {
+>>> +	int next;			/* The next desc state. */
+>>> +};
+>>> +
+>>>    struct vring_virtqueue {
+>>>    	struct virtqueue vq;
+>>> -	/* Actual memory layout for this queue */
+>>> -	struct vring vring;
+>>> +	/* Is this a packed ring? */
+>>> +	bool packed;
+>>>    	/* Can we use weak barriers? */
+>>>    	bool weak_barriers;
+>>> @@ -87,11 +91,39 @@ struct vring_virtqueue {
+>>>    	/* Last used index we've seen. */
+>>>    	u16 last_used_idx;
+>>> -	/* Last written value to avail->flags */
+>>> -	u16 avail_flags_shadow;
+>>> +	union {
+>>> +		/* Available for split ring */
+>>> +		struct {
+>>> +			/* Actual memory layout for this queue. */
+>>> +			struct vring vring;
+>>> -	/* Last written value to avail->idx in guest byte order */
+>>> -	u16 avail_idx_shadow;
+>>> +			/* Last written value to avail->flags */
+>>> +			u16 avail_flags_shadow;
+>>> +
+>>> +			/* Last written value to avail->idx in
+>>> +			 * guest byte order. */
+>>> +			u16 avail_idx_shadow;
+>>> +		};
+>>> +
+>>> +		/* Available for packed ring */
+>>> +		struct {
+>>> +			/* Actual memory layout for this queue. */
+>>> +			struct vring_packed vring_packed;
+>>> +
+>>> +			/* Driver ring wrap counter. */
+>>> +			u8 avail_wrap_counter;
+>>> +
+>>> +			/* Device ring wrap counter. */
+>>> +			u8 used_wrap_counter;
+>> How about just use boolean?
+> I can change it to bool if you want.
+
+Yes, please.
+
 >
-> Responses should be made by Wed May 30 10:00:40 UTC 2018.
-> Anything received after that time might be too late.
+> [...]
+>>> -static int vring_mapping_error(const struct vring_virtqueue *vq,
+>>> -			       dma_addr_t addr)
+>>> -{
+>>> -	if (!vring_use_dma_api(vq->vq.vdev))
+>>> -		return 0;
+>>> -
+>>> -	return dma_mapping_error(vring_dma_dev(vq), addr);
+>>> -}
+>> It looks to me if you keep vring_mapping_error behind
+>> vring_unmap_one_split(), lots of changes were unncessary.
+>>
+> [...]
+>>> +	}
+>>> +	/* That should have freed everything. */
+>>> +	BUG_ON(vq->vq.num_free != vq->vring.num);
+>>> +
+>>> +	END_USE(vq);
+>>> +	return NULL;
+>>> +}
+>> I think the those copy-and-paste hunks could be avoided and the diff should
+>> only contains renaming of the function. If yes, it would be very welcomed
+>> since it requires to compare the changes verbatim otherwise.
+> Michael suggested to lay out the code as:
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.134-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
+> XXX_split
 >
-> thanks,
+> XXX_packed
 >
-> greg k-h
+> XXX wrappers
+>
+> https://lkml.org/lkml/2018/4/13/410
+>
+> That's why I moved some code.
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm and x86_64.
+I see, then no need to change but it still looks unnecessary.
 
-NOTE:
-The failed LTP test case "cve-2017-5669" is a waiver here.
+>
+>>> +
+>>> +/*
+>>> + * The layout for the packed ring is a continuous chunk of memory
+>>> + * which looks like this.
+>>> + *
+>>> + * struct vring_packed {
+>>> + *	// The actual descriptors (16 bytes each)
+>>> + *	struct vring_packed_desc desc[num];
+>>> + *
+>>> + *	// Padding to the next align boundary.
+>>> + *	char pad[];
+>>> + *
+>>> + *	// Driver Event Suppression
+>>> + *	struct vring_packed_desc_event driver;
+>>> + *
+>>> + *	// Device Event Suppression
+>>> + *	struct vring_packed_desc_event device;
+>>> + * };
+>>> + */
+>>> +static inline void vring_init_packed(struct vring_packed *vr, unsigned int num,
+>>> +				     void *p, unsigned long align)
+>>> +{
+>>> +	vr->num = num;
+>>> +	vr->desc = p;
+>>> +	vr->driver = (void *)(((uintptr_t)p + sizeof(struct vring_packed_desc)
+>>> +		* num + align - 1) & ~(align - 1));
+>> If we choose not to go uapi, maybe we can use ALIGN() macro here?
+> Okay.
+>
+>>> +	vr->device = vr->driver + 1;
+>>> +}
+> [...]
+>>> +/* Only available for split ring */
+>>>    const struct vring *virtqueue_get_vring(struct virtqueue *vq)
+>>>    {
+>> A possible issue with this is:
+>>
+>> After commit d4674240f31f8c4289abba07d64291c6ddce51bc ("KVM: s390:
+>> virtio-ccw revision 1 SET_VQ"). CCW tries to use
+>> virtqueue_get_avail()/virtqueue_get_used(). Looks like a bug either here or
+>> ccw code.
+> Do we still need to support:
+>
+> include/linux/virtio.h
+> /*
+>   * Legacy accessors -- in almost all cases, these are the wrong functions
+>   * to use.
+>   */
+> static inline void *virtqueue_get_desc(struct virtqueue *vq)
+> {
+>          return virtqueue_get_vring(vq)->desc;
+> }
+> static inline void *virtqueue_get_avail(struct virtqueue *vq)
+> {
+>          return virtqueue_get_vring(vq)->avail;
+> }
+> static inline void *virtqueue_get_used(struct virtqueue *vq)
+> {
+>          return virtqueue_get_vring(vq)->used;
+> }
+>
+> in packed ring?
 
-Summary
-------------------------------------------------------------------------
+I think it was probably a bug in ccw, they should use e.g 
+virtqueue_get_desc_addr() instead.
 
-kernel: 4.4.134-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.4.y
-git commit: 186b201a52cb29a2970391841c16a97833fe7119
-git describe: v4.4.133-269-g186b201a52cb
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.133-269-g186b201a52cb
+Thanks
 
-No regressions (compared to build v4.4.133-270-gc7a377784d68)
-
-Ran 7070 total tests in the following environments and test suites.
-
-Environments
---------------
-- juno-r2 - arm64
-- qemu_arm
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
-Hikey test results,
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.134-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.134-rc1-hikey-20180528-206
-git commit: c4a9948ea47675e12c3f2a5ff009b2d0cb6c7517
-git describe: 4.4.134-rc1-hikey-20180528-206
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4-oe/build/4.4.134-rc1-hikey-20180528-206
-
-No regressions (compared to build 4.4.134-rc1-hikey-20180528-205)
-
-Ran 2655 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-
--- 
-Linaro LKFT
-https://lkft.linaro.org
+>
+> If so, I think maybe it's better to expose them as
+> symbols and implement them in virtio_ring.c.
+>
+> Best regards,
+> Tiwei Bie
