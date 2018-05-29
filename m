@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936685AbeE2PJQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:09:16 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45627 "EHLO
+        id S936571AbeE2PJH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:09:07 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44565 "EHLO
         mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935811AbeE2OoV (ORCPT
+        with ESMTP id S935824AbeE2OoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:44:21 -0400
-X-Google-Smtp-Source: ADUXVKKWOb8ROp8YuTF1jhpfyTbOVfuvYRq0bc5yaXurP8CFB2gKPTHhCtRfkq2C8jyKZcgPVzJjOQ==
+        Tue, 29 May 2018 10:44:23 -0400
+X-Google-Smtp-Source: AB8JxZqjORlUJeLZTi+N5I50W/PESaHpqNYzk+NdJdUaf1XH0VTuV1oBFJgnKm07ImLT/Y7lG1P+oQ==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 31/39] Revert "ovl: don't allow writing ioctl on lower layer"
-Date: Tue, 29 May 2018 16:43:31 +0200
-Message-Id: <20180529144339.16538-32-mszeredi@redhat.com>
+Subject: [PATCH 33/39] Revert "ovl: fix relatime for directories"
+Date: Tue, 29 May 2018 16:43:33 +0200
+Message-Id: <20180529144339.16538-34-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
 References: <20180529144339.16538-1-mszeredi@redhat.com>
@@ -21,185 +21,77 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 7c6893e3c9abf6a9676e060a1e35e5caca673d57.
+This reverts commit cd91304e7190b4c4802f8e413ab2214b233e0260.
 
-Overlayfs no longer relies on the vfs for checking writability of files.
+Overlayfs no longer relies on the vfs correct atime handling.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/internal.h  |  2 --
- fs/namespace.c | 64 +++-------------------------------------------------------
- fs/open.c      |  4 ++--
- fs/xattr.c     |  9 ++++-----
- 4 files changed, 9 insertions(+), 70 deletions(-)
+ fs/inode.c             | 21 ++++-----------------
+ fs/overlayfs/super.c   |  3 ---
+ include/linux/dcache.h |  3 ---
+ 3 files changed, 4 insertions(+), 23 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 6821cf475fc6..29c9a2fab592 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -80,10 +80,8 @@ extern void __init mnt_init(void);
- 
- extern int __mnt_want_write(struct vfsmount *);
- extern int __mnt_want_write_file(struct file *);
--extern int mnt_want_write_file_path(struct file *);
- extern void __mnt_drop_write(struct vfsmount *);
- extern void __mnt_drop_write_file(struct file *);
--extern void mnt_drop_write_file_path(struct file *);
- 
- /*
-  * fs_struct.c
-diff --git a/fs/namespace.c b/fs/namespace.c
-index c3f7152a8419..5286c5313e67 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -431,18 +431,13 @@ int __mnt_want_write_file(struct file *file)
- }
- 
- /**
-- * mnt_want_write_file_path - get write access to a file's mount
-+ * mnt_want_write_file - get write access to a file's mount
-  * @file: the file who's mount on which to take a write
-  *
-  * This is like mnt_want_write, but it takes a file and can
-  * do some optimisations if the file is open for write already
-- *
-- * Called by the vfs for cases when we have an open file at hand, but will do an
-- * inode operation on it (important distinction for files opened on overlayfs,
-- * since the file operations will come from the real underlying file, while
-- * inode operations come from the overlay).
-  */
--int mnt_want_write_file_path(struct file *file)
-+int mnt_want_write_file(struct file *file)
+diff --git a/fs/inode.c b/fs/inode.c
+index 1bea65d37afe..ad0259bafe2d 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1559,24 +1559,11 @@ EXPORT_SYMBOL(bmap);
+ static void update_ovl_inode_times(struct dentry *dentry, struct inode *inode,
+ 			       bool rcu)
  {
- 	int ret;
- 
-@@ -452,53 +447,6 @@ int mnt_want_write_file_path(struct file *file)
- 		sb_end_write(file->f_path.mnt->mnt_sb);
- 	return ret;
- }
--
--static inline int may_write_real(struct file *file)
--{
--	struct dentry *dentry = file->f_path.dentry;
 -	struct dentry *upperdentry;
++	if (!rcu) {
++		struct inode *realinode = d_real_inode(dentry);
+ 
+-	/*
+-	 * Nothing to do if in rcu or if non-overlayfs
+-	 */
+-	if (rcu || likely(!(dentry->d_flags & DCACHE_OP_REAL)))
+-		return;
 -
--	/* Writable file? */
--	if (file->f_mode & FMODE_WRITER)
--		return 0;
--
--	/* Not overlayfs? */
--	if (likely(!(dentry->d_flags & DCACHE_OP_REAL)))
--		return 0;
--
--	/* File refers to upper, writable layer? */
 -	upperdentry = d_real(dentry, NULL, 0, D_REAL_UPPER);
--	if (upperdentry && file_inode(file) == d_inode(upperdentry))
--		return 0;
 -
--	/* Lower layer: can't write to real file, sorry... */
--	return -EPERM;
--}
+-	/*
+-	 * If file is on lower then we can't update atime, so no worries about
+-	 * stale mtime/ctime.
+-	 */
+-	if (upperdentry) {
+-		struct inode *realinode = d_inode(upperdentry);
 -
--/**
-- * mnt_want_write_file - get write access to a file's mount
-- * @file: the file who's mount on which to take a write
-- *
-- * This is like mnt_want_write, but it takes a file and can
-- * do some optimisations if the file is open for write already
-- *
-- * Mostly called by filesystems from their ioctl operation before performing
-- * modification.  On overlayfs this needs to check if the file is on a read-only
-- * lower layer and deny access in that case.
-- */
--int mnt_want_write_file(struct file *file)
--{
--	int ret;
--
--	ret = may_write_real(file);
--	if (!ret) {
--		sb_start_write(file_inode(file)->i_sb);
--		ret = __mnt_want_write_file(file);
--		if (ret)
--			sb_end_write(file_inode(file)->i_sb);
--	}
--	return ret;
--}
- EXPORT_SYMBOL_GPL(mnt_want_write_file);
+-		if ((!timespec_equal(&inode->i_mtime, &realinode->i_mtime) ||
++		if (unlikely(inode != realinode) &&
++		    (!timespec_equal(&inode->i_mtime, &realinode->i_mtime) ||
+ 		     !timespec_equal(&inode->i_ctime, &realinode->i_ctime))) {
+ 			inode->i_mtime = realinode->i_mtime;
+ 			inode->i_ctime = realinode->i_ctime;
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 900ed4c39919..65ec661c60e6 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -107,9 +107,6 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
+ 	if (inode && d_inode(dentry) == inode)
+ 		return dentry;
  
+-	if (flags & D_REAL_UPPER)
+-		return ovl_dentry_upper(dentry);
+-
+ 	if (!d_is_reg(dentry)) {
+ 		if (!inode || inode == d_inode(dentry))
+ 			return dentry;
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 66c6e17e61e5..ddae4103d324 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -564,9 +564,6 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
+ 	return upper;
+ }
+ 
+-/* d_real() flags */
+-#define D_REAL_UPPER	0x2	/* return upper dentry or NULL if non-upper */
+-
  /**
-@@ -536,15 +484,9 @@ void __mnt_drop_write_file(struct file *file)
- 	__mnt_drop_write(file->f_path.mnt);
- }
- 
--void mnt_drop_write_file_path(struct file *file)
--{
--	mnt_drop_write(file->f_path.mnt);
--}
--
- void mnt_drop_write_file(struct file *file)
- {
--	__mnt_drop_write(file->f_path.mnt);
--	sb_end_write(file_inode(file)->i_sb);
-+	mnt_drop_write(file->f_path.mnt);
- }
- EXPORT_SYMBOL(mnt_drop_write_file);
- 
-diff --git a/fs/open.c b/fs/open.c
-index 1d4bc541c619..2db39216c393 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -707,12 +707,12 @@ int ksys_fchown(unsigned int fd, uid_t user, gid_t group)
- 	if (!f.file)
- 		goto out;
- 
--	error = mnt_want_write_file_path(f.file);
-+	error = mnt_want_write_file(f.file);
- 	if (error)
- 		goto out_fput;
- 	audit_file(f.file);
- 	error = chown_common(&f.file->f_path, user, group);
--	mnt_drop_write_file_path(f.file);
-+	mnt_drop_write_file(f.file);
- out_fput:
- 	fdput(f);
- out:
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 61cd28ba25f3..78eaffbdbee0 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -23,7 +23,6 @@
- #include <linux/posix_acl_xattr.h>
- 
- #include <linux/uaccess.h>
--#include "internal.h"
- 
- static const char *
- strcmp_prefix(const char *a, const char *a_prefix)
-@@ -503,10 +502,10 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
- 	if (!f.file)
- 		return error;
- 	audit_file(f.file);
--	error = mnt_want_write_file_path(f.file);
-+	error = mnt_want_write_file(f.file);
- 	if (!error) {
- 		error = setxattr(f.file->f_path.dentry, name, value, size, flags);
--		mnt_drop_write_file_path(f.file);
-+		mnt_drop_write_file(f.file);
- 	}
- 	fdput(f);
- 	return error;
-@@ -735,10 +734,10 @@ SYSCALL_DEFINE2(fremovexattr, int, fd, const char __user *, name)
- 	if (!f.file)
- 		return error;
- 	audit_file(f.file);
--	error = mnt_want_write_file_path(f.file);
-+	error = mnt_want_write_file(f.file);
- 	if (!error) {
- 		error = removexattr(f.file->f_path.dentry, name);
--		mnt_drop_write_file_path(f.file);
-+		mnt_drop_write_file(f.file);
- 	}
- 	fdput(f);
- 	return error;
+  * d_real - Return the real dentry
+  * @dentry: the dentry to query
 -- 
 2.14.3
