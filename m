@@ -1,29 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965170AbeE2Q4X (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 12:56:23 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:33580 "EHLO
+        id S965222AbeE2Q5q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 12:57:46 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:32838 "EHLO
         bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936967AbeE2Q4U (ORCPT
+        with ESMTP id S935486AbeE2Q5o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 12:56:20 -0400
-Date: Tue, 29 May 2018 09:56:17 -0700
+        Tue, 29 May 2018 12:57:44 -0400
+Date: Tue, 29 May 2018 09:57:42 -0700
 From: Guenter Roeck <linux@roeck-us.net>
 To: Tomer Maimon <tmaimon77@gmail.com>
 Cc: robh+dt@kernel.org, mark.rutland@arm.com, jdelvare@suse.com,
         avifishman70@gmail.com, yuenn@google.com, brendanhiggins@google.com,
         venture@google.com, joel@jms.id.au, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-pwm@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 2/2] hwmon: npcm-pwm: add NPCM7xx PWM driver
-Message-ID: <20180529165617.GD2162@roeck-us.net>
+        openbmc@lists.ozlabs.org
+Subject: Re: [PATCH v1 1/2] dt-binding: hwmon: Add NPCM7xx PWM documentation
+Message-ID: <20180529165742.GE2162@roeck-us.net>
 References: <1527588141-18639-1-git-send-email-tmaimon77@gmail.com>
- <1527588141-18639-3-git-send-email-tmaimon77@gmail.com>
+ <1527588141-18639-2-git-send-email-tmaimon77@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527588141-18639-3-git-send-email-tmaimon77@gmail.com>
+In-Reply-To: <1527588141-18639-2-git-send-email-tmaimon77@gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 X-Authenticated_sender: guenter@roeck-us.net
 X-OutGoing-Spam-Status: No, score=-1.0
@@ -41,433 +40,53 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 01:02:21PM +0300, Tomer Maimon wrote:
-> Add Nuvoton BMC NPCM7xx Pulse Width Modulation (PWM) driver.
-> 
-> The Nuvoton BMC NPCM7xx has two identical PWM controller modules,
-> each module has four PWM controller outputs.
+On Tue, May 29, 2018 at 01:02:20PM +0300, Tomer Maimon wrote:
+> Added device tree binding documentation for Nuvoton BMC
+> NPCM7xx Pulse Width Modulation (PWM) controller.
 > 
 
-I don't see it guaranteed that all future NPCM7xx devices will be PWM
-controllers, much less that they will be compatible to the chip really
-supported here. NPCM750, I presume ? I would suggest name the driver
-accordingly.
-
-As a generic pwm driver, not specifically tied to a fan controller,
-this driver does not belong into hwmon. It should be added to the pwm
-subsystem. Copying the maintainer and mailing list.
-
-If the pwm chip is used to control fans, the existing pwm-fan driver can
-then be used to create the necessary mapping from pwm controls to fans.
+As mentioned in the other commit, this should be a pwm driver,
+not a hwmon driver.
 
 Guenter
 
 > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 > ---
->  drivers/hwmon/Kconfig       |   6 +
->  drivers/hwmon/Makefile      |   1 +
->  drivers/hwmon/npcm7xx-pwm.c | 363 ++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 370 insertions(+)
->  create mode 100644 drivers/hwmon/npcm7xx-pwm.c
+>  .../devicetree/bindings/hwmon/npcm7xx-pwm.txt      | 25 ++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/npcm7xx-pwm.txt
 > 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index 6ec307c93ece..693ba09cff8e 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -1891,6 +1891,12 @@ config SENSORS_XGENE
->  	  If you say yes here you get support for the temperature
->  	  and power sensors for APM X-Gene SoC.
->  
-> +config SENSORS_NPCM7XX
-> +	tristate "Nuvoton NPCM7XX PWM driver"
-> +	help
-> +	  This driver provides support for Nuvoton NPCM7XX PWM
-> +	  controller.
-> +
->  if ACPI
->  
->  comment "ACPI drivers"
-> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-> index e7d52a36e6c4..24aad895a3bb 100644
-> --- a/drivers/hwmon/Makefile
-> +++ b/drivers/hwmon/Makefile
-> @@ -174,6 +174,7 @@ obj-$(CONFIG_SENSORS_W83L786NG)	+= w83l786ng.o
->  obj-$(CONFIG_SENSORS_WM831X)	+= wm831x-hwmon.o
->  obj-$(CONFIG_SENSORS_WM8350)	+= wm8350-hwmon.o
->  obj-$(CONFIG_SENSORS_XGENE)	+= xgene-hwmon.o
-> +obj-$(CONFIG_SENSORS_NPCM7XX)	+= npcm7xx-pwm.o
->  
->  obj-$(CONFIG_PMBUS)		+= pmbus/
->  
-> diff --git a/drivers/hwmon/npcm7xx-pwm.c b/drivers/hwmon/npcm7xx-pwm.c
+> diff --git a/Documentation/devicetree/bindings/hwmon/npcm7xx-pwm.txt b/Documentation/devicetree/bindings/hwmon/npcm7xx-pwm.txt
 > new file mode 100644
-> index 000000000000..6122ca82b94d
+> index 000000000000..2d8a7ccdc8cf
 > --- /dev/null
-> +++ b/drivers/hwmon/npcm7xx-pwm.c
-> @@ -0,0 +1,363 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2014-2018 Nuvoton Technology corporation.
+> +++ b/Documentation/devicetree/bindings/hwmon/npcm7xx-pwm.txt
+> @@ -0,0 +1,25 @@
+> +Nuvoton NPCM7xx Pulse-width modulation (PWM) controller device driver
 > +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/device.h>
-> +#include <linux/clk.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/hwmon.h>
-> +#include <linux/hwmon-sysfs.h>
-> +#include <linux/sysfs.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_address.h>
+> +The NPCM7xx has two identical PWM controller modules,
+> +Each module has four PWM controller outputs.
+> +NPCM7xx PWM controller module 0 outputs PWM0-3 and NPCM7xx PWM controller
+> +module 1 outputs PWM4-7.
 > +
-> +/* NPCM7XX PWM port base address */
-> +#define NPCM7XX_PWM_REG_PR		0x0
-> +#define NPCM7XX_PWM_REG_CSR		0x4
-> +#define NPCM7XX_PWM_REG_CR		0x8
-> +#define NPCM7XX_PWM_REG_CNRx(PORT)	(0xC + (12 * PORT))
-> +#define NPCM7XX_PWM_REG_CMRx(PORT)	(0x10 + (12 * PORT))
-> +#define NPCM7XX_PWM_REG_PDRx(PORT)	(0x14 + (12 * PORT))
-> +#define NPCM7XX_PWM_REG_PIER		0x3C
-> +#define NPCM7XX_PWM_REG_PIIR		0x40
+> +Required properties:
+> +- compatible	: "nuvoton,npcm750-pwm" for Poleg NPCM7XX.
+> +- reg		: Offset and length of the registers set for the device.
+> +- clocks	: phandle of pwm reference clock.
+> +- pinctrl-names	: a pinctrl state named "default" must be defined.
+> +- pinctrl-0 	: phandle referencing pin configuration of the PWM ports.
 > +
-> +#define NPCM7XX_PWM_CTRL_CH0_MODE_BIT		BIT(3)
-> +#define NPCM7XX_PWM_CTRL_CH1_MODE_BIT		BIT(11)
-> +#define NPCM7XX_PWM_CTRL_CH2_MODE_BIT		BIT(15)
-> +#define NPCM7XX_PWM_CTRL_CH3_MODE_BIT		BIT(19)
-> +
-> +#define NPCM7XX_PWM_CTRL_CH0_INV_BIT		BIT(2)
-> +#define NPCM7XX_PWM_CTRL_CH1_INV_BIT		BIT(10)
-> +#define NPCM7XX_PWM_CTRL_CH2_INV_BIT		BIT(14)
-> +#define NPCM7XX_PWM_CTRL_CH3_INV_BIT		BIT(18)
-> +
-> +#define NPCM7XX_PWM_CTRL_CH0_EN_BIT		BIT(0)
-> +#define NPCM7XX_PWM_CTRL_CH1_EN_BIT		BIT(8)
-> +#define NPCM7XX_PWM_CTRL_CH2_EN_BIT		BIT(12)
-> +#define NPCM7XX_PWM_CTRL_CH3_EN_BIT		BIT(16)
-> +
-> +/* Define the maximum PWM channel number */
-> +#define NPCM7XX_PWM_MAX_CHN_NUM			8
-> +#define NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE	4
-> +#define NPCM7XX_PWM_MAX_MODULES                 2
-> +
-> +/* Define the Counter Register, value = 100 for match 100% */
-> +#define NPCM7XX_PWM_COUNTER_DEFALUT_NUM		255
-> +#define NPCM7XX_PWM_COMPARATOR_DEFALUT_NUM	127
-> +
-> +#define NPCM7XX_PWM_COMPARATOR_MAX		255
-> +
-> +
-> +/* default all PWM channels PRESCALE2 = 1 */
-> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH0	0x4
-> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH1	0x40
-> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH2	0x400
-> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH3	0x4000
-> +
-> +#define PWM_OUTPUT_FREQ_25KHZ			25000
-> +#define PWN_CNT_DEFAULT				256
-> +#define MIN_PRESCALE1				2
-> +#define NPCM7XX_PWM_PRESCALE_SHIFT_CH01		8
-> +
-> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT	(NPCM7XX_PWM_PRESCALE2_DEFALUT_CH0 | \
-> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH1 | \
-> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH2 | \
-> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH3)
-> +
-> +#define NPCM7XX_PWM_CTRL_MODE_DEFALUT	(NPCM7XX_PWM_CTRL_CH0_MODE_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH1_MODE_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH2_MODE_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH3_MODE_BIT)
-> +
-> +#define NPCM7XX_PWM_CTRL_EN_DEFALUT	(NPCM7XX_PWM_CTRL_CH0_EN_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH1_EN_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH2_EN_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH3_EN_BIT)
-> +
-> +struct npcm7xx_pwm_data {
-> +	unsigned long clk_freq;
-> +	void __iomem *pwm_base[NPCM7XX_PWM_MAX_MODULES];
-> +	struct mutex npcm7xx_pwm_lock[NPCM7XX_PWM_MAX_CHN_NUM];
+> +pwm:pwm@f0103000 {
+> +	compatible = "nuvoton,npcm750-pwm";
+> +	reg = <0xf0103000 0x50
+> +		0xf0104000 0x50>;
+> +	clocks = <&clk NPCM7XX_CLK_APB3>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pwm0_pins &pwm1_pins
+> +			&pwm2_pins &pwm3_pins
+> +			&pwm4_pins &pwm5_pins
+> +			&pwm6_pins &pwm7_pins>;
 > +};
-> +
-> +static const struct of_device_id pwm_dt_id[];
-> +
-> +static int npcm7xx_pwm_config_set(struct npcm7xx_pwm_data *data, int channel,
-> +				  u16 val)
-> +{
-> +	u32 PWMChannel = (channel % NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
-> +	u32 n_module = (channel / NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
-> +	u32 u32TmpBuf = 0, ctrl_en_bit;
-> +
-> +	/*
-> +	 * Config PWM Comparator register for setting duty cycle
-> +	 */
-> +	if (val < 0 || val > NPCM7XX_PWM_COMPARATOR_MAX)
-> +		return -EINVAL;
-> +
-> +	/* write new CMR value  */
-> +	iowrite32(val, data->pwm_base[n_module] +
-> +		  NPCM7XX_PWM_REG_CMRx(PWMChannel));
-> +
-> +	u32TmpBuf = ioread32(data->pwm_base[n_module] + NPCM7XX_PWM_REG_CR);
-> +
-> +	switch (PWMChannel) {
-> +	case 0:
-> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH0_EN_BIT;
-> +		break;
-> +	case 1:
-> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH1_EN_BIT;
-> +		break;
-> +	case 2:
-> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH2_EN_BIT;
-> +		break;
-> +	case 3:
-> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH3_EN_BIT;
-> +		break;
-> +	default:
-> +		return -ENODEV;
-> +	}
-> +
-> +	if (val == 0)
-> +		/* Disable PWM */
-> +		u32TmpBuf &= ~(ctrl_en_bit);
-> +	else
-> +		/* Enable PWM */
-> +		u32TmpBuf |= ctrl_en_bit;
-> +
-> +	mutex_lock(&data->npcm7xx_pwm_lock[n_module]);
-> +	iowrite32(u32TmpBuf, data->pwm_base[n_module] + NPCM7XX_PWM_REG_CR);
-> +	mutex_unlock(&data->npcm7xx_pwm_lock[n_module]);
-> +
-> +	return 0;
-> +}
-> +
-> +static int npcm7xx_read_pwm(struct device *dev, u32 attr, int channel,
-> +			     long *val)
-> +{
-> +	struct npcm7xx_pwm_data *data = dev_get_drvdata(dev);
-> +	u32 PWMChannel = (channel % NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
-> +	u32 n_module = (channel / NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
-> +
-> +	if (IS_ERR(data))
-> +		return PTR_ERR(data);
-> +
-> +	switch (attr) {
-> +	case hwmon_pwm_input:
-> +		*val = (long)ioread32(data->pwm_base[n_module] +
-> +				      NPCM7XX_PWM_REG_CMRx(PWMChannel));
-> +		return 0;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +static int npcm7xx_write_pwm(struct device *dev, u32 attr, int channel,
-> +			      long val)
-> +{
-> +	struct npcm7xx_pwm_data *data = dev_get_drvdata(dev);
-> +	int err = 0;
-> +
-> +	switch (attr) {
-> +	case hwmon_pwm_input:
-> +		err = npcm7xx_pwm_config_set(data, channel, (u16)val);
-> +		break;
-> +	default:
-> +		err = -EOPNOTSUPP;
-> +		break;
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +static umode_t npcm7xx_pwm_is_visible(const void *_data, u32 attr, int channel)
-> +{
-> +	switch (attr) {
-> +	case hwmon_pwm_input:
-> +		return 0644;
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static int npcm7xx_read(struct device *dev, enum hwmon_sensor_types type,
-> +			 u32 attr, int channel, long *val)
-> +{
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		return npcm7xx_read_pwm(dev, attr, channel, val);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +static int npcm7xx_write(struct device *dev, enum hwmon_sensor_types type,
-> +			  u32 attr, int channel, long val)
-> +{
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		return npcm7xx_write_pwm(dev, attr, channel, val);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +static umode_t npcm7xx_is_visible(const void *data,
-> +				   enum hwmon_sensor_types type,
-> +				   u32 attr, int channel)
-> +{
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		return npcm7xx_pwm_is_visible(data, attr, channel);
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static const u32 npcm7xx_pwm_config[] = {
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	0
-> +};
-> +
-> +static const struct hwmon_channel_info npcm7xx_pwm = {
-> +	.type = hwmon_pwm,
-> +	.config = npcm7xx_pwm_config,
-> +};
-> +
-> +static const struct hwmon_channel_info *npcm7xx_info[] = {
-> +	&npcm7xx_pwm,
-> +	NULL
-> +};
-> +
-> +static const struct hwmon_ops npcm7xx_hwmon_ops = {
-> +	.is_visible = npcm7xx_is_visible,
-> +	.read = npcm7xx_read,
-> +	.write = npcm7xx_write,
-> +};
-> +
-> +static const struct hwmon_chip_info npcm7xx_chip_info = {
-> +	.ops = &npcm7xx_hwmon_ops,
-> +	.info = npcm7xx_info,
-> +};
-> +
-> +static int npcm7xx_pwm_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct npcm7xx_pwm_data *data;
-> +	struct resource res[NPCM7XX_PWM_MAX_MODULES];
-> +	struct device *hwmon;
-> +	struct clk *clk;
-> +	int m, ch, res_cnt, ret;
-> +	u32 Prescale_val, output_freq;
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	for (res_cnt = 0; res_cnt < NPCM7XX_PWM_MAX_MODULES  ; res_cnt++) {
-> +		ret = of_address_to_resource(dev->of_node, res_cnt,
-> +					     &res[res_cnt]);
-> +		if (ret) {
-> +			pr_err("PWM of_address_to_resource fail ret %d\n",
-> +			       ret);
-> +			return -EINVAL;
-> +		}
-> +
-> +		data->pwm_base[res_cnt] =
-> +			devm_ioremap_resource(dev, &(res[res_cnt]));
-> +		pr_debug("pwm%d base is 0x%08X, res.start 0x%08X , size 0x%08X\n",
-> +			 res_cnt, (u32)data->pwm_base[res_cnt],
-> +			 res[res_cnt].start, resource_size(&(res[res_cnt])));
-> +
-> +		if (!data->pwm_base[res_cnt]) {
-> +			pr_err("pwm probe failed: can't read pwm base address for resource %d.\n",
-> +			       res_cnt);
-> +			return -ENOMEM;
-> +		}
-> +
-> +		mutex_init(&data->npcm7xx_pwm_lock[res_cnt]);
-> +	}
-> +
-> +	clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(clk))
-> +		return -ENODEV;
-> +
-> +	data->clk_freq = clk_get_rate(clk);
-> +
-> +	/* Adjust NPCM7xx PWMs output frequency to ~25Khz */
-> +	output_freq = data->clk_freq / PWN_CNT_DEFAULT;
-> +	Prescale_val = DIV_ROUND_CLOSEST(output_freq, PWM_OUTPUT_FREQ_25KHZ);
-> +
-> +	/* If Prescale_val = 0, then the prescale output clock is stopped */
-> +	if (Prescale_val < MIN_PRESCALE1)
-> +		Prescale_val = MIN_PRESCALE1;
-> +	/*
-> +	 * Prescale_val need to decrement in one because in the PWM Prescale
-> +	 * register the Prescale value increment by one
-> +	 */
-> +	Prescale_val--;
-> +
-> +	/* Setting PWM Prescale Register value register to both modules */
-> +	Prescale_val |= (Prescale_val << NPCM7XX_PWM_PRESCALE_SHIFT_CH01);
-> +
-> +	for (m = 0; m < NPCM7XX_PWM_MAX_MODULES  ; m++) {
-> +		iowrite32(Prescale_val,
-> +			  data->pwm_base[m] + NPCM7XX_PWM_REG_PR);
-> +		iowrite32(NPCM7XX_PWM_PRESCALE2_DEFALUT,
-> +			  data->pwm_base[m] + NPCM7XX_PWM_REG_CSR);
-> +		iowrite32(NPCM7XX_PWM_CTRL_MODE_DEFALUT,
-> +			  data->pwm_base[m] + NPCM7XX_PWM_REG_CR);
-> +
-> +		for (ch = 0; ch < NPCM7XX_PWM_MAX_CHN_NUM; ch++) {
-> +			iowrite32(NPCM7XX_PWM_COUNTER_DEFALUT_NUM,
-> +				  data->pwm_base[m] + NPCM7XX_PWM_REG_CNRx(ch));
-> +			iowrite32(NPCM7XX_PWM_COMPARATOR_DEFALUT_NUM,
-> +				  data->pwm_base[m] + NPCM7XX_PWM_REG_CMRx(ch));
-> +		}
-> +
-> +		iowrite32(NPCM7XX_PWM_CTRL_MODE_DEFALUT |
-> +			  NPCM7XX_PWM_CTRL_EN_DEFALUT,
-> +			  data->pwm_base[m] + NPCM7XX_PWM_REG_CR);
-> +	}
-> +
-> +	hwmon = devm_hwmon_device_register_with_info(dev, "npcm7xx_pwm", data,
-> +						     &npcm7xx_chip_info, NULL);
-> +
-> +	if (IS_ERR(hwmon)) {
-> +		pr_err("PWM Driver failed - devm_hwmon_device_register_with_groups failed\n");
-> +		return PTR_ERR(hwmon);
-> +	}
-> +
-> +	pr_info("NPCM7XX PWM Driver probed, PWM output Freq %dHz\n",
-> +		output_freq / ((Prescale_val & 0xf) + 1));
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id of_pwm_match_table[] = {
-> +	{ .compatible = "nuvoton,npcm750-pwm", },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, of_pwm_match_table);
-> +
-> +static struct platform_driver npcm7xx_pwm_driver = {
-> +	.probe		= npcm7xx_pwm_probe,
-> +	.driver		= {
-> +		.name	= "npcm7xx_pwm",
-> +		.of_match_table = of_pwm_match_table,
-> +	},
-> +};
-> +
-> +module_platform_driver(npcm7xx_pwm_driver);
-> +
-> +MODULE_DESCRIPTION("Nuvoton NPCM7XX PWM Driver");
-> +MODULE_AUTHOR("Tomer Maimon <tomer.maimon@nuvoton.com>");
-> +MODULE_LICENSE("GPL v2");
 > -- 
 > 2.14.1
 > 
