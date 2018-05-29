@@ -1,83 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936596AbeE2P2g (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:28:36 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:45342 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935040AbeE2P21 (ORCPT
+        id S935804AbeE2P14 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:27:56 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41084 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935613AbeE2P1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:28:27 -0400
-X-Google-Smtp-Source: ADUXVKI2rvnBze2QY65gyWyl3sraET3P4BmgbYWdjN/aU6/O2C8jR/QOXcmrGlIDIBVljI27ZW+Fie7BoHXTa8sOCCI=
-MIME-Version: 1.0
-In-Reply-To: <20180529070719.164626-1-liumartin@google.com>
-References: <Pine.LNX.4.44L0.1805241100000.1871-100000@iolanthe.rowland.org> <20180529070719.164626-1-liumartin@google.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 29 May 2018 18:28:25 +0300
-Message-ID: <CAHp75VejjrmZhEbvV3DEJ88PGnncySdTaWDPFA8Ba5hBy6rmpQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] driver core: hold dev's parent lock when needed
-To: martin_liu <liumartin@google.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
-        Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        USB <linux-usb@vger.kernel.org>, jenhaochen@google.com
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 May 2018 11:27:52 -0400
+X-Google-Smtp-Source: AB8JxZqB6iTFCi1dV1v9pAuzTv9/nF9NR/VLsCa+BdFynH9/Ao+UtfcOjnBxdbGfpKVD/hsjEJBpmw==
+From: Yafang Shao <laoar.shao@gmail.com>
+To: edumazet@google.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH net-next] tcp: minor optimization around tcp_hdr() usage in receive path
+Date: Tue, 29 May 2018 23:27:31 +0800
+Message-Id: <1527607651-28262-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:07 AM, martin_liu <liumartin@google.com> wrote:
-> SOC have internal I/O buses that can't be proved for devices. The
-> devices on the buses can be accessed directly without additinal
-> configuration required. This type of bus is represented as
-> "simple-bus". In some platforms, we name "soc" with "simple-bus"
-> attribute and many devices are hooked under it desribed in DT
-> (device tree).
->
-> In commit 'bf74ad5bc417 introduce ("[PATCH] Hold the device's
-> parent's lock during probe and remove")' to solve USB subsystem
-> lock sequence since usb device's characteristic. Thus "soc"
-> needs to be locked whenever a device and driver's probing
-> happen under "soc" bus. During this period, an async driver
-> tries to probe a device which is under the "soc" bus would be
-> blocked until previous driver finish the probing and release "soc"
-> lock. And the next probing under the "soc" bus need to wait for
-> async finish. Because of that, driver's async probe for init
-> time improvement will be shadowed.
->
-> Since many devices don't have USB devices' characteristic, they
-> actually don't need parent's lock. Thus, we introduce a lock flag
-> in device struct and driver core would lock the parent lock base
-> on the flag. For usbsystem, we set this flag when its device and
-> driver is matched and to keep original lock behavior in driver
-> core.
->
-> Async probe could have more benefit after this patch.
+This is additional to the
+commit ea1627c20c34 ("tcp: minor optimizations around tcp_hdr() usage").
+At this point, skb->data is same with tcp_hdr() as tcp header has not
+been pulled yet. So use the less expensive one to get the tcp header.
 
-> Signed-off-by: martin_liu <liumartin@google.com>
+Remove the third parameter of tcp_rcv_established() and put it into
+the function body.
 
-Strange Firstname Lastname format...
+Furthermore, the local variables are listed as a reverse christmas tree :)
 
-> Suggested-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+---
+ include/net/tcp.h          | 3 +--
+ include/trace/events/tcp.h | 5 +++--
+ net/ipv4/tcp_input.c       | 6 +++---
+ net/ipv4/tcp_ipv4.c        | 2 +-
+ net/ipv6/tcp_ipv6.c        | 2 +-
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-I guess your SoB should go last (at least this is how -s works in git commit)
-
->         /* Some ULPI devices don't have a vendor id so rely on OF match */
-> -       if (ulpi->id.vendor == 0)
-> -               return of_driver_match_device(dev, driver);
-> +       if (ulpi->id.vendor == 0) {
-> +               if (of_driver_match_device(dev, driver)) {
-> +                       dev->need_parent_lock = 1;
-> +                       return 1;
-> +               }
-
-> +               return o;
-
-Return what?
-
-> +       }
-
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index 952d842..029a51b 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -334,8 +334,7 @@ ssize_t do_tcp_sendpages(struct sock *sk, struct page *page, int offset,
+ void tcp_delack_timer_handler(struct sock *sk);
+ int tcp_ioctl(struct sock *sk, int cmd, unsigned long arg);
+ int tcp_rcv_state_process(struct sock *sk, struct sk_buff *skb);
+-void tcp_rcv_established(struct sock *sk, struct sk_buff *skb,
+-			 const struct tcphdr *th);
++void tcp_rcv_established(struct sock *sk, struct sk_buff *skb);
+ void tcp_rcv_space_adjust(struct sock *sk);
+ int tcp_twsk_unique(struct sock *sk, struct sock *sktw, void *twp);
+ void tcp_twsk_destructor(struct sock *sk);
+diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+index 703abb6..ac55b32 100644
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@ -248,8 +248,9 @@
+ 	),
+ 
+ 	TP_fast_assign(
+-		const struct tcp_sock *tp = tcp_sk(sk);
++		const struct tcphdr *th = (const struct tcphdr *)skb->data;
+ 		const struct inet_sock *inet = inet_sk(sk);
++		const struct tcp_sock *tp = tcp_sk(sk);
+ 
+ 		memset(__entry->saddr, 0, sizeof(struct sockaddr_in6));
+ 		memset(__entry->daddr, 0, sizeof(struct sockaddr_in6));
+@@ -261,7 +262,7 @@
+ 		__entry->dport = ntohs(inet->inet_dport);
+ 		__entry->mark = skb->mark;
+ 
+-		__entry->data_len = skb->len - tcp_hdrlen(skb);
++		__entry->data_len = skb->len - __tcp_hdrlen(th);
+ 		__entry->snd_nxt = tp->snd_nxt;
+ 		__entry->snd_una = tp->snd_una;
+ 		__entry->snd_cwnd = tp->snd_cwnd;
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 1191cac..d5ffb57 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -5390,11 +5390,11 @@ static bool tcp_validate_incoming(struct sock *sk, struct sk_buff *skb,
+  *	the rest is checked inline. Fast processing is turned on in
+  *	tcp_data_queue when everything is OK.
+  */
+-void tcp_rcv_established(struct sock *sk, struct sk_buff *skb,
+-			 const struct tcphdr *th)
++void tcp_rcv_established(struct sock *sk, struct sk_buff *skb)
+ {
+-	unsigned int len = skb->len;
++	const struct tcphdr *th = (const struct tcphdr *)skb->data;
+ 	struct tcp_sock *tp = tcp_sk(sk);
++	unsigned int len = skb->len;
+ 
+ 	/* TCP congestion window tracking */
+ 	trace_tcp_probe(sk, skb);
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index adbdb50..749b0ef 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -1486,7 +1486,7 @@ int tcp_v4_do_rcv(struct sock *sk, struct sk_buff *skb)
+ 				sk->sk_rx_dst = NULL;
+ 			}
+ 		}
+-		tcp_rcv_established(sk, skb, tcp_hdr(skb));
++		tcp_rcv_established(sk, skb);
+ 		return 0;
+ 	}
+ 
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index 7d47c2b..8764a63 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -1322,7 +1322,7 @@ static int tcp_v6_do_rcv(struct sock *sk, struct sk_buff *skb)
+ 			}
+ 		}
+ 
+-		tcp_rcv_established(sk, skb, tcp_hdr(skb));
++		tcp_rcv_established(sk, skb);
+ 		if (opt_skb)
+ 			goto ipv6_pktoptions;
+ 		return 0;
 -- 
-With Best Regards,
-Andy Shevchenko
+1.8.3.1
