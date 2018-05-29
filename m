@@ -1,31 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937517AbeE2DZy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 28 May 2018 23:25:54 -0400
-Received: from ozlabs.org ([203.11.71.1]:41143 "EHLO ozlabs.org"
+        id S1755354AbeE2DmX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 28 May 2018 23:42:23 -0400
+Received: from ozlabs.org ([203.11.71.1]:34217 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932463AbeE2DZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 May 2018 23:25:52 -0400
+        id S1751895AbeE2DmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 May 2018 23:42:13 -0400
 Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 29 May 2018 13:25:48 +1000
+Date: Tue, 29 May 2018 13:42:09 +1000
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 To: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
+        Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
+        =?UTF-8?B?QmrDtnJuIFTDtnBl?= =?UTF-8?B?bA==?=
+        <bjorn.topel@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>, Christoph Hellwig <hch@lst.de>
 Subject: linux-next: build failure after merge of the net-next tree
-Message-ID: <20180529132548.7f71c2ff@canb.auug.org.au>
+Message-ID: <20180529134209.4b8353f1@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0tK3ll5x8Ha1Nll4mTtSUBw"; protocol="application/pgp-signature"
+ boundary="Sig_/wW6_Q0.rSu9m3ivmZ58XCaX"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0tK3ll5x8Ha1Nll4mTtSUBw
+--Sig_/wW6_Q0.rSu9m3ivmZ58XCaX
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -34,41 +34,87 @@ Hi all,
 After merging the net-next tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpfilter_=
-umh.o' is incompatible with i386:x86-64 output
+net/xdp/xsk.c: In function 'xsk_poll':
+net/xdp/xsk.c:207:22: error: implicit declaration of function 'datagram_pol=
+l'; did you mean 'datagram_poll_mask'? [-Werror=3Dimplicit-function-declara=
+tion]
+  unsigned int mask =3D datagram_poll(file, sock, wait);
+                      ^~~~~~~~~~~~~=20
+                      datagram_poll_mask
 
 Caused by commit
 
-  d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+  c497176cb2e4 ("xsk: add Rx receive functions and poll support")
 
-In my builds, the host is PowerPC 64 LE ...
+interacting with commit
 
-I have reverted that commit along with
+  db5051ead64a ("net: convert datagram_poll users tp ->poll_mask")
 
-  61a552eb487f ("bpfilter: fix build dependency")
-  13405468f49d ("bpfilter: don't pass O_CREAT when opening console for debu=
-g")
+from the vfs tree.
 
-for today.
+[Christoph, I noticed that the comment above datagram_poll in
+net/core/datagram.c needs the function name updated]
+
+I have added the following merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 29 May 2018 13:34:25 +1000
+Subject: [PATCH] xsk: update for "net: convert datagram_poll users tp->poll=
+_mask"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/xdp/xsk.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
+index cce0e4f8a536..4ee140afbc61 100644
+--- a/net/xdp/xsk.c
++++ b/net/xdp/xsk.c
+@@ -201,10 +201,9 @@ static int xsk_sendmsg(struct socket *sock, struct msg=
+hdr *m, size_t total_len)
+ 	return xsk_generic_xmit(sk, m, total_len);
+ }
+=20
+-static unsigned int xsk_poll(struct file *file, struct socket *sock,
+-			     struct poll_table_struct *wait)
++static __poll_t xsk_poll_mask(struct socket *sock, __poll_t events)
+ {
+-	unsigned int mask =3D datagram_poll(file, sock, wait);
++	__poll_t mask =3D datagram_poll_mask(sock, events);
+ 	struct sock *sk =3D sock->sk;
+ 	struct xdp_sock *xs =3D xdp_sk(sk);
+=20
+@@ -580,7 +579,7 @@ static const struct proto_ops xsk_proto_ops =3D {
+ 	.socketpair	=3D sock_no_socketpair,
+ 	.accept		=3D sock_no_accept,
+ 	.getname	=3D sock_no_getname,
+-	.poll		=3D xsk_poll,
++	.poll_mask	=3D xsk_poll_mask,
+ 	.ioctl		=3D sock_no_ioctl,
+ 	.listen		=3D sock_no_listen,
+ 	.shutdown	=3D sock_no_shutdown,
+--=20
+2.17.0
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/0tK3ll5x8Ha1Nll4mTtSUBw
+--Sig_/wW6_Q0.rSu9m3ivmZ58XCaX
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsMyDwACgkQAVBC80lX
-0GxKdAf/UMaaj2S350stVP/Rpt4Y9DGTKl8D/EQpZSpfZ+eUnIsutZTCVEjo6yYW
-LB237YXsHQUMr28YpN8F2std5nPgUuFRtWdLHzUoqpzvcRmoXlJn9hZj7wu3DK24
-8CFVvPwG1a/gu9Zg8qsfTHIPWHU/I0tNXB+joY+0jYfzn//nGjn3S5CQCsoAnZGM
-spEYiZ1M5CnLLfgFqD2XmhmsNv5JazsbEPETgHrWvsdXTK2v6iJ5xo6iGUMqmel/
-K5dJjJWufZhnLf7amlVthptCfNfjdMGO2t9EyIS/iLygg462xLNWPcN1FV5ysuQR
-XynQvyVsuChTo2m/6SX7qXD+Smc6hQ==
-=r6JH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsMzBEACgkQAVBC80lX
+0Gxswwf+Ozt2QOlqUAZ8aqdH44Pqo3mb6vaggSqCflmT67/qhiC12M5fiMXGqyI4
+QggzQcphqCPtX+erUrM8PQAPdh5+/sjiCzTc7YgmbIk4UWqAdUlH11H96s3sEBRn
+XGQ9PEU+lBbE/NjhI9v4tJL1Es1FgsM+KREPHMWj8f4L8X4O9GvNA4VQl2Ywr4wU
+MsvjJtaujAZY6pgCjdx1Vvqj6zdRqf2endCt8Pph/5C7GEq9G1UZKr62hlL4/v0s
+en+tVswtL0VNAk8wH4p/k6NelOzwCN+jsBsLXvlNwZArYnYnrTXCgQtMykxcg7MV
+P3Lnt4NZYNu2IIT8iy7dh926qDSgzg==
+=WRdG
 -----END PGP SIGNATURE-----
 
---Sig_/0tK3ll5x8Ha1Nll4mTtSUBw--
+--Sig_/wW6_Q0.rSu9m3ivmZ58XCaX--
