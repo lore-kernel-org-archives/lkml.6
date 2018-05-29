@@ -1,5 +1,5 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1524644-1527568660-5-17364925318879523832
+X-Cyrus-Session-Id: sloti22d1t05-1524644-1527568703-2-14308859200060754764
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
@@ -8,24 +8,24 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527568660; b=AU+xSQLZRy2BMl5HJM3/c6xvM+4bSpFa+LTUZOABly1Nbx/0/c
-    zDpQlo5zjGL/F9zaFyucKEjMMSXR0L3few8OGcUTWNF2qDKo1Xtzdfyr2Jkjbdgi
-    XvEJ3LE85ItkhITvhiydJ1rebyDmId8EE2ryMJi0iMtXMf20fUQto18LtvgVeP7G
-    QL020YFEj1i/gYNpqcJtc/AGaV1+Mmg2I+lIRWh06Y29Py0CxQcLL1OQ//iYm0Ml
-    /rRrGpWHj7gYD52Y1KWR1HOSMxyx7yBc9RRN//Wnch7h+ikrCopGGtEuVLHLKEys
-    DheOsDB/YcgtVgbcHtgza8tiMn2K5/F+zklA==
+    1527568703; b=DPvozsHyOWrw0b38a4DdVvSGiD6RBrYQXuR7nmUunae4aPWKGl
+    MPlmXagLJmfXZT+Yn9soZQpXqWyFXgUk+9B8zMRTsGMse2fF8GRcIhZWbje+MXPk
+    bDAt6FqV21YRWR+lJlW2Gl2RM4eQCUDqSDukFEoGII3bJCPKg0ganBKeYisG9fze
+    JNzYapmWXOgJWgjienpBQZR+jgzCKX6iJTYC11sWCQreoYUndfBbE/KSLBhFO6mM
+    eGYdgjrHgNtZh7qmX/9ilNSjs3XST5zZdakMeBFFoNKiEkJV8EC56TqBhVt7RsNv
+    5VdGv9uJSirK5HWGNx0pRELXbrv0AypB219g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1527568660; bh=rc19uRg27Us5fp28EehDRtY5guGaXR
-    Slaz0GPfVoE68=; b=K8Hee2K2GiJe90BvQKyjxFWe4cFBe/oCgGxaVwCJKUwjcV
-    aM3xczajFeEUmgc86ABkUfXeNEbOl+TK5fOpJpXVLmuBhVKgE0JOfvo2fVukWpTw
-    tb9LZNdmakEiIkIgqxq9S3lvjCTAbpJ+Qcuj3Pg3zbPiwWY6jhed07Rn8tFGU79h
-    u6YHPBEel8SsbGDIf9qhvi/9rG4HoG7Ep4qDgFBH1M0mXlC2k8C8iM819yv5j/yF
-    Xax3K5hiBtuqLlcn5w5naFBlue3rr4AVaSaSNFNe37kEpWaDuCQsI7bg5UZcAnk2
-    GRmXlzEyZPRHy/4OeaTdxKu7VjIkVci6VKcgRcbQ==
+    :list-id; s=fm2; t=1527568703; bh=83IQe3pZmu3WcWM/FSQdDQLW0ZO5EU
+    GxzWPuKx4qtNU=; b=mDNg2KKjjWC3ASSUzy7t255EHjx22mDybRuzIjuzqtaaTi
+    ZR0qGnXBxgkyHIF221PA0RqHhWgLp9VEKCfWlWXpUX7JcUGhVHRh3HhOf7xzOv7M
+    DHbSNM6zHCisdnG5/c4/7Azh796Fr5X3EL0sbqneqSZNLU3lb7Ao0Z4UmDxz9+i/
+    rnuzx12ztmweEa944n5x4hFMf2TrvNXUPRxF3xRh70AwVRxABj602bIOpBcY9yNM
+    7zkfK7oL/xcd9G1UxOd2zGIUjVpF4aFGVeUK2sWMQs7sLn7sYo9Rtoa6ozpj3LTR
+    S6OhZg1JZJgWHSCLG08dZg82jjM4RiA/S/Y6feRA==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=K79fDo7E
+    header.d=gmail.com header.i=@gmail.com header.b=OXxBIaWA
     header.a=rsa-sha256 header.s=20161025 x-bits=2048;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -34,7 +34,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=CFi/tWSQ;
+    header.d=1e100.net header.i=@1e100.net header.b=jWDP+zt1;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
@@ -43,7 +43,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=K79fDo7E
+      header.d=gmail.com header.i=@gmail.com header.b=OXxBIaWA
       header.a=rsa-sha256 header.s=20161025 x-bits=2048;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -52,77 +52,101 @@ Authentication-Results: mx5.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=CFi/tWSQ;
+      header.d=1e100.net header.i=@1e100.net header.b=jWDP+zt1;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDUhZlZzGvgrEASjqapj868wgy8y/u3a9QCRnaeVQq+VgENZy1CF7Ath74nYGAeTKAsPpUPvaL81j2PdmQP4F9jyemjHQLk4JTE0cXvGb7KVx4unoq/x
-    xpPgmfKQhe8CrGpZdH1bkVP4V2l+To6W9hX4qZ7IhuUgWiNkkDBtGi9OR1tXvxlLVIqbSsuIbtznPSuLXAcoHkza/mZWm0koj8Nt0PNubBKNJ1WI6Zn8cqYU
-    HEirOMnACxABSRHRMYHpEQ==
+X-CM-Envelope: MS4wfAQtK/53DABqNdlOcFziIcdHxLHDRcA7zo/oanKRBbV03uR9rtKEdoroYO09iqHjO2cQWbNP3ngL+GyeXQ58Q6YnDZYN23qnbOZu8coyw1F2DM2yiAVJ
+    fGHKc/qOBrwU7WgU8w0q/v39B7MNyH82nQ4+rXSVHcXHT3qxdT00PKsC/CX/5EJcs0btWCyiLY5JbJG5QhjtJf2jVm2qERDvYCvOhs4KioE0Ye1a/fR2STNy
+    BvDe8Nv4txWdHAzB3itF5Q==
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=agizdKYkGd8A:10
-    a=VUJBJC2UJ8kA:10 a=o4cBDJ48AAAA:8 a=VwQbUJbxAAAA:8 a=CL9bXbnIb7Vg_NEitggA:9
-    a=hkQhBpQTBlgK7Mks:21 a=DPOZexylbpBtvwBO:21 a=x8gzFH9gYPwA:10
-    a=OOX4_xUL_TWpQX1oCgna:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=knMS2wLuVtuG5UEON8gA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751377AbeE2Ehh (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 29 May 2018 00:37:37 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:47008 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750866AbeE2Ehf (ORCPT
+        id S1754541AbeE2EiR (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 29 May 2018 00:38:17 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37655 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754646AbeE2EiP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 May 2018 00:37:35 -0400
-X-Google-Smtp-Source: AB8JxZpLfI7Cyrxl32wg5iElXkrM0sr04HdeZ1hsllIvnlOZdpa8lGezK9tTMcOu9ycBB7FoJMYGXA==
+        Tue, 29 May 2018 00:38:15 -0400
+X-Google-Smtp-Source: AB8JxZqmnCdOz27XY1Oxfj7NneqaBOpvHvwkWEMkyU0S9p1L5BewVR+AB/tBIPh3srCCQQL/3jqK6A==
 From: YaoJun <yaojun8558363@gmail.com>
 To: kernel-hardening@lists.openwall.com
 Cc: linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, jmorris@namei.org
-Subject: [PATCH 0/4] migrate swapper_pg_dir
-Date: Tue, 29 May 2018 12:37:28 +0800
-Message-Id: <20180529043728.27738-1-yaojun8558363@gmail.com>
+Subject: [PATCH 3/4] migrate swapper_pg_dir
+Date: Tue, 29 May 2018 12:38:08 +0800
+Message-Id: <20180529043808.27896-1-yaojun8558363@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Because the offset between swapper_pg_dir and _text is fixed, when
-attackers break KASLR, they can calculate the address of swapper_pg_dir,
-and then they can apply KSMA(Kernel Space Mirror Attack). The principle
-of KSMA is to insert an entry to PGD, and this entry has type of block
-with AP = 01, so attackers can read/write kernel memory directly. Details
-can reference:
+Because tramp_map_kernel/tramp_unmap_kernel macro update
+ttbr1 by add/sub offset, so we need to migrate both
+swapper_pg_dir and tramp_pg_dir. Before doing that, make
+tramp_pg_dir and swapper_pg_dir adjacent.
 
-https://www.blackhat.com/docs/asia-18/asia-18-WANG-KSMA-Breaking-Android-kernel-isolation-and-Rooting-with-ARM-MMU-features.pdf
+---
+ arch/arm64/kernel/entry.S       |  4 ++--
+ arch/arm64/kernel/vmlinux.lds.S | 10 +++++-----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-These patches migrate swapper_pg_dir to new place, and there is no
-relationship between swapper_pg_dir and _text. Because this is done
-during kernel booting, the physical address of new swapper_pg_dir may
-be fixed. Do we need to further randomize it?
-
-YaoJun (4):
-  Introduce a variable to record physical address of swapper_pg_dir.
-  Introduce a variable to record new virtual address of swapper_pg_dir.
-  Make tramp_pg_dir and swapper_pg_dir adjacent
-  Migrate swapper_pg_dir and tramp_pg_dir.
-
- arch/arm64/include/asm/mmu_context.h |  6 +--
- arch/arm64/include/asm/pgtable.h     |  2 +
- arch/arm64/kernel/cpufeature.c       |  2 +-
- arch/arm64/kernel/entry.S            |  4 +-
- arch/arm64/kernel/head.S             | 10 ++--
- arch/arm64/kernel/hibernate.c        |  2 +-
- arch/arm64/kernel/sleep.S            |  2 +
- arch/arm64/kernel/vmlinux.lds.S      | 10 ++--
- arch/arm64/mm/kasan_init.c           |  6 +--
- arch/arm64/mm/mmu.c                  | 72 +++++++++++++++++++---------
- 10 files changed, 74 insertions(+), 42 deletions(-)
-
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index ec2ee720e33e..b35425feaf56 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -1004,7 +1004,7 @@ __ni_sys_trace:
+ 
+ 	.macro tramp_map_kernel, tmp
+ 	mrs	\tmp, ttbr1_el1
+-	add	\tmp, \tmp, #(PAGE_SIZE + RESERVED_TTBR0_SIZE)
++	add	\tmp, \tmp, #(PAGE_SIZE)
+ 	bic	\tmp, \tmp, #USER_ASID_FLAG
+ 	msr	ttbr1_el1, \tmp
+ #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
+@@ -1023,7 +1023,7 @@ alternative_else_nop_endif
+ 
+ 	.macro tramp_unmap_kernel, tmp
+ 	mrs	\tmp, ttbr1_el1
+-	sub	\tmp, \tmp, #(PAGE_SIZE + RESERVED_TTBR0_SIZE)
++	sub	\tmp, \tmp, #(PAGE_SIZE)
+ 	orr	\tmp, \tmp, #USER_ASID_FLAG
+ 	msr	ttbr1_el1, \tmp
+ 	/*
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 0221aca6493d..a094156e05a4 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -219,15 +219,15 @@ SECTIONS
+ 	idmap_pg_dir = .;
+ 	. += IDMAP_DIR_SIZE;
+ 
+-#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+-	tramp_pg_dir = .;
+-	. += PAGE_SIZE;
+-#endif
+-
+ #ifdef CONFIG_ARM64_SW_TTBR0_PAN
+ 	reserved_ttbr0 = .;
+ 	. += RESERVED_TTBR0_SIZE;
+ #endif
++
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++	tramp_pg_dir = .;
++	. += PAGE_SIZE;
++#endif
+ 	swapper_pg_dir = .;
+ 	. += SWAPPER_DIR_SIZE;
+ 	swapper_pg_end = .;
 -- 
 2.17.0
 
