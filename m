@@ -1,50 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754712AbeE2HCF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 03:02:05 -0400
-Received: from verein.lst.de ([213.95.11.211]:53558 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754609AbeE2HCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 03:02:03 -0400
-Date: Tue, 29 May 2018 09:08:13 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Michael Schmitz <schmitzmic@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Christoph Hellwig <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>,
-        Joshua Thompson <funaho@jurai.org>, Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh
-        SONIC based ethernet
-Message-ID: <20180529070813.GA32615@lst.de>
-References: <1527378785-13326-1-git-send-email-linux@roeck-us.net> <alpine.LNX.2.21.1805271212480.9@nippy.intranet> <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com> <alpine.LNX.2.21.1805271547090.9@nippy.intranet> <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com> <alpine.LNX.2.21.1805281521420.10@nippy.intranet> <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com> <CAOmrzkKVu6vPgMgvR9JuR==Q=XmTnDf_iyXfP7sDVymaXDX20Q@mail.gmail.com>
+        id S1754778AbeE2HC2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 03:02:28 -0400
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:40370 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754626AbeE2HCE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 03:02:04 -0400
+X-Google-Smtp-Source: AB8JxZoiCvG3UkLdCWDG98PU9NNg4xHVQHPJnPuZm7PwlQi0sHff18ITNTyrNQZCGxKBg5YFROuh6g==
+Date: Tue, 29 May 2018 09:02:00 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        airlied@linux.ie, daniel.vetter@intel.com, seanpaul@chromium.org,
+        gustavo@padovan.org,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: Re: [PATCH] drm: Fix possible race conditions while unplugging DRM
+ device
+Message-ID: <20180529070200.GW3438@phenom.ffwll.local>
+Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        airlied@linux.ie, daniel.vetter@intel.com, seanpaul@chromium.org,
+        gustavo@padovan.org,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180522141304.18646-1-andr2000@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAOmrzkKVu6vPgMgvR9JuR==Q=XmTnDf_iyXfP7sDVymaXDX20Q@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180522141304.18646-1-andr2000@gmail.com>
+X-Operating-System: Linux phenom 4.15.0-3-amd64 
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 07:59:37AM +1200, Michael Schmitz wrote:
-> Hi Geert,
+On Tue, May 22, 2018 at 05:13:04PM +0300, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 > 
-> my preference would be Finn's patch introducing a m68k
-> arch_setup_pdev_archdata(). It nicely preserves what bus code sets up
-> prior to registering a platform device (important for Zorro devices
-> using platform or mfd devices), and allows overriding by drivers that
-> need it.
-
-Let's go with those for now.
-
+> When unplugging a hotpluggable DRM device we first unregister it
+> with drm_dev_unregister and then set drm_device.unplugged flag which
+> is used to mark device critical sections with drm_dev_enter()/
+> drm_dev_exit() preventing access to device resources that are not
+> available after the device is gone.
+> But drm_dev_unregister may lead to hotplug uevent(s) fired to
+> user-space on card and/or connector removal, thus making it possible
+> for user-space to try accessing a disconnected device.
 > 
-> If ever a kernel-wide consensus is reached to move this setup to the
-> generic arch_setup_pdev_archdata(), we can still back out his patch at
-> that time. Finn found one counterexample where absence of DMA mask
-> signaled 'do not use DMA', so I think moving the DMA mask setup to
-> generic code is unlikely to happen any time.
+> Fix this by first making sure device is properly marked as
+> disconnected and only then unregister it.
+> 
+> Fixes: bee330f3d672 ("drm: Use srcu to protect drm_device.unplugged")
+> 
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> Reported-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+> Cc: "Noralf Trønnes" <noralf@tronnes.org>
 
-This is the right thing to do in the long run, and I'll spend some time
-auditing all dma_mask users for the next merge window.
+Nice catch.
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+I think you need to push this to drm-misc-next-fixes to make sure it's on
+the 4.17 train.
+-Daniel
+
+> ---
+>  drivers/gpu/drm/drm_drv.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+> index b553a6f2ff0e..7af748ed1c58 100644
+> --- a/drivers/gpu/drm/drm_drv.c
+> +++ b/drivers/gpu/drm/drm_drv.c
+> @@ -369,13 +369,6 @@ EXPORT_SYMBOL(drm_dev_exit);
+>   */
+>  void drm_dev_unplug(struct drm_device *dev)
+>  {
+> -	drm_dev_unregister(dev);
+> -
+> -	mutex_lock(&drm_global_mutex);
+> -	if (dev->open_count == 0)
+> -		drm_dev_put(dev);
+> -	mutex_unlock(&drm_global_mutex);
+> -
+>  	/*
+>  	 * After synchronizing any critical read section is guaranteed to see
+>  	 * the new value of ->unplugged, and any critical section which might
+> @@ -384,6 +377,13 @@ void drm_dev_unplug(struct drm_device *dev)
+>  	 */
+>  	dev->unplugged = true;
+>  	synchronize_srcu(&drm_unplug_srcu);
+> +
+> +	drm_dev_unregister(dev);
+> +
+> +	mutex_lock(&drm_global_mutex);
+> +	if (dev->open_count == 0)
+> +		drm_dev_put(dev);
+> +	mutex_unlock(&drm_global_mutex);
+>  }
+>  EXPORT_SYMBOL(drm_dev_unplug);
+>  
+> -- 
+> 2.17.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
