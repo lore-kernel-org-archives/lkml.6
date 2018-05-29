@@ -1,110 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967314AbeE2Vav (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 17:30:51 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:45371 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966945AbeE2Vat (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 17:30:49 -0400
-X-Google-Smtp-Source: ADUXVKLq3CzQ1VFugAukhJ2+Lm+O/fVfn3ypUIJFRB0+XI8li20xWeL5YI6D0rmgXR51GIqLXb9jmw==
-Date: Tue, 29 May 2018 14:30:47 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 09/11] misc: throttler: Add core support for non-thermal
- throttling
-Message-ID: <20180529213047.GK168650@google.com>
-References: <20180525203043.249193-1-mka@chromium.org>
- <20180525203043.249193-10-mka@chromium.org>
- <20180528080826.GA17162@kroah.com>
+        id S967241AbeE2Vca (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 17:32:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37030 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966946AbeE2Vc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 17:32:26 -0400
+From: Steve Grubb <sgrubb@redhat.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-audit@redhat.com
+Subject: Re: [PATCH 6/8] integrity: Factor out common part of integrity_audit_msg()
+Date: Tue, 29 May 2018 17:32:22 -0400
+Message-ID: <2600105.j2Wzuo56oP@x2>
+Organization: Red Hat
+In-Reply-To: <20180524201105.3179904-7-stefanb@linux.vnet.ibm.com>
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <20180524201105.3179904-7-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180528080826.GA17162@kroah.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 10:08:26AM +0200, Greg Kroah-Hartman wrote:
-> On Fri, May 25, 2018 at 01:30:41PM -0700, Matthias Kaehlcke wrote:
-> > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> > index 20be70c3f118..01a1714dd2ad 100644
-> > --- a/drivers/misc/Makefile
-> > +++ b/drivers/misc/Makefile
-> > @@ -57,3 +57,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
-> >  obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
-> >  obj-$(CONFIG_OCXL)		+= ocxl/
-> >  obj-$(CONFIG_MISC_RTSX)		+= cardreader/
-> > +obj-y				+= throttler/
+On Thursday, May 24, 2018 4:11:03 PM EDT Stefan Berger wrote:
+> Factor out a common part of integrity_audit_msg() that others
+> can also call.
+
+After all of these changes, do you mind sending an example event for testing/
+review?
+
+Thanks,
+-Steve
+
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> ---
+>  security/integrity/integrity.h       | 16 ++++++++++++++++
+>  security/integrity/integrity_audit.c | 24 ++++++++++++++++--------
+>  2 files changed, 32 insertions(+), 8 deletions(-)
 > 
-> Shouldn't you depend on a Kconfig option to traverse into this
-> directory?
-
-Ack
-
-> > diff --git a/drivers/misc/throttler/Kconfig b/drivers/misc/throttler/Kconfig
-> > new file mode 100644
-> > index 000000000000..ef8388f6bc0a
-> > --- /dev/null
-> > +++ b/drivers/misc/throttler/Kconfig
-> > @@ -0,0 +1,13 @@
-> > +menuconfig THROTTLER
-> > +	bool "Throttler support"
-> > +	default n
+> diff --git a/security/integrity/integrity.h
+> b/security/integrity/integrity.h index 5e58e02ba8dc..9f2924cafa53 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -15,6 +15,7 @@
+>  #include <linux/integrity.h>
+>  #include <crypto/sha.h>
+>  #include <linux/key.h>
+> +#include <linux/audit.h>
 > 
-> the default is always 'n' no need to say it again here :)
-
-Will remove
-
-> > +	depends on OF
-> > +	select CPU_FREQ
-> > +	select PM_DEVFREQ
-> > +	help
-> > +	  This option enables core support for non-thermal throttling of CPUs
-> > +	  and devfreq devices.
-> > +
-> > +	  Note that you also need a event monitor module usually called
-> > +	  *_throttler.
-> > +
-> > diff --git a/drivers/misc/throttler/Makefile b/drivers/misc/throttler/Makefile
-> > new file mode 100644
-> > index 000000000000..c8d920cee315
-> > --- /dev/null
-> > +++ b/drivers/misc/throttler/Makefile
-> > @@ -0,0 +1 @@
-> > +obj-$(CONFIG_THROTTLER)		+= core.o
-> > diff --git a/drivers/misc/throttler/core.c b/drivers/misc/throttler/core.c
-> > new file mode 100644
-> > index 000000000000..c058d03212b8
-> > --- /dev/null
-> > +++ b/drivers/misc/throttler/core.c
-> > @@ -0,0 +1,373 @@
-> > +/*
-> > + * Core code for non-thermal throttling
-> > + *
-> > + * Copyright (C) 2018 Google, Inc.
-> > + *
-> > + * This software is licensed under the terms of the GNU General Public
-> > + * License version 2, as published by the Free Software Foundation, and
-> > + * may be copied, distributed, and modified under those terms.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + *
-> > + */
+>  /* iint action cache flags */
+>  #define IMA_MEASURE		0x00000001
+> @@ -197,6 +198,11 @@ static inline void evm_load_x509(void)
+>  void integrity_audit_msg(int audit_msgno, struct inode *inode,
+>  			 const unsigned char *fname, const char *op,
+>  			 const char *cause, int result, int info);
+> +
+> +void integrity_audit_msg_common(struct audit_buffer *ab, struct inode
+> *inode, +				const unsigned char *fname, const char *op,
+> +				const char *cause, int result);
+> +
+>  #else
+>  static inline void integrity_audit_msg(int audit_msgno, struct inode
+> *inode, const unsigned char *fname,
+> @@ -204,4 +210,14 @@ static inline void integrity_audit_msg(int
+> audit_msgno, struct inode *inode, int result, int info)
+>  {
+>  }
+> +
+> +static inline void integrity_audit_msg_common(struct audit_buffer *ab,
+> +					      struct inode *inode,
+> +					      const unsigned char *fname,
+> +					      const char *op,
+> +					      const char *cause,
+> +					      int result)
+> +{
+> +}
+> +
+>  #endif
+> diff --git a/security/integrity/integrity_audit.c
+> b/security/integrity/integrity_audit.c index 8d25d3c4dcca..8f80b7c042a7
+> 100644
+> --- a/security/integrity/integrity_audit.c
+> +++ b/security/integrity/integrity_audit.c
+> @@ -28,17 +28,12 @@ static int __init integrity_audit_setup(char *str)
+>  }
+>  __setup("integrity_audit=", integrity_audit_setup);
 > 
-> Please just use a single SPDX line, like checkpatch.pl would have warned
-> you about.  No need for the full verbous license boiler-plate text here
-> at all.
-
-Ok
+> -void integrity_audit_msg(int audit_msgno, struct inode *inode,
+> -			 const unsigned char *fname, const char *op,
+> -			 const char *cause, int result, int audit_info)
+> +void integrity_audit_msg_common(struct audit_buffer *ab, struct inode
+> *inode, +				const unsigned char *fname, const char *op,
+> +				const char *cause, int result)
+>  {
+> -	struct audit_buffer *ab;
+>  	char name[TASK_COMM_LEN];
+> 
+> -	if (!integrity_audit_info && audit_info == 1)	/* Skip info messages */
+> -		return;
+> -
+> -	ab = audit_log_start(current->audit_context, GFP_KERNEL, audit_msgno);
+>  	audit_log_format(ab, "pid=%d uid=%u auid=%u ses=%u",
+>  			 task_pid_nr(current),
+>  			 from_kuid(&init_user_ns, current_cred()->uid),
+> @@ -59,5 +54,18 @@ void integrity_audit_msg(int audit_msgno, struct inode
+> *inode, audit_log_d_path_exe(ab, current->mm);
+>  	audit_log_tty(ab, current);
+>  	audit_log_format(ab, " res=%d", !result);
+> +}
+> +
+> +void integrity_audit_msg(int audit_msgno, struct inode *inode,
+> +			 const unsigned char *fname, const char *op,
+> +			 const char *cause, int result, int audit_info)
+> +{
+> +	struct audit_buffer *ab;
+> +
+> +	if (!integrity_audit_info && audit_info == 1)	/* Skip info messages */
+> +		return;
+> +
+> +	ab = audit_log_start(current->audit_context, GFP_KERNEL, audit_msgno);
+> +	integrity_audit_msg_common(ab, inode, fname, op, cause, result);
+>  	audit_log_end(ab);
+>  }
