@@ -1,64 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935764AbeE2OsE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:48:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935518AbeE2OrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:47:08 -0400
-X-Google-Smtp-Source: ADUXVKJUQBRRU/P52X7xDNs88ilbVPlxjcfhEULHY82BMvpNUhyjNnTDFU17Sny5kO6TG97NmxUn7oy+aqWs5Kf5cMs=
-MIME-Version: 1.0
-In-Reply-To: <1765be22-4bd7-c870-926c-2956e46df1d9@gmail.com>
-References: <20180524175024.19874-1-robh@kernel.org> <20180524175024.19874-2-robh@kernel.org>
- <20180524181834.GF4828@sirena.org.uk> <1765be22-4bd7-c870-926c-2956e46df1d9@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 29 May 2018 09:46:46 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKWuOKvyYDVPS_tq8VJ25ZazZvSXBxyu5j4LqDxycyLPg@mail.gmail.com>
-Message-ID: <CAL_JsqKWuOKvyYDVPS_tq8VJ25ZazZvSXBxyu5j4LqDxycyLPg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] driver core: make deferring probe after init optional
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Architecture Mailman List <boot-architecture@lists.linaro.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S936676AbeE2Os2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:48:28 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34911 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936572AbeE2Oqu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 10:46:50 -0400
+X-Google-Smtp-Source: ADUXVKJ7TjIzpl97Gxbn49Mm6zyya8wMxAjPsZohL61MULuuvH65hEo7rAT29tw0WDDPgwVsmNfrDQ==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 28/28] ovl: Enable metadata only feature
+Date: Tue, 29 May 2018 16:46:12 +0200
+Message-Id: <20180529144612.16675-29-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180529144612.16675-1-mszeredi@redhat.com>
+References: <20180529144612.16675-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 12:12 AM, Frank Rowand <frowand.list@gmail.com> wrote:
-> On 05/24/18 11:18, Mark Brown wrote:
->> On Thu, May 24, 2018 at 12:50:17PM -0500, Rob Herring wrote:
->>
->>> Subsystems or drivers may opt-in to this behavior by calling
->>> driver_deferred_probe_check_init_done() instead of just returning
->>> -EPROBE_DEFER. They may use additional information from DT or kernel's
->>> config to decide whether to continue to defer probe or not.
->>
->> Should userspace have some involvement in this decision?  It knows if
->> it's got any intention of loading modules for example.  Kernel config
->> checks might be good enough, though it's going to be a pain to work out
->> if the relevant driver is built as a module for example.
->>
->
-> A parallel issue is that loading an overlay could provide the resource
-> that will allow the deferred probe to complete.  (That is, once we
-> finish implementing the run time overlays feature.)
+From: Vivek Goyal <vgoyal@redhat.com>
 
-I'd like to see an actual example where that could happen. I agree you
-could craft it, but would it really be a valid partitioning? For
-example, SoC pinctrl, iommu, or power domains defined in an overlay
-would not be something valid to apply during kernel boot or after boot
-(though putting those into overlays is exactly what Alex wants to do).
+All the bits are in patches before this.  So it is time to enable the
+metadata only copy up feature.
 
-Rob
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/overlayfs/copy_up.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index c31f198bed99..bdadedf73e51 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -689,9 +689,6 @@ static bool ovl_need_meta_copy_up(struct dentry *dentry, umode_t mode,
+ {
+ 	struct ovl_fs *ofs = dentry->d_sb->s_fs_info;
+ 
+-	/* TODO: Will enable metacopy in last patch of series */
+-	return false;
+-
+ 	if (!ofs->config.metacopy)
+ 		return false;
+ 
+-- 
+2.14.3
