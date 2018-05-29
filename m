@@ -1,102 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933014AbeE2KDf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:03:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57462 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932828AbeE2J6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 05:58:09 -0400
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To: Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mario.Limonciello@dell.com, Peter Hutterer <peter.hutterer@who-t.net>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 1/9] Input: mt - export MT_TOOL in input_mt_init_slot()
-Date: Tue, 29 May 2018 11:57:52 +0200
-Message-Id: <20180529095800.13504-2-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180529095800.13504-1-benjamin.tissoires@redhat.com>
-References: <20180529095800.13504-1-benjamin.tissoires@redhat.com>
+        id S933117AbeE2KED (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:04:03 -0400
+Received: from foss.arm.com ([217.140.101.70]:36530 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932828AbeE2KEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 06:04:00 -0400
+Date: Tue, 29 May 2018 11:03:56 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: YaoJun <yaojun8558363@gmail.com>
+Cc: kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+Subject: Re: [PATCH 0/4] migrate swapper_pg_dir
+Message-ID: <20180529100356.uimq6p6ihpx4eeur@lakrids.cambridge.arm.com>
+References: <20180529043728.27738-1-yaojun8558363@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529043728.27738-1-yaojun8558363@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks like we require users to set a tool but input_mt_init_slots() never
-set the tool bit for us. Meaning that this is a useless information the
-driver tries to forward.
+Hi,
 
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
----
- drivers/input/input-mt.c                 | 1 +
- drivers/input/rmi4/rmi_2d_sensor.c       | 2 --
- drivers/input/touchscreen/atmel_mxt_ts.c | 2 --
- drivers/input/touchscreen/hideep.c       | 2 --
- drivers/input/touchscreen/wacom_w8001.c  | 2 --
- 5 files changed, 1 insertion(+), 8 deletions(-)
+On Tue, May 29, 2018 at 12:37:28PM +0800, YaoJun wrote:
+> Because the offset between swapper_pg_dir and _text is fixed, when
+> attackers break KASLR, they can calculate the address of swapper_pg_dir,
+> and then they can apply KSMA(Kernel Space Mirror Attack). The principle
+> of KSMA is to insert an entry to PGD, and this entry has type of block
+> with AP = 01, so attackers can read/write kernel memory directly. Details
+> can reference:
+> 
+> https://www.blackhat.com/docs/asia-18/asia-18-WANG-KSMA-Breaking-Android-kernel-isolation-and-Rooting-with-ARM-MMU-features.pdf
+> 
+> These patches migrate swapper_pg_dir to new place, and there is no
+> relationship between swapper_pg_dir and _text. Because this is done
+> during kernel booting, the physical address of new swapper_pg_dir may
+> be fixed. Do we need to further randomize it?
 
-diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
-index a1bbec9cda8d..3900686c5d0f 100644
---- a/drivers/input/input-mt.c
-+++ b/drivers/input/input-mt.c
-@@ -57,6 +57,7 @@ int input_mt_init_slots(struct input_dev *dev, unsigned int num_slots,
- 	mt->flags = flags;
- 	input_set_abs_params(dev, ABS_MT_SLOT, 0, num_slots - 1, 0, 0);
- 	input_set_abs_params(dev, ABS_MT_TRACKING_ID, 0, TRKID_MAX, 0, 0);
-+	input_set_abs_params(dev, ABS_MT_TOOL_TYPE, 0, MT_TOOL_MAX, 0, 0);
- 
- 	if (flags & (INPUT_MT_POINTER | INPUT_MT_DIRECT)) {
- 		__set_bit(EV_KEY, dev->evbit);
-diff --git a/drivers/input/rmi4/rmi_2d_sensor.c b/drivers/input/rmi4/rmi_2d_sensor.c
-index 8bb866c7b985..23e666bd2539 100644
---- a/drivers/input/rmi4/rmi_2d_sensor.c
-+++ b/drivers/input/rmi4/rmi_2d_sensor.c
-@@ -186,8 +186,6 @@ static void rmi_2d_sensor_set_input_params(struct rmi_2d_sensor *sensor)
- 		input_set_abs_params(input, ABS_MT_TOUCH_MAJOR, 0, 0x0f, 0, 0);
- 		input_set_abs_params(input, ABS_MT_TOUCH_MINOR, 0, 0x0f, 0, 0);
- 		input_set_abs_params(input, ABS_MT_ORIENTATION, 0, 1, 0, 0);
--		input_set_abs_params(input, ABS_MT_TOOL_TYPE,
--				     0, MT_TOOL_MAX, 0, 0);
- 
- 		if (sensor->sensor_type == rmi_sensor_touchpad)
- 			input_flags = INPUT_MT_POINTER;
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 54fe190fd4bc..0dcf48100dc1 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -2021,8 +2021,6 @@ static int mxt_initialize_input_device(struct mxt_data *data)
- 	}
- 
- 	if (data->multitouch == MXT_TOUCH_MULTITOUCHSCREEN_T100) {
--		input_set_abs_params(input_dev, ABS_MT_TOOL_TYPE,
--				     0, MT_TOOL_MAX, 0, 0);
- 		input_set_abs_params(input_dev, ABS_MT_DISTANCE,
- 				     MXT_DISTANCE_ACTIVE_TOUCH,
- 				     MXT_DISTANCE_HOVERING,
-diff --git a/drivers/input/touchscreen/hideep.c b/drivers/input/touchscreen/hideep.c
-index f1cd4dd9a4a3..980539d8d551 100644
---- a/drivers/input/touchscreen/hideep.c
-+++ b/drivers/input/touchscreen/hideep.c
-@@ -799,8 +799,6 @@ static int hideep_init_input(struct hideep_ts *ts)
- 	input_set_capability(ts->input_dev, EV_ABS, ABS_MT_POSITION_Y);
- 	input_set_abs_params(ts->input_dev, ABS_MT_PRESSURE, 0, 65535, 0, 0);
- 	input_set_abs_params(ts->input_dev, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
--	input_set_abs_params(ts->input_dev, ABS_MT_TOOL_TYPE,
--			     0, MT_TOOL_MAX, 0, 0);
- 	touchscreen_parse_properties(ts->input_dev, true, &ts->prop);
- 
- 	if (ts->prop.max_x == 0 || ts->prop.max_y == 0) {
-diff --git a/drivers/input/touchscreen/wacom_w8001.c b/drivers/input/touchscreen/wacom_w8001.c
-index 3715d1eace92..946dca30560b 100644
---- a/drivers/input/touchscreen/wacom_w8001.c
-+++ b/drivers/input/touchscreen/wacom_w8001.c
-@@ -529,8 +529,6 @@ static int w8001_setup_touch(struct w8001 *w8001, char *basename,
- 					0, touch.x, 0, 0);
- 		input_set_abs_params(dev, ABS_MT_POSITION_Y,
- 					0, touch.y, 0, 0);
--		input_set_abs_params(dev, ABS_MT_TOOL_TYPE,
--					0, MT_TOOL_MAX, 0, 0);
- 		input_abs_set_res(dev, ABS_MT_POSITION_X, touch.panel_res);
- 		input_abs_set_res(dev, ABS_MT_POSITION_Y, touch.panel_res);
- 
--- 
-2.14.3
+This looks interesting, but this didn't go to all the relevant people.
+
+Could you please resend this series, with at least the following Cc'd:
+
+* linux-arm-kernel@lists.infradead.org
+* will.deacon@arm.com
+* catalin.marinas@arm.com
+
+Thanks,
+Mark.
+
+> 
+> YaoJun (4):
+>   Introduce a variable to record physical address of swapper_pg_dir.
+>   Introduce a variable to record new virtual address of swapper_pg_dir.
+>   Make tramp_pg_dir and swapper_pg_dir adjacent
+>   Migrate swapper_pg_dir and tramp_pg_dir.
+> 
+>  arch/arm64/include/asm/mmu_context.h |  6 +--
+>  arch/arm64/include/asm/pgtable.h     |  2 +
+>  arch/arm64/kernel/cpufeature.c       |  2 +-
+>  arch/arm64/kernel/entry.S            |  4 +-
+>  arch/arm64/kernel/head.S             | 10 ++--
+>  arch/arm64/kernel/hibernate.c        |  2 +-
+>  arch/arm64/kernel/sleep.S            |  2 +
+>  arch/arm64/kernel/vmlinux.lds.S      | 10 ++--
+>  arch/arm64/mm/kasan_init.c           |  6 +--
+>  arch/arm64/mm/mmu.c                  | 72 +++++++++++++++++++---------
+>  10 files changed, 74 insertions(+), 42 deletions(-)
+> 
+> -- 
+> 2.17.0
+> 
