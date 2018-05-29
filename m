@@ -1,92 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935100AbeE2Oi1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:38:27 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51750 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934608AbeE2OiV (ORCPT
+        id S935140AbeE2Oih (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:38:37 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:43254 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935068AbeE2OiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:38:21 -0400
-X-Google-Smtp-Source: ADUXVKL3e7iAFUB+XLimK9k6T5Pj1RTGsLnnbLJ9s5bboj3I11k3xr6X3q0d6Gmh6wDOtZDq+ZDebvowxNoCthNYYNA=
+        Tue, 29 May 2018 10:38:23 -0400
+X-Google-Smtp-Source: AB8JxZqmRWIYLPmxSRzn2t8TbQv2XO4v8wJ0ta7VE1Lcvab8PhAbv94C+je1iD5haBn7oM28++9lyg==
+Date: Tue, 29 May 2018 16:38:20 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/8] drm/bridge: cdns: mark PM functions as __maybe_unused
+Message-ID: <20180529143820.GD22634@ulmo>
+References: <20180525155030.3667352-1-arnd@arndb.de>
+ <20180525155030.3667352-8-arnd@arndb.de>
+ <20180528163243.538de32f@bbrezillon>
 MIME-Version: 1.0
-In-Reply-To: <b3102638-68a1-c6b7-a359-8658ebf5287a@gmail.com>
-References: <1527600915-10955-1-git-send-email-laoar.shao@gmail.com>
- <1527600915-10955-2-git-send-email-laoar.shao@gmail.com> <b3102638-68a1-c6b7-a359-8658ebf5287a@gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 29 May 2018 22:37:40 +0800
-Message-ID: <CALOAHbAywgXie2xZXJGW_vghQ-nGb3ek46FtHs0eeuAmxRB17w@mail.gmail.com>
-Subject: Re: [PATCH v4 net-next 2/2] tcp: minor optimization around tcp_hdr()
- usage in tcp receive path
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Song Liu <songliubraving@fb.com>, Eric Dumazet <edumazet@google.com>,
-        David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="AbQceqfdZEv+FvjW"
+Content-Disposition: inline
+In-Reply-To: <20180528163243.538de32f@bbrezillon>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 9:54 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
->
->
-> On 05/29/2018 06:35 AM, Yafang Shao wrote:
->> This is additional to the commit ea1627c20c34 ("tcp: minor optimizations around tcp_hdr() usage").
->> At this point, skb->data is same with tcp_hdr() as tcp header has not
->> been pulled yet.
->> Remove the third parameter of tcp_rcv_established() and put it into
->> the function body.
->>
->> Cc: Eric Dumazet <edumazet@google.com>
->> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
->>
->> ---
->> v4: remove the third parameter of tcp_rcv_established()
->> ---
->>  include/net/tcp.h    | 3 +--
->>  net/ipv4/tcp_input.c | 4 ++--
->>  net/ipv4/tcp_ipv4.c  | 2 +-
->>  net/ipv6/tcp_ipv6.c  | 2 +-
->>  4 files changed, 5 insertions(+), 6 deletions(-)
->>
->> diff --git a/include/net/tcp.h b/include/net/tcp.h
->> index 952d842..029a51b 100644
->> --- a/include/net/tcp.h
->> +++ b/include/net/tcp.h
->> @@ -334,8 +334,7 @@ ssize_t do_tcp_sendpages(struct sock *sk, struct page *page, int offset,
->>  void tcp_delack_timer_handler(struct sock *sk);
->>  int tcp_ioctl(struct sock *sk, int cmd, unsigned long arg);
->>  int tcp_rcv_state_process(struct sock *sk, struct sk_buff *skb);
->> -void tcp_rcv_established(struct sock *sk, struct sk_buff *skb,
->> -                      const struct tcphdr *th);
->> +void tcp_rcv_established(struct sock *sk, struct sk_buff *skb);
->>  void tcp_rcv_space_adjust(struct sock *sk);
->>  int tcp_twsk_unique(struct sock *sk, struct sock *sktw, void *twp);
->>  void tcp_twsk_destructor(struct sock *sk);
->> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
->> index 1191cac..1d70dab 100644
->> --- a/net/ipv4/tcp_input.c
->> +++ b/net/ipv4/tcp_input.c
->> @@ -5390,11 +5390,11 @@ static bool tcp_validate_incoming(struct sock *sk, struct sk_buff *skb,
->>   *   the rest is checked inline. Fast processing is turned on in
->>   *   tcp_data_queue when everything is OK.
->>   */
->> -void tcp_rcv_established(struct sock *sk, struct sk_buff *skb,
->> -                      const struct tcphdr *th)
->> +void tcp_rcv_established(struct sock *sk, struct sk_buff *skb)
->>  {
->>       unsigned int len = skb->len;
->>       struct tcp_sock *tp = tcp_sk(sk);
->> +     const struct tcphdr *th = (const struct tcphdr *)skb->data;
->>
->>
->
-> Please reorder list to get a reverse christmas tree.
->
 
-Got it :)
+--AbQceqfdZEv+FvjW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> const struct tcphdr *th = (const struct tcphdr *)skb->data;
-> struct tcp_sock *tp = tcp_sk(sk);
-> unsigned int len = skb->len;
->
->
+On Mon, May 28, 2018 at 04:32:43PM +0200, Boris Brezillon wrote:
+> +Thierry
+>=20
+> Hi Arnd,
+>=20
+> On Fri, 25 May 2018 17:50:15 +0200
+> Arnd Bergmann <arnd@arndb.de> wrote:
+>=20
+> > These two functions are unused in some configurations, and using __mayb=
+e_unused
+> > is the easiest way to shut up the harmless warnings:
+> >=20
+> > drivers/gpu/drm/bridge/cdns-dsi.c:1353:12: error: 'cdns_dsi_suspend' de=
+fined but not used [-Werror=3Dunused-function]
+> >  static int cdns_dsi_suspend(struct device *dev)
+> >             ^~~~~~~~~~~~~~~~
+> > drivers/gpu/drm/bridge/cdns-dsi.c:1340:12: error: 'cdns_dsi_resume' def=
+ined but not used [-Werror=3Dunused-function]
+> >  static int cdns_dsi_resume(struct device *dev)
+> >=20
+> > Fixes: e19233955d9e ("drm/bridge: Add Cadence DSI driver")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>=20
+> Hm, I thought such a patch had already been applied by Thierry [1].
+>=20
+> [1]https://www.spinics.net/lists/dri-devel/msg174363.html
+
+Yeah, that's in drm-misc-next, but didn't seem to have made it into
+linux-next until today.
+
+Thierry
+
+--AbQceqfdZEv+FvjW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsNZdwACgkQ3SOs138+
+s6F4HBAAiEcTbFfNEgt0B2F0aZmaJL+oMi35fsOc8w+6Q+WCIV6JncQrjVdORIBc
+NVcXK0nc0BA3TPOydDtDnHt6mxhM6wHdOVKSiFcIiZRnaQKV/WLZ+m1l+pUW9CJb
+4saYvCDi+/xKUh2ISKyXu2AE1VQ7PNEBjFry8S2B4VevBxEJmkUFHSKgdKaUMum5
+GZcWOF5bNYhs32tG4met3//szeYkMzWYX/auVWf8je8oDPphl4vLXiBnA/uj9xd6
+aIcbnlvKP+ILjaqMd6Zi7bpSvHr57pYIRGxvu0bA+3daim/l3Rt6w8+NUcWEhvHy
+Uip4XNdz+Fd9Y2kwluwD+l7Z/27HgnxO1mI147UfAdUHu9zg1jMCDRj2yjbvw/MW
+X7UgjyM7TFlwJjBkF3WpJcS9ilRjdPDrz/+fbEDklCzCo54yFune9fgcpA1O8b5T
+x1Ze2/3VmQ2FJrWDt+LncRbVdIhHZDJJN2ijFgdx3UzXdzTkRmsgsfgScfKJSZN9
+41I5Pmx4WlKR6XW5A4/6F9Ymsn8dufdTPm41ujwkqevRujvIMVkAL6wmpaQsiDHb
+NYh0+8+fdz8vwBRh58mTQe0fwfigUmTg69e4b8W7b3gqGAUITKQfdc7x3M4rRXzW
+xvsVhh8DgsI7A9ru+plNNzi/sBHpC0vMC8xmtsBeuDl5WGuem2U=
+=2/Rq
+-----END PGP SIGNATURE-----
+
+--AbQceqfdZEv+FvjW--
