@@ -1,110 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936736AbeE2PE5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:04:57 -0400
-Received: from foss.arm.com ([217.140.101.70]:42272 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935490AbeE2PEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:04:49 -0400
-Date: Tue, 29 May 2018 16:04:46 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Subject: Re: [PATCH v5 01/10] sched/pelt: Move pelt related code in a
- dedicated file
-Message-ID: <20180529150445.GG15173@e108498-lin.cambridge.arm.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-2-git-send-email-vincent.guittot@linaro.org>
- <20180525142648.GC15173@e108498-lin.cambridge.arm.com>
- <20180525180455.GF30654@e110439-lin>
- <20180529145506.GF15173@e108498-lin.cambridge.arm.com>
- <CAKfTPtCrPfpREESbH+D7h71yupchcm-TQ8nx=TADuzVysqNfSA@mail.gmail.com>
+        id S936756AbeE2PFM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:05:12 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36677 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935265AbeE2PFG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:05:06 -0400
+X-Google-Smtp-Source: AB8JxZo76jj7OZnZh8Z/7CWTiYj3veJj9J4gbzwzQ258fukkHLRDnvL0T9VK233502yM8TVu2vkvYw==
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v2 0/5] Reintroduce i.MX EPIT Timer
+Date: Tue, 29 May 2018 17:04:50 +0200
+Message-Id: <20180529150455.17300-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtCrPfpREESbH+D7h71yupchcm-TQ8nx=TADuzVysqNfSA@mail.gmail.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 29 May 2018 at 17:02:29 (+0200), Vincent Guittot wrote:
-> Hi Quentin,
-> 
-> On 29 May 2018 at 16:55, Quentin Perret <quentin.perret@arm.com> wrote:
-> >
-> > On Friday 25 May 2018 at 19:04:55 (+0100), Patrick Bellasi wrote:
-> > > On 25-May 15:26, Quentin Perret wrote:
-> > > > And also, I understand these functions are large, but if we _really_
-> > > > want to inline them even though they're big, why not putting them in
-> > > > sched-pelt.h ?
-> > >
-> > > Had the same tought at first... but then I recalled that header is
-> > > generated from a script. Thus, eventually, it should be a different one.
-> >
-> > Ah, good point. This patch already introduces a pelt.h so I guess that
-> > could work as well.
-> >
-> > >
-> > > > We probably wouldn't accept that for everything, but
-> > > > those PELT functions are used all over the place, including latency
-> > > > sensitive code paths (e.g. task wake-up).
-> > >
-> > > We should better measure the overheads, if any, and check what
-> > > (a modern) compiler does. Maybe some hackbench run could help on the
-> > > first point.
-> >
-> > FWIW, I ran a few hackbench tests today on my Intel box:
-> >  - Intel i7-6700 (4 cores / 8 threads) @ 3.40GHz
-> >  - Base kernel: today's tip/sched/core "2539fc82aa9b sched/fair: Update
-> >    util_est before updating schedutil"
-> >  - Compiler: GCC 7.3.0
-> 
-> Which cpufreq governor are you using ?
+From: Clément Peron <clement.peron@devialet.com>
 
-powersave, with the intel_pstate driver.
+As suggested in the commit message we have added the device tree support,
+proper bindings and we moved the driver into the correct folder.
 
-> 
-> >
-> > The tables below summarize the results for:
-> > perf stat --repeat 10 perf bench sched messaging --pipe --thread -l 50000 --group G
-> >
-> > Without patch:
-> >   +---+-------+----------+---------+
-> >   | G | Tasks | Duration | Stddev  |
-> >   +---+-------+----------+---------+
-> >   | 1 | 40    | 3.906    | +-0.84% |
-> >   | 2 | 80    | 8.569    | +-0.77% |
-> >   | 4 | 160   | 16.384   | +-0.46% |
-> >   | 8 | 320   | 33.686   | +-0.42% |
-> >   +---+-------+----------+---------+
-> >
-> > With patch:
-> 
-> Just to make sure. You mean only this patch and not the whole patchset ?
+Moreover we made some changes like use of relaxed IO accesor,
+implement sched_clock, delay_timer and reduce the clockevents min_delta.
 
-That's right, I applied only this patch.
+Changes since v1 (Thanks Vladimir Zapolskiy):
+- Add OF dependency in Kconfig
+- Sort header
+- Use BIT macro
+- Remove useless comments
+- Fix incorrect indent
+- Fix memory leak
+- Add check and handle possible returned error
 
-> 
-> >   +---+-------+----------------+---------+
-> >   | G | Tasks | Duration       | Stddev  |
-> >   +---+-------+----------------+---------+
-> >   | 1 | 40    | 3.953 (+1.2%)  | +-1.43% |
-> >   | 2 | 80    | 8.646 (+0.9%)  | +-0.32% |
-> >   | 4 | 160   | 16.390 (+0.0%) | +-0.38% |
-> >   | 8 | 320   | 33.992 (+0.9%) | +-0.27% |
-> >   +---+-------+----------------+---------+
-> >
-> > So there is (maybe) a little something on my box, but not so significant
-> > IMHO ... :)
-> >
-> > Thanks,
-> > Quentin
+Clément Peron (2):
+  ARM: imx: remove inexistant EPIT timer init
+  Documentation: DT: add i.MX EPIT timer binding
+
+Colin Didier (3):
+  ARM: clk-imx6q: add EPIT clock support
+  clocksource: add driver for i.MX EPIT timer
+  ARM: dts: imx6qdl: add missing compatible and clock properties for
+    EPIT
+
+ .../devicetree/bindings/clock/imx6q,epit.txt  |  25 ++
+ arch/arm/boot/dts/imx6qdl.dtsi                |  12 +
+ arch/arm/mach-imx/common.h                    |   1 -
+ drivers/clk/imx/clk-imx6q.c                   |   2 +
+ drivers/clocksource/Kconfig                   |  12 +
+ drivers/clocksource/Makefile                  |   1 +
+ drivers/clocksource/timer-imx-epit.c          | 273 ++++++++++++++++++
+ include/dt-bindings/clock/imx6qdl-clock.h     |   4 +-
+ 8 files changed, 328 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.txt
+ create mode 100644 drivers/clocksource/timer-imx-epit.c
+
+-- 
+2.17.0
