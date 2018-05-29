@@ -1,64 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932977AbeE2Kf4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 06:35:56 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54147 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932629AbeE2Kfx (ORCPT
+        id S933012AbeE2KhG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 06:37:06 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:53573 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932975AbeE2Kg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 06:35:53 -0400
-X-Google-Smtp-Source: ADUXVKKESKnNHMRa/obenFxzwfc5UzyhJng8A80sqVlmx4lizonyX9hNh6Q9ps4CqgXsDeCVKmkTMvxGP51APpb0Oa4=
-MIME-Version: 1.0
-In-Reply-To: <20180529103057.1378025-1-arnd@arndb.de>
-References: <20180529103057.1378025-1-arnd@arndb.de>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 29 May 2018 12:35:52 +0200
-Message-ID: <CAPDyKFo2b9biWkmJ1tM4QU1RbGvF6SOOpTxpYFuUchkhZKXnug@mail.gmail.com>
-Subject: Re: [PATCH] mmc: mxmmc: include linux/highmem.h
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christoph Hellwig <hch@lst.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Lin <shawn.lin@rock-chips.com>, Allen <allen.lkml@gmail.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 May 2018 06:36:57 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Russell King <linux@armlinux.org.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dmitry Vyukov <dvyukov@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: disable KCOV for trusted foundations code
+Date: Tue, 29 May 2018 12:36:26 +0200
+Message-Id: <20180529103636.1535457-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:iEnb1OoICK5/hTgLy6V+oDRrdtczKmm2HEW89arqfBpUflfiY4H
+ pAz9pN+2L8HGn6doL9H3ouJtYAqwsne4X7ZiWyL0YGOsQYi13uG9d2pCdXMb+AhcyOGtrWl
+ LG+crrWeuR6ixKFbmlEviy92TGC7GtKAtaLLlVdputcv8Nh/xRDpJTo1toqnxcbMZe7hdRf
+ Du3FBTiBE8TdE7VKNxoCg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:uQ5VGwqfdMM=:+NV7vtgKSYv1ccVEpnpWBk
+ XRZrH8hsQBDcC18mUTxwa/yzjZDDlgrMN/fTH+YDPTQfXkhJ+CpEELkw8i70vLars1h1pjuYW
+ dr5UaSp7Nq2RiVjSEIIGuJn+zaSmTf6zjQCa6eu8sjThVSlG1vLs6HEumsc0TE5SfTcUi1x5m
+ 1YTAgn99zRPywkPgaeRFLvYGJlv/XcxfeqYiaCkm80NVwa2iz1zQQQVDwxvNhSia8+SFX2oaG
+ tVCA/SMsQjoJ/6JshTa55WS8x8BTgRslvfKxkyx0FhBiHqF5iYdSCL1XNMwprvbEZujZg5PF0
+ otqttKkGeoGL3624jPGbZIBk0bv2V50MkujFe8WrojXEoTf11J2lC5Fpx2JQWjJD36ygiYNQ+
+ mIG1gjmlOBytAKWMcCtvj1kjYsBEpN99yWCzvNXGwjAjhNwFzoxAhA6aBTzkl6I4g3VbnDPYa
+ 7EgqnMr45/Mxis67T6Rz6OYUT56H8fj/lESIGLaonTaGlwmGRPXka/PbglWTr0qzCIK1L55Ih
+ nbMLdXslHnLFshLLj1sQQMtEWJmw3E4sOyYkjZVSw8YJ6+UEs/E2Gq7eeP9Xw47YP7nCoV3yL
+ lgcj0hz12XgG4vKc0Y8+Yvgedf6j/hnNfUZc6xwJV5Y2MpNFFmw3AXmjbpywRXSDOUW1MTqUl
+ RGrk3RQrN9jEuH9ivXvcKTRTJaxDxLKBEQEZo9zfuxQsMAoGSMlbmEOHD/r9hAUqhZgc=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 May 2018 at 12:30, Arnd Bergmann <arnd@arndb.de> wrote:
-> The highmem conversion caused a build error in some configurations:
->
-> drivers/mmc/host/mxcmmc.c: In function 'mxcmci_transfer_data':
-> drivers/mmc/host/mxcmmc.c:622:10: error: implicit declaration of function 'kmap_atomic'; did you mean 'in_atomic'? [-Werror=implicit-function-declaration]
->
-> This includes the correct header file.
->
-> Fixes: b189e7589f6d ("mmc: mxcmmc: handle highmem pages")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The ARM trusted foundations code is currently broken in linux-next
+when CONFIG_KCOV_INSTRUMENT_ALL is set:
 
-Thanks, applied for next!
+/tmp/ccHdQsCI.s: Assembler messages:
+/tmp/ccHdQsCI.s:37: Error: .err encountered
+/tmp/ccHdQsCI.s:38: Error: .err encountered
+/tmp/ccHdQsCI.s:39: Error: .err encountered
+scripts/Makefile.build:311: recipe for target 'arch/arm/firmware/trusted_foundations.o' failed
 
-Kind regards
-Uffe
+I could not find a function attribute that lets me disable
+-fsanitize-coverage=trace-pc for just one function, so this
+turns it off for the entire file instead.
 
-> ---
->  drivers/mmc/host/mxcmmc.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
-> index 150fbdba777d..d62bf7efce13 100644
-> --- a/drivers/mmc/host/mxcmmc.c
-> +++ b/drivers/mmc/host/mxcmmc.c
-> @@ -21,6 +21,7 @@
->  #include <linux/init.h>
->  #include <linux/ioport.h>
->  #include <linux/platform_device.h>
-> +#include <linux/highmem.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
->  #include <linux/blkdev.h>
-> --
-> 2.9.0
->
+Fixes: mmotm ("arm: port KCOV to arm")
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/firmware/Makefile | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/firmware/Makefile b/arch/arm/firmware/Makefile
+index a71f16536b6c..6e41336b0bc4 100644
+--- a/arch/arm/firmware/Makefile
++++ b/arch/arm/firmware/Makefile
+@@ -1 +1,4 @@
+ obj-$(CONFIG_TRUSTED_FOUNDATIONS)	+= trusted_foundations.o
++
++# tf_generic_smc() fails to build with -fsanitize-coverage=trace-pc
++KCOV_INSTRUMENT                := n
+-- 
+2.9.0
