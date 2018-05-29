@@ -1,82 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934662AbeE2NUX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 09:20:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934304AbeE2NUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 09:20:17 -0400
-Date: Tue, 29 May 2018 08:20:15 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v4 4/8] PCI: Replace dev_node parameter of
- of_pci_get_host_bridge_resources with device
-Message-ID: <20180529132015.GA79098@bhelgaas-glaptop.roam.corp.google.com>
-References: <cover.1526375226.git.jan.kiszka@siemens.com>
- <5f2226585c6af9920b266d0503e32042d4c9e440.1526375226.git.jan.kiszka@siemens.com>
- <a74db976-d330-80b9-939e-dd164a20c8c3@mentor.com>
- <eb9b477a-33c9-db45-9e62-101e3606e8ff@siemens.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb9b477a-33c9-db45-9e62-101e3606e8ff@siemens.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S934601AbeE2NUG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 09:20:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39914 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933905AbeE2NQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 09:16:15 -0400
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
+        mike.leach@linaro.org, robert.walker@arm.com,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        robh@kernel.org, frowand.list@gmail.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v2 00/12] coresight: tmc-etr Transparent buffer management
+Date: Tue, 29 May 2018 14:15:25 +0100
+Message-Id: <1527599737-28408-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 12:46:35PM +0200, Jan Kiszka wrote:
-> On 2018-05-28 12:00, Vladimir Zapolskiy wrote:
-> > Hi Jan, Bjorn,
-> > 
-> > On 05/15/2018 12:07 PM, Jan Kiszka wrote:
-> >> From: Jan Kiszka <jan.kiszka@siemens.com>
-> >>
-> >> Another step towards a managed version of
-> >> of_pci_get_host_bridge_resources(): Feed in the underlying device,
-> >> rather than just the OF node. This will allow to use managed resource
-> >> allocation internally later on.
-> >>
-> >> CC: Jingoo Han <jingoohan1@gmail.com>
-> >> CC: Joao Pinto <Joao.Pinto@synopsys.com>
-> >> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> >> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> > 
-> > [snip]
-> > 
-> >> diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
-> >> index a6af62e0256d..61802e55a00c 100644
-> >> --- a/drivers/pci/host/pcie-altera.c
-> >> +++ b/drivers/pci/host/pcie-altera.c
-> >> @@ -488,11 +488,10 @@ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
-> >>  {
-> >>  	int err, res_valid = 0;
-> >>  	struct device *dev = &pcie->pdev->dev;
-> >> -	struct device_node *np = dev->of_node;
-> >>  	struct resource_entry *win;
-> >>  
-> >> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pcie->resources,
-> >> -					       NULL);
-> >> +	err = of_pci_get_host_bridge_resources(dev, 0, 0xff
-> >> +						    &pcie->resources, NULL);
-> >>  	if (err)
-> >>  		return err;
-> >>  
-> > 
-> > In case if it is an undiscovered issue, a comma was mistakenly removed,
-> > which will result it compilation error.
-> > 
-> > The problem is also found in pci/next , see commit 88e3909aa125.
-> 
-> Yes, that's known. We have a bisection breakage: The issue was fixed
-> again by patch 6 in that series.
+This series is split of the Coresight ETR perf support patches posted
+here [0]. The CATU support and perf backend support will be posted as
+separate series for better management and review of the patches.
 
-I updated 88e3909aa125 to fix the bisection issue.  I'll rebuild
-pci/next later today or tomorrow.
+This series adds the support for TMC ETR Scatter-Gather mode to allow
+using physical non-contiguous buffer for holding the trace data. It
+also adds a layer to handle the buffer management in a transparent
+manner, independent of the underlying mode used by the TMC ETR.
+The layer chooses the ETR mode based on different parameters (size,
+re-using a set of pages, presence of an SMMU etc.).
+
+Finally we add a sysfs parameter to tune the buffer size for ETR in
+sysfs-mode.
+
+During the testing, we found out that if the TMC ETR is not properly
+connected to the memory subsystem, the ETR could lock-up the system
+while waiting for the "read" transactions to complete in scatter-gather
+mode. So, we do not use the mode on a system unless it is safe to do
+so. This is specified by a DT property "arm,scatter-gather".
+
+Applies on coreisght-next tree from Mathieu
+
+Changes since previous version [1]:
+ - Rebased to Mathieu's coresight-next tree to resolve a conflict.
+ - Added tags for DT changes from Rob and Mathieu
+ - Split the SG mode backend support patch from the
+   ETR-BUF patch.
+ - Address other comments from Mathieu
+
+Changes since splitted series [0] :
+ - Split the series in [0]
+ - Address comments on v2
+ - Rename DT property "scatter-gather" to "arm,scatter-gather"
+ - Add ETM PID for Cortex-A35, use macros to make the listing easier
+
+[0] - http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/574875.html
+[1] - http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579135.html
+
+Suzuki K Poulose (12):
+  coresight: ETM: Add support for Arm Cortex-A73 and Cortex-A35
+  coresight: tmc: Hide trace buffer handling for file read
+  coresight: tmc-etr: Do not clean trace buffer
+  coresight: tmc-etr: Disallow perf mode
+  coresight: Add helper for inserting synchronization packets
+  dts: bindings: Restrict coresight tmc-etr scatter-gather mode
+  dts: juno: Add scatter-gather support for all revisions
+  coresight: Add generic TMC sg table framework
+  coresight: Add support for TMC ETR SG unit
+  coresight: tmc-etr: Add transparent buffer management
+  coresight: tmc-etr buf: Add TMC scatter gather mode backend
+  coresight: tmc: Add configuration support for trace buffer size
+
+ .../ABI/testing/sysfs-bus-coresight-devices-tmc    |    8 +
+ .../devicetree/bindings/arm/coresight.txt          |    5 +-
+ arch/arm64/boot/dts/arm/juno-base.dtsi             |    1 +
+ drivers/hwtracing/coresight/coresight-etb10.c      |   12 +-
+ drivers/hwtracing/coresight/coresight-etm4x.c      |   31 +-
+ drivers/hwtracing/coresight/coresight-priv.h       |   10 +-
+ drivers/hwtracing/coresight/coresight-tmc-etf.c    |   45 +-
+ drivers/hwtracing/coresight/coresight-tmc-etr.c    | 1010 ++++++++++++++++++--
+ drivers/hwtracing/coresight/coresight-tmc.c        |   83 +-
+ drivers/hwtracing/coresight/coresight-tmc.h        |  110 ++-
+ drivers/hwtracing/coresight/coresight.c            |    3 +-
+ 11 files changed, 1144 insertions(+), 174 deletions(-)
+
+-- 
+2.7.4
