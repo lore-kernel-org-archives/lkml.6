@@ -1,51 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754413AbeE2FiT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 01:38:19 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:60560 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751751AbeE2FiR (ORCPT
+        id S1752468AbeE2FpE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 01:45:04 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38644 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751250AbeE2FpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 01:38:17 -0400
-Date: Tue, 29 May 2018 15:38:23 +1000 (AEST)
-From: Finn Thain <fthain@telegraphics.com.au>
-To: Michael Schmitz <schmitzmic@gmail.com>
-cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christoph Hellwig <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>,
-        Joshua Thompson <funaho@jurai.org>, Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC
- based ethernet
-In-Reply-To: <b4f0d2d7-fcd5-b68f-0bc6-cd41c353aba7@gmail.com>
-Message-ID: <alpine.LNX.2.21.1805291524080.16@nippy.intranet>
-References: <1527378785-13326-1-git-send-email-linux@roeck-us.net> <alpine.LNX.2.21.1805271212480.9@nippy.intranet> <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com> <alpine.LNX.2.21.1805271547090.9@nippy.intranet> <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com>
- <alpine.LNX.2.21.1805281521420.10@nippy.intranet> <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com> <alpine.LNX.2.21.1805291047230.13@nippy.intranet> <b4f0d2d7-fcd5-b68f-0bc6-cd41c353aba7@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 29 May 2018 01:45:03 -0400
+X-Google-Smtp-Source: AB8JxZomtjqjPf+7XnxdUxQyEnR9VZy4pwpUay6RTMl2affCayOanIBA6EV+flIBdDwbY9slNfqyDw==
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: blkcipher: prefer strlcpy to strncpy
+Date: Mon, 28 May 2018 22:44:43 -0700
+Message-Id: <1527572683-26098-1-git-send-email-nick.desaulniers@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 May 2018, Michael Schmitz wrote:
+Fixes stringop-truncation warnings from gcc-8.
 
-> > 
-> > Since an arch gets to apply limits in the dma ops it implements, why 
-> > would arch code also have to set a limit in the form of default 
-> > platform device masks? Powerpc seems to be the only arch that does 
-> > this.
-> 
-> One of Christoph's recent patches removed most of arches' dma ops, 
-> replacing them by one generic implementation instead. m68k was one of 
-> the affected arches. I concede his patch series is experimental still 
-> and not in mainline, but may be included at some time.
+Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+---
+ crypto/ablkcipher.c | 8 ++++----
+ crypto/blkcipher.c  | 4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-I found some patches here,
-http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/generic-dma-noncoherent.2
-
-Looks like m68k_dma_alloc() gets renamed arch_dma_alloc() and the generic 
-ops don't use the dma masks.
-
-Maybe I'm looking at the wrong patches?
-
+diff --git a/crypto/ablkcipher.c b/crypto/ablkcipher.c
+index d880a48..e38867f 100644
+--- a/crypto/ablkcipher.c
++++ b/crypto/ablkcipher.c
+@@ -370,8 +370,8 @@ static int crypto_ablkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
+ {
+ 	struct crypto_report_blkcipher rblkcipher;
+ 
+-	strncpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
+-	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
++	strlcpy(rblkcipher.type, "ablkcipher", sizeof(rblkcipher.type));
++	strlcpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+ 		sizeof(rblkcipher.geniv));
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+@@ -444,8 +444,8 @@ static int crypto_givcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
+ {
+ 	struct crypto_report_blkcipher rblkcipher;
+ 
+-	strncpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
+-	strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
++	strlcpy(rblkcipher.type, "givcipher", sizeof(rblkcipher.type));
++	strlcpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
+ 		sizeof(rblkcipher.geniv));
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
+diff --git a/crypto/blkcipher.c b/crypto/blkcipher.c
+index 01c0d4a..ee88e48 100644
+--- a/crypto/blkcipher.c
++++ b/crypto/blkcipher.c
+@@ -509,8 +509,8 @@ static int crypto_blkcipher_report(struct sk_buff *skb, struct crypto_alg *alg)
+ {
+ 	struct crypto_report_blkcipher rblkcipher;
+ 
+-	strncpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
+-	strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
++	strlcpy(rblkcipher.type, "blkcipher", sizeof(rblkcipher.type));
++	strlcpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
+ 		sizeof(rblkcipher.geniv));
+ 
+ 	rblkcipher.blocksize = alg->cra_blocksize;
 -- 
+2.7.4
