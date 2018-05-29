@@ -1,148 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934770AbeE2OKx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:10:53 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42812 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934158AbeE2OKv (ORCPT
+        id S934854AbeE2OLy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:11:54 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:36907 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934158AbeE2OLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:10:51 -0400
-X-Google-Smtp-Source: AB8JxZqOjYjVVLqFxBHAwX7Op2K5ENn1Ubhbc5okfRQXHihvPUOfKVIkggDWUeaVZjNpAkC71YkzGg==
-Date: Tue, 29 May 2018 19:43:08 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: l.stach@pengutronix.de, christian.gmeiner@gmail.com, airlied@linux.ie,
-        willy@infradead.org, daniel.vetter@ffwll.ch
-Cc: linux+etnaviv@armlinux.org.uk, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] gpu: drm: etnaviv: Change return type to vm_fault_t
-Message-ID: <20180529141308.GA19242@jordon-HP-15-Notebook-PC>
+        Tue, 29 May 2018 10:11:51 -0400
+X-Google-Smtp-Source: ADUXVKKCHJJQOUJ0TIMpfu5HkoP7XzyIAl4tJiTO6X7xtrW48R0LhkKioF2ArmHypqSg3uPi6FBYOnF7c2ADJ4M7tqw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180529155736.275e27b1@jawa>
+References: <20180509153428.1440-1-lukma@denx.de> <CAOMZO5AexXNEGVoXa9K_GAm+aFLNRQOXOhF_SdKAjV1qmuD2nA@mail.gmail.com>
+ <20180519140202.3449e3c1@jawa> <CAOMZO5DoLwEmQz5BQHDLk8sBq7mDH_UxBjRA0RGKb+PunMYu-Q@mail.gmail.com>
+ <20180529155736.275e27b1@jawa>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 29 May 2018 11:11:50 -0300
+Message-ID: <CAOMZO5AU8PDEErHeU1yb9mwgNLJUvWipTrDsY8csXSHiNro-7w@mail.gmail.com>
+Subject: Re: [PATCH] ARM: DTS: imx53: Add support for imx53 HSC/DDC boards
+ from K+P
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+Hi Lukasz,
 
-Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+On Tue, May 29, 2018 at 10:58 AM, Lukasz Majewski <lukma@denx.de> wrote:
 
-Previously vm_insert_page() returns err which driver
-mapped into VM_FAULT_* type. The new function
-vmf_insert_page() will replace this inefficiency by
-returning VM_FAULT_* type.
+> Sorry for "small" delay on this.
+>
+> Ok, so I've investigated the issue:
+>
+> 1. The code, which you pasted:
+> http://code.bulix.org/ik01yu-339697
+>
+> works correctly as imx53-qsb-common.dtsi directly includes "imx53.dtsi"
+> in which iomuxc label is defined.
+>
+> In my case though,
+>
+> 2. I do include imx53-tqma53.dtsi [1], in which the iomuxc" label
+> is extended:
+>
+> &iomuxc {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&pinctrl_hog>;
+>
+>         imx53-tqma53 {
+>                 pinctrl_hog: hoggrp {
+>
+> .......
+>
+> };
+>
+> The imx53-tqma53.dtsi then includes imx53.dtsi.
+>
+> Moreover, my file -> imx53-kp.dtsi as it includes [1], it extends
+> further the &iomuxc label:
+>
+> &iomuxc {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&pinctrl_kp_common>;
+>
+>         imx53-kp-common {
+>                 pinctrl_buzzer: buzzergrp {
+> .......
+> };
+>
+> So, when I remove imx53-kp-common I will have mismatch with [1] iomuxc
+> structure.
+>
+> The code works as expected when I do remove imx53-tqma53 in [1].
+>
+> However, I would prefer to not touch this imx53-tqma53.dtsi file.
+> It is also included in: imx53-mba53.dts, which extends iomux in
+> following way:
+>
+> &iomuxc {
+>         lvds1 {
+>                 pinctrl_lvds1_1: lvds1-grp1 {
+>
+>
+> Here I would need to remove lvds1, disp1 and tve to make it working.
+> However, it will not break during build, but at run time.
+>
+> Considering the above, I would prefer to leave the code in [1] as is
+> and use imx53-kp-common as well (as in v2 of this patch).
+>
+> Fabio, what do you think?
 
-vmf_error() is the newly introduce inline function
-in 4.17-rc6.
+Ok, thanks for the clarification. I just wanted to make sure we did
+not have some kind of iomux bug there.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
----
-v2: mutex_lock_killable() is replaced with previous
-    mutex_lock_interruptible() cause that discussion
-    is not yet reached to any conclusion.
+I think your proposed patch is fine then.
 
-v3: updated the change log.
-
- drivers/gpu/drm/etnaviv/etnaviv_drv.h |  3 ++-
- drivers/gpu/drm/etnaviv/etnaviv_gem.c | 37 +++++++++--------------------------
- 2 files changed, 11 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-index a54f0b7..f6777f0 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-@@ -28,6 +28,7 @@
- #include <linux/list.h>
- #include <linux/types.h>
- #include <linux/sizes.h>
-+#include <linux/mm_types.h>
- 
- #include <drm/drmP.h>
- #include <drm/drm_crtc_helper.h>
-@@ -62,7 +63,7 @@ int etnaviv_ioctl_gem_submit(struct drm_device *dev, void *data,
- 		struct drm_file *file);
- 
- int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma);
--int etnaviv_gem_fault(struct vm_fault *vmf);
-+vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf);
- int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset);
- struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj);
- void *etnaviv_gem_prime_vmap(struct drm_gem_object *obj);
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-index fcc969f..b36e1ef 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-@@ -180,31 +180,30 @@ int etnaviv_gem_mmap(struct file *filp, struct vm_area_struct *vma)
- 	return obj->ops->mmap(obj, vma);
- }
- 
--int etnaviv_gem_fault(struct vm_fault *vmf)
-+vm_fault_t etnaviv_gem_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct drm_gem_object *obj = vma->vm_private_data;
- 	struct etnaviv_gem_object *etnaviv_obj = to_etnaviv_bo(obj);
- 	struct page **pages, *page;
- 	pgoff_t pgoff;
--	int ret;
-+	int err;
- 
- 	/*
- 	 * Make sure we don't parallel update on a fault, nor move or remove
--	 * something from beneath our feet.  Note that vm_insert_page() is
-+	 * something from beneath our feet.  Note that vmf_insert_page() is
- 	 * specifically coded to take care of this, so we don't have to.
- 	 */
--	ret = mutex_lock_interruptible(&etnaviv_obj->lock);
--	if (ret)
--		goto out;
--
-+	err = mutex_lock_interruptible(&etnaviv_obj->lock);
-+	if (err)
-+		return VM_FAULT_NOPAGE;
- 	/* make sure we have pages attached now */
- 	pages = etnaviv_gem_get_pages(etnaviv_obj);
- 	mutex_unlock(&etnaviv_obj->lock);
- 
- 	if (IS_ERR(pages)) {
--		ret = PTR_ERR(pages);
--		goto out;
-+		err = PTR_ERR(pages);
-+		return vmf_error(err);
- 	}
- 
- 	/* We don't use vmf->pgoff since that has the fake offset: */
-@@ -215,25 +214,7 @@ int etnaviv_gem_fault(struct vm_fault *vmf)
- 	VERB("Inserting %p pfn %lx, pa %lx", (void *)vmf->address,
- 	     page_to_pfn(page), page_to_pfn(page) << PAGE_SHIFT);
- 
--	ret = vm_insert_page(vma, vmf->address, page);
--
--out:
--	switch (ret) {
--	case -EAGAIN:
--	case 0:
--	case -ERESTARTSYS:
--	case -EINTR:
--	case -EBUSY:
--		/*
--		 * EBUSY is ok: this just means that another thread
--		 * already did the job.
--		 */
--		return VM_FAULT_NOPAGE;
--	case -ENOMEM:
--		return VM_FAULT_OOM;
--	default:
--		return VM_FAULT_SIGBUS;
--	}
-+	return vmf_insert_page(vma, vmf->address, page);
- }
- 
- int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset)
--- 
-1.9.1
+Thanks
