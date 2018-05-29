@@ -1,102 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751684AbeE2FRy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 01:17:54 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:48128 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751204AbeE2FRv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 01:17:51 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180529051748euoutp02bffdf664eb84ad8fe606ee7d6ff2d1e2~zBcsXvjie2746427464euoutp02X
-X-AuditID: cbfec7f4-713ff700000043e4-51-5b0ce27a0491
-Subject: Re: Revert "dmaengine: pl330: add DMA_PAUSE feature"
-To: Vinod <vkoul@kernel.org>
-Cc: Frank Mori Hess <fmh6jj@gmail.com>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        r.baldyga@hackerion.com, Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Tue, 29 May 2018 07:17:44 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
-        Thunderbird/52.8.0
+        id S1751810AbeE2FYG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 01:24:06 -0400
+Received: from mga01.intel.com ([192.55.52.88]:11949 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750871AbeE2FYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 01:24:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,455,1520924400";
+   d="scan'208";a="42948578"
+Date: Tue, 29 May 2018 13:24:18 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com, Cornelia Huck <cohuck@redhat.com>
+Subject: Re: [RFC v5 2/5] virtio_ring: support creating packed ring
+Message-ID: <20180529052418.GB2976@debian>
+References: <20180522081648.14768-1-tiwei.bie@intel.com>
+ <20180522081648.14768-3-tiwei.bie@intel.com>
+ <654feee2-3414-e304-0aec-2bb19a7e0c87@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180518072112.GG2932@vkoul-mobl>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRmVeSWpSXmKPExsWy7djP87pVj3iiDdY8ELDYOGM9q8X0qRcY
-        LVZP/ctqMf/xXDaL8+c3sFtc3jWHzWLG+X1MFnf/fWK02HnnBLMDp8fOWXfZPY7sPMbmsXjP
-        SyaPTas62Tz6tqxi9Pi8SS6ALYrLJiU1J7MstUjfLoErY9mqlYwFB9kqjn6dy9rA2MPaxcjJ
-        ISFgIrHwyXG2LkYuDiGBFYwSy+c1MEM4XxglHn+/xwLhfGaU6L48iwWmpWHFDmYQW0hgOaPE
-        q0dyEEXvGSUufL4BlhAWsJVo33IKaC4Hh4iAjMS5fdEgNcwCe5kkDl57BVbDJmAo0fW2iw3E
-        ZhFQldj2+xqYLSoQI7Ht8gOwZbwCghInZz4BszkF9CVOb7wMdjezgLzE9rdzmCFscYlbT+Yz
-        gSyQEDjFLnF8xX0WkMW8AmUSr2ZngZgSAi4SD9o5Ie4Xlnh1fAs7hC0jcXpyDwtESbnEvxNZ
-        EOEWRom13/QhbGuJw8cvsoKUMAtoSqzfBRV2lPjRfIYRopNP4sZbQYhb+CQmbZvODBHmleho
-        E4KoVpOYdXwd3M6DFy4xT2BUmoXkw1lIvpqF5KtZCHsXMLKsYhRPLS3OTU8tNspLLdcrTswt
-        Ls1L10vOz93ECExMp/8d/7KDcdefpEOMAhyMSjy8AX+5o4VYE8uKK3MPMUpwMCuJ8Jbu5YkW
-        4k1JrKxKLcqPLyrNSS0+xCjNwaIkzhunURclJJCeWJKanZpakFoEk2Xi4JRqYMz+teDkWg+X
-        fr/0/WeWvl5g9sdE7+ojkVurdHQ3RvZ9ML6swX3j0bvOzPvXHrrXS5y+9TInuI9nXqOq7xkt
-        frclfc5pIT9LTTZGTmooY1NdvltRa3+1vojuMQv2cpVLbZ4Kipk3llROuOfzt1ZVSezoC6GD
-        1ZW+81OP+Hv/28igLvx6asfkbiWW4oxEQy3mouJEABd0Sl1IAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xu7oVj3iiDea/tbTYOGM9q8X0qRcY
-        LVZP/ctqMf/xXDaL8+c3sFtc3jWHzWLG+X1MFnf/fWK02HnnBLMDp8fOWXfZPY7sPMbmsXjP
-        SyaPTas62Tz6tqxi9Pi8SS6ALUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshU
-        Sd/OJiU1J7MstUjfLkEvY9mqlYwFB9kqjn6dy9rA2MPaxcjJISFgItGwYgdzFyMXh5DAUkaJ
-        GQeXMEMkZCROTmuAKhKW+HOtiw2i6C2jxNyz+5hAEsICthLtW04BJTg4RIAazu2LBqlhFtjL
-        JHFv6V1GiIbnLBLvPy5mA2lgEzCU6HrbBWbzCthJtM3bzwJiswioSmz7fQ0sLioQI7F642V2
-        iBpBiZMzn4DVcAroS5zeeBnsImYBM4l5mx8yQ9jyEtvfzoGyxSVuPZnPNIFRaBaS9llIWmYh
-        aZmFpGUBI8sqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2MwKjcduzn5h2MlzYGH2IU4GBU4uFd
-        8Z87Wog1say4MvcQowQHs5IIb+lenmgh3pTEyqrUovz4otKc1OJDjKZAz01klhJNzgcmjLyS
-        eENTQ3MLS0NzY3NjMwslcd7zBpVRQgLpiSWp2ampBalFMH1MHJxSDYzKn+oe2HkJypr42jjx
-        PKzlmPJoxxPm5ujO5ZZK+aoeirwx29a+lS28Ffo7d8/zyYFJjcm6lb9PfNfQuX7klPT+Vx7X
-        osWlThz8WuKW1Tjh2pVJO/cyL/eb4MJg/z0l2uPBFf+aNPeJJu/KQi283VbNiPyhLP9Nm2NV
-        WUXcofPqbxd+yN4XJaXEUpyRaKjFXFScCABLUJ+Z4AIAAA==
-Message-Id: <20180529051745eucas1p2ee6ec3e34f075d255c87f8f54a626784~zBcpaqmAb1928519285eucas1p2H@eucas1p2.samsung.com>
-X-CMS-MailID: 20180529051745eucas1p2ee6ec3e34f075d255c87f8f54a626784
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180518040358epcas2p353b0096d33116ca78a03b16d24569813
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180518040358epcas2p353b0096d33116ca78a03b16d24569813
-References: <eb17d6a7-a188-3ef4-2641-5fd588b16431@samsung.com>
-        <CAJz5Opfd9zeEAShFtUNhW4yLfVykef=2QdWWzq88Dtddn4eymQ@mail.gmail.com>
-        <06f54061-c537-b399-e493-ec2cdf4def5d@samsung.com>
-        <20180515062144.GC13271@vkoul-mobl>
-        <CAJz5Open++Dj=a4ty-JbnZBFoqbMQKU6qYumJKSRMRLp_3erSw@mail.gmail.com>
-        <20180517041946.GQ13271@vkoul-mobl>
-        <CAJz5Opfep+TL0k_3kG7uQc_nU-BdFy1wsD1jo1agwtSvw0JibQ@mail.gmail.com>
-        <CGME20180518040358epcas2p353b0096d33116ca78a03b16d24569813@epcas2p3.samsung.com>
-        <20180518040349.GB2932@vkoul-mobl>
-        <7f0b7404-ee12-977f-02a4-a463d1873aee@samsung.com>
-        <20180518072112.GG2932@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <654feee2-3414-e304-0aec-2bb19a7e0c87@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
+On Tue, May 29, 2018 at 10:49:11AM +0800, Jason Wang wrote:
+> On 2018年05月22日 16:16, Tiwei Bie wrote:
+> > This commit introduces the support for creating packed ring.
+> > All split ring specific functions are added _split suffix.
+> > Some necessary stubs for packed ring are also added.
+> > 
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> >   drivers/virtio/virtio_ring.c | 801 +++++++++++++++++++++++------------
+> >   include/linux/virtio_ring.h  |   8 +-
+> >   2 files changed, 546 insertions(+), 263 deletions(-)
+> > 
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index 71458f493cf8..f5ef5f42a7cf 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -61,11 +61,15 @@ struct vring_desc_state {
+> >   	struct vring_desc *indir_desc;	/* Indirect descriptor, if any. */
+> >   };
+> > +struct vring_desc_state_packed {
+> > +	int next;			/* The next desc state. */
+> > +};
+> > +
+> >   struct vring_virtqueue {
+> >   	struct virtqueue vq;
+> > -	/* Actual memory layout for this queue */
+> > -	struct vring vring;
+> > +	/* Is this a packed ring? */
+> > +	bool packed;
+> >   	/* Can we use weak barriers? */
+> >   	bool weak_barriers;
+> > @@ -87,11 +91,39 @@ struct vring_virtqueue {
+> >   	/* Last used index we've seen. */
+> >   	u16 last_used_idx;
+> > -	/* Last written value to avail->flags */
+> > -	u16 avail_flags_shadow;
+> > +	union {
+> > +		/* Available for split ring */
+> > +		struct {
+> > +			/* Actual memory layout for this queue. */
+> > +			struct vring vring;
+> > -	/* Last written value to avail->idx in guest byte order */
+> > -	u16 avail_idx_shadow;
+> > +			/* Last written value to avail->flags */
+> > +			u16 avail_flags_shadow;
+> > +
+> > +			/* Last written value to avail->idx in
+> > +			 * guest byte order. */
+> > +			u16 avail_idx_shadow;
+> > +		};
+> > +
+> > +		/* Available for packed ring */
+> > +		struct {
+> > +			/* Actual memory layout for this queue. */
+> > +			struct vring_packed vring_packed;
+> > +
+> > +			/* Driver ring wrap counter. */
+> > +			u8 avail_wrap_counter;
+> > +
+> > +			/* Device ring wrap counter. */
+> > +			u8 used_wrap_counter;
+> 
+> How about just use boolean?
 
-On 2018-05-18 09:21, Vinod wrote:
-> On 18-05-18, 08:28, Marek Szyprowski wrote:
->> Hi Vinod,
->>
->> Okay, I see that in theory, there are some tricky bits in implementing DMA
->> support in UART drivers. On the other hand there are already drivers
->> with seems
->> to be working fine. This discussion is about revert of the feature
->> present in
->> pl330 driver, which is required by other in-kernel driver without proper
->> fix to
->> them.
->>
->> Can we drop it for now and discuss what and how should be implemented to
->> make
->> everyone happy, without any regressions?
-> Sure am dropping the revert, we can always bring it back if it is required
+I can change it to bool if you want.
 
-This revert is still in your -next branch. Do you plan to update it as well?
+> 
+[...]
+> > -static int vring_mapping_error(const struct vring_virtqueue *vq,
+> > -			       dma_addr_t addr)
+> > -{
+> > -	if (!vring_use_dma_api(vq->vq.vdev))
+> > -		return 0;
+> > -
+> > -	return dma_mapping_error(vring_dma_dev(vq), addr);
+> > -}
+> 
+> It looks to me if you keep vring_mapping_error behind
+> vring_unmap_one_split(), lots of changes were unncessary.
+> 
+[...]
+> > +	}
+> > +	/* That should have freed everything. */
+> > +	BUG_ON(vq->vq.num_free != vq->vring.num);
+> > +
+> > +	END_USE(vq);
+> > +	return NULL;
+> > +}
+> 
+> I think the those copy-and-paste hunks could be avoided and the diff should
+> only contains renaming of the function. If yes, it would be very welcomed
+> since it requires to compare the changes verbatim otherwise.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Michael suggested to lay out the code as:
+
+XXX_split
+
+XXX_packed
+
+XXX wrappers
+
+https://lkml.org/lkml/2018/4/13/410
+
+That's why I moved some code.
+
+> 
+> > +
+> > +/*
+> > + * The layout for the packed ring is a continuous chunk of memory
+> > + * which looks like this.
+> > + *
+> > + * struct vring_packed {
+> > + *	// The actual descriptors (16 bytes each)
+> > + *	struct vring_packed_desc desc[num];
+> > + *
+> > + *	// Padding to the next align boundary.
+> > + *	char pad[];
+> > + *
+> > + *	// Driver Event Suppression
+> > + *	struct vring_packed_desc_event driver;
+> > + *
+> > + *	// Device Event Suppression
+> > + *	struct vring_packed_desc_event device;
+> > + * };
+> > + */
+> > +static inline void vring_init_packed(struct vring_packed *vr, unsigned int num,
+> > +				     void *p, unsigned long align)
+> > +{
+> > +	vr->num = num;
+> > +	vr->desc = p;
+> > +	vr->driver = (void *)(((uintptr_t)p + sizeof(struct vring_packed_desc)
+> > +		* num + align - 1) & ~(align - 1));
+> 
+> If we choose not to go uapi, maybe we can use ALIGN() macro here?
+
+Okay.
+
+> 
+> > +	vr->device = vr->driver + 1;
+> > +}
+[...]
+> > +/* Only available for split ring */
+> >   const struct vring *virtqueue_get_vring(struct virtqueue *vq)
+> >   {
+> 
+> A possible issue with this is:
+> 
+> After commit d4674240f31f8c4289abba07d64291c6ddce51bc ("KVM: s390:
+> virtio-ccw revision 1 SET_VQ"). CCW tries to use
+> virtqueue_get_avail()/virtqueue_get_used(). Looks like a bug either here or
+> ccw code.
+
+Do we still need to support:
+
+include/linux/virtio.h
+/*
+ * Legacy accessors -- in almost all cases, these are the wrong functions
+ * to use.
+ */
+static inline void *virtqueue_get_desc(struct virtqueue *vq)
+{
+        return virtqueue_get_vring(vq)->desc;
+}
+static inline void *virtqueue_get_avail(struct virtqueue *vq)
+{
+        return virtqueue_get_vring(vq)->avail;
+}
+static inline void *virtqueue_get_used(struct virtqueue *vq)
+{
+        return virtqueue_get_vring(vq)->used;
+}
+
+in packed ring?
+
+If so, I think maybe it's better to expose them as
+symbols and implement them in virtio_ring.c.
+
+Best regards,
+Tiwei Bie
