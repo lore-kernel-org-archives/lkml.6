@@ -1,104 +1,272 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936468AbeE2PYE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:24:04 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:27017 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935483AbeE2PYC (ORCPT
+        id S936520AbeE2PYQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:24:16 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:37419 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936493AbeE2PYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:24:02 -0400
-X-IronPort-AV: E=Sophos;i="5.49,456,1520924400";
-   d="scan'208";a="12000422"
-Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
- dma
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-CC: Peter Rosin <peda@axentia.se>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180329131054.22506-1-peda@axentia.se>
- <20180329153322.5e2fc1e7@bbrezillon>
- <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
- <20180329154416.5c1a0013@bbrezillon>
- <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
- <20180402142249.7e076a64@bbrezillon>
- <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
- <20180402212843.164d5d21@bbrezillon> <20180402222020.1d344c14@bbrezillon>
- <d7e6f78d-b57b-4d0f-c07c-ca6c1930cd51@axentia.se>
- <20180403091813.5fb5c18c@bbrezillon>
- <d0afd431-6e51-a9b7-c103-ecf1f6e07c2e@axentia.se>
- <959d826d-1a98-ca22-acee-a4548427fcd3@microchip.com>
- <a25ca617-d3da-d401-1ba9-8e5887f8a8e5@microchip.com>
- <024079cb-77ad-9c48-e370-e6e8f2de171b@axentia.se>
- <9c496531-f7b6-4b9d-dd51-0bfb68ead303@axentia.se>
- <c3cc1894-2d7d-93b6-a9de-ed9ca4564ae9@axentia.se>
- <19d68279-072e-7646-6fdd-8649578229ea@microchip.com>
- <20180529164911.29820e07@bbrezillon>
- <e3c34fb7-4881-3f49-b43b-1b07a8ab865d@microchip.com>
- <20180529171555.19dd723f@bbrezillon>
-From: Eugen Hristev <eugen.hristev@microchip.com>
-Message-ID: <1affd186-7f78-8bb0-050e-da82143c2982@microchip.com>
-Date: Tue, 29 May 2018 18:21:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 29 May 2018 11:24:07 -0400
+X-Google-Smtp-Source: ADUXVKK7qTpuMrmWayzDX4s+0Uc9NjtgSeG4cpKoDplgaZurpoi8fp6JfbRBObioZgROJb3iy0AZ0pTB5buSsnNsOfE=
 MIME-Version: 1.0
-In-Reply-To: <20180529171555.19dd723f@bbrezillon>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180529144143.16378-6-mszeredi@redhat.com>
+References: <20180529144143.16378-1-mszeredi@redhat.com> <20180529144143.16378-6-mszeredi@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 29 May 2018 18:24:06 +0300
+Message-ID: <CAOQ4uxh0XUgOZ-tZ_1jTxBLFAdWv53kamh-1=hTuLkVpEVA08w@mail.gmail.com>
+Subject: Re: [PATCH 05/11] ovl: return dentry from ovl_create_real()
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 29, 2018 at 5:41 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+> From: Amir Goldstein <amir73il@gmail.com>
+>
+> Al Viro suggested to simplify callers of ovl_create_real() by
+> returning the created dentry (or ERR_PTR) from ovl_create_real().
+> This prep patch makes Al's patch change less callers.
+>
+> Also used ovl_create_temp() in ovl_create_index() instead of calling
+> ovl_do_mkdir() directly, so now all callers of ovl_do_mkdir() are routed
+> through ovl_create_real(), which paves the way for Al's fix for non-hashed
+> result from vfs_mkdir().
+>
 
+It's good that you split this patch from ovl_create_temp() patch, but
+the commit message it utterly not related to the patch anymore and
+possibly should retain Al's authorship cause there is no relic of my
+work in this patch.
 
-On 29.05.2018 18:15, Boris Brezillon wrote:
-> On Tue, 29 May 2018 18:01:40 +0300
-> Eugen Hristev <eugen.hristev@microchip.com> wrote:
-> 
->> [...]
->>
->>
->>>
->>> I think you're missing something here. We use the DMA engine in memcpy
->>> mode (SRAM -> DRAM), not in device mode (dev -> DRAM or DRAM -> dev).
->>> So there's no dmas prop defined in the DT and there should not be.
->>>
->>> Regards,
->>>
->>> Boris
->>>    
->>
->> Ok, so the memcpy SRAM <-> DRAM will hog the transfer between DRAM and
->> LCD if my understanding is correct. That's the DMA that Peter wants to
->> disable with his patch ?
->>
->> Then we can then try to force NFC SRAM DMA channels to use just DDR port
->> 1 or 2 for memcpy ?
-> 
-> You mean the dmaengine? According to "14.1.3 Master to Slave Access"
-> that's already the case.
-> 
-> Only DMAC0 can access the NFC SRAM and it's done through DMAC0:IF0,
-> then access to DDR is going through port DDR port 1 (DMAC0:IF1) or 2
-> (DMAC0:IF0).
+Thanks,
+Amir.
 
-If we can make NFC use port 1 only, then HLCDC could have two ports as 
-master 8 & 9, maybe a better bandwidth.
-
-> 
->>
->> I have also received a suggestion to try to increase the porches in
->> LCDC_LCDCFG3 .
-> 
-> Yep, Nicolas suggested something similar. Peter, can you try that?
-> 
+> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/overlayfs/copy_up.c   | 15 ++++--------
+>  fs/overlayfs/dir.c       | 62 +++++++++++++++++++++++-------------------------
+>  fs/overlayfs/overlayfs.h |  4 ++--
+>  fs/overlayfs/super.c     |  7 +++---
+>  4 files changed, 40 insertions(+), 48 deletions(-)
+>
+> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> index 5f4c78b1bbeb..d3e9c1eeb7a4 100644
+> --- a/fs/overlayfs/copy_up.c
+> +++ b/fs/overlayfs/copy_up.c
+> @@ -502,19 +502,12 @@ static int ovl_get_tmpfile(struct ovl_copy_up_ctx *c, struct dentry **tempp)
+>
+>         if (c->tmpfile) {
+>                 temp = ovl_do_tmpfile(c->workdir, c->stat.mode);
+> -               if (IS_ERR(temp))
+> -                       goto temp_err;
+>         } else {
+> -               temp = ovl_lookup_temp(c->workdir);
+> -               if (IS_ERR(temp))
+> -                       goto temp_err;
+> -
+> -               err = ovl_create_real(d_inode(c->workdir), temp, &cattr);
+> -               if (err) {
+> -                       dput(temp);
+> -                       goto out;
+> -               }
+> +               temp = ovl_create_real(d_inode(c->workdir),
+> +                                      ovl_lookup_temp(c->workdir), &cattr);
+>         }
+> +       if (IS_ERR(temp))
+> +               goto temp_err;
+>         err = 0;
+>         *tempp = temp;
+>  out:
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index 0fb3ef85f298..425ddb098c4a 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -114,13 +114,17 @@ int ovl_cleanup_and_whiteout(struct dentry *workdir, struct inode *dir,
+>         goto out;
+>  }
+>
+> -int ovl_create_real(struct inode *dir, struct dentry *newdentry,
+> -                   struct ovl_cattr *attr)
+> +struct dentry *ovl_create_real(struct inode *dir, struct dentry *newdentry,
+> +                              struct ovl_cattr *attr)
+>  {
+>         int err;
+>
+> +       if (IS_ERR(newdentry))
+> +               return newdentry;
+> +
+> +       err = -ESTALE;
+>         if (newdentry->d_inode)
+> -               return -ESTALE;
+> +               goto out;
+>
+>         if (attr->hardlink) {
+>                 err = ovl_do_link(attr->hardlink, dir, newdentry);
+> @@ -157,7 +161,12 @@ int ovl_create_real(struct inode *dir, struct dentry *newdentry,
+>                  */
+>                 err = -ENOENT;
+>         }
+> -       return err;
+> +out:
+> +       if (err) {
+> +               dput(newdentry);
+> +               return ERR_PTR(err);
+> +       }
+> +       return newdentry;
+>  }
+>
+>  static int ovl_set_opaque_xerr(struct dentry *dentry, struct dentry *upper,
+> @@ -224,14 +233,14 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
+>                 attr->mode &= ~current_umask();
+>
+>         inode_lock_nested(udir, I_MUTEX_PARENT);
+> -       newdentry = lookup_one_len(dentry->d_name.name, upperdir,
+> -                                  dentry->d_name.len);
+> +       newdentry = ovl_create_real(udir,
+> +                                   lookup_one_len(dentry->d_name.name,
+> +                                                  upperdir,
+> +                                                  dentry->d_name.len),
+> +                                   attr);
+>         err = PTR_ERR(newdentry);
+>         if (IS_ERR(newdentry))
+>                 goto out_unlock;
+> -       err = ovl_create_real(udir, newdentry, attr);
+> -       if (err)
+> -               goto out_dput;
+>
+>         if (ovl_type_merge(dentry->d_parent) && d_is_dir(newdentry)) {
+>                 /* Setting opaque here is just an optimization, allow to fail */
+> @@ -239,9 +248,7 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
+>         }
+>
+>         ovl_instantiate(dentry, inode, newdentry, !!attr->hardlink);
+> -       newdentry = NULL;
+> -out_dput:
+> -       dput(newdentry);
+> +       err = 0;
+>  out_unlock:
+>         inode_unlock(udir);
+>         return err;
+> @@ -280,15 +287,12 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
+>         if (upper->d_parent->d_inode != udir)
+>                 goto out_unlock;
+>
+> -       opaquedir = ovl_lookup_temp(workdir);
+> +       opaquedir = ovl_create_real(wdir, ovl_lookup_temp(workdir),
+> +                                   OVL_CATTR(stat.mode));
+>         err = PTR_ERR(opaquedir);
+>         if (IS_ERR(opaquedir))
+>                 goto out_unlock;
+>
+> -       err = ovl_create_real(wdir, opaquedir, OVL_CATTR(stat.mode));
+> -       if (err)
+> -               goto out_dput;
+> -
+>         err = ovl_copy_xattr(upper, opaquedir);
+>         if (err)
+>                 goto out_cleanup;
+> @@ -318,7 +322,6 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
+>
+>  out_cleanup:
+>         ovl_cleanup(wdir, opaquedir);
+> -out_dput:
+>         dput(opaquedir);
+>  out_unlock:
+>         unlock_rename(workdir, upperdir);
+> @@ -379,20 +382,16 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+>         if (err)
+>                 goto out;
+>
+> -       newdentry = ovl_lookup_temp(workdir);
+> -       err = PTR_ERR(newdentry);
+> -       if (IS_ERR(newdentry))
+> -               goto out_unlock;
+> -
+>         upper = lookup_one_len(dentry->d_name.name, upperdir,
+>                                dentry->d_name.len);
+>         err = PTR_ERR(upper);
+>         if (IS_ERR(upper))
+> -               goto out_dput;
+> +               goto out_unlock;
+>
+> -       err = ovl_create_real(wdir, newdentry, cattr);
+> -       if (err)
+> -               goto out_dput2;
+> +       newdentry = ovl_create_real(wdir, ovl_lookup_temp(workdir), cattr);
+> +       err = PTR_ERR(newdentry);
+> +       if (IS_ERR(newdentry))
+> +               goto out_dput;
+>
+>         /*
+>          * mode could have been mutilated due to umask (e.g. sgid directory)
+> @@ -439,11 +438,9 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+>                         goto out_cleanup;
+>         }
+>         ovl_instantiate(dentry, inode, newdentry, hardlink);
+> -       newdentry = NULL;
+> -out_dput2:
+> -       dput(upper);
+> +       err = 0;
+>  out_dput:
+> -       dput(newdentry);
+> +       dput(upper);
+>  out_unlock:
+>         unlock_rename(workdir, upperdir);
+>  out:
+> @@ -455,7 +452,8 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+>
+>  out_cleanup:
+>         ovl_cleanup(wdir, newdentry);
+> -       goto out_dput2;
+> +       dput(newdentry);
+> +       goto out_dput;
+>  }
+>
+>  static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index aa8286419133..6bbde513e068 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -358,8 +358,8 @@ struct ovl_cattr {
+>
+>  #define OVL_CATTR(m) (&(struct ovl_cattr) { .mode = (m) })
+>
+> -int ovl_create_real(struct inode *dir, struct dentry *newdentry,
+> -                   struct ovl_cattr *attr);
+> +struct dentry *ovl_create_real(struct inode *dir, struct dentry *newdentry,
+> +                              struct ovl_cattr *attr);
+>  int ovl_cleanup(struct inode *dir, struct dentry *dentry);
+>
+>  /* copy_up.c */
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index 286d36772e9c..704b37311467 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -611,9 +611,10 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
+>                         goto retry;
+>                 }
+>
+> -               err = ovl_create_real(dir, work, OVL_CATTR(attr.ia_mode));
+> -               if (err)
+> -                       goto out_dput;
+> +               work = ovl_create_real(dir, work, OVL_CATTR(attr.ia_mode));
+> +               err = PTR_ERR(work);
+> +               if (IS_ERR(work))
+> +                       goto out_err;
+>
+>                 /*
+>                  * Try to remove POSIX ACL xattrs from workdir.  We are good if:
+> --
+> 2.14.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
