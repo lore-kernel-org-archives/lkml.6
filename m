@@ -1,71 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965490AbeE2Rdl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 13:33:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43926 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965010AbeE2Rdk (ORCPT
+        id S965506AbeE2RfO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 13:35:14 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:42271 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965010AbeE2RfK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 13:33:40 -0400
-Date: Tue, 29 May 2018 10:35:18 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: mingo@kernel.org
-Cc: linux-kernel@vger.kernel.org, efault@gmx.de, peterz@infradead.org,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
-Subject: [GIT PULL rcu/next] Additional RCU commit for 4.18
-Reply-To: paulmck@linux.vnet.ibm.com
+        Tue, 29 May 2018 13:35:10 -0400
+X-Google-Smtp-Source: ADUXVKL55M8OwVDzFnqpGNs6PvVUXryVp220jAn6kdRSBod5ZjbQSrO3y1j/+5d6WHLN/z4ojNdEDnFG8uah7pbMBb8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18052917-0008-0000-0000-0000030E27A6
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009097; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01039460; UDB=6.00532006; IPR=6.00818588;
- MB=3.00021361; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-29 17:33:38
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18052917-0009-0000-0000-00003965D2FC
-Message-Id: <20180529173518.GA6850@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-29_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805290190
+In-Reply-To: <20180527112847.GA18311@asgard.redhat.com>
+References: <20180527112847.GA18311@asgard.redhat.com>
+From: Song Liu <liu.song.a23@gmail.com>
+Date: Tue, 29 May 2018 10:35:09 -0700
+Message-ID: <CAPhsuW5fVamngrqEWcsPKyr3Njjz4K5vO3o51BuWXAMw_nf9KA@mail.gmail.com>
+Subject: Re: [PATCH bpf 2/2] bpf: enforce usage of __aligned_u64 in the UAPI header
+To: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: netdev@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, Jiri Olsa <jolsa@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Lawrence Brakmo <brakmo@fb.com>,
+        Andrey Ignatov <rdna@fb.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Ingo,
+On Sun, May 27, 2018 at 4:28 AM, Eugene Syromiatnikov <esyr@redhat.com> wrote:
+> Use __aligned_u64 instead of __u64 everywhere in the UAPI header,
+> similarly to v4.17-rc1~94^2~58^2 "RDMA: Change all uapi headers to use
+> __aligned_u64 instead of __u64".
+>
+> This commit doesn't change structure layouts, but imposes additional
+> alignment requirements on struct bpf_stack_build_id, struct
+> bpf_sock_ops, struct bpf_perf_event_value, and struct
+> bpf_raw_tracepoint_args; of them only struct bpf_sock_ops and struct
+> bpf_perf_event_value have 64-bit fields that were present in a released
+> kernel without this additional alignment requirement (bytes_received
+> and bytes_acked were added to struct bpf_sock_ops in commit
+> v4.16-rc1~123^2~33^2~5^2~4, struct bpf_perf_event_value was added
+> in commit v4.15-rc1~84^2~532^2~3).
+>
+> Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+> ---
+>  include/uapi/linux/bpf.h       | 22 +++++++++++-----------
+>  tools/include/uapi/linux/bpf.h | 22 +++++++++++-----------
+>  2 files changed, 22 insertions(+), 22 deletions(-)
+>
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index 903010a..174e99a 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -259,8 +259,8 @@ struct bpf_stack_build_id {
+>         __s32           status;
+>         unsigned char   build_id[BPF_BUILD_ID_SIZE];
+>         union {
+> -               __u64   offset;
+> -               __u64   ip;
+> +               __aligned_u64   offset;
+> +               __aligned_u64   ip;
+>         };
+>  };
+>
+> @@ -288,7 +288,7 @@ union bpf_attr {
+>                         __aligned_u64 value;
+>                         __aligned_u64 next_key;
+>                 };
+> -               __u64           flags;
+> +               __aligned_u64   flags;
+>         };
+>
+>         struct { /* anonymous struct used by BPF_PROG_LOAD command */
+> @@ -360,7 +360,7 @@ union bpf_attr {
+>         } query;
+>
+>         struct {
+> -               __u64 name;
+> +               __aligned_u64 name;
+>                 __u32 prog_fd;
+>         } raw_tracepoint;
+>  } __attribute__((aligned(8)));
+> @@ -1011,7 +1011,7 @@ struct bpf_prog_info {
+>         __u32 xlated_prog_len;
+>         __aligned_u64 jited_prog_insns;
+>         __aligned_u64 xlated_prog_insns;
+> -       __u64 load_time;        /* ns since boottime */
+> +       __aligned_u64 load_time;        /* ns since boottime */
+>         __u32 created_by_uid;
+>         __u32 nr_map_ids;
+>         __aligned_u64 map_ids;
+> @@ -1101,8 +1101,8 @@ struct bpf_sock_ops {
+>         __u32 lost_out;
+>         __u32 sacked_out;
+>         __u32 sk_txhash;
+> -       __u64 bytes_received;
+> -       __u64 bytes_acked;
+> +       __aligned_u64 bytes_received;
+> +       __aligned_u64 bytes_acked;
+>  };
+>
+>  /* Definitions for bpf_sock_ops_cb_flags */
+> @@ -1189,9 +1189,9 @@ enum {
+>  #define TCP_BPF_SNDCWND_CLAMP  1002    /* Set sndcwnd_clamp */
+>
+>  struct bpf_perf_event_value {
+> -       __u64 counter;
+> -       __u64 enabled;
+> -       __u64 running;
+> +       __aligned_u64 counter;
+> +       __aligned_u64 enabled;
+> +       __aligned_u64 running;
+>  };
+>
+>  #define BPF_DEVCG_ACC_MKNOD    (1ULL << 0)
+> @@ -1209,7 +1209,7 @@ struct bpf_cgroup_dev_ctx {
+>  };
+>
+>  struct bpf_raw_tracepoint_args {
+> -       __u64 args[0];
+> +       __aligned_u64 args[0];
+>  };
+>
+>  #endif /* _UAPI__LINUX_BPF_H__ */
+> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+> index 903010a..174e99a 100644
+> --- a/tools/include/uapi/linux/bpf.h
+> +++ b/tools/include/uapi/linux/bpf.h
+> @@ -259,8 +259,8 @@ struct bpf_stack_build_id {
+>         __s32           status;
+>         unsigned char   build_id[BPF_BUILD_ID_SIZE];
+>         union {
+> -               __u64   offset;
+> -               __u64   ip;
+> +               __aligned_u64   offset;
+> +               __aligned_u64   ip;
+>         };
+>  };
+>
+> @@ -288,7 +288,7 @@ union bpf_attr {
+>                         __aligned_u64 value;
+>                         __aligned_u64 next_key;
+>                 };
+> -               __u64           flags;
+> +               __aligned_u64   flags;
+>         };
+>
+>         struct { /* anonymous struct used by BPF_PROG_LOAD command */
+> @@ -360,7 +360,7 @@ union bpf_attr {
+>         } query;
+>
+>         struct {
+> -               __u64 name;
+> +               __aligned_u64 name;
+>                 __u32 prog_fd;
+>         } raw_tracepoint;
+>  } __attribute__((aligned(8)));
+> @@ -1011,7 +1011,7 @@ struct bpf_prog_info {
+>         __u32 xlated_prog_len;
+>         __aligned_u64 jited_prog_insns;
+>         __aligned_u64 xlated_prog_insns;
+> -       __u64 load_time;        /* ns since boottime */
+> +       __aligned_u64 load_time;        /* ns since boottime */
+>         __u32 created_by_uid;
+>         __u32 nr_map_ids;
+>         __aligned_u64 map_ids;
+> @@ -1101,8 +1101,8 @@ struct bpf_sock_ops {
+>         __u32 lost_out;
+>         __u32 sacked_out;
+>         __u32 sk_txhash;
+> -       __u64 bytes_received;
+> -       __u64 bytes_acked;
+> +       __aligned_u64 bytes_received;
+> +       __aligned_u64 bytes_acked;
+>  };
+>
+>  /* Definitions for bpf_sock_ops_cb_flags */
+> @@ -1189,9 +1189,9 @@ enum {
+>  #define TCP_BPF_SNDCWND_CLAMP  1002    /* Set sndcwnd_clamp */
+>
+>  struct bpf_perf_event_value {
+> -       __u64 counter;
+> -       __u64 enabled;
+> -       __u64 running;
+> +       __aligned_u64 counter;
+> +       __aligned_u64 enabled;
+> +       __aligned_u64 running;
+>  };
+>
+>  #define BPF_DEVCG_ACC_MKNOD    (1ULL << 0)
+> @@ -1209,7 +1209,7 @@ struct bpf_cgroup_dev_ctx {
+>  };
+>
+>  struct bpf_raw_tracepoint_args {
+> -       __u64 args[0];
+> +       __aligned_u64 args[0];
+>  };
+>
+>  #endif /* _UAPI__LINUX_BPF_H__ */
+> --
+> 2.1.4
+>
 
-This additional v4.18 pull request contains a single commit that fell
-through the cracks:
+I think these changes are not necessary. Is it a general guidance to
+only use 64-bit aligned
+variables in UAPI headers?
 
-1.	Provide early rcu_cpu_starting() callback for the benefit of the
-	x86/mtrr code, which needs RCU to be available on incoming CPUs
-	earlier than has been the case in the past.
-
-	http://lkml.kernel.org/r/20180525191802.GA7141@linux.vnet.ibm.com
-
-All of these changes have been subjected to 0day Test Robot and -next
-testing, and are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
-
-for you to fetch changes up to f64c6013a2029316ea552f99823d116ee5f5f955:
-
-  rcu/x86: Provide early rcu_cpu_starting() callback (2018-05-22 16:12:26 -0700)
-
-----------------------------------------------------------------
-Peter Zijlstra (1):
-      rcu/x86: Provide early rcu_cpu_starting() callback
-
- arch/x86/kernel/cpu/mtrr/main.c | 4 ++++
- include/linux/rcupdate.h        | 1 -
- include/linux/rcutiny.h         | 1 +
- include/linux/rcutree.h         | 1 +
- kernel/rcu/tree.c               | 9 +++++++++
- 5 files changed, 15 insertions(+), 1 deletion(-)
+Thanks,
+Song
