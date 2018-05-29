@@ -1,51 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934976AbeE2Ola (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 10:41:30 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36474 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934608AbeE2Ol2 (ORCPT
+        id S935034AbeE2Olu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 10:41:50 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35995 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754961AbeE2Ols (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:41:28 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6BEB60261
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-To: robh+dt@kernel.org
-Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com,
-        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v5 5/8] dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
-Date: Tue, 29 May 2018 20:11:15 +0530
-Message-Id: <20180529144115.28981-1-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.17.0
+        Tue, 29 May 2018 10:41:48 -0400
+X-Google-Smtp-Source: AB8JxZoVJGeJ9MA/EFgtBByl8z5LZkR53up3BpQYlKYiBn7bYKieu89MDllzqEhd/S8q5oixPeqWBg==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/11] overlayfs fixes
+Date: Tue, 29 May 2018 16:41:32 +0200
+Message-Id: <20180529144143.16378-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new compatible string for Qualcomm SDM845 SoCs
+This series contains various fixes, including handling the case when
+vfs_mkdir() returns success, but requires a new lookup for an instantiated
+dentry.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 1 +
- 1 file changed, 1 insertion(+)
+Amir Goldstein (8):
+  ovl: update documentation for unionmount-testsuite
+  ovl: remove WARN_ON() real inode attributes mismatch
+  ovl: strip debug argument from ovl_do_ helpers
+  ovl: struct cattr cleanups
+  ovl: return dentry from ovl_create_real()
+  ovl: create helper ovl_create_temp()
+  ovl: make ovl_create_real() cope with vfs_mkdir() safely
+  ovl: use inode_insert5() to hash a newly created inode
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 00d3d58a102f..d90182425450 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -11,6 +11,7 @@ on the Qualcomm Hexagon core.
- 		    "qcom,msm8916-mss-pil",
- 		    "qcom,msm8974-mss-pil"
- 		    "qcom,msm8996-mss-pil"
-+		    "qcom,sdm845-mss-pil"
- 
- - reg:
- 	Usage: required
+Miklos Szeredi (2):
+  ovl: clean up copy-up error paths
+  vfs: factor out inode_insert5()
+
+Vivek Goyal (1):
+  ovl: Pass argument to ovl_get_inode() in a structure
+
+ Documentation/filesystems/overlayfs.txt |   7 +-
+ fs/inode.c                              | 164 ++++++++++++-------------
+ fs/overlayfs/copy_up.c                  |  83 ++++---------
+ fs/overlayfs/dir.c                      | 207 +++++++++++++++++++++-----------
+ fs/overlayfs/export.c                   |   8 +-
+ fs/overlayfs/inode.c                    |  28 +++--
+ fs/overlayfs/namei.c                    |  10 +-
+ fs/overlayfs/overlayfs.h                |  65 +++++-----
+ fs/overlayfs/super.c                    |   9 +-
+ include/linux/fs.h                      |   4 +
+ 10 files changed, 315 insertions(+), 270 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.3
