@@ -1,67 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934026AbeE2MO6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:14:58 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35095 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933677AbeE2MOs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:14:48 -0400
-X-Google-Smtp-Source: ADUXVKJUBfqFz9wiUueXgc+zvYqvim5DF7EDqeaOUCGj97wrwyJVWfK7z1s1WZCg2qO0l0Q7dwpZAeOZ4likYqqgUbc=
-MIME-Version: 1.0
-In-Reply-To: <CA+7wUswm60dZAfnTYJ-2p3o1H1ubwn1_OH7GSu9Y_PRKKCHJog@mail.gmail.com>
-References: <20180529210257.26da8de7@canb.auug.org.au> <CA+7wUsw4Us749j8yO5zpqfMcYWPMujwkNq0CRSSWWVFDJXLS0w@mail.gmail.com>
- <CA+7wUswm60dZAfnTYJ-2p3o1H1ubwn1_OH7GSu9Y_PRKKCHJog@mail.gmail.com>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 29 May 2018 14:14:27 +0200
-X-Google-Sender-Auth: VsOd2lER5jYtr1Syk_m2cL0WJG4
-Message-ID: <CA+7wUsy8=hbyN4NQ3x-Sp-YT1uPFRcYLNpJncuoMMy==Qd7PeQ@mail.gmail.com>
-Subject: Re: linux-next: boot messages from today's linux-next
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S934081AbeE2MPV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:15:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55610 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934035AbeE2MPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:15:07 -0400
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
+Subject: [PATCH 10/10] crypto: inside-secure - authenc(hmac(sha384),cbc(aes)) support
+Date: Tue, 29 May 2018 14:13:52 +0200
+Message-Id: <20180529121352.19490-11-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180529121352.19490-1-antoine.tenart@bootlin.com>
+References: <20180529121352.19490-1-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael,
+This patch adds the authenc(hmac(sha384),cbc(aes)) algorithm support to
+the Inside Secure SafeXcel driver.
 
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+---
+ drivers/crypto/inside-secure/safexcel.c       |  1 +
+ drivers/crypto/inside-secure/safexcel.h       |  1 +
+ .../crypto/inside-secure/safexcel_cipher.c    | 39 +++++++++++++++++++
+ 3 files changed, 41 insertions(+)
 
-On Tue, May 29, 2018 at 2:00 PM, Mathieu Malaterre <malat@debian.org> wrote:
-> On Tue, May 29, 2018 at 1:56 PM, Mathieu Malaterre <malat@debian.org> wrote:
->> On Tue, May 29, 2018 at 1:02 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi all,
->>>
->>> My qemu boots of today's powerpc linux-next kernel produced the following
->>> boot message differences:
->>>
->>> -Max number of cores passed to firmware: 2048 (NR_CPUS = 2048)
->>> +Max number of cores passed to firmware: u (NR_CPUS = 2048)
->>>
->>> Seemingly caused by commit
->>>
->>>   eae5f709a4d7 ("powerpc: Add __printf verification to prom_printf")
->>
->> My bad. Patch is pending (thanks Michael!):
->>
->> https://patchwork.ozlabs.org/patch/921948/
->
-> Nope, nevermind this is unrelated.
-
-Could you update your patch "powerpc/prom: Fix %llx usage since
-prom_printf() change" to also do "powerpc/prom: Fix %u usage since
-prom_printf() change"
-
-I did not pay attention that "%u" was also not supported in prom_printf.
-
-I may be able to provide a patch tonight, if this is not acceptable,
-please revert my faulty patch. Sorry for the mess.
-
-
->>> --
->>> Cheers,
->>> Stephen Rothwell
+diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
+index 5ef8ba7ae29c..c39d2d7c9917 100644
+--- a/drivers/crypto/inside-secure/safexcel.c
++++ b/drivers/crypto/inside-secure/safexcel.c
+@@ -800,6 +800,7 @@ static struct safexcel_alg_template *safexcel_algs[] = {
+ 	&safexcel_alg_authenc_hmac_sha1_cbc_aes,
+ 	&safexcel_alg_authenc_hmac_sha224_cbc_aes,
+ 	&safexcel_alg_authenc_hmac_sha256_cbc_aes,
++	&safexcel_alg_authenc_hmac_sha384_cbc_aes,
+ 	&safexcel_alg_authenc_hmac_sha512_cbc_aes,
+ };
+ 
+diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
+index e002f963ff5a..5d6b3b705d0c 100644
+--- a/drivers/crypto/inside-secure/safexcel.h
++++ b/drivers/crypto/inside-secure/safexcel.h
+@@ -682,6 +682,7 @@ extern struct safexcel_alg_template safexcel_alg_hmac_sha512;
+ extern struct safexcel_alg_template safexcel_alg_authenc_hmac_sha1_cbc_aes;
+ extern struct safexcel_alg_template safexcel_alg_authenc_hmac_sha224_cbc_aes;
+ extern struct safexcel_alg_template safexcel_alg_authenc_hmac_sha256_cbc_aes;
++extern struct safexcel_alg_template safexcel_alg_authenc_hmac_sha384_cbc_aes;
+ extern struct safexcel_alg_template safexcel_alg_authenc_hmac_sha512_cbc_aes;
+ 
+ #endif
+diff --git a/drivers/crypto/inside-secure/safexcel_cipher.c b/drivers/crypto/inside-secure/safexcel_cipher.c
+index 560c1e54ce9d..ca4bc2d28d2a 100644
+--- a/drivers/crypto/inside-secure/safexcel_cipher.c
++++ b/drivers/crypto/inside-secure/safexcel_cipher.c
+@@ -200,6 +200,11 @@ static int safexcel_aead_aes_setkey(struct crypto_aead *ctfm, const u8 *key,
+ 					 keys.authkeylen, &istate, &ostate))
+ 			goto badkey;
+ 		break;
++	case CONTEXT_CONTROL_CRYPTO_ALG_SHA384:
++		if (safexcel_hmac_setkey("safexcel-sha384", keys.authkey,
++					 keys.authkeylen, &istate, &ostate))
++			goto badkey;
++		break;
+ 	case CONTEXT_CONTROL_CRYPTO_ALG_SHA512:
+ 		if (safexcel_hmac_setkey("safexcel-sha512", keys.authkey,
+ 					 keys.authkeylen, &istate, &ostate))
+@@ -1058,3 +1063,37 @@ struct safexcel_alg_template safexcel_alg_authenc_hmac_sha512_cbc_aes = {
+ 		},
+ 	},
+ };
++
++static int safexcel_aead_sha384_cra_init(struct crypto_tfm *tfm)
++{
++	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(tfm);
++
++	safexcel_aead_cra_init(tfm);
++	ctx->alg = CONTEXT_CONTROL_CRYPTO_ALG_SHA384;
++	ctx->state_sz = SHA512_DIGEST_SIZE;
++	return 0;
++}
++
++struct safexcel_alg_template safexcel_alg_authenc_hmac_sha384_cbc_aes = {
++	.type = SAFEXCEL_ALG_TYPE_AEAD,
++	.alg.aead = {
++		.setkey = safexcel_aead_aes_setkey,
++		.encrypt = safexcel_aead_encrypt,
++		.decrypt = safexcel_aead_decrypt,
++		.ivsize = AES_BLOCK_SIZE,
++		.maxauthsize = SHA384_DIGEST_SIZE,
++		.base = {
++			.cra_name = "authenc(hmac(sha384),cbc(aes))",
++			.cra_driver_name = "safexcel-authenc-hmac-sha384-cbc-aes",
++			.cra_priority = 300,
++			.cra_flags = CRYPTO_ALG_TYPE_AEAD | CRYPTO_ALG_ASYNC |
++				     CRYPTO_ALG_KERN_DRIVER_ONLY,
++			.cra_blocksize = AES_BLOCK_SIZE,
++			.cra_ctxsize = sizeof(struct safexcel_cipher_ctx),
++			.cra_alignmask = 0,
++			.cra_init = safexcel_aead_sha384_cra_init,
++			.cra_exit = safexcel_aead_cra_exit,
++			.cra_module = THIS_MODULE,
++		},
++	},
++};
+-- 
+2.17.0
