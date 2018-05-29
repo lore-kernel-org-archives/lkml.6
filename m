@@ -1,72 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936533AbeE2PLl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:11:41 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36027 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935657AbeE2OoG (ORCPT
+        id S936616AbeE2PL4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:11:56 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43608 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935828AbeE2PLu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:44:06 -0400
-X-Google-Smtp-Source: ADUXVKIH9tpYZOjJYoOmunUkjsjhdM0R7y2NluoF9HwtbxeBqfy/l3lMUkCnqVR6NTArvseuIApNDg==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 20/39] ovl: add ovl_fallocate()
-Date: Tue, 29 May 2018 16:43:20 +0200
-Message-Id: <20180529144339.16538-21-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180529144339.16538-1-mszeredi@redhat.com>
-References: <20180529144339.16538-1-mszeredi@redhat.com>
+        Tue, 29 May 2018 11:11:50 -0400
+X-Google-Smtp-Source: ADUXVKIrgkKOAF7GbZ6bEkOwizWB+vrxfsYXvow+mBUg0EMwVZpLzC3CUAymv/K6owIYCF7ZkV/QlGnip4joG9O/LDY=
+MIME-Version: 1.0
+In-Reply-To: <d72a1651f7b00c06dfcd8e8973293b93298a20ca.camel@collabora.com>
+References: <20180521165946.11778-1-ezequiel@collabora.com>
+ <20180521165946.11778-2-ezequiel@collabora.com> <CAE6UAyx81nZDQEHuNn0BK5EkB-KmNdSnkiNF+NJTmiUkz72CrA@mail.gmail.com>
+ <d72a1651f7b00c06dfcd8e8973293b93298a20ca.camel@collabora.com>
+From: sathyam panda <panda.sathyam9@gmail.com>
+Date: Tue, 29 May 2018 20:41:48 +0530
+Message-ID: <CAE6UAyxoAss+oCM6QUeASU-uULaBq0tLBWaRpZwdqUnenyq-ig@mail.gmail.com>
+Subject: Re: [PATCH v10 01/16] videobuf2: Make struct vb2_buffer refcounted
+To: Ezequiel Garcia <ezequiel@collabora.com>
+Cc: linux-media@vger.kernel.org, kernel@collabora.com,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement stacked fallocate.
+Hi Ezequiel,
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/overlayfs/file.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+On 5/29/18, Ezequiel Garcia <ezequiel@collabora.com> wrote:
+> On Fri, 2018-05-25 at 12:11 +0530, sathyam panda wrote:
+>> Hello,
+>>
+>> On 5/21/18, Ezequiel Garcia <ezequiel@collabora.com> wrote:
+>> > The in-fence implementation involves having a per-buffer fence
+>> > callback,
+>> > that triggers on the fence signal. The fence callback is called
+>> > asynchronously
+>> > and needs a valid reference to the associated ideobuf2 buffer.
+>> >
+>> > Allow this by making the vb2_buffer refcounted, so it can be passed
+>> > to other contexts.
+>> >
+>>
+>> -Is it really required, because when a queued buffer with an in_fence
+>> is deallocated, firstly queue is cancelled.
+>> -And __vb2_dqbuf is called which calls dma_fence_remove_callback.
+>> -So if fence callback has been called -__vb2_dqbuf will wait to
+>> acquire fence lock.
+>> -So during execution of fence callback, buffers and queue are still
+>> valid.
+>> -And if __vb2_dqbuf remove callback first ,then dma_fence_signal will
+>> wait for lock
+>> - so there won't be any fence callback to call for that buffer when
+>> dma_fence_signal resumes.
+>>
+>
+> Hi Sathyam,
+>
+> Thanks for your review! The refcount is definitely required,
+> as the fence callback only schedules a workqueue, which is
+> completely asynchronous with respect to the rest of the
+> ioctls.
+>
+> In particular, the workqueue is not synchronized with
+> vb2_core_queue_release.
+>
+> Also, another subtle detail, dma_fence_remove_callback
+> can fail to remove the callback.
+>
+> Thanks,
+> Eze
+>
 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 4057bbf2e141..069599d53511 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -282,6 +282,29 @@ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
- 	return ret;
- }
- 
-+static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct fd real;
-+	const struct cred *old_cred;
-+	int ret;
-+
-+	ret = ovl_real_fdget(file, &real);
-+	if (ret)
-+		return ret;
-+
-+	old_cred = ovl_override_creds(file_inode(file)->i_sb);
-+	ret = vfs_fallocate(real.file, mode, offset, len);
-+	revert_creds(old_cred);
-+
-+	/* Update size */
-+	ovl_copyattr(ovl_inode_real(inode), inode);
-+
-+	fdput(real);
-+
-+	return ret;
-+}
-+
- const struct file_operations ovl_file_operations = {
- 	.open		= ovl_open,
- 	.release	= ovl_release,
-@@ -290,4 +313,5 @@ const struct file_operations ovl_file_operations = {
- 	.write_iter	= ovl_write_iter,
- 	.fsync		= ovl_fsync,
- 	.mmap		= ovl_mmap,
-+	.fallocate	= ovl_fallocate,
- };
--- 
-2.14.3
+- Sorry, I didn't pay attention to the use of workqueue, thanks for
+bringing that into my notice. Now it make sense.
+- I have a doubt about the queue since many driver specific structures
+have queues which they release with kfree() after calling
+vb2_queue_release().
+- And since vb2_core_queue_release decrements the buffer refcount only
+once if fence is already signalled, so buffer is still valid, but
+queue isn't as the memory is deallocated.
+- So is it safe to access queue in the __qbuf_work. Please correct me
+if I am wrong.
+
+Regards,
+Sathyam
