@@ -1,175 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965327AbeE2Pv7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:51:59 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:44619 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935733AbeE2Put (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 11:50:49 -0400
-X-Google-Smtp-Source: ADUXVKJOh6LbIhCZzPTVo0gZFZalx9Nf0OsnoxHNqjpZ8Ea5OsVh4DZdEJW4Wcp8ZxvOZYYzvGBPAik8YuuGK9quQh0=
-MIME-Version: 1.0
-In-Reply-To: <551905a6-eaa8-97df-06ec-1ceedfbc164f@arm.com>
-References: <20180511235807.30834-1-jeremy.linton@arm.com> <20180517170523.h7tuvbzdfluuidcz@armageddon.cambridge.arm.com>
- <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com>
- <09fb3fe7-d703-43f1-74f7-f8cb5ff1f67a@arm.com> <CAMuHMdXgiMeD4uF+j8W+CpNwYYK2W_8xqk_=vGBiW=bUvKeq7w@mail.gmail.com>
- <551905a6-eaa8-97df-06ec-1ceedfbc164f@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 May 2018 17:50:47 +0200
-X-Google-Sender-Auth: 0FaKKiVFxoblbvnvmxQgWaeNVUs
-Message-ID: <CAMuHMdWgsRTqrgwi5Z_xyNXmzS1h4gxLaawdFAL_DGF+Yt8s-A@mail.gmail.com>
-Subject: Re: [PATCH v9 00/12] Support PPTT for ARM64
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>, austinwc@codeaurora.org,
-        tnowicki@caviumnetworks.com, Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <Will.Deacon@arm.com>, linux-riscv@lists.infradead.org,
-        Morten.Rasmussen@arm.com, vkilari@codeaurora.org,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, jhugo@codeaurora.org,
-        Al Stone <ahs3@redhat.com>, Len Brown <lenb@kernel.org>,
-        John Garry <john.garry@huawei.com>, wangxiongfeng2@huawei.com,
-        Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S965338AbeE2Pwe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:52:34 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:46915 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965148AbeE2Puo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:50:44 -0400
+Message-Id: <58beaff9ad5caeef64b72dedd6dd31c52401322b.1527608397.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1527608397.git.christophe.leroy@c-s.fr>
+References: <cover.1527608397.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 14/14] powerpc/8xx: Move SW perf counters in first 32kb of
+ memory
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Tue, 29 May 2018 15:50:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sudeep,
+In order to simplify time critical exceptions handling 8xx
+specific SW perf counters, this patch moves the counters into
+the begining of memory. This is possible because .text is readable
+and the counters are never modified outside of the handlers.
 
-On Tue, May 29, 2018 at 3:18 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On 29/05/18 12:56, Geert Uytterhoeven wrote:
->> On Tue, May 29, 2018 at 1:14 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>> On 29/05/18 11:48, Geert Uytterhoeven wrote:
->>>> On Thu, May 17, 2018 at 7:05 PM, Catalin Marinas
->>>> <catalin.marinas@arm.com> wrote:
->>>>> On Fri, May 11, 2018 at 06:57:55PM -0500, Jeremy Linton wrote:
->>>>>> Jeremy Linton (12):
->>>>>>   arm64: topology: divorce MC scheduling domain from core_siblings
->>>>>
->>>>> Queued for 4.18 (without Sudeep's latest property_read_u64 cacheinfo
->>>>> patch - http://lkml.kernel.org/r/20180517154701.GA20281@e107155-lin; I
->>>>> can add it separately).
->>>>
->>>> This is now commit 37c3ec2d810f87ea ("arm64: topology: divorce MC
->>>> scheduling domain from core_siblings") in arm64/for-next/core, causing
->>>> system suspend on big.LITTLE systems to hang after shutting down the first
->>>> CPU:
->>>>
->>>>     $ echo mem > /sys/power/state
->>>>     PM: suspend entry (deep)
->>>>     PM: Syncing filesystems ... done.
->>>>     Freezing user space processes ... (elapsed 0.001 seconds) done.
->>>>     OOM killer disabled.
->>>>     Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
->>>>     Disabling non-boot CPUs ...
->>>>     CPU1: shutdown
->>>>     psci: CPU1 killed.
->>>
->>> Is it OK to assume the suspend failed just after shutting down one CPU
->>> or it's failing during resume ? It depends on whether you had console
->>> disabled or not.
->>
->> I have no-console-suspend enabled.
->> It's failing during suspend, the next lines should be:
->>
->>     CPU2: shutdown
->>     psci: CPU2 killed.
->>     ...
->
-> OK, I was hoping to be something during resume as this patch has nothing
-> executed during suspend. Do you see any change in topology before and
-> after this patch applied. I am interested in the output of:
->
-> $ grep "" /sys/devices/system/cpu/cpu*/topology/*
+By doing this, we avoid having to set a second register with
+the upper part of the address of the counters.
 
-/sys/devices/system/cpu/cpu0/topology/core_id:0
-/sys/devices/system/cpu/cpu0/topology/core_siblings:0f
-/sys/devices/system/cpu/cpu0/topology/core_siblings_list:0-3
-/sys/devices/system/cpu/cpu0/topology/physical_package_id:0
-/sys/devices/system/cpu/cpu0/topology/thread_siblings:01
-/sys/devices/system/cpu/cpu0/topology/thread_siblings_list:0
-/sys/devices/system/cpu/cpu1/topology/core_id:1
-/sys/devices/system/cpu/cpu1/topology/core_siblings:0f
-/sys/devices/system/cpu/cpu1/topology/core_siblings_list:0-3
-/sys/devices/system/cpu/cpu1/topology/physical_package_id:0
-/sys/devices/system/cpu/cpu1/topology/thread_siblings:02
-/sys/devices/system/cpu/cpu1/topology/thread_siblings_list:1
-/sys/devices/system/cpu/cpu2/topology/core_id:2
-/sys/devices/system/cpu/cpu2/topology/core_siblings:0f
-/sys/devices/system/cpu/cpu2/topology/core_siblings_list:0-3
-/sys/devices/system/cpu/cpu2/topology/physical_package_id:0
-/sys/devices/system/cpu/cpu2/topology/thread_siblings:04
-/sys/devices/system/cpu/cpu2/topology/thread_siblings_list:2
-/sys/devices/system/cpu/cpu3/topology/core_id:3
-/sys/devices/system/cpu/cpu3/topology/core_siblings:0f
-/sys/devices/system/cpu/cpu3/topology/core_siblings_list:0-3
-/sys/devices/system/cpu/cpu3/topology/physical_package_id:0
-/sys/devices/system/cpu/cpu3/topology/thread_siblings:08
-/sys/devices/system/cpu/cpu3/topology/thread_siblings_list:3
-/sys/devices/system/cpu/cpu4/topology/core_id:0
-/sys/devices/system/cpu/cpu4/topology/core_siblings:f0
-/sys/devices/system/cpu/cpu4/topology/core_siblings_list:4-7
-/sys/devices/system/cpu/cpu4/topology/physical_package_id:1
-/sys/devices/system/cpu/cpu4/topology/thread_siblings:10
-/sys/devices/system/cpu/cpu4/topology/thread_siblings_list:4
-/sys/devices/system/cpu/cpu5/topology/core_id:1
-/sys/devices/system/cpu/cpu5/topology/core_siblings:f0
-/sys/devices/system/cpu/cpu5/topology/core_siblings_list:4-7
-/sys/devices/system/cpu/cpu5/topology/physical_package_id:1
-/sys/devices/system/cpu/cpu5/topology/thread_siblings:20
-/sys/devices/system/cpu/cpu5/topology/thread_siblings_list:5
-/sys/devices/system/cpu/cpu6/topology/core_id:2
-/sys/devices/system/cpu/cpu6/topology/core_siblings:f0
-/sys/devices/system/cpu/cpu6/topology/core_siblings_list:4-7
-/sys/devices/system/cpu/cpu6/topology/physical_package_id:1
-/sys/devices/system/cpu/cpu6/topology/thread_siblings:40
-/sys/devices/system/cpu/cpu6/topology/thread_siblings_list:6
-/sys/devices/system/cpu/cpu7/topology/core_id:3
-/sys/devices/system/cpu/cpu7/topology/core_siblings:f0
-/sys/devices/system/cpu/cpu7/topology/core_siblings_list:4-7
-/sys/devices/system/cpu/cpu7/topology/physical_package_id:1
-/sys/devices/system/cpu/cpu7/topology/thread_siblings:80
-/sys/devices/system/cpu/cpu7/topology/thread_siblings_list:7
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/kernel/head_8xx.S | 75 +++++++++++++++++++-----------------------
+ 1 file changed, 34 insertions(+), 41 deletions(-)
 
-No change before/after (both match my view of the hardware).
-
->
->>>> For me, it fails on the following big.LITTLE systems:
->>>>
->>>>     R-Car H3 ES2.0 (4xCA57 + 4xCA53)
->>>>     R-Car M3-W (2xCA57 + 4xCA53)
->>>>
->>>
->>> Interesting, is it PSCI based system suspend ?
->>
->> Yes it is.
->
-> From DT, I guess this platform doesn't have any idle states.
-> Does this use genpd power domains ? I see power-domains in the DT, so
-> asking to get more info. Do you have any out of tree patches especially
-> if they are depending on some topology cpumasks ?
-
-No out-of-tree patches.
-I'm testing plain 37c3ec2d810f87ea vs. 37c3ec2d810f87ea^.
-There are power-domains in DT, but they're not managed by the new
-fancy CPU power domain code.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index 81b125475213..084a76a012b5 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -106,6 +106,23 @@ turn_on_mmu:
+ 	mtspr	SPRN_SRR0,r0
+ 	rfi				/* enables MMU */
+ 
++
++#ifdef CONFIG_PERF_EVENTS
++	.align	4
++
++	.globl	itlb_miss_counter
++itlb_miss_counter:
++	.space	4
++
++	.globl	dtlb_miss_counter
++dtlb_miss_counter:
++	.space	4
++
++	.globl	instruction_counter
++instruction_counter:
++	.space	4
++#endif
++
+ /*
+  * Exception entry code.  This code runs with address translation
+  * turned off, i.e. using physical addresses.
+@@ -368,25 +385,20 @@ _ENTRY(ITLBMiss_cmp)
+ 	mtspr	SPRN_MI_RPN, r10	/* Update TLB entry */
+ 
+ 	/* Restore registers */
+-_ENTRY(itlb_miss_exit_1)
+-	mfspr	r10, SPRN_SPRG_SCRATCH0
+ #if defined(ITLB_MISS_KERNEL) || defined(CONFIG_SWAP)
+ 	mfspr	r11, SPRN_SPRG_SCRATCH1
+ #endif
++_ENTRY(itlb_miss_exit_1)
++	mfspr	r10, SPRN_SPRG_SCRATCH0
+ 	rfi
+ #ifdef CONFIG_PERF_EVENTS
+ _ENTRY(itlb_miss_perf)
+-#if !defined(ITLB_MISS_KERNEL) && !defined(CONFIG_SWAP)
+-	mtspr	SPRN_SPRG_SCRATCH1, r11
+-#endif
+-	lis	r10, (itlb_miss_counter - PAGE_OFFSET)@ha
+-	lwz	r11, (itlb_miss_counter - PAGE_OFFSET)@l(r10)
+-	addi	r11, r11, 1
+-	stw	r11, (itlb_miss_counter - PAGE_OFFSET)@l(r10)
+-#endif
++	lwz	r10, (itlb_miss_counter - PAGE_OFFSET)@l(0)
++	addi	r10, r10, 1
++	stw	r10, (itlb_miss_counter - PAGE_OFFSET)@l(0)
+ 	mfspr	r10, SPRN_SPRG_SCRATCH0
+-	mfspr	r11, SPRN_SPRG_SCRATCH1
+ 	rfi
++#endif
+ 
+ #ifndef CONFIG_PIN_TLB_TEXT
+ ITLBMissLinear:
+@@ -399,9 +411,9 @@ ITLBMissLinear:
+ 			  _PAGE_PRESENT
+ 	mtspr	SPRN_MI_RPN, r10	/* Update TLB entry */
+ 
++	mfspr	r11, SPRN_SPRG_SCRATCH1
+ _ENTRY(itlb_miss_exit_2)
+ 	mfspr	r10, SPRN_SPRG_SCRATCH0
+-	mfspr	r11, SPRN_SPRG_SCRATCH1
+ 	rfi
+ #endif
+ 
+@@ -465,20 +477,18 @@ _ENTRY(DTLBMiss_jmp)
+ 
+ 	/* Restore registers */
+ 	mtspr	SPRN_DAR, r11	/* Tag DAR */
++	mfspr	r11, SPRN_SPRG_SCRATCH1
+ _ENTRY(dtlb_miss_exit_1)
+ 	mfspr	r10, SPRN_SPRG_SCRATCH0
+-	mfspr	r11, SPRN_SPRG_SCRATCH1
+ 	rfi
+ #ifdef CONFIG_PERF_EVENTS
+ _ENTRY(dtlb_miss_perf)
+-	lis	r10, (dtlb_miss_counter - PAGE_OFFSET)@ha
+-	lwz	r11, (dtlb_miss_counter - PAGE_OFFSET)@l(r10)
+-	addi	r11, r11, 1
+-	stw	r11, (dtlb_miss_counter - PAGE_OFFSET)@l(r10)
+-#endif
++	lwz	r10, (dtlb_miss_counter - PAGE_OFFSET)@l(0)
++	addi	r10, r10, 1
++	stw	r10, (dtlb_miss_counter - PAGE_OFFSET)@l(0)
+ 	mfspr	r10, SPRN_SPRG_SCRATCH0
+-	mfspr	r11, SPRN_SPRG_SCRATCH1
+ 	rfi
++#endif
+ 
+ DTLBMissIMMR:
+ 	mtcr	r11
+@@ -493,9 +503,9 @@ DTLBMissIMMR:
+ 
+ 	li	r11, RPN_PATTERN
+ 	mtspr	SPRN_DAR, r11	/* Tag DAR */
++	mfspr	r11, SPRN_SPRG_SCRATCH1
+ _ENTRY(dtlb_miss_exit_2)
+ 	mfspr	r10, SPRN_SPRG_SCRATCH0
+-	mfspr	r11, SPRN_SPRG_SCRATCH1
+ 	rfi
+ 
+ DTLBMissLinear:
+@@ -510,9 +520,9 @@ DTLBMissLinear:
+ 
+ 	li	r11, RPN_PATTERN
+ 	mtspr	SPRN_DAR, r11	/* Tag DAR */
++	mfspr	r11, SPRN_SPRG_SCRATCH1
+ _ENTRY(dtlb_miss_exit_3)
+ 	mfspr	r10, SPRN_SPRG_SCRATCH0
+-	mfspr	r11, SPRN_SPRG_SCRATCH1
+ 	rfi
+ 
+ /* This is an instruction TLB error on the MPC8xx.  This could be due
+@@ -598,16 +608,13 @@ DataBreakpoint:
+ 	. = 0x1d00
+ InstructionBreakpoint:
+ 	mtspr	SPRN_SPRG_SCRATCH0, r10
+-	mtspr	SPRN_SPRG_SCRATCH1, r11
+-	lis	r10, (instruction_counter - PAGE_OFFSET)@ha
+-	lwz	r11, (instruction_counter - PAGE_OFFSET)@l(r10)
+-	addi	r11, r11, -1
+-	stw	r11, (instruction_counter - PAGE_OFFSET)@l(r10)
++	lwz	r10, (instruction_counter - PAGE_OFFSET)@l(0)
++	addi	r10, r10, -1
++	stw	r10, (instruction_counter - PAGE_OFFSET)@l(0)
+ 	lis	r10, 0xffff
+ 	ori	r10, r10, 0x01
+ 	mtspr	SPRN_COUNTA, r10
+ 	mfspr	r10, SPRN_SPRG_SCRATCH0
+-	mfspr	r11, SPRN_SPRG_SCRATCH1
+ 	rfi
+ #else
+ 	EXCEPTION(0x1d00, Trap_1d, unknown_exception, EXC_XFER_EE)
+@@ -966,17 +973,3 @@ swapper_pg_dir:
+  */
+ abatron_pteptrs:
+ 	.space	8
+-
+-#ifdef CONFIG_PERF_EVENTS
+-	.globl	itlb_miss_counter
+-itlb_miss_counter:
+-	.space	4
+-
+-	.globl	dtlb_miss_counter
+-dtlb_miss_counter:
+-	.space	4
+-
+-	.globl	instruction_counter
+-instruction_counter:
+-	.space	4
+-#endif
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.13.3
