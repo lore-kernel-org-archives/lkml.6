@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934085AbeE2MgK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 08:36:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47444 "EHLO mx1.redhat.com"
+        id S933820AbeE2MfT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 08:35:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47418 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933756AbeE2MfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 08:35:22 -0400
+        id S933506AbeE2MfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 08:35:14 -0400
 From: Cornelia Huck <cohuck@redhat.com>
 To: Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>
@@ -13,100 +13,48 @@ Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>,
         Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
         kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Cornelia Huck <cohuck@redhat.com>
-Subject: [PULL 5/6] vfio: ccw: set ccw->cda to NULL defensively
-Date: Tue, 29 May 2018 14:35:11 +0200
-Message-Id: <20180529123512.14393-6-cohuck@redhat.com>
-In-Reply-To: <20180529123512.14393-1-cohuck@redhat.com>
-References: <20180529123512.14393-1-cohuck@redhat.com>
+Subject: [PULL 0/6] vfio-ccw updates for 4.18
+Date: Tue, 29 May 2018 14:35:06 +0200
+Message-Id: <20180529123512.14393-1-cohuck@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dong Jia Shi <bjsdjshi@linux.ibm.com>
+The following changes since commit 3376d98021e915196f4894d835325a884e635a04:
 
-Let's avoid free on ccw->cda that points to a guest address
-or an already freed memory area by setting it to NULL if memory
-allocation didn't happen or failed.
+  s390/archrandom: Rework arch random implementation. (2018-05-25 08:12:58 +0200)
 
-Signed-off-by: Dong Jia Shi <bjsdjshi@linux.ibm.com>
-Message-Id: <20180523025645.8978-4-bjsdjshi@linux.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
----
- drivers/s390/cio/vfio_ccw_cp.c | 31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
+are available in the Git repository at:
 
-diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-index b0f20230fc72..dbe7c7ac9ac8 100644
---- a/drivers/s390/cio/vfio_ccw_cp.c
-+++ b/drivers/s390/cio/vfio_ccw_cp.c
-@@ -502,7 +502,7 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
- 	struct ccw1 *ccw;
- 	struct pfn_array_table *pat;
- 	unsigned long *idaws;
--	int idaw_nr;
-+	int ret;
- 
- 	ccw = chain->ch_ccw + idx;
- 
-@@ -522,18 +522,19 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
- 	 * needed when translating a direct ccw to a idal ccw.
- 	 */
- 	pat = chain->ch_pat + idx;
--	if (pfn_array_table_init(pat, 1))
--		return -ENOMEM;
--	idaw_nr = pfn_array_alloc_pin(pat->pat_pa, cp->mdev,
--				      ccw->cda, ccw->count);
--	if (idaw_nr < 0)
--		return idaw_nr;
-+	ret = pfn_array_table_init(pat, 1);
-+	if (ret)
-+		goto out_init;
-+
-+	ret = pfn_array_alloc_pin(pat->pat_pa, cp->mdev, ccw->cda, ccw->count);
-+	if (ret < 0)
-+		goto out_init;
- 
- 	/* Translate this direct ccw to a idal ccw. */
--	idaws = kcalloc(idaw_nr, sizeof(*idaws), GFP_DMA | GFP_KERNEL);
-+	idaws = kcalloc(ret, sizeof(*idaws), GFP_DMA | GFP_KERNEL);
- 	if (!idaws) {
--		pfn_array_table_unpin_free(pat, cp->mdev);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto out_unpin;
- 	}
- 	ccw->cda = (__u32) virt_to_phys(idaws);
- 	ccw->flags |= CCW_FLAG_IDA;
-@@ -541,6 +542,12 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
- 	pfn_array_table_idal_create_words(pat, idaws);
- 
- 	return 0;
-+
-+out_unpin:
-+	pfn_array_table_unpin_free(pat, cp->mdev);
-+out_init:
-+	ccw->cda = 0;
-+	return ret;
- }
- 
- static int ccwchain_fetch_idal(struct ccwchain *chain,
-@@ -570,7 +577,7 @@ static int ccwchain_fetch_idal(struct ccwchain *chain,
- 	pat = chain->ch_pat + idx;
- 	ret = pfn_array_table_init(pat, idaw_nr);
- 	if (ret)
--		return ret;
-+		goto out_init;
- 
- 	/* Translate idal ccw to use new allocated idaws. */
- 	idaws = kzalloc(idaw_len, GFP_DMA | GFP_KERNEL);
-@@ -602,6 +609,8 @@ static int ccwchain_fetch_idal(struct ccwchain *chain,
- 	kfree(idaws);
- out_unpin:
- 	pfn_array_table_unpin_free(pat, cp->mdev);
-+out_init:
-+	ccw->cda = 0;
- 	return ret;
- }
- 
+  git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/vfio-ccw.git tags/vfio-ccw-20180529
+
+for you to fetch changes up to 3cd90214b70f7f971496bffc3c34d23b2141feb3:
+
+  vfio: ccw: add tracepoints for interesting error paths (2018-05-29 09:27:42 +0200)
+
+----------------------------------------------------------------
+Various fixes and improvements in vfio-ccw, including a first stab
+at adding tracepoints.
+
+----------------------------------------------------------------
+
+Dong Jia Shi (4):
+  vfio: ccw: fix error return in vfio_ccw_sch_event
+  vfio: ccw: shorten kernel doc description for pfn_array_pin()
+  vfio: ccw: refactor and improve pfn_array_alloc_pin()
+  vfio: ccw: set ccw->cda to NULL defensively
+
+Halil Pasic (2):
+  vfio: ccw: push down unsupported IDA check
+  vfio: ccw: add tracepoints for interesting error paths
+
+ drivers/s390/cio/Makefile         |   1 +
+ drivers/s390/cio/vfio_ccw_cp.c    | 140 ++++++++++++++++++++------------------
+ drivers/s390/cio/vfio_ccw_drv.c   |   5 +-
+ drivers/s390/cio/vfio_ccw_fsm.c   |  17 ++++-
+ drivers/s390/cio/vfio_ccw_trace.h |  54 +++++++++++++++
+ 5 files changed, 150 insertions(+), 67 deletions(-)
+ create mode 100644 drivers/s390/cio/vfio_ccw_trace.h
+
 -- 
 2.14.3
