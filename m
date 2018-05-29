@@ -1,74 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754564AbeE2GD7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 02:03:59 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:63931 "EHLO pegase1.c-s.fr"
+        id S1754602AbeE2GEV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 02:04:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:36329 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750871AbeE2GDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 02:03:54 -0400
-Message-Id: <f5f2de3e1a39613f7303bfdc0d2f2210d4c91910.1527573345.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2] powerpc/64: Fix build failure with GCC 8.1
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue, 29 May 2018 06:03:53 +0000 (UTC)
+        id S1754569AbeE2GES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 02:04:18 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 29 May 2018 16:04:15 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Rob Herring <robherring2@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the devicetree tree
+Message-ID: <20180529160415.5da54b08@canb.auug.org.au>
+In-Reply-To: <CAL_Jsq+nbTv-bnjo=OQR+P49MgjwL7qkcc+47=jRHb4z0V94Vw@mail.gmail.com>
+References: <20180509160449.68b865a2@canb.auug.org.au>
+        <CAL_Jsq+nbTv-bnjo=OQR+P49MgjwL7qkcc+47=jRHb4z0V94Vw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xGvQJ8uUMEfKuePU45zux=E"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  CC      arch/powerpc/kernel/nvram_64.o
-arch/powerpc/kernel/nvram_64.c: In function 'nvram_create_partition':
-arch/powerpc/kernel/nvram_64.c:1042:2: error: 'strncpy' specified bound 12 equals destination size [-Werror=stringop-truncation]
-  strncpy(new_part->header.name, name, 12);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--Sig_/xGvQJ8uUMEfKuePU45zux=E
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-  CC      arch/powerpc/kernel/trace/ftrace.o
-In function 'make_field',
-    inlined from 'ps3_repository_read_boot_dat_address' at arch/powerpc/platforms/ps3/repository.c:900:9:
-arch/powerpc/platforms/ps3/repository.c:106:2: error: 'strncpy' output truncated before terminating nul copying 8 bytes from a string of the same length [-Werror=stringop-truncation]
-  strncpy((char *)&n, text, 8);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Hi Rob,
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
-v2:
- - Using strnlen(src, sizeof(dest)) instead of min(strlen(src), sizeof(dest))
- - Changed nvram one to memcpy() to still fit the entire fied (thanks to benh)
+On Wed, 9 May 2018 07:17:06 -0500 Rob Herring <robherring2@gmail.com> wrote:
+>
+> > and over 2000 more :-( =20
+>=20
+> I assume you mean on other files. I've already sent out patches for
+> arm and arm64 dts files.
 
- arch/powerpc/kernel/nvram_64.c          | 2 +-
- arch/powerpc/platforms/ps3/repository.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Yeah, we appear to be just down to this now:
 
-diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
-index ba681dac7b46..cf7772cdc3fd 100644
---- a/arch/powerpc/kernel/nvram_64.c
-+++ b/arch/powerpc/kernel/nvram_64.c
-@@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char *name, int sig,
- 	new_part->index = free_part->index;
- 	new_part->header.signature = sig;
- 	new_part->header.length = size;
--	strncpy(new_part->header.name, name, 12);
-+	memcpy(new_part->header.name, name, strnlen(name, sizeof(new_part->header.name)));
- 	new_part->header.checksum = nvram_checksum(&new_part->header);
- 
- 	rc = nvram_write_header(new_part);
-diff --git a/arch/powerpc/platforms/ps3/repository.c b/arch/powerpc/platforms/ps3/repository.c
-index 50dbaf24b1ee..e49c887787c4 100644
---- a/arch/powerpc/platforms/ps3/repository.c
-+++ b/arch/powerpc/platforms/ps3/repository.c
-@@ -101,9 +101,9 @@ static u64 make_first_field(const char *text, u64 index)
- 
- static u64 make_field(const char *text, u64 index)
- {
--	u64 n;
-+	u64 n = 0;
- 
--	strncpy((char *)&n, text, 8);
-+	memcpy((char *)&n, text, strnlen(text, sizeof(n)));
- 	return n + index;
- }
- 
--- 
-2.13.3
+arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dtb: Warning (graph_endpoin=
+t): /soc/mdp@5100000/ports/port@3/endpoint: graph connection to node '/soc/=
+hdmi-tx@4a00000/ports/port@0/endpoint' is not bidirectional
+arch/arm/boot/dts/rk3288-evb-act8846.dtb: Warning (graph_endpoint): /dp@ff9=
+70000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-evb-rk808.dtb: Warning (graph_endpoint): /dp@ff970=
+000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-veyron-jaq.dtb: Warning (graph_endpoint): /dp@ff97=
+0000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-veyron-jerry.dtb: Warning (graph_endpoint): /dp@ff=
+970000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-veyron-minnie.dtb: Warning (graph_endpoint): /dp@f=
+f970000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-veyron-pinky.dtb: Warning (graph_endpoint): /dp@ff=
+970000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-veyron-speedy.dtb: Warning (graph_endpoint): /dp@f=
+f970000/ports/port@1/endpoint: graph node unit address error, expected "0"
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/xGvQJ8uUMEfKuePU45zux=E
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsM7V8ACgkQAVBC80lX
+0GzWCgf/dvr0oYnLxzYXLCnLiv/at4ML7V6MPa9mjfwVMkZ324eQKMP+kbTq7TEp
+ndm86b42YXCL41ErG37G054+veq1yE7fvpEj7cgVodkBjbp4K7BiWH1IKeE1+4tq
+1xVDL6jCDG+p7zzdKuxcs86QkRGbxv5vbIt4Cz7q1EvSHtT2CmN2vfCZ1pOVs8pt
+pMuDjdfRQ13Dl9guJRBBxzza7RM+4IZ5MrDk6/sRVlfbJ+t5CC1YYEbjk9GNVKL5
+t3cAqoliK9yQpoICIfPNmosBKwXODJ06aQHU6IbyrLtF5mG1OQr4NGk9rsDfsPMo
+30pt6VILOCo6JqlKLV5PndrBehesYA==
+=d4NB
+-----END PGP SIGNATURE-----
+
+--Sig_/xGvQJ8uUMEfKuePU45zux=E--
