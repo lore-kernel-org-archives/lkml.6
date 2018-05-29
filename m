@@ -1,134 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754641AbeE2GoT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 02:44:19 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40811 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751800AbeE2GoR (ORCPT
+        id S1754699AbeE2GqV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 02:46:21 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50360 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754466AbeE2GqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 02:44:17 -0400
-X-Google-Smtp-Source: AB8JxZo6mqT3VPM1kS6hLYaxEuOgGdcyMWgAlx3jZb6yf5L94S6STU9BVVqsgRvAZWFABSfItEjyXQ==
-Date: Tue, 29 May 2018 08:44:13 +0200
+        Tue, 29 May 2018 02:46:20 -0400
+X-Google-Smtp-Source: AB8JxZrjBcBi9WbppK7sIUUXTSJg9rZG9ni3L57sJ7o7dlvQu+q6yZPtcE+E11R5wF3qm8KlMyzceg==
+Date: Tue, 29 May 2018 08:46:16 +0200
 From: Daniel Vetter <daniel@ffwll.ch>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: Sean Paul <seanpaul@chromium.org>, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] gpu: drm: vgem: Change return type to vm_fault_t
-Message-ID: <20180529064413.GR3438@phenom.ffwll.local>
-Mail-Followup-To: Souptick Joarder <jrdr.linux@gmail.com>,
+To: Emil Lundmark <lndmrk@chromium.org>
+Cc: dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
         Sean Paul <seanpaul@chromium.org>, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        dri-devel@lists.freedesktop.org
-References: <20180416150232.GA26745@jordon-HP-15-Notebook-PC>
- <CAFqt6zZ6VaPXoPs+3exLjNZ6yzS=v9=2TMXdFqHf_Zv5zEvSAA@mail.gmail.com>
- <20180510185138.GL33053@art_vandelay>
- <20180514162617.GD28661@phenom.ffwll.local>
- <CAFqt6zZ+ExTFKmzRycJiSW-u718pbGm1Ute+1UXF2NPn1WpLfA@mail.gmail.com>
- <20180524125756.GO3438@phenom.ffwll.local>
- <CAFqt6zZo2QFnAhS97cw52kDYUyzA+6AxRXPXcjNskHTJQhnXmQ@mail.gmail.com>
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?iso-8859-1?Q?St=E9phane?= Marchesin
+        <stephane.marchesin@gmail.com>
+Subject: Re: [PATCH v2] drm: udl: Destroy framebuffer only if it was
+ initialized
+Message-ID: <20180529064616.GS3438@phenom.ffwll.local>
+Mail-Followup-To: Emil Lundmark <lndmrk@chromium.org>,
+        dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
+        Sean Paul <seanpaul@chromium.org>, linux-kernel@vger.kernel.org,
+        =?iso-8859-1?Q?St=E9phane?= Marchesin <stephane.marchesin@gmail.com>
+References: <20180420115001.161745-1-lndmrk@chromium.org>
+ <20180528142711.142466-1-lndmrk@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAFqt6zZo2QFnAhS97cw52kDYUyzA+6AxRXPXcjNskHTJQhnXmQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180528142711.142466-1-lndmrk@chromium.org>
 X-Operating-System: Linux phenom 4.15.0-3-amd64 
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 07:51:40PM +0530, Souptick Joarder wrote:
-> On Thu, May 24, 2018 at 6:27 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > On Wed, May 23, 2018 at 03:05:35PM +0530, Souptick Joarder wrote:
-> >> On Mon, May 14, 2018 at 9:56 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> >> > On Thu, May 10, 2018 at 02:51:38PM -0400, Sean Paul wrote:
-> >> >> On Thu, May 10, 2018 at 07:58:11PM +0530, Souptick Joarder wrote:
-> >> >> > Hi Sean,
-> >> >> >
-> >> >> > On Mon, Apr 16, 2018 at 8:32 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >> >> > > Use new return type vm_fault_t for fault handler.
-> >> >> > >
-> >> >> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> >> >> > > Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
-> >> >> > > ---
-> >> >> > >  drivers/gpu/drm/vgem/vgem_drv.c | 5 ++---
-> >> >> > >  1 file changed, 2 insertions(+), 3 deletions(-)
-> >> >> > >
-> >> >> > > diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-> >> >> > > index 2524ff1..c64a859 100644
-> >> >> > > --- a/drivers/gpu/drm/vgem/vgem_drv.c
-> >> >> > > +++ b/drivers/gpu/drm/vgem/vgem_drv.c
-> >> >> > > @@ -61,13 +61,13 @@ static void vgem_gem_free_object(struct drm_gem_object *obj)
-> >> >> > >         kfree(vgem_obj);
-> >> >> > >  }
-> >> >> > >
-> >> >> > > -static int vgem_gem_fault(struct vm_fault *vmf)
-> >> >> > > +static vm_fault_t vgem_gem_fault(struct vm_fault *vmf)
-> >> >> > >  {
-> >> >> > >         struct vm_area_struct *vma = vmf->vma;
-> >> >> > >         struct drm_vgem_gem_object *obj = vma->vm_private_data;
-> >> >> > >         /* We don't use vmf->pgoff since that has the fake offset */
-> >> >> > >         unsigned long vaddr = vmf->address;
-> >> >> > > -       int ret;
-> >> >> > > +       vm_fault_t ret = VM_FAULT_SIGBUS;
-> >> >> > >         loff_t num_pages;
-> >> >> > >         pgoff_t page_offset;
-> >> >> > >         page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
-> >> >> > > @@ -77,7 +77,6 @@ static int vgem_gem_fault(struct vm_fault *vmf)
-> >> >> > >         if (page_offset > num_pages)
-> >> >> > >                 return VM_FAULT_SIGBUS;
-> >> >> > >
-> >> >> > > -       ret = -ENOENT;
-> >> >> > >         mutex_lock(&obj->pages_lock);
-> >> >> > >         if (obj->pages) {
-> >> >> > >                 get_page(obj->pages[page_offset]);
-> >> >> > > --
-> >> >> > > 1.9.1
-> >> >> > >
-> >> >> >
-> >> >> > Any further comment on this patch ?
-> >> >>
-> >> >> Patch looks good to me. My build test fails, though, since vm_fault_t doesn't
-> >> >> exist in drm-misc-next yet.
-> >> >
-> >> > vm_fault_t is already in upstream, just needs Maarten to do a backmerge.
-> >> > Which I think he's done by now ... Otherwise nag him more :-)
-> >> > -Daniel
-> >> >
-> >> >>
-> >> >> So, for now,
-> >> >>
-> >> >> Reviewed-by: Sean Paul <seanpaul@chromium.org>
-> >> >>
-> >> >>
-> >> >> --
-> >> >> Sean Paul, Software Engineer, Google / Chromium OS
-> >> >> _______________________________________________
-> >> >> dri-devel mailing list
-> >> >> dri-devel@lists.freedesktop.org
-> >> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >> >
-> >> > --
-> >> > Daniel Vetter
-> >> > Software Engineer, Intel Corporation
-> >> > http://blog.ffwll.ch
-> >>
-> >> Daniel/ Sean, is this patch already merged for 4.18 ?
-> >
-> > Nope, fell through the cracks. Thanks for the reminder, queued for 4.18
-> > now.
-> > -Daniel
+On Mon, May 28, 2018 at 04:27:11PM +0200, Emil Lundmark wrote:
+> This fixes a NULL pointer dereference that can happen if the UDL
+> driver is unloaded before the framebuffer is initialized. This can
+> happen e.g. if the USB device is unplugged right after it was plugged
+> in.
 > 
-> Thanks Daniel :).
-> Few other similar drm driver patches are also candidates
-> for 4.18. Are you the right Maintainer to make a request
-> for the same ?
+> As explained by Stéphane Marchesin:
+> 
+> It happens when fbdev is disabled (which is the case for Chrome OS).
+> Even though intialization of the fbdev part is optional (it's done in
+> udlfb_create which is the callback for fb_probe()), the teardown isn't
+> optional (udl_driver_unload -> udl_fbdev_cleanup ->
+> udl_fbdev_destroy).
+> 
+> Note that udl_fbdev_cleanup *tries* to be conditional (you can see it
+> does if (!udl->fbdev)) but that doesn't work, because udl->fbdev is
+> always set during udl_fbdev_init.
+> 
+> Suggested-by: Sean Paul <seanpaul@chromium.org>
+> Signed-off-by: Emil Lundmark <lndmrk@chromium.org>
 
-No, please try to find others. I'm occasionally picking stuff up that fell
-through all the cracks, as a last resort, but if I make that a habit then
-this doesn't scale. Please check with MAINTAINERS who's more appropriate
-to get nag mails from you :-)
+You lost the r-b from Sean when resending, I'll leave that to Sean to
+readd when he merges. Anyway, lgtm now with the more detailed explanation.
 
-Thanks, Daniel
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> ---
+> Changes in v2:
+> - Updated commit message with explanation from Stéphane Marchesin
+> 
+>  drivers/gpu/drm/udl/udl_fb.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/udl/udl_fb.c b/drivers/gpu/drm/udl/udl_fb.c
+> index 2ebdc6d5a76e..5754e37f741b 100644
+> --- a/drivers/gpu/drm/udl/udl_fb.c
+> +++ b/drivers/gpu/drm/udl/udl_fb.c
+> @@ -426,9 +426,11 @@ static void udl_fbdev_destroy(struct drm_device *dev,
+>  {
+>  	drm_fb_helper_unregister_fbi(&ufbdev->helper);
+>  	drm_fb_helper_fini(&ufbdev->helper);
+> -	drm_framebuffer_unregister_private(&ufbdev->ufb.base);
+> -	drm_framebuffer_cleanup(&ufbdev->ufb.base);
+> -	drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
+> +	if (ufbdev->ufb.obj) {
+> +		drm_framebuffer_unregister_private(&ufbdev->ufb.base);
+> +		drm_framebuffer_cleanup(&ufbdev->ufb.base);
+> +		drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
+> +	}
+>  }
+>  
+>  int udl_fbdev_init(struct drm_device *dev)
+> -- 
+> 2.17.0.921.gf22659ad46-goog
+> 
+
 -- 
 Daniel Vetter
 Software Engineer, Intel Corporation
