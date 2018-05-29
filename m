@@ -1,45 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936626AbeE2PEF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 11:04:05 -0400
-Received: from 8bytes.org ([81.169.241.247]:57046 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934896AbeE2Ook (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 10:44:40 -0400
-Date: Tue, 29 May 2018 16:44:38 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: mingo@redhat.com, tglx@linutronix.de, Toshi Kani <toshi.kani@hpe.com>
-Cc: mhocko@suse.com, akpm@linux-foundation.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, cpandya@codeaurora.org,
-        linux-mm@kvack.org, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] x86/mm: add TLB purge to free pmd/pte page
- interfaces
-Message-ID: <20180529144438.GM18595@8bytes.org>
-References: <20180516233207.1580-1-toshi.kani@hpe.com>
- <20180516233207.1580-4-toshi.kani@hpe.com>
+        id S936492AbeE2PIh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 11:08:37 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:23192 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935283AbeE2PEC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 11:04:02 -0400
+X-IronPort-AV: E=Sophos;i="5.49,456,1520924400";
+   d="scan'208";a="11998650"
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+To: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Peter Rosin <peda@axentia.se>
+CC: Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180329131054.22506-1-peda@axentia.se>
+ <20180329153322.5e2fc1e7@bbrezillon>
+ <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
+ <20180329154416.5c1a0013@bbrezillon>
+ <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
+ <20180402142249.7e076a64@bbrezillon>
+ <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
+ <20180402212843.164d5d21@bbrezillon> <20180402222020.1d344c14@bbrezillon>
+ <d7e6f78d-b57b-4d0f-c07c-ca6c1930cd51@axentia.se>
+ <20180403091813.5fb5c18c@bbrezillon>
+ <d0afd431-6e51-a9b7-c103-ecf1f6e07c2e@axentia.se>
+ <959d826d-1a98-ca22-acee-a4548427fcd3@microchip.com>
+ <a25ca617-d3da-d401-1ba9-8e5887f8a8e5@microchip.com>
+ <024079cb-77ad-9c48-e370-e6e8f2de171b@axentia.se>
+ <9c496531-f7b6-4b9d-dd51-0bfb68ead303@axentia.se>
+ <c3cc1894-2d7d-93b6-a9de-ed9ca4564ae9@axentia.se>
+ <19d68279-072e-7646-6fdd-8649578229ea@microchip.com>
+ <20180529164911.29820e07@bbrezillon>
+From: Eugen Hristev <eugen.hristev@microchip.com>
+Message-ID: <e3c34fb7-4881-3f49-b43b-1b07a8ab865d@microchip.com>
+Date: Tue, 29 May 2018 18:01:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180516233207.1580-4-toshi.kani@hpe.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180529164911.29820e07@bbrezillon>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 16, 2018 at 05:32:07PM -0600, Toshi Kani wrote:
->  	pmd = (pmd_t *)pud_page_vaddr(*pud);
-> +	pmd_sv = (pmd_t *)__get_free_page(GFP_KERNEL);
-> +	if (!pmd_sv)
-> +		return 0;
+[...]
 
-So your code still needs to allocate a full page where a simple
-list_head on the stack would do the same job.
 
-Ingo, Thomas, can you please just revert the original broken patch for
-now until there is proper fix?
+> 
+> I think you're missing something here. We use the DMA engine in memcpy
+> mode (SRAM -> DRAM), not in device mode (dev -> DRAM or DRAM -> dev).
+> So there's no dmas prop defined in the DT and there should not be.
+> 
+> Regards,
+> 
+> Boris
+> 
 
-Thanks,
+Ok, so the memcpy SRAM <-> DRAM will hog the transfer between DRAM and 
+LCD if my understanding is correct. That's the DMA that Peter wants to 
+disable with his patch ?
 
-	Joerg
+Then we can then try to force NFC SRAM DMA channels to use just DDR port 
+1 or 2 for memcpy ?
+
+I have also received a suggestion to try to increase the porches in 
+LCDC_LCDCFG3 .
+
+>>
+>>   >> [...]
+> 
+> 
