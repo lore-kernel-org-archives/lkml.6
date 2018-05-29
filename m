@@ -1,24 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967994AbeE2WRN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 18:17:13 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:39346 "EHLO
+        id S968170AbeE2WXP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 18:23:15 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45679 "EHLO
         mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967914AbeE2WRC (ORCPT
+        with ESMTP id S967695AbeE2WRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 18:17:02 -0400
-X-Google-Smtp-Source: ADUXVKLhSbAJvU/RWf+PLsjo3nJnhd7JZD+BQ7LBCGNyN/4ghfMU1MN3mzsiV06/KBz/jqOriMLdew==
+        Tue, 29 May 2018 18:17:04 -0400
+X-Google-Smtp-Source: ADUXVKJfngUEqPJi1QXVxMbHKzss4BVbyXZkaeFEe4FUe1/CPBKoXEsct/5g6sSEqnXfY3LRdt2QOg==
 From: Thomas Garnier <thgarnie@google.com>
 To: kernel-hardening@lists.openwall.com
 Cc: Thomas Garnier <thgarnie@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Skip Tom Lendacky <thomas.lendacky@amd.com>,
+        Skip Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 09/27] x86/acpi: Adapt assembly for PIE support
-Date: Tue, 29 May 2018 15:15:10 -0700
-Message-Id: <20180529221625.33541-10-thgarnie@google.com>
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 10/27] x86/boot/64: Adapt assembly for PIE support
+Date: Tue, 29 May 2018 15:15:11 -0700
+Message-Id: <20180529221625.33541-11-thgarnie@google.com>
 X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 In-Reply-To: <20180529221625.33541-1-thgarnie@google.com>
 References: <20180529221625.33541-1-thgarnie@google.com>
@@ -29,87 +31,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Change the assembly code to use only relative references of symbols for the
 kernel to be PIE compatible.
 
+Early at boot, the kernel is mapped at a temporary address while preparing
+the page table. To know the changes needed for the page table with KASLR,
+the boot code calculate the difference between the expected address of the
+kernel and the one chosen by KASLR. It does not work with PIE because all
+symbols in code are relatives. Instead of getting the future relocated
+virtual address, you will get the current temporary mapping.
+Instructions were changed to have absolute 64-bit references.
+
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@google.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- arch/x86/kernel/acpi/wakeup_64.S | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+ arch/x86/kernel/head_64.S | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
-index 50b8ed0317a3..472659c0f811 100644
---- a/arch/x86/kernel/acpi/wakeup_64.S
-+++ b/arch/x86/kernel/acpi/wakeup_64.S
-@@ -14,7 +14,7 @@
- 	 * Hooray, we are in Long 64-bit mode (but still running in low memory)
- 	 */
- ENTRY(wakeup_long64)
--	movq	saved_magic, %rax
-+	movq	saved_magic(%rip), %rax
- 	movq	$0x123456789abcdef0, %rdx
- 	cmpq	%rdx, %rax
- 	jne	bogus_64_magic
-@@ -25,14 +25,14 @@ ENTRY(wakeup_long64)
- 	movw	%ax, %es
- 	movw	%ax, %fs
- 	movw	%ax, %gs
--	movq	saved_rsp, %rsp
-+	movq	saved_rsp(%rip), %rsp
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 8344dd2f310a..7fca19e1f556 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -89,8 +89,10 @@ startup_64:
+ 	popq	%rsi
  
--	movq	saved_rbx, %rbx
--	movq	saved_rdi, %rdi
--	movq	saved_rsi, %rsi
--	movq	saved_rbp, %rbp
-+	movq	saved_rbx(%rip), %rbx
-+	movq	saved_rdi(%rip), %rdi
-+	movq	saved_rsi(%rip), %rsi
-+	movq	saved_rbp(%rip), %rbp
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+-	addq	$(early_top_pgt - __START_KERNEL_map), %rax
++	movabs  $(early_top_pgt - __START_KERNEL_map), %rcx
++	addq    %rcx, %rax
+ 	jmp 1f
++
+ ENTRY(secondary_startup_64)
+ 	UNWIND_HINT_EMPTY
+ 	/*
+@@ -119,7 +121,8 @@ ENTRY(secondary_startup_64)
+ 	popq	%rsi
  
--	movq	saved_rip, %rax
-+	movq	saved_rip(%rip), %rax
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+-	addq	$(init_top_pgt - __START_KERNEL_map), %rax
++	movabs	$(init_top_pgt - __START_KERNEL_map), %rcx
++	addq    %rcx, %rax
+ 1:
+ 
+ 	/* Enable PAE mode, PGE and LA57 */
+@@ -137,7 +140,7 @@ ENTRY(secondary_startup_64)
+ 	movq	%rax, %cr3
+ 
+ 	/* Ensure I am executing from virtual addresses */
+-	movq	$1f, %rax
++	movabs  $1f, %rax
+ 	ANNOTATE_RETPOLINE_SAFE
  	jmp	*%rax
- ENDPROC(wakeup_long64)
- 
-@@ -45,7 +45,7 @@ ENTRY(do_suspend_lowlevel)
- 	xorl	%eax, %eax
- 	call	save_processor_state
- 
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	%rsp, pt_regs_sp(%rax)
- 	movq	%rbp, pt_regs_bp(%rax)
- 	movq	%rsi, pt_regs_si(%rax)
-@@ -64,13 +64,14 @@ ENTRY(do_suspend_lowlevel)
- 	pushfq
- 	popq	pt_regs_flags(%rax)
- 
--	movq	$.Lresume_point, saved_rip(%rip)
-+	leaq	.Lresume_point(%rip), %rax
-+	movq	%rax, saved_rip(%rip)
- 
--	movq	%rsp, saved_rsp
--	movq	%rbp, saved_rbp
--	movq	%rbx, saved_rbx
--	movq	%rdi, saved_rdi
--	movq	%rsi, saved_rsi
-+	movq	%rsp, saved_rsp(%rip)
-+	movq	%rbp, saved_rbp(%rip)
-+	movq	%rbx, saved_rbx(%rip)
-+	movq	%rdi, saved_rdi(%rip)
-+	movq	%rsi, saved_rsi(%rip)
- 
- 	addq	$8, %rsp
- 	movl	$3, %edi
-@@ -82,7 +83,7 @@ ENTRY(do_suspend_lowlevel)
- 	.align 4
- .Lresume_point:
- 	/* We don't restore %rax, it must be 0 anyway */
--	movq	$saved_context, %rax
-+	leaq	saved_context(%rip), %rax
- 	movq	saved_context_cr4(%rax), %rbx
- 	movq	%rbx, %cr4
- 	movq	saved_context_cr3(%rax), %rbx
+ 1:
+@@ -234,11 +237,12 @@ ENTRY(secondary_startup_64)
+ 	 *	REX.W + FF /5 JMP m16:64 Jump far, absolute indirect,
+ 	 *		address given in m16:64.
+ 	 */
+-	pushq	$.Lafter_lret	# put return address on stack for unwinder
++	movabs  $.Lafter_lret, %rax
++	pushq	%rax		# put return address on stack for unwinder
+ 	xorq	%rbp, %rbp	# clear frame pointer
+-	movq	initial_code(%rip), %rax
++	leaq	initial_code(%rip), %rax
+ 	pushq	$__KERNEL_CS	# set correct cs
+-	pushq	%rax		# target address in negative space
++	pushq	(%rax)		# target address in negative space
+ 	lretq
+ .Lafter_lret:
+ END(secondary_startup_64)
 -- 
 2.17.0.921.gf22659ad46-goog
