@@ -1,213 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968845AbeE3JUP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:20:15 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11786 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965167AbeE3JUH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:20:07 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 30 May 2018 02:20:10 -0700
-Subject: Re: [PATCH v2 9/9] PM / Domains: Add dev_pm_domain_attach_by_id() to
- manage multi PM domains
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, <linux-pm@vger.kernel.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        "Rajendra Nayak" <rnayak@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-References: <20180529100421.31022-1-ulf.hansson@linaro.org>
- <20180529100421.31022-10-ulf.hansson@linaro.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <cc6f36ce-32b7-4b69-f9a9-98cf0b12a9d1@nvidia.com>
-Date: Wed, 30 May 2018 10:19:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180529100421.31022-10-ulf.hansson@linaro.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S968908AbeE3JUp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:20:45 -0400
+Received: from mga17.intel.com ([192.55.52.151]:22680 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965116AbeE3JUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 05:20:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,459,1520924400";
+   d="scan'208";a="232890677"
+From: Feng Tang <feng.tang@intel.com>
+To: Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Cc: alek.du@intel.com, Feng Tang <feng.tang@intel.com>
+Subject: [RFC 1/2] printk: Enable platform to provide a early boot clock
+Date: Wed, 30 May 2018 17:20:58 +0800
+Message-Id: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf,
+Currently printk timestamp mostly come from the sched_clock which
+depends on the clock setup, so there are many kernel logs started
+with "[    0.000000]   " before the clock is calibrated.
 
-On 29/05/18 11:04, Ulf Hansson wrote:
-> The existing dev_pm_domain_attach() function, allows a single PM domain to
-> be attached per device. To be able to support devices that are partitioned
-> across multiple PM domains, let's introduce a new interface,
-> dev_pm_domain_attach_by_id().
-> 
-> The dev_pm_domain_attach_by_id() returns a new allocated struct device with
-> the corresponding attached PM domain. This enables for example a driver to
-> operate on the new device from a power management point of view. The driver
-> may then also benefit from using the received device, to set up so called
-> device-links towards its original device. Depending on the situation, these
-> links may then be dynamically changed.
+This patch will provide an debug option for specific platform to
+provide a early boot time clock, so that we can have time info in
+kernel log much earlier, which can show the time info for the early
+kernel boot, and make boottime tuning/optimization easier (boot time
+is critical for phone/tablet and embedded devices).
 
-I have given this series a go with Tegra updating the XHCI driver to make
-use of these new APIs. Good news it does appear to work fine for Tegra,
-however, initially when looking at the device_link_add() API ...
+Capable platform only need to setup the "boot_printk_clock_fn"
+which could return time in nano seconds.
 
-/**
- * device_link_add - Create a link between two devices.
- * @consumer: Consumer end of the link.
- * @supplier: Supplier end of the link.
- * @flags: Link flags.
+Together with a TSC patch on x86 system, we have easily captured
+some early boottime killer like unwind_init() which takes about
+300ms in boot phase.
 
- ... I had assumed that the 'consumer' device would be the actual XHCI 
-device (in the case of Tegra) and the 'supplier' device would be the new
-genpd device. However, this did not work and I got the following WARN on
-boot ...
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+---
+ include/linux/printk.h |  3 +++
+ kernel/printk/printk.c | 15 +++++++++++++--
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
-[    2.050929] ---[ end trace eff0b5265e530c92 ]---
-[    2.055567] WARNING: CPU: 2 PID: 1 at drivers/base/core.c:446 device_links_driver_bound+0xc0/0xd0
-[    2.064422] Modules linked in:
-[    2.067471] CPU: 2 PID: 1 Comm: swapper/0 Tainted: G        W         4.17.0-rc7-next-20180529-00011-g4faf0dc0ebf3-dirty #32
-[    2.078667] Hardware name: Google Pixel C (DT)
-[    2.083101] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    2.087881] pc : device_links_driver_bound+0xc0/0xd0
-[    2.092832] lr : device_links_driver_bound+0x20/0xd0
-
-Switching the Tegra XHCI device to be the 'supplier' and genpd device to
-be the 'consumer' does work, but is this correct? Seems to be opposite to
-what I expected. Maybe I am missing something?
-
-> The new interface is typically called by drivers during their probe phase,
-> in case they manages devices which uses multiple PM domains. If that is the
-> case, the driver also becomes responsible of managing the detaching of the
-> PM domains, which typically should be done at the remove phase. Detaching
-> is done by calling the existing dev_pm_domain_detach() function and for
-> each of the received devices from dev_pm_domain_attach_by_id().
-> 
-> Note, currently its only genpd that supports multiple PM domains per
-> device, but dev_pm_domain_attach_by_id() can easily by extended to cover
-> other PM domain types, if/when needed.
-> 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
-> 
-> Changes in v2:
-> 	- Fixed comments from Jon. Clarified function descriptions/changelog and
-> 	return ERR_PTR(-EEXIST) in case a PM domain is already assigned.
-> 	- Fix build error when CONFIG_PM is unset.
-> 
-> ---
->  drivers/base/power/common.c | 43 ++++++++++++++++++++++++++++++++++---
->  include/linux/pm_domain.h   |  7 ++++++
->  2 files changed, 47 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
-> index 7ae62b6355b8..5e5ea0c239de 100644
-> --- a/drivers/base/power/common.c
-> +++ b/drivers/base/power/common.c
-> @@ -116,14 +116,51 @@ int dev_pm_domain_attach(struct device *dev, bool power_on)
->  }
->  EXPORT_SYMBOL_GPL(dev_pm_domain_attach);
->  
-> +/**
-> + * dev_pm_domain_attach_by_id - Attach a device to one of its PM domains.
-> + * @dev: Device to attach.
-
-Nit ... I still don't think this is the device we are attaching to, but the
-device the PM domains are associated with. IOW we are using this device to
-lookup the PM domains.
-
-> + * @index: The index of the PM domain.
-> + *
-> + * As @dev may only be attached to a single PM domain, the backend PM domain
-> + * provider creates a virtual device to attach instead. If attachment succeeds,
-> + * the ->detach() callback in the struct dev_pm_domain are assigned by the
-> + * corresponding backend attach function, as to deal with detaching of the
-> + * created virtual device.
-> + *
-> + * This function should typically be invoked by a driver during the probe phase,
-> + * in case its device requires power management through multiple PM domains. The
-> + * driver may benefit from using the received device, to configure device-links
-> + * towards its original device. Depending on the use-case and if needed, the
-> + * links may be dynamically changed by the driver, which allows it to control
-> + * the power to the PM domains independently from each other.
-> + *
-> + * Callers must ensure proper synchronization of this function with power
-> + * management callbacks.
-> + *
-> + * Returns the virtual created device when successfully attached to its PM
-> + * domain, NULL in case @dev don't need a PM domain, else an ERR_PTR().
-> + * Note that, to detach the returned virtual device, the driver shall call
-> + * dev_pm_domain_detach() on it, typically during the remove phase.
-> + */
-> +struct device *dev_pm_domain_attach_by_id(struct device *dev,
-> +					  unsigned int index)
-> +{
-> +	if (dev->pm_domain)
-> +		return ERR_PTR(-EEXIST);
-> +
-> +	return genpd_dev_pm_attach_by_id(dev, index);
-> +}
-> +EXPORT_SYMBOL_GPL(dev_pm_domain_attach_by_id);
-> +
->  /**
->   * dev_pm_domain_detach - Detach a device from its PM domain.
->   * @dev: Device to detach.
->   * @power_off: Used to indicate whether we should power off the device.
->   *
-> - * This functions will reverse the actions from dev_pm_domain_attach() and thus
-> - * try to detach the @dev from its PM domain. Typically it should be invoked
-> - * from subsystem level code during the remove phase.
-> + * This functions will reverse the actions from dev_pm_domain_attach() and
-> + * dev_pm_domain_attach_by_id(), thus it detaches @dev from its PM domain.
-> + * Typically it should be invoked during the remove phase, either from
-> + * subsystem level code or from drivers.
->   *
->   * Callers must ensure proper synchronization of this function with power
->   * management callbacks.
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 82458e8e2e01..9206a4fef9ac 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -299,6 +299,8 @@ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
->  
->  #ifdef CONFIG_PM
->  int dev_pm_domain_attach(struct device *dev, bool power_on);
-> +struct device *dev_pm_domain_attach_by_id(struct device *dev,
-> +					  unsigned int index);
->  void dev_pm_domain_detach(struct device *dev, bool power_off);
->  void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd);
->  #else
-> @@ -306,6 +308,11 @@ static inline int dev_pm_domain_attach(struct device *dev, bool power_on)
->  {
->  	return 0;
->  }
-> +static inline struct device *dev_pm_domain_attach_by_id(struct device *dev,
-> +							unsigned int index)
-> +{
-> +	return NULL;
-> +}
->  static inline void dev_pm_domain_detach(struct device *dev, bool power_off) {}
->  static inline void dev_pm_domain_set(struct device *dev,
->  				     struct dev_pm_domain *pd) {}
-> 
-
-My only other comments on this series are ...
-
-1. I think it would be nice to have an dev_pm_domain_attach_by_name() and 
-   that the DT binding has a 'power-domain-names' property.
-2. I am wondering if there could be value in having a
-   dev_pm_domain_attach_link_all() helper which would attach and link all
-   PM domains at once. 
-
-Cheers
-Jon
-
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 6d7e800..7c13d4a 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -188,6 +188,9 @@ extern bool printk_timed_ratelimit(unsigned long *caller_jiffies,
+ extern int printk_delay_msec;
+ extern int dmesg_restrict;
+ 
++/* Return boot timestamp in nano seconds */
++extern u64 (*boot_printk_clock_fn)(void);
++
+ extern int
+ devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write, void __user *buf,
+ 			  size_t *lenp, loff_t *ppos);
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 2f4af21..7feffd8 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -190,6 +190,17 @@ int devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write,
+ 	return 0;
+ }
+ 
++u64 (*boot_printk_clock_fn)(void) __read_mostly;
++
++static u64 printk_clock(void)
++{
++	/* If platform provides early boot printk clock, then use it */
++	if (unlikely(system_state == SYSTEM_BOOTING && boot_printk_clock_fn))
++		return boot_printk_clock_fn();
++	else
++		return local_clock();
++}
++
+ /*
+  * Number of registered extended console drivers.
+  *
+@@ -628,7 +639,7 @@ static int log_store(int facility, int level,
+ 	if (ts_nsec > 0)
+ 		msg->ts_nsec = ts_nsec;
+ 	else
+-		msg->ts_nsec = local_clock();
++		msg->ts_nsec = printk_clock();
+ 	memset(log_dict(msg) + dict_len, 0, pad_len);
+ 	msg->len = size;
+ 
+@@ -1775,7 +1786,7 @@ static bool cont_add(int facility, int level, enum log_flags flags, const char *
+ 		cont.facility = facility;
+ 		cont.level = level;
+ 		cont.owner = current;
+-		cont.ts_nsec = local_clock();
++		cont.ts_nsec = printk_clock();
+ 		cont.flags = flags;
+ 	}
+ 
 -- 
-nvpublic
+2.7.4
