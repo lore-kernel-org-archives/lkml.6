@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753813AbeE3LmZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:42:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60698 "EHLO
+        id S1753801AbeE3LmW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:42:22 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60691 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751984AbeE3LG7 (ORCPT
+        by vger.kernel.org with ESMTP id S1751993AbeE3LG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:06:59 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,13 +13,19 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Ursula Braun" <ubraun@linux.vnet.ibm.com>,
-        "Julian Wiedmann" <jwi@linux.vnet.ibm.com>
-Date: Wed, 30 May 2018 11:52:42 +0100
-Message-ID: <lsq.1527677562.422910969@decadent.org.uk>
+CC: akpm@linux-foundation.org, "Vegard Nossum" <vegard.nossum@oracle.com>,
+        "Hillf Danton" <hillf.zj@alibaba-inc.com>,
+        "Mike Kravetz" <mike.kravetz@oracle.com>,
+        "Dmitry Vyukov" <dvyukov@google.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Naoya Horiguchi" <n-horiguchi@ah.jp.nec.com>,
+        "Michal Hocko" <mhocko@suse.com>,
+        "Andrey Ryabinin" <aryabinin@virtuozzo.com>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.977868562@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 141/153] s390/qeth: free netdevice when removing a card
+Subject: [PATCH 3.2 017/153] hugetlbfs: fix offset overflow in hugetlbfs mmap
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -32,71 +38,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
 
-commit 6be687395b3124f002a653c1a50b3260222b3cd7 upstream.
+commit 045c7a3f53d9403b62d396b6d051c4be5044cdb4 upstream.
 
-On removal, a qeth card's netdevice is currently not properly freed
-because the call chain looks as follows:
+If mmap() maps a file, it can be passed an offset into the file at which
+the mapping is to start.  Offset could be a negative value when
+represented as a loff_t.  The offset plus length will be used to update
+the file size (i_size) which is also a loff_t.
 
-qeth_core_remove_device(card)
-	lx_remove_device(card)
-		unregister_netdev(card->dev)
-		card->dev = NULL			!!!
-	qeth_core_free_card(card)
-		if (card->dev)				!!!
-			free_netdev(card->dev)
+Validate the value of offset and offset + length to make sure they do
+not overflow and appear as negative.
 
-Fix it by free'ing the netdev straight after unregistering. This also
-fixes the sysfs-driven layer switch case (qeth_dev_layer2_store()),
-where the need to free the current netdevice was not considered at all.
+Found by syzcaller with commit ff8c0c53c475 ("mm/hugetlb.c: don't call
+region_abort if region_chg fails") applied.  Prior to this commit, the
+overflow would still occur but we would luckily return ENOMEM.
 
-Note that free_netdev() takes care of the netif_napi_del() for us too.
+To reproduce:
 
-Fixes: 4a71df50047f ("qeth: new qeth device driver")
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
-Reviewed-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+   mmap(0, 0x2000, 0, 0x40021, 0xffffffffffffffffULL, 0x8000000000000000ULL);
+
+Resulted in,
+
+  kernel BUG at mm/hugetlb.c:742!
+  Call Trace:
+   hugetlbfs_evict_inode+0x80/0xa0
+   evict+0x24a/0x620
+   iput+0x48f/0x8c0
+   dentry_unlink_inode+0x31f/0x4d0
+   __dentry_kill+0x292/0x5e0
+   dput+0x730/0x830
+   __fput+0x438/0x720
+   ____fput+0x1a/0x20
+   task_work_run+0xfe/0x180
+   exit_to_usermode_loop+0x133/0x150
+   syscall_return_slowpath+0x184/0x1c0
+   entry_SYSCALL_64_fastpath+0xab/0xad
+
+Fixes: ff8c0c53c475 ("mm/hugetlb.c: don't call region_abort if region_chg fails")
+Link: http://lkml.kernel.org/r/1491951118-30678-1-git-send-email-mike.kravetz@oracle.com
+Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Acked-by: Hillf Danton <hillf.zj@alibaba-inc.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 [bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/s390/net/qeth_core_main.c | 2 --
- drivers/s390/net/qeth_l2_main.c   | 2 +-
- drivers/s390/net/qeth_l3_main.c   | 2 +-
- 3 files changed, 2 insertions(+), 4 deletions(-)
+ fs/hugetlbfs/inode.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -4578,8 +4578,6 @@ static void qeth_core_free_card(struct q
- 	QETH_DBF_HEX(SETUP, 2, &card, sizeof(void *));
- 	qeth_clean_channel(&card->read);
- 	qeth_clean_channel(&card->write);
--	if (card->dev)
--		free_netdev(card->dev);
- 	kfree(card->ip_tbd_list);
- 	qeth_free_qdio_buffers(card);
- 	unregister_service_level(&card->qeth_service_level);
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -897,8 +897,8 @@ static void qeth_l2_remove_device(struct
- 		qeth_l2_set_offline(cgdev);
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -94,17 +94,26 @@ static int hugetlbfs_file_mmap(struct fi
+ 	vma->vm_flags |= VM_HUGETLB | VM_RESERVED;
+ 	vma->vm_ops = &hugetlb_vm_ops;
  
- 	if (card->dev) {
--		netif_napi_del(&card->napi);
- 		unregister_netdev(card->dev);
-+		free_netdev(card->dev);
- 		card->dev = NULL;
- 	}
- 	return;
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -3395,8 +3395,8 @@ static void qeth_l3_remove_device(struct
- 		qeth_l3_set_offline(cgdev);
++	/*
++	 * Offset passed to mmap (before page shift) could have been
++	 * negative when represented as a (l)off_t.
++	 */
++	if (((loff_t)vma->vm_pgoff << PAGE_SHIFT) < 0)
++		return -EINVAL;
++
+ 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
+ 		return -EINVAL;
  
- 	if (card->dev) {
--		netif_napi_del(&card->napi);
- 		unregister_netdev(card->dev);
-+		free_netdev(card->dev);
- 		card->dev = NULL;
- 	}
+ 	vma_len = (loff_t)(vma->vm_end - vma->vm_start);
++	len = vma_len + ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
++	/* check for overflow */
++	if (len < vma_len)
++		return -EINVAL;
+ 
+ 	mutex_lock(&inode->i_mutex);
+ 	file_accessed(file);
+ 
+ 	ret = -ENOMEM;
+-	len = vma_len + ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
+-
+ 	if (hugetlb_reserve_pages(inode,
+ 				vma->vm_pgoff >> huge_page_order(h),
+ 				len >> huge_page_shift(h), vma,
+@@ -114,7 +123,7 @@ static int hugetlbfs_file_mmap(struct fi
+ 	ret = 0;
+ 	hugetlb_prefault_arch_hook(vma->vm_mm);
+ 	if (vma->vm_flags & VM_WRITE && inode->i_size < len)
+-		inode->i_size = len;
++		i_size_write(inode, len);
+ out:
+ 	mutex_unlock(&inode->i_mutex);
  
