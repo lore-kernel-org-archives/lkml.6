@@ -1,51 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933236AbeE3HYZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:24:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59759 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752800AbeE3HYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:24:22 -0400
-Date: Wed, 30 May 2018 09:24:19 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: drop in_nmi check from
- printk_safe_flush_on_panic()
-Message-ID: <20180530072419.jqoohtcvenlnym6h@pathway.suse.cz>
-References: <20180530070350.10131-1-sergey.senozhatsky@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180530070350.10131-1-sergey.senozhatsky@gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S935933AbeE3HZV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:25:21 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:54992 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934600AbeE3HZT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 03:25:19 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: axboe@kernel.dk, osandov@osandov.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V3 1/2] blk-mq: abstract out blk-mq-sched rq list iteration bio merge helper
+Date: Wed, 30 May 2018 15:26:07 +0800
+Message-Id: <1527665168-1965-2-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527665168-1965-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1527665168-1965-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805300085
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-05-30 16:03:50, Sergey Senozhatsky wrote:
-> Drop the in_nmi() check from printk_safe_flush_on_panic()
-> and attempt to re-init (IOW unlock) locked logbuf spinlock
-> from panic CPU regardless of its context. Otherwise,
-> theoretically, we can deadlock on logbuf trying to flush
-> per-CPU buffers:
-> a) Panic CPU is running in non-NMI context
-> b) Panic CPU sends out shutdown IPI via reboot vector
-> c) Panic CPU fails to stop all remote CPUs
-> d) Panic CPU sends out shutdown IPI via NMI vector
->    One of the CPUs that we bring down via NMI vector can hold
->    logbuf spin lock (theoretically).
-> 
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-Acked-by: Petr Mladek <pmladek@suse.com>
+No functional changes in this patch, just a prep patch for utilizing
+this in an IO scheduler.
 
-Just to be sure. IMHO, it is not worth nominating this patch for
-stable. It is not a regression fix. I see it as a continuous
-improving of the handling in various corner cases. And I see this
-as a distant corner case.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+---
+ block/blk-mq-sched.c   | 34 ++++++++++++++++++++++++----------
+ include/linux/blk-mq.h |  3 ++-
+ 2 files changed, 26 insertions(+), 11 deletions(-)
 
-Best Regards,
-Petr
+diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+index 25c14c5..b0f2c2a 100644
+--- a/block/blk-mq-sched.c
++++ b/block/blk-mq-sched.c
+@@ -268,19 +268,16 @@ bool blk_mq_sched_try_merge(struct request_queue *q, struct bio *bio,
+ EXPORT_SYMBOL_GPL(blk_mq_sched_try_merge);
+ 
+ /*
+- * Reverse check our software queue for entries that we could potentially
+- * merge with. Currently includes a hand-wavy stop count of 8, to not spend
+- * too much time checking for merges.
++ * Iterate list of requests and see if we can merge this bio with any
++ * of them.
+  */
+-static bool blk_mq_attempt_merge(struct request_queue *q,
+-				 struct blk_mq_ctx *ctx, struct bio *bio)
++bool blk_mq_bio_list_merge(struct request_queue *q, struct list_head *list,
++			   struct bio *bio)
+ {
+ 	struct request *rq;
+ 	int checked = 8;
+ 
+-	lockdep_assert_held(&ctx->lock);
+-
+-	list_for_each_entry_reverse(rq, &ctx->rq_list, queuelist) {
++	list_for_each_entry_reverse(rq, list, queuelist) {
+ 		bool merged = false;
+ 
+ 		if (!checked--)
+@@ -305,13 +302,30 @@ static bool blk_mq_attempt_merge(struct request_queue *q,
+ 			continue;
+ 		}
+ 
+-		if (merged)
+-			ctx->rq_merged++;
+ 		return merged;
+ 	}
+ 
+ 	return false;
+ }
++EXPORT_SYMBOL_GPL(blk_mq_bio_list_merge);
++
++/*
++ * Reverse check our software queue for entries that we could potentially
++ * merge with. Currently includes a hand-wavy stop count of 8, to not spend
++ * too much time checking for merges.
++ */
++static bool blk_mq_attempt_merge(struct request_queue *q,
++				 struct blk_mq_ctx *ctx, struct bio *bio)
++{
++	lockdep_assert_held(&ctx->lock);
++
++	if (blk_mq_bio_list_merge(q, &ctx->rq_list, bio)) {
++		ctx->rq_merged++;
++		return true;
++	}
++
++	return false;
++}
+ 
+ bool __blk_mq_sched_bio_merge(struct request_queue *q, struct bio *bio)
+ {
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index ebc34a5..fb35517 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -259,7 +259,8 @@ void blk_mq_add_to_requeue_list(struct request *rq, bool at_head,
+ void blk_mq_kick_requeue_list(struct request_queue *q);
+ void blk_mq_delay_kick_requeue_list(struct request_queue *q, unsigned long msecs);
+ void blk_mq_complete_request(struct request *rq);
+-
++bool blk_mq_bio_list_merge(struct request_queue *q, struct list_head *list,
++			   struct bio *bio);
+ bool blk_mq_queue_stopped(struct request_queue *q);
+ void blk_mq_stop_hw_queue(struct blk_mq_hw_ctx *hctx);
+ void blk_mq_start_hw_queue(struct blk_mq_hw_ctx *hctx);
+-- 
+2.7.4
