@@ -1,120 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753648AbeE3Leb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:34:31 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51550 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753633AbeE3LeU (ORCPT
+        id S1753622AbeE3LeR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:34:17 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60823 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752358AbeE3LHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:34:20 -0400
-X-Google-Smtp-Source: ADUXVKJktGFW0MywdSa4/aZg2Oo2nPbjZ/yklNWjT+DCNWcDF9XJZZlcHxV4P2GsVHxxdhviEQ2ns3nj2gpLy1Wxsls=
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0iOP-gcdXcaOjuWy6p+k+hSkHuapDuYYFeS+6gDrxev3w@mail.gmail.com>
-References: <20180529100421.31022-1-ulf.hansson@linaro.org> <CAJZ5v0iOP-gcdXcaOjuWy6p+k+hSkHuapDuYYFeS+6gDrxev3w@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 30 May 2018 13:34:18 +0200
-Message-ID: <CAPDyKFpPYzPwQr2enDNTQPeKdvZ8vQb7TWP4KhT4k1gDhrrpLA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] PM / Domains: Add support for multi PM domains per device
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org
+        Wed, 30 May 2018 07:07:02 -0400
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
+        "Guillaume Nault" <g.nault@alphalink.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        "James Chapman" <jchapman@katalix.com>,
+        "Eric Dumazet" <edumazet@google.com>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.861137605@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.2 116/153] l2tp: do not accept arbitrary sockets
+In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30 May 2018 at 11:30, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Tue, May 29, 2018 at 12:04 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> Changes in v2:
->>         - Addressed comments from Geert around DT doc.
->>         - Addressed comments from Jon around clarification of how to use this
->>         and changes to returned error codes.
->>         - Fixed build error in case CONFIG_PM was unset.
->>
->> There are devices that are partitioned across multiple PM domains. Currently
->> these can't be supported well by the available PM infrastructures we have in
->> the kernel. This series is an attempt to address this.
->>
->> The interesting parts happens from patch 5 an onwards, including a minor DT
->> update to the existing power-domain bindings, the 4 earlier are just trivial
->> clean-ups of some related code in genpd, which I happened to stumble over.
->>
->> Some additional background:
->>
->> One existing case where devices are partitioned across multiple PM domains, is
->> the Nvida Tegra 124/210 X-USB subsystem. A while ago Jon Hunter (Nvidia) sent a
->> series, trying to address these issues, however this is a new approach, while
->> it re-uses the same concepts from DT point of view.
->>
->> The Tegra 124/210 X-USB subsystem contains of a host controller and a device
->> controller. Each controller have its own independent PM domain, but are being
->> partitioned across another shared PM domain for the USB super-speed logic.
->>
->> Currently to make the drivers work, either the related PM domains needs to stay
->> powered on always or the PM domain topology needs to be in-correctly modelled
->> through sub-domains. In both cases PM domains may be powered on while they
->> don't need to be, so in the end this means - wasting power -.
->>
->> As stated above, this series intends to address these problem from a PM
->> infrastructure point of view. More details are available in each changelog.
->>
->> It should be noted that this series has been tested on HW, however only by using
->> a home-cooked test PM domain driver for genpd and together with a test driver.
->> This allowed me to play with PM domain (genpd), runtime PM and device links.
->>
->> Any further deployment for real use cases are greatly appreciated. I am happy to
->> to help, if needed!
->>
->> Kind regards
->> Ulf Hansson
->>
->>
->> Ulf Hansson (9):
->>   PM / Domains: Drop extern declarations of functions in pm_domain.h
->>   PM / Domains: Drop __pm_genpd_add_device()
->>   PM / Domains: Drop genpd as in-param for pm_genpd_remove_device()
->>   PM / Domains: Drop unused parameter in genpd_allocate_dev_data()
->>   PM / Domains: dt: Allow power-domain property to be a list of
->>     specifiers
->>   PM / Domains: Don't attach devices in genpd with multi PM domains
->>   PM / Domains: Split genpd_dev_pm_attach()
->>   PM / Domains: Add support for multi PM domains per device to genpd
->>   PM / Domains: Add dev_pm_domain_attach_by_id() to manage multi PM
->>     domains
->>
->>  .../bindings/power/power_domain.txt           |  19 ++-
->>  drivers/base/power/common.c                   |  39 ++++-
->>  drivers/base/power/domain.c                   | 155 ++++++++++++++----
->>  drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c       |   2 +-
->>  include/linux/pm_domain.h                     |  79 ++++-----
->>  5 files changed, 216 insertions(+), 78 deletions(-)
->
-> I can take patches [1-4/9] from this series for 4.18.
+3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
 
-Thanks!
+------------------
 
->
-> I need an ACK from Rob on the bindings change.
+From: Eric Dumazet <edumazet@google.com>
 
-Yes, of course!
+commit 17cfe79a65f98abe535261856c5aef14f306dff7 upstream.
 
->
-> The rest of the series doesn't seem to be ready yet.
+syzkaller found an issue caused by lack of sufficient checks
+in l2tp_tunnel_create()
 
-It's getting reviewed and tested, so let's give it some more time.
+RAW sockets can not be considered as UDP ones for instance.
 
-BTW, from an overall design point of view, you seems okay with it?
+In another patch, we shall replace all pr_err() by less intrusive
+pr_debug() so that syzkaller can find other bugs faster.
+Acked-by: Guillaume Nault <g.nault@alphalink.fr>
+Acked-by: James Chapman <jchapman@katalix.com>
 
-Kind regards
-Uffe
+==================================================================
+BUG: KASAN: slab-out-of-bounds in setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
+dst_release: dst:00000000d53d0d0f refcnt:-1
+Write of size 1 at addr ffff8801d013b798 by task syz-executor3/6242
+
+CPU: 1 PID: 6242 Comm: syz-executor3 Not tainted 4.16.0-rc2+ #253
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x194/0x24d lib/dump_stack.c:53
+ print_address_description+0x73/0x250 mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report+0x23b/0x360 mm/kasan/report.c:412
+ __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
+ setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
+ l2tp_tunnel_create+0x1354/0x17f0 net/l2tp/l2tp_core.c:1596
+ pppol2tp_connect+0x14b1/0x1dd0 net/l2tp/l2tp_ppp.c:707
+ SYSC_connect+0x213/0x4a0 net/socket.c:1640
+ SyS_connect+0x24/0x30 net/socket.c:1621
+ do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/l2tp/l2tp_core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1505,9 +1505,14 @@ int l2tp_tunnel_create(struct net *net,
+ 		encap = cfg->encap;
+ 
+ 	/* Quick sanity checks */
++	err = -EPROTONOSUPPORT;
++	if (sk->sk_type != SOCK_DGRAM) {
++		pr_debug("tunl %hu: fd %d wrong socket type\n",
++			 tunnel_id, fd);
++		goto err;
++	}
+ 	switch (encap) {
+ 	case L2TP_ENCAPTYPE_UDP:
+-		err = -EPROTONOSUPPORT;
+ 		if (sk->sk_protocol != IPPROTO_UDP) {
+ 			printk(KERN_ERR "tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
+ 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_UDP);
+@@ -1515,7 +1520,6 @@ int l2tp_tunnel_create(struct net *net,
+ 		}
+ 		break;
+ 	case L2TP_ENCAPTYPE_IP:
+-		err = -EPROTONOSUPPORT;
+ 		if (sk->sk_protocol != IPPROTO_L2TP) {
+ 			printk(KERN_ERR "tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
+ 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_L2TP);
