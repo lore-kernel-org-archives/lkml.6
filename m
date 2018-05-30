@@ -1,94 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753664AbeE3Nag (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 09:30:36 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:40746 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753532AbeE3Na1 (ORCPT
+        id S1753528AbeE3N2R (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 09:28:17 -0400
+Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.136]:33686 "EHLO
+        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753476AbeE3N2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 09:30:27 -0400
-X-IronPort-AV: E=Sophos;i="5.49,460,1520866800";
-   d="scan'208";a="282529723"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, M P <buserror@gmail.com>
-CC: Michel Pollet <michel.pollet@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
-Thread-Topic: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
-Thread-Index: AQHT8bSf7l9gIe2dJUyhEMYFJjQsPaQ8Fl+AgADJTwCAAAulAIAADmCAgAMz5wCACCJRAA==
-Date: Wed, 30 May 2018 13:30:20 +0000
-Message-ID: <TY1PR01MB1769DFD4CD9803D10CE1CA4BF56C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdW-HUBRF4rLdfzixcyMUBg7+4XU+-3zayePoyeQiBZ8ZA@mail.gmail.com>
- <CAMMfpEyTORirKiE417AQzCLzxDTKmy83bwivpfJaHQsKUKMc_w@mail.gmail.com>
- <CAMuHMdWAU9wZkA+Z0BNAGrLV1WrCO3PgCTo2p=q3Mq9Tm6JBGA@mail.gmail.com>
- <CAMMfpEwKa90XHu_igCxRQLy_CSVHTkN8eD8f7o=wgtttSn=FqA@mail.gmail.com>
- <CAMuHMdWVde-DfbLVbvZT4rQfsVz1z7AMyQVgbO2DXrQKsEdVcw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWVde-DfbLVbvZT4rQfsVz1z7AMyQVgbO2DXrQKsEdVcw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com;
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1038;7:2Yu1aJ+J0nAS1IAnkfkqNASk4YNWDzJ+6H9jOZFDYrLKemL6mfsQfsSQdiO/ieb59xjo3/ZWIJN4rP8YrBSnBp25zuSKgd57S02ErFcg3le4MvXlh3ANCEvWfbbCnjH6E1/ME/HJdKxbT4QwZ/E34Fw7ZGBYtZ/Fcc+cgip9hgaA3euWswnx+vSCdMwKxYhIz2I4mnHPV2fnaKqHMHdQFVAKoikO1xqClzDgfw37f+IPZfdCzeNC8T3MI9orZiql;20:MQbtddKtnnnvsyx7BWN+7YMADG6hjJvu2ekrwGvHhVTXIydDu4yI8YygF3wmXGX0cQXz3zTgwRKI/MjIYUqGVsUn9QS6hGssoXVa4NOwvVYbeTHVhSABfO/eULOxuRKkXbj6BOGIvksl1hzVDl07I1g8EmnGkcJkUMW1bfoo9yM=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1038;
-x-ms-traffictypediagnostic: TY1PR01MB1038:
-x-microsoft-antispam-prvs: <TY1PR01MB1038CF6BDC31E371FC0D8F6DF56C0@TY1PR01MB1038.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:TY1PR01MB1038;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1038;
-x-forefront-prvs: 0688BF9B46
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(366004)(396003)(346002)(376002)(189003)(199004)(3846002)(3660700001)(5660300001)(14454004)(2906002)(316002)(4326008)(26005)(55016002)(33656002)(3280700002)(81166006)(9686003)(99286004)(86362001)(53936002)(97736004)(74316002)(305945005)(478600001)(93886005)(7736002)(229853002)(25786009)(66066001)(6436002)(446003)(6506007)(53546011)(486006)(76176011)(11346002)(7416002)(102836004)(44832011)(6246003)(186003)(8936002)(8676002)(68736007)(110136005)(39060400002)(2900100001)(7696005)(54906003)(476003)(6116002)(105586002)(106356001)(81156014)(5250100002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1038;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: m9K/kYF15d4vNNlFF+yePFGcC4h524wrsPSnDnuO2oPq1i27ohJRsgQB+jMMIllQKEwwlS2PZ+Do8sk8lZvOznhAcf87SvDtM58laa0osoLMyasukqdxzB9qyACELC72tUiepL0vpWd3lbQLBNJAUfmc02bR+W9Yb+L6N2FAvg/647XQpGAqGlkufEWJPulI
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 6306361d-5643-498b-7a24-08d5c6317dfe
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6306361d-5643-498b-7a24-08d5c6317dfe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2018 13:30:20.9194
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1038
+        Wed, 30 May 2018 09:28:08 -0400
+X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx22AatU+eLaHfutoZdl+X9BETxn4/4+IVqx7oJE8yFU0CFyS7Uq+kmFDrWBCuLGqeCYZgEsPw="
+X-RZG-CLASS-ID: mo05
+From: Frieder Schrempf <frieder.schrempf@exceet.de>
+To: linux-mtd@lists.infradead.org, boris.brezillon@bootlin.com,
+        linux-spi@vger.kernel.org
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
+        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
+        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com, han.xu@nxp.com,
+        Frieder Schrempf <frieder.schrempf@exceet.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Shawn Guo <shawnguo@kernel.org>,
+        Ran Wang <ran.wang_1@nxp.com>, Minghuan Lian <Minghuan.Lian@nxp.com>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Yuantian Tang <andy.tang@nxp.com>,
+        Madalin Bucur <madalin.bucur@nxp.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 10/11] ARM64: dts: ls1046a: Remove fsl,qspi-has-second-chip as it is not used
+Date: Wed, 30 May 2018 15:14:39 +0200
+Message-Id: <1527686082-15142-11-git-send-email-frieder.schrempf@exceet.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
+References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4UDVMsN020042
 
-Hi Geert,
+After switching to the new FSL QSPI driver the property
+'fsl,qspi-has-second-chip' is not needed anymore.
 
-On 25 May 2018 10:13 Geert Uytterhoeven wrote:
- [snip]
+The driver now uses the 'reg' property to determine the bus and
+the chipselect.
 
-> Now, given the clock definitions for RZ/N1[DSL] are the same (although some
-> don't exist on some variants), you could keep on using RZN1_CLK_FOO for
-> the names of the defines, and store them in a common file, included by the
-> soc-specific file. But please make clear the common file cannot be included
-> directly, so the filename does not become part of the DT ABI, and you are
-> shielded from future marketing silliness (e.g. next quarter's RZ/N1X being
-> totally different).
-How does an include filename become part of the DT ABI?
-I thought the dtb is the ABI, not the dts. Am I wrong?
+Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
+---
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks
-Phil
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index 136ebfa..871189e 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -247,7 +247,6 @@
+ 			clock-names = "qspi_en", "qspi";
+ 			clocks = <&clockgen 4 1>, <&clockgen 4 1>;
+ 			big-endian;
+-			fsl,qspi-has-second-chip;
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.7.4
