@@ -1,131 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968919AbeE3JoG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:44:06 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35892 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965077AbeE3JoC (ORCPT
+        id S968948AbeE3Jod (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:44:33 -0400
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:46560 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965077AbeE3Joa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:44:02 -0400
-X-Google-Smtp-Source: ADUXVKLoEZGOmGvNy3Jmo1zoiQOVEtIExYi8eJgyLLo3FYkPy10+FqXOhKDeqMDqaF1YGqzRI5BgPA==
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: architt@codeaurora.org, a.hajda@samsung.com, jernej.skrabec@siol.net
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/bridge/synopsys: dw-hdmi: fix dw_hdmi_setup_rx_sense
-Date: Wed, 30 May 2018 11:43:58 +0200
-Message-Id: <1527673438-20643-1-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 30 May 2018 05:44:30 -0400
+X-Google-Smtp-Source: ADUXVKJoQnS8vTdf4THXvjA7P3K8/6tPoxVdKTEFFMHdpOGOc2Yh2hkCyYfc/jr7rujcA+PDuZW00e5+re5jMKpJn7k=
+MIME-Version: 1.0
+In-Reply-To: <08921b9d-0f31-f31d-096f-6c4f3a1e4d4f@oracle.com>
+References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180522200214.GF9536@vader> <c0b8f2e3-b286-06a7-306d-141f155eff01@oracle.com>
+ <CACVXFVN=LHTq=x9n7U7gciR41rWfTHn9uHmZMUHt6=RdvJanXQ@mail.gmail.com>
+ <bef30b73-bf68-929e-26b5-08f63e5ca885@oracle.com> <CACVXFVNLq7CiBMTDPRcHLNZBWLYXWCpdb4G0iqBUon9f-GpsAA@mail.gmail.com>
+ <08921b9d-0f31-f31d-096f-6c4f3a1e4d4f@oracle.com>
+From: Ming Lei <tom.leiming@gmail.com>
+Date: Wed, 30 May 2018 17:44:28 +0800
+Message-ID: <CACVXFVPKdqb7p-xMQ_8c7Wa26s6O-36Pi0xNHMRDDR1Ar+bDhA@mail.gmail.com>
+Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
+To: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc: Omar Sandoval <osandov@osandov.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dw_hdmi_setup_rx_sense exported function should not use struct device
-to recover the dw-hdmi context using drvdata, but take struct dw_hdmi
-directly like other exported functions.
+On Wed, May 30, 2018 at 5:20 PM, jianchao.wang
+<jianchao.w.wang@oracle.com> wrote:
+> Hi ming
+>
+> On 05/30/2018 05:13 PM, Ming Lei wrote:
+>>> Yes, it maybe good for merging of 'none', because the rq_list is split into 3
+>>> lists, and not need to iterate the whole rq_list any more.
+>>> But what's about the dispatch when there is no io scheduler.
+>> blk_mq_flush_busy_ctxs() and blk_mq_dequeue_from_ctx() should work
+>> fine in case of 'none' if per-domain list is added to ctx. Then we can make
+>> none to be a bit fair on READ/WRITE.
+>>
+>
+> But how to determine when to dispatch READ, WRITE or other more, when there is no io scheduler ?
+>
 
-This caused a regression using Meson DRM on S905X since v4.17-rc1 :
+For blk-mq, no io scheduler means 'none' actually, and it works like a
+scheduler too, but just shares driver tags, IMO.
 
-Internal error: Oops: 96000007 [#1] PREEMPT SMP
-[...]
-CPU: 0 PID: 124 Comm: irq/32-dw_hdmi_ Not tainted 4.17.0-rc7 #2
-Hardware name: Libre Technology CC (DT)
-[...]
-pc : osq_lock+0x54/0x188
-lr : __mutex_lock.isra.0+0x74/0x530
-[...]
-Process irq/32-dw_hdmi_ (pid: 124, stack limit = 0x00000000adf418cb)
-Call trace:
-  osq_lock+0x54/0x188
-  __mutex_lock_slowpath+0x10/0x18
-  mutex_lock+0x30/0x38
-  __dw_hdmi_setup_rx_sense+0x28/0x98
-  dw_hdmi_setup_rx_sense+0x10/0x18
-  dw_hdmi_top_thread_irq+0x2c/0x50
-  irq_thread_fn+0x28/0x68
-  irq_thread+0x10c/0x1a0
-  kthread+0x128/0x130
-  ret_from_fork+0x10/0x18
- Code: 34000964 d00050a2 51000484 9135c042 (f864d844)
- ---[ end trace 945641e1fbbc07da ]---
- note: irq/32-dw_hdmi_[124] exited with preempt_count 1
- genirq: exiting task "irq/32-dw_hdmi_" (124) is an active IRQ thread (irq 32)
+Wrt. the current code of 'none', blk-mq just picks up one request from
+ctx->rq_list
+directly in FIFO style. If READ/WRITE lists are introduced, only
+blk_mq_dequeue_from_ctx() is effected, there are several choices
+left for us:
 
-Fixes: eea034af90c6 ("drm/bridge/synopsys: dw-hdmi: don't clobber drvdata")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Tested-by: Koen Kooi <koen@dominion.thruhere.net>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 15 ++++-----------
- drivers/gpu/drm/meson/meson_dw_hdmi.c     |  2 +-
- include/drm/bridge/dw_hdmi.h              |  2 +-
- 3 files changed, 6 insertions(+), 13 deletions(-)
+1) keep the FIFO style of current behaviour by using req->start_time_ns
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index ec8d000..3c136f2b 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2077,7 +2077,7 @@ static irqreturn_t dw_hdmi_hardirq(int irq, void *dev_id)
- 	return ret;
- }
- 
--void __dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
-+void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
- {
- 	mutex_lock(&hdmi->mutex);
- 
-@@ -2103,13 +2103,6 @@ void __dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
- 	}
- 	mutex_unlock(&hdmi->mutex);
- }
--
--void dw_hdmi_setup_rx_sense(struct device *dev, bool hpd, bool rx_sense)
--{
--	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
--
--	__dw_hdmi_setup_rx_sense(hdmi, hpd, rx_sense);
--}
- EXPORT_SYMBOL_GPL(dw_hdmi_setup_rx_sense);
- 
- static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
-@@ -2145,9 +2138,9 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
- 	 */
- 	if (intr_stat &
- 	    (HDMI_IH_PHY_STAT0_RX_SENSE | HDMI_IH_PHY_STAT0_HPD)) {
--		__dw_hdmi_setup_rx_sense(hdmi,
--					 phy_stat & HDMI_PHY_HPD,
--					 phy_stat & HDMI_PHY_RX_SENSE);
-+		dw_hdmi_setup_rx_sense(hdmi,
-+				       phy_stat & HDMI_PHY_HPD,
-+				       phy_stat & HDMI_PHY_RX_SENSE);
- 
- 		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0)
- 			cec_notifier_set_phys_addr(hdmi->cec_notifier,
-diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index a393095..c9ad456 100644
---- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-+++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-@@ -529,7 +529,7 @@ static irqreturn_t dw_hdmi_top_thread_irq(int irq, void *dev_id)
- 		if (stat & HDMITX_TOP_INTR_HPD_RISE)
- 			hpd_connected = true;
- 
--		dw_hdmi_setup_rx_sense(dw_hdmi->dev, hpd_connected,
-+		dw_hdmi_setup_rx_sense(dw_hdmi->hdmi, hpd_connected,
- 				       hpd_connected);
- 
- 		drm_helper_hpd_irq_event(dw_hdmi->encoder.dev);
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index dd2a8cf..ccb5aa8 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -151,7 +151,7 @@ struct dw_hdmi *dw_hdmi_bind(struct platform_device *pdev,
- 			     struct drm_encoder *encoder,
- 			     const struct dw_hdmi_plat_data *plat_data);
- 
--void dw_hdmi_setup_rx_sense(struct device *dev, bool hpd, bool rx_sense);
-+void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense);
- 
- void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
- void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
--- 
-2.7.4
+2) READ/WRIRE fair style by picking up request from the lists in round-robin
+order
+
+3) or others
+
+It just will make more choices for us, :-)
+
+Thanks,
+Ming Lei
