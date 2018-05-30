@@ -1,72 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966924AbeE3AKW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 20:10:22 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:37206 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935643AbeE3AKU (ORCPT
+        id S1755455AbeE3AMQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 20:12:16 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38803 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755130AbeE3AMM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 20:10:20 -0400
-X-Google-Smtp-Source: ADUXVKIW/gM17OVnVztjvSWkXmkltZW8rq4Eyct3WHQ6DG7HGFBWKIYclBFyIJgeAccON0R0K76PCUas515kLb7ynOc=
-MIME-Version: 1.0
-In-Reply-To: <20180530000321.GP4511@wotan.suse.de>
-References: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
- <20180529192643.GA3487@kmo-pixel> <20180529205143.GB7381@thunk.org>
- <20180529210025.GB3487@kmo-pixel> <20180529225928.GI31712@garbanzo.do-not-panic.com>
- <CAB=NE6XBPjcGCbK2L_ELjMVVSO34BeJQv8cSiC6M_r7MDVFLvQ@mail.gmail.com>
- <CAHp75Vefx7zwrn4CwhDYZrMSLdaaqta1uJHJrqD7c40MQ_N0ZA@mail.gmail.com> <20180530000321.GP4511@wotan.suse.de>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 30 May 2018 03:10:18 +0300
-Message-ID: <CAHp75Vf4AUrCbvsqaTZipC6xdHN=H+rRz1ACVkUpKzNQ4jbKbQ@mail.gmail.com>
-Subject: Re: PostgreSQL licensed code on Linux
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-        Jessica Yu <jeyu@kernel.org>, Tso Ted <tytso@mit.edu>,
-        Coly Li <colyli@suse.de>, Ciaran Farrell <ciaran.farrell@suse.com>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        linux-bcache@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jonas Oberg <jonas@fsfe.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 May 2018 20:12:12 -0400
+X-Google-Smtp-Source: ADUXVKJdoVfbFqHJtR/NfpcDsu6SYqAIxVrCJexmhsyr7KlwqRGy3pGvp6p05Ojq4JDGGMcRBcVHNQ==
+From: Shakeel Butt <shakeelb@google.com>
+To: Michal Hocko <mhocko@kernel.org>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
+Cc: Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH v3] mm: fix race between kmem_cache destroy, create and  deactivate
+Date: Tue, 29 May 2018 17:12:04 -0700
+Message-Id: <20180530001204.183758-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 3:03 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> On Wed, May 30, 2018 at 02:22:14AM +0300, Andy Shevchenko wrote:
->> On Wed, May 30, 2018 at 2:12 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
->> > It would seem I did follow up with a v3 patch and Rusty noted that although
->> > I may be right, its hard to care [0]. But of relevance here is again if one
->> > of the MODULE_LICENSE() dual tags should be used or the GPL tag. I'll
->> > continue to side recommending with the MODULE_LICENSE("GPL") tag even on
->> > files with permissive licenses, and even if it we haven't clarified this in
->> > documentation as I think scaling these tags further is just silly.
->> >
->> > [0] http://lkml.kernel.org/r/87bom0hf0f.fsf@rustcorp.com.au
->>
->> https://www.spinics.net/lists/linux-bcache/msg06048.html
->>
->> https://www.spinics.net/lists/linux-bcache/msg06058.html
->
-> For those that are not developers:
->
-> The proposed changes referenced in the above URLs take old portions PostgreSQL
-> C code which were previously on a larger C file and move them to a new module
-> which has the PostgreSQL header. Modules need to have a MODULE_LICENSE() tag,
-> and if one is not used the kernel assumes the module is proprietary. The above
-> code lacks a MODULE_LICENSE() tag as such currently the driver is proprietary.
+The memcg kmem cache creation and deactivation (SLUB only) is
+asynchronous. If a root kmem cache is destroyed whose memcg cache is in
+the process of creation or deactivation, the kernel may crash.
 
-Thanks for explaining this for audience.
+Example of one such crash:
+	general protection fault: 0000 [#1] SMP PTI
+	CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
+	...
+	Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
+	RIP: 0010:has_cpu_slab
+	...
+	Call Trace:
+	? on_each_cpu_cond
+	__kmem_cache_shrink
+	kmemcg_cache_deact_after_rcu
+	kmemcg_deactivate_workfn
+	process_one_work
+	worker_thread
+	kthread
+	ret_from_fork+0x35/0x40
 
-> Clearly that needs to be fixed before upstreaming.
+To fix this race, on root kmem cache destruction, mark the cache as
+dying and flush the workqueue used for memcg kmem cache creation and
+deactivation.
 
-Yes, that's why Coly deferred the change for getting clear with licenses.
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+Changelog since v2:
+- Instead of refcount, flush the workqueue
 
+Changelog since v1:
+- Added more documentation to the code
+- Renamed fields to be more readable
+
+---
+ include/linux/slab.h |  1 +
+ mm/slab_common.c     | 21 ++++++++++++++++++++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 9ebe659bd4a5..71c5467d99c1 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -658,6 +658,7 @@ struct memcg_cache_params {
+ 			struct memcg_cache_array __rcu *memcg_caches;
+ 			struct list_head __root_caches_node;
+ 			struct list_head children;
++			bool dying;
+ 		};
+ 		struct {
+ 			struct mem_cgroup *memcg;
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index b0dd9db1eb2f..a3496375f5ea 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -136,6 +136,7 @@ void slab_init_memcg_params(struct kmem_cache *s)
+ 	s->memcg_params.root_cache = NULL;
+ 	RCU_INIT_POINTER(s->memcg_params.memcg_caches, NULL);
+ 	INIT_LIST_HEAD(&s->memcg_params.children);
++	s->memcg_params.dying = false;
+ }
+ 
+ static int init_memcg_params(struct kmem_cache *s,
+@@ -608,7 +609,7 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
+ 	 * The memory cgroup could have been offlined while the cache
+ 	 * creation work was pending.
+ 	 */
+-	if (memcg->kmem_state != KMEM_ONLINE)
++	if (memcg->kmem_state != KMEM_ONLINE || root_cache->memcg_params.dying)
+ 		goto out_unlock;
+ 
+ 	idx = memcg_cache_id(memcg);
+@@ -712,6 +713,9 @@ void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
+ 	    WARN_ON_ONCE(s->memcg_params.deact_fn))
+ 		return;
+ 
++	if (s->memcg_params.root_cache->memcg_params.dying)
++		return;
++
+ 	/* pin memcg so that @s doesn't get destroyed in the middle */
+ 	css_get(&s->memcg_params.memcg->css);
+ 
+@@ -823,11 +827,24 @@ static int shutdown_memcg_caches(struct kmem_cache *s)
+ 		return -EBUSY;
+ 	return 0;
+ }
++
++static void flush_memcg_workqueue(struct kmem_cache *s)
++{
++	mutex_lock(&slab_mutex);
++	s->memcg_params.dying = true;
++	mutex_unlock(&slab_mutex);
++
++	flush_workqueue(memcg_kmem_cache_wq);
++}
+ #else
+ static inline int shutdown_memcg_caches(struct kmem_cache *s)
+ {
+ 	return 0;
+ }
++
++static inline void flush_memcg_workqueue(struct kmem_cache *s)
++{
++}
+ #endif /* CONFIG_MEMCG && !CONFIG_SLOB */
+ 
+ void slab_kmem_cache_release(struct kmem_cache *s)
+@@ -845,6 +862,8 @@ void kmem_cache_destroy(struct kmem_cache *s)
+ 	if (unlikely(!s))
+ 		return;
+ 
++	flush_memcg_workqueue(s);
++
+ 	get_online_cpus();
+ 	get_online_mems();
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.0.921.gf22659ad46-goog
