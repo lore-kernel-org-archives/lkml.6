@@ -1,153 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030278AbeE3HqG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:46:06 -0400
-Received: from mga04.intel.com ([192.55.52.120]:58083 "EHLO mga04.intel.com"
+        id S1030347AbeE3Hqc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:46:32 -0400
+Received: from mga12.intel.com ([192.55.52.136]:64455 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934903AbeE3HqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:46:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1030280AbeE3Hq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 03:46:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,459,1520924400";
-   d="scan'208";a="45011159"
-Subject: Re: [PATCH v5 15/23] iommu: handle page response timeout
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>
-References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1526072055-86990-16-git-send-email-jacob.jun.pan@linux.intel.com>
- <5AF93E3A.2040902@linux.intel.com> <20180529092058.1942b223@jacob-builder>
-Cc: iommu@lists.linux-foundation.org, LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Jean Delvare <khali@linux-fr.org>,
-        Christoph Hellwig <hch@infradead.org>
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5B0E56B8.3010606@linux.intel.com>
-Date: Wed, 30 May 2018 15:46:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+   d="scan'208";a="45856189"
+Date: Wed, 30 May 2018 15:45:42 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Maciej Purski <m.purski@samsung.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Maciej Purski <m.purski@samsung.com>
+Subject: Re: [PATCH 08/12] drm/bridge: tc358764: Add DSI to LVDS bridge driver
+Message-ID: <201805301553.AcTypuC4%fengguang.wu@intel.com>
+References: <1527500833-16005-9-git-send-email-m.purski@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529092058.1942b223@jacob-builder>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527500833-16005-9-git-send-email-m.purski@samsung.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Maciej,
 
-On 05/30/2018 12:20 AM, Jacob Pan wrote:
-> On Mon, 14 May 2018 15:43:54 +0800
-> Lu Baolu <baolu.lu@linux.intel.com> wrote:
->
->> Hi,
->>
->> On 05/12/2018 04:54 AM, Jacob Pan wrote:
->>> When IO page faults are reported outside IOMMU subsystem, the page
->>> request handler may fail for various reasons. E.g. a guest received
->>> page requests but did not have a chance to run for a long time. The
->>> irresponsive behavior could hold off limited resources on the
->>> pending device.
->>> There can be hardware or credit based software solutions as
->>> suggested in the PCI ATS Ch-4. To provide a basic safty net this
->>> patch introduces a per device deferrable timer which monitors the
->>> longest pending page fault that requires a response. Proper action
->>> such as sending failure response code could be taken when timer
->>> expires but not included in this patch. We need to consider the
->>> life cycle of page groupd ID to prevent confusion with reused group
->>> ID by a device. For now, a warning message provides clue of such
->>> failure.
->>>
->>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
->>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
->>> ---
->>>  drivers/iommu/iommu.c | 53
->>> +++++++++++++++++++++++++++++++++++++++++++++++++++
->>> include/linux/iommu.h |  4 ++++ 2 files changed, 57 insertions(+)
->>>
->>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->>> index 02fed3e..1f2f49e 100644
->>> --- a/drivers/iommu/iommu.c
->>> +++ b/drivers/iommu/iommu.c
->>> @@ -827,6 +827,37 @@ int iommu_group_unregister_notifier(struct
->>> iommu_group *group, }
->>>  EXPORT_SYMBOL_GPL(iommu_group_unregister_notifier);
->>>  
->>> +static void iommu_dev_fault_timer_fn(struct timer_list *t)
->>> +{
->>> +	struct iommu_fault_param *fparam = from_timer(fparam, t,
->>> timer);
->>> +	struct iommu_fault_event *evt;
->>> +
->>> +	u64 now;
->>> +
->>> +	now = get_jiffies_64();
->>> +
->>> +	/* The goal is to ensure driver or guest page fault
->>> handler(via vfio)
->>> +	 * send page response on time. Otherwise, limited queue
->>> resources
->>> +	 * may be occupied by some irresponsive guests or drivers.
->>> +	 * When per device pending fault list is not empty, we
->>> periodically checks
->>> +	 * if any anticipated page response time has expired.
->>> +	 *
->>> +	 * TODO:
->>> +	 * We could do the following if response time expires:
->>> +	 * 1. send page response code FAILURE to all pending PRQ
->>> +	 * 2. inform device driver or vfio
->>> +	 * 3. drain in-flight page requests and responses for this
->>> device
->>> +	 * 4. clear pending fault list such that driver can
->>> unregister fault
->>> +	 *    handler(otherwise blocked when pending faults are
->>> present).
->>> +	 */
->>> +	list_for_each_entry(evt, &fparam->faults, list) {
->>> +		if (time_after64(now, evt->expire))
->>> +			pr_err("Page response time expired!, pasid
->>> %d gid %d exp %llu now %llu\n",
->>> +				evt->pasid,
->>> evt->page_req_group_id, evt->expire, now);
->>> +	}
->>> +	mod_timer(t, now + prq_timeout);
->>> +}
->>> +  
->> This timer scheme is very rough.
->>
-> yes, the timer is a rough safety net for misbehaved PRQ handlers such
-> as a guest.
->> The timer expires every 10 seconds (by default).
->>
->> 0                   10                 20
->> 30                 40
->> +---------------+---------------+---------------+---------------+ ^
->> ^   ^  ^                        ^ |   |     |
->> |                         | F0 F1  F2 F3
->> (F1,F2,F3 will not be handled until here!)
->>
->> F0, F1, F2, F3 are four page faults happens during [0, 10s) time
->> window. F1, F2, F3 timeout won't be handled until the timer expires
->> again at 20s. That means a fault might be pending there until about
->> (2 * prq_timeout) seconds later.
->>
-> correct. it could be 2x for the worst case. I should explain in
-> comments.
->> Out of curiosity, Why not adding a timer in iommu_fault_event,
->> starting it in iommu_report_device_fault() and removing it in
->> iommu_page_response()?
->>
-> I thought about that also but since we are just trying to have a broad
-> and rough safety net (in addition to potential HW mechanism or credit
-> based solution), my thought was that having a per device timer is more
-> economical than per event.
-> Thanks for the in-depth check!
+Thank you for the patch! Perhaps something to improve:
 
-Okay,  got your idea. Thanks for explanation.
+[auto build test WARNING on next-20180517]
+[cannot apply to drm-exynos/exynos-drm/for-next robh/for-next drm/drm-next v4.17-rc6 v4.17-rc5 v4.17-rc4 v4.17-rc7]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Best regards,
-Lu Baolu
+url:    https://github.com/0day-ci/linux/commits/Maciej-Purski/Add-TOSHIBA-TC358764-DSI-LVDS-bridge-driver/20180530-011258
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/gpu/drm/bridge/tc358764.c:193:14: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [addressable] [usertype] addr @@    got ed] [addressable] [usertype] addr @@
+   drivers/gpu/drm/bridge/tc358764.c:193:14:    expected unsigned short [unsigned] [addressable] [usertype] addr
+   drivers/gpu/drm/bridge/tc358764.c:193:14:    got restricted __le16 [usertype] <noident>
+>> drivers/gpu/drm/bridge/tc358764.c:197:24: sparse: cast to restricted __le32
+>> drivers/gpu/drm/bridge/tc358764.c:175:5: sparse: symbol 'tc358764_read' was not declared. Should it be static?
+>> drivers/gpu/drm/bridge/tc358764.c:204:5: sparse: symbol 'tc358764_write' was not declared. Should it be static?
+
+vim +193 drivers/gpu/drm/bridge/tc358764.c
+
+   174	
+ > 175	int tc358764_read(struct tc358764 *ctx, u16 addr, u32 *val)
+   176	{
+   177		struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+   178		const struct mipi_dsi_host_ops *ops = dsi->host->ops;
+   179		struct mipi_dsi_msg msg = {
+   180			.type = MIPI_DSI_GENERIC_READ_REQUEST_2_PARAM,
+   181			.channel = dsi->channel,
+   182			.flags = MIPI_DSI_MSG_USE_LPM,
+   183			.tx_buf = &addr,
+   184			.tx_len = 2,
+   185			.rx_buf = val,
+   186			.rx_len = 4
+   187		};
+   188		ssize_t ret;
+   189	
+   190		if (!ops || !ops->transfer)
+   191			return -EINVAL;
+   192	
+ > 193		addr = cpu_to_le16(addr);
+   194	
+   195		ret = ops->transfer(dsi->host, &msg);
+   196		if (ret >= 0)
+ > 197			*val = le32_to_cpu(*val);
+   198	
+   199		dev_dbg(ctx->dev, "read: %d, addr: %d\n", addr, *val);
+   200	
+   201		return ret;
+   202	}
+   203	
+ > 204	int tc358764_write(struct tc358764 *ctx, u16 addr, u32 val)
+   205	{
+   206		struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+   207		const struct mipi_dsi_host_ops *ops = dsi->host->ops;
+   208		u8 data[6];
+   209		int ret;
+   210		struct mipi_dsi_msg msg = {
+   211			.type = MIPI_DSI_GENERIC_LONG_WRITE,
+   212			.channel = dsi->channel,
+   213			.flags = MIPI_DSI_MSG_USE_LPM | MIPI_DSI_MSG_REQ_ACK,
+   214			.tx_buf = data,
+   215			.tx_len = 6
+   216		};
+   217	
+   218		if (!ops || !ops->transfer)
+   219			return -EINVAL;
+   220	
+   221		data[0] = addr;
+   222		data[1] = addr >> 8;
+   223		data[2] = val;
+   224		data[3] = val >> 8;
+   225		data[4] = val >> 16;
+   226		data[5] = val >> 24;
+   227	
+   228		ret = ops->transfer(dsi->host, &msg);
+   229	
+   230		return ret;
+   231	}
+   232	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
