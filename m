@@ -1,315 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968767AbeE3Ixq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:53:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44302 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968738AbeE3Ixe (ORCPT
+        id S968779AbeE3IyH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:54:07 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33787 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968744AbeE3Ixh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:53:34 -0400
+        Wed, 30 May 2018 04:53:37 -0400
+X-Google-Smtp-Source: ADUXVKJ/HuG8/U2VMPhXaTmcvQTP3nGwSmmIaYEnKcXjanf5UsvZtVDvfQ0eCGwbHJS/aMIT9gjgvHzBjcF6G3KesXA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 30 May 2018 14:23:32 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Archit Taneja <architt@codeaurora.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v3 01/16] mtd: rawnand: helper function for setting up ECC
- configuration
-In-Reply-To: <CAK7LNAT+vfFKd2OrAT8f41i14JwGxzXaJZZE65013Ya6o17Kbw@mail.gmail.com>
-References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
- <1527250904-21988-2-git-send-email-absahu@codeaurora.org>
- <20180526095807.5caf5800@xps13> <20180529213036.150ed16a@bbrezillon>
- <CAK7LNASW4oCekGGkMfmO3tMUviVaium0EOYan6aLFANhL0FAXw@mail.gmail.com>
- <ae49dcc533007fd6dbdf27d408f5e8ba@codeaurora.org>
- <CAK7LNAT+vfFKd2OrAT8f41i14JwGxzXaJZZE65013Ya6o17Kbw@mail.gmail.com>
-Message-ID: <571c120a804129add212cfeb462d8123@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <CAEemH2c=EWHb1Ua6Fe4g_kF2JC8LKoiySPabZ7xXF43ovrNFmg@mail.gmail.com>
+References: <20180524095752.17770-1-liwang@redhat.com> <CALZtONA4y+7vzUr2xPa8ZbwCczjJV9EMCOXaCsE94DdfGbrmtA@mail.gmail.com>
+ <CAEemH2c=EWHb1Ua6Fe4g_kF2JC8LKoiySPabZ7xXF43ovrNFmg@mail.gmail.com>
+From: Dan Streetman <ddstreet@ieee.org>
+Date: Wed, 30 May 2018 04:52:56 -0400
+X-Google-Sender-Auth: wchKGP2JgBx6oDpeJyQKlf9itSY
+Message-ID: <CALZtONC69mq9Sh+pi_1Snntj-31ej5vW+UH-d77oUdvrEAS-Bw@mail.gmail.com>
+Subject: Re: [PATCH RFC] zswap: reject to compress/store page if
+ zswap_max_pool_percent is 0
+To: Li Wang <liwang@redhat.com>
+Cc: Linux-MM <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Seth Jennings <sjenning@redhat.com>,
+        Huang Ying <huang.ying.caritas@gmail.com>, Yu Zhao <yuzhao@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-30 13:08, Masahiro Yamada wrote:
-> 2018-05-30 15:21 GMT+09:00 Abhishek Sahu <absahu@codeaurora.org>:
->> On 2018-05-30 05:58, Masahiro Yamada wrote:
->>> 
->>> Hi.
->>> 
->>> 2018-05-30 4:30 GMT+09:00 Boris Brezillon 
->>> <boris.brezillon@bootlin.com>:
->>>> 
->>>> On Sat, 26 May 2018 10:42:47 +0200
->>>> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
->>>> 
->>>>> Hi Abhishek,
->>>>> 
->>>>> On Fri, 25 May 2018 17:51:29 +0530, Abhishek Sahu
->>>>> <absahu@codeaurora.org> wrote:
->>>>> 
->>>>> > commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,
->>>>> > match, maximize ECC settings") provides generic helpers which
->>>>> > drivers can use for setting up ECC parameters.
->>>>> >
->>>>> > Since same board can have different ECC strength nand chips so
->>>>> > following is the logic for setting up ECC strength and ECC step
->>>>> > size, which can be used by most of the drivers.
->>>>> >
->>>>> > 1. If both ECC step size and ECC strength are already set
->>>>> >    (usually by DT) then just check whether this setting
->>>>> >    is supported by NAND controller.
->>>>> > 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
->>>>> >    supported by NAND controller.
->>>>> > 3. Otherwise, try to match the ECC step size and ECC strength closest
->>>>> >    to the chip's requirement. If available OOB size can't fit the chip
->>>>> >    requirement then select maximum ECC strength which can be fit with
->>>>> >    available OOB size.
->>>>> >
->>>>> > This patch introduces nand_ecc_choose_conf function which calls the
->>>>> > required helper functions for the above logic. The drivers can use
->>>>> > this single function instead of calling the 3 helper functions
->>>>> > individually.
->>>>> >
->>>>> > CC: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>>> > Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->>>>> > ---
->>>>> > * Changes from v2:
->>>>> >
->>>>> >   1. Renamed function to nand_ecc_choose_conf.
->>>>> >   2. Minor code reorganization to remove warning and 2 function calls
->>>>> >      for nand_maximize_ecc.
->>>>> >
->>>>> > * Changes from v1:
->>>>> >   NEW PATCH
->>>>> >
->>>>> >  drivers/mtd/nand/raw/nand_base.c | 42
->>>>> > ++++++++++++++++++++++++++++++++++++++++
->>>>> >  drivers/mtd/nand/raw/nand_base.c | 31 +++++++++++++++++++++++++++++++
->>>>> >  include/linux/mtd/rawnand.h      |  3 +++
->>>>> >  2 files changed, 34 insertions(+)
->>>>> >
->>>>> > diff --git a/drivers/mtd/nand/raw/nand_base.c
->>>>> > b/drivers/mtd/nand/raw/nand_base.c
->>>>> > index 72f3a89..e52019d 100644
->>>>> > --- a/drivers/mtd/nand/raw/nand_base.c
->>>>> > +++ b/drivers/mtd/nand/raw/nand_base.c
->>>>> > @@ -6249,6 +6249,37 @@ int nand_maximize_ecc(struct nand_chip *chip,
->>>>> >  }
->>>>> >  EXPORT_SYMBOL_GPL(nand_maximize_ecc);
->>>>> >
->>>>> > +/**
->>>>> > + * nand_ecc_choose_conf - Set the ECC strength and ECC step size
->>>>> > + * @chip: nand chip info structure
->>>>> > + * @caps: ECC engine caps info structure
->>>>> > + * @oobavail: OOB size that the ECC engine can use
->>>>> > + *
->>>>> > + * Choose the ECC configuration according to following logic
->>>>> > + *
->>>>> > + * 1. If both ECC step size and ECC strength are already set (usually
->>>>> > by DT)
->>>>> > + *    then check if it is supported by this controller.
->>>>> > + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
->>>>> > + * 3. Otherwise, try to match the ECC step size and ECC strength
->>>>> > closest
->>>>> > + *    to the chip's requirement. If available OOB size can't fit the
->>>>> > chip
->>>>> > + *    requirement then fallback to the maximum ECC step size and ECC
->>>>> > strength.
->>>>> > + *
->>>>> > + * On success, the chosen ECC settings are set.
->>>>> > + */
->>>>> > +int nand_ecc_choose_conf(struct nand_chip *chip,
->>>>> > +                    const struct nand_ecc_caps *caps, int oobavail)
->>>>> > +{
->>>>> > +   if (chip->ecc.size && chip->ecc.strength)
->>>>> > +           return nand_check_ecc_caps(chip, caps, oobavail);
->>>>> > +
->>>>> > +   if (!(chip->ecc.options & NAND_ECC_MAXIMIZE) &&
->>>>> > +       !nand_match_ecc_req(chip, caps, oobavail))
->>>>> > +           return 0;
->>>>> > +
->>>>> > +   return nand_maximize_ecc(chip, caps, oobavail);
->>>>> 
->>>>> I personally don't mind if nand_maximize_ecc() is called twice in
->>>>> the function if it clarifies the logic. Maybe the following will be
->>>>> more clear for the user?
->>>>> 
->>>>>       if (chip->ecc.size && chip->ecc.strength)
->>>>>               return nand_check_ecc_caps(chip, caps, oobavail);
->>>>> 
->>>>>       if (chip->ecc.options & NAND_ECC_MAXIMIZE)
->>>>>               return nand_maximize_ecc(chip, caps, oobavail);
->>>>> 
->>>>>       if (!nand_match_ecc_req(chip, caps, oobavail))
->>>>>               return 0;
->>>>> 
->>>>>       return nand_maximize_ecc(chip, caps, oobavail);
->>>> 
->>>> 
->>>> I personally don't mind, and it seems Masahiro wanted to keep the 
->>>> logic
->>>> he had used in the denali driver.
->>>> 
->>>>> 
->>>>> Also, I'm not sure we should just error out when 
->>>>> nand_check_ecc_caps()
->>>>> fails. What about something more robust, like:
->>>>> 
->>>>>       int ret;
->>>>> 
->>>>>       if (chip->ecc.size && chip->ecc.strength) {
->>>>>               ret = nand_check_ecc_caps(chip, caps, oobavail);
->>>>>               if (ret)
->>>>>                       goto maximize_ecc;
->>>> 
->>>> 
->>>> Nope. When someone asked for a specific ECC config by passing the
->>>> nand-ecc-xxx props we should apply it or return an erro if it's not
->>>> supported. People passing those props should now what the ECC engine
->>>> supports and pick one valid values.
->>>> 
->>>>> 
->>>>>               return 0;
->>>>>       }
->>>>> 
->>>>>       if (chip->ecc.options & NAND_ECC_MAXIMIZE)
->>>>>               goto maximize_ecc;
->>>>> 
->>>>>       ret = nand_match_ecc_req(chip, caps, oobavail);
->>>>>       if (ret)
->>>>>               goto maximize_ecc;
->>>>> 
->>>>>       return 0;
->>>>> 
->>>>> maximize_ecc:
->>>>>       return nand_maximize_ecc(chip, caps, oobavail);
->>>>> 
->>>> 
->>>> 
->>>> ______________________________________________________
->>>> Linux MTD discussion mailing list
->>>> http://lists.infradead.org/mailman/listinfo/linux-mtd/
->>> 
->>> 
->>> 
->>> 
->>> 
->>> 
->>> 
->>> This version looks good to me.
->>> 
->>> If you want to check the error code more precisely,
->>> how about something like follows?
->>> 
->>> 
->>> 
->>> int nand_ecc_choose_conf(struct nand_chip *chip,
->>>                         const struct nand_ecc_caps *caps, int 
->>> oobavail)
->>> {
->>>        int ret;
->>> 
->>>        if (chip->ecc.size && chip->ecc.strength)
->>>                return nand_check_ecc_caps(chip, caps, oobavail);
->>> 
->>>        if (!(chip->ecc.options & NAND_ECC_MAXIMIZE)) {
->>>                ret = nand_match_ecc_req(chip, caps, oobavail);
->>>                if (ret != -ENOTSUPP)
->>>                        return ret;
->>>        }
->>> 
->>>        return nand_maximize_ecc(chip, caps, oobavail);
->>> }
->>> 
->>> 
->>> Only the difference is the case
->>> where nand_match_ecc_req() returns a different error code
->>> than ENOTSUPP.
->>> (Currently, this happens only when insane 'oobavail' is passed.)
->>> 
->> 
->>  We can do that but to me, it will make the helper function
->>  more complicated. Currently, nand_match_ecc_req is returning
->>  other than ENOTSUPP 'oobavail < 0' is passed.
->>  and again in nand_maximize_ecc, we will check for validity
->>  of oobavail so nothing wrong will happen in calling
->>  nand_maximize_ecc.
-> 
-> 
-> Right.  When I added those three helpers,
-> I supposed they were independent APIs.
-> That is why I added the 'oobavail < 0' sanity check
-> in each of the three.
-> 
-> 
-> If you make them internal sub-helpers
-> (i.e. add 'static' instead of EXPORT_SYMBOL_GPL),
-> you can check 'oobavail < 0'
-> only in nand_ecc_choose_conf().
-> 
-> 
+On Tue, May 29, 2018 at 10:57 PM, Li Wang <liwang@redhat.com> wrote:
+> Hi Dan,
+>
+> On Wed, May 30, 2018 at 5:14 AM, Dan Streetman <ddstreet@ieee.org> wrote:
+>>
+>> On Thu, May 24, 2018 at 5:57 AM, Li Wang <liwang@redhat.com> wrote:
+>> > The '/sys/../zswap/stored_pages:' keep raising in zswap test with
+>> > "zswap.max_pool_percent=0" parameter. But theoretically, it should
+>> > not compress or store pages any more since there is no space for
+>> > compressed pool.
+>> >
+>> > Reproduce steps:
+>> >
+>> >   1. Boot kernel with "zswap.enabled=1 zswap.max_pool_percent=17"
+>> >   2. Set the max_pool_percent to 0
+>> >       # echo 0 > /sys/module/zswap/parameters/max_pool_percent
+>> >      Confirm this parameter works fine
+>> >       # cat /sys/kernel/debug/zswap/pool_total_size
+>> >       0
+>> >   3. Do memory stress test to see if some pages have been compressed
+>> >       # stress --vm 1 --vm-bytes $mem_available"M" --timeout 60s
+>> >      Watching the 'stored_pages' numbers increasing or not
+>> >
+>> > The root cause is:
+>> >
+>> >   When the zswap_max_pool_percent is set to 0 via kernel parameter, the
+>> > zswap_is_full()
+>> >   will always return true to shrink the pool size by zswap_shrink(). If
+>> > the pool size
+>> >   has been shrinked a little success, zswap will do compress/store pages
+>> > again. Then we
+>> >   get fails on that as above.
+>>
+>> special casing 0% doesn't make a lot of sense to me, and I'm not
+>> entirely sure what exactly you are trying to fix here.
+>
+>
+> Sorry for that confusing, I am a pretty new to zswap.
+>
+> To specify 0 to max_pool_percent is purpose to verify if zswap stopping work
+> when there is no space in compressed pool.
+>
+> Another consideration from me is:
+>
+> [Method A]
+>
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -1021,7 +1021,7 @@ static int zswap_frontswap_store(unsigned type,
+> pgoff_t offset,
+>         /* reclaim space if needed */
+>         if (zswap_is_full()) {
+>                 zswap_pool_limit_hit++;
+> -               if (zswap_shrink()) {
+> +               if (!zswap_max_pool_percent || zswap_shrink()) {
+>                         zswap_reject_reclaim_fail++;
+>                         ret = -ENOMEM;
+>                         goto reject;
+>
+> This make sure the compressed pool is enough to do zswap_shrink().
+>
+>
+>>
+>>
+>> however, zswap does currently do a zswap_is_full() check, and then if
+>> it's able to reclaim a page happily proceeds to store another page,
+>> without re-checking zswap_is_full().  If you're trying to fix that,
+>> then I would ack a patch that adds a second zswap_is_full() check
+>> after zswap_shrink() to make sure it's now under the max_pool_percent
+>> (or somehow otherwise fixes that behavior).
+>>
+>
+> Ok, it sounds like can also fix the issue. The changes maybe like:
+>
+> [Method B]
+>
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -1026,6 +1026,15 @@ static int zswap_frontswap_store(unsigned type,
+> pgoff_t offset,
+>                         ret = -ENOMEM;
+>                         goto reject;
+>                 }
+> +
+> +               /* A second zswap_is_full() check after
+> +                * zswap_shrink() to make sure it's now
+> +                * under the max_pool_percent
+> +                */
+> +               if (zswap_is_full()) {
+> +                       ret = -ENOMEM;
+> +                       goto reject;
+> +               }
+>         }
+>
+>
+> So, which one do you think is better, A or B?
 
-  I am not sure regarding making them static.
+this is better.
 
-  Currently, Denali NAND driver is only using these functions.
-
-  And Now, this nand_ecc_choose_conf will be help
-  in all the cases.
-
-  For nand_check_ecc_caps: call nand_ecc_choose_conf with
-                           chip->ecc.size && chip->ecc.strength
-
-  For nand_maximize_ecc: call nand_ecc_choose_conf with
-                         NAND_ECC_MAXIMIZE
-
-  So making them static also seems ok which will be
-  easy to maintain in future.
-
-  Thanks,
-  Abhishek
-
-> 
-> 
-> 
->>  Anyway we put this under WARN_ON condition
->> 
->>         if (WARN_ON(oobavail < 0))
->>                 return -EINVAL;
->> 
->>  so if this is being triggered, then it should be mostly
->>  programming error.
-> 
-> 
-> Right.  Moreover,
-> 
-> WARN_ON(oobavail < 0 || oobavail > mtd->oobsize)
-> 
-> 
-> 
-> This is programming error, that is why WARN_ON() is used to
-> make the log noisy.
-> 
-> 
->>  Thanks,
->>  Abhishek
->> 
->>> 
->>> ENOTSUPP means 'required ECC setting is not supported'.
->>> Other error code is more significant, so it is not a good reason
->>> to fall back to miximization, IMHO.
->> 
->> 
->> ______________________________________________________
->> Linux MTD discussion mailing list
->> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+>
+> --
+> Regards,
+> Li Wang
