@@ -1,48 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751522AbeE3KuL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:50:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:32982 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750872AbeE3KuK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:50:10 -0400
-From: Colin King <colin.king@canonical.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] crypto: aegis: fix indentation of a statement
-Date: Wed, 30 May 2018 11:50:05 +0100
-Message-Id: <20180530105005.13116-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S1751933AbeE3KvA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:51:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54014 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751803AbeE3Kuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 06:50:55 -0400
+Date: Wed, 30 May 2018 11:50:50 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com, quentin.perret@arm.com
+Subject: Re: [PATCH v5 04/10] sched/dl: add dl_rq utilization tracking
+Message-ID: <20180530105050.GI30654@e110439-lin>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-5-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527253951-22709-5-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 25-May 15:12, Vincent Guittot wrote:
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index fb18bcc..967e873 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7290,11 +7290,14 @@ static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq)
+>  	return false;
+>  }
+>  
+> -static inline bool rt_rq_has_blocked(struct rq *rq)
+> +static inline bool others_rqs_have_blocked(struct rq *rq)
 
-Trival fix to correct the indentation of a single statement
+Here you are going to fold in IRQ's utilization which, strictly
+speaking, is not a RQ. Moreover, we are checking only utilization.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- crypto/aegis128l.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can we use a better matching name? E.g.
+   others_have_blocked_util
+   non_cfs_blocked_util
+?
 
-diff --git a/crypto/aegis128l.c b/crypto/aegis128l.c
-index 0cc1a7525c85..64dc2654b863 100644
---- a/crypto/aegis128l.c
-+++ b/crypto/aegis128l.c
-@@ -121,7 +121,7 @@ static void crypto_aegis128l_ad(struct aegis_state *state,
- 				(const union aegis_chunk *)src;
- 
- 		while (size >= AEGIS128L_CHUNK_SIZE) {
--                    crypto_aegis128l_update_a(state, src_chunk);
-+			crypto_aegis128l_update_a(state, src_chunk);
- 
- 			size -= AEGIS128L_CHUNK_SIZE;
- 			src_chunk += 1;
+>  {
+>  	if (rq->avg_rt.util_avg)
+>  		return true;
+>  
+> +	if (rq->avg_dl.util_avg)
+> +		return true;
+> +
+>  	return false;
+>  }
+>  
 -- 
-2.17.0
+#include <best/regards.h>
+
+Patrick Bellasi
