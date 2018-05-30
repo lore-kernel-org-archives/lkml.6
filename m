@@ -1,119 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753329AbeE3NGC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 09:06:02 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52218 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753265AbeE3NGA (ORCPT
+        id S1753201AbeE3NG5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 09:06:57 -0400
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:37806 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752784AbeE3NGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 09:06:00 -0400
-X-Google-Smtp-Source: ADUXVKK/C8400AYfCS1VIwYqxvzMfytdlvnGQHjgXMFfWl1tcOqyfrsEL4DE4hd9MN+u0GdgNrTIlw==
-Date: Wed, 30 May 2018 15:05:55 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v9 0/7] Enable cpuset controller in default hierarchy
-Message-ID: <20180530130555.GD3320@localhost.localdomain>
-References: <1527601294-3444-1-git-send-email-longman@redhat.com>
- <20180530101317.GB3320@localhost.localdomain>
- <d74c67ea-43c9-cabb-4303-ecff008412df@redhat.com>
+        Wed, 30 May 2018 09:06:55 -0400
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.220.135
+X-Original-MAILFROM: byungchul.park@lge.com
+Subject: Re: [RFC] rcu: Check the range of jiffies_till_xxx_fqs on setting
+ them
+To: paulmck@linux.vnet.ibm.com
+Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com, joel@joelfernandes.org
+References: <1527578616-5595-1-git-send-email-byungchul.park@lge.com>
+ <20180529120155.GC3803@linux.vnet.ibm.com>
+From: Byungchul Park <byungchul.park@lge.com>
+Message-ID: <ec3f99af-902d-4a12-f533-07de97dab310@lge.com>
+Date: Wed, 30 May 2018 22:06:52 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d74c67ea-43c9-cabb-4303-ecff008412df@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180529120155.GC3803@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/05/18 08:56, Waiman Long wrote:
-> On 05/30/2018 06:13 AM, Juri Lelli wrote:
-> > Hi,
-> >
-> > On 29/05/18 09:41, Waiman Long wrote:
-> >> v9:
-> >>  - Rename cpuset.sched.domain to cpuset.sched.domain_root to better
-> >>    identify its purpose as the root of a new scheduling domain or
-> >>    partition.
-> >>  - Clarify in the document about the purpose of domain_root and
-> >>    load_balance. Using domain_root is th only way to create new
-> >>    partition.
-> >>  - Fix a lockdep warning in update_isolated_cpumask() function.
-> >>  - Add a new patch to eliminate call to generate_sched_domains() for
-> >>    v2 when a change in cpu list does not touch a domain_root.
-> > I was playing with this and ended up with the situation below:
-> >
-> >  g1/cgroup.controllers:cpuset
-> >  g1/cgroup.events:populated 0
-> >  g1/cgroup.max.depth:max
-> >  g1/cgroup.max.descendants:max
-> >  g1/cgroup.stat:nr_descendants 1
-> >  g1/cgroup.stat:nr_dying_descendants 0
-> >  g1/cgroup.subtree_control:cpuset
-> >  g1/cgroup.type:domain
-> >  g1/cpuset.cpus:0-5                   <---
-> >  g1/cpuset.cpus.effective:0-5
-> >  g1/cpuset.mems.effective:0-1
-> >  g1/cpuset.sched.domain_root:1        <---
-> >  g1/cpuset.sched.load_balance:1
-> >  g1/cpu.stat:usage_usec 0
-> >  g1/cpu.stat:user_usec 0
-> >  g1/cpu.stat:system_usec 0
-> >  g1/g11/cgroup.events:populated 0
-> >  g1/g11/cgroup.max.descendants:max
-> >  g1/g11/cpu.stat:usage_usec 0
-> >  g1/g11/cpu.stat:user_usec 0
-> >  g1/g11/cpu.stat:system_usec 0
-> >  g1/g11/cgroup.type:domain
-> >  g1/g11/cgroup.stat:nr_descendants 0
-> >  g1/g11/cgroup.stat:nr_dying_descendants 0
-> >  g1/g11/cpuset.cpus.effective:0-5
-> >  g1/g11/cgroup.controllers:cpuset
-> >  g1/g11/cpuset.sched.load_balance:1
-> >  g1/g11/cpuset.mems.effective:0-1
-> >  g1/g11/cpuset.cpus:6-11              <---
-> >  g1/g11/cgroup.max.depth:max
-> >  g1/g11/cpuset.sched.domain_root:0
-> >
-> > Should this be allowed? I was expecting subgroup g11 should be
-> > restricted to a subset of g1's cpus.
-> >
-> > Best,
-> >
-> > - Juri
+
+
+On 2018-05-29 21:01, Paul E. McKenney wrote:
+> On Tue, May 29, 2018 at 04:23:36PM +0900, Byungchul Park wrote:
+>> Hello Paul and folks,
+>>
+>> I've thought the code should've been like the below since the range
+>> checking of jiffies_till_first_fqs and jiffies_till_next_fqs everytime
+>> in the loop of rcu_gp_kthread are unnecessary at all. However, it's ok
+>> even if you don't think it's worth doing it.
 > 
-> That shouldn't be allowed.The code is probably missing some checks that
-> should have been done. What was the sequence of commands leading to the
-> above configuration?
+> Nice!
+> 
+>> Secondly, I also think jiffies_till_first_fqs = 0 is meaningless so
+>> added checking and adjusting it as what's done on jiffies_till_next_fqs.
+>> Thought?
+> 
+> Actually, jiffies_till_first_fqs == 0 is very useful for cases where
+> at least one CPU is expected to be idle and grace-period latency is
+> important.  In this case, doing the first scan immediately gets the
+> dyntick-idle state recorded immediately, getting the idle CPUs out of
+> the way of the grace period immediately.
 
-This is a E5-2609 v3 (12 cores) Fedora Server box (with systemd, so
-first command is needed to be able to use cpuset controller with v2,
-IIUC):
+Hi Paul~
 
-# umount /sys/fs/cgroup/cpuset 
-# cd /sys/fs/cgroup/unified/
-# echo "+cpuset" >cgroup.subtree_control 
-# mkdir g1
-# echo 0-5 >g1/cpuset.cpus
-# echo 6-11 >init.scope/cpuset.cpus
-# echo 6-11 >machine.slice/cpuset.cpus
-# echo 6-11 >system.slice/cpuset.cpus
-# echo 6-11 >user.slice/cpuset.cpus
-# echo 1 >g1/cpuset.sched.domain_root 
-# mkdir g1/g11
-# echo "+cpuset" > g1/cgroup.subtree_control 
-# echo 6-11 >g1/g11/cpuset.cpus
-# grep -R . g1/*
+You might want to handle it through sysfs. Otherwise, we can do it with
+force_quiescent_state() IMHO.
 
-That should be it. Am I doing something wrong?
+> So why not do this scan as part of grace-period initialization?  Because
+> doing so consumes extra CPU and results in extra cache misses, which is
+> the opposite of what you want on a completely busy system, especially
+> one where the CPUs are context switching quickly.  Thus no scan during
+> grace-period initialization.
 
+I am sorry I don't understand this paragraph. :(
+
+> But I can see the desire to share code.
+> 
+> One approach would be to embed the kernel_params_ops structure inside
+> another structure containing the limits, then just have two structures.
+> Perhaps something like this already exists?  I don't see it right off,
+> but then again, I am not exactly an expert on module_param.
+
+It would be much nicer if we can as you said. I will check it.
+
+Thanks a lot Paul.
+
+-- 
 Thanks,
-
-- Juri
+Byungchul
