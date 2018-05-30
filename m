@@ -1,208 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935987AbeE3ImO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:42:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968756AbeE3ImA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S968769AbeE3ImA (ORCPT <rfc822;w@1wt.eu>);
         Wed, 30 May 2018 04:42:00 -0400
-Date: Wed, 30 May 2018 17:41:56 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
-        Josef Bacik <jbacik@fb.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] error-injection: Simplify arch specific helpers
-Message-Id: <20180530174156.cb1799687fb834f26fe570a9@kernel.org>
-In-Reply-To: <8f4883f08feaf6e040255015af2da7bbc7741e41.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
-References: <cover.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
-        <8f4883f08feaf6e040255015af2da7bbc7741e41.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46791 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964976AbeE3Ily (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:41:54 -0400
+X-Google-Smtp-Source: ADUXVKLLMRjTu2R4IIuHp8usZYGloBNyZES9efytdzxgtGsvYlKqL8L1UfPJ2Giu7ZfYFIgePYP+ROFWjmXIFnPCbus=
+MIME-Version: 1.0
+In-Reply-To: <1527641284.2735.12.camel@themaw.net>
+References: <20180529094702.4092022-1-arnd@arndb.de> <1527641284.2735.12.camel@themaw.net>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 30 May 2018 10:41:52 +0200
+X-Google-Sender-Auth: iudFCuYit3MXHKVTUh6diQsbg-o
+Message-ID: <CAK8P3a3wMJoquq+3MN69Wd1EaDBgzPnzbD1a_e4cgLHq5j0b9g@mail.gmail.com>
+Subject: Re: [PATCH] autofs: make autofs4 and autofs mutually exclusive
+To: Ian Kent <raven@themaw.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 May 2018 18:06:02 +0530
-"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+On Wed, May 30, 2018 at 2:48 AM, Ian Kent <raven@themaw.net> wrote:
+> On Tue, 2018-05-29 at 11:46 +0200, Arnd Bergmann wrote:
+>> The autofs4 implementation is just a redirect to autofs now, but that
+>> also means we can't have both built into the same kernel:
+>>
+>> fs/autofs/inode.o: In function `autofs_new_ino':
+>> inode.c:(.text+0x1b8): multiple definition of `autofs_new_ino'
+>> fs/autofs/inode.o:inode.c:(.text+0x1b8): first defined here
+>> fs/autofs/inode.o: In function `autofs_clean_ino':
+>> inode.c:(.text+0x288): multiple definition of `autofs_clean_ino'
+>>
+>> There is also a problem with trying to build both in parallel, which
+>> leads to two 'make' processes writing to the same fs/autofs/.*.o.cmd
+>> file, causing corruption that manifests like
+>>
+>> fs/autofs4/../autofs/.expire.o.cmd:679: *** missing separator.  Stop.
+>>
+>> Making AUTOFS4_FS depend on AUTOFS_FS being disabled should avoid all
+>> configurations that run into either issue.
+>
+> Thanks Arnd and this adds support that my analysis of build
+> problems is accurate.
+>
+> I posted a similar patch on May 21 which also added a NOTE to
+> fs/autofs4/Kconfig saying pretty much what you've said.
+> https://patchwork.kernel.org/patch/10413823/
+>
+> I recommend using my patch so that anyone that's surprised by the
+> .config change has a chance of finding an explanation somewhere, ;)
+>
+> Not only is the change needed, but to preserve bisection it needs
+> to be folded into the original patch titled:
+> autofs: create autofs Kconfig and Makefile
+>
+> otherwise build test robots will still see this problem between
+> build testing after "autofs: create autofs Kconfig and Makefile"
+> and before this change is applied.
+>
+> Folding in the change is my current recommendation to Andrew.
+> Hopefully that will fix the problem.
 
-> We already have an arch-independent way to set the instruction pointer
-> with instruction_pointer_set(). Using this allows us to get rid of the
-> need for override_function_with_return() that each architecture has to
-> implement.
-> 
-> Furthermore, just_return_func() only has to encode arch-specific
-> assembly instructions to return from a function. Introduce a macro
-> ARCH_FUNC_RET to provide the arch-specific instruction and move over
-> just_return_func() to generic code.
-> 
-> With these changes, architectures that already support kprobes, only
-> just need to ensure they provide regs_set_return_value(), GET_IP() (for
-> instruction_pointer_set()), and ARCH_FUNC_RET to support error
-> injection.
+Yes, looks good.
 
-Nice! the code basically good to me. Just one comment, ARCH_FUNC_RET sounds
-like a function. Maybe ARCH_RETURN_INSTRUCTION will be better name, isn't it? :)
+> Any further thoughts are of course welcome.
 
-Thank you,
+I actually had an alternative approach that I tried out successfully
+but discarded as being too different from the original code. Just for
+reference, this one would work as well, and allow both to be
+compiled together. The version you posted is probably better.
 
-> 
-> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-> ---
->  arch/x86/include/asm/error-injection.h |  6 +-----
->  arch/x86/lib/Makefile                  |  1 -
->  arch/x86/lib/error-inject.c            | 20 --------------------
->  include/asm-generic/error-injection.h  |  6 ++++++
->  include/linux/error-injection.h        |  1 +
->  kernel/fail_function.c                 |  2 +-
->  kernel/trace/bpf_trace.c               |  2 +-
->  lib/error-inject.c                     |  8 ++++++++
->  8 files changed, 18 insertions(+), 28 deletions(-)
->  delete mode 100644 arch/x86/lib/error-inject.c
-> 
-> diff --git a/arch/x86/include/asm/error-injection.h b/arch/x86/include/asm/error-injection.h
-> index 47b7a1296245..f3f22e237b86 100644
-> --- a/arch/x86/include/asm/error-injection.h
-> +++ b/arch/x86/include/asm/error-injection.h
-> @@ -2,12 +2,8 @@
->  #ifndef _ASM_ERROR_INJECTION_H
->  #define _ASM_ERROR_INJECTION_H
->  
-> -#include <linux/compiler.h>
-> -#include <linux/linkage.h>
-> -#include <asm/ptrace.h>
->  #include <asm-generic/error-injection.h>
->  
-> -asmlinkage void just_return_func(void);
-> -void override_function_with_return(struct pt_regs *regs);
-> +#define ARCH_FUNC_RET	"ret"
->  
->  #endif /* _ASM_ERROR_INJECTION_H */
-> diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
-> index 25a972c61b0a..f23934bbaf4e 100644
-> --- a/arch/x86/lib/Makefile
-> +++ b/arch/x86/lib/Makefile
-> @@ -26,7 +26,6 @@ lib-y += memcpy_$(BITS).o
->  lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) += rwsem.o
->  lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o insn-eval.o
->  lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
-> -lib-$(CONFIG_FUNCTION_ERROR_INJECTION)	+= error-inject.o
->  lib-$(CONFIG_RETPOLINE) += retpoline.o
->  
->  obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
-> diff --git a/arch/x86/lib/error-inject.c b/arch/x86/lib/error-inject.c
-> deleted file mode 100644
-> index 3cdf06128d13..000000000000
-> --- a/arch/x86/lib/error-inject.c
-> +++ /dev/null
-> @@ -1,20 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -
-> -#include <linux/error-injection.h>
-> -#include <linux/kprobes.h>
-> -
-> -asmlinkage void just_return_func(void);
-> -
-> -asm(
-> -	".type just_return_func, @function\n"
-> -	".globl just_return_func\n"
-> -	"just_return_func:\n"
-> -	"	ret\n"
-> -	".size just_return_func, .-just_return_func\n"
-> -);
-> -
-> -void override_function_with_return(struct pt_regs *regs)
-> -{
-> -	regs->ip = (unsigned long)&just_return_func;
-> -}
-> -NOKPROBE_SYMBOL(override_function_with_return);
-> diff --git a/include/asm-generic/error-injection.h b/include/asm-generic/error-injection.h
-> index 296c65442f00..8ac152cc204a 100644
-> --- a/include/asm-generic/error-injection.h
-> +++ b/include/asm-generic/error-injection.h
-> @@ -3,6 +3,9 @@
->  #define _ASM_GENERIC_ERROR_INJECTION_H
->  
->  #if defined(__KERNEL__) && !defined(__ASSEMBLY__)
-> +#include <linux/compiler.h>
-> +#include <linux/linkage.h>
-> +
->  enum {
->  	EI_ETYPE_NONE,		/* Dummy value for undefined case */
->  	EI_ETYPE_NULL,		/* Return NULL if failure */
-> @@ -27,6 +30,9 @@ static struct error_injection_entry __used				\
->  		.addr = (unsigned long)fname,				\
->  		.etype = EI_ETYPE_##_etype,				\
->  	};
-> +
-> +asmlinkage void just_return_func(void);
-> +
->  #else
->  #define ALLOW_ERROR_INJECTION(fname, _etype)
->  #endif
-> diff --git a/include/linux/error-injection.h b/include/linux/error-injection.h
-> index 280c61ecbf20..f4a0b23423d2 100644
-> --- a/include/linux/error-injection.h
-> +++ b/include/linux/error-injection.h
-> @@ -4,6 +4,7 @@
->  
->  #ifdef CONFIG_FUNCTION_ERROR_INJECTION
->  
-> +#include <linux/types.h>
->  #include <asm/error-injection.h>
->  
->  extern bool within_error_injection_list(unsigned long addr);
-> diff --git a/kernel/fail_function.c b/kernel/fail_function.c
-> index 1d5632d8bbcc..0ae2ca4a29e8 100644
-> --- a/kernel/fail_function.c
-> +++ b/kernel/fail_function.c
-> @@ -183,7 +183,7 @@ static int fei_kprobe_handler(struct kprobe *kp, struct pt_regs *regs)
->  
->  	if (should_fail(&fei_fault_attr, 1)) {
->  		regs_set_return_value(regs, attr->retval);
-> -		override_function_with_return(regs);
-> +		instruction_pointer_set(regs, (unsigned long)&just_return_func);
->  		/* Kprobe specific fixup */
->  		reset_current_kprobe();
->  		preempt_enable_no_resched();
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index 56ba0f2a01db..23f1f4ffda6c 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -84,7 +84,7 @@ EXPORT_SYMBOL_GPL(trace_call_bpf);
->  BPF_CALL_2(bpf_override_return, struct pt_regs *, regs, unsigned long, rc)
->  {
->  	regs_set_return_value(regs, rc);
-> -	override_function_with_return(regs);
-> +	instruction_pointer_set(regs, (unsigned long)&just_return_func);
->  	return 0;
->  }
->  
-> diff --git a/lib/error-inject.c b/lib/error-inject.c
-> index c0d4600f4896..7fdc92b5babc 100644
-> --- a/lib/error-inject.c
-> +++ b/lib/error-inject.c
-> @@ -20,6 +20,14 @@ struct ei_entry {
->  	void *priv;
->  };
->  
-> +asm(
-> +	".type just_return_func, @function\n"
-> +	".globl just_return_func\n"
-> +	"just_return_func:\n"
-> +	ARCH_FUNC_RET "\n"
-> +	".size just_return_func, .-just_return_func\n"
-> +);
-> +
->  bool within_error_injection_list(unsigned long addr)
->  {
->  	struct ei_entry *ent;
-> -- 
-> 2.17.0
-> 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+index 9400a9f6318a..5a361f5273a1 100644
+--- a/fs/autofs/autofs_i.h
++++ b/fs/autofs/autofs_i.h
+@@ -6,6 +6,8 @@
+  * the terms of the GNU General Public License, version 2, or at your
+  * option, any later version, incorporated herein by reference.
+  */
++#ifndef __AUTOFS_H
++#define __AUTOFS_H
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+ /* Internal header file for autofs */
+
+@@ -271,3 +273,5 @@ static inline void autofs_del_expiring(struct
+dentry *dentry)
+ }
+
+ void autofs_kill_sb(struct super_block *);
++
++#endif /* __AUTOFS_H */
+diff --git a/fs/autofs4/Makefile b/fs/autofs4/Makefile
+index 417dd726d9ef..5fc0a28d656d 100644
+--- a/fs/autofs4/Makefile
++++ b/fs/autofs4/Makefile
+@@ -3,7 +3,3 @@
+ #
+
+ obj-$(CONFIG_AUTOFS4_FS) += autofs4.o
+-
+-autofs4-objs := ../autofs/init.o ../autofs/inode.o ../autofs/root.o \
+-       ../autofs/symlink.o ../autofs/waitq.o ../autofs/expire.o \
+-       ../autofs/dev-ioctl.o
+diff --git a/fs/autofs4/autofs4.c b/fs/autofs4/autofs4.c
+new file mode 100644
+index 000000000000..a76066aa9f27
+--- /dev/null
++++ b/fs/autofs4/autofs4.c
+@@ -0,0 +1,7 @@
++#include "../autofs/init.c"
++#include "../autofs/inode.c"
++#include "../autofs/root.c"
++#include "../autofs/symlink.c"
++#include "../autofs/waitq.c"
++#include "../autofs/expire.c"
++#include "../autofs/dev-ioctl.c"
