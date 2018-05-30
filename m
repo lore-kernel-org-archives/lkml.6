@@ -1,99 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932445AbeE3VQC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:16:02 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:38310 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753484AbeE3VQA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:16:00 -0400
-X-Google-Smtp-Source: ADUXVKJrm6NlgDzNqeozsN72PB28BZEN9BzT8eC8kVKJ7LuWTUooKNpEaE+5WqsceCr/Un/xuTNfXxvmBrf3AwCvdyY=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <1527685480.3534.54.camel@linux.vnet.ibm.com>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com> <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
- <4331521.GQBdaJNAj6@x2> <CAHC9VhRp82u4puDt82E0G4ax4tb9301U7XK6+0ZT1rrP-ZgaRw@mail.gmail.com>
- <1527634686.3534.27.camel@linux.vnet.ibm.com> <1527685480.3534.54.camel@linux.vnet.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 30 May 2018 17:15:58 -0400
-Message-ID: <CAHC9VhRNoB+B46QkRSbc9CwRRdgTHw1sLQ+ccipvqk1PVUw70g@mail.gmail.com>
-Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to integrity audits
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Steve Grubb <sgrubb@redhat.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
+        id S932447AbeE3VQl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:16:41 -0400
+Received: from gate.crashing.org ([63.228.1.57]:43689 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753275AbeE3VQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 17:16:37 -0400
+Message-ID: <8aaa7fa9874bf140354964535ce5cf023012c3f4.camel@kernel.crashing.org>
+Subject: Re: [PATCH v7 3/7] drivers/i2c: Add port structure to FSI algorithm
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Eddie James <eajames@linux.vnet.ibm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Edward A. James" <eajames@us.ibm.com>
+Date: Thu, 31 May 2018 07:16:00 +1000
+In-Reply-To: <ae3de08c-6849-bb3a-7c6c-96309876d48e@linux.vnet.ibm.com>
+References: <1527632665-25707-1-git-send-email-eajames@linux.vnet.ibm.com>
+         <1527632665-25707-4-git-send-email-eajames@linux.vnet.ibm.com>
+         <CAHp75Vd38BrJcULxoqj1mTKCEvMh9ZVYEvzCMAg2t9onZrSR6w@mail.gmail.com>
+         <ae3de08c-6849-bb3a-7c6c-96309876d48e@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 9:04 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> On Tue, 2018-05-29 at 18:58 -0400, Mimi Zohar wrote:
->> On Tue, 2018-05-29 at 17:47 -0400, Paul Moore wrote:
->> > On Tue, May 29, 2018 at 5:35 PM, Steve Grubb <sgrubb@redhat.com> wrote:
->> > > On Tuesday, May 29, 2018 5:19:39 PM EDT Paul Moore wrote:
->> > >> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
->> > >>
->> > >> <stefanb@linux.vnet.ibm.com> wrote:
->> > >> > Use the new public audit functions to add the exe= and tty=
->> > >> > parts to the integrity audit records. We place them before
->> > >> > res=.
->> > >> >
->> > >> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
->> > >> > Suggested-by: Steve Grubb <sgrubb@redhat.com>
->> > >> > ---
->> > >> >
->> > >> >  security/integrity/integrity_audit.c | 2 ++
->> > >> >  1 file changed, 2 insertions(+)
->> > >> >
->> > >> > diff --git a/security/integrity/integrity_audit.c
->> > >> > b/security/integrity/integrity_audit.c index db30763d5525..8d25d3c4dcca
->> > >> > 100644
->> > >> > --- a/security/integrity/integrity_audit.c
->> > >> > +++ b/security/integrity/integrity_audit.c
->> > >> > @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode
->> > >> > *inode,>
->> > >> >                 audit_log_untrustedstring(ab, inode->i_sb->s_id);
->> > >> >                 audit_log_format(ab, " ino=%lu", inode->i_ino);
->> > >> >
->> > >> >         }
->> > >> >
->> > >> > +       audit_log_d_path_exe(ab, current->mm);
->> > >> > +       audit_log_tty(ab, current);
->> > >>
->> > >> NACK
->> > >>
->> > >> Please add the new fields to the end of the audit record, thank you.
->> > >
->> > > Let's see what an example event looks like before NACK'ing this. Way back in
->> > > 2013 the IMA events were good. I think this is repairing the event after some
->> > > drift.
->> >
->> > Can you reference a specific commit, or point in time during 2013?
->> > Looking at the git log quickly, if I go back to commit d726d8d719b6
->> > ("integrity: move integrity_audit_msg()") from March 18, 2013 (the
->> > commit that created integrity_audit.c) the field ordering appears to
->> > be the same as it today.
->> >
->> > My NACK still stands.
->>
->> There hasn't been any changes up to now.  This patch set refactors
->> integrity_audit_msg(), creating integrity_audit_msg_common(), which
->> will be called from both ima_audit_measurement() and
->> ima_parse_rule().
->
-> That should have been "from integrity_audit_msg() and
-> ima_parse_rule()", not ima_audit_measurement().
+On Wed, 2018-05-30 at 10:47 -0500, Eddie James wrote:
+> > > +       if (!list_empty(&i2c->ports)) {
+> > 
+> > My gosh, this is done already in list_for_each*()
+> 
+> No, list_for_each_entry does NOT check if the list is empty or if the 
+> first entry is NULL.
 
-No worries, the important part is that the record format really hasn't
-changed from 2013 as far as I can tell.
+NULL is never valid for a list. It does however check for an empty list
 
->> Previously the audit record generated by ima_parse_rule() did not
->> include this info.  The change in this patch will affect both the
->> existing and the new INTEGRITY_AUDIT_POLICY_RULE audit records.
+It does it implicitely in the test part of the for () statement,
+checking if the next pointer points back to the head.
 
--- 
-paul moore
-www.paul-moore.com
+Cheers,
+Ben.
