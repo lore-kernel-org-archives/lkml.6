@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-379996-1527721990-2-6710963750403610383
+X-Cyrus-Session-Id: sloti22d1t05-186052-1527709461-2-4235423467799033622
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: plain='us-ascii'
@@ -8,23 +8,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527721989; b=OSlO7AhcX+05N7xLB6xYijYiOk1QSS1II89z5CoCyBj8jni4Zt
-    JHC/gpk04xj7IUDH6wIzrG9sHbNpxF7Fq+595o016O24sXCvS/RYJjDQ8CIL9q8N
-    sCr3Qun5tlGOGzJBWCm+Vqw6BCH1PhpprSLvFzPqrUfl9Td+xdngOrt/YZWhYums
-    Y5dVA/wo1dYkKaDqgNlVCmcRF/sXIM+RQtd6vyFtnGoAv08ixf6vb7lSak/EACLP
-    1+3/OfAoP+VGdKCPE2akqGZ/MYajJuwgEzfNTpS5L+Kf4GLUZ40ASQj0TAdWchfJ
-    JiGt2cqfzR/9UoCMMbVa0dgf8U4PbcMGLNGg==
+    1527709460; b=VnVcNjfy61/Ur42RuTtyPPXlkITYxQronO4tXKjZ1Lqbrmm4JT
+    ytRCJIMf3AXek7Y58S6ekUfGrDbb1sC/t0r4z4F6FMVOK6EtSJzLsuk69Q07pbvX
+    dr0u1vxZE9Mlwk40plEBb3Nis6XA/10KfQSH3dJorq4lyd0N8eLVhEJsLjDYfmSI
+    gc2IE4WIpsze9CuWetX8QEtGR8gCmSRQGxY6toI3Teki6tJ81a/qbIGMrqTQ8tId
+    idi5cKQvaICB8R5zOl30AzXR/8QPHOk/VlBhv2mcptTVXtpvnTJckTHwqrflvbUx
+    dHFILbs8mbEwdGDeDE9mxJFis1LfD2uZedOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:reply-to
     :references:mime-version:content-type:in-reply-to:message-id
-    :sender:list-id; s=fm2; t=1527721989; bh=tCrMyUcBSTpT335l/3NhnEF
-    QVcEV+nOQdSCcTiFpktQ=; b=TDraOp9piRCDQ1G3v0utCpVSBhDv7rekuU624zh
-    raUqsueHLpemIFrnL2tY9/7FGJAgxg2G7AvZTXRv8kkGrZ/3gFAOcruZ1qxNLTLK
-    4CzzYPunaPR7onzJTfTPdlafTO2bZQYubKDkqVOV/ZcISD6BDvIVUjUHYTUwsSWE
-    XT3sf5o6ARH8GZCk6cCGUkIhQ6gWXGRtGFBCXroR10Q1wqLzuMYXhPeaiBmQ0g90
-    aYoF6obLMuflwJDfxXI9VJH1QtmtjQ0II0Qr5FTYr8+tRrijqHjCzPNQlccmDVKp
-    dmWppxn5zUZaapur+ITJQQSsghXnMpR3y9NIBLjgHPyBczg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=fm2; t=1527709460; bh=7TL7N+TIeSi7WqwuvnYiQPc
+    9kV9C40l1ghV1j71ka00=; b=kb7uJn8lcSa5wScqf5umuDEuwGQwncLvIL6bRzJ
+    K7IQAPqD7SQweyPvRqQC3WyxGkyq817vOFIBr1AmMurfo1kIjsJBBTSuaPuwVBot
+    l478IKYQka7BoLl8kyL5Qqn3eOiB0oicXpwEHVt8+ji4f4OIJDZIVBylfgiQKDeU
+    +mWFJD2gzaZQecwnCBChk7suH4tEW/ycg+ZjyQ3U4BwryRloioYO/cn+uOPeyAYY
+    1KA4lWeXXmS7r+O2u+HnVWbExwo5MQGHUVjN1MDJ753Qk55aKchFXk4Iygwuzxa8
+    0m4K8AQ2O9blOBU6YIK7I5m1/oET44MMxkk/KY1uAE3ab4Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
     header.from=linux.vnet.ibm.com;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header_org.domain=ibm.com header_org.result=pass
     header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
@@ -58,25 +58,25 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPkbCq6HTF6SEeuLVENPCff3I0YJDOWIKjU9JzhdH9o9ppTT4CojOOAIvY6vcDxl46Gp8U+nX9Fayw9PvFL8R8V1rqrphgSfUNrllgoMyEkyz0F6Qeio
-    T7Sd2sfrE7GeiVCPKP/fWe7YEEAfMMbZbpuMri2vPU+os1s7N4Vq8U+0A6S+WEvTamMmNcFQZ6FFUrLsG9ypPMs9hd+CEoI3PCRwtEDDikvCI0+4xw+ZE1HL
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEGYY2SoScmSW5TuEMbnxhlKG3JYMCUMeh7+mQR/9osfivNjo08FnVh8HwzPNLaYXSXX9wcVix2BICkSDUc0KLsTY46Z2BuFeUBDlEuFU7jh3BnGZxby
+    qlT4AVZyo9ilI45rzAu8vUZFDSVfKhvy6y+HjOBNM+kLFbHOdH73govhXH+e5I4cfSAom+Kf4bz4AVMVFGvwUremoaGXMkVc4vl41t8WAWuPUuv6954NrDVR
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=ZmWs40n30RjOo87KSFoA:9 a=CjuIK1q_8ugA:10
+    a=fMqBbhjsDbo1JTeWER8A:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932625AbeE3XNF (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 30 May 2018 19:13:05 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43228 "EHLO
+        id S932111AbeE3ToR (ORCPT <rfc822;linux@kroah.com>);
+        Wed, 30 May 2018 15:44:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47390 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753734AbeE3XNE (ORCPT
+        by vger.kernel.org with ESMTP id S1753686AbeE3ToR (ORCPT
         <rfc822;linux-arch@vger.kernel.org>);
-        Wed, 30 May 2018 19:13:04 -0400
-Date: Wed, 30 May 2018 16:14:41 -0700
+        Wed, 30 May 2018 15:44:17 -0400
+Date: Wed, 30 May 2018 12:45:54 -0700
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-arch <linux-arch@vger.kernel.org>,
         andrea.parri@amarulasolutions.com,
@@ -94,155 +94,147 @@ Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
 Reply-To: paulmck@linux.vnet.ibm.com
 References: <20180530183826.GI7063@linux.vnet.ibm.com>
  <Pine.LNX.4.44L0.1805301449350.1502-100000@iolanthe.rowland.org>
- <CA+55aFxXgECHW+Pekiuvt1htsDfML2ximrLrmr99xewGYpmEng@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFxXgECHW+Pekiuvt1htsDfML2ximrLrmr99xewGYpmEng@mail.gmail.com>
+In-Reply-To: <Pine.LNX.4.44L0.1805301449350.1502-100000@iolanthe.rowland.org>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 18053023-0040-0000-0000-000004371C2E
+x-cbid: 18053019-2213-0000-0000-000002B04AE6
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009099; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01040030; UDB=6.00530820; IPR=6.00819163;
- MB=3.00021384; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 23:13:02
+ PH=3.00000004; SC=3.00000264; SDB=6.01039960; UDB=6.00532201; IPR=6.00819093;
+ MB=3.00021381; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 19:44:15
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053023-0041-0000-0000-0000083D4256
-Message-Id: <20180530231441.GO7063@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_10:,,
+x-cbparentid: 18053019-2214-0000-0000-00005A4D5271
+Message-Id: <20180530194554.GM7063@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805300242
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805300210
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 30, 2018 at 05:01:01PM -0500, Linus Torvalds wrote:
-> On Wed, May 30, 2018 at 2:08 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> >
-> > Indeed.  The very first line Linus quoted in his first reply to me
-> > (elided above) was:
-> >
-> >         Putting this into herd would be extremely difficult, if not impossible,
-> >         because it involves analyzing code that was not executed.
-> >
-> > It should be clear from this that I was talking about herd.  Not gcc or
-> > real hardware.
+On Wed, May 30, 2018 at 03:08:43PM -0400, Alan Stern wrote:
+> On Wed, 30 May 2018, Paul E. McKenney wrote:
 > 
-> So what does herd actually work on? The source code or the executable,
-> or a trace?
-
-The source code, that is, the source code of the litmus test.
-There are definitions for the various Linux operations, partly within
-the herd tool and partly in the linux.def file in tools/memory-model.
-The problem we are having is nailing down control dependencies and
-compiler optimizations.  The bit about limiting control dependencies
-through the end of "if" statement itself works well in a great many cases,
-but this clearly is not one of them.
-
-> I found the herd paper, but I'm on the road helping my daughter in
-> college move, and I don't have the background to skim the paper
-> quickly and come up with the obvious answer, so I'l just ask.
-
-It is not a short learning curve.
-
-> Because I really think that from our memory model standpoint, we
-> really do have the rule that
+> > On Wed, May 30, 2018 at 09:59:28AM -0500, Linus Torvalds wrote:
+> > > On Wed, May 30, 2018 at 9:29 AM Alan Stern <stern@rowland.harvard.edu>
+> > > wrote:
+> > > 
+> > > > >
+> > > > > Can't we simplify the whole sequence as basically
+> > > > >
+> > > > >      A
+> > > > >      if (!B)
+> > > > >          D
+> > > > >
+> > > > > for that "not B" case, and just think about that. IOW, let's ignore the
+> > > > > whole "not executed" code.
+> > > 
+> > > > Your listing is slightly misleading.
+> > > 
+> > > No. You're confused.
+> > > 
+> > > You're confused because you're conflating two *entirely* different things.
+> > > 
+> > > You're conflating the static source code with the dynamic execution. They
+> > > are NOT THE SAME.
+> > 
+> > I am going to go out on a limb and assert that Linus is talking about
+> > what gcc and hardware do, while Alan is talking about what the tool and
+> > memory model do.
 > 
->    load -> cond -> store
+> Indeed.  The very first line Linus quoted in his first reply to me
+> (elided above) was:
 > 
-> is ordered - even if the store address and store data is in no way
-> dependent on the load. The only thing that matters is that there's a
-> conditional that is dependent on the load in between the load and the
-> store.
+> 	Putting this into herd would be extremely difficult, if not impossible,
+> 	because it involves analyzing code that was not executed.
 > 
-> Note that this is *independent* of how you get to the store. It
-> doesn't matter  if it's a fallthrough conditional jump or  a taken
-> conditional jump, or whether  there is a joining.
+> It should be clear from this that I was talking about herd.  Not gcc or
+> real hardware.
 > 
-> The only thing that *does* matter is whether the conditional can be
-> turned into a "select" statement. If the conditional can be turned
-> into a data dependency, then the ordering goes away. That is why it
-> was relevant whether "C" contained a barrier or not (it doesn't even
-> have to be a *memory* barrier, it just has to be a barrier for code
-> generation).
+> (After rereading his message a few times, I'm not sure exactly what 
+> Linus was talking about...)
 
-Another situation is something like this:
+>From what I could see, real compilers and real hardware.  ;-)
 
-	r1 = READ_ONCE(x);
-	if (r1)
-		r2 = r1 * 3 - 1;
-	else
-		r2 = 42;
-	WRITE_ONCE(y, 5);
-	do_something(r2);
-
-Because there are no compiler barriers or volatile accesses in either
-the "then" clause or the "else" clause, the compiler is within its
-rights to do this:
-
-	r1 = READ_ONCE(x);
-	WRITE_ONCE(y, 5);
-	if (r1)
-		r2 = r1 * 3 - 1;
-	else
-		r2 = 42;
-	do_something(r2);
-
-Then weakly ordered CPUs can reorder the READ_ONCE() and WRITE_ONCE().
-The compiler of course cannot because they are both volatile accesses.
-
-> Note that the "C doesn't even have to have a memory barrier" is
-> important, because the orderin from load->cond->store doesn't actually
-> have anything to do with any memory ordering imposed by C, it's much
-> more fundamental than that.
-
-If there were volatiles or compiler barriers in the "then" or "else"
-clauses, or if the store itself was there (and there weren't identical
-stores in both), then agreed, the compiler cannot do much, nor can
-the hardware.
-
-> > Preserving the order of volatile accesses isn't sufficient.  The
-> > compiler is still allowed to translate
-> >
-> >         r1 = READ_ONCE(x);
-> >         if (r1) {
-> >                 ...
-> >         }
-> >         WRITE_ONCE(y, r2);
-> >
-> > into something resembling
-> >
-> >         r1 = READ_ONCE(x);
-> >         WRITE_ONCE(y, r2);
-> >         if (r1) {
-> >                 ...
-> >         }
+> >  In a perfect world, these would be the same, but it
+> > appears that the world might not be perfect just now.
+> > 
+> > My current guess is that we need to change the memory-model tool.  If
+> > that is the case, here are some possible resolutions:
+> > 
+> > 1.	Make herd's C-language control dependencies work the same as its
+> > 	assembly language, so that they extend beyond the end of the
+> > 	"if" statement.  I believe that this would make Roman's case
+> > 	work, but it could claim that other situations are safe that
+> > 	are actually problematic due to compiler optimizations.
+> > 
+> > 	The fact that the model currently handles only READ_ONCE()
+> > 	and WRITE_ONCE() and not unmarked reads and writes make this
+> > 	option more attractive than it otherwise be, compilers not
+> > 	being allowed to reorder volatile accesses, but we are likely
+> > 	to introduce unmarked accesses sometime in the future.
 > 
-> Correct.
+> Preserving the order of volatile accesses isn't sufficient.  The
+> compiler is still allowed to translate
 > 
-> What matter is that the code in C (now called "..." above ;^) has a
-> build-time barrier that means that the compiler cannot do that.
+> 	r1 = READ_ONCE(x);
+> 	if (r1) {
+> 		...
+> 	}
+> 	WRITE_ONCE(y, r2);
 > 
-> That barrier can be pretty much anything. The important part is
-> literally that there's a guarantee that the write cannot  be migrated
-> below the conditional.
+> into something resembling
 > 
-> But I don't know what level 'herd' works on. If it doesn't see
-> compiler barriers (eg our own "barrier()" macro that literally is just
-> that), only sees the generated code, then it really has no other
-> information than what he compiler _happened_ to do - it doesn't know
-> if the compiler did the store after the conditional because it *had*
-> to do so, or whether it was just a random instruction scheduling
-> decision.
+> 	r1 = READ_ONCE(x);
+> 	WRITE_ONCE(y, r2);
+> 	if (r1) {
+> 		...
+> 	}
+> 
+> (provided the "..." part doesn't contain any volatile accesses,
+> barriers, or anything affecting r2), which would destroy any run-time
+> control dependency.  The CPU could then execute the write before the
+> read.
 
-The 'herd' tool works on litmus-test source, and has almost no idea of
-what compilers get up to.  In this particular case, it would be better
-off being even more ignorant of what compilers get up to.  ;-)
+True, but almost all current litmus tests do have at least one volatile
+access in their "if" statements.  I am guessing that this has the same
+memory-model tooling issues as #2 below, but I am as usual happy to be
+proven wrong.  ;-)
+
+> > 2.	Like #1 above, but only if something in one of the "if"'s
+> > 	branches would prevent the compiler from reordering
+> > 	(smp_mb(), synchronize_rcu(), value-returning non-relaxed
+> > 	RMW atomic, ...).  Easy for me to say, but I am guessing
+> > 	that much violence would be needed to the tooling to make
+> > 	this work.  ;-)
+> 
+> This would be my preference.  But I'm afraid it isn't practical at the 
+> moment.
+
+I bet that some combination of scripting and smallish modifications to
+tooling could make it happen in reasonably short term.  Might be more
+difficult to make something more future-proof, though, agreed.
+
+> > If I understand Alan correctly, there is not an obvious way to make
+> > this change within the confines of the memory model's .bell and .cat
+> > files.
+> 
+> No way at all.  It would require significant changes to herd's internal 
+> workings and its external interface -- my original point.
+
+I was afraid of that.  ;-)
+
+Though truth be told, I was expecting an issue like this to crop up
+sooner rather than later, so I was actually getting a bit nervous
+about the fact that it had not yet shown itself...
 
 							Thanx, Paul
