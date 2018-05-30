@@ -1,113 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753422AbeE3Od2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:33:28 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45078 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751684AbeE3OdZ (ORCPT
+        id S1753638AbeE3Odg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:33:36 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42674 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753453AbeE3Oda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:33:25 -0400
-Subject: Re: [PATCH v5 11/13] KVM: s390: implement mediated device open
- callback
-To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <98ea7ce2-2539-e2ff-4bb4-297e784d87bd@linux.ibm.com>
- <7bb480ac-5723-83ff-c797-53c1ab0458c1@linux.vnet.ibm.com>
- <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Wed, 30 May 2018 10:33:13 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18053014-0016-0000-0000-000008D5E97D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009098; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01039857; UDB=6.00532246; IPR=6.00818990;
- MB=3.00021377; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 14:33:23
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053014-0017-0000-0000-00003F0055C4
-Message-Id: <0f37dc39-7355-19e5-40c9-a02a1ea58c2d@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805300161
+        Wed, 30 May 2018 10:33:30 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: max77686: Fix shared GPIOs" to the regulator tree
+In-Reply-To: 
+Message-Id: <E1fO2AJ-0004Xw-H3@debutante>
+Date: Wed, 30 May 2018 15:33:27 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/24/2018 05:08 AM, Pierre Morel wrote:
-> On 23/05/2018 16:45, Tony Krowiak wrote:
->> On 05/16/2018 04:03 AM, Pierre Morel wrote:
->>> On 07/05/2018 17:11, Tony Krowiak wrote:
->>>> Implements the open callback on the mediated matrix device.
->>>> The function registers a group notifier to receive notification
->>>> of the VFIO_GROUP_NOTIFY_SET_KVM event. When notified,
->>>> the vfio_ap device driver will get access to the guest's
->>>> kvm structure. With access to this structure the driver will:
->>>>
->>>> 1. Ensure that only one mediated device is opened for the guest
->
-> You should explain why.
->
->>>>
->>>> 2. Configure access to the AP devices for the guest.
->>>>
-> ...snip...
->>>> +void kvm_ap_refcount_inc(struct kvm *kvm)
->>>> +{
->>>> +    atomic_inc(&kvm->arch.crypto.aprefs);
->>>> +}
->>>> +EXPORT_SYMBOL(kvm_ap_refcount_inc);
->>>> +
->>>> +void kvm_ap_refcount_dec(struct kvm *kvm)
->>>> +{
->>>> +    atomic_dec(&kvm->arch.crypto.aprefs);
->>>> +}
->>>> +EXPORT_SYMBOL(kvm_ap_refcount_dec);
->>>
->>> Why are these functions inside kvm-ap ?
->>> Will anyone use this outer of vfio-ap ?
->>
->> As I've stated before, I made the choice to contain all interfaces that
->> access KVM in kvm-ap because I don't think it is appropriate for the 
->> device
->> driver to have to have "knowledge" of the inner workings of KVM. Why 
->> does
->> it matter whether any entity outside of the vfio_ap device driver calls
->> these functions? I could ask a similar question if the interfaces were
->> contained in vfio-ap; what if another device driver needs access to 
->> these
->> interfaces?
->
-> This is very driver specific and only used during initialization.
-> It is not a common property of the cryptographic interface.
->
-> I really think you should handle this inside the driver.
+The patch
 
-We are going to have to agree to disagree on this one. Is it not possible
-that future drivers - e.g., when full virtualization is implemented - will
-require access to KVM?
->
-> Pierre
->
->
-> ...snip...
->
->
+   regulator: max77686: Fix shared GPIOs
+
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From d1dae72fab2c377ff463742eefd8ac0f9e99b7b9 Mon Sep 17 00:00:00 2001
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 30 May 2018 15:13:42 +0100
+Subject: [PATCH] regulator: max77686: Fix shared GPIOs
+
+This reverts commit c89c00e2b8f0 "regulator: max77686: Pass descriptor
+instead of GPIO number" as it has problems with shared GPIOs similar to
+that on s2mps11.
+
+Reported-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/max77686-regulator.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
+index 37f98a8350f0..c301f3733475 100644
+--- a/drivers/regulator/max77686-regulator.c
++++ b/drivers/regulator/max77686-regulator.c
+@@ -25,7 +25,8 @@
+ #include <linux/kernel.h>
+ #include <linux/bug.h>
+ #include <linux/err.h>
+-#include <linux/gpio/consumer.h>
++#include <linux/gpio.h>
++#include <linux/of_gpio.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+@@ -89,7 +90,6 @@ enum max77686_ramp_rate {
+ };
+ 
+ struct max77686_data {
+-	struct device *dev;
+ 	DECLARE_BITMAP(gpio_enabled, MAX77686_REGULATORS);
+ 
+ 	/* Array indexed by regulator id */
+@@ -269,20 +269,16 @@ static int max77686_of_parse_cb(struct device_node *np,
+ 	case MAX77686_BUCK8:
+ 	case MAX77686_BUCK9:
+ 	case MAX77686_LDO20 ... MAX77686_LDO22:
+-		config->ena_gpiod = devm_gpiod_get_from_of_node(max77686->dev,
+-								np,
+-								"maxim,ena",
+-								0,
+-								GPIOD_OUT_HIGH,
+-								"max77686-regulator");
+-		if (IS_ERR(config->ena_gpiod))
+-			config->ena_gpiod = NULL;
++		config->ena_gpio = of_get_named_gpio(np,
++					"maxim,ena-gpios", 0);
++		config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
++		config->ena_gpio_initialized = true;
+ 		break;
+ 	default:
+ 		return 0;
+ 	}
+ 
+-	if (config->ena_gpiod) {
++	if (gpio_is_valid(config->ena_gpio)) {
+ 		set_bit(desc->id, max77686->gpio_enabled);
+ 
+ 		return regmap_update_bits(config->regmap, desc->enable_reg,
+@@ -525,7 +521,6 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+ 	if (!max77686)
+ 		return -ENOMEM;
+ 
+-	max77686->dev = &pdev->dev;
+ 	config.dev = iodev->dev;
+ 	config.regmap = iodev->regmap;
+ 	config.driver_data = max77686;
+-- 
+2.17.0
