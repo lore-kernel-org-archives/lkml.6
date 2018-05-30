@@ -1,78 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752949AbeE3LTy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:19:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37340 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752572AbeE3LQr (ORCPT
+        id S1751630AbeE3LXK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:23:10 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60972 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752511AbeE3LHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:16:47 -0400
-Date: Wed, 30 May 2018 04:16:02 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, zi.yan@cs.rutgers.edu,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>, riel@redhat.com,
-        pasha.tatashin@oracle.com, jschoenh@amazon.de,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        David Rientjes <rientjes@google.com>, tglx@linutronix.de,
-        Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>,
-        yang.s@alibaba-inc.com, Minchan Kim <minchan@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH] mm: Change return type to vm_fault_t
-Message-ID: <20180530111602.GB17450@bombadil.infradead.org>
-References: <20180529143126.GA19698@jordon-HP-15-Notebook-PC>
- <20180529145055.GA15148@bombadil.infradead.org>
- <CAFqt6zaxt=wXjvKV0qA+OwU1iUyoBdW2cJSLFqXupVWRpKdqEA@mail.gmail.com>
- <20180529173445.GD15148@bombadil.infradead.org>
- <CAFqt6zZCX7Ai2w9dV3OvUn=V4Z02H=+FBirjHT3QSU1Fuz+uLQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Wed, 30 May 2018 07:07:06 -0400
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <CAFqt6zZCX7Ai2w9dV3OvUn=V4Z02H=+FBirjHT3QSU1Fuz+uLQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Corentin Labbe" <clabbe@baylibre.com>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.450532105@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.2 093/153] powerpc/pseries: Add empty update_numa_cpu_lookup_table()
+ for NUMA=n
+In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 09:10:47AM +0530, Souptick Joarder wrote:
-> On Tue, May 29, 2018 at 11:04 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> > I see:
-> >
-> > mm/gup.c:817:15: warning: invalid assignment: |=
-> > mm/gup.c:817:15:    left side has type int
-> > mm/gup.c:817:15:    right side has type restricted vm_fault_t
-> >
-> > are you building with 'c=2' or 'C=2'?
-> 
-> Building with C=2.
-> Do I need to enable any separate FLAG ?
+3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
 
-Nope.  Here's what I have:
+------------------
 
-willy@bobo:~/kernel/souptick$ make C=2 mm/gup.o
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  CHK     include/generated/utsrelease.h
-  CHECK   arch/x86/purgatory/purgatory.c
-  CHECK   arch/x86/purgatory/sha256.c
-  CHECK   arch/x86/purgatory/string.c
-arch/x86/purgatory/../boot/string.c:134:6: warning: symbol 'simple_strtol' was not declared. Should it be static?
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-  DESCEND  objtool
-  CHECK   scripts/mod/empty.c
-  CHK     scripts/mod/devicetable-offsets.h
-  CHECK   mm/gup.c
-mm/gup.c:817:15: warning: invalid assignment: |=
-mm/gup.c:817:15:    left side has type int
-mm/gup.c:817:15:    right side has type restricted vm_fault_t
-  CC      mm/gup.o
+From: Corentin Labbe <clabbe@baylibre.com>
+
+commit c1e150ceb61e4a585bad156da15c33bfe89f5858 upstream.
+
+When CONFIG_NUMA is not set, the build fails with:
+
+  arch/powerpc/platforms/pseries/hotplug-cpu.c:335:4:
+  error: déclaration implicite de la fonction « update_numa_cpu_lookup_table »
+
+So we have to add update_numa_cpu_lookup_table() as an empty function
+when CONFIG_NUMA is not set.
+
+Fixes: 1d9a090783be ("powerpc/numa: Invalidate numa_cpu_lookup_table on cpu remove")
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/powerpc/include/asm/topology.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/arch/powerpc/include/asm/topology.h
++++ b/arch/powerpc/include/asm/topology.h
+@@ -107,6 +107,9 @@ static inline void sysfs_remove_device_f
+ 						int nid)
+ {
+ }
++
++static inline void update_numa_cpu_lookup_table(unsigned int cpu, int node) {}
++
+ #endif /* CONFIG_NUMA */
+ 
+ #if defined(CONFIG_NUMA) && defined(CONFIG_PPC_SPLPAR)
