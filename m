@@ -1,69 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932540AbeE3WRj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:17:39 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:37738 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753617AbeE3WRg (ORCPT
+        id S932563AbeE3WU5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:20:57 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:46682 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932409AbeE3WUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:17:36 -0400
-X-Google-Smtp-Source: ADUXVKLSL9UASflMNFihID/9M0XLIurGjvVvU5ITcDAJbG2PlU/Njmty3d1a5xHyPE23GSdIYucUvA==
-Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180513211347.7187-1-digetx@gmail.com>
- <20180530201831.6327alcmr2stgr3a@ninjato>
- <20180530202508.raee7klc2q3qoddo@ninjato>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <cf08bb15-f547-5c23-c998-233a003eddf3@gmail.com>
-Date: Thu, 31 May 2018 01:17:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 30 May 2018 18:20:54 -0400
+X-Google-Smtp-Source: ADUXVKL3g8INMiauXcTi+sjCA01L7mSjcKVnkr4HU3vPKeE9tWAMHSzSaiRMqCd0b92dG3cPPUIhlQ==
+Date: Wed, 30 May 2018 15:20:52 -0700
+From: Kees Cook <keescook@chromium.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Florian Westphal <fw@strlen.de>, David Ahern <dsahern@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtnetlink: Remove VLA usage
+Message-ID: <20180530222052.GA30622@beast>
 MIME-Version: 1.0
-In-Reply-To: <20180530202508.raee7klc2q3qoddo@ninjato>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30.05.2018 23:25, Wolfram Sang wrote:
-> 
->> Applied to for-next, thanks!
-> 
-> I removed the stable tag, though. I am not 100% sure if there are not
-> any side-effects for other users. If you still think it should go to
-> stable, please mention this patch to stable@ after it was applied to
-> linus tree. Maybe with a word or two about regression safety.
-> 
+In the quest to remove all stack VLA usage from the kernel[1], this
+allocates the maximum size expected for all possible types and adds
+sanity-checks at both registration and usage to make sure nothing gets
+out of sync. This matches the proposed VLA solution for nfnetlink[2]. The
+values chosen here were based on finding assignments for .maxtype and
+.slave_maxtype and manually counting the enums:
 
-Backporting to stable isn't really necessary, so no objections from me. Thank you.
+slave_maxtype (max 33):
+	IFLA_BRPORT_MAX     33
+	IFLA_BOND_SLAVE_MAX  9
+
+maxtype (max 45):
+	IFLA_BOND_MAX       28
+	IFLA_BR_MAX         45
+	__IFLA_CAIF_HSI_MAX  8
+	IFLA_CAIF_MAX        4
+	IFLA_CAN_MAX        16
+	IFLA_GENEVE_MAX     12
+	IFLA_GRE_MAX        25
+	IFLA_GTP_MAX         5
+	IFLA_HSR_MAX         7
+	IFLA_IPOIB_MAX       4
+	IFLA_IPTUN_MAX      21
+	IFLA_IPVLAN_MAX      3
+	IFLA_MACSEC_MAX     15
+	IFLA_MACVLAN_MAX     7
+	IFLA_PPP_MAX         2
+	__IFLA_RMNET_MAX     4
+	IFLA_VLAN_MAX        6
+	IFLA_VRF_MAX         2
+	IFLA_VTI_MAX         7
+	IFLA_VXLAN_MAX      28
+	VETH_INFO_MAX        2
+	VXCAN_INFO_MAX       2
+
+This additionally changes maxtype and slave_maxtype fields to unsigned,
+since they're only ever using positive values.
+
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+[2] https://patchwork.kernel.org/patch/10439647/
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/net/rtnetlink.h |  4 ++--
+ net/core/rtnetlink.c    | 18 ++++++++++++++++--
+ 2 files changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/include/net/rtnetlink.h b/include/net/rtnetlink.h
+index 14b6b3af8918..0bbaa5488423 100644
+--- a/include/net/rtnetlink.h
++++ b/include/net/rtnetlink.h
+@@ -64,7 +64,7 @@ struct rtnl_link_ops {
+ 	size_t			priv_size;
+ 	void			(*setup)(struct net_device *dev);
+ 
+-	int			maxtype;
++	unsigned int		maxtype;
+ 	const struct nla_policy	*policy;
+ 	int			(*validate)(struct nlattr *tb[],
+ 					    struct nlattr *data[],
+@@ -92,7 +92,7 @@ struct rtnl_link_ops {
+ 	unsigned int		(*get_num_tx_queues)(void);
+ 	unsigned int		(*get_num_rx_queues)(void);
+ 
+-	int			slave_maxtype;
++	unsigned int		slave_maxtype;
+ 	const struct nla_policy	*slave_policy;
+ 	int			(*slave_changelink)(struct net_device *dev,
+ 						    struct net_device *slave_dev,
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 45936922d7e2..4ede33719ca9 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -59,6 +59,9 @@
+ #include <net/rtnetlink.h>
+ #include <net/net_namespace.h>
+ 
++#define RTNL_MAX_TYPE		48
++#define RTNL_SLAVE_MAX_TYPE	36
++
+ struct rtnl_link {
+ 	rtnl_doit_func		doit;
+ 	rtnl_dumpit_func	dumpit;
+@@ -389,6 +392,11 @@ int rtnl_link_register(struct rtnl_link_ops *ops)
+ {
+ 	int err;
+ 
++	/* Sanity-check max sizes to avoid stack buffer overflow. */
++	if (WARN_ON(ops->maxtype > RTNL_MAX_TYPE ||
++		    ops->slave_maxtype > RTNL_SLAVE_MAX_TYPE))
++		return -EINVAL;
++
+ 	rtnl_lock();
+ 	err = __rtnl_link_register(ops);
+ 	rtnl_unlock();
+@@ -2900,13 +2908,16 @@ static int rtnl_newlink(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	}
+ 
+ 	if (1) {
+-		struct nlattr *attr[ops ? ops->maxtype + 1 : 1];
+-		struct nlattr *slave_attr[m_ops ? m_ops->slave_maxtype + 1 : 1];
++		struct nlattr *attr[RTNL_MAX_TYPE + 1];
++		struct nlattr *slave_attr[RTNL_SLAVE_MAX_TYPE + 1];
+ 		struct nlattr **data = NULL;
+ 		struct nlattr **slave_data = NULL;
+ 		struct net *dest_net, *link_net = NULL;
+ 
+ 		if (ops) {
++			if (ops->maxtype > RTNL_MAX_TYPE)
++				return -EINVAL;
++
+ 			if (ops->maxtype && linkinfo[IFLA_INFO_DATA]) {
+ 				err = nla_parse_nested(attr, ops->maxtype,
+ 						       linkinfo[IFLA_INFO_DATA],
+@@ -2923,6 +2934,9 @@ static int rtnl_newlink(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 		}
+ 
+ 		if (m_ops) {
++			if (ops->slave_maxtype > RTNL_SLAVE_MAX_TYPE)
++				return -EINVAL;
++
+ 			if (m_ops->slave_maxtype &&
+ 			    linkinfo[IFLA_INFO_SLAVE_DATA]) {
+ 				err = nla_parse_nested(slave_attr,
+-- 
+2.17.0
+
+
+-- 
+Kees Cook
+Pixel Security
