@@ -1,163 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753956AbeE3QqA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:46:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753816AbeE3Qp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:45:58 -0400
-Date: Wed, 30 May 2018 11:45:57 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>, Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Jianguo Sun <sunjianguo1@huawei.com>, Shawn Guo <shawn.guo@linaro.org>,
-        Tanmay Inamdar <tinamdar@apm.com>, Ryder Lee <ryder.lee@mediatek.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Remove host driver Kconfig selection of
- CONFIG_PCIEPORTBUS
-Message-ID: <20180530164557.GH39853@bhelgaas-glaptop.roam.corp.google.com>
-References: <152668266782.118010.15462515170612275250.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        id S1754014AbeE3QqS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:46:18 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:51167 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753816AbeE3QqN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:46:13 -0400
+Date: Wed, 30 May 2018 09:46:04 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        jdelvare@suse.com, Avi Fishman <avifishman70@gmail.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Patrick Venture <venture@google.com>, Joel Stanley <joel@jms.id.au>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hwmon@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>, linux-pwm@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v1 2/2] hwmon: npcm-pwm: add NPCM7xx PWM driver
+Message-ID: <20180530164604.GB8270@roeck-us.net>
+References: <1527588141-18639-1-git-send-email-tmaimon77@gmail.com>
+ <1527588141-18639-3-git-send-email-tmaimon77@gmail.com>
+ <20180529165617.GD2162@roeck-us.net>
+ <CAP6Zq1h8_n8R=dqmBxC_bK_YstLt1kkE6UCp2OVsNpKp=RK8og@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <152668266782.118010.15462515170612275250.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAP6Zq1h8_n8R=dqmBxC_bK_YstLt1kkE6UCp2OVsNpKp=RK8og@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 05:31:07PM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
+On Wed, May 30, 2018 at 06:44:58PM +0300, Tomer Maimon wrote:
+> Hi  Guenter,
 > 
-> Host bridge drivers do not use the portdrv interfaces (struct pcie_device,
-> struct pcie_port_service_driver, pcie_port_service_register(), etc), and
-> they should not select CONFIG_PCIEPORTBUS.
+> Thanks for your prompt reply!
 > 
-> If users need the portdrv services, they can select CONFIG_PCIEPORTBUS just
-> like all other PCI users.
 > 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> On 29 May 2018 at 19:56, Guenter Roeck <linux@roeck-us.net> wrote:
+> 
+> > On Tue, May 29, 2018 at 01:02:21PM +0300, Tomer Maimon wrote:
+> > > Add Nuvoton BMC NPCM7xx Pulse Width Modulation (PWM) driver.
+> > >
+> > > The Nuvoton BMC NPCM7xx has two identical PWM controller modules,
+> > > each module has four PWM controller outputs.
+> > >
+> >
+> > I don't see it guaranteed that all future NPCM7xx devices will be PWM
+> > controllers, much less that they will be compatible to the chip really
+> >
+> 
+> Actually all NPCM7xx family have PWM and FAN modules support,
+> 
+> 
+> > supported here. NPCM750, I presume ? I would suggest name the driver
+> > accordingly.
+> >
+> 
+> The compatible name can not be a family name like nuvoton,npcm7xx-pwm, only
+> a specific chip name. (in our case the NPCM750 is the full modules SOC)
+> still you think i should change the driver name? (note: all of our NPCM7xx
+> unique modules drivers are named npcm7xx-*.c or *-npcm7xx.c)
+> 
 
-I applied this to pci/kconfig for v4.18.
+drivers/watchdog/npcm_wdt.c contradicts that statement.
 
-> ---
->  drivers/pci/dwc/Kconfig  |   10 ----------
->  drivers/pci/host/Kconfig |    2 --
->  2 files changed, 12 deletions(-)
+Please discuss with the pwm maintainer. In hwmon, wildcards in driver file
+names are discouraged and will not be accepted. Our recommendation is to pick
+one chip from the family and use it as part of the file name.
+
 > 
-> diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
-> index 2f3f5c50aa48..678390a77ba1 100644
-> --- a/drivers/pci/dwc/Kconfig
-> +++ b/drivers/pci/dwc/Kconfig
-> @@ -68,7 +68,6 @@ config PCI_EXYNOS
->  	depends on PCI
->  	depends on SOC_EXYNOS5440
->  	depends on PCI_MSI_IRQ_DOMAIN
-> -	select PCIEPORTBUS
->  	select PCIE_DW_HOST
->  
->  config PCI_IMX6
-> @@ -76,7 +75,6 @@ config PCI_IMX6
->  	depends on PCI
->  	depends on SOC_IMX6Q
->  	depends on PCI_MSI_IRQ_DOMAIN
-> -	select PCIEPORTBUS
->  	select PCIE_DW_HOST
->  
->  config PCIE_SPEAR13XX
-> @@ -84,7 +82,6 @@ config PCIE_SPEAR13XX
->  	depends on PCI
->  	depends on ARCH_SPEAR13XX
->  	depends on PCI_MSI_IRQ_DOMAIN
-> -	select PCIEPORTBUS
->  	select PCIE_DW_HOST
->  	help
->  	  Say Y here if you want PCIe support on SPEAr13XX SoCs.
-> @@ -94,7 +91,6 @@ config PCI_KEYSTONE
->  	depends on PCI
->  	depends on ARCH_KEYSTONE
->  	depends on PCI_MSI_IRQ_DOMAIN
-> -	select PCIEPORTBUS
->  	select PCIE_DW_HOST
->  	help
->  	  Say Y here if you want to enable PCI controller support on Keystone
-> @@ -117,7 +113,6 @@ config PCI_HISI
->  	bool "HiSilicon Hip05 and Hip06 SoCs PCIe controllers"
->  	depends on PCI
->  	depends on PCI_MSI_IRQ_DOMAIN
-> -	select PCIEPORTBUS
->  	select PCIE_DW_HOST
->  	select PCI_HOST_COMMON
->  	help
-> @@ -129,7 +124,6 @@ config PCIE_QCOM
->  	depends on PCI
->  	depends on ARCH_QCOM && OF
->  	depends on PCI_MSI_IRQ_DOMAIN
-> -	select PCIEPORTBUS
->  	select PCIE_DW_HOST
->  	help
->  	  Say Y here to enable PCIe controller support on Qualcomm SoCs. The
-> @@ -141,7 +135,6 @@ config PCIE_ARMADA_8K
->  	depends on PCI
->  	depends on ARCH_MVEBU
->  	depends on PCI_MSI_IRQ_DOMAIN
-> -	select PCIEPORTBUS
->  	select PCIE_DW_HOST
->  	help
->  	  Say Y here if you want to enable PCIe controller support on
-> @@ -156,7 +149,6 @@ config PCIE_ARTPEC6_HOST
->  	bool "Axis ARTPEC-6 PCIe controller Host Mode"
->  	depends on MACH_ARTPEC6
->  	depends on PCI && PCI_MSI_IRQ_DOMAIN
-> -	select PCIEPORTBUS
->  	select PCIE_DW_HOST
->  	select PCIE_ARTPEC6
->  	help
-> @@ -178,7 +170,6 @@ config PCIE_KIRIN
->  	bool "HiSilicon Kirin series SoCs PCIe controllers"
->  	depends on PCI_MSI_IRQ_DOMAIN
->  	depends on PCI
-> -	select PCIEPORTBUS
->  	select PCIE_DW_HOST
->  	help
->  	  Say Y here if you want PCIe controller support
-> @@ -189,7 +180,6 @@ config PCIE_HISI_STB
->  	depends on ARCH_HISI
->  	depends on PCI
->  	depends on PCI_MSI_IRQ_DOMAIN
-> -	select PCIEPORTBUS
->  	select PCIE_DW_HOST
->  	help
->            Say Y here if you want PCIe controller support on HiSilicon STB SoCs
-> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-> index 0d0177ce436c..90f0cc9dfd95 100644
-> --- a/drivers/pci/host/Kconfig
-> +++ b/drivers/pci/host/Kconfig
-> @@ -83,7 +83,6 @@ config PCI_XGENE
->  	bool "X-Gene PCIe controller"
->  	depends on ARM64
->  	depends on OF || (ACPI && PCI_QUIRKS)
-> -	select PCIEPORTBUS
->  	help
->  	  Say Y here if you want internal PCI support on APM X-Gene SoC.
->  	  There are 5 internal PCIe ports available. Each port is GEN3 capable
-> @@ -194,7 +193,6 @@ config PCIE_MEDIATEK
->  	depends on (ARM || ARM64) && (ARCH_MEDIATEK || COMPILE_TEST)
->  	depends on OF
->  	depends on PCI
-> -	select PCIEPORTBUS
->  	help
->  	  Say Y here if you want to enable PCIe controller support on
->  	  MediaTek SoCs.
+> > As a generic pwm driver, not specifically tied to a fan controller,
+> > this driver does not belong into hwmon. It should be added to the pwm
+> > subsystem. Copying the maintainer and mailing list.
+> >
+> > In the NPCM7xx we have PWM and FAN controller modules,  usually in the
+> aspect of our BMC clients the two module
+> are used together to control the fans.
 > 
+> But because in the NPCM7xx the PWM and the FAN controller are separate
+> modules we
+> thought to do two separate drivers in the hwmon
+> is it possible? or you think it is better to do one hwmon driver for the
+> PWM and the FAN controller.
+> 
+That depends on how closely the two modules are intertwined. If the pwm module
+is generic, it belongs into the pwm subsystem. It only belongs into hwmon
+if it can _only_ be used for fan control, eg if the data reported by the fan
+module is used by the hardware to control the pwm output based on some
+fan speed <-> pw value mapping which is programmed into the chip, and/or
+if the pwm output can only connect to a fan and nothing else, and if the
+relationship between pwm output and fan input is well defined.
+
+If both end up in hwmon, I don't see the benefit of having two separate
+drivers. That means two hwmon devices for the same fan or set of fans,
+one being all but useless in respect to output from the 'sensors'
+command. You'll have to convince me why that would make sense; I just
+don't see the point.  In that case, I would also not see the point of
+having two separate devicetree nodes; to me, that would be similar
+to having two interfaces for a single serial line, one for receive
+and one for transmit.
+
+> note that we were going to submit soon also the FAN controller driver under
+> hwmon.
+> 
+No problem with that as long as there are no wildcards in the file name.
+
+Guenter
