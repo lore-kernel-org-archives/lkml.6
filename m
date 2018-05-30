@@ -1,67 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751949AbeE3K5W (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:57:22 -0400
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:52440 "EHLO
-        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1751503AbeE3K5M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:57:12 -0400
-From: Nicholas Mc Guire <hofrat@osadl.org>
-To: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@opentech.at>
-Subject: [PATCH] media: adv7604: simplify of_node_put()
-Date: Wed, 30 May 2018 10:55:16 +0000
-Message-Id: <1527677716-30352-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        id S1751821AbeE3K7t (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:59:49 -0400
+Received: from mga01.intel.com ([192.55.52.88]:25145 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751119AbeE3K7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 06:59:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,460,1520924400";
+   d="scan'208";a="45052654"
+Subject: Re: [PATCH 1/1] device core: Add flag to autoremove device link on
+ supplier unbind
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: gregkh@linuxfoundation.org, lukas@wunner.de, dmitry.torokhov@gmail.com,
+        aspriel@gmail.com, robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20180530095704.5788-1-vivek.gautam@codeaurora.org>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
+ 173, 80-298 Gdansk
+Message-ID: <a85d44e7-3bb1-f282-088d-c4311a108bcd@intel.com>
+Date: Wed, 30 May 2018 12:59:43 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180530095704.5788-1-vivek.gautam@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@opentech.at>
+On 5/30/2018 11:57 AM, Vivek Gautam wrote:
+> When using the device links without the consumers or
+> suppliers maintaining pointers to these links, a flag can
+> help in autoremoving the links on supplier driver unbind.
+> We remove these links only when the supplier's link to its
+> consumers has gone in DL_STATE_SUPPLIER_UNBIND state.
+>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Suggested-by: Lukas Wunner <lukas@wunner.de>
+> ---
+>
+> Lukas, as suggested in the thread [1] this change adds additional flag
+> to autoremove device links on supplier unbind.
+> For arm-smmu, we want to _not_ keep references to the device links
+> added between arm-smmu, and consumer devices.
+> Robin also pointed to [2] the need to autoremove the device link on
+> supplier unbind rather than consumer unbind.
 
-As the of_node_put() is unconditional here there is no need to have it
-twice.
+Please CC device links patches to linux-pm.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@opentech.at>
----
+> [1] https://lkml.org/lkml/2018/3/14/390
+> [2] https://lkml.org/lkml/2018/5/21/381
+>
+>   drivers/base/core.c    | 10 ++++++++++
+>   include/linux/device.h |  2 ++
+>   2 files changed, 12 insertions(+)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index b610816eb887..52c7222bb3c4 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -490,6 +490,16 @@ void device_links_driver_cleanup(struct device *dev)
+>   
+>   		WARN_ON(link->flags & DL_FLAG_AUTOREMOVE);
+>   		WARN_ON(link->status != DL_STATE_SUPPLIER_UNBIND);
+> +
+> +		/*
+> +		 * autoremove the links between this @dev and its consumer
+> +		 * devices that are not active, i.e. where the link state
+> +		 * has moved to DL_STATE_SUPPLIER_UNBIND.
+> +		 */
+> +		if (link->status == DL_STATE_SUPPLIER_UNBIND &&
+> +		    link->flags & DL_FLAG_AUTOREMOVE_S)
+> +			kref_put(&link->kref, __device_link_del);
+> +
+>   		WRITE_ONCE(link->status, DL_STATE_DORMANT);
+>   	}
+>   
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 477956990f5e..6033bf58453d 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -779,11 +779,13 @@ enum device_link_state {
+>    * AUTOREMOVE: Remove this link automatically on consumer driver unbind.
+>    * PM_RUNTIME: If set, the runtime PM framework will use this link.
+>    * RPM_ACTIVE: Run pm_runtime_get_sync() on the supplier during link creation.
+> + * AUTOREMOVE_S: Remove this link automatically on supplier driver unbind.
+>    */
+>   #define DL_FLAG_STATELESS	BIT(0)
+>   #define DL_FLAG_AUTOREMOVE	BIT(1)
+>   #define DL_FLAG_PM_RUNTIME	BIT(2)
+>   #define DL_FLAG_RPM_ACTIVE	BIT(3)
+> +#define DL_FLAG_AUTOREMOVE_S	BIT(4)
 
-Problem located by experimental coccinelle script
+Couldn't you invent a better name for this one?
 
-Not sure if such a change makes this much more readable - it is a trivial
-simplification of the code though. Pleas let me know if such micro
-refactoring makes sense or not.
-
-Patch was compile tested with: x86_64_defconfig + GPIOLIB=y,
-Multimedia support=y, CONFIG_MEDIA_DIGITAL_TV_SUPPORT=y,
-CONFIG_MEDIA_CAMERA_SUPPORT=y CONFIG_VIDEO_V4L2_SUBDEV_API=y,
-CONFIG_VIDEO_ADV7604=y
-
-Patch is against 4.17-rc5 (localversion-next is -next-20180529)
-
- drivers/media/i2c/adv7604.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index cac2081..cc8eac3 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -3108,12 +3108,9 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
- 		return -EINVAL;
- 
- 	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(endpoint), &bus_cfg);
--	if (ret) {
--		of_node_put(endpoint);
--		return ret;
--	}
--
- 	of_node_put(endpoint);
-+	if (ret)
-+		return ret;
- 
- 	if (!of_property_read_u32(np, "default-input", &v))
- 		state->pdata.default_input = v;
--- 
-2.1.4
+>   
+>   /**
+>    * struct device_link - Device link representation.
