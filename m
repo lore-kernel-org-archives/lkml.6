@@ -1,153 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965233AbeE3JTG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:19:06 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39295 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964904AbeE3JTA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:19:00 -0400
-X-ME-Proxy: <xmx:g2wOWwdXNADJ6YIYOhM_4Dw6FWKqxrRbsdMvNLPxYuAytlOkuLzdMA>
-X-ME-Proxy: <xmx:g2wOW19TTwuGCUfnELq4GZmVCXP1RnRjOZiI0xKDsEOwKBlXpitSZg>
-X-ME-Proxy: <xmx:g2wOWwp42qK3Vi1yzbEBYLsDEYMYgLL486NJxsVSYSQUSoO3fXrpGw>
-X-ME-Proxy: <xmx:g2wOW-l9filFFw6zchSfevmu1tFawalzBqGTzCclNH4dUaxUgZn4mw>
-X-ME-Proxy: <xmx:g2wOW7g5IS4PcaET0UW5-tJ_sC92QjloeRbdc7_iKwVAIL5WvoGUmA>
-X-ME-Proxy: <xmx:g2wOW5so7rx3XwXwO9xDQNSMWKy6uw_dKjxxmUtI2i2r99VL70Rj3g>
-X-ME-Sender: <xms:g2wOW911rQt6bmAfCGt03EGf9N1FC_hYB4oQnJA8GO2jS62IpS1c_Q>
-Message-ID: <1527671935.2939.15.camel@themaw.net>
-Subject: Re: [PATCH] autofs: make autofs4 and autofs mutually exclusive
-From: Ian Kent <raven@themaw.net>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Wed, 30 May 2018 17:18:55 +0800
-In-Reply-To: <CAK8P3a3wMJoquq+3MN69Wd1EaDBgzPnzbD1a_e4cgLHq5j0b9g@mail.gmail.com>
-References: <20180529094702.4092022-1-arnd@arndb.de>
-         <1527641284.2735.12.camel@themaw.net>
-         <CAK8P3a3wMJoquq+3MN69Wd1EaDBgzPnzbD1a_e4cgLHq5j0b9g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S968766AbeE3JTr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:19:47 -0400
+Received: from mga03.intel.com ([134.134.136.65]:3897 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964904AbeE3JTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 05:19:42 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,459,1520924400";
+   d="scan'208";a="43893783"
+Date: Wed, 30 May 2018 12:19:34 +0300
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Yong Deng <yong.deng@magewell.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v10 0/2] Initial Allwinner V3s CSI Support
+Message-ID: <20180530091934.tbd6xbyr5s3ipn3v@paasikivi.fi.intel.com>
+References: <20180517090224.u3ygdzjr77im2mmp@flea>
+ <20180529095757.qkz7jyuxza7movbc@flea.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529095757.qkz7jyuxza7movbc@flea.home>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-30 at 10:41 +0200, Arnd Bergmann wrote:
-> On Wed, May 30, 2018 at 2:48 AM, Ian Kent <raven@themaw.net> wrote:
-> > On Tue, 2018-05-29 at 11:46 +0200, Arnd Bergmann wrote:
-> > > The autofs4 implementation is just a redirect to autofs now, but that
-> > > also means we can't have both built into the same kernel:
+On Tue, May 29, 2018 at 11:57:57AM +0200, Maxime Ripard wrote:
+> On Thu, May 17, 2018 at 11:02:24AM +0200, Maxime Ripard wrote:
+> > On Fri, May 04, 2018 at 02:44:08PM +0800, Yong Deng wrote:
+> > > This patchset add initial support for Allwinner V3s CSI.
 > > > 
-> > > fs/autofs/inode.o: In function `autofs_new_ino':
-> > > inode.c:(.text+0x1b8): multiple definition of `autofs_new_ino'
-> > > fs/autofs/inode.o:inode.c:(.text+0x1b8): first defined here
-> > > fs/autofs/inode.o: In function `autofs_clean_ino':
-> > > inode.c:(.text+0x288): multiple definition of `autofs_clean_ino'
+> > > Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
+> > > interface and CSI1 is used for parallel interface. This is not
+> > > documented in datasheet but by test and guess.
 > > > 
-> > > There is also a problem with trying to build both in parallel, which
-> > > leads to two 'make' processes writing to the same fs/autofs/.*.o.cmd
-> > > file, causing corruption that manifests like
+> > > This patchset implement a v4l2 framework driver and add a binding 
+> > > documentation for it. 
 > > > 
-> > > fs/autofs4/../autofs/.expire.o.cmd:679: *** missing separator.  Stop.
-> > > 
-> > > Making AUTOFS4_FS depend on AUTOFS_FS being disabled should avoid all
-> > > configurations that run into either issue.
+> > > Currently, the driver only support the parallel interface. And has been
+> > > tested with a BT1120 signal which generating from FPGA. The following
+> > > fetures are not support with this patchset:
+> > >   - ISP 
+> > >   - MIPI-CSI2
+> > >   - Master clock for camera sensor
+> > >   - Power regulator for the front end IC
 > > 
-> > Thanks Arnd and this adds support that my analysis of build
-> > problems is accurate.
+> > I tested it on my H3 with a parallel camera, and it still works. Thanks!
 > > 
-> > I posted a similar patch on May 21 which also added a NOTE to
-> > fs/autofs4/Kconfig saying pretty much what you've said.
-> > https://patchwork.kernel.org/patch/10413823/
-> > 
-> > I recommend using my patch so that anyone that's surprised by the
-> > .config change has a chance of finding an explanation somewhere, ;)
-> > 
-> > Not only is the change needed, but to preserve bisection it needs
-> > to be folded into the original patch titled:
-> > autofs: create autofs Kconfig and Makefile
-> > 
-> > otherwise build test robots will still see this problem between
-> > build testing after "autofs: create autofs Kconfig and Makefile"
-> > and before this change is applied.
-> > 
-> > Folding in the change is my current recommendation to Andrew.
-> > Hopefully that will fix the problem.
+> > Hans, Sakari, any chance this might land in 4.18?
 > 
-> Yes, looks good.
-> 
-> > Any further thoughts are of course welcome.
-> 
-> I actually had an alternative approach that I tried out successfully
-> but discarded as being too different from the original code. Just for
-> reference, this one would work as well, and allow both to be
-> compiled together. The version you posted is probably better.
+> Ping?
 
-It's an attractive option but the problem is both implement the
-autofs file system.
+I'll try to look into this soonish but it seems to be too late for 4.18.
+Sorry about that.
 
-I've always thought you can't register the same file system at the
-same time from two distinct sources.
-
-If you're careful and compile each only as a module you could do it.
-
-But many configurations have autofs compiled built-in because of the
-auto-loading problems that arose back when there was an autofs fs
-module as well as an autofs fs module present in the autofs4 directory.
-
-Maybe it would actually work with one winning over the other but
-I'd prefer not to go that way.
-
-It will be gone in two subsequent releases if it gets merged and no
-changes to the retained code will be needed with this approach.
-
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
-> index 9400a9f6318a..5a361f5273a1 100644
-> --- a/fs/autofs/autofs_i.h
-> +++ b/fs/autofs/autofs_i.h
-> @@ -6,6 +6,8 @@
->   * the terms of the GNU General Public License, version 2, or at your
->   * option, any later version, incorporated herein by reference.
->   */
-> +#ifndef __AUTOFS_H
-> +#define __AUTOFS_H
-> 
->  /* Internal header file for autofs */
-> 
-> @@ -271,3 +273,5 @@ static inline void autofs_del_expiring(struct
-> dentry *dentry)
->  }
-> 
->  void autofs_kill_sb(struct super_block *);
-> +
-> +#endif /* __AUTOFS_H */
-> diff --git a/fs/autofs4/Makefile b/fs/autofs4/Makefile
-> index 417dd726d9ef..5fc0a28d656d 100644
-> --- a/fs/autofs4/Makefile
-> +++ b/fs/autofs4/Makefile
-> @@ -3,7 +3,3 @@
->  #
-> 
->  obj-$(CONFIG_AUTOFS4_FS) += autofs4.o
-> -
-> -autofs4-objs := ../autofs/init.o ../autofs/inode.o ../autofs/root.o \
-> -       ../autofs/symlink.o ../autofs/waitq.o ../autofs/expire.o \
-> -       ../autofs/dev-ioctl.o
-> diff --git a/fs/autofs4/autofs4.c b/fs/autofs4/autofs4.c
-> new file mode 100644
-> index 000000000000..a76066aa9f27
-> --- /dev/null
-> +++ b/fs/autofs4/autofs4.c
-> @@ -0,0 +1,7 @@
-> +#include "../autofs/init.c"
-> +#include "../autofs/inode.c"
-> +#include "../autofs/root.c"
-> +#include "../autofs/symlink.c"
-> +#include "../autofs/waitq.c"
-> +#include "../autofs/expire.c"
-> +#include "../autofs/dev-ioctl.c"
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
