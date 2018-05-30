@@ -1,71 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932138AbeE3Ql5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:41:57 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:8599 "EHLO pegase1.c-s.fr"
+        id S932170AbeE3QmF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:42:05 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:55228 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932090AbeE3Qlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:41:51 -0400
-Message-Id: <a30ae52fdd0b611c6e90942f772042fadc67f30a.1527697995.git.christophe.leroy@c-s.fr>
+        id S932122AbeE3Qlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:41:55 -0400
+Message-Id: <7aebb7fb324c1e00ca5ddcf2aba607efc902a1a4.1527697995.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1527697995.git.christophe.leroy@c-s.fr>
 References: <cover.1527697995.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH 3/8] powerpc: remove superflous inclusions of asm-compat.h
+Subject: [RFC PATCH 5/8] powerpc: remove superflous inclusions of asm/fixmap.h
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 30 May 2018 16:41:50 +0000 (UTC)
+Date: Wed, 30 May 2018 16:41:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ppc-opcode.h doesn't need asm-compat.h
-neither does dt_cpu_ftrs.h
+Files not using fixmap consts or functions don't need asm/fixmap.h
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/cputable.h       | 1 -
- arch/powerpc/include/asm/feature-fixups.h | 2 ++
- arch/powerpc/include/asm/ppc-opcode.h     | 1 -
- 3 files changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/include/asm/fixmap.h    | 2 --
+ arch/powerpc/kernel/head_8xx.S       | 1 -
+ arch/powerpc/mm/dump_hashpagetable.c | 1 -
+ arch/powerpc/sysdev/cpm_common.c     | 1 -
+ 4 files changed, 5 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
-index 66fcab13c8b4..7518dafa7cd4 100644
---- a/arch/powerpc/include/asm/cputable.h
-+++ b/arch/powerpc/include/asm/cputable.h
-@@ -4,7 +4,6 @@
+diff --git a/arch/powerpc/include/asm/fixmap.h b/arch/powerpc/include/asm/fixmap.h
+index 6c40dfda5912..40efdf1d2d6e 100644
+--- a/arch/powerpc/include/asm/fixmap.h
++++ b/arch/powerpc/include/asm/fixmap.h
+@@ -15,9 +15,7 @@
+ #define _ASM_FIXMAP_H
  
+ #ifndef __ASSEMBLY__
+-#include <linux/kernel.h>
+ #include <asm/page.h>
+-#include <asm/pgtable.h>
+ #ifdef CONFIG_HIGHMEM
+ #include <linux/threads.h>
+ #include <asm/kmap_types.h>
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index 6cab07e76732..95f6bdc0718f 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -30,7 +30,6 @@
+ #include <asm/ppc_asm.h>
+ #include <asm/asm-offsets.h>
+ #include <asm/ptrace.h>
+-#include <asm/fixmap.h>
+ #include <asm/export.h>
  
- #include <linux/types.h>
--#include <asm/asm-compat.h>
- #include <asm/feature-fixups.h>
- #include <uapi/asm/cputable.h>
+ #if CONFIG_TASK_SIZE <= 0x80000000 && CONFIG_PAGE_OFFSET >= 0x80000000
+diff --git a/arch/powerpc/mm/dump_hashpagetable.c b/arch/powerpc/mm/dump_hashpagetable.c
+index 14cfb11b09d0..ddffb1513ddc 100644
+--- a/arch/powerpc/mm/dump_hashpagetable.c
++++ b/arch/powerpc/mm/dump_hashpagetable.c
+@@ -19,7 +19,6 @@
+ #include <linux/mm.h>
+ #include <linux/sched.h>
+ #include <linux/seq_file.h>
+-#include <asm/fixmap.h>
+ #include <asm/pgtable.h>
+ #include <linux/const.h>
+ #include <asm/page.h>
+diff --git a/arch/powerpc/sysdev/cpm_common.c b/arch/powerpc/sysdev/cpm_common.c
+index b74508175b67..010975c3422f 100644
+--- a/arch/powerpc/sysdev/cpm_common.c
++++ b/arch/powerpc/sysdev/cpm_common.c
+@@ -28,7 +28,6 @@
+ #include <asm/udbg.h>
+ #include <asm/io.h>
+ #include <asm/cpm.h>
+-#include <asm/fixmap.h>
+ #include <soc/fsl/qe/qe.h>
  
-diff --git a/arch/powerpc/include/asm/feature-fixups.h b/arch/powerpc/include/asm/feature-fixups.h
-index a9b64df34e2a..ecfdf9d3d145 100644
---- a/arch/powerpc/include/asm/feature-fixups.h
-+++ b/arch/powerpc/include/asm/feature-fixups.h
-@@ -1,6 +1,8 @@
- #ifndef __ASM_POWERPC_FEATURE_FIXUPS_H
- #define __ASM_POWERPC_FEATURE_FIXUPS_H
- 
-+#include <asm/asm-compat.h>
-+
- /*
-  * This program is free software; you can redistribute it and/or
-  * modify it under the terms of the GNU General Public License
-diff --git a/arch/powerpc/include/asm/ppc-opcode.h b/arch/powerpc/include/asm/ppc-opcode.h
-index 4436887bc415..ab12fac26f5b 100644
---- a/arch/powerpc/include/asm/ppc-opcode.h
-+++ b/arch/powerpc/include/asm/ppc-opcode.h
-@@ -13,7 +13,6 @@
- #define _ASM_POWERPC_PPC_OPCODE_H
- 
- #include <linux/stringify.h>
--#include <asm/asm-compat.h>
- 
- #define	__REG_R0	0
- #define	__REG_R1	1
+ #include <mm/mmu_decl.h>
 -- 
 2.13.3
