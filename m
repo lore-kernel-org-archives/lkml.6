@@ -1,24 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753476AbeE3LUo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:20:44 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60989 "EHLO
+        id S1753142AbeE3LUE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:20:04 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:32814 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752525AbeE3LHH (ORCPT
+        by vger.kernel.org with ESMTP id S1752581AbeE3LHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:07 -0400
+        Wed, 30 May 2018 07:07:08 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Julian Wiedmann" <jwi@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC: akpm@linux-foundation.org, "Ingo Molnar" <mingo@kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Jean Delvare" <jdelvare@suse.de>,
+        "Parag Warudkar" <parag.warudkar@gmail.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.655940600@decadent.org.uk>
+Message-ID: <lsq.1527677561.660635407@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 081/153] s390/qeth: fix SETIP command handling
+Subject: [PATCH 3.2 073/153] firmware: dmi_scan: Fix handling of empty DMI
+ strings
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -31,73 +34,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+From: Jean Delvare <jdelvare@suse.de>
 
-commit 1c5b2216fbb973a9410e0b06389740b5c1289171 upstream.
+commit a7770ae194569e96a93c48aceb304edded9cc648 upstream.
 
-send_control_data() applies some special handling to SETIP v4 IPA
-commands. But current code parses *all* command types for the SETIP
-command code. Limit the command code check to IPA commands.
+The handling of empty DMI strings looks quite broken to me:
+* Strings from 1 to 7 spaces are not considered empty.
+* True empty DMI strings (string index set to 0) are not considered
+  empty, and result in allocating a 0-char string.
+* Strings with invalid index also result in allocating a 0-char
+  string.
+* Strings starting with 8 spaces are all considered empty, even if
+  non-space characters follow (sounds like a weird thing to do, but
+  I have actually seen occurrences of this in DMI tables before.)
+* Strings which are considered empty are reported as 8 spaces,
+  instead of being actually empty.
 
-Fixes: 5b54e16f1a54 ("qeth: do not spin for SETIP ip assist command")
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Some of these issues are the result of an off-by-one error in memcmp,
+the rest is incorrect by design.
+
+So let's get it square: missing strings and strings made of only
+spaces, regardless of their length, should be treated as empty and
+no memory should be allocated for them. All other strings are
+non-empty and should be allocated.
+
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Fixes: 79da4721117f ("x86: fix DMI out of memory problems")
+Cc: Parag Warudkar <parag.warudkar@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/s390/net/qeth_core.h      |  5 +++++
- drivers/s390/net/qeth_core_main.c | 14 ++++++++------
- 2 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/firmware/dmi_scan.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -578,6 +578,11 @@ struct qeth_cmd_buffer {
- 	void (*callback) (struct qeth_channel *, struct qeth_cmd_buffer *);
- };
- 
-+static inline struct qeth_ipa_cmd *__ipa_cmd(struct qeth_cmd_buffer *iob)
-+{
-+	return (struct qeth_ipa_cmd *)(iob->data + IPA_PDU_HEADER_SIZE);
-+}
-+
- /**
-  * definition of a qeth channel, used for read and write
+--- a/drivers/firmware/dmi_scan.c
++++ b/drivers/firmware/dmi_scan.c
+@@ -14,7 +14,7 @@
+  * of and an antecedent to, SMBIOS, which stands for System
+  * Management BIOS.  See further: http://www.dmtf.org/standards
   */
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -1932,7 +1932,7 @@ int qeth_send_control_data(struct qeth_c
- 	unsigned long flags;
- 	struct qeth_reply *reply = NULL;
- 	unsigned long timeout, event_timeout;
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = NULL;
+-static const char dmi_empty_string[] = "        ";
++static const char dmi_empty_string[] = "";
  
- 	QETH_CARD_TEXT(card, 2, "sendctl");
+ static u16 __initdata dmi_ver;
+ /*
+@@ -25,25 +25,21 @@ static int dmi_initialized;
+ static const char * __init dmi_string_nosave(const struct dmi_header *dm, u8 s)
+ {
+ 	const u8 *bp = ((u8 *) dm) + dm->length;
++	const u8 *nsp;
  
-@@ -1959,10 +1959,13 @@ int qeth_send_control_data(struct qeth_c
- 	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
- 	qeth_prepare_control_data(card, len, iob);
+ 	if (s) {
+-		s--;
+-		while (s > 0 && *bp) {
++		while (--s > 0 && *bp)
+ 			bp += strlen(bp) + 1;
+-			s--;
+-		}
  
--	if (IS_IPA(iob->data))
-+	if (IS_IPA(iob->data)) {
-+		cmd = __ipa_cmd(iob);
- 		event_timeout = QETH_IPA_TIMEOUT;
--	else
-+	} else {
- 		event_timeout = QETH_TIMEOUT;
-+	}
-+
- 	timeout = jiffies + event_timeout;
+-		if (*bp != 0) {
+-			size_t len = strlen(bp)+1;
+-			size_t cmp_len = len > 8 ? 8 : len;
+-
+-			if (!memcmp(bp, dmi_empty_string, cmp_len))
+-				return dmi_empty_string;
++		/* Strings containing only spaces are considered empty */
++		nsp = bp;
++		while (*nsp == ' ')
++			nsp++;
++		if (*nsp != '\0')
+ 			return bp;
+-		}
+ 	}
  
- 	QETH_CARD_TEXT(card, 6, "noirqpnd");
-@@ -1987,9 +1990,8 @@ int qeth_send_control_data(struct qeth_c
+-	return "";
++	return dmi_empty_string;
+ }
  
- 	/* we have only one long running ipassist, since we can ensure
- 	   process context of this command we can sleep */
--	cmd = (struct qeth_ipa_cmd *)(iob->data+IPA_PDU_HEADER_SIZE);
--	if ((cmd->hdr.command == IPA_CMD_SETIP) &&
--	    (cmd->hdr.prot_version == QETH_PROT_IPV4)) {
-+	if (cmd && cmd->hdr.command == IPA_CMD_SETIP &&
-+	    cmd->hdr.prot_version == QETH_PROT_IPV4) {
- 		if (!wait_event_timeout(reply->wait_q,
- 		    atomic_read(&reply->received), event_timeout))
- 			goto time_err;
+ static const char * __init dmi_string(const struct dmi_header *dm, u8 s)
