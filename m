@@ -1,76 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753043AbeE3L3h (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:29:37 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60898 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752392AbeE3LHE (ORCPT
+        id S1753181AbeE3L3u (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:29:50 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:41993 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752618AbeE3L3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:04 -0400
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Jens Axboe" <axboe@kernel.dk>,
-        "Dave Jiang" <dave.jiang@intel.com>,
-        "David Rientjes" <rientjes@google.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.289191784@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 103/153] kernel/relay.c: limit kmalloc size to
- KMALLOC_MAX_SIZE
-In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Wed, 30 May 2018 07:29:41 -0400
+X-Google-Smtp-Source: ADUXVKJRHoQ2/QMRDDw3Qap3CUP+Khv5tDXQOYbfu/4rqSECsBHNYOLraKfPbvQllPJzusXfm0lD0g==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, broonie@kernel.org,
+        baolin.wang@linaro.org
+Subject: [PATCH] mm: dmapool: Check the dma pool name
+Date: Wed, 30 May 2018 19:28:43 +0800
+Message-Id: <59623b15001e5a20ac32b1a393db88722be2e718.1527679621.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
+It will be crash if we pass one NULL name when creating one dma pool,
+so we should check the passing name when copy it to dma pool.
 
-------------------
+Moreover this patch replaces kmalloc_node() with kzalloc_node() to make
+sure the name array of dma pool is initialized in case the passing name
+is NULL.
 
-From: David Rientjes <rientjes@google.com>
-
-commit 88913bd8ea2a75d7e460a4bed5f75e1c32660d7e upstream.
-
-chan->n_subbufs is set by the user and relay_create_buf() does a kmalloc()
-of chan->n_subbufs * sizeof(size_t *).
-
-kmalloc_slab() will generate a warning when this fails if
-chan->subbufs * sizeof(size_t *) > KMALLOC_MAX_SIZE.
-
-Limit chan->n_subbufs to the maximum allowed kmalloc() size.
-
-Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1802061216100.122576@chino.kir.corp.google.com
-Fixes: f6302f1bcd75 ("relay: prevent integer overflow in relay_open()")
-Signed-off-by: David Rientjes <rientjes@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- kernel/relay.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/dmapool.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/kernel/relay.c
-+++ b/kernel/relay.c
-@@ -166,7 +166,7 @@ static struct rchan_buf *relay_create_bu
- {
- 	struct rchan_buf *buf;
- 
--	if (chan->n_subbufs > UINT_MAX / sizeof(size_t *))
-+	if (chan->n_subbufs > KMALLOC_MAX_SIZE / sizeof(size_t *))
+diff --git a/mm/dmapool.c b/mm/dmapool.c
+index 4d90a64..349f13d 100644
+--- a/mm/dmapool.c
++++ b/mm/dmapool.c
+@@ -155,11 +155,12 @@ struct dma_pool *dma_pool_create(const char *name, struct device *dev,
+ 	else if ((boundary < size) || (boundary & (boundary - 1)))
  		return NULL;
  
- 	buf = kzalloc(sizeof(struct rchan_buf), GFP_KERNEL);
+-	retval = kmalloc_node(sizeof(*retval), GFP_KERNEL, dev_to_node(dev));
++	retval = kzalloc_node(sizeof(*retval), GFP_KERNEL, dev_to_node(dev));
+ 	if (!retval)
+ 		return retval;
+ 
+-	strlcpy(retval->name, name, sizeof(retval->name));
++	if (name)
++		strlcpy(retval->name, name, sizeof(retval->name));
+ 
+ 	retval->dev = dev;
+ 
+-- 
+1.7.9.5
