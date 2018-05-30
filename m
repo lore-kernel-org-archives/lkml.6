@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753550AbeE3L3c (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:29:32 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60899 "EHLO
+        id S1753043AbeE3L3h (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:29:37 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60898 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752502AbeE3LHE (ORCPT
+        by vger.kernel.org with ESMTP id S1752392AbeE3LHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:04 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,16 +13,17 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "James Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Jeremy Boone" <jeremy.boone@nccgroup.trust>,
-        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
-        "James Morris" <james.morris@microsoft.com>
+CC: akpm@linux-foundation.org, "Jens Axboe" <axboe@kernel.dk>,
+        "Dave Jiang" <dave.jiang@intel.com>,
+        "David Rientjes" <rientjes@google.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.116404968@decadent.org.uk>
+Message-ID: <lsq.1527677561.289191784@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 110/153] tpm_tis: fix potential buffer overruns caused
- by bit glitches on the bus
+Subject: [PATCH 3.2 103/153] kernel/relay.c: limit kmalloc size to
+ KMALLOC_MAX_SIZE
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -35,48 +36,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Boone <jeremy.boone@nccgroup.trust>
+From: David Rientjes <rientjes@google.com>
 
-commit 6bb320ca4a4a7b5b3db8c8d7250cc40002046878 upstream.
+commit 88913bd8ea2a75d7e460a4bed5f75e1c32660d7e upstream.
 
-Discrete TPMs are often connected over slow serial buses which, on
-some platforms, can have glitches causing bit flips.  In all the
-driver _recv() functions, we need to use a u32 to unmarshal the
-response size, otherwise a bit flip of the 31st bit would cause the
-expected variable to go negative, which would then try to read a huge
-amount of data.  Also sanity check that the expected amount of data is
-large enough for the TPM header.
+chan->n_subbufs is set by the user and relay_create_buf() does a kmalloc()
+of chan->n_subbufs * sizeof(size_t *).
 
-Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
-[bwh: Backported to 3.2: adjust filename]
+kmalloc_slab() will generate a warning when this fails if
+chan->subbufs * sizeof(size_t *) > KMALLOC_MAX_SIZE.
+
+Limit chan->n_subbufs to the maximum allowed kmalloc() size.
+
+Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1802061216100.122576@chino.kir.corp.google.com
+Fixes: f6302f1bcd75 ("relay: prevent integer overflow in relay_open()")
+Signed-off-by: David Rientjes <rientjes@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/char/tpm/tpm_tis.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ kernel/relay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -253,7 +253,8 @@ static int recv_data(struct tpm_chip *ch
- static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+--- a/kernel/relay.c
++++ b/kernel/relay.c
+@@ -166,7 +166,7 @@ static struct rchan_buf *relay_create_bu
  {
- 	int size = 0;
--	int expected, status;
-+	int status;
-+	u32 expected;
+ 	struct rchan_buf *buf;
  
- 	if (count < TPM_HEADER_SIZE) {
- 		size = -EIO;
-@@ -268,7 +269,7 @@ static int tpm_tis_recv(struct tpm_chip
- 	}
+-	if (chan->n_subbufs > UINT_MAX / sizeof(size_t *))
++	if (chan->n_subbufs > KMALLOC_MAX_SIZE / sizeof(size_t *))
+ 		return NULL;
  
- 	expected = be32_to_cpu(*(__be32 *) (buf + 2));
--	if (expected > count) {
-+	if (expected > count || expected < TPM_HEADER_SIZE) {
- 		size = -EIO;
- 		goto out;
- 	}
+ 	buf = kzalloc(sizeof(struct rchan_buf), GFP_KERNEL);
