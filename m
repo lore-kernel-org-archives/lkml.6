@@ -1,134 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932602AbeE3VI6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:08:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932365AbeE3VIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:08:53 -0400
-X-Google-Smtp-Source: ADUXVKLXJ2zw3YDIBZQ87DlDwWMowBrMt5wfAJyMnxMLNyUgzTM0uzXa0hQyfpl0KWNphyaG4w5qFSzGli7Ep/QkR1A=
-MIME-Version: 1.0
-In-Reply-To: <20180530052142.24761-1-jaewon31.kim@samsung.com>
-References: <CGME20180530052041epcas2p395f2fbf4506d911c127cc4243838fedb@epcas2p3.samsung.com>
- <20180530052142.24761-1-jaewon31.kim@samsung.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 30 May 2018 16:08:31 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJS4CkNd4LeuiPvPV3w1wAHX116WA-akDR3FUi6=fkS3A@mail.gmail.com>
-Message-ID: <CAL_JsqJS4CkNd4LeuiPvPV3w1wAHX116WA-akDR3FUi6=fkS3A@mail.gmail.com>
-Subject: Re: [PATCH] drivers: of: of_reserved_mem: detect count overflow or
- range overlap
-To: Jaewon Kim <jaewon31.kim@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mitchel Humpherys <mitchelh@codeaurora.org>,
-        Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        linux-mm@kvack.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jaewon Kim <jaewon31.kim@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S932593AbeE3VJS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:09:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36122 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753719AbeE3VJK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 17:09:10 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        wsa@the-dreams.de, robh+dt@kernel.org, benh@kernel.crashing.org,
+        joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        rdunlap@infradead.org, andy.shevchenko@gmail.com,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v8 1/7] dt-bindings: i2c: Add FSI-attached I2C master dt binding documentation
+Date: Wed, 30 May 2018 16:07:38 -0500
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1527714464-8642-1-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1527714464-8642-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18053021-0012-0000-0000-0000165A7B0A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009099; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039988; UDB=6.00532325; IPR=6.00819121;
+ MB=3.00021383; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 21:09:07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053021-0013-0000-0000-0000530BFC2E
+Message-Id: <1527714464-8642-2-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=907 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805300224
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 12:21 AM, Jaewon Kim <jaewon31.kim@samsung.com> wrote:
-> During development, number of reserved memory region could be increased
-> and a new region could be unwantedly overlapped. In that case the new
-> region may work well but one of exisiting region could be affected so
-> that it would not be defined properly. It may require time consuming
-> work to find reason that there is a newly added region.
->
-> If a newly added region invoke kernel panic, it will be helpful. This
-> patch records if there is count overflow or range overlap, and invoke
-> panic if that case.
->
-> These are test example based on v4.9.
->
-> Case 1 - out of region count
-> <3>[    0.000000]  [0:        swapper:    0] OF: reserved mem: not enough space all defined regions.
-> <0>[    1.688695]  [6:      swapper/0:    1] Kernel panic - not syncing: overflow on reserved memory, check the latest change
-> <4>[    1.688743]  [6:      swapper/0:    1] CPU: 6 PID: 1 Comm: swapper/0 Not tainted 4.9.65+ #10
-> <4>[    1.688836]  [6:      swapper/0:    1] Call trace:
-> <4>[    1.688869]  [6:      swapper/0:    1] [<ffffff8008095748>] dump_backtrace+0x0/0x248
-> <4>[    1.688913]  [6:      swapper/0:    1] [<ffffff8008095b48>] show_stack+0x18/0x28
-> <4>[    1.688958]  [6:      swapper/0:    1] [<ffffff8008446e84>] dump_stack+0x98/0xc0
-> <4>[    1.689001]  [6:      swapper/0:    1] [<ffffff80081cf784>] panic+0x1e0/0x404
-> <4>[    1.689046]  [6:      swapper/0:    1] [<ffffff8008ddcdb8>] check_reserved_mem+0x40/0x50
-> <4>[    1.689091]  [6:      swapper/0:    1] [<ffffff8008090190>] do_one_initcall+0x54/0x214
-> <4>[    1.689138]  [6:      swapper/0:    1] [<ffffff8009eacf98>] kernel_init_freeable+0x198/0x24c
-> <4>[    1.689187]  [6:      swapper/0:    1] [<ffffff8009396950>] kernel_init+0x18/0x144
-> <4>[    1.689229]  [6:      swapper/0:    1] [<ffffff800808fa50>] ret_from_fork+0x10/0x40
->
-> Case 2 - overlapped region
-> <3>[    0.000000]  [0:        swapper:    0] OF: reserved mem: OVERLAP DETECTED!
-> <0>[    2.309331]  [2:      swapper/0:    1] Kernel panic - not syncing: reserved memory overlap, check the latest change
-> <4>[    2.309398]  [2:      swapper/0:    1] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.9.65+ #14
-> <4>[    2.309508]  [2:      swapper/0:    1] Call trace:
-> <4>[    2.309546]  [2:      swapper/0:    1] [<ffffff8008121748>] dump_backtrace+0x0/0x248
-> <4>[    2.309599]  [2:      swapper/0:    1] [<ffffff8008121b48>] show_stack+0x18/0x28
-> <4>[    2.309652]  [2:      swapper/0:    1] [<ffffff80084d2e84>] dump_stack+0x98/0xc0
-> <4>[    2.309701]  [2:      swapper/0:    1] [<ffffff800825b784>] panic+0x1e0/0x404
-> <4>[    2.309751]  [2:      swapper/0:    1] [<ffffff8008e68dc4>] check_reserved_mem+0x4c/0x50
-> <4>[    2.309802]  [2:      swapper/0:    1] [<ffffff800811c190>] do_one_initcall+0x54/0x214
-> <4>[    2.309856]  [2:      swapper/0:    1] [<ffffff8009f38f98>] kernel_init_freeable+0x198/0x24c
-> <4>[    2.309913]  [2:      swapper/0:    1] [<ffffff8009422950>] kernel_init+0x18/0x144
-> <4>[    2.309961]  [2:      swapper/0:    1] [<ffffff800811ba50>] ret_from_fork+0x10/0x40
->
-> Signed-off-by: Jaewon Kim <jaewon31.kim@samsung.com>
-> ---
->  drivers/of/of_reserved_mem.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-> index 9a4f4246231d..e97d5c5dcc9a 100644
-> --- a/drivers/of/of_reserved_mem.c
-> +++ b/drivers/of/of_reserved_mem.c
-> @@ -65,6 +65,7 @@ int __init __weak early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
->  }
->  #endif
->
-> +static bool rmem_overflow;
->  /**
->   * res_mem_save_node() - save fdt node for second pass initialization
->   */
-> @@ -75,6 +76,7 @@ void __init fdt_reserved_mem_save_node(unsigned long node, const char *uname,
->
->         if (reserved_mem_count == ARRAY_SIZE(reserved_mem)) {
->                 pr_err("not enough space all defined regions.\n");
-> +               rmem_overflow = true;
->                 return;
->         }
->
-> @@ -221,6 +223,7 @@ static int __init __rmem_cmp(const void *a, const void *b)
->         return 0;
->  }
->
-> +static bool rmem_overlap;
->  static void __init __rmem_check_for_overlap(void)
->  {
->         int i;
-> @@ -245,6 +248,7 @@ static void __init __rmem_check_for_overlap(void)
->                         pr_err("OVERLAP DETECTED!\n%s (%pa--%pa) overlaps with %s (%pa--%pa)\n",
->                                this->name, &this->base, &this_end,
->                                next->name, &next->base, &next_end);
-> +                       rmem_overlap = true;
->                 }
->         }
->  }
-> @@ -419,3 +423,13 @@ struct reserved_mem *of_reserved_mem_lookup(struct device_node *np)
->         return NULL;
->  }
->  EXPORT_SYMBOL_GPL(of_reserved_mem_lookup);
-> +
-> +static int check_reserved_mem(void)
-> +{
-> +       if (rmem_overflow)
-> +               panic("overflow on reserved memory, check the latest change");
-> +       if (rmem_overlap)
-> +               panic("overlap on reserved memory, check the latest change");
-> +       return 0;
-> +}
-> +late_initcall(check_reserved_mem);
+Document the bindings.
 
-Just use WARN and avoid this dance you are doing to panic after your
-console is up.
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/i2c/i2c-fsi.txt | 40 +++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-fsi.txt
 
-Rob
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-fsi.txt b/Documentation/devicetree/bindings/i2c/i2c-fsi.txt
+new file mode 100644
+index 0000000..b1be2ce
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/i2c-fsi.txt
+@@ -0,0 +1,40 @@
++Device-tree bindings for FSI-attached I2C master and busses
++-----------------------------------------------------------
++
++Required properties:
++ - compatible = "ibm,i2c-fsi";
++ - reg = < address size >;		: The FSI CFAM address and address
++					  space size.
++ - #address-cells = <1>;		: Number of address cells in child
++					  nodes.
++ - #size-cells = <0>;			: Number of size cells in child nodes.
++ - child nodes				: Nodes to describe busses off the I2C
++					  master.
++
++Child node required properties:
++ - reg = < port number >		: The port number on the I2C master.
++
++Child node optional properties:
++ - child nodes				: Nodes to describe devices on the I2C
++					  bus.
++
++Examples:
++
++    i2c@1800 {
++        compatible = "ibm,i2c-fsi";
++        reg = < 0x1800 0x400 >;
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        i2c-bus@0 {
++            reg = <0>;
++        };
++
++        i2c-bus@1 {
++            reg = <1>;
++
++            eeprom@50 {
++                compatible = "vendor,dev-name";
++            };
++        };
++    };
+-- 
+1.8.3.1
