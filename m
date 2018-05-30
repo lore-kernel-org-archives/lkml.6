@@ -1,156 +1,320 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965156AbeE3GWJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 02:22:09 -0400
-Received: from mail-by2nam03on0065.outbound.protection.outlook.com ([104.47.42.65]:64173
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934498AbeE3GWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 02:22:05 -0400
-From: Vishal Sagar <vsagar@xilinx.com>
-To: Randy Dunlap <rdunlap@infradead.org>,
-        Vishal Sagar <vishal.sagar@xilinx.com>, Hyun Kwon <hyunk@xilinx.com>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Dinesh Kumar <dineshk@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/2] media: v4l: xilinx: Add Xilinx MIPI CSI-2 Rx
- Subsystem driver
-Thread-Topic: [PATCH 2/2] media: v4l: xilinx: Add Xilinx MIPI CSI-2 Rx
- Subsystem driver
-Thread-Index: AQHT937uMW8FXDmICEij2ceN0K+vCaRHIAyAgACSj6A=
-Date: Wed, 30 May 2018 06:22:02 +0000
-Message-ID: <CY4PR02MB2709A481A94CB673DC8C87EBA76C0@CY4PR02MB2709.namprd02.prod.outlook.com>
-References: <1527620084-94864-1-git-send-email-vishal.sagar@xilinx.com>
- <1527620084-94864-3-git-send-email-vishal.sagar@xilinx.com>
- <5bf470c0-8737-273e-c138-58a05d7d9a30@infradead.org>
-In-Reply-To: <5bf470c0-8737-273e-c138-58a05d7d9a30@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR02MB2567;7:sQ5VPb0uSGgfdSCrYwbIbf27G6LwExj19s26+ZUqlbJgUbVZ+4HpIHQz2+PBK8jt8r2lV2gVLsbt8mUqCDL7r3yGY558Vt5Kmt+0AbRpmmdbIlQEYNrWQZhIzX+rPwvgIAb3rToaf9nMHqCSZ+1qK68DEV2wWY+/HVv+ZF0bdHGWYupoLuBwVpH1JWfaZ0vcfnX/9/ujOSQVNI7UiNk4UQLBzgN/Z3fv/U1vS4dZNWW5YVqVyxWhacpWtuAJ6vKr
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(39380400002)(396003)(39860400002)(13464003)(189003)(199004)(478600001)(6436002)(316002)(9686003)(110136005)(54906003)(33656002)(7416002)(76176011)(305945005)(81156014)(7696005)(5250100002)(81166006)(7736002)(8676002)(2201001)(25786009)(86362001)(14454004)(55016002)(53936002)(4326008)(6246003)(229853002)(486006)(446003)(6506007)(53546011)(102836004)(11346002)(26005)(55236004)(186003)(2900100001)(66066001)(105586002)(59450400001)(74316002)(106356001)(97736004)(3280700002)(3660700001)(99286004)(6116002)(2906002)(68736007)(8936002)(476003)(2501003)(5660300001)(3846002)(5890100001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR02MB2567;H:CY4PR02MB2709.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY4PR02MB2567;
-x-ms-traffictypediagnostic: CY4PR02MB2567:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vsagar@xilinx.com;
-x-microsoft-antispam-prvs: <CY4PR02MB256708FF88CFED4FF5E40909A76C0@CY4PR02MB2567.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(192813158149592)(95692535739014)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:CY4PR02MB2567;BCL:0;PCL:0;RULEID:;SRVR:CY4PR02MB2567;
-x-forefront-prvs: 0688BF9B46
-x-microsoft-antispam-message-info: z3zEeLdgZGd9xsH81f9bYODTuxfG5Vft1HFxxEJ7jkXpEsle1lIHgg4vn3EJn3rzQDDPDT6ngpbD8p3qsap39c8C6zzNF00W4Y9/ToDsjmiXV68KGW7CP8T6fpua5dGpeKoNpvzezsfyWTCL2qCZkV1IeXbWJPbimOnEVJOv5i+hdws1B1Tq8ZxYfUlxJm2b
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 989fe1cf-f7d3-4788-38e0-08d5c5f5a890
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 989fe1cf-f7d3-4788-38e0-08d5c5f5a890
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2018 06:22:02.7070
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR02MB2567
+        id S1754656AbeE3G1I (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 02:27:08 -0400
+Received: from mga17.intel.com ([192.55.52.151]:14766 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752773AbeE3G1F (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 02:27:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,459,1520924400";
+   d="scan'208";a="45840731"
+From: Jin Yao <yao.jin@linux.intel.com>
+To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH] perf util: Add more PMU fields for perf script python
+Date: Wed, 30 May 2018 22:20:45 +0800
+Message-Id: <1527690045-17987-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4U6MJUY024576
 
-Hi Randy,
+When doing pmu sampling and then running a script with
+perf script -s script.py, the process_event function gets
+dictionary with some fields from the perf ring buffer
+(like ip, sym, callchain etc).
 
-Thanks for reviewing. 
+But we miss quite a few fields we report now, for example,
+LBRs,data source,weight,transaction,iregs,uregs,and etc.
 
-> -----Original Message-----
-> From: Randy Dunlap [mailto:rdunlap@infradead.org]
-> Sent: Wednesday, May 30, 2018 1:29 AM
-> To: Vishal Sagar <vishal.sagar@xilinx.com>; Hyun Kwon <hyunk@xilinx.com>;
-> laurent.pinchart@ideasonboard.com; michal.simek@xilinx.com; linux-
-> media@vger.kernel.org; devicetree@vger.kernel.org
-> Cc: sakari.ailus@linux.intel.com; hans.verkuil@cisco.com;
-> mchehab@kernel.org; robh+dt@kernel.org; mark.rutland@arm.com; Dinesh
-> Kumar <dineshk@xilinx.com>; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH 2/2] media: v4l: xilinx: Add Xilinx MIPI CSI-2 Rx Subsystem
-> driver
-> 
-> On 05/29/2018 11:54 AM, Vishal Sagar wrote:
-> >
-> > Signed-off-by: Vishal Sagar <vishal.sagar@xilinx.com>
-> > ---
-> >  drivers/media/platform/xilinx/Kconfig           |   12 +
-> >  drivers/media/platform/xilinx/Makefile          |    1 +
-> >  drivers/media/platform/xilinx/xilinx-csi2rxss.c | 1751
-> +++++++++++++++++++++++
-> >  include/uapi/linux/xilinx-csi2rxss.h            |   25 +
-> >  include/uapi/linux/xilinx-v4l2-controls.h       |   14 +
-> >  5 files changed, 1803 insertions(+)
-> >  create mode 100644 drivers/media/platform/xilinx/xilinx-csi2rxss.c
-> >  create mode 100644 include/uapi/linux/xilinx-csi2rxss.h
-> >
-> > diff --git a/drivers/media/platform/xilinx/Kconfig
-> b/drivers/media/platform/xilinx/Kconfig
-> > index a5d21b7..06d5944 100644
-> > --- a/drivers/media/platform/xilinx/Kconfig
-> > +++ b/drivers/media/platform/xilinx/Kconfig
-> > @@ -8,6 +8,18 @@ config VIDEO_XILINX
-> >
-> >  if VIDEO_XILINX
-> >
-> > +config VIDEO_XILINX_CSI2RXSS
-> > +       tristate "Xilinx CSI2 Rx Subsystem"
-> > +       depends on VIDEO_XILINX
-> > +       help
-> > +         Driver for Xilinx MIPI CSI2 Rx Subsystem. This is a V4L sub-device
-> > +         based driver that takes input from CSI2 Tx source and converts
-> > +         it into an AXI4-Stream. It has a DPHY (whose register interface
-> > +         can be enabled, an optional I2C controller and an optional Video
-> 
-> 	    can be enabled),
-> 
+This patch reports these fields for perf script python
+processing.
 
-Noted. I will update in next revision of patch.
+New created elements:
+---------------------
+brstack (from sample->branch_stack, raw value):
+    from, to, mispred, predicted, in_tx, abort, cycles.
 
-> > +         Format Bridge which converts the AXI4-Stream data to Xilinx Video
-> > +         Bus formats based on UG934. The driver is used to set the number
-> > +         of active lanes and get short packet data.
-> > +
-> >  config VIDEO_XILINX_TPG
-> >         tristate "Xilinx Video Test Pattern Generator"
-> >         depends on VIDEO_XILINX
-> 
-> 
-> 
-> > This email and any attachments are intended for the sole use of the named
-> recipient(s) and contain(s) confidential information that may be proprietary,
-> privileged or copyrighted under applicable law. If you are not the intended
-> recipient, do not read, copy, or forward this email message or any attachments.
-> Delete this email message and any attachments immediately.
-> 
-> :(
-> 
+brstacksym (from sample->branch_stack, converted string):
+    from, to, pred, in_tx, abort
 
-Sorry about that.
-I will work with IT on getting this removed before sending v2 for the patches.
+datasrc (from sample->datasrc, raw value)
 
--- Vishal 
+datasrc_decode (from sample->datasrc, decoded string)
 
-> --
-> ~Randy
+iregs (from attr->sample_regs_intr, converted reg name)
+
+uregs (from attr->sample_regs_user, converted reg name)
+
+weight (from sample->weight, raw value)
+
+transaction (from sample->transaction, raw value)
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ .../util/scripting-engines/trace-event-python.c    | 212 ++++++++++++++++++++-
+ 1 file changed, 211 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index 7f8afac..01abb4a 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -48,6 +48,7 @@
+ #include "cpumap.h"
+ #include "print_binary.h"
+ #include "stat.h"
++#include "mem-events.h"
+ 
+ #if PY_MAJOR_VERSION < 3
+ #define _PyUnicode_FromString(arg) \
+@@ -448,6 +449,151 @@ static PyObject *python_process_callchain(struct perf_sample *sample,
+ 	return pylist;
+ }
+ 
++static PyObject *python_process_brstack(struct perf_sample *sample)
++{
++	struct branch_stack *br = sample->branch_stack;
++	PyObject *pylist;
++	u64 i;
++
++	pylist = PyList_New(0);
++	if (!pylist)
++		Py_FatalError("couldn't create Python list");
++
++	if (!(br && br->nr))
++		goto exit;
++
++	for (i = 0; i < br->nr; i++) {
++		PyObject *pyelem;
++
++		pyelem = PyDict_New();
++		if (!pyelem)
++			Py_FatalError("couldn't create Python dictionary");
++
++		pydict_set_item_string_decref(pyelem, "from",
++		    PyLong_FromUnsignedLongLong(br->entries[i].from));
++		pydict_set_item_string_decref(pyelem, "to",
++		    PyLong_FromUnsignedLongLong(br->entries[i].to));
++		pydict_set_item_string_decref(pyelem, "mispred",
++		    PyLong_FromUnsignedLongLong(br->entries[i].flags.mispred));
++		pydict_set_item_string_decref(pyelem, "predicted",
++		    PyLong_FromUnsignedLongLong(br->entries[i].flags.predicted));
++		pydict_set_item_string_decref(pyelem, "in_tx",
++		    PyLong_FromUnsignedLongLong(br->entries[i].flags.in_tx));
++		pydict_set_item_string_decref(pyelem, "abort",
++		    PyLong_FromUnsignedLongLong(br->entries[i].flags.abort));
++		pydict_set_item_string_decref(pyelem, "cycles",
++		    PyLong_FromUnsignedLongLong(br->entries[i].flags.cycles));
++
++		PyList_Append(pylist, pyelem);
++		Py_DECREF(pyelem);
++	}
++
++exit:
++	return pylist;
++}
++
++static unsigned long get_offset(struct symbol *sym, struct addr_location *al)
++{
++	unsigned long offset;
++
++	if (al->addr < sym->end)
++		offset = al->addr - sym->start;
++	else
++		offset = al->addr - al->map->start - sym->start;
++
++	return offset;
++}
++
++static int get_symoff(struct symbol *sym, struct addr_location *al,
++		      bool print_off, char *bf, int size)
++{
++	unsigned long offset;
++
++	if (!sym || !sym->name)
++		return scnprintf(bf, size, "%s", "[unknown]");
++
++	if (!print_off)
++		return scnprintf(bf, size, "%s", sym->name);
++
++	offset = get_offset(sym, al);
++
++	return scnprintf(bf, size, "%s+0x%x", sym->name, offset);
++}
++
++static int get_br_mspred(struct branch_flags *flags, char *bf, int size)
++{
++	if (!flags->mispred  && !flags->predicted)
++		return scnprintf(bf, size, "%s", "-");
++
++	if (flags->mispred)
++		return scnprintf(bf, size, "%s", "M");
++
++	return scnprintf(bf, size, "%s", "P");
++}
++
++static PyObject *python_process_brstacksym(struct perf_sample *sample,
++					   struct thread *thread)
++{
++	struct branch_stack *br = sample->branch_stack;
++	PyObject *pylist;
++	u64 i;
++	char bf[512];
++	struct addr_location al;
++
++	pylist = PyList_New(0);
++	if (!pylist)
++		Py_FatalError("couldn't create Python list");
++
++	if (!(br && br->nr))
++		goto exit;
++
++	for (i = 0; i < br->nr; i++) {
++		PyObject *pyelem;
++
++		pyelem = PyDict_New();
++		if (!pyelem)
++			Py_FatalError("couldn't create Python dictionary");
++
++		thread__find_symbol(thread, sample->cpumode,
++				    br->entries[i].from, &al);
++		get_symoff(al.sym, &al, true, bf, sizeof(bf));
++		pydict_set_item_string_decref(pyelem, "from",
++					      _PyUnicode_FromString(bf));
++
++		thread__find_symbol(thread, sample->cpumode,
++				    br->entries[i].to, &al);
++		get_symoff(al.sym, &al, true, bf, sizeof(bf));
++		pydict_set_item_string_decref(pyelem, "to",
++					      _PyUnicode_FromString(bf));
++
++		get_br_mspred(&br->entries[i].flags, bf, sizeof(bf));
++		pydict_set_item_string_decref(pyelem, "pred",
++					      _PyUnicode_FromString(bf));
++
++		if (br->entries[i].flags.in_tx) {
++			pydict_set_item_string_decref(pyelem, "in_tx",
++					      _PyUnicode_FromString("X"));
++		} else {
++			pydict_set_item_string_decref(pyelem, "in_tx",
++					      _PyUnicode_FromString("-"));
++		}
++
++		if (br->entries[i].flags.abort) {
++			pydict_set_item_string_decref(pyelem, "abort",
++					      _PyUnicode_FromString("A"));
++		} else {
++			pydict_set_item_string_decref(pyelem, "abort",
++					      _PyUnicode_FromString("-"));
++		}
++
++		PyList_Append(pylist, pyelem);
++		Py_DECREF(pyelem);
++	}
++
++exit:
++	return pylist;
++}
++
+ static PyObject *get_sample_value_as_tuple(struct sample_read_value *value)
+ {
+ 	PyObject *t;
+@@ -498,12 +644,63 @@ static void set_sample_read_in_dict(PyObject *dict_sample,
+ 	pydict_set_item_string_decref(dict_sample, "values", values);
+ }
+ 
++static void set_sample_datasrc_in_dict(PyObject *dict,
++				       struct perf_sample *sample)
++{
++	struct mem_info mi = { .data_src.val = sample->data_src };
++	char decode[100];
++
++	pydict_set_item_string_decref(dict, "datasrc",
++			PyLong_FromUnsignedLongLong(sample->data_src));
++
++	perf_script__meminfo_scnprintf(decode, 100, &mi);
++
++	pydict_set_item_string_decref(dict, "datasrc_decode",
++			_PyUnicode_FromString(decode));
++}
++
++static int regs_map(struct regs_dump *regs, uint64_t mask, char *bf, int size)
++{
++	unsigned int i = 0, r;
++	int printed = 0;
++
++	bf[0] = 0;
++
++	for_each_set_bit(r, (unsigned long *) &mask, sizeof(mask) * 8) {
++		u64 val = regs->regs[i++];
++
++		printed += scnprintf(bf + printed, size - printed,
++				     "%5s:0x%" PRIx64 " ",
++				     perf_reg_name(r), val);
++	}
++
++	return printed;
++}
++
++static void set_regs_in_dict(PyObject *dict,
++			     struct perf_sample *sample,
++			     struct perf_evsel *evsel)
++{
++	struct perf_event_attr *attr = &evsel->attr;
++	char bf[512];
++
++	regs_map(&sample->intr_regs, attr->sample_regs_intr, bf, sizeof(bf));
++
++	pydict_set_item_string_decref(dict, "iregs",
++			_PyUnicode_FromString(bf));
++
++	regs_map(&sample->user_regs, attr->sample_regs_user, bf, sizeof(bf));
++
++	pydict_set_item_string_decref(dict, "uregs",
++			_PyUnicode_FromString(bf));
++}
++
+ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
+ 					 struct perf_evsel *evsel,
+ 					 struct addr_location *al,
+ 					 PyObject *callchain)
+ {
+-	PyObject *dict, *dict_sample;
++	PyObject *dict, *dict_sample, *brstack, *brstacksym;
+ 
+ 	dict = PyDict_New();
+ 	if (!dict)
+@@ -534,6 +731,11 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
+ 	pydict_set_item_string_decref(dict_sample, "addr",
+ 			PyLong_FromUnsignedLongLong(sample->addr));
+ 	set_sample_read_in_dict(dict_sample, sample, evsel);
++	pydict_set_item_string_decref(dict_sample, "weight",
++			PyLong_FromUnsignedLongLong(sample->weight));
++	pydict_set_item_string_decref(dict_sample, "transaction",
++			PyLong_FromUnsignedLongLong(sample->transaction));
++	set_sample_datasrc_in_dict(dict_sample, sample);
+ 	pydict_set_item_string_decref(dict, "sample", dict_sample);
+ 
+ 	pydict_set_item_string_decref(dict, "raw_buf", _PyBytes_FromStringAndSize(
+@@ -551,6 +753,14 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
+ 
+ 	pydict_set_item_string_decref(dict, "callchain", callchain);
+ 
++	brstack = python_process_brstack(sample);
++	pydict_set_item_string_decref(dict, "brstack", brstack);
++
++	brstacksym = python_process_brstacksym(sample, al->thread);
++	pydict_set_item_string_decref(dict, "brstacksym", brstacksym);
++
++	set_regs_in_dict(dict, sample, evsel);
++
+ 	return dict;
+ }
+ 
+-- 
+2.7.4
