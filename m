@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753456AbeE3MQ6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:16:58 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47732 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752511AbeE3MQe (ORCPT
+        id S1753387AbeE3MQz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:16:55 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34173 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752240AbeE3MQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:16:34 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180530121632euoutp0165b1c514e2724ebc5396d32aabf673e9~zazk2W_wE0899308993euoutp01z
-X-AuditID: cbfec7f4-b4fc79c0000043e4-89-5b0e961dcc90
+        Wed, 30 May 2018 08:16:33 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180530121631euoutp024eb599ec148fdcd321f56d4ef5b200a7~zazkV3Lkr0061000610euoutp02W
+X-AuditID: cbfec7f4-b4fc79c0000043e4-86-5b0e961cd64e
 From: Maciej Purski <m.purski@samsung.com>
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
@@ -27,645 +27,101 @@ Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v2 08/10] drm/bridge: tc358764: Add DSI to LVDS bridge
- driver
-Date: Wed, 30 May 2018 14:15:59 +0200
-Message-id: <1527682561-1386-9-git-send-email-m.purski@samsung.com>
+Subject: [PATCH v2 07/10] dt-bindings: tc358754: add DT bindings
+Date: Wed, 30 May 2018 14:15:58 +0200
+Message-id: <1527682561-1386-8-git-send-email-m.purski@samsung.com>
 X-Mailer: git-send-email 2.7.4
 In-reply-to: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfyyUcRzH+z73PHePm0fPHppvQus21YRkpe+qyfDHU3+Uf1rGiitPWOfH
-        7nGiLcym3HF+F5Wh/Kpz5FeKkB1zK0XGhCbMulxYP5TF/Khz57/X5/19f96fz777kAImnXAg
-        o2LiOXmMVCYRivHWvpVBd6d7NiGeFTVuaKJ+gEDqgTcYSstYJFBj8TMClfX+10b+fBei/Klc
-        HM19HsJRzuy8AA0ONojQ+7QFEVLmVYpQ0+wogYbbS4SoeLALQ+XGCRzV9U6KUNXHIQyld/aK
-        UHGBUYhW2ktx312stlQL2OFsNca2PZgUsQ8z7hNsk0YpZF8sTxPsVKYeY5srU9jsFg1gl5qc
-        A8XB4lPhnCwqgZMf9gkTR04bDsWVZIHEzjouFfzlVcCKhPRROJU5jauAmGToJwDqlPmWYglA
-        bWUOvu1qXDBuMUNXA7g0QZtNmwA+fzQrVAGSFNKuUHsn1KTb0RoAm8cWgakQ0HcJ+KFsnjB1
-        29Ln4aeWKqGJcdoFGqoLt3SK9oevavMI8zRnOD6gFJhCregAWNvhY8qBdIEIGivngNkTAIc3
-        32JmtoXf9C0iMzvC4YJMy9axMN0wa9ETYZe635J/Evboh7ZYQNvA/NairVmQpmDGbcZsYWFD
-        5oTlJ4oAHCipwXLB7nKwQwPsOQUfHcHxXjHcDQ9eGs0rYiI8rsZGN4H/x9G/of/9ErSvXdEB
-        mgQSa8oziAphCGkCnxStA5AUSOwoRad1CEOFS5NucvLYULlCxvE6sIfEJfbU5YPJwQwdIY3n
-        rnNcHCfffsVIK4dUwBzwGgsrTJxRfan7YW88K9vnNEUmnqst0PoZImT+F981uAX0oTqjVbfh
-        llq1Pye3fj3E3W6kGquIn3malVJ8THK6NnzVsWat7ZrAV8nqlF/3nvH2fvyTWY1VUx3HcxQa
-        /Up38tr6ztd+QYX9ceOBcSVilzA76sL8cs/oxqUTvyQ4Hyk94iqQ89J/uKfn7BgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t/xy7oy0/iiDc7eVbW4te4cq0XvuZNM
-        Fk0db1ktNs5Yz2ox/whQ7MrX92wWk+5PYLF4ce8ii0X/49fMFufPb2C3ONv0ht2ic+ISdotN
-        j6+xWlzeNYfNYsb5fUwWC17eYrFYe+Quu8XS6xeZLFr3HmG3mDH5JZvFz13zWBxEPdbMW8Po
-        cbmvl8lj56y77B6zO2ayemxa1cnmsf3bA1aP+93HmTw2L6n36NuyitHj8ya5AK4oLpuU1JzM
-        stQifbsErowHz7QL5vQwVuxdm9rA+KO4i5GTQ0LARGLjm5csXYxcHEICSxglzty9xAjhNDJJ
-        /Dn6g62LkYODTUBLYk17PEhcRGAVo8TUv3fYQRxmgdmsEq8eTWAEGSUs4CuxbuspFhCbRUBV
-        4tmyKawgNq+As8Tu1RNZIdbJSdw818kMMpRTwEVi9R47kLAQUMm+lk7GCYw8CxgZVjGKpJYW
-        56bnFhvpFSfmFpfmpesl5+duYgSG/bZjP7fsYOx6F3yIUYCDUYmH1yCCN1qINbGsuDL3EKME
-        B7OSCG/pXp5oId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rznDSqjhATSE0tSs1NTC1KLYLJMHJxS
-        DYxcsYF9UdGft35UmRb1LazqWcHKGfFV1U3rF28pcdu62qV4Cr9/RV0l63H+rWfz+P1vbTgy
-        7/idhUx9//WWpLZoKUSmqT9SLKzduW1h+n0F/ni/r5dWeBSru1p+nXZeZM7rN6yP54qdXLB6
-        7+2OgorMruMmlqrLm24/KP9Y+HJ7yb6bc2Sn8DYosRRnJBpqMRcVJwIAl3qXh3cCAAA=
-X-CMS-MailID: 20180530121628eucas1p291c2774152145231a0a5c4ed56354d7f
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTYRjHe8/Z2ZnL2WlavukyGIQlZZqhLyimuODQl/xWKKUzDyrplB1v
+        i8pLWHMy87LlUlHLS95Sm8sbanihFaZLLC8LtTBMm9YHNRJCc259+73/58fzPg88PFyYR7jx
+        EmSpjFwmTRRz+ZyuN9ums6LHTpE+jeNByNw2QSD1xDsM5SrXCfRS106g6tG97OPWLy4qWSzi
+        oJWFSQ56tGTBkcnUQaLx3DUS5RfXkUi/NE2gqb5KLtKZBjFUs2rmoBej8ySqn5nEUN7AKIl0
+        patctN1XxQk5QrdWtQJ6qlCN0b3l8yRdoXxC0PrmfC7d/fsLQS8WGDG6sy6LLjQ0A3pD7xHO
+        j+AHxTKJCemM/FxwND9eM7IMUvIOZc7sLJHZoN9RBRx4kLoAe9rUhJWFVCOAA5/EKsDf4w0A
+        NSNfSRXg7UvPNt1teQOAFZ81wPbYBVDbOwSsEpfygq0Po6y5C9UMYOfs+r6EU1oCfqi27H/h
+        TIXASuMQbmUOdRKaR3SYlQVUGKxdbMdsI3nAuYl83NrUgZLAlv5gax9IlZLwp1prdyRwqnqY
+        a2Nn+MNoIG0sgvnKIbuTDPOWl+x5JhxUjxE2DoQjxsl9xiknWNJVhtu2FEDlA6FNoWGTtsW+
+        ZBmA+nUTKALHasCBZuDKpLFJcQx7XsZkeLPSJDZNFud9MzlJD/aOY2zHuNkD+v7GDAOKB8SO
+        Ap9rgkghIU1nFUnDAPJwsYsgbcAxUiiIlSpuM/LkKHlaIsMOA3ceR+wquHHqXoSQipOmMrcY
+        JoWR/69iPAe3bKD4UzCnsuRqOtZhaUXv4VcSVjVz8MyVnYur9y3Rnu/H39Y/DQlayMy5Exhe
+        16SOCbVk+U9n7Hb71t5t8zxuMm/5aQ2ytXqQsyL65l9V7HOiNuf0pYbvBrTh1xGQkl0Y4CVd
+        xYhy5VWT32sXn8uzVc9DryuKJYGio1lRFTXGsBIxh42X+nrhclb6DyDFdJIYAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t/xy7rS0/iiDfoP6lrcWneO1aL33Ekm
+        i6aOt6wWG2esZ7WYfwQoduXrezaLSfcnsFi8uHeRxaL/8Wtmi/PnN7BbnG16w27ROXEJu8Wm
+        x9dYLS7vmsNmMeP8PiaLBS9vsVisPXKX3WLp9YtMFq17j7BbzJj8ks3i5655LA6iHmvmrWH0
+        uNzXy+Sxc9Zddo/ZHTNZPTat6mTz2P7tAavH/e7jTB6bl9R79G1ZxejxeZNcAFcUl01Kak5m
+        WWqRvl0CV8aUw88YC1r5K67/e8zewLiHp4uRg0NCwERi0RfpLkYuDiGBJYwSa04eZYNwGpkk
+        5nxczAJSxCagJbGmPR4kLiKwilFi6t877CAOs8BsVolXjyYwdjFycggLOEjMOX6QGcRmEVCV
+        uHV4BhOIzSvgLLH4/nowW0JATuLmuU5mkKGcAi4Sq/fYgYSFgEr2tXQyTmDkWcDIsIpRJLW0
+        ODc9t9hQrzgxt7g0L10vOT93EyMw7Lcd+7l5B+OljcGHGAU4GJV4eA0ieKOFWBPLiitzDzFK
+        cDArifCW7uWJFuJNSaysSi3Kjy8qzUktPsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp
+        1cA4Y+rOafLM+SVnreWKb2gcK540rTXatue8iuY/vv8dMXMCjRe5vnrkwypd/dPIyvPD4869
+        v1YIT2RVW2gWUWLr1bDjX2SCT2v5hOWzlNXrsgtb1sZuSrI5Pu1Uo4C41sk9M2M4Gg8riNQ8
+        3V+wbcHdV3HW3tILDp5+VCVhkFG42vDfjIPHEtmVWIozEg21mIuKEwETYAkwdwIAAA==
+X-CMS-MailID: 20180530121627eucas1p1c8daf24d7c95e9e8b04a523d4662dfd9
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180530121628eucas1p291c2774152145231a0a5c4ed56354d7f
+X-CMS-RootMailID: 20180530121627eucas1p1c8daf24d7c95e9e8b04a523d4662dfd9
 References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
-        <CGME20180530121628eucas1p291c2774152145231a0a5c4ed56354d7f@eucas1p2.samsung.com>
+        <CGME20180530121627eucas1p1c8daf24d7c95e9e8b04a523d4662dfd9@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andrzej Hajda <a.hajda@samsung.com>
 
-Add a drm_bridge driver for the Toshiba TC358764 DSI to LVDS bridge.
+The patch adds bindings to Toshiba DSI/LVDS bridge TC358764.
+Bindings describe power supplies, reset gpio and video interfaces.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- drivers/gpu/drm/bridge/Kconfig    |   9 +
- drivers/gpu/drm/bridge/Makefile   |   1 +
- drivers/gpu/drm/bridge/tc358764.c | 547 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 557 insertions(+)
- create mode 100644 drivers/gpu/drm/bridge/tc358764.c
+ .../bindings/display/bridge/toshiba,tc358764.txt   | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index fa2c799..9bd3eb8 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -110,6 +110,15 @@ config DRM_THINE_THC63LVD1024
- 	---help---
- 	  Thine THC63LVD1024 LVDS/parallel converter driver.
- 
-+config DRM_TOSHIBA_TC358764
-+	tristate "TC358764 DSI/LVDS bridge"
-+	depends on DRM && DRM_PANEL
-+	depends on OF
-+	select DRM_MIPI_DSI
-+	select VIDEOMODE_HELPERS
-+	help
-+	  Toshiba TC358764 DSI/LVDS bridge driver
-+
- config DRM_TOSHIBA_TC358767
- 	tristate "Toshiba TC358767 eDP bridge"
- 	depends on OF
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index 35f88d4..bf7c0ce 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
- obj-$(CONFIG_DRM_SII902X) += sii902x.o
- obj-$(CONFIG_DRM_SII9234) += sii9234.o
- obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
-+obj-$(CONFIG_DRM_TOSHIBA_TC358764) += tc358764.o
- obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
- obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
- obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
-diff --git a/drivers/gpu/drm/bridge/tc358764.c b/drivers/gpu/drm/bridge/tc358764.c
+diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
 new file mode 100644
-index 0000000..3109eba
+index 0000000..6eda14f
 --- /dev/null
-+++ b/drivers/gpu/drm/bridge/tc358764.c
-@@ -0,0 +1,547 @@
-+/*
-+ * Copyright (C) 2018 Samsung Electronics Co., Ltd
-+ *
-+ * Authors:
-+ *	Andrzej Hajda <a.hajda@samsung.com>
-+ *	Maciej Purski <m.purski@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.
-+ *
-+ */
++++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+@@ -0,0 +1,37 @@
++TC358764 MIPI-DSI to LVDS panel bridge
 +
-+#include <drm/drm_atomic_helper.h>
++Required properties:
++  - compatible: "toshiba,tc358764"
++  - reg: the virtual channel number of a DSI peripheral
++  - vddc-supply: core voltage supply, 1.2V
++  - vddio-supply: I/O voltage supply, 1.8V or 3.3V
++  - vddlvds-supply: LVDS1/2 voltage supply, 3.3V
++  - reset-gpios: a GPIO spec for the reset pin
 +
-+#include <drm/drmP.h>
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_panel.h>
++The device node can contain zero to two 'port' child nodes, each with one
++child 'endpoint' node, according to the bindings defined in [1].
++The following are properties specific to those nodes.
 +
-+#include <drm/drm_crtc.h>
-+#include <drm/drm_crtc_helper.h>
++port:
++  - reg: (required) can be 0 for DSI port or 1 for LVDS port;
 +
-+#include <linux/gpio/consumer.h>
-+#include <linux/of_graph.h>
-+#include <linux/regulator/consumer.h>
++[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
 +
-+#include <video/mipi_display.h>
-+#include <video/of_videomode.h>
-+#include <video/videomode.h>
++Example:
 +
-+#define FLD_MASK(start, end)    (((1 << ((start) - (end) + 1)) - 1) << (end))
-+#define FLD_VAL(val, start, end) (((val) << (end)) & FLD_MASK(start, end))
-+
-+/* PPI layer registers */
-+#define PPI_STARTPPI		0x0104 /* START control bit */
-+#define PPI_LPTXTIMECNT		0x0114 /* LPTX timing signal */
-+#define PPI_LANEENABLE		0x0134 /* Enables each lane */
-+#define PPI_TX_RX_TA		0x013C /* BTA timing parameters */
-+#define PPI_D0S_CLRSIPOCOUNT	0x0164 /* Assertion timer for Lane 0 */
-+#define PPI_D1S_CLRSIPOCOUNT	0x0168 /* Assertion timer for Lane 1 */
-+#define PPI_D2S_CLRSIPOCOUNT	0x016C /* Assertion timer for Lane 2 */
-+#define PPI_D3S_CLRSIPOCOUNT	0x0170 /* Assertion timer for Lane 3 */
-+#define PPI_START_FUNCTION	1
-+
-+/* DSI layer registers */
-+#define DSI_STARTDSI		0x0204 /* START control bit of DSI-TX */
-+#define DSI_LANEENABLE		0x0210 /* Enables each lane */
-+#define DSI_RX_START		1
-+
-+/* Video path registers */
-+#define VP_CTRL			0x0450 /* Video Path Control */
-+#define VP_CTRL_MSF(v)		FLD_VAL(v, 0, 0) /* Magic square in RGB666 */
-+#define VP_CTRL_VTGEN(v)	FLD_VAL(v, 4, 4) /* Use chip clock for timing */
-+#define VP_CTRL_EVTMODE(v)	FLD_VAL(v, 5, 5) /* Event mode */
-+#define VP_CTRL_RGB888(v)	FLD_VAL(v, 8, 8) /* RGB888 mode */
-+#define VP_CTRL_VSDELAY(v)	FLD_VAL(v, 31, 20) /* VSYNC delay */
-+#define VP_CTRL_HSPOL		BIT(17) /* Polarity of HSYNC signal */
-+#define VP_CTRL_DEPOL		BIT(18) /* Polarity of DE signal */
-+#define VP_CTRL_VSPOL		BIT(19) /* Polarity of VSYNC signal */
-+#define VP_HTIM1		0x0454 /* Horizontal Timing Control 1 */
-+#define VP_HTIM1_HBP(v)		FLD_VAL(v, 24, 16)
-+#define VP_HTIM1_HSYNC(v)	FLD_VAL(v, 8, 0)
-+#define VP_HTIM2		0x0458 /* Horizontal Timing Control 2 */
-+#define VP_HTIM2_HFP(v)		FLD_VAL(v, 24, 16)
-+#define VP_HTIM2_HACT(v)	FLD_VAL(v, 10, 0)
-+#define VP_VTIM1		0x045C /* Vertical Timing Control 1 */
-+#define VP_VTIM1_VBP(v)		FLD_VAL(v, 23, 16)
-+#define VP_VTIM1_VSYNC(v)	FLD_VAL(v, 7, 0)
-+#define VP_VTIM2		0x0460 /* Vertical Timing Control 2 */
-+#define VP_VTIM2_VFP(v)		FLD_VAL(v, 23, 16)
-+#define VP_VTIM2_VACT(v)	FLD_VAL(v, 10, 0)
-+#define VP_VFUEN		0x0464 /* Video Frame Timing Update Enable */
-+
-+/* LVDS registers */
-+#define LV_MX0003		0x0480 /* Mux input bit 0 to 3 */
-+#define LV_MX0407		0x0484 /* Mux input bit 4 to 7 */
-+#define LV_MX0811		0x0488 /* Mux input bit 8 to 11 */
-+#define LV_MX1215		0x048C /* Mux input bit 12 to 15 */
-+#define LV_MX1619		0x0490 /* Mux input bit 16 to 19 */
-+#define LV_MX2023		0x0494 /* Mux input bit 20 to 23 */
-+#define LV_MX2427		0x0498 /* Mux input bit 24 to 27 */
-+#define LV_MX(b0, b1, b2, b3)	(FLD_VAL(b0, 4, 0) | FLD_VAL(b1, 12, 8) | \
-+				FLD_VAL(b2, 20, 16) | FLD_VAL(b3, 28, 24))
-+
-+/* Input bit numbers used in mux registers */
-+enum {
-+	LVI_R0,
-+	LVI_R1,
-+	LVI_R2,
-+	LVI_R3,
-+	LVI_R4,
-+	LVI_R5,
-+	LVI_R6,
-+	LVI_R7,
-+	LVI_G0,
-+	LVI_G1,
-+	LVI_G2,
-+	LVI_G3,
-+	LVI_G4,
-+	LVI_G5,
-+	LVI_G6,
-+	LVI_G7,
-+	LVI_B0,
-+	LVI_B1,
-+	LVI_B2,
-+	LVI_B3,
-+	LVI_B4,
-+	LVI_B5,
-+	LVI_B6,
-+	LVI_B7,
-+	LVI_HS,
-+	LVI_VS,
-+	LVI_DE,
-+	LVI_L0
-+};
-+
-+#define LV_CFG			0x049C /* LVDS Configuration */
-+#define LV_PHY0			0x04A0 /* LVDS PHY 0 */
-+#define LV_PHY0_RST(v)		FLD_VAL(v, 22, 22) /* PHY reset */
-+#define LV_PHY0_IS(v)		FLD_VAL(v, 15, 14)
-+#define LV_PHY0_ND(v)		FLD_VAL(v, 4, 0) /* Frequency range select */
-+#define LV_PHY0_PRBS_ON(v)	FLD_VAL(v, 20, 16) /* Clock/Data Flag pins */
-+
-+/* System registers */
-+#define SYS_RST			0x0504 /* System Reset */
-+#define SYS_ID			0x0580 /* System ID */
-+
-+#define SYS_RST_I2CS		BIT(0) /* Reset I2C-Slave controller */
-+#define SYS_RST_I2CM		BIT(1) /* Reset I2C-Master controller */
-+#define SYS_RST_LCD		BIT(2) /* Reset LCD controller */
-+#define SYS_RST_BM		BIT(3) /* Reset Bus Management controller */
-+#define SYS_RST_DSIRX		BIT(4) /* Reset DSI-RX and App controller */
-+#define SYS_RST_REG		BIT(5) /* Reset Register module */
-+
-+#define LPX_PERIOD		2
-+#define TTA_SURE		3
-+#define TTA_GET			0x20000
-+
-+/* Lane enable PPI and DSI register bits */
-+#define LANEENABLE_CLEN		BIT(0)
-+#define LANEENABLE_L0EN		BIT(1)
-+#define LANEENABLE_L1EN		BIT(2)
-+#define LANEENABLE_L2EN		BIT(3)
-+#define LANEENABLE_L3EN		BIT(4)
-+
-+/* LVCFG fields */
-+#define LV_CFG_LVEN		BIT(0)
-+#define LV_CFG_LVDLINK		BIT(1)
-+#define LV_CFG_CLKPOL1		BIT(2)
-+#define LV_CFG_CLKPOL2		BIT(3)
-+
-+static const char * const tc358764_supplies[] = {
-+	"vddc", "vddio", "vddmipi", "vddlvds133", "vddlvds112"
-+};
-+
-+struct tc358764 {
-+	struct device *dev;
-+	struct drm_bridge bridge;
-+	struct drm_connector connector;
-+	struct regulator_bulk_data supplies[ARRAY_SIZE(tc358764_supplies)];
-+	struct gpio_desc *gpio_reset;
-+
-+	struct drm_panel *panel;
-+};
-+
-+static int tc358764_read(struct tc358764 *ctx, u16 addr, u32 *val)
-+{
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	const struct mipi_dsi_host_ops *ops = dsi->host->ops;
-+	struct mipi_dsi_msg msg = {
-+		.type = MIPI_DSI_GENERIC_READ_REQUEST_2_PARAM,
-+		.channel = dsi->channel,
-+		.flags = MIPI_DSI_MSG_USE_LPM,
-+		.tx_buf = &addr,
-+		.tx_len = 2,
-+		.rx_buf = val,
-+		.rx_len = 4
++	bridge@0 {
++		reg = <0>;
++		compatible = "toshiba,tc358764";
++		vddc-supply = <&vcc_1v2_reg>;
++		vddio-supply = <&vcc_1v8_reg>;
++		vddlvds-supply = <&vcc_3v3_reg>;
++		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		port@1 {
++			reg = <1>;
++			lvds_ep: endpoint {
++				remote-endpoint = <&panel_ep>;
++			};
++		};
 +	};
-+	ssize_t ret;
-+
-+	if (!ops || !ops->transfer)
-+		return -EINVAL;
-+
-+	cpu_to_le16s(&addr);
-+
-+	ret = ops->transfer(dsi->host, &msg);
-+	if (ret >= 0)
-+		le32_to_cpus(val);
-+
-+	dev_dbg(ctx->dev, "read: %d, addr: %d\n", addr, *val);
-+
-+	return ret;
-+}
-+
-+static int tc358764_write(struct tc358764 *ctx, u16 addr, u32 val)
-+{
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	const struct mipi_dsi_host_ops *ops = dsi->host->ops;
-+	u8 data[6];
-+	int ret;
-+	struct mipi_dsi_msg msg = {
-+		.type = MIPI_DSI_GENERIC_LONG_WRITE,
-+		.channel = dsi->channel,
-+		.flags = MIPI_DSI_MSG_USE_LPM | MIPI_DSI_MSG_REQ_ACK,
-+		.tx_buf = data,
-+		.tx_len = 6
-+	};
-+
-+	if (!ops || !ops->transfer)
-+		return -EINVAL;
-+
-+	data[0] = addr;
-+	data[1] = addr >> 8;
-+	data[2] = val;
-+	data[3] = val >> 8;
-+	data[4] = val >> 16;
-+	data[5] = val >> 24;
-+
-+	ret = ops->transfer(dsi->host, &msg);
-+
-+	return ret;
-+}
-+
-+static inline struct tc358764 *bridge_to_tc358764(struct drm_bridge *bridge)
-+{
-+	return container_of(bridge, struct tc358764, bridge);
-+}
-+
-+static inline
-+struct tc358764 *connector_to_tc358764(struct drm_connector *connector)
-+{
-+	return container_of(connector, struct tc358764, connector);
-+}
-+
-+static int tc358764_init(struct tc358764 *ctx)
-+{
-+	u32 v = 0;
-+
-+	tc358764_read(ctx, SYS_ID, &v);
-+	dev_info(ctx->dev, "ID: %#x\n", v);
-+
-+	/* configure PPI counters */
-+	tc358764_write(ctx, PPI_TX_RX_TA, TTA_GET | TTA_SURE);
-+	tc358764_write(ctx, PPI_LPTXTIMECNT, LPX_PERIOD);
-+	tc358764_write(ctx, PPI_D0S_CLRSIPOCOUNT, 5);
-+	tc358764_write(ctx, PPI_D1S_CLRSIPOCOUNT, 5);
-+	tc358764_write(ctx, PPI_D2S_CLRSIPOCOUNT, 5);
-+	tc358764_write(ctx, PPI_D3S_CLRSIPOCOUNT, 5);
-+
-+	/* enable four data lanes and clock lane */
-+	tc358764_write(ctx, PPI_LANEENABLE, LANEENABLE_L3EN | LANEENABLE_L2EN |
-+		       LANEENABLE_L1EN | LANEENABLE_L0EN | LANEENABLE_CLEN);
-+	tc358764_write(ctx, DSI_LANEENABLE, LANEENABLE_L3EN | LANEENABLE_L2EN |
-+		       LANEENABLE_L1EN | LANEENABLE_L0EN | LANEENABLE_CLEN);
-+
-+	/* start */
-+	tc358764_write(ctx, PPI_STARTPPI, PPI_START_FUNCTION);
-+	tc358764_write(ctx, DSI_STARTDSI, DSI_RX_START);
-+
-+	/* configure video path */
-+	tc358764_write(ctx, VP_CTRL, VP_CTRL_VSDELAY(15) | VP_CTRL_RGB888(1) |
-+		       VP_CTRL_EVTMODE(1) | VP_CTRL_HSPOL | VP_CTRL_VSPOL);
-+
-+	/* reset PHY */
-+	tc358764_write(ctx, LV_PHY0, LV_PHY0_RST(1) |
-+		       LV_PHY0_PRBS_ON(4) | LV_PHY0_IS(2) | LV_PHY0_ND(6));
-+	tc358764_write(ctx, LV_PHY0, LV_PHY0_PRBS_ON(4) | LV_PHY0_IS(2) |
-+		       LV_PHY0_ND(6));
-+
-+	/* reset bridge */
-+	tc358764_write(ctx, SYS_RST, SYS_RST_LCD);
-+
-+	/* set bit order */
-+	tc358764_write(ctx, LV_MX0003, LV_MX(LVI_R0, LVI_R1, LVI_R2, LVI_R3));
-+	tc358764_write(ctx, LV_MX0407, LV_MX(LVI_R4, LVI_R7, LVI_R5, LVI_G0));
-+	tc358764_write(ctx, LV_MX0811, LV_MX(LVI_G1, LVI_G2, LVI_G6, LVI_G7));
-+	tc358764_write(ctx, LV_MX1215, LV_MX(LVI_G3, LVI_G4, LVI_G5, LVI_B0));
-+	tc358764_write(ctx, LV_MX1619, LV_MX(LVI_B6, LVI_B7, LVI_B1, LVI_B2));
-+	tc358764_write(ctx, LV_MX2023, LV_MX(LVI_B3, LVI_B4, LVI_B5, LVI_L0));
-+	tc358764_write(ctx, LV_MX2427, LV_MX(LVI_HS, LVI_VS, LVI_DE, LVI_R6));
-+	tc358764_write(ctx, LV_CFG, LV_CFG_CLKPOL2 | LV_CFG_CLKPOL1 |
-+		       LV_CFG_LVEN);
-+
-+	return 0;
-+}
-+
-+static void tc358764_reset(struct tc358764 *ctx)
-+{
-+	msleep(20);
-+	gpiod_set_value(ctx->gpio_reset, 0);
-+	msleep(20);
-+	gpiod_set_value(ctx->gpio_reset, 1);
-+	msleep(40);
-+}
-+
-+static void tc358764_poweroff(struct tc358764 *ctx)
-+{
-+	int ret;
-+
-+	tc358764_reset(ctx);
-+
-+	drm_panel_disable(ctx->panel);
-+	msleep(40);
-+
-+	ret = regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+	if (ret < 0)
-+		dev_err(ctx->dev, "error disabling regulators (%d)\n", ret);
-+}
-+
-+static int tc358764_get_modes(struct drm_connector *connector)
-+{
-+	struct tc358764 *ctx = connector_to_tc358764(connector);
-+
-+	if (ctx->panel && ctx->panel->funcs && ctx->panel->funcs->get_modes)
-+		return ctx->panel->funcs->get_modes(ctx->panel);
-+
-+	return 0;
-+}
-+
-+static const
-+struct drm_connector_helper_funcs tc358764_connector_helper_funcs = {
-+	.get_modes = tc358764_get_modes,
-+};
-+
-+static const struct drm_connector_funcs tc358764_connector_funcs = {
-+	.fill_modes = drm_helper_probe_single_connector_modes,
-+	.destroy = drm_connector_cleanup,
-+	.reset = drm_atomic_helper_connector_reset,
-+	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-+};
-+
-+static void tc358764_disable(struct drm_bridge *bridge)
-+{
-+	struct tc358764 *ctx = bridge_to_tc358764(bridge);
-+
-+	tc358764_poweroff(ctx);
-+}
-+
-+static void tc358764_pre_enable(struct drm_bridge *bridge)
-+{
-+	struct tc358764 *ctx = bridge_to_tc358764(bridge);
-+	int ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies),
-+					ctx->supplies);
-+	if (ret < 0)
-+		dev_err(ctx->dev, "error enabling regulators (%d)\n", ret);
-+
-+	tc358764_reset(ctx);
-+	tc358764_init(ctx);
-+}
-+
-+static void tc358764_enable(struct drm_bridge *bridge)
-+{
-+	struct tc358764 *ctx = bridge_to_tc358764(bridge);
-+	int ret;
-+
-+	drm_panel_prepare(ctx->panel);
-+
-+	ret = drm_panel_enable(ctx->panel);
-+	if (ret < 0)
-+		pr_err("panel enable failed\n");
-+
-+	msleep(40);
-+}
-+
-+static int tc358764_attach(struct drm_bridge *bridge)
-+{
-+	struct tc358764 *ctx = bridge_to_tc358764(bridge);
-+	struct drm_device *drm = bridge->dev;
-+	int ret;
-+
-+	if (!bridge->encoder) {
-+		DRM_ERROR("Encoder not found\n");
-+		return -ENODEV;
-+	}
-+
-+	ctx->connector.polled = DRM_CONNECTOR_POLL_HPD;
-+	ret = drm_connector_init(drm, &ctx->connector,
-+				 &tc358764_connector_funcs,
-+				 DRM_MODE_CONNECTOR_LVDS);
-+	if (ret) {
-+		DRM_ERROR("Failed to initialize connector\n");
-+		return ret;
-+	}
-+
-+	drm_connector_helper_add(&ctx->connector,
-+				 &tc358764_connector_helper_funcs);
-+
-+	drm_mode_connector_attach_encoder(&ctx->connector, bridge->encoder);
-+
-+	if (ctx->panel)
-+		drm_panel_attach(ctx->panel, &ctx->connector);
-+
-+	drm_atomic_helper_connector_reset(&ctx->connector);
-+	drm_connector_register(&ctx->connector);
-+
-+	return 0;
-+}
-+
-+static const struct drm_bridge_funcs tc358764_bridge_funcs = {
-+	.disable = tc358764_disable,
-+	.enable = tc358764_enable,
-+	.pre_enable = tc358764_pre_enable,
-+	.attach = tc358764_attach,
-+};
-+
-+static struct device_node *tc358764_of_find_panel_node(struct device *dev)
-+{
-+	struct device_node *np, *ep;
-+
-+	ep = of_graph_get_endpoint_by_regs(dev->of_node, 1, 0);
-+	if (!ep) {
-+		pr_err("faile to get endpoint\n");
-+		return NULL;
-+	}
-+
-+	np = of_graph_get_remote_port_parent(ep);
-+
-+	return np;
-+}
-+
-+static int tc358764_parse_dt(struct tc358764 *ctx)
-+{
-+	struct device *dev = ctx->dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *lvds;
-+
-+	ctx->gpio_reset = devm_gpiod_get_from_of_node(dev, np, "reset", 0,
-+						      GPIOD_OUT_LOW,
-+						      "tc358764-reset");
-+	if (IS_ERR(ctx->gpio_reset)) {
-+		dev_err(dev, "no reset GPIO pin provided\n");
-+		return PTR_ERR(ctx->gpio_reset);
-+	}
-+
-+	lvds = tc358764_of_find_panel_node(ctx->dev);
-+	if (!lvds) {
-+		dev_err(dev, "cannot find panel node\n");
-+		return -EINVAL;
-+	}
-+
-+	ctx->panel = of_drm_find_panel(lvds);
-+	if (!ctx->panel) {
-+		dev_err(dev, "panel not registered\n");
-+		return -EPROBE_DEFER;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tc358764_configure_regulators(struct tc358764 *ctx)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(ctx->supplies); ++i)
-+		ctx->supplies[i].supply = tc358764_supplies[i];
-+
-+	ret = devm_regulator_bulk_get(ctx->dev, ARRAY_SIZE(ctx->supplies),
-+				      ctx->supplies);
-+	if (ret < 0)
-+		dev_err(ctx->dev, "failed to get regulators: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static int tc358764_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct tc358764 *ctx;
-+	int ret;
-+
-+	ctx = devm_kzalloc(dev, sizeof(struct tc358764), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+
-+	ctx->dev = dev;
-+
-+	dsi->lanes = 4;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST
-+		| MIPI_DSI_MODE_VIDEO_AUTO_VERT;
-+
-+	ret = tc358764_parse_dt(ctx);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = tc358764_configure_regulators(ctx);
-+	if (ret < 0)
-+		return ret;
-+
-+	ctx->bridge.funcs = &tc358764_bridge_funcs;
-+	ctx->bridge.of_node = dev->of_node;
-+
-+	drm_bridge_add(&ctx->bridge);
-+
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret < 0) {
-+		drm_bridge_remove(&ctx->bridge);
-+		dev_err(dev, "failed to attach dsi\n");
-+	}
-+
-+	return ret;
-+}
-+
-+static int tc358764_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct tc358764 *ctx = mipi_dsi_get_drvdata(dsi);
-+
-+	tc358764_poweroff(ctx);
-+
-+	mipi_dsi_detach(dsi);
-+	drm_bridge_remove(&ctx->bridge);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tc358764_of_match[] = {
-+	{ .compatible = "toshiba,tc358764" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tc358764_of_match);
-+
-+static struct mipi_dsi_driver tc358764_driver = {
-+	.probe = tc358764_probe,
-+	.remove = tc358764_remove,
-+	.driver = {
-+		.name = "tc358764",
-+		.owner = THIS_MODULE,
-+		.of_match_table = tc358764_of_match,
-+	},
-+};
-+module_mipi_dsi_driver(tc358764_driver);
-+
-+MODULE_AUTHOR("Andrzej Hajda <a.hajda@samsung.com>");
-+MODULE_AUTHOR("Maciej Purski <m.purski@samsung.com>");
-+MODULE_DESCRIPTION("MIPI-DSI based Driver for TC358764 DSI/LVDS Bridge");
-+MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
