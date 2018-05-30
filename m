@@ -1,195 +1,219 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932085AbeE3PGy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:06:54 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46185 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753614AbeE3PGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:06:51 -0400
-Date: Wed, 30 May 2018 17:06:48 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Frieder Schrempf <frieder.schrempf@exceet.de>
-Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
-        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
-        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com, han.xu@nxp.com,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/11] dt-bindings: spi: Move and adjust the bindings
- for the fsl-qspi driver
-Message-ID: <20180530170648.02c6fc41@bbrezillon>
-In-Reply-To: <1527686082-15142-5-git-send-email-frieder.schrempf@exceet.de>
-References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
-        <1527686082-15142-5-git-send-email-frieder.schrempf@exceet.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753679AbeE3PHb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:07:31 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:32846 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753599AbeE3PH2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:07:28 -0400
+From: Prabu Thangamuthu <Prabu.T@synopsys.com>
+To: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+CC: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>,
+        "prabu.t@synopsys.com" <prabu.t@synopsys.com>
+Subject: [PATCH v2 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
+Thread-Topic: [PATCH v2 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc
+ support
+Thread-Index: AdP4J+f4+DeR4dadRlSsPnyMsPMRwA==
+Date: Wed, 30 May 2018 15:07:23 +0000
+Message-ID: <705D14B1C7978B40A723277C067CEDE2010A9B769C@IN01WEMBXB.internal.synopsys.com>
+Accept-Language: en-US, en-IN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.12.239.235]
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4UF7s9Q027483
 
-On Wed, 30 May 2018 15:14:33 +0200
-Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
 
-> Move the documentation of the old SPI NOR driver to the place of the new
-> SPI memory interface based driver and adjust the content to reflect the
-> new drivers settings.
+Synopsys has DWC MSHC controller on HPAS-DX platform connected using PCIe
+interface with SD card slot and eMMC device slots. This patch is to
+enable SD cards connected on this platform. As Clock generation logic
+is implemented using MMCM module of HAPS-DX platform, we have separate
+functions to control the MMCM to generate required clocks with respect
+to speed mode.
 
-Maybe it's better to do that in 2 steps so that people can easily
-identify what has changed in the bindings.
+Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
+---
+V2 - Removed sdhci-pci-dwc-mshc.h and moved into sdhci-pci-dwc-mshc.c
+Fixed coding style issue.
+Removed sdhci_snps_set_power and new approach to support eMMC device
+voltages will be submitted after completeing validations.
+V1 - Initial Patch.
 
-> 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
-> ---
->  .../devicetree/bindings/mtd/fsl-quadspi.txt     | 65 ------------------
->  .../devicetree/bindings/spi/spi-fsl-qspi.txt    | 69 ++++++++++++++++++++
->  2 files changed, 69 insertions(+), 65 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/fsl-quadspi.txt b/Documentation/devicetree/bindings/mtd/fsl-quadspi.txt
-> deleted file mode 100644
-> index 483e9cf..0000000
-> --- a/Documentation/devicetree/bindings/mtd/fsl-quadspi.txt
-> +++ /dev/null
-> @@ -1,65 +0,0 @@
-> -* Freescale Quad Serial Peripheral Interface(QuadSPI)
-> -
-> -Required properties:
-> -  - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
-> -		 "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
-> -		 "fsl,ls1021a-qspi"
-> -		 or
-> -		 "fsl,ls2080a-qspi" followed by "fsl,ls1021a-qspi",
-> -		 "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
-> -  - reg : the first contains the register location and length,
-> -          the second contains the memory mapping address and length
-> -  - reg-names: Should contain the reg names "QuadSPI" and "QuadSPI-memory"
-> -  - interrupts : Should contain the interrupt for the device
-> -  - clocks : The clocks needed by the QuadSPI controller
-> -  - clock-names : Should contain the name of the clocks: "qspi_en" and "qspi".
-> -
-> -Optional properties:
-> -  - fsl,qspi-has-second-chip: The controller has two buses, bus A and bus B.
-> -                              Each bus can be connected with two NOR flashes.
-> -			      Most of the time, each bus only has one NOR flash
-> -			      connected, this is the default case.
-> -			      But if there are two NOR flashes connected to the
-> -			      bus, you should enable this property.
-> -			      (Please check the board's schematic.)
-> -  - big-endian : That means the IP register is big endian
-> -
-> -Example:
-> -
-> -qspi0: quadspi@40044000 {
-> -	compatible = "fsl,vf610-qspi";
-> -	reg = <0x40044000 0x1000>, <0x20000000 0x10000000>;
-> -	reg-names = "QuadSPI", "QuadSPI-memory";
-> -	interrupts = <0 24 IRQ_TYPE_LEVEL_HIGH>;
-> -	clocks = <&clks VF610_CLK_QSPI0_EN>,
-> -		<&clks VF610_CLK_QSPI0>;
-> -	clock-names = "qspi_en", "qspi";
-> -
-> -	flash0: s25fl128s@0 {
-> -		....
-> -	};
-> -};
-> -
-> -Example showing the usage of two SPI NOR devices:
-> -
-> -&qspi2 {
-> -	pinctrl-names = "default";
-> -	pinctrl-0 = <&pinctrl_qspi2>;
-> -	status = "okay";
-> -
-> -	flash0: n25q256a@0 {
-> -		#address-cells = <1>;
-> -		#size-cells = <1>;
-> -		compatible = "micron,n25q256a", "jedec,spi-nor";
-> -		spi-max-frequency = <29000000>;
-> -		reg = <0>;
-> -	};
-> -
-> -	flash1: n25q256a@1 {
-> -		#address-cells = <1>;
-> -		#size-cells = <1>;
-> -		compatible = "micron,n25q256a", "jedec,spi-nor";
-> -		spi-max-frequency = <29000000>;
-> -		reg = <1>;
-> -	};
-> -};
-> diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-> new file mode 100644
-> index 0000000..0ee9cd8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-> @@ -0,0 +1,69 @@
-> +* Freescale Quad Serial Peripheral Interface(QuadSPI)
-> +
-> +Required properties:
-> +  - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
-> +		 "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
-> +		 "fsl,ls1021a-qspi", "fsl,ls2080a-qspi"
-> +		 or
-> +		 "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
-> +  - reg : the first contains the register location and length,
-> +          the second contains the memory mapping address and length
-> +  - reg-names: Should contain the reg names "QuadSPI" and "QuadSPI-memory"
-> +  - interrupts : Should contain the interrupt for the device
-> +  - clocks : The clocks needed by the QuadSPI controller
-> +  - clock-names : Should contain the name of the clocks: "qspi_en" and "qspi".
-> +
-> +Optional properties:
-> +  - big-endian : That means the IP registers format is big endian
-> +
-> +Required SPI slave node properties:
-> +  - reg: There are two buses (A and B) with two chip selects each.
-> +	 This encodes to which bus and CS the flash is connected:
-> +		<0>: Bus A, CS 0
-> +		<1>: Bus A, CS 1
-> +		<2>: Bus B, CS 0
-> +		<3>: Bus B, CS 1
-> +
-> +Example:
-> +
-> +qspi0: quadspi@40044000 {
-> +	compatible = "fsl,vf610-qspi";
-> +	reg = <0x40044000 0x1000>, <0x20000000 0x10000000>;
-> +	reg-names = "QuadSPI", "QuadSPI-memory";
-> +	interrupts = <0 24 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&clks VF610_CLK_QSPI0_EN>,
-> +		<&clks VF610_CLK_QSPI0>;
-> +	clock-names = "qspi_en", "qspi";
-> +
-> +	flash0: s25fl128s@0 {
-> +		....
-> +	};
-> +};
-> +
-> +Example showing the usage of two SPI NOR devices on bus A:
-> +
-> +&qspi2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_qspi2>;
-> +	status = "okay";
-> +
-> +	flash0: n25q256a@0 {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "micron,n25q256a", "jedec,spi-nor";
-> +		spi-max-frequency = <29000000>;
-> +		spi-rx-bus-width = <4>;
-> +		spi-tx-bus-width = <4>;
-> +		reg = <0>;
-> +	};
-> +
-> +	flash1: n25q256a@1 {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "micron,n25q256a", "jedec,spi-nor";
-> +		spi-max-frequency = <29000000>;
-> +		spi-rx-bus-width = <4>;
-> +		spi-tx-bus-width = <4>;
-> +		reg = <1>;
-> +	};
-> +};
+MAINTAINERS | 7 +++
+drivers/mmc/host/Makefile | 3 +-
+drivers/mmc/host/sdhci-pci-core.c | 1 +
+drivers/mmc/host/sdhci-pci-dwc-mshc.c | 88 +++++++++++++++++++++++++++++++++++
+drivers/mmc/host/sdhci-pci.h | 3 ++
+5 files changed, 101 insertions(+), 1 deletion(-)
+create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4863175..aba98b6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12684,6 +12684,13 @@ S: Maintained
+F: drivers/mmc/host/sdhci*
+F: include/linux/mmc/sdhci*
+
++SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
++M: Prabu Thangamuthu <prabu.t@synopsys.com>
++M: Manjunath M B <manjumb@synopsys.com>
++L: linux-mmc@vger.kernel.org
++S: Maintained
++F: drivers/mmc/host/sdhci-pci-dwc-mshc.c
++
+SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
+M: Ben Dooks <ben-linux@fluff.org>
+M: Jaehoon Chung <jh80.chung@samsung.com>
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index 85dc132..20490f3 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -11,7 +11,8 @@ obj-$(CONFIG_MMC_MXC) += mxcmmc.o
+obj-$(CONFIG_MMC_MXS) += mxs-mmc.o
+obj-$(CONFIG_MMC_SDHCI) += sdhci.o
+obj-$(CONFIG_MMC_SDHCI_PCI) += sdhci-pci.o
+-sdhci-pci-y += sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o
++sdhci-pci-y += sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o \
++ sdhci-pci-dwc-mshc.o
+obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI)) += sdhci-pci-data.o
+obj-$(CONFIG_MMC_SDHCI_ACPI) += sdhci-acpi.o
+obj-$(CONFIG_MMC_SDHCI_PXAV3) += sdhci-pxav3.o
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 77dd352..ca1d4f7 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -1511,6 +1511,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
+SDHCI_PCI_DEVICE(O2, SEABIRD0, o2),
+SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
+SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
++ SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC, snps),
+SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
+/* Generic SD host controller */
+{PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
+diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.c b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+new file mode 100644
+index 0000000..0706055
+--- /dev/null
++++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * SDHCI driver for Synopsys DWC_MSHC controller
++ *
++ * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
++ *
++ * Authors:
++ * Prabu Thangamuthu <prabu.t@synopsys.com>
++ * Manjunath M B <manjumb@synopsys.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "sdhci.h"
++#include "sdhci-pci.h"
++
++#define SDHCI_VENDOR_PTR_R 0xE8
++
++/* Synopsys vendor specific registers */
++#define SDHC_GPIO_OUT 0x34
++#define SDHC_AT_CTRL_R 0x40
++#define SDHC_SW_TUNE_EN 0x00000010
++
++/* MMCM DRP */
++#define SDHC_MMCM_DIV_REG 0x1020
++#define DIV_REG_100_MHZ 0x1145
++#define DIV_REG_200_MHZ 0x1083
++#define SDHC_MMCM_CLKFBOUT 0x1024
++#define CLKFBOUT_100_MHZ 0x0000
++#define CLKFBOUT_200_MHZ 0x0080
++#define SDHC_CCLK_MMCM_RST 0x00000001
++
++static void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++ u16 clk;
++ u32 reg, vendor_ptr;
++
++ vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
++
++ /* Disable software managed rx tuning */
++ reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
++ reg &= ~SDHC_SW_TUNE_EN;
++ sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
++
++ if (clock <= 52000000) {
++ sdhci_set_clock(host, clock);
++ } else {
++ /* Assert reset to MMCM */
++ reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
++ reg |= SDHC_CCLK_MMCM_RST;
++ sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
++
++ /* Configure MMCM */
++ if (clock == 100000000) {
++ sdhci_writel(host, DIV_REG_100_MHZ, SDHC_MMCM_DIV_REG);
++ sdhci_writel(host, CLKFBOUT_100_MHZ,
++ SDHC_MMCM_CLKFBOUT);
++ } else {
++ sdhci_writel(host, DIV_REG_200_MHZ, SDHC_MMCM_DIV_REG);
++ sdhci_writel(host, CLKFBOUT_200_MHZ,
++ SDHC_MMCM_CLKFBOUT);
++ }
++
++ /* De-assert reset to MMCM */
++ reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
++ reg &= ~SDHC_CCLK_MMCM_RST;
++ sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
++
++ /* Enable clock */
++ clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
++ SDHCI_CLOCK_CARD_EN;
++ sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
++ }
++}
++
++static const struct sdhci_ops sdhci_snps_ops = {
++ .set_clock = sdhci_snps_set_clock,
++ .enable_dma = sdhci_pci_enable_dma,
++ .set_bus_width = sdhci_set_bus_width,
++ .reset = sdhci_reset,
++ .set_uhs_signaling = sdhci_set_uhs_signaling,
++};
++
++const struct sdhci_pci_fixes sdhci_snps = {
++ .ops = &sdhci_snps_ops,
++};
+diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
+index db9cb54..60131b8 100644
+--- a/drivers/mmc/host/sdhci-pci.h
++++ b/drivers/mmc/host/sdhci-pci.h
+@@ -59,6 +59,8 @@
+#define PCI_VENDOR_ID_ARASAN 0x16e6
+#define PCI_DEVICE_ID_ARASAN_PHY_EMMC 0x0670
+
++#define PCI_DEVICE_ID_SYNOPSYS_DWC_MSHC 0xc202
++
+/*
+* PCI device class and mask
+*/
+@@ -182,5 +184,6 @@ static inline void *sdhci_pci_priv(struct sdhci_pci_slot *slot)
+#endif
+
+extern const struct sdhci_pci_fixes sdhci_arasan;
++extern const struct sdhci_pci_fixes sdhci_snps;
+
+#endif /* __SDHCI_PCI_H */
+-- 
+1.9.1
