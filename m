@@ -1,87 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968628AbeE3Ici (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:32:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36433 "EHLO mx2.suse.de"
+        id S968705AbeE3IdQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:33:16 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:43215 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935975AbeE3IcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:32:07 -0400
-Date: Wed, 30 May 2018 10:32:04 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Hoeun Ryu <hoeun.ryu@lge.com.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Hoeun Ryu <hoeun.ryu@lge.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH]  printk: make printk_safe_flush safe in NMI context by
- skipping flushing
-Message-ID: <20180530083204.m2yvmm7mc6owvpdk@pathway.suse.cz>
-References: <1527562331-25880-1-git-send-email-hoeun.ryu@lge.com.com>
- <20180529121315.GE438@jagdpanzerIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529121315.GE438@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S964897AbeE3IdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:33:11 -0400
+Message-Id: <9904850a3185b63c7f74442858e51c94761f1852.1527668888.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3] powerpc/lib: implement strlen() in assembly
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Wed, 30 May 2018 08:33:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-05-29 21:13:15, Sergey Senozhatsky wrote:
-> On (05/29/18 11:51), Hoeun Ryu wrote:
-> >  Make printk_safe_flush() safe in NMI context.
-> > nmi_trigger_cpumask_backtrace() can be called in NMI context. For example the
-> > function is called in watchdog_overflow_callback() if the flag of hardlockup
-> > backtrace (sysctl_hardlockup_all_cpu_backtrace) is true and
-> > watchdog_overflow_callback() function is called in NMI context on some
-> > architectures.
-> >  Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace() eventually tries
-> > to lock logbuf_lock in vprintk_emit() but the logbuf_lock can be already locked in
-> > preempted contexts (task or irq in this case) or by other CPUs and it may cause
+The generic implementation of strlen() reads strings byte per byte.
 
-The sentence "logbuf_lock can be already locked in preempted contexts" does not
-make much sense. It is a spin lock. It means that both interrupts and
-preemption are disabled.
+This patch implements strlen() in assembly based on a read of entire
+words, in the same spirit as what some other arches and glibc do.
 
-I would change it to something like:
+On a 8xx the time spent in strlen is reduced by 50-60% for long strings.
 
-"Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace() eventually tries
-to lock logbuf_lock in vprintk_emit() that might be already be part
-of a soft- or hard-lockup on another CPU."
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+Not tested on PPC64.
 
+To avoid trivial conflict, apply on top of serie "[v6 0/2] powerpc/lib: Optimisation of memcmp() and __clear_user() for PPC32".
 
-> > deadlocks.
-> >  By making printk_safe_flush() safe in NMI context, the backtrace triggering CPU
-> > just skips flushing if the lock is not avaiable in NMI context. The messages in
-> > per-cpu nmi buffer of the backtrace triggering CPU can be lost if the CPU is in
-> > hard lockup (because irq is disabled here) but if panic() is not called. The
-> > flushing can be delayed by the next irq work in normal cases.
+Changes in v3:
+ - Made it common to PPC32 and PPC64
 
-I somehow miss there a motivation why the current state is better than
-the previous. It looks like we exchange the risk of a deadlock with
-a risk of loosing the messages.
+Changes in v2:
+ - Moved handling of unaligned strings outside of the main path as it is very unlikely.
+ - Removed the verification of the fourth byte in case none of the three first ones are NUL.
 
-I see it the following way:
+ arch/powerpc/include/asm/asm-compat.h |  4 +++
+ arch/powerpc/include/asm/string.h     |  1 +
+ arch/powerpc/lib/string.S             | 55 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+)
 
-"This patch prevents a deadlock in printk_safe_flush() in NMI
-context. It makes sure that we continue and eventually call
-printk_safe_flush_on_panic() from panic() that has better
-chances to succeed.
-
-There is a risk that logbuf_lock was not part of a soft- or
-dead-lockup and we might just loose the messages. But then there is a high
-chance that irq_work will get called and the messages will get flushed
-the normal way."
-
-
-> Any chance we can add more info to the commit message? E.g. backtraces
-> which would describe "how" is this possible (like the one I posted in
-> another email). Just to make it more clear.
-
-I agree that a backtrace would be helpful. But it is not a must to
-have from my point of view.
-
-The patch itself looks good to me.
-
-Best Regards,
-Petr
+diff --git a/arch/powerpc/include/asm/asm-compat.h b/arch/powerpc/include/asm/asm-compat.h
+index 7f2a7702596c..0e99fe7570c0 100644
+--- a/arch/powerpc/include/asm/asm-compat.h
++++ b/arch/powerpc/include/asm/asm-compat.h
+@@ -20,8 +20,10 @@
+ 
+ /* operations for longs and pointers */
+ #define PPC_LL		stringify_in_c(ld)
++#define PPC_LLU		stringify_in_c(ldu)
+ #define PPC_STL		stringify_in_c(std)
+ #define PPC_STLU	stringify_in_c(stdu)
++#define PPC_ROTLI	stringify_in_c(rotldi)
+ #define PPC_LCMPI	stringify_in_c(cmpdi)
+ #define PPC_LCMPLI	stringify_in_c(cmpldi)
+ #define PPC_LCMP	stringify_in_c(cmpd)
+@@ -53,8 +55,10 @@
+ 
+ /* operations for longs and pointers */
+ #define PPC_LL		stringify_in_c(lwz)
++#define PPC_LLU		stringify_in_c(lwzu)
+ #define PPC_STL		stringify_in_c(stw)
+ #define PPC_STLU	stringify_in_c(stwu)
++#define PPC_ROTLI	stringify_in_c(rotlwi)
+ #define PPC_LCMPI	stringify_in_c(cmpwi)
+ #define PPC_LCMPLI	stringify_in_c(cmplwi)
+ #define PPC_LCMP	stringify_in_c(cmpw)
+diff --git a/arch/powerpc/include/asm/string.h b/arch/powerpc/include/asm/string.h
+index 9b8cedf618f4..8fdcb532de72 100644
+--- a/arch/powerpc/include/asm/string.h
++++ b/arch/powerpc/include/asm/string.h
+@@ -13,6 +13,7 @@
+ #define __HAVE_ARCH_MEMCHR
+ #define __HAVE_ARCH_MEMSET16
+ #define __HAVE_ARCH_MEMCPY_FLUSHCACHE
++#define __HAVE_ARCH_STRLEN
+ 
+ extern char * strcpy(char *,const char *);
+ extern char * strncpy(char *,const char *, __kernel_size_t);
+diff --git a/arch/powerpc/lib/string.S b/arch/powerpc/lib/string.S
+index 4b41970e9ed8..cf8a86c9feb5 100644
+--- a/arch/powerpc/lib/string.S
++++ b/arch/powerpc/lib/string.S
+@@ -67,3 +67,58 @@ _GLOBAL(memchr)
+ 2:	li	r3,0
+ 	blr
+ EXPORT_SYMBOL(memchr)
++
++_GLOBAL(strlen)
++	andi.   r9, r3, (SZL - 1)
++	addi	r10, r3, -SZL
++	bne-	1f
++2:	lis	r6, 0x8080
++	ori	r6, r6, 0x8080		/* r6 = 0x80808080 (himagic) */
++#ifdef CONFIG_PPC64
++	rldimi	r6, r6, 32, 0		/* r6 = 0x8080808080808080 (himagic) */
++#endif
++	PPC_ROTLI  r7, r6, 1 		/* r7 = 0x01010101(01010101) (lomagic)*/
++3:	PPC_LLU	r9, SZL(r10)
++	/* ((x - lomagic) & ~x & himagic) == 0 means no byte in x is NUL */
++	subf	r8, r7, r9
++	andc	r11, r6, r9
++	and.	r8, r8, r11
++	beq+	3b
++#ifdef CONFIG_PPC64
++	rldicl.	r8, r9, 8, 56
++	beq	20f
++	rldicl.	r8, r9, 16, 56
++	beq	21f
++	rldicl.	r8, r9, 24, 56
++	beq	22f
++	rldicl.	r8, r9, 32, 56
++	beq	23f
++	addi	r10, r10, 4
++#endif
++	rlwinm.	r8, r9, 0, 0xff000000
++	beq	20f
++	rlwinm.	r8, r9, 0, 0x00ff0000
++	beq	21f
++	rlwinm.	r8, r9, 0, 0x0000ff00
++	beq	22f
++23:	subf	r3, r3, r10
++	addi	r3, r3, 3
++	blr
++22:	subf	r3, r3, r10
++	addi	r3, r3, 2
++	blr
++21:	subf	r3, r3, r10
++	addi	r3, r3, 1
++	blr
++19:	addi	r10, r10, (SZL - 1)
++20:	subf	r3, r3, r10
++	blr
++
++1:	lbz	r9, SZL(r10)
++	addi	r10, r10, 1
++	cmpwi	cr1, r9, 0
++	andi.	r9, r10, (SZL - 1)
++	beq	cr1, 19b
++	bne	1b
++	b	2b
++EXPORT_SYMBOL(strlen)
+-- 
+2.13.3
