@@ -1,113 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932623AbeE3XJv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 19:09:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932416AbeE3XJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 19:09:47 -0400
-Date: Thu, 31 May 2018 08:09:41 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
-        linux-rt-users@vger.kernel.org, Shuah Khan <shuahkhan@gmail.com>
-Subject: Re: [PATCH v3 13/14] tracing/selftest: Add selftests to test
- trace_marker histogram triggers
-Message-Id: <20180531080941.fd02980b7fd9aac015dbfd73@kernel.org>
-In-Reply-To: <20180528212055.21e24c52@vmware.local.home>
-References: <20180516150012.135869655@goodmis.org>
-        <20180516150201.246539183@goodmis.org>
-        <20180523231331.bf69453f05478e11b00451ab@kernel.org>
-        <20180525140731.07d7543a@gandalf.local.home>
-        <20180525171229.76bae7a8@gandalf.local.home>
-        <20180525171353.53b44f5e@gandalf.local.home>
-        <20180528013258.59715b8111d3e59319006cd2@kernel.org>
-        <20180528212055.21e24c52@vmware.local.home>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S932580AbeE3XMR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 19:12:17 -0400
+Received: from leo.clearchain.com ([199.73.29.74]:30214 "EHLO
+        mail.clearchain.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753695AbeE3XMQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 19:12:16 -0400
+Date: Thu, 31 May 2018 09:12:08 +1000
+From: Peter Hutterer <peter.hutterer@who-t.net>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        Jason Gerecke <killertofu@gmail.com>,
+        Dennis Kempin <denniskempin@google.com>,
+        Andrew de los Reyes <adlr@google.com>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
+ non-confident touches
+Message-ID: <20180530231208.GA19976@jelly>
+References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 May 2018 21:20:55 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hi Dmitry,
 
-> On Mon, 28 May 2018 01:32:58 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Thu, Aug 10, 2017 at 05:44:59PM -0700, Dmitry Torokhov wrote:
+> According to Microsoft specification [1] for Precision Touchpads (and
+> Touchscreens) the devices use "confidence" reports to signal accidental
+> touches, or contacts that are "too large to be a finger". Instead of
+> simply marking contact inactive in this case (which causes issues if
+> contact was originally proper and we lost confidence in it later, as
+> this results in accidental clicks, drags, etc), let's report such
+> contacts as MT_TOOL_PALM and let userspace decide what to do.
+> Additionally, let's report contact size for such touches as maximum
+> allowed for major/minor, which should help userspace that is not yet
+> aware of MT_TOOL_PALM to still perform palm rejection.
 > 
-> > Hi Steve,
-> > 
-> > On Fri, 25 May 2018 17:13:53 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > On Fri, 25 May 2018 17:12:29 -0400
-> > > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > > 
-> > >    
-> > > > #!/bin/sh  
-> > > 
-> > > Hmm, I think I need to make this #!/bin/bash
-> > >   
-> > > > test_trace() {
-> > > >     file=$1
-> > > >     x=$2
-> > > > 
-> > > >     cat $file | while read line; do
-> > > > 	if [ "$line" != "${line/\#/}" ]; then
-> > > > 	    continue
-> > > > 	fi
-> > > > 	echo "testing $line for >$x<"
-> > > > 	if [ "$line" == "${line/>$x</}" ]; then  
-> > > 
-> > > The ${line/>$x</} is unique to bash I believe.  
-> > 
-> > Hmm, could you try to use only posix-shell based test ?
-> > Since I would like to keep this can run on small 
-> > environment, like busybox, etc.
-> >
+> An additional complication, is that some firmwares do not report
+> non-confident touches as active. To cope with this we delay release of
+> such contact (i.e. if contact was active we first report it as still
+> active MT+TOOL_PALM and then synthesize the release event in a separate
+> frame).
 > 
-> Like something like this?
-
-This looks good to me. :)
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thanks,
-
+> [1] https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/touchpad-windows-precision-touchpad-collection
 > 
-> -- Steve
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+This one popped up again in a bug report [1] and it looks like it never
+got merged. fwiw, libinput does support ABS_MT_TOOL_PALM for touchpads as of
+1.8.0 and just releasing the touch causes fake taps. So you have the green
+light from me to merge this :)
+
+Cheers,
+   Peter
+
+[1] https://bugs.freedesktop.org/show_bug.cgi?id=106716
+
+> ---
+>  drivers/hid/hid-multitouch.c | 86 +++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 77 insertions(+), 9 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
-> index c6c50a2..3a3c33d 100644
-> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
-> @@ -41,11 +41,13 @@ test_trace() {
->      x=$2
+> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> index 440b999304a5..c28defe50a10 100644
+> --- a/drivers/hid/hid-multitouch.c
+> +++ b/drivers/hid/hid-multitouch.c
+> @@ -114,6 +114,8 @@ struct mt_device {
+>  	struct timer_list release_timer;	/* to release sticky fingers */
+>  	struct mt_fields *fields;	/* temporary placeholder for storing the
+>  					   multitouch fields */
+> +	unsigned long *pending_palm_slots; /* slots where we reported palm
+> +						and need to release */
+>  	unsigned long mt_io_flags;	/* mt flags (MT_IO_FLAGS_*) */
+>  	int cc_index;	/* contact count field index in the report */
+>  	int cc_value_index;	/* contact count value index in the field */
+> @@ -543,8 +545,12 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+>  		case HID_DG_CONFIDENCE:
+>  			if ((cls->name == MT_CLS_WIN_8 ||
+>  				cls->name == MT_CLS_WIN_8_DUAL) &&
+> -				field->application == HID_DG_TOUCHPAD)
+> +			    field->application == HID_DG_TOUCHPAD) {
+>  				cls->quirks |= MT_QUIRK_CONFIDENCE;
+> +				input_set_abs_params(hi->input,
+> +					ABS_MT_TOOL_TYPE,
+> +					MT_TOOL_FINGER, MT_TOOL_PALM, 0, 0);
+> +			}
+>  			mt_store_field(usage, td, hi);
+>  			return 1;
+>  		case HID_DG_TIPSWITCH:
+> @@ -657,6 +663,7 @@ static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
 >  
->      cat $file | while read line; do
-> -	if [ "$line" != "${line/\#/}" ]; then
-> +	comment=`echo $line | sed -e 's/^#//'`
-> +	if [ "$line" != "$comment" ]; then
->  	    continue
->  	fi
->  	echo "testing $line for >$x<"
-> -	if [ "$line" == "${line/>$x</}" ]; then
-> +	match=`echo $line | sed -e "s/>$x<//"`
-> +	if [ "$line" == "$match" ]; then
->  	    fail "$line does not have >$x< in it"
->  	fi
->  	let x=$x+2
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+>  	if (td->curvalid || (td->mtclass.quirks & MT_QUIRK_ALWAYS_VALID)) {
+>  		int active;
+> +		int tool;
+>  		int slotnum = mt_compute_slot(td, input);
+>  		struct mt_slot *s = &td->curdata;
+>  		struct input_mt *mt = input->mt;
+> @@ -671,24 +678,56 @@ static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
+>  				return;
+>  		}
+>  
+> +		active = s->touch_state || s->inrange_state;
+> +
+>  		if (!(td->mtclass.quirks & MT_QUIRK_CONFIDENCE))
+>  			s->confidence_state = 1;
+> -		active = (s->touch_state || s->inrange_state) &&
+> -							s->confidence_state;
+> +
+> +		if (likely(s->confidence_state)) {
+> +			tool = MT_TOOL_FINGER;
+> +		} else {
+> +			tool = MT_TOOL_PALM;
+> +			if (!active &&
+> +			    input_mt_is_active(&mt->slots[slotnum])) {
+> +				/*
+> +				 * The non-confidence was reported for
+> +				 * previously valid contact that is also no
+> +				 * longer valid. We can't simply report
+> +				 * lift-off as userspace will not be aware
+> +				 * of non-confidence, so we need to split
+> +				 * it into 2 events: active MT_TOOL_PALM
+> +				 * and a separate liftoff.
+> +				 */
+> +				active = true;
+> +				set_bit(slotnum, td->pending_palm_slots);
+> +			}
+> +		}
+>  
+>  		input_mt_slot(input, slotnum);
+> -		input_mt_report_slot_state(input, MT_TOOL_FINGER, active);
+> +		input_mt_report_slot_state(input, tool, active);
+>  		if (active) {
+>  			/* this finger is in proximity of the sensor */
+>  			int wide = (s->w > s->h);
+>  			int major = max(s->w, s->h);
+>  			int minor = min(s->w, s->h);
+>  
+> -			/*
+> -			 * divided by two to match visual scale of touch
+> -			 * for devices with this quirk
+> -			 */
+> -			if (td->mtclass.quirks & MT_QUIRK_TOUCH_SIZE_SCALING) {
+> +			if (unlikely(!s->confidence_state)) {
+> +				/*
+> +				 * When reporting palm, set contact to maximum
+> +				 * size to help userspace that does not
+> +				 * recognize MT_TOOL_PALM to reject contacts
+> +				 * that are too large.
+> +				 */
+> +				major = input_abs_get_max(input,
+> +							  ABS_MT_TOUCH_MAJOR);
+> +				minor = input_abs_get_max(input,
+> +							  ABS_MT_TOUCH_MINOR);
+> +			} else if (td->mtclass.quirks &
+> +					MT_QUIRK_TOUCH_SIZE_SCALING) {
+> +				/*
+> +				 * divided by two to match visual scale of touch
+> +				 * for devices with this quirk
+> +				 */
+>  				major = major >> 1;
+>  				minor = minor >> 1;
+>  			}
+> @@ -711,6 +750,25 @@ static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
+>  	td->num_received++;
+>  }
+>  
+> +static void mt_release_pending_palms(struct mt_device *td,
+> +				     struct input_dev *input)
+> +{
+> +	int slotnum;
+> +	bool need_sync = false;
+> +
+> +	for_each_set_bit(slotnum, td->pending_palm_slots, td->maxcontacts) {
+> +		clear_bit(slotnum, td->pending_palm_slots);
+> +
+> +		input_mt_slot(input, slotnum);
+> +		input_mt_report_slot_state(input, MT_TOOL_PALM, false);
+> +
+> +		need_sync = true;
+> +	}
+> +
+> +	if (need_sync)
+> +		input_sync(input);
+> +}
+> +
+>  /*
+>   * this function is called when a whole packet has been received and processed,
+>   * so that it can decide what to send to the input layer.
+> @@ -719,6 +777,9 @@ static void mt_sync_frame(struct mt_device *td, struct input_dev *input)
+>  {
+>  	input_mt_sync_frame(input);
+>  	input_sync(input);
+> +
+> +	mt_release_pending_palms(td, input);
+> +
+>  	td->num_received = 0;
+>  	if (test_bit(MT_IO_FLAGS_ACTIVE_SLOTS, &td->mt_io_flags))
+>  		set_bit(MT_IO_FLAGS_PENDING_SLOTS, &td->mt_io_flags);
+> @@ -903,6 +964,13 @@ static int mt_touch_input_configured(struct hid_device *hdev,
+>  	if (td->is_buttonpad)
+>  		__set_bit(INPUT_PROP_BUTTONPAD, input->propbit);
+>  
+> +	td->pending_palm_slots = devm_kcalloc(&hi->input->dev,
+> +					      BITS_TO_LONGS(td->maxcontacts),
+> +					      sizeof(long),
+> +					      GFP_KERNEL);
+> +	if (!td->pending_palm_slots)
+> +		return -ENOMEM;
+> +
+>  	ret = input_mt_init_slots(input, td->maxcontacts, td->mt_flags);
+>  	if (ret)
+>  		return ret;
+> -- 
+> 2.14.0.434.g98096fd7a8-goog
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-input" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
