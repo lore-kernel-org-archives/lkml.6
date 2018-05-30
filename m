@@ -1,81 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753674AbeE3PU1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:20:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43328 "EHLO mail.kernel.org"
+        id S1753703AbeE3PXu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:23:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753033AbeE3PUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:20:25 -0400
-Date: Wed, 30 May 2018 10:20:24 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh@kernel.org>,
-        Marc Gonzalez <marc_gonzalez@sigmadesigns.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pci: mvebu: add MVEBU_MBUS dependency
-Message-ID: <20180530152024.GC39853@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180529094204.3945660-1-arnd@arndb.de>
+        id S1751591AbeE3PXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:23:48 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529094204.3945660-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+To: Lee Jones <lee.jones@linaro.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180530111649.GB8038@dell>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+References: <20180528090003.GA8778@localhost.localdomain> <20180529073958.GB4790@dell>
+ <20180529083541.GA13528@localhost.localdomain> <20180530111649.GB8038@dell>
+Message-ID: <152769382760.144038.10609724773770264610@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC driver
+Date: Wed, 30 May 2018 08:23:47 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4UFNtlZ027704
 
-On Tue, May 29, 2018 at 11:41:51AM +0200, Arnd Bergmann wrote:
-> Enabling the PCI_MVEBU driver for compile testing caused a build failure
-> on ARM randconfig builds:
+Quoting Lee Jones (2018-05-30 04:16:49)
+> On Tue, 29 May 2018, Matti Vaittinen wrote:
 > 
-> drivers/pci/host/pci-mvebu.c: In function 'mvebu_pcie_del_windows':
-> drivers/pci/host/pci-mvebu.c:341:3: error: implicit declaration of function 'mvebu_mbus_del_window'; did you mean 'mvebu_pcie_del_windows'? [-Werror=implicit-function-declaration]
->    mvebu_mbus_del_window(base, sz);
->    ^~~~~~~~~~~~~~~~~~~~~
->    mvebu_pcie_del_windows
-> drivers/pci/host/pci-mvebu.c: In function 'mvebu_pcie_add_windows':
-> drivers/pci/host/pci-mvebu.c:364:9: error: implicit declaration of function 'mvebu_mbus_add_window_remap_by_id'; did you mean 'mvebu_pcie_add_windows'? [-Werror=implicit-function-declaration]
->    ret = mvebu_mbus_add_window_remap_by_id(target, attribute, base,
->          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->          mvebu_pcie_add_windows
-> drivers/pci/host/pci-mvebu.c: In function 'mvebu_pcie_probe':
-> drivers/pci/host/pci-mvebu.c:1209:2: error: implicit declaration of function 'mvebu_mbus_get_pcie_mem_aperture'; did you mean 'mvebu_mbus_get_io_win_info'? [-Werror=implicit-function-declaration]
-> drivers/pci/host/pci-mvebu.c:1215:2: error: implicit declaration of function 'mvebu_mbus_get_pcie_io_aperture'; did you mean 'mvebu_mbus_get_io_win_info'? [-Werror=implicit-function-declaration]
+> > Hello,
+> > 
+> > On Tue, May 29, 2018 at 08:39:58AM +0100, Lee Jones wrote:
+> > > On Mon, 28 May 2018, Matti Vaittinen wrote:
+> > > 
+> > > > Patch series adding support for ROHM BD71837 PMIC.
+> > > FYI, this patch-set is going to be difficult to manage since it was
+> > > not sent 'threaded'.
+> > > 
+> > > If/when you send a subsequent version, could you please ensure you
+> > > send the set threaded so the patches keep in relation to one another
+> > > as they are reviewed?
+> > 
+> > Thanks for the guidance. I have not sent so many patches to community so
+> > I am grateful also from all the practical tips =) Just one slight problem.
+> > I have only seen emails being threaded when one is replying to an email.
+> > So how should I send my patches in same thread? Just send first one and
+> > then send subsequent patches as replies?
+> > 
+> > I just killed some unused definitions and one unused variable from the
+> > code so I am about to send new version. I'll try doing that as a threaded
+> > series and resend all the patches as v3.
 > 
-> The problem is that the mbus helper functions are not declared in the
-> header. There are two ways of solving this: we can change the header
-> to provide empty stub functions for CONFIG_MVEBU_MBUS=n, or we can
-> add back the dependency here.
+> You don't need to do this manually.
 > 
-> I picked the second option since that is simpler, but it somewhat
-> defeats the purpose of the original patch because we still cannot
-> compile test on other platforms this way.
+> Just use `git send-email` with the correct arguments.
 > 
-> Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Thanks, I added this when doing the merge.
-
-> ---
->  drivers/pci/host/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-> index fa51d0893384..5340950f4b98 100644
-> --- a/drivers/pci/host/Kconfig
-> +++ b/drivers/pci/host/Kconfig
-> @@ -6,6 +6,7 @@ menu "PCI host controller drivers"
->  config PCI_MVEBU
->  	bool "Marvell EBU PCIe controller"
->  	depends on ARCH_MVEBU || ARCH_DOVE || COMPILE_TEST
-> +	depends on MVEBU_MBUS
->  	depends on ARM
->  	depends on OF
->  
-> -- 
-> 2.9.0
-> 
+I usually send with 'git send-email *.patch' so that git can do the
+threading for me. Looks like these patches were sent with Mutt though,
+so perhaps 'git format-patch | git imap-send' was used without the
+--thread option on format-patch.
