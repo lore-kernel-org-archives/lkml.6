@@ -1,79 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932135AbeE3Rnv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 13:43:51 -0400
-Received: from mga03.intel.com ([134.134.136.65]:28133 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932106AbeE3Rnr (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 13:43:47 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,461,1520924400";
-   d="scan'208";a="53494786"
-Date: Wed, 30 May 2018 10:43:46 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Jin Yao <yao.jin@linux.intel.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH] perf util: Add more PMU fields for perf script python
-Message-ID: <20180530174346.GE30764@tassilo.jf.intel.com>
-References: <1527690045-17987-1-git-send-email-yao.jin@linux.intel.com>
+        id S1753792AbeE3RoM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 13:44:12 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:40994 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932162AbeE3RoE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 13:44:04 -0400
+X-Google-Smtp-Source: ADUXVKLVKLWeRzVMtj1hA2lclc+JUkyBnjCcUZXY+mVWJN9fJ7vI6k0hrOzZkvvkKcpGZwYAsiuSvQ==
+Subject: Re: [PATCH INTERNAL 2/3] PCI: iproc: Fix up corrupted PAXC root
+ complex config registers
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-pci@vger.kernel.org, Ray Jui <rjui@broadcom.com>
+References: <1526577692-21104-1-git-send-email-ray.jui@broadcom.com>
+ <1526577692-21104-3-git-send-email-ray.jui@broadcom.com>
+ <20180530172733.GN39853@bhelgaas-glaptop.roam.corp.google.com>
+From: Ray Jui <ray.jui@broadcom.com>
+Message-ID: <715d8746-1b68-4342-6258-7d9c1b5035bc@broadcom.com>
+Date: Wed, 30 May 2018 10:43:59 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527690045-17987-1-git-send-email-yao.jin@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180530172733.GN39853@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 10:20:45PM +0800, Jin Yao wrote:
-> When doing pmu sampling and then running a script with
-> perf script -s script.py, the process_event function gets
-> dictionary with some fields from the perf ring buffer
-> (like ip, sym, callchain etc).
+Hi Bjorn,
+
+On 5/30/2018 10:27 AM, Bjorn Helgaas wrote:
+> On Thu, May 17, 2018 at 10:21:31AM -0700, Ray Jui wrote:
+>> On certain versions of Broadcom PAXC based root complexes, certain
+>> regions of the configuration space are corrupted. As a result, it
+>> prevents the Linux PCIe stack from traversing the linked list of the
+>> capability registers completely and therefore the root complex is
+>> not advertised as "PCIe capable". This prevents the correct PCIe RID
+>> from being parsed in the kernel PCIe stack. A correct RID is required
+>> for mapping to a stream ID from the SMMU or the device ID from the
+>> GICv3 ITS
+>>
+>> This patch fixes up the issue by manually populating the related
+>> PCIe capabilities based on readings from the PCIe capability structure
+>>
+>> Signed-off-by: Ray Jui <rjui@broadcom.com>
+>> Reviewed-by: Anup Patel <anup.patel@broadcom.com>
+>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>> ---
+>>   drivers/pci/quirks.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 95 insertions(+)
+>>
+>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+>> index 47dfea0..0cdbd0a 100644
+>> --- a/drivers/pci/quirks.c
+>> +++ b/drivers/pci/quirks.c
+>> @@ -2198,6 +2198,101 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0, quirk_paxc_bridge);
+>>   DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd750, quirk_paxc_bridge);
+>>   DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802, quirk_paxc_bridge);
+>>   DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804, quirk_paxc_bridge);
+>> +
+>> +/*
+>> + * The PCI capabilities list for certain revisions of Broadcom PAXC root
+>> + * complexes is incorrectly terminated due to corrupted configuration space
+>> + * registers in the range of 0x50 - 0x5f
+>> + *
+>> + * As a result, the capability list becomes broken and prevent standard PCI
+>> + * stack from being able to traverse to the PCIe capability structure
+>> + */
+>> +static void quirk_paxc_pcie_capability(struct pci_dev *pdev)
+>> +{
+>> +	int pos, i = 0;
+>> +	u8 next_cap;
+>> +	u16 reg16, *cap;
+>> +	struct pci_cap_saved_state *state;
+>> +
+>> +	/* bail out if PCIe capability can be found */
+>> +	if (pdev->pcie_cap || pci_find_capability(pdev, PCI_CAP_ID_EXP))
+>> +		return;
+>> +
+>> +	/* locate the power management capability */
+>> +	pos = pci_find_capability(pdev, PCI_CAP_ID_PM);
+>> +	if (!pos)
+>> +		return;
+>> +
+>> +	/* bail out if the next capability pointer is not 0x50/0x58 */
+>> +	pci_read_config_byte(pdev, pos + 1, &next_cap);
+>> +	if (next_cap != 0x50 && next_cap != 0x58)
+>> +		return;
+>> +
+>> +	/* bail out if we do not terminate at 0x50/0x58 */
+>> +	pos = next_cap;
+>> +	pci_read_config_byte(pdev, pos + 1, &next_cap);
+>> +	if (next_cap != 0x00)
+>> +		return;
+>> +
+>> +	/*
+>> +	 * On these buggy HW, PCIe capability structure is expected to be at
+>> +	 * 0xac and should terminate the list
+>> +	 *
+>> +	 * Borrow the similar logic from theIntel DH895xCC VFs fixup to save
+>> +	 * the PCIe capability list
+>> +	 */
+>> +	pos = 0xac;
+>> +	pci_read_config_word(pdev, pos, &reg16);
+>> +	if (reg16 == (0x0000 | PCI_CAP_ID_EXP)) {
+>> +		u32 status;
+>> +
+>> +#ifndef PCI_EXP_SAVE_REGS
+>> +#define PCI_EXP_SAVE_REGS     7
+>> +#endif
+>> +		int size = PCI_EXP_SAVE_REGS * sizeof(u16);
+>> +
+>> +		pdev->pcie_cap = pos;
+>> +		pci_read_config_word(pdev, pos + PCI_EXP_FLAGS, &reg16);
+>> +		pdev->pcie_flags_reg = reg16;
+>> +		pci_read_config_word(pdev, pos + PCI_EXP_DEVCAP, &reg16);
+>> +		pdev->pcie_mpss = reg16 & PCI_EXP_DEVCAP_PAYLOAD;
 > 
-> But we miss quite a few fields we report now, for example,
-> LBRs,data source,weight,transaction,iregs,uregs,and etc.
-> 
-> This patch reports these fields for perf script python
-> processing.
+> Is there any way you can fix this in iproc_pcie_config_read() instead,
+> by making it notice when we're reading a corrupted part of config
+> space, and then returning the correct data instead?  Is it just the
+> next capability pointer that's corrupted?
 
-We need documentation and an example script using it.
-
-> +		PyObject *pyelem;
-> +
-> +		pyelem = PyDict_New();
-> +		if (!pyelem)
-> +			Py_FatalError("couldn't create Python dictionary");
-> +
-
-I think we need a field for the dso here.
-
-> +		pydict_set_item_string_decref(pyelem, "from",
-> +		    PyLong_FromUnsignedLongLong(br->entries[i].from));
-> +		pydict_set_item_string_decref(pyelem, "to",
-> +		    PyLong_FromUnsignedLongLong(br->entries[i].to));
-> +		pydict_set_item_string_decref(pyelem, "mispred",
-> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.mispred));
-> +		pydict_set_item_string_decref(pyelem, "predicted",
-> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.predicted));
-> +		pydict_set_item_string_decref(pyelem, "in_tx",
-> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.in_tx));
-> +		pydict_set_item_string_decref(pyelem, "abort",
-
-
-These could be booleans.
-
-> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.abort));
-> +		pydict_set_item_string_decref(pyelem, "cycles",
-> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.cycles));
-
-Would be nice to get access to the binary code too (see how perf script
-brstackinsn does it). That could be a followon patch.
+Let me look into that and I'll get back.
 
 Thanks,
 
--Andi
+Ray
+
+> 
+> If you could fix it in the config accessor, lspci would automatically
+> show all the correct data (I think lspci will still show the wrong
+> data with this patch).
+> 
+> The quirk seems like a maintenance issue because anything that calls
+> 
+>    pci_find_capability(pdev, PCI_CAP_ID_EXP)
+> 
+> will get the wrong answer.
+> 
+>> +
+>> +		pdev->cfg_size = PCI_CFG_SPACE_EXP_SIZE;
+>> +		if (pci_read_config_dword(pdev, PCI_CFG_SPACE_SIZE, &status) !=
+>> +		    PCIBIOS_SUCCESSFUL || (status == 0xffffffff))
+>> +			pdev->cfg_size = PCI_CFG_SPACE_SIZE;
+>> +
+>> +		if (pci_find_saved_cap(pdev, PCI_CAP_ID_EXP))
+>> +			return;
+>> +
+>> +		state = kzalloc(sizeof(*state) + size, GFP_KERNEL);
+>> +		if (!state)
+>> +			return;
+>> +
+>> +		state->cap.cap_nr = PCI_CAP_ID_EXP;
+>> +		state->cap.cap_extended = 0;
+>> +		state->cap.size = size;
+>> +		cap = (u16 *)&state->cap.data[0];
+>> +		pcie_capability_read_word(pdev, PCI_EXP_DEVCTL, &cap[i++]);
+>> +		pcie_capability_read_word(pdev, PCI_EXP_LNKCTL, &cap[i++]);
+>> +		pcie_capability_read_word(pdev, PCI_EXP_SLTCTL, &cap[i++]);
+>> +		pcie_capability_read_word(pdev, PCI_EXP_RTCTL,  &cap[i++]);
+>> +		pcie_capability_read_word(pdev, PCI_EXP_DEVCTL2, &cap[i++]);
+>> +		pcie_capability_read_word(pdev, PCI_EXP_LNKCTL2, &cap[i++]);
+>> +		pcie_capability_read_word(pdev, PCI_EXP_SLTCTL2, &cap[i++]);
+>> +		hlist_add_head(&state->next, &pdev->saved_cap_space);
+>> +	}
+>> +}
+>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_NX2_57810,
+>> +			quirk_paxc_pcie_capability);
+>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16cd,
+>> +			quirk_paxc_pcie_capability);
+>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0,
+>> +			quirk_paxc_pcie_capability);
+>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802,
+>> +			quirk_paxc_pcie_capability);
+>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804,
+>> +			quirk_paxc_pcie_capability);
+>>   #endif
+>>   
+>>   /* Originally in EDAC sources for i82875P:
+>> -- 
+>> 2.1.4
+>>
