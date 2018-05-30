@@ -1,116 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753784AbeE3QBP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:01:15 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:23683 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753605AbeE3QBN (ORCPT
+        id S1753888AbeE3QBp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:01:45 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36901 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753757AbeE3QBn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:01:13 -0400
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: Re: general protection fault in wb_workfn (2)
-To: Jan Kara <jack@suse.cz>
-Cc: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        tj@kernel.org, david@fromorbit.com, linux-block@vger.kernel.org
-References: <000000000000cbd959056d1851ca@google.com>
- <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
- <20180528133503.awomzj6djozbo5bv@quack2.suse.cz>
-Message-ID: <2dda7a11-3f6b-bdba-a68a-7c0694806cc4@I-love.SAKURA.ne.jp>
-Date: Thu, 31 May 2018 01:00:08 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 30 May 2018 12:01:43 -0400
+X-Google-Smtp-Source: ADUXVKIotNhvgMgNYX3Rmlq5qD4nxX2W6fgE/+VYOFZ2o3SkOgLbFPjXjjlwYaS/+XR/mISnjLRCEYi0ZS9nQbIJZik=
 MIME-Version: 1.0
-In-Reply-To: <20180528133503.awomzj6djozbo5bv@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1527582935-31175-1-git-send-email-avifishman70@gmail.com>
+References: <1527582935-31175-1-git-send-email-avifishman70@gmail.com>
+From: Avi Fishman <avifishman70@gmail.com>
+Date: Wed, 30 May 2018 19:01:40 +0300
+Message-ID: <CAKKbWA5zu2ty-OapQMiYXWg6wk0UisPq56gow7_1Tti_fg7fkw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] USB host: Add USB ehci support for nuvoton npcm7xx
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stern@rowland.harvard.edu
+Cc: Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
+        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
+        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
+        digetx@gmail.com, kstewart@linuxfoundation.org, hdegoede@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-usb@vger.kernel.org, OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>, davem@davemloft.net,
+        mchehab+samsung@kernel.org, akpm@linux-foundation.org,
+        rdunlap@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So, we have no idea what is happening...
-Then, what about starting from temporary debug printk() patch shown below?
+From: Avi Fishman <AviFishman70@gmail.com>
 
->From 4f70f72ad3c9ae6ce1678024ef740aca4958e5b0 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Wed, 30 May 2018 09:57:10 +0900
-Subject: [PATCH] bdi: Add temporary config for debugging wb_workfn() versus
- bdi_unregister() race bug.
+This patch adds support for ehci controller for the Nuvoton npcm7xx platform.
+Most of the code was taken from ehci-spear.c + specific initialization code
 
-syzbot is hitting NULL pointer dereference at wb_workfn() [1]. But due to
-limitations that syzbot cannot find reproducer for this bug (frequency is
-once or twice per a day) nor we can't capture vmcore in the environment
-which syzbot is using, for now we need to rely on printk() debugging.
+Avi Fishman (3):
+  USB host: Add USB ehci support for nuvoton npcm7xx platform
+  USB: DT probing support to ehci-npcm7xx
+  MAINTAINERS: add subfolders for nuvoton *npcm*
 
-[1] https://syzkaller.appspot.com/bug?id=e0818ccb7e46190b3f1038b0c794299208ed4206
+ .../devicetree/bindings/usb/npcm7xx-usb.txt        |  18 ++
+ MAINTAINERS                                        |   3 +
+ drivers/usb/host/Kconfig                           |   8 +
+ drivers/usb/host/Makefile                          |   1 +
+ drivers/usb/host/ehci-npcm7xx.c                    | 212 +++++++++++++++++++++
+ 5 files changed, 242 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
+ create mode 100644 drivers/usb/host/ehci-npcm7xx.c
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- block/Kconfig     |  7 +++++++
- fs/fs-writeback.c | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
 
-diff --git a/block/Kconfig b/block/Kconfig
-index 28ec557..fbce13e 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -139,6 +139,13 @@ config BLK_CMDLINE_PARSER
- 
- 	See Documentation/block/cmdline-partition.txt for more information.
- 
-+config BLK_DEBUG_WB_WORKFN_RACE
-+	bool "Dump upon hitting wb_workfn() versus bdi_unregister() race bug."
-+	default n
-+	---help---
-+	This is a temporary option used for obtaining information for
-+	specific bug. This option will be removed after the bug is fixed.
-+
- config BLK_WBT
- 	bool "Enable support for block device writeback throttling"
- 	default n
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 471d863..b4dd078 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1934,6 +1934,37 @@ void wb_workfn(struct work_struct *work)
- 						struct bdi_writeback, dwork);
- 	long pages_written;
- 
-+#ifdef CONFIG_BLK_DEBUG_WB_WORKFN_RACE
-+	if (!wb->bdi->dev) {
-+		pr_warn("WARNING: %s: device is NULL\n", __func__);
-+		pr_warn("wb->state=%lx\n", wb->state);
-+		pr_warn("list_empty(&wb->work_list)=%u\n",
-+			list_empty(&wb->work_list));
-+		if (!wb->bdi)
-+			pr_warn("wb->bdi == NULL\n");
-+		else {
-+			pr_warn("list_empty(&wb->bdi->bdi_list)=%u\n",
-+				list_empty(&wb->bdi->bdi_list));
-+			pr_warn("wb->bdi->wb.state=%lx\n", wb->bdi->wb.state);
-+		}
-+		if (!wb->congested)
-+			pr_warn("wb->congested == NULL\n");
-+#ifdef CONFIG_CGROUP_WRITEBACK
-+		else if (!wb->congested->__bdi)
-+			pr_warn("wb->congested->__bdi == NULL\n");
-+		else {
-+			pr_warn("(wb->congested->__bdi == wb->bdi)=%u\n",
-+				wb->congested->__bdi == wb->bdi);
-+			pr_warn("list_empty(&wb->congested->__bdi->bdi_list)=%u\n",
-+				list_empty(&wb->congested->__bdi->bdi_list));
-+			pr_warn("wb->congested->__bdi->wb.state=%lx\n",
-+				wb->congested->__bdi->wb.state);
-+		}
-+#endif
-+		/* Will halt shortly due to NULL pointer dereference... */
-+	}
-+#endif
-+
- 	set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
- 	current->flags |= PF_SWAPWRITE;
- 
 -- 
-1.8.3.1
+2.14.1
