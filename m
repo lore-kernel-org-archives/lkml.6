@@ -1,247 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964849AbeE3GVc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 02:21:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37578 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934498AbeE3GV2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 02:21:28 -0400
+        id S965156AbeE3GWJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 02:22:09 -0400
+Received: from mail-by2nam03on0065.outbound.protection.outlook.com ([104.47.42.65]:64173
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934498AbeE3GWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 02:22:05 -0400
+From: Vishal Sagar <vsagar@xilinx.com>
+To: Randy Dunlap <rdunlap@infradead.org>,
+        Vishal Sagar <vishal.sagar@xilinx.com>, Hyun Kwon <hyunk@xilinx.com>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Dinesh Kumar <dineshk@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/2] media: v4l: xilinx: Add Xilinx MIPI CSI-2 Rx
+ Subsystem driver
+Thread-Topic: [PATCH 2/2] media: v4l: xilinx: Add Xilinx MIPI CSI-2 Rx
+ Subsystem driver
+Thread-Index: AQHT937uMW8FXDmICEij2ceN0K+vCaRHIAyAgACSj6A=
+Date: Wed, 30 May 2018 06:22:02 +0000
+Message-ID: <CY4PR02MB2709A481A94CB673DC8C87EBA76C0@CY4PR02MB2709.namprd02.prod.outlook.com>
+References: <1527620084-94864-1-git-send-email-vishal.sagar@xilinx.com>
+ <1527620084-94864-3-git-send-email-vishal.sagar@xilinx.com>
+ <5bf470c0-8737-273e-c138-58a05d7d9a30@infradead.org>
+In-Reply-To: <5bf470c0-8737-273e-c138-58a05d7d9a30@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+x-originating-ip: [182.72.145.30]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR02MB2567;7:sQ5VPb0uSGgfdSCrYwbIbf27G6LwExj19s26+ZUqlbJgUbVZ+4HpIHQz2+PBK8jt8r2lV2gVLsbt8mUqCDL7r3yGY558Vt5Kmt+0AbRpmmdbIlQEYNrWQZhIzX+rPwvgIAb3rToaf9nMHqCSZ+1qK68DEV2wWY+/HVv+ZF0bdHGWYupoLuBwVpH1JWfaZ0vcfnX/9/ujOSQVNI7UiNk4UQLBzgN/Z3fv/U1vS4dZNWW5YVqVyxWhacpWtuAJ6vKr
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(39380400002)(396003)(39860400002)(13464003)(189003)(199004)(478600001)(6436002)(316002)(9686003)(110136005)(54906003)(33656002)(7416002)(76176011)(305945005)(81156014)(7696005)(5250100002)(81166006)(7736002)(8676002)(2201001)(25786009)(86362001)(14454004)(55016002)(53936002)(4326008)(6246003)(229853002)(486006)(446003)(6506007)(53546011)(102836004)(11346002)(26005)(55236004)(186003)(2900100001)(66066001)(105586002)(59450400001)(74316002)(106356001)(97736004)(3280700002)(3660700001)(99286004)(6116002)(2906002)(68736007)(8936002)(476003)(2501003)(5660300001)(3846002)(5890100001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR02MB2567;H:CY4PR02MB2709.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY4PR02MB2567;
+x-ms-traffictypediagnostic: CY4PR02MB2567:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vsagar@xilinx.com;
+x-microsoft-antispam-prvs: <CY4PR02MB256708FF88CFED4FF5E40909A76C0@CY4PR02MB2567.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(192813158149592)(95692535739014)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:CY4PR02MB2567;BCL:0;PCL:0;RULEID:;SRVR:CY4PR02MB2567;
+x-forefront-prvs: 0688BF9B46
+x-microsoft-antispam-message-info: z3zEeLdgZGd9xsH81f9bYODTuxfG5Vft1HFxxEJ7jkXpEsle1lIHgg4vn3EJn3rzQDDPDT6ngpbD8p3qsap39c8C6zzNF00W4Y9/ToDsjmiXV68KGW7CP8T6fpua5dGpeKoNpvzezsfyWTCL2qCZkV1IeXbWJPbimOnEVJOv5i+hdws1B1Tq8ZxYfUlxJm2b
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 30 May 2018 11:51:26 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v3 01/16] mtd: rawnand: helper function for setting up ECC
- configuration
-In-Reply-To: <CAK7LNASW4oCekGGkMfmO3tMUviVaium0EOYan6aLFANhL0FAXw@mail.gmail.com>
-References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
- <1527250904-21988-2-git-send-email-absahu@codeaurora.org>
- <20180526095807.5caf5800@xps13> <20180529213036.150ed16a@bbrezillon>
- <CAK7LNASW4oCekGGkMfmO3tMUviVaium0EOYan6aLFANhL0FAXw@mail.gmail.com>
-Message-ID: <ae49dcc533007fd6dbdf27d408f5e8ba@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+X-MS-Office365-Filtering-Correlation-Id: 989fe1cf-f7d3-4788-38e0-08d5c5f5a890
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 989fe1cf-f7d3-4788-38e0-08d5c5f5a890
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2018 06:22:02.7070
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR02MB2567
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4U6MJUY024576
 
-On 2018-05-30 05:58, Masahiro Yamada wrote:
-> Hi.
+Hi Randy,
+
+Thanks for reviewing. 
+
+> -----Original Message-----
+> From: Randy Dunlap [mailto:rdunlap@infradead.org]
+> Sent: Wednesday, May 30, 2018 1:29 AM
+> To: Vishal Sagar <vishal.sagar@xilinx.com>; Hyun Kwon <hyunk@xilinx.com>;
+> laurent.pinchart@ideasonboard.com; michal.simek@xilinx.com; linux-
+> media@vger.kernel.org; devicetree@vger.kernel.org
+> Cc: sakari.ailus@linux.intel.com; hans.verkuil@cisco.com;
+> mchehab@kernel.org; robh+dt@kernel.org; mark.rutland@arm.com; Dinesh
+> Kumar <dineshk@xilinx.com>; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH 2/2] media: v4l: xilinx: Add Xilinx MIPI CSI-2 Rx Subsystem
+> driver
 > 
-> 2018-05-30 4:30 GMT+09:00 Boris Brezillon 
-> <boris.brezillon@bootlin.com>:
->> On Sat, 26 May 2018 10:42:47 +0200
->> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
->> 
->>> Hi Abhishek,
->>> 
->>> On Fri, 25 May 2018 17:51:29 +0530, Abhishek Sahu
->>> <absahu@codeaurora.org> wrote:
->>> 
->>> > commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,
->>> > match, maximize ECC settings") provides generic helpers which
->>> > drivers can use for setting up ECC parameters.
->>> >
->>> > Since same board can have different ECC strength nand chips so
->>> > following is the logic for setting up ECC strength and ECC step
->>> > size, which can be used by most of the drivers.
->>> >
->>> > 1. If both ECC step size and ECC strength are already set
->>> >    (usually by DT) then just check whether this setting
->>> >    is supported by NAND controller.
->>> > 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
->>> >    supported by NAND controller.
->>> > 3. Otherwise, try to match the ECC step size and ECC strength closest
->>> >    to the chip's requirement. If available OOB size can't fit the chip
->>> >    requirement then select maximum ECC strength which can be fit with
->>> >    available OOB size.
->>> >
->>> > This patch introduces nand_ecc_choose_conf function which calls the
->>> > required helper functions for the above logic. The drivers can use
->>> > this single function instead of calling the 3 helper functions
->>> > individually.
->>> >
->>> > CC: Masahiro Yamada <yamada.masahiro@socionext.com>
->>> > Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->>> > ---
->>> > * Changes from v2:
->>> >
->>> >   1. Renamed function to nand_ecc_choose_conf.
->>> >   2. Minor code reorganization to remove warning and 2 function calls
->>> >      for nand_maximize_ecc.
->>> >
->>> > * Changes from v1:
->>> >   NEW PATCH
->>> >
->>> >  drivers/mtd/nand/raw/nand_base.c | 42 ++++++++++++++++++++++++++++++++++++++++
->>> >  drivers/mtd/nand/raw/nand_base.c | 31 +++++++++++++++++++++++++++++++
->>> >  include/linux/mtd/rawnand.h      |  3 +++
->>> >  2 files changed, 34 insertions(+)
->>> >
->>> > diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
->>> > index 72f3a89..e52019d 100644
->>> > --- a/drivers/mtd/nand/raw/nand_base.c
->>> > +++ b/drivers/mtd/nand/raw/nand_base.c
->>> > @@ -6249,6 +6249,37 @@ int nand_maximize_ecc(struct nand_chip *chip,
->>> >  }
->>> >  EXPORT_SYMBOL_GPL(nand_maximize_ecc);
->>> >
->>> > +/**
->>> > + * nand_ecc_choose_conf - Set the ECC strength and ECC step size
->>> > + * @chip: nand chip info structure
->>> > + * @caps: ECC engine caps info structure
->>> > + * @oobavail: OOB size that the ECC engine can use
->>> > + *
->>> > + * Choose the ECC configuration according to following logic
->>> > + *
->>> > + * 1. If both ECC step size and ECC strength are already set (usually by DT)
->>> > + *    then check if it is supported by this controller.
->>> > + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
->>> > + * 3. Otherwise, try to match the ECC step size and ECC strength closest
->>> > + *    to the chip's requirement. If available OOB size can't fit the chip
->>> > + *    requirement then fallback to the maximum ECC step size and ECC strength.
->>> > + *
->>> > + * On success, the chosen ECC settings are set.
->>> > + */
->>> > +int nand_ecc_choose_conf(struct nand_chip *chip,
->>> > +                    const struct nand_ecc_caps *caps, int oobavail)
->>> > +{
->>> > +   if (chip->ecc.size && chip->ecc.strength)
->>> > +           return nand_check_ecc_caps(chip, caps, oobavail);
->>> > +
->>> > +   if (!(chip->ecc.options & NAND_ECC_MAXIMIZE) &&
->>> > +       !nand_match_ecc_req(chip, caps, oobavail))
->>> > +           return 0;
->>> > +
->>> > +   return nand_maximize_ecc(chip, caps, oobavail);
->>> 
->>> I personally don't mind if nand_maximize_ecc() is called twice in
->>> the function if it clarifies the logic. Maybe the following will be
->>> more clear for the user?
->>> 
->>>       if (chip->ecc.size && chip->ecc.strength)
->>>               return nand_check_ecc_caps(chip, caps, oobavail);
->>> 
->>>       if (chip->ecc.options & NAND_ECC_MAXIMIZE)
->>>               return nand_maximize_ecc(chip, caps, oobavail);
->>> 
->>>       if (!nand_match_ecc_req(chip, caps, oobavail))
->>>               return 0;
->>> 
->>>       return nand_maximize_ecc(chip, caps, oobavail);
->> 
->> I personally don't mind, and it seems Masahiro wanted to keep the 
->> logic
->> he had used in the denali driver.
->> 
->>> 
->>> Also, I'm not sure we should just error out when 
->>> nand_check_ecc_caps()
->>> fails. What about something more robust, like:
->>> 
->>>       int ret;
->>> 
->>>       if (chip->ecc.size && chip->ecc.strength) {
->>>               ret = nand_check_ecc_caps(chip, caps, oobavail);
->>>               if (ret)
->>>                       goto maximize_ecc;
->> 
->> Nope. When someone asked for a specific ECC config by passing the
->> nand-ecc-xxx props we should apply it or return an erro if it's not
->> supported. People passing those props should now what the ECC engine
->> supports and pick one valid values.
->> 
->>> 
->>>               return 0;
->>>       }
->>> 
->>>       if (chip->ecc.options & NAND_ECC_MAXIMIZE)
->>>               goto maximize_ecc;
->>> 
->>>       ret = nand_match_ecc_req(chip, caps, oobavail);
->>>       if (ret)
->>>               goto maximize_ecc;
->>> 
->>>       return 0;
->>> 
->>> maximize_ecc:
->>>       return nand_maximize_ecc(chip, caps, oobavail);
->>> 
->> 
->> 
->> ______________________________________________________
->> Linux MTD discussion mailing list
->> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+> On 05/29/2018 11:54 AM, Vishal Sagar wrote:
+> >
+> > Signed-off-by: Vishal Sagar <vishal.sagar@xilinx.com>
+> > ---
+> >  drivers/media/platform/xilinx/Kconfig           |   12 +
+> >  drivers/media/platform/xilinx/Makefile          |    1 +
+> >  drivers/media/platform/xilinx/xilinx-csi2rxss.c | 1751
+> +++++++++++++++++++++++
+> >  include/uapi/linux/xilinx-csi2rxss.h            |   25 +
+> >  include/uapi/linux/xilinx-v4l2-controls.h       |   14 +
+> >  5 files changed, 1803 insertions(+)
+> >  create mode 100644 drivers/media/platform/xilinx/xilinx-csi2rxss.c
+> >  create mode 100644 include/uapi/linux/xilinx-csi2rxss.h
+> >
+> > diff --git a/drivers/media/platform/xilinx/Kconfig
+> b/drivers/media/platform/xilinx/Kconfig
+> > index a5d21b7..06d5944 100644
+> > --- a/drivers/media/platform/xilinx/Kconfig
+> > +++ b/drivers/media/platform/xilinx/Kconfig
+> > @@ -8,6 +8,18 @@ config VIDEO_XILINX
+> >
+> >  if VIDEO_XILINX
+> >
+> > +config VIDEO_XILINX_CSI2RXSS
+> > +       tristate "Xilinx CSI2 Rx Subsystem"
+> > +       depends on VIDEO_XILINX
+> > +       help
+> > +         Driver for Xilinx MIPI CSI2 Rx Subsystem. This is a V4L sub-device
+> > +         based driver that takes input from CSI2 Tx source and converts
+> > +         it into an AXI4-Stream. It has a DPHY (whose register interface
+> > +         can be enabled, an optional I2C controller and an optional Video
 > 
-> 
-> 
-> 
-> 
-> 
-> This version looks good to me.
-> 
-> If you want to check the error code more precisely,
-> how about something like follows?
-> 
-> 
-> 
-> int nand_ecc_choose_conf(struct nand_chip *chip,
->                         const struct nand_ecc_caps *caps, int oobavail)
-> {
->        int ret;
-> 
->        if (chip->ecc.size && chip->ecc.strength)
->                return nand_check_ecc_caps(chip, caps, oobavail);
-> 
->        if (!(chip->ecc.options & NAND_ECC_MAXIMIZE)) {
->                ret = nand_match_ecc_req(chip, caps, oobavail);
->                if (ret != -ENOTSUPP)
->                        return ret;
->        }
-> 
->        return nand_maximize_ecc(chip, caps, oobavail);
-> }
-> 
-> 
-> Only the difference is the case
-> where nand_match_ecc_req() returns a different error code
-> than ENOTSUPP.
-> (Currently, this happens only when insane 'oobavail' is passed.)
+> 	    can be enabled),
 > 
 
-  We can do that but to me, it will make the helper function
-  more complicated. Currently, nand_match_ecc_req is returning
-  other than ENOTSUPP 'oobavail < 0' is passed.
-  and again in nand_maximize_ecc, we will check for validity
-  of oobavail so nothing wrong will happen in calling
-  nand_maximize_ecc.
+Noted. I will update in next revision of patch.
 
-  Anyway we put this under WARN_ON condition
-
-         if (WARN_ON(oobavail < 0))
-                 return -EINVAL;
-
-  so if this is being triggered, then it should be mostly
-  programming error.
-
-  Thanks,
-  Abhishek
-
+> > +         Format Bridge which converts the AXI4-Stream data to Xilinx Video
+> > +         Bus formats based on UG934. The driver is used to set the number
+> > +         of active lanes and get short packet data.
+> > +
+> >  config VIDEO_XILINX_TPG
+> >         tristate "Xilinx Video Test Pattern Generator"
+> >         depends on VIDEO_XILINX
 > 
-> ENOTSUPP means 'required ECC setting is not supported'.
-> Other error code is more significant, so it is not a good reason
-> to fall back to miximization, IMHO.
+> 
+> 
+> > This email and any attachments are intended for the sole use of the named
+> recipient(s) and contain(s) confidential information that may be proprietary,
+> privileged or copyrighted under applicable law. If you are not the intended
+> recipient, do not read, copy, or forward this email message or any attachments.
+> Delete this email message and any attachments immediately.
+> 
+> :(
+> 
+
+Sorry about that.
+I will work with IT on getting this removed before sending v2 for the patches.
+
+-- Vishal 
+
+> --
+> ~Randy
