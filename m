@@ -1,58 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932524AbeE3WAu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:00:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54078 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932222AbeE3WAt (ORCPT
+        id S932551AbeE3WCD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:02:03 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:51293 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932222AbeE3WCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:00:49 -0400
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from
- "audit" actions
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc: Steve Grubb <sgrubb@redhat.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-audit@redhat.com
-Date: Wed, 30 May 2018 18:00:28 -0400
-In-Reply-To: <85d2a40a-884c-c63d-50f6-024f7bbea4a8@linux.vnet.ibm.com>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
-         <15281606.YptaXzsEVL@x2>
-         <00f66ee1-7494-8249-f148-688616deca0c@linux.vnet.ibm.com>
-         <3607733.4k8ofLVAdP@x2>
-         <1160afb4-4184-b30c-5f67-c21536b5f7d3@linux.vnet.ibm.com>
-         <CAHC9VhQZeBS3EzgsWogeuCPtGxSFVDm1jUOLV7Jk4JRC4CVLyQ@mail.gmail.com>
-         <85d2a40a-884c-c63d-50f6-024f7bbea4a8@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18053022-0016-0000-0000-000001D62191
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053022-0017-0000-0000-0000322896BD
-Message-Id: <1527717628.3534.79.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805300233
+        Wed, 30 May 2018 18:02:02 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        KaiChieh Chuang <kaichieh.chuang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: mediatek: export mtk-afe symbols as needed
+Date: Thu, 31 May 2018 00:00:35 +0200
+Message-Id: <20180530220057.1419933-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:UNmyZSfskeazLH3wIYQvWi5pNfMMZTyFpAQMPNq0APHZwPjY+l7
+ xtuRk+dQ7JbKprX8tJjYZxQpcCtEe3wcY7gPVfY0cAbJElwkBsJZGrKTCzZBD+74365aiIW
+ B771666WJjv45u9H1vHacvRdVAHVd6Kuu+3RROU9wTlhDW86uqfmfyB2TmD8FEM408VNM+6
+ M3lNrJl5LJFUFnwyDomEA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Yqf7zVcvSUU=:Eke/1CPzRXiURDafNAKwJh
+ Kfu1rMY66d5aUbuwbfbD5LyZJjFYPHL2HisySbK1jz4oozpZK74gI2cLwdVLE0bD2wjsyqR9b
+ WJ8uDdtFQGdiVKF+v69P7vZD+eiNPqWOhXJRSijrpgjpp6zyf6bD+14wdzUYrLeRbOFUgHiAO
+ TUm41uPDXjHB6UPU8zwBOZAqMM0Pl3DETV7jm84JicgSe/cpoVWgBYKeA9lwMPg9zEtbgV9hu
+ ddhKpUFn66H86VZSf6doQEiGPN2LSrNk69yMghaKU5Xhe81zhDlz5oOvr56I3gJFkojDZxH8a
+ WCshlBNHae1WwFJy6IWMq3YPYJGYvNcOfP3F/29HUke/lUoo15jrcBfjZvUq/YUJ5DjioFpkS
+ vLTKk5CBFeBQJqCVk+f8Np1zslNDzap/a06AxQMtOQgoZNG5coZO+GHclHbdLSf3HY/DRE291
+ mVd8XH88CaLuVQ72+vokBt2VKWhq1CfrA9Z97QOncSnzGYcnYYhHSGbBrOUxGlR0RPGpiHrut
+ TyxyHWj8KIl5sklPil6RpHUBGKiN3crNkQr48a4IrVyV9y3SkMcvy52nALopQgTsLR9YiQzdT
+ ctmMhooNg1UIzKlLHFkiZkVSJmbC0mWeX5D8apJ775AsuuY/C2/aV0qoJUDYzykismySq4ziY
+ Y9Nc3fBFx1iRTKSghSELSgAqo5HXYFDUcxOcAYqyw8wA8iBtAtveCGNVQA5ieZ38r2ZA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-30 at 17:49 -0400, Stefan Berger wrote:
-> 
-> So the other choice is to only keep patches 1,2, 6, and 7, so leave most 
-> of the integrity audit messages untouched. Then only create a different 
-> format for the new AUDIT_INTEGRITY_POLICY_RULE (current 8/8) that shares 
-> (for consistency reasons) the same format with the existing integrity 
-> audit messages but also misses tty= and exe= ?
+The new mt6797-afe driver uses some functions in a common file, which
+works for a built-in driver but fails for a loadable module:
 
-Another option would be for the new AUDIT_INTEGRITY_POLICY_RULE to
-call audit_log_task_info() similar to what ima_audit_measurement()
-does.
+ERROR: "mtk_afe_pcm_free" [sound/soc/mediatek/mt6797/snd-soc-mt6797-afe.ko] undefined!
+ERROR: "mtk_afe_add_sub_dai_control" [sound/soc/mediatek/mt6797/snd-soc-mt6797-afe.ko] undefined!
+ERROR: "mtk_afe_pcm_new" [sound/soc/mediatek/mt6797/snd-soc-mt6797-afe.ko] undefined!
+ERROR: "mtk_afe_combine_sub_dai" [sound/soc/mediatek/mt6797/snd-soc-mt6797-afe.ko] undefined!
+ERROR: "mtk_afe_pcm_ops" [sound/soc/mediatek/mt6797/snd-soc-mt6797-afe.ko] undefined!
 
-Mimi
+This exports the five symbols above for modules.
+
+Fixes: b3c702f56bf5 ("ASoC: mt6797: combine DAI to register component")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/mediatek/common/mtk-afe-platform-driver.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.c b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+index 00618587ef1e..51ec4ff6ed95 100644
+--- a/sound/soc/mediatek/common/mtk-afe-platform-driver.c
++++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+@@ -57,6 +57,7 @@ int mtk_afe_combine_sub_dai(struct mtk_base_afe *afe)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(mtk_afe_combine_sub_dai);
+ 
+ int mtk_afe_add_sub_dai_control(struct snd_soc_component *component)
+ {
+@@ -90,6 +91,7 @@ int mtk_afe_add_sub_dai_control(struct snd_soc_component *component)
+ 	return 0;
+ 
+ }
++EXPORT_SYMBOL_GPL(mtk_afe_add_sub_dai_control);
+ 
+ static snd_pcm_uframes_t mtk_afe_pcm_pointer
+ 			 (struct snd_pcm_substream *substream)
+@@ -130,6 +132,7 @@ const struct snd_pcm_ops mtk_afe_pcm_ops = {
+ 	.ioctl = snd_pcm_lib_ioctl,
+ 	.pointer = mtk_afe_pcm_pointer,
+ };
++EXPORT_SYMBOL_GPL(mtk_afe_pcm_ops);
+ 
+ int mtk_afe_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ {
+@@ -143,11 +146,13 @@ int mtk_afe_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 						     afe->dev,
+ 						     size, size);
+ }
++EXPORT_SYMBOL_GPL(mtk_afe_pcm_new);
+ 
+ void mtk_afe_pcm_free(struct snd_pcm *pcm)
+ {
+ 	snd_pcm_lib_preallocate_free_for_all(pcm);
+ }
++EXPORT_SYMBOL_GPL(mtk_afe_pcm_free);
+ 
+ const struct snd_soc_component_driver mtk_afe_pcm_platform = {
+ 	.name = AFE_PCM_NAME,
+-- 
+2.9.0
