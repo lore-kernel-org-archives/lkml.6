@@ -1,58 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752963AbeE3MZM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:25:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41768 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751352AbeE3MZL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:25:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BE21460646
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=hareeshg@codeaurora.org
-Subject: Re: [PATCH] lib/plist.c: Export plist_*() APIs
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>, jcrouse@codeaurora.org,
-        Mel Gorman <mgorman@suse.de>, efault@gmx.de, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org
-References: <1512484543-24772-1-git-send-email-hareeshg@codeaurora.org>
- <20171205144104.egber33dwpc6uo7c@hirez.programming.kicks-ass.net>
- <12861d19-1579-2f78-7c4c-ac8983b505ae@codeaurora.org>
- <20171206155917.se5mmw2gf5qz4otf@hirez.programming.kicks-ass.net>
-From: Hareesh Gundu <hareeshg@codeaurora.org>
-Message-ID: <8a59865a-1143-3ba1-8be7-cf590d422c36@codeaurora.org>
-Date: Wed, 30 May 2018 17:55:05 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1752736AbeE3M3q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:29:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54416 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750790AbeE3M3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 08:29:44 -0400
+Date: Wed, 30 May 2018 13:29:40 +0100
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, bhelgaas@google.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        linux-pci@vger.kernel.org, dan.daly@intel.com, mark.d.rustad@intel.com,
+        alexander.h.duyck@intel.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com
+Subject: Re: [virtio-dev] [PATCH] virtio_pci: support enabling VFs
+Message-ID: <20180530122940.GI14623@stefanha-x1.localdomain>
+References: <20180530085521.26583-1-tiwei.bie@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20171206155917.se5mmw2gf5qz4otf@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="cf0hFtnykp6aONGL"
+Content-Disposition: inline
+In-Reply-To: <20180530085521.26583-1-tiwei.bie@intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--cf0hFtnykp6aONGL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 12/6/2017 9:29 PM, Peter Zijlstra wrote:
-> On Wed, Dec 06, 2017 at 08:59:27PM +0530, Hareesh Gundu wrote:
->> On 12/5/2017 8:11 PM, Peter Zijlstra wrote:
->>> On Tue, Dec 05, 2017 at 08:05:43PM +0530, Hareesh Gundu wrote:
->>>> Allow plist_add(), plist_del() and plist_requeue() APIs to
->>>> be referenced by kernel modules by adding the EXPORT_SYMBOL().
->> This change is not for in-tree kernel module. It's for modules built outside
->> of kernel tree modules.
->>
->> Is it really required to show out tree kernel modules ?
-> Typically we don't add EXPORTs for functions not used in in-tree
-> modules.
-We changed our design and planned to have our module in-tree kernel 
-instead of out tree kernel module.
-Below is the reference for in-tree kernel module proposal for 
-"drviers/gpu/msm" which is referring to plist_* symbols.
+On Wed, May 30, 2018 at 04:55:21PM +0800, Tiwei Bie wrote:
+> There is a new feature bit allocated in virtio spec to
+> support SR-IOV (Single Root I/O Virtualization):
+>=20
+> https://github.com/oasis-tcs/virtio-spec/issues/11
+>=20
+> This patch enables the support for this feature bit in
+> virtio driver.
+>=20
+> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> ---
+> This patch depends on below proposal:
+> https://lists.oasis-open.org/archives/virtio-dev/201805/msg00154.html
+>=20
+> This patch depends on below patch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/commit/?h=
+=3Dpci/virtualization&id=3D8effc395c2097e258fcedfc02ed4a66d45fb4238
+>=20
+>  drivers/virtio/virtio_pci_common.c | 20 ++++++++++++++++++++
+>  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
+>  include/uapi/linux/virtio_config.h |  7 ++++++-
+>  3 files changed, 40 insertions(+), 1 deletion(-)
 
-https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/gpu/msm/adreno_dispatch.c?h=msm-4.9#n533
+Looks good and matches the virtio spec change, but I'm not familiar with
+PCI SR-IOV details, so not a full Reviewed-by.
 
-Could you please revisit the patch and approve for upstream.
+Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--cf0hFtnykp6aONGL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJbDpk0AAoJEJykq7OBq3PI/a8IAMXdX7W1thOJsCpPYJN/TuyS
+wPDyYhx5+Xs35iJreLG2AIQ73SnLOgfdz/OGzHhpe+yAbH3P+JyWjmAPCXXVHDwu
+S01KRyn8xp60ZYqGhAxbCnmynOLGZS69h5PhnQgiQmr85+B/7O2k+6M6RHTKGE0k
+HwcB8kIid3ixIxjMlH9MiC8GKL5H/VWQ/nCwMTl1YRRvzb2e/9vB+JdyJo/+S/Ni
+/YAyP2hYSkbxRaKJM/GPuDkWt5oDsnfGFWyxlihwccTlI7e3eA2fIDxLz+9bIHO6
+NzhcNg/4WC28wenhr+F+jeP8NKtIKnwh+vDs1GSKXa94mj/nvHF3z7Ypcya8PdQ=
+=E2BM
+-----END PGP SIGNATURE-----
+
+--cf0hFtnykp6aONGL--
