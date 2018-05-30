@@ -1,129 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753244AbeE3OcY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:32:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44856 "EHLO mail.bootlin.com"
+        id S1753302AbeE3OdC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:33:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751369AbeE3OcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:32:22 -0400
-Date: Wed, 30 May 2018 16:32:20 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Frieder Schrempf <frieder.schrempf@exceet.de>
-Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
-        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
-        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com, han.xu@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] spi: spi-mem: Extend the SPI mem interface to set
- a custom memory name
-Message-ID: <20180530163220.161fdb86@bbrezillon>
-In-Reply-To: <1527686082-15142-2-git-send-email-frieder.schrempf@exceet.de>
-References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
-        <1527686082-15142-2-git-send-email-frieder.schrempf@exceet.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751300AbeE3OdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 10:33:00 -0400
+X-Google-Smtp-Source: ADUXVKJWdFULyNRe6mR6OkAgoRkWCBn+LNilhXyLdDsOW7cd0nei1Vvf2/vidIMuc486RjH7E8IDRpJmMyTZ6DlgY7c=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1527682561-1386-10-git-send-email-m.purski@samsung.com>
+References: <CGME20180530121629eucas1p2cc1a8c3f5a8e704f4d6f3cf75834cf00@eucas1p2.samsung.com>
+ <1527682561-1386-1-git-send-email-m.purski@samsung.com> <1527682561-1386-10-git-send-email-m.purski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 30 May 2018 16:32:57 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdRxLxw6+AC5moC4327W5GMgBN0q3a9odq=adsFGxmdqA@mail.gmail.com>
+Message-ID: <CAJKOXPdRxLxw6+AC5moC4327W5GMgBN0q3a9odq=adsFGxmdqA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/10] ARM: dts: exynos5250: add DSI node
+To: Maciej Purski <m.purski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>, Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Frieder,
-
-On Wed, 30 May 2018 15:14:30 +0200
-Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
-
-> When porting (Q)SPI controller drivers from the MTD layer to the SPI
-> layer, the naming scheme for the memory devices changes. To be able
-> to keep compatibility with the old drivers naming scheme, a function
-> is added to the SPI mem interface to let controller drivers set a
-> custom name for the memory.
-> 
-> Example for the FSL QSPI driver:
-> 
-> Name with the old driver: 21e0000.qspi,
-> or with multiple devices: 21e0000.qspi-0, 21e0000.qspi-1, ...
-> 
-> Name with the new driver without spi_mem_get_name: spi4.0
-> 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
+On Wed, May 30, 2018 at 2:16 PM, Maciej Purski <m.purski@samsung.com> wrote:
+> From: Andrzej Hajda <a.hajda@samsung.com>
+>
+> The patch adds common part of DSI node for Exynos5250 platforms
+> and a required mipi-phy node.
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
 > ---
->  drivers/spi/spi-mem.c       | 25 +++++++++++++++++++++++++
->  include/linux/spi/spi-mem.h |  3 +++
->  2 files changed, 28 insertions(+)
-> 
-> diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
-> index 990770d..5e9af47 100644
-> --- a/drivers/spi/spi-mem.c
-> +++ b/drivers/spi/spi-mem.c
-> @@ -311,6 +311,31 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
->  EXPORT_SYMBOL_GPL(spi_mem_exec_op);
->  
->  /**
-> + * spi_mem_get_name() - Let drivers using the SPI mem interface specify a
-> + *			custom name for the memory to avoid compatibility
-> + *			issues with ported drivers.
-> + * @mem: the SPI memory
-> + *
-> + * When porting (Q)SPI controller drivers from the MTD layer to the SPI
-> + * layer, the naming scheme for the memory devices changes. To be able to
-> + * keep compatibility with the old drivers naming scheme, this function can
-> + * be used to get a custom name from the controller driver.
-> + * If no custom name is available, the name of the SPI device is returned.
-> + *
-> + * Return: a char array that contains the name for the flash memory
-> + */
-> +const char *spi_mem_get_name(struct spi_mem *mem)
-> +{
-> +	struct spi_controller *ctlr = mem->spi->controller;
-> +
-> +	if (ctlr->mem_ops && ctlr->mem_ops->get_name)
-> +		return ctlr->mem_ops->get_name(mem);
+>  arch/arm/boot/dts/exynos5250.dtsi | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 
-Looks like your implementation of ->get_name() in the fsl driver is
-allocating a new string each time it's called. I guess other
-implementations might be forced to do the same, so maybe it's better to
-add a ->name field to struct spi_mem and only call ->get_name() once
-when the device is probed. Then spi_mem_get_name() can just be
-implemented like this:
+Thanks for changes. I'll take both DTS patches after bindings get
+accepted and after upcomming merge window.
 
-const char *spi_mem_get_name(struct spi_mem *mem)
-{
-	return mem->name;
-}
-
-Regards,
-
-Boris
-
-> +
-> +	return dev_name(&mem->spi->dev);
-> +}
-> +EXPORT_SYMBOL_GPL(spi_mem_get_name);
-> +
-> +/**
->   * spi_mem_adjust_op_size() - Adjust the data size of a SPI mem operation to
->   *			      match controller limitations
->   * @mem: the SPI memory
-> diff --git a/include/linux/spi/spi-mem.h b/include/linux/spi/spi-mem.h
-> index 4fa34a2..f1912d3 100644
-> --- a/include/linux/spi/spi-mem.h
-> +++ b/include/linux/spi/spi-mem.h
-> @@ -178,6 +178,7 @@ struct spi_controller_mem_ops {
->  			    const struct spi_mem_op *op);
->  	int (*exec_op)(struct spi_mem *mem,
->  		       const struct spi_mem_op *op);
-> +	const char *(*get_name)(struct spi_mem *mem);
->  };
->  
->  /**
-> @@ -236,6 +237,8 @@ bool spi_mem_supports_op(struct spi_mem *mem,
->  int spi_mem_exec_op(struct spi_mem *mem,
->  		    const struct spi_mem_op *op);
->  
-> +const char *spi_mem_get_name(struct spi_mem *mem);
-> +
->  int spi_mem_driver_register_with_owner(struct spi_mem_driver *drv,
->  				       struct module *owner);
->  
+Best regards,
+Krzysztof
