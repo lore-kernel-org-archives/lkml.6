@@ -1,102 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753878AbeE3PQq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:16:46 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:62714 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753329AbeE3PQk (ORCPT
+        id S1753879AbeE3PRD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:17:03 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42287 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751794AbeE3PQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:16:40 -0400
-Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
-To: Tony Lindgren <tony@atomide.com>, Faiz Abbas <faiz_abbas@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>, <paul@pwsan.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-2-faiz_abbas@ti.com> <20180530145047.GC5705@atomide.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
-Date: Wed, 30 May 2018 18:15:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 30 May 2018 11:16:55 -0400
+X-Google-Smtp-Source: ADUXVKI4UL8XDoqs00FhdJ62zaGHCHrBqMRlNPk4XukTjvwc39nvjjJ6RZRdpjaTaGWZ4xERTt7t09Nm9+FrsdpXsWg=
 MIME-Version: 1.0
-In-Reply-To: <20180530145047.GC5705@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180525233528.GA371@deepa-ubuntu>
+References: <20180525233528.GA371@deepa-ubuntu>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 30 May 2018 17:16:53 +0200
+X-Google-Sender-Auth: 4BU6rtJEl8jUZQHj0xFDRX1rqXU
+Message-ID: <CAK8P3a1_qJRALkxxb1uPnEaf8T5LsL0N1LbDUqxOr4SUDhPk1g@mail.gmail.com>
+Subject: Re: [GIT PULL] Transition vfs to 64-bit timestamps
+To: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        "Dilger, Andreas" <andreas.dilger@intel.com>, anton@tuxera.com,
+        Felipe Balbi <balbi@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Howells <dhowells@redhat.com>, David Sterba <dsterba@suse.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Mike Marshall <hubcap@omnibond.com>, Jan Kara <jack@suse.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Harkes <jaharkes@cs.cmu.edu>,
+        Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
+        Mark Fasheh <mark@fasheh.com>, Miklos Szeredi <miklos@szeredi.hu>,
+        Nicolas Pitre <nico@linaro.org>, reiserfs-devel@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>, Sage Weil <sage@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Steven Whitehouse <swhiteho@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, zyan@redhat.com,
+        Miklos Szeredi <mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/05/18 17:50, Tony Lindgren wrote:
-> * Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
->> From: Lokesh Vutla <lokeshvutla@ti.com>
->>
->> Add MCAN hwmod data and register it for dra762 silicons.
->>
->> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
->> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->> ---
->>   arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++
->>   1 file changed, 32 insertions(+)
->>
->> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> index 62352d1e6361..a2cd7f865a60 100644
->> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
->> @@ -1355,6 +1355,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
->>   	},
->>   };
->>   
->> +/*
->> + * 'mcan' class
->> + *
->> + */
->> +static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
->> +	.name	= "mcan",
->> +};
->> +
->> +/* mcan */
->> +static struct omap_hwmod dra76x_mcan_hwmod = {
->> +	.name		= "mcan",
->> +	.class		= &dra76x_mcan_hwmod_class,
->> +	.clkdm_name	= "wkupaon_clkdm",
->> +	.main_clk	= "mcan_clk",
->> +	.prcm = {
->> +		.omap4 = {
->> +			.clkctrl_offs = DRA7XX_CM_WKUPAON_ADC_CLKCTRL_OFFSET,
->> +			.context_offs = DRA7XX_RM_WKUPAON_ADC_CONTEXT_OFFSET,
->> +			.modulemode   = MODULEMODE_SWCTRL,
->> +		},
->> +	},
->> +};
-> 
-> You should be now able to leave out at least the clkctrl_offs and modulemode
-> here. Please also check if leaving out clkdm_name and main_clk now works :)
-> 
->> @@ -3818,6 +3841,14 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
->>   	.user		= OCP_USER_MPU,
->>   };
->>   
->> +/* l3_main_1 -> mcan */
->> +static struct omap_hwmod_ocp_if dra76x_l3_main_1__mcan = {
->> +	.master		= &dra7xx_l3_main_1_hwmod,
->> +	.slave		= &dra76x_mcan_hwmod,
->> +	.clk		= "l3_iclk_div",
->> +	.user		= OCP_USER_MPU | OCP_USER_SDMA,
->> +};
-> 
-> I think this we still need though for the clk. Tero, do you have any comments
-> on what all clocks can now be left out?
+On Sat, May 26, 2018 at 1:35 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
 
-For the OCP if part, I think that is still needed until we switch over 
-to full sysc driver. clkctrl_offs you probably also need because that is 
-used for mapping the omap_hwmod against a specific clkctrl clock. Those 
-can be only removed once we are done with hwmod (or figure out some 
-other way to assign the clkctrl clock to a hwmod.)
+> The flag patch applies cleanly. I've not seen the timestamps
+> update logic change often. The series applies cleanly on 4.17-rc6
+> and linux-next tip (top commit: next-20180517).
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+It just stopped applying cleanly against the latest linux-next tree, due to
+a conflict against two patches from the overlayfs-next tree:
+
+b2a285e1dc5d ("Revert "vfs: update ovl inode before relatime check"")
+681b186a012d ("Revert "ovl: fix relatime for directories"")
+
+After the conflict resolution below, it works fine again. Not sure what the
+best merge strategy would be, at least the bit in ovl_file_accessed()
+isn't obvious enough.
+
+       Arnd
+
+diff --cc fs/inode.c
+index 6404639e2491,9fe1f941be02..195b974e7a77
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@@ -1635,10 -1681,11 +1635,10 @@@ static int update_time(struct inode *in
+   *    This function automatically handles read only file systems and media,
+   *    as well as the "noatime" flag and inode specific "noatime" markers.
+   */
+ -bool __atime_needs_update(const struct path *path, struct inode *inode,
+ -                        bool rcu)
+ +bool atime_needs_update(const struct path *path, struct inode *inode)
+  {
+        struct vfsmount *mnt = path->mnt;
+-       struct timespec now;
++       struct timespec64 now;
+
+        if (inode->i_flags & S_NOATIME)
+                return false;
+@@@ -1661,10 -1708,10 +1661,14 @@@
+
+        now = current_time(inode);
+
+ -      if (!relatime_need_update(mnt, inode, now))
+-       if (!relatime_need_update(path, inode,
+timespec64_to_timespec(now), rcu))
+++      if (!relatime_need_update(mnt, inode, timespec64_to_timespec(now)))
+                return false;
+
+-       if (timespec_equal(&inode->i_atime, &now))
++       if (timespec64_equal(&inode->i_atime, &now))
+                return false;
+
+        return true;
+@@@ -1674,9 -1721,9 +1678,9 @@@ void touch_atime(const struct path *pat
+  {
+        struct vfsmount *mnt = path->mnt;
+        struct inode *inode = d_inode(path->dentry);
+-       struct timespec now;
++       struct timespec64 now;
+
+ -      if (!__atime_needs_update(path, inode, false))
+ +      if (!atime_needs_update(path, inode))
+                return;
+
+        if (!sb_start_write_trylock(inode->i_sb))
+diff --cc fs/overlayfs/inode.c
+index e31d64206a01,d7cca60f28e6..e0bb217c01e2
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -169,8 +169,8 @@ static void ovl_file_accessed(struct file *file)
+        if (!upperinode)
+                return;
+
+ -       if ((!timespec_equal(&inode->i_mtime, &upperinode->i_mtime) ||
+ -            !timespec_equal(&inode->i_ctime, &upperinode->i_ctime))) {
+ +       if ((!timespec64_equal(&inode->i_mtime, &upperinode->i_mtime) ||
+ +            !timespec64_equal(&inode->i_ctime, &upperinode->i_ctime))) {
+                inode->i_mtime = upperinode->i_mtime;
+                inode->i_ctime = upperinode->i_ctime;
+        }
+@@@ -439,7 -384,39 +439,7 @@@ struct posix_acl *ovl_get_acl(struct in
+        return acl;
+  }
+
+- int ovl_update_time(struct inode *inode, struct timespec *ts, int flags)
+ -static bool ovl_open_need_copy_up(struct dentry *dentry, int flags)
+ -{
+ -      /* Copy up of disconnected dentry does not set upper alias */
+ -      if (ovl_dentry_upper(dentry) &&
+ -          (ovl_dentry_has_upper_alias(dentry) ||
+ -           (dentry->d_flags & DCACHE_DISCONNECTED)))
+ -              return false;
+ -
+ -      if (special_file(d_inode(dentry)->i_mode))
+ -              return false;
+ -
+ -      if (!(OPEN_FMODE(flags) & FMODE_WRITE) && !(flags & O_TRUNC))
+ -              return false;
+ -
+ -      return true;
+ -}
+ -
+ -int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags)
+ -{
+ -      int err = 0;
+ -
+ -      if (ovl_open_need_copy_up(dentry, file_flags)) {
+ -              err = ovl_want_write(dentry);
+ -              if (!err) {
+ -                      err = ovl_copy_up_flags(dentry, file_flags);
+ -                      ovl_drop_write(dentry);
+ -              }
+ -      }
+ -
+ -      return err;
+ -}
+ -
++ int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags)
+  {
+        if (flags & S_ATIME) {
+                struct ovl_fs *ofs = inode->i_sb->s_fs_info;
+diff --cc fs/overlayfs/overlayfs.h
+index 93c84929d422,9fe10247f9d4..8477d9e4b4fe
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@@ -356,18 -330,10 +356,18 @@@ int ovl_xattr_get(struct dentry *dentry
+                  void *value, size_t size);
+  ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size);
+  struct posix_acl *ovl_get_acl(struct inode *inode, int type);
+- int ovl_update_time(struct inode *inode, struct timespec *ts, int flags);
+ -int ovl_open_maybe_copy_up(struct dentry *dentry, unsigned int file_flags);
++ int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags);
+  bool ovl_is_private_xattr(const char *name);
