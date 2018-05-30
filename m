@@ -1,51 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752556AbeE3MKo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:10:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52354 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752095AbeE3MKn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:10:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC0F260251
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=timur@codeaurora.org
-Subject: Re: [PATCH net-next] net: qcom/emac: fix unused variable
-To: YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180529104343.19448-1-yuehaibing@huawei.com>
-From: Timur Tabi <timur@codeaurora.org>
-Message-ID: <0db547d4-27c1-a9f7-f443-86bebd831cb2@codeaurora.org>
-Date: Wed, 30 May 2018 07:10:40 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        id S1751997AbeE3MNT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:13:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60454 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751012AbeE3MNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 08:13:18 -0400
+Date: Wed, 30 May 2018 08:13:17 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dm: writecache: fix format string warning
+In-Reply-To: <20180528155432.2864616-1-arnd@arndb.de>
+Message-ID: <alpine.LRH.2.02.1805300807090.24812@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180528155432.2864616-1-arnd@arndb.de>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <20180529104343.19448-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/29/18 5:43 AM, YueHaibing wrote:
-> When CONFIG_ACPI isn't set, variable qdf2400_ops/qdf2432_ops isn't used.
-> drivers/net/ethernet/qualcomm/emac/emac-sgmii.c:284:25: warning: ‘qdf2400_ops’ defined but not used [-Wunused-variable]
->   static struct sgmii_ops qdf2400_ops = {
->                           ^~~~~~~~~~~
-> drivers/net/ethernet/qualcomm/emac/emac-sgmii.c:276:25: warning: ‘qdf2432_ops’ defined but not used [-Wunused-variable]
->   static struct sgmii_ops qdf2432_ops = {
->                           ^~~~~~~~~~~
+
+
+On Mon, 28 May 2018, Arnd Bergmann wrote:
+
+> The return type of ACCESS_ONCE is configuration dependent and may be either
+> 'int' or 'long int' for the writecache_has_error() macro, so we get a warning
+> like this for either format string:
+
+__builtin_expect returns always long, see the GCC documentation (it used 
+to return int in very old gcc versions such as 2.96).
+
+I think this is a bug in the macro __branch_check__. The variable ______r 
+should be long, but it is int. This bug may cause misbehavior of other 
+kernel parts (i.e. truncation of long value to int), so it should be fixed 
+in __branch_check__ - not in dm-writecache.
+
+Mikulas
+
+> In file included from drivers/md/dm-writecache.c:8:
+> drivers/md/dm-writecache.c: In function 'writecache_status':
+> drivers/md/dm-writecache.c:2227:10: error: format '%ld' expects argument of type 'long int', but argument 4 has type 'int' [-Werror=format=]
+>    DMEMIT("%ld %llu %llu %llu", writecache_has_error(wc),
+>           ^~~~~~~~~~~~~~~~~~~~
+> include/linux/device-mapper.h:549:46: note: in definition of macro 'DMEMIT'
+>       0 : scnprintf(result + sz, maxlen - sz, x))
+>                                               ^
 > 
-> Move the declaration and functions inside the CONFIG_ACPI ifdef
-> to fix the warning.
-> Signed-off-by: YueHaibing<yuehaibing@huawei.com>
-
-I already fixed this with:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/commit/?id=d377df784178bf5b0a39e75dc8b1ee86e1abb3f6
-
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+> The code is otherwise correct, so we just need to shut up the warning,
+> which can be done using an extra type cast.
+> 
+> Fixes: bb15b431d650 ("dm: add writecache target")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/md/dm-writecache.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+> index 1ef06e738eb6..772ac3a57287 100644
+> --- a/drivers/md/dm-writecache.c
+> +++ b/drivers/md/dm-writecache.c
+> @@ -2224,7 +2224,7 @@ static void writecache_status(struct dm_target *ti, status_type_t type,
+>  
+>  	switch (type) {
+>  	case STATUSTYPE_INFO:
+> -		DMEMIT("%ld %llu %llu %llu", writecache_has_error(wc),
+> +		DMEMIT("%ld %llu %llu %llu", (long)writecache_has_error(wc),
+>  		       (unsigned long long)wc->n_blocks, (unsigned long long)wc->freelist_size,
+>  		       (unsigned long long)wc->writeback_size);
+>  		break;
+> -- 
+> 2.9.0
+> 
