@@ -1,50 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753330AbeE3MEq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:04:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752095AbeE3MDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753248AbeE3MEo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:04:44 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45702 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752099AbeE3MDz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 08:03:55 -0400
-Date: Wed, 30 May 2018 14:03:34 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Rohit Khatri <rohit.khatri@mbconnectline.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4.17-rc7 1/1] lib/kobject_uevent : fix uevent
- environment variable update with kobject event
-Message-ID: <20180530120334.GA24919@kroah.com>
-References: <c195ec31-9ea9-e728-b28b-2f093ed1f8a2@mbconnectline.com>
+X-Google-Smtp-Source: ADUXVKKhL8zcW6KXF9pejwOhJ7xdMLBOeIT8Glnt7uGdw4aN3UbWhJhfcIoMOu8B4deB/NRmeRQbsg==
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v4 2/5] clk: imx6: add EPIT clock support
+Date: Wed, 30 May 2018 14:03:24 +0200
+Message-Id: <20180530120327.27681-3-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180530120327.27681-1-peron.clem@gmail.com>
+References: <20180530120327.27681-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c195ec31-9ea9-e728-b28b-2f093ed1f8a2@mbconnectline.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 11:36:26AM +0000, Rohit Khatri wrote:
-> From: Rohit Khatri <rohit.khatri@mbconnectline.com><mailto:rohit.khatri@mbconnectline.com>
-> Subject: [PATCH 4.17-rc7 1/1] lib/kobject_uevent : fix uevent environment variable update with kobject event
+From: Colin Didier <colin.didier@devialet.com>
 
-What are these lines doing in the email body?
+Add EPIT clock support to the i.MX6Q clocking infrastructure.
 
-> Function kobject_uevent_env is unable to update uevent variables as sequence of code is overwriting user added environment variable(s).
-> For example, if there is a variable named "KEY" in uevent environment with initial value of 0 and if update on any event using  kobject_uevent_env function, value of variable would be 0 only or whatever is initialized because after loading user called variable, function is again reloading same variables.
+Signed-off-by: Colin Didier <colin.didier@devialet.com>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/clk/imx/clk-imx6q.c               | 2 ++
+ include/dt-bindings/clock/imx6qdl-clock.h | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Please always wrap your changelog lines at the proper column, like your
-editor asked you to when you wrote the patch.
-
-> Signed-off-by: Rohit Khatri <rohit.khatri@mbconnectline.com><mailto:rohit.khatri@mbconnectline.com>
-> Cc: stable@vger.kernel.org<mailto:stable@vger.kernel.org>
-
-What is with the crazy mailto: stuff?
-
-Please fix up and we can review the patch...
-
-Also, does this "fix" a patch that is already in the tree?  If so,
-please use the Fixes: tag to specify what commit it fixes.
-
-thanks,
-
-greg k-h
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 8d518ad5dc13..b9ea7037e193 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -753,6 +753,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	else
+ 		clk[IMX6Q_CLK_ECSPI5] = imx_clk_gate2("ecspi5",        "ecspi_root",        base + 0x6c, 8);
+ 	clk[IMX6QDL_CLK_ENET]         = imx_clk_gate2("enet",          "ipg",               base + 0x6c, 10);
++	clk[IMX6QDL_CLK_EPIT1]        = imx_clk_gate2("epit1",         "ipg",               base + 0x6c, 12);
++	clk[IMX6QDL_CLK_EPIT2]        = imx_clk_gate2("epit2",         "ipg",               base + 0x6c, 14);
+ 	clk[IMX6QDL_CLK_ESAI_EXTAL]   = imx_clk_gate2_shared("esai_extal",   "esai_podf",   base + 0x6c, 16, &share_count_esai);
+ 	clk[IMX6QDL_CLK_ESAI_IPG]     = imx_clk_gate2_shared("esai_ipg",   "ahb",           base + 0x6c, 16, &share_count_esai);
+ 	clk[IMX6QDL_CLK_ESAI_MEM]     = imx_clk_gate2_shared("esai_mem", "ahb",             base + 0x6c, 16, &share_count_esai);
+diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+index da59fd9cdb5e..7ad171b8f3bf 100644
+--- a/include/dt-bindings/clock/imx6qdl-clock.h
++++ b/include/dt-bindings/clock/imx6qdl-clock.h
+@@ -271,6 +271,8 @@
+ #define IMX6QDL_CLK_PRE_AXI			258
+ #define IMX6QDL_CLK_MLB_SEL			259
+ #define IMX6QDL_CLK_MLB_PODF			260
+-#define IMX6QDL_CLK_END				261
++#define IMX6QDL_CLK_EPIT1			261
++#define IMX6QDL_CLK_EPIT2			262
++#define IMX6QDL_CLK_END				263
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
+-- 
+2.17.0
