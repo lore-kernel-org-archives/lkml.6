@@ -1,84 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935790AbeE3DBN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 23:01:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45680 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934360AbeE3DBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 23:01:10 -0400
-Date: Wed, 30 May 2018 06:01:09 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Kevin Easton <kevin@guarana.org>, Jason Wang <jasowang@redhat.com>,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [net] vhost: Use kzalloc() to allocate vhost_msg_node
-Message-ID: <20180530055704-mutt-send-email-mst@kernel.org>
-References: <20180427154502.GA22544@la.guarana.org>
- <20180529221908.GA22742@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529221908.GA22742@roeck-us.net>
+        id S935943AbeE3DDj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 23:03:39 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:55719 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933740AbeE3DDi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 23:03:38 -0400
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+To: shuah@kernel.org, valentina.manea.m@gmail.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] usbip: usbip_detach: fix to check for invalid ports
+Date: Tue, 29 May 2018 21:03:08 -0600
+Message-Id: <20180530030308.5566-1-shuah@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 03:19:08PM -0700, Guenter Roeck wrote:
-> On Fri, Apr 27, 2018 at 11:45:02AM -0400, Kevin Easton wrote:
-> > The struct vhost_msg within struct vhost_msg_node is copied to userspace,
-> > so it should be allocated with kzalloc() to ensure all structure padding
-> > is zeroed.
-> > 
-> > Signed-off-by: Kevin Easton <kevin@guarana.org>
-> > Reported-by: syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
-> 
-> Is this patch going anywhere ?
-> 
-> The patch fixes CVE-2018-1118. It would be useful to understand if and when
-> this problem is going to be fixed.
-> 
-> Thanks,
-> Guenter
-> > ---
-> >  drivers/vhost/vhost.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > index f3bd8e9..1b84dcff 100644
-> > --- a/drivers/vhost/vhost.c
-> > +++ b/drivers/vhost/vhost.c
-> > @@ -2339,7 +2339,7 @@ EXPORT_SYMBOL_GPL(vhost_disable_notify);
-> >  /* Create a new message. */
-> >  struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
-> >  {
-> > -	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
-> > +	struct vhost_msg_node *node = kzalloc(sizeof *node, GFP_KERNEL);
-> >  	if (!node)
-> >  		return NULL;
-> >  	node->vq = vq;
+usbip detach doesn't check for invalid ports and ports that are already
+detached. It attempts to remove state file(s) without validating the port
+and sends detach request to the driver for ports that are already detached.
 
-As I pointed out, we don't need to init the whole structure. The proper
-fix is thus (I think) below.
+Add check for invalid ports (port > maxports) and ports that are already
+detached (status == VDEV_ST_NULL). Don't remove state files and don't send
+detach request for invalid ports and ports that are already detached.
 
-Could you use your testing infrastructure to confirm this fixes the issue?
+Add error and information messages that make sense.
 
-Thanks!
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+---
+ tools/usb/usbip/src/usbip_detach.c | 39 +++++++++++++++++++++++++++++---------
+ 1 file changed, 30 insertions(+), 9 deletions(-)
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index f3bd8e941224..58d9aec90afb 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2342,6 +2342,9 @@ struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
- 	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
- 	if (!node)
- 		return NULL;
+diff --git a/tools/usb/usbip/src/usbip_detach.c b/tools/usb/usbip/src/usbip_detach.c
+index 6a8db858caa5..777f7286a0c5 100644
+--- a/tools/usb/usbip/src/usbip_detach.c
++++ b/tools/usb/usbip/src/usbip_detach.c
+@@ -46,6 +46,9 @@ static int detach_port(char *port)
+ 	int ret = 0;
+ 	uint8_t portnum;
+ 	char path[PATH_MAX+1];
++	int i;
++	struct usbip_imported_device *idev;
++	int found = 0;
+ 
+ 	unsigned int port_len = strlen(port);
+ 
+@@ -55,28 +58,46 @@ static int detach_port(char *port)
+ 			return -1;
+ 		}
+ 
+-	/* check max port */
+-
+ 	portnum = atoi(port);
+ 
+-	/* remove the port state file */
+-
+-	snprintf(path, PATH_MAX, VHCI_STATE_PATH"/port%d", portnum);
+-
+-	remove(path);
+-	rmdir(VHCI_STATE_PATH);
+-
+ 	ret = usbip_vhci_driver_open();
+ 	if (ret < 0) {
+ 		err("open vhci_driver");
+ 		return -1;
+ 	}
+ 
++	/* check for invalid port */
++	for (i = 0; i < vhci_driver->nports; i++) {
++		idev = &vhci_driver->idev[i];
 +
-+	/* Make sure all padding within the structure is initialized. */
-+	memset(&node->msg, 0, sizeof node->msg);
- 	node->vq = vq;
- 	node->msg.type = type;
- 	return node;
++		if (idev->port == portnum) {
++			found = 1;
++			if (idev->status != VDEV_ST_NULL)
++				break;
++			info("Port %d is already detached!\n", idev->port);
++			goto call_driver_close;
++		}
++	}
++
++	if (!found) {
++		err("Invalid port %s > maxports %d",
++			port, vhci_driver->nports);
++		goto call_driver_close;
++	}
++
++	/* remove the port state file */
++	snprintf(path, PATH_MAX, VHCI_STATE_PATH"/port%d", portnum);
++
++	remove(path);
++	rmdir(VHCI_STATE_PATH);
++
+ 	ret = usbip_vhci_detach_device(portnum);
+ 	if (ret < 0) {
+ 		ret = -1;
++		err("Port %d detach request failed!\n", portnum);
+ 		goto call_driver_close;
+ 	}
++	info("Port %d is now detached!\n", portnum);
+ 
+ call_driver_close:
+ 	usbip_vhci_driver_close();
+-- 
+2.14.1
