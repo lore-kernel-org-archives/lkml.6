@@ -1,90 +1,130 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-313932-1527714923-2-5246734724930509619
+X-Cyrus-Session-Id: sloti22d1t05-253802-1527712412-2-8360640410747625570
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527714922; b=WtsYucLxM7gRyC+ZQUZiDnamoGWrk+dGN957q8B+H6NvKnTjAC
-    0sgrvMByvr9yPuAlKuAT9ercy8Qhu5XfwRv8t0hIbxcGwPLy92hkDRNX2FagxuGg
-    J3+GmhbpO0G02VVofys+5QQMMTkbrqkz+jIjeZxgs1jbPOiEs+t83sMDHSx8G7dX
-    Z94Nt8dsCGSFA43fAxKUSv6eTSbMdYUeuflIGoCjg33yon/8WfRHNeAmHFjv6aQ4
-    sav8NpBJaXR6u85jtaFjb5uT5gJJqncpE31VdgtT9WQr7ksaaHjoK2/TlJDAHaHj
-    QwH4f+/nJwpdYL/z/+xC06pNCuBRiJ4lZm1A==
+    1527712412; b=N34afRcl74ue5zLhNl8I1ucW8JnuWNdoFoWL9afyULQUzt0tiq
+    v00iitludE8POiOcgrlR9Yp207KU1zTi0x/deuLSQohJEF+39Vsae3n54VPYrLSr
+    m1Ast4YRBa4M0RNDbf6Yz/ZcMb9fBu8eHVwvzyRnXLjPQWlEyHugG+5snATQ3Uwy
+    oKZajDFCjwz1VcrW9UleAmyu/XT0uJBPgSd++kwAL1SVSn5m4IywqWnq2Igr9UEu
+    gI0dtl3XHc48dj36Rjw4I06bHRw7I1xN31iOZ5c2UZDJ9Vtg5Oyh56SuasRgNmxc
+    bCVXwDC8zryJEa8XRDAetTFcIfXDA+8N95PA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:to:references:from:message-id
     :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527714922;
-    bh=z+mUR5kd1uYkqMSaqkKS5iZKgLyiPrnyDvNuP06uTUI=; b=DaVhJHmo1svG
-    5ltt93bIumuDEumMKJB6f7INB0kCfNOvWUgoZTR02TWLKEEl0yMbqnGc2KhacUC5
-    nR38ZPtNdfafHGMwKYX5ZWaKlJ3pGkPQvSBlyuedsRWh9Y2HhwF4B/J9Y5JLSQyu
-    t9kwWxCBkRIZVS66LUTWsI/hRDXZQ1Q9EjLZdvh9DHmDuBXSwaGbLyU18FySgqrq
-    umLyTOGHO+1OAkdjwYbruoABPufs0bOucDgyp0nnIGWpdNCy/ftzMuy780rvAhn6
-    Z8bT9t78Qi69hzUPvZ/FF0D2dEA233NCmGqnD3QiYQVE68HG66B/LSCIu9RZU7g+
-    3pBylqga8g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=CHoP9hjJ
-    header.a=rsa-sha256 header.s=20161025 x-bits=2048;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527712412;
+    bh=1t/Em4Q7E8tBTU3GMFUW/DdkQztP2J46e6TpuMR8Dng=; b=Y9lnXWItjwwJ
+    GV67AgX4fCBX5gzuvWT6W/Huln0ixf4r9C2AzhHovphp9/T1Nawkh4yTgiDlPz43
+    6yb0Br2NBOiNmYtNhA28iRq0xxgL6dRie3eTVJDVyWF9epoViWODhFwafmRTgq2B
+    2/bOu/7V58hlq6ga1UsD0c883cwcfWRYKy/hME4t1HxT1/68GMINZEtdurfXD6ne
+    rnOELUWqO5B6KMG2TPsKOAUqNrOgWVPBqsQV4D0UxJGnJfLCuPvzaRJr1urNgW3G
+    4QvhLCM22S5Ua1NklNSSb1YXLdU1wO22LaLGQVt7nr6DraMhit5/aRnnlxSC/KwE
+    3rOys3Bq2Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tycho.nsa.gov;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=dp04IsF9;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    header.domain=tycho.nsa.gov header.result=pass
+    header_org.domain=nsa.gov header_org.result=pass
+    header_is_org_domain=no;
+    x-vs=clean score=-110 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=CHoP9hjJ
-      header.a=rsa-sha256 header.s=20161025 x-bits=2048;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tycho.nsa.gov;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=dp04IsF9;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=tycho.nsa.gov header.result=pass
+      header_org.domain=nsa.gov header_org.result=pass
+      header_is_org_domain=no;
+    x-vs=clean score=-110 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHzo5YfberpZMyADqlgxXdYfuqe1Pzv8dUODdvEz8QY86kyFtwXUMAH/puaVyndNqLExwAYNC8uQWqFdBdvJq1gxSc6xPTynKfl/j7NfMA8GPmtoxFig
-    zR/6LZlIN6sVLnlPyWbPGs3WcC+L0bJ7umTocjqim8v1uDYM/JvzmGPcFH2y1h1tSG4ZMWoRprvwmsUlFdpSNoPQNi5+mLFTj6Z9as2y52RH7UgavAraiKQm
-    GjVuPuWZx0byEnkMwnIFlg==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=ulJD7APe8ekA:10 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=jRegMVQo5C4VRe_6YNsA:9
-    a=v-DHAAPq3-3zVVIt:21 a=2qCFChUIzVq5yYj8:21 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfEsM9V6RoGPKSvom7ggwPDMV+SJtIMugO7WcwaX6un33VoQfHeBFfnMU6yV0iB3HP4NlbGX5Oqx1Bp8YXpSq8O82M92RokF5CECeBxLClh1MnRDzVMrM
+    emtNgQVF6FrN2oAdJYWVhnhIKpET2oLQ0Q5pPrjRH3ULWc1wY06sZh+w72zl3DUpiVQITi+M7gU39hLlJ1zuZ2ybBlGKQmb3tkFgFO4wyI5secVs5ey8bEeM
+    VrH6JpoYwA57JO5AjTUJrw==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=QQoPp5U2Mh6wbbvzcL4A:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932254AbeE3VPV (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 30 May 2018 17:15:21 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33348 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932151AbeE3VPU (ORCPT
+        id S932217AbeE3Uda (ORCPT <rfc822;linux@kroah.com>);
+        Wed, 30 May 2018 16:33:30 -0400
+Received: from uhil19pa10.eemsg.mail.mil ([214.24.21.83]:13112 "EHLO
+        uhil19pa10.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932191AbeE3Ud3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 May 2018 17:15:20 -0400
-X-Google-Smtp-Source: ADUXVKIyq3i/7W8kZZ92Ty3WxC0vZ6mSS9YwX7QNucctHmiCDuz9zHHl+DqIUmivNPikDKqzzI0ifQ==
-Subject: Re: [PATCH V3 2/5 selinux-next] selinux: Introduce selinux_ruleset
- struct
+        Wed, 30 May 2018 16:33:29 -0400
+X-IronPort-AV: E=Sophos;i="5.49,461,1520899200";
+   d="scan'208";a="13956088"
+IronPort-PHdr: =?us-ascii?q?9a23=3A+LX1/RF6jn9Sv4P0vFSHF51GYnF86YWxBRYc79?=
+ =?us-ascii?q?8ds5kLTJ76oM+zbnLW6fgltlLVR4KTs6sC17KL9fi4EUU7or+5+EgYd5JNUx?=
+ =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
+ =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCa9bL9oMBm6sRjau9ULj4dlNqs/0A?=
+ =?us-ascii?q?bCrGFSe+RRy2NoJFaTkAj568yt4pNt8Dletuw4+cJYXqr0Y6o3TbpDDDQ7KG?=
+ =?us-ascii?q?81/9HktQPCTQSU+HQRVHgdnwdSDAjE6BH6WYrxsjf/u+Fg1iSWIdH6QLYpUj?=
+ =?us-ascii?q?m58axlVAHnhzsGNz4h8WHYlMpwjL5AoBm8oxBz2pPYbJ2JOPZ7eK7Sc8kaRW?=
+ =?us-ascii?q?5cVchPUSJPDJ63Y48WA+YfIepUqo/wrEYMoxSjHwmhHP7hxCFGhnH23qM03e?=
+ =?us-ascii?q?ouHg7E0wM8ENwDq2jUodfvOasOTey4wqvFwDPeZP1Wwzf9743Ifwg8r/GQQ7?=
+ =?us-ascii?q?1wacrRxlcpFwjYk1uQrJbqPzeR1usTs2mQ8u1tVfmyhG48sAxxvjiuydssio?=
+ =?us-ascii?q?nOnI4VzEvE+j9jzIY6It24Vld2bNi5G5VTryGXL5Z6T8wtTm1yuCs216cKtY?=
+ =?us-ascii?q?C0cSQU0pgr2hjSYOGdfYeS+BLsTuORLC99hHJiZb2wmQ6/8VOlyu3gTsm010?=
+ =?us-ascii?q?tKrjZdntnMqH8N0xvT59CbSvRn5Eeh2CuP1xvJ5uFYIUE7iarbK5k7zr42ip?=
+ =?us-ascii?q?UTqljMEjXzmEX3iK+abkQk+u625OT7erjqu5CROoBuhgz+L6gigNKzDOsmPg?=
+ =?us-ascii?q?QUQmSX4eG826fi/U39TrVKlPo2kqzBvZDBOMsbvbW0AxNV04k/6xa/CC2q0N?=
+ =?us-ascii?q?IDnXYdNl5FdxWHj5bxN1HUPP/4Feu/g0irkDpz3/DJIKHhDYvXLnTZjrjhe6?=
+ =?us-ascii?q?ty5FBGyAUoytBf/Z1UB6oaIPL0XE/wtMbUAQM+Mwyx2+znEsly1psCWWKTBa?=
+ =?us-ascii?q?+UKLvSvkWV5uIrOOSMfJUauCv5K/Q84v7uing5mUUDcqWzwZQXb3W4FOx8I0?=
+ =?us-ascii?q?qFeXrsnssBEWASswUgVOzlkkeCUT9IZ3upR6Iz/Cs7CIO9DYfbQoCimqCO0z?=
+ =?us-ascii?q?mhEp1RfGBGBUiGEW30eIWcR/cMdCWSL9djkjMeULiuVZQh2QuqtAPgzrpnKf?=
+ =?us-ascii?q?DU+jcZtZL4z9V14PfTmgsu+jxwEcuRyX2CT2ZxnmkQXT85wLh/oVBhyleEya?=
+ =?us-ascii?q?V3nuZXFdpS5/xXVgc6N4XRz+lkBND2XgLOZNGJSFGpQ9m8HT4xSdcxyccUY0?=
+ =?us-ascii?q?lhA9WikgzD3y2yDrAIk7yEGoE78qzb33jrOslw0GzG27c8gFkmWMRPKXeqib?=
+ =?us-ascii?q?J49wjWH4TJiVmWl762daQA2y7A7GODzWuIvEFFXw98SL7FUm4DaUvLt9T551?=
+ =?us-ascii?q?/CTr+3BbQiNQtO1NOCKq9UZdDyk1VGS+nsOM7Eb2KyhWiwHxCIya2IbIbwfG?=
+ =?us-ascii?q?UdxirdAlAekw8P5XaGKRQ+BiC5rmLaDTxuE0/vYkz1/el9tny7VEk0wB+Ob0?=
+ =?us-ascii?q?B6ybq19QAaheaGR/MQwL0EoiEhpCtwHFqn2NLWEdWArRJ7fKpAedM9/EtH1W?=
+ =?us-ascii?q?XBugxmIJOgNa9iiUAFfgR3pUzu0xF3C4VGkcQwsHwqyw9yI7qC0FxdbzOYwY?=
+ =?us-ascii?q?zwOrrPJ2nq5h+vdqrW2lTC39aV4aoP7PU4q1P+vACmDEYi7XNn3MdJ03eG55?=
+ =?us-ascii?q?XFFw8SXYjtXUYw8hgp743dNxEw+47OnVBqPaSuuDjY1Jp9HOY5xwzmctFTPb?=
+ =?us-ascii?q?mOExX9O9YdAdnoI+svzRzhVhsZOKh386kuMovyb/Kb3IazNftk2Tehin5Kpo?=
+ =?us-ascii?q?t61xTIvwdmS+WA558fwurQigafXi39l3+5u9r2gphAbDofWG2lxn6gTKxYY6?=
+ =?us-ascii?q?BpNaMME32vOIXjxNx7ioWrXzhd80S5Bkgu39Wgch6fKVf62FsUnWgep32qnW?=
+ =?us-ascii?q?Oa0iZ7njcy5v6T1SrPzuDgXB8KPmpCQm5yy1zrJN7wx/wdQUfgSwUlmhy/6Q?=
+ =?us-ascii?q?6uy6xWqKp4NWX7W0pEfyHqaWplV/30/qGPZ89J9YMArTRcUOP6Z0uTDLH6vV?=
+ =?us-ascii?q?9S1yLlAnsb3z0waiurpoS8mht2lWaQBGh8oWCfesxqwxrbotvGSroZ2jsAWT?=
+ =?us-ascii?q?k9ijTNAFW4F8em8M/SlJrZtO26EWW7WdkbOxLm14yN/AbzoyVKCBm7jvb50o?=
+ =?us-ascii?q?n8HBI13Af73t1uRCOOpxH5NM2jnZyzLOYvUwEuTHr3yMd8HIxv2MNknJgN3X?=
+ =?us-ascii?q?0Rhb2R/HwagSHtN9hHn6P0aTwGQjtdkPDP5w2w41FuNnKEwcrCU3yZxsZwL4?=
+ =?us-ascii?q?2hbng+xjM278cMDrydqrNDg30m8RKDsQvNbK0lzX8mwvw05Stf2rtRtQ=3D?=
+ =?us-ascii?q?=3D?=
+X-IPAS-Result: =?us-ascii?q?A2BvAwApCg9b/wHyM5BcGgEBAQEBAgEBAQEIAQEBAYMZK?=
+ =?us-ascii?q?2J/hB+UZEgBAQEGfwghgQ+TUIFkNgGEQAKCHSE4FAECAQEBAQEBAgFrKII1J?=
+ =?us-ascii?q?AGCTgEBAQECASNmCxgCAiYCAlcGAQwIAQGCXkACgXIFCKYughyDeAEBXoNtg?=
+ =?us-ascii?q?WiBCoctgQyBB4EPJAyCXYRbgxiCVAKYZQmOWgaBO4ZShH8rkkAhgVIrCAIYC?=
+ =?us-ascii?q?CEPgn+CHxeNYQFRI4EqAQGOeQEB?=
+Subject: Re: [PATCH V3 0/5] selinux:Significant reduce of preempt_disable
+ holds
 To: Peter Enderborg <peter.enderborg@sony.com>,
         Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
         Eric Paris <eparis@parisplace.org>,
         James Morris <james.l.morris@oracle.com>,
         Daniel Jurgens <danielj@mellanox.com>,
@@ -94,463 +134,83 @@ To: Peter Enderborg <peter.enderborg@sony.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
 References: <20180530141104.28569-1-peter.enderborg@sony.com>
- <20180530141104.28569-3-peter.enderborg@sony.com>
-From: J Freyensee <why2jjj.linux@gmail.com>
-Message-ID: <306e9866-06c0-28ca-44f4-55065828ac3b@gmail.com>
-Date: Wed, 30 May 2018 14:15:15 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+From: Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <8bbb095e-31c3-0062-d17c-662e4832cc17@tycho.nsa.gov>
+Date: Wed, 30 May 2018 16:34:49 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180530141104.28569-3-peter.enderborg@sony.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180530141104.28569-1-peter.enderborg@sony.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On 05/30/2018 10:10 AM, Peter Enderborg wrote:
+> Holding the preempt_disable is very bad for low latency tasks
+> such as audio and therefore we need to break out the rule-set dependent
+> part from this disable. By using a RCU instead of rwlock we
+> have an efficient locking and less preemption interference.
+> 
+> Selinux uses a lot of read_locks. This patch replaces the rwlock
+> with RCU that does not hold preempt_disable.
+> 
+> Intel Xeon W3520 2.67 Ghz running FC27 with 4.15.0-rc9git (+measurement)
+> I get preempt_disable of about 1.2ms in security_compute_av().
+> With the patch I get 960us as the longest security_compute_av()
+> without preempt disabeld. There are very much noise in the measurement
+> but it is not likely a degrade.
+> 
+> And the preempt_disable times is also very dependent on the selinux
+> rule-set.
+> 
+> In security_get_user_sids() we have two nested for-loops and the
+> inner part calls sittab_context_to_sid() that calls
+> sidtab_search_context() that has a for loop() over a while() where
+> the loops is dependent on the rules.
+> 
+> On the test system the average lookup time is 60us and does
+> not change with the introduced RCU usage.
+> 
+> The boolean change becomes a lot more heavy with this patch,
+> but it is a very rare usage in compare with read only operations.
+> The lock held during a policydb_copy is about 1ms on a XEON.
 
-(snip)
-.
-.
-.
->   
-> -static void security_load_policycaps(struct selinux_state *state)
-> +static void security_load_policycaps(struct selinux_state *state,
-> +				     struct policydb *p)
->   {
-> -	struct policydb *p = &state->ss->policydb;
->   	unsigned int i;
->   	struct ebitmap_node *node;
->   
-> @@ -2107,47 +2112,47 @@ static int security_preserve_bools(struct selinux_state *state,
->    */
->   int security_load_policy(struct selinux_state *state, void *data, size_t len)
->   {
-> -	struct policydb *policydb;
-> -	struct sidtab *sidtab;
-> -	struct policydb *oldpolicydb, *newpolicydb;
-> -	struct sidtab oldsidtab, newsidtab;
-> -	struct selinux_mapping *oldmapping;
->   	struct selinux_map newmap;
->   	struct convert_context_args args;
->   	u32 seqno;
->   	int rc = 0;
-> +	struct selinux_ruleset *next_set, *old_set;
->   	struct policy_file file = { data, len }, *fp = &file;
->   
-> -	oldpolicydb = kzalloc(2 * sizeof(*oldpolicydb), GFP_KERNEL);
-> -	if (!oldpolicydb) {
-> +	next_set = kzalloc(sizeof(struct selinux_ruleset), GFP_KERNEL);
-> +	if (!next_set) {
->   		rc = -ENOMEM;
->   		goto out;
->   	}
-> -	newpolicydb = oldpolicydb + 1;
-> -
-> -	policydb = &state->ss->policydb;
-> -	sidtab = &state->ss->sidtab;
-> +	next_set->sidtab = kzalloc(sizeof(struct sidtab), GFP_KERNEL);
-> +	if (!next_set->sidtab) {
-> +		rc = -ENOMEM;
-> +		kfree(next_set);
+This has a very substantial performance impact on setsebool, e.g. time setsebool httpd_can_sendmail=1.
+That's because you are doing a full vmalloc();policydb_write();policydb_read();vfree() sequence on it.
+In comparison, KaiGai's old attempt to replace the policy rwlock with RCU only duplicated the conditional policydb state (via a cond_policydb_dup) that he introduced.  Is there a reason you couldn't use that approach?
 
-How about moving these kfree(next_set) into the 'goto out' cleanup?  The 
-effort has already been made to have a goto cleanup section in 
-security_load_policy).  There is a lot of diff changes in here which is 
-hard to follow, and my worry is a kfree(next_set); could get missed, or 
-is not as easily maintainable as if the code was restructured to have a 
-single kfree(next_set); call for all 'goto out;' cleanup situations.
-> +		goto out;
-> +	}
->   
->   	if (!state->initialized) {
-> -		rc = policydb_read(policydb, fp);
-> +		old_set = state->ss->active_set;
-> +		rc = policydb_read(&next_set->policydb, fp);
->   		if (rc)
->   			goto out;
->   
-> -		policydb->len = len;
-> -		rc = selinux_set_mapping(policydb, secclass_map,
-> -					 &state->ss->map);
-> +		next_set->policydb.len = len;
-> +		rc = selinux_set_mapping(&next_set->policydb, secclass_map,
-> +					 &next_set->map);
->   		if (rc) {
-> -			policydb_destroy(policydb);
-> +			policydb_destroy(&next_set->policydb);
->   			goto out;
->   		}
->   
-> -		rc = policydb_load_isids(policydb, sidtab);
-> +		rc = policydb_load_isids(&next_set->policydb, next_set->sidtab);
->   		if (rc) {
-> -			policydb_destroy(policydb);
-> +			policydb_destroy(&next_set->policydb);
->   			goto out;
->   		}
->   
-> -		security_load_policycaps(state);
-> +		security_load_policycaps(state, &next_set->policydb);
-> +		state->ss->active_set = next_set;
->   		state->initialized = 1;
->   		seqno = ++state->ss->latest_granting;
->   		selinux_complete_init();
-> @@ -2156,45 +2161,48 @@ int security_load_policy(struct selinux_state *state, void *data, size_t len)
->   		selinux_status_update_policyload(state, seqno);
->   		selinux_netlbl_cache_invalidate();
->   		selinux_xfrm_notify_policyload();
-> +		kfree(old_set->sidtab);
-> +		kfree(old_set);
->   		goto out;
->   	}
-> -
-> +	old_set = state->ss->active_set;
->   #if 0
->   	sidtab_hash_eval(sidtab, "sids");
->   #endif
->   
-> -	rc = policydb_read(newpolicydb, fp);
-> +	rc = policydb_read(&next_set->policydb, fp);
->   	if (rc)
->   		goto out;
->   
-> -	newpolicydb->len = len;
-> +	next_set->policydb.len = len;
-> +
->   	/* If switching between different policy types, log MLS status */
-> -	if (policydb->mls_enabled && !newpolicydb->mls_enabled)
-> +	if (old_set->policydb.mls_enabled && !next_set->policydb.mls_enabled)
->   		printk(KERN_INFO "SELinux: Disabling MLS support...\n");
-> -	else if (!policydb->mls_enabled && newpolicydb->mls_enabled)
-> +	else if (!old_set->policydb.mls_enabled
-> +		 && next_set->policydb.mls_enabled)
->   		printk(KERN_INFO "SELinux: Enabling MLS support...\n");
-> -
-> -	rc = policydb_load_isids(newpolicydb, &newsidtab);
-> +	rc = policydb_load_isids(&next_set->policydb, next_set->sidtab);
->   	if (rc) {
->   		printk(KERN_ERR "SELinux:  unable to load the initial SIDs\n");
-> -		policydb_destroy(newpolicydb);
-> +		policydb_destroy(&next_set->policydb);
->   		goto out;
->   	}
->   
-> -	rc = selinux_set_mapping(newpolicydb, secclass_map, &newmap);
-> +	rc = selinux_set_mapping(&next_set->policydb, secclass_map, &newmap);
->   	if (rc)
->   		goto err;
->   
-> -	rc = security_preserve_bools(state, newpolicydb);
-> +	rc = security_preserve_bools(state, &next_set->policydb);
->   	if (rc) {
->   		printk(KERN_ERR "SELinux:  unable to preserve booleans\n");
->   		goto err;
->   	}
->   
->   	/* Clone the SID table. */
-> -	sidtab_shutdown(sidtab);
-> +	sidtab_shutdown(old_set->sidtab);
->   
-> -	rc = sidtab_map(sidtab, clone_sid, &newsidtab);
-> +	rc = sidtab_map(old_set->sidtab, clone_sid, next_set->sidtab);
->   	if (rc)
->   		goto err;
->   
-> @@ -2203,9 +2211,9 @@ int security_load_policy(struct selinux_state *state, void *data, size_t len)
->   	 * in the new SID table.
->   	 */
->   	args.state = state;
-> -	args.oldp = policydb;
-> -	args.newp = newpolicydb;
-> -	rc = sidtab_map(&newsidtab, convert_context, &args);
-> +	args.oldp = &old_set->policydb;
-> +	args.newp = &next_set->policydb;
-> +	rc = sidtab_map(next_set->sidtab, convert_context, &args);
->   	if (rc) {
->   		printk(KERN_ERR "SELinux:  unable to convert the internal"
->   			" representation of contexts in the new SID"
-> @@ -2213,48 +2221,43 @@ int security_load_policy(struct selinux_state *state, void *data, size_t len)
->   		goto err;
->   	}
->   
-> -	/* Save the old policydb and SID table to free later. */
-> -	memcpy(oldpolicydb, policydb, sizeof(*policydb));
-> -	sidtab_set(&oldsidtab, sidtab);
-> +	next_set->map.mapping = newmap.mapping;
-> +	next_set->map.size = newmap.size;
->   
->   	/* Install the new policydb and SID table. */
->   	write_lock_irq(&state->ss->policy_rwlock);
-> -	memcpy(policydb, newpolicydb, sizeof(*policydb));
-> -	sidtab_set(sidtab, &newsidtab);
-> -	security_load_policycaps(state);
-> -	oldmapping = state->ss->map.mapping;
-> -	state->ss->map.mapping = newmap.mapping;
-> -	state->ss->map.size = newmap.size;
-> +	security_load_policycaps(state, &next_set->policydb);
->   	seqno = ++state->ss->latest_granting;
-> +	state->ss->active_set = next_set;
->   	write_unlock_irq(&state->ss->policy_rwlock);
->   
-> -	/* Free the old policydb and SID table. */
-> -	policydb_destroy(oldpolicydb);
-> -	sidtab_destroy(&oldsidtab);
-> -	kfree(oldmapping);
-> -
->   	avc_ss_reset(state->avc, seqno);
->   	selnl_notify_policyload(seqno);
->   	selinux_status_update_policyload(state, seqno);
->   	selinux_netlbl_cache_invalidate();
->   	selinux_xfrm_notify_policyload();
->   
-> +	/* Free the old policydb and SID table. */
-> +	policydb_destroy(&old_set->policydb);
-> +	sidtab_destroy(old_set->sidtab);
-> +	kfree(old_set->sidtab);
-> +	kfree(old_set->map.mapping);
-> +	kfree(old_set);
->   	rc = 0;
->   	goto out;
->   
->   err:
->   	kfree(newmap.mapping);
-> -	sidtab_destroy(&newsidtab);
-> -	policydb_destroy(newpolicydb);
-> -
-> +	sidtab_destroy(next_set->sidtab);
-> +	policydb_destroy(&next_set->policydb);
-> +	kfree(next_set);
->   out:
-> -	kfree(oldpolicydb);
->   	return rc;
->   }
->   
->   size_t security_policydb_len(struct selinux_state *state)
->   {
-> -	struct policydb *p = &state->ss->policydb;
-> +	struct policydb *p = &state->ss->active_set->policydb;
->   	size_t len;
->   
->   	read_lock(&state->ss->policy_rwlock);
-> @@ -2280,8 +2283,8 @@ int security_port_sid(struct selinux_state *state,
->   
->   	read_lock(&state->ss->policy_rwlock);
->   
-> -	policydb = &state->ss->policydb;
-> -	sidtab = &state->ss->sidtab;
-> +	policydb = &state->ss->active_set->policydb;
-> +	sidtab = state->ss->active_set->sidtab;
->   
->   	c = policydb->ocontexts[OCON_PORT];
->   	while (c) {
-> @@ -2326,8 +2329,8 @@ int security_ib_pkey_sid(struct selinux_state *state,
->   
->   	read_lock(&state->ss->policy_rwlock);
->   
-> -	policydb = &state->ss->policydb;
-> -	sidtab = &state->ss->sidtab;
-> +	policydb = &state->ss->active_set->policydb;
-> +	sidtab = state->ss->active_set->sidtab;
->   
->   	c = policydb->ocontexts[OCON_IBPKEY];
->   	while (c) {
-> @@ -2372,8 +2375,8 @@ int security_ib_endport_sid(struct selinux_state *state,
->   
->   	read_lock(&state->ss->policy_rwlock);
->   
-> -	policydb = &state->ss->policydb;
-> -	sidtab = &state->ss->sidtab;
-> +	policydb = &state->ss->active_set->policydb;
-> +	sidtab = state->ss->active_set->sidtab;
->   
->   	c = policydb->ocontexts[OCON_IBENDPORT];
->   	while (c) {
-> @@ -2418,8 +2421,8 @@ int security_netif_sid(struct selinux_state *state,
->   
->   	read_lock(&state->ss->policy_rwlock);
->   
-> -	policydb = &state->ss->policydb;
-> -	sidtab = &state->ss->sidtab;
-> +	policydb = &state->ss->active_set->policydb;
-> +	sidtab = state->ss->active_set->sidtab;
->   
->   	c = policydb->ocontexts[OCON_NETIF];
->   	while (c) {
-> @@ -2483,8 +2486,8 @@ int security_node_sid(struct selinux_state *state,
->   
->   	read_lock(&state->ss->policy_rwlock);
->   
-> -	policydb = &state->ss->policydb;
-> -	sidtab = &state->ss->sidtab;
-> +	policydb = &state->ss->active_set->policydb;
-> +	sidtab = state->ss->active_set->sidtab;
->   
->   	switch (domain) {
->   	case AF_INET: {
-> @@ -2583,8 +2586,8 @@ int security_get_user_sids(struct selinux_state *state,
->   
->   	read_lock(&state->ss->policy_rwlock);
->   
-> -	policydb = &state->ss->policydb;
-> -	sidtab = &state->ss->sidtab;
-> +	policydb = &state->ss->active_set->policydb;
-> +	sidtab = state->ss->active_set->sidtab;
->   
->   	context_init(&usercon);
->   
-> @@ -2685,8 +2688,8 @@ static inline int __security_genfs_sid(struct selinux_state *state,
->   				       u16 orig_sclass,
->   				       u32 *sid)
->   {
-> -	struct policydb *policydb = &state->ss->policydb;
-> -	struct sidtab *sidtab = &state->ss->sidtab;
-> +	struct policydb *policydb = &state->ss->active_set->policydb;
-> +	struct sidtab *sidtab = state->ss->active_set->sidtab;
->   	int len;
->   	u16 sclass;
->   	struct genfs *genfs;
-> @@ -2696,7 +2699,7 @@ static inline int __security_genfs_sid(struct selinux_state *state,
->   	while (path[0] == '/' && path[1] == '/')
->   		path++;
->   
-> -	sclass = unmap_class(&state->ss->map, orig_sclass);
-> +	sclass = unmap_class(&state->ss->active_set->map, orig_sclass);
->   	*sid = SECINITSID_UNLABELED;
->   
->   	for (genfs = policydb->genfs; genfs; genfs = genfs->next) {
-> @@ -2771,8 +2774,8 @@ int security_fs_use(struct selinux_state *state, struct super_block *sb)
->   
->   	read_lock(&state->ss->policy_rwlock);
->   
-> -	policydb = &state->ss->policydb;
-> -	sidtab = &state->ss->sidtab;
-> +	policydb = &state->ss->active_set->policydb;
-> +	sidtab = state->ss->active_set->sidtab;
->   
->   	c = policydb->ocontexts[OCON_FSUSE];
->   	while (c) {
-> @@ -2821,7 +2824,7 @@ int security_get_bools(struct selinux_state *state,
->   
->   	read_lock(&state->ss->policy_rwlock);
->   
-> -	policydb = &state->ss->policydb;
-> +	policydb = &state->ss->active_set->policydb;
->   
->   	*names = NULL;
->   	*values = NULL;
-> @@ -2866,53 +2869,86 @@ int security_get_bools(struct selinux_state *state,
->   
->   int security_set_bools(struct selinux_state *state, int len, int *values)
->   {
-> -	struct policydb *policydb;
->   	int i, rc;
->   	int lenp, seqno = 0;
->   	struct cond_node *cur;
-> +	struct selinux_ruleset *next_set, *old_set = NULL;
-> +	void *storage;
-> +	size_t size;
->   
-> -	write_lock_irq(&state->ss->policy_rwlock);
-> +	next_set = kzalloc(sizeof(struct selinux_ruleset), GFP_KERNEL);
-> +	if (!next_set) {
-> +		rc = -ENOMEM;
-> +		goto errout;
-> +	}
-> +
-> +	rc = policydb_flattened_alloc(&state->ss->active_set->policydb,
-> +				      &storage, &size);
-> +	if (rc) {
-> +		kfree(next_set);
+> 
+> To use RCU the structure of policydb has to be accesses through a pointer.
+> We need 5 patches to get there.
+>  
+> [PATCH V3 1/5 selinux-next] selinux: Make allocation atomic in policydb objects functions.
+> This patch change the allocation for policydb objects. They are in its own patch
+> to make the complicated part easier to read.
+> 
+> [PATCH V3 2/5 selinux-next] selinux: Introduce selinux_ruleset struct
+> This makes the access for the rule evaluation going though a single pointer.
+> 
+> [PATCH V3 3/5 selinux-next] selinux: sidtab_clone switch to use rwlock.
+> We need to make sidtabs copys so this patch change the locks to a rwlock
+> and create a copy function.
+> 
+> [PATCH V3 4/5 selinux-next] selinux: seqno separation
+> This patch adds separation of the read and write and uses
+> the pointer to switch rule set. It uses seqno for error handling
+> since there are a possibility to have multiple access.
+> 
+> [PATCH V3 5/5 selinux-next] selinux: Switch to rcu read locks for avc_compute
+> All the preparation is done so this patch do the change of locks to rcu.
+> 
+> History:
+> V1 rwsem
+> V2 did not handle all policydb objects, solved with the policydb_copy
+>    did not handle sidtab for booleans, I think this one does however
+>    shutdown is not used but not removed. 
+> 
+> 
 
-I think this function, security_set_bools(), is another case where it 
-would be good to restructure the code where there is a single location 
-where kfree(next_set); is called for code readability and 
-maintainability.  Or at the very least keeping the goto cleanup strategy 
-consistent; here, for normal 'goto out;' routines kfree(next_set); is 
-there in the 'out' block, but for 'goto errout;' routines it is not 
-there and kfree(next_set); must be called before-hand.
-> +		goto errout;
-> +	}
->   
-> -	policydb = &state->ss->policydb;
-> +	write_lock_irq(&state->ss->policy_rwlock);
-> +	old_set = state->ss->active_set;
-> +	memcpy(next_set, old_set, sizeof(struct selinux_ruleset));
-> +	rc = policydb_copy(&old_set->policydb, &next_set->policydb,
-> +			   &storage, size);
-> +	if (rc)
-> +		goto out;
->   
->   	rc = -EFAULT;
-> -	lenp = policydb->p_bools.nprim;
-> +	lenp = next_set->policydb.p_bools.nprim;
->   	if (len != lenp)
->   		goto out;
->   
->   	for (i = 0; i < len; i++) {
-> -		if (!!values[i] != policydb->bool_val_to_struct[i]->state) {
-> +		if (!!values[i] !=
-> +			next_set->policydb.bool_val_to_struct[i]->state) {
->   			audit_log(current->audit_context, GFP_ATOMIC,
->   				AUDIT_MAC_CONFIG_CHANGE,
->   				"bool=%s val=%d old_val=%d auid=%u ses=%u",
-> -				sym_name(policydb, SYM_BOOLS, i),
-> +				sym_name(&next_set->policydb, SYM_BOOLS, i),
->   				!!values[i],
-> -				policydb->bool_val_to_struct[i]->state,
-> +				next_set->policydb.bool_val_to_struct[i]->state,
->   				from_kuid(&init_user_ns, audit_get_loginuid(current)),
->   				audit_get_sessionid(current));
->   		}
->   		if (values[i])
-> -			policydb->bool_val_to_struct[i]->state = 1;
-> +			next_set->policydb.bool_val_to_struct[i]->state = 1;
->   		else
-> -			policydb->bool_val_to_struct[i]->state = 0;
-> +			next_set->policydb.bool_val_to_struct[i]->state = 0;
->   	}
->   
-> -	for (cur = policydb->cond_list; cur; cur = cur->next) {
-> -		rc = evaluate_cond_node(policydb, cur);
-> +	for (cur = next_set->policydb.cond_list; cur; cur = cur->next) {
-> +		rc = evaluate_cond_node(&next_set->policydb, cur);
->   		if (rc)
->   			goto out;
->   	}
->   
->   	seqno = ++state->ss->latest_granting;
-> +	state->ss->active_set = next_set;
->   	rc = 0;
->   out:
-> -	write_unlock_irq(&state->ss->policy_rwlock);
->   	if (!rc) {
-> +		seqno = ++state->ss->latest_granting;
-> +		state->ss->active_set = next_set;
-> +		rc = 0;
-
-Why would we want to set rc to 0 here and have the return value be 0 
-instead of the original rc value evaluated in the if() statement above?
-> +		write_unlock_irq(&state->ss->policy_rwlock);
->   		avc_ss_reset(state->avc, seqno);
->   		selnl_notify_policyload(seqno);
->   		selinux_status_update_policyload(state, seqno);
->   		selinux_xfrm_notify_policyload();
-> +		policydb_destroy(&old_set->policydb);
-> +		kfree(old_set);
-> +	} else {
-> +		printk(KERN_ERR "SELinux: %s failed %d\n", __func__, rc);
-> +		write_unlock_irq(&state->ss->policy_rwlock);
-> +		kfree(next_set);
->   	}
-> +	policydb_flattened_free(storage);
-> +
-> + errout:
->   	return rc;
->   }
->   
-> @@
-Thanks,
-Jay
