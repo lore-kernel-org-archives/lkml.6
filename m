@@ -1,84 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968468AbeE3HAc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:00:32 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:49578 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S937179AbeE3G6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 02:58:42 -0400
-From: Yunlong Song <yunlong.song@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH rebase] f2fs-tools: fix overflow bug of start_sector when computing zone_align_start_offset
-Date: Wed, 30 May 2018 14:58:29 +0800
-Message-ID: <1527663509-143986-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
-In-Reply-To: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
-References: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
+        id S968584AbeE3HAn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:00:43 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34609 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937191AbeE3HAK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 03:00:10 -0400
+X-Google-Smtp-Source: ADUXVKK6x6eRz3PvZTt6zYDp43j/mARlG8F4yvhy/zk1LFZNcW06nbd+Xm17YRSEj2IS8eId2VFidtv/KmF+tNro4Ig=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180524175024.19874-6-robh@kernel.org>
+References: <20180524175024.19874-1-robh@kernel.org> <20180524175024.19874-6-robh@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 30 May 2018 09:00:08 +0200
+Message-ID: <CACRpkdZ_xrHkrprb=7BiOCrnJrAsXNZVnYDf2Jcp4gF99W+pCA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/8] pinctrl: optionally stop deferring probe at end of initcalls
+To: Rob Herring <robh@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        boot-architecture@lists.linaro.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zone_align_start_offset should be u64, but config.start_sector is u32,
-so it may be overflow when computing zone_align_start_offset.
+On Thu, May 24, 2018 at 7:50 PM, Rob Herring <robh@kernel.org> wrote:
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fsck/resize.c      | 7 ++++---
- mkfs/f2fs_format.c | 4 ++--
- 2 files changed, 6 insertions(+), 5 deletions(-)
+> If the pinctrl node in DT indicates that pin setup is optional and the
+> defaults can be used with the 'pinctrl-use-default', then only defer probe
+> until initcalls are done. This gives platforms the option to work without
+> their pinctrl driver being enabled.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-diff --git a/fsck/resize.c b/fsck/resize.c
-index 649f5d9..3f8b01d 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -11,7 +11,8 @@
- 
- static int get_new_sb(struct f2fs_super_block *sb)
- {
--	u_int32_t zone_size_bytes, zone_align_start_offset;
-+	u_int32_t zone_size_bytes;
-+	u_int64_t zone_align_start_offset;
- 	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
- 	u_int32_t sit_segments, nat_segments, diff, total_meta_segments;
- 	u_int32_t total_valid_blks_available;
-@@ -27,10 +28,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
- 
- 	zone_size_bytes = segment_size_bytes * segs_per_zone;
- 	zone_align_start_offset =
--		(c.start_sector * DEFAULT_SECTOR_SIZE +
-+		((u_int64_t) c.start_sector * DEFAULT_SECTOR_SIZE +
- 		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
- 		zone_size_bytes * zone_size_bytes -
--		c.start_sector * DEFAULT_SECTOR_SIZE;
-+		(u_int64_t) c.start_sector * DEFAULT_SECTOR_SIZE;
- 
- 	set_sb(segment_count, (c.target_sectors * c.sector_size -
- 				zone_align_start_offset) / segment_size_bytes /
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index e0c3cb8..2350c10 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -212,10 +212,10 @@ static int f2fs_prepare_super_block(void)
- 	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
- 
- 	zone_align_start_offset =
--		(c.start_sector * DEFAULT_SECTOR_SIZE +
-+		((u_int64_t) c.start_sector * DEFAULT_SECTOR_SIZE +
- 		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
- 		zone_size_bytes * zone_size_bytes -
--		c.start_sector * DEFAULT_SECTOR_SIZE;
-+		(u_int64_t) c.start_sector * DEFAULT_SECTOR_SIZE;
- 
- 	if (c.start_sector % DEFAULT_SECTORS_PER_BLOCK) {
- 		MSG(1, "\t%s: Align start sector number to the page unit\n",
--- 
-1.8.5.2
+I trust that you know what you're doing so I guess
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
