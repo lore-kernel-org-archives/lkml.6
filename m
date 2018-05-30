@@ -1,164 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753480AbeE3L3O (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:29:14 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60912 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751572AbeE3LHE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:04 -0400
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1753014AbeE3Lav (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:30:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45746 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751547AbeE3Lar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 07:30:47 -0400
+Date: Wed, 30 May 2018 13:30:26 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        USB <linux-usb@vger.kernel.org>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/3] usb: gadget: ccid: add support for USB CCID
+ Gadget Device
+Message-ID: <20180530113026.GA20775@kroah.com>
+References: <20180529185021.13738-1-marcus.folkesson@gmail.com>
+ <CAHp75VeSbC3QBswCxZpoVpT4cL4pXC5eouCc9YtvBtXG3YddTg@mail.gmail.com>
+ <20180530112459.GB2939@gmail.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Petr Vandrovec" <petr@vandrovec.name>,
-        "Paolo Abeni" <pabeni@redhat.com>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.981632021@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 097/153] dn_getsockoptdecnet: move nf_{get/set}sockopt
- outside sock lock
-In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530112459.GB2939@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
+On Wed, May 30, 2018 at 01:24:59PM +0200, Marcus Folkesson wrote:
+> Hi Andy,
+> 
+> Thank you for your comments!
+> Many good catches here!
+> 
+> On Wed, May 30, 2018 at 03:55:39AM +0300, Andy Shevchenko wrote:
+> > On Tue, May 29, 2018 at 9:50 PM, Marcus Folkesson
+> > <marcus.folkesson@gmail.com> wrote:
+> > > Chip Card Interface Device (CCID) protocol is a USB protocol that
+> > > allows a smartcard device to be connected to a computer via a card
+> > > reader using a standard USB interface, without the need for each manufacturer
+> > > of smartcards to provide its own reader or protocol.
+> > >
+> > > This gadget driver makes Linux show up as a CCID device to the host and let a
+> > > userspace daemon act as the smartcard.
+> > >
+> > > This is useful when the Linux gadget itself should act as a cryptographic
+> > > device or forward APDUs to an embedded smartcard device.
+> > 
+> > > + * Copyright (C) 2018 Marcus Folkesson <marcus.folkesson@gmail.com>
+> > 
+> > > + *
+> > 
+> > Redundant line
+> > 
+> 
+> Yep
+> 
+> > > +static DEFINE_IDA(ccidg_ida);
+> > 
+> > Where is it destroyed?
+> 
+> Hm, I'm not sure it needs to be destroyed. From lib/idr.c:
+> 
+>  * You can also use ida_get_new_above() if you need an ID to be allocated
+>  * above a particular number.  ida_destroy() can be used to dispose of an
+>  * IDA without needing to free the individual IDs in it.  You can use
+>  * ida_is_empty() to find out whether the IDA has any IDs currently allocated.
+> 
+> 
+> An empty ccidg_ida is the indication that we should clean up our
+> mess:
+> 
+> static void ccidg_free_inst(struct usb_function_instance *f)
+> ...
+> 	if (ida_is_empty(&ccidg_ida))
+> 		ccidg_cleanup();
+> 
+> If the IDA is empty, should I call ida_destroy() anyway?
+> Other similiar drivers does not seems to do that.
+> 
+> I must say that I'm not very familiar with the IDA API.
 
-------------------
+When your module is removed, you need to clean up any remaining memory
+that the ida used.  It's not obvious at all, and is a pain as you would
+think that if you statically allocate one, like you have here, it would
+not be needed.  You need to just call:
+	ida_destroy(&ccidg_ida);
+in your module exit function.
 
-From: Paolo Abeni <pabeni@redhat.com>
+Hope this helps,
 
-commit dfec091439bb2acf763497cfc58f2bdfc67c56b7 upstream.
-
-After commit 3f34cfae1238 ("netfilter: on sockopt() acquire sock lock
-only in the required scope"), the caller of nf_{get/set}sockopt() must
-not hold any lock, but, in such changeset, I forgot to cope with DECnet.
-
-This commit addresses the issue moving the nf call outside the lock,
-in the dn_{get,set}sockopt() with the same schema currently used by
-ipv4 and ipv6. Also moves the unhandled sockopts of the end of the main
-switch statements, to improve code readability.
-
-Reported-by: Petr Vandrovec <petr@vandrovec.name>
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=198791#c2
-Fixes: 3f34cfae1238 ("netfilter: on sockopt() acquire sock lock only in the required scope")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- net/decnet/af_decnet.c | 62 ++++++++++++++++++++++--------------------
- 1 file changed, 33 insertions(+), 29 deletions(-)
-
---- a/net/decnet/af_decnet.c
-+++ b/net/decnet/af_decnet.c
-@@ -1338,6 +1338,12 @@ static int dn_setsockopt(struct socket *
- 	lock_sock(sk);
- 	err = __dn_setsockopt(sock, level, optname, optval, optlen, 0);
- 	release_sock(sk);
-+#ifdef CONFIG_NETFILTER
-+	/* we need to exclude all possible ENOPROTOOPTs except default case */
-+	if (err == -ENOPROTOOPT && optname != DSO_LINKINFO &&
-+	    optname != DSO_STREAM && optname != DSO_SEQPACKET)
-+		err = nf_setsockopt(sk, PF_DECnet, optname, optval, optlen);
-+#endif
- 
- 	return err;
- }
-@@ -1445,15 +1451,6 @@ static int __dn_setsockopt(struct socket
- 		dn_nsp_send_disc(sk, 0x38, 0, sk->sk_allocation);
- 		break;
- 
--	default:
--#ifdef CONFIG_NETFILTER
--		return nf_setsockopt(sk, PF_DECnet, optname, optval, optlen);
--#endif
--	case DSO_LINKINFO:
--	case DSO_STREAM:
--	case DSO_SEQPACKET:
--		return -ENOPROTOOPT;
--
- 	case DSO_MAXWINDOW:
- 		if (optlen != sizeof(unsigned long))
- 			return -EINVAL;
-@@ -1501,6 +1498,12 @@ static int __dn_setsockopt(struct socket
- 			return -EINVAL;
- 		scp->info_loc = u.info;
- 		break;
-+
-+	case DSO_LINKINFO:
-+	case DSO_STREAM:
-+	case DSO_SEQPACKET:
-+	default:
-+		return -ENOPROTOOPT;
- 	}
- 
- 	return 0;
-@@ -1514,6 +1517,20 @@ static int dn_getsockopt(struct socket *
- 	lock_sock(sk);
- 	err = __dn_getsockopt(sock, level, optname, optval, optlen, 0);
- 	release_sock(sk);
-+#ifdef CONFIG_NETFILTER
-+	if (err == -ENOPROTOOPT && optname != DSO_STREAM &&
-+	    optname != DSO_SEQPACKET && optname != DSO_CONACCEPT &&
-+	    optname != DSO_CONREJECT) {
-+		int len;
-+
-+		if (get_user(len, optlen))
-+			return -EFAULT;
-+
-+		err = nf_getsockopt(sk, PF_DECnet, optname, optval, &len);
-+		if (err >= 0)
-+			err = put_user(len, optlen);
-+	}
-+#endif
- 
- 	return err;
- }
-@@ -1579,26 +1596,6 @@ static int __dn_getsockopt(struct socket
- 		r_data = &link;
- 		break;
- 
--	default:
--#ifdef CONFIG_NETFILTER
--	{
--		int ret, len;
--
--		if (get_user(len, optlen))
--			return -EFAULT;
--
--		ret = nf_getsockopt(sk, PF_DECnet, optname, optval, &len);
--		if (ret >= 0)
--			ret = put_user(len, optlen);
--		return ret;
--	}
--#endif
--	case DSO_STREAM:
--	case DSO_SEQPACKET:
--	case DSO_CONACCEPT:
--	case DSO_CONREJECT:
--		return -ENOPROTOOPT;
--
- 	case DSO_MAXWINDOW:
- 		if (r_len > sizeof(unsigned long))
- 			r_len = sizeof(unsigned long);
-@@ -1630,6 +1627,13 @@ static int __dn_getsockopt(struct socket
- 			r_len = sizeof(unsigned char);
- 		r_data = &scp->info_rem;
- 		break;
-+
-+	case DSO_STREAM:
-+	case DSO_SEQPACKET:
-+	case DSO_CONACCEPT:
-+	case DSO_CONREJECT:
-+	default:
-+		return -ENOPROTOOPT;
- 	}
- 
- 	if (r_data) {
+greg k-h
