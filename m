@@ -1,59 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753998AbeE3Qoa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:44:30 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:45069 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753560AbeE3QoY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:44:24 -0400
-X-Google-Smtp-Source: ADUXVKK5Rra1JvfHeKEezV019zr2xTrYhDIOh1PJ29GZsOkms9GuMK2UbCn216OXWvisePagjpfipQ==
-Date: Wed, 30 May 2018 09:44:21 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
-        akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Josef Bacik <jbacik@fb.com>
-Subject: Re: [PATCH 13/13] Documentation: add a doc for blk-iolatency
-Message-ID: <20180530164421.GQ1351649@devbig577.frc2.facebook.com>
-References: <20180529211724.4531-1-josef@toxicpanda.com>
- <20180529211724.4531-14-josef@toxicpanda.com>
+        id S1753927AbeE3QpO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:45:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753190AbeE3QpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:45:13 -0400
+Date: Wed, 30 May 2018 11:45:11 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Meelis Roos <mroos@linux.ee>, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] sparc/PCI: VGA resource and other fixes
+Message-ID: <20180530164511.GG39853@bhelgaas-glaptop.roam.corp.google.com>
+References: <152694888798.59585.8779818482732387864.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20180522130217.GA161672@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529211724.4531-14-josef@toxicpanda.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180522130217.GA161672@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, May 22, 2018 at 08:02:17AM -0500, Bjorn Helgaas wrote:
+> [+cc sparclinux, sorry I missed this first time around]
+> 
+> On Mon, May 21, 2018 at 07:30:29PM -0500, Bjorn Helgaas wrote:
+> > The main thing here is the first patch, a legacy VGA framebuffer fix for
+> > issues reported by Meelis.
+> > 
+> > The others are to converge the pci_enable_device() path for LEON and PCIC
+> > with other arches (including sparc64), and to convert some logging to use
+> > dev_printk() and make it more consistent with the PCI core.
+> > 
+> > I propose to merge these via the PCI tree.
+> > 
+> > ---
+> > 
+> > Bjorn Helgaas (4):
+> >       sparc/PCI: Request legacy VGA framebuffer only for VGA devices
+> >       sparc32/PCI/LEON: Converge device enable path
+> >       sparc32/PCI/PCIC: Converge device enable path
+> >       sparc/PCI: Use dev_printk() when possible
+> > 
+> > 
+> >  arch/sparc/kernel/leon_pci.c   |   62 ++++++------------
+> >  arch/sparc/kernel/pci.c        |  136 +++++++++++++++++++++++++---------------
+> >  arch/sparc/kernel/pci_common.c |   31 ++-------
+> >  arch/sparc/kernel/pci_msi.c    |   10 +--
+> >  arch/sparc/kernel/pcic.c       |   86 ++++++++++++-------------
+> >  5 files changed, 159 insertions(+), 166 deletions(-)
 
-On Tue, May 29, 2018 at 05:17:24PM -0400, Josef Bacik wrote:
-> diff --git a/Documentation/blk-iolatency.txt b/Documentation/blk-iolatency.txt
-> new file mode 100644
-> index 000000000000..9dd86f4f64b6
-> --- /dev/null
-> +++ b/Documentation/blk-iolatency.txt
-
-Can you make it a part of Documentation/cgroup-v2.txt?
-
-> +Interface
-> +=========
-> +
-> +- io.latency.  This takes a similar format as the other controllers
-> +
-> +	"MAJOR:MINOR target=<target time in microseconds"
-                                                        >
-
-> +HOWTO
-> +=====
-> +
-> +The limits are only applied at the peer level in the heirarchy.  This means that
-							^hierarchy
-
-Thanks.
-
--- 
-tejun
+I applied these to my pci/sparc branch for v4.18 (with fixes for the typos
+reported by Meelis and the kbuild robot).
