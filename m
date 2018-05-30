@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753569AbeE3Lhf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:37:35 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60792 "EHLO
+        id S1753487AbeE3Lh3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:37:29 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60801 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752308AbeE3LHB (ORCPT
+        by vger.kernel.org with ESMTP id S1752316AbeE3LHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:01 -0400
+        Wed, 30 May 2018 07:07:02 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -14,13 +14,14 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Mathias Nyman" <mathias.nyman@linux.intel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Kai-Heng Feng" <kai.heng.feng@canonical.com>
+        syzbot+0df1ab766f8924b1edba@syzkaller.appspotmail.com,
+        "Doug Ledford" <dledford@redhat.com>,
+        "Leon Romanovsky" <leonro@mellanox.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.948754240@decadent.org.uk>
+Message-ID: <lsq.1527677561.705113109@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 122/153] xhci: Fix front USB ports on ASUS PRIME B350M-A
+Subject: [PATCH 3.2 118/153] RDMA/ucma: Check that user doesn't overflow
+ QP state
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,62 +34,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 191edc5e2e515aab1075a3f0ef23599e80be5f59 upstream.
+commit a5880b84430316e3e1c1f5d23aa32ec6000cc717 upstream.
 
-When a USB device gets plugged on ASUS PRIME B350M-A's front ports, the
-xHC stops working:
-[  549.114587] xhci_hcd 0000:02:00.0: WARN: xHC CMD_RUN timeout
-[  549.114608] suspend_common(): xhci_pci_suspend+0x0/0xc0 returns -110
-[  549.114638] xhci_hcd 0000:02:00.0: can't suspend (hcd_pci_runtime_suspend returned -110)
+The QP state is limited and declared in enum ib_qp_state,
+but ucma user was able to supply any possible (u32) value.
 
-Delay before running xHC command CMD_RUN can workaround the issue.
-
-Use a new quirk to make the delay only targets to the affected xHC.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.2: adjust context]
+Reported-by: syzbot+0df1ab766f8924b1edba@syzkaller.appspotmail.com
+Fixes: 75216638572f ("RDMA/cma: Export rdma cm interface to userspace")
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/host/xhci-pci.c | 3 +++
- drivers/usb/host/xhci.c     | 3 +++
- drivers/usb/host/xhci.h     | 1 +
- 3 files changed, 7 insertions(+)
+ drivers/infiniband/core/ucma.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -112,6 +112,9 @@ static void xhci_pci_quirks(struct devic
- 	if (pdev->vendor == PCI_VENDOR_ID_AMD && usb_amd_find_chipset_info())
- 		xhci->quirks |= XHCI_AMD_PLL_FIX;
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -873,6 +873,9 @@ static ssize_t ucma_init_qp_attr(struct
+ 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+ 		return -EFAULT;
  
-+	if (pdev->vendor == PCI_VENDOR_ID_AMD && pdev->device == 0x43bb)
-+		xhci->quirks |= XHCI_SUSPEND_DELAY;
++	if (cmd.qp_state > IB_QPS_ERR)
++		return -EINVAL;
 +
- 	if (pdev->vendor == PCI_VENDOR_ID_AMD)
- 		xhci->quirks |= XHCI_TRUST_TX_LENGTH;
- 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -936,6 +936,9 @@ int xhci_suspend(struct xhci_hcd *xhci,
- 	clear_bit(HCD_FLAG_POLL_RH, &hcd->flags);
- 	del_timer_sync(&hcd->rh_timer);
- 
-+	if (xhci->quirks & XHCI_SUSPEND_DELAY)
-+		usleep_range(1000, 1500);
-+
- 	spin_lock_irq(&xhci->lock);
- 	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
- 	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &xhci->shared_hcd->flags);
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1503,6 +1503,7 @@ struct xhci_hcd {
- #define XHCI_PME_STUCK_QUIRK	(1 << 20)
- #define XHCI_MISSING_CAS	(1 << 24)
- #define XHCI_U2_DISABLE_WAKE	(1 << 27)
-+#define XHCI_SUSPEND_DELAY	(1 << 30)
- 	unsigned int		num_active_eps;
- 	unsigned int		limit_active_eps;
- 	/* There are two roothubs to keep track of bus suspend info for */
+ 	ctx = ucma_get_ctx(file, cmd.id);
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
