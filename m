@@ -1,75 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932226AbeE3Ti4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:38:56 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36036 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932094AbeE3Tiw (ORCPT
+        id S932217AbeE3Tll (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 15:41:41 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:45483 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753627AbeE3Tlj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:38:52 -0400
-X-Google-Smtp-Source: ADUXVKK2Rgn+3wONEHqKYYnSaXBMCF7zx1VpHMIecRhzsh+qMaY9+NOYwKOaTq5MyNyz+E7RmszzOg==
-Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        hch@infradead.org, colyli@suse.de, darrick.wong@oracle.com, clm@fb.com,
-        bacik@fb.com, linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        neilb@suse.com
-References: <20180521144703.GA19303@redhat.com>
- <4b343aef-e11c-73ba-1d88-7e73ca838cad@kernel.dk>
- <20180521150439.GA19379@redhat.com>
- <61e30dcf-a01c-f47d-087a-12930caf9aef@kernel.dk>
- <20180521151817.GA19454@redhat.com>
- <d01a150a-7752-f6ce-78f2-17a65c1e6fa5@kernel.dk>
- <20180521160907.GA19553@redhat.com>
- <f9e3714c-b7c9-d5f6-4018-2a87dd5babb2@kernel.dk>
- <20180530133629.GC5157@redhat.com>
- <f654ad69-aa90-9580-4731-a05d0604f353@kernel.dk>
- <20180530193707.GB6568@redhat.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <5f32b2e7-859b-42f9-c726-115ba5ff22a9@kernel.dk>
-Date: Wed, 30 May 2018 13:38:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 30 May 2018 15:41:39 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Dave Chinner <david@fromorbit.com>, Eric Sandeen <sandeen@sandeen.net>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000457b2d056cbb0044@google.com>
+        <20180522123107.GC3751@bfoster.bfoster>
+        <20180522222620.GW23861@dastard>
+        <20180522225208.GB658@sol.localdomain>
+        <20180523074425.GM14384@magnolia>
+        <20180523162015.GA3684@sol.localdomain>
+        <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
+        <20180523234114.GA3434@thunk.org> <20180524004931.GB23861@dastard>
+        <20180524005906.GC3434@thunk.org>
+Date: Wed, 30 May 2018 14:41:32 -0500
+In-Reply-To: <20180524005906.GC3434@thunk.org> (Theodore Y. Ts'o's message of
+        "Wed, 23 May 2018 20:59:06 -0400")
+Message-ID: <87k1rlgccz.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180530193707.GB6568@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1fO6yW-0007tk-UN;;;mid=<87k1rlgccz.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18au9+f3h+9YrY7FpaT1BNyOj/uzMbiHVs=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
+        *      [score: 0.3116]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;"Theodore Y. Ts'o" <tytso@mit.edu>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1220 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.8 (0.2%), b_tie_ro: 1.87 (0.2%), parse: 0.99 (0.1%),
+        extract_message_metadata: 4.1 (0.3%), get_uri_detail_list: 1.50 (0.1%),
+        tests_pri_-1000: 4.7 (0.4%), tests_pri_-950: 1.45 (0.1%), tests_pri_-900:
+        1.23 (0.1%), tests_pri_-400: 20 (1.6%), check_bayes: 19 (1.5%), b_tokenize: 6
+        (0.5%), b_tok_get_all: 6 (0.5%), b_comp_prob: 2.3 (0.2%), b_tok_touch_all:
+        2.3 (0.2%), b_finish: 0.60 (0.0%), tests_pri_0: 1169 (95.8%),
+        check_dkim_signature: 0.63 (0.1%), check_dkim_adsp: 2.8 (0.2%),
+        tests_pri_500: 6 (0.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: Bugs involving maliciously crafted file system
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/30/18 1:37 PM, Mike Snitzer wrote:
-> On Wed, May 30 2018 at  2:55pm -0400,
-> Jens Axboe <axboe@kernel.dk> wrote:
-> 
->> On 5/30/18 7:36 AM, Mike Snitzer wrote:
->>> So revisiting this patchset: are you inclined to take these changes (I
->>> assume yes)?  If so, what would you need in order to get them staged for
->>> 4.18?  I'll start with offering my review in reply to the DM patch.  I'd
->>> much prefer to see this level of change go in sooner rather than later.
->>
->> Yeah I'd like to take the changes, but we might have to wait for
->> 4.19 at this point. It'd certainly help to have the dm bits reviewed,
->> as they are some of the larger ones. The grunt of the others are mostly
->> trivial and smaller in scope.
-> 
-> I _really_ would like to see this land for 4.18.  It'll avoid downstream
-> backport problems (due to all the churn in this patchset).
-> 
-> As I'm sure you've seen I reviewed and Acked-by the DM patch.
-> 
-> I mentioned I've been chatting with Kent, he is available if anything
-> needs a v2 for whatever reason.
-> 
-> Would you be OK adding a single sentence description to each driver's
-> patch header (rather than leaving empty like how Kent submitted)?  Or
-> should Kent resubmit the entire set with that boilerplate header for
-> each patch?
+"Theodore Y. Ts'o" <tytso@mit.edu> writes:
 
-See previous email for both questions :)
+> On Thu, May 24, 2018 at 10:49:31AM +1000, Dave Chinner wrote:
+>> User automounting of removable storage should be done via a
+>> privilege separation mechanism and hence avoid this whole class of
+>> security problems. We can get this separation by using FUSE in these
+>> situations, right?
+>
+> FUSE is a pretty terrible security boundary.  And not all file systems
+> have FUSE support.  As I had suggested earlier, probably better to use
+> 9P, and mount the file system in a VM.
 
--- 
-Jens Axboe
+I just have to ask.  Why do you find FUSE to be a pretty terrible
+security boundary?
+
+My experience with kernel's 9P implemenation is that it is scarier to
+deal with, and that 9P is starting to suffer the maladies of an
+unmaintained filesystem (which it is).
+
+FUSE was always written with the assumption that it would be attacked by
+malicious users and generally appears robust against that kind of thing.
+
+The whole internet accessibleness of 9P while making it usable in VM's
+generally looks like down-side as it adds a the whole issue of
+malicious packets from a 3rd party that is neither client nor server to
+deal with.
+
+Eric
