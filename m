@@ -1,42 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932509AbeE3Voh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:44:37 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:43018 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932280AbeE3Voe (ORCPT
+        id S932548AbeE3Voq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:44:46 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40209 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932510AbeE3Vom (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:44:34 -0400
-X-Google-Smtp-Source: ADUXVKKHiHvIHt/TkfR9tYGFfBQ1RtL74KiIg9Uklslb5l8QTQDzrxfjgB3FzJkyYgv1z2UCEWLXtg==
-Date: Wed, 30 May 2018 14:44:30 -0700
+        Wed, 30 May 2018 17:44:42 -0400
+X-Google-Smtp-Source: ADUXVKJCH+WI9BPLB6Pyy/nivpx9HBvu2LUbkfo3/EFRi6QyFfcHl1/4c4RmGaRkihnBguhWNnki6g==
+Date: Wed, 30 May 2018 14:44:39 -0700
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To: Vignesh R <vigneshr@ti.com>
 Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
         linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v3 2/3] Input: ti_am335x_tsc - Ack pending IRQs at probe
- and before suspend
-Message-ID: <20180530214430.GB203327@dtor-ws>
+Subject: Re: [PATCH v3 3/3] Input: ti_am335x_tsc - Prevent system suspend
+ when TSC is in use
+Message-ID: <20180530214439.GC203327@dtor-ws>
 References: <20180424062741.7891-1-vigneshr@ti.com>
- <20180424062741.7891-3-vigneshr@ti.com>
+ <20180424062741.7891-4-vigneshr@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180424062741.7891-3-vigneshr@ti.com>
+In-Reply-To: <20180424062741.7891-4-vigneshr@ti.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 11:57:40AM +0530, Vignesh R wrote:
+On Tue, Apr 24, 2018 at 11:57:41AM +0530, Vignesh R wrote:
 > From: Grygorii Strashko <grygorii.strashko@ti.com>
 > 
-> It is seen that just enabling the TSC module triggers a HW_PEN IRQ
-> without any interaction with touchscreen by user. This results in first
-> suspend/resume sequence to fail as system immediately wakes up from
-> suspend as soon as HW_PEN IRQ is enabled in suspend handler due to the
-> pending IRQ. Therefore clear all IRQs at probe and also in suspend
-> callback for sanity.
+> Prevent system suspend while user has finger on touch screen,
+> because TSC is wakeup source and suspending device while in use will
+> result in failure to disable the module.
+> This patch uses pm_stay_awake() and pm_relax() APIs to prevent and
+> resume system suspend as required.
 > 
 > Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 > Signed-off-by: Vignesh R <vigneshr@ti.com>
@@ -45,40 +44,39 @@ Applied, thank you.
 
 > ---
 > 
-> v3: Clear IRQs related to TSC module only
+> v3: No change
 > 
->  drivers/input/touchscreen/ti_am335x_tsc.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/input/touchscreen/ti_am335x_tsc.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
 > diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
-> index 3908c21862c7..a548b0dbe320 100644
+> index a548b0dbe320..ae6fc9099636 100644
 > --- a/drivers/input/touchscreen/ti_am335x_tsc.c
 > +++ b/drivers/input/touchscreen/ti_am335x_tsc.c
-> @@ -35,6 +35,8 @@
->  #define SEQ_SETTLE		275
->  #define MAX_12BIT		((1 << 12) - 1)
+> @@ -277,6 +277,7 @@ static irqreturn_t titsc_irq(int irq, void *dev)
+>  	if (status & IRQENB_HW_PEN) {
+>  		ts_dev->pen_down = true;
+>  		irqclr |= IRQENB_HW_PEN;
+> +		pm_stay_awake(ts_dev->mfd_tscadc->dev);
+>  	}
 >  
-> +#define TSC_IRQENB_MASK		(IRQENB_FIFO0THRES | IRQENB_EOS | IRQENB_HW_PEN)
-> +
->  static const int config_pins[] = {
->  	STEPCONFIG_XPP,
->  	STEPCONFIG_XNN,
-> @@ -437,6 +439,7 @@ static int titsc_probe(struct platform_device *pdev)
->  	if (err)
->  		dev_err(&pdev->dev, "irq wake enable failed.\n");
->  
-> +	titsc_writel(ts_dev, REG_IRQSTATUS, TSC_IRQENB_MASK);
->  	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_FIFO0THRES);
->  	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_EOS);
->  	err = titsc_config_wires(ts_dev);
-> @@ -502,6 +505,7 @@ static int __maybe_unused titsc_suspend(struct device *dev)
->  
->  	tscadc_dev = ti_tscadc_dev_get(to_platform_device(dev));
->  	if (device_may_wakeup(tscadc_dev->dev)) {
-> +		titsc_writel(ts_dev, REG_IRQSTATUS, TSC_IRQENB_MASK);
->  		idle = titsc_readl(ts_dev, REG_IRQENABLE);
->  		titsc_writel(ts_dev, REG_IRQENABLE,
->  				(idle | IRQENB_HW_PEN));
+>  	if (status & IRQENB_PENUP) {
+> @@ -286,6 +287,7 @@ static irqreturn_t titsc_irq(int irq, void *dev)
+>  			input_report_key(input_dev, BTN_TOUCH, 0);
+>  			input_report_abs(input_dev, ABS_PRESSURE, 0);
+>  			input_sync(input_dev);
+> +			pm_relax(ts_dev->mfd_tscadc->dev);
+>  		} else {
+>  			ts_dev->pen_down = true;
+>  		}
+> @@ -524,6 +526,7 @@ static int __maybe_unused titsc_resume(struct device *dev)
+>  		titsc_writel(ts_dev, REG_IRQWAKEUP,
+>  				0x00);
+>  		titsc_writel(ts_dev, REG_IRQCLR, IRQENB_HW_PEN);
+> +		pm_relax(ts_dev->mfd_tscadc->dev);
+>  	}
+>  	titsc_step_config(ts_dev);
+>  	titsc_writel(ts_dev, REG_FIFO0THR,
 > -- 
 > 2.17.0
 > 
