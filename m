@@ -1,66 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753663AbeE3QYp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:24:45 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:41476 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751688AbeE3QYk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:24:40 -0400
-X-Google-Smtp-Source: ADUXVKIyQEJ5xGk59XL3t5NX83Qyn49icNZOMSdIPvNVUHOfnFg66RtZ2Q2OXR/MFfdUwX3IwCD6PCkDxXdE/yVRyWc=
+        id S1753869AbeE3QZE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:25:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36246 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751630AbeE3QZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:25:03 -0400
+Date: Wed, 30 May 2018 18:25:01 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, libhugetlbfs@googlegroups.com
+Subject: Re: [PATCH 2/2] fs, elf: drop MAP_FIXED usage from elf_map
+Message-ID: <20180530162501.GB15278@dhcp22.suse.cz>
+References: <20171129144219.22867-1-mhocko@kernel.org>
+ <20171129144219.22867-3-mhocko@kernel.org>
+ <93ce964b-e352-1905-c2b6-deedf2ea06f8@oracle.com>
+ <c0e447b3-4ba7-239e-6550-64de7721ad28@oracle.com>
+ <20180530080212.GA27180@dhcp22.suse.cz>
+ <e7705544-04fe-c382-f6d0-48d0680b46f2@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530162007.GU6920@sirena.org.uk>
-References: <cover.1527040878.git.collinsd@codeaurora.org> <6d03576cf90f06afb1194301cb41fc31704def1d.1527040878.git.collinsd@codeaurora.org>
- <CAD=FV=VH0bTxPOmRr+jUyV0cGNQHLcwQTV9L-t0bxZOqD8FnHA@mail.gmail.com>
- <20180530103720.GH6920@sirena.org.uk> <CAD=FV=WTTKXwPchuWRh-RNTc8=X8Xo28oTqk=3wW4+SiTHhxuA@mail.gmail.com>
- <20180530155044.GR6920@sirena.org.uk> <CAD=FV=WVUmvPPd5BxXv9Sa_2CRPrrjQvYFyqroY-3fRr4f0Bzg@mail.gmail.com>
- <20180530162007.GU6920@sirena.org.uk>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 30 May 2018 09:24:37 -0700
-X-Google-Sender-Auth: nzEuSv6KZUfyLukH5OiGCVnT4NI
-Message-ID: <CAD=FV=WL9enzYCoSx0fT_ny40ciLJU-hhS9joJ6nySXvWPqAxQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
-To: Mark Brown <broonie@kernel.org>
-Cc: David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7705544-04fe-c382-f6d0-48d0680b46f2@oracle.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed 30-05-18 08:00:29, Mike Kravetz wrote:
+> On 05/30/2018 01:02 AM, Michal Hocko wrote:
+> > On Tue 29-05-18 15:21:14, Mike Kravetz wrote:
+> >> Just a quick heads up.  I noticed a change in libhugetlbfs testing starting
+> >> with v4.17-rc1.
+> >>
+> >> V4.16 libhugetlbfs test results
+> >> ********** TEST SUMMARY
+> >> *                      2M            
+> >> *                      32-bit 64-bit 
+> >> *     Total testcases:   110    113   
+> >> *             Skipped:     0      0   
+> >> *                PASS:   105    111   
+> >> *                FAIL:     0      0   
+> >> *    Killed by signal:     4      1   
+> >> *   Bad configuration:     1      1   
+> >> *       Expected FAIL:     0      0   
+> >> *     Unexpected PASS:     0      0   
+> >> *    Test not present:     0      0   
+> >> * Strange test result:     0      0   
+> >> **********
+> >>
+> >> v4.17-rc1 (and later) libhugetlbfs test results
+> >> ********** TEST SUMMARY
+> >> *                      2M            
+> >> *                      32-bit 64-bit 
+> >> *     Total testcases:   110    113   
+> >> *             Skipped:     0      0   
+> >> *                PASS:    98    111   
+> >> *                FAIL:     0      0   
+> >> *    Killed by signal:    11      1   
+> >> *   Bad configuration:     1      1   
+> >> *       Expected FAIL:     0      0   
+> >> *     Unexpected PASS:     0      0   
+> >> *    Test not present:     0      0   
+> >> * Strange test result:     0      0   
+> >> **********
+> >>
+> >> I traced the 7 additional (32-bit) killed by signal results to this
+> >> commit 4ed28639519c fs, elf: drop MAP_FIXED usage from elf_map.
+> >>
+> >> libhugetlbfs does unusual things and even provides custom linker scripts.
+> >> So, in hindsight this change in behavior does not seem too unexpected.  I
+> >> JUST discovered this while running libhugetlbfs tests for an unrelated
+> >> issue/change and, will do some analysis to see exactly what is happening.
+> > 
+> > I am definitely interested about further details. Are there any messages
+> > in the kernel log?
+> >
+> 
+> Yes, new messages associated with the failures.
+> 
+> [   47.570451] 1368 (xB.linkhuge_nof): Uhuuh, elf segment at 00000000a731413b requested but the memory is mapped already
+> [   47.606991] 1372 (xB.linkhuge_nof): Uhuuh, elf segment at 00000000a731413b requested but the memory is mapped already
+> [   47.641351] 1376 (xB.linkhuge_nof): Uhuuh, elf segment at 00000000a731413b requested but the memory is mapped already
+> [   47.726138] 1384 (xB.linkhuge): Uhuuh, elf segment at 0000000090b9eaf6 requested but the memory is mapped already
+> [   47.773169] 1393 (xB.linkhuge): Uhuuh, elf segment at 0000000090b9eaf6 requested but the memory is mapped already
+> [   47.817788] 1402 (xB.linkhuge): Uhuuh, elf segment at 0000000090b9eaf6 requested but the memory is mapped already
+> [   47.857338] 1406 (xB.linkshare): Uhuuh, elf segment at 0000000018430471 requested but the memory is mapped already
+> [   47.956355] 1427 (xB.linkshare): Uhuuh, elf segment at 0000000018430471 requested but the memory is mapped already
+> [   48.054894] 1448 (xB.linkhuge): Uhuuh, elf segment at 0000000090b9eaf6 requested but the memory is mapped already
+> [   48.071221] 1451 (xB.linkhuge): Uhuuh, elf segment at 0000000090b9eaf6 requested but the memory is mapped already
+> 
+> Just curious, the addresses printed in those messages does not seem correct.
+> They should be page aligned.  Correct?
 
-On Wed, May 30, 2018 at 9:20 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Wed, May 30, 2018 at 09:12:25AM -0700, Doug Anderson wrote:
->> On Wed, May 30, 2018 at 8:50 AM, Mark Brown <broonie@kernel.org> wrote:
->
->> > No, I'm saying that I don't know why that property exists at all.  This
->> > sounds like it's intended to be the amount of current the regulator can
->> > deliver in each mode which is normally a design property of the silicon.
->
->> Ah, got it.  So the whole point here is to be able to implement either
->> the function "set_load" or the function "get_optimum_mode".  We need
->> some sort of table to convert from current to mode.  That's what this
->> table does.
->
-> We do need that table, my expectation would be that this table would be
-> in the driver as it's not something I'd expect to vary between different
-> systems but rather be a property of the silicon design.  No sense in
-> every single board having to copy it in.
+I have no idea what the loader actually does here.
 
-Ah, got it!  I'd be OK with it being hardcoded in the driver.
+> I think that %p conversion in the pr_info() may doing something wrong.
 
-At one point I think David was making the argument that some boards
-have different noise needs for the rails and thus you might want to
-change modes at different currents.  I don't know if this is realistic
-but I believe it was part of his original argument for why this needed
-to be specified.  If we can hardcode this in the driver I'm fine with
-it...  That would actually solve many of my objections too...
+Well, we are using %px and that shouldn't do any tricks to the given
+address.
 
+> Also, the new failures in question are indeed being built with custom linker
+> scripts designed for use with binutils older than 2.16 (really old).  So, no
+> new users should encounter this issue (I think).  It appears that this may
+> only impact old applications built long ago with pre-2.16 binutils.
 
--Doug
+Could you add a debugging data to dump the VMA which overlaps the
+requested adress and who requested that? E.g. hook into do_mmap and dump
+all requests from the linker.
+-- 
+Michal Hocko
+SUSE Labs
