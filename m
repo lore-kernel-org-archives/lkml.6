@@ -1,79 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968521AbeE3A7I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 20:59:08 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:48974 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968409AbeE3A7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 20:59:07 -0400
-Date: Wed, 30 May 2018 02:57:42 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kees Cook <keescook@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Pramod Kumar <pramod.kumar@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mdio-mux-gpio: Remove VLA usage
-Message-ID: <20180530005742.GA30239@lunn.ch>
-References: <20180529225901.GA30464@beast>
+        id S968554AbeE3A7h (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 20:59:37 -0400
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:42083 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968409AbeE3A7f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 20:59:35 -0400
+X-Google-Smtp-Source: ADUXVKIp8fM5TOVW4iRMuchTfvkqmqc/+vLx7RQ9r4/u1S9C9J7faLo29+zShREa/CHjH6ayJRYprxMPfNpuwz6gGcM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529225901.GA30464@beast>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1527631130-20045-3-git-send-email-ray.jui@broadcom.com>
+References: <1527631130-20045-1-git-send-email-ray.jui@broadcom.com> <1527631130-20045-3-git-send-email-ray.jui@broadcom.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 30 May 2018 03:59:33 +0300
+Message-ID: <CAHp75VfwfKbikfat3tTbMzSfNgt4v9nFpExyDvhOdX9ko1Z4Fw@mail.gmail.com>
+Subject: Re: [PATCH 2/6] PCI: iproc: Add INTx support with better modeling
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pci@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 03:59:01PM -0700, Kees Cook wrote:
-> In the quest to remove all stack VLA usage from the kernel[1], this
-> allocates the values buffer during the callback instead of putting it
-> on the stack.
-> 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  drivers/net/phy/mdio-mux-gpio.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
-> index 082ffef0dec4..e99994f4ed50 100644
-> --- a/drivers/net/phy/mdio-mux-gpio.c
-> +++ b/drivers/net/phy/mdio-mux-gpio.c
-> @@ -26,18 +26,23 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
->  				   void *data)
->  {
->  	struct mdio_mux_gpio_state *s = data;
-> -	int values[s->gpios->ndescs];
-> +	int *values;
->  	unsigned int n;
->  
->  	if (current_child == desired_child)
->  		return 0;
->  
-> +	values = kmalloc_array(s->gpios->ndescs, sizeof(*values), GFP_KERNEL);
-> +	if (!values)
-> +		return -ENOMEM;
-> +
->  	for (n = 0; n < s->gpios->ndescs; n++)
->  		values[n] = (desired_child >> n) & 1;
->  
->  	gpiod_set_array_value_cansleep(s->gpios->ndescs, s->gpios->desc,
->  				       values);
->  
-> +	kfree(values);
->  	return 0;
->  }
+On Wed, May 30, 2018 at 12:58 AM, Ray Jui <ray.jui@broadcom.com> wrote:
+> Add PCIe legacy interrupt INTx support to the iProc PCIe driver by
+> modeling it with its own IRQ domain. All 4 interrupts INTA, INTB, INTC,
+> INTD share the same interrupt line connected to the GIC in the system,
+> while the status of each INTx can be obtained through the INTX CSR
+> register
 
-Hi Kees
+> +       while ((status = iproc_pcie_read_reg(pcie, IPROC_PCIE_INTX_CSR) &
+> +               SYS_RC_INTX_MASK) != 0) {
+> +               for_each_set_bit(bit, &status, PCI_NUM_INTX) {
+> +                       virq = irq_find_mapping(pcie->irq_domain, bit + 1);
+> +                       if (virq)
+> +                               generic_handle_irq(virq);
+> +                       else
+> +                               dev_err(dev, "unexpected INTx%u\n", bit);
+> +               }
+> +       }
 
-This is the 'hot path' for this driver, and you are making it more
-expensive. 
+do {
+  status = ...;
+  for_each_set_bit() {
+    ...
+  }
+} while (status);
 
-Please allocate the memory once in mdio_mux_gpio_probe and make it
-part of mdio_mux_gpio_state.
+would look slightly better for my opinion.
 
-	Thanks
-		Andrew
+-- 
+With Best Regards,
+Andy Shevchenko
