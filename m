@@ -1,102 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932477AbeE3Vr5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:47:57 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:43229 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932395AbeE3Vry (ORCPT
+        id S932532AbeE3VsL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:48:11 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:47625 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932466AbeE3VsE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:47:54 -0400
-X-Google-Smtp-Source: ADUXVKKn6blmoAJPi4gf3KGZAjY8mset/m3IaYgU2QcxVqYVm7Mhc3okWRN/MDA1Y2Vt2vMTXsCcJQ==
-Date: Wed, 30 May 2018 14:47:50 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Vignesh R <vigneshr@ti.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v3 1/3] Input: ti_am335x_tsc - Mark IRQ as wakeup capable
-Message-ID: <20180530214750.GD203327@dtor-ws>
-References: <20180424062741.7891-1-vigneshr@ti.com>
- <20180424062741.7891-2-vigneshr@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180424062741.7891-2-vigneshr@ti.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 30 May 2018 17:48:04 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Xue Liu <liuxuenetmail@gmail.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@osg.samsung.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ieee802154: mcr20a: add missing includes
+Date: Wed, 30 May 2018 23:47:09 +0200
+Message-Id: <20180530214732.1021121-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:0xFqkxSVUKFqwwzauiKdYi9LMCMj06QJQP+ytzKRPBVVrh21etT
+ m+ZXyLHyCaDBYfXsEifyyUEU56Ccx4gYxw34lu9nMgxYdH9dI/WK/DYZBV9Vzt6NzaVccWb
+ o29iGgSXoHow6YPndyGaLBTV5p5K2Tv1ui9HH8wgIF3vEl55d1nLoufTIboweVxZ5iVHuJv
+ DWO2xVJIw95Tbz/hzjzPA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:uBFACPNlAcA=:fVEJLM/+Lqe2JanEmvqI9Q
+ zvlnkFPAQXEMa54QFUwH/IdSRqai+Yvdmt+MmGR/5yDgEXLPq+zSA9nyFooF+bbpZvATP65Yd
+ /rd57Bg6yqWhJ5JNtH9cBQpNS8ACGoALQubwT/UTdkqutflc+c+ad9vhU7glDT6/htKbSMw4X
+ hQusyyDQ/9EGNUNN5ogUj1s+oTKGvCZFvTJp3uaS8IJ+NhXmrn+w84A3UZ6TQykQLlP6szX2C
+ wNUdg0XyKo9Z1wlnhQhpLrTreQRoo87nzSb/ue6So3NoWfbarckmgiJACewIu2VmuEPyLoTt+
+ 3hsNea6W+vBPb1kzCjmV4FPWbXDPXNZbX/wXrED2rqmCCM6bhNveYZgrSm6OI1Y97kiwbYHC/
+ cYfsdZY4bW1VMLiKI8py4IArcUsTPArUPT7UhEFtnxxXs+iBmxlMvzvnnnyIQVyKS2rFXaQwH
+ CR2ECFMMS8gW0fQq5cFGpcxE0NxU8hy42mXlYUC6w5T73/h0JHRbeM8KPFgWm5wXuXDRpZKWu
+ QRu0RzLoenB0lwnUOX8r55PQTPnY5XTAd6fGi4vo9Cn+fu7gopV5XWP+Qx7tPaAYi75HtsZD1
+ DTwZ4C2Vl8lPX3BWWUQTwvJljwCU0Jh9Cu/BL0cQFGc9jwdODAbO/thG5chGs8VQdMjpDYTe1
+ BA0qTYNHKJSRoVCn+IGl5trbbQZ+VUETAX0DaK8AOl3i/MZ+Z0nk3cKZS3X2IY6UlHtk=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vignesh,
+Without CONFIG_GPIOLIB, some headers are not included implicitly,
+leading to a build failure:
 
-On Tue, Apr 24, 2018 at 11:57:39AM +0530, Vignesh R wrote:
-> On AM335x, ti_am335x_tsc can wake up the system from suspend, mark the
-> IRQ as wakeup capable, so that device irq is not disabled during system
-> suspend.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
-> v3: Drop unneeded device_may_wakeup() check
-> 
->  drivers/input/touchscreen/ti_am335x_tsc.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
-> index f1043ae71dcc..3908c21862c7 100644
-> --- a/drivers/input/touchscreen/ti_am335x_tsc.c
-> +++ b/drivers/input/touchscreen/ti_am335x_tsc.c
-> @@ -27,6 +27,7 @@
->  #include <linux/of.h>
->  #include <linux/of_device.h>
->  #include <linux/sort.h>
-> +#include <linux/pm_wakeirq.h>
->  
->  #include <linux/mfd/ti_am335x_tscadc.h>
->  
-> @@ -432,6 +433,10 @@ static int titsc_probe(struct platform_device *pdev)
->  		goto err_free_mem;
->  	}
->  
-> +	err = dev_pm_set_wake_irq(tscadc_dev->dev, ts_dev->irq);
-> +	if (err)
-> +		dev_err(&pdev->dev, "irq wake enable failed.\n");
-> +
+drivers/net/ieee802154/mcr20a.c: In function 'mcr20a_probe':
+drivers/net/ieee802154/mcr20a.c:1347:13: error: implicit declaration of function 'irq_get_trigger_type'; did you mean 'irq_get_irqchip_state'? [-Werror=implicit-function-declaration]
 
-Looking at this driver some more: why do we have the parent MFD device
-as wakeup source? It seems we have 2 independent interrupt lines, one in
-IIO and one in input and we could actually have the touchscreen itself
-to be one of the wakeup devices? I.e. i'd expect
+This includes gpio/consumer.h and irq.h directly rather through the
+gpiolib header.
 
-	err = dev_pm_set_wake_irq(&pdev->dev, ts_dev->irq);
+Fixes: 8c6ad9cc5157 ("ieee802154: Add NXP MCR20A IEEE 802.15.4 transceiver driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/ieee802154/mcr20a.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-here and we should be checking the touchscreen pdev in suspend/resume
-when checking whether to program the controller for wakeups.
-
-
->  	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_FIFO0THRES);
->  	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_EOS);
->  	err = titsc_config_wires(ts_dev);
-> @@ -462,6 +467,7 @@ static int titsc_probe(struct platform_device *pdev)
->  	return 0;
->  
->  err_free_irq:
-> +	dev_pm_clear_wake_irq(tscadc_dev->dev);
->  	free_irq(ts_dev->irq, ts_dev);
->  err_free_mem:
->  	input_free_device(input_dev);
-> @@ -474,6 +480,7 @@ static int titsc_remove(struct platform_device *pdev)
->  	struct titsc *ts_dev = platform_get_drvdata(pdev);
->  	u32 steps;
->  
-> +	dev_pm_clear_wake_irq(ts_dev->mfd_tscadc->dev);
->  	free_irq(ts_dev->irq, ts_dev);
->  
->  	/* total steps followed by the enable mask */
-> -- 
-> 2.17.0
-> 
-
-Thanks.
-
+diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
+index de0d7f28a181..e428277781ac 100644
+--- a/drivers/net/ieee802154/mcr20a.c
++++ b/drivers/net/ieee802154/mcr20a.c
+@@ -15,10 +15,11 @@
+  */
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/spi/spi.h>
+ #include <linux/workqueue.h>
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #include <linux/skbuff.h>
+ #include <linux/of_gpio.h>
+ #include <linux/regmap.h>
 -- 
-Dmitry
+2.9.0
