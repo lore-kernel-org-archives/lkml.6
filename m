@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753658AbeE3OL6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:11:58 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:59091 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753243AbeE3OKa (ORCPT
+        id S1753335AbeE3OKe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:10:34 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:25601 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752734AbeE3OK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:10:30 -0400
+        Wed, 30 May 2018 10:10:27 -0400
 From: Faiz Abbas <faiz_abbas@ti.com>
 To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-clk@vger.kernel.org>
 CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
         <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH v2 2/6] ARM: dts: dra762: Add MCAN clock support
-Date: Wed, 30 May 2018 19:41:29 +0530
-Message-ID: <20180530141133.3711-3-faiz_abbas@ti.com>
+Subject: [PATCH v2 3/6] clk: ti: dra7: Add clkctrl clock data for the mcan clocks
+Date: Wed, 30 May 2018 19:41:30 +0530
+Message-ID: <20180530141133.3711-4-faiz_abbas@ti.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180530141133.3711-1-faiz_abbas@ti.com>
 References: <20180530141133.3711-1-faiz_abbas@ti.com>
@@ -26,58 +26,38 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lokesh Vutla <lokeshvutla@ti.com>
+Add clkctrl data for the m_can clocks and register it within the
+clkctrl driver
 
-MCAN is clocked by H14 divider of DPLL_GMAC. Unlike other
-DPLL dividers this DPLL_GMAC H14 divider is controlled by
-control module. Adding support for these clocks.
-
-Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+CC: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- arch/arm/boot/dts/dra76x.dtsi | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/clk/ti/clk-7xx.c         | 1 +
+ include/dt-bindings/clock/dra7.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
-index 1c88c581ff18..bfc82636999c 100644
---- a/arch/arm/boot/dts/dra76x.dtsi
-+++ b/arch/arm/boot/dts/dra76x.dtsi
-@@ -17,3 +17,36 @@
- &crossbar_mpu {
- 	ti,irqs-skip = <10 67 68 133 139 140>;
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+index fb249a1637a5..71a122b2dc67 100644
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -708,6 +708,7 @@ static const struct omap_clkctrl_reg_data dra7_wkupaon_clkctrl_regs[] __initcons
+ 	{ DRA7_COUNTER_32K_CLKCTRL, NULL, 0, "wkupaon_iclk_mux" },
+ 	{ DRA7_UART10_CLKCTRL, dra7_uart10_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0060:24" },
+ 	{ DRA7_DCAN1_CLKCTRL, dra7_dcan1_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0068:24" },
++	{ DRA7_ADC_CLKCTRL, NULL, CLKF_SW_SUP, "mcan_clk" },
+ 	{ 0 },
  };
-+
-+&scm_conf_clocks {
-+	dpll_gmac_h14x2_ctrl_ck: dpll_gmac_h14x2_ctrl_ck@3fc {
-+		#clock-cells = <0>;
-+		compatible = "ti,divider-clock";
-+		clocks = <&dpll_gmac_x2_ck>;
-+		ti,max-div = <63>;
-+		reg = <0x03fc>;
-+		ti,bit-shift=<20>;
-+		ti,latch-bit=<26>;
-+		assigned-clocks = <&dpll_gmac_h14x2_ctrl_ck>;
-+		assigned-clock-rates = <80000000>;
-+	};
-+
-+	dpll_gmac_h14x2_ctrl_mux_ck: dpll_gmac_h14x2_ctrl_mux_ck@3fc {
-+		#clock-cells = <0>;
-+		compatible = "ti,mux-clock";
-+		clocks = <&dpll_gmac_ck>, <&dpll_gmac_h14x2_ctrl_ck>;
-+		reg = <0x3fc>;
-+		ti,bit-shift = <29>;
-+		ti,latch-bit=<26>;
-+		assigned-clocks = <&dpll_gmac_h14x2_ctrl_mux_ck>;
-+		assigned-clock-parents = <&dpll_gmac_h14x2_ctrl_ck>;
-+	};
-+
-+	mcan_clk: mcan_clk@3fc {
-+		#clock-cells = <0>;
-+		compatible = "ti,gate-clock";
-+		clocks = <&dpll_gmac_h14x2_ctrl_mux_ck>;
-+		ti,bit-shift = <27>;
-+		reg = <0x3fc>;
-+	};
-+};
+ 
+diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
+index 5e1061b15aed..d7549c57cac3 100644
+--- a/include/dt-bindings/clock/dra7.h
++++ b/include/dt-bindings/clock/dra7.h
+@@ -168,5 +168,6 @@
+ #define DRA7_COUNTER_32K_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
+ #define DRA7_UART10_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
+ #define DRA7_DCAN1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
++#define DRA7_ADC_CLKCTRL	DRA7_CLKCTRL_INDEX(0xa0)
+ 
+ #endif
 -- 
 2.17.0
