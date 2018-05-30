@@ -1,26 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753082AbeE3LN4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:13:56 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60721 "EHLO
+        id S1753055AbeE3LPt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:15:49 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60697 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752242AbeE3LHb (ORCPT
+        by vger.kernel.org with ESMTP id S1751692AbeE3LHZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:31 -0400
+        Wed, 30 May 2018 07:07:25 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Colin Ian King" <colin.king@canonical.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Raghava Aditya Renukunta" <RaghavaAditya.Renukunta@microsemi.com>
+CC: akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
+        "Jia-Ju Bai" <baijiaju1990@gmail.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.46783766@decadent.org.uk>
+Message-ID: <lsq.1527677561.502970112@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 038/153] scsi: aacraid: remove redundant setting of
- variable c
+Subject: [PATCH 3.2 030/153] USB: serial: io_edgeport: fix possible
+ sleep-in-atomic
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,39 +32,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-commit 91814744646351a470f256fbcb853fb5a7229a9f upstream.
+commit c7b8f77872c73f69a16528a9eb87afefcccdc18b upstream.
 
-A previous commit no longer stores the contents of c, so we now have a
-situation where c is being updated but the value is never read. Clean up
-the code by removing the now redundant setting of variable c.
+According to drivers/usb/serial/io_edgeport.c, the driver may sleep
+under a spinlock.
+The function call path is:
+edge_bulk_in_callback (acquire the spinlock)
+   process_rcvd_data
+     process_rcvd_status
+       change_port_settings
+         send_iosp_ext_cmd
+           write_cmd_usb
+             usb_kill_urb --> may sleep
 
-Cleans up clang warning:
-drivers/scsi/aacraid/aachba.c:943:3: warning: Value stored to 'c' is
-never read
+To fix it, the redundant usb_kill_urb() is removed from the error path
+after usb_submit_urb() fails.
 
-Fixes: f4e8708d3104 ("scsi: aacraid: Fix udev inquiry race condition")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This possible bug is found by my static analysis tool (DSAC) and checked
+by my code review.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/scsi/aacraid/aachba.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/usb/serial/io_edgeport.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/scsi/aacraid/aachba.c
-+++ b/drivers/scsi/aacraid/aachba.c
-@@ -784,11 +784,8 @@ static void setinqstr(struct aac_dev *de
- 		while (*cp == ' ')
- 			++cp;
- 		/* last six chars reserved for vol type */
--		c = 0;
--		if (strlen(cp) > sizeof(str->pid)) {
--			c = cp[sizeof(str->pid)];
-+		if (strlen(cp) > sizeof(str->pid))
- 			cp[sizeof(str->pid)] = '\0';
--		}
- 		inqstrcpy (cp, str->pid);
- 
- 		kfree(cname);
+--- a/drivers/usb/serial/io_edgeport.c
++++ b/drivers/usb/serial/io_edgeport.c
+@@ -2387,7 +2387,6 @@ static int write_cmd_usb(struct edgeport
+ 		dev_err(&edge_port->port->dev,
+ 		    "%s - usb_submit_urb(write command) failed, status = %d\n",
+ 							__func__, status);
+-		usb_kill_urb(urb);
+ 		usb_free_urb(urb);
+ 		atomic_dec(&CmdUrbs);
+ 		return status;
