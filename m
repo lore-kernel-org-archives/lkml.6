@@ -1,60 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752123AbeE3LAB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:00:01 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11800 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751479AbeE3K75 (ORCPT
+        id S1752199AbeE3LAN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:00:13 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51602 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751479AbeE3LAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:59:57 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 30 May 2018 04:00:00 -0700
-Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
-To: Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
-References: <20180513211347.7187-1-digetx@gmail.com>
- <20180514115933.GH18312@ulmo>
- <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
- <5949e650-8ab5-b4bb-196d-5a0705383141@gmail.com>
- <20180529180659.f5s56nstykztvykr@ninjato>
-CC: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Shardar Shariff Md <smohammed@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Message-ID: <7b93f6b0-0e09-d8e0-b48e-4ef518c3bd9f@nvidia.com>
-Date: Wed, 30 May 2018 16:29:45 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Wed, 30 May 2018 07:00:07 -0400
+Date: Wed, 30 May 2018 12:00:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v4 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
+ driver
+Message-ID: <20180530110000.GI6920@sirena.org.uk>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180530090512.GC13528@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20180529180659.f5s56nstykztvykr@ninjato>
-X-Originating-IP: [10.19.64.176]
-X-ClientProxiedBy: DRBGMAIL102.nvidia.com (10.18.16.21) To
- bgmail102.nvidia.com (10.25.59.11)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="QDIl5R72YNOeCxaP"
+Content-Disposition: inline
+In-Reply-To: <20180530090512.GC13528@localhost.localdomain>
+X-Cookie: Don't get mad, get interest.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--QDIl5R72YNOeCxaP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tuesday 29 May 2018 11:36 PM, Wolfram Sang wrote:
->>> Our I2C driver is based on the interrupt. So we have converted the
->>> suspend/resume to suspend_noirq and reseume_noirq so that we will not allow the
->>> transfer when system interrupt disabled in downstream.
->>>            SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
->>>
->>> In shutdown path, where interrupt disabled and still need i2c, we use the
->>> bit-bang method via GPIO for i2c transfer.
->> In the current upstream kernel suspend/resume can't be simply moved to the
->> 'noirq' stage because resume invokes tegra_i2c_init() which uses runtime PM and
->> that doesn't work with the IRQ's being disabled. But things do not work even
->> with the tegra_i2c_init() changed to work with the disabled IRQ's, like I wrote
->> above the I2C transfer fails (due to timeout) and a "fix" for that failure was
->> to remove reset_control_assert/deassert from the tegra_i2c_init(). So I'd go for
->> a complete suspend/resume removal for now as it is causes problem.
-> Laxman, are you convinced or do you have still objections?
-Fine with me. Please add my Ack
+On Wed, May 30, 2018 at 12:05:12PM +0300, Matti Vaittinen wrote:
 
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Other 4 can be used on PWM or PFM switching mode. When PWM is used
+> voltages can be changed without disabling regulator. On PFM this should
+> not be done. These latter 4 regulators can be forced to PWM mode via
+> control bit in register. This driver does not support controlling this
+> mode though. So this driver version just checks if regulator is enabled
+> before changing the voltage and if it is the voltage change fails with
+> -EBUSY
+
+It probably should support setting modes (especially if the device isn't
+smart enough to automatically shift which sounds like the case) but
+that's a separate thing.
+
+> My question is whether it would be good idea to also read the 'force
+> PWM' bit when voltage is changed and allow the change if PWM mode is
+> forced to be used? Problem is that the check and voltage change can't be
+> atomic so there is a chance someone changes the mode (bypassing the
+> driver and regulator core) after this check but before we get to modify
+> the voltage. Furthermore, I doubt the 'force PWM' is widely used (but I
+> can't say for sure as I can't imagine all use cases) as it is not so
+> power efficient.
+
+Why would anything else be changing the mode configuration of the
+regulator while the system is running?  That sounds like a bad idea.
+In any case if the hardware really needs to be manually put into force
+PWM to change voltage then the simplest thing would be to just move it
+into force PWM mode, do the change, then change back if it wasn't
+already in force PWM mode.
+
+The tradeoff with forced PWM mode is that the quality of regulation will
+be a lot better, especially if the load changes suddenly (as things like
+CPUs often do).  Most hardware that's at all current is able respond to
+changes in load and switch modes automatically when it's appropriate,
+except possibly in some very low power modes.
+
+--QDIl5R72YNOeCxaP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOhC8ACgkQJNaLcl1U
+h9Ag/wf+K4uLA5x5eT0bG96OcP1drAx9nx/aAbTTtQsFPeSTocdCq4nplECWlONt
+Jfi9RRuX2TRezrrQa8QIcfssUhT4M1MJD30Mws0SJ3e1m+vhcSS3FUS4vOepmNPg
+HcFnwg8qXNXSn1ahvYxZ2ISbu20C2uQj2XeJYsB4sQhsBzW/FPp7Z40nH1TMpqR3
+m9hl4NSci25M9BchBzR3vLdltsdYVmGrX4kX2nZSTOXgymX58R+rBLZeyZ4+kMO1
+/E0AUYBNiQ6+UN1NmN0abv0cD/GsvNc8nTEt2lB/IXkVGnz/nyj01pg5/5vrL7fx
+g1F5lBtaLADOmLd6FbvX4wK4BJO3/g==
+=yqHD
+-----END PGP SIGNATURE-----
+
+--QDIl5R72YNOeCxaP--
