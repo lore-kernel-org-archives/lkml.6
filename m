@@ -1,120 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936086AbeE3Ir5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:47:57 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:57189 "EHLO pegase1.c-s.fr"
+        id S937295AbeE3IsI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:48:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37550 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935976AbeE3Irv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:47:51 -0400
-Subject: Re: [PATCH v5 3/3] powerpc/lib: optimise PPC32 memcmp
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <cover.1527503958.git.christophe.leroy@c-s.fr>
- <88c8cc033b4ea364d62d1d8ba811a8f8d56c297d.1527503958.git.christophe.leroy@c-s.fr>
- <CA+7wUszdfG+u4YSnxjFaujy3s_Vu92POPamK+=zjYe6Pbu+kxw@mail.gmail.com>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <f2931bb1-2d56-8a5f-84b2-044f043b7633@c-s.fr>
-Date: Wed, 30 May 2018 10:47:48 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935976AbeE3IsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:48:04 -0400
+Date: Wed, 30 May 2018 10:48:01 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: drop in_nmi check from
+ printk_safe_flush_on_panic()
+Message-ID: <20180530084801.i5mzqhlw2w5o2eod@pathway.suse.cz>
+References: <20180530070350.10131-1-sergey.senozhatsky@gmail.com>
+ <20180530072419.jqoohtcvenlnym6h@pathway.suse.cz>
+ <20180530075105.GA12230@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <CA+7wUszdfG+u4YSnxjFaujy3s_Vu92POPamK+=zjYe6Pbu+kxw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530075105.GA12230@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 29/05/2018 à 22:03, Mathieu Malaterre a écrit :
-> On Mon, May 28, 2018 at 12:49 PM, Christophe Leroy
-> <christophe.leroy@c-s.fr> wrote:
->> At the time being, memcmp() compares two chunks of memory
->> byte per byte.
->>
->> This patch optimises the comparison by comparing word by word.
->>
->> A small benchmark performed on an 8xx comparing two chuncks
->> of 512 bytes performed 100000 times gives:
->>
->> Before : 5852274 TB ticks
->> After:   1488638 TB ticks
->>
->> This is almost 4 times faster
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/lib/string_32.S | 37 +++++++++++++++++++++++++++----------
->>   1 file changed, 27 insertions(+), 10 deletions(-)
+On Wed 2018-05-30 16:51:05, Sergey Senozhatsky wrote:
+> On (05/30/18 09:24), Petr Mladek wrote:
+> > Acked-by: Petr Mladek <pmladek@suse.com>
 > 
-> Would it possible for you to move the actual code instead to:
+> Thanks.
 > 
-> ./arch/powerpc/lib/memcmp_32.S
+> > Just to be sure. IMHO, it is not worth nominating this patch for
+> > stable. It is not a regression fix. I see it as a continuous
+> > improving of the handling in various corner cases. And I see this
+> > as a distant corner case.
 > 
-> This will seat right next to memcmp_64.S implementation.
-
-Good idea, thanks.
-Done in v6
-
-Christophe
-
+> Yep, agreed.
 > 
->> diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
->> index 40a576d56ac7..4fbaa046aa84 100644
->> --- a/arch/powerpc/lib/string_32.S
->> +++ b/arch/powerpc/lib/string_32.S
->> @@ -16,17 +16,34 @@
->>          .text
->>
->>   _GLOBAL(memcmp)
->> -       cmpwi   cr0, r5, 0
->> -       beq-    2f
->> -       mtctr   r5
->> -       addi    r6,r3,-1
->> -       addi    r4,r4,-1
->> -1:     lbzu    r3,1(r6)
->> -       lbzu    r0,1(r4)
->> -       subf.   r3,r0,r3
->> -       bdnzt   2,1b
->> +       srawi.  r7, r5, 2               /* Divide len by 4 */
->> +       mr      r6, r3
->> +       beq-    3f
->> +       mtctr   r7
->> +       li      r7, 0
->> +1:     lwzx    r3, r6, r7
->> +       lwzx    r0, r4, r7
->> +       addi    r7, r7, 4
->> +       cmplw   cr0, r3, r0
->> +       bdnzt   eq, 1b
->> +       bne     5f
->> +3:     andi.   r3, r5, 3
->> +       beqlr
->> +       cmplwi  cr1, r3, 2
->> +       blt-    cr1, 4f
->> +       lhzx    r3, r6, r7
->> +       lhzx    r0, r4, r7
->> +       addi    r7, r7, 2
->> +       subf.   r3, r0, r3
->> +       beqlr   cr1
->> +       bnelr
->> +4:     lbzx    r3, r6, r7
->> +       lbzx    r0, r4, r7
->> +       subf.   r3, r0, r3
->>          blr
->> -2:     li      r3,0
->> +5:     li      r3, 1
->> +       bgtlr
->> +       li      r3, -1
->>          blr
->>   EXPORT_SYMBOL(memcmp)
->>
->> --
->> 2.13.3
->>
+> ***
+> 
+> A random thought [not suggesting anything]:
+> 
+> Given that we call printk() before SMP stop and that some of
+> smp_send_stop() call printk(), may be we can switch panic()
+> to printk_safe() mode and return it back to normal printk()
+> mode right before printk_safe_flush_on_panic(). So all possible
+> printk()-s that can happen in between (printk_safe_enter()
+> printk_safe_exit()) will not access the logbuf spin lock, yet
+> we still will try to flush all per-CPU buffers a bit later.
+> 
+> It probably doesn't sound like a very good/solid idea, just
+> wondering what will people say.
+> 
+> Very schematically,
+> 
+> ---
+> 
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index 42e487488554..98a0493a59d3 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -148,6 +148,7 @@ void panic(const char *fmt, ...)
+>  	 * after setting panic_cpu) from invoking panic() again.
+>  	 */
+>  	local_irq_disable();
+> +	__printk_safe_enter();
+
+I understand why you came with it but I am against this change without
+a proper research. This would redirect too valuable messages into
+a buffer of a limited size and postpone flushing them to the consoles.
+
+We would need to really carefully compare chances where this would
+help and where it would make things worse. There is a high chance
+that we could come with a better solution once we have the analyze.
+
+Best Regards,
+Petr
