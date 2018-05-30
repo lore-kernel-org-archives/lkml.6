@@ -1,25 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751938AbeE3LHH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:07:07 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60627 "EHLO
+        id S1751997AbeE3LH3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:07:29 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60689 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751507AbeE3LG4 (ORCPT
+        by vger.kernel.org with ESMTP id S1751929AbeE3LG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:06:56 -0400
+        Wed, 30 May 2018 07:06:58 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.225630673@decadent.org.uk>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Xin Long" <lucien.xin@gmail.com>,
+        "Andy Gospodarek" <andy@greyhouse.net>
+Date: Wed, 30 May 2018 11:52:42 +0100
+Message-ID: <lsq.1527677562.932263668@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 007/153] ext4: fix block bitmap validation when
- bigalloc, ^flex_bg
+Subject: [PATCH 3.2 147/153] bonding: process the err returned by
+ dev_set_allmulti properly in bond_enslave
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -32,63 +33,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit e674e5cbd0942b42a12106ac0be8330f4301bef4 upstream.
+commit 9f5a90c107741b864398f4ac0014711a8c1d8474 upstream.
 
-On a bigalloc,^flex_bg filesystem, the ext4_valid_block_bitmap
-function fails to convert from blocks to clusters when spot-checking
-the validity of the bitmap block that we've just read from disk.  This
-causes ext4 to think that the bitmap is garbage, which results in the
-block group being taken offline when it's not necessary.  Add in the
-necessary EXT4_B2C() calls to perform the conversions.
+When dev_set_promiscuity(1) succeeds but dev_set_allmulti(1) fails,
+dev_set_promiscuity(-1) should be done before going to the err path.
+Otherwise, dev->promiscuity will leak.
 
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: "Theodore Ts'o" <tytso@mit.edu>
+Fixes: 7e1a1ac1fbaa ("bonding: Check return of dev_set_promiscuity/allmulti")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Andy Gospodarek <andy@greyhouse.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 [bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/balloc.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/bonding/bond_main.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -278,6 +278,7 @@ static int ext4_valid_block_bitmap(struc
- 					unsigned int block_group,
- 					struct buffer_head *bh)
- {
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_grpblk_t offset;
- 	ext4_grpblk_t next_zero_bit;
- 	ext4_fsblk_t bitmap_blk;
-@@ -297,14 +298,14 @@ static int ext4_valid_block_bitmap(struc
- 	/* check whether block bitmap block number is set */
- 	bitmap_blk = ext4_block_bitmap(sb, desc);
- 	offset = bitmap_blk - group_first_block;
--	if (!ext4_test_bit(offset, bh->b_data))
-+	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
- 		/* bad block bitmap */
- 		goto err_out;
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1704,8 +1704,11 @@ int bond_enslave(struct net_device *bond
+ 		/* set allmulti level to new slave */
+ 		if (bond_dev->flags & IFF_ALLMULTI) {
+ 			res = dev_set_allmulti(slave_dev, 1);
+-			if (res)
++			if (res) {
++				if (bond_dev->flags & IFF_PROMISC)
++					dev_set_promiscuity(slave_dev, -1);
+ 				goto err_close;
++			}
+ 		}
  
- 	/* check whether the inode bitmap block number is set */
- 	bitmap_blk = ext4_inode_bitmap(sb, desc);
- 	offset = bitmap_blk - group_first_block;
--	if (!ext4_test_bit(offset, bh->b_data))
-+	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
- 		/* bad block bitmap */
- 		goto err_out;
- 
-@@ -312,9 +313,10 @@ static int ext4_valid_block_bitmap(struc
- 	bitmap_blk = ext4_inode_table(sb, desc);
- 	offset = bitmap_blk - group_first_block;
- 	next_zero_bit = ext4_find_next_zero_bit(bh->b_data,
--				offset + EXT4_SB(sb)->s_itb_per_group,
--				offset);
--	if (next_zero_bit >= offset + EXT4_SB(sb)->s_itb_per_group)
-+			EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group),
-+			EXT4_B2C(sbi, offset));
-+	if (next_zero_bit >=
-+	    EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group))
- 		/* good bitmap for inode tables */
- 		return 1;
- 
+ 		netif_addr_lock_bh(bond_dev);
