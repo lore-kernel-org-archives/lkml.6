@@ -1,61 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755175AbeE3Erz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 00:47:55 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35229 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751005AbeE3Erw (ORCPT
+        id S935318AbeE3Etz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 00:49:55 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53059 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbeE3Etw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 00:47:52 -0400
-X-Google-Smtp-Source: ADUXVKJ4otuV/a1pD594v0XHcFf1ppHcUZaIRqshrNAFxfLMo3ssAdRcKeEnZZ3cKnNR85yFkMVylw==
-Date: Wed, 30 May 2018 10:17:49 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Simon Horman <horms@verge.net.au>, "arm@kernel.org" <arm@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "ionela.voinescu@arm.com" <ionela.voinescu@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "chris.redpath@arm.com" <chris.redpath@arm.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 13/15] arm: dts: r8a7743: Add missing OPP properties for
- CPUs
-Message-ID: <20180530044749.ou45frhlrdykoiuq@vireshk-i7>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
- <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
- <20180528092331.3jon45nsqfdzs5ds@verge.net.au>
- <20180528105831.vesrswazlagynemq@vireshk-i7>
- <20180528115832.b2wovvanypxkgalj@verge.net.au>
- <OSBPR01MB2103A3411D0C3C5DB76F715EB86D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OSBPR01MB2103A3411D0C3C5DB76F715EB86D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        Wed, 30 May 2018 00:49:52 -0400
+X-Google-Smtp-Source: ADUXVKKVSu5qtMuwZwJ6xnEI3y2R1j4MIPA1ClVI4t8G5bbEGUt8dcTP2XjAVkayh8fwZZgA8u8dLQ==
+From: Leo Yan <leo.yan@linaro.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH] perf hists browser: Fix stale hist_entry__tui_annotate() declaration
+Date: Wed, 30 May 2018 12:49:27 +0800
+Message-Id: <1527655767-12161-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-05-18, 13:33, Biju Das wrote:
-> Hi All,
-> 
-> I have tested this patch on RZ/G1M and I didn't find any issues.
-> r8a7743 is similar to r8a7791. So I assume you will apply the same
-> patch for other R-SoC devices as well.
+Since commit 464fb4fd6af7 ("perf hists browser: Pass annotation_options
+from tool to browser") has added extra parameter for functions, but it
+missed to update hist_entry__tui_annotate() declaration for
+!HAVE_SLANG_SUPPORT configuration so this results in regression for perf
+tool building failure.
 
-Okay, I have sent V2 for this and it fixes all those platforms as
-well.
+This patch is to update hist_entry__tui_annotate() declaration for
+new added argument '*annotation_opts'.
 
-> Apart from this, maybe we need to update the OPP binding
-> documentation. i.e., extend the  operating- point usage to other
-> cores in the cluster (Binding 1: operating-points).
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ tools/perf/util/hist.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Its already done, you need to start using operating-points-v2 property
-to avoid duplication like this.
-
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index 5f30758..cafafbf 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -460,7 +460,8 @@ static inline int map_symbol__tui_annotate(struct map_symbol *ms __maybe_unused,
+ 
+ static inline int hist_entry__tui_annotate(struct hist_entry *he __maybe_unused,
+ 					   struct perf_evsel *evsel __maybe_unused,
+-					   struct hist_browser_timer *hbt __maybe_unused)
++					   struct hist_browser_timer *hbt __maybe_unused,
++					   struct annotation_options *annotation_opts __maybe_unused)
+ {
+ 	return 0;
+ }
 -- 
-viresh
+2.7.4
