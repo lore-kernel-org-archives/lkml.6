@@ -1,65 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753027AbeE3M7d (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:59:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752121AbeE3M7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:59:30 -0400
-Date: Wed, 30 May 2018 09:59:26 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: Re: heads up: moving intel-pt-decoder/Build header checks to
- check_headers.sh
-Message-ID: <20180530125926.GC20886@kernel.org>
-References: <20180529134809.GB20886@kernel.org>
- <a090016e-1cb9-2d49-fc47-40dcd6374451@intel.com>
+        id S1752880AbeE3NAN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 09:00:13 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56048 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752409AbeE3NAI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 09:00:08 -0400
+Date: Wed, 30 May 2018 14:59:58 +0200 (CEST)
+From: Sebastian Ott <sebott@linux.ibm.com>
+X-X-Sender: sebott@schleppi
+To: Christoph Hellwig <hch@infradead.org>
+cc: Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [GIT PULL] two more s390 bug fixes for 4.17
+In-Reply-To: <20180530074130.GA6927@infradead.org>
+References: <20180530075920.1f73275a@mschwideX1> <20180530074130.GA6927@infradead.org>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
+ =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
+ =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
+ =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
+ =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
+ =?ISO-8859-15?Q?94=22?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a090016e-1cb9-2d49-fc47-40dcd6374451@intel.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+X-TM-AS-GCONF: 00
+x-cbid: 18053013-0040-0000-0000-0000043F529E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053013-0041-0000-0000-00002644A732
+Message-Id: <alpine.LFD.2.21.1805301425580.1717@schleppi>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=936 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805300148
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, May 30, 2018 at 09:30:50AM +0300, Adrian Hunter escreveu:
-> On 29/05/18 16:48, Arnaldo Carvalho de Melo wrote:
-> > 	We've made tools/perf/check-headers.sh the mechanism to check
-> > for drift on kernel file copies we have in tools/, and it assumes that
-> > if we have tools/a/b/c/d, then it came from a/b/c/d in the kernel
-> > sources, e.g. a copy of the kernel's arch/x86/lib/x86-opcode-map.txt
-> > would be in tools/arch/x86/lib/x86-opcode-map.txt.
+On Wed, 30 May 2018, Christoph Hellwig wrote:
 
-> > 	That is not the case with the intel-pt-decoder, so I'm thinking
-> > about moving those files to comply with the model used for other copies,
-> > as having it in util/intel-pt-decoder/ isn't strictly required, i.e.
-> > those files could conceivably be used for other purposes besides
-> > decoding intel-pt traces, say for disassembly/annotate, that albeit not
-> > planned (at least by me) for the near future, would be something
-> > interesting to investigate doing.
+> > -	req->completion_data = cqr;
+> > +	*((struct dasd_ccw_req **) blk_mq_rq_to_pdu(req)) = cqr;
+> > +
+> 
+> Please don't play such tricks.  In general your driver structure
+> should have struct request embedded.  If for some reason
+> struct dasd_ccw_req has a different life time please create a new
+> structure instead of these hacks.
 
-> > 	IIRC Ingo was the one to point me out this, and now I saw the
-> > warning about it being different flying by in the middle of the build,
-> > differently from what is done by check-headers.sh, that is to show
-> > everything that drifted in one single block, at the start of the build.
+Would you agree that this is an improvement over using completion_data
+(at least now we don't mess with the block layers internal data)?
 
-> > 	So unless you have a strong objection to this, I'll continue
-> > investigation about how do do it with tools/perf/check-headers.sh,
- 
-> I have no objection but currently it is (theoretically) possible to compile
-> Intel PT decoding support into perf script and perf report for any
-> architecture. i.e. decoding Intel PT from a perf.data file does not depend
-> on the build architecture.
+I already looked into what needs to be done to put struct dasd_ccw_req
+behind the request and let it be managed by the block layer.
 
-Right, being on the tools/arch/ will not preclude it from being built
-and linked in the other arches, I'll make sure it continues being built
-there as well.
+My concerns are lifetime and memory constraints (some of our HW interfaces
+still use 31 bit pointers) but I think both of these are manageable with
+the blk-mq interfaces.
 
-Thanks!
+But this would not be a small change and nothing for rc7. Would you be
+OK with doing the small fix now and I'll work on the mentioned
+improvement?
 
-- Arnaldo
+Regards,
+Sebastian
