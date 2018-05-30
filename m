@@ -1,88 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968920AbeE3JO3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:14:29 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:43622 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968822AbeE3JNR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:13:17 -0400
-X-Google-Smtp-Source: ADUXVKLfzImx+0xMG8r6fimQVx0WUvXkExljPHZgTIqyy4GypTBfMeZIwdXQ7qxNk3LuPwPX0jfZZw==
-From: YaoJun <yaojun8558363@gmail.com>
-To: kernel-hardening@lists.openwall.com
-Cc: catalin.marinas@arm.com, will.deacon@arm.com,
+        id S968956AbeE3JOk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:14:40 -0400
+Received: from foss.arm.com ([217.140.101.70]:52632 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968808AbeE3JO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 05:14:28 -0400
+Date: Wed, 30 May 2018 10:14:58 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: YaoJun <yaojun8558363@gmail.com>
+Cc: kernel-hardening@lists.openwall.com, catalin.marinas@arm.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com
-Subject: [PATCH 2/4] arm64/mm: migrate swapper_pg_dir
-Date: Wed, 30 May 2018 17:12:57 +0800
-Message-Id: <20180530091259.9386-3-yaojun8558363@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180530091259.9386-1-yaojun8558363@gmail.com>
-References: <20180530091259.9386-1-yaojun8558363@gmail.com>
+        ard.biesheuvel@linaro.org
+Subject: Re: [PATCH] arm64: mm: mark tramp_pg_dir read-only
+Message-ID: <20180530091457.GB2452@arm.com>
+References: <20180530044806.18449-1-yaojun8558363@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530044806.18449-1-yaojun8558363@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce new_swapper_pg_dir to save virtual address of
- new swapper_pg_dir.
+On Wed, May 30, 2018 at 12:48:06PM +0800, YaoJun wrote:
+> To protect against KSMA(Kernel Space Mirroring Attack), make
+> tramp_pg_dir read-only. The principle of KSMA is to insert a
+> carefully constructed PGD entry into the translation table.
+> The type of this entry is block, which maps the kernel text
+> and its access permissions bits are 01. The user process can
+> then modify kernel text directly through this mapping. In this
+> way, an arbitrary write can be converted to multiple arbitrary
+> writes.
+> 
+> Signed-off-by: YaoJun <yaojun8558363@gmail.com>
+> ---
+>  arch/arm64/mm/mmu.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 2dbb2c9f1ec1..ac4b22c7e435 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -551,6 +551,10 @@ static int __init map_entry_trampoline(void)
+>  	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
+>  			     prot, pgd_pgtable_alloc, 0);
+>  
+> +	update_mapping_prot(__pa_symbol(tramp_pg_dir),
+> +				(unsigned long)tramp_pg_dir,
+> +				PGD_SIZE, PAGE_KERNEL_RO);
 
-Signed-off-by: YaoJun <yaojun8558363@gmail.com>
----
- arch/arm64/include/asm/mmu_context.h | 2 +-
- arch/arm64/include/asm/pgtable.h     | 1 +
- arch/arm64/mm/kasan_init.c           | 2 +-
- arch/arm64/mm/mmu.c                  | 1 +
- 4 files changed, 4 insertions(+), 2 deletions(-)
+Hmm, I like the idea but is there a risk that the page table has been mapped
+as part of a block entry, which we can't safely split at this point (i.e.
+we'll run into one of the BUG_ONs in the mapping code)?
 
-diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
-index 3eddb871f251..481c2d16adeb 100644
---- a/arch/arm64/include/asm/mmu_context.h
-+++ b/arch/arm64/include/asm/mmu_context.h
-@@ -57,7 +57,7 @@ static inline void cpu_set_reserved_ttbr0(void)
- 
- static inline void cpu_switch_mm(pgd_t *pgd, struct mm_struct *mm)
- {
--	BUG_ON(pgd == swapper_pg_dir);
-+	BUG_ON(pgd == new_swapper_pg_dir);
- 	cpu_set_reserved_ttbr0();
- 	cpu_do_switch_mm(virt_to_phys(pgd),mm);
- }
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 14ba344b1af7..7abec25cedd2 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -723,6 +723,7 @@ extern pgd_t swapper_pg_end[];
- extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
- extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
- extern phys_addr_t __pa_swapper_pg_dir;
-+extern pgd_t *new_swapper_pg_dir;
- 
- /*
-  * Encode and decode a swap entry:
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index dd4f28c19165..08bcaae4725e 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -197,7 +197,7 @@ void __init kasan_init(void)
- 	 * tmp_pg_dir used to keep early shadow mapped until full shadow
- 	 * setup will be finished.
- 	 */
--	memcpy(tmp_pg_dir, swapper_pg_dir, sizeof(tmp_pg_dir));
-+	memcpy(tmp_pg_dir, new_swapper_pg_dir, sizeof(tmp_pg_dir));
- 	dsb(ishst);
- 	cpu_replace_ttbr1(__pa_symbol(tmp_pg_dir));
- 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 41eee333f91a..26ba3e70a91c 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -56,6 +56,7 @@ u64 kimage_voffset __ro_after_init;
- EXPORT_SYMBOL(kimage_voffset);
- 
- phys_addr_t __pa_swapper_pg_dir;
-+pgd_t *new_swapper_pg_dir = swapper_pg_dir;
- 
- /*
-  * Empty_zero_page is a special page that is used for zero-initialized data
--- 
-2.17.0
+Will
