@@ -1,232 +1,281 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932244AbeE3Ttt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:49:49 -0400
-Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:51062
-        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753556AbeE3Ttq (ORCPT
+        id S932181AbeE3Tta (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 15:49:30 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:42900 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753556AbeE3Tt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:49:46 -0400
-x-originating-ip: 107.180.71.197
-From: Long Li <longli@linuxonhyperv.com>
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc: Long Li <longli@microsoft.com>
-Subject: [Patch v2 03/15] CIFS: Use offset when reading pages
-Date: Wed, 30 May 2018 12:47:55 -0700
-Message-Id: <20180530194807.31657-4-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180530194807.31657-1-longli@linuxonhyperv.com>
-References: <20180530194807.31657-1-longli@linuxonhyperv.com>
-Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfFoVw1QOP6qbKWSlBmVq0odeGMyFUMygKtA/MV1x3MsdRHI9JZfI9jwRHzD10nu7PLBJlIhoBF/zfRwlnBLZDtykxjZ4X1qS4ap1g7hJmgtb2ZJea9Sc
- cmCku61UOA5DFwJxDvoDMbYIYr88l4siIJTNzVrzyyJcjua6+pahkMwb3IafxHV9KgjqP5fzET/2McRN2EZHgFOyufKtOgEiG+Uk/KB6XdjTM4g9peEsiQtT
- thv4zIP2QXbxbcEXNuF+BhVkFXhqIdS+IomwN0U5sIHoJKFrJhoD796X9l1dP5JC4lp3sZmmKQ2fe0JewGWdXRdzhaOd3UdwbLeW/C791YL4CIsa74b2wpZ9
- 0lwHEgowVyT1p0ZZ6ZshMVOFmPcsO04xwuP5oozNGUC6HxDaZk4tgTP/R7OLw/CdJRldfbUu
+        Wed, 30 May 2018 15:49:27 -0400
+X-Google-Smtp-Source: ADUXVKIrUVwoYaLterF9sI2xZqTRZlcaZOJYUXh7uJ+l9s9fDyYedjTkz+LOlCdK06e/1HV0ix6x2MxyzZNnVW34LfE=
+MIME-Version: 1.0
+In-Reply-To: <1527154169-32380-6-git-send-email-michel.pollet@bp.renesas.com>
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com> <1527154169-32380-6-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 30 May 2018 21:49:25 +0200
+X-Google-Sender-Auth: buKUUg6mU14XJGSumNKiRWKdtD8
+Message-ID: <CAMuHMdW9fSKZv2qA2oz9NCL+MdASAMnxf1UZomJv3_Zts44ygw@mail.gmail.com>
+Subject: Re: [PATCH v7 5/5] clk: renesas: Renesas R9A06G032 clock driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>
+Hi Michel,
 
-With offset defined in rdata, transport functions need to look at this
-offset when reading data into the correct places in pages.
+On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This provides a clock driver for the Renesas R09A06G032.
+> This uses a structure derived from both the RCAR gen2 driver as well as
+> the renesas-cpg-mssr driver.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Signed-off-by: Long Li <longli@microsoft.com>
----
- fs/cifs/cifsproto.h |  4 +++-
- fs/cifs/connect.c   |  5 +++--
- fs/cifs/file.c      | 52 +++++++++++++++++++++++++++++++++++++---------------
- fs/cifs/smb2ops.c   |  2 +-
- fs/cifs/smb2pdu.c   |  1 +
- 5 files changed, 45 insertions(+), 19 deletions(-)
+Thanks for your patch!
 
-diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
-index dc80f84..1f27d8e 100644
---- a/fs/cifs/cifsproto.h
-+++ b/fs/cifs/cifsproto.h
-@@ -203,7 +203,9 @@ extern void dequeue_mid(struct mid_q_entry *mid, bool malformed);
- extern int cifs_read_from_socket(struct TCP_Server_Info *server, char *buf,
- 			         unsigned int to_read);
- extern int cifs_read_page_from_socket(struct TCP_Server_Info *server,
--				      struct page *page, unsigned int to_read);
-+					struct page *page,
-+					unsigned int page_offset,
-+					unsigned int to_read);
- extern int cifs_setup_cifs_sb(struct smb_vol *pvolume_info,
- 			       struct cifs_sb_info *cifs_sb);
- extern int cifs_match_super(struct super_block *, void *);
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 83b0234..8501da0 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -594,10 +594,11 @@ cifs_read_from_socket(struct TCP_Server_Info *server, char *buf,
- 
- int
- cifs_read_page_from_socket(struct TCP_Server_Info *server, struct page *page,
--		      unsigned int to_read)
-+	unsigned int page_offset, unsigned int to_read)
- {
- 	struct msghdr smb_msg;
--	struct bio_vec bv = {.bv_page = page, .bv_len = to_read};
-+	struct bio_vec bv = {
-+		.bv_page = page, .bv_len = to_read, .bv_offset = page_offset};
- 	iov_iter_bvec(&smb_msg.msg_iter, READ | ITER_BVEC, &bv, 1, to_read);
- 	return cifs_readv_from_socket(server, &smb_msg);
- }
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 1c98293..87eece6 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -3026,12 +3026,20 @@ uncached_fill_pages(struct TCP_Server_Info *server,
- 	int result = 0;
- 	unsigned int i;
- 	unsigned int nr_pages = rdata->nr_pages;
-+	unsigned int page_offset = rdata->page_offset;
- 
- 	rdata->got_bytes = 0;
- 	rdata->tailsz = PAGE_SIZE;
- 	for (i = 0; i < nr_pages; i++) {
- 		struct page *page = rdata->pages[i];
- 		size_t n;
-+		unsigned int segment_size = rdata->pagesz;
-+
-+		if (i == 0)
-+			segment_size -= page_offset;
-+		else
-+			page_offset = 0;
-+
- 
- 		if (len <= 0) {
- 			/* no need to hold page hostage */
-@@ -3040,24 +3048,25 @@ uncached_fill_pages(struct TCP_Server_Info *server,
- 			put_page(page);
- 			continue;
- 		}
-+
- 		n = len;
--		if (len >= PAGE_SIZE) {
-+		if (len >= segment_size)
- 			/* enough data to fill the page */
--			n = PAGE_SIZE;
--			len -= n;
--		} else {
--			zero_user(page, len, PAGE_SIZE - len);
-+			n = segment_size;
-+		else
- 			rdata->tailsz = len;
--			len = 0;
--		}
-+		len -= n;
-+
- 		if (iter)
--			result = copy_page_from_iter(page, 0, n, iter);
-+			result = copy_page_from_iter(
-+					page, page_offset, n, iter);
- #ifdef CONFIG_CIFS_SMB_DIRECT
- 		else if (rdata->mr)
- 			result = n;
- #endif
- 		else
--			result = cifs_read_page_from_socket(server, page, n);
-+			result = cifs_read_page_from_socket(
-+					server, page, page_offset, n);
- 		if (result < 0)
- 			break;
- 
-@@ -3130,6 +3139,7 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
- 		rdata->bytes = cur_len;
- 		rdata->pid = pid;
- 		rdata->pagesz = PAGE_SIZE;
-+		rdata->tailsz = PAGE_SIZE;
- 		rdata->read_into_pages = cifs_uncached_read_into_pages;
- 		rdata->copy_into_pages = cifs_uncached_copy_into_pages;
- 		rdata->credits = credits;
-@@ -3574,6 +3584,7 @@ readpages_fill_pages(struct TCP_Server_Info *server,
- 	u64 eof;
- 	pgoff_t eof_index;
- 	unsigned int nr_pages = rdata->nr_pages;
-+	unsigned int page_offset = rdata->page_offset;
- 
- 	/* determine the eof that the server (probably) has */
- 	eof = CIFS_I(rdata->mapping->host)->server_eof;
-@@ -3584,13 +3595,21 @@ readpages_fill_pages(struct TCP_Server_Info *server,
- 	rdata->tailsz = PAGE_SIZE;
- 	for (i = 0; i < nr_pages; i++) {
- 		struct page *page = rdata->pages[i];
--		size_t n = PAGE_SIZE;
-+		unsigned int to_read = rdata->pagesz;
-+		size_t n;
-+
-+		if (i == 0)
-+			to_read -= page_offset;
-+		else
-+			page_offset = 0;
-+
-+		n = to_read;
- 
--		if (len >= PAGE_SIZE) {
--			len -= PAGE_SIZE;
-+		if (len >= to_read) {
-+			len -= to_read;
- 		} else if (len > 0) {
- 			/* enough for partial page, fill and zero the rest */
--			zero_user(page, len, PAGE_SIZE - len);
-+			zero_user(page, len + page_offset, to_read - len);
- 			n = rdata->tailsz = len;
- 			len = 0;
- 		} else if (page->index > eof_index) {
-@@ -3622,13 +3641,15 @@ readpages_fill_pages(struct TCP_Server_Info *server,
- 		}
- 
- 		if (iter)
--			result = copy_page_from_iter(page, 0, n, iter);
-+			result = copy_page_from_iter(
-+					page, page_offset, n, iter);
- #ifdef CONFIG_CIFS_SMB_DIRECT
- 		else if (rdata->mr)
- 			result = n;
- #endif
- 		else
--			result = cifs_read_page_from_socket(server, page, n);
-+			result = cifs_read_page_from_socket(
-+					server, page, page_offset, n);
- 		if (result < 0)
- 			break;
- 
-@@ -3807,6 +3828,7 @@ static int cifs_readpages(struct file *file, struct address_space *mapping,
- 		rdata->bytes = bytes;
- 		rdata->pid = pid;
- 		rdata->pagesz = PAGE_SIZE;
-+		rdata->tailsz = PAGE_SIZE;
- 		rdata->read_into_pages = cifs_readpages_read_into_pages;
- 		rdata->copy_into_pages = cifs_readpages_copy_into_pages;
- 		rdata->credits = credits;
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index 7c0edd2..1fa1c29 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -2467,7 +2467,7 @@ read_data_into_pages(struct TCP_Server_Info *server, struct page **pages,
- 			zero_user(page, len, PAGE_SIZE - len);
- 			len = 0;
- 		}
--		length = cifs_read_page_from_socket(server, page, n);
-+		length = cifs_read_page_from_socket(server, page, 0, n);
- 		if (length < 0)
- 			return length;
- 		server->total_read += length;
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index a02f6b6..f603fbe 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2683,6 +2683,7 @@ smb2_readv_callback(struct mid_q_entry *mid)
- 	struct smb_rqst rqst = { .rq_iov = rdata->iov,
- 				 .rq_nvec = 2,
- 				 .rq_pages = rdata->pages,
-+				 .rq_offset = rdata->page_offset,
- 				 .rq_npages = rdata->nr_pages,
- 				 .rq_pagesz = rdata->pagesz,
- 				 .rq_tailsz = rdata->tailsz };
+> --- /dev/null
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+
+> +/* register/bit pairs are encoded as an uint16_t */
+> +static void clk_rdesc_set(
+> +       struct r9a06g032_priv *clocks,
+> +       uint16_t one, unsigned int on)
+> +{
+> +       u32 __iomem *reg = ((u32 __iomem *)clocks->reg) + (one >> 5);
+
+Do you need the cast? Gcc does support void pointer arithmetic, and treats
+that like byte pointers.
+
+> +       u32 val = clk_readl(reg);
+> +
+> +       val = (val & ~(1U << (one & 0x1f))) | ((!!on) << (one & 0x1f));
+> +       clk_writel(val, reg);
+
+Hence
+
+        clk_writel(val, clocks->reg + 4 * (one >> 5));
+
+Actually clk_{read,write}l() are deprecated, please use {read,write}l() instead.
+
+> +static void r9a06g032_clk_gate_disable(struct clk_hw *hw)
+> +{
+> +       struct r9a06g032_clk_gate *g = to_r9a06g032_gate(hw);
+> +
+> +       if (!g->read_only)
+> +               r9a06g032_clk_gate_set(g->clocks, &g->gate, 0);
+> +       else
+> +               pr_debug("%s %s: disallowed\n", __func__,
+> +                       __clk_get_name(hw->clk));
+
+You can print the name of a clock using %pC:
+
+    pr_debug("%s %pC: disallowed\n", __func__, hw->clk);
+
+But I don't think you need the check, cfr. below.
+
+> +static struct clk *r9a06g032_register_gate(
+> +       struct r9a06g032_priv *clocks,
+> +       const char *parent_name,
+> +       const struct r9a06g032_clkdesc *desc)
+> +{
+> +       struct clk *clk;
+> +       struct r9a06g032_clk_gate *g;
+> +       struct clk_init_data init;
+> +
+> +       g = kzalloc(sizeof(struct r9a06g032_clk_gate), GFP_KERNEL);
+> +       if (!g)
+> +               return NULL;
+> +
+> +       init.name = desc->name;
+> +       init.ops = &r9a06g032_clk_gate_ops;
+> +       init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
+> +       init.parent_names = parent_name ? &parent_name : NULL;
+> +       init.num_parents = parent_name ? 1 : 0;
+> +
+> +       g->clocks = clocks;
+> +       g->index = desc->index;
+> +       g->gate = desc->gate;
+> +       g->hw.init = &init;
+> +       g->read_only = 0;
+> +
+> +       clk = clk_register(NULL, &g->hw);
+> +       if (IS_ERR(clk)) {
+> +               kfree(g);
+> +               return NULL;
+> +       }
+> +       /*
+> +        * important here, some clocks are already in use by the CM3, we
+> +        * have to assume they are not Linux's to play with and try to disable
+> +        * at the end of the boot!
+> +        * Therefore we increase the clock usage count by arbitrarily enabling
+> +        * the clock, allowing it to stay untouched at the end of the boot.
+> +        */
+> +       g->read_only = r9a06g032_clk_gate_is_enabled(&g->hw);
+
+Is checking if the clock is enabled the recommended way to find out if a
+clock is used by the Cortex M3? No need for a table?
+
+> +       if (g->read_only)
+> +               pr_debug("%s was enabled, making read-only\n", desc->name);
+
+You can set init.flags |= CLK_IS_CRITICAL instead of using your own flag.
+
+> +static unsigned long r9a06g032_divider_recalc_rate(
+> +       struct clk_hw *hw,
+> +       unsigned long parent_rate)
+> +{
+> +       struct r9a06g032_clk_div *clk = to_r9a06g032_divider(hw);
+> +       u32 *reg = ((u32 *)clk->clocks->reg) + clk->reg;
+
+Fishy operations on __iomem pointers
+
+> +       long div = clk_readl(reg);
+
+u32 div?
+
+> +
+> +       if (div < clk->min)
+> +               div = clk->min;
+> +       else if (div > clk->max)
+> +               div = clk->max;
+> +       return DIV_ROUND_UP(parent_rate, div);
+> +}
+> +
+> +/*
+> + * Attempts to find a value that is in range of min,max,
+> + * and if a table of set dividers was specified for this
+> + * register, try to find the fixed divider that is the closest
+> + * to the target frequency
+> + */
+> +static long r9a06g032_divider_clamp_div(
+> +       struct r9a06g032_clk_div *clk,
+> +       unsigned long rate, unsigned long prate)
+> +{
+> +       /* + 1 to cope with rates that have the remainder dropped */
+> +       long div = DIV_ROUND_UP(prate, rate + 1);
+> +       int i;
+
+unsigned int i
+
+> +
+> +       if (div <= clk->min)
+> +               return clk->min;
+> +       if (div >= clk->max)
+> +               return clk->max;
+> +
+> +       for (i = 0; clk->table_size && i < clk->table_size - 1; i++) {
+
+> +static long r9a06g032_divider_round_rate(
+> +       struct clk_hw *hw, unsigned long rate,
+> +       unsigned long *prate)
+> +{
+> +       struct r9a06g032_clk_div *clk = to_r9a06g032_divider(hw);
+> +       long div = DIV_ROUND_UP(*prate, rate);
+> +
+> +       pr_devel("%s %pC %ld (prate %ld) (wanted div %ld)\n", __func__,
+
+Ah, you do know about %pC ;-)
+
+> +               hw->clk, rate, *prate, div);
+> +       pr_devel("   min %d (%ld) max %d (%ld)\n",
+> +               clk->min, DIV_ROUND_UP(*prate, clk->min),
+> +               clk->max, DIV_ROUND_UP(*prate, clk->max));
+> +
+> +       div = r9a06g032_divider_clamp_div(clk, rate, *prate);
+> +       /*
+> +        * this is a hack. Currently the serial driver asks for a clock rate
+> +        * that is 16 times the baud rate -- and that is wildly outside the
+> +        * range of the UART divider, somehow there is no provision for that
+> +        * case of 'let the divider as is if outside range'.
+> +        * The serial driver *shouldn't* play with these clocks anyway, there's
+> +        * several uarts attached to this divider, and changing this impacts
+> +        * everyone.
+
+Huh?
+
+> +        */
+> +       if (clk->index == R9A06G032_DIV_UART) {
+> +               pr_devel("%s div uart hack!\n", __func__);
+> +               return clk_get_rate(hw->clk);
+> +       }
+> +       pr_devel("%s %pC %ld / %ld = %ld\n", __func__, hw->clk,
+> +               *prate, div, DIV_ROUND_UP(*prate, div));
+> +       return DIV_ROUND_UP(*prate, div);
+> +}
+> +
+> +static int r9a06g032_divider_set_rate(
+> +       struct clk_hw *hw, unsigned long rate,
+> +       unsigned long parent_rate)
+> +{
+> +       struct r9a06g032_clk_div *clk = to_r9a06g032_divider(hw);
+> +       /* + 1 to cope with rates that have the remainder dropped */
+> +       u32 div = DIV_ROUND_UP(parent_rate, rate + 1);
+> +       u32 *reg = ((u32 *)clk->clocks->reg) + clk->reg;
+> +
+> +       pr_devel("%s %pC rate %ld parent %ld div %d\n", __func__, hw->clk,
+> +               rate, parent_rate, div);
+> +
+> +       /*
+> +        * Need to write the bit 31 with the divider value to
+> +        * latch it. Technically we should wait until it has been
+> +        * cleared too.
+> +        * TODO: Find whether this callback is sleepable, in case
+> +        * the hardware /does/ require some sort of spinloop here.
+> +        */
+> +       clk_writel(div | (1U << 31), reg);
+
+BIT(31)?
+
+> +
+> +       return 0;
+> +}
+
+> +static struct clk *r9a06g032_register_divider(
+> +       struct r9a06g032_priv *clocks,
+> +       const char *parent_name,
+> +       const struct r9a06g032_clkdesc *desc)
+> +{
+> +       struct r9a06g032_clk_div *div;
+> +       struct clk *clk;
+> +       struct clk_init_data init;
+> +       int i;
+
+unsigned int i;
+
+
+> +static void __init r9a06g032_clocks_init(struct device_node *np)
+> +{
+> +       struct r9a06g032_priv *clocks;
+> +       struct clk **clks;
+> +       unsigned int i;
+> +       uint16_t uart_group_sel[2];
+> +
+> +       clocks = kzalloc(sizeof(*clocks), GFP_KERNEL);
+> +       clks = kzalloc(R9A06G032_CLOCK_COUNT * sizeof(struct clk *),
+> +                       GFP_KERNEL);
+
+kcalloc()?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
