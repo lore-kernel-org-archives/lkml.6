@@ -1,135 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932078AbeE3Pjq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:39:46 -0400
-Received: from g4t3425.houston.hpe.com ([15.241.140.78]:56600 "EHLO
-        g4t3425.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753474AbeE3Pjm (ORCPT
+        id S1753656AbeE3PkX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:40:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32770 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753252AbeE3PkU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:39:42 -0400
-From: "Kani, Toshi" <toshi.kani@hpe.com>
-To: "joro@8bytes.org" <joro@8bytes.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
-        "Hocko, Michal" <MHocko@suse.com>
-Subject: Re: [PATCH v3 3/3] x86/mm: add TLB purge to free pmd/pte page
- interfaces
-Thread-Topic: [PATCH v3 3/3] x86/mm: add TLB purge to free pmd/pte page
- interfaces
-Thread-Index: AQHT7W5Q6qzHG3nfSE+qaMtuTJE19KRG3EYAgAAXkYCAANdEgIAAsmGA
-Date: Wed, 30 May 2018 15:39:20 +0000
-Message-ID: <1527694673.14039.106.camel@hpe.com>
-References: <20180516233207.1580-1-toshi.kani@hpe.com>
-         <20180516233207.1580-4-toshi.kani@hpe.com>
-         <20180529144438.GM18595@8bytes.org> <1527610139.14039.58.camel@hpe.com>
-         <20180530045927.GP18595@8bytes.org>
-In-Reply-To: <20180530045927.GP18595@8bytes.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=toshi.kani@hpe.com;
-x-originating-ip: [15.219.147.8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0866;7:khcvJ6I5Je7uqNMuNEB8xKoWaktlmcNoNFBtwgIo1kMxjTvKZ+WB/5V4rutU10Z2DCbHrdor2SjK9l8E41pkGtR/ZXeAbBBczMJxHeHzJXYhFAZ7y4Hirg28G1JWA8e6Ibhv9daGnvGb7dA0dMdUtGf1hIalLAT3WPCD0P2tnyrqrxk3mMsrnFuInGSODk+wdmCeb2eJaR3StiqBSm2xIhnKu3vcPvWUkZB4HDr/ZAdOKM/oD9+gp60XftrWaSVp
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989080)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0866;
-x-ms-traffictypediagnostic: AT5PR8401MB0866:
-x-ld-processed: 105b2061-b669-4b31-92ac-24d304d195dc,ExtAddr
-x-microsoft-antispam-prvs: <AT5PR8401MB0866749257451B535BE52210826C0@AT5PR8401MB0866.NAMPRD84.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:AT5PR8401MB0866;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0866;
-x-forefront-prvs: 0688BF9B46
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(396003)(366004)(39380400002)(199004)(189003)(5640700003)(8676002)(3846002)(6116002)(476003)(2616005)(446003)(86362001)(478600001)(305945005)(7736002)(5660300001)(99286004)(186003)(316002)(54906003)(2501003)(6506007)(76176011)(59450400001)(93886005)(102836004)(6436002)(6916009)(7416002)(11346002)(66066001)(486006)(8936002)(1730700003)(81156014)(81166006)(5250100002)(6486002)(26005)(229853002)(53936002)(3280700002)(106356001)(2351001)(97736004)(103116003)(3660700001)(2900100001)(6246003)(4326008)(6512007)(36756003)(25786009)(14454004)(105586002)(68736007)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0866;H:AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: /HCMNvvmmwnZTlqnYSS31WyGr+8lh7h2KMbeq+lXA2IQrEg7KCSDPZOHZyamuAxgzEjG/IEE66i4AoaPV1wId2frCIY/ZiHRmL4aSrRLiUYHcrQ5vKkEePP41RlaIh7soUEcFoU2ycpemr06TbBkMnRHg9pA07yAcEgFod+XwOQkDnZ/qxsO37QTRKMA+MSu
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1ADD97029483FF44A342DDC6835343AD@NAMPRD84.PROD.OUTLOOK.COM>
+        Wed, 30 May 2018 11:40:20 -0400
+Subject: Re: [PATCH v7 2/7] drivers/i2c: Add FSI-attached I2C master algorithm
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Edward A. James" <eajames@us.ibm.com>
+References: <1527632665-25707-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1527632665-25707-3-git-send-email-eajames@linux.vnet.ibm.com>
+ <CAHp75VexBiRQ1SPYK6=N-vmCAC9DhtpNKanYXrFshSM9WZb+UA@mail.gmail.com>
+From: Eddie James <eajames@linux.vnet.ibm.com>
+Date: Wed, 30 May 2018 10:40:11 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 490f5ed3-7e57-400f-b664-08d5c6438344
-X-MS-Exchange-CrossTenant-Network-Message-Id: 490f5ed3-7e57-400f-b664-08d5c6438344
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2018 15:39:20.8558
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0866
-X-OriginatorOrg: hpe.com
+In-Reply-To: <CAHp75VexBiRQ1SPYK6=N-vmCAC9DhtpNKanYXrFshSM9WZb+UA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18053015-0016-0000-0000-000008D614DA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009098; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039879; UDB=6.00532260; IPR=6.00819012;
+ MB=3.00021378; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 15:40:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053015-0017-0000-0000-00003F00A229
+Message-Id: <b87ee7a3-9901-b7ec-f89c-8a26f82cbb2f@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=482 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805300172
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4UFe198027818
 
-On Wed, 2018-05-30 at 06:59 +0200, joro@8bytes.org wrote:
-> On Tue, May 29, 2018 at 04:10:24PM +0000, Kani, Toshi wrote:
-> > Can you explain why you think allocating a page here is a major problem?
-> 
-> Because a larger allocation is more likely to fail. And if you fail the
-> allocation, you also fail to free more pages, which _is_ a problem. So
-> better avoid any allocations in code paths that are about freeing
-> memory.
 
-It only allocates a single page.  If it fails to allocate a single page,
-this pud mapping request simply falls to pmd mappings, which is only as
-bad as your suggested plain revert always does for both pud and pmd
-mappings.  Also, this func is called from ioremap() when a driver
-initializes its mapping.  If the system does not have a single page to
-allocate, the driver has a much bigger issue to deal with than its
-request falling back to pmd mappings.  Please also note that this func
-is not called from free-memory path.
 
-> > If we just revert, please apply patch 1/3 first.  This patch address the
-> > BUG_ON issue on PAE.  This is a real issue that needs a fix ASAP.
-> 
-> It does not address the problem of dirty page-walk caches on x86-64.
+On 05/29/2018 06:42 PM, Andy Shevchenko wrote:
+> On Wed, May 30, 2018 at 1:24 AM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+>> From: "Edward A. James" <eajames@us.ibm.com>
+>>
+>> Add register definitions for FSI-attached I2C master and functions to
+>> access those registers over FSI. Add an FSI driver so that our I2C bus
+>> is probed up during an FSI scan.
+> This looks like reinventing a wheel in some ways.
+>
+> See my comments below.
+>
+>> +/*
+>> + * Copyright 2017 IBM Corporation
+>> + *
+>> + * Eddie James <eajames@us.ibm.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or
+>> + * modify it under the terms of the GNU General Public License
+>> + * as published by the Free Software Foundation; either version
+>> + * 2 of the License, or (at your option) any later version.
+>> + */
+> We are using SPDX identifiers. Can you?
 
-This patch 3/3 fixes it.  Hope my explanation above clarified.
+Sure.
 
-> > The page-directory cache issue on x64, which is addressed by patch 3/3,
-> > is a theoretical issue that I could not hit by putting ioremap() calls
-> > into a loop for a whole day.  Nobody hit this issue, either.
-> 
-> How do you know you didn't hit that issue? It might cause silent data
-> corruption, which might not be easily detected.
+>
+>> +/* Find left shift from first set bit in m */
+>> +#define MASK_TO_LSH(m)         (__builtin_ffsll(m) - 1ULL)
+> Oh. What about GENMASK()?
+>
+>> +/* Extract field m from v */
+>> +#define GETFIELD(m, v)         (((v) & (m)) >> MASK_TO_LSH(m))
+>> +
+>> +/* Set field m of v to val */
+>> +#define SETFIELD(m, v, val)    \
+>> +       (((v) & ~(m)) | ((((typeof(v))(val)) << MASK_TO_LSH(m)) & (m)))
+> Oh, what about https://elixir.bootlin.com/linux/latest/source/include/linux/bitfield.h
+> ?
 
-If the test hit that issue, it would have caused a kernel page fault
-(freed & cleared pte page still unmapped, or this page reused and
-attribute data invalid) or MCE (pte page reused and phys addr invalid)
-when it accessed to ioremap'd address.
+Good idea, thanks.
 
-Causing silent data corruption requires that this freed & cleared pte
-page to be reused and re-initialized with a valid pte entry data.  While
-this case is possible, the chance of my test only hitting this case
-without ever hitting much more likely cases of page fault or MCE is
-basically zero.
+>
+>> +#define I2C_CMD_WITH_START     0x80000000
+>> +#define I2C_CMD_WITH_ADDR      0x40000000
+>> +#define I2C_CMD_RD_CONT                0x20000000
+>> +#define I2C_CMD_WITH_STOP      0x10000000
+>> +#define I2C_CMD_FORCELAUNCH    0x08000000
+> BIT() ?
+>
+>> +#define I2C_CMD_ADDR           0x00fe0000
+>> +#define I2C_CMD_READ           0x00010000
+> GENMASK()? Though precisely here it might be good to leave explicit values.
+>
+>> +#define I2C_CMD_LEN            0x0000ffff
+>> +#define I2C_MODE_CLKDIV                0xffff0000
+>> +#define I2C_MODE_PORT          0x0000fc00
+>> +#define I2C_MODE_ENHANCED      0x00000008
+>> +#define I2C_MODE_DIAG          0x00000004
+>> +#define I2C_MODE_PACE_ALLOW    0x00000002
+>> +#define I2C_MODE_WRAP          0x00000001
+> What are they? Masks? Bit fields? Just plain numbers?
+>
+>> +#define I2C_WATERMARK_HI       0x0000f000
+>> +#define I2C_WATERMARK_LO       0x000000f0
+> GENMASK() ?
+>
+>> +#define I2C_INT_INV_CMD                0x00008000
+>> +#define I2C_INT_PARITY         0x00004000
+>> +#define I2C_INT_BE_OVERRUN     0x00002000
+>> +#define I2C_INT_BE_ACCESS      0x00001000
+>> +#define I2C_INT_LOST_ARB       0x00000800
+>> +#define I2C_INT_NACK           0x00000400
+>> +#define I2C_INT_DAT_REQ                0x00000200
+>> +#define I2C_INT_CMD_COMP       0x00000100
+>> +#define I2C_INT_STOP_ERR       0x00000080
+>> +#define I2C_INT_BUSY           0x00000040
+>> +#define I2C_INT_IDLE           0x00000020
+> BIT()
+>
+>> +#define I2C_INT_ENABLE         0x0000ff80
+>> +#define I2C_INT_ERR            0x0000fcc0
+>> +#define I2C_STAT_INV_CMD       0x80000000
+>> +#define I2C_STAT_PARITY                0x40000000
+>> +#define I2C_STAT_BE_OVERRUN    0x20000000
+>> +#define I2C_STAT_BE_ACCESS     0x10000000
+>> +#define I2C_STAT_LOST_ARB      0x08000000
+>> +#define I2C_STAT_NACK          0x04000000
+>> +#define I2C_STAT_DAT_REQ       0x02000000
+>> +#define I2C_STAT_CMD_COMP      0x01000000
+>> +#define I2C_STAT_STOP_ERR      0x00800000
+>> +#define I2C_STAT_MAX_PORT      0x000f0000
+>> +#define I2C_STAT_ANY_INT       0x00008000
+>> +#define I2C_STAT_SCL_IN                0x00000800
+>> +#define I2C_STAT_SDA_IN                0x00000400
+>> +#define I2C_STAT_PORT_BUSY     0x00000200
+>> +#define I2C_STAT_SELF_BUSY     0x00000100
+> BIT()
+>
+>> +#define I2C_STAT_FIFO_COUNT    0x000000ff
+> GENMASK()
+>
+>> +
+>> +#define I2C_STAT_ERR           0xfc800000
+>> +#define I2C_STAT_ANY_RESP      0xff800000
+>> +#define I2C_ESTAT_FIFO_SZ      0xff000000
+> GENMASK()
+>
+>> +#define I2C_ESTAT_SCL_IN_SY    0x00008000
+>> +#define I2C_ESTAT_SDA_IN_SY    0x00004000
+>> +#define I2C_ESTAT_S_SCL                0x00002000
+>> +#define I2C_ESTAT_S_SDA                0x00001000
+>> +#define I2C_ESTAT_M_SCL                0x00000800
+>> +#define I2C_ESTAT_M_SDA                0x00000400
+>> +#define I2C_ESTAT_HI_WATER     0x00000200
+>> +#define I2C_ESTAT_LO_WATER     0x00000100
+>> +#define I2C_ESTAT_PORT_BUSY    0x00000080
+>> +#define I2C_ESTAT_SELF_BUSY    0x00000040
+> BIT()
+>
+>> +#define I2C_ESTAT_VERSION      0x0000001f
+> GENMASK()
+>
+>> +       __be32 data_be;
+> No need to have a suffix. If anything can go wrong we have a tool,
+> it's called sparse. It will catch out inappropriate use of __bitwise
+> types.
 
-> > The simple revert patch Joerg posted a while ago causes
-> > pmd_free_pte_page() to fail on x64.  This causes multiple pmd mappings
-> > to fall into pte mappings on my test systems.  This can be seen as a
-> > degradation, and I am afraid that it is more harmful than good.
-> 
-> The plain revert just removes all the issues with the dirty TLB that the
-> original patch introduced and prevents huge mappings from being
-> established when there have been smaller mappings before. This is not
-> ideal, but at least its is consistent and does not leak pages and leaves
-> no dirty TLBs. So this is the easiest and most reliable fix for this
-> stage in the release process.
+I already have a variable called data...
 
-If you think the page directory issue needs a fix ASAP, I believe taking
-patch 3/3 is much better option than the plain revert, which will
-introduce the fall-back issue I explained.
+>
+>> +       __be32 data_be = cpu_to_be32(*data);
+> cpu_to_be32p()  IIUC?
+
+Sure.
+
+>
+>> +static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
+>> +{
+>> +       int rc;
+>> +       u32 mode = I2C_MODE_ENHANCED, extended_status, watermark = 0;
+>> +       u32 interrupt = 0;
+> Redundant assignment.
+
+No, I need to set the interrupt register to 0, so I must set this.
+
+>
+>> +
+>> +       /* since we use polling, disable interrupts */
+>> +       rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_INT_MASK, &interrupt);
+>> +       if (rc)
+>> +               return rc;
+>> +       return rc;
+> Would be non-zero?
+
+No, fsi_i2c_write_reg returns non-zero on error, zero on success. That 
+is what I want.
 
 Thanks,
--Toshi
+Eddie
+
+>
+>> +}
