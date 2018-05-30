@@ -1,149 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753581AbeE3LkH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:40:07 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:41711 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753285AbeE3LkD (ORCPT
+        id S1753596AbeE3Lhj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:37:39 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60800 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752301AbeE3LHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:40:03 -0400
-X-Google-Smtp-Source: ADUXVKIZDww36vQcL2EtC4bT2CgghhkwuMMBwkWmDV8KQPaIlD4EcD2wBD6JjnO748qY3gZ2fGQviSLc/w6pz1v9LlY=
-MIME-Version: 1.0
-In-Reply-To: <20180523153258.GA28451@jordon-HP-15-Notebook-PC>
-References: <20180523153258.GA28451@jordon-HP-15-Notebook-PC>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Wed, 30 May 2018 17:10:01 +0530
-Message-ID: <CAFqt6zaR4b8oNQ1gBiA=3tdPkaAzgzhot8-Q8QNZ9urJVmaNFw@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: ocfs2: Adding new return type vm_fault_t
-To: mfasheh@versity.com, Joel Becker <jlbec@evilplan.org>,
-        Matthew Wilcox <willy@infradead.org>
-Cc: ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+        Wed, 30 May 2018 07:07:01 -0400
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>,
+        "Sasha Neftin" <sasha.neftin@intel.com>,
+        "Aaron Brown" <aaron.f.brown@intel.com>,
+        "Benjamin Poirier" <bpoirier@suse.com>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.484117970@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.2 114/153] e1000e: Fix check_for_link return value with
+ autoneg off
+In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 9:02 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> Use new return type vm_fault_t for fault handler. For
-> now, this is just documenting that the function returns
-> a VM_FAULT value rather than an errno. Once all instances
-> are converted, vm_fault_t will become a distinct type.
->
-> Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->
-> vmf_error() is the newly introduce inline function
-> in 4.18.
->
-> Fix one checkpatch.pl warning by replacing BUG_ON()
-> with WARN_ON()
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
-> ---
->  fs/ocfs2/mmap.c | 44 ++++++++++++++++++++------------------------
->  1 file changed, 20 insertions(+), 24 deletions(-)
->
-> diff --git a/fs/ocfs2/mmap.c b/fs/ocfs2/mmap.c
-> index fb9a20e..036177e 100644
-> --- a/fs/ocfs2/mmap.c
-> +++ b/fs/ocfs2/mmap.c
-> @@ -44,11 +44,11 @@
->  #include "ocfs2_trace.h"
->
->
-> -static int ocfs2_fault(struct vm_fault *vmf)
-> +static vm_fault_t ocfs2_fault(struct vm_fault *vmf)
->  {
->         struct vm_area_struct *vma = vmf->vma;
->         sigset_t oldset;
-> -       int ret;
-> +       vm_fault_t ret;
->
->         ocfs2_block_signals(&oldset);
->         ret = filemap_fault(vmf);
-> @@ -59,10 +59,11 @@ static int ocfs2_fault(struct vm_fault *vmf)
->         return ret;
->  }
->
-> -static int __ocfs2_page_mkwrite(struct file *file, struct buffer_head *di_bh,
-> -                               struct page *page)
-> +static vm_fault_t __ocfs2_page_mkwrite(struct file *file,
-> +                       struct buffer_head *di_bh, struct page *page)
->  {
-> -       int ret = VM_FAULT_NOPAGE;
-> +       int err;
-> +       vm_fault_t ret = VM_FAULT_NOPAGE;
->         struct inode *inode = file_inode(file);
->         struct address_space *mapping = inode->i_mapping;
->         loff_t pos = page_offset(page);
-> @@ -105,15 +106,12 @@ static int __ocfs2_page_mkwrite(struct file *file, struct buffer_head *di_bh,
->         if (page->index == last_index)
->                 len = ((size - 1) & ~PAGE_MASK) + 1;
->
-> -       ret = ocfs2_write_begin_nolock(mapping, pos, len, OCFS2_WRITE_MMAP,
-> +       err = ocfs2_write_begin_nolock(mapping, pos, len, OCFS2_WRITE_MMAP,
->                                        &locked_page, &fsdata, di_bh, page);
-> -       if (ret) {
-> -               if (ret != -ENOSPC)
-> -                       mlog_errno(ret);
-> -               if (ret == -ENOMEM)
-> -                       ret = VM_FAULT_OOM;
-> -               else
-> -                       ret = VM_FAULT_SIGBUS;
-> +       if (err) {
-> +               if (err != -ENOSPC)
-> +                       mlog_errno(err);
-> +               ret = vmf_error(err);
->                 goto out;
->         }
->
-> @@ -121,20 +119,21 @@ static int __ocfs2_page_mkwrite(struct file *file, struct buffer_head *di_bh,
->                 ret = VM_FAULT_NOPAGE;
->                 goto out;
->         }
-> -       ret = ocfs2_write_end_nolock(mapping, pos, len, len, fsdata);
-> -       BUG_ON(ret != len);
-> +       err = ocfs2_write_end_nolock(mapping, pos, len, len, fsdata);
-> +       WARN_ON(err != len);
->         ret = VM_FAULT_LOCKED;
->  out:
->         return ret;
->  }
->
-> -static int ocfs2_page_mkwrite(struct vm_fault *vmf)
-> +static vm_fault_t ocfs2_page_mkwrite(struct vm_fault *vmf)
->  {
->         struct page *page = vmf->page;
->         struct inode *inode = file_inode(vmf->vma->vm_file);
->         struct buffer_head *di_bh = NULL;
->         sigset_t oldset;
-> -       int ret;
-> +       int err;
-> +       vm_fault_t ret;
->
->         sb_start_pagefault(inode->i_sb);
->         ocfs2_block_signals(&oldset);
-> @@ -144,13 +143,10 @@ static int ocfs2_page_mkwrite(struct vm_fault *vmf)
->          * node. Taking the data lock will also ensure that we don't
->          * attempt page truncation as part of a downconvert.
->          */
-> -       ret = ocfs2_inode_lock(inode, &di_bh, 1);
-> -       if (ret < 0) {
-> -               mlog_errno(ret);
-> -               if (ret == -ENOMEM)
-> -                       ret = VM_FAULT_OOM;
-> -               else
-> -                       ret = VM_FAULT_SIGBUS;
-> +       err = ocfs2_inode_lock(inode, &di_bh, 1);
-> +       if (err < 0) {
-> +               mlog_errno(err);
-> +               ret = vmf_error(err);
->                 goto out;
->         }
->
-> --
-> 1.9.1
->
+3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
 
-Any comment for this patch ? We would like to
-get this patch in queue for 4.18.
+------------------
+
+From: Benjamin Poirier <bpoirier@suse.com>
+
+commit 4e7dc08e57c95673d2edaba8983c3de4dd1f65f5 upstream.
+
+When autoneg is off, the .check_for_link callback functions clear the
+get_link_status flag and systematically return a "pseudo-error". This means
+that the link is not detected as up until the next execution of the
+e1000_watchdog_task() 2 seconds later.
+
+Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Acked-by: Sasha Neftin <sasha.neftin@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+[bwh: Backported to 3.2: adjust filename, context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
++++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+@@ -746,7 +746,7 @@ static s32 e1000_check_for_copper_link_i
+ 	 * we have already determined whether we have link or not.
+ 	 */
+ 	if (!mac->autoneg) {
+-		ret_val = -E1000_ERR_CONFIG;
++		ret_val = 1;
+ 		goto out;
+ 	}
+ 
+--- a/drivers/net/ethernet/intel/e1000e/lib.c
++++ b/drivers/net/ethernet/intel/e1000e/lib.c
+@@ -478,10 +478,8 @@ s32 e1000e_check_for_copper_link(struct
+ 	 * If we are forcing speed/duplex, then we simply return since
+ 	 * we have already determined whether we have link or not.
+ 	 */
+-	if (!mac->autoneg) {
+-		ret_val = -E1000_ERR_CONFIG;
+-		return ret_val;
+-	}
++	if (!mac->autoneg)
++		return 1;
+ 
+ 	/*
+ 	 * Auto-Neg is enabled.  Auto Speed Detection takes care
