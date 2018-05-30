@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932539AbeE3V2X (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:28:23 -0400
-Received: from pb-smtp1.pobox.com ([64.147.108.70]:61993 "EHLO
-        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932254AbeE3V2V (ORCPT
+        id S932587AbeE3V2a (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:28:30 -0400
+Received: from pb-smtp2.pobox.com ([64.147.108.71]:57115 "EHLO
+        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932364AbeE3V2V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 17:28:21 -0400
 From: Nicolas Pitre <nicolas.pitre@linaro.org>
@@ -12,82 +12,60 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Dave Mielke <Dave@mielke.cc>,
         Samuel Thibault <samuel.thibault@ens-lyon.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] vt: coherence validation code for the unicode screen buffer
-Date: Wed, 30 May 2018 17:27:45 -0400
-Message-Id: <20180530212745.10997-6-nicolas.pitre@linaro.org>
+Subject: [PATCH 0/5] have the vt console preserve unicode characters
+Date: Wed, 30 May 2018 17:27:40 -0400
+Message-Id: <20180530212745.10997-1-nicolas.pitre@linaro.org>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180530212745.10997-1-nicolas.pitre@linaro.org>
-References: <20180530212745.10997-1-nicolas.pitre@linaro.org>
-X-Pobox-Relay-ID: 5F6B0AE6-6450-11E8-8574-44CE1968708C-78420484!pb-smtp1.pobox.com
+X-Pobox-Relay-ID: 5EC85C38-6450-11E8-95E8-67830C78B957-78420484!pb-smtp2.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure the unicode screen buffer matches the video screen content.
-This is provided for debugging convenience and disabled by default.
+The vt code translates UTF-8 strings into glyph index values and stores
+those glyph values directly in the screen buffer. Because there can only
+be at most 512 glyphs, it is impossible to represent most unicode
+characters, in which case a default glyph (often '?') is displayed
+instead. The original unicode value is then lost.
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
----
- drivers/tty/vt/vt.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+This also means that the /dev/vcs* devices only provide user space with
+glyph index values, and then user applications must get hold of the
+unicode-to-glyph table the kernel is using in order to back-translate
+those into actual characters. It is not possible to get back the original
+unicode value when multiple unicode characters map to the same glyph,
+especially for the vast majority that maps to the default replacement
+glyph.
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index e7c3cabeb1..2f3d528082 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -571,6 +571,45 @@ void vc_uniscr_copy_line(struct vc_data *vc, void *dest, int viewed,
- 	}
- }
- 
-+/* this is for validation and debugging only */
-+static void vc_uniscr_debug_check(struct vc_data *vc)
-+{
-+	struct uni_screen *uniscr = get_vc_uniscr(vc);
-+	unsigned short *p;
-+	int x, y, mask;
-+
-+	if (true)
-+		return;
-+
-+	if (!uniscr)
-+		return;
-+
-+	WARN_CONSOLE_UNLOCKED();
-+
-+	/*
-+	 * Make sure our unicode screen translates into the same glyphs
-+	 * as the actual screen. This is brutal indeed.
-+	 */
-+	p = (unsigned short *)vc->vc_origin;
-+	mask = vc->vc_hi_font_mask | 0xff;
-+	for (y = 0; y < vc->vc_rows; y++) {
-+		char32_t *line = uniscr->lines[y];
-+		for (x = 0; x < vc->vc_cols; x++) {
-+			u16 glyph = scr_readw(p++) & mask;
-+			char32_t uc = line[x];
-+			int tc = conv_uni_to_pc(vc, uc);
-+			if (tc == -4)
-+				tc = conv_uni_to_pc(vc, 0xfffd);
-+			if (tc == -4)
-+				tc = conv_uni_to_pc(vc, '?');
-+			if (tc != glyph)
-+				pr_notice("%s: mismatch at %d,%d: "
-+					  "glyph=%#x tc=%#x\n", __func__,
-+					  x, y, glyph, tc);
-+		}
-+	}
-+}
-+
- 
- static void con_scroll(struct vc_data *vc, unsigned int t, unsigned int b,
- 		enum con_scroll dir, unsigned int nr)
-@@ -2719,6 +2758,7 @@ static int do_con_write(struct tty_struct *tty, const unsigned char *buf, int co
- 		do_con_trol(tty, vc, orig);
- 	}
- 	con_flush(vc, draw_from, draw_to, &draw_x);
-+	vc_uniscr_debug_check(vc);
- 	console_conditional_schedule();
- 	console_unlock();
- 	notify_update(vc);
--- 
-2.17.0
+The 512-glyph limitation is inherent to VGA displays, but users of
+/dev/vcs* shouldn't have to be restricted to a narrow unicode space from
+lossy screen content because of that. This is especially true for
+accessibility applications such as BRLTTY that rely on /dev/vcs to rander
+screen content onto braille terminals.
+
+This patch series introduces unicode support to /dev/vcs* devices,
+allowing full unicode access from userspace to the vt console which
+can, amongst other purposes, appropriately translate actual unicode
+screen content into braille. Memory is allocated, and possible CPU
+overhead introduced, only if /dev/vcsu is read at least once.
+
+I'm a prime user of this feature, as well as the BRLTTY maintainer Dave Mielke
+who implemented support for this in BRLTTY. There is therefore a vested
+self interest to maintain this feature as necessary.
+
+Patch #1 has been picked up by Greg already (commit 4b4ecd9cb8 in
+linux-next) but it is included here as well, as the rest of the series
+depends on it to apply properly.
+
+Patch #5 was used for validation and is included for completeness, however
+if people think it is unappropriate for mainline then it can be dropped.
+
+This is also available on top of v4.17-rc7 here:
+
+  git://git.linaro.org/people/nicolas.pitre/linux vt-unicode
+
+diffstat:
+
+ drivers/tty/vt/vc_screen.c     |  90 +++++++--
+ drivers/tty/vt/vt.c            | 366 +++++++++++++++++++++++++++++++++--
+ include/linux/console_struct.h |   2 +
+ include/linux/selection.h      |   5 +
+ 4 files changed, 429 insertions(+), 34 deletions(-)
