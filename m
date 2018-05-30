@@ -1,90 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968789AbeE3JFj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:05:39 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44944 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964791AbeE3JFR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:05:17 -0400
-X-Google-Smtp-Source: ADUXVKIwoegqJJS9CjfF/PkTB04ugb4WZp1JTfPUHdtk/QSJYotJNG2kNlD5PMBFtbMBWJQmHnYQXg==
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
-Date: Wed, 30 May 2018 12:05:12 +0300
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
- driver
-Message-ID: <20180530090512.GC13528@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1030251AbeE3JGD convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:06:03 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:5932 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964791AbeE3JGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 05:06:00 -0400
+From: Nixiaoming <nixiaoming@huawei.com>
+To: Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>, Will Deacon <will.deacon@arm.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+CC: Will Deacon <will.deacon@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "kristina.martsenko@arm.com" <kristina.martsenko@arm.com>,
+        "steve.capper@arm.com" <steve.capper@arm.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>, "mhocko@suse.com" <mhocko@suse.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "zhang.jia@linux.alibaba.com" <zhang.jia@linux.alibaba.com>,
+        "schwidefsky@de.ibm.com" <schwidefsky@de.ibm.com>,
+        "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>
+Subject: RE: [PATCH 1/3] arm64:add missing CONFIG_STRICT_KERNEL_RWX for
+ mark_rodata_ro
+Thread-Topic: [PATCH 1/3] arm64:add missing CONFIG_STRICT_KERNEL_RWX for
+ mark_rodata_ro
+Thread-Index: AQHT91VOSqz8jbk29Ua9aMsejfLmPaRGU1YAgAFJszD//8jpAIAAlWvw
+Date: Wed, 30 May 2018 09:05:51 +0000
+Message-ID: <E490CD805F7529488761C40FD9D26EF12A6741BA@dggemm507-mbx.china.huawei.com>
+References: <20180529133615.26889-1-nixiaoming@huawei.com>
+ <20180529154523.GK17159@arm.com>
+ <E490CD805F7529488761C40FD9D26EF12A672E03@dggemm507-mbx.china.huawei.com>
+ <20180530080816.f74elebj4demiohl@salmiak>
+In-Reply-To: <20180530080816.f74elebj4demiohl@salmiak>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.57.88.168]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello All,
+Because CONFIG_STRICT_KERNEL_RWX=n cannot be set by make menuconfig on arm64/x86/s390 architecture 
+So, these three patches should not be necessary
+Sorry to disturb everyone
+Thank you for your guidance
 
-I would like to ask for an educated opinion from more experienced
-regulator driver developers.
+Thanks
 
-On Wed, May 30, 2018 at 11:41:13AM +0300, Matti Vaittinen wrote:
-> Patch series adding support for ROHM BD71837 PMIC.
+-----Original Message-----
+From: Mark Rutland [mailto:mark.rutland@arm.com] 
+Sent: Wednesday, May 30, 2018 4:08 PM
+To: Nixiaoming <nixiaoming@huawei.com>
+Cc: Will Deacon <will.deacon@arm.com>; catalin.marinas@arm.com; ard.biesheuvel@linaro.org; marc.zyngier@arm.com; james.morse@arm.com; kristina.martsenko@arm.com; steve.capper@arm.com; tglx@linutronix.de; mingo@redhat.com; hpa@zytor.com; akpm@linux-foundation.org; vbabka@suse.cz; mhocko@suse.com; dave.hansen@linux.intel.com; dan.j.williams@intel.com; kirill.shutemov@linux.intel.com; zhang.jia@linux.alibaba.com; schwidefsky@de.ibm.com; heiko.carstens@de.ibm.com; gregkh@linuxfoundation.org; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; x86@kernel.org; linux-s390@vger.kernel.org
+Subject: Re: [PATCH 1/3] arm64:add missing CONFIG_STRICT_KERNEL_RWX for mark_rodata_ro
+
+On Wed, May 30, 2018 at 03:31:38AM +0000, Nixiaoming wrote:
+> Unable to set CONFIG_STRICT_KERNEL_RWX=n by make menuconfig ARCH=arm64
+
+Indeed. Making this mandatory was a deliberate decision, in part because this
+allows simplification of code (e.g. removal of #ifdef guards).
+
+> When reading the code, I feel it is more appropriate to add macro control
+> here.
+
+I must disagree. I do not think it makes sense to add an #ifdef for a
+configuration option that is mandatory.
+
+There are other places in the kernel that should behave differently if
+CONFIG_STRICT_KERNEL_RWX were disabled, so this wouldn't be sufficient even if
+we were to make CONFIG_STRICT_KERNEL_RWX optional. i.e. the #ifdef would give
+the misleading impression that STRICT_KERNEL_RWX *could* be made optional, even
+though this might not function correctly.
+
+Having an #ifdef here makes the code more complicated and confusing, for the
+benefit of a case which cannot occur.
+
+Thanks,
+Mark.
+
+> -----Original Message-----
+> From: Will Deacon [mailto:will.deacon@arm.com] 
+> Sent: Tuesday, May 29, 2018 11:45 PM
+> To: Nixiaoming <nixiaoming@huawei.com>
+> Cc: catalin.marinas@arm.com; ard.biesheuvel@linaro.org; marc.zyngier@arm.com; james.morse@arm.com; kristina.martsenko@arm.com; steve.capper@arm.com; tglx@linutronix.de; mingo@redhat.com; hpa@zytor.com; akpm@linux-foundation.org; vbabka@suse.cz; mhocko@suse.com; dave.hansen@linux.intel.com; dan.j.williams@intel.com; kirill.shutemov@linux.intel.com; zhang.jia@linux.alibaba.com; schwidefsky@de.ibm.com; heiko.carstens@de.ibm.com; gregkh@linuxfoundation.org; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; x86@kernel.org; linux-s390@vger.kernel.org
+> Subject: Re: [PATCH 1/3] arm64:add missing CONFIG_STRICT_KERNEL_RWX for mark_rodata_ro
 > 
-> BD71837 is a programmable Power Management IC for powering single-core,
-> dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-> low BOM cost and compact solution footprint. It integrates 8 buck
-> regulators and 7 LDO’s to provide all the power rails required by the
-> SoC and the commonly used peripherals.
+> On Tue, May 29, 2018 at 09:36:15PM +0800, nixiaoming wrote:
+> > mark_rodata_ro is only called by the function mark_readonly when
+> > CONFIG_STRICT_KERNEL_RWX=y,
+> > if CONFIG_STRICT_KERNEL_RWX is not set
+> > a compile warning may be triggered: unused function
 > 
-> The driver aims to not limit the usage of PMIC. Thus the buck and LDO
-> naming is generic and not tied to any specific purposes. However there
-> is following limitations which make it mostly suitable for use cases
-> where the processor where PMIC driver is running is powered by the PMIC:
+> How are you achieving this configuration? In our Kconfig we select this
+> unconditionally.
 > 
-> - The PMIC is not re-initialized if it resets. PMIC may reset as a
->   result of voltage monitoring (over/under voltage) or due to reset
->   request. Driver is only initializing PMIC at probe. This is not
->   problem as long as processor controlling PMIC is powered by PMIC.
-> 
-> - The PMIC internal state machine is ignored by driver. Driver assumes
->   the PMIC is wired so that it is always in "run" state when controlled
->   by the driver.
-> 
-> Changelog v4
-> - remove mutex from regulator state check as core prevents simultaneous
->   accesses
-> - allow voltage change for bucks 1 to 4 when regulator is enabled
-
-This chip has 8 bucks. 4 of then support DVS (dynamic voltage scaling).
-Other 4 can be used on PWM or PFM switching mode. When PWM is used
-voltages can be changed without disabling regulator. On PFM this should
-not be done. These latter 4 regulators can be forced to PWM mode via
-control bit in register. This driver does not support controlling this
-mode though. So this driver version just checks if regulator is enabled
-before changing the voltage and if it is the voltage change fails with
--EBUSY
-
-My question is whether it would be good idea to also read the 'force
-PWM' bit when voltage is changed and allow the change if PWM mode is
-forced to be used? Problem is that the check and voltage change can't be
-atomic so there is a chance someone changes the mode (bypassing the
-driver and regulator core) after this check but before we get to modify
-the voltage. Furthermore, I doubt the 'force PWM' is widely used (but I
-can't say for sure as I can't imagine all use cases) as it is not so
-power efficient.
-
-But as I am really inexperienced on this area I would like to get
-opinions from people who know this field of industry better...
-
-Br,
-	Matti Vaittinen
+> Will
