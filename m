@@ -1,121 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753272AbeE3MvK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:51:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36982 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753201AbeE3MvI (ORCPT
+        id S1752660AbeE3MyH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:54:07 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:45204 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751591AbeE3MyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:51:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D09AE60263
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH 1/1] device core: Add flag to autoremove device link on
- supplier unbind
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: gregkh@linuxfoundation.org, lukas@wunner.de, dmitry.torokhov@gmail.com,
-        aspriel@gmail.com, robin.murphy@arm.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20180530095704.5788-1-vivek.gautam@codeaurora.org>
- <a85d44e7-3bb1-f282-088d-c4311a108bcd@intel.com>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <541c84e9-47fc-e7bc-8249-1477b9e63455@codeaurora.org>
-Date: Wed, 30 May 2018 18:21:02 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 30 May 2018 08:54:02 -0400
+X-Google-Smtp-Source: ADUXVKKcOxFqzJ6Na/S+hjXyXvXjc4QR/mBznnjeTtpqa8qSFYNO1QWpVV3SsUpZSXhLnVBCvE0Nj36hB0S2KzJhJNA=
 MIME-Version: 1.0
-In-Reply-To: <a85d44e7-3bb1-f282-088d-c4311a108bcd@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20180530103936.17812-1-liwang@redhat.com>
+References: <20180530103936.17812-1-liwang@redhat.com>
+From: Dan Streetman <ddstreet@ieee.org>
+Date: Wed, 30 May 2018 08:53:21 -0400
+X-Google-Sender-Auth: 5pysO-SE7ZSR_a-AOgYAMSJCRrs
+Message-ID: <CALZtONBKSVfXe+RHOjgS=4VrDqFsxNRx3OuGctp0o1Hrtix3Ew@mail.gmail.com>
+Subject: Re: [PATCH v2] zswap: re-check zswap_is_full after do zswap_shrink
+To: Li Wang <liwang@redhat.com>
+Cc: Linux-MM <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Seth Jennings <sjenning@redhat.com>,
+        Huang Ying <huang.ying.caritas@gmail.com>, Yu Zhao <yuzhao@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
-
-
-On 5/30/2018 4:29 PM, Rafael J. Wysocki wrote:
-> On 5/30/2018 11:57 AM, Vivek Gautam wrote:
->> When using the device links without the consumers or
->> suppliers maintaining pointers to these links, a flag can
->> help in autoremoving the links on supplier driver unbind.
->> We remove these links only when the supplier's link to its
->> consumers has gone in DL_STATE_SUPPLIER_UNBIND state.
->>
->> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->> Suggested-by: Lukas Wunner <lukas@wunner.de>
->> ---
->>
->> Lukas, as suggested in the thread [1] this change adds additional flag
->> to autoremove device links on supplier unbind.
->> For arm-smmu, we want to _not_ keep references to the device links
->> added between arm-smmu, and consumer devices.
->> Robin also pointed to [2] the need to autoremove the device link on
->> supplier unbind rather than consumer unbind.
+On Wed, May 30, 2018 at 6:39 AM, Li Wang <liwang@redhat.com> wrote:
+> The '/sys/../zswap/stored_pages:' keep raising in zswap test with
+> "zswap.max_pool_percent=0" parameter. But theoretically, it should
+> not compress or store pages any more since there is no space in
+> compressed pool.
 >
-> Please CC device links patches to linux-pm.
-
-Thanks for the quick review. Sure, will keep this noted from now on.
-
+> Reproduce steps:
+>   1. Boot kernel with "zswap.enabled=1"
+>   2. Set the max_pool_percent to 0
+>       # echo 0 > /sys/module/zswap/parameters/max_pool_percent
+>   3. Do memory stress test to see if some pages have been compressed
+>       # stress --vm 1 --vm-bytes $mem_available"M" --timeout 60s
+>   4. Watching the 'stored_pages' number increasing or not
 >
->> [1] https://lkml.org/lkml/2018/3/14/390
->> [2] https://lkml.org/lkml/2018/5/21/381
->>
->>   drivers/base/core.c    | 10 ++++++++++
->>   include/linux/device.h |  2 ++
->>   2 files changed, 12 insertions(+)
->>
->> diff --git a/drivers/base/core.c b/drivers/base/core.c
->> index b610816eb887..52c7222bb3c4 100644
->> --- a/drivers/base/core.c
->> +++ b/drivers/base/core.c
->> @@ -490,6 +490,16 @@ void device_links_driver_cleanup(struct device 
->> *dev)
->>             WARN_ON(link->flags & DL_FLAG_AUTOREMOVE);
->>           WARN_ON(link->status != DL_STATE_SUPPLIER_UNBIND);
->> +
->> +        /*
->> +         * autoremove the links between this @dev and its consumer
->> +         * devices that are not active, i.e. where the link state
->> +         * has moved to DL_STATE_SUPPLIER_UNBIND.
->> +         */
->> +        if (link->status == DL_STATE_SUPPLIER_UNBIND &&
->> +            link->flags & DL_FLAG_AUTOREMOVE_S)
->> +            kref_put(&link->kref, __device_link_del);
->> +
->>           WRITE_ONCE(link->status, DL_STATE_DORMANT);
->>       }
->>   diff --git a/include/linux/device.h b/include/linux/device.h
->> index 477956990f5e..6033bf58453d 100644
->> --- a/include/linux/device.h
->> +++ b/include/linux/device.h
->> @@ -779,11 +779,13 @@ enum device_link_state {
->>    * AUTOREMOVE: Remove this link automatically on consumer driver 
->> unbind.
->>    * PM_RUNTIME: If set, the runtime PM framework will use this link.
->>    * RPM_ACTIVE: Run pm_runtime_get_sync() on the supplier during 
->> link creation.
->> + * AUTOREMOVE_S: Remove this link automatically on supplier driver 
->> unbind.
->>    */
->>   #define DL_FLAG_STATELESS    BIT(0)
->>   #define DL_FLAG_AUTOREMOVE    BIT(1)
->>   #define DL_FLAG_PM_RUNTIME    BIT(2)
->>   #define DL_FLAG_RPM_ACTIVE    BIT(3)
->> +#define DL_FLAG_AUTOREMOVE_S    BIT(4)
+> The root cause is:
+>   When zswap_max_pool_percent is setting to 0 via kernel parameter, the
+>   zswap_is_full() will always return true to do zswap_shrink(). But if
+>   the shinking is able to reclain a page successful, then proceeds to
+>   compress/store another page, so the value of stored_pages will keep
+>   changing.
 >
-> Couldn't you invent a better name for this one?
+> To solve the issue, this patch adds zswap_is_full() check again after
+> zswap_shrink() to make sure it's now under the max_pool_percent, and
+> not to compress/store if reach its limitaion.
+>
+> Signed-off-by: Li Wang <liwang@redhat.com>
 
-Frankly, I wanted to have something like DL_FLAG_AUTOREMOVE_SUPPLIER, 
-but that
-felt a bit too long considering other flags.
-Can you please consider suggesting a concise name?
+Acked-by: Dan Streetman <ddstreet@ieee.org>
 
-Regards
-Vivek
+> Cc: Seth Jennings <sjenning@redhat.com>
+> Cc: Dan Streetman <ddstreet@ieee.org>
+> Cc: Huang Ying <huang.ying.caritas@gmail.com>
+> Cc: Yu Zhao <yuzhao@google.com>
+> ---
+>  mm/zswap.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 >
->>     /**
->>    * struct device_link - Device link representation.
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 61a5c41..fd320c3 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -1026,6 +1026,15 @@ static int zswap_frontswap_store(unsigned type, pgoff_t offset,
+>                         ret = -ENOMEM;
+>                         goto reject;
+>                 }
+> +
+> +               /* A second zswap_is_full() check after
+> +                * zswap_shrink() to make sure it's now
+> +                * under the max_pool_percent
+> +                */
+> +               if (zswap_is_full()) {
+> +                       ret = -ENOMEM;
+> +                       goto reject;
+> +               }
+>         }
 >
+>         /* allocate entry */
+> --
+> 2.9.5
 >
