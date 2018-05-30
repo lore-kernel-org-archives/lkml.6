@@ -1,51 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753838AbeE3SKf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 14:10:35 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:41208 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753740AbeE3SKb (ORCPT
+        id S1753942AbeE3SL2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 14:11:28 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:42280 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753882AbeE3SLZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 14:10:31 -0400
-X-Google-Smtp-Source: ADUXVKISkVmocxYovWkjyTjR7TVeA5g+T4pRdO2zoRaen7mrbCue95WiUH+613aSo19LCMmeZIEo5vOUjMpD1NM+Pos=
+        Wed, 30 May 2018 14:11:25 -0400
+Date: Wed, 30 May 2018 11:11:17 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Benjamin LaHaise <bcrl@kvack.org>, Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] aio: fix missing break in switch statement
+Message-ID: <20180530181117.GA23842@magnolia>
+References: <20180530180415.17572-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530173414.6121-1-andrew.smirnov@gmail.com>
-References: <20180530173414.6121-1-andrew.smirnov@gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 30 May 2018 15:10:30 -0300
-Message-ID: <CAOMZO5BbgG2POYvayjT99BAAkC5HzrUWr28Z7DggVwTFSCnpFQ@mail.gmail.com>
-Subject: Re: [PATCH] usb: chipidea: Fix ULPI on imx51
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Peter Chen <peter.chen@nxp.com>, USB list <linux-usb@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>, Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530180415.17572-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8909 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805300193
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 2:34 PM, Andrey Smirnov
-<andrew.smirnov@gmail.com> wrote:
-> Workaround introduced for i.MX53 in be9cae2479f48 ("usb: chipidea:
-> imx: Fix ULPI on imx53") seems to be applicable in case of i.MX51 as
-> well. Running latest kernel on ZII RDU1 Board (imx51-zii-rdu1.dts)
-> exhibits a kernel frozen on PORTSC access and applying the workaround
-> resolves the issue.
->
-> Cc: Peter Chen <peter.chen@nxp.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-usb@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+On Wed, May 30, 2018 at 07:04:15PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The addition of the IOCB_CMD_POLL command removed the break
+> statement for the IOCM_CMD_FDSYNC. From my understanding, this
+> should not have been removed as the fall-through does not seem
+> to make sense.  Fix this by adding the break back again.
+> 
+> Detected by CoverityScan, CID#1469469 ("Missing break in switch")
+> 
+> Fixes: 2c14fa838cbe ("aio: implement IOCB_CMD_POLL")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Makes sense to me...
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+> ---
+>  fs/aio.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 8274d09d44a2..e0b2f183fa1c 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -1785,6 +1785,7 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
+>  		break;
+>  	case IOCB_CMD_FDSYNC:
+>  		ret = aio_fsync(&req->fsync, iocb, true);
+> +		break;
+>  	case IOCB_CMD_POLL:
+>  		ret = aio_poll(req, iocb);
+>  		break;
+> -- 
+> 2.17.0
+> 
