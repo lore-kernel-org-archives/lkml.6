@@ -1,60 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932589AbeE3WYN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:24:13 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37228 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932503AbeE3WYJ (ORCPT
+        id S1753767AbeE3WZ2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:25:28 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35842 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753659AbeE3WZ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:24:09 -0400
-X-Google-Smtp-Source: ADUXVKJNuUuVoQbjvOpreAne7dQGrsEjgsWziloCxU3xJeRCohpNpl/K2gtvq0E1jmbrHsp0tixuaA==
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 00/13] convert block layer to bioset_init()/mempool_init()
-To: Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        hch@infradead.org, colyli@suse.de, snitzer@redhat.com,
-        darrick.wong@oracle.com, clm@fb.com, bacik@fb.com,
-        linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
-        neilb@suse.com
-References: <20180520222558.7053-1-kent.overstreet@gmail.com>
-Message-ID: <234774e0-38d8-77ea-ca40-88da8b3c5ec6@kernel.dk>
-Date: Wed, 30 May 2018 16:24:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 30 May 2018 18:25:26 -0400
+X-Google-Smtp-Source: ADUXVKIf/w8xdNzBmoFvqRX5BicyjWJinuQzjxngelN/Ez8aC4+1cifFglXmCy+ljjuhCw8pCspwkw==
+Date: Wed, 30 May 2018 16:25:20 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Steve Wise <swise@opengridcomputing.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Steve Wise <swise@chelsio.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iw_cxgb4: add INFINIBAND_ADDR_TRANS dependency
+Message-ID: <20180530222520.GJ30754@ziepe.ca>
+References: <20180530215826.1343234-1-arnd@arndb.de>
+ <20180530220405.GH30754@ziepe.ca>
+ <0be4e0fb-8d8e-b337-fc8d-550c90829d8c@opengridcomputing.com>
 MIME-Version: 1.0
-In-Reply-To: <20180520222558.7053-1-kent.overstreet@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0be4e0fb-8d8e-b337-fc8d-550c90829d8c@opengridcomputing.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/20/18 4:25 PM, Kent Overstreet wrote:
-> Jens - this series does the rest of the conversions that Christoph wanted, and
-> drops bioset_create().
+On Wed, May 30, 2018 at 05:10:35PM -0500, Steve Wise wrote:
 > 
-> Only lightly tested, but the changes are pretty mechanical. Based on your
-> for-next tree.
 > 
-> It's also in the for-jens branch at https://evilpiepirate.org/git/bcachefs.git
+> On 5/30/2018 5:04 PM, Jason Gunthorpe wrote:
+> > On Wed, May 30, 2018 at 11:58:18PM +0200, Arnd Bergmann wrote:
+> >> The newly added fill_res_ep_entry function fails to link if
+> >> CONFIG_INFINIBAND_ADDR_TRANS is not set:
+> >>
+> >> drivers/infiniband/hw/cxgb4/restrack.o: In function `fill_res_ep_entry':
+> >> restrack.c:(.text+0x3cc): undefined reference to `rdma_res_to_id'
+> >> restrack.c:(.text+0x3d0): undefined reference to `rdma_iw_cm_id'
+> >>
+> >> This adds a Kconfig dependency for the driver.
+> >>
+> >> Fixes: 116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >>  drivers/infiniband/hw/cxgb4/Kconfig | 1 +
+> >>  1 file changed, 1 insertion(+)
+> > Oh, I think we need to solve this with maybe a header fill null stub
+> > instead..
+> >
+> > We don't want to disable drivers just because a user interface is
+> > disabled.
+> >
 > 
-> Kent Overstreet (12):
->   block: convert bounce, q->bio_split to bioset_init()/mempool_init()
->   drbd: convert to bioset_init()/mempool_init()
->   pktcdvd: convert to bioset_init()/mempool_init()
->   lightnvm: convert to bioset_init()/mempool_init()
->   bcache: convert to bioset_init()/mempool_init()
->   md: convert to bioset_init()/mempool_init()
->   dm: convert to bioset_init()/mempool_init()
->   target: convert to bioset_init()/mempool_init()
->   fs: convert block_dev.c to bioset_init()
->   btrfs: convert to bioset_init()/mempool_init()
->   xfs: convert to bioset_init()/mempool_init()
->   block: Drop bioset_create()
+> Why does CONFIG_INFINIBAND_ADDR_TRANS disable building rdma_cm.ko? That
+> is not correct.
 
-With the reviews, I've queued this up for 4.18.
+That seems like a reasonable thing to do..
 
--- 
-Jens Axboe
+But why does it break the compile? Those functions are in cma.c...
+
+Jason
