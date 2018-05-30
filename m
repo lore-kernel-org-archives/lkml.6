@@ -1,93 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753734AbeE3STD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 14:19:03 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:34542 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750752AbeE3STA (ORCPT
+        id S932119AbeE3STY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 14:19:24 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:33632 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753893AbeE3STM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 14:19:00 -0400
-Date: Wed, 30 May 2018 21:18:58 +0300
-From: "Dmitry V. Levin" <ldv@altlinux.org>
-To: Eugene Syromiatnikov <esyr@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, Jiri Olsa <jolsa@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Lawrence Brakmo <brakmo@fb.com>,
-        Andrey Ignatov <rdna@fb.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        John Fastabend <john.fastabend@gmail.com>
-Subject: Re: [PATCH bpf 1/2] bpf: fix alignment of netns_dev/netns_ino fields
- in bpf_{map,prog}_info
-Message-ID: <20180530181857.GA6744@altlinux.org>
-Mail-Followup-To: Eugene Syromiatnikov <esyr@redhat.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Lawrence Brakmo <brakmo@fb.com>, Andrey Ignatov <rdna@fb.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        John Fastabend <john.fastabend@gmail.com>
-References: <20180527112842.GA18204@asgard.redhat.com>
+        Wed, 30 May 2018 14:19:12 -0400
+X-Google-Smtp-Source: ADUXVKKse4fFPLeUiC991whjzRnpSNC154KRatOvfsJzELdQTLv4YVuGlSxcnlqKu23GovGSLttXtjPOfsR4YmO+BcQ=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="FL5UXtIhxfXey3p5"
-Content-Disposition: inline
-In-Reply-To: <20180527112842.GA18204@asgard.redhat.com>
+References: <152770259826.80701.7360032106128917833.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152770286159.80701.8079550179741454699.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152770286159.80701.8079550179741454699.stgit@bhelgaas-glaptop.roam.corp.google.com>
+From: Rajat Jain <rajatja@google.com>
+Date: Wed, 30 May 2018 11:18:35 -0700
+Message-ID: <CACK8Z6HhvLYkEtbROXymfn3pwz=rc8Dm_AstOe5R4tpb5aiJGg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] PCI/AER: Stop printing vendor/device ID
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci <linux-pci@vger.kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 30, 2018 at 10:54 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
 
---FL5UXtIhxfXey3p5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Bjorn Helgaas <bhelgaas@google.com>
 
-On Sun, May 27, 2018 at 01:28:42PM +0200, Eugene Syromiatnikov wrote:
-> Recent introduction of netns_dev/netns_ino to bpf_map_info/bpf_prog info
-> has broken compat, as offsets of these fields are different in 32-bit
-> and 64-bit ABIs.  One fix (other than implementing compat support in
-> syscall in order to handle this discrepancy) is to use __aligned_u64
-> instead of __u64 for these fields.
->=20
-> Reported-by: Dmitry V. Levin <ldv@altlinux.org>
-> Fixes: 52775b33bb507 ("bpf: offload: report device information about
-> offloaded maps")
-> Fixes: 675fc275a3a2d ("bpf: offload: report device information for
-> offloaded programs")
+> The Vendor and Device ID of the root port that raised an AER interrupt is
+> irrelevant and already available via normal enumeration dmesg logging or
+> lspci.
 
-Reviewed-by: "Dmitry V. Levin" <ldv@altlinux.org>
-Cc: <stable@vger.kernel.org> # v4.16+
+Er, what is getting printed is not the vendor/device id of the root port
+but that of the AER source device (the one that root port got an ERR_*
+message from). In case of fatal AERs, the end point device may become
+inaccessible so lspci will not be available, and enumeration logs (from
+boot) may have gotten rolled over. So I think it is still better to print
+this information here.
+
+Just my opinion :-)
 
 Thanks,
 
+Rajat
 
---=20
-ldv
 
---FL5UXtIhxfXey3p5
-Content-Type: application/pgp-signature; name="signature.asc"
+> Remove the Vendor and Device ID from AER logging.
 
------BEGIN PGP SIGNATURE-----
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>   drivers/pci/pcie/aer/aerdrv_errprint.c |    5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
 
-iQIcBAEBCAAGBQJbDusRAAoJEAVFT+BVnCUIXbEP/AwqWZwvcE5kx8KFhZTcPBo3
-6N/1OsST+PMv6eNzGSjp6vVNp0n7gLjtT5XMjYP4S30UtG28SEXq0+52KR2dCRuQ
-RhzeSEE0Gk95kn98a0q5Fjko0O8+GHhvhMt2MGQ0ZN4x7PGSSTWDTSql853CzdBV
-FyDEjl/K5o3D1fmqCPGS+ZjAI2gUbtf1uP4mBCSUoqqpwmTCG17KZUmAbm5C+zyQ
-/p4lOhsG0ZLE2AsVwsSvQVLa1ihw2SyawqrFbF3Wi8Jl+AA1qiwl+H+ANPdgLkTK
-Rw7UeWdW7wzXsVuahz1tTQyZNkpy26h+bwZYyKPrkRD9zaAxOHNsxmrH88rp/fpP
-N3qIOgfIoqOovY2cLy4ghbOAbacSt+nVonhLUYFQIQPFivZFql9jKsMxyNF4kA/0
-VLrGH8CJ/MJxQTDM0YVQBsbDZ2JNHJB3zv9Rw5cpVzbC5hYrbfLT/npebV5hrFNk
-wk2qTgQoMHXAvsfvNyzowWVxeOzujFZmvlMZmRbBLSXPS+PykgHJHkSn1e03vhYu
-CG81W946tGb71TNXWN7dCYNWRTOaSAjzlZyECcbM07ckPJnpZk4QLsFDoDacq9Ls
-Tsq9/MNpGrK8YXH7BXqj6G/GYrED7H82Ng/g/CFO4Fon/bTBDYu9Zn8/LlaCtqn4
-Nqlas/SFSpgdWBHUxBG3
-=gJ61
------END PGP SIGNATURE-----
+> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c
+b/drivers/pci/pcie/aer/aerdrv_errprint.c
+> index d7fde8368d81..16116844531c 100644
+> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
+> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+> @@ -175,9 +175,8 @@ void aer_print_error(struct pci_dev *dev, struct
+aer_err_info *info)
+>                  aer_error_severity_string[info->severity],
+>                  aer_error_layer[layer], aer_agent_string[agent]);
 
---FL5UXtIhxfXey3p5--
+> -       pci_err(dev, "  device [%04x:%04x] error status/mask=%08x/%08x\n",
+> -               dev->vendor, dev->device,
+> -               info->status, info->mask);
+> +       pci_err(dev, "  error status/mask=%08x/%08x\n", info->status,
+> +               info->mask);
+
+>          __aer_print_error(dev, info);
