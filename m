@@ -1,302 +1,318 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753373AbeE3LZM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:25:12 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34777 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753014AbeE3LZE (ORCPT
+        id S1751912AbeE3LZt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:25:49 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39525 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751462AbeE3LZm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:25:04 -0400
-X-Google-Smtp-Source: ADUXVKK2MQzEEVrLWskicm0p9gWgH04HUO/GUzOX776pzXQJ7QjKAnhuxkcqrHo7yq1qO6aBkHU2ew==
-Date: Wed, 30 May 2018 13:24:59 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        USB <linux-usb@vger.kernel.org>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] usb: gadget: ccid: add support for USB CCID
- Gadget Device
-Message-ID: <20180530112459.GB2939@gmail.com>
-References: <20180529185021.13738-1-marcus.folkesson@gmail.com>
- <CAHp75VeSbC3QBswCxZpoVpT4cL4pXC5eouCc9YtvBtXG3YddTg@mail.gmail.com>
+        Wed, 30 May 2018 07:25:42 -0400
+X-Google-Smtp-Source: ADUXVKJW0zqAGYBEzZFpdbXTe0j0aVMn28DiZvY85A70iU+Wl0+mWGePeG8kgog54ooctEtzPcKT9g==
+Subject: Re: [PATCH 6/6] mfd: da9063: Add DA9063L support
+To: Steve Twiss <stwiss.opensource@diasemi.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+References: <20180523114230.10109-1-marek.vasut+renesas@gmail.com>
+ <20180523114230.10109-6-marek.vasut+renesas@gmail.com>
+ <6ED8E3B22081A4459DAC7699F3695FB701941A47F0@SW-EX-MBX02.diasemi.com>
+ <6ED8E3B22081A4459DAC7699F3695FB701941A4866@SW-EX-MBX02.diasemi.com>
+ <3d81a469-e54f-953d-7600-7ddf3d026ca1@gmail.com>
+ <6ED8E3B22081A4459DAC7699F3695FB701941A4F93@SW-EX-MBX02.diasemi.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <aae63779-75eb-a860-3aa5-bb7eb67d3ef3@gmail.com>
+Date: Wed, 30 May 2018 13:24:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VeSbC3QBswCxZpoVpT4cL4pXC5eouCc9YtvBtXG3YddTg@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <6ED8E3B22081A4459DAC7699F3695FB701941A4F93@SW-EX-MBX02.diasemi.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On 05/24/2018 07:30 PM, Steve Twiss wrote:
+> On 24 May 2018 15:51 Marek Vasut wrote:
+> 
+> Hi Marek,
+> 
+>> To: Steve Twiss <stwiss.opensource@diasemi.com>; linux-kernel@vger.kernel.org
+>> Cc: Marek Vasut <marek.vasut+renesas@gmail.com>; Geert Uytterhoeven
+>> <geert+renesas@glider.be>; Lee Jones <lee.jones@linaro.org>; Mark Brown
+>> <broonie@kernel.org>; Wolfram Sang <wsa+renesas@sang-engineering.com>;
+>> linux-renesas-soc@vger.kernel.org
+>> Subject: Re: [PATCH 6/6] mfd: da9063: Add DA9063L support
+>>
+>> On 05/24/2018 02:32 PM, Steve Twiss wrote:
+>>> On 24 May 2018 @ 12:49 Steve Twiss wrote:
+>>>>> On 23 May 2018 12:43 Marek Vasut wrote,
+>>>>>
+>>>>> To: linux-kernel@vger.kernel.org
+>>>>> Subject: [PATCH 6/6] mfd: da9063: Add DA9063L support
+>>>>>
+>>>>> Add support for DA9063L, which is a reduced variant of the DA9063 with less regulators and without RTC.
+>>>>>
+>>>>
+>>>> There's potentially more to this file. Without an RTC the regmap
+>>>> access tables would change and the usual DA9063 (BB silicon) tables would become invalid.
+>>>> The tables for da9063_bb_readable_ranges, da9063_bb_writeable_ranges,
+>>>> da9063_bb_volatile_ranges, would need to be updated for DA9063L, if a new chip model was needed.
+>>>>
+>>>> The new ranges would be this (see below), and would remove any RTC accesses in the new chip model.
+>>>>
+>>>> static const struct regmap_range da9063l_bb_readable_ranges[] = {
+>>>> 	{
+>>>> 		.range_min = DA9063_REG_PAGE_CON,
+>>>> 		.range_max = DA9063_REG_MON_A10_RES,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_SEQ,
+>>>> 		.range_max = DA9063_REG_ID_32_31,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_SEQ_A,
+>>>> 		.range_max = DA9063_REG_AUTO3_LOW,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_T_OFFSET,
+>>>> 		.range_max = DA9063_BB_REG_GP_ID_19,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_CHIP_ID,
+>>>> 		.range_max = DA9063_REG_CHIP_VARIANT,
+>>>> 	},
+>>>> };
+>>>>
+>>>> static const struct regmap_range da9063l_bb_writeable_ranges[] = {
+>>>> 	{
+>>>> 		.range_min = DA9063_REG_PAGE_CON,
+>>>> 		.range_max = DA9063_REG_PAGE_CON,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_FAULT_LOG,
+>>>> 		.range_max = DA9063_REG_VSYS_MON,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_SEQ,
+>>>> 		.range_max = DA9063_REG_ID_32_31,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_SEQ_A,
+>>>> 		.range_max = DA9063_REG_AUTO3_LOW,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_CONFIG_I,
+>>>> 		.range_max = DA9063_BB_REG_MON_REG_4,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_BB_REG_GP_ID_0,
+>>>> 		.range_max = DA9063_BB_REG_GP_ID_19,
+>>>> 	},
+>>>> };
+>>>>
+>>>> static const struct regmap_range da9063l_bb_volatile_ranges[] = {
+>>>> 	{
+>>>> 		.range_min = DA9063_REG_PAGE_CON,
+>>>> 		.range_max = DA9063_REG_EVENT_D,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_CONTROL_A,
+>>>> 		.range_max = DA9063_REG_CONTROL_B,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_CONTROL_E,
+>>>> 		.range_max = DA9063_REG_CONTROL_F,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_BCORE2_CONT,
+>>>> 		.range_max = DA9063_REG_LDO11_CONT,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_DVC_1,
+>>>> 		.range_max = DA9063_REG_ADC_MAN,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_ADC_RES_L,
+>>>> 		.range_max = DA9063_REG_MON_A10_RES,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_SEQ,
+>>>> 		.range_max = DA9063_REG_SEQ,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_REG_EN_32K,
+>>>> 		.range_max = DA9063_REG_EN_32K,
+>>>> 	}, {
+>>>> 		.range_min = DA9063_BB_REG_MON_REG_5,
+>>>> 		.range_max = DA9063_BB_REG_MON_REG_6,
+>>>> 	},
+>>>> };
+>>>>
+>>>> However this is a larger and more wide-ranging change compared to the
+>>>> one proposed by Marek, and would require other alterations to fit
+>>>> this in. Also I'm undecided to what it would really add apart from a
+>>>> new chip model: I have been told accessing the DA9063 RTC register locations
+>>>> has no effect in the DA9063L.
+>>>
+>>> Looking at this further, there is also a new IRQ regmap.
+>>> Again this comes down to whether a full chip model is needed or not.
+>>> If not, then the IRQ map does not need to be changed as given. Otherwise the
+>>> removal of the following:
+>>>
+>>> 	[DA9063_IRQ_ALARM] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+>>> 		.mask = DA9063_M_ALARM,
+>>> 	},
+>>> 	[DA9063_IRQ_TICK] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+>>> 		.mask = DA9063_M_TICK,
+>>> 	},
+>>>
+>>> prior to registering the IRQs in the chip model would be needed.
+>>> The new regmap_irq would be:
+>>>
+>>> static const struct regmap_irq da9063l_irqs[] = {
+>>> 	/* DA9063 event A register */
+>>> 	[DA9063L_IRQ_ONKEY] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+>>> 		.mask = DA9063_M_ONKEY,
+>>> 	},
+>>> 	[DA9063L_IRQ_ADC_RDY] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+>>> 		.mask = DA9063_M_ADC_RDY,
+>>> 	},
+>>> 	[DA9063L_IRQ_SEQ_RDY] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+>>> 		.mask = DA9063_M_SEQ_RDY,
+>>> 	},
+>>> 	/* DA9063 event B register */
+>>> 	[DA9063L_IRQ_WAKE] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+>>> 		.mask = DA9063_M_WAKE,
+>>> 	},
+>>> 	[DA9063L_IRQ_TEMP] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+>>> 		.mask = DA9063_M_TEMP,
+>>> 	},
+>>> 	[DA9063L_IRQ_COMP_1V2] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+>>> 		.mask = DA9063_M_COMP_1V2,
+>>> 	},
+>>> 	[DA9063L_IRQ_LDO_LIM] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+>>> 		.mask = DA9063_M_LDO_LIM,
+>>> 	},
+>>> 	[DA9063L_IRQ_REG_UVOV] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+>>> 		.mask = DA9063_M_UVOV,
+>>> 	},
+>>> 	[DA9063L_IRQ_DVC_RDY] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+>>> 		.mask = DA9063_M_DVC_RDY,
+>>> 	},
+>>> 	[DA9063L_IRQ_VDD_MON] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+>>> 		.mask = DA9063_M_VDD_MON,
+>>> 	},
+>>> 	[DA9063L_IRQ_WARN] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
+>>> 		.mask = DA9063_M_VDD_WARN,
+>>> 	},
+>>> 	/* DA9063 event C register */
+>>> 	[DA9063L_IRQ_GPI0] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+>>> 		.mask = DA9063_M_GPI0,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI1] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+>>> 		.mask = DA9063_M_GPI1,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI2] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+>>> 		.mask = DA9063_M_GPI2,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI3] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+>>> 		.mask = DA9063_M_GPI3,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI4] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+>>> 		.mask = DA9063_M_GPI4,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI5] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+>>> 		.mask = DA9063_M_GPI5,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI6] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+>>> 		.mask = DA9063_M_GPI6,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI7] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
+>>> 		.mask = DA9063_M_GPI7,
+>>> 	},
+>>> 	/* DA9063 event D register */
+>>> 	[DA9063L_IRQ_GPI8] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+>>> 		.mask = DA9063_M_GPI8,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI9] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+>>> 		.mask = DA9063_M_GPI9,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI10] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+>>> 		.mask = DA9063_M_GPI10,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI11] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+>>> 		.mask = DA9063_M_GPI11,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI12] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+>>> 		.mask = DA9063_M_GPI12,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI13] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+>>> 		.mask = DA9063_M_GPI13,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI14] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+>>> 		.mask = DA9063_M_GPI14,
+>>> 	},
+>>> 	[DA9063L_IRQ_GPI15] = {
+>>> 		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
+>>> 		.mask = DA9063_M_GPI15,
+>>> 	},
+>>> };
+>>
+>> We can probably do the same trick with the regmaps and irqmaps as with the
+>> rest, that is, reorder them and register only a smaller portion ?
+> 
+> I like the "reorder and only register a smaller portion" trick. But it wouldn't work
+> with what I gave earlier today, without some modification.
+> For instance, the first register readable entry range in the  DA9063 BB is:
+> 
+> static const struct regmap_range da9063_bb_readable_ranges[] = {
+> 	{
+> 		.range_min = DA9063_REG_PAGE_CON,
+> 		.range_max = DA9063_BB_REG_SECOND_D,
+> 	}, {
+> 
+> But for the DA9063L, this first range entry would be changed, not removed:
+> 
+> static const struct regmap_range da9063l_bb_readable_ranges[] = {
+> 	{
+> 		.range_min = DA9063_REG_PAGE_CON,
+> 		.range_max = DA9063_REG_MON_A10_RES,
+> 	}, {
+> 
+> So it's not all-or-nothing. But possibly it could be made to work if those ranges were split
+> into two pieces.
+> 
+> However, it might get messy to maintain in future -- sometimes register ranges need to be
+> updated with new components or if a new feature is added -- usually I need to work it
+> all out on paper with the full register map. Splitting up ranges might make it a little
+> messier. But, it's not impossible.
+> 
+> For the DA9062 and DA9061 this was done using separate ranges and using the macro
+> regmap_reg_range(). It's not that messy to read, e.g. 
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/mfd/da9062-core.c?h=next-20180517#n367
 
-Thank you for your comments!
-Many good catches here!
+Hum, can you point me to the datasheet sections so I can check this
+difference please ? I think I have the rest of the feedback addressed,
+so I want to check this one before submitting the next version.
 
-On Wed, May 30, 2018 at 03:55:39AM +0300, Andy Shevchenko wrote:
-> On Tue, May 29, 2018 at 9:50 PM, Marcus Folkesson
-> <marcus.folkesson@gmail.com> wrote:
-> > Chip Card Interface Device (CCID) protocol is a USB protocol that
-> > allows a smartcard device to be connected to a computer via a card
-> > reader using a standard USB interface, without the need for each manufacturer
-> > of smartcards to provide its own reader or protocol.
-> >
-> > This gadget driver makes Linux show up as a CCID device to the host and let a
-> > userspace daemon act as the smartcard.
-> >
-> > This is useful when the Linux gadget itself should act as a cryptographic
-> > device or forward APDUs to an embedded smartcard device.
-> 
-> > + * Copyright (C) 2018 Marcus Folkesson <marcus.folkesson@gmail.com>
-> 
-> > + *
-> 
-> Redundant line
-> 
-
-Yep
-
-> > +static DEFINE_IDA(ccidg_ida);
-> 
-> Where is it destroyed?
-
-Hm, I'm not sure it needs to be destroyed. From lib/idr.c:
-
- * You can also use ida_get_new_above() if you need an ID to be allocated
- * above a particular number.  ida_destroy() can be used to dispose of an
- * IDA without needing to free the individual IDs in it.  You can use
- * ida_is_empty() to find out whether the IDA has any IDs currently allocated.
-
-
-An empty ccidg_ida is the indication that we should clean up our
-mess:
-
-static void ccidg_free_inst(struct usb_function_instance *f)
-...
-	if (ida_is_empty(&ccidg_ida))
-		ccidg_cleanup();
-
-If the IDA is empty, should I call ida_destroy() anyway?
-Other similiar drivers does not seems to do that.
-
-I must say that I'm not very familiar with the IDA API.
-
-> 
-> > +               ccidg_class = NULL;
-> > +               return PTR_ERR(ccidg_class);
-> 
-> Are you sure?
-
-Heh, :-)
-
-> 
-> > +       if (!list_empty(head)) {
-> > +               req = list_first_entry(head, struct usb_request, list);
-> 
-> list_first_entry_or_null()
-
-Will do, thanks.
-
-> 
-> > +       req->length = len;
-> 
-> Perhaps assign this obly if malloc successedeed ?
-
-Will do.
-
-> 
-> > +       req->buf = kmalloc(len, GFP_ATOMIC);
-> 
-> > +       if (req->buf == NULL) {
-> 
-> if (!req->buf) ?
-
-Will do
-
-> 
-> > +               usb_ep_free_request(ep, req);
-> > +               return ERR_PTR(-ENOMEM);
-> > +       }
-> 
-> > +static void ccidg_request_free(struct usb_request *req, struct usb_ep *ep)
-> > +{
-> 
-> > +       if (req) {
-> 
-> Is it even possible?
-> 
-> What about
-> 
-> if (!req)
->  return;
-> 
-> ?
-
-Hmm, maybe it is not.
-I think I remove this check.
-
-> 
-> > +               kfree(req->buf);
-> > +               usb_ep_free_request(ep, req);
-> > +       }
-> > +}
-> 
-> > +                       *(__le32 *) req->buf = ccid_class_desc.dwDefaultClock;
-> 
-> Hmm... put_unaligned()? cpu_to_le32()? cpu_to_le32p()?
-> 
-
-Hmm, dwDefaultClock is already represented in little endian format. If I
-use any of those functions, would not the byte order be swaped on a big
-endian system?
-
-dwDefaultClock is set as:
-	.dwDefaultClock =	cpu_to_le32(3580),
-
-I'm not sure what the best practice is here.
-
-> > +                       *(__le32 *) req->buf = ccid_class_desc.dwDataRate;
-> 
-> Ditto.
-> 
-> > +               }
-> > +               }
-> 
-> Indentation.
-
-I remove the extra brackets from the case instead.
-> 
-> > +       /* responded with data transfer or status phase? */
-> > +       if (ret >= 0) {
-> 
-> Why not
-> 
-> if (ret < 0)
->  return ret;
-> 
-> ?
-> 
-
-Will do
-
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> 
-> > +       atomic_set(&ccidg->online, 1);
-> > +       return ret;
-> 
-> return 0; ?
-
-Will do
-
-> 
-> > +       struct f_ccidg *ccidg;
-> 
-> > +       ccidg = container_of(inode->i_cdev, struct f_ccidg, cdev);
-> 
-> One line ?
-
-The line exceeds 80 characters then, but I will put it like this:
-
-	struct f_ccidg *ccidg = container_of(inode->i_cdev,
-								struct f_ccidg, cdev);
-
-> 
-> > +       xfer = (req->actual < count) ? req->actual : count;
-> 
-> min_t()
-> 
-
-Thanks, will do
-
-> > +       ret = wait_event_interruptible(bulk_dev->write_wq,
-> > +               ((req = ccidg_req_get(ccidg, &bulk_dev->tx_idle))));
-> > +
-> > +       if (ret < 0)
-> > +               return -ERESTARTSYS;
-> 
-> Redundant blank line above.
-> 
-
-I remove the extra blank line
-
-
-> > +static void ccidg_function_free(struct usb_function *f)
-> > +{
-> 
-> > +       struct f_ccidg_opts *opts;
-> 
-> > +       opts = container_of(f->fi, struct f_ccidg_opts, func_inst);
-> 
-> One line.
-
-See above
-
-> 
-> 
-> > +       mutex_lock(&opts->lock);
-> > +       --opts->refcnt;
-> 
-> -- will work
-
-Will do
-
-> 
-> > +       mutex_unlock(&opts->lock);
-> > +}
-> 
-> > +       struct f_ccidg_opts *opts;
-> 
-> > +       opts = container_of(fi, struct f_ccidg_opts, func_inst);
-> 
-> Perhaps one line ?
-
-See above
-
-
-> > +       ++opts->refcnt;
-> X++ would work as well.
-
-Will do
-
-> > +       struct f_ccidg_opts *opts;
-> > +
-> > +       opts = container_of(f, struct f_ccidg_opts, func_inst);
-> 
-> Perhaps one line?
-> 
-
-See above
-
-
-> > +#define CCID_PINSUPOORT_NONE           0x00
-> 
-> (0 << 0)
-> 
->  ?
-> 
-> for sake of consistency
-
-Yep, will change
-
-> 
-> > +#define CCID_PINSUPOORT_VERIFICATION   (1 << 1)
-> > +#define CCID_PINSUPOORT_MODIFICATION   (1 << 2)
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-
+-- 
 Best regards,
-Marcus Folkesson
+Marek Vasut
