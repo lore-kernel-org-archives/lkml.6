@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753613AbeE3Lhl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:37:41 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60788 "EHLO
+        id S1753631AbeE3Lhp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:37:45 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60790 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752291AbeE3LHB (ORCPT
+        by vger.kernel.org with ESMTP id S1752252AbeE3LHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:01 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,12 +13,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
+CC: akpm@linux-foundation.org,
+        "" <syzbot+fe0b19af568972814355@syzkaller.appspotmail.com>,
+        "Pablo Neira Ayuso" <pablo@netfilter.org>,
+        "Florian Westphal" <fw@strlen.de>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.434565072@decadent.org.uk>
+Message-ID: <lsq.1527677561.864008370@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 124/153] ALSA: seq: Clear client entry before deleting
- else at closing
+Subject: [PATCH 3.2 125/153] netfilter: bridge: ebt_among: add missing
+ match size checks
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -31,46 +34,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Florian Westphal <fw@strlen.de>
 
-commit a2ff19f7b70118ced291a28d5313469914de451b upstream.
+commit c4585a2823edf4d1326da44d1524ecbfda26bb37 upstream.
 
-When releasing a client, we need to clear the clienttab[] entry at
-first, then call snd_seq_queue_client_leave().  Otherwise, the
-in-flight cell in the queue might be picked up by the timer interrupt
-via snd_seq_check_queue() before calling snd_seq_queue_client_leave(),
-and it's delivered to another queue while the client is clearing
-queues.  This may eventually result in an uncleared cell remaining in
-a queue, and the later snd_seq_pool_delete() may need to wait for a
-long time until the event gets really processed.
+ebt_among is special, it has a dynamic match size and is exempt
+from the central size checks.
 
-By moving the clienttab[] clearance at the beginning of release, any
-event delivery of a cell belonging to this client will fail at a later
-point, since snd_seq_client_ptr() returns NULL.  Thus the cell that
-was picked up by the timer interrupt will be returned immediately
-without further delivery, and the long stall of snd_seq_delete_pool()
-can be avoided, too.
+Therefore it must check that the size of the match structure
+provided from userspace is sane by making sure em->match_size
+is at least the minimum size of the expected structure.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+The module has such a check, but its only done after accessing
+a structure that might be out of bounds.
+
+tested with: ebtables -A INPUT ... \
+--among-dst fe:fe:fe:fe:fe:fe
+--among-dst fe:fe:fe:fe:fe:fe --among-src fe:fe:fe:fe:ff:f,fe:fe:fe:fe:fe:fb,fe:fe:fe:fe:fc:fd,fe:fe:fe:fe:fe:fd,fe:fe:fe:fe:fe:fe
+--among-src fe:fe:fe:fe:ff:f,fe:fe:fe:fe:fe:fa,fe:fe:fe:fe:fe:fd,fe:fe:fe:fe:fe:fe,fe:fe:fe:fe:fe:fe
+
+Reported-by: <syzbot+fe0b19af568972814355@syzkaller.appspotmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/seq/seq_clientmgr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/bridge/netfilter/ebt_among.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -270,12 +270,12 @@ static int seq_free_client1(struct snd_s
+--- a/net/bridge/netfilter/ebt_among.c
++++ b/net/bridge/netfilter/ebt_among.c
+@@ -172,18 +172,35 @@ ebt_among_mt(const struct sk_buff *skb,
+ 	return true;
+ }
  
- 	if (!client)
- 		return 0;
--	snd_seq_delete_all_ports(client);
--	snd_seq_queue_client_leave(client->number);
- 	spin_lock_irqsave(&clients_lock, flags);
- 	clienttablock[client->number] = 1;
- 	clienttab[client->number] = NULL;
- 	spin_unlock_irqrestore(&clients_lock, flags);
-+	snd_seq_delete_all_ports(client);
-+	snd_seq_queue_client_leave(client->number);
- 	snd_use_lock_sync(&client->use_lock);
- 	snd_seq_queue_client_termination(client->number);
- 	if (client->pool)
++static bool poolsize_invalid(const struct ebt_mac_wormhash *w)
++{
++	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
++}
++
+ static int ebt_among_mt_check(const struct xt_mtchk_param *par)
+ {
+ 	const struct ebt_among_info *info = par->matchinfo;
+ 	const struct ebt_entry_match *em =
+ 		container_of(par->matchinfo, const struct ebt_entry_match, data);
+-	int expected_length = sizeof(struct ebt_among_info);
++	unsigned int expected_length = sizeof(struct ebt_among_info);
+ 	const struct ebt_mac_wormhash *wh_dst, *wh_src;
+ 	int err;
+ 
++	if (expected_length > em->match_size)
++		return -EINVAL;
++
+ 	wh_dst = ebt_among_wh_dst(info);
+-	wh_src = ebt_among_wh_src(info);
++	if (poolsize_invalid(wh_dst))
++		return -EINVAL;
++
+ 	expected_length += ebt_mac_wormhash_size(wh_dst);
++	if (expected_length > em->match_size)
++		return -EINVAL;
++
++	wh_src = ebt_among_wh_src(info);
++	if (poolsize_invalid(wh_src))
++		return -EINVAL;
++
+ 	expected_length += ebt_mac_wormhash_size(wh_src);
+ 
+ 	if (em->match_size != EBT_ALIGN(expected_length)) {
