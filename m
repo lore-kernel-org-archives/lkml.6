@@ -1,89 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754000AbeE3QqJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:46:09 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59468 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753816AbeE3QqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:46:05 -0400
-Date: Wed, 30 May 2018 17:46:01 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
-        valentin.schneider@arm.com
-Subject: Re: [PATCH v5 03/10] cpufreq/schedutil: add rt utilization tracking
-Message-ID: <20180530164601.GC2174@e108498-lin.cambridge.arm.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-4-git-send-email-vincent.guittot@linaro.org>
+        id S1753956AbeE3QqA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:46:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753816AbeE3Qp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:45:58 -0400
+Date: Wed, 30 May 2018 11:45:57 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jingoo Han <jingoohan1@gmail.com>, Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Jianguo Sun <sunjianguo1@huawei.com>, Shawn Guo <shawn.guo@linaro.org>,
+        Tanmay Inamdar <tinamdar@apm.com>, Ryder Lee <ryder.lee@mediatek.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Remove host driver Kconfig selection of
+ CONFIG_PCIEPORTBUS
+Message-ID: <20180530164557.GH39853@bhelgaas-glaptop.roam.corp.google.com>
+References: <152668266782.118010.15462515170612275250.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527253951-22709-4-git-send-email-vincent.guittot@linaro.org>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <152668266782.118010.15462515170612275250.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
-
-On Friday 25 May 2018 at 15:12:24 (+0200), Vincent Guittot wrote:
-> Add both cfs and rt utilization when selecting an OPP for cfs tasks as rt
-> can preempt and steal cfs's running time.
+On Fri, May 18, 2018 at 05:31:07PM -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> Host bridge drivers do not use the portdrv interfaces (struct pcie_device,
+> struct pcie_port_service_driver, pcie_port_service_register(), etc), and
+> they should not select CONFIG_PCIEPORTBUS.
+> 
+> If users need the portdrv services, they can select CONFIG_PCIEPORTBUS just
+> like all other PCI users.
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+
+I applied this to pci/kconfig for v4.18.
+
 > ---
->  kernel/sched/cpufreq_schedutil.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
+>  drivers/pci/dwc/Kconfig  |   10 ----------
+>  drivers/pci/host/Kconfig |    2 --
+>  2 files changed, 12 deletions(-)
 > 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index 28592b6..a84b5a5 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -56,6 +56,7 @@ struct sugov_cpu {
->  	/* The fields below are only needed when sharing a policy: */
->  	unsigned long		util_cfs;
->  	unsigned long		util_dl;
-> +	unsigned long		util_rt;
->  	unsigned long		max;
+> diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
+> index 2f3f5c50aa48..678390a77ba1 100644
+> --- a/drivers/pci/dwc/Kconfig
+> +++ b/drivers/pci/dwc/Kconfig
+> @@ -68,7 +68,6 @@ config PCI_EXYNOS
+>  	depends on PCI
+>  	depends on SOC_EXYNOS5440
+>  	depends on PCI_MSI_IRQ_DOMAIN
+> -	select PCIEPORTBUS
+>  	select PCIE_DW_HOST
 >  
->  	/* The field below is for single-CPU policies only: */
-> @@ -178,14 +179,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
->  	sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
->  	sg_cpu->util_cfs = cpu_util_cfs(rq);
->  	sg_cpu->util_dl  = cpu_util_dl(rq);
-> +	sg_cpu->util_rt  = cpu_util_rt(rq);
->  }
+>  config PCI_IMX6
+> @@ -76,7 +75,6 @@ config PCI_IMX6
+>  	depends on PCI
+>  	depends on SOC_IMX6Q
+>  	depends on PCI_MSI_IRQ_DOMAIN
+> -	select PCIEPORTBUS
+>  	select PCIE_DW_HOST
 >  
->  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->  {
->  	struct rq *rq = cpu_rq(sg_cpu->cpu);
-> +	unsigned long util;
->  
-> -	if (rq->rt.rt_nr_running)
-> -		return sg_cpu->max;
-> +	if (rq->rt.rt_nr_running) {
-> +		util = sg_cpu->max;
-
-So I understand why we want to got to max freq when a RT task is running,
-but I think there are use cases where we might want to be more conservative
-and use the util_avg of the RT rq instead. The first use case is
-battery-powered devices where going to max isn't really affordable from
-an energy standpoint. Android, for example, has been using a RT
-utilization signal to select OPPs for quite a while now, because going
-to max blindly is _very_ expensive.
-
-And the second use-case is thermal pressure. On some modern CPUs, going to
-max freq can lead to stringent thermal capping very quickly, at the
-point where your CPUs might not have enough capacity to serve your tasks
-properly. And that can ultimately hurt the very RT tasks you originally
-tried to run fast. In these systems, in the long term, you'd be better off
-not asking for more than what you really need ...
-
-So what about having a sched_feature to select between going to max and
-using the RT util_avg ? Obviously the default should keep the current
-behaviour.
-
-Thanks,
-Quentin
+>  config PCIE_SPEAR13XX
+> @@ -84,7 +82,6 @@ config PCIE_SPEAR13XX
+>  	depends on PCI
+>  	depends on ARCH_SPEAR13XX
+>  	depends on PCI_MSI_IRQ_DOMAIN
+> -	select PCIEPORTBUS
+>  	select PCIE_DW_HOST
+>  	help
+>  	  Say Y here if you want PCIe support on SPEAr13XX SoCs.
+> @@ -94,7 +91,6 @@ config PCI_KEYSTONE
+>  	depends on PCI
+>  	depends on ARCH_KEYSTONE
+>  	depends on PCI_MSI_IRQ_DOMAIN
+> -	select PCIEPORTBUS
+>  	select PCIE_DW_HOST
+>  	help
+>  	  Say Y here if you want to enable PCI controller support on Keystone
+> @@ -117,7 +113,6 @@ config PCI_HISI
+>  	bool "HiSilicon Hip05 and Hip06 SoCs PCIe controllers"
+>  	depends on PCI
+>  	depends on PCI_MSI_IRQ_DOMAIN
+> -	select PCIEPORTBUS
+>  	select PCIE_DW_HOST
+>  	select PCI_HOST_COMMON
+>  	help
+> @@ -129,7 +124,6 @@ config PCIE_QCOM
+>  	depends on PCI
+>  	depends on ARCH_QCOM && OF
+>  	depends on PCI_MSI_IRQ_DOMAIN
+> -	select PCIEPORTBUS
+>  	select PCIE_DW_HOST
+>  	help
+>  	  Say Y here to enable PCIe controller support on Qualcomm SoCs. The
+> @@ -141,7 +135,6 @@ config PCIE_ARMADA_8K
+>  	depends on PCI
+>  	depends on ARCH_MVEBU
+>  	depends on PCI_MSI_IRQ_DOMAIN
+> -	select PCIEPORTBUS
+>  	select PCIE_DW_HOST
+>  	help
+>  	  Say Y here if you want to enable PCIe controller support on
+> @@ -156,7 +149,6 @@ config PCIE_ARTPEC6_HOST
+>  	bool "Axis ARTPEC-6 PCIe controller Host Mode"
+>  	depends on MACH_ARTPEC6
+>  	depends on PCI && PCI_MSI_IRQ_DOMAIN
+> -	select PCIEPORTBUS
+>  	select PCIE_DW_HOST
+>  	select PCIE_ARTPEC6
+>  	help
+> @@ -178,7 +170,6 @@ config PCIE_KIRIN
+>  	bool "HiSilicon Kirin series SoCs PCIe controllers"
+>  	depends on PCI_MSI_IRQ_DOMAIN
+>  	depends on PCI
+> -	select PCIEPORTBUS
+>  	select PCIE_DW_HOST
+>  	help
+>  	  Say Y here if you want PCIe controller support
+> @@ -189,7 +180,6 @@ config PCIE_HISI_STB
+>  	depends on ARCH_HISI
+>  	depends on PCI
+>  	depends on PCI_MSI_IRQ_DOMAIN
+> -	select PCIEPORTBUS
+>  	select PCIE_DW_HOST
+>  	help
+>            Say Y here if you want PCIe controller support on HiSilicon STB SoCs
+> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+> index 0d0177ce436c..90f0cc9dfd95 100644
+> --- a/drivers/pci/host/Kconfig
+> +++ b/drivers/pci/host/Kconfig
+> @@ -83,7 +83,6 @@ config PCI_XGENE
+>  	bool "X-Gene PCIe controller"
+>  	depends on ARM64
+>  	depends on OF || (ACPI && PCI_QUIRKS)
+> -	select PCIEPORTBUS
+>  	help
+>  	  Say Y here if you want internal PCI support on APM X-Gene SoC.
+>  	  There are 5 internal PCIe ports available. Each port is GEN3 capable
+> @@ -194,7 +193,6 @@ config PCIE_MEDIATEK
+>  	depends on (ARM || ARM64) && (ARCH_MEDIATEK || COMPILE_TEST)
+>  	depends on OF
+>  	depends on PCI
+> -	select PCIEPORTBUS
+>  	help
+>  	  Say Y here if you want to enable PCIe controller support on
+>  	  MediaTek SoCs.
+> 
