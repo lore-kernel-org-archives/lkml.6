@@ -1,165 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932120AbeE3Sc2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 14:32:28 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56108 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753663AbeE3Sc1 (ORCPT
+        id S932170AbeE3Sco (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 14:32:44 -0400
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:60513 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753659AbeE3Scn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 14:32:27 -0400
-Subject: Re: [PATCH 13/13] Documentation: add a doc for blk-iolatency
-To: Josef Bacik <josef@toxicpanda.com>, axboe@kernel.dk,
-        kernel-team@fb.com, linux-block@vger.kernel.org,
-        akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, tj@kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc: Josef Bacik <jbacik@fb.com>
-References: <20180529211724.4531-1-josef@toxicpanda.com>
- <20180529211724.4531-14-josef@toxicpanda.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4c044b70-8d53-055b-933b-1b8570bd4fc2@infradead.org>
-Date: Wed, 30 May 2018 11:32:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 30 May 2018 14:32:43 -0400
+Date: Wed, 30 May 2018 20:32:41 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, Oza Pawandeep <poza@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] PCI/AER: Decode Error Source Requester ID
+Message-ID: <20180530183241.GA20222@wunner.de>
+References: <152770259826.80701.7360032106128917833.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152770285586.80701.6545710900591672975.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529211724.4531-14-josef@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152770285586.80701.6545710900591672975.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 02:17 PM, Josef Bacik wrote:
-> From: Josef Bacik <jbacik@fb.com>
-> 
-> A basic documentation to describe the interface, statistics, and
-> behavior of io.latency.
-> 
-> Signed-off-by: Josef Bacik <jbacik@fb.com>
-> ---
->  Documentation/blk-iolatency.txt | 80 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
->  create mode 100644 Documentation/blk-iolatency.txt
-> 
-> diff --git a/Documentation/blk-iolatency.txt b/Documentation/blk-iolatency.txt
-> new file mode 100644
-> index 000000000000..9dd86f4f64b6
-> --- /dev/null
-> +++ b/Documentation/blk-iolatency.txt
-> @@ -0,0 +1,80 @@
-> +Block IO Latency Controller
+On Wed, May 30, 2018 at 12:54:15PM -0500, Bjorn Helgaas wrote:
+>  void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+>  {
+> -	pci_info(dev, "AER: %s%s error received: id=%04x\n",
+> +	u8 bus = info->id >> 8;
+> +	u8 devfn = info->id & 0xff;
 > +
-> +Overview
-> +========
-> +
-> +This is a cgroup v2 controller for IO workload protection.  You provide a group
-> +with a latency target, and if the average latency exceeds that target the
-> +controller will throttle any peers that have a lower latency target than the
-> +protected workload.
-> +
-> +Interface
-> +=========
-> +
-> +- io.latency.  This takes a similar format as the other controllers
+> +	pci_info(dev, "AER: %s%s error received: %04x:%02x:%02x.%d\n",
+>  		info->multi_error_valid ? "Multiple " : "",
+> -		aer_error_severity_string[info->severity], info->id);
+> +		aer_error_severity_string[info->severity],
+> +		pci_domain_nr(dev->bus), bus, devfn >> 3, devfn & 0x7);
 
-              end above sentence with a period or a colon:
-
-> +
-> +	"MAJOR:MINOR target=<target time in microseconds"
-> +
-> +- io.stat.  If the controller is enabled you will see extra stats in io.stat in
-> +  addition to the normal ones
-
-                end above sentence with a period.
-
-> +
-> +	- depth=<integer>.  This is the current queue depth for the group.
-> +	- delay=<time in microseconds>. This is the current delay per task that
-> +	  does IO in this group.
-> +	- use_delay=<integer>.  This is how deep into the delay we currently
-> +	  are, the larger this number is the longer it'll take us to get back to
-> +	  queue depth > 1.
-> +	- total_lat_avg=<time in microseconds>.  The running average IO latency
-> +	  for this group.  Running average is generally flawed, but will give an
-> +	  admistrator a general idea of the overall latency they can expect for
-
-	  administrator
-
-> +	  their workload on the given disk.
-> +
-> +HOWTO
-> +=====
-> +
-> +The limits are only applied at the peer level in the heirarchy.  This means that
-> +in the diagram below, only groups A, B, and C will influence eachother, and
-
-                                                                each other, and
-
-> +groups D and F will influence eachother.  Group G will influence nobody.
-
-                                 each other.
-
-> +
-> +			[root]
-> +		/	   |		\
-> +		A	   B		C
-> +	       /  \        |
-> +	      D    F	   G
-> +
-> +
-> +So the ideal way to configure this is to set io.latency in groups A, B, and C.
-> +Generally you do not want to set a value lower than the latency your device
-> +supports.  Experiment to find the value that works best for your workload, start
-> +at higher than the expected latency for your device and watch the total_lat_avg
-> +value in io.stat for your workload group to get an idea of the latency you see
-> +during normal operation.  Use this value as a basis for your real setting,
-> +setting at 10-15% higher than the value in io.stat.  Experimentation is key here
-> +because total_lat_avg is a running total, so is the "statistics" portion of
-> +"lies, damned lies, and statistics."
-> +
-> +How Throttling Works
-> +====================
-> +
-> +io.latency is work conserving, so as long as everybody is meeting their latency
-> +target the controller doesn't do anything.  Once a group starts missing it's
-
-                                                                           its
-
-> +target it begins throttling any peer group that has a higher target than itself.
-> +This throttling takes 2 forms
-
-                         2 forms:
-
-> +
-> +- Queue depth throttling.  This is the number of outstanding IO's a group is
-> +  allowed to have.  We will clamp down relatively quickly, starting at no limit
-> +  and going all the way down to 1 IO at a time.
-> +
-> +- Artificial delay induction.  There are certain types of IO that cannot be
-> +  throttled without possibly adversely affecting higher priority groups.  This
-> +  includes swapping and metadata IO.  These types of IO are allowed to occur
-> +  normally, however they are "charged" to the originating group.  If the
-> +  originating group is being throttled you will see the use_delay and delay
-> +  fields in io.stat increase.  The delay value is how many microseconds that are
-> +  being added to any process that runs in this group.  Because this number can
-> +  grow quite large if there is a lot of swapping or metadata IO occuring we
-
-                                                                   occurring
-
-> +  limit the individual delay events to 1 second at a time.
-> +
-> +Once the victimized group starts meeting it's latency target again it will start
-
-                                            its
-
-> +unthrottling any peer groups that were throttled previous.  If the victimized
-
-                                                    previously.
-
-> +group simply stops doing IO the global counter will unthrottle appropriately.
-> 
-
-
--- 
-~Randy
+I think PCI_SLOT(devfn), PCI_FUNC(devfn) is a bit more readable.
