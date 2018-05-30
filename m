@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753753AbeE3LiZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:38:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60761 "EHLO
+        id S1753709AbeE3LiG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:38:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60777 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752156AbeE3LHB (ORCPT
+        by vger.kernel.org with ESMTP id S1752217AbeE3LHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:01 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,15 +13,18 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Randy E. Witt" <randy.e.witt@intel.com>,
-        "Vinicius Costa Gomes" <vinicius.gomes@intel.com>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC: akpm@linux-foundation.org, "Greg KH" <gregkh@linuxfoundation.org>,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rasmus Villemoes" <rasmus.villemoes@prevas.dk>
 Date: Wed, 30 May 2018 11:52:42 +0100
-Message-ID: <lsq.1527677562.353080186@decadent.org.uk>
+Message-ID: <lsq.1527677562.676481802@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 131/153] skbuff: Fix not waking applications when
- errors are enqueued
+Subject: [PATCH 3.2 140/153] posix-timers: Protect posix clock array
+ access against speculation
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -34,45 +37,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 6e5d58fdc9bedd0255a8781b258f10bbdc63e975 upstream.
+commit 19b558db12f9f4e45a22012bae7b4783e62224da upstream.
 
-When errors are enqueued to the error queue via sock_queue_err_skb()
-function, it is possible that the waiting application is not notified.
+The clockid argument of clockid_to_kclock() comes straight from user space
+via various syscalls and is used as index into the posix_clocks array.
 
-Calling 'sk->sk_data_ready()' would not notify applications that
-selected only POLLERR events in poll() (for example).
+Protect it against spectre v1 array out of bounds speculation. Remove the
+redundant check for !posix_clock[id] as this is another source for
+speculation and does not provide any advantage over the return
+posix_clock[id] path which returns NULL in that case anyway.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Randy E. Witt <randy.e.witt@intel.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.2: sk_data_ready() operation takes a length parameter.
- Delete the local variable we used for that.]
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1802151718320.1296@nanos.tec.linutronix.de
+[bwh: Backported to 3.2:
+ - Move the test of the clock_getres field below the lookup using
+   array_index_nospec()
+ - Adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/core/skbuff.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3093,8 +3093,6 @@ static void sock_rmem_free(struct sk_buf
-  */
- int sock_queue_err_skb(struct sock *sk, struct sk_buff *skb)
- {
--	int len = skb->len;
--
- 	if (atomic_read(&sk->sk_rmem_alloc) + skb->truesize >=
- 	    (unsigned)sk->sk_rcvbuf)
- 		return -ENOMEM;
-@@ -3109,7 +3107,7 @@ int sock_queue_err_skb(struct sock *sk,
+--- a/kernel/posix-timers.c
++++ b/kernel/posix-timers.c
+@@ -47,6 +47,7 @@
+ #include <linux/wait.h>
+ #include <linux/workqueue.h>
+ #include <linux/export.h>
++#include <linux/nospec.h>
  
- 	skb_queue_tail(&sk->sk_error_queue, skb);
- 	if (!sock_flag(sk, SOCK_DEAD))
--		sk->sk_data_ready(sk, len);
-+		sk->sk_error_report(sk);
- 	return 0;
+ /*
+  * Management arrays for POSIX timers.	 Timers are kept in slab memory
+@@ -520,13 +521,21 @@ static void release_posix_timer(struct k
+ 
+ static struct k_clock *clockid_to_kclock(const clockid_t id)
+ {
+-	if (id < 0)
++	clockid_t idx = id;
++	struct k_clock *kc;
++
++	if (id < 0) {
+ 		return (id & CLOCKFD_MASK) == CLOCKFD ?
+ 			&clock_posix_dynamic : &clock_posix_cpu;
++	}
++
++	if (id >= ARRAY_SIZE(posix_clocks))
++		return NULL;
+ 
+-	if (id >= MAX_CLOCKS || !posix_clocks[id].clock_getres)
++	kc = &posix_clocks[array_index_nospec(idx, ARRAY_SIZE(posix_clocks))];
++	if (!kc->clock_getres)
+ 		return NULL;
+-	return &posix_clocks[id];
++	return kc;
  }
- EXPORT_SYMBOL(sock_queue_err_skb);
+ 
+ static int common_timer_create(struct k_itimer *new_timer)
