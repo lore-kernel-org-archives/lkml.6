@@ -1,139 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753967AbeE3QuR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:50:17 -0400
-Received: from foss.arm.com ([217.140.101.70]:59534 "EHLO foss.arm.com"
+        id S1753919AbeE3QuA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:50:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753563AbeE3QuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:50:15 -0400
-Date: Wed, 30 May 2018 17:50:10 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH v3 1/2] sched/cpufreq: always consider blocked FAIR
- utilization
-Message-ID: <20180530165010.GK30654@e110439-lin>
-References: <20180524141023.13765-1-patrick.bellasi@arm.com>
- <20180524141023.13765-2-patrick.bellasi@arm.com>
- <CAJZ5v0iq-k4QeeEm6vzfWNLkXxNtLZa0Y9_bBcYWCGQ_FjzgDQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0iq-k4QeeEm6vzfWNLkXxNtLZa0Y9_bBcYWCGQ_FjzgDQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1752850AbeE3Qt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:49:58 -0400
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: exynos: Add missing CPU clocks to secondary CPUs on Exynos542x
+Date: Wed, 30 May 2018 18:49:22 +0200
+Message-Id: <20180530164922.31851-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27-May 11:50, Rafael J. Wysocki wrote:
-> On Thu, May 24, 2018 at 4:10 PM, Patrick Bellasi
-> <patrick.bellasi@arm.com> wrote:
-> > Since the refactoring introduced by:
-> >
-> >    commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
-> >
-> > we aggregate FAIR utilization only if this class has runnable tasks.
-> > This was mainly due to avoid the risk to stay on an high frequency just
-> > because of the blocked utilization of a CPU not being properly decayed
-> > while the CPU was idle.
-> >
-> > However, since:
-> >
-> >    commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
-> >
-> > the FAIR blocked utilization is properly decayed also for IDLE CPUs.
-> >
-> > This allows us to use the FAIR blocked utilization as a safe mechanism
-> > to gracefully reduce the frequency only if no FAIR tasks show up on a
-> > CPU for a reasonable period of time.
-> >
-> > Moreover, we also reduce the frequency drops of CPUs running periodic
-> > tasks which, depending on the task periodicity and the time required
-> > for a frequency switch, was increasing the chances to introduce some
-> > undesirable performance variations.
-> >
-> > Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Cc: Joel Fernandes <joelaf@google.com>
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: linux-pm@vger.kernel.org
-> 
-> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Or please let me know if you want me to apply this one.
+Secondary CPUs should have the same information in DeviceTree as booting
+CPU from both correctness point of view and for possible hotplug
+scenarios.
 
-Hi Rafael, seems this patch has already been applied in tip/sched/core.
-However is missing your tag above. :/
+Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos5420-cpus.dtsi | 6 ++++++
+ arch/arm/boot/dts/exynos5422-cpus.dtsi | 8 +++++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-Dunno if I have / I can to do something about that.
-
-> > ---
-> > Changes in v3:
-> >  - add "Tested-by" and "Acked-by" Vincent tags
-> >
-> > Changes in v2:
-> >  - add "Acked-by" Viresh tag
-> > ---
-> >  kernel/sched/cpufreq_schedutil.c | 17 ++++++++---------
-> >  1 file changed, 8 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > index e13df951aca7..28592b62b1d5 100644
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -183,22 +183,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
-> >  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
-> >  {
-> >         struct rq *rq = cpu_rq(sg_cpu->cpu);
-> > -       unsigned long util;
-> >
-> > -       if (rq->rt.rt_nr_running) {
-> > -               util = sg_cpu->max;
-> > -       } else {
-> > -               util = sg_cpu->util_dl;
-> > -               if (rq->cfs.h_nr_running)
-> > -                       util += sg_cpu->util_cfs;
-> > -       }
-> > +       if (rq->rt.rt_nr_running)
-> > +               return sg_cpu->max;
-> >
-> >         /*
-> > +        * Utilization required by DEADLINE must always be granted while, for
-> > +        * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
-> > +        * gracefully reduce the frequency when no tasks show up for longer
-> > +        * periods of time.
-> > +        *
-> >          * Ideally we would like to set util_dl as min/guaranteed freq and
-> >          * util_cfs + util_dl as requested freq. However, cpufreq is not yet
-> >          * ready for such an interface. So, we only do the latter for now.
-> >          */
-> > -       return min(util, sg_cpu->max);
-> > +       return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
-> >  }
-> >
-> >  static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
-> > --
-> > 2.15.1
-> >
-
+diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+index a8e449471304..0ee6e92a3c29 100644
+--- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
++++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+@@ -38,6 +38,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x1>;
++			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+@@ -49,6 +50,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x2>;
++			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+@@ -60,6 +62,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x3>;
++			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+@@ -83,6 +86,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x101>;
++			clocks = <&clock CLK_KFC_CLK>;
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+@@ -94,6 +98,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x102>;
++			clocks = <&clock CLK_KFC_CLK>;
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+@@ -105,6 +110,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x103>;
++			clocks = <&clock CLK_KFC_CLK>;
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+index 7c130a00d1a8..e4a5857c135f 100644
+--- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
++++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+@@ -37,6 +37,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x101>;
++			clocks = <&clock CLK_KFC_CLK>;
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+@@ -48,6 +49,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x102>;
++			clocks = <&clock CLK_KFC_CLK>;
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+@@ -59,6 +61,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x103>;
++			clocks = <&clock CLK_KFC_CLK>;
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+@@ -69,8 +72,8 @@
+ 		cpu4: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+-			clocks = <&clock CLK_ARM_CLK>;
+ 			reg = <0x0>;
++			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+@@ -82,6 +85,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x1>;
++			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+@@ -93,6 +97,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x2>;
++			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+@@ -104,6 +109,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0x3>;
++			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+2.14.1
