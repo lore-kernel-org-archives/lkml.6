@@ -1,98 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753072AbeE3MuX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:50:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34794 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752089AbeE3MuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:50:22 -0400
-Date: Wed, 30 May 2018 08:49:20 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
-        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from
- "audit" actions
-Message-ID: <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
+        id S1753183AbeE3Muq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:50:46 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:42879 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752089AbeE3Mun (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 08:50:43 -0400
+X-Google-Smtp-Source: ADUXVKJzqoXvL+nw34x5kQ1V5DvAjMmVaJ4uiYtjoiRNI0FvSOi5HYdox28fUzBml4kCdHOU73PZMLyy1KoOV3ttA9A=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20171027
+In-Reply-To: <1527643842-17643-1-git-send-email-Anson.Huang@nxp.com>
+References: <1527643842-17643-1-git-send-email-Anson.Huang@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 30 May 2018 09:50:42 -0300
+Message-ID: <CAOMZO5CBgrtKpGdknpwOFbdOR219JqfVJnOeEjdL1a1GiBdg=g@mail.gmail.com>
+Subject: Re: [PATCH V2] soc: imx: gpcv2: correct PGC offset
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        NXP Linux Team <Linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-24 16:11, Stefan Berger wrote:
-> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
-> the IMA "audit" policy action.  This patch defines
-> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
-> 
-> With this change we now call integrity_audit_msg_common() to get
-> common integrity auditing fields. This now produces the following
-> record when parsing an IMA policy rule:
-> 
-> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
->   fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
->   subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->   op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
->   tty=tty2 res=1
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> ---
->  include/uapi/linux/audit.h          | 3 ++-
->  security/integrity/ima/ima_policy.c | 5 +++--
->  2 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 4e61a9e05132..776e0abd35cf 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -146,7 +146,8 @@
->  #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
->  #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
->  #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
-> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
-> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs  */
-> +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
->  
->  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
->  
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 3aed25a7178a..a8ae47a386b4 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  	int result = 0;
->  
->  	ab = integrity_audit_log_start(NULL, GFP_KERNEL,
-> -				       AUDIT_INTEGRITY_RULE);
-> +				       AUDIT_INTEGRITY_POLICY_RULE);
+Hi Anson,
 
-Is it possible to connect this record to a syscall by replacing the
-first parameter (NULL) by current->context?
+On Tue, May 29, 2018 at 10:30 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
+> Correct MIPI/PCIe/USB_HSIC's PGC offset based on
+> design RTL, the values in the Reference Manual
+> (Rev. 1, 01/2018 and the older ones) are incorrect.
+>
+> The correct offset values should be as below:
+>
+> 0x800 ~ 0x83F: PGC for core0 of A7 platform;
+> 0x840 ~ 0x87F: PGC for core1 of A7 platform;
+> 0x880 ~ 0x8BF: PGC for SCU of A7 platform;
+> 0xA00 ~ 0xA3F: PGC for fastmix/megamix;
+> 0xC00 ~ 0xC3F: PGC for MIPI PHY;
+> 0xC40 ~ 0xC7F: PGC for PCIe_PHY;
+> 0xC80 ~ 0xCBF: PGC for USB OTG1 PHY;
+> 0xCC0 ~ 0xCFF: PGC for USB OTG2 PHY;
+> 0xD00 ~ 0xD3F: PGC for USB HSIC PHY;
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Acked-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 
->  	entry->uid = INVALID_UID;
->  	entry->fowner = INVALID_UID;
-> @@ -926,7 +926,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  		temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
->  	else if (entry->func == POLICY_CHECK)
->  		temp_ima_appraise |= IMA_APPRAISE_POLICY;
-> -	audit_log_format(ab, "res=%d", !result);
-> +	integrity_audit_msg_common(ab, NULL, NULL,
-> +				   "policy_update", "parse_rule", result);
->  	audit_log_end(ab);
->  	return result;
->  }
+Thanks for the fix:
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
