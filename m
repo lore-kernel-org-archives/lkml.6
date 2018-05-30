@@ -1,222 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754762AbeE3EJD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 00:09:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51818 "EHLO mail.kernel.org"
+        id S1750990AbeE3EY5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 00:24:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43799 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750726AbeE3EJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 00:09:01 -0400
-Date: Tue, 29 May 2018 21:09:00 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 3/3] f2fs: clean up symbol namespace
-Message-ID: <20180530040859.GC39056@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180529162041.16005-1-chao@kernel.org>
- <20180529162041.16005-3-chao@kernel.org>
+        id S1750708AbeE3EYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 00:24:55 -0400
+Subject: Re: [PATCH 1/8] xen/grant-table: Make set/clear page private code
+ shared
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180525153331.31188-1-andr2000@gmail.com>
+ <20180525153331.31188-2-andr2000@gmail.com>
+From: Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a43d9dd4-c826-1dab-e397-d60796de3a76@suse.com>
+Date: Wed, 30 May 2018 06:24:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529162041.16005-3-chao@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20180525153331.31188-2-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
+On 25/05/18 17:33, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> 
+> Make set/clear page private code shared and accessible to
+> other kernel modules which can re-use these instead of open-coding.
+> 
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> ---
+>  drivers/xen/grant-table.c | 54 +++++++++++++++++++++++++--------------
+>  include/xen/grant_table.h |  3 +++
+>  2 files changed, 38 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
+> index 27be107d6480..d7488226e1f2 100644
+> --- a/drivers/xen/grant-table.c
+> +++ b/drivers/xen/grant-table.c
+> @@ -769,29 +769,18 @@ void gnttab_free_auto_xlat_frames(void)
+>  }
+>  EXPORT_SYMBOL_GPL(gnttab_free_auto_xlat_frames);
+>  
+> -/**
+> - * gnttab_alloc_pages - alloc pages suitable for grant mapping into
+> - * @nr_pages: number of pages to alloc
+> - * @pages: returns the pages
+> - */
+> -int gnttab_alloc_pages(int nr_pages, struct page **pages)
+> +int gnttab_pages_set_private(int nr_pages, struct page **pages)
+>  {
+>  	int i;
+> -	int ret;
+> -
+> -	ret = alloc_xenballooned_pages(nr_pages, pages);
+> -	if (ret < 0)
+> -		return ret;
+>  
+>  	for (i = 0; i < nr_pages; i++) {
+>  #if BITS_PER_LONG < 64
+>  		struct xen_page_foreign *foreign;
+>  
+>  		foreign = kzalloc(sizeof(*foreign), GFP_KERNEL);
+> -		if (!foreign) {
+> -			gnttab_free_pages(nr_pages, pages);
+> +		if (!foreign)
+>  			return -ENOMEM;
+> -		}
+> +
+>  		set_page_private(pages[i], (unsigned long)foreign);
+>  #endif
+>  		SetPagePrivate(pages[i]);
+> @@ -799,14 +788,30 @@ int gnttab_alloc_pages(int nr_pages, struct page **pages)
+>  
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL(gnttab_alloc_pages);
+> +EXPORT_SYMBOL(gnttab_pages_set_private);
 
-Thank you for the work.
-I resolved some conflicts and modified some function names.
-Please take a look at this.
+EXPORT_SYMBOL_GPL()
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev-test
+>  
+>  /**
+> - * gnttab_free_pages - free pages allocated by gnttab_alloc_pages()
+> - * @nr_pages; number of pages to free
+> - * @pages: the pages
+> + * gnttab_alloc_pages - alloc pages suitable for grant mapping into
+> + * @nr_pages: number of pages to alloc
+> + * @pages: returns the pages
+>   */
+> -void gnttab_free_pages(int nr_pages, struct page **pages)
+> +int gnttab_alloc_pages(int nr_pages, struct page **pages)
+> +{
+> +	int ret;
+> +
+> +	ret = alloc_xenballooned_pages(nr_pages, pages);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = gnttab_pages_set_private(nr_pages, pages);
+> +	if (ret < 0)
+> +		gnttab_free_pages(nr_pages, pages);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(gnttab_alloc_pages);
+> +
+> +void gnttab_pages_clear_private(int nr_pages, struct page **pages)
+>  {
+>  	int i;
+>  
+> @@ -818,6 +823,17 @@ void gnttab_free_pages(int nr_pages, struct page **pages)
+>  			ClearPagePrivate(pages[i]);
+>  		}
+>  	}
+> +}
+> +EXPORT_SYMBOL(gnttab_pages_clear_private);
 
----
- fs/f2fs/checkpoint.c |  8 ++++----
- fs/f2fs/dir.c        |  6 +++---
- fs/f2fs/f2fs.h       | 10 +++++-----
- fs/f2fs/file.c       |  2 +-
- fs/f2fs/gc.c         |  4 ++--
- fs/f2fs/namei.c      |  4 ++--
- fs/f2fs/recovery.c   |  2 +-
- 7 files changed, 18 insertions(+), 18 deletions(-)
+EXPORT_SYMBOL_GPL()
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 078c2d5c5b2e..8eb184c3de84 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -24,7 +24,7 @@
- #include <trace/events/f2fs.h>
- 
- static struct kmem_cache *ino_entry_slab;
--struct kmem_cache *inode_entry_slab;
-+struct kmem_cache *f2fs_inode_entry_slab;
- 
- void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io)
- {
-@@ -1490,9 +1490,9 @@ int __init f2fs_create_checkpoint_caches(void)
- 			sizeof(struct ino_entry));
- 	if (!ino_entry_slab)
- 		return -ENOMEM;
--	inode_entry_slab = f2fs_kmem_cache_create("f2fs_inode_entry",
-+	f2fs_inode_entry_slab = f2fs_kmem_cache_create("f2fs_inode_entry",
- 			sizeof(struct inode_entry));
--	if (!inode_entry_slab) {
-+	if (!f2fs_inode_entry_slab) {
- 		kmem_cache_destroy(ino_entry_slab);
- 		return -ENOMEM;
- 	}
-@@ -1502,5 +1502,5 @@ int __init f2fs_create_checkpoint_caches(void)
- void f2fs_destroy_checkpoint_caches(void)
- {
- 	kmem_cache_destroy(ino_entry_slab);
--	kmem_cache_destroy(inode_entry_slab);
-+	kmem_cache_destroy(f2fs_inode_entry_slab);
- }
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index eedfa2a13786..7f955c4e86a4 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -586,7 +586,7 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 	return err;
- }
- 
--int __f2fs_do_add_link(struct inode *dir, struct fscrypt_name *fname,
-+int f2fs_add_dentry(struct inode *dir, struct fscrypt_name *fname,
- 				struct inode *inode, nid_t ino, umode_t mode)
- {
- 	struct qstr new_name;
-@@ -610,7 +610,7 @@ int __f2fs_do_add_link(struct inode *dir, struct fscrypt_name *fname,
-  * Caller should grab and release a rwsem by calling f2fs_lock_op() and
-  * f2fs_unlock_op().
-  */
--int __f2fs_add_link(struct inode *dir, const struct qstr *name,
-+int f2fs_do_add_link(struct inode *dir, const struct qstr *name,
- 				struct inode *inode, nid_t ino, umode_t mode)
- {
- 	struct fscrypt_name fname;
-@@ -639,7 +639,7 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
- 	} else if (IS_ERR(page)) {
- 		err = PTR_ERR(page);
- 	} else {
--		err = __f2fs_do_add_link(dir, &fname, inode, ino, mode);
-+		err = f2fs_add_dentry(dir, &fname, inode, ino, mode);
- 	}
- 	fscrypt_free_filename(&fname);
- 	return err;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ba1063ed39eb..f167d01443fe 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2626,7 +2626,7 @@ static inline int get_inline_xattr_addrs(struct inode *inode)
- 	return F2FS_I(inode)->i_inline_xattr_size;
- }
- 
--#define get_inode_mode(i) \
-+#define f2fs_get_inode_mode(i) \
- 	((is_inode_flag_set(i, FI_ACL_MODE)) ? \
- 	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
- 
-@@ -2744,9 +2744,9 @@ void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *d,
- int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 			const struct qstr *orig_name,
- 			struct inode *inode, nid_t ino, umode_t mode);
--int __f2fs_do_add_link(struct inode *dir, struct fscrypt_name *fname,
-+int f2fs_add_dentry(struct inode *dir, struct fscrypt_name *fname,
- 			struct inode *inode, nid_t ino, umode_t mode);
--int __f2fs_add_link(struct inode *dir, const struct qstr *name,
-+int f2fs_do_add_link(struct inode *dir, const struct qstr *name,
- 			struct inode *inode, nid_t ino, umode_t mode);
- void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 			struct inode *dir, struct inode *inode);
-@@ -2755,7 +2755,7 @@ bool f2fs_empty_dir(struct inode *dir);
- 
- static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
- {
--	return __f2fs_add_link(d_inode(dentry->d_parent), &dentry->d_name,
-+	return f2fs_do_add_link(d_inode(dentry->d_parent), &dentry->d_name,
- 				inode, inode->i_ino, inode->i_mode);
- }
- 
-@@ -3190,7 +3190,7 @@ extern const struct inode_operations f2fs_dir_inode_operations;
- extern const struct inode_operations f2fs_symlink_inode_operations;
- extern const struct inode_operations f2fs_encrypted_symlink_inode_operations;
- extern const struct inode_operations f2fs_special_inode_operations;
--extern struct kmem_cache *inode_entry_slab;
-+extern struct kmem_cache *f2fs_inode_entry_slab;
- 
- /*
-  * inline.c
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 610ecc7e3864..b7b8ae92abbe 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -812,7 +812,7 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 	__setattr_copy(inode, attr);
- 
- 	if (attr->ia_valid & ATTR_MODE) {
--		err = posix_acl_chmod(inode, get_inode_mode(inode));
-+		err = posix_acl_chmod(inode, f2fs_get_inode_mode(inode));
- 		if (err || is_inode_flag_set(inode, FI_ACL_MODE)) {
- 			inode->i_mode = F2FS_I(inode)->i_acl_mode;
- 			clear_inode_flag(inode, FI_ACL_MODE);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index c43eb3902e62..2a97ce7bc91d 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -429,7 +429,7 @@ static void add_gc_inode(struct gc_inode_list *gc_list, struct inode *inode)
- 		iput(inode);
- 		return;
- 	}
--	new_ie = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
-+	new_ie = f2fs_kmem_cache_alloc(f2fs_inode_entry_slab, GFP_NOFS);
- 	new_ie->inode = inode;
- 
- 	f2fs_radix_tree_insert(&gc_list->iroot, inode->i_ino, new_ie);
-@@ -443,7 +443,7 @@ static void put_gc_inode(struct gc_inode_list *gc_list)
- 		radix_tree_delete(&gc_list->iroot, ie->inode->i_ino);
- 		iput(ie->inode);
- 		list_del(&ie->list);
--		kmem_cache_free(inode_entry_slab, ie);
-+		kmem_cache_free(f2fs_inode_entry_slab, ie);
- 	}
- }
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index fe90202a95c1..5d2d822092a2 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -401,7 +401,7 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
- 		err = PTR_ERR(page);
- 		goto out;
- 	} else {
--		err = __f2fs_add_link(dir, &dot, NULL, dir->i_ino, S_IFDIR);
-+		err = f2fs_do_add_link(dir, &dot, NULL, dir->i_ino, S_IFDIR);
- 		if (err)
- 			goto out;
- 	}
-@@ -412,7 +412,7 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
- 	else if (IS_ERR(page))
- 		err = PTR_ERR(page);
- 	else
--		err = __f2fs_add_link(dir, &dotdot, NULL, pino, S_IFDIR);
-+		err = f2fs_do_add_link(dir, &dotdot, NULL, pino, S_IFDIR);
- out:
- 	if (!err)
- 		clear_inode_flag(dir, FI_INLINE_DOTS);
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index d7f20af33206..38f25f0b193a 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -173,7 +173,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
- 	} else if (IS_ERR(page)) {
- 		err = PTR_ERR(page);
- 	} else {
--		err = __f2fs_do_add_link(dir, &fname, inode,
-+		err = f2fs_add_dentry(dir, &fname, inode,
- 					inode->i_ino, inode->i_mode);
- 	}
- 	if (err == -ENOMEM)
--- 
-2.17.0.441.gb46fe60e1d-goog
+
+Juergen
