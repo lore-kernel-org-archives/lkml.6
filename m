@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968908AbeE3JUp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:20:45 -0400
-Received: from mga17.intel.com ([192.55.52.151]:22680 "EHLO mga17.intel.com"
+        id S968883AbeE3JUl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:20:41 -0400
+Received: from mga17.intel.com ([192.55.52.151]:22682 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965116AbeE3JUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:20:37 -0400
+        id S968864AbeE3JUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 05:20:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,459,1520924400";
-   d="scan'208";a="232890677"
+   d="scan'208";a="232890685"
 From: Feng Tang <feng.tang@intel.com>
 To: Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -18,90 +18,90 @@ To: Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@kernel.org>,
         Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
 Cc: alek.du@intel.com, Feng Tang <feng.tang@intel.com>
-Subject: [RFC 1/2] printk: Enable platform to provide a early boot clock
-Date: Wed, 30 May 2018 17:20:58 +0800
-Message-Id: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
+Subject: [RFC 2/2] x86, tsc: Enable clock for ealry printk timestamp
+Date: Wed, 30 May 2018 17:20:59 +0800
+Message-Id: <1527672059-6225-2-git-send-email-feng.tang@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
+References: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently printk timestamp mostly come from the sched_clock which
-depends on the clock setup, so there are many kernel logs started
-with "[    0.000000]   " before the clock is calibrated.
+To show time info in kernel log earlier and help optimizing kernel
+boot time, printk adds a debug hook "boot_printk_clock_fn()"  for
+capable platform which has accurate clock in early boot phase.
 
-This patch will provide an debug option for specific platform to
-provide a early boot time clock, so that we can have time info in
-kernel log much earlier, which can show the time info for the early
-kernel boot, and make boottime tuning/optimization easier (boot time
-is critical for phone/tablet and embedded devices).
-
-Capable platform only need to setup the "boot_printk_clock_fn"
-which could return time in nano seconds.
-
-Together with a TSC patch on x86 system, we have easily captured
-some early boottime killer like unwind_init() which takes about
-300ms in boot phase.
+This patch will add early param setup option, so that user can
+chose to provide a tsc based early printk clock simply by adding
+in command line: "boot_tsc=xxxxM" (xxxxM is the stable TSC freq).
 
 Signed-off-by: Feng Tang <feng.tang@intel.com>
 ---
- include/linux/printk.h |  3 +++
- kernel/printk/printk.c | 15 +++++++++++++--
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ arch/x86/kernel/tsc.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 6d7e800..7c13d4a 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -188,6 +188,9 @@ extern bool printk_timed_ratelimit(unsigned long *caller_jiffies,
- extern int printk_delay_msec;
- extern int dmesg_restrict;
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 74392d9..d99eb70 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -281,6 +281,57 @@ static int __init tsc_setup(char *str)
  
-+/* Return boot timestamp in nano seconds */
-+extern u64 (*boot_printk_clock_fn)(void);
-+
- extern int
- devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write, void __user *buf,
- 			  size_t *lenp, loff_t *ppos);
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 2f4af21..7feffd8 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -190,6 +190,17 @@ int devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write,
- 	return 0;
- }
+ __setup("tsc=", tsc_setup);
  
-+u64 (*boot_printk_clock_fn)(void) __read_mostly;
 +
-+static u64 printk_clock(void)
++/*
++ * This is to provide a not-so-accurate clock for printk timestamp in
++ * early boot phase (before sched_clock is setup).It could be used for
++ * analyzing/optimising kernel boot time and tools like bootchart.
++ *
++ * User can use it by simply append something like
++ *	"boot_tsc=1881M"
++ * to cmdline for a platform with a stable 1881MHz TSC.
++ */
++static u64 boot_tsc_mhz;
++static u64 boot_tsc_offset;
++
++static u64 boot_tsc_clock(void)
 +{
-+	/* If platform provides early boot printk clock, then use it */
-+	if (unlikely(system_state == SYSTEM_BOOTING && boot_printk_clock_fn))
-+		return boot_printk_clock_fn();
-+	else
-+		return local_clock();
++	u64 cur_tsc, cur_ns;
++
++	cur_tsc	= rdtsc();
++	cur_tsc -= boot_tsc_offset;
++
++	/* return value in ns */
++	cur_ns = div64_u64(cur_tsc * 1000, boot_tsc_mhz);
++	return cur_ns;
 +}
 +
- /*
-  * Number of registered extended console drivers.
-  *
-@@ -628,7 +639,7 @@ static int log_store(int facility, int level,
- 	if (ts_nsec > 0)
- 		msg->ts_nsec = ts_nsec;
- 	else
--		msg->ts_nsec = local_clock();
-+		msg->ts_nsec = printk_clock();
- 	memset(log_dict(msg) + dict_len, 0, pad_len);
- 	msg->len = size;
- 
-@@ -1775,7 +1786,7 @@ static bool cont_add(int facility, int level, enum log_flags flags, const char *
- 		cont.facility = facility;
- 		cont.level = level;
- 		cont.owner = current;
--		cont.ts_nsec = local_clock();
-+		cont.ts_nsec = printk_clock();
- 		cont.flags = flags;
- 	}
++static int __init boot_tsc_setup(char *p)
++{
++	u64 tsc_hz;
++
++	if (!p)
++		return -EINVAL;
++
++	boot_tsc_offset = rdtsc();
++
++	tsc_hz = memparse(p, &p);
++	boot_tsc_mhz = div64_u64(tsc_hz, 1024 * 1024);
++	if (boot_tsc_mhz == 0)
++		return -EINVAL;
++
++	pr_info("TSC has run for %lld us\n",
++		div64_u64(boot_tsc_offset, boot_tsc_mhz));
++
++	/* Setup the early printk clock */
++	boot_printk_clock_fn = boot_tsc_clock;
++	pr_info("TSC: Setup early printk timestamp with %lldM TSC.",
++		boot_tsc_mhz);
++
++	return 0;
++}
++early_param("boot_tsc", boot_tsc_setup);
++
+ #define MAX_RETRIES     5
+ #define SMI_TRESHOLD    50000
  
 -- 
 2.7.4
