@@ -1,337 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968902AbeE3JKz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:10:55 -0400
-Received: from mx.socionext.com ([202.248.49.38]:35855 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968835AbeE3JJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:09:53 -0400
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-media@vger.kernel.org
-Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH 7/8] media: uniphier: add LD11 adapter driver for ISDB
-Date: Wed, 30 May 2018 18:09:45 +0900
-Message-Id: <20180530090946.1635-8-suzuki.katsuhiro@socionext.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180530090946.1635-1-suzuki.katsuhiro@socionext.com>
-References: <20180530090946.1635-1-suzuki.katsuhiro@socionext.com>
+        id S968803AbeE3JNI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:13:08 -0400
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:44994 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964877AbeE3JND (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 05:13:03 -0400
+X-Google-Smtp-Source: ADUXVKJ0vFgLE5+uPRu5ypaC8fKeeoA69wiBwwY6NdNHswbv45BBHcnjLxxEG/yHYhLjdSIXHu+vG7qULYpTZmOJ0/0=
+MIME-Version: 1.0
+In-Reply-To: <bef30b73-bf68-929e-26b5-08f63e5ca885@oracle.com>
+References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180522200214.GF9536@vader> <c0b8f2e3-b286-06a7-306d-141f155eff01@oracle.com>
+ <CACVXFVN=LHTq=x9n7U7gciR41rWfTHn9uHmZMUHt6=RdvJanXQ@mail.gmail.com> <bef30b73-bf68-929e-26b5-08f63e5ca885@oracle.com>
+From: Ming Lei <tom.leiming@gmail.com>
+Date: Wed, 30 May 2018 17:13:00 +0800
+Message-ID: <CACVXFVNLq7CiBMTDPRcHLNZBWLYXWCpdb4G0iqBUon9f-GpsAA@mail.gmail.com>
+Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
+To: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc: Omar Sandoval <osandov@osandov.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds UniPhier LD11 DVB adapter driver for ISDB-S/T
-that equipments SONY SUT-PJ series using CXD2858 tuner and Socionext
-MN884433 demodulator.
+On Wed, May 30, 2018 at 4:36 PM, jianchao.wang
+<jianchao.w.wang@oracle.com> wrote:
+> Hi ming
+>
+> Thanks for your kindly response.
+>
+> On 05/30/2018 04:22 PM, Ming Lei wrote:
+>>>> you could keep the software queues as-is but add our own version of
+>>>> flush_busy_ctxs() that only removes requests of the domain that we want.
+>>>> If one domain gets backed up, that might get messy with long iterations,
+>>>> though.
+>>> Yes, I also considered this approach :)
+>>> But the long iterations on every ctx->rq_list looks really inefficient.
+>> Right, this list can be quite long if dispatch token is used up.
+>>
+>> You might try to introduce per-domain list into ctx directly, then 'none'
+>> may benefit from this change too since bio merge should be done
+>> on the per-domain list actually.
+>
+> Yes, it maybe good for merging of 'none', because the rq_list is split into 3
+> lists, and not need to iterate the whole rq_list any more.
+> But what's about the dispatch when there is no io scheduler.
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
----
- drivers/media/platform/uniphier/Kconfig       |  10 +
- drivers/media/platform/uniphier/Makefile      |   1 +
- .../platform/uniphier/ld11-mn884433-helene.c  | 265 ++++++++++++++++++
- 3 files changed, 276 insertions(+)
- create mode 100644 drivers/media/platform/uniphier/ld11-mn884433-helene.c
+blk_mq_flush_busy_ctxs() and blk_mq_dequeue_from_ctx() should work
+fine in case of 'none' if per-domain list is added to ctx. Then we can make
+none to be a bit fair on READ/WRITE.
 
-diff --git a/drivers/media/platform/uniphier/Kconfig b/drivers/media/platform/uniphier/Kconfig
-index 8f3a662a391c..0fc9bbfc170b 100644
---- a/drivers/media/platform/uniphier/Kconfig
-+++ b/drivers/media/platform/uniphier/Kconfig
-@@ -15,3 +15,13 @@ config DVB_UNIPHIER_LD11
- 	  Driver for the HSC (High speed Stream Controller) for
- 	  UniPhier LD11/LD20.
- 	  Say Y when you want to support this hardware.
-+
-+config DVB_UNIPHIER_LD11_ISDB
-+	bool "Support UniPhier LD11 ISDB adapters"
-+	depends on DVB_UNIPHIER
-+	help
-+	  Driver for LD11 ISDB-S/T adapters which use
-+	  Demux: Socionext LD11 HSC
-+	  Demod: Socionext MN884433
-+	  Tuner: SONY HELENE (CXD2858ER)
-+	  Say Y when you want to support this adapters.
-diff --git a/drivers/media/platform/uniphier/Makefile b/drivers/media/platform/uniphier/Makefile
-index 9e75ad081b77..e4b06f8a37b5 100644
---- a/drivers/media/platform/uniphier/Makefile
-+++ b/drivers/media/platform/uniphier/Makefile
-@@ -8,3 +8,4 @@ ccflags-y += -Idrivers/media/dvb-frontends/
- ccflags-y += -Idrivers/media/tuners/
- 
- uniphier-dvb-y += uniphier-adapter.o
-+uniphier-dvb-$(CONFIG_DVB_UNIPHIER_LD11_ISDB) += ld11-mn884433-helene.o
-diff --git a/drivers/media/platform/uniphier/ld11-mn884433-helene.c b/drivers/media/platform/uniphier/ld11-mn884433-helene.c
-new file mode 100644
-index 000000000000..f4f48b6a0211
---- /dev/null
-+++ b/drivers/media/platform/uniphier/ld11-mn884433-helene.c
-@@ -0,0 +1,265 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Socionext UniPhier LD11 adapter driver for ISDB.
-+// Using Socionext MN884433 ISDB-S/ISDB-T demodulator and
-+// SONY HELENE tuner.
-+//
-+// Copyright (c) 2018 Socionext Inc.
-+
-+#include <linux/clk.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/reset.h>
-+
-+#include "sc1501a.h"
-+#include "cxd2858.h"
-+#include "helene.h"
-+#include "hsc.h"
-+#include "uniphier-adapter.h"
-+
-+static struct sc1501a_config mn884433_conf[] = {
-+	{ .if_freq = LOW_IF_4MHZ, },
-+};
-+
-+static int uniphier_adapter_demod_probe(struct uniphier_adapter_priv *priv)
-+{
-+	const struct uniphier_adapter_spec *spec = priv->spec;
-+	struct device *dev = &priv->pdev->dev;
-+	struct device_node *node;
-+	int ret, i;
-+
-+	priv->demod_mclk = devm_clk_get(dev, "demod-mclk");
-+	if (IS_ERR(priv->demod_mclk)) {
-+		dev_err(dev, "Failed to request demod-mclk: %ld\n",
-+			PTR_ERR(priv->demod_mclk));
-+		return PTR_ERR(priv->demod_mclk);
-+	}
-+
-+	priv->demod_gpio = devm_gpiod_get_optional(dev, "reset-demod",
-+						   GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->demod_gpio)) {
-+		dev_err(dev, "Failed to request demod_gpio: %ld\n",
-+			PTR_ERR(priv->demod_gpio));
-+		return PTR_ERR(priv->demod_gpio);
-+	}
-+
-+	node = of_parse_phandle(dev->of_node, "demod-i2c-bus", 0);
-+	if (!node) {
-+		dev_err(dev, "Failed to parse demod-i2c-bus\n");
-+		return -ENODEV;
-+	}
-+
-+	priv->demod_i2c_adapter = of_find_i2c_adapter_by_node(node);
-+	if (!priv->demod_i2c_adapter) {
-+		dev_err(dev, "Failed to find demod i2c adapter\n");
-+		of_node_put(node);
-+		return -ENODEV;
-+	}
-+	of_node_put(node);
-+
-+	mn884433_conf[0].reset_gpio = priv->demod_gpio;
-+	for (i = 0; i < spec->adapters; i++) {
-+		struct i2c_client *c;
-+
-+		mn884433_conf[i].mclk = priv->demod_mclk;
-+		mn884433_conf[i].fe = &priv->fe[i].fe;
-+
-+		c = dvb_module_probe(spec->demod_i2c_info[i].type, NULL,
-+				     priv->demod_i2c_adapter,
-+				     spec->demod_i2c_info[i].addr,
-+				     &mn884433_conf[i]);
-+		if (!c) {
-+			dev_err(dev, "Failed to probe demod\n");
-+			ret = -ENODEV;
-+			goto err_out;
-+		}
-+		priv->fe[i].demod_i2c = c;
-+	}
-+
-+	return 0;
-+
-+err_out:
-+	for (i = 0; i < spec->adapters; i++)
-+		dvb_module_release(priv->fe[i].demod_i2c);
-+
-+	return ret;
-+}
-+
-+static struct helene_config helene_conf[] = {
-+	{ .xtal = SONY_HELENE_XTAL_16000, },
-+	{ .xtal = SONY_HELENE_XTAL_16000, },
-+};
-+
-+static int uniphier_adapter_tuner_probe(struct uniphier_adapter_priv *priv)
-+{
-+	const struct uniphier_adapter_spec *spec = priv->spec;
-+	struct device *dev = &priv->pdev->dev;
-+	struct device_node *node;
-+	int ret, i;
-+
-+	priv->tuner_gpio = devm_gpiod_get_optional(dev, "reset-tuner",
-+						   GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->tuner_gpio)) {
-+		dev_err(dev, "Failed to request tuner_gpio: %ld\n",
-+			PTR_ERR(priv->tuner_gpio));
-+		return PTR_ERR(priv->tuner_gpio);
-+	}
-+	gpiod_set_value_cansleep(priv->tuner_gpio, 0);
-+
-+	node = of_parse_phandle(dev->of_node, "tuner-i2c-bus", 0);
-+	if (!node) {
-+		dev_err(dev, "Failed to parse tuner-i2c-bus\n");
-+		return -ENODEV;
-+	}
-+
-+	priv->tuner_i2c_adapter = of_find_i2c_adapter_by_node(node);
-+	if (!priv->tuner_i2c_adapter) {
-+		dev_err(dev, "Failed to find tuner i2c adapter\n");
-+		of_node_put(node);
-+		return -ENODEV;
-+	}
-+	of_node_put(node);
-+
-+	for (i = 0; i < priv->spec->adapters; i++) {
-+		struct i2c_client *c;
-+
-+		helene_conf[i].fe = priv->fe[i].fe;
-+
-+		c = dvb_module_probe(spec->tuner_i2c_info[i].type, NULL,
-+				     priv->tuner_i2c_adapter,
-+				     spec->tuner_i2c_info[i].addr,
-+				     &helene_conf[i]);
-+		if (!c) {
-+			dev_err(dev, "Failed to probe tuner\n");
-+			ret = -ENODEV;
-+			goto err_out;
-+		}
-+		priv->fe[i].tuner_i2c = c;
-+	}
-+
-+	return 0;
-+
-+err_out:
-+	for (i = 0; i < spec->adapters; i++)
-+		dvb_module_release(priv->fe[i].tuner_i2c);
-+
-+	return ret;
-+}
-+
-+static int uniphier_adapter_probe(struct platform_device *pdev)
-+{
-+	struct uniphier_adapter_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	int i, ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+	priv->pdev = pdev;
-+
-+	priv->spec = of_device_get_match_data(dev);
-+	if (!priv->spec)
-+		return -EINVAL;
-+
-+	priv->fe = devm_kzalloc(dev, sizeof(*priv->fe) * priv->spec->adapters,
-+				GFP_KERNEL);
-+	if (!priv->fe)
-+		return -ENOMEM;
-+
-+	ret = uniphier_adapter_demux_probe(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = uniphier_adapter_demod_probe(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = uniphier_adapter_tuner_probe(priv);
-+	if (ret)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	for (i = 0; i < priv->spec->adapters; i++) {
-+		priv->chip->tsif[i].fe = priv->fe[i].fe;
-+
-+		ret = hsc_register_dvb(&priv->chip->tsif[i]);
-+		if (ret) {
-+			dev_err(dev, "Failed to register adapter\n");
-+			goto err_out_if;
-+		}
-+	}
-+
-+	return 0;
-+
-+err_out_if:
-+	for (i = 0; i < priv->spec->adapters; i++)
-+		hsc_unregister_dvb(&priv->chip->tsif[i]);
-+
-+	return ret;
-+}
-+
-+static int uniphier_adapter_remove(struct platform_device *pdev)
-+{
-+	struct uniphier_adapter_priv *priv = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < priv->spec->adapters; i++) {
-+		hsc_dmaif_release(&priv->chip->dmaif[i]);
-+		hsc_tsif_release(&priv->chip->tsif[i]);
-+		hsc_unregister_dvb(&priv->chip->tsif[i]);
-+		dvb_module_release(priv->fe[i].tuner_i2c);
-+		dvb_module_release(priv->fe[i].demod_i2c);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct hsc_conf ld11_hsc_conf[] = {
-+	{
-+		.css_in = HSC_CSS_IN_SRLTS0,
-+		.css_out = HSC_CSS_OUT_TSI0,
-+		.dpll = HSC_DPLL0,
-+		.dma_out = HSC_DMA_OUT0,
-+	},
-+};
-+
-+static const struct i2c_board_info mn884433_i2c_info[] = {
-+	{ .type = "mn884433", .addr = 0x68, },
-+};
-+
-+static const struct i2c_board_info helene_i2c_info[] = {
-+	{ .type = "helene", .addr = 0x61, },
-+};
-+
-+static const struct uniphier_adapter_spec ld11_mn884433_helene_spec = {
-+	.adapters = 1,
-+	.hsc_conf = ld11_hsc_conf,
-+	.demod_i2c_info = mn884433_i2c_info,
-+	.tuner_i2c_info = helene_i2c_info,
-+};
-+
-+static const struct of_device_id uniphier_hsc_adapter_of_match[] = {
-+	{
-+		.compatible = "socionext,uniphier-ld11-mn884433-helene",
-+		.data = &ld11_mn884433_helene_spec,
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, uniphier_hsc_adapter_of_match);
-+
-+static struct platform_driver uniphier_hsc_adapter_driver = {
-+	.driver = {
-+		.name = "uniphier-ld11-isdb",
-+		.of_match_table = of_match_ptr(uniphier_hsc_adapter_of_match),
-+	},
-+	.probe  = uniphier_adapter_probe,
-+	.remove = uniphier_adapter_remove,
-+};
-+module_platform_driver(uniphier_hsc_adapter_driver);
-+
-+MODULE_AUTHOR("Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier LD11 adapter driver for ISDB.");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.0
+> We will dispatch request from ctx one by one at the moment.
+> If we have per-domain list in ctx, we have to introduce some policies to determine
+> which domain to dispatch, and these policies should be in io scheduler actually.
+
+The policy is done by IO scheduler, and you can just pick up request
+from ctx/domain list easily by introducing one blk-mq core API.
+
+Thanks,
+Ming Lei
