@@ -1,189 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753792AbeE3RoM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 13:44:12 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:40994 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932162AbeE3RoE (ORCPT
+        id S1753885AbeE3RqI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 13:46:08 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:46068 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751833AbeE3RqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 13:44:04 -0400
-X-Google-Smtp-Source: ADUXVKLVKLWeRzVMtj1hA2lclc+JUkyBnjCcUZXY+mVWJN9fJ7vI6k0hrOzZkvvkKcpGZwYAsiuSvQ==
-Subject: Re: [PATCH INTERNAL 2/3] PCI: iproc: Fix up corrupted PAXC root
- complex config registers
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-pci@vger.kernel.org, Ray Jui <rjui@broadcom.com>
-References: <1526577692-21104-1-git-send-email-ray.jui@broadcom.com>
- <1526577692-21104-3-git-send-email-ray.jui@broadcom.com>
- <20180530172733.GN39853@bhelgaas-glaptop.roam.corp.google.com>
-From: Ray Jui <ray.jui@broadcom.com>
-Message-ID: <715d8746-1b68-4342-6258-7d9c1b5035bc@broadcom.com>
-Date: Wed, 30 May 2018 10:43:59 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 30 May 2018 13:46:06 -0400
+X-Google-Smtp-Source: ADUXVKL9P/8XuOWoBNwElXgTbrTBzzQ4AMN7fq3WzKsT/FCAXtSXTG6f87JU3+Rxle/Y1xFU7ayDUw==
+Subject: Re: [PATCH 2/8] xen/balloon: Move common memory reservation routines
+ to a module
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180525153331.31188-1-andr2000@gmail.com>
+ <20180525153331.31188-3-andr2000@gmail.com>
+ <59ab73b0-967b-a82f-3b0d-95f1b0dc40a5@oracle.com>
+ <89de7bdb-8759-419f-63bf-8ed0d57650f0@gmail.com>
+ <edfa937b-3311-98db-2e6f-b4083598f796@oracle.com>
+ <6ca7f428-eede-2c14-85fe-da4a20bcea0d@gmail.com>
+ <5dd3378d-ac32-691e-1f80-7218a5d07fd6@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <43c17501-8865-6e1f-1a92-d947755d8fa8@gmail.com>
+Date: Wed, 30 May 2018 20:46:00 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180530172733.GN39853@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <5dd3378d-ac32-691e-1f80-7218a5d07fd6@oracle.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-
-On 5/30/2018 10:27 AM, Bjorn Helgaas wrote:
-> On Thu, May 17, 2018 at 10:21:31AM -0700, Ray Jui wrote:
->> On certain versions of Broadcom PAXC based root complexes, certain
->> regions of the configuration space are corrupted. As a result, it
->> prevents the Linux PCIe stack from traversing the linked list of the
->> capability registers completely and therefore the root complex is
->> not advertised as "PCIe capable". This prevents the correct PCIe RID
->> from being parsed in the kernel PCIe stack. A correct RID is required
->> for mapping to a stream ID from the SMMU or the device ID from the
->> GICv3 ITS
+On 05/30/2018 06:54 PM, Boris Ostrovsky wrote:
+> On 05/30/2018 04:29 AM, Oleksandr Andrushchenko wrote:
+>> On 05/29/2018 11:03 PM, Boris Ostrovsky wrote:
+>>> On 05/29/2018 02:22 PM, Oleksandr Andrushchenko wrote:
+>>>> On 05/29/2018 09:04 PM, Boris Ostrovsky wrote:
+>>>>> On 05/25/2018 11:33 AM, Oleksandr Andrushchenko wrote:
+>>>>> @@ -463,11 +457,6 @@ static enum bp_state
+>>>>> increase_reservation(unsigned long nr_pages)
+>>>>>         int rc;
+>>>>>         unsigned long i;
+>>>>>         struct page   *page;
+>>>>> -    struct xen_memory_reservation reservation = {
+>>>>> -        .address_bits = 0,
+>>>>> -        .extent_order = EXTENT_ORDER,
+>>>>> -        .domid        = DOMID_SELF
+>>>>> -    };
+>>>>>           if (nr_pages > ARRAY_SIZE(frame_list))
+>>>>>             nr_pages = ARRAY_SIZE(frame_list);
+>>>>> @@ -486,9 +475,7 @@ static enum bp_state
+>>>>> increase_reservation(unsigned long nr_pages)
+>>>>>             page = balloon_next_page(page);
+>>>>>         }
+>>>>>     -    set_xen_guest_handle(reservation.extent_start, frame_list);
+>>>>> -    reservation.nr_extents = nr_pages;
+>>>>> -    rc = HYPERVISOR_memory_op(XENMEM_populate_physmap, &reservation);
+>>>>> +    rc = xenmem_reservation_increase(nr_pages, frame_list);
+>>>>>         if (rc <= 0)
+>>>>>             return BP_EAGAIN;
+>>>>>     @@ -496,29 +483,7 @@ static enum bp_state
+>>>>> increase_reservation(unsigned long nr_pages)
+>>>>>             page = balloon_retrieve(false);
+>>>>>             BUG_ON(page == NULL);
+>>>>>     -#ifdef CONFIG_XEN_HAVE_PVMMU
+>>>>> -        /*
+>>>>> -         * We don't support PV MMU when Linux and Xen is using
+>>>>> -         * different page granularity.
+>>>>> -         */
+>>>>> -        BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
+>>>>> -
+>>>>> -        if (!xen_feature(XENFEAT_auto_translated_physmap)) {
+>>>>> -            unsigned long pfn = page_to_pfn(page);
+>>>>> -
+>>>>> -            set_phys_to_machine(pfn, frame_list[i]);
+>>>>> -
+>>>>> -            /* Link back into the page tables if not highmem. */
+>>>>> -            if (!PageHighMem(page)) {
+>>>>> -                int ret;
+>>>>> -                ret = HYPERVISOR_update_va_mapping(
+>>>>> -                        (unsigned long)__va(pfn << PAGE_SHIFT),
+>>>>> -                        mfn_pte(frame_list[i], PAGE_KERNEL),
+>>>>> -                        0);
+>>>>> -                BUG_ON(ret);
+>>>>> -            }
+>>>>> -        }
+>>>>> -#endif
+>>>>> +        xenmem_reservation_va_mapping_update(1, &page,
+>>>>> &frame_list[i]);
+>>>>>
+>>>>> Can you make a single call to xenmem_reservation_va_mapping_update(rc,
+>>>>> ...)? You need to keep track of pages but presumable they can be put
+>>>>> into an array (or a list). In fact, perhaps we can have
+>>>>> balloon_retrieve() return a set of pages.
+>>>> This is actually how it is used later on for dma-buf, but I just
+>>>> didn't want
+>>>> to alter original balloon code too much, but this can be done, in
+>>>> order of simplicity:
+>>>>
+>>>> 1. Similar to frame_list, e.g. static array of struct page* of size
+>>>> ARRAY_SIZE(frame_list):
+>>>> more static memory is used, but no allocations
+>>>>
+>>>> 2. Allocated at run-time with kcalloc: allocation can fail
+>>> If this is called in freeing DMA buffer code path or in error path then
+>>> we shouldn't do it.
+>>>
+>>>
+>>>> 3. Make balloon_retrieve() return a set of pages: will require
+>>>> list/array allocation
+>>>> and handling, allocation may fail, balloon_retrieve prototype change
+>>> balloon pages are strung on the lru list. Can we keep have
+>>> balloon_retrieve return a list of pages on that list?
+>> First of all, before we go deep in details, I will highlight
+>> the goal of the requested change: for balloon driver we call
+>> xenmem_reservation_va_mapping_update(*1*, &page, &frame_list[i]);
+>> from increase_reservation
+>> and
+>> xenmem_reservation_va_mapping_reset(*1*, &page);
+>> from decrease_reservation and it seems to be not elegant because of
+>> that one page/frame passed while we might have multiple pages/frames
+>> passed at once.
 >>
->> This patch fixes up the issue by manually populating the related
->> PCIe capabilities based on readings from the PCIe capability structure
+>> In the balloon driver the producer of pages for increase_reservation
+>> is balloon_retrieve(false) and for decrease_reservation it is
+>> alloc_page(gfp).
+>> In case of decrease_reservation the page is added on the list:
+>> LIST_HEAD(pages);
+>> [...]
+>> list_add(&page->lru, &pages);
 >>
->> Signed-off-by: Ray Jui <rjui@broadcom.com>
->> Reviewed-by: Anup Patel <anup.patel@broadcom.com>
->> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->> ---
->>   drivers/pci/quirks.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 95 insertions(+)
+>> and in case of increase_reservation it is retrieved page by page
+>> and can be put on a list as well with the same code from
+>> decrease_reservation, e.g.
+>> LIST_HEAD(pages);
+>> [...]
+>> list_add(&page->lru, &pages);
 >>
->> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
->> index 47dfea0..0cdbd0a 100644
->> --- a/drivers/pci/quirks.c
->> +++ b/drivers/pci/quirks.c
->> @@ -2198,6 +2198,101 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0, quirk_paxc_bridge);
->>   DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd750, quirk_paxc_bridge);
->>   DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802, quirk_paxc_bridge);
->>   DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804, quirk_paxc_bridge);
->> +
->> +/*
->> + * The PCI capabilities list for certain revisions of Broadcom PAXC root
->> + * complexes is incorrectly terminated due to corrupted configuration space
->> + * registers in the range of 0x50 - 0x5f
->> + *
->> + * As a result, the capability list becomes broken and prevent standard PCI
->> + * stack from being able to traverse to the PCIe capability structure
->> + */
->> +static void quirk_paxc_pcie_capability(struct pci_dev *pdev)
->> +{
->> +	int pos, i = 0;
->> +	u8 next_cap;
->> +	u16 reg16, *cap;
->> +	struct pci_cap_saved_state *state;
->> +
->> +	/* bail out if PCIe capability can be found */
->> +	if (pdev->pcie_cap || pci_find_capability(pdev, PCI_CAP_ID_EXP))
->> +		return;
->> +
->> +	/* locate the power management capability */
->> +	pos = pci_find_capability(pdev, PCI_CAP_ID_PM);
->> +	if (!pos)
->> +		return;
->> +
->> +	/* bail out if the next capability pointer is not 0x50/0x58 */
->> +	pci_read_config_byte(pdev, pos + 1, &next_cap);
->> +	if (next_cap != 0x50 && next_cap != 0x58)
->> +		return;
->> +
->> +	/* bail out if we do not terminate at 0x50/0x58 */
->> +	pos = next_cap;
->> +	pci_read_config_byte(pdev, pos + 1, &next_cap);
->> +	if (next_cap != 0x00)
->> +		return;
->> +
->> +	/*
->> +	 * On these buggy HW, PCIe capability structure is expected to be at
->> +	 * 0xac and should terminate the list
->> +	 *
->> +	 * Borrow the similar logic from theIntel DH895xCC VFs fixup to save
->> +	 * the PCIe capability list
->> +	 */
->> +	pos = 0xac;
->> +	pci_read_config_word(pdev, pos, &reg16);
->> +	if (reg16 == (0x0000 | PCI_CAP_ID_EXP)) {
->> +		u32 status;
->> +
->> +#ifndef PCI_EXP_SAVE_REGS
->> +#define PCI_EXP_SAVE_REGS     7
->> +#endif
->> +		int size = PCI_EXP_SAVE_REGS * sizeof(u16);
->> +
->> +		pdev->pcie_cap = pos;
->> +		pci_read_config_word(pdev, pos + PCI_EXP_FLAGS, &reg16);
->> +		pdev->pcie_flags_reg = reg16;
->> +		pci_read_config_word(pdev, pos + PCI_EXP_DEVCAP, &reg16);
->> +		pdev->pcie_mpss = reg16 & PCI_EXP_DEVCAP_PAYLOAD;
-> 
-> Is there any way you can fix this in iproc_pcie_config_read() instead,
-> by making it notice when we're reading a corrupted part of config
-> space, and then returning the correct data instead?  Is it just the
-> next capability pointer that's corrupted?
-
-Let me look into that and I'll get back.
-
-Thanks,
-
-Ray
-
-> 
-> If you could fix it in the config accessor, lspci would automatically
-> show all the correct data (I think lspci will still show the wrong
-> data with this patch).
-> 
-> The quirk seems like a maintenance issue because anything that calls
-> 
->    pci_find_capability(pdev, PCI_CAP_ID_EXP)
-> 
-> will get the wrong answer.
-> 
->> +
->> +		pdev->cfg_size = PCI_CFG_SPACE_EXP_SIZE;
->> +		if (pci_read_config_dword(pdev, PCI_CFG_SPACE_SIZE, &status) !=
->> +		    PCIBIOS_SUCCESSFUL || (status == 0xffffffff))
->> +			pdev->cfg_size = PCI_CFG_SPACE_SIZE;
->> +
->> +		if (pci_find_saved_cap(pdev, PCI_CAP_ID_EXP))
->> +			return;
->> +
->> +		state = kzalloc(sizeof(*state) + size, GFP_KERNEL);
->> +		if (!state)
->> +			return;
->> +
->> +		state->cap.cap_nr = PCI_CAP_ID_EXP;
->> +		state->cap.cap_extended = 0;
->> +		state->cap.size = size;
->> +		cap = (u16 *)&state->cap.data[0];
->> +		pcie_capability_read_word(pdev, PCI_EXP_DEVCTL, &cap[i++]);
->> +		pcie_capability_read_word(pdev, PCI_EXP_LNKCTL, &cap[i++]);
->> +		pcie_capability_read_word(pdev, PCI_EXP_SLTCTL, &cap[i++]);
->> +		pcie_capability_read_word(pdev, PCI_EXP_RTCTL,  &cap[i++]);
->> +		pcie_capability_read_word(pdev, PCI_EXP_DEVCTL2, &cap[i++]);
->> +		pcie_capability_read_word(pdev, PCI_EXP_LNKCTL2, &cap[i++]);
->> +		pcie_capability_read_word(pdev, PCI_EXP_SLTCTL2, &cap[i++]);
->> +		hlist_add_head(&state->next, &pdev->saved_cap_space);
->> +	}
->> +}
->> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_NX2_57810,
->> +			quirk_paxc_pcie_capability);
->> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16cd,
->> +			quirk_paxc_pcie_capability);
->> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0,
->> +			quirk_paxc_pcie_capability);
->> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802,
->> +			quirk_paxc_pcie_capability);
->> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804,
->> +			quirk_paxc_pcie_capability);
->>   #endif
->>   
->>   /* Originally in EDAC sources for i82875P:
->> -- 
->> 2.1.4
+>> Thus, both decrease_reservation and increase_reservation may hold
+>> their pages on a list before calling
+>> xenmem_reservation_va_mapping_{update|reset}.
 >>
+>> For that we need a prototype change:
+>> xenmem_reservation_va_mapping_reset(<nr_pages>, <list of pages>);
+>> But for xenmem_reservation_va_mapping_update it will look like:
+>> xenmem_reservation_va_mapping_update(<nr_pages>, <list of pages>,
+>> <array of frames>)
+>> which seems to be inconsistent. Converting entries of the static
+>> frame_list array
+>> into corresponding list doesn't seem to be cute as well.
+>>
+>> For dma-buf use-case arrays are more preferable as dma-buf constructs
+>> scatter-gather
+>> tables from array of pages etc. and if page list is passed then it
+>> needs to be
+>> converted into page array anyways.
+>>
+>> So, we can:
+>> 1. Keep the prototypes as is, e.g. accept array of pages and use
+>> nr_pages == 1 in
+>> case of balloon driver (existing code)
+>> 2. Statically allocate struct page* array in the balloon driver and
+>> fill it with pages
+>> when those pages are retrieved:
+>> static struct page *page_list[ARRAY_SIZE(frame_list)];
+>> which will take additional 8KiB of space on 64-bit platform, but
+>> simplify things a lot.
+>> 3. Allocate struct page *page_list[ARRAY_SIZE(frame_list)] dynamically
+>>
+>> As to Boris' suggestion "balloon pages are strung on the lru list. Can
+>> we keep have
+>> balloon_retrieve return a list of pages on that list?"
+>> Because of alloc_xenballooned_pages' retry logic for page retireval, e.g.
+>>      while (pgno < nr_pages) {
+>>          page = balloon_retrieve(true);
+>>          if (page) {
+>> [...]
+>>          } else {
+>>              ret = add_ballooned_pages(nr_pages - pgno);
+>> [...]
+>>      }
+>> I wouldn't change things that much.
+>>
+>> IMO, we can keep 1 page based API with the only overhead for balloon
+>> driver of
+>> function calls to xenmem_reservation_va_mapping_{update|reset} for
+>> each page.
+>
+>
+> I still think what I suggested is doable but we can come back to it
+> later and keep your per-page implementation for now.
+>
+> BTW, I also think you can further simplify
+> xenmem_reservation_va_mapping_* routines by bailing out right away if
+> xen_feature(XENFEAT_auto_translated_physmap). In fact, you might even
+> make them inlines, along the lines of
+>
+> inline void xenmem_reservation_va_mapping_reset(unsigned long count,
+> 					 struct page **pages)
+> {
+> #ifdef CONFIG_XEN_HAVE_PVMMU
+> 	if (!xen_feature(XENFEAT_auto_translated_physmap))
+> 		__xenmem_reservation_va_mapping_reset(...)
+> #endif
+> }
+How about:
+
+#ifdef CONFIG_XEN_HAVE_PVMMU
+static inline __xenmem_reservation_va_mapping_reset(struct page *page)
+{
+[...]
+}
+#endif
+
+and
+
+void xenmem_reservation_va_mapping_reset(unsigned long count,
+                      struct page **pages)
+{
+#ifdef CONFIG_XEN_HAVE_PVMMU
+     if (!xen_feature(XENFEAT_auto_translated_physmap)) {
+         int i;
+
+         for (i = 0; i < count; i++)
+             __xenmem_reservation_va_mapping_reset(pages[i]);
+     }
+#endif
+}
+
+This way I can use __xenmem_reservation_va_mapping_reset(page);
+instead of xenmem_reservation_va_mapping_reset(1, &page);
+> Or some such.
+>
+> -boris
+>
+> -boris
+>
+>
