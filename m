@@ -1,81 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753432AbeE3Npj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 09:45:39 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:46195 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751568AbeE3Npg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 09:45:36 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH v2] Bluetooth: btusb: Add additional device ID for
- RTL8822BE
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180530082300.5510-1-velemas@gmail.com>
-Date: Wed, 30 May 2018 15:45:33 +0200
-Cc: honwchong@gmail.com, Larry.Finger@lwfinger.net,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <49C07C09-4E20-4D04-BBE4-92402BB7E40C@holtmann.org>
-References: <6BC33699-4306-4EE9-A290-B5845A402C4C@holtmann.org>
- <20180530082300.5510-1-velemas@gmail.com>
-To: Artiom Vaskov <velemas@gmail.com>
-X-Mailer: Apple Mail (2.3445.6.18)
+        id S1753484AbeE3Nqv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 09:46:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39520 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750757AbeE3Nqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 09:46:48 -0400
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH] cpuset: Enforce that a child's cpus must be a subset of the parent
+Date: Wed, 30 May 2018 09:46:31 -0400
+Message-Id: <1527687991-1431-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Artiom,
+It was found that the cpuset.cpus could contain CPUs that are not listed
+in their parent's cpu list as shown by the command sequence below:
 
-> The Asus ROG GL702ZC laptop contains a Realtek RTL8822BE device with
-> an associated BT chip using a USB ID of 13d3:3526. This ID is added
-> to the driver.
-> 
-> The /sys/kernel/debug/usb/devices portion for this device is:
-> 
-> T:  Bus=01 Lev=01 Prnt=01 Port=09 Cnt=04 Dev#=  5 Spd=12   MxCh= 0
-> D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-> P:  Vendor=13d3 ProdID=3526 Rev= 1.10
-> S:  Manufacturer=Realtek
-> S:  Product=Bluetooth Radio
-> S:  SerialNumber=00e04c000001
-> C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-> E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-> E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> 
-> Signed-off-by: Artiom Vaskov <velemas@gmail.com>
-> ---
-> Changes in v2:
-> - changed commit message
-> 
-> drivers/bluetooth/btusb.c | 1 +
-> 1 file changed, 1 insertion(+)
+  # echo "+cpuset" >cgroup.subtree_control
+  # mkdir g1
+  # echo 0-5 >g1/cpuset.cpus
+  # mkdir g1/g11
+  # echo "+cpuset" > g1/cgroup.subtree_control
+  # echo 6-11 >g1/g11/cpuset.cpus
+  # grep -R . g1 | grep "\.cpus"
+  g1/cpuset.cpus:0-5
+  g1/cpuset.cpus.effective:0-5
+  g1/g11/cpuset.cpus:6-11
+  g1/g11/cpuset.cpus.effective:0-5
 
-patch has been applied to bluetooth-next tree.
+As the intersection of g11's cpus and that of g1 is empty, the effective
+cpus of g11 is just that of g1. The check in update_cpumask() is now
+corrected to make sure that cpus in a child cpus must be a subset of
+its parent's cpus. The error "write error: Invalid argument" will now
+be reported in the above case.
 
-Regards
+Reported-by: Juri Lelli <juri.lelli@redhat.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/cgroup/cpuset.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Marcel
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 71fb2d0..ceec438 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -1185,12 +1185,17 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+ 	if (!*buf) {
+ 		cpumask_clear(trialcs->cpus_allowed);
+ 	} else {
++		struct cpuset *parent = parent_cs(cs);
++
+ 		retval = cpulist_parse(buf, trialcs->cpus_allowed);
+ 		if (retval < 0)
+ 			return retval;
+ 
++		/*
++		 * The cpu list must be a subset of the parent.
++		 */
+ 		if (!cpumask_subset(trialcs->cpus_allowed,
+-				    top_cpuset.cpus_allowed))
++				    parent->cpus_allowed))
+ 			return -EINVAL;
+ 	}
+ 
+-- 
+1.8.3.1
