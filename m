@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752240AbeE3KfJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:35:09 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36650 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751724AbeE3KeO (ORCPT
+        id S1752271AbeE3Kfg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:35:36 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:37839 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751586AbeE3KeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:34:14 -0400
-X-Google-Smtp-Source: ADUXVKLq9tn0TT1l60nJxF53lvVxzUuULsuRLEbPd2j/n7N7hUKl4zP9zd/faH6IAo173FrAvBoQPg==
+        Wed, 30 May 2018 06:34:13 -0400
+X-Google-Smtp-Source: ADUXVKIeuMy4Pib4E95rRagmNad9CFWgosOupH2xW1zpiX++32xWlk3I994XcyhvpWHJMuxf0ASVCQ==
 From: Johan Hovold <johan@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
@@ -17,134 +17,190 @@ Cc: Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
         Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 0/8] gnss: add new GNSS subsystem
-Date: Wed, 30 May 2018 12:32:34 +0200
-Message-Id: <20180530103242.20773-1-johan@kernel.org>
+Subject: [PATCH v2 8/8] gnss: add device type support
+Date: Wed, 30 May 2018 12:32:42 +0200
+Message-Id: <20180530103242.20773-9-johan@kernel.org>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180530103242.20773-1-johan@kernel.org>
+References: <20180530103242.20773-1-johan@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds a new subsystem for GNSS receivers (e.g. GPS
-receivers).
+Add a "type" device attribute and a "GNSS_TYPE" uevent variable which
+can be used to determine the type of a GNSS device. The currently
+identified types reflect the protocol(s) supported by a device:
 
-While GNSS receivers are typically accessed using a UART interface they
-often also support other I/O interfaces such as I2C, SPI and USB, while
-yet other devices use iomem or even some form of remote-processor
-messaging (rpmsg).
+	"NMEA"	NMEA 0183
+	"SiRF"	SiRF Binary
+	"UBX"	UBX
 
-The new GNSS subsystem abstracts the underlying interface and provides a
-new "gnss" class type, which exposes a character-device interface (e.g.
-/dev/gnss0) to user space. This allows GNSS receivers to have a
-representation in the Linux device model, something which is important
-not least for power management purposes and which also allows for easy
-detection and identification of GNSS devices.
+Note that both SiRF and UBX type devices typically support a subset of
+NMEA 0183 with vendor extensions (e.g. to allow switching to the vendor
+protocol).
 
-Note that the character-device interface provides raw access to whatever
-protocol the receiver is (currently) using, such as NMEA 0183, UBX or
-SiRF Binary. These protocols are expected to be continued to be handled
-by user space for the time being, even if some hybrid solutions are also
-conceivable (e.g. to have kernel drivers issue management commands).
-
-This will still allow for better platform integration by allowing GNSS
-devices and their resources (e.g. regulators and enable-gpios) to be
-described by firmware and managed by kernel drivers rather than
-platform-specific scripts and services.
-
-While the current interface is kept minimal, it could be extended using
-IOCTLs, sysfs or uevents as needs and proper abstraction levels are
-identified and determined (e.g. for device and feature identification).
-
-Another possible extension is to add generic 1PPS support.
-
-I decided to go with a custom character-device interface rather than
-pretend that these abstract GNSS devices are still TTY devices (e.g.
-/dev/ttyGNSS0). Obviously, modifying line settings or reading modem
-control signals does not make any sense for a device using, say, a
-USB (not USB-serial) or iomem interface. This also means, however, that
-user space would no longer be able to set the line speed to match a new
-port configuration that can be set using the various GNSS protocols when
-the underlying interface is indeed a UART; instead this would need to be
-taken care of by the driver.
-
-Also note that writes are always synchronous instead of requiring user
-space to call tcdrain() after every command.
-
-This all seems to work well-enough (e.g. with gpsd), but please let me
-know if I've overlooked something which would indeed require a TTY
-interface instead.
-
-I have implemented drivers for receivers based on two common GNSS
-chipsets; SiRFstar and u-blox. Due to lack of hardware, the sirf driver
-has been tested using a mockup device and a USB-serial-based SiRFstar IV
-GPS (using out-of-tree USB-serial code). [ Let me know if you've got any
-evaluation kits to spare. ] The ubx driver has been tested using a
-u-blox 8 GNSS evaluation kit (thanks u-blox!).
-
-Finally, note that documentation (including kerneldoc) remains to be
-written, but hopefully this will not hinder review given that the
-current interfaces are fairly self-describing.
-
-Johan
-
-
-Changes in v2
- - add device type support (new patch 8/8)
- - fix one unprotected access to ops->write_raw
- - add support for optional v_bckp supply to ubx driver
- - drop unnecessary dev_dbgs (Greg)
- - simplify open() error path (Greg)
- - indent function parameters further
- - use gserial->drvdata to access variable length data
- - dt-bindings
-   - document required reg property for I2C, SPI and USB bindings (Rob)
-   - use "pin name:" prefix when referring to datasheet names (Rob)
-   - add vendor prefix to sirf gpios (Rob)
-   - add optional u-blox v-bckp supply (Rob)
-   - add optional u-blox extint gpio
-   - minor clean ups
-   - add Rob's Reviewed-by tag to patches (2/8 and 6/8)
-
-
-Johan Hovold (8):
-  gnss: add GNSS receiver subsystem
-  dt-bindings: add generic gnss binding
-  gnss: add generic serial driver
-  dt-bindings: gnss: add u-blox binding
-  gnss: add driver for u-blox receivers
-  dt-bindings: gnss: add sirfstar binding
-  gnss: add driver for sirfstar-based receivers
-  gnss: add device type support
-
- Documentation/ABI/testing/sysfs-class-gnss    |  15 +
- .../devicetree/bindings/gnss/gnss.txt         |  36 ++
- .../devicetree/bindings/gnss/sirfstar.txt     |  45 ++
- .../devicetree/bindings/gnss/u-blox.txt       |  44 ++
- .../devicetree/bindings/vendor-prefixes.txt   |   4 +
- MAINTAINERS                                   |   8 +
- drivers/Kconfig                               |   2 +
- drivers/Makefile                              |   1 +
- drivers/gnss/Kconfig                          |  43 ++
- drivers/gnss/Makefile                         |  16 +
- drivers/gnss/core.c                           | 420 ++++++++++++++++++
- drivers/gnss/serial.c                         | 275 ++++++++++++
- drivers/gnss/serial.h                         |  47 ++
- drivers/gnss/sirf.c                           | 408 +++++++++++++++++
- drivers/gnss/ubx.c                            | 153 +++++++
- include/linux/gnss.h                          |  75 ++++
- 16 files changed, 1592 insertions(+)
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ Documentation/ABI/testing/sysfs-class-gnss | 15 +++++++
+ MAINTAINERS                                |  1 +
+ drivers/gnss/core.c                        | 49 ++++++++++++++++++++++
+ drivers/gnss/sirf.c                        |  1 +
+ drivers/gnss/ubx.c                         |  2 +
+ include/linux/gnss.h                       |  9 ++++
+ 6 files changed, 77 insertions(+)
  create mode 100644 Documentation/ABI/testing/sysfs-class-gnss
- create mode 100644 Documentation/devicetree/bindings/gnss/gnss.txt
- create mode 100644 Documentation/devicetree/bindings/gnss/sirfstar.txt
- create mode 100644 Documentation/devicetree/bindings/gnss/u-blox.txt
- create mode 100644 drivers/gnss/Kconfig
- create mode 100644 drivers/gnss/Makefile
- create mode 100644 drivers/gnss/core.c
- create mode 100644 drivers/gnss/serial.c
- create mode 100644 drivers/gnss/serial.h
- create mode 100644 drivers/gnss/sirf.c
- create mode 100644 drivers/gnss/ubx.c
- create mode 100644 include/linux/gnss.h
 
+diff --git a/Documentation/ABI/testing/sysfs-class-gnss b/Documentation/ABI/testing/sysfs-class-gnss
+new file mode 100644
+index 000000000000..3bcdf8e2496a
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-gnss
+@@ -0,0 +1,15 @@
++What:		/sys/class/gnss/gnssN/type
++Date:		May 2018
++KernelVersion:	4.18
++Contact:	Johan Hovold <johan@kernel.org>
++Description:
++		The GNSS device type. The currently identified types reflect
++		the protocol(s) supported by the device:
++
++			"NMEA"		NMEA 0183
++			"SiRF"  	SiRF Binary
++			"UBX"   	UBX
++
++		Note that also non-"NMEA" type devices typically support a
++		subset of NMEA 0183 with vendor extensions (e.g. to allow
++		switching to a vendor protocol).
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fa219e80a1f8..e666bc28a102 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5965,6 +5965,7 @@ F:	include/uapi/linux/gigaset_dev.h
+ GNSS SUBSYSTEM
+ M:	Johan Hovold <johan@kernel.org>
+ S:	Maintained
++F:	Documentation/ABI/testing/sysfs-class-gnss
+ F:	Documentation/devicetree/bindings/gnss/
+ F:	drivers/gnss/
+ F:	include/linux/gnss.h
+diff --git a/drivers/gnss/core.c b/drivers/gnss/core.c
+index 307894ca2725..f30ef8338b3a 100644
+--- a/drivers/gnss/core.c
++++ b/drivers/gnss/core.c
+@@ -330,6 +330,52 @@ int gnss_insert_raw(struct gnss_device *gdev, const unsigned char *buf,
+ }
+ EXPORT_SYMBOL_GPL(gnss_insert_raw);
+ 
++static const char * const gnss_type_names[GNSS_TYPE_COUNT] = {
++	[GNSS_TYPE_NMEA]	= "NMEA",
++	[GNSS_TYPE_SIRF]	= "SiRF",
++	[GNSS_TYPE_UBX]		= "UBX",
++};
++
++static const char *gnss_type_name(struct gnss_device *gdev)
++{
++	const char *name = NULL;
++
++	if (gdev->type < GNSS_TYPE_COUNT)
++		name = gnss_type_names[gdev->type];
++
++	if (!name)
++		dev_WARN(&gdev->dev, "type name not defined\n");
++
++	return name;
++}
++
++static ssize_t type_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct gnss_device *gdev = to_gnss_device(dev);
++
++	return sprintf(buf, "%s\n", gnss_type_name(gdev));
++}
++static DEVICE_ATTR_RO(type);
++
++static struct attribute *gnss_attrs[] = {
++	&dev_attr_type.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(gnss);
++
++static int gnss_uevent(struct device *dev, struct kobj_uevent_env *env)
++{
++	struct gnss_device *gdev = to_gnss_device(dev);
++	int ret;
++
++	ret = add_uevent_var(env, "GNSS_TYPE=%s", gnss_type_name(gdev));
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ static int __init gnss_module_init(void)
+ {
+ 	int ret;
+@@ -347,6 +393,9 @@ static int __init gnss_module_init(void)
+ 		goto err_unregister_chrdev;
+ 	}
+ 
++	gnss_class->dev_groups = gnss_groups;
++	gnss_class->dev_uevent = gnss_uevent;
++
+ 	pr_info("GNSS driver registered with major %d\n", MAJOR(gnss_first));
+ 
+ 	return 0;
+diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
+index 5fb0f730db48..79cb98950013 100644
+--- a/drivers/gnss/sirf.c
++++ b/drivers/gnss/sirf.c
+@@ -267,6 +267,7 @@ static int sirf_probe(struct serdev_device *serdev)
+ 	if (!gdev)
+ 		return -ENOMEM;
+ 
++	gdev->type = GNSS_TYPE_SIRF;
+ 	gdev->ops = &sirf_gnss_ops;
+ 	gnss_set_drvdata(gdev, data);
+ 
+diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
+index ecddfb362a6f..902b6854b7db 100644
+--- a/drivers/gnss/ubx.c
++++ b/drivers/gnss/ubx.c
+@@ -77,6 +77,8 @@ static int ubx_probe(struct serdev_device *serdev)
+ 
+ 	gserial->ops = &ubx_gserial_ops;
+ 
++	gserial->gdev->type = GNSS_TYPE_UBX;
++
+ 	data = gnss_serial_get_drvdata(gserial);
+ 
+ 	data->vcc = devm_regulator_get(&serdev->dev, "vcc");
+diff --git a/include/linux/gnss.h b/include/linux/gnss.h
+index e26aeac1e0e2..43546977098c 100644
+--- a/include/linux/gnss.h
++++ b/include/linux/gnss.h
+@@ -18,6 +18,14 @@
+ 
+ struct gnss_device;
+ 
++enum gnss_type {
++	GNSS_TYPE_NMEA = 0,
++	GNSS_TYPE_SIRF,
++	GNSS_TYPE_UBX,
++
++	GNSS_TYPE_COUNT
++};
++
+ struct gnss_operations {
+ 	int (*open)(struct gnss_device *gdev);
+ 	void (*close)(struct gnss_device *gdev);
+@@ -30,6 +38,7 @@ struct gnss_device {
+ 	struct cdev cdev;
+ 	int id;
+ 
++	enum gnss_type type;
+ 	unsigned long flags;
+ 
+ 	struct rw_semaphore rwsem;
 -- 
 2.17.0
