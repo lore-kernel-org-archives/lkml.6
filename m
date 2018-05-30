@@ -1,76 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753942AbeE3QnA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:43:00 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:45534 "EHLO pegase1.c-s.fr"
+        id S932138AbeE3Ql5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:41:57 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:8599 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932133AbeE3Ql6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:41:58 -0400
-Message-Id: <47fbf9bc0493366c2f21626548fecdec0a8a2950.1527697995.git.christophe.leroy@c-s.fr>
+        id S932090AbeE3Qlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:41:51 -0400
+Message-Id: <a30ae52fdd0b611c6e90942f772042fadc67f30a.1527697995.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1527697995.git.christophe.leroy@c-s.fr>
 References: <cover.1527697995.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH 6/8] powerpc: declare set_breakpoint() static
+Subject: [RFC PATCH 3/8] powerpc: remove superflous inclusions of asm-compat.h
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 30 May 2018 16:41:56 +0000 (UTC)
+Date: Wed, 30 May 2018 16:41:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-set_breakpoint() is only used in process.c so make it static
+ppc-opcode.h doesn't need asm-compat.h
+neither does dt_cpu_ftrs.h
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/debug.h |  1 -
- arch/powerpc/kernel/process.c    | 14 +++++++-------
- 2 files changed, 7 insertions(+), 8 deletions(-)
+ arch/powerpc/include/asm/cputable.h       | 1 -
+ arch/powerpc/include/asm/feature-fixups.h | 2 ++
+ arch/powerpc/include/asm/ppc-opcode.h     | 1 -
+ 3 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/debug.h b/arch/powerpc/include/asm/debug.h
-index ce5da214ffe5..7756026b95ca 100644
---- a/arch/powerpc/include/asm/debug.h
-+++ b/arch/powerpc/include/asm/debug.h
-@@ -45,7 +45,6 @@ static inline int debugger_break_match(struct pt_regs *regs) { return 0; }
- static inline int debugger_fault_handler(struct pt_regs *regs) { return 0; }
- #endif
+diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
+index 66fcab13c8b4..7518dafa7cd4 100644
+--- a/arch/powerpc/include/asm/cputable.h
++++ b/arch/powerpc/include/asm/cputable.h
+@@ -4,7 +4,6 @@
  
--void set_breakpoint(struct arch_hw_breakpoint *brk);
- void __set_breakpoint(struct arch_hw_breakpoint *brk);
- bool ppc_breakpoint_available(void);
- #ifdef CONFIG_PPC_ADV_DEBUG_REGS
-diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 1237f13fed51..3e66cf6f7f95 100644
---- a/arch/powerpc/kernel/process.c
-+++ b/arch/powerpc/kernel/process.c
-@@ -714,6 +714,13 @@ void switch_booke_debug_regs(struct debug_reg *new_debug)
- EXPORT_SYMBOL_GPL(switch_booke_debug_regs);
- #else	/* !CONFIG_PPC_ADV_DEBUG_REGS */
- #ifndef CONFIG_HAVE_HW_BREAKPOINT
-+static void set_breakpoint(struct arch_hw_breakpoint *brk)
-+{
-+	preempt_disable();
-+	__set_breakpoint(brk);
-+	preempt_enable();
-+}
+ 
+ #include <linux/types.h>
+-#include <asm/asm-compat.h>
+ #include <asm/feature-fixups.h>
+ #include <uapi/asm/cputable.h>
+ 
+diff --git a/arch/powerpc/include/asm/feature-fixups.h b/arch/powerpc/include/asm/feature-fixups.h
+index a9b64df34e2a..ecfdf9d3d145 100644
+--- a/arch/powerpc/include/asm/feature-fixups.h
++++ b/arch/powerpc/include/asm/feature-fixups.h
+@@ -1,6 +1,8 @@
+ #ifndef __ASM_POWERPC_FEATURE_FIXUPS_H
+ #define __ASM_POWERPC_FEATURE_FIXUPS_H
+ 
++#include <asm/asm-compat.h>
 +
- static void set_debug_reg_defaults(struct thread_struct *thread)
- {
- 	thread->hw_brk.address = 0;
-@@ -826,13 +833,6 @@ void __set_breakpoint(struct arch_hw_breakpoint *brk)
- 		WARN_ON_ONCE(1);
- }
+ /*
+  * This program is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU General Public License
+diff --git a/arch/powerpc/include/asm/ppc-opcode.h b/arch/powerpc/include/asm/ppc-opcode.h
+index 4436887bc415..ab12fac26f5b 100644
+--- a/arch/powerpc/include/asm/ppc-opcode.h
++++ b/arch/powerpc/include/asm/ppc-opcode.h
+@@ -13,7 +13,6 @@
+ #define _ASM_POWERPC_PPC_OPCODE_H
  
--void set_breakpoint(struct arch_hw_breakpoint *brk)
--{
--	preempt_disable();
--	__set_breakpoint(brk);
--	preempt_enable();
--}
--
- /* Check if we have DAWR or DABR hardware */
- bool ppc_breakpoint_available(void)
- {
+ #include <linux/stringify.h>
+-#include <asm/asm-compat.h>
+ 
+ #define	__REG_R0	0
+ #define	__REG_R1	1
 -- 
 2.13.3
