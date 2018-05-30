@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753442AbeE3Ldi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:33:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60883 "EHLO
+        id S1753337AbeE3Ldf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:33:35 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60879 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751742AbeE3LHE (ORCPT
+        by vger.kernel.org with ESMTP id S1751750AbeE3LHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:04 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,14 +13,14 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Maximilian Wilhelm" <max@sdn.clinic>,
-        "Matthias Schiffer" <mschiffer@universe-factory.net>,
-        "Sven Eckelmann" <sven@narfation.org>,
-        "Simon Wunderlich" <sw@simonwunderlich.de>
+CC: akpm@linux-foundation.org,
+        "Kai-Heng Feng" <kai.heng.feng@canonical.com>,
+        "Tejun Heo" <tj@kernel.org>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.522774326@decadent.org.uk>
+Message-ID: <lsq.1527677561.498932115@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 107/153] batman-adv: fix packet checksum in receive path
+Subject: [PATCH 3.2 102/153] libata: disable LPM for Crucial BX100 SSD
+ 500GB drive
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,42 +33,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Schiffer <mschiffer@universe-factory.net>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit abd6360591d3f8259f41c34e31ac4826dfe621b8 upstream.
+commit b17e5729a630d8326a48ec34ef02e6b4464a6aef upstream.
 
-eth_type_trans() internally calls skb_pull(), which does not adjust the
-skb checksum; skb_postpull_rcsum() is necessary to avoid log spam of the
-form "bat0: hw csum failure" when packets with CHECKSUM_COMPLETE are
-received.
+After Laptop Mode Tools starts to use min_power for LPM, a user found
+out Crucial BX100 SSD can't get mounted.
 
-Note that in usual setups, packets don't reach batman-adv with
-CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
-batadv's ethtype?), which is why the log messages do not occur on every
-system using batman-adv. I could reproduce this issue by stacking
-batman-adv on top of a VXLAN interface.
+Crucial BX100 SSD 500GB drive don't work well with min_power. This also
+happens to med_power_with_dipm.
 
-Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
-Tested-by: Maximilian Wilhelm <max@sdn.clinic>
-Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+So let's disable LPM for Crucial BX100 SSD 500GB drive.
+
+BugLink: https://bugs.launchpad.net/bugs/1726930
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 [bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@ -733,12 +733,7 @@ void interface_rx(struct net_device *sof
+ drivers/ata/libata-core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4155,6 +4155,9 @@ static const struct ata_blacklist_entry
+ 	{ "PIONEER DVD-RW  DVR-212D",	NULL,	ATA_HORKAGE_NOSETXFER },
+ 	{ "PIONEER DVD-RW  DVR-216D",	NULL,	ATA_HORKAGE_NOSETXFER },
  
- 	/* skb->dev & skb->pkt_type are set here */
- 	skb->protocol = eth_type_trans(skb, soft_iface);
--
--	/* should not be necessary anymore as we use skb_pull_rcsum()
--	 * TODO: please verify this and remove this TODO
--	 * -- Dec 21st 2009, Simon Wunderlich */
--
--/*	skb->ip_summed = CHECKSUM_UNNECESSARY;*/
-+	skb_postpull_rcsum(skb, eth_hdr(skb), ETH_HLEN);
++	/* Crucial BX100 SSD 500GB has broken LPM support */
++	{ "CT500BX100SSD1",		"MU02",	ATA_HORKAGE_NOLPM },
++
+ 	/* The 512GB version of the MX100 has LPM issues */
+ 	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NOLPM, },
  
- 	bat_priv->stats.rx_packets++;
- 	bat_priv->stats.rx_bytes += skb->len + sizeof(struct ethhdr);
