@@ -1,70 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965177AbeE3IWs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:22:48 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53728 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935964AbeE3IWF (ORCPT
+        id S968714AbeE3IXh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:23:37 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:44161 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968692AbeE3IXc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:22:05 -0400
-X-Google-Smtp-Source: ADUXVKJ4c8LYLpYS/htC8yhsbzR8qaPQTIZxsRrdNOQ5S43jsVl91bxxWeZV2gDFkXjC2qZiZclgEdCUiQQmTVi0VrE=
+        Wed, 30 May 2018 04:23:32 -0400
+X-Google-Smtp-Source: ADUXVKKbBPNeG6ixkzd8UnFbzmhGm7lEqCNXsPaW04bfaG1Ae+ediDt9vs3GEL7JJdQl5/ya7gkfWrNXzLZZQSYdXoI=
 MIME-Version: 1.0
-In-Reply-To: <c0b8f2e3-b286-06a7-306d-141f155eff01@oracle.com>
-References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180522200214.GF9536@vader> <c0b8f2e3-b286-06a7-306d-141f155eff01@oracle.com>
-From: Ming Lei <tom.leiming@gmail.com>
-Date: Wed, 30 May 2018 16:22:02 +0800
-Message-ID: <CACVXFVN=LHTq=x9n7U7gciR41rWfTHn9uHmZMUHt6=RdvJanXQ@mail.gmail.com>
-Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
-To: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc: Omar Sandoval <osandov@osandov.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180530070303.qpcgjng7vaell5me@vireshk-i7>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-4-git-send-email-vincent.guittot@linaro.org> <20180530070303.qpcgjng7vaell5me@vireshk-i7>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 30 May 2018 10:23:10 +0200
+Message-ID: <CAKfTPtDp4T=HUR-K3Wcq84cZ3RFDE6A5c5MVHndCb=R8ACYfFw@mail.gmail.com>
+Subject: Re: [PATCH v5 03/10] cpufreq/schedutil: add rt utilization tracking
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 9:47 AM, jianchao.wang
-<jianchao.w.wang@oracle.com> wrote:
-> Hi Omar
+On 30 May 2018 at 09:03, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 25-05-18, 15:12, Vincent Guittot wrote:
+>> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+>>       /*
+>>        * Utilization required by DEADLINE must always be granted while, for
+>> @@ -197,7 +205,7 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>>        * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+>>        * ready for such an interface. So, we only do the latter for now.
+>>        */
+>> -     return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+>> +     return min(sg_cpu->max, util);
 >
-> Thanks for your kindly response.
->
-> On 05/23/2018 04:02 AM, Omar Sandoval wrote:
->> On Tue, May 22, 2018 at 10:48:29PM +0800, Jianchao Wang wrote:
->>> Currently, kyber is very unfriendly with merging. kyber depends
->>> on ctx rq_list to do merging, however, most of time, it will not
->>> leave any requests in ctx rq_list. This is because even if tokens
->>> of one domain is used up, kyber will try to dispatch requests
->>> from other domain and flush the rq_list there.
->>
->> That's a great catch, I totally missed this.
->>
->> This approach does end up duplicating a lot of code with the blk-mq core
->> even after Jens' change, so I'm curious if you tried other approaches.
->> One idea I had is to try the bio merge against the kqd->rqs lists. Since
->> that's per-queue, the locking overhead might be too high. Alternatively,
->
-> Yes, I used to make a patch as you say, try the bio merge against kqd->rqs directly.
-> The patch looks even simpler. However, because the khd->lock is needed every time
-> when try bio merge, there maybe high contending overhead on hkd->lock when cpu-hctx
-> mapping is not 1:1.
->
->> you could keep the software queues as-is but add our own version of
->> flush_busy_ctxs() that only removes requests of the domain that we want.
->> If one domain gets backed up, that might get messy with long iterations,
->> though.
->
-> Yes, I also considered this approach :)
-> But the long iterations on every ctx->rq_list looks really inefficient.
+> Need to update comment above this line to include RT in that ?
 
-Right, this list can be quite long if dispatch token is used up.
+yes good point
 
-You might try to introduce per-domain list into ctx directly, then 'none'
-may benefit from this change too since bio merge should be done
-on the per-domain list actually.
-
-
-Thanks,
-Ming Lei
+>
+>>  }
+>
+> --
+> viresh
