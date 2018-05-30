@@ -1,102 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753014AbeE3Lav (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:30:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45746 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751547AbeE3Lar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:30:47 -0400
-Date: Wed, 30 May 2018 13:30:26 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        USB <linux-usb@vger.kernel.org>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] usb: gadget: ccid: add support for USB CCID
- Gadget Device
-Message-ID: <20180530113026.GA20775@kroah.com>
-References: <20180529185021.13738-1-marcus.folkesson@gmail.com>
- <CAHp75VeSbC3QBswCxZpoVpT4cL4pXC5eouCc9YtvBtXG3YddTg@mail.gmail.com>
- <20180530112459.GB2939@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1753329AbeE3L3B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:29:01 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60946 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752367AbeE3LHG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 07:07:06 -0400
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20180530112459.GB2939@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        syzbot+10c98dc5725c6c8fc7fb@syzkaller.appspotmail.com,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        "Pablo Neira Ayuso" <pablo@netfilter.org>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.495221922@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.2 091/153] netfilter: x_tables: fix missing timer
+ initialization in xt_LED
+In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 01:24:59PM +0200, Marcus Folkesson wrote:
-> Hi Andy,
-> 
-> Thank you for your comments!
-> Many good catches here!
-> 
-> On Wed, May 30, 2018 at 03:55:39AM +0300, Andy Shevchenko wrote:
-> > On Tue, May 29, 2018 at 9:50 PM, Marcus Folkesson
-> > <marcus.folkesson@gmail.com> wrote:
-> > > Chip Card Interface Device (CCID) protocol is a USB protocol that
-> > > allows a smartcard device to be connected to a computer via a card
-> > > reader using a standard USB interface, without the need for each manufacturer
-> > > of smartcards to provide its own reader or protocol.
-> > >
-> > > This gadget driver makes Linux show up as a CCID device to the host and let a
-> > > userspace daemon act as the smartcard.
-> > >
-> > > This is useful when the Linux gadget itself should act as a cryptographic
-> > > device or forward APDUs to an embedded smartcard device.
-> > 
-> > > + * Copyright (C) 2018 Marcus Folkesson <marcus.folkesson@gmail.com>
-> > 
-> > > + *
-> > 
-> > Redundant line
-> > 
-> 
-> Yep
-> 
-> > > +static DEFINE_IDA(ccidg_ida);
-> > 
-> > Where is it destroyed?
-> 
-> Hm, I'm not sure it needs to be destroyed. From lib/idr.c:
-> 
->  * You can also use ida_get_new_above() if you need an ID to be allocated
->  * above a particular number.  ida_destroy() can be used to dispose of an
->  * IDA without needing to free the individual IDs in it.  You can use
->  * ida_is_empty() to find out whether the IDA has any IDs currently allocated.
-> 
-> 
-> An empty ccidg_ida is the indication that we should clean up our
-> mess:
-> 
-> static void ccidg_free_inst(struct usb_function_instance *f)
-> ...
-> 	if (ida_is_empty(&ccidg_ida))
-> 		ccidg_cleanup();
-> 
-> If the IDA is empty, should I call ida_destroy() anyway?
-> Other similiar drivers does not seems to do that.
-> 
-> I must say that I'm not very familiar with the IDA API.
+3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
 
-When your module is removed, you need to clean up any remaining memory
-that the ida used.  It's not obvious at all, and is a pain as you would
-think that if you statically allocate one, like you have here, it would
-not be needed.  You need to just call:
-	ida_destroy(&ccidg_ida);
-in your module exit function.
+------------------
 
-Hope this helps,
+From: Paolo Abeni <pabeni@redhat.com>
 
-greg k-h
+commit 10414014bc085aac9f787a5890b33b5605fbcfc4 upstream.
+
+syzbot reported that xt_LED may try to use the ledinternal->timer
+without previously initializing it:
+
+------------[ cut here ]------------
+kernel BUG at kernel/time/timer.c:958!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 1826 Comm: kworker/1:2 Not tainted 4.15.0+ #306
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
+RIP: 0010:__mod_timer kernel/time/timer.c:958 [inline]
+RIP: 0010:mod_timer+0x7d6/0x13c0 kernel/time/timer.c:1102
+RSP: 0018:ffff8801d24fe9f8 EFLAGS: 00010293
+RAX: ffff8801d25246c0 RBX: ffff8801aec6cb50 RCX: ffffffff816052c6
+RDX: 0000000000000000 RSI: 00000000fffbd14b RDI: ffff8801aec6cb68
+RBP: ffff8801d24fec98 R08: 0000000000000000 R09: 1ffff1003a49fd6c
+R10: ffff8801d24feb28 R11: 0000000000000005 R12: dffffc0000000000
+R13: ffff8801d24fec70 R14: 00000000fffbd14b R15: ffff8801af608f90
+FS:  0000000000000000(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000206d6fd0 CR3: 0000000006a22001 CR4: 00000000001606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  led_tg+0x1db/0x2e0 net/netfilter/xt_LED.c:75
+  ip6t_do_table+0xc2a/0x1a30 net/ipv6/netfilter/ip6_tables.c:365
+  ip6table_raw_hook+0x65/0x80 net/ipv6/netfilter/ip6table_raw.c:42
+  nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
+  nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
+  nf_hook.constprop.27+0x3f6/0x830 include/linux/netfilter.h:243
+  NF_HOOK include/linux/netfilter.h:286 [inline]
+  ndisc_send_skb+0xa51/0x1370 net/ipv6/ndisc.c:491
+  ndisc_send_ns+0x38a/0x870 net/ipv6/ndisc.c:633
+  addrconf_dad_work+0xb9e/0x1320 net/ipv6/addrconf.c:4008
+  process_one_work+0xbbf/0x1af0 kernel/workqueue.c:2113
+  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
+  kthread+0x33c/0x400 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:429
+Code: 85 2a 0b 00 00 4d 8b 3c 24 4d 85 ff 75 9f 4c 8b bd 60 fd ff ff e8 bb
+57 10 00 65 ff 0d 94 9a a1 7e e9 d9 fc ff ff e8 aa 57 10 00 <0f> 0b e8 a3
+57 10 00 e9 14 fb ff ff e8 99 57 10 00 4c 89 bd 70
+RIP: __mod_timer kernel/time/timer.c:958 [inline] RSP: ffff8801d24fe9f8
+RIP: mod_timer+0x7d6/0x13c0 kernel/time/timer.c:1102 RSP: ffff8801d24fe9f8
+---[ end trace f661ab06f5dd8b3d ]---
+
+The ledinternal struct can be shared between several different
+xt_LED targets, but the related timer is currently initialized only
+if the first target requires it. Fix it by unconditionally
+initializing the timer struct.
+
+v1 -> v2: call del_timer_sync() unconditionally, too.
+
+Fixes: 268cb38e1802 ("netfilter: x_tables: add LED trigger target")
+Reported-by: syzbot+10c98dc5725c6c8fc7fb@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+[bwh: Backported to 3.2: Keep using setup_timer()]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/net/netfilter/xt_LED.c
++++ b/net/netfilter/xt_LED.c
+@@ -139,10 +139,11 @@ static int led_tg_check(const struct xt_
+ 		goto exit_alloc;
+ 	}
+ 
+-	/* See if we need to set up a timer */
+-	if (ledinfo->delay > 0)
+-		setup_timer(&ledinternal->timer, led_timeout_callback,
+-			    (unsigned long)ledinternal);
++	/* Since the letinternal timer can be shared between multiple targets,
++	 * always set it up, even if the current target does not need it
++	 */
++	setup_timer(&ledinternal->timer, led_timeout_callback,
++		    (unsigned long)ledinternal);
+ 
+ 	list_add_tail(&ledinternal->list, &xt_led_triggers);
+ 
+@@ -179,8 +180,7 @@ static void led_tg_destroy(const struct
+ 
+ 	list_del(&ledinternal->list);
+ 
+-	if (ledinfo->delay > 0)
+-		del_timer_sync(&ledinternal->timer);
++	del_timer_sync(&ledinternal->timer);
+ 
+ 	led_trigger_unregister(&ledinternal->netfilter_led_trigger);
+ 
