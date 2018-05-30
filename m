@@ -1,167 +1,109 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-479027-1527723483-2-10764527667863803919
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-186052-1527710117-2-15618959269904164516
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-security-module-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527723483; b=fSyT2xw5LZttgUyEXM+z/endwVQhTdkLS129VgVzgA0yxJ+eyE
-    aubuAEDxGAVOeaKE/hB7BCW4os93tuji7ZsLH6cuWsBmpSFmMWDq6ARqD1CE+8R3
-    KdX6Er7JHwkr0RZTVvxJ4K5RmYYTYkKmoEs8dHPUS635yKJ21S/fhcEK6tAOBZhm
-    alT+Bv5ylDOoX3d1XOvLYeXSljTqr+G7JnohI4W9XSXg37UhUxu9ZmrqeYu/A5f2
-    /k6YKZlQCnfRNHe1Kq/et0uWBiYpkTcW+fEx9qplI9m1tqZwt2MtF8+9pOU0X7D4
-    /T98WkXc9hhsPrZz5DwoUql0SHqNOFz50HhQ==
+    1527710117; b=L7zttGikImsc8QjJNuL1V40BCzBwgIXLrnd+R5qZO6QB+Y3fxc
+    G6aJtZ6aYBQvw89LjIyNiR5fpHlumL84JZIuYIM+iAb5rQ1gGSH5mkJKJjWuXFxZ
+    sTBmVCcvyw6JupupsZZ6e6Ch6ZF5yeOUXTXi1tnZ/tivDOpww6+VyNYaKkOf6/ec
+    rxMW7gv+xnVQ1nSwZ1ZfyMDz/o6g3G3ieUnVaPwrsOzvG0WziDEPgJM8T0kPy1YG
+    IvBEDS8TkxlD39qc7+cq4vUOiILC5BsVw+RkVlLabXw4tIkpphf8L3RWf4O7299t
+    /CYy+84TZrmaUec7xLWRdmhqEUC9Wg8bo5mg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527723483; bh=HuvDoL7fHk1QZOhEQ4asuVTYydHVHF
-    BHdq042Ovoj7c=; b=mQg+AV5YZGlCl2BxCBilHUkHUIndrKpkMapKXCGUoA//mN
-    XNOgzNz7J2OeCiH5RMTS4efKRoIrgmUSintIjM6oH1wr/+NowcbD3AFg57UnCsJS
-    /BkAqqpHcFiHs5M0q4R2gzFBRjZkUyfTLv+IX25aMq4G9DrVJ3LMsxfEvOzHg8ah
-    ulASsTzyNoFhgnSdL2l1AaA3hekTvUuiJwp0uMd0hyhAJOiOCFu5z7uVKZiejZ3V
-    NzmrN5WMdCvvqodDwkNeAueaOnyGWPvzrsjPN7nDPg2IcmlQrRRs3ll61rOBldKn
-    rjlojbJ8pdCA199IHwPDQAScUUkHOJRFpnPfnTcA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527710117; bh=xn8OHz+bkp4hbj+D5YXDeXZB+E+8Im
+    fmTUt57+gMp8c=; b=FLga7oR31kduvx2cB70AttzUCc5MB24tdv4wSkKIO5lM5K
+    JCWTNnliIuh6Fd7OH81YOLVqlxDyNRny5sFouzQAQOMLdugF5KOBTaUaNmhqQb+l
+    +Td6iSbhL2qtLl3N7bQlld9+XGPdjW6EapHQT64TX7TIFYJvSDG7KlMGMXRZWVxA
+    3ORFissqLVM3+5Dw2O2zfXoFzWlz8j1GbTilqtOYpD+nPRQ7Nf1a+lMqrYFgAvNo
+    Vm3qI5b/1/aXEbvMj/RAeR/Tezk5R5GmIbeiDCfdLfKI/RqqAsq2jfaoraj4fWSB
+    iINT9C5E1c0OCkAhJXOaITFoHiTc1a952zE3GwAA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.intel.com header.result=pass
-    header_org.domain=intel.com header_org.result=pass
-    header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.intel.com header.result=pass
-      header_org.domain=intel.com header_org.result=pass
-      header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKz3N0vbql18UdP4ChmVwoLk50a1Gyqm8XZIiDxwMZpe1rz0iULOsp4I5EsrtXIx7H8DphZz+Y85o0bVieJK7CmP8BvqEelQBNnfZcKgatcFEKZLWJq4
-    TI0B55ybLaul9Y8ugr62KSUQKCIQtRCmZ9ZsL2gUWBwNhXPvDzHJSU/8Qq3n08CChF0n9cTjp+YuLfNzeEXpd8TyfsDeRTwUcslRnTP0SxnvxrP9TRXqmRgG
-    47xoSjl2GZjcmsjCdjaCqA==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKoIak68CwGINj30lNkV/khBN3z9uVO02aOnUfLSJY456WiUpqUnUc0KWu355SRN/DgMK4B1gZZXDfqMif27708wXq4jmTd2qt6fe59EA8D7XSRwCLo0
+    Si/M2Syw8opQ10w77jjeartK38WdzfNrWlIJOJJV80+Su5N3X3StCnEAdNT1VVtqaM1x0Kw9wquE72wiTDAKTiB/q6nMKQ1qwqQpb3YtwyGZ8X9rCBxcOAHz
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=0BX9d-ChoBMp6uR4BisA:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=2oNIfkA2PPlwlrE6tZsA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932532AbeE3Xh7 (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 30 May 2018 19:37:59 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61694 "EHLO mga17.intel.com"
+        id S932208AbeE3TzD (ORCPT <rfc822;linux@kroah.com>);
+        Wed, 30 May 2018 15:55:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51631 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932408AbeE3Xh6 (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 May 2018 19:37:58 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,461,1520924400";
-   d="scan'208";a="59062604"
-Date: Thu, 31 May 2018 02:37:52 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
-Message-ID: <20180530233752.GA31296@linux.intel.com>
-References: <20180516194600.28189-1-tomas.winkler@intel.com>
- <20180522091732.GA5228@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
- <20180523131616.GD363@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D8A1269@hasmsx109.ger.corp.intel.com>
- <20180530105034.GA14905@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D940DC6@hasmsx108.ger.corp.intel.com>
+        id S1753651AbeE3TzD (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Wed, 30 May 2018 15:55:03 -0400
+Date: Wed, 30 May 2018 21:55:00 +0200
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: gregkh@linuxfoundation.org, arnd@arndb.de
+Cc: gregkh@linuxfoundation.org, arnd@arndb.de, willy@infradead.org,
+        geert@linux-m68k.org, linux-m68k@lists.linux-m68k.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mcgrof@kernel.org
+Subject: Re: [PATCH v3 0/2] mm: PAGE_KERNEL_* fallbacks
+Message-ID: <20180530195500.GU4511@wotan.suse.de>
+References: <20180510185507.2439-1-mcgrof@kernel.org>
+ <20180516164403.GI27853@wotan.suse.de>
+ <20180523213551.GF4511@wotan.suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D940DC6@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: owner-linux-security-module@vger.kernel.org
+In-Reply-To: <20180523213551.GF4511@wotan.suse.de>
+User-Agent: Mutt/1.6.0 (2016-04-01)
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 30, 2018 at 10:52:28AM +0000, Winkler, Tomas wrote:
+On Wed, May 23, 2018 at 11:35:51PM +0200, Luis R. Rodriguez wrote:
+> On Wed, May 16, 2018 at 06:44:03PM +0200, Luis R. Rodriguez wrote:
+> > On Thu, May 10, 2018 at 11:55:05AM -0700, Luis R. Rodriguez wrote:
+> > > This is the 3rd iteration for moving PAGE_KERNEL_* fallback
+> > > definitions into asm-generic headers. Greg asked for a Changelog
+> > > for patch iteration changes, its below.
+> > > 
+> > > All these patches have been tested by 0-day.
+> > > 
+> > > Questions, and specially flames are greatly appreciated.
 > > 
-> > On Wed, May 23, 2018 at 01:48:17PM +0000, Winkler, Tomas wrote:
-> > >
-> > > > On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
-> > > > > >
-> > > > > > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler wrote:
-> > > > > > > New wrappers are added tpm_cmd_ready() and tpm_go_idle()
-> > > > wrappers
-> > > > > > > to streamline tpm_try_transmit code. TPM_TRANSMIT_UNLOCKED
-> > > > > > > flag
-> > > > is
-> > > > > > abused
-> > > > > > > to resolve tpm spaces recursive calls to tpm_transmit().
-> > > > > >
-> > > > > > This looks good and all but I don't think we want to abuse
-> > > > > > anything in the driver code, do we?
-> > > > >
-> > > > > It's not abuse just the flag UNLOCKED is not really named
-> > > > > correctly I think this has to be backported so wanted to do less invasive
-> > change.
-> > > >
-> > > > It should be renamed anyway and possible merge conflicts are not
-> > > > hard to sort out in this change. Can you rename it as SPACE?
-> > >
-> > > Not sure, I believe UNLOCKED is still better name than SPACE, I'm not
-> > > sure this is Do you also want to remove TPM_TRANSMIT_RAW?
-> > > clk_enable is handling its own anti recursion counter 'data-
-> > >clkrun_enabled'
-> > > but it should be all handled under one flag I guess.
-> > >
-> > > > Right, and even without rename this will probably cause merge
-> > > > conflicts at least in v4.4 an v4.9 since in-kernel RM landed in
-> > > > v4.12, so not much gain not do the rename :-)
-> > >
-> > > I belive we should do minimal change and the big cleanup after that.
-> > > Not sure, I believe UNLOCKED is still better name than SPACE even it wasn't
-> > the original intention.
-> > > No the SPACE is the issue, but any recursion call into tpm_transmit. A
-> > > bigger change is needed and rename to SPACE would be just another
-> > intermediat change.
-> > >
-> > > Please reconsider.
-> > >
-> > > Thanks
-> > > Tomas
-> > 
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > *Poke*
 > 
-> 
-> Does it mean you're Okay with the patch now?
-> Thanks
-> Tomas
+> Greg, since this does touch the firmware loader as well, *poke*.
 
-The change looks good but I'll have to test it.
+*Re-re-poke*
 
-/Jarkko
+  Luis
