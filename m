@@ -1,105 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751821AbeE3K7t (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:59:49 -0400
-Received: from mga01.intel.com ([192.55.52.88]:25145 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751119AbeE3K7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:59:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,460,1520924400";
-   d="scan'208";a="45052654"
-Subject: Re: [PATCH 1/1] device core: Add flag to autoremove device link on
- supplier unbind
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: gregkh@linuxfoundation.org, lukas@wunner.de, dmitry.torokhov@gmail.com,
-        aspriel@gmail.com, robin.murphy@arm.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20180530095704.5788-1-vivek.gautam@codeaurora.org>
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <a85d44e7-3bb1-f282-088d-c4311a108bcd@intel.com>
-Date: Wed, 30 May 2018 12:59:43 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1752123AbeE3LAB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:00:01 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11800 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751479AbeE3K75 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 06:59:57 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 30 May 2018 04:00:00 -0700
+Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
+To: Wolfram Sang <wsa@the-dreams.de>, Dmitry Osipenko <digetx@gmail.com>
+References: <20180513211347.7187-1-digetx@gmail.com>
+ <20180514115933.GH18312@ulmo>
+ <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
+ <5949e650-8ab5-b4bb-196d-5a0705383141@gmail.com>
+ <20180529180659.f5s56nstykztvykr@ninjato>
+CC: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Shardar Shariff Md <smohammed@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Message-ID: <7b93f6b0-0e09-d8e0-b48e-4ef518c3bd9f@nvidia.com>
+Date: Wed, 30 May 2018 16:29:45 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180530095704.5788-1-vivek.gautam@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180529180659.f5s56nstykztvykr@ninjato>
+X-Originating-IP: [10.19.64.176]
+X-ClientProxiedBy: DRBGMAIL102.nvidia.com (10.18.16.21) To
+ bgmail102.nvidia.com (10.25.59.11)
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/30/2018 11:57 AM, Vivek Gautam wrote:
-> When using the device links without the consumers or
-> suppliers maintaining pointers to these links, a flag can
-> help in autoremoving the links on supplier driver unbind.
-> We remove these links only when the supplier's link to its
-> consumers has gone in DL_STATE_SUPPLIER_UNBIND state.
->
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Suggested-by: Lukas Wunner <lukas@wunner.de>
-> ---
->
-> Lukas, as suggested in the thread [1] this change adds additional flag
-> to autoremove device links on supplier unbind.
-> For arm-smmu, we want to _not_ keep references to the device links
-> added between arm-smmu, and consumer devices.
-> Robin also pointed to [2] the need to autoremove the device link on
-> supplier unbind rather than consumer unbind.
 
-Please CC device links patches to linux-pm.
 
-> [1] https://lkml.org/lkml/2018/3/14/390
-> [2] https://lkml.org/lkml/2018/5/21/381
->
->   drivers/base/core.c    | 10 ++++++++++
->   include/linux/device.h |  2 ++
->   2 files changed, 12 insertions(+)
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index b610816eb887..52c7222bb3c4 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -490,6 +490,16 @@ void device_links_driver_cleanup(struct device *dev)
->   
->   		WARN_ON(link->flags & DL_FLAG_AUTOREMOVE);
->   		WARN_ON(link->status != DL_STATE_SUPPLIER_UNBIND);
-> +
-> +		/*
-> +		 * autoremove the links between this @dev and its consumer
-> +		 * devices that are not active, i.e. where the link state
-> +		 * has moved to DL_STATE_SUPPLIER_UNBIND.
-> +		 */
-> +		if (link->status == DL_STATE_SUPPLIER_UNBIND &&
-> +		    link->flags & DL_FLAG_AUTOREMOVE_S)
-> +			kref_put(&link->kref, __device_link_del);
-> +
->   		WRITE_ONCE(link->status, DL_STATE_DORMANT);
->   	}
->   
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 477956990f5e..6033bf58453d 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -779,11 +779,13 @@ enum device_link_state {
->    * AUTOREMOVE: Remove this link automatically on consumer driver unbind.
->    * PM_RUNTIME: If set, the runtime PM framework will use this link.
->    * RPM_ACTIVE: Run pm_runtime_get_sync() on the supplier during link creation.
-> + * AUTOREMOVE_S: Remove this link automatically on supplier driver unbind.
->    */
->   #define DL_FLAG_STATELESS	BIT(0)
->   #define DL_FLAG_AUTOREMOVE	BIT(1)
->   #define DL_FLAG_PM_RUNTIME	BIT(2)
->   #define DL_FLAG_RPM_ACTIVE	BIT(3)
-> +#define DL_FLAG_AUTOREMOVE_S	BIT(4)
+On Tuesday 29 May 2018 11:36 PM, Wolfram Sang wrote:
+>>> Our I2C driver is based on the interrupt. So we have converted the
+>>> suspend/resume to suspend_noirq and reseume_noirq so that we will not allow the
+>>> transfer when system interrupt disabled in downstream.
+>>>            SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
+>>>
+>>> In shutdown path, where interrupt disabled and still need i2c, we use the
+>>> bit-bang method via GPIO for i2c transfer.
+>> In the current upstream kernel suspend/resume can't be simply moved to the
+>> 'noirq' stage because resume invokes tegra_i2c_init() which uses runtime PM and
+>> that doesn't work with the IRQ's being disabled. But things do not work even
+>> with the tegra_i2c_init() changed to work with the disabled IRQ's, like I wrote
+>> above the I2C transfer fails (due to timeout) and a "fix" for that failure was
+>> to remove reset_control_assert/deassert from the tegra_i2c_init(). So I'd go for
+>> a complete suspend/resume removal for now as it is causes problem.
+> Laxman, are you convinced or do you have still objections?
+Fine with me. Please add my Ack
 
-Couldn't you invent a better name for this one?
-
->   
->   /**
->    * struct device_link - Device link representation.
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
