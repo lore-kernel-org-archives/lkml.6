@@ -1,84 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753716AbeE3Oko (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:40:44 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:45031 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbeE3Okm (ORCPT
+        id S1753183AbeE3Oli (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:41:38 -0400
+Received: from mail-it0-f52.google.com ([209.85.214.52]:39552 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752478AbeE3Old (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:40:42 -0400
-X-Google-Smtp-Source: ADUXVKLQCaHe/pXUmQ8aw4A26tGz8AVdvckrEDxRCK1CRAX/b0JmiBsw1DbfvVbuijg5MX3WiViQUg==
-Date: Wed, 30 May 2018 10:40:40 -0400
-From: Sean Paul <seanpaul@chromium.org>
-To: Lowry Li <lowry.li@arm.com>
-Cc: liviu.dudau@arm.com, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, daniel.vetter@intel.com,
-        jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie,
-        ville.syrjala@linux.intel.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, brian.starkey@arm.com,
-        malidp@foss.arm.com, nd@arm.com
-Subject: Re: [PATCH v2 0/2] drm/blend: Add per-plane pixel blend mode property
-Message-ID: <20180530144040.GM3373@art_vandelay>
-References: <1527679434-13228-1-git-send-email-lowry.li@arm.com>
+        Wed, 30 May 2018 10:41:33 -0400
+X-Google-Smtp-Source: ADUXVKKl2i8ujVtBYIDZBd6M2qMIuN/vdBR/vxQHzc/drfuig5hUyXdEWh29In+Jr9JllpqYQLIKOA==
+Subject: Re: [PATCH] sh: pass machine size to sparse
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180528164018.16064-1-luc.vanoostenryck@gmail.com>
+From: Rob Landley <rob@landley.net>
+Message-ID: <d396b6b2-0fa7-aac1-c23b-a31b1c0d446a@landley.net>
+Date: Wed, 30 May 2018 09:41:30 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527679434-13228-1-git-send-email-lowry.li@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180528164018.16064-1-luc.vanoostenryck@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 07:23:52PM +0800, Lowry Li wrote:
-> Hi,
+On 05/28/2018 11:40 AM, Luc Van Oostenryck wrote:
+> By default, sparse assumes a 64bit machine when compiled on x86-64
+> and 32bit when compiled on anything else.
 > 
-> This serie aims at adding the support for pixel blend modes represent the
-> alpha blending equation selection in the driver. It also introduces to use
-> it in the malidp driver.
+> This can of course create all sort of problems, like issuing false
+> warnings like: 'shift too big (32) for type unsigned long', or
+> worse, to not emit legitimate warnings.
 > 
-> Let me know what you think,
+> Fix this by passing to sparse the appropriate -m32/-m64 flag
 
-Hi Lowry,
-Thank you for doing this work. I know this is something that is missing for
-proper Android support, so it's most welcome.
+$ ${CROSS_COMPILE}gcc -E -dM - < /dev/null | grep __SIZEOF_LONG__
+#define __SIZEOF_LONG__ 8
 
-Do you have userspace patches using this property?
+You can ask the compiler, you don't need to redundantly add this to every
+architecture's Makefile.
 
-Sean
-
-
-> Lowry
-> 
-> Changes for v2:
->  - Moves the blending equation into the DOC comment
->  - Refines the comments of drm_plane_create_blend_mode_property to not
->    enumerate the #defines, but instead the string values
->  - Uses fg.* instead of pixel.* and plane_alpha instead of plane.alpha
->  - Introduces to use it in the malidp driver, which depends on the plane
->    alpha patch
-> 
-> Changes from v1:
->  - v1 is just the core changes to request for commments
->  - Adds a pixel_blend_mode to drm_plane_state and a blend_mode_property to
->    drm_plane, and related support functions
->  - Defines three blend modes in drm_blend.h
->  - Rebased on current drm-next
-> 
-> Lowry Li (2):
->   drm/blend: Add per-plane pixel blend mode property
->   drm/mali-dp: Implement plane alpha and pixel blend on malidp
-> 
->  drivers/gpu/drm/arm/malidp_planes.c |  76 ++++++++++++++-----------
->  drivers/gpu/drm/drm_atomic.c        |   4 ++
->  drivers/gpu/drm/drm_atomic_helper.c |   1 +
->  drivers/gpu/drm/drm_blend.c         | 110 ++++++++++++++++++++++++++++++++++++
->  include/drm/drm_blend.h             |   6 ++
->  include/drm/drm_plane.h             |   6 ++
->  6 files changed, 171 insertions(+), 32 deletions(-)
-> 
-> -- 
-> 1.9.1
-> 
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Rob
