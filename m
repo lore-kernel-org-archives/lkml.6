@@ -1,147 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755455AbeE3AMQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 20:12:16 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38803 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755130AbeE3AMM (ORCPT
+        id S1755410AbeE3AUL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 20:20:11 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:38106 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755130AbeE3AUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 20:12:12 -0400
-X-Google-Smtp-Source: ADUXVKJdoVfbFqHJtR/NfpcDsu6SYqAIxVrCJexmhsyr7KlwqRGy3pGvp6p05Ojq4JDGGMcRBcVHNQ==
-From: Shakeel Butt <shakeelb@google.com>
-To: Michal Hocko <mhocko@kernel.org>, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
-Cc: Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Shakeel Butt <shakeelb@google.com>
-Subject: [PATCH v3] mm: fix race between kmem_cache destroy, create and  deactivate
-Date: Tue, 29 May 2018 17:12:04 -0700
-Message-Id: <20180530001204.183758-1-shakeelb@google.com>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
+        Tue, 29 May 2018 20:20:05 -0400
+X-Google-Smtp-Source: ADUXVKLYPTMq/AdhM29LO2s8S0GeBGVnKkf6BCfAOwwy/zVqUOZJaBbx4FoeFuvDkAkI6VoU77WIPqMBMp5Y0im1sCI=
+MIME-Version: 1.0
+In-Reply-To: <1527632665-25707-5-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1527632665-25707-1-git-send-email-eajames@linux.vnet.ibm.com> <1527632665-25707-5-git-send-email-eajames@linux.vnet.ibm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 30 May 2018 03:20:04 +0300
+Message-ID: <CAHp75VfZHCDzsmF3=Nauy2ftPNs+5yOqBY9oBkrmLrus1BnK8A@mail.gmail.com>
+Subject: Re: [PATCH v7 4/7] drivers/i2c: Add abort and hardware reset procedures
+To: Eddie James <eajames@linux.vnet.ibm.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Edward A. James" <eajames@us.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memcg kmem cache creation and deactivation (SLUB only) is
-asynchronous. If a root kmem cache is destroyed whose memcg cache is in
-the process of creation or deactivation, the kernel may crash.
+On Wed, May 30, 2018 at 1:24 AM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+> From: "Edward A. James" <eajames@us.ibm.com>
+>
+> Add abort procedure for failed transfers. Add engine and bus reset
+> procedures to recover from as many faults as possible.
 
-Example of one such crash:
-	general protection fault: 0000 [#1] SMP PTI
-	CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
-	...
-	Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
-	RIP: 0010:has_cpu_slab
-	...
-	Call Trace:
-	? on_each_cpu_cond
-	__kmem_cache_shrink
-	kmemcg_cache_deact_after_rcu
-	kmemcg_deactivate_workfn
-	process_one_work
-	worker_thread
-	kthread
-	ret_from_fork+0x35/0x40
+> +#define I2C_PORT_BUSY_RESET    0x80000000
 
-To fix this race, on root kmem cache destruction, mark the cache as
-dying and flush the workqueue used for memcg kmem cache creation and
-deactivation.
+BIT() ?
 
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
----
-Changelog since v2:
-- Instead of refcount, flush the workqueue
+> +       for (i = 0; i < 9; ++i) {
 
-Changelog since v1:
-- Added more documentation to the code
-- Renamed fields to be more readable
+i++ would work as well.
 
----
- include/linux/slab.h |  1 +
- mm/slab_common.c     | 21 ++++++++++++++++++++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+> +               rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_RESET_SCL, &dummy);
+> +               if (rc)
+> +                       return rc;
+> +
+> +               rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_SET_SCL, &dummy);
+> +               if (rc)
+> +                       return rc;
+> +       }
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 9ebe659bd4a5..71c5467d99c1 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -658,6 +658,7 @@ struct memcg_cache_params {
- 			struct memcg_cache_array __rcu *memcg_caches;
- 			struct list_head __root_caches_node;
- 			struct list_head children;
-+			bool dying;
- 		};
- 		struct {
- 			struct mem_cgroup *memcg;
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index b0dd9db1eb2f..a3496375f5ea 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -136,6 +136,7 @@ void slab_init_memcg_params(struct kmem_cache *s)
- 	s->memcg_params.root_cache = NULL;
- 	RCU_INIT_POINTER(s->memcg_params.memcg_caches, NULL);
- 	INIT_LIST_HEAD(&s->memcg_params.children);
-+	s->memcg_params.dying = false;
- }
- 
- static int init_memcg_params(struct kmem_cache *s,
-@@ -608,7 +609,7 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
- 	 * The memory cgroup could have been offlined while the cache
- 	 * creation work was pending.
- 	 */
--	if (memcg->kmem_state != KMEM_ONLINE)
-+	if (memcg->kmem_state != KMEM_ONLINE || root_cache->memcg_params.dying)
- 		goto out_unlock;
- 
- 	idx = memcg_cache_id(memcg);
-@@ -712,6 +713,9 @@ void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
- 	    WARN_ON_ONCE(s->memcg_params.deact_fn))
- 		return;
- 
-+	if (s->memcg_params.root_cache->memcg_params.dying)
-+		return;
-+
- 	/* pin memcg so that @s doesn't get destroyed in the middle */
- 	css_get(&s->memcg_params.memcg->css);
- 
-@@ -823,11 +827,24 @@ static int shutdown_memcg_caches(struct kmem_cache *s)
- 		return -EBUSY;
- 	return 0;
- }
-+
-+static void flush_memcg_workqueue(struct kmem_cache *s)
-+{
-+	mutex_lock(&slab_mutex);
-+	s->memcg_params.dying = true;
-+	mutex_unlock(&slab_mutex);
-+
-+	flush_workqueue(memcg_kmem_cache_wq);
-+}
- #else
- static inline int shutdown_memcg_caches(struct kmem_cache *s)
- {
- 	return 0;
- }
-+
-+static inline void flush_memcg_workqueue(struct kmem_cache *s)
-+{
-+}
- #endif /* CONFIG_MEMCG && !CONFIG_SLOB */
- 
- void slab_kmem_cache_release(struct kmem_cache *s)
-@@ -845,6 +862,8 @@ void kmem_cache_destroy(struct kmem_cache *s)
- 	if (unlikely(!s))
- 		return;
- 
-+	flush_memcg_workqueue(s);
-+
- 	get_online_cpus();
- 	get_online_mems();
- 
+> +       /* reset errors */
+> +       dummy = 0;
+> +       rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_RESET_ERR, &dummy);
+> +       if (rc)
+> +               return rc;
+
+Ah, okay, discard my previous comments on dummy assignments. It seems
+input and output.
+
+> +       msleep(1);
+
+msleep(1) usually a bad idea.
+usleep_range() I guess what you need here.
+
+> +}
+
+> +       return -ETIME;
+
+ETIMEDOUT ?
+
 -- 
-2.17.0.921.gf22659ad46-goog
+With Best Regards,
+Andy Shevchenko
