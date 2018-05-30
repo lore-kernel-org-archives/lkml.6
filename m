@@ -1,140 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753861AbeE3Qdh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:33:37 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:44631 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753507AbeE3Qdf (ORCPT
+        id S1753937AbeE3Qdw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:33:52 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46898 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753900AbeE3Qdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:33:35 -0400
-X-Google-Smtp-Source: ADUXVKIfSx7eGTGaOw0aXFw2uj5n+eW8fAU3JgOm4LegDIQobwvPby08s3w/MZAKzM7iqCWAT3lolg==
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: apw@canonical.com, joe@perches.com,
-        Willem de Bruijn <willemb@google.com>
-Subject: [PATCH] checkpatch: validate Fixes tags
-Date: Wed, 30 May 2018 12:33:31 -0400
-Message-Id: <20180530163331.169328-1-willemdebruijn.kernel@gmail.com>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
+        Wed, 30 May 2018 12:33:47 -0400
+Date: Wed, 30 May 2018 17:33:43 +0100
+From: Mark Brown <broonie@kernel.org>
+To: David Collins <collinsd@codeaurora.org>
+Cc: lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rnayak@codeaurora.org, sboyd@kernel.org, dianders@chromium.org
+Subject: Re: [PATCH v4 0/2] regulator: add QCOM RPMh regulator driver
+Message-ID: <20180530163343.GV6920@sirena.org.uk>
+References: <cover.1527040878.git.collinsd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qa1NXTiqN6KSzHv0"
+Content-Disposition: inline
+In-Reply-To: <cover.1527040878.git.collinsd@codeaurora.org>
+X-Cookie: Don't get mad, get interest.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Willem de Bruijn <willemb@google.com>
 
-Apply commit syntax validation to Fixes tags:
+--qa1NXTiqN6KSzHv0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Remove the existing exclusion match on " !~ /\bfixes ..." and
-generalize keyword match to "[Cc]ommit|Fixes:".
+On Tue, May 22, 2018 at 07:43:16PM -0700, David Collins wrote:
+> This patch series adds a driver and device tree binding documentation for
+> PMIC regulator control via Resource Power Manager-hardened (RPMh) on some
+> Qualcomm Technologies, Inc. SoCs such as SDM845.  RPMh is a hardware block
 
-Unlike commit tags, fixes tags must take up an entire line and
-may not have line breaks.
+So, this is a very big driver and obviously it being RPM based it
+doesn't look like other regulators which is causing problems, especially
+when coupled with the desire to implement a bunch of more exotic
+features like the mode setting.  I think this review is going to go a
+lot more smoothly if you split this up into a base driver with just
+normal, standard stuff that doesn't add too many custom properties or
+unusual ways of working and then a series of patches on top of that
+adding things like the mode adjustment and interaction with other RPM
+clients.
 
-When applied to a set of 2000+ recent patches, this added patches
-with warnings:
+We've got other RPM based regulators in tree already so the baseline bit
+shouldn't be too hard, that'll make the rest of the patches much smaller
+and easier to review and mean that the bits that are simpler and easier
+to cope with don't need to be reposted.
 
-  - 8x SHA1 too short
-  - 4x line break in description
-  - 3x missing parentheses
-  - 3x extraneous double-quote in description (false positive)
-  - 2x missing quotes
-  - 1x using single instead of double quotes
+--qa1NXTiqN6KSzHv0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-It changed existing warnings only
+-----BEGIN PGP SIGNATURE-----
 
-  - 3x output Commit instead of commit
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsO0mYACgkQJNaLcl1U
+h9Ci/Af6AwaPbNNY3vvBsWxCyE2pVb/OfZff8RFOfNQwK7S7T/Q9zMpuT+hGGs+B
+LemjKDrAEQbXERmfxDOslAp1+Le2p/b/fphDxhD4y75f1EOCFyo3AdxrYfDuNlW5
+6IbTL69vN9u8umsplYEfho1efx8Spigj3zD+sEydmtebVYxPaXPLBIbBXaS13YIo
+rApcrZKZM07D+KnLxEQcMCjmWEyNnaav1Rip1KSQ1wx3zrS/juoFMZOmkIvn+qnc
+UMDb7U2FSBbfWFhTjVt4U+rAfkvnxNLA/76pWXWf7Gn26WQB/iuhZwcz9BbYgqgf
+52pr3JyQSyTIxsfccorB46GD6Tg95w==
+=aKLR
+-----END PGP SIGNATURE-----
 
-Also add a test for lines that start with the fixes keyword but do not
-match the commit syntax condition. These are likely intended as tags,
-but not based on SHA1. This added patches with warnings:
-
-  - 3x keyword in message body on line by itself (false positive)
-  - 1x points to url instead of SHA1
-  - 1x has keyword commit before SHA1
-
-Signed-off-by: Willem de Bruijn <willemb@google.com>
----
- scripts/checkpatch.pl | 40 ++++++++++++++++++++++++++++------------
- 1 file changed, 28 insertions(+), 12 deletions(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 2d42eb9cd1a5..70bc023cae42 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2513,6 +2513,14 @@ sub process {
- 			$in_commit_log = 0;
- 		}
- 
-+# Check format of Fixes line
-+		if ($in_commit_log && $line =~ /^\s*fixes:/i) {
-+			if ($line !~ /^\s*fixes:\s+[0-9a-f]{5,}/i) {
-+				WARN("FIXES_LINE_SYNTAX",
-+				     "Fixes line is not of form \"Fixes: <12+ chars of sha1> [...]");
-+			}
-+		}
-+
- # Check if MAINTAINERS is being updated.  If so, there's probably no need to
- # emit the "does MAINTAINERS need updating?" message on file add/move/delete
- 		if ($line =~ /^\s*MAINTAINERS\s*\|/) {
-@@ -2643,11 +2651,9 @@ sub process {
- 		if ($in_commit_log && !$commit_log_possible_stack_dump &&
- 		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink):/i &&
- 		    $line !~ /^This reverts commit [0-9a-f]{7,40}/ &&
--		    ($line =~ /\bcommit\s+[0-9a-f]{5,}\b/i ||
-+		    ($line =~ /\b(?:commit|fixes:)\s+[0-9a-f]{5,}\b/i ||
- 		     ($line =~ /(?:\s|^)[0-9a-f]{12,40}(?:[\s"'\(\[]|$)/i &&
--		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i &&
--		      $line !~ /\bfixes:\s*[0-9a-f]{12,40}/i))) {
--			my $init_char = "c";
-+		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i))) {
- 			my $orig_commit = "";
- 			my $short = 1;
- 			my $long = 0;
-@@ -2658,19 +2664,29 @@ sub process {
- 			my $id = '0123456789ab';
- 			my $orig_desc = "commit description";
- 			my $description = "";
-+			my $keyword = "commit";
-+			my $keywordcase = "[Cc]ommit";
-+			my $pre = '';
-+			my $post = '';
-+
-+			if ($line =~ /\bfixes:\s+[0-9a-f]{5,}\b/i) {
-+				$keywordcase = "Fixes:";
-+				$pre = '^';
-+				$post = '$';
-+			}
- 
--			if ($line =~ /\b(c)ommit\s+([0-9a-f]{5,})\b/i) {
--				$init_char = $1;
-+			if ($line =~ /\b($keywordcase)\s+([0-9a-f]{5,})\b/i) {
-+				$keyword = $1;
- 				$orig_commit = lc($2);
- 			} elsif ($line =~ /\b([0-9a-f]{12,40})\b/i) {
- 				$orig_commit = lc($1);
- 			}
- 
--			$short = 0 if ($line =~ /\bcommit\s+[0-9a-f]{12,40}/i);
--			$long = 1 if ($line =~ /\bcommit\s+[0-9a-f]{41,}/i);
--			$space = 0 if ($line =~ /\bcommit [0-9a-f]/i);
--			$case = 0 if ($line =~ /\b[Cc]ommit\s+[0-9a-f]{5,40}[^A-F]/);
--			if ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
-+			$short = 0 if ($line =~ /\b$keyword\s+[0-9a-f]{12,40}/i);
-+			$long = 1 if ($line =~ /\b$keyword\s+[0-9a-f]{41,}/i);
-+			$space = 0 if ($line =~ /\b$keyword [0-9a-f]/i);
-+			$case = 0 if ($line =~ /\b$keywordcase\s+[0-9a-f]{5,40}[^A-F]/);
-+			if ($line =~ /$pre\b$keyword\s+[0-9a-f]{5,}\s+\("([^"]+)"\)$post/i) {
- 				$orig_desc = $1;
- 				$hasparens = 1;
- 			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s*$/i &&
-@@ -2694,7 +2710,7 @@ sub process {
- 			if (defined($id) &&
- 			   ($short || $long || $space || $case || ($orig_desc ne $description) || !$hasparens)) {
- 				ERROR("GIT_COMMIT_ID",
--				      "Please use git commit description style 'commit <12+ chars of sha1> (\"<title line>\")' - ie: '${init_char}ommit $id (\"$description\")'\n" . $herecurr);
-+				      "Please use git commit description style '$keyword <12+ chars of sha1> (\"<title line>\")' - ie: '$keyword $id (\"$description\")'\n" . $herecurr);
- 			}
- 		}
- 
--- 
-2.17.0.921.gf22659ad46-goog
+--qa1NXTiqN6KSzHv0--
