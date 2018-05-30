@@ -1,82 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753422AbeE3PCr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:02:47 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35300 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751517AbeE3PCq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:02:46 -0400
-Date: Wed, 30 May 2018 16:02:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator
- bindings
-Message-ID: <20180530150241.GO6920@sirena.org.uk>
-References: <a106c337-0713-e5d6-cb40-13e05f4d361d@codeaurora.org>
- <CAD=FV=W=BquL5ojORz4HNP889s=-uNJ-QEzUfAxwXj2Oa3cGew@mail.gmail.com>
- <20180523082908.GB4828@sirena.org.uk>
- <CAD=FV=XfPkpGD32MfTfcw02wQ+QetpUhY=P299uhpX6pY_iEvg@mail.gmail.com>
- <20180523154057.GL4828@sirena.org.uk>
- <CAD=FV=XWVOdJ8rWJnBTwoNqnYqYRYjknkZtUvT86+skbrTdwig@mail.gmail.com>
- <20180523155617.GN4828@sirena.org.uk>
- <CAD=FV=W4aDxWbcaJ9GZ1KkvyiTPAPR-oUoTFzJfS+LftU5ZP=Q@mail.gmail.com>
- <20180530093701.GD6920@sirena.org.uk>
- <CAD=FV=W-MLU9c-SvfLgKAKGP1eHN5xO-013f2M09XUa+QeHzrA@mail.gmail.com>
+        id S1753583AbeE3PEI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:04:08 -0400
+Received: from muru.com ([72.249.23.125]:45220 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751605AbeE3PEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:04:06 -0400
+Date: Wed, 30 May 2018 08:04:02 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org, bcousson@baylibre.com,
+        paul@pwsan.com, t-kristo@ti.com
+Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
+ node for MCAN
+Message-ID: <20180530150402.GE5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-6-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Vy1A5eXR7jld12ZH"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=W-MLU9c-SvfLgKAKGP1eHN5xO-013f2M09XUa+QeHzrA@mail.gmail.com>
-X-Cookie: Don't get mad, get interest.
+In-Reply-To: <20180530141133.3711-6-faiz_abbas@ti.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+* Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
+> The ti-sysc driver provides support for manipulating the idlemodes
+> and interconnect level resets.
+...
+> --- a/arch/arm/boot/dts/dra76x.dtsi
+> +++ b/arch/arm/boot/dts/dra76x.dtsi
+> @@ -11,6 +11,25 @@
+>  / {
+>  	compatible = "ti,dra762", "ti,dra7";
+>  
+> +	ocp {
+> +
+> +		target-module@0x42c00000 {
+> +			compatible = "ti,sysc-dra7-mcan";
+> +			ranges = <0x0 0x42c00000 0x2000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			reg = <0x42c01900 0x4>,
+> +			      <0x42c01904 0x4>,
+> +			      <0x42c01908 0x4>;
+> +			reg-names = "rev", "sysc", "syss";
+> +			ti,sysc-mask = <(SYSC_OMAP4_SOFTRESET |
+> +					 SYSC_DRA7_MCAN_ENAWAKEUP)>;
+> +			ti,syss-mask = <1>;
+> +			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
+> +			clock-names = "fck";
+> +		};
+> +	};
+> +
+>  };
 
---Vy1A5eXR7jld12ZH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Looks good to me except I think the reset won't do anything currently
+with ti-sysc.c unless you specfify also "ti,hwmods" for the module?
 
-On Wed, May 30, 2018 at 07:46:50AM -0700, Doug Anderson wrote:
-> On Wed, May 30, 2018 at 2:37 AM, Mark Brown <broonie@kernel.org> wrote:
+Can you please check? It might be worth adding the reset function to
+ti-sysc.c for non "ti,hwmods" case and that just might remove the
+need for any hwmod code for this module.
 
-> >> Linux vote for the lowest voltage it's comfortable with.  Linux keeps
-> >> track of the true voltage that the driver wants and will always change
-> >> its vote back to that before enabling.  Thus (assuming Linux is OK
-> >> with 1.2 V - 1.4 V for a rail):
+Regards,
 
-> > That's pretty much what it should do anyway with normally designed
-> > hardware.
-
-> I guess the question is: do we insist that the driver include this
-> workaround, or are we OK with letting the hardware behave as the
-> hardware does?
-
-What you're describing sounds like what we should be doing normally, if
-we're not doing that we should probably be fixing the core.
-
---Vy1A5eXR7jld12ZH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOvRAACgkQJNaLcl1U
-h9AFtwf/cJZ2Tq/ONozyyV709R6zeUtnvfSRxunX/FBfzIs0TqHBMxO9PW2U7oZq
-GWJF1gQoB8MVcnaWSWzGLrNfGJqBlaWD0N/jG9MAOuBaCd+J5fXGvfsbEc9qNiZI
-HGz+eD/Qbzmplb3HAt3/ABvvzFTCuBLiqHKupY6/VjREAWujl09FEbFcoq5tiK2P
-Gd+hnY2HYBV7WcZYrFXXDXq/eWxZcGchq7Yv80ugxzbkSSFazRwkUaiL2Tf8dcfO
-OR6xYHMWiAfde/4bfzwM94XIFyesH8pryEsvh/kBkeZJiCtiWm097wngfgKuPBie
-Nq3FNfijxJIBKEAPb7rDZHDOr3Pzug==
-=f9IM
------END PGP SIGNATURE-----
-
---Vy1A5eXR7jld12ZH--
+Tony
