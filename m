@@ -1,70 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753698AbeE3Rm7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 13:42:59 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44584 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753190AbeE3Rmy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 13:42:54 -0400
-X-Google-Smtp-Source: ADUXVKJtgMrpuzhez2+eOpuXSdLli/iRjTu6W9zNNbM1KV8XGwjRXNKcTSNAj8LoJRD/Z5vpBEKsrQ==
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Shreeya Patel <shreeya.patel23498@gmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 5/6 v2] mtd: rawnand: ams-delta: use GPIO lookup table
-Date: Wed, 30 May 2018 19:43:09 +0200
-Message-ID: <1543045.tPZatK9yHU@z50>
-In-Reply-To: <20180530110500.185b5b7b@bbrezillon>
-References: <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com> <20180525222046.11200-1-jmkrzyszt@gmail.com> <20180530110500.185b5b7b@bbrezillon>
+        id S932135AbeE3Rnv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 13:43:51 -0400
+Received: from mga03.intel.com ([134.134.136.65]:28133 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932106AbeE3Rnr (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 13:43:47 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,461,1520924400";
+   d="scan'208";a="53494786"
+Date: Wed, 30 May 2018 10:43:46 -0700
+From: Andi Kleen <ak@linux.intel.com>
+To: Jin Yao <yao.jin@linux.intel.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf util: Add more PMU fields for perf script python
+Message-ID: <20180530174346.GE30764@tassilo.jf.intel.com>
+References: <1527690045-17987-1-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527690045-17987-1-git-send-email-yao.jin@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, May 30, 2018 11:05:00 AM CEST Boris Brezillon wrote:
-> Hi Janusz,
-
-Hi Boris,
-
-> On Sat, 26 May 2018 00:20:45 +0200
-> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> > ...
-> > Changes since v1:
-> > - fix handling of devm_gpiod_get_optional() return values - thanks to
-> >   Andy Shevchenko.
+On Wed, May 30, 2018 at 10:20:45PM +0800, Jin Yao wrote:
+> When doing pmu sampling and then running a script with
+> perf script -s script.py, the process_event function gets
+> dictionary with some fields from the perf ring buffer
+> (like ip, sym, callchain etc).
 > 
-> Can you put the changelog after the "---" separator so that it does not
-> appear in the final commit message?
-
-Yes, sure, sorry for that.
-
-> > +err_gpiod:
-> > +	if (err == -ENODEV || err == -ENOENT)
-> > +		err = -EPROBE_DEFER;
+> But we miss quite a few fields we report now, for example,
+> LBRs,data source,weight,transaction,iregs,uregs,and etc.
 > 
-> Hm, isn't it better to make gpiod_find() return ERR_PTR(-EPROBE_DEFER)
-> here [1]? At least, ENOENT should not be turned into EPROBE_DEFER,
-> because it's returned when there's no entry matching the requested gpio
-> in the lookup table, and deferring the probe won't solve this problem.
+> This patch reports these fields for perf script python
+> processing.
 
-ENOENT is also returned when no matching lookup table is found. That may 
-happen if consumer dev_name stored in the table differs from dev_name assigned 
-to the consumer by its bus, the platform bus in this case. For that reason I 
-think the consumer dev_name should be initialized in the table after the 
-device is registered, when its actual dev_name can be obtained. If that device 
-registration happens after the driver is already registered, e.g., at 
-late_initcall, the device is probed before its lookup table is ready. For that 
-reason returning EPROBE_DEFER seems better to me even in the ENOENT case.
+We need documentation and an example script using it.
+
+> +		PyObject *pyelem;
+> +
+> +		pyelem = PyDict_New();
+> +		if (!pyelem)
+> +			Py_FatalError("couldn't create Python dictionary");
+> +
+
+I think we need a field for the dso here.
+
+> +		pydict_set_item_string_decref(pyelem, "from",
+> +		    PyLong_FromUnsignedLongLong(br->entries[i].from));
+> +		pydict_set_item_string_decref(pyelem, "to",
+> +		    PyLong_FromUnsignedLongLong(br->entries[i].to));
+> +		pydict_set_item_string_decref(pyelem, "mispred",
+> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.mispred));
+> +		pydict_set_item_string_decref(pyelem, "predicted",
+> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.predicted));
+> +		pydict_set_item_string_decref(pyelem, "in_tx",
+> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.in_tx));
+> +		pydict_set_item_string_decref(pyelem, "abort",
+
+
+These could be booleans.
+
+> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.abort));
+> +		pydict_set_item_string_decref(pyelem, "cycles",
+> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.cycles));
+
+Would be nice to get access to the binary code too (see how perf script
+brstackinsn does it). That could be a followon patch.
 
 Thanks,
-Janusz
+
+-Andi
