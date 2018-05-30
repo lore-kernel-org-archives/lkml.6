@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752817AbeE3LMP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:12:15 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60759 "EHLO
+        id S1752775AbeE3LN7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:13:59 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60723 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752062AbeE3LHi (ORCPT
+        by vger.kernel.org with ESMTP id S1752231AbeE3LHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:38 -0400
+        Wed, 30 May 2018 07:07:30 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "mulhern" <amulhern@redhat.com>,
-        "Mike Snitzer" <snitzer@redhat.com>
+CC: akpm@linux-foundation.org, "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "Eric Biggers" <ebiggers@google.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.967028147@decadent.org.uk>
+Message-ID: <lsq.1527677561.685610822@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 052/153] dm thin: fix documentation relative to low
- water mark threshold
+Subject: [PATCH 3.2 044/153] crypto: hash - annotate algorithms taking
+ optional key
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -32,41 +32,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: mulhern <amulhern@redhat.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 9b28a1102efc75d81298198166ead87d643a29ce upstream.
+commit a208fa8f33031b9e0aba44c7d1b7e68eb0cbd29e upstream.
 
-Fixes:
-1. The use of "exceeds" when the opposite of exceeds, falls below,
-was meant.
-2. Properly speaking, a table can not exceed a threshold.
+We need to consistently enforce that keyed hashes cannot be used without
+setting the key.  To do this we need a reliable way to determine whether
+a given hash algorithm is keyed or not.  AF_ALG currently does this by
+checking for the presence of a ->setkey() method.  However, this is
+actually slightly broken because the CRC-32 algorithms implement
+->setkey() but can also be used without a key.  (The CRC-32 "key" is not
+actually a cryptographic key but rather represents the initial state.
+If not overridden, then a default initial state is used.)
 
-It emphasizes the important point, which is that it is the userspace
-daemon's responsibility to check for low free space when a device
-is resumed, since it won't get a special event indicating low free
-space in that situation.
+Prepare to fix this by introducing a flag CRYPTO_ALG_OPTIONAL_KEY which
+indicates that the algorithm has a ->setkey() method, but it is not
+required to be called.  Then set it on all the CRC-32 algorithms.
 
-Signed-off-by: mulhern <amulhern@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+The same also applies to the Adler-32 implementation in Lustre.
+
+Also, the cryptd and mcryptd templates have to pass through the flag
+from their underlying algorithm.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+[bwh: Backported to 3.2:
+ - Drop changes to nonexistent drivers
+ - There's no CRYPTO_ALG_INTERNAL flag
+ - Adjust filenames]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- Documentation/device-mapper/thin-provisioning.txt | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
---- a/Documentation/device-mapper/thin-provisioning.txt
-+++ b/Documentation/device-mapper/thin-provisioning.txt
-@@ -109,9 +109,11 @@ $low_water_mark is expressed in blocks o
- free space on the data device drops below this level then a dm event
- will be triggered which a userspace daemon should catch allowing it to
- extend the pool device.  Only one such event will be sent.
--Resuming a device with a new table itself triggers an event so the
--userspace daemon can use this to detect a situation where a new table
--already exceeds the threshold.
-+
-+No special event is triggered if a just resumed device's free space is below
-+the low water mark. However, resuming a device always triggers an
-+event; a userspace daemon should verify that free space exceeds the low
-+water mark when handling this event.
+--- a/arch/x86/crypto/crc32c-intel.c
++++ b/arch/x86/crypto/crc32c-intel.c
+@@ -166,6 +166,7 @@ static struct shash_alg alg = {
+ 		.cra_name		=	"crc32c",
+ 		.cra_driver_name	=	"crc32c-intel",
+ 		.cra_priority		=	200,
++		.cra_flags		=	CRYPTO_ALG_OPTIONAL_KEY,
+ 		.cra_blocksize		=	CHKSUM_BLOCK_SIZE,
+ 		.cra_ctxsize		=	sizeof(u32),
+ 		.cra_module		=	THIS_MODULE,
+--- a/crypto/crc32c.c
++++ b/crypto/crc32c.c
+@@ -234,6 +234,7 @@ static struct shash_alg alg = {
+ 		.cra_name		=	"crc32c",
+ 		.cra_driver_name	=	"crc32c-generic",
+ 		.cra_priority		=	100,
++		.cra_flags		=	CRYPTO_ALG_OPTIONAL_KEY,
+ 		.cra_blocksize		=	CHKSUM_BLOCK_SIZE,
+ 		.cra_alignmask		=	3,
+ 		.cra_ctxsize		=	sizeof(struct chksum_ctx),
+--- a/crypto/cryptd.c
++++ b/crypto/cryptd.c
+@@ -603,7 +603,8 @@ static int cryptd_create_hash(struct cry
+ 	if (err)
+ 		goto out_free_inst;
  
- Thin provisioning
- -----------------
+-	inst->alg.halg.base.cra_flags = CRYPTO_ALG_ASYNC;
++	inst->alg.halg.base.cra_flags = CRYPTO_ALG_ASYNC |
++		(alg->cra_flags & CRYPTO_ALG_OPTIONAL_KEY);
+ 
+ 	inst->alg.halg.digestsize = salg->digestsize;
+ 	inst->alg.halg.base.cra_ctxsize = sizeof(struct cryptd_hash_ctx);
+--- a/include/linux/crypto.h
++++ b/include/linux/crypto.h
+@@ -89,6 +89,12 @@
+ #define CRYPTO_ALG_INSTANCE		0x00000800
+ 
+ /*
++ * Set if the algorithm has a ->setkey() method but can be used without
++ * calling it first, i.e. there is a default key.
++ */
++#define CRYPTO_ALG_OPTIONAL_KEY		0x00004000
++
++/*
+  * Transform masks and values (for crt_flags).
+  */
+ #define CRYPTO_TFM_REQ_MASK		0x000fff00
