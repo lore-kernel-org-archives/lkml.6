@@ -1,47 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753183AbeE3Oli (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:41:38 -0400
-Received: from mail-it0-f52.google.com ([209.85.214.52]:39552 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752478AbeE3Old (ORCPT
+        id S1753552AbeE3Olu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:41:50 -0400
+Received: from mail-yb0-f178.google.com ([209.85.213.178]:38150 "EHLO
+        mail-yb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753196AbeE3Ols (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:41:33 -0400
-X-Google-Smtp-Source: ADUXVKKl2i8ujVtBYIDZBd6M2qMIuN/vdBR/vxQHzc/drfuig5hUyXdEWh29In+Jr9JllpqYQLIKOA==
-Subject: Re: [PATCH] sh: pass machine size to sparse
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180528164018.16064-1-luc.vanoostenryck@gmail.com>
-From: Rob Landley <rob@landley.net>
-Message-ID: <d396b6b2-0fa7-aac1-c23b-a31b1c0d446a@landley.net>
-Date: Wed, 30 May 2018 09:41:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 30 May 2018 10:41:48 -0400
+X-Google-Smtp-Source: ADUXVKJfIEOyfDjUiRZbYka3C2fbK9SILwbVrxdHh0wVBK1loOwXf1SH1PkSDEoaEpMdqYmJJ6xfX8A4/MoUw9FG0Z0=
 MIME-Version: 1.0
-In-Reply-To: <20180528164018.16064-1-luc.vanoostenryck@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <bug-199879-41252@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-199879-41252@https.bugzilla.kernel.org/>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Date: Wed, 30 May 2018 07:41:35 -0700
+Message-ID: <CAErSpo5U9D5kmYix2SbcJH_mW8urpmZcgN6Zh=FbGtLch+ACuA@mail.gmail.com>
+Subject: Fwd: [Bug 199879] New: Very basic the Pci device is not resumed from
+ suspend mode
+To: linux-pci@vger.kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 11:40 AM, Luc Van Oostenryck wrote:
-> By default, sparse assumes a 64bit machine when compiled on x86-64
-> and 32bit when compiled on anything else.
-> 
-> This can of course create all sort of problems, like issuing false
-> warnings like: 'shift too big (32) for type unsigned long', or
-> worse, to not emit legitimate warnings.
-> 
-> Fix this by passing to sparse the appropriate -m32/-m64 flag
+[+cc linux-pci, linux-kernel, linux-pm]
 
-$ ${CROSS_COMPILE}gcc -E -dM - < /dev/null | grep __SIZEOF_LONG__
-#define __SIZEOF_LONG__ 8
+I'm not sure I understand the problem yet, so please correct me if I'm wrong:
 
-You can ask the compiler, you don't need to redundantly add this to every
-architecture's Makefile.
+  - Your system has both Nvidia and Intel graphics devices
 
-Rob
+  - When you use Intel graphics, lspci, lshw, and /proc/bus/pci for
+the Nvidia device show invalid data (0xff) after suspend/resume
+
+  - When you use Nvidia graphics, suspend/resume doesn't work (instead
+of resuming, you just get a blank screen)
+
+Can you attach the output of "sudo lspci -vv" to the bugzilla, please?
+
+---------- Forwarded message ---------
+From: <bugzilla-daemon@bugzilla.kernel.org>
+Date: Tue, May 29, 2018 at 1:29 PM
+Subject: [Bug 199879] New: Very basic the Pci device is not resumed
+from suspend mode
+To: <bhelgaas@google.com>
+
+
+https://bugzilla.kernel.org/show_bug.cgi?id=199879
+
+            Bug ID: 199879
+           Summary: Very basic the Pci device is not resumed from suspend
+                    mode
+           Product: Drivers
+           Version: 2.5
+    Kernel Version: kernel-4.15.17
+          Hardware: x86-64
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: high
+          Priority: P1
+         Component: PCI
+          Assignee: drivers_pci@kernel-bugs.osdl.org
+          Reporter: uzg@wp.pl
+        Regression: No
+
+Hi, I have problem with very basic device. Device pci-e not resume from
+suspend. Only sleep.
+
+I have a problem with anyone interested in it, because everyone thinks it is
+the fault of the device drivers themselves. But this is not a problem.
+
+This device is a basic device. I've already installed drivers on various
+hardware and it has always been ok, but not this time.
+
+I'm an electronics technician. After diagnosing what I managed, in my opinion
+the device remains asleep.
+
+Where does my application come from?
+I have multiuser mode and I do not use this device. After suspend lspci and
+lshw show normal data. Normal data is in /proc/bus/pci/...
+Next suspend and resume, and...
+lspci see hardware, but is error
+lshw see hardware as undefined device
+data in /proc/bus/pci/... is only 0xFF
+Hardware sleep, not work, not ready. This is bug.
+
+But since the problem concerns the graphics card in the configuration with the
+second default Intel card, everyone thinks that this is another driver problem
+as always and nobody wants to take a look at it :(
+
+The problem is easy to recognize. On the internet, I've seen a lot of
+unresolved problems in which I could see exactly what I found.
+
+My hardware is Lenovo with NVidia and Intel Graphics. Problem is with NVidia. I
+tested Z710 and Z50-70. The first symptom of the problem is lspci in multiuser
+mode (or when is XServer with intel graphics). After suspend NVidia have e.g
+"rev. A1", after resume is "rev. FF". Next symptom lshw and /proc/bus/pci/...
+When system started with normal NVidia driver, system not resume and halt, only
+black screen.
+
+There are many examples on the Internet with unsolved problems e.g
+https://www.lwks.com/index.php?option=com_kunena&func=view&catid=21&id=124374&Itemid=81
+
+--
+You are receiving this mail because:
+You are watching the assignee of the bug.
