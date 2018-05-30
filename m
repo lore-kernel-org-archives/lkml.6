@@ -1,115 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932663AbeE3XHB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 19:07:01 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:39319 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932416AbeE3XGz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 19:06:55 -0400
-X-Google-Smtp-Source: ADUXVKJCOZAnYMMJKDJjLPSWiuvcxdhQ3lyHgVqnp9jh/Ip4fjFUU0EeVNqmSTDY9BrpIzWkXItfZul3n9NIHf/iw/A=
-MIME-Version: 1.0
-In-Reply-To: <d47b72cc-9209-a190-38b3-969870e1bf26@suse.de>
-References: <20180530204838.22079-1-luc.vanoostenryck@gmail.com> <d47b72cc-9209-a190-38b3-969870e1bf26@suse.de>
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Date: Thu, 31 May 2018 01:06:53 +0200
-Message-ID: <CAMHZB6GXVPvr1uwbemuxqPPtNzYT7jeVokR6q9tz2mS_=TG6vA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: add machine size to CHEKCFLAGS
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>, "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-alpha@vger.kernel.org,
-        "moderated list:ARM/Allwinner sunXi SoC support"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, Rob Landley <rob@landley.net>
-Content-Type: text/plain; charset="UTF-8"
+        id S932623AbeE3XJv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 19:09:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47816 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932416AbeE3XJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 19:09:47 -0400
+Date: Thu, 31 May 2018 08:09:41 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org, Shuah Khan <shuahkhan@gmail.com>
+Subject: Re: [PATCH v3 13/14] tracing/selftest: Add selftests to test
+ trace_marker histogram triggers
+Message-Id: <20180531080941.fd02980b7fd9aac015dbfd73@kernel.org>
+In-Reply-To: <20180528212055.21e24c52@vmware.local.home>
+References: <20180516150012.135869655@goodmis.org>
+        <20180516150201.246539183@goodmis.org>
+        <20180523231331.bf69453f05478e11b00451ab@kernel.org>
+        <20180525140731.07d7543a@gandalf.local.home>
+        <20180525171229.76bae7a8@gandalf.local.home>
+        <20180525171353.53b44f5e@gandalf.local.home>
+        <20180528013258.59715b8111d3e59319006cd2@kernel.org>
+        <20180528212055.21e24c52@vmware.local.home>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4UN7cIS025108
 
-On Thu, May 31, 2018 at 12:00 AM, Andreas Färber <afaerber@suse.de> wrote:
-> Hi Luc,
->
-> The typo in the subject made me curious...
->
-> Am 30.05.2018 um 22:48 schrieb Luc Van Oostenryck:
->> By default, sparse assumes a 64bit machine when compiled on x86-64
->> and 32bit when compiled on anything else.
->>
->> This can of course create all sort of problems for the other archs, like
->> issuing false warnings ('shift too big (32) for type unsigned long'), or
->> worse, failing to emit legitimate warnings.
->>
->> Fix this by adding the -m32/-m64 flag, depending on CONFIG_64BIT,
->> to CHECKFLAGS in the main Makefile (and so for all archs).
->> Also, remove the now unneeded -m32/-m64 in arch specific Makefiles.
->>
->> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
->> ---
->>  Makefile             | 3 +++
->>  arch/alpha/Makefile  | 2 +-
->>  arch/arm/Makefile    | 2 +-
->>  arch/arm64/Makefile  | 2 +-
->>  arch/ia64/Makefile   | 2 +-
->>  arch/mips/Makefile   | 3 ---
->>  arch/parisc/Makefile | 2 +-
->>  arch/sparc/Makefile  | 2 +-
->>  arch/x86/Makefile    | 2 +-
->>  9 files changed, 10 insertions(+), 10 deletions(-)
->
-> What about the architectures not touched by your patch that previously
-> had no -m32/-m64? (arc, c6x, h8300, hexagon, m68k, microblaze, nds32,
-> nios2, openrisc, powerpc, riscv, s390, sh, unicore32, xtensa)
+On Mon, 28 May 2018 21:20:55 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-As explained in the patch, by default sparse uses -m64 if compiled on x86-64
-and 32bit on everything else (well, more recent versions use -m64 if
-compiled on any 64 bit machine). I think that most ppc devs use a ppc
-machine and so ppc was most probably fine (at least ppc64) but I suspect
-that most of these others archs either had never sparse used on them
-or had a lot of wrong warnings. IOW, it was maybe OK but most probably
-incorrect for them and now it is OK.
+> On Mon, 28 May 2018 01:32:58 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Hi Steve,
+> > 
+> > On Fri, 25 May 2018 17:13:53 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > 
+> > > On Fri, 25 May 2018 17:12:29 -0400
+> > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > 
+> > >    
+> > > > #!/bin/sh  
+> > > 
+> > > Hmm, I think I need to make this #!/bin/bash
+> > >   
+> > > > test_trace() {
+> > > >     file=$1
+> > > >     x=$2
+> > > > 
+> > > >     cat $file | while read line; do
+> > > > 	if [ "$line" != "${line/\#/}" ]; then
+> > > > 	    continue
+> > > > 	fi
+> > > > 	echo "testing $line for >$x<"
+> > > > 	if [ "$line" == "${line/>$x</}" ]; then  
+> > > 
+> > > The ${line/>$x</} is unique to bash I believe.  
+> > 
+> > Hmm, could you try to use only posix-shell based test ?
+> > Since I would like to keep this can run on small 
+> > environment, like busybox, etc.
+> >
+> 
+> Like something like this?
 
-> You forgot to CC them on this patch.
+This looks good to me. :)
 
-I didn't thought/knew  it was needed and the CC list is already
-quite long but, if needed, no problem for me.
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-> Have you really checked that all their toolchains support the -m32/-m64
-> flags you newly introduce for them? Apart from non-biarch architectures,
-> I'm thinking of 31-bit s390 as a corner case where !64 != 32.
+Thanks,
 
-Hmm, there is no change to anything I call 'toolchain related', like
-compiler and linker. The only change is sparse (or any other checker)
-receiving now a correct and explicit -m32 or -m64.
+> 
+> -- Steve
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
+> index c6c50a2..3a3c33d 100644
+> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
+> @@ -41,11 +41,13 @@ test_trace() {
+>      x=$2
+>  
+>      cat $file | while read line; do
+> -	if [ "$line" != "${line/\#/}" ]; then
+> +	comment=`echo $line | sed -e 's/^#//'`
+> +	if [ "$line" != "$comment" ]; then
+>  	    continue
+>  	fi
+>  	echo "testing $line for >$x<"
+> -	if [ "$line" == "${line/>$x</}" ]; then
+> +	match=`echo $line | sed -e "s/>$x<//"`
+> +	if [ "$line" == "$match" ]; then
+>  	    fail "$line does not have >$x< in it"
+>  	fi
+>  	let x=$x+2
 
-For s390, as far as I know:
-1) it has CONFIG_64BIT unconditionally definee (because the old 31bit
-   is no more supported, now everything is s390x only).
-2) even if the *address space* was only 31 bit, I'm very sure
-   that sizeof(long) and sizeof(void*) was 4 on these machine
-   hence -m32 would have been correct.
 
-Best regards,
--- Luc
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
