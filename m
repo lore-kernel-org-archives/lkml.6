@@ -1,112 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeE3NHt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 09:07:49 -0400
-Received: from guitar.tcltek.co.il ([192.115.133.116]:33943 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753313AbeE3NHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 09:07:45 -0400
-Date: Wed, 30 May 2018 16:07:42 +0300
-From: Baruch Siach <baruch@tkos.co.il>
-To: =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Scott Branden <sbranden@broadcom.com>,
-        Tony Lindgren <tony@atomide.com>, Ray Jui <rjui@broadcom.com>,
-        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-        Jon Mason <jonmason@broadcom.com>,
-        =?utf-8?Q?Cl=C3=A9ment?= Peron <clement.peron@devialet.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Laura Abbott <labbott@redhat.com>
-Subject: Re: [PATCH] ARM: debug: Add Iproc UART3 debug addresses
-Message-ID: <20180530130742.pwffhb3iysj7auho@sapphire.tkos.co.il>
-References: <20180530122922.1041-1-peron.clem@gmail.com>
- <20180530123809.khyzehg62ct6jzws@sapphire.tkos.co.il>
- <CAJiuCcdJi6Ln3+Eip+Nc=-4aZu4bsTfT-MPVZisec7e10jO4XQ@mail.gmail.com>
+        id S1753305AbeE3NI4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 09:08:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36690 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752102AbeE3NIx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 09:08:53 -0400
+Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit"
+ actions
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
+        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
+ <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
+ <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Wed, 30 May 2018 09:08:47 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJiuCcdJi6Ln3+Eip+Nc=-4aZu4bsTfT-MPVZisec7e10jO4XQ@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18053013-0040-0000-0000-00000436D03A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009098; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039828; UDB=6.00530820; IPR=6.00818962;
+ MB=3.00021375; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 13:08:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053013-0041-0000-0000-0000083CF5EC
+Message-Id: <35894dae-c9c6-aa65-da99-c0283d459878@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805300148
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Clément,
+On 05/30/2018 08:49 AM, Richard Guy Briggs wrote:
+> On 2018-05-24 16:11, Stefan Berger wrote:
+>> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
+>> the IMA "audit" policy action.  This patch defines
+>> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
+>>
+>> With this change we now call integrity_audit_msg_common() to get
+>> common integrity auditing fields. This now produces the following
+>> record when parsing an IMA policy rule:
+>>
+>> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
+>>    fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
+>>    subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
+>>    op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
+>>    tty=tty2 res=1
+>>
+>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> ---
+>>   include/uapi/linux/audit.h          | 3 ++-
+>>   security/integrity/ima/ima_policy.c | 5 +++--
+>>   2 files changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+>> index 4e61a9e05132..776e0abd35cf 100644
+>> --- a/include/uapi/linux/audit.h
+>> +++ b/include/uapi/linux/audit.h
+>> @@ -146,7 +146,8 @@
+>>   #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
+>>   #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
+>>   #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
+>> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
+>> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs  */
+>> +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
+>>   
+>>   #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
+>>   
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index 3aed25a7178a..a8ae47a386b4 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>>   	int result = 0;
+>>   
+>>   	ab = integrity_audit_log_start(NULL, GFP_KERNEL,
+>> -				       AUDIT_INTEGRITY_RULE);
+>> +				       AUDIT_INTEGRITY_POLICY_RULE);
+> Is it possible to connect this record to a syscall by replacing the
+> first parameter (NULL) by current->context?
 
-On Wed, May 30, 2018 at 02:55:28PM +0200, Clément Péron wrote:
-> On Wed, 30 May 2018 at 14:47, Baruch Siach <baruch@tkos.co.il> wrote:
-> > On Wed, May 30, 2018 at 02:29:22PM +0200, Clément Péron wrote:
-> > > From: Clément Peron <clement.peron@devialet.com>
-> > >
-> > > Broadcom Iproc SoCs typically use the UART3 for
-> > > debug/console, provide a known good location for that.
-> > >
-> > > Signed-off-by: Clément Peron <clement.peron@devialet.com>
-> > > ---
-> > >  arch/arm/Kconfig.debug | 12 +++++++++++-
-> > >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> > > index 199ebc1c4538..fa6fa1dae94d 100644
-> > > --- a/arch/arm/Kconfig.debug
-> > > +++ b/arch/arm/Kconfig.debug
-> > > @@ -207,6 +207,14 @@ choice
-> > >               depends on ARCH_BCM_HR2
-> > >               select DEBUG_UART_8250
-> > >
-> > > +     config DEBUG_BCM_IPROC_UART3
-> > > +             bool "Kernel low-level debugging on BCM IPROC UART3"
-> > > +             depends on ARCH_BCM_CYGNUS
-> > > +             select DEBUG_UART_8250
-> > > +             help
-> > > +               Say Y here if you want the debug print routines to
-> direct
-> > > +               their output to the third serial port on these devices.
-> > > +
-> > >       config DEBUG_BCM_KONA_UART
-> > >               bool "Kernel low-level debugging messages via BCM KONA
-> UART"
-> > >               depends on ARCH_BCM_MOBILE
-> > > @@ -1564,6 +1572,7 @@ config DEBUG_UART_PHYS
-> > >       default 0x20068000 if DEBUG_RK29_UART2 || DEBUG_RK3X_UART3
-> > >       default 0x20201000 if DEBUG_BCM2835
-> > >       default 0x3f201000 if DEBUG_BCM2836
-> > > +     default 0x18023000 if DEBUG_BCM_IPROC_UART3
-> 
-> > Entries are sorted by the address value. Except that DEBUG_BCM_KONA_UART
-> > should be listed above DEBUG_BCM2836.
-> 
-> Indeed, can I fix the DEBUG_BCM_KONA_UART entry in the same commit ?
+We would have to fix current->context in this case since it is NULL. We 
+get to this location by root cat'ing a policy or writing a policy 
+filename into /sys/kernel/security/ima/policy.
 
-That is an unrelated fix, so a separate patch is preferred.
 
-baruch
 
-> > >       default 0x3e000000 if DEBUG_BCM_KONA_UART
-> > >       default 0x4000e400 if DEBUG_LL_UART_EFM32
-> > >       default 0x40028000 if DEBUG_AT91_SAMV7_USART1
-> > > @@ -1730,6 +1739,7 @@ config DEBUG_UART_VIRT
-> > >       default 0xfe018000 if DEBUG_MMP_UART3
-> > >       default 0xfe100000 if DEBUG_IMX23_UART || DEBUG_IMX28_UART
-> > >       default 0xfe230000 if DEBUG_PICOXCELL_UART
-> > > +     default 0xf1023000 if DEBUG_BCM_IPROC_UART3
-> 
-> > Same here.
-> 
-> > >       default 0xfe300000 if DEBUG_BCM_KONA_UART
-> > >       default 0xfe800000 if ARCH_IOP32X
-> > >       default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
-> > > @@ -1791,7 +1801,7 @@ config DEBUG_UART_8250_WORD
-> > >               DEBUG_KEYSTONE_UART0 || DEBUG_KEYSTONE_UART1 || \
-> > >               DEBUG_ALPINE_UART0 || \
-> > >               DEBUG_DAVINCI_DMx_UART0 || DEBUG_DAVINCI_DA8XX_UART1 || \
-> > > -             DEBUG_DAVINCI_DA8XX_UART2 || \
-> > > +             DEBUG_DAVINCI_DA8XX_UART2 || DEBUG_BCM_IPROC_UART3 || \
-> > >               DEBUG_BCM_KONA_UART || DEBUG_RK32_UART2
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+>
+>>   	entry->uid = INVALID_UID;
+>>   	entry->fowner = INVALID_UID;
+>> @@ -926,7 +926,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>>   		temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
+>>   	else if (entry->func == POLICY_CHECK)
+>>   		temp_ima_appraise |= IMA_APPRAISE_POLICY;
+>> -	audit_log_format(ab, "res=%d", !result);
+>> +	integrity_audit_msg_common(ab, NULL, NULL,
+>> +				   "policy_update", "parse_rule", result);
+>>   	audit_log_end(ab);
+>>   	return result;
+>>   }
+> - RGB
+>
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
+>
