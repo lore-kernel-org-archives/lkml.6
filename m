@@ -1,24 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752977AbeE3LNS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:13:18 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60741 "EHLO
+        id S1752638AbeE3LHd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:07:33 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60672 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752641AbeE3LHe (ORCPT
+        by vger.kernel.org with ESMTP id S1751836AbeE3LG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:34 -0400
+        Wed, 30 May 2018 07:06:58 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>,
-        "Zhouyi Zhou" <zhouzhouyi@gmail.com>
+CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
+        "=?UTF-8?Q?=E8=8C=83=E9=BE=99=E9=A3=9E?=" <long7573@126.com>,
+        "Nicolai Stange" <nstange@suse.de>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.674505514@decadent.org.uk>
+Message-ID: <lsq.1527677561.575018007@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 039/153] ext4: save error to disk in __ext4_grp_locked_error()
+Subject: [PATCH 3.2 016/153] ALSA: seq: More protection for concurrent
+ write and ioctl races
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -31,33 +33,172 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyi Zhou <zhouzhouyi@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 06f29cc81f0350261f59643a505010531130eea0 upstream.
+commit 7bd80091567789f1c0cb70eb4737aac8bcd2b6b9 upstream.
 
-In the function __ext4_grp_locked_error(), __save_error_info()
-is called to save error info in super block block, but does not sync
-that information to disk to info the subsequence fsck after reboot.
+This patch is an attempt for further hardening against races between
+the concurrent write and ioctls.  The previous fix d15d662e89fc
+("ALSA: seq: Fix racy pool initializations") covered the race of the
+pool initialization at writer and the pool resize ioctl by the
+client->ioctl_mutex (CVE-2018-1000004).  However, basically this mutex
+should be applied more widely to the whole write operation for
+avoiding the unexpected pool operations by another thread.
 
-This patch writes the error information to disk.  After this patch,
-I think there is no obvious EXT4 error handle branches which leads to
-"Remounting filesystem read-only" will leave the disk partition miss
-the subsequence fsck.
+The only change outside snd_seq_write() is the additional mutex
+argument to helper functions, so that we can unlock / relock the given
+mutex temporarily during schedule() call for blocking write.
 
-Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: d15d662e89fc ("ALSA: seq: Fix racy pool initializations")
+Reported-by: 范龙飞 <long7573@126.com>
+Reported-by: Nicolai Stange <nstange@suse.de>
+Reviewed-and-tested-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/super.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/core/seq/seq_clientmgr.c | 18 +++++++++++-------
+ sound/core/seq/seq_fifo.c      |  2 +-
+ sound/core/seq/seq_memory.c    | 14 ++++++++++----
+ sound/core/seq/seq_memory.h    |  3 ++-
+ 4 files changed, 24 insertions(+), 13 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -700,6 +700,7 @@ __acquires(bitlock)
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -907,7 +907,8 @@ int snd_seq_dispatch_event(struct snd_se
+ static int snd_seq_client_enqueue_event(struct snd_seq_client *client,
+ 					struct snd_seq_event *event,
+ 					struct file *file, int blocking,
+-					int atomic, int hop)
++					int atomic, int hop,
++					struct mutex *mutexp)
+ {
+ 	struct snd_seq_event_cell *cell;
+ 	int err;
+@@ -945,7 +946,8 @@ static int snd_seq_client_enqueue_event(
+ 		return -ENXIO; /* queue is not allocated */
+ 
+ 	/* allocate an event cell */
+-	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic, file);
++	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic,
++				file, mutexp);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -1014,12 +1016,11 @@ static ssize_t snd_seq_write(struct file
+ 		return -ENXIO;
+ 
+ 	/* allocate the pool now if the pool is not allocated yet */ 
++	mutex_lock(&client->ioctl_mutex);
+ 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
+-		mutex_lock(&client->ioctl_mutex);
+ 		err = snd_seq_pool_init(client->pool);
+-		mutex_unlock(&client->ioctl_mutex);
+ 		if (err < 0)
+-			return -ENOMEM;
++			goto out;
  	}
  
- 	ext4_unlock_group(sb, grp);
-+	ext4_commit_super(sb, 1);
- 	ext4_handle_error(sb);
- 	/*
- 	 * We only get here in the ERRORS_RO case; relocking the group
+ 	/* only process whole events */
+@@ -1070,7 +1071,7 @@ static ssize_t snd_seq_write(struct file
+ 		/* ok, enqueue it */
+ 		err = snd_seq_client_enqueue_event(client, &event, file,
+ 						   !(file->f_flags & O_NONBLOCK),
+-						   0, 0);
++						   0, 0, &client->ioctl_mutex);
+ 		if (err < 0)
+ 			break;
+ 
+@@ -1081,6 +1082,8 @@ static ssize_t snd_seq_write(struct file
+ 		written += len;
+ 	}
+ 
++ out:
++	mutex_unlock(&client->ioctl_mutex);
+ 	return written ? written : err;
+ }
+ 
+@@ -2343,7 +2346,8 @@ static int kernel_client_enqueue(int cli
+ 	if (! cptr->accept_output)
+ 		result = -EPERM;
+ 	else /* send it */
+-		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking, atomic, hop);
++		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking,
++						      atomic, hop, NULL);
+ 
+ 	snd_seq_client_unlock(cptr);
+ 	return result;
+--- a/sound/core/seq/seq_fifo.c
++++ b/sound/core/seq/seq_fifo.c
+@@ -125,7 +125,7 @@ int snd_seq_fifo_event_in(struct snd_seq
+ 		return -EINVAL;
+ 
+ 	snd_use_lock_use(&f->use_lock);
+-	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL); /* always non-blocking */
++	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL, NULL); /* always non-blocking */
+ 	if (err < 0) {
+ 		if ((err == -ENOMEM) || (err == -EAGAIN))
+ 			atomic_inc(&f->overflow);
+--- a/sound/core/seq/seq_memory.c
++++ b/sound/core/seq/seq_memory.c
+@@ -221,7 +221,8 @@ void snd_seq_cell_free(struct snd_seq_ev
+  */
+ static int snd_seq_cell_alloc(struct snd_seq_pool *pool,
+ 			      struct snd_seq_event_cell **cellp,
+-			      int nonblock, struct file *file)
++			      int nonblock, struct file *file,
++			      struct mutex *mutexp)
+ {
+ 	struct snd_seq_event_cell *cell;
+ 	unsigned long flags;
+@@ -245,7 +246,11 @@ static int snd_seq_cell_alloc(struct snd
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		add_wait_queue(&pool->output_sleep, &wait);
+ 		spin_unlock_irq(&pool->lock);
++		if (mutexp)
++			mutex_unlock(mutexp);
+ 		schedule();
++		if (mutexp)
++			mutex_lock(mutexp);
+ 		spin_lock_irq(&pool->lock);
+ 		remove_wait_queue(&pool->output_sleep, &wait);
+ 		/* interrupted? */
+@@ -288,7 +293,7 @@ __error:
+  */
+ int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
+ 		      struct snd_seq_event_cell **cellp, int nonblock,
+-		      struct file *file)
++		      struct file *file, struct mutex *mutexp)
+ {
+ 	int ncells, err;
+ 	unsigned int extlen;
+@@ -305,7 +310,7 @@ int snd_seq_event_dup(struct snd_seq_poo
+ 	if (ncells >= pool->total_elements)
+ 		return -ENOMEM;
+ 
+-	err = snd_seq_cell_alloc(pool, &cell, nonblock, file);
++	err = snd_seq_cell_alloc(pool, &cell, nonblock, file, mutexp);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -331,7 +336,8 @@ int snd_seq_event_dup(struct snd_seq_poo
+ 			int size = sizeof(struct snd_seq_event);
+ 			if (len < size)
+ 				size = len;
+-			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file);
++			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file,
++						 mutexp);
+ 			if (err < 0)
+ 				goto __error;
+ 			if (cell->event.data.ext.ptr == NULL)
+--- a/sound/core/seq/seq_memory.h
++++ b/sound/core/seq/seq_memory.h
+@@ -66,7 +66,8 @@ struct snd_seq_pool {
+ void snd_seq_cell_free(struct snd_seq_event_cell *cell);
+ 
+ int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
+-		      struct snd_seq_event_cell **cellp, int nonblock, struct file *file);
++		      struct snd_seq_event_cell **cellp, int nonblock,
++		      struct file *file, struct mutex *mutexp);
+ 
+ /* return number of unused (free) cells */
+ static inline int snd_seq_unused_cells(struct snd_seq_pool *pool)
