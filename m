@@ -1,47 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937149AbeE3HDL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:03:11 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:39869 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935905AbeE3HDH (ORCPT
+        id S937227AbeE3HEE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:04:04 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35918 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964773AbeE3HD7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:03:07 -0400
-X-Google-Smtp-Source: ADUXVKLMyAy6C3IgjFqIgu7wTPG/ds0/20uCK5dUPnqtWbeox4wGat2TXrqaWodK0ip6quBltambww==
-Date: Wed, 30 May 2018 12:33:03 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, valentin.schneider@arm.com,
-        quentin.perret@arm.com
-Subject: Re: [PATCH v5 03/10] cpufreq/schedutil: add rt utilization tracking
-Message-ID: <20180530070303.qpcgjng7vaell5me@vireshk-i7>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-4-git-send-email-vincent.guittot@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527253951-22709-4-git-send-email-vincent.guittot@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        Wed, 30 May 2018 03:03:59 -0400
+X-Google-Smtp-Source: ADUXVKJVAUD9rPSoQX0IkHAc1MdvDIWoYn1VpiFRUys2/p36xGbZQ/BxTfCVRAomJoF72U1ttAmNYA==
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCH] printk: drop in_nmi check from printk_safe_flush_on_panic()
+Date: Wed, 30 May 2018 16:03:50 +0900
+Message-Id: <20180530070350.10131-1-sergey.senozhatsky@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-05-18, 15:12, Vincent Guittot wrote:
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
->  	/*
->  	 * Utilization required by DEADLINE must always be granted while, for
-> @@ -197,7 +205,7 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->  	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
->  	 * ready for such an interface. So, we only do the latter for now.
->  	 */
-> -	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
-> +	return min(sg_cpu->max, util);
+Drop the in_nmi() check from printk_safe_flush_on_panic()
+and attempt to re-init (IOW unlock) locked logbuf spinlock
+from panic CPU regardless of its context. Otherwise,
+theoretically, we can deadlock on logbuf trying to flush
+per-CPU buffers:
+a) Panic CPU is running in non-NMI context
+b) Panic CPU sends out shutdown IPI via reboot vector
+c) Panic CPU fails to stop all remote CPUs
+d) Panic CPU sends out shutdown IPI via NMI vector
+   One of the CPUs that we bring down via NMI vector can hold
+   logbuf spin lock (theoretically).
 
-Need to update comment above this line to include RT in that ?
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+---
+ kernel/printk/printk_safe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  }
-
+diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
+index 3e3c2004bb23..baa80de5d8ec 100644
+--- a/kernel/printk/printk_safe.c
++++ b/kernel/printk/printk_safe.c
+@@ -278,7 +278,7 @@ void printk_safe_flush_on_panic(void)
+ 	 * Make sure that we could access the main ring buffer.
+ 	 * Do not risk a double release when more CPUs are up.
+ 	 */
+-	if (in_nmi() && raw_spin_is_locked(&logbuf_lock)) {
++	if (raw_spin_is_locked(&logbuf_lock)) {
+ 		if (num_online_cpus() > 1)
+ 			return;
+ 
 -- 
-viresh
+2.17.0
