@@ -1,101 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935698AbeE3GHP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 02:07:15 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36140 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934498AbeE3GHM (ORCPT
+        id S935723AbeE3GMM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 02:12:12 -0400
+Received: from mail-qt0-f201.google.com ([209.85.216.201]:32816 "EHLO
+        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751478AbeE3GMK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 02:07:12 -0400
-X-Google-Smtp-Source: ADUXVKLWOxAtmj0s2MfkhK00SXr6eUgcCFjYRWN05YNob024+G5uTGqC7yRsmGRHKM81VAzQjmXZwA7me7Cw8RZaZVY=
-MIME-Version: 1.0
-In-Reply-To: <20180530055815.GB6463@gmail.com>
-References: <20180529133622.26982-1-nixiaoming@huawei.com> <20180530055815.GB6463@gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Wed, 30 May 2018 08:07:10 +0200
-Message-ID: <CAKv+Gu-FvWoDbMV2veh8BzW7ihbvaw-cd+rK5x_TLq0UC99FNg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] x86:add missing CONFIG_STRICT_KERNEL_RWX for mark_rodata_ro
-To: Ingo Molnar <mingo@kernel.org>
-Cc: nixiaoming <nixiaoming@huawei.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        zhang.jia@linux.alibaba.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>
+        Wed, 30 May 2018 02:12:10 -0400
+X-Google-Smtp-Source: ADUXVKLyMuMSf5f4Hxa3esCX+o2glkTRCFFCuL7tsY70e4nffhEzPFg1ga4x/tESg5bBLHAJwNjXkqWXR2oB
+Date: Tue, 29 May 2018 23:12:07 -0700
+In-Reply-To: <20180529025722.GA25784@bombadil.infradead.org>
+Message-Id: <xr93sh69wu2w.fsf@gthelen.svl.corp.google.com>
+Mime-Version: 1.0
+References: <20180529024025.58353-1-gthelen@google.com> <20180529025722.GA25784@bombadil.infradead.org>
+Subject: Re: [PATCH] mm: convert scan_control.priority int => byte
+From: Greg Thelen <gthelen@google.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30 May 2018 at 07:58, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * nixiaoming <nixiaoming@huawei.com> wrote:
->
->> mark_rodata_ro is only called by the function mark_readonly
->> when CONFIG_STRICT_KERNEL_RWX=y
->>
->> if CONFIG_STRICT_KERNEL_RWX is not set
->> a compile warning may be triggered: unused function
->>
->> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
->> ---
->>  arch/x86/mm/init_32.c | 2 ++
->>  arch/x86/mm/init_64.c | 2 ++
->>  2 files changed, 4 insertions(+)
->>
->> diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
->> index c893c6a..121c567 100644
->> --- a/arch/x86/mm/init_32.c
->> +++ b/arch/x86/mm/init_32.c
->> @@ -920,6 +920,7 @@ static void mark_nxdata_nx(void)
->>       set_pages_nx(virt_to_page(start), size >> PAGE_SHIFT);
->>  }
->>
->> +#ifdef CONFIG_STRICT_KERNEL_RWX
->>  void mark_rodata_ro(void)
->>  {
->>       unsigned long start = PFN_ALIGN(_text);
->> @@ -957,3 +958,4 @@ void mark_rodata_ro(void)
->>       if (__supported_pte_mask & _PAGE_NX)
->>               debug_checkwx();
->>  }
->> +#endif /*end of CONFIG_STRICT_KERNEL_RWX*/
->> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
->> index 0a40060..1b7a1a7 100644
->> --- a/arch/x86/mm/init_64.c
->> +++ b/arch/x86/mm/init_64.c
->> @@ -1245,6 +1245,7 @@ void set_kernel_text_ro(void)
->>       set_memory_ro(start, (end - start) >> PAGE_SHIFT);
->>  }
->>
->> +#ifdef CONFIG_STRICT_KERNEL_RWX
->>  void mark_rodata_ro(void)
->>  {
->>       unsigned long start = PFN_ALIGN(_text);
->> @@ -1298,6 +1299,7 @@ void mark_rodata_ro(void)
->>        */
->>       pti_clone_kernel_text();
->>  }
->> +#endif
->
-> NAK, this is very ugly and the changelog doesn't appear to be true: the build
-> warning does not trigger in the default build, correct?
->
+Matthew Wilcox <willy@infradead.org> wrote:
 
-I don't see how the build warning could trigger at all, given that
-mark_rodata_ro() has external linkage.
+> On Mon, May 28, 2018 at 07:40:25PM -0700, Greg Thelen wrote:
+>> Reclaim priorities range from 0..12(DEF_PRIORITY).
+>> scan_control.priority is a 4 byte int, which is overkill.
+>> 
+>> Since commit 6538b8ea886e ("x86_64: expand kernel stack to 16K") x86_64
+>> stack overflows are not an issue.  But it's inefficient to use 4 bytes
+>> for priority.
+>
+> If you're looking to shave a few more bytes, allocation order can fit
+> in a u8 too (can't be more than 6 bits, and realistically won't be more
+> than 4 bits).  reclaim_idx likewise will fit in a u8, and actually won't
+> be more than 3 bits.
+
+Nod.  Good tip.  Included in ("[PATCH v2] mm: condense scan_control").
+
+> I am sceptical that nr_to_reclaim should really be an unsigned long; I
+> don't think we should be trying to free 4 billion pages in a single call.
+> nr_scanned might be over 4 billion (!) but nr_reclaimed can probably
+> shrink to unsigned int along with nr_to_reclaim.
+
+Agreed.  For patch simplicity, I'll pass on this for now.
