@@ -1,26 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752638AbeE3LHd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:07:33 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60672 "EHLO
+        id S1752817AbeE3LMP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:12:15 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60759 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751836AbeE3LG6 (ORCPT
+        by vger.kernel.org with ESMTP id S1752062AbeE3LHi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:06:58 -0400
+        Wed, 30 May 2018 07:07:38 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
-        "=?UTF-8?Q?=E8=8C=83=E9=BE=99=E9=A3=9E?=" <long7573@126.com>,
-        "Nicolai Stange" <nstange@suse.de>
+CC: akpm@linux-foundation.org, "mulhern" <amulhern@redhat.com>,
+        "Mike Snitzer" <snitzer@redhat.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.575018007@decadent.org.uk>
+Message-ID: <lsq.1527677561.967028147@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 016/153] ALSA: seq: More protection for concurrent
- write and ioctl races
+Subject: [PATCH 3.2 052/153] dm thin: fix documentation relative to low
+ water mark threshold
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,172 +32,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: mulhern <amulhern@redhat.com>
 
-commit 7bd80091567789f1c0cb70eb4737aac8bcd2b6b9 upstream.
+commit 9b28a1102efc75d81298198166ead87d643a29ce upstream.
 
-This patch is an attempt for further hardening against races between
-the concurrent write and ioctls.  The previous fix d15d662e89fc
-("ALSA: seq: Fix racy pool initializations") covered the race of the
-pool initialization at writer and the pool resize ioctl by the
-client->ioctl_mutex (CVE-2018-1000004).  However, basically this mutex
-should be applied more widely to the whole write operation for
-avoiding the unexpected pool operations by another thread.
+Fixes:
+1. The use of "exceeds" when the opposite of exceeds, falls below,
+was meant.
+2. Properly speaking, a table can not exceed a threshold.
 
-The only change outside snd_seq_write() is the additional mutex
-argument to helper functions, so that we can unlock / relock the given
-mutex temporarily during schedule() call for blocking write.
+It emphasizes the important point, which is that it is the userspace
+daemon's responsibility to check for low free space when a device
+is resumed, since it won't get a special event indicating low free
+space in that situation.
 
-Fixes: d15d662e89fc ("ALSA: seq: Fix racy pool initializations")
-Reported-by: 范龙飞 <long7573@126.com>
-Reported-by: Nicolai Stange <nstange@suse.de>
-Reviewed-and-tested-by: Nicolai Stange <nstange@suse.de>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: mulhern <amulhern@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/seq/seq_clientmgr.c | 18 +++++++++++-------
- sound/core/seq/seq_fifo.c      |  2 +-
- sound/core/seq/seq_memory.c    | 14 ++++++++++----
- sound/core/seq/seq_memory.h    |  3 ++-
- 4 files changed, 24 insertions(+), 13 deletions(-)
+ Documentation/device-mapper/thin-provisioning.txt | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -907,7 +907,8 @@ int snd_seq_dispatch_event(struct snd_se
- static int snd_seq_client_enqueue_event(struct snd_seq_client *client,
- 					struct snd_seq_event *event,
- 					struct file *file, int blocking,
--					int atomic, int hop)
-+					int atomic, int hop,
-+					struct mutex *mutexp)
- {
- 	struct snd_seq_event_cell *cell;
- 	int err;
-@@ -945,7 +946,8 @@ static int snd_seq_client_enqueue_event(
- 		return -ENXIO; /* queue is not allocated */
+--- a/Documentation/device-mapper/thin-provisioning.txt
++++ b/Documentation/device-mapper/thin-provisioning.txt
+@@ -109,9 +109,11 @@ $low_water_mark is expressed in blocks o
+ free space on the data device drops below this level then a dm event
+ will be triggered which a userspace daemon should catch allowing it to
+ extend the pool device.  Only one such event will be sent.
+-Resuming a device with a new table itself triggers an event so the
+-userspace daemon can use this to detect a situation where a new table
+-already exceeds the threshold.
++
++No special event is triggered if a just resumed device's free space is below
++the low water mark. However, resuming a device always triggers an
++event; a userspace daemon should verify that free space exceeds the low
++water mark when handling this event.
  
- 	/* allocate an event cell */
--	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic, file);
-+	err = snd_seq_event_dup(client->pool, event, &cell, !blocking || atomic,
-+				file, mutexp);
- 	if (err < 0)
- 		return err;
- 
-@@ -1014,12 +1016,11 @@ static ssize_t snd_seq_write(struct file
- 		return -ENXIO;
- 
- 	/* allocate the pool now if the pool is not allocated yet */ 
-+	mutex_lock(&client->ioctl_mutex);
- 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
--		mutex_lock(&client->ioctl_mutex);
- 		err = snd_seq_pool_init(client->pool);
--		mutex_unlock(&client->ioctl_mutex);
- 		if (err < 0)
--			return -ENOMEM;
-+			goto out;
- 	}
- 
- 	/* only process whole events */
-@@ -1070,7 +1071,7 @@ static ssize_t snd_seq_write(struct file
- 		/* ok, enqueue it */
- 		err = snd_seq_client_enqueue_event(client, &event, file,
- 						   !(file->f_flags & O_NONBLOCK),
--						   0, 0);
-+						   0, 0, &client->ioctl_mutex);
- 		if (err < 0)
- 			break;
- 
-@@ -1081,6 +1082,8 @@ static ssize_t snd_seq_write(struct file
- 		written += len;
- 	}
- 
-+ out:
-+	mutex_unlock(&client->ioctl_mutex);
- 	return written ? written : err;
- }
- 
-@@ -2343,7 +2346,8 @@ static int kernel_client_enqueue(int cli
- 	if (! cptr->accept_output)
- 		result = -EPERM;
- 	else /* send it */
--		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking, atomic, hop);
-+		result = snd_seq_client_enqueue_event(cptr, ev, file, blocking,
-+						      atomic, hop, NULL);
- 
- 	snd_seq_client_unlock(cptr);
- 	return result;
---- a/sound/core/seq/seq_fifo.c
-+++ b/sound/core/seq/seq_fifo.c
-@@ -125,7 +125,7 @@ int snd_seq_fifo_event_in(struct snd_seq
- 		return -EINVAL;
- 
- 	snd_use_lock_use(&f->use_lock);
--	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL); /* always non-blocking */
-+	err = snd_seq_event_dup(f->pool, event, &cell, 1, NULL, NULL); /* always non-blocking */
- 	if (err < 0) {
- 		if ((err == -ENOMEM) || (err == -EAGAIN))
- 			atomic_inc(&f->overflow);
---- a/sound/core/seq/seq_memory.c
-+++ b/sound/core/seq/seq_memory.c
-@@ -221,7 +221,8 @@ void snd_seq_cell_free(struct snd_seq_ev
-  */
- static int snd_seq_cell_alloc(struct snd_seq_pool *pool,
- 			      struct snd_seq_event_cell **cellp,
--			      int nonblock, struct file *file)
-+			      int nonblock, struct file *file,
-+			      struct mutex *mutexp)
- {
- 	struct snd_seq_event_cell *cell;
- 	unsigned long flags;
-@@ -245,7 +246,11 @@ static int snd_seq_cell_alloc(struct snd
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		add_wait_queue(&pool->output_sleep, &wait);
- 		spin_unlock_irq(&pool->lock);
-+		if (mutexp)
-+			mutex_unlock(mutexp);
- 		schedule();
-+		if (mutexp)
-+			mutex_lock(mutexp);
- 		spin_lock_irq(&pool->lock);
- 		remove_wait_queue(&pool->output_sleep, &wait);
- 		/* interrupted? */
-@@ -288,7 +293,7 @@ __error:
-  */
- int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
- 		      struct snd_seq_event_cell **cellp, int nonblock,
--		      struct file *file)
-+		      struct file *file, struct mutex *mutexp)
- {
- 	int ncells, err;
- 	unsigned int extlen;
-@@ -305,7 +310,7 @@ int snd_seq_event_dup(struct snd_seq_poo
- 	if (ncells >= pool->total_elements)
- 		return -ENOMEM;
- 
--	err = snd_seq_cell_alloc(pool, &cell, nonblock, file);
-+	err = snd_seq_cell_alloc(pool, &cell, nonblock, file, mutexp);
- 	if (err < 0)
- 		return err;
- 
-@@ -331,7 +336,8 @@ int snd_seq_event_dup(struct snd_seq_poo
- 			int size = sizeof(struct snd_seq_event);
- 			if (len < size)
- 				size = len;
--			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file);
-+			err = snd_seq_cell_alloc(pool, &tmp, nonblock, file,
-+						 mutexp);
- 			if (err < 0)
- 				goto __error;
- 			if (cell->event.data.ext.ptr == NULL)
---- a/sound/core/seq/seq_memory.h
-+++ b/sound/core/seq/seq_memory.h
-@@ -66,7 +66,8 @@ struct snd_seq_pool {
- void snd_seq_cell_free(struct snd_seq_event_cell *cell);
- 
- int snd_seq_event_dup(struct snd_seq_pool *pool, struct snd_seq_event *event,
--		      struct snd_seq_event_cell **cellp, int nonblock, struct file *file);
-+		      struct snd_seq_event_cell **cellp, int nonblock,
-+		      struct file *file, struct mutex *mutexp);
- 
- /* return number of unused (free) cells */
- static inline int snd_seq_unused_cells(struct snd_seq_pool *pool)
+ Thin provisioning
+ -----------------
