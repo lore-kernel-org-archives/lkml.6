@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752667AbeE3LHh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:07:37 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60703 "EHLO
+        id S1753013AbeE3LMU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:12:20 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60758 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752062AbeE3LG6 (ORCPT
+        by vger.kernel.org with ESMTP id S1752666AbeE3LHi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:06:58 -0400
+        Wed, 30 May 2018 07:07:38 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -14,13 +14,14 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
         "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "James Holderness" <j4_james@hotmail.com>
-Date: Wed, 30 May 2018 11:52:42 +0100
-Message-ID: <lsq.1527677562.502313133@decadent.org.uk>
+        "Hans de Goede" <hdegoede@redhat.com>,
+        "Oliver Neukum" <oneukum@suse.com>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.240562010@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 144/153] tty: vt: fix up tabstops properly
+Subject: [PATCH 3.2 051/153] USB: cdc-acm: Do not log urb submission
+ errors on disconnect
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,56 +34,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit f1869a890cdedb92a3fab969db5d0fd982850273 upstream.
+commit f0386c083c2ce85284dc0b419d7b89c8e567c09f upstream.
 
-Tabs on a console with long lines do not wrap properly, so correctly
-account for the line length when computing the tab placement location.
+When disconnected sometimes the cdc-acm driver logs errors like these:
 
-Reported-by: James Holderness <j4_james@hotmail.com>
+[20278.039417] cdc_acm 2-2:2.1: urb 9 failed submission with -19
+[20278.042924] cdc_acm 2-2:2.1: urb 10 failed submission with -19
+[20278.046449] cdc_acm 2-2:2.1: urb 11 failed submission with -19
+[20278.049920] cdc_acm 2-2:2.1: urb 12 failed submission with -19
+[20278.053442] cdc_acm 2-2:2.1: urb 13 failed submission with -19
+[20278.056915] cdc_acm 2-2:2.1: urb 14 failed submission with -19
+[20278.060418] cdc_acm 2-2:2.1: urb 15 failed submission with -19
+
+Silence these by not logging errors when the result is -ENODEV.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/vt/vt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/class/cdc-acm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -1676,7 +1676,7 @@ static void reset_terminal(struct vc_dat
- 	default_attr(vc);
- 	update_attr(vc);
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -353,7 +353,7 @@ static int acm_submit_read_urb(struct ac
  
--	vc->vc_tab_stop[0]	= 0x01010100;
-+	vc->vc_tab_stop[0]	=
- 	vc->vc_tab_stop[1]	=
- 	vc->vc_tab_stop[2]	=
- 	vc->vc_tab_stop[3]	=
-@@ -1715,7 +1715,7 @@ static void do_con_trol(struct tty_struc
- 		vc->vc_pos -= (vc->vc_x << 1);
- 		while (vc->vc_x < vc->vc_cols - 1) {
- 			vc->vc_x++;
--			if (vc->vc_tab_stop[vc->vc_x >> 5] & (1 << (vc->vc_x & 31)))
-+			if (vc->vc_tab_stop[7 & (vc->vc_x >> 5)] & (1 << (vc->vc_x & 31)))
- 				break;
- 		}
- 		vc->vc_pos += (vc->vc_x << 1);
-@@ -1775,7 +1775,7 @@ static void do_con_trol(struct tty_struc
- 			lf(vc);
- 			return;
- 		case 'H':
--			vc->vc_tab_stop[vc->vc_x >> 5] |= (1 << (vc->vc_x & 31));
-+			vc->vc_tab_stop[7 & (vc->vc_x >> 5)] |= (1 << (vc->vc_x & 31));
- 			return;
- 		case 'Z':
- 			respond_ID(tty);
-@@ -1968,7 +1968,7 @@ static void do_con_trol(struct tty_struc
- 			return;
- 		case 'g':
- 			if (!vc->vc_par[0])
--				vc->vc_tab_stop[vc->vc_x >> 5] &= ~(1 << (vc->vc_x & 31));
-+				vc->vc_tab_stop[7 & (vc->vc_x >> 5)] &= ~(1 << (vc->vc_x & 31));
- 			else if (vc->vc_par[0] == 3) {
- 				vc->vc_tab_stop[0] =
- 					vc->vc_tab_stop[1] =
+ 	res = usb_submit_urb(acm->read_urbs[index], mem_flags);
+ 	if (res) {
+-		if (res != -EPERM) {
++		if (res != -EPERM && res != -ENODEV) {
+ 			dev_err(&acm->data->dev,
+ 					"%s - usb_submit_urb failed: %d\n",
+ 					__func__, res);
