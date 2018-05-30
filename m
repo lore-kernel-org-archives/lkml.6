@@ -1,27 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753058AbeE3LPW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:15:22 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60693 "EHLO
+        id S1753205AbeE3LQJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:16:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60672 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751911AbeE3LH1 (ORCPT
+        by vger.kernel.org with ESMTP id S1751537AbeE3LHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:27 -0400
+        Wed, 30 May 2018 07:07:24 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Lorenzo Bianconi" <lorenzo.bianconi@redhat.com>,
-        "Jianlin Shi" <jishi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Hangbin Liu" <liuhangbin@gmail.com>
+CC: akpm@linux-foundation.org, "Christoph Hellwig" <hch@lst.de>,
+        "Jens Axboe" <axboe@kernel.dk>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.680781280@decadent.org.uk>
+Message-ID: <lsq.1527677561.43065599@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 033/153] l2tp: fix missing print session offset info
+Subject: [PATCH 3.2 024/153] cdrom: information leak in cdrom_ioctl_media_changed()
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -34,34 +32,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 820da5357572715c6235ba3b3daa2d5b43a1198f upstream.
+commit 9de4ee40547fd315d4a0ed1dd15a2fa3559ad707 upstream.
 
-Report offset parameter in L2TP_CMD_SESSION_GET command if
-it has been configured by userspace
+This cast is wrong.  "cdi->capacity" is an int and "arg" is an unsigned
+long.  The way the check is written now, if one of the high 32 bits is
+set then we could read outside the info->slots[] array.
 
-Fixes: 309795f4bec ("l2tp: Add netlink control API for L2TP")
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.2:
- - Use NLA_PUT_U16, consistent with the rest of the function
- - Adjust context]
+This bug is pretty old and it predates git.
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/l2tp/l2tp_netlink.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/cdrom/cdrom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/l2tp/l2tp_netlink.c
-+++ b/net/l2tp/l2tp_netlink.c
-@@ -589,6 +589,8 @@ static int l2tp_nl_session_send(struct s
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -2342,7 +2342,7 @@ static int cdrom_ioctl_media_changed(str
+ 	if (!CDROM_CAN(CDC_SELECT_DISC) || arg == CDSL_CURRENT)
+ 		return media_changed(cdi, 1);
  
- 	if (session->ifname && session->ifname[0])
- 		NLA_PUT_STRING(skb, L2TP_ATTR_IFNAME, session->ifname);
-+	if (session->offset)
-+		NLA_PUT_U16(skb, L2TP_ATTR_OFFSET, session->offset);
- 	if (session->cookie_len)
- 		NLA_PUT(skb, L2TP_ATTR_COOKIE, session->cookie_len, &session->cookie[0]);
- 	if (session->peer_cookie_len)
+-	if ((unsigned int)arg >= cdi->capacity)
++	if (arg >= cdi->capacity)
+ 		return -EINVAL;
+ 
+ 	info = kmalloc(sizeof(*info), GFP_KERNEL);
