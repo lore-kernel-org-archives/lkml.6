@@ -1,177 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753016AbeE3LSD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:18:03 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46752 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752517AbeE3LRr (ORCPT
+        id S1752780AbeE3LS1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:18:27 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44571 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752644AbeE3LRR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:17:47 -0400
-Date: Wed, 30 May 2018 14:17:25 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Thibaut Robert <thibaut.robert@gmail.com>
-Cc: Aditya Shankar <aditya.shankar@microchip.com>,
-        Ganesh Krishna <ganesh.krishna@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: wilc1000: fix some endianness sparse
- warnings
-Message-ID: <20180530111725.gmigyddsp2i6mgzw@mwanda>
-References: <20180529191143.13081-1-thibaut.robert@gmail.com>
+        Wed, 30 May 2018 07:17:17 -0400
+Date: Wed, 30 May 2018 13:17:15 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        sre@kernel.org, dri-devel@lists.freedesktop.org, tomi.valkeinen@ti.com
+Subject: Re: Linux 4.17-rc7
+Message-ID: <20180530111715.GA19410@amd>
+References: <CA+55aFwUqz9z1Rf4Wwr29W7DeKxQ67qKEW5xty+JPyCY3aNQ=A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
 Content-Disposition: inline
-In-Reply-To: <20180529191143.13081-1-thibaut.robert@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1805300130
+In-Reply-To: <CA+55aFwUqz9z1Rf4Wwr29W7DeKxQ67qKEW5xty+JPyCY3aNQ=A@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 09:11:43PM +0200, Thibaut Robert wrote:
-> diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> index e248702ee519..745bf5ca2622 100644
-> --- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> +++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> @@ -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device *dev, u8 *buff, u32 size)
->  
->  	freq = ieee80211_channel_to_frequency(curr_channel, NL80211_BAND_2GHZ);
->  
-> -	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
-> +	if (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {
 
-"buff" comes from the network, it's going to be little endian, not cpu
-endian.  The rest of the function treats it as CPU endian but I'm pretty
-sure it's wrong...
+--huq684BweRXVnRxX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  		cfg80211_rx_mgmt(priv->wdev, freq, 0, buff, size, 0);
->  		return;
->  	}
+Hi!
 
+> So this week wasn't as calm as the previous weeks have been, but despite
+> that I suspect this is the last rc.
+>=20
+> This week we had the whole "spectre v4" thing, and yes, the fallout from
+> that shows up as part of the patch and commit log. But it's not actually
+> dominant: the patch is pretty evenly one third arch updates, one third
+> networking updates, and one third "rest".
+>=20
+> The arch updates are largely - although not exclusively - spectre v4.
+>=20
+> The networking stuff is mostly network drivers, but there's some core
+> networking too.
+>=20
+> And "the rest" is just that - misc drivers (rdma, gpu, other),
+> documentation, some vfs, vm, bpf, tooling..
+>=20
+> The bulk of it is really pretty trivial one-liners, and nothing looks
+> particularly scary. Let's see how next week looks, but if nothing really
+> happens I suspect we can make do without an rc8.
+>=20
+> Shortlog appended as usual. Go out and test.
 
-> diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
-> index 28c93f3f846e..a5ac1d26590b 100644
-> --- a/drivers/staging/wilc1000/wilc_wlan.c
-> +++ b/drivers/staging/wilc1000/wilc_wlan.c
-> @@ -560,7 +560,8 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
->  	int ret = 0;
->  	int counter;
->  	int timeout;
-> -	u32 vmm_table[WILC_VMM_TBL_SIZE];
-> +	__le32 vmm_table[WILC_VMM_TBL_SIZE];
-> +	u32 table_entry;
->  	struct wilc_vif *vif;
->  	struct wilc *wilc;
->  	const struct wilc_hif_func *func;
-> @@ -598,10 +599,10 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
->  			if ((sum + vmm_sz) > LINUX_TX_SIZE)
->  				break;
->  
-> -			vmm_table[i] = vmm_sz / 4;
-> +			table_entry = vmm_sz / 4;
->  			if (tqe->type == WILC_CFG_PKT)
-> -				vmm_table[i] |= BIT(10);
-> -			vmm_table[i] = cpu_to_le32(vmm_table[i]);
-> +				table_entry |= BIT(10);
-> +			vmm_table[i] = cpu_to_le32(table_entry);
->  
->  			i++;
->  			sum += vmm_sz;
-> @@ -704,8 +705,7 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
->  		if (vmm_table[i] == 0)
->  			break;
->  
-> -		vmm_table[i] = cpu_to_le32(vmm_table[i]);
-> -		vmm_sz = (vmm_table[i] & 0x3ff);
-> +		vmm_sz = (le32_to_cpu(vmm_table[i]) & 0x3ff);
->  		vmm_sz *= 4;
->  		header = (tqe->type << 31) |
->  			 (tqe->buffer_size << 15) |
-> @@ -715,8 +715,7 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
->  		else
->  			header &= ~BIT(30);
->  
-> -		header = cpu_to_le32(header);
-> -		memcpy(&txb[offset], &header, 4);
-> +		*((__le32 *)&txb[offset]) = cpu_to_le32(header);
+Any chance to still get in this one?
 
-I worry about alignment issues here.  That might be the reason for the
-memcpy().  (I'm reading as fast as I can and don't the code so I may
-be wrong).
+https://github.com/freedesktop/drm-misc/commit/2bc5ff0bdc00d81d719dad745893=
+17a260d583ed
 
->  		if (tqe->type == WILC_CFG_PKT) {
->  			buffer_offset = ETH_CONFIG_PKT_HDR_OFFSET;
->  		} else if (tqe->type == WILC_NET_PKT) {
-> @@ -770,8 +769,7 @@ static void wilc_wlan_handle_rx_buff(struct wilc *wilc, u8 *buffer, int size)
->  
->  	do {
->  		buff_ptr = buffer + offset;
-> -		memcpy(&header, buff_ptr, 4);
-> -		header = cpu_to_le32(header);
-> +		header = le32_to_cpup((__le32 *)buff_ptr);
+=2E..it fixes display on Nokia N900, and display is rather important for
+cellphone.
 
-Maybe the same, whenever you see a memcpy().
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
->  
->  		is_cfg_packet = (header >> 31) & 0x1;
->  		pkt_offset = (header >> 22) & 0x1ff;
-> @@ -942,6 +940,7 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
->  	u32 offset;
->  	u32 addr, size, size2, blksz;
->  	u8 *dma_buffer;
-> +	const __le32 *header;
->  	int ret = 0;
->  
->  	blksz = BIT(12);
-> @@ -952,10 +951,9 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
->  
->  	offset = 0;
->  	do {
-> -		memcpy(&addr, &buffer[offset], 4);
-> -		memcpy(&size, &buffer[offset + 4], 4);
-> -		addr = cpu_to_le32(addr);
-> -		size = cpu_to_le32(size);
-> +		header = (__le32 *)buffer + offset;
-> +		addr = le32_to_cpu(header[0]);
-> +		size = le32_to_cpu(header[1]);
->  		acquire_bus(wilc, ACQUIRE_ONLY);
->  		offset += 8;
->  		while (((int)size) && (offset < buffer_size)) {
-> diff --git a/drivers/staging/wilc1000/wilc_wlan_cfg.c b/drivers/staging/wilc1000/wilc_wlan_cfg.c
-> index c0b9b700f4d7..4a914d8572aa 100644
-> --- a/drivers/staging/wilc1000/wilc_wlan_cfg.c
-> +++ b/drivers/staging/wilc1000/wilc_wlan_cfg.c
-> @@ -275,14 +275,14 @@ static int wilc_wlan_cfg_set_bin(u8 *frame, u32 offset, u16 id, u8 *b, u32 size)
->  
->  static void wilc_wlan_parse_response_frame(u8 *info, int size)
->  {
-> -	u32 wid, len = 0, i = 0;
-> +	u32 wid;
-> +	int len = 0, i = 0;
+--huq684BweRXVnRxX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Why did we make these int now?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
->  
->  	while (size > 0) {
->  		i = 0;
-> -		wid = info[0] | (info[1] << 8);
-> -		wid = cpu_to_le32(wid);
-> +		wid = le16_to_cpup((__le16 *)info);
->  
-> -		switch ((wid >> 12) & 0x7) {
-> +		switch (info[1] >> 4) {
+iEYEARECAAYFAlsOiDsACgkQMOfwapXb+vJrswCfWIkHcnJGTflOT0PvwuLQu1oT
+QMMAmgKjij6nhXm5/51fcbx7UVH1tNXC
+=WFFj
+-----END PGP SIGNATURE-----
 
-Why do we not need to mask by 0x7?  Anyway, I feel like this isn't
-beautiful.  We should be using a macro and "wid" instead of magically
-poking into info[1].
-
-		switch(SOME_MACRO(wid)) {
-
-
-regards,
-dan carpenter
+--huq684BweRXVnRxX--
