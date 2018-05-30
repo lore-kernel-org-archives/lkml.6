@@ -1,65 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753757AbeE3PlO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:41:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55462 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751605AbeE3PlL (ORCPT
+        id S1753565AbeE3Plk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:41:40 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44042 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753560AbeE3Pli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:41:11 -0400
-Date: Wed, 30 May 2018 08:41:10 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] mm: dmapool: Check the dma pool name
-Message-ID: <20180530154110.GA22184@bombadil.infradead.org>
-References: <59623b15001e5a20ac32b1a393db88722be2e718.1527679621.git.baolin.wang@linaro.org>
- <20180530120133.GC17450@bombadil.infradead.org>
- <CAMz4ku+fBt2uY6MbiMX1X-6jtjdpqp=DWNMrefOG4SsUHWN4kQ@mail.gmail.com>
- <20180530151327.GA13951@bombadil.infradead.org>
+        Wed, 30 May 2018 11:41:38 -0400
+Date: Wed, 30 May 2018 16:41:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v4 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
+ driver
+Message-ID: <20180530154133.GP6920@sirena.org.uk>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180530090512.GC13528@localhost.localdomain>
+ <20180530110000.GI6920@sirena.org.uk>
+ <20180530125634.GE13528@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="U+NfgObvpQT1Q9Yq"
 Content-Disposition: inline
-In-Reply-To: <20180530151327.GA13951@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180530125634.GE13528@localhost.localdomain>
+X-Cookie: Don't get mad, get interest.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 08:13:27AM -0700, Matthew Wilcox wrote:
-> On Wed, May 30, 2018 at 08:14:09PM +0800, Baolin Wang wrote:
-> > On 30 May 2018 at 20:01, Matthew Wilcox <willy@infradead.org> wrote:
-> > > On Wed, May 30, 2018 at 07:28:43PM +0800, Baolin Wang wrote:
-> > >> It will be crash if we pass one NULL name when creating one dma pool,
-> > >> so we should check the passing name when copy it to dma pool.
-> > >
-> > > NAK.  Crashing is the appropriate thing to do.  Fix the caller to not
-> > > pass NULL.
-> > >
-> > > If you permit NULL to be passed then you're inviting crashes or just
-> > > bad reporting later when pool->name is printed.
-> > 
-> > I think it just prints one NULL pool name. Sometimes the device
-> > doesn't care the dma pool names, so I think we can make code more
-> > solid to valid the passing parameters like other code does.
-> > Or can we add check to return NULL when the passing name is NULL
-> > instead of crashing the kernel? Thanks.
-> 
-> No.  Fix your driver.
 
-Let me elaborate on this.  Kernel code is supposed to be "reasonable".
-That means we don't check every argument to every function for sanity,
-unless it's going to cause trouble later.  Crashing immediately with
-a bogus argument is fine; you can see the problem and fix it immediately.
-Returning NULL with a bad argument is actually worse; you won't know why
-the function returned NULL (maybe we're out of memory?) and you'll have
-a more complex debugging experience.
+--U+NfgObvpQT1Q9Yq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sometimes it makes sense to accept a NULL pointer and do something
-reasonable, like kfree().  In this case, we can eliminate checks in all
-the callers.  But we don't, in general, put sanity checks on arguments
-without a good reason.
+On Wed, May 30, 2018 at 03:56:34PM +0300, Matti Vaittinen wrote:
+> On Wed, May 30, 2018 at 12:00:00PM +0100, Mark Brown wrote:
 
-Your reasons aren't good.  "The driver doesn't care" -- well, just pass
-the driver's name, then.
+> > The tradeoff with forced PWM mode is that the quality of regulation will
+> > be a lot better, especially if the load changes suddenly (as things like
+> > CPUs often do).  Most hardware that's at all current is able respond to
+> > changes in load and switch modes automatically when it's appropriate,
+> > except possibly in some very low power modes.
+
+> Yes. The mode switching is automatic. But there is this control bit for
+> disabling automatic mode switching and forcing the PWM. Problem with
+> these 4 last bucks is just that if regulator is in PFM (and it may be
+> if not forced to PWM - due to this automatic switching) then the voltage
+> change is not behaving well.
+
+That sounds like the mode switching just isn't very good and needs a bit
+of help so forcing the mode is probably going to do the right thing.
+
+--U+NfgObvpQT1Q9Yq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOxiwACgkQJNaLcl1U
+h9DYswf9GhespdXdjovv3j9DD9wgImmLpLB7cFVie8Mls+Q5qYCisULfQ8RnqKuo
+XWBvT3Y/MUHvihjjZ+bDmuz9o2UvikmotCTROd/OE5Rn9E32iOn2F7MIKKjoJcbk
+Gs8VlJBTzjmCqbBRGGE7R/28X2onqeqzJl0ARtC/UB1qd4nw0L5OKy+IrYWmlkEY
+XTSX3H5Kgbs/71gGClNJ5ZPc4R0vwperFsKmJ3xQxEmgbgUb42ficiaYQqW7WrLH
+5rmN+7az3K+XJyN8zPQ8g00ABAwJm3RlLN3i0ZqKoSOazLn4pJhmtcbdatDrRY9g
+14agyXOkxwqNkVxTe1u2g8C3J/LpDQ==
+=95b5
+-----END PGP SIGNATURE-----
+
+--U+NfgObvpQT1Q9Yq--
