@@ -1,128 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968530AbeE3Bi0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 21:38:26 -0400
-Received: from mail-eopbgr50084.outbound.protection.outlook.com ([40.107.5.84]:39328
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965337AbeE3BiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 21:38:25 -0400
-From: Anson Huang <anson.huang@nxp.com>
-To: Leonard Crestez <leonard.crestez@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>
-CC: dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Richard Liu <xuegang.liu@nxp.com>
-Subject: RE: [PATCH] soc: imx: gpcv2: correct PGC offset
-Thread-Topic: [PATCH] soc: imx: gpcv2: correct PGC offset
-Thread-Index: AQHT9yPfZOIICd3jZkebU2yQtAPkpqRGvRaAgADBWJA=
-Date: Wed, 30 May 2018 01:38:22 +0000
-Message-ID: <AM3PR04MB1315EFC9F5CA9DBD7CBC54B5F56C0@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1527580944-10043-1-git-send-email-Anson.Huang@nxp.com>
- <0e0690c89b24b4b028e4a0dab63334af4b37fdd3.camel@nxp.com>
-In-Reply-To: <0e0690c89b24b4b028e4a0dab63334af4b37fdd3.camel@nxp.com>
+        id S968566AbeE3Blt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 21:41:49 -0400
+Received: from mga06.intel.com ([134.134.136.31]:22833 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965337AbeE3Blr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 21:41:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,458,1520924400";
+   d="scan'208";a="44943883"
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+CC: Jean-Philippe Brucker <Jean-Philippe.Brucker@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, "Raj, Ashok" <ashok.raj@intel.com>,
+        Jean Delvare <khali@linux-fr.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, Yi L <yi.l.liu@linux.intel.com>
+Subject: RE: [PATCH v4 04/22] iommu/vt-d: add bind_pasid_table function
+Thread-Topic: [PATCH v4 04/22] iommu/vt-d: add bind_pasid_table function
+Thread-Index: AQHT1cxrC6UgpKcW20OywYDXDmuYDKQEzd+AgASqXQCAAFimgIA9Dz6AgADhuaA=
+Date: Wed, 30 May 2018 01:41:43 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1911E59C4@SHSMSX101.ccr.corp.intel.com>
+References: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1523915351-54415-5-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20180417131047.0a9c310f@w520.home>
+        <AM4PR0802MB2369F739C91B630CA99B3D3BA3B40@AM4PR0802MB2369.eurprd08.prod.outlook.com>
+        <20180420164251.5245f822@jacob-builder> <20180529140915.1f174689@w520.home>
+In-Reply-To: <20180529140915.1f174689@w520.home>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com;
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1427;7:3uqbG/p+PExQKwp9tdDPbv0nECNDGqhLpYUmIFMAkLgkWPUM5KT/v+S0IP8g1sLU0FvEfp0mz1TWYKoKktaupjwuU0dCL5j54NF71Eg32SM52XrlVy0A7pYzanvgApmNtY61oGZoY2f5NAUEKsKXOY1eQl/osHurINm7JU4fFctEjvzB0P/SbwWjicCerMbWNicoCZ0sG370mIFe/Qs0r01/HnhQbzOJ2mRl60LKLjWTfqkaic9UMeI9xYCZ8PAp
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1427;
-x-ms-traffictypediagnostic: AM3PR04MB1427:
-x-microsoft-antispam-prvs: <AM3PR04MB142724006215EBB0DB8EECB8F56C0@AM3PR04MB1427.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1427;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1427;
-x-forefront-prvs: 0688BF9B46
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(39380400002)(366004)(376002)(13464003)(199004)(189003)(76176011)(5660300001)(97736004)(66066001)(99286004)(575784001)(86362001)(110136005)(305945005)(7696005)(478600001)(7736002)(229853002)(6436002)(54906003)(105586002)(55016002)(59450400001)(14454004)(11346002)(102836004)(81166006)(81156014)(4326008)(53546011)(316002)(8676002)(446003)(26005)(74316002)(5250100002)(44832011)(106356001)(9686003)(53936002)(2900100001)(476003)(486006)(3846002)(6116002)(25786009)(3660700001)(6246003)(39060400002)(2501003)(2906002)(68736007)(33656002)(6506007)(3280700002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1427;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: Zg/0BFJkCVO/hsWYo2MwkoiXSc/ZZhHsHRatn1EYRW5RmtgN3P8vP0fXTqF3P7VuTZ5Y9WrVCRC1jv38Uh2zXR1YRcpGWcdW1if+xnXK13eRirBM4st5sjnBtpw2o0z2iGav0MSYiDZcMT5XMEp7baZUTOd1h98Flw9odOi0N1DPeZh+QnQy6dLT6Jrr6eKy
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOGVhNTE5YzItNmRkMC00NmQ1LTkyMmItMGVkZmU1ZTA4ODEwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IjdNTStuWjNcLzRWME1FOXNhMnB5V3JNWktBNDdnTUY1TzlcL0ZWU1RzczI5UT0ifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 55aefd20-cd8f-487a-d600-08d5c5ce0795
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55aefd20-cd8f-487a-d600-08d5c5ce0795
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2018 01:38:22.3050
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1427
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4U1cWZQ006431
 
-Hi, Leonard
-
-Anson Huang
-Best Regards!
-
-
-> -----Original Message-----
-> From: Leonard Crestez
-> Sent: Tuesday, May 29, 2018 10:03 PM
-> To: Anson Huang <anson.huang@nxp.com>; shawnguo@kernel.org; Andrey
-> Smirnov <andrew.smirnov@gmail.com>
-> Cc: dl-linux-imx <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org; s.hauer@pengutronix.de;
-> kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>; Abel Vesa
-> <abel.vesa@nxp.com>; Richard Liu <xuegang.liu@nxp.com>
-> Subject: Re: [PATCH] soc: imx: gpcv2: correct PGC offset
+> From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> Sent: Wednesday, May 30, 2018 4:09 AM
 > 
-> On Tue, 2018-05-29 at 16:02 +0800, Anson Huang wrote:
-> > Correct MIPI/PCIe/USB_HSIC's PGC offset based on design RTL, the value
-> > on Reference Manual are incorrect.
+> On Fri, 20 Apr 2018 16:42:51 -0700
+> Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
+> 
+> > On Fri, 20 Apr 2018 19:25:34 +0100
+> > Jean-Philippe Brucker <Jean-Philippe.Brucker@arm.com> wrote:
 > >
-> > The correct offset should be as below:
-> >
-> > -#define PGC_MIPI			4
-> > -#define PGC_PCIE			5
-> > -#define PGC_USB_HSIC			8
-> > +#define PGC_MIPI			16
-> > +#define PGC_PCIE			17
-> > +#define PGC_USB_HSIC			20
-> >  #define GPC_PGC_CTRL(n)			(0x800 + (n) * 0x40)
-> >  #define GPC_PGC_SR(n)			(GPC_PGC_CTRL(n) + 0xc)
+> > > On Tue, Apr 17, 2018 at 08:10:47PM +0100, Alex Williamson wrote:
+> > > [...]
+> > > > > +	/* Assign guest PASID table pointer and size order */
+> > > > > +	ctx_lo = (pasidt_binfo->base_ptr & VTD_PAGE_MASK) |
+> > > > > +		(pasidt_binfo->pasid_bits - MIN_NR_PASID_BITS);
+> > > >
+> > > > Where does this IOMMU API interface define that base_ptr is 4K
+> > > > aligned or the format of the PASID table?  Are these all
+> > > > standardized or do they vary by host IOMMU?  If they're standards,
+> > > > maybe we could note that and the spec which defines them when we
+> > > > declare base_ptr.  If they're IOMMU specific then I don't
+> > > > understand how we'll match a user provided PASID table to the
+> > > > requirements and format of the host IOMMU. Thanks,
+> > >
+> > > On SMMUv3 the minimum alignment for base_ptr is 64 bytes, so a
+> guest
+> > > under a vSMMU might pass a pointer that's not aligned on 4k.
+> > >
+> > PASID table pointer for VT-d is 4K aligned.
+> > > Maybe this information could be part of the data passed to userspace
+> > > about IOMMU table formats and features? They're not part of this
+> > > series, but I think we wanted to communicate IOMMU-specific features
+> > > via sysfs.
+> > >
+> > Agreed, I believe Yi Liu is working on a sysfs interface such that QEMU
+> > can match IOMMU model and features.
 > 
-> This gpcv2 driver is currently only used for PCI, it probably only works because
-> domains happen to be turned on by default?
- 
-I think so.
-
+> Digging this up again since v5 still has this issue.  The IOMMU API is
+> a kernel internal abstraction of the IOMMU.  sysfs is a userspace
+> interface.  Are we suggesting that the /only/ way to make use of the
+> internal IOMMU API here is to have a user provided opaque pasid table
+> that we can't even do minimal compatibility sanity testing on and we
+> simply hope that hardware covers all the fault conditions without
+> taking the host down with it?  I guess we have to assume the latter
+> since the user has full control of the table, but I have a hard time
+> getting past lack of internal ability to use the interface and no
+> ability to provide even the slimmest sanity testing.  Thanks,
 > 
-> On imx7d upstream platform suspend is not yet supported but even doing
-> device-level suspend causes a hang on resume somewhere in PCI on first read.
-> This patch fixes that immediate hang.
 
-I just added the imx7d platform suspend/resume support using psci in u-boot, patches
-are sent out for review. 
+checking size, alignment, ... is OK, which I think is already considered
+by vendor IOMMU driver. However sanity testing table format might 
+be difficult. The initial table provided by guest is likely just all ZEROs. 
+whatever format violation may be caught only when a PASID entry 
+is updated...
 
-I did notice PCI resume cause system hang, the root cause is PCI controller registers
-can NOT be accessed after resume, and the PCI PHY PLL is NOT locked when issue happen,
-the PCI driver should implement suspend/resume and redo the init flow after resume, since
-its power VDD1P0D are OFF after suspend.
-
-I saw you sent out patch to fix it, thanks.
-
-Anson.
-
-> 
-> After suspend/resume lspci is broken (device doesn't properly resume), that
-> probably requires more imx pci patches and unrelated to pgc.
-> 
-> --
-> Regards,
-> Leonard
+Thanks
+Kevin
