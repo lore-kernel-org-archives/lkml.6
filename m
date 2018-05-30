@@ -1,72 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753784AbeE3Rgo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 13:36:44 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:48476 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751833AbeE3Rgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 13:36:41 -0400
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoffer Dall <cdall@linaro.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20180524214816.14485-1-logang@deltatee.com>
- <20180524214816.14485-3-logang@deltatee.com>
- <20180530102329.7423dc57@w520.home>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <d3a139c0-53d4-56cf-fa7e-8db5fb527136@deltatee.com>
-Date: Wed, 30 May 2018 11:36:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S932099AbeE3Rj3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 13:39:29 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:33188 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751833AbeE3Rj0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 13:39:26 -0400
+Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+To: Eric Dumazet <eric.dumazet@gmail.com>,
+        David Miller <davem@davemloft.net>
+Cc: tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
+References: <20180523232246.20445-1-qing.huang@oracle.com>
+ <20180525.102321.858995452200286788.davem@davemloft.net>
+ <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
+ <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
+ <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
+From: Qing Huang <qing.huang@oracle.com>
+Message-ID: <05a97a57-2a25-34b5-e8eb-6452d6bb419a@oracle.com>
+Date: Wed, 30 May 2018 10:39:14 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180530102329.7423dc57@w520.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: christian.koenig@amd.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, cdall@linaro.org, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, alex.williamson@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 2/3] PCI: Allow specifying devices using a base bus and
- path of devfns
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8909 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805300186
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 30/05/18 10:23 AM, Alex Williamson wrote:
-> I like the idea, but can't we improve the implementation?  It seems
-> that we shouldn't need to allocate more than a working copy of the
-> original path string.  We can use strrchr() to find the last path
-> divider ('/'), match the slot.fn after that to the current devfn, set
-> that path divider to null, step to the next upstream device and
-> repeat.  
+On 5/29/2018 8:49 PM, Eric Dumazet wrote:
+>
+> On 05/29/2018 11:44 PM, Eric Dumazet wrote:
+>
+>> And I will add this simple fix, this really should address your initial concern much better.
+>>
+>> @@ -99,6 +100,8 @@ static int mlx4_alloc_icm_pages(struct scatterlist *mem, int order,
+>>   {
+>>          struct page *page;
+>>   
+>> +       if (order)
+>> +               gfp_mask |= __GFP_NORETRY;
+>      and also      gfp_mask &= ~__GFP_DIRECT_RECLAIM
+>
 
-Ok, I'll give it a shot. I thought this would be a bit more tricky, but
-perhaps not.
+Would this just fail the allocation without trying to reclaim memory 
+under memory pressure? We've tried something similar but it didn't fix 
+the original problem we were facing.
 
-> Also, since we're working from a downstream device up, I
-> suspect we don't need to get and put references at each step, the
-> downstream device probably already holds a reference to the upstream
-> device for each step along the way.  
 
-That makes sense to me. I think it's something I added in similar p2pdma
-code from somebody's review. But sounds like I can probably strip it out
-there too and just put a comment noting this.
-
-Thanks,
-
-Logan
+>>          page = alloc_pages_node(node, gfp_mask, order);
+>>          if (!page) {
+>>                  page = alloc_pages(gfp_mask, order);
+>>
