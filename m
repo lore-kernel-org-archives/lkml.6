@@ -1,59 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753394AbeE3MFM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:05:12 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37123 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751432AbeE3MDy (ORCPT
+        id S1752022AbeE3MG6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:06:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50702 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751352AbeE3MGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:03:54 -0400
-X-Google-Smtp-Source: ADUXVKKjIWEnCB85J682oRUBIbtse0DZg+1eANUNMes+RXdDtnOkPx2wlRIQXuWvjaTwv3Fktlltnw==
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH v4 1/5] ARM: imx: remove inexistant EPIT timer init
-Date: Wed, 30 May 2018 14:03:23 +0200
-Message-Id: <20180530120327.27681-2-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180530120327.27681-1-peron.clem@gmail.com>
-References: <20180530120327.27681-1-peron.clem@gmail.com>
+        Wed, 30 May 2018 08:06:55 -0400
+Date: Wed, 30 May 2018 15:06:38 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Ivan Bornyakov <brnkv.i1@gmail.com>
+Cc: lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        oleg.drokin@intel.com, andreas.dilger@intel.com
+Subject: Re: [PATCH] staging: lustre: libcfs: add parens around macros args
+Message-ID: <20180530120638.lap3libc5nxmzb4o@mwanda>
+References: <20180522133439.12338-1-brnkv.i1@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180522133439.12338-1-brnkv.i1@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=463
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805300140
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Clément Peron <clement.peron@devialet.com>
+On Tue, May 22, 2018 at 04:34:39PM +0300, Ivan Bornyakov wrote:
+> One may call 'CFS_FAIL_TIMEOUT(id, secs + 5);' and get unexpected result
+> after macro substitution, viz., 'secs + 5' will turn into
+> 'secs + 5 * 1000'
+> 
 
-i.MX EPIT timer has been removed but not the init function declaration.
+We actually do that in ptl_send_rpc() as well so this is a real bug.
 
-Signed-off-by: Clément Peron <clement.peron@devialet.com>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
----
- arch/arm/mach-imx/common.h | 1 -
- 1 file changed, 1 deletion(-)
+It's sort of an interesting coincidence that the code in ptl_send_rpc()
+looks almost exactly like your theoretical code:
 
-diff --git a/arch/arm/mach-imx/common.h b/arch/arm/mach-imx/common.h
-index c8d68e918b2f..18aae76fa2da 100644
---- a/arch/arm/mach-imx/common.h
-+++ b/arch/arm/mach-imx/common.h
-@@ -38,7 +38,6 @@ void imx21_soc_init(void);
- void imx27_soc_init(void);
- void imx31_soc_init(void);
- void imx35_soc_init(void);
--void epit_timer_init(void __iomem *base, int irq);
- int mx21_clocks_init(unsigned long lref, unsigned long fref);
- int mx27_clocks_init(unsigned long fref);
- int mx31_clocks_init(unsigned long fref);
--- 
-2.17.0
+	OBD_FAIL_TIMEOUT(OBD_FAIL_PTLRPC_DELAY_SEND, request->rq_timeout + 5);
+
+regards,
+dan carpenter
