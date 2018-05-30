@@ -1,47 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030253AbeE3Igv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:36:51 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:46760 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936044AbeE3Igr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:36:47 -0400
-X-Google-Smtp-Source: ADUXVKIh0dsrrow5cPZAO5HO8uTQreKdJt6Cb55e4mV0NzONYAzXjwru7A0fAm09fBlu/Bwi1DDKX7BRFNpq3aHgQiY=
+        id S1030373AbeE3Ihl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:37:41 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52036 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030331AbeE3IhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:37:19 -0400
+Date: Wed, 30 May 2018 09:37:15 +0100
+From: Quentin Perret <quentin.perret@arm.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        viresh.kumar@linaro.org, valentin.schneider@arm.com
+Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
+Message-ID: <20180530083715.GB2174@e108498-lin.cambridge.arm.com>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
+ <20180529084009.GE15173@e108498-lin.cambridge.arm.com>
+ <20180529095203.GD8985@localhost.localdomain>
 MIME-Version: 1.0
-X-Originating-IP: [194.176.227.33]
-In-Reply-To: <CAJfpeguJ+h5A4ALS3=actNH5UMSWF8Fgoo-RLbmfGuDf0tJicA@mail.gmail.com>
-References: <20180529132148.GC23785@veci.piliscsaba.redhat.com>
- <20180529135938.GA5631@infradead.org> <CAJfpeguJ+h5A4ALS3=actNH5UMSWF8Fgoo-RLbmfGuDf0tJicA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 30 May 2018 10:36:46 +0200
-Message-ID: <CAJfpegvCR4+j0t1dzM=Mvh05JBkz4R5A4Jp=USTtGBeWEL6dGQ@mail.gmail.com>
-Subject: Re: [GIT PULL] overlayfs update for 4.18
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529095203.GD8985@localhost.localdomain>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 4:12 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Tue, May 29, 2018 at 3:59 PM, Christoph Hellwig <hch@infradead.org> wrote:
+On Tuesday 29 May 2018 at 11:52:03 (+0200), Juri Lelli wrote:
+> On 29/05/18 09:40, Quentin Perret wrote:
+> > Hi Vincent,
+> > 
+> > On Friday 25 May 2018 at 15:12:26 (+0200), Vincent Guittot wrote:
+> > > Now that we have both the dl class bandwidth requirement and the dl class
+> > > utilization, we can use the max of the 2 values when agregating the
+> > > utilization of the CPU.
+> > > 
+> > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > > ---
+> > >  kernel/sched/sched.h | 6 +++++-
+> > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> > > index 4526ba6..0eb07a8 100644
+> > > --- a/kernel/sched/sched.h
+> > > +++ b/kernel/sched/sched.h
+> > > @@ -2194,7 +2194,11 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
+> > >  #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+> > >  static inline unsigned long cpu_util_dl(struct rq *rq)
+> > >  {
+> > > -	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> > > +	unsigned long util = (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> > > +
+> > > +	util = max_t(unsigned long, util, READ_ONCE(rq->avg_dl.util_avg));
+> > 
+> > Would it make sense to use a UTIL_EST version of that signal here ? I
+> > don't think that would make sense for the RT class with your patch-set
+> > since you only really use the blocked part of the signal for RT IIUC,
+> > but would that work for DL ?
+> 
+> Well, UTIL_EST for DL looks pretty much what we already do by computing
+> utilization based on dl.running_bw. That's why I was thinking of using
+> that as a starting point for dl.util_avg decay phase.
 
->>>       vfs: export vfs_dedupe_file_range_one() to modules
->>
->> Please use EXPORT_SYMBOL_GPL for all these crazy low-level exports.
+Hmmm I see your point, but running_bw and the util_avg are fundamentally
+different ... I mean, the util_avg doesn't know about the period, which is
+an issue in itself I guess ...
 
-I'd argue with the "crazy" part.  This should have been the primary
-interface from the start.  The batched dedupe interface is the crazy
-one:
-
- - deduping is page size granularity at worst; performance would not
-be horrible even if we had to do one syscall per page
- - vast majority of the time it will be file size granularity
-
-Why was that batching invented in the first place?
-
-Thanks,
-Miklos
+If you have a long running DL task (say 100ms runtime) with a long period
+(say 1s), the running_bw should represent ~1/10 of the CPU capacity, but
+the util_avg can go quite high, which means that you might end up
+executing this task at max OPP. So if we really want to drive OPPs like
+that for deadline, a util_est-like version of this util_avg signal
+should help. Now, you can also argue that going to max OPP for a task
+that _we know_ uses 1/10 of the CPU capacity isn't right ...
