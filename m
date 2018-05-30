@@ -1,73 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753422AbeE3OQk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:16:40 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42632 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752108AbeE3OQj (ORCPT
+        id S1753442AbeE3OR4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:17:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37374 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751844AbeE3ORz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:16:39 -0400
-Date: Wed, 30 May 2018 15:16:36 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 10/19 v3] regulator: s2mps11: Pass descriptor instead of
- GPIO number
-Message-ID: <20180530141636.GL6920@sirena.org.uk>
-References: <20180514080640.12515-1-linus.walleij@linaro.org>
- <CACRpkdZFrFuNnP=uJyREckr8EXW6L2ku+=QwVA7Tva3CpfrpCQ@mail.gmail.com>
- <2026891.KGZ2uNuXyI@amdc3058>
- <CGME20180530134408eucas1p14c6d7fe692e2ed91ef833c8a1ead8ce7@eucas1p1.samsung.com>
- <1722883.ZQ0ZDYoSn5@amdc3058>
+        Wed, 30 May 2018 10:17:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3AFAF6060A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: pull-request: wireless-drivers 2018-05-30
+Date: Wed, 30 May 2018 17:17:51 +0300
+Message-ID: <87vab52po0.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="m0XfRaZG5aslkcJX"
-Content-Disposition: inline
-In-Reply-To: <1722883.ZQ0ZDYoSn5@amdc3058>
-X-Cookie: Don't get mad, get interest.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Dave,
 
---m0XfRaZG5aslkcJX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I now this is late but hopefully this pull request can make it to net
+tree and to the final 4.17 release still. But if not, please let me know
+and I'll pull this to wireless-drivers-next instead.
 
-On Wed, May 30, 2018 at 03:44:08PM +0200, Bartlomiej Zolnierkiewicz wrote:
+More info in the signed tag below, and please let me know if there are
+any problems.
 
-> The similar issue with shared GPIOs seems to be present in commit
-> c89c00e2b8f0 ("regulator: max77686: Pass descriptor instead of GPIO
-> number") and Midas board (arch/arm/boot/dts/exynos4412-midas.dtsi).
-> I don't have the board itself to test it but from the code audit it
-> seems that commit c89c00e2b8f0 should also be reverted.
+Kalle
 
-> Marek has also discovered separate problem on Trats2 board with
-> commit 3c6b38d45fa5 ("regulator: wm8994: Pass descriptor instead of
-> GPIO number"):
+The following changes since commit 813477aa49aac5deba04eb4956360dde58a0e807:
 
-I've reverted both.
+  MAINTAINERS: change Kalle as wcn36xx maintainer (2018-05-22 15:36:41 +0300)
 
---m0XfRaZG5aslkcJX
-Content-Type: application/pgp-signature; name="signature.asc"
+are available in the git repository at:
 
------BEGIN PGP SIGNATURE-----
+  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git tags/wireless-drivers-for-davem-2018-05-30
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOskMACgkQJNaLcl1U
-h9BSfQf/bQSiUgekplmGNTV7rXf90ilA/9t0SV/wnXPwgXt5rflobY+07s3gRNo+
-759/nHDmDMcMMt95B4REuLxdcPQBcS3lzzabwU8ukXuAnPcypmp2kzogSBd36mX+
-7JuslOQdD5l42oQipxpFJP80v15h2UxYUWPXOIpcWodBDQ82RYR5/4+4O+gN/6hr
-SHlV+WHkD7zOo/4zJijvq9YG+BPpPV6621SzDb3hf1xSz592fPQp2saxkZRL2aO7
-K6hHlXO/cmAOBydnraKgvKzVvGoQOyyySs6Fn3dcHk78/l2UpHoY2w07Ns0kFMWU
-+1EXJOUHjuhYS93K55iuKpBy6z/NTg==
-=yn3N
------END PGP SIGNATURE-----
+for you to fetch changes up to ab1068d6866e28bf6427ceaea681a381e5870a4a:
 
---m0XfRaZG5aslkcJX--
+  iwlwifi: pcie: compare with number of IRQs requested for, not number of CPUs (2018-05-29 10:40:25 +0300)
+
+----------------------------------------------------------------
+wireless-drivers fixes for 4.17
+
+Two last minute fixes, hopefully they make it to 4.17 still.
+
+rt2x00
+
+* revert a fix which caused even more problems
+
+iwlwifi
+
+* fix a crash when there are 16 or more logical CPUs
+
+----------------------------------------------------------------
+Hao Wei Tee (1):
+      iwlwifi: pcie: compare with number of IRQs requested for, not number of CPUs
+
+Stanislaw Gruszka (1):
+      Revert "rt2800: use TXOP_BACKOFF for probe frames"
+
+ drivers/net/wireless/intel/iwlwifi/pcie/trans.c  | 10 +++++-----
+ drivers/net/wireless/ralink/rt2x00/rt2x00queue.c |  7 +++----
+ 2 files changed, 8 insertions(+), 9 deletions(-)
