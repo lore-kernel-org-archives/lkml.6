@@ -1,89 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753549AbeE3O4I (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:56:08 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:59070 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbeE3O4G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:56:06 -0400
-Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
-To: Ming Lei <tom.leiming@gmail.com>
-Cc: Omar Sandoval <osandov@osandov.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180522200214.GF9536@vader>
- <c0b8f2e3-b286-06a7-306d-141f155eff01@oracle.com>
- <CACVXFVN=LHTq=x9n7U7gciR41rWfTHn9uHmZMUHt6=RdvJanXQ@mail.gmail.com>
- <bef30b73-bf68-929e-26b5-08f63e5ca885@oracle.com>
- <CACVXFVNLq7CiBMTDPRcHLNZBWLYXWCpdb4G0iqBUon9f-GpsAA@mail.gmail.com>
- <08921b9d-0f31-f31d-096f-6c4f3a1e4d4f@oracle.com>
- <CACVXFVPKdqb7p-xMQ_8c7Wa26s6O-36Pi0xNHMRDDR1Ar+bDhA@mail.gmail.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <ee4c1872-e78d-d41c-6d57-284ca1d37592@oracle.com>
-Date: Wed, 30 May 2018 22:55:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753557AbeE3O44 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:56:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751289AbeE3O4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 10:56:52 -0400
+Date: Wed, 30 May 2018 09:56:50 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: okaya@codeaurora.org
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Ingo Molnar <mingo@kernel.org>, Christoffer Dall <cdall@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>, timur@codeaurora.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        David Rientjes <rientjes@google.com>,
+        Thymo van Beers <thymovanbeers@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Frederick Lawler <fred@fredlawl.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Marc Zyngier <marc.zyngier@arm.com>, linux-arm-msm@vger.kernel.org,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: Add pci=safemode option
+Message-ID: <20180530145650.GA39853@bhelgaas-glaptop.roam.corp.google.com>
+References: <1527650389-31575-1-git-send-email-okaya@codeaurora.org>
+ <20180530043103.GA19734@kroah.com>
+ <6c317ed8-cca3-8862-5f3b-12cf14e4d53b@codeaurora.org>
+ <20180530073735.GA28793@infradead.org>
+ <6dfe2db8f974d94c9867f30ec83d9333@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CACVXFVPKdqb7p-xMQ_8c7Wa26s6O-36Pi0xNHMRDDR1Ar+bDhA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8909 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=521
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1805300165
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6dfe2db8f974d94c9867f30ec83d9333@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ming
-
-Thanks for your kindly and detailed response. :)
-
-On 05/30/2018 05:44 PM, Ming Lei wrote:
-> On Wed, May 30, 2018 at 5:20 PM, jianchao.wang
-> <jianchao.w.wang@oracle.com> wrote:
->> Hi ming
->>
->> On 05/30/2018 05:13 PM, Ming Lei wrote:
->>>> Yes, it maybe good for merging of 'none', because the rq_list is split into 3
->>>> lists, and not need to iterate the whole rq_list any more.
->>>> But what's about the dispatch when there is no io scheduler.
->>> blk_mq_flush_busy_ctxs() and blk_mq_dequeue_from_ctx() should work
->>> fine in case of 'none' if per-domain list is added to ctx. Then we can make
->>> none to be a bit fair on READ/WRITE.
->>>
->>
->> But how to determine when to dispatch READ, WRITE or other more, when there is no io scheduler ?
->>
+On Wed, May 30, 2018 at 12:44:29AM -0700, okaya@codeaurora.org wrote:
+> On 2018-05-30 00:37, Christoph Hellwig wrote:
+> > On Tue, May 29, 2018 at 09:41:33PM -0700, Sinan Kaya wrote:
+> > > Bjorn and I discussed the need for such a "safe" mode feature when you
+> > > want to bring up PCI for a platform. You want to turn off everything
+> > > as
+> > > a starter and just stick to bare minimum.
+> > 
+> > Can we please make it a config option the instead of adding code
+> > to every kernel?  Also maybe the bringup should be in the name
+> > to make this more clear?
 > 
-> For blk-mq, no io scheduler means 'none' actually, and it works like a
-> scheduler too, but just shares driver tags, IMO.
-> > Wrt. the current code of 'none', blk-mq just picks up one request from
-> ctx->rq_list
-> directly in FIFO style. If READ/WRITE lists are introduced, only
-> blk_mq_dequeue_from_ctx() is effected, there are several choices
-> left for us:
+> One other requirement was to have a runtime option rather than compile time
+> option.
 > 
-> 1) keep the FIFO style of current behaviour by using req->start_time_ns
+> When someone reported a problem, we wanted to be able to say "use this
+> option and see if system boots" without doing any bisects or recompilation.
 > 
-> 2) READ/WRIRE fair style by picking up request from the lists in round-robin
-> order
+> This would be the first step in troubleshooting a system to see if
+> fundamental features are working.
 > 
-> 3) or others
-> 
-> It just will make more choices for us, :-)
+> I don't mind changing the name
+> Bjorn mentioned safe option. I made it safemode. I am looking at Bjorn for
+> suggestions at this moment.
 
-OK, I got the point.
+This *was* my idea, but I'm starting to think it was a bad idea.
 
-But is it necessary to introduce kind of dispatch policy which is more complicated 
-than current simple FIFO style in ctx rq_list dispatching ? 
-If we have this kind of requirement, why not introduce an io scheduler ?
-ITOW, shouldn't we keep the blk-mq core code as simple as possible, and put most of the policy
-into io scheduler ?
+I don't want people to use pci= parameters as the normal way to get a
+system to boot.  That would be a huge support hassle (putting things
+in release notes, diagnosing problems when people forget it, etc).
 
-Thanks
-Jianchao
+But the parameters *are* useful for debugging.  If we had a
+"pci=safemode" and it avoided some problem, the next step would be to
+narrow it down by using the more specific flags (pci=nomsi, pci=noari,
+pci=no_ext_tags, etc).  So I think 95% of the value is in the specific
+flags, and a "pci=safemode" might add a little bit of value but at the
+cost of a small but nagging maintenance concern and code clutter.
+
+Bjorn
