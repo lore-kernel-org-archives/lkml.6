@@ -1,172 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968595AbeE3Hb7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:31:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59074 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935179AbeE3Hb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:31:57 -0400
-Date: Wed, 30 May 2018 09:31:33 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: John Stultz <john.stultz@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Leo Yan <leo.yan@linaro.org>, Jean Wangtao <kevin.wangtao@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: Userland breakage from "Modify the device name as devfreq(X) for
- sysfs"
-Message-ID: <20180530073133.GB21721@kroah.com>
-References: <CGME20180508231744epcas2p1251a2e35591e9d2624337d4c8f1d6974@epcas2p1.samsung.com>
- <CALAqxLVJekViPWi4kh2JOQ46XXtTv2-2BXOe9O8AvfnvX9Z+Sw@mail.gmail.com>
- <5AF25CC3.1010902@samsung.com>
- <CALAqxLV-Y9hN97Z=oqL2=_=1Rg5bw1mz56WWgAWrwh=VONNAqw@mail.gmail.com>
- <20180530053350.GA30256@kroah.com>
- <CALAqxLUnuFvfYqtxxjVk-Vq2UpvmSr8d+uZT1jGdjZmFvQ_DOA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALAqxLUnuFvfYqtxxjVk-Vq2UpvmSr8d+uZT1jGdjZmFvQ_DOA@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S935894AbeE3Hcb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:32:31 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50204 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935179AbeE3Hc2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 03:32:28 -0400
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH] IB/mad: Use ID allocator routines to allocate agent
+ number
+From: =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
+In-Reply-To: <20180529164032.GB18457@ziepe.ca>
+Date: Wed, 30 May 2018 09:32:02 +0200
+Cc: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Message-Id: <0E56560E-F577-43A6-9F18-B7AC7B5DB213@oracle.com>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+ <20180529154922.GA18457@ziepe.ca>
+ <A470D739-D0CD-42EE-9196-8E7610B6DAF4@oracle.com>
+ <20180529164032.GB18457@ziepe.ca>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+X-Mailer: Apple Mail (2.3445.6.18)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=15 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805300087
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4U7WsU5028295
 
-On Tue, May 29, 2018 at 11:52:37PM -0700, John Stultz wrote:
-> On Tue, May 29, 2018 at 10:33 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Tue, May 29, 2018 at 10:14:35PM -0700, John Stultz wrote:
-> >> On Tue, May 8, 2018 at 7:28 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> >> > On 2018년 05월 09일 08:17, John Stultz wrote:
-> >> >> Hey folks,
-> >> >>   I wanted to bring up an issue we've recently tripped over, which was
-> >> >> caused by 4585fbcb5331f ("PM / devfreq: Modify the device name as
-> >> >> devfreq(X) for sysfs").
-> >> >>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=4585fbcb5331fc910b7e553ad3efd0dd7b320d14
-> >> >>
-> >> >> That patch replaced paths like:
-> >> >>    /sys/class/devfreq/ddr_devfreq/min_freq
-> >> >> and
-> >> >>   /sys/class/devfreq/e82c0000.mali/min_freq
-> >> >>
-> >> >> With
-> >> >>   /sys/class/devfreq/devfreq(0)/min_freq
-> >> >> and
-> >> >>   /sys/class/devfreq/devfreq(1)/min_freq
-> >> >>
-> >> >>
-> >> >> This broke userspace we have that needs to work on 4.4, 4.9 and 4.14 (and on).
-> >> >
-> >> > Firstly, I'm sorry to make some problem on userland.
-> >> >
-> >> >>
-> >> >> I wanted to try to ask to understand more about the rational for this
-> >> >> patch, as it doesn't make much sense to me, particularly as now it is
-> >> >> less obvious as to which path is for which device  - and more
-> >> >> worrisome it could change depending on initialization order.
-> >> >
-> >> > Some linux framework used the their own prefix under "/sys/class/"
-> >> > for device such as input/pwm/hwmon/regulator and so on.
-> >> > (But, some linux framework used the device name directly without any changes)
-> >> >
-> >> > I thought that devfreq better to use use the consistent name.
-> >> > If user wanted to access the specific device with device name,
-> >> > the user can access the path of '/sys/devices/platform/...'.
-> >> >
-> >> > [Example on Exynos5433-based TM2 board]
-> >> > root@localhost:~# ls -al /sys/class/devfreq
-> >> > total 0
-> >> > drwxr-xr-x  2 root root 0 Jul 26 04:49 .
-> >> > drwxr-xr-x 50 root root 0 Jan  1  1970 ..
-> >> > lrwxrwxrwx  1 root root 0 Jul 26 04:49 devfreq0 -> ../../devices/platform/soc/soc:bus0/devfreq/devfreq0
-> >> > lrwxrwxrwx  1 root root 0 Jul 26 04:49 devfreq1 -> ../../devices/platform/soc/soc:bus1/devfreq/devfreq1
-> >> > (skip)
-> >> >
-> >> > - User can access the devfreq device with specific device name.
-> >> > root@localhost:/sys/devices/platform/soc/soc:bus0/devfreq/devfreq0# pwd
-> >> > /sys/devices/platform/soc/soc:bus0/devfreq/devfreq0
-> >> >
-> >> > root@localhost:/sys/devices/platform/soc/soc:bus0/devfreq/devfreq0# ls
-> >> > available_frequencies  device    min_freq          subsystem    uevent
-> >> > available_governors    governor  polling_interval  target_freq
-> >> > cur_freq               max_freq  power             trans_stat
-> >> >
-> >> > root@localhost:/sys/devices/platform/soc/soc:bus0/devfreq/devfreq0# cat min_freq
-> >> > 160000000
-> >> >
-> >>
-> >> Sorry to not get back to you sooner on this. Was on vacation then this
-> >> discussion got buried in my inbox.
-> >>
-> >> I do agree that it the consistency with other subsystems is an
-> >> improvement, but it still doesn't help our situation that userspace
-> >> applications can't consistently work between kernel versions, as even
-> >> if we go with the /sys/devices/platform/soc/soc:bus0/devfreq/devfreq0
-> >> path rather then the /sys/class/devfreq/ path, in older kernels the
-> >> /sys/devices/platform/soc/soc:bus0/devfreq/devfreq0 doesn't exist.
-> >
-> > Ick, that's not ok.  The sys/class/ path should always work for old and
-> > new.  If not, it's broken and should be reverted.
-> >
-> > And it seems like it still works, just that the "names" are now
-> > different in the class path, of the device, right?  And that should be
-> > fine, what is breaking when a device name changes?
+
+
+> On 29 May 2018, at 18:40, Jason Gunthorpe <jgg@ziepe.ca> wrote:
 > 
-> Well, code that is looking for:
-> /sys/class/devfreq/ddr_devfreq/min_freq
+> On Tue, May 29, 2018 at 06:16:14PM +0200, Håkon Bugge wrote:
+>> 
+>>> On 29 May 2018, at 17:49, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>>> 
+>>> On Tue, May 29, 2018 at 09:38:08AM +0200, Hans Westgaard Ry wrote:
+>>>> The agent TID is a 64 bit value split in two dwords.  The least
+>>>> significant dword is the TID running counter. The most significant
+>>>> dword is the agent number. In the CX-3 shared port model, the mlx4
+>>>> driver uses the most significant byte of the agent number to store the
+>>>> slave number, making agent numbers greater and equal to 2^24 (3 bytes)
+>>>> unusable.
+>>> 
+>>> There is no reason for this to be an ida, just do something like
+>>> 
+>>> mad_agent_priv->agent.hi_tid = atomic_inc_return(&ib_mad_client_id) & mad_agent_priv->ib_dev->tid_mask;
+>>> 
+>>> And have the driver set tid_mask to 3 bytes of 0xFF
+>> 
+>> The issue is that some of the mad agents are long-lived, so you will
+>> wrap and use the same TID twice.
 > 
-> won't work with newer kernels unless its changed to look for:
-> /sys/class/devfreq/devfreq0/min_freq
+> We already have that problem, and using ida is problematic because we
+> need to maximize the time between TID re-use, which ida isn't doing.
+
+Initially, I thought that too, but consulted the spec which states:
+
+C13-18.1.1: When initiating a new operation, MADHeader:TransactionID
+shall be set to such a value that within that MAD the combination of TID,
+SGID, and MgmtClass is different from that of any other currently executing
+operation. []
+
+"currently executing operation" that is.
+
+But if timeouts etc. leads to MAD floating around in the fabric, its of course more robust to maximize the time between reuse.
+
+Then idr_alloc_cyclic() can be used.
+
+> Preventing re-use seems like a seperate issue from limiting the range
+> to be compatible with mlx4.
+
+Yes. But a v2 of Hans' patch using idr_alloc_cyclic() solves both issues.
+
+
+Thxs, Håkon
+
 > 
-> (assuming the ddr_devfreq driver loaded before the mali one :)
-
-Ugh.  In working with sysfs you should never care about the device name,
-you should be iterating over:
-	/sys/class/devfreq/*/min_freq
-
-and just picking up the one you find that has a link back to whatever
-you want it to be.  Device names are not deterministic, as you even
-claim here as you were somehow depending on the module load order :)
-
-So if/when a device name changes, userspace always has to handle that
-properly.
-
-What tool/script is failing here?  What package is it part of so that we
-can fix it to use sysfs "properly"?
-
-Now if somehow we can not figure out _which_ devfreq class device is
-associated with the "correct" real device, then that's a problem and
-needs to be fixed.  But changing the naming scheme is not the proper fix
-for that.
-
-> >> I agree we need a name attribute so folks can tell the difference
-> >> between devices.
-> >>
-> >> I'm also not too much of a stickler that the old ABI broke, as long as
-> >> we have some solution that works across kernels. So I'd request that
-> >> you at least make older -stable kernels (4.4 and 4.9) behavior
-> >> consistent with upstream.
-> >
-> > No, I don't want to backport api changes like that as then users of
-> > those kernels that were working just fine break :)
-> >
-> > So I think mainline needs to revert this.
-> 
-> The trouble is that the break happened awhile back (4.10) so if we
-> revert its likely to break any new users since then.
-> 
-> That's why I suggested we find some way to have both paths work. But I
-> don't know enough sysfs tricks to have a good suggestion on how to
-> easily do so.
-
-We have compatible symlinks all over the place in sysfs, usually we try
-to bury them behind config options for when you have to run new kernels
-on old userspace implementations.  But sometimes we just let them live
-on for forever...
-
-What exactly would need to be linked to what in order to keep this
-working?
-
-thanks,
-
-greg k-h
+> Jason
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
