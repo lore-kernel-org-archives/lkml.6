@@ -1,140 +1,315 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968732AbeE3Ixc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:53:32 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:39212 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965157AbeE3IxZ (ORCPT
+        id S968767AbeE3Ixq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:53:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44302 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968738AbeE3Ixe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:53:25 -0400
-X-Google-Smtp-Source: ADUXVKJNo7fKnhQB58fnH0tdHSRh7fMttcDEeLB6BkxHyvbv1kSV2WGdMGALx5ePX4va4HQ0pu75JjYbxBKnb8Bg9O8=
+        Wed, 30 May 2018 04:53:34 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180529182107.GC167092@dtor-ws>
-References: <20180529095800.13504-1-benjamin.tissoires@redhat.com>
- <20180529095800.13504-2-benjamin.tissoires@redhat.com> <20180529182107.GC167092@dtor-ws>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Wed, 30 May 2018 10:53:24 +0200
-Message-ID: <CAO-hwJ+5U3ZNacYvcbUKqs0sqzM51cjB5EOWMcVwYnrT838tFg@mail.gmail.com>
-Subject: Re: [PATCH 1/9] Input: mt - export MT_TOOL in input_mt_init_slot()
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Mario.Limonciello@dell.com,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 30 May 2018 14:23:32 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v3 01/16] mtd: rawnand: helper function for setting up ECC
+ configuration
+In-Reply-To: <CAK7LNAT+vfFKd2OrAT8f41i14JwGxzXaJZZE65013Ya6o17Kbw@mail.gmail.com>
+References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
+ <1527250904-21988-2-git-send-email-absahu@codeaurora.org>
+ <20180526095807.5caf5800@xps13> <20180529213036.150ed16a@bbrezillon>
+ <CAK7LNASW4oCekGGkMfmO3tMUviVaium0EOYan6aLFANhL0FAXw@mail.gmail.com>
+ <ae49dcc533007fd6dbdf27d408f5e8ba@codeaurora.org>
+ <CAK7LNAT+vfFKd2OrAT8f41i14JwGxzXaJZZE65013Ya6o17Kbw@mail.gmail.com>
+Message-ID: <571c120a804129add212cfeb462d8123@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+On 2018-05-30 13:08, Masahiro Yamada wrote:
+> 2018-05-30 15:21 GMT+09:00 Abhishek Sahu <absahu@codeaurora.org>:
+>> On 2018-05-30 05:58, Masahiro Yamada wrote:
+>>> 
+>>> Hi.
+>>> 
+>>> 2018-05-30 4:30 GMT+09:00 Boris Brezillon 
+>>> <boris.brezillon@bootlin.com>:
+>>>> 
+>>>> On Sat, 26 May 2018 10:42:47 +0200
+>>>> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+>>>> 
+>>>>> Hi Abhishek,
+>>>>> 
+>>>>> On Fri, 25 May 2018 17:51:29 +0530, Abhishek Sahu
+>>>>> <absahu@codeaurora.org> wrote:
+>>>>> 
+>>>>> > commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,
+>>>>> > match, maximize ECC settings") provides generic helpers which
+>>>>> > drivers can use for setting up ECC parameters.
+>>>>> >
+>>>>> > Since same board can have different ECC strength nand chips so
+>>>>> > following is the logic for setting up ECC strength and ECC step
+>>>>> > size, which can be used by most of the drivers.
+>>>>> >
+>>>>> > 1. If both ECC step size and ECC strength are already set
+>>>>> >    (usually by DT) then just check whether this setting
+>>>>> >    is supported by NAND controller.
+>>>>> > 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
+>>>>> >    supported by NAND controller.
+>>>>> > 3. Otherwise, try to match the ECC step size and ECC strength closest
+>>>>> >    to the chip's requirement. If available OOB size can't fit the chip
+>>>>> >    requirement then select maximum ECC strength which can be fit with
+>>>>> >    available OOB size.
+>>>>> >
+>>>>> > This patch introduces nand_ecc_choose_conf function which calls the
+>>>>> > required helper functions for the above logic. The drivers can use
+>>>>> > this single function instead of calling the 3 helper functions
+>>>>> > individually.
+>>>>> >
+>>>>> > CC: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>>> > Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>>>>> > ---
+>>>>> > * Changes from v2:
+>>>>> >
+>>>>> >   1. Renamed function to nand_ecc_choose_conf.
+>>>>> >   2. Minor code reorganization to remove warning and 2 function calls
+>>>>> >      for nand_maximize_ecc.
+>>>>> >
+>>>>> > * Changes from v1:
+>>>>> >   NEW PATCH
+>>>>> >
+>>>>> >  drivers/mtd/nand/raw/nand_base.c | 42
+>>>>> > ++++++++++++++++++++++++++++++++++++++++
+>>>>> >  drivers/mtd/nand/raw/nand_base.c | 31 +++++++++++++++++++++++++++++++
+>>>>> >  include/linux/mtd/rawnand.h      |  3 +++
+>>>>> >  2 files changed, 34 insertions(+)
+>>>>> >
+>>>>> > diff --git a/drivers/mtd/nand/raw/nand_base.c
+>>>>> > b/drivers/mtd/nand/raw/nand_base.c
+>>>>> > index 72f3a89..e52019d 100644
+>>>>> > --- a/drivers/mtd/nand/raw/nand_base.c
+>>>>> > +++ b/drivers/mtd/nand/raw/nand_base.c
+>>>>> > @@ -6249,6 +6249,37 @@ int nand_maximize_ecc(struct nand_chip *chip,
+>>>>> >  }
+>>>>> >  EXPORT_SYMBOL_GPL(nand_maximize_ecc);
+>>>>> >
+>>>>> > +/**
+>>>>> > + * nand_ecc_choose_conf - Set the ECC strength and ECC step size
+>>>>> > + * @chip: nand chip info structure
+>>>>> > + * @caps: ECC engine caps info structure
+>>>>> > + * @oobavail: OOB size that the ECC engine can use
+>>>>> > + *
+>>>>> > + * Choose the ECC configuration according to following logic
+>>>>> > + *
+>>>>> > + * 1. If both ECC step size and ECC strength are already set (usually
+>>>>> > by DT)
+>>>>> > + *    then check if it is supported by this controller.
+>>>>> > + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
+>>>>> > + * 3. Otherwise, try to match the ECC step size and ECC strength
+>>>>> > closest
+>>>>> > + *    to the chip's requirement. If available OOB size can't fit the
+>>>>> > chip
+>>>>> > + *    requirement then fallback to the maximum ECC step size and ECC
+>>>>> > strength.
+>>>>> > + *
+>>>>> > + * On success, the chosen ECC settings are set.
+>>>>> > + */
+>>>>> > +int nand_ecc_choose_conf(struct nand_chip *chip,
+>>>>> > +                    const struct nand_ecc_caps *caps, int oobavail)
+>>>>> > +{
+>>>>> > +   if (chip->ecc.size && chip->ecc.strength)
+>>>>> > +           return nand_check_ecc_caps(chip, caps, oobavail);
+>>>>> > +
+>>>>> > +   if (!(chip->ecc.options & NAND_ECC_MAXIMIZE) &&
+>>>>> > +       !nand_match_ecc_req(chip, caps, oobavail))
+>>>>> > +           return 0;
+>>>>> > +
+>>>>> > +   return nand_maximize_ecc(chip, caps, oobavail);
+>>>>> 
+>>>>> I personally don't mind if nand_maximize_ecc() is called twice in
+>>>>> the function if it clarifies the logic. Maybe the following will be
+>>>>> more clear for the user?
+>>>>> 
+>>>>>       if (chip->ecc.size && chip->ecc.strength)
+>>>>>               return nand_check_ecc_caps(chip, caps, oobavail);
+>>>>> 
+>>>>>       if (chip->ecc.options & NAND_ECC_MAXIMIZE)
+>>>>>               return nand_maximize_ecc(chip, caps, oobavail);
+>>>>> 
+>>>>>       if (!nand_match_ecc_req(chip, caps, oobavail))
+>>>>>               return 0;
+>>>>> 
+>>>>>       return nand_maximize_ecc(chip, caps, oobavail);
+>>>> 
+>>>> 
+>>>> I personally don't mind, and it seems Masahiro wanted to keep the 
+>>>> logic
+>>>> he had used in the denali driver.
+>>>> 
+>>>>> 
+>>>>> Also, I'm not sure we should just error out when 
+>>>>> nand_check_ecc_caps()
+>>>>> fails. What about something more robust, like:
+>>>>> 
+>>>>>       int ret;
+>>>>> 
+>>>>>       if (chip->ecc.size && chip->ecc.strength) {
+>>>>>               ret = nand_check_ecc_caps(chip, caps, oobavail);
+>>>>>               if (ret)
+>>>>>                       goto maximize_ecc;
+>>>> 
+>>>> 
+>>>> Nope. When someone asked for a specific ECC config by passing the
+>>>> nand-ecc-xxx props we should apply it or return an erro if it's not
+>>>> supported. People passing those props should now what the ECC engine
+>>>> supports and pick one valid values.
+>>>> 
+>>>>> 
+>>>>>               return 0;
+>>>>>       }
+>>>>> 
+>>>>>       if (chip->ecc.options & NAND_ECC_MAXIMIZE)
+>>>>>               goto maximize_ecc;
+>>>>> 
+>>>>>       ret = nand_match_ecc_req(chip, caps, oobavail);
+>>>>>       if (ret)
+>>>>>               goto maximize_ecc;
+>>>>> 
+>>>>>       return 0;
+>>>>> 
+>>>>> maximize_ecc:
+>>>>>       return nand_maximize_ecc(chip, caps, oobavail);
+>>>>> 
+>>>> 
+>>>> 
+>>>> ______________________________________________________
+>>>> Linux MTD discussion mailing list
+>>>> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+>>> 
+>>> 
+>>> 
+>>> 
+>>> 
+>>> 
+>>> 
+>>> This version looks good to me.
+>>> 
+>>> If you want to check the error code more precisely,
+>>> how about something like follows?
+>>> 
+>>> 
+>>> 
+>>> int nand_ecc_choose_conf(struct nand_chip *chip,
+>>>                         const struct nand_ecc_caps *caps, int 
+>>> oobavail)
+>>> {
+>>>        int ret;
+>>> 
+>>>        if (chip->ecc.size && chip->ecc.strength)
+>>>                return nand_check_ecc_caps(chip, caps, oobavail);
+>>> 
+>>>        if (!(chip->ecc.options & NAND_ECC_MAXIMIZE)) {
+>>>                ret = nand_match_ecc_req(chip, caps, oobavail);
+>>>                if (ret != -ENOTSUPP)
+>>>                        return ret;
+>>>        }
+>>> 
+>>>        return nand_maximize_ecc(chip, caps, oobavail);
+>>> }
+>>> 
+>>> 
+>>> Only the difference is the case
+>>> where nand_match_ecc_req() returns a different error code
+>>> than ENOTSUPP.
+>>> (Currently, this happens only when insane 'oobavail' is passed.)
+>>> 
+>> 
+>>  We can do that but to me, it will make the helper function
+>>  more complicated. Currently, nand_match_ecc_req is returning
+>>  other than ENOTSUPP 'oobavail < 0' is passed.
+>>  and again in nand_maximize_ecc, we will check for validity
+>>  of oobavail so nothing wrong will happen in calling
+>>  nand_maximize_ecc.
+> 
+> 
+> Right.  When I added those three helpers,
+> I supposed they were independent APIs.
+> That is why I added the 'oobavail < 0' sanity check
+> in each of the three.
+> 
+> 
+> If you make them internal sub-helpers
+> (i.e. add 'static' instead of EXPORT_SYMBOL_GPL),
+> you can check 'oobavail < 0'
+> only in nand_ecc_choose_conf().
+> 
+> 
 
-On Tue, May 29, 2018 at 8:21 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> Hi Benjamin,
->
-> On Tue, May 29, 2018 at 11:57:52AM +0200, Benjamin Tissoires wrote:
->> Looks like we require users to set a tool but input_mt_init_slots() never
->> set the tool bit for us. Meaning that this is a useless information the
->> driver tries to forward.
->
-> I am not sure if I agree with this patch: up until now drivers could
-> decide if they export presence of the tool type to userspace and
-> userspace could distinguish between "pure" touchscreens and touchscreens
-> that support additional tools, such as stylus. Now we unconditionally
-> claim that all multi-touch devices support multiple tools.
->
-> The fact that we were dropping MT_TOOL_TYPE for devices that do not
-> support anything but finger I'd consider a "feature".
+  I am not sure regarding making them static.
 
-OK. I was not sure to agree with this, but I had a quick chat with
-Peter and he also agrees. There is no real point in forwarding an
-event that will never be updated, so let's just skip that patch then.
+  Currently, Denali NAND driver is only using these functions.
 
-Expect this to be removed in v2 then.
+  And Now, this nand_ecc_choose_conf will be help
+  in all the cases.
 
-Cheers,
-Benjamin
+  For nand_check_ecc_caps: call nand_ecc_choose_conf with
+                           chip->ecc.size && chip->ecc.strength
 
->
->>
->> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
->> ---
->>  drivers/input/input-mt.c                 | 1 +
->>  drivers/input/rmi4/rmi_2d_sensor.c       | 2 --
->>  drivers/input/touchscreen/atmel_mxt_ts.c | 2 --
->>  drivers/input/touchscreen/hideep.c       | 2 --
->>  drivers/input/touchscreen/wacom_w8001.c  | 2 --
->>  5 files changed, 1 insertion(+), 8 deletions(-)
->>
->> diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
->> index a1bbec9cda8d..3900686c5d0f 100644
->> --- a/drivers/input/input-mt.c
->> +++ b/drivers/input/input-mt.c
->> @@ -57,6 +57,7 @@ int input_mt_init_slots(struct input_dev *dev, unsigned int num_slots,
->>       mt->flags = flags;
->>       input_set_abs_params(dev, ABS_MT_SLOT, 0, num_slots - 1, 0, 0);
->>       input_set_abs_params(dev, ABS_MT_TRACKING_ID, 0, TRKID_MAX, 0, 0);
->> +     input_set_abs_params(dev, ABS_MT_TOOL_TYPE, 0, MT_TOOL_MAX, 0, 0);
->>
->>       if (flags & (INPUT_MT_POINTER | INPUT_MT_DIRECT)) {
->>               __set_bit(EV_KEY, dev->evbit);
->> diff --git a/drivers/input/rmi4/rmi_2d_sensor.c b/drivers/input/rmi4/rmi_2d_sensor.c
->> index 8bb866c7b985..23e666bd2539 100644
->> --- a/drivers/input/rmi4/rmi_2d_sensor.c
->> +++ b/drivers/input/rmi4/rmi_2d_sensor.c
->> @@ -186,8 +186,6 @@ static void rmi_2d_sensor_set_input_params(struct rmi_2d_sensor *sensor)
->>               input_set_abs_params(input, ABS_MT_TOUCH_MAJOR, 0, 0x0f, 0, 0);
->>               input_set_abs_params(input, ABS_MT_TOUCH_MINOR, 0, 0x0f, 0, 0);
->>               input_set_abs_params(input, ABS_MT_ORIENTATION, 0, 1, 0, 0);
->> -             input_set_abs_params(input, ABS_MT_TOOL_TYPE,
->> -                                  0, MT_TOOL_MAX, 0, 0);
->>
->>               if (sensor->sensor_type == rmi_sensor_touchpad)
->>                       input_flags = INPUT_MT_POINTER;
->> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
->> index 54fe190fd4bc..0dcf48100dc1 100644
->> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
->> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
->> @@ -2021,8 +2021,6 @@ static int mxt_initialize_input_device(struct mxt_data *data)
->>       }
->>
->>       if (data->multitouch == MXT_TOUCH_MULTITOUCHSCREEN_T100) {
->> -             input_set_abs_params(input_dev, ABS_MT_TOOL_TYPE,
->> -                                  0, MT_TOOL_MAX, 0, 0);
->>               input_set_abs_params(input_dev, ABS_MT_DISTANCE,
->>                                    MXT_DISTANCE_ACTIVE_TOUCH,
->>                                    MXT_DISTANCE_HOVERING,
->> diff --git a/drivers/input/touchscreen/hideep.c b/drivers/input/touchscreen/hideep.c
->> index f1cd4dd9a4a3..980539d8d551 100644
->> --- a/drivers/input/touchscreen/hideep.c
->> +++ b/drivers/input/touchscreen/hideep.c
->> @@ -799,8 +799,6 @@ static int hideep_init_input(struct hideep_ts *ts)
->>       input_set_capability(ts->input_dev, EV_ABS, ABS_MT_POSITION_Y);
->>       input_set_abs_params(ts->input_dev, ABS_MT_PRESSURE, 0, 65535, 0, 0);
->>       input_set_abs_params(ts->input_dev, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
->> -     input_set_abs_params(ts->input_dev, ABS_MT_TOOL_TYPE,
->> -                          0, MT_TOOL_MAX, 0, 0);
->>       touchscreen_parse_properties(ts->input_dev, true, &ts->prop);
->>
->>       if (ts->prop.max_x == 0 || ts->prop.max_y == 0) {
->> diff --git a/drivers/input/touchscreen/wacom_w8001.c b/drivers/input/touchscreen/wacom_w8001.c
->> index 3715d1eace92..946dca30560b 100644
->> --- a/drivers/input/touchscreen/wacom_w8001.c
->> +++ b/drivers/input/touchscreen/wacom_w8001.c
->> @@ -529,8 +529,6 @@ static int w8001_setup_touch(struct w8001 *w8001, char *basename,
->>                                       0, touch.x, 0, 0);
->>               input_set_abs_params(dev, ABS_MT_POSITION_Y,
->>                                       0, touch.y, 0, 0);
->> -             input_set_abs_params(dev, ABS_MT_TOOL_TYPE,
->> -                                     0, MT_TOOL_MAX, 0, 0);
->>               input_abs_set_res(dev, ABS_MT_POSITION_X, touch.panel_res);
->>               input_abs_set_res(dev, ABS_MT_POSITION_Y, touch.panel_res);
->>
->> --
->> 2.14.3
->>
->
-> Thanks.
->
-> --
-> Dmitry
+  For nand_maximize_ecc: call nand_ecc_choose_conf with
+                         NAND_ECC_MAXIMIZE
+
+  So making them static also seems ok which will be
+  easy to maintain in future.
+
+  Thanks,
+  Abhishek
+
+> 
+> 
+> 
+>>  Anyway we put this under WARN_ON condition
+>> 
+>>         if (WARN_ON(oobavail < 0))
+>>                 return -EINVAL;
+>> 
+>>  so if this is being triggered, then it should be mostly
+>>  programming error.
+> 
+> 
+> Right.  Moreover,
+> 
+> WARN_ON(oobavail < 0 || oobavail > mtd->oobsize)
+> 
+> 
+> 
+> This is programming error, that is why WARN_ON() is used to
+> make the log noisy.
+> 
+> 
+>>  Thanks,
+>>  Abhishek
+>> 
+>>> 
+>>> ENOTSUPP means 'required ECC setting is not supported'.
+>>> Other error code is more significant, so it is not a good reason
+>>> to fall back to miximization, IMHO.
+>> 
+>> 
+>> ______________________________________________________
+>> Linux MTD discussion mailing list
+>> http://lists.infradead.org/mailman/listinfo/linux-mtd/
