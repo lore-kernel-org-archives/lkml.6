@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753454AbeE3Llt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:41:49 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60744 "EHLO
+        id S1753653AbeE3Lqm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:46:42 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60664 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752141AbeE3LHA (ORCPT
+        by vger.kernel.org with ESMTP id S1751782AbeE3LG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:00 -0400
+        Wed, 30 May 2018 07:06:58 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Chien Tin Tung" <chien.tin.tung@intel.com>,
-        "Jason Gunthorpe" <jgg@mellanox.com>,
-        "Shiraz Saleem" <shiraz.saleem@intel.com>,
-        "Leon Romanovsky" <leonro@mellanox.com>
-Date: Wed, 30 May 2018 11:52:42 +0100
-Message-ID: <lsq.1527677562.809887726@decadent.org.uk>
+CC: akpm@linux-foundation.org, "Mike Kravetz" <mike.kravetz@oracle.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Yisheng Xie" <xieyisheng1@huawei.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Nic Losby" <blurbdust@gmail.com>, "Michal Hocko" <mhocko@suse.com>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.554945558@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 137/153] RDMA/ucma: Correct option size check using optlen
+Subject: [PATCH 3.2 018/153] hugetlbfs: check for pgoff value overflow
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,32 +34,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chien Tin Tung <chien.tin.tung@intel.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
 
-commit 5f3e3b85cc0a5eae1c46d72e47d3de7bf208d9e2 upstream.
+commit 63489f8e821144000e0bdca7e65a8d1cc23a7ee7 upstream.
 
-The option size check is using optval instead of optlen
-causing the set option call to fail. Use the correct
-field, optlen, for size check.
+A vma with vm_pgoff large enough to overflow a loff_t type when
+converted to a byte offset can be passed via the remap_file_pages system
+call.  The hugetlbfs mmap routine uses the byte offset to calculate
+reservations and file size.
 
-Fixes: 6a21dfc0d0db ("RDMA/ucma: Limit possible option size")
-Signed-off-by: Chien Tin Tung <chien.tin.tung@intel.com>
-Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+A sequence such as:
+
+  mmap(0x20a00000, 0x600000, 0, 0x66033, -1, 0);
+  remap_file_pages(0x20a00000, 0x600000, 0, 0x20000000000000, 0);
+
+will result in the following when task exits/file closed,
+
+  kernel BUG at mm/hugetlb.c:749!
+  Call Trace:
+    hugetlbfs_evict_inode+0x2f/0x40
+    evict+0xcb/0x190
+    __dentry_kill+0xcb/0x150
+    __fput+0x164/0x1e0
+    task_work_run+0x84/0xa0
+    exit_to_usermode_loop+0x7d/0x80
+    do_syscall_64+0x18b/0x190
+    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+The overflowed pgoff value causes hugetlbfs to try to set up a mapping
+with a negative range (end < start) that leaves invalid state which
+causes the BUG.
+
+The previous overflow fix to this code was incomplete and did not take
+the remap_file_pages system call into account.
+
+[mike.kravetz@oracle.com: v3]
+  Link: http://lkml.kernel.org/r/20180309002726.7248-1-mike.kravetz@oracle.com
+[akpm@linux-foundation.org: include mmdebug.h]
+[akpm@linux-foundation.org: fix -ve left shift count on sh]
+Link: http://lkml.kernel.org/r/20180308210502.15952-1-mike.kravetz@oracle.com
+Fixes: 045c7a3f53d9 ("hugetlbfs: fix offset overflow in hugetlbfs mmap")
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Reported-by: Nic Losby <blurbdust@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Yisheng Xie <xieyisheng1@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bwh: Backported to 3.2:
+ - Use a conditional WARN() instead of VM_WARN()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/core/ucma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/hugetlbfs/inode.c | 17 ++++++++++++++---
+ mm/hugetlb.c         |  7 +++++++
+ 2 files changed, 21 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1009,7 +1009,7 @@ static ssize_t ucma_set_option(struct uc
- 	if (IS_ERR(ctx))
- 		return PTR_ERR(ctx);
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -76,6 +76,16 @@ static void huge_pagevec_release(struct
+ 	pagevec_reinit(pvec);
+ }
  
--	if (unlikely(cmd.optval > KMALLOC_MAX_SIZE))
-+	if (unlikely(cmd.optlen > KMALLOC_MAX_SIZE))
++/*
++ * Mask used when checking the page offset value passed in via system
++ * calls.  This value will be converted to a loff_t which is signed.
++ * Therefore, we want to check the upper PAGE_SHIFT + 1 bits of the
++ * value.  The extra bit (- 1 in the shift value) is to take the sign
++ * bit into account.
++ */
++#define PGOFF_LOFFT_MAX \
++	(((1UL << (PAGE_SHIFT + 1)) - 1) <<  (BITS_PER_LONG - (PAGE_SHIFT + 1)))
++
+ static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+ 	struct inode *inode = file->f_path.dentry->d_inode;
+@@ -95,12 +105,13 @@ static int hugetlbfs_file_mmap(struct fi
+ 	vma->vm_ops = &hugetlb_vm_ops;
+ 
+ 	/*
+-	 * Offset passed to mmap (before page shift) could have been
+-	 * negative when represented as a (l)off_t.
++	 * page based offset in vm_pgoff could be sufficiently large to
++	 * overflow a (l)off_t when converted to byte offset.
+ 	 */
+-	if (((loff_t)vma->vm_pgoff << PAGE_SHIFT) < 0)
++	if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
  		return -EINVAL;
  
- 	optval = kmalloc(cmd.optlen, GFP_KERNEL);
++	/* must be huge page aligned */
+ 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
+ 		return -EINVAL;
+ 
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -18,6 +18,7 @@
+ #include <linux/bootmem.h>
+ #include <linux/sysfs.h>
+ #include <linux/slab.h>
++#include <linux/mmdebug.h>
+ #include <linux/rmap.h>
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
+@@ -3097,6 +3098,14 @@ int hugetlb_reserve_pages(struct inode *
+ 	struct hstate *h = hstate_inode(inode);
+ 	struct hugepage_subpool *spool = subpool_inode(inode);
+ 
++	/* This should never happen */
++	if (from > to) {
++#ifdef CONFIG_DEBUG_VM
++		WARN(1, "%s called with a negative range\n", __func__);
++#endif
++		return -EINVAL;
++	}
++
+ 	/*
+ 	 * Only apply hugepage reservation if asked. At fault time, an
+ 	 * attempt will be made for VM_NORESERVE to allocate a page
