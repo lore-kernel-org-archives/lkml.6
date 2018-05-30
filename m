@@ -1,91 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932546AbeE3Weo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:34:44 -0400
-Received: from gate.crashing.org ([63.228.1.57]:57400 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932393AbeE3Wem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:34:42 -0400
-Message-ID: <48444d16bd410188bd43ca5eea97f03f70c80f42.camel@kernel.crashing.org>
-Subject: Re: [PATCH v7 3/7] drivers/i2c: Add port structure to FSI algorithm
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Eddie James <eajames@linux.vnet.ibm.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Edward A. James" <eajames@us.ibm.com>
-Date: Thu, 31 May 2018 08:34:16 +1000
-In-Reply-To: <CAHp75Vd8M4-mK=Fs_SbSX67NKeNty7vrq0-Y8-GyFdy9u6Q3jA@mail.gmail.com>
-References: <1527632665-25707-1-git-send-email-eajames@linux.vnet.ibm.com>
-         <1527632665-25707-4-git-send-email-eajames@linux.vnet.ibm.com>
-         <CAHp75Vd38BrJcULxoqj1mTKCEvMh9ZVYEvzCMAg2t9onZrSR6w@mail.gmail.com>
-         <ae3de08c-6849-bb3a-7c6c-96309876d48e@linux.vnet.ibm.com>
-         <CAHp75Vd8M4-mK=Fs_SbSX67NKeNty7vrq0-Y8-GyFdy9u6Q3jA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S932591AbeE3Wg4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:36:56 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36262 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753691AbeE3Wgw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 18:36:52 -0400
+X-Google-Smtp-Source: ADUXVKKL8KfewnOAAaPiSaT9j8mPkM1Sf02VY3aYpFYjh1dPKTxxwV5/dXfK4M96twS9wQWUsreK8w==
+Subject: Re: [PATCH] kbuild: add machine size to CHEKCFLAGS
+To: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>, "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-parisc@vger.kernel.org,
+        sparclinux@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>
+References: <20180530204838.22079-1-luc.vanoostenryck@gmail.com>
+ <d47b72cc-9209-a190-38b3-969870e1bf26@suse.de>
+From: Rob Landley <rob@landley.net>
+Message-ID: <0dd9d6dc-6cb3-157c-33ac-8c3e449a3859@landley.net>
+Date: Wed, 30 May 2018 17:36:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <d47b72cc-9209-a190-38b3-969870e1bf26@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-31 at 00:27 +0300, Andy Shevchenko wrote:
-> On Wed, May 30, 2018 at 6:47 PM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
-> > On 05/29/2018 06:19 PM, Andy Shevchenko wrote:
-> > > On Wed, May 30, 2018 at 1:24 AM, Eddie James <eajames@linux.vnet.ibm.com>
-> > > wrote:
-> > > >   static int fsi_i2c_probe(struct device *dev)
-> > > >   {
-> > > 
-> > > Isn't below somehow repeats of_i2c_register_devices() ?
-> > > Why not to use it?
-> > 
-> > 
-> > Because I need to assign all these port structure fields. Also looks like
-> > of_i2c_register_devices creates new devices; I just want an adapter for each
-> > port.
+On 05/30/2018 05:00 PM, Andreas Färber wrote:
+> What about the architectures not touched by your patch that previously
+> had no -m32/-m64? (arc, c6x, h8300, hexagon, m68k, microblaze, nds32,
+> nios2, openrisc, powerpc, riscv, s390, sh, unicore32, xtensa)
 > 
-> Hmm... Wolfram, what is your opinion on this design?
+> You forgot to CC them on this patch.
 
-Andy, I don't understand your issue.
+A) He cc'd arch/sh on the previous patch earlier today, to which I replied:
 
-of_i2c_register_devices() is about discovering the i2c devices below a
-given bus. This is not what is happening here.
+https://marc.info/?l=linux-sh&m=152769132515226&w=2
 
-This is a driver for a master that supports multiple busses, so it the
-above loop creates all the busses.
+B) Every change to common infrastructure should cc: every arch? Really? So like
+filesystem changes and stuff to?
 
-> > > > +                       devm_kfree(dev, port);
-> > > 
-> > > This hurts my eyes. Why?!
-> > What would you suggest instead?
-> 
-> You even didn't wait for answer, why to ask then?
+> Have you really checked that all their toolchains support the -m32/-m64
+> flags you newly introduce for them? Apart from non-biarch architectures,
+> I'm thinking of 31-bit s390 as a corner case where !64 != 32.
 
-Please stop being so rude.
+1) Last I heard Linux implements lp64:
+   http://www.unix.org/whitepapers/64bit.html
 
-> Moreover, you didn't answer to my question. Why are you doing that
-> call implicitly?
+2) it's unlikely to be worse than it was before the patch,
 
-"implicitly" ? What's implicit here ? This is just pretty standard
-cleanup after failure, you are being very cryptic here.
+3) last I checked https://github.com/landley/mkroot boots to an s390 shell
+prompt under qemu, although I haven't tried building with this patch. (And you
+may still need to add HOST_EXTRA='lex yacc bison flex' to the command line
+unless they've re-added the _shipped versions like the old kconfig had...) Point
+is, shouldn't be too hard to test it. Presumably that's why we have an -rc1 and
+then 6 more -rc versions each release...
 
-Please state precisely what it is you dislike with that code instead of
-expecting us to guess and being nasty about it. Eddie was a genuine
-question, he doesn't see what you think is "hurtful to the eyes" in the
-code you quoted.
-
-> > > > +       if (!list_empty(&i2c->ports)) {
-> > > 
-> > > My gosh, this is done already in list_for_each*()
-> > No, list_for_each_entry does NOT check if the list is empty or if the first
-> > entry is NULL.
-> 
-> Please, read the macro source code again.
-
-Cheers,
-Ben.
+Rob
