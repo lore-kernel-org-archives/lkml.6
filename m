@@ -1,69 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968629AbeE3Bui (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 21:50:38 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39386 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968432AbeE3Bug (ORCPT
+        id S968597AbeE3Bz0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 21:55:26 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:42629 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968489AbeE3BzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 21:50:36 -0400
-X-Google-Smtp-Source: ADUXVKJSEFcHcw/Vi9xwa5JTvYT8VdJPPgGgjdig9QheH3Ocap2fN5fwyeyMOsHlZ0DzON1rbax9Dg==
-Date: Tue, 29 May 2018 18:50:22 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH] mm/huge_memory.c: __split_huge_page() use atomic
- ClearPageDirty()
-Message-ID: <alpine.LSU.2.11.1805291841070.3197@eggly.anvils>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Tue, 29 May 2018 21:55:24 -0400
+X-Google-Smtp-Source: ADUXVKIRAMZd1iNMYGNjzoTAoyTrMHMroLCUl1O5Lac17WWXxhOqjFeEDA/Af75wXUnjiy8m1clH/kLVrodOEasUN04=
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <1527573818-29712-1-git-send-email-nick.desaulniers@gmail.com>
+References: <1527573818-29712-1-git-send-email-nick.desaulniers@gmail.com>
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
+Date: Tue, 29 May 2018 18:55:23 -0700
+Message-ID: <CAH7mPvh_T1YzfGBR+mzcwQ5r6bhz2NxrvY5r7sSY=wMeh-GK+w@mail.gmail.com>
+Subject: Re: [PATCH] tracing: prefer strlcpy to strncpy
+To: "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ebiggers@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Swapping load on huge=always tmpfs (with khugepaged tuned up to be very
-eager, but I'm not sure that is relevant) soon hung uninterruptibly,
-waiting for page lock in shmem_getpage_gfp()'s find_lock_entry(), most
-often when "cp -a" was trying to write to a smallish file.  Debug showed
-that the page in question was not locked, and page->mapping NULL by now,
-but page->index consistent with having been in a huge page before.
+On Mon, May 28, 2018 at 11:03 PM, Nick Desaulniers
+<nick.desaulniers@gmail.com> wrote:
+> Fixes a stringop-truncation warning from gcc-8.
+>
+> Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+> ---
+>  kernel/trace/trace_events_hist.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+> index b9061ed..b53a6c0 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -393,7 +393,7 @@ static void hist_err_event(char *str, char *system, char *event, char *var)
+>         else if (system)
+>                 snprintf(err, MAX_FILTER_STR_VAL, "%s.%s", system, event);
+>         else
+> -               strncpy(err, var, MAX_FILTER_STR_VAL);
+> +               strlcpy(err, var, MAX_FILTER_STR_VAL);
+>
+>         hist_err(str, err);
+>  }
+> --
+> 2.7.4
+>
 
-Reproduced in minutes on a 4.15 kernel, even with 4.17's 605ca5ede764
-("mm/huge_memory.c: reorder operations in __split_huge_page_tail()")
-added in; but took hours to reproduce on a 4.17 kernel (no idea why).
-
-The culprit proved to be the __ClearPageDirty() on tails beyond i_size
-in __split_huge_page(): the non-atomic __bitoperation may have been safe
-when 4.8's baa355fd3314 ("thp: file pages support for split_huge_page()")
-introduced it, but liable to erase PageWaiters after 4.10's 62906027091f
-("mm: add PageWaiters indicating tasks are waiting for a page bit").
-
-Fixes: 62906027091f ("mm: add PageWaiters indicating tasks are waiting for a page bit")
-Signed-off-by: Hugh Dickins <hughd@google.com>
----
-
-It's not a 4.17-rc regression that this fixes, so no great need to slip
-this into 4.17 at the last moment - though it makes a good companion to
-Konstantin's 605ca5ede764. I think they both should go to stable, but
-since Konstantin's already went into rc1 without that tag, we shall
-have to recommend Konstantin's to GregKH out-of-band.
-
- mm/huge_memory.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- 4.17-rc7/mm/huge_memory.c	2018-04-26 10:48:36.019288258 -0700
-+++ linux/mm/huge_memory.c	2018-05-29 18:14:52.095512715 -0700
-@@ -2431,7 +2431,7 @@ static void __split_huge_page(struct pag
- 		__split_huge_page_tail(head, i, lruvec, list);
- 		/* Some pages can be beyond i_size: drop them from page cache */
- 		if (head[i].index >= end) {
--			__ClearPageDirty(head + i);
-+			ClearPageDirty(head + i);
- 			__delete_from_page_cache(head + i, NULL);
- 			if (IS_ENABLED(CONFIG_SHMEM) && PageSwapBacked(head))
- 				shmem_uncharge(head->mapping->host, 1);
+Eric points out this wont initialize the rest of err with zeros.
