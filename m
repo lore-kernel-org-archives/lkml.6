@@ -1,222 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932416AbeE3TvG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:51:06 -0400
-Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:51060
-        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932299AbeE3TuE (ORCPT
+        id S932460AbeE3Tv3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 15:51:29 -0400
+Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:60190
+        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932257AbeE3Ttz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:50:04 -0400
+        Wed, 30 May 2018 15:49:55 -0400
 x-originating-ip: 107.180.71.197
 From: Long Li <longli@linuxonhyperv.com>
 To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
         linux-rdma@vger.kernel.org
 Cc: Long Li <longli@microsoft.com>
-Subject: [Patch v2 13/15] CIFS: Add support for direct I/O read
-Date: Wed, 30 May 2018 12:48:05 -0700
-Message-Id: <20180530194807.31657-14-longli@linuxonhyperv.com>
+Subject: [Patch v2 10/15] CIFS: SMBD: Support page offset in memory registration
+Date: Wed, 30 May 2018 12:48:02 -0700
+Message-Id: <20180530194807.31657-11-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180530194807.31657-1-longli@linuxonhyperv.com>
 References: <20180530194807.31657-1-longli@linuxonhyperv.com>
 Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfF4rdc3JfGnOJ9+DmQWlGN8z48RWmOc2KGZP0K+ZnbvdTBt7ZY3y/lduqgQUUBV5QcWwrY6ZRU+V8fjaci/46piUTJkZFvKqBaDpOMolRox53gjNl9Oi
- F4y+g6PuVXotHuOqMuVyyz3qX7A2ZshlTwOJtupfNZoM9aapJE3dE0JdIUqBK74uDL3RetWZbPoObGnWmib9CHWg9e33sm+97M3yj6gIvsnX6IEhs4h0broa
- iseFZotCt2vDKjyV0q3NtAKerli1G04fHtMCWtty0LgP/9igk9+rlHV5P4W8jZ4ri+j3b8pM6AjzXLwBY0REdFYo0qxnIVyBc9ECH6sFf8S1wwPbIf01Uk1s
- pwgzMQZ8vPqEdsJLc6pDmZ/2+F05i6n1S98ZmtRN44O2OoZQ51gQSHMGQQPUU4/iQr8Hzw69
+X-CMAE-Envelope: MS4wfE2En6LZZmxVtn5WKUvfoKAOIZvu+60DXJGDbf1f8+6++sqxIEmMRhgezaWWXCvpGXnmTXOQuTPDJE2kZeCFY2BD8wyxuA2Vf6TmbqxQJ251u1oJ83B4
+ e9Jx9UR2v7un3wLbFfsZdGQ8EkJTEJx4gjb9NjVKMdoeUCppyTtFCG8T3CHIVNP8Drxwit4oUMlbYqPE1SOYBt+J51G/w9/3oUDAJONxDd7eonmAXozEy5Bp
+ zRSG34UPEPICL0oARu5ukGvaw5AFKCqcD72VC7GJnw9i255KSW+WOAdq8ZlLewgTdLjy5XTegDI/6hZMxwEpg/Yb50YivHXiUVKw47W4F/+dcvEQ19FwmjT6
+ 8tRKz/oOQ9UWFv+25N7Ei9GYitZVmfcjw2aAiPfpvxZMmo6y+BC++kOUljFYLMpMlB03lW1l
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Long Li <longli@microsoft.com>
 
-Implement the function for direct I/O read. It doesn't support AIO, which
-will be implemented in a follow up patch.
+Change code to pass the correct page offset during memory registration for
+RDMA read/write.
 
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- fs/cifs/cifsfs.h |   1 +
- fs/cifs/file.c   | 149 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 150 insertions(+)
+ fs/cifs/smb2pdu.c   | 18 ++++++++-----
+ fs/cifs/smbdirect.c | 76 +++++++++++++++++++++++++++++++----------------------
+ fs/cifs/smbdirect.h |  2 +-
+ 3 files changed, 58 insertions(+), 38 deletions(-)
 
-diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h
-index 5f02318..7fba9aa 100644
---- a/fs/cifs/cifsfs.h
-+++ b/fs/cifs/cifsfs.h
-@@ -102,6 +102,7 @@ extern int cifs_open(struct inode *inode, struct file *file);
- extern int cifs_close(struct inode *inode, struct file *file);
- extern int cifs_closedir(struct inode *inode, struct file *file);
- extern ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to);
-+extern ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to);
- extern ssize_t cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to);
- extern ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from);
- extern ssize_t cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from);
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 87eece6..e6e6f24 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -2955,6 +2955,18 @@ cifs_read_allocate_pages(struct cifs_readdata *rdata, unsigned int nr_pages)
- 	return rc;
- }
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index f603fbe..fc30774 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2623,8 +2623,8 @@ smb2_new_read_req(void **buf, unsigned int *total_len,
  
-+static void cifs_direct_readdata_release(struct kref *refcount)
-+{
-+	struct cifs_readdata *rdata = container_of(refcount,
-+					struct cifs_readdata, refcount);
-+	unsigned int i;
+ 		rdata->mr = smbd_register_mr(
+ 				server->smbd_conn, rdata->pages,
+-				rdata->nr_pages, rdata->tailsz,
+-				true, need_invalidate);
++				rdata->nr_pages, rdata->page_offset,
++				rdata->tailsz, true, need_invalidate);
+ 		if (!rdata->mr)
+ 			return -ENOBUFS;
+ 
+@@ -3013,16 +3013,22 @@ smb2_async_writev(struct cifs_writedata *wdata,
+ 
+ 		wdata->mr = smbd_register_mr(
+ 				server->smbd_conn, wdata->pages,
+-				wdata->nr_pages, wdata->tailsz,
+-				false, need_invalidate);
++				wdata->nr_pages, wdata->page_offset,
++				wdata->tailsz, false, need_invalidate);
+ 		if (!wdata->mr) {
+ 			rc = -ENOBUFS;
+ 			goto async_writev_out;
+ 		}
+ 		req->Length = 0;
+ 		req->DataOffset = 0;
+-		req->RemainingBytes =
+-			cpu_to_le32((wdata->nr_pages-1)*PAGE_SIZE + wdata->tailsz);
++		if (wdata->nr_pages > 1)
++			req->RemainingBytes =
++				cpu_to_le32(
++					(wdata->nr_pages - 1) * wdata->pagesz -
++					wdata->page_offset + wdata->tailsz
++				);
++		else
++			req->RemainingBytes = cpu_to_le32(wdata->tailsz);
+ 		req->Channel = SMB2_CHANNEL_RDMA_V1_INVALIDATE;
+ 		if (need_invalidate)
+ 			req->Channel = SMB2_CHANNEL_RDMA_V1;
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index ba53c52..e459c97 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -2299,37 +2299,37 @@ static void smbd_mr_recovery_work(struct work_struct *work)
+ 		if (smbdirect_mr->state == MR_INVALIDATED ||
+ 			smbdirect_mr->state == MR_ERROR) {
+ 
+-			if (smbdirect_mr->state == MR_INVALIDATED) {
++			/* recover this MR entry */
++			rc = ib_dereg_mr(smbdirect_mr->mr);
++			if (rc) {
++				log_rdma_mr(ERR,
++					"ib_dereg_mr failed rc=%x\n",
++					rc);
++				smbd_disconnect_rdma_connection(info);
++				continue;
++			}
 +
-+	for (i = 0; i < rdata->nr_pages; i++)
-+		put_page(rdata->pages[i]);
++			smbdirect_mr->mr = ib_alloc_mr(
++				info->pd, info->mr_type,
++				info->max_frmr_depth);
++			if (IS_ERR(smbdirect_mr->mr)) {
++				log_rdma_mr(ERR,
++					"ib_alloc_mr failed mr_type=%x "
++					"max_frmr_depth=%x\n",
++					info->mr_type,
++					info->max_frmr_depth);
++				smbd_disconnect_rdma_connection(info);
++				continue;
++			}
 +
-+	cifs_readdata_release(refcount);
-+}
-+
- static void
- cifs_uncached_readdata_release(struct kref *refcount)
++			if (smbdirect_mr->state == MR_INVALIDATED)
+ 				ib_dma_unmap_sg(
+ 					info->id->device, smbdirect_mr->sgl,
+ 					smbdirect_mr->sgl_count,
+ 					smbdirect_mr->dir);
+-				smbdirect_mr->state = MR_READY;
+-			} else if (smbdirect_mr->state == MR_ERROR) {
+-
+-				/* recover this MR entry */
+-				rc = ib_dereg_mr(smbdirect_mr->mr);
+-				if (rc) {
+-					log_rdma_mr(ERR,
+-						"ib_dereg_mr failed rc=%x\n",
+-						rc);
+-					smbd_disconnect_rdma_connection(info);
+-				}
+ 
+-				smbdirect_mr->mr = ib_alloc_mr(
+-					info->pd, info->mr_type,
+-					info->max_frmr_depth);
+-				if (IS_ERR(smbdirect_mr->mr)) {
+-					log_rdma_mr(ERR,
+-						"ib_alloc_mr failed mr_type=%x "
+-						"max_frmr_depth=%x\n",
+-						info->mr_type,
+-						info->max_frmr_depth);
+-					smbd_disconnect_rdma_connection(info);
+-				}
++			smbdirect_mr->state = MR_READY;
+ 
+-				smbdirect_mr->state = MR_READY;
+-			}
+ 			/* smbdirect_mr->state is updated by this function
+ 			 * and is read and updated by I/O issuing CPUs trying
+ 			 * to get a MR, the call to atomic_inc_return
+@@ -2475,7 +2475,7 @@ static struct smbd_mr *get_mr(struct smbd_connection *info)
+  */
+ struct smbd_mr *smbd_register_mr(
+ 	struct smbd_connection *info, struct page *pages[], int num_pages,
+-	int tailsz, bool writing, bool need_invalidate)
++	int offset, int tailsz, bool writing, bool need_invalidate)
  {
-@@ -3267,6 +3279,143 @@ collect_uncached_read_data(struct cifs_aio_ctx *ctx)
- 		complete(&ctx->done);
- }
+ 	struct smbd_mr *smbdirect_mr;
+ 	int rc, i;
+@@ -2498,17 +2498,31 @@ struct smbd_mr *smbd_register_mr(
+ 	smbdirect_mr->sgl_count = num_pages;
+ 	sg_init_table(smbdirect_mr->sgl, num_pages);
  
-+static void cifs_direct_readv_complete(struct work_struct *work)
-+{
-+	struct cifs_readdata *rdata =
-+		container_of(work, struct cifs_readdata, work);
-+
-+	complete(&rdata->done);
-+	kref_put(&rdata->refcount, cifs_direct_readdata_release);
-+}
-+
-+ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to)
-+{
-+	size_t len, cur_len, start;
-+	unsigned int npages, rsize, credits;
-+	struct file *file;
-+	struct cifs_sb_info *cifs_sb;
-+	struct cifsFileInfo *cfile;
-+	struct cifs_tcon *tcon;
-+	struct page **pagevec;
-+	ssize_t rc, total_read = 0;
-+	struct TCP_Server_Info *server;
-+	loff_t offset = iocb->ki_pos;
-+	pid_t pid;
-+	struct cifs_readdata *rdata;
-+
-+	/*
-+	 * iov_iter_get_pages_alloc() doesn't work with ITER_KVEC,
-+	 * fall back to data copy read path
-+	 */
-+	if (to->type & ITER_KVEC) {
-+		cifs_dbg(FYI, "use non-direct cifs_user_readv for kvec I/O\n");
-+		return cifs_user_readv(iocb, to);
+-	for (i = 0; i < num_pages - 1; i++)
+-		sg_set_page(&smbdirect_mr->sgl[i], pages[i], PAGE_SIZE, 0);
++	log_rdma_mr(INFO, "num_pages=0x%x offset=0x%x tailsz=0x%x\n",
++			num_pages, offset, tailsz);
+ 
++	if (num_pages == 1) {
++		sg_set_page(&smbdirect_mr->sgl[0], pages[0], tailsz, offset);
++		goto skip_multiple_pages;
 +	}
 +
-+	len = iov_iter_count(to);
-+	if (!len)
-+		return 0;
-+
-+	file = iocb->ki_filp;
-+	cifs_sb = CIFS_FILE_SB(file);
-+	cfile = file->private_data;
-+	tcon = tlink_tcon(cfile->tlink);
-+	server = tcon->ses->server;
-+
-+	if (!server->ops->async_readv)
-+		return -ENOSYS;
-+
-+	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
-+		pid = cfile->pid;
-+	else
-+		pid = current->tgid;
-+
-+	if ((file->f_flags & O_ACCMODE) == O_WRONLY)
-+		cifs_dbg(FYI, "attempting read on write only file instance\n");
-+
-+	do {
-+		rc = server->ops->wait_mtu_credits(server, cifs_sb->rsize,
-+					&rsize, &credits);
-+		if (rc)
-+			break;
-+
-+		cur_len = min_t(const size_t, len, rsize);
-+
-+		rc = iov_iter_get_pages_alloc(to, &pagevec, cur_len, &start);
-+		if (rc < 0) {
-+			cifs_dbg(VFS,
-+				"couldn't get user pages (rc=%zd) iter type %d"
-+				" iov_offset %lu count %lu\n",
-+				rc, to->type, to->iov_offset, to->count);
-+			dump_stack();
-+			break;
-+		}
-+
-+		rdata = cifs_readdata_direct_alloc(
-+				pagevec, cifs_direct_readv_complete);
-+		if (!rdata) {
-+			add_credits_and_wake_if(server, credits, 0);
-+			rc = -ENOMEM;
-+			break;
-+		}
-+
-+		npages = (rc + start + PAGE_SIZE-1) / PAGE_SIZE;
-+		rdata->nr_pages = npages;
-+		rdata->page_offset = start;
-+		rdata->pagesz = PAGE_SIZE;
-+		rdata->tailsz = npages > 1 ?
-+				rc-(PAGE_SIZE-start)-(npages-2)*PAGE_SIZE :
-+				rc;
-+		cur_len = rc;
-+
-+		rdata->cfile = cifsFileInfo_get(cfile);
-+		rdata->offset = offset;
-+		rdata->bytes = rc;
-+		rdata->pid = pid;
-+		rdata->read_into_pages = cifs_uncached_read_into_pages;
-+		rdata->copy_into_pages = cifs_uncached_copy_into_pages;
-+		rdata->credits = credits;
-+
-+		rc = 0;
-+		if (rdata->cfile->invalidHandle)
-+			rc = cifs_reopen_file(rdata->cfile, true);
-+
-+		if (!rc)
-+			rc = server->ops->async_readv(rdata);
-+
-+		if (rc) {
-+			add_credits_and_wake_if(server, rdata->credits, 0);
-+			kref_put(&rdata->refcount,
-+				 cifs_direct_readdata_release);
-+			if (rc == -EAGAIN)
-+				continue;
-+			break;
-+		}
-+
-+		wait_for_completion(&rdata->done);
-+		rc = rdata->result;
-+		if (rc) {
-+			kref_put(
-+				&rdata->refcount,
-+				cifs_direct_readdata_release);
-+			if (rc == -EAGAIN)
-+				continue;
-+			break;
-+		}
-+
-+		total_read += rdata->got_bytes;
-+		kref_put(&rdata->refcount, cifs_direct_readdata_release);
-+
-+		iov_iter_advance(to, cur_len);
-+		len -= cur_len;
-+		offset += cur_len;
-+	} while (len);
-+
-+	iocb->ki_pos += total_read;
-+
-+	return total_read;
-+}
-+
- ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
- {
- 	struct file *file = iocb->ki_filp;
++	/* We have at least two pages to register */
++	sg_set_page(
++		&smbdirect_mr->sgl[0], pages[0], PAGE_SIZE - offset, offset);
++	i = 1;
++	while (i < num_pages - 1) {
++		sg_set_page(&smbdirect_mr->sgl[i], pages[i], PAGE_SIZE, 0);
++		i++;
++	}
+ 	sg_set_page(&smbdirect_mr->sgl[i], pages[i],
+ 		tailsz ? tailsz : PAGE_SIZE, 0);
+ 
++skip_multiple_pages:
+ 	dir = writing ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
+ 	smbdirect_mr->dir = dir;
+ 	rc = ib_dma_map_sg(info->id->device, smbdirect_mr->sgl, num_pages, dir);
+ 	if (!rc) {
+-		log_rdma_mr(INFO, "ib_dma_map_sg num_pages=%x dir=%x rc=%x\n",
++		log_rdma_mr(ERR, "ib_dma_map_sg num_pages=%x dir=%x rc=%x\n",
+ 			num_pages, dir, rc);
+ 		goto dma_map_error;
+ 	}
+@@ -2516,8 +2530,8 @@ struct smbd_mr *smbd_register_mr(
+ 	rc = ib_map_mr_sg(smbdirect_mr->mr, smbdirect_mr->sgl, num_pages,
+ 		NULL, PAGE_SIZE);
+ 	if (rc != num_pages) {
+-		log_rdma_mr(INFO,
+-			"ib_map_mr_sg failed rc = %x num_pages = %x\n",
++		log_rdma_mr(ERR,
++			"ib_map_mr_sg failed rc = %d num_pages = %x\n",
+ 			rc, num_pages);
+ 		goto map_mr_error;
+ 	}
+diff --git a/fs/cifs/smbdirect.h b/fs/cifs/smbdirect.h
+index f9038da..1e419c2 100644
+--- a/fs/cifs/smbdirect.h
++++ b/fs/cifs/smbdirect.h
+@@ -321,7 +321,7 @@ struct smbd_mr {
+ /* Interfaces to register and deregister MR for RDMA read/write */
+ struct smbd_mr *smbd_register_mr(
+ 	struct smbd_connection *info, struct page *pages[], int num_pages,
+-	int tailsz, bool writing, bool need_invalidate);
++	int offset, int tailsz, bool writing, bool need_invalidate);
+ int smbd_deregister_mr(struct smbd_mr *mr);
+ 
+ #else
 -- 
 2.7.4
