@@ -1,63 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937296AbeE3Ig3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:36:29 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37660 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935953AbeE3IgZ (ORCPT
+        id S1030253AbeE3Igv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:36:51 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:46760 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936044AbeE3Igr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:36:25 -0400
-Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
-To: Ming Lei <tom.leiming@gmail.com>
-Cc: Omar Sandoval <osandov@osandov.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180522200214.GF9536@vader>
- <c0b8f2e3-b286-06a7-306d-141f155eff01@oracle.com>
- <CACVXFVN=LHTq=x9n7U7gciR41rWfTHn9uHmZMUHt6=RdvJanXQ@mail.gmail.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <bef30b73-bf68-929e-26b5-08f63e5ca885@oracle.com>
-Date: Wed, 30 May 2018 16:36:32 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 30 May 2018 04:36:47 -0400
+X-Google-Smtp-Source: ADUXVKIh0dsrrow5cPZAO5HO8uTQreKdJt6Cb55e4mV0NzONYAzXjwru7A0fAm09fBlu/Bwi1DDKX7BRFNpq3aHgQiY=
 MIME-Version: 1.0
-In-Reply-To: <CACVXFVN=LHTq=x9n7U7gciR41rWfTHn9uHmZMUHt6=RdvJanXQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=646
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1805300101
+X-Originating-IP: [194.176.227.33]
+In-Reply-To: <CAJfpeguJ+h5A4ALS3=actNH5UMSWF8Fgoo-RLbmfGuDf0tJicA@mail.gmail.com>
+References: <20180529132148.GC23785@veci.piliscsaba.redhat.com>
+ <20180529135938.GA5631@infradead.org> <CAJfpeguJ+h5A4ALS3=actNH5UMSWF8Fgoo-RLbmfGuDf0tJicA@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 30 May 2018 10:36:46 +0200
+Message-ID: <CAJfpegvCR4+j0t1dzM=Mvh05JBkz4R5A4Jp=USTtGBeWEL6dGQ@mail.gmail.com>
+Subject: Re: [GIT PULL] overlayfs update for 4.18
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi ming
+On Tue, May 29, 2018 at 4:12 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Tue, May 29, 2018 at 3:59 PM, Christoph Hellwig <hch@infradead.org> wrote:
 
-Thanks for your kindly response.
+>>>       vfs: export vfs_dedupe_file_range_one() to modules
+>>
+>> Please use EXPORT_SYMBOL_GPL for all these crazy low-level exports.
 
-On 05/30/2018 04:22 PM, Ming Lei wrote:
->>> you could keep the software queues as-is but add our own version of
->>> flush_busy_ctxs() that only removes requests of the domain that we want.
->>> If one domain gets backed up, that might get messy with long iterations,
->>> though.
->> Yes, I also considered this approach :)
->> But the long iterations on every ctx->rq_list looks really inefficient.
-> Right, this list can be quite long if dispatch token is used up.
-> 
-> You might try to introduce per-domain list into ctx directly, then 'none'
-> may benefit from this change too since bio merge should be done
-> on the per-domain list actually.
+I'd argue with the "crazy" part.  This should have been the primary
+interface from the start.  The batched dedupe interface is the crazy
+one:
 
-Yes, it maybe good for merging of 'none', because the rq_list is split into 3
-lists, and not need to iterate the whole rq_list any more.
-But what's about the dispatch when there is no io scheduler.
-We will dispatch request from ctx one by one at the moment.
-If we have per-domain list in ctx, we have to introduce some policies to determine
-which domain to dispatch, and these policies should be in io scheduler actually.
+ - deduping is page size granularity at worst; performance would not
+be horrible even if we had to do one syscall per page
+ - vast majority of the time it will be file size granularity
 
-Thanks
-Jianchao
+Why was that batching invented in the first place?
+
+Thanks,
+Miklos
