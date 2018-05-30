@@ -1,50 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932382AbeE3UYG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 16:24:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36462 "EHLO mail.kernel.org"
+        id S932315AbeE3UZN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 16:25:13 -0400
+Received: from sauhun.de ([88.99.104.3]:37236 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932237AbeE3UYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 16:24:03 -0400
-Date: Wed, 30 May 2018 22:23:42 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.4.135
-Message-ID: <20180530202342.GB29582@kroah.com>
-References: <20180530202331.GA29582@kroah.com>
+        id S932233AbeE3UZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 16:25:10 -0400
+Date: Wed, 30 May 2018 22:25:08 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
+Message-ID: <20180530202508.raee7klc2q3qoddo@ninjato>
+References: <20180513211347.7187-1-digetx@gmail.com>
+ <20180530201831.6327alcmr2stgr3a@ninjato>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x4anpeq22o24y36s"
 Content-Disposition: inline
-In-Reply-To: <20180530202331.GA29582@kroah.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180530201831.6327alcmr2stgr3a@ninjato>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 119dbcb4f311..9b14a5a224c5 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 4
--SUBLEVEL = 134
-+SUBLEVEL = 135
- EXTRAVERSION =
- NAME = Blurry Fish Butt
- 
-diff --git a/net/ipv4/ip_vti.c b/net/ipv4/ip_vti.c
-index fa79e8118b9b..4b7c81f88abf 100644
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -366,6 +366,7 @@ static int vti_tunnel_init(struct net_device *dev)
- 	memcpy(dev->dev_addr, &iph->saddr, 4);
- 	memcpy(dev->broadcast, &iph->daddr, 4);
- 
-+	dev->mtu		= ETH_DATA_LEN;
- 	dev->flags		= IFF_NOARP;
- 	dev->addr_len		= 4;
- 	dev->features		|= NETIF_F_LLTX;
+
+--x4anpeq22o24y36s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
+> Applied to for-next, thanks!
+
+I removed the stable tag, though. I am not 100% sure if there are not
+any side-effects for other users. If you still think it should go to
+stable, please mention this patch to stable@ after it was applied to
+linus tree. Maybe with a word or two about regression safety.
+
+
+--x4anpeq22o24y36s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsPCKQACgkQFA3kzBSg
+KbZxOQ//emYo+b3hmRs3Wbwpgfd2uJMFBOLHtdlcf2q/8BgPgrp4Ki0aDwJ2d6ut
+oYpFGBZFqbidgxoWw1fxa5dBTRX/QA1zRcTBy11dJQebI7XWR1ou2Zp0u7fBk61P
+/EFhzvEjQavRUCn4l76oGgNM9wKuAQ3Cz6If7tgx+o7/ylDSj1PNvr2nWnqb28xe
+xYJyZUHSni/IcQ1b2XN3RGCe8F6YYjqKP1JP6pV0lrgAvLxl8hZP3TPGPNisTMDv
+fLbdRL/ITfPvshga+iYgQc/+q/mgfw3fG4wNxCmePLVBoMN9Vr8jFWDyBkBp+uHe
+Rq2CmvvRtWDpSpxTf/mo+OecJMp+ni8D3JwRoupIAjW99Q0yVMyNWBZU0VNXDzQX
+vdbJWR5UfkmagqIx5kdFvcjgq+8P4KV7MPyVeQS2xGK8hFAp4H2/esBzHDib9vck
+MAn8B6oVIoT6foCJgTMzgCY5Ast9JQwcdCWQtaJfujVzN5Z2tZJD2QfNtWIAfBhp
+pFzvl6606HPOnwfytj45wFvrJxBy+J8McQ4QbzTY48hrtkLGgVETpnDCn+iq56ge
+BokorHr80O7hXrWg91QMtdd3OWeynzFS0HU4uAWVYIA8YKi0Ofo2C6YyyOP7Fq+M
+ODoEtSqMAD4stJbB53TsM+PhZ67Ek3R7AXDbJsLbZI39YS3eRuA=
+=0dGz
+-----END PGP SIGNATURE-----
+
+--x4anpeq22o24y36s--
