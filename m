@@ -1,42 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935901AbeE3IIh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:08:37 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34499 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935832AbeE3IIU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:08:20 -0400
-X-Google-Smtp-Source: ADUXVKKUR/tntYkFf37y0aUzzbJ0VOrvyLOI1lw+740h/ds7NV50KgtTgJ2KT/zG98R9D2/G9MDUBRp7Odiq6m1p0WI=
+        id S937239AbeE3IL2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:11:28 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8164 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935832AbeE3ILV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:11:21 -0400
+From: Kevin Wangtao <kevin.wangtao@hisilicon.com>
+To: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <gengyanping@hisilicon.com>, <sunzhaosheng@hisilicon.com>,
+        Kevin Wangtao <kevin.wangtao@hisilicon.com>
+Subject: [PATCH V3] cpufreq: reinitialize new policy min/max when writing scaling_(max|min)_freq
+Date: Wed, 30 May 2018 15:56:47 +0800
+Message-ID: <1527667007-48226-1-git-send-email-kevin.wangtao@hisilicon.com>
+X-Mailer: git-send-email 2.8.1
+In-Reply-To: <1527319008-66663-1-git-send-email-kevin.wangtao@hisilicon.com>
+References: <1527319008-66663-1-git-send-email-kevin.wangtao@hisilicon.com>
 MIME-Version: 1.0
-In-Reply-To: <1527250067-1256-1-git-send-email-ilialin@codeaurora.org>
-References: <1527250067-1256-1-git-send-email-ilialin@codeaurora.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 30 May 2018 10:08:19 +0200
-X-Google-Sender-Auth: 65Yh-x3La_PEGQsOPIsGTeFpG04
-Message-ID: <CAJZ5v0gwtu-ptPskMeiXqWcRLhaGvvFVRyi-kX=nw_s6if7XGg@mail.gmail.com>
-Subject: Re: [PATCH v14 0/2] Kryo CPU scaling driver
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.177.161.152]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 2:07 PM, Ilia Lin <ilialin@codeaurora.org> wrote:
-> [v14]
->  * Addressed comment from Sudeep about DT compatible
->  * Added MAINTAINERS entry
+consider such situation, current user_policy.min is 1000000,
+current user_policy.max is 1200000, in cpufreq_set_policy,
+other driver may update policy.min to 1200000, policy.max to
+1300000. After that, If we input "echo 1300000 > scaling_min_freq",
+then user_policy.min will be 1300000, and user_policy.max is
+still 1200000, because the input value is checked with policy.max
+not user_policy.max. if we get all related cpus offline and
+online again, it will cause cpufreq_init_policy fail because
+user_policy.min is higher than user_policy.max.
 
-This causes a build issue to occur in my bleeding-edge branch.
+The solution is when user space tries to write scaling_(max|min)_freq,
+the min/max of new_policy should be reinitialized with min/max
+of user_policy, like what cpufreq_update_policy does.
 
-Does it depend on anything new in arm-soc?
+Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
+---
+ drivers/cpufreq/cpufreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thanks,
-Rafael
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index b79c532..a970113 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -697,6 +697,9 @@ static ssize_t store_##file_name					\
+ 	struct cpufreq_policy new_policy;				\
+ 									\
+ 	memcpy(&new_policy, policy, sizeof(*policy));			\
++	/* Initialized with user_policy to keep consistency */		\
++	new_policy.min = policy->user_policy.min;			\
++	new_policy.max = policy->user_policy.max;			\
+ 									\
+ 	ret = sscanf(buf, "%u", &new_policy.object);			\
+ 	if (ret != 1)							\
+-- 
+2.8.1
