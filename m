@@ -1,82 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753605AbeE3MSF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:18:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52240 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753520AbeE3MRz (ORCPT
+        id S1753658AbeE3MSJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:18:09 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47713 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752653AbeE3MQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:17:55 -0400
-Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to integrity
- audits
-To: Paul Moore <paul@paul-moore.com>
-Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
-        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com>
- <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Wed, 30 May 2018 08:17:49 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18053012-2213-0000-0000-000002B00B74
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009098; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01039811; UDB=6.00532201; IPR=6.00818945;
- MB=3.00021374; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 12:17:52
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053012-2214-0000-0000-00005A4C4282
-Message-Id: <0c9616fe-b404-eeed-1cba-c920c31694fd@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805300140
+        Wed, 30 May 2018 08:16:35 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180530121633euoutp01cf8941a9cd3e71275b239fd519ec4d18~zazmF48h20899308993euoutp010
+X-AuditID: cbfec7f4-b4fc79c0000043e4-8e-5b0e961e512e
+From: Maciej Purski <m.purski@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH v2 09/10] ARM: dts: exynos5250: add DSI node
+Date: Wed, 30 May 2018 14:16:00 +0200
+Message-id: <1527682561-1386-10-git-send-email-m.purski@samsung.com>
+X-Mailer: git-send-email 2.7.4
+In-reply-to: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAAzVSa0hTURzv7N67ex1OLlPzZKIxkFJITYIOKmrghwslRBaUQjr1ptKmsutM
+        M0oUzQfa3DJNQ0XMaj7KKVq+8j1Mc4rii3SSKD6SEjUaSLaHfvud35M/HAoT5RLOVEJiCitP
+        lEjFfAHePmLUX3R9aRfho9nyQovNEwQqmhjloay8HQK1lH8gUPWQiZs5+MVHKoMSRxvLUzh6
+        vrqNIb3+I4m+Zf0kUX5JHYm0q7MEmu58zUfl+l4eqtlcxFHT0BKJ3sxN8VBOzxCJytWbfGTs
+        rMKDHZnGqkbATBcX8ZjPFUskU5n3imC0mnw+0/FnhWAMhToe01r3lClu0wBmT+t6QxAuCIhl
+        pQmprNw7MEoQ3509iyWPCNJ2S9+CTDBIFQAbCtKXYcfwF9KMRfQ7AGuVsAAITHgPwJqFFezE
+        dKSeAVahHkDdqJGwPo4AXKnuNykUxac9YeOzSDPvQGsAbJ3fsSQwupSAk9XbhLnKng6AXboV
+        C8Zpd9inzLJMCOkQOKHfJa1zrnBhIh8zl9qY+IbuQHMPpNUkPCipJ6yeEDiyoeVZsT3c0rUd
+        Z13gtLoQt+IkmLO+esynwd6iseOsPxzUTVkwRttBVXuZZQvSQpiXK7JaGNg19QK3HlkG4HpD
+        PVCCMzXglAY4sQpOFsdyvonsQy9OIuMUiXFeMUkyLTD9jrF/uv1PoPMwegDQFBDbCn3uCCNE
+        hCSVS5cNAEhhYgehosc2QiSMlaQ/YuVJkXKFlOUGwFkKFzsJ7114Ei6i4yQp7AOWTWblJyqP
+        snHOBLfGH4f6X8kJG3YKDvLsaDV6+zU7hu+/b8GqBieXr0eWXIUYUVmYoepT+Hq4ZJx3d5lz
+        MzRJvx76y/gSFVn5o3Y/2+durbzppiyULb3v4WewDXOZDOKxMWF7Ydtrdyu+R+PJnGYtajjz
+        3O2/CkOMAR/vn5z/fRoLcLuGxcnkYpyLl1zyxOSc5D8aa1CDGQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsVy+t/xy7qy0/iiDb7/k7S4te4cq0XvuZNM
+        Fk0db1ktNs5Yz2ox/whQ7MrX92wWk+5PYLF4ce8ii0X/49fMFufPb2C3ONv0ht2ic+ISdotN
+        j6+xWlzeNYfNYsb5fUwWC17eYrFYe+Quu8XS6xeZLFr3HmG3mDH5JZvFz13zWBxEPdbMW8Po
+        cbmvl8lj56y77B6zO2ayemxa1cnmsf3bA1aP+93HmTw2L6n36NuyitHj8ya5AK4oLpuU1JzM
+        stQifbsErow9zdeYC45xVXycupyxgfEwRxcjJ4eEgInE/8lXGLsYuTiEBJYwSrw9fpoJwmlk
+        klgxfQJLFyMHB5uAlsSa9niQuIjAKkaJqX/vsIM4zAKzWSVePZrACDJKWMBGYvfxB6wgNouA
+        qsSBCU3MIDavgIvEufMf2SHWyUncPNfJDDKUEyi+eo8dSFhIwFliX0sn4wRGngWMDKsYRVJL
+        i3PTc4uN9IoTc4tL89L1kvNzNzECA3/bsZ9bdjB2vQs+xCjAwajEw2sQwRstxJpYVlyZe4hR
+        goNZSYS3dC9PtBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHe8waVUUIC6YklqdmpqQWpRTBZJg5O
+        qQZGwab6Z31+Pt6nw94ssfz5bk3MKcaDO6Ja+8S6C95rbzZI2uj1t0de4dOSh+b991hviIos
+        50h9vVi6y6G3heXP6sAgs9auuvaLmff9Xi0z9TMzPXpp/xyT9cWi+cqJ7skC5tv/ra3b4JPw
+        WUagz15hktMdu68VM7tns7OnWTyasDw3b8m59wxKLMUZiYZazEXFiQB5Xt1teAIAAA==
+X-CMS-MailID: 20180530121629eucas1p2cc1a8c3f5a8e704f4d6f3cf75834cf00
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180530121629eucas1p2cc1a8c3f5a8e704f4d6f3cf75834cf00
+References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
+        <CGME20180530121629eucas1p2cc1a8c3f5a8e704f4d6f3cf75834cf00@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 05:19 PM, Paul Moore wrote:
-> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
-> <stefanb@linux.vnet.ibm.com> wrote:
->> Use the new public audit functions to add the exe= and tty=
->> parts to the integrity audit records. We place them before
->> res=.
->>
->> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
->> Suggested-by: Steve Grubb <sgrubb@redhat.com>
->> ---
->>   security/integrity/integrity_audit.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
->> index db30763d5525..8d25d3c4dcca 100644
->> --- a/security/integrity/integrity_audit.c
->> +++ b/security/integrity/integrity_audit.c
->> @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode *inode,
->>                  audit_log_untrustedstring(ab, inode->i_sb->s_id);
->>                  audit_log_format(ab, " ino=%lu", inode->i_ino);
->>          }
->> +       audit_log_d_path_exe(ab, current->mm);
->> +       audit_log_tty(ab, current);
-> NACK
->
-> Please add the new fields to the end of the audit record, thank you.
+From: Andrzej Hajda <a.hajda@samsung.com>
 
-I put it there since Steve said '"res" is traditionally the last field 
-in any event' (https://lkml.org/lkml/2018/5/22/539). I don't mind 
-breaking with this tradition...
+The patch adds common part of DSI node for Exynos5250 platforms
+and a required mipi-phy node.
 
->
->>          audit_log_format(ab, " res=%d", !result);
->>          audit_log_end(ab);
->>   }
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5250.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 2daf505..9965eca 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -733,6 +733,27 @@
+ 			#phy-cells = <0>;
+ 		};
+ 
++		mipi_phy: video-phy@10040710 {
++			compatible = "samsung,s5pv210-mipi-video-phy";
++			reg = <0x10040710 0x100>;
++			#phy-cells = <1>;
++			syscon = <&pmu_system_controller>;
++		};
++
++		dsi_0: dsi@14500000 {
++			compatible = "samsung,exynos4210-mipi-dsi";
++			reg = <0x14500000 0x10000>;
++			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++			samsung,power-domain = <&pd_disp1>;
++			phys = <&mipi_phy 3>;
++			phy-names = "dsim";
++			clocks = <&clock CLK_DSIM0>, <&clock CLK_SCLK_MIPI1>;
++			clock-names = "bus_clk", "sclk_mipi";
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		adc: adc@12d10000 {
+ 			compatible = "samsung,exynos-adc-v1";
+ 			reg = <0x12D10000 0x100>;
+-- 
+2.7.4
