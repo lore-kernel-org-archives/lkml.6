@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968265AbeE3AFo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 20:05:44 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:45496 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967976AbeE3AFV (ORCPT
+        id S968231AbeE3AFk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 20:05:40 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46436 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967996AbeE3AFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 20:05:21 -0400
-X-Google-Smtp-Source: ADUXVKLJsVeAFst5Oq9qXHhUfy4igDceDDCoubFYMer2VbsirVDs0+fWRe9+DQrTQFHp4qKD3FNQNg==
+        Tue, 29 May 2018 20:05:22 -0400
+X-Google-Smtp-Source: ADUXVKKM6LYJ1SRwt9wT3lmUIqi/3Yzztz2N7aloWv3U9hwgGgllrN8iP68KbyEJSpar7KkTl0CSTw==
 From: Joel Fernandes <joelaf@google.com>
 X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
 To: linux-kernel@vger.kernel.org
@@ -25,9 +25,9 @@ Cc: kernel-team@android.com,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Glexiner <tglx@linutronix.de>, Todd Kjos <tkjos@google.com>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v8 7/8] lib: Add module to simulate atomic sections for testing preemptoff tracers
-Date: Tue, 29 May 2018 17:04:59 -0700
-Message-Id: <20180530000500.257225-8-joel@joelfernandes.org>
+Subject: [PATCH v8 8/8] kselftests: Add tests for the preemptoff and irqsoff tracers
+Date: Tue, 29 May 2018 17:05:00 -0700
+Message-Id: <20180530000500.257225-9-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 In-Reply-To: <20180530000500.257225-1-joel@joelfernandes.org>
 References: <20180530000500.257225-1-joel@joelfernandes.org>
@@ -37,166 +37,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-In this patch we introduce a test module for simulating a long atomic
-section in the kernel which the preemptoff or irqsoff tracers can
-detect. This module is to be used only for test purposes and is default
-disabled.
+Here we add unit tests for the preemptoff and irqsoff tracer by using a
+kernel module introduced previously to trigger atomic sections in the
+kernel.
 
-Following is the expected output (only briefly shown) that can be parsed
-to verify that the tracers are working correctly. We will use this from
-the kselftests in future patches.
-
-For the preemptoff tracer:
-
-echo preemptoff > /d/tracing/current_tracer
-sleep 1
-insmod ./test_atomic_sections.ko atomic_mode=preempt atomic_time=500000
-sleep 1
-bash-4.3# cat /d/tracing/trace
-preempt -1066    2...2    0us@: atomic_sect_run <-atomic_sect_run
-preempt -1066    2...2 500002us : atomic_sect_run <-atomic_sect_run
-preempt -1066    2...2 500004us : tracer_preempt_on <-atomic_sect_run
-preempt -1066    2...2 500012us : <stack trace>
- => kthread
- => ret_from_fork
-
-For the irqsoff tracer:
-
-echo irqsoff > /d/tracing/current_tracer
-sleep 1
-insmod ./test_atomic_sections.ko atomic_mode=irq atomic_time=500000
-sleep 1
-bash-4.3# cat /d/tracing/trace
-irq dis -1069    1d..1    0us@: atomic_sect_run
-irq dis -1069    1d..1 500001us : atomic_sect_run
-irq dis -1069    1d..1 500002us : tracer_hardirqs_on <-atomic_sect_run
-irq dis -1069    1d..1 500005us : <stack trace>
- => ret_from_fork
-
-Co-authored-by: Erick Reyes <erickreyes@google.com>
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- lib/Kconfig.debug          |  8 ++++
- lib/Makefile               |  1 +
- lib/test_atomic_sections.c | 79 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 88 insertions(+)
- create mode 100644 lib/test_atomic_sections.c
+ tools/testing/selftests/ftrace/config         |  3 +
+ .../test.d/preemptirq/irqsoff_tracer.tc       | 74 +++++++++++++++++++
+ 2 files changed, 77 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index c40c7b734cd1..faebf0fe3bcf 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1933,6 +1933,14 @@ config TEST_KMOD
- 
- 	  If unsure, say N.
- 
-+config TEST_ATOMIC_SECTIONS
-+	tristate "Simulate atomic sections for tracers to detect"
-+	depends on m
-+	help
-+	  Select this option to build a test module that can help test atomic
-+	  sections by simulating them with a duration supplied as a module
-+	  parameter. Preempt disable and irq disable modes can be requested.
-+
- config TEST_DEBUG_VIRTUAL
- 	tristate "Test CONFIG_DEBUG_VIRTUAL feature"
- 	depends on DEBUG_VIRTUAL
-diff --git a/lib/Makefile b/lib/Makefile
-index ce20696d5a92..e82cf5445b7b 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -46,6 +46,7 @@ obj-y += string_helpers.o
- obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
- obj-y += hexdump.o
- obj-$(CONFIG_TEST_HEXDUMP) += test_hexdump.o
-+obj-$(CONFIG_TEST_ATOMIC_SECTIONS) += test_atomic_sections.o
- obj-y += kstrtox.o
- obj-$(CONFIG_FIND_BIT_BENCHMARK) += find_bit_benchmark.o
- obj-$(CONFIG_TEST_BPF) += test_bpf.o
-diff --git a/lib/test_atomic_sections.c b/lib/test_atomic_sections.c
+diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
+index b01924c71c09..29588b328345 100644
+--- a/tools/testing/selftests/ftrace/config
++++ b/tools/testing/selftests/ftrace/config
+@@ -4,3 +4,6 @@ CONFIG_FUNCTION_PROFILER=y
+ CONFIG_TRACER_SNAPSHOT=y
+ CONFIG_STACK_TRACER=y
+ CONFIG_HIST_TRIGGERS=y
++CONFIG_PREEMPT_TRACER=y
++CONFIG_IRQSOFF_TRACER=y
++CONFIG_TEST_ATOMIC_SECTIONS=m
+diff --git a/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
 new file mode 100644
-index 000000000000..2c8c6419d183
+index 000000000000..1764ff22c02b
 --- /dev/null
-+++ b/lib/test_atomic_sections.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Atomic section emulation test module
-+ *
-+ * Emulates atomic sections by disabling IRQs or preemption
-+ * and doing a busy wait for a specified amount of time.
-+ * This can be used for testing of different atomic section
-+ * tracers such as irqsoff tracers.
-+ *
-+ * (c) 2018. Google LLC
-+ */
++++ b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+@@ -0,0 +1,74 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: test for the preemptirqsoff tracer
 +
-+#include <linux/delay.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/kernel.h>
-+#include <linux/kthread.h>
-+#include <linux/ktime.h>
-+#include <linux/module.h>
-+#include <linux/printk.h>
-+#include <linux/string.h>
++MOD=test_atomic_sections
 +
-+static int atomic_time = 100;
-+static char atomic_mode[10] = "irq";
-+
-+module_param_named(atomic_time, atomic_time, int, S_IRUGO);
-+module_param_string(atomic_mode, atomic_mode, 10, S_IRUGO);
-+MODULE_PARM_DESC(atomic_time, "Period in microseconds (100 uS default)");
-+MODULE_PARM_DESC(atomic_mode, "Mode of the test such as preempt or irq (default irq)");
-+
-+static void busy_wait(int time)
-+{
-+	ktime_t start, end;
-+	start = ktime_get();
-+	do {
-+		end = ktime_get();
-+		if (kthread_should_stop())
-+			break;
-+	} while (ktime_to_ns(ktime_sub(end, start)) < (time * 1000));
++fail() {
++    reset_tracer
++    rmmod $MOD || true
++    exit_fail
 +}
 +
-+void atomic_sect_run(void *data)
-+{
-+	unsigned long flags;
-+
-+	if (!strcmp(atomic_mode, "irq")) {
-+		local_irq_save(flags);
-+		busy_wait(atomic_time);
-+		local_irq_restore(flags);
-+	} else if (!strcmp(atomic_mode, "preempt")) {
-+		preempt_disable();
-+		busy_wait(atomic_time);
-+		preempt_enable();
-+	}
-+	do_exit(0);
++unsup() { #msg
++    reset_tracer
++    rmmod $MOD || true
++    echo $1
++    exit_unsupported
 +}
 +
-+static int __init atomic_sect_init(void)
-+{
-+	char task_name[50];
-+	struct task_struct *test_task;
++modprobe $MOD || unsup "$MOD module not available"
++rmmod $MOD
 +
-+	snprintf(task_name, 50, "%s dis test", atomic_mode);
++grep -q "preemptoff" available_tracers || unsup "preemptoff tracer not enabled"
++grep -q "irqsoff" available_tracers || unsup "irqsoff tracer not enabled"
 +
-+	test_task = kthread_run((void*)atomic_sect_run, NULL, task_name);
-+	if (IS_ERR(test_task))
-+		return PTR_ERR(test_task);
++reset_tracer
 +
-+	return 0;
-+}
++# Simulate preemptoff section for half a second couple of times
++echo preemptoff > current_tracer
++sleep 1
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
 +
-+static void __exit atomic_sect_exit(void)
-+{
-+	return;
-+}
++cat trace
 +
-+module_init(atomic_sect_init)
-+module_exit(atomic_sect_exit)
-+MODULE_LICENSE("GPL");
++# Confirm which tracer
++grep -q "tracer: preemptoff" trace || fail
++
++# Check the end of the section
++egrep -q "5.....us : <stack trace>" trace || fail
++
++# Check for 500ms of latency
++egrep -q "latency: 5..... us" trace || fail
++
++reset_tracer
++
++# Simulate irqsoff section for half a second couple of times
++echo irqsoff > current_tracer
++sleep 1
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++
++cat trace
++
++# Confirm which tracer
++grep -q "tracer: irqsoff" trace || fail
++
++# Check the end of the section
++egrep -q "5.....us : <stack trace>" trace || fail
++
++# Check for 500ms of latency
++egrep -q "latency: 5..... us" trace || fail
++
++reset_tracer
++exit 0
++
 -- 
 2.17.0.921.gf22659ad46-goog
