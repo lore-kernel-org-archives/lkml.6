@@ -1,65 +1,232 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932206AbeE3Tq5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:46:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32804 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932141AbeE3Tqx (ORCPT
+        id S932244AbeE3Ttt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 15:49:49 -0400
+Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:51062
+        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753556AbeE3Ttq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:46:53 -0400
-Subject: Re: [PATCH 3/8] audit: Implement audit_log_tty()
-To: Paul Moore <paul@paul-moore.com>
-Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
-        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <20180524201105.3179904-4-stefanb@linux.vnet.ibm.com>
- <CAHC9VhRjYhSgd_YCmgaOU_MEKuNKbHvPCVotmxyZRzSc2E6-Wg@mail.gmail.com>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Wed, 30 May 2018 15:46:49 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRjYhSgd_YCmgaOU_MEKuNKbHvPCVotmxyZRzSc2E6-Wg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18053019-0052-0000-0000-000002F4DDDB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009099; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01039961; UDB=6.00532309; IPR=6.00819094;
- MB=3.00021382; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 19:46:52
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053019-0053-0000-0000-00005CD62387
-Message-Id: <38d49beb-a5dd-29de-3e4b-3dde67fdc28d@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805300210
+        Wed, 30 May 2018 15:49:46 -0400
+x-originating-ip: 107.180.71.197
+From: Long Li <longli@linuxonhyperv.com>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>
+Subject: [Patch v2 03/15] CIFS: Use offset when reading pages
+Date: Wed, 30 May 2018 12:47:55 -0700
+Message-Id: <20180530194807.31657-4-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180530194807.31657-1-longli@linuxonhyperv.com>
+References: <20180530194807.31657-1-longli@linuxonhyperv.com>
+Reply-To: longli@microsoft.com
+X-CMAE-Envelope: MS4wfFoVw1QOP6qbKWSlBmVq0odeGMyFUMygKtA/MV1x3MsdRHI9JZfI9jwRHzD10nu7PLBJlIhoBF/zfRwlnBLZDtykxjZ4X1qS4ap1g7hJmgtb2ZJea9Sc
+ cmCku61UOA5DFwJxDvoDMbYIYr88l4siIJTNzVrzyyJcjua6+pahkMwb3IafxHV9KgjqP5fzET/2McRN2EZHgFOyufKtOgEiG+Uk/KB6XdjTM4g9peEsiQtT
+ thv4zIP2QXbxbcEXNuF+BhVkFXhqIdS+IomwN0U5sIHoJKFrJhoD796X9l1dP5JC4lp3sZmmKQ2fe0JewGWdXRdzhaOd3UdwbLeW/C791YL4CIsa74b2wpZ9
+ 0lwHEgowVyT1p0ZZ6ZshMVOFmPcsO04xwuP5oozNGUC6HxDaZk4tgTP/R7OLw/CdJRldfbUu
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 05:07 PM, Paul Moore wrote:
-> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
-> <stefanb@linux.vnet.ibm.com> wrote:
->>
->> +void audit_log_tty(struct audit_buffer *ab, struct task_struct *tsk)
->> +{
->> +       struct tty_struct *tty = audit_get_tty(tsk);
->> +
->> +       audit_log_format(ab, " tty=%s", tty ? tty_name(tty) : "(none)");
->> +       audit_put_tty(tty);
->> +}
-> Perhaps I missed it, but your IMA patches only ever call this to log
-> current's tty, yes?  If so, I would prefer if we dropped the
-> task_struct argument and always had audit_log_tty() use current.
+From: Long Li <longli@microsoft.com>
 
-Done.
+With offset defined in rdata, transport functions need to look at this
+offset when reading data into the correct places in pages.
 
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ fs/cifs/cifsproto.h |  4 +++-
+ fs/cifs/connect.c   |  5 +++--
+ fs/cifs/file.c      | 52 +++++++++++++++++++++++++++++++++++++---------------
+ fs/cifs/smb2ops.c   |  2 +-
+ fs/cifs/smb2pdu.c   |  1 +
+ 5 files changed, 45 insertions(+), 19 deletions(-)
 
->
+diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
+index dc80f84..1f27d8e 100644
+--- a/fs/cifs/cifsproto.h
++++ b/fs/cifs/cifsproto.h
+@@ -203,7 +203,9 @@ extern void dequeue_mid(struct mid_q_entry *mid, bool malformed);
+ extern int cifs_read_from_socket(struct TCP_Server_Info *server, char *buf,
+ 			         unsigned int to_read);
+ extern int cifs_read_page_from_socket(struct TCP_Server_Info *server,
+-				      struct page *page, unsigned int to_read);
++					struct page *page,
++					unsigned int page_offset,
++					unsigned int to_read);
+ extern int cifs_setup_cifs_sb(struct smb_vol *pvolume_info,
+ 			       struct cifs_sb_info *cifs_sb);
+ extern int cifs_match_super(struct super_block *, void *);
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 83b0234..8501da0 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -594,10 +594,11 @@ cifs_read_from_socket(struct TCP_Server_Info *server, char *buf,
+ 
+ int
+ cifs_read_page_from_socket(struct TCP_Server_Info *server, struct page *page,
+-		      unsigned int to_read)
++	unsigned int page_offset, unsigned int to_read)
+ {
+ 	struct msghdr smb_msg;
+-	struct bio_vec bv = {.bv_page = page, .bv_len = to_read};
++	struct bio_vec bv = {
++		.bv_page = page, .bv_len = to_read, .bv_offset = page_offset};
+ 	iov_iter_bvec(&smb_msg.msg_iter, READ | ITER_BVEC, &bv, 1, to_read);
+ 	return cifs_readv_from_socket(server, &smb_msg);
+ }
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 1c98293..87eece6 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -3026,12 +3026,20 @@ uncached_fill_pages(struct TCP_Server_Info *server,
+ 	int result = 0;
+ 	unsigned int i;
+ 	unsigned int nr_pages = rdata->nr_pages;
++	unsigned int page_offset = rdata->page_offset;
+ 
+ 	rdata->got_bytes = 0;
+ 	rdata->tailsz = PAGE_SIZE;
+ 	for (i = 0; i < nr_pages; i++) {
+ 		struct page *page = rdata->pages[i];
+ 		size_t n;
++		unsigned int segment_size = rdata->pagesz;
++
++		if (i == 0)
++			segment_size -= page_offset;
++		else
++			page_offset = 0;
++
+ 
+ 		if (len <= 0) {
+ 			/* no need to hold page hostage */
+@@ -3040,24 +3048,25 @@ uncached_fill_pages(struct TCP_Server_Info *server,
+ 			put_page(page);
+ 			continue;
+ 		}
++
+ 		n = len;
+-		if (len >= PAGE_SIZE) {
++		if (len >= segment_size)
+ 			/* enough data to fill the page */
+-			n = PAGE_SIZE;
+-			len -= n;
+-		} else {
+-			zero_user(page, len, PAGE_SIZE - len);
++			n = segment_size;
++		else
+ 			rdata->tailsz = len;
+-			len = 0;
+-		}
++		len -= n;
++
+ 		if (iter)
+-			result = copy_page_from_iter(page, 0, n, iter);
++			result = copy_page_from_iter(
++					page, page_offset, n, iter);
+ #ifdef CONFIG_CIFS_SMB_DIRECT
+ 		else if (rdata->mr)
+ 			result = n;
+ #endif
+ 		else
+-			result = cifs_read_page_from_socket(server, page, n);
++			result = cifs_read_page_from_socket(
++					server, page, page_offset, n);
+ 		if (result < 0)
+ 			break;
+ 
+@@ -3130,6 +3139,7 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
+ 		rdata->bytes = cur_len;
+ 		rdata->pid = pid;
+ 		rdata->pagesz = PAGE_SIZE;
++		rdata->tailsz = PAGE_SIZE;
+ 		rdata->read_into_pages = cifs_uncached_read_into_pages;
+ 		rdata->copy_into_pages = cifs_uncached_copy_into_pages;
+ 		rdata->credits = credits;
+@@ -3574,6 +3584,7 @@ readpages_fill_pages(struct TCP_Server_Info *server,
+ 	u64 eof;
+ 	pgoff_t eof_index;
+ 	unsigned int nr_pages = rdata->nr_pages;
++	unsigned int page_offset = rdata->page_offset;
+ 
+ 	/* determine the eof that the server (probably) has */
+ 	eof = CIFS_I(rdata->mapping->host)->server_eof;
+@@ -3584,13 +3595,21 @@ readpages_fill_pages(struct TCP_Server_Info *server,
+ 	rdata->tailsz = PAGE_SIZE;
+ 	for (i = 0; i < nr_pages; i++) {
+ 		struct page *page = rdata->pages[i];
+-		size_t n = PAGE_SIZE;
++		unsigned int to_read = rdata->pagesz;
++		size_t n;
++
++		if (i == 0)
++			to_read -= page_offset;
++		else
++			page_offset = 0;
++
++		n = to_read;
+ 
+-		if (len >= PAGE_SIZE) {
+-			len -= PAGE_SIZE;
++		if (len >= to_read) {
++			len -= to_read;
+ 		} else if (len > 0) {
+ 			/* enough for partial page, fill and zero the rest */
+-			zero_user(page, len, PAGE_SIZE - len);
++			zero_user(page, len + page_offset, to_read - len);
+ 			n = rdata->tailsz = len;
+ 			len = 0;
+ 		} else if (page->index > eof_index) {
+@@ -3622,13 +3641,15 @@ readpages_fill_pages(struct TCP_Server_Info *server,
+ 		}
+ 
+ 		if (iter)
+-			result = copy_page_from_iter(page, 0, n, iter);
++			result = copy_page_from_iter(
++					page, page_offset, n, iter);
+ #ifdef CONFIG_CIFS_SMB_DIRECT
+ 		else if (rdata->mr)
+ 			result = n;
+ #endif
+ 		else
+-			result = cifs_read_page_from_socket(server, page, n);
++			result = cifs_read_page_from_socket(
++					server, page, page_offset, n);
+ 		if (result < 0)
+ 			break;
+ 
+@@ -3807,6 +3828,7 @@ static int cifs_readpages(struct file *file, struct address_space *mapping,
+ 		rdata->bytes = bytes;
+ 		rdata->pid = pid;
+ 		rdata->pagesz = PAGE_SIZE;
++		rdata->tailsz = PAGE_SIZE;
+ 		rdata->read_into_pages = cifs_readpages_read_into_pages;
+ 		rdata->copy_into_pages = cifs_readpages_copy_into_pages;
+ 		rdata->credits = credits;
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index 7c0edd2..1fa1c29 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -2467,7 +2467,7 @@ read_data_into_pages(struct TCP_Server_Info *server, struct page **pages,
+ 			zero_user(page, len, PAGE_SIZE - len);
+ 			len = 0;
+ 		}
+-		length = cifs_read_page_from_socket(server, page, n);
++		length = cifs_read_page_from_socket(server, page, 0, n);
+ 		if (length < 0)
+ 			return length;
+ 		server->total_read += length;
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index a02f6b6..f603fbe 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2683,6 +2683,7 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 	struct smb_rqst rqst = { .rq_iov = rdata->iov,
+ 				 .rq_nvec = 2,
+ 				 .rq_pages = rdata->pages,
++				 .rq_offset = rdata->page_offset,
+ 				 .rq_npages = rdata->nr_pages,
+ 				 .rq_pagesz = rdata->pagesz,
+ 				 .rq_tailsz = rdata->tailsz };
+-- 
+2.7.4
