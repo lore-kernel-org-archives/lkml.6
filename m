@@ -1,126 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753731AbeE3Ohu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:37:50 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50270 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753104AbeE3OhY (ORCPT
+        id S1753805AbeE3Oia (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:38:30 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44916 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753789AbeE3OiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:37:24 -0400
-Message-Id: <20180530143105.977759909@infradead.org>
-User-Agent: quilt/0.63-1
-Date: Wed, 30 May 2018 16:22:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: mingo@kernel.org, linux-kernel@vger.kernel.org
-Cc: subhra.mazumdar@oracle.com, steven.sistare@oracle.com,
-        dhaval.giani@oracle.com, rohit.k.jain@oracle.com,
-        umgwanakikbuti@gmail.com, matt@codeblueprint.co.uk, riel@surriel.com,
-        peterz@infradead.org
-Subject: [RFC 02/11] sched/fair: Age the average idle time
-References: <20180530142236.667774973@infradead.org>
+        Wed, 30 May 2018 10:38:25 -0400
+X-Google-Smtp-Source: ADUXVKIDuBfSwjHyRrtYEaIs+CU5DkTlnCULbliCLSbny1spvkxgI2UnNELgHOI0RXYV6Ydt0z+LRg==
+Date: Wed, 30 May 2018 07:38:22 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Pavel Machek <pavel@ucw.cz>, Marcel Holtmann <marcel@holtmann.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/8] gnss: add new GNSS subsystem
+Message-ID: <20180530143822.lvtwjvbqe7gvbvgq@localhost>
+References: <20180530103242.20773-1-johan@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-sis-again-2.patch
-X-Bad-Reply: References but no 'Re:' in Subject.
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530103242.20773-1-johan@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently select_idle_cpu()'s proportional scheme uses the average
-idle time *for when we are idle*, that is temporally challenged.
+On Wed, May 30, 2018 at 12:32:34PM +0200, Johan Hovold wrote:
+> Another possible extension is to add generic 1PPS support.
 
-When we're not at all idle, we'll happily continue using whatever
-value we did see when we did go idle. To fix this, introduce a seprate
-average idle and age it (the existing value still makes sense for
-things like new-idle balancing, which happens when we do go idle).
+There are two possibilities to consider.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/sched/core.c     |    5 +++++
- kernel/sched/fair.c     |   29 ++++++++++++++++++++++++-----
- kernel/sched/features.h |    2 ++
- kernel/sched/sched.h    |    3 +++
- 4 files changed, 34 insertions(+), 5 deletions(-)
+1. If the PPS causes an interrupt, then it should hook into the PPS
+   subsystem.
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1674,6 +1674,9 @@ static void ttwu_do_wakeup(struct rq *rq
- 		if (rq->avg_idle > max)
- 			rq->avg_idle = max;
- 
-+		rq->wake_stamp = jiffies;
-+		rq->wake_avg = rq->avg_idle / 2;
-+
- 		rq->idle_stamp = 0;
- 	}
- #endif
-@@ -6051,6 +6054,8 @@ void __init sched_init(void)
- 		rq->online = 0;
- 		rq->idle_stamp = 0;
- 		rq->avg_idle = 2*sysctl_sched_migration_cost;
-+		rq->wake_stamp = jiffies;
-+		rq->wake_avg = rq->avg_idle;
- 		rq->max_idle_balance_cost = sysctl_sched_migration_cost;
- 
- 		INIT_LIST_HEAD(&rq->cfs_tasks);
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6378,11 +6378,30 @@ static int select_idle_cpu(struct task_s
- 	if (!this_sd)
- 		return -1;
- 
--	/*
--	 * Due to large variance we need a large fuzz factor; hackbench in
--	 * particularly is sensitive here.
--	 */
--	avg_idle = this_rq()->avg_idle / 512;
-+	if (sched_feat(SIS_AGE)) {
-+		unsigned long now = jiffies;
-+		struct rq *this_rq = this_rq();
-+
-+		/*
-+		 * If we're busy, the assumption that the last idle period
-+		 * predicts the future is flawed; age away the remaining
-+		 * predicted idle time.
-+		 */
-+		if (unlikely(this_rq->wake_stamp < now)) {
-+			while (this_rq->wake_stamp < now && this_rq->wake_avg) {
-+				this_rq->wake_stamp++;
-+				this_rq->wake_avg >>= 1;
-+			}
-+		}
-+
-+		avg_idle = this_rq->wake_avg;
-+	} else {
-+		/*
-+		 * Due to large variance we need a large fuzz factor; hackbench
-+		 * in particularly is sensitive here.
-+		 */
-+		avg_idle = this_rq()->avg_idle / 512;
-+	}
- 	avg_cost = this_sd->avg_scan_cost + 1;
- 
- 	if (sched_feat(SIS_AVG_CPU) && avg_idle < avg_cost)
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -58,6 +58,8 @@ SCHED_FEAT(TTWU_QUEUE, true)
- SCHED_FEAT(SIS_AVG_CPU, false)
- SCHED_FEAT(SIS_PROP, true)
- 
-+SCHED_FEAT(SIS_AGE, true)
-+
- /*
-  * Issue a WARN when we do multiple update_rq_clock() calls
-  * in a single rq->lock section. Default disabled because the
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -831,6 +831,9 @@ struct rq {
- 	u64			idle_stamp;
- 	u64			avg_idle;
- 
-+	unsigned long		wake_stamp;
-+	u64			wake_avg;
-+
- 	/* This is used to determine avg_idle's max value */
- 	u64			max_idle_balance_cost;
- #endif
+2. If the PPS is a HW signal routed for example to the input pin of a
+   MAC based PTP Hardware Clock (PHC), then it would make sense to
+   model the GNSS device as a PHC as well.  This PHC would be readable
+   but not writable, and more importantly it would offer an output
+   signal.  Then user space could use the existing interfaces to
+   dial the PPS signal from one device the another.
+
+(Come to think of it, modeling the GNSS as PHC would also give you the
+interface for #1 as well.)
+
+Thanks,
+Richard
