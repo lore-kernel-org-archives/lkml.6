@@ -1,87 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932604AbeE3WIG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:08:06 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:43017 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932431AbeE3WIA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:08:00 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] media: v4l: cadence: add VIDEO_V4L2 dependency
-Date: Thu, 31 May 2018 00:07:10 +0200
-Message-Id: <20180530220735.1651221-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:/8xdBscKlf2sf05at1uW9tsRcLE3pMaRcP5bF3HeO5jRStGAa9V
- kYzW8deZ5T5ElEhACm+WPXKyM6oDBC6zdc1+WLchdO4beLDAGs75wUOGbLHlNoxRijr0zHm
- ztVjMPBsSpiZLDu5UK8cp6yBYAKo66iokjbt3X/H+4M1OyJ5zbteTMz4mxgd8FYkkOiAEID
- +EiCQDY84CR53GEUa95/Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:7oC3GyGlxnU=:lgNMblleJOfk39n/Csggen
- aHaU0gBN2ty/FnC7ZQ42UtgSUsbFRL/+j7kZMEJvH4aIBSRuMNwewihjKPWyK4tzF8UnieQhY
- E3irPHRLr22SxwBTJubiYthrOi3nqIOjuF0I1rW+dmwM4nzqatHBbqZBmY1z1Ye7DxQddMK16
- l94jkQAAisyVMFXe1sESO4lFgU7UYtH089iwz1rwlswXhAOIxtXa+bWiQ20qX5m9HMXYZzaFH
- Bad08QIZ7Bhe08CiAiZCN4wXtNuAuFi1RPwKLwIjzhUZma6+1ATp15beHIkL0AQgOePXsXYxS
- pLXFbEeivkz+32NfBnLXMo7VPuBGNVKZs1qF28n24RA0F3ezWvBtydT7pJSfctVTtj4NwsqvG
- xyYuG8Y4eCr8XpqbYZCrcGwwdkUJVJqx7IRIuTjOCgu4KE3SHtNo7ZZ1Ag8Nja4OB29lrUK1E
- pnG6hyugjv44pRcswt1Rwu3+AWRZbbgxknNSlNdQVcisbjCXdrFPRpfSlkErEy96/oQYGOu1H
- xpCmfHBR2OglQV6lClLV44mLQgkTB+YePW2JlV8tkm0QZ6JprYR3bUAiZrSl6JFhcSnn4jZpT
- 6BM5WYkDb02Y+777zj4AGcpu3+2LFgZbylJQx6K/a2zQ31EUJ/gBxM0+aIFgNy2BZkABopAEB
- qRlMnjPzXO+8SygxVH9gQ9SepgjHn94vMkiHsaXinX1lOQbSpA7awwoZoC19P447kZpU=
+        id S932609AbeE3WJF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:09:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36647 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932394AbeE3WJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 18:09:03 -0400
+From: NeilBrown <neil@brown.name>
+To: Sankalp Negi <sankalpnegi2310@gmail.com>, gregkh@linuxfoundation.org
+Date: Thu, 31 May 2018 08:08:55 +1000
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        sankalpnegi2310@gmail.com
+Subject: Re: [PATCH v2] staging: mt7621-mmc: Fix line size exceeding 80 columns
+In-Reply-To: <20180530190444.23006-1-sankalpnegi2310@gmail.com>
+References: <87vab6unv2.fsf@notabene.neil.brown.name> <20180530190444.23006-1-sankalpnegi2310@gmail.com>
+Message-ID: <87bmcwvls8.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cadence media drivers can be built-in while the v4l2 core is a loadable
-module. This is a mistake and leads to link errors:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-drivers/media/v4l2-core/v4l2-fwnode.o: In function `v4l2_async_register_subdev_sensor_common':
-v4l2-fwnode.c:(.text+0x12f0): undefined reference to `v4l2_async_subdev_notifier_register'
-v4l2-fwnode.c:(.text+0x1304): undefined reference to `v4l2_async_register_subdev'
-v4l2-fwnode.c:(.text+0x1318): undefined reference to `v4l2_async_notifier_unregister'
-v4l2-fwnode.c:(.text+0x1338): undefined reference to `v4l2_async_notifier_cleanup'
-cdns-csi2rx.c:(.text+0x9f8): undefined reference to `v4l2_subdev_init'
-cdns-csi2rx.c:(.text+0xa78): undefined reference to `v4l2_async_register_subdev'
-drivers/media/platform/cadence/cdns-csi2tx.o: In function `csi2tx_remove':
-cdns-csi2tx.c:(.text+0x88): undefined reference to `v4l2_async_unregister_subdev'
-drivers/media/platform/cadence/cdns-csi2tx.o: In function `csi2tx_probe':
-cdns-csi2tx.c:(.text+0x884): undefined reference to `v4l2_subdev_init'
-cdns-csi2tx.c:(.text+0xa9c): undefined reference to `v4l2_async_register_subdev'
+On Thu, May 31 2018, Sankalp Negi wrote:
 
-An explicit Kconfig dependency on VIDEO_V4L2 avoids the problem.
+> This patch fixes checkpatch.pl warning and check:
+> WARNING: line over 80 characters
+> CHECK: Alignment should match open parenthesis
+>
+> Signed-off-by: Sankalp Negi <sankalpnegi2310@gmail.com>
 
-Fixes: 1fc3b37f34f6 ("media: v4l: cadence: Add Cadence MIPI-CSI2 RX driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/media/platform/cadence/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Reviewed-by: NeilBrown <neil@brown.name>
 
-diff --git a/drivers/media/platform/cadence/Kconfig b/drivers/media/platform/cadence/Kconfig
-index 3bf0f2454384..cf6124da3c54 100644
---- a/drivers/media/platform/cadence/Kconfig
-+++ b/drivers/media/platform/cadence/Kconfig
-@@ -11,6 +11,7 @@ if VIDEO_CADENCE
- 
- config VIDEO_CADENCE_CSI2RX
- 	tristate "Cadence MIPI-CSI2 RX Controller"
-+	depends on VIDEO_V4L2
- 	depends on MEDIA_CONTROLLER
- 	depends on VIDEO_V4L2_SUBDEV_API
- 	select V4L2_FWNODE
-@@ -22,6 +23,7 @@ config VIDEO_CADENCE_CSI2RX
- 
- config VIDEO_CADENCE_CSI2TX
- 	tristate "Cadence MIPI-CSI2 TX Controller"
-+	depends on VIDEO_V4L2
- 	depends on MEDIA_CONTROLLER
- 	depends on VIDEO_V4L2_SUBDEV_API
- 	select V4L2_FWNODE
--- 
-2.9.0
+Thanks,
+NeilBrown
+
+> ---
+> Changes in v2:
+>   - Made alignments to match open parenthesis.
+> ---
+>  drivers/staging/mt7621-mmc/dbg.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/staging/mt7621-mmc/dbg.c b/drivers/staging/mt7621-mm=
+c/dbg.c
+> index d897b1216348..6e4e223cddfb 100644
+> --- a/drivers/staging/mt7621-mmc/dbg.c
+> +++ b/drivers/staging/mt7621-mmc/dbg.c
+> @@ -229,7 +229,8 @@ static int msdc_debug_proc_read(struct seq_file *s, v=
+oid *p)
+>  }
+>=20=20
+>  static ssize_t msdc_debug_proc_write(struct file *file,
+> -				const char __user *buf, size_t count, loff_t *data)
+> +				     const char __user *buf,
+> +				     size_t count, loff_t *data)
+>  {
+>  	int ret;
+>=20=20
+> --=20
+> 2.11.0
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsPIPcACgkQOeye3VZi
+gbmcxw//dUZdLymFb4Yz+nb6znSxDKs3bQyJ1ABpXm4+hNszniSzq16pM7Q8lfrP
+XFJNykKA4EPMhnJ2XF+VfMKZ5yYZ9PdotDX0Iia5NMqiP8co7jsvj+GxiDubtEwM
+tpR9qS4e9v9zgqnS1V7fluRRLRICnDp77kNOvyzfLuPGKELo7EmIAIdNg9LgtiEf
+GlE1fRCZXkiRtJzRI5ovA7/hOJiQ7c5Kcf/X0KmzmAjEpqFt7ToMEirC3HSqWnEN
+ig+cQG5913hg+BNCQWo2JAJpzfpdEf9d9ex0scSMIYwoQJIpFhxEw7X9wIUII2dL
+sivUxq7MaqnNO/MgSpWBsX0Beh8UJrF+ny8tNPs7uWw++6UnsoK9wrfaWvuuAuUj
+WjipNeK9usATk49EEZDUiAejgcnUrUuEj/pnXiio88ALNGZrIU0O9RgSPiNIDMMN
+S1lPRJoVwinERXioQaQEatLu45e1779ld0cYN7nVN2SNfYb62wHFVS252nkTAZ6s
+O3DB770u6vW++1gjWEcGa19iQGUHFU9jFLL70Sbmk0nQaRvVknnji7jVfOZrf+N1
+SV3kKxzqz/f8QZa3Ww60RtGh09asE7tzKYrslUpIxS5Cv1+AXsf0no+ZwfBUNhgQ
+pNpmWHPx+DvJSseHkj7Wm930lVkThXW761BmxjWAfXgcaF1IY1w=
+=7Rm6
+-----END PGP SIGNATURE-----
+--=-=-=--
