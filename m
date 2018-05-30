@@ -1,70 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932512AbeE3Vxf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:53:35 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:38821 "EHLO
+        id S932526AbeE3VyT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:54:19 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:48539 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932310AbeE3Vxb (ORCPT
+        with ESMTP id S932242AbeE3VyQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:53:31 -0400
+        Wed, 30 May 2018 17:54:16 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
+To: Mark Brown <broonie@kernel.org>
 Cc: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] pci: qcom: include gpio/consumer.h
-Date: Wed, 30 May 2018 23:53:06 +0200
-Message-Id: <20180530215324.1178564-1-arnd@arndb.de>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: codecs: PCM1789: include gpio/consumer.h
+Date: Wed, 30 May 2018 23:53:45 +0200
+Message-Id: <20180530215407.1196429-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:vWp/0v8x9WEIv7clsiVAqiZs2DUobQRTF9mPnKdvd0f2JjIsdbo
- /JTg/iLaf+PVgYKJedfF9NiG/5d0DhATvvndPZdUu45eYkqs8LO0U30t3yQEyScyuWi1lEl
- 44r03FHZcdbK2ynVAaHCoORxjVerxJxBq8NyFH1ra/kv1MExcOboBzUvmpS0ExhUp13FNdu
- Xswv++Bb01IeZtTzeZ6mQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZOt2u/6IGd0=:7h344KbOCfOCUjxx9dDaJV
- Y+TVW80JZyMKb6j/NEMDrj9C0C6Ub5QA6toGiwBeSi6q9EnKDvKZctF+m6b0LAcGcTvsmCBWr
- 9q9BP7r+Iiur1U/lseBfw9kUl6zTgyUbrmBL4IvEeBy8Dt/K/+6XfMrTDAV7mn7829a2gcttC
- +ZhQ48swv/8P2xW9HgquvQvF+WrjFimbGDfAkQixK+qWmt2v1d0TRIYR9txwENbcvpGMRv2Pj
- F1H+6fZ9CRN8VVaT6VPEZvQwzyE6gkMerBth3xYZhPvFOdK2OEDnW2/Mm7vXgBtt5FWj0nnx2
- zRq72Tuy4s5R0J/cPehUw89JZrjapR5Vq+5pa8mM3jSsbQvj5vUlkW+RX15QEI+kZbOKAtpFz
- GDgCAJLIYqTfV/zyyF3kcao0lq6Ks0/boINvrX0bZZ9Ge16wW16swovcKbZEEsw7pqCnDWY2t
- QXeyUMZhS6MQyCq1NUaGTNUFfKXv1LIaPL+7KTYR7G3dGvqz617hcsOdERlpca3XKgvHnE6BR
- fI+yUude7dQLCCVC7Tr7UspMNLJL3uLXArAOGxHVjiPQiFZHt0c+SWbZnus1A4WmOexlILEEJ
- LWm0TkQMQuHHRrrYB3dEWGyArF9HAJ1oV3F6XdZN6McOhY4ujiMQr5QSV2C5F+Dw8xZdwF5vb
- 8EvmXotNlyxPEVmfc50TLowtlWf0Y3t2EVCa1cJ2ih7sGKlXk0Bemu78ML6rU7Lam6Jg=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:Rx9WLGTgobRy7l3v6hsbyoB0dPRPxEzWrQiatF8IBzCHqQWpRNT
+ XR6Ck4ubwHkEJI+FY+y5KBEpXfDsdhNkMcvPwKL9Agx42FNfP2jVVjU34f1kSXFiuzr2zzB
+ vT1ycdCHjuEcIFJeYiDbmAdt20+gR3YT/m1YqgwtZzuUdEnYBJyzh/hoUp+s0psosf7/8K0
+ s73t2m588TNKF0/M5rWZg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:OwHvio7rd9I=:qY6yKCpHM+5rrBQcm+Nq7e
+ u+SiH+iR9Q2F9gbcUyXzTVLIe6++DyLdQtStjnfVlIISp4+QxpJdk7ZAxJS6XXOpoQ1v+aCPV
+ byWSBfqJ7baxafb2+xWFH+QYBuOCZ/2AYEkzswvDnd42nY4t4WNi2etbZrRUyjtSqJFABo9aj
+ HRvSMu0XSmZAj8pPwFMI3hAprnPEk4hc4q6pMWrbLBzChCYloE3dKkzJEi2pDAsep6QQgg4rf
+ FxznIgHOD+tfwBQh4sJtP1KBlYO23rqOFKM32ucFKs7psflFpTVFtF0QFt4VniZVhhY5SfDkf
+ asvCElGlgc36BhIoJcQZF7Ubg6ZJntlqaqmvzi/3jJ9G2hS0SksRGMR7ERif/RpIxc+Ly9X8e
+ DU2UUxU0ZEGXDR9klKOak9luL0vNhrj5q2cqSBwhNcGLnaVhNsOB8/qtohFdddNv0xMgY4yaB
+ VLqD1zEcLDBngAvWrvGM3hznB9yLt1F6FkRW4XtG5vneceLIYpV3aUMxd17RgvRS9hjP7v1Qi
+ J60CPmr2TwYO1YAf7aL5q76Bd8jB7JQEsv9oSiYGtYOecchcZEmTT2YDATMioolqZb/QNkoDv
+ CTDpscUAqUFzC9FiLLmMTz7bBiwHrCuw9RiFGHLXC8RP7qXCZZFKyFFZvUmbw6kUZaCqP4lbm
+ wglWvcuYeFxvhRuxkHsm0begb/6OFASy3qBoXqVPpus5zda83aYL+2AbENBNkqOxVKS/vkQ73
+ 9i2S5e+uNj6ulRul
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_GPIOLIB is disabled, we run into a build failure:
+When CONFIG_GPIOLIB is disabled, this codec fails to build
+because gpio/consumer.h is not included implicitly.
 
-drivers/pci/dwc/pcie-qcom.c: In function 'qcom_pcie_probe':
-drivers/pci/dwc/pcie-qcom.c:1223:16: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_regulator_get_optional'? [-Werror=implicit-function-declaration]
-  pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
+sound/soc/codecs/pcm1789.c: In function 'pcm1789_common_init':
+sound/soc/codecs/pcm1789.c:247:19: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_gpio_request_one'? [-Werror=implicit-function-declaration]
+  pcm1789->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+                   ^~~~~~~~~~~~~~~~~~~~~~~
 
-Including gpio/consumer.h directly is the correct fix.
-
+Fixes: 4ae340d1be36 ("ASoC: codecs: Add support for PCM1789")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/pci/dwc/pcie-qcom.c | 2 +-
+ sound/soc/codecs/pcm1789.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
-index b65bbf7c284e..17df19db851e 100644
---- a/drivers/pci/dwc/pcie-qcom.c
-+++ b/drivers/pci/dwc/pcie-qcom.c
-@@ -10,7 +10,7 @@
+diff --git a/sound/soc/codecs/pcm1789.c b/sound/soc/codecs/pcm1789.c
+index 507ac9412d6c..21f15219b3ad 100644
+--- a/sound/soc/codecs/pcm1789.c
++++ b/sound/soc/codecs/pcm1789.c
+@@ -3,7 +3,7 @@
+ // Copyright (C) 2018 Bootlin
+ // Mylène Josserand <mylene.josserand@bootlin.com>
  
- #include <linux/clk.h>
- #include <linux/delay.h>
 -#include <linux/gpio.h>
 +#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
+ #include <linux/module.h>
+ #include <linux/workqueue.h>
+ 
 -- 
 2.9.0
