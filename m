@@ -1,272 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752101AbeE3KC5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:02:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44774 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751388AbeE3KCw (ORCPT
+        id S1751394AbeE3KGK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:06:10 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:55686 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750869AbeE3KGI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:02:52 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D18160792
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-X-Google-Smtp-Source: ADUXVKJmxnlTA6XGQcoTlJ8YkPNZEHA7QrysEfbs5G3g8bUNxrCO2PvHE18f4IbawXMEQdMv7rPvf7QCL8IeNNvkXSU=
+        Wed, 30 May 2018 06:06:08 -0400
+Date: Wed, 30 May 2018 13:05:29 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: James Simmons <jsimmons@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>,
+        Amir Shehata <amir.shehata@intel.com>,
+        James Simmons <uja.ornl@yahoo.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Subject: Re: [PATCH v2 01/25] staging: lustre: libcfs: restore UMP handling
+Message-ID: <20180530100529.54jlkfx2q52d7o2a@mwanda>
+References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
+ <1527603725-30560-2-git-send-email-jsimmons@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <dda4eee6-2144-7cbf-995b-d3f34a7c0184@arm.com>
-References: <20180322102204.14760-1-vivek.gautam@codeaurora.org> <dda4eee6-2144-7cbf-995b-d3f34a7c0184@arm.com>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Wed, 30 May 2018 15:32:48 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iGLtv+_-mo4LVzKULEZUE8d8kxTs4pHU1j6Pb7bPMr1PQ@mail.gmail.com>
-Message-ID: <CAFp+6iGLtv+_-mo4LVzKULEZUE8d8kxTs4pHU1j6Pb7bPMr1PQ@mail.gmail.com>
-Subject: Re: [PATCH v11 0/4] iommu/arm-smmu: Add runtime pm/sleep support
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        "robh+dt" <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        devicetree@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Clark <robdclark@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>, lukas@wunner.de,
-        Tomasz Figa <tfiga@chromium.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527603725-30560-2-git-send-email-jsimmons@infradead.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=748
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805300117
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On Tue, May 29, 2018 at 10:21:41AM -0400, James Simmons wrote:
+> @@ -208,20 +222,52 @@ void cfs_cpt_unset_nodemask(struct cfs_cpt_table *cptab,
+>  void cfs_cpu_fini(void);
+>  
+>  #else /* !CONFIG_SMP */
+> -struct cfs_cpt_table;
+> -#define cfs_cpt_tab ((struct cfs_cpt_table *)NULL)
+>  
+> -static inline cpumask_var_t *
+> -cfs_cpt_cpumask(struct cfs_cpt_table *cptab, int cpt)
+> +static inline void cfs_cpt_table_free(struct cfs_cpt_table *cptab)
+>  {
+> -	return NULL;
+> +	kfree(cptab);
+>  }
 
+This should free cptab->ctb_cpumask?
 
-On Mon, May 21, 2018 at 7:12 PM, Robin Murphy <robin.murphy@arm.com> wrote:
-> On 22/03/18 10:22, Vivek Gautam wrote:
->>
->> This series provides the support for turning on the arm-smmu's
->> clocks/power domains using runtime pm. This is done using the
->> recently introduced device links patches, which lets the smmu's
->> runtime to follow the master's runtime pm, so the smmu remains
->> powered only when the masters use it.
->> As not all implementations support clock/power gating, we are checking
->> for a valid 'smmu->dev's pm_domain' to conditionally enable the runtime
->> power management for such smmu implementations that can support it.
->>
->> This series also adds support for Qcom's arm-smmu-v2 variant that
->> has different clocks and power requirements.
->>
->> Took some reference from the exynos runtime patches [1].
->>
->> With conditional runtime pm now, we avoid touching dev->power.lock
->> in fastpaths for smmu implementations that don't need to do anything
->> useful with pm_runtime.
->> This lets us to use the much-argued pm_runtime_get_sync/put_sync()
->> calls in map/unmap callbacks so that the clients do not have to
->> worry about handling any of the arm-smmu's power.
->>
->> Previous version of this patch series is @ [5].
->>
->> [v11]
->>     * Some more cleanups for device link. We don't need an explicit
->>       delete for device link from the driver, but just set the flag
->>       DL_FLAG_AUTOREMOVE.
->>       device_link_add() API description says -
->>       "If the DL_FLAG_AUTOREMOVE is set, the link will be removed
->>       automatically when the consumer device driver unbinds."
->
->
-> But then if the consumer subsequently rebinds, there's no opportunity to
-> recreate the link, and PM will just quietly stop functioning properly. Given
-> that it's a lot more reasonable for users to unload and reload modules (or
-> otherwise switch drivers) for a consumer device than it is to unbind the
-> SMMU driver or expect actual device hotplug, I'd rather do nothing and
-> theoretically leak links than autoremove them incorrectly.
->
-> AFAICS the previous discussion on this got as far as Lukas' suggestion of
-> adding an equivalent flag for supplier-managed links (which FWIW sounds good
-> to me), but seems to have stalled there.
-
-Thanks for the review. I have posted a small change [1] for this.
-Kindly take a look.
-
-Best regards
-Vivek
-
-[1] https://patchwork.kernel.org/patch/10438109/
-
->
-> Robin.
->
->
->>     * Addressed the comments for 'smmu' in arm_smmu_map/unmap().
->>     * Dropped the patch [10] that introduced device_link_del_dev() API.
->>
->> [v10]
->>     * Introduce device_link_del_dev() API to delete the link between
->>       given consumer and supplier devices. The users of device link
->>       do not need to store link pointer to delete the link later.
->>       They can straightaway use this API by passing consumer and
->>       supplier devices.
->>     * Made corresponding changes to arm-smmu driver patch handling the
->>       device links.
->>     * Dropped the patch [9] that was adding device_link_find() API to
->>       device core layer. device_link_del_dev() serves the purpose to
->>       directly delete the link between two given devices.
->>
->> [v9]
->>     * Removed 'rpm_supported' flag, instead checking on pm_domain
->>       to enable runtime pm.
->>     * Creating device link only when the runtime pm is enabled, as we
->>       don't need a device link besides managing the power dependency
->>       between supplier and consumer devices.
->>     * Introducing a patch to add device_link_find() API that finds
->>       and existing link between supplier and consumer devices.
->>       Also, made necessary change to device_link_add() to use this API.
->>     * arm_smmu_remove_device() now uses this device_link_find() to find
->>       the device link between smmu device and the master device, and then
->>       delete this link.
->>     * Dropped the destroy_domain_context() fix [8] as it was rather,
->>       introducing catastrophically bad problem by destroying
->>       'good dev's domain context.
->>     * Added 'Reviwed-by' tag for Tomasz's review.
->>
->> [v8]
->>     * Major change -
->>       - Added a flag 'rpm_supported' which each platform that supports
->>         runtime pm, can enable, and we enable runtime_pm over arm-smmu
->>         only when this flag is set.
->>       - Adding the conditional pm_runtime_get/put() calls to .map, .unmap
->>         and .attach_dev ops.
->>       - Dropped the patch [6] that exported pm_runtim_get/put_suupliers(),
->>         and also dropped the user driver patch [7] for these APIs.
->>
->>     * Clock code further cleanup
->>       - doing only clk_bulk_enable() and clk_bulk_disable() in runtime pm
->>         callbacks. We shouldn't be taking a slow path
->> (clk_prepare/unprepare())
->>         from these runtime pm callbacks. Thereby, moved clk_bulk_prepare()
->> to
->>         arm_smmu_device_probe(), and clk_bulk_unprepare() to
->>         arm_smmu_device_remove().
->>       - clk data filling to a common method arm_smmu_fill_clk_data() that
->>         fills the clock ids and number of clocks.
->>
->>     * Addressed other nits and comments
->>       - device_link_add() error path fixed.
->>       - Fix for checking negative error value from pm_runtime_get_sync().
->>       - Documentation redo.
->>
->>     * Added another patch fixing the error path in arm_smmu_attach_dev()
->>       to destroy allocated domain context.
->>
->> [v7]
->>     * Addressed review comments given by Robin Murphy -
->>       - Added device_link_del() in .remove_device path.
->>       - Error path cleanup in arm_smmu_add_device().
->>       - Added pm_runtime_get/put_sync() in .remove path, and replaced
->>          pm_runtime_force_suspend() with pm_runtime_disable().
->>       - clk_names cleanup in arm_smmu_init_clks()
->>     * Added 'Reviewed-by' given by Rob H.
->>
->> [V6]
->>     * Added Ack given by Rafael to first patch in the series.
->>     * Addressed Rob Herring's comment for adding soc specific compatible
->>       string as well besides 'qcom,smmu-v2'.
->>
->> [V5]
->>     * Dropped runtime pm calls from "arm_smmu_unmap" op as discussed over
->>       the list [3] for the last patch series.
->>     * Added a patch to export pm_runtime_get/put_suppliers() APIs to the
->>       series as agreed with Rafael [4].
->>     * Added the related patch for msm drm iommu layer to use
->>       pm_runtime_get/put_suppliers() APIs in msm_mmu_funcs.
->>     * Dropped arm-mmu500 clock patch since that would break existing
->>       platforms.
->>     * Changed compatible 'qcom,msm8996-smmu-v2' to 'qcom,smmu-v2' to
->> reflect
->>       the IP version rather than the platform on which it is used.
->>       The same IP is used across multiple platforms including msm8996,
->>       and sdm845 etc.
->>     * Using clock bulk APIs to handle the clocks available to the IP as
->>       suggested by Stephen Boyd.
->>     * The first patch in v4 version of the patch-series:
->>       ("iommu/arm-smmu: Fix the error path in arm_smmu_add_device") has
->>       already made it to mainline.
->>
->> [V4]
->>     * Reworked the clock handling part. We now take clock names as data
->>       in the driver for supported compatible versions, and loop over them
->>       to get, enable, and disable the clocks.
->>     * Using qcom,msm8996 based compatibles for bindings instead of a
->> generic
->>       qcom compatible.
->>     * Refactor MMU500 patch to just add the necessary clock names data and
->>       corresponding bindings.
->>     * Added the pm_runtime_get/put() calls in .unmap iommu op (fix added
->> by
->>       Stanimir on top of previous patch version.
->>     * Added a patch to fix error path in arm_smmu_add_device()
->>     * Removed patch 3/5 of V3 patch series that added qcom,smmu-v2
->> bindings.
->>
->> [V3]
->>     * Reworked the patches to keep the clocks init/enabling function
->>       separately for each compatible.
->>
->>     * Added clocks bindings for MMU40x/500.
->>
->>     * Added a new compatible for qcom,smmu-v2 implementation and
->>       the clock bindings for the same.
->>
->>     * Rebased on top of 4.11-rc1
->>
->> [V2]
->>     * Split the patches little differently.
->>
->>     * Addressed comments.
->>
->>     * Removed the patch #4 [2] from previous post
->>       for arm-smmu context save restore. Planning to
->>       post this separately after reworking/addressing Robin's
->>       feedback.
->>
->>     * Reversed the sequence to disable clocks than enabling.
->>       This was required for those cases where the
->>       clocks are populated in a dependent order from DT.
->>
->> [1] https://lkml.org/lkml/2016/10/20/70
->> [2] https://patchwork.kernel.org/patch/9389717/
->> [3] https://patchwork.kernel.org/patch/10204925/
->> [4] https://patchwork.kernel.org/patch/10102445/
->> [5] https://lkml.org/lkml/2018/3/14/127
->> [6] https://patchwork.kernel.org/patch/10204945/
->> [7] https://patchwork.kernel.org/patch/10204925/
->> [8] https://patchwork.kernel.org/patch/10254105/
->> [9] https://patchwork.kernel.org/patch/10277975/
->> [10] https://patchwork.kernel.org/patch/10281613/
->>
->> Sricharan R (3):
->>    iommu/arm-smmu: Add pm_runtime/sleep ops
->>    iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
->>    iommu/arm-smmu: Add the device_link between masters and smmu
->>
->> Vivek Gautam (1):
->>    iommu/arm-smmu: Add support for qcom,smmu-v2 variant
->>
->>   .../devicetree/bindings/iommu/arm,smmu.txt         |  42 +++++
->>   drivers/iommu/arm-smmu.c                           | 178
->> +++++++++++++++++++--
->>   2 files changed, 210 insertions(+), 10 deletions(-)
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+regards,
+dan carpenter
