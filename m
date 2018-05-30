@@ -1,154 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937342AbeE3Iwg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:52:36 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52132 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935975AbeE3Iwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:52:31 -0400
-Date: Wed, 30 May 2018 09:52:18 +0100
-From: Morten Rasmussen <morten.rasmussen@arm.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>, austinwc@codeaurora.org,
-        tnowicki@caviumnetworks.com, Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <Will.Deacon@arm.com>, linux-riscv@lists.infradead.org,
-        vkilari@codeaurora.org, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        jhugo@codeaurora.org, Al Stone <ahs3@redhat.com>,
-        Len Brown <lenb@kernel.org>, John Garry <john.garry@huawei.com>,
-        wangxiongfeng2@huawei.com, Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v9 00/12] Support PPTT for ARM64
-Message-ID: <20180530085218.GA8461@e105550-lin.cambridge.arm.com>
-References: <20180511235807.30834-1-jeremy.linton@arm.com>
- <20180517170523.h7tuvbzdfluuidcz@armageddon.cambridge.arm.com>
- <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com>
- <09fb3fe7-d703-43f1-74f7-f8cb5ff1f67a@arm.com>
- <CAMuHMdXgiMeD4uF+j8W+CpNwYYK2W_8xqk_=vGBiW=bUvKeq7w@mail.gmail.com>
- <551905a6-eaa8-97df-06ec-1ceedfbc164f@arm.com>
- <CAMuHMdWgsRTqrgwi5Z_xyNXmzS1h4gxLaawdFAL_DGF+Yt8s-A@mail.gmail.com>
+        id S965115AbeE3IxE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:53:04 -0400
+Received: from mga14.intel.com ([192.55.52.115]:30437 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935951AbeE3Iw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:52:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,459,1520924400";
+   d="scan'208";a="45870463"
+Subject: Re: mmc filesystem performance decreased on the first write after
+ filesystem creation
+To: Christoph Hellwig <hch@lst.de>, Faiz Abbas <faiz_abbas@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
+        linux-ext4@vger.kernel.org, tytso@mit.edu
+References: <a976e20a-3ed1-43d0-4665-f570ef496d02@ti.com>
+ <20180528062618.GA4196@lst.de>
+ <c6a47e30-f07d-3f79-2189-38b6f01429b9@intel.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <43d4164f-5dda-b49a-6008-1f5bf4b08547@intel.com>
+Date: Wed, 30 May 2018 11:51:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWgsRTqrgwi5Z_xyNXmzS1h4gxLaawdFAL_DGF+Yt8s-A@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <c6a47e30-f07d-3f79-2189-38b6f01429b9@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 05:50:47PM +0200, Geert Uytterhoeven wrote:
-> Hi Sudeep,
+On 30/05/18 11:44, Adrian Hunter wrote:
+> On 28/05/18 09:26, Christoph Hellwig wrote:
+>> Summary: mke2s uses the BLKDISCARD ioctl to wipe the device,
+>> and then uses BLKDISCARDZEROES to check if that zeroed the data.
+>>
+>> A while ago I made BLKDISCARDZEROES always return 0 because it is
+>> basically impossible to have reliably zeroing using discard as the
+>> standards leave the devices way to many options to not actually
+>> zero data at their own choice when using the discard commands.
 > 
-> On Tue, May 29, 2018 at 3:18 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> > On 29/05/18 12:56, Geert Uytterhoeven wrote:
-> >> On Tue, May 29, 2018 at 1:14 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >>> On 29/05/18 11:48, Geert Uytterhoeven wrote:
-> >>>> On Thu, May 17, 2018 at 7:05 PM, Catalin Marinas
-> >>>> <catalin.marinas@arm.com> wrote:
-> >>>>> On Fri, May 11, 2018 at 06:57:55PM -0500, Jeremy Linton wrote:
-> >>>>>> Jeremy Linton (12):
-> >>>>>>   arm64: topology: divorce MC scheduling domain from core_siblings
-> >>>>>
-> >>>>> Queued for 4.18 (without Sudeep's latest property_read_u64 cacheinfo
-> >>>>> patch - http://lkml.kernel.org/r/20180517154701.GA20281@e107155-lin; I
-> >>>>> can add it separately).
-> >>>>
-> >>>> This is now commit 37c3ec2d810f87ea ("arm64: topology: divorce MC
-> >>>> scheduling domain from core_siblings") in arm64/for-next/core, causing
-> >>>> system suspend on big.LITTLE systems to hang after shutting down the first
-> >>>> CPU:
-> >>>>
-> >>>>     $ echo mem > /sys/power/state
-> >>>>     PM: suspend entry (deep)
-> >>>>     PM: Syncing filesystems ... done.
-> >>>>     Freezing user space processes ... (elapsed 0.001 seconds) done.
-> >>>>     OOM killer disabled.
-> >>>>     Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-> >>>>     Disabling non-boot CPUs ...
-> >>>>     CPU1: shutdown
-> >>>>     psci: CPU1 killed.
-> >>>
-> >>> Is it OK to assume the suspend failed just after shutting down one CPU
-> >>> or it's failing during resume ? It depends on whether you had console
-> >>> disabled or not.
-> >>
-> >> I have no-console-suspend enabled.
-> >> It's failing during suspend, the next lines should be:
-> >>
-> >>     CPU2: shutdown
-> >>     psci: CPU2 killed.
-> >>     ...
-> >
-> > OK, I was hoping to be something during resume as this patch has nothing
-> > executed during suspend. Do you see any change in topology before and
-> > after this patch applied. I am interested in the output of:
-> >
-> > $ grep "" /sys/devices/system/cpu/cpu*/topology/*
+> Older eMMC do not have a "discard" option and use "erase" instead.  "Erase"
+> has similar benefits to "discard" but the eMMC is required to make the
+> erased blocks read as either all 0's or all 1's.
 > 
-> /sys/devices/system/cpu/cpu0/topology/core_id:0
-> /sys/devices/system/cpu/cpu0/topology/core_siblings:0f
-> /sys/devices/system/cpu/cpu0/topology/core_siblings_list:0-3
-> /sys/devices/system/cpu/cpu0/topology/physical_package_id:0
-> /sys/devices/system/cpu/cpu0/topology/thread_siblings:01
-> /sys/devices/system/cpu/cpu0/topology/thread_siblings_list:0
-> /sys/devices/system/cpu/cpu1/topology/core_id:1
-> /sys/devices/system/cpu/cpu1/topology/core_siblings:0f
-> /sys/devices/system/cpu/cpu1/topology/core_siblings_list:0-3
-> /sys/devices/system/cpu/cpu1/topology/physical_package_id:0
-> /sys/devices/system/cpu/cpu1/topology/thread_siblings:02
-> /sys/devices/system/cpu/cpu1/topology/thread_siblings_list:1
-> /sys/devices/system/cpu/cpu2/topology/core_id:2
-> /sys/devices/system/cpu/cpu2/topology/core_siblings:0f
-> /sys/devices/system/cpu/cpu2/topology/core_siblings_list:0-3
-> /sys/devices/system/cpu/cpu2/topology/physical_package_id:0
-> /sys/devices/system/cpu/cpu2/topology/thread_siblings:04
-> /sys/devices/system/cpu/cpu2/topology/thread_siblings_list:2
-> /sys/devices/system/cpu/cpu3/topology/core_id:3
-> /sys/devices/system/cpu/cpu3/topology/core_siblings:0f
-> /sys/devices/system/cpu/cpu3/topology/core_siblings_list:0-3
-> /sys/devices/system/cpu/cpu3/topology/physical_package_id:0
-> /sys/devices/system/cpu/cpu3/topology/thread_siblings:08
-> /sys/devices/system/cpu/cpu3/topology/thread_siblings_list:3
-> /sys/devices/system/cpu/cpu4/topology/core_id:0
-> /sys/devices/system/cpu/cpu4/topology/core_siblings:f0
-> /sys/devices/system/cpu/cpu4/topology/core_siblings_list:4-7
-> /sys/devices/system/cpu/cpu4/topology/physical_package_id:1
-> /sys/devices/system/cpu/cpu4/topology/thread_siblings:10
-> /sys/devices/system/cpu/cpu4/topology/thread_siblings_list:4
-> /sys/devices/system/cpu/cpu5/topology/core_id:1
-> /sys/devices/system/cpu/cpu5/topology/core_siblings:f0
-> /sys/devices/system/cpu/cpu5/topology/core_siblings_list:4-7
-> /sys/devices/system/cpu/cpu5/topology/physical_package_id:1
-> /sys/devices/system/cpu/cpu5/topology/thread_siblings:20
-> /sys/devices/system/cpu/cpu5/topology/thread_siblings_list:5
-> /sys/devices/system/cpu/cpu6/topology/core_id:2
-> /sys/devices/system/cpu/cpu6/topology/core_siblings:f0
-> /sys/devices/system/cpu/cpu6/topology/core_siblings_list:4-7
-> /sys/devices/system/cpu/cpu6/topology/physical_package_id:1
-> /sys/devices/system/cpu/cpu6/topology/thread_siblings:40
-> /sys/devices/system/cpu/cpu6/topology/thread_siblings_list:6
-> /sys/devices/system/cpu/cpu7/topology/core_id:3
-> /sys/devices/system/cpu/cpu7/topology/core_siblings:f0
-> /sys/devices/system/cpu/cpu7/topology/core_siblings_list:4-7
-> /sys/devices/system/cpu/cpu7/topology/physical_package_id:1
-> /sys/devices/system/cpu/cpu7/topology/thread_siblings:80
-> /sys/devices/system/cpu/cpu7/topology/thread_siblings_list:7
+>>
+>> So IFF mke2fs want to actually free space and zero it it needs
+>> to use fallocate to punch a hole, and mmc needs to implement
+>> REQ_OP_WRITE_ZEROS IFF it actually has a reliable way to zero
+>> blocks.
+>>
+>>
+>> On Tue, May 22, 2018 at 08:48:31PM +0530, Faiz Abbas wrote:
+>>> Hi,
+>>>
+>>> I am debugging a performance reduction in ext2 filesystems on an mmc
+>>> device in TI's am335x evm board.
+>>>
+>>> I see that the performance is reduced on the first write after making a
+>>> new filesystem using mkfs.ext2 on one of the mmc partitions. The
+>>> performance comes back to normal after the first write.
+>>>
+>>> commands used:
+>>>
+>>> => umount /dev/mmcblk1p2
+>>>
+>>> => mkfs.ext2 -F  /dev/mmcblk1p2
+>>>
+>>> => mount -t ext2 -o async /dev/mmcblk1p2 /mnt/partition_mmc
+>>>
+>>> => dd if=/dev/urandom of=/dev/shm/srctest_file_mmc_1184 bs=1M count=10
+>>>
+>>> => ./filesystem_tests -write -src_file /dev/shm/srctest_file_mmc_1184
+>>> -srcfile_size 10 -file /mnt/partition_mmc/test_file_1184 -buffer_size
+>>> 102400 -file_size 100 -performance
+>>>
+>>> The filesystem_tests write utility reads from the file generated at
+>>> /dev/shm/srctest_file_mmc_1184, memory maps the file to a buffer, and
+>>> then writes it into the newly created /mnt/partition_mmc in multiples of
+>>> buffer_size while measuring write performance.
+>>>
+>>> See here for the implementation of filesystem_tests write utility:
+>>> http://arago-project.org/git/projects/?p=test-automation/ltp-ddt.git;a=blob;f=testcases/ddt/filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c;h=80e8e244d7eaa9f0dbd9b21ea705445156c36bef;hb=f7fc06c290333ce08a7d4fba104eee0f0f1d942b
+>>>
+>>> Complete log with multiple calls to filesystem_tests:
+>>> https://pastebin.ubuntu.com/p/BckmTJpqPv/
+>>>
+>>> Notice that the first run of filesystem_tests has a lower throughput
+>>> reported.
+>>>
+>>> I was able to bisect the issue to this commit:
+>>> 5d1429fead5b (mmc: remove the discard_zeroes_data flag)
+>>>
+>>> I would assume that after this flag is removed, the filesystem creation
+>>> command would explicitly write zeroes to the device which might explain
+>>> the performance fall. However, then the mkfs.ext2 command itself should
+>>> take more time rather than the first file write after that.
 > 
-> No change before/after (both match my view of the hardware).
+> You might want to check the lazy initialization options.  I always use
+> "-Elazy_itable_init=0,lazy_journal_init=0" with ext4 to prevent it messing
+> up performance tests.
 
-There shouldn't be any change in the reported topology with this patch
-as that the topology_* functions are not touched by the patch.
-
-The patch should only affect the topology used by the scheduler which
-isn't necessarily the same as the user-space visible one.
-
-Morten
+And discards are not enabled by default by mount so, at least on ext4,
+adding "-o discard" is needed in the mount options.
