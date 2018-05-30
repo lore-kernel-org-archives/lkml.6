@@ -1,26 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753453AbeE3NUZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 09:20:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58156 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751012AbeE3NUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 09:20:12 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: linux-audit@redhat.com
-Cc: Richard Guy Briggs <rgb@redhat.com>, cgroups@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
-        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com, eparis@parisplace.org,
-        serge@hallyn.com
-Subject: Re: [RFC PATCH ghak32 V2 00/13] audit: implement container id
-Date: Wed, 30 May 2018 09:20:01 -0400
-Message-ID: <23151436.iBN3rkXKiY@x2>
-Organization: Red Hat
-In-Reply-To: <cover.1521179281.git.rgb@redhat.com>
-References: <cover.1521179281.git.rgb@redhat.com>
+        id S1753493AbeE3NUd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 09:20:33 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52048 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752852AbeE3NUO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 09:20:14 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 07/12] dt-bindings: tc358754: add DT bindings
+Date: Wed, 30 May 2018 16:20:15 +0300
+Message-ID: <2964003.icRy2MNiaL@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180530130731eucas1p160d53c3f8500bcecd000bd8895843817~zbgGgQw3b1079710797eucas1p1H@eucas1p1.samsung.com>
+References: <1527500833-16005-1-git-send-email-m.purski@samsung.com> <1928297.lKUBOH9NhR@avalon> <20180530130731eucas1p160d53c3f8500bcecd000bd8895843817~zbgGgQw3b1079710797eucas1p1H@eucas1p1.samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -28,138 +36,158 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, March 16, 2018 5:00:27 AM EDT Richard Guy Briggs wrote:
-> Implement audit kernel container ID.
-> 
-> This patchset is a second RFC based on the proposal document (V3)
-> posted:
-> 	https://www.redhat.com/archives/linux-audit/2018-January/msg00014.html
+Hi Andrzej,
 
-So, if you work on a container orchestrator, how exactly is this set of 
-interfaces to be used and in what order?
+On Wednesday, 30 May 2018 16:07:29 EEST Andrzej Hajda wrote:
+> On 30.05.2018 14:35, Laurent Pinchart wrote:
+> > On Wednesday, 30 May 2018 12:59:12 EEST Andrzej Hajda wrote:
+> >> On 28.05.2018 12:18, Laurent Pinchart wrote:
+> >>> On Monday, 28 May 2018 12:47:11 EEST Maciej Purski wrote:
+> >>>> The patch adds bindings to Toshiba DSI/LVDS bridge TC358764.
+> >>>> Bindings describe power supplies, reset gpio and video interfaces.
+> >>>> 
+> >>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> >>>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> >>>> ---
+> >>>> 
+> >>>>  .../bindings/display/bridge/toshiba,tc358764.txt   | 42
+> >>>>  ++++++++++++++++
+> >>>>  1 file changed, 42 insertions(+)
+> >>>>  create mode 100644
+> >>>> 
+> >>>> Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+> >>>> 
+> >>>> diff --git
+> >>>> a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+> >>>> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+> >>>> new
+> >>>> file mode 100644
+> >>>> index 0000000..d09bdc2
+> >>>> --- /dev/null
+> >>>> +++
+> >>>> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+> >>>> @@ -0,0 +1,42 @@
+> >>>> +TC358764 MIPI-DSI to LVDS panel bridge
+> >>>> +
+> >>>> +Required properties:
+> >>>> +  - compatible: "toshiba,tc358764"
+> >>>> +  - reg: the virtual channel number of a DSI peripheral
+> >>>> +  - vddc-supply: core voltage supply
+> >>>> +  - vddio-supply: I/O voltage supply
+> >>>> +  - vddmipi-supply: MIPI voltage supply
+> >>>> +  - vddlvds133-supply: LVDS1 3.3V voltage supply
+> >>>> +  - vddlvds112-supply: LVDS1 1.2V voltage supply
+> >>> 
+> >>> That's a lot of power supplies. Could some of them be merged together ?
+> >>> See https://patchwork.freedesktop.org/patch/216058/ for an earlier
+> >>> discussion on the same subject.
+> >> 
+> >> Specs says about 3 supply voltage values:
+> >> - 1.2V - digital core, DSI-RX PHY
+> >> - 1.8-3.3V - digital I/O
+> >> - 3.3V - LVDS-TX PHY
+> >> 
+> >> So I guess it should be minimal number of supplies. Natural candidates:
+> >> 
+> >> - vddc-supply: core voltage supply, 1.2V
+> >> - vddio-supply: I/O voltage supply, 1.8V or 3.3V
+> >> - vddlvds-supply: LVDS1/2 voltage supply, 3.3V
+> >> 
+> >> I have changed name of the latest supply to be more consistent with
+> >> other supplies, and changed 1.8-3.3 (which incorrectly suggest voltage
+> >> range), to more precise voltage alternative.
+> > 
+> > This looks fine to me.
+> > 
+> >>>> +  - reset-gpios: a GPIO spec for the reset pin
+> >>>> +
+> >>>> +The device node can contain zero to two 'port' child nodes, each with
+> >>>> one
+> >>>> +child
+> >>>> +'endpoint' node, according to the bindings defined in [1].
+> >>>> +The following are properties specific to those nodes.
+> >>>> +
+> >>>> +port:
+> >>>> +  - reg: (required) can be 0 for DSI port or 1 for LVDS port;
+> >>> 
+> >>> This seems pretty vague to me. It could be read as meaning that ports
+> >>> are
+> >>> completely optional, and that the port number you list can be used, but
+> >>> that something else could be used to.
+> >>> 
+> >>> Let's make the port nodes mandatory. I propose the following.
+> >>> 
+> >>> Required nodes:
+> >>> 
+> >>> The TC358764 has DSI and LVDS ports whose connections are described
+> >>> using
+> >>> the OF graph bindings defined in
+> >>> Documentation/devicetree/bindings/graph.txt. The device node must
+> >>> contain
+> >>> one 'port' child node per DSI and LVDS port. The port nodes are numbered
+> >>> as follows.
+> >>> 
+> >>>   Port                  Number
+> >>> 
+> >>> -------------------------------------------------------------------
+> >>> 
+> >>>   DSI Input             0
+> >>>   LVDS Output           1
+> >>> 
+> >>> Each port node must contain endpoint nodes describing the hardware
+> >>> connections.
+> >> 
+> >> Since the bridge is controlled via DSI bus, DSI input port is not
+> >> necessary.
+> > 
+> > I don't agree with this. Regardless of how the bridge is controlled, I
+> > think we should always use ports to describe the data connections.
+> > Otherwise it would get more complicated for display controller drivers to
+> > use different types of bridges.
+> 
+> It was discussed already, and DT guideline is to skip graphs in simple
+> case of parent/child nodes, see for example [1].
+> 
+> [1]: https://marc.info/?l=dri-devel&m=148354108702517&w=2
 
-Thanks,
--Steve
+That's when the child as no other connection at all. I don't think it makes 
+sense to mix description of connections through parent/child relationships and 
+through ports for a single device.
 
-> The first patch implements the proc fs write to set the audit container
-> ID of a process, emitting an AUDIT_CONTAINER record to announce the
-> registration of that container ID on that process.  This patch requires
-> userspace support for record acceptance and proper type display.
-> 
-> The second checks for children or co-threads and refuses to set the
-> container ID if either are present.  (This policy could be changed to
-> set both with the same container ID provided they meet the rest of the
-> requirements.)
-> 
-> The third implements the auxiliary record AUDIT_CONTAINER_INFO if a
-> container ID is identifiable with an event.  This patch requires
-> userspace support for proper type display.
-> 
-> The fourth adds container ID filtering to the exit, exclude and user
-> lists.  This patch requires auditctil userspace support for the
-> --containerid option.
-> 
-> The 5th adds signal and ptrace support.
-> 
-> The 6th creates a local audit context to be able to bind a standalone
-> record with a locally created auxiliary record.
-> 
-> The 7th, 8th, 9th, 10th patches add container ID records to standalone
-> records.  Some of these may end up being syscall auxiliary records and
-> won't need this specific support since they'll be supported via
-> syscalls.
-> 
-> The 11th adds network namespace container ID labelling based on member
-> tasks' container ID labels.
-> 
-> The 12th adds container ID support to standalone netfilter records that
-> don't have a task context and lists each container to which that net
-> namespace belongs.
-> 
-> The 13th implements reading the container ID from the proc filesystem
-> for debugging.  This patch isn't planned for upstream inclusion.
-> 
-> Feedback please!
-> 
-> Example: Set a container ID of 123456 to the "sleep" task:
-> 	sleep 2&
-> 	child=$!
-> 	echo 123456 > /proc/$child/containerid; echo $?
-> 	ausearch -ts recent -m container
-> 	echo child:$child contid:$( cat /proc/$child/containerid)
-> This should produce a record such as:
-> 	type=CONTAINER msg=audit(1521122590.315:222): op=set pid=689 uid=0
-> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 auid=0 tty=pts0
-> ses=3 opid=707 old-contid=18446744073709551615 contid=123456 res=1
-> 
-> Example: Set a filter on a container ID 123459 on /tmp/tmpcontainerid:
-> 	containerid=123459
-> 	key=tmpcontainerid
-> 	auditctl -a exit,always -F dir=/tmp -F perm=wa -F containerid=$containerid
-> -F key=$key perl -e "sleep 1; open(my \$tmpfile, '>', \"/tmp/$key\");
-> close(\$tmpfile);" & child=$!
-> 	echo $containerid > /proc/$child/containerid
-> 	sleep 2
-> 	ausearch -i -ts recent -k $key
-> 	auditctl -d exit,always -F dir=/tmp -F perm=wa -F containerid=$containerid
-> -F key=$key rm -f /tmp/$key
-> This should produce an event such as:
-> 	type=CONTAINER_INFO msg=audit(1521122591.614:227): op=task contid=123459
-> 	type=PROCTITLE msg=audit(1521122591.614:227):
-> proctitle=7065726C002D6500736C65657020313B206F70656E286D792024746D7066696C
-> 652C20273E272C20222F746D702F746D70636F6E7461696E6572696422293B20636C6F73652
-> 824746D7066696C65293B type=PATH msg=audit(1521122591.614:227): item=1
-> name="/tmp/tmpcontainerid" inode=18427 dev=00:26 mode=0100644 ouid=0
-> ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE
-> cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0
-> type=PATH msg=audit(1521122591.614:227): item=0 name="/tmp/" inode=13513
-> dev=00:26 mode=041777 ouid=0 ogid=0 rdev=00:00
-> obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=0000000000000000
-> cap_fi=0000000000000000 cap_fe=0 cap_fver=0 type=CWD
-> msg=audit(1521122591.614:227): cwd="/root"
-> 	type=SYSCALL msg=audit(1521122591.614:227): arch=c000003e syscall=257
-> success=yes exit=3 a0=ffffffffffffff9c a1=55db90a28900 a2=241 a3=1b6
-> items=2 ppid=689 pid=724 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0
-> sgid=0 fsgid=0 tty=pts0 ses=3 comm="perl" exe="/usr/bin/perl"
-> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> key="tmpcontainerid"
-> 
-> See:
-> 	https://github.com/linux-audit/audit-kernel/issues/32
-> 	https://github.com/linux-audit/audit-userspace/issues/40
-> 	https://github.com/linux-audit/audit-testsuite/issues/64
-> 
-> Richard Guy Briggs (13):
->   audit: add container id
->   audit: check children and threading before allowing containerid
->   audit: log container info of syscalls
->   audit: add containerid filtering
->   audit: add containerid support for ptrace and signals
->   audit: add support for non-syscall auxiliary records
->   audit: add container aux record to watch/tree/mark
->   audit: add containerid support for tty_audit
->   audit: add containerid support for config/feature/user records
->   audit: add containerid support for seccomp and anom_abend records
->   audit: add support for containerid to network namespaces
->   audit: NETFILTER_PKT: record each container ID associated with a netNS
->   debug audit: read container ID of a process
-> 
->  drivers/tty/tty_audit.c     |   5 +-
->  fs/proc/base.c              |  53 ++++++++++++++++
->  include/linux/audit.h       |  43 +++++++++++++
->  include/linux/init_task.h   |   4 +-
->  include/linux/sched.h       |   1 +
->  include/net/net_namespace.h |  12 ++++
->  include/uapi/linux/audit.h  |   8 ++-
->  kernel/audit.c              |  75 ++++++++++++++++++++---
->  kernel/audit.h              |   3 +
->  kernel/audit_fsnotify.c     |   5 +-
->  kernel/audit_tree.c         |   5 +-
->  kernel/audit_watch.c        |  33 +++++-----
->  kernel/auditfilter.c        |  52 +++++++++++++++-
->  kernel/auditsc.c            | 145
-> ++++++++++++++++++++++++++++++++++++++++++-- kernel/nsproxy.c            |
->   6 ++
->  net/core/net_namespace.c    |  45 ++++++++++++++
->  net/netfilter/xt_AUDIT.c    |  15 ++++-
->  17 files changed, 473 insertions(+), 37 deletions(-)
+And that being said, I don't agree with Rob's comment there. Having two 
+different methods to describe connections means that you have to implement 
+them both in all display controller drivers (and even all bridge drivers in 
+the case of chained bridges). That's an extra complexity that can easily be 
+avoided by standardizing DT bindings.
+
+I also wonder whether Rob's position hasn't been reconsidered since then; I 
+vaguely recalled another more recent discussion on this topic. I'm a bit too 
+busy now to try and dig it up now I'm afraid :-/
+
+> >>>> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+> >>>> +
+> >>>> +Example:
+> >>>> +
+> >>>> +	bridge@0 {
+> >>>> +		reg = <0>;
+> >>>> +		compatible = "toshiba,tc358764";
+> >>>> +		vddc-supply = <&vcc_1v2_reg>;
+> >>>> +		vddio-supply = <&vcc_1v8_reg>;
+> >>>> +		vddmipi-supply = <&vcc_1v2_reg>;
+> >>>> +		vddlvds133-supply = <&vcc_3v3_reg>;
+> >>>> +		vddlvds112-supply = <&vcc_1v2_reg>;
+> >>>> +		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
+> >>>> +		#address-cells = <1>;
+> >>>> +		#size-cells = <0>;
+> >>>> +		port@1 {
+> >>>> +			reg = <1>;
+> >>>> +			lvds_ep: endpoint {
+> >>>> +				remote-endpoint = <&panel_ep>;
+> >>>> +			};
+> >>>> +		};
+> >>>> +	};
+
+-- 
+Regards,
+
+Laurent Pinchart
