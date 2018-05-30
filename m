@@ -1,91 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753910AbeE3Q7u (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:59:50 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33920 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753553AbeE3Q7n (ORCPT
+        id S932095AbeE3RA5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 13:00:57 -0400
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:37380 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932065AbeE3RA4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:59:43 -0400
-Date: Wed, 30 May 2018 17:59:37 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator
- bindings
-Message-ID: <20180530165937.GX6920@sirena.org.uk>
-References: <20180530150241.GO6920@sirena.org.uk>
- <CAD=FV=XJd-udEE6az0xP7i6x0oGsnd=BSCyZ0Og_+RjNCMXnCQ@mail.gmail.com>
- <20180530154849.GQ6920@sirena.org.uk>
- <CAD=FV=X2u=hMyWinSDtim-PmFwAy5mXcwg3HeYojAHcsUFhV3g@mail.gmail.com>
- <20180530160744.GS6920@sirena.org.uk>
- <CAD=FV=WVGu0f+=q-C9kiEmaLEUJqGY+Jbns83h72uF-9iasrUw@mail.gmail.com>
- <20180530161311.GT6920@sirena.org.uk>
- <CAD=FV=UpWEMSPUYOHmLQ0g_mF990kwn4_zm=ZCNttLKZiz7i=Q@mail.gmail.com>
- <20180530163644.GW6920@sirena.org.uk>
- <CAD=FV=V1gGccKr1mHM0zx_-FFdLU1vrzUChwx6KTUyTGzj39Tw@mail.gmail.com>
+        Wed, 30 May 2018 13:00:56 -0400
+X-Google-Smtp-Source: ADUXVKLfg9lbqlENZIByluEee/gaRlAjDWTxQeYw6/HYu7WuCEWqyDV1mgtH4QsoZw7cD1oM7b+gReUerCuwUWaHgj0=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1RhGCd1AsoFHGRHc"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=V1gGccKr1mHM0zx_-FFdLU1vrzUChwx6KTUyTGzj39Tw@mail.gmail.com>
-X-Cookie: Don't get mad, get interest.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180530073133.GB21721@kroah.com>
+References: <CGME20180508231744epcas2p1251a2e35591e9d2624337d4c8f1d6974@epcas2p1.samsung.com>
+ <CALAqxLVJekViPWi4kh2JOQ46XXtTv2-2BXOe9O8AvfnvX9Z+Sw@mail.gmail.com>
+ <5AF25CC3.1010902@samsung.com> <CALAqxLV-Y9hN97Z=oqL2=_=1Rg5bw1mz56WWgAWrwh=VONNAqw@mail.gmail.com>
+ <20180530053350.GA30256@kroah.com> <CALAqxLUnuFvfYqtxxjVk-Vq2UpvmSr8d+uZT1jGdjZmFvQ_DOA@mail.gmail.com>
+ <20180530073133.GB21721@kroah.com>
+From: John Stultz <john.stultz@linaro.org>
+Date: Wed, 30 May 2018 10:00:53 -0700
+Message-ID: <CALAqxLVg5cNJx2o3SsoaboR2y5EsGEzxJ2mADw23taFWYfHxAQ@mail.gmail.com>
+Subject: Re: Userland breakage from "Modify the device name as devfreq(X) for sysfs"
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Leo Yan <leo.yan@linaro.org>, Jean Wangtao <kevin.wangtao@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4UH15VK002855
+
+On Wed, May 30, 2018 at 12:31 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Tue, May 29, 2018 at 11:52:37PM -0700, John Stultz wrote:
+>> On Tue, May 29, 2018 at 10:33 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+>> > On Tue, May 29, 2018 at 10:14:35PM -0700, John Stultz wrote:
+>> >> On Tue, May 8, 2018 at 7:28 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> >> > On 2018년 05월 09일 08:17, John Stultz wrote:
+>> >> >> Hey folks,
+>> >> >>   I wanted to bring up an issue we've recently tripped over, which was
+>> >> >> caused by 4585fbcb5331f ("PM / devfreq: Modify the device name as
+>> >> >> devfreq(X) for sysfs").
+>> >> >>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=4585fbcb5331fc910b7e553ad3efd0dd7b320d14
+>> >> >>
+>> >> >> That patch replaced paths like:
+>> >> >>    /sys/class/devfreq/ddr_devfreq/min_freq
+>> >> >> and
+>> >> >>   /sys/class/devfreq/e82c0000.mali/min_freq
+>> >> >>
+>> >> >> With
+>> >> >>   /sys/class/devfreq/devfreq(0)/min_freq
+>> >> >> and
+>> >> >>   /sys/class/devfreq/devfreq(1)/min_freq
+>> >> >>
+>> >> >>
+>> >> >> This broke userspace we have that needs to work on 4.4, 4.9 and 4.14 (and on).
+>> >> >
+>> >> > Firstly, I'm sorry to make some problem on userland.
+>> >> >
+>> >> >>
+>> >> >> I wanted to try to ask to understand more about the rational for this
+>> >> >> patch, as it doesn't make much sense to me, particularly as now it is
+>> >> >> less obvious as to which path is for which device  - and more
+>> >> >> worrisome it could change depending on initialization order.
+>> >> >
+>> >> > Some linux framework used the their own prefix under "/sys/class/"
+>> >> > for device such as input/pwm/hwmon/regulator and so on.
+>> >> > (But, some linux framework used the device name directly without any changes)
+>> >> >
+>> >> > I thought that devfreq better to use use the consistent name.
+>> >> > If user wanted to access the specific device with device name,
+>> >> > the user can access the path of '/sys/devices/platform/...'.
+>> >> >
+>> >> > [Example on Exynos5433-based TM2 board]
+>> >> > root@localhost:~# ls -al /sys/class/devfreq
+>> >> > total 0
+>> >> > drwxr-xr-x  2 root root 0 Jul 26 04:49 .
+>> >> > drwxr-xr-x 50 root root 0 Jan  1  1970 ..
+>> >> > lrwxrwxrwx  1 root root 0 Jul 26 04:49 devfreq0 -> ../../devices/platform/soc/soc:bus0/devfreq/devfreq0
+>> >> > lrwxrwxrwx  1 root root 0 Jul 26 04:49 devfreq1 -> ../../devices/platform/soc/soc:bus1/devfreq/devfreq1
+>> >> > (skip)
+>> >> >
+>> >> > - User can access the devfreq device with specific device name.
+>> >> > root@localhost:/sys/devices/platform/soc/soc:bus0/devfreq/devfreq0# pwd
+>> >> > /sys/devices/platform/soc/soc:bus0/devfreq/devfreq0
+>> >> >
+>> >> > root@localhost:/sys/devices/platform/soc/soc:bus0/devfreq/devfreq0# ls
+>> >> > available_frequencies  device    min_freq          subsystem    uevent
+>> >> > available_governors    governor  polling_interval  target_freq
+>> >> > cur_freq               max_freq  power             trans_stat
+>> >> >
+>> >> > root@localhost:/sys/devices/platform/soc/soc:bus0/devfreq/devfreq0# cat min_freq
+>> >> > 160000000
+>> >> >
+>> >>
+>> >> Sorry to not get back to you sooner on this. Was on vacation then this
+>> >> discussion got buried in my inbox.
+>> >>
+>> >> I do agree that it the consistency with other subsystems is an
+>> >> improvement, but it still doesn't help our situation that userspace
+>> >> applications can't consistently work between kernel versions, as even
+>> >> if we go with the /sys/devices/platform/soc/soc:bus0/devfreq/devfreq0
+>> >> path rather then the /sys/class/devfreq/ path, in older kernels the
+>> >> /sys/devices/platform/soc/soc:bus0/devfreq/devfreq0 doesn't exist.
+>> >
+>> > Ick, that's not ok.  The sys/class/ path should always work for old and
+>> > new.  If not, it's broken and should be reverted.
+>> >
+>> > And it seems like it still works, just that the "names" are now
+>> > different in the class path, of the device, right?  And that should be
+>> > fine, what is breaking when a device name changes?
+>>
+>> Well, code that is looking for:
+>> /sys/class/devfreq/ddr_devfreq/min_freq
+>>
+>> won't work with newer kernels unless its changed to look for:
+>> /sys/class/devfreq/devfreq0/min_freq
+>>
+>> (assuming the ddr_devfreq driver loaded before the mali one :)
+>
+> Ugh.  In working with sysfs you should never care about the device name,
+> you should be iterating over:
+>         /sys/class/devfreq/*/min_freq
+>
+> and just picking up the one you find that has a link back to whatever
+> you want it to be.  Device names are not deterministic, as you even
+> claim here as you were somehow depending on the module load order :)
+
+Well, previously it used the dev name, which was somewhat
+deterministic (e82c0000.mali or ddr_devfreq) regardless of module load
+order. Now, its just devfreqN, which obviously isn't deterministic.
+
+Part of the trouble, as Chanwoo mentioned is there is no name entry,
+so even iterating over the the devices, the devfreqN sysfs dirs are
+indistinguishable.
 
 
---1RhGCd1AsoFHGRHc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> So if/when a device name changes, userspace always has to handle that
+> properly.
+>
+> What tool/script is failing here?  What package is it part of so that we
+> can fix it to use sysfs "properly"?
 
-On Wed, May 30, 2018 at 09:41:55AM -0700, Doug Anderson wrote:
-> On Wed, May 30, 2018 at 9:36 AM, Mark Brown <broonie@kernel.org> wrote:
+Its an Android PowerHAL for HiKey960 devices. I'm happy to change it
+to make it work properly, but we do want it to work with 4.4, 4.9,
+4.14 and mainline.
 
-> > Yeah, and I don't think that's unreasonable for the core to do - just
-> > drop the voltage to the constraint minimum after it has turned off the
-> > regulator, then recheck and raise if needed before it enables again.
+> Now if somehow we can not figure out _which_ devfreq class device is
+> associated with the "correct" real device, then that's a problem and
+> needs to be fixed.  But changing the naming scheme is not the proper fix
+> for that.
 
-> Would it do this for all regulators, though?  Most regulators are
-> hooked up over a slow i2c bus, so that means that every regulator
-> disable would now do an extra i2c transfer even though for all
-> regulators (other than RPMh) the voltage of a regulator doesn't matter
-> when it's been "disabled' (from Linux's point of view).
+Ok. So maybe if we get name entries added to both upstream and -stable
+kernels, we can iterate over the directories if they are named
+e82c0000.mali or devfreq0 all the same, and that might work out.
 
-It'd only affect regulators that can vary in voltage and actually get
-disabled which is a pretty small subset.  Most regulators are either
-fixed voltage or always on.
 
-> Hrmmm, I suppose maybe it'd be OK though because for most regulators
-> we'd use "regcache" and most regulators that we enabled/disable a lot
-> are not expected to change voltage in Linux (so the regcache write
-> would hopefully be a noop), so maybe it wouldn't be _that_
-> inefficient...
+>> >> I agree we need a name attribute so folks can tell the difference
+>> >> between devices.
+>> >>
+>> >> I'm also not too much of a stickler that the old ABI broke, as long as
+>> >> we have some solution that works across kernels. So I'd request that
+>> >> you at least make older -stable kernels (4.4 and 4.9) behavior
+>> >> consistent with upstream.
+>> >
+>> > No, I don't want to backport api changes like that as then users of
+>> > those kernels that were working just fine break :)
+>> >
+>> > So I think mainline needs to revert this.
+>>
+>> The trouble is that the break happened awhile back (4.10) so if we
+>> revert its likely to break any new users since then.
+>>
+>> That's why I suggested we find some way to have both paths work. But I
+>> don't know enough sysfs tricks to have a good suggestion on how to
+>> easily do so.
+>
+> We have compatible symlinks all over the place in sysfs, usually we try
+> to bury them behind config options for when you have to run new kernels
+> on old userspace implementations.  But sometimes we just let them live
+> on for forever...
 
-Even if the regulator lacks a cache we'd at least skip out on the write
-when we're not changing voltage as we'd do a read/modify/update cycle
-and stop at the modify.
+Ok. I'll try to look that up.
 
---1RhGCd1AsoFHGRHc
-Content-Type: application/pgp-signature; name="signature.asc"
+> What exactly would need to be linked to what in order to keep this
+> working?
 
------BEGIN PGP SIGNATURE-----
+I was thinking just having both dev_name() and devfreqN entries, but
+with the name node added (to both newer and older kernels) we can
+probably adapt to make it work w/o compatibility links.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsO2HkACgkQJNaLcl1U
-h9DTXQf/VgwB1seFzCThTskB5IXfv81dOdpaoeVGDg7V4Y/r6nAbB5uNeRkQojgl
-aMDgpQFnVqVBsZXktBllwQ7foPOGg8WSd0Q4IlVuQwNNf5nAFqSFy+huw0o47LJ8
-x7aWjVFpLTA4XuNezN6XXwNcP2QO6ZY7lKQmXko66py8oQ7KKrktaTaG6mRXAkwf
-Jb/i+lr13F6TFcb71Ky4gMEx6rClG12dMIs8a7Ud/USTmibRTQZ7uEX+mG1hRfHC
-nsiHZ9YV+OCpIuSePcDwSzRL2CxU//EK4CLx3+Ztp2BCd7XQLk3hsO+arIuOHthH
-A/Zc69LtGG1ZIhBnZtGW4XjsKCOr2g==
-=ZaJS
------END PGP SIGNATURE-----
-
---1RhGCd1AsoFHGRHc--
+thanks
+-john
