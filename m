@@ -1,205 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753778AbeE3RVF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 13:21:05 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:37078 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1752850AbeE3RVC (ORCPT
+        id S1753733AbeE3RVw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 13:21:52 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:46029 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752980AbeE3RVu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 13:21:02 -0400
-Date: Wed, 30 May 2018 13:21:02 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Martin Liu <liumartin@google.com>
-cc: gregkh@linuxfoundation.org, <heikki.krogerus@linux.intel.com>,
-        <johan@kernel.org>, <andy.shevchenko@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <jenhaochen@google.com>
-Subject: Re: [PATCH v4] driver core: hold dev's parent lock when needed
-In-Reply-To: <20180530163135.50081-1-liumartin@google.com>
-Message-ID: <Pine.LNX.4.44L0.1805301319430.1502-100000@iolanthe.rowland.org>
+        Wed, 30 May 2018 13:21:50 -0400
+X-Google-Smtp-Source: ADUXVKKfBml5G5Blgz2RzTF/Cbpi2qyg6krSH0/rRhAeQs1MoB0YaBzl4IxGzFJdz8Q37oVyJ23N1Q==
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <20180529181740.195362-1-evgreen@chromium.org> <20180529181740.195362-6-evgreen@chromium.org>
+In-Reply-To: <20180529181740.195362-6-evgreen@chromium.org>
+From: Evan Green <evgreen@chromium.org>
+Date: Wed, 30 May 2018 10:21:10 -0700
+X-Gmail-Original-Message-ID: <CAE=gft7ho=2mb7DHbVOHL_0A94BQOZwsdoXcMw_0JOGBUdqSew@mail.gmail.com>
+Message-ID: <CAE=gft7ho=2mb7DHbVOHL_0A94BQOZwsdoXcMw_0JOGBUdqSew@mail.gmail.com>
+Subject: Re: [PATCH 5/7] scsi: ufs: Refactor descriptor read for write
+To: vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, stanislav.nijnikov@wdc.com,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc: gwendal@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018, Martin Liu wrote:
+Reviewing my own patch...
 
-> SoC have internal I/O buses that can't be proved for devices. The
-> devices on the buses can be accessed directly without additinal
-> configuration required. This type of bus is represented as
-> "simple-bus". In some platforms, we name "soc" with "simple-bus"
-> attribute and many devices are hooked under it described in DT
-> (device tree).
-> 
-> In commit bf74ad5bc417 ("Hold the device's parent's lock during
-> probe and remove") to solve USB subsystem lock sequence since
-> USB device's characteristic. Thus "soc" needs to be locked
-> whenever a device and driver's probing happen under "soc" bus.
-> During this period, an async driver tries to probe a device which
-> is under the "soc" bus would be blocked until previous driver
-> finish the probing and release "soc" lock. And the next probing
-> under the "soc" bus need to wait for async finish. Because of
-> that, driver's async probe for init time improvement will be
-> shadowed.
-> 
-> Since many devices don't have USB devices' characteristic, they
-> actually don't need parent's lock. Thus, we introduce a lock flag
-> in bus_type struct and driver core would lock the parent lock base
-> on the flag. For USB, we set this flag in usb_bus_type to keep
-> original lock behavior in driver core.
-> 
-> Async probe could have more benefit after this patch.
-> 
-> Signed-off-by: Martin Liu <liumartin@google.com>
+On Tue, May 29, 2018 at 11:18 AM Evan Green <evgreen@chromium.org> wrote:
+
+> This change refactors the ufshcd_read_desc_param function into
+> one that can both read and write descriptors. Most of the low-level
+> plumbing for writing to descriptors was already there, this change
+> simply enables that code path, and manages the incoming data buffer
+> appropriately.
+
+> Signed-off-by: Evan Green <evgreen@chromium.org>
 > ---
-> Changes in v4:
->  -fix comment and wording.
->  -follow the suggestion.
-> 
-> [v3]: https://lkml.org/lkml/2018/5/29/876
-> [v2]: https://lkml.org/lkml/2018/5/29/108
-> [v1]: https://lkml.org/lkml/2018/5/22/545
-> 
->  drivers/base/bus.c        | 16 ++++++++--------
->  drivers/base/dd.c         |  8 ++++----
->  drivers/usb/core/driver.c |  1 +
->  include/linux/device.h    |  3 +++
->  4 files changed, 16 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-> index ef6183306b40..8bfd27ec73d6 100644
-> --- a/drivers/base/bus.c
-> +++ b/drivers/base/bus.c
-> @@ -184,10 +184,10 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
->  
->  	dev = bus_find_device_by_name(bus, NULL, buf);
->  	if (dev && dev->driver == drv) {
-> -		if (dev->parent)	/* Needed for USB */
-> +		if (dev->parent && dev->bus->need_parent_lock)
->  			device_lock(dev->parent);
->  		device_release_driver(dev);
-> -		if (dev->parent)
-> +		if (dev->parent && dev->bus->need_parent_lock)
->  			device_unlock(dev->parent);
->  		err = count;
->  	}
-> @@ -211,12 +211,12 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
->  
->  	dev = bus_find_device_by_name(bus, NULL, buf);
->  	if (dev && dev->driver == NULL && driver_match_device(drv, dev)) {
-> -		if (dev->parent)	/* Needed for USB */
-> +		if (dev->parent && bus->need_parent_lock)
->  			device_lock(dev->parent);
->  		device_lock(dev);
->  		err = driver_probe_device(drv, dev);
->  		device_unlock(dev);
-> -		if (dev->parent)
-> +		if (dev->parent && bus->need_parent_lock)
->  			device_unlock(dev->parent);
->  
->  		if (err > 0) {
-> @@ -735,10 +735,10 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
->  	int ret = 0;
->  
->  	if (!dev->driver) {
-> -		if (dev->parent)	/* Needed for USB */
-> +		if (dev->parent && dev->bus->need_parent_lock)
->  			device_lock(dev->parent);
->  		ret = device_attach(dev);
-> -		if (dev->parent)
-> +		if (dev->parent && dev->bus->need_parent_lock)
->  			device_unlock(dev->parent);
->  	}
->  	return ret < 0 ? ret : 0;
-> @@ -770,10 +770,10 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
->  int device_reprobe(struct device *dev)
->  {
->  	if (dev->driver) {
-> -		if (dev->parent)        /* Needed for USB */
-> +		if (dev->parent && dev->bus->need_parent_lock)
->  			device_lock(dev->parent);
->  		device_release_driver(dev);
-> -		if (dev->parent)
-> +		if (dev->parent && dev->bus->need_parent_lock)
->  			device_unlock(dev->parent);
->  	}
->  	return bus_rescan_devices_helper(dev, NULL);
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index c9f54089429b..7c09f73b96f3 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -817,13 +817,13 @@ static int __driver_attach(struct device *dev, void *data)
->  		return ret;
->  	} /* ret > 0 means positive match */
->  
-> -	if (dev->parent)	/* Needed for USB */
-> +	if (dev->parent && dev->bus->need_parent_lock)
->  		device_lock(dev->parent);
->  	device_lock(dev);
->  	if (!dev->driver)
->  		driver_probe_device(drv, dev);
->  	device_unlock(dev);
-> -	if (dev->parent)
-> +	if (dev->parent && dev->bus->need_parent_lock)
->  		device_unlock(dev->parent);
->  
->  	return 0;
-> @@ -919,7 +919,7 @@ void device_release_driver_internal(struct device *dev,
->  				    struct device_driver *drv,
->  				    struct device *parent)
->  {
-> -	if (parent)
-> +	if (parent && dev->bus->need_parent_lock)
->  		device_lock(parent);
->  
->  	device_lock(dev);
-> @@ -927,7 +927,7 @@ void device_release_driver_internal(struct device *dev,
->  		__device_release_driver(dev, parent);
->  
->  	device_unlock(dev);
-> -	if (parent)
-> +	if (parent && dev->bus->need_parent_lock)
->  		device_unlock(parent);
->  }
->  
-> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> index 9792cedfc351..e76e95f62f76 100644
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -1922,4 +1922,5 @@ struct bus_type usb_bus_type = {
->  	.name =		"usb",
->  	.match =	usb_device_match,
->  	.uevent =	usb_uevent,
-> +	.need_parent_lock =	true,
->  };
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 477956990f5e..beca424395dd 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -98,6 +98,8 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
->   * @lock_key:	Lock class key for use by the lock validator
->   * @force_dma:	Assume devices on this bus should be set up by dma_configure()
->   * 		even if DMA capability is not explicitly described by firmware.
-> + * @need_parent_lock:	When probing or removing a device on this bus, the
-> + *			device core should lock the device's parent.
->   *
->   * A bus is a channel between the processor and one or more devices. For the
->   * purposes of the device model, all devices are connected via a bus, even if
-> @@ -138,6 +140,7 @@ struct bus_type {
->  	struct lock_class_key lock_key;
->  
->  	bool force_dma;
-> +	bool need_parent_lock;
->  };
->  
->  extern int __must_check bus_register(struct bus_type *bus);
+>   drivers/scsi/ufs/ufs-sysfs.c |  4 +-
+>   drivers/scsi/ufs/ufshcd.c    | 89
+++++++++++++++++++++++++++++++++------------
+>   drivers/scsi/ufs/ufshcd.h    | 13 ++++---
+>   3 files changed, 74 insertions(+), 32 deletions(-)
 
-This looks okay to me.
+...
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 00e79057f870..6a5939fb5da3 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -3004,22 +3004,24 @@ int ufshcd_map_desc_id_to_length(struct ufs_hba
+*hba,
+>   EXPORT_SYMBOL(ufshcd_map_desc_id_to_length);
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+>   /**
+> - * ufshcd_read_desc_param - read the specified descriptor parameter
+> + * ufshcd_rw_desc_param - read or write the specified descriptor
+parameter
+>    * @hba: Pointer to adapter instance
+> + * @opcode: indicates whether to read or write
+>    * @desc_id: descriptor idn value
+>    * @desc_index: descriptor index
+> - * @param_offset: offset of the parameter to read
+> - * @param_read_buf: pointer to buffer where parameter would be read
+> - * @param_size: sizeof(param_read_buf)
+> + * @param_offset: offset of the parameter to read or write
+> + * @param_buf: pointer to buffer to be read or written
+> + * @param_size: sizeof(param_buf)
+>    *
+>    * Return 0 in case of success, non-zero otherwise
+>    */
+> -int ufshcd_read_desc_param(struct ufs_hba *hba,
+> -                          enum desc_idn desc_id,
+> -                          int desc_index,
+> -                          u8 param_offset,
+> -                          u8 *param_read_buf,
+> -                          u8 param_size)
+> +int ufshcd_rw_desc_param(struct ufs_hba *hba,
+> +                        enum query_opcode opcode,
+> +                        enum desc_idn desc_id,
+> +                        int desc_index,
+> +                        u8 param_offset,
+> +                        u8 *param_buf,
+> +                        u8 param_size)
+>   {
+>          int ret;
+>          u8 *desc_buf;
+> @@ -3042,24 +3044,57 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
+>                  return ret;
+>          }
 
-Greg, any more comments?
+> +       if (param_offset > buff_len)
+> +               return 0;
+> +
+>          /* Check whether we need temp memory */
+>          if (param_offset != 0 || param_size < buff_len) {
+> -               desc_buf = kmalloc(buff_len, GFP_KERNEL);
+> +               desc_buf = kzalloc(buff_len, GFP_KERNEL);
+>                  if (!desc_buf)
+>                          return -ENOMEM;
+> +
+> +               /* If it's a write, first read the complete descriptor,
+then
+> +                * copy in the parts being changed.
+> +                */
+> +               if (opcode == UPIU_QUERY_OPCODE_WRITE_DESC) {
+> +                       if ((int)param_offset + (int)param_size >
+buff_len) {
+> +                               ret = -EINVAL;
+> +                               goto out;
+> +                       }
+> +
+> +                       ret = ufshcd_query_descriptor_retry(hba,
+> +
+UPIU_QUERY_OPCODE_READ_DESC,
+> +                                               desc_id, desc_index, 0,
+> +                                               desc_buf, &buff_len);
+> +
+> +                       if (ret) {
+> +                               dev_err(hba->dev,
+> +                                       "%s: Failed reading descriptor.
+desc_id %d, desc_index %d, param_offset %d, ret %d",
+> +                                       __func__, desc_id, desc_index,
+> +                                       param_offset, ret);
+> +
+> +                               goto out;
+> +                       }
+> +
+> +                       memcpy(desc_buf + param_offset, param_buf,
+param_size);
+> +               }
+> +
+>          } else {
+> -               desc_buf = param_read_buf;
+> +               desc_buf = param_buf;
+>                  is_kmalloc = false;
+>          }
 
-Alan Stern
+> -       /* Request for full descriptor */
+> -       ret = ufshcd_query_descriptor_retry(hba,
+UPIU_QUERY_OPCODE_READ_DESC,
+> +       /* Read or write the entire descriptor. */
+> +       ret = ufshcd_query_descriptor_retry(hba, opcode,
+>                                          desc_id, desc_index, 0,
+>                                          desc_buf, &buff_len);
+
+>          if (ret) {
+> -               dev_err(hba->dev, "%s: Failed reading descriptor. desc_id
+%d, desc_index %d, param_offset %d, ret %d",
+> -                       __func__, desc_id, desc_index, param_offset, ret);
+> +               dev_err(hba->dev, "%s: Failed %s descriptor. desc_id %d,
+desc_index %d, param_offset %d, ret %d",
+> +                       __func__,
+> +                       opcode == UPIU_QUERY_OPCODE_READ_DESC ?
+> +                       "reading" : "writing",
+> +                       desc_id, desc_index, param_offset, ret);
+>                  goto out;
+>          }
+
+> @@ -3071,12 +3106,16 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
+>                  goto out;
+>          }
+
+> -       /* Check wherher we will not copy more data, than available */
+> -       if (is_kmalloc && param_size > buff_len)
+> -               param_size = buff_len;
+> +       /* Copy data to the output. The offset is already validated to be
+> +        * within the buffer.
+> +        */
+> +       if (is_kmalloc && (opcode == UPIU_QUERY_OPCODE_READ_DESC)) {
+> +               if ((int)param_offset + (int)param_size > buff_len)
+> +                       param_size = buff_len - param_offset;
+> +
+> +               memcpy(param_buf, &desc_buf[param_offset], param_size);
+> +       }
+
+Previously this function didn't handle param_offset being non-zero well at
+all, as it would allow you to read off the end of the descriptor. My hunk
+here, as well as the "if (param_offset > buff_len) return 0;" above prevent
+reading off the end of the kmalloced buffer. But it will return success
+while leaving the caller's buffer uninitialized, which I think is asking
+for trouble. I think I should fail if the starting offset is greater than
+the size. If the requested read starts at a valid index but ends beyond the
+end, I think I should clear the remaining buffer. ufshcd_read_string_desc,
+for example, always asks for the max, and would need this bit of leniency.
+-Evan
