@@ -1,214 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753637AbeE3LeT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:34:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60813 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752329AbeE3LHC (ORCPT
+        id S1753648AbeE3Leb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:34:31 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51550 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753633AbeE3LeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:02 -0400
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Wed, 30 May 2018 07:34:20 -0400
+X-Google-Smtp-Source: ADUXVKJktGFW0MywdSa4/aZg2Oo2nPbjZ/yklNWjT+DCNWcDF9XJZZlcHxV4P2GsVHxxdhviEQ2ns3nj2gpLy1Wxsls=
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Fredrik Noring" <noring@nocrew.org>,
-        "Pete Zaitcev" <zaitcev@redhat.com>,
-        "Pete Zaitcev" <zaitcev@kotori.zaitcev.us>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.830894055@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 121/153] usb: usbmon: Read text within supplied buffer
- size
-In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <CAJZ5v0iOP-gcdXcaOjuWy6p+k+hSkHuapDuYYFeS+6gDrxev3w@mail.gmail.com>
+References: <20180529100421.31022-1-ulf.hansson@linaro.org> <CAJZ5v0iOP-gcdXcaOjuWy6p+k+hSkHuapDuYYFeS+6gDrxev3w@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 30 May 2018 13:34:18 +0200
+Message-ID: <CAPDyKFpPYzPwQr2enDNTQPeKdvZ8vQb7TWP4KhT4k1gDhrrpLA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] PM / Domains: Add support for multi PM domains per device
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
+On 30 May 2018 at 11:30, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Tue, May 29, 2018 at 12:04 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> Changes in v2:
+>>         - Addressed comments from Geert around DT doc.
+>>         - Addressed comments from Jon around clarification of how to use this
+>>         and changes to returned error codes.
+>>         - Fixed build error in case CONFIG_PM was unset.
+>>
+>> There are devices that are partitioned across multiple PM domains. Currently
+>> these can't be supported well by the available PM infrastructures we have in
+>> the kernel. This series is an attempt to address this.
+>>
+>> The interesting parts happens from patch 5 an onwards, including a minor DT
+>> update to the existing power-domain bindings, the 4 earlier are just trivial
+>> clean-ups of some related code in genpd, which I happened to stumble over.
+>>
+>> Some additional background:
+>>
+>> One existing case where devices are partitioned across multiple PM domains, is
+>> the Nvida Tegra 124/210 X-USB subsystem. A while ago Jon Hunter (Nvidia) sent a
+>> series, trying to address these issues, however this is a new approach, while
+>> it re-uses the same concepts from DT point of view.
+>>
+>> The Tegra 124/210 X-USB subsystem contains of a host controller and a device
+>> controller. Each controller have its own independent PM domain, but are being
+>> partitioned across another shared PM domain for the USB super-speed logic.
+>>
+>> Currently to make the drivers work, either the related PM domains needs to stay
+>> powered on always or the PM domain topology needs to be in-correctly modelled
+>> through sub-domains. In both cases PM domains may be powered on while they
+>> don't need to be, so in the end this means - wasting power -.
+>>
+>> As stated above, this series intends to address these problem from a PM
+>> infrastructure point of view. More details are available in each changelog.
+>>
+>> It should be noted that this series has been tested on HW, however only by using
+>> a home-cooked test PM domain driver for genpd and together with a test driver.
+>> This allowed me to play with PM domain (genpd), runtime PM and device links.
+>>
+>> Any further deployment for real use cases are greatly appreciated. I am happy to
+>> to help, if needed!
+>>
+>> Kind regards
+>> Ulf Hansson
+>>
+>>
+>> Ulf Hansson (9):
+>>   PM / Domains: Drop extern declarations of functions in pm_domain.h
+>>   PM / Domains: Drop __pm_genpd_add_device()
+>>   PM / Domains: Drop genpd as in-param for pm_genpd_remove_device()
+>>   PM / Domains: Drop unused parameter in genpd_allocate_dev_data()
+>>   PM / Domains: dt: Allow power-domain property to be a list of
+>>     specifiers
+>>   PM / Domains: Don't attach devices in genpd with multi PM domains
+>>   PM / Domains: Split genpd_dev_pm_attach()
+>>   PM / Domains: Add support for multi PM domains per device to genpd
+>>   PM / Domains: Add dev_pm_domain_attach_by_id() to manage multi PM
+>>     domains
+>>
+>>  .../bindings/power/power_domain.txt           |  19 ++-
+>>  drivers/base/power/common.c                   |  39 ++++-
+>>  drivers/base/power/domain.c                   | 155 ++++++++++++++----
+>>  drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c       |   2 +-
+>>  include/linux/pm_domain.h                     |  79 ++++-----
+>>  5 files changed, 216 insertions(+), 78 deletions(-)
+>
+> I can take patches [1-4/9] from this series for 4.18.
 
-------------------
+Thanks!
 
-From: Pete Zaitcev <zaitcev@kotori.zaitcev.us>
+>
+> I need an ACK from Rob on the bindings change.
 
-commit a5f596830e27e15f7a0ecd6be55e433d776986d8 upstream.
+Yes, of course!
 
-This change fixes buffer overflows and silent data corruption with the
-usbmon device driver text file read operations.
+>
+> The rest of the series doesn't seem to be ready yet.
 
-Signed-off-by: Fredrik Noring <noring@nocrew.org>
-Signed-off-by: Pete Zaitcev <zaitcev@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/usb/mon/mon_text.c | 126 +++++++++++++++++++++++--------------
- 1 file changed, 78 insertions(+), 48 deletions(-)
+It's getting reviewed and tested, so let's give it some more time.
 
---- a/drivers/usb/mon/mon_text.c
-+++ b/drivers/usb/mon/mon_text.c
-@@ -82,6 +82,8 @@ struct mon_reader_text {
- 
- 	wait_queue_head_t wait;
- 	int printf_size;
-+	size_t printf_offset;
-+	size_t printf_togo;
- 	char *printf_buf;
- 	struct mutex printf_lock;
- 
-@@ -373,75 +375,103 @@ err_alloc:
- 	return rc;
- }
- 
--/*
-- * For simplicity, we read one record in one system call and throw out
-- * what does not fit. This means that the following does not work:
-- *   dd if=/dbg/usbmon/0t bs=10
-- * Also, we do not allow seeks and do not bother advancing the offset.
-- */
-+static ssize_t mon_text_copy_to_user(struct mon_reader_text *rp,
-+    char __user * const buf, const size_t nbytes)
-+{
-+	const size_t togo = min(nbytes, rp->printf_togo);
-+
-+	if (copy_to_user(buf, &rp->printf_buf[rp->printf_offset], togo))
-+		return -EFAULT;
-+	rp->printf_togo -= togo;
-+	rp->printf_offset += togo;
-+	return togo;
-+}
-+
-+/* ppos is not advanced since the llseek operation is not permitted. */
- static ssize_t mon_text_read_t(struct file *file, char __user *buf,
--				size_t nbytes, loff_t *ppos)
-+    size_t nbytes, loff_t *ppos)
- {
- 	struct mon_reader_text *rp = file->private_data;
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
-+	ssize_t ret;
- 
--	ep = mon_text_read_wait(rp, file);
--	if (IS_ERR(ep))
--		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
--	ptr.cnt = 0;
--	ptr.pbuf = rp->printf_buf;
--	ptr.limit = rp->printf_size;
--
--	mon_text_read_head_t(rp, &ptr, ep);
--	mon_text_read_statset(rp, &ptr, ep);
--	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
--	    " %d", ep->length);
--	mon_text_read_data(rp, &ptr, ep);
- 
--	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
--		ptr.cnt = -EFAULT;
-+	if (rp->printf_togo == 0) {
-+
-+		ep = mon_text_read_wait(rp, file);
-+		if (IS_ERR(ep)) {
-+			mutex_unlock(&rp->printf_lock);
-+			return PTR_ERR(ep);
-+		}
-+		ptr.cnt = 0;
-+		ptr.pbuf = rp->printf_buf;
-+		ptr.limit = rp->printf_size;
-+
-+		mon_text_read_head_t(rp, &ptr, ep);
-+		mon_text_read_statset(rp, &ptr, ep);
-+		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
-+		    " %d", ep->length);
-+		mon_text_read_data(rp, &ptr, ep);
-+
-+		rp->printf_togo = ptr.cnt;
-+		rp->printf_offset = 0;
-+
-+		kmem_cache_free(rp->e_slab, ep);
-+	}
-+
-+	ret = mon_text_copy_to_user(rp, buf, nbytes);
- 	mutex_unlock(&rp->printf_lock);
--	kmem_cache_free(rp->e_slab, ep);
--	return ptr.cnt;
-+	return ret;
- }
- 
-+/* ppos is not advanced since the llseek operation is not permitted. */
- static ssize_t mon_text_read_u(struct file *file, char __user *buf,
--				size_t nbytes, loff_t *ppos)
-+    size_t nbytes, loff_t *ppos)
- {
- 	struct mon_reader_text *rp = file->private_data;
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
-+	ssize_t ret;
- 
--	ep = mon_text_read_wait(rp, file);
--	if (IS_ERR(ep))
--		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
--	ptr.cnt = 0;
--	ptr.pbuf = rp->printf_buf;
--	ptr.limit = rp->printf_size;
- 
--	mon_text_read_head_u(rp, &ptr, ep);
--	if (ep->type == 'E') {
--		mon_text_read_statset(rp, &ptr, ep);
--	} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
--		mon_text_read_isostat(rp, &ptr, ep);
--		mon_text_read_isodesc(rp, &ptr, ep);
--	} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
--		mon_text_read_intstat(rp, &ptr, ep);
--	} else {
--		mon_text_read_statset(rp, &ptr, ep);
-+	if (rp->printf_togo == 0) {
-+
-+		ep = mon_text_read_wait(rp, file);
-+		if (IS_ERR(ep)) {
-+			mutex_unlock(&rp->printf_lock);
-+			return PTR_ERR(ep);
-+		}
-+		ptr.cnt = 0;
-+		ptr.pbuf = rp->printf_buf;
-+		ptr.limit = rp->printf_size;
-+
-+		mon_text_read_head_u(rp, &ptr, ep);
-+		if (ep->type == 'E') {
-+			mon_text_read_statset(rp, &ptr, ep);
-+		} else if (ep->xfertype == USB_ENDPOINT_XFER_ISOC) {
-+			mon_text_read_isostat(rp, &ptr, ep);
-+			mon_text_read_isodesc(rp, &ptr, ep);
-+		} else if (ep->xfertype == USB_ENDPOINT_XFER_INT) {
-+			mon_text_read_intstat(rp, &ptr, ep);
-+		} else {
-+			mon_text_read_statset(rp, &ptr, ep);
-+		}
-+		ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
-+		    " %d", ep->length);
-+		mon_text_read_data(rp, &ptr, ep);
-+
-+		rp->printf_togo = ptr.cnt;
-+		rp->printf_offset = 0;
-+
-+		kmem_cache_free(rp->e_slab, ep);
- 	}
--	ptr.cnt += snprintf(ptr.pbuf + ptr.cnt, ptr.limit - ptr.cnt,
--	    " %d", ep->length);
--	mon_text_read_data(rp, &ptr, ep);
- 
--	if (copy_to_user(buf, rp->printf_buf, ptr.cnt))
--		ptr.cnt = -EFAULT;
-+	ret = mon_text_copy_to_user(rp, buf, nbytes);
- 	mutex_unlock(&rp->printf_lock);
--	kmem_cache_free(rp->e_slab, ep);
--	return ptr.cnt;
-+	return ret;
- }
- 
- static struct mon_event_text *mon_text_read_wait(struct mon_reader_text *rp,
+BTW, from an overall design point of view, you seems okay with it?
+
+Kind regards
+Uffe
