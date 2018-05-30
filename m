@@ -1,60 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968611AbeE3BuP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 21:50:15 -0400
-Received: from feh.colobox.com ([209.177.154.210]:59606 "EHLO feh.colobox.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968432AbeE3BuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 21:50:12 -0400
-Subject: Re: [PATCH V3 2/2] scsi: hpsa: drop shutdown callback
-To: Sinan Kaya <okaya@codeaurora.org>, linux-pci@vger.kernel.org,
-        timur@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        stable@vger.kernel.org, Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "open list:HEWLETT-PACKARD SMART ARRAY RAID DRIVER (hpsa)"
-        <esc.storagedev@microsemi.com>,
-        "open list:HEWLETT-PACKARD SMART ARRAY RAID DRIVER (hpsa)"
-        <linux-scsi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1527542471-10316-1-git-send-email-okaya@codeaurora.org>
- <1527542471-10316-2-git-send-email-okaya@codeaurora.org>
-From: Ryan Finnie <ryan@finnie.org>
-Message-ID: <51bb7b82-c4a1-435c-7668-639db96d76e1@finnie.org>
-Date: Tue, 29 May 2018 18:50:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S968629AbeE3Bui (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 21:50:38 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:39386 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968432AbeE3Bug (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 21:50:36 -0400
+X-Google-Smtp-Source: ADUXVKJSEFcHcw/Vi9xwa5JTvYT8VdJPPgGgjdig9QheH3Ocap2fN5fwyeyMOsHlZ0DzON1rbax9Dg==
+Date: Tue, 29 May 2018 18:50:22 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH] mm/huge_memory.c: __split_huge_page() use atomic
+ ClearPageDirty()
+Message-ID: <alpine.LSU.2.11.1805291841070.3197@eggly.anvils>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-In-Reply-To: <1527542471-10316-2-git-send-email-okaya@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28/2018 02:21 PM, Sinan Kaya wrote:
-> 'Commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
-> shutdown")' has been added to kernel to shutdown pending PCIe port
-> service interrupts during reboot so that a newly started kexec kernel
-> wouldn't observe pending interrupts.
-> 
-> pcie_port_device_remove() is disabling the root port and switches by
-> calling pci_disable_device() after all PCIe service drivers are shutdown.
-> 
-> This has been found to cause crashes on HP DL360 Gen9 machines during
-> reboot due to hpsa driver not clearing the bus master bit during the
-> shutdown procedure by calling pci_disable_device().
-> 
-> Drop the shutdown API and do an orderly clean up by using the remove.
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=199779
-> Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
-> Cc: stable@vger.kernel.org
-> Reported-by: Ryan Finnie <ryan@finnie.org>
+Swapping load on huge=always tmpfs (with khugepaged tuned up to be very
+eager, but I'm not sure that is relevant) soon hung uninterruptibly,
+waiting for page lock in shmem_getpage_gfp()'s find_lock_entry(), most
+often when "cp -a" was trying to write to a smallish file.  Debug showed
+that the page in question was not locked, and page->mapping NULL by now,
+but page->index consistent with having been in a huge page before.
 
-Tested successfully on DL360 Gen9 and DL380 Gen9.
+Reproduced in minutes on a 4.15 kernel, even with 4.17's 605ca5ede764
+("mm/huge_memory.c: reorder operations in __split_huge_page_tail()")
+added in; but took hours to reproduce on a 4.17 kernel (no idea why).
 
-Tested-by: Ryan Finnie <ryan@finnie.org>
+The culprit proved to be the __ClearPageDirty() on tails beyond i_size
+in __split_huge_page(): the non-atomic __bitoperation may have been safe
+when 4.8's baa355fd3314 ("thp: file pages support for split_huge_page()")
+introduced it, but liable to erase PageWaiters after 4.10's 62906027091f
+("mm: add PageWaiters indicating tasks are waiting for a page bit").
+
+Fixes: 62906027091f ("mm: add PageWaiters indicating tasks are waiting for a page bit")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+
+It's not a 4.17-rc regression that this fixes, so no great need to slip
+this into 4.17 at the last moment - though it makes a good companion to
+Konstantin's 605ca5ede764. I think they both should go to stable, but
+since Konstantin's already went into rc1 without that tag, we shall
+have to recommend Konstantin's to GregKH out-of-band.
+
+ mm/huge_memory.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- 4.17-rc7/mm/huge_memory.c	2018-04-26 10:48:36.019288258 -0700
++++ linux/mm/huge_memory.c	2018-05-29 18:14:52.095512715 -0700
+@@ -2431,7 +2431,7 @@ static void __split_huge_page(struct pag
+ 		__split_huge_page_tail(head, i, lruvec, list);
+ 		/* Some pages can be beyond i_size: drop them from page cache */
+ 		if (head[i].index >= end) {
+-			__ClearPageDirty(head + i);
++			ClearPageDirty(head + i);
+ 			__delete_from_page_cache(head + i, NULL);
+ 			if (IS_ENABLED(CONFIG_SHMEM) && PageSwapBacked(head))
+ 				shmem_uncharge(head->mapping->host, 1);
