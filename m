@@ -1,53 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753967AbeE3Ryk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 13:54:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753861AbeE3RyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 13:54:22 -0400
-Subject: [PATCH v1 2/2] PCI/AER: Stop printing vendor/device ID
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Oza Pawandeep <poza@codeaurora.org>, linux-kernel@vger.kernel.org
-Date: Wed, 30 May 2018 12:54:21 -0500
-Message-ID: <152770286159.80701.8079550179741454699.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152770259826.80701.7360032106128917833.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152770259826.80701.7360032106128917833.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S1753929AbeE3RyV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 13:54:21 -0400
+Received: from mail-pl0-f48.google.com ([209.85.160.48]:42175 "EHLO
+        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753861AbeE3RyL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 13:54:11 -0400
+X-Google-Smtp-Source: ADUXVKLSXPFn9jq6tTkLhG3l3LXNeJYvWkVEMPJFc4gvTS3jWpyNAukXLjFolyMJ6Io/9ccVZ2AEFg==
+Date: Wed, 30 May 2018 23:24:05 +0530
+From: Sankalp Negi <sankalpnegi2310@gmail.com>
+To: linux-kernel@vger.kernel.org
+Message-ID: <20180530175405.eggt6x4ghyyckeqv@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
-
-The Vendor and Device ID of the root port that raised an AER interrupt is
-irrelevant and already available via normal enumeration dmesg logging or
-lspci.
-
-Remove the Vendor and Device ID from AER logging.
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pcie/aer/aerdrv_errprint.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
-index d7fde8368d81..16116844531c 100644
---- a/drivers/pci/pcie/aer/aerdrv_errprint.c
-+++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
-@@ -175,9 +175,8 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
- 		aer_error_severity_string[info->severity],
- 		aer_error_layer[layer], aer_agent_string[agent]);
- 
--	pci_err(dev, "  device [%04x:%04x] error status/mask=%08x/%08x\n",
--		dev->vendor, dev->device,
--		info->status, info->mask);
-+	pci_err(dev, "  error status/mask=%08x/%08x\n", info->status,
-+		info->mask);
- 
- 	__aer_print_error(dev, info);
- 
+unsubscribe linux-kernel
