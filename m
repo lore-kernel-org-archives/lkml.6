@@ -1,72 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751983AbeE3Kha (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:37:30 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41652 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751390AbeE3KhZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:37:25 -0400
-Date: Wed, 30 May 2018 11:37:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v4 1/2] regulator: dt-bindings: add QCOM RPMh regulator
- bindings
-Message-ID: <20180530103720.GH6920@sirena.org.uk>
-References: <cover.1527040878.git.collinsd@codeaurora.org>
- <6d03576cf90f06afb1194301cb41fc31704def1d.1527040878.git.collinsd@codeaurora.org>
- <CAD=FV=VH0bTxPOmRr+jUyV0cGNQHLcwQTV9L-t0bxZOqD8FnHA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lrvsYIebpInmECXG"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=VH0bTxPOmRr+jUyV0cGNQHLcwQTV9L-t0bxZOqD8FnHA@mail.gmail.com>
-X-Cookie: Don't get mad, get interest.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1751691AbeE3Kjr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:39:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58900 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750904AbeE3Kjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 06:39:43 -0400
+From: Li Wang <liwang@redhat.com>
+To: ddstreet@ieee.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Seth Jennings <sjenning@redhat.com>,
+        Huang Ying <huang.ying.caritas@gmail.com>, Yu Zhao <yuzhao@google.com>
+Subject: [PATCH v2] zswap: re-check zswap_is_full after do zswap_shrink
+Date: Wed, 30 May 2018 18:39:36 +0800
+Message-Id: <20180530103936.17812-1-liwang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The '/sys/../zswap/stored_pages:' keep raising in zswap test with
+"zswap.max_pool_percent=0" parameter. But theoretically, it should
+not compress or store pages any more since there is no space in
+compressed pool.
 
---lrvsYIebpInmECXG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reproduce steps:
+  1. Boot kernel with "zswap.enabled=1"
+  2. Set the max_pool_percent to 0
+      # echo 0 > /sys/module/zswap/parameters/max_pool_percent
+  3. Do memory stress test to see if some pages have been compressed
+      # stress --vm 1 --vm-bytes $mem_available"M" --timeout 60s
+  4. Watching the 'stored_pages' number increasing or not
 
-On Tue, May 29, 2018 at 10:23:20PM -0700, Doug Anderson wrote:
+The root cause is:
+  When zswap_max_pool_percent is setting to 0 via kernel parameter, the
+  zswap_is_full() will always return true to do zswap_shrink(). But if
+  the shinking is able to reclain a page successful, then proceeds to
+  compress/store another page, so the value of stored_pages will keep
+  changing.
 
-> > +                       qcom,drms-mode-max-microamps = <10000 1000000>;
+To solve the issue, this patch adds zswap_is_full() check again after
+zswap_shrink() to make sure it's now under the max_pool_percent, and
+not to compress/store if reach its limitaion.
 
-> Things look pretty good to me now.  I'm still hesitant about the whole
-> need to list the modes twice (once using the unordered
-> "regulator-allowed-modes" and once to match up against the ordered
-> "qcom,drms-mode-max-microamps").  I'm also still of the opinion that
-> the whole "drms-mode-max-microamps" ought to be a standard property
-> (not a qcom specific one) and handled in the regulator core.
+Signed-off-by: Li Wang <liwang@redhat.com>
+Cc: Seth Jennings <sjenning@redhat.com>
+Cc: Dan Streetman <ddstreet@ieee.org>
+Cc: Huang Ying <huang.ying.caritas@gmail.com>
+Cc: Yu Zhao <yuzhao@google.com>
+---
+ mm/zswap.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-I'm confused as to why we are specifying the maximum current the device
-can deliver in a given mode in the DT - surely that's a fixed property
-of the hardware?
-
---lrvsYIebpInmECXG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOfuAACgkQJNaLcl1U
-h9DCkwf/TUW3B79DOQ8gDtXWhAdDlfnHkl1MQ+yklnO9/BV1sXKmL7RPDwwOyCqT
-cKIWmY4o4H7nvMpr1YXBwW1CXG4r6+87fQDaP0212TufnzJkJjVPv4XMsMAe/Z7b
-BTtTtXCFmudVjSrp4l24q94APzWQcgt5I3FWLKiiv93HhKp8+4RBVCKFq/D3XLxk
-3nhjUG8zvTMhDtADgAYw3cZrT473IOyUEaXCwTc3wY3srVSX5ffzSZqM8Y2K1Vmi
-PLzk694h1wLsHXZe5Ig9HCF/Ys3y65fqhipmHGPcDkB3voPiJj9PNAmSZa16xsYc
-Beq6G12n2RpuddPVHJGdx+kuX2KvmQ==
-=SPtN
------END PGP SIGNATURE-----
-
---lrvsYIebpInmECXG--
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 61a5c41..fd320c3 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1026,6 +1026,15 @@ static int zswap_frontswap_store(unsigned type, pgoff_t offset,
+ 			ret = -ENOMEM;
+ 			goto reject;
+ 		}
++
++		/* A second zswap_is_full() check after
++		 * zswap_shrink() to make sure it's now
++		 * under the max_pool_percent
++		 */
++		if (zswap_is_full()) {
++			ret = -ENOMEM;
++			goto reject;
++		}
+ 	}
+ 
+ 	/* allocate entry */
+-- 
+2.9.5
