@@ -1,52 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932603AbeE3WET (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:04:19 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40270 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932509AbeE3WEK (ORCPT
+        id S932568AbeE3WEQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:04:16 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:42896 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932506AbeE3WEI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:04:10 -0400
-X-Google-Smtp-Source: ADUXVKJZcQo6O1VP/QESYF7EvUXPVZ0vnwm0BIjA/Jn73tzRQ0U86FuNUQY8/mqQovZBC6D022yl5A==
-Date: Wed, 30 May 2018 16:04:05 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Steve Wise <swise@chelsio.com>, Doug Ledford <dledford@redhat.com>,
-        Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iw_cxgb4: add INFINIBAND_ADDR_TRANS dependency
-Message-ID: <20180530220405.GH30754@ziepe.ca>
-References: <20180530215826.1343234-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180530215826.1343234-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 30 May 2018 18:04:08 -0400
+X-Google-Smtp-Source: ADUXVKL3bANiFeHlnCWwcekRpKR7p0tgcf1BuYzWBBojHYtcZ4DK0i+7WtYYBMrxzt7qjiO+xwZ0dA==
+From: Jeffrin Jose T <ahiliation@gmail.com>
+To: shuah@kernel.org, daniel.diaz@linaro.org, kstewart@linuxfoundation.org,
+        tglx@linutronix.de, thomas@m3y3r.de, gregkh@linuxfoundation.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrin Jose T <ahiliation@gmail.com>
+Subject: [RESEND PATCH] selftests: intel_pstate: notification about privilege required to run intel_pstate testing script
+Date: Thu, 31 May 2018 03:33:39 +0530
+Message-Id: <20180530220339.6107-1-ahiliation@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 11:58:18PM +0200, Arnd Bergmann wrote:
-> The newly added fill_res_ep_entry function fails to link if
-> CONFIG_INFINIBAND_ADDR_TRANS is not set:
-> 
-> drivers/infiniband/hw/cxgb4/restrack.o: In function `fill_res_ep_entry':
-> restrack.c:(.text+0x3cc): undefined reference to `rdma_res_to_id'
-> restrack.c:(.text+0x3d0): undefined reference to `rdma_iw_cm_id'
-> 
-> This adds a Kconfig dependency for the driver.
-> 
-> Fixes: 116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/infiniband/hw/cxgb4/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+The intel_pstate related testing script need root level privileges
+when trying to access certain file for the successful execution of
+the script.But this is not the case always like when using evaluation
+only mode, which only require user level privilege.
 
-Oh, I think we need to solve this with maybe a header fill null stub
-instead..
+This patch is to notify the user about the privilege the script
+demands for the successful execution of the test.
 
-We don't want to disable drivers just because a user interface is
-disabled.
+Signed-off-by: Jeffrin Jose T (Rajagiri SET) <ahiliation@gmail.com>
+---
+ tools/testing/selftests/intel_pstate/run.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Thanks,
-Jason
+diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
+index 8576f6564307..e7008f614ad7 100755
+--- a/tools/testing/selftests/intel_pstate/run.sh
++++ b/tools/testing/selftests/intel_pstate/run.sh
+@@ -38,6 +38,12 @@ if ! uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ | grep -q x86; then
+ 	exit $ksft_skip
+ fi
+ 
++msg="skip all tests:"
++if [ $UID != 0 ] && [ $EVALUATE_ONLY == 0 ]; then
++    echo $msg please run this as root >&2
++    exit $ksft_skip
++fi
++
+ max_cpus=$(($(nproc)-1))
+ 
+ function run_test () {
+-- 
+2.17.0
