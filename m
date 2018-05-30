@@ -1,46 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753896AbeE3P6i (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:58:38 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:41686 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753813AbeE3P61 (ORCPT
+        id S1753784AbeE3QBP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:01:15 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:23683 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753605AbeE3QBN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:58:27 -0400
-X-Google-Smtp-Source: ADUXVKI1OQiNZFqT3v41ozUbA4cfQWRCDt+PiSEkWCojMW9pKXrpbbULQ+SvXs3TqMbqZ9mn0tCgDQ==
-Date: Wed, 30 May 2018 08:58:24 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
-        akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Josef Bacik <jbacik@fb.com>
-Subject: Re: [PATCH 04/13] blk: introduce REQ_SWAP
-Message-ID: <20180530155824.GL1351649@devbig577.frc2.facebook.com>
-References: <20180529211724.4531-1-josef@toxicpanda.com>
- <20180529211724.4531-5-josef@toxicpanda.com>
+        Wed, 30 May 2018 12:01:13 -0400
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: Re: general protection fault in wb_workfn (2)
+To: Jan Kara <jack@suse.cz>
+Cc: syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        tj@kernel.org, david@fromorbit.com, linux-block@vger.kernel.org
+References: <000000000000cbd959056d1851ca@google.com>
+ <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
+ <20180528133503.awomzj6djozbo5bv@quack2.suse.cz>
+Message-ID: <2dda7a11-3f6b-bdba-a68a-7c0694806cc4@I-love.SAKURA.ne.jp>
+Date: Thu, 31 May 2018 01:00:08 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529211724.4531-5-josef@toxicpanda.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180528133503.awomzj6djozbo5bv@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 05:17:15PM -0400, Josef Bacik wrote:
-> From: Josef Bacik <jbacik@fb.com>
-> 
-> Just like REQ_META, it's important to know the IO coming down is swap
-> in order to guard against potential IO priority inversion issues with
-> cgroups.  Add REQ_SWAP and use it for all swap IO, and add it to our
-> bio_issue_as_root_blkg helper.
-> 
-> Signed-off-by: Josef Bacik <jbacik@fb.com>
+So, we have no idea what is happening...
+Then, what about starting from temporary debug printk() patch shown below?
 
-Acked-by: Tejun Heo <tj@kernel.org>
+>From 4f70f72ad3c9ae6ce1678024ef740aca4958e5b0 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 30 May 2018 09:57:10 +0900
+Subject: [PATCH] bdi: Add temporary config for debugging wb_workfn() versus
+ bdi_unregister() race bug.
 
-Thanks.
+syzbot is hitting NULL pointer dereference at wb_workfn() [1]. But due to
+limitations that syzbot cannot find reproducer for this bug (frequency is
+once or twice per a day) nor we can't capture vmcore in the environment
+which syzbot is using, for now we need to rely on printk() debugging.
 
+[1] https://syzkaller.appspot.com/bug?id=e0818ccb7e46190b3f1038b0c794299208ed4206
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ block/Kconfig     |  7 +++++++
+ fs/fs-writeback.c | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+
+diff --git a/block/Kconfig b/block/Kconfig
+index 28ec557..fbce13e 100644
+--- a/block/Kconfig
++++ b/block/Kconfig
+@@ -139,6 +139,13 @@ config BLK_CMDLINE_PARSER
+ 
+ 	See Documentation/block/cmdline-partition.txt for more information.
+ 
++config BLK_DEBUG_WB_WORKFN_RACE
++	bool "Dump upon hitting wb_workfn() versus bdi_unregister() race bug."
++	default n
++	---help---
++	This is a temporary option used for obtaining information for
++	specific bug. This option will be removed after the bug is fixed.
++
+ config BLK_WBT
+ 	bool "Enable support for block device writeback throttling"
+ 	default n
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 471d863..b4dd078 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1934,6 +1934,37 @@ void wb_workfn(struct work_struct *work)
+ 						struct bdi_writeback, dwork);
+ 	long pages_written;
+ 
++#ifdef CONFIG_BLK_DEBUG_WB_WORKFN_RACE
++	if (!wb->bdi->dev) {
++		pr_warn("WARNING: %s: device is NULL\n", __func__);
++		pr_warn("wb->state=%lx\n", wb->state);
++		pr_warn("list_empty(&wb->work_list)=%u\n",
++			list_empty(&wb->work_list));
++		if (!wb->bdi)
++			pr_warn("wb->bdi == NULL\n");
++		else {
++			pr_warn("list_empty(&wb->bdi->bdi_list)=%u\n",
++				list_empty(&wb->bdi->bdi_list));
++			pr_warn("wb->bdi->wb.state=%lx\n", wb->bdi->wb.state);
++		}
++		if (!wb->congested)
++			pr_warn("wb->congested == NULL\n");
++#ifdef CONFIG_CGROUP_WRITEBACK
++		else if (!wb->congested->__bdi)
++			pr_warn("wb->congested->__bdi == NULL\n");
++		else {
++			pr_warn("(wb->congested->__bdi == wb->bdi)=%u\n",
++				wb->congested->__bdi == wb->bdi);
++			pr_warn("list_empty(&wb->congested->__bdi->bdi_list)=%u\n",
++				list_empty(&wb->congested->__bdi->bdi_list));
++			pr_warn("wb->congested->__bdi->wb.state=%lx\n",
++				wb->congested->__bdi->wb.state);
++		}
++#endif
++		/* Will halt shortly due to NULL pointer dereference... */
++	}
++#endif
++
+ 	set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
+ 	current->flags |= PF_SWAPWRITE;
+ 
 -- 
-tejun
+1.8.3.1
