@@ -1,114 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965115AbeE3IxE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:53:04 -0400
-Received: from mga14.intel.com ([192.55.52.115]:30437 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935951AbeE3Iw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:52:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,459,1520924400";
-   d="scan'208";a="45870463"
-Subject: Re: mmc filesystem performance decreased on the first write after
- filesystem creation
-To: Christoph Hellwig <hch@lst.de>, Faiz Abbas <faiz_abbas@ti.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-        linux-ext4@vger.kernel.org, tytso@mit.edu
-References: <a976e20a-3ed1-43d0-4665-f570ef496d02@ti.com>
- <20180528062618.GA4196@lst.de>
- <c6a47e30-f07d-3f79-2189-38b6f01429b9@intel.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <43d4164f-5dda-b49a-6008-1f5bf4b08547@intel.com>
-Date: Wed, 30 May 2018 11:51:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S968732AbeE3Ixc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:53:32 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:39212 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965157AbeE3IxZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:53:25 -0400
+X-Google-Smtp-Source: ADUXVKJNo7fKnhQB58fnH0tdHSRh7fMttcDEeLB6BkxHyvbv1kSV2WGdMGALx5ePX4va4HQ0pu75JjYbxBKnb8Bg9O8=
 MIME-Version: 1.0
-In-Reply-To: <c6a47e30-f07d-3f79-2189-38b6f01429b9@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180529182107.GC167092@dtor-ws>
+References: <20180529095800.13504-1-benjamin.tissoires@redhat.com>
+ <20180529095800.13504-2-benjamin.tissoires@redhat.com> <20180529182107.GC167092@dtor-ws>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Wed, 30 May 2018 10:53:24 +0200
+Message-ID: <CAO-hwJ+5U3ZNacYvcbUKqs0sqzM51cjB5EOWMcVwYnrT838tFg@mail.gmail.com>
+Subject: Re: [PATCH 1/9] Input: mt - export MT_TOOL in input_mt_init_slot()
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Mario.Limonciello@dell.com,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/05/18 11:44, Adrian Hunter wrote:
-> On 28/05/18 09:26, Christoph Hellwig wrote:
->> Summary: mke2s uses the BLKDISCARD ioctl to wipe the device,
->> and then uses BLKDISCARDZEROES to check if that zeroed the data.
->>
->> A while ago I made BLKDISCARDZEROES always return 0 because it is
->> basically impossible to have reliably zeroing using discard as the
->> standards leave the devices way to many options to not actually
->> zero data at their own choice when using the discard commands.
-> 
-> Older eMMC do not have a "discard" option and use "erase" instead.  "Erase"
-> has similar benefits to "discard" but the eMMC is required to make the
-> erased blocks read as either all 0's or all 1's.
-> 
->>
->> So IFF mke2fs want to actually free space and zero it it needs
->> to use fallocate to punch a hole, and mmc needs to implement
->> REQ_OP_WRITE_ZEROS IFF it actually has a reliable way to zero
->> blocks.
->>
->>
->> On Tue, May 22, 2018 at 08:48:31PM +0530, Faiz Abbas wrote:
->>> Hi,
->>>
->>> I am debugging a performance reduction in ext2 filesystems on an mmc
->>> device in TI's am335x evm board.
->>>
->>> I see that the performance is reduced on the first write after making a
->>> new filesystem using mkfs.ext2 on one of the mmc partitions. The
->>> performance comes back to normal after the first write.
->>>
->>> commands used:
->>>
->>> => umount /dev/mmcblk1p2
->>>
->>> => mkfs.ext2 -F  /dev/mmcblk1p2
->>>
->>> => mount -t ext2 -o async /dev/mmcblk1p2 /mnt/partition_mmc
->>>
->>> => dd if=/dev/urandom of=/dev/shm/srctest_file_mmc_1184 bs=1M count=10
->>>
->>> => ./filesystem_tests -write -src_file /dev/shm/srctest_file_mmc_1184
->>> -srcfile_size 10 -file /mnt/partition_mmc/test_file_1184 -buffer_size
->>> 102400 -file_size 100 -performance
->>>
->>> The filesystem_tests write utility reads from the file generated at
->>> /dev/shm/srctest_file_mmc_1184, memory maps the file to a buffer, and
->>> then writes it into the newly created /mnt/partition_mmc in multiples of
->>> buffer_size while measuring write performance.
->>>
->>> See here for the implementation of filesystem_tests write utility:
->>> http://arago-project.org/git/projects/?p=test-automation/ltp-ddt.git;a=blob;f=testcases/ddt/filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c;h=80e8e244d7eaa9f0dbd9b21ea705445156c36bef;hb=f7fc06c290333ce08a7d4fba104eee0f0f1d942b
->>>
->>> Complete log with multiple calls to filesystem_tests:
->>> https://pastebin.ubuntu.com/p/BckmTJpqPv/
->>>
->>> Notice that the first run of filesystem_tests has a lower throughput
->>> reported.
->>>
->>> I was able to bisect the issue to this commit:
->>> 5d1429fead5b (mmc: remove the discard_zeroes_data flag)
->>>
->>> I would assume that after this flag is removed, the filesystem creation
->>> command would explicitly write zeroes to the device which might explain
->>> the performance fall. However, then the mkfs.ext2 command itself should
->>> take more time rather than the first file write after that.
-> 
-> You might want to check the lazy initialization options.  I always use
-> "-Elazy_itable_init=0,lazy_journal_init=0" with ext4 to prevent it messing
-> up performance tests.
+Hi Dmitry,
 
-And discards are not enabled by default by mount so, at least on ext4,
-adding "-o discard" is needed in the mount options.
+On Tue, May 29, 2018 at 8:21 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> Hi Benjamin,
+>
+> On Tue, May 29, 2018 at 11:57:52AM +0200, Benjamin Tissoires wrote:
+>> Looks like we require users to set a tool but input_mt_init_slots() never
+>> set the tool bit for us. Meaning that this is a useless information the
+>> driver tries to forward.
+>
+> I am not sure if I agree with this patch: up until now drivers could
+> decide if they export presence of the tool type to userspace and
+> userspace could distinguish between "pure" touchscreens and touchscreens
+> that support additional tools, such as stylus. Now we unconditionally
+> claim that all multi-touch devices support multiple tools.
+>
+> The fact that we were dropping MT_TOOL_TYPE for devices that do not
+> support anything but finger I'd consider a "feature".
+
+OK. I was not sure to agree with this, but I had a quick chat with
+Peter and he also agrees. There is no real point in forwarding an
+event that will never be updated, so let's just skip that patch then.
+
+Expect this to be removed in v2 then.
+
+Cheers,
+Benjamin
+
+>
+>>
+>> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+>> ---
+>>  drivers/input/input-mt.c                 | 1 +
+>>  drivers/input/rmi4/rmi_2d_sensor.c       | 2 --
+>>  drivers/input/touchscreen/atmel_mxt_ts.c | 2 --
+>>  drivers/input/touchscreen/hideep.c       | 2 --
+>>  drivers/input/touchscreen/wacom_w8001.c  | 2 --
+>>  5 files changed, 1 insertion(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
+>> index a1bbec9cda8d..3900686c5d0f 100644
+>> --- a/drivers/input/input-mt.c
+>> +++ b/drivers/input/input-mt.c
+>> @@ -57,6 +57,7 @@ int input_mt_init_slots(struct input_dev *dev, unsigned int num_slots,
+>>       mt->flags = flags;
+>>       input_set_abs_params(dev, ABS_MT_SLOT, 0, num_slots - 1, 0, 0);
+>>       input_set_abs_params(dev, ABS_MT_TRACKING_ID, 0, TRKID_MAX, 0, 0);
+>> +     input_set_abs_params(dev, ABS_MT_TOOL_TYPE, 0, MT_TOOL_MAX, 0, 0);
+>>
+>>       if (flags & (INPUT_MT_POINTER | INPUT_MT_DIRECT)) {
+>>               __set_bit(EV_KEY, dev->evbit);
+>> diff --git a/drivers/input/rmi4/rmi_2d_sensor.c b/drivers/input/rmi4/rmi_2d_sensor.c
+>> index 8bb866c7b985..23e666bd2539 100644
+>> --- a/drivers/input/rmi4/rmi_2d_sensor.c
+>> +++ b/drivers/input/rmi4/rmi_2d_sensor.c
+>> @@ -186,8 +186,6 @@ static void rmi_2d_sensor_set_input_params(struct rmi_2d_sensor *sensor)
+>>               input_set_abs_params(input, ABS_MT_TOUCH_MAJOR, 0, 0x0f, 0, 0);
+>>               input_set_abs_params(input, ABS_MT_TOUCH_MINOR, 0, 0x0f, 0, 0);
+>>               input_set_abs_params(input, ABS_MT_ORIENTATION, 0, 1, 0, 0);
+>> -             input_set_abs_params(input, ABS_MT_TOOL_TYPE,
+>> -                                  0, MT_TOOL_MAX, 0, 0);
+>>
+>>               if (sensor->sensor_type == rmi_sensor_touchpad)
+>>                       input_flags = INPUT_MT_POINTER;
+>> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+>> index 54fe190fd4bc..0dcf48100dc1 100644
+>> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
+>> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+>> @@ -2021,8 +2021,6 @@ static int mxt_initialize_input_device(struct mxt_data *data)
+>>       }
+>>
+>>       if (data->multitouch == MXT_TOUCH_MULTITOUCHSCREEN_T100) {
+>> -             input_set_abs_params(input_dev, ABS_MT_TOOL_TYPE,
+>> -                                  0, MT_TOOL_MAX, 0, 0);
+>>               input_set_abs_params(input_dev, ABS_MT_DISTANCE,
+>>                                    MXT_DISTANCE_ACTIVE_TOUCH,
+>>                                    MXT_DISTANCE_HOVERING,
+>> diff --git a/drivers/input/touchscreen/hideep.c b/drivers/input/touchscreen/hideep.c
+>> index f1cd4dd9a4a3..980539d8d551 100644
+>> --- a/drivers/input/touchscreen/hideep.c
+>> +++ b/drivers/input/touchscreen/hideep.c
+>> @@ -799,8 +799,6 @@ static int hideep_init_input(struct hideep_ts *ts)
+>>       input_set_capability(ts->input_dev, EV_ABS, ABS_MT_POSITION_Y);
+>>       input_set_abs_params(ts->input_dev, ABS_MT_PRESSURE, 0, 65535, 0, 0);
+>>       input_set_abs_params(ts->input_dev, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
+>> -     input_set_abs_params(ts->input_dev, ABS_MT_TOOL_TYPE,
+>> -                          0, MT_TOOL_MAX, 0, 0);
+>>       touchscreen_parse_properties(ts->input_dev, true, &ts->prop);
+>>
+>>       if (ts->prop.max_x == 0 || ts->prop.max_y == 0) {
+>> diff --git a/drivers/input/touchscreen/wacom_w8001.c b/drivers/input/touchscreen/wacom_w8001.c
+>> index 3715d1eace92..946dca30560b 100644
+>> --- a/drivers/input/touchscreen/wacom_w8001.c
+>> +++ b/drivers/input/touchscreen/wacom_w8001.c
+>> @@ -529,8 +529,6 @@ static int w8001_setup_touch(struct w8001 *w8001, char *basename,
+>>                                       0, touch.x, 0, 0);
+>>               input_set_abs_params(dev, ABS_MT_POSITION_Y,
+>>                                       0, touch.y, 0, 0);
+>> -             input_set_abs_params(dev, ABS_MT_TOOL_TYPE,
+>> -                                     0, MT_TOOL_MAX, 0, 0);
+>>               input_abs_set_res(dev, ABS_MT_POSITION_X, touch.panel_res);
+>>               input_abs_set_res(dev, ABS_MT_POSITION_Y, touch.panel_res);
+>>
+>> --
+>> 2.14.3
+>>
+>
+> Thanks.
+>
+> --
+> Dmitry
