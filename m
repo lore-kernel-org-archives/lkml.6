@@ -1,81 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937295AbeE3IsI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:48:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37550 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935976AbeE3IsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:48:04 -0400
-Date: Wed, 30 May 2018 10:48:01 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: drop in_nmi check from
- printk_safe_flush_on_panic()
-Message-ID: <20180530084801.i5mzqhlw2w5o2eod@pathway.suse.cz>
-References: <20180530070350.10131-1-sergey.senozhatsky@gmail.com>
- <20180530072419.jqoohtcvenlnym6h@pathway.suse.cz>
- <20180530075105.GA12230@jagdpanzerIV>
+        id S936094AbeE3Ivv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:51:51 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51456 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935975AbeE3Ivr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:51:47 -0400
+X-Google-Smtp-Source: ADUXVKLv1i1yPr+PfQjXqBPIXpigdQOgXHshGgKC3KYB/HHN3Coa61r6sCTz/Gkx9zsT/WPS1SRtkQ==
+Date: Wed, 30 May 2018 10:51:43 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        viresh.kumar@linaro.org, valentin.schneider@arm.com
+Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
+Message-ID: <20180530085143.GA3320@localhost.localdomain>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
+ <20180529084009.GE15173@e108498-lin.cambridge.arm.com>
+ <20180529095203.GD8985@localhost.localdomain>
+ <20180530083715.GB2174@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180530075105.GA12230@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180530083715.GB2174@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-05-30 16:51:05, Sergey Senozhatsky wrote:
-> On (05/30/18 09:24), Petr Mladek wrote:
-> > Acked-by: Petr Mladek <pmladek@suse.com>
+On 30/05/18 09:37, Quentin Perret wrote:
+> On Tuesday 29 May 2018 at 11:52:03 (+0200), Juri Lelli wrote:
+> > On 29/05/18 09:40, Quentin Perret wrote:
+> > > Hi Vincent,
+> > > 
+> > > On Friday 25 May 2018 at 15:12:26 (+0200), Vincent Guittot wrote:
+> > > > Now that we have both the dl class bandwidth requirement and the dl class
+> > > > utilization, we can use the max of the 2 values when agregating the
+> > > > utilization of the CPU.
+> > > > 
+> > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > > > ---
+> > > >  kernel/sched/sched.h | 6 +++++-
+> > > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> > > > index 4526ba6..0eb07a8 100644
+> > > > --- a/kernel/sched/sched.h
+> > > > +++ b/kernel/sched/sched.h
+> > > > @@ -2194,7 +2194,11 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
+> > > >  #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+> > > >  static inline unsigned long cpu_util_dl(struct rq *rq)
+> > > >  {
+> > > > -	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> > > > +	unsigned long util = (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> > > > +
+> > > > +	util = max_t(unsigned long, util, READ_ONCE(rq->avg_dl.util_avg));
+> > > 
+> > > Would it make sense to use a UTIL_EST version of that signal here ? I
+> > > don't think that would make sense for the RT class with your patch-set
+> > > since you only really use the blocked part of the signal for RT IIUC,
+> > > but would that work for DL ?
+> > 
+> > Well, UTIL_EST for DL looks pretty much what we already do by computing
+> > utilization based on dl.running_bw. That's why I was thinking of using
+> > that as a starting point for dl.util_avg decay phase.
 > 
-> Thanks.
+> Hmmm I see your point, but running_bw and the util_avg are fundamentally
+> different ... I mean, the util_avg doesn't know about the period, which is
+> an issue in itself I guess ...
 > 
-> > Just to be sure. IMHO, it is not worth nominating this patch for
-> > stable. It is not a regression fix. I see it as a continuous
-> > improving of the handling in various corner cases. And I see this
-> > as a distant corner case.
-> 
-> Yep, agreed.
-> 
-> ***
-> 
-> A random thought [not suggesting anything]:
-> 
-> Given that we call printk() before SMP stop and that some of
-> smp_send_stop() call printk(), may be we can switch panic()
-> to printk_safe() mode and return it back to normal printk()
-> mode right before printk_safe_flush_on_panic(). So all possible
-> printk()-s that can happen in between (printk_safe_enter()
-> printk_safe_exit()) will not access the logbuf spin lock, yet
-> we still will try to flush all per-CPU buffers a bit later.
-> 
-> It probably doesn't sound like a very good/solid idea, just
-> wondering what will people say.
-> 
-> Very schematically,
-> 
-> ---
-> 
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index 42e487488554..98a0493a59d3 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -148,6 +148,7 @@ void panic(const char *fmt, ...)
->  	 * after setting panic_cpu) from invoking panic() again.
->  	 */
->  	local_irq_disable();
-> +	__printk_safe_enter();
+> If you have a long running DL task (say 100ms runtime) with a long period
+> (say 1s), the running_bw should represent ~1/10 of the CPU capacity, but
+> the util_avg can go quite high, which means that you might end up
+> executing this task at max OPP. So if we really want to drive OPPs like
+> that for deadline, a util_est-like version of this util_avg signal
+> should help. Now, you can also argue that going to max OPP for a task
+> that _we know_ uses 1/10 of the CPU capacity isn't right ...
 
-I understand why you came with it but I am against this change without
-a proper research. This would redirect too valuable messages into
-a buffer of a limited size and postpone flushing them to the consoles.
-
-We would need to really carefully compare chances where this would
-help and where it would make things worse. There is a high chance
-that we could come with a better solution once we have the analyze.
-
-Best Regards,
-Petr
+Yep, that's my point. :)
