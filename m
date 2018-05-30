@@ -1,122 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753531AbeE3OSO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:18:14 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40528 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753262AbeE3OSI (ORCPT
+        id S932069AbeE3OVn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:21:43 -0400
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:11379 "EHLO
+        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752975AbeE3OVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:18:08 -0400
-X-Google-Smtp-Source: ADUXVKIXWLZdzo8pC2x6TllLmzJAhLWWmeoreIIIRHuYIY5NigE/xk8PfRaope4KBD6AULzhxWQQsw==
-Date: Wed, 30 May 2018 16:18:04 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v9 2/7] cpuset: Add new v2 cpuset.sched.domain_root flag
-Message-ID: <20180530141804.GG3320@localhost.localdomain>
-References: <1527601294-3444-1-git-send-email-longman@redhat.com>
- <1527601294-3444-3-git-send-email-longman@redhat.com>
+        Wed, 30 May 2018 10:21:37 -0400
+From: Peter Enderborg <peter.enderborg@sony.com>
+To: <peter.enderborg@sony.com>, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <james.l.morris@oracle.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>, <selinux@tycho.nsa.gov>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, "Serge E . Hallyn" <serge@hallyn.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH V3 3/5 selinux-next] selinux: sidtab_clone switch to use rwlock.
+Date: Wed, 30 May 2018 16:11:02 +0200
+Message-ID: <20180530141104.28569-4-peter.enderborg@sony.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180530141104.28569-1-peter.enderborg@sony.com>
+References: <20180530141104.28569-1-peter.enderborg@sony.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527601294-3444-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+We need a copy of sidtabs, so change the generic sidtab_clone
+as from a function pointer and let it use a read rwlock while
+do the clone.
 
-On 29/05/18 09:41, Waiman Long wrote:
+Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
+---
+ security/selinux/ss/services.c | 20 +-------------------
+ security/selinux/ss/sidtab.c   | 39 ++++++++++++++++++++++++++++++++-------
+ security/selinux/ss/sidtab.h   |  3 ++-
+ 3 files changed, 35 insertions(+), 27 deletions(-)
 
-[...]
-
-> +  cpuset.sched.domain_root
-> +	A read-write single value file which exists on non-root
-> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
-> +	either "0" (off) or "1" (on).  This flag is set by the parent
-> +	and is not delegatable.
-> +
-> +	If set, it indicates that the current cgroup is the root of a
-> +	new scheduling domain or partition that comprises itself and
-> +	all its descendants except those that are scheduling domain
-> +	roots themselves and their descendants.  The root cgroup is
-> +	always a scheduling domain root.
-> +
-> +	There are constraints on where this flag can be set.  It can
-> +	only be set in a cgroup if all the following conditions are true.
-> +
-> +	1) The "cpuset.cpus" is not empty and the list of CPUs are
-> +	   exclusive, i.e. they are not shared by any of its siblings.
-> +	2) The parent cgroup is also a scheduling domain root.
-> +	3) There is no child cgroups with cpuset enabled.  This is
-> +	   for eliminating corner cases that have to be handled if such
-> +	   a condition is allowed.
-> +
-> +	Setting this flag will take the CPUs away from the effective
-> +	CPUs of the parent cgroup.  Once it is set, this flag cannot
-> +	be cleared if there are any child cgroups with cpuset enabled.
-> +	Further changes made to "cpuset.cpus" is allowed as long as
-> +	the first condition above is still true.
-
-IIUC, with the configuration below
-
- cpuset.cpus.effective:6-11
- cgroup.controllers:cpuset
- cpuset.mems.effective:0-1
- cgroup.subtree_control:cpuset
- g1/cpuset.cpus.effective:0-5
- g1/cgroup.controllers:cpuset
- g1/cpuset.sched.load_balance:1
- g1/cpuset.mems.effective:0-1
- g1/cpuset.cpus:0-5
- g1/cpuset.sched.domain_root:1
- user.slice/cpuset.cpus.effective:6-11
- user.slice/cgroup.controllers:cpuset
- user.slice/cpuset.sched.load_balance:1
- user.slice/cpuset.mems.effective:0-1
- user.slice/cpuset.cpus:6-11
- user.slice/cpuset.sched.domain_root:0
- init.scope/cpuset.cpus.effective:6-11
- init.scope/cgroup.controllers:cpuset
- init.scope/cpuset.sched.load_balance:1
- init.scope/cpuset.mems.effective:0-1
- init.scope/cpuset.cpus:6-11
- init.scope/cpuset.sched.domain_root:0
- system.slice/cpuset.cpus.effective:6-11
- system.slice/cgroup.controllers:cpuset
- system.slice/cpuset.sched.load_balance:1
- system.slice/cpuset.mems.effective:0-1
- system.slice/cpuset.cpus:6-11
- system.slice/cpuset.sched.domain_root:0
- machine.slice/cpuset.cpus.effective:6-11
- machine.slice/cgroup.controllers:cpuset
- machine.slice/cpuset.sched.load_balance:1
- machine.slice/cpuset.mems.effective:0-1
- machine.slice/cpuset.cpus:6-11
- machine.slice/cpuset.sched.domain_root:0
-
-I should be able to
-
- # echo 0-4 >g1/cpuset.cpus
-
-?
-
-It doesn't let me.
-
-I'm not sure we actually want to allow that, but that's what would I
-expect as per your text above.
-
-Thanks,
-
-- Juri
-
-BTW: thanks a lot for your prompt feedback and hope it's OK if I keep
-playing and asking questions. :)
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index 4f3ce389084c..2be471d72c85 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -1891,19 +1891,6 @@ int security_change_sid(struct selinux_state *state,
+ 				    out_sid, false);
+ }
+ 
+-/* Clone the SID into the new SID table. */
+-static int clone_sid(u32 sid,
+-		     struct context *context,
+-		     void *arg)
+-{
+-	struct sidtab *s = arg;
+-
+-	if (sid > SECINITSID_NUM)
+-		return sidtab_insert(s, sid, context);
+-	else
+-		return 0;
+-}
+-
+ static inline int convert_context_handle_invalid_context(
+ 	struct selinux_state *state,
+ 	struct context *context)
+@@ -2199,10 +2186,7 @@ int security_load_policy(struct selinux_state *state, void *data, size_t len)
+ 		goto err;
+ 	}
+ 
+-	/* Clone the SID table. */
+-	sidtab_shutdown(old_set->sidtab);
+-
+-	rc = sidtab_map(old_set->sidtab, clone_sid, next_set->sidtab);
++	rc = sidtab_clone(old_set->sidtab, next_set->sidtab);
+ 	if (rc)
+ 		goto err;
+ 
+@@ -2926,8 +2910,6 @@ int security_set_bools(struct selinux_state *state, int len, int *values)
+ 			goto out;
+ 	}
+ 
+-	seqno = ++state->ss->latest_granting;
+-	state->ss->active_set = next_set;
+ 	rc = 0;
+ out:
+ 	if (!rc) {
+diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
+index 5be31b7af225..811503cd7c2b 100644
+--- a/security/selinux/ss/sidtab.c
++++ b/security/selinux/ss/sidtab.c
+@@ -27,7 +27,7 @@ int sidtab_init(struct sidtab *s)
+ 	s->nel = 0;
+ 	s->next_sid = 1;
+ 	s->shutdown = 0;
+-	spin_lock_init(&s->lock);
++	rwlock_init(&s->lock);
+ 	return 0;
+ }
+ 
+@@ -116,6 +116,31 @@ struct context *sidtab_search_force(struct sidtab *s, u32 sid)
+ 	return sidtab_search_core(s, sid, 1);
+ }
+ 
++int sidtab_clone(struct sidtab *s, struct sidtab *d)
++{
++	int i, rc = 0;
++	struct sidtab_node *cur;
++
++	if (!s || !d)
++		goto errout;
++
++	read_lock(&s->lock);
++	for (i = 0; i < SIDTAB_SIZE; i++) {
++		cur = s->htable[i];
++		while (cur) {
++			if (cur->sid > SECINITSID_NUM)
++				rc =  sidtab_insert(d, cur->sid, &cur->context);
++			if (rc)
++				goto out;
++			cur = cur->next;
++		}
++	}
++out:
++	read_unlock(&s->lock);
++errout:
++	return rc;
++}
++
+ int sidtab_map(struct sidtab *s,
+ 	       int (*apply) (u32 sid,
+ 			     struct context *context,
+@@ -202,7 +227,7 @@ int sidtab_context_to_sid(struct sidtab *s,
+ 	if (!sid)
+ 		sid = sidtab_search_context(s, context);
+ 	if (!sid) {
+-		spin_lock_irqsave(&s->lock, flags);
++		write_lock_irqsave(&s->lock, flags);
+ 		/* Rescan now that we hold the lock. */
+ 		sid = sidtab_search_context(s, context);
+ 		if (sid)
+@@ -221,7 +246,7 @@ int sidtab_context_to_sid(struct sidtab *s,
+ 		if (ret)
+ 			s->next_sid--;
+ unlock_out:
+-		spin_unlock_irqrestore(&s->lock, flags);
++		write_unlock_irqrestore(&s->lock, flags);
+ 	}
+ 
+ 	if (ret)
+@@ -287,21 +312,21 @@ void sidtab_set(struct sidtab *dst, struct sidtab *src)
+ 	unsigned long flags;
+ 	int i;
+ 
+-	spin_lock_irqsave(&src->lock, flags);
++	write_lock_irqsave(&src->lock, flags);
+ 	dst->htable = src->htable;
+ 	dst->nel = src->nel;
+ 	dst->next_sid = src->next_sid;
+ 	dst->shutdown = 0;
+ 	for (i = 0; i < SIDTAB_CACHE_LEN; i++)
+ 		dst->cache[i] = NULL;
+-	spin_unlock_irqrestore(&src->lock, flags);
++	write_unlock_irqrestore(&src->lock, flags);
+ }
+ 
+ void sidtab_shutdown(struct sidtab *s)
+ {
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&s->lock, flags);
++	write_lock_irqsave(&s->lock, flags);
+ 	s->shutdown = 1;
+-	spin_unlock_irqrestore(&s->lock, flags);
++	write_unlock_irqrestore(&s->lock, flags);
+ }
+diff --git a/security/selinux/ss/sidtab.h b/security/selinux/ss/sidtab.h
+index a1a1d2617b6f..6751f8bcbd66 100644
+--- a/security/selinux/ss/sidtab.h
++++ b/security/selinux/ss/sidtab.h
+@@ -29,7 +29,7 @@ struct sidtab {
+ 	unsigned char shutdown;
+ #define SIDTAB_CACHE_LEN	3
+ 	struct sidtab_node *cache[SIDTAB_CACHE_LEN];
+-	spinlock_t lock;
++	rwlock_t lock;
+ };
+ 
+ int sidtab_init(struct sidtab *s);
+@@ -51,6 +51,7 @@ void sidtab_hash_eval(struct sidtab *h, char *tag);
+ void sidtab_destroy(struct sidtab *s);
+ void sidtab_set(struct sidtab *dst, struct sidtab *src);
+ void sidtab_shutdown(struct sidtab *s);
++int sidtab_clone(struct sidtab *s, struct sidtab *d);
+ 
+ #endif	/* _SS_SIDTAB_H_ */
+ 
+-- 
+2.15.1
