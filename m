@@ -1,161 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751840AbeE3KHA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:07:00 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37470 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750869AbeE3KG6 (ORCPT
+        id S1751993AbeE3KIA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:08:00 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48022 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750710AbeE3KH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:06:58 -0400
-X-Google-Smtp-Source: ADUXVKKhKrzGWAIGF+ivqy/y1Xra1VHbBL+iubA2akU3S6b5KbBXEL5XN3sIL/YBtFRJaMG6yw+YEapxvNwCmdY3qSc=
+        Wed, 30 May 2018 06:07:57 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0BF806021C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v2 5/6] soc: qcom: rpmh powerdomain driver
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: David Collins <collinsd@codeaurora.org>, sboyd@kernel.org,
+        andy.gross@linaro.org, ulf.hansson@linaro.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
+References: <20180525100121.28214-1-rnayak@codeaurora.org>
+ <20180525100121.28214-6-rnayak@codeaurora.org>
+ <215deee5-6472-d587-9a90-f7158162ed82@codeaurora.org>
+ <6f8e5fe2-199d-ba1f-19d7-2faf276075f3@codeaurora.org>
+ <36822404-bdf5-1915-03e7-e5ffcff05c9b@codeaurora.org>
+ <20180530094438.xnyukvhum7tc6roh@vireshk-i7>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <9b147942-8a6a-34c0-ba94-a6935b354b70@codeaurora.org>
+Date: Wed, 30 May 2018 15:37:51 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180530093203.GG30654@e110439-lin>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-3-git-send-email-vincent.guittot@linaro.org>
- <20180525155437.GE30654@e110439-lin> <CAKfTPtCnJKmLajbeuXe71B-g5xC1vV2krrmG1TBB=pEnApR7cQ@mail.gmail.com>
- <20180530093203.GG30654@e110439-lin>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 30 May 2018 12:06:37 +0200
-Message-ID: <CAKfTPtDmBHGWUpWk8SmbY=4HDDjRPCVRQ1dGAX7CK6FRuU_BQQ@mail.gmail.com>
-Subject: Re: [PATCH v5 02/10] sched/rt: add rt_rq utilization tracking
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180530094438.xnyukvhum7tc6roh@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30 May 2018 at 11:32, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> On 29-May 15:29, Vincent Guittot wrote:
->> Hi Patrick,
->> >> +static inline bool rt_rq_has_blocked(struct rq *rq)
->> >> +{
->> >> +     if (rq->avg_rt.util_avg)
->> >
->> > Should use READ_ONCE?
+
+
+On 05/30/2018 03:14 PM, Viresh Kumar wrote:
+> On 30-05-18, 14:25, Rajendra Nayak wrote:
+>> []...
 >>
->> I was expecting that there will be only one read by default but I can
->> add READ_ONCE
->
-> I would say here it's required mainly for "documentation" purposes,
-> since we can use this function from non rq-locked paths, e.g.
->
->    update_sg_lb_stats()
->       update_nohz_stats()
->          update_blocked_averages()
->             rt_rq_has_blocked()
->
-> Thus, AFAIU, we should use READ_ONCE to "flag" that the value can
-> potentially be updated concurrently?
-
-yes
-
->
->> >
->> >> +             return true;
->> >> +
->> >> +     return false;
->> >
->> > What about just:
->> >
->> >        return READ_ONCE(rq->avg_rt.util_avg);
->> >
->> > ?
+>>>>> +Required Properties:
+>>>>> + - compatible: Should be one of the following
+>>>>> +	* qcom,sdm845-rpmhpd: RPMh powerdomain for the sdm845 family of SoC
+>>>>> + - power-domain-cells: number of cells in power domain specifier
+>>>>> +	must be 1
+>>>>> + - operating-points-v2: Phandle to the OPP table for the power-domain.
+>>>>> +	Refer to Documentation/devicetree/bindings/power/power_domain.txt
+>>>>> +	and Documentation/devicetree/bindings/opp/qcom-opp.txt for more details
+>>>>> +
+>>>>> +Example:
+>>>>> +
+>>>>> +	rpmhpd: power-controller {
+>>>>> +		compatible = "qcom,sdm845-rpmhpd";
+>>>>> +		#power-domain-cells = <1>;
+>>>>> +		operating-points-v2 = <&rpmhpd_opp_table>,
+>>>>> +				      <&rpmhpd_opp_table>,
+>>>>> +				      <&rpmhpd_opp_table>,
+>>>>> +				      <&rpmhpd_opp_table>,
+>>>>> +				      <&rpmhpd_opp_table>,
+>>>>> +				      <&rpmhpd_opp_table>,
+>>>>> +				      <&rpmhpd_opp_table>,
+>>>>> +				      <&rpmhpd_opp_table>,
+>>>>> +				      <&rpmhpd_opp_table>;
+>>>>
+>>>> Can this be changed to simply:
+>>>>   operating-points-v2 = <&rpmhpd_opp_table>;
+>>>>
+>>>> The opp binding documentation [1] states that this should be ok:
+>>>>
+>>>>     If only one phandle is available, then the same OPP table will be used
+>>>>     for all power domains provided by the power domain provider.
+>>>
+>>> thanks, I mentioned this to Viresh but didn't realize he fixed it up.
+>>> Will remove the redundant entries.
 >>
->> This function is renamed and extended with others tracking in the
->> following patches so we have to test several values in the function.
->> That's also why there is the if test because additional if test are
->> going to be added
->
-> Right, makes sense.
->
-> [...]
->
->> >> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
->> >> index ef3c4e6..b4148a9 100644
->> >> --- a/kernel/sched/rt.c
->> >> +++ b/kernel/sched/rt.c
->> >> @@ -5,6 +5,8 @@
->> >>   */
->> >>  #include "sched.h"
->> >>
->> >> +#include "pelt.h"
->> >> +
->> >>  int sched_rr_timeslice = RR_TIMESLICE;
->> >>  int sysctl_sched_rr_timeslice = (MSEC_PER_SEC / HZ) * RR_TIMESLICE;
->> >>
->> >> @@ -1572,6 +1574,9 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
->> >>
->> >>       rt_queue_push_tasks(rq);
->> >>
->> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq,
->> >> +             rq->curr->sched_class == &rt_sched_class);
->> >> +
->> >>       return p;
->> >>  }
->> >>
->> >> @@ -1579,6 +1584,8 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
->> >>  {
->> >>       update_curr_rt(rq);
->> >>
->> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
->> >> +
->> >>       /*
->> >>        * The previous task needs to be made eligible for pushing
->> >>        * if it is still active
->> >> @@ -2308,6 +2315,7 @@ static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
->> >>       struct sched_rt_entity *rt_se = &p->rt;
->> >>
->> >>       update_curr_rt(rq);
->> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
->> >
->> > Mmm... not entirely sure... can't we fold
->> >    update_rt_rq_load_avg() into update_curr_rt() ?
->> >
->> > Currently update_curr_rt() is used in:
->> >    dequeue_task_rt
->> >    pick_next_task_rt
->> >    put_prev_task_rt
->> >    task_tick_rt
->> >
->> > while we update_rt_rq_load_avg() only in:
->> >    pick_next_task_rt
->> >    put_prev_task_rt
->> >    task_tick_rt
->> > and
->> >    update_blocked_averages
->> >
->> > Why we don't we need to update at dequeue_task_rt() time ?
+>> Looks like the kernel implementation does not handle this yet, and I get
+>> an error adding the OPP tables for the powerdomains if I just specify
+>> a single OPP table phandle.
 >>
->> We are tracking rt rq and not sched entities so we want to know when
->> sched rt will be the running or not  sched class on the rq. Tracking
->> dequeue_task_rt is useless
->
-> What about (push) migrations?
+>> Viresh, is this expected with the latest patches in linux-next?
+>>
+>> It would be good if I can specify just one phandle instead of coping
+>> the same phandle n times. 
+> 
+> Please try this untested hunk:
 
-it doesn't make any difference. put_prev_task_rt() says that the prev
-task that was running, was a rt task so we can account past time at rt
-running time
-and pick_next_task_rt says that the next one will be a rt task so we
-have to account elapse time either to rt or not rt time according.
+yes, seems to work.
 
-I can probably optimize the pick_next_task_rt by doing the below instead:
-
-if (rq->curr->sched_class == &rt_sched_class)
-       update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
-
-If prev task is a rt  task, put_prev_task_rt has already done the update
-
->
+> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+> index 6d15f05bfc28..7af0ddec936b 100644
+> --- a/drivers/opp/of.c
+> +++ b/drivers/opp/of.c
+> @@ -554,11 +554,24 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_of_add_table);
+>  int dev_pm_opp_of_add_table_indexed(struct device *dev, int index)
+>  {
+>         struct device_node *opp_np;
+> -       int ret;
+> +       int ret, count;
+>  
+> +again:
+>         opp_np = _opp_of_get_opp_desc_node(dev->of_node, index);
+> -       if (!opp_np)
+> +       if (!opp_np) {
+> +               /*
+> +                * If only one phandle is present, then the same OPP table
+> +                * applies for all index requests.
+> +                */
+> +               count = of_count_phandle_with_args(dev->of_node,
+> +                                                  "operating-points-v2", NULL);
+> +               if (count == 1 && index) {
+> +                       index = 0;
+> +                       goto again;
+> +               }
+> +
+>                 return -ENODEV;
+> +       }
+>  
+>         ret = _of_add_opp_table_v2(dev, opp_np);
+>         of_node_put(opp_np);
+> 
 > --
-> #include <best/regards.h>
->
-> Patrick Bellasi
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
