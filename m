@@ -1,86 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752981AbeE3M3t (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:29:49 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34577 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751706AbeE3M3p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:29:45 -0400
-X-Google-Smtp-Source: ADUXVKI0sAlpREKxB7+lSOLI2AJOdmJMEwbyrm3dyEnTksyg2Bfb++qOOuiJOUVcWwfAFovWeBuyag==
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>, Laura Abbott <labbott@redhat.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH] ARM: debug: Add Iproc UART3 debug addresses
-Date: Wed, 30 May 2018 14:29:22 +0200
-Message-Id: <20180530122922.1041-1-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753201AbeE3Maa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:30:30 -0400
+Received: from mga07.intel.com ([134.134.136.100]:12038 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752724AbeE3Ma3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 08:30:29 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,460,1520924400";
+   d="asc'?scan'208";a="43331528"
+From: Felipe Balbi <balbi@kernel.org>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, davem@davemloft.net,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: Re: [PATCH v3 1/3] usb: gadget: ccid: add support for USB CCID Gadget Device
+In-Reply-To: <20180529185021.13738-1-marcus.folkesson@gmail.com>
+References: <20180529185021.13738-1-marcus.folkesson@gmail.com>
+Date: Wed, 30 May 2018 15:28:18 +0300
+Message-ID: <87r2ltcopp.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Clément Peron <clement.peron@devialet.com>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Broadcom Iproc SoCs typically use the UART3 for
-debug/console, provide a known good location for that.
+Marcus Folkesson <marcus.folkesson@gmail.com> writes:
 
-Signed-off-by: Clément Peron <clement.peron@devialet.com>
----
- arch/arm/Kconfig.debug | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+> Chip Card Interface Device (CCID) protocol is a USB protocol that
+> allows a smartcard device to be connected to a computer via a card
+> reader using a standard USB interface, without the need for each manufact=
+urer
+> of smartcards to provide its own reader or protocol.
+>
+> This gadget driver makes Linux show up as a CCID device to the host and l=
+et a
+> userspace daemon act as the smartcard.
+>
+> This is useful when the Linux gadget itself should act as a cryptographic
+> device or forward APDUs to an embedded smartcard device.
+>
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 199ebc1c4538..fa6fa1dae94d 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -207,6 +207,14 @@ choice
- 		depends on ARCH_BCM_HR2
- 		select DEBUG_UART_8250
- 
-+	config DEBUG_BCM_IPROC_UART3
-+		bool "Kernel low-level debugging on BCM IPROC UART3"
-+		depends on ARCH_BCM_CYGNUS
-+		select DEBUG_UART_8250
-+		help
-+		  Say Y here if you want the debug print routines to direct
-+		  their output to the third serial port on these devices.
-+
- 	config DEBUG_BCM_KONA_UART
- 		bool "Kernel low-level debugging messages via BCM KONA UART"
- 		depends on ARCH_BCM_MOBILE
-@@ -1564,6 +1572,7 @@ config DEBUG_UART_PHYS
- 	default 0x20068000 if DEBUG_RK29_UART2 || DEBUG_RK3X_UART3
- 	default 0x20201000 if DEBUG_BCM2835
- 	default 0x3f201000 if DEBUG_BCM2836
-+	default 0x18023000 if DEBUG_BCM_IPROC_UART3
- 	default 0x3e000000 if DEBUG_BCM_KONA_UART
- 	default 0x4000e400 if DEBUG_LL_UART_EFM32
- 	default 0x40028000 if DEBUG_AT91_SAMV7_USART1
-@@ -1730,6 +1739,7 @@ config DEBUG_UART_VIRT
- 	default 0xfe018000 if DEBUG_MMP_UART3
- 	default 0xfe100000 if DEBUG_IMX23_UART || DEBUG_IMX28_UART
- 	default 0xfe230000 if DEBUG_PICOXCELL_UART
-+	default 0xf1023000 if DEBUG_BCM_IPROC_UART3
- 	default 0xfe300000 if DEBUG_BCM_KONA_UART
- 	default 0xfe800000 if ARCH_IOP32X
- 	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
-@@ -1791,7 +1801,7 @@ config DEBUG_UART_8250_WORD
- 		DEBUG_KEYSTONE_UART0 || DEBUG_KEYSTONE_UART1 || \
- 		DEBUG_ALPINE_UART0 || \
- 		DEBUG_DAVINCI_DMx_UART0 || DEBUG_DAVINCI_DA8XX_UART1 || \
--		DEBUG_DAVINCI_DA8XX_UART2 || \
-+		DEBUG_DAVINCI_DA8XX_UART2 || DEBUG_BCM_IPROC_UART3 || \
- 		DEBUG_BCM_KONA_UART || DEBUG_RK32_UART2
- 
- config DEBUG_UART_8250_PALMCHIP
--- 
-2.17.0
+this could be done entirely in userspace with functionfs, why do we need
+this part in the kernel? It does very little.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlsOmOIACgkQzL64meEa
+mQbOzg//Zjt5SPpolplikLJu91nAO8HLYQCcjL+61fYqAp1DfPfZ1TuJ6XXazcks
+9ND9QpHsuTvEhjoyI/1p7tefFdQYcUAh98N2Jflp5biK6MjpzjYCenxpBhvtj8kk
+r/Kr1ecKGk6+22CzcMgHGEWNzz1pNiL5FFXFE2M014RDJ49lOxS8CVydDBUCY161
+6VbM10KMKoJNCzx97QhVamxprysuCDK9HQKvduvcD+x6483SlYcGUvICGhhYBJ12
+i7/Z/6u4jdkpRpYTCZFQ/rKnaYTJUbTTatWiXNiyNgFQeXr1OUlzc8q6iVdbv4vy
+Qsk42U/5Er2sqG05lkk99+p6jr+kw6FnFkD8DU23m10u3h72/vNzyt+TEB9qkXb4
+v3Y4TgezcQd4wezP+ggqt8tkA4sGz+R7QHUrwQ3PvjdsKJqY0IQtJAKMNE02En8F
+yXYSjpu9Jm0j8+drqICEfDggB5iyzTks1BfK5f6WIUSd3rDit1my5LQmUj+bBXA1
+//X4SEpezxgV5STJJHReceVtP5mvjS9mG5AUjhfTu++qRWze7HFReC9aGobXDt0P
+gufwqbq2x5q1bkooWOFJJVjvYBo30sXNP1BJ9KxQgvMEOUhwJM8AQRpE+W3z+nnd
+ABB+Uj1ARbAy/RIRhvTKoqSb61sInG1hOB/vqIHW4jYnrDsj8VA=
+=0rMg
+-----END PGP SIGNATURE-----
+--=-=-=--
