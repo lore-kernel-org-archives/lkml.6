@@ -1,97 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937302AbeE3H46 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:56:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42256 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935776AbeE3H4z (ORCPT
+        id S935907AbeE3H7G (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:59:06 -0400
+Received: from forwardcorp1j.cmail.yandex.net ([5.255.227.105]:54544 "EHLO
+        forwardcorp1j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935164AbeE3H7E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:56:55 -0400
+        Wed, 30 May 2018 03:59:04 -0400
+Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: Re: [PATCH] mm/huge_memory.c: __split_huge_page() use atomic
+ ClearPageDirty()
+To: Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <alpine.LSU.2.11.1805291841070.3197@eggly.anvils>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <6c069202-c963-07a4-fc35-630acb223041@yandex-team.ru>
+Date: Wed, 30 May 2018 10:59:00 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <alpine.LSU.2.11.1805291841070.3197@eggly.anvils>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
-Date: Wed, 30 May 2018 00:56:52 -0700
-From: okaya@codeaurora.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-pci@vger.kernel.org,
-        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Christoffer Dall <cdall@linaro.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-pci-owner@vger.kernel.org
-Subject: Re: [PATCH] PCI: Add pci=safemode option
-In-Reply-To: <20180530074822.GB30177@kroah.com>
-References: <1527650389-31575-1-git-send-email-okaya@codeaurora.org>
- <20180530043103.GA19734@kroah.com>
- <6c317ed8-cca3-8862-5f3b-12cf14e4d53b@codeaurora.org>
- <20180530073735.GA28793@infradead.org>
- <6dfe2db8f974d94c9867f30ec83d9333@codeaurora.org>
- <20180530074822.GB30177@kroah.com>
-Message-ID: <577f01ada5e7f08c79a28d41020fb019@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-30 00:48, Greg Kroah-Hartman wrote:
-> On Wed, May 30, 2018 at 12:44:29AM -0700, okaya@codeaurora.org wrote:
->> On 2018-05-30 00:37, Christoph Hellwig wrote:
->> > On Tue, May 29, 2018 at 09:41:33PM -0700, Sinan Kaya wrote:
->> > > Bjorn and I discussed the need for such a "safe" mode feature when you
->> > > want to bring up PCI for a platform. You want to turn off everything
->> > > as
->> > > a starter and just stick to bare minimum.
->> >
->> > Can we please make it a config option the instead of adding code
->> > to every kernel?  Also maybe the bringup should be in the name
->> > to make this more clear?
->> 
->> One other requirement was to have a runtime option rather than compile 
->> time
->> option.
->> 
->> When someone reported a problem, we wanted to be able to say "use this
->> option and see if system boots" without doing any bisects or 
->> recompilation.
->> 
->> This would be the first step in troubleshooting a system to see if
->> fundamental features are working.
+On 30.05.2018 04:50, Hugh Dickins wrote:
+> Swapping load on huge=always tmpfs (with khugepaged tuned up to be very
+> eager, but I'm not sure that is relevant) soon hung uninterruptibly,
+> waiting for page lock in shmem_getpage_gfp()'s find_lock_entry(), most
+> often when "cp -a" was trying to write to a smallish file.  Debug showed
+> that the page in question was not locked, and page->mapping NULL by now,
+> but page->index consistent with having been in a huge page before.
 > 
-> That makes sense, people can not rebuild their kernels for the most
-> part.  Putting it behind a config option would not make sense as it
-> would always have to be enabled.
+> Reproduced in minutes on a 4.15 kernel, even with 4.17's 605ca5ede764
+> ("mm/huge_memory.c: reorder operations in __split_huge_page_tail()")
+> added in; but took hours to reproduce on a 4.17 kernel (no idea why).
 > 
-
-Here is where the discussion took place. Last 5-10  messages should 
-help.
-
-
-https://bugzilla.kernel.org/show_bug.cgi?id=196197
-
-
->> I don't mind changing the name Bjorn mentioned safe option. I made it
->> safemode. I am looking at Bjorn for suggestions at this moment.
+> The culprit proved to be the __ClearPageDirty() on tails beyond i_size
+> in __split_huge_page(): the non-atomic __bitoperation may have been safe
+> when 4.8's baa355fd3314 ("thp: file pages support for split_huge_page()")
+> introduced it, but liable to erase PageWaiters after 4.10's 62906027091f
+> ("mm: add PageWaiters indicating tasks are waiting for a page bit").
 > 
-> "minimal"?  "basic"?  "crippled"?
-> "my_hardware_is_so_borked_it_needs_this_option"?  :)
+> Fixes: 62906027091f ("mm: add PageWaiters indicating tasks are waiting for a page bit")
+> Signed-off-by: Hugh Dickins <hughd@google.com>
+> ---
 > 
-> Naming is hard...
+> It's not a 4.17-rc regression that this fixes, so no great need to slip
+> this into 4.17 at the last moment - though it makes a good companion to
+> Konstantin's 605ca5ede764. I think they both should go to stable, but
+> since Konstantin's already went into rc1 without that tag, we shall
+> have to recommend Konstantin's to GregKH out-of-band.
+
+Good catch.
+
+This is the same issue, so all 4.10+ needs them both.
+Preserving known regressions in core pieces like lock_page() is a bad idea.
+
 > 
-> greg k-h
+>   mm/huge_memory.c |    2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- 4.17-rc7/mm/huge_memory.c	2018-04-26 10:48:36.019288258 -0700
+> +++ linux/mm/huge_memory.c	2018-05-29 18:14:52.095512715 -0700
+> @@ -2431,7 +2431,7 @@ static void __split_huge_page(struct pag
+>   		__split_huge_page_tail(head, i, lruvec, list);
+>   		/* Some pages can be beyond i_size: drop them from page cache */
+>   		if (head[i].index >= end) {
+> -			__ClearPageDirty(head + i);
+> +			ClearPageDirty(head + i);
+>   			__delete_from_page_cache(head + i, NULL);
+>   			if (IS_ENABLED(CONFIG_SHMEM) && PageSwapBacked(head))
+>   				shmem_uncharge(head->mapping->host, 1);
+> 
