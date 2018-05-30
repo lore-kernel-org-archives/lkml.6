@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753074AbeE3LMa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:12:30 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60753 "EHLO
+        id S1752977AbeE3LNS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:13:18 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60741 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752656AbeE3LHh (ORCPT
+        by vger.kernel.org with ESMTP id S1752641AbeE3LHe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:37 -0400
+        Wed, 30 May 2018 07:07:34 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mark Brown" <broonie@kernel.org>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+CC: akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>,
+        "Zhouyi Zhou" <zhouzhouyi@gmail.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.357371351@decadent.org.uk>
+Message-ID: <lsq.1527677561.674505514@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 049/153] ASoC: au1x: Fix timeout tests in
- au1xac97c_ac97_read()
+Subject: [PATCH 3.2 039/153] ext4: save error to disk in __ext4_grp_locked_error()
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -32,42 +31,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Zhouyi Zhou <zhouzhouyi@gmail.com>
 
-commit 123af9043e93cb6f235207d260d50f832cdb5439 upstream.
+commit 06f29cc81f0350261f59643a505010531130eea0 upstream.
 
-The loop timeout doesn't work because it's a post op and ends with "tmo"
-set to -1.  I changed it from a post-op to a pre-op and I changed the
-initial the starting value from 5 to 6 so we still iterate 5 times.  I
-left the other as it was because it's a large number.
+In the function __ext4_grp_locked_error(), __save_error_info()
+is called to save error info in super block block, but does not sync
+that information to disk to info the subsequence fsck after reboot.
 
-Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This patch writes the error information to disk.  After this patch,
+I think there is no obvious EXT4 error handle branches which leads to
+"Remounting filesystem read-only" will leave the disk partition miss
+the subsequence fsck.
+
+Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/soc/au1x/ac97c.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/ext4/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/soc/au1x/ac97c.c
-+++ b/sound/soc/au1x/ac97c.c
-@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_rea
- 	do {
- 		mutex_lock(&ctx->lock);
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -700,6 +700,7 @@ __acquires(bitlock)
+ 	}
  
--		tmo = 5;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		tmo = 6;
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			udelay(21);	/* wait an ac97 frame time */
- 		if (!tmo) {
- 			pr_debug("ac97rd timeout #1\n");
-@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_rea
- 		 * poll, Forrest, poll...
- 		 */
- 		tmo = 0x10000;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			asm volatile ("nop");
- 		data = RD(ctx, AC97_CMDRESP);
- 
+ 	ext4_unlock_group(sb, grp);
++	ext4_commit_super(sb, 1);
+ 	ext4_handle_error(sb);
+ 	/*
+ 	 * We only get here in the ERRORS_RO case; relocking the group
