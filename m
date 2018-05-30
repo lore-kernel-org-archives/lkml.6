@@ -1,90 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755425AbeE2Xpn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 19:45:43 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:44298 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755284AbeE2Xpi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 19:45:38 -0400
-X-Google-Smtp-Source: ADUXVKKXxjZqpyiL6JS/pWwBiM1KBXPQntKOArZfRZpCvVbA6BFTR00mnD+w65zMe9qwVDq9JcKxvw==
-Date: Tue, 29 May 2018 16:45:34 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Ben Chan <benchan@chromium.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>, dtor@chromium.org,
-        drinkcat@chromium.org
-Subject: Re: [PATCH] HID: multitouch: fix calculation of last slot field in
- multi-touch reports
-Message-ID: <20180529234534.GG167092@dtor-ws>
-References: <20180529225655.214380-1-benchan@chromium.org>
+        id S965878AbeE3ADY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 20:03:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51766 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965083AbeE3ADX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 20:03:23 -0400
+Date: Wed, 30 May 2018 02:03:21 +0200
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Jessica Yu <jeyu@kernel.org>, Tso Ted <tytso@mit.edu>,
+        Coly Li <colyli@suse.de>, Ciaran Farrell <ciaran.farrell@suse.com>,
+        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+        linux-bcache@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Jonas Oberg <jonas@fsfe.org>
+Subject: Re: PostgreSQL licensed code on Linux
+Message-ID: <20180530000321.GP4511@wotan.suse.de>
+References: <CAB=NE6XGCM0nZqvq74JPnSKgvL37Nkwvr3H3cAQ=ooTYJt7Rdg@mail.gmail.com>
+ <20180529192643.GA3487@kmo-pixel>
+ <20180529205143.GB7381@thunk.org>
+ <20180529210025.GB3487@kmo-pixel>
+ <20180529225928.GI31712@garbanzo.do-not-panic.com>
+ <CAB=NE6XBPjcGCbK2L_ELjMVVSO34BeJQv8cSiC6M_r7MDVFLvQ@mail.gmail.com>
+ <CAHp75Vefx7zwrn4CwhDYZrMSLdaaqta1uJHJrqD7c40MQ_N0ZA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529225655.214380-1-benchan@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAHp75Vefx7zwrn4CwhDYZrMSLdaaqta1uJHJrqD7c40MQ_N0ZA@mail.gmail.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 03:56:55PM -0700, Ben Chan wrote:
-> According to [1] and also seemingly agreed by [2], the Scan Time usage
-> (0x0D 0x56) is a report level usage, not a contact level usage.
+On Wed, May 30, 2018 at 02:22:14AM +0300, Andy Shevchenko wrote:
+> On Wed, May 30, 2018 at 2:12 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+> > It would seem I did follow up with a v3 patch and Rusty noted that although
+> > I may be right, its hard to care [0]. But of relevance here is again if one
+> > of the MODULE_LICENSE() dual tags should be used or the GPL tag. I'll
+> > continue to side recommending with the MODULE_LICENSE("GPL") tag even on
+> > files with permissive licenses, and even if it we haven't clarified this in
+> > documentation as I think scaling these tags further is just silly.
+> >
+> > [0] http://lkml.kernel.org/r/87bom0hf0f.fsf@rustcorp.com.au
 > 
-> However, the hid-multitouch driver currently includes HID_DG_SCANTIME
-> when calculating `td->last_slot_field', which may lead to
-> mt_complete_slot() being prematurely called in certain cases (e.g. when
-> each touch input report includes more than one contact and the Scan Time
-> usage appears before any contact logical collection).
+> https://www.spinics.net/lists/linux-bcache/msg06048.html
 > 
-> This patch fixes the issue by skipping mt_store_field() on
-> HID_DG_SCANTIME, similar to how HID_DG_CONTACTCOUNT and
-> HID_DG_CONTACTMAX are handled.
-> 
-> [1] https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/windows-precision-touchpad-required-hid-top-level-collections#windows-precision-touchpad-input-reports
-> [2] https://patchwork.kernel.org/patch/1742181/
-> 
-> Fixes: 29cc309d8bf19 ("HID: hid-multitouch: forward MSC_TIMESTAMP")
-> Signed-off-by: Ben Chan <benchan@chromium.org>
+> https://www.spinics.net/lists/linux-bcache/msg06058.html
 
-This looks reasonable to me.
+For those that are not developers:
 
-Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+The proposed changes referenced in the above URLs take old portions PostgreSQL
+C code which were previously on a larger C file and move them to a new module
+which has the PostgreSQL header. Modules need to have a MODULE_LICENSE() tag,
+and if one is not used the kernel assumes the module is proprietary. The above
+code lacks a MODULE_LICENSE() tag as such currently the driver is proprietary.
+Clearly that needs to be fixed before upstreaming.
 
-> ---
->  drivers/hid/hid-multitouch.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> index dad2fbb0e3f8..161551aab496 100644
-> --- a/drivers/hid/hid-multitouch.c
-> +++ b/drivers/hid/hid-multitouch.c
-> @@ -620,13 +620,16 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
->  			hid_map_usage(hi, usage, bit, max,
->  				EV_MSC, MSC_TIMESTAMP);
->  			input_set_capability(hi->input, EV_MSC, MSC_TIMESTAMP);
-> -			mt_store_field(usage, td, hi);
->  			/* Ignore if indexes are out of bounds. */
->  			if (field->index >= field->report->maxfield ||
->  			    usage->usage_index >= field->report_count)
->  				return 1;
->  			td->scantime_index = field->index;
->  			td->scantime_val_index = usage->usage_index;
-> +			/*
-> +			 * We don't set td->last_slot_field as scan time is
-> +			 * global to the report.
-> +			 */
->  			return 1;
->  		case HID_DG_CONTACTCOUNT:
->  			/* Ignore if indexes are out of bounds. */
-> -- 
-> 2.17.0.921.gf22659ad46-goog
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
--- 
-Dmitry
+  Luis
