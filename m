@@ -1,92 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753111AbeE3LaS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:30:18 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55716 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753537AbeE3L3Y (ORCPT
+        id S1753480AbeE3L3O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:29:14 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60912 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751572AbeE3LHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:29:24 -0400
-Date: Wed, 30 May 2018 14:29:04 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Thibaut Robert <thibaut.robert@gmail.com>
-Cc: Aditya Shankar <aditya.shankar@microchip.com>,
-        Ganesh Krishna <ganesh.krishna@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] staging: wilc1000: Use common structs to parse ip
- packets
-Message-ID: <20180530112904.x4vcpkdmqhpc7xll@mwanda>
-References: <20180529190839.12818-1-thibaut.robert@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Wed, 30 May 2018 07:07:04 -0400
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20180529190839.12818-1-thibaut.robert@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=628
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1805300132
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Petr Vandrovec" <petr@vandrovec.name>,
+        "Paolo Abeni" <pabeni@redhat.com>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.981632021@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.2 097/153] dn_getsockoptdecnet: move nf_{get/set}sockopt
+ outside sock lock
+In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 09:08:39PM +0200, Thibaut Robert wrote:
->  static inline void tcp_process(struct net_device *dev, struct txq_entry_t *tqe)
->  {
-> -	u8 *eth_hdr_ptr;
-> +	const struct ethhdr *eth_hdr_ptr = (const struct ethhdr *)tqe->buffer;
-> +
->  	u8 *buffer = tqe->buffer;
+3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
 
-No blank line, please.
+------------------
 
-> -	unsigned short h_proto;
->  	int i;
->  	unsigned long flags;
->  	struct wilc_vif *vif;
-> @@ -197,37 +199,25 @@ static inline void tcp_process(struct net_device *dev, struct txq_entry_t *tqe)
->  
->  	spin_lock_irqsave(&wilc->txq_spinlock, flags);
->  
-> -	eth_hdr_ptr = &buffer[0];
-> -	h_proto = ntohs(*((unsigned short *)&eth_hdr_ptr[12]));
-> -	if (h_proto == ETH_P_IP) {
-> -		u8 *ip_hdr_ptr;
-> -		u8 protocol;
-> -
-> -		ip_hdr_ptr = &buffer[ETHERNET_HDR_LEN];
-> -		protocol = ip_hdr_ptr[9];
-> +	if (eth_hdr_ptr->h_proto == htons(ETH_P_IP)) {
-> +		const struct iphdr *ip_hdr_ptr = (const struct iphdr *)
-> +		  (buffer + ETH_HLEN);
+From: Paolo Abeni <pabeni@redhat.com>
 
-If you declared buffer as a void pointer you could remove this cast.
+commit dfec091439bb2acf763497cfc58f2bdfc67c56b7 upstream.
 
-		const struct iphdr *ip_hdr_ptr = buf + ETH_HLEN;
+After commit 3f34cfae1238 ("netfilter: on sockopt() acquire sock lock
+only in the required scope"), the caller of nf_{get/set}sockopt() must
+not hold any lock, but, in such changeset, I forgot to cope with DECnet.
 
+This commit addresses the issue moving the nf call outside the lock,
+in the dn_{get,set}sockopt() with the same schema currently used by
+ipv4 and ipv6. Also moves the unhandled sockopts of the end of the main
+switch statements, to improve code readability.
 
->  
-> -		if (protocol == 0x06) {
-> -			u8 *tcp_hdr_ptr;
-> +		if (ip_hdr_ptr->protocol == IPPROTO_TCP) {
-> +			const struct tcphdr *tcp_hdr_ptr;
->  			u32 IHL, total_length, data_offset;
->  
-> -			tcp_hdr_ptr = &ip_hdr_ptr[IP_HDR_LEN];
-> -			IHL = (ip_hdr_ptr[0] & 0xf) << 2;
-> -			total_length = ((u32)ip_hdr_ptr[2] << 8) +
-> -					(u32)ip_hdr_ptr[3];
-> -			data_offset = ((u32)tcp_hdr_ptr[12] & 0xf0) >> 2;
-> +			IHL = ip_hdr_ptr->ihl << 2;
-> +			tcp_hdr_ptr = (const struct tcphdr *)
-> +			  ((u8 *)ip_hdr_ptr + IHL);
+Reported-by: Petr Vandrovec <petr@vandrovec.name>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=198791#c2
+Fixes: 3f34cfae1238 ("netfilter: on sockopt() acquire sock lock only in the required scope")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/decnet/af_decnet.c | 62 ++++++++++++++++++++++--------------------
+ 1 file changed, 33 insertions(+), 29 deletions(-)
 
-This alignment is a bit unfortunate...  Perhaps?
-
-			tcp_hdr_ptr = buf + ETH_HLEN + IHL;
-
-regards,
-dan carpenter
+--- a/net/decnet/af_decnet.c
++++ b/net/decnet/af_decnet.c
+@@ -1338,6 +1338,12 @@ static int dn_setsockopt(struct socket *
+ 	lock_sock(sk);
+ 	err = __dn_setsockopt(sock, level, optname, optval, optlen, 0);
+ 	release_sock(sk);
++#ifdef CONFIG_NETFILTER
++	/* we need to exclude all possible ENOPROTOOPTs except default case */
++	if (err == -ENOPROTOOPT && optname != DSO_LINKINFO &&
++	    optname != DSO_STREAM && optname != DSO_SEQPACKET)
++		err = nf_setsockopt(sk, PF_DECnet, optname, optval, optlen);
++#endif
+ 
+ 	return err;
+ }
+@@ -1445,15 +1451,6 @@ static int __dn_setsockopt(struct socket
+ 		dn_nsp_send_disc(sk, 0x38, 0, sk->sk_allocation);
+ 		break;
+ 
+-	default:
+-#ifdef CONFIG_NETFILTER
+-		return nf_setsockopt(sk, PF_DECnet, optname, optval, optlen);
+-#endif
+-	case DSO_LINKINFO:
+-	case DSO_STREAM:
+-	case DSO_SEQPACKET:
+-		return -ENOPROTOOPT;
+-
+ 	case DSO_MAXWINDOW:
+ 		if (optlen != sizeof(unsigned long))
+ 			return -EINVAL;
+@@ -1501,6 +1498,12 @@ static int __dn_setsockopt(struct socket
+ 			return -EINVAL;
+ 		scp->info_loc = u.info;
+ 		break;
++
++	case DSO_LINKINFO:
++	case DSO_STREAM:
++	case DSO_SEQPACKET:
++	default:
++		return -ENOPROTOOPT;
+ 	}
+ 
+ 	return 0;
+@@ -1514,6 +1517,20 @@ static int dn_getsockopt(struct socket *
+ 	lock_sock(sk);
+ 	err = __dn_getsockopt(sock, level, optname, optval, optlen, 0);
+ 	release_sock(sk);
++#ifdef CONFIG_NETFILTER
++	if (err == -ENOPROTOOPT && optname != DSO_STREAM &&
++	    optname != DSO_SEQPACKET && optname != DSO_CONACCEPT &&
++	    optname != DSO_CONREJECT) {
++		int len;
++
++		if (get_user(len, optlen))
++			return -EFAULT;
++
++		err = nf_getsockopt(sk, PF_DECnet, optname, optval, &len);
++		if (err >= 0)
++			err = put_user(len, optlen);
++	}
++#endif
+ 
+ 	return err;
+ }
+@@ -1579,26 +1596,6 @@ static int __dn_getsockopt(struct socket
+ 		r_data = &link;
+ 		break;
+ 
+-	default:
+-#ifdef CONFIG_NETFILTER
+-	{
+-		int ret, len;
+-
+-		if (get_user(len, optlen))
+-			return -EFAULT;
+-
+-		ret = nf_getsockopt(sk, PF_DECnet, optname, optval, &len);
+-		if (ret >= 0)
+-			ret = put_user(len, optlen);
+-		return ret;
+-	}
+-#endif
+-	case DSO_STREAM:
+-	case DSO_SEQPACKET:
+-	case DSO_CONACCEPT:
+-	case DSO_CONREJECT:
+-		return -ENOPROTOOPT;
+-
+ 	case DSO_MAXWINDOW:
+ 		if (r_len > sizeof(unsigned long))
+ 			r_len = sizeof(unsigned long);
+@@ -1630,6 +1627,13 @@ static int __dn_getsockopt(struct socket
+ 			r_len = sizeof(unsigned char);
+ 		r_data = &scp->info_rem;
+ 		break;
++
++	case DSO_STREAM:
++	case DSO_SEQPACKET:
++	case DSO_CONACCEPT:
++	case DSO_CONREJECT:
++	default:
++		return -ENOPROTOOPT;
+ 	}
+ 
+ 	if (r_data) {
