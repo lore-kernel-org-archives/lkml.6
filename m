@@ -1,78 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753914AbeE3Qyn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:54:43 -0400
-Received: from mga07.intel.com ([134.134.136.100]:24566 "EHLO mga07.intel.com"
+        id S1753670AbeE3Q4j (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:56:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753670AbeE3Qyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:54:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,461,1520924400";
-   d="scan'208";a="45449353"
-From: "Duyck, Alexander H" <alexander.h.duyck@intel.com>
-To: "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        "mst@redhat.com" <mst@redhat.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "Daly, Dan" <dan.daly@intel.com>, "Bie, Tiwei" <tiwei.bie@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Liang, Cunming" <cunming.liang@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>
-Subject: Re: [PATCH] virtio_pci: support enabling VFs
-Thread-Topic: [PATCH] virtio_pci: support enabling VFs
-Thread-Index: AQHT9/P5uaO7GXR/D0ickSAfuvKJDaRI6igAgAAGIoCAAALrgA==
-Date: Wed, 30 May 2018 16:54:35 +0000
-Message-ID: <1527699273.29907.2.camel@intel.com>
-References: <20180530085521.26583-1-tiwei.bie@intel.com>
-         <20180530192010-mutt-send-email-mst@kernel.org>
-         <414C18B1-30FA-4AC0-B47D-F0FBF9832737@intel.com>
-In-Reply-To: <414C18B1-30FA-4AC0-B47D-F0FBF9832737@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [134.134.177.79]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EE63E1D03CDD854B8989945BAE9C2E54@intel.com>
+        id S1751623AbeE3Q4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:56:37 -0400
+Date: Wed, 30 May 2018 11:56:36 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pci/aer: Get rid of aer_recover_work_func() forward
+ declaration
+Message-ID: <20180530165636.GM39853@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180511163923.22116-1-bp@alien8.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180511163923.22116-1-bp@alien8.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4UGspnX002814
 
-On Wed, 2018-05-30 at 09:44 -0700, Rustad, Mark D wrote:
-> On May 30, 2018, at 9:22 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+On Fri, May 11, 2018 at 06:39:23PM +0200, Borislav Petkov wrote:
+> From: Borislav Petkov <bp@suse.de>
 > 
-> > > +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int  
-> > > num_vfs)
-> > > +{
-> > > +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> > > +	struct virtio_device *vdev = &vp_dev->vdev;
-> > > +	int (*sriov_configure)(struct pci_dev *pci_dev, int num_vfs);
-> > > +
-> > > +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
-> > > +		return -EBUSY;
-> > > +
-> > > +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
-> > > +		return -EINVAL;
-> > > +
-> > > +	sriov_configure = pci_sriov_configure_simple;
-> > > +	if (sriov_configure == NULL)
-> > > +		return -ENOENT;
-> > 
-> > BTW what is all this trickery in aid of?
+> Just move the actual function up so that it is visible to its user
+> aer_recover_queue().
 > 
-> When SR-IOV support is not compiled into the kernel,  
-> pci_sriov_configure_simple is #defined as NULL. This allows it to compile  
-> in that case, even though there is utterly no way for it to be called in  
-> that case. It is an alternative to #ifs in the code.
+> No functional changes.
+> 
+> Signed-off-by: Borislav Petkov <bp@suse.de>
 
-Why even have the call though? I would wrap all of this in an #ifdef
-and strip it out since you couldn't support SR-IOV if it isn't present
-in the kernel anyway.
+Applied to pci/aer for v4.18, thanks!
+
+> ---
+>  drivers/pci/pcie/aer/aerdrv_core.c | 45 +++++++++++++++---------------
+>  1 file changed, 22 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+> index 0ea5acc40323..a9e575189571 100644
+> --- a/drivers/pci/pcie/aer/aerdrv_core.c
+> +++ b/drivers/pci/pcie/aer/aerdrv_core.c
+> @@ -567,8 +567,6 @@ static void handle_error_source(struct pcie_device *aerdev,
+>  }
+>  
+>  #ifdef CONFIG_ACPI_APEI_PCIEAER
+> -static void aer_recover_work_func(struct work_struct *work);
+> -
+>  #define AER_RECOVER_RING_ORDER		4
+>  #define AER_RECOVER_RING_SIZE		(1 << AER_RECOVER_RING_ORDER)
+>  
+> @@ -582,6 +580,28 @@ struct aer_recover_entry {
+>  
+>  static DEFINE_KFIFO(aer_recover_ring, struct aer_recover_entry,
+>  		    AER_RECOVER_RING_SIZE);
+> +
+> +static void aer_recover_work_func(struct work_struct *work)
+> +{
+> +	struct aer_recover_entry entry;
+> +	struct pci_dev *pdev;
+> +
+> +	while (kfifo_get(&aer_recover_ring, &entry)) {
+> +		pdev = pci_get_domain_bus_and_slot(entry.domain, entry.bus,
+> +						   entry.devfn);
+> +		if (!pdev) {
+> +			pr_err("AER recover: Can not find pci_dev for %04x:%02x:%02x:%x\n",
+> +			       entry.domain, entry.bus,
+> +			       PCI_SLOT(entry.devfn), PCI_FUNC(entry.devfn));
+> +			continue;
+> +		}
+> +		cper_print_aer(pdev, entry.severity, entry.regs);
+> +		if (entry.severity != AER_CORRECTABLE)
+> +			do_recovery(pdev, entry.severity);
+> +		pci_dev_put(pdev);
+> +	}
+> +}
+> +
+>  /*
+>   * Mutual exclusion for writers of aer_recover_ring, reader side don't
+>   * need lock, because there is only one reader and lock is not needed
+> @@ -611,27 +631,6 @@ void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
+>  	spin_unlock_irqrestore(&aer_recover_ring_lock, flags);
+>  }
+>  EXPORT_SYMBOL_GPL(aer_recover_queue);
+> -
+> -static void aer_recover_work_func(struct work_struct *work)
+> -{
+> -	struct aer_recover_entry entry;
+> -	struct pci_dev *pdev;
+> -
+> -	while (kfifo_get(&aer_recover_ring, &entry)) {
+> -		pdev = pci_get_domain_bus_and_slot(entry.domain, entry.bus,
+> -						   entry.devfn);
+> -		if (!pdev) {
+> -			pr_err("AER recover: Can not find pci_dev for %04x:%02x:%02x:%x\n",
+> -			       entry.domain, entry.bus,
+> -			       PCI_SLOT(entry.devfn), PCI_FUNC(entry.devfn));
+> -			continue;
+> -		}
+> -		cper_print_aer(pdev, entry.severity, entry.regs);
+> -		if (entry.severity != AER_CORRECTABLE)
+> -			do_recovery(pdev, entry.severity);
+> -		pci_dev_put(pdev);
+> -	}
+> -}
+>  #endif
+>  
+>  /**
+> -- 
+> 2.17.0.391.g1f1cddd558b5
+> 
