@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752271AbeE3Kfg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:35:36 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:37839 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751586AbeE3KeN (ORCPT
+        id S1752364AbeE3Kfm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:35:42 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35549 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751492AbeE3KeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:34:13 -0400
-X-Google-Smtp-Source: ADUXVKIeuMy4Pib4E95rRagmNad9CFWgosOupH2xW1zpiX++32xWlk3I994XcyhvpWHJMuxf0ASVCQ==
+        Wed, 30 May 2018 06:34:12 -0400
+X-Google-Smtp-Source: ADUXVKLxQEVPk0+HN/k8S6qSH2B5niHodErtp/fV/INYbyUlk89+3SSs5BUlZFlCYTzV60MsmSGWvA==
 From: Johan Hovold <johan@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
@@ -17,9 +17,9 @@ Cc: Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
         Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 8/8] gnss: add device type support
-Date: Wed, 30 May 2018 12:32:42 +0200
-Message-Id: <20180530103242.20773-9-johan@kernel.org>
+Subject: [PATCH v2 5/8] gnss: add driver for u-blox receivers
+Date: Wed, 30 May 2018 12:32:39 +0200
+Message-Id: <20180530103242.20773-6-johan@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180530103242.20773-1-johan@kernel.org>
 References: <20180530103242.20773-1-johan@kernel.org>
@@ -27,180 +27,215 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a "type" device attribute and a "GNSS_TYPE" uevent variable which
-can be used to determine the type of a GNSS device. The currently
-identified types reflect the protocol(s) supported by a device:
+Add driver for serial-connected u-blox GNSS receivers.
 
-	"NMEA"	NMEA 0183
-	"SiRF"	SiRF Binary
-	"UBX"	UBX
+Note that the driver uses the generic GNSS serial implementation and
+therefore essentially only manages power abstracted into three power
+states: ACTIVE, STANDBY, and OFF.
 
-Note that both SiRF and UBX type devices typically support a subset of
-NMEA 0183 with vendor extensions (e.g. to allow switching to the vendor
-protocol).
+For u-blox receivers with a main supply and no enable-gpios, this simply
+means that the main supply is disabled in STANDBY and OFF (the optional
+backup supply is kept enabled while the driver is bound).
+
+Note that timepulse-support is not yet implemented.
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-class-gnss | 15 +++++++
- MAINTAINERS                                |  1 +
- drivers/gnss/core.c                        | 49 ++++++++++++++++++++++
- drivers/gnss/sirf.c                        |  1 +
- drivers/gnss/ubx.c                         |  2 +
- include/linux/gnss.h                       |  9 ++++
- 6 files changed, 77 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-gnss
+ drivers/gnss/Kconfig  |  13 ++++
+ drivers/gnss/Makefile |   3 +
+ drivers/gnss/ubx.c    | 151 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 167 insertions(+)
+ create mode 100644 drivers/gnss/ubx.c
 
-diff --git a/Documentation/ABI/testing/sysfs-class-gnss b/Documentation/ABI/testing/sysfs-class-gnss
-new file mode 100644
-index 000000000000..3bcdf8e2496a
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-gnss
-@@ -0,0 +1,15 @@
-+What:		/sys/class/gnss/gnssN/type
-+Date:		May 2018
-+KernelVersion:	4.18
-+Contact:	Johan Hovold <johan@kernel.org>
-+Description:
-+		The GNSS device type. The currently identified types reflect
-+		the protocol(s) supported by the device:
-+
-+			"NMEA"		NMEA 0183
-+			"SiRF"  	SiRF Binary
-+			"UBX"   	UBX
-+
-+		Note that also non-"NMEA" type devices typically support a
-+		subset of NMEA 0183 with vendor extensions (e.g. to allow
-+		switching to a vendor protocol).
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fa219e80a1f8..e666bc28a102 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5965,6 +5965,7 @@ F:	include/uapi/linux/gigaset_dev.h
- GNSS SUBSYSTEM
- M:	Johan Hovold <johan@kernel.org>
- S:	Maintained
-+F:	Documentation/ABI/testing/sysfs-class-gnss
- F:	Documentation/devicetree/bindings/gnss/
- F:	drivers/gnss/
- F:	include/linux/gnss.h
-diff --git a/drivers/gnss/core.c b/drivers/gnss/core.c
-index 307894ca2725..f30ef8338b3a 100644
---- a/drivers/gnss/core.c
-+++ b/drivers/gnss/core.c
-@@ -330,6 +330,52 @@ int gnss_insert_raw(struct gnss_device *gdev, const unsigned char *buf,
- }
- EXPORT_SYMBOL_GPL(gnss_insert_raw);
+diff --git a/drivers/gnss/Kconfig b/drivers/gnss/Kconfig
+index f8ee54f99a8d..784b8c0367d9 100644
+--- a/drivers/gnss/Kconfig
++++ b/drivers/gnss/Kconfig
+@@ -15,4 +15,17 @@ if GNSS
+ config GNSS_SERIAL
+ 	tristate
  
-+static const char * const gnss_type_names[GNSS_TYPE_COUNT] = {
-+	[GNSS_TYPE_NMEA]	= "NMEA",
-+	[GNSS_TYPE_SIRF]	= "SiRF",
-+	[GNSS_TYPE_UBX]		= "UBX",
++config GNSS_UBX_SERIAL
++	tristate "u-blox GNSS receiver support"
++	depends on SERIAL_DEV_BUS
++	select GNSS_SERIAL
++	---help---
++	  Say Y here if you have a u-blox GNSS receiver which uses a serial
++	  interface.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gnss-ubx.
++
++	  If unsure, say N.
++
+ endif # GNSS
+diff --git a/drivers/gnss/Makefile b/drivers/gnss/Makefile
+index 171aba71684d..d9295b20b7bc 100644
+--- a/drivers/gnss/Makefile
++++ b/drivers/gnss/Makefile
+@@ -8,3 +8,6 @@ gnss-y := core.o
+ 
+ obj-$(CONFIG_GNSS_SERIAL)		+= gnss-serial.o
+ gnss-serial-y := serial.o
++
++obj-$(CONFIG_GNSS_UBX_SERIAL)		+= gnss-ubx.o
++gnss-ubx-y := ubx.o
+diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
+new file mode 100644
+index 000000000000..ecddfb362a6f
+--- /dev/null
++++ b/drivers/gnss/ubx.c
+@@ -0,0 +1,151 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * u-blox GNSS receiver driver
++ *
++ * Copyright (C) 2018 Johan Hovold <johan@kernel.org>
++ */
++
++#include <linux/errno.h>
++#include <linux/gnss.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/regulator/consumer.h>
++#include <linux/serdev.h>
++
++#include "serial.h"
++
++struct ubx_data {
++	struct regulator *v_bckp;
++	struct regulator *vcc;
 +};
 +
-+static const char *gnss_type_name(struct gnss_device *gdev)
++static int ubx_set_active(struct gnss_serial *gserial)
 +{
-+	const char *name = NULL;
-+
-+	if (gdev->type < GNSS_TYPE_COUNT)
-+		name = gnss_type_names[gdev->type];
-+
-+	if (!name)
-+		dev_WARN(&gdev->dev, "type name not defined\n");
-+
-+	return name;
-+}
-+
-+static ssize_t type_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct gnss_device *gdev = to_gnss_device(dev);
-+
-+	return sprintf(buf, "%s\n", gnss_type_name(gdev));
-+}
-+static DEVICE_ATTR_RO(type);
-+
-+static struct attribute *gnss_attrs[] = {
-+	&dev_attr_type.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(gnss);
-+
-+static int gnss_uevent(struct device *dev, struct kobj_uevent_env *env)
-+{
-+	struct gnss_device *gdev = to_gnss_device(dev);
++	struct ubx_data *data = gnss_serial_get_drvdata(gserial);
 +	int ret;
 +
-+	ret = add_uevent_var(env, "GNSS_TYPE=%s", gnss_type_name(gdev));
++	ret = regulator_enable(data->vcc);
 +	if (ret)
 +		return ret;
 +
 +	return 0;
 +}
 +
- static int __init gnss_module_init(void)
- {
- 	int ret;
-@@ -347,6 +393,9 @@ static int __init gnss_module_init(void)
- 		goto err_unregister_chrdev;
- 	}
- 
-+	gnss_class->dev_groups = gnss_groups;
-+	gnss_class->dev_uevent = gnss_uevent;
++static int ubx_set_standby(struct gnss_serial *gserial)
++{
++	struct ubx_data *data = gnss_serial_get_drvdata(gserial);
++	int ret;
 +
- 	pr_info("GNSS driver registered with major %d\n", MAJOR(gnss_first));
- 
- 	return 0;
-diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
-index 5fb0f730db48..79cb98950013 100644
---- a/drivers/gnss/sirf.c
-+++ b/drivers/gnss/sirf.c
-@@ -267,6 +267,7 @@ static int sirf_probe(struct serdev_device *serdev)
- 	if (!gdev)
- 		return -ENOMEM;
- 
-+	gdev->type = GNSS_TYPE_SIRF;
- 	gdev->ops = &sirf_gnss_ops;
- 	gnss_set_drvdata(gdev, data);
- 
-diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
-index ecddfb362a6f..902b6854b7db 100644
---- a/drivers/gnss/ubx.c
-+++ b/drivers/gnss/ubx.c
-@@ -77,6 +77,8 @@ static int ubx_probe(struct serdev_device *serdev)
- 
- 	gserial->ops = &ubx_gserial_ops;
- 
-+	gserial->gdev->type = GNSS_TYPE_UBX;
++	ret = regulator_disable(data->vcc);
++	if (ret)
++		return ret;
 +
- 	data = gnss_serial_get_drvdata(gserial);
- 
- 	data->vcc = devm_regulator_get(&serdev->dev, "vcc");
-diff --git a/include/linux/gnss.h b/include/linux/gnss.h
-index e26aeac1e0e2..43546977098c 100644
---- a/include/linux/gnss.h
-+++ b/include/linux/gnss.h
-@@ -18,6 +18,14 @@
- 
- struct gnss_device;
- 
-+enum gnss_type {
-+	GNSS_TYPE_NMEA = 0,
-+	GNSS_TYPE_SIRF,
-+	GNSS_TYPE_UBX,
++	return 0;
++}
 +
-+	GNSS_TYPE_COUNT
++static int ubx_set_power(struct gnss_serial *gserial,
++				enum gnss_serial_pm_state state)
++{
++	switch (state) {
++	case GNSS_SERIAL_ACTIVE:
++		return ubx_set_active(gserial);
++	case GNSS_SERIAL_OFF:
++	case GNSS_SERIAL_STANDBY:
++		return ubx_set_standby(gserial);
++	}
++
++	return -EINVAL;
++}
++
++const struct gnss_serial_ops ubx_gserial_ops = {
++	.set_power = ubx_set_power,
 +};
 +
- struct gnss_operations {
- 	int (*open)(struct gnss_device *gdev);
- 	void (*close)(struct gnss_device *gdev);
-@@ -30,6 +38,7 @@ struct gnss_device {
- 	struct cdev cdev;
- 	int id;
- 
-+	enum gnss_type type;
- 	unsigned long flags;
- 
- 	struct rw_semaphore rwsem;
++static int ubx_probe(struct serdev_device *serdev)
++{
++	struct gnss_serial *gserial;
++	struct ubx_data *data;
++	int ret;
++
++	gserial = gnss_serial_allocate(serdev, sizeof(*data));
++	if (IS_ERR(gserial)) {
++		ret = PTR_ERR(gserial);
++		return ret;
++	}
++
++	gserial->ops = &ubx_gserial_ops;
++
++	data = gnss_serial_get_drvdata(gserial);
++
++	data->vcc = devm_regulator_get(&serdev->dev, "vcc");
++	if (IS_ERR(data->vcc)) {
++		ret = PTR_ERR(data->vcc);
++		goto err_free_gserial;
++	}
++
++	data->v_bckp = devm_regulator_get_optional(&serdev->dev, "v-bckp");
++	if (IS_ERR(data->v_bckp)) {
++		ret = PTR_ERR(data->v_bckp);
++		if (ret == -ENODEV)
++			data->v_bckp = NULL;
++		else
++			goto err_free_gserial;
++	}
++
++	if (data->v_bckp) {
++		ret = regulator_enable(data->v_bckp);
++		if (ret)
++			goto err_free_gserial;
++	}
++
++	ret = gnss_serial_register(gserial);
++	if (ret)
++		goto err_disable_v_bckp;
++
++	return 0;
++
++err_disable_v_bckp:
++	if (data->v_bckp)
++		regulator_disable(data->v_bckp);
++err_free_gserial:
++	gnss_serial_free(gserial);
++
++	return ret;
++}
++
++static void ubx_remove(struct serdev_device *serdev)
++{
++	struct gnss_serial *gserial = serdev_device_get_drvdata(serdev);
++	struct ubx_data *data = gnss_serial_get_drvdata(gserial);
++
++	gnss_serial_deregister(gserial);
++	if (data->v_bckp)
++		regulator_disable(data->v_bckp);
++	gnss_serial_free(gserial);
++};
++
++#ifdef CONFIG_OF
++static const struct of_device_id ubx_of_match[] = {
++	{ .compatible = "u-blox,neo-8" },
++	{ .compatible = "u-blox,neo-m8" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, ubx_of_match);
++#endif
++
++static struct serdev_device_driver ubx_driver = {
++	.driver	= {
++		.name		= "gnss-ubx",
++		.of_match_table	= of_match_ptr(ubx_of_match),
++		.pm		= &gnss_serial_pm_ops,
++	},
++	.probe	= ubx_probe,
++	.remove	= ubx_remove,
++};
++module_serdev_device_driver(ubx_driver);
++
++MODULE_AUTHOR("Johan Hovold <johan@kernel.org>");
++MODULE_DESCRIPTION("u-blox GNSS receiver driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.17.0
