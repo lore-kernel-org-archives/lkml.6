@@ -1,81 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968778AbeE3Jhb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:37:31 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53292 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964974AbeE3JhG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:37:06 -0400
-Date: Wed, 30 May 2018 10:37:01 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator
- bindings
-Message-ID: <20180530093701.GD6920@sirena.org.uk>
-References: <fb390ccb-927a-8449-05c3-8dcac964bfae@codeaurora.org>
- <CAD=FV=XARtQNo5Cyg78XuT26JUFgn=7BjWRnXPjP566=a-sF1w@mail.gmail.com>
- <a106c337-0713-e5d6-cb40-13e05f4d361d@codeaurora.org>
- <CAD=FV=W=BquL5ojORz4HNP889s=-uNJ-QEzUfAxwXj2Oa3cGew@mail.gmail.com>
- <20180523082908.GB4828@sirena.org.uk>
- <CAD=FV=XfPkpGD32MfTfcw02wQ+QetpUhY=P299uhpX6pY_iEvg@mail.gmail.com>
- <20180523154057.GL4828@sirena.org.uk>
- <CAD=FV=XWVOdJ8rWJnBTwoNqnYqYRYjknkZtUvT86+skbrTdwig@mail.gmail.com>
- <20180523155617.GN4828@sirena.org.uk>
- <CAD=FV=W4aDxWbcaJ9GZ1KkvyiTPAPR-oUoTFzJfS+LftU5ZP=Q@mail.gmail.com>
+        id S968866AbeE3Jih (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:38:37 -0400
+Received: from elvis.franken.de ([193.175.24.41]:48839 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965196AbeE3Jic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 05:38:32 -0400
+Date: Wed, 30 May 2018 11:01:51 +0200
+From: Tom Bogendoerfer <tsbogend@alpha.franken.de>
+To: Finn Thain <fthain@telegraphics.com.au>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net/sonic: Use dma_mapping_error()
+Message-ID: <20180530090151.GA2004@alpha.franken.de>
+References: <cba8175deaf9d631ae000088aea1ccf1c444909b.1527649393.git.fthain@telegraphics.com.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xB0nW4MQa6jZONgY"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=W4aDxWbcaJ9GZ1KkvyiTPAPR-oUoTFzJfS+LftU5ZP=Q@mail.gmail.com>
-X-Cookie: Don't get mad, get interest.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <cba8175deaf9d631ae000088aea1ccf1c444909b.1527649393.git.fthain@telegraphics.com.au>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 30, 2018 at 01:03:51PM +1000, Finn Thain wrote:
+> With CONFIG_DMA_API_DEBUG=y, calling sonic_open() produces the
+> message, "DMA-API: device driver failed to check map error".
+> Add the missing dma_mapping_error() call.
+> 
+> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> ---
+>  drivers/net/ethernet/natsemi/sonic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
+> index 7ed08486ae23..c805dcbebd02 100644
+> --- a/drivers/net/ethernet/natsemi/sonic.c
+> +++ b/drivers/net/ethernet/natsemi/sonic.c
+> @@ -84,7 +84,7 @@ static int sonic_open(struct net_device *dev)
+>  	for (i = 0; i < SONIC_NUM_RRS; i++) {
+>  		dma_addr_t laddr = dma_map_single(lp->device, skb_put(lp->rx_skb[i], SONIC_RBSIZE),
+>  		                                  SONIC_RBSIZE, DMA_FROM_DEVICE);
+> -		if (!laddr) {
+> +		if (dma_mapping_error(lp->device, laddr)) {
+>  			while(i > 0) { /* free any that were mapped successfully */
+>  				i--;
+>  				dma_unmap_single(lp->device, lp->rx_laddr[i], SONIC_RBSIZE, DMA_FROM_DEVICE);
+> -- 
+> 2.16.1
 
---xB0nW4MQa6jZONgY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+looks good
 
-On Tue, May 29, 2018 at 10:30:33PM -0700, Doug Anderson wrote:
-> On Wed, May 23, 2018 at 8:56 AM, Mark Brown <broonie@kernel.org> wrote:
+Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 
-> > Yes, that's definitely not what's expected but it's unfortunately what
-> > the firmware chose to implement so we may well be stuck with it
-> > unfortunately.
+Thomas.
 
-> We're not really stuck with it if we do what I was suggesting.  I was
-> suggesting that every time we disable the regulator in Linux we have
-> Linux vote for the lowest voltage it's comfortable with.  Linux keeps
-> track of the true voltage that the driver wants and will always change
-> its vote back to that before enabling.  Thus (assuming Linux is OK
-> with 1.2 V - 1.4 V for a rail):
-
-That's pretty much what it should do anyway with normally designed
-hardware.
-
---xB0nW4MQa6jZONgY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOcL0ACgkQJNaLcl1U
-h9DM5wf/ZIB/GXA/GKedSaSDuEH7anyaK0FDs0T5+c5BeuhSOKMMO56wPSCmNKOS
-wiMVH2Oe+SjF07QaUMXYAnBKhSJ95P2c+U+MbzexI9MVcaV2DCyqE2PYlALX4Gsg
-1p+F/ESu6fLIbNMWhUQ9jzqIsoNL5fAWX/B5sJeSb1hXPTo/QXvKGMz9SnO0LoLM
-btZh5hlny9lzNGPxEz+8IrcDi/y1JoAjtFUICAfiWlxlk45g88rJ43GciuBb4yYT
-HN4DTFugMryqY97VeQ28RXO5gnvAq5PKjLGfCraDRzy9irgTqyBiuF5mzdCV6vm9
-qMtsByT1THQmE6RX/ab4hL3xbchr/w==
-=hbBI
------END PGP SIGNATURE-----
-
---xB0nW4MQa6jZONgY--
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
