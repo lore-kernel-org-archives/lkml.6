@@ -1,152 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935522AbeE3GF4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 02:05:56 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50628 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933788AbeE3GFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 02:05:55 -0400
-Date: Wed, 30 May 2018 07:05:47 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: mingo@kernel.org, tglx@linutronix.de, stable@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/spectre_v1: Disable compiler optimizations over
- array_index_mask_nospec()
-Message-ID: <20180530060546.jnjoltsturoduohh@salmiak>
-References: <152726886796.10827.14538693708255560877.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S935698AbeE3GHP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 02:07:15 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36140 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934498AbeE3GHM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 02:07:12 -0400
+X-Google-Smtp-Source: ADUXVKLWOxAtmj0s2MfkhK00SXr6eUgcCFjYRWN05YNob024+G5uTGqC7yRsmGRHKM81VAzQjmXZwA7me7Cw8RZaZVY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152726886796.10827.14538693708255560877.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180530055815.GB6463@gmail.com>
+References: <20180529133622.26982-1-nixiaoming@huawei.com> <20180530055815.GB6463@gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Wed, 30 May 2018 08:07:10 +0200
+Message-ID: <CAKv+Gu-FvWoDbMV2veh8BzW7ihbvaw-cd+rK5x_TLq0UC99FNg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] x86:add missing CONFIG_STRICT_KERNEL_RWX for mark_rodata_ro
+To: Ingo Molnar <mingo@kernel.org>
+Cc: nixiaoming <nixiaoming@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        zhang.jia@linux.alibaba.com,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+On 30 May 2018 at 07:58, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> * nixiaoming <nixiaoming@huawei.com> wrote:
+>
+>> mark_rodata_ro is only called by the function mark_readonly
+>> when CONFIG_STRICT_KERNEL_RWX=y
+>>
+>> if CONFIG_STRICT_KERNEL_RWX is not set
+>> a compile warning may be triggered: unused function
+>>
+>> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
+>> ---
+>>  arch/x86/mm/init_32.c | 2 ++
+>>  arch/x86/mm/init_64.c | 2 ++
+>>  2 files changed, 4 insertions(+)
+>>
+>> diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+>> index c893c6a..121c567 100644
+>> --- a/arch/x86/mm/init_32.c
+>> +++ b/arch/x86/mm/init_32.c
+>> @@ -920,6 +920,7 @@ static void mark_nxdata_nx(void)
+>>       set_pages_nx(virt_to_page(start), size >> PAGE_SHIFT);
+>>  }
+>>
+>> +#ifdef CONFIG_STRICT_KERNEL_RWX
+>>  void mark_rodata_ro(void)
+>>  {
+>>       unsigned long start = PFN_ALIGN(_text);
+>> @@ -957,3 +958,4 @@ void mark_rodata_ro(void)
+>>       if (__supported_pte_mask & _PAGE_NX)
+>>               debug_checkwx();
+>>  }
+>> +#endif /*end of CONFIG_STRICT_KERNEL_RWX*/
+>> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+>> index 0a40060..1b7a1a7 100644
+>> --- a/arch/x86/mm/init_64.c
+>> +++ b/arch/x86/mm/init_64.c
+>> @@ -1245,6 +1245,7 @@ void set_kernel_text_ro(void)
+>>       set_memory_ro(start, (end - start) >> PAGE_SHIFT);
+>>  }
+>>
+>> +#ifdef CONFIG_STRICT_KERNEL_RWX
+>>  void mark_rodata_ro(void)
+>>  {
+>>       unsigned long start = PFN_ALIGN(_text);
+>> @@ -1298,6 +1299,7 @@ void mark_rodata_ro(void)
+>>        */
+>>       pti_clone_kernel_text();
+>>  }
+>> +#endif
+>
+> NAK, this is very ugly and the changelog doesn't appear to be true: the build
+> warning does not trigger in the default build, correct?
+>
 
-On Fri, May 25, 2018 at 10:21:08AM -0700, Dan Williams wrote:
-> Mark notes that gcc optimization passes have the potential to elide
-> necessary invocations of this instruction sequence, so include an
-> optimization barrier.
-> 
->     > I think that either way, we have a potential problem if the compiler
->     > generates a branch dependent on the result of validate_index_nospec().
->     >
->     > In that case, we could end up with codegen approximating:
->     >
->     >       bool safe = false;
->     >
->     >       if (idx < bound) {
->     >               idx = array_index_nospec(idx, bound);
->     >               safe = true;
->     >       }
->     >
->     >       // this branch can be mispredicted
->     >       if (safe) {
->     >               foo = array[idx];
->     >       }
->     >
->     > ... and thus we lose the nospec protection.
-> 
->     I see GCC do this at -O0, but so far I haven't tricked it into doing
->     this at -O1 or above.
-> 
->     Regardless, I worry this is fragile -- GCC *can* generate code as per
->     the above, even if it's unlikely to.
-
-I certainly believe that we want the volatile.
-
-However, just to be clear, the barrier doesn't prevent the above example, since
-we don't currently have a mechanism to prevent the compiler splitting basic
-blocks and inserting additional branches between those blocks.
-
-I've written up a rationale for the volatile below, if you want something for
-the commit message. There's a minor comment on the patch after that.
-
-----
-The volatile will inhibit *some* cases where the compiler could lift the
-array_index_nospec() call out of a branch, e.g. where there are multiple
-invocations of array_index_nospec() with the same arguments:
-
-	if (idx < foo) {
-		idx1 = array_idx_nospec(idx, foo)
-		do_something(idx1);
-	}
-
-	< some other code >
-
-	if (idx < foo) {
-		idx2 = array_idx_nospec(idx, foo);
-		do_something_else(idx2);
-	}
-
-... since the compiler can determine that the two invocations yield the same
-result, and reuse the first result (likely the same register as idx was in
-originally) for the second branch, effectively re-writing the above as:
-
-
-	if (idx < foo) {
-		idx = array_idx_nospec(idx, foo);
-		do_something(idx);
-	}
-
-	< some other code >
-
-	if (idx < foo) {
-		do_something_else(idx);
-	}
-	
-... if we don't take the first branch, then speculatively take the second, we
-lose the nospec protection.
-
-There's more info on volatile asm in the GCC docs:
-
-https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Volatile
-----
-
-> Cc: <stable@vger.kernel.org>
-> Fixes: babdde2698d4 ("x86: Implement array_index_mask_nospec")
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Reported-by: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  arch/x86/include/asm/barrier.h |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/barrier.h b/arch/x86/include/asm/barrier.h
-> index 042b5e892ed1..41f7435c84a7 100644
-> --- a/arch/x86/include/asm/barrier.h
-> +++ b/arch/x86/include/asm/barrier.h
-> @@ -38,10 +38,11 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
->  {
->  	unsigned long mask;
->  
-> -	asm ("cmp %1,%2; sbb %0,%0;"
-> +	asm volatile ("cmp %1,%2; sbb %0,%0;"
->  			:"=r" (mask)
->  			:"g"(size),"r" (index)
->  			:"cc");
-> +	barrier();
->  	return mask;
->  }
-
-What does the barrier() prevent?
-
-I don't think that inhibits the insertion of branches, and AFAIK the volatile
-is sufficient to prevent elision of identical array_idx_nospec() calls.
-
-I don't have an objection to it, regardless.
-
-So long as the example is updated in the commit message, feel free to add:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks,
-Mark.
+I don't see how the build warning could trigger at all, given that
+mark_rodata_ro() has external linkage.
