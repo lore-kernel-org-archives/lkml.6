@@ -1,23 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755437AbeE3B7q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 21:59:46 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:37559 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbeE3B7m (ORCPT
+        id S968593AbeE3CBh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 22:01:37 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:46651 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751826AbeE3CBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 21:59:42 -0400
-X-Google-Smtp-Source: ADUXVKKUtsdOAUQZo4Ac9zZv9CpJng83/Eb5EMs6U5YOFnut4nQhRIeFsdRsIjp6cK1tKTXvBGbyIbyq7Np2B7mhe90=
+        Tue, 29 May 2018 22:01:36 -0400
+X-Google-Smtp-Source: ADUXVKLFAmAcUg9NIHaQB8FU5508/Axn8Z4iIDG/dhO6JIadiS+YlJADPl5GM4BKBi4kF+/3iDawkFL8X0Ega12KMLs=
 MIME-Version: 1.0
-In-Reply-To: <1527574913-10561-1-git-send-email-nick.desaulniers@gmail.com>
-References: <1527574913-10561-1-git-send-email-nick.desaulniers@gmail.com>
+In-Reply-To: <CAK8P3a2=THd7YL6sB4=xXZShD=wOjk_taM1L-E5VPH77TiQK0w@mail.gmail.com>
+References: <1527573427-16569-1-git-send-email-nick.desaulniers@gmail.com> <CAK8P3a2=THd7YL6sB4=xXZShD=wOjk_taM1L-E5VPH77TiQK0w@mail.gmail.com>
 From: Nick Desaulniers <nick.desaulniers@gmail.com>
-Date: Tue, 29 May 2018 18:59:41 -0700
-Message-ID: <CAH7mPvh7rQG5TPeWUXNEkF=WuPNroAozHrWAvZfLGPw0dSmBBQ@mail.gmail.com>
-Subject: Re: [PATCH] ext4: prefer strlcpy to strncpy
-To: "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca
-Cc: Nick Desaulniers <nick.desaulniers@gmail.com>,
-        linux-ext4@vger.kernel.org,
+Date: Tue, 29 May 2018 19:01:35 -0700
+Message-ID: <CAH7mPvhQo5S5EbgvkteoL1xftLWjWBqkfoanG0dTLzaa=FtTgw@mail.gmail.com>
+Subject: Re: [PATCH] kdb: prefer strlcpy to strncpy
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        kgdb-bugreport@lists.sourceforge.net,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         ebiggers@google.com
 Content-Type: text/plain; charset="UTF-8"
@@ -25,36 +29,73 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 11:21 PM, Nick Desaulniers
-<nick.desaulniers@gmail.com> wrote:
-> Fixes a stringop-truncation warning from gcc-8.
+On Tue, May 29, 2018 at 12:57 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tue, May 29, 2018 at 7:57 AM, Nick Desaulniers
+> <nick.desaulniers@gmail.com> wrote:
+>> Fixes stringop-truncation and stringop-overflow warnings from gcc-8.
 >
-> Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-> ---
->  fs/ext4/super.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> That patch description should really explain whether gcc is right or not. What's
+> the worst thing that could happen here?
 >
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index eb104e8..d47c85f 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -323,11 +323,11 @@ static void __save_error_info(struct super_block *sb, const char *func,
->                 return;
->         es->s_state |= cpu_to_le16(EXT4_ERROR_FS);
->         es->s_last_error_time = cpu_to_le32(get_seconds());
-> -       strncpy(es->s_last_error_func, func, sizeof(es->s_last_error_func));
-> +       strlcpy(es->s_last_error_func, func, sizeof(es->s_last_error_func));
->         es->s_last_error_line = cpu_to_le32(line);
->         if (!es->s_first_error_time) {
->                 es->s_first_error_time = es->s_last_error_time;
-> -               strncpy(es->s_first_error_func, func,
-> +               strlcpy(es->s_first_error_func, func,
->                         sizeof(es->s_first_error_func));
->                 es->s_first_error_line = cpu_to_le32(line);
->                 es->s_first_error_ino = es->s_last_error_ino;
-> --
-> 2.7.4
+> I would also recommend citing the exact warning you got.
 >
+>> diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
+>> index ed5d349..b5dfff1 100644
+>> --- a/kernel/debug/kdb/kdb_io.c
+>> +++ b/kernel/debug/kdb/kdb_io.c
+>> @@ -443,7 +443,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
+>>  char *kdb_getstr(char *buffer, size_t bufsize, const char *prompt)
+>>  {
+>>         if (prompt && kdb_prompt_str != prompt)
+>> -               strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
+>> +               strlcpy(kdb_prompt_str, prompt, CMD_BUFLEN);
+>>         kdb_printf(kdb_prompt_str);
+>>         kdb_nextline = 1;       /* Prompt and input resets line number */
+>>         return kdb_read(buffer, bufsize);
+>> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+>> index e405677..c30a0d8 100644
+>> --- a/kernel/debug/kdb/kdb_main.c
+>> +++ b/kernel/debug/kdb/kdb_main.c
+>> @@ -1103,12 +1103,12 @@ static int handle_ctrl_cmd(char *cmd)
+>>         case CTRL_P:
+>>                 if (cmdptr != cmd_tail)
+>>                         cmdptr = (cmdptr-1) % KDB_CMD_HISTORY_COUNT;
+>> -               strncpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+>> +               strlcpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+>>                 return 1;
+>>         case CTRL_N:
+>>                 if (cmdptr != cmd_head)
+>>                         cmdptr = (cmdptr+1) % KDB_CMD_HISTORY_COUNT;
+>> -               strncpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+>> +               strlcpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+>>                 return 1;
+>>         }
+>>         return 0;
+>
+> Those three all look good.
+>
+>> diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
+>> index 990b3cc..dcfbf8f 100644
+>> --- a/kernel/debug/kdb/kdb_support.c
+>> +++ b/kernel/debug/kdb/kdb_support.c
+>> @@ -236,7 +236,7 @@ int kallsyms_symbol_next(char *prefix_name, int flag)
+>>
+>>         while ((name = kdb_walk_kallsyms(&pos))) {
+>>                 if (strncmp(name, prefix_name, prefix_len) == 0) {
+>> -                       strncpy(prefix_name, name, strlen(name)+1);
+>> +                       strlcpy(prefix_name, name, prefix_len);
+>>                         return 1;
+>>                 }
+>
+> I don't know what this does, but you are changing the behavior: the previous
+> 'strlen(name)+1' argument was the size of the source string (which makes
+> the strncpy() behave the same as a plain strcpy()), the new one means
+> we only copy at most as many bytes as the previous length of the destination
+> string.
+>
+> Is that intended? If yes, better explain it in the patch description.
+>
+>         Arnd
 
-Eric points out this will leave the rest of dest uninitialized if size
-is less than length of src.
+Eric points out that this will leak kernel memory if size is less than
+sizeof src.
