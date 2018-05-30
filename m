@@ -1,79 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752736AbeE3M3q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:29:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54416 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750790AbeE3M3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:29:44 -0400
-Date: Wed, 30 May 2018 13:29:40 +0100
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, bhelgaas@google.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        linux-pci@vger.kernel.org, dan.daly@intel.com, mark.d.rustad@intel.com,
-        alexander.h.duyck@intel.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com
-Subject: Re: [virtio-dev] [PATCH] virtio_pci: support enabling VFs
-Message-ID: <20180530122940.GI14623@stefanha-x1.localdomain>
-References: <20180530085521.26583-1-tiwei.bie@intel.com>
+        id S1752981AbeE3M3t (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:29:49 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34577 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751706AbeE3M3p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 08:29:45 -0400
+X-Google-Smtp-Source: ADUXVKI0sAlpREKxB7+lSOLI2AJOdmJMEwbyrm3dyEnTksyg2Bfb++qOOuiJOUVcWwfAFovWeBuyag==
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>, Laura Abbott <labbott@redhat.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH] ARM: debug: Add Iproc UART3 debug addresses
+Date: Wed, 30 May 2018 14:29:22 +0200
+Message-Id: <20180530122922.1041-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cf0hFtnykp6aONGL"
-Content-Disposition: inline
-In-Reply-To: <20180530085521.26583-1-tiwei.bie@intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Clément Peron <clement.peron@devialet.com>
 
---cf0hFtnykp6aONGL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Broadcom Iproc SoCs typically use the UART3 for
+debug/console, provide a known good location for that.
 
-On Wed, May 30, 2018 at 04:55:21PM +0800, Tiwei Bie wrote:
-> There is a new feature bit allocated in virtio spec to
-> support SR-IOV (Single Root I/O Virtualization):
->=20
-> https://github.com/oasis-tcs/virtio-spec/issues/11
->=20
-> This patch enables the support for this feature bit in
-> virtio driver.
->=20
-> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> ---
-> This patch depends on below proposal:
-> https://lists.oasis-open.org/archives/virtio-dev/201805/msg00154.html
->=20
-> This patch depends on below patch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/commit/?h=
-=3Dpci/virtualization&id=3D8effc395c2097e258fcedfc02ed4a66d45fb4238
->=20
->  drivers/virtio/virtio_pci_common.c | 20 ++++++++++++++++++++
->  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
->  include/uapi/linux/virtio_config.h |  7 ++++++-
->  3 files changed, 40 insertions(+), 1 deletion(-)
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+---
+ arch/arm/Kconfig.debug | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Looks good and matches the virtio spec change, but I'm not familiar with
-PCI SR-IOV details, so not a full Reviewed-by.
-
-Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---cf0hFtnykp6aONGL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAEBAgAGBQJbDpk0AAoJEJykq7OBq3PI/a8IAMXdX7W1thOJsCpPYJN/TuyS
-wPDyYhx5+Xs35iJreLG2AIQ73SnLOgfdz/OGzHhpe+yAbH3P+JyWjmAPCXXVHDwu
-S01KRyn8xp60ZYqGhAxbCnmynOLGZS69h5PhnQgiQmr85+B/7O2k+6M6RHTKGE0k
-HwcB8kIid3ixIxjMlH9MiC8GKL5H/VWQ/nCwMTl1YRRvzb2e/9vB+JdyJo/+S/Ni
-/YAyP2hYSkbxRaKJM/GPuDkWt5oDsnfGFWyxlihwccTlI7e3eA2fIDxLz+9bIHO6
-NzhcNg/4WC28wenhr+F+jeP8NKtIKnwh+vDs1GSKXa94mj/nvHF3z7Ypcya8PdQ=
-=E2BM
------END PGP SIGNATURE-----
-
---cf0hFtnykp6aONGL--
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 199ebc1c4538..fa6fa1dae94d 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -207,6 +207,14 @@ choice
+ 		depends on ARCH_BCM_HR2
+ 		select DEBUG_UART_8250
+ 
++	config DEBUG_BCM_IPROC_UART3
++		bool "Kernel low-level debugging on BCM IPROC UART3"
++		depends on ARCH_BCM_CYGNUS
++		select DEBUG_UART_8250
++		help
++		  Say Y here if you want the debug print routines to direct
++		  their output to the third serial port on these devices.
++
+ 	config DEBUG_BCM_KONA_UART
+ 		bool "Kernel low-level debugging messages via BCM KONA UART"
+ 		depends on ARCH_BCM_MOBILE
+@@ -1564,6 +1572,7 @@ config DEBUG_UART_PHYS
+ 	default 0x20068000 if DEBUG_RK29_UART2 || DEBUG_RK3X_UART3
+ 	default 0x20201000 if DEBUG_BCM2835
+ 	default 0x3f201000 if DEBUG_BCM2836
++	default 0x18023000 if DEBUG_BCM_IPROC_UART3
+ 	default 0x3e000000 if DEBUG_BCM_KONA_UART
+ 	default 0x4000e400 if DEBUG_LL_UART_EFM32
+ 	default 0x40028000 if DEBUG_AT91_SAMV7_USART1
+@@ -1730,6 +1739,7 @@ config DEBUG_UART_VIRT
+ 	default 0xfe018000 if DEBUG_MMP_UART3
+ 	default 0xfe100000 if DEBUG_IMX23_UART || DEBUG_IMX28_UART
+ 	default 0xfe230000 if DEBUG_PICOXCELL_UART
++	default 0xf1023000 if DEBUG_BCM_IPROC_UART3
+ 	default 0xfe300000 if DEBUG_BCM_KONA_UART
+ 	default 0xfe800000 if ARCH_IOP32X
+ 	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
+@@ -1791,7 +1801,7 @@ config DEBUG_UART_8250_WORD
+ 		DEBUG_KEYSTONE_UART0 || DEBUG_KEYSTONE_UART1 || \
+ 		DEBUG_ALPINE_UART0 || \
+ 		DEBUG_DAVINCI_DMx_UART0 || DEBUG_DAVINCI_DA8XX_UART1 || \
+-		DEBUG_DAVINCI_DA8XX_UART2 || \
++		DEBUG_DAVINCI_DA8XX_UART2 || DEBUG_BCM_IPROC_UART3 || \
+ 		DEBUG_BCM_KONA_UART || DEBUG_RK32_UART2
+ 
+ config DEBUG_UART_8250_PALMCHIP
+-- 
+2.17.0
