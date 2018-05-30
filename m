@@ -1,94 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932502AbeE3Vd0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:33:26 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:37135 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932222AbeE3VdX (ORCPT
+        id S932507AbeE3Ve3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:34:29 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:53765 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932222AbeE3Ve0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:33:23 -0400
-X-Google-Smtp-Source: ADUXVKLOsHQM3BEPFocIBQky2+RlSS7X6aZAnNaOiHj6Mpy93jojabx8PIFBn/0ll9oku3TPHDIa7/vrhZN9HbIz09Q=
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jrUwXFrF7aB-bKqfZ=17T5ie27KEO0JYWD=ETAqOqA4g@mail.gmail.com>
-References: <20180505075854.192237-1-ksspiers@google.com> <CAPcyv4i__AQmCxM1rVBrLqXreMxQ5u9uRHRyJ=XZjDELxxJTzw@mail.gmail.com>
- <CAPcyv4jrUwXFrF7aB-bKqfZ=17T5ie27KEO0JYWD=ETAqOqA4g@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 30 May 2018 14:33:20 -0700
-X-Google-Sender-Auth: ZBnD7fllhQwYIutR626GCBVugsQ
-Message-ID: <CAGXu5jL5hzArDhKJzG+jd7wQVJfXGPT1tUys-FzNOS6MTE-jFA@mail.gmail.com>
-Subject: Re: [PATCH v2] async_pq: Remove VLA usage
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Kyle Spiers <ksspiers@google.com>, David Miller <davem@davemloft.net>,
-        ray.jui@broadcom.com, linux-crypto <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-raid <linux-raid@vger.kernel.org>, vkoul@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 30 May 2018 17:34:26 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: tegra: select USB_COMMON
+Date: Wed, 30 May 2018 23:33:50 +0200
+Message-Id: <20180530213406.618544-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:119IMb4qLp4j3KVQNMwvpOLU2KgQaFGCO8x+SsiPG3mDu0heo/0
+ VdPxu9s4HNUZfb6FZPmEbMtcIYu6hhIJXFe/CbezV4GiJ0SYbww2+1GlJtLadCz9VTj3Hom
+ UUwtJIMIcY8VO5QGoXQM/dKtAcdnuRmUXRq9IKzbO584AliasuwACFDshA0nDTkBpO+VuLd
+ kphOtnTc2p9cEAV0BKrSw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:hQLYyeoqy7Y=:lkTlnrh1rLuFWG2tNukPBE
+ LLNOv6HeQegzeC9R42OHD2mbTNuen9KWrJtIyLesRSOKmat6485/2j/LTN73f68gImHLn6Soc
+ K3zpXuHGmuk0DBOl9Is7p8BJLVRwVIswIzXZiKQZwSmVWP1AlucIb3J4+8Mg1h7HrRHaWG73y
+ dxM6a8rRdIHzPkSKCykNXbQIrDSSLei7WE/fjWFyWZ2IKvSeQGYtyoG+tmOmPgF0w1/Q4+vKi
+ UmbaWBz93teSP///Dq2hnMP5ovzRJ3gcIe0YKuk5dylTnWWzxvg+UH5ZmSIqAu5kmbL4lLfMP
+ J77n7Jx09ikpkgh+EZrBWdA/F+5M/TEI/h2lYgFj8AS2+aWbbG7Ch+2JwiTFQzlRQ8qTeDtU8
+ geJnp4VaTECULDklgMhlZaic0+Wmcuua33DSLsRsbNHS5PgwB0RYXo2Rv+jsQQiMwyd/fbwY0
+ DXQZDVzZVQanKSrXIBCDAjf/gDD1dtHhvLz6gbwTnbTt392gl5C3D8ffiWjj9s5az84dYR7Ec
+ LP1vGDxogVZUbOefw4PgvYoTAlfvvnkkqq0sPobjzc1ccBMz8bk+6eAy77FVOPq5CUD7d7452
+ E4grnlvqS+6SadfoXTXfipu1rAQK30JuHocd2G08d1AvB4W+B61rzyJPNuxA4izagzog7701b
+ fy1IF/5o13hBVp9xH2D9dIhFQTwJB4xHLrFwfTUdzP6uJV6gtT2m/O/+XnQPTB3RA0xM=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 3:40 PM, Dan Williams <dan.j.williams@intel.com> wrote:
-> [ add Vinod's korg address ]
->
-> On Tue, May 29, 2018 at 3:37 PM, Dan Williams <dan.j.williams@intel.com> wrote:
->> [ adding linux-raid ]
->>
->> Apologies for the delay, the recent ping from Kees made me take a closer look.
->>
->> On Sat, May 5, 2018 at 12:58 AM, Kyle Spiers <ksspiers@google.com> wrote:
->>> In the quest to remove VLAs from the kernel[1], this moves the
->>> allocation of coefs and blocks from the stack to being kmalloc()ed.
->>>
->>> [1] https://lkml.org/lkml/2018/3/7/621
->>>
->>> Signed-off-by: Kyle Spiers <ksspiers@google.com>
->>> ---
->>> Forgot to add slab.h
->>> ---
->>>  crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
->>>  crypto/async_tx/raid6test.c |  9 ++++++++-
->>>  2 files changed, 22 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
->>> index 56bd612927ab..af1912313a23 100644
->>> --- a/crypto/async_tx/async_pq.c
->>> +++ b/crypto/async_tx/async_pq.c
->>> @@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
->>>             (src_cnt <= dma_maxpq(device, 0) ||
->>>              dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
->>>             is_dma_pq_aligned(device, offset, 0, len)) {
->>> -               struct dma_async_tx_descriptor *tx;
->>> +               struct dma_async_tx_descriptor *tx = NULL;
->>>                 enum dma_ctrl_flags dma_flags = 0;
->>> -               unsigned char coefs[src_cnt];
->>> +               unsigned char *coefs;
->> At a minimum this needs to be GFP_NOIO since raid may be in the
->> page-reclaim path.
->>
->> However, I think it may be better to allocate this with the rest of
->> the stripe resources and pass it in as a scratch buffer. See the usage
->> / implementation of scribble_alloc() in drivers/md/raid5.c.
+A built-in PHY driver cannot link against modular USB core code:
 
-Given this:
+drivers/usb/phy/phy-tegra-usb.o: In function `tegra_usb_phy_probe':
+phy-tegra-usb.c:(.text+0x6bc): undefined reference to `usb_get_dr_mode'
 
-        int src_cnt = disks - 2;
-...
-        BUG_ON(disks > 255 || ...)
+This uses a 'select' statement in Kconfig like we have for other such
+PHY drivers.
 
-what about just making something like:
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/usb/phy/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-#define MAX_DISKS 255
-...
-        int src_cnt = disks - 2;
-...
-        BUG_ON(disks > MAX_DISKS || ...)
-...
-                 unsigned char coefs[MAX_DISKS];
-
-?
-
--Kees
-
+diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
+index b9b0a44be679..d7312eed6088 100644
+--- a/drivers/usb/phy/Kconfig
++++ b/drivers/usb/phy/Kconfig
+@@ -162,6 +162,7 @@ config USB_MXS_PHY
+ config USB_TEGRA_PHY
+ 	tristate "NVIDIA Tegra USB PHY Driver"
+ 	depends on ARCH_TEGRA
++	select USB_COMMON
+ 	select USB_PHY
+ 	select USB_ULPI
+ 	help
 -- 
-Kees Cook
-Pixel Security
+2.9.0
