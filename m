@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753160AbeE3LLE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:11:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60800 "EHLO
+        id S1753152AbeE3LLA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:11:00 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60788 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752756AbeE3LHs (ORCPT
+        by vger.kernel.org with ESMTP id S1752731AbeE3LHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:48 -0400
+        Wed, 30 May 2018 07:07:46 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
+CC: akpm@linux-foundation.org, "Alex Deucher" <alexander.deucher@amd.com>,
+        "Felix Kuehling" <Felix.Kuehling@amd.com>,
+        "Christian =?UTF-8?Q?K=C3=B6nig?=" <christian.koenig@amd.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.957553376@decadent.org.uk>
+Message-ID: <lsq.1527677561.717443662@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 059/153] scsi: fas216: fix sense buffer initialization
+Subject: [PATCH 3.2 054/153] drm/ttm: Don't add swapped BOs to swap-LRU list
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -31,38 +32,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Felix Kuehling <Felix.Kuehling@amd.com>
 
-commit 96d5eaa9bb74d299508d811d865c2c41b38b0301 upstream.
+commit fd5002d6a3c602664b07668a24df4ef7a43bf078 upstream.
 
-While testing with the ARM specific memset() macro removed, I ran into a
-compiler warning that shows an old bug:
+A BO that's already swapped would be added back to the swap-LRU list
+for example if its validation failed under high memory pressure. This
+could later lead to swapping it out again and leaking previous swap
+storage.
 
-drivers/scsi/arm/fas216.c: In function 'fas216_rq_sns_done':
-drivers/scsi/arm/fas216.c:2014:40: error: argument to 'sizeof' in 'memset' call is the same expression as the destination; did you mean to provide an explicit length? [-Werror=sizeof-pointer-memaccess]
+This commit adds a condition to prevent that from happening.
 
-It turns out that the definition of the scsi_cmd structure changed back
-in linux-2.6.25, so now we clear only four bytes (sizeof(pointer))
-instead of 96 (SCSI_SENSE_BUFFERSIZE). I did not check whether we
-actually need to initialize the buffer here, but it's clear that if we
-do it, we should use the correct size.
+v2: Check page_flags instead of swap_storage
 
-Fixes: de25deb18016 ("[SCSI] use dynamically allocated sense buffer")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+[bwh: Backported to 3.2: We aren't checking for TTM_PAGE_FLAG_SG here as that's
+ not defined]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/scsi/arm/fas216.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/scsi/arm/fas216.c
-+++ b/drivers/scsi/arm/fas216.c
-@@ -2009,7 +2009,7 @@ static void fas216_rq_sns_done(FAS216_In
- 		 * have valid data in the sense buffer that could
- 		 * confuse the higher levels.
- 		 */
--		memset(SCpnt->sense_buffer, 0, sizeof(SCpnt->sense_buffer));
-+		memset(SCpnt->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE);
- //printk("scsi%d.%c: sense buffer: ", info->host->host_no, '0' + SCpnt->device->id);
- //{ int i; for (i = 0; i < 32; i++) printk("%02x ", SCpnt->sense_buffer[i]); printk("\n"); }
- 	/*
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -184,7 +184,7 @@ void ttm_bo_add_to_lru(struct ttm_buffer
+ 		list_add_tail(&bo->lru, &man->lru);
+ 		kref_get(&bo->list_kref);
+ 
+-		if (bo->ttm != NULL) {
++		if (bo->ttm && !(bo->ttm->page_flags & TTM_PAGE_FLAG_SWAPPED)) {
+ 			list_add_tail(&bo->swap, &bo->glob->swap_lru);
+ 			kref_get(&bo->list_kref);
+ 		}
