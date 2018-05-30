@@ -1,79 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751777AbeE3KJT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:09:19 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:42097 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750710AbeE3KJP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:09:15 -0400
-X-Google-Smtp-Source: ADUXVKISVY9mTXrd41twsbQfSAbUzWYFN4rzDV0jU1f4sUf1f8OGq8GG24oyNlc8V3VPH3HjHsHOIg==
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Rafael Wysocki <rjw@rjwysocki.net>, Viresh Kumar <vireshk@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] OPP: Allow same OPP table to be used for multiple genpd
-Date: Wed, 30 May 2018 15:39:02 +0530
-Message-Id: <8a352fd8787cefcb19c25ca1390301f874797b9c.1527674939.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
+        id S1751479AbeE3KLt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:11:49 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37139 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750718AbeE3KLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 06:11:47 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: fix to update mtime correctly
+Date: Wed, 30 May 2018 18:11:31 +0800
+Message-ID: <20180530101131.107083-2-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.17.0.391.g1f1cddd558b5
+In-Reply-To: <20180530101131.107083-1-yuchao0@huawei.com>
+References: <20180530101131.107083-1-yuchao0@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The OPP binding says:
+If we change system time to the past, get_mtime() will return a
+overflowed time, and SIT_I(sbi)->max_mtime will be udpated
+incorrectly, this patch fixes the two issues.
 
-	Property: operating-points-v2
-
-	...
-
-	This can contain more than one phandle for power domain
-	providers that provide multiple power domains. That is, one
-	phandle for each power domain. If only one phandle is available,
-	then the same OPP table will be used for all power domains
-	provided by the power domain provider.
-
-But the OPP core isn't allowing the same OPP table to be used for
-multiple domains. Update dev_pm_opp_of_add_table_indexed() to allow
-that.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Tested-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- drivers/opp/of.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c |  3 ++-
+ fs/f2fs/segment.h | 14 +++++++++++---
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 6d15f05bfc28..7af0ddec936b 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -554,11 +554,24 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_of_add_table);
- int dev_pm_opp_of_add_table_indexed(struct device *dev, int index)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 8ef87f6e0fb2..91af3e8c9065 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1821,7 +1821,8 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 
+ 	se->valid_blocks = new_vblocks;
+ 	se->mtime = get_mtime(sbi);
+-	SIT_I(sbi)->max_mtime = se->mtime;
++	if (se->mtime > SIT_I(sbi)->max_mtime)
++		SIT_I(sbi)->max_mtime = se->mtime;
+ 
+ 	/* Update valid block bitmap */
+ 	if (del > 0) {
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index c574131ac7e1..fe4ea82b08aa 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -748,9 +748,17 @@ static inline void set_to_next_sit(struct sit_info *sit_i, unsigned int start)
+ static inline unsigned long long get_mtime(struct f2fs_sb_info *sbi)
  {
- 	struct device_node *opp_np;
--	int ret;
-+	int ret, count;
- 
-+again:
- 	opp_np = _opp_of_get_opp_desc_node(dev->of_node, index);
--	if (!opp_np)
-+	if (!opp_np) {
-+		/*
-+		 * If only one phandle is present, then the same OPP table
-+		 * applies for all index requests.
-+		 */
-+		count = of_count_phandle_with_args(dev->of_node,
-+						   "operating-points-v2", NULL);
-+		if (count == 1 && index) {
-+			index = 0;
-+			goto again;
-+		}
+ 	struct sit_info *sit_i = SIT_I(sbi);
+-	time64_t now = ktime_get_real_seconds();
+-
+-	return sit_i->elapsed_time + now - sit_i->mounted_time;
++	time64_t diff = 0, now = ktime_get_real_seconds();
 +
- 		return -ENODEV;
++	if (now >= sit_i->mounted_time) {
++		diff = now - sit_i->mounted_time;
++	} else {
++		/* system time is set to the past */
++		diff = sit_i->mounted_time - now;
++		if (sit_i->elapsed_time >= diff)
++			return sit_i->elapsed_time - diff;
 +	}
++	return sit_i->elapsed_time + diff;
+ }
  
- 	ret = _of_add_opp_table_v2(dev, opp_np);
- 	of_node_put(opp_np);
+ static inline void set_summary(struct f2fs_summary *sum, nid_t nid,
 -- 
-2.15.0.194.g9af6a3dea062
+2.17.0.391.g1f1cddd558b5
