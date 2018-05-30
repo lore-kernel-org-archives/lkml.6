@@ -1,57 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753969AbeE3Qnv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:43:51 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39920 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753115AbeE3Qls (ORCPT
+        id S1753998AbeE3Qoa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:44:30 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:45069 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753560AbeE3QoY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:41:48 -0400
-From: Colin King <colin.king@canonical.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
-        Hawking Zhang <Hawking.Zhang@amd.com>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amdgpu/df: fix potential array out-of-bounds read
-Date: Wed, 30 May 2018 17:41:44 +0100
-Message-Id: <20180530164144.21526-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 30 May 2018 12:44:24 -0400
+X-Google-Smtp-Source: ADUXVKK5Rra1JvfHeKEezV019zr2xTrYhDIOh1PJ29GZsOkms9GuMK2UbCn216OXWvisePagjpfipQ==
+Date: Wed, 30 May 2018 09:44:21 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
+        akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Josef Bacik <jbacik@fb.com>
+Subject: Re: [PATCH 13/13] Documentation: add a doc for blk-iolatency
+Message-ID: <20180530164421.GQ1351649@devbig577.frc2.facebook.com>
+References: <20180529211724.4531-1-josef@toxicpanda.com>
+ <20180529211724.4531-14-josef@toxicpanda.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529211724.4531-14-josef@toxicpanda.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello,
 
-The comparison with the number of elements in array df_v3_7_channel_number
-is off-by-one and can produce an array out-of-bounds read if
-fb_channel_number is equal to the number of elements of the array. Fix
-this by changing the comparison to >= instead of >.
+On Tue, May 29, 2018 at 05:17:24PM -0400, Josef Bacik wrote:
+> diff --git a/Documentation/blk-iolatency.txt b/Documentation/blk-iolatency.txt
+> new file mode 100644
+> index 000000000000..9dd86f4f64b6
+> --- /dev/null
+> +++ b/Documentation/blk-iolatency.txt
 
-Detected by CoverityScan, CID#1469489 ("Out-of-bounds read")
+Can you make it a part of Documentation/cgroup-v2.txt?
 
-Fixes: 13b581502d51 ("drm/amdgpu/df: implement df v3_6 callback functions (v2)")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/amdgpu/df_v3_6.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +Interface
+> +=========
+> +
+> +- io.latency.  This takes a similar format as the other controllers
+> +
+> +	"MAJOR:MINOR target=<target time in microseconds"
+                                                        >
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/df_v3_6.c b/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
-index 60608b3df881..d5ebe566809b 100644
---- a/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
-+++ b/drivers/gpu/drm/amd/amdgpu/df_v3_6.c
-@@ -64,7 +64,7 @@ static u32 df_v3_6_get_hbm_channel_number(struct amdgpu_device *adev)
- 	int fb_channel_number;
- 
- 	fb_channel_number = adev->df_funcs->get_fb_channel_number(adev);
--	if (fb_channel_number > ARRAY_SIZE(df_v3_6_channel_number))
-+	if (fb_channel_number >= ARRAY_SIZE(df_v3_6_channel_number))
- 		fb_channel_number = 0;
- 
- 	return df_v3_6_channel_number[fb_channel_number];
+> +HOWTO
+> +=====
+> +
+> +The limits are only applied at the peer level in the heirarchy.  This means that
+							^hierarchy
+
+Thanks.
+
 -- 
-2.17.0
+tejun
