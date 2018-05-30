@@ -1,75 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030332AbeE3ITa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:19:30 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:42278 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965177AbeE3IT1 (ORCPT
+        id S965177AbeE3IWs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:22:48 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53728 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935964AbeE3IWF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:19:27 -0400
-Date: Wed, 30 May 2018 10:19:22 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Kees Cook <keescook@chromium.org>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: nfnetlink: Remove VLA usage
-Message-ID: <20180530081922.tckogxkmltw6cxn7@breakpoint.cc>
-References: <20180530003525.GA18642@beast>
+        Wed, 30 May 2018 04:22:05 -0400
+X-Google-Smtp-Source: ADUXVKJ4c8LYLpYS/htC8yhsbzR8qaPQTIZxsRrdNOQ5S43jsVl91bxxWeZV2gDFkXjC2qZiZclgEdCUiQQmTVi0VrE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180530003525.GA18642@beast>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <c0b8f2e3-b286-06a7-306d-141f155eff01@oracle.com>
+References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180522200214.GF9536@vader> <c0b8f2e3-b286-06a7-306d-141f155eff01@oracle.com>
+From: Ming Lei <tom.leiming@gmail.com>
+Date: Wed, 30 May 2018 16:22:02 +0800
+Message-ID: <CACVXFVN=LHTq=x9n7U7gciR41rWfTHn9uHmZMUHt6=RdvJanXQ@mail.gmail.com>
+Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
+To: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc: Omar Sandoval <osandov@osandov.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> wrote:
-> In the quest to remove all stack VLA usage from the kernel[1], this
-> allocates the maximum size expected for all possible attrs and adds
-> a sanity-check to make sure nothing gets out of sync.
-> 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  net/netfilter/nfnetlink.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
-> index 03ead8a9e90c..0cb395f9627e 100644
-> --- a/net/netfilter/nfnetlink.c
-> +++ b/net/netfilter/nfnetlink.c
-> @@ -28,6 +28,7 @@
->  
->  #include <net/netlink.h>
->  #include <linux/netfilter/nfnetlink.h>
-> +#include <linux/netfilter/nf_tables.h>
+On Wed, May 23, 2018 at 9:47 AM, jianchao.wang
+<jianchao.w.wang@oracle.com> wrote:
+> Hi Omar
 >
->  	const struct nfnetlink_subsystem __rcu	*subsys;
-> @@ -185,11 +191,17 @@ static int nfnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
->  	{
->  		int min_len = nlmsg_total_size(sizeof(struct nfgenmsg));
->  		u8 cb_id = NFNL_MSG_TYPE(nlh->nlmsg_type);
-> -		struct nlattr *cda[ss->cb[cb_id].attr_count + 1];
-> +		struct nlattr *cda[NFTA_MAX_ATTR + 1];
->  		struct nlattr *attr = (void *)nlh + min_len;
->  		int attrlen = nlh->nlmsg_len - min_len;
->  		__u8 subsys_id = NFNL_SUBSYS_ID(type);
->  
-> +		/* Sanity-check NFTA_MAX_ATTR */
-> +		if (ss->cb[cb_id].attr_count > NFTA_MAX_ATTR) {
-> +			rcu_read_unlock();
-> +			return -ENOMEM;
-> +		}
+> Thanks for your kindly response.
+>
+> On 05/23/2018 04:02 AM, Omar Sandoval wrote:
+>> On Tue, May 22, 2018 at 10:48:29PM +0800, Jianchao Wang wrote:
+>>> Currently, kyber is very unfriendly with merging. kyber depends
+>>> on ctx rq_list to do merging, however, most of time, it will not
+>>> leave any requests in ctx rq_list. This is because even if tokens
+>>> of one domain is used up, kyber will try to dispatch requests
+>>> from other domain and flush the rq_list there.
+>>
+>> That's a great catch, I totally missed this.
+>>
+>> This approach does end up duplicating a lot of code with the blk-mq core
+>> even after Jens' change, so I'm curious if you tried other approaches.
+>> One idea I had is to try the bio merge against the kqd->rqs lists. Since
+>> that's per-queue, the locking overhead might be too high. Alternatively,
+>
+> Yes, I used to make a patch as you say, try the bio merge against kqd->rqs directly.
+> The patch looks even simpler. However, because the khd->lock is needed every time
+> when try bio merge, there maybe high contending overhead on hkd->lock when cpu-hctx
+> mapping is not 1:1.
+>
+>> you could keep the software queues as-is but add our own version of
+>> flush_busy_ctxs() that only removes requests of the domain that we want.
+>> If one domain gets backed up, that might get messy with long iterations,
+>> though.
+>
+> Yes, I also considered this approach :)
+> But the long iterations on every ctx->rq_list looks really inefficient.
 
-Would you mind also adding check to nfnetlink_subsys_register, plus WARN()?
+Right, this list can be quite long if dispatch token is used up.
 
-That way we'll see that NFTA_MAX_ATTR isn't large enough by virtue
-of registration rather than actual use.
+You might try to introduce per-domain list into ctx directly, then 'none'
+may benefit from this change too since bio merge should be done
+on the per-domain list actually.
 
-Other than that this looks fine to me.
+
+Thanks,
+Ming Lei
