@@ -1,47 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753683AbeE3PxY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:53:24 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:46446 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750771AbeE3PxW (ORCPT
+        id S1753798AbeE3Pyi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:54:38 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:33922 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751817AbeE3Pyg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:53:22 -0400
-X-Google-Smtp-Source: ADUXVKJ6wkk7LBxdNnJSFLYJxsiWzVpK8ezLgInzlSwf1n97/fUr6c5ap0mB8b+zHADmqql6socNGg==
-Date: Wed, 30 May 2018 08:53:19 -0700
+        Wed, 30 May 2018 11:54:36 -0400
+X-Google-Smtp-Source: ADUXVKK2ok0m2Of4WPUVAZOwLeKUJAYnsLkfbszLyig47g2JF5icyXwC0sx2Hf4V5kVSJ4t1r1KQDw==
+Date: Wed, 30 May 2018 08:54:32 -0700
 From: Tejun Heo <tj@kernel.org>
 To: Josef Bacik <josef@toxicpanda.com>
 Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
         akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Josef Bacik <jbacik@fb.com>
-Subject: Re: [PATCH 02/13] block: introduce bio_issue_as_root_blkg
-Message-ID: <20180530155319.GJ1351649@devbig577.frc2.facebook.com>
+Subject: Re: [PATCH 03/13] blk-cgroup: allow controllers to output their own
+ stats
+Message-ID: <20180530155432.GK1351649@devbig577.frc2.facebook.com>
 References: <20180529211724.4531-1-josef@toxicpanda.com>
- <20180529211724.4531-3-josef@toxicpanda.com>
+ <20180529211724.4531-4-josef@toxicpanda.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529211724.4531-3-josef@toxicpanda.com>
+In-Reply-To: <20180529211724.4531-4-josef@toxicpanda.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 05:17:13PM -0400, Josef Bacik wrote:
-> From: Josef Bacik <jbacik@fb.com>
-> 
-> Instead of forcing all file systems to get the right context on their
-> bio's, simply check for REQ_META to see if we need to issue as the root
-> blkg.  We don't want to force all bio's to have the root blkg associated
-> with them if REQ_META is set, as some controllers (blk-iolatency) need
-> to know who the originating cgroup is so it can backcharge them for the
-> work they are doing.  This helper will make sure that the controllers do
-> the proper thing wrt the IO priority and backcharging.
-> 
-> Signed-off-by: Josef Bacik <jbacik@fb.com>
+On Tue, May 29, 2018 at 05:17:14PM -0400, Josef Bacik wrote:
+...
+> +		mutex_lock(&blkcg_pol_mutex);
+> +		for (i = 0; i < BLKCG_MAX_POLS; i++) {
+> +			struct blkcg_policy *pol = blkcg_policy[i];
+> +
+> +			if (!blkg->pd[i] || !pol->pd_stat_fn)
+> +				continue;
+> +
+> +			count = pol->pd_stat_fn(blkg->pd[i], buf, size);
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Wouldn't it be easier to simply pass in the seq_file?
+
+> +			if (count >= size)
+> +				continue;
+> +			buf += count;
+> +			total += count;
+> +			size -= count + 1;
+> +		}
+> +		mutex_unlock(&blkcg_pol_mutex);
+> +		if (total) {
+> +			count = snprintf(buf, size, "\n");
+> +			if (count >= size)
+> +				continue;
+
+scnprintf() might make this less painful.
+
+> +			total += count;
+> +			seq_commit(sf, total);
+> +		}
 
 Thanks.
 
