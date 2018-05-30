@@ -1,75 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753782AbeE3XBp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 19:01:45 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41585 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753734AbeE3XBn (ORCPT
+        id S932609AbeE3XGQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 19:06:16 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:54778 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932416AbeE3XGO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 19:01:43 -0400
-X-Google-Smtp-Source: ADUXVKLvb+xU5/g+MxaCDuAzex+Tgt5ymlMwQ8l5pxFMie9zo9qlNLgtuJT/YxhfScSZMn5T/dyQEw==
-Date: Wed, 30 May 2018 17:01:36 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Steve Wise <swise@opengridcomputing.com>,
-        Steve Wise <swise@chelsio.com>, Doug Ledford <dledford@redhat.com>,
-        Yuval Shaia <yuval.shaia@oracle.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Greg Thelen <gthelen@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iw_cxgb4: add INFINIBAND_ADDR_TRANS dependency
-Message-ID: <20180530230136.GK30754@ziepe.ca>
-References: <20180530215826.1343234-1-arnd@arndb.de>
- <20180530220405.GH30754@ziepe.ca>
- <0be4e0fb-8d8e-b337-fc8d-550c90829d8c@opengridcomputing.com>
- <20180530222520.GJ30754@ziepe.ca>
- <d2472443-3ae6-63f4-59ad-d6367b837038@opengridcomputing.com>
- <CAK8P3a3HZXTR60ua=cjBHnB5FWWKve9F-JqcNwn0ujks+=FsNg@mail.gmail.com>
+        Wed, 30 May 2018 19:06:14 -0400
+X-Google-Smtp-Source: ADUXVKJjnC7/rdJ0toFZFrGHx8//0xJjwREIPZZLsTsyhBi5ajmfpuqmloDs8RBP9gPBlEj4r4GKDw==
+Subject: Re: [PATCH] nvme: trace: add disk name to tracepoints
+To: Johannes Thumshirn <jthumshirn@suse.de>,
+        Christoph Hellwig <hch@lst.de>, Keith Busch <keith.busch@intel.com>
+Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Hannes Reinecke <hare@suse.de>
+References: <20180530132049.5890-1-jthumshirn@suse.de>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <8659d1e0-ac96-5f45-61a8-247d81376516@grimberg.me>
+Date: Thu, 31 May 2018 02:06:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3HZXTR60ua=cjBHnB5FWWKve9F-JqcNwn0ujks+=FsNg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180530132049.5890-1-jthumshirn@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 12:40:54AM +0200, Arnd Bergmann wrote:
-> > On 5/30/2018 5:25 PM, Jason Gunthorpe wrote:
-> >> On Wed, May 30, 2018 at 05:10:35PM -0500, Steve Wise wrote:
-> >>>
-> >>> On 5/30/2018 5:04 PM, Jason Gunthorpe wrote:
-> >>>> On Wed, May 30, 2018 at 11:58:18PM +0200, Arnd Bergmann wrote:
-> >>>>> The newly added fill_res_ep_entry function fails to link if
-> >>>>> CONFIG_INFINIBAND_ADDR_TRANS is not set:
-> >>>>>
-> >>>>> drivers/infiniband/hw/cxgb4/restrack.o: In function `fill_res_ep_entry':
-> >>>>> restrack.c:(.text+0x3cc): undefined reference to `rdma_res_to_id'
-> >>>>> restrack.c:(.text+0x3d0): undefined reference to `rdma_iw_cm_id'
-> >>>>>
-> >>>>> This adds a Kconfig dependency for the driver.
-> >>>>>
-> >>>>> Fixes: 116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
-> >>>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >>>>>  drivers/infiniband/hw/cxgb4/Kconfig | 1 +
-> >>>>>  1 file changed, 1 insertion(+)
-> >>>> Oh, I think we need to solve this with maybe a header fill null stub
-> >>>> instead..
-> >>>>
-> >>>> We don't want to disable drivers just because a user interface is
-> >>>> disabled.
-> >>>>
-> >>> Why does CONFIG_INFINIBAND_ADDR_TRANS disable building rdma_cm.ko? That
-> >>> is not correct.
-> >> That seems like a reasonable thing to do..
-> > rdma_ucm.ko is for usermode users, rdma_cm.ko is for kernel users, and
-> > is required for iwarp drivers.  It seems rdma_cm.ko is not being
-> > compiled if ADDR_TRANS is not set.
+> Add disk name to tracepoints so we can better destinguish between
+> individual disks in the trace output.
 
-I think the intention was to completely disable rdma-cm, including all
-support for rx'ing remote packets? Greg?
+Looks useful,
 
-If this is required for iwarp then Arnd's patch is probably the right
-way to go..
-
-Jason
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
