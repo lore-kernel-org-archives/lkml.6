@@ -1,121 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937114AbeE3HmX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:42:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:32810 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935134AbeE3HmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:42:20 -0400
-Date: Wed, 30 May 2018 09:42:16 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        guillaume.knispel@supersonicimagine.com,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
-Message-ID: <20180530074216.GZ27180@dhcp22.suse.cz>
-References: <20180524211135.27760-1-dave@stgolabs.net>
- <20180524211135.27760-4-dave@stgolabs.net>
- <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
- <20180529144317.GA20910@dhcp22.suse.cz>
- <20180529145106.GV27180@dhcp22.suse.cz>
- <CA+55aFxoC0+hKBQ_TmbXM_X60fnP8JKC3aVvGc=8bKh2oxL12g@mail.gmail.com>
+        id S937196AbeE3Hod (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:44:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34378 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752842AbeE3Hob (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 03:44:31 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxoC0+hKBQ_TmbXM_X60fnP8JKC3aVvGc=8bKh2oxL12g@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 30 May 2018 00:44:29 -0700
+From: okaya@codeaurora.org
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, timur@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Christoffer Dall <cdall@linaro.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Thymo van Beers <thymovanbeers@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Frederick Lawler <fred@fredlawl.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: Add pci=safemode option
+In-Reply-To: <20180530073735.GA28793@infradead.org>
+References: <1527650389-31575-1-git-send-email-okaya@codeaurora.org>
+ <20180530043103.GA19734@kroah.com>
+ <6c317ed8-cca3-8862-5f3b-12cf14e4d53b@codeaurora.org>
+ <20180530073735.GA28793@infradead.org>
+Message-ID: <6dfe2db8f974d94c9867f30ec83d9333@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 29-05-18 15:46:25, Linus Torvalds wrote:
-[...]
-> The whole and ONLY point of "kvmalloc()" and friends is to make it easy to
-> write code and _not_ have those idiotic "let's do kmalloc or kvmalloc
-> depending on the phase of the moon" garbage. So the warning has literally
-> destroyed the only value that function has!
+On 2018-05-30 00:37, Christoph Hellwig wrote:
+> On Tue, May 29, 2018 at 09:41:33PM -0700, Sinan Kaya wrote:
+>> Bjorn and I discussed the need for such a "safe" mode feature when you
+>> want to bring up PCI for a platform. You want to turn off everything 
+>> as
+>> a starter and just stick to bare minimum.
+> 
+> Can we please make it a config option the instead of adding code
+> to every kernel?  Also maybe the bringup should be in the name
+> to make this more clear?
 
-Well, I do agree but I've also seen terrible things while doing the
-conversion when introducing kvmalloc.
+One other requirement was to have a runtime option rather than compile 
+time option.
 
-So I admit that the defensive mode here is mostly inspired by existing
-users of vmalloc(GFP_NOFS). They are simply wrong and not really
-eager to be fixed from my experience. Now with kvmalloc fixing them
-up silently it would get even less likely to get fixed because there
-won't be any deadlock possible (compared to open coded kvmalloc like
-ext4_kvmalloc for example).
+When someone reported a problem, we wanted to be able to say "use this 
+option and see if system boots" without doing any bisects or 
+recompilation.
 
-My experience also tells me that most of those vmalloc NOFS users
-simply do not need NOFS at all because there is no risk of the reclaim
-recursion deadlocks. They are just used because of cargo cult which is
-sad and it causes some subtle problems for the direct reclaim. I would
-really like to eliminate those (e.g. see [1]).  It is sad reality that
-people tend to be more sensitive to WARN splats than "look this is wrong
-albeit not critical in most cases).
+This would be the first step in troubleshooting a system to see if 
+fundamental features are working.
 
-[1] http://lkml.kernel.org/r/20180424162712.GL17484@dhcp22.suse.cz
-
-That being sad, if you believe that silently fixing up a code like that
-is a good idea we can do the following of course:
-
->From c1a098e809a109800f9cfa63cb27fe9a78f3f316 Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Wed, 30 May 2018 09:34:39 +0200
-Subject: [PATCH] mm: kvmalloc does not fallback to vmalloc for incompatible
- gfp flags
-
-kvmalloc warned about incompatible gfp_mask to catch abusers (mostly
-GFP_NOFS) with an intention that this will motivate authors of the code
-to fix those. Linus argues that this just motivates people to do even
-more hacks like
-	if (gfp == GFP_KERNEL)
-		kvmalloc
-	else
-		kmalloc
-
-I haven't seen this happening but it is true that we can grow those in
-future. Therefore Linus suggested to simply not fallback to vmalloc for
-incompatible gfp flags and rather stick with the kmalloc path.
-
-Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- mm/util.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/mm/util.c b/mm/util.c
-index 45fc3169e7b0..c6586c146995 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -391,7 +391,8 @@ EXPORT_SYMBOL(vm_mmap);
-  * __GFP_RETRY_MAYFAIL is supported, and it should be used only if kmalloc is
-  * preferable to the vmalloc fallback, due to visible performance drawbacks.
-  *
-- * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm people.
-+ * Please note that any use of gfp flags outside of GFP_KERNEL is careful to not
-+ * fall back to vmalloc.
-  */
- void *kvmalloc_node(size_t size, gfp_t flags, int node)
- {
-@@ -402,7 +403,8 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
- 	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
- 	 * so the given set of flags has to be compatible.
- 	 */
--	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
-+	if ((flags & GFP_KERNEL) != GFP_KERNEL)
-+		return kmalloc_node(size, flags, node);
- 
- 	/*
- 	 * We want to attempt a large physically contiguous block first because
--- 
-2.17.0
-
--- 
-Michal Hocko
-SUSE Labs
+I don't mind changing the name
+Bjorn mentioned safe option. I made it safemode. I am looking at Bjorn 
+for suggestions at this moment.
