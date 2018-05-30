@@ -1,82 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932350AbeE3VGA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:06:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56202 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932078AbeE3VF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:05:57 -0400
-Date: Wed, 30 May 2018 17:05:56 -0400
-From: Vivek Goyal <vgoyal@redhat.com>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 16/28] ovl: Do not expose metacopy only dentry from
- d_real()
-Message-ID: <20180530210556.GD2717@redhat.com>
-References: <20180529144612.16675-1-mszeredi@redhat.com>
- <20180529144612.16675-17-mszeredi@redhat.com>
+        id S932401AbeE3VGz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:06:55 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36679 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932271AbeE3VGx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 17:06:53 -0400
+X-Google-Smtp-Source: ADUXVKIR4T32D5qmw2vyGCm2LbmQ/x6YXGdhYNNI/Keh8oB0/7W/ttJz3lJ3a50j9BH5Jb2UvY0suA==
+Date: Wed, 30 May 2018 14:06:51 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [rfc patch] mm, oom: fix unnecessary killing of additional
+ processes
+In-Reply-To: <20180528081345.GD1517@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1805301357100.150424@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com> <20180525072636.GE11881@dhcp22.suse.cz> <alpine.DEB.2.21.1805251227380.158701@chino.kir.corp.google.com> <20180528081345.GD1517@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529144612.16675-17-mszeredi@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 04:46:00PM +0200, Miklos Szeredi wrote:
-> From: Vivek Goyal <vgoyal@redhat.com>
+On Mon, 28 May 2018, Michal Hocko wrote:
+
+> > That's not sufficient since the oom reaper is also not able to oom reap if 
+> > the mm has blockable mmu notifiers or all memory is shared filebacked 
+> > memory, so it immediately sets MMF_OOM_SKIP and additional processes are 
+> > oom killed.
 > 
-> Metacopy dentry/inode is internal to overlay and is never exposed outside
-> of it.  Exception is metacopy upper file used for fsync().  Modify d_real()
-> to look for dentries/inode which have data, but also allow matching upper
-> inode without data for the fsync case.
+> Could you be more specific with a real world example where that is the
+> case? I mean the full address space of non-reclaimable file backed
+> memory where waiting some more would help? Blockable mmu notifiers are
+> a PITA for sure. I wish we could have a better way to deal with them.
+> Maybe we can tell them we are in the non-blockable context and have them
+> release as much as possible. Still something that a random timeout
+> wouldn't help I am afraid.
 > 
 
-Hi Miklos,
+It's not a random timeout, it's sufficiently long such that we don't oom 
+kill several processes needlessly in the very rare case where oom livelock 
+would actually prevent the original victim from exiting.  The oom reaper 
+processing an mm, finding everything to be mlocked, and immediately 
+MMF_OOM_SKIP is inappropriate.  This is rather trivial to reproduce for a 
+large memory hogging process that mlocks all of its memory; we 
+consistently see spurious and unnecessary oom kills simply because the oom 
+reaper has set MMF_OOM_SKIP very early.
 
-I am not able to see how in fsync() path d_real() gets called. If we
-decide to do fsync() on upper metacopy, then opening upper will not
-go through d_real(). And we never issue fsync() on lower.
+This patch introduces a "give up" period such that the oom reaper is still 
+allowed to do its good work but only gives up in the hope the victim can 
+make forward progress at some substantial period of time in the future.  I 
+would understand the objection if oom livelock where the victim cannot 
+make forward progress were commonplace, but in the interest of not killing 
+several processes needlessly every time a large mlocked process is 
+targeted, I think it compels a waiting period.
 
-So I am scratching my head while trying to understand the d_real() and
-fsync() connection.
-
-Thanks
-Vivek
-
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/overlayfs/super.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> Trying to reap a different oom victim when the current one is not making
+> progress during the lock contention is certainly something that make
+> sense. It has been proposed in the past and we just gave it up because
+> it was more complex. Do you have any specific example when this would
+> help to justify the additional complexity?
 > 
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index e0326a686f45..6687d547ec6b 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -101,10 +101,13 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
->  	}
->  
->  	real = ovl_dentry_upper(dentry);
-> -	if (real && (!inode || inode == d_inode(real)))
-> +	if (real && (inode == d_inode(real)))
->  		return real;
->  
-> -	real = ovl_dentry_lower(dentry);
-> +	if (real && !inode && ovl_has_upperdata(d_inode(dentry)))
-> +		return real;
-> +
-> +	real = ovl_dentry_lowerdata(dentry);
->  	if (!real)
->  		goto bug;
->  
-> -- 
-> 2.14.3
+
+I'm not sure how you're defining complexity, the patch adds ~30 lines of 
+code and prevents processes from needlessly being oom killed when oom 
+reaping is largely unsuccessful and before the victim finishes 
+free_pgtables() and then also allows the oom reaper to operate on multiple 
+mm's instead of processing one at a time.  Obviously if there is a delay 
+before MMF_OOM_SKIP is set it requires that the oom reaper be able to 
+process other mm's, otherwise we stall needlessly for 10s.  Operating on 
+multiple mm's in a linked list while waiting for victims to exit during a 
+timeout period is thus very much needed, it wouldn't make sense without 
+it.
+
+> > But also note that even if oom reaping is possible, in the presence of an 
+> > antagonist that continues to allocate memory, that it is possible to oom 
+> > kill additional victims unnecessarily if we aren't able to complete 
+> > free_pgtables() in exit_mmap() of the original victim.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> If there is unbound source of allocations then we are screwed no matter
+> what. We just hope that the allocator will get noticed by the oom killer
+> and it will be stopped.
+> 
+
+It's not unbounded, it's just an allocator that acts as an antagonist.  At 
+the risk of being overly verbose, for system or memcg oom conditions: a 
+large mlocked process is oom killed, other processes continue to 
+allocate/charge, the oom reaper almost immediately grants MMF_OOM_SKIP 
+without being able to free any memory, and the other important processes 
+are needlessly oom killed before the original victim can reach 
+exit_mmap().  This happens a _lot_.
+
+I'm open to hearing any other suggestions that you have other than waiting 
+some time period before MMF_OOM_SKIP gets set to solve this problem.
