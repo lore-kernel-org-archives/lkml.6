@@ -1,112 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753738AbeE3TSD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:18:03 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:37577 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753651AbeE3TSA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:18:00 -0400
-X-Google-Smtp-Source: ADUXVKISXJEnp3K3X1zlYuuYyDJNDSqC/L7QCkyugaU0+jDqSXq74NCDCQGEYNDuf9qcBcAuuzCs6g==
-Date: Wed, 30 May 2018 12:17:56 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] netfilter: nfnetlink: Remove VLA usage
-Message-ID: <20180530191756.GA39504@beast>
+        id S1753770AbeE3TSi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 15:18:38 -0400
+Received: from anholt.net ([50.246.234.109]:46548 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751623AbeE3TSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 15:18:37 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>
+Cc: Arnd Bergmann <arnd@arndb.de>, Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/8] drm/v3d: add CONFIG_MMU dependency
+In-Reply-To: <20180525155030.3667352-5-arnd@arndb.de>
+References: <20180525155030.3667352-1-arnd@arndb.de> <20180525155030.3667352-5-arnd@arndb.de>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Wed, 30 May 2018 12:18:34 -0700
+Message-ID: <87o9gxne9h.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-allocates the maximum size expected for all possible attrs and adds
-sanity-checks at both registration and usage to make sure nothing
-gets out of sync.
+--=-=-=
+Content-Type: text/plain
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+Arnd Bergmann <arnd@arndb.de> writes:
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-v2: Use a static value and add a check in nfnetlink_subsys_register()
----
- net/netfilter/nfnetlink.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+> Without CONFIG_MMU, we get a link error:
+>
+> drivers/gpu/drm/v3d/v3d_bo.o: In function `v3d_gem_fault':
+> v3d_bo.c:(.text+0x3ca): undefined reference to `vm_insert_mixed'
+>
+> The other drivers with this problem already depend on CONFIG_MMU,
+> so let's do the same thing here.
+>
+> Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
-index 03ead8a9e90c..1a80fdcf008f 100644
---- a/net/netfilter/nfnetlink.c
-+++ b/net/netfilter/nfnetlink.c
-@@ -37,6 +37,8 @@ MODULE_ALIAS_NET_PF_PROTO(PF_NETLINK, NETLINK_NETFILTER);
- 	rcu_dereference_protected(table[(id)].subsys, \
- 				  lockdep_nfnl_is_held((id)))
- 
-+#define NFNL_MAX_ATTR_COUNT	32
-+
- static struct {
- 	struct mutex				mutex;
- 	const struct nfnetlink_subsystem __rcu	*subsys;
-@@ -76,6 +78,13 @@ EXPORT_SYMBOL_GPL(lockdep_nfnl_is_held);
- 
- int nfnetlink_subsys_register(const struct nfnetlink_subsystem *n)
- {
-+	u8 cb_id;
-+
-+	/* Sanity-check attr_count size to avoid stack buffer overflow. */
-+	for (cb_id = 0; cb_id < n->cb_count; cb_id++)
-+		if (WARN_ON(n->cb[cb_id].attr_count > NFNL_MAX_ATTR_COUNT))
-+			return -EINVAL;
-+
- 	nfnl_lock(n->subsys_id);
- 	if (table[n->subsys_id].subsys) {
- 		nfnl_unlock(n->subsys_id);
-@@ -185,11 +194,17 @@ static int nfnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	{
- 		int min_len = nlmsg_total_size(sizeof(struct nfgenmsg));
- 		u8 cb_id = NFNL_MSG_TYPE(nlh->nlmsg_type);
--		struct nlattr *cda[ss->cb[cb_id].attr_count + 1];
-+		struct nlattr *cda[NFNL_MAX_ATTR_COUNT + 1];
- 		struct nlattr *attr = (void *)nlh + min_len;
- 		int attrlen = nlh->nlmsg_len - min_len;
- 		__u8 subsys_id = NFNL_SUBSYS_ID(type);
- 
-+		/* Sanity-check NFNL_MAX_ATTR_COUNT */
-+		if (ss->cb[cb_id].attr_count > NFNL_MAX_ATTR_COUNT) {
-+			rcu_read_unlock();
-+			return -ENOMEM;
-+		}
-+
- 		err = nla_parse(cda, ss->cb[cb_id].attr_count, attr, attrlen,
- 				ss->cb[cb_id].policy, extack);
- 		if (err < 0) {
-@@ -379,10 +394,16 @@ static void nfnetlink_rcv_batch(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		{
- 			int min_len = nlmsg_total_size(sizeof(struct nfgenmsg));
- 			u8 cb_id = NFNL_MSG_TYPE(nlh->nlmsg_type);
--			struct nlattr *cda[ss->cb[cb_id].attr_count + 1];
-+			struct nlattr *cda[NFNL_MAX_ATTR_COUNT + 1];
- 			struct nlattr *attr = (void *)nlh + min_len;
- 			int attrlen = nlh->nlmsg_len - min_len;
- 
-+			/* Sanity-check NFTA_MAX_ATTR */
-+			if (ss->cb[cb_id].attr_count > NFNL_MAX_ATTR_COUNT) {
-+				err = -ENOMEM;
-+				goto ack;
-+			}
-+
- 			err = nla_parse(cda, ss->cb[cb_id].attr_count, attr,
- 					attrlen, ss->cb[cb_id].policy, NULL);
- 			if (err < 0)
--- 
-2.17.0
+Applied to drm-misc-next-fixes.  Thanks!
 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Kees Cook
-Pixel Security
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlsO+QoACgkQtdYpNtH8
+nuhJJhAAmWQNvV0njl7oCwx8Yw2gKeqPlvHyPk6q7gXZ/vH9Xm9orS2pjzDmINEt
+hoX2uFbFmCwWyaZhk+BYRFFUWtEENvVJAWBa/1tIfdVaVgWQAFIFAX1V3QRHKUHz
+5zq0gDHzcN/Bww9xjzhQmBPnMoVxjiTT7Lv0pU6DtN6P2L3vap6R+FVzXEq1KJ2X
+qDMZBPh0+9luy8RNyOsbP3iaHHZ1Udg1N1iZhmLBUq4bwWZEQVNMY3qKyXQEq8eo
+jXzYGv2EbUI/m2jhhIGlQ2EAO+QQnPhQw0Za8VvpeyHRYApMj0543Uglt5ssOr1/
+fZ2C+BuT/Pi+/VoroGYLO7W6fJNG8NXqh+K+wHdYGxk/hZkB3ajRnTr1ffsyWPnL
+Wm4RpH4Trf7xoHbFYAGetNt4M28BqugDWDXbG0uL0mL8gvEkUwAE/tBJ5AcwI0Zu
+iwyrB+Dey010RdeCUiCR+4V6xZ4hRNMngSlxn1DLISvCDoQUOhVKSyM64Ra1Ww93
+lVdTKNvq4nBqUxujRQ/PfslLwfByepdHIPaRzuY1AVFF+VXW5DhNkjiuk2lHrd2b
+mwsa0d/50JL7muAGyHVKJLXpo1iD6nzNo1Me1x0TTgMBQF9F3giOq7YehFyLjIDJ
+BbPHQBM1r8x288VGf+mGX/4hd/nVPhRfgq1qC9tiG473TWnA128=
+=Ga9x
+-----END PGP SIGNATURE-----
+--=-=-=--
