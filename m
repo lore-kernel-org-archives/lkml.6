@@ -1,219 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753679AbeE3PHb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:07:31 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:32846 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753599AbeE3PH2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:07:28 -0400
-From: Prabu Thangamuthu <Prabu.T@synopsys.com>
-To: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-CC: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>,
-        "prabu.t@synopsys.com" <prabu.t@synopsys.com>
-Subject: [PATCH v2 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
-Thread-Topic: [PATCH v2 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc
- support
-Thread-Index: AdP4J+f4+DeR4dadRlSsPnyMsPMRwA==
-Date: Wed, 30 May 2018 15:07:23 +0000
-Message-ID: <705D14B1C7978B40A723277C067CEDE2010A9B769C@IN01WEMBXB.internal.synopsys.com>
-Accept-Language: en-US, en-IN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.12.239.235]
-Content-Type: text/plain; charset="us-ascii"
+        id S932099AbeE3PID (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:08:03 -0400
+Received: from muru.com ([72.249.23.125]:45242 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753695AbeE3PIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:08:01 -0400
+Date: Wed, 30 May 2018 08:07:57 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org, bcousson@baylibre.com,
+        paul@pwsan.com, t-kristo@ti.com
+Subject: Re: [PATCH v2 6/6] ARM: dts: dra76x: Add MCAN node
+Message-ID: <20180530150757.GF5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-7-faiz_abbas@ti.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530141133.3711-7-faiz_abbas@ti.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4UF7s9Q027483
 
+* Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
+> From: Franklin S Cooper Jr <fcooper@ti.com>
+> 
+> Add support for the MCAN peripheral which supports both classic
+> CAN messages along with the new CAN-FD message.
+...
+> --- a/arch/arm/boot/dts/dra76x.dtsi
+> +++ b/arch/arm/boot/dts/dra76x.dtsi
+> @@ -27,6 +27,21 @@
+>  			ti,syss-mask = <1>;
+>  			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
+>  			clock-names = "fck";
+> +
+> +			m_can0: mcan@42c01a00 {
+> +				compatible = "bosch,m_can";
+> +				reg = <0x1a00 0x4000>, <0x0 0x18FC>;
+> +				reg-names = "m_can", "message_ram";
+> +				interrupt-parent = <&gic>;
+> +				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
+> +					     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+> +				interrupt-names = "int0", "int1";
+> +				ti,hwmods = "mcan";
 
-Synopsys has DWC MSHC controller on HPAS-DX platform connected using PCIe
-interface with SD card slot and eMMC device slots. This patch is to
-enable SD cards connected on this platform. As Clock generation logic
-is implemented using MMCM module of HAPS-DX platform, we have separate
-functions to control the MMCM to generate required clocks with respect
-to speed mode.
+The "ti,hwmods" should be in the parent node now. But you may not even need
+it, see the reset comment I made for the parent node patch.
 
-Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
----
-V2 - Removed sdhci-pci-dwc-mshc.h and moved into sdhci-pci-dwc-mshc.c
-Fixed coding style issue.
-Removed sdhci_snps_set_power and new approach to support eMMC device
-voltages will be submitted after completeing validations.
-V1 - Initial Patch.
+> +				clocks = <&mcan_clk>, <&l3_iclk_div>;
+> +				clock-names = "cclk", "hclk";
+> +				bosch,mram-cfg = <0x0 0 0 32 0 0 1 1>;
+> +				status = "disabled";
 
-MAINTAINERS | 7 +++
-drivers/mmc/host/Makefile | 3 +-
-drivers/mmc/host/sdhci-pci-core.c | 1 +
-drivers/mmc/host/sdhci-pci-dwc-mshc.c | 88 +++++++++++++++++++++++++++++++++++
-drivers/mmc/host/sdhci-pci.h | 3 ++
-5 files changed, 101 insertions(+), 1 deletion(-)
-create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.c
+And then you should be able to also leave out status = "disabled" as the
+hardware is there for sure and we can idle it. Then a board specific
+dts file can set it to "disabled" if reallly needed. Setting everything
+manually to "disabled" and then again to "enabled" is the wrong way
+around, the default is "enabled".
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4863175..aba98b6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12684,6 +12684,13 @@ S: Maintained
-F: drivers/mmc/host/sdhci*
-F: include/linux/mmc/sdhci*
+Regards,
 
-+SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
-+M: Prabu Thangamuthu <prabu.t@synopsys.com>
-+M: Manjunath M B <manjumb@synopsys.com>
-+L: linux-mmc@vger.kernel.org
-+S: Maintained
-+F: drivers/mmc/host/sdhci-pci-dwc-mshc.c
-+
-SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
-M: Ben Dooks <ben-linux@fluff.org>
-M: Jaehoon Chung <jh80.chung@samsung.com>
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 85dc132..20490f3 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -11,7 +11,8 @@ obj-$(CONFIG_MMC_MXC) += mxcmmc.o
-obj-$(CONFIG_MMC_MXS) += mxs-mmc.o
-obj-$(CONFIG_MMC_SDHCI) += sdhci.o
-obj-$(CONFIG_MMC_SDHCI_PCI) += sdhci-pci.o
--sdhci-pci-y += sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o
-+sdhci-pci-y += sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o \
-+ sdhci-pci-dwc-mshc.o
-obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI)) += sdhci-pci-data.o
-obj-$(CONFIG_MMC_SDHCI_ACPI) += sdhci-acpi.o
-obj-$(CONFIG_MMC_SDHCI_PXAV3) += sdhci-pxav3.o
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index 77dd352..ca1d4f7 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -1511,6 +1511,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
-SDHCI_PCI_DEVICE(O2, SEABIRD0, o2),
-SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
-SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
-+ SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC, snps),
-SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
-/* Generic SD host controller */
-{PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
-diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.c b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
-new file mode 100644
-index 0000000..0706055
---- /dev/null
-+++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * SDHCI driver for Synopsys DWC_MSHC controller
-+ *
-+ * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
-+ *
-+ * Authors:
-+ * Prabu Thangamuthu <prabu.t@synopsys.com>
-+ * Manjunath M B <manjumb@synopsys.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include "sdhci.h"
-+#include "sdhci-pci.h"
-+
-+#define SDHCI_VENDOR_PTR_R 0xE8
-+
-+/* Synopsys vendor specific registers */
-+#define SDHC_GPIO_OUT 0x34
-+#define SDHC_AT_CTRL_R 0x40
-+#define SDHC_SW_TUNE_EN 0x00000010
-+
-+/* MMCM DRP */
-+#define SDHC_MMCM_DIV_REG 0x1020
-+#define DIV_REG_100_MHZ 0x1145
-+#define DIV_REG_200_MHZ 0x1083
-+#define SDHC_MMCM_CLKFBOUT 0x1024
-+#define CLKFBOUT_100_MHZ 0x0000
-+#define CLKFBOUT_200_MHZ 0x0080
-+#define SDHC_CCLK_MMCM_RST 0x00000001
-+
-+static void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+ u16 clk;
-+ u32 reg, vendor_ptr;
-+
-+ vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
-+
-+ /* Disable software managed rx tuning */
-+ reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
-+ reg &= ~SDHC_SW_TUNE_EN;
-+ sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
-+
-+ if (clock <= 52000000) {
-+ sdhci_set_clock(host, clock);
-+ } else {
-+ /* Assert reset to MMCM */
-+ reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
-+ reg |= SDHC_CCLK_MMCM_RST;
-+ sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
-+
-+ /* Configure MMCM */
-+ if (clock == 100000000) {
-+ sdhci_writel(host, DIV_REG_100_MHZ, SDHC_MMCM_DIV_REG);
-+ sdhci_writel(host, CLKFBOUT_100_MHZ,
-+ SDHC_MMCM_CLKFBOUT);
-+ } else {
-+ sdhci_writel(host, DIV_REG_200_MHZ, SDHC_MMCM_DIV_REG);
-+ sdhci_writel(host, CLKFBOUT_200_MHZ,
-+ SDHC_MMCM_CLKFBOUT);
-+ }
-+
-+ /* De-assert reset to MMCM */
-+ reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
-+ reg &= ~SDHC_CCLK_MMCM_RST;
-+ sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
-+
-+ /* Enable clock */
-+ clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
-+ SDHCI_CLOCK_CARD_EN;
-+ sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-+ }
-+}
-+
-+static const struct sdhci_ops sdhci_snps_ops = {
-+ .set_clock = sdhci_snps_set_clock,
-+ .enable_dma = sdhci_pci_enable_dma,
-+ .set_bus_width = sdhci_set_bus_width,
-+ .reset = sdhci_reset,
-+ .set_uhs_signaling = sdhci_set_uhs_signaling,
-+};
-+
-+const struct sdhci_pci_fixes sdhci_snps = {
-+ .ops = &sdhci_snps_ops,
-+};
-diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
-index db9cb54..60131b8 100644
---- a/drivers/mmc/host/sdhci-pci.h
-+++ b/drivers/mmc/host/sdhci-pci.h
-@@ -59,6 +59,8 @@
-#define PCI_VENDOR_ID_ARASAN 0x16e6
-#define PCI_DEVICE_ID_ARASAN_PHY_EMMC 0x0670
-
-+#define PCI_DEVICE_ID_SYNOPSYS_DWC_MSHC 0xc202
-+
-/*
-* PCI device class and mask
-*/
-@@ -182,5 +184,6 @@ static inline void *sdhci_pci_priv(struct sdhci_pci_slot *slot)
-#endif
-
-extern const struct sdhci_pci_fixes sdhci_arasan;
-+extern const struct sdhci_pci_fixes sdhci_snps;
-
-#endif /* __SDHCI_PCI_H */
--- 
-1.9.1
+Tony
