@@ -1,93 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751562AbeE3K1J (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:27:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60092 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750816AbeE3K1H (ORCPT
+        id S1751503AbeE3K0t (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:26:49 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33823 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751086AbeE3K0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:27:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 141C860261
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-Subject: Re: [PATCH RESEND] time: Fix sleeptime injection for non-stop
- clocksource & persistent clock
-To: John Stultz <john.stultz@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>, neeraju@codeaurora.org,
-        gkohli@codeaurora.org, cpandya@codeaurora.org
-References: <1527587351-26634-1-git-send-email-mojha@codeaurora.org>
- <CALAqxLWsD7rpgGYhdpDCVuH3Sss+RkqmFgunDejFYpKZ7=JTng@mail.gmail.com>
-From: Mukesh Ojha <mojha@codeaurora.org>
-Message-ID: <76bd29b8-c8af-b5ac-3538-b6a97afb6ab1@codeaurora.org>
-Date: Wed, 30 May 2018 15:57:02 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 30 May 2018 06:26:44 -0400
+X-Google-Smtp-Source: ADUXVKLT2cCZ8YeGl94v7h86952RM1R7Hg/TWx4lAP42FSjmx4aP6HIJGGDD+Xa0GekLf5KNMGrL+w==
+Date: Wed, 30 May 2018 12:26:39 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hovold <johan@kernel.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Pavel Machek <pavel@ucw.cz>, LKML <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/7] gnss: add new GNSS subsystem
+Message-ID: <20180530102639.GC3259@localhost>
+References: <20180424163458.11947-1-johan@kernel.org>
+ <20180504132741.brn5jqv5ufjhp7ky@earth.universe>
+ <20180507102056.GU2285@localhost>
+ <FA27606D-AB12-4D62-8EBD-3CC6F0900AF7@holtmann.org>
+ <20180508070153.GX2285@localhost>
+ <C8F35484-132F-466C-B87F-B209B2BC8B37@holtmann.org>
+ <20180508124817.GZ2285@localhost>
+ <0EFEDDD9-C21B-458B-884D-FC23F3D38B94@holtmann.org>
 MIME-Version: 1.0
-In-Reply-To: <CALAqxLWsD7rpgGYhdpDCVuH3Sss+RkqmFgunDejFYpKZ7=JTng@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0EFEDDD9-C21B-458B-884D-FC23F3D38B94@holtmann.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
+Hi Marcel,
 
+Sorry about the late reply. I got side-tracked with other things.
 
-On 5/30/2018 7:50 AM, John Stultz wrote:
-> On Tue, May 29, 2018 at 2:49 AM, Mukesh Ojha <mojha@codeaurora.org> wrote:
->> Currently, for both non-stop clocksource and persistent clock
->> there is a corner case, when a driver failed to go suspend mode
->> rtc_resume() injects the sleeptime as timekeeping_rtc_skipresume()
->> returned 'false' due to which we can see mismatch in time between
->> system clock and other timers.
->>
->> Success case:
->>                                           {sleeptime_injected=true}
->> rtc_suspend() => timekeeping_suspend() => timekeeping_resume() =>
->>    rtc_resume()
->>
->> Failure case:
->>               {failure in sleep path} {sleeptime_injected=false}
->> rtc_suspend()          =>            rtc_resume()
->>
->> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-> I'm not sure this patch makes sense yet (since I don't really see how
-> its used
+On Tue, May 08, 2018 at 10:03:57PM +0200, Marcel Holtmann wrote:
+> Hi Johan,
+> 
+> >>>>>> I have one concern, though. While providing raw data by
+> >>>>>> default is fine generally, it is a problem with device
+> >>>>>> auto-discovery. I think there should be some IOCTL from
+> >>>>>> the start, that can be used to inform userspace about
+> >>>>>> the raw protocol being used (i.e. "NMEA"). I fear, that
+> >>>>>> userspace may start to just assume raw = NMEA without
+> >>>>>> having this (especially since all initial drivers provide
+> >>>>>> NMEA).
+> >>>>> 
+> >>>>> One problem I see here would be that the driver does not necessarily
+> >>>>> know either what protocol is currently being used. Some devices have
+> >>>>> boot-pins which can be used to configure the initial protocol used (and
+> >>>>> this could perhaps be reflected in DT), but this can often later be
+> >>>>> changed (by user space) and even be made persistent using battery-backed
+> >>>>> ram or eeproms.
+> >>>>> 
+> >>>>> Also note that at least u-blox devices supports having more than one
+> >>>>> protocol active on the same port...
+> >>>> 
+> >>>> as long as userspace can determine that it is GNSS hardware and what
+> >>>> hardware it is, then you deal with the rest in userspace.
+> >>> 
+> >>> Yeah, I think that will do for now.
+> >> 
+> >> I forgot to mention that this part should be simple. So providing a
+> >> DEVTYPE attribute that can be easily associated to the /dev/gnssX
+> >> nodes is a must have here. Doing complex mapping of USB or DT layouts
+> >> to figure out this is NMEA vs some vendor vs I need extra code to
+> >> change the mode etc.
+> > 
+> > Yes, as I mentioned in the cover letter some kind of generic interface
+> > for identifying the device type (and its features) should be defined
+> > eventually.
+> 
+> I think this needs to be present from the start. Half backed
+> subsystems are dangerous. And I really want to avoid hacking in
+> userspace to figure out details about the hardware.
 
-In a system where both non-stop clocksource and rtc exist
+Fair enough. I've now added support for determining the GNSS type, which
+reflects the protocol(s) supported by the device and which should allow,
+for example, the gpsd protocol probing hack to be dropped.
 
-Timestamp mismatch seen between a (Gyro)timer based on non-stop clocksource
-and system clock after attempting a sleep.
-Here, System clock timestamps increase by some millisecond as compare to
-other timer.
+Currently, there are three types defined:
 
-And we see this is possible only when timekeeping_resume() has not been 
-called
-which is keeping sleeptime_injected to its default value(false). So, the 
-call to
-timekeeping_rtc_skipresume() in rtc_resume() is false and thats ends up in
-sleeptime injection via rtc_resume().
+	"NMEA"  NMEA 0183
+        "SiRF"  SiRF Binary
+        "UBX"   UBX
 
+Note that both SiRF and UBX type devices typically support a subset of
+NMEA 0183 with vendor extensions (e.g. to allow switching to the vendor
+protocol).
 
-When timekeeping_resume() has not been called means one of the driver failed
-during suspend in syscore_suspend() in kernel/power/suspend.c .
+> > Note that this is not necessarily something that is needed from the
+> > start however as, for example, gpsd implements protocol detection.
+> 
+> That might be, but that is a total hack. Lets get this right from the
+> get-go.
 
-So if we let rtc inject the sleeptime here, we would see the timestamp 
-increase in case of
-system clock.
-
->   - mind cc'ing me on the patch that makes use of this?)
->
-> And more problematic, the patch doesn't seem to apply to mainline.
-> Could you respin and resend?
-
-Will spin the patch again with some minor code change.
+I agree; it's horrid.
 
 Thanks,
-Mukesh
-
->
-> thanks
-> -john
+Johan
