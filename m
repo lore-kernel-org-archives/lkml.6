@@ -1,116 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753765AbeE3T7I (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:59:08 -0400
-Received: from vern.gendns.com ([206.190.152.46]:49590 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753695AbeE3T7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:59:04 -0400
-Subject: Re: [PATCH 6/9] clk: davinci: pll: allow dev == NULL
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        linux-kernel@vger.kernel.org, brgl@bgdev.pl
-References: <20180525181150.17873-1-david@lechnology.com>
- <20180525181150.17873-7-david@lechnology.com>
- <20180530194559.982.42844@harbor.lan>
-From: David Lechner <david@lechnology.com>
-Message-ID: <41524516-3b58-0db8-1e67-3d76f8596a23@lechnology.com>
-Date: Wed, 30 May 2018 14:59:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932222AbeE3T7r (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 15:59:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48674 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932154AbeE3T7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 15:59:46 -0400
+Date: Wed, 30 May 2018 15:59:42 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Laurence Oberman <loberman@redhat.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>, Ewan Milne <emilne@redhat.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>, dm-devel@redhat.com
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+Message-ID: <20180530195942.GC6568@redhat.com>
+References: <20180525130535.GA24239@lst.de>
+ <20180525135813.GB9591@redhat.com>
+ <20180525141211.GA25971@lst.de>
+ <20180525145056.GD9591@redhat.com>
+ <yq1muwj45sg.fsf@oracle.com>
+ <20180529030236.GA28895@redhat.com>
+ <20180529072240.np5c62akbr7jqelr@linux-x5ow.site>
+ <20180529080952.GA1369@lst.de>
+ <20180529232718.GA1730@redhat.com>
+ <f4951571-d37d-73cd-1d6c-0ca84647d5ac@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20180530194559.982.42844@harbor.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4951571-d37d-73cd-1d6c-0ca84647d5ac@kernel.dk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/30/2018 02:46 PM, Michael Turquette wrote:
-> Hi David,
-> 
-> Quoting David Lechner (2018-05-25 11:11:47)
->> This modifies the TI Davinci PLL clock driver to allow for the case
->> when dev == NULL. On some (most) SoCs that use this driver, the PLL
->> clock needs to be registered during early boot because it is used
->> for clocksource/clkevent and there will be no platform device available.
-> 
-> A lot of this stuff feels like a step backwards. E.g:
-> 
->> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
->> index 23a24c944f1d..2eb981e61185 100644
->> --- a/drivers/clk/davinci/pll.c
->> +++ b/drivers/clk/davinci/pll.c
->> @@ -11,6 +11,7 @@
->>   
->>   #include <linux/clk-provider.h>
->>   #include <linux/clk.h>
->> +#include <linux/clk/davinci.h>
->>   #include <linux/delay.h>
->>   #include <linux/err.h>
->>   #include <linux/io.h>
->> @@ -223,6 +224,7 @@ static const struct clk_ops dm365_pll_ops = {
->>   
->>   /**
->>    * davinci_pll_div_register - common *DIV clock implementation
->> + * @dev: The PLL platform device or NULL
->>    * @name: the clock name
->>    * @parent_name: the parent clock name
->>    * @reg: the *DIV register
->> @@ -240,17 +242,21 @@ static struct clk *davinci_pll_div_register(struct device *dev,
->>          const struct clk_ops *divider_ops = &clk_divider_ops;
->>          struct clk_gate *gate;
->>          struct clk_divider *divider;
->> +       struct clk *clk;
->> +       int ret;
->>   
->> -       gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
->> +       gate = kzalloc(sizeof(*gate), GFP_KERNEL);
->>          if (!gate)
->>                  return ERR_PTR(-ENOMEM);
->>   
->>          gate->reg = reg;
->>          gate->bit_idx = DIV_ENABLE_SHIFT;
->>   
->> -       divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
->> -       if (!divider)
->> -               return ERR_PTR(-ENOMEM);
->> +       divider = kzalloc(sizeof(*divider), GFP_KERNEL);
->> +       if (!divider) {
->> +               ret = -ENOMEM;
->> +               goto err_free_gate;
->> +       }
->>   
->>          divider->reg = reg;
->>          divider->shift = DIV_RATIO_SHIFT;
-> 
-> Oh no my poor devm_ helpers!
-> 
-> I understand that we need to support early boot drivers better, so this
-> patch can be merged.
-> 
-> However I'm curious if you're tracking Bartosz's early_platform_driver
-> efforts? Converting to that if it is ever merged would likely be
-> cleaner:
-> 
-> https://lkml.kernel.org/r/20180511162028.20616-1-brgl@bgdev.pl
-> 
-> Best regards,
-> Mike
-> 
+On Wed, May 30 2018 at  3:05pm -0400,
+Jens Axboe <axboe@kernel.dk> wrote:
 
-Yes. In fact, this is what got Bartosz working on it in the first
-place. :-)
+> On 5/29/18 5:27 PM, Mike Snitzer wrote:
+> > On Tue, May 29 2018 at  4:09am -0400,
+> > Christoph Hellwig <hch@lst.de> wrote:
+> > 
+> >> On Tue, May 29, 2018 at 09:22:40AM +0200, Johannes Thumshirn wrote:
+> >>> For a "Plan B" we can still use the global knob that's already in
+> >>> place (even if this reminds me so much about scsi-mq which at least we
+> >>> haven't turned on in fear of performance regressions).
+> >>>
+> >>> Let's drop the discussion here, I don't think it leads to something
+> >>> else than flamewars.
+> >>
+> >> If our plan A doesn't work we can go back to these patches.  For now
+> >> I'd rather have everyone spend their time on making Plan A work then
+> >> preparing for contingencies.  Nothing prevents anyone from using these
+> >> patches already out there if they really want to, but I'd recommend
+> >> people are very careful about doing so as you'll lock yourself into
+> >> a long-term maintainance burden.
+> > 
+> > Restating (for others): this patchset really isn't about contingencies.
+> > It is about choice.
+> > 
+> > Since we're at an impasse, in the hopes of soliciting definitive
+> > feedback from Jens and Linus, I'm going to attempt to reset the
+> > discussion for their entry.
+> > 
+> > In summary, we have a classic example of a maintainer stalemate here:
+> > 1) Christoph, as NVMe co-maintainer, doesn't want to allow native NVMe
+> >    multipath to actively coexist with dm-multipath's NVMe support on the
+> >    same host.
+> > 2) I, as DM maintainer, would like to offer this flexibility to users --
+> >    by giving them opt-in choice to continue using existing dm-multipath
+> >    with NVMe. (also, both Red Hat and SUSE would like to offer this).
+> > 
+> > There is no technical reason why they cannot coexist.  Hence this simple
+> > patchset that was originally offered by Johannes Thumshirn with
+> > contributions from myself.
+> 
+> Here's what I think - flag days tend to suck. They may be more convenient
+> for developers, but they inflict pain on users. Sometimes they prevent
+> them from moving forward, since updates are now gated on external
+> dependencies. Moving forward with a new architecture is great, but
+> proper care has to be given to existing users of multipath, regardless
+> of how few they may be.
+
+As I mentioned at the end of my summary (and in my first reply to this
+0th header): it is on the "other" multipath toolchain to deal with
+switching from "native" to "other" (by writing to 'mpath_personality').
+For dm-multipath, it is multipathd that would trigger the switch from
+"native" to "other" iff user opts-in by configuring multipath.conf to
+own a particular NVMe subsystem's multipathing.
+
+So users very likely won't ever have a need to write to
+'mpath_personality'.  And as such, they'll just default to using
+"native" NVMe multipath.
+
+> This patchset seems pretty clean and minimalist. Realistically, I'm
+> guessing that SUSE and RH will ship it regardless of upstream status.
+
+TBD really.  We are keen to enable CONFIG_NVME_MULTIPATH to allow users
+to use native (as the default!).  But we won't be able to do that unless
+we have this patchset.  Because we really do _need_ to give our users
+the option of continuing to use dm-multipath.
+
+And as the Red Hat employee who would have to port it to each kernel (as
+long as there is a need): _please_ don't make me do that.
+
+PLEASE! ;)
+
+Mike
