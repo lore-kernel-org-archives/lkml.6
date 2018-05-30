@@ -1,70 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932094AbeE3PUC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:20:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43212 "EHLO mail.kernel.org"
+        id S1753674AbeE3PU1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:20:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932069AbeE3PUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:20:01 -0400
-Date: Wed, 30 May 2018 10:20:00 -0500
+        id S1753033AbeE3PUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:20:25 -0400
+Date: Wed, 30 May 2018 10:20:24 -0500
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>, linux-kernel@vger.kernel.org,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] PCI: versatile: include pci.h
-Message-ID: <20180530152000.GB39853@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180528154850.2647019-1-arnd@arndb.de>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh@kernel.org>,
+        Marc Gonzalez <marc_gonzalez@sigmadesigns.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pci: mvebu: add MVEBU_MBUS dependency
+Message-ID: <20180530152024.GC39853@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180529094204.3945660-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180528154850.2647019-1-arnd@arndb.de>
+In-Reply-To: <20180529094204.3945660-1-arnd@arndb.de>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 05:48:39PM +0200, Arnd Bergmann wrote:
-> Two patches for PCI host drivers clashed recently, leading to a broken
-> build for versatile-pci:
+On Tue, May 29, 2018 at 11:41:51AM +0200, Arnd Bergmann wrote:
+> Enabling the PCI_MVEBU driver for compile testing caused a build failure
+> on ARM randconfig builds:
 > 
-> drivers/pci/host/pci-versatile.c: In function 'versatile_pci_parse_request_of_pci_ranges':
-> drivers/pci/host/pci-versatile.c:70:8: error: implicit declaration of function 'devm_of_pci_get_host_bridge_resources'; did you mean 'pci_get_host_bridge_device'? [-Werror=implicit-function-declaration]
+> drivers/pci/host/pci-mvebu.c: In function 'mvebu_pcie_del_windows':
+> drivers/pci/host/pci-mvebu.c:341:3: error: implicit declaration of function 'mvebu_mbus_del_window'; did you mean 'mvebu_pcie_del_windows'? [-Werror=implicit-function-declaration]
+>    mvebu_mbus_del_window(base, sz);
+>    ^~~~~~~~~~~~~~~~~~~~~
+>    mvebu_pcie_del_windows
+> drivers/pci/host/pci-mvebu.c: In function 'mvebu_pcie_add_windows':
+> drivers/pci/host/pci-mvebu.c:364:9: error: implicit declaration of function 'mvebu_mbus_add_window_remap_by_id'; did you mean 'mvebu_pcie_add_windows'? [-Werror=implicit-function-declaration]
+>    ret = mvebu_mbus_add_window_remap_by_id(target, attribute, base,
+>          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>          mvebu_pcie_add_windows
+> drivers/pci/host/pci-mvebu.c: In function 'mvebu_pcie_probe':
+> drivers/pci/host/pci-mvebu.c:1209:2: error: implicit declaration of function 'mvebu_mbus_get_pcie_mem_aperture'; did you mean 'mvebu_mbus_get_io_win_info'? [-Werror=implicit-function-declaration]
+> drivers/pci/host/pci-mvebu.c:1215:2: error: implicit declaration of function 'mvebu_mbus_get_pcie_io_aperture'; did you mean 'mvebu_mbus_get_io_win_info'? [-Werror=implicit-function-declaration]
 > 
-> This adds the missing header inclusion that became necessary now.
+> The problem is that the mbus helper functions are not declared in the
+> header. There are two ways of solving this: we can change the header
+> to provide empty stub functions for CONFIG_MVEBU_MBUS=n, or we can
+> add back the dependency here.
 > 
-> Fixes: 9e2aee80c78d ("PCI: Move private DT related functions into private header")
-> Fixes: 64720fd1f630 ("PCI: Rework of_pci_get_host_bridge_resources() to devm_of_pci_get_host_bridge_resources()")
+> I picked the second option since that is simpler, but it somewhat
+> defeats the purpose of the original patch because we still cannot
+> compile test on other platforms this way.
+> 
+> Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Thanks, I added this in the merge where these two commits came together,
-so hopefully there should be no bisection hole.
+Thanks, I added this when doing the merge.
 
 > ---
->  drivers/pci/host/pci-versatile.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/pci/host/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/pci/host/pci-versatile.c b/drivers/pci/host/pci-versatile.c
-> index ff2cd12b3978..994f32061b32 100644
-> --- a/drivers/pci/host/pci-versatile.c
-> +++ b/drivers/pci/host/pci-versatile.c
-> @@ -15,6 +15,8 @@
->  #include <linux/pci.h>
->  #include <linux/platform_device.h>
->  
-> +#include "../pci.h"
-> +
->  static void __iomem *versatile_pci_base;
->  static void __iomem *versatile_cfg_base[2];
+> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+> index fa51d0893384..5340950f4b98 100644
+> --- a/drivers/pci/host/Kconfig
+> +++ b/drivers/pci/host/Kconfig
+> @@ -6,6 +6,7 @@ menu "PCI host controller drivers"
+>  config PCI_MVEBU
+>  	bool "Marvell EBU PCIe controller"
+>  	depends on ARCH_MVEBU || ARCH_DOVE || COMPILE_TEST
+> +	depends on MVEBU_MBUS
+>  	depends on ARM
+>  	depends on OF
 >  
 > -- 
 > 2.9.0
 > 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
