@@ -1,116 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752852AbeE3LQv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:16:51 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60685 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751479AbeE3LHW (ORCPT
+        id S1752751AbeE3LT2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:19:28 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37732 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752969AbeE3LQx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:22 -0400
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 30 May 2018 07:16:53 -0400
+X-Google-Smtp-Source: ADUXVKKEbm5WetIH3mpqsYMpPOq5w35MuyQGXQnacma0uQaDaFL7LSs84sLB59/2chWb1SsJOs9TIA==
+Date: Wed, 30 May 2018 12:16:49 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
+ driver
+Message-ID: <20180530111649.GB8038@dell>
+References: <20180528090003.GA8778@localhost.localdomain>
+ <20180529073958.GB4790@dell>
+ <20180529083541.GA13528@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Ingo Molnar" <mingo@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "Peter Zijlstra" <a.p.zijlstra@chello.nl>,
-        "Frederic Weisbecker" <fweisbec@gmail.com>,
-        "K.Prasad" <Prasad.Krishnan@gmail.com>,
-        "Edjunior Barbosa Machado" <emachado@linux.vnet.ibm.com>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.878002863@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 025/153] perf/hwpb: Invoke __perf_event_disable() if
- interrupts are already  disabled
-In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <20180529083541.GA13528@localhost.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
+On Tue, 29 May 2018, Matti Vaittinen wrote:
 
-------------------
+> Hello,
+> 
+> On Tue, May 29, 2018 at 08:39:58AM +0100, Lee Jones wrote:
+> > On Mon, 28 May 2018, Matti Vaittinen wrote:
+> > 
+> > > Patch series adding support for ROHM BD71837 PMIC.
+> > FYI, this patch-set is going to be difficult to manage since it was
+> > not sent 'threaded'.
+> > 
+> > If/when you send a subsequent version, could you please ensure you
+> > send the set threaded so the patches keep in relation to one another
+> > as they are reviewed?
+> 
+> Thanks for the guidance. I have not sent so many patches to community so
+> I am grateful also from all the practical tips =) Just one slight problem.
+> I have only seen emails being threaded when one is replying to an email.
+> So how should I send my patches in same thread? Just send first one and
+> then send subsequent patches as replies?
+> 
+> I just killed some unused definitions and one unused variable from the
+> code so I am about to send new version. I'll try doing that as a threaded
+> series and resend all the patches as v3.
 
-From: "K.Prasad" <Prasad.Krishnan@gmail.com>
+You don't need to do this manually.
 
-commit 500ad2d8b01390c98bc6dce068bccfa9534b8212 upstream.
+Just use `git send-email` with the correct arguments.
 
-While debugging a warning message on PowerPC while using hardware
-breakpoints, it was discovered that when perf_event_disable is invoked
-through hw_breakpoint_handler function with interrupts disabled, a
-subsequent IPI in the code path would trigger a WARN_ON_ONCE message in
-smp_call_function_single function.
-
-This patch calls __perf_event_disable() when interrupts are already
-disabled, instead of perf_event_disable().
-
-Reported-by: Edjunior Barbosa Machado <emachado@linux.vnet.ibm.com>
-Signed-off-by: K.Prasad <Prasad.Krishnan@gmail.com>
-[naveen.n.rao@linux.vnet.ibm.com: v3: Check to make sure we target current task]
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Acked-by: Frederic Weisbecker <fweisbec@gmail.com>
-Signed-off-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Link: http://lkml.kernel.org/r/20120802081635.5811.17737.stgit@localhost.localdomain
-[ Fixed build error on MIPS. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- include/linux/perf_event.h    |  2 ++
- kernel/events/core.c          |  2 +-
- kernel/events/hw_breakpoint.c | 11 ++++++++++-
- 3 files changed, 13 insertions(+), 2 deletions(-)
-
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1140,6 +1140,7 @@ extern int perf_swevent_get_recursion_co
- extern void perf_swevent_put_recursion_context(int rctx);
- extern void perf_event_enable(struct perf_event *event);
- extern void perf_event_disable(struct perf_event *event);
-+extern int __perf_event_disable(void *info);
- extern void perf_event_task_tick(void);
- #else
- static inline void
-@@ -1178,6 +1179,7 @@ static inline int  perf_swevent_get_recu
- static inline void perf_swevent_put_recursion_context(int rctx)		{ }
- static inline void perf_event_enable(struct perf_event *event)		{ }
- static inline void perf_event_disable(struct perf_event *event)		{ }
-+static inline int __perf_event_disable(void *info)			{ return -1; }
- static inline void perf_event_task_tick(void)				{ }
- #endif
- 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1344,7 +1344,7 @@ retry:
- /*
-  * Cross CPU call to disable a performance event
-  */
--static int __perf_event_disable(void *info)
-+int __perf_event_disable(void *info)
- {
- 	struct perf_event *event = info;
- 	struct perf_event_context *ctx = event->ctx;
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -453,7 +453,16 @@ int modify_user_hw_breakpoint(struct per
- 	int old_type = bp->attr.bp_type;
- 	int err = 0;
- 
--	perf_event_disable(bp);
-+	/*
-+	 * modify_user_hw_breakpoint can be invoked with IRQs disabled and hence it
-+	 * will not be possible to raise IPIs that invoke __perf_event_disable.
-+	 * So call the function directly after making sure we are targeting the
-+	 * current task.
-+	 */
-+	if (irqs_disabled() && bp->ctx && bp->ctx->task == current)
-+		__perf_event_disable(bp);
-+	else
-+		perf_event_disable(bp);
- 
- 	bp->attr.bp_addr = attr->bp_addr;
- 	bp->attr.bp_type = attr->bp_type;
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
