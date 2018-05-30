@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753293AbeE3L2u (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:28:50 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60947 "EHLO
+        id S1753195AbeE3L2p (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:28:45 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60958 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751008AbeE3LHG (ORCPT
+        by vger.kernel.org with ESMTP id S1752453AbeE3LHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:06 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,13 +13,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Paolo Abeni" <pabeni@redhat.com>,
+CC: akpm@linux-foundation.org, "Florian Westphal" <fw@strlen.de>,
         "Pablo Neira Ayuso" <pablo@netfilter.org>,
-        syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com
+        "Cong Wang" <xiyou.wangcong@gmail.com>,
+        "Eric Dumazet" <eric.dumazet@gmail.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.96583215@decadent.org.uk>
+Message-ID: <lsq.1527677561.948453769@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 092/153] netfilter: nat: cope with negative port range
+Subject: [PATCH 3.2 090/153] netfilter: ipt_CLUSTERIP: fix a refcount bug
+ in clusterip_config_find_get()
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -32,114 +34,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit db57ccf0f2f4624b4c4758379f8165277504fbd7 upstream.
+commit db93a3632b0f8773a3899e04a3a3e0aa7a26eb46 upstream.
 
-syzbot reported a division by 0 bug in the netfilter nat code:
+In clusterip_config_find_get() we hold RCU read lock so it could
+run concurrently with clusterip_config_entry_put(), as a result,
+the refcnt could go back to 1 from 0, which leads to a double
+list_del()... Just replace refcount_inc() with
+refcount_inc_not_zero(), as for c->refcount.
 
-divide error: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4168 Comm: syzkaller034710 Not tainted 4.16.0-rc1+ #309
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-RIP: 0010:nf_nat_l4proto_unique_tuple+0x291/0x530
-net/netfilter/nf_nat_proto_common.c:88
-RSP: 0018:ffff8801b2466778 EFLAGS: 00010246
-RAX: 000000000000f153 RBX: ffff8801b2466dd8 RCX: ffff8801b2466c7c
-RDX: 0000000000000000 RSI: ffff8801b2466c58 RDI: ffff8801db5293ac
-RBP: ffff8801b24667d8 R08: ffff8801b8ba6dc0 R09: ffffffff88af5900
-R10: ffff8801b24666f0 R11: 0000000000000000 R12: 000000002990f153
-R13: 0000000000000001 R14: 0000000000000000 R15: ffff8801b2466c7c
-FS:  00000000017e3880(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000208fdfe4 CR3: 00000001b5340002 CR4: 00000000001606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  dccp_unique_tuple+0x40/0x50 net/netfilter/nf_nat_proto_dccp.c:30
-  get_unique_tuple+0xc28/0x1c10 net/netfilter/nf_nat_core.c:362
-  nf_nat_setup_info+0x1c2/0xe00 net/netfilter/nf_nat_core.c:406
-  nf_nat_redirect_ipv6+0x306/0x730 net/netfilter/nf_nat_redirect.c:124
-  redirect_tg6+0x7f/0xb0 net/netfilter/xt_REDIRECT.c:34
-  ip6t_do_table+0xc2a/0x1a30 net/ipv6/netfilter/ip6_tables.c:365
-  ip6table_nat_do_chain+0x65/0x80 net/ipv6/netfilter/ip6table_nat.c:41
-  nf_nat_ipv6_fn+0x594/0xa80 net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:302
-  nf_nat_ipv6_local_fn+0x33/0x5d0
-net/ipv6/netfilter/nf_nat_l3proto_ipv6.c:407
-  ip6table_nat_local_fn+0x2c/0x40 net/ipv6/netfilter/ip6table_nat.c:69
-  nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
-  nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
-  nf_hook include/linux/netfilter.h:243 [inline]
-  NF_HOOK include/linux/netfilter.h:286 [inline]
-  ip6_xmit+0x10ec/0x2260 net/ipv6/ip6_output.c:277
-  inet6_csk_xmit+0x2fc/0x580 net/ipv6/inet6_connection_sock.c:139
-  dccp_transmit_skb+0x9ac/0x10f0 net/dccp/output.c:142
-  dccp_connect+0x369/0x670 net/dccp/output.c:564
-  dccp_v6_connect+0xe17/0x1bf0 net/dccp/ipv6.c:946
-  __inet_stream_connect+0x2d4/0xf00 net/ipv4/af_inet.c:620
-  inet_stream_connect+0x58/0xa0 net/ipv4/af_inet.c:684
-  SYSC_connect+0x213/0x4a0 net/socket.c:1639
-  SyS_connect+0x24/0x30 net/socket.c:1620
-  do_syscall_64+0x282/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x26/0x9b
-RIP: 0033:0x441c69
-RSP: 002b:00007ffe50cc0be8 EFLAGS: 00000217 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 0000000000441c69
-RDX: 000000000000001c RSI: 00000000208fdfe4 RDI: 0000000000000003
-RBP: 00000000006cc018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000538 R11: 0000000000000217 R12: 0000000000403590
-R13: 0000000000403620 R14: 0000000000000000 R15: 0000000000000000
-Code: 48 89 f0 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 46 02 00 00 48 8b
-45 c8 44 0f b7 20 e8 88 97 04 fd 31 d2 41 0f b7 c4 4c 89 f9 <41> f7 f6 48
-c1 e9 03 48 b8 00 00 00 00 00 fc ff df 0f b6 0c 01
-RIP: nf_nat_l4proto_unique_tuple+0x291/0x530
-net/netfilter/nf_nat_proto_common.c:88 RSP: ffff8801b2466778
-
-The problem is that currently we don't have any check on the
-configured port range. A port range == -1 triggers the bug, while
-other negative values may require a very long time to complete the
-following loop.
-
-This commit addresses the issue swapping the two ends on negative
-ranges. The check is performed in nf_nat_l4proto_unique_tuple() since
-the nft nat loads the port values from nft registers at runtime.
-
-v1 -> v2: use the correct 'Fixes' tag
-v2 -> v3: update commit message, drop unneeded READ_ONCE()
-
-Fixes: 5b1158e909ec ("[NETFILTER]: Add NAT support for nf_conntrack")
-Reported-by: syzbot+8012e198bd037f4871e5@syzkaller.appspotmail.com
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Fixes: d73f33b16883 ("netfilter: CLUSTERIP: RCU conversion")
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Florian Westphal <fw@strlen.de>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reviewed-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-[bwh: Backported to 3.2: adjust filename, context]
+[bwh: Backported to 3.2: s/refcount/atomic/]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv4/netfilter/nf_nat_proto_common.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/netfilter/nf_nat_proto_common.c
-+++ b/net/ipv4/netfilter/nf_nat_proto_common.c
-@@ -42,7 +42,7 @@ void nf_nat_proto_unique_tuple(struct nf
- 			       const struct nf_conn *ct,
- 			       u_int16_t *rover)
- {
--	unsigned int range_size, min, i;
-+	unsigned int range_size, min, max, i;
- 	__be16 *portptr;
- 	u_int16_t off;
- 
-@@ -72,7 +72,10 @@ void nf_nat_proto_unique_tuple(struct nf
- 		}
- 	} else {
- 		min = ntohs(range->min.all);
--		range_size = ntohs(range->max.all) - min + 1;
-+		max = ntohs(range->max.all);
-+		if (unlikely(max < min))
-+			swap(max, min);
-+		range_size = max - min + 1;
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -135,8 +135,12 @@ clusterip_config_find_get(__be32 cluster
+ 	if (c) {
+ 		if (unlikely(!atomic_inc_not_zero(&c->refcount)))
+ 			c = NULL;
+-		else if (entry)
+-			atomic_inc(&c->entries);
++		else if (entry) {
++			if (unlikely(!atomic_inc_not_zero(&c->entries))) {
++				clusterip_config_put(c);
++				c = NULL;
++			}
++		}
  	}
+ 	rcu_read_unlock_bh();
  
- 	if (range->flags & IP_NAT_RANGE_PROTO_RANDOM)
