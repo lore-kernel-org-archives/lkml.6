@@ -1,103 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932572AbeE3WKc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:10:32 -0400
-Received: from 72-48-214-68.dyn.grandenetworks.net ([72.48.214.68]:55147 "EHLO
-        smtp.opengridcomputing.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932431AbeE3WKb (ORCPT
+        id S932536AbeE3WNA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:13:00 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41643 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753617AbeE3WM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:10:31 -0400
-Subject: Re: [PATCH] iw_cxgb4: add INFINIBAND_ADDR_TRANS dependency
-To: Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>
-Cc: Steve Wise <swise@chelsio.com>, Doug Ledford <dledford@redhat.com>,
-        Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org,
+        Wed, 30 May 2018 18:12:56 -0400
+X-Google-Smtp-Source: ADUXVKKqUxn/hogfrsFobUFvVcXBaMP+dZd5Oc1bCfaDDskSflLSFty2DilaHlI+4r9zYnTXd0KDqA==
+Subject: Re: [PATCH] phy: tegra: select USB_COMMON
+To: Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thierry Reding <treding@nvidia.com>, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20180530215826.1343234-1-arnd@arndb.de>
- <20180530220405.GH30754@ziepe.ca>
-From: Steve Wise <swise@opengridcomputing.com>
+References: <20180530213406.618544-1-arnd@arndb.de>
+From: Dmitry Osipenko <digetx@gmail.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=swise@opengridcomputing.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0be4e0fb-8d8e-b337-fc8d-550c90829d8c@opengridcomputing.com>
-Date: Wed, 30 May 2018 17:10:35 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <d06a612f-1519-40cd-a912-e45df408c178@gmail.com>
+Date: Thu, 31 May 2018 01:12:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180530220405.GH30754@ziepe.ca>
+In-Reply-To: <20180530213406.618544-1-arnd@arndb.de>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 31.05.2018 00:33, Arnd Bergmann wrote:
+> A built-in PHY driver cannot link against modular USB core code:
+> 
+> drivers/usb/phy/phy-tegra-usb.o: In function `tegra_usb_phy_probe':
+> phy-tegra-usb.c:(.text+0x6bc): undefined reference to `usb_get_dr_mode'
+> 
+> This uses a 'select' statement in Kconfig like we have for other such
+> PHY drivers.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/usb/phy/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
+> index b9b0a44be679..d7312eed6088 100644
+> --- a/drivers/usb/phy/Kconfig
+> +++ b/drivers/usb/phy/Kconfig
+> @@ -162,6 +162,7 @@ config USB_MXS_PHY
+>  config USB_TEGRA_PHY
+>  	tristate "NVIDIA Tegra USB PHY Driver"
+>  	depends on ARCH_TEGRA
+> +	select USB_COMMON
+>  	select USB_PHY
+>  	select USB_ULPI
+>  	help
+> 
 
+Thank you!
 
-On 5/30/2018 5:04 PM, Jason Gunthorpe wrote:
-> On Wed, May 30, 2018 at 11:58:18PM +0200, Arnd Bergmann wrote:
->> The newly added fill_res_ep_entry function fails to link if
->> CONFIG_INFINIBAND_ADDR_TRANS is not set:
->>
->> drivers/infiniband/hw/cxgb4/restrack.o: In function `fill_res_ep_entry':
->> restrack.c:(.text+0x3cc): undefined reference to `rdma_res_to_id'
->> restrack.c:(.text+0x3d0): undefined reference to `rdma_iw_cm_id'
->>
->> This adds a Kconfig dependency for the driver.
->>
->> Fixes: 116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>  drivers/infiniband/hw/cxgb4/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
-> Oh, I think we need to solve this with maybe a header fill null stub
-> instead..
->
-> We don't want to disable drivers just because a user interface is
-> disabled.
->
-
-Why does CONFIG_INFINIBAND_ADDR_TRANS disable building rdma_cm.ko?  That
-is not correct.
-
-Steve.
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
