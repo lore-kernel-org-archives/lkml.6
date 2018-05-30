@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752981AbeE3LJA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:09:00 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60763 "EHLO
+        id S1752966AbeE3LI4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:08:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60777 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752672AbeE3LHj (ORCPT
+        by vger.kernel.org with ESMTP id S1752673AbeE3LHj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:39 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,14 +13,25 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
+CC: akpm@linux-foundation.org, "Borislav Petkov" <bp@alien8.de>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Dave Hansen" <dave.hansen@linux.intel.com>,
         "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Chu.Mike [=?UTF-8?Q?=E6=9C=B1=E5=A0=85=E5=AE=9C?=]"
-        <Mike-Chu@prolific.com.tw>
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Dan Williams" <dan.j.williams@intel.com>, linux-arch@vger.kernel.org,
+        "Will Deacon" <will.deacon@arm.com>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Arjan van de Ven" <arjan@linux.intel.com>,
+        "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.430066906@decadent.org.uk>
+Message-ID: <lsq.1527677561.523255589@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 063/153] USB: serial: pl2303: new device id for Chilitag
+Subject: [PATCH 3.2 098/153] nospec: Allow index argument to have
+ const-qualified type
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,38 +44,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-commit d08dd3f3dd2ae351b793fc5b76abdbf0fd317b12 upstream.
+commit b98c6a160a057d5686a8c54c79cc6c8c94a7d0c8 upstream.
 
-This adds a new device id for Chilitag devices to the pl2303 driver.
+The last expression in a statement expression need not be a bare
+variable, quoting gcc docs
 
-Reported-by: "Chu.Mike [朱堅宜]" <Mike-Chu@prolific.com.tw>
-Acked-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  The last thing in the compound statement should be an expression
+  followed by a semicolon; the value of this subexpression serves as the
+  value of the entire construct.
+
+and we already use that in e.g. the min/max macros which end with a
+ternary expression.
+
+This way, we can allow index to have const-qualified type, which will in
+some cases avoid the need for introducing a local copy of index of
+non-const qualified type. That, in turn, can prevent readers not
+familiar with the internals of array_index_nospec from wondering about
+the seemingly redundant extra variable, and I think that's worthwhile
+considering how confusing the whole _nospec business is.
+
+The expression _i&_mask has type unsigned long (since that is the type
+of _mask, and the BUILD_BUG_ONs guarantee that _i will get promoted to
+that), so in order not to change the type of the whole expression, add
+a cast back to typeof(_i).
+
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arch@vger.kernel.org
+Link: http://lkml.kernel.org/r/151881604837.17395.10812767547837568328.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/pl2303.c | 1 +
- drivers/usb/serial/pl2303.h | 1 +
- 2 files changed, 2 insertions(+)
+ include/linux/nospec.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -45,6 +45,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ2) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_DCU11) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_RSAQ3) },
-+	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_CHILITAG) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_PHAROS) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ALDIGA) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MMX) },
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -17,6 +17,7 @@
- #define PL2303_PRODUCT_ID_DCU11		0x1234
- #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
- #define PL2303_PRODUCT_ID_RSAQ3		0xaaa2
-+#define PL2303_PRODUCT_ID_CHILITAG	0xaaa8
- #define PL2303_PRODUCT_ID_ALDIGA	0x0611
- #define PL2303_PRODUCT_ID_MMX		0x0612
- #define PL2303_PRODUCT_ID_GPRS		0x0609
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -53,7 +53,6 @@ static inline unsigned long array_index_
+ 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
+ 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
+ 									\
+-	_i &= _mask;							\
+-	_i;								\
++	(typeof(_i)) (_i & _mask);					\
+ })
+ #endif /* _LINUX_NOSPEC_H */
