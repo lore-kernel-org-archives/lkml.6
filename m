@@ -1,87 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932556AbeE3X4c (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 19:56:32 -0400
-Received: from mga01.intel.com ([192.55.52.88]:64240 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932091AbeE3X42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 19:56:28 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,461,1520924400";
-   d="scan'208";a="52069566"
-Date: Thu, 31 May 2018 02:56:21 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: stable@vger.kernel.org
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Sonny Rao <sonnyrao@chromium.org>,
-        James Morris <james.l.morris@oracle.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Marcel Selhorst <tpmdd@selhorst.net>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        "moderated list:TPM DEVICE DRIVER"
-        <tpmdd-devel@lists.sourceforge.net>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] tpm: do not suspend/resume if power stays on
-Message-ID: <20180530235621.GA32293@linux.intel.com>
-References: <20180530204440.27299-1-jarkko.sakkinen@linux.intel.com>
- <20180530204440.27299-2-jarkko.sakkinen@linux.intel.com>
+        id S932568AbeE3X7A (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 19:59:00 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33832 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932091AbeE3X64 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 19:58:56 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D62FD6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH v4 2/2] regulator: add QCOM RPMh regulator driver
+To: Doug Anderson <dianders@chromium.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <cover.1527040878.git.collinsd@codeaurora.org>
+ <7489cd65fedb8a31488cf8188885759bcd4820ce.1527040878.git.collinsd@codeaurora.org>
+ <CAD=FV=WF+onhAAWrbmwcHiWyCjuZ=6vvnhodUsia=Ps-da6_4A@mail.gmail.com>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <5e65b713-6d45-4b33-d05e-6ebe2c6b6cec@codeaurora.org>
+Date: Wed, 30 May 2018 16:58:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180530204440.27299-2-jarkko.sakkinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAD=FV=WF+onhAAWrbmwcHiWyCjuZ=6vvnhodUsia=Ps-da6_4A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 11:44:39PM +0300, Jarkko Sakkinen wrote:
-> From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> 
-> commit b5d0ebc99bf5d0801a5ecbe958caa3d68b8eaee8 upstream
-> 
-> The suspend/resume behavior of the TPM can be controlled by setting
-> "powered-while-suspended" in the DTS. This is useful for the cases
-> when hardware does not power-off the TPM.
-> 
-> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Reviewed-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: James Morris <james.l.morris@oracle.com>
-> ---
->  drivers/char/tpm/tpm-chip.c      | 12 ++++++++++++
->  drivers/char/tpm/tpm-interface.c |  3 +++
->  drivers/char/tpm/tpm.h           |  1 +
->  3 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index a0d9ac6b6cc9..a8d7220f613c 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -324,8 +324,20 @@ static void tpm1_chip_unregister(struct tpm_chip *chip)
->   */
->  int tpm_chip_register(struct tpm_chip *chip)
->  {
-> +#ifdef CONFIG_TCG_IBMVTPM
-> +	struct device_node *np;
-> +#endif
->  	int rc;
->  
-> +#ifdef CONFIG_TCG_IBMVTPM
-> +	np = of_find_node_by_name(NULL, "vtpm");
-> +	if (!np)
-> +		return -ENODEV;
-> +	if (of_property_read_bool(np, "powered-while-suspended"))
-> +		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
-> +	of_node_put(np);
-> +#endif
+Hello Doug,
 
-I'll have to revise this as more config flag should be CONFIG_OF
-and property should be conditionally read if the node is found.
-Then it can be relocated without interference.
+On 05/29/2018 10:32 PM, Doug Anderson wrote:
+> On Tue, May 22, 2018 at 7:43 PM, David Collins <collinsd@codeaurora.org> wrote:
+>> + * @ever_enabled:              Boolean indicating that the regulator has been
+>> + *                             explicitly enabled at least once.  Voltage
+>> + *                             requests should be cached when this flag is not
+>> + *                             set.
+> 
+> Do you really need this extra boolean?  Can't you just check if
+> "enabled" is still "-EINVAL"?  If it is then you don't pass the
+> voltage along.
+> 
+> ...this would mean that you'd also need to send the voltage vote when
+> the regulator core tries to disable unused regulators at the end of
+> bootup, but that should be OK right?  If we never touched a regulator
+> anywhere at probe time and we're about to vote to disable it, we know
+> there's nobody requiring it to still be on.  We can vote for the
+> voltage now without fear of messing up a vote that the BIOS left in
+> place.
+> 
+> In theory this should also allow you to assert your vote about the
+> voltage of a regulator that has never been enabled, which (if I
+> understand correctly) you consider to be a feature.
 
-/Jarkko
+Removing 'ever_enabled' and caching the voltage when 'enabled == -EINVAL'
+seems workable.  I'm a little concerned about this resulting in voltage =
+regulator-min-microvolt requests being sent for all regulators that are
+not explicitly enabled by Linux consumers before late_initcall_sync().
+Theoretically all of the boot loader hand-off cases should be taken care
+of by this point so it should be safe.
+
+I'll make this change.
+
+Take care,
+David
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
