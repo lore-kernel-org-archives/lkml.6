@@ -1,32 +1,32 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-133372-1527491527-2-11109574392196105258
+X-Cyrus-Session-Id: sloti22d1t05-3573297-1527670882-2-17849697459762816179
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527491527; b=E7aa/uFP9FFXZ6jgspt/UiLV84M/adg6kikb3pSJiIEYCQ2x4e
-    uXWa2Oc+oD8CMoUKB11fM4fTkA4nM5+XJLUauIrJQWucqLhwLCDyhdiFjBI0520X
-    mlpqVdDa5k1kkZJn/PhaEzr0b0xGXgmcIH37a3bjYrsdYsnnpzCjHZGmjS4bQMRV
-    yAUN+SK3siKxJ8H0ko0yiO4mUS+UvTf/G+gIOrq/M8qwEbdSdO+ylx4kud4gWv/9
-    xjCsPIZyfBoTnOQYNzTvl6b21BiszLj6l5C3tk7fpc+OoETUL0zfwa4ARXHZ8DLD
-    uvYS+n12mgG8omy7BTTtuYsqcmY7bRBA0YkA==
+    1527670882; b=h2/eOLwyLe8Y5RgS3zV9NPmlGsV4AwrAadVyPKybH5CmxEfKrW
+    vExnHdqkedr7gbOjKsqgRBQSUUCOU05PsreK0Igg5TVZ5bjja7Bt6kwQYFXr8njr
+    8u4yxjCZrUaAE+A35oOjbGw1G1tB90HQy+Y7HvQhvF7l1N19HnoEJkKQn5CUZ/IK
+    opEJpxJk2W9Fn5+VEYY7CegA31JhOfHVNGLkjq7dCsA59v2FJABj1MB+1qB4pKEc
+    NxxezPbqWyeA3jF+7T2zh5XZjS6UcHtrdq7ERjudLSrWt015D1IQVU4uHn7zy2qA
+    KxaV3NnNnK+1FEEQ/53g/BqiriSlcp+SrbxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
+    messagingengine.com; h=date:from:to:cc:subject:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527491527;
-    bh=ABFwjbKL4775/xXKFCfdT+DpR32EoG+cISR2ymXpDmM=; b=V60pphvgZ0Xp
-    /HBKnQHSrSrkCpiw/WfRo0CpAp0LIC+FJMYtqnuo0Xp2BkpD2pweTV0IqSp1NwG0
-    hG6F2BY78QQeqM/zvwTFG/SPKkx0eu/Zc/FpDL/m2ZFP5tviiGZRnp860iz6pp4v
-    th3NDWJ/uXDTPQ8qN7mLOvTmpW0kn1DrLy7+YknbladwOC1H1DD0NYXC3OYOe8W+
-    Phhq7/2rZLMFcOH8K+mtSnM0ToijqKMfoxrI6fM/0prnhtqUhO0tFvLOyMws3Ck0
-    /KwcSgdqBKYXS3SGnCyYhQssjNvlNs29w/1apdyCTTmRGugZNU+UHU8fvGqSo/pL
-    ldnGPzcGUQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527670882;
+    bh=mZ+jwWFYuCpPq+2jAjmpIodoZ6g/6e3KTnZEBYHZLio=; b=TUELNr0yzoO4
+    F8poXt85o7ZvBe3qHChRF3hNYVRh0ok23gl/3rv8gQzIqMtScc8E6TwzrpwwTYvL
+    8/TpK7rtWp9Pa0ljcciFmAMDGxNI4neP12MTCtaGHnk2ZGdB5s5Mv/8hcdm2VI+i
+    Cf0+IJYivkUPBQBb/v6dmT6fHJZGdIx2aWYsvzzBQ8SMsJzT6FmQXe1mxhQYNlHw
+    eDm1X93111LpVRsaKuA5/eGMQvILg9edjaKrHbVt+omfXQXw/HmqGB9abwWfuZwD
+    wXUCZU3uzu2iuPzjTr2l+9eyzxCRa6yxwzVU2RxZPqmFKfYzlcV2ltbfxKSKQjJd
+    0puLdwHKpQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=WKk6liOr header.a=rsa-sha256
+    header.i=@kernel.org header.b=yQHKuTaA header.a=rsa-sha256
     header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,10 +39,10 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=WKk6liOr header.a=rsa-sha256
+      header.i=@kernel.org header.b=yQHKuTaA header.a=rsa-sha256
       header.s=default x-bits=1024;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -56,25 +56,26 @@ Authentication-Results: mx5.messagingengine.com;
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIvD5hfCeOuXaHldA0yRl4GTUrsaECXU2PNtrnP0tu4fNyL0shjHAc6k5o49KDGjI1CUi9z3coY/4QBSdfjQOWDrlTANCbiuVEvqfDiFPpUuxq93pWpc
-    YtCzkqFuy6UgLFfVEB8FVYE1ujMPF3zJePjNdnzyzI4LvaG3Rc29EGBXzZ8kae+DCK6Ypk77WjgZsS0aSLpoIo3FHFaGTztbWDjwAlcxc4cNrgMkVfa7fyD/
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=_u_78erHU6qHEIP7UEIA:9 a=QlGJODSAtthrecHN:21
-    a=cr6IuLziThbSwi_5:21 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfKYNKV4DeeFm3FCFRAw3AAV1583FEmiHKtaaKpKu2RCXRc/IYACeIX0ip7bYrxytBYvQQZA+CtnNb74e7l+IU12SL6r2zkZp2M8/0bY8ueLHAYe9IbAk
+    bhVeset8/Kto+VXiwFRQJLajGCp8R9S54keB9Q2BrtD1oqNdYNAUDjHE7MZGkFnJ9pqqi5jyGqC+h20KgM6yzoctcZwb3tkNY8xp3j9VCwOpsjtesQqheCY9
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=D19gQVrFAAAA:8 a=GVvBtGTFHZWgCG7zfkIA:9 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=W4TVW4IDbPiebHqcZpNg:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753796AbeE1HMF (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 28 May 2018 03:12:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46384 "EHLO mail.kernel.org"
+        id S936014AbeE3JBT (ORCPT <rfc822;linux@kroah.com>);
+        Wed, 30 May 2018 05:01:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753786AbeE1HME (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Mon, 28 May 2018 03:12:04 -0400
+        id S935975AbeE3JBO (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Wed, 30 May 2018 05:01:14 -0400
+Date: Wed, 30 May 2018 18:01:08 +0900
 From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+To: naveen.n.rao@linux.vnet.ibm.com
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
         Ingo Molnar <mingo@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
         Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
@@ -98,15 +99,13 @@ Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Rich Felker <dalias@libc.org>,
         "David S . Miller" <davem@davemloft.net>,
         linux-arch@vger.kernel.org
-Subject: [PATCH -tip v4 24/27] bpf: error-inject: kprobes: Clear current_kprobe and enable preempt in kprobe
-Date: Mon, 28 May 2018 16:11:38 +0900
-Message-Id: <152749149794.15132.15817377604536829521.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
+Subject: Re: [PATCH -tip v4 00/27] kprobes: Cleanup jprobe implementation
+Message-Id: <20180530180108.e3a7a37672e65d5ee685596f@kernel.org>
 In-Reply-To: <152749074878.15132.16693721906742461289.stgit@devbox>
 References: <152749074878.15132.16693721906742461289.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
@@ -114,367 +113,167 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Clear current_kprobe and enable preemption in kprobe
-even if pre_handler returns !0.
+Hi Naveen,
 
-This simplifies function override using kprobes.
+Sorry, I might miss to add you on CC list. Could you test and review this on powerpc?
 
-Jprobe used to require to keep the preemption disabled and
-keep current_kprobe until it returned to original function
-entry. For this reason kprobe_int3_handler() and similar
-arch dependent kprobe handers checks pre_handler result
-and exit without enabling preemption if the result is !0.
+Thank you,
 
-After removing the jprobe, Kprobes does not need to
-keep preempt disabled even if user handler returns !0
-anymore.
+On Mon, 28 May 2018 15:59:09 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-But since the function override handler in error-inject
-and bpf is also returns !0 if it overrides a function,
-to balancing the preempt count, it enables preemption
-and reset current kprobe by itself.
+> Hello,
+> 
+> Since we decided to remove jprobe from kernel last year,
+> its APIs are disabled and we worked on moving in-kernel
+> jprobe users to kprobes or trace-events. And now no jprobe
+> users are here anymore.
+> 
+> This is the 4th version of the series for removing jprobe.
+> Previous version is here:
+> 
+>  https://lkml.org/lkml/2018/5/16/1052
+> 
+> Unlike previous versions, this version removes jprobe from
+> all architectures, as Ingo asked me in the previous thread.
+> 
+> I marked this as RFC again because it introduced changes for
+> many arch. It should be reviewed by some arch which is not
+> simply removing code (e.g. powerpc, arm).
+> 
+> BTW, this series are based on -tip tree as same as its
+> previous version, and I'm sure it can be applied to
+> linus tree/linux-next too.
+> 
+> Series structure
+> =====
+> Basically this series introduces 3 major changes;
+> 
+> - Remove jprobe implementation ([2/27] - [12/27])
+> 
+> - Remove break_handler() related code ([13/27] - [23/27])
+>   This should be done after (or with) removing jprobe
+>   because break_handler is only used by jprobe.
+>  (I'm not so sure, should I merge above patches into one
+>   arch-wide patch as next one does?)
+> 
+> - Clean current_kprobe and enable preempt if pre_handler()
+>   returns !0 ([24/27] and [25/27]<- x86 specific update)
+>   This also depends on above patches because those
+>   current_kprobe and preemption are expected to be adjusted
+>   by jprobe implementation via break_handler.
+> 
+> And some minor changes;
+> 
+> - Document cleanup and update ([1/27], [26/27])
+> 
+> And finally remove jprobe stub APIs and break_handler
+> from kprobes.h ([27/27]). Of course this depends on
+> above patches.
+> 
+> Since removing jprobes and break_handler related code
+> involve archtecture specific changes in some archs,
+> I splitted it for each arch. But "clean current_kprobe and
+> enable preempt if pre_handler() returns !0" patch modifies
+> all architectures, since it changes expected kprobe
+> handler behavior. I think this would be better done in
+> one patch for consistency.
+> 
+> Result
+> =====
+> I've tested it with kprobe sanity test on x86-64, and arm64
+> but for other archs, I just did cross-build test.
+> 
+> With this series, we finally cleanup all jprobe code
+> and break_handler as below.
+> 
+> $ git grep -wi break_handler | wc -l
+> 0
+> $ git grep -wi jprobe | wc -l
+> 0
+> 
+> Actually, there is one place where mentioning jprobe,
+> Documentation/kprobes.txt explains jprobe is deprecated
+> and how to migrate jprobe user to ftrace or kprobe.
+> I didn't remove it because it might be useful for
+> some users.
+> 
+> Thank you,
+> 
+> ---
+> 
+> Masami Hiramatsu (27):
+>       Documentation/kprobes: Fix to remove remaining jprobe
+>       kprobes: Remove jprobe API implementation
+>       kprobes/x86: Remove jprobe implementation
+>       ARC: kprobes: Remove jprobe implementation
+>       ARM: kprobes: Remove jprobe arm implementation
+>       arm64: kprobes: Remove jprobe implementation
+>       powerpc/kprobes: Remove jprobe powerpc implementation
+>       ia64: kprobes: Remove jprobe implementation
+>       MIPS: kprobes: Remove jprobe implementation
+>       s390/kprobes: Remove jprobe implementation
+>       sh: kprobes: Remove jprobe implementation
+>       sparc64: kprobes: Remove jprobe implementation
+>       kprobes: Don't check the ->break_handler() in generic kprobes code
+>       kprobes/x86: Don't call ->break_handler() in x86 kprobes
+>       ARC: kprobes: Don't call the ->break_handler() in ARC kprobes code
+>       ARM: kprobes: Don't call the ->break_handler() in arm kprobes code
+>       arm64: kprobes: Don't call the ->break_handler() in arm kprobes code
+>       powerpc/kprobes: Don't call the ->break_handler() in arm kprobes code
+>       ia64: kprobes: Don't call the ->break_handler() in ia64 kprobes code
+>       MIPS: kprobes: Don't call the ->break_handler() in MIPS kprobes code
+>       s390/kprobes: Don't call the ->break_handler() in s390 kprobes code
+>       sh: kprobes: Don't call the ->break_handler() in SH kprobes code
+>       sparc64: kprobes: Don't call the ->break_handler() in sparc64 kprobes code
+>       bpf: error-inject: kprobes: Clear current_kprobe and enable preempt in kprobe
+>       x86: kprobes: Do not disable preempt on int3 path
+>       Documentation: kprobes: Add how to change the execution path
+>       kprobes: Remove jprobe stub API
+> 
+> 
+>  Documentation/kprobes.txt                      |   35 +++++-
+>  arch/arc/include/asm/kprobes.h                 |    2 
+>  arch/arc/kernel/kprobes.c                      |   50 +--------
+>  arch/arm/include/asm/kprobes.h                 |    2 
+>  arch/arm/include/asm/probes.h                  |    1 
+>  arch/arm/probes/kprobes/core.c                 |  135 +-----------------------
+>  arch/arm64/include/asm/kprobes.h               |    1 
+>  arch/arm64/kernel/probes/kprobes.c             |   86 +--------------
+>  arch/ia64/include/asm/kprobes.h                |    2 
+>  arch/ia64/include/uapi/asm/break.h             |    1 
+>  arch/ia64/kernel/Makefile                      |    2 
+>  arch/ia64/kernel/jprobes.S                     |   90 ----------------
+>  arch/ia64/kernel/kprobes.c                     |   93 +----------------
+>  arch/mips/include/asm/kprobes.h                |   13 --
+>  arch/mips/kernel/kprobes.c                     |   70 ++----------
+>  arch/powerpc/include/asm/kprobes.h             |   12 --
+>  arch/powerpc/kernel/kprobes-ftrace.c           |   31 +-----
+>  arch/powerpc/kernel/kprobes.c                  |   92 +++-------------
+>  arch/powerpc/kernel/trace/ftrace_64_mprofile.S |   39 +------
+>  arch/s390/include/asm/kprobes.h                |    2 
+>  arch/s390/kernel/kprobes.c                     |   86 +--------------
+>  arch/sh/include/asm/kprobes.h                  |    4 -
+>  arch/sh/kernel/kprobes.c                       |   72 +------------
+>  arch/sparc/include/asm/kprobes.h               |    1 
+>  arch/sparc/kernel/kprobes.c                    |   65 +-----------
+>  arch/x86/include/asm/kprobes.h                 |    5 -
+>  arch/x86/kernel/kprobes/common.h               |   10 --
+>  arch/x86/kernel/kprobes/core.c                 |  119 +--------------------
+>  arch/x86/kernel/kprobes/ftrace.c               |   31 ++----
+>  arch/x86/kernel/kprobes/opt.c                  |    1 
+>  include/linux/kprobes.h                        |   53 ---------
+>  kernel/fail_function.c                         |    3 -
+>  kernel/kprobes.c                               |  115 +-------------------
+>  kernel/test_kprobes.c                          |   94 -----------------
+>  kernel/trace/trace_kprobe.c                    |   11 +-
+>  lib/Kconfig.debug                              |    2 
+>  36 files changed, 125 insertions(+), 1306 deletions(-)
+>  delete mode 100644 arch/ia64/kernel/jprobes.S
+> 
+> --
+> Masami Hiramatsu (Linaro)
 
-That is a bad design that is very buggy. This fixes
-such unbalanced preempt-count and current_kprobes setting
-in kprobes, bpf and error-inject.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- arch/arc/kernel/kprobes.c          |    5 +++--
- arch/arm/probes/kprobes/core.c     |   10 +++++-----
- arch/arm64/kernel/probes/kprobes.c |   10 +++++-----
- arch/ia64/kernel/kprobes.c         |   13 ++++---------
- arch/mips/kernel/kprobes.c         |    4 ++--
- arch/powerpc/kernel/kprobes.c      |    7 +++++--
- arch/s390/kernel/kprobes.c         |    7 ++++---
- arch/sh/kernel/kprobes.c           |    7 ++++---
- arch/sparc/kernel/kprobes.c        |    7 ++++---
- arch/x86/kernel/kprobes/core.c     |    4 ++++
- arch/x86/kernel/kprobes/ftrace.c   |   15 ++++++++-------
- kernel/fail_function.c             |    3 ---
- kernel/trace/trace_kprobe.c        |   11 +++--------
- 13 files changed, 51 insertions(+), 52 deletions(-)
-
-diff --git a/arch/arc/kernel/kprobes.c b/arch/arc/kernel/kprobes.c
-index 465365696c91..df35d4c0b0b8 100644
---- a/arch/arc/kernel/kprobes.c
-+++ b/arch/arc/kernel/kprobes.c
-@@ -231,6 +231,9 @@ int __kprobes arc_kprobe_handler(unsigned long addr, struct pt_regs *regs)
- 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
- 			setup_singlestep(p, regs);
- 			kcb->kprobe_status = KPROBE_HIT_SS;
-+		} else {
-+			reset_current_kprobe();
-+			preempt_enable_no_resched();
- 		}
- 
- 		return 1;
-@@ -442,9 +445,7 @@ static int __kprobes trampoline_probe_handler(struct kprobe *p,
- 	kretprobe_assert(ri, orig_ret_address, trampoline_address);
- 	regs->ret = orig_ret_address;
- 
--	reset_current_kprobe();
- 	kretprobe_hash_unlock(current, &flags);
--	preempt_enable_no_resched();
- 
- 	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
- 		hlist_del(&ri->hlist);
-diff --git a/arch/arm/probes/kprobes/core.c b/arch/arm/probes/kprobes/core.c
-index 3192350f389d..8d37601fdb20 100644
---- a/arch/arm/probes/kprobes/core.c
-+++ b/arch/arm/probes/kprobes/core.c
-@@ -300,10 +300,10 @@ void __kprobes kprobe_handler(struct pt_regs *regs)
- 
- 			/*
- 			 * If we have no pre-handler or it returned 0, we
--			 * continue with normal processing.  If we have a
--			 * pre-handler and it returned non-zero, it prepped
--			 * for calling the break_handler below on re-entry,
--			 * so get out doing nothing more here.
-+			 * continue with normal processing. If we have a
-+			 * pre-handler and it returned non-zero, it will
-+			 * modify the execution path and no need to single
-+			 * stepping. Let's just reset current kprobe and exit.
- 			 */
- 			if (!p->pre_handler || !p->pre_handler(p, regs)) {
- 				kcb->kprobe_status = KPROBE_HIT_SS;
-@@ -312,8 +312,8 @@ void __kprobes kprobe_handler(struct pt_regs *regs)
- 					kcb->kprobe_status = KPROBE_HIT_SSDONE;
- 					p->post_handler(p, regs, 0);
- 				}
--				reset_current_kprobe();
- 			}
-+			reset_current_kprobe();
- 		}
- 	} else {
- 		/*
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index 076c3c0775a6..5daf3d721cb7 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -395,9 +395,9 @@ static void __kprobes kprobe_handler(struct pt_regs *regs)
- 			/*
- 			 * If we have no pre-handler or it returned 0, we
- 			 * continue with normal processing.  If we have a
--			 * pre-handler and it returned non-zero, it prepped
--			 * for calling the break_handler below on re-entry,
--			 * so get out doing nothing more here.
-+			 * pre-handler and it returned non-zero, it will
-+			 * modify the execution path and no need to single
-+			 * stepping. Let's just reset current kprobe and exit.
- 			 *
- 			 * pre_handler can hit a breakpoint and can step thru
- 			 * before return, keep PSTATE D-flag enabled until
-@@ -405,8 +405,8 @@ static void __kprobes kprobe_handler(struct pt_regs *regs)
- 			 */
- 			if (!p->pre_handler || !p->pre_handler(p, regs)) {
- 				setup_singlestep(p, regs, kcb, 0);
--				return;
--			}
-+			} else
-+				reset_current_kprobe();
- 		}
- 	}
- 	/*
-diff --git a/arch/ia64/kernel/kprobes.c b/arch/ia64/kernel/kprobes.c
-index 74c8524e6309..aa41bd5cf9b7 100644
---- a/arch/ia64/kernel/kprobes.c
-+++ b/arch/ia64/kernel/kprobes.c
-@@ -478,12 +478,9 @@ int __kprobes trampoline_probe_handler(struct kprobe *p, struct pt_regs *regs)
- 			 */
- 			break;
- 	}
--
- 	kretprobe_assert(ri, orig_ret_address, trampoline_address);
- 
--	reset_current_kprobe();
- 	kretprobe_hash_unlock(current, &flags);
--	preempt_enable_no_resched();
- 
- 	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
- 		hlist_del(&ri->hlist);
-@@ -851,13 +848,11 @@ static int __kprobes pre_kprobes_handler(struct die_args *args)
- 	set_current_kprobe(p, kcb);
- 	kcb->kprobe_status = KPROBE_HIT_ACTIVE;
- 
--	if (p->pre_handler && p->pre_handler(p, regs))
--		/*
--		 * Our pre-handler is specifically requesting that we just
--		 * do a return.  This is used for both the jprobe pre-handler
--		 * and the kretprobe trampoline
--		 */
-+	if (p->pre_handler && p->pre_handler(p, regs)) {
-+		reset_current_kprobe();
-+		preempt_enable_no_resched();
- 		return 1;
-+	}
- 
- #if !defined(CONFIG_PREEMPT)
- 	if (p->ainsn.inst_flag == INST_FLAG_BOOSTABLE && !p->post_handler) {
-diff --git a/arch/mips/kernel/kprobes.c b/arch/mips/kernel/kprobes.c
-index 7fd277bc59b9..54cd675c5d1d 100644
---- a/arch/mips/kernel/kprobes.c
-+++ b/arch/mips/kernel/kprobes.c
-@@ -358,6 +358,8 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
- 
- 	if (p->pre_handler && p->pre_handler(p, regs)) {
- 		/* handler has already set things up, so skip ss setup */
-+		reset_current_kprobe();
-+		preempt_enable_no_resched();
- 		return 1;
- 	}
- 
-@@ -543,9 +545,7 @@ static int __kprobes trampoline_probe_handler(struct kprobe *p,
- 	kretprobe_assert(ri, orig_ret_address, trampoline_address);
- 	instruction_pointer(regs) = orig_ret_address;
- 
--	reset_current_kprobe();
- 	kretprobe_hash_unlock(current, &flags);
--	preempt_enable_no_resched();
- 
- 	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
- 		hlist_del(&ri->hlist);
-diff --git a/arch/powerpc/kernel/kprobes.c b/arch/powerpc/kernel/kprobes.c
-index f06747e2e70d..5c60bb0f927f 100644
---- a/arch/powerpc/kernel/kprobes.c
-+++ b/arch/powerpc/kernel/kprobes.c
-@@ -358,9 +358,12 @@ int kprobe_handler(struct pt_regs *regs)
- 
- 	kcb->kprobe_status = KPROBE_HIT_ACTIVE;
- 	set_current_kprobe(p, regs, kcb);
--	if (p->pre_handler && p->pre_handler(p, regs))
--		/* handler has already set things up, so skip ss setup */
-+	if (p->pre_handler && p->pre_handler(p, regs)) {
-+		/* handler changed execution path, so skip ss setup */
-+		reset_current_kprobe();
-+		preempt_enable_no_resched();
- 		return 1;
-+	}
- 
- 	if (p->ainsn.boostable >= 0) {
- 		ret = try_to_emulate(p, regs);
-diff --git a/arch/s390/kernel/kprobes.c b/arch/s390/kernel/kprobes.c
-index 3e34018960b5..7c0a095e9c5f 100644
---- a/arch/s390/kernel/kprobes.c
-+++ b/arch/s390/kernel/kprobes.c
-@@ -326,8 +326,11 @@ static int kprobe_handler(struct pt_regs *regs)
- 			 */
- 			push_kprobe(kcb, p);
- 			kcb->kprobe_status = KPROBE_HIT_ACTIVE;
--			if (p->pre_handler && p->pre_handler(p, regs))
-+			if (p->pre_handler && p->pre_handler(p, regs)) {
-+				pop_kprobe(kcb);
-+				preempt_enable_no_resched();
- 				return 1;
-+			}
- 			kcb->kprobe_status = KPROBE_HIT_SS;
- 		}
- 		enable_singlestep(kcb, regs, (unsigned long) p->ainsn.insn);
-@@ -431,9 +434,7 @@ static int trampoline_probe_handler(struct kprobe *p, struct pt_regs *regs)
- 
- 	regs->psw.addr = orig_ret_address;
- 
--	pop_kprobe(get_kprobe_ctlblk());
- 	kretprobe_hash_unlock(current, &flags);
--	preempt_enable_no_resched();
- 
- 	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
- 		hlist_del(&ri->hlist);
-diff --git a/arch/sh/kernel/kprobes.c b/arch/sh/kernel/kprobes.c
-index 4fafe0cd12c6..241e903dd3ee 100644
---- a/arch/sh/kernel/kprobes.c
-+++ b/arch/sh/kernel/kprobes.c
-@@ -272,9 +272,12 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
- 	set_current_kprobe(p, regs, kcb);
- 	kcb->kprobe_status = KPROBE_HIT_ACTIVE;
- 
--	if (p->pre_handler && p->pre_handler(p, regs))
-+	if (p->pre_handler && p->pre_handler(p, regs)) {
- 		/* handler has already set things up, so skip ss setup */
-+		reset_current_kprobe();
-+		preempt_enable_no_resched();
- 		return 1;
-+	}
- 
- 	prepare_singlestep(p, regs);
- 	kcb->kprobe_status = KPROBE_HIT_SS;
-@@ -352,8 +355,6 @@ int __kprobes trampoline_probe_handler(struct kprobe *p, struct pt_regs *regs)
- 	regs->pc = orig_ret_address;
- 	kretprobe_hash_unlock(current, &flags);
- 
--	preempt_enable_no_resched();
--
- 	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
- 		hlist_del(&ri->hlist);
- 		kfree(ri);
-diff --git a/arch/sparc/kernel/kprobes.c b/arch/sparc/kernel/kprobes.c
-index c684c96ef2e9..dfbca2470536 100644
---- a/arch/sparc/kernel/kprobes.c
-+++ b/arch/sparc/kernel/kprobes.c
-@@ -175,8 +175,11 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
- 
- 	set_current_kprobe(p, regs, kcb);
- 	kcb->kprobe_status = KPROBE_HIT_ACTIVE;
--	if (p->pre_handler && p->pre_handler(p, regs))
-+	if (p->pre_handler && p->pre_handler(p, regs)) {
-+		reset_current_kprobe();
-+		preempt_enable_no_resched();
- 		return 1;
-+	}
- 
- 	prepare_singlestep(p, regs, kcb);
- 	kcb->kprobe_status = KPROBE_HIT_SS;
-@@ -508,9 +511,7 @@ static int __kprobes trampoline_probe_handler(struct kprobe *p,
- 	regs->tpc = orig_ret_address;
- 	regs->tnpc = orig_ret_address + 4;
- 
--	reset_current_kprobe();
- 	kretprobe_hash_unlock(current, &flags);
--	preempt_enable_no_resched();
- 
- 	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
- 		hlist_del(&ri->hlist);
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 0ac16a0d93e5..814e26b7c8a2 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -694,6 +694,10 @@ int kprobe_int3_handler(struct pt_regs *regs)
- 			 */
- 			if (!p->pre_handler || !p->pre_handler(p, regs))
- 				setup_singlestep(p, regs, kcb, 0);
-+			else {
-+				reset_current_kprobe();
-+				preempt_enable_no_resched();
-+			}
- 			return 1;
- 		}
- 	} else if (*addr != BREAKPOINT_INSTRUCTION) {
-diff --git a/arch/x86/kernel/kprobes/ftrace.c b/arch/x86/kernel/kprobes/ftrace.c
-index c8696f2a583f..310ef737b9d4 100644
---- a/arch/x86/kernel/kprobes/ftrace.c
-+++ b/arch/x86/kernel/kprobes/ftrace.c
-@@ -63,18 +63,19 @@ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
- 		/* Kprobe handler expects regs->ip = ip + 1 as breakpoint hit */
- 		regs->ip = ip + sizeof(kprobe_opcode_t);
- 
--		/* To emulate trap based kprobes, preempt_disable here */
--		preempt_disable();
- 		__this_cpu_write(current_kprobe, p);
- 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
- 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
- 			skip_singlestep(p, regs, kcb, orig_ip);
--			preempt_enable_no_resched();
-+		} else {
-+			/*
-+			 * If pre_handler returns !0, this handler
-+			 * modifies regs->ip and goes back to there
-+			 * directly without single stepping.
-+			 * So let's just clear current kprobe.
-+			 */
-+			__this_cpu_write(current_kprobe, NULL);
- 		}
--		/*
--		 * If pre_handler returns !0, it sets regs->ip and
--		 * resets current kprobe, and keep preempt count +1.
--		 */
- 	}
- }
- NOKPROBE_SYMBOL(kprobe_ftrace_handler);
-diff --git a/kernel/fail_function.c b/kernel/fail_function.c
-index 1d5632d8bbcc..b090688df94f 100644
---- a/kernel/fail_function.c
-+++ b/kernel/fail_function.c
-@@ -184,9 +184,6 @@ static int fei_kprobe_handler(struct kprobe *kp, struct pt_regs *regs)
- 	if (should_fail(&fei_fault_attr, 1)) {
- 		regs_set_return_value(regs, attr->retval);
- 		override_function_with_return(regs);
--		/* Kprobe specific fixup */
--		reset_current_kprobe();
--		preempt_enable_no_resched();
- 		return 1;
- 	}
- 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 02aed76e0978..b65cd6834450 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1217,16 +1217,11 @@ kprobe_perf_func(struct trace_kprobe *tk, struct pt_regs *regs)
- 
- 		/*
- 		 * We need to check and see if we modified the pc of the
--		 * pt_regs, and if so clear the kprobe and return 1 so that we
--		 * don't do the single stepping.
--		 * The ftrace kprobe handler leaves it up to us to re-enable
--		 * preemption here before returning if we've modified the ip.
-+		 * pt_regs, and if so return 1 so that we don't do the
-+		 * single stepping.
- 		 */
--		if (orig_ip != instruction_pointer(regs)) {
--			reset_current_kprobe();
--			preempt_enable_no_resched();
-+		if (orig_ip != instruction_pointer(regs))
- 			return 1;
--		}
- 		if (!ret)
- 			return 0;
- 	}
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
