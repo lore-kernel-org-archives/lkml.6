@@ -1,84 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753552AbeE3OK5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:10:57 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:25625 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753483AbeE3OKu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:10:50 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH v2 6/6] ARM: dts: dra76x: Add MCAN node
-Date: Wed, 30 May 2018 19:41:33 +0530
-Message-ID: <20180530141133.3711-7-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180530141133.3711-1-faiz_abbas@ti.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
+        id S1753275AbeE3OLH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:11:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53150 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753483AbeE3OK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 10:10:58 -0400
+Date: Wed, 30 May 2018 17:10:56 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH] virtio_ring: switch to dma_XX barriers for rpmsg
+Message-ID: <20180530163740-mutt-send-email-mst@kernel.org>
+References: <1524159181-351878-1-git-send-email-mst@redhat.com>
+ <5047d08c-9f9e-2902-d425-1fac849ce5b4@redhat.com>
+ <20180419204017-mutt-send-email-mst@kernel.org>
+ <524fb400-2325-f60b-7e03-15be01888afc@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <524fb400-2325-f60b-7e03-15be01888afc@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Franklin S Cooper Jr <fcooper@ti.com>
+On Thu, Apr 19, 2018 at 07:48:24PM +0200, Paolo Bonzini wrote:
+> On 19/04/2018 19:46, Michael S. Tsirkin wrote:
+> >> This should be okay, but I wonder if there should be a virtio_wmb(...)
+> >> or an "if (weak_barriers) wmb()" before the "writel" in vm_notify
+> >> (drivers/virtio/virtio_mmio.c).
+> >>
+> >> Thanks,
+> >>
+> >> Paolo
+> > That one uses weak barriers AFAIK.
+> > 
+> > IIUC you mean rproc_virtio_notify.
+> > 
+> > I suspect it works because specific kick callbacks have a barrier internally.
+> 
+> Yes, that one.  At least keystone_rproc_kick doesn't seem to have a barrier.
+> 
+> Paolo
 
-Add support for the MCAN peripheral which supports both classic
-CAN messages along with the new CAN-FD message.
+Any feedback from rproc maintainers?
 
-Add MCAN node to evm and enable it with a maximum datarate of 5 mbps
-
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- arch/arm/boot/dts/dra76-evm.dts |  7 +++++++
- arch/arm/boot/dts/dra76x.dtsi   | 15 +++++++++++++++
- 2 files changed, 22 insertions(+)
-
-diff --git a/arch/arm/boot/dts/dra76-evm.dts b/arch/arm/boot/dts/dra76-evm.dts
-index 2deb96405d06..277765257410 100644
---- a/arch/arm/boot/dts/dra76-evm.dts
-+++ b/arch/arm/boot/dts/dra76-evm.dts
-@@ -404,3 +404,10 @@
- 	phys = <&pcie1_phy>, <&pcie2_phy>;
- 	phy-names = "pcie-phy0", "pcie-phy1";
- };
-+
-+&m_can0 {
-+	status = "okay";
-+	can-transceiver {
-+		max-bitrate = <5000000>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
-index 57b8dc0fe719..d7a8cc569808 100644
---- a/arch/arm/boot/dts/dra76x.dtsi
-+++ b/arch/arm/boot/dts/dra76x.dtsi
-@@ -27,6 +27,21 @@
- 			ti,syss-mask = <1>;
- 			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
- 			clock-names = "fck";
-+
-+			m_can0: mcan@42c01a00 {
-+				compatible = "bosch,m_can";
-+				reg = <0x1a00 0x4000>, <0x0 0x18FC>;
-+				reg-names = "m_can", "message_ram";
-+				interrupt-parent = <&gic>;
-+				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-names = "int0", "int1";
-+				ti,hwmods = "mcan";
-+				clocks = <&mcan_clk>, <&l3_iclk_div>;
-+				clock-names = "cclk", "hclk";
-+				bosch,mram-cfg = <0x0 0 0 32 0 0 1 1>;
-+				status = "disabled";
-+			};
- 		};
- 	};
- 
 -- 
-2.17.0
+MST
