@@ -1,77 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932272AbeE3UNS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 16:13:18 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:49592 "EHLO ale.deltatee.com"
+        id S932259AbeE3USh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 16:18:37 -0400
+Received: from sauhun.de ([88.99.104.3]:37188 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932170AbeE3UNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 16:13:17 -0400
-From: Logan Gunthorpe <logang@deltatee.com>
-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-ntb@googlegroups.com
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Doug Meyer <dmeyer@gigaio.com>
-Date: Wed, 30 May 2018 14:13:11 -0600
-Message-Id: <20180530201311.11274-1-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, logang@deltatee.com, bhelgaas@google.com, alex.williamson@redhat.com, dmeyer@gigaio.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v3] PCI: Expand documentation for pci_add_dma_alias()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1753718AbeE3USd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 16:18:33 -0400
+Date: Wed, 30 May 2018 22:18:31 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
+Message-ID: <20180530201831.6327alcmr2stgr3a@ninjato>
+References: <20180513211347.7187-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="e5vf2g2grh6d4q2g"
+Content-Disposition: inline
+In-Reply-To: <20180513211347.7187-1-digetx@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Seeing there's been some confusion about the use of pci_add_dma_alias(),
-expand the comment to describe why it must be called early and how
-early it must be called.
 
-Also, expand on the purpose of this function and common reasons it would
-be used.
+--e5vf2g2grh6d4q2g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[The comment was reworded to some extent by Alex Williamson]
+On Mon, May 14, 2018 at 12:13:47AM +0300, Dmitry Osipenko wrote:
+> Nothing prevents I2C clients to access I2C while Tegra's driver is being
+> suspended, this results in -EBUSY error returned to the clients and that
+> may have unfortunate consequences. In particular this causes problems
+> for the TPS6586x MFD driver which emits hundreds of "failed to read
+> interrupt status" error messages on resume from suspend. This happens if
+> TPS6586X is used to wake system from suspend by the expired RTC alarm
+> timer because TPS6586X is an I2C device driver and its IRQ handler reads
+> the status register while Tegra's I2C driver is suspended, i.e. just after
+> kernel enabled IRQ's during of resume-from-suspend process.
+>=20
+> Note that the removed tegra_i2c_resume() invoked tegra_i2c_init() which
+> performs HW reset. That seems was also not entirely correct because moving
+> tegra_i2c_resume to an earlier stage of resume-from-suspend process causes
+> I2C transfer to fail in the case of TPS6586X. It is fine to remove the
+> HW-reinitialization for now because it should be only needed in a case of
+> using lowest power-mode during suspend, which upstream kernel doesn't
+> support.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Cc: <stable@vger.kernel.org>
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Doug Meyer <dmeyer@gigaio.com>
----
+Applied to for-next, thanks!
 
-v3: Fixed some typos pointed out by Randy
-v2: Reworked the patch with Alex's suggested wording
 
-drivers/pci/pci.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+--e5vf2g2grh6d4q2g
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index dbfe7c4f3776..2d8650253cc9 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5395,8 +5395,19 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
-  * @dev: the PCI device for which alias is added
-  * @devfn: alias slot and function
-  *
-- * This helper encodes 8-bit devfn as bit number in dma_alias_mask.
-- * It should be called early, preferably as PCI fixup header quirk.
-+ * This helper encodes an 8-bit devfn as a bit number in dma_alias_mask
-+ * which is used to program permissible bus-devfn source addresses for DMA
-+ * requests in an IOMMU. These aliases factor into IOMMU group creation
-+ * and are useful for devices generating DMA requests beyond or different
-+ * from their logical bus-devfn. Examples include device quirks where the
-+ * device simply uses the wrong devfn, as well as non-transparent bridges
-+ * where the alias may be a proxy for devices in another domain.
-+ *
-+ * IOMMU group creation is performed during device discovery or addition,
-+ * prior to any potential DMA mapping and therefore prior to driver probing
-+ * (especially for userspace assigned devices where IOMMU group definition
-+ * cannot be left as a userspace activity). DMA aliases should therefore
-+ * be configured via quirks, such as the PCI fixup header quirk.
-  */
- void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
- {
---
-2.11.0
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsPBxcACgkQFA3kzBSg
+KbbFZw//SMNfWMlDFbsbF6Gb+7UXJQ9Yj8lterDd+32HwO2oAnM8VxIDdP9qkTTL
+ZsLy1/tddjX+6yX1H7MQw/fcOPk1FArnWXtAhCaE48SsaovY5Sgl1+X7RDDkzypt
+pUkneCDeVHmkVpaYq6X/4BLAodThAlES2QwMS/WWUBKpSdUHugYB0nHiD4Zb2tb0
+x52sK1VU1r5C3sc3HMJK5HZ6n+k+qe0mw5bFpsmGXuxC1jf79sqdtfSRi/DMwl3t
+Do3rhhgDRrqYg/FTDR//w6cq7JNUTCnfS29LjtdWDA+opO2OLsjteOnhW53MFynw
+otvkVcf+RFeV7Jsgz4H7uCj0YAq7mGeqVqIfgDHfvtiFmDGqNdMsbSxN5xws5BNK
+Xjh+xHr64G5cZxtpJTUVVQItARUmETlhVU3jQtCbp7ioc1ehNw3GSWVyXiIqjG+g
+VSSaj32slpWhCckna7jH6cWLUosQRoKBe496Owdj1ugDAoH0714wmMcM6LZ8eZN8
+3n1tzxsk6P4w4QLnJixcAfQVYqlj+kVghWX0sKZrVopshVYR6LpoTgcXJhutGD40
+nTUuzuqabi/4SjmWndXlYKhRUTlGiORGsQO6yN2u7ae6HB5+sfLmHIbz/TgQqdrO
+CCbNtCDRv2eOaPfkd+uHL2TERcFuwMOz/IVvPEdeaPGjgr9KTxU=
+=Rq5I
+-----END PGP SIGNATURE-----
+
+--e5vf2g2grh6d4q2g--
