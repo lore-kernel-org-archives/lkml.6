@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753169AbeE3LP0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:15:26 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60698 "EHLO
+        id S1753124AbeE3LOE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:14:04 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60714 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751746AbeE3LH0 (ORCPT
+        by vger.kernel.org with ESMTP id S1752163AbeE3LHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:26 -0400
+        Wed, 30 May 2018 07:07:30 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Kalle Valo" <kvalo@qca.qualcomm.com>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+CC: akpm@linux-foundation.org, "Eric Biggers" <ebiggers@google.com>,
+        "Herbert Xu" <herbert@gondor.apana.org.au>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.618788242@decadent.org.uk>
+Message-ID: <lsq.1527677561.841934229@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 032/153] ath9k_htc: Add a sanity check in
- ath9k_htc_ampdu_action()
+Subject: [PATCH 3.2 042/153] crypto: hash - introduce crypto_hash_alg_has_setkey()
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -32,37 +31,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 413fd2f5c0233d3cde391679b967c1f14cd2cb27 upstream.
+commit cd6ed77ad5d223dc6299fb58f62e0f5267f7e2ba upstream.
 
-Smatch generates a warning here:
+Templates that use an shash spawn can use crypto_shash_alg_has_setkey()
+to determine whether the underlying algorithm requires a key or not.
+But there was no corresponding function for ahash spawns.  Add it.
 
-    drivers/net/wireless/ath/ath9k/htc_drv_main.c:1688 ath9k_htc_ampdu_action()
-    error: buffer overflow 'ista->tid_state' 8 <= 15
+Note that the new function actually has to support both shash and ahash
+algorithms, since the ahash API can be used with either.
 
-I don't know if it's a real bug or not but the other paths through this
-function all ensure that "tid" is less than ATH9K_HTC_MAX_TID (8) so
-checking here makes things more consistent.
-
-Fixes: fb9987d0f748 ("ath9k_htc: Support for AR9271 chipset.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/wireless/ath/ath9k/htc_drv_main.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ crypto/ahash.c                 | 11 +++++++++++
+ include/crypto/internal/hash.h |  2 ++
+ 2 files changed, 13 insertions(+)
 
---- a/drivers/net/wireless/ath/ath9k/htc_drv_main.c
-+++ b/drivers/net/wireless/ath/ath9k/htc_drv_main.c
-@@ -1640,6 +1640,10 @@ static int ath9k_htc_ampdu_action(struct
- 		ieee80211_stop_tx_ba_cb_irqsafe(vif, sta->addr, tid);
- 		break;
- 	case IEEE80211_AMPDU_TX_OPERATIONAL:
-+		if (tid >= ATH9K_HTC_MAX_TID) {
-+			ret = -EINVAL;
-+			break;
-+		}
- 		ista = (struct ath9k_htc_sta *) sta->drv_priv;
- 		spin_lock_bh(&priv->tx.tx_lock);
- 		ista->tid_state[tid] = AGGR_OPERATIONAL;
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -599,5 +599,16 @@ struct hash_alg_common *ahash_attr_alg(s
+ }
+ EXPORT_SYMBOL_GPL(ahash_attr_alg);
+ 
++bool crypto_hash_alg_has_setkey(struct hash_alg_common *halg)
++{
++	struct crypto_alg *alg = &halg->base;
++
++	if (alg->cra_type != &crypto_ahash_type)
++		return crypto_shash_alg_has_setkey(__crypto_shash_alg(alg));
++
++	return __crypto_ahash_alg(alg)->setkey != NULL;
++}
++EXPORT_SYMBOL_GPL(crypto_hash_alg_has_setkey);
++
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Asynchronous cryptographic hash type");
+--- a/include/crypto/internal/hash.h
++++ b/include/crypto/internal/hash.h
+@@ -78,6 +78,8 @@ static inline bool crypto_shash_alg_has_
+ 	return alg->setkey != shash_no_setkey;
+ }
+ 
++bool crypto_hash_alg_has_setkey(struct hash_alg_common *halg);
++
+ int crypto_init_ahash_spawn(struct crypto_ahash_spawn *spawn,
+ 			    struct hash_alg_common *alg,
+ 			    struct crypto_instance *inst);
