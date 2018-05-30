@@ -1,85 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932310AbeE3Uvs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 16:51:48 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37849 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932241AbeE3Uvo (ORCPT
+        id S932404AbeE3Uv7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 16:51:59 -0400
+Received: from mail-io0-f179.google.com ([209.85.223.179]:39008 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932337AbeE3Uv4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 16:51:44 -0400
-X-Google-Smtp-Source: ADUXVKLavMM+TdN+R8JLmUmW5NZaloPMWO/wLsg/HDGHRtevWW2f324v13c67gC7BURfhui6KR/qzA==
-Date: Wed, 30 May 2018 13:51:42 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Mike Kravetz <mike.kravetz@oracle.com>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch] mm, hugetlb_cgroup: suppress SIGBUS when hugetlb_cgroup
- charge fails
-In-Reply-To: <7cf79250-a58a-b8a3-50ca-5e472762b510@oracle.com>
-Message-ID: <alpine.DEB.2.21.1805301342430.149715@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1805251316090.167008@chino.kir.corp.google.com> <7cf79250-a58a-b8a3-50ca-5e472762b510@oracle.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 30 May 2018 16:51:56 -0400
+X-Google-Smtp-Source: ADUXVKK4k7H8tPpZi7FYwdeS947Dj0uCkXdhRyBqXkgqSwthQRhI48wbb52oWDg5byrdMeVgORHeCj2ivsxRH9MD+g4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <000000000000457b2d056cbb0044@google.com> <20180522123107.GC3751@bfoster.bfoster>
+ <20180522222620.GW23861@dastard> <20180522225208.GB658@sol.localdomain>
+ <20180523074425.GM14384@magnolia> <20180523162015.GA3684@sol.localdomain>
+ <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net> <20180523234114.GA3434@thunk.org>
+ <20180524004931.GB23861@dastard>
+In-Reply-To: <20180524004931.GB23861@dastard>
+From: Matthew Garrett <mjg59@google.com>
+Date: Wed, 30 May 2018 13:51:44 -0700
+Message-ID: <CACdnJutbRW4wV7QAwS9s-=p1dd7mYkHqEX1NBkEXiD+oBV3-xw@mail.gmail.com>
+Subject: Re: Bugs involving maliciously crafted file system
+To: david@fromorbit.com
+Cc: "Theodore Ts'o" <tytso@mit.edu>, sandeen@sandeen.net,
+        ebiggers3@gmail.com, darrick.wong@oracle.com, bfoster@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mike,
+On Wed, May 30, 2018 at 1:42 PM Dave Chinner <david@fromorbit.com> wrote:
+> We've learnt this lesson the hard way over and over again: don't
+> parse untrusted input in privileged contexts. How many times do we
+> have to make the same mistakes before people start to learn from
+> them?
 
-On Tue, 29 May 2018, Mike Kravetz wrote:
-
-> > When charging to a hugetlb_cgroup fails, alloc_huge_page() returns
-> > ERR_PTR(-ENOSPC) which will cause VM_FAULT_SIGBUS to be returned to the
-> > page fault handler.
-> > 
-> > Instead, return the proper error code, ERR_PTR(-ENOMEM), so VM_FAULT_OOM
-> > is handled correctly.  This is consistent with failing mem cgroup charges
-> > in the non-hugetlb fault path.
-> 
-> Apologies for the late reply.
-> 
-> I am not %100 sure we want to make this change.  When hugetlb cgroup support
-> was added by Aneesh, the intention was for the application to get SIGBUS.
-> 
-> commit 2bc64a204697
-> https://lwn.net/Articles/499255/
-> 
-> Since the code has always caused SIGBUS when exceeding cgroup limit, there
-> may be applications depending on this behavior.  I would be especially
-> concerned with HPC applications which were the original purpose for adding
-> the feature.
-> 
-> Perhaps, the original code should have returned ENOMEM to be consistent as
-> in your patch.  That does seem to be the more correct behavior.  But, do we
-> want to change behavior now (admittedly undocumented) and potentially break
-> some application?
-> 
-> I echo Michal's question about the reason for the change.  If there is a
-> real problem or issue to solve, that makes more of a case for making the
-> change.  If it is simply code/behavior cleanup for consistency then I would
-> suggest not making the change, but rather documenting this as another
-> hugetlbfs "special behavior".
-> 
-
-Yes, I mentioned the backwards compatibility issue and I'm not sure there 
-is a likely way around it.  But it's rather unfortunate that applications 
-can become constrained in such a way that SIGBUS may be unavoidable if 
-alloc_buddy_huge_page_with_mpol() cannot allocate from surplus and/or the 
-hugetlb_cgroup limit is reached.  Not only are both racy, but applications 
-prior to hugetlb_cgroup was introduced may have avoided SIGBUS by checking 
-global hstate and are now limited to hugetlb_cgroup constraints 
-unknowingly.  It's also not possible to avoid the SIGBUS by trying to 
-terminate a lower priority process that has hugetlb reservations.
-
-I'm not sure there is a path forward that can make this more 
-deterministic.  We have customers who have reported receiving SIGBUS deep 
-in their allocation stack using MAP_HUGETLB and were checking global 
-hstate but were unaware of any hugetlb_cgroup restriction.
-
-Andrew, please drop the patch.  I'd like to know if anybody has any ideas 
-on how this can be more userspace friendly, however.
+You're not wrong, but we haven't considered root to be fundamentally
+trustworthy for years - there are multiple kernel features that can be
+configured such that root is no longer able to do certain things (the
+one-way trap for requiring module signatures is the most obvious, but
+IMA in appraisal mode will also restrict root), and as a result it's
+not reasonable to be worried only about users - it's also necessary to
+prevent root form being able to deliberately mount a filesystem that
+results in arbitrary code execution in the kernel.
