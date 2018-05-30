@@ -1,106 +1,310 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967204AbeE3Afc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 20:35:32 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41792 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935750AbeE3Af2 (ORCPT
+        id S967455AbeE3Ajb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 20:39:31 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:20955 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965181AbeE3Aj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 20:35:28 -0400
-X-Google-Smtp-Source: ADUXVKJcmKYl9SAS93WrY4TKzr3MqH2RrDTo+PpjmmA24Btibz9jEjyL8D/um9hFORBgTYzCoOzKiQ==
-Date: Tue, 29 May 2018 17:35:25 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] netfilter: nfnetlink: Remove VLA usage
-Message-ID: <20180530003525.GA18642@beast>
+        Tue, 29 May 2018 20:39:29 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w4U0dJMC013997
+X-Nifty-SrcIP: [209.85.213.42]
+X-Google-Smtp-Source: ADUXVKJsHVrHXRn6WkfvibLuqdjlg5V8yidDWH8qVG49swlfzEcYTcmB4chJZX87nG56mILi8LeugQR4om3zozZf1jA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <CAK7LNATmbiigNnPmfwOgMHqxyTOJ0H4ROMAfHZKqRxYN+W-=1w@mail.gmail.com>
+References: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com> <CAK7LNATmbiigNnPmfwOgMHqxyTOJ0H4ROMAfHZKqRxYN+W-=1w@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 30 May 2018 09:38:38 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT0S-4qq1T3q25H0BGsJSUpTsgV_+TGKBiPW-MUKyqzsQ@mail.gmail.com>
+Message-ID: <CAK7LNAT0S-4qq1T3q25H0BGsJSUpTsgV_+TGKBiPW-MUKyqzsQ@mail.gmail.com>
+Subject: Re: [PATCH v5 00/31] kconfig: move compiler capability tests to Kconfig
+To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>, Nicholas Piggin <npiggin@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-allocates the maximum size expected for all possible attrs and adds
-a sanity-check to make sure nothing gets out of sync.
+2018-05-28 21:23 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> 2018-05-28 18:21 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>>
+>> [Introduction]
+>>
+>> The motivation of this work is to move the compiler option tests to
+>> Kconfig from Makefile.  A number of kernel features require the
+>> compiler support.  Enabling such features blindly in Kconfig ends up
+>> with a lot of nasty build-time testing in Makefiles.  If a chosen
+>> feature turns out unsupported by the compiler, what the build system
+>> can do is either to disable it (silently!) or to forcibly break the
+>> build, despite Kconfig has let the user to enable it.  By moving the
+>> compiler capability tests to Kconfig, Kconfig entries will be visible
+>> only when they are available.
+>>
+>> [Major Changes in V5]
+>>
+>> V5 removed the complexity unnecessary for Kconfig.
+>>
+>>  - In order to make the implementation simpler, I drop the lazy
+>>    argument expansion.
+>>    In V5, parameters are expanded before passed to a function.
+>>    (the same behavior as v3)
+>>
+>>  - Replace 'warning', 'error' functions with 'warning-if',
+>>    'error-if' functions.  The new functions are effective
+>>    only when the condition part is 'y'.
+>>
+>>  - In V4, '$' must be followed by '$' or '('.
+>>    '$$' meant an escaped '$'.
+>>
+>>    V4 caused a build error for ARC architecture due to the
+>>    following line:
+>>    https://github.com/torvalds/linux/blob/v4.17-rc4/arch/arc/Kconfig#L252
+>>
+>>    Of course, we could rephrase "D$" to "D cache", but
+>>    I treaked the grammar a little bit.
+>>
+>>    Kconfig decided to not support single-letter variable as in "$X".
+>>    Nor curly braces as in "${CC}" are not supported.
+>>    This means variable/function references in Kconfig always start
+>>    with "$(".
+>>    We can use '$' not followed by '(' as-is.
+>>    We do not need the "$$" escape sequence.
+>>    If necessary, we can use a trick to print '$(' verbatim.  See below.
+>>
+>>  - Fix a wrong behavior of simply expanded variables.
+>>    V4 expanded simply expanded variables when used, but it should not.
+>>
+>>    For example,
+>>
+>>    dollar := $
+>>    X := 1
+>>    Y := $(dollar)(X)
+>>    $(info,$(Y))
+>>
+>>    V5 prints '$(X)', not '1'.
+>>
+>>  - Remove a space after a comma is $( ) context.
+>>    Actually, spaces do not matter in most cases.
+>>
+>>    You can write either
+>>
+>>       $(cc-option,-fstack-protector)
+>>
+>>    or
+>>
+>>       $(cc-option, -fstack-protector)
+>>
+>>    In fact, both style co-exist in our Makefiles too.
+>>    However, there are some cases where they do matter.
+>>
+>>    I remove spaces after commas for consistency.
+>>    If you are unsure, no-space-after-comma is always safe.
+>>
+>> [Major Changes in V4]
+>>
+>>  - In V4, I slightly change the syntax of a function call.
+>>    I chose grammatical consistency and simplicity.
+>>    Anyway, Kconfig is deviating from Make behavior already.
+>>
+>>    In v3, a function call looked like this:
+>>
+>>       $(func-name arg1,arg2,arg3)
+>>
+>>    In v4, a function is invoked like follows:
+>>
+>>       $(func-name,arg1,arg2,arg3)
+>>
+>>    The difference is that the function name and the first argument
+>>    are separated by a comma.
+>>
+>>  - V3 supported single-letter variable like $X.
+>>    V4 dropped it because we do not need multiple ways to do the
+>>    same thing.
+>>    You must always enclose a variable name like $(X).
+>>
+>>  - Support lazy argument expansion.  This is necessary for implementing
+>>    'if', 'and', 'or' functions as in Make.
+>>
+>>  - Add more built-in functions:
+>>    'if', 'error', 'filename', 'lineno'
+>>
+>>  - Error out if a recursive variable references itself eventually.
+>>    For example,  X = $(X)
+>>    ends up with a circular expansion.  It must be terminated
+>>    since the expansion would continue eternally.
+>>
+>>  - Update Documentation and unit-tests, accordingly.
+>>
+>> [Major Changes in V3]
+>>
+>> This version looks more like Make.
+>>
+>>   - Use = operator instead of 'macro' keyword
+>>     to define a user-defined function.
+>>
+>>   - 'Recursively expanded variable' is implemented as a side-effect.
+>>      A variable is a function with zero argument.
+>>
+>>   - Support simply expanded variable which is defined by := operator
+>>
+>>   - Support += operator.
+>>     Probably, this feature will be useful to accumulate compiler flags.
+>>     At least, Clang needs some prerequisite flags such as triplet
+>>     to test other compiler flags.
+>>
+>>   - Support $(info ...) and $(warning ...) built-in functions,
+>>     which were useful while I was debugging this.
+>>
+>>   - Add documentation
+>>
+>>   - Add unit tests
+>>
+>>   - Collect helpers to scripts/Kconfig.include
+>>
+>> [Old Versions]
+>>
+>> V4:  https://lkml.org/lkml/2018/5/17/97
+>> V3:  https://lkml.org/lkml/2018/4/13/37
+>> V2:  https://lkml.org/lkml/2018/2/16/610
+>> V1:  https://lkml.org/lkml/2018/2/16/610
+>> RFC: https://lkml.org/lkml/2018/2/8/429
+>>
+>>
+>> Masahiro Yamada (31):
+>>   kbuild: remove kbuild cache
+>>   kbuild: remove CONFIG_CROSS_COMPILE support
+>>   kconfig: reference environment variables directly and remove 'option
+>>     env='
+>>   kconfig: remove string expansion in file_lookup()
+>>   kconfig: remove string expansion for mainmenu after yyparse()
+>>   kconfig: remove sym_expand_string_value()
+>>   kconfig: make default prompt of mainmenu less specific
+>>   kconfig: add built-in function support
+>>   kconfig: add 'shell' built-in function
+>>   kconfig: replace $(UNAME_RELEASE) with function call
+>>   kconfig: begin PARAM state only when seeing a command keyword
+>>   kconfig: support user-defined function and recursively expanded
+>>     variable
+>>   kconfig: support simply expanded variable
+>>   kconfig: support append assignment operator
+>>   kconfig: expand lefthand side of assignment statement
+>>   kconfig: add 'info', 'warning-if', and 'error-if' built-in functions
+>>   kconfig: add 'filename' and 'lineno' built-in variables
+>>   kconfig: error out if a recursive variable references itself
+>>   Documentation: kconfig: document a new Kconfig macro language
+>>   kconfig: test: add Kconfig macro language tests
+>>   kconfig: show compiler version text in the top comment
+>>   kconfig: add basic helper macros to scripts/Kconfig.include
+>>   stack-protector: test compiler capability in Kconfig and drop AUTO
+>>     mode
+>>   kconfig: add CC_IS_GCC and GCC_VERSION
+>>   kconfig: add CC_IS_CLANG and CLANG_VERSION
+>>   gcov: remove CONFIG_GCOV_FORMAT_AUTODETECT
+>>   kcov: test compiler capability in Kconfig and correct dependency
+>>   gcc-plugins: move GCC version check for PowerPC to Kconfig
+>>   gcc-plugins: test plugin support in Kconfig and clean up Makefile
+>>   gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
+>>   Documentation: kconfig: add recommended way to describe compiler
+>>     support
+>>
+>>  Documentation/kbuild/kconfig-language.txt          |  26 +-
+>>  Documentation/kbuild/kconfig-macro-language.txt    | 242 +++++++++
+>>  Kconfig                                            |  10 +-
+>>  MAINTAINERS                                        |   3 +-
+>>  Makefile                                           | 105 +---
+>>  arch/Kconfig                                       |  49 +-
+>>  arch/powerpc/Kconfig                               |   2 +-
+>>  arch/sh/Kconfig                                    |   4 +-
+>>  arch/sparc/Kconfig                                 |   4 +-
+>>  arch/um/Kconfig.common                             |   4 -
+>>  arch/x86/Kconfig                                   |  15 +-
+>>  arch/x86/um/Kconfig                                |  10 +-
+>>  init/Kconfig                                       |  40 +-
+>>  kernel/gcov/Kconfig                                |  17 +-
+>>  kernel/gcov/Makefile                               |   2 -
+>>  lib/Kconfig.debug                                  |  11 +-
+>>  scripts/Kbuild.include                             | 101 +---
+>>  scripts/Kconfig.include                            |  30 ++
+>>  scripts/Makefile.gcc-plugins                       |  91 +---
+>>  scripts/Makefile.kcov                              |  10 +-
+>>  scripts/clang-version.sh                           |  18 +-
+>>  scripts/gcc-plugins/Makefile                       |   1 +
+>>  scripts/gcc-x86_32-has-stack-protector.sh          |   7 +-
+>>  scripts/gcc-x86_64-has-stack-protector.sh          |   5 -
+>>  scripts/kconfig/confdata.c                         |  33 +-
+>>  scripts/kconfig/kconf_id.c                         |   1 -
+>>  scripts/kconfig/lkc.h                              |   5 +-
+>>  scripts/kconfig/lkc_proto.h                        |  15 +-
+>>  scripts/kconfig/menu.c                             |   3 -
+>>  scripts/kconfig/preprocess.c                       | 572 +++++++++++++++++++++
+>>  scripts/kconfig/symbol.c                           | 109 ----
+>>  .../tests/no_write_if_dep_unmet/expected_config    |   2 +-
+>>  .../kconfig/tests/preprocess/builtin_func/Kconfig  |  27 +
+>>  .../tests/preprocess/builtin_func/__init__.py      |   9 +
+>>  .../tests/preprocess/builtin_func/expected_stderr  |   5 +
+>>  .../tests/preprocess/builtin_func/expected_stdout  |   1 +
+>>  .../tests/preprocess/circular_expansion/Kconfig    |   5 +
+>>  .../preprocess/circular_expansion/__init__.py      |  11 +
+>>  .../preprocess/circular_expansion/expected_stderr  |   1 +
+>>  scripts/kconfig/tests/preprocess/escape/Kconfig    |  44 ++
+>>  .../kconfig/tests/preprocess/escape/__init__.py    |   8 +
+>>  .../tests/preprocess/escape/expected_stderr        |  10 +
+>>  scripts/kconfig/tests/preprocess/variable/Kconfig  |  53 ++
+>>  .../kconfig/tests/preprocess/variable/__init__.py  |   8 +
+>>  .../tests/preprocess/variable/expected_stderr      |   9 +
+>>  scripts/kconfig/util.c                             |  33 +-
+>>  scripts/kconfig/zconf.l                            |  95 +++-
+>>  scripts/kconfig/zconf.y                            |  46 +-
+>>  48 files changed, 1345 insertions(+), 567 deletions(-)
+>>  create mode 100644 Documentation/kbuild/kconfig-macro-language.txt
+>>  create mode 100644 scripts/Kconfig.include
+>>  create mode 100644 scripts/kconfig/preprocess.c
+>>  create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/Kconfig
+>>  create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/__init__.py
+>>  create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/expected_stderr
+>>  create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/expected_stdout
+>>  create mode 100644 scripts/kconfig/tests/preprocess/circular_expansion/Kconfig
+>>  create mode 100644 scripts/kconfig/tests/preprocess/circular_expansion/__init__.py
+>>  create mode 100644 scripts/kconfig/tests/preprocess/circular_expansion/expected_stderr
+>>  create mode 100644 scripts/kconfig/tests/preprocess/escape/Kconfig
+>>  create mode 100644 scripts/kconfig/tests/preprocess/escape/__init__.py
+>>  create mode 100644 scripts/kconfig/tests/preprocess/escape/expected_stderr
+>>  create mode 100644 scripts/kconfig/tests/preprocess/variable/Kconfig
+>>  create mode 100644 scripts/kconfig/tests/preprocess/variable/__init__.py
+>>  create mode 100644 scripts/kconfig/tests/preprocess/variable/expected_stderr
+>>
+>> --
+>> 2.7.4
+>>
+>
+>
+>
+> I pushed this series to
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+> kconfig-shell-v5
+>
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- net/netfilter/nfnetlink.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+I pushed this series to the for-next branch.
+Unless a significant problem is reported,
+I'd like to merge this series in the upcoming MW.
+At least, I need to keep it in linux-next for a while.
 
-diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
-index 03ead8a9e90c..0cb395f9627e 100644
---- a/net/netfilter/nfnetlink.c
-+++ b/net/netfilter/nfnetlink.c
-@@ -28,6 +28,7 @@
- 
- #include <net/netlink.h>
- #include <linux/netfilter/nfnetlink.h>
-+#include <linux/netfilter/nf_tables.h>
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Harald Welte <laforge@netfilter.org>");
-@@ -37,6 +38,11 @@ MODULE_ALIAS_NET_PF_PROTO(PF_NETLINK, NETLINK_NETFILTER);
- 	rcu_dereference_protected(table[(id)].subsys, \
- 				  lockdep_nfnl_is_held((id)))
- 
-+#define NFTA_MAX_ATTR	max(max(max(NFTA_CHAIN_MAX, NFTA_FLOWTABLE_MAX),\
-+				max(NFTA_OBJ_MAX, NFTA_RULE_MAX)),	\
-+			    max(NFTA_TABLE_MAX,				\
-+				max(NFTA_SET_ELEM_LIST_MAX, NFTA_SET_MAX)))
-+
- static struct {
- 	struct mutex				mutex;
- 	const struct nfnetlink_subsystem __rcu	*subsys;
-@@ -185,11 +191,17 @@ static int nfnetlink_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	{
- 		int min_len = nlmsg_total_size(sizeof(struct nfgenmsg));
- 		u8 cb_id = NFNL_MSG_TYPE(nlh->nlmsg_type);
--		struct nlattr *cda[ss->cb[cb_id].attr_count + 1];
-+		struct nlattr *cda[NFTA_MAX_ATTR + 1];
- 		struct nlattr *attr = (void *)nlh + min_len;
- 		int attrlen = nlh->nlmsg_len - min_len;
- 		__u8 subsys_id = NFNL_SUBSYS_ID(type);
- 
-+		/* Sanity-check NFTA_MAX_ATTR */
-+		if (ss->cb[cb_id].attr_count > NFTA_MAX_ATTR) {
-+			rcu_read_unlock();
-+			return -ENOMEM;
-+		}
-+
- 		err = nla_parse(cda, ss->cb[cb_id].attr_count, attr, attrlen,
- 				ss->cb[cb_id].policy, extack);
- 		if (err < 0) {
-@@ -379,10 +391,16 @@ static void nfnetlink_rcv_batch(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		{
- 			int min_len = nlmsg_total_size(sizeof(struct nfgenmsg));
- 			u8 cb_id = NFNL_MSG_TYPE(nlh->nlmsg_type);
--			struct nlattr *cda[ss->cb[cb_id].attr_count + 1];
-+			struct nlattr *cda[NFTA_MAX_ATTR + 1];
- 			struct nlattr *attr = (void *)nlh + min_len;
- 			int attrlen = nlh->nlmsg_len - min_len;
- 
-+			/* Sanity-check NFTA_MAX_ATTR */
-+			if (ss->cb[cb_id].attr_count > NFTA_MAX_ATTR) {
-+				err = -ENOMEM;
-+				goto ack;
-+			}
-+
- 			err = nla_parse(cda, ss->cb[cb_id].attr_count, attr,
- 					attrlen, ss->cb[cb_id].policy, NULL);
- 			if (err < 0)
+Your comments and tags are still appreciated.
+I will add tags (or replace patches if necessary) later,
+but I want this series tested in linux-next
+to expose to more developers' eyes.
+
+It passed my local test.  O-day bot did not report anything so far.
+
+
 -- 
-2.17.0
-
-
--- 
-Kees Cook
-Pixel Security
+Best Regards
+Masahiro Yamada
