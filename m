@@ -1,143 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968818AbeE3JcP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:32:15 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52946 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965350AbeE3JcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:32:08 -0400
-Date: Wed, 30 May 2018 10:32:03 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Subject: Re: [PATCH v5 02/10] sched/rt: add rt_rq utilization tracking
-Message-ID: <20180530093203.GG30654@e110439-lin>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-3-git-send-email-vincent.guittot@linaro.org>
- <20180525155437.GE30654@e110439-lin>
- <CAKfTPtCnJKmLajbeuXe71B-g5xC1vV2krrmG1TBB=pEnApR7cQ@mail.gmail.com>
+        id S968778AbeE3Jhb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:37:31 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53292 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964974AbeE3JhG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 05:37:06 -0400
+Date: Wed, 30 May 2018 10:37:01 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: David Collins <collinsd@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator
+ bindings
+Message-ID: <20180530093701.GD6920@sirena.org.uk>
+References: <fb390ccb-927a-8449-05c3-8dcac964bfae@codeaurora.org>
+ <CAD=FV=XARtQNo5Cyg78XuT26JUFgn=7BjWRnXPjP566=a-sF1w@mail.gmail.com>
+ <a106c337-0713-e5d6-cb40-13e05f4d361d@codeaurora.org>
+ <CAD=FV=W=BquL5ojORz4HNP889s=-uNJ-QEzUfAxwXj2Oa3cGew@mail.gmail.com>
+ <20180523082908.GB4828@sirena.org.uk>
+ <CAD=FV=XfPkpGD32MfTfcw02wQ+QetpUhY=P299uhpX6pY_iEvg@mail.gmail.com>
+ <20180523154057.GL4828@sirena.org.uk>
+ <CAD=FV=XWVOdJ8rWJnBTwoNqnYqYRYjknkZtUvT86+skbrTdwig@mail.gmail.com>
+ <20180523155617.GN4828@sirena.org.uk>
+ <CAD=FV=W4aDxWbcaJ9GZ1KkvyiTPAPR-oUoTFzJfS+LftU5ZP=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xB0nW4MQa6jZONgY"
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtCnJKmLajbeuXe71B-g5xC1vV2krrmG1TBB=pEnApR7cQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAD=FV=W4aDxWbcaJ9GZ1KkvyiTPAPR-oUoTFzJfS+LftU5ZP=Q@mail.gmail.com>
+X-Cookie: Don't get mad, get interest.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-May 15:29, Vincent Guittot wrote:
-> Hi Patrick,
-> >> +static inline bool rt_rq_has_blocked(struct rq *rq)
-> >> +{
-> >> +     if (rq->avg_rt.util_avg)
-> >
-> > Should use READ_ONCE?
-> 
-> I was expecting that there will be only one read by default but I can
-> add READ_ONCE
 
-I would say here it's required mainly for "documentation" purposes,
-since we can use this function from non rq-locked paths, e.g.
+--xB0nW4MQa6jZONgY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   update_sg_lb_stats()
-      update_nohz_stats()
-         update_blocked_averages()
-            rt_rq_has_blocked()
+On Tue, May 29, 2018 at 10:30:33PM -0700, Doug Anderson wrote:
+> On Wed, May 23, 2018 at 8:56 AM, Mark Brown <broonie@kernel.org> wrote:
 
-Thus, AFAIU, we should use READ_ONCE to "flag" that the value can
-potentially be updated concurrently?
+> > Yes, that's definitely not what's expected but it's unfortunately what
+> > the firmware chose to implement so we may well be stuck with it
+> > unfortunately.
 
-> >
-> >> +             return true;
-> >> +
-> >> +     return false;
-> >
-> > What about just:
-> >
-> >        return READ_ONCE(rq->avg_rt.util_avg);
-> >
-> > ?
-> 
-> This function is renamed and extended with others tracking in the
-> following patches so we have to test several values in the function.
-> That's also why there is the if test because additional if test are
-> going to be added
+> We're not really stuck with it if we do what I was suggesting.  I was
+> suggesting that every time we disable the regulator in Linux we have
+> Linux vote for the lowest voltage it's comfortable with.  Linux keeps
+> track of the true voltage that the driver wants and will always change
+> its vote back to that before enabling.  Thus (assuming Linux is OK
+> with 1.2 V - 1.4 V for a rail):
 
-Right, makes sense.
+That's pretty much what it should do anyway with normally designed
+hardware.
 
-[...]
+--xB0nW4MQa6jZONgY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> >> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> >> index ef3c4e6..b4148a9 100644
-> >> --- a/kernel/sched/rt.c
-> >> +++ b/kernel/sched/rt.c
-> >> @@ -5,6 +5,8 @@
-> >>   */
-> >>  #include "sched.h"
-> >>
-> >> +#include "pelt.h"
-> >> +
-> >>  int sched_rr_timeslice = RR_TIMESLICE;
-> >>  int sysctl_sched_rr_timeslice = (MSEC_PER_SEC / HZ) * RR_TIMESLICE;
-> >>
-> >> @@ -1572,6 +1574,9 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-> >>
-> >>       rt_queue_push_tasks(rq);
-> >>
-> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq,
-> >> +             rq->curr->sched_class == &rt_sched_class);
-> >> +
-> >>       return p;
-> >>  }
-> >>
-> >> @@ -1579,6 +1584,8 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
-> >>  {
-> >>       update_curr_rt(rq);
-> >>
-> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
-> >> +
-> >>       /*
-> >>        * The previous task needs to be made eligible for pushing
-> >>        * if it is still active
-> >> @@ -2308,6 +2315,7 @@ static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
-> >>       struct sched_rt_entity *rt_se = &p->rt;
-> >>
-> >>       update_curr_rt(rq);
-> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
-> >
-> > Mmm... not entirely sure... can't we fold
-> >    update_rt_rq_load_avg() into update_curr_rt() ?
-> >
-> > Currently update_curr_rt() is used in:
-> >    dequeue_task_rt
-> >    pick_next_task_rt
-> >    put_prev_task_rt
-> >    task_tick_rt
-> >
-> > while we update_rt_rq_load_avg() only in:
-> >    pick_next_task_rt
-> >    put_prev_task_rt
-> >    task_tick_rt
-> > and
-> >    update_blocked_averages
-> >
-> > Why we don't we need to update at dequeue_task_rt() time ?
-> 
-> We are tracking rt rq and not sched entities so we want to know when
-> sched rt will be the running or not  sched class on the rq. Tracking
-> dequeue_task_rt is useless
+-----BEGIN PGP SIGNATURE-----
 
-What about (push) migrations?
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOcL0ACgkQJNaLcl1U
+h9DM5wf/ZIB/GXA/GKedSaSDuEH7anyaK0FDs0T5+c5BeuhSOKMMO56wPSCmNKOS
+wiMVH2Oe+SjF07QaUMXYAnBKhSJ95P2c+U+MbzexI9MVcaV2DCyqE2PYlALX4Gsg
+1p+F/ESu6fLIbNMWhUQ9jzqIsoNL5fAWX/B5sJeSb1hXPTo/QXvKGMz9SnO0LoLM
+btZh5hlny9lzNGPxEz+8IrcDi/y1JoAjtFUICAfiWlxlk45g88rJ43GciuBb4yYT
+HN4DTFugMryqY97VeQ28RXO5gnvAq5PKjLGfCraDRzy9irgTqyBiuF5mzdCV6vm9
+qMtsByT1THQmE6RX/ab4hL3xbchr/w==
+=hbBI
+-----END PGP SIGNATURE-----
 
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+--xB0nW4MQa6jZONgY--
