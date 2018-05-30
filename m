@@ -1,104 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753243AbeE3NFD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 09:05:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:25816 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753025AbeE3NE7 (ORCPT
+        id S1753329AbeE3NGC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 09:06:02 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52218 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753265AbeE3NGA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 09:04:59 -0400
-Subject: Re: [PATCH 5/8] integrity: Add exe= and tty= before res= to
- integrity audits
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Date: Wed, 30 May 2018 09:04:40 -0400
-In-Reply-To: <1527634686.3534.27.camel@linux.vnet.ibm.com>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
-         <20180524201105.3179904-6-stefanb@linux.vnet.ibm.com>
-         <CAHC9VhQTFPwz5tpL133DQuXDbZR4P7zy4m3hb4nwm9OSf4RNgQ@mail.gmail.com>
-         <4331521.GQBdaJNAj6@x2>
-         <CAHC9VhRp82u4puDt82E0G4ax4tb9301U7XK6+0ZT1rrP-ZgaRw@mail.gmail.com>
-         <1527634686.3534.27.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18053013-0008-0000-0000-000004FC9505
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053013-0009-0000-0000-00001E90B846
-Message-Id: <1527685480.3534.54.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805300148
+        Wed, 30 May 2018 09:06:00 -0400
+X-Google-Smtp-Source: ADUXVKK/C8400AYfCS1VIwYqxvzMfytdlvnGQHjgXMFfWl1tcOqyfrsEL4DE4hd9MN+u0GdgNrTIlw==
+Date: Wed, 30 May 2018 15:05:55 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v9 0/7] Enable cpuset controller in default hierarchy
+Message-ID: <20180530130555.GD3320@localhost.localdomain>
+References: <1527601294-3444-1-git-send-email-longman@redhat.com>
+ <20180530101317.GB3320@localhost.localdomain>
+ <d74c67ea-43c9-cabb-4303-ecff008412df@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d74c67ea-43c9-cabb-4303-ecff008412df@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-29 at 18:58 -0400, Mimi Zohar wrote:
-> On Tue, 2018-05-29 at 17:47 -0400, Paul Moore wrote:
-> > On Tue, May 29, 2018 at 5:35 PM, Steve Grubb <sgrubb@redhat.com> wrote:
-> > > On Tuesday, May 29, 2018 5:19:39 PM EDT Paul Moore wrote:
-> > >> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
-> > >>
-> > >> <stefanb@linux.vnet.ibm.com> wrote:
-> > >> > Use the new public audit functions to add the exe= and tty=
-> > >> > parts to the integrity audit records. We place them before
-> > >> > res=.
-> > >> >
-> > >> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > >> > Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> > >> > ---
-> > >> >
-> > >> >  security/integrity/integrity_audit.c | 2 ++
-> > >> >  1 file changed, 2 insertions(+)
-> > >> >
-> > >> > diff --git a/security/integrity/integrity_audit.c
-> > >> > b/security/integrity/integrity_audit.c index db30763d5525..8d25d3c4dcca
-> > >> > 100644
-> > >> > --- a/security/integrity/integrity_audit.c
-> > >> > +++ b/security/integrity/integrity_audit.c
-> > >> > @@ -56,6 +56,8 @@ void integrity_audit_msg(int audit_msgno, struct inode
-> > >> > *inode,>
-> > >> >                 audit_log_untrustedstring(ab, inode->i_sb->s_id);
-> > >> >                 audit_log_format(ab, " ino=%lu", inode->i_ino);
-> > >> >
-> > >> >         }
-> > >> >
-> > >> > +       audit_log_d_path_exe(ab, current->mm);
-> > >> > +       audit_log_tty(ab, current);
-> > >>
-> > >> NACK
-> > >>
-> > >> Please add the new fields to the end of the audit record, thank you.
-> > >
-> > > Let's see what an example event looks like before NACK'ing this. Way back in
-> > > 2013 the IMA events were good. I think this is repairing the event after some
-> > > drift.
-> > 
-> > Can you reference a specific commit, or point in time during 2013?
-> > Looking at the git log quickly, if I go back to commit d726d8d719b6
-> > ("integrity: move integrity_audit_msg()") from March 18, 2013 (the
-> > commit that created integrity_audit.c) the field ordering appears to
-> > be the same as it today.
-> > 
-> > My NACK still stands.
+On 30/05/18 08:56, Waiman Long wrote:
+> On 05/30/2018 06:13 AM, Juri Lelli wrote:
+> > Hi,
+> >
+> > On 29/05/18 09:41, Waiman Long wrote:
+> >> v9:
+> >>  - Rename cpuset.sched.domain to cpuset.sched.domain_root to better
+> >>    identify its purpose as the root of a new scheduling domain or
+> >>    partition.
+> >>  - Clarify in the document about the purpose of domain_root and
+> >>    load_balance. Using domain_root is th only way to create new
+> >>    partition.
+> >>  - Fix a lockdep warning in update_isolated_cpumask() function.
+> >>  - Add a new patch to eliminate call to generate_sched_domains() for
+> >>    v2 when a change in cpu list does not touch a domain_root.
+> > I was playing with this and ended up with the situation below:
+> >
+> >  g1/cgroup.controllers:cpuset
+> >  g1/cgroup.events:populated 0
+> >  g1/cgroup.max.depth:max
+> >  g1/cgroup.max.descendants:max
+> >  g1/cgroup.stat:nr_descendants 1
+> >  g1/cgroup.stat:nr_dying_descendants 0
+> >  g1/cgroup.subtree_control:cpuset
+> >  g1/cgroup.type:domain
+> >  g1/cpuset.cpus:0-5                   <---
+> >  g1/cpuset.cpus.effective:0-5
+> >  g1/cpuset.mems.effective:0-1
+> >  g1/cpuset.sched.domain_root:1        <---
+> >  g1/cpuset.sched.load_balance:1
+> >  g1/cpu.stat:usage_usec 0
+> >  g1/cpu.stat:user_usec 0
+> >  g1/cpu.stat:system_usec 0
+> >  g1/g11/cgroup.events:populated 0
+> >  g1/g11/cgroup.max.descendants:max
+> >  g1/g11/cpu.stat:usage_usec 0
+> >  g1/g11/cpu.stat:user_usec 0
+> >  g1/g11/cpu.stat:system_usec 0
+> >  g1/g11/cgroup.type:domain
+> >  g1/g11/cgroup.stat:nr_descendants 0
+> >  g1/g11/cgroup.stat:nr_dying_descendants 0
+> >  g1/g11/cpuset.cpus.effective:0-5
+> >  g1/g11/cgroup.controllers:cpuset
+> >  g1/g11/cpuset.sched.load_balance:1
+> >  g1/g11/cpuset.mems.effective:0-1
+> >  g1/g11/cpuset.cpus:6-11              <---
+> >  g1/g11/cgroup.max.depth:max
+> >  g1/g11/cpuset.sched.domain_root:0
+> >
+> > Should this be allowed? I was expecting subgroup g11 should be
+> > restricted to a subset of g1's cpus.
+> >
+> > Best,
+> >
+> > - Juri
 > 
-> There hasn't been any changes up to now.  This patch set refactors
-> integrity_audit_msg(), creating integrity_audit_msg_common(), which
-> will be called from both ima_audit_measurement() and
-> ima_parse_rule().
+> That shouldn't be allowed.The code is probably missing some checks that
+> should have been done. What was the sequence of commands leading to the
+> above configuration?
 
-That should have been "from integrity_audit_msg() and
-ima_parse_rule()", not ima_audit_measurement().
+This is a E5-2609 v3 (12 cores) Fedora Server box (with systemd, so
+first command is needed to be able to use cpuset controller with v2,
+IIUC):
 
-> Previously the audit record generated by ima_parse_rule() did not
-> include this info.  The change in this patch will affect both the
-> existing and the new INTEGRITY_AUDIT_POLICY_RULE audit records.
+# umount /sys/fs/cgroup/cpuset 
+# cd /sys/fs/cgroup/unified/
+# echo "+cpuset" >cgroup.subtree_control 
+# mkdir g1
+# echo 0-5 >g1/cpuset.cpus
+# echo 6-11 >init.scope/cpuset.cpus
+# echo 6-11 >machine.slice/cpuset.cpus
+# echo 6-11 >system.slice/cpuset.cpus
+# echo 6-11 >user.slice/cpuset.cpus
+# echo 1 >g1/cpuset.sched.domain_root 
+# mkdir g1/g11
+# echo "+cpuset" > g1/cgroup.subtree_control 
+# echo 6-11 >g1/g11/cpuset.cpus
+# grep -R . g1/*
+
+That should be it. Am I doing something wrong?
+
+Thanks,
+
+- Juri
