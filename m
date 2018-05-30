@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753631AbeE3Lhp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:37:45 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60790 "EHLO
+        id S1753677AbeE3Lh6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:37:58 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60767 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752252AbeE3LHB (ORCPT
+        by vger.kernel.org with ESMTP id S1752186AbeE3LHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:01 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,15 +13,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "" <syzbot+fe0b19af568972814355@syzkaller.appspotmail.com>,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>,
-        "Florian Westphal" <fw@strlen.de>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.864008370@decadent.org.uk>
+CC: akpm@linux-foundation.org, "Sean Hefty" <sean.hefty@intel.com>,
+        "" <syzbot+e6aba77967bd72cbc9d6@syzkaller.appspotmail.com>,
+        "Leon Romanovsky" <leonro@mellanox.com>,
+        "Doug Ledford" <dledford@redhat.com>
+Date: Wed, 30 May 2018 11:52:42 +0100
+Message-ID: <lsq.1527677562.567620381@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 125/153] netfilter: bridge: ebt_among: add missing
- match size checks
+Subject: [PATCH 3.2 127/153] RDMA/ucma: Fix access to non-initialized
+ CM_ID object
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -34,70 +34,152 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit c4585a2823edf4d1326da44d1524ecbfda26bb37 upstream.
+commit 7688f2c3bbf55e52388e37ac5d63ca471a7712e1 upstream.
 
-ebt_among is special, it has a dynamic match size and is exempt
-from the central size checks.
+The attempt to join multicast group without ensuring that CMA device
+exists will lead to the following crash reported by syzkaller.
 
-Therefore it must check that the size of the match structure
-provided from userspace is sane by making sure em->match_size
-is at least the minimum size of the expected structure.
+[   64.076794] BUG: KASAN: null-ptr-deref in rdma_join_multicast+0x26e/0x12c0
+[   64.076797] Read of size 8 at addr 00000000000000b0 by task join/691
+[   64.076797]
+[   64.076800] CPU: 1 PID: 691 Comm: join Not tainted 4.16.0-rc1-00219-gb97853b65b93 #23
+[   64.076802] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-proj4
+[   64.076803] Call Trace:
+[   64.076809]  dump_stack+0x5c/0x77
+[   64.076817]  kasan_report+0x163/0x380
+[   64.085859]  ? rdma_join_multicast+0x26e/0x12c0
+[   64.086634]  rdma_join_multicast+0x26e/0x12c0
+[   64.087370]  ? rdma_disconnect+0xf0/0xf0
+[   64.088579]  ? __radix_tree_replace+0xc3/0x110
+[   64.089132]  ? node_tag_clear+0x81/0xb0
+[   64.089606]  ? idr_alloc_u32+0x12e/0x1a0
+[   64.090517]  ? __fprop_inc_percpu_max+0x150/0x150
+[   64.091768]  ? tracing_record_taskinfo+0x10/0xc0
+[   64.092340]  ? idr_alloc+0x76/0xc0
+[   64.092951]  ? idr_alloc_u32+0x1a0/0x1a0
+[   64.093632]  ? ucma_process_join+0x23d/0x460
+[   64.094510]  ucma_process_join+0x23d/0x460
+[   64.095199]  ? ucma_migrate_id+0x440/0x440
+[   64.095696]  ? futex_wake+0x10b/0x2a0
+[   64.096159]  ucma_join_multicast+0x88/0xe0
+[   64.096660]  ? ucma_process_join+0x460/0x460
+[   64.097540]  ? _copy_from_user+0x5e/0x90
+[   64.098017]  ucma_write+0x174/0x1f0
+[   64.098640]  ? ucma_resolve_route+0xf0/0xf0
+[   64.099343]  ? rb_erase_cached+0x6c7/0x7f0
+[   64.099839]  __vfs_write+0xc4/0x350
+[   64.100622]  ? perf_syscall_enter+0xe4/0x5f0
+[   64.101335]  ? kernel_read+0xa0/0xa0
+[   64.103525]  ? perf_sched_cb_inc+0xc0/0xc0
+[   64.105510]  ? syscall_exit_register+0x2a0/0x2a0
+[   64.107359]  ? __switch_to+0x351/0x640
+[   64.109285]  ? fsnotify+0x899/0x8f0
+[   64.111610]  ? fsnotify_unmount_inodes+0x170/0x170
+[   64.113876]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
+[   64.115813]  ? ring_buffer_record_is_on+0xd/0x20
+[   64.117824]  ? __fget+0xa8/0xf0
+[   64.119869]  vfs_write+0xf7/0x280
+[   64.122001]  SyS_write+0xa1/0x120
+[   64.124213]  ? SyS_read+0x120/0x120
+[   64.126644]  ? SyS_read+0x120/0x120
+[   64.128563]  do_syscall_64+0xeb/0x250
+[   64.130732]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[   64.132984] RIP: 0033:0x7f5c994ade99
+[   64.135699] RSP: 002b:00007f5c99b97d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   64.138740] RAX: ffffffffffffffda RBX: 00000000200001e4 RCX: 00007f5c994ade99
+[   64.141056] RDX: 00000000000000a0 RSI: 00000000200001c0 RDI: 0000000000000015
+[   64.143536] RBP: 00007f5c99b97ec0 R08: 0000000000000000 R09: 0000000000000000
+[   64.146017] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c99b97fc0
+[   64.148608] R13: 0000000000000000 R14: 00007fff660e1c40 R15: 00007f5c99b989c0
+[   64.151060]
+[   64.153703] Disabling lock debugging due to kernel taint
+[   64.156032] BUG: unable to handle kernel NULL pointer dereference at 00000000000000b0
+[   64.159066] IP: rdma_join_multicast+0x26e/0x12c0
+[   64.161451] PGD 80000001d0298067 P4D 80000001d0298067 PUD 1dea39067 PMD 0
+[   64.164442] Oops: 0000 [#1] SMP KASAN PTI
+[   64.166817] CPU: 1 PID: 691 Comm: join Tainted: G    B 4.16.0-rc1-00219-gb97853b65b93 #23
+[   64.170004] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-proj4
+[   64.174985] RIP: 0010:rdma_join_multicast+0x26e/0x12c0
+[   64.177246] RSP: 0018:ffff8801c8207860 EFLAGS: 00010282
+[   64.179901] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff94789522
+[   64.183344] RDX: 1ffffffff2d50fa5 RSI: 0000000000000297 RDI: 0000000000000297
+[   64.186237] RBP: ffff8801c8207a50 R08: 0000000000000000 R09: ffffed0039040ea7
+[   64.189328] R10: 0000000000000001 R11: ffffed0039040ea6 R12: 0000000000000000
+[   64.192634] R13: 0000000000000000 R14: ffff8801e2022800 R15: ffff8801d4ac2400
+[   64.196105] FS:  00007f5c99b98700(0000) GS:ffff8801e5d00000(0000) knlGS:0000000000000000
+[   64.199211] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   64.202046] CR2: 00000000000000b0 CR3: 00000001d1c48004 CR4: 00000000003606a0
+[   64.205032] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   64.208221] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   64.211554] Call Trace:
+[   64.213464]  ? rdma_disconnect+0xf0/0xf0
+[   64.216124]  ? __radix_tree_replace+0xc3/0x110
+[   64.219337]  ? node_tag_clear+0x81/0xb0
+[   64.222140]  ? idr_alloc_u32+0x12e/0x1a0
+[   64.224422]  ? __fprop_inc_percpu_max+0x150/0x150
+[   64.226588]  ? tracing_record_taskinfo+0x10/0xc0
+[   64.229763]  ? idr_alloc+0x76/0xc0
+[   64.232186]  ? idr_alloc_u32+0x1a0/0x1a0
+[   64.234505]  ? ucma_process_join+0x23d/0x460
+[   64.237024]  ucma_process_join+0x23d/0x460
+[   64.240076]  ? ucma_migrate_id+0x440/0x440
+[   64.243284]  ? futex_wake+0x10b/0x2a0
+[   64.245302]  ucma_join_multicast+0x88/0xe0
+[   64.247783]  ? ucma_process_join+0x460/0x460
+[   64.250841]  ? _copy_from_user+0x5e/0x90
+[   64.253878]  ucma_write+0x174/0x1f0
+[   64.257008]  ? ucma_resolve_route+0xf0/0xf0
+[   64.259877]  ? rb_erase_cached+0x6c7/0x7f0
+[   64.262746]  __vfs_write+0xc4/0x350
+[   64.265537]  ? perf_syscall_enter+0xe4/0x5f0
+[   64.267792]  ? kernel_read+0xa0/0xa0
+[   64.270358]  ? perf_sched_cb_inc+0xc0/0xc0
+[   64.272575]  ? syscall_exit_register+0x2a0/0x2a0
+[   64.275367]  ? __switch_to+0x351/0x640
+[   64.277700]  ? fsnotify+0x899/0x8f0
+[   64.280530]  ? fsnotify_unmount_inodes+0x170/0x170
+[   64.283156]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
+[   64.286182]  ? ring_buffer_record_is_on+0xd/0x20
+[   64.288749]  ? __fget+0xa8/0xf0
+[   64.291136]  vfs_write+0xf7/0x280
+[   64.292972]  SyS_write+0xa1/0x120
+[   64.294965]  ? SyS_read+0x120/0x120
+[   64.297474]  ? SyS_read+0x120/0x120
+[   64.299751]  do_syscall_64+0xeb/0x250
+[   64.301826]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[   64.304352] RIP: 0033:0x7f5c994ade99
+[   64.306711] RSP: 002b:00007f5c99b97d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   64.309577] RAX: ffffffffffffffda RBX: 00000000200001e4 RCX: 00007f5c994ade99
+[   64.312334] RDX: 00000000000000a0 RSI: 00000000200001c0 RDI: 0000000000000015
+[   64.315783] RBP: 00007f5c99b97ec0 R08: 0000000000000000 R09: 0000000000000000
+[   64.318365] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c99b97fc0
+[   64.320980] R13: 0000000000000000 R14: 00007fff660e1c40 R15: 00007f5c99b989c0
+[   64.323515] Code: e8 e8 79 08 ff 4c 89 ff 45 0f b6 a7 b8 01 00 00 e8 68 7c 08 ff 49 8b 1f 4d 89 e5 49 c1 e4 04 48 8
+[   64.330753] RIP: rdma_join_multicast+0x26e/0x12c0 RSP: ffff8801c8207860
+[   64.332979] CR2: 00000000000000b0
+[   64.335550] ---[ end trace 0c00c17a408849c1 ]---
 
-The module has such a check, but its only done after accessing
-a structure that might be out of bounds.
-
-tested with: ebtables -A INPUT ... \
---among-dst fe:fe:fe:fe:fe:fe
---among-dst fe:fe:fe:fe:fe:fe --among-src fe:fe:fe:fe:ff:f,fe:fe:fe:fe:fe:fb,fe:fe:fe:fe:fc:fd,fe:fe:fe:fe:fe:fd,fe:fe:fe:fe:fe:fe
---among-src fe:fe:fe:fe:ff:f,fe:fe:fe:fe:fe:fa,fe:fe:fe:fe:fe:fd,fe:fe:fe:fe:fe:fe,fe:fe:fe:fe:fe:fe
-
-Reported-by: <syzbot+fe0b19af568972814355@syzkaller.appspotmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reported-by: <syzbot+e6aba77967bd72cbc9d6@syzkaller.appspotmail.com>
+Fixes: c8f6a362bf3e ("RDMA/cma: Add multicast communication support")
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Sean Hefty <sean.hefty@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/bridge/netfilter/ebt_among.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ drivers/infiniband/core/cma.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/bridge/netfilter/ebt_among.c
-+++ b/net/bridge/netfilter/ebt_among.c
-@@ -172,18 +172,35 @@ ebt_among_mt(const struct sk_buff *skb,
- 	return true;
- }
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -3131,6 +3131,9 @@ int rdma_join_multicast(struct rdma_cm_i
+ 	struct cma_multicast *mc;
+ 	int ret;
  
-+static bool poolsize_invalid(const struct ebt_mac_wormhash *w)
-+{
-+	return w && w->poolsize >= (INT_MAX / sizeof(struct ebt_mac_wormhash_tuple));
-+}
-+
- static int ebt_among_mt_check(const struct xt_mtchk_param *par)
- {
- 	const struct ebt_among_info *info = par->matchinfo;
- 	const struct ebt_entry_match *em =
- 		container_of(par->matchinfo, const struct ebt_entry_match, data);
--	int expected_length = sizeof(struct ebt_among_info);
-+	unsigned int expected_length = sizeof(struct ebt_among_info);
- 	const struct ebt_mac_wormhash *wh_dst, *wh_src;
- 	int err;
- 
-+	if (expected_length > em->match_size)
++	if (!id->device)
 +		return -EINVAL;
 +
- 	wh_dst = ebt_among_wh_dst(info);
--	wh_src = ebt_among_wh_src(info);
-+	if (poolsize_invalid(wh_dst))
-+		return -EINVAL;
-+
- 	expected_length += ebt_mac_wormhash_size(wh_dst);
-+	if (expected_length > em->match_size)
-+		return -EINVAL;
-+
-+	wh_src = ebt_among_wh_src(info);
-+	if (poolsize_invalid(wh_src))
-+		return -EINVAL;
-+
- 	expected_length += ebt_mac_wormhash_size(wh_src);
- 
- 	if (em->match_size != EBT_ALIGN(expected_length)) {
+ 	id_priv = container_of(id, struct rdma_id_private, id);
+ 	if (!cma_comp(id_priv, RDMA_CM_ADDR_BOUND) &&
+ 	    !cma_comp(id_priv, RDMA_CM_ADDR_RESOLVED))
