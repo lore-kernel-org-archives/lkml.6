@@ -1,104 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752966AbeE3LI4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:08:56 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60777 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752673AbeE3LHj (ORCPT
+        id S1753111AbeE3LKD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:10:03 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:39869 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753083AbeE3LJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:39 -0400
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Wed, 30 May 2018 07:09:58 -0400
+X-Google-Smtp-Source: ADUXVKL30mLNCVTto4WM7YSs4cExlu/PB6B+jQt0a3Dz0D2S3NyFguPVRGH5iOksKgBX/qBGj6xD1cMpBOmy0XHN9Xg=
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Borislav Petkov" <bp@alien8.de>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Dave Hansen" <dave.hansen@linux.intel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Dan Williams" <dan.j.williams@intel.com>, linux-arch@vger.kernel.org,
-        "Will Deacon" <will.deacon@arm.com>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Arjan van de Ven" <arjan@linux.intel.com>,
-        "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.523255589@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 098/153] nospec: Allow index argument to have
- const-qualified type
-In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <20180529172611.GL3803@linux.vnet.ibm.com>
+References: <20180525101958.13277-1-bigeasy@linutronix.de> <20180525101958.13277-2-bigeasy@linutronix.de>
+ <CAJZ5v0jEUR7YxzujvZn8WVK+dMxmOxoHNiLKcmgCq9awHR=vYg@mail.gmail.com>
+ <20180529120443.GE3803@linux.vnet.ibm.com> <CAJZ5v0j_O=nL6Eym5GqGGDC8LPB5vu-YAp9DFfZSJsHd-TMEmg@mail.gmail.com>
+ <20180529172611.GL3803@linux.vnet.ibm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 30 May 2018 13:09:57 +0200
+X-Google-Sender-Auth: 5CPAlLTxgbqEtMLfSN3Ed2GlW14
+Message-ID: <CAJZ5v0gYcFywNZh+-EHSmwU89AER=a8ouKtK93j=Lu4DSHUzNw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kernel/SRCU: provide a static initializer
+To: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
+On Tue, May 29, 2018 at 7:26 PM, Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
+> On Tue, May 29, 2018 at 07:14:49PM +0200, Rafael J. Wysocki wrote:
+>> On Tue, May 29, 2018 at 2:04 PM, Paul E. McKenney
+>> <paulmck@linux.vnet.ibm.com> wrote:
+>> > On Tue, May 29, 2018 at 10:09:51AM +0200, Rafael J. Wysocki wrote:
+>> >> On Fri, May 25, 2018 at 12:19 PM, Sebastian Andrzej Siewior
+>> >> <bigeasy@linutronix.de> wrote:
+>> >> > There are macros for static initializer for the three out of four
+>> >> > possible notifier types, that are:
+>> >> >         ATOMIC_NOTIFIER_HEAD()
+>> >> >         BLOCKING_NOTIFIER_HEAD()
+>> >> >         RAW_NOTIFIER_HEAD()
+>> >> >
+>> >> > This patch provides a static initilizer for the forth type to make it
+>> >> > complete.
+>> >> >
+>> >> > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+>> >> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+>> >>
+>> >> I cannot apply this without an ACK from Paul.
+>> >
+>> > I have both queued, but if you would prefer to take them, then for the
+>> > SRCU piece:
+>> >
+>> > Tested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>> > Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>>
+>> Thanks!
+>>
+>> I'll route them along with the other cpufreq material then.
+>
+> Please let me know when you have them queued so that I can remove
+> them from -rcu.
 
-------------------
+I've just added them to my linux-next branch.
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-
-commit b98c6a160a057d5686a8c54c79cc6c8c94a7d0c8 upstream.
-
-The last expression in a statement expression need not be a bare
-variable, quoting gcc docs
-
-  The last thing in the compound statement should be an expression
-  followed by a semicolon; the value of this subexpression serves as the
-  value of the entire construct.
-
-and we already use that in e.g. the min/max macros which end with a
-ternary expression.
-
-This way, we can allow index to have const-qualified type, which will in
-some cases avoid the need for introducing a local copy of index of
-non-const qualified type. That, in turn, can prevent readers not
-familiar with the internals of array_index_nospec from wondering about
-the seemingly redundant extra variable, and I think that's worthwhile
-considering how confusing the whole _nospec business is.
-
-The expression _i&_mask has type unsigned long (since that is the type
-of _mask, and the BUILD_BUG_ONs guarantee that _i will get promoted to
-that), so in order not to change the type of the whole expression, add
-a cast back to typeof(_i).
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arch@vger.kernel.org
-Link: http://lkml.kernel.org/r/151881604837.17395.10812767547837568328.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- include/linux/nospec.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -53,7 +53,6 @@ static inline unsigned long array_index_
- 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
- 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
- 									\
--	_i &= _mask;							\
--	_i;								\
-+	(typeof(_i)) (_i & _mask);					\
- })
- #endif /* _LINUX_NOSPEC_H */
+Cheers,
+Rafael
