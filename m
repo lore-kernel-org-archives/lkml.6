@@ -1,89 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932321AbeE3TzN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:55:13 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:44758 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932246AbeE3TzJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:55:09 -0400
-X-Google-Smtp-Source: ADUXVKIHitKuuLaKe/DLTcvh2x6lpOH8TIiV6EuO6fiktWOxJL2bgwF4wGPmxkB9HNE/dOd9ULCV/dYdnStTQU0i3Bo=
+        id S1753765AbeE3T7I (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 15:59:08 -0400
+Received: from vern.gendns.com ([206.190.152.46]:49590 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753695AbeE3T7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 15:59:04 -0400
+Subject: Re: [PATCH 6/9] clk: davinci: pll: allow dev == NULL
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        linux-kernel@vger.kernel.org, brgl@bgdev.pl
+References: <20180525181150.17873-1-david@lechnology.com>
+ <20180525181150.17873-7-david@lechnology.com>
+ <20180530194559.982.42844@harbor.lan>
+From: David Lechner <david@lechnology.com>
+Message-ID: <41524516-3b58-0db8-1e67-3d76f8596a23@lechnology.com>
+Date: Wed, 30 May 2018 14:59:01 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <10880132-7686-78f6-7f9f-3fc29c3e554a@linux-m68k.org>
-References: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
- <alpine.LNX.2.21.1805271212480.9@nippy.intranet> <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com>
- <alpine.LNX.2.21.1805271547090.9@nippy.intranet> <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com>
- <alpine.LNX.2.21.1805281521420.10@nippy.intranet> <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
- <10880132-7686-78f6-7f9f-3fc29c3e554a@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 30 May 2018 21:55:08 +0200
-X-Google-Sender-Auth: l5Dbc9jxR05ucJzArUXUVtlZ9t0
-Message-ID: <CAMuHMdUzp-Bqc0s7SsKFKuiiC8Eb9dk3uUcynjVApg=UQ6g-yQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC
- based ethernet
-To: Greg Ungerer <gerg@linux-m68k.org>
-Cc: Finn Thain <fthain@telegraphics.com.au>,
-        Christoph Hellwig <hch@lst.de>, Michael Schmitz <schmitzmic@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, Joshua Thompson <funaho@jurai.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180530194559.982.42844@harbor.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On 05/30/2018 02:46 PM, Michael Turquette wrote:
+> Hi David,
+> 
+> Quoting David Lechner (2018-05-25 11:11:47)
+>> This modifies the TI Davinci PLL clock driver to allow for the case
+>> when dev == NULL. On some (most) SoCs that use this driver, the PLL
+>> clock needs to be registered during early boot because it is used
+>> for clocksource/clkevent and there will be no platform device available.
+> 
+> A lot of this stuff feels like a step backwards. E.g:
+> 
+>> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+>> index 23a24c944f1d..2eb981e61185 100644
+>> --- a/drivers/clk/davinci/pll.c
+>> +++ b/drivers/clk/davinci/pll.c
+>> @@ -11,6 +11,7 @@
+>>   
+>>   #include <linux/clk-provider.h>
+>>   #include <linux/clk.h>
+>> +#include <linux/clk/davinci.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/err.h>
+>>   #include <linux/io.h>
+>> @@ -223,6 +224,7 @@ static const struct clk_ops dm365_pll_ops = {
+>>   
+>>   /**
+>>    * davinci_pll_div_register - common *DIV clock implementation
+>> + * @dev: The PLL platform device or NULL
+>>    * @name: the clock name
+>>    * @parent_name: the parent clock name
+>>    * @reg: the *DIV register
+>> @@ -240,17 +242,21 @@ static struct clk *davinci_pll_div_register(struct device *dev,
+>>          const struct clk_ops *divider_ops = &clk_divider_ops;
+>>          struct clk_gate *gate;
+>>          struct clk_divider *divider;
+>> +       struct clk *clk;
+>> +       int ret;
+>>   
+>> -       gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
+>> +       gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+>>          if (!gate)
+>>                  return ERR_PTR(-ENOMEM);
+>>   
+>>          gate->reg = reg;
+>>          gate->bit_idx = DIV_ENABLE_SHIFT;
+>>   
+>> -       divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
+>> -       if (!divider)
+>> -               return ERR_PTR(-ENOMEM);
+>> +       divider = kzalloc(sizeof(*divider), GFP_KERNEL);
+>> +       if (!divider) {
+>> +               ret = -ENOMEM;
+>> +               goto err_free_gate;
+>> +       }
+>>   
+>>          divider->reg = reg;
+>>          divider->shift = DIV_RATIO_SHIFT;
+> 
+> Oh no my poor devm_ helpers!
+> 
+> I understand that we need to support early boot drivers better, so this
+> patch can be merged.
+> 
+> However I'm curious if you're tracking Bartosz's early_platform_driver
+> efforts? Converting to that if it is ever merged would likely be
+> cleaner:
+> 
+> https://lkml.kernel.org/r/20180511162028.20616-1-brgl@bgdev.pl
+> 
+> Best regards,
+> Mike
+> 
 
-On Wed, May 30, 2018 at 2:28 AM, Greg Ungerer <gerg@linux-m68k.org> wrote:
-> On 28/05/18 20:15, Geert Uytterhoeven wrote:
->> On Mon, May 28, 2018 at 7:26 AM, Finn Thain <fthain@telegraphics.com.au>
->> wrote:
->>> On Mon, 28 May 2018, Michael Schmitz wrote:
->>>> Am 27.05.2018 um 17:49 schrieb Finn Thain:
->>>>> On Sun, 27 May 2018, Michael Schmitz wrote:
->>>>>> That should have fixed the warning already ...
->>>>>
->>>>> It's still not fixed (hence my "acked-by" for Geunter's patch).
->>>>
->>>> Odd - does link order still matter even though the
->>>> arch_setup_dev_archdata() function from the core platform code is
->>>> declared as a weak symbol?
->>>>
->>>> I'll see what I can find out on elgar ...
->>>
->>> Any one of the numerous patches/rfcs/suggestions that I sent will avoid
->>> the WARN splat.
->>>
->>> When I said "it's still not fixed", what I meant to say was, "it's still
->>> not fixed in mainline and no proposed fix was accepted to the best of my
->>> knowledge".
->>
->> Indeed.
->>
->> Do we have a consensus on the way forward? The merge window for
->> v4.18 will open soon.
->
-> For whatever it is worth I thought Finn's patch was the best approach
-> (https://lkml.org/lkml/2018/5/17/333, "m68k: Set default dma mask for
-> platform device").
-
-FTR: done.
-
-> We seem to be hitting quite a few places (within m68k) that otherwise
-> need individual fixes. There is no immediate need to revert existing
-> changes that have already been applied if we use this now either
-> (like my FEC fix, commit f61e64310b75 "m68k: set dma and coherent
-> masks for platform FEC ethernets").
-
-Indeed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yes. In fact, this is what got Bartosz working on it in the first
+place. :-)
