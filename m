@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753248AbeE3LYi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:24:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33290 "EHLO
+        id S1753210AbeE3LY2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:24:28 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33288 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753219AbeE3LY3 (ORCPT
+        by vger.kernel.org with ESMTP id S1751911AbeE3LYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:24:29 -0400
+        Wed, 30 May 2018 07:24:24 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Hans Verkuil" <hans.verkuil@cisco.com>,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+CC: akpm@linux-foundation.org, "Dan Carpenter" <dan.carpenter@oracle.com>,
+        "Mark Brown" <broonie@kernel.org>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.409494394@decadent.org.uk>
+Message-ID: <lsq.1527677561.892857035@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 027/153] media: cpia2: Fix a couple off by one bugs
+Subject: [PATCH 3.2 029/153] ASoC: nuc900: Fix a loop timeout test
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -34,41 +33,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit d5ac225c7d64c9c3ef821239edc035634e594ec9 upstream.
+commit 65a12b3aafed5fc59f4ce41b22b752b1729e6701 upstream.
 
-The cam->buffers[] array has cam->num_frames elements so the > needs to
-be changed to >= to avoid going beyond the end of the array.  The
-->buffers[] array is allocated in cpia2_allocate_buffers() if you want
-to confirm.
+We should be finishing the loop with timeout set to zero but because
+this is a post-op we finish with timeout == -1.
 
-Fixes: ab33d5071de7 ("V4L/DVB (3376): Add cpia2 camera support")
-
+Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-[bwh: Backported to 3.2: adjust filename]
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/video/cpia2/cpia2_v4l.c | 4 ++--
+ sound/soc/nuc900/nuc900-ac97.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/video/cpia2/cpia2_v4l.c
-+++ b/drivers/media/video/cpia2/cpia2_v4l.c
-@@ -1152,7 +1152,7 @@ static int cpia2_querybuf(struct file *f
- 	struct camera_data *cam = video_drvdata(file);
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -66,7 +66,7 @@ static unsigned short nuc900_ac97_read(s
  
- 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
--	   buf->index > cam->num_frames)
-+	   buf->index >= cam->num_frames)
- 		return -EINVAL;
+ 	/* polling the AC_R_FINISH */
+ 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
  
- 	buf->m.offset = cam->buffers[buf->index].data - cam->frame_buffer;
-@@ -1201,7 +1201,7 @@ static int cpia2_qbuf(struct file *file,
+ 	if (!timeout) {
+@@ -120,7 +120,7 @@ static void nuc900_ac97_write(struct snd
  
- 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
- 	   buf->memory != V4L2_MEMORY_MMAP ||
--	   buf->index > cam->num_frames)
-+	   buf->index >= cam->num_frames)
- 		return -EINVAL;
+ 	/* polling the AC_W_FINISH */
+ 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
  
- 	DBG("QBUF #%d\n", buf->index);
+ 	if (!timeout)
