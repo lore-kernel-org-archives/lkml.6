@@ -1,75 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932539AbeE3WHa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:07:30 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:41709 "EHLO
+        id S932575AbeE3WH5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:07:57 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:41101 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753587AbeE3WH3 (ORCPT
+        with ESMTP id S932431AbeE3WH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:07:29 -0400
+        Wed, 30 May 2018 18:07:56 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: unhide snd_soc_new_compress() declaration
-Date: Thu, 31 May 2018 00:06:03 +0200
-Message-Id: <20180530220628.1613824-1-arnd@arndb.de>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] media: v4l: omap: add VIDEO_V4L2 dependency
+Date: Thu, 31 May 2018 00:07:11 +0200
+Message-Id: <20180530220735.1651221-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:zo7ZsdWUAL+5d2VAO/P3sx4J9wU5AU2UYT5zZHWTqgfm2zGKQh4
- jzX8r68lzHZ7ENbTWREM6i0jigQ1V6wwSCHNNaFCtuisy1qHMB5VZJFx9cz4Z+g3qZSZyj9
- w/ZqlCR4bVRh5FeD/JZAVuLwphwhVVIGMEY9L4pta45LMTgG7Gvp4Fhq6k/Q7LxCDzB2Hfr
- Mv9u3CQm9Nzl/+e2Z2a5A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:qQV5uOLA3x4=:4W0gFgKzGnx+fMzFFW9KLo
- ny0+pCgYB6gjMrdbGoIDRablytFUd7h5iM92sOEz0f4zkxyhE6LPOmNfUz8C8rF8fI2VfUqqL
- 7PIs8SiDXXeuGcouQ8XmkeKD+NvVvaiVPVgqY+M1ArMw5HAJyUFjWGXd3euyQJiAg4BxWOBsA
- +3uAYBXMyAeKVyJ2B6h3IUdbomngn4l8+fR+tgwsIKNxfQnGgEOP8Q5tdcZnKWIYr9hgu70Ab
- RikXIXNZ3FSKJzC05lMIqdsFCwy8tLn7zKihkEMwJg35IozIATdaJSSkQKuPcuRwDe9wqbziN
- ovwChMV1nUvLMVqa8Mt1aQUmVa+5DNwkHzr0LlUA9RVEVnaSfxmOx0deKcAlTNhZUNP3e09jq
- z4saAuHHDbVg2dV/OSo6rf7PTWaCDgIOOSCHTQv8Sn8MDWj+yuD/5Eod9/vECm1BcVf2DrUWH
- hLvrlRoThFo10UHvhiXsaBqswvWfvzmnNVxhv2GzZVqS8hWioGL/bMyCEHnCzg4p+7j1MMFM2
- QEsMIaMC/2kXPRWQWFFPoV3CClBf6aLGJbzabZwInuTITCxs0n+IsHR9TQeUI8IsRPAJOYv4q
- gStmQA7InfiDr/z7YSwk/FyP5GrWqii3+hPK4zAMgglylJaMkMrkj0+CRqlq9arFnDkK5d7Eb
- rqGJqr3Ia6lIlBcYe1tSNBxkd0We0fjBhVBthTjMeCV2vj9ILj6/obFiM4S8vtyr1QJQ=
+In-Reply-To: <20180530220735.1651221-1-arnd@arndb.de>
+References: <20180530220735.1651221-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:A/P65lCfhg5b7st4LKQlZQ1GFxihGQepgmm4UTJSe37PMtGuzps
+ dgRQ9+tOSgKUwmI85h2uABRyVD4b8rN04AHuM5t4i5cmvkZDj2rS/c5w0e+OsQRCx3mlZwP
+ SZswI3wh/CgSxxDzMnWYqvJdC8eBfRRAoSLFRieabKN8NjSsB7RdujbkodN+VfH+5c/2+q4
+ gbVRCA9cD73ygxwpjNy2Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:6k8HBU8lOcU=:U2HOSxcMEgIQKO1I+9inTh
+ P+AXNuYQXhmU2xCc5AczeaUGRall4gjSHl38DlB3NmoPTlqNNH+VDdEs8/M1nM3ekOcgWWiAm
+ POEYHFB8zhj+4eqMpI93g2oDEcSiG2xygZhAu6xiyLX4x3QfJOoqLrwjfVf8Sw/Kmf5MGrjCs
+ jRnpMsg7OTe/LYJ/bV63sR+bvEF3A3+Ko3KxAs+3BY/3eZNDSPNjiDQ963vjfYAwqqxmTdA/K
+ zhQcvd82HVEc76ifHuus0no7B2MzjckghC/pkGMfFuLDUWZsdQ8bnLPwSaqkqpcEPtl+JsuyO
+ 6+piGQf7mOjleKpJwKhDrqOvNc7cDfHQNQkp5SGqjpYtLPF9P9MQEYvqFHCCz+JjsMtyFdUt7
+ yGNX8y1Ezxr1195onWYWkyUerxt27YWh0ITW2QpIMbziKNl0qQ0xjK9Cc1QkQYsQQaCSIFZFm
+ 6qyjUf7imwBdknwWir4qa9NqAxk0+WpWyyl2L1UXoK1XQMlkPO99iMbYRlbB1bJjSBa9auz5/
+ uHYoo27CA1ovLYsvtVF+vDYBq4lTth4svgVP21b/VNFwoU0VlEIHkq3GREZxXnteCqjY3b02h
+ VkRr+yAu80XurD+kbKh5kTB68BohNhwQxG7wU8P1udn8TCxSrVzEF9ZZzymPTynB5HkysZxBr
+ 7eiNII+8XD5UL2phkaqjTAoMw9mV2lPXrh1varRHeoWmTZfWFReWEkLwXjSyJ4XHVMwA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My randconfig build setup came across a new build failure today:
+The omap media driver can be built-in while the v4l2 core is a loadable
+module. This is a mistake and leads to link errors:
 
-sound/soc/soc-topology.c: In function 'soc_tplg_dai_create':
-sound/soc/soc-topology.c:1758:27: error: 'snd_soc_new_compress' undeclared (first use in this function); did you mean 'snd_soc_compr_ops'?
-   dai_drv->compress_new = snd_soc_new_compress;
+drivers/media/platform/omap/omap_vout.o: In function `omap_vout_remove':
+omap_vout.c:(.text+0xec): undefined reference to `v4l2_device_unregister'
+omap_vout.c:(.text+0x140): undefined reference to `video_device_release'
+omap_vout.c:(.text+0x150): undefined reference to `video_unregister_device'
+omap_vout.c:(.text+0x15c): undefined reference to `v4l2_ctrl_handler_free'
 
-Simply making that prototype visible again fixes the build failure
-for me, though I'm not exactly sure why we don't get a link
-error now.
+An explicit Kconfig dependency on VIDEO_V4L2 avoids the problem.
+I ran into this problem for the first time today during my randconfig
+builds, but could not find what caused it.
 
-The reference to snd_soc_new_compress() was added a few weeks
-ago and seems to have caused the problem.
-
-Fixes: 5db6aab6f36f ("ASoC: topology: Add support for compressed PCMs")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/sound/soc.h | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/platform/omap/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index 600a7ebd10c0..8e073865bde3 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -460,9 +460,7 @@ struct snd_soc_component *snd_soc_lookup_component(struct device *dev,
- 						   const char *driver_name);
- 
- int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num);
--#ifdef CONFIG_SND_SOC_COMPRESS
- int snd_soc_new_compress(struct snd_soc_pcm_runtime *rtd, int num);
--#endif
- 
- void snd_soc_disconnect_sync(struct device *dev);
- 
+diff --git a/drivers/media/platform/omap/Kconfig b/drivers/media/platform/omap/Kconfig
+index d827b6c285a6..4b5e55d41ad4 100644
+--- a/drivers/media/platform/omap/Kconfig
++++ b/drivers/media/platform/omap/Kconfig
+@@ -8,6 +8,7 @@ config VIDEO_OMAP2_VOUT
+ 	depends on MMU
+ 	depends on FB_OMAP2 || (COMPILE_TEST && FB_OMAP2=n)
+ 	depends on ARCH_OMAP2 || ARCH_OMAP3 || COMPILE_TEST
++	depends on VIDEO_V4L2
+ 	select VIDEOBUF_GEN
+ 	select VIDEOBUF_DMA_CONTIG
+ 	select OMAP2_VRFB if ARCH_OMAP2 || ARCH_OMAP3
 -- 
 2.9.0
