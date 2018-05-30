@@ -1,273 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932637AbeE3XGs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 19:06:48 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45415 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932416AbeE3XGq (ORCPT
+        id S932663AbeE3XHB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 19:07:01 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:39319 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932416AbeE3XGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 19:06:46 -0400
-Subject: Re: [PATCH] Use an IDR to allocate apparmor secids
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20180522093259.GA30182@bombadil.infradead.org>
-From: John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <3862327e-f9f5-a4f3-0c82-3a1e951e53c1@canonical.com>
-Date: Wed, 30 May 2018 16:06:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 30 May 2018 19:06:55 -0400
+X-Google-Smtp-Source: ADUXVKJCOZAnYMMJKDJjLPSWiuvcxdhQ3lyHgVqnp9jh/Ip4fjFUU0EeVNqmSTDY9BrpIzWkXItfZul3n9NIHf/iw/A=
 MIME-Version: 1.0
-In-Reply-To: <20180522093259.GA30182@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <d47b72cc-9209-a190-38b3-969870e1bf26@suse.de>
+References: <20180530204838.22079-1-luc.vanoostenryck@gmail.com> <d47b72cc-9209-a190-38b3-969870e1bf26@suse.de>
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Date: Thu, 31 May 2018 01:06:53 +0200
+Message-ID: <CAMHZB6GXVPvr1uwbemuxqPPtNzYT7jeVokR6q9tz2mS_=TG6vA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: add machine size to CHEKCFLAGS
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>, "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-alpha@vger.kernel.org,
+        "moderated list:ARM/Allwinner sunXi SoC support"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, Rob Landley <rob@landley.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4UN7cIS025108
 
-On 05/22/2018 02:32 AM, Matthew Wilcox wrote:
-> Replace the custom usage of the radix tree to store a list of free IDs
-> with the IDR.
-> 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> 
->  security/apparmor/secid.c |  114 ++++------------------------------------------
->  1 file changed, 11 insertions(+), 103 deletions(-)
-> 
-> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-> index c2f0c1571156..3ad94b2ffbb2 100644
-> --- a/security/apparmor/secid.c
-> +++ b/security/apparmor/secid.c
-> @@ -18,6 +18,7 @@
->  #include <linux/errno.h>
->  #include <linux/err.h>
->  #include <linux/gfp.h>
-> +#include <linux/idr.h>
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  
-> @@ -30,18 +31,10 @@
->  /*
->   * secids - do not pin labels with a refcount. They rely on the label
->   * properly updating/freeing them
-> - *
-> - * A singly linked free list is used to track secids that have been
-> - * freed and reuse them before allocating new ones
->   */
->  
-> -#define FREE_LIST_HEAD 1
-> -
-> -static RADIX_TREE(aa_secids_map, GFP_ATOMIC);
-> +static DEFINE_IDR(aa_secids);
->  static DEFINE_SPINLOCK(secid_lock);
-> -static u32 alloced_secid = FREE_LIST_HEAD;
-> -static u32 free_list = FREE_LIST_HEAD;
-> -static unsigned long free_count;
->  
->  /*
->   * TODO: allow policy to reserve a secid range?
-> @@ -49,65 +42,6 @@ static unsigned long free_count;
->   * TODO: use secid_update in label replace
->   */
->  
-> -#define SECID_MAX U32_MAX
-> -
-> -/* TODO: mark free list as exceptional */
-> -static void *to_ptr(u32 secid)
-> -{
-> -	return (void *)
-> -		((((unsigned long) secid) << RADIX_TREE_EXCEPTIONAL_SHIFT));
-> -}
-> -
-> -static u32 to_secid(void *ptr)
-> -{
-> -	return (u32) (((unsigned long) ptr) >> RADIX_TREE_EXCEPTIONAL_SHIFT);
-> -}
-> -
-> -
-> -/* TODO: tag free_list entries to mark them as different */
-> -static u32 __pop(struct aa_label *label)
-> -{
-> -	u32 secid = free_list;
-> -	void __rcu **slot;
-> -	void *entry;
-> -
-> -	if (free_list == FREE_LIST_HEAD)
-> -		return AA_SECID_INVALID;
-> -
-> -	slot = radix_tree_lookup_slot(&aa_secids_map, secid);
-> -	AA_BUG(!slot);
-> -	entry = radix_tree_deref_slot_protected(slot, &secid_lock);
-> -	free_list = to_secid(entry);
-> -	radix_tree_replace_slot(&aa_secids_map, slot, label);
-> -	free_count--;
-> -
-> -	return secid;
-> -}
-> -
-> -static void __push(u32 secid)
-> -{
-> -	void __rcu **slot;
-> -
-> -	slot = radix_tree_lookup_slot(&aa_secids_map, secid);
-> -	AA_BUG(!slot);
-> -	radix_tree_replace_slot(&aa_secids_map, slot, to_ptr(free_list));
-> -	free_list = secid;
-> -	free_count++;
-> -}
-> -
-> -static struct aa_label * __secid_update(u32 secid, struct aa_label *label)
-> -{
-> -	struct aa_label *old;
-> -	void __rcu **slot;
-> -
-> -	slot = radix_tree_lookup_slot(&aa_secids_map, secid);
-> -	AA_BUG(!slot);
-> -	old = radix_tree_deref_slot_protected(slot, &secid_lock);
-> -	radix_tree_replace_slot(&aa_secids_map, slot, label);
-> -
-> -	return old;
-> -}
-> -
->  /**
->   * aa_secid_update - update a secid mapping to a new label
->   * @secid: secid to update
-> @@ -115,11 +49,10 @@ static struct aa_label * __secid_update(u32 secid, struct aa_label *label)
->   */
->  void aa_secid_update(u32 secid, struct aa_label *label)
->  {
-> -	struct aa_label *old;
->  	unsigned long flags;
->  
->  	spin_lock_irqsave(&secid_lock, flags);
-> -	old = __secid_update(secid, label);
-> +	idr_replace(&aa_secids, label, secid);
->  	spin_unlock_irqrestore(&secid_lock, flags);
->  }
->  
-> @@ -132,7 +65,7 @@ struct aa_label *aa_secid_to_label(u32 secid)
->  	struct aa_label *label;
->  
->  	rcu_read_lock();
-> -	label = radix_tree_lookup(&aa_secids_map, secid);
-> +	label = idr_find(&aa_secids, secid);
->  	rcu_read_unlock();
->  
->  	return label;
-> @@ -167,7 +100,6 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
->  	return 0;
->  }
->  
-> -
->  int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
->  {
->  	struct aa_label *label;
-> @@ -186,7 +118,6 @@ void apparmor_release_secctx(char *secdata, u32 seclen)
->  	kfree(secdata);
->  }
->  
-> -
->  /**
->   * aa_alloc_secid - allocate a new secid for a profile
->   */
-> @@ -195,35 +126,12 @@ u32 aa_alloc_secid(struct aa_label *label, gfp_t gfp)
->  	unsigned long flags;
->  	u32 secid;
->  
-> -	/* racey, but at worst causes new allocation instead of reuse */
-> -	if (free_list == FREE_LIST_HEAD) {
-> -		bool preload = 0;
-> -		int res;
-> -
-> -retry:
-> -		if (gfpflags_allow_blocking(gfp) && !radix_tree_preload(gfp))
-> -			preload = 1;
-> -		spin_lock_irqsave(&secid_lock, flags);
-> -		if (alloced_secid != SECID_MAX) {
-> -			secid = ++alloced_secid;
-> -			res = radix_tree_insert(&aa_secids_map, secid, label);
-> -			AA_BUG(res == -EEXIST);
-> -		} else {
-> -			secid = AA_SECID_INVALID;
-> -		}
-> -		spin_unlock_irqrestore(&secid_lock, flags);
-> -		if (preload)
-> -			radix_tree_preload_end();
-> -	} else {
-> -		spin_lock_irqsave(&secid_lock, flags);
-> -		/* remove entry from free list */
-> -		secid = __pop(label);
-> -		if (secid == AA_SECID_INVALID) {
-> -			spin_unlock_irqrestore(&secid_lock, flags);
-> -			goto retry;
-> -		}
-> -		spin_unlock_irqrestore(&secid_lock, flags);
-> -	}
-> +	idr_preload(gfp);
-> +	spin_lock_irqsave(&secid_lock, flags);
-> +	secid = idr_alloc(&aa_secids, label, 0, 0, GFP_ATOMIC);
-> +	/* XXX: Can return -ENOMEM */
+On Thu, May 31, 2018 at 12:00 AM, Andreas Färber <afaerber@suse.de> wrote:
+> Hi Luc,
+>
+> The typo in the subject made me curious...
+>
+> Am 30.05.2018 um 22:48 schrieb Luc Van Oostenryck:
+>> By default, sparse assumes a 64bit machine when compiled on x86-64
+>> and 32bit when compiled on anything else.
+>>
+>> This can of course create all sort of problems for the other archs, like
+>> issuing false warnings ('shift too big (32) for type unsigned long'), or
+>> worse, failing to emit legitimate warnings.
+>>
+>> Fix this by adding the -m32/-m64 flag, depending on CONFIG_64BIT,
+>> to CHECKFLAGS in the main Makefile (and so for all archs).
+>> Also, remove the now unneeded -m32/-m64 in arch specific Makefiles.
+>>
+>> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+>> ---
+>>  Makefile             | 3 +++
+>>  arch/alpha/Makefile  | 2 +-
+>>  arch/arm/Makefile    | 2 +-
+>>  arch/arm64/Makefile  | 2 +-
+>>  arch/ia64/Makefile   | 2 +-
+>>  arch/mips/Makefile   | 3 ---
+>>  arch/parisc/Makefile | 2 +-
+>>  arch/sparc/Makefile  | 2 +-
+>>  arch/x86/Makefile    | 2 +-
+>>  9 files changed, 10 insertions(+), 10 deletions(-)
+>
+> What about the architectures not touched by your patch that previously
+> had no -m32/-m64? (arc, c6x, h8300, hexagon, m68k, microblaze, nds32,
+> nios2, openrisc, powerpc, riscv, s390, sh, unicore32, xtensa)
 
-need to return AA_SECID_INVALID in the event of an error
+As explained in the patch, by default sparse uses -m64 if compiled on x86-64
+and 32bit on everything else (well, more recent versions use -m64 if
+compiled on any 64 bit machine). I think that most ppc devs use a ppc
+machine and so ppc was most probably fine (at least ppc64) but I suspect
+that most of these others archs either had never sparse used on them
+or had a lot of wrong warnings. IOW, it was maybe OK but most probably
+incorrect for them and now it is OK.
 
-if we want to track which error we could change the api of aa_alloc_secid
+> You forgot to CC them on this patch.
 
+I didn't thought/knew  it was needed and the CC list is already
+quite long but, if needed, no problem for me.
 
-> +	spin_unlock_irqrestore(&secid_lock, flags);
-> +	idr_preload_end();
->  
->  	return secid;
->  }
-> @@ -237,6 +145,6 @@ void aa_free_secid(u32 secid)
->  	unsigned long flags;
->  
->  	spin_lock_irqsave(&secid_lock, flags);
-> -	__push(secid);
-> +	idr_remove(&aa_secids, secid);
->  	spin_unlock_irqrestore(&secid_lock, flags);
->  }
-> 
+> Have you really checked that all their toolchains support the -m32/-m64
+> flags you newly introduce for them? Apart from non-biarch architectures,
+> I'm thinking of 31-bit s390 as a corner case where !64 != 32.
+
+Hmm, there is no change to anything I call 'toolchain related', like
+compiler and linker. The only change is sparse (or any other checker)
+receiving now a correct and explicit -m32 or -m64.
+
+For s390, as far as I know:
+1) it has CONFIG_64BIT unconditionally definee (because the old 31bit
+   is no more supported, now everything is s390x only).
+2) even if the *address space* was only 31 bit, I'm very sure
+   that sizeof(long) and sizeof(void*) was 4 on these machine
+   hence -m32 would have been correct.
+
+Best regards,
+-- Luc
