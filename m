@@ -1,119 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753049AbeE3Mzv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:55:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34484 "EHLO mx1.redhat.com"
+        id S1753182AbeE3M4P (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:56:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39428 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752942AbeE3Mzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:55:47 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>, zohar@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit" actions
-Date: Wed, 30 May 2018 08:55:46 -0400
-Message-ID: <2190202.xkDzTfvTEJ@x2>
+        id S1753129AbeE3M4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 08:56:13 -0400
+Subject: Re: [PATCH v9 0/7] Enable cpuset controller in default hierarchy
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <1527601294-3444-1-git-send-email-longman@redhat.com>
+ <20180530101317.GB3320@localhost.localdomain>
+From: Waiman Long <longman@redhat.com>
 Organization: Red Hat
-In-Reply-To: <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com> <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
+Message-ID: <d74c67ea-43c9-cabb-4303-ecff008412df@redhat.com>
+Date: Wed, 30 May 2018 08:56:10 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180530101317.GB3320@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, May 30, 2018 8:49:20 AM EDT Richard Guy Briggs wrote:
-> On 2018-05-24 16:11, Stefan Berger wrote:
-> > The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
-> > the IMA "audit" policy action.  This patch defines
-> > AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
-> > 
-> > With this change we now call integrity_audit_msg_common() to get
-> > common integrity auditing fields. This now produces the following
-> > record when parsing an IMA policy rule:
-> > 
-> > type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
-> > 
-> >   fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
-> >   subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
-> >   op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
-> >   tty=tty2 res=1
-> > 
-> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > ---
-> > 
-> >  include/uapi/linux/audit.h          | 3 ++-
-> >  security/integrity/ima/ima_policy.c | 5 +++--
-> >  2 files changed, 5 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> > index 4e61a9e05132..776e0abd35cf 100644
-> > --- a/include/uapi/linux/audit.h
-> > +++ b/include/uapi/linux/audit.h
-> > @@ -146,7 +146,8 @@
-> > 
-> >  #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
-> >  #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
-> >  #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
-> > 
-> > -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
-> > +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs 
-> > */ +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
-> > 
-> >  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A 
-REQUEST.
-> >  */
-> > 
-> > diff --git a/security/integrity/ima/ima_policy.c
-> > b/security/integrity/ima/ima_policy.c index 3aed25a7178a..a8ae47a386b4
-> > 100644
-> > --- a/security/integrity/ima/ima_policy.c
-> > +++ b/security/integrity/ima/ima_policy.c
-> > @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct
-> > ima_rule_entry *entry)> 
-> >  	int result = 0;
-> >  	
-> >  	ab = integrity_audit_log_start(NULL, GFP_KERNEL,
-> > 
-> > -				       AUDIT_INTEGRITY_RULE);
-> > +				       AUDIT_INTEGRITY_POLICY_RULE);
-> 
-> Is it possible to connect this record to a syscall by replacing the
-> first parameter (NULL) by current->context?
+On 05/30/2018 06:13 AM, Juri Lelli wrote:
+> Hi,
+>
+> On 29/05/18 09:41, Waiman Long wrote:
+>> v9:
+>>  - Rename cpuset.sched.domain to cpuset.sched.domain_root to better
+>>    identify its purpose as the root of a new scheduling domain or
+>>    partition.
+>>  - Clarify in the document about the purpose of domain_root and
+>>    load_balance. Using domain_root is th only way to create new
+>>    partition.
+>>  - Fix a lockdep warning in update_isolated_cpumask() function.
+>>  - Add a new patch to eliminate call to generate_sched_domains() for
+>>    v2 when a change in cpu list does not touch a domain_root.
+> I was playing with this and ended up with the situation below:
+>
+>  g1/cgroup.controllers:cpuset
+>  g1/cgroup.events:populated 0
+>  g1/cgroup.max.depth:max
+>  g1/cgroup.max.descendants:max
+>  g1/cgroup.stat:nr_descendants 1
+>  g1/cgroup.stat:nr_dying_descendants 0
+>  g1/cgroup.subtree_control:cpuset
+>  g1/cgroup.type:domain
+>  g1/cpuset.cpus:0-5                   <---
+>  g1/cpuset.cpus.effective:0-5
+>  g1/cpuset.mems.effective:0-1
+>  g1/cpuset.sched.domain_root:1        <---
+>  g1/cpuset.sched.load_balance:1
+>  g1/cpu.stat:usage_usec 0
+>  g1/cpu.stat:user_usec 0
+>  g1/cpu.stat:system_usec 0
+>  g1/g11/cgroup.events:populated 0
+>  g1/g11/cgroup.max.descendants:max
+>  g1/g11/cpu.stat:usage_usec 0
+>  g1/g11/cpu.stat:user_usec 0
+>  g1/g11/cpu.stat:system_usec 0
+>  g1/g11/cgroup.type:domain
+>  g1/g11/cgroup.stat:nr_descendants 0
+>  g1/g11/cgroup.stat:nr_dying_descendants 0
+>  g1/g11/cpuset.cpus.effective:0-5
+>  g1/g11/cgroup.controllers:cpuset
+>  g1/g11/cpuset.sched.load_balance:1
+>  g1/g11/cpuset.mems.effective:0-1
+>  g1/g11/cpuset.cpus:6-11              <---
+>  g1/g11/cgroup.max.depth:max
+>  g1/g11/cpuset.sched.domain_root:0
+>
+> Should this be allowed? I was expecting subgroup g11 should be
+> restricted to a subset of g1's cpus.
+>
+> Best,
+>
+> - Juri
 
-We don't want to add syscall records to everything. That messes up schemas 
-and existing code. The integrity events are 1 record in size and should stay 
-that way. This saves disk space and improves readability.
+That shouldn't be allowed.The code is probably missing some checks that
+should have been done. What was the sequence of commands leading to the
+above configuration?
 
--Steve
-
-> >  	entry->uid = INVALID_UID;
-> >  	entry->fowner = INVALID_UID;
-> > 
-> > @@ -926,7 +926,8 @@ static int ima_parse_rule(char *rule, struct
-> > ima_rule_entry *entry)> 
-> >  		temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
-> >  	
-> >  	else if (entry->func == POLICY_CHECK)
-> >  	
-> >  		temp_ima_appraise |= IMA_APPRAISE_POLICY;
-> > 
-> > -	audit_log_format(ab, "res=%d", !result);
-> > +	integrity_audit_msg_common(ab, NULL, NULL,
-> > +				   "policy_update", "parse_rule", result);
-> > 
-> >  	audit_log_end(ab);
-> >  	return result;
-> >  
-> >  }
-> 
-> - RGB
-> 
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
+Cheers,
+Longman
