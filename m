@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeE3LXK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:23:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60972 "EHLO
+        id S1752110AbeE3LXI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:23:08 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60959 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752511AbeE3LHG (ORCPT
+        by vger.kernel.org with ESMTP id S1752509AbeE3LHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:06 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,13 +13,16 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Corentin Labbe" <clabbe@baylibre.com>
+CC: akpm@linux-foundation.org, "Xin Long" <lucien.xin@gmail.com>,
+        "Florian Westphal" <fw@strlen.de>,
+        "Pablo Neira Ayuso" <pablo@netfilter.org>,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.450532105@decadent.org.uk>
+Message-ID: <lsq.1527677561.357392825@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 093/153] powerpc/pseries: Add empty update_numa_cpu_lookup_table()
- for NUMA=n
+Subject: [PATCH 3.2 089/153] netfilter: drop outermost socket lock in
+ getsockopt()
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -32,35 +35,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Corentin Labbe <clabbe@baylibre.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit c1e150ceb61e4a585bad156da15c33bfe89f5858 upstream.
+commit 01ea306f2ac2baff98d472da719193e738759d93 upstream.
 
-When CONFIG_NUMA is not set, the build fails with:
+The Syzbot reported a possible deadlock in the netfilter area caused by
+rtnl lock, xt lock and socket lock being acquired with a different order
+on different code paths, leading to the following backtrace:
+Reviewed-by: Xin Long <lucien.xin@gmail.com>
 
-  arch/powerpc/platforms/pseries/hotplug-cpu.c:335:4:
-  error: déclaration implicite de la fonction « update_numa_cpu_lookup_table »
+======================================================
+WARNING: possible circular locking dependency detected
+4.15.0+ #301 Not tainted
+------------------------------------------------------
+syzkaller233489/4179 is trying to acquire lock:
+  (rtnl_mutex){+.+.}, at: [<0000000048e996fd>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
 
-So we have to add update_numa_cpu_lookup_table() as an empty function
-when CONFIG_NUMA is not set.
+but task is already holding lock:
+  (&xt[i].mutex){+.+.}, at: [<00000000328553a2>]
+xt_find_table_lock+0x3e/0x3e0 net/netfilter/x_tables.c:1041
 
-Fixes: 1d9a090783be ("powerpc/numa: Invalidate numa_cpu_lookup_table on cpu remove")
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+which lock already depends on the new lock.
+===
+
+Since commit 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock
+only in the required scope"), we already acquire the socket lock in
+the innermost scope, where needed. In such commit I forgot to remove
+the outer-most socket lock from the getsockopt() path, this commit
+addresses the issues dropping it now.
+
+v1 -> v2: fix bad subj, added relavant 'fixes' tag
+
+Fixes: 22265a5c3c10 ("netfilter: xt_TEE: resolve oif using netdevice notifiers")
+Fixes: 202f59afd441 ("netfilter: ipt_CLUSTERIP: do not hold dev")
+Fixes: 3f34cfae1230 ("netfilter: on sockopt() acquire sock lock only in the required scope")
+Reported-by: syzbot+ddde1c7b7ff7442d7f2d@syzkaller.appspotmail.com
+Suggested-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/powerpc/include/asm/topology.h | 3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/ip_sockglue.c   |  7 +------
+ net/ipv6/ipv6_sockglue.c | 10 ++--------
+ 2 files changed, 3 insertions(+), 14 deletions(-)
 
---- a/arch/powerpc/include/asm/topology.h
-+++ b/arch/powerpc/include/asm/topology.h
-@@ -107,6 +107,9 @@ static inline void sysfs_remove_device_f
- 						int nid)
- {
- }
-+
-+static inline void update_numa_cpu_lookup_table(unsigned int cpu, int node) {}
-+
- #endif /* CONFIG_NUMA */
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -1308,10 +1308,7 @@ int ip_getsockopt(struct sock *sk, int l
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
  
- #if defined(CONFIG_NUMA) && defined(CONFIG_PPC_SPLPAR)
+-		lock_sock(sk);
+-		err = nf_getsockopt(sk, PF_INET, optname, optval,
+-				&len);
+-		release_sock(sk);
++		err = nf_getsockopt(sk, PF_INET, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 		return err;
+@@ -1343,9 +1340,7 @@ int compat_ip_getsockopt(struct sock *sk
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+ 		err = compat_nf_getsockopt(sk, PF_INET, optname, optval, &len);
+-		release_sock(sk);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 		return err;
+--- a/net/ipv6/ipv6_sockglue.c
++++ b/net/ipv6/ipv6_sockglue.c
+@@ -1237,10 +1237,7 @@ int ipv6_getsockopt(struct sock *sk, int
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = nf_getsockopt(sk, PF_INET6, optname, optval,
+-				&len);
+-		release_sock(sk);
++		err = nf_getsockopt(sk, PF_INET6, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 	}
+@@ -1280,10 +1277,7 @@ int compat_ipv6_getsockopt(struct sock *
+ 		if (get_user(len, optlen))
+ 			return -EFAULT;
+ 
+-		lock_sock(sk);
+-		err = compat_nf_getsockopt(sk, PF_INET6,
+-					   optname, optval, &len);
+-		release_sock(sk);
++		err = compat_nf_getsockopt(sk, PF_INET6, optname, optval, &len);
+ 		if (err >= 0)
+ 			err = put_user(len, optlen);
+ 	}
