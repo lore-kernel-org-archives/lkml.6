@@ -1,57 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753927AbeE3QpO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:45:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753190AbeE3QpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:45:13 -0400
-Date: Wed, 30 May 2018 11:45:11 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Meelis Roos <mroos@linux.ee>, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v1 0/4] sparc/PCI: VGA resource and other fixes
-Message-ID: <20180530164511.GG39853@bhelgaas-glaptop.roam.corp.google.com>
-References: <152694888798.59585.8779818482732387864.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180522130217.GA161672@bhelgaas-glaptop.roam.corp.google.com>
+        id S1754000AbeE3QqJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:46:09 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59468 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753816AbeE3QqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:46:05 -0400
+Date: Wed, 30 May 2018 17:46:01 +0100
+From: Quentin Perret <quentin.perret@arm.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com
+Subject: Re: [PATCH v5 03/10] cpufreq/schedutil: add rt utilization tracking
+Message-ID: <20180530164601.GC2174@e108498-lin.cambridge.arm.com>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-4-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180522130217.GA161672@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1527253951-22709-4-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 08:02:17AM -0500, Bjorn Helgaas wrote:
-> [+cc sparclinux, sorry I missed this first time around]
-> 
-> On Mon, May 21, 2018 at 07:30:29PM -0500, Bjorn Helgaas wrote:
-> > The main thing here is the first patch, a legacy VGA framebuffer fix for
-> > issues reported by Meelis.
-> > 
-> > The others are to converge the pci_enable_device() path for LEON and PCIC
-> > with other arches (including sparc64), and to convert some logging to use
-> > dev_printk() and make it more consistent with the PCI core.
-> > 
-> > I propose to merge these via the PCI tree.
-> > 
-> > ---
-> > 
-> > Bjorn Helgaas (4):
-> >       sparc/PCI: Request legacy VGA framebuffer only for VGA devices
-> >       sparc32/PCI/LEON: Converge device enable path
-> >       sparc32/PCI/PCIC: Converge device enable path
-> >       sparc/PCI: Use dev_printk() when possible
-> > 
-> > 
-> >  arch/sparc/kernel/leon_pci.c   |   62 ++++++------------
-> >  arch/sparc/kernel/pci.c        |  136 +++++++++++++++++++++++++---------------
-> >  arch/sparc/kernel/pci_common.c |   31 ++-------
-> >  arch/sparc/kernel/pci_msi.c    |   10 +--
-> >  arch/sparc/kernel/pcic.c       |   86 ++++++++++++-------------
-> >  5 files changed, 159 insertions(+), 166 deletions(-)
+Hi Vincent,
 
-I applied these to my pci/sparc branch for v4.18 (with fixes for the typos
-reported by Meelis and the kbuild robot).
+On Friday 25 May 2018 at 15:12:24 (+0200), Vincent Guittot wrote:
+> Add both cfs and rt utilization when selecting an OPP for cfs tasks as rt
+> can preempt and steal cfs's running time.
+> 
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index 28592b6..a84b5a5 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -56,6 +56,7 @@ struct sugov_cpu {
+>  	/* The fields below are only needed when sharing a policy: */
+>  	unsigned long		util_cfs;
+>  	unsigned long		util_dl;
+> +	unsigned long		util_rt;
+>  	unsigned long		max;
+>  
+>  	/* The field below is for single-CPU policies only: */
+> @@ -178,14 +179,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+>  	sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
+>  	sg_cpu->util_cfs = cpu_util_cfs(rq);
+>  	sg_cpu->util_dl  = cpu_util_dl(rq);
+> +	sg_cpu->util_rt  = cpu_util_rt(rq);
+>  }
+>  
+>  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>  {
+>  	struct rq *rq = cpu_rq(sg_cpu->cpu);
+> +	unsigned long util;
+>  
+> -	if (rq->rt.rt_nr_running)
+> -		return sg_cpu->max;
+> +	if (rq->rt.rt_nr_running) {
+> +		util = sg_cpu->max;
+
+So I understand why we want to got to max freq when a RT task is running,
+but I think there are use cases where we might want to be more conservative
+and use the util_avg of the RT rq instead. The first use case is
+battery-powered devices where going to max isn't really affordable from
+an energy standpoint. Android, for example, has been using a RT
+utilization signal to select OPPs for quite a while now, because going
+to max blindly is _very_ expensive.
+
+And the second use-case is thermal pressure. On some modern CPUs, going to
+max freq can lead to stringent thermal capping very quickly, at the
+point where your CPUs might not have enough capacity to serve your tasks
+properly. And that can ultimately hurt the very RT tasks you originally
+tried to run fast. In these systems, in the long term, you'd be better off
+not asking for more than what you really need ...
+
+So what about having a sched_feature to select between going to max and
+using the RT util_avg ? Obviously the default should keep the current
+behaviour.
+
+Thanks,
+Quentin
