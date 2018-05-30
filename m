@@ -1,94 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754753AbeE3CeC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 22:34:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750821AbeE3Cd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 22:33:59 -0400
-Date: Tue, 29 May 2018 19:33:57 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Yunlong Song <yunlong.song@huawei.com>, chao@kernel.org,
-        yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com,
-        shengyong1@huawei.com, heyunlei@huawei.com,
-        linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs-tools: fix overflow bug of start_sector when
- computing zone_align_start_offset
-Message-ID: <20180530023357.GB39056@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
- <a6732361-57a7-249b-ba75-3dd5e5bb18a2@huawei.com>
+        id S1755477AbeE3Ce6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 22:34:58 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:50542 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750821AbeE3Ce4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 22:34:56 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>, linux-kernel@vger.kernel.org
+References: <87o9h6554f.fsf@xmission.com> <20180524214617.GG7712@thunk.org>
+        <87y3g8y6x9.fsf@xmission.com> <20180525035716.GE10363@dastard>
+        <8736yar4g3.fsf@xmission.com> <20180529221710.GM23861@dastard>
+Date: Tue, 29 May 2018 21:34:35 -0500
+In-Reply-To: <20180529221710.GM23861@dastard> (Dave Chinner's message of "Wed,
+        30 May 2018 08:17:10 +1000")
+Message-ID: <87k1rlkh1g.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6732361-57a7-249b-ba75-3dd5e5bb18a2@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: text/plain
+X-XM-SPF: eid=1fNqwh-0001oR-7G;;;mid=<87k1rlkh1g.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/3z68iK0gE+LhG6TcTrosq00kEFSbkhQs=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4985]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Dave Chinner <david@fromorbit.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 15024 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 3.0 (0.0%), b_tie_ro: 2.1 (0.0%), parse: 0.87 (0.0%),
+        extract_message_metadata: 11 (0.1%), get_uri_detail_list: 1.32 (0.0%),
+        tests_pri_-1000: 3.4 (0.0%), tests_pri_-950: 1.40 (0.0%), tests_pri_-900:
+        1.08 (0.0%), tests_pri_-400: 21 (0.1%), check_bayes: 20 (0.1%), b_tokenize: 6
+        (0.0%), b_tok_get_all: 7 (0.0%), b_comp_prob: 2.4 (0.0%), b_tok_touch_all:
+        2.6 (0.0%), b_finish: 0.60 (0.0%), tests_pri_0: 162 (1.1%),
+        check_dkim_signature: 0.67 (0.0%), check_dkim_adsp: 3.8 (0.0%),
+        tests_pri_500: 14816 (98.6%), poll_dns_idle: 14807 (98.6%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [REVIEW][PATCH 0/6] Wrapping up the vfs support for unprivileged mounts
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/28, Chao Yu wrote:
-> On 2018/5/26 16:09, Yunlong Song wrote:
-> > zone_align_start_offset should be u64, but config.start_sector is u32,
-> > so it may be overflow when computing zone_align_start_offset.
-> 
-> Could you rebase this patch on top of "f2fs-tools: fix to match with the
-> start_sector"?
+Dave Chinner <david@fromorbit.com> writes:
 
-Yes, please. I updated dev-test. :P
+> Yeah, the are some fairly big process and policy things that need
+> to be decided here. Not just at the kernel level, but at distro and
+> app infrastructure level too.
+>
+> I was originally sceptical of supporting kernel filesystems via lkl,
+> but the desire for unprivileged mounts has not gone away and so I'm
+> less worried about accessing filesystems that way than I am of
+> letting the kernel parse untrusted images from untrusted users...
 
-> 
-> Thanks,
-> 
-> > 
-> > Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> > ---
-> >  fsck/resize.c      | 7 ++++---
-> >  mkfs/f2fs_format.c | 4 ++--
-> >  2 files changed, 6 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fsck/resize.c b/fsck/resize.c
-> > index d285dd7..8ac7d45 100644
-> > --- a/fsck/resize.c
-> > +++ b/fsck/resize.c
-> > @@ -11,7 +11,8 @@
-> >  
-> >  static int get_new_sb(struct f2fs_super_block *sb)
-> >  {
-> > -	u_int32_t zone_size_bytes, zone_align_start_offset;
-> > +	u_int32_t zone_size_bytes;
-> > +	u_int64_t zone_align_start_offset;
-> >  	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
-> >  	u_int32_t sit_segments, nat_segments, diff, total_meta_segments;
-> >  	u_int32_t total_valid_blks_available;
-> > @@ -27,10 +28,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
-> >  
-> >  	zone_size_bytes = segment_size_bytes * segs_per_zone;
-> >  	zone_align_start_offset =
-> > -		(c.start_sector * c.sector_size +
-> > +		((u_int64_t) c.start_sector * c.sector_size +
-> >  		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
-> >  		zone_size_bytes * zone_size_bytes -
-> > -		c.start_sector * c.sector_size;
-> > +		(u_int64_t) c.start_sector * c.sector_size;
-> >  
-> >  	set_sb(segment_count, (c.target_sectors * c.sector_size -
-> >  				zone_align_start_offset) / segment_size_bytes /
-> > diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> > index 0a99a77..f045e23 100644
-> > --- a/mkfs/f2fs_format.c
-> > +++ b/mkfs/f2fs_format.c
-> > @@ -212,10 +212,10 @@ static int f2fs_prepare_super_block(void)
-> >  	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
-> >  
-> >  	zone_align_start_offset =
-> > -		(c.start_sector * c.sector_size +
-> > +		((u_int64_t) c.start_sector * c.sector_size +
-> >  		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
-> >  		zone_size_bytes * zone_size_bytes -
-> > -		c.start_sector * c.sector_size;
-> > +		(u_int64_t) c.start_sector * c.sector_size;
-> >  
-> >  	if (c.start_sector % c.sectors_per_blk) {
-> >  		MSG(1, "\t%s: Align start sector number to the page unit\n",
-> > 
+There is also the more readily available libguestfs which doesn't
+support as many filesystems but does seem available in most
+linux distributions already.  It already has a fuse option available
+with guestmount.  I may have to dig in there and see how to make
+it available without using fusermount.
+
+> I'm not sure what the correct forum for this is - wasn't this
+> something the Plumbers conference was supposed to facilitate?
+
+Yes.  If we all need to be in a room and talk about things.
+It is early enough in the planning for Plumers that we could
+definitely schedule a talk or a BOF for this.
+
+>> Is fusefs-lkl valuable for testing filesystems?  If xfs-tests were to
+>> have a mode that used that used the fuse protocol for testing and
+>> fuzzing filesystems without the full weight of the kernel in the middle
+>> that might encourage people to suppor this kind of things as well.
+>
+> Getting lkl-fuse to run under fstests would be a great way to ensure
+> we have some level of confidence that it will do the right thing and
+> users can expect that it won't eat their data. I think this would
+> need to be a part of a recommendation for wider deploy of such a
+> solution...
+
+Good thought.  I will have to give that a look.  That does sound like a
+good practical test.
+
+Eric
