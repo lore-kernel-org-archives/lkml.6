@@ -1,77 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932076AbeE3P2v (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:28:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52440 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753293AbeE3P2r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:28:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E9A5660452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH] PCI: Add pci=safemode option
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Ingo Molnar <mingo@kernel.org>, Christoffer Dall <cdall@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>, timur@codeaurora.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        David Rientjes <rientjes@google.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Marc Zyngier <marc.zyngier@arm.com>, linux-arm-msm@vger.kernel.org,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1527650389-31575-1-git-send-email-okaya@codeaurora.org>
- <20180530043103.GA19734@kroah.com>
- <6c317ed8-cca3-8862-5f3b-12cf14e4d53b@codeaurora.org>
- <20180530073735.GA28793@infradead.org>
- <6dfe2db8f974d94c9867f30ec83d9333@codeaurora.org>
- <20180530145650.GA39853@bhelgaas-glaptop.roam.corp.google.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <2a5281cd-a0c7-1449-5b72-133660667fa6@codeaurora.org>
-Date: Wed, 30 May 2018 11:28:42 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1753795AbeE3P3q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:29:46 -0400
+Received: from mga01.intel.com ([192.55.52.88]:37997 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751547AbeE3P3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:29:42 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,460,1520924400";
+   d="scan'208";a="59837693"
+Date: Wed, 30 May 2018 18:29:36 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com, sadolfsson@google.com,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, fparent@baylibre.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        linux-media@vger.kernel.org
+Subject: Re: [Intel-gfx] [PATCH v6 2/6] drm/i915: hdmi: add CEC notifier to
+ intel_hdmi
+Message-ID: <20180530152936.GQ23723@intel.com>
+References: <1527155841-28494-1-git-send-email-narmstrong@baylibre.com>
+ <1527155841-28494-3-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530145650.GA39853@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1527155841-28494-3-git-send-email-narmstrong@baylibre.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/30/2018 10:56 AM, Bjorn Helgaas wrote:
-> This *was* my idea, but I'm starting to think it was a bad idea.
+On Thu, May 24, 2018 at 11:57:17AM +0200, Neil Armstrong wrote:
+> This patchs adds the cec_notifier feature to the intel_hdmi part
+> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
+> between each HDMI ports.
+> The changes will allow the i915 HDMI code to notify EDID and HPD changes
+> to an eventual CEC adapter.
 > 
-> I don't want people to use pci= parameters as the normal way to get a
-> system to boot.  That would be a huge support hassle (putting things
-> in release notes, diagnosing problems when people forget it, etc).
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+> ---
+>  drivers/gpu/drm/i915/Kconfig         |  1 +
+>  drivers/gpu/drm/i915/intel_display.h | 20 ++++++++++++++++++++
+>  drivers/gpu/drm/i915/intel_drv.h     |  2 ++
+>  drivers/gpu/drm/i915/intel_hdmi.c    | 13 +++++++++++++
+>  4 files changed, 36 insertions(+)
 > 
-> But the parameters *are* useful for debugging.  If we had a
-> "pci=safemode" and it avoided some problem, the next step would be to
-> narrow it down by using the more specific flags (pci=nomsi, pci=noari,
-> pci=no_ext_tags, etc).  So I think 95% of the value is in the specific
-> flags, and a "pci=safemode" might add a little bit of value but at the
-> cost of a small but nagging maintenance concern and code clutter.
+> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+> index dfd9588..2d65d56 100644
+> --- a/drivers/gpu/drm/i915/Kconfig
+> +++ b/drivers/gpu/drm/i915/Kconfig
+> @@ -23,6 +23,7 @@ config DRM_I915
+>  	select SYNC_FILE
+>  	select IOSF_MBI
+>  	select CRC32
+> +	select CEC_CORE if CEC_NOTIFIER
+>  	help
+>  	  Choose this option if you have a system that has "Intel Graphics
+>  	  Media Accelerator" or "HD Graphics" integrated graphics,
+> diff --git a/drivers/gpu/drm/i915/intel_display.h b/drivers/gpu/drm/i915/intel_display.h
+> index 4e7418b..c68d1c8 100644
+> --- a/drivers/gpu/drm/i915/intel_display.h
+> +++ b/drivers/gpu/drm/i915/intel_display.h
+> @@ -126,6 +126,26 @@ enum port {
+>  
+>  #define port_name(p) ((p) + 'A')
+>  
+> +static inline const char *port_identifier(enum port port)
+> +{
+> +	switch (port) {
+> +	case PORT_A:
+> +		return "Port A";
+> +	case PORT_B:
+> +		return "Port B";
+> +	case PORT_C:
+> +		return "Port C";
+> +	case PORT_D:
+> +		return "Port D";
+> +	case PORT_E:
+> +		return "Port E";
+> +	case PORT_F:
+> +		return "Port F";
+> +	default:
+> +		return "<invalid>";
+> +	}
+> +}
 
-OK. Let's try noXYZ feature. Can you enumerate the XYZ features that you
-want to see?
+Could use a comment to make it clear that this identifier is
+expected to remain stable since it's referenced from other drivers.
+
+> +
+>  enum dpio_channel {
+>  	DPIO_CH0,
+>  	DPIO_CH1
+> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+> index d436858..b50e51b 100644
+> --- a/drivers/gpu/drm/i915/intel_drv.h
+> +++ b/drivers/gpu/drm/i915/intel_drv.h
+> @@ -39,6 +39,7 @@
+>  #include <drm/drm_dp_mst_helper.h>
+>  #include <drm/drm_rect.h>
+>  #include <drm/drm_atomic.h>
+> +#include <media/cec-notifier.h>
+>  
+>  /**
+>   * __wait_for - magic wait macro
+> @@ -1001,6 +1002,7 @@ struct intel_hdmi {
+>  	bool has_audio;
+>  	bool rgb_quant_range_selectable;
+>  	struct intel_connector *attached_connector;
+> +	struct cec_notifier *notifier;
+
+"notifier" seems a bit too generic a name. "cec_notifier" would be
+better.
+
+Apart from that this seems OK to me
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+
+>  };
+>  
+>  struct intel_dp_mst_encoder;
+> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
+> index 1baef4a..d522b5b 100644
+> --- a/drivers/gpu/drm/i915/intel_hdmi.c
+> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
+> @@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
+>  		connected = true;
+>  	}
+>  
+> +	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
+> +
+>  	return connected;
+>  }
+>  
+> @@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+>  {
+>  	enum drm_connector_status status;
+>  	struct drm_i915_private *dev_priv = to_i915(connector->dev);
+> +	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
+>  
+>  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
+>  		      connector->base.id, connector->name);
+> @@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+>  
+>  	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
+>  
+> +	if (status != connector_status_connected)
+> +		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
+> +
+>  	return status;
+>  }
+>  
+> @@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
+>  
+>  static void intel_hdmi_destroy(struct drm_connector *connector)
+>  {
+> +	if (intel_attached_hdmi(connector)->notifier)
+> +		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
+>  	kfree(to_intel_connector(connector)->detect_edid);
+>  	drm_connector_cleanup(connector);
+>  	kfree(connector);
+> @@ -2358,6 +2366,11 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
+>  		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
+>  		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
+>  	}
+> +
+> +	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev,
+> +						     port_identifier(port));
+> +	if (!intel_hdmi->notifier)
+> +		DRM_DEBUG_KMS("CEC notifier get failed\n");
+>  }
+>  
+>  void intel_hdmi_init(struct drm_i915_private *dev_priv,
+> -- 
+> 2.7.4
+> 
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
 
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Ville Syrjälä
+Intel
