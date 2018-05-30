@@ -1,80 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964890AbeE3Euk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 00:50:40 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37090 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751223AbeE3Eui (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 00:50:38 -0400
-X-Google-Smtp-Source: ADUXVKKzu/3gIX9E80Ovga6dnYRSwL7HawVKDVmCLMW5wu/EdRpJC6Em+9jpZcpIOcyxb2TeNCNleA==
-Date: Wed, 30 May 2018 10:20:34 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 2/2] cpufreq: Use static SRCU initializer
-Message-ID: <20180530045034.xlxnjq42gkm6dbrs@vireshk-i7>
-References: <20180525101958.13277-1-bigeasy@linutronix.de>
- <20180525101958.13277-3-bigeasy@linutronix.de>
+        id S935612AbeE3EwI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 00:52:08 -0400
+Received: from 8bytes.org ([81.169.241.247]:41320 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750795AbeE3EwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 00:52:05 -0400
+Date: Wed, 30 May 2018 06:52:04 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Gary R Hook <ghook@amd.com>
+Cc: Gary R Hook <gary.hook@amd.com>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/amd - Optimize PPR log handling
+Message-ID: <20180530045203.GO18595@8bytes.org>
+References: <152668031618.108078.8188026193559324640.stgit@wsp141332wss.amd.com>
+ <20180529145405.GN18595@8bytes.org>
+ <223930b9-3df9-813a-6676-68072e4e1bb6@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180525101958.13277-3-bigeasy@linutronix.de>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <223930b9-3df9-813a-6676-68072e4e1bb6@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-05-18, 12:19, Sebastian Andrzej Siewior wrote:
-> Use the static SRCU initializer for `cpufreq_transition_notifier_list'.
-> This avoids the init_cpufreq_transition_notifier_list() initcall. Its
-> only purpose is to initialize the SRCU notifier once during boot and set
-> another variable which is used as an indicator whether the init was
-> perfromed before cpufreq_register_notifier() was used.
-> 
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> CC: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  drivers/cpufreq/cpufreq.c | 13 +------------
->  1 file changed, 1 insertion(+), 12 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 075d18f6ba7a..3f7b502cfb1e 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -89,16 +89,7 @@ static void cpufreq_governor_limits(struct cpufreq_policy *policy);
->   * The mutex locks both lists.
->   */
->  static BLOCKING_NOTIFIER_HEAD(cpufreq_policy_notifier_list);
-> -static struct srcu_notifier_head cpufreq_transition_notifier_list;
-> -
-> -static bool init_cpufreq_transition_notifier_list_called;
-> -static int __init init_cpufreq_transition_notifier_list(void)
-> -{
-> -	srcu_init_notifier_head(&cpufreq_transition_notifier_list);
-> -	init_cpufreq_transition_notifier_list_called = true;
-> -	return 0;
-> -}
-> -pure_initcall(init_cpufreq_transition_notifier_list);
-> +SRCU_NOTIFIER_HEAD_STATIC(cpufreq_transition_notifier_list);
->  
->  static int off __read_mostly;
->  static int cpufreq_disabled(void)
-> @@ -1764,8 +1755,6 @@ int cpufreq_register_notifier(struct notifier_block *nb, unsigned int list)
->  	if (cpufreq_disabled())
->  		return -EINVAL;
->  
-> -	WARN_ON(!init_cpufreq_transition_notifier_list_called);
-> -
->  	switch (list) {
->  	case CPUFREQ_TRANSITION_NOTIFIER:
->  		mutex_lock(&cpufreq_fast_switch_lock);
+On Tue, May 29, 2018 at 12:28:54PM -0500, Gary R Hook wrote:
+> No, no numbers. We're still working out how best to test this, and
+> suggestions/strategies are welcome.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Maybe run a simple kernel on the CPU that does a memcpy on a larger
+portion of mmapped (but yet unmapped) process address space and measure
+the time it takes for the kernel to run. The page-fault path in the
+iommu-driver is only a small part of the involved code here, but maybe
+you already see a difference. Doing a u-benchmark only for that code is
+probably a bit more challenging.
 
--- 
-viresh
+> The change is modeled after the function iommu_poll_events(), which is much
+> cleaner. The GA log handling should be changed, as well (there are
+> superfluous writes in the loop), but I figured, "one thing at a time". This
+> is admittedly a minor optimization, but discussions with Tom Lendacky have
+> led us down this path.
+> 
+> Your feedback is appreciated.
+
+Yeah, the patch looks good to me from my first review. But since I can't
+test that code myself I was wondering if you did any tests and can share
+something with me to run my own tests :)
+
+
+
+	Joerg
