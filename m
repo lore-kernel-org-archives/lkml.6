@@ -1,26 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753578AbeE3LeE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:34:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60834 "EHLO
+        id S1753603AbeE3LeL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:34:11 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60857 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752448AbeE3LHC (ORCPT
+        by vger.kernel.org with ESMTP id S1750757AbeE3LHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:02 -0400
+        Wed, 30 May 2018 07:07:03 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Julia Lawall" <Julia.Lawall@lip6.fr>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "James Chapman" <jchapman@katalix.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.848404530@decadent.org.uk>
+Message-ID: <lsq.1527677561.684985263@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 120/153] USB: usbmon: remove assignment from IS_ERR
- argument
+Subject: [PATCH 3.2 108/153] l2tp: don't use inet_shutdown on ppp session
+ destroy
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,52 +32,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: James Chapman <jchapman@katalix.com>
 
-commit 46c236dc7d1212d7417e6fb0317f91c44c719322 upstream.
+commit 225eb26489d05c679a4c4197ffcb81c81e9dcaf4 upstream.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Previously, if a ppp session was closed, we called inet_shutdown to mark
+the socket as unconnected such that userspace would get errors and
+then close the socket. This could race with userspace closing the
+socket. Instead, leave userspace to close the socket in its own time
+(our session will be detached anyway).
 
-// <smpl>
-@@
-expression e1,e2;
-statement S1,S2;
-@@
+BUG: KASAN: use-after-free in inet_shutdown+0x5d/0x1c0
+Read of size 4 at addr ffff880010ea3ac0 by task syzbot_347bd5ac/8296
 
-+e1 = e2;
-if (IS_ERR(
-    e1
--   = e2
-   )) S1 else S2
-// </smpl>
+CPU: 3 PID: 8296 Comm: syzbot_347bd5ac Not tainted 4.16.0-rc1+ #91
+Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+Call Trace:
+ dump_stack+0x101/0x157
+ ? inet_shutdown+0x5d/0x1c0
+ print_address_description+0x78/0x260
+ ? inet_shutdown+0x5d/0x1c0
+ kasan_report+0x240/0x360
+ __asan_load4+0x78/0x80
+ inet_shutdown+0x5d/0x1c0
+ ? pppol2tp_show+0x80/0x80
+ pppol2tp_session_close+0x68/0xb0
+ l2tp_tunnel_closeall+0x199/0x210
+ ? udp_v6_flush_pending_frames+0x90/0x90
+ l2tp_udp_encap_destroy+0x6b/0xc0
+ ? l2tp_tunnel_del_work+0x2e0/0x2e0
+ udpv6_destroy_sock+0x8c/0x90
+ sk_common_release+0x47/0x190
+ udp_lib_close+0x15/0x20
+ inet_release+0x85/0xd0
+ inet6_release+0x43/0x60
+ sock_release+0x53/0x100
+ ? sock_alloc_file+0x260/0x260
+ sock_close+0x1b/0x20
+ __fput+0x19f/0x380
+ ____fput+0x1a/0x20
+ task_work_run+0xd2/0x110
+ exit_to_usermode_loop+0x18d/0x190
+ do_syscall_64+0x389/0x3b0
+ entry_SYSCALL_64_after_hwframe+0x26/0x9b
+RIP: 0033:0x7fe240a45259
+RSP: 002b:00007fe241132df8 EFLAGS: 00000297 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007fe240a45259
+RDX: 00007fe240a45259 RSI: 0000000000000000 RDI: 00000000000000a5
+RBP: 00007fe241132e20 R08: 00007fe241133700 R09: 0000000000000000
+R10: 00007fe241133700 R11: 0000000000000297 R12: 0000000000000000
+R13: 00007ffc49aff84f R14: 0000000000000000 R15: 00007fe241141040
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Allocated by task 8331:
+ save_stack+0x43/0xd0
+ kasan_kmalloc+0xad/0xe0
+ kasan_slab_alloc+0x12/0x20
+ kmem_cache_alloc+0x144/0x3e0
+ sock_alloc_inode+0x22/0x130
+ alloc_inode+0x3d/0xf0
+ new_inode_pseudo+0x1c/0x90
+ sock_alloc+0x30/0x110
+ __sock_create+0xaa/0x4c0
+ SyS_socket+0xbe/0x130
+ do_syscall_64+0x128/0x3b0
+ entry_SYSCALL_64_after_hwframe+0x26/0x9b
+
+Freed by task 8314:
+ save_stack+0x43/0xd0
+ __kasan_slab_free+0x11a/0x170
+ kasan_slab_free+0xe/0x10
+ kmem_cache_free+0x88/0x2b0
+ sock_destroy_inode+0x49/0x50
+ destroy_inode+0x77/0xb0
+ evict+0x285/0x340
+ iput+0x429/0x530
+ dentry_unlink_inode+0x28c/0x2c0
+ __dentry_kill+0x1e3/0x2f0
+ dput.part.21+0x500/0x560
+ dput+0x24/0x30
+ __fput+0x2aa/0x380
+ ____fput+0x1a/0x20
+ task_work_run+0xd2/0x110
+ exit_to_usermode_loop+0x18d/0x190
+ do_syscall_64+0x389/0x3b0
+ entry_SYSCALL_64_after_hwframe+0x26/0x9b
+
+Fixes: fd558d186df2c ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
+Signed-off-by: James Chapman <jchapman@katalix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.2: deleted code is formatted a bit differently]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/mon/mon_text.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
---- a/drivers/usb/mon/mon_text.c
-+++ b/drivers/usb/mon/mon_text.c
-@@ -386,7 +386,8 @@ static ssize_t mon_text_read_t(struct fi
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -467,18 +467,6 @@ abort:
+  */
+ static void pppol2tp_session_close(struct l2tp_session *session)
+ {
+-	struct sock *sk;
+-
+-	BUG_ON(session->magic != L2TP_SESSION_MAGIC);
+-
+-
+-	sk = pppol2tp_session_get_sock(session);
+-	if (sk) {
+-		if (sk->sk_socket)
+-			inet_shutdown(sk->sk_socket, SEND_SHUTDOWN);
+-		sock_put(sk);
+-	}
+-	return;
+ }
  
--	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
-+	ep = mon_text_read_wait(rp, file);
-+	if (IS_ERR(ep))
- 		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
- 	ptr.cnt = 0;
-@@ -413,7 +414,8 @@ static ssize_t mon_text_read_u(struct fi
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
- 
--	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
-+	ep = mon_text_read_wait(rp, file);
-+	if (IS_ERR(ep))
- 		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
- 	ptr.cnt = 0;
+ /* Really kill the session socket. (Called from sock_put() if
