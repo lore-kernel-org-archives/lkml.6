@@ -1,259 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932488AbeE3VJz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:09:55 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50122 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932509AbeE3VIB (ORCPT
+        id S1753681AbeE3VMn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:12:43 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:41405 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753275AbeE3VMk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:08:01 -0400
-From: Eddie James <eajames@linux.vnet.ibm.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        wsa@the-dreams.de, robh+dt@kernel.org, benh@kernel.crashing.org,
-        joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
-        rdunlap@infradead.org, andy.shevchenko@gmail.com,
-        Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH v8 4/7] i2c: fsi: Add abort and hardware reset procedures
-Date: Wed, 30 May 2018 16:07:41 -0500
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1527714464-8642-1-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1527714464-8642-1-git-send-email-eajames@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18053021-0020-0000-0000-00000E0D7C6A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009099; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01039988; UDB=6.00532325; IPR=6.00819121;
- MB=3.00021383; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 21:07:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053021-0021-0000-0000-000061AAE711
-Message-Id: <1527714464-8642-5-git-send-email-eajames@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805300224
+        Wed, 30 May 2018 17:12:40 -0400
+X-Google-Smtp-Source: ADUXVKLCorTu4PNiSFTBuy8P3FAj+zYrTjuapI7Ovy3OlPgSb+xdwRrEFbT7mxca5rGNOB9WlINwVNUbLx+RkcYHQwM=
+MIME-Version: 1.0
+In-Reply-To: <20180530134645.GA31844@parrot.com>
+References: <20180529224207.GA13354@beast> <20180530134645.GA31844@parrot.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 30 May 2018 14:12:38 -0700
+X-Google-Sender-Auth: ABUQGIK4S18pknpvjvl7kC7Wwzk
+Message-ID: <CAGXu5jK-Z=Ms2mdxmDnA5Gji-tx4HfDGtFRPYNcEwtQC-DzeHw@mail.gmail.com>
+Subject: Re: [PATCH] lib/bch: Remove VLA usage
+To: Ivan Djelic <ivan.djelic@parrot.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Linux mtd <linux-mtd@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4ULCnUV017772
 
-Add abort procedure for failed transfers. Add engine and bus reset
-procedures to recover from as many faults as possible.
+On Wed, May 30, 2018 at 6:46 AM, Ivan Djelic <ivan.djelic@parrot.com> wrote:
+> On Tue, May 29, 2018 at 03:42:07PM -0700, Kees Cook wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this removes
+>> the on-stack working buffers in favor of pre-allocated working buffers
+>> (which were already used in other places). Since these routines must
+>> already be serialized (since they work on bch->ecc_buf), adding the usage
+>> of bch->ecc_work would be similarly safe. Additionally, since "max m" is
+>> only 15, this was adjusted to just use a fixed size array in those cases.
+>
+> Hi Kees,
+>
+> Using an on-stack buffer instead of a pre-allocated buffer was done initially
+> for performance reasons.  For "usual" (m,t) values (for instance m=13, t=4),
+> there is a huge performance difference between the on-stack buffer version and
+> the kmalloc version. I didn't investigate the reason for this, but I ran a
+> quick benchmark on my PC:
+>
+> little-endian, type sizes: int=4 long=8 longlong=8
+> cpu: Intel(R) Core(TM) i5 CPU         650  @ 3.20GHz
+> calibration: iter=4.9143µs niter=2034 nsamples=200 m=13 t=4
+>
+>   Buffer allocation |  Encoding throughput (Mbit/s)
+> ---------------------------------------------------
+>  on-stack, VLA      |   3988
+>  on-stack, fixed    |   4494
+>  kmalloc            |   1967
+>
+> The first line shows the performance of the current code, using a VLA.
+> The second line shows the performance when r[] is allocated on the stack with
+> a fixed, constant size (the maximum allowed value).
+> The third line shows the performance when r is a pre-allocated working buffer.
+>
+> In fact, when using a pre-allocated buffer there is no need to introduce 'ecc_work':
+> you can directly point 'r' to bch->ecc_buf and remove memcpy() surrounding the
+> 'while (mlen--)' loop. Everything happens inside the 'bch->ecc_buf' buffer.
+> But with a big performance penalty. Looks like declaring a temporary buffer on the
+> stack to store ECC values allows GCC to do a better job at optimizing the loop.
+>
+> So rather than introducing 'ecc_work', I suggest we compute the maximum allowed
+> size for r[] and use that:
+>
+> sizeof(r) = sizeof(uint32_t)*(l+1)
+> l+1 = BCH_ECC_WORDS(bch) = DIV_ROUND_UP(m*t, 32)
+>
+> We also know that:
+>
+> m*t < 2^m - 1 (ECC maximum size)
+>
+> therefore:
+>
+> l+1 < DIV_ROUND_UP(2^m - 1, 32) < 2^(m-5)
+>
+> So instead of 'uint32_t r[l+1]' we could declare 'uint32_t r[1 << (BCH_MAX_M-5)]'.
+> And replace 'sizeof(r)' with 'sizeof(*bch->ecc_buf)*(l+1)' in memset/memcpy calls.
+> In practice the actual maximum size of r[] is (1 << (15-5))*sizeof(uint32_t) = 4096 bytes.
+>
+> What do you think ?
 
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
----
- drivers/i2c/busses/i2c-fsi.c | 179 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 179 insertions(+)
+I actually did that implementation first since I didn't realize how
+large that allocation could get. 4096 is a HUGE stack allocation. The
+kernel build warns at 2048. The defaults seen during allmodconfig are:
 
-diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
-index be8e15c..e5dd0f7 100644
---- a/drivers/i2c/busses/i2c-fsi.c
-+++ b/drivers/i2c/busses/i2c-fsi.c
-@@ -12,10 +12,12 @@
- 
- #include <linux/bitfield.h>
- #include <linux/bitops.h>
-+#include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/errno.h>
- #include <linux/fsi.h>
- #include <linux/i2c.h>
-+#include <linux/jiffies.h>
- #include <linux/kernel.h>
- #include <linux/list.h>
- #include <linux/module.h>
-@@ -122,6 +124,20 @@
- #define I2C_ESTAT_SELF_BUSY	BIT(6)
- #define I2C_ESTAT_VERSION	GENMASK(4, 0)
- 
-+/* port busy register */
-+#define I2C_PORT_BUSY_RESET	BIT(31)
-+
-+/* wait for command complete or data request */
-+#define I2C_CMD_SLEEP_MAX_US	500
-+#define I2C_CMD_SLEEP_MIN_US	50
-+
-+/* wait after reset; choose time from legacy driver */
-+#define I2C_RESET_SLEEP_MAX_US	2000
-+#define I2C_RESET_SLEEP_MIN_US	1000
-+
-+/* choose timeout length from legacy driver; it's well tested */
-+#define I2C_ABORT_TIMEOUT	msecs_to_jiffies(100)
-+
- struct fsi_i2c_master {
- 	struct fsi_device	*fsi;
- 	u8			fifo_size;
-@@ -208,6 +224,169 @@ static int fsi_i2c_set_port(struct fsi_i2c_port *port)
- 	return fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
- }
- 
-+static int fsi_i2c_reset_bus(struct fsi_i2c_master *i2c)
-+{
-+	int i, rc;
-+	u32 mode, stat, ext, dummy = 0;
-+
-+	rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_MODE, &mode);
-+	if (rc)
-+		return rc;
-+
-+	mode |= I2C_MODE_DIAG;
-+	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_MODE, &mode);
-+	if (rc)
-+		return rc;
-+
-+	for (i = 0; i < 9; ++i) {
-+		rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_RESET_SCL, &dummy);
-+		if (rc)
-+			return rc;
-+
-+		rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_SET_SCL, &dummy);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_RESET_SCL, &dummy);
-+	if (rc)
-+		return rc;
-+
-+	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_RESET_SDA, &dummy);
-+	if (rc)
-+		return rc;
-+
-+	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_SET_SCL, &dummy);
-+	if (rc)
-+		return rc;
-+
-+	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_SET_SDA, &dummy);
-+	if (rc)
-+		return rc;
-+
-+	mode &= ~I2C_MODE_DIAG;
-+	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_MODE, &mode);
-+	if (rc)
-+		return rc;
-+
-+	rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_STAT, &stat);
-+	if (rc)
-+		return rc;
-+
-+	/* check for hardware fault */
-+	if (!(stat & I2C_STAT_SCL_IN) || !(stat & I2C_STAT_SDA_IN)) {
-+		rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_ESTAT, &ext);
-+		if (rc)
-+			return rc;
-+
-+		dev_err(&i2c->fsi->dev, "bus stuck status[%08X] ext[%08X]\n",
-+			stat, ext);
-+	}
-+
-+	return 0;
-+}
-+
-+static int fsi_i2c_reset(struct fsi_i2c_master *i2c, u16 port)
-+{
-+	int rc;
-+	u32 mode, stat, dummy = 0;
-+
-+	/* reset engine */
-+	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_RESET_I2C, &dummy);
-+	if (rc)
-+		return rc;
-+
-+	/* re-init engine */
-+	rc = fsi_i2c_dev_init(i2c);
-+	if (rc)
-+		return rc;
-+
-+	rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_MODE, &mode);
-+	if (rc)
-+		return rc;
-+
-+	/* set port; default after reset is 0 */
-+	if (port) {
-+		mode = (mode & ~I2C_MODE_PORT) | FIELD_PREP(I2C_MODE_PORT,
-+							    port);
-+		rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_MODE, &mode);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	/* reset busy register; hw workaround */
-+	dummy = I2C_PORT_BUSY_RESET;
-+	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_PORT_BUSY, &dummy);
-+	if (rc)
-+		return rc;
-+
-+	/* force bus reset */
-+	rc = fsi_i2c_reset_bus(i2c);
-+	if (rc)
-+		return rc;
-+
-+	/* reset errors */
-+	dummy = 0;
-+	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_RESET_ERR, &dummy);
-+	if (rc)
-+		return rc;
-+
-+	/* wait for command complete */
-+	usleep_range(I2C_RESET_SLEEP_MIN_US, I2C_RESET_SLEEP_MAX_US);
-+
-+	rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_STAT, &stat);
-+	if (rc)
-+		return rc;
-+
-+	if (stat & I2C_STAT_CMD_COMP)
-+		return rc;
-+
-+	/* failed to get command complete; reset engine again */
-+	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_RESET_I2C, &dummy);
-+	if (rc)
-+		return rc;
-+
-+	/* re-init engine again */
-+	return fsi_i2c_dev_init(i2c);
-+}
-+
-+static int fsi_i2c_abort(struct fsi_i2c_port *port, u32 status)
-+{
-+	int rc;
-+	unsigned long start;
-+	u32 cmd = I2C_CMD_WITH_STOP;
-+	struct fsi_device *fsi = port->master->fsi;
-+
-+	rc = fsi_i2c_reset(port->master, port->port);
-+	if (rc)
-+		return rc;
-+
-+	/* skip final stop command for these errors */
-+	if (status & (I2C_STAT_PARITY | I2C_STAT_LOST_ARB | I2C_STAT_STOP_ERR))
-+		return 0;
-+
-+	/* write stop command */
-+	rc = fsi_i2c_write_reg(fsi, I2C_FSI_CMD, &cmd);
-+	if (rc)
-+		return rc;
-+
-+	/* wait until we see command complete in the master */
-+	start = jiffies;
-+
-+	do {
-+		rc = fsi_i2c_read_reg(fsi, I2C_FSI_STAT, &status);
-+		if (rc)
-+			return rc;
-+
-+		if (status & I2C_STAT_CMD_COMP)
-+			return 0;
-+
-+		usleep_range(I2C_CMD_SLEEP_MIN_US, I2C_CMD_SLEEP_MAX_US);
-+	} while (time_after(start + I2C_ABORT_TIMEOUT, jiffies));
-+
-+	return -ETIMEDOUT;
-+}
-+
- static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
- 			int num)
- {
+CONFIG_BCH_CONST_M=14
+CONFIG_BCH_CONST_T=4
+
+So those builds are already seeing a large stack allocation, but it
+was hidden from the checking tools before because it was a dynamic
+stack allocation:
+
+lib/bch.c: In function ‘encode_bch’:
+lib/bch.c:261:1: warning: the frame size of 2288 bytes is larger than
+2048 bytes [-Wframe-larger-than=]
+
+This could be masked in the Makefile, though, since this is already
+the situation the code runs under. I'll send that patch...
+
+-Kees
+
 -- 
-1.8.3.1
+Kees Cook
+Pixel Security
