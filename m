@@ -1,55 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753181AbeE3L3u (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:29:50 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41993 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752618AbeE3L3l (ORCPT
+        id S1753111AbeE3LaS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:30:18 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:55716 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753537AbeE3L3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:29:41 -0400
-X-Google-Smtp-Source: ADUXVKJRHoQ2/QMRDDw3Qap3CUP+Khv5tDXQOYbfu/4rqSECsBHNYOLraKfPbvQllPJzusXfm0lD0g==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, broonie@kernel.org,
-        baolin.wang@linaro.org
-Subject: [PATCH] mm: dmapool: Check the dma pool name
-Date: Wed, 30 May 2018 19:28:43 +0800
-Message-Id: <59623b15001e5a20ac32b1a393db88722be2e718.1527679621.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        Wed, 30 May 2018 07:29:24 -0400
+Date: Wed, 30 May 2018 14:29:04 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Thibaut Robert <thibaut.robert@gmail.com>
+Cc: Aditya Shankar <aditya.shankar@microchip.com>,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] staging: wilc1000: Use common structs to parse ip
+ packets
+Message-ID: <20180530112904.x4vcpkdmqhpc7xll@mwanda>
+References: <20180529190839.12818-1-thibaut.robert@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529190839.12818-1-thibaut.robert@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=628
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805300132
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It will be crash if we pass one NULL name when creating one dma pool,
-so we should check the passing name when copy it to dma pool.
+On Tue, May 29, 2018 at 09:08:39PM +0200, Thibaut Robert wrote:
+>  static inline void tcp_process(struct net_device *dev, struct txq_entry_t *tqe)
+>  {
+> -	u8 *eth_hdr_ptr;
+> +	const struct ethhdr *eth_hdr_ptr = (const struct ethhdr *)tqe->buffer;
+> +
+>  	u8 *buffer = tqe->buffer;
 
-Moreover this patch replaces kmalloc_node() with kzalloc_node() to make
-sure the name array of dma pool is initialized in case the passing name
-is NULL.
+No blank line, please.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- mm/dmapool.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> -	unsigned short h_proto;
+>  	int i;
+>  	unsigned long flags;
+>  	struct wilc_vif *vif;
+> @@ -197,37 +199,25 @@ static inline void tcp_process(struct net_device *dev, struct txq_entry_t *tqe)
+>  
+>  	spin_lock_irqsave(&wilc->txq_spinlock, flags);
+>  
+> -	eth_hdr_ptr = &buffer[0];
+> -	h_proto = ntohs(*((unsigned short *)&eth_hdr_ptr[12]));
+> -	if (h_proto == ETH_P_IP) {
+> -		u8 *ip_hdr_ptr;
+> -		u8 protocol;
+> -
+> -		ip_hdr_ptr = &buffer[ETHERNET_HDR_LEN];
+> -		protocol = ip_hdr_ptr[9];
+> +	if (eth_hdr_ptr->h_proto == htons(ETH_P_IP)) {
+> +		const struct iphdr *ip_hdr_ptr = (const struct iphdr *)
+> +		  (buffer + ETH_HLEN);
 
-diff --git a/mm/dmapool.c b/mm/dmapool.c
-index 4d90a64..349f13d 100644
---- a/mm/dmapool.c
-+++ b/mm/dmapool.c
-@@ -155,11 +155,12 @@ struct dma_pool *dma_pool_create(const char *name, struct device *dev,
- 	else if ((boundary < size) || (boundary & (boundary - 1)))
- 		return NULL;
- 
--	retval = kmalloc_node(sizeof(*retval), GFP_KERNEL, dev_to_node(dev));
-+	retval = kzalloc_node(sizeof(*retval), GFP_KERNEL, dev_to_node(dev));
- 	if (!retval)
- 		return retval;
- 
--	strlcpy(retval->name, name, sizeof(retval->name));
-+	if (name)
-+		strlcpy(retval->name, name, sizeof(retval->name));
- 
- 	retval->dev = dev;
- 
--- 
-1.7.9.5
+If you declared buffer as a void pointer you could remove this cast.
+
+		const struct iphdr *ip_hdr_ptr = buf + ETH_HLEN;
+
+
+>  
+> -		if (protocol == 0x06) {
+> -			u8 *tcp_hdr_ptr;
+> +		if (ip_hdr_ptr->protocol == IPPROTO_TCP) {
+> +			const struct tcphdr *tcp_hdr_ptr;
+>  			u32 IHL, total_length, data_offset;
+>  
+> -			tcp_hdr_ptr = &ip_hdr_ptr[IP_HDR_LEN];
+> -			IHL = (ip_hdr_ptr[0] & 0xf) << 2;
+> -			total_length = ((u32)ip_hdr_ptr[2] << 8) +
+> -					(u32)ip_hdr_ptr[3];
+> -			data_offset = ((u32)tcp_hdr_ptr[12] & 0xf0) >> 2;
+> +			IHL = ip_hdr_ptr->ihl << 2;
+> +			tcp_hdr_ptr = (const struct tcphdr *)
+> +			  ((u8 *)ip_hdr_ptr + IHL);
+
+This alignment is a bit unfortunate...  Perhaps?
+
+			tcp_hdr_ptr = buf + ETH_HLEN + IHL;
+
+regards,
+dan carpenter
