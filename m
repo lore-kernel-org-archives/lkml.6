@@ -1,136 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753719AbeE3Vtq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:49:46 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37996 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932382AbeE3Vtk (ORCPT
+        id S932608AbeE3Vtz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:49:55 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:33451 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932382AbeE3Vtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:49:40 -0400
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit"
- actions
-To: Paul Moore <paul@paul-moore.com>
-Cc: Steve Grubb <sgrubb@redhat.com>, zohar@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-audit@redhat.com
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <15281606.YptaXzsEVL@x2>
- <00f66ee1-7494-8249-f148-688616deca0c@linux.vnet.ibm.com>
- <3607733.4k8ofLVAdP@x2>
- <1160afb4-4184-b30c-5f67-c21536b5f7d3@linux.vnet.ibm.com>
- <CAHC9VhQZeBS3EzgsWogeuCPtGxSFVDm1jUOLV7Jk4JRC4CVLyQ@mail.gmail.com>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Wed, 30 May 2018 17:49:35 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAHC9VhQZeBS3EzgsWogeuCPtGxSFVDm1jUOLV7Jk4JRC4CVLyQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18053021-0048-0000-0000-00000272E85C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009099; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01040002; UDB=6.00532333; IPR=6.00819135;
- MB=3.00021384; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 21:49:38
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053021-0049-0000-0000-000045469207
-Message-Id: <85d2a40a-884c-c63d-50f6-024f7bbea4a8@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805300232
+        Wed, 30 May 2018 17:49:52 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-omap@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fb_omap: add gpiolib dependency
+Date: Wed, 30 May 2018 23:49:22 +0200
+Message-Id: <20180530214938.1073749-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:G8HuF+dSRxo43ZgzxicXS+Sgtw5RiZhb/HGNBdCbp1PIc9WWrt3
+ ZfFNtnOqrHJTAlAh31z3Rle9evAUJ43+w4i5UzniCFuFmp3lNTFjuAQUJ0apBPIorlQZMFa
+ njSV3jPEOCg3JrzDRZ0l3lZluDZju1vmfmyPGrD/arH1UF4W1tij7rSqWky7AxAUTmlfued
+ sYIcPTBO/3AjpnT9RUGHA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:iNjEaeTeOws=:W59IGHuLqEk/opP3SM99uj
+ LeniHqVc5oocGQoGwJ/gxXUWtDOqXKJm1nFjzOKZEY3ssN//6VUyvxe1qphPckVCvW81qDyp2
+ W/QRBLC5iEBJz9Bxf9ubl4OA/5YP3/UBEJXDev+gol/CxyEGbcBaTaAO5PpVqsv0paBDXQVvn
+ f/3/IP+F5G0CgBbXpU0MaWih2Ui6I6cZUmfb1VtoJIj9kyw29qkuHvyOPWzvSbmXX/Xyc2cb0
+ qgWBl7GlV3AjeiPWz7uIA8/3pyjNk2OQeGQPdDNgv0LWtFDwFo8/P9ywLAAO1C8ewavicVU17
+ 14QpGfE8qJYu++wKiZGatRhd3EA4KJQk7dUnaztBVYF6yaByPk5++TzfTxu4Ap5BNyEqCUCmC
+ wcMccEaSxQBX/U/m0cJqko4HDFruSDw1KY2FbHYACHpWIYuPMjY+yZGar6EOvi+zHsErhdkPi
+ MMKpn1LZAvSaOH4WFiYunhBeikSM4+p0DNosBNsaeaEgq/COk2fELjjrBX14mhnvy2zDBADoR
+ L8qsDi0EL0lq6HKkj9VpLNWjmV+2GGuFcnt4baKBzmM+HYlGfsP02tZN/rKK+eTd0c4k+Lix+
+ LCGg49mY6oZwSBRaazIqdRXKbUxn+tOr0KiJOnq7aieZBOzS9QPB6Nxw4gHn/0cF0fp0iminC
+ h8YXB50GBQ5br5I2PO/qgnkHkbV3F6ne+LdrLSmKyItzsmjDeZd+0LURiKS3pQMhUHoE=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/30/2018 05:24 PM, Paul Moore wrote:
-> On Wed, May 30, 2018 at 3:54 PM, Stefan Berger
-> <stefanb@linux.vnet.ibm.com> wrote:
->> On 05/30/2018 12:27 PM, Steve Grubb wrote:
->>> On Wednesday, May 30, 2018 11:25:05 AM EDT Stefan Berger wrote:
->>>> On 05/30/2018 11:15 AM, Steve Grubb wrote:
->>>>> On Wednesday, May 30, 2018 9:54:00 AM EDT Stefan Berger wrote:
->>>>>> On 05/29/2018 05:30 PM, Steve Grubb wrote:
->>>>>>> Hello,
->>>>>>>
->>>>>>> On Thursday, May 24, 2018 4:11:05 PM EDT Stefan Berger wrote:
->>>>>>>> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
->>>>>>>> the IMA "audit" policy action.  This patch defines
->>>>>>>> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
->>>>>>>>
->>>>>>>> With this change we now call integrity_audit_msg_common() to get
->>>>>>>> common integrity auditing fields. This now produces the following
->>>>>>>> record when parsing an IMA policy rule:
->>>>>>>>
->>>>>>>> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure
->>>>>>>> \
->>>>>>>>
->>>>>>>> fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
->>>>>>>> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->>>>>>>> op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
->>>>>>>> tty=tty2 res=1
->>>>>>> Since this is a new event, do you mind moving the tty field to be
->>>>>>> between
->>>>>>> auid= and ses=  ?   That is the more natural place for it.
->>>>>> 6/8 refactors the code so that the integrity audit records produced by
->>>>>> IMA follow one format in terms of ordering of the fields, with fields
->>>>>> like inode optional, though, and AUDIT_INTEGRITY_RULE in the end being
->>>>>> the only one with a different format. Do we really want to change that
->>>>>> order just for 1806?
->>>>>>
->>>>>> 5/8 now produces the following:
->>>>>>
->>>>>> type=INTEGRITY_PCR msg=audit(1527685075.941:502): pid=2431 \
->>>>>> uid=0 auid=1000 ses=5 \
->>>>>> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->>>>>> op=invalid_pcr cause=open_writers comm="grep" \
->>>>>> name="/var/log/audit/audit.log" dev="dm-0" ino=1962494 \
->>>>>> exe="/usr/bin/grep" tty=pts0 res=1
->>>>>>
->>>>>> Comparing the two:
->>>>>>
->>>>>> 1806:          action, fsmagic, pid, uid, auid, ses, subj, op, cause,
->>>>>> comm,    exe, tty, res
->>>>>> INTEGRITY_PCR:                  pid, uid, auid, ses, subj, op, cause,
->>>>>> comm, name, dev, ino, exe, tty, res
->>>>> OK. I guess go with it as is. It passes testing.
->>>> What about the position of 'res' field relative to the two new fields
->>>> 'exe' and 'tty'?
->>> res (results) is always the last field for every event. We have no events
->>> where it is not the last field. I'd prefer to go with it as is. The events
->>> pass my testing the way they are.
->>>
->>>> Do we want to keep them as shown or strictly append the
->>>> two new fields 'exe' and 'tty'?
->>> I'd prefer the first option to keep things as expected.
->>>
->>>> Paul seems to request that they appear after 'res'.
->>> I'd rather see them dropped, as useful as they could be, than to malform
->>> the
->>> events.
->>
->> Paul NACK'ed them since he wanted to have them added to the end. You seem to
->> say it's ok to add them before 'res'. Not sure whether to drop them now
->> since we are 'at it.'
-> I talked about this in the other patch's thread, but the "new fields
-> at the end of existing records" policy applies here too.
+Building the omap sub-drivers when CONFIG_GPIOLIB is disabled causes
+lots of build failures, either from using gpiolib interfaces, or from
+including the wrong headers:
 
-I am not sure what to post in v2. It looks like if I append it to the 
-end after 'res' I could get the NACK'ed by Steve?!
+drivers/video/fbdev/omap2/omapfb/displays/encoder-opa362.c: In function 'opa362_enable':
+drivers/video/fbdev/omap2/omapfb/displays/encoder-opa362.c:101:3: error: implicit declaration of function 'gpiod_set_value_cansleep'; did you mean 'gpio_set_value_cansleep'? [-Werror=implicit-function-declaration]
+drivers/video/fbdev/omap2/omapfb/displays/panel-dpi.c: In function 'panel_dpi_enable':
+drivers/video/fbdev/omap2/omapfb/displays/panel-dpi.c:86:2: error: implicit declaration of function 'gpiod_set_value_cansleep'; did you mean 'gpio_set_value_cansleep'? [-Werror=implicit-function-declaration]
+drivers/video/fbdev/omap2/omapfb/displays/panel-dpi.c: In function 'panel_dpi_probe_pdata':
+drivers/video/fbdev/omap2/omapfb/displays/panel-dpi.c:189:23: error: implicit declaration of function 'gpio_to_desc'; did you mean 'irq_to_desc'? [-Werror=implicit-function-declaration]
+drivers/video/fbdev/omap2/omapfb/displays/panel-dpi.c: In function 'panel_dpi_probe_of':
+drivers/video/fbdev/omap2/omapfb/displays/panel-dpi.c:210:9: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_gpio_request_one'? [-Werror=implicit-function-declaration]
+drivers/video/fbdev/omap2/omapfb/displays/panel-sharp-ls037v7dw01.c: In function 'sharp_ls_enable':
+drivers/video/fbdev/omap2/omapfb/displays/panel-sharp-ls037v7dw01.c:120:3: error: implicit declaration of function 'gpiod_set_value_cansleep'; did you mean 'gpio_set_value_cansleep'? [-Werror=implicit-function-declaration]
+drivers/video/fbdev/omap2/omapfb/displays/panel-lgphilips-lb035q02.c: In function 'lb035q02_enable':
+drivers/video/fbdev/omap2/omapfb/displays/panel-lgphilips-lb035q02.c:170:3: error: implicit declaration of function 'gpiod_set_value_cansleep'; did you mean 'gpio_set_value_cansleep'? [-Werror=implicit-function-declaration]
+drivers/video/fbdev/omap2/omapfb/dss/hdmi5.c: In function 'hdmi_probe_of':
+drivers/video/fbdev/omap2/omapfb/dss/hdmi5.c:584:2: error: implicit declaration of function 'of_node_put'; did you mean 'node_set'? [-Werror=implicit-function-declaration]
+drivers/video/fbdev/omap2/omapfb/dss/hdmi4.c: In function 'hdmi_probe_of':
+drivers/video/fbdev/omap2/omapfb/dss/hdmi4.c:554:2: error: implicit declaration of function 'of_node_put'; did you mean 'node_set'? [-Werror=implicit-function-declaration]
 
-So the other choice is to only keep patches 1,2, 6, and 7, so leave most 
-of the integrity audit messages untouched. Then only create a different 
-format for the new AUDIT_INTEGRITY_POLICY_RULE (current 8/8) that shares 
-(for consistency reasons) the same format with the existing integrity 
-audit messages but also misses tty= and exe= ?
+Rather than fixing up each one individually, this just marks all of it
+as depending on GPIOLIB.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/video/fbdev/omap2/omapfb/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> Also note Richard's earlier comment about "associating" the IMA
-> records with all of the related audit records.
->
+diff --git a/drivers/video/fbdev/omap2/omapfb/Kconfig b/drivers/video/fbdev/omap2/omapfb/Kconfig
+index e6226aeed17e..3bf154e676d1 100644
+--- a/drivers/video/fbdev/omap2/omapfb/Kconfig
++++ b/drivers/video/fbdev/omap2/omapfb/Kconfig
+@@ -5,6 +5,7 @@ menuconfig FB_OMAP2
+         tristate "OMAP2+ frame buffer support"
+         depends on FB
+         depends on DRM_OMAP = n
++	depends on GPIOLIB
+ 
+         select FB_OMAP2_DSS
+ 	select OMAP2_VRFB if ARCH_OMAP2 || ARCH_OMAP3
+-- 
+2.9.0
