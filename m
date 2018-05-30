@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753687AbeE3Lss (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:48:48 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60630 "EHLO
+        id S1753628AbeE3Lsn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:48:43 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60638 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751593AbeE3LG4 (ORCPT
+        by vger.kernel.org with ESMTP id S1751624AbeE3LG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:06:56 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,15 +13,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "" <syzbot+845a53d13171abf8bf29@syzkaller.appspotmail.com>,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>,
-        "Florian Westphal" <fw@strlen.de>
+CC: akpm@linux-foundation.org, "Wen Xu" <wen.xu@gatech.edu>,
+        "Theodore Ts'o" <tytso@mit.edu>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.357755018@decadent.org.uk>
+Message-ID: <lsq.1527677561.522720252@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 004/153] netfilter: ebtables: CONFIG_COMPAT: don't
- trust userland offsets
+Subject: [PATCH 3.2 006/153] ext4: fail ext4_iget for root directory if
+ unallocated
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -34,55 +32,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit b71812168571fa55e44cdd0254471331b9c4c4c6 upstream.
+commit 8e4b5eae5decd9dfe5a4ee369c22028f90ab4c44 upstream.
 
-We need to make sure the offsets are not out of range of the
-total size.
-Also check that they are in ascending order.
+If the root directory has an i_links_count of zero, then when the file
+system is mounted, then when ext4_fill_super() notices the problem and
+tries to call iput() the root directory in the error return path,
+ext4_evict_inode() will try to free the inode on disk, before all of
+the file system structures are set up, and this will result in an OOPS
+caused by a NULL pointer dereference.
 
-The WARN_ON triggered by syzkaller (it sets panic_on_warn) is
-changed to also bail out, no point in continuing parsing.
+This issue has been assigned CVE-2018-1092.
 
-Briefly tested with simple ruleset of
--A INPUT --limit 1/s' --log
-plus jump to custom chains using 32bit ebtables binary.
+https://bugzilla.kernel.org/show_bug.cgi?id=199179
+https://bugzilla.redhat.com/show_bug.cgi?id=1560777
 
-Reported-by: <syzbot+845a53d13171abf8bf29@syzkaller.appspotmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+[bwh: Backported to 3.2:
+ - Use EIO instead of EFSCORRUPTED
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/bridge/netfilter/ebtables.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2004,7 +2004,9 @@ static int ebt_size_mwt(struct compat_eb
- 		if (match_kern)
- 			match_kern->match_size = ret;
- 
--		WARN_ON(type == EBT_COMPAT_TARGET && size_left);
-+		if (WARN_ON(type == EBT_COMPAT_TARGET && size_left))
-+			return -EINVAL;
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3902,6 +3902,13 @@ struct inode *ext4_iget(struct super_blo
+ 	if (ret < 0)
+ 		goto bad_inode;
+ 	raw_inode = ext4_raw_inode(&iloc);
 +
- 		match32 = (struct compat_ebt_entry_mwt *) buf;
- 	}
- 
-@@ -2061,6 +2063,15 @@ static int size_entry_mwt(struct ebt_ent
- 	 *
- 	 * offsets are relative to beginning of struct ebt_entry (i.e., 0).
- 	 */
-+	for (i = 0; i < 4 ; ++i) {
-+		if (offsets[i] >= *total)
-+			return -EINVAL;
-+		if (i == 0)
-+			continue;
-+		if (offsets[i-1] > offsets[i])
-+			return -EINVAL;
++	if ((ino == EXT4_ROOT_INO) && (raw_inode->i_links_count == 0)) {
++		EXT4_ERROR_INODE(inode, "root inode unallocated");
++		ret = -EIO;
++		goto bad_inode;
 +	}
 +
- 	for (i = 0, j = 1 ; j < 4 ; j++, i++) {
- 		struct compat_ebt_entry_mwt *match32;
- 		unsigned int size;
+ 	inode->i_mode = le16_to_cpu(raw_inode->i_mode);
+ 	inode->i_uid = (uid_t)le16_to_cpu(raw_inode->i_uid_low);
+ 	inode->i_gid = (gid_t)le16_to_cpu(raw_inode->i_gid_low);
