@@ -1,159 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753932AbeE3PM2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:12:28 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:32955 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753648AbeE3PMS (ORCPT
+        id S1753767AbeE3PNB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:13:01 -0400
+Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.130]:8011 "EHLO
+        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753484AbeE3PM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:12:18 -0400
-X-Google-Smtp-Source: ADUXVKJAG/HAncW+Hp0q4RIncGyaZb57PD6604wvPcHW/TnXdoNY1mqJB0xQdxERGBYUxc7sRV3ug1l/6Nj5IYWZzRc=
+        Wed, 30 May 2018 11:12:58 -0400
+X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx2zAOrX/r2ZbrrxoyOl37jyAS87PDYJ9azvnITHNpDem7ChLghAqCJU8ykdftsfK97"
+X-RZG-CLASS-ID: mo05
+Subject: Re: [PATCH 01/11] spi: spi-mem: Extend the SPI mem interface to set a
+ custom memory name
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
+        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
+        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com, han.xu@nxp.com,
+        linux-kernel@vger.kernel.org
+References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
+ <1527686082-15142-2-git-send-email-frieder.schrempf@exceet.de>
+ <20180530163220.161fdb86@bbrezillon>
+From: Frieder Schrempf <frieder.schrempf@exceet.de>
+Message-ID: <9c1cf52a-dfea-157f-a7ef-d59299e154af@exceet.de>
+Date: Wed, 30 May 2018 17:12:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <20180530143044.GB2717@redhat.com>
-References: <20180529144612.16675-1-mszeredi@redhat.com> <20180529144612.16675-16-mszeredi@redhat.com>
- <20180530143044.GB2717@redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 30 May 2018 17:12:16 +0200
-Message-ID: <CAJfpegvLcFgFi7aMiJs=xotEMKNNDy7rXdms08Mx3c5G37OJgw@mail.gmail.com>
-Subject: Re: [PATCH 15/28] ovl: Open file with data except for the case of fsync
-To: Vivek Goyal <vgoyal@redhat.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180530163220.161fdb86@bbrezillon>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 4:30 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
-> On Tue, May 29, 2018 at 04:45:59PM +0200, Miklos Szeredi wrote:
->> From: Vivek Goyal <vgoyal@redhat.com>
+Hi Boris,
+
+On 30.05.2018 16:32, Boris Brezillon wrote:
+> Hi Frieder,
+> 
+> On Wed, 30 May 2018 15:14:30 +0200
+> Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
+> 
+>> When porting (Q)SPI controller drivers from the MTD layer to the SPI
+>> layer, the naming scheme for the memory devices changes. To be able
+>> to keep compatibility with the old drivers naming scheme, a function
+>> is added to the SPI mem interface to let controller drivers set a
+>> custom name for the memory.
 >>
->> ovl_open() should open file which contains data and not open metacopy
->> inode.  With the introduction of metacopy inodes, with current
->> implementaion we will end up opening metacopy inode as well.
+>> Example for the FSL QSPI driver:
 >>
->> But there can be certain circumstances like ovl_fsync() where we want to
->> allow opening a metacopy inode instead.
+>> Name with the old driver: 21e0000.qspi,
+>> or with multiple devices: 21e0000.qspi-0, 21e0000.qspi-1, ...
 >>
->> Hence, change ovl_open_realfile() and add _ovl_open_real() and add extra
->> parameter which specifies whether to allow opening metacopy inode or not.
->> If this parameter is false, we look for data inode and open that.
+>> Name with the new driver without spi_mem_get_name: spi4.0
 >>
->> This should allow covering both the cases.
->>
->> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
->> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
->> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+>> Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
 >> ---
->>  fs/overlayfs/file.c | 39 ++++++++++++++++++++++++++++++---------
->>  1 file changed, 30 insertions(+), 9 deletions(-)
+>>   drivers/spi/spi-mem.c       | 25 +++++++++++++++++++++++++
+>>   include/linux/spi/spi-mem.h |  3 +++
+>>   2 files changed, 28 insertions(+)
 >>
->> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
->> index 266692ce9a9a..c7738ef492c8 100644
->> --- a/fs/overlayfs/file.c
->> +++ b/fs/overlayfs/file.c
->> @@ -14,11 +14,20 @@
->>  #include <linux/uio.h>
->>  #include "overlayfs.h"
->>
->> -static struct file *ovl_open_realfile(const struct file *file)
->> +static char ovl_whatisit(struct inode *inode, struct inode *realinode)
+>> diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+>> index 990770d..5e9af47 100644
+>> --- a/drivers/spi/spi-mem.c
+>> +++ b/drivers/spi/spi-mem.c
+>> @@ -311,6 +311,31 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+>>   EXPORT_SYMBOL_GPL(spi_mem_exec_op);
+>>   
+>>   /**
+>> + * spi_mem_get_name() - Let drivers using the SPI mem interface specify a
+>> + *			custom name for the memory to avoid compatibility
+>> + *			issues with ported drivers.
+>> + * @mem: the SPI memory
+>> + *
+>> + * When porting (Q)SPI controller drivers from the MTD layer to the SPI
+>> + * layer, the naming scheme for the memory devices changes. To be able to
+>> + * keep compatibility with the old drivers naming scheme, this function can
+>> + * be used to get a custom name from the controller driver.
+>> + * If no custom name is available, the name of the SPI device is returned.
+>> + *
+>> + * Return: a char array that contains the name for the flash memory
+>> + */
+>> +const char *spi_mem_get_name(struct spi_mem *mem)
 >> +{
->> +     if (realinode != ovl_inode_upper(inode))
->> +             return 'l';
->> +     if (ovl_has_upperdata(inode))
->> +             return 'u';
->> +     else
->> +             return 'm';
+>> +	struct spi_controller *ctlr = mem->spi->controller;
+>> +
+>> +	if (ctlr->mem_ops && ctlr->mem_ops->get_name)
+>> +		return ctlr->mem_ops->get_name(mem);
+> 
+> Looks like your implementation of ->get_name() in the fsl driver is
+> allocating a new string each time it's called. I guess other
+> implementations might be forced to do the same, so maybe it's better to
+> add a ->name field to struct spi_mem and only call ->get_name() once
+> when the device is probed. Then spi_mem_get_name() can just be
+> implemented like this:
+> 
+> const char *spi_mem_get_name(struct spi_mem *mem)
+> {
+> 	return mem->name;
+> }
+
+Sounds like a good proposal. I will change that.
+
+Thanks,
+
+Frieder
+
+> 
+> Regards,
+> 
+> Boris
+> 
+>> +
+>> +	return dev_name(&mem->spi->dev);
 >> +}
+>> +EXPORT_SYMBOL_GPL(spi_mem_get_name);
 >> +
->> +static struct file *ovl_open_realfile(const struct file *file,
->> +                                   struct inode *realinode)
->>  {
->>       struct inode *inode = file_inode(file);
->> -     struct inode *upperinode = ovl_inode_upper(inode);
->> -     struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
->>       struct file *realfile;
->>       const struct cred *old_cred;
->>
->> @@ -28,7 +37,7 @@ static struct file *ovl_open_realfile(const struct file *file)
->>       revert_creds(old_cred);
->>
->>       pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
->> -              file, file, upperinode ? 'u' : 'l', file->f_flags,
->> +              file, file, ovl_whatisit(inode, realinode), file->f_flags,
->>                realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
->>
->>       return realfile;
->> @@ -72,17 +81,24 @@ static int ovl_change_flags(struct file *file, unsigned int flags)
->>       return 0;
->>  }
->>
->> -static int ovl_real_fdget(const struct file *file, struct fd *real)
->> +static int ovl_real_fdget_meta(const struct file *file, struct fd *real,
->> +                            bool allow_meta)
->>  {
->>       struct inode *inode = file_inode(file);
->> +     struct inode *realinode;
->>
->>       real->flags = 0;
->>       real->file = file->private_data;
->>
->> +     if (allow_meta)
->> +             realinode = ovl_inode_real(inode);
->> +     else
->> +             realinode = ovl_inode_realdata(inode);
+>> +/**
+>>    * spi_mem_adjust_op_size() - Adjust the data size of a SPI mem operation to
+>>    *			      match controller limitations
+>>    * @mem: the SPI memory
+>> diff --git a/include/linux/spi/spi-mem.h b/include/linux/spi/spi-mem.h
+>> index 4fa34a2..f1912d3 100644
+>> --- a/include/linux/spi/spi-mem.h
+>> +++ b/include/linux/spi/spi-mem.h
+>> @@ -178,6 +178,7 @@ struct spi_controller_mem_ops {
+>>   			    const struct spi_mem_op *op);
+>>   	int (*exec_op)(struct spi_mem *mem,
+>>   		       const struct spi_mem_op *op);
+>> +	const char *(*get_name)(struct spi_mem *mem);
+>>   };
+>>   
+>>   /**
+>> @@ -236,6 +237,8 @@ bool spi_mem_supports_op(struct spi_mem *mem,
+>>   int spi_mem_exec_op(struct spi_mem *mem,
+>>   		    const struct spi_mem_op *op);
+>>   
+>> +const char *spi_mem_get_name(struct spi_mem *mem);
 >> +
->>       /* Has it been copied up since we'd opened it? */
->> -     if (unlikely(file_inode(real->file) != ovl_inode_real(inode))) {
->> +     if (unlikely(file_inode(real->file) != realinode)) {
->>               real->flags = FDPUT_FPUT;
->> -             real->file = ovl_open_realfile(file);
->> +             real->file = ovl_open_realfile(file, realinode);
->>
->>               return PTR_ERR_OR_ZERO(real->file);
->>       }
->> @@ -94,6 +110,11 @@ static int ovl_real_fdget(const struct file *file, struct fd *real)
->>       return 0;
->>  }
->>
->> +static int ovl_real_fdget(const struct file *file, struct fd *real)
->> +{
->> +     return ovl_real_fdget_meta(file, real, false);
->> +}
->> +
->>  static int ovl_open(struct inode *inode, struct file *file)
->>  {
->>       struct dentry *dentry = file_dentry(file);
->> @@ -107,7 +128,7 @@ static int ovl_open(struct inode *inode, struct file *file)
->>       /* No longer need these flags, so don't pass them on to underlying fs */
->>       file->f_flags &= ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);
->>
->> -     realfile = ovl_open_realfile(file);
->> +     realfile = ovl_open_realfile(file, ovl_inode_real(file_inode(file)));
-
-That was meant to be
-
-+     realfile = ovl_open_realfile(file, ovl_inode_realdata(file_inode(file)));
-
-Is that correct?
-
-> Hmm...so there have been some changes in this patch. My original intention
-> was that to always open data inode (lower/upper) in ovl_open(). So if upper
-> inode is a metacopy only, I will open lower inode instead.
->
-> But new logic seems to be to always open real inode (that means upper
-> metacopy inode as well). And that means that later when read happens
-> on the file we will end up opening lower file, read data and close
-> lower file.
->
-> I am concerned a bit if there are performance implications to this.
-> This will be hot path for containers.
-
-Right.   Unfortunately not detected with automatic testing...
-
-Thanks for spotting!
-
-Miklos
+>>   int spi_mem_driver_register_with_owner(struct spi_mem_driver *drv,
+>>   				       struct module *owner);
+>>   
+> 
