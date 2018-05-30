@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753806AbeE3LrH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:47:07 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60647 "EHLO
+        id S1753857AbeE3LrQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:47:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60640 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751737AbeE3LG5 (ORCPT
+        by vger.kernel.org with ESMTP id S1751637AbeE3LG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:06:57 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,14 +13,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Peter Malone" <peter.malone@gmail.com>,
-        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>,
-        "Mathieu Malaterre" <malat@debian.org>
+CC: akpm@linux-foundation.org, "Neil Horman" <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Marcelo Ricardo Leitner" <marcelo.leinter@gmail.com>,
+        "Alexey Kodanev" <alexey.kodanev@oracle.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.814339507@decadent.org.uk>
+Message-ID: <lsq.1527677561.264015880@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 012/153] fbdev: Fixing arbitrary kernel leak in case
- FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().
+Subject: [PATCH 3.2 011/153] sctp: verify size of a new chunk in
+ _sctp_make_chunk()
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,61 +34,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Malone <peter.malone@gmail.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
-commit 250c6c49e3b68756b14983c076183568636e2bde upstream.
+commit 07f2c7ab6f8d0a7e7c5764c4e6cc9c52951b9d9c upstream.
 
-Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in
-sbusfb_ioctl_helper().
+When SCTP makes INIT or INIT_ACK packet the total chunk length
+can exceed SCTP_MAX_CHUNK_LEN which leads to kernel panic when
+transmitting these packets, e.g. the crash on sending INIT_ACK:
 
-'index' is defined as an int in sbusfb_ioctl_helper().
-We retrieve this from the user:
-if (get_user(index, &c->index) ||
-    __get_user(count, &c->count) ||
-    __get_user(ured, &c->red) ||
-    __get_user(ugreen, &c->green) ||
-    __get_user(ublue, &c->blue))
-       return -EFAULT;
+[  597.804948] skbuff: skb_over_panic: text:00000000ffae06e4 len:120168
+               put:120156 head:000000007aa47635 data:00000000d991c2de
+               tail:0x1d640 end:0xfec0 dev:<NULL>
+...
+[  597.976970] ------------[ cut here ]------------
+[  598.033408] kernel BUG at net/core/skbuff.c:104!
+[  600.314841] Call Trace:
+[  600.345829]  <IRQ>
+[  600.371639]  ? sctp_packet_transmit+0x2095/0x26d0 [sctp]
+[  600.436934]  skb_put+0x16c/0x200
+[  600.477295]  sctp_packet_transmit+0x2095/0x26d0 [sctp]
+[  600.540630]  ? sctp_packet_config+0x890/0x890 [sctp]
+[  600.601781]  ? __sctp_packet_append_chunk+0x3b4/0xd00 [sctp]
+[  600.671356]  ? sctp_cmp_addr_exact+0x3f/0x90 [sctp]
+[  600.731482]  sctp_outq_flush+0x663/0x30d0 [sctp]
+[  600.788565]  ? sctp_make_init+0xbf0/0xbf0 [sctp]
+[  600.845555]  ? sctp_check_transmitted+0x18f0/0x18f0 [sctp]
+[  600.912945]  ? sctp_outq_tail+0x631/0x9d0 [sctp]
+[  600.969936]  sctp_cmd_interpreter.isra.22+0x3be1/0x5cb0 [sctp]
+[  601.041593]  ? sctp_sf_do_5_1B_init+0x85f/0xc30 [sctp]
+[  601.104837]  ? sctp_generate_t1_cookie_event+0x20/0x20 [sctp]
+[  601.175436]  ? sctp_eat_data+0x1710/0x1710 [sctp]
+[  601.233575]  sctp_do_sm+0x182/0x560 [sctp]
+[  601.284328]  ? sctp_has_association+0x70/0x70 [sctp]
+[  601.345586]  ? sctp_rcv+0xef4/0x32f0 [sctp]
+[  601.397478]  ? sctp6_rcv+0xa/0x20 [sctp]
+...
 
-and then we use 'index' in the following way:
-red = cmap->red[index + i] >> 8;
-green = cmap->green[index + i] >> 8;
-blue = cmap->blue[index + i] >> 8;
+Here the chunk size for INIT_ACK packet becomes too big, mostly
+because of the state cookie (INIT packet has large size with
+many address parameters), plus additional server parameters.
 
-This is a classic information leak vulnerability. 'index' should be
-an unsigned int, given its usage above.
+Later this chunk causes the panic in skb_put_data():
 
-This patch is straight-forward; it changes 'index' to unsigned int
-in two switch-cases: FBIOGETCMAP_SPARC && FBIOPUTCMAP_SPARC.
+  skb_packet_transmit()
+      sctp_packet_pack()
+          skb_put_data(nskb, chunk->skb->data, chunk->skb->len);
 
-This patch fixes CVE-2018-6412.
+'nskb' (head skb) was previously allocated with packet->size
+from u16 'chunk->chunk_hdr->length'.
 
-Signed-off-by: Peter Malone <peter.malone@gmail.com>
-Acked-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-[bwh: Backported to 3.2: adjust filename]
+As suggested by Marcelo we should check the chunk's length in
+_sctp_make_chunk() before trying to allocate skb for it and
+discard a chunk if its size bigger than SCTP_MAX_CHUNK_LEN.
+
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leinter@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.2:
+ - Keep using WORD_ROUND() instead of SCTP_PAD4()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/video/sbuslib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/sctp/sm_make_chunk.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/video/sbuslib.c
-+++ b/drivers/video/sbuslib.c
-@@ -122,7 +122,7 @@ int sbusfb_ioctl_helper(unsigned long cm
- 		unsigned char __user *ured;
- 		unsigned char __user *ugreen;
- 		unsigned char __user *ublue;
--		int index, count, i;
-+		unsigned int index, count, i;
+--- a/net/sctp/sm_make_chunk.c
++++ b/net/sctp/sm_make_chunk.c
+@@ -1324,10 +1324,14 @@ struct sctp_chunk *sctp_make_chunk(const
+ 	sctp_chunkhdr_t *chunk_hdr;
+ 	struct sk_buff *skb;
+ 	struct sock *sk;
++	int chunklen;
++
++	chunklen = WORD_ROUND(sizeof(*chunk_hdr) + paylen);
++	if (chunklen > SCTP_MAX_CHUNK_LEN)
++		goto nodata;
  
- 		if (get_user(index, &c->index) ||
- 		    __get_user(count, &c->count) ||
-@@ -161,7 +161,7 @@ int sbusfb_ioctl_helper(unsigned long cm
- 		unsigned char __user *ugreen;
- 		unsigned char __user *ublue;
- 		struct fb_cmap *cmap = &info->cmap;
--		int index, count, i;
-+		unsigned int index, count, i;
- 		u8 red, green, blue;
+ 	/* No need to allocate LL here, as this is only a chunk. */
+-	skb = alloc_skb(WORD_ROUND(sizeof(sctp_chunkhdr_t) + paylen),
+-			GFP_ATOMIC);
++	skb = alloc_skb(chunklen, GFP_ATOMIC);
+ 	if (!skb)
+ 		goto nodata;
  
- 		if (get_user(index, &c->index) ||
