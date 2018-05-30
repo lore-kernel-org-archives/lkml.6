@@ -1,147 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753819AbeE3PPh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:15:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42932 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750990AbeE3PPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:15:32 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-audit@redhat.com
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit" actions
-Date: Wed, 30 May 2018 11:15:29 -0400
-Message-ID: <15281606.YptaXzsEVL@x2>
-Organization: Red Hat
-In-Reply-To: <2d5baf73-755b-dc82-a778-25a3cd22989a@linux.vnet.ibm.com>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <1569841.KfYyxMilWs@x2> <2d5baf73-755b-dc82-a778-25a3cd22989a@linux.vnet.ibm.com>
+        id S932065AbeE3PPx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:15:53 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43640 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750990AbeE3PPt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:15:49 -0400
+X-Google-Smtp-Source: ADUXVKJE1vJQ+TQumQXrShNmuROsz8Qd52+5cVSgf2rnbeW/0Px0AE9XeSJ915nwTrImO7vAZDgR7w==
+Date: Wed, 30 May 2018 09:15:47 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
+Cc: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] IB/mad: Use ID allocator routines to allocate agent
+ number
+Message-ID: <20180530151547.GC30754@ziepe.ca>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+ <20180529154922.GA18457@ziepe.ca>
+ <A470D739-D0CD-42EE-9196-8E7610B6DAF4@oracle.com>
+ <20180529164032.GB18457@ziepe.ca>
+ <0E56560E-F577-43A6-9F18-B7AC7B5DB213@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0E56560E-F577-43A6-9F18-B7AC7B5DB213@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, May 30, 2018 9:54:00 AM EDT Stefan Berger wrote:
-> On 05/29/2018 05:30 PM, Steve Grubb wrote:
-> > Hello,
+On Wed, May 30, 2018 at 09:32:02AM +0200, Håkon Bugge wrote:
+> 
+> 
+> > On 29 May 2018, at 18:40, Jason Gunthorpe <jgg@ziepe.ca> wrote:
 > > 
-> > On Thursday, May 24, 2018 4:11:05 PM EDT Stefan Berger wrote:
-> >> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
-> >> the IMA "audit" policy action.  This patch defines
-> >> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
+> > On Tue, May 29, 2018 at 06:16:14PM +0200, Håkon Bugge wrote:
 > >> 
-> >> With this change we now call integrity_audit_msg_common() to get
-> >> common integrity auditing fields. This now produces the following
-> >> record when parsing an IMA policy rule:
+> >>> On 29 May 2018, at 17:49, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >>> 
+> >>> On Tue, May 29, 2018 at 09:38:08AM +0200, Hans Westgaard Ry wrote:
+> >>>> The agent TID is a 64 bit value split in two dwords.  The least
+> >>>> significant dword is the TID running counter. The most significant
+> >>>> dword is the agent number. In the CX-3 shared port model, the mlx4
+> >>>> driver uses the most significant byte of the agent number to store the
+> >>>> slave number, making agent numbers greater and equal to 2^24 (3 bytes)
+> >>>> unusable.
+> >>> 
+> >>> There is no reason for this to be an ida, just do something like
+> >>> 
+> >>> mad_agent_priv->agent.hi_tid = atomic_inc_return(&ib_mad_client_id) & mad_agent_priv->ib_dev->tid_mask;
+> >>> 
+> >>> And have the driver set tid_mask to 3 bytes of 0xFF
 > >> 
-> >> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
-> >> 
-> >>    fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
-> >>    subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
-> >>    op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
-> >>    tty=tty2 res=1
+> >> The issue is that some of the mad agents are long-lived, so you will
+> >> wrap and use the same TID twice.
 > > 
-> > Since this is a new event, do you mind moving the tty field to be between
-> > auid= and ses=  ?   That is the more natural place for it.
+> > We already have that problem, and using ida is problematic because we
+> > need to maximize the time between TID re-use, which ida isn't doing.
 > 
-> 6/8 refactors the code so that the integrity audit records produced by
-> IMA follow one format in terms of ordering of the fields, with fields
-> like inode optional, though, and AUDIT_INTEGRITY_RULE in the end being
-> the only one with a different format. Do we really want to change that
-> order just for 1806?
+> Initially, I thought that too, but consulted the spec which states:
 > 
-> 5/8 now produces the following:
+> C13-18.1.1: When initiating a new operation, MADHeader:TransactionID
+> shall be set to such a value that within that MAD the combination of TID,
+> SGID, and MgmtClass is different from that of any other currently executing
+> operation. []
 > 
-> type=INTEGRITY_PCR msg=audit(1527685075.941:502): pid=2431 \
->    uid=0 auid=1000 ses=5 \
->    subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->    op=invalid_pcr cause=open_writers comm="grep" \
->    name="/var/log/audit/audit.log" dev="dm-0" ino=1962494 \
->    exe="/usr/bin/grep" tty=pts0 res=1
-> 
-> Comparing the two:
-> 
-> 1806:          action, fsmagic, pid, uid, auid, ses, subj, op, cause,
-> comm,    exe, tty, res
-> INTEGRITY_PCR:                  pid, uid, auid, ses, subj, op, cause,
-> comm, name, dev, ino, exe, tty, res
+> "currently executing operation" that is.
 
-OK. I guess go with it as is. It passes testing.
+'currently executing operation' encompasses a wide range of behaviors
+and it is not just 'completing the MAD at the local node'
 
--Steve
- 
-> > Also, it might be more natural for the op= and cause= fields to be before
-> > the pid= portion. This doesn't matter as much to me because those are
-> > not searchable fields and they are skipped right over. But moving the
-> > tty field is the main comment from me.
+You have to exceed all the timeouts before a single node can be
+certain that the condition is satisfied.
+
+This is why we just simply maximize the time between allocations, and
+encourage the user providing the rest of the tid to do the same.
+
+> > Preventing re-use seems like a seperate issue from limiting the range
+> > to be compatible with mlx4.
 > 
-> With the refactoring in 6/8 we at least have consistency among the
-> INTEGRITY_* records, with the only exception being AUDIT_INTEGRITY_RULE
-> that has its own format:
-> 
-> https://elixir.bootlin.com/linux/latest/source/security/integrity/ima/ima_a
-> pi.c#L324
-> 
-> The other ones currently all format using integrity_audit_msg().
-> 
-> > Thanks,
-> > -Steve
-> > 
-> >> Signed-off-by: Stefan Berger<stefanb@linux.vnet.ibm.com>
-> >> ---
-> >> 
-> >>   include/uapi/linux/audit.h          | 3 ++-
-> >>   security/integrity/ima/ima_policy.c | 5 +++--
-> >>   2 files changed, 5 insertions(+), 3 deletions(-)
-> >> 
-> >> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> >> index 4e61a9e05132..776e0abd35cf 100644
-> >> --- a/include/uapi/linux/audit.h
-> >> +++ b/include/uapi/linux/audit.h
-> >> @@ -146,7 +146,8 @@
-> >> 
-> >>   #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
-> >>   #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
-> >>   #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
-> >> 
-> >> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
-> >> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs
-> >> */ +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
-> >> 
-> >>   #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A
-> > 
-> > REQUEST. */
-> > 
-> >> diff --git a/security/integrity/ima/ima_policy.c
-> >> b/security/integrity/ima/ima_policy.c index 3aed25a7178a..a8ae47a386b4
-> >> 100644
-> >> --- a/security/integrity/ima/ima_policy.c
-> >> +++ b/security/integrity/ima/ima_policy.c
-> >> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct
-> >> ima_rule_entry *entry) int result = 0;
-> >> 
-> >>   	ab = integrity_audit_log_start(NULL, GFP_KERNEL,
-> >> 
-> >> -				       AUDIT_INTEGRITY_RULE);
-> >> +				       AUDIT_INTEGRITY_POLICY_RULE);
-> >> 
-> >>   	entry->uid = INVALID_UID;
-> >>   	entry->fowner = INVALID_UID;
-> >> 
-> >> @@ -926,7 +926,8 @@ static int ima_parse_rule(char *rule, struct
-> >> ima_rule_entry *entry) temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
-> >> 
-> >>   	else if (entry->func == POLICY_CHECK)
-> >>   	
-> >>   		temp_ima_appraise |= IMA_APPRAISE_POLICY;
-> >> 
-> >> -	audit_log_format(ab, "res=%d", !result);
-> >> +	integrity_audit_msg_common(ab, NULL, NULL,
-> >> +				   "policy_update", "parse_rule", result);
-> >> 
-> >>   	audit_log_end(ab);
-> >>   	return result;
-> >>   
-> >>   }
+> Yes. But a v2 of Hans' patch using idr_alloc_cyclic() solves both issues.
+
+That might work, but still have to get rid of the sysctl
+
+Jason
