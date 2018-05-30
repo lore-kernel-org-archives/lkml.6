@@ -1,78 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932568AbeE3X7A (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 19:59:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33832 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932091AbeE3X64 (ORCPT
+        id S932563AbeEaACd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 20:02:33 -0400
+Received: from mail-pl0-f54.google.com ([209.85.160.54]:34941 "EHLO
+        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932091AbeEaACa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 19:58:56 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D62FD6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-Subject: Re: [PATCH v4 2/2] regulator: add QCOM RPMh regulator driver
-To: Doug Anderson <dianders@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <cover.1527040878.git.collinsd@codeaurora.org>
- <7489cd65fedb8a31488cf8188885759bcd4820ce.1527040878.git.collinsd@codeaurora.org>
- <CAD=FV=WF+onhAAWrbmwcHiWyCjuZ=6vvnhodUsia=Ps-da6_4A@mail.gmail.com>
-From: David Collins <collinsd@codeaurora.org>
-Message-ID: <5e65b713-6d45-4b33-d05e-6ebe2c6b6cec@codeaurora.org>
-Date: Wed, 30 May 2018 16:58:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        Wed, 30 May 2018 20:02:30 -0400
+X-Google-Smtp-Source: ADUXVKKdSi9EA/vF/hfxY8qbfn5EEAY0MYygzf9l/zcYpBJtzMVTj1wU9nfgKx9al6hx0WSIzHABxQ==
+Date: Thu, 31 May 2018 08:51:40 +0900
+From: Jungsub Shin <supsup5642@gmail.com>
+To: "J. R. Okajima" <hooanon05g@gmail.com>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Why is the length of max mount option a page size??
+Message-ID: <20180530235140.GA3974@supsup-VirtualBox>
+References: <20180521173959.GA12779@supsup-VirtualBox>
+ <5670.1527244930@jrobl>
+ <20180529002456.GA30767@supsup-VirtualBox>
+ <20180529011412.GE30522@ZenIV.linux.org.uk>
+ <20180529035703.GA32550@supsup-VirtualBox>
+ <5878.1527648027@jrobl>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=WF+onhAAWrbmwcHiWyCjuZ=6vvnhodUsia=Ps-da6_4A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5878.1527648027@jrobl>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Doug,
-
-On 05/29/2018 10:32 PM, Doug Anderson wrote:
-> On Tue, May 22, 2018 at 7:43 PM, David Collins <collinsd@codeaurora.org> wrote:
->> + * @ever_enabled:              Boolean indicating that the regulator has been
->> + *                             explicitly enabled at least once.  Voltage
->> + *                             requests should be cached when this flag is not
->> + *                             set.
+On Wed, May 30, 2018 at 11:40:27AM +0900, J. R. Okajima wrote:
+> Jungsub Shin:
+> > Do you mean using symlinks or bind mount to reduce length of mount
+> > options?? I can remove "~/tca_agent/image_layer_dir" string. But the
+> > other character means unique ID of layer and i can't compress it or
+> > replace it to another string. This is not fundamental solution. Docker=20
 > 
-> Do you really need this extra boolean?  Can't you just check if
-> "enabled" is still "-EINVAL"?  If it is then you don't pass the
-> voltage along.
+> Can't it be a solution?
 > 
-> ...this would mean that you'd also need to send the voltage vote when
-> the regulator core tries to disable unused regulators at the end of
-> bootup, but that should be OK right?  If we never touched a regulator
-> anywhere at probe time and we're about to vote to disable it, we know
-> there's nobody requiring it to still be on.  We can vote for the
-> voltage now without fear of messing up a vote that the BIOS left in
-> place.
+> # mount -o bind /long/path0 /br0
+> # mount -o bind /long/path1 /br1
+> 	:::
+> # mount -t aufs -o br=/br0:/br1:... none /mntpnt
 > 
-> In theory this should also allow you to assert your vote about the
-> voltage of a regulator that has never been enabled, which (if I
-> understand correctly) you consider to be a feature.
+> or
+> 
+> # ln -s /long/path0 /br0
+> # ln -s /long/path1 /br1
+> 	:::
+> # mount -t aufs -o br=/br0:/br1:... none /mntpnt
+> 
+> 
+> J. R. Okajima
 
-Removing 'ever_enabled' and caching the voltage when 'enabled == -EINVAL'
-seems workable.  I'm a little concerned about this resulting in voltage =
-regulator-min-microvolt requests being sent for all regulators that are
-not explicitly enabled by Linux consumers before late_initcall_sync().
-Theoretically all of the boot loader hand-off cases should be taken care
-of by this point so it should be safe.
+I don't test them, but they will work well.
+That's temporary solution. So i'm use remount,append option.
 
-I'll make this change.
-
-Take care,
-David
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks
