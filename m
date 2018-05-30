@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752162AbeE3KfC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:35:02 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43416 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751799AbeE3KeO (ORCPT
+        id S1752022AbeE3KeZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:34:25 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:46346 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751361AbeE3KeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:34:14 -0400
-X-Google-Smtp-Source: ADUXVKIYtTpE9pONlMGb1/8F8bFm980MFsb9H7VVSzYJsPdsfLHOH1i28zoEiy7wXaJTIAEfegisdA==
+        Wed, 30 May 2018 06:34:11 -0400
+X-Google-Smtp-Source: ADUXVKITmXZZGK/kczxnyCESlymq3YA/x9aLx8Ve7P0Rx+Mw/rpy1S+Y6iFskA5vIIn2N8d6Blr+8Q==
 From: Johan Hovold <johan@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
@@ -17,9 +17,9 @@ Cc: Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
         Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 7/8] gnss: add driver for sirfstar-based receivers
-Date: Wed, 30 May 2018 12:32:41 +0200
-Message-Id: <20180530103242.20773-8-johan@kernel.org>
+Subject: [PATCH v2 3/8] gnss: add generic serial driver
+Date: Wed, 30 May 2018 12:32:37 +0200
+Message-Id: <20180530103242.20773-4-johan@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180530103242.20773-1-johan@kernel.org>
 References: <20180530103242.20773-1-johan@kernel.org>
@@ -27,132 +27,89 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add driver for serial-connected SiRFstar-based GNSS receivers.
-
-These devices typically boot into hibernate mode from which they can be
-woken using a pulse on the ON_OFF input pin. Once active, a pulse on the
-same ON_OFF pin is used to put the device back into hibernate mode. The
-current state can be determined by sampling the WAKEUP output.
-
-Hardware configurations where WAKEUP has been connected to ON_OFF (and
-where an initial WAKEUP pulse during boot is sufficient to have the
-device boot into active mode) are also supported. In this case, device
-power is managed using the main-supply regulator only.
-
-Note that configurations where WAKEUP is left not connected, so that the
-device power state can only indirectly be determined using the I/O
-interface, is currently not supported. It should be fairly
-straight-forward to extend the current implementation with such support
-however (and this this is the main reason for not using the generic
-serial implementation for this driver).
-
-Note that timepulse-support is left unimplemented.
+Add a generic serial GNSS driver (library) which provides a common
+implementation for the gnss interface and power management (runtime and
+system suspend). This allows GNSS drivers for specific chip to be
+implemented by simply providing a set_power() callback to handle three
+states: ACTIVE, STANDBY and OFF.
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/gnss/Kconfig  |  12 ++
+ drivers/gnss/Kconfig  |   7 ++
  drivers/gnss/Makefile |   3 +
- drivers/gnss/sirf.c   | 407 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 422 insertions(+)
- create mode 100644 drivers/gnss/sirf.c
+ drivers/gnss/serial.c | 275 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/gnss/serial.h |  47 ++++++++
+ 4 files changed, 332 insertions(+)
+ create mode 100644 drivers/gnss/serial.c
+ create mode 100644 drivers/gnss/serial.h
 
 diff --git a/drivers/gnss/Kconfig b/drivers/gnss/Kconfig
-index 784b8c0367d9..6abc88514512 100644
+index 103fcc70992e..f8ee54f99a8d 100644
 --- a/drivers/gnss/Kconfig
 +++ b/drivers/gnss/Kconfig
-@@ -15,6 +15,18 @@ if GNSS
- config GNSS_SERIAL
- 	tristate
+@@ -9,3 +9,10 @@ menuconfig GNSS
  
-+config GNSS_SIRF_SERIAL
-+	tristate "SiRFstar GNSS receiver support"
-+	depends on SERIAL_DEV_BUS
-+	---help---
-+	  Say Y here if you have a SiRFstar-based GNSS receiver which uses a
-+	  serial interface.
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called gnss.
 +
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called gnss-sirf.
++if GNSS
 +
-+	  If unsure, say N.
++config GNSS_SERIAL
++	tristate
 +
- config GNSS_UBX_SERIAL
- 	tristate "u-blox GNSS receiver support"
- 	depends on SERIAL_DEV_BUS
++endif # GNSS
 diff --git a/drivers/gnss/Makefile b/drivers/gnss/Makefile
-index d9295b20b7bc..5cf0ebe0330a 100644
+index 1f7a7baab1d9..171aba71684d 100644
 --- a/drivers/gnss/Makefile
 +++ b/drivers/gnss/Makefile
-@@ -9,5 +9,8 @@ gnss-y := core.o
- obj-$(CONFIG_GNSS_SERIAL)		+= gnss-serial.o
- gnss-serial-y := serial.o
+@@ -5,3 +5,6 @@
  
-+obj-$(CONFIG_GNSS_SIRF_SERIAL)		+= gnss-sirf.o
-+gnss-sirf-y := sirf.o
+ obj-$(CONFIG_GNSS)			+= gnss.o
+ gnss-y := core.o
 +
- obj-$(CONFIG_GNSS_UBX_SERIAL)		+= gnss-ubx.o
- gnss-ubx-y := ubx.o
-diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
++obj-$(CONFIG_GNSS_SERIAL)		+= gnss-serial.o
++gnss-serial-y := serial.o
+diff --git a/drivers/gnss/serial.c b/drivers/gnss/serial.c
 new file mode 100644
-index 000000000000..5fb0f730db48
+index 000000000000..b01ba4438501
 --- /dev/null
-+++ b/drivers/gnss/sirf.c
-@@ -0,0 +1,407 @@
++++ b/drivers/gnss/serial.c
+@@ -0,0 +1,275 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * SiRFstar GNSS receiver driver
++ * Generic serial GNSS receiver driver
 + *
 + * Copyright (C) 2018 Johan Hovold <johan@kernel.org>
 + */
 +
 +#include <linux/errno.h>
 +#include <linux/gnss.h>
-+#include <linux/gpio/consumer.h>
 +#include <linux/init.h>
-+#include <linux/interrupt.h>
 +#include <linux/kernel.h>
 +#include <linux/module.h>
 +#include <linux/of.h>
 +#include <linux/pm.h>
 +#include <linux/pm_runtime.h>
-+#include <linux/regulator/consumer.h>
 +#include <linux/serdev.h>
 +#include <linux/slab.h>
-+#include <linux/wait.h>
 +
-+#define SIRF_BOOT_DELAY			500
-+#define SIRF_ON_OFF_PULSE_TIME		100
-+#define SIRF_ACTIVATE_TIMEOUT		200
-+#define SIRF_HIBERNATE_TIMEOUT		200
++#include "serial.h"
 +
-+struct sirf_data {
-+	struct gnss_device *gdev;
-+	struct serdev_device *serdev;
-+	speed_t	speed;
-+	struct regulator *vcc;
-+	struct gpio_desc *on_off;
-+	struct gpio_desc *wakeup;
-+	int irq;
-+	bool active;
-+	wait_queue_head_t power_wait;
-+};
-+
-+static int sirf_open(struct gnss_device *gdev)
++static int gnss_serial_open(struct gnss_device *gdev)
 +{
-+	struct sirf_data *data = gnss_get_drvdata(gdev);
-+	struct serdev_device *serdev = data->serdev;
++	struct gnss_serial *gserial = gnss_get_drvdata(gdev);
++	struct serdev_device *serdev = gserial->serdev;
 +	int ret;
 +
 +	ret = serdev_device_open(serdev);
 +	if (ret)
 +		return ret;
 +
-+	serdev_device_set_baudrate(serdev, data->speed);
++	serdev_device_set_baudrate(serdev, gserial->speed);
 +	serdev_device_set_flow_control(serdev, false);
 +
 +	ret = pm_runtime_get_sync(&serdev->dev);
 +	if (ret < 0) {
-+		dev_err(&gdev->dev, "failed to runtime resume: %d\n", ret);
 +		pm_runtime_put_noidle(&serdev->dev);
 +		goto err_close;
 +	}
@@ -165,21 +122,21 @@ index 000000000000..5fb0f730db48
 +	return ret;
 +}
 +
-+static void sirf_close(struct gnss_device *gdev)
++static void gnss_serial_close(struct gnss_device *gdev)
 +{
-+	struct sirf_data *data = gnss_get_drvdata(gdev);
-+	struct serdev_device *serdev = data->serdev;
++	struct gnss_serial *gserial = gnss_get_drvdata(gdev);
++	struct serdev_device *serdev = gserial->serdev;
 +
 +	serdev_device_close(serdev);
 +
 +	pm_runtime_put(&serdev->dev);
 +}
 +
-+static int sirf_write_raw(struct gnss_device *gdev, const unsigned char *buf,
-+				size_t count)
++static int gnss_serial_write_raw(struct gnss_device *gdev,
++		const unsigned char *buf, size_t count)
 +{
-+	struct sirf_data *data = gnss_get_drvdata(gdev);
-+	struct serdev_device *serdev = data->serdev;
++	struct gnss_serial *gserial = gnss_get_drvdata(gdev);
++	struct serdev_device *serdev = gserial->serdev;
 +	int ret;
 +
 +	/* write is only buffered synchronously */
@@ -193,257 +150,114 @@ index 000000000000..5fb0f730db48
 +	return count;
 +}
 +
-+static const struct gnss_operations sirf_gnss_ops = {
-+	.open		= sirf_open,
-+	.close		= sirf_close,
-+	.write_raw	= sirf_write_raw,
++static const struct gnss_operations gnss_serial_gnss_ops = {
++	.open		= gnss_serial_open,
++	.close		= gnss_serial_close,
++	.write_raw	= gnss_serial_write_raw,
 +};
 +
-+static int sirf_receive_buf(struct serdev_device *serdev,
-+				const unsigned char *buf, size_t count)
++static int gnss_serial_receive_buf(struct serdev_device *serdev,
++					const unsigned char *buf, size_t count)
 +{
-+	struct sirf_data *data = serdev_device_get_drvdata(serdev);
-+	struct gnss_device *gdev = data->gdev;
++	struct gnss_serial *gserial = serdev_device_get_drvdata(serdev);
++	struct gnss_device *gdev = gserial->gdev;
 +
 +	return gnss_insert_raw(gdev, buf, count);
 +}
 +
-+static const struct serdev_device_ops sirf_serdev_ops = {
-+	.receive_buf	= sirf_receive_buf,
++static const struct serdev_device_ops gnss_serial_serdev_ops = {
++	.receive_buf	= gnss_serial_receive_buf,
 +	.write_wakeup	= serdev_device_write_wakeup,
 +};
 +
-+static irqreturn_t sirf_wakeup_handler(int irq, void *dev_id)
++static int gnss_serial_set_power(struct gnss_serial *gserial,
++					enum gnss_serial_pm_state state)
 +{
-+	struct sirf_data *data = dev_id;
-+	struct device *dev = &data->serdev->dev;
-+	int ret;
++	if (!gserial->ops || !gserial->ops->set_power)
++		return 0;
 +
-+	ret = gpiod_get_value_cansleep(data->wakeup);
-+	dev_dbg(dev, "%s - wakeup = %d\n", __func__, ret);
-+	if (ret < 0)
-+		goto out;
-+
-+	data->active = !!ret;
-+	wake_up_interruptible(&data->power_wait);
-+out:
-+	return IRQ_HANDLED;
++	return gserial->ops->set_power(gserial, state);
 +}
 +
-+static int sirf_wait_for_power_state(struct sirf_data *data, bool active,
-+					unsigned long timeout)
++/*
++ * FIXME: need to provide subdriver defaults or separate dt parsing from
++ * allocation.
++ */
++static int gnss_serial_parse_dt(struct serdev_device *serdev)
 +{
-+	int ret;
-+
-+	ret = wait_event_interruptible_timeout(data->power_wait,
-+			data->active == active, msecs_to_jiffies(timeout));
-+	if (ret < 0)
-+		return ret;
-+
-+	if (ret == 0) {
-+		dev_warn(&data->serdev->dev, "timeout waiting for active state = %d\n",
-+				active);
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
-+static void sirf_pulse_on_off(struct sirf_data *data)
-+{
-+	gpiod_set_value_cansleep(data->on_off, 1);
-+	msleep(SIRF_ON_OFF_PULSE_TIME);
-+	gpiod_set_value_cansleep(data->on_off, 0);
-+}
-+
-+static int sirf_set_active(struct sirf_data *data, bool active)
-+{
-+	unsigned long timeout;
-+	int retries = 3;
-+	int ret;
-+
-+	if (active)
-+		timeout = SIRF_ACTIVATE_TIMEOUT;
-+	else
-+		timeout = SIRF_HIBERNATE_TIMEOUT;
-+
-+	while (retries-- > 0) {
-+		sirf_pulse_on_off(data);
-+		ret = sirf_wait_for_power_state(data, active, timeout);
-+		if (ret < 0) {
-+			if (ret == -ETIMEDOUT)
-+				continue;
-+
-+			return ret;
-+		}
-+
-+		break;
-+	}
-+
-+	if (retries == 0)
-+		return -ETIMEDOUT;
-+
-+	return 0;
-+}
-+
-+static int sirf_runtime_suspend(struct device *dev)
-+{
-+	struct sirf_data *data = dev_get_drvdata(dev);
-+
-+	if (!data->on_off)
-+		return regulator_disable(data->vcc);
-+
-+	return sirf_set_active(data, false);
-+}
-+
-+static int sirf_runtime_resume(struct device *dev)
-+{
-+	struct sirf_data *data = dev_get_drvdata(dev);
-+
-+	if (!data->on_off)
-+		return regulator_enable(data->vcc);
-+
-+	return sirf_set_active(data, true);
-+}
-+
-+static int __maybe_unused sirf_suspend(struct device *dev)
-+{
-+	struct sirf_data *data = dev_get_drvdata(dev);
-+	int ret = 0;
-+
-+	if (!pm_runtime_suspended(dev))
-+		ret = sirf_runtime_suspend(dev);
-+
-+	if (data->wakeup)
-+		disable_irq(data->irq);
-+
-+	return ret;
-+}
-+
-+static int __maybe_unused sirf_resume(struct device *dev)
-+{
-+	struct sirf_data *data = dev_get_drvdata(dev);
-+	int ret = 0;
-+
-+	if (data->wakeup)
-+		enable_irq(data->irq);
-+
-+	if (!pm_runtime_suspended(dev))
-+		ret = sirf_runtime_resume(dev);
-+
-+	return ret;
-+}
-+
-+static const struct dev_pm_ops sirf_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(sirf_suspend, sirf_resume)
-+	SET_RUNTIME_PM_OPS(sirf_runtime_suspend, sirf_runtime_resume, NULL)
-+};
-+
-+static int sirf_parse_dt(struct serdev_device *serdev)
-+{
-+	struct sirf_data *data = serdev_device_get_drvdata(serdev);
++	struct gnss_serial *gserial = serdev_device_get_drvdata(serdev);
 +	struct device_node *node = serdev->dev.of_node;
-+	u32 speed = 9600;
++	u32 speed = 4800;
 +
 +	of_property_read_u32(node, "current-speed", &speed);
 +
-+	data->speed = speed;
++	gserial->speed = speed;
 +
 +	return 0;
 +}
 +
-+static int sirf_probe(struct serdev_device *serdev)
++struct gnss_serial *gnss_serial_allocate(struct serdev_device *serdev,
++						size_t data_size)
 +{
-+	struct device *dev = &serdev->dev;
++	struct gnss_serial *gserial;
 +	struct gnss_device *gdev;
-+	struct sirf_data *data;
 +	int ret;
 +
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
++	gserial = kzalloc(sizeof(*gserial) + data_size, GFP_KERNEL);
++	if (!gserial)
++		return ERR_PTR(-ENOMEM);
 +
-+	gdev = gnss_allocate_device(dev);
-+	if (!gdev)
-+		return -ENOMEM;
++	gdev = gnss_allocate_device(&serdev->dev);
++	if (!gdev) {
++		ret = -ENOMEM;
++		goto err_free_gserial;
++	}
 +
-+	gdev->ops = &sirf_gnss_ops;
-+	gnss_set_drvdata(gdev, data);
++	gdev->ops = &gnss_serial_gnss_ops;
++	gnss_set_drvdata(gdev, gserial);
 +
-+	data->serdev = serdev;
-+	data->gdev = gdev;
++	gserial->serdev = serdev;
++	gserial->gdev = gdev;
 +
-+	init_waitqueue_head(&data->power_wait);
++	serdev_device_set_drvdata(serdev, gserial);
++	serdev_device_set_client_ops(serdev, &gnss_serial_serdev_ops);
 +
-+	serdev_device_set_drvdata(serdev, data);
-+	serdev_device_set_client_ops(serdev, &sirf_serdev_ops);
-+
-+	ret = sirf_parse_dt(serdev);
++	ret = gnss_serial_parse_dt(serdev);
 +	if (ret)
 +		goto err_put_device;
 +
-+	data->vcc = devm_regulator_get(dev, "vcc");
-+	if (IS_ERR(data->vcc)) {
-+		ret = PTR_ERR(data->vcc);
-+		goto err_put_device;
-+	}
++	return gserial;
 +
-+	data->on_off = devm_gpiod_get_optional(dev, "sirf,onoff",
-+			GPIOD_OUT_LOW);
-+	if (IS_ERR(data->on_off))
-+		goto err_put_device;
++err_put_device:
++	gnss_put_device(gserial->gdev);
++err_free_gserial:
++	kfree(gserial);
 +
-+	if (data->on_off) {
-+		data->wakeup = devm_gpiod_get_optional(dev, "sirf,wakeup",
-+				GPIOD_IN);
-+		if (IS_ERR(data->wakeup))
-+			goto err_put_device;
++	return ERR_PTR(ret);
++}
++EXPORT_SYMBOL_GPL(gnss_serial_allocate);
 +
-+		/*
-+		 * Configurations where WAKEUP has been left not connected,
-+		 * are currently not supported.
-+		 */
-+		if (!data->wakeup) {
-+			dev_err(dev, "no wakeup gpio specified\n");
-+			ret = -ENODEV;
-+			goto err_put_device;
-+		}
-+	}
++void gnss_serial_free(struct gnss_serial *gserial)
++{
++	gnss_put_device(gserial->gdev);
++	kfree(gserial);
++};
++EXPORT_SYMBOL_GPL(gnss_serial_free);
 +
-+	if (data->wakeup) {
-+		ret = gpiod_to_irq(data->wakeup);
-+		if (ret < 0)
-+			goto err_put_device;
-+
-+		data->irq = ret;
-+
-+		ret = devm_request_threaded_irq(dev, data->irq, NULL,
-+				sirf_wakeup_handler,
-+				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-+				"wakeup", data);
-+		if (ret)
-+			goto err_put_device;
-+	}
-+
-+	if (data->on_off) {
-+		ret = regulator_enable(data->vcc);
-+		if (ret)
-+			goto err_put_device;
-+
-+		/* Wait for chip to boot into hibernate mode */
-+		msleep(SIRF_BOOT_DELAY);
-+	}
++int gnss_serial_register(struct gnss_serial *gserial)
++{
++	struct serdev_device *serdev = gserial->serdev;
++	int ret;
 +
 +	if (IS_ENABLED(CONFIG_PM)) {
-+		pm_runtime_set_suspended(dev);	/* clear runtime_error flag */
-+		pm_runtime_enable(dev);
++		pm_runtime_enable(&serdev->dev);
 +	} else {
-+		ret = sirf_runtime_resume(dev);
++		ret = gnss_serial_set_power(gserial, GNSS_SERIAL_ACTIVE);
 +		if (ret < 0)
-+			goto err_disable_vcc;
++			return ret;
 +	}
 +
-+	ret = gnss_register_device(gdev);
++	ret = gnss_register_device(gserial->gdev);
 +	if (ret)
 +		goto err_disable_rpm;
 +
@@ -451,59 +265,143 @@ index 000000000000..5fb0f730db48
 +
 +err_disable_rpm:
 +	if (IS_ENABLED(CONFIG_PM))
-+		pm_runtime_disable(dev);
++		pm_runtime_disable(&serdev->dev);
 +	else
-+		sirf_runtime_suspend(dev);
-+err_disable_vcc:
-+	if (data->on_off)
-+		regulator_disable(data->vcc);
-+err_put_device:
-+	gnss_put_device(data->gdev);
++		gnss_serial_set_power(gserial, GNSS_SERIAL_OFF);
 +
 +	return ret;
 +}
++EXPORT_SYMBOL_GPL(gnss_serial_register);
 +
-+static void sirf_remove(struct serdev_device *serdev)
++void gnss_serial_deregister(struct gnss_serial *gserial)
 +{
-+	struct sirf_data *data = serdev_device_get_drvdata(serdev);
++	struct serdev_device *serdev = gserial->serdev;
 +
-+	gnss_deregister_device(data->gdev);
++	gnss_deregister_device(gserial->gdev);
 +
 +	if (IS_ENABLED(CONFIG_PM))
 +		pm_runtime_disable(&serdev->dev);
 +	else
-+		sirf_runtime_suspend(&serdev->dev);
++		gnss_serial_set_power(gserial, GNSS_SERIAL_OFF);
++}
++EXPORT_SYMBOL_GPL(gnss_serial_deregister);
 +
-+	if (data->on_off)
-+		regulator_disable(data->vcc);
++#ifdef CONFIG_PM
++static int gnss_serial_runtime_suspend(struct device *dev)
++{
++	struct gnss_serial *gserial = dev_get_drvdata(dev);
 +
-+	gnss_put_device(data->gdev);
++	return gnss_serial_set_power(gserial, GNSS_SERIAL_STANDBY);
++}
++
++static int gnss_serial_runtime_resume(struct device *dev)
++{
++	struct gnss_serial *gserial = dev_get_drvdata(dev);
++
++	return gnss_serial_set_power(gserial, GNSS_SERIAL_ACTIVE);
++}
++#endif /* CONFIG_PM */
++
++static int gnss_serial_prepare(struct device *dev)
++{
++	if (pm_runtime_suspended(dev))
++		return 1;
++
++	return 0;
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int gnss_serial_suspend(struct device *dev)
++{
++	struct gnss_serial *gserial = dev_get_drvdata(dev);
++	int ret = 0;
++
++	/*
++	 * FIXME: serdev currently lacks support for managing the underlying
++	 * device's wakeup settings. A workaround would be to close the serdev
++	 * device here if it is open.
++	 */
++
++	if (!pm_runtime_suspended(dev))
++		ret = gnss_serial_set_power(gserial, GNSS_SERIAL_STANDBY);
++
++	return ret;
++}
++
++static int gnss_serial_resume(struct device *dev)
++{
++	struct gnss_serial *gserial = dev_get_drvdata(dev);
++	int ret = 0;
++
++	if (!pm_runtime_suspended(dev))
++		ret = gnss_serial_set_power(gserial, GNSS_SERIAL_ACTIVE);
++
++	return ret;
++}
++#endif /* CONFIG_PM_SLEEP */
++
++const struct dev_pm_ops gnss_serial_pm_ops = {
++	.prepare	= gnss_serial_prepare,
++	SET_SYSTEM_SLEEP_PM_OPS(gnss_serial_suspend, gnss_serial_resume)
++	SET_RUNTIME_PM_OPS(gnss_serial_runtime_suspend, gnss_serial_runtime_resume, NULL)
 +};
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id sirf_of_match[] = {
-+	{ .compatible = "fastrax,uc430" },
-+	{ .compatible = "linx,r4" },
-+	{ .compatible = "wi2wi,w2sg0008i" },
-+	{ .compatible = "wi2wi,w2sg0084i" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, sirf_of_match);
-+#endif
-+
-+static struct serdev_device_driver sirf_driver = {
-+	.driver	= {
-+		.name		= "gnss-sirf",
-+		.of_match_table	= of_match_ptr(sirf_of_match),
-+		.pm		= &sirf_pm_ops,
-+	},
-+	.probe	= sirf_probe,
-+	.remove	= sirf_remove,
-+};
-+module_serdev_device_driver(sirf_driver);
++EXPORT_SYMBOL_GPL(gnss_serial_pm_ops);
 +
 +MODULE_AUTHOR("Johan Hovold <johan@kernel.org>");
-+MODULE_DESCRIPTION("SiRFstar GNSS receiver driver");
++MODULE_DESCRIPTION("Generic serial GNSS receiver driver");
 +MODULE_LICENSE("GPL v2");
+diff --git a/drivers/gnss/serial.h b/drivers/gnss/serial.h
+new file mode 100644
+index 000000000000..980ffdc86c2a
+--- /dev/null
++++ b/drivers/gnss/serial.h
+@@ -0,0 +1,47 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Generic serial GNSS receiver driver
++ *
++ * Copyright (C) 2018 Johan Hovold <johan@kernel.org>
++ */
++
++#ifndef _LINUX_GNSS_SERIAL_H
++#define _LINUX_GNSS_SERIAL_H
++
++#include <asm/termbits.h>
++#include <linux/pm.h>
++
++struct gnss_serial {
++	struct serdev_device *serdev;
++	struct gnss_device *gdev;
++	speed_t	speed;
++	const struct gnss_serial_ops *ops;
++	unsigned long drvdata[0];
++};
++
++enum gnss_serial_pm_state {
++	GNSS_SERIAL_OFF,
++	GNSS_SERIAL_ACTIVE,
++	GNSS_SERIAL_STANDBY,
++};
++
++struct gnss_serial_ops {
++	int (*set_power)(struct gnss_serial *gserial,
++				enum gnss_serial_pm_state state);
++};
++
++extern const struct dev_pm_ops gnss_serial_pm_ops;
++
++struct gnss_serial *gnss_serial_allocate(struct serdev_device *gserial,
++						size_t data_size);
++void gnss_serial_free(struct gnss_serial *gserial);
++
++int gnss_serial_register(struct gnss_serial *gserial);
++void gnss_serial_deregister(struct gnss_serial *gserial);
++
++static inline void *gnss_serial_get_drvdata(struct gnss_serial *gserial)
++{
++	return gserial->drvdata;
++}
++
++#endif /* _LINUX_GNSS_SERIAL_H */
 -- 
 2.17.0
