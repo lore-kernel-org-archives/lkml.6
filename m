@@ -1,130 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752468AbeE3Kfp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 06:35:45 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44390 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751473AbeE3KeM (ORCPT
+        id S1751983AbeE3Kha (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 06:37:30 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41652 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751390AbeE3KhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 06:34:12 -0400
-X-Google-Smtp-Source: ADUXVKKsN4FUzyl/EOp6PLGwvgOhjcpDBruaTOuQ62Tn7V9Nr8Wht9pncq6Aoe/PozYaWuLIfvSHew==
-From: Johan Hovold <johan@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Pavel Machek <pavel@ucw.cz>, Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 6/8] dt-bindings: gnss: add sirfstar binding
-Date: Wed, 30 May 2018 12:32:40 +0200
-Message-Id: <20180530103242.20773-7-johan@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180530103242.20773-1-johan@kernel.org>
-References: <20180530103242.20773-1-johan@kernel.org>
+        Wed, 30 May 2018 06:37:25 -0400
+Date: Wed, 30 May 2018 11:37:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: David Collins <collinsd@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v4 1/2] regulator: dt-bindings: add QCOM RPMh regulator
+ bindings
+Message-ID: <20180530103720.GH6920@sirena.org.uk>
+References: <cover.1527040878.git.collinsd@codeaurora.org>
+ <6d03576cf90f06afb1194301cb41fc31704def1d.1527040878.git.collinsd@codeaurora.org>
+ <CAD=FV=VH0bTxPOmRr+jUyV0cGNQHLcwQTV9L-t0bxZOqD8FnHA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lrvsYIebpInmECXG"
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=VH0bTxPOmRr+jUyV0cGNQHLcwQTV9L-t0bxZOqD8FnHA@mail.gmail.com>
+X-Cookie: Don't get mad, get interest.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add binding for SiRFstar-based GNSS receivers.
 
-Note that while four compatible-strings are initially added representing
-devices which differ in which I/O interfaces they support, they
-otherwise essentially share the same feature set.
+--lrvsYIebpInmECXG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Pin and supply names vary slightly, as do some recommended timings.
+On Tue, May 29, 2018 at 10:23:20PM -0700, Doug Anderson wrote:
 
-Note that the wakeup gpio is not intended to be used as a wakeup source,
-but rather to detect the current power state of the device (active or
-hibernate).
+> > +                       qcom,drms-mode-max-microamps = <10000 1000000>;
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- .../devicetree/bindings/gnss/sirfstar.txt     | 45 +++++++++++++++++++
- .../devicetree/bindings/vendor-prefixes.txt   |  3 ++
- 2 files changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gnss/sirfstar.txt
+> Things look pretty good to me now.  I'm still hesitant about the whole
+> need to list the modes twice (once using the unordered
+> "regulator-allowed-modes" and once to match up against the ordered
+> "qcom,drms-mode-max-microamps").  I'm also still of the opinion that
+> the whole "drms-mode-max-microamps" ought to be a standard property
+> (not a qcom specific one) and handled in the regulator core.
 
-diff --git a/Documentation/devicetree/bindings/gnss/sirfstar.txt b/Documentation/devicetree/bindings/gnss/sirfstar.txt
-new file mode 100644
-index 000000000000..5803a7831f81
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gnss/sirfstar.txt
-@@ -0,0 +1,45 @@
-+SiRFstar-based GNSS Receiver DT binding
-+
-+SiRFstar chipsets are used in GNSS-receiver modules produced by several
-+vendors and can use UART, SPI or I2C interfaces.
-+
-+Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
-+properties.
-+
-+Required properties:
-+
-+- compatible 	: Must be one of
-+
-+			"fastrax,uc430"
-+			"linx,r4"
-+			"wi2wi,w2sg0008i"
-+			"wi2wi,w2sg0084i"
-+
-+- vcc-supply	: Main voltage regulator (pin name: 3V3_IN, VCC, VDD)
-+
-+Required properties (I2C):
-+- reg		: I2C slave address
-+
-+Required properties (SPI):
-+- reg		: SPI chip select address
-+
-+Optional properties:
-+
-+- sirf,onoff-gpios	: GPIO used to power on and off device (pin name: ON_OFF)
-+- sirf,wakeup-gpios	: GPIO used to determine device power state
-+			  (pin name: RFPWRUP, WAKEUP)
-+- timepulse-gpios	: Time pulse GPIO (pin name: 1PPS, TM)
-+
-+Example:
-+
-+serial@1234 {
-+	compatible = "ns16550a";
-+
-+	gnss {
-+		compatible = "wi2wi,w2sg0084i";
-+
-+		vcc-supply = <&gnss_reg>;
-+		sirf,onoff-gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
-+		sirf,wakeup-gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 2128dfdf73f1..61db9d2391c4 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -120,6 +120,7 @@ excito	Excito
- ezchip	EZchip Semiconductor
- fairphone	Fairphone B.V.
- faraday	Faraday Technology Corporation
-+fastrax	Fastrax Oy
- fcs	Fairchild Semiconductor
- firefly	Firefly
- focaltech	FocalTech Systems Co.,Ltd
-@@ -197,6 +198,7 @@ licheepi	Lichee Pi
- linaro	Linaro Limited
- linksys	Belkin International, Inc. (Linksys)
- linux	Linux-specific binding
-+linx	Linx Technologies
- lltc	Linear Technology Corporation
- lsi	LSI Corp. (LSI Logic)
- lwn	Liebherr-Werk Nenzing GmbH
-@@ -393,6 +395,7 @@ vot	Vision Optical Technology Co., Ltd.
- wd	Western Digital Corp.
- wetek	WeTek Electronics, limited.
- wexler	Wexler
-+wi2wi	Wi2Wi, Inc.
- winbond Winbond Electronics corp.
- winstar	Winstar Display Corp.
- wlf	Wolfson Microelectronics
--- 
-2.17.0
+I'm confused as to why we are specifying the maximum current the device
+can deliver in a given mode in the DT - surely that's a fixed property
+of the hardware?
+
+--lrvsYIebpInmECXG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOfuAACgkQJNaLcl1U
+h9DCkwf/TUW3B79DOQ8gDtXWhAdDlfnHkl1MQ+yklnO9/BV1sXKmL7RPDwwOyCqT
+cKIWmY4o4H7nvMpr1YXBwW1CXG4r6+87fQDaP0212TufnzJkJjVPv4XMsMAe/Z7b
+BTtTtXCFmudVjSrp4l24q94APzWQcgt5I3FWLKiiv93HhKp8+4RBVCKFq/D3XLxk
+3nhjUG8zvTMhDtADgAYw3cZrT473IOyUEaXCwTc3wY3srVSX5ffzSZqM8Y2K1Vmi
+PLzk694h1wLsHXZe5Ig9HCF/Ys3y65fqhipmHGPcDkB3voPiJj9PNAmSZa16xsYc
+Beq6G12n2RpuddPVHJGdx+kuX2KvmQ==
+=SPtN
+-----END PGP SIGNATURE-----
+
+--lrvsYIebpInmECXG--
