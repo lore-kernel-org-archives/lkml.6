@@ -1,135 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753691AbeE3VJI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:09:08 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:33102 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753307AbeE3VJC (ORCPT
+        id S932615AbeE3VJ5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:09:57 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54958 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932508AbeE3VIA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:09:02 -0400
-X-Google-Smtp-Source: ADUXVKKjFCzCJgSjh2nfnjStDwKAJcchxoRxQbmc9rFthVBvzrWlCJXjHkc2gRlyMMWlrjnVrKNRz2uY+7cM/Lh0I2g=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <8736y9lw08.fsf@xmission.com>
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1527616920-5415-9-git-send-email-zohar@linux.vnet.ibm.com>
- <CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com> <8736y9lw08.fsf@xmission.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 30 May 2018 17:09:00 -0400
-Message-ID: <CAHC9VhTL=jT+agnm5M5p7rRETSL4V+eu+fZ=7iooLdmRvoJcsA@mail.gmail.com>
-Subject: Re: [PATCH v4 8/8] module: replace the existing LSM hook in init_module
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>, kexec@lists.infradead.org,
-        Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 30 May 2018 17:08:00 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        wsa@the-dreams.de, robh+dt@kernel.org, benh@kernel.crashing.org,
+        joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        rdunlap@infradead.org, andy.shevchenko@gmail.com,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v8 3/7] i2c: fsi: Add port structures
+Date: Wed, 30 May 2018 16:07:40 -0500
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1527714464-8642-1-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1527714464-8642-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18053021-0012-0000-0000-0000165A7A19
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009099; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039988; UDB=6.00532325; IPR=6.00819121;
+ MB=3.00021383; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 21:07:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053021-0013-0000-0000-0000530BFAAD
+Message-Id: <1527714464-8642-4-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805300224
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:25 PM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
-> Paul Moore <paul@paul-moore.com> writes:
->> On Tue, May 29, 2018 at 2:02 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->>> Both the init_module and finit_module syscalls call either directly
->>> or indirectly the security_kernel_read_file LSM hook.  This patch
->>> replaces the direct call in init_module with a call to the new
->>> security_kernel_load_data hook and makes the corresponding changes in
->>> SELinux and IMA.
->>>
->>> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
->>> Cc: Jeff Vander Stoep <jeffv@google.com>
->>> Cc: Paul Moore <paul@paul-moore.com>
->>> Cc: Casey Schaufler <casey@schaufler-ca.com>
->>> ---
->>>  kernel/module.c                   |  2 +-
->>>  security/integrity/ima/ima_main.c | 24 ++++++++++--------------
->>>  security/selinux/hooks.c          | 26 ++++++++++++++++++++------
->>>  3 files changed, 31 insertions(+), 21 deletions(-)
+Add and initialize I2C adapters for each port on the FSI-attached I2C
+master. Ports for each master are defined in the devicetree.
 
-...
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+---
+ drivers/i2c/busses/i2c-fsi.c | 90 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
->>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->>> index 02ebd1585eaf..e02186470fc5 100644
->>> --- a/security/selinux/hooks.c
->>> +++ b/security/selinux/hooks.c
->>> @@ -4018,12 +4018,6 @@ static int selinux_kernel_module_from_file(struct file *file)
->>>         u32 sid = current_sid();
->>>         int rc;
->>>
->>> -       /* init_module */
->>> -       if (file == NULL)
->>> -               return avc_has_perm(&selinux_state,
->>> -                                   sid, sid, SECCLASS_SYSTEM,
->>> -                                       SYSTEM__MODULE_LOAD, NULL);
->>> -
->>>         /* finit_module */
->>>
->>>         ad.type = LSM_AUDIT_DATA_FILE;
->>> @@ -4043,6 +4037,25 @@ static int selinux_kernel_module_from_file(struct file *file)
->>>                                 SYSTEM__MODULE_LOAD, &ad);
->>>  }
->>>
->>> +static int selinux_kernel_load_data(enum kernel_load_data_id id)
->>> +{
->>> +       u32 sid;
->>> +       int rc = 0;
->>> +
->>> +       switch (id) {
->>> +       case LOADING_MODULE:
->>> +               sid = current_sid();
->>> +
->>> +               /* init_module */
->>> +               return avc_has_perm(&selinux_state, sid, sid, SECCLASS_SYSTEM,
->>> +                                   SYSTEM__MODULE_LOAD, NULL);
->>> +       default:
->>> +               break;
->>> +       }
->>> +
->>> +       return rc;
->>> +}
->>
->> I'm not a fan of the duplication here.
->
-> There are a couple of fundamental and strong differences here.
->
-> selinux_kernel_load_data only has the current_sid to work with.
->
-> selinux_module_data_from_file is all about the logic of how
-> to get fsec or isec from the file and from the inode.
->
-> For selinux and for every other lsm that uses the hooks that difference
-> of whether or not you have a file leads to different logic and different
-> code.  There is no meaningful sharing between the two cases.
->
-> In selinux all of the meaningful sharing happens with calls to
-> avc_has_perm(... SYSTEM__MODULE_LOAD, ...);
->
-> So as far as I can see talking about duplication is unfounded there is
-> none.
-
-The duplication is the system:module_load access check (look at the
-avc_has_perm() calls in selinux_kernel_module_from_file().  I believe
-there is a readability/maintainability advantage to keeping them in
-one function, and I would like it to stay that way.  If these
-particular LSM hook(s) ever became performance critical (e.g. many
-invocations a second) then I could see the value in separating them
-out to eliminating some conditionals/branching, but as far as I can
-tell that is not a problem at present.
-
-I'm guessing your concern is more about the LSM hooks themselves and
-not the individual implementations, in which case please see my last
-response to Mimi.  I'm not opposed to two separate LSM hooks, I just
-want to avoid moving the system:module_load checks out of
-selinux_kernel_module_from_file(); which is independent of the number
-of LSM hooks.
-
+diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
+index e1b183c..be8e15c 100644
+--- a/drivers/i2c/busses/i2c-fsi.c
++++ b/drivers/i2c/busses/i2c-fsi.c
+@@ -17,7 +17,9 @@
+ #include <linux/fsi.h>
+ #include <linux/i2c.h>
+ #include <linux/kernel.h>
++#include <linux/list.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ 
+ #define FSI_ENGID_I2C		0x7
+ 
+@@ -123,6 +125,14 @@
+ struct fsi_i2c_master {
+ 	struct fsi_device	*fsi;
+ 	u8			fifo_size;
++	struct list_head	ports;
++};
++
++struct fsi_i2c_port {
++	struct list_head	list;
++	struct i2c_adapter	adapter;
++	struct fsi_i2c_master	*master;
++	u16			port;
+ };
+ 
+ static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
+@@ -176,9 +186,38 @@ static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
+ 	return fsi_i2c_write_reg(i2c->fsi, I2C_FSI_WATER_MARK, &watermark);
+ }
+ 
++static int fsi_i2c_set_port(struct fsi_i2c_port *port)
++{
++	int rc;
++	struct fsi_device *fsi = port->master->fsi;
++	u32 mode, dummy = 0;
++
++	rc = fsi_i2c_read_reg(fsi, I2C_FSI_MODE, &mode);
++	if (rc)
++		return rc;
++
++	if (FIELD_GET(I2C_MODE_PORT, mode) == port->port)
++		return 0;
++
++	mode = (mode & ~I2C_MODE_PORT) | FIELD_PREP(I2C_MODE_PORT, port->port);
++	rc = fsi_i2c_write_reg(fsi, I2C_FSI_MODE, &mode);
++	if (rc)
++		return rc;
++
++	/* reset engine when port is changed */
++	return fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
++}
++
+ static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+ 			int num)
+ {
++	int rc;
++	struct fsi_i2c_port *port = adap->algo_data;
++
++	rc = fsi_i2c_set_port(port);
++	if (rc)
++		return rc;
++
+ 	return -EOPNOTSUPP;
+ }
+ 
+@@ -196,23 +235,73 @@ static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
+ static int fsi_i2c_probe(struct device *dev)
+ {
+ 	struct fsi_i2c_master *i2c;
++	struct fsi_i2c_port *port;
++	struct device_node *np;
+ 	int rc;
++	u32 port_no;
+ 
+ 	i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
+ 	if (!i2c)
+ 		return -ENOMEM;
+ 
+ 	i2c->fsi = to_fsi_dev(dev);
++	INIT_LIST_HEAD(&i2c->ports);
+ 
+ 	rc = fsi_i2c_dev_init(i2c);
+ 	if (rc)
+ 		return rc;
+ 
++	/* Add adapter for each i2c port of the master. */
++	for_each_available_child_of_node(dev->of_node, np) {
++		rc = of_property_read_u32(np, "reg", &port_no);
++		if (rc || port_no > USHRT_MAX)
++			continue;
++
++		port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
++		if (!port)
++			break;
++
++		port->master = i2c;
++		port->port = port_no;
++
++		port->adapter.owner = THIS_MODULE;
++		port->adapter.dev.of_node = np;
++		port->adapter.dev.parent = dev;
++		port->adapter.algo = &fsi_i2c_algorithm;
++		port->adapter.algo_data = port;
++
++		snprintf(port->adapter.name, sizeof(port->adapter.name),
++			 "i2c_bus-%u", port_no);
++
++		rc = i2c_add_adapter(&port->adapter);
++		if (rc < 0) {
++			dev_err(dev, "Failed to register adapter: %d\n", rc);
++			devm_kfree(dev, port);
++			continue;
++		}
++
++		list_add(&port->list, &i2c->ports);
++	}
++
+ 	dev_set_drvdata(dev, i2c);
+ 
+ 	return 0;
+ }
+ 
++static int fsi_i2c_remove(struct device *dev)
++{
++	struct fsi_i2c_master *i2c = dev_get_drvdata(dev);
++	struct fsi_i2c_port *port;
++
++	if (!list_empty(&i2c->ports)) {
++		list_for_each_entry(port, &i2c->ports, list) {
++			i2c_del_adapter(&port->adapter);
++		}
++	}
++
++	return 0;
++}
++
+ static const struct fsi_device_id fsi_i2c_ids[] = {
+ 	{ FSI_ENGID_I2C, FSI_VERSION_ANY },
+ 	{ 0 }
+@@ -224,6 +313,7 @@ static int fsi_i2c_probe(struct device *dev)
+ 		.name = "i2c-fsi",
+ 		.bus = &fsi_bus_type,
+ 		.probe = fsi_i2c_probe,
++		.remove = fsi_i2c_remove,
+ 	},
+ };
+ 
 -- 
-paul moore
-www.paul-moore.com
+1.8.3.1
