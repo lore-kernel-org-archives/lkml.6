@@ -1,44 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968797AbeE3JJd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:09:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42446 "EHLO mail.kernel.org"
+        id S968873AbeE3JKB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:10:01 -0400
+Received: from mx.socionext.com ([202.248.49.38]:35842 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968739AbeE3JJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:09:13 -0400
-From: Jessica Yu <jeyu@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>
-Subject: [PATCH 3/3] modsign: print module name along with error message
-Date: Wed, 30 May 2018 11:08:30 +0200
-Message-Id: <20180530090830.20737-4-jeyu@kernel.org>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180530090830.20737-1-jeyu@kernel.org>
-References: <20180530090830.20737-1-jeyu@kernel.org>
+        id S968802AbeE3JJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 05:09:50 -0400
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-media@vger.kernel.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH 1/8] media: uniphier: add DT bindings documentation for UniPhier HSC
+Date: Wed, 30 May 2018 18:09:39 +0900
+Message-Id: <20180530090946.1635-2-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180530090946.1635-1-suzuki.katsuhiro@socionext.com>
+References: <20180530090946.1635-1-suzuki.katsuhiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is useful to know which module failed signature verification, so
-print the module name along with the error message.
+This patch adds DT binding documentation for UniPhier HSC which is
+MPEG2-TS input/output and demux subsystem.
 
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 ---
- kernel/module.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/media/uniphier,hsc.txt           | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/uniphier,hsc.txt
 
-diff --git a/kernel/module.c b/kernel/module.c
-index ae824a6f1a03..8670585eb5f7 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2807,7 +2807,7 @@ static int module_sig_check(struct load_info *info, int flags,
- 		reason = "Loading of module with unavailable key";
- 	decide:
- 		if (sig_enforce) {
--			pr_notice("%s is rejected\n", reason);
-+			pr_notice("%s: %s is rejected\n", info->name, reason);
- 			return -EKEYREJECTED;
- 		}
- 
+diff --git a/Documentation/devicetree/bindings/media/uniphier,hsc.txt b/Documentation/devicetree/bindings/media/uniphier,hsc.txt
+new file mode 100644
+index 000000000000..4242483b2ecc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/uniphier,hsc.txt
+@@ -0,0 +1,38 @@
++Socionext UniPhier HSC (High-speed Stream Controller)
++
++The Socionext UniPhier HSC subsystem consists of MPEG2-TS input/output and
++demultiplexer cores in the same register space.
++
++This interface is support TS serial signals (clock, valid, sync, data) from
++external demodulators.
++
++Required properties:
++- compatible      : should be one of the following:
++		    "socionext,uniphier-ld11-hsc"
++		    "socionext,uniphier-ld20-hsc"
++- reg             : offset and length of the register set for the device.
++- interrupts      : should contain DMA and TSI error interrupt.
++- pinctrl-names   : should be "default".
++- pinctrl-0       : defined TS serial signal pins for external demodulators.
++- clock-names     : should include following entries:
++                    "hsc", "stdmac"
++- clocks          : a list of phandle, should contain an entry for each
++                    entry in clock-names.
++- reset-names     : should include following entries:
++                    "hsc", "stdmac"
++- resets          : a list of phandle, should contain an entry for each
++                    entry in reset-names.
++
++Example:
++	hsc {
++		compatible = "socionext,uniphier-ld20-hsc";
++		reg = <0x5c000000 0x100000>;
++		interrupts = <0 100 4>, <0 101 4>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_hscin2_s>,
++			    <&pinctrl_hscin3_s>;
++		clock-names = "stdmac", "hsc";
++		clocks = <&sys_clk 8>, <&sys_clk 9>;
++		reset-names = "stdmac", "hsc";
++		resets = <&sys_rst 8>, <&sys_rst 9>;
++	};
 -- 
-2.16.3
+2.17.0
