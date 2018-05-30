@@ -1,71 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753291AbeE3LRT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:17:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:32840 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752605AbeE3LHJ (ORCPT
+        id S1753044AbeE3LRt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:17:49 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52272 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753181AbeE3LRU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:09 -0400
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Wed, 30 May 2018 07:17:20 -0400
+Date: Wed, 30 May 2018 12:17:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: Applied "regulator: bd71837: BD71837 PMIC regulator driver" to
+ the regulator tree
+Message-ID: <20180530111714.GJ6920@sirena.org.uk>
+References: <72e644d9855621ea8cfd7ec555e2da02403f21f6.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <E1fNysa-0006jU-41@debutante>
+ <20180530111425.GD13528@localhost.localdomain>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Hannes Reinecke" <hare@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Tyrel Datwyler" <tyreld@linux.vnet.ibm.com>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.283678190@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 066/153] scsi: ibmvfc: fix misdefined reserved field
- in ibmvfc_fcp_rsp_info
-In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="q5r20fdKX+PFtYHw"
+Content-Disposition: inline
+In-Reply-To: <20180530111425.GD13528@localhost.localdomain>
+X-Cookie: Don't get mad, get interest.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
 
-------------------
+--q5r20fdKX+PFtYHw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+On Wed, May 30, 2018 at 02:14:25PM +0300, Matti Vaittinen wrote:
 
-commit c39813652700f3df552b6557530f1e5f782dbe2f upstream.
+> Does this mean this single patch was applied? I am sorry if I did not
+> follow correct policy/way of informing the dependencies - but there is a
+> dependency. The patch 1/6 contains the header file
+> include/linux/mfd/bd71837.h with bunch of definitions this patch is
+> requiring.
 
-The fcp_rsp_info structure as defined in the FC spec has an initial 3
-bytes reserved field. The ibmvfc driver mistakenly defined this field as
-4 bytes resulting in the rsp_code field being defined in what should be
-the start of the second reserved field and thus always being reported as
-zero by the driver.
+Your driver won't actually get built until the MFD parts end up in the
+same tree since the regulator driver depends on the MFD so there's no
+problem, the code will just sit there and not cause any problems.
 
-Ideally, we should wire ibmvfc up with libfc for the sake of code
-deduplication, and ease of maintaining standardized structures in a
-single place. However, for now simply fixup the definition in ibmvfc for
-backporting to distros on older kernels. Wiring up with libfc will be
-done in a followup patch.
+--q5r20fdKX+PFtYHw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Reported-by: Hannes Reinecke <hare@suse.de>
-Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[bwh: Backported to 3.2: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/scsi/ibmvscsi/ibmvfc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
 
---- a/drivers/scsi/ibmvscsi/ibmvfc.h
-+++ b/drivers/scsi/ibmvscsi/ibmvfc.h
-@@ -365,7 +365,7 @@ enum ibmvfc_fcp_rsp_info_codes {
- };
- 
- struct ibmvfc_fcp_rsp_info {
--	u16 reserved;
-+	u8 reserved[3];
- 	u8 rsp_code;
- 	u8 reserved2[4];
- }__attribute__((packed, aligned (2)));
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOiDoACgkQJNaLcl1U
+h9C0Uwf9FffLG3KwDPEbrDy2gWR4EXdFCpKw9k3uQal6TZNRpKxPZ1m10XDfpCKv
+f80INeTZW0mnU7TPsFhnWs4czsdpUL4M5DZHVC8X7MDTlTE2TsbJ9mGjPiziFrpN
+6dCebSH14VVIH0/BVoqOzI1L+pCbVXBe5OQo69o1Gu2gTWj8s1GPYQ3yl/g1Wa9d
+daw6eG0sNVGhmu54HuLW1dxtDC97ENuLAdt8+bG2cWC1UljH+1S1zTQzXtiQsP8f
+ePg8xwhqeP6z7cssLUMl5uCAi3kdhectNgR3nx/ILrCDNUA9YcwmE82/zi1JmHVX
+IQUJc2UpuVVJ4mgDfZw0gd7jHLYJ0A==
+=Yxz3
+-----END PGP SIGNATURE-----
+
+--q5r20fdKX+PFtYHw--
