@@ -1,116 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030365AbeE3Hmb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:42:31 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14008 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935134AbeE3HmZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:42:25 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 30 May 2018 00:42:24 -0700
-Date: Wed, 30 May 2018 10:42:25 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Stefan Agner <stefan@agner.ch>, <boris.brezillon@bootlin.com>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <marek.vasut@gmail.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <thierry.reding@gmail.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <dev@lynxeye.de>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <marcel@ziswiler.com>, <krzk@kernel.org>,
-        <benjamin.lindqvist@endian.se>, <jonathanh@nvidia.com>,
-        <pgaikwad@nvidia.com>, <mirza.krak@gmail.com>,
-        <linux-mtd@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
-Message-ID: <20180530074225.GC6708@tbergstrom-lnx.Nvidia.com>
-References: <20180527215442.14760-5-stefan@agner.ch>
- <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
- <5665b799f763daa82dced238fb494863@agner.ch>
- <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
- <90180dd9fc6e60175c54b9d70e50f0e5@agner.ch>
- <04cdfdf5-33c5-b569-9cd7-dda1b9ea0baf@gmail.com>
+        id S937114AbeE3HmX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:42:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32810 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935134AbeE3HmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 03:42:20 -0400
+Date: Wed, 30 May 2018 09:42:16 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        guillaume.knispel@supersonicimagine.com,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
+Message-ID: <20180530074216.GZ27180@dhcp22.suse.cz>
+References: <20180524211135.27760-1-dave@stgolabs.net>
+ <20180524211135.27760-4-dave@stgolabs.net>
+ <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
+ <20180529144317.GA20910@dhcp22.suse.cz>
+ <20180529145106.GV27180@dhcp22.suse.cz>
+ <CA+55aFxoC0+hKBQ_TmbXM_X60fnP8JKC3aVvGc=8bKh2oxL12g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <04cdfdf5-33c5-b569-9cd7-dda1b9ea0baf@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
+In-Reply-To: <CA+55aFxoC0+hKBQ_TmbXM_X60fnP8JKC3aVvGc=8bKh2oxL12g@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 03:19:47PM +0300, Dmitry Osipenko wrote:
-> On 29.05.2018 15:12, Stefan Agner wrote:
-> > On 29.05.2018 09:48, Peter De Schrijver wrote:
-> >> On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
-> >>> On 28.05.2018 09:55, Peter De Schrijver wrote:
-> >>>> On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
-> >>>>> From: Lucas Stach <dev@lynxeye.de>
-> >>>>>
-> >>>>> Set up the NAND Flash controller clock to run at 150MHz
-> >>>>> instead of the rate set by the bootloader. This is a
-> >>>>> conservative rate which also yields good performance.
-> >>>>>
-> >>>>> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> >>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >>>>> ---
-> >>>>>  drivers/clk/tegra/clk-tegra20.c | 1 +
-> >>>>>  1 file changed, 1 insertion(+)
-> >>>>>
-> >>>>> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> >>>>> index 0ee56dd04cec..dff8c425cd28 100644
-> >>>>> --- a/drivers/clk/tegra/clk-tegra20.c
-> >>>>> +++ b/drivers/clk/tegra/clk-tegra20.c
-> >>>>> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
-> >>>>>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> >>>>>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> >>>>>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-> >>>>> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
-> >>>>>  	/* must be the last entry */
-> >>>>>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
-> >>>>>  };
-> >>>>> --
-> >>>>> 2.17.0
-> >>>>>
-> >>>>
-> >>>> Maybe better to specify this in the Tegra20 dtsi? See
-> >>>> "Assigned clock parents and rates" in
-> >>>> Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >>>
-> >>> assigned-clocks indeed works just fine for this case. Thanks for
-> >>> bringing this up, will drop this patch and add the device tree
-> >>> properties in v3.
-> >>>
-> >>> Hm, interesting that none of the Tegra device tree make use of the
-> >>> feature so far. I guess there would be other cases where this would be
-> >>> useful as well (the one just above, VDE?).
-> >>>
-> >>
-> >> Yes, historically this feature wasn't available, so we used these init tables.
-> >> Unfortunately it's not easy to get rid of them for parent and rate
-> >> configuration, because new kernels should also work with existing DTBs, so we
-> >> can't just add assigned-clock properties and remove the existing table
-> >> entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
-> >> are only enabled by the init table. For not yet merged blocks, this is
-> >> ofcourse not a concern.
-> > 
-> > Sure I understand.
-> > 
-> > Was just somewhat surprised that it isn't used at all yet (grep -r -e
-> > assigned-clock arch/arm/boot/dts/tegra* returns nothing). After all,
-> > assigned clocks bindings have been merged in 2014 :-)
-> > 
-> > At least "clk: tegra: Specify VDE clock rate" merged earlier this year
-> > would have been a candidate already.
-> 
-> I wasn't even aware of existence of the assigned-clock properties, probably just
-> like others.
+On Tue 29-05-18 15:46:25, Linus Torvalds wrote:
+[...]
+> The whole and ONLY point of "kvmalloc()" and friends is to make it easy to
+> write code and _not_ have those idiotic "let's do kmalloc or kvmalloc
+> depending on the phase of the moon" garbage. So the warning has literally
+> destroyed the only value that function has!
 
-This feature seems to be little used indeed. Not sure why.
+Well, I do agree but I've also seen terrible things while doing the
+conversion when introducing kvmalloc.
 
-Peter.
+So I admit that the defensive mode here is mostly inspired by existing
+users of vmalloc(GFP_NOFS). They are simply wrong and not really
+eager to be fixed from my experience. Now with kvmalloc fixing them
+up silently it would get even less likely to get fixed because there
+won't be any deadlock possible (compared to open coded kvmalloc like
+ext4_kvmalloc for example).
+
+My experience also tells me that most of those vmalloc NOFS users
+simply do not need NOFS at all because there is no risk of the reclaim
+recursion deadlocks. They are just used because of cargo cult which is
+sad and it causes some subtle problems for the direct reclaim. I would
+really like to eliminate those (e.g. see [1]).  It is sad reality that
+people tend to be more sensitive to WARN splats than "look this is wrong
+albeit not critical in most cases).
+
+[1] http://lkml.kernel.org/r/20180424162712.GL17484@dhcp22.suse.cz
+
+That being sad, if you believe that silently fixing up a code like that
+is a good idea we can do the following of course:
+
+>From c1a098e809a109800f9cfa63cb27fe9a78f3f316 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Wed, 30 May 2018 09:34:39 +0200
+Subject: [PATCH] mm: kvmalloc does not fallback to vmalloc for incompatible
+ gfp flags
+
+kvmalloc warned about incompatible gfp_mask to catch abusers (mostly
+GFP_NOFS) with an intention that this will motivate authors of the code
+to fix those. Linus argues that this just motivates people to do even
+more hacks like
+	if (gfp == GFP_KERNEL)
+		kvmalloc
+	else
+		kmalloc
+
+I haven't seen this happening but it is true that we can grow those in
+future. Therefore Linus suggested to simply not fallback to vmalloc for
+incompatible gfp flags and rather stick with the kmalloc path.
+
+Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ mm/util.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/mm/util.c b/mm/util.c
+index 45fc3169e7b0..c6586c146995 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -391,7 +391,8 @@ EXPORT_SYMBOL(vm_mmap);
+  * __GFP_RETRY_MAYFAIL is supported, and it should be used only if kmalloc is
+  * preferable to the vmalloc fallback, due to visible performance drawbacks.
+  *
+- * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm people.
++ * Please note that any use of gfp flags outside of GFP_KERNEL is careful to not
++ * fall back to vmalloc.
+  */
+ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+ {
+@@ -402,7 +403,8 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+ 	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
+ 	 * so the given set of flags has to be compatible.
+ 	 */
+-	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
++	if ((flags & GFP_KERNEL) != GFP_KERNEL)
++		return kmalloc_node(size, flags, node);
+ 
+ 	/*
+ 	 * We want to attempt a large physically contiguous block first because
+-- 
+2.17.0
+
+-- 
+Michal Hocko
+SUSE Labs
