@@ -1,121 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755150AbeE3Elk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 00:41:40 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53152 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750762AbeE3Elg (ORCPT
+        id S1753211AbeE3ErJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 00:47:09 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:36867 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbeE3ErE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 00:41:36 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0554A6028C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH] PCI: Add pci=safemode option
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-pci@vger.kernel.org, timur@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Christoffer Dall <cdall@linaro.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1527650389-31575-1-git-send-email-okaya@codeaurora.org>
- <20180530043103.GA19734@kroah.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <6c317ed8-cca3-8862-5f3b-12cf14e4d53b@codeaurora.org>
-Date: Tue, 29 May 2018 21:41:33 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180530043103.GA19734@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 30 May 2018 00:47:04 -0400
+X-Google-Smtp-Source: ADUXVKKFDY1kA3tiUPxHgE96BnlVYikviKTxbXUz7OJvXgNxzNS0rVJY8/aDfT8JlsBkLPYzFdmHCA==
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: arm@kernel.org, biju.das@bp.renesas.com,
+        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 13/15] arm: dts: r8a77xx: Add missing OPP properties for CPUs
+Date: Wed, 30 May 2018 10:16:58 +0530
+Message-Id: <c6254ebb1f177468db6b8ac560ffb5a4a0b864f0.1527655562.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
+In-Reply-To: <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
+References: <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/29/2018 9:31 PM, Greg Kroah-Hartman wrote:
-> On Tue, May 29, 2018 at 11:19:41PM -0400, Sinan Kaya wrote:
->> Adding pci=safemode kernel command line parameter to turn off all PCI
->> Express service driver as well as all optional PCIe features such as LTR,
->> Extended tags, Relaxed Ordering etc.
->>
->> Also setting MPS configuration to PCIE_BUS_SAFE so that MPS and MRRS can be
->> reconfigured with by the kernel in case BIOS hands off a broken
->> configuration.
-> 
-> Why not fix the BIOS?  That's what sane platforms do :)
-> 
->>
->> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->> ---
->>  Documentation/admin-guide/kernel-parameters.txt | 2 ++
->>  drivers/pci/pci.c                               | 7 +++++++
->>  drivers/pci/pci.h                               | 2 ++
->>  drivers/pci/pcie/portdrv_core.c                 | 2 +-
->>  drivers/pci/probe.c                             | 6 ++++++
->>  5 files changed, 18 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index 641ec9c..247adbb 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -3153,6 +3153,8 @@
->>  		noari		do not use PCIe ARI.
->>  		noats		[PCIE, Intel-IOMMU, AMD-IOMMU]
->>  				do not use PCIe ATS (and IOMMU device IOTLB).
->> +		safemode	turns of all optinal PCI features. Useful
->> +				for bringup/troubleshooting.
-> 
-> s/optinal/optional/ ?
+The OPP properties, like "operating-points", should either be present
+for all the CPUs of a cluster or none. If these are present only for a
+subset of CPUs of a cluster then things will start falling apart as soon
+as the CPUs are brought online in a different order. For example, this
+will happen because the operating system looks for such properties in
+the CPU node it is trying to bring up, so that it can create an OPP
+table.
 
-sure.
+Add such missing properties.
 
-> 
-> And you should explain what exactly in PCI is "optional".  Who defines
-> this and where is that list and what can go wrong if those options are
-> not enabled?
+Fix other missing properties (like, clock latency, voltage tolerance,
+etc) as well to make it all work.
 
-Bjorn and I discussed the need for such a "safe" mode feature when you
-want to bring up PCI for a platform. You want to turn off everything as
-a starter and just stick to bare minimum.
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ arch/arm/boot/dts/r8a7743.dtsi |  9 +++++++++
+ arch/arm/boot/dts/r8a7790.dtsi | 34 ++++++++++++++++++++++++++++++++--
+ arch/arm/boot/dts/r8a7791.dtsi | 14 ++++++++++++--
+ arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++++++--
+ 4 files changed, 66 insertions(+), 6 deletions(-)
 
-I can add a few words describing them. The goal of this option is to keep
-base PCI features with MSI only. Things like PME, AER, ASPM, Extended
-Tags, LTR, Relaxed Ordering, SRIOV are all considered optional. safemode
-is certainly not intended for production environments. 
-
-I can taint the kernel as a suggestion.
-
-I defined minimum as just booting a device and to be able to do DMA traffic
-only with 0 optimization
-
-> 
-> In looking at your patch, I can't determine that at all, so there's no
-> way that someone just looking at this sentence will be able to
-> understand.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-
-
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 142949d7066f..e4fb31c4f0ee 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -98,8 +98,17 @@
+ 			reg = <1>;
+ 			clock-frequency = <1500000000>;
+ 			clocks = <&cpg CPG_CORE R8A7743_CLK_Z>;
++			clock-latency = <300000>; /* 300 us */
+ 			power-domains = <&sysc R8A7743_PD_CA15_CPU1>;
+ 			next-level-cache = <&L2_CA15>;
++
++			/* kHz - uV - OPPs unknown yet */
++			operating-points = <1500000 1000000>,
++					   <1312500 1000000>,
++					   <1125000 1000000>,
++					   < 937500 1000000>,
++					   < 750000 1000000>,
++					   < 375000 1000000>;
+ 		};
+ 
+ 		L2_CA15: cache-controller-0 {
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 4d06b154bd7e..c4324b1a2ec4 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -79,12 +79,12 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0>;
+ 			clock-frequency = <1300000000>;
+-			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg CPG_CORE R8A7790_CLK_Z>;
+-			clock-latency = <300000>; /* 300 us */
+ 			power-domains = <&sysc R8A7790_PD_CA15_CPU0>;
+ 			next-level-cache = <&L2_CA15>;
+ 			capacity-dmips-mhz = <1024>;
++			voltage-tolerance = <1>; /* 1% */
++			clock-latency = <300000>; /* 300 us */
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+ 			operating-points = <1400000 1000000>,
+@@ -104,6 +104,16 @@
+ 			power-domains = <&sysc R8A7790_PD_CA15_CPU1>;
+ 			next-level-cache = <&L2_CA15>;
+ 			capacity-dmips-mhz = <1024>;
++			voltage-tolerance = <1>; /* 1% */
++			clock-latency = <300000>; /* 300 us */
++
++			/* kHz - uV - OPPs unknown yet */
++			operating-points = <1400000 1000000>,
++					   <1225000 1000000>,
++					   <1050000 1000000>,
++					   < 875000 1000000>,
++					   < 700000 1000000>,
++					   < 350000 1000000>;
+ 		};
+ 
+ 		cpu2: cpu@2 {
+@@ -115,6 +125,16 @@
+ 			power-domains = <&sysc R8A7790_PD_CA15_CPU2>;
+ 			next-level-cache = <&L2_CA15>;
+ 			capacity-dmips-mhz = <1024>;
++			voltage-tolerance = <1>; /* 1% */
++			clock-latency = <300000>; /* 300 us */
++
++			/* kHz - uV - OPPs unknown yet */
++			operating-points = <1400000 1000000>,
++					   <1225000 1000000>,
++					   <1050000 1000000>,
++					   < 875000 1000000>,
++					   < 700000 1000000>,
++					   < 350000 1000000>;
+ 		};
+ 
+ 		cpu3: cpu@3 {
+@@ -126,6 +146,16 @@
+ 			power-domains = <&sysc R8A7790_PD_CA15_CPU3>;
+ 			next-level-cache = <&L2_CA15>;
+ 			capacity-dmips-mhz = <1024>;
++			voltage-tolerance = <1>; /* 1% */
++			clock-latency = <300000>; /* 300 us */
++
++			/* kHz - uV - OPPs unknown yet */
++			operating-points = <1400000 1000000>,
++					   <1225000 1000000>,
++					   <1050000 1000000>,
++					   < 875000 1000000>,
++					   < 700000 1000000>,
++					   < 350000 1000000>;
+ 		};
+ 
+ 		cpu4: cpu@100 {
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 6e1dd7ad7bd6..d1d726a1364a 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -78,11 +78,11 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0>;
+ 			clock-frequency = <1500000000>;
+-			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
+-			clock-latency = <300000>; /* 300 us */
+ 			power-domains = <&sysc R8A7791_PD_CA15_CPU0>;
+ 			next-level-cache = <&L2_CA15>;
++			voltage-tolerance = <1>; /* 1% */
++			clock-latency = <300000>; /* 300 us */
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+ 			operating-points = <1500000 1000000>,
+@@ -101,6 +101,16 @@
+ 			clocks = <&cpg CPG_CORE R8A7791_CLK_Z>;
+ 			power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
+ 			next-level-cache = <&L2_CA15>;
++			voltage-tolerance = <1>; /* 1% */
++			clock-latency = <300000>; /* 300 us */
++
++			/* kHz - uV - OPPs unknown yet */
++			operating-points = <1500000 1000000>,
++					   <1312500 1000000>,
++					   <1125000 1000000>,
++					   < 937500 1000000>,
++					   < 750000 1000000>,
++					   < 375000 1000000>;
+ 		};
+ 
+ 		L2_CA15: cache-controller-0 {
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 4abecfc0ca98..1e6439b85a6b 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -70,10 +70,10 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0>;
+ 			clock-frequency = <1500000000>;
+-			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg CPG_CORE R8A7793_CLK_Z>;
+-			clock-latency = <300000>; /* 300 us */
+ 			power-domains = <&sysc R8A7793_PD_CA15_CPU0>;
++			voltage-tolerance = <1>; /* 1% */
++			clock-latency = <300000>; /* 300 us */
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+ 			operating-points = <1500000 1000000>,
+@@ -92,6 +92,17 @@
+ 			clock-frequency = <1500000000>;
+ 			clocks = <&cpg CPG_CORE R8A7793_CLK_Z>;
+ 			power-domains = <&sysc R8A7793_PD_CA15_CPU1>;
++			voltage-tolerance = <1>; /* 1% */
++			clock-latency = <300000>; /* 300 us */
++
++			/* kHz - uV - OPPs unknown yet */
++			operating-points = <1500000 1000000>,
++					   <1312500 1000000>,
++					   <1125000 1000000>,
++					   < 937500 1000000>,
++					   < 750000 1000000>,
++					   < 375000 1000000>;
++			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+ 		L2_CA15: cache-controller-0 {
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.15.0.194.g9af6a3dea062
