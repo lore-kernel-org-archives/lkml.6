@@ -1,28 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753237AbeE3L2K (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:28:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33275 "EHLO
+        id S1752886AbeE3L2m (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:28:42 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60969 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751651AbeE3LYB (ORCPT
+        by vger.kernel.org with ESMTP id S1752510AbeE3LHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:24:01 -0400
+        Wed, 30 May 2018 07:07:06 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Stefan Kristiansson" <stefan.kristiansson@saunalahti.fi>,
-        "Jonas Bonn" <jonas@southpole.se>, "Arnd Bergmann" <arnd@arndb.de>,
-        "Stafford Horne" <shorne@gmail.com>, openrisc@lists.librecores.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
+CC: akpm@linux-foundation.org, "Xin Long" <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Xiong Zhou" <xzhou@redhat.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.942515338@decadent.org.uk>
+Message-ID: <lsq.1527677561.897877604@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 046/153] signal/openrisc: Fix do_unaligned_access to
- send the proper signal
+Subject: [PATCH 3.2 084/153] bridge: check brport attr show in brport_show
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -35,53 +32,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 500d58300571b6602341b041f97c082a461ef994 upstream.
+commit 1b12580af1d0677c3c3a19e35bfe5d59b03f737f upstream.
 
-While reviewing the signal sending on openrisc the do_unaligned_access
-function stood out because it is obviously wrong.  A comment about an
-si_code set above when actually si_code is never set.  Leading to a
-random si_code being sent to userspace in the event of an unaligned
-access.
+Now br_sysfs_if file flush doesn't have attr show. To read it will
+cause kernel panic after users chmod u+r this file.
 
-Looking further SIGBUS BUS_ADRALN is the proper pair of signal and
-si_code to send for an unaligned access. That is what other
-architectures do and what is required by posix.
+Xiong found this issue when running the commands:
 
-Given that do_unaligned_access is broken in a way that no one can be
-relying on it on openrisc fix the code to just do the right thing.
+  ip link add br0 type bridge
+  ip link add type veth
+  ip link set veth0 master br0
+  chmod u+r /sys/devices/virtual/net/veth0/brport/flush
+  timeout 3 cat /sys/devices/virtual/net/veth0/brport/flush
 
-Fixes: 769a8a96229e ("OpenRISC: Traps")
-Cc: Jonas Bonn <jonas@southpole.se>
-Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-Cc: Stafford Horne <shorne@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: openrisc@lists.librecores.org
-Acked-by: Stafford Horne <shorne@gmail.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+kernel crashed with NULL a pointer dereference call trace.
+
+This patch is to fix it by return -EINVAL when brport_attr->show
+is null, just the same as the check for brport_attr->store in
+brport_store().
+
+Fixes: 9cf637473c85 ("bridge: add sysfs hook to flush forwarding table")
+Reported-by: Xiong Zhou <xzhou@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/openrisc/kernel/traps.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ net/bridge/br_sysfs_if.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/openrisc/kernel/traps.c
-+++ b/arch/openrisc/kernel/traps.c
-@@ -313,12 +313,12 @@ asmlinkage void do_unaligned_access(stru
- 	siginfo_t info;
+--- a/net/bridge/br_sysfs_if.c
++++ b/net/bridge/br_sysfs_if.c
+@@ -196,6 +196,9 @@ static ssize_t brport_show(struct kobjec
+ 	struct brport_attribute * brport_attr = to_brport_attr(attr);
+ 	struct net_bridge_port * p = to_brport(kobj);
  
- 	if (user_mode(regs)) {
--		/* Send a SIGSEGV */
--		info.si_signo = SIGSEGV;
-+		/* Send a SIGBUS */
-+		info.si_signo = SIGBUS;
- 		info.si_errno = 0;
--		/* info.si_code has been set above */
--		info.si_addr = (void *)address;
--		force_sig_info(SIGSEGV, &info, current);
-+		info.si_code = BUS_ADRALN;
-+		info.si_addr = (void __user *)address;
-+		force_sig_info(SIGBUS, &info, current);
- 	} else {
- 		printk("KERNEL: Unaligned Access 0x%.8lx\n", address);
- 		show_registers(regs);
++	if (!brport_attr->show)
++		return -EINVAL;
++
+ 	return brport_attr->show(p, buf);
+ }
+ 
