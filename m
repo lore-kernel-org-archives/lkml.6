@@ -1,46 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753850AbeE3PQh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:16:37 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:8167 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753065AbeE3PQg (ORCPT
+        id S1753878AbeE3PQq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:16:46 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:62714 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753329AbeE3PQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:16:36 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 30 May 2018 08:16:35 -0700
-Subject: Re: [PATCH] ASoC: core: Fix return code shown on error for hw_params
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-CC: <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-References: <1527693178-5038-1-git-send-email-jonathanh@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <cecd3b0d-b4b4-9b22-13be-3f6c51264cfe@nvidia.com>
-Date: Wed, 30 May 2018 16:16:31 +0100
+        Wed, 30 May 2018 11:16:40 -0400
+Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+To: Tony Lindgren <tony@atomide.com>, Faiz Abbas <faiz_abbas@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>, <paul@pwsan.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-2-faiz_abbas@ti.com> <20180530145047.GC5705@atomide.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
+Date: Wed, 30 May 2018 18:15:42 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1527693178-5038-1-git-send-email-jonathanh@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180530145047.GC5705@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 30/05/18 17:50, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
+>> From: Lokesh Vutla <lokeshvutla@ti.com>
+>>
+>> Add MCAN hwmod data and register it for dra762 silicons.
+>>
+>> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>> ---
+>>   arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++
+>>   1 file changed, 32 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+>> index 62352d1e6361..a2cd7f865a60 100644
+>> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+>> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+>> @@ -1355,6 +1355,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
+>>   	},
+>>   };
+>>   
+>> +/*
+>> + * 'mcan' class
+>> + *
+>> + */
+>> +static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
+>> +	.name	= "mcan",
+>> +};
+>> +
+>> +/* mcan */
+>> +static struct omap_hwmod dra76x_mcan_hwmod = {
+>> +	.name		= "mcan",
+>> +	.class		= &dra76x_mcan_hwmod_class,
+>> +	.clkdm_name	= "wkupaon_clkdm",
+>> +	.main_clk	= "mcan_clk",
+>> +	.prcm = {
+>> +		.omap4 = {
+>> +			.clkctrl_offs = DRA7XX_CM_WKUPAON_ADC_CLKCTRL_OFFSET,
+>> +			.context_offs = DRA7XX_RM_WKUPAON_ADC_CONTEXT_OFFSET,
+>> +			.modulemode   = MODULEMODE_SWCTRL,
+>> +		},
+>> +	},
+>> +};
+> 
+> You should be now able to leave out at least the clkctrl_offs and modulemode
+> here. Please also check if leaving out clkdm_name and main_clk now works :)
+> 
+>> @@ -3818,6 +3841,14 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
+>>   	.user		= OCP_USER_MPU,
+>>   };
+>>   
+>> +/* l3_main_1 -> mcan */
+>> +static struct omap_hwmod_ocp_if dra76x_l3_main_1__mcan = {
+>> +	.master		= &dra7xx_l3_main_1_hwmod,
+>> +	.slave		= &dra76x_mcan_hwmod,
+>> +	.clk		= "l3_iclk_div",
+>> +	.user		= OCP_USER_MPU | OCP_USER_SDMA,
+>> +};
+> 
+> I think this we still need though for the clk. Tero, do you have any comments
+> on what all clocks can now be left out?
 
-On 30/05/18 16:12, Jon Hunter wrote:
-> The call to hw_params for a component fails the error code is held by
-> the variable '__ret' but the error message displays the value held by
-> the variable 'ret'. Fix the return code shown when hw_params fails for
-> a component.
+For the OCP if part, I think that is still needed until we switch over 
+to full sysc driver. clkctrl_offs you probably also need because that is 
+used for mapping the omap_hwmod against a specific clkctrl clock. Those 
+can be only removed once we are done with hwmod (or figure out some 
+other way to assign the clkctrl clock to a hwmod.)
 
-Sorry, just resent this as I realise the description does not read correctly!
-
-Jon
-
--- 
-nvpublic
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
