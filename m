@@ -1,150 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932088AbeE3Psb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:48:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42212 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753561AbeE3Ps2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:48:28 -0400
-Date: Wed, 30 May 2018 11:48:26 -0400
-From: Vivek Goyal <vgoyal@redhat.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 15/28] ovl: Open file with data except for the case of
- fsync
-Message-ID: <20180530154826.GC2717@redhat.com>
-References: <20180529144612.16675-1-mszeredi@redhat.com>
- <20180529144612.16675-16-mszeredi@redhat.com>
- <20180530143044.GB2717@redhat.com>
- <CAJfpegvLcFgFi7aMiJs=xotEMKNNDy7rXdms08Mx3c5G37OJgw@mail.gmail.com>
+        id S1753734AbeE3Psz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:48:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56206 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753180AbeE3Psx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:48:53 -0400
+Date: Wed, 30 May 2018 16:48:49 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: David Collins <collinsd@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator
+ bindings
+Message-ID: <20180530154849.GQ6920@sirena.org.uk>
+References: <20180523082908.GB4828@sirena.org.uk>
+ <CAD=FV=XfPkpGD32MfTfcw02wQ+QetpUhY=P299uhpX6pY_iEvg@mail.gmail.com>
+ <20180523154057.GL4828@sirena.org.uk>
+ <CAD=FV=XWVOdJ8rWJnBTwoNqnYqYRYjknkZtUvT86+skbrTdwig@mail.gmail.com>
+ <20180523155617.GN4828@sirena.org.uk>
+ <CAD=FV=W4aDxWbcaJ9GZ1KkvyiTPAPR-oUoTFzJfS+LftU5ZP=Q@mail.gmail.com>
+ <20180530093701.GD6920@sirena.org.uk>
+ <CAD=FV=W-MLU9c-SvfLgKAKGP1eHN5xO-013f2M09XUa+QeHzrA@mail.gmail.com>
+ <20180530150241.GO6920@sirena.org.uk>
+ <CAD=FV=XJd-udEE6az0xP7i6x0oGsnd=BSCyZ0Og_+RjNCMXnCQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vIXBmblrD40XNCy4"
 Content-Disposition: inline
-In-Reply-To: <CAJfpegvLcFgFi7aMiJs=xotEMKNNDy7rXdms08Mx3c5G37OJgw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAD=FV=XJd-udEE6az0xP7i6x0oGsnd=BSCyZ0Og_+RjNCMXnCQ@mail.gmail.com>
+X-Cookie: Don't get mad, get interest.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 05:12:16PM +0200, Miklos Szeredi wrote:
-> >> From: Vivek Goyal <vgoyal@redhat.com>
-> >>
-> >> ovl_open() should open file which contains data and not open metacopy
-> >> inode.  With the introduction of metacopy inodes, with current
-> >> implementaion we will end up opening metacopy inode as well.
-> >>
-> >> But there can be certain circumstances like ovl_fsync() where we want to
-> >> allow opening a metacopy inode instead.
-> >>
-> >> Hence, change ovl_open_realfile() and add _ovl_open_real() and add extra
-> >> parameter which specifies whether to allow opening metacopy inode or not.
-> >> If this parameter is false, we look for data inode and open that.
-> >>
-> >> This should allow covering both the cases.
-> >>
-> >> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> >> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> >> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> >> ---
-> >>  fs/overlayfs/file.c | 39 ++++++++++++++++++++++++++++++---------
-> >>  1 file changed, 30 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> >> index 266692ce9a9a..c7738ef492c8 100644
-> >> --- a/fs/overlayfs/file.c
-> >> +++ b/fs/overlayfs/file.c
-> >> @@ -14,11 +14,20 @@
-> >>  #include <linux/uio.h>
-> >>  #include "overlayfs.h"
-> >>
-> >> -static struct file *ovl_open_realfile(const struct file *file)
-> >> +static char ovl_whatisit(struct inode *inode, struct inode *realinode)
-> >> +{
-> >> +     if (realinode != ovl_inode_upper(inode))
-> >> +             return 'l';
-> >> +     if (ovl_has_upperdata(inode))
-> >> +             return 'u';
-> >> +     else
-> >> +             return 'm';
-> >> +}
-> >> +
-> >> +static struct file *ovl_open_realfile(const struct file *file,
-> >> +                                   struct inode *realinode)
-> >>  {
-> >>       struct inode *inode = file_inode(file);
-> >> -     struct inode *upperinode = ovl_inode_upper(inode);
-> >> -     struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
-> >>       struct file *realfile;
-> >>       const struct cred *old_cred;
-> >>
-> >> @@ -28,7 +37,7 @@ static struct file *ovl_open_realfile(const struct file *file)
-> >>       revert_creds(old_cred);
-> >>
-> >>       pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
-> >> -              file, file, upperinode ? 'u' : 'l', file->f_flags,
-> >> +              file, file, ovl_whatisit(inode, realinode), file->f_flags,
-> >>                realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
-> >>
-> >>       return realfile;
-> >> @@ -72,17 +81,24 @@ static int ovl_change_flags(struct file *file, unsigned int flags)
-> >>       return 0;
-> >>  }
-> >>
-> >> -static int ovl_real_fdget(const struct file *file, struct fd *real)
-> >> +static int ovl_real_fdget_meta(const struct file *file, struct fd *real,
-> >> +                            bool allow_meta)
-> >>  {
-> >>       struct inode *inode = file_inode(file);
-> >> +     struct inode *realinode;
-> >>
-> >>       real->flags = 0;
-> >>       real->file = file->private_data;
-> >>
-> >> +     if (allow_meta)
-> >> +             realinode = ovl_inode_real(inode);
-> >> +     else
-> >> +             realinode = ovl_inode_realdata(inode);
-> >> +
-> >>       /* Has it been copied up since we'd opened it? */
-> >> -     if (unlikely(file_inode(real->file) != ovl_inode_real(inode))) {
-> >> +     if (unlikely(file_inode(real->file) != realinode)) {
-> >>               real->flags = FDPUT_FPUT;
-> >> -             real->file = ovl_open_realfile(file);
-> >> +             real->file = ovl_open_realfile(file, realinode);
-> >>
-> >>               return PTR_ERR_OR_ZERO(real->file);
-> >>       }
-> >> @@ -94,6 +110,11 @@ static int ovl_real_fdget(const struct file *file, struct fd *real)
-> >>       return 0;
-> >>  }
-> >>
-> >> +static int ovl_real_fdget(const struct file *file, struct fd *real)
-> >> +{
-> >> +     return ovl_real_fdget_meta(file, real, false);
-> >> +}
-> >> +
-> >>  static int ovl_open(struct inode *inode, struct file *file)
-> >>  {
-> >>       struct dentry *dentry = file_dentry(file);
-> >> @@ -107,7 +128,7 @@ static int ovl_open(struct inode *inode, struct file *file)
-> >>       /* No longer need these flags, so don't pass them on to underlying fs */
-> >>       file->f_flags &= ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);
-> >>
-> >> -     realfile = ovl_open_realfile(file);
-> >> +     realfile = ovl_open_realfile(file, ovl_inode_real(file_inode(file)));
-> 
-> That was meant to be
-> 
-> +     realfile = ovl_open_realfile(file, ovl_inode_realdata(file_inode(file)));
-> 
-> Is that correct?
 
-Yes, that's correct.
+--vIXBmblrD40XNCy4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-While we are at it, can we also update patch changelog. I see that
-_ovl_open_real() is not there anymore.
+On Wed, May 30, 2018 at 08:34:50AM -0700, Doug Anderson wrote:
+> On Wed, May 30, 2018 at 8:02 AM, Mark Brown <broonie@kernel.org> wrote:
 
-Thanks
-Vivek
+> > What you're describing sounds like what we should be doing normally, if
+> > we're not doing that we should probably be fixing the core.
+
+> I'm not convinced that this behavior makes sense to move to the core.
+> On most regulators I'd expect that when the regulator driver says to
+> turn them off that they will output no voltage.  The reason RPMh is
+
+Oh, you mean while the regulator is off...  TBH I don't see a huge
+problem doing that anyway and just reverting to the bottom of the
+constraints when everything gets turned off since we have to see if we
+need to adjust the voltage every time we enabled anyway.
+
+> In any other system when Linux disabled the regulator it wouldn't
+> matter that you left it set at 1.4V.  Thus RPMh is special and IMO the
+> workaround belongs there.
+
+Without the core doing something the regulator isn't going to get told
+that anything updated voltages anyway...
+
+--vIXBmblrD40XNCy4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOx+AACgkQJNaLcl1U
+h9DtYAf/d42wzL/BwC0ZoU87rcBj1tg5JnI3JXmEjk0TAEr8Mr9X26kTgvNDN4he
+sfj0TCQnt106iCytS9vuq13r0vc0N8a73zACI9rBL4AFN2r8/KqyjfG5iuD1IYUf
+eEAlJeBHT5jL8EJOiBgq2z+8n4jIPNnZdK/A8kanILTb2D0yU9LmqXJaLCquSBef
+d3otBG5MHDZNmBvemCG07/dvdvwHHmOZu/QAEsxkqP6cuqw+phTpVrIc2+40lHJk
+QfVj28IYFDxNf3viq4W606P0LE0BtP3pwjhFyKUj6CdLFzFli+EI7lXBuvp1q3UB
+eEWC9xQb5Fw2b4Hj5h+RS6hFhej0mw==
+=hSKi
+-----END PGP SIGNATURE-----
+
+--vIXBmblrD40XNCy4--
