@@ -1,179 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932615AbeE3WhC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:37:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36306 "EHLO mail.kernel.org"
+        id S932515AbeE3Wkm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:40:42 -0400
+Received: from ozlabs.org ([203.11.71.1]:49567 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932573AbeE3Wg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:36:57 -0400
-X-Google-Smtp-Source: ADUXVKJfBYEakyqXFlBdIlKJLzXckomUqOkVFEDlfG6RaIJdcg8mXb0zVEfqYGZ1sesqRboa7iF7CuwwKlk4JOymvb4=
+        id S1753681AbeE3Wkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 18:40:40 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 31 May 2018 08:40:37 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the kbuild tree
+Message-ID: <20180531084037.2f8b4c1e@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180530194032.982.41562@harbor.lan>
-References: <20180511162028.20616-1-brgl@bgdev.pl> <CAL_JsqL3CWFSpKEGoGwQDxCQ04g4uT1hiDTxXzjz4XTjPbfsoQ@mail.gmail.com>
- <CAMRc=McDNYQ5uk8EyRkDf8eh9q7tyF=t7PcUd6DBLqXcseJ3AQ@mail.gmail.com>
- <CAL_JsqJ=DdkDR3LtnTMHPUpwaUbjPEBgkaCV8ja+p-mTvWZuYA@mail.gmail.com> <20180530194032.982.41562@harbor.lan>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 30 May 2018 17:36:34 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+7=NGj57k=E5GAuDmW7Uu_YkHJXf8jSyc_ad3r1op4yA@mail.gmail.com>
-Message-ID: <CAL_Jsq+7=NGj57k=E5GAuDmW7Uu_YkHJXf8jSyc_ad3r1op4yA@mail.gmail.com>
-Subject: Re: [PATCH 00/12] introduce support for early platform drivers
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>, Stephen Boyd <sboyd@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES"
-        <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/YcQ0cgYwznQVM=6GoGAqbNd"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 2:40 PM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Hi Rob,
->
-> Quoting Rob Herring (2018-05-14 06:20:57)
->> On Mon, May 14, 2018 at 6:38 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> > 2018-05-11 22:13 GMT+02:00 Rob Herring <robh+dt@kernel.org>:
->> >> On Fri, May 11, 2018 at 11:20 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> >>> This series is a follow-up to the RFC[1] posted a couple days ago.
->> >>>
->> >>> NOTE: this series applies on top of my recent patches[2] that move the previous
->> >>> implementation of early platform devices to arch/sh.
->> >>>
->> >>> Problem:
->> >>>
->> >>> Certain class of devices, such as timers, certain clock drivers and irq chip
->> >>> drivers need to be probed early in the boot sequence. The currently preferred
->> >>> approach is using one of the OF_DECLARE() macros. This however does not create
->> >>> a platform device which has many drawbacks - such as not being able to use
->> >>> devres routines, dev_ log functions or no way of deferring the init OF function
->> >>> if some other resources are missing.
->> >>
->> >> I skimmed though this and it doesn't look horrible (how's that for
->> >> positive feedback? ;) ). But before going into the details, I think
->> >> first there needs to be agreement this is the right direction.
->> >>
->> >> The question does remain though as to whether this class of devices
->> >> should be platform drivers. They can't be modules. They can't be
->> >> hotplugged. Can they be runtime-pm enabled? So the advantage is ...
->> >>
->> >
->> > The main (but not the only) advantage for drivers that can both be
->> > platform drivers and OF_DECLARE drivers is that we get a single entry
->> > point and can reuse code without resorting to checking if (!dev). It
->> > results in more consistent code base. Another big advantage is
->> > consolidation of device tree and machine code for SoC drivers used in
->> > different boards of which some are still using board files and others
->> > are defined in DT (see: DaVinci).
->> >
->> >> I assume that the clock maintainers had some reason to move clocks to
->> >> be platform drivers. It's just not clear to me what that was.
->> >>
->> >>> For drivers that use both platform drivers and OF_DECLARE the situation is even
->> >>> more complicated as the code needs to take into account that there can possibly
->> >>> be no struct device present. For a specific use case that we're having problems
->> >>> with, please refer to the recent DaVinci common-clock conversion patches and
->> >>> the nasty workaround that this problem implies[3].
->> >>
->> >> So devm_kzalloc will work with this solution? Why did we need
->> >> devm_kzalloc in the first place? The clocks can never be removed and
->> >> cleaning up on error paths is kind of pointless. The system would be
->> >> hosed, right?
->> >>
->> >
->> > It depends - not all clocks are necessary for system to boot.
->>
->> That doesn't matter. You have a single driver for all/most of the
->> clocks, so the driver can't be removed.
->
-> -ECANOFWORMS
->
-> A couple of quick rebuttals, but I imagine we're going to disagree on
-> the platform_driver thing as a matter of taste no matter what...
+--Sig_/YcQ0cgYwznQVM=6GoGAqbNd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It's really more should the clocksource, clockevents and primary
-interrupt controller be drivers. Let's get agreement on that first. If
-yes, then it probably does make sense that their dependencies are
-drivers too. If not, then making only the dependencies drivers doesn't
-seem right to me.
+Hi Masahiro,
 
-> 1) There should be multiple clk drivers in a properly modeled system.
-> Some folks still incorrectly put all clocks in a system into a single
-> driver because That's How We Used To Do It, and some systems (simpler
-> ones) really only have a single clock generator IP block.
->
-> Excepting those two reasons above, we really should have separate
-> drivers for clocks controlled by the PMIC, for the (one or more) clock
-> generator blocks inside of the AP/SoC, and then even more for the
-> drivers that map to IP blocks that have their own clock gens.
+After merging the kbuild tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-I agree those should be separate entities at least. But for a given
-h/w block, if you already have to use OF_DECLARE, why would you try to
-split that into OF_DECLARE and a driver? what advantage does putting
-non-boot essential clocks in a driver or transitioning to a driver get
-you?
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function '=
+wlc_phy_workarounds_nphy_rev7':
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warni=
+ng: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-=
+than=3D]
+ }
+ ^
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function '=
+wlc_phy_workarounds_nphy_rev3':
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warni=
+ng: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-=
+than=3D]
+ }
+ ^
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function '=
+wlc_phy_cal_txiqlo_nphy':
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warni=
+ng: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-=
+than=3D]
+ }
+ ^
 
-And I've seen PMIC clocks could be inputs to the SoC's clock
-controller(s), so the dependencies get more complicated. Then does the
-PMIC driver and its dependencies need to be early drivers too?
+I have no idea what caused these warnings to appear ... nothing in those
+functions looks too bad.
 
-> Good examples of the latter are display controllers that generate their
-> own PLL and pixel clock. Or MMC controllers that have a
-> runtime-programmable clock divider. Examples of these are merged into
-> mainline.
+--=20
+Cheers,
+Stephen Rothwell
 
-But those are drivers of types other than a clock controller that
-happen to register some clocks as well. I wasn't saying these cases
-can't or shouldn't be part of the driver model. Look at irqchips. We
-have some that use the driver model (e.g. every GPIO driver) and some
-that don't because there's no need (e.g. GIC).
+--Sig_/YcQ0cgYwznQVM=6GoGAqbNd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> 2) Stephen and I wanted clock drivers to actually be represented in the
-> driver model. There were these gigantic clock drivers that exclusively
-> used CLK_OF_DECLARE and they just sort of floated out there in the
-> ether... no representation in sysfs, no struct device to map onto a
-> clock controller struct, etc.
->
-> I'd be happy to hear why you think that platform_driver is a bad fit for
-> a device driver that generally manages memory-mapped system resources
-> that are part of the system glue and not really tied to a specific bus.
-> Sounds like a good fit to me.
->
-> If platform_driver doesn't handle the early boot thing well, that tells
-> me that we have a problem to solve in platform_driver, not in the clk
-> subsystem or drivers.
+-----BEGIN PGP SIGNATURE-----
 
-Doing things earlier is not the only way to solve the problems.
-Perhaps we need to figure out how to start things later. Maybe it's
-not feasible here, I don't know.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPKGUACgkQAVBC80lX
+0Gy2dwf9HgIRhN09P6Vpty/a8LE9OoVMtkQLr2QzJ67t1oRtUyMO0+om6ektF/Vt
+F50uGrp2TPjjx5b3zwfRC6xZoDslnkhWxkr+/DeyzmpH+/LI/yPY8zKXofXvekbV
+i/ltx/VRcHMQXz4dRJO1yTlMAxlhSl4AVJcYi25lOozC1XFLbQHtGYBIHJpP9Bzx
+1UgR6S4KPHctj8Rc3C7OjA9MUn93ebmKy2aKYhhmfPszPicDAK6jAM73ZIMoDoC3
+zPJXSPh7DLSe8FmHHpwonn2YC6IzHLLunm5PkgHg5Si4QIPKiPL9x2t9yX485reY
+O3GASh2D1cXLvN1W4BVYCaIWgm4zLg==
+=PQzO
+-----END PGP SIGNATURE-----
 
-> 3) Lots of clock controllers should be loadable modules. E.g. i2c clock
-> expanders, potentially external PMIC-related drivers, external audio
-> codecs, etc.
->
-> Again, repeating my point #1 above, just because many platforms have a
-> monolithic clock driver does not mean that this is the Right Way to do
-> it.
-
-And in those cases, I completely agree they should be part of a driver.
-
-Rob
+--Sig_/YcQ0cgYwznQVM=6GoGAqbNd--
