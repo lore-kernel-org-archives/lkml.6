@@ -1,107 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753152AbeE3Mga (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:36:30 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51678 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751870AbeE3Mg1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:36:27 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Maciej Purski <m.purski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2 07/10] dt-bindings: tc358754: add DT bindings
-Date: Wed, 30 May 2018 15:36:29 +0300
-Message-ID: <6047372.VZe6FOdiCA@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1527682561-1386-8-git-send-email-m.purski@samsung.com>
-References: <1527682561-1386-1-git-send-email-m.purski@samsung.com> <CGME20180530121627eucas1p1c8daf24d7c95e9e8b04a523d4662dfd9@eucas1p1.samsung.com> <1527682561-1386-8-git-send-email-m.purski@samsung.com>
+        id S1752995AbeE3MiO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:38:14 -0400
+Received: from guitar.tcltek.co.il ([192.115.133.116]:33927 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751870AbeE3MiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 08:38:13 -0400
+Date: Wed, 30 May 2018 15:38:09 +0300
+From: Baruch Siach <baruch@tkos.co.il>
+To: =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Scott Branden <sbranden@broadcom.com>,
+        Tony Lindgren <tony@atomide.com>, Ray Jui <rjui@broadcom.com>,
+        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        Jon Mason <jonmason@broadcom.com>,
+        =?utf-8?Q?Cl=C3=A9ment?= Peron <clement.peron@devialet.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Laura Abbott <labbott@redhat.com>
+Subject: Re: [PATCH] ARM: debug: Add Iproc UART3 debug addresses
+Message-ID: <20180530123809.khyzehg62ct6jzws@sapphire.tkos.co.il>
+References: <20180530122922.1041-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180530122922.1041-1-peron.clem@gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maciej,
+Hi Clément,
 
-On Wednesday, 30 May 2018 15:15:58 EEST Maciej Purski wrote:
-> From: Andrzej Hajda <a.hajda@samsung.com>
+On Wed, May 30, 2018 at 02:29:22PM +0200, Clément Péron wrote:
+> From: Clément Peron <clement.peron@devialet.com>
 > 
-> The patch adds bindings to Toshiba DSI/LVDS bridge TC358764.
-> Bindings describe power supplies, reset gpio and video interfaces.
+> Broadcom Iproc SoCs typically use the UART3 for
+> debug/console, provide a known good location for that.
 > 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
+> Signed-off-by: Clément Peron <clement.peron@devialet.com>
 > ---
->  .../bindings/display/bridge/toshiba,tc358764.txt   | 37 +++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
+>  arch/arm/Kconfig.debug | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 > 
-> diff --git
-> a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
-> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt new
-> file mode 100644
-> index 0000000..6eda14f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
-> @@ -0,0 +1,37 @@
-> +TC358764 MIPI-DSI to LVDS panel bridge
+> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> index 199ebc1c4538..fa6fa1dae94d 100644
+> --- a/arch/arm/Kconfig.debug
+> +++ b/arch/arm/Kconfig.debug
+> @@ -207,6 +207,14 @@ choice
+>  		depends on ARCH_BCM_HR2
+>  		select DEBUG_UART_8250
+>  
+> +	config DEBUG_BCM_IPROC_UART3
+> +		bool "Kernel low-level debugging on BCM IPROC UART3"
+> +		depends on ARCH_BCM_CYGNUS
+> +		select DEBUG_UART_8250
+> +		help
+> +		  Say Y here if you want the debug print routines to direct
+> +		  their output to the third serial port on these devices.
 > +
-> +Required properties:
-> +  - compatible: "toshiba,tc358764"
-> +  - reg: the virtual channel number of a DSI peripheral
-> +  - vddc-supply: core voltage supply, 1.2V
-> +  - vddio-supply: I/O voltage supply, 1.8V or 3.3V
-> +  - vddlvds-supply: LVDS1/2 voltage supply, 3.3V
-> +  - reset-gpios: a GPIO spec for the reset pin
-> +
-> +The device node can contain zero to two 'port' child nodes, each with one
-> +child 'endpoint' node, according to the bindings defined in [1].
-> +The following are properties specific to those nodes.
-> +
-> +port:
-> +  - reg: (required) can be 0 for DSI port or 1 for LVDS port;
-> +
-> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+>  	config DEBUG_BCM_KONA_UART
+>  		bool "Kernel low-level debugging messages via BCM KONA UART"
+>  		depends on ARCH_BCM_MOBILE
+> @@ -1564,6 +1572,7 @@ config DEBUG_UART_PHYS
+>  	default 0x20068000 if DEBUG_RK29_UART2 || DEBUG_RK3X_UART3
+>  	default 0x20201000 if DEBUG_BCM2835
+>  	default 0x3f201000 if DEBUG_BCM2836
+> +	default 0x18023000 if DEBUG_BCM_IPROC_UART3
 
-Could you please take the comments I made on v1 into account when you'll post 
-v3 ?
+Entries are sorted by the address value. Except that DEBUG_BCM_KONA_UART 
+should be listed above DEBUG_BCM2836.
 
-> +Example:
-> +
-> +	bridge@0 {
-> +		reg = <0>;
-> +		compatible = "toshiba,tc358764";
-> +		vddc-supply = <&vcc_1v2_reg>;
-> +		vddio-supply = <&vcc_1v8_reg>;
-> +		vddlvds-supply = <&vcc_3v3_reg>;
-> +		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		port@1 {
-> +			reg = <1>;
-> +			lvds_ep: endpoint {
-> +				remote-endpoint = <&panel_ep>;
-> +			};
-> +		};
-> +	};
+>  	default 0x3e000000 if DEBUG_BCM_KONA_UART
+>  	default 0x4000e400 if DEBUG_LL_UART_EFM32
+>  	default 0x40028000 if DEBUG_AT91_SAMV7_USART1
+> @@ -1730,6 +1739,7 @@ config DEBUG_UART_VIRT
+>  	default 0xfe018000 if DEBUG_MMP_UART3
+>  	default 0xfe100000 if DEBUG_IMX23_UART || DEBUG_IMX28_UART
+>  	default 0xfe230000 if DEBUG_PICOXCELL_UART
+> +	default 0xf1023000 if DEBUG_BCM_IPROC_UART3
 
+Same here.
+
+>  	default 0xfe300000 if DEBUG_BCM_KONA_UART
+>  	default 0xfe800000 if ARCH_IOP32X
+>  	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
+> @@ -1791,7 +1801,7 @@ config DEBUG_UART_8250_WORD
+>  		DEBUG_KEYSTONE_UART0 || DEBUG_KEYSTONE_UART1 || \
+>  		DEBUG_ALPINE_UART0 || \
+>  		DEBUG_DAVINCI_DMx_UART0 || DEBUG_DAVINCI_DA8XX_UART1 || \
+> -		DEBUG_DAVINCI_DA8XX_UART2 || \
+> +		DEBUG_DAVINCI_DA8XX_UART2 || DEBUG_BCM_IPROC_UART3 || \
+>  		DEBUG_BCM_KONA_UART || DEBUG_RK32_UART2
+
+baruch
 
 -- 
-Regards,
-
-Laurent Pinchart
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
