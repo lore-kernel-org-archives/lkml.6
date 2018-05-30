@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753507AbeE3Ldq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:33:46 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60863 "EHLO
+        id S1753564AbeE3Ld7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:33:59 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60853 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751721AbeE3LHE (ORCPT
+        by vger.kernel.org with ESMTP id S1751499AbeE3LHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:04 -0400
+        Wed, 30 May 2018 07:07:03 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Alan Cox" <alan@llwyncelyn.cymru>, "Tejun Heo" <tj@kernel.org>
+CC: akpm@linux-foundation.org, "Tejun Heo" <tj@kernel.org>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        "Hans de Goede" <hdegoede@redhat.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.44296485@decadent.org.uk>
+Message-ID: <lsq.1527677561.209285955@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 111/153] tty: make n_tty_read() always abort if hangup
- is in progress
+Subject: [PATCH 3.2 113/153] ahci: Add PCI-id for the Highpoint Rocketraid
+ 644L card
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,195 +33,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 28b0f8a6962a24ed21737578f3b1b07424635c9e upstream.
+commit 28b2182dad43f6f8fcbd167539a26714fd12bd64 upstream.
 
-A tty is hung up by __tty_hangup() setting file->f_op to
-hung_up_tty_fops, which is skipped on ttys whose write operation isn't
-tty_write().  This means that, for example, /dev/console whose write
-op is redirected_tty_write() is never actually marked hung up.
+Like the Highpoint Rocketraid 642L and cards using a Marvel 88SE9235
+controller in general, this RAID card also supports AHCI mode and short
+of a custom driver, this is the only way to make it work under Linux.
 
-Because n_tty_read() uses the hung up status to decide whether to
-abort the waiting readers, the lack of hung-up marking can lead to the
-following scenario.
+Note that even though the card is called to 644L, it has a product-id
+of 0x0645.
 
- 1. A session contains two processes.  The leader and its child.  The
-    child ignores SIGHUP.
-
- 2. The leader exits and starts disassociating from the controlling
-    terminal (/dev/console).
-
- 3. __tty_hangup() skips setting f_op to hung_up_tty_fops.
-
- 4. SIGHUP is delivered and ignored.
-
- 5. tty_ldisc_hangup() is invoked.  It wakes up the waits which should
-    clear the read lockers of tty->ldisc_sem.
-
- 6. The reader wakes up but because tty_hung_up_p() is false, it
-    doesn't abort and goes back to sleep while read-holding
-    tty->ldisc_sem.
-
- 7. The leader progresses to tty_ldisc_lock() in tty_ldisc_hangup()
-    and is now stuck in D sleep indefinitely waiting for
-    tty->ldisc_sem.
-
-The following is Alan's explanation on why some ttys aren't hung up.
-
- http://lkml.kernel.org/r/20171101170908.6ad08580@alans-desktop
-
- 1. It broke the serial consoles because they would hang up and close
-    down the hardware. With tty_port that *should* be fixable properly
-    for any cases remaining.
-
- 2. The console layer was (and still is) completely broken and doens't
-    refcount properly. So if you turn on console hangups it breaks (as
-    indeed does freeing consoles and half a dozen other things).
-
-As neither can be fixed quickly, this patch works around the problem
-by introducing a new flag, TTY_HUPPING, which is used solely to tell
-n_tty_read() that hang-up is in progress for the console and the
-readers should be aborted regardless of the hung-up status of the
-device.
-
-The following is a sample hung task warning caused by this issue.
-
-  INFO: task agetty:2662 blocked for more than 120 seconds.
-        Not tainted 4.11.3-dbg-tty-lockup-02478-gfd6c7ee-dirty #28
-  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-      0  2662      1 0x00000086
-  Call Trace:
-   __schedule+0x267/0x890
-   schedule+0x36/0x80
-   schedule_timeout+0x23c/0x2e0
-   ldsem_down_write+0xce/0x1f6
-   tty_ldisc_lock+0x16/0x30
-   tty_ldisc_hangup+0xb3/0x1b0
-   __tty_hangup+0x300/0x410
-   disassociate_ctty+0x6c/0x290
-   do_exit+0x7ef/0xb00
-   do_group_exit+0x3f/0xa0
-   get_signal+0x1b3/0x5d0
-   do_signal+0x28/0x660
-   exit_to_usermode_loop+0x46/0x86
-   do_syscall_64+0x9c/0xb0
-   entry_SYSCALL64_slow_path+0x25/0x25
-
-The following is the repro.  Run "$PROG /dev/console".  The parent
-process hangs in D state.
-
-  #include <sys/types.h>
-  #include <sys/stat.h>
-  #include <sys/wait.h>
-  #include <sys/ioctl.h>
-  #include <fcntl.h>
-  #include <unistd.h>
-  #include <stdio.h>
-  #include <stdlib.h>
-  #include <errno.h>
-  #include <signal.h>
-  #include <time.h>
-  #include <termios.h>
-
-  int main(int argc, char **argv)
-  {
-	  struct sigaction sact = { .sa_handler = SIG_IGN };
-	  struct timespec ts1s = { .tv_sec = 1 };
-	  pid_t pid;
-	  int fd;
-
-	  if (argc < 2) {
-		  fprintf(stderr, "test-hung-tty /dev/$TTY\n");
-		  return 1;
-	  }
-
-	  /* fork a child to ensure that it isn't already the session leader */
-	  pid = fork();
-	  if (pid < 0) {
-		  perror("fork");
-		  return 1;
-	  }
-
-	  if (pid > 0) {
-		  /* top parent, wait for everyone */
-		  while (waitpid(-1, NULL, 0) >= 0)
-			  ;
-		  if (errno != ECHILD)
-			  perror("waitpid");
-		  return 0;
-	  }
-
-	  /* new session, start a new session and set the controlling tty */
-	  if (setsid() < 0) {
-		  perror("setsid");
-		  return 1;
-	  }
-
-	  fd = open(argv[1], O_RDWR);
-	  if (fd < 0) {
-		  perror("open");
-		  return 1;
-	  }
-
-	  if (ioctl(fd, TIOCSCTTY, 1) < 0) {
-		  perror("ioctl");
-		  return 1;
-	  }
-
-	  /* fork a child, sleep a bit and exit */
-	  pid = fork();
-	  if (pid < 0) {
-		  perror("fork");
-		  return 1;
-	  }
-
-	  if (pid > 0) {
-		  nanosleep(&ts1s, NULL);
-		  printf("Session leader exiting\n");
-		  exit(0);
-	  }
-
-	  /*
-	   * The child ignores SIGHUP and keeps reading from the controlling
-	   * tty.  Because SIGHUP is ignored, the child doesn't get killed on
-	   * parent exit and the bug in n_tty makes the read(2) block the
-	   * parent's control terminal hangup attempt.  The parent ends up in
-	   * D sleep until the child is explicitly killed.
-	   */
-	  sigaction(SIGHUP, &sact, NULL);
-	  printf("Child reading tty\n");
-	  while (1) {
-		  char buf[1024];
-
-		  if (read(fd, buf, sizeof(buf)) < 0) {
-			  perror("read");
-			  return 1;
-		  }
-	  }
-
-	  return 0;
-  }
-
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1534106
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Alan Cox <alan@llwyncelyn.cymru>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.2: TTY_HUPPING is not really a new flag; it's an old flag
- that was wrongly removed in 3.19.  Just add the test for it in n_tty_read().]
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -1809,6 +1809,12 @@ do_it_again:
- 			}
- 			if (tty_hung_up_p(file))
- 				break;
-+			/*
-+			 * Abort readers for ttys which never actually
-+			 * get hung up.  See __tty_hangup().
-+			 */
-+			if (test_bit(TTY_HUPPING, &tty->flags))
-+				break;
- 			if (!timeout)
- 				break;
- 			if (file->f_flags & O_NONBLOCK) {
+ drivers/ata/ahci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -542,7 +542,9 @@ static const struct pci_device_id ahci_p
+ 	  .driver_data = board_ahci_yes_fbs },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9230),
+ 	  .driver_data = board_ahci_yes_fbs },
+-	{ PCI_DEVICE(PCI_VENDOR_ID_TTI, 0x0642),
++	{ PCI_DEVICE(PCI_VENDOR_ID_TTI, 0x0642), /* highpoint rocketraid 642L */
++	  .driver_data = board_ahci_yes_fbs },
++	{ PCI_DEVICE(PCI_VENDOR_ID_TTI, 0x0645), /* highpoint rocketraid 644L */
+ 	  .driver_data = board_ahci_yes_fbs },
+ 
+ 	/* Promise */
