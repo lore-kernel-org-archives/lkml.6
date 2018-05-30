@@ -1,109 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935430AbeE3DSM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 23:18:12 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35744 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937030AbeE3DRz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 23:17:55 -0400
-X-Google-Smtp-Source: ADUXVKKAdl9rNQTI/eTQShtmAWguNspy3HCgib3qE/J3SZlDzoMdczKwaSfJRhXVdRXCr6IUz9tXEg==
-From: Fabien Parent <fparent@baylibre.com>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        eballetbo@gmail.com, gpain@baylibre.com,
-        Fabien Parent <fparent@baylibre.com>
-Subject: [PATCH 3/3] power: supply: cros: add property to detect connected ports
-Date: Tue, 29 May 2018 20:17:04 -0700
-Message-Id: <20180530031704.18597-4-fparent@baylibre.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180530031704.18597-1-fparent@baylibre.com>
-References: <20180530031704.18597-1-fparent@baylibre.com>
+        id S965225AbeE3DSA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 23:18:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36714 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935743AbeE3DRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 23:17:48 -0400
+Date: Tue, 29 May 2018 21:17:46 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Jean-Philippe Brucker <Jean-Philippe.Brucker@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, "Raj, Ashok" <ashok.raj@intel.com>,
+        Jean Delvare <khali@linux-fr.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, Yi L <yi.l.liu@linux.intel.com>
+Subject: Re: [PATCH v4 04/22] iommu/vt-d: add bind_pasid_table function
+Message-ID: <20180529211746.74f1dd23@w520.home>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1911E59C4@SHSMSX101.ccr.corp.intel.com>
+References: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1523915351-54415-5-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20180417131047.0a9c310f@w520.home>
+        <AM4PR0802MB2369F739C91B630CA99B3D3BA3B40@AM4PR0802MB2369.eurprd08.prod.outlook.com>
+        <20180420164251.5245f822@jacob-builder>
+        <20180529140915.1f174689@w520.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1911E59C4@SHSMSX101.ccr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a port is connected but acting as a source, its 'online' and
-'status' properties are identical to a port that is not connected. This
-makes it tedious for userspace to know for sure whether a port is
-connected or not.
+On Wed, 30 May 2018 01:41:43 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-This commit adds a new property 'present' to reflect whether a port
-is connected or not.
+> > From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> > Sent: Wednesday, May 30, 2018 4:09 AM
+> > 
+> > On Fri, 20 Apr 2018 16:42:51 -0700
+> > Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
+> >   
+> > > On Fri, 20 Apr 2018 19:25:34 +0100
+> > > Jean-Philippe Brucker <Jean-Philippe.Brucker@arm.com> wrote:
+> > >  
+> > > > On Tue, Apr 17, 2018 at 08:10:47PM +0100, Alex Williamson wrote:
+> > > > [...]  
+> > > > > > +	/* Assign guest PASID table pointer and size order */
+> > > > > > +	ctx_lo = (pasidt_binfo->base_ptr & VTD_PAGE_MASK) |
+> > > > > > +		(pasidt_binfo->pasid_bits - MIN_NR_PASID_BITS);  
+> > > > >
+> > > > > Where does this IOMMU API interface define that base_ptr is 4K
+> > > > > aligned or the format of the PASID table?  Are these all
+> > > > > standardized or do they vary by host IOMMU?  If they're standards,
+> > > > > maybe we could note that and the spec which defines them when we
+> > > > > declare base_ptr.  If they're IOMMU specific then I don't
+> > > > > understand how we'll match a user provided PASID table to the
+> > > > > requirements and format of the host IOMMU. Thanks,  
+> > > >
+> > > > On SMMUv3 the minimum alignment for base_ptr is 64 bytes, so a  
+> > guest  
+> > > > under a vSMMU might pass a pointer that's not aligned on 4k.
+> > > >  
+> > > PASID table pointer for VT-d is 4K aligned.  
+> > > > Maybe this information could be part of the data passed to userspace
+> > > > about IOMMU table formats and features? They're not part of this
+> > > > series, but I think we wanted to communicate IOMMU-specific features
+> > > > via sysfs.
+> > > >  
+> > > Agreed, I believe Yi Liu is working on a sysfs interface such that QEMU
+> > > can match IOMMU model and features.  
+> > 
+> > Digging this up again since v5 still has this issue.  The IOMMU API is
+> > a kernel internal abstraction of the IOMMU.  sysfs is a userspace
+> > interface.  Are we suggesting that the /only/ way to make use of the
+> > internal IOMMU API here is to have a user provided opaque pasid table
+> > that we can't even do minimal compatibility sanity testing on and we
+> > simply hope that hardware covers all the fault conditions without
+> > taking the host down with it?  I guess we have to assume the latter
+> > since the user has full control of the table, but I have a hard time
+> > getting past lack of internal ability to use the interface and no
+> > ability to provide even the slimmest sanity testing.  Thanks,
+> >   
+> 
+> checking size, alignment, ... is OK, which I think is already considered
+> by vendor IOMMU driver. However sanity testing table format might 
+> be difficult. The initial table provided by guest is likely just all ZEROs. 
+> whatever format violation may be caught only when a PASID entry 
+> is updated...
 
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
----
- drivers/power/supply/cros_usbpd-charger.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+There's sanity testing the actual contents of the table, which I agree
+would be difficult and would likely require some sort of shadowing at
+additional overhead, but what about even basic consistency checking?
+For example, is it possible that due to hardware variations a user
+might generate a table which works on some systems but not others?  What
+if two table formats are sufficiently similar that the IOMMU driver
+puts an incompatible table in place but it continuously generates
+faults, how do we debug that?  As an intermediary in this whole process
+I'd really rather be able to identify that the user claims to be
+providing a TypeA table but the IOMMU only supports TypeB, so clearly
+this won't work.  I don't see that we have that capability.  Thanks,
 
-diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
-index 808688a6586c..d44ab35670ab 100644
---- a/drivers/power/supply/cros_usbpd-charger.c
-+++ b/drivers/power/supply/cros_usbpd-charger.c
-@@ -32,6 +32,7 @@ struct port_data {
- 	struct power_supply_desc psy_desc;
- 	int psy_usb_type;
- 	int psy_online;
-+	int psy_present;
- 	int psy_status;
- 	int psy_current_max;
- 	int psy_voltage_max_design;
-@@ -54,6 +55,7 @@ struct charger_data {
- 
- static enum power_supply_property cros_usbpd_charger_props[] = {
- 	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_PRESENT,
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_CURRENT_MAX,
- 	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
-@@ -65,6 +67,7 @@ static enum power_supply_property cros_usbpd_charger_props[] = {
- 
- static enum power_supply_property cros_usbpd_dedicated_charger_props[] = {
- 	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_PRESENT,
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_VOLTAGE_NOW,
- };
-@@ -205,18 +208,22 @@ static int cros_usbpd_charger_get_power_info(struct port_data *port)
- 	case USB_PD_PORT_POWER_DISCONNECTED:
- 		port->psy_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
- 		port->psy_online = 0;
-+		port->psy_present = 0;
- 		break;
- 	case USB_PD_PORT_POWER_SOURCE:
- 		port->psy_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
- 		port->psy_online = 0;
-+		port->psy_present = 1;
- 		break;
- 	case USB_PD_PORT_POWER_SINK:
- 		port->psy_status = POWER_SUPPLY_STATUS_CHARGING;
- 		port->psy_online = 1;
-+		port->psy_present = 1;
- 		break;
- 	case USB_PD_PORT_POWER_SINK_NOT_CHARGING:
- 		port->psy_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
- 		port->psy_online = 1;
-+		port->psy_present = 1;
- 		break;
- 	default:
- 		dev_err(dev, "Unknown role %d\n", resp.role);
-@@ -362,6 +369,7 @@ static int cros_usbpd_charger_get_prop(struct power_supply *psy,
- 		 */
- 		if (ec_device->mkbp_event_supported || port->psy_online)
- 			break;
-+	case POWER_SUPPLY_PROP_PRESENT:
- 	case POWER_SUPPLY_PROP_CURRENT_MAX:
- 	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
- 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-@@ -380,6 +388,9 @@ static int cros_usbpd_charger_get_prop(struct power_supply *psy,
- 	case POWER_SUPPLY_PROP_ONLINE:
- 		val->intval = port->psy_online;
- 		break;
-+	case POWER_SUPPLY_PROP_PRESENT:
-+		val->intval = port->psy_present;
-+		break;
- 	case POWER_SUPPLY_PROP_STATUS:
- 		val->intval = port->psy_status;
- 		break;
--- 
-2.17.0
+Alex
