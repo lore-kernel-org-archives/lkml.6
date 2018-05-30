@@ -1,124 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932569AbeE3XfU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 19:35:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51956 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932471AbeE3XfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 19:35:18 -0400
-Date: Wed, 30 May 2018 19:34:13 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-audit@redhat.com
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from
- "audit" actions
-Message-ID: <20180530233413.xz5bs3zb4jwmddpi@madcap2.tricolour.ca>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
- <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
- <35894dae-c9c6-aa65-da99-c0283d459878@linux.vnet.ibm.com>
- <CAHC9VhSnubpfY6=RF9ZHQS0js18xor2nF=REfd=ZKTxV-wabiA@mail.gmail.com>
- <85a2ad4d-6406-ad64-f440-7ab8289ceb2e@linux.vnet.ibm.com>
+        id S932608AbeE3XjQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 19:39:16 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59770 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932408AbeE3XjN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 19:39:13 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4242E6063A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH v4 1/2] regulator: dt-bindings: add QCOM RPMh regulator
+ bindings
+To: Doug Anderson <dianders@chromium.org>, Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <cover.1527040878.git.collinsd@codeaurora.org>
+ <6d03576cf90f06afb1194301cb41fc31704def1d.1527040878.git.collinsd@codeaurora.org>
+ <CAD=FV=VH0bTxPOmRr+jUyV0cGNQHLcwQTV9L-t0bxZOqD8FnHA@mail.gmail.com>
+ <20180530103720.GH6920@sirena.org.uk>
+ <CAD=FV=WTTKXwPchuWRh-RNTc8=X8Xo28oTqk=3wW4+SiTHhxuA@mail.gmail.com>
+ <20180530155044.GR6920@sirena.org.uk>
+ <CAD=FV=WVUmvPPd5BxXv9Sa_2CRPrrjQvYFyqroY-3fRr4f0Bzg@mail.gmail.com>
+ <20180530162007.GU6920@sirena.org.uk>
+ <CAD=FV=WL9enzYCoSx0fT_ny40ciLJU-hhS9joJ6nySXvWPqAxQ@mail.gmail.com>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <75088820-f20d-32ac-780a-5e7dacdf20ff@codeaurora.org>
+Date: Wed, 30 May 2018 16:39:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <85a2ad4d-6406-ad64-f440-7ab8289ceb2e@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20171027
+In-Reply-To: <CAD=FV=WL9enzYCoSx0fT_ny40ciLJU-hhS9joJ6nySXvWPqAxQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-30 17:38, Stefan Berger wrote:
-> On 05/30/2018 05:22 PM, Paul Moore wrote:
-> > On Wed, May 30, 2018 at 9:08 AM, Stefan Berger
-> > <stefanb@linux.vnet.ibm.com> wrote:
-> > > On 05/30/2018 08:49 AM, Richard Guy Briggs wrote:
-> > > > On 2018-05-24 16:11, Stefan Berger wrote:
-> > > > > The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
-> > > > > the IMA "audit" policy action.  This patch defines
-> > > > > AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
-> > > > > 
-> > > > > With this change we now call integrity_audit_msg_common() to get
-> > > > > common integrity auditing fields. This now produces the following
-> > > > > record when parsing an IMA policy rule:
-> > > > > 
-> > > > > type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
-> > > > >     fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
-> > > > >     subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
-> > > > >     op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
-> > > > >     tty=tty2 res=1
-> > > > > 
-> > > > > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > > > > ---
-> > > > >    include/uapi/linux/audit.h          | 3 ++-
-> > > > >    security/integrity/ima/ima_policy.c | 5 +++--
-> > > > >    2 files changed, 5 insertions(+), 3 deletions(-)
-> > > > > 
-> > > > > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> > > > > index 4e61a9e05132..776e0abd35cf 100644
-> > > > > --- a/include/uapi/linux/audit.h
-> > > > > +++ b/include/uapi/linux/audit.h
-> > > > > @@ -146,7 +146,8 @@
-> > > > >    #define AUDIT_INTEGRITY_STATUS            1802 /* Integrity enable
-> > > > > status */
-> > > > >    #define AUDIT_INTEGRITY_HASH      1803 /* Integrity HASH type */
-> > > > >    #define AUDIT_INTEGRITY_PCR       1804 /* PCR invalidation msgs */
-> > > > > -#define AUDIT_INTEGRITY_RULE       1805 /* policy rule */
-> > > > > +#define AUDIT_INTEGRITY_RULE       1805 /* IMA "audit" action policy
-> > > > > msgs  */
-> > > > > +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
-> > > > >      #define AUDIT_KERNEL                2000    /* Asynchronous audit
-> > > > > record. NOT A REQUEST. */
-> > > > >    diff --git a/security/integrity/ima/ima_policy.c
-> > > > > b/security/integrity/ima/ima_policy.c
-> > > > > index 3aed25a7178a..a8ae47a386b4 100644
-> > > > > --- a/security/integrity/ima/ima_policy.c
-> > > > > +++ b/security/integrity/ima/ima_policy.c
-> > > > > @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct
-> > > > > ima_rule_entry *entry)
-> > > > >          int result = 0;
-> > > > >          ab = integrity_audit_log_start(NULL, GFP_KERNEL,
-> > > > > -                                      AUDIT_INTEGRITY_RULE);
-> > > > > +                                      AUDIT_INTEGRITY_POLICY_RULE);
-> > > > Is it possible to connect this record to a syscall by replacing the
-> > > > first parameter (NULL) by current->context?
-> > We're likely going to need to "associate" this record (audit speak for
-> > making the first parameter non-NULL) with others for the audit
-> > container ID work.  If you do it now, Richard's patches will likely
-> > get a few lines smaller and that will surely make him a bit happier :)
+Hello Mark and Doug,
+
+On 05/30/2018 09:24 AM, Doug Anderson wrote:
+> On Wed, May 30, 2018 at 9:20 AM, Mark Brown <broonie@kernel.org> wrote:
+>> On Wed, May 30, 2018 at 09:12:25AM -0700, Doug Anderson wrote:
+>>> On Wed, May 30, 2018 at 8:50 AM, Mark Brown <broonie@kernel.org> wrote:
+>>
+>>>> No, I'm saying that I don't know why that property exists at all.  This
+>>>> sounds like it's intended to be the amount of current the regulator can
+>>>> deliver in each mode which is normally a design property of the silicon.
+>>
+>>> Ah, got it.  So the whole point here is to be able to implement either
+>>> the function "set_load" or the function "get_optimum_mode".  We need
+>>> some sort of table to convert from current to mode.  That's what this
+>>> table does.
+>>
+>> We do need that table, my expectation would be that this table would be
+>> in the driver as it's not something I'd expect to vary between different
+>> systems but rather be a property of the silicon design.  No sense in
+>> every single board having to copy it in.
 > 
-> Richard is also introducing a local context that we can then create and use
-> instead of the NULL. Can we not use that then?
-
-That is for records for which there is no syscall or user associated.
-
-In fact there is another recent change that would be better to use than
-current->audit_context, which is the function audit_context().
-See commit cdfb6b3 ("audit: use inline function to get audit context").
-
-> Steven seems to say: "We don't want to add syscall records to everything.
-> That messes up schemas and existing code. The integrity events are 1 record
-> in size and should stay that way. This saves disk space and improves
-> readability."
+> Ah, got it!  I'd be OK with it being hardcoded in the driver.
 > 
-> > > We would have to fix current->context in this case since it is NULL. We get
-> > > to this location by root cat'ing a policy or writing a policy filename into
-> > > /sys/kernel/security/ima/policy.
-> > Perhaps I'm missing something, but current in this case should point
-> > to the process which is writing to the policy file, yes?
-> 
-> Yes, but current->context is NULL for some reason.
+> At one point I think David was making the argument that some boards
+> have different noise needs for the rails and thus you might want to
+> change modes at different currents.  I don't know if this is realistic
+> but I believe it was part of his original argument for why this needed
+> to be specified.  If we can hardcode this in the driver I'm fine with
+> it...  That would actually solve many of my objections too...
 
-Is it always this way?  If it isn't, which it should not be, we should
-find out why.  Well, we should find out why this is NULL anyways, since
-it shouldn't be.
+The DRMS modes to use and max allowed current per mode need to be
+specified at the board level in device tree instead of hard-coded per
+regulator type in the driver.  There are at least two use cases driving
+this need: LDOs shared between RPMh client processors and SMPSes requiring
+PWM mode in certain circumstances.
 
-- RGB
+For LDOs the maximum low power mode (LPM) current is typically 10 mA or 30
+mA (depending upon subtype) per hardware documentation. Unfortunately,
+sharing control of regulators with other processors adds some subtlety to
+the LPM current limit that should actually be applied at runtime.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Consider the case of a regulator with physical 10 mA LPM max current. Say
+that modem and application processors each have a load on the regulator
+that draws 9 mA. If they each respect the 10 mA limit, then they'd each
+vote for LPM. The VRM block in RPMh hardware will aggregate these requests
+together using a max function which will result in the regulator being set
+to LPM, even though the total load is 18 mA (which would require high
+power mode (HPM)). To get around this corner case, a LPM max current of 1
+uA can be used for all LDO supplies that have non-application processor
+consumers. Thus, any non-zero regulator_set_load() current request will
+result in setting the regulator to HPM (which is always safe).
+
+The second situation that needs board-level DRMS mode and current limit
+specification is SMPS regulator AUTO mode to PWM (HPM) mode switching.
+SMPS regulators should theoretically always be able to operate in AUTO
+mode as it switches automatically between PWM mode (which can provide the
+maximum current) and PFM mode (which supports lower current but has higher
+efficiency). However, there may be board/system issues that require
+switching to PWM mode for certain use cases as it has better load
+regulation (i.e. no PFM ripple for lower loads) and supports more
+aggressive load current steps (i.e. greater A/ns).
+
+If a Linux consumer requires the ability to force a given SMPS regulator
+from AUTO mode into PWM mode and that SMPS is shared by other Linux
+consumers (which may be the case, but at least must be guaranteed to work
+architecturally), then regulator_set_load() is the only option since it
+provides aggregation, where as regulator_set_mode() does not.
+regulator_set_load() can be utilized in this case by specifying AUTO mode
+and PWM mode as drms modes and specifying some particular AUTO mode
+maximum current (that is known by the consumer) in device tree.  The
+consumer can then call regulator_set_load() with the imposed AUTO mode
+limit + delta when PWM mode is required and a lower value when AUTO mode
+is sufficient.
+
+Note that I previously mentioned the need for board-level drms mode and
+current limit specification in [1].
+
+Take care,
+David
+
+[1]: https://lkml.org/lkml/2018/3/22/802
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
