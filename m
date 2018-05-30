@@ -1,121 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752982AbeE3Oe2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:34:28 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50593 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753121AbeE3OeU (ORCPT
+        id S1753422AbeE3Od2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:33:28 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45078 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751684AbeE3OdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:34:20 -0400
-X-Google-Smtp-Source: ADUXVKIKl802QTOdsrsKaaGszkU9vjAeTIfSeTOPidIVFe3Ifb0bmlfxzzrezB8u3im/2BIUdTn3bw==
-Date: Wed, 30 May 2018 15:34:15 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Nick Desaulniers <nick.desaulniers@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ebiggers@google.com
-Subject: Re: [PATCH] kdb: prefer strlcpy to strncpy
-Message-ID: <20180530143415.ksc6fb4zo6m7xb25@holly.lan>
-References: <1527573427-16569-1-git-send-email-nick.desaulniers@gmail.com>
- <CAK8P3a2=THd7YL6sB4=xXZShD=wOjk_taM1L-E5VPH77TiQK0w@mail.gmail.com>
- <CAH7mPvhQo5S5EbgvkteoL1xftLWjWBqkfoanG0dTLzaa=FtTgw@mail.gmail.com>
+        Wed, 30 May 2018 10:33:25 -0400
+Subject: Re: [PATCH v5 11/13] KVM: s390: implement mediated device open
+ callback
+To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <98ea7ce2-2539-e2ff-4bb4-297e784d87bd@linux.ibm.com>
+ <7bb480ac-5723-83ff-c797-53c1ab0458c1@linux.vnet.ibm.com>
+ <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Wed, 30 May 2018 10:33:13 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAH7mPvhQo5S5EbgvkteoL1xftLWjWBqkfoanG0dTLzaa=FtTgw@mail.gmail.com>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18053014-0016-0000-0000-000008D5E97D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009098; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039857; UDB=6.00532246; IPR=6.00818990;
+ MB=3.00021377; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 14:33:23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053014-0017-0000-0000-00003F0055C4
+Message-Id: <0f37dc39-7355-19e5-40c9-a02a1ea58c2d@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805300161
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 07:01:35PM -0700, Nick Desaulniers wrote:
-> On Tue, May 29, 2018 at 12:57 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Tue, May 29, 2018 at 7:57 AM, Nick Desaulniers
-> > <nick.desaulniers@gmail.com> wrote:
-> >> Fixes stringop-truncation and stringop-overflow warnings from gcc-8.
-> >
-> > That patch description should really explain whether gcc is right or not. What's
-> > the worst thing that could happen here?
-> >
-> > I would also recommend citing the exact warning you got.
-> >
-> >> diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-> >> index ed5d349..b5dfff1 100644
-> >> --- a/kernel/debug/kdb/kdb_io.c
-> >> +++ b/kernel/debug/kdb/kdb_io.c
-> >> @@ -443,7 +443,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
-> >>  char *kdb_getstr(char *buffer, size_t bufsize, const char *prompt)
-> >>  {
-> >>         if (prompt && kdb_prompt_str != prompt)
-> >> -               strncpy(kdb_prompt_str, prompt, CMD_BUFLEN);
-> >> +               strlcpy(kdb_prompt_str, prompt, CMD_BUFLEN);
-> >>         kdb_printf(kdb_prompt_str);
-> >>         kdb_nextline = 1;       /* Prompt and input resets line number */
-> >>         return kdb_read(buffer, bufsize);
-> >> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-> >> index e405677..c30a0d8 100644
-> >> --- a/kernel/debug/kdb/kdb_main.c
-> >> +++ b/kernel/debug/kdb/kdb_main.c
-> >> @@ -1103,12 +1103,12 @@ static int handle_ctrl_cmd(char *cmd)
-> >>         case CTRL_P:
-> >>                 if (cmdptr != cmd_tail)
-> >>                         cmdptr = (cmdptr-1) % KDB_CMD_HISTORY_COUNT;
-> >> -               strncpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
-> >> +               strlcpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
-> >>                 return 1;
-> >>         case CTRL_N:
-> >>                 if (cmdptr != cmd_head)
-> >>                         cmdptr = (cmdptr+1) % KDB_CMD_HISTORY_COUNT;
-> >> -               strncpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
-> >> +               strlcpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
-> >>                 return 1;
-> >>         }
-> >>         return 0;
-> >
-> > Those three all look good.
-> >
-> >> diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
-> >> index 990b3cc..dcfbf8f 100644
-> >> --- a/kernel/debug/kdb/kdb_support.c
-> >> +++ b/kernel/debug/kdb/kdb_support.c
-> >> @@ -236,7 +236,7 @@ int kallsyms_symbol_next(char *prefix_name, int flag)
-> >>
-> >>         while ((name = kdb_walk_kallsyms(&pos))) {
-> >>                 if (strncmp(name, prefix_name, prefix_len) == 0) {
-> >> -                       strncpy(prefix_name, name, strlen(name)+1);
-> >> +                       strlcpy(prefix_name, name, prefix_len);
-> >>                         return 1;
-> >>                 }
-> >
-> > I don't know what this does, but you are changing the behavior: the previous
-> > 'strlen(name)+1' argument was the size of the source string (which makes
-> > the strncpy() behave the same as a plain strcpy()), the new one means
-> > we only copy at most as many bytes as the previous length of the destination
-> > string.
-> >
-> > Is that intended? If yes, better explain it in the patch description.
-> >
-> >         Arnd
-> 
-> Eric points out that this will leak kernel memory if size is less than
-> sizeof src.
+On 05/24/2018 05:08 AM, Pierre Morel wrote:
+> On 23/05/2018 16:45, Tony Krowiak wrote:
+>> On 05/16/2018 04:03 AM, Pierre Morel wrote:
+>>> On 07/05/2018 17:11, Tony Krowiak wrote:
+>>>> Implements the open callback on the mediated matrix device.
+>>>> The function registers a group notifier to receive notification
+>>>> of the VFIO_GROUP_NOTIFY_SET_KVM event. When notified,
+>>>> the vfio_ap device driver will get access to the guest's
+>>>> kvm structure. With access to this structure the driver will:
+>>>>
+>>>> 1. Ensure that only one mediated device is opened for the guest
+>
+> You should explain why.
+>
+>>>>
+>>>> 2. Configure access to the AP devices for the guest.
+>>>>
+> ...snip...
+>>>> +void kvm_ap_refcount_inc(struct kvm *kvm)
+>>>> +{
+>>>> +    atomic_inc(&kvm->arch.crypto.aprefs);
+>>>> +}
+>>>> +EXPORT_SYMBOL(kvm_ap_refcount_inc);
+>>>> +
+>>>> +void kvm_ap_refcount_dec(struct kvm *kvm)
+>>>> +{
+>>>> +    atomic_dec(&kvm->arch.crypto.aprefs);
+>>>> +}
+>>>> +EXPORT_SYMBOL(kvm_ap_refcount_dec);
+>>>
+>>> Why are these functions inside kvm-ap ?
+>>> Will anyone use this outer of vfio-ap ?
+>>
+>> As I've stated before, I made the choice to contain all interfaces that
+>> access KVM in kvm-ap because I don't think it is appropriate for the 
+>> device
+>> driver to have to have "knowledge" of the inner workings of KVM. Why 
+>> does
+>> it matter whether any entity outside of the vfio_ap device driver calls
+>> these functions? I could ask a similar question if the interfaces were
+>> contained in vfio-ap; what if another device driver needs access to 
+>> these
+>> interfaces?
+>
+> This is very driver specific and only used during initialization.
+> It is not a common property of the cryptographic interface.
+>
+> I really think you should handle this inside the driver.
 
-Don't quite understand what this means (there's no allocation here, how
-can there be a leak?) but the symbol completion certainly won't work if
-we truncate the copy here.
-
-My understanding is that the only way to make this overflow safe is to
-change the signature of kallsyms_symbol_next() so it takes a max_len
-argument similar to what is done for kallsyms_symbol_complete().
-
-It might even be worth using strscpy() here and propagating the -E2BIG
-to the caller. That allows the caller to print the partial symbol and
-an elipsis to show the user that the symbol has been truncated.
-
-
-Daniel.
+We are going to have to agree to disagree on this one. Is it not possible
+that future drivers - e.g., when full virtualization is implemented - will
+require access to KVM?
+>
+> Pierre
+>
+>
+> ...snip...
+>
+>
