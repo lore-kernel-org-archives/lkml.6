@@ -1,310 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967455AbeE3Ajb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 20:39:31 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:20955 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965181AbeE3Aj3 (ORCPT
+        id S968122AbeE3AqM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 20:46:12 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:34074 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965323AbeE3AqK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 20:39:29 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w4U0dJMC013997
-X-Nifty-SrcIP: [209.85.213.42]
-X-Google-Smtp-Source: ADUXVKJsHVrHXRn6WkfvibLuqdjlg5V8yidDWH8qVG49swlfzEcYTcmB4chJZX87nG56mILi8LeugQR4om3zozZf1jA=
+        Tue, 29 May 2018 20:46:10 -0400
+X-Google-Smtp-Source: ADUXVKJdcd4HA036K5EQQUCsNZ11qUsDbzsdNbDUCiLGnEoKQp/ucOVgbwCfDDSEPQB+ujeSYKOc337ggdhhtvE3dpA=
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNATmbiigNnPmfwOgMHqxyTOJ0H4ROMAfHZKqRxYN+W-=1w@mail.gmail.com>
-References: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com> <CAK7LNATmbiigNnPmfwOgMHqxyTOJ0H4ROMAfHZKqRxYN+W-=1w@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 30 May 2018 09:38:38 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT0S-4qq1T3q25H0BGsJSUpTsgV_+TGKBiPW-MUKyqzsQ@mail.gmail.com>
-Message-ID: <CAK7LNAT0S-4qq1T3q25H0BGsJSUpTsgV_+TGKBiPW-MUKyqzsQ@mail.gmail.com>
-Subject: Re: [PATCH v5 00/31] kconfig: move compiler capability tests to Kconfig
-To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, Nicholas Piggin <npiggin@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <1527576797-5738-1-git-send-email-wanpengli@tencent.com>
+ <20180529142324.GA7819@flask> <20180529143102.GC7819@flask> <e85689ac-25be-a0ca-7618-51a918896ca4@redhat.com>
+In-Reply-To: <e85689ac-25be-a0ca-7618-51a918896ca4@redhat.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Wed, 30 May 2018 08:46:11 +0800
+Message-ID: <CANRm+Cw0umo1DTR0wohYb0EpvTRWOoEuUCyrWcif9_-WG1we=Q@mail.gmail.com>
+Subject: Re: [PATCH] KVM: VMX: Optimize tscdeadline timer latency
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krcmar <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4U0kXsk002858
 
-2018-05-28 21:23 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> 2018-05-28 18:21 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->>
->> [Introduction]
->>
->> The motivation of this work is to move the compiler option tests to
->> Kconfig from Makefile.  A number of kernel features require the
->> compiler support.  Enabling such features blindly in Kconfig ends up
->> with a lot of nasty build-time testing in Makefiles.  If a chosen
->> feature turns out unsupported by the compiler, what the build system
->> can do is either to disable it (silently!) or to forcibly break the
->> build, despite Kconfig has let the user to enable it.  By moving the
->> compiler capability tests to Kconfig, Kconfig entries will be visible
->> only when they are available.
->>
->> [Major Changes in V5]
->>
->> V5 removed the complexity unnecessary for Kconfig.
->>
->>  - In order to make the implementation simpler, I drop the lazy
->>    argument expansion.
->>    In V5, parameters are expanded before passed to a function.
->>    (the same behavior as v3)
->>
->>  - Replace 'warning', 'error' functions with 'warning-if',
->>    'error-if' functions.  The new functions are effective
->>    only when the condition part is 'y'.
->>
->>  - In V4, '$' must be followed by '$' or '('.
->>    '$$' meant an escaped '$'.
->>
->>    V4 caused a build error for ARC architecture due to the
->>    following line:
->>    https://github.com/torvalds/linux/blob/v4.17-rc4/arch/arc/Kconfig#L252
->>
->>    Of course, we could rephrase "D$" to "D cache", but
->>    I treaked the grammar a little bit.
->>
->>    Kconfig decided to not support single-letter variable as in "$X".
->>    Nor curly braces as in "${CC}" are not supported.
->>    This means variable/function references in Kconfig always start
->>    with "$(".
->>    We can use '$' not followed by '(' as-is.
->>    We do not need the "$$" escape sequence.
->>    If necessary, we can use a trick to print '$(' verbatim.  See below.
->>
->>  - Fix a wrong behavior of simply expanded variables.
->>    V4 expanded simply expanded variables when used, but it should not.
->>
->>    For example,
->>
->>    dollar := $
->>    X := 1
->>    Y := $(dollar)(X)
->>    $(info,$(Y))
->>
->>    V5 prints '$(X)', not '1'.
->>
->>  - Remove a space after a comma is $( ) context.
->>    Actually, spaces do not matter in most cases.
->>
->>    You can write either
->>
->>       $(cc-option,-fstack-protector)
->>
->>    or
->>
->>       $(cc-option, -fstack-protector)
->>
->>    In fact, both style co-exist in our Makefiles too.
->>    However, there are some cases where they do matter.
->>
->>    I remove spaces after commas for consistency.
->>    If you are unsure, no-space-after-comma is always safe.
->>
->> [Major Changes in V4]
->>
->>  - In V4, I slightly change the syntax of a function call.
->>    I chose grammatical consistency and simplicity.
->>    Anyway, Kconfig is deviating from Make behavior already.
->>
->>    In v3, a function call looked like this:
->>
->>       $(func-name arg1,arg2,arg3)
->>
->>    In v4, a function is invoked like follows:
->>
->>       $(func-name,arg1,arg2,arg3)
->>
->>    The difference is that the function name and the first argument
->>    are separated by a comma.
->>
->>  - V3 supported single-letter variable like $X.
->>    V4 dropped it because we do not need multiple ways to do the
->>    same thing.
->>    You must always enclose a variable name like $(X).
->>
->>  - Support lazy argument expansion.  This is necessary for implementing
->>    'if', 'and', 'or' functions as in Make.
->>
->>  - Add more built-in functions:
->>    'if', 'error', 'filename', 'lineno'
->>
->>  - Error out if a recursive variable references itself eventually.
->>    For example,  X = $(X)
->>    ends up with a circular expansion.  It must be terminated
->>    since the expansion would continue eternally.
->>
->>  - Update Documentation and unit-tests, accordingly.
->>
->> [Major Changes in V3]
->>
->> This version looks more like Make.
->>
->>   - Use = operator instead of 'macro' keyword
->>     to define a user-defined function.
->>
->>   - 'Recursively expanded variable' is implemented as a side-effect.
->>      A variable is a function with zero argument.
->>
->>   - Support simply expanded variable which is defined by := operator
->>
->>   - Support += operator.
->>     Probably, this feature will be useful to accumulate compiler flags.
->>     At least, Clang needs some prerequisite flags such as triplet
->>     to test other compiler flags.
->>
->>   - Support $(info ...) and $(warning ...) built-in functions,
->>     which were useful while I was debugging this.
->>
->>   - Add documentation
->>
->>   - Add unit tests
->>
->>   - Collect helpers to scripts/Kconfig.include
->>
->> [Old Versions]
->>
->> V4:  https://lkml.org/lkml/2018/5/17/97
->> V3:  https://lkml.org/lkml/2018/4/13/37
->> V2:  https://lkml.org/lkml/2018/2/16/610
->> V1:  https://lkml.org/lkml/2018/2/16/610
->> RFC: https://lkml.org/lkml/2018/2/8/429
->>
->>
->> Masahiro Yamada (31):
->>   kbuild: remove kbuild cache
->>   kbuild: remove CONFIG_CROSS_COMPILE support
->>   kconfig: reference environment variables directly and remove 'option
->>     env='
->>   kconfig: remove string expansion in file_lookup()
->>   kconfig: remove string expansion for mainmenu after yyparse()
->>   kconfig: remove sym_expand_string_value()
->>   kconfig: make default prompt of mainmenu less specific
->>   kconfig: add built-in function support
->>   kconfig: add 'shell' built-in function
->>   kconfig: replace $(UNAME_RELEASE) with function call
->>   kconfig: begin PARAM state only when seeing a command keyword
->>   kconfig: support user-defined function and recursively expanded
->>     variable
->>   kconfig: support simply expanded variable
->>   kconfig: support append assignment operator
->>   kconfig: expand lefthand side of assignment statement
->>   kconfig: add 'info', 'warning-if', and 'error-if' built-in functions
->>   kconfig: add 'filename' and 'lineno' built-in variables
->>   kconfig: error out if a recursive variable references itself
->>   Documentation: kconfig: document a new Kconfig macro language
->>   kconfig: test: add Kconfig macro language tests
->>   kconfig: show compiler version text in the top comment
->>   kconfig: add basic helper macros to scripts/Kconfig.include
->>   stack-protector: test compiler capability in Kconfig and drop AUTO
->>     mode
->>   kconfig: add CC_IS_GCC and GCC_VERSION
->>   kconfig: add CC_IS_CLANG and CLANG_VERSION
->>   gcov: remove CONFIG_GCOV_FORMAT_AUTODETECT
->>   kcov: test compiler capability in Kconfig and correct dependency
->>   gcc-plugins: move GCC version check for PowerPC to Kconfig
->>   gcc-plugins: test plugin support in Kconfig and clean up Makefile
->>   gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
->>   Documentation: kconfig: add recommended way to describe compiler
->>     support
->>
->>  Documentation/kbuild/kconfig-language.txt          |  26 +-
->>  Documentation/kbuild/kconfig-macro-language.txt    | 242 +++++++++
->>  Kconfig                                            |  10 +-
->>  MAINTAINERS                                        |   3 +-
->>  Makefile                                           | 105 +---
->>  arch/Kconfig                                       |  49 +-
->>  arch/powerpc/Kconfig                               |   2 +-
->>  arch/sh/Kconfig                                    |   4 +-
->>  arch/sparc/Kconfig                                 |   4 +-
->>  arch/um/Kconfig.common                             |   4 -
->>  arch/x86/Kconfig                                   |  15 +-
->>  arch/x86/um/Kconfig                                |  10 +-
->>  init/Kconfig                                       |  40 +-
->>  kernel/gcov/Kconfig                                |  17 +-
->>  kernel/gcov/Makefile                               |   2 -
->>  lib/Kconfig.debug                                  |  11 +-
->>  scripts/Kbuild.include                             | 101 +---
->>  scripts/Kconfig.include                            |  30 ++
->>  scripts/Makefile.gcc-plugins                       |  91 +---
->>  scripts/Makefile.kcov                              |  10 +-
->>  scripts/clang-version.sh                           |  18 +-
->>  scripts/gcc-plugins/Makefile                       |   1 +
->>  scripts/gcc-x86_32-has-stack-protector.sh          |   7 +-
->>  scripts/gcc-x86_64-has-stack-protector.sh          |   5 -
->>  scripts/kconfig/confdata.c                         |  33 +-
->>  scripts/kconfig/kconf_id.c                         |   1 -
->>  scripts/kconfig/lkc.h                              |   5 +-
->>  scripts/kconfig/lkc_proto.h                        |  15 +-
->>  scripts/kconfig/menu.c                             |   3 -
->>  scripts/kconfig/preprocess.c                       | 572 +++++++++++++++++++++
->>  scripts/kconfig/symbol.c                           | 109 ----
->>  .../tests/no_write_if_dep_unmet/expected_config    |   2 +-
->>  .../kconfig/tests/preprocess/builtin_func/Kconfig  |  27 +
->>  .../tests/preprocess/builtin_func/__init__.py      |   9 +
->>  .../tests/preprocess/builtin_func/expected_stderr  |   5 +
->>  .../tests/preprocess/builtin_func/expected_stdout  |   1 +
->>  .../tests/preprocess/circular_expansion/Kconfig    |   5 +
->>  .../preprocess/circular_expansion/__init__.py      |  11 +
->>  .../preprocess/circular_expansion/expected_stderr  |   1 +
->>  scripts/kconfig/tests/preprocess/escape/Kconfig    |  44 ++
->>  .../kconfig/tests/preprocess/escape/__init__.py    |   8 +
->>  .../tests/preprocess/escape/expected_stderr        |  10 +
->>  scripts/kconfig/tests/preprocess/variable/Kconfig  |  53 ++
->>  .../kconfig/tests/preprocess/variable/__init__.py  |   8 +
->>  .../tests/preprocess/variable/expected_stderr      |   9 +
->>  scripts/kconfig/util.c                             |  33 +-
->>  scripts/kconfig/zconf.l                            |  95 +++-
->>  scripts/kconfig/zconf.y                            |  46 +-
->>  48 files changed, 1345 insertions(+), 567 deletions(-)
->>  create mode 100644 Documentation/kbuild/kconfig-macro-language.txt
->>  create mode 100644 scripts/Kconfig.include
->>  create mode 100644 scripts/kconfig/preprocess.c
->>  create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/Kconfig
->>  create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/__init__.py
->>  create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/expected_stderr
->>  create mode 100644 scripts/kconfig/tests/preprocess/builtin_func/expected_stdout
->>  create mode 100644 scripts/kconfig/tests/preprocess/circular_expansion/Kconfig
->>  create mode 100644 scripts/kconfig/tests/preprocess/circular_expansion/__init__.py
->>  create mode 100644 scripts/kconfig/tests/preprocess/circular_expansion/expected_stderr
->>  create mode 100644 scripts/kconfig/tests/preprocess/escape/Kconfig
->>  create mode 100644 scripts/kconfig/tests/preprocess/escape/__init__.py
->>  create mode 100644 scripts/kconfig/tests/preprocess/escape/expected_stderr
->>  create mode 100644 scripts/kconfig/tests/preprocess/variable/Kconfig
->>  create mode 100644 scripts/kconfig/tests/preprocess/variable/__init__.py
->>  create mode 100644 scripts/kconfig/tests/preprocess/variable/expected_stderr
->>
->> --
->> 2.7.4
->>
->
->
->
-> I pushed this series to
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-> kconfig-shell-v5
->
+On Wed, 30 May 2018 at 01:08, Paolo Bonzini <pbonzini@redhat.com> wrote:
 
+> On 29/05/2018 16:31, Radim Krčmář wrote:
+> > 2018-05-29 16:23+0200, Radim Krčmář:
+> >> 2018-05-29 14:53+0800, Wanpeng Li:
+> >>> From: Wanpeng Li <wanpengli@tencent.com>
+> >>>
+> >>> 'Commit d0659d946be0 ("KVM: x86: add option to advance tscdeadline
+> >>> hrtimer expiration")' advances the tscdeadline (the timer is emulated
+> >>> by hrtimer) expiration in order that the latency which is incurred
+> >>> by hypervisor (apic_timer_fn -> vmentry) can be avoided. This patch
+> >>> adds the advance tscdeadline expiration support to which the
+tscdeadline
+> >>> timer is emulated by VMX preemption timer to reduce the hypervisor
+> >>> lantency (handle_preemption_timer -> vmentry). clockevents
+infrastruture
+> >>> can program minimum delay if hrtimer feeds a expiration in the past,
+> >>> we set delta_tsc to 1(which will be converted to 0 before vmentry)
+> >>> which can lead to an immediately vmexit when delta_tsc is not bigger
+> >>> than advance ns.
+> >>>
+> >>> This patch can reduce ~63% latency (~4450 cycles to ~1660 cycles on
+> >>> a haswell desktop) for kvm-unit-tests/tscdeadline_latency when testing
+> >>> busy waits.
+> >>>
+> >>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> >>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> >>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> >>> ---
+> >>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> >>> @@ -12444,6 +12444,12 @@ static int vmx_set_hv_timer(struct kvm_vcpu
+*vcpu, u64 guest_deadline_tsc)
+> >>>     tscl = rdtsc();
+> >>>     guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
+> >>>     delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
+> >>> +   lapic_timer_advance_cycles = nsec_to_cycles(vcpu,
+lapic_timer_advance_ns);
+> >>> +   if (delta_tsc > lapic_timer_advance_cycles)
+> >>> +           delta_tsc -= lapic_timer_advance_cycles;
+> >>> +   else
+> >>> +           delta_tsc = 1;
+> >>
+> >> Why don't we just "return 1" to say that the timer has expired?
+> >
+> > This case might be rare, so setting delta_tsc = 0 would be safer.
 
-I pushed this series to the for-next branch.
-Unless a significant problem is reported,
-I'd like to merge this series in the upcoming MW.
-At least, I need to keep it in linux-next for a while.
+> Queued with this change.  Indeed this case matches vmx_arm_hv_timer so
+> it's preferrable.
 
-Your comments and tags are still appreciated.
-I will add tags (or replace patches if necessary) later,
-but I want this series tested in linux-next
-to expose to more developers' eyes.
+Agreed, thanks.
 
-It passed my local test.  O-day bot did not report anything so far.
-
-
--- 
-Best Regards
-Masahiro Yamada
+Regards,
+Wanpeng Li
