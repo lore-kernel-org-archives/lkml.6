@@ -1,72 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753453AbeE3O5c (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:57:32 -0400
-Received: from muru.com ([72.249.23.125]:45206 "EHLO muru.com"
+        id S1753617AbeE3O6V (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:58:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45828 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751656AbeE3O53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:57:29 -0400
-Date: Wed, 30 May 2018 07:57:26 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org, bcousson@baylibre.com,
-        paul@pwsan.com, t-kristo@ti.com
-Subject: Re: [PATCH v2 4/6] bus: ti-sysc: Add support for using ti-sysc for
- MCAN on dra76x
-Message-ID: <20180530145726.GD5705@atomide.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-5-faiz_abbas@ti.com>
+        id S1753113AbeE3O6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 10:58:18 -0400
+Date: Wed, 30 May 2018 16:58:16 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Frieder Schrempf <frieder.schrempf@exceet.de>
+Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
+        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
+        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com, han.xu@nxp.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Message-ID: <20180530165816.371dc39c@bbrezillon>
+In-Reply-To: <1527686082-15142-4-git-send-email-frieder.schrempf@exceet.de>
+References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
+        <1527686082-15142-4-git-send-email-frieder.schrempf@exceet.de>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180530141133.3711-5-faiz_abbas@ti.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
-> The dra76x MCAN generic interconnect module has a its own
-> format for the bits in the control registers.
-...
-> --- a/drivers/bus/ti-sysc.c
-> +++ b/drivers/bus/ti-sysc.c
-> @@ -1262,6 +1262,22 @@ static const struct sysc_capabilities sysc_omap4_usb_host_fs = {
->  	.regbits = &sysc_regbits_omap4_usb_host_fs,
->  };
->  
-> +static const struct sysc_regbits sysc_regbits_dra7_mcan = {
-> +	.dmadisable_shift = -ENODEV,
-> +	.midle_shift = -ENODEV,
-> +	.sidle_shift = -ENODEV,
-> +	.clkact_shift = -ENODEV,
-> +	.enwkup_shift = 4,
-> +	.srst_shift = 0,
-> +	.emufree_shift = -ENODEV,
-> +	.autoidle_shift = -ENODEV,
-> +};
-> +
-> +static const struct sysc_capabilities sysc_dra7_mcan = {
-> +	.type = TI_SYSC_DRA7_MCAN,
-> +	.regbits = &sysc_regbits_dra7_mcan,
-> +};
-> +
->  static int sysc_init_pdata(struct sysc *ddata)
->  {
->  	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
-> @@ -1441,6 +1457,7 @@ static const struct of_device_id sysc_match[] = {
->  	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
->  	{ .compatible = "ti,sysc-usb-host-fs",
->  	  .data = &sysc_omap4_usb_host_fs, },
-> +	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
->  	{  },
->  };
+Hi Frieder,
 
-Looks good to me. And presumably you checked that no other dra7 modules
-use sysconfig register bit layout like this?
+On Wed, 30 May 2018 15:14:32 +0200
+Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
+
+> +
+> +static const char *fsl_qspi_get_name(struct spi_mem *mem)
+> +{
+> +	struct fsl_qspi *q = spi_controller_get_devdata(mem->spi->master);
+> +	struct device *dev = &mem->spi->dev;
+> +	const char *name;
+> +
+> +	/*
+> +	 * In order to keep mtdparts compatible with the old MTD driver at
+> +	 * mtd/spi-nor/fsl-quadspi.c, we set a custom name derived from the
+> +	 * platform_device of the controller.
+> +	 */
+> +	if (of_get_available_child_count(q->dev->of_node) == 1)
+> +		name = dev_name(q->dev);
+> +	else
+> +		name = devm_kasprintf(dev, GFP_KERNEL,
+> +				      "%s-%d", dev_name(q->dev),
+> +				      mem->spi->chip_select);
+> +
+> +	if (!name) {
+> +		dev_err(dev, "failed to get memory for custom flash name\n");
+> +		return dev_name(q->dev);
+
+Hm, not sure that's what we want. We should probably fail when the
+allocation fails.
+
+How about letting ->get_name() return an error pointer or NULL in case
+of error. With the other I made suggestion in my review of patch 1
+(calling ->get_name() at probe time) you could refuse to probe the
+device when ->get_name() fails.
+
+> +	}
+> +
+> +	return name;
+> +}
+> +
 
 Regards,
 
-Tony
+Boris
