@@ -1,76 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968050AbeE3HGO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:06:14 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:42757 "EHLO pegase1.c-s.fr"
+        id S968624AbeE3HGV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:06:21 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:49389 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935905AbeE3HGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:06:13 -0400
-Message-Id: <cover.1527663626.git.christophe.leroy@c-s.fr>
+        id S937027AbeE3HGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 03:06:17 -0400
+Message-Id: <e3b55565fe2dc503466ce5882a8ec0a768f81af9.1527663626.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1527663626.git.christophe.leroy@c-s.fr>
+References: <cover.1527663626.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v6 0/2] powerpc/lib: Optimisation of memcmp() and __clear_user() for PPC32 
+Subject: [PATCH v6 2/2] powerpc/lib: optimise PPC32 memcmp
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, segher@kernel.crashing.org
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 30 May 2018 07:06:11 +0000 (UTC)
+Date: Wed, 30 May 2018 07:06:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This serie intends to optimise memcmp() and __clear_user() for PPC32
-in the same spirit as already done on PPC64.
+At the time being, memcmp() compares two chunks of memory
+byte per byte.
 
-The first patch rewrites __clear_user() by using dcbz intruction
-The second patch rewrites memcmp() to compare 32 bits words instead
-of comparing byte per byte.
+This patch optimises the comparison by comparing word by word.
 
-As shown in each individual commit log, second and third patches
-provide significant improvment.
+On the same way as commit 15c2d45d17418 ("powerpc: Add 64bit
+optimised memcmp"), this patch moves memcmp() into a dedicated
+file named memcmp_32.S
 
-Changes in v6:
-- Dropped first patch of the serie which was just moving memcmp() and __clear_user()
-into new string_32.S file
-- As suggested by Mathieu, to be consistant with PPC64:
-  - __clear_user() is moved into new file string_32.S
-  - memcmp() is moved into new file memcmp_32.S
-- Removed unneccessary included header files.
+A small benchmark performed on an 8xx comparing two chuncks
+of 512 bytes performed 100000 times gives:
 
-Changes in v5:
-- Removed the handling of Little Endian, as PPC32 kernel only support Big Endian
-at the time being, and because unaligned accesses should be handled differently
-in LE.
+Before : 5852274 TB ticks
+After:   1488638 TB ticks
 
-Changes in v4:
-- In memcmp(), dropped the special handling for when length is 0. Handling it 
-through the small length path.
+This is almost 4 times faster
 
-Changes in v3:
-- Fixed the sign of the result returned by memcmp() by using a logical
-comparison of u32 words and returning -1, 0 or 1 instead of doing a substract.
-- In first patch, replaced PPC_LCMPI by cmpwi
-- Fixed licence in string_32.S
-- Removed the two last patches from the serie. They will be handled later as
-they require further tests and analysis to properly identify their real benefit
-in all possible cases.
-
-Changes in v2:
-- Moved out the patch removing the hot loop alignment on PPC32
-- Squashed the changes related to NUL size verification in a single patch
-- Reordered the patches in a more logical order
-- Modified the inlining patch to avoid warning about impossibility to version symbols.
-
-Christophe Leroy (2):
-  powerpc/lib: optimise 32 bits __clear_user()
-  powerpc/lib: optimise PPC32 memcmp
-
- arch/powerpc/lib/Makefile    |  5 ++-
- arch/powerpc/lib/memcmp_32.S | 45 ++++++++++++++++++++++
- arch/powerpc/lib/string.S    | 63 -------------------------------
- arch/powerpc/lib/string_32.S | 90 ++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 138 insertions(+), 65 deletions(-)
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/lib/Makefile    |  4 ++--
+ arch/powerpc/lib/memcmp_32.S | 45 ++++++++++++++++++++++++++++++++++++++++++++
+ arch/powerpc/lib/string.S    | 17 -----------------
+ 3 files changed, 47 insertions(+), 19 deletions(-)
  create mode 100644 arch/powerpc/lib/memcmp_32.S
- create mode 100644 arch/powerpc/lib/string_32.S
 
+diff --git a/arch/powerpc/lib/Makefile b/arch/powerpc/lib/Makefile
+index 2c9b8c0adf22..d0ca13ad8231 100644
+--- a/arch/powerpc/lib/Makefile
++++ b/arch/powerpc/lib/Makefile
+@@ -26,14 +26,14 @@ obj-$(CONFIG_PPC_BOOK3S_64) += copyuser_power7.o copypage_power7.o \
+ 			       memcpy_power7.o
+ 
+ obj64-y	+= copypage_64.o copyuser_64.o mem_64.o hweight_64.o \
+-	   memcpy_64.o memcmp_64.o pmem.o
++	   memcpy_64.o pmem.o
+ 
+ obj64-$(CONFIG_SMP)	+= locks.o
+ obj64-$(CONFIG_ALTIVEC)	+= vmx-helper.o
+ obj64-$(CONFIG_KPROBES_SANITY_TEST) += test_emulate_step.o
+ 
+ obj-y			+= checksum_$(BITS).o checksum_wrappers.o \
+-			   string_$(BITS).o
++			   string_$(BITS).o memcmp_$(BITS).o
+ 
+ obj-y			+= sstep.o ldstfp.o quad.o
+ obj64-y			+= quad.o
+diff --git a/arch/powerpc/lib/memcmp_32.S b/arch/powerpc/lib/memcmp_32.S
+new file mode 100644
+index 000000000000..dcb6ab45be66
+--- /dev/null
++++ b/arch/powerpc/lib/memcmp_32.S
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * memcmp for PowerPC32
++ *
++ * Copyright (C) 1996 Paul Mackerras.
++ *
++ */
++
++#include <asm/ppc_asm.h>
++#include <asm/export.h>
++
++	.text
++
++_GLOBAL(memcmp)
++	srawi.	r7, r5, 2		/* Divide len by 4 */
++	mr	r6, r3
++	beq-	3f
++	mtctr	r7
++	li	r7, 0
++1:	lwzx	r3, r6, r7
++	lwzx	r0, r4, r7
++	addi	r7, r7, 4
++	cmplw	cr0, r3, r0
++	bdnzt	eq, 1b
++	bne	5f
++3:	andi.	r3, r5, 3
++	beqlr
++	cmplwi	cr1, r3, 2
++	blt-	cr1, 4f
++	lhzx	r3, r6, r7
++	lhzx	r0, r4, r7
++	addi	r7, r7, 2
++	subf.	r3, r0, r3
++	beqlr	cr1
++	bnelr
++4:	lbzx	r3, r6, r7
++	lbzx	r0, r4, r7
++	subf.	r3, r0, r3
++	blr
++5:	li	r3, 1
++	bgtlr
++	li	r3, -1
++	blr
++EXPORT_SYMBOL(memcmp)
+diff --git a/arch/powerpc/lib/string.S b/arch/powerpc/lib/string.S
+index 5343a88e619e..4b41970e9ed8 100644
+--- a/arch/powerpc/lib/string.S
++++ b/arch/powerpc/lib/string.S
+@@ -54,23 +54,6 @@ _GLOBAL(strncmp)
+ 	blr
+ EXPORT_SYMBOL(strncmp)
+ 
+-#ifdef CONFIG_PPC32
+-_GLOBAL(memcmp)
+-	PPC_LCMPI 0,r5,0
+-	beq-	2f
+-	mtctr	r5
+-	addi	r6,r3,-1
+-	addi	r4,r4,-1
+-1:	lbzu	r3,1(r6)
+-	lbzu	r0,1(r4)
+-	subf.	r3,r0,r3
+-	bdnzt	2,1b
+-	blr
+-2:	li	r3,0
+-	blr
+-EXPORT_SYMBOL(memcmp)
+-#endif
+-
+ _GLOBAL(memchr)
+ 	PPC_LCMPI 0,r5,0
+ 	beq-	2f
 -- 
 2.13.3
