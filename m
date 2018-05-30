@@ -1,78 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937278AbeE3HQq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:16:46 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:59419 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937196AbeE3HQm (ORCPT
+        id S937303AbeE3HQz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:16:55 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:32893 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935032AbeE3HQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:16:42 -0400
-From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-To: Zeng Tao <prime.zeng@hisilicon.com>,
-        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: dwc2: gadget: fix missing process for isoc
- descriptor dma mode
-Thread-Topic: [PATCH] usb: dwc2: gadget: fix missing process for isoc
- descriptor dma mode
-Thread-Index: AQHT99RV+ygzxPGq9EKuFvTgIUAiiA==
-Date: Wed, 30 May 2018 07:16:36 +0000
-Message-ID: <410670D7E743164D87FA6160E7907A56013A59784A@am04wembxa.internal.synopsys.com>
-References: <1527681676-44003-1-git-send-email-prime.zeng@hisilicon.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.116.70.165]
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+        Wed, 30 May 2018 03:16:51 -0400
+X-Google-Smtp-Source: ADUXVKIvYn0uOyrFt1f+YFopT364JyEg5Oth7sD+SSG776mC5r6o6KiMQtL3AepwbFx5whIzZe00jg==
+From: Keiichi Watanabe <keiichiw@chromium.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 2/2] media: mtk-vcodec: Support VP9 profile in decoder
+Date: Wed, 30 May 2018 16:16:13 +0900
+Message-Id: <20180530071613.125768-3-keiichiw@chromium.org>
+X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
+In-Reply-To: <20180530071613.125768-1-keiichiw@chromium.org>
+References: <20180530071613.125768-1-keiichiw@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4U7GqRk028192
 
-Hi Zeng Tao,
+Add V4L2_CID_MPEG_VIDEO_VP9_PROFILE control in MediaTek decoder's
+driver.
+MediaTek decoder only supports profile 0 for now.
 
-On 5/30/2018 9:09 AM, Zeng Tao wrote:
-> If it's the first request to queue, and we are using descriptor dma mode
-> for isoc transfer, we only need to add the request to the queue, and it
-> will be processed in the future nak interrupt handler.
-> 
-> Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
-> ---
->   drivers/usb/dwc2/gadget.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-> index f0d9ccf..48e3a48c 100644
-> --- a/drivers/usb/dwc2/gadget.c
-> +++ b/drivers/usb/dwc2/gadget.c
-> @@ -1365,6 +1365,9 @@ static int dwc2_hsotg_ep_queue(struct usb_ep *ep, struct usb_request *req,
->   			return 0;
->   		}
->   
-> +		if (using_desc_dma(hs))
-> +			return 0;
-> +
->   		/* Update current frame number value. */
->   		hs->frame_number = dwc2_hsotg_read_frameno(hs);
->   		while (dwc2_gadget_target_frame_elapsed(hs_ep)) {
-> 
+Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
+---
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Actually it considered in "[PATCH] usb: dwc2: Change ISOC DDMA flow" 
-before checking is this request first or no:
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
+index 86f0a7134365..f9393504356d 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
+@@ -1400,6 +1400,12 @@ int mtk_vcodec_dec_ctrls_setup(struct mtk_vcodec_ctx *ctx)
+ 				V4L2_CID_MIN_BUFFERS_FOR_CAPTURE,
+ 				0, 32, 1, 1);
+ 	ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
++	v4l2_ctrl_new_std_menu(&ctx->ctrl_hdl,
++				&mtk_vcodec_dec_ctrl_ops,
++				V4L2_CID_MPEG_VIDEO_VP9_PROFILE,
++				V4L2_MPEG_VIDEO_VP9_PROFILE_3,
++				~(1U << V4L2_MPEG_VIDEO_VP9_PROFILE_0),
++				V4L2_MPEG_VIDEO_VP9_PROFILE_0);
 
-+	if (using_desc_dma(hs) && hs_ep->isochronous) {
-+		if (hs_ep->target_frame != TARGET_FRAME_INITIAL) {
-+			dwc2_gadget_fill_isoc_desc(hs_ep, hs_req->req.dma,
-+						   hs_req->req.length);
-+		}
-  		return 0;
-  	}
-
-
-Thanks,
-Minas
+ 	if (ctx->ctrl_hdl.error) {
+ 		mtk_v4l2_err("Adding control failed %d",
+--
+2.17.0.921.gf22659ad46-goog
