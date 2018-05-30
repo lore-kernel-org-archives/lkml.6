@@ -1,80 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753874AbeE3Q0e (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:26:34 -0400
-Received: from mga06.intel.com ([134.134.136.31]:29567 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751699AbeE3Q0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:26:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,461,1520924400";
-   d="scan'208";a="43998862"
-From: "Duyck, Alexander H" <alexander.h.duyck@intel.com>
-To: "mst@redhat.com" <mst@redhat.com>,
-        "alexander.duyck@gmail.com" <alexander.duyck@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        "Daly, Dan" <dan.daly@intel.com>, "Bie, Tiwei" <tiwei.bie@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Liang, Cunming" <cunming.liang@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>
-Subject: Re: [virtio-dev] [PATCH] virtio_pci: support enabling VFs
-Thread-Topic: [virtio-dev] [PATCH] virtio_pci: support enabling VFs
-Thread-Index: AQHT9/P5uaO7GXR/D0ickSAfuvKJDaRI5waAgAADPwCAAAEXAA==
-Date: Wed, 30 May 2018 16:26:30 +0000
-Message-ID: <1527697588.16245.136.camel@intel.com>
-References: <20180530085521.26583-1-tiwei.bie@intel.com>
-         <CAKgT0UcRZd5ajpTyC3KMvNFACVAb6D8A9Tss3m0r+UdamvVeRA@mail.gmail.com>
-         <20180530192215-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180530192215-mutt-send-email-mst@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [134.134.177.79]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <27BDE5CE4F9BBE428A5669147C2A00EF@intel.com>
+        id S1753916AbeE3Q1T (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:27:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57214 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753560AbeE3Q1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:27:17 -0400
+From: Steve Grubb <sgrubb@redhat.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: Paul Moore <paul@paul-moore.com>, zohar@linux.vnet.ibm.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-audit@redhat.com
+Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit" actions
+Date: Wed, 30 May 2018 12:27:14 -0400
+Message-ID: <3607733.4k8ofLVAdP@x2>
+Organization: Red Hat
+In-Reply-To: <00f66ee1-7494-8249-f148-688616deca0c@linux.vnet.ibm.com>
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <15281606.YptaXzsEVL@x2> <00f66ee1-7494-8249-f148-688616deca0c@linux.vnet.ibm.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4UGQdOA031540
 
-On Wed, 2018-05-30 at 19:22 +0300, Michael S. Tsirkin wrote:
-> On Wed, May 30, 2018 at 09:10:57AM -0700, Alexander Duyck wrote:
-> > On Wed, May 30, 2018 at 1:55 AM, Tiwei Bie <tiwei.bie@intel.com> wrote:
-> > > There is a new feature bit allocated in virtio spec to
-> > > support SR-IOV (Single Root I/O Virtualization):
-> > > 
-> > > https://github.com/oasis-tcs/virtio-spec/issues/11
-> > > 
-> > > This patch enables the support for this feature bit in
-> > > virtio driver.
-> > > 
-> > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+On Wednesday, May 30, 2018 11:25:05 AM EDT Stefan Berger wrote:
+> On 05/30/2018 11:15 AM, Steve Grubb wrote:
+> > On Wednesday, May 30, 2018 9:54:00 AM EDT Stefan Berger wrote:
+> >> On 05/29/2018 05:30 PM, Steve Grubb wrote:
+> >>> Hello,
+> >>> 
+> >>> On Thursday, May 24, 2018 4:11:05 PM EDT Stefan Berger wrote:
+> >>>> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
+> >>>> the IMA "audit" policy action.  This patch defines
+> >>>> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
+> >>>> 
+> >>>> With this change we now call integrity_audit_msg_common() to get
+> >>>> common integrity auditing fields. This now produces the following
+> >>>> record when parsing an IMA policy rule:
+> >>>> 
+> >>>> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure
+> >>>> \
+> >>>> 
+> >>>> fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
+> >>>> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
+> >>>> op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
+> >>>> tty=tty2 res=1
+> >>> 
+> >>> Since this is a new event, do you mind moving the tty field to be
+> >>> between
+> >>> auid= and ses=  ?   That is the more natural place for it.
+> >> 
+> >> 6/8 refactors the code so that the integrity audit records produced by
+> >> IMA follow one format in terms of ordering of the fields, with fields
+> >> like inode optional, though, and AUDIT_INTEGRITY_RULE in the end being
+> >> the only one with a different format. Do we really want to change that
+> >> order just for 1806?
+> >> 
+> >> 5/8 now produces the following:
+> >> 
+> >> type=INTEGRITY_PCR msg=audit(1527685075.941:502): pid=2431 \
+> >> uid=0 auid=1000 ses=5 \
+> >> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
+> >> op=invalid_pcr cause=open_writers comm="grep" \
+> >> name="/var/log/audit/audit.log" dev="dm-0" ino=1962494 \
+> >> exe="/usr/bin/grep" tty=pts0 res=1
+> >> 
+> >> Comparing the two:
+> >> 
+> >> 1806:          action, fsmagic, pid, uid, auid, ses, subj, op, cause,
+> >> comm,    exe, tty, res
+> >> INTEGRITY_PCR:                  pid, uid, auid, ses, subj, op, cause,
+> >> comm, name, dev, ino, exe, tty, res
 > > 
-> > So from a quick glance it looks like we are leaving SR-IOV enabled if
-> > the driver is removed. Do we want to have that behavior or should we
-> > be adding the code to disable SR-IOV and free the VFs on driver
-> > removal?
+> > OK. I guess go with it as is. It passes testing.
 > 
-> Could pci core handle it for us somehow?
+> What about the position of 'res' field relative to the two new fields
+> 'exe' and 'tty'?
 
-Maybe, but it would require changes to the pci core to do it.
+res (results) is always the last field for every event. We have no events 
+where it is not the last field. I'd prefer to go with it as is. The events 
+pass my testing the way they are.
 
-The problem is some drivers want to leave the VFs there since the PF
-doesn't really do anything, or they have the option of essentially
-putting the VFs into a standby state when the PF is gone.
+> Do we want to keep them as shown or strictly append the
+> two new fields 'exe' and 'tty'? 
 
-My main concern is do we care if VFs are allocated and then somebody
-removes the driver and binds a different driver to the interface? If
-not then this code and be left as is, but I just wanted to be certain
-since I know this isn't just enabling SR-IOV we are having to do a
-number of other checks against the virtio device.
+I'd prefer the first option to keep things as expected.
+
+> Paul seems to request that they appear after 'res'.
+
+I'd rather see them dropped, as useful as they could be, than to malform the 
+events.
+
+-Steve
