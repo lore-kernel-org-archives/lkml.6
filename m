@@ -1,73 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964784AbeE3Clw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 22:41:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45014 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbeE3Cls (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 22:41:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 075B960242
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH V2] PCI/portdrv: do not disable device on reboot/shutdown
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, timur@codeaurora.org, ryan@finnie.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Don Brace <don.brace@microsemi.com>, esc.storagedev@microsemi.com,
-        linux-scsi@vger.kernel.org
-References: <1527043490-17268-1-git-send-email-okaya@codeaurora.org>
- <20180523213249.GD150632@bhelgaas-glaptop.roam.corp.google.com>
- <61f70fd6-52fd-da07-ce73-303f95132131@codeaurora.org>
- <20180524183502.GB85822@bhelgaas-glaptop.roam.corp.google.com>
- <984b9734-244d-04e9-946f-7524f148ff7c@codeaurora.org>
- <20180525221024.GC92995@bhelgaas-glaptop.roam.corp.google.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <8eacc568-af8c-a990-ee96-d13e669e8643@codeaurora.org>
-Date: Tue, 29 May 2018 19:41:43 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935790AbeE3DBN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 23:01:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934360AbeE3DBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 May 2018 23:01:10 -0400
+Date: Wed, 30 May 2018 06:01:09 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Kevin Easton <kevin@guarana.org>, Jason Wang <jasowang@redhat.com>,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [net] vhost: Use kzalloc() to allocate vhost_msg_node
+Message-ID: <20180530055704-mutt-send-email-mst@kernel.org>
+References: <20180427154502.GA22544@la.guarana.org>
+ <20180529221908.GA22742@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <20180525221024.GC92995@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529221908.GA22742@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bjorn,
-
-On 5/25/2018 3:10 PM, Bjorn Helgaas wrote:
-> On Fri, May 25, 2018 at 09:30:59AM -0400, Sinan Kaya wrote:
->> On 5/24/2018 2:35 PM, Bjorn Helgaas wrote:
->>> That sounds like a reasonable idea, and it is definitely another can
->>> of worms.  I looked briefly at some of the .shutdown() cases:
->>
->> should we throw it into 4.18 and see what happens?
+On Tue, May 29, 2018 at 03:19:08PM -0700, Guenter Roeck wrote:
+> On Fri, Apr 27, 2018 at 11:45:02AM -0400, Kevin Easton wrote:
+> > The struct vhost_msg within struct vhost_msg_node is copied to userspace,
+> > so it should be allocated with kzalloc() to ensure all structure padding
+> > is zeroed.
+> > 
+> > Signed-off-by: Kevin Easton <kevin@guarana.org>
+> > Reported-by: syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
 > 
-> It wouldn't solve this particular problem because hpsa *does* have a
-> .shutdown() method.  The problem is that it doesn't work -- it's
-> supposed to stop DMA and interrupts but it apparently doesn't.
+> Is this patch going anywhere ?
 > 
-> I think we need to fix hpsa first.
+> The patch fixes CVE-2018-1118. It would be useful to understand if and when
+> this problem is going to be fixed.
 > 
+> Thanks,
+> Guenter
+> > ---
+> >  drivers/vhost/vhost.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> > index f3bd8e9..1b84dcff 100644
+> > --- a/drivers/vhost/vhost.c
+> > +++ b/drivers/vhost/vhost.c
+> > @@ -2339,7 +2339,7 @@ EXPORT_SYMBOL_GPL(vhost_disable_notify);
+> >  /* Create a new message. */
+> >  struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
+> >  {
+> > -	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
+> > +	struct vhost_msg_node *node = kzalloc(sizeof *node, GFP_KERNEL);
+> >  	if (!node)
+> >  		return NULL;
+> >  	node->vq = vq;
 
-I don't know if you followed my latest V3 patch but I found a way to put
-these two together to reach to an, IMO, more acceptable solution.
+As I pointed out, we don't need to init the whole structure. The proper
+fix is thus (I think) below.
 
-Sinan
+Could you use your testing infrastructure to confirm this fixes the issue?
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Thanks!
+
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index f3bd8e941224..58d9aec90afb 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -2342,6 +2342,9 @@ struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
+ 	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
+ 	if (!node)
+ 		return NULL;
++
++	/* Make sure all padding within the structure is initialized. */
++	memset(&node->msg, 0, sizeof node->msg);
+ 	node->vq = vq;
+ 	node->msg.type = type;
+ 	return node;
