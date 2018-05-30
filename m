@@ -1,31 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932554AbeE3Vs4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:48:56 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:35311 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932466AbeE3Vsy (ORCPT
+        id S932583AbeE3VtO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:49:14 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:37765 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932313AbeE3VtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:48:54 -0400
-X-Google-Smtp-Source: ADUXVKKo+z5clayMNve3gGqBXiWNtTRNWTl7B+ffPatAEVb7kDsXVvIUwHQVT+b0orUquhTXu1lYDD61pAzHiEJx4yM=
+        Wed, 30 May 2018 17:49:11 -0400
+X-Google-Smtp-Source: ADUXVKJH2nsvaOTbwBMoEE+Pp6xh+msBdoW02z+Wprj1i3BDhKtozI6OojLSIyDDtxqtQGSsAcDbm6Ljd0xE2Jlmj2M=
 MIME-Version: 1.0
-In-Reply-To: <bb2d3dfb-08be-de3e-c18f-616ee27fa2e9@codeaurora.org>
-References: <20180509170159.29682-1-ilina@codeaurora.org> <20180509170159.29682-10-ilina@codeaurora.org>
- <CAD=FV=Xvi8V43+J9v-mosU5WUDQtabg8gUbrkn6SCoNEYFtjUQ@mail.gmail.com> <bb2d3dfb-08be-de3e-c18f-616ee27fa2e9@codeaurora.org>
+In-Reply-To: <1527158731-17685-2-git-send-email-rplsssn@codeaurora.org>
+References: <1527158731-17685-1-git-send-email-rplsssn@codeaurora.org> <1527158731-17685-2-git-send-email-rplsssn@codeaurora.org>
 From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 30 May 2018 14:48:51 -0700
-X-Google-Sender-Auth: FT_IA3PxpCwFcNYkQ5igvyvcGEA
-Message-ID: <CAD=FV=XrhG0N33YF8Uo16Lpq904TEGz8=S7Eb=P=sX52dTtVuA@mail.gmail.com>
-Subject: Re: [PATCH v8 09/10] drivers: qcom: rpmh: add support for batch RPMH request
+Date: Wed, 30 May 2018 14:49:09 -0700
+X-Google-Sender-Auth: rGntjKgFvlgbvMgavVw9J6pk1Kc
+Message-ID: <CAD=FV=VG-wDqone04dFZHVPUgxvdPQED0eeT90ZobKqtVKJ-hQ@mail.gmail.com>
+Subject: Re: [PATCH v9 01/10] drivers: qcom: rpmh-rsc: add RPMH controller for
+ QCOM SoCs
 To: Raju P L S S S N <rplsssn@codeaurora.org>
-Cc: Lina Iyer <ilina@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
+Cc: Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
         "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, msivasub@codeaurora.org,
-        mkshah@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Evan Green <evgreen@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
+        Matthias Kaehlcke <mka@chromium.org>, Lina Iyer <ilina@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -33,19 +33,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Wed, May 23, 2018 at 6:27 AM, Raju P L S S S N
+On Thu, May 24, 2018 at 3:45 AM, Raju P L S S S N
 <rplsssn@codeaurora.org> wrote:
->>> +                       break;
->>
->>
->> "break" seems wrong here.  You'll end up waiting for the completion,
->> then I guess timing out, then returning -ETIMEDOUT?
->
->
-> As the loop above break runs for remaining count, completion will be
-> notified so there will not be waiting.
+> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+> new file mode 100644
+> index 0000000..99b23b7
+> --- /dev/null
+> +++ b/drivers/soc/qcom/rpmh-rsc.c
+> @@ -0,0 +1,482 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#define pr_fmt(fmt) "%s " fmt, KBUILD_MODNAME
+> +
+> +#include <linux/atomic.h>
+> +#include <linux/delay.h>
+> +#include <linux/export.h>
 
-Ah, I see.  I missed that.
+Now that you're not exporting any symbols in here, presumably you no
+longer need "export.h" right?
 
-...oh, I guess you need to wait because any requests you might have
-made will try to signal your completion which is on the stack...
+-Doug
