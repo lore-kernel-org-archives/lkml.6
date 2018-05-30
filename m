@@ -1,71 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753493AbeE3Oyx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:54:53 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:46230 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751758AbeE3Oyt (ORCPT
+        id S1753549AbeE3O4I (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:56:08 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59070 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750914AbeE3O4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:54:49 -0400
-X-Google-Smtp-Source: ADUXVKJcKY/i1JJlmwMbpLJjIDQO9q6bCYTHQ/3hfiJ9S2hBRDMcNXPPPGOPXaVbg42hE9jIX6nwZwuk5aRx1Zx+5YI=
+        Wed, 30 May 2018 10:56:06 -0400
+Subject: Re: [PATCH] block: kyber: make kyber more friendly with merging
+To: Ming Lei <tom.leiming@gmail.com>
+Cc: Omar Sandoval <osandov@osandov.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1527000509-2619-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180522200214.GF9536@vader>
+ <c0b8f2e3-b286-06a7-306d-141f155eff01@oracle.com>
+ <CACVXFVN=LHTq=x9n7U7gciR41rWfTHn9uHmZMUHt6=RdvJanXQ@mail.gmail.com>
+ <bef30b73-bf68-929e-26b5-08f63e5ca885@oracle.com>
+ <CACVXFVNLq7CiBMTDPRcHLNZBWLYXWCpdb4G0iqBUon9f-GpsAA@mail.gmail.com>
+ <08921b9d-0f31-f31d-096f-6c4f3a1e4d4f@oracle.com>
+ <CACVXFVPKdqb7p-xMQ_8c7Wa26s6O-36Pi0xNHMRDDR1Ar+bDhA@mail.gmail.com>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <ee4c1872-e78d-d41c-6d57-284ca1d37592@oracle.com>
+Date: Wed, 30 May 2018 22:55:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180530103720.GH6920@sirena.org.uk>
-References: <cover.1527040878.git.collinsd@codeaurora.org> <6d03576cf90f06afb1194301cb41fc31704def1d.1527040878.git.collinsd@codeaurora.org>
- <CAD=FV=VH0bTxPOmRr+jUyV0cGNQHLcwQTV9L-t0bxZOqD8FnHA@mail.gmail.com> <20180530103720.GH6920@sirena.org.uk>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 30 May 2018 07:54:47 -0700
-X-Google-Sender-Auth: xO2qLhhKYI8xzZQHnEMUorhh1Zk
-Message-ID: <CAD=FV=WTTKXwPchuWRh-RNTc8=X8Xo28oTqk=3wW4+SiTHhxuA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
-To: Mark Brown <broonie@kernel.org>
-Cc: David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACVXFVPKdqb7p-xMQ_8c7Wa26s6O-36Pi0xNHMRDDR1Ar+bDhA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8909 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=521
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805300165
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Ming
 
-On Wed, May 30, 2018 at 3:37 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, May 29, 2018 at 10:23:20PM -0700, Doug Anderson wrote:
->
->> > +                       qcom,drms-mode-max-microamps = <10000 1000000>;
->
->> Things look pretty good to me now.  I'm still hesitant about the whole
->> need to list the modes twice (once using the unordered
->> "regulator-allowed-modes" and once to match up against the ordered
->> "qcom,drms-mode-max-microamps").  I'm also still of the opinion that
->> the whole "drms-mode-max-microamps" ought to be a standard property
->> (not a qcom specific one) and handled in the regulator core.
->
-> I'm confused as to why we are specifying the maximum current the device
-> can deliver in a given mode in the DT - surely that's a fixed property
-> of the hardware?
+Thanks for your kindly and detailed response. :)
 
-Said another way: you're saying that you'd expect the "max-microamps"
-table to have one fewer element than the listed modes?  So in the
-above example you'd have:
+On 05/30/2018 05:44 PM, Ming Lei wrote:
+> On Wed, May 30, 2018 at 5:20 PM, jianchao.wang
+> <jianchao.w.wang@oracle.com> wrote:
+>> Hi ming
+>>
+>> On 05/30/2018 05:13 PM, Ming Lei wrote:
+>>>> Yes, it maybe good for merging of 'none', because the rq_list is split into 3
+>>>> lists, and not need to iterate the whole rq_list any more.
+>>>> But what's about the dispatch when there is no io scheduler.
+>>> blk_mq_flush_busy_ctxs() and blk_mq_dequeue_from_ctx() should work
+>>> fine in case of 'none' if per-domain list is added to ctx. Then we can make
+>>> none to be a bit fair on READ/WRITE.
+>>>
+>>
+>> But how to determine when to dispatch READ, WRITE or other more, when there is no io scheduler ?
+>>
+> 
+> For blk-mq, no io scheduler means 'none' actually, and it works like a
+> scheduler too, but just shares driver tags, IMO.
+> > Wrt. the current code of 'none', blk-mq just picks up one request from
+> ctx->rq_list
+> directly in FIFO style. If READ/WRITE lists are introduced, only
+> blk_mq_dequeue_from_ctx() is effected, there are several choices
+> left for us:
+> 
+> 1) keep the FIFO style of current behaviour by using req->start_time_ns
+> 
+> 2) READ/WRIRE fair style by picking up request from the lists in round-robin
+> order
+> 
+> 3) or others
+> 
+> It just will make more choices for us, :-)
 
-drms-modes: LPM, HPM
-max-microamps: 10000
+OK, I got the point.
 
-...or in a more complicated case, you could have:
+But is it necessary to introduce kind of dispatch policy which is more complicated 
+than current simple FIFO style in ctx rq_list dispatching ? 
+If we have this kind of requirement, why not introduce an io scheduler ?
+ITOW, shouldn't we keep the blk-mq core code as simple as possible, and put most of the policy
+into io scheduler ?
 
-drms-modes: RET, LPM, AUTO, HPM
-max-microamps: 1, 100, 10000
-
-
-Did I understand you correctly?
-
-I'm personally OK with that color for the shed.  I kinda like the
-symmetry of having the same number of elements in both lists (and
-being able to print an error message if someone ends up asking for too
-much current), but it's not a big deal for me either way.
-
--Doug
+Thanks
+Jianchao
