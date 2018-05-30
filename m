@@ -1,91 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932498AbeE3WEG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:04:06 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:34475 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932382AbeE3WED (ORCPT
+        id S932603AbeE3WET (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:04:19 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40270 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932509AbeE3WEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:04:03 -0400
-X-Google-Smtp-Source: ADUXVKI7jQKdkIGfbBo7nZrBvWqf5OV/o/YCXJ/D7SxbP89XElUdotzHQAu5o1JRBEpiKikMtu/BtHJ4fU9fjXIqFJA=
+        Wed, 30 May 2018 18:04:10 -0400
+X-Google-Smtp-Source: ADUXVKJZcQo6O1VP/QESYF7EvUXPVZ0vnwm0BIjA/Jn73tzRQ0U86FuNUQY8/mqQovZBC6D022yl5A==
+Date: Wed, 30 May 2018 16:04:05 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Steve Wise <swise@chelsio.com>, Doug Ledford <dledford@redhat.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iw_cxgb4: add INFINIBAND_ADDR_TRANS dependency
+Message-ID: <20180530220405.GH30754@ziepe.ca>
+References: <20180530215826.1343234-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jL5hzArDhKJzG+jd7wQVJfXGPT1tUys-FzNOS6MTE-jFA@mail.gmail.com>
-References: <20180505075854.192237-1-ksspiers@google.com> <CAPcyv4i__AQmCxM1rVBrLqXreMxQ5u9uRHRyJ=XZjDELxxJTzw@mail.gmail.com>
- <CAPcyv4jrUwXFrF7aB-bKqfZ=17T5ie27KEO0JYWD=ETAqOqA4g@mail.gmail.com> <CAGXu5jL5hzArDhKJzG+jd7wQVJfXGPT1tUys-FzNOS6MTE-jFA@mail.gmail.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Wed, 30 May 2018 15:04:02 -0700
-Message-ID: <CAPcyv4j9AoRtjpLfHX=gjgv35gNtb5fKt3rFaGA4ZPkPg1GfmQ@mail.gmail.com>
-Subject: Re: [PATCH v2] async_pq: Remove VLA usage
-To: Kees Cook <keescook@chromium.org>
-Cc: Kyle Spiers <ksspiers@google.com>, David Miller <davem@davemloft.net>,
-        ray.jui@broadcom.com, linux-crypto <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-raid <linux-raid@vger.kernel.org>, vkoul@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530215826.1343234-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 2:33 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Tue, May 29, 2018 at 3:40 PM, Dan Williams <dan.j.williams@intel.com> wrote:
->> [ add Vinod's korg address ]
->>
->> On Tue, May 29, 2018 at 3:37 PM, Dan Williams <dan.j.williams@intel.com> wrote:
->>> [ adding linux-raid ]
->>>
->>> Apologies for the delay, the recent ping from Kees made me take a closer look.
->>>
->>> On Sat, May 5, 2018 at 12:58 AM, Kyle Spiers <ksspiers@google.com> wrote:
->>>> In the quest to remove VLAs from the kernel[1], this moves the
->>>> allocation of coefs and blocks from the stack to being kmalloc()ed.
->>>>
->>>> [1] https://lkml.org/lkml/2018/3/7/621
->>>>
->>>> Signed-off-by: Kyle Spiers <ksspiers@google.com>
->>>> ---
->>>> Forgot to add slab.h
->>>> ---
->>>>  crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
->>>>  crypto/async_tx/raid6test.c |  9 ++++++++-
->>>>  2 files changed, 22 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
->>>> index 56bd612927ab..af1912313a23 100644
->>>> --- a/crypto/async_tx/async_pq.c
->>>> +++ b/crypto/async_tx/async_pq.c
->>>> @@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
->>>>             (src_cnt <= dma_maxpq(device, 0) ||
->>>>              dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
->>>>             is_dma_pq_aligned(device, offset, 0, len)) {
->>>> -               struct dma_async_tx_descriptor *tx;
->>>> +               struct dma_async_tx_descriptor *tx = NULL;
->>>>                 enum dma_ctrl_flags dma_flags = 0;
->>>> -               unsigned char coefs[src_cnt];
->>>> +               unsigned char *coefs;
->>> At a minimum this needs to be GFP_NOIO since raid may be in the
->>> page-reclaim path.
->>>
->>> However, I think it may be better to allocate this with the rest of
->>> the stripe resources and pass it in as a scratch buffer. See the usage
->>> / implementation of scribble_alloc() in drivers/md/raid5.c.
->
-> Given this:
->
->         int src_cnt = disks - 2;
-> ...
->         BUG_ON(disks > 255 || ...)
->
-> what about just making something like:
->
-> #define MAX_DISKS 255
-> ...
->         int src_cnt = disks - 2;
-> ...
->         BUG_ON(disks > MAX_DISKS || ...)
-> ...
->                  unsigned char coefs[MAX_DISKS];
->
-> ?
+On Wed, May 30, 2018 at 11:58:18PM +0200, Arnd Bergmann wrote:
+> The newly added fill_res_ep_entry function fails to link if
+> CONFIG_INFINIBAND_ADDR_TRANS is not set:
+> 
+> drivers/infiniband/hw/cxgb4/restrack.o: In function `fill_res_ep_entry':
+> restrack.c:(.text+0x3cc): undefined reference to `rdma_res_to_id'
+> restrack.c:(.text+0x3d0): undefined reference to `rdma_iw_cm_id'
+> 
+> This adds a Kconfig dependency for the driver.
+> 
+> Fixes: 116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/infiniband/hw/cxgb4/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
-Yeah, we were already potentially suffering a value that large on the
-stack in a max config case anyway with the VLA. Looks ok to me.
+Oh, I think we need to solve this with maybe a header fill null stub
+instead..
+
+We don't want to disable drivers just because a user interface is
+disabled.
+
+Thanks,
+Jason
