@@ -1,70 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753113AbeE3LoF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:44:05 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:43221 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752034AbeE3LoC (ORCPT
+        id S1753716AbeE3LmI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:42:08 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60721 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752121AbeE3LG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:44:02 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ramesh Thomas <ramesh.thomas@intel.com>
-Subject: [PATCH 1/2] cpuidle: governors: Drop redundant checks related to PM QoS
-Date: Wed, 30 May 2018 13:41:09 +0200
-Message-ID: <2392049.LpkvHV6nCY@aspire.rjw.lan>
-In-Reply-To: <2261593.SGWtJkXgY3@aspire.rjw.lan>
-References: <2261593.SGWtJkXgY3@aspire.rjw.lan>
+        Wed, 30 May 2018 07:06:59 -0400
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Namhyung Kim" <namhyung@kernel.org>,
+        "Arnaldo Carvalho de Melo" <acme@kernel.org>,
+        "Ravi Bangoria" <ravi.bangoria@linux.vnet.ibm.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        "Tom Zanussi" <tom.zanussi@linux.intel.com>,
+        "Masami Hiramatsu" <mhiramat@kernel.org>
+Date: Wed, 30 May 2018 11:52:42 +0100
+Message-ID: <lsq.1527677562.903065357@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.2 143/153] tracing: probeevent: Fix to support minus
+ offset from symbol
+In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
 
-PM_QOS_RESUME_LATENCY_NO_CONSTRAINT is defined as the 32-bit integer
-maximum, so it is not necessary to test the return value of
-dev_pm_qos_raw_read_value() against it directly in the menu and
-ladder cpuidle governors.
+------------------
 
-Drop these redundant checks.
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+commit c5d343b6b7badd1f5fe0873eff2e8d63a193e732 upstream.
+
+In Documentation/trace/kprobetrace.txt, it says
+
+ @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
+
+However, the parser doesn't parse minus offset correctly, since
+commit 2fba0c8867af ("tracing/kprobes: Fix probe offset to be
+unsigned") drops minus ("-") offset support for kprobe probe
+address usage.
+
+This fixes the traceprobe_split_symbol_offset() to parse minus
+offset again with checking the offset range, and add a minus
+offset check in kprobe probe address usage.
+
+Link: http://lkml.kernel.org/r/152129028983.31874.13419301530285775521.stgit@devbox
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Fixes: 2fba0c8867af ("tracing/kprobes: Fix probe offset to be unsigned")
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+[bwh: Backported to 3.2: adjust filename, context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/cpuidle/governors/ladder.c |    3 +--
- drivers/cpuidle/governors/menu.c   |    3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-Index: linux-pm/drivers/cpuidle/governors/ladder.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/ladder.c
-+++ linux-pm/drivers/cpuidle/governors/ladder.c
-@@ -76,8 +76,7 @@ static int ladder_select_state(struct cp
- 	int latency_req = pm_qos_request(PM_QOS_CPU_DMA_LATENCY);
- 	int resume_latency = dev_pm_qos_raw_read_value(device);
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -920,7 +920,7 @@ static struct notifier_block trace_probe
+ };
  
--	if (resume_latency < latency_req &&
--	    resume_latency != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT)
-+	if (resume_latency < latency_req)
- 		latency_req = resume_latency;
+ /* Split symbol and offset. */
+-static int split_symbol_offset(char *symbol, unsigned long *offset)
++static int split_symbol_offset(char *symbol, long *offset)
+ {
+ 	char *tmp;
+ 	int ret;
+@@ -928,10 +928,9 @@ static int split_symbol_offset(char *sym
+ 	if (!offset)
+ 		return -EINVAL;
  
- 	/* Special case when user has set very strict latency requirement */
-Index: linux-pm/drivers/cpuidle/governors/menu.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/menu.c
-+++ linux-pm/drivers/cpuidle/governors/menu.c
-@@ -304,8 +304,7 @@ static int menu_select(struct cpuidle_dr
- 		data->needs_update = 0;
- 	}
+-	tmp = strchr(symbol, '+');
++	tmp = strpbrk(symbol, "+-");
+ 	if (tmp) {
+-		/* skip sign because strict_strtol doesn't accept '+' */
+-		ret = strict_strtoul(tmp + 1, 0, offset);
++		ret = kstrtol(tmp, 0, offset);
+ 		if (ret)
+ 			return ret;
+ 		*tmp = '\0';
+@@ -1165,7 +1164,7 @@ static int create_trace_probe(int argc,
+ 	int is_return = 0, is_delete = 0;
+ 	char *symbol = NULL, *event = NULL, *group = NULL;
+ 	char *arg;
+-	unsigned long offset = 0;
++	long offset = 0;
+ 	void *addr = NULL;
+ 	char buf[MAX_EVENT_NAME_LEN];
  
--	if (resume_latency < latency_req &&
--	    resume_latency != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT)
-+	if (resume_latency < latency_req)
- 		latency_req = resume_latency;
- 
- 	/* Special case when user has set very strict latency requirement */
+@@ -1238,7 +1237,7 @@ static int create_trace_probe(int argc,
+ 		symbol = argv[1];
+ 		/* TODO: support .init module functions */
+ 		ret = split_symbol_offset(symbol, &offset);
+-		if (ret) {
++		if (ret || offset < 0 || offset > UINT_MAX) {
+ 			pr_info("Failed to parse either an address or a symbol.\n");
+ 			return ret;
+ 		}
