@@ -1,77 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751997AbeE3MNT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:13:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60454 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751012AbeE3MNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:13:18 -0400
-Date: Wed, 30 May 2018 08:13:17 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dm: writecache: fix format string warning
-In-Reply-To: <20180528155432.2864616-1-arnd@arndb.de>
-Message-ID: <alpine.LRH.2.02.1805300807090.24812@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180528155432.2864616-1-arnd@arndb.de>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1752751AbeE3MOF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:14:05 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41429 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751012AbeE3MOC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 08:14:02 -0400
+X-Google-Smtp-Source: ADUXVKK+hP9cgD1bhmnjVxwR2vSOiQ9ekRjIk2Jnr/pD1NlEtwtRHJCf6Dk0aTZKbWc0/f6kFauMkg==
+Date: Wed, 30 May 2018 14:13:57 +0200
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        USB <linux-usb@vger.kernel.org>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/3] usb: gadget: ccid: add support for USB CCID
+ Gadget Device
+Message-ID: <20180530121357.GD2939@gmail.com>
+References: <20180529185021.13738-1-marcus.folkesson@gmail.com>
+ <CAHp75VeSbC3QBswCxZpoVpT4cL4pXC5eouCc9YtvBtXG3YddTg@mail.gmail.com>
+ <20180530112459.GB2939@gmail.com>
+ <20180530113026.GA20775@kroah.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530113026.GA20775@kroah.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Greg,
 
-
-On Mon, 28 May 2018, Arnd Bergmann wrote:
-
-> The return type of ACCESS_ONCE is configuration dependent and may be either
-> 'int' or 'long int' for the writecache_has_error() macro, so we get a warning
-> like this for either format string:
-
-__builtin_expect returns always long, see the GCC documentation (it used 
-to return int in very old gcc versions such as 2.96).
-
-I think this is a bug in the macro __branch_check__. The variable ______r 
-should be long, but it is int. This bug may cause misbehavior of other 
-kernel parts (i.e. truncation of long value to int), so it should be fixed 
-in __branch_check__ - not in dm-writecache.
-
-Mikulas
-
-> In file included from drivers/md/dm-writecache.c:8:
-> drivers/md/dm-writecache.c: In function 'writecache_status':
-> drivers/md/dm-writecache.c:2227:10: error: format '%ld' expects argument of type 'long int', but argument 4 has type 'int' [-Werror=format=]
->    DMEMIT("%ld %llu %llu %llu", writecache_has_error(wc),
->           ^~~~~~~~~~~~~~~~~~~~
-> include/linux/device-mapper.h:549:46: note: in definition of macro 'DMEMIT'
->       0 : scnprintf(result + sz, maxlen - sz, x))
->                                               ^
+On Wed, May 30, 2018 at 01:30:26PM +0200, Greg Kroah-Hartman wrote:
+> On Wed, May 30, 2018 at 01:24:59PM +0200, Marcus Folkesson wrote:
+> > Hi Andy,
+> > 
+> > Thank you for your comments!
+> > Many good catches here!
+> > 
+> > On Wed, May 30, 2018 at 03:55:39AM +0300, Andy Shevchenko wrote:
+> > > On Tue, May 29, 2018 at 9:50 PM, Marcus Folkesson
+> > > <marcus.folkesson@gmail.com> wrote:
+> > > > Chip Card Interface Device (CCID) protocol is a USB protocol that
+> > > > allows a smartcard device to be connected to a computer via a card
+> > > > reader using a standard USB interface, without the need for each manufacturer
+> > > > of smartcards to provide its own reader or protocol.
+> > > >
+> > > > This gadget driver makes Linux show up as a CCID device to the host and let a
+> > > > userspace daemon act as the smartcard.
+> > > >
+> > > > This is useful when the Linux gadget itself should act as a cryptographic
+> > > > device or forward APDUs to an embedded smartcard device.
+> > > 
+> > > > + * Copyright (C) 2018 Marcus Folkesson <marcus.folkesson@gmail.com>
+> > > 
+> > > > + *
+> > > 
+> > > Redundant line
+> > > 
+> > 
+> > Yep
+> > 
+> > > > +static DEFINE_IDA(ccidg_ida);
+> > > 
+> > > Where is it destroyed?
+> > 
+> > Hm, I'm not sure it needs to be destroyed. From lib/idr.c:
+> > 
+> >  * You can also use ida_get_new_above() if you need an ID to be allocated
+> >  * above a particular number.  ida_destroy() can be used to dispose of an
+> >  * IDA without needing to free the individual IDs in it.  You can use
+> >  * ida_is_empty() to find out whether the IDA has any IDs currently allocated.
+> > 
+> > 
+> > An empty ccidg_ida is the indication that we should clean up our
+> > mess:
+> > 
+> > static void ccidg_free_inst(struct usb_function_instance *f)
+> > ...
+> > 	if (ida_is_empty(&ccidg_ida))
+> > 		ccidg_cleanup();
+> > 
+> > If the IDA is empty, should I call ida_destroy() anyway?
+> > Other similiar drivers does not seems to do that.
+> > 
+> > I must say that I'm not very familiar with the IDA API.
 > 
-> The code is otherwise correct, so we just need to shut up the warning,
-> which can be done using an extra type cast.
+> When your module is removed, you need to clean up any remaining memory
+> that the ida used.  It's not obvious at all, and is a pain as you would
+> think that if you statically allocate one, like you have here, it would
+> not be needed.  You need to just call:
+> 	ida_destroy(&ccidg_ida);
+> in your module exit function.
 > 
-> Fixes: bb15b431d650 ("dm: add writecache target")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/md/dm-writecache.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hope this helps,
+
+Thank you for making it clear.
+
+Maybe I should use
+#define DECLARE_USB_FUNCTION(_name, _inst_alloc, _func_alloc)		\
+
+instead of 
+#define DECLARE_USB_FUNCTION_INIT(_name, _inst_alloc, _func_alloc)	\
+
+and provide my own module_init/module_exit functions then?
+
+Just give me a hint and I will do the same for
+f_printer.c and
+f_hid.c
+
+as those use IDAs in a similiar way.
+
 > 
-> diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-> index 1ef06e738eb6..772ac3a57287 100644
-> --- a/drivers/md/dm-writecache.c
-> +++ b/drivers/md/dm-writecache.c
-> @@ -2224,7 +2224,7 @@ static void writecache_status(struct dm_target *ti, status_type_t type,
->  
->  	switch (type) {
->  	case STATUSTYPE_INFO:
-> -		DMEMIT("%ld %llu %llu %llu", writecache_has_error(wc),
-> +		DMEMIT("%ld %llu %llu %llu", (long)writecache_has_error(wc),
->  		       (unsigned long long)wc->n_blocks, (unsigned long long)wc->freelist_size,
->  		       (unsigned long long)wc->writeback_size);
->  		break;
-> -- 
-> 2.9.0
-> 
+> greg k-h
+
+Best regards,
+Marcus Folkesson
