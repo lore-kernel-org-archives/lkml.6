@@ -1,106 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753739AbeE3QsU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:48:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753022AbeE3QsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:48:18 -0400
-Date: Wed, 30 May 2018 11:48:17 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/portdrv: Remove unused pcie_port_acpi_setup()
-Message-ID: <20180530164817.GJ39853@bhelgaas-glaptop.roam.corp.google.com>
-References: <152598877588.228994.16423836714969302381.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        id S1753812AbeE3Qs4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:48:56 -0400
+Received: from mail-io0-f172.google.com ([209.85.223.172]:40556 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753238AbeE3Qsy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:48:54 -0400
+X-Google-Smtp-Source: ADUXVKJDHcsoMxLKkohMMivshrr7UK568CApmv/+3jRQhPTDfWDIhd45nLbGRO7kePoCEaVAcyvJtw==
+Subject: Re: [PATCH V3 0/2] block: kyber: make kyber more friendly with
+ merging
+To: Jianchao Wang <jianchao.w.wang@oracle.com>, osandov@osandov.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1527665168-1965-1-git-send-email-jianchao.w.wang@oracle.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <3f44d1dc-6b81-9f51-9e2d-68f1faba1684@kernel.dk>
+Date: Wed, 30 May 2018 10:48:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152598877588.228994.16423836714969302381.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1527665168-1965-1-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 04:46:15PM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
+On 5/30/18 1:26 AM, Jianchao Wang wrote:
+> Hi Jens
 > 
-> 02bfeb484230 ("PCI/portdrv: Simplify PCIe feature permission checking")
-> removed the only call of pcie_port_acpi_setup() and removed portdrv_acpi.o
-> from the Makefile, but I forgot to remove pcie_port_acpi_setup() itself.
+> This is the 3rd version patchset to make the kyber io scheduler more firendly
+> with merging.
 > 
-> Remove pcie_port_acpi_setup() and the drivers/pci/pcie/portdrv_acpi.c file.
+> Most of time, kyber io scheduler will not leave any requests in ctx rq_list,
+> this is because even if tokens of one domain is used up, kyber will try to
+> dispatch requests from other domain and flush the rq_list there. So there is not
+> any change to do merge.
 > 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> To improve this, setup kyber_ctx_queue (kcq) which is similar with blk_mq_ctx but has
+> rq_list for every domain, and build mapping between kcq and khd as ctx and hctx.
+> Then we could merge, insert and dispatch on rq_list of different domains separately.
+> At the same time, only flush the rq_list of kcq after get domain token
+> successfully, then the requests could be left in the rq_list of that domain and 
+> maybe merged with following io. In my local test on NVMe card, the sequential io
+> performance could be improved a lot, especially on high workload. More details
+> please refer to the second patch.
 
-I applied this to pci/portdrv for v4.18.
+Great work, thanks Jianchao - applied for 4.18.
 
-> ---
->  drivers/pci/pcie/portdrv_acpi.c |   57 ---------------------------------------
->  1 file changed, 57 deletions(-)
->  delete mode 100644 drivers/pci/pcie/portdrv_acpi.c
-> 
-> diff --git a/drivers/pci/pcie/portdrv_acpi.c b/drivers/pci/pcie/portdrv_acpi.c
-> deleted file mode 100644
-> index 8ab5d434b9c6..000000000000
-> --- a/drivers/pci/pcie/portdrv_acpi.c
-> +++ /dev/null
-> @@ -1,57 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -/*
-> - * PCIe Port Native Services Support, ACPI-Related Part
-> - *
-> - * Copyright (C) 2010 Rafael J. Wysocki <rjw@sisk.pl>, Novell Inc.
-> - */
-> -
-> -#include <linux/pci.h>
-> -#include <linux/kernel.h>
-> -#include <linux/errno.h>
-> -#include <linux/acpi.h>
-> -#include <linux/pci-acpi.h>
-> -
-> -#include "aer/aerdrv.h"
-> -#include "../pci.h"
-> -#include "portdrv.h"
-> -
-> -/**
-> - * pcie_port_acpi_setup - Request the BIOS to release control of PCIe services.
-> - * @port: PCIe Port service for a root port or event collector.
-> - * @srv_mask: Bit mask of services that can be enabled for @port.
-> - *
-> - * Invoked when @port is identified as a PCIe port device.  To avoid conflicts
-> - * with the BIOS PCIe port native services support requires the BIOS to yield
-> - * control of these services to the kernel.  The mask of services that the BIOS
-> - * allows to be enabled for @port is written to @srv_mask.
-> - *
-> - * NOTE: It turns out that we cannot do that for individual port services
-> - * separately, because that would make some systems work incorrectly.
-> - */
-> -void pcie_port_acpi_setup(struct pci_dev *port, int *srv_mask)
-> -{
-> -	struct acpi_pci_root *root;
-> -	acpi_handle handle;
-> -	u32 flags;
-> -
-> -	if (acpi_pci_disabled)
-> -		return;
-> -
-> -	handle = acpi_find_root_bridge_handle(port);
-> -	if (!handle)
-> -		return;
-> -
-> -	root = acpi_pci_find_root(handle);
-> -	if (!root)
-> -		return;
-> -
-> -	flags = root->osc_control_set;
-> -
-> -	*srv_mask = 0;
-> -	if (flags & OSC_PCI_EXPRESS_NATIVE_HP_CONTROL)
-> -		*srv_mask |= PCIE_PORT_SERVICE_HP;
-> -	if (flags & OSC_PCI_EXPRESS_PME_CONTROL)
-> -		*srv_mask |= PCIE_PORT_SERVICE_PME;
-> -	if (flags & OSC_PCI_EXPRESS_AER_CONTROL)
-> -		*srv_mask |= PCIE_PORT_SERVICE_AER | PCIE_PORT_SERVICE_DPC;
-> -}
-> 
+-- 
+Jens Axboe
