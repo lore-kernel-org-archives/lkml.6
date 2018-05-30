@@ -1,119 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968731AbeE3Ip0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:45:26 -0400
-Received: from mga14.intel.com ([192.55.52.115]:30130 "EHLO mga14.intel.com"
+        id S936086AbeE3Ir5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:47:57 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:57189 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964801AbeE3IpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:45:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,459,1520924400";
-   d="scan'208";a="45869232"
-Subject: Re: mmc filesystem performance decreased on the first write after
- filesystem creation
-To: Christoph Hellwig <hch@lst.de>, Faiz Abbas <faiz_abbas@ti.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-        linux-ext4@vger.kernel.org, tytso@mit.edu
-References: <a976e20a-3ed1-43d0-4665-f570ef496d02@ti.com>
- <20180528062618.GA4196@lst.de>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <c6a47e30-f07d-3f79-2189-38b6f01429b9@intel.com>
-Date: Wed, 30 May 2018 11:44:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S935976AbeE3Irv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:47:51 -0400
+Subject: Re: [PATCH v5 3/3] powerpc/lib: optimise PPC32 memcmp
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <cover.1527503958.git.christophe.leroy@c-s.fr>
+ <88c8cc033b4ea364d62d1d8ba811a8f8d56c297d.1527503958.git.christophe.leroy@c-s.fr>
+ <CA+7wUszdfG+u4YSnxjFaujy3s_Vu92POPamK+=zjYe6Pbu+kxw@mail.gmail.com>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <f2931bb1-2d56-8a5f-84b2-044f043b7633@c-s.fr>
+Date: Wed, 30 May 2018 10:47:48 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180528062618.GA4196@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CA+7wUszdfG+u4YSnxjFaujy3s_Vu92POPamK+=zjYe6Pbu+kxw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/05/18 09:26, Christoph Hellwig wrote:
-> Summary: mke2s uses the BLKDISCARD ioctl to wipe the device,
-> and then uses BLKDISCARDZEROES to check if that zeroed the data.
-> 
-> A while ago I made BLKDISCARDZEROES always return 0 because it is
-> basically impossible to have reliably zeroing using discard as the
-> standards leave the devices way to many options to not actually
-> zero data at their own choice when using the discard commands.
 
-Older eMMC do not have a "discard" option and use "erase" instead.  "Erase"
-has similar benefits to "discard" but the eMMC is required to make the
-erased blocks read as either all 0's or all 1's.
+
+Le 29/05/2018 à 22:03, Mathieu Malaterre a écrit :
+> On Mon, May 28, 2018 at 12:49 PM, Christophe Leroy
+> <christophe.leroy@c-s.fr> wrote:
+>> At the time being, memcmp() compares two chunks of memory
+>> byte per byte.
+>>
+>> This patch optimises the comparison by comparing word by word.
+>>
+>> A small benchmark performed on an 8xx comparing two chuncks
+>> of 512 bytes performed 100000 times gives:
+>>
+>> Before : 5852274 TB ticks
+>> After:   1488638 TB ticks
+>>
+>> This is almost 4 times faster
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   arch/powerpc/lib/string_32.S | 37 +++++++++++++++++++++++++++----------
+>>   1 file changed, 27 insertions(+), 10 deletions(-)
+> 
+> Would it possible for you to move the actual code instead to:
+> 
+> ./arch/powerpc/lib/memcmp_32.S
+> 
+> This will seat right next to memcmp_64.S implementation.
+
+Good idea, thanks.
+Done in v6
+
+Christophe
 
 > 
-> So IFF mke2fs want to actually free space and zero it it needs
-> to use fallocate to punch a hole, and mmc needs to implement
-> REQ_OP_WRITE_ZEROS IFF it actually has a reliable way to zero
-> blocks.
-> 
-> 
-> On Tue, May 22, 2018 at 08:48:31PM +0530, Faiz Abbas wrote:
->> Hi,
+>> diff --git a/arch/powerpc/lib/string_32.S b/arch/powerpc/lib/string_32.S
+>> index 40a576d56ac7..4fbaa046aa84 100644
+>> --- a/arch/powerpc/lib/string_32.S
+>> +++ b/arch/powerpc/lib/string_32.S
+>> @@ -16,17 +16,34 @@
+>>          .text
 >>
->> I am debugging a performance reduction in ext2 filesystems on an mmc
->> device in TI's am335x evm board.
+>>   _GLOBAL(memcmp)
+>> -       cmpwi   cr0, r5, 0
+>> -       beq-    2f
+>> -       mtctr   r5
+>> -       addi    r6,r3,-1
+>> -       addi    r4,r4,-1
+>> -1:     lbzu    r3,1(r6)
+>> -       lbzu    r0,1(r4)
+>> -       subf.   r3,r0,r3
+>> -       bdnzt   2,1b
+>> +       srawi.  r7, r5, 2               /* Divide len by 4 */
+>> +       mr      r6, r3
+>> +       beq-    3f
+>> +       mtctr   r7
+>> +       li      r7, 0
+>> +1:     lwzx    r3, r6, r7
+>> +       lwzx    r0, r4, r7
+>> +       addi    r7, r7, 4
+>> +       cmplw   cr0, r3, r0
+>> +       bdnzt   eq, 1b
+>> +       bne     5f
+>> +3:     andi.   r3, r5, 3
+>> +       beqlr
+>> +       cmplwi  cr1, r3, 2
+>> +       blt-    cr1, 4f
+>> +       lhzx    r3, r6, r7
+>> +       lhzx    r0, r4, r7
+>> +       addi    r7, r7, 2
+>> +       subf.   r3, r0, r3
+>> +       beqlr   cr1
+>> +       bnelr
+>> +4:     lbzx    r3, r6, r7
+>> +       lbzx    r0, r4, r7
+>> +       subf.   r3, r0, r3
+>>          blr
+>> -2:     li      r3,0
+>> +5:     li      r3, 1
+>> +       bgtlr
+>> +       li      r3, -1
+>>          blr
+>>   EXPORT_SYMBOL(memcmp)
 >>
->> I see that the performance is reduced on the first write after making a
->> new filesystem using mkfs.ext2 on one of the mmc partitions. The
->> performance comes back to normal after the first write.
+>> --
+>> 2.13.3
 >>
->> commands used:
->>
->> => umount /dev/mmcblk1p2
->>
->> => mkfs.ext2 -F  /dev/mmcblk1p2
->>
->> => mount -t ext2 -o async /dev/mmcblk1p2 /mnt/partition_mmc
->>
->> => dd if=/dev/urandom of=/dev/shm/srctest_file_mmc_1184 bs=1M count=10
->>
->> => ./filesystem_tests -write -src_file /dev/shm/srctest_file_mmc_1184
->> -srcfile_size 10 -file /mnt/partition_mmc/test_file_1184 -buffer_size
->> 102400 -file_size 100 -performance
->>
->> The filesystem_tests write utility reads from the file generated at
->> /dev/shm/srctest_file_mmc_1184, memory maps the file to a buffer, and
->> then writes it into the newly created /mnt/partition_mmc in multiples of
->> buffer_size while measuring write performance.
->>
->> See here for the implementation of filesystem_tests write utility:
->> http://arago-project.org/git/projects/?p=test-automation/ltp-ddt.git;a=blob;f=testcases/ddt/filesystem_test_suite/src/testcases/st_filesystem_write_to_file.c;h=80e8e244d7eaa9f0dbd9b21ea705445156c36bef;hb=f7fc06c290333ce08a7d4fba104eee0f0f1d942b
->>
->> Complete log with multiple calls to filesystem_tests:
->> https://pastebin.ubuntu.com/p/BckmTJpqPv/
->>
->> Notice that the first run of filesystem_tests has a lower throughput
->> reported.
->>
->> I was able to bisect the issue to this commit:
->> 5d1429fead5b (mmc: remove the discard_zeroes_data flag)
->>
->> I would assume that after this flag is removed, the filesystem creation
->> command would explicitly write zeroes to the device which might explain
->> the performance fall. However, then the mkfs.ext2 command itself should
->> take more time rather than the first file write after that.
-
-You might want to check the lazy initialization options.  I always use
-"-Elazy_itable_init=0,lazy_journal_init=0" with ext4 to prevent it messing
-up performance tests.
-
->>
->> It would be nice if someone could help me understand why this is happening.
->>
->> Thanks for your help.
->>
->> Regards,
->> Faiz
-> ---end quoted text---
-> 
