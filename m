@@ -1,187 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753742AbeE3Q7n (ORCPT <rfc822;w@1wt.eu>);
+        id S1753910AbeE3Q7u (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:59:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33920 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753553AbeE3Q7n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 12:59:43 -0400
-Received: from mail-ve1eur01on0067.outbound.protection.outlook.com ([104.47.1.67]:55533
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753432AbeE3Q7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:59:42 -0400
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-CC: "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/1] pwm: fsl-ftm: Support the new version of FTM block on
- i.MX8x
-Thread-Topic: [PATCH 1/1] pwm: fsl-ftm: Support the new version of FTM block
- on i.MX8x
-Thread-Index: AQHT84pNMjdFhAI/vUSobBw7N99yZ6RIh/dg
-Date: Wed, 30 May 2018 16:59:38 +0000
-Message-ID: <HE1PR04MB328939CAD27C15DD182C5E40896C0@HE1PR04MB3289.eurprd04.prod.outlook.com>
-References: <20180524180848.61844-1-shenwei.wang@nxp.com>
-In-Reply-To: <20180524180848.61844-1-shenwei.wang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [64.157.242.222]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR04MB3017;7:2bn9rrTZVozZt0tLq1cTpWZyVT5i9pOpMywVCZitWRvJWZPWDmxBbdbqKh5gKaJKti1sSZtMgQogCbXrrjv9nUj5xtchR2RhnzVGpS8DLb1fIYF4Unp0wd5SN2x4dsBxWeqHkBqb+3fY3UfJj8oEDdqsqe5qq8IEOpgjhxHnSPyfaDgUs6FTjkjZYdgBVmTw1IU7GZ9PgCwd4TByMlMlEpkfviPltD3QpGL5jm820D4CzXDHOowKFIBWySuxx1dX
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB3017;
-x-ms-traffictypediagnostic: HE1PR04MB3017:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shenwei.wang@nxp.com;
-x-microsoft-antispam-prvs: <HE1PR04MB3017B3338E02D24E17093747896C0@HE1PR04MB3017.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231254)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:HE1PR04MB3017;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB3017;
-x-forefront-prvs: 0688BF9B46
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(396003)(366004)(39380400002)(346002)(199004)(13464003)(189003)(7736002)(305945005)(39060400002)(99286004)(76176011)(3660700001)(6436002)(9686003)(486006)(74316002)(25786009)(97736004)(53936002)(7696005)(446003)(476003)(105586002)(3846002)(44832011)(4326008)(66066001)(3280700002)(6116002)(2906002)(106356001)(186003)(229853002)(316002)(6916009)(6246003)(11346002)(2501003)(5250100002)(2900100001)(8676002)(14454004)(55016002)(26005)(33656002)(81156014)(81166006)(1361003)(5660300001)(53546011)(59450400001)(8936002)(5640700003)(102836004)(68736007)(478600001)(6506007)(86362001)(54906003)(2351001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB3017;H:HE1PR04MB3289.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: /rdkVOS3fO4MO9wRwltDhGjCv1dVH0L49zY5i5+blhoUPb8AKyoJLdqLAazmWVYZj5yc37doWuu3ET2bb17AB2gUwnf3Fcxr8u5uQ//patlMksJ0g/oeb3ibxZL+tvqxdunnatVRjqNGP2P+BUzhUUt341QUp5VHrg17ekU8TJMETsVD+ITVrCoQt6kCAIaP
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+Date: Wed, 30 May 2018 17:59:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: David Collins <collinsd@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator
+ bindings
+Message-ID: <20180530165937.GX6920@sirena.org.uk>
+References: <20180530150241.GO6920@sirena.org.uk>
+ <CAD=FV=XJd-udEE6az0xP7i6x0oGsnd=BSCyZ0Og_+RjNCMXnCQ@mail.gmail.com>
+ <20180530154849.GQ6920@sirena.org.uk>
+ <CAD=FV=X2u=hMyWinSDtim-PmFwAy5mXcwg3HeYojAHcsUFhV3g@mail.gmail.com>
+ <20180530160744.GS6920@sirena.org.uk>
+ <CAD=FV=WVGu0f+=q-C9kiEmaLEUJqGY+Jbns83h72uF-9iasrUw@mail.gmail.com>
+ <20180530161311.GT6920@sirena.org.uk>
+ <CAD=FV=UpWEMSPUYOHmLQ0g_mF990kwn4_zm=ZCNttLKZiz7i=Q@mail.gmail.com>
+ <20180530163644.GW6920@sirena.org.uk>
+ <CAD=FV=V1gGccKr1mHM0zx_-FFdLU1vrzUChwx6KTUyTGzj39Tw@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 87d5a5cc-19c5-4c57-814d-08d5c64eba9b
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87d5a5cc-19c5-4c57-814d-08d5c64eba9b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2018 16:59:38.2045
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB3017
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1RhGCd1AsoFHGRHc"
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=V1gGccKr1mHM0zx_-FFdLU1vrzUChwx6KTUyTGzj39Tw@mail.gmail.com>
+X-Cookie: Don't get mad, get interest.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4UGxs3k002837
 
-Ping.
 
-Shenwei
+--1RhGCd1AsoFHGRHc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
------Original Message-----
-From: Shenwei Wang 
-Sent: Thursday, May 24, 2018 1:09 PM
-To: thierry.reding@gmail.com
-Cc: linux-pwm@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; linux-kernel@vger.kernel.org; Shenwei Wang <shenwei.wang@nxp.com>
-Subject: [PATCH 1/1] pwm: fsl-ftm: Support the new version of FTM block on i.MX8x
+On Wed, May 30, 2018 at 09:41:55AM -0700, Doug Anderson wrote:
+> On Wed, May 30, 2018 at 9:36 AM, Mark Brown <broonie@kernel.org> wrote:
 
-On the new i.MX8x SoC family, the following changes were made on the FTM
-block:
+> > Yeah, and I don't think that's unreasonable for the core to do - just
+> > drop the voltage to the constraint minimum after it has turned off the
+> > regulator, then recheck and raise if needed before it enables again.
 
-1. Need to enable the IPG clock before accessing any FTM registers. Because the IPG clock is not an option for FTM counter clock source, it can't be used as the ftm_sys clock.
+> Would it do this for all regulators, though?  Most regulators are
+> hooked up over a slow i2c bus, so that means that every regulator
+> disable would now do an extra i2c transfer even though for all
+> regulators (other than RPMh) the voltage of a regulator doesn't matter
+> when it's been "disabled' (from Linux's point of view).
 
-2. An additional PWM enable bit was added for each PWM channel in register FTM_SC[16:23]. It supports 8 channels. Bit16 is for channel 0, and bit23 for channel 7.
+It'd only affect regulators that can vary in voltage and actually get
+disabled which is a pretty small subset.  Most regulators are either
+fixed voltage or always on.
 
-As the IP version information can not be obtained in any of the FTM registers, a property of "fsl,has-pwmen-bits" is added in the ftm pwm device node. If it has the property, the driver set the PWM enable bit when a PWM channel is requested.
+> Hrmmm, I suppose maybe it'd be OK though because for most regulators
+> we'd use "regcache" and most regulators that we enabled/disable a lot
+> are not expected to change voltage in Linux (so the regcache write
+> would hopefully be a noop), so maybe it wouldn't be _that_
+> inefficient...
 
-Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
----
- drivers/pwm/pwm-fsl-ftm.c | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
+Even if the regulator lacks a cache we'd at least skip out on the write
+when we're not changing voltage as we'd do a read/modify/update cycle
+and stop at the modify.
 
-diff --git a/drivers/pwm/pwm-fsl-ftm.c b/drivers/pwm/pwm-fsl-ftm.c index 557b4ea..0426458f 100644
---- a/drivers/pwm/pwm-fsl-ftm.c
-+++ b/drivers/pwm/pwm-fsl-ftm.c
-@@ -86,7 +86,9 @@ struct fsl_pwm_chip {
- 	struct regmap *regmap;
- 
- 	int period_ns;
-+	bool has_pwmen;
- 
-+	struct clk *ipg_clk;
- 	struct clk *clk[FSL_PWM_CLK_MAX];
- };
- 
-@@ -97,16 +99,31 @@ static inline struct fsl_pwm_chip *to_fsl_chip(struct pwm_chip *chip)
- 
- static int fsl_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)  {
-+	int ret;
- 	struct fsl_pwm_chip *fpc = to_fsl_chip(chip);
- 
--	return clk_prepare_enable(fpc->clk[FSL_PWM_CLK_SYS]);
-+	ret = clk_prepare_enable(fpc->ipg_clk);
-+
-+	if ((!ret) && (fpc->has_pwmen)) {
-+		mutex_lock(&fpc->lock);
-+		regmap_update_bits(fpc->regmap, FTM_SC,
-+				BIT(pwm->hwpwm + 16), BIT(pwm->hwpwm + 16));
-+		mutex_unlock(&fpc->lock);
-+	}
-+
-+	return ret;
- }
- 
- static void fsl_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)  {
- 	struct fsl_pwm_chip *fpc = to_fsl_chip(chip);
- 
--	clk_disable_unprepare(fpc->clk[FSL_PWM_CLK_SYS]);
-+	if (fpc->has_pwmen) {
-+		mutex_lock(&fpc->lock);
-+		regmap_update_bits(fpc->regmap, FTM_SC, BIT(pwm->hwpwm + 16), 0);
-+		mutex_unlock(&fpc->lock);
-+	}
-+	clk_disable_unprepare(fpc->ipg_clk);
- }
- 
- static int fsl_pwm_calculate_default_ps(struct fsl_pwm_chip *fpc, @@ -363,7 +380,7 @@ static int fsl_pwm_init(struct fsl_pwm_chip *fpc)  {
- 	int ret;
- 
--	ret = clk_prepare_enable(fpc->clk[FSL_PWM_CLK_SYS]);
-+	ret = clk_prepare_enable(fpc->ipg_clk);
- 	if (ret)
- 		return ret;
- 
-@@ -371,7 +388,7 @@ static int fsl_pwm_init(struct fsl_pwm_chip *fpc)
- 	regmap_write(fpc->regmap, FTM_OUTINIT, 0x00);
- 	regmap_write(fpc->regmap, FTM_OUTMASK, 0xFF);
- 
--	clk_disable_unprepare(fpc->clk[FSL_PWM_CLK_SYS]);
-+	clk_disable_unprepare(fpc->ipg_clk);
- 
- 	return 0;
- }
-@@ -428,6 +445,10 @@ static int fsl_pwm_probe(struct platform_device *pdev)
- 		return PTR_ERR(fpc->clk[FSL_PWM_CLK_SYS]);
- 	}
- 
-+	fpc->ipg_clk = devm_clk_get(&pdev->dev, "ipg");
-+	if (IS_ERR(fpc->ipg_clk))
-+		fpc->ipg_clk = fpc->clk[FSL_PWM_CLK_SYS];
-+
- 	fpc->clk[FSL_PWM_CLK_FIX] = devm_clk_get(fpc->chip.dev, "ftm_fix");
- 	if (IS_ERR(fpc->clk[FSL_PWM_CLK_FIX]))
- 		return PTR_ERR(fpc->clk[FSL_PWM_CLK_FIX]);
-@@ -446,6 +467,8 @@ static int fsl_pwm_probe(struct platform_device *pdev)
- 	fpc->chip.of_pwm_n_cells = 3;
- 	fpc->chip.base = -1;
- 	fpc->chip.npwm = 8;
-+	fpc->has_pwmen = of_property_read_bool(pdev->dev.of_node,
-+						"fsl,ftm-has-pwmen-bits");
- 
- 	ret = pwmchip_add(&fpc->chip);
- 	if (ret < 0) {
-@@ -480,7 +503,7 @@ static int fsl_pwm_suspend(struct device *dev)
- 		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
- 			continue;
- 
--		clk_disable_unprepare(fpc->clk[FSL_PWM_CLK_SYS]);
-+		clk_disable_unprepare(fpc->ipg_clk);
- 
- 		if (!pwm_is_enabled(pwm))
- 			continue;
-@@ -503,7 +526,7 @@ static int fsl_pwm_resume(struct device *dev)
- 		if (!test_bit(PWMF_REQUESTED, &pwm->flags))
- 			continue;
- 
--		clk_prepare_enable(fpc->clk[FSL_PWM_CLK_SYS]);
-+		clk_prepare_enable(fpc->ipg_clk);
- 
- 		if (!pwm_is_enabled(pwm))
- 			continue;
---
-2.9.2
+--1RhGCd1AsoFHGRHc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsO2HkACgkQJNaLcl1U
+h9DTXQf/VgwB1seFzCThTskB5IXfv81dOdpaoeVGDg7V4Y/r6nAbB5uNeRkQojgl
+aMDgpQFnVqVBsZXktBllwQ7foPOGg8WSd0Q4IlVuQwNNf5nAFqSFy+huw0o47LJ8
+x7aWjVFpLTA4XuNezN6XXwNcP2QO6ZY7lKQmXko66py8oQ7KKrktaTaG6mRXAkwf
+Jb/i+lr13F6TFcb71Ky4gMEx6rClG12dMIs8a7Ud/USTmibRTQZ7uEX+mG1hRfHC
+nsiHZ9YV+OCpIuSePcDwSzRL2CxU//EK4CLx3+Ztp2BCd7XQLk3hsO+arIuOHthH
+A/Zc69LtGG1ZIhBnZtGW4XjsKCOr2g==
+=ZaJS
+-----END PGP SIGNATURE-----
+
+--1RhGCd1AsoFHGRHc--
