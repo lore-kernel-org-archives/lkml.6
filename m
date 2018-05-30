@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753885AbeE3RqI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 13:46:08 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:46068 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751833AbeE3RqG (ORCPT
+        id S1753767AbeE3RtR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 13:49:17 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38270 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753651AbeE3RtP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 13:46:06 -0400
-X-Google-Smtp-Source: ADUXVKL9P/8XuOWoBNwElXgTbrTBzzQ4AMN7fq3WzKsT/FCAXtSXTG6f87JU3+Rxle/Y1xFU7ayDUw==
-Subject: Re: [PATCH 2/8] xen/balloon: Move common memory reservation routines
- to a module
+        Wed, 30 May 2018 13:49:15 -0400
+X-Google-Smtp-Source: ADUXVKJKFTmKAp7fgIsUUIRnzBa1n96R1MW9Xj4x0zI1G74te0nKMuii7mlpYAJKDJCgW8q36zjpgg==
+Subject: Re: [PATCH 3/8] xen/grant-table: Allow allocating buffers suitable
+ for DMA
 To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
@@ -18,19 +18,17 @@ Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
         matthew.d.roper@intel.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 References: <20180525153331.31188-1-andr2000@gmail.com>
- <20180525153331.31188-3-andr2000@gmail.com>
- <59ab73b0-967b-a82f-3b0d-95f1b0dc40a5@oracle.com>
- <89de7bdb-8759-419f-63bf-8ed0d57650f0@gmail.com>
- <edfa937b-3311-98db-2e6f-b4083598f796@oracle.com>
- <6ca7f428-eede-2c14-85fe-da4a20bcea0d@gmail.com>
- <5dd3378d-ac32-691e-1f80-7218a5d07fd6@oracle.com>
+ <20180525153331.31188-4-andr2000@gmail.com>
+ <94de6bd7-405c-c43f-0468-be71efff7552@oracle.com>
+ <c2f9f6b4-03bd-225b-a42d-b071958dd899@gmail.com>
+ <ab1b28b8-02b1-3501-801c-d4f523ab829f@oracle.com>
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <43c17501-8865-6e1f-1a92-d947755d8fa8@gmail.com>
-Date: Wed, 30 May 2018 20:46:00 +0300
+Message-ID: <5e6e0f5d-a417-676a-1aad-c51eb09e6dee@gmail.com>
+Date: Wed, 30 May 2018 20:49:11 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <5dd3378d-ac32-691e-1f80-7218a5d07fd6@oracle.com>
+In-Reply-To: <ab1b28b8-02b1-3501-801c-d4f523ab829f@oracle.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
@@ -38,209 +36,67 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/30/2018 06:54 PM, Boris Ostrovsky wrote:
-> On 05/30/2018 04:29 AM, Oleksandr Andrushchenko wrote:
->> On 05/29/2018 11:03 PM, Boris Ostrovsky wrote:
->>> On 05/29/2018 02:22 PM, Oleksandr Andrushchenko wrote:
->>>> On 05/29/2018 09:04 PM, Boris Ostrovsky wrote:
->>>>> On 05/25/2018 11:33 AM, Oleksandr Andrushchenko wrote:
->>>>> @@ -463,11 +457,6 @@ static enum bp_state
->>>>> increase_reservation(unsigned long nr_pages)
->>>>>         int rc;
->>>>>         unsigned long i;
->>>>>         struct page   *page;
->>>>> -    struct xen_memory_reservation reservation = {
->>>>> -        .address_bits = 0,
->>>>> -        .extent_order = EXTENT_ORDER,
->>>>> -        .domid        = DOMID_SELF
->>>>> -    };
->>>>>           if (nr_pages > ARRAY_SIZE(frame_list))
->>>>>             nr_pages = ARRAY_SIZE(frame_list);
->>>>> @@ -486,9 +475,7 @@ static enum bp_state
->>>>> increase_reservation(unsigned long nr_pages)
->>>>>             page = balloon_next_page(page);
->>>>>         }
->>>>>     -    set_xen_guest_handle(reservation.extent_start, frame_list);
->>>>> -    reservation.nr_extents = nr_pages;
->>>>> -    rc = HYPERVISOR_memory_op(XENMEM_populate_physmap, &reservation);
->>>>> +    rc = xenmem_reservation_increase(nr_pages, frame_list);
->>>>>         if (rc <= 0)
->>>>>             return BP_EAGAIN;
->>>>>     @@ -496,29 +483,7 @@ static enum bp_state
->>>>> increase_reservation(unsigned long nr_pages)
->>>>>             page = balloon_retrieve(false);
->>>>>             BUG_ON(page == NULL);
->>>>>     -#ifdef CONFIG_XEN_HAVE_PVMMU
->>>>> -        /*
->>>>> -         * We don't support PV MMU when Linux and Xen is using
->>>>> -         * different page granularity.
->>>>> -         */
->>>>> -        BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
->>>>> -
->>>>> -        if (!xen_feature(XENFEAT_auto_translated_physmap)) {
->>>>> -            unsigned long pfn = page_to_pfn(page);
->>>>> -
->>>>> -            set_phys_to_machine(pfn, frame_list[i]);
->>>>> -
->>>>> -            /* Link back into the page tables if not highmem. */
->>>>> -            if (!PageHighMem(page)) {
->>>>> -                int ret;
->>>>> -                ret = HYPERVISOR_update_va_mapping(
->>>>> -                        (unsigned long)__va(pfn << PAGE_SHIFT),
->>>>> -                        mfn_pte(frame_list[i], PAGE_KERNEL),
->>>>> -                        0);
->>>>> -                BUG_ON(ret);
->>>>> -            }
->>>>> -        }
->>>>> -#endif
->>>>> +        xenmem_reservation_va_mapping_update(1, &page,
->>>>> &frame_list[i]);
->>>>>
->>>>> Can you make a single call to xenmem_reservation_va_mapping_update(rc,
->>>>> ...)? You need to keep track of pages but presumable they can be put
->>>>> into an array (or a list). In fact, perhaps we can have
->>>>> balloon_retrieve() return a set of pages.
->>>> This is actually how it is used later on for dma-buf, but I just
->>>> didn't want
->>>> to alter original balloon code too much, but this can be done, in
->>>> order of simplicity:
->>>>
->>>> 1. Similar to frame_list, e.g. static array of struct page* of size
->>>> ARRAY_SIZE(frame_list):
->>>> more static memory is used, but no allocations
->>>>
->>>> 2. Allocated at run-time with kcalloc: allocation can fail
->>> If this is called in freeing DMA buffer code path or in error path then
->>> we shouldn't do it.
+On 05/30/2018 06:20 PM, Boris Ostrovsky wrote:
+> On 05/30/2018 02:34 AM, Oleksandr Andrushchenko wrote:
+>> On 05/29/2018 10:10 PM, Boris Ostrovsky wrote:
+>>> On 05/25/2018 11:33 AM, Oleksandr Andrushchenko wrote:
+>>> +/**
+>>> + * gnttab_dma_free_pages - free DMAable pages
+>>> + * @args: arguments to the function
+>>> + */
+>>> +int gnttab_dma_free_pages(struct gnttab_dma_alloc_args *args)
+>>> +{
+>>> +    xen_pfn_t *frames;
+>>> +    size_t size;
+>>> +    int i, ret;
+>>> +
+>>> +    gnttab_pages_clear_private(args->nr_pages, args->pages);
+>>> +
+>>> +    frames = kcalloc(args->nr_pages, sizeof(*frames), GFP_KERNEL);
 >>>
+>>> Any way you can do it without allocating memory? One possibility is to
+>>> keep allocated frames from gnttab_dma_alloc_pages(). (Not sure I like
+>>> that either but it's the only thing I can think of).
+>> Yes, I was also thinking about storing the allocated frames array from
+>> gnttab_dma_alloc_pages(), but that seemed not to be clear enough as
+>> the caller of the gnttab_dma_alloc_pages will need to store those frames
+>> in some context, so we can pass them on free. But the caller doesn't
+>> really
+>> need the frames which might confuse, so I decided to make those
+>> allocations
+>> on the fly.
+>> But I can still rework that to store the frames if you insist: please
+>> let me know.
+>
+> I would prefer not to allocate anything in the release path. Yes, I
+> realize that dragging frames array around is not necessary but IMO it's
+> better than potentially failing an allocation during a teardown. A
+> comment in the struct definition could explain the reason for having
+> this field.
+Then I would suggest we have it this way: current API requires that
+struct page **pages are allocated from outside. So, let's allocate
+the frames from outside as well. This way the caller is responsible for
+both pages and frames arrays and API looks consistent.
+>
 >>>
->>>> 3. Make balloon_retrieve() return a set of pages: will require
->>>> list/array allocation
->>>> and handling, allocation may fail, balloon_retrieve prototype change
->>> balloon pages are strung on the lru list. Can we keep have
->>> balloon_retrieve return a list of pages on that list?
->> First of all, before we go deep in details, I will highlight
->> the goal of the requested change: for balloon driver we call
->> xenmem_reservation_va_mapping_update(*1*, &page, &frame_list[i]);
->> from increase_reservation
->> and
->> xenmem_reservation_va_mapping_reset(*1*, &page);
->> from decrease_reservation and it seems to be not elegant because of
->> that one page/frame passed while we might have multiple pages/frames
->> passed at once.
->>
->> In the balloon driver the producer of pages for increase_reservation
->> is balloon_retrieve(false) and for decrease_reservation it is
->> alloc_page(gfp).
->> In case of decrease_reservation the page is added on the list:
->> LIST_HEAD(pages);
->> [...]
->> list_add(&page->lru, &pages);
->>
->> and in case of increase_reservation it is retrieved page by page
->> and can be put on a list as well with the same code from
->> decrease_reservation, e.g.
->> LIST_HEAD(pages);
->> [...]
->> list_add(&page->lru, &pages);
->>
->> Thus, both decrease_reservation and increase_reservation may hold
->> their pages on a list before calling
->> xenmem_reservation_va_mapping_{update|reset}.
->>
->> For that we need a prototype change:
->> xenmem_reservation_va_mapping_reset(<nr_pages>, <list of pages>);
->> But for xenmem_reservation_va_mapping_update it will look like:
->> xenmem_reservation_va_mapping_update(<nr_pages>, <list of pages>,
->> <array of frames>)
->> which seems to be inconsistent. Converting entries of the static
->> frame_list array
->> into corresponding list doesn't seem to be cute as well.
->>
->> For dma-buf use-case arrays are more preferable as dma-buf constructs
->> scatter-gather
->> tables from array of pages etc. and if page list is passed then it
->> needs to be
->> converted into page array anyways.
->>
->> So, we can:
->> 1. Keep the prototypes as is, e.g. accept array of pages and use
->> nr_pages == 1 in
->> case of balloon driver (existing code)
->> 2. Statically allocate struct page* array in the balloon driver and
->> fill it with pages
->> when those pages are retrieved:
->> static struct page *page_list[ARRAY_SIZE(frame_list)];
->> which will take additional 8KiB of space on 64-bit platform, but
->> simplify things a lot.
->> 3. Allocate struct page *page_list[ARRAY_SIZE(frame_list)] dynamically
->>
->> As to Boris' suggestion "balloon pages are strung on the lru list. Can
->> we keep have
->> balloon_retrieve return a list of pages on that list?"
->> Because of alloc_xenballooned_pages' retry logic for page retireval, e.g.
->>      while (pgno < nr_pages) {
->>          page = balloon_retrieve(true);
->>          if (page) {
->> [...]
->>          } else {
->>              ret = add_ballooned_pages(nr_pages - pgno);
->> [...]
->>      }
->> I wouldn't change things that much.
->>
->> IMO, we can keep 1 page based API with the only overhead for balloon
->> driver of
->> function calls to xenmem_reservation_va_mapping_{update|reset} for
->> each page.
+>>>> +    if (!frames)
+>>>> +        return -ENOMEM;
+>>>> +
+>>>> +    for (i = 0; i < args->nr_pages; i++)
+>>>> +        frames[i] = page_to_xen_pfn(args->pages[i]);
+>>> Not xen_page_to_gfn()?
+>> Well, according to [1] it should be :
+>>      /* XENMEM_populate_physmap requires a PFN based on Xen
+>>       * granularity.
+>>       */
+>>      frame_list[i] = page_to_xen_pfn(page);
 >
->
-> I still think what I suggested is doable but we can come back to it
-> later and keep your per-page implementation for now.
->
-> BTW, I also think you can further simplify
-> xenmem_reservation_va_mapping_* routines by bailing out right away if
-> xen_feature(XENFEAT_auto_translated_physmap). In fact, you might even
-> make them inlines, along the lines of
->
-> inline void xenmem_reservation_va_mapping_reset(unsigned long count,
-> 					 struct page **pages)
-> {
-> #ifdef CONFIG_XEN_HAVE_PVMMU
-> 	if (!xen_feature(XENFEAT_auto_translated_physmap))
-> 		__xenmem_reservation_va_mapping_reset(...)
-> #endif
-> }
-How about:
-
-#ifdef CONFIG_XEN_HAVE_PVMMU
-static inline __xenmem_reservation_va_mapping_reset(struct page *page)
-{
-[...]
-}
-#endif
-
-and
-
-void xenmem_reservation_va_mapping_reset(unsigned long count,
-                      struct page **pages)
-{
-#ifdef CONFIG_XEN_HAVE_PVMMU
-     if (!xen_feature(XENFEAT_auto_translated_physmap)) {
-         int i;
-
-         for (i = 0; i < count; i++)
-             __xenmem_reservation_va_mapping_reset(pages[i]);
-     }
-#endif
-}
-
-This way I can use __xenmem_reservation_va_mapping_reset(page);
-instead of xenmem_reservation_va_mapping_reset(1, &page);
-> Or some such.
->
-> -boris
+> Ah, yes. I was looking at decrease_reservation and automatically assumed
+> the same parameter type.
+Good, then this one is resolved
 >
 > -boris
 >
 >
+Thank you,
+Oleksandr
