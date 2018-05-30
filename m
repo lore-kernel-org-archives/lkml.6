@@ -1,102 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752995AbeE3MiO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:38:14 -0400
-Received: from guitar.tcltek.co.il ([192.115.133.116]:33927 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751870AbeE3MiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:38:13 -0400
-Date: Wed, 30 May 2018 15:38:09 +0300
-From: Baruch Siach <baruch@tkos.co.il>
-To: =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Scott Branden <sbranden@broadcom.com>,
-        Tony Lindgren <tony@atomide.com>, Ray Jui <rjui@broadcom.com>,
-        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-        Jon Mason <jonmason@broadcom.com>,
-        =?utf-8?Q?Cl=C3=A9ment?= Peron <clement.peron@devialet.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Laura Abbott <labbott@redhat.com>
-Subject: Re: [PATCH] ARM: debug: Add Iproc UART3 debug addresses
-Message-ID: <20180530123809.khyzehg62ct6jzws@sapphire.tkos.co.il>
-References: <20180530122922.1041-1-peron.clem@gmail.com>
+        id S1752621AbeE3MlM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:41:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33338 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751447AbeE3MlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 08:41:11 -0400
+Date: Wed, 30 May 2018 15:41:09 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: bhelgaas@google.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        linux-pci@vger.kernel.org, dan.daly@intel.com, mark.d.rustad@intel.com,
+        alexander.h.duyck@intel.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com
+Subject: Re: [PATCH] virtio_pci: support enabling VFs
+Message-ID: <20180530152534-mutt-send-email-mst@kernel.org>
+References: <20180530085521.26583-1-tiwei.bie@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180530122922.1041-1-peron.clem@gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180530085521.26583-1-tiwei.bie@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Clément,
+On Wed, May 30, 2018 at 04:55:21PM +0800, Tiwei Bie wrote:
+> There is a new feature bit allocated in virtio spec to
+> support SR-IOV (Single Root I/O Virtualization):
+> 
+> https://github.com/oasis-tcs/virtio-spec/issues/11
+> 
+> This patch enables the support for this feature bit in
+> virtio driver.
+> 
+> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
 
-On Wed, May 30, 2018 at 02:29:22PM +0200, Clément Péron wrote:
-> From: Clément Peron <clement.peron@devialet.com>
-> 
-> Broadcom Iproc SoCs typically use the UART3 for
-> debug/console, provide a known good location for that.
-> 
-> Signed-off-by: Clément Peron <clement.peron@devialet.com>
+
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
 > ---
->  arch/arm/Kconfig.debug | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+> This patch depends on below proposal:
+> https://lists.oasis-open.org/archives/virtio-dev/201805/msg00154.html
 > 
-> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> index 199ebc1c4538..fa6fa1dae94d 100644
-> --- a/arch/arm/Kconfig.debug
-> +++ b/arch/arm/Kconfig.debug
-> @@ -207,6 +207,14 @@ choice
->  		depends on ARCH_BCM_HR2
->  		select DEBUG_UART_8250
+> This patch depends on below patch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/commit/?h=pci/virtualization&id=8effc395c2097e258fcedfc02ed4a66d45fb4238
+> 
+>  drivers/virtio/virtio_pci_common.c | 20 ++++++++++++++++++++
+>  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
+>  include/uapi/linux/virtio_config.h |  7 ++++++-
+>  3 files changed, 40 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+> index 48d4d1cf1cb6..023da80a7a3e 100644
+> --- a/drivers/virtio/virtio_pci_common.c
+> +++ b/drivers/virtio/virtio_pci_common.c
+> @@ -588,6 +588,25 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+>  	put_device(dev);
+>  }
 >  
-> +	config DEBUG_BCM_IPROC_UART3
-> +		bool "Kernel low-level debugging on BCM IPROC UART3"
-> +		depends on ARCH_BCM_CYGNUS
-> +		select DEBUG_UART_8250
-> +		help
-> +		  Say Y here if you want the debug print routines to direct
-> +		  their output to the third serial port on these devices.
+> +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
+> +{
+> +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+> +	struct virtio_device *vdev = &vp_dev->vdev;
+> +	int (*sriov_configure)(struct pci_dev *pci_dev, int num_vfs);
 > +
->  	config DEBUG_BCM_KONA_UART
->  		bool "Kernel low-level debugging messages via BCM KONA UART"
->  		depends on ARCH_BCM_MOBILE
-> @@ -1564,6 +1572,7 @@ config DEBUG_UART_PHYS
->  	default 0x20068000 if DEBUG_RK29_UART2 || DEBUG_RK3X_UART3
->  	default 0x20201000 if DEBUG_BCM2835
->  	default 0x3f201000 if DEBUG_BCM2836
-> +	default 0x18023000 if DEBUG_BCM_IPROC_UART3
-
-Entries are sorted by the address value. Except that DEBUG_BCM_KONA_UART 
-should be listed above DEBUG_BCM2836.
-
->  	default 0x3e000000 if DEBUG_BCM_KONA_UART
->  	default 0x4000e400 if DEBUG_LL_UART_EFM32
->  	default 0x40028000 if DEBUG_AT91_SAMV7_USART1
-> @@ -1730,6 +1739,7 @@ config DEBUG_UART_VIRT
->  	default 0xfe018000 if DEBUG_MMP_UART3
->  	default 0xfe100000 if DEBUG_IMX23_UART || DEBUG_IMX28_UART
->  	default 0xfe230000 if DEBUG_PICOXCELL_UART
-> +	default 0xf1023000 if DEBUG_BCM_IPROC_UART3
-
-Same here.
-
->  	default 0xfe300000 if DEBUG_BCM_KONA_UART
->  	default 0xfe800000 if ARCH_IOP32X
->  	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
-> @@ -1791,7 +1801,7 @@ config DEBUG_UART_8250_WORD
->  		DEBUG_KEYSTONE_UART0 || DEBUG_KEYSTONE_UART1 || \
->  		DEBUG_ALPINE_UART0 || \
->  		DEBUG_DAVINCI_DMx_UART0 || DEBUG_DAVINCI_DA8XX_UART1 || \
-> -		DEBUG_DAVINCI_DA8XX_UART2 || \
-> +		DEBUG_DAVINCI_DA8XX_UART2 || DEBUG_BCM_IPROC_UART3 || \
->  		DEBUG_BCM_KONA_UART || DEBUG_RK32_UART2
-
-baruch
-
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+> +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
+> +		return -EBUSY;
+> +
+> +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
+> +		return -EINVAL;
+> +
+> +	sriov_configure = pci_sriov_configure_simple;
+> +	if (sriov_configure == NULL)
+> +		return -ENOENT;
+> +
+> +	return sriov_configure(pci_dev, num_vfs);
+> +}
+> +
+>  static struct pci_driver virtio_pci_driver = {
+>  	.name		= "virtio-pci",
+>  	.id_table	= virtio_pci_id_table,
+> @@ -596,6 +615,7 @@ static struct pci_driver virtio_pci_driver = {
+>  #ifdef CONFIG_PM_SLEEP
+>  	.driver.pm	= &virtio_pci_pm_ops,
+>  #endif
+> +	.sriov_configure = virtio_pci_sriov_configure,
+>  };
+>  
+>  module_pci_driver(virtio_pci_driver);
+> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
+> index 2555d80f6eec..07571daccfec 100644
+> --- a/drivers/virtio/virtio_pci_modern.c
+> +++ b/drivers/virtio/virtio_pci_modern.c
+> @@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
+>  	return features;
+>  }
+>  
+> +static void vp_transport_features(struct virtio_device *vdev, u64 features)
+> +{
+> +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> +	struct pci_dev *pci_dev = vp_dev->pci_dev;
+> +
+> +	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
+> +			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
+> +		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
+> +}
+> +
+>  /* virtio config->finalize_features() implementation */
+>  static int vp_finalize_features(struct virtio_device *vdev)
+>  {
+>  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> +	u64 features = vdev->features;
+>  
+>  	/* Give virtio_ring a chance to accept features. */
+>  	vring_transport_features(vdev);
+>  
+> +	/* Give virtio_pci a chance to accept features. */
+> +	vp_transport_features(vdev, features);
+> +
+>  	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
+>  		dev_err(&vdev->dev, "virtio: device uses modern interface "
+>  			"but does not have VIRTIO_F_VERSION_1\n");
+> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> index 308e2096291f..b7c1f4e7d59e 100644
+> --- a/include/uapi/linux/virtio_config.h
+> +++ b/include/uapi/linux/virtio_config.h
+> @@ -49,7 +49,7 @@
+>   * transport being used (eg. virtio_ring), the rest are per-device feature
+>   * bits. */
+>  #define VIRTIO_TRANSPORT_F_START	28
+> -#define VIRTIO_TRANSPORT_F_END		34
+> +#define VIRTIO_TRANSPORT_F_END		38
+>  
+>  #ifndef VIRTIO_CONFIG_NO_LEGACY
+>  /* Do we get callbacks when the ring is completely used, even if we've
+> @@ -71,4 +71,9 @@
+>   * this is for compatibility with legacy systems.
+>   */
+>  #define VIRTIO_F_IOMMU_PLATFORM		33
+> +
+> +/*
+> + * Does the device support Single Root I/O Virtualization?
+> + */
+> +#define VIRTIO_F_SR_IOV			37
+>  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+> -- 
+> 2.17.0
