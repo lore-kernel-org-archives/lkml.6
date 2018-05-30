@@ -1,121 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753638AbeE3Odg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:33:36 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42674 "EHLO
+        id S1753692AbeE3Odx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:33:53 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43102 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753453AbeE3Oda (ORCPT
+        with ESMTP id S1753441AbeE3Odp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:33:30 -0400
+        Wed, 30 May 2018 10:33:45 -0400
+Date: Wed, 30 May 2018 15:33:38 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: max77686: Fix shared GPIOs" to the regulator tree
-In-Reply-To: 
-Message-Id: <E1fO2AJ-0004Xw-H3@debutante>
-Date: Wed, 30 May 2018 15:33:27 +0100
+To: Maciej Purski <m.purski@samsung.com>
+Cc: Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        Carlos Hernandez <ceh@ti.com>
+Subject: Re: Regression in Linux next again
+Message-ID: <20180530143338.GM6920@sirena.org.uk>
+References: <20180529221501.GJ5702@atomide.com>
+ <CGME20180530091325epcas4p20dea07f013a3512ce4ea92120da90f61@epcas4p2.samsung.com>
+ <20180530091314.GB6920@sirena.org.uk>
+ <20180530140318eucas1p2af2d01b9678e8914c2b8e099c584ec11~zcQzVKtj30757607576eucas1p2V@eucas1p2.samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1hVIwB4NpNcOOTEe"
+Content-Disposition: inline
+In-Reply-To: <20180530140318eucas1p2af2d01b9678e8914c2b8e099c584ec11~zcQzVKtj30757607576eucas1p2V@eucas1p2.samsung.com>
+X-Cookie: Don't get mad, get interest.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   regulator: max77686: Fix shared GPIOs
+--1hVIwB4NpNcOOTEe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-has been applied to the regulator tree at
+On Wed, May 30, 2018 at 04:03:15PM +0200, Maciej Purski wrote:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+> I'm afraid, I have no idea, how to fix it quickly. You can revert it and
+> in the next version I'll fix the build error and split the last patch even
+> more, so we could perform a more precise bisection. I'd be grateful if you
+> could push it on your test coupled branch and Tony could test it again before
+> merging it with next again.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Yeah, if we could get testing from Tony first that'd be ideal.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--1hVIwB4NpNcOOTEe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOtkEACgkQJNaLcl1U
+h9DnRwf8DySBfS9D6jyXQbl8EQS2V1CxEV3vC6Jw50bQuwPr8gCNYFDQeglCijgY
+K7/mSBPFvrnfYmS+PfNs7M9/4yNlMOM18Qw/LolQl4a4fxR4vYa2cFR19veO95FP
+2ympwvGNKYwmm38tzh/phcCJZVR3P6ruXb1bTxs/WZZPkglxJDZsMb+VDENUJslZ
+YT1Pt3Nm1ykaTfY6Md6uHDuPO26BVw9v30bX2X2M5WRH5iCAngV5Z3ssbXfxuLfe
+svyTfppH14Mlq3yOCwJt2A33ONCT0IC2M4q8B/MB3t6n/ZeZfZ+BLVkIlqwqycso
+Ne0Ka6pSH+bJavrO/1Zyv0su04cERg==
+=9SQ4
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
->From d1dae72fab2c377ff463742eefd8ac0f9e99b7b9 Mon Sep 17 00:00:00 2001
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 30 May 2018 15:13:42 +0100
-Subject: [PATCH] regulator: max77686: Fix shared GPIOs
-
-This reverts commit c89c00e2b8f0 "regulator: max77686: Pass descriptor
-instead of GPIO number" as it has problems with shared GPIOs similar to
-that on s2mps11.
-
-Reported-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/max77686-regulator.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
-index 37f98a8350f0..c301f3733475 100644
---- a/drivers/regulator/max77686-regulator.c
-+++ b/drivers/regulator/max77686-regulator.c
-@@ -25,7 +25,8 @@
- #include <linux/kernel.h>
- #include <linux/bug.h>
- #include <linux/err.h>
--#include <linux/gpio/consumer.h>
-+#include <linux/gpio.h>
-+#include <linux/of_gpio.h>
- #include <linux/slab.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
-@@ -89,7 +90,6 @@ enum max77686_ramp_rate {
- };
- 
- struct max77686_data {
--	struct device *dev;
- 	DECLARE_BITMAP(gpio_enabled, MAX77686_REGULATORS);
- 
- 	/* Array indexed by regulator id */
-@@ -269,20 +269,16 @@ static int max77686_of_parse_cb(struct device_node *np,
- 	case MAX77686_BUCK8:
- 	case MAX77686_BUCK9:
- 	case MAX77686_LDO20 ... MAX77686_LDO22:
--		config->ena_gpiod = devm_gpiod_get_from_of_node(max77686->dev,
--								np,
--								"maxim,ena",
--								0,
--								GPIOD_OUT_HIGH,
--								"max77686-regulator");
--		if (IS_ERR(config->ena_gpiod))
--			config->ena_gpiod = NULL;
-+		config->ena_gpio = of_get_named_gpio(np,
-+					"maxim,ena-gpios", 0);
-+		config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
-+		config->ena_gpio_initialized = true;
- 		break;
- 	default:
- 		return 0;
- 	}
- 
--	if (config->ena_gpiod) {
-+	if (gpio_is_valid(config->ena_gpio)) {
- 		set_bit(desc->id, max77686->gpio_enabled);
- 
- 		return regmap_update_bits(config->regmap, desc->enable_reg,
-@@ -525,7 +521,6 @@ static int max77686_pmic_probe(struct platform_device *pdev)
- 	if (!max77686)
- 		return -ENOMEM;
- 
--	max77686->dev = &pdev->dev;
- 	config.dev = iodev->dev;
- 	config.regmap = iodev->regmap;
- 	config.driver_data = max77686;
--- 
-2.17.0
+--1hVIwB4NpNcOOTEe--
