@@ -1,64 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753760AbeE3TXX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:23:23 -0400
-Received: from anholt.net ([50.246.234.109]:46672 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932108AbeE3TXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:23:22 -0400
-From: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Phil Elwell <phil@raspberrypi.org>,
-        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: [PATCH] mailbox: bcm2835: Fix of_xlate return value
-In-Reply-To: <1527330240-6181-1-git-send-email-stefan.wahren@i2se.com>
-References: <1527330240-6181-1-git-send-email-stefan.wahren@i2se.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Wed, 30 May 2018 12:23:20 -0700
-Message-ID: <87in75ne1j.fsf@anholt.net>
+        id S932177AbeE3T1w (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 15:27:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53032 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932076AbeE3T1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 15:27:50 -0400
+Date: Wed, 30 May 2018 15:27:48 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        axboe@kernel.dk, hch@infradead.org, colyli@suse.de,
+        darrick.wong@oracle.com, clm@fb.com, bacik@fb.com,
+        linux-xfs@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-btrfs@vger.kernel.org, linux-raid@vger.kernel.org,
+        neilb@suse.com
+Subject: Re: [PATCH 07/12] dm: convert to bioset_init()/mempool_init()
+Message-ID: <20180530192747.GA6568@redhat.com>
+References: <20180520222558.7053-1-kent.overstreet@gmail.com>
+ <20180520222558.7053-8-kent.overstreet@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180520222558.7053-8-kent.overstreet@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Sun, May 20 2018 at  6:25pm -0400,
+Kent Overstreet <kent.overstreet@gmail.com> wrote:
 
-Stefan Wahren <stefan.wahren@i2se.com> writes:
+> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+> ---
+>  drivers/md/dm-bio-prison-v1.c      | 13 ++++---
+>  drivers/md/dm-bio-prison-v2.c      | 13 ++++---
+>  drivers/md/dm-cache-target.c       | 25 ++++++-------
+>  drivers/md/dm-core.h               |  4 +-
+>  drivers/md/dm-crypt.c              | 60 ++++++++++++++----------------
+>  drivers/md/dm-integrity.c          | 15 ++++----
+>  drivers/md/dm-io.c                 | 29 ++++++++-------
+>  drivers/md/dm-kcopyd.c             | 22 ++++++-----
+>  drivers/md/dm-log-userspace-base.c | 19 +++++-----
+>  drivers/md/dm-region-hash.c        | 23 ++++++------
+>  drivers/md/dm-rq.c                 |  2 +-
+>  drivers/md/dm-snap.c               | 17 ++++-----
+>  drivers/md/dm-thin.c               | 32 ++++++++--------
+>  drivers/md/dm-verity-fec.c         | 55 +++++++++++++--------------
+>  drivers/md/dm-verity-fec.h         |  8 ++--
+>  drivers/md/dm-zoned-target.c       | 13 +++----
+>  drivers/md/dm.c                    | 53 ++++++++++++--------------
+>  17 files changed, 197 insertions(+), 206 deletions(-)
 
-> The bcm2835-mailbox returns NULL instead of an error pointer, which could
-> result in a NULL ptr dereference in mbox_request_channel. So fix this
-> by returning a proper error pointer.
->
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-> Fixes: 0bae6af6d704 ("mailbox: Enable BCM2835 mailbox support")
+In general I think each of these driver patches in the series needs a
+one-line summary in the description, e.g.:
+Embed bioset and mempool_t to avoid pointer indirection in the fast IO path.
 
-Reviewed-by: Eric Anholt <eric@anholt.net>
+But that aside, on a code level, I had to double check bioset_exit() is
+safe to call even if bioset_init() failed.  AFter confirming it is (and
+double checking by chatting with Kent) I like how the code is simpler
+(not having to check if the bioset is set before calling it).
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Nice job Kent, like you said: mostly mechnical.  But even the changes
+that weren't purely mechnical (e.g. passing r to ERR_PTR, rather than
+using old hardcode) were fixed up nicely.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlsO+igACgkQtdYpNtH8
-nuhUhA//Xx75OvJvsrIPDIcxa/6+Qco1Az24IsT4dHwNbheL5UUHz1xmwIlWzrJa
-S6c+1dTp+hiRUwlLyfskHQUTayucQnMybuF9BoePkUIYa2J4J9MdKnCSDxCZiScx
-7M93inyCCdzloKR1WEW/UmgFs24iMFahgLxgZzHk0E2sW5+lx3EeYZYgSmtJQ5DJ
-UrYmriK9ZbJJJgFvuU3vXRlX2IW+1jePyw56wjRphDT4Rh/EtKBv7vlpFQzzJSjD
-Yp5UfR86wn0BqCIy8Zw0RpAFheN78g0TeQysDGcNaq4Sq+wYLIE16T7ItfgHFHig
-azzZ8x/pKwxoYE3yajv9j9NMwBhnw+/GWKH8J+PpbNzF1GWoP4hdo/MdJdyH8irL
-naGUZpxSIxEYZJlc8jZo0HsJNo4ptgQzp9jcsWR/Fdb2B/R5jf5KazKZS5+k2FkF
-xxd3sxBo6dVvjvdCrDAVgHNzAx5fSKNdsjPumDaIUGiVCAc6UupSc6neD1ExnwRz
-dGGZBV07bQV29M8CZrlncNow8umBsCpcZOMDvEPZdKQP2lxQyKIZ4uSlJw8sjamO
-pkrzA/abpeeelbH/bJmTcRrFeIXjlRmQZ92duRCwW0tf62MNy2dmIRpF5ZbNMxW0
-mkZXnHkVS7CBIzF2J6te1NJPGnNW1V7zxKs0Cbto0KGlAeN772E=
-=Nwn/
------END PGP SIGNATURE-----
---=-=-=--
+Acked-by: Mike Snitzer <snitzer@redhat.com>
