@@ -1,26 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752705AbeE3LHm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:07:42 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60683 "EHLO
+        id S1753031AbeE3LJG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:09:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60790 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751925AbeE3LG6 (ORCPT
+        by vger.kernel.org with ESMTP id S1752730AbeE3LHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:06:58 -0400
+        Wed, 30 May 2018 07:07:46 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Eran Ben Elisha" <eranbe@mellanox.com>,
-        "Tariq Toukan" <tariqt@mellanox.com>
-Date: Wed, 30 May 2018 11:52:42 +0100
-Message-ID: <lsq.1527677562.989076491@decadent.org.uk>
+CC: akpm@linux-foundation.org, "Mikulas Patocka" <mpatocka@redhat.com>,
+        "Matt Turner" <mattst88@gmail.com>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.120065268@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 150/153] net/mlx4_en: Fix mixed PFC and Global pause
- user control requests
+Subject: [PATCH 3.2 056/153] alpha: fix reboot on Avanti platform
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,88 +31,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eran Ben Elisha <eranbe@mellanox.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 6e8814ceb7e8f468659ef9253bd212c07ae19584 upstream.
+commit 55fc633c41a08ce9244ff5f528f420b16b1e04d6 upstream.
 
-Global pause and PFC configuration should be mutually exclusive (i.e. only
-one of them at most can be set). However, once PFC was turned off,
-driver automatically turned Global pause on. This is a bug.
+We need to define NEED_SRM_SAVE_RESTORE on the Avanti, otherwise we get
+machine check exception when attempting to reboot the machine.
 
-Fix the driver behaviour to turn off PFC/Global once the user turned the
-other on.
-
-This also fixed a weird behaviour that at a current time, the profile
-had both PFC and global pause configuration turned on, which is
-Hardware-wise impossible and caused returning false positive indication
-to query tools.
-
-In addition, fix error code when setting global pause or PFC to change
-metadata only upon successful change.
-
-Also, removed useless debug print.
-
-Fixes: af7d51852631 ("net/mlx4_en: Add DCB PFC support through CEE netlink commands")
-Fixes: c27a02cd94d6 ("mlx4_en: Add driver for Mellanox ConnectX 10GbE NIC")
-Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.2:
- - Drop changes in en_dcb_nl.c
- - Don't call mlx4_en_update_pfc_stats_bitmap()]
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Matt Turner <mattst88@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-@@ -362,21 +362,29 @@ static int mlx4_en_set_pauseparam(struct
- {
- 	struct mlx4_en_priv *priv = netdev_priv(dev);
- 	struct mlx4_en_dev *mdev = priv->mdev;
-+	u8 tx_pause, tx_ppp, rx_pause, rx_ppp;
- 	int err;
+ arch/alpha/kernel/pci_impl.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/arch/alpha/kernel/pci_impl.h
++++ b/arch/alpha/kernel/pci_impl.h
+@@ -143,7 +143,8 @@ struct pci_iommu_arena
+ };
  
- 	if (pause->autoneg)
- 		return -EINVAL;
- 
--	priv->prof->tx_pause = pause->tx_pause != 0;
--	priv->prof->rx_pause = pause->rx_pause != 0;
-+	tx_pause = !!(pause->tx_pause);
-+	rx_pause = !!(pause->rx_pause);
-+	rx_ppp = priv->prof->rx_ppp && !(tx_pause || rx_pause);
-+	tx_ppp = priv->prof->tx_ppp && !(tx_pause || rx_pause);
-+
- 	err = mlx4_SET_PORT_general(mdev->dev, priv->port,
- 				    priv->rx_skb_size + ETH_FCS_LEN,
--				    priv->prof->tx_pause,
--				    priv->prof->tx_ppp,
--				    priv->prof->rx_pause,
--				    priv->prof->rx_ppp);
--	if (err)
--		en_err(priv, "Failed setting pause params\n");
-+				    tx_pause, tx_ppp, rx_pause, rx_ppp);
-+	if (err) {
-+		en_err(priv, "Failed setting pause params, err = %d\n", err);
-+		return err;
-+	}
-+
-+	priv->prof->tx_pause = tx_pause;
-+	priv->prof->rx_pause = rx_pause;
-+	priv->prof->tx_ppp = tx_ppp;
-+	priv->prof->rx_ppp = rx_ppp;
- 
- 	return err;
- }
---- a/drivers/net/ethernet/mellanox/mlx4/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_main.c
-@@ -112,9 +112,9 @@ static int mlx4_en_get_profile(struct ml
- 		params->udp_rss = 0;
- 	}
- 	for (i = 1; i <= MLX4_MAX_PORTS; i++) {
--		params->prof[i].rx_pause = 1;
-+		params->prof[i].rx_pause = !(pfcrx || pfctx);
- 		params->prof[i].rx_ppp = pfcrx;
--		params->prof[i].tx_pause = 1;
-+		params->prof[i].tx_pause = !(pfcrx || pfctx);
- 		params->prof[i].tx_ppp = pfctx;
- 		params->prof[i].tx_ring_size = MLX4_EN_DEF_TX_RING_SIZE;
- 		params->prof[i].rx_ring_size = MLX4_EN_DEF_RX_RING_SIZE;
+ #if defined(CONFIG_ALPHA_SRM) && \
+-    (defined(CONFIG_ALPHA_CIA) || defined(CONFIG_ALPHA_LCA))
++    (defined(CONFIG_ALPHA_CIA) || defined(CONFIG_ALPHA_LCA) || \
++     defined(CONFIG_ALPHA_AVANTI))
+ # define NEED_SRM_SAVE_RESTORE
+ #else
+ # undef NEED_SRM_SAVE_RESTORE
