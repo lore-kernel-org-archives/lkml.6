@@ -1,88 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752660AbeE3MyH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 08:54:07 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:45204 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbeE3MyC (ORCPT
+        id S1752886AbeE3Mzn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 08:55:43 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:46848 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751746AbeE3Mzk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 08:54:02 -0400
-X-Google-Smtp-Source: ADUXVKKcOxFqzJ6Na/S+hjXyXvXjc4QR/mBznnjeTtpqa8qSFYNO1QWpVV3SsUpZSXhLnVBCvE0Nj36hB0S2KzJhJNA=
+        Wed, 30 May 2018 08:55:40 -0400
+X-Google-Smtp-Source: ADUXVKLGi4+ZYk5V3K7bd5trnuk9DEj3626/3NTbFuueZnYEwcxn8IB7OJb5lu2Ht2ik8mRQPB1or0ubG2QWixPnw0E=
 MIME-Version: 1.0
-In-Reply-To: <20180530103936.17812-1-liwang@redhat.com>
-References: <20180530103936.17812-1-liwang@redhat.com>
-From: Dan Streetman <ddstreet@ieee.org>
-Date: Wed, 30 May 2018 08:53:21 -0400
-X-Google-Sender-Auth: 5pysO-SE7ZSR_a-AOgYAMSJCRrs
-Message-ID: <CALZtONBKSVfXe+RHOjgS=4VrDqFsxNRx3OuGctp0o1Hrtix3Ew@mail.gmail.com>
-Subject: Re: [PATCH v2] zswap: re-check zswap_is_full after do zswap_shrink
-To: Li Wang <liwang@redhat.com>
-Cc: Linux-MM <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Seth Jennings <sjenning@redhat.com>,
-        Huang Ying <huang.ying.caritas@gmail.com>, Yu Zhao <yuzhao@google.com>
+References: <20180530122922.1041-1-peron.clem@gmail.com> <20180530123809.khyzehg62ct6jzws@sapphire.tkos.co.il>
+In-Reply-To: <20180530123809.khyzehg62ct6jzws@sapphire.tkos.co.il>
+From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date: Wed, 30 May 2018 14:55:28 +0200
+Message-ID: <CAJiuCcdJi6Ln3+Eip+Nc=-4aZu4bsTfT-MPVZisec7e10jO4XQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: debug: Add Iproc UART3 debug addresses
+To: baruch@tkos.co.il
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Scott Branden <sbranden@broadcom.com>,
+        Tony Lindgren <tony@atomide.com>, Ray Jui <rjui@broadcom.com>,
+        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        Jon Mason <jonmason@broadcom.com>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Laura Abbott <labbott@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4UCu4oH019791
 
-On Wed, May 30, 2018 at 6:39 AM, Li Wang <liwang@redhat.com> wrote:
-> The '/sys/../zswap/stored_pages:' keep raising in zswap test with
-> "zswap.max_pool_percent=0" parameter. But theoretically, it should
-> not compress or store pages any more since there is no space in
-> compressed pool.
->
-> Reproduce steps:
->   1. Boot kernel with "zswap.enabled=1"
->   2. Set the max_pool_percent to 0
->       # echo 0 > /sys/module/zswap/parameters/max_pool_percent
->   3. Do memory stress test to see if some pages have been compressed
->       # stress --vm 1 --vm-bytes $mem_available"M" --timeout 60s
->   4. Watching the 'stored_pages' number increasing or not
->
-> The root cause is:
->   When zswap_max_pool_percent is setting to 0 via kernel parameter, the
->   zswap_is_full() will always return true to do zswap_shrink(). But if
->   the shinking is able to reclain a page successful, then proceeds to
->   compress/store another page, so the value of stored_pages will keep
->   changing.
->
-> To solve the issue, this patch adds zswap_is_full() check again after
-> zswap_shrink() to make sure it's now under the max_pool_percent, and
-> not to compress/store if reach its limitaion.
->
-> Signed-off-by: Li Wang <liwang@redhat.com>
+Hi Baruch,
 
-Acked-by: Dan Streetman <ddstreet@ieee.org>
+On Wed, 30 May 2018 at 14:47, Baruch Siach <baruch@tkos.co.il> wrote:
 
-> Cc: Seth Jennings <sjenning@redhat.com>
-> Cc: Dan Streetman <ddstreet@ieee.org>
-> Cc: Huang Ying <huang.ying.caritas@gmail.com>
-> Cc: Yu Zhao <yuzhao@google.com>
-> ---
->  mm/zswap.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 61a5c41..fd320c3 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1026,6 +1026,15 @@ static int zswap_frontswap_store(unsigned type, pgoff_t offset,
->                         ret = -ENOMEM;
->                         goto reject;
->                 }
-> +
-> +               /* A second zswap_is_full() check after
-> +                * zswap_shrink() to make sure it's now
-> +                * under the max_pool_percent
-> +                */
-> +               if (zswap_is_full()) {
-> +                       ret = -ENOMEM;
-> +                       goto reject;
-> +               }
->         }
->
->         /* allocate entry */
+> Hi Clément,
+
+> On Wed, May 30, 2018 at 02:29:22PM +0200, Clément Péron wrote:
+> > From: Clément Peron <clement.peron@devialet.com>
+> >
+> > Broadcom Iproc SoCs typically use the UART3 for
+> > debug/console, provide a known good location for that.
+> >
+> > Signed-off-by: Clément Peron <clement.peron@devialet.com>
+> > ---
+> >  arch/arm/Kconfig.debug | 12 +++++++++++-
+> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> > index 199ebc1c4538..fa6fa1dae94d 100644
+> > --- a/arch/arm/Kconfig.debug
+> > +++ b/arch/arm/Kconfig.debug
+> > @@ -207,6 +207,14 @@ choice
+> >               depends on ARCH_BCM_HR2
+> >               select DEBUG_UART_8250
+> >
+> > +     config DEBUG_BCM_IPROC_UART3
+> > +             bool "Kernel low-level debugging on BCM IPROC UART3"
+> > +             depends on ARCH_BCM_CYGNUS
+> > +             select DEBUG_UART_8250
+> > +             help
+> > +               Say Y here if you want the debug print routines to
+direct
+> > +               their output to the third serial port on these devices.
+> > +
+> >       config DEBUG_BCM_KONA_UART
+> >               bool "Kernel low-level debugging messages via BCM KONA
+UART"
+> >               depends on ARCH_BCM_MOBILE
+> > @@ -1564,6 +1572,7 @@ config DEBUG_UART_PHYS
+> >       default 0x20068000 if DEBUG_RK29_UART2 || DEBUG_RK3X_UART3
+> >       default 0x20201000 if DEBUG_BCM2835
+> >       default 0x3f201000 if DEBUG_BCM2836
+> > +     default 0x18023000 if DEBUG_BCM_IPROC_UART3
+
+> Entries are sorted by the address value. Except that DEBUG_BCM_KONA_UART
+> should be listed above DEBUG_BCM2836.
+
+Indeed, can I fix the DEBUG_BCM_KONA_UART entry in the same commit ?
+
+
+> >       default 0x3e000000 if DEBUG_BCM_KONA_UART
+> >       default 0x4000e400 if DEBUG_LL_UART_EFM32
+> >       default 0x40028000 if DEBUG_AT91_SAMV7_USART1
+> > @@ -1730,6 +1739,7 @@ config DEBUG_UART_VIRT
+> >       default 0xfe018000 if DEBUG_MMP_UART3
+> >       default 0xfe100000 if DEBUG_IMX23_UART || DEBUG_IMX28_UART
+> >       default 0xfe230000 if DEBUG_PICOXCELL_UART
+> > +     default 0xf1023000 if DEBUG_BCM_IPROC_UART3
+
+> Same here.
+
+> >       default 0xfe300000 if DEBUG_BCM_KONA_UART
+> >       default 0xfe800000 if ARCH_IOP32X
+> >       default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
+> > @@ -1791,7 +1801,7 @@ config DEBUG_UART_8250_WORD
+> >               DEBUG_KEYSTONE_UART0 || DEBUG_KEYSTONE_UART1 || \
+> >               DEBUG_ALPINE_UART0 || \
+> >               DEBUG_DAVINCI_DMx_UART0 || DEBUG_DAVINCI_DA8XX_UART1 || \
+> > -             DEBUG_DAVINCI_DA8XX_UART2 || \
+> > +             DEBUG_DAVINCI_DA8XX_UART2 || DEBUG_BCM_IPROC_UART3 || \
+> >               DEBUG_BCM_KONA_UART || DEBUG_RK32_UART2
+
+> baruch
+
 > --
-> 2.9.5
->
+>       http://baruch.siach.name/blog/                  ~. .~   Tk Open
+Systems
+
+=}------------------------------------------------ooO--U--Ooo------------{=
+>     - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+
+Clement
