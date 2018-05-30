@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753653AbeE3Lqm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:46:42 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60664 "EHLO
+        id S1753736AbeE3Lqu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:46:50 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60652 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751782AbeE3LG6 (ORCPT
+        by vger.kernel.org with ESMTP id S1751444AbeE3LG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:06:58 -0400
+        Wed, 30 May 2018 07:06:57 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mike Kravetz" <mike.kravetz@oracle.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Yisheng Xie" <xieyisheng1@huawei.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Nic Losby" <blurbdust@gmail.com>, "Michal Hocko" <mhocko@suse.com>
+CC: akpm@linux-foundation.org, "Daniel Borkmann" <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Jason Gunthorpe" <jgunthorpe@obsidianresearch.com>,
+        "Neil Horman" <nhorman@tuxdriver.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.554945558@decadent.org.uk>
+Message-ID: <lsq.1527677561.879901012@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 018/153] hugetlbfs: check for pgoff value overflow
+Subject: [PATCH 3.2 001/153] sctp: Fix mangled IPv4 addresses on a IPv6
+ listening socket
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -34,120 +34,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
 
-commit 63489f8e821144000e0bdca7e65a8d1cc23a7ee7 upstream.
+commit 9302d7bb0c5cd46be5706859301f18c137b2439f upstream.
 
-A vma with vm_pgoff large enough to overflow a loff_t type when
-converted to a byte offset can be passed via the remap_file_pages system
-call.  The hugetlbfs mmap routine uses the byte offset to calculate
-reservations and file size.
+sctp_v4_map_v6 was subtly writing and reading from members
+of a union in a way the clobbered data it needed to read before
+it read it.
 
-A sequence such as:
+Zeroing the v6 flowinfo overwrites the v4 sin_addr with 0, meaning
+that every place that calls sctp_v4_map_v6 gets ::ffff:0.0.0.0 as the
+result.
 
-  mmap(0x20a00000, 0x600000, 0, 0x66033, -1, 0);
-  remap_file_pages(0x20a00000, 0x600000, 0, 0x20000000000000, 0);
+Reorder things to guarantee correct behaviour no matter what the
+union layout is.
 
-will result in the following when task exits/file closed,
+This impacts user space clients that open an IPv6 SCTP socket and
+receive IPv4 connections. Prior to 299ee user space would see a
+sockaddr with AF_INET and a correct address, after 299ee the sockaddr
+is AF_INET6, but the address is wrong.
 
-  kernel BUG at mm/hugetlb.c:749!
-  Call Trace:
-    hugetlbfs_evict_inode+0x2f/0x40
-    evict+0xcb/0x190
-    __dentry_kill+0xcb/0x150
-    __fput+0x164/0x1e0
-    task_work_run+0x84/0xa0
-    exit_to_usermode_loop+0x7d/0x80
-    do_syscall_64+0x18b/0x190
-    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-The overflowed pgoff value causes hugetlbfs to try to set up a mapping
-with a negative range (end < start) that leaves invalid state which
-causes the BUG.
-
-The previous overflow fix to this code was incomplete and did not take
-the remap_file_pages system call into account.
-
-[mike.kravetz@oracle.com: v3]
-  Link: http://lkml.kernel.org/r/20180309002726.7248-1-mike.kravetz@oracle.com
-[akpm@linux-foundation.org: include mmdebug.h]
-[akpm@linux-foundation.org: fix -ve left shift count on sh]
-Link: http://lkml.kernel.org/r/20180308210502.15952-1-mike.kravetz@oracle.com
-Fixes: 045c7a3f53d9 ("hugetlbfs: fix offset overflow in hugetlbfs mmap")
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Reported-by: Nic Losby <blurbdust@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.2:
- - Use a conditional WARN() instead of VM_WARN()
- - Adjust context]
+Fixes: 299ee123e198 (sctp: Fixup v4mapped behaviour to comply with Sock API)
+Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/hugetlbfs/inode.c | 17 ++++++++++++++---
- mm/hugetlb.c         |  7 +++++++
- 2 files changed, 21 insertions(+), 3 deletions(-)
+ include/net/sctp/sctp.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -76,6 +76,16 @@ static void huge_pagevec_release(struct
- 	pagevec_reinit(pvec);
- }
- 
-+/*
-+ * Mask used when checking the page offset value passed in via system
-+ * calls.  This value will be converted to a loff_t which is signed.
-+ * Therefore, we want to check the upper PAGE_SHIFT + 1 bits of the
-+ * value.  The extra bit (- 1 in the shift value) is to take the sign
-+ * bit into account.
-+ */
-+#define PGOFF_LOFFT_MAX \
-+	(((1UL << (PAGE_SHIFT + 1)) - 1) <<  (BITS_PER_LONG - (PAGE_SHIFT + 1)))
-+
- static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
+--- a/include/net/sctp/sctp.h
++++ b/include/net/sctp/sctp.h
+@@ -704,11 +704,14 @@ static inline void sctp_v6_map_v4(union
+ /* Map v4 address to v4-mapped v6 address */
+ static inline void sctp_v4_map_v6(union sctp_addr *addr)
  {
- 	struct inode *inode = file->f_path.dentry->d_inode;
-@@ -95,12 +105,13 @@ static int hugetlbfs_file_mmap(struct fi
- 	vma->vm_ops = &hugetlb_vm_ops;
- 
- 	/*
--	 * Offset passed to mmap (before page shift) could have been
--	 * negative when represented as a (l)off_t.
-+	 * page based offset in vm_pgoff could be sufficiently large to
-+	 * overflow a (l)off_t when converted to byte offset.
- 	 */
--	if (((loff_t)vma->vm_pgoff << PAGE_SHIFT) < 0)
-+	if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
- 		return -EINVAL;
- 
-+	/* must be huge page aligned */
- 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
- 		return -EINVAL;
- 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -18,6 +18,7 @@
- #include <linux/bootmem.h>
- #include <linux/sysfs.h>
- #include <linux/slab.h>
-+#include <linux/mmdebug.h>
- #include <linux/rmap.h>
- #include <linux/swap.h>
- #include <linux/swapops.h>
-@@ -3097,6 +3098,14 @@ int hugetlb_reserve_pages(struct inode *
- 	struct hstate *h = hstate_inode(inode);
- 	struct hugepage_subpool *spool = subpool_inode(inode);
- 
-+	/* This should never happen */
-+	if (from > to) {
-+#ifdef CONFIG_DEBUG_VM
-+		WARN(1, "%s called with a negative range\n", __func__);
-+#endif
-+		return -EINVAL;
-+	}
++	__be16 port;
 +
- 	/*
- 	 * Only apply hugepage reservation if asked. At fault time, an
- 	 * attempt will be made for VM_NORESERVE to allocate a page
++	port = addr->v4.sin_port;
++	addr->v6.sin6_addr.s6_addr32[3] = addr->v4.sin_addr.s_addr;
++	addr->v6.sin6_port = port;
+ 	addr->v6.sin6_family = AF_INET6;
+ 	addr->v6.sin6_flowinfo = 0;
+ 	addr->v6.sin6_scope_id = 0;
+-	addr->v6.sin6_port = addr->v4.sin_port;
+-	addr->v6.sin6_addr.s6_addr32[3] = addr->v4.sin_addr.s_addr;
+ 	addr->v6.sin6_addr.s6_addr32[0] = 0;
+ 	addr->v6.sin6_addr.s6_addr32[1] = 0;
+ 	addr->v6.sin6_addr.s6_addr32[2] = htonl(0x0000ffff);
