@@ -1,70 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753847AbeE3Qyb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:54:31 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42181 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752850AbeE3Qy1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:54:27 -0400
-X-Google-Smtp-Source: ADUXVKLyUv3asK9080Pl4jD2NVO9PxcfHifYu0ms9KzDMMCRpuW6SWTBpH7HhydPIKDTxv0rbdNAQg==
-From: Gwendal Grignou <gwendal@chromium.org>
-To: bleung@chromium.org, lee.jones@linaro.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2] cros_ec: Use devm_kzalloc for private data
-Date: Wed, 30 May 2018 09:54:22 -0700
-Message-Id: <20180530165422.51178-1-gwendal@chromium.org>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
-In-Reply-To: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
-References: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
+        id S1753914AbeE3Qyn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:54:43 -0400
+Received: from mga07.intel.com ([134.134.136.100]:24566 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753670AbeE3Qyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:54:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,461,1520924400";
+   d="scan'208";a="45449353"
+From: "Duyck, Alexander H" <alexander.h.duyck@intel.com>
+To: "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        "mst@redhat.com" <mst@redhat.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "Daly, Dan" <dan.daly@intel.com>, "Bie, Tiwei" <tiwei.bie@intel.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Liang, Cunming" <cunming.liang@intel.com>,
+        "Wang, Zhihong" <zhihong.wang@intel.com>
+Subject: Re: [PATCH] virtio_pci: support enabling VFs
+Thread-Topic: [PATCH] virtio_pci: support enabling VFs
+Thread-Index: AQHT9/P5uaO7GXR/D0ickSAfuvKJDaRI6igAgAAGIoCAAALrgA==
+Date: Wed, 30 May 2018 16:54:35 +0000
+Message-ID: <1527699273.29907.2.camel@intel.com>
+References: <20180530085521.26583-1-tiwei.bie@intel.com>
+         <20180530192010-mutt-send-email-mst@kernel.org>
+         <414C18B1-30FA-4AC0-B47D-F0FBF9832737@intel.com>
+In-Reply-To: <414C18B1-30FA-4AC0-B47D-F0FBF9832737@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [134.134.177.79]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EE63E1D03CDD854B8989945BAE9C2E54@intel.com>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4UGspnX002814
 
-Use dev_kzmalloc, remove .release entry point.
+On Wed, 2018-05-30 at 09:44 -0700, Rustad, Mark D wrote:
+> On May 30, 2018, at 9:22 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> 
+> > > +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int  
+> > > num_vfs)
+> > > +{
+> > > +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+> > > +	struct virtio_device *vdev = &vp_dev->vdev;
+> > > +	int (*sriov_configure)(struct pci_dev *pci_dev, int num_vfs);
+> > > +
+> > > +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
+> > > +		return -EBUSY;
+> > > +
+> > > +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
+> > > +		return -EINVAL;
+> > > +
+> > > +	sriov_configure = pci_sriov_configure_simple;
+> > > +	if (sriov_configure == NULL)
+> > > +		return -ENOENT;
+> > 
+> > BTW what is all this trickery in aid of?
+> 
+> When SR-IOV support is not compiled into the kernel,  
+> pci_sriov_configure_simple is #defined as NULL. This allows it to compile  
+> in that case, even though there is utterly no way for it to be called in  
+> that case. It is an alternative to #ifs in the code.
 
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
----
-Change sinc v1:
-- Readd __remove to avoid a warning when loaded as a module.
-
- drivers/mfd/cros_ec_dev.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index 1d6dc5c7a19d..81466264f7fc 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -262,12 +262,7 @@ static const struct file_operations fops = {
- #endif
- };
- 
--static void __remove(struct device *dev)
--{
--	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
--					      class_dev);
--	kfree(ec);
--}
-+static void __remove(struct device *dev) { }
- 
- static void cros_ec_sensors_register(struct cros_ec_dev *ec)
- {
-@@ -392,7 +387,7 @@ static int ec_device_probe(struct platform_device *pdev)
- 	int retval = -ENOMEM;
- 	struct device *dev = &pdev->dev;
- 	struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
--	struct cros_ec_dev *ec = kzalloc(sizeof(*ec), GFP_KERNEL);
-+	struct cros_ec_dev *ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
- 
- 	if (!ec)
- 		return retval;
-@@ -414,7 +409,6 @@ static int ec_device_probe(struct platform_device *pdev)
- 	ec->class_dev.devt = MKDEV(ec_major, pdev->id);
- 	ec->class_dev.class = &cros_class;
- 	ec->class_dev.parent = dev;
--	ec->class_dev.release = __remove;
- 
- 	retval = dev_set_name(&ec->class_dev, "%s", ec_platform->ec_name);
- 	if (retval) {
--- 
-2.17.0.921.gf22659ad46-goog
+Why even have the call though? I would wrap all of this in an #ifdef
+and strip it out since you couldn't support SR-IOV if it isn't present
+in the kernel anyway.
