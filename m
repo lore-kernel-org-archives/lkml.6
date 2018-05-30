@@ -1,146 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968787AbeE3IzU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:55:20 -0400
-Received: from mga17.intel.com ([192.55.52.151]:21432 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964790AbeE3IzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:55:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,459,1520924400";
-   d="scan'208";a="45870985"
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: mst@redhat.com, bhelgaas@google.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        linux-pci@vger.kernel.org
-Cc: dan.daly@intel.com, mark.d.rustad@intel.com,
-        alexander.h.duyck@intel.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com
-Subject: [PATCH] virtio_pci: support enabling VFs
-Date: Wed, 30 May 2018 16:55:21 +0800
-Message-Id: <20180530085521.26583-1-tiwei.bie@intel.com>
-X-Mailer: git-send-email 2.17.0
+        id S936109AbeE3Izf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:55:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45080 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964790AbeE3Iz2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:55:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ECA3C6060A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v2 5/6] soc: qcom: rpmh powerdomain driver
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: David Collins <collinsd@codeaurora.org>, viresh.kumar@linaro.org,
+        sboyd@kernel.org, andy.gross@linaro.org, ulf.hansson@linaro.org
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
+References: <20180525100121.28214-1-rnayak@codeaurora.org>
+ <20180525100121.28214-6-rnayak@codeaurora.org>
+ <215deee5-6472-d587-9a90-f7158162ed82@codeaurora.org>
+ <6f8e5fe2-199d-ba1f-19d7-2faf276075f3@codeaurora.org>
+Message-ID: <36822404-bdf5-1915-03e7-e5ffcff05c9b@codeaurora.org>
+Date: Wed, 30 May 2018 14:25:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <6f8e5fe2-199d-ba1f-19d7-2faf276075f3@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a new feature bit allocated in virtio spec to
-support SR-IOV (Single Root I/O Virtualization):
+[]...
 
-https://github.com/oasis-tcs/virtio-spec/issues/11
+>>> +Required Properties:
+>>> + - compatible: Should be one of the following
+>>> +	* qcom,sdm845-rpmhpd: RPMh powerdomain for the sdm845 family of SoC
+>>> + - power-domain-cells: number of cells in power domain specifier
+>>> +	must be 1
+>>> + - operating-points-v2: Phandle to the OPP table for the power-domain.
+>>> +	Refer to Documentation/devicetree/bindings/power/power_domain.txt
+>>> +	and Documentation/devicetree/bindings/opp/qcom-opp.txt for more details
+>>> +
+>>> +Example:
+>>> +
+>>> +	rpmhpd: power-controller {
+>>> +		compatible = "qcom,sdm845-rpmhpd";
+>>> +		#power-domain-cells = <1>;
+>>> +		operating-points-v2 = <&rpmhpd_opp_table>,
+>>> +				      <&rpmhpd_opp_table>,
+>>> +				      <&rpmhpd_opp_table>,
+>>> +				      <&rpmhpd_opp_table>,
+>>> +				      <&rpmhpd_opp_table>,
+>>> +				      <&rpmhpd_opp_table>,
+>>> +				      <&rpmhpd_opp_table>,
+>>> +				      <&rpmhpd_opp_table>,
+>>> +				      <&rpmhpd_opp_table>;
+>>
+>> Can this be changed to simply:
+>>   operating-points-v2 = <&rpmhpd_opp_table>;
+>>
+>> The opp binding documentation [1] states that this should be ok:
+>>
+>>     If only one phandle is available, then the same OPP table will be used
+>>     for all power domains provided by the power domain provider.
+> 
+> thanks, I mentioned this to Viresh but didn't realize he fixed it up.
+> Will remove the redundant entries.
 
-This patch enables the support for this feature bit in
-virtio driver.
+Looks like the kernel implementation does not handle this yet, and I get
+an error adding the OPP tables for the powerdomains if I just specify
+a single OPP table phandle.
 
-Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
----
-This patch depends on below proposal:
-https://lists.oasis-open.org/archives/virtio-dev/201805/msg00154.html
+Viresh, is this expected with the latest patches in linux-next?
 
-This patch depends on below patch:
-https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/commit/?h=pci/virtualization&id=8effc395c2097e258fcedfc02ed4a66d45fb4238
+It would be good if I can specify just one phandle instead of coping
+the same phandle n times. 
 
- drivers/virtio/virtio_pci_common.c | 20 ++++++++++++++++++++
- drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
- include/uapi/linux/virtio_config.h |  7 ++++++-
- 3 files changed, 40 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index 48d4d1cf1cb6..023da80a7a3e 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -588,6 +588,25 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
- 	put_device(dev);
- }
- 
-+static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
-+{
-+	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-+	struct virtio_device *vdev = &vp_dev->vdev;
-+	int (*sriov_configure)(struct pci_dev *pci_dev, int num_vfs);
-+
-+	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
-+		return -EBUSY;
-+
-+	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
-+		return -EINVAL;
-+
-+	sriov_configure = pci_sriov_configure_simple;
-+	if (sriov_configure == NULL)
-+		return -ENOENT;
-+
-+	return sriov_configure(pci_dev, num_vfs);
-+}
-+
- static struct pci_driver virtio_pci_driver = {
- 	.name		= "virtio-pci",
- 	.id_table	= virtio_pci_id_table,
-@@ -596,6 +615,7 @@ static struct pci_driver virtio_pci_driver = {
- #ifdef CONFIG_PM_SLEEP
- 	.driver.pm	= &virtio_pci_pm_ops,
- #endif
-+	.sriov_configure = virtio_pci_sriov_configure,
- };
- 
- module_pci_driver(virtio_pci_driver);
-diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-index 2555d80f6eec..07571daccfec 100644
---- a/drivers/virtio/virtio_pci_modern.c
-+++ b/drivers/virtio/virtio_pci_modern.c
-@@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
- 	return features;
- }
- 
-+static void vp_transport_features(struct virtio_device *vdev, u64 features)
-+{
-+	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-+	struct pci_dev *pci_dev = vp_dev->pci_dev;
-+
-+	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
-+			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
-+		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
-+}
-+
- /* virtio config->finalize_features() implementation */
- static int vp_finalize_features(struct virtio_device *vdev)
- {
- 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-+	u64 features = vdev->features;
- 
- 	/* Give virtio_ring a chance to accept features. */
- 	vring_transport_features(vdev);
- 
-+	/* Give virtio_pci a chance to accept features. */
-+	vp_transport_features(vdev, features);
-+
- 	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
- 		dev_err(&vdev->dev, "virtio: device uses modern interface "
- 			"but does not have VIRTIO_F_VERSION_1\n");
-diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-index 308e2096291f..b7c1f4e7d59e 100644
---- a/include/uapi/linux/virtio_config.h
-+++ b/include/uapi/linux/virtio_config.h
-@@ -49,7 +49,7 @@
-  * transport being used (eg. virtio_ring), the rest are per-device feature
-  * bits. */
- #define VIRTIO_TRANSPORT_F_START	28
--#define VIRTIO_TRANSPORT_F_END		34
-+#define VIRTIO_TRANSPORT_F_END		38
- 
- #ifndef VIRTIO_CONFIG_NO_LEGACY
- /* Do we get callbacks when the ring is completely used, even if we've
-@@ -71,4 +71,9 @@
-  * this is for compatibility with legacy systems.
-  */
- #define VIRTIO_F_IOMMU_PLATFORM		33
-+
-+/*
-+ * Does the device support Single Root I/O Virtualization?
-+ */
-+#define VIRTIO_F_SR_IOV			37
- #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
 -- 
-2.17.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
