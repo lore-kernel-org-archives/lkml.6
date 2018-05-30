@@ -1,91 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753592AbeE3LeH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:34:07 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60822 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752352AbeE3LHC (ORCPT
+        id S1753591AbeE3LfK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:35:10 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40452 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753055AbeE3LfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:02 -0400
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Wed, 30 May 2018 07:35:04 -0400
+X-Google-Smtp-Source: ADUXVKJY+qEPIkfynzr2V8Rs65Vk+eMMAZRAelvIvl2rINH/9yU7+kuBOLsfRlHgprRv25Oep6rFGA==
+Date: Wed, 30 May 2018 13:34:59 +0200
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
+        davem@davemloft.net,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>, linux-usb@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] Documentation: usb: add documentation for USB
+ CCID Gadget Device
+Message-ID: <20180530113459.GC2939@gmail.com>
+References: <20180529185021.13738-1-marcus.folkesson@gmail.com>
+ <20180529185021.13738-2-marcus.folkesson@gmail.com>
+ <f4cdc62c-8bbe-28f9-0e7a-b4943d6f6a4f@infradead.org>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Yazen Ghannam" <yazen.ghannam@amd.com>,
-        "linux-edac" <linux-edac@vger.kernel.org>,
-        "Borislav Petkov" <bp@suse.de>, "Tony Luck" <tony.luck@intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.250029342@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 119/153] x86/MCE: Save microcode revision in machine
- check records
-In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4cdc62c-8bbe-28f9-0e7a-b4943d6f6a4f@infradead.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
+Hi Randy,
 
-------------------
+On Tue, May 29, 2018 at 01:27:23PM -0700, Randy Dunlap wrote:
+> On 05/29/2018 11:50 AM, Marcus Folkesson wrote:
+> > Add documentation to give a brief description on how to use the
+> > CCID Gadget Device.
+> > This includes a description for all attributes followed by an example on
+> > how to setup the device with ConfigFS.
+> > 
+> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> > ---
+> > 
+> > Notes:
+> >     v3:
+> >     	- correct the grammer (thanks Randy)
+> >     v2:
+> >     	- add the missing changelog text
+> > 
+> >  Documentation/usb/gadget_ccid.rst | 267 ++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 267 insertions(+)
+> >  create mode 100644 Documentation/usb/gadget_ccid.rst
+> > 
+> > diff --git a/Documentation/usb/gadget_ccid.rst b/Documentation/usb/gadget_ccid.rst
+> > new file mode 100644
+> > index 000000000000..524fe9e6ac19
+> > --- /dev/null
+> > +++ b/Documentation/usb/gadget_ccid.rst
+> > @@ -0,0 +1,267 @@
+> > +.. SPDX-License-Identifier: GPL-2.0
+> > +
+> > +============
+> > +CCID Gadget
+> > +============
+> > +
+> > +:Author: Marcus Folkesson <marcus.folkesson@gmail.com>
+> > +
+> > +Introduction
+> > +============
+> > +
+> > +The CCID Gadget will present itself as a CCID device to the host system.
+> > +The device supports two endpoints for now; BULK IN and BULK OUT.
+> > +These endpoints are exposed to userspace via /dev/ccidg*.
+> > +
+> > +All CCID commands are sent on the BULK-OUT endpoint. Each command sent to the CCID
+> > +has an associated ending response. Some commands can also have intermediate
+> > +responses. The response is sent on the BULK-IN endpoint.
+> > +See Figure 3-3 in the CCID Specification [1]_ for more details.
+> > +
+> > +The CCID commands must be handled in userspace since the driver is only working
+> > +as a transport layer for the TPDUs.
+> 
+> I think that it would be helpful to tell us what the naming of the /dev/ccidg*
+> endpoints looks like.  Also, how to distinguish the BULK-IN from the BULK-OUT
+> endpoint.
 
-From: Tony Luck <tony.luck@intel.com>
+You are right, it is not clear.
 
-commit fa94d0c6e0f3431523f5701084d799c77c7d4a4f upstream.
+The devices are named as /dev/ccidg[0-4] and is per device.
+Writing/reading to the device is using BULK-IN/BULK-OUT, the /dev/ccidg*
+device is not bound to a particular endpoint.
 
-Updating microcode used to be relatively rare. Now that it has become
-more common we should save the microcode version in a machine check
-record to make sure that those people looking at the error have this
-important information bundled with the rest of the logged information.
+I will come up with something that make it more clear.
 
-[ Borislav: Simplify a bit. ]
+Thank you!
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20180301233449.24311-1-tony.luck@intel.com
-[bwh: Backported to 3.2:
- - Add other new fields to struct mce, to match upstream UAPI
- - Adjust filename, context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -76,6 +76,10 @@ struct mce {
- 	__u32 socketid;	/* CPU socket ID */
- 	__u32 apicid;	/* CPU initial apic ID */
- 	__u64 mcgcap;	/* MCGCAP MSR: machine check capabilities of CPU */
-+	__u64 synd;	/* MCA_SYND MSR: only valid on SMCA systems */
-+	__u64 ipid;	/* MCA_IPID MSR: only valid on SMCA systems */
-+	__u64 ppin;	/* Protected Processor Inventory Number */
-+	__u32 microcode;/* Microcode revision */
- };
- 
- /*
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -125,6 +125,8 @@ void mce_setup(struct mce *m)
- 	m->socketid = cpu_data(m->extcpu).phys_proc_id;
- 	m->apicid = cpu_data(m->extcpu).initial_apicid;
- 	rdmsrl(MSR_IA32_MCG_CAP, m->mcgcap);
-+
-+	m->microcode = boot_cpu_data.microcode;
- }
- 
- DEFINE_PER_CPU(struct mce, injectm);
-@@ -221,7 +223,7 @@ static void print_mce(struct mce *m)
- 	 */
- 	pr_emerg(HW_ERR "PROCESSOR %u:%x TIME %llu SOCKET %u APIC %x microcode %x\n",
- 		m->cpuvendor, m->cpuid, m->time, m->socketid, m->apicid,
--		cpu_data(m->extcpu).microcode);
-+		m->microcode);
- 
- 	/*
- 	 * Print out human-readable details about the MCE error,
+
+> 
+> > +
+> > +
+> > +CCID Commands
+> > +--------------
+> > +
+> > +All CCID commands begins with a 10-byte header followed by an optional
+> > +data field depending on message type.
+> > +
+> > ++--------+--------------+-------+----------------------------------+
+> > +| Offset | Field        | Size  | Description                      |
+> > ++========+==============+=======+==================================+
+> > +| 0      | bMessageType | 1     | Type of message                  |
+> > ++--------+--------------+-------+----------------------------------+
+> > +| 1      | dwLength     | 4     | Message specific data length     |
+> > +|        |              |       |                                  |
+> > ++--------+--------------+-------+----------------------------------+
+> > +| 5      | bSlot        | 1     | Identifies the slot number       |
+> > +|        |              |       | for this command                 |
+> > ++--------+--------------+-------+----------------------------------+
+> > +| 6      | bSeq         | 1     | Sequence number for command      |
+> > ++--------+--------------+-------+----------------------------------+
+> > +| 7      | ...          | 3     | Fields depends on message type   |
+> > ++--------+--------------+-------+----------------------------------+
+> > +| 10     | abData       | array | Message specific data (OPTIONAL) |
+> > ++--------+--------------+-------+----------------------------------+
+> > +
+> > +
+> > +Multiple CCID gadgets
+> > +----------------------
+> > +
+> > +It is possible to create multiple instances of the CCID gadget, however,
+> > +a much more flexible way is to create one gadget and set the `nslots` attribute
+> > +to the number of desired CCID devices.
+> > +
+> > +All CCID commands specify which slot is the receiver in the `bSlot` field
+> > +of the CCID header.
+> > +
+> > +Usage
+> > +=====
+> > +
+> > +Access from userspace
+> > +----------------------
+> > +All communication is by read(2) and write(2) to the corresponding /dev/ccidg* device.
+> > +Only one file descriptor is allowed to be open to the device at a time.
+> 
+> 
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> 
+> 
+> thanks,
+> -- 
+> ~Randy
+
+Best regards,
+Marcus Folkesson
