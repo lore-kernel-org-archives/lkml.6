@@ -1,212 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753783AbeE3PPb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:15:31 -0400
-Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.133]:18969 "EHLO
-        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750990AbeE3PPY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:15:24 -0400
-X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx2zAOrX/r2ZbrrxoyOl37jyAS87PDYJ9azvnITHNpDem7ChLghAqCJU8ykdftsfK97"
-X-RZG-CLASS-ID: mo05
-Subject: Re: [PATCH 04/11] dt-bindings: spi: Move and adjust the bindings for
- the fsl-qspi driver
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
-        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
-        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com, han.xu@nxp.com,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
- <1527686082-15142-5-git-send-email-frieder.schrempf@exceet.de>
- <20180530170648.02c6fc41@bbrezillon>
-From: Frieder Schrempf <frieder.schrempf@exceet.de>
-Message-ID: <f5db2a39-3758-8861-0efa-d49c4e428714@exceet.de>
-Date: Wed, 30 May 2018 17:14:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1753819AbeE3PPh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:15:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42932 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750990AbeE3PPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:15:32 -0400
+From: Steve Grubb <sgrubb@redhat.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-audit@redhat.com
+Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit" actions
+Date: Wed, 30 May 2018 11:15:29 -0400
+Message-ID: <15281606.YptaXzsEVL@x2>
+Organization: Red Hat
+In-Reply-To: <2d5baf73-755b-dc82-a778-25a3cd22989a@linux.vnet.ibm.com>
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com> <1569841.KfYyxMilWs@x2> <2d5baf73-755b-dc82-a778-25a3cd22989a@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530170648.02c6fc41@bbrezillon>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
-
-On 30.05.2018 17:06, Boris Brezillon wrote:
-> On Wed, 30 May 2018 15:14:33 +0200
-> Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
+On Wednesday, May 30, 2018 9:54:00 AM EDT Stefan Berger wrote:
+> On 05/29/2018 05:30 PM, Steve Grubb wrote:
+> > Hello,
+> > 
+> > On Thursday, May 24, 2018 4:11:05 PM EDT Stefan Berger wrote:
+> >> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
+> >> the IMA "audit" policy action.  This patch defines
+> >> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
+> >> 
+> >> With this change we now call integrity_audit_msg_common() to get
+> >> common integrity auditing fields. This now produces the following
+> >> record when parsing an IMA policy rule:
+> >> 
+> >> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
+> >> 
+> >>    fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
+> >>    subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
+> >>    op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
+> >>    tty=tty2 res=1
+> > 
+> > Since this is a new event, do you mind moving the tty field to be between
+> > auid= and ses=  ?   That is the more natural place for it.
 > 
->> Move the documentation of the old SPI NOR driver to the place of the new
->> SPI memory interface based driver and adjust the content to reflect the
->> new drivers settings.
+> 6/8 refactors the code so that the integrity audit records produced by
+> IMA follow one format in terms of ordering of the fields, with fields
+> like inode optional, though, and AUDIT_INTEGRITY_RULE in the end being
+> the only one with a different format. Do we really want to change that
+> order just for 1806?
 > 
-> Maybe it's better to do that in 2 steps so that people can easily
-> identify what has changed in the bindings.
-
-Ok, I can split this.
-
-Thanks,
-
-Frieder
-
+> 5/8 now produces the following:
 > 
->>
->> Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
->> ---
->>   .../devicetree/bindings/mtd/fsl-quadspi.txt     | 65 ------------------
->>   .../devicetree/bindings/spi/spi-fsl-qspi.txt    | 69 ++++++++++++++++++++
->>   2 files changed, 69 insertions(+), 65 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mtd/fsl-quadspi.txt b/Documentation/devicetree/bindings/mtd/fsl-quadspi.txt
->> deleted file mode 100644
->> index 483e9cf..0000000
->> --- a/Documentation/devicetree/bindings/mtd/fsl-quadspi.txt
->> +++ /dev/null
->> @@ -1,65 +0,0 @@
->> -* Freescale Quad Serial Peripheral Interface(QuadSPI)
->> -
->> -Required properties:
->> -  - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
->> -		 "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
->> -		 "fsl,ls1021a-qspi"
->> -		 or
->> -		 "fsl,ls2080a-qspi" followed by "fsl,ls1021a-qspi",
->> -		 "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
->> -  - reg : the first contains the register location and length,
->> -          the second contains the memory mapping address and length
->> -  - reg-names: Should contain the reg names "QuadSPI" and "QuadSPI-memory"
->> -  - interrupts : Should contain the interrupt for the device
->> -  - clocks : The clocks needed by the QuadSPI controller
->> -  - clock-names : Should contain the name of the clocks: "qspi_en" and "qspi".
->> -
->> -Optional properties:
->> -  - fsl,qspi-has-second-chip: The controller has two buses, bus A and bus B.
->> -                              Each bus can be connected with two NOR flashes.
->> -			      Most of the time, each bus only has one NOR flash
->> -			      connected, this is the default case.
->> -			      But if there are two NOR flashes connected to the
->> -			      bus, you should enable this property.
->> -			      (Please check the board's schematic.)
->> -  - big-endian : That means the IP register is big endian
->> -
->> -Example:
->> -
->> -qspi0: quadspi@40044000 {
->> -	compatible = "fsl,vf610-qspi";
->> -	reg = <0x40044000 0x1000>, <0x20000000 0x10000000>;
->> -	reg-names = "QuadSPI", "QuadSPI-memory";
->> -	interrupts = <0 24 IRQ_TYPE_LEVEL_HIGH>;
->> -	clocks = <&clks VF610_CLK_QSPI0_EN>,
->> -		<&clks VF610_CLK_QSPI0>;
->> -	clock-names = "qspi_en", "qspi";
->> -
->> -	flash0: s25fl128s@0 {
->> -		....
->> -	};
->> -};
->> -
->> -Example showing the usage of two SPI NOR devices:
->> -
->> -&qspi2 {
->> -	pinctrl-names = "default";
->> -	pinctrl-0 = <&pinctrl_qspi2>;
->> -	status = "okay";
->> -
->> -	flash0: n25q256a@0 {
->> -		#address-cells = <1>;
->> -		#size-cells = <1>;
->> -		compatible = "micron,n25q256a", "jedec,spi-nor";
->> -		spi-max-frequency = <29000000>;
->> -		reg = <0>;
->> -	};
->> -
->> -	flash1: n25q256a@1 {
->> -		#address-cells = <1>;
->> -		#size-cells = <1>;
->> -		compatible = "micron,n25q256a", "jedec,spi-nor";
->> -		spi-max-frequency = <29000000>;
->> -		reg = <1>;
->> -	};
->> -};
->> diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
->> new file mode 100644
->> index 0000000..0ee9cd8
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
->> @@ -0,0 +1,69 @@
->> +* Freescale Quad Serial Peripheral Interface(QuadSPI)
->> +
->> +Required properties:
->> +  - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
->> +		 "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
->> +		 "fsl,ls1021a-qspi", "fsl,ls2080a-qspi"
->> +		 or
->> +		 "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
->> +  - reg : the first contains the register location and length,
->> +          the second contains the memory mapping address and length
->> +  - reg-names: Should contain the reg names "QuadSPI" and "QuadSPI-memory"
->> +  - interrupts : Should contain the interrupt for the device
->> +  - clocks : The clocks needed by the QuadSPI controller
->> +  - clock-names : Should contain the name of the clocks: "qspi_en" and "qspi".
->> +
->> +Optional properties:
->> +  - big-endian : That means the IP registers format is big endian
->> +
->> +Required SPI slave node properties:
->> +  - reg: There are two buses (A and B) with two chip selects each.
->> +	 This encodes to which bus and CS the flash is connected:
->> +		<0>: Bus A, CS 0
->> +		<1>: Bus A, CS 1
->> +		<2>: Bus B, CS 0
->> +		<3>: Bus B, CS 1
->> +
->> +Example:
->> +
->> +qspi0: quadspi@40044000 {
->> +	compatible = "fsl,vf610-qspi";
->> +	reg = <0x40044000 0x1000>, <0x20000000 0x10000000>;
->> +	reg-names = "QuadSPI", "QuadSPI-memory";
->> +	interrupts = <0 24 IRQ_TYPE_LEVEL_HIGH>;
->> +	clocks = <&clks VF610_CLK_QSPI0_EN>,
->> +		<&clks VF610_CLK_QSPI0>;
->> +	clock-names = "qspi_en", "qspi";
->> +
->> +	flash0: s25fl128s@0 {
->> +		....
->> +	};
->> +};
->> +
->> +Example showing the usage of two SPI NOR devices on bus A:
->> +
->> +&qspi2 {
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&pinctrl_qspi2>;
->> +	status = "okay";
->> +
->> +	flash0: n25q256a@0 {
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		compatible = "micron,n25q256a", "jedec,spi-nor";
->> +		spi-max-frequency = <29000000>;
->> +		spi-rx-bus-width = <4>;
->> +		spi-tx-bus-width = <4>;
->> +		reg = <0>;
->> +	};
->> +
->> +	flash1: n25q256a@1 {
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		compatible = "micron,n25q256a", "jedec,spi-nor";
->> +		spi-max-frequency = <29000000>;
->> +		spi-rx-bus-width = <4>;
->> +		spi-tx-bus-width = <4>;
->> +		reg = <1>;
->> +	};
->> +};
+> type=INTEGRITY_PCR msg=audit(1527685075.941:502): pid=2431 \
+>    uid=0 auid=1000 ses=5 \
+>    subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
+>    op=invalid_pcr cause=open_writers comm="grep" \
+>    name="/var/log/audit/audit.log" dev="dm-0" ino=1962494 \
+>    exe="/usr/bin/grep" tty=pts0 res=1
 > 
+> Comparing the two:
+> 
+> 1806:          action, fsmagic, pid, uid, auid, ses, subj, op, cause,
+> comm,    exe, tty, res
+> INTEGRITY_PCR:                  pid, uid, auid, ses, subj, op, cause,
+> comm, name, dev, ino, exe, tty, res
+
+OK. I guess go with it as is. It passes testing.
+
+-Steve
+ 
+> > Also, it might be more natural for the op= and cause= fields to be before
+> > the pid= portion. This doesn't matter as much to me because those are
+> > not searchable fields and they are skipped right over. But moving the
+> > tty field is the main comment from me.
+> 
+> With the refactoring in 6/8 we at least have consistency among the
+> INTEGRITY_* records, with the only exception being AUDIT_INTEGRITY_RULE
+> that has its own format:
+> 
+> https://elixir.bootlin.com/linux/latest/source/security/integrity/ima/ima_a
+> pi.c#L324
+> 
+> The other ones currently all format using integrity_audit_msg().
+> 
+> > Thanks,
+> > -Steve
+> > 
+> >> Signed-off-by: Stefan Berger<stefanb@linux.vnet.ibm.com>
+> >> ---
+> >> 
+> >>   include/uapi/linux/audit.h          | 3 ++-
+> >>   security/integrity/ima/ima_policy.c | 5 +++--
+> >>   2 files changed, 5 insertions(+), 3 deletions(-)
+> >> 
+> >> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> >> index 4e61a9e05132..776e0abd35cf 100644
+> >> --- a/include/uapi/linux/audit.h
+> >> +++ b/include/uapi/linux/audit.h
+> >> @@ -146,7 +146,8 @@
+> >> 
+> >>   #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
+> >>   #define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
+> >>   #define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
+> >> 
+> >> -#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
+> >> +#define AUDIT_INTEGRITY_RULE	    1805 /* IMA "audit" action policy msgs
+> >> */ +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
+> >> 
+> >>   #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A
+> > 
+> > REQUEST. */
+> > 
+> >> diff --git a/security/integrity/ima/ima_policy.c
+> >> b/security/integrity/ima/ima_policy.c index 3aed25a7178a..a8ae47a386b4
+> >> 100644
+> >> --- a/security/integrity/ima/ima_policy.c
+> >> +++ b/security/integrity/ima/ima_policy.c
+> >> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct
+> >> ima_rule_entry *entry) int result = 0;
+> >> 
+> >>   	ab = integrity_audit_log_start(NULL, GFP_KERNEL,
+> >> 
+> >> -				       AUDIT_INTEGRITY_RULE);
+> >> +				       AUDIT_INTEGRITY_POLICY_RULE);
+> >> 
+> >>   	entry->uid = INVALID_UID;
+> >>   	entry->fowner = INVALID_UID;
+> >> 
+> >> @@ -926,7 +926,8 @@ static int ima_parse_rule(char *rule, struct
+> >> ima_rule_entry *entry) temp_ima_appraise |= IMA_APPRAISE_FIRMWARE;
+> >> 
+> >>   	else if (entry->func == POLICY_CHECK)
+> >>   	
+> >>   		temp_ima_appraise |= IMA_APPRAISE_POLICY;
+> >> 
+> >> -	audit_log_format(ab, "res=%d", !result);
+> >> +	integrity_audit_msg_common(ab, NULL, NULL,
+> >> +				   "policy_update", "parse_rule", result);
+> >> 
+> >>   	audit_log_end(ab);
+> >>   	return result;
+> >>   
+> >>   }
