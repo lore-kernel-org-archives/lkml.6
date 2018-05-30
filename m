@@ -1,121 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932460AbeE3VYe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:24:34 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:36130 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932268AbeE3VYd (ORCPT
+        id S932458AbeE3VZt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:25:49 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:60071 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932268AbeE3VZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:24:33 -0400
-X-Google-Smtp-Source: ADUXVKKqrYWHMtKdCTn3k7/JZuGq+1oIxa0rU9YNPO9cDGKzgDAIClhrCkBuo+yAGvPCpKoWPx14jlRAEU5MPa4mA50=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <1160afb4-4184-b30c-5f67-c21536b5f7d3@linux.vnet.ibm.com>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <15281606.YptaXzsEVL@x2> <00f66ee1-7494-8249-f148-688616deca0c@linux.vnet.ibm.com>
- <3607733.4k8ofLVAdP@x2> <1160afb4-4184-b30c-5f67-c21536b5f7d3@linux.vnet.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 30 May 2018 17:24:30 -0400
-Message-ID: <CAHC9VhQZeBS3EzgsWogeuCPtGxSFVDm1jUOLV7Jk4JRC4CVLyQ@mail.gmail.com>
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit" actions
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: Steve Grubb <sgrubb@redhat.com>, zohar@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-audit@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 30 May 2018 17:25:47 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Robert Jarzmik <robert.jarzmik@free.fr>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: pxa, regulator: fix building ezx e680
+Date: Wed, 30 May 2018 23:24:58 +0200
+Message-Id: <20180530212514.346474-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:c64zjEeWf5mPbFEaRNaX97f8o3RjnKVIIy+lRzqiYu1CDZ8l83E
+ qGZMCi5hSVZxHsun9HUx8M8EOYw4zwST/VKPjSFHE7Si4ZoJ3uxei0yCTrQqRami0P9mMAD
+ m7igQbJA06uriNJxbkbN3Sy4VwZuUr3MJqCiCdEs/+8YFHAlzQhRkLTsf7OTZwabmAgFvZZ
+ bUoMCdsgHr5s2Ht51otaQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:4NP1JBFWlGc=:L+YqZ5HScOBkz+TjWcRvFL
+ CcFtztMocI9rEvmp4nT4EodiOce8rPAW5SbregFm4e6TaV3rOYCEsxPP+94D1V/3oJC7WMa0Q
+ 93VOhBGV5ZM4S+ARwM1MGJzLkBiP3NsCT3HNP3BsGTIg61BDZu9mAu6i7s2PwDoy5Yat8gUFU
+ REtybwO2P3NLgjvlP74rwsB25VQ1xedfv71ORAYyExq46cp8vgBRPVBb2rTdhBV4qF7qW891A
+ NsPtrSWNq7UL1SeVI3gp/kPTTeIxc8nx6/cfze/+NWu2XbZ3873S0uev/OpEQ6kvDqJPqbcdU
+ gi7FSYwfnxipRjfE0ozanQ0gryIViJt5czbPxjYWD3esi4W9PwaS7DrBB3sEWQ1o/WDFOZwVl
+ iiRzAINYyTGdXOmXCtBMRitrOIsCDSULQQ2Z6z6CYojRQMOaouuErMYwZoK2bkq0kVlL/zImE
+ 4qwFdrscoSoLTyeAq4Juhq+1fgbLfrtncwKp7PsJE/7w9M9hTt8M+ByPeEW13fyCHOzBf5nVl
+ lJd7Cw47APf17NRHcXd4qPbKWXg7Mt0dxbmHvykz0Zz0zJkc+yKu/IDUaFz3VBKfyKQKWii8w
+ 3Qd+imw43WgBsZYIZtIGr4Y0K2Fs8QFgl68xZmlLaIySWb+6VAG6w99NJyS/6RhladNQoN4Nl
+ Bm81uRBcUu7Q2Q9CHcp0dwZkTx1zi2tZV0/HZsJZC7OhwR8Lv53yiQFZ5F91KBiE/Mxg=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 3:54 PM, Stefan Berger
-<stefanb@linux.vnet.ibm.com> wrote:
-> On 05/30/2018 12:27 PM, Steve Grubb wrote:
->>
->> On Wednesday, May 30, 2018 11:25:05 AM EDT Stefan Berger wrote:
->>>
->>> On 05/30/2018 11:15 AM, Steve Grubb wrote:
->>>>
->>>> On Wednesday, May 30, 2018 9:54:00 AM EDT Stefan Berger wrote:
->>>>>
->>>>> On 05/29/2018 05:30 PM, Steve Grubb wrote:
->>>>>>
->>>>>> Hello,
->>>>>>
->>>>>> On Thursday, May 24, 2018 4:11:05 PM EDT Stefan Berger wrote:
->>>>>>>
->>>>>>> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
->>>>>>> the IMA "audit" policy action.  This patch defines
->>>>>>> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
->>>>>>>
->>>>>>> With this change we now call integrity_audit_msg_common() to get
->>>>>>> common integrity auditing fields. This now produces the following
->>>>>>> record when parsing an IMA policy rule:
->>>>>>>
->>>>>>> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure
->>>>>>> \
->>>>>>>
->>>>>>> fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
->>>>>>> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->>>>>>> op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
->>>>>>> tty=tty2 res=1
->>>>>>
->>>>>> Since this is a new event, do you mind moving the tty field to be
->>>>>> between
->>>>>> auid= and ses=  ?   That is the more natural place for it.
->>>>>
->>>>> 6/8 refactors the code so that the integrity audit records produced by
->>>>> IMA follow one format in terms of ordering of the fields, with fields
->>>>> like inode optional, though, and AUDIT_INTEGRITY_RULE in the end being
->>>>> the only one with a different format. Do we really want to change that
->>>>> order just for 1806?
->>>>>
->>>>> 5/8 now produces the following:
->>>>>
->>>>> type=INTEGRITY_PCR msg=audit(1527685075.941:502): pid=2431 \
->>>>> uid=0 auid=1000 ses=5 \
->>>>> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->>>>> op=invalid_pcr cause=open_writers comm="grep" \
->>>>> name="/var/log/audit/audit.log" dev="dm-0" ino=1962494 \
->>>>> exe="/usr/bin/grep" tty=pts0 res=1
->>>>>
->>>>> Comparing the two:
->>>>>
->>>>> 1806:          action, fsmagic, pid, uid, auid, ses, subj, op, cause,
->>>>> comm,    exe, tty, res
->>>>> INTEGRITY_PCR:                  pid, uid, auid, ses, subj, op, cause,
->>>>> comm, name, dev, ino, exe, tty, res
->>>>
->>>> OK. I guess go with it as is. It passes testing.
->>>
->>> What about the position of 'res' field relative to the two new fields
->>> 'exe' and 'tty'?
->>
->> res (results) is always the last field for every event. We have no events
->> where it is not the last field. I'd prefer to go with it as is. The events
->> pass my testing the way they are.
->>
->>> Do we want to keep them as shown or strictly append the
->>> two new fields 'exe' and 'tty'?
->>
->> I'd prefer the first option to keep things as expected.
->>
->>> Paul seems to request that they appear after 'res'.
->>
->> I'd rather see them dropped, as useful as they could be, than to malform
->> the
->> events.
->
->
-> Paul NACK'ed them since he wanted to have them added to the end. You seem to
-> say it's ok to add them before 'res'. Not sure whether to drop them now
-> since we are 'at it.'
+The reference to camera_supply_gpiod_table was added in the wrong function,
+as observed from this randconfig build failure:
 
-I talked about this in the other patch's thread, but the "new fields
-at the end of existing records" policy applies here too.
+arch/arm/mach-pxa/ezx.c: In function 'e680_init':
+arch/arm/mach-pxa/ezx.c:905:26: error: 'camera_supply_gpiod_table' undeclared (first use in this function)
+  gpiod_add_lookup_table(&camera_supply_gpiod_table);
 
-Also note Richard's earlier comment about "associating" the IMA
-records with all of the related audit records.
+Fixes: 6059577cb28d ("regulator: fixed: Convert to use GPIO descriptor only")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/mach-pxa/ezx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/mach-pxa/ezx.c b/arch/arm/mach-pxa/ezx.c
+index 2b4bd6d94855..4f33eea73f9a 100644
+--- a/arch/arm/mach-pxa/ezx.c
++++ b/arch/arm/mach-pxa/ezx.c
+@@ -902,7 +902,6 @@ static void __init e680_init(void)
+ 
+ 	pxa_set_keypad_info(&e680_keypad_platform_data);
+ 
+-	gpiod_add_lookup_table(&camera_supply_gpiod_table);
+ 	pwm_add_table(ezx_pwm_lookup, ARRAY_SIZE(ezx_pwm_lookup));
+ 	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
+ 	platform_add_devices(ARRAY_AND_SIZE(e680_devices));
+@@ -1132,6 +1131,7 @@ static void __init a910_init(void)
+ 	if (a910_camera_init() == 0)
+ 		pxa_set_camera_info(&a910_pxacamera_platform_data);
+ 
++	gpiod_add_lookup_table(&camera_supply_gpiod_table);
+ 	pwm_add_table(ezx_pwm_lookup, ARRAY_SIZE(ezx_pwm_lookup));
+ 	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
+ 	platform_add_devices(ARRAY_AND_SIZE(a910_devices));
 -- 
-paul moore
-www.paul-moore.com
+2.9.0
