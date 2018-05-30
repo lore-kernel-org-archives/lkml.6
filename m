@@ -1,43 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932570AbeE3WuA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:50:00 -0400
-Received: from smtp2.provo.novell.com ([137.65.250.81]:39403 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753691AbeE3Wt6 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 30 May 2018 18:49:58 -0400
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: peterz@infradead.org, mingo@redhat.com
-Cc: linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH] sched: Fix throttling typo
-Date: Wed, 30 May 2018 15:49:40 -0700
-Message-Id: <20180530224940.17839-1-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.3
+        id S932587AbeE3XAX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 19:00:23 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:40867 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753734AbeE3XAT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 19:00:19 -0400
+X-Google-Smtp-Source: ADUXVKJmWII4bGSUdZD2O2Sn3fBIAnnP7EmbtfkTXtVB7wyoLrTUjbf8wFKO/obQQJGQXoil1DnTCyJ/PAhxOiwkXjg=
+MIME-Version: 1.0
+In-Reply-To: <20180525160632.66726-1-arnd@arndb.de>
+References: <20180525160632.66726-1-arnd@arndb.de>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 30 May 2018 16:00:17 -0700
+X-Google-Sender-Auth: Z-c0Acl1WKhDFm_sv3gfQfI6jBo
+Message-ID: <CAD=FV=UAw+JB4=++cPDBT1GtO_AChhrgtayJZqV3+yE7RLxcAQ@mail.gmail.com>
+Subject: Re: [PATCH] usb: dwc3: qcom: mark PM functions as __maybe_unused
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Manu Gautam <mgautam@codeaurora.org>, linux-usb@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I cannot spell 'throttling'.
+Hi,
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- kernel/sched/sched.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, May 25, 2018 at 9:06 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> The #ifdef guards around these are wrong, resulting in warnings
+> in certain configurations:
+>
+> drivers/usb/dwc3/dwc3-qcom.c:244:12: error: 'dwc3_qcom_resume' defined but not used [-Werror=unused-function]
+>  static int dwc3_qcom_resume(struct dwc3_qcom *qcom)
+>             ^~~~~~~~~~~~~~~~
+> drivers/usb/dwc3/dwc3-qcom.c:223:12: error: 'dwc3_qcom_suspend' defined but not used [-Werror=unused-function]
+>  static int dwc3_qcom_suspend(struct dwc3_qcom *qcom)
+>
+> This replaces the guards with __maybe_unused annotations to shut up
+> the warnings and give better compile time coverage.
+>
+> Fixes: a4333c3a6ba9 ("usb: dwc3: Add Qualcomm DWC3 glue driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/usb/dwc3/dwc3-qcom.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 67702b4d9ac7..6601baf2361c 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -983,7 +983,7 @@ static inline void rq_clock_skip_update(struct rq *rq)
- }
- 
- /*
-- * See rt task throttoling, which is the only time a skip
-+ * See rt task throttling, which is the only time a skip
-  * request is cancelled.
-  */
- static inline void rq_clock_cancel_skipupdate(struct rq *rq)
--- 
-2.16.3
+FWIW:
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
