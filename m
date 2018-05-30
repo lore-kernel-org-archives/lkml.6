@@ -1,151 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932132AbeE3Spi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 14:45:38 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34483 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932077AbeE3Spg (ORCPT
+        id S932124AbeE3St7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 14:49:59 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:39513 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751684AbeE3St5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 14:45:36 -0400
-X-Google-Smtp-Source: ADUXVKL7JX4q92YMfHCBUcEqs7soDDOsCNHTDPZ5Bth9p2KwCBBeFwF0K+oLO756zITIEMGxL0KMDSRFYEkB0xhgiOs=
+        Wed, 30 May 2018 14:49:57 -0400
+X-Google-Smtp-Source: ADUXVKJPvJuxtCz/KvAsWCjUafoB1A61Dh3qCGks/2wEZr4gfGv3fhoE0n58eoyQHkMTmWwZDUX8VQ==
+Reply-To: ahs3@redhat.com
+Subject: Re: [PATCH][next] mailbox: PCC: check for negative count for parse
+ failure checking
+To: Colin Ian King <colin.king@canonical.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180530171429.3172-1-colin.king@canonical.com>
+ <0d780988-0e59-a3b7-a7c1-9e3f0d227412@redhat.com>
+ <905b4bfb-9fca-a165-7911-61122281e6a4@canonical.com>
+From: Al Stone <ahs3@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=ahs3@redhat.com; keydata=
+ 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
+ AeZZwq9vgjZvBA==
+Organization: Red Hat, Inc.
+Message-ID: <5afb37a4-34d6-041f-b443-dfa6aef6698e@redhat.com>
+Date: Wed, 30 May 2018 12:49:54 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <72473e6f-8ade-8e26-3282-276fcae4c4c7@arm.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-8-git-send-email-vincent.guittot@linaro.org> <72473e6f-8ade-8e26-3282-276fcae4c4c7@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 30 May 2018 20:45:15 +0200
-Message-ID: <CAKfTPtC8c9sP7TjefZPN2SFuNVGS7Q12WBj3BBYEbJFzxVN-2A@mail.gmail.com>
-Subject: Re: [PATCH v5 07/10] sched/irq: add irq utilization tracking
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <905b4bfb-9fca-a165-7911-61122281e6a4@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dietmar,
-
-On 30 May 2018 at 17:55, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
-> On 05/25/2018 03:12 PM, Vincent Guittot wrote:
+On 05/30/2018 12:24 PM, Colin Ian King wrote:
+> On 30/05/18 18:59, Al Stone wrote:
+>> On 05/30/2018 11:14 AM, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> The function acpi_table_parse_enties_array can potentially return a
+>>> negative value if parsing fails. Currently the check on the return
+>>> is not checking for errors, so fix this by adding a -ve check too.
+>>>
+>>> Detected by CoverityScan, CID#1469477 ("Improper use of negative value")
+>>>
+>>> Fixes: 8f8027c5f935 ("mailbox: PCC: erroneous error message when parsing ACPI PCCT")
+>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>> ---
+>>>  drivers/mailbox/pcc.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+>>> index fc3c237daef2..87d67922020d 100644
+>>> --- a/drivers/mailbox/pcc.c
+>>> +++ b/drivers/mailbox/pcc.c
+>>> @@ -461,7 +461,7 @@ static int __init acpi_pcc_probe(void)
+>>>  	count = acpi_table_parse_entries_array(ACPI_SIG_PCCT,
+>>>  			sizeof(struct acpi_table_pcct), proc,
+>>>  			ACPI_PCCT_TYPE_RESERVED, MAX_PCC_SUBSPACES);
+>>> -	if (count == 0 || count > MAX_PCC_SUBSPACES) {
+>>> +	if (count <= 0 || count > MAX_PCC_SUBSPACES) {
+>>>  		pr_warn("Invalid PCCT: %d PCC subspaces\n", count);
+>>>  		return -EINVAL;
+>>>  	}
+>>>
 >>
->> interrupt and steal time are the only remaining activities tracked by
->> rt_avg. Like for sched classes, we can use PELT to track their average
->> utilization of the CPU. But unlike sched class, we don't track when
->> entering/leaving interrupt; Instead, we take into account the time spent
->> under interrupt context when we update rqs' clock (rq_clock_task).
->> This also means that we have to decay the normal context time and account
->> for interrupt time during the update.
+>> Yup, nice catch.  A little paranoid, but we like that in a kernel :).  Thanks.
+> 
+> If it can go wrong, it will go wrong, especially with firmware :-)
+
+Amen to that!  You are preachin' to the choir, brother ...
+
 >>
->> That's also important to note that because
->>    rq_clock == rq_clock_task + interrupt time
->> and rq_clock_task is used by a sched class to compute its utilization, the
->> util_avg of a sched class only reflects the utilization of the time spent
->> in normal context and not of the whole time of the CPU. The utilization of
->> interrupt gives an more accurate level of utilization of CPU.
->> The CPU utilization is :
->>    avg_irq + (1 - avg_irq / max capacity) * /Sum avg_rq
+>> Reviewed-by: Al Stone <ahs3@redhat.com>
 >>
->> Most of the time, avg_irq is small and neglictible so the use of the
->> approximation CPU utilization = /Sum avg_rq was enough
->
->
-> [...]
->
->> @@ -7362,6 +7363,7 @@ static void update_blocked_averages(int cpu)
->>         }
->>         update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
->>         update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
->> +       update_irq_load_avg(rq, 0);
->
->
-> So this one decays the signals only in case the update_rq_clock_task()
-> didn't call update_irq_load_avg() because 'irq_delta + steal' is 0, right?
-
-yes
-
->
-> [...]
->
->
->> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
->> index 3d5bd3a..d2e4f21 100644
->> --- a/kernel/sched/pelt.c
->> +++ b/kernel/sched/pelt.c
->> @@ -355,3 +355,41 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int
->> running)
->>         return 0;
->>   }
->> +
->> +/*
->> + * irq:
->> + *
->> + *   util_sum = \Sum se->avg.util_sum but se->avg.util_sum is not tracked
->> + *   util_sum = cpu_scale * load_sum
->> + *   runnable_load_sum = load_sum
->> + *
->> + */
->> +
->> +int update_irq_load_avg(struct rq *rq, u64 running)
->> +{
->> +       int ret = 0;
->> +       /*
->> +        * We know the time that has been used by interrupt since last
->> update
->> +        * but we don't when. Let be pessimistic and assume that interrupt
->> has
->> +        * happened just before the update. This is not so far from
->> reality
->> +        * because interrupt will most probably wake up task and trig an
->> update
->> +        * of rq clock during which the metric si updated.
->> +        * We start to decay with normal context time and then we add the
->> +        * interrupt context time.
->> +        * We can safely remove running from rq->clock because
->> +        * rq->clock += delta with delta >= running
->
->
-> This is true as long update_irq_load_avg() with a 'running != 0' is called
-> only after rq->clock moved forward (rq->clock += delta) (which is true for
-> update_rq_clock()->update_rq_clock_task()).
-
-yes
-
->
->> +        */
->> +       ret = ___update_load_sum(rq->clock - running, rq->cpu,
->> &rq->avg_irq,
->> +                               0,
->> +                               0,
->> +                               0);
->> +       ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
->> +                               1,
->> +                               1,
->> +                               1);
->
->
-> So you decay the signal in [sa->lut, rq->clock - running] (assumed to be the
-> portion of delta used by the task scheduler) and you increase it in
-> [rq->clock - running, rq->clock] (irq and virt portion of delta).
->
-> That means that this signal is updated on rq->clock whereas the others are
-> on rq->clock_task.
->
-> What about the ever growing clock diff between them? I see e.g ~6s after
-> 20min uptime and up to 1.5ms 'running'.
->
-> It should be still safe to sum the sched class and irq signal in
-> sugov_aggregate_util() because they are independent, I guess.
-
-yes. the formula is explained in patch "cpufreq/schedutil: take into
-account interrupt"
+> 
 
 
->
-> [...]
+-- 
+ciao,
+al
+-----------------------------------
+Al Stone
+Software Engineer
+Red Hat, Inc.
+ahs3@redhat.com
+-----------------------------------
