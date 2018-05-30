@@ -1,108 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753552AbeE3Olu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:41:50 -0400
-Received: from mail-yb0-f178.google.com ([209.85.213.178]:38150 "EHLO
-        mail-yb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753196AbeE3Ols (ORCPT
+        id S1753141AbeE3Ono (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:43:44 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37796 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751630AbeE3Onk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:41:48 -0400
-X-Google-Smtp-Source: ADUXVKJfIEOyfDjUiRZbYka3C2fbK9SILwbVrxdHh0wVBK1loOwXf1SH1PkSDEoaEpMdqYmJJ6xfX8A4/MoUw9FG0Z0=
-MIME-Version: 1.0
-References: <bug-199879-41252@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-199879-41252@https.bugzilla.kernel.org/>
-From: Bjorn Helgaas <bhelgaas@google.com>
-Date: Wed, 30 May 2018 07:41:35 -0700
-Message-ID: <CAErSpo5U9D5kmYix2SbcJH_mW8urpmZcgN6Zh=FbGtLch+ACuA@mail.gmail.com>
-Subject: Fwd: [Bug 199879] New: Very basic the Pci device is not resumed from
- suspend mode
-To: linux-pci@vger.kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 30 May 2018 10:43:40 -0400
+X-Google-Smtp-Source: ADUXVKIqbeNdxUccYvOrMQWw4wABTjCSQDp4wU9F92O30ZAIMa6tyx9BYgz5FYj3HpRIeinJ21Dqjg==
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: ulf.hansson@linaro.org, adrian.hunter@intel.com
+Cc: vviswana@codeaurora.org, riteshh@codeaurora.org,
+        subhashj@codeaurora.org, stummala@codeaurora.org,
+        asutoshd@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>
+Subject: [PATCH] mmc: sdhci-msm: Remove NO_CARD_NO_RESET quirk
+Date: Wed, 30 May 2018 17:43:35 +0300
+Message-Id: <20180530144335.7888-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc linux-pci, linux-kernel, linux-pm]
+Now we have a proper implementation for the power irq handling and this
+quirk is not needed anymore. In fact, it is causing card detection delays
+on apq8096 platforms and the following error is displayed:
+sdhci_msm 74a4900.sdhci: mmc0: pwr_irq for req: (4) timed out
 
-I'm not sure I understand the problem yet, so please correct me if I'm wrong:
+The quirk is forcing the controller to retain 1.8V signalling on the slot
+even when a new card is inserted, which is not correct. The proper behavior
+would be to reset the controller in order to start with 3.3V signaling.
 
-  - Your system has both Nvidia and Intel graphics devices
+Fixes: c0309b3803fe ("mmc: sdhci-msm: Add sdhci msm register write APIs which wait for pwr irq")
+Suggested-by: Vijay Viswanath <vviswana@codeaurora.org>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+This can go for v4.18, as it's not a critical fix.
+Tested on db410c and db820c.
+---
+ drivers/mmc/host/sdhci-msm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-  - When you use Intel graphics, lspci, lshw, and /proc/bus/pci for
-the Nvidia device show invalid data (0xff) after suspend/resume
-
-  - When you use Nvidia graphics, suspend/resume doesn't work (instead
-of resuming, you just get a blank screen)
-
-Can you attach the output of "sudo lspci -vv" to the bugzilla, please?
-
----------- Forwarded message ---------
-From: <bugzilla-daemon@bugzilla.kernel.org>
-Date: Tue, May 29, 2018 at 1:29 PM
-Subject: [Bug 199879] New: Very basic the Pci device is not resumed
-from suspend mode
-To: <bhelgaas@google.com>
-
-
-https://bugzilla.kernel.org/show_bug.cgi?id=199879
-
-            Bug ID: 199879
-           Summary: Very basic the Pci device is not resumed from suspend
-                    mode
-           Product: Drivers
-           Version: 2.5
-    Kernel Version: kernel-4.15.17
-          Hardware: x86-64
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: high
-          Priority: P1
-         Component: PCI
-          Assignee: drivers_pci@kernel-bugs.osdl.org
-          Reporter: uzg@wp.pl
-        Regression: No
-
-Hi, I have problem with very basic device. Device pci-e not resume from
-suspend. Only sleep.
-
-I have a problem with anyone interested in it, because everyone thinks it is
-the fault of the device drivers themselves. But this is not a problem.
-
-This device is a basic device. I've already installed drivers on various
-hardware and it has always been ok, but not this time.
-
-I'm an electronics technician. After diagnosing what I managed, in my opinion
-the device remains asleep.
-
-Where does my application come from?
-I have multiuser mode and I do not use this device. After suspend lspci and
-lshw show normal data. Normal data is in /proc/bus/pci/...
-Next suspend and resume, and...
-lspci see hardware, but is error
-lshw see hardware as undefined device
-data in /proc/bus/pci/... is only 0xFF
-Hardware sleep, not work, not ready. This is bug.
-
-But since the problem concerns the graphics card in the configuration with the
-second default Intel card, everyone thinks that this is another driver problem
-as always and nobody wants to take a look at it :(
-
-The problem is easy to recognize. On the internet, I've seen a lot of
-unresolved problems in which I could see exactly what I found.
-
-My hardware is Lenovo with NVidia and Intel Graphics. Problem is with NVidia. I
-tested Z710 and Z50-70. The first symptom of the problem is lspci in multiuser
-mode (or when is XServer with intel graphics). After suspend NVidia have e.g
-"rev. A1", after resume is "rev. FF". Next symptom lshw and /proc/bus/pci/...
-When system started with normal NVidia driver, system not resume and halt, only
-black screen.
-
-There are many examples on the Internet with unsolved problems e.g
-https://www.lwks.com/index.php?option=com_kunena&func=view&catid=21&id=124374&Itemid=81
-
---
-You are receiving this mail because:
-You are watching the assignee of the bug.
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index c283291db705..791779173332 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -1333,7 +1333,6 @@ static const struct sdhci_ops sdhci_msm_ops = {
+ 
+ static const struct sdhci_pltfm_data sdhci_msm_pdata = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
+-		  SDHCI_QUIRK_NO_CARD_NO_RESET |
+ 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+ 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+ 	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
