@@ -1,77 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753741AbeE3QNR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:13:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40636 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751833AbeE3QNO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:13:14 -0400
-Date: Wed, 30 May 2018 17:13:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator
- bindings
-Message-ID: <20180530161311.GT6920@sirena.org.uk>
-References: <20180523155617.GN4828@sirena.org.uk>
- <CAD=FV=W4aDxWbcaJ9GZ1KkvyiTPAPR-oUoTFzJfS+LftU5ZP=Q@mail.gmail.com>
- <20180530093701.GD6920@sirena.org.uk>
- <CAD=FV=W-MLU9c-SvfLgKAKGP1eHN5xO-013f2M09XUa+QeHzrA@mail.gmail.com>
- <20180530150241.GO6920@sirena.org.uk>
- <CAD=FV=XJd-udEE6az0xP7i6x0oGsnd=BSCyZ0Og_+RjNCMXnCQ@mail.gmail.com>
- <20180530154849.GQ6920@sirena.org.uk>
- <CAD=FV=X2u=hMyWinSDtim-PmFwAy5mXcwg3HeYojAHcsUFhV3g@mail.gmail.com>
- <20180530160744.GS6920@sirena.org.uk>
- <CAD=FV=WVGu0f+=q-C9kiEmaLEUJqGY+Jbns83h72uF-9iasrUw@mail.gmail.com>
+        id S1753740AbeE3QPV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:15:21 -0400
+Received: from imap.thunk.org ([74.207.234.97]:46690 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753075AbeE3QPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:15:17 -0400
+Date: Wed, 30 May 2018 12:15:07 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Christoph Hellwig <hch@lst.de>, Faiz Abbas <faiz_abbas@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
+        linux-ext4@vger.kernel.org
+Subject: Re: mmc filesystem performance decreased on the first write after
+ filesystem creation
+Message-ID: <20180530161507.GA14279@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@lst.de>, Faiz Abbas <faiz_abbas@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
+        linux-ext4@vger.kernel.org
+References: <a976e20a-3ed1-43d0-4665-f570ef496d02@ti.com>
+ <20180528062618.GA4196@lst.de>
+ <c6a47e30-f07d-3f79-2189-38b6f01429b9@intel.com>
+ <43d4164f-5dda-b49a-6008-1f5bf4b08547@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="OowMmFE4aK71mEhh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=WVGu0f+=q-C9kiEmaLEUJqGY+Jbns83h72uF-9iasrUw@mail.gmail.com>
-X-Cookie: Don't get mad, get interest.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <43d4164f-5dda-b49a-6008-1f5bf4b08547@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 30, 2018 at 11:51:41AM +0300, Adrian Hunter wrote:
+> 
+> And discards are not enabled by default by mount so, at least on ext4,
+> adding "-o discard" is needed in the mount options.
 
---OowMmFE4aK71mEhh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is because doing discards right away is not always a win from
+performance reasons.  There are some flash devices where discards are
+super-slow and some devices where issuing discards too quickly would
+cause them to trigger internal FTL race conditions and turn them into
+paperweights.
 
-On Wed, May 30, 2018 at 09:09:02AM -0700, Doug Anderson wrote:
-> On Wed, May 30, 2018 at 9:07 AM, Mark Brown <broonie@kernel.org> wrote:
+There was at least one engineer from a Linux distribution who argued
+for making discard not the default because back then, there were a lot
+of SSD's floating out there (by a manufacturer who thankfully has
+since gone bankrupt :-) for which they didn't want to deal with the
+support requests from people who were angry about lost data or
+destroyed SSD's --- because guess who they would blame?
 
-> > It needs something to tell it what the new voltage to set is.
+Also, please note that for many devices it's much better to
+periodically run fstrim (once a day or once a week) out of cron.
 
-> The regulator driver has its own cache of what voltage was most
-> recently requested by Linux.  It can use that, can't it?
+If someone wants to do a survey of available hardware and demonstrate:
 
-If we're just going to use the most recently set voltage then hopefully
-the hardware already knew that, and it might not be the lowest available
-voltage if the last consumer to get turned off was holding the voltage
-higher.
+   * there is significant value from enabling -o discard by default
+     (instead of using fstrim)
 
---OowMmFE4aK71mEhh
-Content-Type: application/pgp-signature; name="signature.asc"
+   * there are no (or at least very, very few) devices for which
+     enabling -o discard results in a major performance regression,
+     and
 
------BEGIN PGP SIGNATURE-----
+   * if there are any devices left that turn into paperweights, they can
+     be managed using blacklists,
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOzZYACgkQJNaLcl1U
-h9B6Rgf/Yms2GdcmMMUj3u4d9y+PBjuS86yXp1+z0NNJHf88fhyWjhMHzcpAQOc/
-yNh11Y4cIR+tt/4gXbh9LQR0O7iunImfsTbD3KH6CqycrAyVcG+s8llqNUwdKL6L
-BK84gQk/g/877c0Yf/dEpWwxjGfiCEofwRfoqM7JgsCmLhDImWH/W0S5NZSuZSVp
-MUn5RzG72VaV8V3Q550FnHWk2bdweBsFulC7eLoVpJz8K6Wr1Lruso4qxrSpycff
-tgrKMLJuCUelD6rdHalEekQD7s2+7GpkvCmHB45WqTMwq3c+yQLBJp4GW7kMxW7S
-2NGWlRK95dYaiuNdYvWMjUaMzqZIoQ==
-=+Bib
------END PGP SIGNATURE-----
+I'm certainly open to changing the default.  There was, however, a
+really good *reason* why the default was chosen to be the way it is.
 
---OowMmFE4aK71mEhh--
+					- Ted
