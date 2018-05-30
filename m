@@ -1,48 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753542AbeE3ONJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:13:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42942 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752959AbeE3ONH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:13:07 -0400
-Date: Wed, 30 May 2018 16:12:53 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Hareesh Gundu <hareeshg@codeaurora.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>, jcrouse@codeaurora.org,
-        Mel Gorman <mgorman@suse.de>, efault@gmx.de, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/plist.c: Export plist_*() APIs
-Message-ID: <20180530141253.GI12217@hirez.programming.kicks-ass.net>
-References: <1512484543-24772-1-git-send-email-hareeshg@codeaurora.org>
- <20171205144104.egber33dwpc6uo7c@hirez.programming.kicks-ass.net>
- <12861d19-1579-2f78-7c4c-ac8983b505ae@codeaurora.org>
- <20171206155917.se5mmw2gf5qz4otf@hirez.programming.kicks-ass.net>
- <8a59865a-1143-3ba1-8be7-cf590d422c36@codeaurora.org>
+        id S1752266AbeE3ONj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:13:39 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:52776 "EHLO gum.cmpxchg.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752793AbeE3ONe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 10:13:34 -0400
+Date: Wed, 30 May 2018 10:15:33 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 07/13] memcontrol: schedule throttling if we are congested
+Message-ID: <20180530141533.GC4035@cmpxchg.org>
+References: <20180529211724.4531-1-josef@toxicpanda.com>
+ <20180529211724.4531-8-josef@toxicpanda.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8a59865a-1143-3ba1-8be7-cf590d422c36@codeaurora.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180529211724.4531-8-josef@toxicpanda.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 05:55:05PM +0530, Hareesh Gundu wrote:
+On Tue, May 29, 2018 at 05:17:18PM -0400, Josef Bacik wrote:
+> @@ -5458,6 +5458,30 @@ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
+>  	return ret;
+>  }
+>  
+> +int mem_cgroup_try_charge_delay(struct page *page, struct mm_struct *mm,
+> +			  gfp_t gfp_mask, struct mem_cgroup **memcgp,
+> +			  bool compound)
+> +{
+> +	struct mem_cgroup *memcg;
+> +	struct block_device *bdev;
+> +	int ret;
+> +
+> +	ret = mem_cgroup_try_charge(page, mm, gfp_mask, memcgp, compound);
+> +	memcg = *memcgp;
+> +
+> +	if (!(gfp_mask & __GFP_IO) || !memcg)
+> +		return ret;
+> +#if defined(CONFIG_BLOCK) && defined(CONFIG_SWAP)
+> +	if (atomic_read(&memcg->css.cgroup->congestion_count) &&
+> +	    has_usable_swap()) {
+> +		map_swap_page(page, &bdev);
 
-> Below is the reference for in-tree kernel module proposal for
-> "drviers/gpu/msm" which is referring to plist_* symbols.
-> 
-> https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/gpu/msm/adreno_dispatch.c?h=msm-4.9#n533
-> 
-> Could you please revisit the patch and approve for upstream.
+This doesn't work, unfortunately - or only works on accident.
 
-I could not find where you actually use the priority. In any case, the
-normal way is to submit the export patch along with the patches that use
-it.
+It goes through page_private(), which is only valid for pages in the
+swapcache. The newly allocated pages you call it against aren't in the
+swapcache, but their page_private() is 0, which is incorrectly
+interpreted as "first swap slot on the first swap device" - which
+happens to make sense if you have only one swap device.
 
-Please post the lot to the appropriate lists and people and go from there.
+> +		blkcg_schedule_throttle(bdev_get_queue(bdev), true);
 
-Also, you're missing all the SPDX tags, see Documentation/process/license-rules.rst
+By the time we allocate, we simply cannot know which swap device the
+page will end up on. However, we know what's likely: swap_avail_heads
+is sorted by order in which we try to allocate swap slots; the first
+device on there is where swap io will go. If we walk this list and
+throttle on the first device that has built-up delay debt, we'll
+throttle against the device that probably gets the current bulk of the
+swap writes.
+
+Also, if we have two swap devices with the same priority, swap
+allocation will re-order the list for us automatically in order to do
+round-robin loading of the devices. See get_swap_pages(). That should
+work out nicely for throttling as well.
+
+You can use page_to_nid() on the newly allocated page to index into
+swap_avail_heads[].
+
+On an unrelated note, mem_cgroup_try_charge_delay() isn't the most
+descriptive name. Since it's not too page specific, we might want to
+move the throttling part out of the charge function and do something
+simliar to a stand-alone balance_dirty_pages() function.
+
+mem_cgroup_balance_anon_pages()?
+
+mem_cgroup_throttle_swaprate()?
+
+mem_cgroup_anon_throttle()?
+
+mem_cgroup_anon_allocwait()?
+
+Something like that. I personally like balance_anon_pages the best;
+not because it is the best name by itself, but because in the MM it
+has the notion of throttling the creation of IO liabilities to the
+write rate, which is what we're doing here as well.
