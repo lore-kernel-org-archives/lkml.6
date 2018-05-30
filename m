@@ -1,87 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932609AbeE3WJF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:09:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36647 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932394AbeE3WJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:09:03 -0400
-From: NeilBrown <neil@brown.name>
-To: Sankalp Negi <sankalpnegi2310@gmail.com>, gregkh@linuxfoundation.org
-Date: Thu, 31 May 2018 08:08:55 +1000
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        sankalpnegi2310@gmail.com
-Subject: Re: [PATCH v2] staging: mt7621-mmc: Fix line size exceeding 80 columns
-In-Reply-To: <20180530190444.23006-1-sankalpnegi2310@gmail.com>
-References: <87vab6unv2.fsf@notabene.neil.brown.name> <20180530190444.23006-1-sankalpnegi2310@gmail.com>
-Message-ID: <87bmcwvls8.fsf@notabene.neil.brown.name>
+        id S1753761AbeE3WJo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:09:44 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34474 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753617AbeE3WJk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 18:09:40 -0400
+X-Google-Smtp-Source: ADUXVKKJHSHsAM1qimQtwremgl0NqctsckOxkoX2hRjlWov58dNsaXtlBDEYp0VXQ0mlfswfixlu6A==
+Date: Wed, 30 May 2018 16:09:34 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
+Cc: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>,
+        jackm <jackm@dev.mellanox.co.il>, Doug Ledford <dledford@redhat.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH] IB/mad: Use ID allocator routines to allocate agent
+ number
+Message-ID: <20180530220934.GI30754@ziepe.ca>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+ <20180529154922.GA18457@ziepe.ca>
+ <A470D739-D0CD-42EE-9196-8E7610B6DAF4@oracle.com>
+ <20180529164032.GB18457@ziepe.ca>
+ <20180530110216.00000913@dev.mellanox.co.il>
+ <d8b75416-6a01-aa64-cd60-0cb4f2b6d0d5@oracle.com>
+ <20180530151023.GB30754@ziepe.ca>
+ <E67F0098-C2BC-49F6-AC55-3F9195712D4B@oracle.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <E67F0098-C2BC-49F6-AC55-3F9195712D4B@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 30, 2018 at 10:07:16PM +0200, Håkon Bugge wrote:
+> 
+> 
+> > On 30 May 2018, at 17:10, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > 
+> > On Wed, May 30, 2018 at 02:22:56PM +0200, Hans Westgaard Ry wrote:
+> > 
+> >> We came up with this code snippet which we think handles both preventing
+> >> immediate re-use and too big/wrapping...
+> > 
+> > Isn't this basically the same as idr_alloc_cyclic ?
+> 
+> I draw my statement back. The idr_alloc_cyclic() is the family of idr's that associates a pointer with the bit. Hence, each bit is a bit + 64b.
+> 
+> That's why we ended up with Hans' pseudo code.
 
-On Thu, May 31 2018, Sankalp Negi wrote:
+Okay, fair enough.
 
-> This patch fixes checkpatch.pl warning and check:
-> WARNING: line over 80 characters
-> CHECK: Alignment should match open parenthesis
->
-> Signed-off-by: Sankalp Negi <sankalpnegi2310@gmail.com>
+Is it worth adding a ida_get_new_cyclic for this?
 
-Reviewed-by: NeilBrown <neil@brown.name>
-
-Thanks,
-NeilBrown
-
-> ---
-> Changes in v2:
->   - Made alignments to match open parenthesis.
-> ---
->  drivers/staging/mt7621-mmc/dbg.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/mt7621-mmc/dbg.c b/drivers/staging/mt7621-mm=
-c/dbg.c
-> index d897b1216348..6e4e223cddfb 100644
-> --- a/drivers/staging/mt7621-mmc/dbg.c
-> +++ b/drivers/staging/mt7621-mmc/dbg.c
-> @@ -229,7 +229,8 @@ static int msdc_debug_proc_read(struct seq_file *s, v=
-oid *p)
->  }
->=20=20
->  static ssize_t msdc_debug_proc_write(struct file *file,
-> -				const char __user *buf, size_t count, loff_t *data)
-> +				     const char __user *buf,
-> +				     size_t count, loff_t *data)
->  {
->  	int ret;
->=20=20
-> --=20
-> 2.11.0
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsPIPcACgkQOeye3VZi
-gbmcxw//dUZdLymFb4Yz+nb6znSxDKs3bQyJ1ABpXm4+hNszniSzq16pM7Q8lfrP
-XFJNykKA4EPMhnJ2XF+VfMKZ5yYZ9PdotDX0Iia5NMqiP8co7jsvj+GxiDubtEwM
-tpR9qS4e9v9zgqnS1V7fluRRLRICnDp77kNOvyzfLuPGKELo7EmIAIdNg9LgtiEf
-GlE1fRCZXkiRtJzRI5ovA7/hOJiQ7c5Kcf/X0KmzmAjEpqFt7ToMEirC3HSqWnEN
-ig+cQG5913hg+BNCQWo2JAJpzfpdEf9d9ex0scSMIYwoQJIpFhxEw7X9wIUII2dL
-sivUxq7MaqnNO/MgSpWBsX0Beh8UJrF+ny8tNPs7uWw++6UnsoK9wrfaWvuuAuUj
-WjipNeK9usATk49EEZDUiAejgcnUrUuEj/pnXiio88ALNGZrIU0O9RgSPiNIDMMN
-S1lPRJoVwinERXioQaQEatLu45e1779ld0cYN7nVN2SNfYb62wHFVS252nkTAZ6s
-O3DB770u6vW++1gjWEcGa19iQGUHFU9jFLL70Sbmk0nQaRvVknnji7jVfOZrf+N1
-SV3kKxzqz/f8QZa3Ww60RtGh09asE7tzKYrslUpIxS5Cv1+AXsf0no+ZwfBUNhgQ
-pNpmWHPx+DvJSseHkj7Wm930lVkThXW761BmxjWAfXgcaF1IY1w=
-=7Rm6
------END PGP SIGNATURE-----
---=-=-=--
+Jason
