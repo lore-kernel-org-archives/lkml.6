@@ -1,191 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753795AbeE3P3q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:29:46 -0400
-Received: from mga01.intel.com ([192.55.52.88]:37997 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751547AbeE3P3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:29:42 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,460,1520924400";
-   d="scan'208";a="59837693"
-Date: Wed, 30 May 2018 18:29:36 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
-        olof@lixom.net, seanpaul@google.com, sadolfsson@google.com,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, fparent@baylibre.com,
-        felixe@google.com, bleung@google.com, darekm@google.com,
-        linux-media@vger.kernel.org
-Subject: Re: [Intel-gfx] [PATCH v6 2/6] drm/i915: hdmi: add CEC notifier to
- intel_hdmi
-Message-ID: <20180530152936.GQ23723@intel.com>
-References: <1527155841-28494-1-git-send-email-narmstrong@baylibre.com>
- <1527155841-28494-3-git-send-email-narmstrong@baylibre.com>
+        id S1753542AbeE3Pe5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:34:57 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:46479 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751547AbeE3Pex (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:34:53 -0400
+X-Google-Smtp-Source: ADUXVKIp9WfAsAFoF47LHqk2mh8fT5HXaUSeSGSQCu/NVMZheaS4YSTt+G5wIWNnsgH/QjxNj8/TdWpnof30snvRVio=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1527155841-28494-3-git-send-email-narmstrong@baylibre.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180530150241.GO6920@sirena.org.uk>
+References: <a106c337-0713-e5d6-cb40-13e05f4d361d@codeaurora.org>
+ <CAD=FV=W=BquL5ojORz4HNP889s=-uNJ-QEzUfAxwXj2Oa3cGew@mail.gmail.com>
+ <20180523082908.GB4828@sirena.org.uk> <CAD=FV=XfPkpGD32MfTfcw02wQ+QetpUhY=P299uhpX6pY_iEvg@mail.gmail.com>
+ <20180523154057.GL4828@sirena.org.uk> <CAD=FV=XWVOdJ8rWJnBTwoNqnYqYRYjknkZtUvT86+skbrTdwig@mail.gmail.com>
+ <20180523155617.GN4828@sirena.org.uk> <CAD=FV=W4aDxWbcaJ9GZ1KkvyiTPAPR-oUoTFzJfS+LftU5ZP=Q@mail.gmail.com>
+ <20180530093701.GD6920@sirena.org.uk> <CAD=FV=W-MLU9c-SvfLgKAKGP1eHN5xO-013f2M09XUa+QeHzrA@mail.gmail.com>
+ <20180530150241.GO6920@sirena.org.uk>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 30 May 2018 08:34:50 -0700
+X-Google-Sender-Auth: Vny9-bg1QiAogzibPECfC-W_tHA
+Message-ID: <CAD=FV=XJd-udEE6az0xP7i6x0oGsnd=BSCyZ0Og_+RjNCMXnCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
+To: Mark Brown <broonie@kernel.org>
+Cc: David Collins <collinsd@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 11:57:17AM +0200, Neil Armstrong wrote:
-> This patchs adds the cec_notifier feature to the intel_hdmi part
-> of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
-> between each HDMI ports.
-> The changes will allow the i915 HDMI code to notify EDID and HPD changes
-> to an eventual CEC adapter.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-> ---
->  drivers/gpu/drm/i915/Kconfig         |  1 +
->  drivers/gpu/drm/i915/intel_display.h | 20 ++++++++++++++++++++
->  drivers/gpu/drm/i915/intel_drv.h     |  2 ++
->  drivers/gpu/drm/i915/intel_hdmi.c    | 13 +++++++++++++
->  4 files changed, 36 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-> index dfd9588..2d65d56 100644
-> --- a/drivers/gpu/drm/i915/Kconfig
-> +++ b/drivers/gpu/drm/i915/Kconfig
-> @@ -23,6 +23,7 @@ config DRM_I915
->  	select SYNC_FILE
->  	select IOSF_MBI
->  	select CRC32
-> +	select CEC_CORE if CEC_NOTIFIER
->  	help
->  	  Choose this option if you have a system that has "Intel Graphics
->  	  Media Accelerator" or "HD Graphics" integrated graphics,
-> diff --git a/drivers/gpu/drm/i915/intel_display.h b/drivers/gpu/drm/i915/intel_display.h
-> index 4e7418b..c68d1c8 100644
-> --- a/drivers/gpu/drm/i915/intel_display.h
-> +++ b/drivers/gpu/drm/i915/intel_display.h
-> @@ -126,6 +126,26 @@ enum port {
->  
->  #define port_name(p) ((p) + 'A')
->  
-> +static inline const char *port_identifier(enum port port)
-> +{
-> +	switch (port) {
-> +	case PORT_A:
-> +		return "Port A";
-> +	case PORT_B:
-> +		return "Port B";
-> +	case PORT_C:
-> +		return "Port C";
-> +	case PORT_D:
-> +		return "Port D";
-> +	case PORT_E:
-> +		return "Port E";
-> +	case PORT_F:
-> +		return "Port F";
-> +	default:
-> +		return "<invalid>";
-> +	}
-> +}
+Hi,
 
-Could use a comment to make it clear that this identifier is
-expected to remain stable since it's referenced from other drivers.
+On Wed, May 30, 2018 at 8:02 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, May 30, 2018 at 07:46:50AM -0700, Doug Anderson wrote:
+>> On Wed, May 30, 2018 at 2:37 AM, Mark Brown <broonie@kernel.org> wrote:
+>
+>> >> Linux vote for the lowest voltage it's comfortable with.  Linux keeps
+>> >> track of the true voltage that the driver wants and will always change
+>> >> its vote back to that before enabling.  Thus (assuming Linux is OK
+>> >> with 1.2 V - 1.4 V for a rail):
+>
+>> > That's pretty much what it should do anyway with normally designed
+>> > hardware.
+>
+>> I guess the question is: do we insist that the driver include this
+>> workaround, or are we OK with letting the hardware behave as the
+>> hardware does?
+>
+> What you're describing sounds like what we should be doing normally, if
+> we're not doing that we should probably be fixing the core.
 
-> +
->  enum dpio_channel {
->  	DPIO_CH0,
->  	DPIO_CH1
-> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-> index d436858..b50e51b 100644
-> --- a/drivers/gpu/drm/i915/intel_drv.h
-> +++ b/drivers/gpu/drm/i915/intel_drv.h
-> @@ -39,6 +39,7 @@
->  #include <drm/drm_dp_mst_helper.h>
->  #include <drm/drm_rect.h>
->  #include <drm/drm_atomic.h>
-> +#include <media/cec-notifier.h>
->  
->  /**
->   * __wait_for - magic wait macro
-> @@ -1001,6 +1002,7 @@ struct intel_hdmi {
->  	bool has_audio;
->  	bool rgb_quant_range_selectable;
->  	struct intel_connector *attached_connector;
-> +	struct cec_notifier *notifier;
+I'm not convinced that this behavior makes sense to move to the core.
+On most regulators I'd expect that when the regulator driver says to
+turn them off that they will output no voltage.  The reason RPMh is
+special is that there's an aggregation outside of Linux.  Specifically
+I like to make it concrete use the example where both Linux and "the
+modem" make requests for the same regulator and RPMh aggregates these
+requests.  This aggregation happens separately for "enabled" and
+"voltage".
 
-"notifier" seems a bit too generic a name. "cec_notifier" would be
-better.
+Thus if you consider:
+Modem: vote for 1.3V and enabled=true
+Linux: vote for 1.4V and enabled=false
 
-Apart from that this seems OK to me
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+The aggregated voltage is 1.4V and the aggregated enabled is true.
+Said another way: Linux's vote for the voltage affected the state of
+the rail even though Linux wanted the rail disabled.
 
->  };
->  
->  struct intel_dp_mst_encoder;
-> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
-> index 1baef4a..d522b5b 100644
-> --- a/drivers/gpu/drm/i915/intel_hdmi.c
-> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
-> @@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
->  		connected = true;
->  	}
->  
-> +	cec_notifier_set_phys_addr_from_edid(intel_hdmi->notifier, edid);
-> +
->  	return connected;
->  }
->  
-> @@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
->  {
->  	enum drm_connector_status status;
->  	struct drm_i915_private *dev_priv = to_i915(connector->dev);
-> +	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
->  
->  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
->  		      connector->base.id, connector->name);
-> @@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
->  
->  	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
->  
-> +	if (status != connector_status_connected)
-> +		cec_notifier_phys_addr_invalidate(intel_hdmi->notifier);
-> +
->  	return status;
->  }
->  
-> @@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
->  
->  static void intel_hdmi_destroy(struct drm_connector *connector)
->  {
-> +	if (intel_attached_hdmi(connector)->notifier)
-> +		cec_notifier_put(intel_attached_hdmi(connector)->notifier);
->  	kfree(to_intel_connector(connector)->detect_edid);
->  	drm_connector_cleanup(connector);
->  	kfree(connector);
-> @@ -2358,6 +2366,11 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
->  		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
->  		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
->  	}
-> +
-> +	intel_hdmi->notifier = cec_notifier_get_conn(dev->dev,
-> +						     port_identifier(port));
-> +	if (!intel_hdmi->notifier)
-> +		DRM_DEBUG_KMS("CEC notifier get failed\n");
->  }
->  
->  void intel_hdmi_init(struct drm_i915_private *dev_priv,
-> -- 
-> 2.7.4
-> 
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+In any other system when Linux disabled the regulator it wouldn't
+matter that you left it set at 1.4V.  Thus RPMh is special and IMO the
+workaround belongs there.
 
--- 
-Ville Syrjälä
-Intel
+
+-Doug
