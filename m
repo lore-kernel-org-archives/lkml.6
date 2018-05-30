@@ -1,60 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753910AbeE3PMA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:12:00 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:38720 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752370AbeE3PKY (ORCPT
+        id S1753912AbeE3PME (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:12:04 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:7963 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753660AbeE3PLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:10:24 -0400
-X-Google-Smtp-Source: ADUXVKI2F96K5mLg4fmiqeqnJ97mJePpmqPyIDTTV8YtRaWZw84TdZvlMxki3r/Twr4e1XuEJVI2fQ==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/4] dt: bindings: tegra20-emc: Document interrupt property
-Date: Wed, 30 May 2018 18:06:43 +0300
-Message-Id: <20180530150646.19030-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180530150646.19030-1-digetx@gmail.com>
-References: <20180530150646.19030-1-digetx@gmail.com>
+        Wed, 30 May 2018 11:11:51 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 30 May 2018 08:11:55 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC: <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] usb: xhci: tegra: Fix runtime PM support
+Date: Wed, 30 May 2018 16:11:42 +0100
+Message-ID: <1527693102-4711-1-git-send-email-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EMC has a dedicated interrupt that is used to notify about completion of
-HW operations. Document the interrupt property.
+Fix silly mistake when enabling runtime PM support for the Tegra XHCI
+driver. If runtime PM was enabled correctly for the XHCI device, then
+we should call pm_runtime_get_sync() to enable the device.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Fixes: ee9e5f4c7825 ("usb: xhci: tegra: Add runtime PM support")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/host/xhci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-index 4c33b29dc660..a6fe401d0d48 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-@@ -10,6 +10,7 @@ Properties:
-   and chosen using the ramcode board selector. If omitted, only one
-   set of tables can be present and said tables will be used
-   irrespective of ram-code configuration.
-+- interrupts : Should contain EMC General interrupt.
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index c78fc2942bca..a8c1d073cba0 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1136,7 +1136,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, tegra);
  
- Child device nodes describe the memory settings for different configurations and clock rates.
- 
-@@ -20,6 +21,7 @@ Example:
- 		#size-cells = < 0 >;
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f4000 0x200>;
-+		interrupts = <0 78 0x04>;
- 	}
- 
- 
+ 	pm_runtime_enable(&pdev->dev);
+-	if (!pm_runtime_enabled(&pdev->dev))
++	if (pm_runtime_enabled(&pdev->dev))
+ 		err = pm_runtime_get_sync(&pdev->dev);
+ 	else
+ 		err = tegra_xusb_runtime_resume(&pdev->dev);
 -- 
-2.17.0
+2.7.4
