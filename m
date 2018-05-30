@@ -1,56 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937158AbeE3G60 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 02:58:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55603 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937118AbeE3G4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 02:56:47 -0400
-Date: Wed, 30 May 2018 08:56:45 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-cc: Andrew Duggan <aduggan@synaptics.com>,
-        Oscar Morante <spacepluk@gmail.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: rmi: use HID_QUIRK_NO_INPUT_SYNC
-In-Reply-To: <20180525125106.18008-1-benjamin.tissoires@redhat.com>
-Message-ID: <nycvar.YFH.7.76.1805300855510.27054@cbobk.fhfr.pm>
-References: <20180525125106.18008-1-benjamin.tissoires@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S968468AbeE3HAc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:00:32 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:49578 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S937179AbeE3G6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 02:58:42 -0400
+From: Yunlong Song <yunlong.song@huawei.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH rebase] f2fs-tools: fix overflow bug of start_sector when computing zone_align_start_offset
+Date: Wed, 30 May 2018 14:58:29 +0800
+Message-ID: <1527663509-143986-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
+In-Reply-To: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
+References: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Originating-IP: [10.113.189.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 May 2018, Benjamin Tissoires wrote:
+zone_align_start_offset should be u64, but config.start_sector is u32,
+so it may be overflow when computing zone_align_start_offset.
 
-> When we receive a RMI4 report, we should not unconditionally send an
-> input_sync event. Instead, we should let the rmi4 transport layer do it
-> for us.
-> 
-> This fixes a situation where we might receive X in a report and the rest
-> in a subsequent one. And this messes up user space.
-> 
-> Link: https://bugs.freedesktop.org/show_bug.cgi?id=100436
-> 
-> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> ---
-> 
-> Hi,
-> 
-> Oscar, do you mind if we add your "Tested-by: Oscar Morante <your@email>"?
-> 
-> Andrew, can you check for any sides effects please?
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fsck/resize.c      | 7 ++++---
+ mkfs/f2fs_format.c | 4 ++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-I have now added Oscar's Tested-by: line and queued in for-4.18/rmi. In 
-case any sideeffects are discovered, I'll either not include for-4.18/rmi 
-in the push to Linus, or we'll do incremental fixups on top (depending on 
-the nature of the side-effects :) ).
-
-Thanks,
-
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 649f5d9..3f8b01d 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -11,7 +11,8 @@
+ 
+ static int get_new_sb(struct f2fs_super_block *sb)
+ {
+-	u_int32_t zone_size_bytes, zone_align_start_offset;
++	u_int32_t zone_size_bytes;
++	u_int64_t zone_align_start_offset;
+ 	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
+ 	u_int32_t sit_segments, nat_segments, diff, total_meta_segments;
+ 	u_int32_t total_valid_blks_available;
+@@ -27,10 +28,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
+ 
+ 	zone_size_bytes = segment_size_bytes * segs_per_zone;
+ 	zone_align_start_offset =
+-		(c.start_sector * DEFAULT_SECTOR_SIZE +
++		((u_int64_t) c.start_sector * DEFAULT_SECTOR_SIZE +
+ 		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
+ 		zone_size_bytes * zone_size_bytes -
+-		c.start_sector * DEFAULT_SECTOR_SIZE;
++		(u_int64_t) c.start_sector * DEFAULT_SECTOR_SIZE;
+ 
+ 	set_sb(segment_count, (c.target_sectors * c.sector_size -
+ 				zone_align_start_offset) / segment_size_bytes /
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index e0c3cb8..2350c10 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -212,10 +212,10 @@ static int f2fs_prepare_super_block(void)
+ 	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
+ 
+ 	zone_align_start_offset =
+-		(c.start_sector * DEFAULT_SECTOR_SIZE +
++		((u_int64_t) c.start_sector * DEFAULT_SECTOR_SIZE +
+ 		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
+ 		zone_size_bytes * zone_size_bytes -
+-		c.start_sector * DEFAULT_SECTOR_SIZE;
++		(u_int64_t) c.start_sector * DEFAULT_SECTOR_SIZE;
+ 
+ 	if (c.start_sector % DEFAULT_SECTORS_PER_BLOCK) {
+ 		MSG(1, "\t%s: Align start sector number to the page unit\n",
 -- 
-Jiri Kosina
-SUSE Labs
+1.8.5.2
