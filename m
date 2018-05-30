@@ -1,72 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753442AbeE3OR4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:17:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37374 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751844AbeE3ORz (ORCPT
+        id S1753531AbeE3OSO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:18:14 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40528 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753262AbeE3OSI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:17:55 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3AFAF6060A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: pull-request: wireless-drivers 2018-05-30
-Date: Wed, 30 May 2018 17:17:51 +0300
-Message-ID: <87vab52po0.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Wed, 30 May 2018 10:18:08 -0400
+X-Google-Smtp-Source: ADUXVKIXWLZdzo8pC2x6TllLmzJAhLWWmeoreIIIRHuYIY5NigE/xk8PfRaope4KBD6AULzhxWQQsw==
+Date: Wed, 30 May 2018 16:18:04 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v9 2/7] cpuset: Add new v2 cpuset.sched.domain_root flag
+Message-ID: <20180530141804.GG3320@localhost.localdomain>
+References: <1527601294-3444-1-git-send-email-longman@redhat.com>
+ <1527601294-3444-3-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527601294-3444-3-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
+Hi,
 
-I now this is late but hopefully this pull request can make it to net
-tree and to the final 4.17 release still. But if not, please let me know
-and I'll pull this to wireless-drivers-next instead.
+On 29/05/18 09:41, Waiman Long wrote:
 
-More info in the signed tag below, and please let me know if there are
-any problems.
+[...]
 
-Kalle
+> +  cpuset.sched.domain_root
+> +	A read-write single value file which exists on non-root
+> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
+> +	either "0" (off) or "1" (on).  This flag is set by the parent
+> +	and is not delegatable.
+> +
+> +	If set, it indicates that the current cgroup is the root of a
+> +	new scheduling domain or partition that comprises itself and
+> +	all its descendants except those that are scheduling domain
+> +	roots themselves and their descendants.  The root cgroup is
+> +	always a scheduling domain root.
+> +
+> +	There are constraints on where this flag can be set.  It can
+> +	only be set in a cgroup if all the following conditions are true.
+> +
+> +	1) The "cpuset.cpus" is not empty and the list of CPUs are
+> +	   exclusive, i.e. they are not shared by any of its siblings.
+> +	2) The parent cgroup is also a scheduling domain root.
+> +	3) There is no child cgroups with cpuset enabled.  This is
+> +	   for eliminating corner cases that have to be handled if such
+> +	   a condition is allowed.
+> +
+> +	Setting this flag will take the CPUs away from the effective
+> +	CPUs of the parent cgroup.  Once it is set, this flag cannot
+> +	be cleared if there are any child cgroups with cpuset enabled.
+> +	Further changes made to "cpuset.cpus" is allowed as long as
+> +	the first condition above is still true.
 
-The following changes since commit 813477aa49aac5deba04eb4956360dde58a0e807:
+IIUC, with the configuration below
 
-  MAINTAINERS: change Kalle as wcn36xx maintainer (2018-05-22 15:36:41 +0300)
+ cpuset.cpus.effective:6-11
+ cgroup.controllers:cpuset
+ cpuset.mems.effective:0-1
+ cgroup.subtree_control:cpuset
+ g1/cpuset.cpus.effective:0-5
+ g1/cgroup.controllers:cpuset
+ g1/cpuset.sched.load_balance:1
+ g1/cpuset.mems.effective:0-1
+ g1/cpuset.cpus:0-5
+ g1/cpuset.sched.domain_root:1
+ user.slice/cpuset.cpus.effective:6-11
+ user.slice/cgroup.controllers:cpuset
+ user.slice/cpuset.sched.load_balance:1
+ user.slice/cpuset.mems.effective:0-1
+ user.slice/cpuset.cpus:6-11
+ user.slice/cpuset.sched.domain_root:0
+ init.scope/cpuset.cpus.effective:6-11
+ init.scope/cgroup.controllers:cpuset
+ init.scope/cpuset.sched.load_balance:1
+ init.scope/cpuset.mems.effective:0-1
+ init.scope/cpuset.cpus:6-11
+ init.scope/cpuset.sched.domain_root:0
+ system.slice/cpuset.cpus.effective:6-11
+ system.slice/cgroup.controllers:cpuset
+ system.slice/cpuset.sched.load_balance:1
+ system.slice/cpuset.mems.effective:0-1
+ system.slice/cpuset.cpus:6-11
+ system.slice/cpuset.sched.domain_root:0
+ machine.slice/cpuset.cpus.effective:6-11
+ machine.slice/cgroup.controllers:cpuset
+ machine.slice/cpuset.sched.load_balance:1
+ machine.slice/cpuset.mems.effective:0-1
+ machine.slice/cpuset.cpus:6-11
+ machine.slice/cpuset.sched.domain_root:0
 
-are available in the git repository at:
+I should be able to
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git tags/wireless-drivers-for-davem-2018-05-30
+ # echo 0-4 >g1/cpuset.cpus
 
-for you to fetch changes up to ab1068d6866e28bf6427ceaea681a381e5870a4a:
+?
 
-  iwlwifi: pcie: compare with number of IRQs requested for, not number of CPUs (2018-05-29 10:40:25 +0300)
+It doesn't let me.
 
-----------------------------------------------------------------
-wireless-drivers fixes for 4.17
+I'm not sure we actually want to allow that, but that's what would I
+expect as per your text above.
 
-Two last minute fixes, hopefully they make it to 4.17 still.
+Thanks,
 
-rt2x00
+- Juri
 
-* revert a fix which caused even more problems
-
-iwlwifi
-
-* fix a crash when there are 16 or more logical CPUs
-
-----------------------------------------------------------------
-Hao Wei Tee (1):
-      iwlwifi: pcie: compare with number of IRQs requested for, not number of CPUs
-
-Stanislaw Gruszka (1):
-      Revert "rt2800: use TXOP_BACKOFF for probe frames"
-
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c  | 10 +++++-----
- drivers/net/wireless/ralink/rt2x00/rt2x00queue.c |  7 +++----
- 2 files changed, 8 insertions(+), 9 deletions(-)
+BTW: thanks a lot for your prompt feedback and hope it's OK if I keep
+playing and asking questions. :)
