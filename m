@@ -1,66 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753798AbeE3Pyi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 11:54:38 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:33922 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751817AbeE3Pyg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 11:54:36 -0400
-X-Google-Smtp-Source: ADUXVKK2ok0m2Of4WPUVAZOwLeKUJAYnsLkfbszLyig47g2JF5icyXwC0sx2Hf4V5kVSJ4t1r1KQDw==
-Date: Wed, 30 May 2018 08:54:32 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
-        akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Josef Bacik <jbacik@fb.com>
-Subject: Re: [PATCH 03/13] blk-cgroup: allow controllers to output their own
- stats
-Message-ID: <20180530155432.GK1351649@devbig577.frc2.facebook.com>
-References: <20180529211724.4531-1-josef@toxicpanda.com>
- <20180529211724.4531-4-josef@toxicpanda.com>
+        id S1753852AbeE3Pyz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 11:54:55 -0400
+Received: from muru.com ([72.249.23.125]:45300 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753815AbeE3Pyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 11:54:52 -0400
+Date: Wed, 30 May 2018 08:54:48 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        robh+dt@kernel.org, bcousson@baylibre.com, paul@pwsan.com
+Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+Message-ID: <20180530155448.GH5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-2-faiz_abbas@ti.com>
+ <20180530145047.GC5705@atomide.com>
+ <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
+ <20180530152825.GG5705@atomide.com>
+ <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529211724.4531-4-josef@toxicpanda.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 05:17:14PM -0400, Josef Bacik wrote:
-...
-> +		mutex_lock(&blkcg_pol_mutex);
-> +		for (i = 0; i < BLKCG_MAX_POLS; i++) {
-> +			struct blkcg_policy *pol = blkcg_policy[i];
-> +
-> +			if (!blkg->pd[i] || !pol->pd_stat_fn)
-> +				continue;
-> +
-> +			count = pol->pd_stat_fn(blkg->pd[i], buf, size);
+* Tero Kristo <t-kristo@ti.com> [180530 15:44]:
+> On 30/05/18 18:28, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
+> > > For the OCP if part, I think that is still needed until we switch over to
+> > > full sysc driver. clkctrl_offs you probably also need because that is used
+> > > for mapping the omap_hwmod against a specific clkctrl clock. Those can be
+> > > only removed once we are done with hwmod (or figure out some other way to
+> > > assign the clkctrl clock to a hwmod.)
+> > 
+> > Hmm might be worth testing. I thought your commit 70f05be32133
+> > ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
+> > already parses the clkctrl from dts?
+> 
+> It maps the clkctrl clock to be used by hwmod, if those are available. We
+> didn't add any specific clock entries to DT for mapping the actual clkctrl
+> clock without the hwmod_data hints yet though, as that was deemed temporary
+> solution only due to transition to interconnect driver. I.e., you would need
+> something like this in DT for every device node:
+> 
+> &uart3 {
+>   clocks = <l4per_clkctrl UART3_CLK 0>;
+>   clock-names = "clkctrl";
+> };
+> 
+> ... which is currently not present.
 
-Wouldn't it be easier to simply pass in the seq_file?
+Hmm is that not the "fck" clkctrl clock we have already in
+the dts files for the interconnect target modules?
 
-> +			if (count >= size)
-> +				continue;
-> +			buf += count;
-> +			total += count;
-> +			size -= count + 1;
-> +		}
-> +		mutex_unlock(&blkcg_pol_mutex);
-> +		if (total) {
-> +			count = snprintf(buf, size, "\n");
-> +			if (count >= size)
-> +				continue;
+We can also use pdata callbacks to pass the clock node if
+needed. But I guess I don't quite still understand what we
+are missing :)
 
-scnprintf() might make this less painful.
+Regards,
 
-> +			total += count;
-> +			seq_commit(sf, total);
-> +		}
-
-Thanks.
-
--- 
-tejun
+Tony
