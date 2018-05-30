@@ -1,60 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932269AbeE3UnB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 16:43:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48382 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932176AbeE3Um6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 16:42:58 -0400
-Date: Wed, 30 May 2018 13:42:56 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: ufo19890607 <ufo19890607@gmail.com>
-Cc: mhocko@suse.com, rientjes@google.com, kirill.shutemov@linux.intel.com,
-        aarcange@redhat.com, penguin-kernel@I-love.SAKURA.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yuzhoujian <yuzhoujian@didichuxing.com>
-Subject: Re: [PATCH v4] Print the memcg's name when system-wide OOM happened
-Message-Id: <20180530134256.bbf7a8639571a3f8910b6a05@linux-foundation.org>
-In-Reply-To: <1526870386-2439-1-git-send-email-ufo19890607@gmail.com>
-References: <1526870386-2439-1-git-send-email-ufo19890607@gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S932317AbeE3UpA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 16:45:00 -0400
+Received: from mga04.intel.com ([192.55.52.120]:28219 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932225AbeE3Uo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 16:44:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,461,1520924400";
+   d="scan'208";a="43451066"
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: stable@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        linux-kernel@vger.kernel.org (open list),
+        tpmdd-devel@lists.sourceforge.net (moderated list:TPM DEVICE DRIVER)
+Subject: [PATCH v2 0/2] fixes for v4.4
+Date: Wed, 30 May 2018 23:44:38 +0300
+Message-Id: <20180530204440.27299-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 May 2018 03:39:46 +0100 ufo19890607 <ufo19890607@gmail.com> wrote:
+Decided to add Enric's commit because it is also a bug fix instead
+of modifying Chris commit.
 
-> From: yuzhoujian <yuzhoujian@didichuxing.com>
-> 
-> The dump_header does not print the memcg's name when the system
-> oom happened. So users cannot locate the certain container which
-> contains the task that has been killed by the oom killer.
-> 
-> System oom report will print the memcg's name after this patch,
-> so users can get the memcg's path from the oom report and check
-> the certain container more quickly.
+Chris Chiu (1):
+  tpm: self test failure should not cause suspend to fail
 
-lkp-robot is reporting an oops.
+Enric Balletbo i Serra (1):
+  tpm: do not suspend/resume if power stays on
 
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -433,6 +433,7 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
->  	if (is_memcg_oom(oc))
->  		mem_cgroup_print_oom_info(oc->memcg, p);
->  	else {
-> +		mem_cgroup_print_oom_memcg_name(oc->memcg, p);
->  		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
->  		if (is_dump_unreclaim_slabs())
->  			dump_unreclaimable_slab();
+ drivers/char/tpm/tpm-chip.c      | 12 ++++++++++++
+ drivers/char/tpm/tpm-interface.c |  7 +++++++
+ drivers/char/tpm/tpm.h           |  1 +
+ 3 files changed, 20 insertions(+)
 
-static inline bool is_memcg_oom(struct oom_control *oc)
-{
-	return oc->memcg != NULL;
-}
-
-So in the mem_cgroup_print_oom_memcg_name() call which this patch adds,
-oc->memcg is known to be NULL.  How can this possibly work?  
+-- 
+v2: moved the check from tpm_of.c to tpm-chip.c as in v4.4 chip is
+unreachable otherwise. I did compilation test now with BuildRoot
+for power arch.
+2.17.0
