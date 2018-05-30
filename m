@@ -1,81 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753022AbeE3NN3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 09:13:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50256 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751794AbeE3NN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 09:13:28 -0400
-Date: Wed, 30 May 2018 09:13:27 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Shaohua Li <shli@kernel.org>,
-        Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
-        Matthew Wilcox <mawilcox@microsoft.com>, linux-fsdevel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Heinz Mauelshagen <heinzm@redhat.com>, linux-raid@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: dm-writecache: fix compilation issue with !DAX
-Message-ID: <20180530131326.GA2106@redhat.com>
-References: <20180529175216.24937-1-ross.zwisler@linux.intel.com>
- <alpine.LRH.2.02.1805300821510.24812@file01.intranet.prod.int.rdu2.redhat.com>
+        id S1753266AbeE3NUH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 09:20:07 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52856 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751012AbeE3NUF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 09:20:05 -0400
+X-Google-Smtp-Source: ADUXVKJqfieB9MUXDXkvvPzFLnk0SYAFe6FOThjWvUofcEotzNPvmef76Z8ZZJM7OKKzRBsD9e1H+Q==
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>, Laura Abbott <labbott@redhat.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v2 1/2] ARM: debug: Add Iproc UART3 debug addresses
+Date: Wed, 30 May 2018 15:19:55 +0200
+Message-Id: <20180530131956.13972-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1805300821510.24812@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30 2018 at  8:22am -0400,
-Mikulas Patocka <mpatocka@redhat.com> wrote:
+From: Clément Peron <clement.peron@devialet.com>
 
-> 
-> 
-> On Tue, 29 May 2018, Ross Zwisler wrote:
-> 
-> > As reported by Arnd (https://lkml.org/lkml/2018/5/28/1697), dm-writecache
-> > will fail with link errors in configs where DAX isn't present:
-> > 
-> > drivers/md/dm-writecache.o: In function `writecache_ctr':
-> > dm-writecache.c:(.text+0x1fdc): undefined reference to `dax_read_lock'
-> > dm-writecache.c:(.text+0x2004): undefined reference to `dax_direct_access'
-> > dm-writecache.c:(.text+0x21cc): undefined reference to `dax_read_unlock'
-> > 
-> > Fix this by following the lead of the other DM modules and wrapping calls
-> > to the generic DAX code in #if IS_ENABLED(CONFIG_DAX_DRIVER) blocks.
-> > 
-> > We also expand the failure case for the 'p' (persistent memory) flag so
-> > that fails on both architectures that don't support persistent memory and
-> > on kernels that don't have DAX support configured.  This prevents us from
-> > ever hitting the BUG() in the persistent_memory_claim() stub.
-> > 
-> > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> > Reported-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  drivers/md/dm-writecache.c | 16 ++++++++++++----
-> >  1 file changed, 12 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-> > index 92af65fdf4af..1c2b53ae1a96 100644
-> > --- a/drivers/md/dm-writecache.c
-> > +++ b/drivers/md/dm-writecache.c
-> > @@ -253,6 +253,7 @@ static void wc_unlock(struct dm_writecache *wc)
-> >  	mutex_unlock(&wc->lock);
-> >  }
-> >  
-> > +#if IS_ENABLED(CONFIG_DAX_DRIVER)
-> 
-> We already have #if(n)def DM_WRITECACHE_ONLY_SSD
-> 
-> There is no need to use another macro for the same purpose.
+Broadcom Iproc SoCs typically use the UART3 for
+debug/console, provide a known good location for that.
 
-I removed DM_WRITECACHE_ONLY_SSD because it wasn't needed, this is the
-split out commit that I have since folded in:
-https://git.kernel.org/pub/scm/linux/kernel/git/snitzer/linux.git/commit/?h=dm-4.18-writecache-wip&id=e7fd3d1c05659f7e1295178290fbdaebf36becdc
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+---
 
-Ross's patch effectively builds ontop of that.
+ arch/arm/Kconfig.debug | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Mike
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 199ebc1c4538..4ea9d5793b91 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -207,6 +207,14 @@ choice
+ 		depends on ARCH_BCM_HR2
+ 		select DEBUG_UART_8250
+ 
++	config DEBUG_BCM_IPROC_UART3
++		bool "Kernel low-level debugging on BCM IPROC UART3"
++		depends on ARCH_BCM_CYGNUS
++		select DEBUG_UART_8250
++		help
++		  Say Y here if you want the debug print routines to direct
++		  their output to the third serial port on these devices.
++
+ 	config DEBUG_BCM_KONA_UART
+ 		bool "Kernel low-level debugging messages via BCM KONA UART"
+ 		depends on ARCH_BCM_MOBILE
+@@ -1557,6 +1565,7 @@ config DEBUG_UART_PHYS
+ 	default 0x18000400 if DEBUG_BCM_HR2
+ 	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
+ 	default 0x18020000 if DEBUG_SIRFATLAS7_UART1
++	default 0x18023000 if DEBUG_BCM_IPROC_UART3
+ 	default 0x1c090000 if DEBUG_VEXPRESS_UART0_RS1
+ 	default 0x20001000 if DEBUG_HIP01_UART
+ 	default 0x20060000 if DEBUG_RK29_UART0
+@@ -1676,6 +1685,7 @@ config DEBUG_UART_VIRT
+ 	default 0xf1002000 if DEBUG_MT8127_UART0
+ 	default 0xf1006000 if DEBUG_MT6589_UART0
+ 	default 0xf1009000 if DEBUG_MT8135_UART3
++	default 0xf1023000 if DEBUG_BCM_IPROC_UART3
+ 	default 0xf11f1000 if DEBUG_VERSATILE
+ 	default 0xf1600000 if DEBUG_INTEGRATOR
+ 	default 0xf1c28000 if DEBUG_SUNXI_UART0
+@@ -1791,7 +1801,7 @@ config DEBUG_UART_8250_WORD
+ 		DEBUG_KEYSTONE_UART0 || DEBUG_KEYSTONE_UART1 || \
+ 		DEBUG_ALPINE_UART0 || \
+ 		DEBUG_DAVINCI_DMx_UART0 || DEBUG_DAVINCI_DA8XX_UART1 || \
+-		DEBUG_DAVINCI_DA8XX_UART2 || \
++		DEBUG_DAVINCI_DA8XX_UART2 || DEBUG_BCM_IPROC_UART3 || \
+ 		DEBUG_BCM_KONA_UART || DEBUG_RK32_UART2
+ 
+ config DEBUG_UART_8250_PALMCHIP
+-- 
+2.17.0
