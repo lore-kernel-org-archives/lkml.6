@@ -1,117 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932222AbeE3T7r (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:59:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48674 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932154AbeE3T7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:59:46 -0400
-Date: Wed, 30 May 2018 15:59:42 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Laurence Oberman <loberman@redhat.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>, Ewan Milne <emilne@redhat.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>, dm-devel@redhat.com
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-Message-ID: <20180530195942.GC6568@redhat.com>
-References: <20180525130535.GA24239@lst.de>
- <20180525135813.GB9591@redhat.com>
- <20180525141211.GA25971@lst.de>
- <20180525145056.GD9591@redhat.com>
- <yq1muwj45sg.fsf@oracle.com>
- <20180529030236.GA28895@redhat.com>
- <20180529072240.np5c62akbr7jqelr@linux-x5ow.site>
- <20180529080952.GA1369@lst.de>
- <20180529232718.GA1730@redhat.com>
- <f4951571-d37d-73cd-1d6c-0ca84647d5ac@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f4951571-d37d-73cd-1d6c-0ca84647d5ac@kernel.dk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S932245AbeE3UAl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 16:00:41 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:43738 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753718AbeE3UAk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 16:00:40 -0400
+X-ME-Helo: belgarion.home
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Wed, 30 May 2018 22:00:37 +0200
+X-ME-IP: 90.55.202.35
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Vinod Koul <vinod.koul@intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2] dmaengine: pxa: add a default requestor policy
+Date: Wed, 30 May 2018 22:00:18 +0200
+Message-Id: <20180530200018.26677-1-robert.jarzmik@free.fr>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30 2018 at  3:05pm -0400,
-Jens Axboe <axboe@kernel.dk> wrote:
+As what former drcmr -1 value meant, add a this as a default to each
+channel, ie. that by default no requestor line is used.
 
-> On 5/29/18 5:27 PM, Mike Snitzer wrote:
-> > On Tue, May 29 2018 at  4:09am -0400,
-> > Christoph Hellwig <hch@lst.de> wrote:
-> > 
-> >> On Tue, May 29, 2018 at 09:22:40AM +0200, Johannes Thumshirn wrote:
-> >>> For a "Plan B" we can still use the global knob that's already in
-> >>> place (even if this reminds me so much about scsi-mq which at least we
-> >>> haven't turned on in fear of performance regressions).
-> >>>
-> >>> Let's drop the discussion here, I don't think it leads to something
-> >>> else than flamewars.
-> >>
-> >> If our plan A doesn't work we can go back to these patches.  For now
-> >> I'd rather have everyone spend their time on making Plan A work then
-> >> preparing for contingencies.  Nothing prevents anyone from using these
-> >> patches already out there if they really want to, but I'd recommend
-> >> people are very careful about doing so as you'll lock yourself into
-> >> a long-term maintainance burden.
-> > 
-> > Restating (for others): this patchset really isn't about contingencies.
-> > It is about choice.
-> > 
-> > Since we're at an impasse, in the hopes of soliciting definitive
-> > feedback from Jens and Linus, I'm going to attempt to reset the
-> > discussion for their entry.
-> > 
-> > In summary, we have a classic example of a maintainer stalemate here:
-> > 1) Christoph, as NVMe co-maintainer, doesn't want to allow native NVMe
-> >    multipath to actively coexist with dm-multipath's NVMe support on the
-> >    same host.
-> > 2) I, as DM maintainer, would like to offer this flexibility to users --
-> >    by giving them opt-in choice to continue using existing dm-multipath
-> >    with NVMe. (also, both Red Hat and SUSE would like to offer this).
-> > 
-> > There is no technical reason why they cannot coexist.  Hence this simple
-> > patchset that was originally offered by Johannes Thumshirn with
-> > contributions from myself.
-> 
-> Here's what I think - flag days tend to suck. They may be more convenient
-> for developers, but they inflict pain on users. Sometimes they prevent
-> them from moving forward, since updates are now gated on external
-> dependencies. Moving forward with a new architecture is great, but
-> proper care has to be given to existing users of multipath, regardless
-> of how few they may be.
+This is specifically used for network drivers smc91x and smc911x, and
+needed for their port to slave maps.
 
-As I mentioned at the end of my summary (and in my first reply to this
-0th header): it is on the "other" multipath toolchain to deal with
-switching from "native" to "other" (by writing to 'mpath_personality').
-For dm-multipath, it is multipathd that would trigger the switch from
-"native" to "other" iff user opts-in by configuring multipath.conf to
-own a particular NVMe subsystem's multipathing.
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+Since v1: changed -1 to U32_MAX
+---
+ drivers/dma/pxa_dma.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-So users very likely won't ever have a need to write to
-'mpath_personality'.  And as such, they'll just default to using
-"native" NVMe multipath.
-
-> This patchset seems pretty clean and minimalist. Realistically, I'm
-> guessing that SUSE and RH will ship it regardless of upstream status.
-
-TBD really.  We are keen to enable CONFIG_NVME_MULTIPATH to allow users
-to use native (as the default!).  But we won't be able to do that unless
-we have this patchset.  Because we really do _need_ to give our users
-the option of continuing to use dm-multipath.
-
-And as the Red Hat employee who would have to port it to each kernel (as
-long as there is a need): _please_ don't make me do that.
-
-PLEASE! ;)
-
-Mike
+diff --git a/drivers/dma/pxa_dma.c b/drivers/dma/pxa_dma.c
+index 9505334f9c6e..b31c28b67ad3 100644
+--- a/drivers/dma/pxa_dma.c
++++ b/drivers/dma/pxa_dma.c
+@@ -762,6 +762,8 @@ static void pxad_free_chan_resources(struct dma_chan *dchan)
+ 	dma_pool_destroy(chan->desc_pool);
+ 	chan->desc_pool = NULL;
+ 
++	chan->drcmr = U32_MAX;
++	chan->prio = PXAD_PRIO_LOWEST;
+ }
+ 
+ static void pxad_free_desc(struct virt_dma_desc *vd)
+@@ -1386,6 +1388,9 @@ static int pxad_init_dmadev(struct platform_device *op,
+ 		c = devm_kzalloc(&op->dev, sizeof(*c), GFP_KERNEL);
+ 		if (!c)
+ 			return -ENOMEM;
++
++		c->drcmr = U32_MAX;
++		c->prio = PXAD_PRIO_LOWEST;
+ 		c->vc.desc_free = pxad_free_desc;
+ 		vchan_init(&c->vc, &pdev->slave);
+ 		init_waitqueue_head(&c->wq_state);
+-- 
+2.11.0
