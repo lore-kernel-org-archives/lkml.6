@@ -1,56 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753141AbeE3Ono (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:43:44 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37796 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751630AbeE3Onk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:43:40 -0400
-X-Google-Smtp-Source: ADUXVKIqbeNdxUccYvOrMQWw4wABTjCSQDp4wU9F92O30ZAIMa6tyx9BYgz5FYj3HpRIeinJ21Dqjg==
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: ulf.hansson@linaro.org, adrian.hunter@intel.com
-Cc: vviswana@codeaurora.org, riteshh@codeaurora.org,
-        subhashj@codeaurora.org, stummala@codeaurora.org,
-        asutoshd@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>
-Subject: [PATCH] mmc: sdhci-msm: Remove NO_CARD_NO_RESET quirk
-Date: Wed, 30 May 2018 17:43:35 +0300
-Message-Id: <20180530144335.7888-1-georgi.djakov@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        id S1753065AbeE3OpM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:45:12 -0400
+Received: from muru.com ([72.249.23.125]:45170 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750987AbeE3OpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 10:45:08 -0400
+Date: Wed, 30 May 2018 07:45:05 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        Carlos Hernandez <ceh@ti.com>
+Subject: Re: Regression in Linux next again
+Message-ID: <20180530144505.GB5705@atomide.com>
+References: <20180529221501.GJ5702@atomide.com>
+ <CGME20180530091325epcas4p20dea07f013a3512ce4ea92120da90f61@epcas4p2.samsung.com>
+ <20180530091314.GB6920@sirena.org.uk>
+ <20180530140318eucas1p2af2d01b9678e8914c2b8e099c584ec11~zcQzVKtj30757607576eucas1p2V@eucas1p2.samsung.com>
+ <20180530143338.GM6920@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180530143338.GM6920@sirena.org.uk>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now we have a proper implementation for the power irq handling and this
-quirk is not needed anymore. In fact, it is causing card detection delays
-on apq8096 platforms and the following error is displayed:
-sdhci_msm 74a4900.sdhci: mmc0: pwr_irq for req: (4) timed out
+* Mark Brown <broonie@kernel.org> [180530 14:36]:
+> On Wed, May 30, 2018 at 04:03:15PM +0200, Maciej Purski wrote:
+> 
+> > I'm afraid, I have no idea, how to fix it quickly. You can revert it and
+> > in the next version I'll fix the build error and split the last patch even
+> > more, so we could perform a more precise bisection. I'd be grateful if you
+> > could push it on your test coupled branch and Tony could test it again before
+> > merging it with next again.
+> 
+> Yeah, if we could get testing from Tony first that'd be ideal.
 
-The quirk is forcing the controller to retain 1.8V signalling on the slot
-even when a new card is inserted, which is not correct. The proper behavior
-would be to reset the controller in order to start with 3.3V signaling.
+I can boot test the patches easily no problem. Maciej, maybe email
+me some debug version and I'll email you back the dmesg output.
 
-Fixes: c0309b3803fe ("mmc: sdhci-msm: Add sdhci msm register write APIs which wait for pwr irq")
-Suggested-by: Vijay Viswanath <vviswana@codeaurora.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
-This can go for v4.18, as it's not a critical fix.
-Tested on db410c and db820c.
----
- drivers/mmc/host/sdhci-msm.c | 1 -
- 1 file changed, 1 deletion(-)
+Regards,
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index c283291db705..791779173332 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -1333,7 +1333,6 @@ static const struct sdhci_ops sdhci_msm_ops = {
- 
- static const struct sdhci_pltfm_data sdhci_msm_pdata = {
- 	.quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
--		  SDHCI_QUIRK_NO_CARD_NO_RESET |
- 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
- 	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+Tony
