@@ -1,173 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753906AbeE3QE3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:04:29 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:37892 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753836AbeE3QE1 (ORCPT
+        id S932093AbeE3QEp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:04:45 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10366 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753841AbeE3QEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:04:27 -0400
-X-Google-Smtp-Source: ADUXVKITiujYyomgK1ATWsr2aU24f6u3IbG0RGOZd+9Y8hSGnPEtdAlUvrV7z9oDQumWjfhbeUMYkg==
-From: Gwendal Grignou <gwendal@chromium.org>
-To: bleung@chromium.org, eballetbo@gmail.com, lee.jones@linaro.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2] platform/chrome: Use to_cros_ec_dev more broadly
-Date: Wed, 30 May 2018 09:04:13 -0700
-Message-Id: <20180530160413.33612-1-gwendal@chromium.org>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
-In-Reply-To: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
-References: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
+        Wed, 30 May 2018 12:04:42 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 30 May 2018 09:04:42 -0700
+Subject: Re: [PATCH v2 8/9] PM / Domains: Add support for multi PM domains per
+ device to genpd
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, <linux-pm@vger.kernel.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+References: <20180529100421.31022-1-ulf.hansson@linaro.org>
+ <20180529100421.31022-9-ulf.hansson@linaro.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <a53f0970-22c4-444f-10e6-c115a21d05ea@nvidia.com>
+Date: Wed, 30 May 2018 17:04:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180529100421.31022-9-ulf.hansson@linaro.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move to_cros_ec_dev macro to cros_ec.h and use it when the private ec
-object is needed from device object.
 
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
----
-Change since v1:
-   Remove changes in cros_ec_dev.c to avoid inter-dependencies.
+On 29/05/18 11:04, Ulf Hansson wrote:
+> To support devices being partitioned across multiple PM domains, let's
+> begin with extending genpd to cope with these kind of configurations.
+> 
+> Therefore, add a new exported function genpd_dev_pm_attach_by_id(), which
+> is similar to the existing genpd_dev_pm_attach(), but with the difference
+> that it allows its callers to provide an index to the PM domain that it
+> wants to attach.
+> 
+> Note that, genpd_dev_pm_attach_by_id() shall only be called by the driver
+> core / PM core, similar to how the existing dev_pm_domain_attach() makes
+> use of genpd_dev_pm_attach(). However, this is implemented by following
+> changes on top.
+> 
+> Because, only one PM domain can be attached per device, genpd needs to
+> create a virtual device that it can attach/detach instead. More precisely,
+> let the new function genpd_dev_pm_attach_by_id() register a virtual struct
+> device via calling device_register(). Then let it attach this device to the
+> corresponding PM domain, rather than the one that is provided by the
+> caller. The actual attaching is done via re-using the existing genpd OF
+> functions.
+> 
+> At successful attachment, genpd_dev_pm_attach_by_id() returns the created
+> virtual device, which allows the caller to operate on it to deal with power
+> management. Following changes on top, provides more details in this
+> regards.
+> 
+> To deal with detaching of a PM domain for the multiple PM domains case,
+> let's also extend the existing genpd_dev_pm_detach() function, to cover the
+> cleanup of the created virtual device, via make it call device_unregister()
+> on it. In this way, there is no need to introduce a new function to deal
+> with detach for the multiple PM domain case, but instead the existing one
+> is re-used.
+> 
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+> 
+> Changes in v2:
+> 	- Fixed comments from Jon. Clarified function descriptions
+> 	and changelog.
+> 
+> ---
+>  drivers/base/power/domain.c | 80 +++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_domain.h   |  8 ++++
+>  2 files changed, 88 insertions(+)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 2af99bfcbe3c..2b496d79159d 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2171,6 +2171,15 @@ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
+>  }
+>  EXPORT_SYMBOL_GPL(of_genpd_remove_last);
+>  
+> +static void genpd_release_dev(struct device *dev)
+> +{
+> +	kfree(dev);
+> +}
+> +
+> +static struct bus_type genpd_bus_type = {
+> +	.name		= "genpd",
+> +};
+> +
+>  /**
+>   * genpd_dev_pm_detach - Detach a device from its PM domain.
+>   * @dev: Device to detach.
+> @@ -2208,6 +2217,10 @@ static void genpd_dev_pm_detach(struct device *dev, bool power_off)
+>  
+>  	/* Check if PM domain can be powered off after removing this device. */
+>  	genpd_queue_power_off_work(pd);
+> +
+> +	/* Unregister the device if it was created by genpd. */
+> +	if (dev->bus == &genpd_bus_type)
+> +		device_unregister(dev);
+>  }
+>  
+>  static void genpd_dev_pm_sync(struct device *dev)
+> @@ -2298,6 +2311,67 @@ int genpd_dev_pm_attach(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
+>  
+> +/**
+> + * genpd_dev_pm_attach_by_id() - Attach a device to one of its PM domain.
+> + * @dev: Device to attach.
 
- drivers/platform/chrome/cros_ec_lightbar.c | 21 +++++++--------------
- drivers/platform/chrome/cros_ec_sysfs.c    |  2 --
- drivers/platform/chrome/cros_ec_vbc.c      |  9 +++------
- include/linux/mfd/cros_ec.h                |  2 ++
- 4 files changed, 12 insertions(+), 22 deletions(-)
+Can you update the description of the above as well?
 
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index 6ea79d495aa2..68193bb53383 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -170,8 +170,7 @@ static ssize_t version_show(struct device *dev,
- 			    struct device_attribute *attr, char *buf)
- {
- 	uint32_t version = 0, flags = 0;
--	struct cros_ec_dev *ec = container_of(dev,
--					      struct cros_ec_dev, class_dev);
-+	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
- 	int ret;
- 
- 	ret = lb_throttle();
-@@ -193,8 +192,7 @@ static ssize_t brightness_store(struct device *dev,
- 	struct cros_ec_command *msg;
- 	int ret;
- 	unsigned int val;
--	struct cros_ec_dev *ec = container_of(dev,
--					      struct cros_ec_dev, class_dev);
-+	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
- 
- 	if (kstrtouint(buf, 0, &val))
- 		return -EINVAL;
-@@ -238,8 +236,7 @@ static ssize_t led_rgb_store(struct device *dev, struct device_attribute *attr,
- {
- 	struct ec_params_lightbar *param;
- 	struct cros_ec_command *msg;
--	struct cros_ec_dev *ec = container_of(dev,
--					      struct cros_ec_dev, class_dev);
-+	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
- 	unsigned int val[4];
- 	int ret, i = 0, j = 0, ok = 0;
- 
-@@ -311,8 +308,7 @@ static ssize_t sequence_show(struct device *dev,
- 	struct ec_response_lightbar *resp;
- 	struct cros_ec_command *msg;
- 	int ret;
--	struct cros_ec_dev *ec = container_of(dev,
--					      struct cros_ec_dev, class_dev);
-+	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
- 
- 	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
-@@ -439,8 +435,7 @@ static ssize_t sequence_store(struct device *dev, struct device_attribute *attr,
- 	struct cros_ec_command *msg;
- 	unsigned int num;
- 	int ret, len;
--	struct cros_ec_dev *ec = container_of(dev,
--					      struct cros_ec_dev, class_dev);
-+	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
- 
- 	for (len = 0; len < count; len++)
- 		if (!isalnum(buf[len]))
-@@ -488,8 +483,7 @@ static ssize_t program_store(struct device *dev, struct device_attribute *attr,
- 	int extra_bytes, max_size, ret;
- 	struct ec_params_lightbar *param;
- 	struct cros_ec_command *msg;
--	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
--					      class_dev);
-+	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
- 
- 	/*
- 	 * We might need to reject the program for size reasons. The EC
-@@ -599,8 +593,7 @@ static umode_t cros_ec_lightbar_attrs_are_visible(struct kobject *kobj,
- 						  struct attribute *a, int n)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
--	struct cros_ec_dev *ec = container_of(dev,
--					      struct cros_ec_dev, class_dev);
-+	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
- 	struct platform_device *pdev = to_platform_device(ec->dev);
- 	struct cros_ec_platform *pdata = pdev->dev.platform_data;
- 	int is_cros_ec;
-diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index 5a6db3fe213a..f34a50121064 100644
---- a/drivers/platform/chrome/cros_ec_sysfs.c
-+++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -34,8 +34,6 @@
- #include <linux/types.h>
- #include <linux/uaccess.h>
- 
--#define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
--
- /* Accessor functions */
- 
- static ssize_t reboot_show(struct device *dev,
-diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
-index 6d38e6b08334..5356f26bc022 100644
---- a/drivers/platform/chrome/cros_ec_vbc.c
-+++ b/drivers/platform/chrome/cros_ec_vbc.c
-@@ -29,8 +29,7 @@ static ssize_t vboot_context_read(struct file *filp, struct kobject *kobj,
- 				  loff_t pos, size_t count)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
--	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
--					      class_dev);
-+	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
- 	struct cros_ec_device *ecdev = ec->ec_dev;
- 	struct ec_params_vbnvcontext *params;
- 	struct cros_ec_command *msg;
-@@ -70,8 +69,7 @@ static ssize_t vboot_context_write(struct file *filp, struct kobject *kobj,
- 				   loff_t pos, size_t count)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
--	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
--					      class_dev);
-+	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
- 	struct cros_ec_device *ecdev = ec->ec_dev;
- 	struct ec_params_vbnvcontext *params;
- 	struct cros_ec_command *msg;
-@@ -111,8 +109,7 @@ static umode_t cros_ec_vbc_is_visible(struct kobject *kobj,
- 				      struct bin_attribute *a, int n)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
--	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
--					      class_dev);
-+	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
- 	struct device_node *np = ec->ec_dev->dev->of_node;
- 
- 	if (IS_ENABLED(CONFIG_OF) && np) {
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 4ff0cec979b0..4270972adb94 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -197,6 +197,8 @@ struct cros_ec_dev {
- 	u32 features[2];
- };
- 
-+#define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
-+
- /**
-  * cros_ec_suspend - Handle a suspend operation for the ChromeOS EC device
-  *
+Thanks
+Jon
+
 -- 
-2.17.0.921.gf22659ad46-goog
+nvpublic
