@@ -1,85 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751672AbeE3Lg5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:36:57 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42217 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751441AbeE3Lgq (ORCPT
+        id S1753613AbeE3Lhl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:37:41 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60788 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752291AbeE3LHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:36:46 -0400
-X-Google-Smtp-Source: ADUXVKK8+EYyRT7/s8Z6LAMKerl9XgSw2+GLTsdc579r8LEDUazKWev8Cg0Y17KOCyzm+s4nD20voQ==
-Subject: Re: [PATCH] dma-buf: make map_atomic and map function pointers
- optional
-To: Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc: open list <linux-kernel@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-References: <20180529135918.19729-1-kraxel@redhat.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <cc4a43db-8479-37e6-3f4f-57dbf04f5110@gmail.com>
-Date: Wed, 30 May 2018 14:36:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 30 May 2018 07:07:01 -0400
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <20180529135918.19729-1-kraxel@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.434565072@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.2 124/153] ALSA: seq: Clear client entry before deleting
+ else at closing
+In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 04:59 PM, Gerd Hoffmann wrote:
-> So drivers don't need dummy functions just returning NULL.
->
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->   include/linux/dma-buf.h   | 4 ++--
->   drivers/dma-buf/dma-buf.c | 4 ++++
->   2 files changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-> index 085db2fee2..88917fa796 100644
-> --- a/include/linux/dma-buf.h
-> +++ b/include/linux/dma-buf.h
-> @@ -39,12 +39,12 @@ struct dma_buf_attachment;
->   
->   /**
->    * struct dma_buf_ops - operations possible on struct dma_buf
-> - * @map_atomic: maps a page from the buffer into kernel address
-> + * @map_atomic: [optional] maps a page from the buffer into kernel address
->    *		space, users may not block until the subsequent unmap call.
->    *		This callback must not sleep.
->    * @unmap_atomic: [optional] unmaps a atomically mapped page from the buffer.
->    *		  This Callback must not sleep.
-> - * @map: maps a page from the buffer into kernel address space.
-> + * @map: [optional] maps a page from the buffer into kernel address space.
->    * @unmap: [optional] unmaps a page from the buffer.
->    * @vmap: [optional] creates a virtual mapping for the buffer into kernel
->    *	  address space. Same restrictions as for vmap and friends apply.
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index d78d5fc173..4c45e31258 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -872,6 +872,8 @@ void *dma_buf_kmap_atomic(struct dma_buf *dmabuf, unsigned long page_num)
->   {
->   	WARN_ON(!dmabuf);
->   
-> +	if (!dmabuf->ops->map_atomic)
-> +		return NULL;
->   	return dmabuf->ops->map_atomic(dmabuf, page_num);
->   }
->   EXPORT_SYMBOL_GPL(dma_buf_kmap_atomic);
-> @@ -907,6 +909,8 @@ void *dma_buf_kmap(struct dma_buf *dmabuf, unsigned long page_num)
->   {
->   	WARN_ON(!dmabuf);
->   
-> +	if (!dmabuf->ops->map)
-> +		return NULL;
->   	return dmabuf->ops->map(dmabuf, page_num);
->   }
->   EXPORT_SYMBOL_GPL(dma_buf_kmap);
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Takashi Iwai <tiwai@suse.de>
+
+commit a2ff19f7b70118ced291a28d5313469914de451b upstream.
+
+When releasing a client, we need to clear the clienttab[] entry at
+first, then call snd_seq_queue_client_leave().  Otherwise, the
+in-flight cell in the queue might be picked up by the timer interrupt
+via snd_seq_check_queue() before calling snd_seq_queue_client_leave(),
+and it's delivered to another queue while the client is clearing
+queues.  This may eventually result in an uncleared cell remaining in
+a queue, and the later snd_seq_pool_delete() may need to wait for a
+long time until the event gets really processed.
+
+By moving the clienttab[] clearance at the beginning of release, any
+event delivery of a cell belonging to this client will fail at a later
+point, since snd_seq_client_ptr() returns NULL.  Thus the cell that
+was picked up by the timer interrupt will be returned immediately
+without further delivery, and the long stall of snd_seq_delete_pool()
+can be avoided, too.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ sound/core/seq/seq_clientmgr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -270,12 +270,12 @@ static int seq_free_client1(struct snd_s
+ 
+ 	if (!client)
+ 		return 0;
+-	snd_seq_delete_all_ports(client);
+-	snd_seq_queue_client_leave(client->number);
+ 	spin_lock_irqsave(&clients_lock, flags);
+ 	clienttablock[client->number] = 1;
+ 	clienttab[client->number] = NULL;
+ 	spin_unlock_irqrestore(&clients_lock, flags);
++	snd_seq_delete_all_ports(client);
++	snd_seq_queue_client_leave(client->number);
+ 	snd_use_lock_sync(&client->use_lock);
+ 	snd_seq_queue_client_termination(client->number);
+ 	if (client->pool)
