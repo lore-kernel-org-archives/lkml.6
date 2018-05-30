@@ -1,81 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932142AbeE3S2Q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 14:28:16 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33934 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753912AbeE3S2N (ORCPT
+        id S932120AbeE3Sc2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 14:32:28 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56108 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753663AbeE3Sc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 14:28:13 -0400
-X-Google-Smtp-Source: ADUXVKLkC9y+XwTEr5zZor6j/1CrIcUbbkKPcFYaasS/4SKMbn9k+Sqjj/F9GJ+EUg7ki5z4MdceFw==
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        stable@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v4] rtc: sun6i: Fix bit_idx value for clk_register_gate
-Date: Wed, 30 May 2018 23:57:44 +0530
-Message-Id: <20180530182744.27611-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.14.3
+        Wed, 30 May 2018 14:32:27 -0400
+Subject: Re: [PATCH 13/13] Documentation: add a doc for blk-iolatency
+To: Josef Bacik <josef@toxicpanda.com>, axboe@kernel.dk,
+        kernel-team@fb.com, linux-block@vger.kernel.org,
+        akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc: Josef Bacik <jbacik@fb.com>
+References: <20180529211724.4531-1-josef@toxicpanda.com>
+ <20180529211724.4531-14-josef@toxicpanda.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <4c044b70-8d53-055b-933b-1b8570bd4fc2@infradead.org>
+Date: Wed, 30 May 2018 11:32:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180529211724.4531-14-josef@toxicpanda.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Trimarchi <michael@amarulasolutions.com>
+On 05/29/2018 02:17 PM, Josef Bacik wrote:
+> From: Josef Bacik <jbacik@fb.com>
+> 
+> A basic documentation to describe the interface, statistics, and
+> behavior of io.latency.
+> 
+> Signed-off-by: Josef Bacik <jbacik@fb.com>
+> ---
+>  Documentation/blk-iolatency.txt | 80 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+>  create mode 100644 Documentation/blk-iolatency.txt
+> 
+> diff --git a/Documentation/blk-iolatency.txt b/Documentation/blk-iolatency.txt
+> new file mode 100644
+> index 000000000000..9dd86f4f64b6
+> --- /dev/null
+> +++ b/Documentation/blk-iolatency.txt
+> @@ -0,0 +1,80 @@
+> +Block IO Latency Controller
+> +
+> +Overview
+> +========
+> +
+> +This is a cgroup v2 controller for IO workload protection.  You provide a group
+> +with a latency target, and if the average latency exceeds that target the
+> +controller will throttle any peers that have a lower latency target than the
+> +protected workload.
+> +
+> +Interface
+> +=========
+> +
+> +- io.latency.  This takes a similar format as the other controllers
 
-clk-gate core will take bit_idx through clk_register_gate
-and then do clk_gate_ops by using BIT(bit_idx), but rtc-sun6i
-is passing bit_idx as BIT(bit_idx) it becomes BIT(BIT(bit_idx)
-which is wrong and eventually external gate clock is not enabling.
+              end above sentence with a period or a colon:
 
-This patch fixed by passing bit index and the original change
-introduced from below commit.
-"rtc: sun6i: Add support for the external oscillator gate"
-(sha1: 	17ecd246414b3a0fe0cb248c86977a8bda465b7b)
+> +
+> +	"MAJOR:MINOR target=<target time in microseconds"
+> +
+> +- io.stat.  If the controller is enabled you will see extra stats in io.stat in
+> +  addition to the normal ones
 
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Fixes: 17ecd246414b ("rtc: sun6i: Add support for the external oscillator gate")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v4:
-- Cc to stable tree
-Changes for v3:
-- add fixes tag
-- Cced stable ML
-Changes for v2:
-- add suffix _OFFSET with macro name to distinguish b/w
-  register actual values vs offset.
+                end above sentence with a period.
 
- drivers/rtc/rtc-sun6i.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +
+> +	- depth=<integer>.  This is the current queue depth for the group.
+> +	- delay=<time in microseconds>. This is the current delay per task that
+> +	  does IO in this group.
+> +	- use_delay=<integer>.  This is how deep into the delay we currently
+> +	  are, the larger this number is the longer it'll take us to get back to
+> +	  queue depth > 1.
+> +	- total_lat_avg=<time in microseconds>.  The running average IO latency
+> +	  for this group.  Running average is generally flawed, but will give an
+> +	  admistrator a general idea of the overall latency they can expect for
 
-diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-index 2e6fb275acc8..2cd5a7b1a2e3 100644
---- a/drivers/rtc/rtc-sun6i.c
-+++ b/drivers/rtc/rtc-sun6i.c
-@@ -74,7 +74,7 @@
- #define SUN6I_ALARM_CONFIG_WAKEUP		BIT(0)
- 
- #define SUN6I_LOSC_OUT_GATING			0x0060
--#define SUN6I_LOSC_OUT_GATING_EN		BIT(0)
-+#define SUN6I_LOSC_OUT_GATING_EN_OFFSET		0
- 
- /*
-  * Get date values
-@@ -255,7 +255,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
- 				      &clkout_name);
- 	rtc->ext_losc = clk_register_gate(NULL, clkout_name, rtc->hw.init->name,
- 					  0, rtc->base + SUN6I_LOSC_OUT_GATING,
--					  SUN6I_LOSC_OUT_GATING_EN, 0,
-+					  SUN6I_LOSC_OUT_GATING_EN_OFFSET, 0,
- 					  &rtc->lock);
- 	if (IS_ERR(rtc->ext_losc)) {
- 		pr_crit("Couldn't register the LOSC external gate\n");
+	  administrator
+
+> +	  their workload on the given disk.
+> +
+> +HOWTO
+> +=====
+> +
+> +The limits are only applied at the peer level in the heirarchy.  This means that
+> +in the diagram below, only groups A, B, and C will influence eachother, and
+
+                                                                each other, and
+
+> +groups D and F will influence eachother.  Group G will influence nobody.
+
+                                 each other.
+
+> +
+> +			[root]
+> +		/	   |		\
+> +		A	   B		C
+> +	       /  \        |
+> +	      D    F	   G
+> +
+> +
+> +So the ideal way to configure this is to set io.latency in groups A, B, and C.
+> +Generally you do not want to set a value lower than the latency your device
+> +supports.  Experiment to find the value that works best for your workload, start
+> +at higher than the expected latency for your device and watch the total_lat_avg
+> +value in io.stat for your workload group to get an idea of the latency you see
+> +during normal operation.  Use this value as a basis for your real setting,
+> +setting at 10-15% higher than the value in io.stat.  Experimentation is key here
+> +because total_lat_avg is a running total, so is the "statistics" portion of
+> +"lies, damned lies, and statistics."
+> +
+> +How Throttling Works
+> +====================
+> +
+> +io.latency is work conserving, so as long as everybody is meeting their latency
+> +target the controller doesn't do anything.  Once a group starts missing it's
+
+                                                                           its
+
+> +target it begins throttling any peer group that has a higher target than itself.
+> +This throttling takes 2 forms
+
+                         2 forms:
+
+> +
+> +- Queue depth throttling.  This is the number of outstanding IO's a group is
+> +  allowed to have.  We will clamp down relatively quickly, starting at no limit
+> +  and going all the way down to 1 IO at a time.
+> +
+> +- Artificial delay induction.  There are certain types of IO that cannot be
+> +  throttled without possibly adversely affecting higher priority groups.  This
+> +  includes swapping and metadata IO.  These types of IO are allowed to occur
+> +  normally, however they are "charged" to the originating group.  If the
+> +  originating group is being throttled you will see the use_delay and delay
+> +  fields in io.stat increase.  The delay value is how many microseconds that are
+> +  being added to any process that runs in this group.  Because this number can
+> +  grow quite large if there is a lot of swapping or metadata IO occuring we
+
+                                                                   occurring
+
+> +  limit the individual delay events to 1 second at a time.
+> +
+> +Once the victimized group starts meeting it's latency target again it will start
+
+                                            its
+
+> +unthrottling any peer groups that were throttled previous.  If the victimized
+
+                                                    previously.
+
+> +group simply stops doing IO the global counter will unthrottle appropriately.
+> 
+
+
 -- 
-2.14.3
+~Randy
