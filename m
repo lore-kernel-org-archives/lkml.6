@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753628AbeE3Lsn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:48:43 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60638 "EHLO
+        id S1753542AbeE3Lsj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:48:39 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60636 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751624AbeE3LG4 (ORCPT
+        by vger.kernel.org with ESMTP id S1751622AbeE3LG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:06:56 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -16,10 +16,10 @@ To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org, "Wen Xu" <wen.xu@gatech.edu>,
         "Theodore Ts'o" <tytso@mit.edu>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.522720252@decadent.org.uk>
+Message-ID: <lsq.1527677561.336797334@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 006/153] ext4: fail ext4_iget for root directory if
- unallocated
+Subject: [PATCH 3.2 008/153] ext4: add validity checks for bitmap block
+ numbers
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -34,40 +34,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 8e4b5eae5decd9dfe5a4ee369c22028f90ab4c44 upstream.
+commit 7dac4a1726a9c64a517d595c40e95e2d0d135f6f upstream.
 
-If the root directory has an i_links_count of zero, then when the file
-system is mounted, then when ext4_fill_super() notices the problem and
-tries to call iput() the root directory in the error return path,
-ext4_evict_inode() will try to free the inode on disk, before all of
-the file system structures are set up, and this will result in an OOPS
-caused by a NULL pointer dereference.
+An privileged attacker can cause a crash by mounting a crafted ext4
+image which triggers a out-of-bounds read in the function
+ext4_valid_block_bitmap() in fs/ext4/balloc.c.
 
-This issue has been assigned CVE-2018-1092.
+This issue has been assigned CVE-2018-1093.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=199179
-https://bugzilla.redhat.com/show_bug.cgi?id=1560777
-
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=199181
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1560782
 Reported-by: Wen Xu <wen.xu@gatech.edu>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 [bwh: Backported to 3.2:
- - Use EIO instead of EFSCORRUPTED
+ - In ext4_valid_block_bitmap(), goto err_out on error
+ - In ext4_read_{block,inode}_bitmap(), return NULL on error
  - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3902,6 +3902,13 @@ struct inode *ext4_iget(struct super_blo
- 	if (ret < 0)
- 		goto bad_inode;
- 	raw_inode = ext4_raw_inode(&iloc);
-+
-+	if ((ino == EXT4_ROOT_INO) && (raw_inode->i_links_count == 0)) {
-+		EXT4_ERROR_INODE(inode, "root inode unallocated");
-+		ret = -EIO;
-+		goto bad_inode;
+--- a/fs/ext4/balloc.c
++++ b/fs/ext4/balloc.c
+@@ -298,20 +298,25 @@ static int ext4_valid_block_bitmap(struc
+ 	/* check whether block bitmap block number is set */
+ 	bitmap_blk = ext4_block_bitmap(sb, desc);
+ 	offset = bitmap_blk - group_first_block;
+-	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
+ 		/* bad block bitmap */
+ 		goto err_out;
+ 
+ 	/* check whether the inode bitmap block number is set */
+ 	bitmap_blk = ext4_inode_bitmap(sb, desc);
+ 	offset = bitmap_blk - group_first_block;
+-	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
+ 		/* bad block bitmap */
+ 		goto err_out;
+ 
+ 	/* check whether the inode table block number is set */
+ 	bitmap_blk = ext4_inode_table(sb, desc);
+ 	offset = bitmap_blk - group_first_block;
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= sb->s_blocksize)
++		goto err_out;
+ 	next_zero_bit = ext4_find_next_zero_bit(bh->b_data,
+ 			EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group),
+ 			EXT4_B2C(sbi, offset));
+@@ -339,6 +344,7 @@ struct buffer_head *
+ ext4_read_block_bitmap(struct super_block *sb, ext4_group_t block_group)
+ {
+ 	struct ext4_group_desc *desc;
++	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	struct buffer_head *bh = NULL;
+ 	ext4_fsblk_t bitmap_blk;
+ 
+@@ -346,6 +352,12 @@ ext4_read_block_bitmap(struct super_bloc
+ 	if (!desc)
+ 		return NULL;
+ 	bitmap_blk = ext4_block_bitmap(sb, desc);
++	if ((bitmap_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
++	    (bitmap_blk >= ext4_blocks_count(sbi->s_es))) {
++		ext4_error(sb, "Invalid block bitmap block %llu in "
++			   "block_group %u", bitmap_blk, block_group);
++		return NULL;
 +	}
-+
- 	inode->i_mode = le16_to_cpu(raw_inode->i_mode);
- 	inode->i_uid = (uid_t)le16_to_cpu(raw_inode->i_uid_low);
- 	inode->i_gid = (gid_t)le16_to_cpu(raw_inode->i_gid_low);
+ 	bh = sb_getblk(sb, bitmap_blk);
+ 	if (unlikely(!bh)) {
+ 		ext4_error(sb, "Cannot read block bitmap - "
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -102,6 +102,7 @@ static struct buffer_head *
+ ext4_read_inode_bitmap(struct super_block *sb, ext4_group_t block_group)
+ {
+ 	struct ext4_group_desc *desc;
++	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	struct buffer_head *bh = NULL;
+ 	ext4_fsblk_t bitmap_blk;
+ 
+@@ -110,6 +111,12 @@ ext4_read_inode_bitmap(struct super_bloc
+ 		return NULL;
+ 
+ 	bitmap_blk = ext4_inode_bitmap(sb, desc);
++	if ((bitmap_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
++	    (bitmap_blk >= ext4_blocks_count(sbi->s_es))) {
++		ext4_error(sb, "Invalid inode bitmap blk %llu in "
++			   "block_group %u", bitmap_blk, block_group);
++		return NULL;
++	}
+ 	bh = sb_getblk(sb, bitmap_blk);
+ 	if (unlikely(!bh)) {
+ 		ext4_error(sb, "Cannot read inode bitmap - "
