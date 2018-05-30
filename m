@@ -1,93 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932179AbeE3TFv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:05:51 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:44052 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753653AbeE3TFt (ORCPT
+        id S1753757AbeE3TG3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 15:06:29 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44345 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753685AbeE3TG0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:05:49 -0400
-X-Google-Smtp-Source: ADUXVKKu06Tke0dAahx36T4OxaRz/Kc9x4L3V6T3bDY9NbGLCmINXazHTPPQ2IpcsXe8NS8Ievnk+A==
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-To: Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Laurence Oberman <loberman@redhat.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>, Ewan Milne <emilne@redhat.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>, dm-devel@redhat.com
-References: <20180525125322.15398-1-jthumshirn@suse.de>
- <20180525130535.GA24239@lst.de> <20180525135813.GB9591@redhat.com>
- <20180525141211.GA25971@lst.de> <20180525145056.GD9591@redhat.com>
- <yq1muwj45sg.fsf@oracle.com> <20180529030236.GA28895@redhat.com>
- <20180529072240.np5c62akbr7jqelr@linux-x5ow.site>
- <20180529080952.GA1369@lst.de> <20180529232718.GA1730@redhat.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <f4951571-d37d-73cd-1d6c-0ca84647d5ac@kernel.dk>
-Date: Wed, 30 May 2018 13:05:46 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 30 May 2018 15:06:26 -0400
+X-Google-Smtp-Source: ADUXVKI7pLI6v5URnGE8ebB4hvHNg+zA8EAx0hxg0GnnWf36oNbCpkIkn+NwNHClbFGOIm4md1zCPg==
+Date: Wed, 30 May 2018 12:06:22 -0700
+From: Benson Leung <bleung@google.com>
+To: Gwendal Grignou <gwendal@chromium.org>, lee.jones@linaro.org
+Cc: bleung@chromium.org, eballetbo@gmail.com, lee.jones@linaro.org,
+        linux-kernel@vger.kernel.org, enric.balletbo@collabora.com
+Subject: Re: [PATCH v2] platform/chrome: Use to_cros_ec_dev more broadly
+Message-ID: <20180530190622.GA36087@decatoncale.mtv.corp.google.com>
+References: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
+ <20180530160413.33612-1-gwendal@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20180529232718.GA1730@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
+Content-Disposition: inline
+In-Reply-To: <20180530160413.33612-1-gwendal@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/29/18 5:27 PM, Mike Snitzer wrote:
-> On Tue, May 29 2018 at  4:09am -0400,
-> Christoph Hellwig <hch@lst.de> wrote:
-> 
->> On Tue, May 29, 2018 at 09:22:40AM +0200, Johannes Thumshirn wrote:
->>> For a "Plan B" we can still use the global knob that's already in
->>> place (even if this reminds me so much about scsi-mq which at least we
->>> haven't turned on in fear of performance regressions).
->>>
->>> Let's drop the discussion here, I don't think it leads to something
->>> else than flamewars.
->>
->> If our plan A doesn't work we can go back to these patches.  For now
->> I'd rather have everyone spend their time on making Plan A work then
->> preparing for contingencies.  Nothing prevents anyone from using these
->> patches already out there if they really want to, but I'd recommend
->> people are very careful about doing so as you'll lock yourself into
->> a long-term maintainance burden.
-> 
-> Restating (for others): this patchset really isn't about contingencies.
-> It is about choice.
-> 
-> Since we're at an impasse, in the hopes of soliciting definitive
-> feedback from Jens and Linus, I'm going to attempt to reset the
-> discussion for their entry.
-> 
-> In summary, we have a classic example of a maintainer stalemate here:
-> 1) Christoph, as NVMe co-maintainer, doesn't want to allow native NVMe
->    multipath to actively coexist with dm-multipath's NVMe support on the
->    same host.
-> 2) I, as DM maintainer, would like to offer this flexibility to users --
->    by giving them opt-in choice to continue using existing dm-multipath
->    with NVMe. (also, both Red Hat and SUSE would like to offer this).
-> 
-> There is no technical reason why they cannot coexist.  Hence this simple
-> patchset that was originally offered by Johannes Thumshirn with
-> contributions from myself.
 
-Here's what I think - flag days tend to suck. They may be more convenient
-for developers, but they inflict pain on users. Sometimes they prevent
-them from moving forward, since updates are now gated on external
-dependencies. Moving forward with a new architecture is great, but
-proper care has to be given to existing users of multipath, regardless
-of how few they may be.
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patchset seems pretty clean and minimalist. Realistically, I'm
-guessing that SUSE and RH will ship it regardless of upstream status.
+Hi Gwendal,
 
--- 
-Jens Axboe
+On Wed, May 30, 2018 at 09:04:13AM -0700, Gwendal Grignou wrote:
+> Move to_cros_ec_dev macro to cros_ec.h and use it when the private ec
+> object is needed from device object.
+>=20
+> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+
+Applied to platform/chrome for v4.18.
+
+FYI, Lee, I'll add the new macro in cros_ec.h through my tree. Looks to
+merge clean with mfd's changes this time.
+
+Thanks,
+Benson
+
+--=20
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
+
+--1yeeQ81UyVL57Vl7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlsO9i4ACgkQHwn1ewov
+5liCqg/+OwRLP3R2rfmqEqmD72y9k9iSuqrMLJ4lFCUiYTTnYkZazzI+i3ELXNhf
+FIAsBbzm+NDUWemKIzJSFLSqJuCkjUnhmPjh0JNwVr1rfkLLG+duoS0XdumrkXjk
+j5NFDI5q3nEAdMFUQ5TnDykRJIviU+uEWhCXgeoVMd2pupvyH706hu8BIV4/aBi6
+zIF+fhl5P6uuhYB6208as1uRvwEUbkD0fa2PIYYdozdeRdZR81NlrIwZHwdQlxss
+tPBspDOoqQZxTXuXF5gpHvb3vcT7Yub/PwYSYUkLHzGgSGaEM/WxlABEgpfMSeTJ
+hMpjkotBs851bIH801TiUAfuhWAJfb2IKyWswfSXdyPqiNhVe56kfoeRGLqBnci5
+sJf+p4Yq9x+JIkH9/BRLq7jZxlUMsc//Y9OhUc1UcKO+oy4ybkwaNOhVsTI7fgIi
+r/CYMkaaJCh1KEBheB5Ym5aG7ICjxrum20HFoR87/ayP+xzCkpY8jZ6vlELqjWVO
+NgS3apg2xT2ijFo3W7RLxnc2CF9QG31Bb3Q2EmBudvsOfTX7YD/kO0WuCc9Broq9
+qtGI5TY6kANXroCe860ddYKc10vKW0m6XobNwN3syfHd07LMBsQRMm4nx3pQ17EE
+qv5VtZJTnlEVYK9g/2ZdRuYfIShgPsYzWGgnH8IXtEJRKgO2U1o=
+=ushV
+-----END PGP SIGNATURE-----
+
+--1yeeQ81UyVL57Vl7--
