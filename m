@@ -1,121 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753656AbeE3RLy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 13:11:54 -0400
-Received: from mga06.intel.com ([134.134.136.31]:32074 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752980AbeE3RLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 13:11:51 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,461,1520924400";
-   d="asc'?scan'208";a="59864784"
-From: "Rustad, Mark D" <mark.d.rustad@intel.com>
-To: "Duyck, Alexander H" <alexander.h.duyck@intel.com>
-CC: "mst@redhat.com" <mst@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "Daly, Dan" <dan.daly@intel.com>, "Bie, Tiwei" <tiwei.bie@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Liang, Cunming" <cunming.liang@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>
-Subject: Re: [PATCH] virtio_pci: support enabling VFs
-Thread-Topic: [PATCH] virtio_pci: support enabling VFs
-Thread-Index: AQHT+DJkllI7MbkD40qnnyH4gxudsqRI78oAgAAC8ICAAATBAA==
-Date: Wed, 30 May 2018 17:11:37 +0000
-Message-ID: <5063D90B-7955-4F1E-85A2-D8AFD661ACB7@intel.com>
-References: <20180530085521.26583-1-tiwei.bie@intel.com>
- <20180530192010-mutt-send-email-mst@kernel.org>
- <414C18B1-30FA-4AC0-B47D-F0FBF9832737@intel.com>
- <1527699273.29907.2.camel@intel.com>
-In-Reply-To: <1527699273.29907.2.camel@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.233.80.164]
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_79A5F5B5-3E24-4259-A6B1-321A0585332D";
-        protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1753667AbeE3ROc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 13:14:32 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40536 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752982AbeE3ROb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 13:14:31 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Al Stone <ahs3@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mailbox: PCC: check for negative count for parse failure checking
+Date: Wed, 30 May 2018 18:14:29 +0100
+Message-Id: <20180530171429.3172-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_79A5F5B5-3E24-4259-A6B1-321A0585332D
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii;
-	delsp=yes;
-	format=flowed
+From: Colin Ian King <colin.king@canonical.com>
 
-On May 30, 2018, at 9:54 AM, Duyck, Alexander H  
-<alexander.h.duyck@intel.com> wrote:
+The function acpi_table_parse_enties_array can potentially return a
+negative value if parsing fails. Currently the check on the return
+is not checking for errors, so fix this by adding a -ve check too.
 
-> On Wed, 2018-05-30 at 09:44 -0700, Rustad, Mark D wrote:
->> On May 30, 2018, at 9:22 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
->>
->>>> +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int
->>>> num_vfs)
->>>> +{
->>>> +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
->>>> +	struct virtio_device *vdev = &vp_dev->vdev;
->>>> +	int (*sriov_configure)(struct pci_dev *pci_dev, int num_vfs);
->>>> +
->>>> +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
->>>> +		return -EBUSY;
->>>> +
->>>> +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
->>>> +		return -EINVAL;
->>>> +
->>>> +	sriov_configure = pci_sriov_configure_simple;
->>>> +	if (sriov_configure == NULL)
->>>> +		return -ENOENT;
->>>
->>> BTW what is all this trickery in aid of?
->>
->> When SR-IOV support is not compiled into the kernel,
->> pci_sriov_configure_simple is #defined as NULL. This allows it to compile
->> in that case, even though there is utterly no way for it to be called in
->> that case. It is an alternative to #ifs in the code.
->
-> Why even have the call though? I would wrap all of this in an #ifdef
-> and strip it out since you couldn't support SR-IOV if it isn't present
-> in the kernel anyway.
+Detected by CoverityScan, CID#1469477 ("Improper use of negative value")
 
-I am inclined to agree. In this case, the presence of #ifdefs I think would  
-be clearer. As written, someone will want to get rid of the pointer only to  
-create a build problem when SR-IOV is not configured.
+Fixes: 8f8027c5f935 ("mailbox: PCC: erroneous error message when parsing ACPI PCCT")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mailbox/pcc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Mark Rustad, Networking Division, Intel Corporation
-
---Apple-Mail=_79A5F5B5-3E24-4259-A6B1-321A0585332D
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEE6ug8b0Wg+ULmnksNPA7/547j7m4FAlsO20gACgkQPA7/547j
-7m6sgA//aFVQG9ccnLqmx0UcGSLODSICO8nOjKH5F9TnF3JLAawh9D23rjyqdZvC
-MwKssNOkMklZO9i5/2oYs4OaA2Y/prT1ocHZjL5q7gmU8kZIDSJZkbwb83M2p4ov
-Cq7EHKmoBJssyHPiRG92KCRBpx2df9eIHW0X+FeoWvjTIVcLg2B7D+4hE+u7HsFJ
-xMDsOCDYUAEI1RK8+IhaLpwFxjUsQGTW152Kg6vY+92JCVcm1U50bywJeyX81i7s
-eJMOmDFDuwtZbKe59IYQuEHZVTWf/2A4Pgx1tddfzNdpGIhB8+1UQjSBakOqpE2Q
-b/8CgGNP6MO+qsoy1RX/y/0Gnhr5zKSffDRt0neTmZ77FHltFoZSlshMPEfSpRGH
-4SM/HO77OPq29gFVq2Hd5v2h4SAELExSuwIyyU2nFkyPFIR0F3UxZ5lccdAQSuzt
-/6zaame34yhQdeQuD457GKinAQX+c6sEPaztYN/jVqtPkv3TiJOPS5sMaWtb4Rwk
-PT8EkC/BtIyO1gsLcrNwrzZAQKmkq7OajiD8dtwboGN0uPTKm7/eTB3A/UdKB+XL
-BU5wg8Hw6uL/dsjFvkqBZYml88bDPKqz2TjnqS/MI6oJdPsZI68IlHaSvQHK1HPU
-hnnBQfDp878SQrSsA+mWe+eHc/YIj87DM/A/eVBLfTor5pnUcJM=
-=oOs9
------END PGP SIGNATURE-----
-
---Apple-Mail=_79A5F5B5-3E24-4259-A6B1-321A0585332D--
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index fc3c237daef2..87d67922020d 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -461,7 +461,7 @@ static int __init acpi_pcc_probe(void)
+ 	count = acpi_table_parse_entries_array(ACPI_SIG_PCCT,
+ 			sizeof(struct acpi_table_pcct), proc,
+ 			ACPI_PCCT_TYPE_RESERVED, MAX_PCC_SUBSPACES);
+-	if (count == 0 || count > MAX_PCC_SUBSPACES) {
++	if (count <= 0 || count > MAX_PCC_SUBSPACES) {
+ 		pr_warn("Invalid PCCT: %d PCC subspaces\n", count);
+ 		return -EINVAL;
+ 	}
+-- 
+2.17.0
