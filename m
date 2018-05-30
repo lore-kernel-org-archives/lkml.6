@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753136AbeE3L1l (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:27:41 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33285 "EHLO
+        id S1753237AbeE3L2K (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:28:10 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33275 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752656AbeE3LYP (ORCPT
+        by vger.kernel.org with ESMTP id S1751651AbeE3LYB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:24:15 -0400
+        Wed, 30 May 2018 07:24:01 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -14,12 +14,15 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
-        "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>
+        "Stefan Kristiansson" <stefan.kristiansson@saunalahti.fi>,
+        "Jonas Bonn" <jonas@southpole.se>, "Arnd Bergmann" <arnd@arndb.de>,
+        "Stafford Horne" <shorne@gmail.com>, openrisc@lists.librecores.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.935554343@decadent.org.uk>
+Message-ID: <lsq.1527677561.942515338@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 031/153] media: bt8xx: Fix err 'bt878_probe()'
+Subject: [PATCH 3.2 046/153] signal/openrisc: Fix do_unaligned_access to
+ send the proper signal
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -32,34 +35,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-commit 45392ff6881dbe56d41ef0b17c2e576065f8ffa1 upstream.
+commit 500d58300571b6602341b041f97c082a461ef994 upstream.
 
-This is odd to call 'pci_disable_device()' in an error path before a
-coresponding successful 'pci_enable_device()'.
+While reviewing the signal sending on openrisc the do_unaligned_access
+function stood out because it is obviously wrong.  A comment about an
+si_code set above when actually si_code is never set.  Leading to a
+random si_code being sent to userspace in the event of an unaligned
+access.
 
-Return directly instead.
+Looking further SIGBUS BUS_ADRALN is the proper pair of signal and
+si_code to send for an unaligned access. That is what other
+architectures do and what is required by posix.
 
-Fixes: 77e0be12100a ("V4L/DVB (4176): Bug-fix: Fix memory overflow")
+Given that do_unaligned_access is broken in a way that no one can be
+relying on it on openrisc fix the code to just do the right thing.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-[bwh: Backported to 3.2: adjust filename]
+Fixes: 769a8a96229e ("OpenRISC: Traps")
+Cc: Jonas Bonn <jonas@southpole.se>
+Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+Cc: Stafford Horne <shorne@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: openrisc@lists.librecores.org
+Acked-by: Stafford Horne <shorne@gmail.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/dvb/bt8xx/bt878.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/openrisc/kernel/traps.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/media/dvb/bt8xx/bt878.c
-+++ b/drivers/media/dvb/bt8xx/bt878.c
-@@ -434,8 +434,7 @@ static int __devinit bt878_probe(struct
- 	       bt878_num);
- 	if (bt878_num >= BT878_MAX) {
- 		printk(KERN_ERR "bt878: Too many devices inserted\n");
--		result = -ENOMEM;
--		goto fail0;
-+		return -ENOMEM;
- 	}
- 	if (pci_enable_device(dev))
- 		return -EIO;
+--- a/arch/openrisc/kernel/traps.c
++++ b/arch/openrisc/kernel/traps.c
+@@ -313,12 +313,12 @@ asmlinkage void do_unaligned_access(stru
+ 	siginfo_t info;
+ 
+ 	if (user_mode(regs)) {
+-		/* Send a SIGSEGV */
+-		info.si_signo = SIGSEGV;
++		/* Send a SIGBUS */
++		info.si_signo = SIGBUS;
+ 		info.si_errno = 0;
+-		/* info.si_code has been set above */
+-		info.si_addr = (void *)address;
+-		force_sig_info(SIGSEGV, &info, current);
++		info.si_code = BUS_ADRALN;
++		info.si_addr = (void __user *)address;
++		force_sig_info(SIGBUS, &info, current);
+ 	} else {
+ 		printk("KERNEL: Unaligned Access 0x%.8lx\n", address);
+ 		show_registers(regs);
