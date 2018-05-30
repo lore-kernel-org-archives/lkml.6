@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751706AbeE3LW7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:22:59 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60974 "EHLO
+        id S1752801AbeE3LYE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:24:04 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33274 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752512AbeE3LHH (ORCPT
+        by vger.kernel.org with ESMTP id S1752656AbeE3LX6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:07 -0400
+        Wed, 30 May 2018 07:23:58 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Tejun Heo" <tj@kernel.org>,
-        "Eric Biggers" <ebiggers@google.com>,
-        syzbot+1ff6f9fcc3c35f1c72a95e26528c8e7e3276e4da@syzkaller.appspotmail.com
+CC: akpm@linux-foundation.org, "chenxiang" <chenxiang66@hisilicon.com>,
+        "Christoph Hellwig" <hch@lst.de>, "John Garry" <john.garry@huawei.com>,
+        "Jason Yan" <yanaijie@huawei.com>, "chenqilin" <chenqilin2@huawei.com>,
+        "Hannes Reinecke" <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.64140635@decadent.org.uk>
+Message-ID: <lsq.1527677561.644178077@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 085/153] libata: fix length validation of
- ATAPI-relayed SCSI commands
+Subject: [PATCH 3.2 037/153] scsi: libsas: fix error when getting phy events
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,98 +34,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Jason Yan <yanaijie@huawei.com>
 
-commit 058f58e235cbe03e923b30ea7c49995a46a8725f upstream.
+commit 2b23d9509fd7174b362482cf5f3b5f9a2265bc33 upstream.
 
-syzkaller reported a crash in ata_bmdma_fill_sg() when writing to
-/dev/sg1.  The immediate cause was that the ATA command's scatterlist
-was not DMA-mapped, which causes 'pi - 1' to underflow, resulting in a
-write to 'qc->ap->bmdma_prd[0xffffffff]'.
+The intend purpose here was to goto out if smp_execute_task() returned
+error. Obviously something got screwed up. We will never get these link
+error statistics below:
 
-Strangely though, the flag ATA_QCFLAG_DMAMAP was set in qc->flags.  The
-root cause is that when __ata_scsi_queuecmd() is preparing to relay a
-SCSI command to an ATAPI device, it doesn't correctly validate the CDB
-length before copying it into the 16-byte buffer 'cdb' in 'struct
-ata_queued_cmd'.  Namely, it validates the fixed CDB length expected
-based on the SCSI opcode but not the actual CDB length, which can be
-larger due to the use of the SG_NEXT_CMD_LEN ioctl.  Since 'flags' is
-the next member in ata_queued_cmd, a buffer overflow corrupts it.
+~:/sys/class/sas_phy/phy-1:0:12 # cat invalid_dword_count
+0
+~:/sys/class/sas_phy/phy-1:0:12 # cat running_disparity_error_count
+0
+~:/sys/class/sas_phy/phy-1:0:12 # cat loss_of_dword_sync_count
+0
+~:/sys/class/sas_phy/phy-1:0:12 # cat phy_reset_problem_count
+0
 
-Fix it by requiring that the actual CDB length be <= 16 (ATAPI_CDB_LEN).
+Obviously we should goto error handler if smp_execute_task() returns
+non-zero.
 
-[Really it seems the length should be required to be <= dev->cdb_len,
-but the current behavior seems to have been intentionally introduced by
-commit 607126c2a21c ("libata-scsi: be tolerant of 12-byte ATAPI commands
-in 16-byte CDBs") to work around a userspace bug in mplayer.  Probably
-the workaround is no longer needed (mplayer was fixed in 2007), but
-continuing to allow lengths to up 16 appears harmless for now.]
-
-Here's a reproducer that works in QEMU when /dev/sg1 refers to the
-CD-ROM drive that qemu-system-x86_64 creates by default:
-
-    #include <fcntl.h>
-    #include <sys/ioctl.h>
-    #include <unistd.h>
-
-    #define SG_NEXT_CMD_LEN 0x2283
-
-    int main()
-    {
-	    char buf[53] = { [36] = 0x7e, [52] = 0x02 };
-	    int fd = open("/dev/sg1", O_RDWR);
-	    ioctl(fd, SG_NEXT_CMD_LEN, &(int){ 17 });
-	    write(fd, buf, sizeof(buf));
-    }
-
-The crash was:
-
-    BUG: unable to handle kernel paging request at ffff8cb97db37ffc
-    IP: ata_bmdma_fill_sg drivers/ata/libata-sff.c:2623 [inline]
-    IP: ata_bmdma_qc_prep+0xa4/0xc0 drivers/ata/libata-sff.c:2727
-    PGD fb6c067 P4D fb6c067 PUD 0
-    Oops: 0002 [#1] SMP
-    CPU: 1 PID: 150 Comm: syz_ata_bmdma_q Not tainted 4.15.0-next-20180202 #99
-    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-    [...]
-    Call Trace:
-     ata_qc_issue+0x100/0x1d0 drivers/ata/libata-core.c:5421
-     ata_scsi_translate+0xc9/0x1a0 drivers/ata/libata-scsi.c:2024
-     __ata_scsi_queuecmd drivers/ata/libata-scsi.c:4326 [inline]
-     ata_scsi_queuecmd+0x8c/0x210 drivers/ata/libata-scsi.c:4375
-     scsi_dispatch_cmd+0xa2/0xe0 drivers/scsi/scsi_lib.c:1727
-     scsi_request_fn+0x24c/0x530 drivers/scsi/scsi_lib.c:1865
-     __blk_run_queue_uncond block/blk-core.c:412 [inline]
-     __blk_run_queue+0x3a/0x60 block/blk-core.c:432
-     blk_execute_rq_nowait+0x93/0xc0 block/blk-exec.c:78
-     sg_common_write.isra.7+0x272/0x5a0 drivers/scsi/sg.c:806
-     sg_write+0x1ef/0x340 drivers/scsi/sg.c:677
-     __vfs_write+0x31/0x160 fs/read_write.c:480
-     vfs_write+0xa7/0x160 fs/read_write.c:544
-     SYSC_write fs/read_write.c:589 [inline]
-     SyS_write+0x4d/0xc0 fs/read_write.c:581
-     do_syscall_64+0x5e/0x110 arch/x86/entry/common.c:287
-     entry_SYSCALL_64_after_hwframe+0x21/0x86
-
-Fixes: 607126c2a21c ("libata-scsi: be tolerant of 12-byte ATAPI commands in 16-byte CDBs")
-Reported-by: syzbot+1ff6f9fcc3c35f1c72a95e26528c8e7e3276e4da@syzkaller.appspotmail.com
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: John Garry <john.garry@huawei.com>
+CC: chenqilin <chenqilin2@huawei.com>
+CC: chenxiang <chenxiang66@hisilicon.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/ata/libata-scsi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/libsas/sas_expander.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -3194,7 +3194,9 @@ static inline int __ata_scsi_queuecmd(st
- 		if (likely((scsi_op != ATA_16) || !atapi_passthru16)) {
- 			/* relay SCSI command to ATAPI device */
- 			int len = COMMAND_SIZE(scsi_op);
--			if (unlikely(len > scmd->cmd_len || len > dev->cdb_len))
-+			if (unlikely(len > scmd->cmd_len ||
-+				     len > dev->cdb_len ||
-+				     scmd->cmd_len > ATAPI_CDB_LEN))
- 				goto bad_cdb_len;
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -557,7 +557,7 @@ int sas_smp_get_phy_events(struct sas_ph
+ 	res = smp_execute_task(dev, req, RPEL_REQ_SIZE,
+ 			            resp, RPEL_RESP_SIZE);
  
- 			xlat_func = atapi_xlat;
+-	if (!res)
++	if (res)
+ 		goto out;
+ 
+ 	phy->invalid_dword_count = scsi_to_u32(&resp[12]);
