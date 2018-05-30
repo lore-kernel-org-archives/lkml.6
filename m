@@ -1,177 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753655AbeE3Ohp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:37:45 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50280 "EHLO
+        id S1753499AbeE3Ohc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:37:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50294 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753131AbeE3OhY (ORCPT
+        with ESMTP id S1753313AbeE3OhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:37:24 -0400
-Message-Id: <20180530143106.082002139@infradead.org>
+        Wed, 30 May 2018 10:37:25 -0400
+Message-Id: <20180530143106.029493355@infradead.org>
 User-Agent: quilt/0.63-1
-Date: Wed, 30 May 2018 16:22:40 +0200
+Date: Wed, 30 May 2018 16:22:39 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@kernel.org, linux-kernel@vger.kernel.org
 Cc: subhra.mazumdar@oracle.com, steven.sistare@oracle.com,
         dhaval.giani@oracle.com, rohit.k.jain@oracle.com,
         umgwanakikbuti@gmail.com, matt@codeblueprint.co.uk, riel@surriel.com,
         peterz@infradead.org
-Subject: [RFC 04/11] sched/topology: Introduce sched_domain_cores()
+Subject: [RFC 03/11] sched/fair: Only use time once
 References: <20180530142236.667774973@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-sis-again-4.patch
+Content-Disposition: inline; filename=peterz-sis-again-3.patch
 X-Bad-Reply: References but no 'Re:' in Subject.
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to more efficiently iterate cores/smt, we need a cpumask
-containing only the first thread of each core (for the LLC domain).
+The goal is to not spend more time scanning for idle CPUs than we're
+idle for. Otherwise we're inhibiting work.
 
-And since we're iterating SMT specific things, move sched_init_smt()
-over there. Also track how many threads per core we have.
+This means that we need to consider the cost over all the wakeups
+between consequtive idle periods.
+
+Combined AGE+ONCE work better than the old code:
+
+ORIG
+
+1:        0.559639567 seconds time elapsed    ( +-  1.44% )
+2:        0.630091207 seconds time elapsed    ( +-  2.93% )
+5:        2.329768398 seconds time elapsed    ( +-  1.21% )
+10:       3.920248646 seconds time elapsed    ( +-  2.39% )
+20:       6.501776759 seconds time elapsed    ( +-  1.02% )
+40:      10.482109619 seconds time elapsed    ( +-  2.16% )
+
+AGE+ONCE
+
+1:        0.546238431 seconds time elapsed    ( +-  0.84% )
+2:        0.620581405 seconds time elapsed    ( +-  1.26% )
+5:        2.161288964 seconds time elapsed    ( +-  1.90% )
+10:       3.514636966 seconds time elapsed    ( +-  1.82% )
+20:       6.228234657 seconds time elapsed    ( +-  0.67% )
+40:       9.755615438 seconds time elapsed    ( +-  2.20% )
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/linux/sched/topology.h |    9 +++++++++
- kernel/sched/core.c            |   18 ------------------
- kernel/sched/fair.c            |    3 +++
- kernel/sched/sched.h           |    2 ++
- kernel/sched/topology.c        |   35 +++++++++++++++++++++++++++++++++--
- 5 files changed, 47 insertions(+), 20 deletions(-)
+ kernel/sched/fair.c     |   15 +++++++++++++++
+ kernel/sched/features.h |    1 +
+ 2 files changed, 16 insertions(+)
 
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -72,6 +72,8 @@ struct sched_domain_shared {
- 	atomic_t	ref;
- 	atomic_t	nr_busy_cpus;
- 	int		has_idle_cores;
-+
-+	unsigned long core_mask[0];
- };
- 
- struct sched_domain {
-@@ -162,6 +164,13 @@ static inline struct cpumask *sched_doma
- 	return to_cpumask(sd->span);
- }
- 
-+#ifdef CONFIG_SCHED_SMT
-+static inline struct cpumask *sched_domain_cores(struct sched_domain *sd)
-+{
-+	return to_cpumask(sd->shared->core_mask);
-+}
-+#endif
-+
- extern void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 				    struct sched_domain_attr *dattr_new);
- 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5854,22 +5854,6 @@ int sched_cpu_dying(unsigned int cpu)
- }
- #endif
- 
--#ifdef CONFIG_SCHED_SMT
--DEFINE_STATIC_KEY_FALSE(sched_smt_present);
--
--static void sched_init_smt(void)
--{
--	/*
--	 * We've enumerated all CPUs and will assume that if any CPU
--	 * has SMT siblings, CPU0 will too.
--	 */
--	if (cpumask_weight(cpu_smt_mask(0)) > 1)
--		static_branch_enable(&sched_smt_present);
--}
--#else
--static inline void sched_init_smt(void) { }
--#endif
--
- void __init sched_init_smp(void)
- {
- 	sched_init_numa();
-@@ -5891,8 +5875,6 @@ void __init sched_init_smp(void)
- 	init_sched_rt_class();
- 	init_sched_dl_class();
- 
--	sched_init_smt();
--
- 	sched_smp_initialized = true;
- }
- 
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -6238,6 +6238,9 @@ static inline int find_idlest_cpu(struct
- }
- 
- #ifdef CONFIG_SCHED_SMT
-+DEFINE_STATIC_KEY_FALSE(sched_smt_present);
-+
-+__read_mostly int sched_smt_weight = 1;
- 
- static inline void set_idle_cores(int cpu, int val)
- {
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -910,6 +910,8 @@ static inline void update_idle_core(stru
- 		__update_idle_core(rq);
- }
- 
-+extern __read_mostly int sched_smt_weight;
-+
- #else
- static inline void update_idle_core(struct rq *rq) { }
- #endif
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1190,8 +1190,39 @@ sd_init(struct sched_domain_topology_lev
- 	 */
- 	if (sd->flags & SD_SHARE_PKG_RESOURCES) {
- 		sd->shared = *per_cpu_ptr(sdd->sds, sd_id);
--		atomic_inc(&sd->shared->ref);
- 		atomic_set(&sd->shared->nr_busy_cpus, sd_weight);
-+		if (atomic_read(&sd->shared->ref)) {
-+			atomic_inc(&sd->shared->ref);
-+		} else {
-+#ifdef CONFIG_SCHED_SMT
-+			int core, smt, smt_weight;
-+
-+			/*
-+			 * Set the first SMT sibling of each core present in
-+			 * the domain span.
-+			 */
-+			for_each_cpu(core, sched_domain_span(sd)) {
-+				for_each_cpu(smt, cpu_smt_mask(core)) {
-+					if (cpumask_test_cpu(smt, sched_domain_span(sd))) {
-+						__cpumask_set_cpu(smt, sched_domain_cores(sd));
-+						break;
-+					}
-+				}
-+
-+				/*
-+				 * And track the presence and number of threads per core.
-+				 */
-+
-+				smt_weight = cpumask_weight(cpu_smt_mask(core));
-+				if (smt_weight > sched_smt_weight) {
-+					sched_smt_weight = smt_weight;
-+					static_branch_enable(&sched_smt_present);
-+				}
-+			}
-+#endif
-+
-+			atomic_set(&sd->shared->ref, 1);
-+		}
+@@ -6429,6 +6429,21 @@ static int select_idle_cpu(struct task_s
  	}
  
- 	sd->private = sdd;
-@@ -1537,7 +1568,7 @@ static int __sdt_alloc(const struct cpum
+ 	time = local_clock() - time;
++
++	if (sched_feat(SIS_ONCE)) {
++		struct rq *this_rq = this_rq();
++
++		/*
++		 * We need to consider the cost of all wakeups between
++		 * consequtive idle periods. We can only use the predicted
++		 * idle time once.
++		 */
++		if (this_rq->wake_avg > time)
++			this_rq->wake_avg -= time;
++		else
++			this_rq->wake_avg = 0;
++	}
++
+ 	time = div_u64(time, loops);
+ 	cost = this_sd->avg_scan_cost;
+ 	delta = (s64)(time - cost) / 8;
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -59,6 +59,7 @@ SCHED_FEAT(SIS_AVG_CPU, false)
+ SCHED_FEAT(SIS_PROP, true)
  
- 			*per_cpu_ptr(sdd->sd, j) = sd;
+ SCHED_FEAT(SIS_AGE, true)
++SCHED_FEAT(SIS_ONCE, true)
  
--			sds = kzalloc_node(sizeof(struct sched_domain_shared),
-+			sds = kzalloc_node(sizeof(struct sched_domain_shared) + cpumask_size(),
- 					GFP_KERNEL, cpu_to_node(j));
- 			if (!sds)
- 				return -ENOMEM;
+ /*
+  * Issue a WARN when we do multiple update_rq_clock() calls
