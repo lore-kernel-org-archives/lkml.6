@@ -1,96 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966833AbeE3A2X (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 20:28:23 -0400
-Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.107]:54506
-        "EHLO icp-osb-irony-out7.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965323AbeE3A2U (ORCPT
+        id S968085AbeE3A2w (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 20:28:52 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:41919 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965323AbeE3A2t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 20:28:20 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2DnAACH7w1b/zXSMGcNTxoBAQEBAQIBA?=
- =?us-ascii?q?QEBCAEBAQGDGYENbTqDd5U3AQEBAQEBBn8IIXUalTMqhE0Cgjg4FAECAQEBAQE?=
- =?us-ascii?q?BAoEIhTUBAQEDIxVBEAsNCwICJgICVwYBDAYCAQGDHgKBchykS22CHBqEPoNqg?=
- =?us-ascii?q?WMFgQmIOYEHgQ8kDIIoNYJ6hHmCVAKHI5E/CAGFbIJXhhcIh3iFDIlsiHeBczM?=
- =?us-ascii?q?aCCgIgn4fggEXEWkBAYddhVBdkAQBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2DnAACH7w1b/zXSMGcNTxoBAQEBAQIBAQEBCAEBAQGDGYE?=
- =?us-ascii?q?NbTqDd5U3AQEBAQEBBn8IIXUalTMqhE0Cgjg4FAECAQEBAQEBAoEIhTUBAQEDI?=
- =?us-ascii?q?xVBEAsNCwICJgICVwYBDAYCAQGDHgKBchykS22CHBqEPoNqgWMFgQmIOYEHgQ8?=
- =?us-ascii?q?kDIIoNYJ6hHmCVAKHI5E/CAGFbIJXhhcIh3iFDIlsiHeBczMaCCgIgn4fggEXE?=
- =?us-ascii?q?WkBAYddhVBdkAQBAQ?=
-X-IronPort-AV: E=Sophos;i="5.49,458,1520870400";
-   d="scan'208";a="84602333"
-Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC
- based ethernet
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Christoph Hellwig <hch@lst.de>
-Cc: Michael Schmitz <schmitzmic@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, Joshua Thompson <funaho@jurai.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
- <alpine.LNX.2.21.1805271212480.9@nippy.intranet>
- <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com>
- <alpine.LNX.2.21.1805271547090.9@nippy.intranet>
- <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com>
- <alpine.LNX.2.21.1805281521420.10@nippy.intranet>
- <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
-From: Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <10880132-7686-78f6-7f9f-3fc29c3e554a@linux-m68k.org>
-Date: Wed, 30 May 2018 10:28:15 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 29 May 2018 20:28:49 -0400
+X-Google-Smtp-Source: ADUXVKIAlt0V6Ds5PpZRhD3KRrR5tqklOKTZ2Ki4Kp0aAa4AAu3ID7GQfHT+uoTSI7t2SmROcxk35g==
+Date: Wed, 30 May 2018 08:28:37 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Robert Walker <Robert.Walker@arm.com>,
+        Mike Leach <mike.leach@linaro.org>, Kim Phillips <kim.phillips@arm.co>,
+        Tor Jeremiassen <tor@ti.com>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        coresight@lists.linaro.org
+Subject: Re: [RFT v3 1/4] perf cs-etm: Generate branch sample for missed
+ packets
+Message-ID: <20180530002837.GB11923@leoy-ThinkPad-X240s>
+References: <1527497103-3593-1-git-send-email-leo.yan@linaro.org>
+ <1527497103-3593-2-git-send-email-leo.yan@linaro.org>
+ <20180528221347.GA4109@xps15>
+ <20180529002538.GA11317@leoy-ThinkPad-X240s>
+ <CANLsYkzEU90aVtPMRqf=YHzee8DHq8JZttRuxjLKGz-gRYiBuw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANLsYkzEU90aVtPMRqf=YHzee8DHq8JZttRuxjLKGz-gRYiBuw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Hi Mathieu,
 
-On 28/05/18 20:15, Geert Uytterhoeven wrote:
-> On Mon, May 28, 2018 at 7:26 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
->> On Mon, 28 May 2018, Michael Schmitz wrote:
->>> Am 27.05.2018 um 17:49 schrieb Finn Thain:
->>>> On Sun, 27 May 2018, Michael Schmitz wrote:
->>>>
->>>>> That should have fixed the warning already ...
->>>>
->>>> It's still not fixed (hence my "acked-by" for Geunter's patch).
->>>>
->>>
->>> Odd - does link order still matter even though the
->>> arch_setup_dev_archdata() function from the core platform code is
->>> declared as a weak symbol?
->>>
->>> I'll see what I can find out on elgar ...
->>>
->>
->> Any one of the numerous patches/rfcs/suggestions that I sent will avoid
->> the WARN splat.
->>
->> When I said "it's still not fixed", what I meant to say was, "it's still
->> not fixed in mainline and no proposed fix was accepted to the best of my
->> knowledge".
+On Tue, May 29, 2018 at 10:04:49AM -0600, Mathieu Poirier wrote:
+
+[...]
+
+> > As now this patch is big with more complex logic, so I consider to
+> > split it into small patches:
+> >
+> > - Define CS_ETM_INVAL_ADDR;
+> > - Fix for CS_ETM_TRACE_ON packet;
+> > - Fix for exception packet;
+> >
+> > Does this make sense for you?  I have concern that this patch is a
+> > fixing patch, so not sure after spliting patches will introduce
+> > trouble for applying them for other stable kernels ...
 > 
-> Indeed.
+> Reverse the order:
 > 
-> Do we have a consensus on the way forward? The merge window for
-> v4.18 will open soon.
+> - Fix for CS_ETM_TRACE_ON packet;
+> - Fix for exception packet;
+> - Define CS_ETM_INVAL_ADDR;
+> 
+> But you may not need to - see next comment.
 
-For whatever it is worth I thought Finn's patch was the best approach
-(https://lkml.org/lkml/2018/5/17/333, "m68k: Set default dma mask for
-platform device").
+>From the discussion context, I think here 'you may not need to' is
+referring to my concern for applying patches on stable kernel, so I
+should take this patch series as an enhancement and don't need to
+consider much for stable kernel.
 
-We seem to be hitting quite a few places (within m68k) that otherwise
-need individual fixes. There is no immediate need to revert existing
-changes that have already been applied if we use this now either
-(like my FEC fix, commit f61e64310b75 "m68k: set dma and coherent
-masks for platform FEC ethernets").
+On the other hand, your suggestion is possible to mean 'not need
+to' split into small patches (though I guess this is misunderstanding
+for your meaning).
 
-Regards
-Greg
+Could you clarify which is your meaning?
+
+> >> > +
+> >> > +   /*
+> >> >      * The packet records the execution range with an exclusive end address
+> >> >      *
+> >> >      * A64 instructions are constant size, so the last executed
+> >> > @@ -505,6 +519,18 @@ static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
+> >> >     return packet->end_addr - A64_INSTR_SIZE;
+> >> >  }
+> >> >
+> >> > +static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
+> >> > +{
+> >> > +   /*
+> >> > +    * The packet is the CS_ETM_TRACE_ON packet if the start_addr is
+> >> > +    * magic number 0xdeadbeefdeadbeefUL, returns 0 for this case.
+> >> > +    */
+> >> > +   if (packet->start_addr == 0xdeadbeefdeadbeefUL)
+> >> > +           return 0;
+> >>
+> >> Same comment as above.
+> >
+> > Will do this.
+> >
+> >> > +
+> >> > +   return packet->start_addr;
+> >> > +}
+> >> > +
+> >> >  static inline u64 cs_etm__instr_count(const struct cs_etm_packet *packet)
+> >> >  {
+> >> >     /*
+> >> > @@ -546,7 +572,7 @@ static void cs_etm__update_last_branch_rb(struct cs_etm_queue *etmq)
+> >> >
+> >> >     be       = &bs->entries[etmq->last_branch_pos];
+> >> >     be->from = cs_etm__last_executed_instr(etmq->prev_packet);
+> >> > -   be->to   = etmq->packet->start_addr;
+> >> > +   be->to   = cs_etm__first_executed_instr(etmq->packet);
+> >> >     /* No support for mispredict */
+> >> >     be->flags.mispred = 0;
+> >> >     be->flags.predicted = 1;
+> >> > @@ -701,7 +727,7 @@ static int cs_etm__synth_branch_sample(struct cs_etm_queue *etmq)
+> >> >     sample.ip = cs_etm__last_executed_instr(etmq->prev_packet);
+> >> >     sample.pid = etmq->pid;
+> >> >     sample.tid = etmq->tid;
+> >> > -   sample.addr = etmq->packet->start_addr;
+> >> > +   sample.addr = cs_etm__first_executed_instr(etmq->packet);
+> >> >     sample.id = etmq->etm->branches_id;
+> >> >     sample.stream_id = etmq->etm->branches_id;
+> >> >     sample.period = 1;
+> >> > @@ -897,13 +923,28 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+> >> >             etmq->period_instructions = instrs_over;
+> >> >     }
+> >> >
+> >> > -   if (etm->sample_branches &&
+> >> > -       etmq->prev_packet &&
+> >> > -       etmq->prev_packet->sample_type == CS_ETM_RANGE &&
+> >> > -       etmq->prev_packet->last_instr_taken_branch) {
+> >> > -           ret = cs_etm__synth_branch_sample(etmq);
+> >> > -           if (ret)
+> >> > -                   return ret;
+> >> > +   if (etm->sample_branches && etmq->prev_packet) {
+> >> > +           bool generate_sample = false;
+> >> > +
+> >> > +           /* Generate sample for start tracing packet */
+> >> > +           if (etmq->prev_packet->sample_type == 0 ||
+> >>
+> >> What kind of packet is sample_type == 0 ?
+> >
+> > Just as explained above, sample_type == 0 is the packet which
+> > initialized in the function cs_etm__alloc_queue().
+> >
+> >> > +               etmq->prev_packet->sample_type == CS_ETM_TRACE_ON)
+> >> > +                   generate_sample = true;
+> >> > +
+> >> > +           /* Generate sample for exception packet */
+> >> > +           if (etmq->prev_packet->exc == true)
+> >> > +                   generate_sample = true;
+> >>
+> >> Please don't do that.  Exception packets have a type of their own and can be
+> >> added to the decoder packet queue the same way INST_RANGE and TRACE_ON packets
+> >> are.  Moreover exception packet containt an address that, if I'm reading the
+> >> documenation properly, can be used to keep track of instructions that were
+> >> executed between the last address of the previous range packet and the address
+> >> executed just before the exception occurred.  Mike and Rob will have to confirm
+> >> this as the decoder may be doing all that hard work for us.
+> >
+> > Sure, will wait for Rob and Mike to confirm for this.
+> >
+> > At my side, I dump the packet, the exception packet isn't passed to
+> > cs-etm.c layer, the decoder layer only sets the flag
+> > 'packet->exc = true' when exception packet is coming [1].
+> 
+> That's because we didn't need the information.  Now that we do a
+> function that will insert a packet in the decoder packet queue and
+> deal with the new packet type in the main decoder loop [2].  At that
+> point your work may not be eligible for stable anymore and I think it
+> is fine.  Robert's work was an enhancement over mine and yours is an
+> enhancement over his.
+> 
+> [2]. https://elixir.bootlin.com/linux/v4.17-rc7/source/tools/perf/util/cs-etm.c#L999
+
+Agree, will look into for exception packet and try to add new packet
+type for this.
+
+[...]
+
+Thanks,
+Leo Yan
