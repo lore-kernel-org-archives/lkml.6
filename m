@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967456AbeE3AFT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 20:05:19 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45589 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755320AbeE3AFO (ORCPT
+        id S968135AbeE3AF0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 20:05:26 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:43800 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755375AbeE3AFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 20:05:14 -0400
-X-Google-Smtp-Source: ADUXVKK+DDlrHOEFtccOE+/eB4g1l+dPxtiDxw1OFBK6j3dNATkqBvtzy7ZPpE9WRADrkLI7e+If/A==
+        Tue, 29 May 2018 20:05:15 -0400
+X-Google-Smtp-Source: ADUXVKLCGg1DYaAAG7a5kZabThomFHGgnTha96lm+PB+M85xx4h6Jj0Jn+8MGKCX5EP5w6t67wdFFQ==
 From: Joel Fernandes <joelaf@google.com>
 X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
 To: linux-kernel@vger.kernel.org
-Cc: kernel-team@android.com, Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
+Cc: kernel-team@android.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Boqun Feng <boqun.feng@gmail.com>,
         Byungchul Park <byungchul.park@lge.com>,
         Erick Reyes <erickreyes@google.com>, Ingo Molnar <mingo@redhat.com>,
@@ -20,13 +20,14 @@ Cc: kernel-team@android.com, Paul McKenney <paulmck@linux.vnet.ibm.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
         Peter Zijlstra <peterz@infradead.org>, Shuah Khan <shuah@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Glexiner <tglx@linutronix.de>, Todd Kjos <tkjos@google.com>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v8 2/8] srcu: Add notrace variants of srcu_read_{lock,unlock}
-Date: Tue, 29 May 2018 17:04:54 -0700
-Message-Id: <20180530000500.257225-3-joel@joelfernandes.org>
+Subject: [PATCH v8 3/8] srcu: Add notrace variant of srcu_dereference
+Date: Tue, 29 May 2018 17:04:55 -0700
+Message-Id: <20180530000500.257225-4-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 In-Reply-To: <20180530000500.257225-1-joel@joelfernandes.org>
 References: <20180530000500.257225-1-joel@joelfernandes.org>
@@ -34,57 +35,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul McKenney <paulmck@linux.vnet.ibm.com>
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-This is needed for a future tracepoint patch that uses srcu, and to make
-sure it doesn't call into lockdep.
+In the last patch in this series, we are making lockdep register hooks
+onto the irq_{disable,enable} tracepoints. These tracepoints use the
+_rcuidle tracepoint variant. In this series we switch the _rcuidle
+tracepoint callers to use SRCU instead of sched-RCU. Inorder to
+dereference the pointer to the probe functions, we could call
+srcu_dereference, however this API will call back into lockdep to check
+if the lock is held *before* the lockdep probe hooks have a chance to
+run and annotate the IRQ enabled/disabled state.
 
-tracepoint code already calls notrace variants for rcu_read_lock_sched
-so this patch does the same for srcu which will be used in a later
-patch. Keeps it consistent with rcu-sched.
+For this reason we need a notrace variant of srcu_dereference since
+otherwise we get lockdep splats. This patch adds the needed
+srcu_dereference_notrace variant.
 
-[Joel: Added commit message]
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- include/linux/srcu.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ include/linux/srcu.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 33c1c698df09..2ec618979b20 100644
+index 2ec618979b20..a1c4947be877 100644
 --- a/include/linux/srcu.h
 +++ b/include/linux/srcu.h
-@@ -161,6 +161,16 @@ static inline int srcu_read_lock(struct srcu_struct *sp) __acquires(sp)
- 	return retval;
- }
+@@ -135,6 +135,11 @@ static inline int srcu_read_lock_held(const struct srcu_struct *sp)
+  */
+ #define srcu_dereference(p, sp) srcu_dereference_check((p), (sp), 0)
  
-+/* Used by tracing, cannot be traced and cannot invoke lockdep. */
-+static inline notrace int
-+srcu_read_lock_notrace(struct srcu_struct *sp) __acquires(sp)
-+{
-+	int retval;
-+
-+	retval = __srcu_read_lock(sp);
-+	return retval;
-+}
++/**
++ * srcu_dereference_notrace - no tracing and no lockdep calls from here
++ */
++#define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)
 +
  /**
-  * srcu_read_unlock - unregister a old reader from an SRCU-protected structure.
-  * @sp: srcu_struct in which to unregister the old reader.
-@@ -175,6 +185,13 @@ static inline void srcu_read_unlock(struct srcu_struct *sp, int idx)
- 	__srcu_read_unlock(sp, idx);
- }
- 
-+/* Used by tracing, cannot be traced and cannot call lockdep. */
-+static inline notrace void
-+srcu_read_unlock_notrace(struct srcu_struct *sp, int idx) __releases(sp)
-+{
-+	__srcu_read_unlock(sp, idx);
-+}
-+
- /**
-  * smp_mb__after_srcu_read_unlock - ensure full ordering after srcu_read_unlock
-  *
+  * srcu_read_lock - register a new reader for an SRCU-protected structure.
+  * @sp: srcu_struct in which to register the new reader.
 -- 
 2.17.0.921.gf22659ad46-goog
