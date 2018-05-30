@@ -1,125 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753582AbeE3Nrt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 09:47:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52314 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752675AbeE3Nrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 09:47:46 -0400
-Subject: Re: [PATCH v9 0/7] Enable cpuset controller in default hierarchy
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <1527601294-3444-1-git-send-email-longman@redhat.com>
- <20180530101317.GB3320@localhost.localdomain>
- <d74c67ea-43c9-cabb-4303-ecff008412df@redhat.com>
- <20180530130555.GD3320@localhost.localdomain>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <e42f910a-83b7-0fd2-2c77-05d069441c2f@redhat.com>
-Date: Wed, 30 May 2018 09:47:42 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S932076AbeE3NsS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 09:48:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39590 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751568AbeE3NsP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 09:48:15 -0400
+Date: Wed, 30 May 2018 06:49:52 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com, joel@joelfernandes.org
+Subject: Re: [RFC] rcu: Check the range of jiffies_till_xxx_fqs on setting
+ them
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1527578616-5595-1-git-send-email-byungchul.park@lge.com>
+ <20180529120155.GC3803@linux.vnet.ibm.com>
+ <ec3f99af-902d-4a12-f533-07de97dab310@lge.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530130555.GD3320@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec3f99af-902d-4a12-f533-07de97dab310@lge.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18053013-0008-0000-0000-0000030EA663
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009098; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039841; UDB=6.00532237; IPR=6.00818975;
+ MB=3.00021375; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 13:48:11
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053013-0009-0000-0000-000039686920
+Message-Id: <20180530134952.GF7063@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805300154
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/30/2018 09:05 AM, Juri Lelli wrote:
-> On 30/05/18 08:56, Waiman Long wrote:
->> On 05/30/2018 06:13 AM, Juri Lelli wrote:
->>> Hi,
->>>
->>> On 29/05/18 09:41, Waiman Long wrote:
->>>> v9:
->>>>  - Rename cpuset.sched.domain to cpuset.sched.domain_root to better
->>>>    identify its purpose as the root of a new scheduling domain or
->>>>    partition.
->>>>  - Clarify in the document about the purpose of domain_root and
->>>>    load_balance. Using domain_root is th only way to create new
->>>>    partition.
->>>>  - Fix a lockdep warning in update_isolated_cpumask() function.
->>>>  - Add a new patch to eliminate call to generate_sched_domains() for
->>>>    v2 when a change in cpu list does not touch a domain_root.
->>> I was playing with this and ended up with the situation below:
->>>
->>>  g1/cgroup.controllers:cpuset
->>>  g1/cgroup.events:populated 0
->>>  g1/cgroup.max.depth:max
->>>  g1/cgroup.max.descendants:max
->>>  g1/cgroup.stat:nr_descendants 1
->>>  g1/cgroup.stat:nr_dying_descendants 0
->>>  g1/cgroup.subtree_control:cpuset
->>>  g1/cgroup.type:domain
->>>  g1/cpuset.cpus:0-5                   <---
->>>  g1/cpuset.cpus.effective:0-5
->>>  g1/cpuset.mems.effective:0-1
->>>  g1/cpuset.sched.domain_root:1        <---
->>>  g1/cpuset.sched.load_balance:1
->>>  g1/cpu.stat:usage_usec 0
->>>  g1/cpu.stat:user_usec 0
->>>  g1/cpu.stat:system_usec 0
->>>  g1/g11/cgroup.events:populated 0
->>>  g1/g11/cgroup.max.descendants:max
->>>  g1/g11/cpu.stat:usage_usec 0
->>>  g1/g11/cpu.stat:user_usec 0
->>>  g1/g11/cpu.stat:system_usec 0
->>>  g1/g11/cgroup.type:domain
->>>  g1/g11/cgroup.stat:nr_descendants 0
->>>  g1/g11/cgroup.stat:nr_dying_descendants 0
->>>  g1/g11/cpuset.cpus.effective:0-5
->>>  g1/g11/cgroup.controllers:cpuset
->>>  g1/g11/cpuset.sched.load_balance:1
->>>  g1/g11/cpuset.mems.effective:0-1
->>>  g1/g11/cpuset.cpus:6-11              <---
->>>  g1/g11/cgroup.max.depth:max
->>>  g1/g11/cpuset.sched.domain_root:0
->>>
->>> Should this be allowed? I was expecting subgroup g11 should be
->>> restricted to a subset of g1's cpus.
->>>
->>> Best,
->>>
->>> - Juri
->> That shouldn't be allowed.The code is probably missing some checks that
->> should have been done. What was the sequence of commands leading to the
->> above configuration?
-> This is a E5-2609 v3 (12 cores) Fedora Server box (with systemd, so
-> first command is needed to be able to use cpuset controller with v2,
-> IIUC):
->
-> # umount /sys/fs/cgroup/cpuset 
-> # cd /sys/fs/cgroup/unified/
-> # echo "+cpuset" >cgroup.subtree_control 
-> # mkdir g1
-> # echo 0-5 >g1/cpuset.cpus
-> # echo 6-11 >init.scope/cpuset.cpus
-> # echo 6-11 >machine.slice/cpuset.cpus
-> # echo 6-11 >system.slice/cpuset.cpus
-> # echo 6-11 >user.slice/cpuset.cpus
-> # echo 1 >g1/cpuset.sched.domain_root 
-> # mkdir g1/g11
-> # echo "+cpuset" > g1/cgroup.subtree_control 
-> # echo 6-11 >g1/g11/cpuset.cpus
-> # grep -R . g1/*
->
-> That should be it. Am I doing something wrong?
->
+On Wed, May 30, 2018 at 10:06:52PM +0900, Byungchul Park wrote:
+> 
+> 
+> On 2018-05-29 21:01, Paul E. McKenney wrote:
+> >On Tue, May 29, 2018 at 04:23:36PM +0900, Byungchul Park wrote:
+> >>Hello Paul and folks,
+> >>
+> >>I've thought the code should've been like the below since the range
+> >>checking of jiffies_till_first_fqs and jiffies_till_next_fqs everytime
+> >>in the loop of rcu_gp_kthread are unnecessary at all. However, it's ok
+> >>even if you don't think it's worth doing it.
+> >
+> >Nice!
+> >
+> >>Secondly, I also think jiffies_till_first_fqs = 0 is meaningless so
+> >>added checking and adjusting it as what's done on jiffies_till_next_fqs.
+> >>Thought?
+> >
+> >Actually, jiffies_till_first_fqs == 0 is very useful for cases where
+> >at least one CPU is expected to be idle and grace-period latency is
+> >important.  In this case, doing the first scan immediately gets the
+> >dyntick-idle state recorded immediately, getting the idle CPUs out of
+> >the way of the grace period immediately.
+> 
+> Hi Paul~
+> 
+> You might want to handle it through sysfs. Otherwise, we can do it with
+> force_quiescent_state() IMHO.
+
+I agree that sysfs would be better than debugfs because these parameters
+are about tuning, not debugging, so good point!
+
+> >So why not do this scan as part of grace-period initialization?  Because
+> >doing so consumes extra CPU and results in extra cache misses, which is
+> >the opposite of what you want on a completely busy system, especially
+> >one where the CPUs are context switching quickly.  Thus no scan during
+> >grace-period initialization.
+> 
+> I am sorry I don't understand this paragraph. :(
+
+Let me try again.  ;-)
+
+I could change RCU to avoid the need for jiffies_till_first_fqs == 0,
+but doing that would increase CPU consumption for workloads that are
+already bottlenecked on the CPU.  So I won't be making that change,
+so we still need jiffies_till_first_fqs == 0.
+
+> >But I can see the desire to share code.
+> >
+> >One approach would be to embed the kernel_params_ops structure inside
+> >another structure containing the limits, then just have two structures.
+> >Perhaps something like this already exists?  I don't see it right off,
+> >but then again, I am not exactly an expert on module_param.
+> 
+> It would be much nicer if we can as you said. I will check it.
+
+Sounds very good!
+
+							Thanx, Paul
+
+> Thanks a lot Paul.
+> 
+> -- 
 > Thanks,
->
-> - Juri
-
-
-Yes, it is a bug in the existing code. I have sent out a patch to fix that.
-
--Longman
+> Byungchul
+> 
