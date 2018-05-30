@@ -1,95 +1,197 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968481AbeE3AsN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 29 May 2018 20:48:13 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:43947 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S968452AbeE3AsJ (ORCPT
+        id S968296AbeE3Azn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 29 May 2018 20:55:43 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:38521 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964788AbeE3Azk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 May 2018 20:48:09 -0400
-X-ME-Proxy: <xmx:yPQNWwk7DG7p4xhVCOgA0C_2PWU7vh-m8r2fNhzxUdNojXM7Pl-iyA>
-X-ME-Proxy: <xmx:yPQNW5ZcsYiK8zslTOEmIQnAqqpihfmTPTIWujTw77fG6lP-dm7LXg>
-X-ME-Proxy: <xmx:yPQNW5aJOtJxGVSkGxl9AwEjb4rg-_tcvPYU_iEvH-70RUVsPlG0pg>
-X-ME-Proxy: <xmx:yPQNW_Gy8gvyt_-Wm86iStZHstwfMAuz5E-NZC_cs9yOXgHhkDhU1Q>
-X-ME-Proxy: <xmx:yPQNWyyv0H6KU4wfDZEEjh9WHyb8Vk7hT20SgWvQobn5bCYTJjwd1A>
-X-ME-Proxy: <xmx:yPQNW00_K9sCPHrFDuGrdbz5mNlep0KczKzLhNasCtrctbxPUxYMeg>
-X-ME-Sender: <xms:yPQNW-4DQ-30uNLxcVTbzH4R1zkz7xwcbdaCFo6ofWNwco_Kyc_KuQ>
-Message-ID: <1527641284.2735.12.camel@themaw.net>
-Subject: Re: [PATCH] autofs: make autofs4 and autofs mutually exclusive
-From: Ian Kent <raven@themaw.net>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Date: Wed, 30 May 2018 08:48:04 +0800
-In-Reply-To: <20180529094702.4092022-1-arnd@arndb.de>
-References: <20180529094702.4092022-1-arnd@arndb.de>
+        Tue, 29 May 2018 20:55:40 -0400
+X-Google-Smtp-Source: ADUXVKLPV+A2DKAANyiDdPhpgArNQrLENza8XSRuOSBxnMJopjUcvXySVcJy96JYgJaWBYkmzeOBSKh+BVJHJalUUA4=
+MIME-Version: 1.0
+In-Reply-To: <20180529185021.13738-1-marcus.folkesson@gmail.com>
+References: <20180529185021.13738-1-marcus.folkesson@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 30 May 2018 03:55:39 +0300
+Message-ID: <CAHp75VeSbC3QBswCxZpoVpT4cL4pXC5eouCc9YtvBtXG3YddTg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] usb: gadget: ccid: add support for USB CCID Gadget Device
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        USB <linux-usb@vger.kernel.org>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-29 at 11:46 +0200, Arnd Bergmann wrote:
-> The autofs4 implementation is just a redirect to autofs now, but that
-> also means we can't have both built into the same kernel:
-> 
-> fs/autofs/inode.o: In function `autofs_new_ino':
-> inode.c:(.text+0x1b8): multiple definition of `autofs_new_ino'
-> fs/autofs/inode.o:inode.c:(.text+0x1b8): first defined here
-> fs/autofs/inode.o: In function `autofs_clean_ino':
-> inode.c:(.text+0x288): multiple definition of `autofs_clean_ino'
-> 
-> There is also a problem with trying to build both in parallel, which
-> leads to two 'make' processes writing to the same fs/autofs/.*.o.cmd
-> file, causing corruption that manifests like
-> 
-> fs/autofs4/../autofs/.expire.o.cmd:679: *** missing separator.  Stop.
-> 
-> Making AUTOFS4_FS depend on AUTOFS_FS being disabled should avoid all
-> configurations that run into either issue.
+On Tue, May 29, 2018 at 9:50 PM, Marcus Folkesson
+<marcus.folkesson@gmail.com> wrote:
+> Chip Card Interface Device (CCID) protocol is a USB protocol that
+> allows a smartcard device to be connected to a computer via a card
+> reader using a standard USB interface, without the need for each manufacturer
+> of smartcards to provide its own reader or protocol.
+>
+> This gadget driver makes Linux show up as a CCID device to the host and let a
+> userspace daemon act as the smartcard.
+>
+> This is useful when the Linux gadget itself should act as a cryptographic
+> device or forward APDUs to an embedded smartcard device.
 
-Thanks Arnd and this adds support that my analysis of build
-problems is accurate.
+> + * Copyright (C) 2018 Marcus Folkesson <marcus.folkesson@gmail.com>
 
-I posted a similar patch on May 21 which also added a NOTE to
-fs/autofs4/Kconfig saying pretty much what you've said.
-https://patchwork.kernel.org/patch/10413823/
+> + *
 
-I recommend using my patch so that anyone that's surprised by the
-.config change has a chance of finding an explanation somewhere, ;)
+Redundant line
 
-Not only is the change needed, but to preserve bisection it needs
-to be folded into the original patch titled:
-autofs: create autofs Kconfig and Makefile
+> +static DEFINE_IDA(ccidg_ida);
 
-otherwise build test robots will still see this problem between
-build testing after "autofs: create autofs Kconfig and Makefile"
-and before this change is applied.
+Where is it destroyed?
 
-Folding in the change is my current recommendation to Andrew.
-Hopefully that will fix the problem.
+> +               ccidg_class = NULL;
+> +               return PTR_ERR(ccidg_class);
 
-Any further thoughts are of course welcome.
+Are you sure?
 
-> 
-> Fixes: mmotm ("autofs: update fs/autofs4/Makefile")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  fs/autofs4/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/autofs4/Kconfig b/fs/autofs4/Kconfig
-> index 53bc592a250d..eccf673c6c8c 100644
-> --- a/fs/autofs4/Kconfig
-> +++ b/fs/autofs4/Kconfig
-> @@ -1,5 +1,6 @@
->  config AUTOFS4_FS
->  	tristate "Kernel automounter version 4 support (also supports v3 and
-> v5)"
-> +	depends on AUTOFS_FS=n
->  	default n
->  	help
->  	  The automounter is a tool to automatically mount remote file
-> systems
+> +       if (!list_empty(head)) {
+> +               req = list_first_entry(head, struct usb_request, list);
+
+list_first_entry_or_null()
+
+> +       req->length = len;
+
+Perhaps assign this obly if malloc successedeed ?
+
+> +       req->buf = kmalloc(len, GFP_ATOMIC);
+
+> +       if (req->buf == NULL) {
+
+if (!req->buf) ?
+
+> +               usb_ep_free_request(ep, req);
+> +               return ERR_PTR(-ENOMEM);
+> +       }
+
+> +static void ccidg_request_free(struct usb_request *req, struct usb_ep *ep)
+> +{
+
+> +       if (req) {
+
+Is it even possible?
+
+What about
+
+if (!req)
+ return;
+
+?
+
+> +               kfree(req->buf);
+> +               usb_ep_free_request(ep, req);
+> +       }
+> +}
+
+> +                       *(__le32 *) req->buf = ccid_class_desc.dwDefaultClock;
+
+Hmm... put_unaligned()? cpu_to_le32()? cpu_to_le32p()?
+
+> +                       *(__le32 *) req->buf = ccid_class_desc.dwDataRate;
+
+Ditto.
+
+> +               }
+> +               }
+
+Indentation.
+
+> +       /* responded with data transfer or status phase? */
+> +       if (ret >= 0) {
+
+Why not
+
+if (ret < 0)
+ return ret;
+
+?
+
+> +       }
+> +
+> +       return ret;
+> +}
+
+> +       atomic_set(&ccidg->online, 1);
+> +       return ret;
+
+return 0; ?
+
+> +       struct f_ccidg *ccidg;
+
+> +       ccidg = container_of(inode->i_cdev, struct f_ccidg, cdev);
+
+One line ?
+
+> +       xfer = (req->actual < count) ? req->actual : count;
+
+min_t()
+
+> +       ret = wait_event_interruptible(bulk_dev->write_wq,
+> +               ((req = ccidg_req_get(ccidg, &bulk_dev->tx_idle))));
+> +
+> +       if (ret < 0)
+> +               return -ERESTARTSYS;
+
+Redundant blank line above.
+
+> +static void ccidg_function_free(struct usb_function *f)
+> +{
+
+> +       struct f_ccidg_opts *opts;
+
+> +       opts = container_of(f->fi, struct f_ccidg_opts, func_inst);
+
+One line.
+
+
+> +       mutex_lock(&opts->lock);
+> +       --opts->refcnt;
+
+-- will work
+
+> +       mutex_unlock(&opts->lock);
+> +}
+
+> +       struct f_ccidg_opts *opts;
+
+> +       opts = container_of(fi, struct f_ccidg_opts, func_inst);
+
+Perhaps one line ?
+> +       ++opts->refcnt;
+X++ would work as well.
+> +       struct f_ccidg_opts *opts;
+> +
+> +       opts = container_of(f, struct f_ccidg_opts, func_inst);
+
+Perhaps one line?
+
+> +#define CCID_PINSUPOORT_NONE           0x00
+
+(0 << 0)
+
+ ?
+
+for sake of consistency
+
+> +#define CCID_PINSUPOORT_VERIFICATION   (1 << 1)
+> +#define CCID_PINSUPOORT_MODIFICATION   (1 << 2)
+
+-- 
+With Best Regards,
+Andy Shevchenko
