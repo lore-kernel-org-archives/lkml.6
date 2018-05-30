@@ -1,69 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753251AbeE3LUK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:20:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:32780 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752569AbeE3LHH (ORCPT
+        id S1752424AbeE3LVp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:21:45 -0400
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:40721 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751559AbeE3LVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:07 -0400
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Wed, 30 May 2018 07:21:41 -0400
+X-Google-Smtp-Source: ADUXVKJoMYl1rQcYvHY8FWo2X8ZYwhYi3dWEHgkr+phU2ipxcN/6nUPO1mWEVV7KPE/9k8hN2wzaEDPPDD+AjSJRwh4=
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Thinh Nguyen" <thinhn@synopsys.com>,
-        "Felipe Balbi" <felipe.balbi@linux.intel.com>,
-        "Thinh Nguyen" <Thinh.Nguyen@synopsys.com>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.726218401@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 083/153] usb: dwc3: gadget: Set maxpacket size for ep0 IN
-In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <20180530111715.GA19410@amd>
+References: <CA+55aFwUqz9z1Rf4Wwr29W7DeKxQ67qKEW5xty+JPyCY3aNQ=A@mail.gmail.com>
+ <20180530111715.GA19410@amd>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Wed, 30 May 2018 12:21:38 +0100
+Message-ID: <CAPj87rOuoTM_EHDHkPrA_RE=2=az8jS+Xdcqgh1emBg4oEoRiA@mail.gmail.com>
+Subject: Re: Linux 4.17-rc7
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Dave Airlie <airlied@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
+Hi Pavel,
 
-------------------
+On 30 May 2018 at 12:17, Pavel Machek <pavel@ucw.cz> wrote:
+>> The bulk of it is really pretty trivial one-liners, and nothing looks
+>> particularly scary. Let's see how next week looks, but if nothing really
+>> happens I suspect we can make do without an rc8.
+>>
+>> Shortlog appended as usual. Go out and test.
+>
+> Any chance to still get in this one?
+>
+> https://github.com/freedesktop/drm-misc/commit/2bc5ff0bdc00d81d719dad74589317a260d583ed
+>
+> ...it fixes display on Nokia N900, and display is rather important for
+> cellphone.
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+The pull request was sent to Dave just yesterday:
+https://lists.freedesktop.org/archives/dri-devel/2018-May/178606.html
 
-commit 6180026341e852a250e1f97ebdcf71684a3c81b9 upstream.
-
-There are 2 control endpoint structures for DWC3. However, the driver
-only updates the OUT direction control endpoint structure during
-ConnectDone event. DWC3 driver needs to update the endpoint max packet
-size for control IN endpoint as well. If the max packet size is not
-properly set, then the driver will incorrectly calculate the data
-transfer size and fail to send ZLP for HS/FS 3-stage control read
-transfer.
-
-The fix is simply to update the max packet size for the ep0 IN direction
-during ConnectDone event.
-
-Fixes: 72246da40f37 ("usb: Introduce DesignWare USB3 DRD Driver")
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-[bwh: Backported to 3.2: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/usb/dwc3/gadget.c | 2 ++
- 1 file changed, 2 insertions(+)
-
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -1821,6 +1821,8 @@ static void dwc3_gadget_conndone_interru
- 		break;
- 	}
- 
-+	dwc->eps[1]->endpoint.maxpacket = dwc->gadget.ep0->maxpacket;
-+
- 	/* Disable unneded PHY */
- 	dwc3_gadget_disable_phy(dwc, dwc->gadget.speed);
- 
+Cheers,
+Daniel
