@@ -1,124 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968769AbeE3ImA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:42:00 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46791 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964976AbeE3Ily (ORCPT
+        id S937244AbeE3Imp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:42:45 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40761 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936021AbeE3ImM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:41:54 -0400
-X-Google-Smtp-Source: ADUXVKLLMRjTu2R4IIuHp8usZYGloBNyZES9efytdzxgtGsvYlKqL8L1UfPJ2Giu7ZfYFIgePYP+ROFWjmXIFnPCbus=
+        Wed, 30 May 2018 04:42:12 -0400
+X-Google-Smtp-Source: ADUXVKKOHbUvdhenzUOoIOYf5HW1hYP9EHpAOxQ8B5CuPSi/42VakvfM4ZagEUfXMTf9HDjG+4PYIA==
+Date: Wed, 30 May 2018 11:42:03 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM BD71837
+ PMIC
+Message-ID: <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <1527641284.2735.12.camel@themaw.net>
-References: <20180529094702.4092022-1-arnd@arndb.de> <1527641284.2735.12.camel@themaw.net>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 30 May 2018 10:41:52 +0200
-X-Google-Sender-Auth: iudFCuYit3MXHKVTUh6diQsbg-o
-Message-ID: <CAK8P3a3wMJoquq+3MN69Wd1EaDBgzPnzbD1a_e4cgLHq5j0b9g@mail.gmail.com>
-Subject: Re: [PATCH] autofs: make autofs4 and autofs mutually exclusive
-To: Ian Kent <raven@themaw.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 2:48 AM, Ian Kent <raven@themaw.net> wrote:
-> On Tue, 2018-05-29 at 11:46 +0200, Arnd Bergmann wrote:
->> The autofs4 implementation is just a redirect to autofs now, but that
->> also means we can't have both built into the same kernel:
->>
->> fs/autofs/inode.o: In function `autofs_new_ino':
->> inode.c:(.text+0x1b8): multiple definition of `autofs_new_ino'
->> fs/autofs/inode.o:inode.c:(.text+0x1b8): first defined here
->> fs/autofs/inode.o: In function `autofs_clean_ino':
->> inode.c:(.text+0x288): multiple definition of `autofs_clean_ino'
->>
->> There is also a problem with trying to build both in parallel, which
->> leads to two 'make' processes writing to the same fs/autofs/.*.o.cmd
->> file, causing corruption that manifests like
->>
->> fs/autofs4/../autofs/.expire.o.cmd:679: *** missing separator.  Stop.
->>
->> Making AUTOFS4_FS depend on AUTOFS_FS being disabled should avoid all
->> configurations that run into either issue.
->
-> Thanks Arnd and this adds support that my analysis of build
-> problems is accurate.
->
-> I posted a similar patch on May 21 which also added a NOTE to
-> fs/autofs4/Kconfig saying pretty much what you've said.
-> https://patchwork.kernel.org/patch/10413823/
->
-> I recommend using my patch so that anyone that's surprised by the
-> .config change has a chance of finding an explanation somewhere, ;)
->
-> Not only is the change needed, but to preserve bisection it needs
-> to be folded into the original patch titled:
-> autofs: create autofs Kconfig and Makefile
->
-> otherwise build test robots will still see this problem between
-> build testing after "autofs: create autofs Kconfig and Makefile"
-> and before this change is applied.
->
-> Folding in the change is my current recommendation to Andrew.
-> Hopefully that will fix the problem.
+Document devicetree bindings for ROHM BD71837 PMIC MFD.
 
-Yes, looks good.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 52 ++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 
-> Any further thoughts are of course welcome.
-
-I actually had an alternative approach that I tried out successfully
-but discarded as being too different from the original code. Just for
-reference, this one would work as well, and allow both to be
-compiled together. The version you posted is probably better.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
-index 9400a9f6318a..5a361f5273a1 100644
---- a/fs/autofs/autofs_i.h
-+++ b/fs/autofs/autofs_i.h
-@@ -6,6 +6,8 @@
-  * the terms of the GNU General Public License, version 2, or at your
-  * option, any later version, incorporated herein by reference.
-  */
-+#ifndef __AUTOFS_H
-+#define __AUTOFS_H
-
- /* Internal header file for autofs */
-
-@@ -271,3 +273,5 @@ static inline void autofs_del_expiring(struct
-dentry *dentry)
- }
-
- void autofs_kill_sb(struct super_block *);
-+
-+#endif /* __AUTOFS_H */
-diff --git a/fs/autofs4/Makefile b/fs/autofs4/Makefile
-index 417dd726d9ef..5fc0a28d656d 100644
---- a/fs/autofs4/Makefile
-+++ b/fs/autofs4/Makefile
-@@ -3,7 +3,3 @@
- #
-
- obj-$(CONFIG_AUTOFS4_FS) += autofs4.o
--
--autofs4-objs := ../autofs/init.o ../autofs/inode.o ../autofs/root.o \
--       ../autofs/symlink.o ../autofs/waitq.o ../autofs/expire.o \
--       ../autofs/dev-ioctl.o
-diff --git a/fs/autofs4/autofs4.c b/fs/autofs4/autofs4.c
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 new file mode 100644
-index 000000000000..a76066aa9f27
+index 000000000000..bbc46d38b162
 --- /dev/null
-+++ b/fs/autofs4/autofs4.c
-@@ -0,0 +1,7 @@
-+#include "../autofs/init.c"
-+#include "../autofs/inode.c"
-+#include "../autofs/root.c"
-+#include "../autofs/symlink.c"
-+#include "../autofs/waitq.c"
-+#include "../autofs/expire.c"
-+#include "../autofs/dev-ioctl.c"
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+@@ -0,0 +1,52 @@
++* ROHM BD71837 Power Management Integrated Circuit bindings
++
++BD71837MWV is a programmable Power Management IC for powering single-core,
++dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
++low BOM cost and compact solution footprint. It integrates 8 Buck
++egulators and 7 LDO’s to provide all the power rails required by the SoC and
++the commonly used peripherals.
++
++Required properties:
++ - compatible		: Should be "rohm,bd71837".
++ - reg			: I2C slave address.
++ - interrupt-parent	: Phandle to the parent interrupt controller.
++ - interrupts		: The interrupt line the device is connected to.
++ - interrupt-controller	: Marks the device node as an interrupt controller.
++ - #interrupt-cells	: The number of cells to describe an IRQ, should be 1 or 2.
++			    The first cell is the IRQ number.
++			    The second cell if present is the flags, encoded as trigger
++			    masks from ../interrupt-controller/interrupts.txt.
++ - regulators:		: List of child nodes that specify the regulators
++			  Please see ../regulator/rohm,bd71837-regulator.txt
++ - clock:		: Please see ../clock/rohm,bd71837-clock.txt
++
++Example:
++
++	pmic: bd71837@4b {
++		compatible = "rohm,bd71837";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x4b>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <29 GPIO_ACTIVE_LOW>;
++		interrupt-names = "irq";
++		#interrupt-cells = <1>;
++		interrupt-controller;
++
++		regulators {
++			buck1: BUCK1 {
++				regulator-name = "buck1";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-boot-on;
++				regulator-ramp-delay = <1250>;
++			};
++			...
++		};
++		clk: bd71837-32k-out {
++			compatible = "rohm,bd71837-clk";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++			clock-output-names = "bd71837-32k-out";
++		};
++	};
+-- 
+2.14.3
