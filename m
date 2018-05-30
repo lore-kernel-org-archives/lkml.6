@@ -1,389 +1,779 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753150AbeE3LOJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:14:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60716 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752128AbeE3LH3 (ORCPT
+        id S1753063AbeE3LOh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:14:37 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38897 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752839AbeE3LOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:29 -0400
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Wed, 30 May 2018 07:14:31 -0400
+X-Google-Smtp-Source: ADUXVKL3eNyzV1WSCBO8P4Y4mHLBfDF6ALnTxNt8E1DsAfHmuCK2O5AkkFWVLWYTCtxKo+pKLc/3cw==
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
+Date: Wed, 30 May 2018 14:14:25 +0300
+To: Mark Brown <broonie@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: Applied "regulator: bd71837: BD71837 PMIC regulator driver" to
+ the regulator tree
+Message-ID: <20180530111425.GD13528@localhost.localdomain>
+References: <72e644d9855621ea8cfd7ec555e2da02403f21f6.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <E1fNysa-0006jU-41@debutante>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Eric Biggers" <ebiggers@google.com>,
-        "syzbot" <syzkaller@googlegroups.com>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.57224680@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 045/153] crypto: hash - prevent using keyed hashes
- without setting key
-In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <E1fNysa-0006jU-41@debutante>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
+Hello All,
 
-------------------
+On Wed, May 30, 2018 at 12:02:56PM +0100, Mark Brown wrote:
+> The patch
+> 
+>    regulator: bd71837: BD71837 PMIC regulator driver
+> 
+> has been applied to the regulator tree at
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-From: Eric Biggers <ebiggers@google.com>
+Does this mean this single patch was applied? I am sorry if I did not
+follow correct policy/way of informing the dependencies - but there is a
+dependency. The patch 1/6 contains the header file
+include/linux/mfd/bd71837.h with bunch of definitions this patch is
+requiring.
 
-commit 9fa68f620041be04720d0cbfb1bd3ddfc6310b24 upstream.
+So If Mark can apply all of these patches (or at least the MFD parts
+which is patch 1/6) to his tree - then we are Ok. But if the MFD needs
+to go via Lee's tree - then I need some process guidance in order to
+understand how this goes and what is expected from me =)
 
-Currently, almost none of the keyed hash algorithms check whether a key
-has been set before proceeding.  Some algorithms are okay with this and
-will effectively just use a key of all 0's or some other bogus default.
-However, others will severely break, as demonstrated using
-"hmac(sha3-512-generic)", the unkeyed use of which causes a kernel crash
-via a (potentially exploitable) stack buffer overflow.
+Br,
+	Matti Vaittinen
 
-A while ago, this problem was solved for AF_ALG by pairing each hash
-transform with a 'has_key' bool.  However, there are still other places
-in the kernel where userspace can specify an arbitrary hash algorithm by
-name, and the kernel uses it as unkeyed hash without checking whether it
-is really unkeyed.  Examples of this include:
 
-    - KEYCTL_DH_COMPUTE, via the KDF extension
-    - dm-verity
-    - dm-crypt, via the ESSIV support
-    - dm-integrity, via the "internal hash" mode with no key given
-    - drbd (Distributed Replicated Block Device)
-
-This bug is especially bad for KEYCTL_DH_COMPUTE as that requires no
-privileges to call.
-
-Fix the bug for all users by adding a flag CRYPTO_TFM_NEED_KEY to the
-->crt_flags of each hash transform that indicates whether the transform
-still needs to be keyed or not.  Then, make the hash init, import, and
-digest functions return -ENOKEY if the key is still needed.
-
-The new flag also replaces the 'has_key' bool which algif_hash was
-previously using, thereby simplifying the algif_hash implementation.
-
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-[bwh: Backported to 3.2:
- - In hash_accept_parent_nokey(), update initialisation of ds to use tfm
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -172,11 +172,18 @@ int crypto_ahash_setkey(struct crypto_ah
- 			unsigned int keylen)
- {
- 	unsigned long alignmask = crypto_ahash_alignmask(tfm);
-+	int err;
- 
- 	if ((unsigned long)key & alignmask)
--		return ahash_setkey_unaligned(tfm, key, keylen);
-+		err = ahash_setkey_unaligned(tfm, key, keylen);
-+	else
-+		err = tfm->setkey(tfm, key, keylen);
-+
-+	if (err)
-+		return err;
- 
--	return tfm->setkey(tfm, key, keylen);
-+	crypto_ahash_clear_flags(tfm, CRYPTO_TFM_NEED_KEY);
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(crypto_ahash_setkey);
- 
-@@ -349,7 +356,12 @@ EXPORT_SYMBOL_GPL(crypto_ahash_finup);
- 
- int crypto_ahash_digest(struct ahash_request *req)
- {
--	return crypto_ahash_op(req, crypto_ahash_reqtfm(req)->digest);
-+	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+
-+	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
-+	return crypto_ahash_op(req, tfm->digest);
- }
- EXPORT_SYMBOL_GPL(crypto_ahash_digest);
- 
-@@ -435,7 +447,6 @@ static int crypto_ahash_init_tfm(struct
- 	struct ahash_alg *alg = crypto_ahash_alg(hash);
- 
- 	hash->setkey = ahash_nosetkey;
--	hash->has_setkey = false;
- 	hash->export = ahash_no_export;
- 	hash->import = ahash_no_import;
- 
-@@ -450,7 +461,8 @@ static int crypto_ahash_init_tfm(struct
- 
- 	if (alg->setkey) {
- 		hash->setkey = alg->setkey;
--		hash->has_setkey = true;
-+		if (!(alg->halg.base.cra_flags & CRYPTO_ALG_OPTIONAL_KEY))
-+			crypto_ahash_set_flags(hash, CRYPTO_TFM_NEED_KEY);
- 	}
- 	if (alg->export)
- 		hash->export = alg->export;
---- a/crypto/algif_hash.c
-+++ b/crypto/algif_hash.c
-@@ -34,11 +34,6 @@ struct hash_ctx {
- 	struct ahash_request req;
- };
- 
--struct algif_hash_tfm {
--	struct crypto_ahash *hash;
--	bool has_key;
--};
--
- static int hash_sendmsg(struct kiocb *unused, struct socket *sock,
- 			struct msghdr *msg, size_t ignored)
- {
-@@ -258,7 +253,7 @@ static int hash_check_key(struct socket
- 	int err = 0;
- 	struct sock *psk;
- 	struct alg_sock *pask;
--	struct algif_hash_tfm *tfm;
-+	struct crypto_ahash *tfm;
- 	struct sock *sk = sock->sk;
- 	struct alg_sock *ask = alg_sk(sk);
- 
-@@ -272,7 +267,7 @@ static int hash_check_key(struct socket
- 
- 	err = -ENOKEY;
- 	lock_sock_nested(psk, SINGLE_DEPTH_NESTING);
--	if (!tfm->has_key)
-+	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
- 		goto unlock;
- 
- 	if (!pask->refcnt++)
-@@ -363,41 +358,17 @@ static struct proto_ops algif_hash_ops_n
- 
- static void *hash_bind(const char *name, u32 type, u32 mask)
- {
--	struct algif_hash_tfm *tfm;
--	struct crypto_ahash *hash;
--
--	tfm = kzalloc(sizeof(*tfm), GFP_KERNEL);
--	if (!tfm)
--		return ERR_PTR(-ENOMEM);
--
--	hash = crypto_alloc_ahash(name, type, mask);
--	if (IS_ERR(hash)) {
--		kfree(tfm);
--		return ERR_CAST(hash);
--	}
--
--	tfm->hash = hash;
--
--	return tfm;
-+	return crypto_alloc_ahash(name, type, mask);
- }
- 
- static void hash_release(void *private)
- {
--	struct algif_hash_tfm *tfm = private;
--
--	crypto_free_ahash(tfm->hash);
--	kfree(tfm);
-+	crypto_free_ahash(private);
- }
- 
- static int hash_setkey(void *private, const u8 *key, unsigned int keylen)
- {
--	struct algif_hash_tfm *tfm = private;
--	int err;
--
--	err = crypto_ahash_setkey(tfm->hash, key, keylen);
--	tfm->has_key = !err;
--
--	return err;
-+	return crypto_ahash_setkey(private, key, keylen);
- }
- 
- static void hash_sock_destruct(struct sock *sk)
-@@ -413,12 +384,11 @@ static void hash_sock_destruct(struct so
- 
- static int hash_accept_parent_nokey(void *private, struct sock *sk)
- {
--	struct hash_ctx *ctx;
-+	struct crypto_ahash *tfm = private;
- 	struct alg_sock *ask = alg_sk(sk);
--	struct algif_hash_tfm *tfm = private;
--	struct crypto_ahash *hash = tfm->hash;
--	unsigned len = sizeof(*ctx) + crypto_ahash_reqsize(hash);
--	unsigned ds = crypto_ahash_digestsize(hash);
-+	struct hash_ctx *ctx;
-+	unsigned int len = sizeof(*ctx) + crypto_ahash_reqsize(tfm);
-+	unsigned ds = crypto_ahash_digestsize(tfm);
- 
- 	ctx = sock_kmalloc(sk, len, GFP_KERNEL);
- 	if (!ctx)
-@@ -438,7 +408,7 @@ static int hash_accept_parent_nokey(void
- 
- 	ask->private = ctx;
- 
--	ahash_request_set_tfm(&ctx->req, hash);
-+	ahash_request_set_tfm(&ctx->req, tfm);
- 	ahash_request_set_callback(&ctx->req, CRYPTO_TFM_REQ_MAY_BACKLOG,
- 				   af_alg_complete, &ctx->completion);
- 
-@@ -449,9 +419,9 @@ static int hash_accept_parent_nokey(void
- 
- static int hash_accept_parent(void *private, struct sock *sk)
- {
--	struct algif_hash_tfm *tfm = private;
-+	struct crypto_ahash *tfm = private;
- 
--	if (!tfm->has_key && crypto_ahash_has_setkey(tfm->hash))
-+	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
- 		return -ENOKEY;
- 
- 	return hash_accept_parent_nokey(private, sk);
---- a/crypto/shash.c
-+++ b/crypto/shash.c
-@@ -57,11 +57,18 @@ int crypto_shash_setkey(struct crypto_sh
- {
- 	struct shash_alg *shash = crypto_shash_alg(tfm);
- 	unsigned long alignmask = crypto_shash_alignmask(tfm);
-+	int err;
- 
- 	if ((unsigned long)key & alignmask)
--		return shash_setkey_unaligned(tfm, key, keylen);
-+		err = shash_setkey_unaligned(tfm, key, keylen);
-+	else
-+		err = shash->setkey(tfm, key, keylen);
-+
-+	if (err)
-+		return err;
- 
--	return shash->setkey(tfm, key, keylen);
-+	crypto_shash_clear_flags(tfm, CRYPTO_TFM_NEED_KEY);
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(crypto_shash_setkey);
- 
-@@ -179,6 +186,9 @@ int crypto_shash_digest(struct shash_des
- 	struct shash_alg *shash = crypto_shash_alg(tfm);
- 	unsigned long alignmask = crypto_shash_alignmask(tfm);
- 
-+	if (crypto_shash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
- 	if (((unsigned long)data | (unsigned long)out) & alignmask)
- 		return shash_digest_unaligned(desc, data, len, out);
- 
-@@ -358,7 +368,8 @@ int crypto_init_shash_ops_async(struct c
- 	crt->digest = shash_async_digest;
- 	crt->setkey = shash_async_setkey;
- 
--	crt->has_setkey = alg->setkey != shash_no_setkey;
-+	crypto_ahash_set_flags(crt, crypto_shash_get_flags(shash) &
-+				    CRYPTO_TFM_NEED_KEY);
- 
- 	if (alg->export)
- 		crt->export = shash_async_export;
-@@ -518,8 +529,14 @@ static unsigned int crypto_shash_ctxsize
- static int crypto_shash_init_tfm(struct crypto_tfm *tfm)
- {
- 	struct crypto_shash *hash = __crypto_shash_cast(tfm);
-+	struct shash_alg *alg = crypto_shash_alg(hash);
-+
-+	hash->descsize = alg->descsize;
-+
-+	if (crypto_shash_alg_has_setkey(alg) &&
-+	    !(alg->base.cra_flags & CRYPTO_ALG_OPTIONAL_KEY))
-+		crypto_shash_set_flags(hash, CRYPTO_TFM_NEED_KEY);
- 
--	hash->descsize = crypto_shash_alg(hash)->descsize;
- 	return 0;
- }
- 
---- a/include/crypto/hash.h
-+++ b/include/crypto/hash.h
-@@ -94,7 +94,6 @@ struct crypto_ahash {
- 		      unsigned int keylen);
- 
- 	unsigned int reqsize;
--	bool has_setkey;
- 	struct crypto_tfm base;
- };
- 
-@@ -182,11 +181,6 @@ static inline void *ahash_request_ctx(st
- 
- int crypto_ahash_setkey(struct crypto_ahash *tfm, const u8 *key,
- 			unsigned int keylen);
--static inline bool crypto_ahash_has_setkey(struct crypto_ahash *tfm)
--{
--	return tfm->has_setkey;
--}
--
- int crypto_ahash_finup(struct ahash_request *req);
- int crypto_ahash_final(struct ahash_request *req);
- int crypto_ahash_digest(struct ahash_request *req);
-@@ -198,12 +192,22 @@ static inline int crypto_ahash_export(st
- 
- static inline int crypto_ahash_import(struct ahash_request *req, const void *in)
- {
--	return crypto_ahash_reqtfm(req)->import(req, in);
-+	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+
-+	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
-+	return tfm->import(req, in);
- }
- 
- static inline int crypto_ahash_init(struct ahash_request *req)
- {
--	return crypto_ahash_reqtfm(req)->init(req);
-+	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+
-+	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
-+	return tfm->init(req);
- }
- 
- static inline int crypto_ahash_update(struct ahash_request *req)
-@@ -342,12 +346,22 @@ static inline int crypto_shash_export(st
- 
- static inline int crypto_shash_import(struct shash_desc *desc, const void *in)
- {
--	return crypto_shash_alg(desc->tfm)->import(desc, in);
-+	struct crypto_shash *tfm = desc->tfm;
-+
-+	if (crypto_shash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
-+	return crypto_shash_alg(tfm)->import(desc, in);
- }
- 
- static inline int crypto_shash_init(struct shash_desc *desc)
- {
--	return crypto_shash_alg(desc->tfm)->init(desc);
-+	struct crypto_shash *tfm = desc->tfm;
-+
-+	if (crypto_shash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
-+		return -ENOKEY;
-+
-+	return crypto_shash_alg(tfm)->init(desc);
- }
- 
- int crypto_shash_update(struct shash_desc *desc, const u8 *data,
---- a/include/linux/crypto.h
-+++ b/include/linux/crypto.h
-@@ -97,6 +97,8 @@
- /*
-  * Transform masks and values (for crt_flags).
-  */
-+#define CRYPTO_TFM_NEED_KEY		0x00000001
-+
- #define CRYPTO_TFM_REQ_MASK		0x000fff00
- #define CRYPTO_TFM_RES_MASK		0xfff00000
- 
+> 
+> All being well this means that it will be integrated into the linux-next
+> tree (usually sometime in the next 24 hours) and sent to Linus during
+> the next merge window (or sooner if it is a bug fix), however if
+> problems are discovered then the patch may be dropped or reverted.  
+> 
+> You may get further e-mails resulting from automated or manual testing
+> and review of the tree, please engage with people reporting problems and
+> send followup patches addressing any issues that are reported if needed.
+> 
+> If any updates are required or you are submitting further changes they
+> should be sent as incremental updates against current git, existing
+> patches will not be replaced.
+> 
+> Please add any relevant lists and maintainers to the CCs when replying
+> to this mail.
+> 
+> Thanks,
+> Mark
+> 
+> From ba08799e90b5935a3df20766a73b5841046f6832 Mon Sep 17 00:00:00 2001
+> From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Date: Wed, 30 May 2018 11:43:43 +0300
+> Subject: [PATCH] regulator: bd71837: BD71837 PMIC regulator driver
+> 
+> Support for controlling the 8 bucks and 7 LDOs the PMIC contains.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  drivers/regulator/Kconfig             |  11 +
+>  drivers/regulator/Makefile            |   1 +
+>  drivers/regulator/bd71837-regulator.c | 640 ++++++++++++++++++++++++++
+>  3 files changed, 652 insertions(+)
+>  create mode 100644 drivers/regulator/bd71837-regulator.c
+> 
+> diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+> index 4efae3b7e746..5dbccf5f3037 100644
+> --- a/drivers/regulator/Kconfig
+> +++ b/drivers/regulator/Kconfig
+> @@ -180,6 +180,17 @@ config REGULATOR_BCM590XX
+>  	  BCM590xx PMUs. This will enable support for the software
+>  	  controllable LDO/Switching regulators.
+>  
+> +config REGULATOR_BD71837
+> +	tristate "ROHM BD71837 Power Regulator"
+> +	depends on MFD_BD71837
+> +	help
+> +	  This driver supports voltage regulators on ROHM BD71837 PMIC.
+> +	  This will enable support for the software controllable buck
+> +	  and LDO regulators.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called bd71837-regulator.
+> +
+>  config REGULATOR_BD9571MWV
+>  	tristate "ROHM BD9571MWV Regulators"
+>  	depends on MFD_BD9571MWV
+> diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+> index d81fb02bd6e9..bd818ceb7c72 100644
+> --- a/drivers/regulator/Makefile
+> +++ b/drivers/regulator/Makefile
+> @@ -27,6 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+>  obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
+>  obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
+>  obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
+> +obj-$(CONFIG_REGULATOR_BD71837) += bd71837-regulator.o
+>  obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
+>  obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
+>  obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
+> diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+> new file mode 100644
+> index 000000000000..6eae4d0432a2
+> --- /dev/null
+> +++ b/drivers/regulator/bd71837-regulator.c
+> @@ -0,0 +1,640 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 ROHM Semiconductors
+> +// bd71837-regulator.c ROHM BD71837MWV regulator driver
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/err.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regulator/driver.h>
+> +#include <linux/regulator/machine.h>
+> +#include <linux/delay.h>
+> +#include <linux/slab.h>
+> +#include <linux/gpio.h>
+> +#include <linux/mfd/bd71837.h>
+> +#include <linux/regulator/of_regulator.h>
+> +
+> +struct bd71837_pmic {
+> +	struct regulator_desc descs[BD71837_REGULATOR_CNT];
+> +	struct bd71837 *mfd;
+> +	struct platform_device *pdev;
+> +	struct regulator_dev *rdev[BD71837_REGULATOR_CNT];
+> +};
+> +
+> +/*
+> + * BUCK1/2/3/4
+> + * BUCK1RAMPRATE[1:0] BUCK1 DVS ramp rate setting
+> + * 00: 10.00mV/usec 10mV 1uS
+> + * 01: 5.00mV/usec	10mV 2uS
+> + * 10: 2.50mV/usec	10mV 4uS
+> + * 11: 1.25mV/usec	10mV 8uS
+> + */
+> +static int bd71837_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+> +					   int ramp_delay)
+> +{
+> +	struct bd71837_pmic *pmic = rdev_get_drvdata(rdev);
+> +	struct bd71837 *mfd = pmic->mfd;
+> +	int id = rdev->desc->id;
+> +	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
+> +
+> +	dev_dbg(&(pmic->pdev->dev), "Buck[%d] Set Ramp = %d\n", id + 1,
+> +		ramp_delay);
+> +	switch (ramp_delay) {
+> +	case 1 ... 1250:
+> +		ramp_value = BUCK_RAMPRATE_1P25MV;
+> +		break;
+> +	case 1251 ... 2500:
+> +		ramp_value = BUCK_RAMPRATE_2P50MV;
+> +		break;
+> +	case 2501 ... 5000:
+> +		ramp_value = BUCK_RAMPRATE_5P00MV;
+> +		break;
+> +	case 5001 ... 10000:
+> +		ramp_value = BUCK_RAMPRATE_10P00MV;
+> +		break;
+> +	default:
+> +		ramp_value = BUCK_RAMPRATE_10P00MV;
+> +		dev_err(&pmic->pdev->dev,
+> +			"%s: ramp_delay: %d not supported, setting 10000mV//us\n",
+> +			rdev->desc->name, ramp_delay);
+> +	}
+> +
+> +	return regmap_update_bits(mfd->regmap, BD71837_REG_BUCK1_CTRL + id,
+> +				  BUCK_RAMPRATE_MASK, ramp_value << 6);
+> +}
+> +
+> +/* Bucks 1 to 4 support DVS. PWM mode is used when voltage is changed.
+> + * Bucks 5 to 8 and LDOs can use PFM and must be disabled when voltage
+> + * is changed. Hence we return -EBUSY for these if voltage is changed
+> + * when BUCK/LDO is enabled.
+> + */
+> +static int bd71837_set_voltage_sel_restricted(struct regulator_dev *rdev,
+> +						    unsigned int sel)
+> +{
+> +	int ret;
+> +
+> +	ret = regulator_is_enabled_regmap(rdev);
+> +	if (!ret)
+> +		ret = regulator_set_voltage_sel_regmap(rdev, sel);
+> +	else if (ret == 1)
+> +		ret = -EBUSY;
+> +	return ret;
+> +}
+> +
+> +static struct regulator_ops bd71837_ldo_regulator_ops = {
+> +	.enable = regulator_enable_regmap,
+> +	.disable = regulator_disable_regmap,
+> +	.is_enabled = regulator_is_enabled_regmap,
+> +	.list_voltage = regulator_list_voltage_linear_range,
+> +	.set_voltage_sel = bd71837_set_voltage_sel_restricted,
+> +	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+> +};
+> +
+> +static struct regulator_ops bd71837_ldo_regulator_nolinear_ops = {
+> +	.enable = regulator_enable_regmap,
+> +	.disable = regulator_disable_regmap,
+> +	.is_enabled = regulator_is_enabled_regmap,
+> +	.list_voltage = regulator_list_voltage_table,
+> +	.set_voltage_sel = bd71837_set_voltage_sel_restricted,
+> +	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+> +};
+> +
+> +static struct regulator_ops bd71837_buck_regulator_ops = {
+> +	.enable = regulator_enable_regmap,
+> +	.disable = regulator_disable_regmap,
+> +	.is_enabled = regulator_is_enabled_regmap,
+> +	.list_voltage = regulator_list_voltage_linear_range,
+> +	.set_voltage_sel = bd71837_set_voltage_sel_restricted,
+> +	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+> +	.set_voltage_time_sel = regulator_set_voltage_time_sel,
+> +};
+> +
+> +static struct regulator_ops bd71837_buck_regulator_nolinear_ops = {
+> +	.enable = regulator_enable_regmap,
+> +	.disable = regulator_disable_regmap,
+> +	.is_enabled = regulator_is_enabled_regmap,
+> +	.list_voltage = regulator_list_voltage_table,
+> +	.set_voltage_sel = bd71837_set_voltage_sel_restricted,
+> +	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+> +	.set_voltage_time_sel = regulator_set_voltage_time_sel,
+> +};
+> +
+> +static struct regulator_ops bd71837_buck1234_regulator_ops = {
+> +	.enable = regulator_enable_regmap,
+> +	.disable = regulator_disable_regmap,
+> +	.is_enabled = regulator_is_enabled_regmap,
+> +	.list_voltage = regulator_list_voltage_linear_range,
+> +	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+> +	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+> +	.set_voltage_time_sel = regulator_set_voltage_time_sel,
+> +	.set_ramp_delay = bd71837_buck1234_set_ramp_delay,
+> +};
+> +
+> +/*
+> + * BUCK1/2/3/4
+> + * 0.70 to 1.30V (10mV step)
+> + */
+> +static const struct regulator_linear_range bd71837_buck1234_voltage_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(700000, 0x00, 0x3C, 10000),
+> +	REGULATOR_LINEAR_RANGE(1300000, 0x3D, 0x3F, 0),
+> +};
+> +
+> +/*
+> + * BUCK5
+> + * 0.9V to 1.35V ()
+> + */
+> +static const struct regulator_linear_range bd71837_buck5_voltage_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(700000, 0x00, 0x03, 100000),
+> +	REGULATOR_LINEAR_RANGE(1050000, 0x04, 0x05, 50000),
+> +	REGULATOR_LINEAR_RANGE(1200000, 0x06, 0x07, 150000),
+> +};
+> +
+> +/*
+> + * BUCK6
+> + * 3.0V to 3.3V (step 100mV)
+> + */
+> +static const struct regulator_linear_range bd71837_buck6_voltage_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(3000000, 0x00, 0x03, 100000),
+> +};
+> +
+> +/*
+> + * BUCK7
+> + * 000 = 1.605V
+> + * 001 = 1.695V
+> + * 010 = 1.755V
+> + * 011 = 1.8V (Initial)
+> + * 100 = 1.845V
+> + * 101 = 1.905V
+> + * 110 = 1.95V
+> + * 111 = 1.995V
+> + */
+> +static const unsigned int buck_7_volts[] = {
+> +	1605000, 1695000, 1755000, 1800000, 1845000, 1905000, 1950000, 1995000
+> +};
+> +
+> +/*
+> + * BUCK8
+> + * 0.8V to 1.40V (step 10mV)
+> + */
+> +static const struct regulator_linear_range bd71837_buck8_voltage_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(800000, 0x00, 0x3C, 10000),
+> +	REGULATOR_LINEAR_RANGE(1400000, 0x3D, 0x3F, 0),
+> +};
+> +
+> +/*
+> + * LDO1
+> + * 3.0 to 3.3V (100mV step)
+> + */
+> +static const struct regulator_linear_range bd71837_ldo1_voltage_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(3000000, 0x00, 0x03, 100000),
+> +};
+> +
+> +/*
+> + * LDO2
+> + * 0.8 or 0.9V
+> + */
+> +const unsigned int ldo_2_volts[] = {
+> +	900000, 800000
+> +};
+> +
+> +/*
+> + * LDO3
+> + * 1.8 to 3.3V (100mV step)
+> + */
+> +static const struct regulator_linear_range bd71837_ldo3_voltage_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
+> +};
+> +
+> +/*
+> + * LDO4
+> + * 0.9 to 1.8V (100mV step)
+> + */
+> +static const struct regulator_linear_range bd71837_ldo4_voltage_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(900000, 0x00, 0x09, 100000),
+> +	REGULATOR_LINEAR_RANGE(1800000, 0x0A, 0x0F, 0),
+> +};
+> +
+> +/*
+> + * LDO5
+> + * 1.8 to 3.3V (100mV step)
+> + */
+> +static const struct regulator_linear_range bd71837_ldo5_voltage_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
+> +};
+> +
+> +/*
+> + * LDO6
+> + * 0.9 to 1.8V (100mV step)
+> + */
+> +static const struct regulator_linear_range bd71837_ldo6_voltage_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(900000, 0x00, 0x09, 100000),
+> +	REGULATOR_LINEAR_RANGE(1800000, 0x0A, 0x0F, 0),
+> +};
+> +
+> +/*
+> + * LDO7
+> + * 1.8 to 3.3V (100mV step)
+> + */
+> +static const struct regulator_linear_range bd71837_ldo7_voltage_ranges[] = {
+> +	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
+> +};
+> +
+> +static const struct regulator_desc bd71837_regulators[] = {
+> +	{
+> +		.name = "buck1",
+> +		.of_match = of_match_ptr("BUCK1"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_BUCK1,
+> +		.ops = &bd71837_buck1234_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_BUCK1_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_buck1234_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_BUCK1_VOLT_RUN,
+> +		.vsel_mask = BUCK1_RUN_MASK,
+> +		.enable_reg = BD71837_REG_BUCK1_CTRL,
+> +		.enable_mask = BD71837_BUCK_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "buck2",
+> +		.of_match = of_match_ptr("BUCK2"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_BUCK2,
+> +		.ops = &bd71837_buck1234_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_BUCK2_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_buck1234_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_BUCK2_VOLT_RUN,
+> +		.vsel_mask = BUCK2_RUN_MASK,
+> +		.enable_reg = BD71837_REG_BUCK2_CTRL,
+> +		.enable_mask = BD71837_BUCK_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "buck3",
+> +		.of_match = of_match_ptr("BUCK3"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_BUCK3,
+> +		.ops = &bd71837_buck1234_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_BUCK3_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_buck1234_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_BUCK3_VOLT_RUN,
+> +		.vsel_mask = BUCK3_RUN_MASK,
+> +		.enable_reg = BD71837_REG_BUCK3_CTRL,
+> +		.enable_mask = BD71837_BUCK_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "buck4",
+> +		.of_match = of_match_ptr("BUCK4"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +			.id = BD71837_BUCK4,
+> +		.ops = &bd71837_buck1234_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_BUCK4_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_buck1234_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_BUCK4_VOLT_RUN,
+> +		.vsel_mask = BUCK4_RUN_MASK,
+> +		.enable_reg = BD71837_REG_BUCK4_CTRL,
+> +		.enable_mask = BD71837_BUCK_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "buck5",
+> +		.of_match = of_match_ptr("BUCK5"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_BUCK5,
+> +		.ops = &bd71837_buck_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_BUCK5_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_buck5_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_buck5_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_BUCK5_VOLT,
+> +		.vsel_mask = BUCK5_MASK,
+> +		.enable_reg = BD71837_REG_BUCK5_CTRL,
+> +		.enable_mask = BD71837_BUCK_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "buck6",
+> +		.of_match = of_match_ptr("BUCK6"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_BUCK6,
+> +		.ops = &bd71837_buck_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_BUCK6_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_buck6_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_buck6_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_BUCK6_VOLT,
+> +		.vsel_mask = BUCK6_MASK,
+> +		.enable_reg = BD71837_REG_BUCK6_CTRL,
+> +		.enable_mask = BD71837_BUCK_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "buck7",
+> +		.of_match = of_match_ptr("BUCK7"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_BUCK7,
+> +		.ops = &bd71837_buck_regulator_nolinear_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.volt_table = &buck_7_volts[0],
+> +		.n_voltages = ARRAY_SIZE(buck_7_volts),
+> +		.vsel_reg = BD71837_REG_BUCK7_VOLT,
+> +		.vsel_mask = BUCK7_MASK,
+> +		.enable_reg = BD71837_REG_BUCK7_CTRL,
+> +		.enable_mask = BD71837_BUCK_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "buck8",
+> +		.of_match = of_match_ptr("BUCK8"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_BUCK8,
+> +		.ops = &bd71837_buck_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_BUCK8_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_buck8_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_buck8_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_BUCK8_VOLT,
+> +		.vsel_mask = BUCK8_MASK,
+> +		.enable_reg = BD71837_REG_BUCK8_CTRL,
+> +		.enable_mask = BD71837_BUCK_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "ldo1",
+> +		.of_match = of_match_ptr("LDO1"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_LDO1,
+> +		.ops = &bd71837_ldo_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_LDO1_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_ldo1_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo1_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_LDO1_VOLT,
+> +		.vsel_mask = LDO1_MASK,
+> +		.enable_reg = BD71837_REG_LDO1_VOLT,
+> +		.enable_mask = BD71837_LDO_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "ldo2",
+> +		.of_match = of_match_ptr("LDO2"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_LDO2,
+> +		.ops = &bd71837_ldo_regulator_nolinear_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.volt_table = &ldo_2_volts[0],
+> +		.vsel_reg = BD71837_REG_LDO2_VOLT,
+> +		.vsel_mask = LDO2_MASK,
+> +		.n_voltages = ARRAY_SIZE(ldo_2_volts),
+> +		.n_voltages = BD71837_LDO2_VOLTAGE_NUM,
+> +		.enable_reg = BD71837_REG_LDO2_VOLT,
+> +		.enable_mask = BD71837_LDO_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "ldo3",
+> +		.of_match = of_match_ptr("LDO3"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_LDO3,
+> +		.ops = &bd71837_ldo_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_LDO3_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_ldo3_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo3_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_LDO3_VOLT,
+> +		.vsel_mask = LDO3_MASK,
+> +		.enable_reg = BD71837_REG_LDO3_VOLT,
+> +		.enable_mask = BD71837_LDO_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "ldo4",
+> +		.of_match = of_match_ptr("LDO4"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_LDO4,
+> +		.ops = &bd71837_ldo_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_LDO4_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_ldo4_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo4_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_LDO4_VOLT,
+> +		.vsel_mask = LDO4_MASK,
+> +		.enable_reg = BD71837_REG_LDO4_VOLT,
+> +		.enable_mask = BD71837_LDO_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "ldo5",
+> +		.of_match = of_match_ptr("LDO5"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_LDO5,
+> +		.ops = &bd71837_ldo_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_LDO5_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_ldo5_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo5_voltage_ranges),
+> +		/* LDO5 is supplied by buck6 */
+> +		.supply_name = "buck6",
+> +		.vsel_reg = BD71837_REG_LDO5_VOLT,
+> +		.vsel_mask = LDO5_MASK,
+> +		.enable_reg = BD71837_REG_LDO5_VOLT,
+> +		.enable_mask = BD71837_LDO_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "ldo6",
+> +		.of_match = of_match_ptr("LDO6"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_LDO6,
+> +		.ops = &bd71837_ldo_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_LDO6_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_ldo6_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo6_voltage_ranges),
+> +		/* LDO6 is supplied by buck7 */
+> +		.supply_name = "buck7",
+> +		.vsel_reg = BD71837_REG_LDO6_VOLT,
+> +		.vsel_mask = LDO6_MASK,
+> +		.enable_reg = BD71837_REG_LDO6_VOLT,
+> +		.enable_mask = BD71837_LDO_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	{
+> +		.name = "ldo7",
+> +		.of_match = of_match_ptr("LDO7"),
+> +		.regulators_node = of_match_ptr("regulators"),
+> +		.id = BD71837_LDO7,
+> +		.ops = &bd71837_ldo_regulator_ops,
+> +		.type = REGULATOR_VOLTAGE,
+> +		.n_voltages = BD71837_LDO7_VOLTAGE_NUM,
+> +		.linear_ranges = bd71837_ldo7_voltage_ranges,
+> +		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo7_voltage_ranges),
+> +		.vsel_reg = BD71837_REG_LDO7_VOLT,
+> +		.vsel_mask = LDO7_MASK,
+> +		.enable_reg = BD71837_REG_LDO7_VOLT,
+> +		.enable_mask = BD71837_LDO_EN,
+> +		.owner = THIS_MODULE,
+> +	},
+> +};
+> +
+> +struct reg_init {
+> +	unsigned int reg;
+> +	unsigned int mask;
+> +};
+> +
+> +static int bd71837_probe(struct platform_device *pdev)
+> +{
+> +	struct bd71837_pmic *pmic;
+> +	struct bd71837_board *pdata;
+> +	struct regulator_config config = { 0 };
+> +	struct reg_init pmic_regulator_inits[] = {
+> +		{
+> +			.reg = BD71837_REG_BUCK1_CTRL,
+> +			.mask = BD71837_BUCK_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_BUCK2_CTRL,
+> +			.mask = BD71837_BUCK_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_BUCK3_CTRL,
+> +			.mask = BD71837_BUCK_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_BUCK4_CTRL,
+> +			.mask = BD71837_BUCK_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_BUCK5_CTRL,
+> +			.mask = BD71837_BUCK_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_BUCK6_CTRL,
+> +			.mask = BD71837_BUCK_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_BUCK7_CTRL,
+> +			.mask = BD71837_BUCK_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_BUCK8_CTRL,
+> +			.mask = BD71837_BUCK_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_LDO1_VOLT,
+> +			.mask = BD71837_LDO_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_LDO2_VOLT,
+> +			.mask = BD71837_LDO_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_LDO3_VOLT,
+> +			.mask = BD71837_LDO_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_LDO4_VOLT,
+> +			.mask = BD71837_LDO_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_LDO5_VOLT,
+> +			.mask = BD71837_LDO_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_LDO6_VOLT,
+> +			.mask = BD71837_LDO_SEL,
+> +		}, {
+> +			.reg = BD71837_REG_LDO7_VOLT,
+> +			.mask = BD71837_LDO_SEL,
+> +		}
+> +	};
+> +
+> +	int i, err;
+> +
+> +	pmic = devm_kzalloc(&pdev->dev, sizeof(struct bd71837_pmic),
+> +			    GFP_KERNEL);
+> +	if (!pmic)
+> +		return -ENOMEM;
+> +
+> +	memcpy(pmic->descs, bd71837_regulators, sizeof(pmic->descs));
+> +
+> +	pmic->pdev = pdev;
+> +	pmic->mfd = dev_get_drvdata(pdev->dev.parent);
+> +
+> +	if (!pmic->mfd) {
+> +		dev_err(&pdev->dev, "No MFD driver data\n");
+> +		err = -EINVAL;
+> +		goto err;
+> +	}
+> +	platform_set_drvdata(pdev, pmic);
+> +	pdata = dev_get_platdata(pmic->mfd->dev);
+> +
+> +	/* Register LOCK release */
+> +	err = regmap_update_bits(pmic->mfd->regmap, BD71837_REG_REGLOCK,
+> +				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
+> +	if (err) {
+> +		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
+> +		goto err;
+> +	} else {
+> +		dev_dbg(&pmic->pdev->dev, "%s: Unlocked lock register 0x%x\n",
+> +			__func__, BD71837_REG_REGLOCK);
+> +	}
+> +
+> +	for (i = 0; i < ARRAY_SIZE(pmic_regulator_inits); i++) {
+> +
+> +		struct regulator_desc *desc;
+> +		struct regulator_dev *rdev;
+> +
+> +		desc = &pmic->descs[i];
+> +
+> +		if (pdata)
+> +			config.init_data = pdata->init_data[i];
+> +
+> +		config.dev = pdev->dev.parent;
+> +		config.driver_data = pmic;
+> +		config.regmap = pmic->mfd->regmap;
+> +
+> +		rdev = devm_regulator_register(&pdev->dev, desc, &config);
+> +		if (IS_ERR(rdev)) {
+> +			dev_err(pmic->mfd->dev,
+> +				"failed to register %s regulator\n",
+> +				desc->name);
+> +			err = PTR_ERR(rdev);
+> +			goto err;
+> +		}
+> +		/* Regulator register gets the regulator constraints and
+> +		 * applies them (set_machine_constraints). This should have
+> +		 * turned the control register(s) to correct values and we
+> +		 * can now switch the control from PMIC state machine to the
+> +		 * register interface
+> +		 */
+> +		err = regmap_update_bits(pmic->mfd->regmap,
+> +					 pmic_regulator_inits[i].reg,
+> +					 pmic_regulator_inits[i].mask,
+> +					 0xFFFFFFFF);
+> +		if (err) {
+> +			dev_err(&pmic->pdev->dev,
+> +				"Failed to write BUCK/LDO SEL bit for (%s)\n",
+> +				desc->name);
+> +			goto err;
+> +		}
+> +
+> +		pmic->rdev[i] = rdev;
+> +	}
+> +
+> +	return 0;
+> +
+> +err:
+> +	return err;
+> +}
+> +
+> +static struct platform_driver bd71837_regulator = {
+> +	.driver = {
+> +		.name = "bd71837-pmic",
+> +		.owner = THIS_MODULE,
+> +	},
+> +	.probe = bd71837_probe,
+> +};
+> +
+> +module_platform_driver(bd71837_regulator);
+> +
+> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+> +MODULE_DESCRIPTION("BD71837 voltage regulator driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.17.0
+> 
