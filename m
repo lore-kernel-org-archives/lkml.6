@@ -1,94 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752266AbeE3ONj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:13:39 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:52776 "EHLO gum.cmpxchg.org"
+        id S1753123AbeE3OP6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:15:58 -0400
+Received: from mga03.intel.com ([134.134.136.65]:16177 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752793AbeE3ONe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:13:34 -0400
-Date: Wed, 30 May 2018 10:15:33 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, tj@kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 07/13] memcontrol: schedule throttling if we are congested
-Message-ID: <20180530141533.GC4035@cmpxchg.org>
-References: <20180529211724.4531-1-josef@toxicpanda.com>
- <20180529211724.4531-8-josef@toxicpanda.com>
+        id S1751844AbeE3OP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 10:15:57 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,460,1520924400";
+   d="scan'208";a="58915787"
+Date: Wed, 30 May 2018 22:17:29 +0800
+From: Feng Tang <feng.tang@intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        alek.du@intel.com
+Subject: Re: [RFC 2/2] x86, tsc: Enable clock for ealry printk timestamp
+Message-ID: <20180530141729.5xulqmhjibynbm5d@shbuild888>
+References: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
+ <1527672059-6225-2-git-send-email-feng.tang@intel.com>
+ <CAHp75Vcii2=TDxBWeOve05peyiYiPeMu_ocBvj5SJ8UB+94eNQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529211724.4531-8-josef@toxicpanda.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAHp75Vcii2=TDxBWeOve05peyiYiPeMu_ocBvj5SJ8UB+94eNQ@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 05:17:18PM -0400, Josef Bacik wrote:
-> @@ -5458,6 +5458,30 @@ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
->  	return ret;
->  }
->  
-> +int mem_cgroup_try_charge_delay(struct page *page, struct mm_struct *mm,
-> +			  gfp_t gfp_mask, struct mem_cgroup **memcgp,
-> +			  bool compound)
-> +{
-> +	struct mem_cgroup *memcg;
-> +	struct block_device *bdev;
-> +	int ret;
-> +
-> +	ret = mem_cgroup_try_charge(page, mm, gfp_mask, memcgp, compound);
-> +	memcg = *memcgp;
-> +
-> +	if (!(gfp_mask & __GFP_IO) || !memcg)
-> +		return ret;
-> +#if defined(CONFIG_BLOCK) && defined(CONFIG_SWAP)
-> +	if (atomic_read(&memcg->css.cgroup->congestion_count) &&
-> +	    has_usable_swap()) {
-> +		map_swap_page(page, &bdev);
+Hi Andy,
 
-This doesn't work, unfortunately - or only works on accident.
+Thanks for the review.
 
-It goes through page_private(), which is only valid for pages in the
-swapcache. The newly allocated pages you call it against aren't in the
-swapcache, but their page_private() is 0, which is incorrectly
-interpreted as "first swap slot on the first swap device" - which
-happens to make sense if you have only one swap device.
+On Wed, May 30, 2018 at 04:25:07PM +0300, Andy Shevchenko wrote:
+> On Wed, May 30, 2018 at 12:20 PM, Feng Tang <feng.tang@intel.com> wrote:
+> > To show time info in kernel log earlier and help optimizing kernel
+> > boot time, printk adds a debug hook "boot_printk_clock_fn()"  for
+> > capable platform which has accurate clock in early boot phase.
+> >
+> > This patch will add early param setup option, so that user can
+> > chose to provide a tsc based early printk clock simply by adding
+> > in command line: "boot_tsc=xxxxM" (xxxxM is the stable TSC freq).
+> 
+> > +
+> 
+> This line is not needed.
+Ok, will remove it.
 
-> +		blkcg_schedule_throttle(bdev_get_queue(bdev), true);
+> 
+> > +       cur_tsc = rdtsc();
+> > +       cur_tsc -= boot_tsc_offset;
+> 
+> In one expression?
+Agree
 
-By the time we allocate, we simply cannot know which swap device the
-page will end up on. However, we know what's likely: swap_avail_heads
-is sorted by order in which we try to allocate swap slots; the first
-device on there is where swap io will go. If we walk this list and
-throttle on the first device that has built-up delay debt, we'll
-throttle against the device that probably gets the current bulk of the
-swap writes.
+> 
+> > +       if (!p)
+> > +               return -EINVAL;
+> > +
+> 
+> I'm not sure it's needed at all.
+> 
+> > +       boot_tsc_mhz = div64_u64(tsc_hz, 1024 * 1024);
+> 
+> Hmm... 1024*1024 != 1000 * 1000. So, hz -> mhz here (as by suffixes)
+> looks weird.
 
-Also, if we have two swap devices with the same priority, swap
-allocation will re-order the list for us automatically in order to do
-round-robin loading of the devices. See get_swap_pages(). That should
-work out nicely for throttling as well.
+The memparse is mostly for memory stuff which takes 1M as 1024*1024,
+but for TSC frequency 1M means 1000*1000,  and the code is trying to
+do some awkward translation. 
 
-You can use page_to_nid() on the newly allocated page to index into
-swap_avail_heads[].
+But you are right, this code will break if user doesn't use expression
+with 'm".
 
-On an unrelated note, mem_cgroup_try_charge_delay() isn't the most
-descriptive name. Since it's not too page specific, we might want to
-move the throttling part out of the charge function and do something
-simliar to a stand-alone balance_dirty_pages() function.
+> 
+> > +       if (boot_tsc_mhz == 0)
+> > +               return -EINVAL;
+> 
+> > +       pr_info("TSC has run for %lld us\n",
+> > +               div64_u64(boot_tsc_offset, boot_tsc_mhz));
+> > +
+> > +       /* Setup the early printk clock */
+> > +       boot_printk_clock_fn = boot_tsc_clock;
+> 
+> > +       pr_info("TSC: Setup early printk timestamp with %lldM TSC.",
+> > +               boot_tsc_mhz);
+> 
+> Perhaps remove period (above doesn't have it) and move this to one line?
 
-mem_cgroup_balance_anon_pages()?
+You mean merge the two pr_info line? yes, we can do that. 
 
-mem_cgroup_throttle_swaprate()?
 
-mem_cgroup_anon_throttle()?
-
-mem_cgroup_anon_allocwait()?
-
-Something like that. I personally like balance_anon_pages the best;
-not because it is the best name by itself, but because in the MM it
-has the notion of throttling the creation of IO liabilities to the
-write rate, which is what we're doing here as well.
+Thanks,
+Feng
