@@ -1,54 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753663AbeE3SOj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 14:14:39 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36713 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750752AbeE3SOg (ORCPT
+        id S1753734AbeE3STD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 14:19:03 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:34542 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeE3STA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 14:14:36 -0400
-X-Google-Smtp-Source: ADUXVKJT4h7VCLf6sd9x9yZynYRwBNnKDmGwWzGX0Uh/Ujp0CA6KysN7yaeHq13vW9gz8HYCszQIEvKdhVdW1JEwnyM=
+        Wed, 30 May 2018 14:19:00 -0400
+Date: Wed, 30 May 2018 21:18:58 +0300
+From: "Dmitry V. Levin" <ldv@altlinux.org>
+To: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, Jiri Olsa <jolsa@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Lawrence Brakmo <brakmo@fb.com>,
+        Andrey Ignatov <rdna@fb.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>
+Subject: Re: [PATCH bpf 1/2] bpf: fix alignment of netns_dev/netns_ino fields
+ in bpf_{map,prog}_info
+Message-ID: <20180530181857.GA6744@altlinux.org>
+Mail-Followup-To: Eugene Syromiatnikov <esyr@redhat.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Lawrence Brakmo <brakmo@fb.com>, Andrey Ignatov <rdna@fb.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>
+References: <20180527112842.GA18204@asgard.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529083153.GR27180@dhcp22.suse.cz>
-References: <20180525185501.82098-1-shakeelb@google.com> <20180526185144.xvh7ejlyelzvqwdb@esperanza>
- <CALvZod5yTxcuB_Aao-a0ChNEnwyBJk9UPvEQ80s9tZFBQ0cxpw@mail.gmail.com>
- <20180528091110.GG1517@dhcp22.suse.cz> <CALvZod6x5iRmcJ6pYKS+jwJd855jnwmVcPK9tnKbuJ9Hfppa-A@mail.gmail.com>
- <20180529083153.GR27180@dhcp22.suse.cz>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Wed, 30 May 2018 11:14:33 -0700
-Message-ID: <CALvZod67qzq+hQLms4Wut5LNVBjBcEQPpMp9zxF6NE5k+7CLOw@mail.gmail.com>
-Subject: Re: [PATCH] memcg: force charge kmem counter too
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="FL5UXtIhxfXey3p5"
+Content-Disposition: inline
+In-Reply-To: <20180527112842.GA18204@asgard.redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 1:31 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Mon 28-05-18 10:23:07, Shakeel Butt wrote:
->> On Mon, May 28, 2018 at 2:11 AM, Michal Hocko <mhocko@kernel.org> wrote:
->> Though is there a precedence where the broken feature is not fixed
->> because an alternative is available?
->
-> Well, I can see how breaking GFP_NOFAIL semantic is problematic, on the
-> other hand we keep saying that kmem accounting in v1 is hard usable and
-> strongly discourage people from using it. Sure we can add the code which
-> handles _this_ particular case but that wouldn't make the whole thing
-> more usable I strongly suspect. Maybe I am wrong and you can provide
-> some specific examples. Is GFP_NOFAIL that common to matter?
->
-> In any case we should balance between the code maintainability here.
-> Adding more cruft into the allocator path is not free.
->
 
-We do not use kmem limits internally and this is something I found
-through code inspection. If this patch is increasing the cost of code
-maintainability I am fine with dropping it but at least there should a
-comment saying that kmem limits are broken and no need fix.
+--FL5UXtIhxfXey3p5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Shakeel
+On Sun, May 27, 2018 at 01:28:42PM +0200, Eugene Syromiatnikov wrote:
+> Recent introduction of netns_dev/netns_ino to bpf_map_info/bpf_prog info
+> has broken compat, as offsets of these fields are different in 32-bit
+> and 64-bit ABIs.  One fix (other than implementing compat support in
+> syscall in order to handle this discrepancy) is to use __aligned_u64
+> instead of __u64 for these fields.
+>=20
+> Reported-by: Dmitry V. Levin <ldv@altlinux.org>
+> Fixes: 52775b33bb507 ("bpf: offload: report device information about
+> offloaded maps")
+> Fixes: 675fc275a3a2d ("bpf: offload: report device information for
+> offloaded programs")
+
+Reviewed-by: "Dmitry V. Levin" <ldv@altlinux.org>
+Cc: <stable@vger.kernel.org> # v4.16+
+
+Thanks,
+
+
+--=20
+ldv
+
+--FL5UXtIhxfXey3p5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJbDusRAAoJEAVFT+BVnCUIXbEP/AwqWZwvcE5kx8KFhZTcPBo3
+6N/1OsST+PMv6eNzGSjp6vVNp0n7gLjtT5XMjYP4S30UtG28SEXq0+52KR2dCRuQ
+RhzeSEE0Gk95kn98a0q5Fjko0O8+GHhvhMt2MGQ0ZN4x7PGSSTWDTSql853CzdBV
+FyDEjl/K5o3D1fmqCPGS+ZjAI2gUbtf1uP4mBCSUoqqpwmTCG17KZUmAbm5C+zyQ
+/p4lOhsG0ZLE2AsVwsSvQVLa1ihw2SyawqrFbF3Wi8Jl+AA1qiwl+H+ANPdgLkTK
+Rw7UeWdW7wzXsVuahz1tTQyZNkpy26h+bwZYyKPrkRD9zaAxOHNsxmrH88rp/fpP
+N3qIOgfIoqOovY2cLy4ghbOAbacSt+nVonhLUYFQIQPFivZFql9jKsMxyNF4kA/0
+VLrGH8CJ/MJxQTDM0YVQBsbDZ2JNHJB3zv9Rw5cpVzbC5hYrbfLT/npebV5hrFNk
+wk2qTgQoMHXAvsfvNyzowWVxeOzujFZmvlMZmRbBLSXPS+PykgHJHkSn1e03vhYu
+CG81W946tGb71TNXWN7dCYNWRTOaSAjzlZyECcbM07ckPJnpZk4QLsFDoDacq9Ls
+Tsq9/MNpGrK8YXH7BXqj6G/GYrED7H82Ng/g/CFO4Fon/bTBDYu9Zn8/LlaCtqn4
+Nqlas/SFSpgdWBHUxBG3
+=gJ61
+-----END PGP SIGNATURE-----
+
+--FL5UXtIhxfXey3p5--
