@@ -1,58 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753925AbeE3Q21 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:28:27 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:54634 "EHLO
+        id S1753939AbeE3Q2l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:28:41 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:54652 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751688AbeE3Q2Y (ORCPT
+        with ESMTP id S1753487AbeE3Q2i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:28:24 -0400
-Date: Thu, 31 May 2018 00:28:19 +0800
+        Wed, 30 May 2018 12:28:38 -0400
+Date: Thu, 31 May 2018 00:28:04 +0800
 From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Brijesh Singh <brijesh.singh@amd.com>, Borislav Petkov <bp@suse.de>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCHv2 0/2] Add new SEV commands
-Message-ID: <20180530162819.4xbwb3jbbx5dey24@gondor.apana.org.au>
-References: <cover.1527274269.git.Janakarajan.Natarajan@amd.com>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
+Message-ID: <20180530162804.zp4n22nprqmigywz@gondor.apana.org.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1527274269.git.Janakarajan.Natarajan@amd.com>
+In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 03:23:28PM -0500, Janakarajan Natarajan wrote:
-> This patchset adds two new SEV commands, introduced in SEV API v0.15
-> and v0.16 respectively.
+On Thu, May 24, 2018 at 03:19:05PM +0100, Gilad Ben-Yossef wrote:
+> The patch set enables the use of CryptoCell found in some Renesas R-Car
+> Salvator-X boards and fixes some driver issues uncovered that prevented
+> to work properly.
 > 
-> * DOWNLOAD_FIRMWARE allows the SEV firmware to be updated if a blob newer
->   than or similar to the exisiting build is available.
+> Changes from v1:
+> - Properly fix the bug that caused us to read a bad signature register
+>   rather than dropping the check
+> - Proper DT fields as indicated by Geert Uytterhoeven.
+> - Better clock enabling as suggested by Geert Uytterhoeven.
 > 
-> * GET_ID allows to query for a unique ID that can be used to retrieve the
->   Chip Endorsment Key (CEK) public key signed by the AMD SEV Signing Key
->   (ASK). 
-> 
-> v1->v2:
-> * Added cover letter.
-> * Misc changes based on Boris' feedback.
-> 
-> Janakarajan Natarajan (2):
->   crypto: ccp: Add DOWNLOAD_FIRMWARE SEV command
->   crypto: ccp: Add GET_ID SEV command
-> 
->  drivers/crypto/ccp/psp-dev.c | 143 ++++++++++++++++++++++++++++++++++++++++---
->  drivers/crypto/ccp/psp-dev.h |   4 ++
->  include/linux/psp-sev.h      |  23 +++++++
->  include/uapi/linux/psp-sev.h |  12 ++++
->  4 files changed, 172 insertions(+), 10 deletions(-)
+> Note! the last two patches in the set depend on the
+> "clk: renesas: r8a7795: Add CR clock" patch from Geert Uytterhoeven.
 
-All applied.  Thanks.
+Patches 1-3 applied.  Thanks.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
