@@ -1,78 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932515AbeE3Wkm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 18:40:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:49567 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753681AbeE3Wkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 18:40:40 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 31 May 2018 08:40:37 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the kbuild tree
-Message-ID: <20180531084037.2f8b4c1e@canb.auug.org.au>
+        id S932596AbeE3Wk7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 18:40:59 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:40730 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753695AbeE3Wkz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 18:40:55 -0400
+X-Google-Smtp-Source: ADUXVKJ8aze7t7zrPeNEzZkl330AFPmzza8Mf+02y8EqWTf2SLlQQSD9TGGkA4/Lkwek6gUiLxqBOgqEvs+ul013NWs=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YcQ0cgYwznQVM=6GoGAqbNd"; protocol="application/pgp-signature"
+In-Reply-To: <d2472443-3ae6-63f4-59ad-d6367b837038@opengridcomputing.com>
+References: <20180530215826.1343234-1-arnd@arndb.de> <20180530220405.GH30754@ziepe.ca>
+ <0be4e0fb-8d8e-b337-fc8d-550c90829d8c@opengridcomputing.com>
+ <20180530222520.GJ30754@ziepe.ca> <d2472443-3ae6-63f4-59ad-d6367b837038@opengridcomputing.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 31 May 2018 00:40:54 +0200
+X-Google-Sender-Auth: hlEu9LAGMha0y9VrD8YK3nQ3mxo
+Message-ID: <CAK8P3a3HZXTR60ua=cjBHnB5FWWKve9F-JqcNwn0ujks+=FsNg@mail.gmail.com>
+Subject: Re: [PATCH] iw_cxgb4: add INFINIBAND_ADDR_TRANS dependency
+To: Steve Wise <swise@opengridcomputing.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Steve Wise <swise@chelsio.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/YcQ0cgYwznQVM=6GoGAqbNd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 31, 2018 at 12:29 AM, Steve Wise
+<swise@opengridcomputing.com> wrote:
+>
+>
+> On 5/30/2018 5:25 PM, Jason Gunthorpe wrote:
+>> On Wed, May 30, 2018 at 05:10:35PM -0500, Steve Wise wrote:
+>>>
+>>> On 5/30/2018 5:04 PM, Jason Gunthorpe wrote:
+>>>> On Wed, May 30, 2018 at 11:58:18PM +0200, Arnd Bergmann wrote:
+>>>>> The newly added fill_res_ep_entry function fails to link if
+>>>>> CONFIG_INFINIBAND_ADDR_TRANS is not set:
+>>>>>
+>>>>> drivers/infiniband/hw/cxgb4/restrack.o: In function `fill_res_ep_entry':
+>>>>> restrack.c:(.text+0x3cc): undefined reference to `rdma_res_to_id'
+>>>>> restrack.c:(.text+0x3d0): undefined reference to `rdma_iw_cm_id'
+>>>>>
+>>>>> This adds a Kconfig dependency for the driver.
+>>>>>
+>>>>> Fixes: 116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
+>>>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>>>>  drivers/infiniband/hw/cxgb4/Kconfig | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>> Oh, I think we need to solve this with maybe a header fill null stub
+>>>> instead..
+>>>>
+>>>> We don't want to disable drivers just because a user interface is
+>>>> disabled.
+>>>>
+>>> Why does CONFIG_INFINIBAND_ADDR_TRANS disable building rdma_cm.ko? That
+>>> is not correct.
+>> That seems like a reasonable thing to do..
+> rdma_ucm.ko is for usermode users, rdma_cm.ko is for kernel users, and
+> is required for iwarp drivers.  It seems rdma_cm.ko is not being
+> compiled if ADDR_TRANS is not set.
+>
+>
+>> But why does it break the compile? Those functions are in cma.c...
+>>
+>> Jason
+>
+> Indeed, why. :)
+>
+> Perhaps this line is wrong in drivers/infiniband/core/Makefile:
+>
+> infiniband-$(CONFIG_INFINIBAND_ADDR_TRANS)      := rdma_cm.o
+>
+> I don't understand the rules in that Makefile.
 
-Hi Masahiro,
+You need to look at these three lines:
 
-After merging the kbuild tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+infiniband-$(CONFIG_INFINIBAND_ADDR_TRANS)      := rdma_cm.o
 
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function '=
-wlc_phy_workarounds_nphy_rev7':
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warni=
-ng: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-=
-than=3D]
- }
- ^
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function '=
-wlc_phy_workarounds_nphy_rev3':
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warni=
-ng: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-=
-than=3D]
- }
- ^
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function '=
-wlc_phy_cal_txiqlo_nphy':
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warni=
-ng: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-=
-than=3D]
- }
- ^
+obj-$(CONFIG_INFINIBAND) +=             ib_core.o ib_cm.o iw_cm.o \
+                                        $(infiniband-y)
 
-I have no idea what caused these warnings to appear ... nothing in those
-functions looks too bad.
+rdma_cm-y :=                    cma.o
 
---=20
-Cheers,
-Stephen Rothwell
+cma.o is built into rdma_cm.ko if both CONFIG_INFINIBAND_ADDR_TRANS
+and CONFIG_INFINIBAND are enabled. The first line is just another
+syntax for writing
 
---Sig_/YcQ0cgYwznQVM=6GoGAqbNd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+ifdef CONFIG_INFINIBAND_ADDR_TRANS
+obj-$(CONFIG_INFINIBAND) += rdma_cm.o
+endif
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPKGUACgkQAVBC80lX
-0Gy2dwf9HgIRhN09P6Vpty/a8LE9OoVMtkQLr2QzJ67t1oRtUyMO0+om6ektF/Vt
-F50uGrp2TPjjx5b3zwfRC6xZoDslnkhWxkr+/DeyzmpH+/LI/yPY8zKXofXvekbV
-i/ltx/VRcHMQXz4dRJO1yTlMAxlhSl4AVJcYi25lOozC1XFLbQHtGYBIHJpP9Bzx
-1UgR6S4KPHctj8Rc3C7OjA9MUn93ebmKy2aKYhhmfPszPicDAK6jAM73ZIMoDoC3
-zPJXSPh7DLSe8FmHHpwonn2YC6IzHLLunm5PkgHg5Si4QIPKiPL9x2t9yX485reY
-O3GASh2D1cXLvN1W4BVYCaIWgm4zLg==
-=PQzO
------END PGP SIGNATURE-----
-
---Sig_/YcQ0cgYwznQVM=6GoGAqbNd--
+        Arnd
