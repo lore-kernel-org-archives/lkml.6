@@ -1,91 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeE3LAN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:00:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51602 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751479AbeE3LAH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:00:07 -0400
-Date: Wed, 30 May 2018 12:00:00 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
- driver
-Message-ID: <20180530110000.GI6920@sirena.org.uk>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180530090512.GC13528@localhost.localdomain>
+        id S1752413AbeE3LB2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:01:28 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54086 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752291AbeE3LBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 07:01:22 -0400
+Date: Wed, 30 May 2018 12:01:17 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
+Subject: Re: [PATCH v5 02/10] sched/rt: add rt_rq utilization tracking
+Message-ID: <20180530110117.GJ30654@e110439-lin>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-3-git-send-email-vincent.guittot@linaro.org>
+ <20180525155437.GE30654@e110439-lin>
+ <CAKfTPtCnJKmLajbeuXe71B-g5xC1vV2krrmG1TBB=pEnApR7cQ@mail.gmail.com>
+ <20180530093203.GG30654@e110439-lin>
+ <CAKfTPtDmBHGWUpWk8SmbY=4HDDjRPCVRQ1dGAX7CK6FRuU_BQQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="QDIl5R72YNOeCxaP"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180530090512.GC13528@localhost.localdomain>
-X-Cookie: Don't get mad, get interest.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAKfTPtDmBHGWUpWk8SmbY=4HDDjRPCVRQ1dGAX7CK6FRuU_BQQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 30-May 12:06, Vincent Guittot wrote:
+> On 30 May 2018 at 11:32, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > On 29-May 15:29, Vincent Guittot wrote:
 
---QDIl5R72YNOeCxaP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[...]
 
-On Wed, May 30, 2018 at 12:05:12PM +0300, Matti Vaittinen wrote:
+> >> >> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> >> >> index ef3c4e6..b4148a9 100644
+> >> >> --- a/kernel/sched/rt.c
+> >> >> +++ b/kernel/sched/rt.c
+> >> >> @@ -5,6 +5,8 @@
+> >> >>   */
+> >> >>  #include "sched.h"
+> >> >>
+> >> >> +#include "pelt.h"
+> >> >> +
+> >> >>  int sched_rr_timeslice = RR_TIMESLICE;
+> >> >>  int sysctl_sched_rr_timeslice = (MSEC_PER_SEC / HZ) * RR_TIMESLICE;
+> >> >>
+> >> >> @@ -1572,6 +1574,9 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+> >> >>
+> >> >>       rt_queue_push_tasks(rq);
+> >> >>
+> >> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq,
+> >> >> +             rq->curr->sched_class == &rt_sched_class);
+> >> >> +
+> >> >>       return p;
+> >> >>  }
+> >> >>
+> >> >> @@ -1579,6 +1584,8 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
+> >> >>  {
+> >> >>       update_curr_rt(rq);
+> >> >>
+> >> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
+> >> >> +
+> >> >>       /*
+> >> >>        * The previous task needs to be made eligible for pushing
+> >> >>        * if it is still active
+> >> >> @@ -2308,6 +2315,7 @@ static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
+> >> >>       struct sched_rt_entity *rt_se = &p->rt;
+> >> >>
+> >> >>       update_curr_rt(rq);
+> >> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
+> >> >
+> >> > Mmm... not entirely sure... can't we fold
+> >> >    update_rt_rq_load_avg() into update_curr_rt() ?
+> >> >
+> >> > Currently update_curr_rt() is used in:
+> >> >    dequeue_task_rt
+> >> >    pick_next_task_rt
+> >> >    put_prev_task_rt
+> >> >    task_tick_rt
+> >> >
+> >> > while we update_rt_rq_load_avg() only in:
+> >> >    pick_next_task_rt
+> >> >    put_prev_task_rt
+> >> >    task_tick_rt
+> >> > and
+> >> >    update_blocked_averages
+> >> >
+> >> > Why we don't we need to update at dequeue_task_rt() time ?
+> >>
+> >> We are tracking rt rq and not sched entities so we want to know when
+> >> sched rt will be the running or not  sched class on the rq. Tracking
+> >> dequeue_task_rt is useless
+> >
+> > What about (push) migrations?
+> 
+> it doesn't make any difference. put_prev_task_rt() says that the prev
+> task that was running, was a rt task so we can account past time at rt
+> running time
+> and pick_next_task_rt says that the next one will be a rt task so we
+> have to account elapse time either to rt or not rt time according.
 
-> Other 4 can be used on PWM or PFM switching mode. When PWM is used
-> voltages can be changed without disabling regulator. On PFM this should
-> not be done. These latter 4 regulators can be forced to PWM mode via
-> control bit in register. This driver does not support controlling this
-> mode though. So this driver version just checks if regulator is enabled
-> before changing the voltage and if it is the voltage change fails with
-> -EBUSY
+Right, I was missing that you are tracking RT (and DL) only at RQ
+level... not SE level, thus we will not see migrations of blocked
+utilization.
 
-It probably should support setting modes (especially if the device isn't
-smart enough to automatically shift which sounds like the case) but
-that's a separate thing.
+> I can probably optimize the pick_next_task_rt by doing the below instead:
+> 
+> if (rq->curr->sched_class == &rt_sched_class)
+>        update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+> 
+> If prev task is a rt  task, put_prev_task_rt has already done the update
 
-> My question is whether it would be good idea to also read the 'force
-> PWM' bit when voltage is changed and allow the change if PWM mode is
-> forced to be used? Problem is that the check and voltage change can't be
-> atomic so there is a chance someone changes the mode (bypassing the
-> driver and regulator core) after this check but before we get to modify
-> the voltage. Furthermore, I doubt the 'force PWM' is widely used (but I
-> can't say for sure as I can't imagine all use cases) as it is not so
-> power efficient.
+Right.
 
-Why would anything else be changing the mode configuration of the
-regulator while the system is running?  That sounds like a bad idea.
-In any case if the hardware really needs to be manually put into force
-PWM to change voltage then the simplest thing would be to just move it
-into force PWM mode, do the change, then change back if it wasn't
-already in force PWM mode.
+Just one more question about non tracking SE. Once we migrate an RT
+task with the current solution we will have to wait for it's PELT
+blocked utilization to decay completely before starting to ignore that
+task contribution, which means that:
+ 1. we will see an higher utilization on the original CPU
+ 2. we don't immediately see the increased utilization on the
+    destination CPU
 
-The tradeoff with forced PWM mode is that the quality of regulation will
-be a lot better, especially if the load changes suddenly (as things like
-CPUs often do).  Most hardware that's at all current is able respond to
-changes in load and switch modes automatically when it's appropriate,
-except possibly in some very low power modes.
+I remember Juri had some patches to track SE utilization thus fixing
+the two issues above. Can you remember me why we decided to go just
+for the RQ tracking solution?
+Don't we expect any strange behaviors on real systems when RT tasks
+are moved around?
 
---QDIl5R72YNOeCxaP
-Content-Type: application/pgp-signature; name="signature.asc"
+Perhaps we should run some tests on Android...
 
------BEGIN PGP SIGNATURE-----
+-- 
+#include <best/regards.h>
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOhC8ACgkQJNaLcl1U
-h9Ag/wf+K4uLA5x5eT0bG96OcP1drAx9nx/aAbTTtQsFPeSTocdCq4nplECWlONt
-Jfi9RRuX2TRezrrQa8QIcfssUhT4M1MJD30Mws0SJ3e1m+vhcSS3FUS4vOepmNPg
-HcFnwg8qXNXSn1ahvYxZ2ISbu20C2uQj2XeJYsB4sQhsBzW/FPp7Z40nH1TMpqR3
-m9hl4NSci25M9BchBzR3vLdltsdYVmGrX4kX2nZSTOXgymX58R+rBLZeyZ4+kMO1
-/E0AUYBNiQ6+UN1NmN0abv0cD/GsvNc8nTEt2lB/IXkVGnz/nyj01pg5/5vrL7fx
-g1F5lBtaLADOmLd6FbvX4wK4BJO3/g==
-=yqHD
------END PGP SIGNATURE-----
-
---QDIl5R72YNOeCxaP--
+Patrick Bellasi
