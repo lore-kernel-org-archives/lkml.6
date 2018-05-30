@@ -1,80 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966192AbeE3H1q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:27:46 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:52137 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753094AbeE3H1n (ORCPT
+        id S968643AbeE3H33 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:29:29 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36617 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935695AbeE3H30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:27:43 -0400
-X-Google-Smtp-Source: ADUXVKJ85DVc9fK/ZPTZ4ITptHXJWSi891Q0cKTu2Fm4yRTTDXis+p2gvREWndXhNXXdGGgDx4OL0LfOCuCZAWV1v1c=
+        Wed, 30 May 2018 03:29:26 -0400
+X-Google-Smtp-Source: ADUXVKIXfjH9e1pd+IWOWuXzb7vCScUpARs4zB4ahvSBjBPiMQ1ClVT0P6ye5CN8HRvvIaP6v3G28tx7j1X1uVbSu5M=
 MIME-Version: 1.0
-In-Reply-To: <20180515095748.6794-3-jbrunet@baylibre.com>
-References: <20180515095748.6794-1-jbrunet@baylibre.com> <20180515095748.6794-3-jbrunet@baylibre.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 30 May 2018 09:27:42 +0200
-Message-ID: <CAPDyKFo1ui3XyjXJt0JKrQZd52zEQfsY65LbK_exFqJ6jVDmCQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: meson-gx: add device reset
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180530150711.2c7c1fe9@canb.auug.org.au>
+References: <20180530150711.2c7c1fe9@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 30 May 2018 09:29:24 +0200
+Message-ID: <CACRpkdaotBXbA4pPFHRH0S1SF7-XX_T6yAOwZcbsR3RBcj+-=Q@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the regulator tree with the arm-soc tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome,
+On Wed, May 30, 2018 at 7:07 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On 15 May 2018 at 11:57, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> Trigger the reset line of the mmc controller while probing, if available.
-> The reset should be optional for now, at least until all related DT nodes
-> have the reset property.
+> Hi all,
 >
-> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Today's linux-next merge of the regulator tree got a conflict in:
+>
+>   arch/arm/mach-omap1/board-ams-delta.c
+>
+> between commit:
+>
+>   0486738928bf ("ARM: OMAP1: ams-delta: add GPIO lookup tables")
+>
+> from the arm-soc tree and commit:
+>
+>   6059577cb28d ("regulator: fixed: Convert to use GPIO descriptor only")
+>
+> from the regulator tree.
+>
+> I fixed it up (see below - it may be better done) and can carry the fix
+> as necessary.
 
-I got a regression boot report from kernelci. The bisect doesn't point
-to a certain commit, but I found $subject patch a possible cause. Is
-it something you can have a look at and see if it's a valid problem?
-https://kernelci.org/boot/id/5b0d68a859b514726179a899/
 
-Kind regards
-Uffe
+OMG that patch on a patch makes my head spin.
 
-> ---
->  drivers/mmc/host/meson-gx-mmc.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-> index 4f972b879fe6..9bca359f7936 100644
-> --- a/drivers/mmc/host/meson-gx-mmc.c
-> +++ b/drivers/mmc/host/meson-gx-mmc.c
-> @@ -35,6 +35,7 @@
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/reset.h>
->  #include <linux/interrupt.h>
->  #include <linux/bitfield.h>
->  #include <linux/pinctrl/consumer.h>
-> @@ -1184,6 +1185,14 @@ static int meson_mmc_probe(struct platform_device *pdev)
->                 goto free_host;
->         }
->
-> +       ret = device_reset_optional(&pdev->dev);
-> +       if (ret) {
-> +               if (ret != -EPROBE_DEFER)
-> +                       dev_err(&pdev->dev, "device reset failed: %d\n", ret);
-> +
-> +               return ret;
-> +       }
-> +
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         host->regs = devm_ioremap_resource(&pdev->dev, res);
->         if (IS_ERR(host->regs)) {
-> --
-> 2.14.3
->
+I think I just have to look at the eventual result in linux-next and see if
+it makes proper sense, and rely on Janusz to test the result and help
+to fix it up.
+
+I was unaware of this concurrent gpiod conversion inside OMAP1 but
+I'm happy to see that it happens. We might have some fallout, but I'm
+sure Janusz is on top of things.
+
+Yours,
+Linus Walleij
