@@ -1,98 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932577AbeE3Xcm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 19:32:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:50807 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753734AbeE3Xcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 19:32:41 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 31 May 2018 09:32:16 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: linux-next: manual merge of the powerpc tree with the kbuild tree
-Message-ID: <20180531093216.5c91aa2b@canb.auug.org.au>
+        id S1753776AbeE3Xc6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 19:32:58 -0400
+Received: from mail-io0-f176.google.com ([209.85.223.176]:41416 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753750AbeE3Xcx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 19:32:53 -0400
+X-Google-Smtp-Source: ADUXVKIHvk/yKzZnaEzMi5ZXvI/qOuWVFd93cisvgWnbPLSfJYbGaNd9l+6h17WzM8zMc9wlEKqBWqIyPzX4qrVHUMo=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Ru_ne_nrKN=hqgwpUNXRDNB"; protocol="application/pgp-signature"
+In-Reply-To: <20180529181616.GB28689@cmpxchg.org>
+References: <20180507210135.1823-1-hannes@cmpxchg.org> <CAJuCfpF4q+1aSg4WQn_p-1-zEDhh-iqST6dc1DkxnDofSPBKGw@mail.gmail.com>
+ <20180529181616.GB28689@cmpxchg.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 30 May 2018 16:32:52 -0700
+Message-ID: <CAJuCfpGXSyu3SOky6jMhKjix=bbaPccg05VcepbvuJiv+bQgzw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] psi: pressure stall information for CPU, memory, and IO
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Ru_ne_nrKN=hqgwpUNXRDNB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, May 29, 2018 at 11:16 AM, Johannes Weiner <hannes@cmpxchg.org> wrote:
+> Hi Suren,
+>
+> On Fri, May 25, 2018 at 05:29:30PM -0700, Suren Baghdasaryan wrote:
+>> Hi Johannes,
+>> I tried your previous memdelay patches before this new set was posted
+>> and results were promising for predicting when Android system is close
+>> to OOM. I'm definitely going to try this one after I backport it to
+>> 4.9.
+>
+> I'm happy to hear that!
+>
+>> Would it make sense to split CONFIG_PSI into CONFIG_PSI_CPU,
+>> CONFIG_PSI_MEM and CONFIG_PSI_IO since one might need only specific
+>> subset of this feature?
+>
+> Yes, that should be doable. I'll split them out in the next version.
+>
+>> > The total= value gives the absolute stall time in microseconds. This
+>> > allows detecting latency spikes that might be too short to sway the
+>> > running averages. It also allows custom time averaging in case the
+>> > 10s/1m/5m windows aren't adequate for the usecase (or are too coarse
+>> > with future hardware).
+>>
+>> Any reasons these specific windows were chosen (empirical
+>> data/historical reasons)? I'm worried that with the smallest window
+>> being 10s the signal might be too inert to detect fast memory pressure
+>> buildup before OOM kill happens. I'll have to experiment with that
+>> first, however if you have some insights into this already please
+>> share them.
+>
+> They were chosen empirically. We started out with the loadavg window
+> sizes, but had to reduce them for exactly the reason you mention -
+> they're way too coarse to detect acute pressure buildup.
+>
+> 10s has been working well for us. We could make it smaller, but there
+> is some worry that we don't have enough samples then and the average
+> becomes too erratic - whereas monitoring total= directly would allow
+> you to detect accute spikes and handle this erraticness explicitly.
 
-Hi all,
+Unfortunately total= field is now updated only at 2sec intervals which
+might be too late to react to mounting memory pressure. With previous
+memdelay patchset md->aggregate which is reported as "total" was
+calculated directly from inside memdelay_task_change, so it was always
+up-to-date. Now group->some and group->full are updated from inside
+psi_clock with up to 2sec delay. This prevents us from detecting these
+acute pressure spikes immediately. I understand why you moved these
+calculations out of the hot path but maybe we could keep updating
+"total" inside psi_group_update? This would allow for custom averaging
+and eliminate this delay for detecting spikes in the pressure signal.
+More conceptually I would love to have a way to monitor the averages
+at a slow rate and when they rise and cross some threshold to increase
+the monitoring rate and react quickly in case they shoot up. Current
+2sec delay poses a problem for doing that.
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+>
+> Let me know how it works out in your tests.
 
-  arch/powerpc/kernel/module_64.c
+I've done the backporting to 4.9 and running the tests but the 2sec
+delay is problematic for getting a detailed look at the signal and its
+usefulness. Thinking about workarounds if only for data collection but
+don't want to deviate too much from your baseline. Would love to hear
+from you if a good compromise can be reached here.
 
-between commit:
-
-  06aeb9e3f2bc ("powerpc/kbuild: move -mprofile-kernel check to Kconfig")
-
-from the kbuild tree and commit:
-
-  250122baed29 ("powerpc64/module: Tighten detection of mcount call sites w=
-ith -mprofile-kernel")
-
-from the powerpc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/powerpc/kernel/module_64.c
-index 55bccc315e1a,f7667e2ebfcb..000000000000
---- a/arch/powerpc/kernel/module_64.c
-+++ b/arch/powerpc/kernel/module_64.c
-@@@ -462,9 -466,12 +466,12 @@@ static unsigned long stub_for_addr(cons
-  	return (unsigned long)&stubs[i];
-  }
- =20
- -#ifdef CC_USING_MPROFILE_KERNEL
- +#ifdef CONFIG_MPROFILE_KERNEL
-- static bool is_early_mcount_callsite(u32 *instruction)
-+ static bool is_mprofile_mcount_callsite(const char *name, u32 *instructio=
-n)
-  {
-+ 	if (strcmp("_mcount", name))
-+ 		return false;
-+=20
-  	/*
-  	 * Check if this is one of the -mprofile-kernel sequences.
-  	 */
-
---Sig_/Ru_ne_nrKN=hqgwpUNXRDNB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPNIAACgkQAVBC80lX
-0GySDwf+KMfNFbnc+SDtymp5YdW9K61AWysy5duqE7dY2up0PK8jZC+7NwLEcJex
-ZVHRK9tmmLSvCfH3sJ8615NNlJUfIgsmL/w8xaNtu+EDIE8uh/wtSweXDqaewdDA
-S7DDzF28Z9CsKPMKQQWEzXZSFi2tGdVznRa3IcSgHsdIVCBlD+RFeWlvhAF/5KIG
-sLTdBo0JfTCMLFrXZtpALcFe2V88HDLA1KUpd8oHyjFaHq/1QROYLEV6aF/HLHb5
-nvpmV7fa+QzJHHEFJuP+Eikindx6YyyQLGXNNis8Ey7WB98vdFuEe/UK0wmywPy4
-j1KXufYi517zjxbVvZ72NYKCxc5QVA==
-=x/mn
------END PGP SIGNATURE-----
-
---Sig_/Ru_ne_nrKN=hqgwpUNXRDNB--
+>
+> Thanks for your feedback.
