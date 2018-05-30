@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753321AbeE3LhZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:37:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60809 "EHLO
+        id S1753261AbeE3LhU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:37:20 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60802 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752323AbeE3LHC (ORCPT
+        by vger.kernel.org with ESMTP id S1752318AbeE3LHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:02 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,14 +13,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Danilo Krummrich" <danilokrummrich@dk-develop.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC: akpm@linux-foundation.org, "Doug Ledford" <dledford@redhat.com>,
+        "Leon Romanovsky" <leonro@mellanox.com>,
+        syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.527205994@decadent.org.uk>
+Message-ID: <lsq.1527677561.610345481@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 115/153] usb: quirks: add control message delay for
- 1b1c:1b20
+Subject: [PATCH 3.2 117/153] RDMA/ucma: Limit possible option size
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -33,82 +32,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Danilo Krummrich <danilokrummrich@dk-develop.de>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit cb88a0588717ba6c756cb5972d75766b273a6817 upstream.
+commit 6a21dfc0d0db7b7e0acedce67ca533a6eb19283c upstream.
 
-Corsair Strafe RGB keyboard does not respond to usb control messages
-sometimes and hence generates timeouts.
+Users of ucma are supposed to provide size of option level,
+in most paths it is supposed to be equal to u8 or u16, but
+it is not the case for the IB path record, where it can be
+multiple of struct ib_path_rec_data.
 
-Commit de3af5bf259d ("usb: quirks: add delay init quirk for Corsair
-Strafe RGB keyboard") tried to fix those timeouts by adding
-USB_QUIRK_DELAY_INIT.
+This patch takes simplest possible approach and prevents providing
+values more than possible to allocate.
 
-Unfortunately, even with this quirk timeouts of usb_control_msg()
-can still be seen, but with a lower frequency (approx. 1 out of 15):
-
-[   29.103520] usb 1-8: string descriptor 0 read error: -110
-[   34.363097] usb 1-8: can't set config #1, error -110
-
-Adding further delays to different locations where usb control
-messages are issued just moves the timeouts to other locations,
-e.g.:
-
-[   35.400533] usbhid 1-8:1.0: can't add hid device: -110
-[   35.401014] usbhid: probe of 1-8:1.0 failed with error -110
-
-The only way to reliably avoid those issues is having a pause after
-each usb control message. In approx. 200 boot cycles no more timeouts
-were seen.
-
-Addionaly, keep USB_QUIRK_DELAY_INIT as it turned out to be necessary
-to have the delay in hub_port_connect() after hub_port_init().
-
-The overall boot time seems not to be influenced by these additional
-delays, even on fast machines and lightweight distributions.
-
-Fixes: de3af5bf259d ("usb: quirks: add delay init quirk for Corsair Strafe RGB keyboard")
-Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com
+Fixes: 7ce86409adcd ("RDMA/ucma: Allow user space to set service type")
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/core/message.c | 4 ++++
- drivers/usb/core/quirks.c  | 3 ++-
- include/linux/usb/quirks.h | 3 +++
- 3 files changed, 9 insertions(+), 1 deletion(-)
+ drivers/infiniband/core/ucma.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/core/message.c
-+++ b/drivers/usb/core/message.c
-@@ -150,6 +150,10 @@ int usb_control_msg(struct usb_device *d
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -1000,6 +1000,9 @@ static ssize_t ucma_set_option(struct uc
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
  
- 	ret = usb_internal_control_msg(dev, pipe, dr, data, size, timeout);
- 
-+	/* Linger a bit, prior to the next control message. */
-+	if (dev->quirks & USB_QUIRK_DELAY_CTRL_MSG)
-+		msleep(200);
++	if (unlikely(cmd.optval > KMALLOC_MAX_SIZE))
++		return -EINVAL;
 +
- 	kfree(dr);
- 
- 	return ret;
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -210,7 +210,8 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
- 
- 	/* Corsair Strafe RGB */
--	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
-+	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
-+	  USB_QUIRK_DELAY_CTRL_MSG },
- 
- 	/* Corsair K70 LUX */
- 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
---- a/include/linux/usb/quirks.h
-+++ b/include/linux/usb/quirks.h
-@@ -50,4 +50,7 @@
-  */
- #define USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL	BIT(11)
- 
-+/* Device needs a pause after every control message. */
-+#define USB_QUIRK_DELAY_CTRL_MSG		BIT(13)
-+
- #endif /* __LINUX_USB_QUIRKS_H */
+ 	optval = kmalloc(cmd.optlen, GFP_KERNEL);
+ 	if (!optval) {
+ 		ret = -ENOMEM;
