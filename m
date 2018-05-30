@@ -1,31 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753163AbeE3LY1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:24:27 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33287 "EHLO
+        id S1753248AbeE3LYi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:24:38 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33290 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753088AbeE3LYW (ORCPT
+        by vger.kernel.org with ESMTP id S1753219AbeE3LY3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:24:22 -0400
+        Wed, 30 May 2018 07:24:29 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, keescook@chromium.org,
-        "John Stultz" <john.stultz@linaro.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Christoph Hellwig" <hch@lst.de>,
-        "Anna-Maria Gleixner" <anna-maria@linutronix.de>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+CC: akpm@linux-foundation.org, "Hans Verkuil" <hans.verkuil@cisco.com>,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.793763804@decadent.org.uk>
+Message-ID: <lsq.1527677561.409494394@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 050/153] hrtimer: Ensure POSIX compliance (relative
- CLOCK_REALTIME hrtimers)
+Subject: [PATCH 3.2 027/153] media: cpia2: Fix a couple off by one bugs
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -38,52 +32,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 48d0c9becc7f3c66874c100c126459a9da0fdced upstream.
+commit d5ac225c7d64c9c3ef821239edc035634e594ec9 upstream.
 
-The POSIX specification defines that relative CLOCK_REALTIME timers are not
-affected by clock modifications. Those timers have to use CLOCK_MONOTONIC
-to ensure POSIX compliance.
+The cam->buffers[] array has cam->num_frames elements so the > needs to
+be changed to >= to avoid going beyond the end of the array.  The
+->buffers[] array is allocated in cpia2_allocate_buffers() if you want
+to confirm.
 
-The introduction of the additional HRTIMER_MODE_PINNED mode broke this
-requirement for pinned timers.
+Fixes: ab33d5071de7 ("V4L/DVB (3376): Add cpia2 camera support")
 
-There is no user space visible impact because user space timers are not
-using pinned mode, but for consistency reasons this needs to be fixed.
-
-Check whether the mode has the HRTIMER_MODE_REL bit set instead of
-comparing with HRTIMER_MODE_ABS.
-
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: keescook@chromium.org
-Fixes: 597d0275736d ("timers: Framework for identifying pinned timers")
-Link: http://lkml.kernel.org/r/20171221104205.7269-7-anna-maria@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 [bwh: Backported to 3.2: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/hrtimer.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/media/video/cpia2/cpia2_v4l.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/hrtimer.c
-+++ b/kernel/hrtimer.c
-@@ -1200,7 +1200,12 @@ static void __hrtimer_init(struct hrtime
+--- a/drivers/media/video/cpia2/cpia2_v4l.c
++++ b/drivers/media/video/cpia2/cpia2_v4l.c
+@@ -1152,7 +1152,7 @@ static int cpia2_querybuf(struct file *f
+ 	struct camera_data *cam = video_drvdata(file);
  
- 	cpu_base = &__raw_get_cpu_var(hrtimer_bases);
+ 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+-	   buf->index > cam->num_frames)
++	   buf->index >= cam->num_frames)
+ 		return -EINVAL;
  
--	if (clock_id == CLOCK_REALTIME && mode != HRTIMER_MODE_ABS)
-+	/*
-+	 * POSIX magic: Relative CLOCK_REALTIME timers are not affected by
-+	 * clock modifications, so they needs to become CLOCK_MONOTONIC to
-+	 * ensure POSIX compliance.
-+	 */
-+	if (clock_id == CLOCK_REALTIME && mode & HRTIMER_MODE_REL)
- 		clock_id = CLOCK_MONOTONIC;
+ 	buf->m.offset = cam->buffers[buf->index].data - cam->frame_buffer;
+@@ -1201,7 +1201,7 @@ static int cpia2_qbuf(struct file *file,
  
- 	base = hrtimer_clockid_to_base(clock_id);
+ 	if(buf->type != V4L2_BUF_TYPE_VIDEO_CAPTURE ||
+ 	   buf->memory != V4L2_MEMORY_MMAP ||
+-	   buf->index > cam->num_frames)
++	   buf->index >= cam->num_frames)
+ 		return -EINVAL;
+ 
+ 	DBG("QBUF #%d\n", buf->index);
