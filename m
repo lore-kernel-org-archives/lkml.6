@@ -1,68 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753044AbeE3LRt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:17:49 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52272 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753181AbeE3LRU (ORCPT
+        id S1753016AbeE3LSD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:18:03 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46752 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752517AbeE3LRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:17:20 -0400
-Date: Wed, 30 May 2018 12:17:14 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: Applied "regulator: bd71837: BD71837 PMIC regulator driver" to
- the regulator tree
-Message-ID: <20180530111714.GJ6920@sirena.org.uk>
-References: <72e644d9855621ea8cfd7ec555e2da02403f21f6.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <E1fNysa-0006jU-41@debutante>
- <20180530111425.GD13528@localhost.localdomain>
+        Wed, 30 May 2018 07:17:47 -0400
+Date: Wed, 30 May 2018 14:17:25 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Thibaut Robert <thibaut.robert@gmail.com>
+Cc: Aditya Shankar <aditya.shankar@microchip.com>,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] staging: wilc1000: fix some endianness sparse
+ warnings
+Message-ID: <20180530111725.gmigyddsp2i6mgzw@mwanda>
+References: <20180529191143.13081-1-thibaut.robert@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="q5r20fdKX+PFtYHw"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180530111425.GD13528@localhost.localdomain>
-X-Cookie: Don't get mad, get interest.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180529191143.13081-1-thibaut.robert@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8908 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805300130
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 29, 2018 at 09:11:43PM +0200, Thibaut Robert wrote:
+> diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> index e248702ee519..745bf5ca2622 100644
+> --- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> +++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> @@ -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device *dev, u8 *buff, u32 size)
+>  
+>  	freq = ieee80211_channel_to_frequency(curr_channel, NL80211_BAND_2GHZ);
+>  
+> -	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
+> +	if (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {
 
---q5r20fdKX+PFtYHw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+"buff" comes from the network, it's going to be little endian, not cpu
+endian.  The rest of the function treats it as CPU endian but I'm pretty
+sure it's wrong...
 
-On Wed, May 30, 2018 at 02:14:25PM +0300, Matti Vaittinen wrote:
+>  		cfg80211_rx_mgmt(priv->wdev, freq, 0, buff, size, 0);
+>  		return;
+>  	}
 
-> Does this mean this single patch was applied? I am sorry if I did not
-> follow correct policy/way of informing the dependencies - but there is a
-> dependency. The patch 1/6 contains the header file
-> include/linux/mfd/bd71837.h with bunch of definitions this patch is
-> requiring.
 
-Your driver won't actually get built until the MFD parts end up in the
-same tree since the regulator driver depends on the MFD so there's no
-problem, the code will just sit there and not cause any problems.
+> diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
+> index 28c93f3f846e..a5ac1d26590b 100644
+> --- a/drivers/staging/wilc1000/wilc_wlan.c
+> +++ b/drivers/staging/wilc1000/wilc_wlan.c
+> @@ -560,7 +560,8 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+>  	int ret = 0;
+>  	int counter;
+>  	int timeout;
+> -	u32 vmm_table[WILC_VMM_TBL_SIZE];
+> +	__le32 vmm_table[WILC_VMM_TBL_SIZE];
+> +	u32 table_entry;
+>  	struct wilc_vif *vif;
+>  	struct wilc *wilc;
+>  	const struct wilc_hif_func *func;
+> @@ -598,10 +599,10 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+>  			if ((sum + vmm_sz) > LINUX_TX_SIZE)
+>  				break;
+>  
+> -			vmm_table[i] = vmm_sz / 4;
+> +			table_entry = vmm_sz / 4;
+>  			if (tqe->type == WILC_CFG_PKT)
+> -				vmm_table[i] |= BIT(10);
+> -			vmm_table[i] = cpu_to_le32(vmm_table[i]);
+> +				table_entry |= BIT(10);
+> +			vmm_table[i] = cpu_to_le32(table_entry);
+>  
+>  			i++;
+>  			sum += vmm_sz;
+> @@ -704,8 +705,7 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+>  		if (vmm_table[i] == 0)
+>  			break;
+>  
+> -		vmm_table[i] = cpu_to_le32(vmm_table[i]);
+> -		vmm_sz = (vmm_table[i] & 0x3ff);
+> +		vmm_sz = (le32_to_cpu(vmm_table[i]) & 0x3ff);
+>  		vmm_sz *= 4;
+>  		header = (tqe->type << 31) |
+>  			 (tqe->buffer_size << 15) |
+> @@ -715,8 +715,7 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+>  		else
+>  			header &= ~BIT(30);
+>  
+> -		header = cpu_to_le32(header);
+> -		memcpy(&txb[offset], &header, 4);
+> +		*((__le32 *)&txb[offset]) = cpu_to_le32(header);
 
---q5r20fdKX+PFtYHw
-Content-Type: application/pgp-signature; name="signature.asc"
+I worry about alignment issues here.  That might be the reason for the
+memcpy().  (I'm reading as fast as I can and don't the code so I may
+be wrong).
 
------BEGIN PGP SIGNATURE-----
+>  		if (tqe->type == WILC_CFG_PKT) {
+>  			buffer_offset = ETH_CONFIG_PKT_HDR_OFFSET;
+>  		} else if (tqe->type == WILC_NET_PKT) {
+> @@ -770,8 +769,7 @@ static void wilc_wlan_handle_rx_buff(struct wilc *wilc, u8 *buffer, int size)
+>  
+>  	do {
+>  		buff_ptr = buffer + offset;
+> -		memcpy(&header, buff_ptr, 4);
+> -		header = cpu_to_le32(header);
+> +		header = le32_to_cpup((__le32 *)buff_ptr);
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOiDoACgkQJNaLcl1U
-h9C0Uwf9FffLG3KwDPEbrDy2gWR4EXdFCpKw9k3uQal6TZNRpKxPZ1m10XDfpCKv
-f80INeTZW0mnU7TPsFhnWs4czsdpUL4M5DZHVC8X7MDTlTE2TsbJ9mGjPiziFrpN
-6dCebSH14VVIH0/BVoqOzI1L+pCbVXBe5OQo69o1Gu2gTWj8s1GPYQ3yl/g1Wa9d
-daw6eG0sNVGhmu54HuLW1dxtDC97ENuLAdt8+bG2cWC1UljH+1S1zTQzXtiQsP8f
-ePg8xwhqeP6z7cssLUMl5uCAi3kdhectNgR3nx/ILrCDNUA9YcwmE82/zi1JmHVX
-IQUJc2UpuVVJ4mgDfZw0gd7jHLYJ0A==
-=Yxz3
------END PGP SIGNATURE-----
+Maybe the same, whenever you see a memcpy().
 
---q5r20fdKX+PFtYHw--
+>  
+>  		is_cfg_packet = (header >> 31) & 0x1;
+>  		pkt_offset = (header >> 22) & 0x1ff;
+> @@ -942,6 +940,7 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
+>  	u32 offset;
+>  	u32 addr, size, size2, blksz;
+>  	u8 *dma_buffer;
+> +	const __le32 *header;
+>  	int ret = 0;
+>  
+>  	blksz = BIT(12);
+> @@ -952,10 +951,9 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
+>  
+>  	offset = 0;
+>  	do {
+> -		memcpy(&addr, &buffer[offset], 4);
+> -		memcpy(&size, &buffer[offset + 4], 4);
+> -		addr = cpu_to_le32(addr);
+> -		size = cpu_to_le32(size);
+> +		header = (__le32 *)buffer + offset;
+> +		addr = le32_to_cpu(header[0]);
+> +		size = le32_to_cpu(header[1]);
+>  		acquire_bus(wilc, ACQUIRE_ONLY);
+>  		offset += 8;
+>  		while (((int)size) && (offset < buffer_size)) {
+> diff --git a/drivers/staging/wilc1000/wilc_wlan_cfg.c b/drivers/staging/wilc1000/wilc_wlan_cfg.c
+> index c0b9b700f4d7..4a914d8572aa 100644
+> --- a/drivers/staging/wilc1000/wilc_wlan_cfg.c
+> +++ b/drivers/staging/wilc1000/wilc_wlan_cfg.c
+> @@ -275,14 +275,14 @@ static int wilc_wlan_cfg_set_bin(u8 *frame, u32 offset, u16 id, u8 *b, u32 size)
+>  
+>  static void wilc_wlan_parse_response_frame(u8 *info, int size)
+>  {
+> -	u32 wid, len = 0, i = 0;
+> +	u32 wid;
+> +	int len = 0, i = 0;
+
+Why did we make these int now?
+
+>  
+>  	while (size > 0) {
+>  		i = 0;
+> -		wid = info[0] | (info[1] << 8);
+> -		wid = cpu_to_le32(wid);
+> +		wid = le16_to_cpup((__le16 *)info);
+>  
+> -		switch ((wid >> 12) & 0x7) {
+> +		switch (info[1] >> 4) {
+
+Why do we not need to mask by 0x7?  Anyway, I feel like this isn't
+beautiful.  We should be using a macro and "wid" instead of magically
+poking into info[1].
+
+		switch(SOME_MACRO(wid)) {
+
+
+regards,
+dan carpenter
