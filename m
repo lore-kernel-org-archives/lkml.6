@@ -1,164 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750990AbeE3EY5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 00:24:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43799 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750708AbeE3EYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 00:24:55 -0400
-Subject: Re: [PATCH 1/8] xen/grant-table: Make set/clear page private code
- shared
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180525153331.31188-1-andr2000@gmail.com>
- <20180525153331.31188-2-andr2000@gmail.com>
-From: Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a43d9dd4-c826-1dab-e397-d60796de3a76@suse.com>
-Date: Wed, 30 May 2018 06:24:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1754912AbeE3E1u (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 00:27:50 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:46619 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750827AbeE3E1t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 00:27:49 -0400
+X-ME-Proxy: <xmx:RCgOW9i0GaW-zd7bBd9kEchIn-P-evAERdEY1j4po2WWEeLaprrIsw>
+X-ME-Proxy: <xmx:RCgOW-ANREyhylZBwSu--bgrLlDu3f3e40KE0F2EF9BqHoh-HUsY2A>
+X-ME-Proxy: <xmx:RCgOW_R4tCofUAZXyEI_g9jj1G3Md8EHdgzyKXoQ4rzM7Dyduk4gMg>
+X-ME-Proxy: <xmx:RCgOWzWYJp-BPn37CToJ6-s3jtMKe3_PoEvekm9qnRSVBFDQmSjAtA>
+X-ME-Proxy: <xmx:RCgOW4dBKD7PfdN5Y44CZTO1-4BvYtwthpG8WETr7oGeyR6Ag8FTbw>
+X-ME-Proxy: <xmx:RCgOW9yD2LykFjWh7Q0FP7niO9ccrH2KZwGWEorKpblqMqrJZOtCSw>
+X-ME-Sender: <xms:RCgOW6k5KmmEBlo_oPZMdUsKgVGmcQi-AI9zXF64NH_iwWFw-kjNjw>
+Date: Wed, 30 May 2018 14:27:44 +1000
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 4/4] vsprintf: Add command line option
+ debug_boot_weak_hash
+Message-ID: <20180530042744.GA14188@eros>
+References: <1527472002-11571-1-git-send-email-me@tobin.cc>
+ <1527472002-11571-5-git-send-email-me@tobin.cc>
+ <fde2cc84-f1d8-b1ee-510b-b3659834874d@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180525153331.31188-2-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fde2cc84-f1d8-b1ee-510b-b3659834874d@infradead.org>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/05/18 17:33, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+On Mon, May 28, 2018 at 10:40:43AM -0700, Randy Dunlap wrote:
+> On 05/27/2018 06:46 PM, Tobin C. Harding wrote:
+> > Currently printing [hashed] pointers requires enough entropy to be
+> > available.  Early in the boot sequence this may not be the case
+> > resulting in a dummy string '(____ptrval____)' being printed.  This
+> > makes debugging the early boot sequence difficult.  We can relax the
+> > requirement to use cryptographically secure hashing during debugging.
+> > This enables debugging while keeping development/production kernel
+> > behaviour the same.
+> > 
+> > If new command line option debug_boot_weak_hash is enabled use
+> > cryptographically insecure hashing and hash pointer value immediately.
+> > 
+> > Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Tobin C. Harding <me@tobin.cc>
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
+> >  lib/vsprintf.c                                  | 20 ++++++++++++++++++++
+> >  2 files changed, 29 insertions(+)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index f2040d46f095..8a86d895343e 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -753,6 +753,15 @@
+> >  
+> >  	debug		[KNL] Enable kernel debugging (events log level).
+> >  
 > 
-> Make set/clear page private code shared and accessible to
-> other kernel modules which can re-use these instead of open-coding.
-> 
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
->  drivers/xen/grant-table.c | 54 +++++++++++++++++++++++++--------------
->  include/xen/grant_table.h |  3 +++
->  2 files changed, 38 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
-> index 27be107d6480..d7488226e1f2 100644
-> --- a/drivers/xen/grant-table.c
-> +++ b/drivers/xen/grant-table.c
-> @@ -769,29 +769,18 @@ void gnttab_free_auto_xlat_frames(void)
->  }
->  EXPORT_SYMBOL_GPL(gnttab_free_auto_xlat_frames);
->  
-> -/**
-> - * gnttab_alloc_pages - alloc pages suitable for grant mapping into
-> - * @nr_pages: number of pages to alloc
-> - * @pages: returns the pages
-> - */
-> -int gnttab_alloc_pages(int nr_pages, struct page **pages)
-> +int gnttab_pages_set_private(int nr_pages, struct page **pages)
->  {
->  	int i;
-> -	int ret;
-> -
-> -	ret = alloc_xenballooned_pages(nr_pages, pages);
-> -	if (ret < 0)
-> -		return ret;
->  
->  	for (i = 0; i < nr_pages; i++) {
->  #if BITS_PER_LONG < 64
->  		struct xen_page_foreign *foreign;
->  
->  		foreign = kzalloc(sizeof(*foreign), GFP_KERNEL);
-> -		if (!foreign) {
-> -			gnttab_free_pages(nr_pages, pages);
-> +		if (!foreign)
->  			return -ENOMEM;
-> -		}
-> +
->  		set_page_private(pages[i], (unsigned long)foreign);
->  #endif
->  		SetPagePrivate(pages[i]);
-> @@ -799,14 +788,30 @@ int gnttab_alloc_pages(int nr_pages, struct page **pages)
->  
->  	return 0;
->  }
-> -EXPORT_SYMBOL(gnttab_alloc_pages);
-> +EXPORT_SYMBOL(gnttab_pages_set_private);
+> Hi,
+> This is much more readable than the previous version.  Thanks.
 
-EXPORT_SYMBOL_GPL()
+Thanks for following up with this one Randy.
 
->  
->  /**
-> - * gnttab_free_pages - free pages allocated by gnttab_alloc_pages()
-> - * @nr_pages; number of pages to free
-> - * @pages: the pages
-> + * gnttab_alloc_pages - alloc pages suitable for grant mapping into
-> + * @nr_pages: number of pages to alloc
-> + * @pages: returns the pages
->   */
-> -void gnttab_free_pages(int nr_pages, struct page **pages)
-> +int gnttab_alloc_pages(int nr_pages, struct page **pages)
-> +{
-> +	int ret;
-> +
-> +	ret = alloc_xenballooned_pages(nr_pages, pages);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = gnttab_pages_set_private(nr_pages, pages);
-> +	if (ret < 0)
-> +		gnttab_free_pages(nr_pages, pages);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(gnttab_alloc_pages);
-> +
-> +void gnttab_pages_clear_private(int nr_pages, struct page **pages)
->  {
->  	int i;
->  
-> @@ -818,6 +823,17 @@ void gnttab_free_pages(int nr_pages, struct page **pages)
->  			ClearPagePrivate(pages[i]);
->  		}
->  	}
-> +}
-> +EXPORT_SYMBOL(gnttab_pages_clear_private);
-
-EXPORT_SYMBOL_GPL()
-
-
-Juergen
+	Tobin
