@@ -1,61 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937219AbeE3HQm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 03:16:42 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44978 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937148AbeE3HQe (ORCPT
+        id S937278AbeE3HQq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 03:16:46 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:59419 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937196AbeE3HQm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 03:16:34 -0400
-X-Google-Smtp-Source: ADUXVKL0KibXz3rqoWk0E9cFRVwSTdWyZeazXYu3Rjzrpc9X5bzm9WBhKSwMGIwMpOjTHeYXqEB9Bw==
-From: Keiichi Watanabe <keiichiw@chromium.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 0/2] Add control for VP9 profile
-Date: Wed, 30 May 2018 16:16:11 +0900
-Message-Id: <20180530071613.125768-1-keiichiw@chromium.org>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
+        Wed, 30 May 2018 03:16:42 -0400
+From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+To: Zeng Tao <prime.zeng@hisilicon.com>,
+        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: dwc2: gadget: fix missing process for isoc
+ descriptor dma mode
+Thread-Topic: [PATCH] usb: dwc2: gadget: fix missing process for isoc
+ descriptor dma mode
+Thread-Index: AQHT99RV+ygzxPGq9EKuFvTgIUAiiA==
+Date: Wed, 30 May 2018 07:16:36 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A59784A@am04wembxa.internal.synopsys.com>
+References: <1527681676-44003-1-git-send-email-prime.zeng@hisilicon.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.165]
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4U7GqRk028192
 
-This patch series adds a new control V4L2_CID_MPEG_VIDEO_VP9_PROFILE
-for VP9 profile.
-This control can be used to select a desired profile for VP9 encoder.
-In addition, it is also used to query for supported profiles by an
-encoder or a decoder.
+Hi Zeng Tao,
 
-Patch 1 adds this control.
-By patch 2, this control is added to MediaTek decoder's driver, which
-supports VP9 profile 0.
+On 5/30/2018 9:09 AM, Zeng Tao wrote:
+> If it's the first request to queue, and we are using descriptor dma mode
+> for isoc transfer, we only need to add the request to the queue, and it
+> will be processed in the future nak interrupt handler.
+> 
+> Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+> ---
+>   drivers/usb/dwc2/gadget.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+> index f0d9ccf..48e3a48c 100644
+> --- a/drivers/usb/dwc2/gadget.c
+> +++ b/drivers/usb/dwc2/gadget.c
+> @@ -1365,6 +1365,9 @@ static int dwc2_hsotg_ep_queue(struct usb_ep *ep, struct usb_request *req,
+>   			return 0;
+>   		}
+>   
+> +		if (using_desc_dma(hs))
+> +			return 0;
+> +
+>   		/* Update current frame number value. */
+>   		hs->frame_number = dwc2_hsotg_read_frameno(hs);
+>   		while (dwc2_gadget_target_frame_elapsed(hs_ep)) {
+> 
+
+Actually it considered in "[PATCH] usb: dwc2: Change ISOC DDMA flow" 
+before checking is this request first or no:
+
++	if (using_desc_dma(hs) && hs_ep->isochronous) {
++		if (hs_ep->target_frame != TARGET_FRAME_INITIAL) {
++			dwc2_gadget_fill_isoc_desc(hs_ep, hs_req->req.dma,
++						   hs_req->req.length);
++		}
+  		return 0;
+  	}
 
 
-Version 2 changes:
-- Support this control in MediaTek decoder's driver
-
-Keiichi Watanabe (2):
-  media: v4l2-ctrl: Add control for VP9 profile
-  media: mtk-vcodec: Support VP9 profile in decoder
-
- .../media/uapi/v4l/extended-controls.rst      | 26 +++++++++++++++++++
- .../platform/mtk-vcodec/mtk_vcodec_dec.c      |  6 +++++
- drivers/media/v4l2-core/v4l2-ctrls.c          | 12 +++++++++
- include/uapi/linux/v4l2-controls.h            |  8 ++++++
- 4 files changed, 52 insertions(+)
-
---
-2.17.0.921.gf22659ad46-goog
+Thanks,
+Minas
