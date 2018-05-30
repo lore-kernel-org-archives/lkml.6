@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753261AbeE3LhU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:37:20 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60802 "EHLO
+        id S1753049AbeE3LhS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:37:18 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60791 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752318AbeE3LHC (ORCPT
+        by vger.kernel.org with ESMTP id S1752257AbeE3LHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:02 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,13 +13,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Doug Ledford" <dledford@redhat.com>,
-        "Leon Romanovsky" <leonro@mellanox.com>,
-        syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com
+CC: akpm@linux-foundation.org, "Nicolai Stange" <nstange@suse.de>,
+        "Takashi Iwai" <tiwai@suse.de>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.610345481@decadent.org.uk>
+Message-ID: <lsq.1527677561.788127865@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 117/153] RDMA/ucma: Limit possible option size
+Subject: [PATCH 3.2 123/153] ALSA: seq: Fix possible UAF in
+ snd_seq_check_queue()
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -32,37 +32,166 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 6a21dfc0d0db7b7e0acedce67ca533a6eb19283c upstream.
+commit d0f833065221cbfcbadf19fd4102bcfa9330006a upstream.
 
-Users of ucma are supposed to provide size of option level,
-in most paths it is supposed to be equal to u8 or u16, but
-it is not the case for the IB path record, where it can be
-multiple of struct ib_path_rec_data.
+Although we've covered the races between concurrent write() and
+ioctl() in the previous patch series, there is still a possible UAF in
+the following scenario:
 
-This patch takes simplest possible approach and prevents providing
-values more than possible to allocate.
+A: user client closed		B: timer irq
+  -> snd_seq_release()		  -> snd_seq_timer_interrupt()
+    -> snd_seq_free_client()	    -> snd_seq_check_queue()
+				      -> cell = snd_seq_prioq_cell_peek()
+      -> snd_seq_prioq_leave()
+         .... removing all cells
+      -> snd_seq_pool_done()
+         .... vfree()
+				      -> snd_seq_compare_tick_time(cell)
+				         ... Oops
 
-Reported-by: syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com
-Fixes: 7ce86409adcd ("RDMA/ucma: Allow user space to set service type")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
-[bwh: Backported to 3.2: adjust context]
+So the problem is that a cell is peeked and accessed without any
+protection until it's retrieved from the queue again via
+snd_seq_prioq_cell_out().
+
+This patch tries to address it, also cleans up the code by a slight
+refactoring.  snd_seq_prioq_cell_out() now receives an extra pointer
+argument.  When it's non-NULL, the function checks the event timestamp
+with the given pointer.  The caller needs to pass the right reference
+either to snd_seq_tick or snd_seq_realtime depending on the event
+timestamp type.
+
+A good news is that the above change allows us to remove the
+snd_seq_prioq_cell_peek(), too, thus the patch actually reduces the
+code size.
+
+Reviewed-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[bwh: Backported to 3.2: Deleted function had different log message]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/core/ucma.c | 3 +++
- 1 file changed, 3 insertions(+)
+ sound/core/seq/seq_prioq.c | 28 ++++++++++++++--------------
+ sound/core/seq/seq_prioq.h |  6 ++----
+ sound/core/seq/seq_queue.c | 28 +++++++++-------------------
+ 3 files changed, 25 insertions(+), 37 deletions(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1000,6 +1000,9 @@ static ssize_t ucma_set_option(struct uc
- 	if (IS_ERR(ctx))
- 		return PTR_ERR(ctx);
+--- a/sound/core/seq/seq_prioq.c
++++ b/sound/core/seq/seq_prioq.c
+@@ -89,7 +89,7 @@ void snd_seq_prioq_delete(struct snd_seq
+ 	if (f->cells > 0) {
+ 		/* drain prioQ */
+ 		while (f->cells > 0)
+-			snd_seq_cell_free(snd_seq_prioq_cell_out(f));
++			snd_seq_cell_free(snd_seq_prioq_cell_out(f, NULL));
+ 	}
+ 	
+ 	kfree(f);
+@@ -216,8 +216,18 @@ int snd_seq_prioq_cell_in(struct snd_seq
+ 	return 0;
+ }
  
-+	if (unlikely(cmd.optval > KMALLOC_MAX_SIZE))
-+		return -EINVAL;
++/* return 1 if the current time >= event timestamp */
++static int event_is_ready(struct snd_seq_event *ev, void *current_time)
++{
++	if ((ev->flags & SNDRV_SEQ_TIME_STAMP_MASK) == SNDRV_SEQ_TIME_STAMP_TICK)
++		return snd_seq_compare_tick_time(current_time, &ev->time.tick);
++	else
++		return snd_seq_compare_real_time(current_time, &ev->time.time);
++}
 +
- 	optval = kmalloc(cmd.optlen, GFP_KERNEL);
- 	if (!optval) {
- 		ret = -ENOMEM;
+ /* dequeue cell from prioq */
+-struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f)
++struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f,
++						  void *current_time)
+ {
+ 	struct snd_seq_event_cell *cell;
+ 	unsigned long flags;
+@@ -229,6 +239,8 @@ struct snd_seq_event_cell *snd_seq_prioq
+ 	spin_lock_irqsave(&f->lock, flags);
+ 
+ 	cell = f->head;
++	if (cell && current_time && !event_is_ready(&cell->event, current_time))
++		cell = NULL;
+ 	if (cell) {
+ 		f->head = cell->next;
+ 
+@@ -255,17 +267,6 @@ int snd_seq_prioq_avail(struct snd_seq_p
+ }
+ 
+ 
+-/* peek at cell at the head of the prioq */
+-struct snd_seq_event_cell *snd_seq_prioq_cell_peek(struct snd_seq_prioq * f)
+-{
+-	if (f == NULL) {
+-		snd_printd("oops: snd_seq_prioq_cell_in() called with NULL prioq\n");
+-		return NULL;
+-	}
+-	return f->head;
+-}
+-
+-
+ static inline int prioq_match(struct snd_seq_event_cell *cell,
+ 			      int client, int timestamp)
+ {
+--- a/sound/core/seq/seq_prioq.h
++++ b/sound/core/seq/seq_prioq.h
+@@ -44,14 +44,12 @@ void snd_seq_prioq_delete(struct snd_seq
+ int snd_seq_prioq_cell_in(struct snd_seq_prioq *f, struct snd_seq_event_cell *cell);
+ 
+ /* dequeue cell from prioq */ 
+-struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f);
++struct snd_seq_event_cell *snd_seq_prioq_cell_out(struct snd_seq_prioq *f,
++						  void *current_time);
+ 
+ /* return number of events available in prioq */
+ int snd_seq_prioq_avail(struct snd_seq_prioq *f);
+ 
+-/* peek at cell at the head of the prioq */
+-struct snd_seq_event_cell *snd_seq_prioq_cell_peek(struct snd_seq_prioq *f);
+-
+ /* client left queue */
+ void snd_seq_prioq_leave(struct snd_seq_prioq *f, int client, int timestamp);        
+ 
+--- a/sound/core/seq/seq_queue.c
++++ b/sound/core/seq/seq_queue.c
+@@ -275,30 +275,20 @@ void snd_seq_check_queue(struct snd_seq_
+ 
+       __again:
+ 	/* Process tick queue... */
+-	while ((cell = snd_seq_prioq_cell_peek(q->tickq)) != NULL) {
+-		if (snd_seq_compare_tick_time(&q->timer->tick.cur_tick,
+-					      &cell->event.time.tick)) {
+-			cell = snd_seq_prioq_cell_out(q->tickq);
+-			if (cell)
+-				snd_seq_dispatch_event(cell, atomic, hop);
+-		} else {
+-			/* event remains in the queue */
++	for (;;) {
++		cell = snd_seq_prioq_cell_out(q->tickq,
++					      &q->timer->tick.cur_tick);
++		if (!cell)
+ 			break;
+-		}
++		snd_seq_dispatch_event(cell, atomic, hop);
+ 	}
+ 
+-
+ 	/* Process time queue... */
+-	while ((cell = snd_seq_prioq_cell_peek(q->timeq)) != NULL) {
+-		if (snd_seq_compare_real_time(&q->timer->cur_time,
+-					      &cell->event.time.time)) {
+-			cell = snd_seq_prioq_cell_out(q->timeq);
+-			if (cell)
+-				snd_seq_dispatch_event(cell, atomic, hop);
+-		} else {
+-			/* event remains in the queue */
++	for (;;) {
++		cell = snd_seq_prioq_cell_out(q->timeq, &q->timer->cur_time);
++		if (!cell)
+ 			break;
+-		}
++		snd_seq_dispatch_event(cell, atomic, hop);
+ 	}
+ 
+ 	/* free lock */
