@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753605AbeE3OLJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:11:09 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:56730 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753549AbeE3OK5 (ORCPT
+        id S1753236AbeE3OK3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:10:29 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:25600 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752667AbeE3OK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:10:57 -0400
+        Wed, 30 May 2018 10:10:27 -0400
 From: Faiz Abbas <faiz_abbas@ti.com>
 To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-clk@vger.kernel.org>
 CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
         <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH v2 4/6] bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
-Date: Wed, 30 May 2018 19:41:31 +0530
-Message-ID: <20180530141133.3711-5-faiz_abbas@ti.com>
+Subject: [PATCH v2 0/6] Add MCAN Support for dra76x
+Date: Wed, 30 May 2018 19:41:27 +0530
+Message-ID: <20180530141133.3711-1-faiz_abbas@ti.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180530141133.3711-1-faiz_abbas@ti.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -26,92 +24,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dra76x MCAN generic interconnect module has a its own
-format for the bits in the control registers.
+The following patches add dts, hwmod and sysconfig support
+for MCAN on TI's dra76 SOCs
 
-Therefore add a new module type, new regbits and new capabilities
-specific to the MCAN module.
+The patches depend on the following series:
+https://patchwork.kernel.org/patch/10221105/
 
-CC: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- .../devicetree/bindings/bus/ti-sysc.txt         |  1 +
- drivers/bus/ti-sysc.c                           | 17 +++++++++++++++++
- include/dt-bindings/bus/ti-sysc.h               |  2 ++
- include/linux/platform_data/ti-sysc.h           |  1 +
- 4 files changed, 21 insertions(+)
+Changes in v2:
+ 1. Added Support for mcan in the ti-sysc driver
+    Also added the target-module node for the same
 
-diff --git a/Documentation/devicetree/bindings/bus/ti-sysc.txt b/Documentation/devicetree/bindings/bus/ti-sysc.txt
-index 2957a9ae291f..ebbb11144b7b 100644
---- a/Documentation/devicetree/bindings/bus/ti-sysc.txt
-+++ b/Documentation/devicetree/bindings/bus/ti-sysc.txt
-@@ -36,6 +36,7 @@ Required standard properties:
- 		"ti,sysc-omap-aes"
- 		"ti,sysc-mcasp"
- 		"ti,sysc-usb-host-fs"
-+		"ti,sysc-dra7-mcan"
- 
- - reg		shall have register areas implemented for the interconnect
- 		target module in question such as revision, sysc and syss
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 7cd2fd04b212..83b47974567a 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -1262,6 +1262,22 @@ static const struct sysc_capabilities sysc_omap4_usb_host_fs = {
- 	.regbits = &sysc_regbits_omap4_usb_host_fs,
- };
- 
-+static const struct sysc_regbits sysc_regbits_dra7_mcan = {
-+	.dmadisable_shift = -ENODEV,
-+	.midle_shift = -ENODEV,
-+	.sidle_shift = -ENODEV,
-+	.clkact_shift = -ENODEV,
-+	.enwkup_shift = 4,
-+	.srst_shift = 0,
-+	.emufree_shift = -ENODEV,
-+	.autoidle_shift = -ENODEV,
-+};
-+
-+static const struct sysc_capabilities sysc_dra7_mcan = {
-+	.type = TI_SYSC_DRA7_MCAN,
-+	.regbits = &sysc_regbits_dra7_mcan,
-+};
-+
- static int sysc_init_pdata(struct sysc *ddata)
- {
- 	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
-@@ -1441,6 +1457,7 @@ static const struct of_device_id sysc_match[] = {
- 	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
- 	{ .compatible = "ti,sysc-usb-host-fs",
- 	  .data = &sysc_omap4_usb_host_fs, },
-+	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
- 	{  },
- };
- MODULE_DEVICE_TABLE(of, sysc_match);
-diff --git a/include/dt-bindings/bus/ti-sysc.h b/include/dt-bindings/bus/ti-sysc.h
-index 2c005376ac0e..7138384e2ef9 100644
---- a/include/dt-bindings/bus/ti-sysc.h
-+++ b/include/dt-bindings/bus/ti-sysc.h
-@@ -15,6 +15,8 @@
- /* SmartReflex sysc found on 36xx and later */
- #define SYSC_OMAP3_SR_ENAWAKEUP		(1 << 26)
- 
-+#define SYSC_DRA7_MCAN_ENAWAKEUP	(1 << 4)
-+
- /* SYSCONFIG STANDBYMODE/MIDLEMODE/SIDLEMODE supported by hardware */
- #define SYSC_IDLE_FORCE			0
- #define SYSC_IDLE_NO			1
-diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
-index 80ce28d40832..1ea3aab972b4 100644
---- a/include/linux/platform_data/ti-sysc.h
-+++ b/include/linux/platform_data/ti-sysc.h
-@@ -14,6 +14,7 @@ enum ti_sysc_module_type {
- 	TI_SYSC_OMAP4_SR,
- 	TI_SYSC_OMAP4_MCASP,
- 	TI_SYSC_OMAP4_USB_HOST_FS,
-+	TI_SYSC_DRA7_MCAN,
- };
- 
- struct ti_sysc_cookie {
+ 2. Added clkctrl data for mcan clocks
+
+Faiz Abbas (3):
+  clk: ti: dra7: Add clkctrl clock data for the mcan clocks
+  bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
+  ARM: dts: Add generic interconnect target module node for MCAN
+
+Franklin S Cooper Jr (1):
+  ARM: dts: dra76x: Add MCAN node
+
+Lokesh Vutla (2):
+  ARM: dra762: hwmod: Add MCAN support
+  ARM: dts: dra762: Add MCAN clock support
+
+ .../devicetree/bindings/bus/ti-sysc.txt       |  1 +
+ arch/arm/boot/dts/dra76-evm.dts               |  7 ++
+ arch/arm/boot/dts/dra76x.dtsi                 | 67 +++++++++++++++++++
+ arch/arm/mach-omap2/omap_hwmod_7xx_data.c     | 32 +++++++++
+ drivers/bus/ti-sysc.c                         | 17 +++++
+ drivers/clk/ti/clk-7xx.c                      |  1 +
+ include/dt-bindings/bus/ti-sysc.h             |  2 +
+ include/dt-bindings/clock/dra7.h              |  1 +
+ include/linux/platform_data/ti-sysc.h         |  1 +
+ 9 files changed, 129 insertions(+)
+
 -- 
 2.17.0
