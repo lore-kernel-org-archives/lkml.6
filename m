@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753622AbeE3LeR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:34:17 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60823 "EHLO
+        id S1753592AbeE3LeH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:34:07 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60822 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752358AbeE3LHC (ORCPT
+        by vger.kernel.org with ESMTP id S1752352AbeE3LHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:07:02 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -13,15 +13,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
-        "Guillaume Nault" <g.nault@alphalink.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        "James Chapman" <jchapman@katalix.com>,
-        "Eric Dumazet" <edumazet@google.com>
+CC: akpm@linux-foundation.org, "Yazen Ghannam" <yazen.ghannam@amd.com>,
+        "linux-edac" <linux-edac@vger.kernel.org>,
+        "Borislav Petkov" <bp@suse.de>, "Tony Luck" <tony.luck@intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.861137605@decadent.org.uk>
+Message-ID: <lsq.1527677561.250029342@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 116/153] l2tp: do not accept arbitrary sockets
+Subject: [PATCH 3.2 119/153] x86/MCE: Save microcode revision in machine
+ check records
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -34,74 +34,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Tony Luck <tony.luck@intel.com>
 
-commit 17cfe79a65f98abe535261856c5aef14f306dff7 upstream.
+commit fa94d0c6e0f3431523f5701084d799c77c7d4a4f upstream.
 
-syzkaller found an issue caused by lack of sufficient checks
-in l2tp_tunnel_create()
+Updating microcode used to be relatively rare. Now that it has become
+more common we should save the microcode version in a machine check
+record to make sure that those people looking at the error have this
+important information bundled with the rest of the logged information.
 
-RAW sockets can not be considered as UDP ones for instance.
+[ Borislav: Simplify a bit. ]
 
-In another patch, we shall replace all pr_err() by less intrusive
-pr_debug() so that syzkaller can find other bugs faster.
-Acked-by: Guillaume Nault <g.nault@alphalink.fr>
-Acked-by: James Chapman <jchapman@katalix.com>
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
-dst_release: dst:00000000d53d0d0f refcnt:-1
-Write of size 1 at addr ffff8801d013b798 by task syz-executor3/6242
-
-CPU: 1 PID: 6242 Comm: syz-executor3 Not tainted 4.16.0-rc2+ #253
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x194/0x24d lib/dump_stack.c:53
- print_address_description+0x73/0x250 mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report+0x23b/0x360 mm/kasan/report.c:412
- __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
- setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
- l2tp_tunnel_create+0x1354/0x17f0 net/l2tp/l2tp_core.c:1596
- pppol2tp_connect+0x14b1/0x1dd0 net/l2tp/l2tp_ppp.c:707
- SYSC_connect+0x213/0x4a0 net/socket.c:1640
- SyS_connect+0x24/0x30 net/socket.c:1621
- do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180301233449.24311-1-tony.luck@intel.com
+[bwh: Backported to 3.2:
+ - Add other new fields to struct mce, to match upstream UAPI
+ - Adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/l2tp/l2tp_core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1505,9 +1505,14 @@ int l2tp_tunnel_create(struct net *net,
- 		encap = cfg->encap;
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -76,6 +76,10 @@ struct mce {
+ 	__u32 socketid;	/* CPU socket ID */
+ 	__u32 apicid;	/* CPU initial apic ID */
+ 	__u64 mcgcap;	/* MCGCAP MSR: machine check capabilities of CPU */
++	__u64 synd;	/* MCA_SYND MSR: only valid on SMCA systems */
++	__u64 ipid;	/* MCA_IPID MSR: only valid on SMCA systems */
++	__u64 ppin;	/* Protected Processor Inventory Number */
++	__u32 microcode;/* Microcode revision */
+ };
  
- 	/* Quick sanity checks */
-+	err = -EPROTONOSUPPORT;
-+	if (sk->sk_type != SOCK_DGRAM) {
-+		pr_debug("tunl %hu: fd %d wrong socket type\n",
-+			 tunnel_id, fd);
-+		goto err;
-+	}
- 	switch (encap) {
- 	case L2TP_ENCAPTYPE_UDP:
--		err = -EPROTONOSUPPORT;
- 		if (sk->sk_protocol != IPPROTO_UDP) {
- 			printk(KERN_ERR "tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
- 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_UDP);
-@@ -1515,7 +1520,6 @@ int l2tp_tunnel_create(struct net *net,
- 		}
- 		break;
- 	case L2TP_ENCAPTYPE_IP:
--		err = -EPROTONOSUPPORT;
- 		if (sk->sk_protocol != IPPROTO_L2TP) {
- 			printk(KERN_ERR "tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
- 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_L2TP);
+ /*
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -125,6 +125,8 @@ void mce_setup(struct mce *m)
+ 	m->socketid = cpu_data(m->extcpu).phys_proc_id;
+ 	m->apicid = cpu_data(m->extcpu).initial_apicid;
+ 	rdmsrl(MSR_IA32_MCG_CAP, m->mcgcap);
++
++	m->microcode = boot_cpu_data.microcode;
+ }
+ 
+ DEFINE_PER_CPU(struct mce, injectm);
+@@ -221,7 +223,7 @@ static void print_mce(struct mce *m)
+ 	 */
+ 	pr_emerg(HW_ERR "PROCESSOR %u:%x TIME %llu SOCKET %u APIC %x microcode %x\n",
+ 		m->cpuvendor, m->cpuid, m->time, m->socketid, m->apicid,
+-		cpu_data(m->extcpu).microcode);
++		m->microcode);
+ 
+ 	/*
+ 	 * Print out human-readable details about the MCE error,
