@@ -1,29 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753670AbeE3Ll6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:41:58 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60707 "EHLO
+        id S1753568AbeE3Llw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:41:52 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60741 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752102AbeE3LG7 (ORCPT
+        by vger.kernel.org with ESMTP id S1752133AbeE3LHA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:06:59 -0400
+        Wed, 30 May 2018 07:07:00 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Michal Hocko" <mhocko@kernel.org>,
-        "Dmitriy Vyukov" <dvyukov@google.com>,
-        "Yisheng Xie" <xieyisheng1@huawei.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Vlastimil Babka" <vbabka@suse.cz>,
-        "Alexander Potapenko" <glider@google.com>
+CC: akpm@linux-foundation.org, "Sean Hefty" <sean.hefty@intel.com>,
+        "Leon Romanovsky" <leonro@mellanox.com>,
+        "Jason Gunthorpe" <jgg@mellanox.com>,
+        "" <syzbot+dcfd344365a56fbebd0f@syzkaller.appspotmail.com>
 Date: Wed, 30 May 2018 11:52:42 +0100
-Message-ID: <lsq.1527677562.889299916@decadent.org.uk>
+Message-ID: <lsq.1527677562.576219870@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 142/153] mm/mempolicy.c: avoid use uninitialized
- preferred_node
+Subject: [PATCH 3.2 135/153] RDMA/ucma: Fix use-after-free access in
+ ucma_close
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -36,43 +34,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yisheng Xie <xieyisheng1@huawei.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 8970a63e965b43288c4f5f40efbc2bbf80de7f16 upstream.
+commit ed65a4dc22083e73bac599ded6a262318cad7baf upstream.
 
-Alexander reported a use of uninitialized memory in __mpol_equal(),
-which is caused by incorrect use of preferred_node.
+The error in ucma_create_id() left ctx in the list of contexts belong
+to ucma file descriptor. The attempt to close this file descriptor causes
+to use-after-free accesses while iterating over such list.
 
-When mempolicy in mode MPOL_PREFERRED with flags MPOL_F_LOCAL, it uses
-numa_node_id() instead of preferred_node, however, __mpol_equal() uses
-preferred_node without checking whether it is MPOL_F_LOCAL or not.
-
-[akpm@linux-foundation.org: slight comment tweak]
-Link: http://lkml.kernel.org/r/4ebee1c2-57f6-bcb8-0e2d-1833d1ee0bb7@huawei.com
-Fixes: fc36b8d3d819 ("mempolicy: use MPOL_F_LOCAL to Indicate Preferred Local Policy")
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-Reported-by: Alexander Potapenko <glider@google.com>
-Tested-by: Alexander Potapenko <glider@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dmitriy Vyukov <dvyukov@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 75216638572f ("RDMA/cma: Export rdma cm interface to userspace")
+Reported-by: <syzbot+dcfd344365a56fbebd0f@syzkaller.appspotmail.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Sean Hefty <sean.hefty@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- mm/mempolicy.c | 3 +++
+ drivers/infiniband/core/ucma.c | 3 +++
  1 file changed, 3 insertions(+)
 
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2019,6 +2019,9 @@ int __mpol_equal(struct mempolicy *a, st
- 	case MPOL_INTERLEAVE:
- 		return nodes_equal(a->v.nodes, b->v.nodes);
- 	case MPOL_PREFERRED:
-+		/* a's ->flags is the same as b's */
-+		if (a->flags & MPOL_F_LOCAL)
-+			return true;
- 		return a->v.preferred_node == b->v.preferred_node;
- 	default:
- 		BUG();
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -433,6 +433,9 @@ err1:
+ 	mutex_lock(&mut);
+ 	idr_remove(&ctx_idr, ctx->id);
+ 	mutex_unlock(&mut);
++	mutex_lock(&file->mut);
++	list_del(&ctx->list);
++	mutex_unlock(&file->mut);
+ 	kfree(ctx);
+ 	return ret;
+ }
