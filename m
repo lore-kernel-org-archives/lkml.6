@@ -1,83 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753002AbeE3OhU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 10:37:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59082 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751445AbeE3OhR (ORCPT
+        id S1753562AbeE3Ohe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 10:37:34 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50292 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753176AbeE3OhY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 10:37:17 -0400
-Message-Id: <20180530143106.133840135@infradead.org>
+        Wed, 30 May 2018 10:37:24 -0400
+Message-Id: <20180530143106.239069559@infradead.org>
 User-Agent: quilt/0.63-1
-Date: Wed, 30 May 2018 16:22:41 +0200
+Date: Wed, 30 May 2018 16:22:43 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@kernel.org, linux-kernel@vger.kernel.org
 Cc: subhra.mazumdar@oracle.com, steven.sistare@oracle.com,
         dhaval.giani@oracle.com, rohit.k.jain@oracle.com,
         umgwanakikbuti@gmail.com, matt@codeblueprint.co.uk, riel@surriel.com,
         peterz@infradead.org
-Subject: [RFC 05/11] sched/fair: Re-arrange select_idle_cpu()
+Subject: [RFC 07/11] sched/fair: Fold the select_idle_sibling() scans
 References: <20180530142236.667774973@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-sis-again-5.patch
+Content-Disposition: inline; filename=peterz-sis-again-6.patch
 X-Bad-Reply: References but no 'Re:' in Subject.
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation of the next patch, move the actual scanning of the LLC
-out of the whole proportional/cost metric stuff, so we can change it
-out in a next patch.
+Currently select_idle_sibling() does 3 separate scans:
 
-Should not actually change anything.
+ - searches for an idle core
+ - searches for an idle cpu
+ - searches for an idle thread
 
+The core scan is gates by there actually having been an idle core, it
+has a worst case issue where we'll always scan the entire LLC to
+establish there is no idle core left anymore before gating.
+
+The cpu scan is done proportional to the remaining average idle time.
+
+And since the cpu scan might not actually see our own sibling threads
+(if they're enumerated far away in the CPU space), check if there's an
+idle sibling thread.
+
+Rohit suggested we could maybe do all 3 in a single proportional
+search.
+
+This uses the new SMT topology bits previously introduced to do the
+core/smt iteration. And relies on the select_idle_cpu()'s change to nr
+cores.
+
+Basically we iterate @nr cores and select the first idle thread of the
+core with the least amount of busy threads that first in the task
+affinity mask.
+
+ORIG
+
+1:        0.559639567 seconds time elapsed    ( +-  1.44% )
+2:        0.630091207 seconds time elapsed    ( +-  2.93% )
+5:        2.329768398 seconds time elapsed    ( +-  1.21% )
+10:       3.920248646 seconds time elapsed    ( +-  2.39% )
+20:       6.501776759 seconds time elapsed    ( +-  1.02% )
+40:      10.482109619 seconds time elapsed    ( +-  2.16% )
+
+FOLD
+
+1:        0.568188455 seconds time elapsed    ( +-  0.40% )
+2:        0.643264625 seconds time elapsed    ( +-  1.27% )
+5:        2.385378263 seconds time elapsed    ( +-  1.12% )
+10:       3.808555491 seconds time elapsed    ( +-  1.46% )
+20:       6.431994272 seconds time elapsed    ( +-  1.21% )
+40:       9.423539507 seconds time elapsed    ( +-  2.07% )
+
+Suggested-by: Rohit Jain <rohit.k.jain@oracle.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/fair.c |   28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ kernel/sched/fair.c     |   48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/features.h |    1 +
+ 2 files changed, 49 insertions(+)
 
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -6364,6 +6364,23 @@ static inline int select_idle_smt(struct
+@@ -6350,6 +6350,41 @@ static int select_idle_smt(struct task_s
+ 	return -1;
+ }
  
- #endif /* CONFIG_SCHED_SMT */
- 
-+static int __select_idle_cpu(struct task_struct *p, struct sched_domain *sd,
-+			     int target, int nr, int *ploops)
++static int __select_idle_core(struct task_struct *p, struct sched_domain *sd,
++			      int target, int nr, int *ploops)
 +{
-+	int cpu;
++	int best_busy = INT_MAX, best_cpu = -1;
++	int core, cpu;
 +
-+	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
++	for_each_cpu_wrap(core, sched_domain_cores(sd), target) {
++		int first_idle = -1;
++		int busy = 0;
++
 +		if ((*ploops)++ >= nr)
-+			return -1;
-+		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
-+			continue;
-+		if (available_idle_cpu(cpu))
 +			break;
++
++		for (cpu = core; cpu < nr_cpumask_bits; cpu = cpumask_next(cpu, cpu_smt_mask(core))) {
++			if (!available_idle_cpu(cpu))
++				busy++;
++			else if (first_idle < 0 && cpumask_test_cpu(cpu, &p->cpus_allowed))
++				first_idle = cpu;
++		}
++
++		if (first_idle < 0)
++			continue;
++
++		if (!busy)
++			return first_idle;
++
++		if (busy < best_busy) {
++			best_busy = busy;
++			best_cpu = first_idle;
++		}
 +	}
 +
-+	return cpu;
++	return best_cpu;
 +}
 +
- /*
-  * Scan the LLC domain for idle CPUs; this is dynamically regulated by
-  * comparing the average scan cost (tracked in sd->avg_scan_cost) against the
-@@ -6420,16 +6437,7 @@ static int select_idle_cpu(struct task_s
+ #else /* CONFIG_SCHED_SMT */
+ 
+ #define sched_smt_weight	1
+@@ -6441,6 +6476,11 @@ static int select_idle_cpu(struct task_s
  
  	time = local_clock();
  
--	for_each_cpu_wrap(cpu, sched_domain_span(sd), target) {
--		if (loops++ >= nr) {
--			cpu = -1;
--			break;
--		}
--		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
--			continue;
--		if (available_idle_cpu(cpu))
--			break;
--	}
-+	cpu = __select_idle_cpu(p, sd, target, nr, &loops);
++#ifdef CONFIG_SCHED_SMT
++	if (sched_feat(SIS_FOLD) && static_branch_likely(&sched_smt_present))
++		cpu = __select_idle_core(p, sd, target, nr, &loops);
++	else
++#endif
+ 	cpu = __select_idle_cpu(p, sd, target, nr * sched_smt_weight, &loops);
  
  	time = local_clock() - time;
+@@ -6503,6 +6543,14 @@ static int select_idle_sibling(struct ta
+ 	if (!sd)
+ 		return target;
  
++	if (sched_feat(SIS_FOLD)) {
++		i = select_idle_cpu(p, sd, target);
++		if ((unsigned)i < nr_cpumask_bits)
++			target = i;
++
++		return target;
++	}
++
+ 	i = select_idle_core(p, sd, target);
+ 	if ((unsigned)i < nr_cpumask_bits)
+ 		return i;
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -60,6 +60,7 @@ SCHED_FEAT(SIS_PROP, true)
+ 
+ SCHED_FEAT(SIS_AGE, true)
+ SCHED_FEAT(SIS_ONCE, true)
++SCHED_FEAT(SIS_FOLD, false)
+ 
+ /*
+  * Issue a WARN when we do multiple update_rq_clock() calls
