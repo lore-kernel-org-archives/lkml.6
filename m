@@ -1,140 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965035AbeE3Grw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 02:47:52 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:44211 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935905AbeE3Gru (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 02:47:50 -0400
-X-Google-Smtp-Source: ADUXVKJFwoYNbQJidEAL0X6Mpo7iHSbSafD0yKFP0f1beLtmKDCCs3W6ogij9H4pCV/wmNcwAexIIA==
-Subject: Re: [PATCH 4/8] xen/gntdev: Allow mappings for DMA buffers
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180525153331.31188-1-andr2000@gmail.com>
- <20180525153331.31188-5-andr2000@gmail.com>
- <9f2999a8-7786-5811-bdf0-ff7f30301cf2@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <c4cca97f-bd36-75bd-36aa-1edf3b140d15@gmail.com>
-Date: Wed, 30 May 2018 09:47:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S968498AbeE3Guq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 02:50:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54944 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936939AbeE3Gup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 02:50:45 -0400
+Date: Wed, 30 May 2018 08:50:43 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: steam: select CONFIG_POWER_SUPPLY
+In-Reply-To: <20180525153118.3015806-1-arnd@arndb.de>
+Message-ID: <nycvar.YFH.7.76.1805300850320.27054@cbobk.fhfr.pm>
+References: <20180525153118.3015806-1-arnd@arndb.de>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <9f2999a8-7786-5811-bdf0-ff7f30301cf2@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/30/2018 12:52 AM, Boris Ostrovsky wrote:
-> On 05/25/2018 11:33 AM, Oleksandr Andrushchenko wrote:
->>   
->>   struct unmap_notify {
->> @@ -96,10 +104,28 @@ struct grant_map {
->>   	struct gnttab_unmap_grant_ref *kunmap_ops;
->>   	struct page **pages;
->>   	unsigned long pages_vm_start;
->> +
->> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> +	/*
->> +	 * If dmabuf_vaddr is not NULL then this mapping is backed by DMA
->> +	 * capable memory.
->> +	 */
->> +
->> +	/* Device for which DMA memory is allocated. */
->> +	struct device *dma_dev;
->> +	/* Flags used to create this DMA buffer: GNTDEV_DMABUF_FLAG_XXX. */
->> +	bool dma_flags;
-> Again, I think most of the comments here can be dropped. Except possibly
-> for the flags.
-will drop most of those
->> +	/* Virtual/CPU address of the DMA buffer. */
->> +	void *dma_vaddr;
->> +	/* Bus address of the DMA buffer. */
->> +	dma_addr_t dma_bus_addr;
->> +#endif
->>   };
->>   
->>   static int unmap_grant_pages(struct grant_map *map, int offset, int pages);
->>   
->> +static struct miscdevice gntdev_miscdev;
->> +
->>   /* ------------------------------------------------------------------ */
->>   
->>   static void gntdev_print_maps(struct gntdev_priv *priv,
->> @@ -121,8 +147,26 @@ static void gntdev_free_map(struct grant_map *map)
->>   	if (map == NULL)
->>   		return;
->>   
->> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> +	if (map->dma_vaddr) {
->> +		struct gnttab_dma_alloc_args args;
->> +
->> +		args.dev = map->dma_dev;
->> +		args.coherent = map->dma_flags & GNTDEV_DMA_FLAG_COHERENT;
->> +		args.nr_pages = map->count;
->> +		args.pages = map->pages;
->> +		args.vaddr = map->dma_vaddr;
->> +		args.dev_bus_addr = map->dma_bus_addr;
->> +
->> +		gnttab_dma_free_pages(&args);
->> +	} else if (map->pages) {
->> +		gnttab_free_pages(map->count, map->pages);
->> +	}
->> +#else
->>   	if (map->pages)
->>   		gnttab_free_pages(map->count, map->pages);
->> +#endif
->> +
-> } else
-> #endif
->      if (map->pages)
->          gnttab_free_pages(map->count, map->pages);
->
->
-> (and elsewhere)
-ok, just wasn't sure if it is ok to violate kernel coding style here ;)
->>   	kfree(map->pages);
->>   	kfree(map->grants);
->>   	kfree(map->map_ops);
->
->
->>   
->> diff --git a/include/uapi/xen/gntdev.h b/include/uapi/xen/gntdev.h
->> index 6d1163456c03..2d5a4672f07c 100644
->> --- a/include/uapi/xen/gntdev.h
->> +++ b/include/uapi/xen/gntdev.h
->> @@ -200,4 +200,19 @@ struct ioctl_gntdev_grant_copy {
->>   /* Send an interrupt on the indicated event channel */
->>   #define UNMAP_NOTIFY_SEND_EVENT 0x2
->>   
->> +/*
->> + * Flags to be used while requesting memory mapping's backing storage
->> + * to be allocated with DMA API.
->> + */
->> +
->> +/*
->> + * The buffer is backed with memory allocated with dma_alloc_wc.
->> + */
->> +#define GNTDEV_DMA_FLAG_WC		(1 << 1)
->
-> Is there a reason you are not using bit 0?
-No reason for that, will start from 0
->
-> -boris
-Thank you,
-Oleksandr
->> +
->> +/*
->> + * The buffer is backed with memory allocated with dma_alloc_coherent.
->> + */
->> +#define GNTDEV_DMA_FLAG_COHERENT	(1 << 2)
->> +
->>   #endif /* __LINUX_PUBLIC_GNTDEV_H__ */
+On Fri, 25 May 2018, Arnd Bergmann wrote:
+
+> Using the power supply APIs requires selecting the appropriate
+> Kconfig symbol, otherwise we get this build failure:
+> 
+> drivers/hid/hid-steam.o: In function `steam_unregister':
+> hid-steam.c:(.text+0x1cc): undefined reference to `power_supply_unregister'
+> drivers/hid/hid-steam.o: In function `steam_battery_get_property':
+> hid-steam.c:(.text+0x2d2): undefined reference to `power_supply_get_drvdata'
+> drivers/hid/hid-steam.o: In function `steam_raw_event':
+> hid-steam.c:(.text+0xcba): undefined reference to `power_supply_changed'
+> drivers/hid/hid-steam.o: In function `steam_register':
+> hid-steam.c:(.text+0x13e3): undefined reference to `power_supply_register'
+> hid-steam.c:(.text+0x13fe): undefined reference to `power_supply_powers'
+> 
+> Fixes: f82719790751 ("HID: steam: add battery device.")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Applied, thanks.
+
+-- 
+Jiri Kosina
+SUSE Labs
