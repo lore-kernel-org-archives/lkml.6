@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753561AbeE3Lmj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:42:39 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60675 "EHLO
+        id S1753828AbeE3Lme (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:42:34 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60677 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751854AbeE3LG6 (ORCPT
+        by vger.kernel.org with ESMTP id S1751874AbeE3LG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 May 2018 07:06:58 -0400
 Content-Type: text/plain; charset="UTF-8"
@@ -14,12 +14,12 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "=?UTF-8?Q?=E8=8C=83=E9=BE=99=E9=A3=9E?=" <long7573@126.com>,
-        "Takashi Iwai" <tiwai@suse.de>
-Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.938113122@decadent.org.uk>
+        "Boris Brezillon" <boris.brezillon@bootlin.com>,
+        "Linus Walleij" <linus.walleij@linaro.org>
+Date: Wed, 30 May 2018 11:52:42 +0100
+Message-ID: <lsq.1527677562.166036395@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 013/153] ALSA: seq: Fix racy pool initializations
+Subject: [PATCH 3.2 153/153] mtd: jedec_probe: Fix crash in jedec_read_mfr()
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -32,53 +32,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-commit d15d662e89fc667b90cd294b0eb45694e33144da upstream.
+commit 87a73eb5b56fd6e07c8e499fe8608ef2d8912b82 upstream.
 
-ALSA sequencer core initializes the event pool on demand by invoking
-snd_seq_pool_init() when the first write happens and the pool is
-empty.  Meanwhile user can reset the pool size manually via ioctl
-concurrently, and this may lead to UAF or out-of-bound accesses since
-the function tries to vmalloc / vfree the buffer.
+It turns out that the loop where we read manufacturer
+jedec_read_mfd() can under some circumstances get a
+CFI_MFR_CONTINUATION repeatedly, making the loop go
+over all banks and eventually hit the end of the
+map and crash because of an access violation:
 
-A simple fix is to just wrap the snd_seq_pool_init() call with the
-recently introduced client->ioctl_mutex; as the calls for
-snd_seq_pool_init() from other side are always protected with this
-mutex, we can avoid the race.
+Unable to handle kernel paging request at virtual address c4980000
+pgd = (ptrval)
+[c4980000] *pgd=03808811, *pte=00000000, *ppte=00000000
+Internal error: Oops: 7 [#1] PREEMPT ARM
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.16.0-rc1+ #150
+Hardware name: Gemini (Device Tree)
+PC is at jedec_probe_chip+0x6ec/0xcd0
+LR is at 0x4
+pc : [<c03a2bf4>]    lr : [<00000004>]    psr: 60000013
+sp : c382dd18  ip : 0000ffff  fp : 00000000
+r10: c0626388  r9 : 00020000  r8 : c0626340
+r7 : 00000000  r6 : 00000001  r5 : c3a71afc  r4 : c382dd70
+r3 : 00000001  r2 : c4900000  r1 : 00000002  r0 : 00080000
+Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+Control: 0000397f  Table: 00004000  DAC: 00000053
+Process swapper (pid: 1, stack limit = 0x(ptrval))
 
-Reported-by: 范龙飞 <long7573@126.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fix this by breaking the loop with a return 0 if
+the offset exceeds the map size.
+
+Fixes: 5c9c11e1c47c ("[MTD] [NOR] Add support for flash chips with ID in bank other than 0")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/seq/seq_clientmgr.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/mtd/chips/jedec_probe.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -1000,7 +1000,7 @@ static ssize_t snd_seq_write(struct file
- {
- 	struct snd_seq_client *client = file->private_data;
- 	int written = 0, len;
--	int err = -EINVAL;
-+	int err;
- 	struct snd_seq_event event;
- 
- 	if (!(snd_seq_file_flags(file) & SNDRV_SEQ_LFLG_OUTPUT))
-@@ -1015,11 +1015,15 @@ static ssize_t snd_seq_write(struct file
- 
- 	/* allocate the pool now if the pool is not allocated yet */ 
- 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
--		if (snd_seq_pool_init(client->pool) < 0)
-+		mutex_lock(&client->ioctl_mutex);
-+		err = snd_seq_pool_init(client->pool);
-+		mutex_unlock(&client->ioctl_mutex);
-+		if (err < 0)
- 			return -ENOMEM;
- 	}
- 
- 	/* only process whole events */
-+	err = -EINVAL;
- 	while (count >= sizeof(struct snd_seq_event)) {
- 		/* Read in the event header from the user */
- 		len = sizeof(event);
+--- a/drivers/mtd/chips/jedec_probe.c
++++ b/drivers/mtd/chips/jedec_probe.c
+@@ -1888,6 +1888,8 @@ static inline u32 jedec_read_mfr(struct
+ 	do {
+ 		uint32_t ofs = cfi_build_cmd_addr(0 + (bank << 8), map, cfi);
+ 		mask = (1 << (cfi->device_type * 8)) - 1;
++		if (ofs >= map->size)
++			return 0;
+ 		result = map_read(map, base + ofs);
+ 		bank++;
+ 	} while ((result.x[0] & mask) == CFI_MFR_CONTINUATION);
