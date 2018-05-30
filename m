@@ -1,63 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753721AbeE3Rej (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 13:34:39 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36657 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751817AbeE3Reh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 13:34:37 -0400
-X-Google-Smtp-Source: ADUXVKKMF1clviDi3ZNl6/S+Xz0j0Q1cP0NPPoiBnreQ9QzarKUE+HgwyWfwK7heEkR0lZiJkQubZw==
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Peter Chen <peter.chen@nxp.com>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>, Chris Healy <cphealy@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH] usb: chipidea: Fix ULPI on imx51
-Date: Wed, 30 May 2018 10:34:14 -0700
-Message-Id: <20180530173414.6121-1-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753784AbeE3Rgo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 13:36:44 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:48476 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751833AbeE3Rgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 13:36:41 -0400
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoffer Dall <cdall@linaro.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180524214816.14485-1-logang@deltatee.com>
+ <20180524214816.14485-3-logang@deltatee.com>
+ <20180530102329.7423dc57@w520.home>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <d3a139c0-53d4-56cf-fa7e-8db5fb527136@deltatee.com>
+Date: Wed, 30 May 2018 11:36:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180530102329.7423dc57@w520.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: christian.koenig@amd.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, cdall@linaro.org, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, alex.williamson@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/3] PCI: Allow specifying devices using a base bus and
+ path of devfns
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Workaround introduced for i.MX53 in be9cae2479f48 ("usb: chipidea:
-imx: Fix ULPI on imx53") seems to be applicable in case of i.MX51 as
-well. Running latest kernel on ZII RDU1 Board (imx51-zii-rdu1.dts)
-exhibits a kernel frozen on PORTSC access and applying the workaround
-resolves the issue.
 
-Cc: Peter Chen <peter.chen@nxp.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- drivers/usb/chipidea/ci_hdrc_imx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
-index e431c5aafe35..19f5f5f2a48a 100644
---- a/drivers/usb/chipidea/ci_hdrc_imx.c
-+++ b/drivers/usb/chipidea/ci_hdrc_imx.c
-@@ -291,7 +291,8 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
- 
- 	pdata.usb_phy = data->phy;
- 
--	if (of_device_is_compatible(np, "fsl,imx53-usb") && pdata.usb_phy &&
-+	if ((of_device_is_compatible(np, "fsl,imx53-usb") ||
-+	     of_device_is_compatible(np, "fsl,imx51-usb")) && pdata.usb_phy &&
- 	    of_usb_get_phy_mode(np) == USBPHY_INTERFACE_MODE_ULPI) {
- 		pdata.flags |= CI_HDRC_OVERRIDE_PHY_CONTROL;
- 		data->override_phy_control = true;
--- 
-2.17.0
+On 30/05/18 10:23 AM, Alex Williamson wrote:
+> I like the idea, but can't we improve the implementation?  It seems
+> that we shouldn't need to allocate more than a working copy of the
+> original path string.  We can use strrchr() to find the last path
+> divider ('/'), match the slot.fn after that to the current devfn, set
+> that path divider to null, step to the next upstream device and
+> repeat.  
+
+Ok, I'll give it a shot. I thought this would be a bit more tricky, but
+perhaps not.
+
+> Also, since we're working from a downstream device up, I
+> suspect we don't need to get and put references at each step, the
+> downstream device probably already holds a reference to the upstream
+> device for each step along the way.  
+
+That makes sense to me. I think it's something I added in similar p2pdma
+code from somebody's review. But sounds like I can probably strip it out
+there too and just put a comment noting this.
+
+Thanks,
+
+Logan
