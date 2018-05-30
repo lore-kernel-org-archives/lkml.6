@@ -1,343 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937340AbeE3Icf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:32:35 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42888 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935879AbeE3IcD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:32:03 -0400
-X-Google-Smtp-Source: ADUXVKJBRoJCKzjlfSxvkJS9SGlStgGz2KA9gGTH87iq2Ha09IBMPxrvHa5UOutaxj8ylHE5I45hjw==
-Subject: Re: [PATCH 8/8] xen/gntdev: Expose gntdev's dma-buf API for in-kernel
- use
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180525153331.31188-1-andr2000@gmail.com>
- <20180525153331.31188-9-andr2000@gmail.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <94c6bc22-da2e-6543-0f13-7c6c1752533d@gmail.com>
-Date: Wed, 30 May 2018 11:32:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S968628AbeE3Ici (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:32:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36433 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935975AbeE3IcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 04:32:07 -0400
+Date: Wed, 30 May 2018 10:32:04 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Hoeun Ryu <hoeun.ryu@lge.com.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Hoeun Ryu <hoeun.ryu@lge.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH]  printk: make printk_safe_flush safe in NMI context by
+ skipping flushing
+Message-ID: <20180530083204.m2yvmm7mc6owvpdk@pathway.suse.cz>
+References: <1527562331-25880-1-git-send-email-hoeun.ryu@lge.com.com>
+ <20180529121315.GE438@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <20180525153331.31188-9-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529121315.GE438@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/25/2018 06:33 PM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->
-> Allow creating grant device context for use by kernel modules which
-> require functionality, provided by gntdev. Export symbols for dma-buf
-> API provided by the module.
->
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
->   drivers/xen/gntdev.c    | 116 ++++++++++++++++++++++++++--------------
->   include/xen/grant_dev.h |  37 +++++++++++++
->   2 files changed, 113 insertions(+), 40 deletions(-)
->   create mode 100644 include/xen/grant_dev.h
->
-> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-> index d8b6168f2cd9..912056f3e909 100644
-> --- a/drivers/xen/gntdev.c
-> +++ b/drivers/xen/gntdev.c
-> @@ -684,14 +684,33 @@ static const struct mmu_notifier_ops gntdev_mmu_ops = {
->   
->   /* ------------------------------------------------------------------ */
->   
-> -static int gntdev_open(struct inode *inode, struct file *flip)
-> +void gntdev_free_context(struct gntdev_priv *priv)
-> +{
-> +	struct grant_map *map;
-> +
-> +	pr_debug("priv %p\n", priv);
-> +
-> +	mutex_lock(&priv->lock);
-> +	while (!list_empty(&priv->maps)) {
-> +		map = list_entry(priv->maps.next, struct grant_map, next);
-> +		list_del(&map->next);
-> +		gntdev_put_map(NULL /* already removed */, map);
-> +	}
-> +	WARN_ON(!list_empty(&priv->freeable_maps));
-> +
-> +	mutex_unlock(&priv->lock);
-> +
-> +	kfree(priv);
-> +}
-> +EXPORT_SYMBOL(gntdev_free_context);
-I will convert EXPORT_SYMBOL to EXPORT_SYMBOL_GPL here and below
-> +
-> +struct gntdev_priv *gntdev_alloc_context(struct device *dev)
->   {
->   	struct gntdev_priv *priv;
-> -	int ret = 0;
->   
->   	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
->   	if (!priv)
-> -		return -ENOMEM;
-> +		return ERR_PTR(-ENOMEM);
->   
->   	INIT_LIST_HEAD(&priv->maps);
->   	INIT_LIST_HEAD(&priv->freeable_maps);
-> @@ -704,6 +723,32 @@ static int gntdev_open(struct inode *inode, struct file *flip)
->   	INIT_LIST_HEAD(&priv->dmabuf_imp_list);
->   #endif
->   
-> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
-> +	priv->dma_dev = dev;
-> +
-> +	/*
-> +	 * The device is not spawn from a device tree, so arch_setup_dma_ops
-> +	 * is not called, thus leaving the device with dummy DMA ops.
-> +	 * Fix this call of_dma_configure() with a NULL node to set
-> +	 * default DMA ops.
-> +	 */
-> +	of_dma_configure(priv->dma_dev, NULL);
-> +#endif
-> +	pr_debug("priv %p\n", priv);
-> +
-> +	return priv;
-> +}
-> +EXPORT_SYMBOL(gntdev_alloc_context);
-> +
-> +static int gntdev_open(struct inode *inode, struct file *flip)
-> +{
-> +	struct gntdev_priv *priv;
-> +	int ret = 0;
-> +
-> +	priv = gntdev_alloc_context(gntdev_miscdev.this_device);
-> +	if (IS_ERR(priv))
-> +		return PTR_ERR(priv);
-> +
->   	if (use_ptemod) {
->   		priv->mm = get_task_mm(current);
->   		if (!priv->mm) {
-> @@ -716,23 +761,11 @@ static int gntdev_open(struct inode *inode, struct file *flip)
->   	}
->   
->   	if (ret) {
-> -		kfree(priv);
-> +		gntdev_free_context(priv);
->   		return ret;
->   	}
->   
->   	flip->private_data = priv;
-> -#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
-> -	priv->dma_dev = gntdev_miscdev.this_device;
-> -
-> -	/*
-> -	 * The device is not spawn from a device tree, so arch_setup_dma_ops
-> -	 * is not called, thus leaving the device with dummy DMA ops.
-> -	 * Fix this call of_dma_configure() with a NULL node to set
-> -	 * default DMA ops.
-> -	 */
-> -	of_dma_configure(priv->dma_dev, NULL);
-> -#endif
-> -	pr_debug("priv %p\n", priv);
->   
->   	return 0;
->   }
-> @@ -740,22 +773,11 @@ static int gntdev_open(struct inode *inode, struct file *flip)
->   static int gntdev_release(struct inode *inode, struct file *flip)
->   {
->   	struct gntdev_priv *priv = flip->private_data;
-> -	struct grant_map *map;
-> -
-> -	pr_debug("priv %p\n", priv);
-> -
-> -	mutex_lock(&priv->lock);
-> -	while (!list_empty(&priv->maps)) {
-> -		map = list_entry(priv->maps.next, struct grant_map, next);
-> -		list_del(&map->next);
-> -		gntdev_put_map(NULL /* already removed */, map);
-> -	}
-> -	WARN_ON(!list_empty(&priv->freeable_maps));
-> -	mutex_unlock(&priv->lock);
->   
->   	if (use_ptemod)
->   		mmu_notifier_unregister(&priv->mn, priv->mm);
-> -	kfree(priv);
-> +
-> +	gntdev_free_context(priv);
->   	return 0;
->   }
->   
-> @@ -1210,7 +1232,7 @@ dmabuf_exp_wait_obj_get_by_fd(struct gntdev_priv *priv, int fd)
->   	return ret;
->   }
->   
-> -static int dmabuf_exp_wait_released(struct gntdev_priv *priv, int fd,
-> +int gntdev_dmabuf_exp_wait_released(struct gntdev_priv *priv, int fd,
->   				    int wait_to_ms)
->   {
->   	struct xen_dmabuf *xen_dmabuf;
-> @@ -1242,6 +1264,7 @@ static int dmabuf_exp_wait_released(struct gntdev_priv *priv, int fd,
->   	dmabuf_exp_wait_obj_free(priv, obj);
->   	return ret;
->   }
-> +EXPORT_SYMBOL(gntdev_dmabuf_exp_wait_released);
->   
->   /* ------------------------------------------------------------------ */
->   /* DMA buffer export support.                                         */
-> @@ -1511,7 +1534,7 @@ dmabuf_exp_alloc_backing_storage(struct gntdev_priv *priv, int dmabuf_flags,
->   	return map;
->   }
->   
-> -static int dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
-> +int gntdev_dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
->   				int count, u32 domid, u32 *refs, u32 *fd)
->   {
->   	struct grant_map *map;
-> @@ -1557,6 +1580,7 @@ static int dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
->   	gntdev_remove_map(priv, map);
->   	return ret;
->   }
-> +EXPORT_SYMBOL(gntdev_dmabuf_exp_from_refs);
->   
->   /* ------------------------------------------------------------------ */
->   /* DMA buffer import support.                                         */
-> @@ -1646,8 +1670,9 @@ static struct xen_dmabuf *dmabuf_imp_alloc_storage(int count)
->   	return ERR_PTR(-ENOMEM);
->   }
->   
-> -static struct xen_dmabuf *
-> -dmabuf_imp_to_refs(struct gntdev_priv *priv, int fd, int count, int domid)
-> +struct xen_dmabuf *
-> +gntdev_dmabuf_imp_to_refs(struct gntdev_priv *priv, int fd,
-> +			  int count, int domid)
->   {
->   	struct xen_dmabuf *xen_dmabuf, *ret;
->   	struct dma_buf *dma_buf;
-> @@ -1736,6 +1761,16 @@ dmabuf_imp_to_refs(struct gntdev_priv *priv, int fd, int count, int domid)
->   	dma_buf_put(dma_buf);
->   	return ret;
->   }
-> +EXPORT_SYMBOL(gntdev_dmabuf_imp_to_refs);
-> +
-> +u32 *gntdev_dmabuf_imp_get_refs(struct xen_dmabuf *xen_dmabuf)
-> +{
-> +	if (xen_dmabuf)
-> +		return xen_dmabuf->u.imp.refs;
-> +
-> +	return NULL;
-> +}
-> +EXPORT_SYMBOL(gntdev_dmabuf_imp_get_refs);
->   
->   /*
->    * Find the hyper dma-buf by its file descriptor and remove
-> @@ -1759,7 +1794,7 @@ dmabuf_imp_find_unlink(struct gntdev_priv *priv, int fd)
->   	return ret;
->   }
->   
-> -static int dmabuf_imp_release(struct gntdev_priv *priv, u32 fd)
-> +int gntdev_dmabuf_imp_release(struct gntdev_priv *priv, u32 fd)
->   {
->   	struct xen_dmabuf *xen_dmabuf;
->   	struct dma_buf_attachment *attach;
-> @@ -1785,6 +1820,7 @@ static int dmabuf_imp_release(struct gntdev_priv *priv, u32 fd)
->   	dmabuf_imp_free_storage(xen_dmabuf);
->   	return 0;
->   }
-> +EXPORT_SYMBOL(gntdev_dmabuf_imp_release);
->   
->   /* ------------------------------------------------------------------ */
->   /* DMA buffer IOCTL support.                                          */
-> @@ -1810,8 +1846,8 @@ gntdev_ioctl_dmabuf_exp_from_refs(struct gntdev_priv *priv,
->   		goto out;
->   	}
->   
-> -	ret = dmabuf_exp_from_refs(priv, op.flags, op.count,
-> -				   op.domid, refs, &op.fd);
-> +	ret = gntdev_dmabuf_exp_from_refs(priv, op.flags, op.count,
-> +					  op.domid, refs, &op.fd);
->   	if (ret)
->   		goto out;
->   
-> @@ -1832,7 +1868,7 @@ gntdev_ioctl_dmabuf_exp_wait_released(struct gntdev_priv *priv,
->   	if (copy_from_user(&op, u, sizeof(op)) != 0)
->   		return -EFAULT;
->   
-> -	return dmabuf_exp_wait_released(priv, op.fd, op.wait_to_ms);
-> +	return gntdev_dmabuf_exp_wait_released(priv, op.fd, op.wait_to_ms);
->   }
->   
->   static long
-> @@ -1846,7 +1882,7 @@ gntdev_ioctl_dmabuf_imp_to_refs(struct gntdev_priv *priv,
->   	if (copy_from_user(&op, u, sizeof(op)) != 0)
->   		return -EFAULT;
->   
-> -	xen_dmabuf = dmabuf_imp_to_refs(priv, op.fd, op.count, op.domid);
-> +	xen_dmabuf = gntdev_dmabuf_imp_to_refs(priv, op.fd, op.count, op.domid);
->   	if (IS_ERR(xen_dmabuf))
->   		return PTR_ERR(xen_dmabuf);
->   
-> @@ -1858,7 +1894,7 @@ gntdev_ioctl_dmabuf_imp_to_refs(struct gntdev_priv *priv,
->   	return 0;
->   
->   out_release:
-> -	dmabuf_imp_release(priv, op.fd);
-> +	gntdev_dmabuf_imp_release(priv, op.fd);
->   	return ret;
->   }
->   
-> @@ -1871,7 +1907,7 @@ gntdev_ioctl_dmabuf_imp_release(struct gntdev_priv *priv,
->   	if (copy_from_user(&op, u, sizeof(op)) != 0)
->   		return -EFAULT;
->   
-> -	return dmabuf_imp_release(priv, op.fd);
-> +	return gntdev_dmabuf_imp_release(priv, op.fd);
->   }
->   #endif
->   
-> diff --git a/include/xen/grant_dev.h b/include/xen/grant_dev.h
-> new file mode 100644
-> index 000000000000..faccc9170174
-> --- /dev/null
-> +++ b/include/xen/grant_dev.h
-> @@ -0,0 +1,37 @@
-> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> +
-> +/*
-> + * Grant device kernel API
-> + *
-> + * Copyright (C) 2018 EPAM Systems Inc.
-> + *
-> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> + */
-> +
-> +#ifndef _GRANT_DEV_H
-> +#define _GRANT_DEV_H
-> +
-> +#include <linux/types.h>
-> +
-> +struct device;
-> +struct gntdev_priv;
-> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
-> +struct xen_dmabuf;
-> +#endif
-> +
-> +struct gntdev_priv *gntdev_alloc_context(struct device *dev);
-> +void gntdev_free_context(struct gntdev_priv *priv);
-> +
-> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
-> +int gntdev_dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
-> +				int count, u32 domid, u32 *refs, u32 *fd);
-> +int gntdev_dmabuf_exp_wait_released(struct gntdev_priv *priv, int fd,
-> +				    int wait_to_ms);
-> +
-> +struct xen_dmabuf *gntdev_dmabuf_imp_to_refs(struct gntdev_priv *priv,
-> +					     int fd, int count, int domid);
-> +u32 *gntdev_dmabuf_imp_get_refs(struct xen_dmabuf *xen_dmabuf);
-> +int gntdev_dmabuf_imp_release(struct gntdev_priv *priv, u32 fd);
-> +#endif
-> +
-> +#endif
+On Tue 2018-05-29 21:13:15, Sergey Senozhatsky wrote:
+> On (05/29/18 11:51), Hoeun Ryu wrote:
+> >  Make printk_safe_flush() safe in NMI context.
+> > nmi_trigger_cpumask_backtrace() can be called in NMI context. For example the
+> > function is called in watchdog_overflow_callback() if the flag of hardlockup
+> > backtrace (sysctl_hardlockup_all_cpu_backtrace) is true and
+> > watchdog_overflow_callback() function is called in NMI context on some
+> > architectures.
+> >  Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace() eventually tries
+> > to lock logbuf_lock in vprintk_emit() but the logbuf_lock can be already locked in
+> > preempted contexts (task or irq in this case) or by other CPUs and it may cause
+
+The sentence "logbuf_lock can be already locked in preempted contexts" does not
+make much sense. It is a spin lock. It means that both interrupts and
+preemption are disabled.
+
+I would change it to something like:
+
+"Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace() eventually tries
+to lock logbuf_lock in vprintk_emit() that might be already be part
+of a soft- or hard-lockup on another CPU."
+
+
+> > deadlocks.
+> >  By making printk_safe_flush() safe in NMI context, the backtrace triggering CPU
+> > just skips flushing if the lock is not avaiable in NMI context. The messages in
+> > per-cpu nmi buffer of the backtrace triggering CPU can be lost if the CPU is in
+> > hard lockup (because irq is disabled here) but if panic() is not called. The
+> > flushing can be delayed by the next irq work in normal cases.
+
+I somehow miss there a motivation why the current state is better than
+the previous. It looks like we exchange the risk of a deadlock with
+a risk of loosing the messages.
+
+I see it the following way:
+
+"This patch prevents a deadlock in printk_safe_flush() in NMI
+context. It makes sure that we continue and eventually call
+printk_safe_flush_on_panic() from panic() that has better
+chances to succeed.
+
+There is a risk that logbuf_lock was not part of a soft- or
+dead-lockup and we might just loose the messages. But then there is a high
+chance that irq_work will get called and the messages will get flushed
+the normal way."
+
+
+> Any chance we can add more info to the commit message? E.g. backtraces
+> which would describe "how" is this possible (like the one I posted in
+> another email). Just to make it more clear.
+
+I agree that a backtrace would be helpful. But it is not a must to
+have from my point of view.
+
+The patch itself looks good to me.
+
+Best Regards,
+Petr
