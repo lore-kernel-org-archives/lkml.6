@@ -1,101 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932176AbeE3TqL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 15:46:11 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43994 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932124AbeE3TqG (ORCPT
+        id S932206AbeE3Tq5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 15:46:57 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32804 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932141AbeE3Tqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 15:46:06 -0400
-X-Google-Smtp-Source: ADUXVKIBQ2fj44VJo8anLNITCs2+7U9lN4txSAh6fdvsJpvCZ31OiUzWGTwmKSXF1M4xGEYQD7X+ZA==
-Content-Type: text/plain; charset="utf-8"
+        Wed, 30 May 2018 15:46:53 -0400
+Subject: Re: [PATCH 3/8] audit: Implement audit_log_tty()
+To: Paul Moore <paul@paul-moore.com>
+Cc: zohar@linux.vnet.ibm.com, sgrubb@redhat.com,
+        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
+ <20180524201105.3179904-4-stefanb@linux.vnet.ibm.com>
+ <CAHC9VhRjYhSgd_YCmgaOU_MEKuNKbHvPCVotmxyZRzSc2E6-Wg@mail.gmail.com>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Wed, 30 May 2018 15:46:49 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-To: David Lechner <david@lechnology.com>, Stephen Boyd <sboyd@kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20180525181150.17873-7-david@lechnology.com>
-Cc: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org,
-        brgl@bgdev.pl
-References: <20180525181150.17873-1-david@lechnology.com>
- <20180525181150.17873-7-david@lechnology.com>
-Message-ID: <20180530194559.982.42844@harbor.lan>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 6/9] clk: davinci: pll: allow dev == NULL
-Date: Wed, 30 May 2018 12:46:02 -0700
+In-Reply-To: <CAHC9VhRjYhSgd_YCmgaOU_MEKuNKbHvPCVotmxyZRzSc2E6-Wg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18053019-0052-0000-0000-000002F4DDDB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009099; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039961; UDB=6.00532309; IPR=6.00819094;
+ MB=3.00021382; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 19:46:52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053019-0053-0000-0000-00005CD62387
+Message-Id: <38d49beb-a5dd-29de-3e4b-3dde67fdc28d@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805300210
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4UJkRbw010411
 
-Hi David,
+On 05/29/2018 05:07 PM, Paul Moore wrote:
+> On Thu, May 24, 2018 at 4:11 PM, Stefan Berger
+> <stefanb@linux.vnet.ibm.com> wrote:
+>>
+>> +void audit_log_tty(struct audit_buffer *ab, struct task_struct *tsk)
+>> +{
+>> +       struct tty_struct *tty = audit_get_tty(tsk);
+>> +
+>> +       audit_log_format(ab, " tty=%s", tty ? tty_name(tty) : "(none)");
+>> +       audit_put_tty(tty);
+>> +}
+> Perhaps I missed it, but your IMA patches only ever call this to log
+> current's tty, yes?  If so, I would prefer if we dropped the
+> task_struct argument and always had audit_log_tty() use current.
 
-Quoting David Lechner (2018-05-25 11:11:47)
-> This modifies the TI Davinci PLL clock driver to allow for the case
-> when dev == NULL. On some (most) SoCs that use this driver, the PLL
-> clock needs to be registered during early boot because it is used
-> for clocksource/clkevent and there will be no platform device available.
+Done.
 
-A lot of this stuff feels like a step backwards. E.g:
 
-> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-> index 23a24c944f1d..2eb981e61185 100644
-> --- a/drivers/clk/davinci/pll.c
-> +++ b/drivers/clk/davinci/pll.c
-> @@ -11,6 +11,7 @@
->  
->  #include <linux/clk-provider.h>
->  #include <linux/clk.h>
-> +#include <linux/clk/davinci.h>
->  #include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
-> @@ -223,6 +224,7 @@ static const struct clk_ops dm365_pll_ops = {
->  
->  /**
->   * davinci_pll_div_register - common *DIV clock implementation
-> + * @dev: The PLL platform device or NULL
->   * @name: the clock name
->   * @parent_name: the parent clock name
->   * @reg: the *DIV register
-> @@ -240,17 +242,21 @@ static struct clk *davinci_pll_div_register(struct device *dev,
->         const struct clk_ops *divider_ops = &clk_divider_ops;
->         struct clk_gate *gate;
->         struct clk_divider *divider;
-> +       struct clk *clk;
-> +       int ret;
->  
-> -       gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
-> +       gate = kzalloc(sizeof(*gate), GFP_KERNEL);
->         if (!gate)
->                 return ERR_PTR(-ENOMEM);
->  
->         gate->reg = reg;
->         gate->bit_idx = DIV_ENABLE_SHIFT;
->  
-> -       divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
-> -       if (!divider)
-> -               return ERR_PTR(-ENOMEM);
-> +       divider = kzalloc(sizeof(*divider), GFP_KERNEL);
-> +       if (!divider) {
-> +               ret = -ENOMEM;
-> +               goto err_free_gate;
-> +       }
->  
->         divider->reg = reg;
->         divider->shift = DIV_RATIO_SHIFT;
-
-Oh no my poor devm_ helpers!
-
-I understand that we need to support early boot drivers better, so this
-patch can be merged.
-
-However I'm curious if you're tracking Bartosz's early_platform_driver
-efforts? Converting to that if it is ever merged would likely be
-cleaner:
-
-https://lkml.kernel.org/r/20180511162028.20616-1-brgl@bgdev.pl
-
-Best regards,
-Mike
+>
