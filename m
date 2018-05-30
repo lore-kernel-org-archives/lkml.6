@@ -1,66 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932544AbeE3ViJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 17:38:09 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:39069 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932222AbeE3ViI (ORCPT
+        id S932558AbeE3Vi1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 17:38:27 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58948 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932222AbeE3ViY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 17:38:08 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Gerd Hoffmann <kraxel@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Joe Lawrence <joe.lawrence@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] samples: mbochs: add DMA_SHARED_BUFFER dependency
-Date: Wed, 30 May 2018 23:37:31 +0200
-Message-Id: <20180530213801.731288-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:xHKTQwAu2V2kFGH0gm7DzCklJ2irOBM1J1MWufskyojxbqzLl1G
- dnG4NTeWtndwiOLp/Y8sYl6+ZszlPIWcdBowrlzipDHQl4rSQP9PdGUqxiAiTg+bwdexinr
- e0clvob4LIdPoEbV78nnCkQjSsOPr5Mc8eIuQSonDvGXfLTv/Ap2aCFnYLQvkW4aSh6f1NK
- knkdKxQyCsWPWfXUXNSmQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:mxgtVHquPpU=:nN6qDr9OCw6nWzxg3mdNXy
- wcT6ECkn9QCNgslp+SrpeMpTgWKu79wRLDMk07JTzsBijy5De+Gk+tr0MZl+P0uMhUocdK1Ao
- Pet9HNxEHoD9bDyTWZ3KfGMCmAbKgRcsz31nGk9xTh/wW3Xb846CKVYYqcN9Wzc1JFHM4zUqb
- ZI3xlzgIfGFPJGMUt7oAACmO/425zPmnaPBZKExMkn2UT3tPnIU6VK9DPpf0n4Rfp+j2FeTTU
- kK6EheTGbujaHliA3elHqrIO2p8w3W8ZdIZ4mzbXVDLVc4UTzT6BbA5OzZ/s5DF58xG6PSuf7
- y38toj3evw4MS3xTw8fZNUtutfIokS5I3ES3qTQLdOjpFpZDtSAlTMUR5vyrz0tre1qWoczrb
- A+Pu0l1izy5LEb5/TxodE7FsbpsvNg8VU9rMRwuj64eAc7JyJhGQKgskRRqWGF8QYomR/z5xJ
- JV5gQ43iEJ00nv2QKZaVxh+Me1ecvGViPXNPuYctLblpZw+HtXvUZ3G/32xcWa9K5/pqKae5M
- LXYrexZj9HpGKMNniJLPpO2OFrX6aC+vm6mW5KHgpPJs80i5tffCy3QqWd4hDIeUfr7qUYA/3
- O1PWp04CPogZ3FHEvhLJydyGr3n6lVTJRtKkzbxQe3QXQtC2ld21NkyhdsEDZliA+yiCQtX2V
- rR4e4CCukZ28GPAq/Jo4u8N5Lf9oPFCeXuxHb1AzQetptoa7+M2KJIjiauPD+0qsdCmE=
+        Wed, 30 May 2018 17:38:24 -0400
+Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit"
+ actions
+To: Paul Moore <paul@paul-moore.com>
+Cc: Richard Guy Briggs <rgb@redhat.com>, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-audit@redhat.com
+References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
+ <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
+ <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
+ <35894dae-c9c6-aa65-da99-c0283d459878@linux.vnet.ibm.com>
+ <CAHC9VhSnubpfY6=RF9ZHQS0js18xor2nF=REfd=ZKTxV-wabiA@mail.gmail.com>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Wed, 30 May 2018 17:38:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAHC9VhSnubpfY6=RF9ZHQS0js18xor2nF=REfd=ZKTxV-wabiA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18053021-0008-0000-0000-0000030EE60D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009099; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000264; SDB=6.01039998; UDB=6.00532331; IPR=6.00819131;
+ MB=3.00021384; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-30 21:38:21
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053021-0009-0000-0000-0000396981D9
+Message-Id: <85a2ad4d-6406-ad64-f440-7ab8289ceb2e@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-30_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805300229
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new bochs vbe sample fails to link when DMA_SHARED_BUFFER is
-disabled:
+On 05/30/2018 05:22 PM, Paul Moore wrote:
+> On Wed, May 30, 2018 at 9:08 AM, Stefan Berger
+> <stefanb@linux.vnet.ibm.com> wrote:
+>> On 05/30/2018 08:49 AM, Richard Guy Briggs wrote:
+>>> On 2018-05-24 16:11, Stefan Berger wrote:
+>>>> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
+>>>> the IMA "audit" policy action.  This patch defines
+>>>> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
+>>>>
+>>>> With this change we now call integrity_audit_msg_common() to get
+>>>> common integrity auditing fields. This now produces the following
+>>>> record when parsing an IMA policy rule:
+>>>>
+>>>> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
+>>>>     fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
+>>>>     subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
+>>>>     op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
+>>>>     tty=tty2 res=1
+>>>>
+>>>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>>>> ---
+>>>>    include/uapi/linux/audit.h          | 3 ++-
+>>>>    security/integrity/ima/ima_policy.c | 5 +++--
+>>>>    2 files changed, 5 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+>>>> index 4e61a9e05132..776e0abd35cf 100644
+>>>> --- a/include/uapi/linux/audit.h
+>>>> +++ b/include/uapi/linux/audit.h
+>>>> @@ -146,7 +146,8 @@
+>>>>    #define AUDIT_INTEGRITY_STATUS            1802 /* Integrity enable
+>>>> status */
+>>>>    #define AUDIT_INTEGRITY_HASH      1803 /* Integrity HASH type */
+>>>>    #define AUDIT_INTEGRITY_PCR       1804 /* PCR invalidation msgs */
+>>>> -#define AUDIT_INTEGRITY_RULE       1805 /* policy rule */
+>>>> +#define AUDIT_INTEGRITY_RULE       1805 /* IMA "audit" action policy
+>>>> msgs  */
+>>>> +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
+>>>>      #define AUDIT_KERNEL                2000    /* Asynchronous audit
+>>>> record. NOT A REQUEST. */
+>>>>    diff --git a/security/integrity/ima/ima_policy.c
+>>>> b/security/integrity/ima/ima_policy.c
+>>>> index 3aed25a7178a..a8ae47a386b4 100644
+>>>> --- a/security/integrity/ima/ima_policy.c
+>>>> +++ b/security/integrity/ima/ima_policy.c
+>>>> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct
+>>>> ima_rule_entry *entry)
+>>>>          int result = 0;
+>>>>          ab = integrity_audit_log_start(NULL, GFP_KERNEL,
+>>>> -                                      AUDIT_INTEGRITY_RULE);
+>>>> +                                      AUDIT_INTEGRITY_POLICY_RULE);
+>>> Is it possible to connect this record to a syscall by replacing the
+>>> first parameter (NULL) by current->context?
+> We're likely going to need to "associate" this record (audit speak for
+> making the first parameter non-NULL) with others for the audit
+> container ID work.  If you do it now, Richard's patches will likely
+> get a few lines smaller and that will surely make him a bit happier :)
 
-ERROR: "dma_buf_export" [samples/vfio-mdev/mbochs.ko] undefined!
-ERROR: "dma_buf_fd" [samples/vfio-mdev/mbochs.ko] undefined!
+Richard is also introducing a local context that we can then create and 
+use instead of the NULL. Can we not use that then?
 
-This uses a 'select' statement to enable that framework, like all
-other users do.
+Steven seems to say: "We don't want to add syscall records to 
+everything. That messes up schemas and existing code. The integrity 
+events are 1 record in size and should stay that way. This saves disk 
+space and improves readability."
 
-Fixes: 8021194eb3da ("sample: vfio bochs vbe display (host device for bochs-drm)")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- samples/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index 3aeaaca77831..bd133efc1a56 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -135,6 +135,7 @@ config SAMPLE_VFIO_MDEV_MDPY_FB
- config SAMPLE_VFIO_MDEV_MBOCHS
- 	tristate "Build VFIO mdpy example mediated device sample code -- loadable modules only"
- 	depends on VFIO_MDEV_DEVICE && m
-+	select DMA_SHARED_BUFFER
- 	help
- 	  Build a virtual display sample driver for use as a VFIO
- 	  mediated device.  It supports the region display interface
--- 
-2.9.0
+>
+>> We would have to fix current->context in this case since it is NULL. We get
+>> to this location by root cat'ing a policy or writing a policy filename into
+>> /sys/kernel/security/ima/policy.
+> Perhaps I'm missing something, but current in this case should point
+> to the process which is writing to the policy file, yes?
+>
+Yes, but current->context is NULL for some reason.
