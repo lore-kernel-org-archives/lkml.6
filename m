@@ -1,159 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753591AbeE3LfK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:35:10 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40452 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753055AbeE3LfE (ORCPT
+        id S1753553AbeE3Ldz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:33:55 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60858 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751591AbeE3LHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:35:04 -0400
-X-Google-Smtp-Source: ADUXVKJY+qEPIkfynzr2V8Rs65Vk+eMMAZRAelvIvl2rINH/9yU7+kuBOLsfRlHgprRv25Oep6rFGA==
-Date: Wed, 30 May 2018 13:34:59 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, Felipe Balbi <balbi@kernel.org>,
-        davem@davemloft.net,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>, linux-usb@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] Documentation: usb: add documentation for USB
- CCID Gadget Device
-Message-ID: <20180530113459.GC2939@gmail.com>
-References: <20180529185021.13738-1-marcus.folkesson@gmail.com>
- <20180529185021.13738-2-marcus.folkesson@gmail.com>
- <f4cdc62c-8bbe-28f9-0e7a-b4943d6f6a4f@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Wed, 30 May 2018 07:07:03 -0400
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <f4cdc62c-8bbe-28f9-0e7a-b4943d6f6a4f@infradead.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "James Chapman" <jchapman@katalix.com>,
+        "David S. Miller" <davem@davemloft.net>
+Date: Wed, 30 May 2018 11:52:41 +0100
+Message-ID: <lsq.1527677561.357102580@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.2 109/153] l2tp: fix race in pppol2tp_release with
+ session object destroy
+In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy,
+3.2.102-rc1 review patch.  If anyone has any objections, please let me know.
 
-On Tue, May 29, 2018 at 01:27:23PM -0700, Randy Dunlap wrote:
-> On 05/29/2018 11:50 AM, Marcus Folkesson wrote:
-> > Add documentation to give a brief description on how to use the
-> > CCID Gadget Device.
-> > This includes a description for all attributes followed by an example on
-> > how to setup the device with ConfigFS.
-> > 
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > ---
-> > 
-> > Notes:
-> >     v3:
-> >     	- correct the grammer (thanks Randy)
-> >     v2:
-> >     	- add the missing changelog text
-> > 
-> >  Documentation/usb/gadget_ccid.rst | 267 ++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 267 insertions(+)
-> >  create mode 100644 Documentation/usb/gadget_ccid.rst
-> > 
-> > diff --git a/Documentation/usb/gadget_ccid.rst b/Documentation/usb/gadget_ccid.rst
-> > new file mode 100644
-> > index 000000000000..524fe9e6ac19
-> > --- /dev/null
-> > +++ b/Documentation/usb/gadget_ccid.rst
-> > @@ -0,0 +1,267 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +============
-> > +CCID Gadget
-> > +============
-> > +
-> > +:Author: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > +
-> > +Introduction
-> > +============
-> > +
-> > +The CCID Gadget will present itself as a CCID device to the host system.
-> > +The device supports two endpoints for now; BULK IN and BULK OUT.
-> > +These endpoints are exposed to userspace via /dev/ccidg*.
-> > +
-> > +All CCID commands are sent on the BULK-OUT endpoint. Each command sent to the CCID
-> > +has an associated ending response. Some commands can also have intermediate
-> > +responses. The response is sent on the BULK-IN endpoint.
-> > +See Figure 3-3 in the CCID Specification [1]_ for more details.
-> > +
-> > +The CCID commands must be handled in userspace since the driver is only working
-> > +as a transport layer for the TPDUs.
-> 
-> I think that it would be helpful to tell us what the naming of the /dev/ccidg*
-> endpoints looks like.  Also, how to distinguish the BULK-IN from the BULK-OUT
-> endpoint.
+------------------
 
-You are right, it is not clear.
+From: James Chapman <jchapman@katalix.com>
 
-The devices are named as /dev/ccidg[0-4] and is per device.
-Writing/reading to the device is using BULK-IN/BULK-OUT, the /dev/ccidg*
-device is not bound to a particular endpoint.
+commit d02ba2a6110c530a32926af8ad441111774d2893 upstream.
 
-I will come up with something that make it more clear.
+pppol2tp_release uses call_rcu to put the final ref on its socket. But
+the session object doesn't hold a ref on the session socket so may be
+freed while the pppol2tp_put_sk RCU callback is scheduled. Fix this by
+having the session hold a ref on its socket until the session is
+destroyed. It is this ref that is dropped via call_rcu.
 
-Thank you!
+Sessions are also deleted via l2tp_tunnel_closeall. This must now also put
+the final ref via call_rcu. So move the call_rcu call site into
+pppol2tp_session_close so that this happens in both destroy paths. A
+common destroy path should really be implemented, perhaps with
+l2tp_tunnel_closeall calling l2tp_session_delete like pppol2tp_release
+does, but this will be looked at later.
 
+ODEBUG: activate active (active state 1) object type: rcu_head hint:           (null)
+WARNING: CPU: 3 PID: 13407 at lib/debugobjects.c:291 debug_print_object+0x166/0x220
+Modules linked in:
+CPU: 3 PID: 13407 Comm: syzbot_19c09769 Not tainted 4.16.0-rc2+ #38
+Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+RIP: 0010:debug_print_object+0x166/0x220
+RSP: 0018:ffff880013647a00 EFLAGS: 00010082
+RAX: dffffc0000000008 RBX: 0000000000000003 RCX: ffffffff814d3333
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff88001a59f6d0
+RBP: ffff880013647a40 R08: 0000000000000000 R09: 0000000000000001
+R10: ffff8800136479a8 R11: 0000000000000000 R12: 0000000000000001
+R13: ffffffff86161420 R14: ffffffff85648b60 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff88001a580000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020e77000 CR3: 0000000006022000 CR4: 00000000000006e0
+Call Trace:
+ debug_object_activate+0x38b/0x530
+ ? debug_object_assert_init+0x3b0/0x3b0
+ ? __mutex_unlock_slowpath+0x85/0x8b0
+ ? pppol2tp_session_destruct+0x110/0x110
+ __call_rcu.constprop.66+0x39/0x890
+ ? __call_rcu.constprop.66+0x39/0x890
+ call_rcu_sched+0x17/0x20
+ pppol2tp_release+0x2c7/0x440
+ ? fcntl_setlk+0xca0/0xca0
+ ? sock_alloc_file+0x340/0x340
+ sock_release+0x92/0x1e0
+ sock_close+0x1b/0x20
+ __fput+0x296/0x6e0
+ ____fput+0x1a/0x20
+ task_work_run+0x127/0x1a0
+ do_exit+0x7f9/0x2ce0
+ ? SYSC_connect+0x212/0x310
+ ? mm_update_next_owner+0x690/0x690
+ ? up_read+0x1f/0x40
+ ? __do_page_fault+0x3c8/0xca0
+ do_group_exit+0x10d/0x330
+ ? do_group_exit+0x330/0x330
+ SyS_exit_group+0x22/0x30
+ do_syscall_64+0x1e0/0x730
+ ? trace_hardirqs_off_thunk+0x1a/0x1c
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x7f362e471259
+RSP: 002b:00007ffe389abe08 EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f362e471259
+RDX: 00007f362e471259 RSI: 000000000000002e RDI: 0000000000000000
+RBP: 00007ffe389abe30 R08: 0000000000000000 R09: 00007f362e944270
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000400b60
+R13: 00007ffe389abf50 R14: 0000000000000000 R15: 0000000000000000
+Code: 8d 3c dd a0 8f 64 85 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7b 48 8b 14 dd a0 8f 64 85 4c 89 f6 48 c7 c7 20 85 64 85 e
+8 2a 55 14 ff <0f> 0b 83 05 ad 2a 68 04 01 48 83 c4 18 5b 41 5c 41 5d 41 5e 41
 
-> 
-> > +
-> > +
-> > +CCID Commands
-> > +--------------
-> > +
-> > +All CCID commands begins with a 10-byte header followed by an optional
-> > +data field depending on message type.
-> > +
-> > ++--------+--------------+-------+----------------------------------+
-> > +| Offset | Field        | Size  | Description                      |
-> > ++========+==============+=======+==================================+
-> > +| 0      | bMessageType | 1     | Type of message                  |
-> > ++--------+--------------+-------+----------------------------------+
-> > +| 1      | dwLength     | 4     | Message specific data length     |
-> > +|        |              |       |                                  |
-> > ++--------+--------------+-------+----------------------------------+
-> > +| 5      | bSlot        | 1     | Identifies the slot number       |
-> > +|        |              |       | for this command                 |
-> > ++--------+--------------+-------+----------------------------------+
-> > +| 6      | bSeq         | 1     | Sequence number for command      |
-> > ++--------+--------------+-------+----------------------------------+
-> > +| 7      | ...          | 3     | Fields depends on message type   |
-> > ++--------+--------------+-------+----------------------------------+
-> > +| 10     | abData       | array | Message specific data (OPTIONAL) |
-> > ++--------+--------------+-------+----------------------------------+
-> > +
-> > +
-> > +Multiple CCID gadgets
-> > +----------------------
-> > +
-> > +It is possible to create multiple instances of the CCID gadget, however,
-> > +a much more flexible way is to create one gadget and set the `nslots` attribute
-> > +to the number of desired CCID devices.
-> > +
-> > +All CCID commands specify which slot is the receiver in the `bSlot` field
-> > +of the CCID header.
-> > +
-> > +Usage
-> > +=====
-> > +
-> > +Access from userspace
-> > +----------------------
-> > +All communication is by read(2) and write(2) to the corresponding /dev/ccidg* device.
-> > +Only one file descriptor is allowed to be open to the device at a time.
-> 
-> 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> 
-> thanks,
-> -- 
-> ~Randy
+Fixes: ee40fb2e1eb5b ("l2tp: protect sock pointer of struct pppol2tp_session with RCU")
+Signed-off-by: James Chapman <jchapman@katalix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.2: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/l2tp/l2tp_ppp.c | 52 +++++++++++++++++++++++----------------------
+ 1 file changed, 27 insertions(+), 25 deletions(-)
 
-Best regards,
-Marcus Folkesson
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -463,10 +463,28 @@ abort:
+  * Session (and tunnel control) socket create/destroy.
+  *****************************************************************************/
+ 
++static void pppol2tp_put_sk(struct rcu_head *head)
++{
++	struct pppol2tp_session *ps;
++
++	ps = container_of(head, typeof(*ps), rcu);
++	sock_put(ps->__sk);
++}
++
+ /* Called by l2tp_core when a session socket is being closed.
+  */
+ static void pppol2tp_session_close(struct l2tp_session *session)
+ {
++	struct pppol2tp_session *ps;
++
++	ps = l2tp_session_priv(session);
++	mutex_lock(&ps->sk_lock);
++	ps->__sk = rcu_dereference_protected(ps->sk,
++					     lockdep_is_held(&ps->sk_lock));
++	RCU_INIT_POINTER(ps->sk, NULL);
++	if (ps->__sk)
++		call_rcu(&ps->rcu, pppol2tp_put_sk);
++	mutex_unlock(&ps->sk_lock);
+ }
+ 
+ /* Really kill the session socket. (Called from sock_put() if
+@@ -490,14 +508,6 @@ out:
+ 	return;
+ }
+ 
+-static void pppol2tp_put_sk(struct rcu_head *head)
+-{
+-	struct pppol2tp_session *ps;
+-
+-	ps = container_of(head, typeof(*ps), rcu);
+-	sock_put(ps->__sk);
+-}
+-
+ /* Called when the PPPoX socket (session) is closed.
+  */
+ static int pppol2tp_release(struct socket *sock)
+@@ -521,26 +531,17 @@ static int pppol2tp_release(struct socke
+ 	sock_orphan(sk);
+ 	sock->sk = NULL;
+ 
++	/* If the socket is associated with a session,
++	 * l2tp_session_delete will call pppol2tp_session_close which
++	 * will drop the session's ref on the socket.
++	 */
+ 	session = pppol2tp_sock_to_session(sk);
+-
+-	if (session != NULL) {
+-		struct pppol2tp_session *ps;
+-
++	if (session) {
+ 		l2tp_session_delete(session);
+-
+-		ps = l2tp_session_priv(session);
+-		mutex_lock(&ps->sk_lock);
+-		ps->__sk = rcu_dereference_protected(ps->sk,
+-						     lockdep_is_held(&ps->sk_lock));
+-		RCU_INIT_POINTER(ps->sk, NULL);
+-		mutex_unlock(&ps->sk_lock);
+-		call_rcu(&ps->rcu, pppol2tp_put_sk);
+-
+-		/* Rely on the sock_put() call at the end of the function for
+-		 * dropping the reference held by pppol2tp_sock_to_session().
+-		 * The last reference will be dropped by pppol2tp_put_sk().
+-		 */
++		/* drop the ref obtained by pppol2tp_sock_to_session */
++		sock_put(sk);
+ 	}
++
+ 	skb_queue_purge(&sk->sk_receive_queue);
+ 	skb_queue_purge(&sk->sk_write_queue);
+ 
+@@ -828,6 +829,7 @@ static int pppol2tp_connect(struct socke
+ 
+ out_no_ppp:
+ 	/* This is how we get the session context from the socket. */
++	sock_hold(sk);
+ 	sk->sk_user_data = session;
+ 	rcu_assign_pointer(ps->sk, sk);
+ 	mutex_unlock(&ps->sk_lock);
