@@ -1,59 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753885AbeE3QJJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:09:09 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:40971 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753570AbeE3QJE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:09:04 -0400
-X-Google-Smtp-Source: ADUXVKLiewQ3LARsVYwLCOtT3OIEEmWkKnOiOJFY4ubj08tgJegPneRC2rs5yVTe5gxhgpLDL/HMDS6xIJPphsVDlMU=
+        id S1753773AbeE3QJk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:09:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42916 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750752AbeE3QJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:09:39 -0400
+Date: Wed, 30 May 2018 19:09:37 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: "Rustad, Mark D" <mark.d.rustad@intel.com>
+Cc: "Bie, Tiwei" <tiwei.bie@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        "Liang, Cunming" <cunming.liang@intel.com>,
+        "Wang, Zhihong" <zhihong.wang@intel.com>
+Subject: Re: [virtio-dev] [PATCH] virtio_pci: support enabling VFs
+Message-ID: <20180530190819-mutt-send-email-mst@kernel.org>
+References: <20180530085521.26583-1-tiwei.bie@intel.com>
+ <D7004E41-C23D-48B7-94A4-ACBBA06B021D@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530160744.GS6920@sirena.org.uk>
-References: <20180523154057.GL4828@sirena.org.uk> <CAD=FV=XWVOdJ8rWJnBTwoNqnYqYRYjknkZtUvT86+skbrTdwig@mail.gmail.com>
- <20180523155617.GN4828@sirena.org.uk> <CAD=FV=W4aDxWbcaJ9GZ1KkvyiTPAPR-oUoTFzJfS+LftU5ZP=Q@mail.gmail.com>
- <20180530093701.GD6920@sirena.org.uk> <CAD=FV=W-MLU9c-SvfLgKAKGP1eHN5xO-013f2M09XUa+QeHzrA@mail.gmail.com>
- <20180530150241.GO6920@sirena.org.uk> <CAD=FV=XJd-udEE6az0xP7i6x0oGsnd=BSCyZ0Og_+RjNCMXnCQ@mail.gmail.com>
- <20180530154849.GQ6920@sirena.org.uk> <CAD=FV=X2u=hMyWinSDtim-PmFwAy5mXcwg3HeYojAHcsUFhV3g@mail.gmail.com>
- <20180530160744.GS6920@sirena.org.uk>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 30 May 2018 09:09:02 -0700
-X-Google-Sender-Auth: lwX0FUiPiDqL4_EiXCLcVGEsYgY
-Message-ID: <CAD=FV=WVGu0f+=q-C9kiEmaLEUJqGY+Jbns83h72uF-9iasrUw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
-To: Mark Brown <broonie@kernel.org>
-Cc: David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D7004E41-C23D-48B7-94A4-ACBBA06B021D@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, May 30, 2018 at 04:03:37PM +0000, Rustad, Mark D wrote:
+> On May 30, 2018, at 1:55 AM, Tiwei Bie <tiwei.bie@intel.com> wrote:
+> 
+> > There is a new feature bit allocated in virtio spec to
+> > support SR-IOV (Single Root I/O Virtualization):
+> > 
+> > https://github.com/oasis-tcs/virtio-spec/issues/11
+> > 
+> > This patch enables the support for this feature bit in
+> > virtio driver.
+> > 
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> > This patch depends on below proposal:
+> > https://lists.oasis-open.org/archives/virtio-dev/201805/msg00154.html
+> > 
+> > This patch depends on below patch:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/commit/?h=pci/virtualization&id=8effc395c2097e258fcedfc02ed4a66d45fb4238
+> > 
+> >  drivers/virtio/virtio_pci_common.c | 20 ++++++++++++++++++++
+> >  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
+> >  include/uapi/linux/virtio_config.h |  7 ++++++-
+> >  3 files changed, 40 insertions(+), 1 deletion(-)
+> > 
+> 
+> <snip>
+> 
+> > diff --git a/include/uapi/linux/virtio_config.h
+> > b/include/uapi/linux/virtio_config.h
+> > index 308e2096291f..b7c1f4e7d59e 100644
+> > --- a/include/uapi/linux/virtio_config.h
+> > +++ b/include/uapi/linux/virtio_config.h
+> > @@ -49,7 +49,7 @@
+> 
+> There is a value in the comment directly before this that should
+> be updated as well to be consistent with the new value for
+> VIRTIO_TRANSPORT_F_END below.
 
-On Wed, May 30, 2018 at 9:07 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Wed, May 30, 2018 at 09:06:16AM -0700, Doug Anderson wrote:
->> On Wed, May 30, 2018 at 8:48 AM, Mark Brown <broonie@kernel.org> wrote:
->
->> > Without the core doing something the regulator isn't going to get told
->> > that anything updated voltages anyway...
->
->> I was just suggesting that when the core tells the regulator driver to
->> disable itself that the regulator driver tell RPMh to not only disable
->> itself but also (temporarily) vote for a lower voltage.  When the core
->> tells the regulator to re-enable itself then the regulator driver
->> restores the original voltage vote (or applies any vote that might
->> have been attempted while the regulator was disabled).  That wouldn't
->> require any regulator core changes.
->
-> It needs something to tell it what the new voltage to set is.
+It hasn't been updated to 34 yet.
+I suggest a separate patch to replace the numbers with
+VIRTIO_TRANSPORT_F_START and VIRTIO_TRANSPORT_F_END
+in the comment.
+Maybe replace "e.g. virtio_ring" with "e.g. virtio_ring,
+virtio_pci etc." as well.
 
-The regulator driver has its own cache of what voltage was most
-recently requested by Linux.  It can use that, can't it?
-
--Doug
+> >   * transport being used (eg. virtio_ring), the rest are per-device feature
+> >   * bits. */
+> >  #define VIRTIO_TRANSPORT_F_START	28
+> > -#define VIRTIO_TRANSPORT_F_END		34
+> > +#define VIRTIO_TRANSPORT_F_END		38
+> > 
+> >  #ifndef VIRTIO_CONFIG_NO_LEGACY
+> >  /* Do we get callbacks when the ring is completely used, even if we've
+> 
+> <snip>
+> 
+> --
+> Mark Rustad, Networking Division, Intel Corporation
