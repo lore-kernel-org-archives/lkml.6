@@ -1,113 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968982AbeE3Joo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 05:44:44 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38158 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965077AbeE3Jol (ORCPT
+        id S969002AbeE3JqX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 05:46:23 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:33143 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965213AbeE3JqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 05:44:41 -0400
-X-Google-Smtp-Source: ADUXVKLE3k7AZ9PJhYl7U6SIV5t+40jIB6TfBTn6lbZDBEO8MiD1PLDnegMB6Nv734x+Twp7U9jdPA==
-Date: Wed, 30 May 2018 15:14:38 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: David Collins <collinsd@codeaurora.org>, sboyd@kernel.org,
-        andy.gross@linaro.org, ulf.hansson@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
-Subject: Re: [PATCH v2 5/6] soc: qcom: rpmh powerdomain driver
-Message-ID: <20180530094438.xnyukvhum7tc6roh@vireshk-i7>
-References: <20180525100121.28214-1-rnayak@codeaurora.org>
- <20180525100121.28214-6-rnayak@codeaurora.org>
- <215deee5-6472-d587-9a90-f7158162ed82@codeaurora.org>
- <6f8e5fe2-199d-ba1f-19d7-2faf276075f3@codeaurora.org>
- <36822404-bdf5-1915-03e7-e5ffcff05c9b@codeaurora.org>
+        Wed, 30 May 2018 05:46:22 -0400
+X-ME-Proxy: <xmx:7XIOW96-BTguMJpllCQNs1z_KPyXNvQvCz4jWZ2qP1Ce-TEldCzOtg>
+X-ME-Proxy: <xmx:7XIOW2h-Fw4Cm1bkZcNqvcLVB4s_-kCKHSSo-lVV5oy3TALCY0RHfg>
+X-ME-Proxy: <xmx:7XIOW2nZGXOD0pTyd59O6onsVq0vbLsUcxQ3iAdczWObfHR14_W6TQ>
+X-ME-Proxy: <xmx:7XIOW0g4omU3_hDYr8bizf6bTuGamMDbnc1O7-N3JmL9pr_eGlKf1w>
+X-ME-Proxy: <xmx:7XIOW-10ztgWigXz9iq3hcBwdh96D0zBQ1O3dSTQkSd_8pN-ChRQ0g>
+X-ME-Proxy: <xmx:7XIOW4nrIVYZvrBpsQILCOl-pR7_VKagP2qI68KJHCWK73zbqfbiDQ>
+X-ME-Sender: <xms:7XIOW__udBlGgA1uTo83IwXWymptAY9Lv4nRuHFB2pI9WeyGrXjKEQ>
+Date: Wed, 30 May 2018 11:46:02 +0200
+From: Greg KH <greg@kroah.com>
+To: YaoJun <yaojun8558363@gmail.com>
+Cc: kernel-hardening@lists.openwall.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH 1/4] arm64/mm: migrate swapper_pg_dir
+Message-ID: <20180530094602.GB25193@kroah.com>
+References: <20180530091259.9386-1-yaojun8558363@gmail.com>
+ <20180530091259.9386-2-yaojun8558363@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <36822404-bdf5-1915-03e7-e5ffcff05c9b@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180530091259.9386-2-yaojun8558363@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30-05-18, 14:25, Rajendra Nayak wrote:
-> []...
+On Wed, May 30, 2018 at 05:12:56PM +0800, YaoJun wrote:
+> Introduce __pa_swapper_pg_dir to save physical address
+> of swapper_pg_dir. And pass it as an argument to
+> __enable_mmu().
 > 
-> >>> +Required Properties:
-> >>> + - compatible: Should be one of the following
-> >>> +	* qcom,sdm845-rpmhpd: RPMh powerdomain for the sdm845 family of SoC
-> >>> + - power-domain-cells: number of cells in power domain specifier
-> >>> +	must be 1
-> >>> + - operating-points-v2: Phandle to the OPP table for the power-domain.
-> >>> +	Refer to Documentation/devicetree/bindings/power/power_domain.txt
-> >>> +	and Documentation/devicetree/bindings/opp/qcom-opp.txt for more details
-> >>> +
-> >>> +Example:
-> >>> +
-> >>> +	rpmhpd: power-controller {
-> >>> +		compatible = "qcom,sdm845-rpmhpd";
-> >>> +		#power-domain-cells = <1>;
-> >>> +		operating-points-v2 = <&rpmhpd_opp_table>,
-> >>> +				      <&rpmhpd_opp_table>,
-> >>> +				      <&rpmhpd_opp_table>,
-> >>> +				      <&rpmhpd_opp_table>,
-> >>> +				      <&rpmhpd_opp_table>,
-> >>> +				      <&rpmhpd_opp_table>,
-> >>> +				      <&rpmhpd_opp_table>,
-> >>> +				      <&rpmhpd_opp_table>,
-> >>> +				      <&rpmhpd_opp_table>;
-> >>
-> >> Can this be changed to simply:
-> >>   operating-points-v2 = <&rpmhpd_opp_table>;
-> >>
-> >> The opp binding documentation [1] states that this should be ok:
-> >>
-> >>     If only one phandle is available, then the same OPP table will be used
-> >>     for all power domains provided by the power domain provider.
-> > 
-> > thanks, I mentioned this to Viresh but didn't realize he fixed it up.
-> > Will remove the redundant entries.
-> 
-> Looks like the kernel implementation does not handle this yet, and I get
-> an error adding the OPP tables for the powerdomains if I just specify
-> a single OPP table phandle.
-> 
-> Viresh, is this expected with the latest patches in linux-next?
-> 
-> It would be good if I can specify just one phandle instead of coping
-> the same phandle n times. 
+> Signed-off-by: YaoJun <yaojun8558363@gmail.com>
 
-Please try this untested hunk:
+This is better, but your subject line is still identical for all 4
+patches (which doesn't make sense as they do different things), and I
+think you need to put a space in your name somewhere, right?
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 6d15f05bfc28..7af0ddec936b 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -554,11 +554,24 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_of_add_table);
- int dev_pm_opp_of_add_table_indexed(struct device *dev, int index)
- {
-        struct device_node *opp_np;
--       int ret;
-+       int ret, count;
- 
-+again:
-        opp_np = _opp_of_get_opp_desc_node(dev->of_node, index);
--       if (!opp_np)
-+       if (!opp_np) {
-+               /*
-+                * If only one phandle is present, then the same OPP table
-+                * applies for all index requests.
-+                */
-+               count = of_count_phandle_with_args(dev->of_node,
-+                                                  "operating-points-v2", NULL);
-+               if (count == 1 && index) {
-+                       index = 0;
-+                       goto again;
-+               }
-+
-                return -ENODEV;
-+       }
- 
-        ret = _of_add_opp_table_v2(dev, opp_np);
-        of_node_put(opp_np);
+thanks,
+
+greg k-h
