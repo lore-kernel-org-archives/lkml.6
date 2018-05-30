@@ -1,144 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752413AbeE3LB2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:01:28 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54086 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752291AbeE3LBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:01:22 -0400
-Date: Wed, 30 May 2018 12:01:17 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Subject: Re: [PATCH v5 02/10] sched/rt: add rt_rq utilization tracking
-Message-ID: <20180530110117.GJ30654@e110439-lin>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-3-git-send-email-vincent.guittot@linaro.org>
- <20180525155437.GE30654@e110439-lin>
- <CAKfTPtCnJKmLajbeuXe71B-g5xC1vV2krrmG1TBB=pEnApR7cQ@mail.gmail.com>
- <20180530093203.GG30654@e110439-lin>
- <CAKfTPtDmBHGWUpWk8SmbY=4HDDjRPCVRQ1dGAX7CK6FRuU_BQQ@mail.gmail.com>
+        id S1752520AbeE3LBj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:01:39 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50306 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752464AbeE3LBf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 07:01:35 -0400
+X-Google-Smtp-Source: ADUXVKJa4DZq3+ryqgb/+AvMRcyo8pqq+5yW84DrUJZuK8GQRzzlt9lyHGAA06YYAmHQU4pdnGRHlA==
+Subject: Re: [PATCH 2/6] mfd: da9063: Replace model with type
+To: Ye Xiaolong <xiaolong.ye@intel.com>
+Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20180523114230.10109-2-marek.vasut+renesas@gmail.com>
+ <201805261713.OJMLXvlB%fengguang.wu@intel.com>
+ <fca2a629-e5e8-6ef8-7e7d-d25353ab4c3e@gmail.com>
+ <20180530052110.GB27396@yexl-desktop>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <7db6e995-70db-8bdf-e425-14c52e2592ea@gmail.com>
+Date: Wed, 30 May 2018 12:45:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtDmBHGWUpWk8SmbY=4HDDjRPCVRQ1dGAX7CK6FRuU_BQQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180530052110.GB27396@yexl-desktop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30-May 12:06, Vincent Guittot wrote:
-> On 30 May 2018 at 11:32, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> > On 29-May 15:29, Vincent Guittot wrote:
-
-[...]
-
-> >> >> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> >> >> index ef3c4e6..b4148a9 100644
-> >> >> --- a/kernel/sched/rt.c
-> >> >> +++ b/kernel/sched/rt.c
-> >> >> @@ -5,6 +5,8 @@
-> >> >>   */
-> >> >>  #include "sched.h"
-> >> >>
-> >> >> +#include "pelt.h"
-> >> >> +
-> >> >>  int sched_rr_timeslice = RR_TIMESLICE;
-> >> >>  int sysctl_sched_rr_timeslice = (MSEC_PER_SEC / HZ) * RR_TIMESLICE;
-> >> >>
-> >> >> @@ -1572,6 +1574,9 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-> >> >>
-> >> >>       rt_queue_push_tasks(rq);
-> >> >>
-> >> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq,
-> >> >> +             rq->curr->sched_class == &rt_sched_class);
-> >> >> +
-> >> >>       return p;
-> >> >>  }
-> >> >>
-> >> >> @@ -1579,6 +1584,8 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
-> >> >>  {
-> >> >>       update_curr_rt(rq);
-> >> >>
-> >> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
-> >> >> +
-> >> >>       /*
-> >> >>        * The previous task needs to be made eligible for pushing
-> >> >>        * if it is still active
-> >> >> @@ -2308,6 +2315,7 @@ static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
-> >> >>       struct sched_rt_entity *rt_se = &p->rt;
-> >> >>
-> >> >>       update_curr_rt(rq);
-> >> >> +     update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
-> >> >
-> >> > Mmm... not entirely sure... can't we fold
-> >> >    update_rt_rq_load_avg() into update_curr_rt() ?
-> >> >
-> >> > Currently update_curr_rt() is used in:
-> >> >    dequeue_task_rt
-> >> >    pick_next_task_rt
-> >> >    put_prev_task_rt
-> >> >    task_tick_rt
-> >> >
-> >> > while we update_rt_rq_load_avg() only in:
-> >> >    pick_next_task_rt
-> >> >    put_prev_task_rt
-> >> >    task_tick_rt
-> >> > and
-> >> >    update_blocked_averages
-> >> >
-> >> > Why we don't we need to update at dequeue_task_rt() time ?
-> >>
-> >> We are tracking rt rq and not sched entities so we want to know when
-> >> sched rt will be the running or not  sched class on the rq. Tracking
-> >> dequeue_task_rt is useless
-> >
-> > What about (push) migrations?
+On 05/30/2018 07:21 AM, Ye Xiaolong wrote:
+> Hi, Marek
 > 
-> it doesn't make any difference. put_prev_task_rt() says that the prev
-> task that was running, was a rt task so we can account past time at rt
-> running time
-> and pick_next_task_rt says that the next one will be a rt task so we
-> have to account elapse time either to rt or not rt time according.
-
-Right, I was missing that you are tracking RT (and DL) only at RQ
-level... not SE level, thus we will not see migrations of blocked
-utilization.
-
-> I can probably optimize the pick_next_task_rt by doing the below instead:
+> On 05/26, Marek Vasut wrote:
+>> On 05/26/2018 11:16 AM, kbuild test robot wrote:
+>>> Hi Marek,
+>>>
+>>> I love your patch! Perhaps something to improve:
+>>>
+>>> [auto build test WARNING on ljones-mfd/for-mfd-next]
+>>> [also build test WARNING on v4.17-rc6]
+>>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>>>
+>>> url:    https://github.com/0day-ci/linux/commits/Marek-Vasut/mfd-da9063-Rename-PMIC_DA9063-to-PMIC_CHIP_ID_DA9063/20180526-162613
+>>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+>>> config: x86_64-randconfig-x002-201820 (attached as .config)
+>>> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+>>> reproduce:
+>>>         # save the attached .config to linux build tree
+>>>         make ARCH=x86_64 
+>>>
+>>> All warnings (new ones prefixed by >>):
+>>>
+>>>    In file included from include/linux/kernel.h:10:0,
+>>>                     from drivers//regulator/da9063-regulator.c:16:
+>>>    drivers//regulator/da9063-regulator.c: In function 'da9063_regulator_probe':
+>>>    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
+>>>       if (model->dev_model == da9063->type)
+>>>                ^
+>>>    include/linux/compiler.h:58:30: note: in definition of macro '__trace_if'
+>>>      if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
+>>>                                  ^~~~
+>>>>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
+>>>       if (model->dev_model == da9063->type)
+>>>       ^~
+>>>    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
+>>>       if (model->dev_model == da9063->type)
+>>>                ^
+>>>    include/linux/compiler.h:58:42: note: in definition of macro '__trace_if'
+>>>      if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
+>>>                                              ^~~~
+>>>>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
+>>>       if (model->dev_model == da9063->type)
+>>>       ^~
+>>>    drivers//regulator/da9063-regulator.c:744:12: error: 'const struct da9063_dev_model' has no member named 'dev_model'
+>>>       if (model->dev_model == da9063->type)
+>>>                ^
+>>>    include/linux/compiler.h:69:16: note: in definition of macro '__trace_if'
+>>>       ______r = !!(cond);     \
+>>>                    ^~~~
+>>>>> drivers//regulator/da9063-regulator.c:744:3: note: in expansion of macro 'if'
+>>>       if (model->dev_model == da9063->type)
+>>>       ^~
+>>>    drivers//regulator/da9063-regulator.c:749:10: error: 'struct da9063' has no member named 'model'
+>>>        da9063->model);
+>>>              ^~
+>>>
+>>> vim +/if +744 drivers//regulator/da9063-regulator.c
+>>
+>> Is it testing this patch without the other patches in the series or at
+>> least 1/6 ?
 > 
-> if (rq->curr->sched_class == &rt_sched_class)
->        update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
-> 
-> If prev task is a rt  task, put_prev_task_rt has already done the update
+> It was tested with the whole patch series as you can see in https://github.com/0day-ci/linux/commits/Marek-Vasut/mfd-da9063-Rename-PMIC_DA9063-to-PMIC_CHIP_ID_DA9063/20180526-162613.
 
-Right.
-
-Just one more question about non tracking SE. Once we migrate an RT
-task with the current solution we will have to wait for it's PELT
-blocked utilization to decay completely before starting to ignore that
-task contribution, which means that:
- 1. we will see an higher utilization on the original CPU
- 2. we don't immediately see the increased utilization on the
-    destination CPU
-
-I remember Juri had some patches to track SE utilization thus fixing
-the two issues above. Can you remember me why we decided to go just
-for the RQ tracking solution?
-Don't we expect any strange behaviors on real systems when RT tasks
-are moved around?
-
-Perhaps we should run some tests on Android...
+Ha, I see the problem. Thanks for confirming it's checked with the whole
+series.
 
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Best regards,
+Marek Vasut
