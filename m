@@ -1,69 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753942AbeE3SL2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 14:11:28 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:42280 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753882AbeE3SLZ (ORCPT
+        id S1753663AbeE3SOj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 14:14:39 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36713 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeE3SOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 14:11:25 -0400
-Date: Wed, 30 May 2018 11:11:17 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Benjamin LaHaise <bcrl@kvack.org>, Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] aio: fix missing break in switch statement
-Message-ID: <20180530181117.GA23842@magnolia>
-References: <20180530180415.17572-1-colin.king@canonical.com>
+        Wed, 30 May 2018 14:14:36 -0400
+X-Google-Smtp-Source: ADUXVKJT4h7VCLf6sd9x9yZynYRwBNnKDmGwWzGX0Uh/Ujp0CA6KysN7yaeHq13vW9gz8HYCszQIEvKdhVdW1JEwnyM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180530180415.17572-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8909 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1805300193
+In-Reply-To: <20180529083153.GR27180@dhcp22.suse.cz>
+References: <20180525185501.82098-1-shakeelb@google.com> <20180526185144.xvh7ejlyelzvqwdb@esperanza>
+ <CALvZod5yTxcuB_Aao-a0ChNEnwyBJk9UPvEQ80s9tZFBQ0cxpw@mail.gmail.com>
+ <20180528091110.GG1517@dhcp22.suse.cz> <CALvZod6x5iRmcJ6pYKS+jwJd855jnwmVcPK9tnKbuJ9Hfppa-A@mail.gmail.com>
+ <20180529083153.GR27180@dhcp22.suse.cz>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Wed, 30 May 2018 11:14:33 -0700
+Message-ID: <CALvZod67qzq+hQLms4Wut5LNVBjBcEQPpMp9zxF6NE5k+7CLOw@mail.gmail.com>
+Subject: Re: [PATCH] memcg: force charge kmem counter too
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 07:04:15PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The addition of the IOCB_CMD_POLL command removed the break
-> statement for the IOCM_CMD_FDSYNC. From my understanding, this
-> should not have been removed as the fall-through does not seem
-> to make sense.  Fix this by adding the break back again.
-> 
-> Detected by CoverityScan, CID#1469469 ("Missing break in switch")
-> 
-> Fixes: 2c14fa838cbe ("aio: implement IOCB_CMD_POLL")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Tue, May 29, 2018 at 1:31 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Mon 28-05-18 10:23:07, Shakeel Butt wrote:
+>> On Mon, May 28, 2018 at 2:11 AM, Michal Hocko <mhocko@kernel.org> wrote:
+>> Though is there a precedence where the broken feature is not fixed
+>> because an alternative is available?
+>
+> Well, I can see how breaking GFP_NOFAIL semantic is problematic, on the
+> other hand we keep saying that kmem accounting in v1 is hard usable and
+> strongly discourage people from using it. Sure we can add the code which
+> handles _this_ particular case but that wouldn't make the whole thing
+> more usable I strongly suspect. Maybe I am wrong and you can provide
+> some specific examples. Is GFP_NOFAIL that common to matter?
+>
+> In any case we should balance between the code maintainability here.
+> Adding more cruft into the allocator path is not free.
+>
 
-Makes sense to me...
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+We do not use kmem limits internally and this is something I found
+through code inspection. If this patch is increasing the cost of code
+maintainability I am fine with dropping it but at least there should a
+comment saying that kmem limits are broken and no need fix.
 
---D
-
-> ---
->  fs/aio.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 8274d09d44a2..e0b2f183fa1c 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1785,6 +1785,7 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
->  		break;
->  	case IOCB_CMD_FDSYNC:
->  		ret = aio_fsync(&req->fsync, iocb, true);
-> +		break;
->  	case IOCB_CMD_POLL:
->  		ret = aio_poll(req, iocb);
->  		break;
-> -- 
-> 2.17.0
-> 
+Shakeel
