@@ -1,193 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753493AbeE3NUd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 09:20:33 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52048 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752852AbeE3NUO (ORCPT
+        id S1753394AbeE3NUW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 09:20:22 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54721 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753210AbeE3NUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 09:20:14 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 07/12] dt-bindings: tc358754: add DT bindings
-Date: Wed, 30 May 2018 16:20:15 +0300
-Message-ID: <2964003.icRy2MNiaL@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180530130731eucas1p160d53c3f8500bcecd000bd8895843817~zbgGgQw3b1079710797eucas1p1H@eucas1p1.samsung.com>
-References: <1527500833-16005-1-git-send-email-m.purski@samsung.com> <1928297.lKUBOH9NhR@avalon> <20180530130731eucas1p160d53c3f8500bcecd000bd8895843817~zbgGgQw3b1079710797eucas1p1H@eucas1p1.samsung.com>
+        Wed, 30 May 2018 09:20:06 -0400
+X-Google-Smtp-Source: ADUXVKLyFpnsdNH+2CIDngqOkW3Px+K+diD2Yi3jMiFPkGDRHSpEETy/9X7sOceyTs2421KxSf/oeA==
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>, Laura Abbott <labbott@redhat.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v2 2/2] ARM: debug: fix BCM2836 order entry
+Date: Wed, 30 May 2018 15:19:56 +0200
+Message-Id: <20180530131956.13972-2-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180530131956.13972-1-peron.clem@gmail.com>
+References: <20180530131956.13972-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrzej,
+From: Clément Peron <clement.peron@devialet.com>
 
-On Wednesday, 30 May 2018 16:07:29 EEST Andrzej Hajda wrote:
-> On 30.05.2018 14:35, Laurent Pinchart wrote:
-> > On Wednesday, 30 May 2018 12:59:12 EEST Andrzej Hajda wrote:
-> >> On 28.05.2018 12:18, Laurent Pinchart wrote:
-> >>> On Monday, 28 May 2018 12:47:11 EEST Maciej Purski wrote:
-> >>>> The patch adds bindings to Toshiba DSI/LVDS bridge TC358764.
-> >>>> Bindings describe power supplies, reset gpio and video interfaces.
-> >>>> 
-> >>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> >>>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> >>>> ---
-> >>>> 
-> >>>>  .../bindings/display/bridge/toshiba,tc358764.txt   | 42
-> >>>>  ++++++++++++++++
-> >>>>  1 file changed, 42 insertions(+)
-> >>>>  create mode 100644
-> >>>> 
-> >>>> Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
-> >>>> 
-> >>>> diff --git
-> >>>> a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
-> >>>> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
-> >>>> new
-> >>>> file mode 100644
-> >>>> index 0000000..d09bdc2
-> >>>> --- /dev/null
-> >>>> +++
-> >>>> b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358764.txt
-> >>>> @@ -0,0 +1,42 @@
-> >>>> +TC358764 MIPI-DSI to LVDS panel bridge
-> >>>> +
-> >>>> +Required properties:
-> >>>> +  - compatible: "toshiba,tc358764"
-> >>>> +  - reg: the virtual channel number of a DSI peripheral
-> >>>> +  - vddc-supply: core voltage supply
-> >>>> +  - vddio-supply: I/O voltage supply
-> >>>> +  - vddmipi-supply: MIPI voltage supply
-> >>>> +  - vddlvds133-supply: LVDS1 3.3V voltage supply
-> >>>> +  - vddlvds112-supply: LVDS1 1.2V voltage supply
-> >>> 
-> >>> That's a lot of power supplies. Could some of them be merged together ?
-> >>> See https://patchwork.freedesktop.org/patch/216058/ for an earlier
-> >>> discussion on the same subject.
-> >> 
-> >> Specs says about 3 supply voltage values:
-> >> - 1.2V - digital core, DSI-RX PHY
-> >> - 1.8-3.3V - digital I/O
-> >> - 3.3V - LVDS-TX PHY
-> >> 
-> >> So I guess it should be minimal number of supplies. Natural candidates:
-> >> 
-> >> - vddc-supply: core voltage supply, 1.2V
-> >> - vddio-supply: I/O voltage supply, 1.8V or 3.3V
-> >> - vddlvds-supply: LVDS1/2 voltage supply, 3.3V
-> >> 
-> >> I have changed name of the latest supply to be more consistent with
-> >> other supplies, and changed 1.8-3.3 (which incorrectly suggest voltage
-> >> range), to more precise voltage alternative.
-> > 
-> > This looks fine to me.
-> > 
-> >>>> +  - reset-gpios: a GPIO spec for the reset pin
-> >>>> +
-> >>>> +The device node can contain zero to two 'port' child nodes, each with
-> >>>> one
-> >>>> +child
-> >>>> +'endpoint' node, according to the bindings defined in [1].
-> >>>> +The following are properties specific to those nodes.
-> >>>> +
-> >>>> +port:
-> >>>> +  - reg: (required) can be 0 for DSI port or 1 for LVDS port;
-> >>> 
-> >>> This seems pretty vague to me. It could be read as meaning that ports
-> >>> are
-> >>> completely optional, and that the port number you list can be used, but
-> >>> that something else could be used to.
-> >>> 
-> >>> Let's make the port nodes mandatory. I propose the following.
-> >>> 
-> >>> Required nodes:
-> >>> 
-> >>> The TC358764 has DSI and LVDS ports whose connections are described
-> >>> using
-> >>> the OF graph bindings defined in
-> >>> Documentation/devicetree/bindings/graph.txt. The device node must
-> >>> contain
-> >>> one 'port' child node per DSI and LVDS port. The port nodes are numbered
-> >>> as follows.
-> >>> 
-> >>>   Port                  Number
-> >>> 
-> >>> -------------------------------------------------------------------
-> >>> 
-> >>>   DSI Input             0
-> >>>   LVDS Output           1
-> >>> 
-> >>> Each port node must contain endpoint nodes describing the hardware
-> >>> connections.
-> >> 
-> >> Since the bridge is controlled via DSI bus, DSI input port is not
-> >> necessary.
-> > 
-> > I don't agree with this. Regardless of how the bridge is controlled, I
-> > think we should always use ports to describe the data connections.
-> > Otherwise it would get more complicated for display controller drivers to
-> > use different types of bridges.
-> 
-> It was discussed already, and DT guideline is to skip graphs in simple
-> case of parent/child nodes, see for example [1].
-> 
-> [1]: https://marc.info/?l=dri-devel&m=148354108702517&w=2
+Entries are sorted by their address value, except the BCM2836/KONA
+which are not in the proper order.
 
-That's when the child as no other connection at all. I don't think it makes 
-sense to mix description of connections through parent/child relationships and 
-through ports for a single device.
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+---
+ arch/arm/Kconfig.debug | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And that being said, I don't agree with Rob's comment there. Having two 
-different methods to describe connections means that you have to implement 
-them both in all display controller drivers (and even all bridge drivers in 
-the case of chained bridges). That's an extra complexity that can easily be 
-avoided by standardizing DT bindings.
-
-I also wonder whether Rob's position hasn't been reconsidered since then; I 
-vaguely recalled another more recent discussion on this topic. I'm a bit too 
-busy now to try and dig it up now I'm afraid :-/
-
-> >>>> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
-> >>>> +
-> >>>> +Example:
-> >>>> +
-> >>>> +	bridge@0 {
-> >>>> +		reg = <0>;
-> >>>> +		compatible = "toshiba,tc358764";
-> >>>> +		vddc-supply = <&vcc_1v2_reg>;
-> >>>> +		vddio-supply = <&vcc_1v8_reg>;
-> >>>> +		vddmipi-supply = <&vcc_1v2_reg>;
-> >>>> +		vddlvds133-supply = <&vcc_3v3_reg>;
-> >>>> +		vddlvds112-supply = <&vcc_1v2_reg>;
-> >>>> +		reset-gpios = <&gpd1 6 GPIO_ACTIVE_LOW>;
-> >>>> +		#address-cells = <1>;
-> >>>> +		#size-cells = <0>;
-> >>>> +		port@1 {
-> >>>> +			reg = <1>;
-> >>>> +			lvds_ep: endpoint {
-> >>>> +				remote-endpoint = <&panel_ep>;
-> >>>> +			};
-> >>>> +		};
-> >>>> +	};
-
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 4ea9d5793b91..1571d6c8f40e 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -1572,8 +1572,8 @@ config DEBUG_UART_PHYS
+ 	default 0x20064000 if DEBUG_RK29_UART1 || DEBUG_RK3X_UART2
+ 	default 0x20068000 if DEBUG_RK29_UART2 || DEBUG_RK3X_UART3
+ 	default 0x20201000 if DEBUG_BCM2835
+-	default 0x3f201000 if DEBUG_BCM2836
+ 	default 0x3e000000 if DEBUG_BCM_KONA_UART
++	default 0x3f201000 if DEBUG_BCM2836
+ 	default 0x4000e400 if DEBUG_LL_UART_EFM32
+ 	default 0x40028000 if DEBUG_AT91_SAMV7_USART1
+ 	default 0x40081000 if DEBUG_LPC18XX_UART0
 -- 
-Regards,
-
-Laurent Pinchart
+2.17.0
