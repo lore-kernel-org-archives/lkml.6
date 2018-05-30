@@ -1,111 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937212AbeE3ISM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 04:18:12 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:38855 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935800AbeE3ISG (ORCPT
+        id S965153AbeE3ITM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 04:19:12 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36266 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937253AbeE3ITB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 04:18:06 -0400
-X-Google-Smtp-Source: ADUXVKL8lPtbhrbZahH8QHjiBlQ+wp5HMB7nqw7HlN+3q7Jq68msbHI1u7w7e04S/GXS3cnbX0GAVeH3bPRWv8m4hms=
+        Wed, 30 May 2018 04:19:01 -0400
+X-Google-Smtp-Source: ADUXVKI4NTbf7XA0W7xhvDgZv9QElIKryYP02+HXAF6Hb5/IPNYrKM7cz2YbanfuRPJ92Wl4fHCQKg==
+Date: Wed, 30 May 2018 11:18:56 +0300
+From: jackm <jackm@dev.mellanox.co.il>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Hakon Bugge <haakon.bugge@oracle.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] IB/mad: Use ID allocator routines to allocate agent
+ number
+Message-ID: <20180530111856.0000430f@dev.mellanox.co.il>
+In-Reply-To: <20180529095445.GG3697@mtr-leonro.mtl.com>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+        <20180529085459.GF3697@mtr-leonro.mtl.com>
+        <20180529095445.GG3697@mtr-leonro.mtl.com>
+Organization: Mellanox
+X-Mailer: Claws Mail 3.15.0 (GTK+ 2.24.31; i686-w64-mingw32)
 MIME-Version: 1.0
-X-Originating-IP: [194.176.227.33]
-In-Reply-To: <CAOQ4uxg6hVd2k5T20N1u72Of9Eb3O_EAasC0MhDoLY3-o2UrGw@mail.gmail.com>
-References: <20180529144143.16378-1-mszeredi@redhat.com> <20180529144143.16378-8-mszeredi@redhat.com>
- <CAOQ4uxg6hVd2k5T20N1u72Of9Eb3O_EAasC0MhDoLY3-o2UrGw@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 30 May 2018 10:18:03 +0200
-Message-ID: <CAJfpegv1HLghFSczd1oZbrpOaz39r8VD5M47aH1eVJFQxs=keg@mail.gmail.com>
-Subject: Re: [PATCH 07/11] ovl: make ovl_create_real() cope with vfs_mkdir() safely
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 5:29 PM, Amir Goldstein <amir73il@gmail.com> wrote:
-> On Tue, May 29, 2018 at 5:41 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
->> From: Amir Goldstein <amir73il@gmail.com>
->>
->> vfs_mkdir() may succeed and leave the dentry passed to it unhashed and
->> negative.  ovl_create_real() is the last caller breaking when that
->> happens.
->>
->> [amir: split re-factoring of ovl_create_temp() to prep patch
->>        add comment about unhashed dir after mkdir
->>        add pr_warn() if mkdir succeeds and lookup fails]
->>
->> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
->> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->> ---
->>  fs/overlayfs/dir.c | 35 +++++++++++++++++++++++++++++++++--
->>  1 file changed, 33 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
->> index 1b181292a624..b33d37d1a87c 100644
->> --- a/fs/overlayfs/dir.c
->> +++ b/fs/overlayfs/dir.c
->> @@ -114,6 +114,37 @@ int ovl_cleanup_and_whiteout(struct dentry *workdir, struct inode *dir,
->>         goto out;
->>  }
->>
->> +static struct dentry *ovl_mkdir_real(struct inode *dir, struct dentry *dentry,
->> +                                    umode_t mode)
->> +{
->> +       int err;
->> +
->> +       err = ovl_do_mkdir(dir, dentry, mode);
->> +       if (err) {
->> +               dput(dentry);
->> +               return ERR_PTR(err);
->> +       }
->> +
->> +       /*
->> +        * vfs_mkdir() may succeed and leave the dentry passed
->> +        * to it unhashed and negative. If that happens, try to
->> +        * lookup a new hashed and positive dentry.
->> +        */
->> +       if (unlikely(d_unhashed(dentry))) {
->> +               struct dentry *d;
->> +
->> +               d = lookup_one_len(dentry->d_name.name, dentry->d_parent,
->> +                                  dentry->d_name.len);
->> +               if (IS_ERR(d)) {
->> +                       pr_warn("overlayfs: failed lookup after mkdir (%pd2, err=%i).\n",
->> +                               dentry, err);
->> +               }
->> +               dput(dentry);
->> +               dentry = d;
->> +       }
->> +       return dentry;
->> +}
->> +
->>  struct dentry *ovl_create_real(struct inode *dir, struct dentry *newdentry,
->>                                struct ovl_cattr *attr)
->>  {
->> @@ -135,8 +166,8 @@ struct dentry *ovl_create_real(struct inode *dir, struct dentry *newdentry,
->>                         break;
->>
->>                 case S_IFDIR:
->> -                       err = ovl_do_mkdir(dir, newdentry, attr->mode);
->> -                       break;
->> +                       /* mkdir is special... */
->> +                       return ovl_mkdir_real(dir, newdentry, attr->mode);
->>
->
-> I like your version with the helper.
-> So do we not care about the WARN_ON below on non-instantiated dentry
-> for directories? or we don't need it at all?
+On Tue, 29 May 2018 12:54:45 +0300
+Leon Romanovsky <leon@kernel.org> wrote:
 
-I think we do.  Filesystems do all sorts of weird an unexpected
-things.   We should definitely not assume underlying filesystem
-returns in any way sane result.
+> On Tue, May 29, 2018 at 11:54:59AM +0300, Leon Romanovsky wrote:
+> > On Tue, May 29, 2018 at 09:38:08AM +0200, Hans Westgaard Ry wrote:  
+> > > The agent TID is a 64 bit value split in two dwords.  The least
+> > > significant dword is the TID running counter. The most significant
+> > > dword is the agent number. In the CX-3 shared port model, the mlx4
+> > > driver uses the most significant byte of the agent number to
+> > > store the slave number, making agent numbers greater and equal to
+> > > 2^24 (3 bytes) unusable.  The current codebase uses a variable
+> > > which is incremented atomically for each new agent number giving
+> > > too large agent numbers over time.  The IDA set of functions are
+> > > used instead of the simple counter approach. This allows re-use
+> > > of agent numbers. A sysctl variable is also introduced, to
+> > > control the max agent number.  
+> >
+> > Why don't you simply limit this number per-driver? By default, any
+> > variable is allowed and mlx4_ib will set something else.
 
-Fixed, thanks for spotting.
+It is much simpler to do things here -- the current allocation scheme
+does have a wrap-around problem, so there is a good reason for using a
+global allocator residing in the ib core.
 
-Miklos
+> >
+> > What is the advantage of having sysctl?  
+> 
+> Anyway, it doesn't pass smoke test.
+
+REASON:  The start argument in ida_simple_get should be 1, not 0:
++       ib_mad_client_id = ida_simple_get(&ib_mad_client_ids,
++                                         1,
++                                         ib_mad_sysctl_client_id_max,
++                                         GFP_KERNEL);
+
+
+The agent ID 0 is interpreted as -no agent-, is used by snoop agents,
+and is never allocated.
+
+The first allocated agent id is 1:
+static atomic_t ib_mad_client_id_min = ATOMIC_INIT(0);
+...
+mad_agent_priv->agent.hi_tid =atomic_inc_return(&ib_mad_client_id);
+
+If this is fixed, we do not get the panic.
+
+However, please note Jason's feedback and my suggestion -- this
+ida-based interface needs to avoid immediate re-use of freed ids.
+
+ -Jack
+> 
+> [  126.428407] RPC: Unregistered rdma transport module.
+> [  126.428513] RPC: Unregistered rdma backchannel transport module.
+> [  194.664081] IPv6: ADDRCONF(NETDEV_UP): ib0: link is not ready
+> [  209.068702] BUG: unable to handle kernel NULL pointer dereference
+> at 0000000000000070 [  209.068858] PGD 80000000341cf067 P4D
+> 80000000341cf067 PUD 34188067 PMD 0 [  209.068941] Oops: 0002 [#1]
+> SMP PTI [  209.069006] Modules linked in: netconsole nfsv3 nfs fscache
+> mlx4_ib(-) mlx4_en mlx4_core devlink ib_ipoib rdma_ucm ib_ucm
+> ib_uverbs ib_umad rdma_cm ib_cm iw_cm ib_core dm_mirror
+> dm_region_hash dm_log dm_mod nfsd pcspkr i2c_piix4 auth_rpcgss
+> nfs_acl lockd grace sunrpc ip_tables ata_generic cirrus
+> drm_kms_helper pata_acpi syscopyarea sysfillrect sysimgblt
+> fb_sys_fops ttm drm e1000 virtio_console i2c_core serio_raw ata_piix
+> floppy [last unloaded: mlxfw] [  209.069312] CPU: 4 PID: 11048 Comm:
+> modprobe Not tainted
+> 4.17.0-rc7-2018-05-29_11-04-56_Hans_Westgaard_Ry__hans_westga #1
+> [  209.069413] Hardware name: Red Hat KVM, BIOS Bochs 01/01/2011
+> [  209.069486] RIP: 0010:_raw_spin_lock_irqsave+0x1e/0x40
+> [  209.069536] RSP: 0018:ffffc90000b4fd70 EFLAGS: 00010046
+> [  209.069591] RAX: 0000000000000000 RBX: 0000000000000246 RCX:
+> ffffea0004d7ed00 [  209.069653] RDX: 0000000000000001 RSI:
+> 0000000000000000 RDI: 0000000000000070 [  209.069717] RBP:
+> 0000000000000000 R08: ffff88013446fc00 R09: 000000018010000f
+> [  209.069778] R10: 0000000000000001 R11: ffff88013446fc00 R12:
+> 0000000000000070 [  209.069849] R13: 0000000000000202 R14:
+> 0000000000000000 R15: 0000000000000000 [  209.069915] FS:
+> 00007fc34caf7740(0000) GS:ffff88013fd00000(0000)
+> knlGS:0000000000000000 [  209.069987] CS:  0010 DS: 0000 ES: 0000
+> CR0: 0000000080050033 [  209.070043] CR2: 0000000000000070 CR3:
+> 000000008853e000 CR4: 00000000000006e0 [  209.070128] Call Trace:
+> [  209.070189]  ib_unregister_mad_agent+0x2d/0x540 [ib_core]
+> [  209.070260]  ? __slab_free+0x9a/0x2d0 [  209.070332]
+> ib_agent_port_close+0xad/0xf0 [ib_core] [  209.070396]
+> ib_mad_remove_device+0x59/0xb0 [ib_core] [  209.070466]
+> ib_unregister_device+0xd4/0x180 [ib_core] [  209.070537]
+> mlx4_ib_remove+0x67/0x1f0 [mlx4_ib] [  209.070594]
+> mlx4_remove_device+0x93/0xa0 [mlx4_core] [  209.070648]
+> mlx4_unregister_interface+0x37/0x90 [mlx4_core] [  209.070705]
+> mlx4_ib_cleanup+0xc/0x4db [mlx4_ib] [  209.072113]
+> __x64_sys_delete_module+0x15b/0x260 [  209.073567]  ?
+> exit_to_usermode_loop+0x7f/0x95 [  209.074945]
+> do_syscall_64+0x48/0x100 [  209.076448]
+> entry_SYSCALL_64_after_hwframe+0x44/0xa9 [  209.077799] RIP:
+> 0033:0x7fc34bfe36b7 [  209.079122] RSP: 002b:00007ffc8ffa98b8 EFLAGS:
+> 00000206 ORIG_RAX: 00000000000000b0 [  209.080500] RAX:
+> ffffffffffffffda RBX: 00000000013455c0 RCX: 00007fc34bfe36b7
+> [  209.081875] RDX: 0000000000000000 RSI: 0000000000000800 RDI:
+> 0000000001345628 [  209.083265] RBP: 0000000000000000 R08:
+> 00007fc34c2a8060 R09: 00007fc34c053a40 [  209.084655] R10:
+> 00007ffc8ffa9640 R11: 0000000000000206 R12: 0000000000000000
+> [  209.086028] R13: 0000000000000001 R14: 0000000001345628 R15:
+> 0000000000000000 [  209.087416] Code: 66 66 66 66 2e 0f 1f 84 00 00
+> 00 00 00 0f 1f 44 00 00 53 9c 58 0f 1f 44 00 00 48 89 c3 fa 66 0f 1f
+> 44 00 00 31 c0 ba 01 00 00 00 <f0> 0f b1 17 85 c0 75 05 48 89 d8 5b
+> c3 89 c6 e8 1e c9 81 ff eb [  209.090262] RIP:
+> _raw_spin_lock_irqsave+0x1e/0x40 RSP: ffffc90000b4fd70 [  209.091720]
+> CR2: 0000000000000070 [  209.093137] ---[ end trace 7b8a6faa27868861
+> ]--- [  209.094546] Kernel panic - not syncing: Fatal exception
+> [  209.096910] Kernel Offset: disabled [  209.098291] ---[ end Kernel
+> panic - not syncing: Fatal exception ]---
+> 
+> Thanks
+> 
+> >
+> > Thanks  
+> 
+> 
