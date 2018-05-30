@@ -1,130 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753752AbeE3QDk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 12:03:40 -0400
-Received: from mga17.intel.com ([192.55.52.151]:39721 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751623AbeE3QDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 12:03:39 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,461,1520924400";
-   d="asc'?scan'208";a="43991562"
-From: "Rustad, Mark D" <mark.d.rustad@intel.com>
-To: "Bie, Tiwei" <tiwei.bie@intel.com>
-CC: "Michael S. Tsirkin" <mst@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "Liang, Cunming" <cunming.liang@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>
-Subject: Re: [virtio-dev] [PATCH] virtio_pci: support enabling VFs
-Thread-Topic: [virtio-dev] [PATCH] virtio_pci: support enabling VFs
-Thread-Index: AQHT9/P2dROWg+ft+kidDfH9t+Sz7qRI5PgA
-Date: Wed, 30 May 2018 16:03:37 +0000
-Message-ID: <D7004E41-C23D-48B7-94A4-ACBBA06B021D@intel.com>
-References: <20180530085521.26583-1-tiwei.bie@intel.com>
-In-Reply-To: <20180530085521.26583-1-tiwei.bie@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.233.80.164]
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_BAEA8DCF-7D8D-46E0-BF67-24CFA346618A";
-        protocol="application/pgp-signature"; micalg=pgp-sha256
-MIME-Version: 1.0
+        id S1753906AbeE3QE3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 12:04:29 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37892 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753836AbeE3QE1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 12:04:27 -0400
+X-Google-Smtp-Source: ADUXVKITiujYyomgK1ATWsr2aU24f6u3IbG0RGOZd+9Y8hSGnPEtdAlUvrV7z9oDQumWjfhbeUMYkg==
+From: Gwendal Grignou <gwendal@chromium.org>
+To: bleung@chromium.org, eballetbo@gmail.com, lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2] platform/chrome: Use to_cros_ec_dev more broadly
+Date: Wed, 30 May 2018 09:04:13 -0700
+Message-Id: <20180530160413.33612-1-gwendal@chromium.org>
+X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
+In-Reply-To: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
+References: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_BAEA8DCF-7D8D-46E0-BF67-24CFA346618A
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii;
-	delsp=yes;
-	format=flowed
+Move to_cros_ec_dev macro to cros_ec.h and use it when the private ec
+object is needed from device object.
 
-On May 30, 2018, at 1:55 AM, Tiwei Bie <tiwei.bie@intel.com> wrote:
+Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+---
+Change since v1:
+   Remove changes in cros_ec_dev.c to avoid inter-dependencies.
 
-> There is a new feature bit allocated in virtio spec to
-> support SR-IOV (Single Root I/O Virtualization):
->
-> https://github.com/oasis-tcs/virtio-spec/issues/11
->
-> This patch enables the support for this feature bit in
-> virtio driver.
->
-> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> ---
-> This patch depends on below proposal:
-> https://lists.oasis-open.org/archives/virtio-dev/201805/msg00154.html
->
-> This patch depends on below patch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/commit/?h=pci/virtualization&id=8effc395c2097e258fcedfc02ed4a66d45fb4238
->
->  drivers/virtio/virtio_pci_common.c | 20 ++++++++++++++++++++
->  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
->  include/uapi/linux/virtio_config.h |  7 ++++++-
->  3 files changed, 40 insertions(+), 1 deletion(-)
->
+ drivers/platform/chrome/cros_ec_lightbar.c | 21 +++++++--------------
+ drivers/platform/chrome/cros_ec_sysfs.c    |  2 --
+ drivers/platform/chrome/cros_ec_vbc.c      |  9 +++------
+ include/linux/mfd/cros_ec.h                |  2 ++
+ 4 files changed, 12 insertions(+), 22 deletions(-)
 
-<snip>
-
-> diff --git a/include/uapi/linux/virtio_config.h  
-> b/include/uapi/linux/virtio_config.h
-> index 308e2096291f..b7c1f4e7d59e 100644
-> --- a/include/uapi/linux/virtio_config.h
-> +++ b/include/uapi/linux/virtio_config.h
-> @@ -49,7 +49,7 @@
-
-There is a value in the comment directly before this that should
-be updated as well to be consistent with the new value for
-VIRTIO_TRANSPORT_F_END below.
-
->   * transport being used (eg. virtio_ring), the rest are per-device feature
->   * bits. */
->  #define VIRTIO_TRANSPORT_F_START	28
-> -#define VIRTIO_TRANSPORT_F_END		34
-> +#define VIRTIO_TRANSPORT_F_END		38
->
->  #ifndef VIRTIO_CONFIG_NO_LEGACY
->  /* Do we get callbacks when the ring is completely used, even if we've
-
-<snip>
-
---
-Mark Rustad, Networking Division, Intel Corporation
-
---Apple-Mail=_BAEA8DCF-7D8D-46E0-BF67-24CFA346618A
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEE6ug8b0Wg+ULmnksNPA7/547j7m4FAlsOy1gACgkQPA7/547j
-7m76ZA//Y2LUMKR3vk+daXgmttHCcE/LQRNdsp+Ik27ahXsyWiUT77IJ2RPB0Mze
-J5LThGz0VlmeUFJ5vc1l3RutQoF4DTOo8j1V9U5TD+FG9K9jimJAjf2KQBOZngBx
-ui5BctfAfRkk3hHN35p9B5E8XuOOYGzfwUGFrqCse0tsz+v11s+NwZvtylt9vnDH
-9wDK37Ot2gl/ufee/dRj6cRZXpbO3D4+7heiAx+UfqNGvCDwDII6xhslJAJNGAxt
-TtGgR5sWc6dm7Z02sMQS5IXonrBtZSOkk6Th6P0sAxkc/OiiWTNZjyvP39TM9AkM
-ZKpmXEDwyBaSgqGnrd4GordqXCh6DgVPI6APsKdfl8KNf0GZuFxmCtu8sugYOnA9
-M2UYRppTV73vPB/jIMgo5ClDJ3LIsLeOlwr7oZcOBTzKqzj1YzLcuqAXasR4+rx/
-oZjXMw77yHZbWHWCA2ErIa+Lgeu1xdfHJm/f7ExDQIgGUVKlXfbj2lE87ttm8Zdi
-yY02wOS2z05P2+xnawmEx/p94nQnVz6l4Vdgh48VqUU8g5kax3Zkxb4v8B9oVtDo
-uY+VJrfJ9VReziVzPfIqUAKaCciamvsbAytjRd0JyxALy2600iQZZxt67Z5CMBEp
-MIPoubbmknwnjWXJlDdpGNp24J4d0ZrftJSJtiqbw8TPZ7GcFSQ=
-=13w0
------END PGP SIGNATURE-----
-
---Apple-Mail=_BAEA8DCF-7D8D-46E0-BF67-24CFA346618A--
+diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
+index 6ea79d495aa2..68193bb53383 100644
+--- a/drivers/platform/chrome/cros_ec_lightbar.c
++++ b/drivers/platform/chrome/cros_ec_lightbar.c
+@@ -170,8 +170,7 @@ static ssize_t version_show(struct device *dev,
+ 			    struct device_attribute *attr, char *buf)
+ {
+ 	uint32_t version = 0, flags = 0;
+-	struct cros_ec_dev *ec = container_of(dev,
+-					      struct cros_ec_dev, class_dev);
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+ 	int ret;
+ 
+ 	ret = lb_throttle();
+@@ -193,8 +192,7 @@ static ssize_t brightness_store(struct device *dev,
+ 	struct cros_ec_command *msg;
+ 	int ret;
+ 	unsigned int val;
+-	struct cros_ec_dev *ec = container_of(dev,
+-					      struct cros_ec_dev, class_dev);
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+ 
+ 	if (kstrtouint(buf, 0, &val))
+ 		return -EINVAL;
+@@ -238,8 +236,7 @@ static ssize_t led_rgb_store(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct ec_params_lightbar *param;
+ 	struct cros_ec_command *msg;
+-	struct cros_ec_dev *ec = container_of(dev,
+-					      struct cros_ec_dev, class_dev);
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+ 	unsigned int val[4];
+ 	int ret, i = 0, j = 0, ok = 0;
+ 
+@@ -311,8 +308,7 @@ static ssize_t sequence_show(struct device *dev,
+ 	struct ec_response_lightbar *resp;
+ 	struct cros_ec_command *msg;
+ 	int ret;
+-	struct cros_ec_dev *ec = container_of(dev,
+-					      struct cros_ec_dev, class_dev);
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+ 
+ 	msg = alloc_lightbar_cmd_msg(ec);
+ 	if (!msg)
+@@ -439,8 +435,7 @@ static ssize_t sequence_store(struct device *dev, struct device_attribute *attr,
+ 	struct cros_ec_command *msg;
+ 	unsigned int num;
+ 	int ret, len;
+-	struct cros_ec_dev *ec = container_of(dev,
+-					      struct cros_ec_dev, class_dev);
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+ 
+ 	for (len = 0; len < count; len++)
+ 		if (!isalnum(buf[len]))
+@@ -488,8 +483,7 @@ static ssize_t program_store(struct device *dev, struct device_attribute *attr,
+ 	int extra_bytes, max_size, ret;
+ 	struct ec_params_lightbar *param;
+ 	struct cros_ec_command *msg;
+-	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
+-					      class_dev);
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+ 
+ 	/*
+ 	 * We might need to reject the program for size reasons. The EC
+@@ -599,8 +593,7 @@ static umode_t cros_ec_lightbar_attrs_are_visible(struct kobject *kobj,
+ 						  struct attribute *a, int n)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct cros_ec_dev *ec = container_of(dev,
+-					      struct cros_ec_dev, class_dev);
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+ 	struct platform_device *pdev = to_platform_device(ec->dev);
+ 	struct cros_ec_platform *pdata = pdev->dev.platform_data;
+ 	int is_cros_ec;
+diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+index 5a6db3fe213a..f34a50121064 100644
+--- a/drivers/platform/chrome/cros_ec_sysfs.c
++++ b/drivers/platform/chrome/cros_ec_sysfs.c
+@@ -34,8 +34,6 @@
+ #include <linux/types.h>
+ #include <linux/uaccess.h>
+ 
+-#define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
+-
+ /* Accessor functions */
+ 
+ static ssize_t reboot_show(struct device *dev,
+diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
+index 6d38e6b08334..5356f26bc022 100644
+--- a/drivers/platform/chrome/cros_ec_vbc.c
++++ b/drivers/platform/chrome/cros_ec_vbc.c
+@@ -29,8 +29,7 @@ static ssize_t vboot_context_read(struct file *filp, struct kobject *kobj,
+ 				  loff_t pos, size_t count)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
+-					      class_dev);
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+ 	struct cros_ec_device *ecdev = ec->ec_dev;
+ 	struct ec_params_vbnvcontext *params;
+ 	struct cros_ec_command *msg;
+@@ -70,8 +69,7 @@ static ssize_t vboot_context_write(struct file *filp, struct kobject *kobj,
+ 				   loff_t pos, size_t count)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
+-					      class_dev);
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+ 	struct cros_ec_device *ecdev = ec->ec_dev;
+ 	struct ec_params_vbnvcontext *params;
+ 	struct cros_ec_command *msg;
+@@ -111,8 +109,7 @@ static umode_t cros_ec_vbc_is_visible(struct kobject *kobj,
+ 				      struct bin_attribute *a, int n)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+-	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
+-					      class_dev);
++	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+ 	struct device_node *np = ec->ec_dev->dev->of_node;
+ 
+ 	if (IS_ENABLED(CONFIG_OF) && np) {
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index 4ff0cec979b0..4270972adb94 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -197,6 +197,8 @@ struct cros_ec_dev {
+ 	u32 features[2];
+ };
+ 
++#define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
++
+ /**
+  * cros_ec_suspend - Handle a suspend operation for the ChromeOS EC device
+  *
+-- 
+2.17.0.921.gf22659ad46-goog
