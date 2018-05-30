@@ -1,27 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753142AbeE3LUE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 07:20:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:32814 "EHLO
+        id S1752713AbeE3LU0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 07:20:26 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:60999 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752581AbeE3LHI (ORCPT
+        by vger.kernel.org with ESMTP id S1752552AbeE3LHH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 07:07:08 -0400
+        Wed, 30 May 2018 07:07:07 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Ingo Molnar" <mingo@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Jean Delvare" <jdelvare@suse.de>,
-        "Parag Warudkar" <parag.warudkar@gmail.com>
+CC: akpm@linux-foundation.org, "Johannes Berg" <johannes.berg@intel.com>,
+        "Nicolas Dichtel" <nicolas.dichtel@6wind.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date: Wed, 30 May 2018 11:52:41 +0100
-Message-ID: <lsq.1527677561.660635407@decadent.org.uk>
+Message-ID: <lsq.1527677561.939943983@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 073/153] firmware: dmi_scan: Fix handling of empty DMI
- strings
+Subject: [PATCH 3.2 078/153] netlink: ensure to loop over all netns in
+ genlmsg_multicast_allns()
 In-Reply-To: <lsq.1527677560.486731940@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -34,82 +33,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jean Delvare <jdelvare@suse.de>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
-commit a7770ae194569e96a93c48aceb304edded9cc648 upstream.
+commit cb9f7a9a5c96a773bbc9c70660dc600cfff82f82 upstream.
 
-The handling of empty DMI strings looks quite broken to me:
-* Strings from 1 to 7 spaces are not considered empty.
-* True empty DMI strings (string index set to 0) are not considered
-  empty, and result in allocating a 0-char string.
-* Strings with invalid index also result in allocating a 0-char
-  string.
-* Strings starting with 8 spaces are all considered empty, even if
-  non-space characters follow (sounds like a weird thing to do, but
-  I have actually seen occurrences of this in DMI tables before.)
-* Strings which are considered empty are reported as 8 spaces,
-  instead of being actually empty.
+Nowadays, nlmsg_multicast() returns only 0 or -ESRCH but this was not the
+case when commit 134e63756d5f was pushed.
+However, there was no reason to stop the loop if a netns does not have
+listeners.
+Returns -ESRCH only if there was no listeners in all netns.
 
-Some of these issues are the result of an off-by-one error in memcmp,
-the rest is incorrect by design.
+To avoid having the same problem in the future, I didn't take the
+assumption that nlmsg_multicast() returns only 0 or -ESRCH.
 
-So let's get it square: missing strings and strings made of only
-spaces, regardless of their length, should be treated as empty and
-no memory should be allocated for them. All other strings are
-non-empty and should be allocated.
-
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: 79da4721117f ("x86: fix DMI out of memory problems")
-Cc: Parag Warudkar <parag.warudkar@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 134e63756d5f ("genetlink: make netns aware")
+CC: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.2: s/portid/pid/]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/firmware/dmi_scan.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ net/netlink/genetlink.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/firmware/dmi_scan.c
-+++ b/drivers/firmware/dmi_scan.c
-@@ -14,7 +14,7 @@
-  * of and an antecedent to, SMBIOS, which stands for System
-  * Management BIOS.  See further: http://www.dmtf.org/standards
-  */
--static const char dmi_empty_string[] = "        ";
-+static const char dmi_empty_string[] = "";
- 
- static u16 __initdata dmi_ver;
- /*
-@@ -25,25 +25,21 @@ static int dmi_initialized;
- static const char * __init dmi_string_nosave(const struct dmi_header *dm, u8 s)
+--- a/net/netlink/genetlink.c
++++ b/net/netlink/genetlink.c
+@@ -917,6 +917,7 @@ static int genlmsg_mcast(struct sk_buff
  {
- 	const u8 *bp = ((u8 *) dm) + dm->length;
-+	const u8 *nsp;
+ 	struct sk_buff *tmp;
+ 	struct net *net, *prev = NULL;
++	bool delivered = false;
+ 	int err;
  
- 	if (s) {
--		s--;
--		while (s > 0 && *bp) {
-+		while (--s > 0 && *bp)
- 			bp += strlen(bp) + 1;
--			s--;
--		}
+ 	for_each_net_rcu(net) {
+@@ -928,14 +929,21 @@ static int genlmsg_mcast(struct sk_buff
+ 			}
+ 			err = nlmsg_multicast(prev->genl_sock, tmp,
+ 					      pid, group, flags);
+-			if (err)
++			if (!err)
++				delivered = true;
++			else if (err != -ESRCH)
+ 				goto error;
+ 		}
  
--		if (*bp != 0) {
--			size_t len = strlen(bp)+1;
--			size_t cmp_len = len > 8 ? 8 : len;
--
--			if (!memcmp(bp, dmi_empty_string, cmp_len))
--				return dmi_empty_string;
-+		/* Strings containing only spaces are considered empty */
-+		nsp = bp;
-+		while (*nsp == ' ')
-+			nsp++;
-+		if (*nsp != '\0')
- 			return bp;
--		}
+ 		prev = net;
  	}
  
--	return "";
-+	return dmi_empty_string;
- }
- 
- static const char * __init dmi_string(const struct dmi_header *dm, u8 s)
+-	return nlmsg_multicast(prev->genl_sock, skb, pid, group, flags);
++	err = nlmsg_multicast(prev->genl_sock, skb, pid, group, flags);
++	if (!err)
++		delivered = true;
++	else if (err != -ESRCH)
++		goto error;
++	return delivered ? 0 : -ESRCH;
+  error:
+ 	kfree_skb(skb);
+ 	return err;
