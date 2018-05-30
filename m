@@ -1,54 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932161AbeE3STp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 14:19:45 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41720 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932129AbeE3STm (ORCPT
+        id S1753784AbeE3SWM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 14:22:12 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59271 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752982AbeE3SWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 14:19:42 -0400
-From: Colin King <colin.king@canonical.com>
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Brian Masney <masneyb@onstation.org>, linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: tsl2x7x/tsl2772: avoid potential division by zero
-Date: Wed, 30 May 2018 19:19:36 +0100
-Message-Id: <20180530181936.17902-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 30 May 2018 14:22:11 -0400
+Date: Wed, 30 May 2018 20:22:09 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Yunlong Song <yunlong.song@huawei.com>
+Cc: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com,
+        yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com,
+        shengyong1@huawei.com, heyunlei@huawei.com,
+        linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] f2fs-tools: do not ignore *.rej in git
+Message-ID: <20180530182209.GA19379@amd>
+References: <1527664249-147982-1-git-send-email-yunlong.song@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Disposition: inline
+In-Reply-To: <1527664249-147982-1-git-send-email-yunlong.song@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-It may be possible for tsl2772_get_lux to return a zero lux value
-and hence a division by zero can occur when lux_val is zero. Check
-for this case and return -ERANGE to avoid the division by zero.
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Detected by CoverityScan, CID#1469484 ("Division or modulo by zero")
+On Wed 2018-05-30 15:10:49, Yunlong Song wrote:
+> When using git apply --reject to resolve the conflicts, we should better
+> see all the *.rej clear, or we will miss merging some *.rej patches.
+>=20
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  .gitignore | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/.gitignore b/.gitignore
+> index 3f04e85..391c528 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -11,7 +11,6 @@
+>  *.mod.c
+>  *.lst
+>  *.orig
+> -*.rej
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/iio/light/tsl2772.c | 2 ++
- 1 file changed, 2 insertions(+)
+I don't think that's good idea. You don't want .rej files version
+controlled, that's what .gitignore file says.
 
-diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
-index 34d42a2504c9..df5b2a0da96c 100644
---- a/drivers/iio/light/tsl2772.c
-+++ b/drivers/iio/light/tsl2772.c
-@@ -582,6 +582,8 @@ static int tsl2772_als_calibrate(struct iio_dev *indio_dev)
- 			"%s: failed to get lux\n", __func__);
- 		return lux_val;
- 	}
-+	if (lux_val == 0)
-+		return -ERANGE;
- 
- 	ret = (chip->settings.als_cal_target * chip->settings.als_gain_trim) /
- 			lux_val;
--- 
-2.17.0
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsO69EACgkQMOfwapXb+vLcGgCfUk0JoC0oK31sj+uiG+aHcA5x
+QQ8AoJ4Vnq0zgWp1uergdZ1BZ8+PGVmT
+=DllP
+-----END PGP SIGNATURE-----
+
+--vkogqOf2sHV7VnPd--
