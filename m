@@ -1,90 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755552AbeEaPgt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:36:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50264 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755421AbeEaPgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:36:46 -0400
-Subject: Re: [PATCH v9 3/7] cpuset: Add cpuset.sched.load_balance flag to v2
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <1527601294-3444-1-git-send-email-longman@redhat.com>
- <1527601294-3444-4-git-send-email-longman@redhat.com>
- <20180531122638.GJ12180@hirez.programming.kicks-ass.net>
- <42cc1f44-2355-1c0c-b575-49c863303c42@redhat.com>
- <20180531152050.GK12180@hirez.programming.kicks-ass.net>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <ebe7f0c1-b2dc-57ad-e5cb-7edf0fee4626@redhat.com>
-Date: Thu, 31 May 2018 11:36:39 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1755496AbeEaPiV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:38:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43494 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755417AbeEaPiR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 11:38:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B66226050D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
+To: Alex_Gagniuc@Dellteam.com, mr.nuke.me@gmail.com, bhelgaas@google.com
+Cc: Austin.Bolen@dell.com, Shyam.Iyer@dell.com, keith.busch@intel.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
+ <28004506-24f0-6d10-2d1e-074e0483d2f9@codeaurora.org>
+ <4e0611c872054e768daa96b302651db3@ausx13mps321.AMER.DELL.COM>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <f260078b-6918-7fd9-39d6-e9f300e4c048@codeaurora.org>
+Date: Thu, 31 May 2018 11:38:13 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180531152050.GK12180@hirez.programming.kicks-ass.net>
+In-Reply-To: <4e0611c872054e768daa96b302651db3@ausx13mps321.AMER.DELL.COM>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/31/2018 11:20 AM, Peter Zijlstra wrote:
-> On Thu, May 31, 2018 at 09:54:27AM -0400, Waiman Long wrote:
->> On 05/31/2018 08:26 AM, Peter Zijlstra wrote:
->>> I still find all that a bit weird.
->>>
->>> So load_balance=0 basically changes a partition into a
->>> 'fully-partitioned partition' with the seemingly random side-effect that
->>> now sub-partitions are allowed to consume all CPUs.
->> Are you suggesting that we should allow sub-partition to consume all the
->> CPUs no matter the load balance state? I can live with that if you think
->> it is more logical.
-> I'm on the fence myself; the only thing I'm fairly sure of is that tying
-> this particular behaviour to the load-balance knob seems off.
+On 5/31/2018 11:29 AM, Alex_Gagniuc@Dellteam.com wrote:
+> On 5/31/2018 10:28 AM, Sinan Kaya wrote:
+>> On 5/31/2018 11:05 AM, Alexandru Gagniuc wrote:
+>>> +static void pcie_max_link_cap(struct pci_dev *dev, enum pci_bus_speed *speed,
+>>> +				enum pcie_link_width *width)
+>>> +{
+>>> +	uint32_t lnkcap;
+>>> +
+>>> +	pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &lnkcap);
+>>> +
+>>> +	*speed = pcie_link_speed[lnkcap & PCI_EXP_LNKCAP_SLS];
+>>> +	*width = (lnkcap & PCI_EXP_LNKCAP_MLW) >> PCI_EXP_LNKCAP_MLW_SHIFT;
+>>> +}
+>>> +
+>>> +static void pcie_cur_link_sta(struct pci_dev *dev, enum pci_bus_speed *speed,
+>>> +				enum pcie_link_width *width)
+>>> +{
+>>> +	uint16_t lnksta;
+>>> +
+>>> +	pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
+>>> +	*speed = pcie_link_speed[lnksta & PCI_EXP_LNKSTA_CLS];
+>>> +	*width = (lnksta & PCI_EXP_LNKSTA_NLW) >> PCI_EXP_LNKSTA_NLW_SHIFT;
+>>> +}
+>>> +
+>>> +static const char *pcie_bus_speed_name(enum pci_bus_speed speed)
+>>> +{
+>>> +	switch (speed) {
+>>> +	case PCIE_SPEED_2_5GT:
+>>> +		return "2.5 GT/s";
+>>> +	case PCIE_SPEED_5_0GT:
+>>> +		return "5.0 GT/s";
+>>> +	case PCIE_SPEED_8_0GT:
+>>> +		return "8.0 GT/s";
+>>> +	default:
+>>> +		return "unknown";
+>>> +	}
+>>> +}
+>>
+>> I thought Bjorn added some functions to retrieve this now.
+> 
+> Hmm. I couldn't find them.
 
-The main reason for doing it this way is that I don't want to have
-load-balanced partition with no cpu in it. How about we just don't allow
-consume-all at all. Each partition must have at least 1 cpu.
+https://lkml.org/lkml/2018/3/30/553
 
->
->>> The rationale, only given in the Changelog above, seems to be to allow
->>> 'easy' emulation of isolcpus.
->>>
->>> I'm still not convinced this is a useful knob to have. You can do
->>> fully-partitioned by simply creating a lot of 1 cpu parititions.
->> That is certainly true. However, I think there are some additional
->> overhead in the scheduler side in maintaining those 1-cpu partitions. Right?
-> cpuset-controller as such doesn't have much overhead scheduler wise,
-> cpu-controller OTOH does, and there depth is the predominant factor, so
-> many sibling groups should not matter there either.
->
->>> So this one knob does two separate things, both of which seem, to me,
->>> redundant.
->>>
->>> Can we please get better rationale for this?
->> I am fine getting rid of the load_balance flag if this is the consensus.
->> However, we do need to come up with a good migration story for those
->> users that need the isolcpus capability. I think Mike was the one asking
->> for supporting isolcpus. So Mike, what is your take on that.
-> So I don't strictly mind having a knob that does the 'fully-partitioned
-> partition' thing -- however odd that sounds -- but I feel we should have
-> a solid use-case for it.
->
-> I also think we should not mix the 'consume all' thing with the
-> 'fully-partitioned' thing, as they are otherwise unrelated.
+are you working on linux-next?
 
-The "consume all" and "fully-partitioned" look the same to me. Are you
-talking about allocating all the CPUs in a partition to sub-partitions
-so that there is no CPU left in the parent partition?
+> 
+> Alex
+> 
+> 
 
-Cheers,
-Longman
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
