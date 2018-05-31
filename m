@@ -1,102 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753825AbeEaFlP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 01:41:15 -0400
-Received: from mga14.intel.com ([192.55.52.115]:20892 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752003AbeEaFlO (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 01:41:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,462,1520924400";
-   d="scan'208";a="44155829"
-Subject: Re: [PATCH] perf util: Add more PMU fields for perf script python
-To: Andi Kleen <ak@linux.intel.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, kan.liang@intel.com, yao.jin@intel.com
-References: <1527690045-17987-1-git-send-email-yao.jin@linux.intel.com>
- <20180530174346.GE30764@tassilo.jf.intel.com>
-From: "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <177a0a85-fd48-494e-e48b-4e88712c09d3@linux.intel.com>
-Date: Thu, 31 May 2018 13:41:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1753841AbeEaFoX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 01:44:23 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41042 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753757AbeEaFoU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 01:44:20 -0400
+X-Google-Smtp-Source: ADUXVKJm+L9ewhFghn8rNUZG2lR8jujHyUSZ4O0uqU7VlMDPmI1QrvmhOQ6+daZpwxcThng0Z0k6BIn63vPmJdI8G2Y=
 MIME-Version: 1.0
-In-Reply-To: <20180530174346.GE30764@tassilo.jf.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CA+G9fYvff4_9XH8Y4CTadexb2WGV+rAd29Jdo4ztBxqFXKbt5Q@mail.gmail.com>
+References: <20180529221501.GJ5702@atomide.com> <CGME20180530091325epcas4p20dea07f013a3512ce4ea92120da90f61@epcas4p2.samsung.com>
+ <20180530091314.GB6920@sirena.org.uk> <20180530140318eucas1p2af2d01b9678e8914c2b8e099c584ec11~zcQzVKtj30757607576eucas1p2V@eucas1p2.samsung.com>
+ <20180530143338.GM6920@sirena.org.uk> <CA+G9fYvff4_9XH8Y4CTadexb2WGV+rAd29Jdo4ztBxqFXKbt5Q@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 31 May 2018 11:14:18 +0530
+Message-ID: <CA+G9fYvmeCaSn4KvHtvygwj5yqwf=gchQAzd1YDYfd1LCwWDLA@mail.gmail.com>
+Subject: Re: Regression in Linux next again
+To: Mark Brown <broonie@kernel.org>
+Cc: Maciej Purski <m.purski@samsung.com>, Tony Lindgren <tony@atomide.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        Carlos Hernandez <ceh@ti.com>, Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 5/31/2018 1:43 AM, Andi Kleen wrote:
-> On Wed, May 30, 2018 at 10:20:45PM +0800, Jin Yao wrote:
->> When doing pmu sampling and then running a script with
->> perf script -s script.py, the process_event function gets
->> dictionary with some fields from the perf ring buffer
->> (like ip, sym, callchain etc).
+On 30 May 2018 at 20:23, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> On 30 May 2018 at 20:03, Mark Brown <broonie@kernel.org> wrote:
+>> On Wed, May 30, 2018 at 04:03:15PM +0200, Maciej Purski wrote:
 >>
->> But we miss quite a few fields we report now, for example,
->> LBRs,data source,weight,transaction,iregs,uregs,and etc.
+>>> I'm afraid, I have no idea, how to fix it quickly. You can revert it and
+>>> in the next version I'll fix the build error and split the last patch even
+>>> more, so we could perform a more precise bisection. I'd be grateful if you
+>>> could push it on your test coupled branch and Tony could test it again before
+>>> merging it with next again.
 >>
->> This patch reports these fields for perf script python
->> processing.
-> 
-> We need documentation and an example script using it.
-> 
-
-OK, I will add an example with some field explanations to 
-Documentation/perf-script-python.txt.
-
->> +		PyObject *pyelem;
->> +
->> +		pyelem = PyDict_New();
->> +		if (!pyelem)
->> +			Py_FatalError("couldn't create Python dictionary");
->> +
-> 
-> I think we need a field for the dso here.
+>> Yeah, if we could get testing from Tony first that'd be ideal.
 >
-
-I will add new fields "from_dsoname" and "to_dsoname" in v2.
-
->> +		pydict_set_item_string_decref(pyelem, "from",
->> +		    PyLong_FromUnsignedLongLong(br->entries[i].from));
->> +		pydict_set_item_string_decref(pyelem, "to",
->> +		    PyLong_FromUnsignedLongLong(br->entries[i].to));
->> +		pydict_set_item_string_decref(pyelem, "mispred",
->> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.mispred));
->> +		pydict_set_item_string_decref(pyelem, "predicted",
->> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.predicted));
->> +		pydict_set_item_string_decref(pyelem, "in_tx",
->> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.in_tx));
->> +		pydict_set_item_string_decref(pyelem, "abort",
-> 
-> 
-> These could be booleans.
-> 
->> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.abort));
->> +		pydict_set_item_string_decref(pyelem, "cycles",
->> +		    PyLong_FromUnsignedLongLong(br->entries[i].flags.cycles));
-
-I will use PyBool_FromLong() for mispred/predicted/in_tx/abort in v2.
-
-> 
-> Would be nice to get access to the binary code too (see how perf script
-> brstackinsn does it). That could be a followon patch.
+> Linux next 4.17.0-rc7-next-20180529 boot failed on x15 device.
+> Manually reproduced boot failed problem on x15 device.
+> The qemu_arm32 boots successfully.
 >
+> Ref bug:
+> LKFT: linux-next: Boot failed on beagle board x15
+> https://bugs.linaro.org/show_bug.cgi?id=3863
 
-OK, fine, I will see how perf script brstackinsn does.
+This bug still happening on 4.17.0-rc7-next-20180530 on beagle board x15.
 
-Thanks
-Jin Yao
+Linux version 4.17.0-rc7-next-20180530 (buildslave@x86-64-07) (gcc version
+ 6.2.1 20161016 (Linaro GCC 6.2-2016.11)) #1 SMP Wed May 30 12:38:23 UTC 2018
 
-> Thanks,
-> 
-> -Andi
-> 
+- Naresh
