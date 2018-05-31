@@ -1,47 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754570AbeEaKvS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:51:18 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:16243 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754346AbeEaKvP (ORCPT
+        id S1754587AbeEaKwW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:52:22 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44410 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754464AbeEaKwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:51:15 -0400
-Subject: Re: [PATCH v2 3/7] PCI: cadence: Update cdns_pcie_ep_raise_irq
- function signature
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
-        <adouglas@cadence.com>, <jesper.nilsson@axis.com>
-References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
- <4994f263efbf6a2cb952d3d9839fb3b1737efde9.1526576613.git.gustavo.pimentel@synopsys.com>
-CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <aa86d9b7-d715-2a21-6a94-be927e55b51b@ti.com>
-Date: Thu, 31 May 2018 16:21:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Thu, 31 May 2018 06:52:20 -0400
+X-Google-Smtp-Source: ADUXVKLqRxsSxSaiJz/EE5T0q7Z0Vg/PMqX3mA8JjUivjwcOJJMljZYP4+3Mw+sqCNRZeVN93045dw==
+Date: Thu, 31 May 2018 19:52:15 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Maninder Singh <maninder1.s@samsung.com>
+Cc: pmladek@suse.com, sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
+        pankaj.m@samsung.com, v.narang@samsung.com
+Subject: Re: [PATCH 2/2] printk: make sure to print log on console.
+Message-ID: <20180531105215.GF477@jagdpanzerIV>
+References: <CGME20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e@epcas5p2.samsung.com>
+ <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <4994f263efbf6a2cb952d3d9839fb3b1737efde9.1526576613.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alan,
-
-On Thursday 17 May 2018 10:39 PM, Gustavo Pimentel wrote:
-> Change cdns_pcie_ep_raise_irq() signature, namely the interrupt_num
-> variable type from u8 to u16 to accommodate 2048 maximum MSI-X
-> interrupts.
+On (05/31/18 15:49), Maninder Singh wrote:
 > 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> Acked-by: Alan Douglas <adouglas@cadence.com>
+> This patch make sure printing of log if loglevel at time of storing
+> log is greater than current console loglevel.
+> 
+> @why
+> In case of async printk, printk thread can miss logs because it checks
+> current log level at time of console_unlock.
 
-Do you want to add MSI-X support to cadence PCIe?
+Upstream printk has no printing kthread. And we also run
+printk()->console_unlock() with disabled preemption.
 
-Thanks
-Kishon
+	-ss
