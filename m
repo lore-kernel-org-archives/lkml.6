@@ -1,135 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755606AbeEaQVN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:21:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43244 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755456AbeEaQVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:21:11 -0400
-Date: Thu, 31 May 2018 11:21:10 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4] coresight: documentation: update sysfs section
-Message-Id: <20180531112110.5769511ef6e379df24820158@arm.com>
-In-Reply-To: <20180516152458.d392b0d1e09393da30e2aeb6@arm.com>
-References: <20180507172915.c032cd71c07b1849bf419a5f@arm.com>
-        <CANLsYkyQLan3XajOz2uuoOF8OQchGfeu2ZkZJ9H1Xm9q==aXTw@mail.gmail.com>
-        <20180514121959.a9a3d2fb3d3d270849ffbc39@arm.com>
-        <20180516131823.4b1a3ecb@lwn.net>
-        <20180516152458.d392b0d1e09393da30e2aeb6@arm.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1755625AbeEaQZs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:25:48 -0400
+Received: from mail-it0-f42.google.com ([209.85.214.42]:36236 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755456AbeEaQZo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:25:44 -0400
+X-Google-Smtp-Source: ADUXVKLBOrXWo2+MHl67BTF2DQrrJss+d6VkWkl0oxYvPodZNXjR22qVcup+Bf7nKWf823GpFmXfnG7XqvpK9n/FItQ=
+MIME-Version: 1.0
+In-Reply-To: <4b9c4b84704ba4d1a89bd0408e76e68e5554d078.camel@ndufresne.ca>
+References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
+ <4b9c4b84704ba4d1a89bd0408e76e68e5554d078.camel@ndufresne.ca>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Thu, 31 May 2018 21:55:43 +0530
+Message-ID: <CAMty3ZCV0LgDK0vFtN2HvLVZ4W26mvn4xEr0wby1TaYyhbFZsw@mail.gmail.com>
+Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
+To: Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Discussion of the development of and with GStreamer
+        <gstreamer-devel@lists.freedesktop.org>,
+        linux-media@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VGPseD023835
 
-- Align and show updated ls devices output from the TC2, based on
-  current driver
+On Thu, May 31, 2018 at 9:40 PM, Nicolas Dufresne <nicolas@ndufresne.ca> wrote:
+> Le jeudi 31 mai 2018 à 20:39 +0530, Jagan Teki a écrit :
+>> Hi All,
+>>
+>> I'm trying to verify MIPI-CSI2 OV5640 camera on i.MX6 platform with
+>> Mainline Linux.
+>>
+>> I've followed these[1] instructions to configure MC links and pads
+>> based on the probing details from dmesg and trying to capture
+>> ipu1_ic_prpenc capture (/dev/video1) but it's not working.
+>>
+>> Can anyone help me to verify whether I configured all the details
+>> properly if not please suggest.
+>>
+>> I'm pasting full log here, so-that anyone can comment in line and dt
+>> changes are at [2]
+>
+> Be aware that because all of the provided GStreamer logs lines are
+> truncated, I won't be able to comment on the issue.
 
-- Provide an example from an ETMv4 based system (Juno)
+Sorry for the confusion, here is the gst log [3] and dmesg + media-ctl [4]
 
-- Reflect changes to the way the RAM write pointer is accessed since
-  it got changed in commit 7d83d17795ef ("coresight: tmc: adding sysFS
-  management entries").
+[3] https://paste.ubuntu.com/p/NpG8ynb8nQ/
+[4] https://paste.ubuntu.com/p/VGX3sYdvVW/
 
-Cc: Jonathan Corbet <corbet@lwn.net>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
----
-v4: v3 + Randy and Mathieu's acked-bys, for Jonathan to apply.
-v3: address Randy Dunlap's showns->shown,  corrected - and + line merging
-v2: address Mathieu's comment about clarifying the sinks on the Juno
-    vs. TC2 platforms.
+Jagan.
 
- Documentation/trace/coresight.txt | 43 +++++++++++++++++++------------
- 1 file changed, 26 insertions(+), 17 deletions(-)
-
-diff --git a/Documentation/trace/coresight.txt b/Documentation/trace/coresight.txt
-index 6f0120c3a4f1..15d2a0f1e1b8 100644
---- a/Documentation/trace/coresight.txt
-+++ b/Documentation/trace/coresight.txt
-@@ -141,13 +141,25 @@ register the device with the core framework.  The unregister function takes
- a reference to a "struct coresight_device", obtained at registration time.
- 
- If everything goes well during the registration process the new devices will
--show up under /sys/bus/coresight/devices, as showns here for a TC2 platform:
-+show up under /sys/bus/coresight/devices, as shown here for a TC2 platform:
- 
- root:~# ls /sys/bus/coresight/devices/
--replicator  20030000.tpiu    2201c000.ptm  2203c000.etm  2203e000.etm
--20010000.etb         20040000.funnel  2201d000.ptm  2203d000.etm
-+20010000.etb   20040000.funnel	2201d000.ptm  2203d000.etm  replicator
-+20030000.tpiu  2201c000.ptm	2203c000.etm  2203e000.etm
- root:~#
- 
-+and here for a Juno platform:
-+
-+root@juno:~# ls /sys/bus/coresight/devices/
-+20010000.etf	 20120000.replicator  22040000.etm     230c0000.funnel
-+20030000.tpiu	 20130000.funnel      220c0000.funnel  23140000.etm
-+20040000.funnel  20140000.etf	      22140000.etm     23240000.etm
-+20070000.etr	 20150000.funnel      23040000.etm     23340000.etm
-+root@juno:~# 
-+
-+Note that on Juno users can select the ETF, ETR and TPIU as a sink target while
-+on TC2, the ETB and TPIU can be selected.
-+
- The functions take a "struct coresight_device", which looks like this:
- 
- struct coresight_desc {
-@@ -193,16 +205,16 @@ the information carried in "THIS_MODULE".
- How to use the tracer modules
- -----------------------------
- 
--Before trace collection can start, a coresight sink needs to be identify.
-+Before trace collection can start, a coresight sink needs to be identified.
- There is no limit on the amount of sinks (nor sources) that can be enabled at
- any given moment.  As a generic operation, all device pertaining to the sink
- class will have an "active" entry in sysfs:
- 
- root:/sys/bus/coresight/devices# ls
--replicator  20030000.tpiu    2201c000.ptm  2203c000.etm  2203e000.etm
--20010000.etb         20040000.funnel  2201d000.ptm  2203d000.etm
-+20010000.etb   20040000.funnel	2201d000.ptm  2203d000.etm  replicator
-+20030000.tpiu  2201c000.ptm	2203c000.etm  2203e000.etm
- root:/sys/bus/coresight/devices# ls 20010000.etb
--enable_sink  status  trigger_cntr
-+enable_sink  mgmt  power  subsystem  trigger_cntr  uevent
- root:/sys/bus/coresight/devices# echo 1 > 20010000.etb/enable_sink
- root:/sys/bus/coresight/devices# cat 20010000.etb/enable_sink
- 1
-@@ -216,16 +228,13 @@ trigger a trace capture:
- root:/sys/bus/coresight/devices# echo 1 > 2201c000.ptm/enable_source
- root:/sys/bus/coresight/devices# cat 2201c000.ptm/enable_source
- 1
--root:/sys/bus/coresight/devices# cat 20010000.etb/status
--Depth:          0x2000
--Status:         0x1
--RAM read ptr:   0x0
--RAM wrt ptr:    0x19d3   <----- The write pointer is moving
--Trigger cnt:    0x0
--Control:        0x1
--Flush status:   0x0
--Flush ctrl:     0x2001
--root:/sys/bus/coresight/devices#
-+
-+Observe the write pointer moving:
-+
-+root:/sys/bus/coresight/devices# cat 20010000.etb/mgmt/rwp
-+0x1a8
-+root:/sys/bus/coresight/devices# cat 20010000.etb/mgmt/rwp
-+0x19a6
- 
- Trace collection is stopped the same way:
- 
 -- 
-2.17.0
+Jagan Teki
+Senior Linux Kernel Engineer | Amarula Solutions
+U-Boot, Linux | Upstream Maintainer
+Hyderabad, India.
