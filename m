@@ -1,80 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754026AbeEaGQU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:16:20 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:54442 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753883AbeEaGQG (ORCPT
+        id S1753986AbeEaGRW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:17:22 -0400
+Received: from mail-io0-f169.google.com ([209.85.223.169]:40432 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753772AbeEaGRU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:16:06 -0400
-Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
-To: Tony Lindgren <tony@atomide.com>
-CC: Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <robh+dt@kernel.org>, <bcousson@baylibre.com>, <paul@pwsan.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-2-faiz_abbas@ti.com> <20180530145047.GC5705@atomide.com>
- <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
- <20180530152825.GG5705@atomide.com>
- <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
- <20180530155448.GH5705@atomide.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <98c989ca-0694-5150-f74b-35f3e4bf20c0@ti.com>
-Date: Thu, 31 May 2018 09:15:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 31 May 2018 02:17:20 -0400
+X-Google-Smtp-Source: ADUXVKK2obEakEdhdoh5PjLYkf7Li6WR8/v04PxumgYAbnS+OZFvD0UouSX6PIBBlB2TXNDg9wisHLQOxCNptcNM1d8=
 MIME-Version: 1.0
-In-Reply-To: <20180530155448.GH5705@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <a53f0970-22c4-444f-10e6-c115a21d05ea@nvidia.com>
+References: <20180529100421.31022-1-ulf.hansson@linaro.org>
+ <20180529100421.31022-9-ulf.hansson@linaro.org> <a53f0970-22c4-444f-10e6-c115a21d05ea@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 31 May 2018 08:17:18 +0200
+Message-ID: <CAPDyKFrV5fosZ1QZ4un+okzpeQDM3QSCBWJB1YZH4WNxKf_FVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 8/9] PM / Domains: Add support for multi PM domains per
+ device to genpd
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/05/18 18:54, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [180530 15:44]:
->> On 30/05/18 18:28, Tony Lindgren wrote:
->>> * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
->>>> For the OCP if part, I think that is still needed until we switch over to
->>>> full sysc driver. clkctrl_offs you probably also need because that is used
->>>> for mapping the omap_hwmod against a specific clkctrl clock. Those can be
->>>> only removed once we are done with hwmod (or figure out some other way to
->>>> assign the clkctrl clock to a hwmod.)
->>>
->>> Hmm might be worth testing. I thought your commit 70f05be32133
->>> ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
->>> already parses the clkctrl from dts?
->>
->> It maps the clkctrl clock to be used by hwmod, if those are available. We
->> didn't add any specific clock entries to DT for mapping the actual clkctrl
->> clock without the hwmod_data hints yet though, as that was deemed temporary
->> solution only due to transition to interconnect driver. I.e., you would need
->> something like this in DT for every device node:
->>
->> &uart3 {
->>    clocks = <l4per_clkctrl UART3_CLK 0>;
->>    clock-names = "clkctrl";
->> };
->>
->> ... which is currently not present.
-> 
-> Hmm is that not the "fck" clkctrl clock we have already in
-> the dts files for the interconnect target modules?
+[...]
 
-Oh okay, yeah, we could parse that one, but currently it is not done, 
-and is not present for everything either I believe.
+>> +/**
+>> + * genpd_dev_pm_attach_by_id() - Attach a device to one of its PM domain.
+>> + * @dev: Device to attach.
+>
+> Can you update the description of the above as well?
 
-> We can also use pdata callbacks to pass the clock node if
-> needed. But I guess I don't quite still understand what we
-> are missing :)
+Yes, like below?
 
-So, what is missing is the glue logic only from the hwmod codebase. 
-Right now this is not supported but should be relatively trivial thing 
-to add if we really want to do this.
+genpd_dev_pm_attach_by_id() - Associate a device with one of its PM domains.
+@dev: The device used to lookup the PM domain.
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Kind regards
+Uffe
