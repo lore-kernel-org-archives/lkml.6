@@ -1,352 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754819AbeEaLHI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:07:08 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35634 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754677AbeEaLHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:07:03 -0400
-From: Gao Xiang <gaoxiang25@huawei.com>
-To: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC: <miaoxie@huawei.com>, <yuchao0@huawei.com>, <sunqiuyang@huawei.com>,
-        <fangwei1@huawei.com>, <liguifu2@huawei.com>, <weidu.du@huawei.com>,
-        <chen.chun.yen@huawei.com>, <brooke.wangzhigang@hisilicon.com>,
-        <dongjinguang@huawei.com>, <gaoxiang25@huawei.com>
-Subject: [NOMERGE] [RFC PATCH 02/12] erofs: add erofs in-memory stuffs
-Date: Thu, 31 May 2018 19:06:50 +0800
-Message-ID: <1527764810-22426-1-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+        id S1754755AbeEaLGp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:06:45 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50946 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754441AbeEaLGh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:06:37 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org, Ryder Lee <ryder.lee@mediatek.com>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        KaiChieh Chuang <kaichieh.chuang@mediatek.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: mediatek: export mtk-afe symbols as needed" to the asoc tree
+In-Reply-To: <20180530220057.1419933-1-arnd@arndb.de>
+Message-Id: <E1fOLPd-0001zu-1m@debutante>
+Date: Thu, 31 May 2018 12:06:33 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- - erofs_sb_info:
-   contains erofs-specific in-memory information.
+The patch
 
- - erofs_vnode:
-   contains vfs_inode and other fs-specific information.
-   same as super block, the only one in-memory definition exists.
+   ASoC: mediatek: export mtk-afe symbols as needed
 
- - erofs_map_blocks
-   plays a role in the disk L2P mapping
+has been applied to the asoc tree at
 
-Signed-off-by: Miao Xie <miaoxie@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 39f56b757cf9778572041f497f6fad890224c9fb Mon Sep 17 00:00:00 2001
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 31 May 2018 00:00:35 +0200
+Subject: [PATCH] ASoC: mediatek: export mtk-afe symbols as needed
+
+The new mt6797-afe driver uses some functions in a common file, which
+works for a built-in driver but fails for a loadable module:
+
+ERROR: "mtk_afe_pcm_free" [sound/soc/mediatek/mt6797/snd-soc-mt6797-afe.ko] undefined!
+ERROR: "mtk_afe_add_sub_dai_control" [sound/soc/mediatek/mt6797/snd-soc-mt6797-afe.ko] undefined!
+ERROR: "mtk_afe_pcm_new" [sound/soc/mediatek/mt6797/snd-soc-mt6797-afe.ko] undefined!
+ERROR: "mtk_afe_combine_sub_dai" [sound/soc/mediatek/mt6797/snd-soc-mt6797-afe.ko] undefined!
+ERROR: "mtk_afe_pcm_ops" [sound/soc/mediatek/mt6797/snd-soc-mt6797-afe.ko] undefined!
+
+This exports the five symbols above for modules.
+
+Fixes: b3c702f56bf5 ("ASoC: mt6797: combine DAI to register component")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/erofs/internal.h | 300 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 300 insertions(+)
- create mode 100644 fs/erofs/internal.h
+ sound/soc/mediatek/common/mtk-afe-platform-driver.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-new file mode 100644
-index 0000000..2a3cd45
---- /dev/null
-+++ b/fs/erofs/internal.h
-@@ -0,0 +1,300 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * linux/fs/erofs/internal.h
-+ *
-+ * Copyright (C) 2017-2018 HUAWEI, Inc.
-+ *             http://www.huawei.com/
-+ * Created by Gao Xiang <gaoxiang25@huawei.com>
-+ *
-+ * This file is subject to the terms and conditions of the GNU General Public
-+ * License.  See the file COPYING in the main directory of the Linux
-+ * distribution for more details.
-+ */
-+#ifndef __INTERNAL_H
-+#define __INTERNAL_H
-+
-+#include <linux/fs.h>
-+#include <linux/dcache.h>
-+#include <linux/mm.h>
-+#include <linux/pagemap.h>
-+#include <linux/bio.h>
-+#include <linux/buffer_head.h>
-+#include <linux/cleancache.h>
-+#include <linux/vmalloc.h>
-+#include "erofs_fs.h"
-+
-+#include "staging.h"
-+
-+/* redefine pr_fmt "erofs: " */
-+#undef pr_fmt
-+#define pr_fmt(fmt) "erofs: " fmt
-+
-+#define errln(x, ...)   pr_err(x "\n", ##__VA_ARGS__)
-+#define infoln(x, ...)  pr_info(x "\n", ##__VA_ARGS__)
-+#ifdef CONFIG_EROFS_FS_DEBUG
-+#define debugln(x, ...) pr_debug(x "\n", ##__VA_ARGS__)
-+
-+#define erofs_dbg_might_sleep   might_sleep
-+#define DBG_BUGON       BUG_ON
-+#else
-+#define debugln(x, ...) ((void)0)
-+#define erofs_dbg_might_sleep() ((void)0)
-+#define DBG_BUGON(...)  ((void)0)
-+#endif
-+
-+/* EROFS_SUPER_MAGIC_V1 to represent the whole file system */
-+#define EROFS_SUPER_MAGIC   EROFS_SUPER_MAGIC_V1
-+
-+typedef u64 erofs_nid_t;
-+
-+struct erofs_sb_info {
-+	u32 blocks;
-+	u32 meta_blkaddr;
-+
-+	/* inode slot unit size in bit shift */
-+	unsigned char islotbits;
-+
-+	u32 build_time_nsec;
-+	u64 build_time;
-+
-+	/* what we really care is nid, rather than ino.. */
-+	erofs_nid_t root_nid;
-+	/* used for statfs, f_files - f_favail */
-+	u64 inos;
-+
-+	u8 uuid[16];                    /* 128-bit uuid for volume */
-+	u8 volume_name[16];             /* volume name */
-+	char *dev_name;
-+
-+	unsigned int mount_opt;
-+};
-+
-+#define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info)
-+#define EROFS_I_SB(inode) ((struct erofs_sb_info *)(inode)->i_sb->s_fs_info)
-+
-+#define clear_opt(sbi, option)	((sbi)->mount_opt &= ~EROFS_MOUNT_##option)
-+#define set_opt(sbi, option)	((sbi)->mount_opt |= EROFS_MOUNT_##option)
-+#define test_opt(sbi, option)	((sbi)->mount_opt & EROFS_MOUNT_##option)
-+
-+/* we strictly follow PAGE_SIZE and no buffer head */
-+#define LOG_BLOCK_SIZE		PAGE_SHIFT
-+
-+#undef LOG_SECTORS_PER_BLOCK
-+#define LOG_SECTORS_PER_BLOCK	(PAGE_SHIFT - 9)
-+
-+#undef SECTORS_PER_BLOCK
-+#define SECTORS_PER_BLOCK	(1 << SECTORS_PER_BLOCK)
-+
-+#define EROFS_BLKSIZ		(1 << LOG_BLOCK_SIZE)
-+
-+#if (EROFS_BLKSIZ % 4096 || !EROFS_BLKSIZ)
-+#error erofs cannot be used in this platform
-+#endif
-+
-+#define ROOT_NID(sb)		((sb)->root_nid)
-+
-+typedef u64 erofs_off_t;
-+
-+/* data type for filesystem-wide blocks number */
-+typedef u32 erofs_blk_t;
-+
-+static inline erofs_off_t iloc(struct erofs_sb_info *sbi, erofs_nid_t nid)
-+{
-+	return sbi->meta_blkaddr * EROFS_BLKSIZ + (nid << sbi->islotbits);
-+}
-+
-+#define erofs_blknr(addr)       ((addr) / EROFS_BLKSIZ)
-+#define erofs_blkoff(addr)      ((addr) % EROFS_BLKSIZ)
-+#define blknr_to_addr(nr)       ((nr) * EROFS_BLKSIZ)
-+
-+#define inode_set_inited_xattr(inode)   (EROFS_V(inode)->flags |= 1)
-+#define inode_has_inited_xattr(inode)   (EROFS_V(inode)->flags & 1)
-+
-+struct erofs_vnode {
-+	erofs_nid_t nid;
-+	unsigned int flags;
-+
-+	unsigned char data_mapping_mode;
-+	/* inline size in bytes */
-+	unsigned char inode_isize;
-+	unsigned short xattr_isize;
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 2, 0))
-+	char *i_link;
-+#endif
-+	unsigned xattr_shared_count;
-+	unsigned *xattr_shared_xattrs;
-+
-+	erofs_blk_t raw_blkaddr;
-+
-+	/* the corresponding vfs inode */
-+	struct inode vfs_inode;
-+};
-+
-+#define EROFS_V(ptr)	\
-+	container_of(ptr, struct erofs_vnode, vfs_inode)
-+
-+#define __inode_advise(x, bit, bits) \
-+	(((x) >> (bit)) & ((1 << (bits)) - 1))
-+
-+#define __inode_version(advise)	\
-+	__inode_advise(advise, EROFS_I_VERSION_BIT,	\
-+		EROFS_I_VERSION_BITS)
-+
-+#define __inode_data_mapping(advise)	\
-+	__inode_advise(advise, EROFS_I_DATA_MAPPING_BIT,\
-+		EROFS_I_DATA_MAPPING_BITS)
-+
-+static inline unsigned long inode_datablocks(struct inode *inode)
-+{
-+	/* since i_size cannot be changed */
-+	return DIV_ROUND_UP(inode->i_size, EROFS_BLKSIZ);
-+}
-+
-+static inline bool is_inode_layout_plain(struct inode *inode)
-+{
-+	return EROFS_V(inode)->data_mapping_mode == EROFS_INODE_LAYOUT_PLAIN;
-+}
-+
-+static inline bool is_inode_layout_compression(struct inode *inode)
-+{
-+	return EROFS_V(inode)->data_mapping_mode ==
-+					EROFS_INODE_LAYOUT_COMPRESSION;
-+}
-+
-+static inline bool is_inode_layout_inline(struct inode *inode)
-+{
-+	return EROFS_V(inode)->data_mapping_mode == EROFS_INODE_LAYOUT_INLINE;
-+}
-+
-+extern const struct super_operations erofs_sops;
-+extern const struct inode_operations erofs_dir_iops;
-+extern const struct file_operations erofs_dir_fops;
-+
-+extern const struct file_operations erofs_unaligned_compressed_fops;
-+
-+extern const struct address_space_operations erofs_raw_access_aops;
-+
-+/*
-+ * Logical to physical block mapping, used by erofs_map_blocks()
-+ *
-+ * Different with other file systems, it is used for 2 access modes:
-+ *
-+ * 1) RAW access mode:
-+ *
-+ * Users pass a valid (m_lblk, m_lofs -- usually 0) pair,
-+ * and get the valid m_pblk, m_pofs and the longest m_len(in bytes).
-+ *
-+ * Note that m_lblk in the RAW access mode refers to the number of
-+ * the compressed ondisk block rather than the uncompressed
-+ * in-memory block for the compressed file.
-+ *
-+ * m_pofs equals to m_lofs except for the inline data page.
-+ *
-+ * 2) Normal access mode:
-+ *
-+ * If the inode is not compressed, it has no difference with
-+ * the RAW access mode. However, if the inode is compressed,
-+ * users should pass a valid (m_lblk, m_lofs) pair, and get
-+ * the needed m_pblk, m_pofs, m_len to get the compressed data
-+ * and the updated m_lblk, m_lofs which indicates the start
-+ * of the corresponding uncompressed data in the file.
-+ */
-+enum {
-+	BH_Zipped = BH_PrivateStart,
-+};
-+
-+/* Has a disk mapping */
-+#define EROFS_MAP_MAPPED	(1 << BH_Mapped)
-+/* Located in metadata (could be copied from bd_inode) */
-+#define EROFS_MAP_META		(1 << BH_Meta)
-+/* The extent has been compressed */
-+#define EROFS_MAP_ZIPPED	(1 << BH_Zipped)
-+
-+struct erofs_map_blocks {
-+	erofs_off_t m_pa, m_la;
-+	u64 m_plen, m_llen;
-+
-+	unsigned int m_flags;
-+};
-+
-+/* Flags used by erofs_map_blocks() */
-+#define EROFS_GET_BLOCKS_RAW    0x0001
-+
-+/* data.c */
-+extern struct page *erofs_get_meta_page(struct super_block *sb,
-+	erofs_blk_t blkaddr, bool prio);
-+extern int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
-+extern int erofs_map_blocks_iter(struct inode *, struct erofs_map_blocks *,
-+	struct page **, int);
-+
-+struct erofs_map_blocks_iter {
-+	struct erofs_map_blocks map;
-+	struct page *mpage;
-+};
-+
-+
-+static inline struct page *erofs_get_inline_page(struct inode *inode,
-+	erofs_blk_t blkaddr)
-+{
-+	return erofs_get_meta_page(inode->i_sb,
-+		blkaddr, S_ISDIR(inode->i_mode));
-+}
-+
-+/* inode.c */
-+extern struct inode *erofs_iget(struct super_block *sb,
-+	erofs_nid_t nid, bool dir);
-+
-+/* dir.c */
-+int erofs_namei(struct inode *dir, struct qstr *name,
-+	erofs_nid_t *nid, unsigned *d_type);
-+
-+/* xattr.c */
-+extern const struct xattr_handler *erofs_xattr_handlers[];
-+
-+extern void test_meta_ops(struct super_block *sb);
-+
-+/* symlink */
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 2, 0))
-+extern const struct inode_operations simple_symlink_inode_operations;
-+#endif
-+
-+static inline void set_inode_fast_symlink(struct inode *inode)
-+{
-+	inode->i_op = &simple_symlink_inode_operations;
-+}
-+
-+static inline bool is_inode_fast_symlink(struct inode *inode)
-+{
-+	return inode->i_op == &simple_symlink_inode_operations;
-+}
-+
-+static inline void *erofs_vmap(struct page **pages, unsigned int count)
-+{
-+#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
-+	int i = 0;
-+
-+	while (1) {
-+		void *addr = vm_map_ram(pages, count, -1, PAGE_KERNEL);
-+		/* retry two more times (totally 3 times) */
-+		if (addr != NULL || ++i >= 3)
-+			return addr;
-+		vm_unmap_aliases();
-+	}
-+	return NULL;
-+#else
-+	return vmap(pages, count, VM_MAP, PAGE_KERNEL);
-+#endif
-+}
-+
-+static inline void erofs_vunmap(const void *mem, unsigned int count)
-+{
-+#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
-+	vm_unmap_ram(mem, count);
-+#else
-+	vunmap(mem);
-+#endif
-+}
-+
-+#endif
-+
+diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.c b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+index 00618587ef1e..51ec4ff6ed95 100644
+--- a/sound/soc/mediatek/common/mtk-afe-platform-driver.c
++++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+@@ -57,6 +57,7 @@ int mtk_afe_combine_sub_dai(struct mtk_base_afe *afe)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(mtk_afe_combine_sub_dai);
+ 
+ int mtk_afe_add_sub_dai_control(struct snd_soc_component *component)
+ {
+@@ -90,6 +91,7 @@ int mtk_afe_add_sub_dai_control(struct snd_soc_component *component)
+ 	return 0;
+ 
+ }
++EXPORT_SYMBOL_GPL(mtk_afe_add_sub_dai_control);
+ 
+ static snd_pcm_uframes_t mtk_afe_pcm_pointer
+ 			 (struct snd_pcm_substream *substream)
+@@ -130,6 +132,7 @@ const struct snd_pcm_ops mtk_afe_pcm_ops = {
+ 	.ioctl = snd_pcm_lib_ioctl,
+ 	.pointer = mtk_afe_pcm_pointer,
+ };
++EXPORT_SYMBOL_GPL(mtk_afe_pcm_ops);
+ 
+ int mtk_afe_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ {
+@@ -143,11 +146,13 @@ int mtk_afe_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 						     afe->dev,
+ 						     size, size);
+ }
++EXPORT_SYMBOL_GPL(mtk_afe_pcm_new);
+ 
+ void mtk_afe_pcm_free(struct snd_pcm *pcm)
+ {
+ 	snd_pcm_lib_preallocate_free_for_all(pcm);
+ }
++EXPORT_SYMBOL_GPL(mtk_afe_pcm_free);
+ 
+ const struct snd_soc_component_driver mtk_afe_pcm_platform = {
+ 	.name = AFE_PCM_NAME,
 -- 
-1.9.1
+2.17.0
