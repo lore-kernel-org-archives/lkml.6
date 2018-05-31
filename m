@@ -1,79 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753963AbeEaFYW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 01:24:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41863 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752025AbeEaFYS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 01:24:18 -0400
-From: NeilBrown <neilb@suse.com>
-To: Trond Myklebust <trondmy@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 31 May 2018 15:24:10 +1000
-Cc: List Linux Next Mailing <linux-next@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: linux-next: Signed-off-by missing for commit in the nfs tree
-In-Reply-To: <CAABAsM7VZcJvtSnbebOAWEAZ7oTkV6JXJF=GxOj=zLYgjSGQ_Q@mail.gmail.com>
-References: <20180531072629.6e19241b@canb.auug.org.au> <CAABAsM7VZcJvtSnbebOAWEAZ7oTkV6JXJF=GxOj=zLYgjSGQ_Q@mail.gmail.com>
-Message-ID: <87y3g0tn2d.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        id S1753885AbeEaFhQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 01:37:16 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36918 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751885AbeEaFhO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 01:37:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 59436602A7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=akhilpo@codeaurora.org
+From: Akhil P Oommen <akhilpo@codeaurora.org>
+To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jcrouse@codeaurora.org, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, cw00.choi@samsung.com,
+        linux-arm-msm@vger.kernel.org
+Subject: [RFC] PM / devfreq: Add support for alerts
+Date: Thu, 31 May 2018 11:06:59 +0530
+Message-Id: <1527745019-25155-1-git-send-email-akhilpo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Currently, DEVFREQ reevaluates the device state periodically and/or
+based on the OPP list changes. Private API has to be exposed to allow
+the device driver to alert/notify the governor to reevaluate when a new
+set of data is available. This makes the governor more coupled to a
+particular device driver. We can improve here by exposing a DEVFREQ API
+to allow the device drivers to send generic alerts to the governor.
 
-On Wed, May 30 2018, Trond Myklebust wrote:
+Signed-off-by: Akhil P Oommen <akhilpo@codeaurora.org>
+---
+ drivers/devfreq/devfreq.c  | 21 +++++++++++++++++++++
+ drivers/devfreq/governor.h |  1 +
+ include/linux/devfreq.h    |  5 +++++
+ 3 files changed, 27 insertions(+)
 
-> Hi Stephen,
->
-> Thanks for noticing and apologies for missing that. I'll take that
-> patch out until Neil can update it.
->
-
-Thanks for noticing that Stephen,
-I've sent and updated version.
-
-Thanks,
-NeilBrown
-
-
-> Cheers
->   Trond
-> On Wed, 30 May 2018 at 17:26, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Hi Trond,
->>
->> Commit
->>
->>   f217ebf24480 ("NFS: slight optimization for walking list for delegations")
->>
->> is missing a Signed-off-by from its author.
->>
->> --
->> Cheers,
->> Stephen Rothwell
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsPhvsACgkQOeye3VZi
-gbnMfQ/+Mrg9puY97bp79nb0vdCKOoyVdTElZiQrGwIVc+wyACzzJdKyX9zNc6dP
-TqRxDLmLG5pCG9sPRL+zmdDDjtVf2Hp5InvRdJTP5WcbiYrvy9mDrQzJewpVe8JV
-GC/84WV2/MmSFdNkkAKBeITe9//zX4+x2Ud5yl90ctrFH5U4lbK4mR8l7P9Ogw5g
-4dV+wJBLRKC63URlFNfNVkrzrHWIdx4NsgXTJq0VSJRT1rju+I6P83c6koV3Y/WH
-AiP8WHjPVpFRIeezTfIjRO0GWRppC8P7JsGUVus+71dZDlkPnLLvlKxCxZyswdUW
-WD/S23C+MmavbzGGFk7RqC8f6FRXzO+YjYb4RModstjPp+IHVsTSd2eb71MFRvfk
-zORh69RHtQONc9quUa05qtW9siZSK49kizY6PcH7PeeQlhEU4IpyihlSsJzkGU5R
-UPYHbMIZp4HbpB1l1MGtd5n4c2GVBlf7CLSfrd4qMm/oiSeIZm6exOZWGcelCPY8
-XrJ6rVk0ls4RkHIrG0FqOuPqAGzwsxLSzDKYV3YauRRBHVbmtEt+rV3cVmRpFuef
-fflylH7PBowgLSZOWNNdZWVL8etIL+NPocrgk8TFC/V4u2e7+QbZAl3WlkYhHHeV
-dTi19l+xNzQhUYB67Vl9vLDsb+aOhBWVzEsgOCxq8fCsh3FbOQM=
-=L4IE
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index fe2af6a..24a8046 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -1532,3 +1532,24 @@ void devm_devfreq_unregister_notifier(struct device *dev,
+ 			       devm_devfreq_dev_match, devfreq));
+ }
+ EXPORT_SYMBOL(devm_devfreq_unregister_notifier);
++
++/**
++ * devfreq_alert_governor() - Alert governor about an event
++ * @devfreq:	The devfreq object.
++ * @type:	Optional alert type.
++ *
++ * This function lets the device alert the governor about an event.
++ * A governor may not implement or choose to completely ignore this alert.
++ */
++void devfreq_alert_governor(struct devfreq *devfreq, unsigned int type)
++{
++	/* Don't let someone change the governor until we are done here. */
++	mutex_lock(&devfreq_list_lock);
++
++	if (devfreq)
++		devfreq->governor->event_handler(devfreq,
++				DEVFREQ_GOV_ALERT, &type);
++
++	mutex_unlock(&devfreq_list_lock);
++}
++EXPORT_SYMBOL(devfreq_alert_governor);
+diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+index cfc50a6..e5da3442 100644
+--- a/drivers/devfreq/governor.h
++++ b/drivers/devfreq/governor.h
+@@ -24,6 +24,7 @@
+ #define DEVFREQ_GOV_INTERVAL			0x3
+ #define DEVFREQ_GOV_SUSPEND			0x4
+ #define DEVFREQ_GOV_RESUME			0x5
++#define DEVFREQ_GOV_ALERT			0x6
+ 
+ /**
+  * struct devfreq_governor - Devfreq policy governor
+diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+index 3aae5b3..740c228 100644
+--- a/include/linux/devfreq.h
++++ b/include/linux/devfreq.h
+@@ -193,6 +193,7 @@ extern struct devfreq *devm_devfreq_add_device(struct device *dev,
+ 				  void *data);
+ extern void devm_devfreq_remove_device(struct device *dev,
+ 				  struct devfreq *devfreq);
++extern void devfreq_alert_governor(struct devfreq *devfreq, unsigned int type);
+ 
+ /* Supposed to be called by PM callbacks */
+ extern int devfreq_suspend_device(struct devfreq *devfreq);
+@@ -306,6 +307,10 @@ static inline void devm_devfreq_remove_device(struct device *dev,
+ {
+ }
+ 
++static void devfreq_alert_governor(struct devfreq *devfreq, unsigned int type)
++{
++}
++
+ static inline int devfreq_suspend_device(struct devfreq *devfreq)
+ {
+ 	return 0;
+-- 
+1.9.1
