@@ -1,94 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751464AbeEaWwp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:52:45 -0400
-Received: from mga14.intel.com ([192.55.52.115]:6569 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751204AbeEaWvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 18:51:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
-   d="scan'208";a="233413425"
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
-        mgorman@techsingularity.net
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        juri.lelli@redhat.com, viresh.kumar@linaro.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [RFC/RFT] [PATCH v3 3/4] cpufreq: intel_pstate: New sysfs entry to control HWP boost
-Date: Thu, 31 May 2018 15:51:42 -0700
-Message-Id: <20180531225143.34270-4-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180531225143.34270-1-srinivas.pandruvada@linux.intel.com>
-References: <20180531225143.34270-1-srinivas.pandruvada@linux.intel.com>
+        id S1751495AbeEaWw7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 18:52:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59854 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeEaWw6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 18:52:58 -0400
+Date: Thu, 31 May 2018 15:52:56 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/shmem: Zero out unused vma fields in
+ shmem_pseudo_vma_init()
+Message-Id: <20180531155256.a5f557c9e620a6d7e85e4ca1@linux-foundation.org>
+In-Reply-To: <20180531135602.20321-1-kirill.shutemov@linux.intel.com>
+References: <20180531135602.20321-1-kirill.shutemov@linux.intel.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A new attribute is added to intel_pstate sysfs to enable/disable
-HWP dynamic performance boost.
+On Thu, 31 May 2018 16:56:02 +0300 "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/cpufreq/intel_pstate.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+> shmem/tmpfs uses pseudo vma to allocate page with correct NUMA policy.
+> 
+> The pseudo vma doesn't have vm_page_prot set. We are going to encode
+> encryption KeyID in vm_page_prot. Having garbage there causes problems.
+> 
+> Zero out all unused fields in the pseudo vma.
+> 
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 2a14756d958e..254e30a6c1e0 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1033,6 +1033,30 @@ static ssize_t store_min_perf_pct(struct kobject *a, struct attribute *b,
- 	return count;
- }
- 
-+static ssize_t show_hwp_dynamic_boost(struct kobject *kobj,
-+				struct attribute *attr, char *buf)
-+{
-+	return sprintf(buf, "%u\n", hwp_boost);
-+}
-+
-+static ssize_t store_hwp_dynamic_boost(struct kobject *a, struct attribute *b,
-+				       const char *buf, size_t count)
-+{
-+	unsigned int input;
-+	int ret;
-+
-+	ret = kstrtouint(buf, 10, &input);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&intel_pstate_driver_lock);
-+	hwp_boost = !!input;
-+	intel_pstate_update_policies();
-+	mutex_unlock(&intel_pstate_driver_lock);
-+
-+	return count;
-+}
-+
- show_one(max_perf_pct, max_perf_pct);
- show_one(min_perf_pct, min_perf_pct);
- 
-@@ -1042,6 +1066,7 @@ define_one_global_rw(max_perf_pct);
- define_one_global_rw(min_perf_pct);
- define_one_global_ro(turbo_pct);
- define_one_global_ro(num_pstates);
-+define_one_global_rw(hwp_dynamic_boost);
- 
- static struct attribute *intel_pstate_attributes[] = {
- 	&status.attr,
-@@ -1082,6 +1107,11 @@ static void __init intel_pstate_sysfs_expose_params(void)
- 	rc = sysfs_create_file(intel_pstate_kobject, &min_perf_pct.attr);
- 	WARN_ON(rc);
- 
-+	if (hwp_active) {
-+		rc = sysfs_create_file(intel_pstate_kobject,
-+				       &hwp_dynamic_boost.attr);
-+		WARN_ON(rc);
-+	}
- }
- /************************** sysfs end ************************/
- 
--- 
-2.13.6
+So there are no known problems in the current mainline kernel?
+
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1404,10 +1404,9 @@ static void shmem_pseudo_vma_init(struct vm_area_struct *vma,
+>  		struct shmem_inode_info *info, pgoff_t index)
+>  {
+>  	/* Create a pseudo vma that just contains the policy */
+> -	vma->vm_start = 0;
+> +	memset(vma, 0, sizeof(*vma));
+>  	/* Bias interleave by inode number to distribute better across nodes */
+>  	vma->vm_pgoff = index + info->vfs_inode.i_ino;
+> -	vma->vm_ops = NULL;
+>  	vma->vm_policy = mpol_shared_policy_lookup(&info->policy, index);
+>  }
