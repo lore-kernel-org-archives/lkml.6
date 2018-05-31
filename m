@@ -1,61 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754523AbeEaKZh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:25:37 -0400
-Received: from mga18.intel.com ([134.134.136.126]:26155 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754400AbeEaKZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:25:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
+        id S1754544AbeEaKZp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:25:45 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:17728 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754400AbeEaKZi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 06:25:38 -0400
 X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
-   d="scan'208";a="52233014"
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] perf intel-pt: Fix decoding to accept CBR between FUP and corresponding TIP
-Date: Thu, 31 May 2018 13:23:43 +0300
-Message-Id: <1527762225-26024-3-git-send-email-adrian.hunter@intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527762225-26024-1-git-send-email-adrian.hunter@intel.com>
-References: <1527762225-26024-1-git-send-email-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+   d="scan'208";a="15473294"
+Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
+To: Rob Herring <robh@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, <nicolas.ferre@microchip.com>,
+        <boris.brezillon@bootlin.com>, <alexandre.belloni@bootlin.com>,
+        <broonie@kernel.org>, <Cristian.Birsan@microchip.com>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+ <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
+ <20180531005827.GA17203@rob-hp-laptop>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Message-ID: <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
+Date: Thu, 31 May 2018 13:25:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180531005827.GA17203@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is possible to have a CBR packet between a FUP packet and corresponding
-TIP packet. Stop treating it as an error.
+On 31.05.2018 03:58, Rob Herring wrote:
+> On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
+>> The I2S mux clock can be used to select the I2S input clock. The
+>> available parents are the peripheral and the generated clocks.
+>>
+>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>> ---
+>>   .../devicetree/bindings/clock/at91-clock.txt       | 34 ++++++++++++++++++++++
+>>   1 file changed, 34 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+>> index 51c259a..1c46b3c 100644
+>> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
+>> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+>> @@ -90,6 +90,8 @@ Required properties:
+>>   	"atmel,sama5d2-clk-audio-pll-pmc"
+>>   		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
+>>   		and can be used by peripheral clock or generic clock
+>> +	"atmel,sama5d2-clk-i2s-mux":
+>> +		at91 I2S clock source selection
+> 
+> Is this boolean or takes some values. If latter, what are valid values?
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: stable@vger.kernel.org
----
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+This is the compatible string of the clock driver.
 
-diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-index f9157aed1289..e5eb91777383 100644
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -1604,7 +1604,6 @@ static int intel_pt_walk_fup_tip(struct intel_pt_decoder *decoder)
- 		case INTEL_PT_PSB:
- 		case INTEL_PT_TSC:
- 		case INTEL_PT_TMA:
--		case INTEL_PT_CBR:
- 		case INTEL_PT_MODE_TSX:
- 		case INTEL_PT_BAD:
- 		case INTEL_PT_PSBEND:
-@@ -1620,6 +1619,10 @@ static int intel_pt_walk_fup_tip(struct intel_pt_decoder *decoder)
- 			decoder->pkt_step = 0;
- 			return -ENOENT;
- 
-+		case INTEL_PT_CBR:
-+			intel_pt_calc_cbr(decoder);
-+			break;
-+
- 		case INTEL_PT_OVF:
- 			return intel_pt_overflow(decoder);
- 
--- 
-1.9.1
+> 
+>>   
+>>   Required properties for SCKC node:
+>>   - reg : defines the IO memory reserved for the SCKC.
+>> @@ -507,3 +509,35 @@ For example:
+>>   			atmel,clk-output-range = <0 83000000>;
+>>   		};
+>>   	};
+>> +
+>> +Required properties for I2S mux clocks:
+>> +- #size-cells : shall be 0 (reg is used to encode I2S bus id).
+>> +- #address-cells : shall be 1 (reg is used to encode I2S bus id).
+>> +- name: device tree node describing a specific mux clock.
+>> +	* #clock-cells : from common clock binding; shall be set to 0.
+>> +	* clocks : shall be the mux clock parent phandles; shall be 2 phandles:
+>> +	  peripheral and generated clock; the first phandle shall belong to the
+>> +	  peripheral clock and the second one shall belong to the generated
+>> +	  clock; "clock-indices" property can be user to specify
+>> +	  the correct order.
+>> +	* reg: I2S bus id of the corresponding mux clock.
+>> +	  e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
+>> +
+>> +For example:
+>> +	i2s_clkmux {
+> 
+> What is this a child of?
+
+It is a child of PMC node, since both parent clocks are generated by PMC.
+
+> 
+>> +		compatible = "atmel,sama5d2-clk-i2s-mux";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+> 
+> How do you address this block? My guess is you don't because it is just
+> part of some other block and you are just creating this node to
+> instantiate a driver. Just make the node for the actual h/w block a
+> clock provider and define the clock ids (0 and 1).
+
+This block is not addressed, but its children are. The register we 
+access in this driver is not part of other block. It's a SFR register, 
+accessed through syscon and it has nothing to do with the I2S IP (see 
+SAMA5D2 DS, page 1256, fig. 44-1: I2SC Block Diagram) that is the 
+consumer of this clock. Adding a clock-id property in the I2S node would 
+be just like v3 of this series, with the difference that we use clock-id 
+instead of alias id to set the clock parent, which is not how you 
+suggested back then.
+
+Thank you for your review.
+
+Best regards,
+Codrin
+
+[...]
