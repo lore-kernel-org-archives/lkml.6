@@ -1,64 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755889AbeEaR1Z (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 13:27:25 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:42854 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755768AbeEaR1X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 13:27:23 -0400
-X-Google-Smtp-Source: ADUXVKLSKkjF26T/Bf5IYNBzrcesjNuO+HuC1BLPmfZuxV0osXZONqvhyEswGAY03zMIwjbQl0NsMw==
-Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
-To: Sinan Kaya <okaya@codeaurora.org>, Alex_Gagniuc@Dellteam.com,
-        bhelgaas@google.com
-Cc: Austin.Bolen@dell.com, Shyam.Iyer@dell.com, keith.busch@intel.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
- <28004506-24f0-6d10-2d1e-074e0483d2f9@codeaurora.org>
- <4e0611c872054e768daa96b302651db3@ausx13mps321.AMER.DELL.COM>
- <f260078b-6918-7fd9-39d6-e9f300e4c048@codeaurora.org>
- <3b8a895b-3080-7ddb-cbfd-5aa972e9bf65@gmail.com>
- <35563ce3-e235-096c-4b9b-5f3664d67d0f@codeaurora.org>
- <093b2789-39a1-db9e-5783-b0488b3c9ccd@gmail.com>
- <32d58835-2f35-0b80-38d0-b9ff603619dd@codeaurora.org>
- <54071f83-5d0d-04a0-d448-0c99ec0ffc4f@gmail.com>
- <29ad2bf5-b5af-35be-3bef-2d0652aa2e33@codeaurora.org>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <954892f0-196d-b11c-c2a0-e4a0e4be4b8c@gmail.com>
-Date: Thu, 31 May 2018 12:27:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <29ad2bf5-b5af-35be-3bef-2d0652aa2e33@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+        id S1755873AbeEaRa1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 13:30:27 -0400
+Received: from mga02.intel.com ([134.134.136.20]:32842 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755830AbeEaRa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 13:30:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
+   d="scan'208";a="44300267"
+From: "Dilger, Andreas" <andreas.dilger@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: James Simmons <jsimmons@infradead.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "Drokin, Oleg" <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>,
+        "Hammond, John" <john.hammond@intel.com>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Subject: Re: [PATCH v2 6/6] staging: lustre: mdc: use large xattr buffers
+ for old servers
+Thread-Topic: [PATCH v2 6/6] staging: lustre: mdc: use large xattr buffers
+ for old servers
+Thread-Index: AQHT+QAZU3E1b4pl5kivVFHYDbsEJ6RKjXSA
+Date: Thu, 31 May 2018 17:30:24 +0000
+Message-ID: <AE3B1D00-46A8-42FA-9025-2E680C185294@intel.com>
+References: <1527603705-30450-1-git-send-email-jsimmons@infradead.org>
+ <1527603705-30450-7-git-send-email-jsimmons@infradead.org>
+ <20180531165426.GA23414@kroah.com>
+In-Reply-To: <20180531165426.GA23414@kroah.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.252.6.188]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <DA4F57CEC55E1840816133662E3612B0@intel.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/31/2018 12:11 PM, Sinan Kaya wrote:
-> On 5/31/2018 12:49 PM, Alex G. wrote:
->>> 	bw_cap = pcie_bandwidth_capable(dev, &speed_cap, &width_cap);
->>> 	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width, *parent*);
->> That's confusing. I'd expect _capable() and _available() to be
->> symmetrical. They either both look at one link only, or both go down to
->> the root port. Though it seems _capable() is link-local, and
->> _available() is down to root port.
->>
+On May 31, 2018, at 18:54, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 > 
-> As you know, link speed is a qualification of two devices speed capability.
-> Both speed and width parameters get negotiated by two devices during TS1 and TS2
-> ordered set exchange. 
+> On Tue, May 29, 2018 at 10:21:45AM -0400, James Simmons wrote:
+>> From: "John L. Hammond" <john.hammond@intel.com>
+>> 
+>> Pre 2.10.1 MDTs will crash when they receive a listxattr (MDS_GETXATTR
+>> with OBD_MD_FLXATTRLS) RPC for an orphan or dead object. So for
+>> clients connected to these older MDTs, try to avoid sending listxattr
+>> RPCs by making the bulk getxattr (MDS_GETXATTR with OBD_MD_FLXATTRALL)
+>> more likely to succeed and thereby reducing the chances of falling
+>> back to listxattr.
+>> 
+>> +#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 > 
-> You need to see what your link partner can support in available function() vs.
-> what this device can do in bandwidth() function.
+> Why are you adding pointless version checks to mainline?  Please don't
+> add new ones of these, you need to be working on removing the existing
+> ones.
 
-I see. I'm not sure I can use pcie_print_link_status() without some
-major refactoring. I need to look at capability of device and it
-downstream port. There's no point complaining that an x16 device is
-running at x4 when the port is only x4 capable.
+These are not Linux kernel version checks, but rather Lustre release version
+checks.  This allows us to remove workarounds like this in the future when
+they are no longer needed, rather than accumulating cruft forever.  It's like
+the separation of NFSv2 vs NFSv3 vs NFSv4.
 
-Let me think some more on this.
-
-Alex
+Cheers, Andreas
+--
+Andreas Dilger
+Lustre Principal Architect
+Intel Corporation
