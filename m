@@ -1,139 +1,154 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1708975-1527783074-2-17786885180672465176
+X-Cyrus-Session-Id: sloti22d1t05-1708975-1527783748-2-4605477526147645060
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527783074; b=cJBLhamOR48P9WAHkjs8mWo5CjamV6q3fUwt5KtAWWFVB5wDk3
-    5a2l1jeYV0RJkZqqQq0p1pB2Po+iSEIKIyQexjA2QCa+A9R1+RO2uAPrTRrRp0PV
-    hoJ6fsaH4KNo6RUxe9TEQegpTB0E3FLtIFfJ9dMOgYcdURCCDN8veIWMVQmWSuwD
-    E8TqHBcFxhPO4vIGybHhi76qkN83gWk86LesZkehWheuS8tJW3hozOti6vnyXl0q
-    Seb4GsK5tCW6HeYF2h0zxAGtnZsOThsWr97c2KNC6vNK4NmvI+b9T/Yd3hG4S2+d
-    FBgJEQ7jpmaHlM3RsH5286qgACJnk4r4IUDQ==
+    1527783748; b=fPRbTx5U5RB4KqhCWizpsjwu7DEU5DLGv9YadH/22EnhwROJM3
+    b63YF7XG5Rjw86dqFlrsSeqriZHIjGx/z2HYt4LAYyzTUIFVY0USndItyQbeC5Ti
+    qXOsIC5Wn7gXiGDiwKPfQe/Wy4GFSL8RywUKXW9XilB3xsafqfXIu+O5d4XKg1rk
+    pArnAIudLIe8Imv2h8qoyWCzswH+r9rE1l5mtGwPLWM9DBuv9qQnb550XnnGojcf
+    f3JeU60L3MshzxaJvxsgQaCq2gC3C4vpdkWNdN+iZlAVWVReZGExj4mpycJ9gr86
+    bUwObOxsGlMmrEW/M/mY+7IhS8/0UKaqreHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527783074; bh=s6xT/yxa7zw0V49Tk8sfpnWgojWX8m
-    6Fb+KdrugwGVY=; b=TGHXWjy5NQmCSXP3B1U0/vWFpkIbmmGU2MImxRmeIZKOJs
-    Wf2vfIjfLYZ+5/ljuAxkPwc3TfsFsAmAiX4Qa7r2lT+murmCUU60/1opanmnYWaF
-    u87XVDgr/41g2vXnN15B3uFjkAHzJn5eJ85CqKnAEjx8QWV//9GG9aMwwUeH36z6
-    qMj0QsNzybqT3pIVLgYXA+u68ayinyLXoCq0nzqni8Pbf8G/7AuzOKbkc4qlO81j
-    e6F0wy3gHicpbfa5pvw4u1skpwYql8sKKbcoHSV1cMunAGdQU1djgW/biaEtlJXG
-    gO30sNGCQWwZHuDiwQn36ePtgnowxLsPv3G+SvQg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=qj9nqHvb
-    header.a=rsa-sha256 header.s=20161025 x-bits=2048;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1527783748;
+    bh=AgXj8AArfBcW9SMKhn6tAyeWgVAT0/cBt0S6wV38W3c=; b=Ow/SDv0X2Qu1
+    HdTNX8qtR9PrT2EnrNRmzOdJcOnlhvq5ahiymBbvOKh5ynmQNJb4KDZBnszmOX6J
+    Odpy3yu5EaL/NkAZrVuC/3G102FLNT4L0Y7nmkbJA7qViPXhCdNO2/6NMK+qcXsB
+    0aJlhccG9v4adVoCVEY08Y8+umEB1eiO8uJFPGSYH24/H0uLkG+QvKImJVkoyxUf
+    Iy77QdBy+70M85WwFO/7+O7oiQ8YOYmQHmN1RJKQKiVuxMITbfHi6xC9tfndMKet
+    HdcYYSdsJFuIe57nS1QRvrwpqexfhHw3Msnx6qW2E+PhtBUqXr8WMbGzCw0sHTrz
+    5ajqK2q+RQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=yahoo.com header.i=@yahoo.com header.b=QMO9A2oM
+    header.a=rsa-sha256 header.s=s2048 x-bits=2048;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=schaufler-ca.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=UiXxCL+8;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+    header.domain=schaufler-ca.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-80 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=qj9nqHvb
-      header.a=rsa-sha256 header.s=20161025 x-bits=2048;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=yahoo.com header.i=@yahoo.com header.b=QMO9A2oM
+      header.a=rsa-sha256 header.s=s2048 x-bits=2048;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=schaufler-ca.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=UiXxCL+8;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=schaufler-ca.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-80 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIETHUTy55FDJIoXc6EjhgDQ+Lx1HDxhdmgUOj52j62PgVetN95ZtiooQKsXMkkUvHU1rp/TioUywpFtaVuyNDyj2nq0+TOFY/Oc9/lkEqKbrzoLkuCw
-    kMSHxpAezD14/+kkU4DL2NHexLWH/u5wi9NSxAaqmSxMTR4GoxkzTgYzV306eEwbyUgLvDCC+aQO/Y/lTVsZTfvvP18Szh2IZ32c+5OB1tg52adPt361lkY3
-    2xXzjmD+CECvIkrKcxIkyA==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
-    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=ZcWpN81wZGfSTRTvrR0A:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfAU8FaZWue72/Sw4/awaNWjVJ8pIdQ/9O39yM4Y/1z6IWSjrOH2WCjInnKKtgcoQWVyCGlqP22bc2X0Jul2eyTbw8hEHgNVBYAR6+4mlFw1Gp9SfnQVF
+    /bv+TGSqzTEVrPjTIAyLCmhT1vWqQXAaswZ6RwdrfkAi/wFiSW9ccEGT1JQAwn9UADQldfIchM9TdEYT7G2IoXcuQRTDT1mSINY41MLJBJmSpqJHVCdfhwf4
+    3HGpCX6CJC9+AZE19dkbRQ==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=5HJ6KZJP-kkA:10
+    a=VUJBJC2UJ8kA:10 a=We03CPWqHyUA:10 a=3NGxsLzzGfgA:10 a=ZZnuYtJkoWoA:10
+    a=VwQbUJbxAAAA:8 a=fpOHQEl9X1u3KMRq2TkA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755632AbeEaQLL (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 31 May 2018 12:11:11 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:33286 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755562AbeEaQLK (ORCPT
+        id S1755636AbeEaQWY (ORCPT <rfc822;linux@kroah.com>);
+        Thu, 31 May 2018 12:22:24 -0400
+Received: from sonic306-26.consmr.mail.gq1.yahoo.com ([98.137.68.89]:42772
+        "EHLO sonic306-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755632AbeEaQWX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 May 2018 12:11:10 -0400
-X-Google-Smtp-Source: ADUXVKKkx2J6y6ei7zChPFZClLs0XCBkYRuTBhvdbiI3RJRBb6Y3F6OsLSw6aUxjzZTwd7bZEOsSZA==
-Date: Thu, 31 May 2018 09:11:07 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Casey Schaufler <casey@schaufler-ca.com>
+        Thu, 31 May 2018 12:22:23 -0400
+X-YMail-OSG: 4QD9H7UVM1leSF1nzd4B3LsQ_GyF6b62rjBPUqgXWHWCEIVmehnvYm7illxkI.D
+ 4AICOMyfutbwba1aLNahbKxkPS6ct23c1cFpN7O101otRJJiAb0MW6Fhno68y66f1d.FWgvUmhJm
+ 9e7UXCPvBp6mrBEl78idF9xLxKIMVWLGMG7E8wim.PmWotXuZmyLRtO3cUM5J8ldsBM5ygQNsDpz
+ iQsn4K9Xvt0LvSU4dqmTbMqmDvbEqMyn2MG6UXqB3FoZAtpV2FQ_GOb_i7rye.SZ2_tUAoyyYayY
+ bUWvJCX2YI6IxvDuELg1C1LsXbxCTYydVUaU_ARdyIPUl1eYr4gURdMPV0UdUEqKRNDgrPqfoNsZ
+ CdPalXForSmR4kvVbwL0VviA3.eBDwtYCJcbpJ0th48xCj83qgEYbznr4GYhFPOHvJ_iE7Nw3EHh
+ ILGQKR8.j3DiDzl_2w4NoIA93SAd6teuFovFjc1.fGH2dpU.nbnkKqzPekStyIN6a5alz4fHtccR
+ qoVR1bJKoYN6g_QlY7TdrNrmesriBDIygL30RwrDPE8z03CtVUO9rJuYEb1oU5saUlZ3mDNINUln
+ 492wB88RR7fTdi9rhrsQLw0g1y5qBziXaHOJ90iKDAtfl8u39BBDn8erToanuLyCdCNAfW.QXonQ
+ arlaFX7zg2g5FFLgohIc459n5Q8pTpobDirTKbKEZSZk-
+Subject: Re: [PATCH 1/1] Fix memory leak in kernfs_security_xattr_set and
+ kernfs_security_xattr_set
+To: Tejun Heo <tj@kernel.org>
 Cc: CHANDAN VN <chandan.vn@samsung.com>, gregkh@linuxfoundation.org,
         bfields@fieldses.org, jlayton@kernel.org,
         linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
         cpgs@samsung.com, sireesha.t@samsung.com,
         Chris Wright <chrisw@sous-sol.org>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 1/1] Fix memory leak in kernfs_security_xattr_set and
- kernfs_security_xattr_set
-Message-ID: <20180531161107.GV1351649@devbig577.frc2.facebook.com>
+        linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
 References: <CGME20180531092848epcas1p24b638ccd6da00f1e039bdb64de7e1a5b@epcas1p2.samsung.com>
  <1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
  <20180531153943.GR1351649@devbig577.frc2.facebook.com>
  <4f00f9ae-3302-83b9-c083-d21ade380eb2@schaufler-ca.com>
+ <20180531161107.GV1351649@devbig577.frc2.facebook.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <1ced6bce-92cc-7e0c-fab4-0aaa3d03b82f@schaufler-ca.com>
+Date: Thu, 31 May 2018 09:22:18 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f00f9ae-3302-83b9-c083-d21ade380eb2@schaufler-ca.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180531161107.GV1351649@devbig577.frc2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 31, 2018 at 09:04:25AM -0700, Casey Schaufler wrote:
-> On 5/31/2018 8:39 AM, Tejun Heo wrote:
-> > (cc'ing more security folks and copying whole body)
-> >
-> > So, I'm sure the patch fixes the memory leak but API wise it looks
-> > super confusing.  Can security folks chime in here?  Is this the right
-> > fix?
-> 
-> security_inode_getsecctx() provides a security context. Technically,
-> this is a data blob, although both provider provide a null terminated
-> string. security_inode_getsecurity(), on the other hand, provides a
-> string to match an attribute name. The former releases the security
-> context with security_release_secctx(), where the later releases the
-> string with kfree().
-> 
-> When the Smack hook smack_inode_getsecctx() was added in 2009
-> for use by labeled NFS the alloc value passed to
-> smack_inode_getsecurity() was set incorrectly. This wasn't a
-> major issue, since labeled NFS is a fringe case. When kernfs
-> started using the hook, it became the issue you discovered.
-> 
-> The reason that we have all this confusion is that SELinux
-> generates security contexts as needed, while Smack keeps them
-> around all the time. Releasing an SELinux context frees memory,
-> while releasing a Smack context is a null operation.
+On 5/31/2018 9:11 AM, Tejun Heo wrote:
+> On Thu, May 31, 2018 at 09:04:25AM -0700, Casey Schaufler wrote:
+>> On 5/31/2018 8:39 AM, Tejun Heo wrote:
+>>> (cc'ing more security folks and copying whole body)
+>>>
+>>> So, I'm sure the patch fixes the memory leak but API wise it looks
+>>> super confusing.  Can security folks chime in here?  Is this the right
+>>> fix?
+>> security_inode_getsecctx() provides a security context. Technically,
+>> this is a data blob, although both provider provide a null terminated
+>> string. security_inode_getsecurity(), on the other hand, provides a
+>> string to match an attribute name. The former releases the security
+>> context with security_release_secctx(), where the later releases the
+>> string with kfree().
+>>
+>> When the Smack hook smack_inode_getsecctx() was added in 2009
+>> for use by labeled NFS the alloc value passed to
+>> smack_inode_getsecurity() was set incorrectly. This wasn't a
+>> major issue, since labeled NFS is a fringe case. When kernfs
+>> started using the hook, it became the issue you discovered.
+>>
+>> The reason that we have all this confusion is that SELinux
+>> generates security contexts as needed, while Smack keeps them
+>> around all the time. Releasing an SELinux context frees memory,
+>> while releasing a Smack context is a null operation.
+> Any chance this detail can be hidden behind security api?  This looks
+> pretty error-prone, no?
 
-Any chance this detail can be hidden behind security api?  This looks
-pretty error-prone, no?
+It *is* hidden behind the security API. The problem is strictly
+within the Smack code, where the implementer of smack_inode_getsecctx()
+made an error.
 
-Thanks.
+>
+> Thanks.
+>
 
--- 
-tejun
