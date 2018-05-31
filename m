@@ -1,355 +1,285 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755919AbeEaRyS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 13:54:18 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:35178 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755819AbeEaRyO (ORCPT
+        id S1755953AbeEaRzK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 13:55:10 -0400
+Received: from mailoutvs62.siol.net ([185.57.226.253]:41886 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755819AbeEaRzE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 13:54:14 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 31 May 2018 13:55:04 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 06/15] drm/sun4i: tcon: Add support for tcon-top
 Date: Thu, 31 May 2018 19:54:08 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, boris.brezillon@bootlin.com,
-        robh+dt@kernel.org
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
-        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180528000422.7f18dc5f@xps13>
-References: <cover.1526990589.git.stefan@agner.ch>
- <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <20180528000422.7f18dc5f@xps13>
-Message-ID: <047a9a5e72c8db52858a505865d4f720@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[25];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Message-ID: <2293030.uW1p7mJGcj@jernej-laptop>
+In-Reply-To: <20180531092133.3gqepoabvuruiztz@flea.home>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net> <CAGb2v65whE-qW++cg+gu_o2O1dDdCWkumQB41nt3Aqa75Wp3dg@mail.gmail.com> <20180531092133.3gqepoabvuruiztz@flea.home>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miquel, Boris,
+Dne četrtek, 31. maj 2018 ob 11:21:33 CEST je Maxime Ripard napisal(a):
+> On Thu, May 24, 2018 at 03:01:09PM -0700, Chen-Yu Tsai wrote:
+> > >> > > + if (tcon->quirks->needs_tcon_top) {
+> > >> > > +         struct device_node *np;
+> > >> > > +
+> > >> > > +         np = of_parse_phandle(dev->of_node, "allwinner,tcon-top",
+> > >> > > 0);
+> > >> > > +         if (np) {
+> > >> > > +                 struct platform_device *pdev;
+> > >> > > +
+> > >> > > +                 pdev = of_find_device_by_node(np);
+> > >> > > +                 if (pdev)
+> > >> > > +                         tcon->tcon_top =
+> > >> > > platform_get_drvdata(pdev);
+> > >> > > +                 of_node_put(np);
+> > >> > > +
+> > >> > > +                 if (!tcon->tcon_top)
+> > >> > > +                         return -EPROBE_DEFER;
+> > >> > > +         }
+> > >> > > + }
+> > >> > > +
+> > >> > 
+> > >> > I might have missed it, but I've not seen the bindings additions for
+> > >> > that property. This shouldn't really be done that way anyway, instead
+> > >> > of using a direct phandle, you should be using the of-graph, with the
+> > >> > TCON-top sitting where it belongs in the flow of data.
+> > >> 
+> > >> Just to answer to the first question, it did describe it in "[PATCH
+> > >> 07/15] dt- bindings: display: sun4i-drm: Add R40 HDMI pipeline".
+> > >> 
+> > >> As why I designed it that way - HW representation could be described
+> > >> that way> >> 
+> > >> (ASCII art makes sense when fixed width font is used to view it):
+> > >>                             / LCD0/LVDS0
+> > >>                 
+> > >>                 / TCON-LCD0
+> > >>                 
+> > >>                 |           \ MIPI DSI
+> > >> 
+> > >> mixer0          |
+> > >> 
+> > >>        \        / TCON-LCD1 - LCD1/LVDS1
+> > >>        
+> > >>         TCON-TOP
+> > >>        
+> > >>        /        \ TCON-TV0 - TVE0/RGB
+> > >> 
+> > >> mixer1          |          \
+> > >> 
+> > >>                 |           TCON-TOP - HDMI
+> > >>                 |          
+> > >>                 |          /
+> > >>                 
+> > >>                 \ TCON-TV1 - TVE1/RGB
+> > >> 
+> > >> This is a bit simplified, since there is also TVE-TOP, which is
+> > >> responsible
+> > >> for sharing 4 DACs between both TVE encoders. You can have two TV outs
+> > >> (PAL/ NTSC) or TVE0 as TV out and TVE1 as RGB or vice versa. It even
+> > >> seems that you can arbitrarly choose which DAC is responsible for
+> > >> which signal, so there is a ton of possible end combinations, but I'm
+> > >> not 100% sure.
+> > >> 
+> > >> Even though I wrote TCON-TOP twice, this is same unit in HW. R40 manual
+> > >> suggest more possibilities, although some of them seem wrong, like RGB
+> > >> feeding from LCD TCON. That is confirmed to be wrong when checking BSP
+> > >> code.
+> > >> 
+> > >> Additionally, TCON-TOP comes in the middle of TVE0 and LCD0, TVE1 and
+> > >> LCD1 for pin muxing, although I'm not sure why is that needed at all,
+> > >> since according to R40 datasheet, TVE0 and TVE1 pins are dedicated and
+> > >> not on PORT D and PORT H, respectively, as TCON-TOP documentation
+> > >> suggest. However, HSYNC and PSYNC lines might be shared between TVE
+> > >> (when it works in RGB mode) and LCD. But that is just my guess since
+> > >> I'm not really familiar with RGB and LCD interfaces.
+> > >> 
+> > >> I'm really not sure what would be the best representation in OF-graph.
+> > >> Can you suggest one?
+> > > 
+> > > Rob might disagree on this one, but I don't see anything wrong with
+> > > having loops in the graph. If the TCON-TOP can be both the input and
+> > > output of the TCONs, then so be it, and have it described that way in
+> > > the graph.
+> > > 
+> > > The code is already able to filter out nodes that have already been
+> > > added to the list of devices we need to wait for in the component
+> > > framework, so that should work as well.
+> > > 
+> > > And we'd need to describe TVE-TOP as well, even though we don't have a
+> > > driver for it yet. That will simplify the backward compatibility later
+> > > on.
+> > 
+> > I'm getting the feeling that TCON-TOP / TVE-TOP is the glue layer that
+> > binds everything together, and provides signal routing, kind of like
+> > DE-TOP on A64. So the signal mux controls that were originally found
+> > in TCON0 and TVE0 were moved out.
+> > 
+> > The driver needs to know about that, but the graph about doesn't make
+> > much sense directly. Without looking at the manual, I understand it to
+> > likely be one mux between the mixers and TCONs, and one between the
+> > TCON-TVs and HDMI. Would it make more sense to just have the graph
+> > connections between the muxed components, and remove TCON-TOP from
+> > it, like we had in the past? A phandle could be used to reference
+> > the TCON-TOP for mux controls, in addition to the clocks and resets.
+> > 
+> > For TVE, we would need something to represent each of the output pins,
+> > so the device tree can actually describe what kind of signal, be it
+> > each component of RGB/YUV or composite video, is wanted on each pin,
+> > if any. This is also needed on the A20 for the Cubietruck, so we can
+> > describe which pins are tied to the VGA connector, and which one does
+> > R, G, or B.
+> 
+> I guess we'll see how the DT maintainers feel about this, but my
+> impression is that the OF graph should model the flow of data between
+> the devices. If there's a mux somewhere, then the data is definitely
+> going through it, and as such it should be part of the graph.
 
-[also adding Rob to to since it is DT related]
+I concur, but I spent few days thinking how to represent this sanely in graph, 
+but I didn't find any good solution. I'll represent here my idea and please 
+tell your opinion before I start implementing it.
 
-On 28.05.2018 00:04, Miquel Raynal wrote:
-> Hi Stefan,
-> 
-> I just see your v2 while I'm sending my review on the driver, will
-> probably wait for v4 then ;)
-> 
-> Thanks for the work though!
-> Miquèl
-> 
-> On Tue, 22 May 2018 14:07:06 +0200, Stefan Agner <stefan@agner.ch>
-> wrote:
-> 
->> Add support for the NAND flash controller found on NVIDIA
->> Tegra 2 SoCs. This implementation does not make use of the
->> command queue feature. Regular operations/data transfers are
->> done in PIO mode. Page read/writes with hardware ECC make
->> use of the DMA for data transfer.
->>
->> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
-> 
-> [...]
-> 
+First, let me be clear that mixer0 and mixer1 don't have same capabilities 
+(different number of planes, mixer0 supports writeback, mixer1 does not, 
+etc.). Thus, it does matter which mixer is connected to which TCON/encoder. 
+mixer0 is meant to be connected to main display and mixer1 to auxiliary. That 
+obviously depends on end system.
 
-[...]
+So, TCON TOP has 3 muxes, which have to be represented in graph. Two of them 
+are for mixer/TCON relationship (each of them 1 input and 4 possible outputs) 
+and one for TV TCON/HDMI pair selection (2 possible inputs, 1 output).
 
->> +
->> +static int tegra_nand_probe(struct platform_device *pdev)
->> +{
->> +	struct reset_control *rst;
->> +	struct tegra_nand *nand;
-> 
-> Would you mind having another name for the tegra_nand structure than
-> just 'nand'? I found it confusing as, following Boris comment, it won't
-> be a 'NAND device' structure but rather more a controller structure.
-> 
->> +	struct nand_chip *chip;
->> +	struct mtd_info *mtd;
->> +	struct resource *res;
->> +	unsigned long value;
-> 
-> s/value/reg/ ? or something more explicit?
-> 
->> +	int irq, err = 0;
->> +
->> +	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
->> +	if (!nand)
->> +		return -ENOMEM;
->> +
->> +	nand->dev = &pdev->dev;
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	nand->regs = devm_ioremap_resource(&pdev->dev, res);
->> +	if (IS_ERR(nand->regs))
->> +		return PTR_ERR(nand->regs);
->> +
->> +	irq = platform_get_irq(pdev, 0);
->> +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
->> +			       dev_name(&pdev->dev), nand);
->> +	if (err)
->> +		return err;
->> +
->> +	rst = devm_reset_control_get(&pdev->dev, "nand");
->> +	if (IS_ERR(rst))
->> +		return PTR_ERR(rst);
->> +
->> +	nand->clk = devm_clk_get(&pdev->dev, "nand");
->> +	if (IS_ERR(nand->clk))
->> +		return PTR_ERR(nand->clk);
->> +
->> +	nand->wp_gpio = gpiod_get_optional(&pdev->dev, "wp-gpios",
->> +					   GPIOD_OUT_HIGH);
->> +	if (IS_ERR(nand->wp_gpio))
->> +		return PTR_ERR(nand->wp_gpio);
->> +
->> +	err = clk_prepare_enable(nand->clk);
->> +	if (err)
->> +		return err;
->> +
->> +	reset_control_assert(rst);
->> +	udelay(2);
->> +	reset_control_deassert(rst);
->> +
->> +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
->> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
->> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
->> +	writel(NAND_CMD_STATUS, nand->regs + HWSTATUS_CMD);
->> +	writel(value, nand->regs + HWSTATUS_MASK);
->> +
->> +	init_completion(&nand->command_complete);
->> +	init_completion(&nand->dma_complete);
->> +
->> +	/* clear interrupts */
->> +	value = readl(nand->regs + ISR);
->> +	writel(value, nand->regs + ISR);
->> +
->> +	writel(DMA_CTRL_IS_DONE, nand->regs + DMA_CTRL);
->> +
->> +	/* enable interrupts */
->> +	value = IER_UND | IER_OVR | IER_CMD_DONE | IER_ECC_ERR | IER_GIE;
->> +	writel(value, nand->regs + IER);
->> +
->> +	/* reset config */
->> +	writel(0, nand->regs + CFG);
->> +
->> +	chip = &nand->chip;
->> +	mtd = nand_to_mtd(chip);
->> +
->> +	mtd->dev.parent = &pdev->dev;
->> +	mtd->name = "tegra_nand";
-> 
-> I just figured it was undocumented (yet) but you could have a label
-> string property in your nand DT node that tells you the name of the
-> MTD device instead of something too generic like tegra_nand.
-> 
+According to current practice in sun4i-drm driver, graph has to have port 0, 
+representing input and port 1, representing output. This would mean that graph 
+looks something like that:
 
-Using label in the NAND chip subnode actually causes current U-Boot to
-delete (!!) the chip node and create partitions on the controller node.
+tcon_top: tcon-top@1c70000 {
+	compatible = "allwinner,sun8i-r40-tcon-top";
+	...
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
 
-See:
-https://elixir.bootlin.com/u-boot/latest/source/common/fdt_support.c#L757
+		tcon_top_in: port@0 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0>;
 
-The code essentially uses the property label to detect whether its a
-NAND chip or a partition...
+			tcon_top_in_mixer0: endpoint@0 {
+				reg = <0>;
+				remote-endpoint = <&mixer0_out_tcon_top>;
+			};
 
-At least this is the case when using fdt_fixup_mtdparts and passing the
-controller compatible ("nvidia,tegra20-nand") in node_info, what our
-downstream U-Boot is currently doing. Maybe we should pass the
-compatible property of the NAND chip? But afaik, chips do not have a
-compatible necessarily.
+			tcon_top_in_mixer1: endpoint@1 {
+				reg = <1>;
+				remote-endpoint = <&mixer1_out_tcon_top>;
+			};
 
-So using label in the chip node is currently a no-go for me.
+			tcon_top_in_tcon_tv: endpoint@2 {
+				reg = <2>;
+				// here is HDMI input connection, part of board DTS
+				remote-endpoint = <board specific phandle to TV TCON output>;
+			};
+		};
 
-Will send out v3 soon.
+		tcon_top_out: port@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
 
---
-Stefan
+			tcon_top_out_tcon0: endpoint@0 {
+				reg = <0>;
+				// here is mixer0 output connection, part of board DTS
+				remote-endpoint = <board specific phandle to TCON>;
+			};
 
+			tcon_top_out_tcon1: endpoint@1 {
+				reg = <1>;
+				// here is mixer1 output connection, part of board DTS
+				remote-endpoint = <board specific phandle to TCON>;
+			};
 
->> +	mtd->owner = THIS_MODULE;
->> +
->> +	nand_set_flash_node(chip, pdev->dev.of_node);
->> +	nand_set_controller_data(chip, nand);
->> +
->> +	chip->options = NAND_NO_SUBPAGE_WRITE;
->> +	chip->exec_op = tegra_nand_exec_op;
->> +	chip->select_chip = tegra_nand_select_chip;
->> +	tegra_nand_setup_timing(nand, 0);
-> 
-> You really should implement ->setup_data_interface() and let the core
-> handle the timings issue entirely (mind that chipnr is not the NAND
-> chip id but more the CS id asserted for the pointed NAND chip).
->  
->> +
->> +	err = nand_scan_ident(mtd, 1, NULL);
->> +	if (err)
->> +		goto err_disable_clk;
->> +
->> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
->> +		chip->bbt_options |= NAND_BBT_NO_OOB;
->> +
->> +	nand->data_buf = dmam_alloc_coherent(&pdev->dev, mtd->writesize,
->> +					    &nand->data_dma, GFP_KERNEL);
-> 
-> Do you need these buffers before nand_scan_tail() or could you simply
-> use the ones allocated by the core right after?
-> 
->> +	if (!nand->data_buf) {
->> +		err = -ENOMEM;
->> +		goto err_disable_clk;
->> +	}
->> +
->> +	nand->oob_buf = dmam_alloc_coherent(&pdev->dev, mtd->oobsize,
->> +					    &nand->oob_dma, GFP_KERNEL);
->> +	if (!nand->oob_buf) {
->> +		err = -ENOMEM;
->> +		goto err_disable_clk;
->> +	}
->> +
->> +	chip->ecc.mode = NAND_ECC_HW;
->> +	chip->ecc.size = 512;
->> +	chip->ecc.read_page = tegra_nand_read_page;
->> +	chip->ecc.write_page = tegra_nand_write_page;
->> +
->> +	value = readl(nand->regs + CFG);
->> +	value |= CFG_PIPE_EN | CFG_SKIP_SPARE | CFG_SKIP_SPARE_SIZE_4 |
->> +		 CFG_TAG_BYTE_SIZE(mtd_ooblayout_count_freebytes(mtd) - 1);
->> +
->> +	if (chip->options & NAND_BUSWIDTH_16)
->> +		value |= CFG_BUS_WIDTH_16;
->> +
->> +	switch (mtd->oobsize) {
->> +	case 16:
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_16_ops);
->> +		chip->ecc.strength = 1;
->> +		chip->ecc.bytes = 4;
->> +		break;
->> +	case 64:
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_64_ops);
->> +		chip->ecc.strength = 8;
->> +		chip->ecc.bytes = 18;
->> +		value |= CFG_ECC_SEL | CFG_TVAL_8;
->> +		break;
->> +	case 128:
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_128_ops);
->> +		chip->ecc.strength = 8;
->> +		chip->ecc.bytes = 18;
->> +		value |= CFG_ECC_SEL | CFG_TVAL_8;
->> +		break;
->> +	case 224:
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_224_ops);
->> +		chip->ecc.strength = 8;
->> +		chip->ecc.bytes = 18;
->> +		value |= CFG_ECC_SEL | CFG_TVAL_8;
->> +		break;
->> +	default:
->> +		dev_err(&pdev->dev, "unhandled OOB size %d\n", mtd->oobsize);
->> +		err = -ENODEV;
->> +		goto err_disable_clk;
->> +	}
->> +
->> +	switch (mtd->writesize) {
->> +	case 256:
->> +		value |= CFG_PS_256;
->> +		break;
->> +	case 512:
->> +		value |= CFG_PS_512;
->> +		break;
->> +	case 1024:
->> +		value |= CFG_PS_1024;
->> +		break;
->> +	case 2048:
->> +		value |= CFG_PS_2048;
->> +		break;
->> +	case 4096:
->> +		value |= CFG_PS_4096;
->> +		break;
->> +	default:
->> +		dev_err(&pdev->dev, "unhandled writesize %d\n", mtd->writesize);
->> +		err = -ENODEV;
->> +		goto err_disable_clk;
->> +	}
->> +
->> +	writel(value, nand->regs + CFG);
->> +
->> +	tegra_nand_setup_chiptiming(nand);
->> +
->> +	err = nand_scan_tail(mtd);
->> +	if (err)
->> +		goto err_disable_clk;
->> +
->> +	err = mtd_device_register(mtd, NULL, 0);
->> +	if (err)
->> +		goto err_cleanup_nand;
->> +
->> +	platform_set_drvdata(pdev, nand);
->> +
->> +	return 0;
->> +
->> +err_cleanup_nand:
->> +	nand_cleanup(chip);
->> +err_disable_clk:
->> +	clk_disable_unprepare(nand->clk);
->> +	return err;
->> +}
->> +
->> +static int tegra_nand_remove(struct platform_device *pdev)
->> +{
->> +	struct tegra_nand *nand = platform_get_drvdata(pdev);
->> +
->> +	nand_release(nand_to_mtd(&nand->chip));
->> +
->> +	clk_disable_unprepare(nand->clk);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct of_device_id tegra_nand_of_match[] = {
->> +	{ .compatible = "nvidia,tegra20-nand" },
->> +	{ /* sentinel */ }
->> +};
->> +
->> +static struct platform_driver tegra_nand_driver = {
->> +	.driver = {
->> +		.name = "tegra-nand",
->> +		.of_match_table = tegra_nand_of_match,
->> +	},
->> +	.probe = tegra_nand_probe,
->> +	.remove = tegra_nand_remove,
->> +};
->> +module_platform_driver(tegra_nand_driver);
->> +
->> +MODULE_DESCRIPTION("NVIDIA Tegra NAND driver");
->> +MODULE_AUTHOR("Thierry Reding <thierry.reding@nvidia.com>");
->> +MODULE_AUTHOR("Lucas Stach <dev@lynxeye.de>");
->> +MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
->> +MODULE_LICENSE("GPL v2");
->> +MODULE_DEVICE_TABLE(of, tegra_nand_of_match);
+			tcon_top_out_hdmi: endpoint@2 {
+				reg = <2>;
+				remote-endpoint = <&hdmi_in_tcon_top>;
+			};
+		};
+	};
+};
+
+tcon_tv0: lcd-controller@1c73000 {
+	compatible = "allwinner,sun8i-r40-tcon-tv-0";
+	...
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		tcon_tv0_in: port@0 {
+			reg = <0>;
+
+			tcon_tv0_in_tcon_top: endpoint {
+				// endpoint depends on board, part of board DTS
+				remote-endpoint = <phandle to one of tcon_top_out_tcon>;
+			};
+		};
+
+		tcon_tv0_out: port@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+
+			// endpoints to TV TOP and TCON TOP HDMI input
+			...
+		};
+	};
+};
+
+tcon_tv1: lcd-controller@1c74000 {
+	compatible = "allwinner,sun8i-r40-tcon-tv-1";
+	...
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		tcon_tv1_in: port@0 {
+			reg = <0>;
+
+			tcon_tv1_in_tcon_top: endpoint {
+				// endpoint depends on board, part of board DTS
+				remote-endpoint = <phandle to one of tcon_top_out_tcon>;
+			};
+		};
+
+		tcon_tv1_out: port@1 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <1>;
+
+			// endpoints to TV TOP and TCON TOP HDMI input
+			...
+		};
+	};
+};
+
+tcon_lcd0 and tcon_lcd1 would have similar connections, except that for 
+outputs would be LCD or LVDS panels or MIPI DSI encoder.
+
+Please note that each TCON (there are 4 of them) would need to have unique 
+compatible and have HW index stored in quirks data. It would be used by TCON 
+TOP driver for configuring muxes.
+
+What do you think about above suggestion?
+
+Best regards,
+Jernej
