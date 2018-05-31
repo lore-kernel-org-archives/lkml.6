@@ -1,136 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754287AbeEaJoB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:44:01 -0400
-Received: from mga02.intel.com ([134.134.136.20]:4520 "EHLO mga02.intel.com"
+        id S1754336AbeEaJoS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:44:18 -0400
+Received: from 8bytes.org ([81.169.241.247]:33658 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754092AbeEaJn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:43:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
-   d="scan'208";a="45654468"
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v1]: perf record: enable arbitrary event names thru name=
- modifier
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Message-ID: <ca21ebcd-3119-a75e-aff3-3684ebc61a68@linux.intel.com>
-Date: Thu, 31 May 2018 12:43:50 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1754308AbeEaJoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 05:44:16 -0400
+Date: Thu, 31 May 2018 11:44:15 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Yizhuo Zhai <yzhai003@ucr.edu>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Chengyu Song <csong@cs.ucr.edu>, Zhiyun Qian <zhiyunq@cs.ucr.edu>
+Subject: Re: [patch] /drivers/iommu/amd_iommu.c: variable unmap_size could be
+ uninitialized
+Message-ID: <20180531094415.GR18595@8bytes.org>
+References: <CABvMjLS3xMmMCSk4Y9Q1rd3398B4kqRi69mn7igPzx6Kt=83cw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABvMjLS3xMmMCSk4Y9Q1rd3398B4kqRi69mn7igPzx6Kt=83cw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Yizhuo Zhai,
 
-Enable complex event names containing [.:=,] symbols to be encoded into Perf 
-trace using name= modifier e.g. like this:
+thanks for your patch, but I think there is a better way to fix that.
+Please see below.
 
-perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',\
-		period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex
+On Wed, May 30, 2018 at 11:02:54PM -0700, Yizhuo Zhai wrote:
+> Variable "unmap_size" is supposed to be initialized in function fetch_pte.
+> However, it's uninitialized if fetch_pte returns NULL. And "unmap_size" is used
+> outside the return check. 
+> 
+> From 377ccb647d3c6c6747f20a242b035bafc775c3be Mon Sep 17 00:00:00 2001
+> 
+> Signed-off-by: From: "yzhai003@ucr.edu" <yzhai003@ucr.edu>
+> ---
+>  drivers/iommu/amd_iommu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+> index 8fb8c73..774e057 100644
+> --- a/drivers/iommu/amd_iommu.c
+> +++ b/drivers/iommu/amd_iommu.c
+> @@ -1500,7 +1500,7 @@ static unsigned long iommu_unmap_page(struct
+> protection_domain *dom,
+>        unsigned long page_size)
+>  {
+>   unsigned long long unmapped;
+> - unsigned long unmap_size;
+> + unsigned long unmap_size = 0;
 
-Below is how it looks like in the report output. Please note explicit escaped 
-quoting at cmdline string in the header so that thestring can be directly reused
-for another collection in shell:
+That is not sufficient because fetch_pte is called in a loop, and when
+it returns NULL then unmap_size keeps the value of the previous
+invocation.
 
-perf report --header
+So from looking at the code, it is better to set page_size=0 in
+fetch_pte at the very beginning, before the function can return NULL.
 
-# ========
-...
-# cmdline : /root/abudanko/kernel/tip/tools/perf/perf record -v -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex 
-# event : name = OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM, , type = 4, size = 112, config = 0x100003c, { sample_period, sample_freq } = 3500000, sample_type = IP|TID|TIME, disabled = 1, inh
-...
-# ========
-#
-#
-# Total Lost Samples: 0
-#
-# Samples: 24K of event 'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM'
-# Event count (approx.): 86492000000
-#
-# Overhead  Command  Shared Object     Symbol                                        
-# ........  .......  ................  ..............................................
-#
-    14.75%  futex    [kernel.vmlinux]  [k] __entry_trampoline_start
-...
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- tools/perf/util/header.c       | 19 +++++++++++++++++--
- tools/perf/util/parse-events.l |  8 +++++++-
- 2 files changed, 24 insertions(+), 3 deletions(-)
+Thanks,
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index a8bff2178fbc..e78700385a24 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1459,8 +1459,23 @@ static void print_cmdline(struct feat_fd *ff, FILE *fp)
- 
- 	fprintf(fp, "# cmdline : ");
- 
--	for (i = 0; i < nr; i++)
--		fprintf(fp, "%s ", ff->ph->env.cmdline_argv[i]);
-+	for (i = 0; i < nr; i++) {
-+		char *argv_i = strdup(ff->ph->env.cmdline_argv[i]);
-+		if (!argv_i) {
-+			fprintf(fp, "%s ", ff->ph->env.cmdline_argv[i]);
-+		} else {
-+			char *mem = argv_i;
-+			do {
-+				char *quote = strchr(argv_i, '\'');
-+				if (!quote) break;
-+				*quote++ = '\0';
-+				fprintf(fp, "%s\\\'", argv_i);
-+				argv_i = quote;
-+			} while (1);
-+			fprintf(fp, "%s ", argv_i);
-+			free(mem);
-+		}
-+	}
- 	fputc('\n', fp);
- }
- 
-diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
-index a1a01b1ac8b8..26c28faa0f62 100644
---- a/tools/perf/util/parse-events.l
-+++ b/tools/perf/util/parse-events.l
-@@ -53,7 +53,11 @@ static int str(yyscan_t scanner, int token)
- 	YYSTYPE *yylval = parse_events_get_lval(scanner);
- 	char *text = parse_events_get_text(scanner);
- 
--	yylval->str = strdup(text);
-+	if (text[0] != '\'')
-+		yylval->str = strdup(text);
-+	 else
-+		yylval->str = strndup(&text[1], strlen(text) - 2);
-+
- 	return token;
- }
- 
-@@ -176,6 +180,7 @@ num_dec		[0-9]+
- num_hex		0x[a-fA-F0-9]+
- num_raw_hex	[a-fA-F0-9]+
- name		[a-zA-Z_*?\[\]][a-zA-Z0-9_*?.\[\]]*
-+name_tag	[\'][a-zA-Z_*?\[\]][a-zA-Z0-9_*?\-,\.\[\]:=]*[\']
- name_minus	[a-zA-Z_*?][a-zA-Z0-9\-_*?.:]*
- drv_cfg_term	[a-zA-Z0-9_\.]+(=[a-zA-Z0-9_*?\.:]+)?
- /* If you add a modifier you need to update check_modifier() */
-@@ -344,6 +349,7 @@ r{num_raw_hex}		{ return raw(yyscanner); }
- {bpf_object}		{ if (!isbpf(yyscanner)) { USER_REJECT }; return str(yyscanner, PE_BPF_OBJECT); }
- {bpf_source}		{ if (!isbpf(yyscanner)) { USER_REJECT }; return str(yyscanner, PE_BPF_SOURCE); }
- {name}			{ return pmu_str_check(yyscanner); }
-+{name_tag}		{ return str(yyscanner, PE_NAME); }
- "/"			{ BEGIN(config); return '/'; }
- -			{ return '-'; }
- ,			{ BEGIN(event); return ','; }
+	Joerg
