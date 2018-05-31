@@ -1,79 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754121AbeEaIlp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:41:45 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41745 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754046AbeEaIlj (ORCPT
+        id S1754178AbeEaImC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:42:02 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:42460 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754046AbeEaIl7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:41:39 -0400
-X-Google-Smtp-Source: ADUXVKI3xYUetrHjfusQDohYG0knYSgHy9zXELSZy2xDyO/phYZP2uYsiyXHdbJgYNlD+294i8iPrg==
-Date: Thu, 31 May 2018 10:41:34 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Zefan Li <lizefan@huawei.com>, Waiman Long <longman@redhat.com>,
-        Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] cpuset: Enforce that a child's cpus must be a subset of
- the parent
-Message-ID: <20180531084134.GA17937@localhost.localdomain>
-References: <1527687991-1431-1-git-send-email-longman@redhat.com>
- <5B0F4F09.9050100@huawei.com>
- <5B0FAE72.1090204@huawei.com>
- <20180531082613.GF12180@hirez.programming.kicks-ass.net>
+        Thu, 31 May 2018 04:41:59 -0400
+X-Google-Smtp-Source: ADUXVKKCP1IPcMMN4x1Rz9WDWGlV7NeKKl91IgNp+L6F+WQ4MuglhlobxE5iQY2QQHurrgR1XuDvEi/QnZ+sqYl/8Wk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531082613.GF12180@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180530120327.27681-1-peron.clem@gmail.com> <20180530120327.27681-6-peron.clem@gmail.com>
+ <a4042956-24e1-6132-4606-b5b8f4e30023@mentor.com>
+In-Reply-To: <a4042956-24e1-6132-4606-b5b8f4e30023@mentor.com>
+From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date: Thu, 31 May 2018 10:41:47 +0200
+Message-ID: <CAJiuCcefvMg6r=06O8m1TYa0hat_dHydcoJ7PN58qUru1K8zMQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] ARM: dts: imx6qdl: add missing compatible and
+ clock properties for EPIT
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4V8giup025809
 
-On 31/05/18 10:26, Peter Zijlstra wrote:
-> On Thu, May 31, 2018 at 04:12:34PM +0800, Zefan Li wrote:
-> > On 2018/5/31 9:25, Zefan Li wrote:
-> > > Hi Waiman,
-> > > 
-> > > On 2018/5/30 21:46, Waiman Long wrote:
-> > >> It was found that the cpuset.cpus could contain CPUs that are not listed
-> > >> in their parent's cpu list as shown by the command sequence below:
-> > >>
-> > >>   # echo "+cpuset" >cgroup.subtree_control
-> > >>   # mkdir g1
-> > >>   # echo 0-5 >g1/cpuset.cpus
-> > >>   # mkdir g1/g11
-> > >>   # echo "+cpuset" > g1/cgroup.subtree_control
-> > >>   # echo 6-11 >g1/g11/cpuset.cpus
-> > >>   # grep -R . g1 | grep "\.cpus"
-> > >>   g1/cpuset.cpus:0-5
-> > >>   g1/cpuset.cpus.effective:0-5
-> > >>   g1/g11/cpuset.cpus:6-11
-> > >>   g1/g11/cpuset.cpus.effective:0-5
-> > >>
-> > >> As the intersection of g11's cpus and that of g1 is empty, the effective
-> > >> cpus of g11 is just that of g1. The check in update_cpumask() is now
-> > >> corrected to make sure that cpus in a child cpus must be a subset of
-> > >> its parent's cpus. The error "write error: Invalid argument" will now
-> > >> be reported in the above case.
-> > >>
-> > > 
-> > > We made the distinction between user-configured CPUs and effective CPUs
-> > > in commit 7e88291beefbb758, so actually it's not a bug.
-> > > 
-> > 
-> > I remember the original reason is to support restoration of the original
-> > cpu after cpu offline->online. We use user-configured CPUs to remember
-> > if the cpu should be restored in the cpuset after it's onlined.
-> 
-> AFAICT you can do that and still have the child a subset of the parent,
-> no?
+Hi Vladimir,
 
-Plus this is not hotplug, but a user decision. It could make sense to
-keep .cpus unmodified after hotplug events, but does it make sense to
-let the user be able to choose cpus outside the parent domain?
+On Thu, 31 May 2018 at 10:33, Vladimir Zapolskiy
+<vladimir_zapolskiy@mentor.com> wrote:
+>
+> On 05/30/2018 03:03 PM, Clément Péron wrote:
+> > From: Colin Didier <colin.didier@devialet.com>
+> >
+> > Add missing compatible and clock properties for EPIT node.
+> >
+> > Signed-off-by: Colin Didier <colin.didier@devialet.com>
+> > Signed-off-by: Clément Peron <clement.peron@devialet.com>
+> > Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+> > ---
+> >  arch/arm/boot/dts/imx6qdl.dtsi | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+> > index c003e62bf290..0feec516847a 100644
+> > --- a/arch/arm/boot/dts/imx6qdl.dtsi
+> > +++ b/arch/arm/boot/dts/imx6qdl.dtsi
+> > @@ -844,13 +844,23 @@
+> >                       };
+> >
+> >                       epit1: epit@20d0000 { /* EPIT1 */
+>
+> epit1: timer@20d0000 { ...
+>
+> And /* EPIT1 */ comment can be removed, it is quite clear from the same
+> line context.
+>
+> Formally it is a subject to another patch, but I think this can be
+> accepted as a part of this one.
+
+Should I also update other boards ?
+I only did it for imx6qdl.dtsi, but the EPIT is present in other boards
+but i can't test it myself.
+
+>
+> > +                             compatible = "fsl,imx6q-epit", "fsl,imx31-epit";
+> >                               reg = <0x020d0000 0x4000>;
+> >                               interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
+> > +                             clocks = <&clks IMX6QDL_CLK_IPG_PER>,
+> > +                                      <&clks IMX6QDL_CLK_EPIT1>;
+> > +                             clock-names = "ipg", "per";
+> > +                             status = "disabled";
+> >                       };
+> >
+> >                       epit2: epit@20d4000 { /* EPIT2 */
+>
+> Same as above.
+>
+> > +                             compatible = "fsl,imx6q-epit", "fsl,imx31-epit";
+> >                               reg = <0x020d4000 0x4000>;
+> >                               interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
+> > +                             clocks = <&clks IMX6QDL_CLK_IPG_PER>,
+> > +                                      <&clks IMX6QDL_CLK_EPIT2>;
+> > +                             clock-names = "ipg", "per";
+> > +                             status = "disabled";
+> >                       };
+> >
+> >                       src: src@20d8000 {
+> >
+>
+> --
+> With best wishes,
+> Vladimir
