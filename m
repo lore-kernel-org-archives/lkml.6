@@ -1,14 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755746AbeEaQt2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:49:28 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:38729 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755696AbeEaQtZ (ORCPT
+        id S932750AbeEaQua (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:50:30 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:39500 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932714AbeEaQu1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:49:25 -0400
-X-Google-Smtp-Source: ADUXVKKEK4BluPoPK5TFgBDsB2E/lxKdSrWs6iCiu7Qtgm/xivp/t5zJk5jqVjaJXVODdn7cdRzrDQ==
+        Thu, 31 May 2018 12:50:27 -0400
+X-Google-Smtp-Source: ADUXVKLU22FI19IJRKrLsrYGUV7lGcgyAGnROIdgCWFsbsKvfoJP+QAQcCwF4KQ9iFygUOUAekBZQQ==
 Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
+From: "Alex G." <mr.nuke.me@gmail.com>
 To: Sinan Kaya <okaya@codeaurora.org>, Alex_Gagniuc@Dellteam.com,
         bhelgaas@google.com
 Cc: Austin.Bolen@dell.com, Shyam.Iyer@dell.com, keith.busch@intel.com,
@@ -21,13 +22,13 @@ References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
  <35563ce3-e235-096c-4b9b-5f3664d67d0f@codeaurora.org>
  <093b2789-39a1-db9e-5783-b0488b3c9ccd@gmail.com>
  <32d58835-2f35-0b80-38d0-b9ff603619dd@codeaurora.org>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <54071f83-5d0d-04a0-d448-0c99ec0ffc4f@gmail.com>
-Date: Thu, 31 May 2018 11:49:21 -0500
+ <54071f83-5d0d-04a0-d448-0c99ec0ffc4f@gmail.com>
+Message-ID: <dbe16533-1878-13ed-709a-04b3a75fe477@gmail.com>
+Date: Thu, 31 May 2018 11:50:25 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <32d58835-2f35-0b80-38d0-b9ff603619dd@codeaurora.org>
+In-Reply-To: <54071f83-5d0d-04a0-d448-0c99ec0ffc4f@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -37,36 +38,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 05/31/2018 11:13 AM, Sinan Kaya wrote:
-> On 5/31/2018 12:01 PM, Alex G. wrote:
->>>       PCI: Add pcie_print_link_status() to log link speed and whether it's limited
->> This one, I have, but it's not what I need. This looks at the available
->> bandwidth from root port to endpoint, whereas I'm only interested in
->> downtraining between endpoint and upstream port.
+On 05/31/2018 11:49 AM, Alex G. wrote:
 > 
-> I see what you are saying. 
 > 
-> With a little bit of effort, you can reuse the same code.
+> On 05/31/2018 11:13 AM, Sinan Kaya wrote:
+>> On 5/31/2018 12:01 PM, Alex G. wrote:
+>>>>       PCI: Add pcie_print_link_status() to log link speed and whether it's limited
+>>> This one, I have, but it's not what I need. This looks at the available
+>>> bandwidth from root port to endpoint, whereas I'm only interested in
+>>> downtraining between endpoint and upstream port.
+>>
+>> I see what you are saying. 
+>>
+>> With a little bit of effort, you can reuse the same code.
+>>
+>> Here is an attempt.
+>>
+>> You can probably extend pcie_bandwidth_available() to put an optional parent bridge
+>> device for your own use case and terminate the loop around here.
+>>
+>> https://elixir.bootlin.com/linux/v4.17-rc7/source/drivers/pci/pci.c#L5182
+>>
+>> Then, you can use the existing code to achieve what you are looking for via
+>> pcie_print_link_status() by adding an optional parent parameter.
+>>
+>> 	bw_cap = pcie_bandwidth_capable(dev, &speed_cap, &width_cap);
+>> 	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width, *parent*);
 > 
-> Here is an attempt.
-> 
-> You can probably extend pcie_bandwidth_available() to put an optional parent bridge
-> device for your own use case and terminate the loop around here.
-> 
-> https://elixir.bootlin.com/linux/v4.17-rc7/source/drivers/pci/pci.c#L5182
-> 
-> Then, you can use the existing code to achieve what you are looking for via
-> pcie_print_link_status() by adding an optional parent parameter.
-> 
-> 	bw_cap = pcie_bandwidth_capable(dev, &speed_cap, &width_cap);
-> 	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width, *parent*);
+> That's confusing.
 
-That's confusing. I'd expect _capable() and _available() to be
-symmetrical. They either both look at one link only, or both go down to
-the root port. Though it seems _capable() is link-local, and
-_available() is down to root port.
+"confusing" refers to the way the code currently works. It doesn't refer
+to your proposal.
 
+
+Alex
+
+ I'd expect _capable() and _available() to be
+> symmetrical. They either both look at one link only, or both go down to
+> the root port. Though it seems _capable() is link-local, and
+> _available() is down to root port.
 > 
-> If parent parameter is NULL, code can walk all the way to root as it is doing today.
-> If it is not, then will terminate the loop on the first iteration.
-> 
+>>
+>> If parent parameter is NULL, code can walk all the way to root as it is doing today.
+>> If it is not, then will terminate the loop on the first iteration.
+>>
