@@ -1,77 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753928AbeEaGmV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:42:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39350 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753803AbeEaGmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:42:19 -0400
-Date: Thu, 31 May 2018 08:42:05 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Stefan Agner <stefan@agner.ch>, boris.brezillon@bootlin.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
-        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] mtd: rawnand: tegra: add devicetree binding
-Message-ID: <20180531084205.38bfe90f@xps13>
-In-Reply-To: <20180531034523.GA5417@rob-hp-laptop>
-References: <20180527215442.14760-3-stefan@agner.ch>
-        <20180528002354.45025afd@xps13>
-        <20180531034523.GA5417@rob-hp-laptop>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753975AbeEaGpn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:45:43 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:55270 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753740AbeEaGpm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 02:45:42 -0400
+Date: Thu, 31 May 2018 14:45:34 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Gary R Hook <gary.hook@amd.com>
+Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Brijesh Singh <brijesh.singh@amd.com>, Borislav Petkov <bp@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCHv2 0/2] Add new SEV commands
+Message-ID: <20180531064534.ldi2ysuhh2omex5d@gondor.apana.org.au>
+References: <cover.1527274269.git.Janakarajan.Natarajan@amd.com>
+ <20180530162819.4xbwb3jbbx5dey24@gondor.apana.org.au>
+ <79caff3c-1002-9fea-1ab6-954062435633@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79caff3c-1002-9fea-1ab6-954062435633@amd.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On Wed, 30 May 2018 22:45:23 -0500, Rob Herring <robh@kernel.org> wrote:
-
-> On Mon, May 28, 2018 at 12:23:54AM +0200, Miquel Raynal wrote:
-> > Hi Stefan,
+On Wed, May 30, 2018 at 01:44:12PM -0500, Gary R Hook wrote:
+> On 05/30/2018 11:28 AM, Herbert Xu wrote:
+> > On Fri, May 25, 2018 at 03:23:28PM -0500, Janakarajan Natarajan wrote:
+> > > This patchset adds two new SEV commands, introduced in SEV API v0.15
+> > > and v0.16 respectively.
+> > > 
+> > > * DOWNLOAD_FIRMWARE allows the SEV firmware to be updated if a blob newer
+> > >    than or similar to the exisiting build is available.
+> > > 
+> > > * GET_ID allows to query for a unique ID that can be used to retrieve the
+> > >    Chip Endorsment Key (CEK) public key signed by the AMD SEV Signing Key
+> > >    (ASK).
+> > > 
+> > > v1->v2:
+> > > * Added cover letter.
+> > > * Misc changes based on Boris' feedback.
+> > > 
+> > > Janakarajan Natarajan (2):
+> > >    crypto: ccp: Add DOWNLOAD_FIRMWARE SEV command
+> > >    crypto: ccp: Add GET_ID SEV command
+> > > 
+> > >   drivers/crypto/ccp/psp-dev.c | 143 ++++++++++++++++++++++++++++++++++++++++---
+> > >   drivers/crypto/ccp/psp-dev.h |   4 ++
+> > >   include/linux/psp-sev.h      |  23 +++++++
+> > >   include/uapi/linux/psp-sev.h |  12 ++++
+> > >   4 files changed, 172 insertions(+), 10 deletions(-)
 > > 
-> > On Sun, 27 May 2018 23:54:38 +0200, Stefan Agner <stefan@agner.ch>
-> > wrote:
-> >   
-> > > From: Lucas Stach <dev@lynxeye.de>
-> > > 
-> > > This adds the devicetree binding for the Tegra 2 NAND flash
-> > > controller.
-> > > 
-> > > Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > > ---
-> > >  .../bindings/mtd/nvidia,tegra20-nand.txt      | 62 +++++++++++++++++++
-> > >  1 file changed, 62 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> > > new file mode 100644
-> > > index 000000000000..49e472af1b39
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> > > @@ -0,0 +1,62 @@
-> > > +NVIDIA Tegra NAND Flash controller
-> > > +
-> > > +Required properties:
-> > > +- compatible: Must be one of:  
-> > 
-> > Nitpick: just put the compatible here as there is only one?  
+> > All applied.  Thanks.
 > 
-> No, this is how I ask people to format it.
+> Huh. Without a Reviewed-by or an Acked-by?
 
-Oh, ok, I'll remember it for my own DT patches then :)
+These patches have been out there for weeks.  If you were going
+to object you should have done so by now.
 
-Thanks,
-Miquèl
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
