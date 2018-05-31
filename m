@@ -1,91 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeEaVLC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 17:11:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34466 "EHLO mail.bootlin.com"
+        id S1751201AbeEaVLu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 17:11:50 -0400
+Received: from mga02.intel.com ([134.134.136.20]:46819 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750795AbeEaVKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 17:10:03 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 5/5] rtc: test: remove irq sysfs file
-Date: Thu, 31 May 2018 23:09:59 +0200
-Message-Id: <20180531210959.2472-5-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180531210959.2472-1-alexandre.belloni@bootlin.com>
-References: <20180531210959.2472-1-alexandre.belloni@bootlin.com>
+        id S1750766AbeEaVLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 17:11:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
+   d="scan'208";a="55572418"
+From: "Bae, Chang Seok" <chang.seok.bae@intel.com>
+To: Andy Lutomirski <luto@kernel.org>
+CC: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V2 00/15] x86: Enable FSGSBASE instructions
+Thread-Topic: [PATCH V2 00/15] x86: Enable FSGSBASE instructions
+Thread-Index: AQHT+QkbMI0rMwAEAkyWFDH5cwIjEqRKsQgA//+jiQA=
+Date: Thu, 31 May 2018 21:11:44 +0000
+Message-ID: <C9BB696F3A938947B10DCAD29FAB8FFA66BBA483@CRSMSX101.amr.corp.intel.com>
+References: <1527789525-8857-1-git-send-email-chang.seok.bae@intel.com>
+ <CALCETrVAW5wuABK63h8frMuW_-tT29ZWPH2fPMiffOWQn8Lp2g@mail.gmail.com>
+In-Reply-To: <CALCETrVAW5wuABK63h8frMuW_-tT29ZWPH2fPMiffOWQn8Lp2g@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDJjNmJjNWMtMzAxMC00YzQ0LTgzZTMtOWFlZTcwMWE1ZGMzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJ4bGU3Q1FPZkROaVpGNnpFWU9RTldOYThXaVNhZ3h2ZTllSzVUaENkU1dUNG1JRlROWkx0NmpYam5cLzRcL1RMeHgifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [172.18.205.10]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4VLBrmc009946
 
-Now that alarms are emulated, remove the irq sysfs file that could be used
-to send alarms.
+> 1. Can you try and generate a new version of patches 1-5 quickly?  I think it would be nice to get them merged this cycle.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-test.c | 39 ---------------------------------------
- 1 file changed, 39 deletions(-)
-
-diff --git a/drivers/rtc/rtc-test.c b/drivers/rtc/rtc-test.c
-index 975f6cdda73f..fbcec4a2e3c9 100644
---- a/drivers/rtc/rtc-test.c
-+++ b/drivers/rtc/rtc-test.c
-@@ -110,37 +110,6 @@ static void test_rtc_alarm_handler(struct timer_list *t)
- 	rtc_update_irq(rtd->rtc, 1, RTC_AF | RTC_IRQF);
- }
- 
--static ssize_t test_irq_show(struct device *dev,
--				struct device_attribute *attr, char *buf)
--{
--	return sprintf(buf, "%d\n", 42);
--}
--static ssize_t test_irq_store(struct device *dev,
--				struct device_attribute *attr,
--				const char *buf, size_t count)
--{
--	int retval;
--	struct rtc_device *rtc = dev_get_drvdata(dev);
--
--	retval = count;
--	if (strncmp(buf, "tick", 4) == 0 && rtc->pie_enabled)
--		rtc_update_irq(rtc, 1, RTC_PF | RTC_IRQF);
--	else if (strncmp(buf, "alarm", 5) == 0) {
--		struct rtc_wkalrm alrm;
--		int err = rtc_read_alarm(rtc, &alrm);
--
--		if (!err && alrm.enabled)
--			rtc_update_irq(rtc, 1, RTC_AF | RTC_IRQF);
--
--	} else if (strncmp(buf, "update", 6) == 0 && rtc->uie_rtctimer.enabled)
--		rtc_update_irq(rtc, 1, RTC_UF | RTC_IRQF);
--	else
--		retval = -EINVAL;
--
--	return retval;
--}
--static DEVICE_ATTR(irq, S_IRUGO | S_IWUSR, test_irq_show, test_irq_store);
--
- static int test_probe(struct platform_device *plat_dev)
- {
- 	struct rtc_test_data *rtd;
-@@ -162,16 +131,8 @@ static int test_probe(struct platform_device *plat_dev)
- 	return 0;
- }
- 
--static int test_remove(struct platform_device *plat_dev)
--{
--	device_remove_file(&plat_dev->dev, &dev_attr_irq);
--
--	return 0;
--}
--
- static struct platform_driver test_driver = {
- 	.probe	= test_probe,
--	.remove = test_remove,
- 	.driver = {
- 		.name = "rtc-test",
- 	},
--- 
-2.17.0
+Okay, let me reply, first, what I can do now. Will do submit patches with revisions, (as soon as I can).
