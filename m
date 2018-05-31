@@ -1,49 +1,233 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932716AbeEaOvm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:51:42 -0400
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:35687 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932577AbeEaOvj (ORCPT
+        id S932743AbeEaOwS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:52:18 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:43999 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755438AbeEaOuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:51:39 -0400
-X-Google-Smtp-Source: ADUXVKK6Ik/sB3i4DRNHwoMvyGND/WjwPwGnKaLzwB8rfFhIoQUTyM21rpOv2SaMzTJYr21NjkxX5T7gvz4cIjEkgXU=
-MIME-Version: 1.0
-In-Reply-To: <1527679434-13228-2-git-send-email-lowry.li@arm.com>
-References: <1527679434-13228-1-git-send-email-lowry.li@arm.com> <1527679434-13228-2-git-send-email-lowry.li@arm.com>
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Date: Thu, 31 May 2018 15:51:37 +0100
-Message-ID: <CACvgo52NznSOWNvB_uOT4iQ-8+3A=ohhBe2os+jbEc=8pswn3A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] drm/blend: Add per-plane pixel blend mode property
-To: Lowry Li <lowry.li@arm.com>
-Cc: Liviu Dudau <liviu.dudau@arm.com>, David Airlie <airlied@linux.ie>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        "Vetter, Daniel" <daniel.vetter@intel.com>, nd@arm.com
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 31 May 2018 10:50:55 -0400
+X-Google-Smtp-Source: ADUXVKJHtlyfLC90ynUcc4jiE0C9BnnTaikIqcH79wA1wIbR+i73L5NnuQdW/ymGlTorfL8ncRGyTQ==
+From: Tycho Andersen <tycho@tycho.ws>
+To: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org
+Cc: Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>, Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        "Tobin C . Harding" <me@tobin.cc>, Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH v3 3/4] seccomp: add a way to get a listener fd from ptrace
+Date: Thu, 31 May 2018 08:49:48 -0600
+Message-Id: <20180531144949.24995-4-tycho@tycho.ws>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180531144949.24995-1-tycho@tycho.ws>
+References: <20180531144949.24995-1-tycho@tycho.ws>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lowry,
+As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
+version which can acquire filters is useful. There are at least two reasons
+this is preferable, even though it uses ptrace:
 
-Small drive-by suggestion. Haven't checked if others have pointed it
-out previously :-\
+1. You can control tasks that aren't cooperating with you
+2. You can control tasks whose filters block sendmsg() and socket(); if the
+   task installs a filter which blocks these calls, there's no way with
+   SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
 
-On 30 May 2018 at 12:23, Lowry Li <lowry.li@arm.com> wrote:
+v2: fix a bug where listener mode was not unset when an unused fd was not
+    available
+v3: fix refcounting bug (Oleg)
 
-> +/**
-> + * drm_plane_create_blend_mode_property - create a new blend mode property
-> + * @plane: drm plane
-> + * @supported_modes: bitmask of supported modes, must include
-> + *                  BIT(DRM_MODE_BLEND_PREMULTI)
-> + *
-There are two possible blend modes (ignoring 'none'), yet premult must
-be supported.
-What if the hardware can do only "coverage"?
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+CC: Kees Cook <keescook@chromium.org>
+CC: Andy Lutomirski <luto@amacapital.net>
+CC: Oleg Nesterov <oleg@redhat.com>
+CC: Eric W. Biederman <ebiederm@xmission.com>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: Christian Brauner <christian.brauner@ubuntu.com>
+CC: Tyler Hicks <tyhicks@canonical.com>
+CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+---
+ include/linux/seccomp.h                       | 11 ++++
+ include/uapi/linux/ptrace.h                   |  2 +
+ kernel/ptrace.c                               |  4 ++
+ kernel/seccomp.c                              | 28 ++++++++
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 66 +++++++++++++++++++
+ 5 files changed, 111 insertions(+)
 
-One-liner explaining why things are as-is would be a great move.
-
-HTH
-Emil
+diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+index 0fd3e0676a1c..10e684899b7b 100644
+--- a/include/linux/seccomp.h
++++ b/include/linux/seccomp.h
+@@ -111,4 +111,15 @@ static inline long seccomp_get_metadata(struct task_struct *task,
+ 	return -EINVAL;
+ }
+ #endif /* CONFIG_SECCOMP_FILTER && CONFIG_CHECKPOINT_RESTORE */
++
++#ifdef CONFIG_SECCOMP_USER_NOTIFICATION
++extern long seccomp_get_listener(struct task_struct *task,
++				 unsigned long filter_off);
++#else
++static inline long seccomp_get_listener(struct task_struct *task,
++					unsigned long filter_off)
++{
++	return -EINVAL;
++}
++#endif/* CONFIG_SECCOMP_USER_NOTIFICATION */
+ #endif /* _LINUX_SECCOMP_H */
+diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
+index d5a1b8a492b9..dc0abf81de3b 100644
+--- a/include/uapi/linux/ptrace.h
++++ b/include/uapi/linux/ptrace.h
+@@ -73,6 +73,8 @@ struct seccomp_metadata {
+ 	__u64 flags;		/* Output: filter's flags */
+ };
+ 
++#define PTRACE_SECCOMP_GET_LISTENER	0x420e
++
+ /* Read signals from a shared (process wide) queue */
+ #define PTRACE_PEEKSIGINFO_SHARED	(1 << 0)
+ 
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index 21fec73d45d4..fcbdb6f4dc07 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -1096,6 +1096,10 @@ int ptrace_request(struct task_struct *child, long request,
+ 		ret = seccomp_get_metadata(child, addr, datavp);
+ 		break;
+ 
++	case PTRACE_SECCOMP_GET_LISTENER:
++		ret = seccomp_get_listener(child, addr);
++		break;
++
+ 	default:
+ 		break;
+ 	}
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index 4a6d6bd80d07..6dc99c65c2f4 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -1668,6 +1668,34 @@ static struct file *init_listener(struct task_struct *task,
+ 
+ 	return ret;
+ }
++
++long seccomp_get_listener(struct task_struct *task,
++			  unsigned long filter_off)
++{
++	struct seccomp_filter *filter;
++	struct file *listener;
++	int fd;
++
++	filter = get_nth_filter(task, filter_off);
++	if (IS_ERR(filter))
++		return PTR_ERR(filter);
++
++	fd = get_unused_fd_flags(O_RDWR);
++	if (fd < 0) {
++		__put_seccomp_filter(filter);
++		return fd;
++	}
++
++	listener = init_listener(task, task->seccomp.filter);
++	__put_seccomp_filter(filter);
++	if (IS_ERR(listener)) {
++		put_unused_fd(fd);
++		return PTR_ERR(listener);
++	}
++
++	fd_install(fd, listener);
++	return fd;
++}
+ #else
+ static struct file *init_listener(struct task_struct *task,
+ 				  struct seccomp_filter *filter)
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index f439bd3fb15f..07984f7bd601 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -178,6 +178,10 @@ int seccomp(unsigned int op, unsigned int flags, void *args)
+ }
+ #endif
+ 
++#ifndef PTRACE_SECCOMP_GET_LISTENER
++#define PTRACE_SECCOMP_GET_LISTENER 0x420e
++#endif
++
+ #if __BYTE_ORDER == __LITTLE_ENDIAN
+ #define syscall_arg(_n) (offsetof(struct seccomp_data, args[_n]))
+ #elif __BYTE_ORDER == __BIG_ENDIAN
+@@ -3110,6 +3114,68 @@ TEST(get_user_notification_syscall)
+ 	close(listener);
+ }
+ 
++TEST(get_user_notification_ptrace)
++{
++	pid_t pid;
++	int status, listener;
++	int sk_pair[2];
++	char c;
++	struct seccomp_notif req = {};
++	struct seccomp_notif_resp resp = {};
++
++	ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		EXPECT_EQ(user_trap_syscall(__NR_getpid, 0), 0);
++
++		/* Test that we get ENOSYS while not attached */
++		EXPECT_EQ(syscall(__NR_getpid), -1);
++		EXPECT_EQ(errno, ENOSYS);
++
++		/* Signal we're ready and have installed the filter. */
++		EXPECT_EQ(write(sk_pair[1], "J", 1), 1);
++
++		EXPECT_EQ(read(sk_pair[1], &c, 1), 1);
++		EXPECT_EQ(c, 'H');
++
++		exit(syscall(__NR_getpid) != USER_NOTIF_MAGIC);
++	}
++
++	EXPECT_EQ(read(sk_pair[0], &c, 1), 1);
++	EXPECT_EQ(c, 'J');
++
++	EXPECT_EQ(ptrace(PTRACE_ATTACH, pid), 0);
++	EXPECT_EQ(waitpid(pid, NULL, 0), pid);
++	listener = ptrace(PTRACE_SECCOMP_GET_LISTENER, pid, 0);
++	EXPECT_GE(listener, 0);
++
++	/* EBUSY for second listener */
++	EXPECT_EQ(ptrace(PTRACE_SECCOMP_GET_LISTENER, pid, 0), -1);
++	EXPECT_EQ(errno, EBUSY);
++
++	EXPECT_EQ(ptrace(PTRACE_DETACH, pid, NULL, 0), 0);
++
++	/* Now signal we are done and respond with magic */
++	EXPECT_EQ(write(sk_pair[0], "H", 1), 1);
++
++	EXPECT_EQ(read(listener, &req, sizeof(req)), sizeof(req));
++
++	resp.id = req.id;
++	resp.error = 0;
++	resp.val = USER_NOTIF_MAGIC;
++
++	EXPECT_EQ(write(listener, &resp, sizeof(resp)), sizeof(resp));
++
++	EXPECT_EQ(waitpid(pid, &status, 0), pid);
++	EXPECT_EQ(true, WIFEXITED(status));
++	EXPECT_EQ(0, WEXITSTATUS(status));
++
++	close(listener);
++}
++
+ /*
+  * TODO:
+  * - add microbenchmarks
+-- 
+2.17.0
