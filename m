@@ -1,61 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932661AbeEaCnJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 22:43:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57652 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932621AbeEaCnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 22:43:06 -0400
-Date: Thu, 31 May 2018 10:42:48 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Mike Snitzer <snitzer@redhat.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Smart <james.smart@broadcom.com>, Ewan Milne <emilne@redhat.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-Message-ID: <20180531024247.GA15700@ming.t460p>
-References: <20180525125322.15398-1-jthumshirn@suse.de>
- <20180525130535.GA24239@lst.de>
- <20180525135813.GB9591@redhat.com>
- <20180525141211.GA25971@lst.de>
- <20180525145056.GD9591@redhat.com>
- <yq1muwj45sg.fsf@oracle.com>
- <20180529030236.GA28895@redhat.com>
- <20180529072240.np5c62akbr7jqelr@linux-x5ow.site>
+        id S932669AbeEaCrv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 22:47:51 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:35774 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932621AbeEaCrt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 22:47:49 -0400
+X-Google-Smtp-Source: ADUXVKIXziw/hv7kBHBGn3Nh/j4+syBcjmjAzp4S6m5rZGlVQzj1VnyuNQl2EoQVFavA49rviLB6nA==
+Date: Wed, 30 May 2018 21:47:46 -0500
+From: Rob Herring <robh@kernel.org>
+To: Stu Hsieh <stu.hsieh@mediatek.com>
+Cc: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>, Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com
+Subject: Re: [PATCH v4 1/9] drm/mediatek: update dt-bindings for mt2712
+Message-ID: <20180531024746.GA8356@rob-hp-laptop>
+References: <1527489507-24453-1-git-send-email-stu.hsieh@mediatek.com>
+ <1527489507-24453-2-git-send-email-stu.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529072240.np5c62akbr7jqelr@linux-x5ow.site>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1527489507-24453-2-git-send-email-stu.hsieh@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 09:22:40AM +0200, Johannes Thumshirn wrote:
-> On Mon, May 28, 2018 at 11:02:36PM -0400, Mike Snitzer wrote:
-> > No, what both Red Hat and SUSE are saying is: cool let's have a go at
-> > "Plan A" but, in parallel, what harm is there in allowing "Plan B" (dm
-> > multipath) to be conditionally enabled to coexist with native NVMe
-> > multipath?
+On Mon, May 28, 2018 at 02:38:19PM +0800, Stu Hsieh wrote:
+> Update device tree binding documentation for the display subsystem for
+> Mediatek MT2712 SoCs.
 > 
-> For a "Plan B" we can still use the global knob that's already in
-> place (even if this reminds me so much about scsi-mq which at least we
-> haven't turned on in fear of performance regressions).
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> Acked-by: CK Hu <ck.hu@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-BTW, for scsi-mq, we have made a little progress by commit 2f31115e940c
-(scsi: core: introduce force_blk_mq), and virtio-scsi is working at
-always scsi-mq mode now. Then driver can decide if .force_blk_mq needs
-to be set.
-
-Hope progress can be made in this nvme mpath issue too.
-
-Thanks,
-Ming
+Acked-by: Rob Herring <robh@kernel.org>
