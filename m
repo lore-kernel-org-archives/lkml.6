@@ -1,72 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754132AbeEaIYg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:24:36 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46575 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753957AbeEaIYc (ORCPT
+        id S1754069AbeEaI0h (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:26:37 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36412 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753957AbeEaI0f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:24:32 -0400
-X-Google-Smtp-Source: ADUXVKJC3Kyl88cyWHGBYkiCXvkgKhdiMDK0jZZSxfGDzzXdz+3fFAk9Efkw9uolmL2y0KOQxla+LA==
-Date: Thu, 31 May 2018 09:24:28 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ebiggers@google.com
-Subject: Re: [PATCH] kdb: prefer strlcpy to strncpy
-Message-ID: <20180531082428.c5z7cpdetdrhy5wd@holly.lan>
-References: <1527573427-16569-1-git-send-email-nick.desaulniers@gmail.com>
- <CAK8P3a2=THd7YL6sB4=xXZShD=wOjk_taM1L-E5VPH77TiQK0w@mail.gmail.com>
- <CAH7mPvhQo5S5EbgvkteoL1xftLWjWBqkfoanG0dTLzaa=FtTgw@mail.gmail.com>
- <20180530143415.ksc6fb4zo6m7xb25@holly.lan>
- <CAMuHMdXE980MDNO4mxOkwO=5AWV=Nzwwu1Sjt653AK8bMHbWsA@mail.gmail.com>
+        Thu, 31 May 2018 04:26:35 -0400
+Date: Thu, 31 May 2018 10:26:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Zefan Li <lizefan@huawei.com>
+Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH] cpuset: Enforce that a child's cpus must be a subset of
+ the parent
+Message-ID: <20180531082613.GF12180@hirez.programming.kicks-ass.net>
+References: <1527687991-1431-1-git-send-email-longman@redhat.com>
+ <5B0F4F09.9050100@huawei.com>
+ <5B0FAE72.1090204@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXE980MDNO4mxOkwO=5AWV=Nzwwu1Sjt653AK8bMHbWsA@mail.gmail.com>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <5B0FAE72.1090204@huawei.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 10:47:13PM +0200, Geert Uytterhoeven wrote:
-> H Daniel,
+On Thu, May 31, 2018 at 04:12:34PM +0800, Zefan Li wrote:
+> On 2018/5/31 9:25, Zefan Li wrote:
+> > Hi Waiman,
+> > 
+> > On 2018/5/30 21:46, Waiman Long wrote:
+> >> It was found that the cpuset.cpus could contain CPUs that are not listed
+> >> in their parent's cpu list as shown by the command sequence below:
+> >>
+> >>   # echo "+cpuset" >cgroup.subtree_control
+> >>   # mkdir g1
+> >>   # echo 0-5 >g1/cpuset.cpus
+> >>   # mkdir g1/g11
+> >>   # echo "+cpuset" > g1/cgroup.subtree_control
+> >>   # echo 6-11 >g1/g11/cpuset.cpus
+> >>   # grep -R . g1 | grep "\.cpus"
+> >>   g1/cpuset.cpus:0-5
+> >>   g1/cpuset.cpus.effective:0-5
+> >>   g1/g11/cpuset.cpus:6-11
+> >>   g1/g11/cpuset.cpus.effective:0-5
+> >>
+> >> As the intersection of g11's cpus and that of g1 is empty, the effective
+> >> cpus of g11 is just that of g1. The check in update_cpumask() is now
+> >> corrected to make sure that cpus in a child cpus must be a subset of
+> >> its parent's cpus. The error "write error: Invalid argument" will now
+> >> be reported in the above case.
+> >>
+> > 
+> > We made the distinction between user-configured CPUs and effective CPUs
+> > in commit 7e88291beefbb758, so actually it's not a bug.
+> > 
 > 
-> On Wed, May 30, 2018 at 4:34 PM, Daniel Thompson
-> <daniel.thompson@linaro.org> wrote:
-> > On Tue, May 29, 2018 at 07:01:35PM -0700, Nick Desaulniers wrote:
-> >> On Tue, May 29, 2018 at 12:57 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> >> > On Tue, May 29, 2018 at 7:57 AM, Nick Desaulniers
-> >> > <nick.desaulniers@gmail.com> wrote:
-> >> >> Fixes stringop-truncation and stringop-overflow warnings from gcc-8.
-> 
-> >> Eric points out that this will leak kernel memory if size is less than
-> >> sizeof src.
-> >
-> > Don't quite understand what this means (there's no allocation here, how
-> > can there be a leak?) but the symbol completion certainly won't work if
-> > we truncate the copy here.
-> 
-> Not leak an is memory leak, but leak as in information leak of uninitialized
-> data to userspace (if the buffer is ever copied to userspace).
+> I remember the original reason is to support restoration of the original
+> cpu after cpu offline->online. We use user-configured CPUs to remember
+> if the cpu should be restored in the cpuset after it's onlined.
 
-I see... I saw "leak", I saw "memory" and was perhaps too quick to link
-the two together.
-
-The underlying bug is a buffer overflow (so a good catch and I look
-forward to a v2) but, with or without Nick's change, I can't see a leak
-in either sense of the word in the code that Arnd was commenting on[1].
-
-
-Daniel.
-
-
-[1] Clearly the undefined behaviour post-overflow *could* be a leak but
-    I stopped analyzing after the overflow.
+AFAICT you can do that and still have the child a subset of the parent,
+no?
