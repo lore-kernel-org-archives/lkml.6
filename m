@@ -1,128 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755416AbeEaOVY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:21:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38426 "EHLO mail.kernel.org"
+        id S1755391AbeEaOVE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:21:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56960 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755274AbeEaOVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:21:20 -0400
-X-Google-Smtp-Source: ADUXVKJXO7Y+gRj/j6k6z+bBK52b3VUDREV23Yyziy+TyklfsSUOPr9dtFj0nrBlc3OHE/ge9vxyzI0X140peqGNVT4=
+        id S1755274AbeEaOVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:21:02 -0400
+Date: Thu, 31 May 2018 16:21:00 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: drop in_nmi check from
+ printk_safe_flush_on_panic()
+Message-ID: <20180531142100.bwseualfb2qrxwjb@pathway.suse.cz>
+References: <20180530070350.10131-1-sergey.senozhatsky@gmail.com>
+ <20180530072419.jqoohtcvenlnym6h@pathway.suse.cz>
+ <20180530075105.GA12230@jagdpanzerIV>
+ <20180530084801.i5mzqhlw2w5o2eod@pathway.suse.cz>
+ <20180530095504.GD12230@jagdpanzerIV>
+ <20180530100037.GE12230@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
- <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
- <20180531005827.GA17203@rob-hp-laptop> <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 31 May 2018 09:20:57 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
-Message-ID: <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
-To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Cc: "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mark Brown <broonie@kernel.org>, Cristian.Birsan@microchip.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530100037.GE12230@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 5:25 AM, Codrin Ciubotariu
-<codrin.ciubotariu@microchip.com> wrote:
-> On 31.05.2018 03:58, Rob Herring wrote:
->>
->> On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
->>>
->>> The I2S mux clock can be used to select the I2S input clock. The
->>> available parents are the peripheral and the generated clocks.
->>>
->>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
->>> ---
->>>   .../devicetree/bindings/clock/at91-clock.txt       | 34
->>> ++++++++++++++++++++++
->>>   1 file changed, 34 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt
->>> b/Documentation/devicetree/bindings/clock/at91-clock.txt
->>> index 51c259a..1c46b3c 100644
->>> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
->>> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
->>> @@ -90,6 +90,8 @@ Required properties:
->>>         "atmel,sama5d2-clk-audio-pll-pmc"
->>>                 at91 audio pll output on AUDIOPLLCLK that feeds the PMC
->>>                 and can be used by peripheral clock or generic clock
->>> +       "atmel,sama5d2-clk-i2s-mux":
->>> +               at91 I2S clock source selection
->>
->>
->> Is this boolean or takes some values. If latter, what are valid values?
->
->
-> This is the compatible string of the clock driver.
+On Wed 2018-05-30 19:00:37, Sergey Senozhatsky wrote:
+> On (05/30/18 18:55), Sergey Senozhatsky wrote:
+> > The thing is, we, in fact, already invoke panic() in printk_safe mode.
+> > Sometimes.
+> > 
+> > Namely,
+> > 
+> >   nmi_panic() -> panic()
+> > 
+> > is invoked while we are in printk_nmi(), so all printk()-s go
+> > to the per-CPU buffers. So, at least to some extent, panic()
+> > in printk_safe context is not something never seen before. Just
+> > saying.
+> 
+> Well, we have a PRINTK_NMI_DEFERRED_CONTEXT_MASK mode for
+> printk_nmi(). May be we can [if need be] come up with the same trick
+> for printk_safe_panic() mode. If logbuf spin_lock is unlocked, then
+> we use the main logbuf, if it is locked, we redirect printk to per-CPU
+> buffers and then flush it via printk_safe_flush_on_panic(), which will
+> re-init (unlock) the logbuf.
 
-Ah, now I remember. AT91 uses fine grained clock nodes in DT. Is there
-still a plan to fix this?
+All these checks are racy. Now, I believe that it might really prevent
+a deadlock in some situations but it might also cause loosing messages
+in other situations (never flushed buffer). I am sorry but I am still
+unable to decide if it is worth the risk.
 
->>>     Required properties for SCKC node:
->>>   - reg : defines the IO memory reserved for the SCKC.
->>> @@ -507,3 +509,35 @@ For example:
->>>                         atmel,clk-output-range = <0 83000000>;
->>>                 };
->>>         };
->>> +
->>> +Required properties for I2S mux clocks:
->>> +- #size-cells : shall be 0 (reg is used to encode I2S bus id).
->>> +- #address-cells : shall be 1 (reg is used to encode I2S bus id).
->>> +- name: device tree node describing a specific mux clock.
->>> +       * #clock-cells : from common clock binding; shall be set to 0.
->>> +       * clocks : shall be the mux clock parent phandles; shall be 2
->>> phandles:
->>> +         peripheral and generated clock; the first phandle shall belong
->>> to the
->>> +         peripheral clock and the second one shall belong to the
->>> generated
->>> +         clock; "clock-indices" property can be user to specify
->>> +         the correct order.
->>> +       * reg: I2S bus id of the corresponding mux clock.
->>> +         e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
->>> +
->>> +For example:
->>> +       i2s_clkmux {
->>
->>
->> What is this a child of?
->
->
-> It is a child of PMC node, since both parent clocks are generated by PMC.
->
->>
->>> +               compatible = "atmel,sama5d2-clk-i2s-mux";
->>> +               #address-cells = <1>;
->>> +               #size-cells = <0>;
->>
->>
->> How do you address this block? My guess is you don't because it is just
->> part of some other block and you are just creating this node to
->> instantiate a driver. Just make the node for the actual h/w block a
->> clock provider and define the clock ids (0 and 1).
->
->
-> This block is not addressed, but its children are. The register we access in
-> this driver is not part of other block. It's a SFR register, accessed
-> through syscon and it has nothing to do with the I2S IP (see SAMA5D2 DS,
-> page 1256, fig. 44-1: I2SC Block Diagram) that is the consumer of this
-> clock. Adding a clock-id property in the I2S node would be just like v3 of
-> this series, with the difference that we use clock-id instead of alias id to
-> set the clock parent, which is not how you suggested back then.
+I would want to keep it as is until anyone comes with a more detailed
+analyze or until we get some bug reports.
 
-I wasn't suggesting a clock-id property, but a clock specifier (i.e.
-make #clock-cells 1).
-
-But AT91 clocks are all a mess, so I don't know what to tell you.
-
-Rob
+Best Regards,
+Petr
