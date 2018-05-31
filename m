@@ -1,226 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751200AbeEaXvB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 19:51:01 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:59086 "EHLO ale.deltatee.com"
+        id S1750968AbeEaXwm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 19:52:42 -0400
+Received: from gate.crashing.org ([63.228.1.57]:57974 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750756AbeEaXu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 19:50:28 -0400
-From: Logan Gunthorpe <logang@deltatee.com>
-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date: Thu, 31 May 2018 17:50:10 -0600
-Message-Id: <20180531235010.5279-4-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180531235010.5279-1-logang@deltatee.com>
-References: <20180531235010.5279-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v2 3/3] PCI: Introduce the disable_acs_redir parameter
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1750758AbeEaXwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 19:52:40 -0400
+Message-ID: <5683dded80ecabef532d2e285e5fc98e29f59510.camel@kernel.crashing.org>
+Subject: Re: [PATCH v8 0/7] i2c: Add FSI-attached I2C master algorithm
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Eddie James <eajames@linux.vnet.ibm.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Date: Fri, 01 Jun 2018 09:33:49 +1000
+In-Reply-To: <CAHp75Vec+KZCkjcs3qpB=qLmaTon=yTLyu7S_tDrMGcobHW5eQ@mail.gmail.com>
+References: <1527714464-8642-1-git-send-email-eajames@linux.vnet.ibm.com>
+         <CAHp75VerhOMCTPGz5b8wUNL611AdT1iutRm-wrHfzzT+_GbvWA@mail.gmail.com>
+         <58c1059a91b93a490a7fc8bda2112e67e6513840.camel@kernel.crashing.org>
+         <CAHp75Vec+KZCkjcs3qpB=qLmaTon=yTLyu7S_tDrMGcobHW5eQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to support P2P traffic on a segment of the PCI hierarchy,
-we must be able to disable the ACS redirect bits for select
-PCI bridges. The bridges must be selected before the devices are
-discovered by the kernel and the IOMMU groups created. Therefore,
-a kernel command line parameter is created to specify devices
-which must have their ACS bits disabled.
+On Thu, 2018-05-31 at 09:29 +0300, Andy Shevchenko wrote:
+> > If you have specific issues with how this is done, please express them
+> > clearly. It's quite possible that there's some better way to do what
+> > Eddie is doing here, but without *construtive* feedback this is
+> > pointless.
+> 
+> It feels like you duplicate approach which is done in OF generic case.
+> That is my concern. Though, if Wolfram is telling that is OK, I have
+> no objections.
 
-The new parameter takes a list of devices separated by a semicolon.
-Each device specified will have it's ACS redirect bits disabled.
-This is similar to the existing 'resource_alignment' parameter and just
-like it we also create a sysfs bus attribute which can be used to
-read the parameter. Writing the parameter is not supported
-as it would require forcibly hot plugging the affected device as
-well as all devices whose IOMMU groups might change.
+THe OF generic case is about discovering slaves underneath a port, not
+ports inside of a mulit-port master.
 
-The ACS Request P2P Request Redirect, P2P Completion Redirect and P2P
-Egress Control bits are disabled which is sufficient to always allow
-passing P2P traffic uninterrupted. The bits are set after the kernel
-(optionally) enables the ACS bits itself. It is also done regardless of
-whether the kernel sets the bits or not seeing some BIOS firmware is known
-to set the bits on boot.
+I am not aware of a generic mechanism for the latter. We *could* make
+the ports sub-devices but it gets messy then to arbitrate the
+communication and deal with the common part. I've seen (and written)
+multi-port masters in the past that use a similar approach to what
+Eddie's doing and it works fine.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Stephen Bates <sbates@raithlin.com>
-Acked-by: Christian König <christian.koenig@amd.com>
----
- Documentation/admin-guide/kernel-parameters.txt |   9 +++
- drivers/pci/pci.c                               | 103 +++++++++++++++++++++++-
- 2 files changed, 110 insertions(+), 2 deletions(-)
+> > I'm disappointed here because we have an example of somebody rather new
+> > producing what is overall pretty damn good code,
+> 
+> That is true. His code much better than many I have seen before
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index bc51b316f485..e4a761a2821b 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3179,6 +3179,15 @@
- 				Adding the window is slightly risky (it may
- 				conflict with unreported devices), so this
- 				taints the kernel.
-+		disable_acs_redir=<pci_dev>[; ...]
-+				Specify one or more PCI devices (in the format
-+				specified above) separated by semicolons.
-+				Each device specified will have the PCI ACS
-+				redirect capabilities forced off which will
-+				allow P2P traffic between devices through
-+				bridges without forcing it upstream. Note:
-+				this removes isolation between devices and
-+				will make the IOMMU groups less granular.
- 
- 	pcie_aspm=	[PCIE] Forcibly enable or disable PCIe Active State Power
- 			Management.
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 39f11bd0ee03..7a5f3b97d0ff 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -2993,6 +2993,92 @@ void pci_request_acs(void)
- 	pci_acs_enable = 1;
- }
- 
-+#define DISABLE_ACS_REDIR_PARAM_SIZE COMMAND_LINE_SIZE
-+static char disable_acs_redir_param[DISABLE_ACS_REDIR_PARAM_SIZE] = {0};
-+static DEFINE_SPINLOCK(disable_acs_redir_lock);
-+
-+static ssize_t pci_set_disable_acs_redir_param(const char *buf, size_t count)
-+{
-+	if (count > DISABLE_ACS_REDIR_PARAM_SIZE - 1)
-+		count = DISABLE_ACS_REDIR_PARAM_SIZE - 1;
-+	spin_lock(&disable_acs_redir_lock);
-+	strncpy(disable_acs_redir_param, buf, count);
-+	disable_acs_redir_param[count] = '\0';
-+	spin_unlock(&disable_acs_redir_lock);
-+	return count;
-+}
-+
-+static ssize_t pci_disable_acs_redir_show(struct bus_type *bus, char *buf)
-+{
-+	size_t count;
-+
-+	spin_lock(&disable_acs_redir_lock);
-+	count = snprintf(buf, PAGE_SIZE, "%s\n", disable_acs_redir_param);
-+	spin_unlock(&disable_acs_redir_lock);
-+	return count;
-+}
-+
-+static BUS_ATTR(disable_acs_redir, 0444, pci_disable_acs_redir_show, NULL);
-+
-+static int __init pci_disable_acs_redir_sysfs_init(void)
-+{
-+	return bus_create_file(&pci_bus_type, &bus_attr_disable_acs_redir);
-+}
-+late_initcall(pci_disable_acs_redir_sysfs_init);
-+
-+/**
-+ * pci_disable_acs_redir - disable ACS redirect capabilities
-+ * @dev: the PCI device
-+ *
-+ * For only devices specified in the disable_acs_redir parameter.
-+ */
-+static void pci_disable_acs_redir(struct pci_dev *dev)
-+{
-+	int ret = 0;
-+	const char *p;
-+	int pos;
-+	u16 ctrl;
-+
-+	spin_lock(&disable_acs_redir_lock);
-+
-+	p = disable_acs_redir_param;
-+	while (*p) {
-+		ret = pci_dev_str_match(dev, p, &p);
-+		if (ret < 0) {
-+			pr_info_once("PCI: Can't parse disable_acs_redir parameter: %s\n",
-+				     disable_acs_redir_param);
-+
-+			break;
-+		} else if (ret == 1) {
-+			/* Found a match */
-+			break;
-+		}
-+
-+		if (*p != ';' && *p != ',') {
-+			/* End of param or invalid format */
-+			break;
-+		}
-+		p++;
-+	}
-+	spin_unlock(&disable_acs_redir_lock);
-+
-+	if (ret != 1)
-+		return;
-+
-+	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ACS);
-+	if (!pos)
-+		return;
-+
-+	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
-+
-+	/* P2P Request & Completion Redirect */
-+	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
-+
-+	pci_write_config_word(dev, pos + PCI_ACS_CTRL, ctrl);
-+
-+	pci_info(dev, "disabled ACS redirect\n");
-+}
-+
- /**
-  * pci_std_enable_acs - enable ACS on devices using standard ACS capabilites
-  * @dev: the PCI device
-@@ -3032,12 +3118,22 @@ static void pci_std_enable_acs(struct pci_dev *dev)
- void pci_enable_acs(struct pci_dev *dev)
- {
- 	if (!pci_acs_enable)
--		return;
-+		goto disable_acs_redir;
- 
- 	if (!pci_dev_specific_enable_acs(dev))
--		return;
-+		goto disable_acs_redir;
- 
- 	pci_std_enable_acs(dev);
-+
-+disable_acs_redir:
-+	/*
-+	 * Note: pci_disable_acs_redir() must be called even if
-+	 * ACS is not enabled by the kernel because the firmware
-+	 * may have unexpectedly set the flags. So if we are told
-+	 * to disable it, we should always disable it after setting
-+	 * the kernel's default preferences.
-+	 */
-+	pci_disable_acs_redir(dev);
- }
- 
- static bool pci_acs_flags_enabled(struct pci_dev *pdev, u16 acs_flags)
-@@ -5990,6 +6086,9 @@ static int __init pci_setup(char *str)
- 				pcie_bus_config = PCIE_BUS_PEER2PEER;
- 			} else if (!strncmp(str, "pcie_scan_all", 13)) {
- 				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
-+			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
-+				pci_set_disable_acs_redir_param(str + 18,
-+					strlen(str + 18));
- 			} else {
- 				printk(KERN_ERR "PCI: Unknown option `%s'\n",
- 						str);
--- 
-2.11.0
+Thanks. Also thanks for taking the time to review.
+
+> > despite a few corner
+> > issues, and being (again) treated like crap.
+> 
+> Sorry for that, life is harsh.
+> 
+> > This isn't the right way to operate, and I believe this has been made
+> > clear many times before.
+> 
+> Yes.
+
+
+Cheers,
+Ben.
