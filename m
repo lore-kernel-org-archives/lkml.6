@@ -1,55 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755419AbeEaNpR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:45:17 -0400
-Received: from muru.com ([72.249.23.125]:45418 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755312AbeEaNpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:45:11 -0400
-Date: Thu, 31 May 2018 06:45:07 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org, bcousson@baylibre.com,
-        paul@pwsan.com, t-kristo@ti.com
-Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
- node for MCAN
-Message-ID: <20180531134507.GK5705@atomide.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-6-faiz_abbas@ti.com>
- <20180530150402.GE5705@atomide.com>
- <2361da91-659d-1aaa-0ab8-d1473bc3a71a@ti.com>
+        id S1755282AbeEaNqs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:46:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51122 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755085AbeEaNqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:46:45 -0400
+Date: Thu, 31 May 2018 08:46:42 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org
+Subject: Re: [PATCH v3 1/6] x86/stacktrace: do not unwind after user regs
+Message-ID: <20180531134642.sl2ezvng2cdsyklk@treble>
+References: <20180518064713.26440-1-jslaby@suse.cz>
+ <20180518065547.GA18262@gmail.com>
+ <20180518224125.w2ty35wngxbzx6kv@treble>
+ <20180519074251.GA2952@gmail.com>
+ <20180522160609.yppbfdpfoigoyuxg@treble>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2361da91-659d-1aaa-0ab8-d1473bc3a71a@ti.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180522160609.yppbfdpfoigoyuxg@treble>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Faiz Abbas <faiz_abbas@ti.com> [180531 10:22]:
-> On Wednesday 30 May 2018 08:34 PM, Tony Lindgren wrote:
-> > Looks good to me except I think the reset won't do anything currently
-> > with ti-sysc.c unless you specfify also "ti,hwmods" for the module?
+On Tue, May 22, 2018 at 11:06:09AM -0500, Josh Poimboeuf wrote:
+> On Sat, May 19, 2018 at 09:42:51AM +0200, Ingo Molnar wrote:
 > > 
-> > Can you please check? It might be worth adding the reset function to
-> > ti-sysc.c for non "ti,hwmods" case and that just might remove the
-> > need for any hwmod code for this module.
+> > * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 > > 
+> > > On Fri, May 18, 2018 at 08:55:47AM +0200, Ingo Molnar wrote:
+> > > > 
+> > > > * Jiri Slaby <jslaby@suse.cz> wrote:
+> > > > 
+> > > > > Josh pointed out, that there is no way a frame can be after user regs.
+> > > > > So remove the last unwind and the check.
+> > > > > 
+> > > > > Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> > > > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > > > Cc: Ingo Molnar <mingo@redhat.com>
+> > > > > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > > > > Cc: x86@kernel.org
+> > > > > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> > > > 
+> > > > Josh: an Acked-by or Reviewed-by for the whole series from you would be nice.
+> > > 
+> > > The patches look good, but I want to run it through some testing before
+> > > I give them an ACK.
 > 
-> If I understand correctly, this involves adding a (*reset_module) in
-> ti_sysc_platform_data and defining a ti_sysc_reset_module() in ti-sysc.c
-> similar to ti_sysc_idle_module(). Right?
+> For the series:
+> 
+> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Well try moving "ti,hwmods" to the module level first. Then reset will
-happen with enable.
+Ingo,
 
-Then for simple cases we can add reset directly to ti-sysc.c without
-pdata callbacks and and drop "ti,hwmods". For more complex cases we
-need to use reset-simple for the RSTCTRL registers.
+Any chance this can make the next merge window?
 
-Regards,
-
-Tony
+-- 
+Josh
