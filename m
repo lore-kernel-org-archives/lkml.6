@@ -1,40 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754911AbeEaMRL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 08:17:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56146 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754197AbeEaMRJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 08:17:09 -0400
-From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-To: linux-kernel@vger.kernel.org
-Cc: rostedt@goodmis.org, mingo@redhat.com
-Subject: [PATCH] ftrace: use non-archaic spelling of failes
-Date: Thu, 31 May 2018 09:17:01 -0300
-Message-Id: <20180531121701.8972-1-cascardo@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S1754869AbeEaMVP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 08:21:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46885 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754197AbeEaMVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 08:21:14 -0400
+Date: Thu, 31 May 2018 14:21:12 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Maninder Singh <maninder1.s@samsung.com>, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+        a.sahrawat@samsung.com, pankaj.m@samsung.com, v.narang@samsung.com
+Subject: Re: [PATCH 2/2] printk: make sure to print log on console.
+Message-ID: <20180531122112.bfeqtmwpl2qc67a5@pathway.suse.cz>
+References: <CGME20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e@epcas5p2.samsung.com>
+ <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
+ <20180531105215.GF477@jagdpanzerIV>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531105215.GF477@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
----
- kernel/trace/ftrace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu 2018-05-31 19:52:15, Sergey Senozhatsky wrote:
+> On (05/31/18 15:49), Maninder Singh wrote:
+> > 
+> > This patch make sure printing of log if loglevel at time of storing
+> > log is greater than current console loglevel.
+> > 
+> > @why
+> > In case of async printk, printk thread can miss logs because it checks
+> > current log level at time of console_unlock.
+> 
+> Upstream printk has no printing kthread. And we also run
+> printk()->console_unlock() with disabled preemption.
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 8d83bcf9ef69..b218cee1f18c 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4788,7 +4788,7 @@ ftrace_set_addr(struct ftrace_ops *ops, unsigned long ip, int remove,
-  * @reset - non zero to reset all filters before applying this filter.
-  *
-  * Filters denote which functions should be enabled when tracing is enabled
-- * If @ip is NULL, it failes to update filter.
-+ * If @ip is NULL, it fails to update filter.
-  */
- int ftrace_set_filter_ip(struct ftrace_ops *ops, unsigned long ip,
- 			 int remove, int reset)
--- 
-2.17.0
+Yes, the comment was wrong but the problem is real. The console
+handling is asynchronous even without the kthread. The current
+console_lock owner is responsible for handling messages also
+from other CPUs.
+
+Best Regards,
+Petr
