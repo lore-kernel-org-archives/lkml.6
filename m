@@ -1,65 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750876AbeEaW3G (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:29:06 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:30247 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750737AbeEaW3F (ORCPT
+        id S1750842AbeEaWgX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 18:36:23 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:40593 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbeEaWgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 18:29:05 -0400
-Subject: Re: [PATCH v2 0/2] ti-cpufreq: minor fixes/cleanups
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC: Viresh Kumar <viresh.kumar@linaro.org>,
-        Dave Gerlach <d-gerlach@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180402164958.20057-1-s-anna@ti.com>
- <ffbb49c3-229b-df20-ca0d-c49822fcdaf2@ti.com>
- <2808028.7H1yeuone6@aspire.rjw.lan>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <c49fce73-ae82-2074-8d9c-c7019fa8fdb4@ti.com>
-Date: Thu, 31 May 2018 17:29:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <2808028.7H1yeuone6@aspire.rjw.lan>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 31 May 2018 18:36:22 -0400
+X-Google-Smtp-Source: ADUXVKL7pDCyV/PW0N40ymG5/mMw14nB0lcSp7SRCD3MpwLwgFRfY1xT3jq19XAs4JXHApYGadYdlA==
+From: Bo Chen <chenbo@pdx.edu>
+To: tiwai@suse.com
+Cc: perex@perex.cz, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, Bo Chen <chenbo@pdx.edu>
+Subject: [PATCH] ALSA: hda - Handle kzalloc() failure in snd_hda_attach_pcm_stream()
+Date: Thu, 31 May 2018 15:35:18 -0700
+Message-Id: <20180531223518.18675-1-chenbo@pdx.edu>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+When 'kzalloc()' fails in 'snd_hda_attach_pcm_stream()', a new pcm instance is
+created without setting its operators via 'snd_pcm_set_ops()'. Following
+operations on the new pcm instance can trigger kernel null pointer dereferences
+and cause kernel oops.
 
-On 05/18/2018 03:19 PM, Rafael J. Wysocki wrote:
-> On Friday, May 18, 2018 5:07:12 PM CEST Suman Anna wrote:
->> On 04/02/2018 11:49 AM, Suman Anna wrote:
->>> Hi Viresh,
->>>
->>> Please find the updated series replacing the previous patch [1] fixing
->>> couple of issues in the TI CPUFreq driver. I have split up the patches
->>> as per your comments on v1. Final code diff remains the same as before.
->>>
->>> regards
->>> Suman
->>>
->>> [1] https://patchwork.kernel.org/patch/10308925/
->>>
->>> Suman Anna (2):
->>>   cpufreq: ti-cpufreq: Fix an incorrect error return value
->>>   cpufreq: ti-cpufreq: Use devres managed API in probe()
->>
->> Gentle reminder, I don't see these patches in -next. Who is picking up
->> these patches?
-> 
-> You need to resend them I'm afraid, with any tags received so far.
-> 
-> And they won't be picked up if you don't CC linux-pm@vger.kernel.org on
-> the submission.
+This bug was found with my work on building a gray-box fault-injection tool for
+linux-kernel-module binaries. A kernel null pointer dereference was confirmed
+from line 'substream->ops->open()' in function 'snd_pcm_open_substream()' in
+file 'sound/core/pcm_native.c'.
 
-Sorry for the delay, I have reposted the series with all the tags picked
-up and CCing the linux-pm list.
+This patch fixes the bug by calling 'snd_device_free()' in the error handling
+path of 'kzalloc()', which removes the new pcm instance from the snd card before
+returns with an error code.
 
-regards
-Suman
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
+---
+ sound/pci/hda/hda_controller.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sound/pci/hda/hda_controller.c b/sound/pci/hda/hda_controller.c
+index d1eb14842340..a12e594d4e3b 100644
+--- a/sound/pci/hda/hda_controller.c
++++ b/sound/pci/hda/hda_controller.c
+@@ -748,8 +748,10 @@ int snd_hda_attach_pcm_stream(struct hda_bus *_bus, struct hda_codec *codec,
+ 		return err;
+ 	strlcpy(pcm->name, cpcm->name, sizeof(pcm->name));
+ 	apcm = kzalloc(sizeof(*apcm), GFP_KERNEL);
+-	if (apcm == NULL)
++	if (apcm == NULL) {
++		snd_device_free(chip->card, pcm);
+ 		return -ENOMEM;
++	}
+ 	apcm->chip = chip;
+ 	apcm->pcm = pcm;
+ 	apcm->codec = codec;
+-- 
+2.17.0
