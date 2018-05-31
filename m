@@ -1,57 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756034AbeEaSxB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 14:53:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755877AbeEaSw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 14:52:58 -0400
-Date: Thu, 31 May 2018 14:52:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] enable early printing of hashed pointers
-Message-ID: <20180531145253.02daa5d4@vmware.local.home>
-In-Reply-To: <1527472002-11571-1-git-send-email-me@tobin.cc>
-References: <1527472002-11571-1-git-send-email-me@tobin.cc>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1756061AbeEaSx1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 14:53:27 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:45524 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756036AbeEaSxZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 14:53:25 -0400
+X-Google-Smtp-Source: ADUXVKIAOfoyWyDSpQQJDGjK1ZhVIeAcyYrxBkQwyaVHQvvnDs3g6uvZ59khgzl/cOQ0zetrWYmL4Z92YckvQbViI5k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180531175902.GC11565@jcrouse-lnx.qualcomm.com>
+References: <20180521172948.GA18605@jordon-HP-15-Notebook-PC>
+ <CAFqt6zY8VJ791_6C_pqrGgjG91T1kirEmUyA3JC+3JsN8QjFAw@mail.gmail.com> <20180531175902.GC11565@jcrouse-lnx.qualcomm.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Fri, 1 Jun 2018 00:23:22 +0530
+Message-ID: <CAFqt6zZc_6wkPTJYB52_Hs5Hfy6wGL476NP3aB6r+=BEUr2hpw@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH] gpu: drm: msm: Change return type to vm_fault_t
+To: Souptick Joarder <jrdr.linux@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, airlied@linux.ie,
+        Matthew Wilcox <willy@infradead.org>, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 May 2018 11:46:38 +1000
-"Tobin C. Harding" <me@tobin.cc> wrote:
+On Thu, May 31, 2018 at 11:29 PM, Jordan Crouse <jcrouse@codeaurora.org> wrote:
+> On Mon, May 28, 2018 at 12:38:41PM +0530, Souptick Joarder wrote:
+>> On Mon, May 21, 2018 at 10:59 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> > Use new return type vm_fault_t for fault handler. For
+>> > now, this is just documenting that the function returns
+>> > a VM_FAULT value rather than an errno. Once all instances
+>> > are converted, vm_fault_t will become a distinct type.
+>> >
+>> > Ref- commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>> >
+>> > Previously vm_insert_mixed() returns err which driver
+>> > mapped into VM_FAULT_* type. The new function
+>> > vmf_insert_mixed() will replace this inefficiency by
+>> > returning VM_FAULT_* type.
+>> >
+>> > vmf_error() is the newly introduce inline function
+>> > in 4.17-rc6.
+>> >
+>> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> > Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> > ---
+>> >  drivers/gpu/drm/msm/msm_drv.h |  3 ++-
+>> >  drivers/gpu/drm/msm/msm_gem.c | 33 ++++++++++-----------------------
+>> >  2 files changed, 12 insertions(+), 24 deletions(-)
+>> >
+>> > diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
+>> > index 0a653dd..44b4ca7 100644
+>> > --- a/drivers/gpu/drm/msm/msm_drv.h
+>> > +++ b/drivers/gpu/drm/msm/msm_drv.h
+>> > @@ -33,6 +33,7 @@
+>> >  #include <linux/of_graph.h>
+>> >  #include <linux/of_device.h>
+>> >  #include <asm/sizes.h>
+>> > +#include <linux/mm_types.h>
+>> >
+>> >  #include <drm/drmP.h>
+>> >  #include <drm/drm_atomic.h>
+>> > @@ -188,7 +189,7 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+>> >  int msm_gem_mmap_obj(struct drm_gem_object *obj,
+>> >                         struct vm_area_struct *vma);
+>> >  int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+>> > -int msm_gem_fault(struct vm_fault *vmf);
+>> > +vm_fault_t msm_gem_fault(struct vm_fault *vmf);
+>> >  uint64_t msm_gem_mmap_offset(struct drm_gem_object *obj);
+>> >  int msm_gem_get_iova(struct drm_gem_object *obj,
+>> >                 struct msm_gem_address_space *aspace, uint64_t *iova);
+>> > diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+>> > index 07376de..27a5ab5 100644
+>> > --- a/drivers/gpu/drm/msm/msm_gem.c
+>> > +++ b/drivers/gpu/drm/msm/msm_gem.c
+>> > @@ -217,7 +217,7 @@ int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+>> >         return msm_gem_mmap_obj(vma->vm_private_data, vma);
+>> >  }
+>> >
+>> > -int msm_gem_fault(struct vm_fault *vmf)
+>> > +vm_fault_t msm_gem_fault(struct vm_fault *vmf)
+>> >  {
+>> >         struct vm_area_struct *vma = vmf->vma;
+>> >         struct drm_gem_object *obj = vma->vm_private_data;
+>> > @@ -225,15 +225,18 @@ int msm_gem_fault(struct vm_fault *vmf)
+>> >         struct page **pages;
+>> >         unsigned long pfn;
+>> >         pgoff_t pgoff;
+>> > -       int ret;
+>> > +       int err;
+>> > +       vm_fault_t ret;
+>> >
+>> >         /*
+>> >          * vm_ops.open/drm_gem_mmap_obj and close get and put
+>> >          * a reference on obj. So, we dont need to hold one here.
+>> >          */
+>> > -       ret = mutex_lock_interruptible(&msm_obj->lock);
+>> > -       if (ret)
+>> > +       err = mutex_lock_interruptible(&msm_obj->lock);
+>> > +       if (err) {
+>> > +               ret = VM_FAULT_NOPAGE;
+>> >                 goto out;
+>> > +       }
+>> >
+>> >         if (WARN_ON(msm_obj->madv != MSM_MADV_WILLNEED)) {
+>> >                 mutex_unlock(&msm_obj->lock);
+>> > @@ -243,7 +246,7 @@ int msm_gem_fault(struct vm_fault *vmf)
+>> >         /* make sure we have pages attached now */
+>> >         pages = get_pages(obj);
+>> >         if (IS_ERR(pages)) {
+>> > -               ret = PTR_ERR(pages);
+>> > +               ret = vmf_error(PTR_ERR(pages));
+>> >                 goto out_unlock;
+>> >         }
+>> >
+>> > @@ -255,27 +258,11 @@ int msm_gem_fault(struct vm_fault *vmf)
+>> >         VERB("Inserting %p pfn %lx, pa %lx", (void *)vmf->address,
+>> >                         pfn, pfn << PAGE_SHIFT);
+>> >
+>> > -       ret = vm_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
+>> > -
+>> > +       ret = vmf_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
+>> >  out_unlock:
+>> >         mutex_unlock(&msm_obj->lock);
+>> >  out:
+>> > -       switch (ret) {
+>> > -       case -EAGAIN:
+>> > -       case 0:
+>> > -       case -ERESTARTSYS:
+>> > -       case -EINTR:
+>> > -       case -EBUSY:
+>> > -               /*
+>> > -                * EBUSY is ok: this just means that another thread
+>> > -                * already did the job.
+>> > -                */
+>> > -               return VM_FAULT_NOPAGE;
+>> > -       case -ENOMEM:
+>> > -               return VM_FAULT_OOM;
+>> > -       default:
+>> > -               return VM_FAULT_SIGBUS;
+>> > -       }
+>> > +       return ret;
+>> >  }
+>> >
+>> >  /** get mmap offset */
+>> > --
+>> > 1.9.1
+>> >
+>>
+>> Any comment for this patch ?
+>
+> Sorry for the delay, I wanted to get a chance to test it. It seems to pass the
+> usual regression tests. LGTM.
+>
+> Jordan
+>
 
-> Steve,
-
-Hi Tobin,
-
-Sorry for the late reply, I'm currently at a conference and have had
-little time to read email.
-
-> 
-> Could you please take a quick squiz at the final 2 patches if you get a
-> chance.  I assumed we are in preemptible context during early_init based
-> on your code (and code comment) and called static_branch_disable()
-> directly if hw RNG returned keying material.  It's a pretty simple
-> change but I'd love to get someone else to check I've not noob'ed it.
-
-I can take a look, and perhaps do some tests. But it was Anna-Maria
-that originally triggered the issue. She's on Cc, perhaps she can try
-this and see if it works.
-
-I'll still pull the patches and add some injections to see how it works.
-
-Thanks!
-
--- Steve
+Thanks :)
