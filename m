@@ -1,171 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753882AbeEaEek (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 00:34:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:40929 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751282AbeEaEei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 00:34:38 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 31 May 2018 14:34:36 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        id S1753893AbeEaEfs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 00:35:48 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33637 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751648AbeEaEfn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 00:35:43 -0400
+X-Google-Smtp-Source: ADUXVKLRxOm5g+JfTWO+IGEqBC5NuiQGAzZyZ65c/yj8m8Fmsymc8cVjKre3Uvx4CS4fnnk0Z6QzAw==
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: linux-next: build failure after merge of the device-mapper tree
+From: Jens Axboe <axboe@kernel.dk>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <20180531142302.5f7b4302@canb.auug.org.au>
+Date: Wed, 30 May 2018 22:35:40 -0600
+Cc: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>, Xiao Ni <xni@redhat.com>
-Subject: linux-next: manual merge of the md tree with the block tree
-Message-ID: <20180531143436.79769901@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5UIs6+1gRyTV7MEtY2ve6Tn"; protocol="application/pgp-signature"
+        Kent Overstreet <kent.overstreet@gmail.com>
+Message-Id: <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
+References: <20180531142302.5f7b4302@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4V4aJch011078
 
---Sig_/5UIs6+1gRyTV7MEtY2ve6Tn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On May 30, 2018, at 10:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> Hi all,
+> 
+> After merging the device-mapper tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/md/dm-writecache.c: In function 'writecache_dtr':
+> drivers/md/dm-writecache.c:1799:3: error: implicit declaration of function 'bioset_free'; did you mean 'bvec_free'? [-Werror=implicit-function-declaration]
+>   bioset_free(wc->bio_set);
+>   ^~~~~~~~~~~
+>   bvec_free
+> drivers/md/dm-writecache.c: In function 'writecache_ctr':
+> drivers/md/dm-writecache.c:1929:17: error: implicit declaration of function 'bioset_create'; did you mean 'bioset_exit'? [-Werror=implicit-function-declaration]
+>   wc->bio_set = bioset_create(BIO_POOL_SIZE,
+>                 ^~~~~~~~~~~~~
+>                 bioset_exit
+> drivers/md/dm-writecache.c:1929:15: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+>   wc->bio_set = bioset_create(BIO_POOL_SIZE,
+>               ^
+> 
+> Caused by commit
+> 
+>  2105231db61b ("dm: add writecache target")
+> 
+> interacting with commit
+> 
+>  dad08527525f ("block: Drop bioset_create()")
+> 
+> from the block tree.
+> 
+> Can we please consider not immediately dropping APIs if at all
+> possible. :-(
 
-Hi all,
-
-Today's linux-next merge of the md tree got a conflict in:
-
-  drivers/md/md.c
-
-between commit:
-
-  afeee514ce7f ("md: convert to bioset_init()/mempool_init()")
-
-from the block tree and commit:
-
-  5a409b4f56d5 ("MD: fix lock contention for flush bios")
-
-from the md tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/md/md.c
-index fc692b7128bb,6b4e2f29fe4e..000000000000
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@@ -5498,16 -5518,34 +5519,32 @@@ int md_run(struct mddev *mddev
-  		sysfs_notify_dirent_safe(rdev->sysfs_state);
-  	}
- =20
- -	if (mddev->bio_set =3D=3D NULL) {
- -		mddev->bio_set =3D bioset_create(BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
- -		if (!mddev->bio_set)
- -			return -ENOMEM;
- +	if (!bioset_initialized(&mddev->bio_set)) {
- +		err =3D bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVEC=
-S);
- +		if (err)
- +			return err;
-  	}
- -	if (mddev->sync_set =3D=3D NULL) {
- -		mddev->sync_set =3D bioset_create(BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
- -		if (!mddev->sync_set) {
- -			err =3D -ENOMEM;
- +	if (!bioset_initialized(&mddev->sync_set)) {
- +		err =3D bioset_init(&mddev->sync_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVE=
-CS);
- +		if (err)
-  			goto abort;
- -		}
-  	}
-+ 	if (mddev->flush_pool =3D=3D NULL) {
-+ 		mddev->flush_pool =3D mempool_create(NR_FLUSH_INFOS, flush_info_alloc,
-+ 						flush_info_free, mddev);
-+ 		if (!mddev->flush_pool) {
-+ 			err =3D -ENOMEM;
-+ 			goto abort;
-+ 		}
-+ 	}
-+ 	if (mddev->flush_bio_pool =3D=3D NULL) {
-+ 		mddev->flush_bio_pool =3D mempool_create(NR_FLUSH_BIOS, flush_bio_alloc,
-+ 						flush_bio_free, mddev);
-+ 		if (!mddev->flush_bio_pool) {
-+ 			err =3D -ENOMEM;
-+ 			goto abort;
-+ 		}
-+ 	}
- =20
-  	spin_lock(&pers_lock);
-  	pers =3D find_pers(mddev->level, mddev->clevel);
-@@@ -5667,8 -5705,22 +5704,16 @@@
-  	return 0;
- =20
-  abort:
-+ 	if (mddev->flush_bio_pool) {
-+ 		mempool_destroy(mddev->flush_bio_pool);
-+ 		mddev->flush_bio_pool =3D NULL;
-+ 	}
-+ 	if (mddev->flush_pool){
-+ 		mempool_destroy(mddev->flush_pool);
-+ 		mddev->flush_pool =3D NULL;
-+ 	}
- -	if (mddev->bio_set) {
- -		bioset_free(mddev->bio_set);
- -		mddev->bio_set =3D NULL;
- -	}
- -	if (mddev->sync_set) {
- -		bioset_free(mddev->sync_set);
- -		mddev->sync_set =3D NULL;
- -	}
- +	bioset_exit(&mddev->bio_set);
- +	bioset_exit(&mddev->sync_set);
- =20
-  	return err;
-  }
-@@@ -5881,8 -5933,22 +5926,16 @@@ void md_stop(struct mddev *mddev
-  	 * This is called from dm-raid
-  	 */
-  	__md_stop(mddev);
-+ 	if (mddev->flush_bio_pool) {
-+ 		mempool_destroy(mddev->flush_bio_pool);
-+ 		mddev->flush_bio_pool =3D NULL;
-+ 	}
-+ 	if (mddev->flush_pool) {
-+ 		mempool_destroy(mddev->flush_pool);
-+ 		mddev->flush_pool =3D NULL;
-+ 	}
- -	if (mddev->bio_set) {
- -		bioset_free(mddev->bio_set);
- -		mddev->bio_set =3D NULL;
- -	}
- -	if (mddev->sync_set) {
- -		bioset_free(mddev->sync_set);
- -		mddev->sync_set =3D NULL;
- -	}
- +	bioset_exit(&mddev->bio_set);
- +	bioset_exit(&mddev->sync_set);
-  }
- =20
-  EXPORT_SYMBOL_GPL(md_stop);
-
---Sig_/5UIs6+1gRyTV7MEtY2ve6Tn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPe1wACgkQAVBC80lX
-0Gz2bwf+PCE25jCiwAIwNY+2/CL2tRnZd2K4Tesx1Ers98JabUeBpMbcbCEyKQmx
-NI9lKpyfBEhT1c50Dc3pSTqQSGxkHMyxC7kGihp545LdRrM/Gx7JixKyARndYw+y
-85QJY4TbpLWHy9K/mTW1zrJl7XdZXQz2dX6ITCR01eV4BaINZIQuTKJYDs8izVZf
-e9YMS1mpdIuWCGR6B9gWAim2C6xnxWf8R6v0FcyGVWCPCCNaVDYbB4eVtHVPD7RU
-ot7gOyaOPmb5lWhYHBwL9L2mYtu/rcrt6jUX1ruDGNs/mYlvL4fPOMXc10QdU8l4
-pS68GSUKo/T13PYEBpYqfvcyTrsUnw==
-=l15y
------END PGP SIGNATURE-----
-
---Sig_/5UIs6+1gRyTV7MEtY2ve6Tn--
+I’ll drop the last patch, we can do that at the end of the merge window instead. 
