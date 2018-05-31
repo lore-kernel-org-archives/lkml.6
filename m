@@ -1,78 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755592AbeEaQBv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:01:51 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:41742 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755456AbeEaQBs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:01:48 -0400
-X-Google-Smtp-Source: ADUXVKK8WgNNY2MgXG04GNorJ6ddvsIPrHZSD+Zh1gvkxyfyL5Gh51Aze8WfCOFf+dAftIkv0K6w/w==
-Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
-To: Sinan Kaya <okaya@codeaurora.org>, Alex_Gagniuc@Dellteam.com,
-        bhelgaas@google.com
-Cc: Austin.Bolen@dell.com, Shyam.Iyer@dell.com, keith.busch@intel.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
- <28004506-24f0-6d10-2d1e-074e0483d2f9@codeaurora.org>
- <4e0611c872054e768daa96b302651db3@ausx13mps321.AMER.DELL.COM>
- <f260078b-6918-7fd9-39d6-e9f300e4c048@codeaurora.org>
- <3b8a895b-3080-7ddb-cbfd-5aa972e9bf65@gmail.com>
- <35563ce3-e235-096c-4b9b-5f3664d67d0f@codeaurora.org>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <093b2789-39a1-db9e-5783-b0488b3c9ccd@gmail.com>
-Date: Thu, 31 May 2018 11:01:45 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1755624AbeEaQCH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:02:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50968 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755606AbeEaQCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:02:04 -0400
+Date: Thu, 31 May 2018 12:02:02 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Alasdair Kergon <agk@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>, dm-devel@redhat.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] dm writecache: fix return value check in
+ writecache_ctr()
+Message-ID: <20180531160202.GA11300@redhat.com>
+References: <1527767595-76082-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <35563ce3-e235-096c-4b9b-5f3664d67d0f@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527767595-76082-1-git-send-email-weiyongjun1@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 31 2018 at  7:53am -0400,
+Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-
-On 05/31/2018 10:54 AM, Sinan Kaya wrote:
-> On 5/31/2018 11:46 AM, Alex G. wrote:
->>> https://lkml.org/lkml/2018/3/30/553
->> Oh, pcie_get_speed_cap()/pcie_get_width_cap() seems to handle the
->> capability. Not seeing one for status and speed name.
->>
->>> are you working on linux-next?
->> v4.17-rc7
->>
+> Function dm_io_client_create() and dm_kcopyd_client_create() return
+> ERR_PTR() not NULL in case of error. The NULL test in the return value
+> check should be replaced with IS_ERR()
 > 
-> I think everything you need is in the series. I don't know which linux
-> tree this landed or if it landed. Probably, it is shipping for 4.18. 
-> Need some help from Bjorn where to locate these.
+> Fixes: 2105231db61b ("dm: add writecache target")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/md/dm-writecache.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> Fri, 30 Mar 2018 16:04:40 -0500
+> diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+> index 844c4fb..0b2b436 100644
+> --- a/drivers/md/dm-writecache.c
+> +++ b/drivers/md/dm-writecache.c
+> @@ -1872,9 +1872,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  	}
+>  
+>  	wc->dm_io = dm_io_client_create();
+> -	if (!wc->dm_io) {
+> -		r = -ENOMEM;
+> +	if (IS_ERR(wc->dm_io)) {
+> +		r = PTR_ERR(wc->dm_io);
+>  		ti->error = "Unable to allocate dm-io client";
+> +		wc->dm_io = NULL;
+>  		goto bad;
+>  	}
+>  
+> @@ -2096,9 +2097,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  		}
+>  
+>  		wc->dm_kcopyd = dm_kcopyd_client_create(&dm_kcopyd_throttle);
+> -		if (!wc->dm_kcopyd) {
+> -			r = -ENOMEM;
+> +		if (IS_ERR(wc->dm_kcopyd)) {
+> +			r = PTR_ERR(wc->dm_kcopyd);
+>  			ti->error = "Unable to allocate dm-kcopyd client";
+> +			wc->dm_kcopyd = NULL;
+>  			goto bad;
+>  		}
 > 
-> Bjorn Helgaas (6):
->       bnx2x: Report PCIe link properties with pcie_print_link_status()
->       bnxt_en: Report PCIe link properties with pcie_print_link_status()
->       cxgb4: Report PCIe link properties with pcie_print_link_status()
->       fm10k: Report PCIe link properties with pcie_print_link_status()
->       ixgbe: Report PCIe link properties with pcie_print_link_status()
->       PCI: Remove unused pcie_get_minimum_link()
 
-I remember seeing some of these in my tree.
 
-> Tal Gilboa (8):
->       PCI: Add pcie_get_speed_cap() to find max supported link speed
->       PCI: Add pcie_get_width_cap() to find max supported link width
->       PCI: Add pcie_bandwidth_capable() to compute max supported link bandwidth
->       PCI: Add pcie_bandwidth_available() to compute bandwidth available to device
+Yes, I forgot to pull this in.. it got lost in the shuffle.  Mikulas had
+provided this same change (folded into a larger patch) yesterday, see:
+https://patchwork.kernel.org/patch/10439345/
 
-I definitely have these.
+I'll get this folded in ASAP.
 
->       PCI: Add pcie_print_link_status() to log link speed and whether it's limited
-
-This one, I have, but it's not what I need. This looks at the available
-bandwidth from root port to endpoint, whereas I'm only interested in
-downtraining between endpoint and upstream port.
-
-Alex
+Thanks,
+Mike
