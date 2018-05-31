@@ -1,87 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755047AbeEaL1I (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:27:08 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8224 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754634AbeEaLWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:22:40 -0400
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <andy.shevchenko@gmail.com>, Yisheng Xie <xieyisheng1@huawei.com>,
-        "Tony Lindgren" <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>,
-        <linux-omap@vger.kernel.org>
-Subject: [PATCH v2 02/21] mfd: omap-usb-host: use match_string() helper
-Date: Thu, 31 May 2018 19:11:07 +0800
-Message-ID: <1527765086-19873-3-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+        id S1755120AbeEaL2B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:28:01 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:47570 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754779AbeEaL14 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:27:56 -0400
+Subject: Re: [PATCH v2 6/7] misc: pci_endpoint_test: Add MSI-X support
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <adouglas@cadence.com>, <jesper.nilsson@axis.com>
+References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
+ <30034b904a27c405b894a34922e59315dcae68ab.1526576613.git.gustavo.pimentel@synopsys.com>
+CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <2f56cd19-f7a5-c99f-e74f-83a4dbeb0248@ti.com>
+Date: Thu, 31 May 2018 16:57:39 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <30034b904a27c405b894a34922e59315dcae68ab.1526576613.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-match_string() returns the index of an array for a matching string,
-which can be used instead of open coded variant.
+Hi,
 
-Acked-by: Tony Lindgren <tony@atomide.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: linux-omap@vger.kernel.org
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
-v2:
- - add Acked-by and Reviewed-by tag.
+On Thursday 17 May 2018 10:39 PM, Gustavo Pimentel wrote:
+> Add MSI-X support and update driver documentation accordingly.
+> 
+> Add new driver parameter to allow interruption type selection.
+> 
+> Add 2 new IOCTL commands:
+>  - Allow to reconfigure driver IRQ type in runtime.
+>  - Allow to retrieve current driver IRQ type configured.
+> 
+> Change Legacy/MSI/MSI-X test process, by having in a BAR:
+>  - Interrupt type triggered (added).
+>  - Interrupt ID number (moved from the command section).
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 
- drivers/mfd/omap-usb-host.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+It's better to change the subject to pci-epf-test/pci_endpoint_test: Add MSI-X
+support
 
-diff --git a/drivers/mfd/omap-usb-host.c b/drivers/mfd/omap-usb-host.c
-index 7aab376..e11ab12 100644
---- a/drivers/mfd/omap-usb-host.c
-+++ b/drivers/mfd/omap-usb-host.c
-@@ -153,27 +153,6 @@ static inline u32 usbhs_read(void __iomem *base, u32 reg)
- 	[OMAP_OHCI_PORT_MODE_TLL_2PIN_DPDM]	= "ohci-tll-2pin-dpdm",
- };
- 
--/**
-- * omap_usbhs_get_dt_port_mode - Get the 'enum usbhs_omap_port_mode'
-- * from the port mode string.
-- * @mode: The port mode string, usually obtained from device tree.
-- *
-- * The function returns the 'enum usbhs_omap_port_mode' that matches the
-- * provided port mode string as per the port_modes table.
-- * If no match is found it returns -ENODEV
-- */
--static int omap_usbhs_get_dt_port_mode(const char *mode)
--{
--	int i;
--
--	for (i = 0; i < ARRAY_SIZE(port_modes); i++) {
--		if (!strcmp(mode, port_modes[i]))
--			return i;
--	}
--
--	return -ENODEV;
--}
--
- static struct platform_device *omap_usbhs_alloc_child(const char *name,
- 			struct resource	*res, int num_resources, void *pdata,
- 			size_t pdata_size, struct device *dev)
-@@ -529,7 +508,8 @@ static int usbhs_omap_get_dt_pdata(struct device *dev,
- 		if (ret < 0)
- 			continue;
- 
--		ret = omap_usbhs_get_dt_port_mode(mode);
-+		/* get 'enum usbhs_omap_port_mode' from port mode string */
-+		ret = match_string(port_modes, ARRAY_SIZE(port_modes), mode);
- 		if (ret < 0) {
- 			dev_warn(dev, "Invalid port%d-mode \"%s\" in device tree\n",
- 					i, mode);
--- 
-1.7.12.4
+IMO this patch should be split into multiple patches
+
+*) Cleanup PCI_ENDPOINT_TEST memspace (by moving the interrupt number away from
+command section)
+*) Using irq_type module param
+*) Adding MSI-X support
+*) adding 2 ioctl commands (I'm not convinced on adding new ioctls though)
+
+Thanks
+Kishon
