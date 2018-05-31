@@ -1,115 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755472AbeEaO1i (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:27:38 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:51418 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1755459AbeEaO1e (ORCPT
+        id S1755481AbeEaO1t (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:27:49 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:36559 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755433AbeEaO1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:27:34 -0400
-Date: Thu, 31 May 2018 10:27:33 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        <andrea.parri@amarulasolutions.com>, Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nick Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-        Roman Pen <roman.penyaev@profitbricks.com>
-Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
-In-Reply-To: <20180530231441.GO7063@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1805311008460.1607-100000@iolanthe.rowland.org>
+        Thu, 31 May 2018 10:27:44 -0400
+X-Google-Smtp-Source: ADUXVKLav7SqtKAGnhwfgAfUXmwlGtQl6jzIOdajNIRNPYKZe3s98s31msZ4pid7oGB7LWXEqU7cPfBNyJY7xshx4/M=
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20180531032049.GB15516@debian>
+References: <20180530085521.26583-1-tiwei.bie@intel.com> <20180530192010-mutt-send-email-mst@kernel.org>
+ <414C18B1-30FA-4AC0-B47D-F0FBF9832737@intel.com> <1527699273.29907.2.camel@intel.com>
+ <5063D90B-7955-4F1E-85A2-D8AFD661ACB7@intel.com> <20180531032049.GB15516@debian>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Thu, 31 May 2018 07:27:43 -0700
+Message-ID: <CAKgT0Ud1QmotAXGOi1ORA79rYLFzofDZWPiJtPj=MBg4zxiSdw@mail.gmail.com>
+Subject: Re: [PATCH] virtio_pci: support enabling VFs
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "Daly, Dan" <dan.daly@intel.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Liang, Cunming" <cunming.liang@intel.com>,
+        "Wang, Zhihong" <zhihong.wang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 May 2018, Paul E. McKenney wrote:
+On Wed, May 30, 2018 at 8:20 PM, Tiwei Bie <tiwei.bie@intel.com> wrote:
+> On Thu, May 31, 2018 at 01:11:37AM +0800, Rustad, Mark D wrote:
+>> On May 30, 2018, at 9:54 AM, Duyck, Alexander H
+>> <alexander.h.duyck@intel.com> wrote:
+>>
+>> > On Wed, 2018-05-30 at 09:44 -0700, Rustad, Mark D wrote:
+>> > > On May 30, 2018, at 9:22 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+>> > >
+>> > > > > +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int
+>> > > > > num_vfs)
+>> > > > > +{
+>> > > > > +     struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+>> > > > > +     struct virtio_device *vdev = &vp_dev->vdev;
+>> > > > > +     int (*sriov_configure)(struct pci_dev *pci_dev, int num_vfs);
+>> > > > > +
+>> > > > > +     if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
+>> > > > > +             return -EBUSY;
+>> > > > > +
+>> > > > > +     if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
+>> > > > > +             return -EINVAL;
+>> > > > > +
+>> > > > > +     sriov_configure = pci_sriov_configure_simple;
+>> > > > > +     if (sriov_configure == NULL)
+>> > > > > +             return -ENOENT;
+>> > > >
+>> > > > BTW what is all this trickery in aid of?
+>> > >
+>> > > When SR-IOV support is not compiled into the kernel,
+>> > > pci_sriov_configure_simple is #defined as NULL. This allows it to compile
+>> > > in that case, even though there is utterly no way for it to be called in
+>> > > that case. It is an alternative to #ifs in the code.
+>> >
+>> > Why even have the call though? I would wrap all of this in an #ifdef
+>> > and strip it out since you couldn't support SR-IOV if it isn't present
+>> > in the kernel anyway.
+>>
+>> I am inclined to agree. In this case, the presence of #ifdefs I think would
+>> be clearer. As written, someone will want to get rid of the pointer only to
+>> create a build problem when SR-IOV is not configured.
+>
+> In my opinion, maybe it would be better to make
+> pci_sriov_configure_simple() always available
+> just like other sriov functions.
+>
+> Based on the comments in the original patch:
+>
+> https://patchwork.kernel.org/patch/10353197/
+> """
+> +/* this is expected to be used as a function pointer, just define as NULL */
+> +#define pci_sriov_configure_simple NULL
+> """
+>
+> This function could be defined as NULL just because
+> it was expected to be used as a function pointer.
+> But actually it could be called directly as a
+> function, just like this case.
+>
+> So I prefer to make this function always available
+> just like other sriov functions.
+>
+> Best regards,
+> Tiwei Bie
 
-> On Wed, May 30, 2018 at 05:01:01PM -0500, Linus Torvalds wrote:
-> > On Wed, May 30, 2018 at 2:08 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> > >
-> > > Indeed.  The very first line Linus quoted in his first reply to me
-> > > (elided above) was:
-> > >
-> > >         Putting this into herd would be extremely difficult, if not impossible,
-> > >         because it involves analyzing code that was not executed.
-> > >
-> > > It should be clear from this that I was talking about herd.  Not gcc or
-> > > real hardware.
-> > 
-> > So what does herd actually work on? The source code or the executable,
-> > or a trace?
-> 
-> The source code, that is, the source code of the litmus test.
-> There are definitions for the various Linux operations, partly within
-> the herd tool and partly in the linux.def file in tools/memory-model.
-> The problem we are having is nailing down control dependencies and
-> compiler optimizations.  The bit about limiting control dependencies
-> through the end of "if" statement itself works well in a great many cases,
-> but this clearly is not one of them.
-> 
-> > I found the herd paper, but I'm on the road helping my daughter in
-> > college move, and I don't have the background to skim the paper
-> > quickly and come up with the obvious answer, so I'l just ask.
-> 
-> It is not a short learning curve.
-> 
-> > Because I really think that from our memory model standpoint, we
-> > really do have the rule that
-> > 
-> >    load -> cond -> store
-> > 
-> > is ordered - even if the store address and store data is in no way
-> > dependent on the load. The only thing that matters is that there's a
-> > conditional that is dependent on the load in between the load and the
-> > store.
+The fact that you are having to add additional code kind of implies
+that maybe this doesn't fall into the pci_sriov_configure_simple case
+anymore. The PF itself is defining what the VF can and can't do via
+the feature flags you are testing for.
 
-This is true for all the architectures supported by the Linux kernel.  
-However, in the future it might not always hold.  I can imagine that
-CPU designers would want to include an optimization that checks a
-conditional branch to see if it skips over only the following
-instruction (and the following instruction can't affect the flow of
-control); in that situation, they might decide there doesn't need to be
-a control dependency to future stores.  Such an optimization would not
-violate the C11 memory model.
+For example how is the bit of code below valid if the kernel itself
+doesn't support SR-IOV:
++static void vp_transport_features(struct virtio_device *vdev, u64 features)
++{
++       struct virtio_pci_device *vp_dev = to_vp_device(vdev);
++       struct pci_dev *pci_dev = vp_dev->pci_dev;
++
++       if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
++                       pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
++               __virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
++}
++
 
-Of course, this is purely theoretical.  And if anybody does decide to
-try doing that, the memory-model people might scream at them so hard
-they change their minds.  :-)
+It really seems like we should be wrapping these functions at the very
+minimum so that they don't imply you have SR-IOV support when it isn't
+supported in the kernel.
 
-...
+Also it seems like we should be disabling the VFs if the driver is
+unbound from this interface. We need to add logic to disable SR-IOV if
+the driver is removed. What we don't want to do is leave VFs allocated
+and then have the potential for us to unbind/rebind the driver as the
+new driver may change the negotiated features.
 
-> > But I don't know what level 'herd' works on. If it doesn't see
-> > compiler barriers (eg our own "barrier()" macro that literally is just
-> > that), only sees the generated code, then it really has no other
-> > information than what he compiler _happened_ to do - it doesn't know
-> > if the compiler did the store after the conditional because it *had*
-> > to do so, or whether it was just a random instruction scheduling
-> > decision.
-> 
-> The 'herd' tool works on litmus-test source, and has almost no idea of
-> what compilers get up to.  In this particular case, it would be better
-> off being even more ignorant of what compilers get up to.  ;-)
-
-In more detail, herd analyzes the source code and constructs a set of
-all possible candidate executions.  herd then checks each execution to
-see if it violates the rules of the memory model as expressed in the
-.bell and .cat files.  If any of the non-violating executions satisfies
-the litmus test's final "exists" condition, herd reports that the test
-is allowed.
-
-The point here is that when herd checks any one particular execution, 
-it pays attention _only_ to the statements which are part of that 
-execution.  Statements belonging to an untaken "if" branch are ignored 
-completely.  That's why I think it would be difficult to make herd do 
-exactly what we want in this case.
-
-Alan
+- Alex
