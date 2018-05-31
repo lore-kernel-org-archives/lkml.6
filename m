@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754758AbeEaMIA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 08:08:00 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:54510 "EHLO huawei.com"
+        id S1754804AbeEaMIE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 08:08:04 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:54492 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754228AbeEaMH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754330AbeEaMH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 May 2018 08:07:58 -0400
 From: Xie XiuQi <xiexiuqi@huawei.com>
 To: <catalin.marinas@arm.com>, <will.deacon@arm.com>,
@@ -13,12 +13,10 @@ To: <catalin.marinas@arm.com>, <will.deacon@arm.com>,
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <guohanjun@huawei.com>, <wanghuiqiang@huawei.com>,
         <tnowicki@caviumnetworks.com>
-Subject: [PATCH 1/2] arm64: avoid alloc memory on offline node
-Date: Thu, 31 May 2018 20:14:38 +0800
-Message-ID: <1527768879-88161-2-git-send-email-xiexiuqi@huawei.com>
+Subject: [PATCH 0/2] arm64/drivers: avoid alloc memory on offline node
+Date: Thu, 31 May 2018 20:14:37 +0800
+Message-ID: <1527768879-88161-1-git-send-email-xiexiuqi@huawei.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1527768879-88161-1-git-send-email-xiexiuqi@huawei.com>
-References: <1527768879-88161-1-git-send-email-xiexiuqi@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.175.113.25]
@@ -91,28 +89,13 @@ In this situation, we use NUMA_NO_NODE to avoid oops.
 [   25.980162] ---[ end trace 64f0893eb21ec283 ]---
 [   25.984765] Kernel panic - not syncing: Fatal exception
 
-Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
-Tested-by: Huiqiang Wang <wanghuiqiang@huawei.com>
-Cc: Hanjun Guo <hanjun.guo@linaro.org>
-Cc: Tomasz Nowicki <Tomasz.Nowicki@caviumnetworks.com>
-Cc: Xishi Qiu <qiuxishi@huawei.com>
----
- arch/arm64/kernel/pci.c | 3 +++
- 1 file changed, 3 insertions(+)
+Xie XiuQi (2):
+  arm64: avoid alloc memory on offline node
+  drivers: check numa node's online status in dev_to_node
 
-diff --git a/arch/arm64/kernel/pci.c b/arch/arm64/kernel/pci.c
-index 0e2ea1c..e17cc45 100644
---- a/arch/arm64/kernel/pci.c
-+++ b/arch/arm64/kernel/pci.c
-@@ -170,6 +170,9 @@ struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root)
- 	struct pci_bus *bus, *child;
- 	struct acpi_pci_root_ops *root_ops;
- 
-+	if (node != NUMA_NO_NODE && !node_online(node))
-+		node = NUMA_NO_NODE;
-+
- 	ri = kzalloc_node(sizeof(*ri), GFP_KERNEL, node);
- 	if (!ri)
- 		return NULL;
+ arch/arm64/kernel/pci.c | 3 +++
+ include/linux/device.h  | 7 ++++++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
 -- 
 1.8.3.1
