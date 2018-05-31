@@ -1,38 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755636AbeEaQcw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:32:52 -0400
-Received: from verein.lst.de ([213.95.11.211]:39001 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755456AbeEaQcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:32:50 -0400
-Date: Thu, 31 May 2018 18:39:19 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Colin King <colin.king@canonical.com>
-Cc: Benjamin LaHaise <bcrl@kvack.org>, Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] aio: fix missing break in switch statement
-Message-ID: <20180531163919.GB31181@lst.de>
-References: <20180530180415.17572-1-colin.king@canonical.com>
+        id S1755720AbeEaQet (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:34:49 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:30012 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755569AbeEaQer (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:34:47 -0400
+Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+To: Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>, <paul@pwsan.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-2-faiz_abbas@ti.com> <20180530145047.GC5705@atomide.com>
+ <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
+ <20180530152825.GG5705@atomide.com>
+ <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
+ <20180530155448.GH5705@atomide.com>
+ <98c989ca-0694-5150-f74b-35f3e4bf20c0@ti.com>
+ <20180531152623.GN5705@atomide.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <f74763ed-7e27-146b-6856-6be1b2ba630d@ti.com>
+Date: Thu, 31 May 2018 22:05:55 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180530180415.17572-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20180531152623.GN5705@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 07:04:15PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The addition of the IOCB_CMD_POLL command removed the break
-> statement for the IOCM_CMD_FDSYNC. From my understanding, this
-> should not have been removed as the fall-through does not seem
-> to make sense.  Fix this by adding the break back again.
-> 
-> Detected by CoverityScan, CID#1469469 ("Missing break in switch")
+Hi,
 
-Thanks.  I've actually send a fix to Al for this a few days ago
-already.
+On Thursday 31 May 2018 08:56 PM, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [180531 06:18]:
+>> On 30/05/18 18:54, Tony Lindgren wrote:
+>>> * Tero Kristo <t-kristo@ti.com> [180530 15:44]:
+>>>> On 30/05/18 18:28, Tony Lindgren wrote:
+>>>>> * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
+>>>>>> For the OCP if part, I think that is still needed until we switch over to
+>>>>>> full sysc driver. clkctrl_offs you probably also need because that is used
+>>>>>> for mapping the omap_hwmod against a specific clkctrl clock. Those can be
+>>>>>> only removed once we are done with hwmod (or figure out some other way to
+>>>>>> assign the clkctrl clock to a hwmod.)
+>>>>>
+>>>>> Hmm might be worth testing. I thought your commit 70f05be32133
+>>>>> ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
+>>>>> already parses the clkctrl from dts?
+>>>>
+>>>> It maps the clkctrl clock to be used by hwmod, if those are available. We
+>>>> didn't add any specific clock entries to DT for mapping the actual clkctrl
+>>>> clock without the hwmod_data hints yet though, as that was deemed temporary
+>>>> solution only due to transition to interconnect driver. I.e., you would need
+>>>> something like this in DT for every device node:
+>>>>
+>>>> &uart3 {
+>>>>    clocks = <l4per_clkctrl UART3_CLK 0>;
+>>>>    clock-names = "clkctrl";
+>>>> };
+>>>>
+>>>> ... which is currently not present.
+>>>
+>>> Hmm is that not the "fck" clkctrl clock we have already in
+>>> the dts files for the interconnect target modules?
+>>
+>> Oh okay, yeah, we could parse that one, but currently it is not done, and is
+>> not present for everything either I believe.
+>>
+>>> We can also use pdata callbacks to pass the clock node if
+>>> needed. But I guess I don't quite still understand what we
+>>> are missing :)
+>>
+>> So, what is missing is the glue logic only from the hwmod codebase. Right
+>> now this is not supported but should be relatively trivial thing to add if
+>> we really want to do this.
+> 
+> OK let's think about this a bit for v4.19 then.
+> 
+
+I am not sure what the conclusion is. Should I try removing the
+clkctrl_offsets, clkdm_name, and main_clk?
+
+Thanks,
+Faiz
