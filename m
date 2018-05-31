@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756014AbeEaSBM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 14:01:12 -0400
-Received: from mga01.intel.com ([192.55.52.88]:18561 "EHLO mga01.intel.com"
+        id S1756030AbeEaSBO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 14:01:14 -0400
+Received: from mga01.intel.com ([192.55.52.88]:18555 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755956AbeEaR7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1755948AbeEaR7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 May 2018 13:59:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
-   d="scan'208";a="60725528"
+   d="scan'208";a="60725523"
 From: "Chang S. Bae" <chang.seok.bae@intel.com>
 To: Andy Lutomirski <luto@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
@@ -20,9 +20,9 @@ Cc: Andi Kleen <ak@linux.intel.com>,
         "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 09/15] x86/fsgsbase/64: Enable FSGSBASE instructions in helper functions
-Date: Thu, 31 May 2018 10:58:39 -0700
-Message-Id: <1527789525-8857-10-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH V2 08/15] x86/fsgsbase/64: Add intrinsics/macros for FSGSBASE instructions
+Date: Thu, 31 May 2018 10:58:38 -0700
+Message-Id: <1527789525-8857-9-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527789525-8857-1-git-send-email-chang.seok.bae@intel.com>
 References: <1527789525-8857-1-git-send-email-chang.seok.bae@intel.com>
@@ -30,189 +30,119 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The helper functions switch on faster access to FS/GS, when
-FSGSBASE enabled.
+From: Andi Kleen <ak@linux.intel.com>
 
-Accessing user GS base needs a couple of SWPAGS. It is avoidable
-if the user GS base is copied at kernel entry and updated as
-changed, and (actual) GS base is written back at kernel exit.
-However, it costs more cycles to do that. The measured
-overhead was (almost) offset to the benefit.
+Add C intrinsics and assembler macros for the new RD/WR FS/GS BASE
+instructions.
 
+Very straight forward. Used in followon patch.
+
+[luto: rename the variables from fs and gs to fsbase and gsbase and
+ make fsgs.h safe to include on 32-bit kernels.]
+
+v2: Use __always_inline
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+[chang: Replace new instruction macros with GAS-compatible and
+renaming. Note: if GCC supports it, we can add -mfsgsbase to
+CFLAGS and use the builtins here for extra performance.]
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: Any Lutomirski <luto@kernel.org>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/fsgsbase.h | 17 ++++------
- arch/x86/kernel/process_64.c    | 75 +++++++++++++++++++++++++++++++++++------
- 2 files changed, 72 insertions(+), 20 deletions(-)
+ arch/x86/include/asm/fsgsbase.h | 70 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
 diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
-index ed42015..903c7a0 100644
+index 0d4fbef..ed42015 100644
 --- a/arch/x86/include/asm/fsgsbase.h
 +++ b/arch/x86/include/asm/fsgsbase.h
-@@ -54,26 +54,23 @@ static __always_inline void wrgsbase(unsigned long gsbase)
- 			: "memory");
- }
+@@ -18,6 +18,42 @@ unsigned long read_task_gsbase(struct task_struct *task);
+ int write_task_fsbase(struct task_struct *task, unsigned long fsbase);
+ int write_task_gsbase(struct task_struct *task, unsigned long gsbase);
  
-+#include <asm/cpufeature.h>
++/* Must be protected by X86_FEATURE_FSGSBASE check. */
++
++static __always_inline unsigned long rdfsbase(void)
++{
++	unsigned long fsbase;
++
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xc0 # rdfsbaseq %%rax"
++			: "=a" (fsbase)
++			:: "memory");
++	return fsbase;
++}
++
++static __always_inline unsigned long rdgsbase(void)
++{
++	unsigned long gsbase;
++
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xc8 # rdgsbaseq %%rax;"
++			: "=a" (gsbase)
++			:: "memory");
++	return gsbase;
++}
++
++static __always_inline void wrfsbase(unsigned long fsbase)
++{
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xd0 # wrfsbaseq %%rax"
++			:: "a" (fsbase)
++			: "memory");
++}
++
++static __always_inline void wrgsbase(unsigned long gsbase)
++{
++	asm volatile(".byte 0xf3, 0x48, 0x0f, 0xae, 0xd8 # wrgsbaseq %%rax;"
++			:: "a" (gsbase)
++			: "memory");
++}
 +
  /* Helper functions for reading/writing FS/GS base */
  
  static inline unsigned long read_fsbase(void)
- {
- 	unsigned long fsbase;
- 
--	rdmsrl(MSR_FS_BASE, fsbase);
-+	if (static_cpu_has(X86_FEATURE_FSGSBASE))
-+		fsbase = rdfsbase();
-+	else
-+		rdmsrl(MSR_FS_BASE, fsbase);
- 	return fsbase;
- }
- 
- void write_fsbase(unsigned long fsbase);
--
--static inline unsigned long read_inactive_gsbase(void)
--{
--	unsigned long gsbase;
--
--	rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
--	return gsbase;
--}
--
-+unsigned long read_inactive_gsbase(void);
- void  write_inactive_gsbase(unsigned long gsbase);
+@@ -42,6 +78,40 @@ void  write_inactive_gsbase(unsigned long gsbase);
  
  #endif /* CONFIG_X86_64 */
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index cebf240..8ba947f 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -154,6 +154,38 @@ enum which_selector {
- };
  
- /*
-+ * Interrupts are disabled here.
-+ * Out of line to be protected from kprobes.
-+ */
-+static noinline __kprobes unsigned long rd_inactive_gsbase(void)
-+{
-+	unsigned long gsbase, flags;
++#else /* __ASSEMBLY__ */
 +
-+	local_irq_save(flags);
-+	native_swapgs();
-+	gsbase = rdgsbase();
-+	native_swapgs();
-+	local_irq_restore(flags);
++#ifdef CONFIG_X86_64
 +
-+	return gsbase;
-+}
++#include <asm/inst.h>
 +
-+/*
-+ * Interrupts are disabled here.
-+ * Out of line to be protected from kprobes.
-+ */
-+static noinline __kprobes void wr_inactive_gsbase(unsigned long gsbase)
-+{
-+	unsigned long flags;
++.macro RDGSBASE opd
++	REG_TYPE rdgsbase_opd_type \opd
++	.if rdgsbase_opd_type == REG_TYPE_R64
++	R64_NUM rdgsbase_opd \opd
++	.byte 0xf3
++	PFX_REX rdgsbase_opd 0 W = 1
++	.else
++	.error "RDGSBASE: only for 64-bit value"
++	.endif
++	.byte 0xf, 0xae
++	MODRM 0xc0 rdgsbase_opd 1
++.endm
 +
-+	local_irq_save(flags);
-+	native_swapgs();
-+	wrgsbase(gsbase);
-+	native_swapgs();
-+	local_irq_restore(flags);
-+}
++.macro WRGSBASE opd
++	REG_TYPE wrgsbase_opd_type \opd
++	.if wrgsbase_opd_type == REG_TYPE_R64
++	R64_NUM wrgsbase_opd \opd
++	.byte 0xf3
++	PFX_REX wrgsbase_opd 0 W = 1
++	.else
++	.error "WRGSBASE: only for 64-bit value"
++	.endif
++	.byte 0xf, 0xae
++	MODRM 0xd0 wrgsbase_opd 1
++.endm
 +
-+/*
-  * Saves the FS or GS base for an outgoing thread if FSGSBASE extensions are
-  * not available.  The goal is to be reasonably fast on non-FSGSBASE systems.
-  * It's forcibly inlined because it'll generate better code and this function
-@@ -333,16 +365,35 @@ static unsigned long task_seg_base(struct task_struct *task,
- 
- void write_fsbase(unsigned long fsbase)
- {
--	/* set the selector to 0 to not confuse __switch_to */
--	loadseg(FS, 0);
--	wrmsrl(MSR_FS_BASE, fsbase);
-+	if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
-+		wrfsbase(fsbase);
-+	} else {
-+		/* set the selector to 0 to not confuse __switch_to */
-+		loadseg(FS, 0);
-+		wrmsrl(MSR_FS_BASE, fsbase);
-+	}
-+}
++#endif /* CONFIG_X86_64 */
 +
-+unsigned long read_inactive_gsbase(void)
-+{
-+	unsigned long gsbase;
-+
-+	if (static_cpu_has(X86_FEATURE_FSGSBASE))
-+		gsbase = rd_inactive_gsbase();
-+	else
-+		rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+	return gsbase;
- }
+ #endif /* __ASSEMBLY__ */
  
- void write_inactive_gsbase(unsigned long gsbase)
- {
--	/* set the selector to 0 to not confuse __switch_to */
--	loadseg(GS, 0);
--	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+	if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
-+		wr_inactive_gsbase(gsbase);
-+	} else {
-+		/* set the selector to 0 to not confuse __switch_to */
-+		loadseg(GS, 0);
-+		wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+	}
- }
- 
- unsigned long read_task_fsbase(struct task_struct *task)
-@@ -351,7 +402,8 @@ unsigned long read_task_fsbase(struct task_struct *task)
- 
- 	if (task == current)
- 		fsbase = read_fsbase();
--	else if (task->thread.fsindex == 0)
-+	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
-+		 (task->thread.fsindex == 0))
- 		fsbase = task->thread.fsbase;
- 	else
- 		fsbase = task_seg_base(task, task->thread.fsindex);
-@@ -365,7 +417,8 @@ unsigned long read_task_gsbase(struct task_struct *task)
- 
- 	if (task == current)
- 		gsbase = read_inactive_gsbase();
--	else if (task->thread.gsindex == 0)
-+	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
-+		 (task->thread.gsindex == 0))
- 		gsbase = task->thread.gsbase;
- 	else
- 		gsbase = task_seg_base(task, task->thread.gsindex);
-@@ -388,7 +441,8 @@ int write_task_fsbase(struct task_struct *task, unsigned long fsbase)
- 	task->thread.fsbase = fsbase;
- 	if (task == current)
- 		write_fsbase(fsbase);
--	task->thread.fsindex = 0;
-+	if (!static_cpu_has(X86_FEATURE_FSGSBASE))
-+		task->thread.fsindex = 0;
- 	put_cpu();
- 
- 	return 0;
-@@ -405,7 +459,8 @@ int write_task_gsbase(struct task_struct *task, unsigned long gsbase)
- 	task->thread.gsbase = gsbase;
- 	if (task == current)
- 		write_inactive_gsbase(gsbase);
--	task->thread.gsindex = 0;
-+	if (!static_cpu_has(X86_FEATURE_FSGSBASE))
-+		task->thread.gsindex = 0;
- 	put_cpu();
- 
- 	return 0;
+ #endif /* _ASM_FSGSBASE_H */
 -- 
 2.7.4
