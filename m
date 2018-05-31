@@ -1,72 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755880AbeEaRXF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 13:23:05 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44994 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755556AbeEaRXE (ORCPT
+        id S1755905AbeEaRXv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 13:23:51 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:60094 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755827AbeEaRXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 13:23:04 -0400
-Subject: Re: [RFC 1/2] printk: Enable platform to provide a early boot clock
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Feng Tang <feng.tang@intel.com>
-Cc: Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        alek.du@intel.com
-References: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
- <CAHp75VdFZcNMMt6aRWicCozMJ+wfAyJ4ajegHCgNg2X-x_KN_A@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ea92b4fb-a1c9-a961-b67e-7834e351d6e1@infradead.org>
-Date: Thu, 31 May 2018 10:22:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VdFZcNMMt6aRWicCozMJ+wfAyJ4ajegHCgNg2X-x_KN_A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Thu, 31 May 2018 13:23:48 -0400
+Date: Thu, 31 May 2018 13:23:44 -0400 (EDT)
+Message-Id: <20180531.132344.339904863786377155.davem@davemloft.net>
+To: laoar.shao@gmail.com
+Cc: edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] tcp: minor optimization around tcp_hdr()
+ usage in receive path
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1527607651-28262-1-git-send-email-laoar.shao@gmail.com>
+References: <1527607651-28262-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/31/2018 12:18 AM, Andy Shevchenko wrote:
-> On Wed, May 30, 2018 at 12:20 PM, Feng Tang <feng.tang@intel.com> wrote:
->> Currently printk timestamp mostly come from the sched_clock which
->> depends on the clock setup, so there are many kernel logs started
->> with "[    0.000000]   " before the clock is calibrated.
->>
->> This patch will provide an debug option for specific platform to
->> provide a early boot time clock, so that we can have time info in
->> kernel log much earlier, which can show the time info for the early
->> kernel boot, and make boottime tuning/optimization easier (boot time
->> is critical for phone/tablet and embedded devices).
->>
->> Capable platform only need to setup the "boot_printk_clock_fn"
->> which could return time in nano seconds.
->>
->> Together with a TSC patch on x86 system, we have easily captured
->> some early boottime killer like unwind_init() which takes about
->> 300ms in boot phase.
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 29 May 2018 23:27:31 +0800
+
+> This is additional to the
+> commit ea1627c20c34 ("tcp: minor optimizations around tcp_hdr() usage").
+> At this point, skb->data is same with tcp_hdr() as tcp header has not
+> been pulled yet. So use the less expensive one to get the tcp header.
 > 
->> +static u64 printk_clock(void)
->> +{
->> +       /* If platform provides early boot printk clock, then use it */
->> +       if (unlikely(system_state == SYSTEM_BOOTING && boot_printk_clock_fn))
->> +               return boot_printk_clock_fn();
->> +       else
->> +               return local_clock();
+> Remove the third parameter of tcp_rcv_established() and put it into
+> the function body.
 > 
-> 'else' is redundant.
+> Furthermore, the local variables are listed as a reverse christmas tree :)
+> 
+> Cc: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 
-So it is.  Is this a style comment?
-This shouldn't matter to a smart compiler, should it?
-
->> +}
-
-thanks,
--- 
-~Randy
+Applied, thanks.
