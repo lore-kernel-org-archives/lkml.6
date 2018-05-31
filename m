@@ -1,55 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756077AbeEaTCJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 15:02:09 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:41524 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755875AbeEaTCH (ORCPT
+        id S1754081AbeEaTHF convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 15:07:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34052 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754003AbeEaTHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 15:02:07 -0400
-X-Google-Smtp-Source: ADUXVKI7xzq/FzoDPD177YesLdLsJ2dG/wi1e+v86IRwYJQU0QybTFrZYk9CqPKNGJTTg1sIh7ueq2HJp81ZEAZ+IR0=
+        Thu, 31 May 2018 15:07:03 -0400
+Date: Fri, 01 Jun 2018 00:36:54 +0530
+From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: [PATCH 2/2] powerpc: Add support for function error injection
+To: Josef Bacik <jbacik@fb.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
+        <5ad23690185a90a887514d702ecb45783090d7c0.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
+        <87h8mozajv.fsf@concordia.ellerman.id.au>
+        <1527761352.z5jz8jg2d5.naveen@linux.ibm.com>
+        <87zi0fyktj.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87zi0fyktj.fsf@concordia.ellerman.id.au>
+User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
 MIME-Version: 1.0
-In-Reply-To: <s5hmuwf648a.wl-tiwai@suse.de>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
- <1527765086-19873-16-git-send-email-xieyisheng1@huawei.com>
- <CAHp75VeNgTVT_O_ytF2C_iavkDLz5uxQggxboWpB9f1fgjkYdQ@mail.gmail.com> <s5hmuwf648a.wl-tiwai@suse.de>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 31 May 2018 22:02:05 +0300
-Message-ID: <CAHp75VcVMO=s0gxGOZ9UqG-AybPNDac9ePc276VSGHm4WKnaBA@mail.gmail.com>
-Subject: Re: [PATCH v2 15/21] ALSA: oxygen: use match_string() helper
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 18053119-4275-0000-0000-000002885F55
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053119-4276-0000-0000-0000378F6572
+Message-Id: <1527793526.g9zv2oo8k4.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=940 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805310211
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 9:59 PM, Takashi Iwai <tiwai@suse.de> wrote:
-> On Thu, 31 May 2018 20:41:36 +0200,
-> Andy Shevchenko wrote:
->> On Thu, May 31, 2018 at 2:11 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
-
->> > +               j = match_string(known_ctl_names, CONTROL_COUNT, ctl->id.name);
->> > +               if (j >= 0) {
->> > +                       chip->controls[j] = ctl;
->> > +                       ctl->private_free = oxygen_any_ctl_free;
->> > +               }
+Michael Ellerman wrote:
+> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
+> 
+>> Michael Ellerman wrote:
+>>> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
+>>>> ...
+>>> 
+>>> A change log is always nice even if it's short :)
 >>
->> It looks to me you may get rid of j completely by utilizing existing err.
->
-> Well, err isn't ideal as it's referred as the actual index.
-> That is, the line below looks weird to me:
->         chip->controls[err] = ctl;
->
-> Of course, j isn't the best name, either, but at least, keeping the
-> same variable makes the code conversion logic clearer.
+>> I tried, but really couldn't come up with anything more to write. I'll 
+>> try harder for v2 :)
+> 
+> Yeah true.
+> 
+> You could just say "All that's required is to define x and y and select
+> the Kconfig symbol".
 
-Works for me either way.
-Thanks!
+Ok, sure.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> 
+>>> This looks fine to me, it's probably easiest if it goes in via tip along
+>>> with patch 1.
+>>> 
+>>> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+>>
+>> Thanks for the review. I'll base v2 on -tip
+> 
+> I guess if it doesn't already apply to tip you should rebase it. You've
+> probably missed 4.18 anyway.
+
+Oh ok. I just tried and it seems to apply just fine. I'll post v2 after 
+giving this a quick test.
+
+- Naveen
