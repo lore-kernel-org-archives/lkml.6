@@ -1,131 +1,273 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754030AbeEaGup (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:50:45 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36510 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753934AbeEaGul (ORCPT
+        id S1754058AbeEaGvL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:51:11 -0400
+Received: from mail.efficios.com ([167.114.142.138]:53638 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754006AbeEaGun (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:50:41 -0400
-X-Google-Smtp-Source: ADUXVKJHQQc2wtasyHz7NnRRZbXmbzwGiDrBFAycT64jNeSDOKmSe/o8Qj0KSdb1EgFktBGKaeiCfqyPpxHrnB0Xekw=
+        Thu, 31 May 2018 02:50:43 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 5555E225F33
+Date: Thu, 31 May 2018 02:50:41 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Joel Fernandes <joelaf@google.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, shuah <shuah@kernel.org>,
+        rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Message-ID: <214539705.3633.1527749441133.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180530000500.257225-6-joel@joelfernandes.org>
+References: <20180530000500.257225-1-joel@joelfernandes.org> <20180530000500.257225-6-joel@joelfernandes.org>
+Subject: Re: [PATCH v8 5/8] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
 MIME-Version: 1.0
-References: <CAKwvOd=jmi_7LvZbS0PA5-zt62m5ZFPUNG7JtMQVmerCR63ebQ@mail.gmail.com>
- <BDEF22F0-84A5-4A36-B153-13E6A4260922@zytor.com> <CAKwvOdnLt5qr_5ah86qdsocTxUbo_3X1y3PPRp1EZwt=__NxnA@mail.gmail.com>
- <dd1626ae-114f-3817-c8b2-f845e079bfc6@zytor.com> <CAKwvOdkEHqv7Ut8H6Rb+gSvfWsMHqO=E3f7yxm=06m9yEn=h6w@mail.gmail.com>
- <26B017D5-4063-46CB-8768-B0E5E7CD3838@zytor.com> <CAKwvOdk_4g5PsRUoLgOeWEwt+d0diyD_Ycx6s7LQsJrSMsBEuA@mail.gmail.com>
- <319FB971-ABB6-4BE7-969B-D87D84853196@zytor.com> <CAKwvOdmryseROx=iSs6CZ86-tr90Fni8RC_w6Y7nFSXGW=508g@mail.gmail.com>
- <31A5469A-176F-451F-886A-ECD649DDC78C@zytor.com> <CAKwvOdkpWZC4vWK8hDdgUGseTmK4Hz5uDHn_mP9yc=jbfdVPmg@mail.gmail.com>
- <A042BB2E-FACF-4AE0-8B1E-716061666C5F@zytor.com> <CAKwvOdkWsxoyXCnQz+Xwh0RQ0yPPVD3iCqVaWAimW_Z4QU0XiA@mail.gmail.com>
- <38f21c66-fa34-3a77-33bc-d15065c15af9@zytor.com> <CAKwvOdkurUGcSAGjR8_nDRgHLFLj93E1wAA3+O0A+pKPHvzwRA@mail.gmail.com>
-In-Reply-To: <CAKwvOdkurUGcSAGjR8_nDRgHLFLj93E1wAA3+O0A+pKPHvzwRA@mail.gmail.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Wed, 30 May 2018 23:50:28 -0700
-Message-ID: <CAKwvOd=FN0G-zs-DMF3ubs8y9-PDEamfi__P_iv_JgN3bH6qFw@mail.gmail.com>
-Subject: Re: [clang] stack protector and f1f029c7bf
-To: hpa@zytor.com
-Cc: Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: tracepoint: Make rcuidle tracepoint callers use SRCU
+Thread-Index: nAvq5R3aJ9eIQjR/d+8UrCS38/m8pw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 3:38 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Fri, May 25, 2018 at 2:06 PM H. Peter Anvin <hpa@zytor.com> wrote:
-> > On 05/25/18 13:36, Nick Desaulniers wrote:
-> > > On Fri, May 25, 2018 at 10:56 AM <hpa@zytor.com> wrote:
-> > >> You need the extern inline in the .h file and the out-of-line .S file
-> > > I don't see how you can specify to the linker from assembly source that
-> > > this function should be treated as `extern inline`?
-> > "extern inline" is a C directive. In the header file you should provide
-> > the inlinable implementation (which is already there.) It means that "if
-> > you don't want to inline this there is an external implementation
-> > available."
->
-> oh you put `extern inline` on the definition, not the declaration?! What?!
->
-> http://m68hc11.serveftp.org/inline-1.php
->
-> in fact documents that trick.  Wow, I've never seen that before.  Seems
-> like there's not too many instances in the kernel.
->
-> This seems to inline native_save_fl() properly into the call sites, but the
-> boot code now fails to link due to multiple definitions when trying link
-> the objects from arch/x86/boot/compressed/ into vmlinux.
->
-> When disassembling the the arch/x86/boot/compressed/ objects, I can see
-> they're pulling in the `extern inline` c versions, but still outlining
-> them! (gcc and clang).
->
-> That seems to contradict the statement from the above link:
-> "In no case is the function compiled on its own, not even if you refer to
-> its address explicitly"
->
-> This is kind of funny; first we were wondering why native_save_fl was
-> getting outlined as a static inline function, which Alistair tracked down
-> to the incorrect use as a function pointer. Now I'm playing why is
-> native_save_fl getting outlined as an extern inline function.
->
-> If I move the .S file to be in arch/x86/kernel/boot/compressed, the boot
-> code now links but then paravirt.o fails to link.  Referring to the .S from
-> both Makefiles results in multiple definitions that the linker doesn't
-> like. (and the boot code still containing outlines).
->
-> I don't understand how `extern inline` signals to the linker that "this
-> version should be taken if you find no others".  From what I can tell with
-> `readelf -a` and `objdump -d`, a function marked `extern inline` vs not
-> look similar.
->
-> Then again, arch/x86/boot/compressed/Makefile completely resets
-> KBUILD_CFLAGS and KBUILD_AFLAGS, which may be problematic (if there's some
-> kind of command line flag that affects `extern inline` linkage).
+----- On May 30, 2018, at 2:04 AM, Joel Fernandes joelaf@google.com wrote:
 
-Aha! This (wiping away CFLAGS) was it!  The rules for `extern inline`
-for gnu89 and c99 are exactly the opposite! [0][1]
+> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> 
+> In recent tests with IRQ on/off tracepoints, a large performance
+> overhead ~10% is noticed when running hackbench. This is root caused to
+> calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
+> tracepoint code. Following a long discussion on the list [1] about this,
+> we concluded that srcu is a better alternative for use during rcu idle.
+> Although it does involve extra barriers, its lighter than the sched-rcu
+> version which has to do additional RCU calls to notify RCU idle about
+> entry into RCU sections.
+> 
+> In this patch, we change the underlying implementation of the
+> trace_*_rcuidle API to use SRCU. This has shown to improve performance
+> alot for the high frequency irq enable/disable tracepoints.
+> 
+> Test: Tested idle and preempt/irq tracepoints.
+> 
+> Here are some performance numbers:
+> 
+> With a run of the following 30 times on a single core x86 Qemu instance
+> with 1GB memory:
+> hackbench -g 4 -f 2 -l 3000
+> 
+> Completion times in seconds. CONFIG_PROVE_LOCKING=y.
+> 
+> No patches (without this series)
+> Mean: 3.048
+> Median: 3.025
+> Std Dev: 0.064
+> 
+> With Lockdep using irq tracepoints with RCU implementation:
+> Mean: 3.451   (-11.66 %)
+> Median: 3.447 (-12.22%)
+> Std Dev: 0.049
+> 
+> With Lockdep using irq tracepoints with SRCU implementation (this series):
+> Mean: 3.020   (I would consider the improvement against the "without
+>	       this series" case as just noise).
+> Median: 3.013
+> Std Dev: 0.033
+> 
+> [1] https://patchwork.kernel.org/patch/10344297/
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+> include/linux/tracepoint.h | 48 +++++++++++++++++++++++++++++++-------
+> kernel/tracepoint.c        | 15 +++++++++++-
+> 2 files changed, 54 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index c94f466d57ef..880794207921 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -15,6 +15,7 @@
+>  */
+> 
+> #include <linux/smp.h>
+> +#include <linux/srcu.h>
+> #include <linux/errno.h>
+> #include <linux/types.h>
+> #include <linux/cpumask.h>
+> @@ -33,6 +34,8 @@ struct trace_eval_map {
+> 
+> #define TRACEPOINT_DEFAULT_PRIO	10
+> 
+> +extern struct srcu_struct tracepoint_srcu;
+> +
+> extern int
+> tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
+> extern int
+> @@ -75,10 +78,15 @@ int unregister_tracepoint_module_notifier(struct
+> notifier_block *nb)
+>  * probe unregistration and the end of module exit to make sure there is no
+>  * caller executing a probe when it is freed.
+>  */
+> +#ifdef CONFIG_TRACEPOINTS
+> static inline void tracepoint_synchronize_unregister(void)
+> {
+> +	synchronize_srcu(&tracepoint_srcu);
+> 	synchronize_sched();
+> }
+> +#else
+> +static inline void tracepoint_synchronize_unregister(void) { }
 
-c99: "a function defined extern inline will always, emit an externally
-visible function."
+In order to add some consistency to the style in this header file,
+this empty function should look like:
 
-but then
+static inline void tracepoint_synchronize_unregister(void)
+{ }
 
-gnu89: "gnu89 semantics of inline and extern inline are essentially
-the exact opposite of those in C99"
+(with newline before "{")
 
-This is elaborated more concisely in [2].
+> +#endif
+> 
+> #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+> extern int syscall_regfunc(void);
+> @@ -129,18 +137,38 @@ extern void syscall_unregfunc(void);
+>  * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
+>  * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
+>  */
+> -#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
+> +#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
+> 	do {								\
+> 		struct tracepoint_func *it_func_ptr;			\
+> 		void *it_func;						\
+> 		void *__data;						\
+> +		int __maybe_unused idx = 0;				\
+> 									\
+> 		if (!(cond))						\
+> 			return;						\
+> -		if (rcucheck)						\
+> -			rcu_irq_enter_irqson();				\
+> -		rcu_read_lock_sched_notrace();				\
+> -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
+> +									\
+> +		/*							\
+> +		 * For rcuidle callers, use srcu since sched-rcu	\
+> +		 * doesn't work from the idle path.			\
+> +		 */							\
+> +		if (rcuidle) {						\
+> +			if (in_nmi()) {					\
+> +				WARN_ON_ONCE(1);			\
+> +				return; /* no srcu from nmi */		\
 
-If I add `-std=gnu89` to the KBUILD_CFLAGS for compilation units that
-are missing that flag but include irqflags.h, I stop getting multiple
-definition linkage errors and link the expected kernel image!
+I find it odd to have a "return" in a macro that consists of a
+do { } while (0). I'm tempted to replace "return" by "break" here,
+to break the macro do/while (0) loop.
 
-This is something to seriously consider for whoever might ever want to
-change the kernel's C standard: that you'll end up flipping the
-semantics of `extern inline`.  Sounds like `-fgnu89-inline` compiler
-flag or `gnu_inline` attribute could be used to correct such a
-situation.
+> +			}						\
+> +									\
+> +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
+> +			it_func_ptr =					\
+> +				srcu_dereference_notrace((tp)->funcs,	\
+> +						&tracepoint_srcu);	\
+> +			/* To keep it consistent with !rcuidle path */	\
+> +			preempt_disable_notrace();			\
+> +		} else {						\
+> +			rcu_read_lock_sched_notrace();			\
+> +			it_func_ptr =					\
+> +				rcu_dereference_sched((tp)->funcs);	\
+> +		}							\
+> +									\
+> 		if (it_func_ptr) {					\
+> 			do {						\
+> 				it_func = (it_func_ptr)->func;		\
+> @@ -148,9 +176,13 @@ extern void syscall_unregfunc(void);
+> 				((void(*)(proto))(it_func))(args);	\
+> 			} while ((++it_func_ptr)->func);		\
+> 		}							\
+> -		rcu_read_unlock_sched_notrace();			\
+> -		if (rcucheck)						\
+> -			rcu_irq_exit_irqson();				\
+> +									\
+> +		if (rcuidle) {						\
+> +			preempt_enable_notrace();			\
+> +			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
+> +		} else {						\
+> +			rcu_read_unlock_sched_notrace();		\
+> +		}							\
+> 	} while (0)
+> 
+> #ifndef MODULE
+> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+> index 1e37da2e0c25..54157792f5ab 100644
+> --- a/kernel/tracepoint.c
+> +++ b/kernel/tracepoint.c
+> @@ -31,6 +31,9 @@
+> extern struct tracepoint * const __start___tracepoints_ptrs[];
+> extern struct tracepoint * const __stop___tracepoints_ptrs[];
+> 
+> +DEFINE_SRCU(tracepoint_srcu);
+> +EXPORT_SYMBOL_GPL(tracepoint_srcu);
+> +
+> /* Set to 1 to enable tracepoint debug output */
+> static const int tracepoint_debug;
+> 
+> @@ -67,16 +70,26 @@ static inline void *allocate_probes(int count)
+> 	return p == NULL ? NULL : p->probes;
+> }
+> 
+> -static void rcu_free_old_probes(struct rcu_head *head)
+> +static void srcu_free_old_probes(struct rcu_head *head)
+> {
+> 	kfree(container_of(head, struct tp_probes, rcu));
+> }
+> 
+> +static void rcu_free_old_probes(struct rcu_head *head)
+> +{
+> +	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
+> +}
+> +
+> static inline void release_probes(struct tracepoint_func *old)
+> {
+> 	if (old) {
+> 		struct tp_probes *tp_probes = container_of(old,
+> 			struct tp_probes, probes[0]);
+> +		/*
+> +		 * Tracepoint probes are protected by both sched RCU and SRCU,
+> +		 * by calling the SRCU callback in the sched RCU callback we
+> +		 * cover both cases. So lets chain the SRCU and RCU callbacks.
 
-+ KBUILD maintainers and mailing list.
+lets -> let's
 
-Completely overwriting the KBUILD_CFLAGS from sub directory Makefiles
-(using the := operator) has been making me feel uneasy, since we very
-carefully try to set the necessary flags for Clang in the top level
-Makefile.  In this case, the C standard is different for at least 2
-subdirectories, which has implications for at least the above case
-with the linkage of `extern inline` functions.
+But I would use a different wording for that sentence that does not include
+"let's" which is short for "let us", e.g.
 
-Will do further testing and cut a patch set tomorrow.
+"Chain the SRCU and sched RCU callbacks to wait for both grace periods."
 
-[0] https://en.wikipedia.org/wiki/Inline_function#C99
-[1] https://en.wikipedia.org/wiki/Inline_function#gnu89
-[2] http://blahg.josefsipek.net/?p=529
--- 
+With the comments above taken care of, please add my:
+
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+
 Thanks,
-~Nick Desaulniers
+
+Mathieu
+
+> +		 */
+> 		call_rcu_sched(&tp_probes->rcu, rcu_free_old_probes);
+> 	}
+> }
+> --
+> 2.17.0.921.gf22659ad46-goog
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
