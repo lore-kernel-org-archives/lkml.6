@@ -1,55 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756075AbeEaS4C (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 14:56:02 -0400
-Received: from mail-qt0-f177.google.com ([209.85.216.177]:46172 "EHLO
-        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755955AbeEaSz6 (ORCPT
+        id S1756091AbeEaS4N (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 14:56:13 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36419 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755955AbeEaS4K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 14:55:58 -0400
-X-Google-Smtp-Source: ADUXVKKDXGAx2QrJeJvd9fE1KvKdPD4bCbaJzd5NgUmC+XVr3VG1HAOfCxq86TY37Lzd6PikfOoKk4zvJsnmRNFnFRA=
-MIME-Version: 1.0
-In-Reply-To: <20180531072732.GA90146@google.com>
-References: <20180530163135.50081-1-liumartin@google.com> <Pine.LNX.4.44L0.1805301319430.1502-100000@iolanthe.rowland.org>
- <20180531063118.GA7554@kroah.com> <20180531072732.GA90146@google.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 31 May 2018 21:55:56 +0300
-Message-ID: <CAHp75Ve8RmAcr-nEQaLZug2+x_d8ExJJK2DgEJc+L_60u0vLzw@mail.gmail.com>
-Subject: Re: [PATCH v4] driver core: hold dev's parent lock when needed
-To: Martin Liu <liumartin@google.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
-        Johan Hovold <johan@kernel.org>,
+        Thu, 31 May 2018 14:56:10 -0400
+X-Google-Smtp-Source: ADUXVKLX2ffX17t6T1EYlK2Ul22rX1+cllcdeOaaK83/6l7nMtmNyegZKbn4cX19birXRLDOyMfp2g==
+Subject: Re: [PATCH v2 01/21] usb: phy: use match_string() helper
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Yisheng Xie <xieyisheng1@huawei.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        USB <linux-usb@vger.kernel.org>, jenhaochen@google.com
-Content-Type: text/plain; charset="UTF-8"
+        USB <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+ <1527765086-19873-2-git-send-email-xieyisheng1@huawei.com>
+ <af7838f0-9cae-d526-b52f-15996cd8031c@cogentembedded.com>
+ <CAHp75VfAwj2P51ydOoe6aysB=Q9j8DaMNSbYaMqwbYHn7UFfdQ@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <d06e5dd2-cee8-7648-c4e0-3f65977e0510@cogentembedded.com>
+Date: Thu, 31 May 2018 21:56:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VfAwj2P51ydOoe6aysB=Q9j8DaMNSbYaMqwbYHn7UFfdQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 10:27 AM, Martin Liu <liumartin@google.com> wrote:
-> On Thu, May 31, 2018 at 08:31:18AM +0200, Greg KH wrote:
->> On Wed, May 30, 2018 at 01:21:02PM -0400, Alan Stern wrote:
->> > On Thu, 31 May 2018, Martin Liu wrote:
+On 05/31/2018 09:47 PM, Andy Shevchenko wrote:
 
->> > This looks okay to me.
->> >
->> > Acked-by: Alan Stern <stern@rowland.harvard.edu>
->> >
->> > Greg, any more comments?
+>>>  - donot rename err to ret  - per Andy
 >>
->> Looks sane to me.  Martin, thanks for all of the changes.
+>>    Hm...
+> 
+>>> -     int err, i;
+> 
+>>> +     err = match_string(usbphy_modes, ARRAY_SIZE(usbphy_modes), phy_type);
+>>> +     if (err < 0)
+>>
+>>    This is one of the few cases when 'err' is not the best name for such a
+>> variable. I'd prefer to see something like 'match' or even 'rc' or 'ret'... :-)
+> 
+> Then leaving i would make it?
 
-> Great thank Alan, Greg and Andy for helpful hints and feedback.
-> Many Thanks!
+   Yes. :-)
 
-You are welcome!
+> I'm okay with either which just not renames err, b/c it's used with
+> something else in this function.
 
-Btw, FWIW,
+   Looking at it again, 'err' seems equally bad for the result of 
+of_property_read_string()... unless the check there is changed to just *if* (err) --
+this function never returns positive values, 0 means success, others mean error.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
+MBR, Sergei 
