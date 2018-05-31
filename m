@@ -1,57 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755023AbeEaMLF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 08:11:05 -0400
-Received: from mga12.intel.com ([192.55.52.136]:63675 "EHLO mga12.intel.com"
+        id S1754790AbeEaMNP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 08:13:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754986AbeEaMK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 08:10:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
-   d="scan'208";a="228816294"
-Subject: Re: [PATCH V3 00/17] perf tools and x86 PTI entry trampolines
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <1526986485-6562-1-git-send-email-adrian.hunter@intel.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <4017be61-554f-f356-b68d-64981261f8dd@intel.com>
-Date: Thu, 31 May 2018 15:09:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754637AbeEaMNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 08:13:13 -0400
+Date: Thu, 31 May 2018 14:12:51 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH 4.16 269/272] pinctrl: msm: Use dynamic GPIO numbering
+Message-ID: <20180531121251.GA13561@kroah.com>
+References: <20180528100240.256525891@linuxfoundation.org>
+ <20180528100302.722883806@linuxfoundation.org>
+ <7c34ccef-2fa8-8b53-2677-29f6fbe71a04@dd-wrt.com>
+ <20180531114553.GB11598@kroah.com>
+ <d2ed4f7c-f97c-ba51-6f33-d329da69dbc6@dd-wrt.com>
+ <510e5f2c-718a-de42-8274-9345d13e7797@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1526986485-6562-1-git-send-email-adrian.hunter@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <510e5f2c-718a-de42-8274-9345d13e7797@codeaurora.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/05/18 13:54, Adrian Hunter wrote:
-> Hi
+On Thu, May 31, 2018 at 06:55:55AM -0500, Timur Tabi wrote:
+> On 5/31/18 6:53 AM, Sebastian Gottschall wrote:
+> > > 
+> > i checked initially 4.9 with latest patches and 4.14 and reverted this
+> > line to get back to the old behaviour but a which view in the current
+> > 4.17 tree shows
+> > that the same patch has been included in 4.17. it was introduced in the
+> > kernel mainline on 12.feb 2018
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/pinctrl/qcom/pinctrl-msm.c?h=v4.17-rc7&id=a7aa75a2a7dba32594291a71c3704000a2fd7089
 > 
-> Here is V3 of patches to support x86 PTI entry trampolines in perf tools.
+> I believe that this patch should not be applied to *any* stable kernel.
 > 
-> Patches also here:
-> 	http://git.infradead.org/users/ahunter/linux-perf.git/shortlog/refs/heads/perf-tools-kpti-v3
-> 	git://git.infradead.org/users/ahunter/linux-perf.git perf-tools-kpti-v3
-> 
+> It completely breaks legacy GPIO numbering, and it does so intentionally.
+> That may be okay for future kernels, but IMHO it's wrong for older kernels.
 
-Arnaldo has queued the tools patches, but there are still 3 kernel patches:
+Why is it somehow ok for "future" kernels?  You can't break the api in
+the future for no reason.
 
-	kallsyms: Simplify update_iter_mod()
-	kallsyms, x86: Export addresses of syscall trampolines
-	x86: Add entry trampolines to kcore
+So this needs to be the same everywhere.  If it is broken in 4.17-rc, it
+needs to be reverted.
 
-Are there any further comments on these?  Can they be applied?
+thanks,
+
+greg k-h
