@@ -1,95 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754021AbeEaHlm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 03:41:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35278 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753934AbeEaHlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 03:41:39 -0400
+        id S1754030AbeEaHnT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 03:43:19 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:5551 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753740AbeEaHnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 03:43:18 -0400
+From: "Zengtao (B)" <prime.zeng@hisilicon.com>
+To: Takashi Iwai <tiwai@suse.de>
+CC: "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [alsa-devel] Timeout issues in wait_for_avail function
+Thread-Topic: [alsa-devel] Timeout issues in wait_for_avail function
+Thread-Index: AQHT6qbW0DvOfS0K70aSvYL4PbK3FaRJizRA
+Date: Thu, 31 May 2018 07:43:10 +0000
+Message-ID: <678F3D1BB717D949B966B68EAEB446ED0C91AA6C@DGGEMM506-MBS.china.huawei.com>
+References: <678F3D1BB717D949B966B68EAEB446ED0C8D7B4E@DGGEMM506-MBS.china.huawei.com>
+ <s5h1sef96ua.wl-tiwai@suse.de>
+In-Reply-To: <s5h1sef96ua.wl-tiwai@suse.de>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.67.222.15]
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <9f2e1aa8-21c1-10b0-6193-e6bc16993a0d@codeaurora.org>
-Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
-        andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux@arm.linux.org.uk
-References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
- <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
- <20180524173926.GC14924@minitux>
- <664089d4-b30d-99bb-2021-12128b2895ba@codeaurora.org>
- <152769571081.144038.4314499217001219157@swboyd.mtv.corp.google.com>
- <9f2e1aa8-21c1-10b0-6193-e6bc16993a0d@codeaurora.org>
-Message-ID: <152775249799.144038.9269415086304305030@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v9 01/15] ARM: Add Krait L2 register accessor functions
-Date: Thu, 31 May 2018 00:41:37 -0700
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4V7fm7Q022012
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4V7hkx9022025
 
-Quoting Sricharan R (2018-05-30 21:57:20)
-> Hi Stephen,
-> 
-> On 5/30/2018 9:25 PM, Stephen Boyd wrote:
-> > Quoting Sricharan R (2018-05-24 22:40:11)
-> >> Hi Bjorn,
-> >>
-> >> On 5/24/2018 11:09 PM, Bjorn Andersson wrote:
-> >>> On Tue 06 Mar 06:38 PST 2018, Sricharan R wrote:
-> >>>
-> >>>> From: Stephen Boyd <sboyd@codeaurora.org>
-> >>>>
-> >>>> Krait CPUs have a handful of L2 cache controller registers that
-> >>>> live behind a cp15 based indirection register. First you program
-> >>>> the indirection register (l2cpselr) to point the L2 'window'
-> >>>> register (l2cpdr) at what you want to read/write.  Then you
-> >>>> read/write the 'window' register to do what you want. The
-> >>>> l2cpselr register is not banked per-cpu so we must lock around
-> >>>> accesses to it to prevent other CPUs from re-pointing l2cpdr
-> >>>> underneath us.
-> >>>>
-> >>>> Cc: Mark Rutland <mark.rutland@arm.com>
-> >>>> Cc: Russell King <linux@arm.linux.org.uk>
-> >>>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> >>>
-> >>> This should have your signed-off-by here as well.
-> >>>
-> >>
-> >>  ok.
-> >>
-> >>> Apart from that:
-> >>>
-> >>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> >>>
-> >>
-> > 
-> > Will these patches come around again? I'll do a quick sweep on them
-> > today but I expect them to be resent.
-> 
-> Sure, i will have to resend them again, fixing couple of Bjorn's
-> minor comments. Will address your comments that you would give
-> as well along with that.
-> 
+Hi Takashi:
 
-Ok. One general comment is that it would be nice if the bindings for all
-the nodes that are introduced included 'clocks' properties and also
-maybe 'clock-names' properties for the clocks that are consumed by each
-node. Right now, we hide those details from DT and rely on the string
-names to hook the clk tree up for us. That sort of prevents us from
-moving away from string easily, so I would just throw the clocks into
-the binding right now and always have them there just in case we want to
-use the binding to figure out the hierarchy in the future.
+Thank you for your reply.
 
-I've been thinking we need to do something similar for the gcc and other
-nodes for any clks they use, but I haven't gotten around to it.
+>-----Original Message-----
+>From: Takashi Iwai [mailto:tiwai@suse.de]
+>Sent: Sunday, May 13, 2018 6:40 PM
+>To: Zengtao (B) <prime.zeng@hisilicon.com>
+>Cc: perex@perex.cz; tiwai@suse.com; alsa-devel@alsa-project.org;
+>linux-kernel@vger.kernel.org
+>Subject: Re: [alsa-devel] Timeout issues in wait_for_avail function
+>
+>On Mon, 07 May 2018 12:49:34 +0200,
+>Zengtao (B) wrote:
+>>
+>> Hi perex and tiwai:
+>>
+>> I have met a timeout case when capture audio from snd-usb-audio
+>> device, when the host call the pcm_read and get into the wait_for_avail
+>function.
+>> The following happends
+>> 1.  No available data for capture(maybe because of the late response
+>> audio data by the uac device)
+>
+>Hrm, in the case of capture, the data must be available.
+>If it's not the case, something is wrong.
+>
+>> 2.  The current thread falls into sleep state and no one wakes up it.
+>> 3.  The current thread will sleep 10s(schedule_timeout(1000)) and then
+>wakeup.
+>>
+>> I have two question about the wait_for_avail:
+>> 1. The timeout value too long, is it a reasonable value?
+>> 2. Is there any mechanism to wake up the thread if there is data from the
+>hw.
+>
+>The scenario above shouldn't happen, so no need for discussion.
+>Rather we should check why it's woken up even though no data is available.
+>
 
-Otherwise the patches look mostly ok to me. Not sure I'll have any other
-comments.
+It really happens on my platform, and anyway 10 seconds timeout seems
+not a reasonable value. And I don't there is any guarantee that there must be avail
+data when we reach wait_for_avail, in fact, inside the wait_for_avail, there is branch
+when no data is available.
+
+>You can check the tracepoints to see the action of PCM stream, and confirm
+>whether it's really no data, or it's just lost by some reason (or looks as if so).
+>
+I trace the data flow, we reach the wait_for_avail function before the usb snd data arrives, 
+so we wait until 10 seconds timeout. 
+
+>
+>Takashi
+
+
+Regards
+Zengtao 
