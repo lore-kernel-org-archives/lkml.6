@@ -1,105 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755868AbeEaQze (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:55:34 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43640 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755634AbeEaQzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:55:31 -0400
-Subject: Re: [PATCH v2 00/17] arm64 SSBD (aka Spectre-v4) mitigation
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, Mark Rutland <mark.rutland@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Julien Grall <julien.grall@arm.com>, Andy Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180529121121.24927-1-marc.zyngier@arm.com>
- <20180531164133.6z6py7nl55ty473e@armageddon.cambridge.arm.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <b6111f31-b128-94f2-ae6b-03a906358c0b@arm.com>
-Date: Thu, 31 May 2018 17:55:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1755726AbeEaQ6G (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:58:06 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41934 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755556AbeEaQ6C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:58:02 -0400
+X-Google-Smtp-Source: ADUXVKIBML67v4eMwlMeQOOxmBNYD2iXw357ykGhMExK65FdTL6eCO1bwv6YnlRaWfQAHgs9rVyK9w==
+Date: Thu, 31 May 2018 09:57:59 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Timur Tabi <timur@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH 4.16 269/272] pinctrl: msm: Use dynamic GPIO numbering
+Message-ID: <20180531165759.GJ14924@minitux>
+References: <20180528100240.256525891@linuxfoundation.org>
+ <20180528100302.722883806@linuxfoundation.org>
+ <7c34ccef-2fa8-8b53-2677-29f6fbe71a04@dd-wrt.com>
+ <20180531114553.GB11598@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20180531164133.6z6py7nl55ty473e@armageddon.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180531114553.GB11598@kroah.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Catalin,
+On Thu 31 May 04:45 PDT 2018, Greg Kroah-Hartman wrote:
 
-On 31/05/18 17:41, Catalin Marinas wrote:
-> On Tue, May 29, 2018 at 01:11:04PM +0100, Marc Zyngier wrote:
->> Marc Zyngier (17):
->>   arm/arm64: smccc: Add SMCCC-specific return codes
->>   arm64: Call ARCH_WORKAROUND_2 on transitions between EL0 and EL1
->>   arm64: Add per-cpu infrastructure to call ARCH_WORKAROUND_2
->>   arm64: Add ARCH_WORKAROUND_2 probing
->>   arm64: Add 'ssbd' command-line option
->>   arm64: ssbd: Add global mitigation state accessor
->>   arm64: ssbd: Skip apply_ssbd if not using dynamic mitigation
->>   arm64: ssbd: Restore mitigation status on CPU resume
->>   arm64: ssbd: Introduce thread flag to control userspace mitigation
->>   arm64: ssbd: Add prctl interface for per-thread mitigation
->>   arm64: KVM: Add HYP per-cpu accessors
->>   arm64: KVM: Add ARCH_WORKAROUND_2 support for guests
->>   arm64: KVM: Handle guest's ARCH_WORKAROUND_2 requests
->>   arm64: KVM: Add ARCH_WORKAROUND_2 discovery through
->>     ARCH_FEATURES_FUNC_ID
+> On Thu, May 31, 2018 at 01:21:56PM +0200, Sebastian Gottschall wrote:
+> > Am 28.05.2018 um 12:05 schrieb Greg Kroah-Hartman:
+> > > 4.16-stable review patch.  If anyone has any objections, please let me know.
+> > > 
+> > > ------------------
+> > > 
+> > > From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > 
+> > > [ Upstream commit a7aa75a2a7dba32594291a71c3704000a2fd7089 ]
+> > > 
+> > > The base of the TLMM gpiochip should not be statically defined as 0, fix
+> > > this to not artificially restrict the existence of multiple pinctrl-msm
+> > > devices.
+> > > 
+> > > Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
+> > > Reported-by: Timur Tabi <timur@codeaurora.org>
+> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> > > Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > ---
+> > >   drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> > > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> > > @@ -818,7 +818,7 @@ static int msm_gpio_init(struct msm_pinc
+> > >   		return -EINVAL;
+> > >   	chip = &pctrl->chip;
+> > > -	chip->base = 0;
+> > > +	chip->base = -1;
+> > >   	chip->ngpio = ngpio;
+> > >   	chip->label = dev_name(pctrl->dev);
+> > >   	chip->parent = pctrl->dev;
+> > 
+> > this patch creates a regression for me. on ipq8064 the systems gpios now
+> > start somewhere in the sky
+> > 
+> > new layout
+> > 
+> > lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip373 -> ../../devices/platform/soc/1b700000.pci/pci0001:00/0001:00:00.0/0001:01:00.0/gpio/gpiochip373
+> > lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip408 -> ../../devices/platform/soc/1b500000.pci/pci0000:00/0000:00:00.0/0000:01:00.0/gpio/gpiochip408
+> > lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip443 ->
+> > ../../devices/platform/soc/800000.pinmux/gpio/gpiochip443
+> > 
+> > 
+> > before the patch
+> > 
+> > lrwxrwxrwx    1 root     root             0 Jan  1  1970 gpiochip0 ->
+> > ../../devices/platform/soc/800000.pinmux/gpio/gpiochip0
+> > lrwxrwxrwx    1 root     root             0 May 31 13:13 gpiochip442 -> ../../devices/platform/soc/1b700000.pci/pci0001:00/0001:00:00.0/0001:01:00.0/gpio/gpiochip442
+> > lrwxrwxrwx    1 root     root             0 May 31 13:13 gpiochip477 -> ../../devices/platform/soc/1b500000.pci/pci0000:00/0000:00:00.0/0000:01:00.0/gpio/gpiochip477
+> > 
+> > 
+> > this broke my userspace gpio handling. i can override this, but still it
+> > doesnt look correct since there is a hole at the beginng likelly reserved by
+> > unused arm gpios
 > 
-> I queued the 14 patches above for 4.18.
+> So does this mean that 4.17-rc is also broken for you?  If so, this
+> needs to be reverted there as well.
+> 
+> Bjorn, any ideas?
+> 
 
-I just realized that your for-next/core branch is based on
-4.17-rc4, which means arch/arm64/kernel/ssbd.c won't compile
-(it relies on some of the symbols introduced with the x86
-stuff in 4.17-rc7.
+The Qualcomm TLMM (pinctrl) driver was introduced long after it was
+decided that the kernel should not rely on global/static gpio numbering.
 
-You can work around it by adding the following hack:
-
->From 8a0dbe9fb468c03b3913d17af9dce7358f899ee3 Mon Sep 17 00:00:00 2001
-From: Marc Zyngier <marc.zyngier@arm.com>
-Date: Thu, 31 May 2018 17:54:11 +0100
-Subject: [PATCH] fixup! arm64: ssbd: Add prctl interface for per-thread
- mitigation
-
----
- arch/arm64/kernel/ssbd.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/kernel/ssbd.c b/arch/arm64/kernel/ssbd.c
-index 07b12c034ec2..3432e5ef9f41 100644
---- a/arch/arm64/kernel/ssbd.c
-+++ b/arch/arm64/kernel/ssbd.c
-@@ -11,7 +11,9 @@
- 
- /*
-  * prctl interface for SSBD
-+ * FIXME: Drop the below ifdefery once merged in 4.18.
-  */
-+#ifdef PR_SPEC_STORE_BYPASS
- static int ssbd_prctl_set(struct task_struct *task, unsigned long ctrl)
- {
- 	int state = arm64_get_ssbd_state();
-@@ -105,3 +107,4 @@ int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
- 		return -ENODEV;
- 	}
- }
-+#endif	/* PR_SPEC_STORE_BYPASS */
--- 
-2.17.1
+But due to a mistake on my part the dynamic gpio base for this gpiochip
+was always 0, which the offending patch corrects.
 
 
-Thanks,
+So writing user space code relying on the gpio numbering for this chip
+has always been incorrect, just as it is for the other two gpiochips
+listed above.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+
+The original objection for backporting this patch was a touchscreen
+driver stopped working on 4.4, but the driver clearly doesn't depend on
+global or static numbering of gpios. I don't think this was ever root
+caused.
+
+
+I guess the pragmatic approach would be to come up with something like
+Timur's suggested fix that makes the first instance of this driver use
+base = 0 and then use dynamic numbering for the rest, to maintain
+support for this incorrect usage of the gpio sysfs interface. (Although
+that would probably break if Timur's customers move their user space to
+the new platform as "the first instance" isn't deterministic).
+
+Regards,
+Bjorn
