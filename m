@@ -1,63 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754315AbeEaJ1X (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:27:23 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:34029 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754296AbeEaJ1V (ORCPT
+        id S1754286AbeEaJ1B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:27:01 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:36492 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754103AbeEaJ1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:27:21 -0400
-X-Google-Smtp-Source: ADUXVKIAX83o/Hy0P7IQO6q21ovJra6qmQ4488AQ7TlqC+WSsjfgJfQb1MCbEVHhvZnBCIS54q7gYA==
+        Thu, 31 May 2018 05:27:00 -0400
+X-Google-Smtp-Source: ADUXVKKA9PR5z5s6TalDQV0gUDoSaV3skazC5TfX4Um9xQZr6WU4qzE50YjeF3aM4jzDwEM34yiDog==
+Subject: Re: [PATCH 3/5] nvme: call nvmf_create_ctrl before checking for
+ duplicate assignment
+To: Johannes Thumshirn <jthumshirn@suse.de>,
+        Christoph Hellwig <hch@lst.de>
+Cc: Keith Busch <keith.busch@intel.com>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>
+References: <20180515074043.22843-1-jthumshirn@suse.de>
+ <20180515074043.22843-4-jthumshirn@suse.de> <20180515075055.GB23659@lst.de>
+ <20180515075221.4ppaxdvbosy36ltk@linux-x5ow.site>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <1b2cdac6-4dbd-261b-0ae9-b9768f972f0d@grimberg.me>
+Date: Thu, 31 May 2018 12:26:56 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-26-stanimir.varbanov@linaro.org>
-In-Reply-To: <20180515075859.17217-26-stanimir.varbanov@linaro.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Thu, 31 May 2018 18:27:07 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BjfdyZw4cHogCK1QkxTHTfdbvH-mvkQ79sRixThr5COg@mail.gmail.com>
-Message-ID: <CAAFQd5BjfdyZw4cHogCK1QkxTHTfdbvH-mvkQ79sRixThr5COg@mail.gmail.com>
-Subject: Re: [PATCH v2 25/29] venus: vdec: new function for output configuration
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180515075221.4ppaxdvbosy36ltk@linux-x5ow.site>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 5:01 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Make a new function vdec_output_conf() for decoder output
-> configuration. vdec_output_conf() will set properties via
-> HFI interface related to the output configuration, and
-> keep vdec_set_properties() which will set properties
-> related to decoding parameters.
->
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  drivers/media/platform/qcom/venus/vdec.c | 35 ++++++++++++++++++--------------
->  1 file changed, 20 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index 5a5e3e2fece4..3a699af0ab58 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -545,6 +545,23 @@ static const struct v4l2_ioctl_ops vdec_ioctl_ops = {
->  static int vdec_set_properties(struct venus_inst *inst)
->  {
->         struct vdec_controls *ctr = &inst->controls.dec;
-> +       struct hfi_enable en = { .enable = 1 };
-> +       u32 ptype;
-> +       int ret;
-> +
-> +       if (ctr->post_loop_deb_mode) {
-> +               ptype = HFI_PROPERTY_CONFIG_VDEC_POST_LOOP_DEBLOCKER;
-> +               en.enable = 1;
 
-en.enable was already set to 1 in the definition.
+>> In general it seems like fc loop needs to offload any I/O to a workqueue
+>> just like nvme-loop does, but even then I can't see how that is going to
+>> cause an issue in this area.
+> 
+> Hmm I'll be looking into it.
 
-Best regards,
-Tomasz
+FWIW, I agree it should do that as well.
