@@ -1,63 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755579AbeEaPs7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:48:59 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:34196 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755417AbeEaPs5 (ORCPT
+        id S932703AbeEaPwV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:52:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38430 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755417AbeEaPwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:48:57 -0400
-X-Google-Smtp-Source: ADUXVKIzaBRRBZgiMhRtpsprdiyRzV3obPFt2tIfhnBjYlIrM93pzNiEP6usBUjKefwglsPBnWuAMg==
-Date: Thu, 31 May 2018 08:48:54 -0700
-From: Tejun Heo <tj@kernel.org>
-To: "Richard W.M. Jones" <rjones@redhat.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
-Subject: Re: [PATCH v2] libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk
-Message-ID: <20180531154854.GT1351649@devbig577.frc2.facebook.com>
-References: <20180531112107.13778-1-hdegoede@redhat.com>
- <20180531121038.GR1455@redhat.com>
+        Thu, 31 May 2018 11:52:20 -0400
+Date: Thu, 31 May 2018 17:52:10 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Feng Tang <feng.tang@intel.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>, linux-kernel@vger.kernel.org,
+        alek.du@intel.com, pasha.tatashin@oracle.com
+Subject: Re: [RFC 2/2] x86, tsc: Enable clock for ealry printk timestamp
+Message-ID: <20180531155210.GL12180@hirez.programming.kicks-ass.net>
+References: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
+ <1527672059-6225-2-git-send-email-feng.tang@intel.com>
+ <20180531135542.4j7w7bxsw43ydx3j@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180531121038.GR1455@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180531135542.4j7w7bxsw43ydx3j@pathway.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 01:10:38PM +0100, Richard W.M. Jones wrote:
-> On Thu, May 31, 2018 at 01:21:07PM +0200, Hans de Goede wrote:
-> > Commit 184add2ca23c ("libata: Apply NOLPM quirk for SanDisk
-> > SD7UB3Q*G1001 SSDs") disabled LPM for SanDisk SD7UB3Q*G1001 SSDs.
-> > 
-> > This has lead to several reports of users of that SSD where LPM
-> > was working fine and who know have a significantly increased idle
-> > power consumption on their laptops.
-> > 
-> > Likely there is another problem on the T450s from the original
-> > reporter which gets exposed by the uncore reaching deeper sleep
-> > states (higher PC-states) due to LPM being enabled. The problem as
-> > reported, a hardfreeze about once a day, already did not sound like
-> > it would be caused by LPM and the reports of the SSD working fine
-> > confirm this. The original reporter is ok with dropping the quirk.
-> > 
-> > A X250 user has reported the same hard freeze problem and for him
-> > the problem went away after unrelated updates, I suspect some GPU
-> > driver stack changes fixed things.
-> > 
-> > TL;DR: The original reporters problem were triggered by LPM but not
-> > an LPM issue, so drop the quirk for the SSD in question.
-> 
-> As the reporter of the original issue, I agree with Hans's
-> analysis above, so ACK from me.
+On Thu, May 31, 2018 at 03:55:42PM +0200, Petr Mladek wrote:
+> I wonder if we could get some cleaner integration into the timer and
+> printk code.
 
-I'm not sure this is related but we were seeing periodic complete
-lockups on "SanDisk SD[78]SN*G" devices with NCQ enabled and
-blacklisted them for NCQ recently.
+Yes, these patches are particularly horrific..
 
-Thanks.
+There were some earlier patches by Pavel Tatashin, which attempted do
+get things running earlier.
 
--- 
-tejun
+  http://lkml.kernel.org/r/20180209211143.16215-1-pasha.tatashin@oracle.com
+
+I'm not entirely happy with that, but I never did get around to
+reviewing that last version :-( In particuarly, now that you made me
+look, I dislike his patch 6 almost as much as these patches.
+
+The idea was to get regular sched_clock() running earlier, not to botch
+some early_sched_clock() into it.
+
+Basically run calibrate_tsc() earlier (like _waaay_ earlier, it doesn't
+rely on anything other than CPUID) and if you have a recent part (with
+exception of SKX) you'll get a usable tsc rate (and TSC_RELIABLE) and
+things will work.
+
+If you have a dodgy part (sorry SKX), you'll just have to live with
+sched_clock starting late(r).
+
+Do not cobble things on the side, try and get the normal things running
+earlier.
