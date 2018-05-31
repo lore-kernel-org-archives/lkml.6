@@ -1,131 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754836AbeEaLJW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:09:22 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:35588 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754464AbeEaLJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:09:17 -0400
-From: Gao Xiang <gaoxiang25@huawei.com>
-To: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC: <miaoxie@huawei.com>, <yuchao0@huawei.com>, <sunqiuyang@huawei.com>,
-        <fangwei1@huawei.com>, <liguifu2@huawei.com>, <weidu.du@huawei.com>,
-        <chen.chun.yen@huawei.com>, <brooke.wangzhigang@hisilicon.com>,
-        <dongjinguang@huawei.com>, <gaoxiang25@huawei.com>
-Subject: [NOMERGE] [RFC PATCH 08/12] erofs: definitions for the various kernel version temporarily
-Date: Thu, 31 May 2018 19:09:01 +0800
-Message-ID: <1527764941-23148-1-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        id S1754848AbeEaLJb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:09:31 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:38914 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754464AbeEaLJZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:09:25 -0400
+X-Google-Smtp-Source: ADUXVKIh5c8N+yhSk73THRPCjPiTsDJWZ9e4spIFE98mMT6qrsN1d8O86ZgUueMVFewTtOYNhxFG3ftzsJJ6sRL1Mg4=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+In-Reply-To: <c4d9f752-0368-6257-bdab-6459b18eb893@codeaurora.org>
+References: <20180525100121.28214-1-rnayak@codeaurora.org> <20180525100121.28214-2-rnayak@codeaurora.org>
+ <CAPDyKFoAJjZknWtbbQLn0Hnc3Du_1vnSUnqfwZLYK76j2rg52g@mail.gmail.com>
+ <0e07d577-9728-e97a-2da0-dd7dd324f058@codeaurora.org> <CAPDyKFpuZ4s7C+Nr3NhU-A40oVw84yK7eEniO6NhHNJ3VosR-A@mail.gmail.com>
+ <c4d9f752-0368-6257-bdab-6459b18eb893@codeaurora.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 31 May 2018 13:09:23 +0200
+Message-ID: <CAPDyKFox1y5wxL8fxGRxEJL=p+ckOn8hMg3v+pVBHKsg-9aKrA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] soc: qcom: rpmpd: Add a powerdomain driver to
+ model corners
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        devicetree@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        collinsd@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-the erofs file system is designed for 3.1x ~ latest kernel,
-staging.h is introduced for compatibility.
+On 31 May 2018 at 06:20, Rajendra Nayak <rnayak@codeaurora.org> wrote:
+>
+>
+> On 05/30/2018 06:14 PM, Ulf Hansson wrote:
+>> [...]
+>>
+>>>>> +
+>>>>> +static DEFINE_MUTEX(rpmpd_lock);
+>>>>> +
+>>>>> +/* msm8996 RPM powerdomains */
+>>>>> +DEFINE_RPMPD_CORN_SMPA(msm8996, vddcx, vddcx_ao, 1);
+>>>>> +DEFINE_RPMPD_CORN_SMPA(msm8996, vddmx, vddmx_ao, 2);
+>>>>> +DEFINE_RPMPD_CORN_LDOA(msm8996, vddsscx, 26);
+>>>>> +
+>>>>> +DEFINE_RPMPD_VFC_SMPA(msm8996, vddcx_vfc, 1);
+>>>>> +DEFINE_RPMPD_VFC_LDOA(msm8996, vddsscx_vfc, 26);
+>>>>> +
+>>>>> +static struct rpmpd *msm8996_rpmpds[] = {
+>>>>> +       [0] = &msm8996_vddcx,
+>>>>> +       [1] = &msm8996_vddcx_ao,
+>>>>> +       [2] = &msm8996_vddcx_vfc,
+>>>>> +       [3] = &msm8996_vddmx,
+>>>>> +       [4] = &msm8996_vddmx_ao,
+>>>>> +       [5] = &msm8996_vddsscx,
+>>>>> +       [6] = &msm8996_vddsscx_vfc,
+>>>>> +};
+>>>>
+>>>> It's not my call, but honestly the above all macros makes the code
+>>>> less readable.
+>>>
+>>> This is all static data per SoC. The macros will keep the new additions
+>>> needed for every new SoC to a minimal. Currently this supports only
+>>> msm8996.
+>>
+>> Right, that's fine then.
+>>
+>>>
+>>>>
+>>>> Anyway, I think you should convert to allocate these structs
+>>>> dynamically from the heap (kzalloc/kcalloc), instead of statically as
+>>>> above.
+>>
+>> However, I assume this is still doable!?
+>
+> Perhaps it is, but is there any specific advantage of constructing these structures
+> dynamically vs statically, given they are static data?
 
-This _should_ be avoided in the near future after we fork
-the needed kernel version public trees.
+Well, I was just thinking that the genpd struct has grown quite big.
 
-Signed-off-by: Miao Xie <miaoxie@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- fs/erofs/staging.h | 83 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
- create mode 100644 fs/erofs/staging.h
+> Most other powerdomain/clock/regulator drivers I see do it statically, and thats
+> what I followed.
 
-diff --git a/fs/erofs/staging.h b/fs/erofs/staging.h
-new file mode 100644
-index 0000000..7712a7b
---- /dev/null
-+++ b/fs/erofs/staging.h
-@@ -0,0 +1,83 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/* should be avoid in the future */
-+#include <linux/version.h>
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 14, 31))
-+__SETPAGEFLAG(Referenced, referenced)
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 18, 0))
-+#define d_inode(d) ((d)->d_inode)
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 1, 0))
-+#define d_really_is_negative(d) (d_inode(d) == NULL)
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 0))
-+/* Restricts the given gfp_mask to what the mapping allows. */
-+static inline gfp_t mapping_gfp_constraint(
-+	struct address_space *mapping,
-+	gfp_t gfp_mask)
-+{
-+	return mapping_gfp_mask(mapping) & gfp_mask;
-+}
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 116))
-+static inline void inode_nohighmem(struct inode *inode)
-+{
-+	mapping_set_gfp_mask(inode->i_mapping, GFP_USER);
-+}
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 8, 0))
-+
-+/* bio stuffs */
-+#define REQ_OP_READ    READ
-+#define REQ_OP_WRITE   WRITE
-+#define bio_op(bio)    ((bio)->bi_rw & 1)
-+
-+static inline void bio_set_op_attrs(struct bio *bio,
-+	unsigned op, unsigned op_flags) {
-+	bio->bi_rw = op | op_flags;
-+}
-+
-+static inline gfp_t readahead_gfp_mask(struct address_space *x)
-+{
-+	return mapping_gfp_mask(x) |  __GFP_COLD |
-+	                              __GFP_NORETRY | __GFP_NOWARN;
-+}
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 18, 13))
-+#define READ_ONCE(x)		ACCESS_ONCE(x)
-+#define WRITE_ONCE(x, val)	(ACCESS_ONCE(x) = (val))
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 18, 40))
-+static inline int lockref_put_return(struct lockref *lockref)
-+{
-+	return -1;
-+}
-+#endif
-+
-+#ifndef WQ_NON_REENTRANT
-+#define WQ_NON_REENTRANT 0
-+#endif
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 6, 0))
-+#define page_cache_get(page)            get_page(page)
-+#define page_cache_release(page)        put_page(page)
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
-+static inline bool sb_rdonly(const struct super_block *sb) {
-+	return sb->s_flags & MS_RDONLY;
-+}
-+
-+#define bio_set_dev(bio, bdev)	((bio)->bi_bdev = (bdev))
-+
-+#endif
-+
--- 
-1.9.1
+Right, so forget it and keep it as is.
+
+Kind regards
+Uffe
