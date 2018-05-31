@@ -1,146 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755044AbeEaNC1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:02:27 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37048 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754867AbeEaNCZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:02:25 -0400
-X-Google-Smtp-Source: ADUXVKJQjkpUIl0aWhNkNNYrsYzhpCvbZvGj+E4td9HnTFrqATzfjhvoU04yG4RvZp7pAgO7VyVtKLt2uHKSOsrMwYE=
+        id S1755135AbeEaNDu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:03:50 -0400
+Received: from foss.arm.com ([217.140.101.70]:41138 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755042AbeEaNDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:03:47 -0400
+Subject: Re: [PATCH 1/7] iommu/dma: fix trival coding style mistake
+To: Zhen Lei <thunder.leizhen@huawei.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>,
+        linux-mediatek <linux-mediatek@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Hanjun Guo <guohanjun@huawei.com>, Libin <huawei.libin@huawei.com>,
+        Guozhu Li <liguozhu@hisilicon.com>, Xinwei Hu <huxinwei@huawei.com>
+References: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
+ <1527752569-18020-2-git-send-email-thunder.leizhen@huawei.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <b473059d-fee6-1627-4749-192771038741@arm.com>
+Date: Thu, 31 May 2018 14:03:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180531102735.GM30654@e110439-lin>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
- <20180528101234.GA1293@localhost.localdomain> <CAKfTPtDCkzPMt6XrXRcURXm=53LABiwbFd3JMQkJDWpTprycRQ@mail.gmail.com>
- <20180528152243.GD1293@localhost.localdomain> <CAKfTPtAY26HZ00R02RuW2kvZLvZxHGvh-kbfrqv-hPumdknvWg@mail.gmail.com>
- <20180531102735.GM30654@e110439-lin>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 31 May 2018 15:02:04 +0200
-Message-ID: <CAKfTPtCeoimTehLktVk4WiTEM5h9KW_4yvuxGof8p6ZOgsRE2Q@mail.gmail.com>
-Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Alessio Balsini <alessio.balsini@santannapisa.it>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1527752569-18020-2-git-send-email-thunder.leizhen@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31 May 2018 at 12:27, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
->
-> Hi Vincent, Juri,
->
-> On 28-May 18:34, Vincent Guittot wrote:
->> On 28 May 2018 at 17:22, Juri Lelli <juri.lelli@redhat.com> wrote:
->> > On 28/05/18 16:57, Vincent Guittot wrote:
->> >> Hi Juri,
->> >>
->> >> On 28 May 2018 at 12:12, Juri Lelli <juri.lelli@redhat.com> wrote:
->> >> > Hi Vincent,
->> >> >
->> >> > On 25/05/18 15:12, Vincent Guittot wrote:
->> >> >> Now that we have both the dl class bandwidth requirement and the dl class
->> >> >> utilization, we can use the max of the 2 values when agregating the
->> >> >> utilization of the CPU.
->> >> >>
->> >> >> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->> >> >> ---
->> >> >>  kernel/sched/sched.h | 6 +++++-
->> >> >>  1 file changed, 5 insertions(+), 1 deletion(-)
->> >> >>
->> >> >> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
->> >> >> index 4526ba6..0eb07a8 100644
->> >> >> --- a/kernel/sched/sched.h
->> >> >> +++ b/kernel/sched/sched.h
->> >> >> @@ -2194,7 +2194,11 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
->> >> >>  #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
->> >> >>  static inline unsigned long cpu_util_dl(struct rq *rq)
->> >> >>  {
->> >> >> -     return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
->> >> >> +     unsigned long util = (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
->> >> >
->> >> > I'd be tempted to say the we actually want to cap to this one above
->> >> > instead of using the max (as you are proposing below) or the
->> >> > (theoretical) power reduction benefits of using DEADLINE for certain
->> >> > tasks might vanish.
->> >>
->> >> The problem that I'm facing is that the sched_entity bandwidth is
->> >> removed after the 0-lag time and the rq->dl.running_bw goes back to
->> >> zero but if the DL task has preempted a CFS task, the utilization of
->> >> the CFS task will be lower than reality and schedutil will set a lower
->> >> OPP whereas the CPU is always running.
->
-> With UTIL_EST enabled I don't expect an OPP reduction below the
-> expected utilization of a CFS task.
+On 31/05/18 08:42, Zhen Lei wrote:
+> The static function iova_reserve_iommu_regions is only called by function
+> iommu_dma_init_domain, and the 'if (!dev)' check in iommu_dma_init_domain
+> affect it only, so we can safely move the check into it. I think it looks
+> more natural.
 
-I'm not sure to fully catch what you mean but all tests that I ran,
-are using util_est (which is enable by default  if i'm not wrong). So
-all OPP drops that have been observed, were with util_est
+As before, I disagree - the logic of iommu_dma_init_domain() is "we 
+expect to have a valid device, but stop here if we don't", and moving 
+the check just needlessly obfuscates that. It is not a coincidence that 
+the arguments of both functions are in effective order of importance.
 
->
-> IOW, when a periodic CFS task is preempted by a DL one, what we use
-> for OPP selection once the DL task is over is still the estimated
-> utilization for the CFS task itself. Thus, schedutil will eventually
-> (since we have quite conservative down scaling thresholds) go down to
-> the right OPP to serve that task.
->
->> >> The example with a RT task described in the cover letter can be
->> >> run with a DL task and will give similar results.
->
-> In the cover letter you says:
->
->    A rt-app use case which creates an always running cfs thread and a
->    rt threads that wakes up periodically with both threads pinned on
->    same CPU, show lot of frequency switches of the CPU whereas the CPU
->    never goes idles during the test.
->
-> I would say that's a quite specific corner case where your always
-> running CFS task has never accumulated a util_est sample.
->
-> Do we really have these cases in real systems?
+> In addition, the local variable 'ret' is only assigned in the branch of
+> 'if (region->type == IOMMU_RESV_MSI)', so the 'if (ret)' should also only
+> take effect in the branch, add a brace to enclose it.
 
-My example is voluntary an extreme one because it's easier to
-highlight the problem
+'ret' is clearly also assigned at its declaration, to cover the (very 
+likely) case where we don't enter the loop at all. Thus testing it in 
+the loop is harmless, and cluttering that up with extra tabs and braces 
+is just noise.
 
->
-> Otherwise, it seems to me that we are trying to solve quite specific
-> corner cases by adding a not negligible level of "complexity".
+Robin.
 
-By complexity, do you mean :
-
-Taking into account the number cfs running task to choose between
-rq->dl.running_bw and avg_dl.util_avg
-
-I'm preparing a patchset that will provide the cfs waiting time in
-addition to dl/rt util_avg for almost no additional cost. I will try
-to sent the proposal later today
-
->
-> Moreover, I also have the impression that we can fix these
-> use-cases by:
->
->   - improving the way we accumulate samples in util_est
->     i.e. by discarding preemption time
->
->   - maybe by improving the utilization aggregation in schedutil to
->     better understand DL requirements
->     i.e. a 10% utilization with a 100ms running time is way different
->     then the same utilization with a 1ms running time
->
->
-> --
-> #include <best/regards.h>
->
-> Patrick Bellasi
+> No functional changes.
+> 
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> ---
+>   drivers/iommu/dma-iommu.c | 12 +++++++-----
+>   1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index ddcbbdb..4e885f7 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -231,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device *dev,
+>   	LIST_HEAD(resv_regions);
+>   	int ret = 0;
+>   
+> +	if (!dev)
+> +		return 0;
+> +
+>   	if (dev_is_pci(dev))
+>   		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
+>   
+> @@ -246,11 +249,12 @@ static int iova_reserve_iommu_regions(struct device *dev,
+>   		hi = iova_pfn(iovad, region->start + region->length - 1);
+>   		reserve_iova(iovad, lo, hi);
+>   
+> -		if (region->type == IOMMU_RESV_MSI)
+> +		if (region->type == IOMMU_RESV_MSI) {
+>   			ret = cookie_init_hw_msi_region(cookie, region->start,
+>   					region->start + region->length);
+> -		if (ret)
+> -			break;
+> +			if (ret)
+> +				break;
+> +		}
+>   	}
+>   	iommu_put_resv_regions(dev, &resv_regions);
+>   
+> @@ -308,8 +312,6 @@ int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+>   	}
+>   
+>   	init_iova_domain(iovad, 1UL << order, base_pfn);
+> -	if (!dev)
+> -		return 0;
+>   
+>   	return iova_reserve_iommu_regions(dev, domain);
+>   }
+> 
