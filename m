@@ -1,65 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755318AbeEaNmI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:42:08 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:33128 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1755217AbeEaNmD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:42:03 -0400
-From: avifishman70@gmail.com
-To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
-        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
-        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
-        digetx@gmail.com, kstewart@linuxfoundation.org, hdegoede@redhat.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        openbmc@lists.ozlabs.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, Avi Fishman <AviFishman70@gmail.com>
-Subject: [PATCH v2 2/3] USB: DT probing support to ehci-npcm7xx
-Date: Thu, 31 May 2018 16:40:45 +0300
-Message-Id: <1527774046-7952-3-git-send-email-avifishman70@gmail.com>
-X-Mailer: git-send-email 1.8.3.4
-In-Reply-To: <1527774046-7952-1-git-send-email-avifishman70@gmail.com>
-References: <1527774046-7952-1-git-send-email-avifishman70@gmail.com>
+        id S1755419AbeEaNpR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:45:17 -0400
+Received: from muru.com ([72.249.23.125]:45418 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755312AbeEaNpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:45:11 -0400
+Date: Thu, 31 May 2018 06:45:07 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org, bcousson@baylibre.com,
+        paul@pwsan.com, t-kristo@ti.com
+Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
+ node for MCAN
+Message-ID: <20180531134507.GK5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-6-faiz_abbas@ti.com>
+ <20180530150402.GE5705@atomide.com>
+ <2361da91-659d-1aaa-0ab8-d1473bc3a71a@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2361da91-659d-1aaa-0ab8-d1473bc3a71a@ti.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avi Fishman <AviFishman70@gmail.com>
+* Faiz Abbas <faiz_abbas@ti.com> [180531 10:22]:
+> On Wednesday 30 May 2018 08:34 PM, Tony Lindgren wrote:
+> > Looks good to me except I think the reset won't do anything currently
+> > with ti-sysc.c unless you specfify also "ti,hwmods" for the module?
+> > 
+> > Can you please check? It might be worth adding the reset function to
+> > ti-sysc.c for non "ti,hwmods" case and that just might remove the
+> > need for any hwmod code for this module.
+> > 
+> 
+> If I understand correctly, this involves adding a (*reset_module) in
+> ti_sysc_platform_data and defining a ti_sysc_reset_module() in ti-sysc.c
+> similar to ti_sysc_idle_module(). Right?
 
-Device Tree documentation for Nuvoton npcm7xx EHCI.
+Well try moving "ti,hwmods" to the module level first. Then reset will
+happen with enable.
 
-Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
----
- Documentation/devicetree/bindings/usb/npcm7xx-usb.txt | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
+Then for simple cases we can add reset directly to ti-sysc.c without
+pdata callbacks and and drop "ti,hwmods". For more complex cases we
+need to use reset-simple for the RSTCTRL registers.
 
-diff --git a/Documentation/devicetree/bindings/usb/npcm7xx-usb.txt b/Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
-new file mode 100644
-index 000000000000..dec67d4d4c30
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
-@@ -0,0 +1,17 @@
-+Nuvoton NPCM7XX SoC USB controllers:
-+-----------------------------
-+
-+EHCI:
-+-----
-+
-+Required properties:
-+- compatible: "nuvoton,npcm750-ehci"
-+- interrupts: Should contain the EHCI interrupt
-+
-+Example:
-+
-+	ehci@e1800000 {
-+		compatible = "nuvoton,npcm750-ehci";
-+		reg = <0xf0806000 0x1000>;
-+		interrupts = <0 61 4>;
-+	};
--- 
-2.14.1
+Regards,
+
+Tony
