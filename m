@@ -1,59 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754171AbeEaTWX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 15:22:23 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43828 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754050AbeEaTWP (ORCPT
+        id S1754163AbeEaT0N (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 15:26:13 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48646 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754089AbeEaT0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 15:22:15 -0400
-X-Google-Smtp-Source: ADUXVKLa/FB11hLHeLxgWYc9BO9MnMMpvLBTuB1O8PIGHRe90pUAG6LeDaW/oWn36acPyVD1GCQLAg==
-From: Alexander Kapshuk <alexander.kapshuk@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, alexander.kapshuk@gmail.com
-Subject: [PATCH 2/2] ver_linux: Do not check for ver_linux pattern in version function
-Date: Thu, 31 May 2018 22:22:47 +0300
-Message-Id: <20180531192247.9003-2-alexander.kapshuk@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180531192247.9003-1-alexander.kapshuk@gmail.com>
-References: <20180531192247.9003-1-alexander.kapshuk@gmail.com>
+        Thu, 31 May 2018 15:26:09 -0400
+Date: Thu, 31 May 2018 20:26:08 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 20/32] vfs: Make close() unmount the attached mount if so
+ flagged [ver #8]
+Message-ID: <20180531192608.GH30522@ZenIV.linux.org.uk>
+References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
+ <152720685405.9073.17445116582570028610.stgit@warthog.procyon.org.uk>
+ <20180531191955.GG30522@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531191955.GG30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Checking whether output of commands matches the ver_linux pattern in
-the version function is original shell implementation legacy code. When
-the original implementation failed to locate a particular utility,
-it generated error output along the lines of:
+On Thu, May 31, 2018 at 08:19:55PM +0100, Al Viro wrote:
+> On Fri, May 25, 2018 at 01:07:34AM +0100, David Howells wrote:
+> > +	if (unlikely(file->f_mode & FMODE_NEED_UNMOUNT))
+> > +		__detach_mounts(dentry);
+> > +
+> 
+> This is completely wrong.  First of all, you want to dissolve the mount tree
+> on file->f_path.mount, not every tree rooted at dentry equal to file->f_path.dentry.
+> This is easily done - it would be a simple call of drop_collected_mounts(mnt)
+> if not for one detail.  You want it to happen only if the sucker isn't attached
+> anywhere by that point.  IOW,
+>         namespace_lock();
+>         lock_mount_hash();
+> 	if (!real_mount(mnt)->mnt_ns)
+> 		umount_tree(real_mount(mnt), UMOUNT_SYNC);
+>         unlock_mount_hash();
+>         namespace_unlock();
+> and that's it.  You don't need that magical mystery turd in move_mount() later
+> in the series and all the infrastructure you grow for it.
+> 
+> FWIW, I would've suggested this
+>  void drop_collected_mounts(struct vfsmount *mnt)
+>  {
+>  	namespace_lock();
+>  	lock_mount_hash();
+> +	if (!real_mount(mnt)->mnt_ns)
+> +		umount_tree(real_mount(mnt), UMOUNT_SYNC);
+> -	umount_tree(real_mount(mnt), UMOUNT_SYNC);
+>  	unlock_mount_hash();
+>  	namespace_unlock();
+>  }
+> 
+> and in __fput()
+> 	if (unlikely(file->f_mode & FMODE_NEED_UNMOUNT))
+> 		drop_collected_mounts(mnt);
+> 
+> All there is to it, AFAICS...
 
-ver_linux:line number: command not found.
-
-The awk implementation, does not contain the name of the script within the
-body of the error message returned by the subshell when a given utility
-fails to be located. The error message returned is along the lines of:
-
-sh: name of utility: command not found
-
-Safeguarding against the ver_linux pattern being found in the output
-being parsed may thus be safely omitted.
-
-Signed-off-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
----
- scripts/ver_linux | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/ver_linux b/scripts/ver_linux
-index e1dc041f903f..a6c728db05ce 100755
---- a/scripts/ver_linux
-+++ b/scripts/ver_linux
-@@ -70,7 +70,7 @@ BEGIN {
- function version(cmd,    ver) {
- 	cmd = cmd " 2>&1"
- 	while (cmd | getline > 0) {
--		if (!/ver_linux/ && match($0, /[0-9]+([.]?[0-9]+)+/)) {
-+		if (match($0, /[0-9]+([.]?[0-9]+)+/)) {
- 			ver = substr($0, RSTART, RLENGTH)
- 			break
- 		}
--- 
-2.17.1
+... and that eliminates #27 and #28 entirely, with #31 becoming simpler -
+no move_mount_lookup(), no dfd_ref, the check in do_move_mount() becomes
++       if (!mnt_has_parent(old) && old->mnt_ns) {
++               /* We need to allow open(O_PATH|O_CLONE_MOUNT) or fsmount()
++                * followed by move_mount(), but mustn't allow "/" to be moved.
++                */
++                goto out1;
++       }
+and I wouldn't be surprised if move_mount_old()/move_mount() split turns out
+to be not needed at all, seeing that the whole "clear FMODE_NEED_UNMOUNT
+on success" part goes away.
