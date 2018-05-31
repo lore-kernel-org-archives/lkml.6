@@ -1,95 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755488AbeEaOqC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:46:02 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51116 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755441AbeEaOpd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:45:33 -0400
-X-Google-Smtp-Source: ADUXVKJr3RRMjVcpP96UvhVQweV5E32YbD/jjSm8+9Up7Tnfn/aFh/KVLP3diU5mQB85Cf8ipVo0kQ==
-From: Paolo Valente <paolo.valente@linaro.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        sapienza.dav@gmail.com, 177992@studenti.unimore.it,
-        Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX/IMPROVEMENTS 3/4] block, bfq: increase weight-raising duration for interactive apps
-Date: Thu, 31 May 2018 16:45:07 +0200
-Message-Id: <20180531144508.3927-4-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180531144508.3927-1-paolo.valente@linaro.org>
-References: <20180531144508.3927-1-paolo.valente@linaro.org>
+        id S1755433AbeEaOp3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:45:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43020 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755117AbeEaOpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:45:24 -0400
+X-Google-Smtp-Source: ADUXVKKzw4ZLme5jx+8793AoNRASUgbenjR3B9AA/dEmQlTxS+aU0IcWRmS+j+bZKE4OkMeZsOiv6GQBQpboQsLsvTg=
+MIME-Version: 1.0
+In-Reply-To: <1527737273-8387-3-git-send-email-djw@t-chip.com.cn>
+References: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn> <1527737273-8387-3-git-send-email-djw@t-chip.com.cn>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 31 May 2018 09:45:02 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJK4vrmLBeN_ZeGCXAyqshshL16B0KN_+8uvt+=-O9TEw@mail.gmail.com>
+Message-ID: <CAL_JsqJK4vrmLBeN_ZeGCXAyqshshL16B0KN_+8uvt+=-O9TEw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] gpio: syscon: rockchip: add GPIO_MUTE support for rk3328
+To: Levin Du <djw@t-chip.com.cn>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>,
+        devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davide Sapienza <sapienza.dav@gmail.com>
+On Wed, May 30, 2018 at 10:27 PM,  <djw@t-chip.com.cn> wrote:
+> From: Levin Du <djw@t-chip.com.cn>
+>
+> In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec
+> mute control, can also be used for general purpose. It is manipulated by
+> the GRF_SOC_CON10 register.
+>
+> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+>
+> ---
+>
+> Changes in v3:
+> - Change from general gpio-syscon to specific rk3328-gpio-mute
+>
+> Changes in v2:
+> - Rename gpio_syscon10 to gpio_mute in doc
+>
+> Changes in v1:
+> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+> - Add doc rockchip,gpio-syscon.txt
+>
+>  .../bindings/gpio/rockchip,rk3328-gpio-mute.txt    | 28 +++++++++++++++++++
+>  drivers/gpio/gpio-syscon.c                         | 31 ++++++++++++++++++++++
+>  2 files changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> new file mode 100644
+> index 0000000..10bc632
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> @@ -0,0 +1,28 @@
+> +Rockchip RK3328 GPIO controller dedicated for the GPIO_MUTE pin.
+> +
+> +In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec mute
+> +control, can also be used for general purpose. It is manipulated by the
+> +GRF_SOC_CON10 register.
+> +
+> +Required properties:
+> +- compatible: Should contain "rockchip,rk3328-gpio-mute".
+> +- gpio-controller: Marks the device node as a gpio controller.
+> +- #gpio-cells: Should be 2. The first cell is the pin number and
+> +  the second cell is used to specify the gpio polarity:
+> +    0 = Active high,
+> +    1 = Active low.
+> +
+> +Example:
+> +
+> +       grf: syscon@ff100000 {
+> +               compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
+> +
+> +               gpio_mute: gpio-mute {
 
-The maximum possible duration of the weight-raising period for
-interactive applications is limited to 13 seconds, as this is the time
-needed to load the largest application that we considered when tuning
-weight raising. Unfortunately, in such an evaluation, we did not
-consider the case of very slow virtual machines.
+Node names should be generic:
 
-For example, on a QEMU/KVM virtual machine
-- running in a slow PC;
-- with a virtual disk stacked on a slow low-end 5400rpm HDD;
-- serving a heavy I/O workload, such as the sequential reading of
-several files;
-mplayer takes 23 seconds to start, if constantly weight-raised.
+gpio {
 
-To address this issue, this commit conservatively sets the upper limit
-for weight-raising duration to 25 seconds.
+This also means you can't add another GPIO node in the future and
+you'll have to live with "rockchip,rk3328-gpio-mute" covering more
+than 1 GPIO if you do need to add more GPIOs.
 
-Signed-off-by: Davide Sapienza <sapienza.dav@gmail.com>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
----
- block/bfq-iosched.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+> +                       compatible = "rockchip,rk3328-gpio-mute";
+> +                       gpio-controller;
+> +                       #gpio-cells = <2>;
+> +               };
+> +       };
+> +
+> +Note: The gpio_mute node should be declared as the child of the GRF (General
+> +Register File) node. The GPIO_MUTE pin is referred to as <&gpio_mute 0>.
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 262c929e24ee..31ce089d54eb 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -930,22 +930,26 @@ static unsigned int bfq_wr_duration(struct bfq_data *bfqd)
- 	do_div(dur, bfqd->peak_rate);
- 
- 	/*
--	 * Limit duration between 3 and 13 seconds. Tests show that
--	 * higher values than 13 seconds often yield the opposite of
--	 * the desired result, i.e., worsen responsiveness by letting
--	 * non-interactive and non-soft-real-time applications
--	 * preserve weight raising for a too long time interval.
-+	 * Limit duration between 3 and 25 seconds. The upper limit
-+	 * has been conservatively set after the following worst case:
-+	 * on a QEMU/KVM virtual machine
-+	 * - running in a slow PC
-+	 * - with a virtual disk stacked on a slow low-end 5400rpm HDD
-+	 * - serving a heavy I/O workload, such as the sequential reading
-+	 *   of several files
-+	 * mplayer took 23 seconds to start, if constantly weight-raised.
-+	 *
-+	 * As for higher values than that accomodating the above bad
-+	 * scenario, tests show that higher values would often yield
-+	 * the opposite of the desired result, i.e., would worsen
-+	 * responsiveness by allowing non-interactive applications to
-+	 * preserve weight raising for too long.
- 	 *
- 	 * On the other end, lower values than 3 seconds make it
- 	 * difficult for most interactive tasks to complete their jobs
- 	 * before weight-raising finishes.
- 	 */
--	if (dur > msecs_to_jiffies(13000))
--		dur = msecs_to_jiffies(13000);
--	else if (dur < msecs_to_jiffies(3000))
--		dur = msecs_to_jiffies(3000);
--
--	return dur;
-+	return clamp_val(dur, msecs_to_jiffies(3000), msecs_to_jiffies(25000));
- }
- 
- /* switch back from soft real-time to interactive weight raising */
--- 
-2.16.1
+This is wrong because you should have 2 cells. The phandle doesn't
+count as a cell.
+
+Rob
