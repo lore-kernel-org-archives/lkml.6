@@ -1,81 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755502AbeEaP0b (ORCPT <rfc822;w@1wt.eu>);
+        id S1755528AbeEaP0h (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:26:37 -0400
+Received: from sonic301-27.consmr.mail.gq1.yahoo.com ([98.137.64.153]:38277
+        "EHLO sonic301-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755478AbeEaP0b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 May 2018 11:26:31 -0400
-Received: from muru.com ([72.249.23.125]:45546 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755369AbeEaP01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:26:27 -0400
+X-YMail-OSG: f_xppgwVM1m3ZuLXkLIngZRjWGIXHpL4PJqa4mabZbHb4m_Way6h6koGQp2zo0Z
+ cK5AVzoaEbusj0STy.cT_OQlUf5ZyzVoKjSNGMa1qnVB.8zcu0GQtezVqAt8DqMgmY466Cuj5FI1
+ 6Y_jH1hN9G1cG1OTAddnATLLcO7ZEgvCIwiVqHPogVJvm5I5vUTY_ytepXShwLumrM73R3nIUivw
+ iBplVCgWzPr6mWbPZCi7FGBjtPU1OgaGU5.YkqH47WzlCF6AdSeyOmHd4weeG7E1EYnuND0lDo5d
+ LSzNhKpWVLaukJJUETa17J_qKozePYvKzmMGnsfT0OBeidNSAyalwZ7ZgRMruTvKiJsfFhCTMA9C
+ 165DJSkkq159z7hZC7e1zhf8pby1LcdC4G2yS6Ya84pLxhIlMBvvSkiBjtrONv6GM8jEGm2_2LqQ
+ cADgc.WmMEBxJJkVnJmaq1rt_JQ4dDZKn5r21Qb3ypb7wTxpodrI39l.E2dF_.Dr1O79fuhXyiZw
+ rKzUVT5zmfluWCnh8p.DmNfYqZlRaQTY7CbAviXZc9OafkQje3GoC3kvbL9yJmLUSySlr_LVtsO9
+ 0AG1ABu59n02NzK1AARw5OPqlso6kycxKlFM5IKy5jaR.vglsDv26fBCHoSjJm8DQ76EwwhXzYZb
+ inCW6XYFsQ40PDQnlvTax4zoai.7kTbXGJuLUdedPWV2zR_TVGBYofJSephXnZBRwwTHt18lhEPf
+ VSSfZe26NwmjNAmrZs94mXSXtNcutg1nr0jl_tVh8
+Subject: Re: [PATCH 1/1] Fix memory leak in kernfs_security_xattr_set and
+ kernfs_security_xattr_set
+To: CHANDAN VN <chandan.vn@samsung.com>, gregkh@linuxfoundation.org,
+        tj@kernel.org, bfields@fieldses.org, jlayton@kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Cc: cpgs@samsung.com, sireesha.t@samsung.com,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <CGME20180531092848epcas1p24b638ccd6da00f1e039bdb64de7e1a5b@epcas1p2.samsung.com>
+ <1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <cae274dd-e9e5-39b1-8b7b-aec1b3e76fe9@schaufler-ca.com>
 Date: Thu, 31 May 2018 08:26:23 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        robh+dt@kernel.org, bcousson@baylibre.com, paul@pwsan.com
-Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
-Message-ID: <20180531152623.GN5705@atomide.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-2-faiz_abbas@ti.com>
- <20180530145047.GC5705@atomide.com>
- <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
- <20180530152825.GG5705@atomide.com>
- <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
- <20180530155448.GH5705@atomide.com>
- <98c989ca-0694-5150-f74b-35f3e4bf20c0@ti.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98c989ca-0694-5150-f74b-35f3e4bf20c0@ti.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tero Kristo <t-kristo@ti.com> [180531 06:18]:
-> On 30/05/18 18:54, Tony Lindgren wrote:
-> > * Tero Kristo <t-kristo@ti.com> [180530 15:44]:
-> > > On 30/05/18 18:28, Tony Lindgren wrote:
-> > > > * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
-> > > > > For the OCP if part, I think that is still needed until we switch over to
-> > > > > full sysc driver. clkctrl_offs you probably also need because that is used
-> > > > > for mapping the omap_hwmod against a specific clkctrl clock. Those can be
-> > > > > only removed once we are done with hwmod (or figure out some other way to
-> > > > > assign the clkctrl clock to a hwmod.)
-> > > > 
-> > > > Hmm might be worth testing. I thought your commit 70f05be32133
-> > > > ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
-> > > > already parses the clkctrl from dts?
-> > > 
-> > > It maps the clkctrl clock to be used by hwmod, if those are available. We
-> > > didn't add any specific clock entries to DT for mapping the actual clkctrl
-> > > clock without the hwmod_data hints yet though, as that was deemed temporary
-> > > solution only due to transition to interconnect driver. I.e., you would need
-> > > something like this in DT for every device node:
-> > > 
-> > > &uart3 {
-> > >    clocks = <l4per_clkctrl UART3_CLK 0>;
-> > >    clock-names = "clkctrl";
-> > > };
-> > > 
-> > > ... which is currently not present.
-> > 
-> > Hmm is that not the "fck" clkctrl clock we have already in
-> > the dts files for the interconnect target modules?
-> 
-> Oh okay, yeah, we could parse that one, but currently it is not done, and is
-> not present for everything either I believe.
-> 
-> > We can also use pdata callbacks to pass the clock node if
-> > needed. But I guess I don't quite still understand what we
-> > are missing :)
-> 
-> So, what is missing is the glue logic only from the hwmod codebase. Right
-> now this is not supported but should be relatively trivial thing to add if
-> we really want to do this.
+On 5/31/2018 2:28 AM, CHANDAN VN wrote:
+> From: "sireesha.t" <sireesha.t@samsung.com>
+>
+> Leak is caused because smack_inode_getsecurity() is allocating memory
+> using kstrdup(). Though the security_release_secctx() is called, it
+> would not free the allocated memory. Calling security_release_secctx is
+> not relevant for this scenario as inode_getsecurity() does not provide a
+> "secctx".
+>
+> Similar fix has been mainlined:
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/?id=57e7ba04d422c3d41c8426380303ec9b7533ded9
+>
+> The fix is to replace the security_release_secctx() with a kfree()
+>
+> Below is the KMEMLEAK dump:
+> unreferenced object 0xffffffc025e11c80 (size 64):
+>   comm "systemd-tmpfile", pid 2452, jiffies 4294894464 (age 235587.492s)
+>   hex dump (first 32 bytes):
+>     53 79 73 74 65 6d 3a 3a 53 68 61 72 65 64 00 00  System::Shared..
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<ffffff80081be770>] __save_stack_trace+0x28/0x34
+>     [<ffffff80081bedb8>] create_object+0x130/0x25c
+>     [<ffffff80088c82f8>] kmemleak_alloc+0x30/0x5c
+>     [<ffffff80081b3ef0>] __kmalloc_track_caller+0x1cc/0x2a8
+>     [<ffffff800818673c>] kstrdup+0x3c/0x6c
+>     [<ffffff80082d78b0>] smack_inode_getsecurity+0xcc/0xec
+>     [<ffffff80082d78f4>] smack_inode_getsecctx+0x24/0x44
+>     [<ffffff80082d5ea0>] security_inode_getsecctx+0x50/0x70
+>     [<ffffff800823bbcc>] kernfs_security_xattr_set+0x74/0xe0
+>     [<ffffff80081eafec>] __vfs_setxattr+0x74/0x90
+>     [<ffffff80081eb088>] __vfs_setxattr_noperm+0x80/0x1ac
+>     [<ffffff80081eb238>] vfs_setxattr+0x84/0xac
+>     [<ffffff80081eb374>] setxattr+0x114/0x178
+>     [<ffffff80081eb44c>] path_setxattr+0x74/0xb8
+>     [<ffffff80081ebdcc>] SyS_lsetxattr+0x10/0x1c
+>     [<ffffff800808310c>] __sys_trace_return+0x0/0x4
+>
+> Signed-off-by: sireesha.t <sireesha.t@samsung.com>
+> Signed-off-by: CHANDAN VN <chandan.vn@samsung.com>
 
-OK let's think about this a bit for v4.19 then.
+Why not:
 
-Regards,
+ static int smack_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
+ {
+-	int len = 0;
+-	len = smack_inode_getsecurity(inode, XATTR_SMACK_SUFFIX, ctx, true);
++	int len = smack_inode_getsecurity(inode, XATTR_SMACK_SUFFIX, ctx, false);
+ 
+ 	if (len < 0)
+ 		return len;
 
-Tony
+> ---
+>  fs/kernfs/inode.c | 3 ++-
+>  fs/nfsd/nfs4xdr.c | 2 +-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+> index a343039..53befb8 100644
+> --- a/fs/kernfs/inode.c
+> +++ b/fs/kernfs/inode.c
+> @@ -369,7 +369,8 @@ static int kernfs_security_xattr_set(const struct xattr_handler *handler,
+>  	mutex_unlock(&kernfs_mutex);
+>  
+>  	if (secdata)
+> -		security_release_secctx(secdata, secdata_len);
+> +		kfree(secdata);
+> +
+>  	return error;
+>  }
+>  
+> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> index aaa88c1..1e0dbe9 100644
+> --- a/fs/nfsd/nfs4xdr.c
+> +++ b/fs/nfsd/nfs4xdr.c
+> @@ -2911,7 +2911,7 @@ static int get_parent_attributes(struct svc_export *exp, struct kstat *stat)
+>  out:
+>  #ifdef CONFIG_NFSD_V4_SECURITY_LABEL
+>  	if (context)
+> -		security_release_secctx(context, contextlen);
+> +		kfree(context);
+>  #endif /* CONFIG_NFSD_V4_SECURITY_LABEL */
+>  	kfree(acl);
+>  	if (tempfh) {
