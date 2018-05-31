@@ -1,75 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754081AbeEaTHF convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 15:07:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34052 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754003AbeEaTHD (ORCPT
+        id S1754125AbeEaTHT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 15:07:19 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44915 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754094AbeEaTHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 15:07:03 -0400
-Date: Fri, 01 Jun 2018 00:36:54 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/2] powerpc: Add support for function error injection
-To: Josef Bacik <jbacik@fb.com>, Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
-        <5ad23690185a90a887514d702ecb45783090d7c0.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
-        <87h8mozajv.fsf@concordia.ellerman.id.au>
-        <1527761352.z5jz8jg2d5.naveen@linux.ibm.com>
-        <87zi0fyktj.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87zi0fyktj.fsf@concordia.ellerman.id.au>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
+        Thu, 31 May 2018 15:07:08 -0400
+Date: Thu, 31 May 2018 21:06:59 +0200
+From: Philipp Zabel <pza@pengutronix.de>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Discussion of the development of and with GStreamer
+        <gstreamer-devel@lists.freedesktop.org>,
+        linux-media@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
+Message-ID: <20180531190659.xdp4q2cjro33aihq@pengutronix.de>
+References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18053119-4275-0000-0000-000002885F55
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053119-4276-0000-0000-0000378F6572
-Message-Id: <1527793526.g9zv2oo8k4.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=940 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805310211
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-IRC: #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 20:59:54 up 161 days,  3:18, 91 users,  load average: 0.11, 0.38,
+ 0.39
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: pza@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael Ellerman wrote:
-> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
-> 
->> Michael Ellerman wrote:
->>> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
->>>> ...
->>> 
->>> A change log is always nice even if it's short :)
->>
->> I tried, but really couldn't come up with anything more to write. I'll 
->> try harder for v2 :)
-> 
-> Yeah true.
-> 
-> You could just say "All that's required is to define x and y and select
-> the Kconfig symbol".
+Hi Jagan,
 
-Ok, sure.
-
+On Thu, May 31, 2018 at 08:39:20PM +0530, Jagan Teki wrote:
+> Hi All,
 > 
->>> This looks fine to me, it's probably easiest if it goes in via tip along
->>> with patch 1.
->>> 
->>> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
->>
->> Thanks for the review. I'll base v2 on -tip
+> I'm trying to verify MIPI-CSI2 OV5640 camera on i.MX6 platform with
+> Mainline Linux.
 > 
-> I guess if it doesn't already apply to tip you should rebase it. You've
-> probably missed 4.18 anyway.
+> I've followed these[1] instructions to configure MC links and pads
+> based on the probing details from dmesg and trying to capture
+> ipu1_ic_prpenc capture (/dev/video1) but it's not working.
+> 
+> Can anyone help me to verify whether I configured all the details
+> properly if not please suggest.
+> 
+> I'm pasting full log here, so-that anyone can comment in line and dt
+> changes are at [2]
+> 
+> Log:
+> -----
+[...]
+> # media-ctl -l "'ov5640 2-003c':0 -> 'imx6-mipi-csi2':0[1]"
+> # media-ctl -l "'imx6-mipi-csi2':2 -> 'ipu1_csi1':0[1]"
+> # media-ctl -l "'ipu1_csi1':1 -> 'ipu1_ic_prp':0[1]"
+> # media-ctl -l "'ipu1_ic_prp':1 -> 'ipu1_ic_prpenc':0[1]"
+> # media-ctl -l "'ipu1_ic_prpenc':1 -> 'ipu1_ic_prpenc capture':0[1]"
 
-Oh ok. I just tried and it seems to apply just fine. I'll post v2 after 
-giving this a quick test.
+Here you configure a pipeline that ends at ipu1 prpenc capture ...
 
-- Naveen
+> # med# media-ctl -p
+[...]
+> - entity 18: ipu1_ic_prpenc capture (1 pad, 1 link)
+>              type Node subtype V4L flags 0
+>              device node name /dev/video0
+
+... which is /dev/video0 ...
+
+[...]
+> - entity 27: ipu1_ic_prpvf capture (1 pad, 1 link)
+>              type Node subtype V4L flags 0
+>              device node name /dev/video1
+
+... not /dev/video1 ...
+
+[...]
+> # GST_DEBUG="v4l2*:5" gst-launch-1.0 -v v4l2src device=/dev/video1 ! \
+> > autovideosink
+
+... and then you try to capture from prpvf, which is not part of a
+configured pipeline.
+
+regards
+Philipp
