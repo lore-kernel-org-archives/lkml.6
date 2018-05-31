@@ -1,83 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754741AbeEaLpB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:45:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39038 "EHLO mail.kernel.org"
+        id S1754762AbeEaLqS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:46:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754628AbeEaLpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:45:00 -0400
-Date: Thu, 31 May 2018 13:44:37 +0200
+        id S1754522AbeEaLqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:46:16 -0400
+Date: Thu, 31 May 2018 13:45:54 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
-        Quytelda Kahja <quytelda@tamalin.org>, devel@driverdev.osuosl.org
-Subject: Re: [PATCH v2 03/21] Staging: gdm724x: use match_string() helper
-Message-ID: <20180531114437.GA11598@kroah.com>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
- <1527765086-19873-4-git-send-email-xieyisheng1@huawei.com>
+To: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Timur Tabi <timur@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH 4.16 269/272] pinctrl: msm: Use dynamic GPIO numbering
+Message-ID: <20180531114553.GB11598@kroah.com>
+References: <20180528100240.256525891@linuxfoundation.org>
+ <20180528100302.722883806@linuxfoundation.org>
+ <7c34ccef-2fa8-8b53-2677-29f6fbe71a04@dd-wrt.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1527765086-19873-4-git-send-email-xieyisheng1@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7c34ccef-2fa8-8b53-2677-29f6fbe71a04@dd-wrt.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 07:11:08PM +0800, Yisheng Xie wrote:
-> match_string() returns the index of an array for a matching string,
-> which can be used instead of open coded variant.
+On Thu, May 31, 2018 at 01:21:56PM +0200, Sebastian Gottschall wrote:
+> Am 28.05.2018 um 12:05 schrieb Greg Kroah-Hartman:
+> > 4.16-stable review patch.  If anyone has any objections, please let me know.
+> > 
+> > ------------------
+> > 
+> > From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > 
+> > [ Upstream commit a7aa75a2a7dba32594291a71c3704000a2fd7089 ]
+> > 
+> > The base of the TLMM gpiochip should not be statically defined as 0, fix
+> > this to not artificially restrict the existence of multiple pinctrl-msm
+> > devices.
+> > 
+> > Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
+> > Reported-by: Timur Tabi <timur@codeaurora.org>
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> > Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >   drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> > @@ -818,7 +818,7 @@ static int msm_gpio_init(struct msm_pinc
+> >   		return -EINVAL;
+> >   	chip = &pctrl->chip;
+> > -	chip->base = 0;
+> > +	chip->base = -1;
+> >   	chip->ngpio = ngpio;
+> >   	chip->label = dev_name(pctrl->dev);
+> >   	chip->parent = pctrl->dev;
 > 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Quytelda Kahja <quytelda@tamalin.org>
-> Cc: devel@driverdev.osuosl.org
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> ---
-> v2:
->  - const DRIVER_STRING instead  - per Andy
+> this patch creates a regression for me. on ipq8064 the systems gpios now
+> start somewhere in the sky
 > 
->  drivers/staging/gdm724x/gdm_tty.c | 18 +++++-------------
->  1 file changed, 5 insertions(+), 13 deletions(-)
+> new layout
 > 
-> diff --git a/drivers/staging/gdm724x/gdm_tty.c b/drivers/staging/gdm724x/gdm_tty.c
-> index 3cdebb8..397ecaa 100644
-> --- a/drivers/staging/gdm724x/gdm_tty.c
-> +++ b/drivers/staging/gdm724x/gdm_tty.c
-> @@ -43,7 +43,7 @@
->  static struct gdm *gdm_table[TTY_MAX_COUNT][GDM_TTY_MINOR];
->  static DEFINE_MUTEX(gdm_table_lock);
->  
-> -static char *DRIVER_STRING[TTY_MAX_COUNT] = {"GCTATC", "GCTDM"};
-> +static const char *DRIVER_STRING[TTY_MAX_COUNT] = {"GCTATC", "GCTDM"};
->  static char *DEVICE_STRING[TTY_MAX_COUNT] = {"GCT-ATC", "GCT-DM"};
->  
->  static void gdm_port_destruct(struct tty_port *port)
-> @@ -65,22 +65,14 @@ static int gdm_tty_install(struct tty_driver *driver, struct tty_struct *tty)
->  {
->  	struct gdm *gdm = NULL;
->  	int ret;
-> -	int i;
-> -	int j;
-> -
-> -	j = GDM_TTY_MINOR;
-> -	for (i = 0; i < TTY_MAX_COUNT; i++) {
-> -		if (!strcmp(tty->driver->driver_name, DRIVER_STRING[i])) {
-> -			j = tty->index;
-> -			break;
-> -		}
-> -	}
->  
-> -	if (j == GDM_TTY_MINOR)
-> +	ret = match_string(DRIVER_STRING, TTY_MAX_COUNT,
-> +			   tty->driver->driver_name);
-> +	if (ret < 0 || tty->index == GDM_TTY_MINOR)
->  		return -ENODEV;
+> lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip373 -> ../../devices/platform/soc/1b700000.pci/pci0001:00/0001:00:00.0/0001:01:00.0/gpio/gpiochip373
+> lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip408 -> ../../devices/platform/soc/1b500000.pci/pci0000:00/0000:00:00.0/0000:01:00.0/gpio/gpiochip408
+> lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip443 ->
+> ../../devices/platform/soc/800000.pinmux/gpio/gpiochip443
+> 
+> 
+> before the patch
+> 
+> lrwxrwxrwx    1 root     root             0 Jan  1  1970 gpiochip0 ->
+> ../../devices/platform/soc/800000.pinmux/gpio/gpiochip0
+> lrwxrwxrwx    1 root     root             0 May 31 13:13 gpiochip442 -> ../../devices/platform/soc/1b700000.pci/pci0001:00/0001:00:00.0/0001:01:00.0/gpio/gpiochip442
+> lrwxrwxrwx    1 root     root             0 May 31 13:13 gpiochip477 -> ../../devices/platform/soc/1b500000.pci/pci0000:00/0000:00:00.0/0000:01:00.0/gpio/gpiochip477
+> 
+> 
+> this broke my userspace gpio handling. i can override this, but still it
+> doesnt look correct since there is a hole at the beginng likelly reserved by
+> unused arm gpios
 
-Very odd rewrite here.  Why call this function if you think the initial
-parameters are not correct?  Are you sure about your test for
-tty->index?
+So does this mean that 4.17-rc is also broken for you?  If so, this
+needs to be reverted there as well.
 
-This should be cleaned up more please.
+Bjorn, any ideas?
 
 thanks,
 
