@@ -1,129 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754700AbeEaLA7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:00:59 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:38362 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754583AbeEaLAM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:00:12 -0400
-X-Google-Smtp-Source: ADUXVKLrSr5wyw2yMUlV9FRYkbooKC5gewusQUuJJVyOmDsfgiaIpf6BJyC9wZByqujKM8zCb5Q1uA==
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v3 3/5] PM / Domains: Split genpd_dev_pm_attach()
-Date: Thu, 31 May 2018 12:59:57 +0200
-Message-Id: <20180531105959.14843-4-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180531105959.14843-1-ulf.hansson@linaro.org>
-References: <20180531105959.14843-1-ulf.hansson@linaro.org>
+        id S1754738AbeEaLB1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:01:27 -0400
+Received: from foss.arm.com ([217.140.101.70]:39766 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754504AbeEaLBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:01:20 -0400
+Date: Thu, 31 May 2018 12:01:15 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Dongjiu Geng <gengdongjiu@huawei.com>, james.morse@arm.com
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
+        lenb@kernel.org, tony.luck@intel.com, bp@alien8.de,
+        robert.moore@intel.com, erik.schmauss@intel.com, dave.martin@arm.com,
+        ard.biesheuvel@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] arm64: handle NOTIFY_SEI notification by the APEI
+ driver
+Message-ID: <20180531110115.uglmicy3nzwfoyx3@lakrids.cambridge.arm.com>
+References: <1527770506-8076-1-git-send-email-gengdongjiu@huawei.com>
+ <1527770506-8076-3-git-send-email-gengdongjiu@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527770506-8076-3-git-send-email-gengdongjiu@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To extend genpd to deal with allowing multiple PM domains per device, some
-of the code in genpd_dev_pm_attach() can be re-used. Let's prepare for this
-by moving some of the code into a sub-function.
+On Thu, May 31, 2018 at 08:41:46PM +0800, Dongjiu Geng wrote:
+> When kernel or KVM gets the NOTIFY_SEI notification, it firstly
+> calls the APEI driver to handle this notification.
+> 
+> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+> ---
+>  arch/arm64/kernel/traps.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> ---
+> change since https://www.spinics.net/lists/kvm/msg168919.html
+> 
+> 1. Remove the handle_guest_sei() helper
+> 
+> 
+> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> index 8bbdc17..676e40c 100644
+> --- a/arch/arm64/kernel/traps.c
+> +++ b/arch/arm64/kernel/traps.c
+> @@ -50,6 +50,7 @@
+>  #include <asm/exception.h>
+>  #include <asm/system_misc.h>
+>  #include <asm/sysreg.h>
+> +#include <acpi/ghes.h>
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/base/power/domain.c | 60 ++++++++++++++++++++-----------------
- 1 file changed, 33 insertions(+), 27 deletions(-)
+Nit: please place newline before the new include, since it comes from a
+different directory (and we do so in fault.c).
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 908c44779ae7..b1fcbf917974 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2221,38 +2221,15 @@ static void genpd_dev_pm_sync(struct device *dev)
- 	genpd_queue_power_off_work(pd);
- }
- 
--/**
-- * genpd_dev_pm_attach - Attach a device to its PM domain using DT.
-- * @dev: Device to attach.
-- *
-- * Parse device's OF node to find a PM domain specifier. If such is found,
-- * attaches the device to retrieved pm_domain ops.
-- *
-- * Returns 1 on successfully attached PM domain, 0 when the device don't need a
-- * PM domain or when multiple power-domains exists for it, else a negative error
-- * code. Note that if a power-domain exists for the device, but it cannot be
-- * found or turned on, then return -EPROBE_DEFER to ensure that the device is
-- * not probed and to re-try again later.
-- */
--int genpd_dev_pm_attach(struct device *dev)
-+static int __genpd_dev_pm_attach(struct device *dev, struct device_node *np,
-+				 unsigned int index)
- {
- 	struct of_phandle_args pd_args;
- 	struct generic_pm_domain *pd;
- 	int ret;
- 
--	if (!dev->of_node)
--		return 0;
--
--	/*
--	 * Devices with multiple PM domains must be attached separately, as we
--	 * can only attach one PM domain per device.
--	 */
--	if (of_count_phandle_with_args(dev->of_node, "power-domains",
--				       "#power-domain-cells") != 1)
--		return 0;
--
--	ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
--					"#power-domain-cells", 0, &pd_args);
-+	ret = of_parse_phandle_with_args(np, "power-domains",
-+				"#power-domain-cells", index, &pd_args);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -2290,6 +2267,35 @@ int genpd_dev_pm_attach(struct device *dev)
- 
- 	return ret ? -EPROBE_DEFER : 1;
- }
-+
-+/**
-+ * genpd_dev_pm_attach - Attach a device to its PM domain using DT.
-+ * @dev: Device to attach.
-+ *
-+ * Parse device's OF node to find a PM domain specifier. If such is found,
-+ * attaches the device to retrieved pm_domain ops.
-+ *
-+ * Returns 1 on successfully attached PM domain, 0 when the device don't need a
-+ * PM domain or when multiple power-domains exists for it, else a negative error
-+ * code. Note that if a power-domain exists for the device, but it cannot be
-+ * found or turned on, then return -EPROBE_DEFER to ensure that the device is
-+ * not probed and to re-try again later.
-+ */
-+int genpd_dev_pm_attach(struct device *dev)
-+{
-+	if (!dev->of_node)
-+		return 0;
-+
-+	/*
-+	 * Devices with multiple PM domains must be attached separately, as we
-+	 * can only attach one PM domain per device.
-+	 */
-+	if (of_count_phandle_with_args(dev->of_node, "power-domains",
-+				       "#power-domain-cells") != 1)
-+		return 0;
-+
-+	return __genpd_dev_pm_attach(dev, dev->of_node, 0);
-+}
- EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
- 
- static const struct of_device_id idle_state_match[] = {
--- 
-2.17.0
+>  static const char *handler[]= {
+>  	"Synchronous Abort",
+> @@ -701,6 +702,20 @@ void __noreturn arm64_serror_panic(struct pt_regs *regs, u32 esr)
+>  bool arm64_is_fatal_ras_serror(struct pt_regs *regs, unsigned int esr)
+>  {
+>  	u32 aet = arm64_ras_serror_get_severity(esr);
+> +	int ret = -ENOENT;
+> +
+> +	if (IS_ENABLED(CONFIG_ACPI_APEI_SEI)) {
+> +		if (interrupts_enabled(regs))
+> +			nmi_enter();
+> +
+> +		ret = ghes_notify_sei();
+> +
+> +		if (interrupts_enabled(regs))
+> +			nmi_exit();
+> +
+> +		if (!ret)
+> +			return false;
+> +	}
+
+In do_serror() we already handle nmi_{enter,exit}(), so there's no need
+for that here.
+
+TBH, I don't understand why do_sea() does that conditionally today.
+Unless there's some constraint I'm missing, I think it would make more
+sense to do that regardless of whether the interrupted context had
+interrupts enabled. James -- does that make sense to you?
+
+If you update the prior patch with a stub for !CONFIG_ACPI_APEI_SEI, you
+can simplify all of the above additions down to:
+
+	if (!ghes_notify_sei())
+		return;
+
+... which would look a lot nicer.
+
+Thanks,
+Mark.
