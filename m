@@ -1,99 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755340AbeEaOHI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:07:08 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:51352 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1755093AbeEaOHG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:07:06 -0400
-Date: Thu, 31 May 2018 10:07:05 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Johan Hovold <johan@kernel.org>
-cc: Roger Quadros <rogerq@ti.com>, <balbi@kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] usb: dwc3: of_simple: don't call pm_runtime_set_active()
-In-Reply-To: <20180531132538.GH3259@localhost>
-Message-ID: <Pine.LNX.4.44L0.1805311004260.1607-100000@iolanthe.rowland.org>
+        id S1755350AbeEaOHv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:07:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755093AbeEaOHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:07:46 -0400
+X-Google-Smtp-Source: ADUXVKJTuNpCi0aug9ldRTG6p/Kae8rSiIL+zWHq29VjXcI467Ng5PWJg1xsFVTYcOWwPdBSWn20mijJbs4Z/Rz73Kk=
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20180531102315.GA5150@localhost.localdomain>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180531030129.GA16122@rob-hp-laptop> <20180531071717.GG13528@localhost.localdomain>
+ <20180531102315.GA5150@localhost.localdomain>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 31 May 2018 09:07:24 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
+Message-ID: <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018, Johan Hovold wrote:
+On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+> On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
+>> Hello Rob,
+>>
+>> Thanks for the review!
+>>
+>> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
+>> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
+>> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
+>> > > + - interrupts            : The interrupt line the device is connected to.
+>> > > + - interrupt-controller  : Marks the device node as an interrupt controller.
+>> >
+>> > What sub blocks have interrupts?
+>>
+>> The PMIC can generate interrupts from events which cause it to reset.
+>> Eg, irq from watchdog line change, power button pushes, reset request
+>> via register interface etc. I don't know any generic handling for these
+>> interrupts. In "normal" use-case this PMIC is powering the processor
+>> where driver is running and I do not see reasonable handling because
+>> power-reset is going to follow the irq.
+>>
+>
+> Oh, but when reading this I understand that the interrupt-controller
+> property should at least be optional.
 
-> > This breaks runtime pm as you now get a second round of clock enables
-> > which are never balanced on runtime suspend (the clocks are first
-> > enabled in dwc3_of_simple_clk_init() above and with your change again in
-> > dwc3_of_simple_runtime_resume()).
-> > 
-> > On the other hand, we currently return from probe() with a positive RPM
-> > count so perhaps the RPM callbacks can just be removed altogether (i.e.
-> > unless some other entity drops that count at some point before
-> > remove()).
-> > 
-> > >  	ret = of_platform_populate(np, NULL, NULL, dev);
-> > >  	if (ret) {
-> > >  		for (i = 0; i < simple->num_clocks; i++) {
-> > > @@ -131,10 +134,6 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
-> > >  		goto err_resetc_assert;
-> > >  	}
-> > >  
-> > > -	pm_runtime_set_active(dev);
-> > > -	pm_runtime_enable(dev);
-> > > -	pm_runtime_get_sync(dev);
-> > > -
-> > >  	return 0;
-> > >  
-> > >  err_resetc_assert:
-> > 
-> > Also note that there's currently a use-after-free in remove(), where
-> > pm_runtime_put_sync() is called after the clocks have been put.
-> > Something like the below (untested) patch should fix it.
-> 
-> What about the use-after-free in remove? Shall I resubmit the fix below
-> separately?
-> 
-> Thanks,
-> Johan
-> 
-> > From 35c384c31010c344d403c26fc0a1dde0fd68ef4a Mon Sep 17 00:00:00 2001
-> > From: Johan Hovold <johan@kernel.org>
-> > Date: Mon, 28 May 2018 17:31:45 +0200
-> > Subject: [PATCH] usb: dwc3: of-simple: fix use-after-free on remove
-> > 
-> > The clocks have already been explicitly disabled and put as part of
-> > remove() so the runtime suspend callback must not be run when balancing
-> > the runtime PM usage count before returning.
-> > 
-> > Fixes: 16adc674d0d6 ("usb: dwc3: add generic OF glue layer")
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > ---
-> >  drivers/usb/dwc3/dwc3-of-simple.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-> > index cb2ee96fd3e8..b9c869cd6585 100644
-> > --- a/drivers/usb/dwc3/dwc3-of-simple.c
-> > +++ b/drivers/usb/dwc3/dwc3-of-simple.c
-> > @@ -165,8 +165,9 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
-> >  
-> >  	reset_control_put(simple->resets);
-> >  
-> > -	pm_runtime_put_sync(dev);
-> > +	pm_runtime_put_noidle(dev);
-> >  	pm_runtime_disable(dev);
-> > +	pm_runtime_set_suspended(dev);
-> >  
-> >  	return 0;
-> >  }
+I don't think it should. The h/w either has an interrupt controller or
+it doesn't. My concern is you added it but nothing uses it which tells
+me your binding is incomplete. I'd rather see complete bindings even
+if you don't have drivers. For example, as-is, there's not really any
+need for the clocks child node. You can just make the parent a clock
+provider. But we need a complete picture of the h/w to make that
+determination.
 
-This is a little racy -- there might be a runtime-suspend callback
-between the put_noidle and the disable.  (The put_noidle itself won't
-cause a callback to happen, but something else could.)
-
-It would be better to do the disable first and then the put_noidle.
-
-Alan Stern
+Rob
