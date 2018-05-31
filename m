@@ -1,104 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755536AbeEaPge (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:36:34 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34781 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755421AbeEaPg1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:36:27 -0400
-X-Google-Smtp-Source: ADUXVKL4YOMAckFCPMnIa13BhfVBLamc3fR5Xqc04RHoG6LCMbyLZgdVjtqcsrfHPeRoOG05u4U9ZxN58CLUTIUrmtk=
+        id S1755552AbeEaPgt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:36:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50264 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755421AbeEaPgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 11:36:46 -0400
+Subject: Re: [PATCH v9 3/7] cpuset: Add cpuset.sched.load_balance flag to v2
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1527601294-3444-1-git-send-email-longman@redhat.com>
+ <1527601294-3444-4-git-send-email-longman@redhat.com>
+ <20180531122638.GJ12180@hirez.programming.kicks-ass.net>
+ <42cc1f44-2355-1c0c-b575-49c863303c42@redhat.com>
+ <20180531152050.GK12180@hirez.programming.kicks-ass.net>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <ebe7f0c1-b2dc-57ad-e5cb-7edf0fee4626@redhat.com>
+Date: Thu, 31 May 2018 11:36:39 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <1527599737-28408-1-git-send-email-suzuki.poulose@arm.com>
-References: <1527599737-28408-1-git-send-email-suzuki.poulose@arm.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 31 May 2018 09:36:25 -0600
-Message-ID: <CANLsYkxStH5R0_8WFF1oe=PCCFr4Ko+0J+Xhn-wzopFFDgrRCw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] coresight: tmc-etr Transparent buffer management
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>, coresight@lists.linaro.org,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180531152050.GK12180@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 May 2018 at 07:15, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
-> This series is split of the Coresight ETR perf support patches posted
-> here [0]. The CATU support and perf backend support will be posted as
-> separate series for better management and review of the patches.
->
-> This series adds the support for TMC ETR Scatter-Gather mode to allow
-> using physical non-contiguous buffer for holding the trace data. It
-> also adds a layer to handle the buffer management in a transparent
-> manner, independent of the underlying mode used by the TMC ETR.
-> The layer chooses the ETR mode based on different parameters (size,
-> re-using a set of pages, presence of an SMMU etc.).
->
-> Finally we add a sysfs parameter to tune the buffer size for ETR in
-> sysfs-mode.
->
-> During the testing, we found out that if the TMC ETR is not properly
-> connected to the memory subsystem, the ETR could lock-up the system
-> while waiting for the "read" transactions to complete in scatter-gather
-> mode. So, we do not use the mode on a system unless it is safe to do
-> so. This is specified by a DT property "arm,scatter-gather".
->
-> Applies on coreisght-next tree from Mathieu
->
-> Changes since previous version [1]:
->  - Rebased to Mathieu's coresight-next tree to resolve a conflict.
->  - Added tags for DT changes from Rob and Mathieu
->  - Split the SG mode backend support patch from the
->    ETR-BUF patch.
->  - Address other comments from Mathieu
->
-> Changes since splitted series [0] :
->  - Split the series in [0]
->  - Address comments on v2
->  - Rename DT property "scatter-gather" to "arm,scatter-gather"
->  - Add ETM PID for Cortex-A35, use macros to make the listing easier
->
-> [0] - http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/574875.html
-> [1] - http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579135.html
->
-> Suzuki K Poulose (12):
->   coresight: ETM: Add support for Arm Cortex-A73 and Cortex-A35
->   coresight: tmc: Hide trace buffer handling for file read
->   coresight: tmc-etr: Do not clean trace buffer
->   coresight: tmc-etr: Disallow perf mode
->   coresight: Add helper for inserting synchronization packets
->   dts: bindings: Restrict coresight tmc-etr scatter-gather mode
->   dts: juno: Add scatter-gather support for all revisions
->   coresight: Add generic TMC sg table framework
->   coresight: Add support for TMC ETR SG unit
->   coresight: tmc-etr: Add transparent buffer management
->   coresight: tmc-etr buf: Add TMC scatter gather mode backend
->   coresight: tmc: Add configuration support for trace buffer size
->
->  .../ABI/testing/sysfs-bus-coresight-devices-tmc    |    8 +
->  .../devicetree/bindings/arm/coresight.txt          |    5 +-
->  arch/arm64/boot/dts/arm/juno-base.dtsi             |    1 +
->  drivers/hwtracing/coresight/coresight-etb10.c      |   12 +-
->  drivers/hwtracing/coresight/coresight-etm4x.c      |   31 +-
->  drivers/hwtracing/coresight/coresight-priv.h       |   10 +-
->  drivers/hwtracing/coresight/coresight-tmc-etf.c    |   45 +-
->  drivers/hwtracing/coresight/coresight-tmc-etr.c    | 1010 ++++++++++++++++++--
->  drivers/hwtracing/coresight/coresight-tmc.c        |   83 +-
->  drivers/hwtracing/coresight/coresight-tmc.h        |  110 ++-
->  drivers/hwtracing/coresight/coresight.c            |    3 +-
->  11 files changed, 1144 insertions(+), 174 deletions(-)
+On 05/31/2018 11:20 AM, Peter Zijlstra wrote:
+> On Thu, May 31, 2018 at 09:54:27AM -0400, Waiman Long wrote:
+>> On 05/31/2018 08:26 AM, Peter Zijlstra wrote:
+>>> I still find all that a bit weird.
+>>>
+>>> So load_balance=0 basically changes a partition into a
+>>> 'fully-partitioned partition' with the seemingly random side-effect that
+>>> now sub-partitions are allowed to consume all CPUs.
+>> Are you suggesting that we should allow sub-partition to consume all the
+>> CPUs no matter the load balance state? I can live with that if you think
+>> it is more logical.
+> I'm on the fence myself; the only thing I'm fairly sure of is that tying
+> this particular behaviour to the load-balance knob seems off.
 
-Applied after correcting indentation problems and rectifying the
-kernel version and date in "sysfs-bus-coresight-devices-tmc".
-
-Mathieu
+The main reason for doing it this way is that I don't want to have
+load-balanced partition with no cpu in it. How about we just don't allow
+consume-all at all. Each partition must have at least 1 cpu.
 
 >
-> --
-> 2.7.4
+>>> The rationale, only given in the Changelog above, seems to be to allow
+>>> 'easy' emulation of isolcpus.
+>>>
+>>> I'm still not convinced this is a useful knob to have. You can do
+>>> fully-partitioned by simply creating a lot of 1 cpu parititions.
+>> That is certainly true. However, I think there are some additional
+>> overhead in the scheduler side in maintaining those 1-cpu partitions. Right?
+> cpuset-controller as such doesn't have much overhead scheduler wise,
+> cpu-controller OTOH does, and there depth is the predominant factor, so
+> many sibling groups should not matter there either.
 >
+>>> So this one knob does two separate things, both of which seem, to me,
+>>> redundant.
+>>>
+>>> Can we please get better rationale for this?
+>> I am fine getting rid of the load_balance flag if this is the consensus.
+>> However, we do need to come up with a good migration story for those
+>> users that need the isolcpus capability. I think Mike was the one asking
+>> for supporting isolcpus. So Mike, what is your take on that.
+> So I don't strictly mind having a knob that does the 'fully-partitioned
+> partition' thing -- however odd that sounds -- but I feel we should have
+> a solid use-case for it.
+>
+> I also think we should not mix the 'consume all' thing with the
+> 'fully-partitioned' thing, as they are otherwise unrelated.
+
+The "consume all" and "fully-partitioned" look the same to me. Are you
+talking about allocating all the CPUs in a partition to sub-partitions
+so that there is no CPU left in the parent partition?
+
+Cheers,
+Longman
