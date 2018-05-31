@@ -1,131 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755458AbeEaPOn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:14:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53850 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755025AbeEaPOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:14:38 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH ghak86 V1] audit: use audit_enabled as a boolean where convenient
-Date: Thu, 31 May 2018 11:13:10 -0400
-Message-Id: <c390a53d148593016df96e880a35e64f42edcf91.1527726830.git.rgb@redhat.com>
+        id S1755484AbeEaPPu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:15:50 -0400
+Received: from smtprelay0223.hostedemail.com ([216.40.44.223]:60285 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755134AbeEaPPt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 11:15:49 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2895:3138:3139:3140:3141:3142:3352:3622:3867:3871:3872:4321:4384:5007:7903:10004:10400:10848:11026:11658:11914:12296:12438:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21627:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: truck41_6cc0e17656916
+X-Filterd-Recvd-Size: 1469
+Message-ID: <993c7040bd1e5251abd70ff3aa7e3141f28b3505.camel@perches.com>
+Subject: Re: [PATCH] ftrace: use non-archaic spelling of failes
+From: Joe Perches <joe@perches.com>
+To: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
+        linux-kernel@vger.kernel.org
+Cc: rostedt@goodmis.org, mingo@redhat.com
+Date: Thu, 31 May 2018 08:15:45 -0700
+In-Reply-To: <20180531121701.8972-1-cascardo@canonical.com>
+References: <20180531121701.8972-1-cascardo@canonical.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most uses of audit_enabled don't care about the distinction between
-AUDIT_ON and AUDIT_LOCKED, so using audit_enabled as a boolean makes
-more sense and is easier to read. Most uses of audit_enabled treat it as
-a boolean, so switch the remaining AUDIT_OFF usage to simply use
-audit_enabled as a boolean where applicable.
+On Thu, 2018-05-31 at 09:17 -0300, Thadeu Lima de Souza Cascardo wrote:
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+[]
+> @@ -4788,7 +4788,7 @@ ftrace_set_addr(struct ftrace_ops *ops, unsigned long ip, int remove,
+>   * @reset - non zero to reset all filters before applying this filter.
+>   *
+>   * Filters denote which functions should be enabled when tracing is enabled
+> - * If @ip is NULL, it failes to update filter.
+> + * If @ip is NULL, it fails to update filter.
+>   */
+>  int ftrace_set_filter_ip(struct ftrace_ops *ops, unsigned long ip,
+>  			 int remove, int reset)
 
-See: https://github.com/linux-audit/audit-kernel/issues/86
+Perhaps fix it treewide?
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- drivers/tty/tty_audit.c      | 2 +-
- include/net/xfrm.h           | 2 +-
- kernel/audit.c               | 8 ++++----
- net/netfilter/xt_AUDIT.c     | 2 +-
- net/netlabel/netlabel_user.c | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
-index e30aa6b..1e48051 100644
---- a/drivers/tty/tty_audit.c
-+++ b/drivers/tty/tty_audit.c
-@@ -92,7 +92,7 @@ static void tty_audit_buf_push(struct tty_audit_buf *buf)
- {
- 	if (buf->valid == 0)
- 		return;
--	if (audit_enabled == 0) {
-+	if (!audit_enabled) {
- 		buf->valid = 0;
- 		return;
- 	}
-diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-index 7f2e31a..380542b 100644
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -734,7 +734,7 @@ static inline struct audit_buffer *xfrm_audit_start(const char *op)
- {
- 	struct audit_buffer *audit_buf = NULL;
- 
--	if (audit_enabled == 0)
-+	if (!audit_enabled)
- 		return NULL;
- 	audit_buf = audit_log_start(audit_context(), GFP_ATOMIC,
- 				    AUDIT_MAC_IPSEC_EVENT);
-diff --git a/kernel/audit.c b/kernel/audit.c
-index e7478cb..3a18e59 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -424,7 +424,7 @@ static int audit_do_config_change(char *function_name, u32 *to_change, u32 new)
- 	else
- 		allow_changes = 1;
- 
--	if (audit_enabled != AUDIT_OFF) {
-+	if (audit_enabled) {
- 		rc = audit_log_config_change(function_name, new, old, allow_changes);
- 		if (rc)
- 			allow_changes = 0;
-@@ -1097,7 +1097,7 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
- {
- 	struct audit_buffer *ab;
- 
--	if (audit_enabled == AUDIT_OFF)
-+	if (!audit_enabled)
- 		return;
- 	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_FEATURE_CHANGE);
- 	if (!ab)
-@@ -1270,7 +1270,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
- 				err = auditd_set(req_pid,
- 						 NETLINK_CB(skb).portid,
- 						 sock_net(NETLINK_CB(skb).sk));
--				if (audit_enabled != AUDIT_OFF)
-+				if (audit_enabled)
- 					audit_log_config_change("audit_pid",
- 								new_pid,
- 								auditd_pid,
-@@ -1281,7 +1281,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
- 				/* try to process any backlog */
- 				wake_up_interruptible(&kauditd_wait);
- 			} else {
--				if (audit_enabled != AUDIT_OFF)
-+				if (audit_enabled)
- 					audit_log_config_change("audit_pid",
- 								new_pid,
- 								auditd_pid, 1);
-diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
-index f368ee6..3921553 100644
---- a/net/netfilter/xt_AUDIT.c
-+++ b/net/netfilter/xt_AUDIT.c
-@@ -72,7 +72,7 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
- 	struct audit_buffer *ab;
- 	int fam = -1;
- 
--	if (audit_enabled == 0)
-+	if (!audit_enabled)
- 		goto errout;
- 	ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
- 	if (ab == NULL)
-diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
-index 2f328af..e68fa9d 100644
---- a/net/netlabel/netlabel_user.c
-+++ b/net/netlabel/netlabel_user.c
-@@ -101,7 +101,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
- 	char *secctx;
- 	u32 secctx_len;
- 
--	if (audit_enabled == 0)
-+	if (!audit_enabled)
- 		return NULL;
- 
- 	audit_buf = audit_log_start(audit_context(), GFP_ATOMIC, type);
--- 
-1.8.3.1
+$ git grep -w -i failes | wc -l
+8
