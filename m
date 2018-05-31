@@ -1,128 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755383AbeEaOeh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:34:37 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:37591 "EHLO
+        id S1755406AbeEaOhN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:37:13 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44976 "EHLO
         mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755297AbeEaOed (ORCPT
+        with ESMTP id S1755302AbeEaOhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:34:33 -0400
-X-Google-Smtp-Source: ADUXVKIaA9OdB28IaNqmb3hDK9gYbXFBuWDHn9Zl5YuSnbaGq41S3Q8+yulk5PyUFB9lTi9jts+/OQ==
-Date: Thu, 31 May 2018 16:34:28 +0200
+        Thu, 31 May 2018 10:37:08 -0400
+X-Google-Smtp-Source: ADUXVKLNtvqKR5D1UcJ8pOR36URKtuNBzoOI2erVkrTQSde7B9J1WQL0EN47mN25q/jbdTiTjj3Iyw==
+Date: Thu, 31 May 2018 16:37:03 +0200
 From: Johan Hovold <johan@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Pavel Machek <pavel@ucw.cz>, Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/8] dt-bindings: gnss: add u-blox binding
-Message-ID: <20180531143428.GK3259@localhost>
-References: <20180530103242.20773-1-johan@kernel.org>
- <20180530103242.20773-5-johan@kernel.org>
- <20180531035805.GA16906@rob-hp-laptop>
- <20180531082241.GD3259@localhost>
- <CAL_Jsq+-NBqR8H49oB-XZtH8XSCn_BO92Zf17=KfEXfE5mvjAg@mail.gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Johan Hovold <johan@kernel.org>, Roger Quadros <rogerq@ti.com>,
+        balbi@kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: dwc3: of_simple: don't call
+ pm_runtime_set_active()
+Message-ID: <20180531143703.GL3259@localhost>
+References: <20180531132538.GH3259@localhost>
+ <Pine.LNX.4.44L0.1805311004260.1607-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+-NBqR8H49oB-XZtH8XSCn_BO92Zf17=KfEXfE5mvjAg@mail.gmail.com>
+In-Reply-To: <Pine.LNX.4.44L0.1805311004260.1607-100000@iolanthe.rowland.org>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 08:55:10AM -0500, Rob Herring wrote:
-> On Thu, May 31, 2018 at 3:22 AM, Johan Hovold <johan@kernel.org> wrote:
-> > On Wed, May 30, 2018 at 10:58:05PM -0500, Rob Herring wrote:
-> >> On Wed, May 30, 2018 at 12:32:38PM +0200, Johan Hovold wrote:
-> >> > Add binding for u-blox GNSS receivers.
-> >> >
-> >> > Note that the u-blox product names encodes form factor (e.g. "neo"),
-> >> > chipset (e.g. "8") and variant (e.g. "q"), but that only formfactor and
-> >> > chipset is used for the compatible strings (for now).
-> >> >
-> >> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> >> > ---
-> >> >  .../devicetree/bindings/gnss/u-blox.txt       | 44 +++++++++++++++++++
-> >> >  .../devicetree/bindings/vendor-prefixes.txt   |  1 +
-> >> >  2 files changed, 45 insertions(+)
-> >> >  create mode 100644 Documentation/devicetree/bindings/gnss/u-blox.txt
-> >> >
-> >> > diff --git a/Documentation/devicetree/bindings/gnss/u-blox.txt b/Documentation/devicetree/bindings/gnss/u-blox.txt
-> >> > new file mode 100644
-> >> > index 000000000000..caef9ace0b0c
-> >> > --- /dev/null
-> >> > +++ b/Documentation/devicetree/bindings/gnss/u-blox.txt
-> >> > @@ -0,0 +1,44 @@
-> >> > +u-blox GNSS Receiver DT binding
-> >> > +
-> >> > +The u-blox GNSS receivers can use UART, DDC (I2C), SPI and USB interfaces.
-> >> > +
-> >> > +Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
-> >> > +properties.
-> >> > +
-> >> > +Required properties:
-> >> > +
-> >> > +- compatible       : Must be one of
-> >>
-> >> mixture of space and tab here.
-> >
-> > Oops. Same single space character before the tab here in all three
-> > binding docs (and in the in-tree slave_devices.txt which I think I used
-> > as a template).
+On Thu, May 31, 2018 at 10:07:05AM -0400, Alan Stern wrote:
+> On Thu, 31 May 2018, Johan Hovold wrote:
 > 
-> Who wrote that crap? ;)
-
-Heh.
-
-> >
-> >> > +
-> >> > +                   "u-blox,neo-8"
-> >> > +                   "u-blox,neo-m8"
-> >> > +
-> >> > +- vcc-supply       : Main voltage regulator
-> >> > +
-> >> > +Required properties (DDC):
-> >> > +- reg              : DDC (I2C) slave address
-> >> > +
-> >> > +Required properties (SPI):
-> >> > +- reg              : SPI chip select address
-> >> > +
-> >> > +Required properties (USB):
-> >> > +- reg              : Number of the USB hub port or the USB host-controller port
-> >> > +                  to which this device is attached
-> >> > +
-> >> > +Optional properties:
-> >> > +
-> >> > +- timepulse-gpios  : Time pulse GPIO
-> >> > +- u-blox,extint-gpios      : External interrupt GPIO
-> >>
-> >> This should be interrupts property instead of a gpio.
-> >
-> > Contrary to what the name may suggest, this pin is actually an input
-> > which can be used to control active power or to provide time or
-> > frequency aiding data to the receiver (see section 1.13 in [1]).
-> >
-> > I only added it for completeness as the driver does not use it
-> > currently. Remove, leave as is, or add "input" to the description as in:
-> >
-> >         - u-blox,extint-gpios   : External interrupt input GPIO
+> > > This breaks runtime pm as you now get a second round of clock enables
+> > > which are never balanced on runtime suspend (the clocks are first
+> > > enabled in dwc3_of_simple_clk_init() above and with your change again in
+> > > dwc3_of_simple_runtime_resume()).
+> > > 
+> > > On the other hand, we currently return from probe() with a positive RPM
+> > > count so perhaps the RPM callbacks can just be removed altogether (i.e.
+> > > unless some other entity drops that count at some point before
+> > > remove()).
+> > > 
+> > > >  	ret = of_platform_populate(np, NULL, NULL, dev);
+> > > >  	if (ret) {
+> > > >  		for (i = 0; i < simple->num_clocks; i++) {
+> > > > @@ -131,10 +134,6 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+> > > >  		goto err_resetc_assert;
+> > > >  	}
+> > > >  
+> > > > -	pm_runtime_set_active(dev);
+> > > > -	pm_runtime_enable(dev);
+> > > > -	pm_runtime_get_sync(dev);
+> > > > -
+> > > >  	return 0;
+> > > >  
+> > > >  err_resetc_assert:
+> > > 
+> > > Also note that there's currently a use-after-free in remove(), where
+> > > pm_runtime_put_sync() is called after the clocks have been put.
+> > > Something like the below (untested) patch should fix it.
+> > 
+> > What about the use-after-free in remove? Shall I resubmit the fix below
+> > separately?
+> > 
+> > Thanks,
+> > Johan
+> > 
+> > > From 35c384c31010c344d403c26fc0a1dde0fd68ef4a Mon Sep 17 00:00:00 2001
+> > > From: Johan Hovold <johan@kernel.org>
+> > > Date: Mon, 28 May 2018 17:31:45 +0200
+> > > Subject: [PATCH] usb: dwc3: of-simple: fix use-after-free on remove
+> > > 
+> > > The clocks have already been explicitly disabled and put as part of
+> > > remove() so the runtime suspend callback must not be run when balancing
+> > > the runtime PM usage count before returning.
+> > > 
+> > > Fixes: 16adc674d0d6 ("usb: dwc3: add generic OF glue layer")
+> > > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > > ---
+> > >  drivers/usb/dwc3/dwc3-of-simple.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+> > > index cb2ee96fd3e8..b9c869cd6585 100644
+> > > --- a/drivers/usb/dwc3/dwc3-of-simple.c
+> > > +++ b/drivers/usb/dwc3/dwc3-of-simple.c
+> > > @@ -165,8 +165,9 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
+> > >  
+> > >  	reset_control_put(simple->resets);
+> > >  
+> > > -	pm_runtime_put_sync(dev);
+> > > +	pm_runtime_put_noidle(dev);
+> > >  	pm_runtime_disable(dev);
+> > > +	pm_runtime_set_suspended(dev);
+> > >  
+> > >  	return 0;
+> > >  }
 > 
-> Yes. You should also define the active level.
+> This is a little racy -- there might be a runtime-suspend callback
+> between the put_noidle and the disable.  (The put_noidle itself won't
+> cause a callback to happen, but something else could.)
+> 
+> It would be better to do the disable first and then the put_noidle.
 
-The active level appears to be runtime configurable and dependent on the
-selected function. For power control it can be used to control force-on
-(active high), force-off (active low) or both; and for time aiding
-sampling on falling or rising edge is also configurable. And who knows
-what else this pin is used for next time they update the firmware. ;)
-
-Shall I remove the property, or just add "input" as suggested above?
+Good point. I'll send a v2 for Felipe to consider.
 
 Thanks,
 Johan
