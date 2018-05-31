@@ -1,104 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754108AbeEaI1K (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:27:10 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:51819 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753957AbeEaI1F (ORCPT
+        id S1754117AbeEaI2W (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:28:22 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:26089 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754034AbeEaI2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:27:05 -0400
-Subject: Re: [PATCH v4 3/5] Documentation: DT: add i.MX EPIT timer binding
-To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180530120327.27681-1-peron.clem@gmail.com>
- <20180530120327.27681-4-peron.clem@gmail.com>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <0eb40af3-b741-2e65-3af9-f150345beb3c@mentor.com>
-Date: Thu, 31 May 2018 11:26:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Thu, 31 May 2018 04:28:20 -0400
+From: Fabien Dessenne <fabien.dessenne@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        "Ludovic Barre" <ludovic.barre@st.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [RESEND PATCH v4 1/2] dt-bindings: mailbox: add STMicroelectronics STM32 IPCC binding
+Date: Thu, 31 May 2018 10:27:24 +0200
+Message-ID: <1527755245-27817-2-git-send-email-fabien.dessenne@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527755245-27817-1-git-send-email-fabien.dessenne@st.com>
+References: <1527755245-27817-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530120327.27681-4-peron.clem@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+Content-Type: text/plain
+X-Originating-IP: [10.129.5.196]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Clément,
+Add a binding for the STMicroelectronics STM32 IPCC block exposing a
+mailbox mechanism between two processors.
 
-On 05/30/2018 03:03 PM, Clément Péron wrote:
-> From: Clément Peron <clement.peron@devialet.com>
-> 
-> Add devicetree binding document for NXP's i.MX SoC specific
-> EPIT timer driver.
-> 
-> Signed-off-by: Clément Peron <clement.peron@devialet.com>
-> ---
->  .../devicetree/bindings/timer/fsl,imxepit.txt | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/fsl,imxepit.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/fsl,imxepit.txt b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
-> new file mode 100644
-> index 000000000000..90112d58af10
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
-> @@ -0,0 +1,24 @@
-> +Binding for the i.MX EPIT timer
-> +
-> +This binding uses the common clock binding[1].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/mailbox/stm32-ipcc.txt     | 47 ++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
 
-no, this leftover reference to clock-bindings.txt is invalid, please remove it.
-
-Instead you may add a simple description of the timer module.
-
-> +Required properties:
-> +- compatible: should be "fsl,imx31-epit"
-
-To satisfy compatibles with multiple SoCs, apparently you may follow a model,
-which is used with other Freescale controllers, for instance
-
-gpio/fsl-imx-gpio.txt	- compatible : Should be "fsl,<soc>-gpio"
-mmc/fsl-imx-esdhc.txt	- compatible : Should be "fsl,<chip>-esdhc"
-serial/fsl-imx-uart.txt	- compatible : Should be "fsl,<soc>-uart"
-timer/fsl,imxgpt.txt	- compatible : should be "fsl,<soc>-gpt"
-
-and so on, I hope it would cover Rob's ask.
-
-> +- reg: physical base address of the controller and length of memory mapped
-> +  region.
-> +- interrupts: Should contain EPIT controller interrupt
-> +- clocks: list of clock specifiers, must contain an entry for each required
-> +  entry in clock-names
-> +- clock-names : should include entries "ipg", "per"
-> +
-> +Example for i.MX6QDL:
-> +	epit1: epit@20d0000 {
-> +		compatible = "fsl,imx6q-epit", "fsl,imx31-epit";
-> +		reg = <0x020d0000 0x4000>;
-> +		interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&clks IMX6QDL_CLK_IPG_PER>,
-> +			<&clks IMX6QDL_CLK_EPIT1>;
-> +		clock-names = "ipg", "per";
-> +	};
-> 
-
---
-With best wishes,
-Vladimir
+diff --git a/Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt b/Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
+new file mode 100644
+index 0000000..1d2b7fe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
+@@ -0,0 +1,47 @@
++* STMicroelectronics STM32 IPCC (Inter-Processor Communication Controller)
++
++The IPCC block provides a non blocking signaling mechanism to post and
++retrieve messages in an atomic way between two processors.
++It provides the signaling for N bidirectionnal channels. The number of channels
++(N) can be read from a dedicated register.
++
++Required properties:
++- compatible:   Must be "st,stm32mp1-ipcc"
++- reg:          Register address range (base address and length)
++- st,proc-id:   Processor id using the mailbox (0 or 1)
++- clocks:       Input clock
++- interrupt-names: List of names for the interrupts described by the interrupt
++                   property. Must contain the following entries:
++                   - "rx"
++                   - "tx"
++                   - "wakeup"
++- interrupts:   Interrupt specifiers for "rx channel occupied", "tx channel
++                free" and "system wakeup".
++- #mbox-cells:  Number of cells required for the mailbox specifier. Must be 1.
++                The data contained in the mbox specifier of the "mboxes"
++                property in the client node is the mailbox channel index.
++
++Optional properties:
++- wakeup-source: Flag to indicate whether this device can wake up the system
++
++
++
++Example:
++	ipcc: mailbox@4c001000 {
++		compatible = "st,stm32mp1-ipcc";
++		#mbox-cells = <1>;
++		reg = <0x4c001000 0x400>;
++		st,proc-id = <0>;
++		interrupts-extended = <&intc GIC_SPI 100 IRQ_TYPE_NONE>,
++				      <&intc GIC_SPI 101 IRQ_TYPE_NONE>,
++				      <&aiec 62 1>;
++		interrupt-names = "rx", "tx", "wakeup";
++		clocks = <&rcc_clk IPCC>;
++		wakeup-source;
++	}
++
++Client:
++	mbox_test {
++		...
++		mboxes = <&ipcc 0>, <&ipcc 1>;
++	};
+-- 
+2.7.4
