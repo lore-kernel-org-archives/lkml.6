@@ -1,28 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755136AbeEaM3c (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 08:29:32 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34275 "EHLO
+        id S1755158AbeEaMaZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 08:30:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36061 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755110AbeEaM33 (ORCPT
+        with ESMTP id S1754197AbeEaMaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 08:29:29 -0400
-Date: Thu, 31 May 2018 05:29:03 -0700
-From: tip-bot for Juri Lelli <tipbot@zytor.com>
-Message-ID: <tip-ecda2b66e263dfd6c1d6113add19150f4e235bb3@git.kernel.org>
-Cc: claudio@evidence.eu.com, luca.abeni@santannapisa.it, hpa@zytor.com,
-        xiaolong.ye@intel.com, linux-kernel@vger.kernel.org,
-        juri.lelli@redhat.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org, mingo@kernel.org, peterz@infradead.org
-Reply-To: claudio@evidence.eu.com, hpa@zytor.com, luca.abeni@santannapisa.it,
-        xiaolong.ye@intel.com, juri.lelli@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@kernel.org,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-In-Reply-To: <20180530160809.9074-1-juri.lelli@redhat.com>
-References: <20180530160809.9074-1-juri.lelli@redhat.com>
+        Thu, 31 May 2018 08:30:23 -0400
+Date: Thu, 31 May 2018 05:30:03 -0700
+From: tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-2da331465f44f9618abe8837d1a68405d550b66e@git.kernel.org>
+Cc: kan.liang@intel.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
+        mingo@kernel.org, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, kan.liang@intel.com
+In-Reply-To: <1525371913-10597-1-git-send-email-kan.liang@intel.com>
+References: <1525371913-10597-1-git-send-email-kan.liang@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/deadline: Fix missing clock update
-Git-Commit-ID: ecda2b66e263dfd6c1d6113add19150f4e235bb3
+Subject: [tip:perf/core] perf/x86/intel/uncore: Introduce customized
+ event_read() for client IMC uncore
+Git-Commit-ID: 2da331465f44f9618abe8837d1a68405d550b66e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,77 +34,98 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ecda2b66e263dfd6c1d6113add19150f4e235bb3
-Gitweb:     https://git.kernel.org/tip/ecda2b66e263dfd6c1d6113add19150f4e235bb3
-Author:     Juri Lelli <juri.lelli@redhat.com>
-AuthorDate: Wed, 30 May 2018 18:08:09 +0200
+Commit-ID:  2da331465f44f9618abe8837d1a68405d550b66e
+Gitweb:     https://git.kernel.org/tip/2da331465f44f9618abe8837d1a68405d550b66e
+Author:     Kan Liang <kan.liang@intel.com>
+AuthorDate: Thu, 3 May 2018 11:25:06 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 31 May 2018 12:27:13 +0200
+CommitDate: Thu, 31 May 2018 12:36:27 +0200
 
-sched/deadline: Fix missing clock update
+perf/x86/intel/uncore: Introduce customized event_read() for client IMC uncore
 
-A missing clock update is causing the following warning:
+There are two free-running counters for client IMC uncore. The
+customized event_init() function hard codes their index to
+'UNCORE_PMC_IDX_FIXED' and 'UNCORE_PMC_IDX_FIXED + 1'.
+To support the index 'UNCORE_PMC_IDX_FIXED + 1', the generic
+uncore_perf_event_update is obscurely hacked.
+The code quality issue will bring problems when a new counter index is
+introduced into the generic code, for example, a new index for
+free-running counter.
 
- rq->clock_update_flags < RQCF_ACT_SKIP
- WARNING: CPU: 10 PID: 0 at kernel/sched/sched.h:963 inactive_task_timer+0x5d6/0x720
- Call Trace:
-  <IRQ>
-  __hrtimer_run_queues+0x10f/0x530
-  hrtimer_interrupt+0xe5/0x240
-  smp_apic_timer_interrupt+0x79/0x2b0
-  apic_timer_interrupt+0xf/0x20
-  </IRQ>
-  do_idle+0x203/0x280
-  cpu_startup_entry+0x6f/0x80
-  start_secondary+0x1b0/0x200
-  secondary_startup_64+0xa5/0xb0
- hardirqs last  enabled at (793919): [<ffffffffa27c5f6e>] cpuidle_enter_state+0x9e/0x360
- hardirqs last disabled at (793920): [<ffffffffa2a0096e>] interrupt_entry+0xce/0xe0
- softirqs last  enabled at (793922): [<ffffffffa20bef78>] irq_enter+0x68/0x70
- softirqs last disabled at (793921): [<ffffffffa20bef5d>] irq_enter+0x4d/0x70
+Introducing a customized event_read() function for client IMC uncore.
+The customized function is copied from previous generic
+uncore_pmu_event_read().
+The index 'UNCORE_PMC_IDX_FIXED + 1' will be isolated for client IMC
+uncore only.
 
-This happens because inactive_task_timer() calls sub_running_bw() (if
-TASK_DEAD and non_contending) that might trigger a schedutil update,
-which might access the clock. Clock is however currently updated only
-later in inactive_task_timer() function.
-
-Fix the problem by updating the clock right after task_rq_lock().
-
-Reported-by: kernel test robot <xiaolong.ye@intel.com>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+Signed-off-by: Kan Liang <kan.liang@intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Claudio Scordino <claudio@evidence.eu.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luca Abeni <luca.abeni@santannapisa.it>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180530160809.9074-1-juri.lelli@redhat.com
+Cc: acme@kernel.org
+Cc: eranian@google.com
+Link: http://lkml.kernel.org/r/1525371913-10597-1-git-send-email-kan.liang@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/deadline.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/events/intel/uncore_snb.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 1356afd1eeb6..fbfc3f1d368a 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1259,6 +1259,9 @@ static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
+diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
+index aee5e8496be4..df535215d18b 100644
+--- a/arch/x86/events/intel/uncore_snb.c
++++ b/arch/x86/events/intel/uncore_snb.c
+@@ -450,6 +450,35 @@ static void snb_uncore_imc_event_start(struct perf_event *event, int flags)
+ 		uncore_pmu_start_hrtimer(box);
+ }
  
- 	rq = task_rq_lock(p, &rf);
- 
-+	sched_clock_tick();
-+	update_rq_clock(rq);
++static void snb_uncore_imc_event_read(struct perf_event *event)
++{
++	struct intel_uncore_box *box = uncore_event_to_box(event);
++	u64 prev_count, new_count, delta;
++	int shift;
 +
- 	if (!dl_task(p) || p->state == TASK_DEAD) {
- 		struct dl_bw *dl_b = dl_bw_of(task_cpu(p));
++	/*
++	 * There are two free running counters in IMC.
++	 * The index for the second one is hardcoded to
++	 * UNCORE_PMC_IDX_FIXED + 1.
++	 */
++	if (event->hw.idx >= UNCORE_PMC_IDX_FIXED)
++		shift = 64 - uncore_fixed_ctr_bits(box);
++	else
++		shift = 64 - uncore_perf_ctr_bits(box);
++
++	/* the hrtimer might modify the previous event value */
++again:
++	prev_count = local64_read(&event->hw.prev_count);
++	new_count = uncore_read_counter(box, event);
++	if (local64_xchg(&event->hw.prev_count, new_count) != prev_count)
++		goto again;
++
++	delta = (new_count << shift) - (prev_count << shift);
++	delta >>= shift;
++
++	local64_add(delta, &event->count);
++}
++
+ static void snb_uncore_imc_event_stop(struct perf_event *event, int flags)
+ {
+ 	struct intel_uncore_box *box = uncore_event_to_box(event);
+@@ -472,7 +501,7 @@ static void snb_uncore_imc_event_stop(struct perf_event *event, int flags)
+ 		 * Drain the remaining delta count out of a event
+ 		 * that we are disabling:
+ 		 */
+-		uncore_perf_event_update(box, event);
++		snb_uncore_imc_event_read(event);
+ 		hwc->state |= PERF_HES_UPTODATE;
+ 	}
+ }
+@@ -534,7 +563,7 @@ static struct pmu snb_uncore_imc_pmu = {
+ 	.del		= snb_uncore_imc_event_del,
+ 	.start		= snb_uncore_imc_event_start,
+ 	.stop		= snb_uncore_imc_event_stop,
+-	.read		= uncore_pmu_event_read,
++	.read		= snb_uncore_imc_event_read,
+ };
  
-@@ -1278,9 +1281,6 @@ static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
- 	if (dl_se->dl_non_contending == 0)
- 		goto unlock;
- 
--	sched_clock_tick();
--	update_rq_clock(rq);
--
- 	sub_running_bw(dl_se, &rq->dl);
- 	dl_se->dl_non_contending = 0;
- unlock:
+ static struct intel_uncore_ops snb_uncore_imc_ops = {
