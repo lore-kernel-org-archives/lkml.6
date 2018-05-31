@@ -1,81 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754236AbeEaIz5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:55:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59656 "EHLO mx2.suse.de"
+        id S1754204AbeEaIzB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:55:01 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:58898 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754040AbeEaIzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:55:35 -0400
-Date: Thu, 31 May 2018 10:55:32 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: David Miller <davem@davemloft.net>, qing.huang@oracle.com,
-        tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
-Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
-Message-ID: <20180531085532.GK15278@dhcp22.suse.cz>
-References: <20180523232246.20445-1-qing.huang@oracle.com>
- <20180525.102321.858995452200286788.davem@davemloft.net>
- <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
- <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
- <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
- <20180531065405.GH15278@dhcp22.suse.cz>
- <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1754149AbeEaIy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 04:54:56 -0400
+Message-Id: <6515adbdf40a598c407f0f9fdc3949593f29660a.1527755908.git.christophe.leroy@c-s.fr>
+In-Reply-To: <170bd2b5b5cb1e474599165e8f21f121225a2df9.1527755908.git.christophe.leroy@c-s.fr>
+References: <170bd2b5b5cb1e474599165e8f21f121225a2df9.1527755908.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH 4.14 3/4] powerpc/mm/slice: Enhance for supporting PPC32
+To: stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Thu, 31 May 2018 08:54:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 31-05-18 04:35:31, Eric Dumazet wrote:
-> 
-> 
-> On 05/31/2018 02:54 AM, Michal Hocko wrote:
-> > On Tue 29-05-18 23:49:59, Eric Dumazet wrote:
-> >>
-> >>
-> >> On 05/29/2018 11:44 PM, Eric Dumazet wrote:
-> >>
-> >>>
-> >>> And I will add this simple fix, this really should address your initial concern much better.
-> >>>
-> >>> @@ -99,6 +100,8 @@ static int mlx4_alloc_icm_pages(struct scatterlist *mem, int order,
-> >>>  {
-> >>>         struct page *page;
-> >>>  
-> >>> +       if (order)
-> >>> +               gfp_mask |= __GFP_NORETRY;
-> >>
-> >>     and also      gfp_mask &= ~__GFP_DIRECT_RECLAIM
-> > 
-> > JFTR the latter one makes __GFP_NORETRY pointless. Non sleeping allocations
-> > are not retrying.
-> 
-> Hi Michal
-> 
-> Since when this rule is applied ?
+[ Upstream commit db3a528db41caaa6dfd4c64e9f5efb1c81a80467 ]
 
-Well, this has been the case since I remember. ~__GFP_DIRECT_RECLAIM
-resp. GFP_NOWAIT formerly meant that the allocation doesn't perform
-_any_ reclaim and therefore it never retries. Why would it? Any retry
-would just hope for a reclaim on behalf of somebody else. __GFP_NORETRY
-has always simply stopped retrying after one/few reclaim attempts.
-Implementation has changed here and there over time but in essence the
-semantic remained the same. Please have a look at the current
-documentation in gfp.h file and let me know if you would like some
-clarfications.
+In preparation for the following patch which will fix an issue on
+the 8xx by re-using the 'slices', this patch enhances the
+'slices' implementation to support 32 bits CPUs.
 
-> These GFP flags change all the time, I suggest mm experts to cleanup existing call sites ?
+On PPC32, the address space is limited to 4Gbytes, hence only the low
+slices will be used.
 
-Do you have any specific areas to look at?
+The high slices use bitmaps. As bitmap functions are not prepared to
+handle bitmaps of size 0, this patch ensures that bitmap functions
+are called only when SLICE_NUM_HIGH is not nul.
 
-> I merely copied/pasted from alloc_skb_with_frags() :/
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ arch/powerpc/include/asm/nohash/32/slice.h | 18 +++++++++++++++
+ arch/powerpc/include/asm/slice.h           |  4 +++-
+ arch/powerpc/mm/slice.c                    | 37 +++++++++++++++++++++++-------
+ 3 files changed, 50 insertions(+), 9 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/nohash/32/slice.h
 
-I will have a look at it. Thanks!
+diff --git a/arch/powerpc/include/asm/nohash/32/slice.h b/arch/powerpc/include/asm/nohash/32/slice.h
+new file mode 100644
+index 000000000000..95d532e18092
+--- /dev/null
++++ b/arch/powerpc/include/asm/nohash/32/slice.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_POWERPC_NOHASH_32_SLICE_H
++#define _ASM_POWERPC_NOHASH_32_SLICE_H
++
++#ifdef CONFIG_PPC_MM_SLICES
++
++#define SLICE_LOW_SHIFT		28
++#define SLICE_LOW_TOP		(0x100000000ull)
++#define SLICE_NUM_LOW		(SLICE_LOW_TOP >> SLICE_LOW_SHIFT)
++#define GET_LOW_SLICE_INDEX(addr)	((addr) >> SLICE_LOW_SHIFT)
++
++#define SLICE_HIGH_SHIFT	0
++#define SLICE_NUM_HIGH		0ul
++#define GET_HIGH_SLICE_INDEX(addr)	(addr & 0)
++
++#endif /* CONFIG_PPC_MM_SLICES */
++
++#endif /* _ASM_POWERPC_NOHASH_32_SLICE_H */
+diff --git a/arch/powerpc/include/asm/slice.h b/arch/powerpc/include/asm/slice.h
+index 17c5a5d8c418..172711fadb1c 100644
+--- a/arch/powerpc/include/asm/slice.h
++++ b/arch/powerpc/include/asm/slice.h
+@@ -4,8 +4,10 @@
+ 
+ #ifdef CONFIG_PPC_BOOK3S_64
+ #include <asm/book3s/64/slice.h>
+-#else
++#elif defined(CONFIG_PPC64)
+ #include <asm/nohash/64/slice.h>
++#elif defined(CONFIG_PPC_MMU_NOHASH)
++#include <asm/nohash/32/slice.h>
+ #endif
+ 
+ #ifdef CONFIG_PPC_MM_SLICES
+diff --git a/arch/powerpc/mm/slice.c b/arch/powerpc/mm/slice.c
+index b79897bb89e3..8baaa6c6f21c 100644
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -73,10 +73,12 @@ static void slice_range_to_mask(unsigned long start, unsigned long len,
+ 	unsigned long end = start + len - 1;
+ 
+ 	ret->low_slices = 0;
+-	bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
++	if (SLICE_NUM_HIGH)
++		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
+ 
+ 	if (start < SLICE_LOW_TOP) {
+-		unsigned long mend = min(end, (SLICE_LOW_TOP - 1));
++		unsigned long mend = min(end,
++					 (unsigned long)(SLICE_LOW_TOP - 1));
+ 
+ 		ret->low_slices = (1u << (GET_LOW_SLICE_INDEX(mend) + 1))
+ 			- (1u << GET_LOW_SLICE_INDEX(start));
+@@ -113,11 +115,13 @@ static int slice_high_has_vma(struct mm_struct *mm, unsigned long slice)
+ 	unsigned long start = slice << SLICE_HIGH_SHIFT;
+ 	unsigned long end = start + (1ul << SLICE_HIGH_SHIFT);
+ 
++#ifdef CONFIG_PPC64
+ 	/* Hack, so that each addresses is controlled by exactly one
+ 	 * of the high or low area bitmaps, the first high area starts
+ 	 * at 4GB, not 0 */
+ 	if (start == 0)
+ 		start = SLICE_LOW_TOP;
++#endif
+ 
+ 	return !slice_area_is_free(mm, start, end - start);
+ }
+@@ -127,7 +131,8 @@ static void slice_mask_for_free(struct mm_struct *mm, struct slice_mask *ret)
+ 	unsigned long i;
+ 
+ 	ret->low_slices = 0;
+-	bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
++	if (SLICE_NUM_HIGH)
++		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
+ 
+ 	for (i = 0; i < SLICE_NUM_LOW; i++)
+ 		if (!slice_low_has_vma(mm, i))
+@@ -149,7 +154,8 @@ static void slice_mask_for_size(struct mm_struct *mm, int psize, struct slice_ma
+ 	u64 lpsizes;
+ 
+ 	ret->low_slices = 0;
+-	bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
++	if (SLICE_NUM_HIGH)
++		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
+ 
+ 	lpsizes = mm->context.low_slices_psize;
+ 	for (i = 0; i < SLICE_NUM_LOW; i++)
+@@ -171,6 +177,10 @@ static int slice_check_fit(struct mm_struct *mm,
+ 	DECLARE_BITMAP(result, SLICE_NUM_HIGH);
+ 	unsigned long slice_count = GET_HIGH_SLICE_INDEX(mm->context.addr_limit);
+ 
++	if (!SLICE_NUM_HIGH)
++		return (mask.low_slices & available.low_slices) ==
++		       mask.low_slices;
++
+ 	bitmap_and(result, mask.high_slices,
+ 		   available.high_slices, slice_count);
+ 
+@@ -180,6 +190,7 @@ static int slice_check_fit(struct mm_struct *mm,
+ 
+ static void slice_flush_segments(void *parm)
+ {
++#ifdef CONFIG_PPC64
+ 	struct mm_struct *mm = parm;
+ 	unsigned long flags;
+ 
+@@ -191,6 +202,7 @@ static void slice_flush_segments(void *parm)
+ 	local_irq_save(flags);
+ 	slb_flush_and_rebolt();
+ 	local_irq_restore(flags);
++#endif
+ }
+ 
+ static void slice_convert(struct mm_struct *mm, struct slice_mask mask, int psize)
+@@ -380,6 +392,8 @@ static unsigned long slice_find_area(struct mm_struct *mm, unsigned long len,
+ static inline void slice_or_mask(struct slice_mask *dst, struct slice_mask *src)
+ {
+ 	dst->low_slices |= src->low_slices;
++	if (!SLICE_NUM_HIGH)
++		return;
+ 	bitmap_or(dst->high_slices, dst->high_slices, src->high_slices,
+ 		  SLICE_NUM_HIGH);
+ }
+@@ -388,6 +402,8 @@ static inline void slice_andnot_mask(struct slice_mask *dst, struct slice_mask *
+ {
+ 	dst->low_slices &= ~src->low_slices;
+ 
++	if (!SLICE_NUM_HIGH)
++		return;
+ 	bitmap_andnot(dst->high_slices, dst->high_slices, src->high_slices,
+ 		      SLICE_NUM_HIGH);
+ }
+@@ -437,14 +453,17 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+ 	 * init different masks
+ 	 */
+ 	mask.low_slices = 0;
+-	bitmap_zero(mask.high_slices, SLICE_NUM_HIGH);
+ 
+ 	/* silence stupid warning */;
+ 	potential_mask.low_slices = 0;
+-	bitmap_zero(potential_mask.high_slices, SLICE_NUM_HIGH);
+ 
+ 	compat_mask.low_slices = 0;
+-	bitmap_zero(compat_mask.high_slices, SLICE_NUM_HIGH);
++
++	if (SLICE_NUM_HIGH) {
++		bitmap_zero(mask.high_slices, SLICE_NUM_HIGH);
++		bitmap_zero(potential_mask.high_slices, SLICE_NUM_HIGH);
++		bitmap_zero(compat_mask.high_slices, SLICE_NUM_HIGH);
++	}
+ 
+ 	/* Sanity checks */
+ 	BUG_ON(mm->task_size == 0);
+@@ -582,7 +601,9 @@ unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
+  convert:
+ 	slice_andnot_mask(&mask, &good_mask);
+ 	slice_andnot_mask(&mask, &compat_mask);
+-	if (mask.low_slices || !bitmap_empty(mask.high_slices, SLICE_NUM_HIGH)) {
++	if (mask.low_slices ||
++	    (SLICE_NUM_HIGH &&
++	     !bitmap_empty(mask.high_slices, SLICE_NUM_HIGH))) {
+ 		slice_convert(mm, mask, psize);
+ 		if (psize > MMU_PAGE_BASE)
+ 			on_each_cpu(slice_flush_segments, mm, 1);
 -- 
-Michal Hocko
-SUSE Labs
+2.13.3
