@@ -1,60 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755455AbeEaPCG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:02:06 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:39470 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755254AbeEaPCD (ORCPT
+        id S1755510AbeEaPDB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:03:01 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51060 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755163AbeEaPC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:02:03 -0400
-X-Google-Smtp-Source: ADUXVKLPhnZFdSakSeRYVCcFZY+l+x67wqRhmIgLInobmLN0l4K94urZR3XcJsnWu81eGh6Y8KAI/HGadW6Y54htdyI=
-MIME-Version: 1.0
-References: <20180524211135.27760-1-dave@stgolabs.net> <20180524211135.27760-4-dave@stgolabs.net>
- <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
- <20180529144317.GA20910@dhcp22.suse.cz> <20180529145106.GV27180@dhcp22.suse.cz>
- <CA+55aFxoC0+hKBQ_TmbXM_X60fnP8JKC3aVvGc=8bKh2oxL12g@mail.gmail.com> <20180530074216.GZ27180@dhcp22.suse.cz>
-In-Reply-To: <20180530074216.GZ27180@dhcp22.suse.cz>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 31 May 2018 10:01:51 -0500
-Message-ID: <CA+55aFyu9HpoHcn0p6uaADOspTd2DKPYciAgHz+C6zwLBvVSJA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        guillaume.knispel@supersonicimagine.com,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dbueso@suse.de>
+        Thu, 31 May 2018 11:02:59 -0400
+Subject: Re: [PATCH v2 13/21] ima: use match_string() helper
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
+Cc: andy.shevchenko@gmail.com, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+Date: Thu, 31 May 2018 11:02:38 -0400
+In-Reply-To: <1527765086-19873-14-git-send-email-xieyisheng1@huawei.com>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+         <1527765086-19873-14-git-send-email-xieyisheng1@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18053115-0008-0000-0000-000002426993
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053115-0009-0000-0000-000021A81751
+Message-Id: <1527778958.3427.16.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805310169
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 2:42 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> That being sad, if you believe that silently fixing up a code like that
-> is a good idea we can do the following of course:
+On Thu, 2018-05-31 at 19:11 +0800, Yisheng Xie wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used instead of open coded variant.
+> 
+> Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-integrity@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 
-Ack.
+In the future, the patch's author Signed-off-by is always first.
 
-Except for:
+Thanks, this patch is now queued in the next-integrity branch.
 
-> Linus argues that this just motivates people to do even
-> more hacks like
->         if (gfp == GFP_KERNEL)
->                 kvmalloc
->         else
->                 kmalloc
->
-> I haven't seen this happening but it is true that we can grow those in
-> future.
+Mimi
 
-This whole discussion came from the fact that YES, THIS IS ACTUALLY HAPPENING.
-
-See lib/bucket_locks.c - it just uses gfpflags_allow_blocking()
-instead of explicitly checking for GFP_KERNEL (probably because the
-only two cases it actually deals with is GFP_ATOMIC and GFP_KERNEL).
-
-              Linus
+> ---
+> v2:
+>  - add Reviewed-by tag.
+> 
+>  security/integrity/ima/ima_main.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 74d0bd7..f807093 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -61,14 +61,11 @@ static int __init hash_setup(char *str)
+>  		goto out;
+>  	}
+> 
+> -	for (i = 0; i < HASH_ALGO__LAST; i++) {
+> -		if (strcmp(str, hash_algo_name[i]) == 0) {
+> -			ima_hash_algo = i;
+> -			break;
+> -		}
+> -	}
+> -	if (i == HASH_ALGO__LAST)
+> +	i = match_string(hash_algo_name, HASH_ALGO__LAST, str);
+> +	if (i < 0)
+>  		return 1;
+> +
+> +	ima_hash_algo = i;
+>  out:
+>  	hash_setup_done = 1;
+>  	return 1;
