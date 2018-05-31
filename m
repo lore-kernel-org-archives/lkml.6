@@ -1,71 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932654AbeEaCer (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 22:34:47 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:44275 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932602AbeEaCep (ORCPT
+        id S932690AbeEaChK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 22:37:10 -0400
+Received: from mo-csw1115.securemx.jp ([210.130.202.157]:33074 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932620AbeEaChI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 22:34:45 -0400
-X-Google-Smtp-Source: ADUXVKJoHXEHjprmSx/hTPqGcsf4DqoIe9ECG0+w7f1RGD9T0SQfU3zAJofpqB0nu3Sgh7k+iafbndIJ4dM4xSr3Ez8=
+        Wed, 30 May 2018 22:37:08 -0400
+X-Iguazu-Qid: 2wGqoE3kiwjayAECJ7
+X-Iguazu-QSIG: v=1; s=0; t=1527734209; q=2wGqoE3kiwjayAECJ7; m=2XfrqkSImq9DPsvxyRae1Mtg8YVpeAeJPZjBiHmR0xI=
+From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
+To: "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+Cc: <stable@vger.kernel.org>, "'Davidlohr Bueso'" <dbueso@suse.de>,
+        "'Joe Lawrence'" <joe.lawrence@redhat.com>,
+        "'Andrea Arcangeli'" <aarcange@redhat.com>,
+        "'Manfred Spraul'" <manfred@colorfullife.com>,
+        "'Andrew Morton'" <akpm@linux-foundation.org>,
+        "'Linus Torvalds'" <torvalds@linux-foundation.org>
+References: <20180528100202.045206534@linuxfoundation.org> <20180528100203.357731085@linuxfoundation.org>
+In-Reply-To: <20180528100203.357731085@linuxfoundation.org>
+Subject: RE: [PATCH 4.4 011/268] Revert "ipc/shm: Fix shmat mmap nil-page protection"
+Date: Thu, 31 May 2018 11:36:46 +0900
+X-TSB-HOP: ON
+Message-ID: <005601d3f888$37f266f0$a7d734d0$@toshiba.co.jp>
 MIME-Version: 1.0
-In-Reply-To: <20180530154110.GA22184@bombadil.infradead.org>
-References: <59623b15001e5a20ac32b1a393db88722be2e718.1527679621.git.baolin.wang@linaro.org>
- <20180530120133.GC17450@bombadil.infradead.org> <CAMz4ku+fBt2uY6MbiMX1X-6jtjdpqp=DWNMrefOG4SsUHWN4kQ@mail.gmail.com>
- <20180530151327.GA13951@bombadil.infradead.org> <20180530154110.GA22184@bombadil.infradead.org>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Thu, 31 May 2018 10:34:44 +0800
-Message-ID: <CAMz4kuLG7c9E98q_SwYT+wcKRjH3RHL9p85D1Ku+FAAvLL1T-Q@mail.gmail.com>
-Subject: Re: [PATCH] mm: dmapool: Check the dma pool name
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIIWZ/WGnaRCO8XjPKf6QObGDbsxQGPOkpho9PiK/A=
+Content-Language: ja
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30 May 2018 at 23:41, Matthew Wilcox <willy@infradead.org> wrote:
-> On Wed, May 30, 2018 at 08:13:27AM -0700, Matthew Wilcox wrote:
->> On Wed, May 30, 2018 at 08:14:09PM +0800, Baolin Wang wrote:
->> > On 30 May 2018 at 20:01, Matthew Wilcox <willy@infradead.org> wrote:
->> > > On Wed, May 30, 2018 at 07:28:43PM +0800, Baolin Wang wrote:
->> > >> It will be crash if we pass one NULL name when creating one dma pool,
->> > >> so we should check the passing name when copy it to dma pool.
->> > >
->> > > NAK.  Crashing is the appropriate thing to do.  Fix the caller to not
->> > > pass NULL.
->> > >
->> > > If you permit NULL to be passed then you're inviting crashes or just
->> > > bad reporting later when pool->name is printed.
->> >
->> > I think it just prints one NULL pool name. Sometimes the device
->> > doesn't care the dma pool names, so I think we can make code more
->> > solid to valid the passing parameters like other code does.
->> > Or can we add check to return NULL when the passing name is NULL
->> > instead of crashing the kernel? Thanks.
->>
->> No.  Fix your driver.
->
-> Let me elaborate on this.  Kernel code is supposed to be "reasonable".
-> That means we don't check every argument to every function for sanity,
-> unless it's going to cause trouble later.  Crashing immediately with
-> a bogus argument is fine; you can see the problem and fix it immediately.
-> Returning NULL with a bad argument is actually worse; you won't know why
-> the function returned NULL (maybe we're out of memory?) and you'll have
-> a more complex debugging experience.
->
-> Sometimes it makes sense to accept a NULL pointer and do something
-> reasonable, like kfree().  In this case, we can eliminate checks in all
-> the callers.  But we don't, in general, put sanity checks on arguments
-> without a good reason.
->
-> Your reasons aren't good.  "The driver doesn't care" -- well, just pass
-> the driver's name, then.
+> -----Original Message-----
+> From: stable-owner@vger.kernel.org [mailto:stable-owner@vger.kernel.org] On
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Davidlohr Bueso <dave@stgolabs.net>
+> 
+> commit a73ab244f0dad8fffb3291b905f73e2d3eaa7c00 upstream.
+> 
+> Patch series "ipc/shm: shmat() fixes around nil-page".
 
-Thanks for your explanation. OK, force the driver to pass a pool name.
-Sorry for noises.
+Sorry for being a bit late (the pace is really fast here).
 
--- 
-Baolin.wang
-Best Regards
+I have found a regression from 4.4.133-rc1 to 4.4.134-rc1 using Fuego LTP wrapper.
+
+4.4.134-rc1
+	tst_test.c:982: INFO: Timeout per run is 0h 05m 00s
+	cve-2017-5669.c:62: INFO: Attempting to attach shared memory to null page
+	cve-2017-5669.c:74: INFO: Mapped shared memory to (nil)
+	cve-2017-5669.c:78: FAIL: We have mapped a VM address within the first 64Kb
+	cve-2017-5669.c:84: INFO: Touching shared memory to see if anything strange happens
+
+4.4.133-rc1:
+	tst_test.c:982: INFO: Timeout per run is 0h 05m 00s
+	cve-2017-5669.c:62: INFO: Attempting to attach shared memory to null page
+	cve-2017-5669.c:67: PASS: shmat returned EINVAL
+
+The culprits should be one or both of the two last commits to ipc/shm (one of them a revert).
+
+- ipc/shm: fix shmat() nil address after round-down when remapping
+- Revert "ipc/shm: Fix shmat mmap nil-page protection"
+
+I need to investigate the concrete reason, but for now I just wanted to report it.
+
+Thanks,
+Daniel
+
+
+
+
+
+
+
+
+
+> 
+> These patches fix two issues reported[1] a while back by Joe and Andrea
+> around how shmat(2) behaves with nil-page.
+> 
+> The first reverts a commit that it was incorrectly thought that mapping
+> nil-page (address=0) was a no no with MAP_FIXED.  This is not the case,
+> with the exception of SHM_REMAP; which is address in the second patch.
+> 
+> I chose two patches because it is easier to backport and it explicitly
+> reverts bogus behaviour.  Both patches ought to be in -stable and ltp
+> testcases need updated (the added testcase around the cve can be
+> modified to just test for SHM_RND|SHM_REMAP).
+> 
+> [1] lkml.kernel.org/r/20180430172152.nfa564pvgpk3ut7p@linux-n805
+> 
+> This patch (of 2):
+> 
+> Commit 95e91b831f87 ("ipc/shm: Fix shmat mmap nil-page protection")
+> worked on the idea that we should not be mapping as root addr=0 and
+> MAP_FIXED.  However, it was reported that this scenario is in fact
+> valid, thus making the patch both bogus and breaks userspace as well.
+> 
+> For example X11's libint10.so relies on shmat(1, SHM_RND) for lowmem
+> initialization[1].
+> 
+> [1]
+> https://cgit.freedesktop.org/xorg/xserver/tree/hw/xfree86/os-support/linux/int1
+> 0/linux.c#n347
+> Link: http://lkml.kernel.org/r/20180503203243.15045-2-dave@stgolabs.net
+> Fixes: 95e91b831f87 ("ipc/shm: Fix shmat mmap nil-page protection")
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
+> Reported-by: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Manfred Spraul <manfred@colorfullife.com>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  ipc/shm.c |    9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> --- a/ipc/shm.c
+> +++ b/ipc/shm.c
+> @@ -1113,13 +1113,8 @@ long do_shmat(int shmid, char __user *sh
+>  		goto out;
+>  	else if ((addr = (ulong)shmaddr)) {
+>  		if (addr & (shmlba - 1)) {
+> -			/*
+> -			 * Round down to the nearest multiple of shmlba.
+> -			 * For sane do_mmap_pgoff() parameters, avoid
+> -			 * round downs that trigger nil-page and MAP_FIXED.
+> -			 */
+> -			if ((shmflg & SHM_RND) && addr >= shmlba)
+> -				addr &= ~(shmlba - 1);
+> +			if (shmflg & SHM_RND)
+> +				addr &= ~(shmlba - 1);  /* round down */
+>  			else
+>  #ifndef __ARCH_FORCE_SHMLBA
+>  				if (addr & ~PAGE_MASK)
+> 
+> 
