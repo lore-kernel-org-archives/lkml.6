@@ -1,142 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754606AbeEaUl0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 16:41:26 -0400
-Received: from mga04.intel.com ([192.55.52.120]:45700 "EHLO mga04.intel.com"
+        id S1754612AbeEaUqm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 16:46:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754372AbeEaUlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 16:41:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
-   d="scan'208";a="60245718"
-Date: Thu, 31 May 2018 14:41:22 -0600
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Dave Jiang <dave.jiang@intel.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
- boolean returns
-Message-ID: <20180531204122.GC28256@linux.intel.com>
-Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Dave Jiang <dave.jiang@intel.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-3-ross.zwisler@linux.intel.com>
- <20180529212510.GJ30110@magnolia>
- <20180529220114.GA13948@linux.intel.com>
- <20180531191332.GB7825@magnolia>
+        id S1754234AbeEaUql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 16:46:41 -0400
+Date: Thu, 31 May 2018 16:46:38 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/4] vsprintf: Use hw RNG for ptr_key
+Message-ID: <20180531164638.2610ae5c@vmware.local.home>
+In-Reply-To: <1527472002-11571-4-git-send-email-me@tobin.cc>
+References: <1527472002-11571-1-git-send-email-me@tobin.cc>
+        <1527472002-11571-4-git-send-email-me@tobin.cc>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531191332.GB7825@magnolia>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 12:13:32PM -0700, Darrick J. Wong wrote:
-> On Tue, May 29, 2018 at 04:01:14PM -0600, Ross Zwisler wrote:
-> > On Tue, May 29, 2018 at 02:25:10PM -0700, Darrick J. Wong wrote:
-> > > On Tue, May 29, 2018 at 01:51:01PM -0600, Ross Zwisler wrote:
-> > > > From: Dave Jiang <dave.jiang@intel.com>
-> > > > 
-> > > > The function return values are confusing with the way the function is
-> > > > named. We expect a true or false return value but it actually returns
-> > > > 0/-errno.  This makes the code very confusing. Changing the return values
-> > > > to return a bool where if DAX is supported then return true and no DAX
-> > > > support returns false.
-> > > > 
-> > > > Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> > > > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> > > 
-> > > Looks ok, do you want me to pull the first two patches through the xfs
-> > > tree?
-> > > 
-> > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > 
-> > Thanks for the review.
-> > 
-> > I'm not sure what's best.  If you do that then Mike will need to have a DM
-> > branch for the rest of the series based on your stable commits, yea?
-> > 
-> > Mike what would you prefer?
+On Mon, 28 May 2018 11:46:41 +1000
+"Tobin C. Harding" <me@tobin.cc> wrote:
+
+> Currently we must wait for enough entropy to become available before
+> hashed pointers can be printed.  We can remove this wait by using the
+> hw RNG if available.
 > 
-> I /was/ about to say that I would pull in the first two patches, but now
-> I can't get xfs to mount with pmem at all, and have no way of testing
-> this...?
+> Use hw RNG to get keying material.
 > 
-> # echo 'file drivers/dax/* +p' > /sys/kernel/debug/dynamic_debug/control
-> # mount /dev/pmem3 -o rtdev=/dev/pmem4,dax /mnt
-> # dmesg
-> <snip>
-> SGI XFS with ACLs, security attributes, realtime, scrub, debug enabled
-> XFS (pmem3): DAX enabled. Warning: EXPERIMENTAL, use at your own risk
-> pmem3: error: dax support not enabled
-> pmem4: error: dax support not enabled
-> XFS (pmem3): DAX unsupported by block device. Turning off DAX.
-> XFS (pmem3): Mounting V5 Filesystem
-> XFS (pmem3): Ending clean mount
+> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-This same sequence worked fine in my QEMU setup.
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-My guess is the issue is that your namespaces are in raw mode:
+-- Steve
 
-# ndctl list
-[
-  {
-    "dev":"namespace1.0",
-    "mode":"raw",			<< this
-    "size":18119393280,
-    "sector_size":512,
-    "blockdev":"pmem1",
-    "numa_node":0
-  },
-  {
-    "dev":"namespace0.0",
-    "mode":"raw",			<< this
-    "size":18119393280,
-    "sector_size":512,
-    "blockdev":"pmem0",
-    "numa_node":0
-  }
-]
-
-If so, you can solve this by putting them in fsdax mode with ndctl:
-
-# ndctl create-namespace -f -e namespace0.0 --mode=fsdax
-{
-  "dev":"namespace0.0",
-  "mode":"fsdax",
-  "size":"16.61 GiB (17.83 GB)",
-  "uuid":"4c193c83-c031-41d4-8f96-2ff5c7b59c69",
-  "raw_uuid":"2f785f09-717a-4a5e-9e9d-88d489ef1030",
-  "sector_size":512,
-  "blockdev":"pmem0",
-  "numa_node":0
-}
-
-# ndctl create-namespace -f -e namespace1.0 --mode=fsdax
-{
-  "dev":"namespace1.0",
-  "mode":"fsdax",
-  "size":"16.61 GiB (17.83 GB)",
-  "uuid":"39ec9cc4-a7ef-4f99-8354-60105543bf47",
-  "raw_uuid":"403fae76-d4f8-4bed-9a3f-ef40924762be",
-  "sector_size":512,
-  "blockdev":"pmem1",
-  "numa_node":0
-}
-
-If that doesn't fix it for you, ping me on freenode and we'll figure it out.
-
-Thanks,
-- Ross
+> Suggested-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+> ---
+>  lib/vsprintf.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 23920c5ff728..1545a8aa26a9 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -1693,8 +1693,16 @@ static struct random_ready_callback random_ready = {
+>  
+>  static int __init initialize_ptr_random(void)
+>  {
+> -	int ret = add_random_ready_callback(&random_ready);
+> +	int key_size = sizeof(ptr_key);
+> +	int ret;
+> +
+> +	/* Use hw RNG if available */
+> +	if (get_random_bytes_arch(&ptr_key, key_size) == key_size) {
+> +		static_branch_disable(&not_filled_random_ptr_key);
+> +		return 0;
+> +	}
+>  
+> +	ret = add_random_ready_callback(&random_ready);
+>  	if (!ret) {
+>  		return 0;
+>  	} else if (ret == -EALREADY) {
