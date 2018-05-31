@@ -1,151 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755382AbeEaOIX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:08:23 -0400
-Received: from mga14.intel.com ([192.55.52.115]:45037 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755093AbeEaOIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:08:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
-   d="scan'208";a="45384341"
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v2]: perf record: enable arbitrary event names thru name=
- modifier
-Message-ID: <23f72f9b-c513-ecd4-d375-c5cf2eb30197@linux.intel.com>
-Date: Thu, 31 May 2018 17:08:12 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1755361AbeEaOIQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:08:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50442 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755093AbeEaOIN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:08:13 -0400
+Date: Thu, 31 May 2018 07:08:08 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Can kfree() sleep at runtime?
+Message-ID: <20180531140808.GA30221@bombadil.infradead.org>
+References: <30ecafd7-ed61-907b-f924-77fc37dcc753@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <30ecafd7-ed61-907b-f924-77fc37dcc753@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 31, 2018 at 09:10:07PM +0800, Jia-Ju Bai wrote:
+> I write a static analysis tool (DSAC), and it finds that kfree() can sleep.
+> 
+> Here is the call path for kfree().
+> Please look at it *from the bottom up*.
+> 
+> [FUNC] alloc_pages(GFP_KERNEL)
+> arch/x86/mm/pageattr.c, 756: alloc_pages in split_large_page
+> arch/x86/mm/pageattr.c, 1283: split_large_page in __change_page_attr
 
-Enable complex event names containing [.:=,] symbols to be encoded into Perf 
-trace using name= modifier e.g. like this:
+Here's your bug.  Coming from kfree(), we can't end up in the
+split_large_page() path.  __change_page_attr may be called in several
+different circumstances in which it would have to split a large page,
+but the path from kfree() is not one of them.
 
-perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',\
-		period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex
+I think the path from kfree() will lead to the 'level == PG_LEVEL_4K'
+path, but I'm not really familiar with this x86 code.
 
-Below is how it looks like in the report output. Please note explicit escaped 
-quoting at cmdline string in the header so that thestring can be directly reused
-for another collection in shell:
-
-perf report --header
-
-# ========
-...
-# cmdline : /root/abudanko/kernel/tip/tools/perf/perf record -v -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex 
-# event : name = OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM, , type = 4, size = 112, config = 0x100003c, { sample_period, sample_freq } = 3500000, sample_type = IP|TID|TIME, disabled = 1, inh
-...
-# ========
-#
-#
-# Total Lost Samples: 0
-#
-# Samples: 24K of event 'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM'
-# Event count (approx.): 86492000000
-#
-# Overhead  Command  Shared Object     Symbol                                        
-# ........  .......  ................  ..............................................
-#
-    14.75%  futex    [kernel.vmlinux]  [k] __entry_trampoline_start
-...
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v2:
-- aligned break according to coding guidelines;
-- put comment regarding expected quoting rules; 
----
- tools/perf/util/header.c       | 20 ++++++++++++++++++--
- tools/perf/util/parse-events.l | 18 +++++++++++++++++-
- 2 files changed, 35 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index a8bff2178fbc..08176e8cb3b4 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1459,8 +1459,24 @@ static void print_cmdline(struct feat_fd *ff, FILE *fp)
- 
- 	fprintf(fp, "# cmdline : ");
- 
--	for (i = 0; i < nr; i++)
--		fprintf(fp, "%s ", ff->ph->env.cmdline_argv[i]);
-+	for (i = 0; i < nr; i++) {
-+		char *argv_i = strdup(ff->ph->env.cmdline_argv[i]);
-+		if (!argv_i) {
-+			fprintf(fp, "%s ", ff->ph->env.cmdline_argv[i]);
-+		} else {
-+			char *mem = argv_i;
-+			do {
-+				char *quote = strchr(argv_i, '\'');
-+				if (!quote)
-+					break;
-+				*quote++ = '\0';
-+				fprintf(fp, "%s\\\'", argv_i);
-+				argv_i = quote;
-+			} while (1);
-+			fprintf(fp, "%s ", argv_i);
-+			free(mem);
-+		}
-+	}
- 	fputc('\n', fp);
- }
- 
-diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
-index a1a01b1ac8b8..c6d2bce4c017 100644
---- a/tools/perf/util/parse-events.l
-+++ b/tools/perf/util/parse-events.l
-@@ -53,7 +53,21 @@ static int str(yyscan_t scanner, int token)
- 	YYSTYPE *yylval = parse_events_get_lval(scanner);
- 	char *text = parse_events_get_text(scanner);
- 
--	yylval->str = strdup(text);
-+	if (text[0] != '\'') {
-+		yylval->str = strdup(text);
-+	} else {
-+		/*
-+		 * If a text tag specified on the command line 
-+		 * contains opening single quite ' then it is 
-+		 * expected that the tag ends with single quote 
-+		 * as well, like this:
-+		 *     name=\'CPU_CLK_UNHALTED.THREAD:cmask=1\'
-+		 * quotes need to be escaped to bypass shell 
-+		 * processing.
-+		 */
-+		yylval->str = strndup(&text[1], strlen(text) - 2);
-+	}
-+
- 	return token;
- }
- 
-@@ -176,6 +190,7 @@ num_dec		[0-9]+
- num_hex		0x[a-fA-F0-9]+
- num_raw_hex	[a-fA-F0-9]+
- name		[a-zA-Z_*?\[\]][a-zA-Z0-9_*?.\[\]]*
-+name_tag	[\'][a-zA-Z_*?\[\]][a-zA-Z0-9_*?\-,\.\[\]:=]*[\']
- name_minus	[a-zA-Z_*?][a-zA-Z0-9\-_*?.:]*
- drv_cfg_term	[a-zA-Z0-9_\.]+(=[a-zA-Z0-9_*?\.:]+)?
- /* If you add a modifier you need to update check_modifier() */
-@@ -344,6 +359,7 @@ r{num_raw_hex}		{ return raw(yyscanner); }
- {bpf_object}		{ if (!isbpf(yyscanner)) { USER_REJECT }; return str(yyscanner, PE_BPF_OBJECT); }
- {bpf_source}		{ if (!isbpf(yyscanner)) { USER_REJECT }; return str(yyscanner, PE_BPF_SOURCE); }
- {name}			{ return pmu_str_check(yyscanner); }
-+{name_tag}		{ return str(yyscanner, PE_NAME); }
- "/"			{ BEGIN(config); return '/'; }
- -			{ return '-'; }
- ,			{ BEGIN(event); return ','; }
+> arch/x86/mm/pageattr.c, 1391: __change_page_attr in
+> __change_page_attr_set_clr
+> arch/x86/mm/pageattr.c, 2014: __change_page_attr_set_clr in __set_pages_np
+> arch/x86/mm/pageattr.c, 2034: __set_pages_np in __kernel_map_pages
+> ./include/linux/mm.h, 2488: __kernel_map_pages in kernel_map_pages
+> mm/page_alloc.c, 1074: kernel_map_pages in free_pages_prepare
+> mm/page_alloc.c, 1264: free_pages_prepare in __free_pages_ok
+> mm/page_alloc.c, 4312: __free_pages_ok in __free_pages
+> mm/slub.c, 3914: __free_pages in kfree
+> 
+> I always have an impression that kfree() never sleeps, so I feel confused
+> here.
+> So could someone please help me to find the mistake?
+> Thanks in advance :)
+> 
+> Best wishes,
+> Jia-Ju Bai
