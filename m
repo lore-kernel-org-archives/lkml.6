@@ -1,115 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754050AbeEaIWz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:22:55 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:38799 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753957AbeEaIWr (ORCPT
+        id S1754076AbeEaIXK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:23:10 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:38891 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753957AbeEaIXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:22:47 -0400
-X-Google-Smtp-Source: ADUXVKKB/VICoccB/EhzjnZx+Up72Fo1RxBG3hW+zuiQSY0gdhUHN7aGaUIVajG8ZCORdP3vgxcBbg==
-Date: Thu, 31 May 2018 10:22:41 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Pavel Machek <pavel@ucw.cz>, Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/8] dt-bindings: gnss: add u-blox binding
-Message-ID: <20180531082241.GD3259@localhost>
-References: <20180530103242.20773-1-johan@kernel.org>
- <20180530103242.20773-5-johan@kernel.org>
- <20180531035805.GA16906@rob-hp-laptop>
+        Thu, 31 May 2018 04:23:01 -0400
+X-Google-Smtp-Source: ADUXVKJ4ikrcZwN9V+t/0aQvh1L0gcI1Fg+nmx5GWr3OsGhsF6bZ3+xBlR1SysYFP1axgNAVVM88c5sneckCUQOJMfM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531035805.GA16906@rob-hp-laptop>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180530131956.13972-1-peron.clem@gmail.com> <93c2d07a-9344-ed39-261e-11084067a3fa@broadcom.com>
+In-Reply-To: <93c2d07a-9344-ed39-261e-11084067a3fa@broadcom.com>
+From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date: Thu, 31 May 2018 10:22:48 +0200
+Message-ID: <CAJiuCcek9KU6QWsAAxVCLUaf1v97uR6FcLOfY=A1LGCMTmjHjg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ARM: debug: Add Iproc UART3 debug addresses
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>, Laura Abbott <labbott@redhat.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4V8NQFu025678
 
-On Wed, May 30, 2018 at 10:58:05PM -0500, Rob Herring wrote:
-> On Wed, May 30, 2018 at 12:32:38PM +0200, Johan Hovold wrote:
-> > Add binding for u-blox GNSS receivers.
-> > 
-> > Note that the u-blox product names encodes form factor (e.g. "neo"),
-> > chipset (e.g. "8") and variant (e.g. "q"), but that only formfactor and
-> > chipset is used for the compatible strings (for now).
-> > 
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > ---
-> >  .../devicetree/bindings/gnss/u-blox.txt       | 44 +++++++++++++++++++
-> >  .../devicetree/bindings/vendor-prefixes.txt   |  1 +
-> >  2 files changed, 45 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/gnss/u-blox.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/gnss/u-blox.txt b/Documentation/devicetree/bindings/gnss/u-blox.txt
-> > new file mode 100644
-> > index 000000000000..caef9ace0b0c
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/gnss/u-blox.txt
-> > @@ -0,0 +1,44 @@
-> > +u-blox GNSS Receiver DT binding
-> > +
-> > +The u-blox GNSS receivers can use UART, DDC (I2C), SPI and USB interfaces.
-> > +
-> > +Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
-> > +properties.
-> > +
-> > +Required properties:
-> > +
-> > +- compatible 	: Must be one of
-> 
-> mixture of space and tab here.
+Hi Rai,
 
-Oops. Same single space character before the tab here in all three
-binding docs (and in the in-tree slave_devices.txt which I think I used
-as a template).
-
-Do you want me to fix this even if this turns out to be the only thing
-that needs to be addressed in a v3?
-
-> > +
-> > +			"u-blox,neo-8"
-> > +			"u-blox,neo-m8"
-> > +
-> > +- vcc-supply	: Main voltage regulator
-> > +
-> > +Required properties (DDC):
-> > +- reg		: DDC (I2C) slave address
-> > +
-> > +Required properties (SPI):
-> > +- reg		: SPI chip select address
-> > +
-> > +Required properties (USB):
-> > +- reg		: Number of the USB hub port or the USB host-controller port
-> > +                  to which this device is attached
-> > +
-> > +Optional properties:
-> > +
-> > +- timepulse-gpios	: Time pulse GPIO
-> > +- u-blox,extint-gpios	: External interrupt GPIO
-> 
-> This should be interrupts property instead of a gpio.
-
-Contrary to what the name may suggest, this pin is actually an input
-which can be used to control active power or to provide time or
-frequency aiding data to the receiver (see section 1.13 in [1]).
-
-I only added it for completeness as the driver does not use it
-currently. Remove, leave as is, or add "input" to the description as in:
-
-	- u-blox,extint-gpios	: External interrupt input GPIO
-
-perhaps?
+On Wed, 30 May 2018 at 19:25, Ray Jui <ray.jui@broadcom.com> wrote:
+>
+> Hi Clément,
+>
+> Correct me if I'm wrong, but I thought the trend is to move to use
+> earlycon that can be activated from kernel command line for early print
+> before the serial driver is loaded.
+>
+> Have you tried earlcon?
+No, only tested this method.
 
 Thanks,
-Johan
+Clement
 
-[1] https://www.u-blox.com/sites/default/files/NEO-8Q_DataSheet_%28UBX-15031913%29.pdf
+>
+> Thanks,
+>
+> Ray
+>
+> On 5/30/2018 6:19 AM, Clément Péron wrote:
+> > From: Clément Peron <clement.peron@devialet.com>
+> >
+> > Broadcom Iproc SoCs typically use the UART3 for
+> > debug/console, provide a known good location for that.
+> >
+> > Signed-off-by: Clément Peron <clement.peron@devialet.com>
+> > ---
+> >
+> >   arch/arm/Kconfig.debug | 12 +++++++++++-
+> >   1 file changed, 11 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> > index 199ebc1c4538..4ea9d5793b91 100644
+> > --- a/arch/arm/Kconfig.debug
+> > +++ b/arch/arm/Kconfig.debug
+> > @@ -207,6 +207,14 @@ choice
+> >               depends on ARCH_BCM_HR2
+> >               select DEBUG_UART_8250
+> >
+> > +     config DEBUG_BCM_IPROC_UART3
+> > +             bool "Kernel low-level debugging on BCM IPROC UART3"
+> > +             depends on ARCH_BCM_CYGNUS
+> > +             select DEBUG_UART_8250
+> > +             help
+> > +               Say Y here if you want the debug print routines to direct
+> > +               their output to the third serial port on these devices.
+> > +
+> >       config DEBUG_BCM_KONA_UART
+> >               bool "Kernel low-level debugging messages via BCM KONA UART"
+> >               depends on ARCH_BCM_MOBILE
+> > @@ -1557,6 +1565,7 @@ config DEBUG_UART_PHYS
+> >       default 0x18000400 if DEBUG_BCM_HR2
+> >       default 0x18010000 if DEBUG_SIRFATLAS7_UART0
+> >       default 0x18020000 if DEBUG_SIRFATLAS7_UART1
+> > +     default 0x18023000 if DEBUG_BCM_IPROC_UART3
+> >       default 0x1c090000 if DEBUG_VEXPRESS_UART0_RS1
+> >       default 0x20001000 if DEBUG_HIP01_UART
+> >       default 0x20060000 if DEBUG_RK29_UART0
+> > @@ -1676,6 +1685,7 @@ config DEBUG_UART_VIRT
+> >       default 0xf1002000 if DEBUG_MT8127_UART0
+> >       default 0xf1006000 if DEBUG_MT6589_UART0
+> >       default 0xf1009000 if DEBUG_MT8135_UART3
+> > +     default 0xf1023000 if DEBUG_BCM_IPROC_UART3
+> >       default 0xf11f1000 if DEBUG_VERSATILE
+> >       default 0xf1600000 if DEBUG_INTEGRATOR
+> >       default 0xf1c28000 if DEBUG_SUNXI_UART0
+> > @@ -1791,7 +1801,7 @@ config DEBUG_UART_8250_WORD
+> >               DEBUG_KEYSTONE_UART0 || DEBUG_KEYSTONE_UART1 || \
+> >               DEBUG_ALPINE_UART0 || \
+> >               DEBUG_DAVINCI_DMx_UART0 || DEBUG_DAVINCI_DA8XX_UART1 || \
+> > -             DEBUG_DAVINCI_DA8XX_UART2 || \
+> > +             DEBUG_DAVINCI_DA8XX_UART2 || DEBUG_BCM_IPROC_UART3 || \
+> >               DEBUG_BCM_KONA_UART || DEBUG_RK32_UART2
+> >
+> >   config DEBUG_UART_8250_PALMCHIP
+> >
