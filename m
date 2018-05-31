@@ -1,61 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932575AbeEaAXb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 20:23:31 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:33058 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932450AbeEaAX2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 20:23:28 -0400
-X-Google-Smtp-Source: ADUXVKLLs/q5No1zATpywgTA32QfVwIIAVmD7LTdBvzfc9Yixbw/L4LYLKOpmMM0ZVJEH+vgVmn32Q==
-Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
-To: Stephen Boyd <sboyd@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
- <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
- <152772366322.144038.12289577935853704907@swboyd.mtv.corp.google.com>
-From: Ray Jui <ray.jui@broadcom.com>
-Message-ID: <25bd1449-b0f6-aecb-b326-a00af1dc4e90@broadcom.com>
-Date: Wed, 30 May 2018 17:23:24 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932589AbeEaA2f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 20:28:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58848 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932450AbeEaA2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 20:28:33 -0400
+Date: Wed, 30 May 2018 19:28:32 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Rajat Jain <rajatja@google.com>
+Cc: linux-pci <linux-pci@vger.kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/2] PCI/AER: Stop printing vendor/device ID
+Message-ID: <20180531002832.GP39853@bhelgaas-glaptop.roam.corp.google.com>
+References: <152770259826.80701.7360032106128917833.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152770286159.80701.8079550179741454699.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <CACK8Z6HhvLYkEtbROXymfn3pwz=rc8Dm_AstOe5R4tpb5aiJGg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <152772366322.144038.12289577935853704907@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACK8Z6HhvLYkEtbROXymfn3pwz=rc8Dm_AstOe5R4tpb5aiJGg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
-
-On 5/30/2018 4:41 PM, Stephen Boyd wrote:
-> Subject is missing an 's' on stringray?
->
-
-Yes, will fix this.
-
-
-> Quoting Ray Jui (2018-05-25 09:45:16)
->> Update and add Stingray clock definitions and tables so they match the
->> binding document and the latest ASIC datasheet
->>
->> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
->> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+On Wed, May 30, 2018 at 11:18:35AM -0700, Rajat Jain wrote:
+> On Wed, May 30, 2018 at 10:54 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
 > 
-> Otherwise it looks ok, but maybe Pramod should be the author?
+> > From: Bjorn Helgaas <bhelgaas@google.com>
 > 
+> > The Vendor and Device ID of the root port that raised an AER interrupt is
+> > irrelevant and already available via normal enumeration dmesg logging or
+> > lspci.
+> 
+> Er, what is getting printed is not the vendor/device id of the root port
+> but that of the AER source device (the one that root port got an ERR_*
+> message from). In case of fatal AERs, the end point device may become
+> inaccessible so lspci will not be available, and enumeration logs (from
+> boot) may have gotten rolled over. So I think it is still better to print
+> this information here.
 
-Will fix this for all commits in this series.
+Thanks for looking this over!
 
-I'll fix the above and send out v2.
+You're right, "dev" here is not necessarily the Root Port, so this
+changelog is bogus.  "dev" came from e_info->dev[] from
+aer_process_err_devices().
 
-Thanks,
+I think to be more precise, aer_irq() reads the Root Port's
+PCI_ERR_ROOT_ERR_SRC register, which gives us the Requester ID from
+the ERR_* message.  Then find_source_device() walks the tree starting
+with the Root Port, looking for:
 
-Ray
+  - a device that matches the Requester ID, or
+  - a device that doesn't match the Requester ID (e.g., because a VMD
+    port clears the source ID) but has AER enabled and has logged an
+    error of the same type (ERR_COR vs ERR_FATAL/NONFATAL) we're
+    currently decoding
+
+So there might be multiple "dev" pointers in e_info->dev[] because
+several devices could have logged errors.
+
+I'm not convinced the vendor/device ID is that useful because there
+might be several devices with the same ID, so it doesn't really tell
+you which one.  The Requester ID (bus/device/function) is the
+important thing.
+
+The current code is not ideal because the find_source_device() path
+depends on the pci_dev still being present and even accessible (so we
+can read DEVCTL, ERR_COR_STATUS, etc), which might not be the case.
+
+If find_source_device() fails, i.e., it can't find a matching pci_dev
+and prints the "can't find device of ID%04x" message, we're in real
+trouble because we don't call aer_process_err_devices(), which means
+we don't clear PCI_ERR_COR_STATUS.
+
+Anyway, I'll abandon this change for now since it's not a clear
+improvement.
+
+> > Remove the Vendor and Device ID from AER logging.
+> 
+> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > ---
+> >   drivers/pci/pcie/aer/aerdrv_errprint.c |    5 ++---
+> >   1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> > diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c
+> b/drivers/pci/pcie/aer/aerdrv_errprint.c
+> > index d7fde8368d81..16116844531c 100644
+> > --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
+> > +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+> > @@ -175,9 +175,8 @@ void aer_print_error(struct pci_dev *dev, struct
+> aer_err_info *info)
+> >                  aer_error_severity_string[info->severity],
+> >                  aer_error_layer[layer], aer_agent_string[agent]);
+> 
+> > -       pci_err(dev, "  device [%04x:%04x] error status/mask=%08x/%08x\n",
+> > -               dev->vendor, dev->device,
+> > -               info->status, info->mask);
+> > +       pci_err(dev, "  error status/mask=%08x/%08x\n", info->status,
+> > +               info->mask);
+> 
+> >          __aer_print_error(dev, info);
