@@ -1,84 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755379AbeEaOZS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:25:18 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45880 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755335AbeEaOZL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:25:11 -0400
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-To: zohar@linux.vnet.ibm.com, paul@paul-moore.com,
-        linux-integrity@vger.kernel.org, linux-audit@redhat.com
-Cc: sgrubb@redhat.com, linux-kernel@vger.kernel.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH v2 2/4] ima: Use audit_log_format() rather than audit_log_string()
-Date: Thu, 31 May 2018 10:24:58 -0400
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180531142500.4193818-1-stefanb@linux.vnet.ibm.com>
-References: <20180531142500.4193818-1-stefanb@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18053114-0012-0000-0000-0000165C4B92
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009102; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01040334; UDB=6.00532531; IPR=6.00819463;
- MB=3.00021393; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-31 14:25:09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053114-0013-0000-0000-0000530FA4C1
-Message-Id: <20180531142500.4193818-3-stefanb@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805310163
+        id S1755408AbeEaOZ1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:25:27 -0400
+Received: from foss.arm.com ([217.140.101.70]:42096 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755335AbeEaOZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:25:24 -0400
+Subject: Re: [PATCH 0/7] add non-strict mode support for arm-smmu-v3
+To: Hanjun Guo <guohanjun@huawei.com>,
+        Zhen Lei <thunder.leizhen@huawei.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>,
+        linux-mediatek <linux-mediatek@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Libin <huawei.libin@huawei.com>, Guozhu Li <liguozhu@hisilicon.com>,
+        Xinwei Hu <huxinwei@huawei.com>
+References: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
+ <d65f87a4-db61-3cd2-1a6f-0322025840a8@arm.com>
+ <96cc25b9-b21f-6067-384d-f52e6b8b25e7@huawei.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <92b240f5-596e-87a9-863a-b18475042cce@arm.com>
+Date: Thu, 31 May 2018 15:25:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <96cc25b9-b21f-6067-384d-f52e6b8b25e7@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the usage of audit_log_string() and replace it with
-audit_log_format().
+On 31/05/18 14:49, Hanjun Guo wrote:
+> Hi Robin,
+> 
+> On 2018/5/31 19:24, Robin Murphy wrote:
+>> On 31/05/18 08:42, Zhen Lei wrote:
+>>> In common, a IOMMU unmap operation follow the below steps:
+>>> 1. remove the mapping in page table of the specified iova range
+>>> 2. execute tlbi command to invalid the mapping which is cached in TLB
+>>> 3. wait for the above tlbi operation to be finished
+>>> 4. free the IOVA resource
+>>> 5. free the physical memory resource
+>>>
+>>> This maybe a problem when unmap is very frequently, the combination of tlbi
+>>> and wait operation will consume a lot of time. A feasible method is put off
+>>> tlbi and iova-free operation, when accumulating to a certain number or
+>>> reaching a specified time, execute only one tlbi_all command to clean up
+>>> TLB, then free the backup IOVAs. Mark as non-strict mode.
+>>>
+>>> But it must be noted that, although the mapping has already been removed in
+>>> the page table, it maybe still exist in TLB. And the freed physical memory
+>>> may also be reused for others. So a attacker can persistent access to memory
+>>> based on the just freed IOVA, to obtain sensible data or corrupt memory. So
+>>> the VFIO should always choose the strict mode.
+>>>
+>>> Some may consider put off physical memory free also, that will still follow
+>>> strict mode. But for the map_sg cases, the memory allocation is not controlled
+>>> by IOMMU APIs, so it is not enforceable.
+>>>
+>>> Fortunately, Intel and AMD have already applied the non-strict mode, and put
+>>> queue_iova() operation into the common file dma-iommu.c., and my work is based
+>>> on it. The difference is that arm-smmu-v3 driver will call IOMMU common APIs to
+>>> unmap, but Intel and AMD IOMMU drivers are not.
+>>>
+>>> Below is the performance data of strict vs non-strict for NVMe device:
+>>> Randomly Read  IOPS: 146K(strict) vs 573K(non-strict)
+>>> Randomly Write IOPS: 143K(strict) vs 513K(non-strict)
+>>
+>> What hardware is this on? If it's SMMUv3 without MSIs (e.g. D05), then you'll still be using the rubbish globally-blocking sync implementation. If that is the case, I'd be very interested to see how much there is to gain from just improving that - I've had a patch kicking around for a while[1] (also on a rebased branch at [2]), but don't have the means for serious performance testing.
+> 
+> The hardware is the new D06 which the SMMU with MSIs,
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Suggested-by: Steve Grubb <sgrubb@redhat.com>
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
----
- security/integrity/ima/ima_policy.c  | 3 +--
- security/integrity/integrity_audit.c | 6 +-----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+Cool! Now that profiling is fairly useful since we got rid of most of 
+the locks, are you able to get an idea of how the overhead in the normal 
+case is distributed between arm_smmu_cmdq_insert_cmd() and 
+__arm_smmu_sync_poll_msi()? We're always trying to improve our 
+understanding of where command-queue-related overheads turn out to be in 
+practice, and there's still potentially room to do nicer things than 
+TLBI_NH_ALL ;)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 1d00db19d167..3fcf0935468c 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -634,8 +634,7 @@ static void ima_log_string_op(struct audit_buffer *ab, char *key, char *value,
- 		audit_log_format(ab, "%s<", key);
- 	else
- 		audit_log_format(ab, "%s=", key);
--	audit_log_string(ab, value);
--	audit_log_format(ab, " ");
-+	audit_log_format(ab, "%s ", value);
- }
- static void ima_log_string(struct audit_buffer *ab, char *key, char *value)
- {
-diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
-index 90987d15b6fe..db30763d5525 100644
---- a/security/integrity/integrity_audit.c
-+++ b/security/integrity/integrity_audit.c
-@@ -45,11 +45,7 @@ void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
- 			 audit_get_sessionid(current));
- 	audit_log_task_context(ab);
--	audit_log_format(ab, " op=");
--	audit_log_string(ab, op);
--	audit_log_format(ab, " cause=");
--	audit_log_string(ab, cause);
--	audit_log_format(ab, " comm=");
-+	audit_log_format(ab, " op=%s cause=%s comm=", op, cause);
- 	audit_log_untrustedstring(ab, get_task_comm(name, current));
- 	if (fname) {
- 		audit_log_format(ab, " name=");
--- 
-2.13.6
+Robin.
+
+> it's not D05 :)
+> 
+> Thanks
+> Hanjun
+> 
