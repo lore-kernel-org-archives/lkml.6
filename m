@@ -1,62 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753852AbeEaEiV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 00:38:21 -0400
-Received: from ozlabs.org ([203.11.71.1]:56699 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750903AbeEaEiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 00:38:18 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 31 May 2018 14:38:16 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: Re: linux-next: build failure after merge of the device-mapper tree
-Message-ID: <20180531143816.01af2db7@canb.auug.org.au>
-In-Reply-To: <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
-References: <20180531142302.5f7b4302@canb.auug.org.au>
-        <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
+        id S1753808AbeEaEk0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 00:40:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48974 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751053AbeEaEkZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 00:40:25 -0400
+Date: Thu, 31 May 2018 10:10:12 +0530
+From: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: stewart@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com,
+        ego@linux.vnet.ibm.com, mpe@ellerman.id.au
+Subject: Re: [PATCH] [SCHEME 1] Add support for new idle device tree format
+References: <1527735184-24465-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/m3jcP865iScaWobYI.If3oh"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527735184-24465-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170306 (1.8.0)
+X-TM-AS-GCONF: 00
+x-cbid: 18053104-4275-0000-0000-000002881B37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053104-4276-0000-0000-0000378F1C8D
+Message-Id: <20180531044003.2zpkgzhsxyph3tdc@aksadiga.ibm>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805310051
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/m3jcP865iScaWobYI.If3oh
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 31, 2018 at 08:23:04AM +0530, Akshay Adiga wrote:
+> This patch adds support for new device-tree format for idle state
+> description.
+> 
+> Previously if a older kernel runs on a newer firmware, it may enable
+> all available states irrespective of its capability of handling it.
+> New device tree format adds a compatible flag, so that only kernel
+> which has the capability to handle the version of stop state will enable
+> it.
+> 
+> Older kernel will still see stop0 and stop0_lite in older format and we
+> will depricate it after some time.
+> 
+> Idea is to bump up the version in firmware if we find a bug or
+> regression in stop states. A fix will be provided in linux which would
+> now know about the bumped up version of stop states, where as kernel
+> without fixes would ignore the states.
+> 
+> New idle state device tree format :
+>        power-mgt {
+>             ...
+>         ibm,enabled-stop-levels = <0xec000000>;
+>         ibm,cpu-idle-state-psscr-mask = <0x0 0x3003ff 0x0 0x3003ff>;
+>         ibm,cpu-idle-state-latencies-ns = <0x3e8 0x7d0>;
+>         ibm,cpu-idle-state-psscr = <0x0 0x330 0x0 0x300330>;
+>         ibm,cpu-idle-state-flags = <0x100000 0x101000>;
+>         ibm,cpu-idle-state-residency-ns = <0x2710 0x4e20>;
+>         ibm,idle-states {
+>                 phandle = <0xff>;
+>                     stop4 {
+>                         flags = <0x207000>;
+>                         compatible = "ibm,cpuidle-state-v1";
+>                         psscr-mask = <0x0 0x3003ff>;
+>                         handle = <0x102>;
+>                         latency-ns = <0x186a0>;
+>                         residency-ns = <0x989680>;
+>                         psscr = <0x0 0x300374>;
+>                  };
+> 
+>                     ...
+>                     stop11 {
+>                         ...
+>                         compatible = "ibm,cpuoffline-state-v1";
+>                         ...
+> 
+>            };
+>            };
+> 
+> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
 
-Hi Jens,
-
-On Wed, 30 May 2018 22:35:40 -0600 Jens Axboe <axboe@kernel.dk> wrote:
->
-> I=E2=80=99ll drop the last patch, we can do that at the end of the merge =
-window instead.=20
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/m3jcP865iScaWobYI.If3oh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPfDgACgkQAVBC80lX
-0GzGIwf/eahZ3GVKsRnWnwYyLhmJ+ztrNnFTeTVy6wvlQ4PYaVdCaM6amHopEDQQ
-5TF3ZjC1cyDLj8gruB5mOPeZyiyMBAdw6xRtCx1Q0mb7xR9x+2r12PK9wxll1yy8
-5f0QmhTVI1GTY6c7ya5Pg/luZjuM/JyZWWI6/PZDS6F+07+NVVuGA/wxMpRvxjLl
-/TnKWCQ3r5j3NsEMeSR2T7GAN2wVrXW5OofxqaCK/ICSPwOrE3W3IWFv3ebn/Np6
-Sit4TM3VfZ0iNXwCcVec0RNAvjdhTdrd6ONmsSea89XjrBox1ZWwjkJhE3Did/6k
-Rw/H4p4a3wgdR+/RByySlHA2+e9V9A==
-=rtCm
------END PGP SIGNATURE-----
-
---Sig_/m3jcP865iScaWobYI.If3oh--
+This is intended to be a RFC patch. 
+The skiboot patch for the device tree is posted here :
+https://patchwork.ozlabs.org/patch/923120/
