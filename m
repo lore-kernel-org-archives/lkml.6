@@ -1,273 +1,665 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754058AbeEaGvL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:51:11 -0400
-Received: from mail.efficios.com ([167.114.142.138]:53638 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754006AbeEaGun (ORCPT
+        id S1754067AbeEaGvl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:51:41 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47888 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753909AbeEaGvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:50:43 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 5555E225F33
-Date: Thu, 31 May 2018 02:50:41 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Joel Fernandes <joelaf@google.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Erick Reyes <erickreyes@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, shuah <shuah@kernel.org>,
-        rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Todd Kjos <tkjos@google.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Message-ID: <214539705.3633.1527749441133.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180530000500.257225-6-joel@joelfernandes.org>
-References: <20180530000500.257225-1-joel@joelfernandes.org> <20180530000500.257225-6-joel@joelfernandes.org>
-Subject: Re: [PATCH v8 5/8] tracepoint: Make rcuidle tracepoint callers use
- SRCU
+        Thu, 31 May 2018 02:51:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D655A6050D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
+Subject: Re: [PATCH v2 08/10] drm/bridge: tc358764: Add DSI to LVDS bridge
+ driver
+To: Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
+ <CGME20180530121628eucas1p291c2774152145231a0a5c4ed56354d7f@eucas1p2.samsung.com>
+ <1527682561-1386-9-git-send-email-m.purski@samsung.com>
+From: Archit Taneja <architt@codeaurora.org>
+Message-ID: <9eec949c-f2b8-4d8d-e30e-ade5159255d6@codeaurora.org>
+Date: Thu, 31 May 2018 12:21:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1527682561-1386-9-git-send-email-m.purski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: tracepoint: Make rcuidle tracepoint callers use SRCU
-Thread-Index: nAvq5R3aJ9eIQjR/d+8UrCS38/m8pw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On May 30, 2018, at 2:04 AM, Joel Fernandes joelaf@google.com wrote:
+Hi,
 
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+On Wednesday 30 May 2018 05:45 PM, Maciej Purski wrote:
+> From: Andrzej Hajda <a.hajda@samsung.com>
 > 
-> In recent tests with IRQ on/off tracepoints, a large performance
-> overhead ~10% is noticed when running hackbench. This is root caused to
-> calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
-> tracepoint code. Following a long discussion on the list [1] about this,
-> we concluded that srcu is a better alternative for use during rcu idle.
-> Although it does involve extra barriers, its lighter than the sched-rcu
-> version which has to do additional RCU calls to notify RCU idle about
-> entry into RCU sections.
+> Add a drm_bridge driver for the Toshiba TC358764 DSI to LVDS bridge.
 > 
-> In this patch, we change the underlying implementation of the
-> trace_*_rcuidle API to use SRCU. This has shown to improve performance
-> alot for the high frequency irq enable/disable tracepoints.
-> 
-> Test: Tested idle and preempt/irq tracepoints.
-> 
-> Here are some performance numbers:
-> 
-> With a run of the following 30 times on a single core x86 Qemu instance
-> with 1GB memory:
-> hackbench -g 4 -f 2 -l 3000
-> 
-> Completion times in seconds. CONFIG_PROVE_LOCKING=y.
-> 
-> No patches (without this series)
-> Mean: 3.048
-> Median: 3.025
-> Std Dev: 0.064
-> 
-> With Lockdep using irq tracepoints with RCU implementation:
-> Mean: 3.451   (-11.66 %)
-> Median: 3.447 (-12.22%)
-> Std Dev: 0.049
-> 
-> With Lockdep using irq tracepoints with SRCU implementation (this series):
-> Mean: 3.020   (I would consider the improvement against the "without
->	       this series" case as just noise).
-> Median: 3.013
-> Std Dev: 0.033
-> 
-> [1] https://patchwork.kernel.org/patch/10344297/
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
 > ---
-> include/linux/tracepoint.h | 48 +++++++++++++++++++++++++++++++-------
-> kernel/tracepoint.c        | 15 +++++++++++-
-> 2 files changed, 54 insertions(+), 9 deletions(-)
+>   drivers/gpu/drm/bridge/Kconfig    |   9 +
+>   drivers/gpu/drm/bridge/Makefile   |   1 +
+>   drivers/gpu/drm/bridge/tc358764.c | 547 ++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 557 insertions(+)
+>   create mode 100644 drivers/gpu/drm/bridge/tc358764.c
 > 
-> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> index c94f466d57ef..880794207921 100644
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -15,6 +15,7 @@
->  */
-> 
-> #include <linux/smp.h>
-> +#include <linux/srcu.h>
-> #include <linux/errno.h>
-> #include <linux/types.h>
-> #include <linux/cpumask.h>
-> @@ -33,6 +34,8 @@ struct trace_eval_map {
-> 
-> #define TRACEPOINT_DEFAULT_PRIO	10
-> 
-> +extern struct srcu_struct tracepoint_srcu;
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index fa2c799..9bd3eb8 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -110,6 +110,15 @@ config DRM_THINE_THC63LVD1024
+>   	---help---
+>   	  Thine THC63LVD1024 LVDS/parallel converter driver.
+>   
+> +config DRM_TOSHIBA_TC358764
+> +	tristate "TC358764 DSI/LVDS bridge"
+> +	depends on DRM && DRM_PANEL
+> +	depends on OF
+> +	select DRM_MIPI_DSI
+> +	select VIDEOMODE_HELPERS
+
+I don't see videomode usage in the driver, can we drop this if it isn't
+used?
+
+> +	help
+> +	  Toshiba TC358764 DSI/LVDS bridge driver
 > +
-> extern int
-> tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
-> extern int
-> @@ -75,10 +78,15 @@ int unregister_tracepoint_module_notifier(struct
-> notifier_block *nb)
->  * probe unregistration and the end of module exit to make sure there is no
->  * caller executing a probe when it is freed.
->  */
-> +#ifdef CONFIG_TRACEPOINTS
-> static inline void tracepoint_synchronize_unregister(void)
-> {
-> +	synchronize_srcu(&tracepoint_srcu);
-> 	synchronize_sched();
-> }
-> +#else
-> +static inline void tracepoint_synchronize_unregister(void) { }
+>   config DRM_TOSHIBA_TC358767
+>   	tristate "Toshiba TC358767 eDP bridge"
+>   	depends on OF
+> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> index 35f88d4..bf7c0ce 100644
+> --- a/drivers/gpu/drm/bridge/Makefile
+> +++ b/drivers/gpu/drm/bridge/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
+>   obj-$(CONFIG_DRM_SII902X) += sii902x.o
+>   obj-$(CONFIG_DRM_SII9234) += sii9234.o
+>   obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
+> +obj-$(CONFIG_DRM_TOSHIBA_TC358764) += tc358764.o
+>   obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
+>   obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
+>   obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
+> diff --git a/drivers/gpu/drm/bridge/tc358764.c b/drivers/gpu/drm/bridge/tc358764.c
+> new file mode 100644
+> index 0000000..3109eba
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/tc358764.c
+> @@ -0,0 +1,547 @@
 
-In order to add some consistency to the style in this header file,
-this empty function should look like:
-
-static inline void tracepoint_synchronize_unregister(void)
-{ }
-
-(with newline before "{")
-
-> +#endif
-> 
-> #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
-> extern int syscall_regfunc(void);
-> @@ -129,18 +137,38 @@ extern void syscall_unregfunc(void);
->  * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
->  * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
->  */
-> -#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
-> +#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
-> 	do {								\
-> 		struct tracepoint_func *it_func_ptr;			\
-> 		void *it_func;						\
-> 		void *__data;						\
-> +		int __maybe_unused idx = 0;				\
-> 									\
-> 		if (!(cond))						\
-> 			return;						\
-> -		if (rcucheck)						\
-> -			rcu_irq_enter_irqson();				\
-> -		rcu_read_lock_sched_notrace();				\
-> -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
-> +									\
-> +		/*							\
-> +		 * For rcuidle callers, use srcu since sched-rcu	\
-> +		 * doesn't work from the idle path.			\
-> +		 */							\
-> +		if (rcuidle) {						\
-> +			if (in_nmi()) {					\
-> +				WARN_ON_ONCE(1);			\
-> +				return; /* no srcu from nmi */		\
-
-I find it odd to have a "return" in a macro that consists of a
-do { } while (0). I'm tempted to replace "return" by "break" here,
-to break the macro do/while (0) loop.
-
-> +			}						\
-> +									\
-> +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-> +			it_func_ptr =					\
-> +				srcu_dereference_notrace((tp)->funcs,	\
-> +						&tracepoint_srcu);	\
-> +			/* To keep it consistent with !rcuidle path */	\
-> +			preempt_disable_notrace();			\
-> +		} else {						\
-> +			rcu_read_lock_sched_notrace();			\
-> +			it_func_ptr =					\
-> +				rcu_dereference_sched((tp)->funcs);	\
-> +		}							\
-> +									\
-> 		if (it_func_ptr) {					\
-> 			do {						\
-> 				it_func = (it_func_ptr)->func;		\
-> @@ -148,9 +176,13 @@ extern void syscall_unregfunc(void);
-> 				((void(*)(proto))(it_func))(args);	\
-> 			} while ((++it_func_ptr)->func);		\
-> 		}							\
-> -		rcu_read_unlock_sched_notrace();			\
-> -		if (rcucheck)						\
-> -			rcu_irq_exit_irqson();				\
-> +									\
-> +		if (rcuidle) {						\
-> +			preempt_enable_notrace();			\
-> +			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
-> +		} else {						\
-> +			rcu_read_unlock_sched_notrace();		\
-> +		}							\
-> 	} while (0)
-> 
-> #ifndef MODULE
-> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-> index 1e37da2e0c25..54157792f5ab 100644
-> --- a/kernel/tracepoint.c
-> +++ b/kernel/tracepoint.c
-> @@ -31,6 +31,9 @@
-> extern struct tracepoint * const __start___tracepoints_ptrs[];
-> extern struct tracepoint * const __stop___tracepoints_ptrs[];
-> 
-> +DEFINE_SRCU(tracepoint_srcu);
-> +EXPORT_SYMBOL_GPL(tracepoint_srcu);
+We'd need a SPDX license here?
+> +/*
+> + * Copyright (C) 2018 Samsung Electronics Co., Ltd
+> + *
+> + * Authors:
+> + *	Andrzej Hajda <a.hajda@samsung.com>
+> + *	Maciej Purski <m.purski@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.
+> + *
+> + */
 > +
-> /* Set to 1 to enable tracepoint debug output */
-> static const int tracepoint_debug;
-> 
-> @@ -67,16 +70,26 @@ static inline void *allocate_probes(int count)
-> 	return p == NULL ? NULL : p->probes;
-> }
-> 
-> -static void rcu_free_old_probes(struct rcu_head *head)
-> +static void srcu_free_old_probes(struct rcu_head *head)
-> {
-> 	kfree(container_of(head, struct tp_probes, rcu));
-> }
-> 
-> +static void rcu_free_old_probes(struct rcu_head *head)
+> +#include <drm/drm_atomic_helper.h>
+> +
+> +#include <drm/drmP.h>
+> +#include <drm/drm_mipi_dsi.h>
+> +#include <drm/drm_panel.h>
+> +
+> +#include <drm/drm_crtc.h>
+> +#include <drm/drm_crtc_helper.h>
+> +
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/of_graph.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +#include <video/mipi_display.h>
+> +#include <video/of_videomode.h>
+> +#include <video/videomode.h>
+> +
+> +#define FLD_MASK(start, end)    (((1 << ((start) - (end) + 1)) - 1) << (end))
+> +#define FLD_VAL(val, start, end) (((val) << (end)) & FLD_MASK(start, end))
+> +
+> +/* PPI layer registers */
+> +#define PPI_STARTPPI		0x0104 /* START control bit */
+> +#define PPI_LPTXTIMECNT		0x0114 /* LPTX timing signal */
+> +#define PPI_LANEENABLE		0x0134 /* Enables each lane */
+> +#define PPI_TX_RX_TA		0x013C /* BTA timing parameters */
+> +#define PPI_D0S_CLRSIPOCOUNT	0x0164 /* Assertion timer for Lane 0 */
+> +#define PPI_D1S_CLRSIPOCOUNT	0x0168 /* Assertion timer for Lane 1 */
+> +#define PPI_D2S_CLRSIPOCOUNT	0x016C /* Assertion timer for Lane 2 */
+> +#define PPI_D3S_CLRSIPOCOUNT	0x0170 /* Assertion timer for Lane 3 */
+> +#define PPI_START_FUNCTION	1
+> +
+> +/* DSI layer registers */
+> +#define DSI_STARTDSI		0x0204 /* START control bit of DSI-TX */
+> +#define DSI_LANEENABLE		0x0210 /* Enables each lane */
+> +#define DSI_RX_START		1
+> +
+> +/* Video path registers */
+> +#define VP_CTRL			0x0450 /* Video Path Control */
+> +#define VP_CTRL_MSF(v)		FLD_VAL(v, 0, 0) /* Magic square in RGB666 */
+> +#define VP_CTRL_VTGEN(v)	FLD_VAL(v, 4, 4) /* Use chip clock for timing */
+> +#define VP_CTRL_EVTMODE(v)	FLD_VAL(v, 5, 5) /* Event mode */
+> +#define VP_CTRL_RGB888(v)	FLD_VAL(v, 8, 8) /* RGB888 mode */
+> +#define VP_CTRL_VSDELAY(v)	FLD_VAL(v, 31, 20) /* VSYNC delay */
+> +#define VP_CTRL_HSPOL		BIT(17) /* Polarity of HSYNC signal */
+> +#define VP_CTRL_DEPOL		BIT(18) /* Polarity of DE signal */
+> +#define VP_CTRL_VSPOL		BIT(19) /* Polarity of VSYNC signal */
+> +#define VP_HTIM1		0x0454 /* Horizontal Timing Control 1 */
+> +#define VP_HTIM1_HBP(v)		FLD_VAL(v, 24, 16)
+> +#define VP_HTIM1_HSYNC(v)	FLD_VAL(v, 8, 0)
+> +#define VP_HTIM2		0x0458 /* Horizontal Timing Control 2 */
+> +#define VP_HTIM2_HFP(v)		FLD_VAL(v, 24, 16)
+> +#define VP_HTIM2_HACT(v)	FLD_VAL(v, 10, 0)
+> +#define VP_VTIM1		0x045C /* Vertical Timing Control 1 */
+> +#define VP_VTIM1_VBP(v)		FLD_VAL(v, 23, 16)
+> +#define VP_VTIM1_VSYNC(v)	FLD_VAL(v, 7, 0)
+> +#define VP_VTIM2		0x0460 /* Vertical Timing Control 2 */
+> +#define VP_VTIM2_VFP(v)		FLD_VAL(v, 23, 16)
+> +#define VP_VTIM2_VACT(v)	FLD_VAL(v, 10, 0)
+> +#define VP_VFUEN		0x0464 /* Video Frame Timing Update Enable */
+> +
+> +/* LVDS registers */
+> +#define LV_MX0003		0x0480 /* Mux input bit 0 to 3 */
+> +#define LV_MX0407		0x0484 /* Mux input bit 4 to 7 */
+> +#define LV_MX0811		0x0488 /* Mux input bit 8 to 11 */
+> +#define LV_MX1215		0x048C /* Mux input bit 12 to 15 */
+> +#define LV_MX1619		0x0490 /* Mux input bit 16 to 19 */
+> +#define LV_MX2023		0x0494 /* Mux input bit 20 to 23 */
+> +#define LV_MX2427		0x0498 /* Mux input bit 24 to 27 */
+> +#define LV_MX(b0, b1, b2, b3)	(FLD_VAL(b0, 4, 0) | FLD_VAL(b1, 12, 8) | \
+> +				FLD_VAL(b2, 20, 16) | FLD_VAL(b3, 28, 24))
+> +
+> +/* Input bit numbers used in mux registers */
+> +enum {
+> +	LVI_R0,
+> +	LVI_R1,
+> +	LVI_R2,
+> +	LVI_R3,
+> +	LVI_R4,
+> +	LVI_R5,
+> +	LVI_R6,
+> +	LVI_R7,
+> +	LVI_G0,
+> +	LVI_G1,
+> +	LVI_G2,
+> +	LVI_G3,
+> +	LVI_G4,
+> +	LVI_G5,
+> +	LVI_G6,
+> +	LVI_G7,
+> +	LVI_B0,
+> +	LVI_B1,
+> +	LVI_B2,
+> +	LVI_B3,
+> +	LVI_B4,
+> +	LVI_B5,
+> +	LVI_B6,
+> +	LVI_B7,
+> +	LVI_HS,
+> +	LVI_VS,
+> +	LVI_DE,
+> +	LVI_L0
+> +};
+> +
+> +#define LV_CFG			0x049C /* LVDS Configuration */
+> +#define LV_PHY0			0x04A0 /* LVDS PHY 0 */
+> +#define LV_PHY0_RST(v)		FLD_VAL(v, 22, 22) /* PHY reset */
+> +#define LV_PHY0_IS(v)		FLD_VAL(v, 15, 14)
+> +#define LV_PHY0_ND(v)		FLD_VAL(v, 4, 0) /* Frequency range select */
+> +#define LV_PHY0_PRBS_ON(v)	FLD_VAL(v, 20, 16) /* Clock/Data Flag pins */
+> +
+> +/* System registers */
+> +#define SYS_RST			0x0504 /* System Reset */
+> +#define SYS_ID			0x0580 /* System ID */
+> +
+> +#define SYS_RST_I2CS		BIT(0) /* Reset I2C-Slave controller */
+> +#define SYS_RST_I2CM		BIT(1) /* Reset I2C-Master controller */
+> +#define SYS_RST_LCD		BIT(2) /* Reset LCD controller */
+> +#define SYS_RST_BM		BIT(3) /* Reset Bus Management controller */
+> +#define SYS_RST_DSIRX		BIT(4) /* Reset DSI-RX and App controller */
+> +#define SYS_RST_REG		BIT(5) /* Reset Register module */
+> +
+> +#define LPX_PERIOD		2
+> +#define TTA_SURE		3
+> +#define TTA_GET			0x20000
+> +
+> +/* Lane enable PPI and DSI register bits */
+> +#define LANEENABLE_CLEN		BIT(0)
+> +#define LANEENABLE_L0EN		BIT(1)
+> +#define LANEENABLE_L1EN		BIT(2)
+> +#define LANEENABLE_L2EN		BIT(3)
+> +#define LANEENABLE_L3EN		BIT(4)
+> +
+> +/* LVCFG fields */
+> +#define LV_CFG_LVEN		BIT(0)
+> +#define LV_CFG_LVDLINK		BIT(1)
+> +#define LV_CFG_CLKPOL1		BIT(2)
+> +#define LV_CFG_CLKPOL2		BIT(3)
+> +
+> +static const char * const tc358764_supplies[] = {
+> +	"vddc", "vddio", "vddmipi", "vddlvds133", "vddlvds112"
+> +};
+> +
+> +struct tc358764 {
+> +	struct device *dev;
+> +	struct drm_bridge bridge;
+> +	struct drm_connector connector;
+> +	struct regulator_bulk_data supplies[ARRAY_SIZE(tc358764_supplies)];
+> +	struct gpio_desc *gpio_reset;
+> +
+> +	struct drm_panel *panel;
+> +};
+> +
+> +static int tc358764_read(struct tc358764 *ctx, u16 addr, u32 *val)
 > +{
-> +	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
+> +	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+> +	const struct mipi_dsi_host_ops *ops = dsi->host->ops;
+> +	struct mipi_dsi_msg msg = {
+> +		.type = MIPI_DSI_GENERIC_READ_REQUEST_2_PARAM,
+> +		.channel = dsi->channel,
+> +		.flags = MIPI_DSI_MSG_USE_LPM,
+> +		.tx_buf = &addr,
+> +		.tx_len = 2,
+> +		.rx_buf = val,
+> +		.rx_len = 4
+> +	};
+> +	ssize_t ret;
+> +
+> +	if (!ops || !ops->transfer)
+> +		return -EINVAL;
+> +
+> +	cpu_to_le16s(&addr);
+> +
+> +	ret = ops->transfer(dsi->host, &msg);
+> +	if (ret >= 0)
+> +		le32_to_cpus(val); > +
+> +	dev_dbg(ctx->dev, "read: %d, addr: %d\n", addr, *val);
+> +
+> +	return ret;
 > +}
 > +
-> static inline void release_probes(struct tracepoint_func *old)
-> {
-> 	if (old) {
-> 		struct tp_probes *tp_probes = container_of(old,
-> 			struct tp_probes, probes[0]);
-> +		/*
-> +		 * Tracepoint probes are protected by both sched RCU and SRCU,
-> +		 * by calling the SRCU callback in the sched RCU callback we
-> +		 * cover both cases. So lets chain the SRCU and RCU callbacks.
+> +static int tc358764_write(struct tc358764 *ctx, u16 addr, u32 val)
+> +{
+> +	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+> +	const struct mipi_dsi_host_ops *ops = dsi->host->ops;
+> +	u8 data[6];
+> +	int ret;
+> +	struct mipi_dsi_msg msg = {
+> +		.type = MIPI_DSI_GENERIC_LONG_WRITE,
+> +		.channel = dsi->channel,
+> +		.flags = MIPI_DSI_MSG_USE_LPM | MIPI_DSI_MSG_REQ_ACK,
+> +		.tx_buf = data,
+> +		.tx_len = 6
+> +	};
+> +
+> +	if (!ops || !ops->transfer)
+> +		return -EINVAL;
+> +
+> +	data[0] = addr;
+> +	data[1] = addr >> 8;
+> +	data[2] = val;
+> +	data[3] = val >> 8;
+> +	data[4] = val >> 16;
+> +	data[5] = val >> 24;
+> +
+> +	ret = ops->transfer(dsi->host, &msg);
+> +
+> +	return ret;
+> +}
+> +
+> +static inline struct tc358764 *bridge_to_tc358764(struct drm_bridge *bridge)
+> +{
+> +	return container_of(bridge, struct tc358764, bridge);
+> +}
+> +
+> +static inline
+> +struct tc358764 *connector_to_tc358764(struct drm_connector *connector)
+> +{
+> +	return container_of(connector, struct tc358764, connector);
+> +}
+> +
+> +static int tc358764_init(struct tc358764 *ctx)
+> +{
+> +	u32 v = 0;
+> +
+> +	tc358764_read(ctx, SYS_ID, &v);
+> +	dev_info(ctx->dev, "ID: %#x\n", v);
+> +
+> +	/* configure PPI counters */
+> +	tc358764_write(ctx, PPI_TX_RX_TA, TTA_GET | TTA_SURE);
+> +	tc358764_write(ctx, PPI_LPTXTIMECNT, LPX_PERIOD);
+> +	tc358764_write(ctx, PPI_D0S_CLRSIPOCOUNT, 5);
+> +	tc358764_write(ctx, PPI_D1S_CLRSIPOCOUNT, 5);
+> +	tc358764_write(ctx, PPI_D2S_CLRSIPOCOUNT, 5);
+> +	tc358764_write(ctx, PPI_D3S_CLRSIPOCOUNT, 5);
+> +
+> +	/* enable four data lanes and clock lane */
+> +	tc358764_write(ctx, PPI_LANEENABLE, LANEENABLE_L3EN | LANEENABLE_L2EN |
+> +		       LANEENABLE_L1EN | LANEENABLE_L0EN | LANEENABLE_CLEN);
+> +	tc358764_write(ctx, DSI_LANEENABLE, LANEENABLE_L3EN | LANEENABLE_L2EN |
+> +		       LANEENABLE_L1EN | LANEENABLE_L0EN | LANEENABLE_CLEN);
+> +
+> +	/* start */
+> +	tc358764_write(ctx, PPI_STARTPPI, PPI_START_FUNCTION);
+> +	tc358764_write(ctx, DSI_STARTDSI, DSI_RX_START);
+> +
+> +	/* configure video path */
+> +	tc358764_write(ctx, VP_CTRL, VP_CTRL_VSDELAY(15) | VP_CTRL_RGB888(1) |
+> +		       VP_CTRL_EVTMODE(1) | VP_CTRL_HSPOL | VP_CTRL_VSPOL);
 
-lets -> let's
+Could we specify somewhere that
+> +
+> +	/* reset PHY */
+> +	tc358764_write(ctx, LV_PHY0, LV_PHY0_RST(1) |
+> +		       LV_PHY0_PRBS_ON(4) | LV_PHY0_IS(2) | LV_PHY0_ND(6));
+> +	tc358764_write(ctx, LV_PHY0, LV_PHY0_PRBS_ON(4) | LV_PHY0_IS(2) |
+> +		       LV_PHY0_ND(6));
+> +
+> +	/* reset bridge */
+> +	tc358764_write(ctx, SYS_RST, SYS_RST_LCD);
+> +
+> +	/* set bit order */
+> +	tc358764_write(ctx, LV_MX0003, LV_MX(LVI_R0, LVI_R1, LVI_R2, LVI_R3));
+> +	tc358764_write(ctx, LV_MX0407, LV_MX(LVI_R4, LVI_R7, LVI_R5, LVI_G0));
+> +	tc358764_write(ctx, LV_MX0811, LV_MX(LVI_G1, LVI_G2, LVI_G6, LVI_G7));
+> +	tc358764_write(ctx, LV_MX1215, LV_MX(LVI_G3, LVI_G4, LVI_G5, LVI_B0));
+> +	tc358764_write(ctx, LV_MX1619, LV_MX(LVI_B6, LVI_B7, LVI_B1, LVI_B2));
+> +	tc358764_write(ctx, LV_MX2023, LV_MX(LVI_B3, LVI_B4, LVI_B5, LVI_L0));
+> +	tc358764_write(ctx, LV_MX2427, LV_MX(LVI_HS, LVI_VS, LVI_DE, LVI_R6));
+> +	tc358764_write(ctx, LV_CFG, LV_CFG_CLKPOL2 | LV_CFG_CLKPOL1 |
+> +		       LV_CFG_LVEN);
+> +
+> +	return 0;
+> +}
+> +
+> +static void tc358764_reset(struct tc358764 *ctx)
+> +{
+> +	msleep(20);
+> +	gpiod_set_value(ctx->gpio_reset, 0);
+> +	msleep(20);
+> +	gpiod_set_value(ctx->gpio_reset, 1);
+> +	msleep(40);
+> +}
+> +
+> +static void tc358764_poweroff(struct tc358764 *ctx)
+> +{
+> +	int ret;
+> +
+> +	tc358764_reset(ctx);
+> +
+> +	drm_panel_disable(ctx->panel);
+> +	msleep(40);
+> +
+> +	ret = regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +	if (ret < 0)
+> +		dev_err(ctx->dev, "error disabling regulators (%d)\n", ret);
+> +}
+> +
+> +static int tc358764_get_modes(struct drm_connector *connector)
+> +{
+> +	struct tc358764 *ctx = connector_to_tc358764(connector);
+> +
+> +	if (ctx->panel && ctx->panel->funcs && ctx->panel->funcs->get_modes)
+> +		return ctx->panel->funcs->get_modes(ctx->panel);
+> +
+> +	return 0;
+> +}
+> +
+> +static const
+> +struct drm_connector_helper_funcs tc358764_connector_helper_funcs = {
+> +	.get_modes = tc358764_get_modes,
+> +};
+> +
+> +static const struct drm_connector_funcs tc358764_connector_funcs = {
+> +	.fill_modes = drm_helper_probe_single_connector_modes,
+> +	.destroy = drm_connector_cleanup,
+> +	.reset = drm_atomic_helper_connector_reset,
+> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> +};
+> +
+> +static void tc358764_disable(struct drm_bridge *bridge)
+> +{
+> +	struct tc358764 *ctx = bridge_to_tc358764(bridge);
+> +
+> +	tc358764_poweroff(ctx);
+> +}
+> +
+> +static void tc358764_pre_enable(struct drm_bridge *bridge)
+> +{
+> +	struct tc358764 *ctx = bridge_to_tc358764(bridge);
+> +	int ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies),
+> +					ctx->supplies);
+> +	if (ret < 0)
+> +		dev_err(ctx->dev, "error enabling regulators (%d)\n", ret);
+> +
+> +	tc358764_reset(ctx);
+> +	tc358764_init(ctx);
+> +}
+> +
+> +static void tc358764_enable(struct drm_bridge *bridge)
+> +{
+> +	struct tc358764 *ctx = bridge_to_tc358764(bridge);
+> +	int ret;
+> +
+> +	drm_panel_prepare(ctx->panel);
+> +
+> +	ret = drm_panel_enable(ctx->panel);
+> +	if (ret < 0)
+> +		pr_err("panel enable failed\n");
+> +
+> +	msleep(40);
+> +}
+> +
+> +static int tc358764_attach(struct drm_bridge *bridge)
+> +{
+> +	struct tc358764 *ctx = bridge_to_tc358764(bridge);
+> +	struct drm_device *drm = bridge->dev;
+> +	int ret;
+> +
+> +	if (!bridge->encoder) {
+> +		DRM_ERROR("Encoder not found\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	ctx->connector.polled = DRM_CONNECTOR_POLL_HPD;
+> +	ret = drm_connector_init(drm, &ctx->connector,
+> +				 &tc358764_connector_funcs,
+> +				 DRM_MODE_CONNECTOR_LVDS);
+> +	if (ret) {
+> +		DRM_ERROR("Failed to initialize connector\n");
+> +		return ret;
+> +	}
+> +
+> +	drm_connector_helper_add(&ctx->connector,
+> +				 &tc358764_connector_helper_funcs);
+> +
+> +	drm_mode_connector_attach_encoder(&ctx->connector, bridge->encoder);
+> +
+> +	if (ctx->panel)
+> +		drm_panel_attach(ctx->panel, &ctx->connector);
+> +
+> +	drm_atomic_helper_connector_reset(&ctx->connector);
+> +	drm_connector_register(&ctx->connector);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct drm_bridge_funcs tc358764_bridge_funcs = {
+> +	.disable = tc358764_disable,
+> +	.enable = tc358764_enable,
+> +	.pre_enable = tc358764_pre_enable,
+> +	.attach = tc358764_attach,
+> +};
+> +
+> +static struct device_node *tc358764_of_find_panel_node(struct device *dev)
+> +{
+> +	struct device_node *np, *ep;
+> +
+> +	ep = of_graph_get_endpoint_by_regs(dev->of_node, 1, 0);
+> +	if (!ep) {
+> +		pr_err("faile to get endpoint\n");
+> +		return NULL;
+> +	}
+> +
+> +	np = of_graph_get_remote_port_parent(ep);
+> +
+> +	return np;
+> +}
+> +
+> +static int tc358764_parse_dt(struct tc358764 *ctx)
+> +{
+> +	struct device *dev = ctx->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct device_node *lvds;
+> +
+> +	ctx->gpio_reset = devm_gpiod_get_from_of_node(dev, np, "reset", 0,
+> +						      GPIOD_OUT_LOW,
+> +						      "tc358764-reset");
+> +	if (IS_ERR(ctx->gpio_reset)) {
+> +		dev_err(dev, "no reset GPIO pin provided\n");
+> +		return PTR_ERR(ctx->gpio_reset);
+> +	}
+> +
+> +	lvds = tc358764_of_find_panel_node(ctx->dev);
+> +	if (!lvds) {
+> +		dev_err(dev, "cannot find panel node\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ctx->panel = of_drm_find_panel(lvds);
+> +	if (!ctx->panel) {
+> +		dev_err(dev, "panel not registered\n");
+> +		return -EPROBE_DEFER;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int tc358764_configure_regulators(struct tc358764 *ctx)
+> +{
+> +	int i, ret;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(ctx->supplies); ++i)
+> +		ctx->supplies[i].supply = tc358764_supplies[i];
+> +
+> +	ret = devm_regulator_bulk_get(ctx->dev, ARRAY_SIZE(ctx->supplies),
+> +				      ctx->supplies);
+> +	if (ret < 0)
+> +		dev_err(ctx->dev, "failed to get regulators: %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int tc358764_probe(struct mipi_dsi_device *dsi)
+> +{
+> +	struct device *dev = &dsi->dev;
+> +	struct tc358764 *ctx;
+> +	int ret;
+> +
+> +	ctx = devm_kzalloc(dev, sizeof(struct tc358764), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	mipi_dsi_set_drvdata(dsi, ctx);
+> +
+> +	ctx->dev = dev;
+> +
+> +	dsi->lanes = 4;
+> +	dsi->format = MIPI_DSI_FMT_RGB888;
+> +	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST
+> +		| MIPI_DSI_MODE_VIDEO_AUTO_VERT;
 
-But I would use a different wording for that sentence that does not include
-"let's" which is short for "let us", e.g.
+if you use the mipi_dsi_device_transfer() helper, I guess you'd need to
+add the LPM flag here.
 
-"Chain the SRCU and sched RCU callbacks to wait for both grace periods."
+Looks good to me otherwise. Once the DT port issue is concluded:
 
-With the comments above taken care of, please add my:
+Reviewed-by: Archit Taneja <architt@codeaurora.org>
 
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-
-Thanks,
-
-Mathieu
-
-> +		 */
-> 		call_rcu_sched(&tp_probes->rcu, rcu_free_old_probes);
-> 	}
-> }
-> --
-> 2.17.0.921.gf22659ad46-goog
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+> +
+> +	ret = tc358764_parse_dt(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = tc358764_configure_regulators(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ctx->bridge.funcs = &tc358764_bridge_funcs;
+> +	ctx->bridge.of_node = dev->of_node;
+> +
+> +	drm_bridge_add(&ctx->bridge);
+> +
+> +	ret = mipi_dsi_attach(dsi);
+> +	if (ret < 0) {
+> +		drm_bridge_remove(&ctx->bridge);
+> +		dev_err(dev, "failed to attach dsi\n");
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int tc358764_remove(struct mipi_dsi_device *dsi)
+> +{
+> +	struct tc358764 *ctx = mipi_dsi_get_drvdata(dsi);
+> +
+> +	tc358764_poweroff(ctx);
+> +
+> +	mipi_dsi_detach(dsi);
+> +	drm_bridge_remove(&ctx->bridge);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id tc358764_of_match[] = {
+> +	{ .compatible = "toshiba,tc358764" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, tc358764_of_match);
+> +
+> +static struct mipi_dsi_driver tc358764_driver = {
+> +	.probe = tc358764_probe,
+> +	.remove = tc358764_remove,
+> +	.driver = {
+> +		.name = "tc358764",
+> +		.owner = THIS_MODULE,
+> +		.of_match_table = tc358764_of_match,
+> +	},
+> +};
+> +module_mipi_dsi_driver(tc358764_driver);
+> +
+> +MODULE_AUTHOR("Andrzej Hajda <a.hajda@samsung.com>");
+> +MODULE_AUTHOR("Maciej Purski <m.purski@samsung.com>");
+> +MODULE_DESCRIPTION("MIPI-DSI based Driver for TC358764 DSI/LVDS Bridge");
+> +MODULE_LICENSE("GPL v2");
+> 
