@@ -1,90 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755601AbeEaQHQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:07:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51100 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755456AbeEaQHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:07:15 -0400
-Date: Thu, 31 May 2018 12:07:12 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Alasdair Kergon <agk@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] dm writecache: fix return value check in
- writecache_ctr()
-Message-ID: <20180531160711.GB11300@redhat.com>
-References: <1527767595-76082-1-git-send-email-weiyongjun1@huawei.com>
- <20180531160202.GA11300@redhat.com>
+        id S1755570AbeEaQJT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:09:19 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52824 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755456AbeEaQJQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:09:16 -0400
+Date: Thu, 31 May 2018 18:08:57 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v9 3/7] cpuset: Add cpuset.sched.load_balance flag to v2
+Message-ID: <20180531160857.GM12180@hirez.programming.kicks-ass.net>
+References: <1527601294-3444-1-git-send-email-longman@redhat.com>
+ <1527601294-3444-4-git-send-email-longman@redhat.com>
+ <20180531122638.GJ12180@hirez.programming.kicks-ass.net>
+ <42cc1f44-2355-1c0c-b575-49c863303c42@redhat.com>
+ <20180531152050.GK12180@hirez.programming.kicks-ass.net>
+ <ebe7f0c1-b2dc-57ad-e5cb-7edf0fee4626@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180531160202.GA11300@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <ebe7f0c1-b2dc-57ad-e5cb-7edf0fee4626@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31 2018 at 12:02pm -0400,
-Mike Snitzer <snitzer@redhat.com> wrote:
-
-> On Thu, May 31 2018 at  7:53am -0400,
-> Wei Yongjun <weiyongjun1@huawei.com> wrote:
+On Thu, May 31, 2018 at 11:36:39AM -0400, Waiman Long wrote:
+> > I'm on the fence myself; the only thing I'm fairly sure of is that tying
+> > this particular behaviour to the load-balance knob seems off.
 > 
-> > Function dm_io_client_create() and dm_kcopyd_client_create() return
-> > ERR_PTR() not NULL in case of error. The NULL test in the return value
-> > check should be replaced with IS_ERR()
-> > 
-> > Fixes: 2105231db61b ("dm: add writecache target")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> >  drivers/md/dm-writecache.c | 10 ++++++----
-> >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-> > index 844c4fb..0b2b436 100644
-> > --- a/drivers/md/dm-writecache.c
-> > +++ b/drivers/md/dm-writecache.c
-> > @@ -1872,9 +1872,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
-> >  	}
-> >  
-> >  	wc->dm_io = dm_io_client_create();
-> > -	if (!wc->dm_io) {
-> > -		r = -ENOMEM;
-> > +	if (IS_ERR(wc->dm_io)) {
-> > +		r = PTR_ERR(wc->dm_io);
-> >  		ti->error = "Unable to allocate dm-io client";
-> > +		wc->dm_io = NULL;
-> >  		goto bad;
-> >  	}
-> >  
-> > @@ -2096,9 +2097,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
-> >  		}
-> >  
-> >  		wc->dm_kcopyd = dm_kcopyd_client_create(&dm_kcopyd_throttle);
-> > -		if (!wc->dm_kcopyd) {
-> > -			r = -ENOMEM;
-> > +		if (IS_ERR(wc->dm_kcopyd)) {
-> > +			r = PTR_ERR(wc->dm_kcopyd);
-> >  			ti->error = "Unable to allocate dm-kcopyd client";
-> > +			wc->dm_kcopyd = NULL;
-> >  			goto bad;
-> >  		}
-> > 
-> 
-> 
-> Yes, I forgot to pull this in.. it got lost in the shuffle.  Mikulas had
-> provided this same change (folded into a larger patch) yesterday, see:
-> https://patchwork.kernel.org/patch/10439345/
-> 
-> I'll get this folded in ASAP.
+> The main reason for doing it this way is that I don't want to have
+> load-balanced partition with no cpu in it. How about we just don't allow
+> consume-all at all. Each partition must have at least 1 cpu.
 
-Turns out I already did fold it in.  My push to linux-next just missed
-today's tree.
+I suspect that might be sufficient. It certainly is for the use-cases
+I'm aware of. You always want a system/control set which runs the
+regular busy work of running a system.
 
-So already taken care of.
+Then you have one (or more) partitions to run your 'important' work.
 
-Thanks for sending the patch though.
+> > I also think we should not mix the 'consume all' thing with the
+> > 'fully-partitioned' thing, as they are otherwise unrelated.
+>
+> The "consume all" and "fully-partitioned" look the same to me. Are you
+> talking about allocating all the CPUs in a partition to sub-partitions
+> so that there is no CPU left in the parent partition?
 
-Mike
+Not sure what you're asking. "consume all" is allowing sub-partitions to
+allocate all CPUs of the parent, such that there are none left.
+
+"fully-partitioned" is N cpus but no load-balancing, also equivalent to
+N 1 CPU parititions.
+
+They are distinct things. Disabling load-balancing should not affect how
+many CPUs can be allocated to sub-partitions, the moment you hit 1 CPU
+the load balancing is effectively off already. Going down to 0 CPUs
+isn't a problem for the load-balancer, it wasn't doing anything anyway.
+
+So the question is if someone really needs the one partition without
+balancing over N separate paritions.
