@@ -1,49 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754018AbeEaHEb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 03:04:31 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34876 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753984AbeEaHE3 (ORCPT
+        id S1754022AbeEaHF4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 03:05:56 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60308 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753825AbeEaHFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 03:04:29 -0400
-X-Google-Smtp-Source: ADUXVKJG8x413A7p5Y8tpO2dKhTcQXYQrmg/d8Cz0IfcTZR3ehMvy9pmByN6Ma44uVtIOMzOvY2wCg==
-Date: Thu, 31 May 2018 12:34:26 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 7/9] PM / Domains: Split genpd_dev_pm_attach()
-Message-ID: <20180531070426.3olmew36foji32ge@vireshk-i7>
-References: <20180529100421.31022-1-ulf.hansson@linaro.org>
- <20180529100421.31022-8-ulf.hansson@linaro.org>
+        Thu, 31 May 2018 03:05:53 -0400
+Date: Thu, 31 May 2018 10:05:18 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Colin King <colin.king@canonical.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] bpf: devmap: remove redundant assignment of dev =
+ dev
+Message-ID: <20180531070518.obnfw5tv23sbpfys@mwanda>
+References: <20180530150916.16808-1-colin.king@canonical.com>
+ <20180530210713.v4cf4wjniwyobfmm@ast-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529100421.31022-8-ulf.hansson@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180530210713.v4cf4wjniwyobfmm@ast-mbp.dhcp.thefacebook.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8909 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805310079
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-05-18, 12:04, Ulf Hansson wrote:
-> To extend genpd to deal with allowing multiple PM domains per device, some
-> of the code in genpd_dev_pm_attach() can be re-used. Let's prepare for this
-> by moving some of the code into a sub-function.
+On Wed, May 30, 2018 at 05:07:15PM -0400, Alexei Starovoitov wrote:
+> On Wed, May 30, 2018 at 04:09:16PM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The assignment dev = dev is redundant and should be removed.
+> > 
+> > Detected by CoverityScan, CID#1469486 ("Evaluation order violation")
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/base/power/domain.c | 60 ++++++++++++++++++++-----------------
->  1 file changed, 33 insertions(+), 27 deletions(-)
+> Applied, Thanks.
+> 
+> Please use [PATCH bpf-next] in the subject next time.
+> See Documentation/bpf/bpf_devel_QA.rst
 
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+Guys, be reasonable...
 
--- 
-viresh
+git log --author=Carpenter | \
+	grep -A1 "Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>" | \
+	grep -v Carpenter | grep Signed | cut -d '<' -f 1 | sort -u | wc -l
+
+I have sent patches to 206 maintainers.  It doesn't scale for everyone
+to have their own special document for sending patches.
+
+I asked this last time, and I even skimmed your document, but how are
+people supposed to go from linux-next to the correct bpf-next git tree?
+It's a pain for me to do this for net, but net is way larger and busier
+than any other tree.  I know it's a bit rude for me to say that you guys
+are not as important as net, but that's how I feel.  I'm only going to
+report bugs instead of writing patches if you guys are going to insist
+on all sorts of new rules.
+
+regards,
+dan carpenter
