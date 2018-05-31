@@ -1,65 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755477AbeEaOu5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:50:57 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37118 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755352AbeEaOut (ORCPT
+        id S1755513AbeEaOvJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:51:09 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:52460 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755377AbeEaOuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:50:49 -0400
-X-Google-Smtp-Source: ADUXVKJxFtYC8hLJFVruZTPg8Ivrbv6fBD8tnsXPXmYSB6af0TU2rJym3zG19DG/NsoPo+fktYa7zg==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH BUGFIX 0/3] three fixes for the function
- bfq_requests_merged
-From: Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <d2f92f58-598f-d75c-8120-71cf269738fe@kernel.dk>
-Date: Thu, 31 May 2018 16:50:46 +0200
-Cc: linux-block <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        oleksandr@natalenko.name, filippo.muzzini@outlook.it
-Message-Id: <3C2F9AF5-C988-4D53-A24C-2D69A71F9F29@linaro.org>
-References: <20180531132313.2986-1-paolo.valente@linaro.org>
- <d2f92f58-598f-d75c-8120-71cf269738fe@kernel.dk>
-To: Jens Axboe <axboe@kernel.dk>
-X-Mailer: Apple Mail (2.3445.6.18)
+        Thu, 31 May 2018 10:50:52 -0400
+X-Google-Smtp-Source: ADUXVKKyg17aYw1WC8/bT5xiHBN6VXmYaTLWsIv7OyrKVxx5O/crf0MlAJAg1RZIJF2wMuF1bLbQiQ==
+From: Tycho Andersen <tycho@tycho.ws>
+To: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org
+Cc: Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>, Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        "Tobin C . Harding" <me@tobin.cc>, Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH v3 2/4] seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
+Date: Thu, 31 May 2018 08:49:47 -0600
+Message-Id: <20180531144949.24995-3-tycho@tycho.ws>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180531144949.24995-1-tycho@tycho.ws>
+References: <20180531144949.24995-1-tycho@tycho.ws>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VEpPeR019791
 
+In the next commit we'll use this same mnemonic to get a listener for the
+nth filter, so we need it available outside of CHECKPOINT_RESTORE. This is
+slightly looser than necessary, because it really could be
+CHECKPOINT_RESTORE || USER_NOTIFICATION, but it's declared static and this
+complicates the code less, so hopefully it's ok.
 
+v2: new in v2
+v3: no changes
 
-> Il giorno 31 mag 2018, alle ore 16:48, Jens Axboe <axboe@kernel.dk> ha scritto:
-> 
-> On 5/31/18 7:23 AM, Paolo Valente wrote:
->> Hi Jens,
->> this series fixes three bugs in bfq_requests_merged. In more detail:
->> 
->> - two linked bugs, with the first (critical: wrong lock) hidden by the
->>  second (less critical: wrong check that made the body of the
->>  function not be executed at all)
->> - a rather minor bug: superflous code
-> 
-> Patch #2 doesn't apply on for-4.18/block.
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+CC: Kees Cook <keescook@chromium.org>
+CC: Andy Lutomirski <luto@amacapital.net>
+CC: Oleg Nesterov <oleg@redhat.com>
+CC: Eric W. Biederman <ebiederm@xmission.com>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: Christian Brauner <christian.brauner@ubuntu.com>
+CC: Tyler Hicks <tyhicks@canonical.com>
+CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+---
+ kernel/seccomp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Yep, it gave some problems to me too, because we happened to move this
-patch around by email.
-
-> I hand applied it, all
-> 3 are queued up now.
-> 
-
-Thanks for the patience and for queueing these fixes.
-
-Paolo
-
-> -- 
-> Jens Axboe
-> 
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index f69327d5f7c7..4a6d6bd80d07 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -1168,7 +1168,7 @@ long prctl_set_seccomp(unsigned long seccomp_mode, char __user *filter)
+ 	return do_seccomp(op, 0, uargs);
+ }
+ 
+-#if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_CHECKPOINT_RESTORE)
++#if defined(CONFIG_SECCOMP_FILTER)
+ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
+ 					     unsigned long filter_off)
+ {
+@@ -1215,6 +1215,7 @@ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
+ 	return filter;
+ }
+ 
++#if defined(CONFIG_CHECKPOINT_RESTORE)
+ long seccomp_get_filter(struct task_struct *task, unsigned long filter_off,
+ 			void __user *data)
+ {
+@@ -1287,7 +1288,8 @@ long seccomp_get_metadata(struct task_struct *task,
+ 	__put_seccomp_filter(filter);
+ 	return ret;
+ }
+-#endif
++#endif /* CONFIG_CHECKPOINT_RESTORE */
++#endif /* CONFIG_SECCOMP_FILTER */
+ 
+ #ifdef CONFIG_SYSCTL
+ 
+-- 
+2.17.0
