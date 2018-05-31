@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755612AbeEaQJn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:09:43 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51390 "EHLO
+        id S1755644AbeEaQJt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:09:49 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51480 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755578AbeEaQJl (ORCPT
+        with ESMTP id S1755615AbeEaQJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:09:41 -0400
+        Thu, 31 May 2018 12:09:44 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Xie Yisheng <xieyisheng1@huawei.com>
 Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
@@ -15,18 +15,19 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
         Yisheng Xie <xieyisheng1@huawei.com>, alsa-devel@alsa-project.org,
         Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: dapm: use match_string() helper" to the asoc tree
-In-Reply-To: <1526903890-35761-34-git-send-email-xieyisheng1@huawei.com>
-Message-Id: <E1fOQ8w-0003A4-5a@debutante>
-Date: Thu, 31 May 2018 17:09:38 +0100
+        andy.shevchenko@gmail.com, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: max98095: use match_string() helper" to the asoc tree
+In-Reply-To: <1527765086-19873-18-git-send-email-xieyisheng1@huawei.com>
+Message-Id: <E1fOQ8z-0003BE-Nh@debutante>
+Date: Thu, 31 May 2018 17:09:41 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: dapm: use match_string() helper
+   ASoC: max98095: use match_string() helper
 
 has been applied to the asoc tree at
 
@@ -51,15 +52,14 @@ to this mail.
 Thanks,
 Mark
 
->From f9e0b4afd4e9b19e95158962d81b5b776d57ca06 Mon Sep 17 00:00:00 2001
+>From 1567062f17284637519d004ecc5d7ea0d6c754c3 Mon Sep 17 00:00:00 2001
 From: Xie Yisheng <xieyisheng1@huawei.com>
-Date: Thu, 31 May 2018 19:11:23 +0800
-Subject: [PATCH] ASoC: dapm: use match_string() helper
+Date: Thu, 31 May 2018 19:11:22 +0800
+Subject: [PATCH] ASoC: max98095: use match_string() helper
 
 match_string() returns the index of an array for a matching string,
 which can be used instead of open coded variant.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Liam Girdwood <lgirdwood@gmail.com>
 Cc: Mark Brown <broonie@kernel.org>
 Cc: Jaroslav Kysela <perex@perex.cz>
@@ -68,38 +68,33 @@ Cc: alsa-devel@alsa-project.org
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-dapm.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ sound/soc/codecs/max98095.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 2d9709104ec5..1e9a36389667 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -724,18 +724,14 @@ static int dapm_connect_mux(struct snd_soc_dapm_context *dapm,
- 		item = 0;
- 	}
+diff --git a/sound/soc/codecs/max98095.c b/sound/soc/codecs/max98095.c
+index 6bf2d0ba864f..3b3a10da7f40 100644
+--- a/sound/soc/codecs/max98095.c
++++ b/sound/soc/codecs/max98095.c
+@@ -1634,15 +1634,12 @@ static const char *bq_mode_name[] = {"Biquad1 Mode", "Biquad2 Mode"};
+ static int max98095_get_bq_channel(struct snd_soc_component *component,
+ 				   const char *name)
+ {
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(bq_mode_name); i++)
+-		if (strcmp(name, bq_mode_name[i]) == 0)
+-			return i;
++	int ret;
  
--	for (i = 0; i < e->items; i++) {
--		if (!(strcmp(control_name, e->texts[i]))) {
--			path->name = e->texts[i];
--			if (i == item)
--				path->connect = 1;
--			else
--				path->connect = 0;
--			return 0;
--		}
--	}
-+	i = match_string(e->texts, e->items, control_name);
-+	if (i < 0)
-+		return -ENODEV;
-+
-+	path->name = e->texts[i];
-+	path->connect = (i == item);
-+	return 0;
- 
--	return -ENODEV;
+-	/* Shouldn't happen */
+-	dev_err(component->dev, "Bad biquad channel name '%s'\n", name);
+-	return -EINVAL;
++	ret = match_string(bq_mode_name, ARRAY_SIZE(bq_mode_name), name);
++	if (ret < 0)
++		dev_err(component->dev, "Bad biquad channel name '%s'\n", name);
++	return ret;
  }
  
- /* set up initial codec paths */
+ static int max98095_put_bq_enum(struct snd_kcontrol *kcontrol,
 -- 
 2.17.0
