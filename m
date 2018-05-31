@@ -1,58 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755281AbeEaOEJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:04:09 -0400
-Received: from atl4mhob21.registeredsite.com ([209.17.115.115]:45230 "EHLO
-        atl4mhob21.registeredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755225AbeEaOEH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:04:07 -0400
-X-TCPREMOTEIP: 37.74.225.130
-X-Authenticated-UID: mike@milosoftware.com
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH] clk-si544: Properly round requested frequency to nearest match
-Date: Thu, 31 May 2018 16:03:55 +0200
-Message-Id: <1527775435-5017-1-git-send-email-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 1.9.1
+        id S1755326AbeEaOF3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:05:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55484 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755199AbeEaOF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:05:27 -0400
+Date: Thu, 31 May 2018 16:05:24 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: drop in_nmi check from
+ printk_safe_flush_on_panic()
+Message-ID: <20180531140524.4vazxpalztzujcgh@pathway.suse.cz>
+References: <20180530070350.10131-1-sergey.senozhatsky@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530070350.10131-1-sergey.senozhatsky@gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The si544 driver had a rounding problem that using the result of clk_round_rate
-may set the clock to yet another rate, for example:
-clk_round_rate(195000000) = 194999999
-clk_round_rate(194999999) = 194999998
+On Wed 2018-05-30 16:03:50, Sergey Senozhatsky wrote:
+> Drop the in_nmi() check from printk_safe_flush_on_panic()
+> and attempt to re-init (IOW unlock) locked logbuf spinlock
+> from panic CPU regardless of its context. Otherwise,
+> theoretically, we can deadlock on logbuf trying to flush
+> per-CPU buffers:
+> a) Panic CPU is running in non-NMI context
+> b) Panic CPU sends out shutdown IPI via reboot vector
+> c) Panic CPU fails to stop all remote CPUs
+> d) Panic CPU sends out shutdown IPI via NMI vector
+>    One of the CPUs that we bring down via NMI vector can hold
+>    logbuf spin lock (theoretically).
+> 
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-Clients would expect that after clk_set_rate(clk, freq2=clk_round_rate(clk, freq)) the
-chip will be running at exactly freq2.
+I have pushed this into printk.git, branch for-4.18.
 
-The problem was in the calculation of the feedback divider, it was always rounded
-down instead of to the nearest possible VCO value.
-
-After this change, the following holds true for any supported frequency:
-actual_freq = clk_round_rate(clk, freq);
-clk_set_rate(clk, actual_freq);
-clk_round_rate(clk, actual_freq) == actual_freq && clk_get_rate(clk) == actual_freq
-
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
----
- drivers/clk/clk-si544.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
-index d437722..e972ffb 100644
---- a/drivers/clk/clk-si544.c
-+++ b/drivers/clk/clk-si544.c
-@@ -207,6 +207,7 @@ static int si544_calc_muldiv(struct clk_si544_muldiv *settings,
- 
- 	/* And the fractional bits using the remainder */
- 	vco = (u64)tmp << 32;
-+	vco += FXO / 2; /* Round to nearest multiple */
- 	do_div(vco, FXO);
- 	settings->fb_div_frac = vco;
- 
--- 
-1.9.1
+Best Regards,
+Petr
