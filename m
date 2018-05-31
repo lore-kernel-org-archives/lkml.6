@@ -1,62 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755435AbeEaOut (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:50:49 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:40622 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755254AbeEaOur (ORCPT
+        id S1755477AbeEaOu5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:50:57 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37118 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755352AbeEaOut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:50:47 -0400
-X-Google-Smtp-Source: ADUXVKKMhoR7Z7odOJ16DwAHcVRLrFW31ojmkB86i8PuQUfdhB2ujnJ6okdOzF3fmFdQUvGBkn256w==
-From: Tycho Andersen <tycho@tycho.ws>
-To: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org
-Cc: Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        "Tobin C . Harding" <me@tobin.cc>, Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH v3 0/4] seccomp trap to userspace
-Date: Thu, 31 May 2018 08:49:45 -0600
-Message-Id: <20180531144949.24995-1-tycho@tycho.ws>
-X-Mailer: git-send-email 2.17.0
+        Thu, 31 May 2018 10:50:49 -0400
+X-Google-Smtp-Source: ADUXVKJxFtYC8hLJFVruZTPg8Ivrbv6fBD8tnsXPXmYSB6af0TU2rJym3zG19DG/NsoPo+fktYa7zg==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH BUGFIX 0/3] three fixes for the function
+ bfq_requests_merged
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <d2f92f58-598f-d75c-8120-71cf269738fe@kernel.dk>
+Date: Thu, 31 May 2018 16:50:46 +0200
+Cc: linux-block <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "'Paolo Valente' via bfq-iosched"
+        <bfq-iosched@googlegroups.com>,
+        oleksandr@natalenko.name, filippo.muzzini@outlook.it
+Message-Id: <3C2F9AF5-C988-4D53-A24C-2D69A71F9F29@linaro.org>
+References: <20180531132313.2986-1-paolo.valente@linaro.org>
+ <d2f92f58-598f-d75c-8120-71cf269738fe@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VEpPeR019791
 
-Hi all,
 
-Here's a v3 of the seccomp trap to userspace, with all the nits from v2
-fixed. Open questions from v2 are still:
 
-1. is it ok not to use netlink?
-2. what should the fd passing API look like? (see patch notes on this
-   one for details of why the current one might (?) be a problem)
+> Il giorno 31 mag 2018, alle ore 16:48, Jens Axboe <axboe@kernel.dk> ha scritto:
+> 
+> On 5/31/18 7:23 AM, Paolo Valente wrote:
+>> Hi Jens,
+>> this series fixes three bugs in bfq_requests_merged. In more detail:
+>> 
+>> - two linked bugs, with the first (critical: wrong lock) hidden by the
+>>  second (less critical: wrong check that made the body of the
+>>  function not be executed at all)
+>> - a rather minor bug: superflous code
+> 
+> Patch #2 doesn't apply on for-4.18/block.
 
-As an added bonus, I've also written some stress testing, with lots of
-tasks and listeners (1000 of each) sharing the same notification thread,
-and not found any issues so far. Code is here:
-https://github.com/tych0/kernel-utils/blob/master/seccomp/notify_stress.c
-although I haven't included it in the patchset.
+Yep, it gave some problems to me too, because we happened to move this
+patch around by email.
 
-v2: https://lkml.org/lkml/2018/5/17/627
+> I hand applied it, all
+> 3 are queued up now.
+> 
 
-Tycho Andersen (4):
-  seccomp: add a return code to trap to userspace
-  seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
-  seccomp: add a way to get a listener fd from ptrace
-  seccomp: add support for passing fds via USER_NOTIF
+Thanks for the patience and for queueing these fixes.
 
- arch/Kconfig                                  |   7 +
- include/linux/seccomp.h                       |  14 +-
- include/uapi/linux/ptrace.h                   |   2 +
- include/uapi/linux/seccomp.h                  |  20 +-
- kernel/ptrace.c                               |   4 +
- kernel/seccomp.c                              | 477 +++++++++++++++++-
- tools/testing/selftests/seccomp/seccomp_bpf.c | 373 +++++++++++++-
- 7 files changed, 889 insertions(+), 8 deletions(-)
+Paolo
 
--- 
-2.17.0
+> -- 
+> Jens Axboe
+> 
