@@ -1,167 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754277AbeEaJzK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:55:10 -0400
-Received: from ozlabs.org ([203.11.71.1]:59433 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754092AbeEaJzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:55:08 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH 0/8] Remove unneccessary included headers
-In-Reply-To: <cover.1527697995.git.christophe.leroy@c-s.fr>
-References: <cover.1527697995.git.christophe.leroy@c-s.fr>
-Date: Thu, 31 May 2018 19:55:03 +1000
-Message-ID: <87bmcwywso.fsf@concordia.ellerman.id.au>
+        id S1754361AbeEaJzW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:55:22 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:39284 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754325AbeEaJzU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 05:55:20 -0400
+X-Google-Smtp-Source: ADUXVKIYA57jyB8XA8LqnuBTeHIAjDvTXa2pHhhMlrmSWGLD8uCr9P9/kZu+wWvFGqyQD6aTaWa01g==
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+In-Reply-To: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Thu, 31 May 2018 18:55:06 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5C7zB5r3S85vbUWyaUHinMREmk2=2osWpU9AQihYMPhRw@mail.gmail.com>
+Message-ID: <CAAFQd5C7zB5r3S85vbUWyaUHinMREmk2=2osWpU9AQihYMPhRw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/29] Venus updates
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+Hi Stanimir,
 
-> The purpose of this serie is to limit the number of includes to
-> only the necessary ones in order to reduce the number of files
-> recompiled everytime a header file is modified.
+On Tue, May 15, 2018 at 5:14 PM Stanimir Varbanov
+<stanimir.varbanov@linaro.org> wrote:
 >
-> This is the start of the work, please provide feedback if any so
-> that I don't go in the wrong direction.
+> Hello,
+>
+> Here is v2 with following comments addressed:
+>
+> * reworked venus suspend 3xx and reuse it for 4xx.
+> * drop 10/28 patch from v1, i.e. call of session_continue when
+>   buffer requirements are not sufficient.
+> * fixed kbuild test robot warning in 11/28 by allocating instance
+>   variable from heap.
+> * spelling typo in 15/28.
+> * added Reviewed-by for DT changes.
+> * extended 28/28 HEVC support for encoder, now the profile and
+>   level are selected properly.
+>
+> Comments are welcome!
 
-Thanks for starting on this.
+Thanks a lot for the series. I finally managed to finish reviewing it.
+Sorry for taking so long.
 
-There's a few build errors, summary below.
+For the patches I didn't send any comments for, please feel free to
+add my Reviewed-by.
 
-  http://kisskb.ellerman.id.au/kisskb/head/14031/
-
-cheers
-
-arch/powerpc/kernel/machine_kexec.c:140:26: error: 'KDUMP_KERNELBASE' undeclared (first use in this function):
-  corenet32_smp_defconfig powerpc
-  corenet32_smp_defconfig powerpc-5.3
-  g5_defconfig powerpc
-  g5_defconfig powerpc-5.3
-  gamecube_defconfig powerpc
-  gamecube_defconfig powerpc-5.3
-  maple_defconfig powerpc
-  maple_defconfig powerpc-5.3
-  mpc85xx_defconfig powerpc
-  mpc85xx_defconfig powerpc-5.3
-  mpc85xx_smp_defconfig powerpc
-  mpc85xx_smp_defconfig powerpc-5.3
-  mpc86xx_defconfig powerpc
-  mpc86xx_defconfig powerpc-5.3
-  powernv_defconfig+NO_NUMA ppc64le
-  powernv_defconfig+NO_PERF ppc64le
-  powernv_defconfig+NO_RADIX ppc64le
-  powernv_defconfig+STRICT_RWX ppc64le
-  powernv_defconfig+THIN ppc64le
-  powerpc-randconfig powerpc-5.3
-  ppc64e_defconfig+KEXEC powerpc
-  ppc64e_defconfig+KEXEC powerpc-5.3
-  ps3_defconfig powerpc
-  ps3_defconfig powerpc-5.3
-  pseries_defconfig powerpc
-  pseries_defconfig powerpc-5.3
-  pseries_defconfig+NO_MEMORY_HOTPLUG powerpc
-  pseries_defconfig+NO_MEMORY_HOTPLUG powerpc-5.3
-  pseries_defconfig+NO_MEMORY_HOTREMOVE powerpc
-  pseries_defconfig+NO_SPLPAR powerpc
-  pseries_defconfig+NO_SPLPAR powerpc-5.3
-  pseries_le_defconfig ppc64le
-  pseries_le_defconfig+NO_NUMA ppc64le
-  pseries_le_defconfig+NO_SPLPAR ppc64le
-  skiroot_defconfig ppc64le
-  wii_defconfig powerpc
-  wii_defconfig powerpc-5.3
-
-arch/powerpc/include/asm/cputable.h:146:23: error: implicit declaration of function 'ASM_CONST' [-Werror=implicit-function-declaration]:
-  amigaone_defconfig powerpc-5.3
-  corenet_basic_defconfig powerpc-5.3
-  holly_defconfig powerpc-5.3
-  mpc85xx_basic_defconfig powerpc-5.3
-  pmac32_defconfig powerpc-5.3
-  pmac32_defconfig+KVM powerpc-5.3
-  pmac32_defconfig+kexec powerpc-5.3
-
-arch/powerpc/include/asm/cputable.h:538:6: error: enumerator value for 'CPU_FTRS_POSSIBLE' is not an integer constant:
-  44x/akebono_defconfig powerpc
-  44x/akebono_defconfig powerpc-5.3
-  44x/currituck_defconfig powerpc
-  44x/currituck_defconfig powerpc-5.3
-  amigaone_defconfig powerpc
-  amigaone_defconfig powerpc-5.3
-  chrp32_defconfig powerpc
-  chrp32_defconfig powerpc-5.3
-  corenet_basic_defconfig powerpc
-  corenet_basic_defconfig powerpc-5.3
-  holly_defconfig powerpc
-  holly_defconfig powerpc-5.3
-  mpc85xx_basic_defconfig powerpc
-  mpc85xx_basic_defconfig powerpc-5.3
-  pmac32_defconfig powerpc
-  pmac32_defconfig powerpc-5.3
-  pmac32_defconfig+KVM powerpc
-  pmac32_defconfig+KVM powerpc-5.3
-  pmac32_defconfig+SMP powerpc
-  pmac32_defconfig+SMP powerpc-5.3
-  pmac32_defconfig+kexec powerpc
-  pmac32_defconfig+kexec powerpc-5.3
-  ppc6xx_defconfig powerpc
-  ppc6xx_defconfig powerpc-5.3
-
-arch/powerpc/include/asm/cputable.h:614:6: error: enumerator value for 'CPU_FTRS_ALWAYS' is not an integer constant:
-  44x/akebono_defconfig powerpc
-  44x/akebono_defconfig powerpc-5.3
-  44x/currituck_defconfig powerpc
-  44x/currituck_defconfig powerpc-5.3
-  amigaone_defconfig powerpc
-  amigaone_defconfig powerpc-5.3
-  chrp32_defconfig powerpc
-  chrp32_defconfig powerpc-5.3
-  corenet_basic_defconfig powerpc
-  corenet_basic_defconfig powerpc-5.3
-  holly_defconfig powerpc
-  holly_defconfig powerpc-5.3
-  mpc85xx_basic_defconfig powerpc
-  mpc85xx_basic_defconfig powerpc-5.3
-  pmac32_defconfig powerpc
-  pmac32_defconfig powerpc-5.3
-  pmac32_defconfig+KVM powerpc
-  pmac32_defconfig+KVM powerpc-5.3
-  pmac32_defconfig+SMP powerpc
-  pmac32_defconfig+SMP powerpc-5.3
-  pmac32_defconfig+kexec powerpc
-  pmac32_defconfig+kexec powerpc-5.3
-  ppc6xx_defconfig powerpc
-  ppc6xx_defconfig powerpc-5.3
-
-arch/powerpc/include/asm/cputable.h:505:6: error: implicit declaration of function 'ASM_CONST' [-Werror=implicit-function-declaration]:
-  amigaone_defconfig powerpc
-  chrp32_defconfig powerpc
-  corenet_basic_defconfig powerpc
-  holly_defconfig powerpc
-  mpc85xx_basic_defconfig powerpc
-  pmac32_defconfig powerpc
-  pmac32_defconfig+KVM powerpc
-  pmac32_defconfig+SMP powerpc
-  pmac32_defconfig+kexec powerpc
-  ppc6xx_defconfig powerpc
-
-arch/powerpc/kernel/machine_kexec.c:155:22: error: 'KDUMP_KERNELBASE' undeclared (first use in this function):
-  44x/fsp2_defconfig powerpc-5.3
-
-arch/powerpc/include/asm/cputable.h:158:32: error: implicit declaration of function 'ASM_CONST' [-Werror=implicit-function-declaration]:
-  44x/akebono_defconfig powerpc-5.3
-  44x/currituck_defconfig powerpc-5.3
-  chrp32_defconfig powerpc-5.3
-  pmac32_defconfig+SMP powerpc-5.3
-  ppc6xx_defconfig powerpc-5.3
-
-arch/powerpc/include/asm/cputable.h:515:6: error: implicit declaration of function 'ASM_CONST' [-Werror=implicit-function-declaration]:
-  44x/akebono_defconfig powerpc
-  44x/currituck_defconfig powerpc
+Best regards,
+Tomasz
