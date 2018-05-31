@@ -1,334 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754404AbeEaJzi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:55:38 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:58978 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754379AbeEaJzd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:55:33 -0400
+        id S1754434AbeEaJ4G (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:56:06 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8216 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754092AbeEaJ4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 05:56:05 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: let sync node IO interrupt async one
+Date: Thu, 31 May 2018 17:55:37 +0800
+Message-ID: <20180531095537.53898-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.17.0.391.g1f1cddd558b5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date: Thu, 31 May 2018 11:55:31 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <80eb6a514e96cdbd460c6a0937a9dff9@agner.ch>
-References: <20180527215442.14760-4-stefan@agner.ch>
- <80eb6a514e96cdbd460c6a0937a9dff9@agner.ch>
-Message-ID: <149e568a8c914c4ea861037d5d51ce94@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[25];
-         BAYES_HAM(-3.00)[100.00%];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         TO_DN_NONE(0.00)[];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31.05.2018 11:37, Stefan Agner wrote:
-> On 27.05.2018 23:54, Stefan Agner wrote:
->> Add support for the NAND flash controller found on NVIDIA
->> Tegra 2 SoCs. This implementation does not make use of the
->> command queue feature. Regular operations/data transfers are
->> done in PIO mode. Page read/writes with hardware ECC make
->> use of the DMA for data transfer.
->>
->> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  MAINTAINERS                       |   7 +
->>  drivers/mtd/nand/raw/Kconfig      |   6 +
->>  drivers/mtd/nand/raw/Makefile     |   1 +
->>  drivers/mtd/nand/raw/tegra_nand.c | 999 ++++++++++++++++++++++++++++++
->>  4 files changed, 1013 insertions(+)
->>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
->>
-> [...]
->> +
->> +	chip->ecc.read_page = tegra_nand_read_page_hwecc;
->> +	chip->ecc.write_page = tegra_nand_write_page_hwecc;
->> +	/* Not functional for unknown reason...
->> +	chip->ecc.read_page_raw = tegra_nand_read_page;
->> +	chip->ecc.write_page_raw = tegra_nand_write_page;
->> +	*/
-> 
-> I am giving up on these raw read/write_page functions. Using DMA without
-> HW ECC just seems not to work.
-> 
-> I do not get the CMD_DONE interrupt as I do when using DMA with HW ECC.
-> I tried with the same settings, just not enabling DMA (HW_ECC not set,
-> HW_ERR_CORRECTION not set, and also with/without PIPELINE_EN).
+Although mixed sync/async IOs can have continuous LBA, as they have
+different IO priority, block IO scheduler will add them into different
+queues and commit them separately, result in splited IOs which causes
+wrose performance.
 
-s/not enabling DMA/not enabling HW ECC/
+This patch gives high priority to synchronous IO of nodes, means that
+once synchronous flow starts, it can interrupt asynchronous writeback
+flow of system flusher, so more big IOs can be expected.
 
-> 
-> A register dump after a successful read with HW ECC looks like this:
-> [  196.935199] CMD: 0x66890104
-> [  196.938003] STATUS: 0x00000101
-> [  196.941049] ISR: 0x00000000
-> [  196.943865] CONFIG: 0x0084000b
-> [  196.946914] DMA_MST_CTRL: 0x15000004
-> [  196.950481] DMA_CFG_A: 0x00000fff
-> [  196.954361] DMA_CFG_B: 0x00000000
-> [  196.957670] FIFO: 0x0000aa00
-> 
-> Whereas without HW ECC completion times out (using
-> wait_for_completion_timeout already):
-> [  226.128618] tegra-nand 70008000.nand: CMD timeout, last CMD:
-> 0xe6890104                              
-> [  226.135375] CMD: 0xe6890104
-> [  226.138201] STATUS: 0x00000100
-> [  226.141280] ISR: 0x00000100
-> [  226.153372] CONFIG: 0x0084000b
-> [  226.156423] DMA_MST_CTRL: 0x95000004
-> [  226.159989] DMA_CFG_A: 0x00000fff
-> [  226.164084] DMA_CFG_B: 0x00000000
-> [  226.167393] FIFO: 0x0000aa00
-> 
-> It looks to me as if the DMA just does not start the data cycle. The
-> NAND seems to have read the page (RBSY0 is set).
-> 
-> 
-> Note that it is never explicitly stated whether DMA without HW ECC is
-> supported. There is some indication that it should: There are separated
-> bits to enable HW ECC/DMA, the reference manual states "If HW ECC is
-> enabled... " and a block diagram shows separate blocks for the ECC
-> Engine and NAND DMA control.
-> 
-> There is also indication that it does not: The chapter Restrictions
-> reads: "HW_ERR_CORRECTION = 0/1, doesn’t alter controller hardware
-> behavior. Software error correction scheme with HW_ERR_CORRECTION = 0,
-> is deprecated in Tegra 2 Processor."
-> 
-> Note that the default implementations nand_(read|write)_page_raw which
-> use exec_op do work fine! Unfortunately, the PIO mode only allows 4
-> bytes in a read cycle, hence raw read/write is slow...
-> 
-> --
-> Stefan
-> 
-> 
->> +	config = readl(ctrl->regs + CFG);
->> +	config |= CFG_PIPE_EN | CFG_SKIP_SPARE | CFG_SKIP_SPARE_SIZE_4;
->> +
->> +	if (chip->options & NAND_BUSWIDTH_16)
->> +		config |= CFG_BUS_WIDTH_16;
->> +
->> +	switch (chip->ecc.algo) {
->> +	case NAND_ECC_RS:
->> +		bits_per_step = BITS_PER_STEP_RS * chip->ecc.strength;
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_rs_ops);
->> +		switch (chip->ecc.strength) {
->> +		case 4:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_4;
->> +			break;
->> +		case 6:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_6;
->> +			break;
->> +		case 8:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_8;
->> +			break;
->> +		default:
->> +			dev_err(dev, "ECC strength %d not supported\n",
->> +				chip->ecc.strength);
->> +			return -EINVAL;
->> +		}
->> +		break;
->> +	case NAND_ECC_BCH:
->> +		bits_per_step = BITS_PER_STEP_BCH * chip->ecc.strength;
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_bch_ops);
->> +		switch (chip->ecc.strength) {
->> +		case 4:
->> +			bch_config = BCH_TVAL_4;
->> +			break;
->> +		case 8:
->> +			bch_config = BCH_TVAL_8;
->> +			break;
->> +		case 14:
->> +			bch_config = BCH_TVAL_14;
->> +			break;
->> +		case 16:
->> +			bch_config = BCH_TVAL_16;
->> +			break;
->> +		default:
->> +			dev_err(dev, "ECC strength %d not supported\n",
->> +				chip->ecc.strength);
->> +			return -EINVAL;
->> +		}
->> +		break;
->> +	default:
->> +		dev_err(dev, "ECC algorithm not supported\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	chip->ecc.bytes = DIV_ROUND_UP(bits_per_step, 8);
->> +
->> +	switch (mtd->writesize) {
->> +	case 256:
->> +		config |= CFG_PS_256;
->> +		break;
->> +	case 512:
->> +		config |= CFG_PS_512;
->> +		break;
->> +	case 1024:
->> +		config |= CFG_PS_1024;
->> +		break;
->> +	case 2048:
->> +		config |= CFG_PS_2048;
->> +		break;
->> +	case 4096:
->> +		config |= CFG_PS_4096;
->> +		break;
->> +	default:
->> +		dev_err(dev, "unhandled writesize %d\n", mtd->writesize);
->> +		return -ENODEV;
->> +	}
->> +
->> +	writel(config, ctrl->regs + CFG);
->> +	writel(bch_config, ctrl->regs + BCH_CONFIG);
->> +
->> +	err = nand_scan_tail(mtd);
->> +	if (err)
->> +		return err;
->> +
->> +	config |= CFG_TAG_BYTE_SIZE(mtd_ooblayout_count_freebytes(mtd) - 1);
->> +	writel(config, ctrl->regs + CFG);
->> +
->> +	err = mtd_device_register(mtd, NULL, 0);
->> +	if (err)
->> +		return err;
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_probe(struct platform_device *pdev)
->> +{
->> +	struct reset_control *rst;
->> +	struct tegra_nand_controller *ctrl;
->> +	struct resource *res;
->> +	unsigned long value;
->> +	int irq, err = 0;
->> +
->> +	ctrl = devm_kzalloc(&pdev->dev, sizeof(*ctrl), GFP_KERNEL);
->> +	if (!ctrl)
->> +		return -ENOMEM;
->> +
->> +	ctrl->dev = &pdev->dev;
->> +	nand_hw_control_init(&ctrl->controller);
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	ctrl->regs = devm_ioremap_resource(&pdev->dev, res);
->> +	if (IS_ERR(ctrl->regs))
->> +		return PTR_ERR(ctrl->regs);
->> +
->> +	rst = devm_reset_control_get(&pdev->dev, "nand");
->> +	if (IS_ERR(rst))
->> +		return PTR_ERR(rst);
->> +
->> +	ctrl->clk = devm_clk_get(&pdev->dev, "nand");
->> +	if (IS_ERR(ctrl->clk))
->> +		return PTR_ERR(ctrl->clk);
->> +
->> +	err = clk_prepare_enable(ctrl->clk);
->> +	if (err)
->> +		return err;
->> +
->> +	reset_control_reset(rst);
->> +
->> +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
->> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
->> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
->> +	writel(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
->> +	writel(value, ctrl->regs + HWSTATUS_MASK);
->> +
->> +	init_completion(&ctrl->command_complete);
->> +	init_completion(&ctrl->dma_complete);
->> +
->> +	/* clear interrupts */
->> +	value = readl(ctrl->regs + ISR);
->> +	writel(value, ctrl->regs + ISR);
->> +
->> +	irq = platform_get_irq(pdev, 0);
->> +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
->> +			       dev_name(&pdev->dev), ctrl);
->> +	if (err)
->> +		goto err_disable_clk;
->> +
->> +	writel(DMA_CTRL_IS_DONE, ctrl->regs + DMA_CTRL);
->> +
->> +	/* enable interrupts */
->> +	value = IER_UND | IER_OVR | IER_CMD_DONE | IER_ECC_ERR | IER_GIE;
->> +	writel(value, ctrl->regs + IER);
->> +
->> +	/* reset config */
->> +	writel(0, ctrl->regs + CFG);
->> +
->> +	err = tegra_nand_chips_init(ctrl->dev, ctrl);
->> +	if (err)
->> +		goto err_disable_clk;
->> +
->> +	platform_set_drvdata(pdev, ctrl);
->> +
->> +	return 0;
->> +
->> +err_disable_clk:
->> +	clk_disable_unprepare(ctrl->clk);
->> +	return err;
->> +}
->> +
->> +static int tegra_nand_remove(struct platform_device *pdev)
->> +{
->> +	struct tegra_nand_controller *ctrl = platform_get_drvdata(pdev);
->> +
->> +	nand_release(nand_to_mtd(ctrl->chip));
->> +
->> +	clk_disable_unprepare(ctrl->clk);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct of_device_id tegra_nand_of_match[] = {
->> +	{ .compatible = "nvidia,tegra20-nand" },
->> +	{ /* sentinel */ }
->> +};
->> +
->> +static struct platform_driver tegra_nand_driver = {
->> +	.driver = {
->> +		.name = "tegra-nand",
->> +		.of_match_table = tegra_nand_of_match,
->> +	},
->> +	.probe = tegra_nand_probe,
->> +	.remove = tegra_nand_remove,
->> +};
->> +module_platform_driver(tegra_nand_driver);
->> +
->> +MODULE_DESCRIPTION("NVIDIA Tegra NAND driver");
->> +MODULE_AUTHOR("Thierry Reding <thierry.reding@nvidia.com>");
->> +MODULE_AUTHOR("Lucas Stach <dev@lynxeye.de>");
->> +MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
->> +MODULE_LICENSE("GPL v2");
->> +MODULE_DEVICE_TABLE(of, tegra_nand_of_match);
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c |  2 ++
+ fs/f2fs/data.c       |  9 +++++----
+ fs/f2fs/f2fs.h       |  2 +-
+ fs/f2fs/file.c       |  2 ++
+ fs/f2fs/gc.c         |  7 +++++++
+ fs/f2fs/node.c       | 16 +++++++++++++---
+ fs/f2fs/super.c      |  3 ++-
+ 7 files changed, 32 insertions(+), 9 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 40b39db317ea..9624a8f7254b 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1089,7 +1089,9 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 
+ 	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
+ 		up_write(&sbi->node_write);
++		atomic_inc(&sbi->wb_sync_req[NODE]);
+ 		err = f2fs_sync_node_pages(sbi, &wbc, false, FS_CP_NODE_IO);
++		atomic_dec(&sbi->wb_sync_req[NODE]);
+ 		if (err) {
+ 			up_write(&sbi->node_change);
+ 			f2fs_unlock_all(sbi);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a2e30c403ef2..8f931d699287 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1933,6 +1933,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	int ret = 0;
+ 	int done = 0;
+ 	struct pagevec pvec;
++	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
+ 	int nr_pages;
+ 	pgoff_t uninitialized_var(writeback_index);
+ 	pgoff_t index;
+@@ -1987,7 +1988,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 			bool submitted = false;
+ 
+ 			/* give a priority to WB_SYNC threads */
+-			if (atomic_read(&F2FS_M_SB(mapping)->wb_sync_req) &&
++			if (atomic_read(&sbi->wb_sync_req[DATA]) &&
+ 					wbc->sync_mode == WB_SYNC_NONE) {
+ 				done = 1;
+ 				break;
+@@ -2107,8 +2108,8 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 
+ 	/* to avoid spliting IOs due to mixed WB_SYNC_ALL and WB_SYNC_NONE */
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
+-		atomic_inc(&sbi->wb_sync_req);
+-	else if (atomic_read(&sbi->wb_sync_req))
++		atomic_inc(&sbi->wb_sync_req[DATA]);
++	else if (atomic_read(&sbi->wb_sync_req[DATA]))
+ 		goto skip_write;
+ 
+ 	blk_start_plug(&plug);
+@@ -2116,7 +2117,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	blk_finish_plug(&plug);
+ 
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
+-		atomic_dec(&sbi->wb_sync_req);
++		atomic_dec(&sbi->wb_sync_req[DATA]);
+ 	/*
+ 	 * if some pages were truncated, we cannot guarantee its mapping->host
+ 	 * to detect pending bios.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1f1dd5d7d453..656fe4bd16d5 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1204,7 +1204,7 @@ struct f2fs_sb_info {
+ 	struct percpu_counter alloc_valid_block_count;
+ 
+ 	/* writeback control */
+-	atomic_t wb_sync_req;			/* count # of WB_SYNC threads */
++	atomic_t wb_sync_req[META];	/* count # of WB_SYNC threads */
+ 
+ 	/* valid inode count */
+ 	struct percpu_counter total_valid_inode_count;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index b7b8ae92abbe..f8a728f81622 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -273,7 +273,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 		goto out;
+ 	}
+ sync_nodes:
++	atomic_inc(&sbi->wb_sync_req[NODE]);
+ 	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic);
++	atomic_dec(&sbi->wb_sync_req[NODE]);
+ 	if (ret)
+ 		goto out;
+ 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 2a97ce7bc91d..9093be6e7a7d 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -473,12 +473,16 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
+ 	block_t start_addr;
+ 	int off;
+ 	int phase = 0;
++	bool fggc = (gc_type == FG_GC);
+ 
+ 	start_addr = START_BLOCK(sbi, segno);
+ 
+ next_step:
+ 	entry = sum;
+ 
++	if (fggc && phase == 2)
++		atomic_inc(&sbi->wb_sync_req[NODE]);
++
+ 	for (off = 0; off < sbi->blocks_per_seg; off++, entry++) {
+ 		nid_t nid = le32_to_cpu(entry->nid);
+ 		struct page *node_page;
+@@ -525,6 +529,9 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
+ 
+ 	if (++phase < 3)
+ 		goto next_step;
++
++	if (fggc)
++		atomic_dec(&sbi->wb_sync_req[NODE]);
+ }
+ 
+ /*
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 513f03d823b6..29030afecdb9 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1596,21 +1596,28 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 	int step = 0;
+ 	int nwritten = 0;
+ 	int ret = 0;
+-	int nr_pages;
++	int nr_pages, done = 0;
+ 
+ 	pagevec_init(&pvec);
+ 
+ next_step:
+ 	index = 0;
+ 
+-	while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
+-				PAGECACHE_TAG_DIRTY))) {
++	while (!done && (nr_pages = pagevec_lookup_tag(&pvec,
++			NODE_MAPPING(sbi), &index, PAGECACHE_TAG_DIRTY))) {
+ 		int i;
+ 
+ 		for (i = 0; i < nr_pages; i++) {
+ 			struct page *page = pvec.pages[i];
+ 			bool submitted = false;
+ 
++			/* give a priority to WB_SYNC threads */
++			if (atomic_read(&sbi->wb_sync_req[NODE]) &&
++					wbc->sync_mode == WB_SYNC_NONE) {
++				done = 1;
++				break;
++			}
++
+ 			/*
+ 			 * flushing sequence with step:
+ 			 * 0. indirect nodes
+@@ -1738,6 +1745,9 @@ static int f2fs_write_node_pages(struct address_space *mapping,
+ 	if (get_pages(sbi, F2FS_DIRTY_NODES) < nr_pages_to_skip(sbi, NODE))
+ 		goto skip_write;
+ 
++	if (atomic_read(&sbi->wb_sync_req))
++		goto skip_write;
++
+ 	trace_f2fs_writepages(mapping->host, wbc, NODE);
+ 
+ 	diff = nr_pages_to_write(sbi, NODE, wbc);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 25863cec143a..73d7d7e51a61 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2362,7 +2362,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < NR_COUNT_TYPE; i++)
+ 		atomic_set(&sbi->nr_pages[i], 0);
+ 
+-	atomic_set(&sbi->wb_sync_req, 0);
++	for (i = 0; i < META; i++)
++		atomic_set(&sbi->wb_sync_req[i], 0);
+ 
+ 	INIT_LIST_HEAD(&sbi->s_list);
+ 	mutex_init(&sbi->umount_mutex);
+-- 
+2.17.0.391.g1f1cddd558b5
