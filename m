@@ -1,66 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755282AbeEaNqs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:46:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51122 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755085AbeEaNqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:46:45 -0400
-Date: Thu, 31 May 2018 08:46:42 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Jiri Slaby <jslaby@suse.cz>, Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org
-Subject: Re: [PATCH v3 1/6] x86/stacktrace: do not unwind after user regs
-Message-ID: <20180531134642.sl2ezvng2cdsyklk@treble>
-References: <20180518064713.26440-1-jslaby@suse.cz>
- <20180518065547.GA18262@gmail.com>
- <20180518224125.w2ty35wngxbzx6kv@treble>
- <20180519074251.GA2952@gmail.com>
- <20180522160609.yppbfdpfoigoyuxg@treble>
+        id S1755244AbeEaNuI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:50:08 -0400
+Received: from muru.com ([72.249.23.125]:45432 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755175AbeEaNuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:50:03 -0400
+Date: Thu, 31 May 2018 06:50:00 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org, bcousson@baylibre.com,
+        paul@pwsan.com, t-kristo@ti.com
+Subject: Re: [PATCH v2 4/6] bus: ti-sysc: Add support for using ti-sysc for
+ MCAN on dra76x
+Message-ID: <20180531135000.GL5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-5-faiz_abbas@ti.com>
+ <20180530145726.GD5705@atomide.com>
+ <0b627ab6-59f1-4a4f-42d2-5d6846adfe0b@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180522160609.yppbfdpfoigoyuxg@treble>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <0b627ab6-59f1-4a4f-42d2-5d6846adfe0b@ti.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 11:06:09AM -0500, Josh Poimboeuf wrote:
-> On Sat, May 19, 2018 at 09:42:51AM +0200, Ingo Molnar wrote:
-> > 
-> > * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > 
-> > > On Fri, May 18, 2018 at 08:55:47AM +0200, Ingo Molnar wrote:
-> > > > 
-> > > > * Jiri Slaby <jslaby@suse.cz> wrote:
-> > > > 
-> > > > > Josh pointed out, that there is no way a frame can be after user regs.
-> > > > > So remove the last unwind and the check.
-> > > > > 
-> > > > > Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> > > > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > > > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > > > > Cc: x86@kernel.org
-> > > > > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> > > > 
-> > > > Josh: an Acked-by or Reviewed-by for the whole series from you would be nice.
-> > > 
-> > > The patches look good, but I want to run it through some testing before
-> > > I give them an ACK.
+* Faiz Abbas <faiz_abbas@ti.com> [180531 10:17]:
+> Hi,
 > 
-> For the series:
+> On Wednesday 30 May 2018 08:27 PM, Tony Lindgren wrote:
+> > * Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
+> >> The dra76x MCAN generic interconnect module has a its own
+> >> format for the bits in the control registers.
+> ...
+> >>  static int sysc_init_pdata(struct sysc *ddata)
+> >>  {
+> >>  	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
+> >> @@ -1441,6 +1457,7 @@ static const struct of_device_id sysc_match[] = {
+> >>  	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
+> >>  	{ .compatible = "ti,sysc-usb-host-fs",
+> >>  	  .data = &sysc_omap4_usb_host_fs, },
+> >> +	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
+> >>  	{  },
+> >>  };
+> > 
+> > Looks good to me. And presumably you checked that no other dra7 modules
+> > use sysconfig register bit layout like this?
+> > 
 > 
-> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> As far as I could see, Yes.
 
-Ingo,
+OK thanks for checking it.
 
-Any chance this can make the next merge window?
+Regards,
 
--- 
-Josh
+Tony
