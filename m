@@ -1,127 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751399AbeEaWRs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:17:48 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:37530 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750880AbeEaWQl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 18:16:41 -0400
-From: Stefan Agner <stefan@agner.ch>
-To: boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com
-Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        stefan@agner.ch, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/6] mtd: rawnand: tegra: add devicetree binding
-Date: Fri,  1 Jun 2018 00:16:34 +0200
-Message-Id: <20180531221637.6017-4-stefan@agner.ch>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180531221637.6017-1-stefan@agner.ch>
-References: <20180531221637.6017-1-stefan@agner.ch>
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[23];
-         BAYES_HAM(-3.00)[100.00%];
-         RCVD_TLS_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         MID_CONTAINS_FROM(1.00)[];
-         ASN(0.00)[asn:13030, ipnet:37.17.238.0/23, country:CH];
-         TO_DN_NONE(0.00)[];
-         ARC_NA(0.00)[]
+        id S1750812AbeEaWUX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 18:20:23 -0400
+Received: from mga09.intel.com ([134.134.136.24]:50331 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750737AbeEaWUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 18:20:22 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
+   d="scan'208";a="228961475"
+Date: Fri, 1 Jun 2018 06:19:35 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Edward Cree <ecree@solarflare.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
+Subject: drivers/net/ethernet/sfc/efx.c:3032:1-20: alloc with no test,
+ possible model on line 3041
+Message-ID: <201806010632.4fsedp9j%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the devicetree binding for the Tegra 2 NAND flash
-controller.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   dd52cb879063ca5470d5a093c32180ba74fa528e
+commit: f8d6203780b73c07dc49ee421fedae8edb76b6e4 sfc: ARFS filter IDs
+date:   5 weeks ago
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+
+coccinelle warnings: (new ones prefixed by >>)
+
+>> drivers/net/ethernet/sfc/efx.c:3032:1-20: alloc with no test, possible model on line 3041
+   drivers/net/ethernet/sfc/efx.c:3032:1-20: alloc with no test, possible model on line 3062
+
+vim +3032 drivers/net/ethernet/sfc/efx.c
+
+  2983	
+  2984	/**************************************************************************
+  2985	 *
+  2986	 * Data housekeeping
+  2987	 *
+  2988	 **************************************************************************/
+  2989	
+  2990	/* This zeroes out and then fills in the invariants in a struct
+  2991	 * efx_nic (including all sub-structures).
+  2992	 */
+  2993	static int efx_init_struct(struct efx_nic *efx,
+  2994				   struct pci_dev *pci_dev, struct net_device *net_dev)
+  2995	{
+  2996		int rc = -ENOMEM, i;
+  2997	
+  2998		/* Initialise common structures */
+  2999		INIT_LIST_HEAD(&efx->node);
+  3000		INIT_LIST_HEAD(&efx->secondary_list);
+  3001		spin_lock_init(&efx->biu_lock);
+  3002	#ifdef CONFIG_SFC_MTD
+  3003		INIT_LIST_HEAD(&efx->mtd_list);
+  3004	#endif
+  3005		INIT_WORK(&efx->reset_work, efx_reset_work);
+  3006		INIT_DELAYED_WORK(&efx->monitor_work, efx_monitor);
+  3007		INIT_DELAYED_WORK(&efx->selftest_work, efx_selftest_async_work);
+  3008		efx->pci_dev = pci_dev;
+  3009		efx->msg_enable = debug;
+  3010		efx->state = STATE_UNINIT;
+  3011		strlcpy(efx->name, pci_name(pci_dev), sizeof(efx->name));
+  3012	
+  3013		efx->net_dev = net_dev;
+  3014		efx->rx_prefix_size = efx->type->rx_prefix_size;
+  3015		efx->rx_ip_align =
+  3016			NET_IP_ALIGN ? (efx->rx_prefix_size + NET_IP_ALIGN) % 4 : 0;
+  3017		efx->rx_packet_hash_offset =
+  3018			efx->type->rx_hash_offset - efx->type->rx_prefix_size;
+  3019		efx->rx_packet_ts_offset =
+  3020			efx->type->rx_ts_offset - efx->type->rx_prefix_size;
+  3021		INIT_LIST_HEAD(&efx->rss_context.list);
+  3022		mutex_init(&efx->rss_lock);
+  3023		spin_lock_init(&efx->stats_lock);
+  3024		efx->vi_stride = EFX_DEFAULT_VI_STRIDE;
+  3025		efx->num_mac_stats = MC_CMD_MAC_NSTATS;
+  3026		BUILD_BUG_ON(MC_CMD_MAC_NSTATS - 1 != MC_CMD_MAC_GENERATION_END);
+  3027		mutex_init(&efx->mac_lock);
+  3028	#ifdef CONFIG_RFS_ACCEL
+  3029		mutex_init(&efx->rps_mutex);
+  3030		spin_lock_init(&efx->rps_hash_lock);
+  3031		/* Failure to allocate is not fatal, but may degrade ARFS performance */
+> 3032		efx->rps_hash_table = kcalloc(EFX_ARFS_HASH_TABLE_SIZE,
+  3033					      sizeof(*efx->rps_hash_table), GFP_KERNEL);
+  3034	#endif
+  3035		efx->phy_op = &efx_dummy_phy_operations;
+  3036		efx->mdio.dev = net_dev;
+  3037		INIT_WORK(&efx->mac_work, efx_mac_work);
+  3038		init_waitqueue_head(&efx->flush_wq);
+  3039	
+  3040		for (i = 0; i < EFX_MAX_CHANNELS; i++) {
+> 3041			efx->channel[i] = efx_alloc_channel(efx, i, NULL);
+  3042			if (!efx->channel[i])
+  3043				goto fail;
+  3044			efx->msi_context[i].efx = efx;
+  3045			efx->msi_context[i].index = i;
+  3046		}
+  3047	
+  3048		/* Higher numbered interrupt modes are less capable! */
+  3049		if (WARN_ON_ONCE(efx->type->max_interrupt_mode >
+  3050				 efx->type->min_interrupt_mode)) {
+  3051			rc = -EIO;
+  3052			goto fail;
+  3053		}
+  3054		efx->interrupt_mode = max(efx->type->max_interrupt_mode,
+  3055					  interrupt_mode);
+  3056		efx->interrupt_mode = min(efx->type->min_interrupt_mode,
+  3057					  interrupt_mode);
+  3058	
+  3059		/* Would be good to use the net_dev name, but we're too early */
+  3060		snprintf(efx->workqueue_name, sizeof(efx->workqueue_name), "sfc%s",
+  3061			 pci_name(pci_dev));
+  3062		efx->workqueue = create_singlethread_workqueue(efx->workqueue_name);
+  3063		if (!efx->workqueue)
+  3064			goto fail;
+  3065	
+  3066		return 0;
+  3067	
+  3068	fail:
+  3069		efx_fini_struct(efx);
+  3070		return rc;
+  3071	}
+  3072	
+
 ---
- .../bindings/mtd/nvidia-tegra20-nand.txt      | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-
-diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-new file mode 100644
-index 000000000000..5cd984ef046b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-@@ -0,0 +1,64 @@
-+NVIDIA Tegra NAND Flash controller
-+
-+Required properties:
-+- compatible: Must be one of:
-+  - "nvidia,tegra20-nand"
-+- reg: MMIO address range
-+- interrupts: interrupt output of the NFC controller
-+- clocks: Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: Must include the following entries:
-+  - nand
-+- resets: Must contain an entry for each entry in reset-names.
-+  See ../reset/reset.txt for details.
-+- reset-names: Must include the following entries:
-+  - nand
-+
-+Optional children nodes:
-+Individual NAND chips are children of the NAND controller node. Currently
-+only one NAND chip supported.
-+
-+Required children node properties:
-+- reg: An integer ranging from 1 to 6 representing the CS line to use.
-+
-+Optional children node properties:
-+- nand-ecc-mode: String, operation mode of the NAND ecc mode. Currently only
-+		 "hw" is supported.
-+- nand-ecc-algo: string, algorithm of NAND ECC.
-+		 Supported values with "hw" ECC mode are: "rs", "bch".
-+- nand-bus-width : See nand.txt
-+- nand-on-flash-bbt: See nand.txt
-+- nand-ecc-strength: integer representing the number of bits to correct
-+		     per ECC step (always 512). Supported strength using HW ECC
-+		     modes are:
-+		     - RS: 4, 6, 8
-+		     - BCH: 4, 8, 14, 16
-+- nand-ecc-maximize: See nand.txt
-+- nand-is-boot-medium: Makes sure only ECC strengths supported by the boot ROM
-+		       are choosen.
-+- wp-gpios: GPIO specifier for the write protect pin.
-+
-+Optional child node of NAND chip nodes:
-+Partitions: see partition.txt
-+
-+  Example:
-+	nand@70008000 {
-+		compatible = "nvidia,tegra20-nand";
-+		reg = <0x70008000 0x100>;
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-+		clock-names = "nand";
-+		resets = <&tegra_car 13>;
-+		reset-names = "nand";
-+
-+		nand-chip@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			nand-bus-width = <8>;
-+			nand-on-flash-bbt;
-+			nand-ecc-algo = "bch";
-+			nand-ecc-strength = <8>;
-+			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-+		};
-+	};
--- 
-2.17.0
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
