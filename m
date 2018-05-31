@@ -1,204 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754175AbeEaIio (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:38:44 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38115 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754071AbeEaIii (ORCPT
+        id S1754121AbeEaIlp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:41:45 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:41745 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754046AbeEaIlj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:38:38 -0400
-X-Google-Smtp-Source: ADUXVKIkbuGAAfSxXiQH56qTVc4Itx/n+Gsl6iD0/ILPI+JGda4xHqQJQQkW98z0459P7zgFVWwBRw==
-Date: Thu, 31 May 2018 09:38:32 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>, "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, Rob Landley <rob@landley.net>
-Subject: Re: [PATCH] kbuild: add machine size to CHEKCFLAGS
-Message-ID: <20180531083832.glzcj23cgucev77v@holly.lan>
-References: <20180530204838.22079-1-luc.vanoostenryck@gmail.com>
+        Thu, 31 May 2018 04:41:39 -0400
+X-Google-Smtp-Source: ADUXVKI3xYUetrHjfusQDohYG0knYSgHy9zXELSZy2xDyO/phYZP2uYsiyXHdbJgYNlD+294i8iPrg==
+Date: Thu, 31 May 2018 10:41:34 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Zefan Li <lizefan@huawei.com>, Waiman Long <longman@redhat.com>,
+        Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH] cpuset: Enforce that a child's cpus must be a subset of
+ the parent
+Message-ID: <20180531084134.GA17937@localhost.localdomain>
+References: <1527687991-1431-1-git-send-email-longman@redhat.com>
+ <5B0F4F09.9050100@huawei.com>
+ <5B0FAE72.1090204@huawei.com>
+ <20180531082613.GF12180@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180530204838.22079-1-luc.vanoostenryck@gmail.com>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <20180531082613.GF12180@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 10:48:38PM +0200, Luc Van Oostenryck wrote:
-> By default, sparse assumes a 64bit machine when compiled on x86-64
-> and 32bit when compiled on anything else.
+On 31/05/18 10:26, Peter Zijlstra wrote:
+> On Thu, May 31, 2018 at 04:12:34PM +0800, Zefan Li wrote:
+> > On 2018/5/31 9:25, Zefan Li wrote:
+> > > Hi Waiman,
+> > > 
+> > > On 2018/5/30 21:46, Waiman Long wrote:
+> > >> It was found that the cpuset.cpus could contain CPUs that are not listed
+> > >> in their parent's cpu list as shown by the command sequence below:
+> > >>
+> > >>   # echo "+cpuset" >cgroup.subtree_control
+> > >>   # mkdir g1
+> > >>   # echo 0-5 >g1/cpuset.cpus
+> > >>   # mkdir g1/g11
+> > >>   # echo "+cpuset" > g1/cgroup.subtree_control
+> > >>   # echo 6-11 >g1/g11/cpuset.cpus
+> > >>   # grep -R . g1 | grep "\.cpus"
+> > >>   g1/cpuset.cpus:0-5
+> > >>   g1/cpuset.cpus.effective:0-5
+> > >>   g1/g11/cpuset.cpus:6-11
+> > >>   g1/g11/cpuset.cpus.effective:0-5
+> > >>
+> > >> As the intersection of g11's cpus and that of g1 is empty, the effective
+> > >> cpus of g11 is just that of g1. The check in update_cpumask() is now
+> > >> corrected to make sure that cpus in a child cpus must be a subset of
+> > >> its parent's cpus. The error "write error: Invalid argument" will now
+> > >> be reported in the above case.
+> > >>
+> > > 
+> > > We made the distinction between user-configured CPUs and effective CPUs
+> > > in commit 7e88291beefbb758, so actually it's not a bug.
+> > > 
+> > 
+> > I remember the original reason is to support restoration of the original
+> > cpu after cpu offline->online. We use user-configured CPUs to remember
+> > if the cpu should be restored in the cpuset after it's onlined.
 > 
-> This can of course create all sort of problems for the other archs, like
-> issuing false warnings ('shift too big (32) for type unsigned long'), or
-> worse, failing to emit legitimate warnings.
-> 
-> Fix this by adding the -m32/-m64 flag, depending on CONFIG_64BIT,
-> to CHECKFLAGS in the main Makefile (and so for all archs).
-> Also, remove the now unneeded -m32/-m64 in arch specific Makefiles.
-> 
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+> AFAICT you can do that and still have the child a subset of the parent,
+> no?
 
-Looks like a good clean up to me. However the typo in the Subject: line
-did attract my attention.
-
-
-Daniel.
-
-
-> ---
->  Makefile             | 3 +++
->  arch/alpha/Makefile  | 2 +-
->  arch/arm/Makefile    | 2 +-
->  arch/arm64/Makefile  | 2 +-
->  arch/ia64/Makefile   | 2 +-
->  arch/mips/Makefile   | 3 ---
->  arch/parisc/Makefile | 2 +-
->  arch/sparc/Makefile  | 2 +-
->  arch/x86/Makefile    | 2 +-
->  9 files changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 6c6610913..18379987c 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -881,6 +881,9 @@ endif
->  # insure the checker run with the right endianness
->  CHECKFLAGS += $(if $(CONFIG_CPU_BIG_ENDIAN),-mbig-endian,-mlittle-endian)
->  
-> +# the checker needs the correct machine size
-> +CHECKFLAGS += $(if $(CONFIG_64BIT),-m64,-m32)
-> +
->  # Default kernel image to build when no specific target is given.
->  # KBUILD_IMAGE may be overruled on the command line or
->  # set in the environment
-> diff --git a/arch/alpha/Makefile b/arch/alpha/Makefile
-> index 2cc3cc519..c5ec8c09c 100644
-> --- a/arch/alpha/Makefile
-> +++ b/arch/alpha/Makefile
-> @@ -11,7 +11,7 @@
->  NM := $(NM) -B
->  
->  LDFLAGS_vmlinux	:= -static -N #-relax
-> -CHECKFLAGS	+= -D__alpha__ -m64
-> +CHECKFLAGS	+= -D__alpha__
->  cflags-y	:= -pipe -mno-fp-regs -ffixed-8
->  cflags-y	+= $(call cc-option, -fno-jump-tables)
->  
-> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> index e4e537f27..f32a5468d 100644
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@ -135,7 +135,7 @@ endif
->  KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -msoft-float -Uarm
->  KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_ISA) $(arch-y) $(tune-y) -include asm/unified.h -msoft-float
->  
-> -CHECKFLAGS	+= -D__arm__ -m32
-> +CHECKFLAGS	+= -D__arm__
->  
->  #Default value
->  head-y		:= arch/arm/kernel/head$(MMUEXT).o
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 87f7d2f9f..3c353b471 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -78,7 +78,7 @@ LDFLAGS		+= -maarch64linux
->  UTS_MACHINE	:= aarch64
->  endif
->  
-> -CHECKFLAGS	+= -D__aarch64__ -m64
-> +CHECKFLAGS	+= -D__aarch64__
->  
->  ifeq ($(CONFIG_ARM64_MODULE_PLTS),y)
->  KBUILD_LDFLAGS_MODULE	+= -T $(srctree)/arch/arm64/kernel/module.lds
-> diff --git a/arch/ia64/Makefile b/arch/ia64/Makefile
-> index 2dd7f519a..45f59808b 100644
-> --- a/arch/ia64/Makefile
-> +++ b/arch/ia64/Makefile
-> @@ -18,7 +18,7 @@ READELF := $(CROSS_COMPILE)readelf
->  
->  export AWK
->  
-> -CHECKFLAGS	+= -m64 -D__ia64=1 -D__ia64__=1 -D_LP64 -D__LP64__
-> +CHECKFLAGS	+= -D__ia64=1 -D__ia64__=1 -D_LP64 -D__LP64__
->  
->  OBJCOPYFLAGS	:= --strip-all
->  LDFLAGS_vmlinux	:= -static
-> diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-> index 5e9fce076..e2122cca4 100644
-> --- a/arch/mips/Makefile
-> +++ b/arch/mips/Makefile
-> @@ -309,9 +309,6 @@ ifdef CONFIG_MIPS
->  CHECKFLAGS += $(shell $(CC) $(KBUILD_CFLAGS) -dM -E -x c /dev/null | \
->  	egrep -vw '__GNUC_(|MINOR_|PATCHLEVEL_)_' | \
->  	sed -e "s/^\#define /-D'/" -e "s/ /'='/" -e "s/$$/'/" -e 's/\$$/&&/g')
-> -ifdef CONFIG_64BIT
-> -CHECKFLAGS		+= -m64
-> -endif
->  endif
->  
->  OBJCOPYFLAGS		+= --remove-section=.reginfo
-> diff --git a/arch/parisc/Makefile b/arch/parisc/Makefile
-> index 348ae4779..714284ea6 100644
-> --- a/arch/parisc/Makefile
-> +++ b/arch/parisc/Makefile
-> @@ -28,7 +28,7 @@ export LIBGCC
->  
->  ifdef CONFIG_64BIT
->  UTS_MACHINE	:= parisc64
-> -CHECKFLAGS	+= -D__LP64__=1 -m64
-> +CHECKFLAGS	+= -D__LP64__=1
->  CC_ARCHES	= hppa64
->  LD_BFD		:= elf64-hppa-linux
->  else # 32-bit
-> diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
-> index edac927e4..966a13d2b 100644
-> --- a/arch/sparc/Makefile
-> +++ b/arch/sparc/Makefile
-> @@ -39,7 +39,7 @@ else
->  # sparc64
->  #
->  
-> -CHECKFLAGS    += -D__sparc__ -D__sparc_v9__ -D__arch64__ -m64
-> +CHECKFLAGS    += -D__sparc__ -D__sparc_v9__ -D__arch64__
->  LDFLAGS       := -m elf64_sparc
->  export BITS   := 64
->  UTS_MACHINE   := sparc64
-> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-> index 60135cbd9..f0a6ea224 100644
-> --- a/arch/x86/Makefile
-> +++ b/arch/x86/Makefile
-> @@ -94,7 +94,7 @@ ifeq ($(CONFIG_X86_32),y)
->  else
->          BITS := 64
->          UTS_MACHINE := x86_64
-> -        CHECKFLAGS += -D__x86_64__ -m64
-> +        CHECKFLAGS += -D__x86_64__
->  
->          biarch := -m64
->          KBUILD_AFLAGS += -m64
-> -- 
-> 2.17.0
-> 
+Plus this is not hotplug, but a user decision. It could make sense to
+keep .cpus unmodified after hotplug events, but does it make sense to
+let the user be able to choose cpus outside the parent domain?
