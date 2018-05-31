@@ -1,110 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754652AbeEaK4b (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:56:31 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:16387 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754464AbeEaK43 (ORCPT
+        id S1754645AbeEaKzv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:55:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45446 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754464AbeEaKzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:56:29 -0400
-Subject: Re: [PATCH v2 5/7] PCI: dwc: Add legacy interrupt callback handler
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
-        <adouglas@cadence.com>, <jesper.nilsson@axis.com>
-References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
- <c94a66476c391f8bdc781384e6d096453c2c885b.1526576613.git.gustavo.pimentel@synopsys.com>
-CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <820a245a-77e9-b231-24df-7e7df7ea0c32@ti.com>
-Date: Thu, 31 May 2018 16:26:15 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Thu, 31 May 2018 06:55:49 -0400
+Date: Thu, 31 May 2018 16:25:38 +0530
+From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: [PATCH -tip v4 24/27] bpf: error-inject: kprobes: Clear
+ current_kprobe and enable preempt in kprobe
+To: Masami Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        Josef Bacik <jbacik@fb.com>, James Hogan <jhogan@kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Ralf Baechle <ralf@linux-mips.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>, Will Deacon <will.deacon@arm.com>,
+        x86@kernel.org
+References: <152749074878.15132.16693721906742461289.stgit@devbox>
+        <152749149794.15132.15817377604536829521.stgit@devbox>
+In-Reply-To: <152749149794.15132.15817377604536829521.stgit@devbox>
+User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
 MIME-Version: 1.0
-In-Reply-To: <c94a66476c391f8bdc781384e6d096453c2c885b.1526576613.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 18053110-0008-0000-0000-000002425340
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053110-0009-0000-0000-000021A7FEC5
+Message-Id: <1527763450.f65xiu4yuz.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=723 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805310126
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Thursday 17 May 2018 10:39 PM, Gustavo Pimentel wrote:
-> Add a legacy interrupt callback handler. Currently DesignWare IP don't
-> allow trigger legacy interrupts.
+Masami Hiramatsu wrote:
+> Clear current_kprobe and enable preemption in kprobe
+> even if pre_handler returns !0.
 > 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> This simplifies function override using kprobes.
+> 
+> Jprobe used to require to keep the preemption disabled and
+> keep current_kprobe until it returned to original function
+> entry. For this reason kprobe_int3_handler() and similar
+> arch dependent kprobe handers checks pre_handler result
+> and exit without enabling preemption if the result is !0.
+> 
+> After removing the jprobe, Kprobes does not need to
+> keep preempt disabled even if user handler returns !0
+> anymore.
 
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+I think the reason jprobes did it that way is to address architecture 
+specific requirements when changing a function. So, without that 
+infrastructure, I am not sure if we will be able to claim support for 
+over-riding functions with kprobes. I am not sure if we want to claim 
+that, but this is something we need to be clear on.
+
+For powerpc, the current function override in error-inject works fine 
+since the new function does nothing. But, if anyone wants to do more 
+work in the replacement function, it won't work with the current 
+approach.
+
+> 
+> But since the function override handler in error-inject
+> and bpf is also returns !0 if it overrides a function,
+> to balancing the preempt count, it enables preemption
+> and reset current kprobe by itself.
+> 
+> That is a bad design that is very buggy. This fixes
+> such unbalanced preempt-count and current_kprobes setting
+> in kprobes, bpf and error-inject.
+> 
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 > ---
-> Change v1->v2:
->  - Nothing changed, just to follow the patch set version.
-> 
->  drivers/pci/dwc/pcie-designware-ep.c   | 10 ++++++++++
->  drivers/pci/dwc/pcie-designware-plat.c |  3 +--
->  drivers/pci/dwc/pcie-designware.h      |  6 ++++++
->  3 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-> index a4baa0d..9822127 100644
-> --- a/drivers/pci/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/dwc/pcie-designware-ep.c
-> @@ -370,6 +370,16 @@ static const struct pci_epc_ops epc_ops = {
->  	.stop			= dw_pcie_ep_stop,
->  };
->  
-> +int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +	struct device *dev = pci->dev;
-> +
-> +	dev_err(dev, "EP cannot trigger legacy IRQs\n");
-> +
-> +	return -EINVAL;
-> +}
-> +
->  int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->  			     u8 interrupt_num)
->  {
-> diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
-> index 654dcb5..90a8c95 100644
-> --- a/drivers/pci/dwc/pcie-designware-plat.c
-> +++ b/drivers/pci/dwc/pcie-designware-plat.c
-> @@ -84,8 +84,7 @@ static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
->  
->  	switch (type) {
->  	case PCI_EPC_IRQ_LEGACY:
-> -		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
-> -		return -EINVAL;
-> +		return dw_pcie_ep_raise_legacy_irq(ep, func_no);
->  	case PCI_EPC_IRQ_MSI:
->  		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
->  	case PCI_EPC_IRQ_MSIX:
-> diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
-> index a0ab12f..69e6e17 100644
-> --- a/drivers/pci/dwc/pcie-designware.h
-> +++ b/drivers/pci/dwc/pcie-designware.h
-> @@ -350,6 +350,7 @@ static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
->  void dw_pcie_ep_linkup(struct dw_pcie_ep *ep);
->  int dw_pcie_ep_init(struct dw_pcie_ep *ep);
->  void dw_pcie_ep_exit(struct dw_pcie_ep *ep);
-> +int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no);
->  int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->  			     u8 interrupt_num);
->  int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
-> @@ -369,6 +370,11 @@ static inline void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
->  {
->  }
->  
-> +static inline int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->  					   u8 interrupt_num)
->  {
-> 
+>  arch/arc/kernel/kprobes.c          |    5 +++--
+>  arch/arm/probes/kprobes/core.c     |   10 +++++-----
+>  arch/arm64/kernel/probes/kprobes.c |   10 +++++-----
+>  arch/ia64/kernel/kprobes.c         |   13 ++++---------
+>  arch/mips/kernel/kprobes.c         |    4 ++--
+>  arch/powerpc/kernel/kprobes.c      |    7 +++++--
+
+I think you should also update arch/powerpc/kernel/kprobes-ftrace.c
+
+- Naveen
