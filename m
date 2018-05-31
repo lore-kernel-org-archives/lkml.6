@@ -1,98 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932677AbeEaBnV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 21:43:21 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:46750 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932593AbeEaBnT (ORCPT
+        id S932706AbeEaBqv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 21:46:51 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:42736 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932593AbeEaBqs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 21:43:19 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w4V1h596029242
-X-Nifty-SrcIP: [209.85.213.46]
-X-Google-Smtp-Source: ADUXVKKB2nSb6IAbeNrV0IcQpMYkAe0huMZsP1Cz5c3eG/ZYOu9wt7c0UtxY4zms0ab8iuCgp9IXHzXYEJPio3BIH9g=
+        Wed, 30 May 2018 21:46:48 -0400
+Subject: Re: [PATCH 0/8] xen: dma-buf support for grant device
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180525153331.31188-1-andr2000@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <9687b6e5-808e-0c63-34c3-90e6fcbdfb2e@oracle.com>
+Date: Wed, 30 May 2018 21:46:28 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180530151736.nzpde2bgzn4koi7f@ast-mbp>
-References: <20180528153222.2037158-1-arnd@arndb.de> <20180530151736.nzpde2bgzn4koi7f@ast-mbp>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 31 May 2018 10:42:24 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATdw+nTQ0O7jBUDTKHaL53ejZ=oTPocFOJ1brtDr-GB1Q@mail.gmail.com>
-Message-ID: <CAK7LNATdw+nTQ0O7jBUDTKHaL53ejZ=oTPocFOJ1brtDr-GB1Q@mail.gmail.com>
-Subject: Re: [PATCH] [net-next, wrong] make BPFILTER_UMH depend on X86
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180525153331.31188-1-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8909 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805310016
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-31 0:17 GMT+09:00 Alexei Starovoitov <alexei.starovoitov@gmail.com>:
-> On Mon, May 28, 2018 at 05:31:01PM +0200, Arnd Bergmann wrote:
->> When build testing across architectures, I run into a build error on
->> all targets other than X86:
->>
->> gcc-8.1.0-nolibc/arm-linux-gnueabi/bin/arm-linux-gnueabi-objdump: net/bpfilter/bpfilter_umh: File format not recognized
->> gcc-8.1.0-nolibc/arm-linux-gnueabi/bin/arm-linux-gnueabi-objcopy:net/bpfilter/bpfilter_umh.o: Invalid bfd target
->>
->> The problem is that 'hostprogs' get built with 'gcc' rather than
->> '$(CROSS_COMPILE)gcc', and my default gcc (as most people's) targets x86.
->>
->> To work around it, adding an X86 dependency gets randconfigs building
->> again on my box.
->>
->> Clearly, this is not a good solution, since it should actually work fine
->> when building native kernels on other architectures but that is now
->> disabled, while cross building an x86 kernel on another host is still
->> broken after my patch.
->>
->> What we probably want here is to try out if the compiler is able to build
->> executables for the target architecture and not build the helper otherwise,
->> at least when compile-testing. No idea how to do that though.
->>
->> Link: http://www.kernel.org/pub/tools/crosstool/
->> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Cc: linux-kbuild@vger.kernel.org
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>  net/bpfilter/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/net/bpfilter/Kconfig b/net/bpfilter/Kconfig
->> index 60725c5f79db..61cc4fcbb4d0 100644
->> --- a/net/bpfilter/Kconfig
->> +++ b/net/bpfilter/Kconfig
->> @@ -9,6 +9,7 @@ menuconfig BPFILTER
->>  if BPFILTER
->>  config BPFILTER_UMH
->>       tristate "bpfilter kernel module with user mode helper"
->> +     depends on X86 # actually depends on native builds
->
-> depends on X86 will break it on arm.
-> I think the better short term fix would be to test that HOSTCC == CC
-> It doesn't have to be the same compiler. HOSTCC's arch == kernel ARCH
-> Not sure how to hack makefile to do that.
-> Long term we need to get rid of HOSTCC dependency.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-Hmm.
-For cross-compiling, we set 'ARCH' via the environment variable or the
-command line.
-
-ARCH is not explicitly set, the top-level Makefile sets it to $(SUBARCH)
 
 
-ARCH ?= $(SUBARCH)
+On 05/25/2018 11:33 AM, Oleksandr Andrushchenko wrote:
+
+> 
+> Oleksandr Andrushchenko (8):
+>    xen/grant-table: Make set/clear page private code shared
+>    xen/balloon: Move common memory reservation routines to a module
+>    xen/grant-table: Allow allocating buffers suitable for DMA
+>    xen/gntdev: Allow mappings for DMA buffers
+>    xen/gntdev: Add initial support for dma-buf UAPI
+>    xen/gntdev: Implement dma-buf export functionality
+>    xen/gntdev: Implement dma-buf import functionality
+>    xen/gntdev: Expose gntdev's dma-buf API for in-kernel use
+> 
+>   drivers/xen/Kconfig           |   23 +
+>   drivers/xen/Makefile          |    1 +
+>   drivers/xen/balloon.c         |   71 +--
+>   drivers/xen/gntdev.c          | 1025 ++++++++++++++++++++++++++++++++-
 
 
-Maybe, we can assume the native build if $(ARCH) and $(SUBARCH) are the same?
+I think this calls for gntdev_dma.c. I only had a quick look over gntdev 
+changes but they very much are concentrated in dma-specific routines.
+
+You essentially only share file_operations entry points with original 
+gntdev code, right?
+
+-boris
 
 
--- 
-Best Regards
-Masahiro Yamada
+>   drivers/xen/grant-table.c     |  176 +++++-
+>   drivers/xen/mem-reservation.c |  134 +++++
+>   include/uapi/xen/gntdev.h     |  106 ++++
+>   include/xen/grant_dev.h       |   37 ++
+>   include/xen/grant_table.h     |   28 +
+>   include/xen/mem_reservation.h |   29 +
+>   10 files changed, 1527 insertions(+), 103 deletions(-)
+>   create mode 100644 drivers/xen/mem-reservation.c
+>   create mode 100644 include/xen/grant_dev.h
+>   create mode 100644 include/xen/mem_reservation.h
+> 
