@@ -1,97 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754082AbeEaIdx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:33:53 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:52498 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754034AbeEaIdu (ORCPT
+        id S1754130AbeEaIfj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:35:39 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36430 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754034AbeEaIff (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:33:50 -0400
-Subject: Re: [PATCH v4 5/5] ARM: dts: imx6qdl: add missing compatible and
- clock properties for EPIT
-To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180530120327.27681-1-peron.clem@gmail.com>
- <20180530120327.27681-6-peron.clem@gmail.com>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <a4042956-24e1-6132-4606-b5b8f4e30023@mentor.com>
-Date: Thu, 31 May 2018 11:33:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Thu, 31 May 2018 04:35:35 -0400
+X-Google-Smtp-Source: ADUXVKINOD9HVd6iRYxCNbFcXm2hUjj4L0HCOkgybcKL2uM5XMn1iKuMkrP7AwS4FrcRQZ54hmqPlg==
+Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+To: Michal Hocko <mhocko@kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Cc: David Miller <davem@davemloft.net>, qing.huang@oracle.com,
+        tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
+References: <20180523232246.20445-1-qing.huang@oracle.com>
+ <20180525.102321.858995452200286788.davem@davemloft.net>
+ <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
+ <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
+ <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
+ <20180531065405.GH15278@dhcp22.suse.cz>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
+Date: Thu, 31 May 2018 04:35:31 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180530120327.27681-6-peron.clem@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+In-Reply-To: <20180531065405.GH15278@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/30/2018 03:03 PM, Clément Péron wrote:
-> From: Colin Didier <colin.didier@devialet.com>
+
+
+On 05/31/2018 02:54 AM, Michal Hocko wrote:
+> On Tue 29-05-18 23:49:59, Eric Dumazet wrote:
+>>
+>>
+>> On 05/29/2018 11:44 PM, Eric Dumazet wrote:
+>>
+>>>
+>>> And I will add this simple fix, this really should address your initial concern much better.
+>>>
+>>> @@ -99,6 +100,8 @@ static int mlx4_alloc_icm_pages(struct scatterlist *mem, int order,
+>>>  {
+>>>         struct page *page;
+>>>  
+>>> +       if (order)
+>>> +               gfp_mask |= __GFP_NORETRY;
+>>
+>>     and also      gfp_mask &= ~__GFP_DIRECT_RECLAIM
 > 
-> Add missing compatible and clock properties for EPIT node.
-> 
-> Signed-off-by: Colin Didier <colin.didier@devialet.com>
-> Signed-off-by: Clément Peron <clement.peron@devialet.com>
-> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-> ---
->  arch/arm/boot/dts/imx6qdl.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-> index c003e62bf290..0feec516847a 100644
-> --- a/arch/arm/boot/dts/imx6qdl.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl.dtsi
-> @@ -844,13 +844,23 @@
->  			};
->  
->  			epit1: epit@20d0000 { /* EPIT1 */
+> JFTR the latter one makes __GFP_NORETRY pointless. Non sleeping allocations
+> are not retrying.
 
-epit1: timer@20d0000 { ...
+Hi Michal
 
-And /* EPIT1 */ comment can be removed, it is quite clear from the same
-line context.
+Since when this rule is applied ?
 
-Formally it is a subject to another patch, but I think this can be
-accepted as a part of this one.
+These GFP flags change all the time, I suggest mm experts to cleanup existing call sites ?
 
-> +				compatible = "fsl,imx6q-epit", "fsl,imx31-epit";
->  				reg = <0x020d0000 0x4000>;
->  				interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks = <&clks IMX6QDL_CLK_IPG_PER>,
-> +					 <&clks IMX6QDL_CLK_EPIT1>;
-> +				clock-names = "ipg", "per";
-> +				status = "disabled";
->  			};
->  
->  			epit2: epit@20d4000 { /* EPIT2 */
+I merely copied/pasted from alloc_skb_with_frags() :/
 
-Same as above.
-
-> +				compatible = "fsl,imx6q-epit", "fsl,imx31-epit";
->  				reg = <0x020d4000 0x4000>;
->  				interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks = <&clks IMX6QDL_CLK_IPG_PER>,
-> +					 <&clks IMX6QDL_CLK_EPIT2>;
-> +				clock-names = "ipg", "per";
-> +				status = "disabled";
->  			};
->  
->  			src: src@20d8000 {
-> 
-
---
-With best wishes,
-Vladimir
+Thanks !
