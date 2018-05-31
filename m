@@ -1,74 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755425AbeEaO55 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:57:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754986AbeEaO5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:57:55 -0400
-Content-Type: text/plain; charset="utf-8"
+        id S1755471AbeEaPCS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:02:18 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:39166 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755369AbeEaPCF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 11:02:05 -0400
+X-Google-Smtp-Source: ADUXVKKZer1rOSvvRK2fLqi7ksiENcndoEvFDyBQoxIrnnJrGgG5CS/Wuk0Jt+CS7s73KoxWfBhPYg==
+Subject: Re: linux-next: build failure after merge of the device-mapper tree
+From: Jens Axboe <axboe@kernel.dk>
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Alasdair G Kergon <agk@redhat.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+References: <20180531142302.5f7b4302@canb.auug.org.au>
+ <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
+ <20180531121041.GB8456@redhat.com>
+ <6ad38822-0bb4-3099-69b0-7a8a36d79403@kernel.dk>
+ <9ed288cd-0e85-1cb6-7be0-d9d76c7af66d@kernel.dk>
+Message-ID: <f5842a01-2bf1-2c18-1531-becae5dc5fb6@kernel.dk>
+Date: Thu, 31 May 2018 09:02:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-        Rob Herring <robh@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030129.GA16122@rob-hp-laptop>
- <20180531071717.GG13528@localhost.localdomain>
- <20180531102315.GA5150@localhost.localdomain>
- <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
-Message-ID: <152777867392.144038.18188452389972834689@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-Date: Thu, 31 May 2018 07:57:53 -0700
+In-Reply-To: <9ed288cd-0e85-1cb6-7be0-d9d76c7af66d@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VEwDgD019853
 
-Quoting Rob Herring (2018-05-31 07:07:24)
-> On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
-> > On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
-> >> Hello Rob,
-> >>
-> >> Thanks for the review!
-> >>
-> >> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
-> >> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
-> >> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> >> > > + - interrupts            : The interrupt line the device is connected to.
-> >> > > + - interrupt-controller  : Marks the device node as an interrupt controller.
-> >> >
-> >> > What sub blocks have interrupts?
-> >>
-> >> The PMIC can generate interrupts from events which cause it to reset.
-> >> Eg, irq from watchdog line change, power button pushes, reset request
-> >> via register interface etc. I don't know any generic handling for these
-> >> interrupts. In "normal" use-case this PMIC is powering the processor
-> >> where driver is running and I do not see reasonable handling because
-> >> power-reset is going to follow the irq.
-> >>
-> >
-> > Oh, but when reading this I understand that the interrupt-controller
-> > property should at least be optional.
+On 5/31/18 8:22 AM, Jens Axboe wrote:
+> On 5/31/18 8:20 AM, Jens Axboe wrote:
+>> On 5/31/18 6:10 AM, Mike Snitzer wrote:
+>>> On Thu, May 31 2018 at 12:35am -0400,
+>>> Jens Axboe <axboe@kernel.dk> wrote:
+>>>
+>>>> On May 30, 2018, at 10:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>>>
+>>>>> Hi all,
+>>>>>
+>>>>> After merging the device-mapper tree, today's linux-next build (x86_64
+>>>>> allmodconfig) failed like this:
+>>>>>
+>>>>> drivers/md/dm-writecache.c: In function 'writecache_dtr':
+>>>>> drivers/md/dm-writecache.c:1799:3: error: implicit declaration of function 'bioset_free'; did you mean 'bvec_free'? [-Werror=implicit-function-declaration]
+>>>>>   bioset_free(wc->bio_set);
+>>>>>   ^~~~~~~~~~~
+>>>>>   bvec_free
+>>>>> drivers/md/dm-writecache.c: In function 'writecache_ctr':
+>>>>> drivers/md/dm-writecache.c:1929:17: error: implicit declaration of function 'bioset_create'; did you mean 'bioset_exit'? [-Werror=implicit-function-declaration]
+>>>>>   wc->bio_set = bioset_create(BIO_POOL_SIZE,
+>>>>>                 ^~~~~~~~~~~~~
+>>>>>                 bioset_exit
+>>>>> drivers/md/dm-writecache.c:1929:15: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+>>>>>   wc->bio_set = bioset_create(BIO_POOL_SIZE,
+>>>>>               ^
+>>>>>
+>>>>> Caused by commit
+>>>>>
+>>>>>  2105231db61b ("dm: add writecache target")
+>>>>>
+>>>>> interacting with commit
+>>>>>
+>>>>>  dad08527525f ("block: Drop bioset_create()")
+>>>>>
+>>>>> from the block tree.
+>>>>>
+>>>>> Can we please consider not immediately dropping APIs if at all
+>>>>> possible. :-(
+>>>>
+>>>> I’ll drop the last patch, we can do that at the end of the merge window instead. 
+>>>>
+>>>
+>>> FYI, I've since updated dm-writecache to use the new APIs
+>>
+>> Thanks Mike. I've rebased for-4.18/block to fold a bug fix for the
+>> bounce code, and drop the patch that gets rid of the old API. When
+>> we get to the end of the merge window, I'll push that last patch.
+>> That's much more sensible, how it should have been done from the
+>> get-go.
 > 
-> I don't think it should. The h/w either has an interrupt controller or
-> it doesn't. My concern is you added it but nothing uses it which tells
-> me your binding is incomplete. I'd rather see complete bindings even
-> if you don't have drivers. For example, as-is, there's not really any
-> need for the clocks child node. You can just make the parent a clock
-> provider. But we need a complete picture of the h/w to make that
-> determination.
-> 
+> Actually, maybe I should roll them back, since you both fixed that
+> up AND based on my tree - which is of course totally fine, but
+> now I'm thinking the rebase will do more harm than good in this
+> case.
 
-I don't see a reason to have the clk subnode either.
+Talked to Mike offline, but for Stephen's sake I'll reiterate here
+too. Since I'm assuming that dm-writecache is the only problematic
+user here, and since Mike based dm-4.18 on the block tree, I considered
+it saner to leave things as-is. This means that the API removal is still
+in the tree.
+
+Stephen, if you see further conflicts due to that, do let me know and
+I'll do a proper revert of the patch instead. Hopefully it'll be smooth
+sailing from here on out.
+
+-- 
+Jens Axboe
