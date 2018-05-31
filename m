@@ -1,54 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755870AbeEaRWG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 13:22:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41418 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755837AbeEaRWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 13:22:03 -0400
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: run fstrim asynchronously if runtime discard is on
-Date: Thu, 31 May 2018 10:22:01 -0700
-Message-Id: <20180531172201.8729-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        id S1755880AbeEaRXF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 13:23:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:44994 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755556AbeEaRXE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 13:23:04 -0400
+Subject: Re: [RFC 1/2] printk: Enable platform to provide a early boot clock
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Feng Tang <feng.tang@intel.com>
+Cc: Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        alek.du@intel.com
+References: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
+ <CAHp75VdFZcNMMt6aRWicCozMJ+wfAyJ4ajegHCgNg2X-x_KN_A@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ea92b4fb-a1c9-a961-b67e-7834e351d6e1@infradead.org>
+Date: Thu, 31 May 2018 10:22:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VdFZcNMMt6aRWicCozMJ+wfAyJ4ajegHCgNg2X-x_KN_A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't need to wait for whole bunch of discard candidates in fstrim, since
-runtime discard will issue them in idle time.
+On 05/31/2018 12:18 AM, Andy Shevchenko wrote:
+> On Wed, May 30, 2018 at 12:20 PM, Feng Tang <feng.tang@intel.com> wrote:
+>> Currently printk timestamp mostly come from the sched_clock which
+>> depends on the clock setup, so there are many kernel logs started
+>> with "[    0.000000]   " before the clock is calibrated.
+>>
+>> This patch will provide an debug option for specific platform to
+>> provide a early boot time clock, so that we can have time info in
+>> kernel log much earlier, which can show the time info for the early
+>> kernel boot, and make boottime tuning/optimization easier (boot time
+>> is critical for phone/tablet and embedded devices).
+>>
+>> Capable platform only need to setup the "boot_printk_clock_fn"
+>> which could return time in nano seconds.
+>>
+>> Together with a TSC patch on x86 system, we have easily captured
+>> some early boottime killer like unwind_init() which takes about
+>> 300ms in boot phase.
+> 
+>> +static u64 printk_clock(void)
+>> +{
+>> +       /* If platform provides early boot printk clock, then use it */
+>> +       if (unlikely(system_state == SYSTEM_BOOTING && boot_printk_clock_fn))
+>> +               return boot_printk_clock_fn();
+>> +       else
+>> +               return local_clock();
+> 
+> 'else' is redundant.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/segment.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+So it is.  Is this a style comment?
+This shouldn't matter to a smart compiler, should it?
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index bef74d628f66..b1e58b10425f 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2439,9 +2439,18 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 
- 	__init_discard_policy(sbi, &dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
- 	__issue_discard_cmd_range(sbi, &dpolicy, start_block, end_block);
--	trimmed = __wait_discard_cmd_range(sbi, &dpolicy,
-+
-+	/*
-+	 * We filed discard candidates, but actually we don't need to wait for
-+	 * all of them, since they'll be issued in idle time along with runtime
-+	 * discard option. User configuration looks like using runtime discard
-+	 * or periodic fstrim instead of it.
-+	 */
-+	if (!test_opt(sbi, DISCARD)) {
-+		trimmed = __wait_discard_cmd_range(sbi, &dpolicy,
- 					start_block, end_block);
--	range->len = F2FS_BLK_TO_BYTES(trimmed);
-+		range->len = F2FS_BLK_TO_BYTES(trimmed);
-+	}
- out:
- 	return err;
- }
+>> +}
+
+thanks,
 -- 
-2.17.0.441.gb46fe60e1d-goog
+~Randy
