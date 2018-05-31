@@ -1,63 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754461AbeEaKX3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:23:29 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33381 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754324AbeEaKXZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:23:25 -0400
-X-Google-Smtp-Source: ADUXVKLbPrFg4V0XcLYyLxLLgFtkaw5vc/goeT8oJ7wprORxf3oh//PHQU+hzwCM1jl43a7ErhXyaA==
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
-Date: Thu, 31 May 2018 13:23:15 +0300
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180531102315.GA5150@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030129.GA16122@rob-hp-laptop>
- <20180531071717.GG13528@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531071717.GG13528@localhost.localdomain>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1754490AbeEaKZI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:25:08 -0400
+Received: from mga18.intel.com ([134.134.136.126]:26155 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754448AbeEaKZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 06:25:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
+   d="scan'208";a="52233028"
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 3/4] perf intel-pt: Fix MTC timing after overflow
+Date: Thu, 31 May 2018 13:23:44 +0300
+Message-Id: <1527762225-26024-4-git-send-email-adrian.hunter@intel.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1527762225-26024-1-git-send-email-adrian.hunter@intel.com>
+References: <1527762225-26024-1-git-send-email-adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
-> Hello Rob,
-> 
-> Thanks for the review!
-> 
-> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
-> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
-> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> > > + - interrupts		: The interrupt line the device is connected to.
-> > > + - interrupt-controller	: Marks the device node as an interrupt controller.
-> > 
-> > What sub blocks have interrupts?
-> 
-> The PMIC can generate interrupts from events which cause it to reset.
-> Eg, irq from watchdog line change, power button pushes, reset request
-> via register interface etc. I don't know any generic handling for these
-> interrupts. In "normal" use-case this PMIC is powering the processor
-> where driver is running and I do not see reasonable handling because
-> power-reset is going to follow the irq.
-> 
+On some platforms, overflows will clear before MTC wraparound, and there is
+no following TSC/TMA packet. In that case the previous TMA is valid. Since
+there will be a valid TMA either way, stop setting 'have_tma' to false upon
+overflow.
 
-Oh, but when reading this I understand that the interrupt-controller
-property should at least be optional.
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: stable@vger.kernel.org
+---
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Br,
-    Matti Vaittinen
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+index e5eb91777383..881d7c5e5e2a 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1376,7 +1376,6 @@ static int intel_pt_overflow(struct intel_pt_decoder *decoder)
+ {
+ 	intel_pt_log("ERROR: Buffer overflow\n");
+ 	intel_pt_clear_tx_flags(decoder);
+-	decoder->have_tma = false;
+ 	decoder->cbr = 0;
+ 	decoder->timestamp_insn_cnt = 0;
+ 	decoder->pkt_state = INTEL_PT_STATE_ERR_RESYNC;
+-- 
+1.9.1
