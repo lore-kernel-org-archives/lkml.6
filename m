@@ -1,206 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751341AbeEaW5a (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:57:30 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:47076 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751183AbeEaW50 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 18:57:26 -0400
-X-Google-Smtp-Source: ADUXVKJdbSkCXKVHCUqcAYV/ta1L2WXF42mkUw21khSiC9NtxawJRt/yCnIR8pnLA8P+BK71Q/qdjA==
-From: Bastian Germann <bastiangermann@fishpost.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Bastian Germann <bastiangermann@fishpost.de>,
-        Luca Tettamanti <kronos.it@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] hwmon: (asus_atk0110) Make use of device managed memory
-Date: Fri,  1 Jun 2018 00:57:00 +0200
-Message-Id: <20180531225700.721-2-bastiangermann@fishpost.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180531225700.721-1-bastiangermann@fishpost.de>
-References: <f885fcb0-d9f3-7702-13ad-5af2913131f0@roeck-us.net>
- <20180531225700.721-1-bastiangermann@fishpost.de>
+        id S1750816AbeEaXE5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 19:04:57 -0400
+Received: from mga03.intel.com ([134.134.136.65]:14001 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750714AbeEaXEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 19:04:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
+   d="scan'208";a="53852731"
+Message-ID: <1527807882.10176.11.camel@linux.intel.com>
+Subject: Re: [PATCH V2] platform/x86: intel_pmc_core: Add CNP SLPS0 debug
+ registers
+From: "David E. Box" <david.e.box@linux.intel.com>
+Reply-To: david.e.box@linux.intel.com
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andy@infradead.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
+        Darren Hart <dvhart@infradead.org>, kyle.d.pelton@linux.intel.com,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Thu, 31 May 2018 16:04:42 -0700
+In-Reply-To: <CAHp75VfgAS4mDbtnVSMCJcadra=mPEsSQ5jt153r-Fks6vis7A@mail.gmail.com>
+References: <CAHp75VfLqvjVPwhcsK4enhsvXSLggX9_pO9AozZT56DWDrkjPg@mail.gmail.com>
+         <20180525011056.25132-1-david.e.box@linux.intel.com>
+         <CAHp75VfgAS4mDbtnVSMCJcadra=mPEsSQ5jt153r-Fks6vis7A@mail.gmail.com>
+Organization: David E. Box
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.3 (3.26.3-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_* variants of kstrdup and kzalloc. Get rid of the kfree cleanups.
+On Thu, 2018-05-31 at 21:38 +0300, Andy Shevchenko wrote:
+> On Fri, May 25, 2018 at 4:10 AM, David E. Box
+> <david.e.box@linux.intel.com> wrote:
+> > Adds debugfs access to registers in the Cannon Point PCH PMC that
+> > are
+> > useful for debugging #SLP_S0 signal assertion and other low power
+> > related
+> > activities. Device pm states are latched in these registers
+> > whenever the
+> > package enters C10 and can be read from slp_s0_debug_status. The pm
+> > states may also be latched by writing 1 to slp_s0_dbg_latch which
+> > will
+> > immediately capture the current state on the next read of
+> > slp_s0_debug_status. Also while in intel_pmc_core.h clean up
+> > spacing.
+> > 
+> 
+> Thanks for an update. My comments below.
+> 
+> As far as I understand there is still ongoing discussion about the
+> approach when and how to show data. So I'll wait a bit for a
+> settlement between you, guys.
+> 
+> > +static void pmc_core_slps0_dbg_latch(struct pmc_dev *pmcdev, bool
+> > reset)
+> > +{
+> > +       const struct pmc_reg_map *map = pmcdev->map;
+> > +       u32 fd;
+> > +
+> > +       mutex_lock(&pmcdev->lock);
+> > +
+> > +       if (!reset && !slps0_dbg_latch)
+> > +               goto out_unlock;
+> > +
+> > +       fd = pmc_core_reg_read(pmcdev, map->slps0_dbg_offset);
+> > +       reset ? (fd &= ~CNP_PMC_LATCH_SLPS0_EVENTS) :
+> > +               (fd |= CNP_PMC_LATCH_SLPS0_EVENTS);
+> 
+> I would rather use classical pattern here, i.e.
+> 
+> if (reset)
+>  fd ...
+> else
+>  fd ...
+> 
+> > +       pmc_core_reg_write(pmcdev, map->slps0_dbg_offset, fd);
+> > +
+> > +       slps0_dbg_latch = 0;
+> > +
+> > +out_unlock:
+> > +       mutex_unlock(&pmcdev->lock);
+> > +}
+> > +       struct pmc_dev *pmcdev = s ? s->private : &pmc;
+> 
+> I'm not sure why do we need such condition.
+> 
+> Simple
+> 
+> ... pmcdev = s->private;
+> 
+> is enough.
+> 
+> >  /* Cannonlake Power Management Controller register offsets */
+> > -#define CNP_PMC_SLP_S0_RES_COUNTER_OFFSET      0x193C
+> > -#define CNP_PMC_LTR_IGNORE_OFFSET              0x1B0C
+> > -#define CNP_PMC_PM_CFG_OFFSET                  0x1818
+> > +#define CNP_PMC_SLP_S0_RES_COUNTER_OFFSET      0x193C
+> > +#define CNP_PMC_LTR_IGNORE_OFFSET              0x1B0C
+> > +#define CNP_PMC_PM_CFG_OFFSET                  0x1818
+> 
+> I have hard time to understand what is the difference here.
+> Either do another clean up patch (white spaces vs. tabs?) or leave it
+> untouched.
+> 
+> >  /* Cannonlake: PGD PFET Enable Ack Status Register(s) start */
+> > -#define CNP_PMC_HOST_PPFEAR0A                  0x1D90
+> > +#define CNP_PMC_HOST_PPFEAR0A                  0x1D90
+> > 
+> > -#define CNP_PMC_MMIO_REG_LEN                   0x2000
+> > -#define CNP_PPFEAR_NUM_ENTRIES                 8
+> > -#define CNP_PMC_READ_DISABLE_BIT               22
+> > +#define CNP_PMC_MMIO_REG_LEN                   0x2000
+> > +#define CNP_PPFEAR_NUM_ENTRIES                 8
+> > +#define CNP_PMC_READ_DISABLE_BIT               22
+> 
+> Ditto.
+> 
+> > +struct slps0_dbg_map {
+> > +       const struct pmc_bit_map *slps0_dbg_sts;
+> > +       int size;
+> > +};
+> 
+> Didn't pay attention to this earlier. Why do we have a separate size
+> member? What does it define?
 
-Signed-off-by: Bastian Germann <bastiangermann@fishpost.de>
----
- drivers/hwmon/asus_atk0110.c | 54 +++++++-----------------------------
- 1 file changed, 10 insertions(+), 44 deletions(-)
+It holds the size of the pmc_bit_map array, assigned as shown here:
 
-diff --git a/drivers/hwmon/asus_atk0110.c b/drivers/hwmon/asus_atk0110.c
-index 33748cc07acc..8bf097bf6f24 100644
---- a/drivers/hwmon/asus_atk0110.c
-+++ b/drivers/hwmon/asus_atk0110.c
-@@ -190,7 +190,6 @@ static int atk_add(struct acpi_device *device);
- static int atk_remove(struct acpi_device *device);
- static void atk_print_sensor(struct atk_data *data, union acpi_object *obj);
- static int atk_read_value(struct atk_sensor_data *sensor, u64 *value);
--static void atk_free_sensors(struct atk_data *data);
- 
- static struct acpi_driver atk_driver = {
- 	.name	= ATK_HID,
-@@ -722,6 +721,7 @@ static void atk_pack_print(char *buf, size_t sz, union acpi_object *pack)
- static int atk_debugfs_ggrp_open(struct inode *inode, struct file *file)
- {
- 	struct atk_data *data = inode->i_private;
-+	struct device *dev = &data->acpi_dev->dev;
- 	char *buf = NULL;
- 	union acpi_object *ret;
- 	u8 cls;
-@@ -748,7 +748,7 @@ static int atk_debugfs_ggrp_open(struct inode *inode, struct file *file)
- 		id = &pack->package.elements[0];
- 		if (id->integer.value == data->debugfs.id) {
- 			/* Print the package */
--			buf = kzalloc(512, GFP_KERNEL);
-+			buf = devm_kzalloc(dev, 512, GFP_KERNEL);
- 			if (!buf) {
- 				ACPI_FREE(ret);
- 				return -ENOMEM;
-@@ -776,16 +776,9 @@ static ssize_t atk_debugfs_ggrp_read(struct file *file, char __user *buf,
- 	return simple_read_from_buffer(buf, count, pos, str, len);
- }
- 
--static int atk_debugfs_ggrp_release(struct inode *inode, struct file *file)
--{
--	kfree(file->private_data);
--	return 0;
--}
--
- static const struct file_operations atk_debugfs_ggrp_fops = {
- 	.read		= atk_debugfs_ggrp_read,
- 	.open		= atk_debugfs_ggrp_open,
--	.release	= atk_debugfs_ggrp_release,
- 	.llseek		= no_llseek,
- };
- 
-@@ -906,15 +899,13 @@ static int atk_add_sensor(struct atk_data *data, union acpi_object *obj)
- 	limit1 = atk_get_pack_member(data, obj, HWMON_PACK_LIMIT1);
- 	limit2 = atk_get_pack_member(data, obj, HWMON_PACK_LIMIT2);
- 
--	sensor = kzalloc(sizeof(*sensor), GFP_KERNEL);
-+	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
- 	if (!sensor)
- 		return -ENOMEM;
- 
--	sensor->acpi_name = kstrdup(name->string.pointer, GFP_KERNEL);
--	if (!sensor->acpi_name) {
--		err = -ENOMEM;
--		goto out;
--	}
-+	sensor->acpi_name = devm_kstrdup(dev, name->string.pointer, GFP_KERNEL);
-+	if (!sensor->acpi_name)
-+		return -ENOMEM;
- 
- 	INIT_LIST_HEAD(&sensor->list);
- 	sensor->type = type;
-@@ -955,9 +946,6 @@ static int atk_add_sensor(struct atk_data *data, union acpi_object *obj)
- 	(*num)++;
- 
- 	return 1;
--out:
--	kfree(sensor);
--	return err;
- }
- 
- static int atk_enumerate_old_hwmon(struct atk_data *data)
-@@ -998,8 +986,7 @@ static int atk_enumerate_old_hwmon(struct atk_data *data)
- 		dev_warn(dev, METHOD_OLD_ENUM_TMP ": ACPI exception: %s\n",
- 				acpi_format_exception(status));
- 
--		ret = -ENODEV;
--		goto cleanup;
-+		return -ENODEV;
- 	}
- 
- 	pack = buf.pointer;
-@@ -1020,8 +1007,7 @@ static int atk_enumerate_old_hwmon(struct atk_data *data)
- 		dev_warn(dev, METHOD_OLD_ENUM_FAN ": ACPI exception: %s\n",
- 				acpi_format_exception(status));
- 
--		ret = -ENODEV;
--		goto cleanup;
-+		return -ENODEV;
- 	}
- 
- 	pack = buf.pointer;
-@@ -1035,9 +1021,6 @@ static int atk_enumerate_old_hwmon(struct atk_data *data)
- 	ACPI_FREE(buf.pointer);
- 
- 	return count;
--cleanup:
--	atk_free_sensors(data);
--	return ret;
- }
- 
- static int atk_ec_present(struct atk_data *data)
-@@ -1213,17 +1196,6 @@ static int atk_init_attribute_groups(struct atk_data *data)
- 	return 0;
- }
- 
--static void atk_free_sensors(struct atk_data *data)
--{
--	struct list_head *head = &data->sensor_list;
--	struct atk_sensor_data *s, *tmp;
--
--	list_for_each_entry_safe(s, tmp, head, list) {
--		kfree(s->acpi_name);
--		kfree(s);
--	}
--}
--
- static int atk_register_hwmon(struct atk_data *data)
- {
- 	struct device *dev = &data->acpi_dev->dev;
-@@ -1323,7 +1295,7 @@ static int atk_add(struct acpi_device *device)
- 
- 	dev_dbg(&device->dev, "adding...\n");
- 
--	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	data = devm_kzalloc(&device->dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
-@@ -1375,18 +1347,15 @@ static int atk_add(struct acpi_device *device)
- 		goto out;
- 	err = atk_register_hwmon(data);
- 	if (err)
--		goto cleanup;
-+		goto out;
- 
- 	atk_debugfs_init(data);
- 
- 	device->driver_data = data;
- 	return 0;
--cleanup:
--	atk_free_sensors(data);
- out:
- 	if (data->disable_ec)
- 		atk_ec_ctl(data, 0);
--	kfree(data);
- 	return err;
- }
- 
-@@ -1399,7 +1368,6 @@ static int atk_remove(struct acpi_device *device)
- 
- 	atk_debugfs_cleanup(data);
- 
--	atk_free_sensors(data);
- 	hwmon_device_unregister(data->hwmon_dev);
- 
- 	if (data->disable_ec) {
-@@ -1407,8 +1375,6 @@ static int atk_remove(struct acpi_device *device)
- 			dev_err(&device->dev, "Failed to disable EC\n");
- 	}
- 
--	kfree(data);
--
- 	return 0;
- }
- 
--- 
-2.17.1
++static const struct slps0_dbg_map cnp_slps0_dbg_maps[] = {
++ {cnp_slps0_dbg0_map, ARRAY_SIZE(cnp_slps0_dbg0_map)},
++ {cnp_slps0_dbg1_map, ARRAY_SIZE(cnp_slps0_dbg1_map)},
++ {cnp_slps0_dbg2_map, ARRAY_SIZE(cnp_slps0_dbg2_map)},
++};
+
+
+Okay on all other comments
+
+Dave
