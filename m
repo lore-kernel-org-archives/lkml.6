@@ -1,96 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754659AbeEaUe1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 16:34:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48479 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754171AbeEaUeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 16:34:12 -0400
-Subject: Re: [PATCH] MAINTAINERS: Add Actions Semi S900 clk entries
-To: Stephen Boyd <sboyd@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: daniel.thompson@linaro.org, manivannanece23@gmail.com,
-        bdong@ucrobotics.com, liuwei@actions-semi.com,
-        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
-        hzhang@ucrobotics.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1527780180-15041-1-git-send-email-manivannan.sadhasivam@linaro.org>
- <152779875340.144038.4898809848995507014@swboyd.mtv.corp.google.com>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <e6ff5bfc-2c19-9b39-311b-a527f90e4b5b@suse.de>
-Date: Thu, 31 May 2018 22:34:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1754488AbeEaUf7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 16:35:59 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:43021 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754160AbeEaUfz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 16:35:55 -0400
+X-Google-Smtp-Source: ADUXVKKaE4rEghRJche8Htp3WxmawZBmkLgs7TTBRyZ6yLQQcSP3zOuNGpM//dHDvpf1CJCdOu10AjVUOdYeUf5EgtQ=
 MIME-Version: 1.0
-In-Reply-To: <152779875340.144038.4898809848995507014@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180531191332.GB7825@magnolia>
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-3-ross.zwisler@linux.intel.com> <20180529212510.GJ30110@magnolia>
+ <20180529220114.GA13948@linux.intel.com> <20180531191332.GB7825@magnolia>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Thu, 31 May 2018 13:35:54 -0700
+Message-ID: <CAPcyv4i6t1zahuL73m+oL5qiRJ_oikOszBvTMxoby62Z_0e7Hw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
+ boolean returns
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 31.05.2018 um 22:32 schrieb Stephen Boyd:
-> Quoting Manivannan Sadhasivam (2018-05-31 08:23:00)
->> Add S900 clk entries under ARCH_ACTIONS
+On Thu, May 31, 2018 at 12:13 PM, Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
+> On Tue, May 29, 2018 at 04:01:14PM -0600, Ross Zwisler wrote:
+>> On Tue, May 29, 2018 at 02:25:10PM -0700, Darrick J. Wong wrote:
+>> > On Tue, May 29, 2018 at 01:51:01PM -0600, Ross Zwisler wrote:
+>> > > From: Dave Jiang <dave.jiang@intel.com>
+>> > >
+>> > > The function return values are confusing with the way the function is
+>> > > named. We expect a true or false return value but it actually returns
+>> > > 0/-errno.  This makes the code very confusing. Changing the return values
+>> > > to return a bool where if DAX is supported then return true and no DAX
+>> > > support returns false.
+>> > >
+>> > > Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+>> > > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+>> >
+>> > Looks ok, do you want me to pull the first two patches through the xfs
+>> > tree?
+>> >
+>> > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 >>
->> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->> ---
-> 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> 
-> Unless you wanted me to apply this?
+>> Thanks for the review.
+>>
+>> I'm not sure what's best.  If you do that then Mike will need to have a DM
+>> branch for the rest of the series based on your stable commits, yea?
+>>
+>> Mike what would you prefer?
+>
+> I /was/ about to say that I would pull in the first two patches, but now
+> I can't get xfs to mount with pmem at all, and have no way of testing
+> this...?
+>
+> # echo 'file drivers/dax/* +p' > /sys/kernel/debug/dynamic_debug/control
+> # mount /dev/pmem3 -o rtdev=/dev/pmem4,dax /mnt
+> # dmesg
+> <snip>
+> SGI XFS with ACLs, security attributes, realtime, scrub, debug enabled
+> XFS (pmem3): DAX enabled. Warning: EXPERIMENTAL, use at your own risk
+> pmem3: error: dax support not enabled
+> pmem4: error: dax support not enabled
+> XFS (pmem3): DAX unsupported by block device. Turning off DAX.
+> XFS (pmem3): Mounting V5 Filesystem
+> XFS (pmem3): Ending clean mount
+>
+> Evidently the pfn it picks up is missing PFN_MAP in flags because
+> ND_REGION_PAGEMAP isn't set, and looking at the kernel source, pmem that
+> comes in via NFIT never gets that set...?
+>
+> relevant qemu pmem options:
+>
+> -object memory-backend-file,id=memnvdimm0,prealloc=no,mem-path=/dev/shm/a.img,share=yes,size=13488881664
+> -device nvdimm,node=0,memdev=memnvdimm0,id=nvdimm0,slot=0
+> (repeat for five more devices)
+>
+> <confused>
+>
 
-I'll take it once I have my 4.17 branches rebased to 4.18.
-
-Thanks,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+What does "ndctl list" say? The namespaces need to be in fsdax mode.
