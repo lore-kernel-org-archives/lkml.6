@@ -1,100 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755856AbeEaRRd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 13:17:33 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:34880 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755678AbeEaRR3 (ORCPT
+        id S1755811AbeEaRVs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 13:21:48 -0400
+Received: from web2.default.djames.uk0.bigv.io ([213.138.101.246]:60168 "EHLO
+        web2.default.djames.uk0.bigv.io" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755708AbeEaRVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 13:17:29 -0400
-X-Google-Smtp-Source: ADUXVKIEQml28XqpKluuMlihVGWaRQLQ+I0gJCKGQXMnfgeBozYUS1pMPEkY1CGLAxzBoB/Q8hmLJw==
-Date: Thu, 31 May 2018 12:17:26 -0500
-From: Rob Herring <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, taiten.peng@linaro.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        manivannanece23@gmail.com
-Subject: Re: [PATCH 2/2] arm64: dts: Add Mediatek X20 Development Board
- support
-Message-ID: <20180531171726.GB23016@rob-hp-laptop>
-References: <20180529045258.1415-1-manivannan.sadhasivam@linaro.org>
- <20180529045258.1415-3-manivannan.sadhasivam@linaro.org>
+        Thu, 31 May 2018 13:21:46 -0400
+X-Google-Smtp-Source: ADUXVKLkXIx8pfaoWuBZbif7WxuB5G50cxJI3etFX7hRgGVxcveYl+grjt90fLjwsXU0fkB5kfLF/DRYvI7yxZ5BPxM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529045258.1415-3-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180531165109.8476-1-jagan@amarulasolutions.com>
+References: <20180531165109.8476-1-jagan@amarulasolutions.com>
+From: Christopher Obbard <chris@64studio.com>
+Date: Thu, 31 May 2018 17:55:31 +0100
+X-Gmail-Original-Message-ID: <CAP03XeoY8_-gG-2h8WP+3ZZFzxeyHERG=o7Y3Btk2svy5kco_Q@mail.gmail.com>
+Message-ID: <CAP03XeoY8_-gG-2h8WP+3ZZFzxeyHERG=o7Y3Btk2svy5kco_Q@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2] arm64: allwinner: a64-amarula-relic:
+ Enable AP6330 WiFi support
+To: jagan@amarulasolutions.com
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tOn Tue, May 29, 2018 at 10:22:58AM +0530, Manivannan Sadhasivam wrote:
-> Add initial device tree support for Mediatek X20 Development Board
-> based on MT6797 Deca core SoC. This board is one of the 96Boards
-> Consumer Edition platform.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Hi Jagan,
+
+I cannot find any information on this board online, so I am guessing
+it has not been released yet and you are developing software support
+now.
+
+Do you have any datasheet/overview document of the board?
+
+Rather than making a lot of noise on the various MLs, why not wait
+until all hardware has a driver written for it & bugs have been been
+smashed, then patch in one series?
+
+Christopher Obbard
+64 Studio Ltd.
+
+
+On 31 May 2018 at 17:51, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> Enable AP6330 WiFi/BT combo chip on Amarula A64-Relic board:
+> - WiFi SDIO interface is connected to MMC1
+> - WiFi WL-PMU-EN pin connected to gpio PL2: attach to mmc-pwrseq
+> - WiFi WL-WAKE-AP pin connected to gpio PL3
+> - 32kHz external oscillator gate clock from RTC
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
->  arch/arm64/boot/dts/mediatek/Makefile         |  1 +
->  .../boot/dts/mediatek/mt6797-x20-dev.dts      | 33 +++++++++++++++++++
+> Changes for v2:
+> - Move external rtc clock nodes into main rtc node definition
+>   of sun50i-a64.dtsi
+>
+>  .../dts/allwinner/sun50i-a64-amarula-relic.dts     | 31 ++++++++++++++++++++++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |  3 +++
 >  2 files changed, 34 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-> index ac17f60f998c..5b7fd6ad96e4 100644
-> --- a/arch/arm64/boot/dts/mediatek/Makefile
-> +++ b/arch/arm64/boot/dts/mediatek/Makefile
-> @@ -3,5 +3,6 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
-> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
-> diff --git a/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts b/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
-> new file mode 100644
-> index 000000000000..2c09ca95d9e2
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
-> @@ -0,0 +1,33 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree Source for MediaTek X20 Development Board
-> + *
-> + * Copyright (C) 2018, Linaro Ltd.
-> + *
-> + */
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> index ce4a256ff086..eac4793c8502 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> @@ -21,12 +21,43 @@
+>         chosen {
+>                 stdout-path = "serial0:115200n8";
+>         };
 > +
-> +/dts-v1/;
+> +       wifi_pwrseq: wifi-pwrseq {
+> +               compatible = "mmc-pwrseq-simple";
+> +               clocks = <&rtc 1>;
+> +               clock-names = "ext_clock";
+> +               reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* WL-PMU-EN: PL2 */
+> +       };
+>  };
+>
+>  &ehci0 {
+>         status = "okay";
+>  };
+>
+> +&mmc1 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&mmc1_pins>;
+> +       vmmc-supply = <&reg_dcdc1>;
+> +       /*
+> +        * Schematic shows both dldo4 and eldo1 connected for vcc-io-wifi, but
+> +        * dldo4 connection shows DNP(Do Not Populate) and eldo1 connected with
+> +        * 0Ohm register to vcc-io-wifi so eldo1 is used.
+> +        */
+> +       vqmmc-supply = <&reg_eldo1>;
+> +       mmc-pwrseq = <&wifi_pwrseq>;
+> +       bus-width = <4>;
+> +       non-removable;
+> +       status = "okay";
 > +
-> +#include "mt6797.dtsi"
-> +
-> +/ {
-> +	model = "Mediatek X20 Development Board";
-> +	compatible = "archermind,mt6797-x20-dev", "mediatek,mt6797";
-
-The board compatible needs documenting.
-
-> +
-> +	aliases {
-> +		serial0 = &uart1;
-> +	};
-> +
-> +	memory@40000000 {
-> +		device_type = "memory";
-> +		reg = <0 0x40000000 0 0x1e605000>;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
+> +       brcmf: wifi@1 {
+> +               reg = <1>;
+> +               compatible = "brcm,bcm4329-fmac";
+> +               interrupt-parent = <&r_pio>;
+> +               interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>;  /* WL-WAKE-AP: PL3 */
+> +               interrupt-names = "host-wake";
+> +       };
 > +};
 > +
-> +&uart1 {
-> +	status = "okay";
-> +};
-> -- 
-> 2.17.0
-> 
+>  &mmc2 {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&mmc2_pins>;
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> index 1b2ef28c42bd..82516aec4153 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -634,6 +634,9 @@
+>                         reg = <0x01f00000 0x54>;
+>                         interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+>                                      <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clock-output-names = "rtc-osc32k", "rtc-osc32k-out";
+> +                       clocks = <&osc32k>;
+> +                       #clock-cells = <1>;
+>                 };
+>
+>                 r_intc: interrupt-controller@1f00c00 {
+> --
+> 2.14.3
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
