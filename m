@@ -1,71 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753953AbeEaGtz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:49:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50816 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753825AbeEaGty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:49:54 -0400
-Date: Thu, 31 May 2018 08:49:51 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: ufo19890607 <ufo19890607@gmail.com>, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yuzhoujian <yuzhoujian@didichuxing.com>
-Subject: Re: [PATCH v4] Print the memcg's name when system-wide OOM happened
-Message-ID: <20180531064951.GG15278@dhcp22.suse.cz>
-References: <1526870386-2439-1-git-send-email-ufo19890607@gmail.com>
- <20180530134256.bbf7a8639571a3f8910b6a05@linux-foundation.org>
+        id S1754003AbeEaGub (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:50:31 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:39362 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753944AbeEaGu1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 02:50:27 -0400
+X-Google-Smtp-Source: ADUXVKLqGlPfieyAfxXUULkVS8N6mwrJ0ZbIoOrgVinWfSAyJX/FYJKHibrXW8Go0EGt6eGbwLUkSw==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180530134256.bbf7a8639571a3f8910b6a05@linux-foundation.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+ <20180515075859.17217-12-stanimir.varbanov@linaro.org> <CAAFQd5BDZztVT5KT_HX8SfPuHRmXaEg2VGVCOabWqL7F9Qq6Ew@mail.gmail.com>
+ <3a892dd5-0744-c289-e258-099d531d5abd@linaro.org>
+In-Reply-To: <3a892dd5-0744-c289-e258-099d531d5abd@linaro.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Thu, 31 May 2018 15:50:13 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CiBcmOVPJX1x6yWUuHky6WdjSrJDMG8c_uzkbF1ud=uQ@mail.gmail.com>
+Message-ID: <CAAFQd5CiBcmOVPJX1x6yWUuHky6WdjSrJDMG8c_uzkbF1ud=uQ@mail.gmail.com>
+Subject: Re: [PATCH v2 11/29] venus: venc,vdec: adds clocks needed for venus 4xx
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 30-05-18 13:42:56, Andrew Morton wrote:
-> On Mon, 21 May 2018 03:39:46 +0100 ufo19890607 <ufo19890607@gmail.com> wrote:
-> 
-> > From: yuzhoujian <yuzhoujian@didichuxing.com>
-> > 
-> > The dump_header does not print the memcg's name when the system
-> > oom happened. So users cannot locate the certain container which
-> > contains the task that has been killed by the oom killer.
-> > 
-> > System oom report will print the memcg's name after this patch,
-> > so users can get the memcg's path from the oom report and check
-> > the certain container more quickly.
-> 
-> lkp-robot is reporting an oops.
-> 
-> > --- a/mm/oom_kill.c
-> > +++ b/mm/oom_kill.c
-> > @@ -433,6 +433,7 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
-> >  	if (is_memcg_oom(oc))
-> >  		mem_cgroup_print_oom_info(oc->memcg, p);
-> >  	else {
-> > +		mem_cgroup_print_oom_memcg_name(oc->memcg, p);
-> >  		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
-> >  		if (is_dump_unreclaim_slabs())
-> >  			dump_unreclaimable_slab();
-> 
-> static inline bool is_memcg_oom(struct oom_control *oc)
-> {
-> 	return oc->memcg != NULL;
-> }
-> 
-> So in the mem_cgroup_print_oom_memcg_name() call which this patch adds,
-> oc->memcg is known to be NULL.  How can this possibly work?  
+On Mon, May 28, 2018 at 5:47 PM Stanimir Varbanov
+<stanimir.varbanov@linaro.org> wrote:
+>
+> Hi Tomasz,
+>
+> On 05/24/2018 09:11 AM, Tomasz Figa wrote:
+> > Hi Stanimir,
+> >
+> > On Tue, May 15, 2018 at 5:10 PM Stanimir Varbanov <
+> > stanimir.varbanov@linaro.org> wrote:
+> >
+> >> This extends the clocks number to support suspend and resume
+> >> on Venus version 4xx.
+> >
+> >> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> >> ---
+> >>   drivers/media/platform/qcom/venus/core.h |  4 +--
+> >>   drivers/media/platform/qcom/venus/vdec.c | 42
+> > ++++++++++++++++++++++++++------
+> >>   drivers/media/platform/qcom/venus/venc.c | 42
+> > ++++++++++++++++++++++++++------
+> >>   3 files changed, 72 insertions(+), 16 deletions(-)
+> >
+> >> diff --git a/drivers/media/platform/qcom/venus/core.h
+> > b/drivers/media/platform/qcom/venus/core.h
+> >> index 8d3e150800c9..b5b9a84e9155 100644
+> >> --- a/drivers/media/platform/qcom/venus/core.h
+> >> +++ b/drivers/media/platform/qcom/venus/core.h
+> >> @@ -92,8 +92,8 @@ struct venus_core {
+> >>          void __iomem *base;
+> >>          int irq;
+> >>          struct clk *clks[VIDC_CLKS_NUM_MAX];
+> >> -       struct clk *core0_clk;
+> >> -       struct clk *core1_clk;
+> >> +       struct clk *core0_clk, *core0_bus_clk;
+> >> +       struct clk *core1_clk, *core1_bus_clk;
+> >>          struct video_device *vdev_dec;
+> >>          struct video_device *vdev_enc;
+> >>          struct v4l2_device v4l2_dev;
+> >> diff --git a/drivers/media/platform/qcom/venus/vdec.c
+> > b/drivers/media/platform/qcom/venus/vdec.c
+> >> index 261a51adeef2..c45452634e7e 100644
+> >> --- a/drivers/media/platform/qcom/venus/vdec.c
+> >> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> >> @@ -1081,12 +1081,18 @@ static int vdec_probe(struct platform_device
+> > *pdev)
+> >>          if (!core)
+> >>                  return -EPROBE_DEFER;
+> >
+> >> -       if (core->res->hfi_version == HFI_VERSION_3XX) {
+> >> +       if (IS_V3(core) || IS_V4(core)) {
+> >>                  core->core0_clk = devm_clk_get(dev, "core");
+> >>                  if (IS_ERR(core->core0_clk))
+> >>                          return PTR_ERR(core->core0_clk);
+> >>          }
+> >
+> >> +       if (IS_V4(core)) {
+> >> +               core->core0_bus_clk = devm_clk_get(dev, "bus");
+> >> +               if (IS_ERR(core->core0_bus_clk))
+> >> +                       return PTR_ERR(core->core0_bus_clk);
+> >> +       }
+> >> +
+> >
+> > Rather than doing this conditional dance, wouldn't it make more sense to
+> > just list all the clocks in variant data struct and use clk_bulk_get()?
+>
+> Do you mean the same as it is done for venus/core.c ?
 
-This version is broken. The current version [1] seems to be doing the
-right thing in that regards AFAICS. It has some other issues though.
-Can we drop the current code from the mmotm tree and start over?
+I mean clk_bulk_get() as in drivers/clk/clk-bulk.c. I guess
+venus/core.c would also benefit from switching to these helpers.
 
-[1] http://lkml.kernel.org/r/1527413551-5982-1-git-send-email-ufo19890607@gmail.com
--- 
-Michal Hocko
-SUSE Labs
+>
+> >
+> >>          platform_set_drvdata(pdev, core);
+> >
+> >>          vdev = video_device_alloc();
+> >> @@ -1132,12 +1138,23 @@ static __maybe_unused int
+> > vdec_runtime_suspend(struct device *dev)
+> >>   {
+> >>          struct venus_core *core = dev_get_drvdata(dev);
+> >
+> >> -       if (core->res->hfi_version == HFI_VERSION_1XX)
+> >> +       if (IS_V1(core))
+> >>                  return 0;
+> >
+> >> -       writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> >> +       if (IS_V3(core))
+> >> +               writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> >> +       else if (IS_V4(core))
+> >> +               writel(0, core->base +
+> > WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+> >> +
+> >> +       if (IS_V4(core))
+> >> +               clk_disable_unprepare(core->core0_bus_clk);
+> >> +
+> >>          clk_disable_unprepare(core->core0_clk);
+> >> -       writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> >> +
+> >> +       if (IS_V3(core))
+> >> +               writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> >> +       else if (IS_V4(core))
+> >> +               writel(1, core->base +
+> > WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
+> >
+> > Almost every step here differs between version. I'd suggest splitting this
+> > into separate functions for both versions.
+>
+> I think it will be better to squash this patch with 13/29.
+
+I see. Let me review patch 13 first then.
+
+Best regards,
+Tomasz
