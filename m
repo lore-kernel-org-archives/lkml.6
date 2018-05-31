@@ -1,59 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755268AbeEaNhi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:37:38 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:44028 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755042AbeEaNhf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:37:35 -0400
-X-Google-Smtp-Source: ADUXVKJwzPv5JOvu4JloJHE1KMGLi30dseMSGvnWxl9jTBygJdeZsTqgfqlUrHW/f+X/6bKRY9VrJA==
-Date: Thu, 31 May 2018 15:37:30 +0200
-From: Johan Hovold <johan@kernel.org>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Johan Hovold <johan@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
-        Pavel Machek <pavel@ucw.cz>, Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] gnss: add new GNSS subsystem
-Message-ID: <20180531133730.GJ3259@localhost>
-References: <20180530103242.20773-1-johan@kernel.org>
- <20180530143822.lvtwjvbqe7gvbvgq@localhost>
- <20180531085242.GE3259@localhost>
- <943C21CA-EEC6-45E2-997E-A6E1FA0549EB@goldelico.com>
- <20180531114743.GG3259@localhost>
- <598825FD-67A5-4016-BCE8-A50517472B8F@goldelico.com>
+        id S1755219AbeEaNlR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:41:17 -0400
+Received: from muru.com ([72.249.23.125]:45396 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755042AbeEaNlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:41:13 -0400
+Date: Thu, 31 May 2018 06:41:09 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com
+Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
+ node for MCAN
+Message-ID: <20180531134109.GJ5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-6-faiz_abbas@ti.com>
+ <20180531040638.GA26751@rob-hp-laptop>
+ <be0fd711-c44b-dbe2-648f-08aa88c7aec4@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <598825FD-67A5-4016-BCE8-A50517472B8F@goldelico.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <be0fd711-c44b-dbe2-648f-08aa88c7aec4@ti.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 03:33:41PM +0200, H. Nikolaus Schaller wrote:
-> > Am 31.05.2018 um 13:47 schrieb Johan Hovold <johan@kernel.org>:
-
-> > Using pps-gpio would not allow you to describe the hardware properly,
-> > something which, for example, may be needed for power management (e.g.
-> > to power on the GNSS receiver when the pps device is being accessed).
+* Faiz Abbas <faiz_abbas@ti.com> [180531 11:27]:
+> On Thursday 31 May 2018 09:36 AM, Rob Herring wrote:
+> > On Wed, May 30, 2018 at 07:41:32PM +0530, Faiz Abbas wrote:
+> >> --- a/arch/arm/boot/dts/dra76x.dtsi
+> >> +++ b/arch/arm/boot/dts/dra76x.dtsi
+> >> @@ -11,6 +11,25 @@
+> >>  / {
+> >>  	compatible = "ti,dra762", "ti,dra7";
+> >>  
+> >> +	ocp {
+> >> +
+> >> +		target-module@0x42c00000 {
+> > 
+> > Build your dtb with W=1 and fix warnings you add (drop '0x').
 > 
-> Yes, that is indeed a very valid reason to do it that way as the pps-gpio
-> seems to assume an always-on impulse source.
+> Sure, Will fix this.
+> > 
+> > This is a CAN bus controller? If so, then use 'can' for node name.
 > 
-> On the other hand it looks as if the pps framework can't tell the
-> source when to power on/off because it does not notify when it
-> is being accessed or not:
-> 
-> https://elixir.bootlin.com/linux/v4.17-rc7/source/drivers/pps/pps.c#L305
+> Yes but I am using m_can along the lines of dcan in other boards (For
+> example, see arch/arm/boot/dts/am33xx.dtsi:1046). Are you saying all CAN
+> controllers should only be called can?
 
-Yeah, we may need to address that when/if we get there.
+The module should be target-module@42c00000 and the child(ren)
+can@1a00 or mcan@1a00 if mcan is different from can.
 
-Thanks,
-Johan
+Regards,
+
+Tony
