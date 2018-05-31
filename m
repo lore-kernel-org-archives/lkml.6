@@ -1,49 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754009AbeEaGQH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:16:07 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45144 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753760AbeEaGQF (ORCPT
+        id S1754026AbeEaGQU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:16:20 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:54442 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753883AbeEaGQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:16:05 -0400
-X-Google-Smtp-Source: ADUXVKLi7m5Hg+lGYOJEaZgypdzcyJFpoTwzrp7zsoq1Scegd0gBy0r3GiELSTUa8kcfP3kYZ9d6iQ==
-Date: Thu, 31 May 2018 11:46:02 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 4/9] PM / Domains: Drop unused parameter in
- genpd_allocate_dev_data()
-Message-ID: <20180531061602.jaipvmlsslsb3j55@vireshk-i7>
-References: <20180529100421.31022-1-ulf.hansson@linaro.org>
- <20180529100421.31022-5-ulf.hansson@linaro.org>
+        Thu, 31 May 2018 02:16:06 -0400
+Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+To: Tony Lindgren <tony@atomide.com>
+CC: Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <robh+dt@kernel.org>, <bcousson@baylibre.com>, <paul@pwsan.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-2-faiz_abbas@ti.com> <20180530145047.GC5705@atomide.com>
+ <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
+ <20180530152825.GG5705@atomide.com>
+ <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
+ <20180530155448.GH5705@atomide.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <98c989ca-0694-5150-f74b-35f3e4bf20c0@ti.com>
+Date: Thu, 31 May 2018 09:15:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529100421.31022-5-ulf.hansson@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180530155448.GH5705@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-05-18, 12:04, Ulf Hansson wrote:
-> The in-parameter struct generic_pm_domain *genpd to
-> genpd_allocate_dev_data() is unused, so let's drop it.
+On 30/05/18 18:54, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [180530 15:44]:
+>> On 30/05/18 18:28, Tony Lindgren wrote:
+>>> * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
+>>>> For the OCP if part, I think that is still needed until we switch over to
+>>>> full sysc driver. clkctrl_offs you probably also need because that is used
+>>>> for mapping the omap_hwmod against a specific clkctrl clock. Those can be
+>>>> only removed once we are done with hwmod (or figure out some other way to
+>>>> assign the clkctrl clock to a hwmod.)
+>>>
+>>> Hmm might be worth testing. I thought your commit 70f05be32133
+>>> ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
+>>> already parses the clkctrl from dts?
+>>
+>> It maps the clkctrl clock to be used by hwmod, if those are available. We
+>> didn't add any specific clock entries to DT for mapping the actual clkctrl
+>> clock without the hwmod_data hints yet though, as that was deemed temporary
+>> solution only due to transition to interconnect driver. I.e., you would need
+>> something like this in DT for every device node:
+>>
+>> &uart3 {
+>>    clocks = <l4per_clkctrl UART3_CLK 0>;
+>>    clock-names = "clkctrl";
+>> };
+>>
+>> ... which is currently not present.
 > 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/base/power/domain.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> Hmm is that not the "fck" clkctrl clock we have already in
+> the dts files for the interconnect target modules?
 
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+Oh okay, yeah, we could parse that one, but currently it is not done, 
+and is not present for everything either I believe.
 
--- 
-viresh
+> We can also use pdata callbacks to pass the clock node if
+> needed. But I guess I don't quite still understand what we
+> are missing :)
+
+So, what is missing is the glue logic only from the hwmod codebase. 
+Right now this is not supported but should be relatively trivial thing 
+to add if we really want to do this.
+
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
