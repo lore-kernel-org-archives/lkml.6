@@ -1,84 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755781AbeEaQy4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:54:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37674 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755728AbeEaQyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:54:52 -0400
-Date: Thu, 31 May 2018 18:54:26 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: James Simmons <jsimmons@infradead.org>
-Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
-        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>,
-        "John L. Hammond" <john.hammond@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH v2 6/6] staging: lustre: mdc: use large xattr buffers for
- old servers
-Message-ID: <20180531165426.GA23414@kroah.com>
-References: <1527603705-30450-1-git-send-email-jsimmons@infradead.org>
- <1527603705-30450-7-git-send-email-jsimmons@infradead.org>
+        id S1755747AbeEaQzF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:55:05 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43600 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755793AbeEaQzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:55:00 -0400
+Subject: Re: [PATCH v5 07/10] sched/irq: add irq utilization tracking
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-8-git-send-email-vincent.guittot@linaro.org>
+ <72473e6f-8ade-8e26-3282-276fcae4c4c7@arm.com>
+ <CAKfTPtC8c9sP7TjefZPN2SFuNVGS7Q12WBj3BBYEbJFzxVN-2A@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <fba5a810-3c3b-dc8b-15fb-8078a591ec2b@arm.com>
+Date: Thu, 31 May 2018 18:54:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527603705-30450-7-git-send-email-jsimmons@infradead.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAKfTPtC8c9sP7TjefZPN2SFuNVGS7Q12WBj3BBYEbJFzxVN-2A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:21:45AM -0400, James Simmons wrote:
-> From: "John L. Hammond" <john.hammond@intel.com>
+On 05/30/2018 08:45 PM, Vincent Guittot wrote:
+> Hi Dietmar,
 > 
-> Pre 2.10.1 MDTs will crash when they receive a listxattr (MDS_GETXATTR
-> with OBD_MD_FLXATTRLS) RPC for an orphan or dead object. So for
-> clients connected to these older MDTs, try to avoid sending listxattr
-> RPCs by making the bulk getxattr (MDS_GETXATTR with OBD_MD_FLXATTRALL)
-> more likely to succeed and thereby reducing the chances of falling
-> back to listxattr.
-> 
-> Signed-off-by: John L. Hammond <john.hammond@intel.com>
-> Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10912
-> Reviewed-on: https://review.whamcloud.com/31990
-> Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
-> Reviewed-by: Fan Yong <fan.yong@intel.com>
-> Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
-> Signed-off-by: James Simmons <jsimmons@infradead.org>
-> ---
-> Changelog:
-> 
-> v1) Initial patch
-> v2) Rebased patch. No changes
-> 
->  drivers/staging/lustre/lustre/mdc/mdc_locks.c | 31 +++++++++++++++++++++------
->  1 file changed, 24 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/staging/lustre/lustre/mdc/mdc_locks.c b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
-> index a8aa0fa..b991c6f 100644
-> --- a/drivers/staging/lustre/lustre/mdc/mdc_locks.c
-> +++ b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
-> @@ -326,8 +326,10 @@ static void mdc_realloc_openmsg(struct ptlrpc_request *req,
->  {
->  	struct ptlrpc_request	*req;
->  	struct ldlm_intent	*lit;
-> +	u32 min_buf_size = 0;
->  	int rc, count = 0;
->  	LIST_HEAD(cancels);
-> +	u32 buf_size = 0;
->  
->  	req = ptlrpc_request_alloc(class_exp2cliimp(exp),
->  				   &RQF_LDLM_INTENT_GETXATTR);
-> @@ -344,18 +346,33 @@ static void mdc_realloc_openmsg(struct ptlrpc_request *req,
->  	lit = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
->  	lit->opc = IT_GETXATTR;
->  
-> +#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+> On 30 May 2018 at 17:55, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>> On 05/25/2018 03:12 PM, Vincent Guittot wrote:
 
-Why are you adding pointless version checks to mainline?  Please don't
-add new ones of these, you need to be working on removing the existing
-ones.
+[...]
 
-thanks,
+>>> +        */
+>>> +       ret = ___update_load_sum(rq->clock - running, rq->cpu,
+>>> &rq->avg_irq,
+>>> +                               0,
+>>> +                               0,
+>>> +                               0);
+>>> +       ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
+>>> +                               1,
+>>> +                               1,
+>>> +                               1);
 
-greg k-h
+Can you not change the function parameter list to the usual
+(u64 now, struct rq *rq, int running)?
+
+Something like this (only compile and boot tested):
+
+-- >8 --
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 9894bc7af37e..26ffd585cab8 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -177,8 +177,22 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+        rq->clock_task += delta;
+ 
+ #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
+-       if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
+-               update_irq_load_avg(rq, irq_delta + steal);
++       if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY)) {
++               /*
++                * We know the time that has been used by interrupt since last
++                * update but we don't when. Let be pessimistic and assume that
++                * interrupt has happened just before the update. This is not
++                * so far from reality because interrupt will most probably
++                * wake up task and trig an update of rq clock during which the
++                * metric si updated.
++                * We start to decay with normal context time and then we add
++                * the interrupt context time.
++                * We can safely remove running from rq->clock because
++                * rq->clock += delta with delta >= running
++                */
++               update_irq_load_avg(rq_clock(rq) - (irq_delta + steal), rq, 0);
++               update_irq_load_avg(rq_clock(rq), rq, 1);
++       }
+ #endif
+ }
+ 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 1bb3379c4b71..a245f853c271 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7363,7 +7363,7 @@ static void update_blocked_averages(int cpu)
+        }
+        update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+        update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
+-       update_irq_load_avg(rq, 0);
++       update_irq_load_avg(rq_clock(rq), rq, 0);
+        /* Don't need periodic decay once load/util_avg are null */
+        if (others_rqs_have_blocked(rq))
+                done = false;
+@@ -7434,7 +7434,7 @@ static inline void update_blocked_averages(int cpu)
+        update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
+        update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+        update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
+-       update_irq_load_avg(rq, 0);
++       update_irq_load_avg(rq_clock(rq), rq, 0);
+ #ifdef CONFIG_NO_HZ_COMMON
+        rq->last_blocked_load_update_tick = jiffies;
+        if (!cfs_rq_has_blocked(cfs_rq) && !others_rqs_have_blocked(rq))
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index d2e4f2186b13..ae01bb18e28c 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -365,31 +365,15 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+  *
+  */
+ 
+-int update_irq_load_avg(struct rq *rq, u64 running)
++int update_irq_load_avg(u64 now, struct rq *rq, int running)
+ {
+-       int ret = 0;
+-       /*
+-        * We know the time that has been used by interrupt since last update
+-        * but we don't when. Let be pessimistic and assume that interrupt has
+-        * happened just before the update. This is not so far from reality
+-        * because interrupt will most probably wake up task and trig an update
+-        * of rq clock during which the metric si updated.
+-        * We start to decay with normal context time and then we add the
+-        * interrupt context time.
+-        * We can safely remove running from rq->clock because
+-        * rq->clock += delta with delta >= running
+-        */
+-       ret = ___update_load_sum(rq->clock - running, rq->cpu, &rq->avg_irq,
+-                               0,
+-                               0,
+-                               0);
+-       ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
+-                               1,
+-                               1,
+-                               1);
+-
+-       if (ret)
++       if (___update_load_sum(now, rq->cpu, &rq->avg_irq,
++                               running,
++                               running,
++                               running)) {
+                ___update_load_avg(&rq->avg_irq, 1, 1);
++               return 1;
++       }
+ 
+-       return ret;
++       return 0;
+ }
+diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
+index 0ce9a5a5877a..ebc57301a9a8 100644
+--- a/kernel/sched/pelt.h
++++ b/kernel/sched/pelt.h
+@@ -5,7 +5,7 @@ int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_e
+ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
+ int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
+ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
+-int update_irq_load_avg(struct rq *rq, u64 running);
++int update_irq_load_avg(u64 now, struct rq *rq, int running);
+ 
+ /*
+  * When a task is dequeued, its estimated utilization should not be update if
