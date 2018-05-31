@@ -1,82 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755327AbeEaNt6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:49:58 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8240 "EHLO huawei.com"
+        id S1755265AbeEaNye convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:54:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33914 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755085AbeEaNtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:49:55 -0400
-Subject: Re: [PATCH 0/7] add non-strict mode support for arm-smmu-v3
-To: Robin Murphy <robin.murphy@arm.com>,
-        Zhen Lei <thunder.leizhen@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, "Joerg Roedel" <joro@8bytes.org>,
-        linux-mediatek <linux-mediatek@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-CC: Libin <huawei.libin@huawei.com>, Guozhu Li <liguozhu@hisilicon.com>,
-        Xinwei Hu <huxinwei@huawei.com>
-References: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
- <d65f87a4-db61-3cd2-1a6f-0322025840a8@arm.com>
-From: Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <96cc25b9-b21f-6067-384d-f52e6b8b25e7@huawei.com>
-Date: Thu, 31 May 2018 21:49:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1755155AbeEaNya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:54:30 -0400
+Subject: Re: [PATCH v9 3/7] cpuset: Add cpuset.sched.load_balance flag to v2
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1527601294-3444-1-git-send-email-longman@redhat.com>
+ <1527601294-3444-4-git-send-email-longman@redhat.com>
+ <20180531122638.GJ12180@hirez.programming.kicks-ass.net>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <42cc1f44-2355-1c0c-b575-49c863303c42@redhat.com>
+Date: Thu, 31 May 2018 09:54:27 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <d65f87a4-db61-3cd2-1a6f-0322025840a8@arm.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180531122638.GJ12180@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.223.23]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+On 05/31/2018 08:26 AM, Peter Zijlstra wrote:
+> On Tue, May 29, 2018 at 09:41:30AM -0400, Waiman Long wrote:
+>> The sched.load_balance flag is needed to enable CPU isolation similar to
+>> what can be done with the "isolcpus" kernel boot parameter. Its value
+>> can only be changed in a scheduling domain with no child cpusets. On
+>> a non-scheduling domain cpuset, the value of sched.load_balance is
+>> inherited from its parent. This is to make sure that all the cpusets
+>> within the same scheduling domain or partition has the same load
+>> balancing state.
+>>
+>> This flag is set by the parent and is not delegatable.
+>> +  cpuset.sched.domain_root
+>> +	A read-write single value file which exists on non-root
+>> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
+>> +	either "0" (off) or "1" (on).  This flag is set by the parent
+>> +	and is not delegatable.
+>> +
+>> +	If set, it indicates that the current cgroup is the root of a
+>> +	new scheduling domain or partition that comprises itself and
+>> +	all its descendants except those that are scheduling domain
+>> +	roots themselves and their descendants.  The root cgroup is
+>> +	always a scheduling domain root.
+>> +
+>> +	There are constraints on where this flag can be set.  It can
+>> +	only be set in a cgroup if all the following conditions are true.
+>> +
+>> +	1) The "cpuset.cpus" is not empty and the list of CPUs are
+>> +	   exclusive, i.e. they are not shared by any of its siblings.
+>> +	2) The parent cgroup is also a scheduling domain root.
+>> +	3) There is no child cgroups with cpuset enabled.  This is
+>> +	   for eliminating corner cases that have to be handled if such
+>> +	   a condition is allowed.
+>> +
+>> +	Setting this flag will take the CPUs away from the effective
+>> +	CPUs of the parent cgroup.  Once it is set, this flag cannot
+>> +	be cleared if there are any child cgroups with cpuset enabled.
+>> +	Further changes made to "cpuset.cpus" is allowed as long as
+>> +	the first condition above is still true.
+>> +
+>> +	A parent scheduling domain root cgroup cannot distribute all
+>> +	its CPUs to its child scheduling domain root cgroups unless
+>> +	its load balancing flag is turned off.
+>> +
+>> +  cpuset.sched.load_balance
+>> +	A read-write single value file which exists on non-root
+>> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
+>> +	either "0" (off) or "1" (on).  This flag is set by the parent
+>> +	and is not delegatable.  It is on by default in the root cgroup.
+>> +
+>> +	When it is on, tasks within this cpuset will be load-balanced
+>> +	by the kernel scheduler.  Tasks will be moved from CPUs with
+>> +	high load to other CPUs within the same cpuset with less load
+>> +	periodically.
+>> +
+>> +	When it is off, there will be no load balancing among CPUs on
+>> +	this cgroup.  Tasks will stay in the CPUs they are running on
+>> +	and will not be moved to other CPUs.
+>> +
+>> +	The load balancing state of a cgroup can only be changed on a
+>> +	scheduling domain root cgroup with no cpuset-enabled children.
+>> +	All cgroups within a scheduling domain or partition must have
+>> +	the same load balancing state.	As descendant cgroups of a
+>> +	scheduling domain root are created, they inherit the same load
+>> +	balancing state of their root.
+> I still find all that a bit weird.
+>
+> So load_balance=0 basically changes a partition into a
+> 'fully-partitioned partition' with the seemingly random side-effect that
+> now sub-partitions are allowed to consume all CPUs.
 
-On 2018/5/31 19:24, Robin Murphy wrote:
-> On 31/05/18 08:42, Zhen Lei wrote:
->> In common, a IOMMU unmap operation follow the below steps:
->> 1. remove the mapping in page table of the specified iova range
->> 2. execute tlbi command to invalid the mapping which is cached in TLB
->> 3. wait for the above tlbi operation to be finished
->> 4. free the IOVA resource
->> 5. free the physical memory resource
->>
->> This maybe a problem when unmap is very frequently, the combination of tlbi
->> and wait operation will consume a lot of time. A feasible method is put off
->> tlbi and iova-free operation, when accumulating to a certain number or
->> reaching a specified time, execute only one tlbi_all command to clean up
->> TLB, then free the backup IOVAs. Mark as non-strict mode.
->>
->> But it must be noted that, although the mapping has already been removed in
->> the page table, it maybe still exist in TLB. And the freed physical memory
->> may also be reused for others. So a attacker can persistent access to memory
->> based on the just freed IOVA, to obtain sensible data or corrupt memory. So
->> the VFIO should always choose the strict mode.
->>
->> Some may consider put off physical memory free also, that will still follow
->> strict mode. But for the map_sg cases, the memory allocation is not controlled
->> by IOMMU APIs, so it is not enforceable.
->>
->> Fortunately, Intel and AMD have already applied the non-strict mode, and put
->> queue_iova() operation into the common file dma-iommu.c., and my work is based
->> on it. The difference is that arm-smmu-v3 driver will call IOMMU common APIs to
->> unmap, but Intel and AMD IOMMU drivers are not.
->>
->> Below is the performance data of strict vs non-strict for NVMe device:
->> Randomly Read  IOPS: 146K(strict) vs 573K(non-strict)
->> Randomly Write IOPS: 143K(strict) vs 513K(non-strict)
-> 
-> What hardware is this on? If it's SMMUv3 without MSIs (e.g. D05), then you'll still be using the rubbish globally-blocking sync implementation. If that is the case, I'd be very interested to see how much there is to gain from just improving that - I've had a patch kicking around for a while[1] (also on a rebased branch at [2]), but don't have the means for serious performance testing.
+Are you suggesting that we should allow sub-partition to consume all the
+CPUs no matter the load balance state? I can live with that if you think
+it is more logical.
 
-The hardware is the new D06 which the SMMU with MSIs,
-it's not D05 :)
+> The rationale, only given in the Changelog above, seems to be to allow
+> 'easy' emulation of isolcpus.
+>
+> I'm still not convinced this is a useful knob to have. You can do
+> fully-partitioned by simply creating a lot of 1 cpu parititions.
 
-Thanks
-Hanjun
+That is certainly true. However, I think there are some additional
+overhead in the scheduler side in maintaining those 1-cpu partitions. Right?
+
+> So this one knob does two separate things, both of which seem, to me,
+> redundant.
+>
+> Can we please get better rationale for this?
+
+I am fine getting rid of the load_balance flag if this is the consensus.
+However, we do need to come up with a good migration story for those
+users that need the isolcpus capability. I think Mike was the one asking
+for supporting isolcpus. So Mike, what is your take on that.
+
+Cheers,
+Longman
