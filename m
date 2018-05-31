@@ -1,83 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754996AbeEaMlH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 08:41:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59050 "EHLO mx1.redhat.com"
+        id S1755095AbeEaMmY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 08:42:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57930 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754197AbeEaMlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 08:41:04 -0400
-Date: Thu, 31 May 2018 08:41:03 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
-        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
-        James Smart <james.smart@broadcom.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-Message-ID: <20180531124102.GB10552@redhat.com>
-References: <20180525125322.15398-1-jthumshirn@suse.de>
- <20180525130535.GA24239@lst.de>
- <20180525135813.GB9591@redhat.com>
- <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
- <20180530224402.GA7303@redhat.com>
- <cab4ef4a-df7a-60c8-1f40-7a130aa3b15a@grimberg.me>
+        id S1754775AbeEaMmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 08:42:22 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CA+55aFxJXptHn4ddadqz2v_WqJHgf1vrVR6U9a31priYV1F+zg@mail.gmail.com>
+References: <CA+55aFxJXptHn4ddadqz2v_WqJHgf1vrVR6U9a31priYV1F+zg@mail.gmail.com> <31071.1527602145@warthog.procyon.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] afs: A couple of fixes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cab4ef4a-df7a-60c8-1f40-7a130aa3b15a@grimberg.me>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Thu, 31 May 2018 13:42:21 +0100
+Message-ID: <32665.1527770541@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31 2018 at  4:51am -0400,
-Sagi Grimberg <sagi@grimberg.me> wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> >>Moreover, I also wanted to point out that fabrics array vendors are
-> >>building products that rely on standard nvme multipathing (and probably
-> >>multipathing over dispersed namespaces as well), and keeping a knob that
-> >>will keep nvme users with dm-multipath will probably not help them
-> >>educate their customers as well... So there is another angle to this.
-> >
-> >Noticed I didn't respond directly to this aspect.  As I explained in
-> >various replies to this thread: The users/admins would be the ones who
-> >would decide to use dm-multipath.  It wouldn't be something that'd be
-> >imposed by default.  If anything, the all-or-nothing
-> >nvme_core.multipath=N would pose a much more serious concern for these
-> >array vendors that do have designs to specifically leverage native NVMe
-> >multipath.  Because if users were to get into the habit of setting that
-> >on the kernel commandline they'd literally _never_ be able to leverage
-> >native NVMe multipathing.
-> >
-> >We can also add multipath.conf docs (man page, etc) that caution admins
-> >to consult their array vendors about whether using dm-multipath is to be
-> >avoided, etc.
-> >
-> >Again, this is opt-in, so on a upstream Linux kernel level the default
-> >of enabling native NVMe multipath stands (provided CONFIG_NVME_MULTIPATH
-> >is configured).  Not seeing why there is so much angst and concern about
-> >offering this flexibility via opt-in but I'm also glad we're having this
-> >discussion to have our eyes wide open.
-> 
-> I think that the concern is valid and should not be dismissed. And
-> at times flexibility is a real source of pain, both to users and
-> developers.
-> 
-> The choice is there, no one is forbidden to use multipath. I'm just
-> still not sure exactly why the subsystem granularity is an absolute
-> must other than a volume exposed as a nvmf namespace and scsi lun (how
-> would dm-multipath detect this is the same device btw?)
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Please see my other reply, I was talking about completely disjoint
-arrays in my hypothetical config where having the ability to allow
-simultaneous use of native NVMe multipath and dm-multipath is
-meaningful.
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+> tags/afs-fixes-20180529
+>=20
+> Hmm. That _was_ a tag, but it wasn't signed.
+>=20
+> I don't require signed tags from kernel.org, so I took it.
+>=20
+> But since you *have* been sending me signed tags (with RSA key
+> FBB7576BA7CB0B6B), I thought I'd mention it and double check that it was
+> just an oversight.
 
-Mike
+Ummm...  Yes, I should've created a signed tag.  Sorry about that.
+
+David
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEqG5UsNXhtOCrfGQP+7dXa6fLC2sFAlsP7acACgkQ+7dXa6fL
+C2vhyQ//TuePvot7N6naZd+PVj5Vpv2RTpU5EdxgQzywCgfwZ+hugTsbQP11QS92
+E7s83jjSRgNn2nbB4Zkp4Qi9OaGjF4+E6/RLZCrG4SVWg5nZnwdpBaY55XeKKZZI
+l2drWwCypw0MtPpf06QFbDF0+J60x7I2yiJ56LaC2xh5npfo+NtZERXl/mqN3mA9
+v4sT+ReNoGirIXgKOAtJZz+ATs2wzSU9DZ9AawnTT+r+R9shcD2N80VvTYK4k6Mr
+4tlN++6orOekfcyhwes/6byZPcP8pnmjJfNzV9UGUF3NYzO4be2JbYNZvk3YoTTf
+yso4mdsDVG1Uw89zrtREB2L8oyuG3LFqqe5C3rGBHboCqmbHRL1/8izhuKX0rq0I
+xETaeN2YYenkUJIoV4KfUUV/5+by687i3ugH9Hr/I6/K2S7trIq5e0+jj9X05Inh
+4krnyMUd8QZ9lGu3/8L68zUr+KS7HWrT3+zfR2aPHAmx07xVHReofMej3QyKaU5T
+JQFk9dZgpsPm1ZVSgl923EnGRQGW4xJLhZKmThqJWxWF63+p8u56jk4/UeY1we7u
+2oGfQkxfV7LO2f34uGQMl4rC+XaR8crolwJwFCft8dTWVCLkAXECduIxZo3VTzhO
+xFXPxR1NYscbLwoIvaQJ1q/oxEv47pFKcCKXXX/PTjtw+JHZIas=
+=+CDn
+-----END PGP SIGNATURE-----
+--=-=-=--
