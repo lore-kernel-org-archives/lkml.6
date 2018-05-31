@@ -1,85 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932690AbeEaDPS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 23:15:18 -0400
-Received: from [180.169.226.26] ([180.169.226.26]:60616 "EHLO mail.iauto.com"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932527AbeEaDPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 23:15:15 -0400
-X-DSPAM-Result: Innocent
-X-DSPAM-Processed: Thu May 31 11:15:13 2018
-X-DSPAM-Confidence: 0.8525
-X-DSPAM-Probability: 0.0000
-X-DSPAM-Signature: 1,5b0f68c112001188614662
-X-Spam-Flag: NO
-X-Spam-Score: -2
-Content-Type: text/plain;
-        charset=gb2312
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] ANDROID: binder: rename parameter to resolve name
- collision.
-From: kuangrufan@iauto.com
-In-Reply-To: <CAHRSSEySzqTb-m5Rjv23PuUHi2q4OY485JJjFi1AeLiKL1KJQQ@mail.gmail.com>
-Date: Thu, 31 May 2018 11:15:12 +0800
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <67F0DCCC-BBC5-4B7B-9FC4-1BD83D247DAA@iauto.com>
-References: <20180530045814.49504-1-kuangrufan@iauto.com>
- <CAHRSSEySzqTb-m5Rjv23PuUHi2q4OY485JJjFi1AeLiKL1KJQQ@mail.gmail.com>
-To: Todd Kjos <tkjos@google.com>
-X-Mailer: Apple Mail (2.3445.6.18)
+        id S932704AbeEaDUg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 23:20:36 -0400
+Received: from mga14.intel.com ([192.55.52.115]:31205 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932637AbeEaDUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 23:20:35 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,462,1520924400";
+   d="scan'208";a="45580590"
+Date: Thu, 31 May 2018 11:20:49 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>
+Cc: "mst@redhat.com" <mst@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "Daly, Dan" <dan.daly@intel.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Liang, Cunming" <cunming.liang@intel.com>,
+        "Wang, Zhihong" <zhihong.wang@intel.com>
+Subject: Re: [PATCH] virtio_pci: support enabling VFs
+Message-ID: <20180531032049.GB15516@debian>
+References: <20180530085521.26583-1-tiwei.bie@intel.com>
+ <20180530192010-mutt-send-email-mst@kernel.org>
+ <414C18B1-30FA-4AC0-B47D-F0FBF9832737@intel.com>
+ <1527699273.29907.2.camel@intel.com>
+ <5063D90B-7955-4F1E-85A2-D8AFD661ACB7@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5063D90B-7955-4F1E-85A2-D8AFD661ACB7@intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Why is this needed? These don't collide in the namespace:
-Sorry, I check it again, you’re right. my bad.
+On Thu, May 31, 2018 at 01:11:37AM +0800, Rustad, Mark D wrote:
+> On May 30, 2018, at 9:54 AM, Duyck, Alexander H
+> <alexander.h.duyck@intel.com> wrote:
+> 
+> > On Wed, 2018-05-30 at 09:44 -0700, Rustad, Mark D wrote:
+> > > On May 30, 2018, at 9:22 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > 
+> > > > > +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int
+> > > > > num_vfs)
+> > > > > +{
+> > > > > +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+> > > > > +	struct virtio_device *vdev = &vp_dev->vdev;
+> > > > > +	int (*sriov_configure)(struct pci_dev *pci_dev, int num_vfs);
+> > > > > +
+> > > > > +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
+> > > > > +		return -EBUSY;
+> > > > > +
+> > > > > +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
+> > > > > +		return -EINVAL;
+> > > > > +
+> > > > > +	sriov_configure = pci_sriov_configure_simple;
+> > > > > +	if (sriov_configure == NULL)
+> > > > > +		return -ENOENT;
+> > > > 
+> > > > BTW what is all this trickery in aid of?
+> > > 
+> > > When SR-IOV support is not compiled into the kernel,
+> > > pci_sriov_configure_simple is #defined as NULL. This allows it to compile
+> > > in that case, even though there is utterly no way for it to be called in
+> > > that case. It is an alternative to #ifs in the code.
+> > 
+> > Why even have the call though? I would wrap all of this in an #ifdef
+> > and strip it out since you couldn't support SR-IOV if it isn't present
+> > in the kernel anyway.
+> 
+> I am inclined to agree. In this case, the presence of #ifdefs I think would
+> be clearer. As written, someone will want to get rid of the pointer only to
+> create a build problem when SR-IOV is not configured.
 
-PS:
-I need to change the binder API between 32bit & 64bit dynamically.
-So I was trying to compile binder as a “.ko”. I compiled the 2
-files into the same kernel module, which causes problem.
+In my opinion, maybe it would be better to make
+pci_sriov_configure_simple() always available
+just like other sriov functions.
 
-Best Regards,
+Based on the comments in the original patch:
 
-> 在 2018年5月30日，下午11:54，Todd Kjos <tkjos@google.com> 写道：
-> 
-> Why is this needed? These don't collide in the namespace:
-> 
-> /sys/module/binder/parameters/debug_mask
-> 
-> and
-> 
-> /sys/module/binder_alloc/parameters/debug_mask.
-> 
-> On Tue, May 29, 2018 at 9:58 PM <kuangrufan@iauto.com> wrote:
-> From: Kuang Rufan <kuangrufan@iauto.com>
-> 
-> both bind.c & binder_alloc.c define the same kernel parameter 'debug_mask',
-> rename the one in binder_alloc.c to 'alloc_debug_mask'.
-> 
-> Signed-off-by: Kuang Rufan <kuangrufan@iauto.com>
-> ---
->  drivers/android/binder_alloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-> index 5a426c877dfb..3850dab493d4 100644
-> --- a/drivers/android/binder_alloc.c
-> +++ b/drivers/android/binder_alloc.c
-> @@ -42,7 +42,7 @@ enum {
->  };
->  static uint32_t binder_alloc_debug_mask;
-> 
-> -module_param_named(debug_mask, binder_alloc_debug_mask,
-> +module_param_named(alloc_debug_mask, binder_alloc_debug_mask,
->                    uint, 0644);
-> 
->  #define binder_alloc_debug(mask, x...) \
-> -- 
-> 2.15.1 (Apple Git-101)
-> 
+https://patchwork.kernel.org/patch/10353197/
+"""
++/* this is expected to be used as a function pointer, just define as NULL */
++#define pci_sriov_configure_simple NULL
+"""
+
+This function could be defined as NULL just because
+it was expected to be used as a function pointer.
+But actually it could be called directly as a
+function, just like this case.
+
+So I prefer to make this function always available
+just like other sriov functions.
+
+Best regards,
+Tiwei Bie
