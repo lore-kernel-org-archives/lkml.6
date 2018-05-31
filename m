@@ -1,64 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932663AbeEaB0C (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 21:26:02 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37168 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932563AbeEaB0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 21:26:00 -0400
-Subject: Re: [PATCH] cpuset: Enforce that a child's cpus must be a subset of
- the parent
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Johannes Weiner" <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ingo Molnar" <mingo@redhat.com>
-References: <1527687991-1431-1-git-send-email-longman@redhat.com>
-CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <kernel-team@fb.com>, <pjt@google.com>,
-        <luto@amacapital.net>, Mike Galbraith <efault@gmx.de>,
-        <torvalds@linux-foundation.org>, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-From: Zefan Li <lizefan@huawei.com>
-X-Enigmail-Draft-Status: N1110
-Message-ID: <5B0F4F09.9050100@huawei.com>
-Date: Thu, 31 May 2018 09:25:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S932712AbeEaB0T (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 21:26:19 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:42623 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932683AbeEaB0K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 21:26:10 -0400
+X-Google-Smtp-Source: ADUXVKLNIPFCURX3ORXUNuj5KGqSxnRdGGHFlb7xBjIWlzygHVDVMCSfCKJS8nnvAUb2mJ+xWdIZb5p924B1S9yKpUQ=
 MIME-Version: 1.0
-In-Reply-To: <1527687991-1431-1-git-send-email-longman@redhat.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.19.236]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
+References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 30 May 2018 18:26:08 -0700
+X-Google-Sender-Auth: BcOgN5NZufktYeBb58k4IojITCc
+Message-ID: <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Waiman,
+On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Hi.
+> (+CC Kees)
+>
+> 2018-05-31 7:40 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+>> Hi Masahiro,
+>>
+>> After merging the kbuild tree, today's linux-next build (x86_64
+>> allmodconfig) produced these warnings:
+>>
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev7':
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>  }
+>>  ^
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev3':
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warning: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>  }
+>>  ^
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_cal_txiqlo_nphy':
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warning: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>  }
+>>  ^
+>>
+>> I have no idea what caused these warnings to appear ... nothing in those
+>> functions looks too bad.
+>
+>
+> This has been triggered by the following commit:
+>
+>
+> commit 0e461945f3504e09b8ecf947b6398adce1287a28
+> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Date:   Mon May 28 18:22:07 2018 +0900
+>
+>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
+>
+>
+>
+> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
+> for COMPILE_TEST, which is now enabled.
 
-On 2018/5/30 21:46, Waiman Long wrote:
-> It was found that the cpuset.cpus could contain CPUs that are not listed
-> in their parent's cpu list as shown by the command sequence below:
-> 
->   # echo "+cpuset" >cgroup.subtree_control
->   # mkdir g1
->   # echo 0-5 >g1/cpuset.cpus
->   # mkdir g1/g11
->   # echo "+cpuset" > g1/cgroup.subtree_control
->   # echo 6-11 >g1/g11/cpuset.cpus
->   # grep -R . g1 | grep "\.cpus"
->   g1/cpuset.cpus:0-5
->   g1/cpuset.cpus.effective:0-5
->   g1/g11/cpuset.cpus:6-11
->   g1/g11/cpuset.cpus.effective:0-5
-> 
-> As the intersection of g11's cpus and that of g1 is empty, the effective
-> cpus of g11 is just that of g1. The check in update_cpumask() is now
-> corrected to make sure that cpus in a child cpus must be a subset of
-> its parent's cpus. The error "write error: Invalid argument" will now
-> be reported in the above case.
-> 
+Weird -- I do build tests with plugins enabled pretty regularly. I
+hadn't seen this before. I'll see if I can figure out what the
+combination is...
 
-We made the distinction between user-configured CPUs and effective CPUs
-in commit 7e88291beefbb758, so actually it's not a bug.
+> COMPILE_TEST now enables GCC plugin for wider test coverage,
+> this is a good thing in general.
+
+Yes indeed!
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
