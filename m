@@ -1,92 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755696AbeEaQyn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:54:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:43576 "EHLO foss.arm.com"
+        id S1755781AbeEaQy4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:54:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755618AbeEaQyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:54:41 -0400
-Subject: Re: [PATCH v1 2/2] arm64: handle NOTIFY_SEI notification by the APEI
- driver
-To: Mark Rutland <mark.rutland@arm.com>,
-        Dongjiu Geng <gengdongjiu@huawei.com>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-        lenb@kernel.org, tony.luck@intel.com, bp@alien8.de,
-        robert.moore@intel.com, erik.schmauss@intel.com, dave.martin@arm.com,
-        ard.biesheuvel@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-References: <1527770506-8076-1-git-send-email-gengdongjiu@huawei.com>
- <1527770506-8076-3-git-send-email-gengdongjiu@huawei.com>
- <20180531110115.uglmicy3nzwfoyx3@lakrids.cambridge.arm.com>
-From: James Morse <james.morse@arm.com>
-Message-ID: <71afa669-e3c5-979e-da5b-1d9cb7056fd6@arm.com>
-Date: Thu, 31 May 2018 17:51:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1755728AbeEaQyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:54:52 -0400
+Date: Thu, 31 May 2018 18:54:26 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: James Simmons <jsimmons@infradead.org>
+Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>,
+        "John L. Hammond" <john.hammond@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Subject: Re: [PATCH v2 6/6] staging: lustre: mdc: use large xattr buffers for
+ old servers
+Message-ID: <20180531165426.GA23414@kroah.com>
+References: <1527603705-30450-1-git-send-email-jsimmons@infradead.org>
+ <1527603705-30450-7-git-send-email-jsimmons@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180531110115.uglmicy3nzwfoyx3@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527603705-30450-7-git-send-email-jsimmons@infradead.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark, Dongjiu Geng,
-
-On 31/05/18 12:01, Mark Rutland wrote:
-> In do_serror() we already handle nmi_{enter,exit}(), so there's no need
-> for that here.
-
-Even better: nmi_enter() has a BUG_ON(in_nmi()).
-
-
-> TBH, I don't understand why do_sea() does that conditionally today.
-> Unless there's some constraint I'm missing, 
-
-APEI uses a different fixmap entry and locks when in_nmi(). This was because we
-may interrupt the irq-masked region in APEI that was using the regular memory.
-(e.g. the 'polled' notification, or something backed by an interrupt.) But,
-Borislav has spotted other things in here that are broken[0]. I'm working on
-rolling all that into 'v5' of the in_nmi() rework stuff.
-
-We currently get away with this on arm because 'SEA' is the only NMI-like thing,
-and it occurs synchronously. The problem cases are all also cases where the
-kernel text is corrupt, which we can't possibly hope to handle.
-
-For NOTIFY_SDEI and NOTIFY_SEI this is the wrong pattern as these are
-asynchronous. do_serror() has already done most of the work for NOTIFY_SEI, but
-we need to use the estatus queue in APEI, which is currently x86 only.
-
-
-> I think it would make more
-> sense to do that regardless of whether the interrupted context had
-> interrupts enabled. James -- does that make sense to you?
+On Tue, May 29, 2018 at 10:21:45AM -0400, James Simmons wrote:
+> From: "John L. Hammond" <john.hammond@intel.com>
 > 
-> If you update the prior patch with a stub for !CONFIG_ACPI_APEI_SEI, you
-> can simplify all of the above additions down to:
+> Pre 2.10.1 MDTs will crash when they receive a listxattr (MDS_GETXATTR
+> with OBD_MD_FLXATTRLS) RPC for an orphan or dead object. So for
+> clients connected to these older MDTs, try to avoid sending listxattr
+> RPCs by making the bulk getxattr (MDS_GETXATTR with OBD_MD_FLXATTRALL)
+> more likely to succeed and thereby reducing the chances of falling
+> back to listxattr.
 > 
-> 	if (!ghes_notify_sei())
-> 		return;
+> Signed-off-by: John L. Hammond <john.hammond@intel.com>
+> Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10912
+> Reviewed-on: https://review.whamcloud.com/31990
+> Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+> Reviewed-by: Fan Yong <fan.yong@intel.com>
+> Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
+> Signed-off-by: James Simmons <jsimmons@infradead.org>
+> ---
+> Changelog:
 > 
-> ... which would look a lot nicer.
+> v1) Initial patch
+> v2) Rebased patch. No changes
+> 
+>  drivers/staging/lustre/lustre/mdc/mdc_locks.c | 31 +++++++++++++++++++++------
+>  1 file changed, 24 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/staging/lustre/lustre/mdc/mdc_locks.c b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+> index a8aa0fa..b991c6f 100644
+> --- a/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+> +++ b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+> @@ -326,8 +326,10 @@ static void mdc_realloc_openmsg(struct ptlrpc_request *req,
+>  {
+>  	struct ptlrpc_request	*req;
+>  	struct ldlm_intent	*lit;
+> +	u32 min_buf_size = 0;
+>  	int rc, count = 0;
+>  	LIST_HEAD(cancels);
+> +	u32 buf_size = 0;
+>  
+>  	req = ptlrpc_request_alloc(class_exp2cliimp(exp),
+>  				   &RQF_LDLM_INTENT_GETXATTR);
+> @@ -344,18 +346,33 @@ static void mdc_realloc_openmsg(struct ptlrpc_request *req,
+>  	lit = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
+>  	lit->opc = IT_GETXATTR;
+>  
+> +#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 
-The code that calls ghes_notify_sei() may need calling by KVM too, but its
-default action to an 'unclaimed' SError will be different.
-Because of the race between memory_failure() and return-to-userspace, we may
-need to kick the irq work queue (if we can), as we return from do_serror(). [1]
-and [2] provide an example for NOTIFY_SEA. SDEI does this by returning to the
-kernel through the IRQ handler, (which handles the KVM case too).
+Why are you adding pointless version checks to mainline?  Please don't
+add new ones of these, you need to be working on removing the existing
+ones.
 
+thanks,
 
-I think this series is unsafe until we can use the estatus queue in APEI. Its
-also missing the handling for an SError interrupting a KVM guest.
-
-
-Thanks,
-
-James
-
-[0] https://www.spinics.net/lists/arm-kernel/msg653332.html
-[1] https://www.spinics.net/lists/arm-kernel/msg649237.html
-[2] https://www.spinics.net/lists/arm-kernel/msg649239.html
+greg k-h
