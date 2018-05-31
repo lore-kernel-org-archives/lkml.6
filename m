@@ -1,69 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754125AbeEaIXk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:23:40 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37879 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753957AbeEaIXg (ORCPT
+        id S1754132AbeEaIYg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:24:36 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:46575 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753957AbeEaIYc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:23:36 -0400
-X-Google-Smtp-Source: ADUXVKI7R36M85sQmn49VDGCS9DGqzsuzqHV1wsLqnGSzJBSK3JDQX7UXJZljvZt3vDOvRRgEsoBZg==
-Subject: Re: [PATCH v2 15/29] venus: helpers: rename a helper function and use
- buffer mode from caps
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Thu, 31 May 2018 04:24:32 -0400
+X-Google-Smtp-Source: ADUXVKJC3Kyl88cyWHGBYkiCXvkgKhdiMDK0jZZSxfGDzzXdz+3fFAk9Efkw9uolmL2y0KOQxla+LA==
+Date: Thu, 31 May 2018 09:24:28 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        kgdb-bugreport@lists.sourceforge.net,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
- <20180515075859.17217-16-stanimir.varbanov@linaro.org>
- <CAAFQd5BgTB0s0Dp7rqAVqxrUA74KNZSCo67xwVBPoWnZHiudFQ@mail.gmail.com>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <bd3deac5-c331-d069-ed1d-797da948db33@linaro.org>
-Date: Thu, 31 May 2018 11:23:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        ebiggers@google.com
+Subject: Re: [PATCH] kdb: prefer strlcpy to strncpy
+Message-ID: <20180531082428.c5z7cpdetdrhy5wd@holly.lan>
+References: <1527573427-16569-1-git-send-email-nick.desaulniers@gmail.com>
+ <CAK8P3a2=THd7YL6sB4=xXZShD=wOjk_taM1L-E5VPH77TiQK0w@mail.gmail.com>
+ <CAH7mPvhQo5S5EbgvkteoL1xftLWjWBqkfoanG0dTLzaa=FtTgw@mail.gmail.com>
+ <20180530143415.ksc6fb4zo6m7xb25@holly.lan>
+ <CAMuHMdXE980MDNO4mxOkwO=5AWV=Nzwwu1Sjt653AK8bMHbWsA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5BgTB0s0Dp7rqAVqxrUA74KNZSCo67xwVBPoWnZHiudFQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXE980MDNO4mxOkwO=5AWV=Nzwwu1Sjt653AK8bMHbWsA@mail.gmail.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
-
-Thanks for the review!
-
-On 05/31/2018 10:59 AM, Tomasz Figa wrote:
-> On Tue, May 15, 2018 at 5:06 PM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
->>
->> Rename is_reg_unreg_needed() to better name is_dynamic_bufmode() and
->> use buffer mode from enumerated per codec capabilities.
->>
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->> ---
->>  drivers/media/platform/qcom/venus/helpers.c | 21 +++++++++++----------
->>  1 file changed, 11 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
->> index 2b21f6ed7502..1eda19adbf28 100644
->> --- a/drivers/media/platform/qcom/venus/helpers.c
->> +++ b/drivers/media/platform/qcom/venus/helpers.c
->> @@ -354,18 +354,19 @@ session_process_buf(struct venus_inst *inst, struct vb2_v4l2_buffer *vbuf)
->>         return 0;
->>  }
->>
->> -static inline int is_reg_unreg_needed(struct venus_inst *inst)
->> +static inline int is_dynamic_bufmode(struct venus_inst *inst)
+On Wed, May 30, 2018 at 10:47:13PM +0200, Geert Uytterhoeven wrote:
+> H Daniel,
 > 
-> nit: Could be made bool.
+> On Wed, May 30, 2018 at 4:34 PM, Daniel Thompson
+> <daniel.thompson@linaro.org> wrote:
+> > On Tue, May 29, 2018 at 07:01:35PM -0700, Nick Desaulniers wrote:
+> >> On Tue, May 29, 2018 at 12:57 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> >> > On Tue, May 29, 2018 at 7:57 AM, Nick Desaulniers
+> >> > <nick.desaulniers@gmail.com> wrote:
+> >> >> Fixes stringop-truncation and stringop-overflow warnings from gcc-8.
+> 
+> >> Eric points out that this will leak kernel memory if size is less than
+> >> sizeof src.
+> >
+> > Don't quite understand what this means (there's no allocation here, how
+> > can there be a leak?) but the symbol completion certainly won't work if
+> > we truncate the copy here.
+> 
+> Not leak an is memory leak, but leak as in information leak of uninitialized
+> data to userspace (if the buffer is ever copied to userspace).
 
-And drop inline I guess? :)
+I see... I saw "leak", I saw "memory" and was perhaps too quick to link
+the two together.
 
--- 
-regards,
-Stan
+The underlying bug is a buffer overflow (so a good catch and I look
+forward to a v2) but, with or without Nick's change, I can't see a leak
+in either sense of the word in the code that Arnd was commenting on[1].
+
+
+Daniel.
+
+
+[1] Clearly the undefined behaviour post-overflow *could* be a leak but
+    I stopped analyzing after the overflow.
