@@ -1,89 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754890AbeEaMJZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 08:09:25 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39606 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754353AbeEaMJW (ORCPT
+        id S1754853AbeEaMKJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 08:10:09 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:33963 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753881AbeEaMKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 08:09:22 -0400
-X-Google-Smtp-Source: ADUXVKLG6mWUcjMcyOqqPsqcLCNLqZxHUo84bxWlUL8lkOqldY6ZfSxvLJe9R1Giiwy/sVQhd84eEA==
-Date: Thu, 31 May 2018 05:09:21 -0700 (PDT)
-X-Google-Original-Date: Thu, 31 May 2018 05:07:43 PDT (-0700)
-Subject: Re: [PATCH] riscv: pass machine size to sparse
-In-Reply-To: <CAK7LNAT_dnO9Enr+Dg11YTux8JAV3K=k4r_5VP3moUCG8s5XHg@mail.gmail.com>
-Message-ID: <mhng-a4f5b769-8271-4b99-ae61-bbc49fa2286f@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-CC: Christoph Hellwig <hch@infradead.org>, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, albert@sifive.com,
-        michal.lkml@markovi.net
-From: Palmer Dabbelt <palmer@sifive.com>
-To: yamada.masahiro@socionext.com, luc.vanoostenryck@gmail.com
+        Thu, 31 May 2018 08:10:07 -0400
+X-Google-Smtp-Source: ADUXVKJx8M7MoVKB/QduulvcKwAtKhZeGc0OKOEzmKIM2mOtIdsMnSDTktBGrITWPevy8fmUgwcHFxp4rnreLMoIQZM=
+MIME-Version: 1.0
+In-Reply-To: <20180528114448.11710-1-chdy.uuid@gmail.com>
+References: <20180528114448.11710-1-chdy.uuid@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 31 May 2018 15:10:06 +0300
+Message-ID: <CAHp75VeH-UQW6UCi4_FKaDU2YqsbW=UL7Bz7qU10Mr83TC2bAA@mail.gmail.com>
+Subject: Re: [PATCH] ideapad-laptop: Add E42-80 to no_hw_rfkill
+To: dylanchu <chdy.uuid@gmail.com>
+Cc: Ike Panhc <ike.pan@canonical.com>, Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 May 2018 23:14:20 PDT (-0700), yamada.masahiro@socionext.com wrote:
-> 2018-05-29 15:11 GMT+09:00 Christoph Hellwig <hch@infradead.org>:
->> On Mon, May 28, 2018 at 06:35:05PM +0200, Luc Van Oostenryck wrote:
->>> By default, sparse assumes a 64bit machine when compiled on x86-64
->>> and 32bit when compiled on anything else.
->>>
->>> This can of course create all sort of problems when this doesn't
->>> correspond to the target's machine size, like issuing false
->>> warnings like: 'shift too big (32) for type unsigned long' or
->>> is 64bit while sparse was compiled on a 32bit machine, or worse,
->>> to not emit legitimate warnings.
->>>
->>> Fix this by passing the appropriate -m32/-m64 flag to sparse.
->>
->> Can we please move this to the common Kbuild code using the
->> CONFIG_64BIT syombol?  This really should not need boiler plate in
->> every architecture.
+On Mon, May 28, 2018 at 2:44 PM, dylanchu <chdy.uuid@gmail.com> wrote:
+> Lenovo Zhaoyang E42-80 is another Lenovo model without
+> a hw rfkill switch, resulting in wifi always reported
+> as hard blocked.
 >
+> Add the model to the list of models without rfkill switch.
 >
-> I agree.
+
+Pushed to my review and testing queue, thanks!
+
+> Signed-off-by: dylanchu <chdy.uuid@gmail.com>
+> ---
+>  drivers/platform/x86/ideapad-laptop.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >
-> Luc did so for -mbig/little-endian:
-> https://patchwork.kernel.org/patch/10433957/
+> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+> index 535199c9e6bc..6fdd70373ed3 100644
+> --- a/drivers/platform/x86/ideapad-laptop.c
+> +++ b/drivers/platform/x86/ideapad-laptop.c
+> @@ -1163,6 +1163,13 @@ static const struct dmi_system_id no_hw_rfkill_list[] = {
+>                         DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo YOGA 920-13IKB"),
+>                 },
+>         },
+> +       {
+> +               .ident = "Lenovo Zhaoyang E42-80",
+> +               .matches = {
+> +                       DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+> +                       DMI_MATCH(DMI_PRODUCT_VERSION, "ZHAOYANG E42-80"),
+> +               },
+> +       },
+>         {}
+>  };
 >
-> We should do likewise for -m32/64.
+> --
+> 2.17.0
 
-Sorry for being a bit slow here, but I like the idea of making the 32/64-bit 
-issue generic as it seems like it'll be necessary for every port.  Looking 
-through the patch for big/little-endian I did notice:
 
-* RISC-V compilers set "__riscv_xlen" to the length of an X (integer) register 
-  in bits.
-* RISC-V compilers define "__riscv", and it doesn't appear we inform sparse 
-  about that.
 
-These two might not be that interesting, but we do already have some cases 
-where we're checking for __riscv_xlen in Linux.  I've yet to successfully use 
-sparse, but adding at least
-
-    CHECKFLAGS += -D__riscv
-
-seems reasonable, and possibly also some sort of
-
-    ifeq ($(CONFIG_ARCH_RV64I),y)
-            CHECKFLAGS += -D__riscv_xlen=64
-    else
-            CHECKFLAGS += -D__riscv_xlen=32
-    fi
-
-might be necessary.  We strive to follow the generic rules for ABI-related 
-stuff like __LP64__ but I don't think there's any generic mapping for XLEN.  
-Similarly there's "__riscv_flen" and "__riscv_float_abi_*", but those are less 
-likely to be used by the kernel so they're probably not worth worrying about 
-for now.
-
-There's also a bunch of other RISC-V macros, the only one of which we're 
-currently using is "__riscv_muldiv" (and that's in a manner that's unlikely to 
-trigger any sort of static analysis).  Between a lack of Kconfig options and a 
-glibc port we're essentially mandating IMA right now, so these probably don't 
-matter.
-
-Thanks!
+-- 
+With Best Regards,
+Andy Shevchenko
