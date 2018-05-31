@@ -1,128 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750983AbeEaVop (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 17:44:45 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:37134 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeEaVok (ORCPT
+        id S1750914AbeEaVqY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 17:46:24 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:34044 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750715AbeEaVqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 17:44:40 -0400
+        Thu, 31 May 2018 17:46:23 -0400
+Subject: Re: [PATCH 2/2] fs, elf: drop MAP_FIXED usage from elf_map
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, libhugetlbfs@googlegroups.com
+References: <20171129144219.22867-1-mhocko@kernel.org>
+ <20171129144219.22867-3-mhocko@kernel.org>
+ <93ce964b-e352-1905-c2b6-deedf2ea06f8@oracle.com>
+ <c0e447b3-4ba7-239e-6550-64de7721ad28@oracle.com>
+ <20180530080212.GA27180@dhcp22.suse.cz>
+ <e7705544-04fe-c382-f6d0-48d0680b46f2@oracle.com>
+ <20180530162501.GB15278@dhcp22.suse.cz>
+ <1f6be96b-12ac-9a03-df90-386dab02369d@oracle.com>
+ <20180531092425.GM15278@dhcp22.suse.cz>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <29bd73d1-ceed-0e4d-324a-b9ae87c4da4e@oracle.com>
+Date: Thu, 31 May 2018 14:46:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180531092425.GM15278@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Thu, 31 May 2018 23:44:37 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>, robh+dt@kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, mark.rutland@arm.com, thierry.reding@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
-        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180531223027.57e36d0b@bbrezillon>
-References: <cover.1526990589.git.stefan@agner.ch>
- <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <20180528000422.7f18dc5f@xps13> <047a9a5e72c8db52858a505865d4f720@agner.ch>
- <20180531223027.57e36d0b@bbrezillon>
-Message-ID: <12cb03d078c3571171362710f9019d41@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[25];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8910 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1805310240
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31.05.2018 22:30, Boris Brezillon wrote:
-> On Thu, 31 May 2018 19:54:08 +0200
-> Stefan Agner <stefan@agner.ch> wrote:
-> 
->> >> +
->> >> +	mtd->dev.parent = &pdev->dev;
->> >> +	mtd->name = "tegra_nand";
->> >
->> > I just figured it was undocumented (yet) but you could have a label
->> > string property in your nand DT node that tells you the name of the
->> > MTD device instead of something too generic like tegra_nand.
->> >
->>
->> Using label in the NAND chip subnode actually causes current U-Boot to
->> delete (!!) the chip node and create partitions on the controller node.
->>
->> See:
->> https://elixir.bootlin.com/u-boot/latest/source/common/fdt_support.c#L757
->>
->> The code essentially uses the property label to detect whether its a
->> NAND chip or a partition...
-> 
-> Why not fixing that in uboot? The representation where the NAND device
-> and NAND controller are mixed in a single node called nand@xxx is just
-> wrong from a HW PoV, and it seems uboot is using this representation,
-> which is probably why you have a problem when trying to find the
-> partition directly under the NAND controller node.
-> 
->>
->> At least this is the case when using fdt_fixup_mtdparts and passing the
->> controller compatible ("nvidia,tegra20-nand") in node_info,
-> 
-> Just a digression, but I recommend using
-> "nvidia,tegra20-nand-controller" for the compatible, because the node
-> is describing the NAND controller not the NAND chip. 
-> 
+On 05/31/2018 02:24 AM, Michal Hocko wrote:
+> I am not an expert on the load linkers myself so I cannot really answer
+> this question. Please note that ppc had something similar. See
+> ad55eac74f20 ("elf: enforce MAP_FIXED on overlaying elf segments").
+> Maybe we need to sprinkle more of those at other places?
 
-Ok.
+I finally understand the issue, and it is NOT a problem with the kernel.
+The issue is with old libhugetlbfs provided linker scripts, and yes,
+starting with v4.17 people who run libhugetlbfs tests on x86 (at least)
+will see additional failures.
 
->> what our
->> downstream U-Boot is currently doing. Maybe we should pass the
->> compatible property of the NAND chip?
-> 
-> Or maybe you should search for partitions in children of the controller
-> node instead of searching directly under the controller node itself.
-> 
+I'll try to work this from the libhugetlbfs side.  In the unlikely event
+that anyone knows about those linker scripts, assistance and/or feedback
+would be appreciated.
 
-Yes, that is what it is doing... But only if that child has not a label.
+Read on only if you want additional details about this failure.
 
-fdt_fixup_mtdparts is common code. Change the behaviour now probably
-breaks boards... 
+The executable files which are now failing are created with the elf_i386.xB
+linker script.  This script is provided for pre-2.17 versions of binutils.
+binutils-2.17 came out aprox in 2007, and this script is disabled by default
+if binutils-2.17 or later is used.  The only way to create executables with
+this script today is by setting the HUGETLB_DEPRECATED_LINK env variable.
+This is what libhugetlbfs tests do to simply continue testing the old scripts.
 
-Anyway, this discussion needs to be shifted to the U-Boot mailing list.
+I previously was mistaken about which tests were causing the additional
+failures.  The example I previously provided failed on v4.16 as well as
+v4.17-rc kernels.  So, please ignore that information.
 
->> But afaik, chips do not have a
->> compatible necessarily.
-> 
-> Nope, and it should stay like that.
-> 
->>
->> So using label in the chip node is currently a no-go for me.
-> 
-> I hope I'm wrong but I fear this is not the only problem you'll face
-> when switching to a controller+chip representation. This is just the
-> tip of the iceberg.
-> 
+For an executable that runs on v4.16 and fails on v4.17-rc, here is a listing
+of elf sections that the kernel will attempt to load.
 
-Works not too bad otherwise, so far :-)
+Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+LOAD           0x000000 0x08048000 0x08048000 0x11c24 0x11c24 R E 0x1000
+LOAD           0x011c24 0x08059c24 0x08059c24 0x10d04 0x10d04 RW  0x1000
+LOAD           0x023000 0x09000000 0x09000000 0x00000 0x10048 RWE 0x1000
 
->>
->> Will send out v3 soon.
-> 
-> Sure, let's see how v3 looks.
+The first section is loaded without issue.  elf_map() will create a vma
+based on the following:
+map_addr ELF_PAGESTART(addr) 8048000 ELF_PAGEALIGN(size) 12000 
+File_offset 0
 
---
-Stefan
+We then attempt to load the following section with:
+map_addr ELF_PAGESTART(addr) 8059000 ELF_PAGEALIGN(size) 12000
+File_offset 11000
+
+This results in,
+Uhuuh, elf segment at 8059000 requested but the memory is mapped already
+
+Note that the last page of the first section overlaps with the first page
+of the second section.  Unlike the case in ad55eac74f20, the access
+permissions on section 1 (RE) are different than section 2 (RW).  If we
+allowed the previous MAP_FIXED behavior, we would be changing part of a
+read only section to read write.  This is exactly what MAP_FIXED_NOREPLACE
+was designed to prevent.
+-- 
+Mike Kravetz
