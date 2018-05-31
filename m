@@ -1,53 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754457AbeEaK0E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:26:04 -0400
-Received: from mga18.intel.com ([134.134.136.126]:26155 "EHLO mga18.intel.com"
+        id S1754429AbeEaK1n (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:27:43 -0400
+Received: from foss.arm.com ([217.140.101.70]:39118 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754362AbeEaKZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:25:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
-   d="scan'208";a="52233003"
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] perf intel-pt: Fix sync_switch INTEL_PT_SS_NOT_TRACING
-Date: Thu, 31 May 2018 13:23:42 +0300
-Message-Id: <1527762225-26024-2-git-send-email-adrian.hunter@intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527762225-26024-1-git-send-email-adrian.hunter@intel.com>
-References: <1527762225-26024-1-git-send-email-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1754250AbeEaK1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 06:27:41 -0400
+Date: Thu, 31 May 2018 11:27:36 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Alessio Balsini <alessio.balsini@santannapisa.it>
+Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
+Message-ID: <20180531102735.GM30654@e110439-lin>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
+ <20180528101234.GA1293@localhost.localdomain>
+ <CAKfTPtDCkzPMt6XrXRcURXm=53LABiwbFd3JMQkJDWpTprycRQ@mail.gmail.com>
+ <20180528152243.GD1293@localhost.localdomain>
+ <CAKfTPtAY26HZ00R02RuW2kvZLvZxHGvh-kbfrqv-hPumdknvWg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtAY26HZ00R02RuW2kvZLvZxHGvh-kbfrqv-hPumdknvWg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sync_switch is a facility to synchronize decoding more closely with the
-point in the kernel when the context actually switched.
 
-In one case, INTEL_PT_SS_NOT_TRACING state was not correctly transitioning
-to INTEL_PT_SS_TRACING state due to a missing case clause. Add it.
+Hi Vincent, Juri,
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: stable@vger.kernel.org
----
- tools/perf/util/intel-pt.c | 1 +
- 1 file changed, 1 insertion(+)
+On 28-May 18:34, Vincent Guittot wrote:
+> On 28 May 2018 at 17:22, Juri Lelli <juri.lelli@redhat.com> wrote:
+> > On 28/05/18 16:57, Vincent Guittot wrote:
+> >> Hi Juri,
+> >>
+> >> On 28 May 2018 at 12:12, Juri Lelli <juri.lelli@redhat.com> wrote:
+> >> > Hi Vincent,
+> >> >
+> >> > On 25/05/18 15:12, Vincent Guittot wrote:
+> >> >> Now that we have both the dl class bandwidth requirement and the dl class
+> >> >> utilization, we can use the max of the 2 values when agregating the
+> >> >> utilization of the CPU.
+> >> >>
+> >> >> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> >> >> ---
+> >> >>  kernel/sched/sched.h | 6 +++++-
+> >> >>  1 file changed, 5 insertions(+), 1 deletion(-)
+> >> >>
+> >> >> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> >> >> index 4526ba6..0eb07a8 100644
+> >> >> --- a/kernel/sched/sched.h
+> >> >> +++ b/kernel/sched/sched.h
+> >> >> @@ -2194,7 +2194,11 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
+> >> >>  #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+> >> >>  static inline unsigned long cpu_util_dl(struct rq *rq)
+> >> >>  {
+> >> >> -     return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> >> >> +     unsigned long util = (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> >> >
+> >> > I'd be tempted to say the we actually want to cap to this one above
+> >> > instead of using the max (as you are proposing below) or the
+> >> > (theoretical) power reduction benefits of using DEADLINE for certain
+> >> > tasks might vanish.
+> >>
+> >> The problem that I'm facing is that the sched_entity bandwidth is
+> >> removed after the 0-lag time and the rq->dl.running_bw goes back to
+> >> zero but if the DL task has preempted a CFS task, the utilization of
+> >> the CFS task will be lower than reality and schedutil will set a lower
+> >> OPP whereas the CPU is always running.
 
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 492986a25ef6..3db7f0ee52a8 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -1521,6 +1521,7 @@ static int intel_pt_sample(struct intel_pt_queue *ptq)
- 
- 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
- 		switch (ptq->switch_state) {
-+		case INTEL_PT_SS_NOT_TRACING:
- 		case INTEL_PT_SS_UNKNOWN:
- 		case INTEL_PT_SS_EXPECTING_SWITCH_IP:
- 			err = intel_pt_next_tid(pt, ptq);
+With UTIL_EST enabled I don't expect an OPP reduction below the
+expected utilization of a CFS task.
+
+IOW, when a periodic CFS task is preempted by a DL one, what we use
+for OPP selection once the DL task is over is still the estimated
+utilization for the CFS task itself. Thus, schedutil will eventually
+(since we have quite conservative down scaling thresholds) go down to
+the right OPP to serve that task.
+
+> >> The example with a RT task described in the cover letter can be
+> >> run with a DL task and will give similar results.
+
+In the cover letter you says:
+
+   A rt-app use case which creates an always running cfs thread and a
+   rt threads that wakes up periodically with both threads pinned on
+   same CPU, show lot of frequency switches of the CPU whereas the CPU
+   never goes idles during the test.
+
+I would say that's a quite specific corner case where your always
+running CFS task has never accumulated a util_est sample.
+
+Do we really have these cases in real systems?
+
+Otherwise, it seems to me that we are trying to solve quite specific
+corner cases by adding a not negligible level of "complexity".
+
+Moreover, I also have the impression that we can fix these
+use-cases by:
+
+  - improving the way we accumulate samples in util_est
+    i.e. by discarding preemption time
+
+  - maybe by improving the utilization aggregation in schedutil to
+    better understand DL requirements
+    i.e. a 10% utilization with a 100ms running time is way different
+    then the same utilization with a 1ms running time
+
+
 -- 
-1.9.1
+#include <best/regards.h>
+
+Patrick Bellasi
