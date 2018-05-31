@@ -1,58 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932748AbeEaDxs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 23:53:48 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:35790 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932672AbeEaDxo (ORCPT
+        id S932778AbeEaDxw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 23:53:52 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:36516 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932672AbeEaDxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 23:53:44 -0400
-X-Google-Smtp-Source: ADUXVKKVa+hLtZ9xJx2QkJXNKR98XlMAP8SGRocXl+686I+z6zFyvIcRopdoBdoeDetZ8mWeBDjoPA==
-Date: Wed, 30 May 2018 22:53:42 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/9] PM / Domains: dt: Allow power-domain property to
- be a list of specifiers
-Message-ID: <20180531035342.GA14184@rob-hp-laptop>
-References: <20180529100421.31022-1-ulf.hansson@linaro.org>
- <20180529100421.31022-6-ulf.hansson@linaro.org>
+        Wed, 30 May 2018 23:53:48 -0400
+X-Google-Smtp-Source: ADUXVKI/hCdbZBqNNQ/gQCUzJy6h5SOpR/1bOWsE0PcnMNCgWfAODxkRu2QE6UyPtztFlRd1rCNNmBEwnYPMbzL9tBY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529100421.31022-6-ulf.hansson@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
+References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
+ <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 30 May 2018 20:53:45 -0700
+X-Google-Sender-Auth: xlQrLoGmYa8i9HSqOD4rIFg0k9U
+Message-ID: <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 12:04:17PM +0200, Ulf Hansson wrote:
-> To be able to describe topologies where devices are partitioned across
-> multiple power domains, let's extend the power-domain property to allow
-> being a list of PM domain specifiers.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Suggested-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
-> 
-> Changes in v2:
-> 	- Fixed comments from Geert. Re-worded to "PM domain specifiers" and
-> 	clarified DT example.
-> 
-> ---
->  .../bindings/power/power_domain.txt           | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
+On Wed, May 30, 2018 at 6:26 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> Hi.
+>> (+CC Kees)
+>>
+>> 2018-05-31 7:40 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+>>> Hi Masahiro,
+>>>
+>>> After merging the kbuild tree, today's linux-next build (x86_64
+>>> allmodconfig) produced these warnings:
+>>>
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev7':
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>>  }
+>>>  ^
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev3':
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warning: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>>  }
+>>>  ^
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_cal_txiqlo_nphy':
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warning: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>>  }
+>>>  ^
+>>>
+>>> I have no idea what caused these warnings to appear ... nothing in those
+>>> functions looks too bad.
+>>
+>>
+>> This has been triggered by the following commit:
+>>
+>>
+>> commit 0e461945f3504e09b8ecf947b6398adce1287a28
+>> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Date:   Mon May 28 18:22:07 2018 +0900
+>>
+>>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
+>>
+>>
+>>
+>> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
+>> for COMPILE_TEST, which is now enabled.
+>
+> Weird -- I do build tests with plugins enabled pretty regularly. I
+> hadn't seen this before. I'll see if I can figure out what the
+> combination is...
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Weirdly, I only see this after merging kbuild/for-next into
+next-20180530. (I don't get the warning if I just force the plugins
+on.)
+
+Regardless, I can confirm that CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+trips it. I'll investigate more tomorrow...
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
