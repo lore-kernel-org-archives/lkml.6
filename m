@@ -1,50 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754099AbeEaIua (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:50:30 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35397 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754040AbeEaIuY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:50:24 -0400
-X-Google-Smtp-Source: ADUXVKIKu4W7UCIdmRYGLWi9z2ODkxcAbJu+WmCYtA3hDASYwslNe++F59i54tU3ubgCTFqDAatHvQ==
-Subject: Re: [PATCH net-next] net/ncsi: Avoid GFP_KERNEL in response handler
-To: Samuel Mendoza-Jonas <sam@mendozajonas.com>, netdev@vger.kernel.org
-Cc: "David S . Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org
-References: <20180531070254.28878-1-sam@mendozajonas.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <69fcb143-00a2-2ddf-e2d4-c692b650f292@gmail.com>
-Date: Thu, 31 May 2018 04:50:21 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754127AbeEaIvR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:51:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59386 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754040AbeEaIvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 04:51:13 -0400
+Date: Thu, 31 May 2018 10:51:09 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Shakeel Butt <shakeelb@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] memcg: force charge kmem counter too
+Message-ID: <20180531085109.GJ15278@dhcp22.suse.cz>
+References: <20180525185501.82098-1-shakeelb@google.com>
+ <20180526185144.xvh7ejlyelzvqwdb@esperanza>
+ <CALvZod5yTxcuB_Aao-a0ChNEnwyBJk9UPvEQ80s9tZFBQ0cxpw@mail.gmail.com>
+ <20180528091110.GG1517@dhcp22.suse.cz>
+ <CALvZod6x5iRmcJ6pYKS+jwJd855jnwmVcPK9tnKbuJ9Hfppa-A@mail.gmail.com>
+ <20180529083153.GR27180@dhcp22.suse.cz>
+ <CALvZod67qzq+hQLms4Wut5LNVBjBcEQPpMp9zxF6NE5k+7CLOw@mail.gmail.com>
+ <20180531060133.GA31477@rodete-desktop-imager.corp.google.com>
+ <20180531065642.GI15278@dhcp22.suse.cz>
+ <20180531082317.GA52285@rodete-desktop-imager.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180531070254.28878-1-sam@mendozajonas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531082317.GA52285@rodete-desktop-imager.corp.google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/31/2018 03:02 AM, Samuel Mendoza-Jonas wrote:
-> ncsi_rsp_handler_gc() allocates the filter arrays using GFP_KERNEL in
-> softirq context, causing the below backtrace. This allocation is only a
-> few dozen bytes during probing so allocate with GFP_ATOMIC instead.
+On Thu 31-05-18 17:23:17, Minchan Kim wrote:
+> On Thu, May 31, 2018 at 08:56:42AM +0200, Michal Hocko wrote:
+> > On Thu 31-05-18 15:01:33, Minchan Kim wrote:
+> > > On Wed, May 30, 2018 at 11:14:33AM -0700, Shakeel Butt wrote:
+> > > > On Tue, May 29, 2018 at 1:31 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > > > > On Mon 28-05-18 10:23:07, Shakeel Butt wrote:
+> > > > >> On Mon, May 28, 2018 at 2:11 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > > > >> Though is there a precedence where the broken feature is not fixed
+> > > > >> because an alternative is available?
+> > > > >
+> > > > > Well, I can see how breaking GFP_NOFAIL semantic is problematic, on the
+> > > > > other hand we keep saying that kmem accounting in v1 is hard usable and
+> > > > > strongly discourage people from using it. Sure we can add the code which
+> > > > > handles _this_ particular case but that wouldn't make the whole thing
+> > > > > more usable I strongly suspect. Maybe I am wrong and you can provide
+> > > > > some specific examples. Is GFP_NOFAIL that common to matter?
+> > > > >
+> > > > > In any case we should balance between the code maintainability here.
+> > > > > Adding more cruft into the allocator path is not free.
+> > > > >
+> > > > 
+> > > > We do not use kmem limits internally and this is something I found
+> > > > through code inspection. If this patch is increasing the cost of code
+> > > > maintainability I am fine with dropping it but at least there should a
+> > > > comment saying that kmem limits are broken and no need fix.
+> > >  
+> > > I agree.
+> > > 
+> > > Even, I didn't know kmem is strongly discouraged until now. Then,
+> > > why is it enabled by default on cgroup v1?
+> > 
+> > You have to set a non-zero limit to make it active IIRC. The code is
 > 
+> Maybe, no. I didn't set anything. IOW, it was a default without any setting
+> and I hit this as you can remember.
+> http://lkml.kernel.org/r/<20180418022912.248417-1-minchan@kernel.org>
+> We don't need to allocate memory for stuff even maintainers discourage.
 
-Hi Samuel
-
-You forgot to add
-
-Fixes: 062b3e1b6d4f ("net/ncsi: Refactor MAC, VLAN filters")
-
-size = (rsp->uc_cnt + rsp->mc_cnt + rsp->mixed_cnt) * ETH_ALEN;
-
--> seems to be able to reach more than few dozen bytes...
-
-Also, what prevents ncsi_rsp_handler_gc() to be called multiples times ?
-
-nc->mac_filter.addrs & nc->vlan_filter.vids would be re-allocated and memory would leak.
+Well, you can disable the whole kmem accounting by cgroup.memory=nokmem
+kernel parameter. I wasn't very happy when we removed the config option
+which would have put all the tracking aside even when no limit is set
+but the argument was that the ifdefery was growing into an
+unmaintainable mess and I have to agree with that. So here we are...
+-- 
+Michal Hocko
+SUSE Labs
