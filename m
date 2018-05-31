@@ -1,77 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755659AbeEaQGA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:06:00 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8242 "EHLO huawei.com"
+        id S1755601AbeEaQHQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:07:16 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51100 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755575AbeEaQF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:05:58 -0400
-Subject: Re: [PATCH 8/8] scsi: libsas: support SATA phy link rate unmatch the
- pathway
-To: Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20180529022309.21071-1-yanaijie@huawei.com>
- <20180529022309.21071-9-yanaijie@huawei.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        chenqilin <chenqilin2@huawei.com>, Ewan Milne <emilne@redhat.com>,
-        Tomas Henzl <thenzl@redhat.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <ed533ab2-018d-0bda-568f-0034dac1e332@huawei.com>
-Date: Thu, 31 May 2018 17:05:25 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1755456AbeEaQHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:07:15 -0400
+Date: Thu, 31 May 2018 12:07:12 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Alasdair Kergon <agk@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>, dm-devel@redhat.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] dm writecache: fix return value check in
+ writecache_ctr()
+Message-ID: <20180531160711.GB11300@redhat.com>
+References: <1527767595-76082-1-git-send-email-weiyongjun1@huawei.com>
+ <20180531160202.GA11300@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529022309.21071-9-yanaijie@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531160202.GA11300@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/05/2018 03:23, Jason Yan wrote:
-> If a SATA disk attached to a expander phy and it's linkrate is greater
-> than the expander host phy's linkrate, the disk will failed to discover.
-> The topology is like below:
->
->    +----------+           +----------+
->    |          |           |          |
->    |          |-- 3.0 G --|          |-- 6.0 G -- SAS  disk
->    |          |           |          |
->    |          |-- 3.0 G --|          |-- 6.0 G -- SAS  disk
->    |initiator |           |          |
->    | device   |-- 3.0 G --| Expander |-- 6.0 G -- SAS  disk
->    |          |           |          |
->    |          |-- 3.0 G --|          |-- 6.0 G -- SATA disk  -->failed to connect
->    |          |           |          |
->    |          |           |          |-- 6.0 G -- SATA disk  -->failed to connect
->    |          |           |          |
->    +----------+           +----------+
->
-> And when we check the sas protocal spec, this scenario is described as
-> this:
->
-> 7.13 Rate matching
-> ......
-> If an expander phy attached to a SATA phy is using a physical link rate
-> greater than the maximum connection rate supported by the pathway from
-> an STP initiator port, a management application client should use the
-> SMP PHY CONTROL function (see 10.4.3.10) to set the PROGRAMMED MAXIMUM
-> PHYSICAL LINK RATE field of the expander phy to the maximum connection
-> rate supported by the pathway from that STP initiator port.
->
-> In order to support this scenario, checking the SATA disk's linkrate
-> to see if it is greater than any phy's linkrate it may pass through.
-> Remember the minimum linkrate of the pathway and set the SATA phy
-> linkrate to it using the SMP PHY CONTROL function.
+On Thu, May 31 2018 at 12:02pm -0400,
+Mike Snitzer <snitzer@redhat.com> wrote:
 
-As we (re)discover the tree, can we keep track of the min pathway to the 
-root PHY dynamically (per expander), and then take action for any SATA 
-devices attached which have a negotiated linkrate greater (than the 
-expanders min pathway)? This would be an alternate to your approach of 
-finishing discovery and then checking the min pathway as a whole new step.
+> On Thu, May 31 2018 at  7:53am -0400,
+> Wei Yongjun <weiyongjun1@huawei.com> wrote:
+> 
+> > Function dm_io_client_create() and dm_kcopyd_client_create() return
+> > ERR_PTR() not NULL in case of error. The NULL test in the return value
+> > check should be replaced with IS_ERR()
+> > 
+> > Fixes: 2105231db61b ("dm: add writecache target")
+> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> > ---
+> >  drivers/md/dm-writecache.c | 10 ++++++----
+> >  1 file changed, 6 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+> > index 844c4fb..0b2b436 100644
+> > --- a/drivers/md/dm-writecache.c
+> > +++ b/drivers/md/dm-writecache.c
+> > @@ -1872,9 +1872,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+> >  	}
+> >  
+> >  	wc->dm_io = dm_io_client_create();
+> > -	if (!wc->dm_io) {
+> > -		r = -ENOMEM;
+> > +	if (IS_ERR(wc->dm_io)) {
+> > +		r = PTR_ERR(wc->dm_io);
+> >  		ti->error = "Unable to allocate dm-io client";
+> > +		wc->dm_io = NULL;
+> >  		goto bad;
+> >  	}
+> >  
+> > @@ -2096,9 +2097,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+> >  		}
+> >  
+> >  		wc->dm_kcopyd = dm_kcopyd_client_create(&dm_kcopyd_throttle);
+> > -		if (!wc->dm_kcopyd) {
+> > -			r = -ENOMEM;
+> > +		if (IS_ERR(wc->dm_kcopyd)) {
+> > +			r = PTR_ERR(wc->dm_kcopyd);
+> >  			ti->error = "Unable to allocate dm-kcopyd client";
+> > +			wc->dm_kcopyd = NULL;
+> >  			goto bad;
+> >  		}
+> > 
+> 
+> 
+> Yes, I forgot to pull this in.. it got lost in the shuffle.  Mikulas had
+> provided this same change (folded into a larger patch) yesterday, see:
+> https://patchwork.kernel.org/patch/10439345/
+> 
+> I'll get this folded in ASAP.
+
+Turns out I already did fold it in.  My push to linux-next just missed
+today's tree.
+
+So already taken care of.
+
+Thanks for sending the patch though.
+
+Mike
