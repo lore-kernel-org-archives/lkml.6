@@ -1,287 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932841AbeEaSAJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 14:00:09 -0400
-Received: from mga01.intel.com ([192.55.52.88]:18561 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755824AbeEaR7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 13:59:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
-   d="scan'208";a="60725540"
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: Andy Lutomirski <luto@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2 12/15] x86/fsgsbase/64: Use per-CPU base as GS base on paranoid_entry
-Date: Thu, 31 May 2018 10:58:42 -0700
-Message-Id: <1527789525-8857-13-git-send-email-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527789525-8857-1-git-send-email-chang.seok.bae@intel.com>
-References: <1527789525-8857-1-git-send-email-chang.seok.bae@intel.com>
+        id S932805AbeEaSAB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 14:00:01 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36030 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755991AbeEaR7G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 13:59:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B86C960263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date: Thu, 31 May 2018 11:59:02 -0600
+From: Jordan Crouse <jcrouse@codeaurora.org>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, airlied@linux.ie,
+        Matthew Wilcox <willy@infradead.org>, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [Freedreno] [PATCH] gpu: drm: msm: Change return type to
+ vm_fault_t
+Message-ID: <20180531175902.GC11565@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: Souptick Joarder <jrdr.linux@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, airlied@linux.ie,
+        Matthew Wilcox <willy@infradead.org>, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180521172948.GA18605@jordon-HP-15-Notebook-PC>
+ <CAFqt6zY8VJ791_6C_pqrGgjG91T1kirEmUyA3JC+3JsN8QjFAw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqt6zY8VJ791_6C_pqrGgjG91T1kirEmUyA3JC+3JsN8QjFAw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FSGSBASE allows fast access on GS base. With that, per-CPU
-base is always copied to GS base on paranoid entry. The
-current GS base value is restored on the exit.
+On Mon, May 28, 2018 at 12:38:41PM +0530, Souptick Joarder wrote:
+> On Mon, May 21, 2018 at 10:59 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> > Use new return type vm_fault_t for fault handler. For
+> > now, this is just documenting that the function returns
+> > a VM_FAULT value rather than an errno. Once all instances
+> > are converted, vm_fault_t will become a distinct type.
+> >
+> > Ref- commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+> >
+> > Previously vm_insert_mixed() returns err which driver
+> > mapped into VM_FAULT_* type. The new function
+> > vmf_insert_mixed() will replace this inefficiency by
+> > returning VM_FAULT_* type.
+> >
+> > vmf_error() is the newly introduce inline function
+> > in 4.17-rc6.
+> >
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+> > ---
+> >  drivers/gpu/drm/msm/msm_drv.h |  3 ++-
+> >  drivers/gpu/drm/msm/msm_gem.c | 33 ++++++++++-----------------------
+> >  2 files changed, 12 insertions(+), 24 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
+> > index 0a653dd..44b4ca7 100644
+> > --- a/drivers/gpu/drm/msm/msm_drv.h
+> > +++ b/drivers/gpu/drm/msm/msm_drv.h
+> > @@ -33,6 +33,7 @@
+> >  #include <linux/of_graph.h>
+> >  #include <linux/of_device.h>
+> >  #include <asm/sizes.h>
+> > +#include <linux/mm_types.h>
+> >
+> >  #include <drm/drmP.h>
+> >  #include <drm/drm_atomic.h>
+> > @@ -188,7 +189,7 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+> >  int msm_gem_mmap_obj(struct drm_gem_object *obj,
+> >                         struct vm_area_struct *vma);
+> >  int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+> > -int msm_gem_fault(struct vm_fault *vmf);
+> > +vm_fault_t msm_gem_fault(struct vm_fault *vmf);
+> >  uint64_t msm_gem_mmap_offset(struct drm_gem_object *obj);
+> >  int msm_gem_get_iova(struct drm_gem_object *obj,
+> >                 struct msm_gem_address_space *aspace, uint64_t *iova);
+> > diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+> > index 07376de..27a5ab5 100644
+> > --- a/drivers/gpu/drm/msm/msm_gem.c
+> > +++ b/drivers/gpu/drm/msm/msm_gem.c
+> > @@ -217,7 +217,7 @@ int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+> >         return msm_gem_mmap_obj(vma->vm_private_data, vma);
+> >  }
+> >
+> > -int msm_gem_fault(struct vm_fault *vmf)
+> > +vm_fault_t msm_gem_fault(struct vm_fault *vmf)
+> >  {
+> >         struct vm_area_struct *vma = vmf->vma;
+> >         struct drm_gem_object *obj = vma->vm_private_data;
+> > @@ -225,15 +225,18 @@ int msm_gem_fault(struct vm_fault *vmf)
+> >         struct page **pages;
+> >         unsigned long pfn;
+> >         pgoff_t pgoff;
+> > -       int ret;
+> > +       int err;
+> > +       vm_fault_t ret;
+> >
+> >         /*
+> >          * vm_ops.open/drm_gem_mmap_obj and close get and put
+> >          * a reference on obj. So, we dont need to hold one here.
+> >          */
+> > -       ret = mutex_lock_interruptible(&msm_obj->lock);
+> > -       if (ret)
+> > +       err = mutex_lock_interruptible(&msm_obj->lock);
+> > +       if (err) {
+> > +               ret = VM_FAULT_NOPAGE;
+> >                 goto out;
+> > +       }
+> >
+> >         if (WARN_ON(msm_obj->madv != MSM_MADV_WILLNEED)) {
+> >                 mutex_unlock(&msm_obj->lock);
+> > @@ -243,7 +246,7 @@ int msm_gem_fault(struct vm_fault *vmf)
+> >         /* make sure we have pages attached now */
+> >         pages = get_pages(obj);
+> >         if (IS_ERR(pages)) {
+> > -               ret = PTR_ERR(pages);
+> > +               ret = vmf_error(PTR_ERR(pages));
+> >                 goto out_unlock;
+> >         }
+> >
+> > @@ -255,27 +258,11 @@ int msm_gem_fault(struct vm_fault *vmf)
+> >         VERB("Inserting %p pfn %lx, pa %lx", (void *)vmf->address,
+> >                         pfn, pfn << PAGE_SHIFT);
+> >
+> > -       ret = vm_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
+> > -
+> > +       ret = vmf_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
+> >  out_unlock:
+> >         mutex_unlock(&msm_obj->lock);
+> >  out:
+> > -       switch (ret) {
+> > -       case -EAGAIN:
+> > -       case 0:
+> > -       case -ERESTARTSYS:
+> > -       case -EINTR:
+> > -       case -EBUSY:
+> > -               /*
+> > -                * EBUSY is ok: this just means that another thread
+> > -                * already did the job.
+> > -                */
+> > -               return VM_FAULT_NOPAGE;
+> > -       case -ENOMEM:
+> > -               return VM_FAULT_OOM;
+> > -       default:
+> > -               return VM_FAULT_SIGBUS;
+> > -       }
+> > +       return ret;
+> >  }
+> >
+> >  /** get mmap offset */
+> > --
+> > 1.9.1
+> >
+> 
+> Any comment for this patch ?
 
-Currently, userspace can't modify GS base and the kernel's
-conventions are that a negative GS base means it is a kernel
-value and a positive GS base means it is a user value. But,
-with FSGSBASE enabled, userspace can put arbitrary data in
-there. This behavior will be the same with the patch.
+Sorry for the delay, I wanted to get a chance to test it. It seems to pass the
+usual regression tests. LGTM.
 
-Per-CPU base can be found from per_cpu_offset table with CPU
-number, which is in the (per-CPU) segment limit or obtained
-by RDPID instruction.
+Jordan
 
-GAS-compatible RDPID macro is included.
-
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/entry_64.S       | 74 +++++++++++++++++++++++++++++++++--------
- arch/x86/include/asm/fsgsbase.h | 57 +++++++++++++++++++++++++++++++
- arch/x86/include/asm/inst.h     | 15 +++++++++
- 3 files changed, 132 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 3166b96..cfac4c0 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -38,6 +38,8 @@
- #include <asm/export.h>
- #include <asm/frame.h>
- #include <asm/nospec-branch.h>
-+#include <asm/vdso.h>
-+#include <asm/fsgsbase.h>
- #include <linux/err.h>
- 
- #include "calling.h"
-@@ -954,10 +956,14 @@ ENTRY(\sym)
- 	addq	$EXCEPTION_STKSZ, CPU_TSS_IST(\shift_ist)
- 	.endif
- 
--	/* these procedures expect "no swapgs" flag in ebx */
- 	.if \paranoid
-+	/*
-+	 * With FSGSBASE, original GS base is stored in rbx
-+	 * Without FSGSBASE, expect "no swapgs" flag in ebx
-+	 */
- 	jmp	paranoid_exit
- 	.else
-+	/* expect "no swapgs" flag in ebx */
- 	jmp	error_exit
- 	.endif
- 
-@@ -1168,26 +1174,57 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
- #endif
- 
- /*
-- * Save all registers in pt_regs, and switch gs if needed.
-- * Use slow, but surefire "are we in kernel?" check.
-- * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
-+ * Save all registers in pt_regs.
-+ *
-+ * When FSGSBASE enabled, current GS base is always copied to rbx.
-+ *
-+ * Without FSGSBASE, SWAPGS is needed when entering from userspace.
-+ * A positive GS base means it is a user value and a negative GS
-+ * base means it is a kernel value.
-+ *
-+ * Return:
-+ * 	With FSGSBASE, rbx has current GS base.
-+ * 	Without that,
-+ *		ebx=0: need SWAPGS on exit, ebx=1: otherwise
-  */
- ENTRY(paranoid_entry)
- 	UNWIND_HINT_FUNC
- 	cld
- 	PUSH_AND_CLEAR_REGS save_ret=1
- 	ENCODE_FRAME_POINTER 8
--	movl	$1, %ebx
--	movl	$MSR_GS_BASE, %ecx
--	rdmsr
--	testl	%edx, %edx
--	js	1f				/* negative -> in kernel */
--	SWAPGS
--	xorl	%ebx, %ebx
- 
--1:
-+	/*
-+	 * As long as this PTI macro doesn't depend on kernel GS base,
-+	 * we can do it early. This is because FIND_PERCPU_BASE
-+	 * references data in kernel space.
-+	 */
- 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
- 
-+	/*
-+	 * Read GS base by RDGSBASE. Kernel GS base is found
-+	 * from the per-CPU offset table with CPU number.
-+	 */
-+	ALTERNATIVE "jmp .Lparanoid_entry_no_fsgsbase",	"",\
-+		X86_FEATURE_FSGSBASE
-+	RDGSBASE	%rbx
-+	FIND_PERCPU_BASE	%rax
-+	WRGSBASE	%rax
-+	ret
-+
-+.Lparanoid_entry_no_fsgsbase:
-+	movl	$1, %ebx
-+	/*
-+	 * FSGSBASE is not in use, so depend on the kernel-enforced
-+	 * convention that a negative GS base indicates a kernel value.
-+	 */
-+	READ_MSR_GSBASE save_reg=%edx
-+	testl	%edx, %edx	/* negative -> in kernel */
-+	jns	.Lparanoid_entry_swapgs
-+	ret
-+
-+.Lparanoid_entry_swapgs:
-+	SWAPGS
-+	xorl	%ebx, %ebx
- 	ret
- END(paranoid_entry)
- 
-@@ -1201,12 +1238,21 @@ END(paranoid_entry)
-  * be complicated.  Fortunately, we there's no good reason
-  * to try to handle preemption here.
-  *
-- * On entry, ebx is "no swapgs" flag (1: don't need swapgs, 0: need it)
-+ * On entry,
-+ *	With FSGSBASE,
-+ *		rbx is original GS base that needs to be restored on the exit
-+ *	Without that,
-+ * 		ebx is "no swapgs" flag (1: don't need swapgs, 0: need it)
-  */
- ENTRY(paranoid_exit)
- 	UNWIND_HINT_REGS
- 	DISABLE_INTERRUPTS(CLBR_ANY)
- 	TRACE_IRQS_OFF_DEBUG
-+	ALTERNATIVE "jmp .Lparanoid_exit_no_fsgsbase",	"nop",\
-+		X86_FEATURE_FSGSBASE
-+	WRGSBASE	%rbx
-+	jmp	.Lparanoid_exit_no_swapgs;
-+.Lparanoid_exit_no_fsgsbase:
- 	testl	%ebx, %ebx			/* swapgs needed? */
- 	jnz	.Lparanoid_exit_no_swapgs
- 	TRACE_IRQS_IRETQ
-@@ -1217,7 +1263,7 @@ ENTRY(paranoid_exit)
- 	TRACE_IRQS_IRETQ_DEBUG
- 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
- .Lparanoid_exit_restore:
--	jmp restore_regs_and_return_to_kernel
-+	jmp	restore_regs_and_return_to_kernel
- END(paranoid_exit)
- 
- /*
-diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
-index 903c7a0..3a5e1ec 100644
---- a/arch/x86/include/asm/fsgsbase.h
-+++ b/arch/x86/include/asm/fsgsbase.h
-@@ -107,6 +107,63 @@ void  write_inactive_gsbase(unsigned long gsbase);
- 	MODRM 0xd0 wrgsbase_opd 1
- .endm
- 
-+#if CONFIG_SMP
-+
-+/*
-+ * Fetch the per-CPU GSBASE value for this processor and put it in @reg.
-+ * We normally use %GS for accessing per-CPU data, but we are setting up
-+ * %GS here and obviously can not use %GS itself to access per-CPU data.
-+ */
-+.macro FIND_PERCPU_BASE_RDPID reg:req
-+	RDPID	\reg
-+
-+	/*
-+	 * CPU number is written before IST initialization. Later,
-+	 * processor id is (also) written during vDSO initialization,
-+	 * with 12 bits for the CPU and 8 bits for the node.
-+	 */
-+	andq	$PERCPU_CPU_MASK, \reg
-+	/*
-+	 * Kernel GS base is looked up from the __per_cpu_offset list with
-+	 * the CPU number (processor id).
-+	 */
-+	movq	__per_cpu_offset(, \reg, 8), \reg
-+.endm
-+
-+.macro FIND_PERCPU_BASE_SEG_LIMIT reg:req
-+	/* CPU number is found from the limit of PER_CPU entry in GDT */
-+	movq	$__PER_CPU_SEG, \reg
-+	lsl	\reg, \reg
-+
-+	/* Same as FIND_PERCPU_BASE_RDPID */
-+	andq	$PERCPU_CPU_MASK, \reg
-+	movq	__per_cpu_offset(, \reg, 8), \reg
-+.endm
-+
-+.macro FIND_PERCPU_BASE reg:req
-+	ALTERNATIVE \
-+		"FIND_PERCPU_BASE_SEG_LIMIT \reg", \
-+		"FIND_PERCPU_BASE_RDPID \reg", \
-+		X86_FEATURE_RDPID
-+.endm
-+
-+#else
-+
-+.macro FIND_PERCPU_BASE reg:req
-+	/* Tracking the base offset value */
-+	movq	pcpu_unit_offsets(%rip), \reg
-+.endm
-+
-+#endif /* CONFIG_SMP */
-+
-+.macro READ_MSR_GSBASE save_reg:req
-+	movl	$MSR_GS_BASE, %ecx
-+	/* Read MSR specified by %ecx into %edx:%eax */
-+	rdmsr
-+	.ifnc \save_reg, %edx
-+	movl	%edx, \save_reg
-+	.endif
-+.endm
- #endif /* CONFIG_X86_64 */
- 
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/x86/include/asm/inst.h b/arch/x86/include/asm/inst.h
-index f5a796d..d063841 100644
---- a/arch/x86/include/asm/inst.h
-+++ b/arch/x86/include/asm/inst.h
-@@ -306,6 +306,21 @@
- 	.endif
- 	MODRM 0xc0 movq_r64_xmm_opd1 movq_r64_xmm_opd2
- 	.endm
-+
-+.macro RDPID opd
-+	REG_TYPE rdpid_opd_type \opd
-+	.if rdpid_opd_type == REG_TYPE_R64
-+	R64_NUM rdpid_opd \opd
-+	.else
-+	R32_NUM rdpid_opd \opd
-+	.endif
-+	.byte 0xf3
-+	.if rdpid_opd > 7
-+	PFX_REX rdpid_opd 0
-+	.endif
-+	.byte 0x0f, 0xc7
-+	MODRM 0xc0 rdpid_opd 0x7
-+.endm
- #endif
- 
- #endif
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
