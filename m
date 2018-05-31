@@ -1,70 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755153AbeEaLZX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:25:23 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8228 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754758AbeEaLWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:22:43 -0400
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <andy.shevchenko@gmail.com>, Yisheng Xie <xieyisheng1@huawei.com>,
-        "Ben Skeggs" <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>, <nouveau@lists.freedesktop.org>
-Subject: [PATCH v2 11/21] drm/nouveau: use match_string() helper
-Date: Thu, 31 May 2018 19:11:16 +0800
-Message-ID: <1527765086-19873-12-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+        id S1755008AbeEaLZu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:25:50 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:65041 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754690AbeEaLZo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:25:44 -0400
+Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
+ node for MCAN
+To: Rob Herring <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <bcousson@baylibre.com>,
+        <tony@atomide.com>, <paul@pwsan.com>, <t-kristo@ti.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-6-faiz_abbas@ti.com>
+ <20180531040638.GA26751@rob-hp-laptop>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <be0fd711-c44b-dbe2-648f-08aa88c7aec4@ti.com>
+Date: Thu, 31 May 2018 16:56:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180531040638.GA26751@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-match_string() returns the index of an array for a matching string,
-which can be used instead of open coded variant.
+Hi,
 
-Cc: Ben Skeggs <bskeggs@redhat.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org
-Cc: nouveau@lists.freedesktop.org
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
-v2:
- - handle err case before normal case - per Andy
+On Thursday 31 May 2018 09:36 AM, Rob Herring wrote:
+> On Wed, May 30, 2018 at 07:41:32PM +0530, Faiz Abbas wrote:
+>> The ti-sysc driver provides support for manipulating the idlemodes
+>> and interconnect level resets.
+>>
+>> Add the generic interconnect target module node for MCAN to support
+>> the same.
+>>
+>> CC: Tony Lindgren <tony@atomide.com>
+>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>> ---
+>>  arch/arm/boot/dts/dra76x.dtsi | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
+>> index bfc82636999c..57b8dc0fe719 100644
+>> --- a/arch/arm/boot/dts/dra76x.dtsi
+>> +++ b/arch/arm/boot/dts/dra76x.dtsi
+>> @@ -11,6 +11,25 @@
+>>  / {
+>>  	compatible = "ti,dra762", "ti,dra7";
+>>  
+>> +	ocp {
+>> +
+>> +		target-module@0x42c00000 {
+> 
+> Build your dtb with W=1 and fix warnings you add (drop '0x').
 
- drivers/gpu/drm/nouveau/dispnv04/tvnv17.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+Sure, Will fix this.
+> 
+> This is a CAN bus controller? If so, then use 'can' for node name.
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-index 6d99f11..67ba2ac 100644
---- a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-+++ b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-@@ -644,16 +644,13 @@ static int nv17_tv_create_resources(struct drm_encoder *encoder,
- 	int i;
- 
- 	if (nouveau_tv_norm) {
--		for (i = 0; i < num_tv_norms; i++) {
--			if (!strcmp(nv17_tv_norm_names[i], nouveau_tv_norm)) {
--				tv_enc->tv_norm = i;
--				break;
--			}
--		}
--
--		if (i == num_tv_norms)
-+		i = match_string(nv17_tv_norm_names,
-+				 num_tv_norms, nouveau_tv_norm);
-+		if (i < 0)
- 			NV_WARN(drm, "Invalid TV norm setting \"%s\"\n",
- 				nouveau_tv_norm);
-+		else
-+			tv_enc->tv_norm = i;
- 	}
- 
- 	drm_mode_create_tv_properties(dev, num_tv_norms, nv17_tv_norm_names);
--- 
-1.7.12.4
+Yes but I am using m_can along the lines of dcan in other boards (For
+example, see arch/arm/boot/dts/am33xx.dtsi:1046). Are you saying all CAN
+controllers should only be called can?
+
+Thanks,
+Faiz
