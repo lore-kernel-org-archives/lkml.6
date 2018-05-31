@@ -1,143 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755234AbeEaN1M (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:27:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52579 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755117AbeEaN1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:27:11 -0400
-Date: Thu, 31 May 2018 15:27:08 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Maninder Singh <maninder1.s@samsung.com>
-Cc: sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
-        pankaj.m@samsung.com, v.narang@samsung.com
-Subject: Re: [PATCH 2/2] printk: make sure to print log on console.
-Message-ID: <20180531132708.2yappktdrz6qljxi@pathway.suse.cz>
-References: <CGME20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e@epcas5p2.samsung.com>
- <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
+        id S1755197AbeEaNau (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:30:50 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:21609 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755006AbeEaNaq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:30:46 -0400
+Subject: Re: [PATCH v2 3/6] clk: ti: dra7: Add clkctrl clock data for the mcan
+ clocks
+To: Faiz Abbas <faiz_abbas@ti.com>, Rob Herring <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <bcousson@baylibre.com>,
+        <tony@atomide.com>, <paul@pwsan.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-4-faiz_abbas@ti.com>
+ <20180531040350.GA25132@rob-hp-laptop>
+ <e7e3ade1-76b7-f216-ece5-bd64a55cede6@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <678ef467-a235-91db-8bae-f249ad98eac8@ti.com>
+Date: Thu, 31 May 2018 16:29:56 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <e7e3ade1-76b7-f216-ece5-bd64a55cede6@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-05-31 15:49:11, Maninder Singh wrote:
-> This patch make sure printing of log if loglevel at time of storing
-> log is greater than current console loglevel.
+On 31/05/18 13:14, Faiz Abbas wrote:
+> Hi,
 > 
-> @why
-> In case of async printk, printk thread can miss logs because it checks
-> current log level at time of console_unlock.
+> On Thursday 31 May 2018 09:33 AM, Rob Herring wrote:
+>> On Wed, May 30, 2018 at 07:41:30PM +0530, Faiz Abbas wrote:
+>>> Add clkctrl data for the m_can clocks and register it within the
+> ...
+>>>   
+>>> diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
+>>> index 5e1061b15aed..d7549c57cac3 100644
+>>> --- a/include/dt-bindings/clock/dra7.h
+>>> +++ b/include/dt-bindings/clock/dra7.h
+>>> @@ -168,5 +168,6 @@
+>>>   #define DRA7_COUNTER_32K_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
+>>>   #define DRA7_UART10_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
+>>>   #define DRA7_DCAN1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
+>>> +#define DRA7_ADC_CLKCTRL	DRA7_CLKCTRL_INDEX(0xa0)
+>>
+>> ADC and mcan are the same thing?
+>>
 > 
-> func()
-> {
-> ....
-> ....
-> 	console_verbose();  // user wants to have all the logs on console.
-> 	pr_alert();
-> 	pr_info();
-> 	dump_backtrace(); // prints with default loglevel.
-> 	pr_info();
-> 	pr_emerg();
-> 	pr_info();
-> 	...
-> 	...
-> 	...
-> 	pr_info();
-> 	console_silent(); // stop all logs from printing on console.
-> }
-> 
-> Now if printk thread is scheduled after setting console loglevel
-> to silent, then user's requirement will be in waste, because it will not
-> print logs on console at time of printk thread scheduling.
+> The register to control MCAN clocks is called ADC_CLKCTRL, Yes.
 
-A better text would be something like:
+Is there any reason for this or is that just a documentation bug?
 
-Now if console_lock was owned by another process, the messages might
-be handled after the consoles were silenced.
-
-> @how
-> use one bit of flags field to store whether its console print
-> or not(console_print) by checking current console loglevel with 
-> message's level at time of log.
-> At time of print check this flag for printing message on console.
-> 
-> Signed-off-by: Vaneet Narang <v.narang@samsung.com>
-> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
-> ---
->  kernel/printk/printk.c | 33 +++++++++++++++++++++++----------
->  1 file changed, 23 insertions(+), 10 deletions(-)
-> 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index ab15903..4e0be66e 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -360,8 +360,16 @@ struct printk_log {
->  	u16 text_len;		/* length of text buffer */
->  	u16 dict_len;		/* length of dictionary buffer */
->  	u8 facility;		/* syslog facility */
-> -	u8 flags:5;		/* internal record flags */
-> +	u8 flags:4;		/* internal record flags */
->  	u8 level:3;		/* syslog level */
-> +	/*
-> +	 * whether to print this msg on console or not?
-> +	 * due to async printk, printk thread can miss
-> +	 * prints at the time of console_flush because of
-> +	 * change in print level afterwards.
-> +	 */
-> +	u8 console_print:1;
-
-We should be careful with changing the structure. It is accessed
-by external tools, like "crash".
-
-IMHO, it is perfectly fine to handle this by a flag, e.g.
-add LOG_CON_SUPPRESS.
-
-> +
->  }
->  #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
->  __packed __aligned(4)
-> @@ -623,7 +631,12 @@ static int log_store(int facility, int level,
->  	msg->dict_len = dict_len;
->  	msg->facility = facility;
->  	msg->level = level & 7;
-> -	msg->flags = flags & 0x1f;
-> +	if (msg->level >= console_loglevel)
-> +		msg->console_print = 0;
-> +	else
-> +		msg->console_print = 1;
-
-We are going to decide about the visibility when the message is
-stored. Let's handle it completely and make it easier later.
-
-We could keep suppress_message_printing() as is and do the following
-in vprintk_emit():
-
-	if (suppress_message_printing(level)
-		lflags |= LOG_CON_SUPPRESS;
-
-> @@ -2354,7 +2367,7 @@ void console_unlock(void)
->  			break;
->  
->  		msg = log_from_idx(console_idx);
-> -		if (suppress_message_printing(msg->level)) {
-> +		if (suppress_message_printing(msg->console_print)) {
-
-Then it is enough to do
-
--		if (suppress_message_printing(msg->level)) {
-+		if (msg->flags & LOG_CON_SUPRESSED) {
-
-Best Regards,
-Petr
-
-  			/*
->  			 * Skip record we have buffered and already printed
->  			 * directly to the console when we received it, and
-> -- 
-> 1.9.1
-> 
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
