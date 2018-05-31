@@ -1,127 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754162AbeEaIh3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:37:29 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:55211 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754023AbeEaIhY (ORCPT
+        id S1754175AbeEaIio (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:38:44 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38115 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754071AbeEaIii (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:37:24 -0400
-X-Google-Smtp-Source: ADUXVKL6r773OjpTTYqP3fyjmTuMbW7Hth6gSwiH4y7HzDk17a7HvH+YSfYNxs9zySXSalfyxxRcVw==
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
-        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
-        James Smart <james.smart@broadcom.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>
-References: <20180525125322.15398-1-jthumshirn@suse.de>
- <20180525130535.GA24239@lst.de> <20180525135813.GB9591@redhat.com>
- <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
- <20180530220206.GA7037@redhat.com>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <f084e3bc-77af-4268-c882-7b0737e45f3b@grimberg.me>
-Date: Thu, 31 May 2018 11:37:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 31 May 2018 04:38:38 -0400
+X-Google-Smtp-Source: ADUXVKIkbuGAAfSxXiQH56qTVc4Itx/n+Gsl6iD0/ILPI+JGda4xHqQJQQkW98z0459P7zgFVWwBRw==
+Date: Thu, 31 May 2018 09:38:32 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>, "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, Rob Landley <rob@landley.net>
+Subject: Re: [PATCH] kbuild: add machine size to CHEKCFLAGS
+Message-ID: <20180531083832.glzcj23cgucev77v@holly.lan>
+References: <20180530204838.22079-1-luc.vanoostenryck@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530220206.GA7037@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530204838.22079-1-luc.vanoostenryck@gmail.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> Wouldn't expect you guys to nurture this 'mpath_personality' knob.  SO
-> when features like "dispersed namespaces" land a negative check would
-> need to be added in the code to prevent switching from "native".
+On Wed, May 30, 2018 at 10:48:38PM +0200, Luc Van Oostenryck wrote:
+> By default, sparse assumes a 64bit machine when compiled on x86-64
+> and 32bit when compiled on anything else.
 > 
-> And once something like "dispersed namespaces" lands we'd then have to
-> see about a more sophisticated switch that operates at a different
-> granularity.  Could also be that switching one subsystem that is part of
-> "dispersed namespaces" would then cascade to all other associated
-> subsystems?  Not that dissimilar from the 3rd patch in this series that
-> allows a 'device' switch to be done in terms of the subsystem.
-
-Which I think is broken by allowing to change this personality on the
-fly.
-
+> This can of course create all sort of problems for the other archs, like
+> issuing false warnings ('shift too big (32) for type unsigned long'), or
+> worse, failing to emit legitimate warnings.
 > 
-> Anyway, I don't know the end from the beginning on something you just
-> told me about ;)  But we're all in this together.  And can take it as it
-> comes.
-
-I agree but this will be exposed to user-space and we will need to live
-with it for a long long time...
-
-> I'm merely trying to bridge the gap from old dm-multipath while
-> native NVMe multipath gets its legs.
+> Fix this by adding the -m32/-m64 flag, depending on CONFIG_64BIT,
+> to CHECKFLAGS in the main Makefile (and so for all archs).
+> Also, remove the now unneeded -m32/-m64 in arch specific Makefiles.
 > 
-> In time I really do have aspirations to contribute more to NVMe
-> multipathing.  I think Christoph's NVMe multipath implementation of
-> bio-based device ontop on NVMe core's blk-mq device(s) is very clever
-> and effective (blk_steal_bios() hack and all).
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 
-That's great.
+Looks like a good clean up to me. However the typo in the Subject: line
+did attract my attention.
 
->> Don't get me wrong, I do support your cause, and I think nvme should try
->> to help, I just think that subsystem granularity is not the correct
->> approach going forward.
+
+Daniel.
+
+
+> ---
+>  Makefile             | 3 +++
+>  arch/alpha/Makefile  | 2 +-
+>  arch/arm/Makefile    | 2 +-
+>  arch/arm64/Makefile  | 2 +-
+>  arch/ia64/Makefile   | 2 +-
+>  arch/mips/Makefile   | 3 ---
+>  arch/parisc/Makefile | 2 +-
+>  arch/sparc/Makefile  | 2 +-
+>  arch/x86/Makefile    | 2 +-
+>  9 files changed, 10 insertions(+), 10 deletions(-)
 > 
-> I understand there will be limits to this 'mpath_personality' knob's
-> utility and it'll need to evolve over time.  But the burden of making
-> more advanced NVMe multipath features accessible outside of native NVMe
-> isn't intended to be on any of the NVMe maintainers (other than maybe
-> remembering to disallow the switch where it makes sense in the future).
-
-I would expect that any "advanced multipath features" would be properly
-brought up with the NVMe TWG as a ratified standard and find its way
-to nvme. So I don't think this particularly is a valid argument.
-
->> As I said, I've been off the grid, can you remind me why global knob is
->> not sufficient?
+> diff --git a/Makefile b/Makefile
+> index 6c6610913..18379987c 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -881,6 +881,9 @@ endif
+>  # insure the checker run with the right endianness
+>  CHECKFLAGS += $(if $(CONFIG_CPU_BIG_ENDIAN),-mbig-endian,-mlittle-endian)
+>  
+> +# the checker needs the correct machine size
+> +CHECKFLAGS += $(if $(CONFIG_64BIT),-m64,-m32)
+> +
+>  # Default kernel image to build when no specific target is given.
+>  # KBUILD_IMAGE may be overruled on the command line or
+>  # set in the environment
+> diff --git a/arch/alpha/Makefile b/arch/alpha/Makefile
+> index 2cc3cc519..c5ec8c09c 100644
+> --- a/arch/alpha/Makefile
+> +++ b/arch/alpha/Makefile
+> @@ -11,7 +11,7 @@
+>  NM := $(NM) -B
+>  
+>  LDFLAGS_vmlinux	:= -static -N #-relax
+> -CHECKFLAGS	+= -D__alpha__ -m64
+> +CHECKFLAGS	+= -D__alpha__
+>  cflags-y	:= -pipe -mno-fp-regs -ffixed-8
+>  cflags-y	+= $(call cc-option, -fno-jump-tables)
+>  
+> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+> index e4e537f27..f32a5468d 100644
+> --- a/arch/arm/Makefile
+> +++ b/arch/arm/Makefile
+> @@ -135,7 +135,7 @@ endif
+>  KBUILD_CFLAGS	+=$(CFLAGS_ABI) $(CFLAGS_ISA) $(arch-y) $(tune-y) $(call cc-option,-mshort-load-bytes,$(call cc-option,-malignment-traps,)) -msoft-float -Uarm
+>  KBUILD_AFLAGS	+=$(CFLAGS_ABI) $(AFLAGS_ISA) $(arch-y) $(tune-y) -include asm/unified.h -msoft-float
+>  
+> -CHECKFLAGS	+= -D__arm__ -m32
+> +CHECKFLAGS	+= -D__arm__
+>  
+>  #Default value
+>  head-y		:= arch/arm/kernel/head$(MMUEXT).o
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index 87f7d2f9f..3c353b471 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -78,7 +78,7 @@ LDFLAGS		+= -maarch64linux
+>  UTS_MACHINE	:= aarch64
+>  endif
+>  
+> -CHECKFLAGS	+= -D__aarch64__ -m64
+> +CHECKFLAGS	+= -D__aarch64__
+>  
+>  ifeq ($(CONFIG_ARM64_MODULE_PLTS),y)
+>  KBUILD_LDFLAGS_MODULE	+= -T $(srctree)/arch/arm64/kernel/module.lds
+> diff --git a/arch/ia64/Makefile b/arch/ia64/Makefile
+> index 2dd7f519a..45f59808b 100644
+> --- a/arch/ia64/Makefile
+> +++ b/arch/ia64/Makefile
+> @@ -18,7 +18,7 @@ READELF := $(CROSS_COMPILE)readelf
+>  
+>  export AWK
+>  
+> -CHECKFLAGS	+= -m64 -D__ia64=1 -D__ia64__=1 -D_LP64 -D__LP64__
+> +CHECKFLAGS	+= -D__ia64=1 -D__ia64__=1 -D_LP64 -D__LP64__
+>  
+>  OBJCOPYFLAGS	:= --strip-all
+>  LDFLAGS_vmlinux	:= -static
+> diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+> index 5e9fce076..e2122cca4 100644
+> --- a/arch/mips/Makefile
+> +++ b/arch/mips/Makefile
+> @@ -309,9 +309,6 @@ ifdef CONFIG_MIPS
+>  CHECKFLAGS += $(shell $(CC) $(KBUILD_CFLAGS) -dM -E -x c /dev/null | \
+>  	egrep -vw '__GNUC_(|MINOR_|PATCHLEVEL_)_' | \
+>  	sed -e "s/^\#define /-D'/" -e "s/ /'='/" -e "s/$$/'/" -e 's/\$$/&&/g')
+> -ifdef CONFIG_64BIT
+> -CHECKFLAGS		+= -m64
+> -endif
+>  endif
+>  
+>  OBJCOPYFLAGS		+= --remove-section=.reginfo
+> diff --git a/arch/parisc/Makefile b/arch/parisc/Makefile
+> index 348ae4779..714284ea6 100644
+> --- a/arch/parisc/Makefile
+> +++ b/arch/parisc/Makefile
+> @@ -28,7 +28,7 @@ export LIBGCC
+>  
+>  ifdef CONFIG_64BIT
+>  UTS_MACHINE	:= parisc64
+> -CHECKFLAGS	+= -D__LP64__=1 -m64
+> +CHECKFLAGS	+= -D__LP64__=1
+>  CC_ARCHES	= hppa64
+>  LD_BFD		:= elf64-hppa-linux
+>  else # 32-bit
+> diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
+> index edac927e4..966a13d2b 100644
+> --- a/arch/sparc/Makefile
+> +++ b/arch/sparc/Makefile
+> @@ -39,7 +39,7 @@ else
+>  # sparc64
+>  #
+>  
+> -CHECKFLAGS    += -D__sparc__ -D__sparc_v9__ -D__arch64__ -m64
+> +CHECKFLAGS    += -D__sparc__ -D__sparc_v9__ -D__arch64__
+>  LDFLAGS       := -m elf64_sparc
+>  export BITS   := 64
+>  UTS_MACHINE   := sparc64
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index 60135cbd9..f0a6ea224 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -94,7 +94,7 @@ ifeq ($(CONFIG_X86_32),y)
+>  else
+>          BITS := 64
+>          UTS_MACHINE := x86_64
+> -        CHECKFLAGS += -D__x86_64__ -m64
+> +        CHECKFLAGS += -D__x86_64__
+>  
+>          biarch := -m64
+>          KBUILD_AFLAGS += -m64
+> -- 
+> 2.17.0
 > 
-> Because once nvme_core.multipath=N is set: native NVMe multipath is then
-> not accessible from the same host.  The goal of this patchset is to give
-> users choice.  But not limit them to _only_ using dm-multipath if they
-> just have some legacy needs.
-> 
-> Tough to be convincing with hypotheticals but I could imagine a very
-> obvious usecase for native NVMe multipathing be PCI-based embedded NVMe
-> "fabrics" (especially if/when the numa-based path selector lands).  But
-> the same host with PCI NVMe could be connected to a FC network that has
-> historically always been managed via dm-multipath.. but say that
-> FC-based infrastructure gets updated to use NVMe (to leverage a wider
-> NVMe investment, whatever?) -- but maybe admins would still prefer to
-> use dm-multipath for the NVMe over FC.
-
-You are referring to an array exposing media via nvmf and scsi
-simultaneously? I'm not sure that there is a clean definition of
-how that is supposed to work (ANA/ALUA, reservations, etc..)
-
->> This might sound stupid to you, but can't users that desperately must
->> keep using dm-multipath (for its mature toolset or what-not) just
->> stack it on multipath nvme device? (I might be completely off on
->> this so feel free to correct my ignorance).
-> 
-> We could certainly pursue adding multipath-tools support for native NVMe
-> multipathing.  Not opposed to it (even if just reporting topology and
-> state).  But given the extensive lengths NVMe multipath goes to hide
-> devices we'd need some way to piercing through the opaque nvme device
-> that native NVMe multipath exposes.  But that really is a tangent
-> relative to this patchset.  Since that kind of visibility would also
-> benefit the nvme cli... otherwise how are users to even be able to trust
-> but verify native NVMe multipathing did what it expected it to?
-
-Can you explain what is missing for multipath-tools to resolve topology?
-
-nvme list-subsys is doing just that, doesn't it? It lists subsys-ctrl
-topology but that is sort of the important information as controllers
-are the real paths.
