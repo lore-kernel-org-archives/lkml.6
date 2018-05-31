@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755462AbeEaOpf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:45:35 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:40474 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755117AbeEaOpa (ORCPT
+        id S1755475AbeEaOpr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:45:47 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:56148 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755438AbeEaOpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:45:30 -0400
-X-Google-Smtp-Source: ADUXVKKTuk/x387Qoht06FeYPoXa2cJ7X8CS5TY0yPCPkkIsEf7k5Om0Vguu/GbsssO9h4wMQNk85w==
+        Thu, 31 May 2018 10:45:34 -0400
+X-Google-Smtp-Source: ADUXVKKh0yA2jR36XpYJNzn2y3jOmuD/6wXIOAGdYlfFin1C4YOuH1bgH/g50tf4Y/61zxGiqN/tVg==
 From: Paolo Valente <paolo.valente@linaro.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -15,9 +15,9 @@ Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
         sapienza.dav@gmail.com, 177992@studenti.unimore.it,
         Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX/IMPROVEMENTS 1/4] block, bfq: add description of weight-raising heuristics
-Date: Thu, 31 May 2018 16:45:05 +0200
-Message-Id: <20180531144508.3927-2-paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX/IMPROVEMENTS 4/4] block, bfq: prevent soft_rt_next_start from being stuck at infinity
+Date: Thu, 31 May 2018 16:45:08 +0200
+Message-Id: <20180531144508.3927-5-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180531144508.3927-1-paolo.valente@linaro.org>
 References: <20180531144508.3927-1-paolo.valente@linaro.org>
@@ -25,123 +25,93 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A description of how weight raising works is missing in BFQ
-sources. In addition, the code for handling weight raising is
-scattered across a few functions. This makes it rather hard to
-understand the mechanism and its rationale. This commits adds such a
-description at the beginning of the main source file.
+From: Davide Sapienza <sapienza.dav@gmail.com>
 
+BFQ can deem a bfq_queue as soft real-time only if the queue
+- periodically becomes completely idle, i.e., empty and with
+  no still-outstanding I/O request;
+- after becoming idle, gets new I/O only after a special reference
+  time soft_rt_next_start.
+
+In this respect, after commit "block, bfq: consider also past I/O in
+soft real-time detection", the value of soft_rt_next_start can never
+decrease. This causes a problem with the following special updating
+case for soft_rt_next_start: to prevent queues that are not completely
+idle to be wrongly detected as soft real-time (when they become
+non-empty again), soft_rt_next_start is temporarily set to infinity
+for empty queues with still outstanding I/O requests. But, if such an
+update is actually performed, then, because of the above commit,
+soft_rt_next_start will be stuck at infinity forever, and the queue
+will have no more chance to be considered soft real-time.
+
+On slow systems, this problem does cause actual soft real-time
+applications to be occasionally not detected as such.
+
+This commit addresses this issue by eliminating the pushing of
+soft_rt_next_start to infinity, and by changing the way non-empty
+queues are prevented from being wrongly detected as soft
+real-time. Simply, a queue that becomes non-empty again can now be
+detected as soft real-time only if it has no outstanding I/O request.
+
+Signed-off-by: Davide Sapienza <sapienza.dav@gmail.com>
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- block/bfq-iosched.c | 80 +++++++++++++++++++++++++++++++++++++----------------
- 1 file changed, 56 insertions(+), 24 deletions(-)
+ block/bfq-iosched.c | 29 ++---------------------------
+ 1 file changed, 2 insertions(+), 27 deletions(-)
 
 diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index f71a5846b629..f3703e7431aa 100644
+index 31ce089d54eb..37cadc643c56 100644
 --- a/block/bfq-iosched.c
 +++ b/block/bfq-iosched.c
-@@ -49,9 +49,39 @@
-  *
-  * In particular, to provide these low-latency guarantees, BFQ
-  * explicitly privileges the I/O of two classes of time-sensitive
-- * applications: interactive and soft real-time. This feature enables
-- * BFQ to provide applications in these classes with a very low
-- * latency. Finally, BFQ also features additional heuristics for
-+ * applications: interactive and soft real-time. In more detail, BFQ
-+ * behaves this way if the low_latency parameter is set (default
-+ * configuration). This feature enables BFQ to provide applications in
-+ * these classes with a very low latency.
-+ *
-+ * To implement this feature, BFQ constantly tries to detect whether
-+ * the I/O requests in a bfq_queue come from an interactive or a soft
-+ * real-time application. For brevity, in these cases, the queue is
-+ * said to be interactive or soft real-time. In both cases, BFQ
-+ * privileges the service of the queue, over that of non-interactive
-+ * and non-soft-real-time queues. This privileging is performed,
-+ * mainly, by raising the weight of the queue. So, for brevity, we
-+ * call just weight-raising periods the time periods during which a
-+ * queue is privileged, because deemed interactive or soft real-time.
-+ *
-+ * The detection of soft real-time queues/applications is described in
-+ * detail in the comments on the function
-+ * bfq_bfqq_softrt_next_start. On the other hand, the detection of an
-+ * interactive queue works as follows: a queue is deemed interactive
-+ * if it is constantly non empty only for a limited time interval,
-+ * after which it does become empty. The queue may be deemed
-+ * interactive again (for a limited time), if it restarts being
-+ * constantly non empty, provided that this happens only after the
-+ * queue has remained empty for a given minimum idle time.
-+ *
-+ * By default, BFQ computes automatically the above maximum time
-+ * interval, i.e., the time interval after which a constantly
-+ * non-empty queue stops being deemed interactive. Since a queue is
-+ * weight-raised while it is deemed interactive, this maximum time
-+ * interval happens to coincide with the (maximum) duration of the
-+ * weight-raising for interactive queues.
-+ *
-+ * Finally, BFQ also features additional heuristics for
-  * preserving both a low latency and a high throughput on NCQ-capable,
-  * rotational or flash-based devices, and to get the job done quickly
-  * for applications consisting in many I/O-bound processes.
-@@ -61,14 +91,14 @@
-  * all low-latency heuristics for that device, by setting low_latency
-  * to 0.
-  *
-- * BFQ is described in [1], where also a reference to the initial, more
-- * theoretical paper on BFQ can be found. The interested reader can find
-- * in the latter paper full details on the main algorithm, as well as
-- * formulas of the guarantees and formal proofs of all the properties.
-- * With respect to the version of BFQ presented in these papers, this
-- * implementation adds a few more heuristics, such as the one that
-- * guarantees a low latency to soft real-time applications, and a
-- * hierarchical extension based on H-WF2Q+.
-+ * BFQ is described in [1], where also a reference to the initial,
-+ * more theoretical paper on BFQ can be found. The interested reader
-+ * can find in the latter paper full details on the main algorithm, as
-+ * well as formulas of the guarantees and formal proofs of all the
-+ * properties.  With respect to the version of BFQ presented in these
-+ * papers, this implementation adds a few more heuristics, such as the
-+ * ones that guarantee a low latency to interactive and soft real-time
-+ * applications, and a hierarchical extension based on H-WF2Q+.
-  *
-  * B-WF2Q+ is based on WF2Q+, which is described in [2], together with
-  * H-WF2Q+, while the augmented tree used here to implement B-WF2Q+
-@@ -218,21 +248,23 @@ static struct kmem_cache *bfq_pool;
- #define BFQ_RATE_SHIFT		16
+@@ -1416,15 +1416,6 @@ static bool bfq_bfqq_update_budg_for_activation(struct bfq_data *bfqd,
+ 	return wr_or_deserves_wr;
+ }
  
+-/*
+- * Return the farthest future time instant according to jiffies
+- * macros.
+- */
+-static unsigned long bfq_greatest_from_now(void)
+-{
+-	return jiffies + MAX_JIFFY_OFFSET;
+-}
+-
  /*
-- * By default, BFQ computes the duration of the weight raising for
-- * interactive applications automatically, using the following formula:
-- * duration = (R / r) * T, where r is the peak rate of the device, and
-- * R and T are two reference parameters.
-- * In particular, R is the peak rate of the reference device (see
-- * below), and T is a reference time: given the systems that are
-- * likely to be installed on the reference device according to its
-- * speed class, T is about the maximum time needed, under BFQ and
-+ * When configured for computing the duration of the weight-raising
-+ * for interactive queues automatically (see the comments at the
-+ * beginning of this file), BFQ does it using the following formula:
-+ * duration = (R / r) * T,
-+ * where r is the peak rate of the device, and R
-+ * and T are two reference parameters.	In particular,
-+ * R is the peak rate of the reference device (see below), and
-+ * T is a reference time: given the systems that are likely
-+ * to be installed on the reference device according to its speed
-+ * class, T is about the maximum time needed, under BFQ and
-  * while reading two files in parallel, to load typical large
-  * applications on these systems (see the comments on
-- * max_service_from_wr below, for more details on how T is obtained).
-- * In practice, the slower/faster the device at hand is, the more/less
-- * it takes to load applications with respect to the reference device.
-- * Accordingly, the longer/shorter BFQ grants weight raising to
-- * interactive applications.
-+ * max_service_from_wr below, for more details on how T is
-+ * obtained).  In practice, the slower/faster the device at hand is,
-+ * the more/less it takes to load applications with respect to the
-+ * reference device.  Accordingly, the longer/shorter BFQ grants
-+ * weight raising to interactive applications.
-  *
-  * BFQ uses four different reference pairs (R, T), depending on:
-  * . whether the device is rotational or non-rotational;
+  * Return the farthest past time instant according to jiffies
+  * macros.
+@@ -1569,7 +1560,8 @@ static void bfq_bfqq_handle_idle_busy_switch(struct bfq_data *bfqd,
+ 	in_burst = bfq_bfqq_in_large_burst(bfqq);
+ 	soft_rt = bfqd->bfq_wr_max_softrt_rate > 0 &&
+ 		!in_burst &&
+-		time_is_before_jiffies(bfqq->soft_rt_next_start);
++		time_is_before_jiffies(bfqq->soft_rt_next_start) &&
++		bfqq->dispatched == 0;
+ 	*interactive = !in_burst && idle_for_long_time;
+ 	wr_or_deserves_wr = bfqd->low_latency &&
+ 		(bfqq->wr_coeff > 1 ||
+@@ -3272,23 +3264,6 @@ void bfq_bfqq_expire(struct bfq_data *bfqd,
+ 			bfqq->soft_rt_next_start =
+ 				bfq_bfqq_softrt_next_start(bfqd, bfqq);
+ 		else {
+-			/*
+-			 * The application is still waiting for the
+-			 * completion of one or more requests:
+-			 * prevent it from possibly being incorrectly
+-			 * deemed as soft real-time by setting its
+-			 * soft_rt_next_start to infinity. In fact,
+-			 * without this assignment, the application
+-			 * would be incorrectly deemed as soft
+-			 * real-time if:
+-			 * 1) it issued a new request before the
+-			 *    completion of all its in-flight
+-			 *    requests, and
+-			 * 2) at that time, its soft_rt_next_start
+-			 *    happened to be in the past.
+-			 */
+-			bfqq->soft_rt_next_start =
+-				bfq_greatest_from_now();
+ 			/*
+ 			 * Schedule an update of soft_rt_next_start to when
+ 			 * the task may be discovered to be isochronous.
 -- 
 2.16.1
