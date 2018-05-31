@@ -1,145 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753899AbeEaGA4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:00:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52770 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbeEaGAx (ORCPT
+        id S1753957AbeEaGBm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:01:42 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41115 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbeEaGBj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:00:53 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8C0076050D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH] drm/bridge/synopsys: dw-hdmi: fix dw_hdmi_setup_rx_sense
-To: Neil Armstrong <narmstrong@baylibre.com>, a.hajda@samsung.com,
-        jernej.skrabec@siol.net
-Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1527673438-20643-1-git-send-email-narmstrong@baylibre.com>
-From: Archit Taneja <architt@codeaurora.org>
-Message-ID: <db0013e7-dbde-13ca-b9af-178f4b3cfff6@codeaurora.org>
-Date: Thu, 31 May 2018 11:30:41 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 31 May 2018 02:01:39 -0400
+X-Google-Smtp-Source: ADUXVKKP7qFOwdeGTq8CgYvVb5rJ2hBCx4SXstMynQ1gnebh7L+bHbh0phJXO5XoqWugTXIj+jv+Ww==
+Date: Thu, 31 May 2018 15:01:33 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] memcg: force charge kmem counter too
+Message-ID: <20180531060133.GA31477@rodete-desktop-imager.corp.google.com>
+References: <20180525185501.82098-1-shakeelb@google.com>
+ <20180526185144.xvh7ejlyelzvqwdb@esperanza>
+ <CALvZod5yTxcuB_Aao-a0ChNEnwyBJk9UPvEQ80s9tZFBQ0cxpw@mail.gmail.com>
+ <20180528091110.GG1517@dhcp22.suse.cz>
+ <CALvZod6x5iRmcJ6pYKS+jwJd855jnwmVcPK9tnKbuJ9Hfppa-A@mail.gmail.com>
+ <20180529083153.GR27180@dhcp22.suse.cz>
+ <CALvZod67qzq+hQLms4Wut5LNVBjBcEQPpMp9zxF6NE5k+7CLOw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1527673438-20643-1-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod67qzq+hQLms4Wut5LNVBjBcEQPpMp9zxF6NE5k+7CLOw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 30, 2018 at 11:14:33AM -0700, Shakeel Butt wrote:
+> On Tue, May 29, 2018 at 1:31 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > On Mon 28-05-18 10:23:07, Shakeel Butt wrote:
+> >> On Mon, May 28, 2018 at 2:11 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> >> Though is there a precedence where the broken feature is not fixed
+> >> because an alternative is available?
+> >
+> > Well, I can see how breaking GFP_NOFAIL semantic is problematic, on the
+> > other hand we keep saying that kmem accounting in v1 is hard usable and
+> > strongly discourage people from using it. Sure we can add the code which
+> > handles _this_ particular case but that wouldn't make the whole thing
+> > more usable I strongly suspect. Maybe I am wrong and you can provide
+> > some specific examples. Is GFP_NOFAIL that common to matter?
+> >
+> > In any case we should balance between the code maintainability here.
+> > Adding more cruft into the allocator path is not free.
+> >
+> 
+> We do not use kmem limits internally and this is something I found
+> through code inspection. If this patch is increasing the cost of code
+> maintainability I am fine with dropping it but at least there should a
+> comment saying that kmem limits are broken and no need fix.
+ 
+I agree.
 
+Even, I didn't know kmem is strongly discouraged until now. Then,
+why is it enabled by default on cgroup v1?
 
-On Wednesday 30 May 2018 03:13 PM, Neil Armstrong wrote:
-> The dw_hdmi_setup_rx_sense exported function should not use struct device
-> to recover the dw-hdmi context using drvdata, but take struct dw_hdmi
-> directly like other exported functions.
-> 
-> This caused a regression using Meson DRM on S905X since v4.17-rc1 :
-
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
-
-> 
-> Internal error: Oops: 96000007 [#1] PREEMPT SMP
-> [...]
-> CPU: 0 PID: 124 Comm: irq/32-dw_hdmi_ Not tainted 4.17.0-rc7 #2
-> Hardware name: Libre Technology CC (DT)
-> [...]
-> pc : osq_lock+0x54/0x188
-> lr : __mutex_lock.isra.0+0x74/0x530
-> [...]
-> Process irq/32-dw_hdmi_ (pid: 124, stack limit = 0x00000000adf418cb)
-> Call trace:
->    osq_lock+0x54/0x188
->    __mutex_lock_slowpath+0x10/0x18
->    mutex_lock+0x30/0x38
->    __dw_hdmi_setup_rx_sense+0x28/0x98
->    dw_hdmi_setup_rx_sense+0x10/0x18
->    dw_hdmi_top_thread_irq+0x2c/0x50
->    irq_thread_fn+0x28/0x68
->    irq_thread+0x10c/0x1a0
->    kthread+0x128/0x130
->    ret_from_fork+0x10/0x18
->   Code: 34000964 d00050a2 51000484 9135c042 (f864d844)
->   ---[ end trace 945641e1fbbc07da ]---
->   note: irq/32-dw_hdmi_[124] exited with preempt_count 1
->   genirq: exiting task "irq/32-dw_hdmi_" (124) is an active IRQ thread (irq 32)
-> 
-> Fixes: eea034af90c6 ("drm/bridge/synopsys: dw-hdmi: don't clobber drvdata")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> Tested-by: Koen Kooi <koen@dominion.thruhere.net>
-> ---
->   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 15 ++++-----------
->   drivers/gpu/drm/meson/meson_dw_hdmi.c     |  2 +-
->   include/drm/bridge/dw_hdmi.h              |  2 +-
->   3 files changed, 6 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index ec8d000..3c136f2b 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -2077,7 +2077,7 @@ static irqreturn_t dw_hdmi_hardirq(int irq, void *dev_id)
->   	return ret;
->   }
->   
-> -void __dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
-> +void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
->   {
->   	mutex_lock(&hdmi->mutex);
->   
-> @@ -2103,13 +2103,6 @@ void __dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
->   	}
->   	mutex_unlock(&hdmi->mutex);
->   }
-> -
-> -void dw_hdmi_setup_rx_sense(struct device *dev, bool hpd, bool rx_sense)
-> -{
-> -	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
-> -
-> -	__dw_hdmi_setup_rx_sense(hdmi, hpd, rx_sense);
-> -}
->   EXPORT_SYMBOL_GPL(dw_hdmi_setup_rx_sense);
->   
->   static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
-> @@ -2145,9 +2138,9 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
->   	 */
->   	if (intr_stat &
->   	    (HDMI_IH_PHY_STAT0_RX_SENSE | HDMI_IH_PHY_STAT0_HPD)) {
-> -		__dw_hdmi_setup_rx_sense(hdmi,
-> -					 phy_stat & HDMI_PHY_HPD,
-> -					 phy_stat & HDMI_PHY_RX_SENSE);
-> +		dw_hdmi_setup_rx_sense(hdmi,
-> +				       phy_stat & HDMI_PHY_HPD,
-> +				       phy_stat & HDMI_PHY_RX_SENSE);
->   
->   		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0)
->   			cec_notifier_set_phys_addr(hdmi->cec_notifier,
-> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> index a393095..c9ad456 100644
-> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> @@ -529,7 +529,7 @@ static irqreturn_t dw_hdmi_top_thread_irq(int irq, void *dev_id)
->   		if (stat & HDMITX_TOP_INTR_HPD_RISE)
->   			hpd_connected = true;
->   
-> -		dw_hdmi_setup_rx_sense(dw_hdmi->dev, hpd_connected,
-> +		dw_hdmi_setup_rx_sense(dw_hdmi->hdmi, hpd_connected,
->   				       hpd_connected);
->   
->   		drm_helper_hpd_irq_event(dw_hdmi->encoder.dev);
-> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-> index dd2a8cf..ccb5aa8 100644
-> --- a/include/drm/bridge/dw_hdmi.h
-> +++ b/include/drm/bridge/dw_hdmi.h
-> @@ -151,7 +151,7 @@ struct dw_hdmi *dw_hdmi_bind(struct platform_device *pdev,
->   			     struct drm_encoder *encoder,
->   			     const struct dw_hdmi_plat_data *plat_data);
->   
-> -void dw_hdmi_setup_rx_sense(struct device *dev, bool hpd, bool rx_sense);
-> +void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense);
->   
->   void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
->   void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
-> 
+Let's turn if off with comment "It's broken so do not use/fix. Instead,
+please move to cgroup v2".
