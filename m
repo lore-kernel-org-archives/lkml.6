@@ -1,78 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755214AbeEaNdr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:33:47 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:18436 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755006AbeEaNdp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:33:45 -0400
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisNN1FzaY"
-X-RZG-CLASS-ID: mo00
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v2 0/8] gnss: add new GNSS subsystem
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20180531114743.GG3259@localhost>
-Date: Thu, 31 May 2018 15:33:41 +0200
-Cc: Richard Cochran <richardcochran@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
-        Pavel Machek <pavel@ucw.cz>, Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Message-Id: <598825FD-67A5-4016-BCE8-A50517472B8F@goldelico.com>
-References: <20180530103242.20773-1-johan@kernel.org> <20180530143822.lvtwjvbqe7gvbvgq@localhost> <20180531085242.GE3259@localhost> <943C21CA-EEC6-45E2-997E-A6E1FA0549EB@goldelico.com> <20180531114743.GG3259@localhost>
-To: Johan Hovold <johan@kernel.org>
-X-Mailer: Apple Mail (2.3124)
+        id S1755239AbeEaNg1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:36:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45944 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755053AbeEaNgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:36:25 -0400
+Subject: Re: [PATCH v9 3/7] cpuset: Add cpuset.sched.load_balance flag to v2
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <1527601294-3444-1-git-send-email-longman@redhat.com>
+ <1527601294-3444-4-git-send-email-longman@redhat.com>
+ <20180531105416.GI12180@hirez.programming.kicks-ass.net>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <f7eef1f4-9012-e3e1-3e00-d42f5e1fb36b@redhat.com>
+Date: Thu, 31 May 2018 09:36:20 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180531105416.GI12180@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VDYjLD012432
 
+On 05/31/2018 06:54 AM, Peter Zijlstra wrote:
+> On Tue, May 29, 2018 at 09:41:30AM -0400, Waiman Long wrote:
+>
+>> +  cpuset.sched.load_balance
+>> +	A read-write single value file which exists on non-root
+>> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
+>> +	either "0" (off) or "1" (on).  This flag is set by the parent
+>> +	and is not delegatable.  It is on by default in the root cgroup.
+>> +
+>> +	When it is on, tasks within this cpuset will be load-balanced
+>> +	by the kernel scheduler.  Tasks will be moved from CPUs with
+>> +	high load to other CPUs within the same cpuset with less load
+>> +	periodically.
+>> +
+>> +	When it is off, there will be no load balancing among CPUs on
+>> +	this cgroup.  Tasks will stay in the CPUs they are running on
+>> +	and will not be moved to other CPUs.
+> That is not entirely accurate I'm afraid (unless the patch makes it so,
+> I've yet to check). When you disable load-balancing on a cgroup you'll
+> get whatever balancing is left for the partition you happen to end up
+> in.
+>
+> Take for instance workqueue thingies, they use kthread_bind_mask()
+> (IIRC) and thus end up with PF_NO_SETAFFINITY so cpusets (or any other
+> cgroups really) do not have effect on them (long standing complaint).
+>
+> So take for instance the unbound numa enabled workqueue threads, those
+> will land in whatever partition and get balanced there.
 
-> Am 31.05.2018 um 13:47 schrieb Johan Hovold <johan@kernel.org>:
-> 
-> On Thu, May 31, 2018 at 11:52:18AM +0200, H. Nikolaus Schaller wrote:
->> 
->>> Am 31.05.2018 um 10:52 schrieb Johan Hovold <johan@kernel.org>:
->>> 
->>> On Wed, May 30, 2018 at 07:38:22AM -0700, Richard Cochran wrote:
->>>> On Wed, May 30, 2018 at 12:32:34PM +0200, Johan Hovold wrote:
->>>>> Another possible extension is to add generic 1PPS support.
->>>> 
->>>> There are two possibilities to consider.
->>>> 
->>>> 1. If the PPS causes an interrupt, then it should hook into the PPS
->>>>  subsystem.
->>> 
->>> Registering a PPS child device is what I had in mind for this.
->> 
->> This seems to be duplicating functionality that is already solved by
->> 
->> https://elixir.bootlin.com/linux/v4.17-rc7/source/Documentation/devicetree/bindings/pps/pps-gpio.txt
->> 
->> and
->> 
->> https://elixir.bootlin.com/linux/v4.17-rc7/source/drivers/pps/clients/pps-gpio.c
->> 
->> Or what is bad with just using that?
-> 
-> Using pps-gpio would not allow you to describe the hardware properly,
-> something which, for example, may be needed for power management (e.g.
-> to power on the GNSS receiver when the pps device is being accessed).
+Thanks for the clarification. The patch doesn't make any changes in the
+scheduler. I was trying to say what the flag does. I will update the
+documentation about this nuisance.
 
-Yes, that is indeed a very valid reason to do it that way as the pps-gpio
-seems to assume an always-on impulse source.
-
-On the other hand it looks as if the pps framework can't tell the
-source when to power on/off because it does not notify when it
-is being accessed or not:
-
-https://elixir.bootlin.com/linux/v4.17-rc7/source/drivers/pps/pps.c#L305
-
-BR,
-Nikolaus
+Cheers,
+Longman
