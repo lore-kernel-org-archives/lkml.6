@@ -1,64 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754081AbeEaHnq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 03:43:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38250 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754035AbeEaHnk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754064AbeEaHnn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 03:43:43 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50135 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753934AbeEaHnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 May 2018 03:43:40 -0400
-Date: Thu, 31 May 2018 09:43:27 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Zefan Li <lizefan@huawei.com>
-Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] cpuset: Enforce that a child's cpus must be a subset of
- the parent
-Message-ID: <20180531074327.GD12180@hirez.programming.kicks-ass.net>
-References: <1527687991-1431-1-git-send-email-longman@redhat.com>
- <5B0F4F09.9050100@huawei.com>
+From: Zhen Lei <thunder.leizhen@huawei.com>
+To: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>,
+        linux-mediatek <linux-mediatek@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+CC: Zhen Lei <thunder.leizhen@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, Libin <huawei.libin@huawei.com>,
+        Guozhu Li <liguozhu@hisilicon.com>, "Xinwei Hu" <huxinwei@huawei.com>
+Subject: [PATCH 2/7] iommu/arm-smmu-v3: fix the implementation of flush_iotlb_all hook
+Date: Thu, 31 May 2018 15:42:44 +0800
+Message-ID: <1527752569-18020-3-git-send-email-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 1.9.5.msysgit.0
+In-Reply-To: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
+References: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B0F4F09.9050100@huawei.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 09:25:29AM +0800, Zefan Li wrote:
-> Hi Waiman,
-> 
-> On 2018/5/30 21:46, Waiman Long wrote:
-> > It was found that the cpuset.cpus could contain CPUs that are not listed
-> > in their parent's cpu list as shown by the command sequence below:
-> > 
-> >   # echo "+cpuset" >cgroup.subtree_control
-> >   # mkdir g1
-> >   # echo 0-5 >g1/cpuset.cpus
-> >   # mkdir g1/g11
-> >   # echo "+cpuset" > g1/cgroup.subtree_control
-> >   # echo 6-11 >g1/g11/cpuset.cpus
-> >   # grep -R . g1 | grep "\.cpus"
-> >   g1/cpuset.cpus:0-5
-> >   g1/cpuset.cpus.effective:0-5
-> >   g1/g11/cpuset.cpus:6-11
-> >   g1/g11/cpuset.cpus.effective:0-5
-> > 
-> > As the intersection of g11's cpus and that of g1 is empty, the effective
-> > cpus of g11 is just that of g1. The check in update_cpumask() is now
-> > corrected to make sure that cpus in a child cpus must be a subset of
-> > its parent's cpus. The error "write error: Invalid argument" will now
-> > be reported in the above case.
-> > 
-> 
-> We made the distinction between user-configured CPUs and effective CPUs
-> in commit 7e88291beefbb758, so actually it's not a bug.
+.flush_iotlb_all can not just wait for previous tlbi operations to be
+completed, but should also invalid all TLBs of the related domain.
 
-Why though; that makes no sense what so ever.
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/iommu/arm-smmu-v3.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 1d64710..4402187 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -1770,6 +1770,14 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+ 	return ops->unmap(ops, iova, size);
+ }
+ 
++static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
++{
++	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
++
++	if (smmu_domain->smmu)
++		arm_smmu_tlb_inv_context(smmu_domain);
++}
++
+ static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
+ {
+ 	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
+@@ -1998,7 +2006,7 @@ static void arm_smmu_put_resv_regions(struct device *dev,
+ 	.map			= arm_smmu_map,
+ 	.unmap			= arm_smmu_unmap,
+ 	.map_sg			= default_iommu_map_sg,
+-	.flush_iotlb_all	= arm_smmu_iotlb_sync,
++	.flush_iotlb_all	= arm_smmu_flush_iotlb_all,
+ 	.iotlb_sync		= arm_smmu_iotlb_sync,
+ 	.iova_to_phys		= arm_smmu_iova_to_phys,
+ 	.add_device		= arm_smmu_add_device,
+-- 
+1.8.3
