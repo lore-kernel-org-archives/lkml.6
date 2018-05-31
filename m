@@ -1,52 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751495AbeEaWw7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:52:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59854 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751135AbeEaWw6 (ORCPT
+        id S1751166AbeEaW5U (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 18:57:20 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55339 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750790AbeEaW5S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 18:52:58 -0400
-Date: Thu, 31 May 2018 15:52:56 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
+        Thu, 31 May 2018 18:57:18 -0400
+X-Google-Smtp-Source: ADUXVKKbgthzf5VJFenDysf3Fyut2KR2niub1/IFEVXAB/4b6IoZVgrhPhpSGw+A0fegPWbCxe+wjQ==
+From: Bastian Germann <bastiangermann@fishpost.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Bastian Germann <bastiangermann@fishpost.de>,
+        Luca Tettamanti <kronos.it@gmail.com>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/shmem: Zero out unused vma fields in
- shmem_pseudo_vma_init()
-Message-Id: <20180531155256.a5f557c9e620a6d7e85e4ca1@linux-foundation.org>
-In-Reply-To: <20180531135602.20321-1-kirill.shutemov@linux.intel.com>
-References: <20180531135602.20321-1-kirill.shutemov@linux.intel.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/2] hwmon: (asus_atk0110) Replace deprecated device register call
+Date: Fri,  1 Jun 2018 00:56:59 +0200
+Message-Id: <20180531225700.721-1-bastiangermann@fishpost.de>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <f885fcb0-d9f3-7702-13ad-5af2913131f0@roeck-us.net>
+References: <f885fcb0-d9f3-7702-13ad-5af2913131f0@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018 16:56:02 +0300 "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
+Make the asus_atk0110 driver use hwmon_device_register_with_groups instead
+of the deprecated hwmon_device_register.
+Construct the expected attribute_group array from the sensor list which
+contains all needed attributes.
+Remove the manual sysfs file creation and deletion that are now taken care
+of by the (un)register calls via the attribute_group array.
 
-> shmem/tmpfs uses pseudo vma to allocate page with correct NUMA policy.
-> 
-> The pseudo vma doesn't have vm_page_prot set. We are going to encode
-> encryption KeyID in vm_page_prot. Having garbage there causes problems.
-> 
-> Zero out all unused fields in the pseudo vma.
-> 
+Signed-off-by: Bastian Germann <bastiangermann@fishpost.de>
+---
+ drivers/hwmon/asus_atk0110.c | 75 ++++++++++++------------------------
+ 1 file changed, 25 insertions(+), 50 deletions(-)
 
-So there are no known problems in the current mainline kernel?
-
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1404,10 +1404,9 @@ static void shmem_pseudo_vma_init(struct vm_area_struct *vma,
->  		struct shmem_inode_info *info, pgoff_t index)
->  {
->  	/* Create a pseudo vma that just contains the policy */
-> -	vma->vm_start = 0;
-> +	memset(vma, 0, sizeof(*vma));
->  	/* Bias interleave by inode number to distribute better across nodes */
->  	vma->vm_pgoff = index + info->vfs_inode.i_ino;
-> -	vma->vm_ops = NULL;
->  	vma->vm_policy = mpol_shared_policy_lookup(&info->policy, index);
->  }
+diff --git a/drivers/hwmon/asus_atk0110.c b/drivers/hwmon/asus_atk0110.c
+index 975c43d446f8..33748cc07acc 100644
+--- a/drivers/hwmon/asus_atk0110.c
++++ b/drivers/hwmon/asus_atk0110.c
+@@ -125,6 +125,8 @@ struct atk_data {
+ 	int temperature_count;
+ 	int fan_count;
+ 	struct list_head sensor_list;
++	struct attribute_group attr_group[2];
++	const struct attribute_group *attr_groups[2];
+ 
+ 	struct {
+ 		struct dentry *root;
+@@ -262,14 +264,6 @@ static ssize_t atk_limit2_show(struct device *dev,
+ 	return sprintf(buf, "%lld\n", value);
+ }
+ 
+-static ssize_t atk_name_show(struct device *dev,
+-				struct device_attribute *attr, char *buf)
+-{
+-	return sprintf(buf, "atk0110\n");
+-}
+-static struct device_attribute atk_name_attr =
+-		__ATTR(name, 0444, atk_name_show, NULL);
+-
+ static void atk_init_attribute(struct device_attribute *attr, char *name,
+ 		sysfs_show_func show)
+ {
+@@ -1193,42 +1187,30 @@ static int atk_enumerate_new_hwmon(struct atk_data *data)
+ 	return err;
+ }
+ 
+-static int atk_create_files(struct atk_data *data)
++static int atk_init_attribute_groups(struct atk_data *data)
+ {
++	struct device *dev = &data->acpi_dev->dev;
+ 	struct atk_sensor_data *s;
+-	int err;
++	struct attribute **attrs;
++	int i = 0;
++	int len = (data->voltage_count + data->temperature_count
++			+ data->fan_count) * 4 + 1;
++
++	attrs = devm_kcalloc(dev, len, sizeof(struct attribute *), GFP_KERNEL);
++	if (!attrs)
++		return -ENOMEM;
+ 
+ 	list_for_each_entry(s, &data->sensor_list, list) {
+-		err = device_create_file(data->hwmon_dev, &s->input_attr);
+-		if (err)
+-			return err;
+-		err = device_create_file(data->hwmon_dev, &s->label_attr);
+-		if (err)
+-			return err;
+-		err = device_create_file(data->hwmon_dev, &s->limit1_attr);
+-		if (err)
+-			return err;
+-		err = device_create_file(data->hwmon_dev, &s->limit2_attr);
+-		if (err)
+-			return err;
++		attrs[i++] = &s->input_attr.attr;
++		attrs[i++] = &s->label_attr.attr;
++		attrs[i++] = &s->limit1_attr.attr;
++		attrs[i++] = &s->limit2_attr.attr;
+ 	}
+ 
+-	err = device_create_file(data->hwmon_dev, &atk_name_attr);
++	data->attr_group[0].attrs = attrs;
++	data->attr_groups[0] = data->attr_group;
+ 
+-	return err;
+-}
+-
+-static void atk_remove_files(struct atk_data *data)
+-{
+-	struct atk_sensor_data *s;
+-
+-	list_for_each_entry(s, &data->sensor_list, list) {
+-		device_remove_file(data->hwmon_dev, &s->input_attr);
+-		device_remove_file(data->hwmon_dev, &s->label_attr);
+-		device_remove_file(data->hwmon_dev, &s->limit1_attr);
+-		device_remove_file(data->hwmon_dev, &s->limit2_attr);
+-	}
+-	device_remove_file(data->hwmon_dev, &atk_name_attr);
++	return 0;
+ }
+ 
+ static void atk_free_sensors(struct atk_data *data)
+@@ -1245,24 +1227,15 @@ static void atk_free_sensors(struct atk_data *data)
+ static int atk_register_hwmon(struct atk_data *data)
+ {
+ 	struct device *dev = &data->acpi_dev->dev;
+-	int err;
+ 
+ 	dev_dbg(dev, "registering hwmon device\n");
+-	data->hwmon_dev = hwmon_device_register(dev);
++	data->hwmon_dev = hwmon_device_register_with_groups(dev, "atk0110",
++							    data,
++							    data->attr_groups);
+ 	if (IS_ERR(data->hwmon_dev))
+ 		return PTR_ERR(data->hwmon_dev);
+ 
+-	dev_dbg(dev, "populating sysfs directory\n");
+-	err = atk_create_files(data);
+-	if (err)
+-		goto remove;
+-
+ 	return 0;
+-remove:
+-	/* Cleanup the registered files */
+-	atk_remove_files(data);
+-	hwmon_device_unregister(data->hwmon_dev);
+-	return err;
+ }
+ 
+ static int atk_probe_if(struct atk_data *data)
+@@ -1397,6 +1370,9 @@ static int atk_add(struct acpi_device *device)
+ 		goto out;
+ 	}
+ 
++	err = atk_init_attribute_groups(data);
++	if (err)
++		goto out;
+ 	err = atk_register_hwmon(data);
+ 	if (err)
+ 		goto cleanup;
+@@ -1423,7 +1399,6 @@ static int atk_remove(struct acpi_device *device)
+ 
+ 	atk_debugfs_cleanup(data);
+ 
+-	atk_remove_files(data);
+ 	atk_free_sensors(data);
+ 	hwmon_device_unregister(data->hwmon_dev);
+ 
+-- 
+2.17.1
