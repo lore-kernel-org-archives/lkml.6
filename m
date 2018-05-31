@@ -1,67 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754336AbeEaJoS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:44:18 -0400
-Received: from 8bytes.org ([81.169.241.247]:33658 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754308AbeEaJoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:44:16 -0400
-Date: Thu, 31 May 2018 11:44:15 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Yizhuo Zhai <yzhai003@ucr.edu>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Chengyu Song <csong@cs.ucr.edu>, Zhiyun Qian <zhiyunq@cs.ucr.edu>
-Subject: Re: [patch] /drivers/iommu/amd_iommu.c: variable unmap_size could be
- uninitialized
-Message-ID: <20180531094415.GR18595@8bytes.org>
-References: <CABvMjLS3xMmMCSk4Y9Q1rd3398B4kqRi69mn7igPzx6Kt=83cw@mail.gmail.com>
+        id S1754366AbeEaJpQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:45:16 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:39135 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754219AbeEaJpO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 05:45:14 -0400
+X-Google-Smtp-Source: ADUXVKKs9BpJt4pYHXvN8cEZt7rv686mi6Oq36uxHR/D5zUzycz2Jcx+G7pFrXvBOfgZAx+Dtc7CsA==
+Date: Thu, 31 May 2018 18:45:08 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: bhelgaas@google.com, pmladek@suse.com, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Greg KH <gregkh@linuxfoundation.org>, corbet@lwn.net,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: Can printk() sleep at runtime?
+Message-ID: <20180531094508.GC477@jagdpanzerIV>
+References: <ba98332d-7013-f5cb-7d49-645ee6f49156@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABvMjLS3xMmMCSk4Y9Q1rd3398B4kqRi69mn7igPzx6Kt=83cw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <ba98332d-7013-f5cb-7d49-645ee6f49156@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yizhuo Zhai,
+Cc-ing CLK people.
 
-thanks for your patch, but I think there is a better way to fix that.
-Please see below.
-
-On Wed, May 30, 2018 at 11:02:54PM -0700, Yizhuo Zhai wrote:
-> Variable "unmap_size" is supposed to be initialized in function fetch_pte.
-> However, it's uninitialized if fetch_pte returns NULL. And "unmap_size" is used
-> outside the return check. 
+On (05/31/18 17:08), Jia-Ju Bai wrote:
+> [FUNC] __might_sleep
+> kernel/locking/mutex.c: 747: __might_sleep in __mutex_lock_common
+> kernel/locking/mutex.c: 893: __mutex_lock_common in __mutex_lock
+> kernel/locking/mutex.c: 908: __mutex_lock in mutex_lock_nested
+> drivers/clk/clk.c, 123: mutex_lock_nested in clk_prepare_lock
+> drivers/clk/clk.c, 1369: clk_prepare_lock in clk_core_get_rate
+> drivers/clk/clk.c, 1393: clk_core_get_rate in clk_get_rate
+> lib/vsprintf.c, 1450: clk_get_rate in clock
+> lib/vsprintf.c, 1944: clock in pointer
+> lib/vsprintf.c, 2286: pointer in vsnprintf
+> lib/vsprintf.c, 2385: vsnprintf in vscnprintf
+> kernel/printk/printk.c, 1853: vscnprintf in vprintk_emit
+> kernel/printk/printk.c, 1947: vprintk_emit in vprintk_default
+> kernel/printk/printk_safe.c, 379: vprintk_default in vprintk_func
+> kernel/printk/printk.c, 1980: vprintk_func in printk
+> drivers/pci/pci.c, 5364: printk in pci_specified_resource_alignment
+> drivers/pci/pci.c, 5313: spin_lock in pci_specified_resource_alignment
 > 
-> From 377ccb647d3c6c6747f20a242b035bafc775c3be Mon Sep 17 00:00:00 2001
+> In fact, I suspect that my report is false, because I always have an
+> impression that printk() cannot sleep.
+> But according to the call path, I cannot find where I make the mistake...
 > 
-> Signed-off-by: From: "yzhai003@ucr.edu" <yzhai003@ucr.edu>
-> ---
->  drivers/iommu/amd_iommu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-> index 8fb8c73..774e057 100644
-> --- a/drivers/iommu/amd_iommu.c
-> +++ b/drivers/iommu/amd_iommu.c
-> @@ -1500,7 +1500,7 @@ static unsigned long iommu_unmap_page(struct
-> protection_domain *dom,
->        unsigned long page_size)
->  {
->   unsigned long long unmapped;
-> - unsigned long unmap_size;
-> + unsigned long unmap_size = 0;
+> So could someone please help me to point the mistake?
 
-That is not sufficient because fetch_pte is called in a loop, and when
-it returns NULL then unmap_size keeps the value of the previous
-invocation.
+I think you are right.
 
-So from looking at the code, it is better to set page_size=0 in
-fetch_pte at the very beginning, before the function can return NULL.
+number(buf, end, clk_get_rate(clk), spec) indeed locks the `prepare_lock'
+mutex from atomic context.
 
-
-Thanks,
-
-	Joerg
+	-ss
