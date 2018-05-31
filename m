@@ -1,55 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755902AbeEaRLy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 13:11:54 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:51743 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755691AbeEaRLr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1755881AbeEaRLr (ORCPT <rfc822;w@1wt.eu>);
         Thu, 31 May 2018 13:11:47 -0400
-X-Google-Smtp-Source: ADUXVKK8AZTte4N7vZqXXpT0e7PEI2jHT08V4+mA/xjOdGRCu5EXTg2kLA/0nqmJheJO8D7wQ0MyF9msuQ/OFBOkXyo=
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:21593 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755688AbeEaRLo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 13:11:44 -0400
+From: Suman Anna <s-anna@ti.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH 3/5] rpmsg: smd: Switch to SPDX license identifier
+Date: Thu, 31 May 2018 12:11:01 -0500
+Message-ID: <20180531171103.8703-4-s-anna@ti.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180531171103.8703-1-s-anna@ti.com>
+References: <20180531171103.8703-1-s-anna@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <CAP03XeoY8_-gG-2h8WP+3ZZFzxeyHERG=o7Y3Btk2svy5kco_Q@mail.gmail.com>
-References: <20180531165109.8476-1-jagan@amarulasolutions.com> <CAP03XeoY8_-gG-2h8WP+3ZZFzxeyHERG=o7Y3Btk2svy5kco_Q@mail.gmail.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Thu, 31 May 2018 22:41:46 +0530
-Message-ID: <CAMty3ZCM55Ug__=t9_JLnq2rcc6GZN5byZn26kyApGR=+_FaWA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2] arm64: allwinner: a64-amarula-relic:
- Enable AP6330 WiFi support
-To: Christopher Obbard <chris@64studio.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 10:25 PM, Christopher Obbard <chris@64studio.com> wrote:
-> Hi Jagan,
->
-> I cannot find any information on this board online, so I am guessing
-> it has not been released yet and you are developing software support
-> now.
->
-> Do you have any datasheet/overview document of the board?
+Use the appropriate SPDX license identifier in the rpmsg SMD backend
+driver source file and drop the previous boilerplate license text.
 
-It's an industrial board for a real product and not so different than
-what we supported a software for other A64 boards [1], I will update
-the wiki for the same in couple of days.
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/rpmsg/qcom_smd.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-[1] https://openedev.amarulasolutions.com/display/ODWIKI/A64
-
-Jagan.
-
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 5ce9bf7b897d..0819836fc178 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1,15 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2015, Sony Mobile Communications AB.
+  * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/interrupt.h>
 -- 
-Jagan Teki
-Senior Linux Kernel Engineer | Amarula Solutions
-U-Boot, Linux | Upstream Maintainer
-Hyderabad, India.
+2.17.0
