@@ -1,43 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755395AbeEaOae (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:30:34 -0400
-Received: from a9-99.smtp-out.amazonses.com ([54.240.9.99]:40694 "EHLO
-        a9-99.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755291AbeEaOaa (ORCPT
+        id S1755413AbeEaOcX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:32:23 -0400
+Received: from mail-it0-f41.google.com ([209.85.214.41]:56081 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755297AbeEaOcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:30:30 -0400
-Date: Thu, 31 May 2018 14:30:29 +0000
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Matthew Wilcox <willy@infradead.org>
-cc: Jia-Ju Bai <baijiaju1990@gmail.com>, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Can kfree() sleep at runtime?
-In-Reply-To: <20180531141452.GC30221@bombadil.infradead.org>
-Message-ID: <01000163b69b6b62-6c5ac940-d6c1-419a-9dc9-697908020c53-000000@email.amazonses.com>
-References: <30ecafd7-ed61-907b-f924-77fc37dcc753@gmail.com> <20180531140808.GA30221@bombadil.infradead.org> <01000163b68a8026-56fb6a35-040b-4af9-8b73-eb3b4a41c595-000000@email.amazonses.com> <20180531141452.GC30221@bombadil.infradead.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 31 May 2018 10:32:22 -0400
+X-Google-Smtp-Source: ADUXVKLVCJMhHUc3LDfDije6DL01SY15WJLzFTO4lSt3Z8yJ9giYjPcM2MERG5DEa8LKR7axKOPAASy//mYC5ZstI9g=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.05.31-54.240.9.99
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+References: <ba98332d-7013-f5cb-7d49-645ee6f49156@gmail.com> <20180531100457.fncibp5cxdozvbjh@pathway.suse.cz>
+In-Reply-To: <20180531100457.fncibp5cxdozvbjh@pathway.suse.cz>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 31 May 2018 09:32:10 -0500
+Message-ID: <CA+55aFxasUXmLwb9Mj1j8WSJbmfO1oGkcsZ2hxxbkz_p1gkUfQ@mail.gmail.com>
+Subject: Re: Can printk() sleep at runtime?
+To: Petr Mladek <pmladek@suse.com>
+Cc: baijiaju1990@gmail.com, Bjorn Helgaas <bhelgaas@google.com>,
+        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>, sboyd@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018, Matthew Wilcox wrote:
-
-> > Freeing a page in the page allocator also was traditionally not sleeping.
-> > That has changed?
+On Thu, May 31, 2018 at 5:05 AM Petr Mladek <pmladek@suse.com> wrote:
 >
-> No.  "Your bug" being "The bug in your static analysis tool".  It probably
-> isn't following the data flow correctly (or deeply enough).
+> Anyway, we need to fix or remove this format. vsprintf-like functions
+> are called in any context and nobody expect that they might sleep.
 
-Well ok this is not going to trigger for kfree(), this is x86 specific and
-requires CONFIG_DEBUG_PAGEALLOC and a free of a page in a huge page.
+Ack. I guess the argument is that "%pCr" is rare, and none of *those*
+users may care, but I do think that doing things wrong as-is.
 
-Ok that is a very contorted situation but how would a static checker deal
-with that?
+It's too subtle to have to know you're in a particular locking context
+when you use a particular %p modifier.
+
+                   Linus
