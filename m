@@ -1,43 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754286AbeEaJ1B (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:27:01 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:36492 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754103AbeEaJ1A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:27:00 -0400
-X-Google-Smtp-Source: ADUXVKKA9PR5z5s6TalDQV0gUDoSaV3skazC5TfX4Um9xQZr6WU4qzE50YjeF3aM4jzDwEM34yiDog==
-Subject: Re: [PATCH 3/5] nvme: call nvmf_create_ctrl before checking for
- duplicate assignment
-To: Johannes Thumshirn <jthumshirn@suse.de>,
-        Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <keith.busch@intel.com>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>
-References: <20180515074043.22843-1-jthumshirn@suse.de>
- <20180515074043.22843-4-jthumshirn@suse.de> <20180515075055.GB23659@lst.de>
- <20180515075221.4ppaxdvbosy36ltk@linux-x5ow.site>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <1b2cdac6-4dbd-261b-0ae9-b9768f972f0d@grimberg.me>
-Date: Thu, 31 May 2018 12:26:56 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754112AbeEaJ2H (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:28:07 -0400
+Received: from onstation.org ([52.200.56.107]:33230 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754092AbeEaJ2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 05:28:03 -0400
+Date: Thu, 31 May 2018 05:28:01 -0400
+From: Brian Masney <masneyb@onstation.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: tsl2x7x/tsl2772: avoid potential division by
+ zero
+Message-ID: <20180531092801.bsmqujkfnge3xhpo@0dcddc0a723b>
+References: <20180530181936.17902-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20180515075221.4ppaxdvbosy36ltk@linux-x5ow.site>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530181936.17902-1-colin.king@canonical.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
->> In general it seems like fc loop needs to offload any I/O to a workqueue
->> just like nvme-loop does, but even then I can't see how that is going to
->> cause an issue in this area.
+On Wed, May 30, 2018 at 07:19:36PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Hmm I'll be looking into it.
+> It may be possible for tsl2772_get_lux to return a zero lux value
+> and hence a division by zero can occur when lux_val is zero. Check
+> for this case and return -ERANGE to avoid the division by zero.
+> 
+> Detected by CoverityScan, CID#1469484 ("Division or modulo by zero")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-FWIW, I agree it should do that as well.
+Acked-by: Brian Masney <masneyb@onstation.org>
