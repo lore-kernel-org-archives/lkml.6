@@ -1,170 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753944AbeEaEg5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 00:36:57 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43428 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751970AbeEaEgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 00:36:31 -0400
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-To: <catalin.marinas@arm.com>, <will.deacon@arm.com>, <rjw@rjwysocki.net>,
-        <lenb@kernel.org>, <tony.luck@intel.com>, <bp@alien8.de>,
-        <robert.moore@intel.com>, <erik.schmauss@intel.com>,
-        <mark.rutland@arm.com>, <dave.martin@arm.com>,
-        <ard.biesheuvel@linaro.org>, <james.morse@arm.com>,
-        <gengdongjiu@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-Subject: [PATCH v1 1/2] ACPI / APEI: Add SEI notification type support for ARMv8
-Date: Thu, 31 May 2018 20:41:45 +0800
-Message-ID: <1527770506-8076-2-git-send-email-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527770506-8076-1-git-send-email-gengdongjiu@huawei.com>
-References: <1527770506-8076-1-git-send-email-gengdongjiu@huawei.com>
+        id S1753852AbeEaEiV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 00:38:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:56699 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750903AbeEaEiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 00:38:18 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 31 May 2018 14:38:16 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Subject: Re: linux-next: build failure after merge of the device-mapper tree
+Message-ID: <20180531143816.01af2db7@canb.auug.org.au>
+In-Reply-To: <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
+References: <20180531142302.5f7b4302@canb.auug.org.au>
+        <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.143.28.90]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/m3jcP865iScaWobYI.If3oh"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACPI 6.x adds support for NOTIFY_SEI as a GHES notification
-mechanism, so add new GHES notification handling functions.
-Expose API ghes_notify_sei() to arch code, arch code will call
-this API when it gets this NOTIFY_SEI.
+--Sig_/m3jcP865iScaWobYI.If3oh
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
----
-Note:
-Firmware will follow the SError mask rule, if the SError is masked,
-the firmware will not deliver NOTIFY_SEI notification.
----
- drivers/acpi/apei/Kconfig | 15 ++++++++++++++
- drivers/acpi/apei/ghes.c  | 53 +++++++++++++++++++++++++++++++++++++++++++++++
- include/acpi/ghes.h       |  1 +
- 3 files changed, 69 insertions(+)
+Hi Jens,
 
-diff --git a/drivers/acpi/apei/Kconfig b/drivers/acpi/apei/Kconfig
-index 52ae543..ff4afc3 100644
---- a/drivers/acpi/apei/Kconfig
-+++ b/drivers/acpi/apei/Kconfig
-@@ -55,6 +55,21 @@ config ACPI_APEI_SEA
- 	  option allows the OS to look for such hardware error record, and
- 	  take appropriate action.
- 
-+config ACPI_APEI_SEI
-+	bool "APEI SError(System Error) Interrupt logging/recovering support"
-+	depends on ARM64 && ACPI_APEI_GHES
-+	default y
-+	help
-+	  This option should be enabled if the system supports
-+	  firmware first handling of SEI (SError interrupt).
-+
-+	  SEI happens with asynchronous external abort for errors on device
-+	  memory reads on ARMv8 systems. If a system supports firmware first
-+	  handling of SEI, the platform analyzes and handles hardware error
-+	  notifications from SEI, and it may then form a hardware error record for
-+	  the OS to parse and handle. This option allows the OS to look for
-+	  such hardware error record, and take appropriate action.
-+
- config ACPI_APEI_MEMORY_FAILURE
- 	bool "APEI memory error recovering support"
- 	depends on ACPI_APEI && MEMORY_FAILURE
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index 1efefe9..33f77ae 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -827,6 +827,46 @@ static inline void ghes_sea_add(struct ghes *ghes) { }
- static inline void ghes_sea_remove(struct ghes *ghes) { }
- #endif /* CONFIG_ACPI_APEI_SEA */
- 
-+#ifdef CONFIG_ACPI_APEI_SEI
-+static LIST_HEAD(ghes_sei);
-+
-+/*
-+ * Return 0 only if one of the SEI error sources successfully reported an error
-+ * record sent from the firmware.
-+ */
-+int ghes_notify_sei(void)
-+{
-+	struct ghes *ghes;
-+	int ret = -ENOENT;
-+
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(ghes, &ghes_sei, list) {
-+		if (!ghes_proc(ghes))
-+			ret = 0;
-+	}
-+	rcu_read_unlock();
-+	return ret;
-+}
-+
-+static void ghes_sei_add(struct ghes *ghes)
-+{
-+	mutex_lock(&ghes_list_mutex);
-+	list_add_rcu(&ghes->list, &ghes_sei);
-+	mutex_unlock(&ghes_list_mutex);
-+}
-+
-+static void ghes_sei_remove(struct ghes *ghes)
-+{
-+	mutex_lock(&ghes_list_mutex);
-+	list_del_rcu(&ghes->list);
-+	mutex_unlock(&ghes_list_mutex);
-+	synchronize_rcu();
-+}
-+#else /* CONFIG_ACPI_APEI_SEI */
-+static inline void ghes_sei_add(struct ghes *ghes) { }
-+static inline void ghes_sei_remove(struct ghes *ghes) { }
-+#endif /* CONFIG_ACPI_APEI_SEI */
-+
- #ifdef CONFIG_HAVE_ACPI_APEI_NMI
- /*
-  * printk is not safe in NMI context.  So in NMI handler, we allocate
-@@ -1055,6 +1095,13 @@ static int ghes_probe(struct platform_device *ghes_dev)
- 			goto err;
- 		}
- 		break;
-+	case ACPI_HEST_NOTIFY_SEI:
-+		if (!IS_ENABLED(CONFIG_ACPI_APEI_SEI)) {
-+			pr_warn(GHES_PFX "Generic hardware error source: %d notified via SEI is not supported!\n",
-+				generic->header.source_id);
-+		goto err;
-+	}
-+	break;
- 	case ACPI_HEST_NOTIFY_NMI:
- 		if (!IS_ENABLED(CONFIG_HAVE_ACPI_APEI_NMI)) {
- 			pr_warn(GHES_PFX "Generic hardware error source: %d notified via NMI interrupt is not supported!\n",
-@@ -1126,6 +1173,9 @@ static int ghes_probe(struct platform_device *ghes_dev)
- 	case ACPI_HEST_NOTIFY_SEA:
- 		ghes_sea_add(ghes);
- 		break;
-+	case ACPI_HEST_NOTIFY_SEI:
-+		ghes_sei_add(ghes);
-+		break;
- 	case ACPI_HEST_NOTIFY_NMI:
- 		ghes_nmi_add(ghes);
- 		break;
-@@ -1179,6 +1229,9 @@ static int ghes_remove(struct platform_device *ghes_dev)
- 	case ACPI_HEST_NOTIFY_SEA:
- 		ghes_sea_remove(ghes);
- 		break;
-+	case ACPI_HEST_NOTIFY_SEI:
-+		ghes_sei_remove(ghes);
-+		break;
- 	case ACPI_HEST_NOTIFY_NMI:
- 		ghes_nmi_remove(ghes);
- 		break;
-diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
-index 8feb0c8..9ba59e2 100644
---- a/include/acpi/ghes.h
-+++ b/include/acpi/ghes.h
-@@ -120,5 +120,6 @@ static inline void *acpi_hest_get_next(struct acpi_hest_generic_data *gdata)
- 	     section = acpi_hest_get_next(section))
- 
- int ghes_notify_sea(void);
-+int ghes_notify_sei(void);
- 
- #endif /* GHES_H */
--- 
-1.9.1
+On Wed, 30 May 2018 22:35:40 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+>
+> I=E2=80=99ll drop the last patch, we can do that at the end of the merge =
+window instead.=20
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/m3jcP865iScaWobYI.If3oh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPfDgACgkQAVBC80lX
+0GzGIwf/eahZ3GVKsRnWnwYyLhmJ+ztrNnFTeTVy6wvlQ4PYaVdCaM6amHopEDQQ
+5TF3ZjC1cyDLj8gruB5mOPeZyiyMBAdw6xRtCx1Q0mb7xR9x+2r12PK9wxll1yy8
+5f0QmhTVI1GTY6c7ya5Pg/luZjuM/JyZWWI6/PZDS6F+07+NVVuGA/wxMpRvxjLl
+/TnKWCQ3r5j3NsEMeSR2T7GAN2wVrXW5OofxqaCK/ICSPwOrE3W3IWFv3ebn/Np6
+Sit4TM3VfZ0iNXwCcVec0RNAvjdhTdrd6ONmsSea89XjrBox1ZWwjkJhE3Did/6k
+Rw/H4p4a3wgdR+/RByySlHA2+e9V9A==
+=rtCm
+-----END PGP SIGNATURE-----
+
+--Sig_/m3jcP865iScaWobYI.If3oh--
