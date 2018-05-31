@@ -1,122 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755144AbeEaNZp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:25:45 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:38092 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754820AbeEaNZn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:25:43 -0400
-X-Google-Smtp-Source: ADUXVKLiPj6QDYM24E9n+nqrQybIJfmdqJXADjiCriV/gAm9lZ9HYyv5xtwR7BkmjKILX/EJ9Si+FQ==
-Date: Thu, 31 May 2018 15:25:38 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Roger Quadros <rogerq@ti.com>, balbi@kernel.org
-Cc: balbi@kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] usb: dwc3: of_simple: don't call
- pm_runtime_set_active()
-Message-ID: <20180531132538.GH3259@localhost>
-References: <1527518174-27860-1-git-send-email-rogerq@ti.com>
- <1527518174-27860-2-git-send-email-rogerq@ti.com>
- <20180528152030.GA3261@localhost>
+        id S1755234AbeEaN1M (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:27:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52579 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755117AbeEaN1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:27:11 -0400
+Date: Thu, 31 May 2018 15:27:08 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Maninder Singh <maninder1.s@samsung.com>
+Cc: sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
+        pankaj.m@samsung.com, v.narang@samsung.com
+Subject: Re: [PATCH 2/2] printk: make sure to print log on console.
+Message-ID: <20180531132708.2yappktdrz6qljxi@pathway.suse.cz>
+References: <CGME20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e@epcas5p2.samsung.com>
+ <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180528152030.GA3261@localhost>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Felipe,
+On Thu 2018-05-31 15:49:11, Maninder Singh wrote:
+> This patch make sure printing of log if loglevel at time of storing
+> log is greater than current console loglevel.
+> 
+> @why
+> In case of async printk, printk thread can miss logs because it checks
+> current log level at time of console_unlock.
+> 
+> func()
+> {
+> ....
+> ....
+> 	console_verbose();  // user wants to have all the logs on console.
+> 	pr_alert();
+> 	pr_info();
+> 	dump_backtrace(); // prints with default loglevel.
+> 	pr_info();
+> 	pr_emerg();
+> 	pr_info();
+> 	...
+> 	...
+> 	...
+> 	pr_info();
+> 	console_silent(); // stop all logs from printing on console.
+> }
+> 
+> Now if printk thread is scheduled after setting console loglevel
+> to silent, then user's requirement will be in waste, because it will not
+> print logs on console at time of printk thread scheduling.
 
-On Mon, May 28, 2018 at 05:41:48PM +0200, Johan Hovold wrote:
-> On Mon, May 28, 2018 at 05:36:14PM +0300, Roger Quadros wrote:
-> > Don't call pm_runtime_set_active() as it will prevent the device
-> > from being activated in the next pm_runtime_get_sync() call.
-> > 
-> > Also call pm_runtime_get_sync() before of_platform_populate().
-> 
-> This paragraph describes what you do, but not why do it.
-> 
-> > Signed-off-by: Roger Quadros <rogerq@ti.com>
-> > ---
-> >  drivers/usb/dwc3/dwc3-of-simple.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-> > index e98d221..2cbb5c0 100644
-> > --- a/drivers/usb/dwc3/dwc3-of-simple.c
-> > +++ b/drivers/usb/dwc3/dwc3-of-simple.c
-> > @@ -121,6 +121,9 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
-> >  	if (ret)
-> >  		goto err_resetc_assert;
-> >  
-> > +	pm_runtime_enable(dev);
-> > +	pm_runtime_get_sync(dev);
-> 
-> This breaks runtime pm as you now get a second round of clock enables
-> which are never balanced on runtime suspend (the clocks are first
-> enabled in dwc3_of_simple_clk_init() above and with your change again in
-> dwc3_of_simple_runtime_resume()).
-> 
-> On the other hand, we currently return from probe() with a positive RPM
-> count so perhaps the RPM callbacks can just be removed altogether (i.e.
-> unless some other entity drops that count at some point before
-> remove()).
-> 
-> >  	ret = of_platform_populate(np, NULL, NULL, dev);
-> >  	if (ret) {
-> >  		for (i = 0; i < simple->num_clocks; i++) {
-> > @@ -131,10 +134,6 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
-> >  		goto err_resetc_assert;
-> >  	}
-> >  
-> > -	pm_runtime_set_active(dev);
-> > -	pm_runtime_enable(dev);
-> > -	pm_runtime_get_sync(dev);
-> > -
-> >  	return 0;
-> >  
-> >  err_resetc_assert:
-> 
-> Also note that there's currently a use-after-free in remove(), where
-> pm_runtime_put_sync() is called after the clocks have been put.
-> Something like the below (untested) patch should fix it.
+A better text would be something like:
 
-What about the use-after-free in remove? Shall I resubmit the fix below
-separately?
+Now if console_lock was owned by another process, the messages might
+be handled after the consoles were silenced.
 
-Thanks,
-Johan
-
-> From 35c384c31010c344d403c26fc0a1dde0fd68ef4a Mon Sep 17 00:00:00 2001
-> From: Johan Hovold <johan@kernel.org>
-> Date: Mon, 28 May 2018 17:31:45 +0200
-> Subject: [PATCH] usb: dwc3: of-simple: fix use-after-free on remove
+> @how
+> use one bit of flags field to store whether its console print
+> or not(console_print) by checking current console loglevel with 
+> message's level at time of log.
+> At time of print check this flag for printing message on console.
 > 
-> The clocks have already been explicitly disabled and put as part of
-> remove() so the runtime suspend callback must not be run when balancing
-> the runtime PM usage count before returning.
-> 
-> Fixes: 16adc674d0d6 ("usb: dwc3: add generic OF glue layer")
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Vaneet Narang <v.narang@samsung.com>
+> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
 > ---
->  drivers/usb/dwc3/dwc3-of-simple.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  kernel/printk/printk.c | 33 +++++++++++++++++++++++----------
+>  1 file changed, 23 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-> index cb2ee96fd3e8..b9c869cd6585 100644
-> --- a/drivers/usb/dwc3/dwc3-of-simple.c
-> +++ b/drivers/usb/dwc3/dwc3-of-simple.c
-> @@ -165,8 +165,9 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
->  
->  	reset_control_put(simple->resets);
->  
-> -	pm_runtime_put_sync(dev);
-> +	pm_runtime_put_noidle(dev);
->  	pm_runtime_disable(dev);
-> +	pm_runtime_set_suspended(dev);
->  
->  	return 0;
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index ab15903..4e0be66e 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -360,8 +360,16 @@ struct printk_log {
+>  	u16 text_len;		/* length of text buffer */
+>  	u16 dict_len;		/* length of dictionary buffer */
+>  	u8 facility;		/* syslog facility */
+> -	u8 flags:5;		/* internal record flags */
+> +	u8 flags:4;		/* internal record flags */
+>  	u8 level:3;		/* syslog level */
+> +	/*
+> +	 * whether to print this msg on console or not?
+> +	 * due to async printk, printk thread can miss
+> +	 * prints at the time of console_flush because of
+> +	 * change in print level afterwards.
+> +	 */
+> +	u8 console_print:1;
+
+We should be careful with changing the structure. It is accessed
+by external tools, like "crash".
+
+IMHO, it is perfectly fine to handle this by a flag, e.g.
+add LOG_CON_SUPPRESS.
+
+> +
 >  }
+>  #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+>  __packed __aligned(4)
+> @@ -623,7 +631,12 @@ static int log_store(int facility, int level,
+>  	msg->dict_len = dict_len;
+>  	msg->facility = facility;
+>  	msg->level = level & 7;
+> -	msg->flags = flags & 0x1f;
+> +	if (msg->level >= console_loglevel)
+> +		msg->console_print = 0;
+> +	else
+> +		msg->console_print = 1;
+
+We are going to decide about the visibility when the message is
+stored. Let's handle it completely and make it easier later.
+
+We could keep suppress_message_printing() as is and do the following
+in vprintk_emit():
+
+	if (suppress_message_printing(level)
+		lflags |= LOG_CON_SUPPRESS;
+
+> @@ -2354,7 +2367,7 @@ void console_unlock(void)
+>  			break;
+>  
+>  		msg = log_from_idx(console_idx);
+> -		if (suppress_message_printing(msg->level)) {
+> +		if (suppress_message_printing(msg->console_print)) {
+
+Then it is enough to do
+
+-		if (suppress_message_printing(msg->level)) {
++		if (msg->flags & LOG_CON_SUPRESSED) {
+
+Best Regards,
+Petr
+
+  			/*
+>  			 * Skip record we have buffered and already printed
+>  			 * directly to the console when we received it, and
+> -- 
+> 1.9.1
+> 
