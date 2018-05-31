@@ -1,117 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755305AbeEaMye (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 08:54:34 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38681 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754941AbeEaMwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 08:52:20 -0400
-From: John Garry <john.garry@huawei.com>
-To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, Xiaofei Tan <tanxiaofei@huawei.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 4/9] scsi: hisi_sas: Adjust task reject period during host reset
-Date: Thu, 31 May 2018 20:50:45 +0800
-Message-ID: <1527771050-200916-5-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527771050-200916-1-git-send-email-john.garry@huawei.com>
-References: <1527771050-200916-1-git-send-email-john.garry@huawei.com>
+        id S1755044AbeEaNC1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:02:27 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:37048 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754867AbeEaNCZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:02:25 -0400
+X-Google-Smtp-Source: ADUXVKJQjkpUIl0aWhNkNNYrsYzhpCvbZvGj+E4td9HnTFrqATzfjhvoU04yG4RvZp7pAgO7VyVtKLt2uHKSOsrMwYE=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180531102735.GM30654@e110439-lin>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
+ <20180528101234.GA1293@localhost.localdomain> <CAKfTPtDCkzPMt6XrXRcURXm=53LABiwbFd3JMQkJDWpTprycRQ@mail.gmail.com>
+ <20180528152243.GD1293@localhost.localdomain> <CAKfTPtAY26HZ00R02RuW2kvZLvZxHGvh-kbfrqv-hPumdknvWg@mail.gmail.com>
+ <20180531102735.GM30654@e110439-lin>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 31 May 2018 15:02:04 +0200
+Message-ID: <CAKfTPtCeoimTehLktVk4WiTEM5h9KW_4yvuxGof8p6ZOgsRE2Q@mail.gmail.com>
+Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Alessio Balsini <alessio.balsini@santannapisa.it>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+On 31 May 2018 at 12:27, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+>
+> Hi Vincent, Juri,
+>
+> On 28-May 18:34, Vincent Guittot wrote:
+>> On 28 May 2018 at 17:22, Juri Lelli <juri.lelli@redhat.com> wrote:
+>> > On 28/05/18 16:57, Vincent Guittot wrote:
+>> >> Hi Juri,
+>> >>
+>> >> On 28 May 2018 at 12:12, Juri Lelli <juri.lelli@redhat.com> wrote:
+>> >> > Hi Vincent,
+>> >> >
+>> >> > On 25/05/18 15:12, Vincent Guittot wrote:
+>> >> >> Now that we have both the dl class bandwidth requirement and the dl class
+>> >> >> utilization, we can use the max of the 2 values when agregating the
+>> >> >> utilization of the CPU.
+>> >> >>
+>> >> >> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+>> >> >> ---
+>> >> >>  kernel/sched/sched.h | 6 +++++-
+>> >> >>  1 file changed, 5 insertions(+), 1 deletion(-)
+>> >> >>
+>> >> >> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+>> >> >> index 4526ba6..0eb07a8 100644
+>> >> >> --- a/kernel/sched/sched.h
+>> >> >> +++ b/kernel/sched/sched.h
+>> >> >> @@ -2194,7 +2194,11 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
+>> >> >>  #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+>> >> >>  static inline unsigned long cpu_util_dl(struct rq *rq)
+>> >> >>  {
+>> >> >> -     return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+>> >> >> +     unsigned long util = (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+>> >> >
+>> >> > I'd be tempted to say the we actually want to cap to this one above
+>> >> > instead of using the max (as you are proposing below) or the
+>> >> > (theoretical) power reduction benefits of using DEADLINE for certain
+>> >> > tasks might vanish.
+>> >>
+>> >> The problem that I'm facing is that the sched_entity bandwidth is
+>> >> removed after the 0-lag time and the rq->dl.running_bw goes back to
+>> >> zero but if the DL task has preempted a CFS task, the utilization of
+>> >> the CFS task will be lower than reality and schedutil will set a lower
+>> >> OPP whereas the CPU is always running.
+>
+> With UTIL_EST enabled I don't expect an OPP reduction below the
+> expected utilization of a CFS task.
 
-After soft_reset() for host reset, we should not be allowed to send
-commands to the HW before the PHYs have come up and the port ids have been
-refreshed.
+I'm not sure to fully catch what you mean but all tests that I ran,
+are using util_est (which is enable by default  if i'm not wrong). So
+all OPP drops that have been observed, were with util_est
 
-Prior to this point, any commands cannot be successfully completed.
+>
+> IOW, when a periodic CFS task is preempted by a DL one, what we use
+> for OPP selection once the DL task is over is still the estimated
+> utilization for the CFS task itself. Thus, schedutil will eventually
+> (since we have quite conservative down scaling thresholds) go down to
+> the right OPP to serve that task.
+>
+>> >> The example with a RT task described in the cover letter can be
+>> >> run with a DL task and will give similar results.
+>
+> In the cover letter you says:
+>
+>    A rt-app use case which creates an always running cfs thread and a
+>    rt threads that wakes up periodically with both threads pinned on
+>    same CPU, show lot of frequency switches of the CPU whereas the CPU
+>    never goes idles during the test.
+>
+> I would say that's a quite specific corner case where your always
+> running CFS task has never accumulated a util_est sample.
+>
+> Do we really have these cases in real systems?
 
-This exclusion is achieved by grabbing the host reset semaphore.
+My example is voluntary an extreme one because it's easier to
+highlight the problem
 
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 21 ++++++++++++---------
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |  4 +++-
- 2 files changed, 15 insertions(+), 10 deletions(-)
+>
+> Otherwise, it seems to me that we are trying to solve quite specific
+> corner cases by adding a not negligible level of "complexity".
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 823386f..090d3e0 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -536,8 +536,13 @@ static int hisi_sas_task_exec(struct sas_task *task, gfp_t gfp_flags,
- 	struct device *dev = hisi_hba->dev;
- 	struct hisi_sas_dq *dq = NULL;
- 
--	if (unlikely(test_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags)))
--		return -EINVAL;
-+	if (unlikely(test_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags))) {
-+		if (in_softirq())
-+			return -EINVAL;
-+
-+		down(&hisi_hba->sem);
-+		up(&hisi_hba->sem);
-+	}
- 
- 	/* protect task_prep and start_delivery sequence */
- 	rc = hisi_sas_task_prep(task, &dq, is_tmf, tmf, &pass);
-@@ -1383,30 +1388,28 @@ static int hisi_sas_controller_reset(struct hisi_hba *hisi_hba)
- 		clear_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags);
- 		up(&hisi_hba->sem);
- 		scsi_unblock_requests(shost);
--		goto out;
-+		clear_bit(HISI_SAS_RESET_BIT, &hisi_hba->flags);
-+		return rc;
- 	}
- 
--	clear_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags);
--
- 	/* Init and wait for PHYs to come up and all libsas event finished. */
- 	hisi_hba->hw->phys_init(hisi_hba);
- 	msleep(1000);
- 	hisi_sas_refresh_port_id(hisi_hba);
-+	clear_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags);
- 	up(&hisi_hba->sem);
- 
- 	if (hisi_hba->reject_stp_links_msk)
- 		hisi_sas_terminate_stp_reject(hisi_hba);
- 	hisi_sas_reset_init_all_devices(hisi_hba);
- 	scsi_unblock_requests(shost);
-+	clear_bit(HISI_SAS_RESET_BIT, &hisi_hba->flags);
- 
- 	state = hisi_hba->hw->get_phys_state(hisi_hba);
- 	hisi_sas_rescan_topology(hisi_hba, old_state, state);
- 	dev_info(dev, "controller reset complete\n");
- 
--out:
--	clear_bit(HISI_SAS_RESET_BIT, &hisi_hba->flags);
--
--	return rc;
-+	return 0;
- }
- 
- static int hisi_sas_abort_task(struct sas_task *task)
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 0a126a82..c40fdb8 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2459,7 +2459,9 @@ static int hisi_sas_v3_suspend(struct pci_dev *pdev, pm_message_t state)
- 		return -ENODEV;
- 	}
- 
--	set_bit(HISI_SAS_RESET_BIT, &hisi_hba->flags);
-+	if (test_and_set_bit(HISI_SAS_RESET_BIT, &hisi_hba->flags))
-+		return -1;
-+
- 	scsi_block_requests(shost);
- 	set_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags);
- 	flush_workqueue(hisi_hba->wq);
--- 
-1.9.1
+By complexity, do you mean :
+
+Taking into account the number cfs running task to choose between
+rq->dl.running_bw and avg_dl.util_avg
+
+I'm preparing a patchset that will provide the cfs waiting time in
+addition to dl/rt util_avg for almost no additional cost. I will try
+to sent the proposal later today
+
+>
+> Moreover, I also have the impression that we can fix these
+> use-cases by:
+>
+>   - improving the way we accumulate samples in util_est
+>     i.e. by discarding preemption time
+>
+>   - maybe by improving the utilization aggregation in schedutil to
+>     better understand DL requirements
+>     i.e. a 10% utilization with a 100ms running time is way different
+>     then the same utilization with a 1ms running time
+>
+>
+> --
+> #include <best/regards.h>
+>
+> Patrick Bellasi
