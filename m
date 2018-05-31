@@ -1,124 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754863AbeEaMIJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 08:08:09 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:54508 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754197AbeEaMH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 08:07:58 -0400
-From: Xie XiuQi <xiexiuqi@huawei.com>
-To: <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <bhelgaas@google.com>, <gregkh@linuxfoundation.org>,
-        <rafael.j.wysocki@intel.com>, <jarkko.sakkinen@linux.intel.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <guohanjun@huawei.com>, <wanghuiqiang@huawei.com>,
-        <tnowicki@caviumnetworks.com>
-Subject: [PATCH 2/2] drivers: check numa node's online status in dev_to_node
-Date: Thu, 31 May 2018 20:14:39 +0800
-Message-ID: <1527768879-88161-3-git-send-email-xiexiuqi@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1527768879-88161-1-git-send-email-xiexiuqi@huawei.com>
-References: <1527768879-88161-1-git-send-email-xiexiuqi@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1754890AbeEaMJZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 08:09:25 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39606 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754353AbeEaMJW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 08:09:22 -0400
+X-Google-Smtp-Source: ADUXVKLG6mWUcjMcyOqqPsqcLCNLqZxHUo84bxWlUL8lkOqldY6ZfSxvLJe9R1Giiwy/sVQhd84eEA==
+Date: Thu, 31 May 2018 05:09:21 -0700 (PDT)
+X-Google-Original-Date: Thu, 31 May 2018 05:07:43 PDT (-0700)
+Subject: Re: [PATCH] riscv: pass machine size to sparse
+In-Reply-To: <CAK7LNAT_dnO9Enr+Dg11YTux8JAV3K=k4r_5VP3moUCG8s5XHg@mail.gmail.com>
+Message-ID: <mhng-a4f5b769-8271-4b99-ae61-bbc49fa2286f@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+CC: Christoph Hellwig <hch@infradead.org>, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, albert@sifive.com,
+        michal.lkml@markovi.net
+From: Palmer Dabbelt <palmer@sifive.com>
+To: yamada.masahiro@socionext.com, luc.vanoostenryck@gmail.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If dev->numa_node is not available (or offline), we should
-return NUMA_NO_NODE to prevent alloc memory on offline
-nodes, which could cause oops.
+On Mon, 28 May 2018 23:14:20 PDT (-0700), yamada.masahiro@socionext.com wrote:
+> 2018-05-29 15:11 GMT+09:00 Christoph Hellwig <hch@infradead.org>:
+>> On Mon, May 28, 2018 at 06:35:05PM +0200, Luc Van Oostenryck wrote:
+>>> By default, sparse assumes a 64bit machine when compiled on x86-64
+>>> and 32bit when compiled on anything else.
+>>>
+>>> This can of course create all sort of problems when this doesn't
+>>> correspond to the target's machine size, like issuing false
+>>> warnings like: 'shift too big (32) for type unsigned long' or
+>>> is 64bit while sparse was compiled on a 32bit machine, or worse,
+>>> to not emit legitimate warnings.
+>>>
+>>> Fix this by passing the appropriate -m32/-m64 flag to sparse.
+>>
+>> Can we please move this to the common Kbuild code using the
+>> CONFIG_64BIT syombol?  This really should not need boiler plate in
+>> every architecture.
+>
+>
+> I agree.
+>
+> Luc did so for -mbig/little-endian:
+> https://patchwork.kernel.org/patch/10433957/
+>
+> We should do likewise for -m32/64.
 
-For example, a numa node:
-1) without memory
-2) NR_CPUS is very small, and the cpus on the node are not brought up
+Sorry for being a bit slow here, but I like the idea of making the 32/64-bit 
+issue generic as it seems like it'll be necessary for every port.  Looking 
+through the patch for big/little-endian I did notice:
 
-[   27.851041] Unable to handle kernel NULL pointer dereference at virtual address 00001988
-[   27.859128] Mem abort info:
-[   27.861908]   ESR = 0x96000005
-[   27.864949]   Exception class = DABT (current EL), IL = 32 bits
-[   27.870860]   SET = 0, FnV = 0
-[   27.873900]   EA = 0, S1PTW = 0
-[   27.877029] Data abort info:
-[   27.879895]   ISV = 0, ISS = 0x00000005
-[   27.883716]   CM = 0, WnR = 0
-[   27.886673] [0000000000001988] user address but active_mm is swapper
-[   27.893012] Internal error: Oops: 96000005 [#1] SMP
-[   27.897876] Modules linked in:
-[   27.900919] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc6-mpam+ #116
-[   27.907865] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 EC UEFI Nemo 2.0 RC0 - B306 05/28/2018
-[   27.916983] pstate: 80c00009 (Nzcv daif +PAN +UAO)
-[   27.921763] pc : __alloc_pages_nodemask+0xf0/0xe70
-[   27.926540] lr : __alloc_pages_nodemask+0x184/0xe70
-[   27.931403] sp : ffff00000996f7e0
-[   27.934704] x29: ffff00000996f7e0 x28: ffff000008cb10a0
-[   27.940003] x27: 00000000014012c0 x26: 0000000000000000
-[   27.945301] x25: 0000000000000003 x24: ffff0000085bbc14
-[   27.950600] x23: 0000000000400000 x22: 0000000000000000
-[   27.955898] x21: 0000000000000001 x20: 0000000000000000
-[   27.961196] x19: 0000000000400000 x18: 0000000000000f00
-[   27.966494] x17: 00000000003bff88 x16: 0000000000000020
-[   27.971792] x15: 000000000000003b x14: ffffffffffffffff
-[   27.977090] x13: ffffffffffff0000 x12: 0000000000000030
-[   27.982388] x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
-[   27.987686] x9 : 2e64716e622e7364 x8 : 7f7f7f7f7f7f7f7f
-[   27.992984] x7 : 0000000000000000 x6 : ffff000008d73c08
-[   27.998282] x5 : 0000000000000000 x4 : 0000000000000081
-[   28.003580] x3 : 0000000000000000 x2 : 0000000000000000
-[   28.008878] x1 : 0000000000000001 x0 : 0000000000001980
-[   28.014177] Process swapper/0 (pid: 1, stack limit = 0x        (ptrval))
-[   28.020863] Call trace:
-[   28.023296]  __alloc_pages_nodemask+0xf0/0xe70
-[   28.027727]  allocate_slab+0x94/0x590
-[   28.031374]  new_slab+0x68/0xc8
-[   28.034502]  ___slab_alloc+0x444/0x4f8
-[   28.038237]  __slab_alloc+0x50/0x68
-[   28.041713]  __kmalloc_node_track_caller+0x100/0x320
-[   28.046664]  devm_kmalloc+0x3c/0x90
-[   28.050139]  pinctrl_bind_pins+0x4c/0x298
-[   28.054135]  driver_probe_device+0xb4/0x4a0
-[   28.058305]  __driver_attach+0x124/0x128
-[   28.062213]  bus_for_each_dev+0x78/0xe0
-[   28.066035]  driver_attach+0x30/0x40
-[   28.069597]  bus_add_driver+0x248/0x2b8
-[   28.073419]  driver_register+0x68/0x100
-[   28.077242]  __pci_register_driver+0x64/0x78
-[   28.081500]  pcie_portdrv_init+0x44/0x4c
-[   28.085410]  do_one_initcall+0x54/0x208
-[   28.089232]  kernel_init_freeable+0x244/0x340
-[   28.093577]  kernel_init+0x18/0x118
-[   28.097052]  ret_from_fork+0x10/0x1c
-[   28.100614] Code: 7100047f 321902a4 1a950095 b5000602 (b9400803)
-[   28.106740] ---[ end trace e32df44e6e1c3a4b ]---
+* RISC-V compilers set "__riscv_xlen" to the length of an X (integer) register 
+  in bits.
+* RISC-V compilers define "__riscv", and it doesn't appear we inform sparse 
+  about that.
 
-Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
-Tested-by: Huiqiang Wang <wanghuiqiang@huawei.com>
-Cc: Hanjun Guo <hanjun.guo@linaro.org>
-Cc: Tomasz Nowicki <Tomasz.Nowicki@caviumnetworks.com>
-Cc: Xishi Qiu <qiuxishi@huawei.com>
----
- include/linux/device.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+These two might not be that interesting, but we do already have some cases 
+where we're checking for __riscv_xlen in Linux.  I've yet to successfully use 
+sparse, but adding at least
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 4779569..2a4fb08 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1017,7 +1017,12 @@ extern __printf(2, 3)
- #ifdef CONFIG_NUMA
- static inline int dev_to_node(struct device *dev)
- {
--	return dev->numa_node;
-+	int node = dev->numa_node;
-+
-+	if (unlikely(node != NUMA_NO_NODE && !node_online(node)))
-+		return NUMA_NO_NODE;
-+
-+	return node;
- }
- static inline void set_dev_node(struct device *dev, int node)
- {
--- 
-1.8.3.1
+    CHECKFLAGS += -D__riscv
+
+seems reasonable, and possibly also some sort of
+
+    ifeq ($(CONFIG_ARCH_RV64I),y)
+            CHECKFLAGS += -D__riscv_xlen=64
+    else
+            CHECKFLAGS += -D__riscv_xlen=32
+    fi
+
+might be necessary.  We strive to follow the generic rules for ABI-related 
+stuff like __LP64__ but I don't think there's any generic mapping for XLEN.  
+Similarly there's "__riscv_flen" and "__riscv_float_abi_*", but those are less 
+likely to be used by the kernel so they're probably not worth worrying about 
+for now.
+
+There's also a bunch of other RISC-V macros, the only one of which we're 
+currently using is "__riscv_muldiv" (and that's in a manner that's unlikely to 
+trigger any sort of static analysis).  Between a lack of Kconfig options and a 
+glibc port we're essentially mandating IMA right now, so these probably don't 
+matter.
+
+Thanks!
