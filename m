@@ -1,88 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754007AbeEaF5z (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 01:57:55 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:52114 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753790AbeEaF5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 01:57:50 -0400
-Subject: Re: [PATCH v2] powerpc/64: Fix build failure with GCC 8.1
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Geoff Levand <geoff@infradead.org>
-References: <f5f2de3e1a39613f7303bfdc0d2f2210d4c91910.1527573345.git.christophe.leroy@c-s.fr>
- <CAMuHMdVSKigQPUQH=BVc2fRSRmuEThLaf+V9ghMPDT9_m1C6BA@mail.gmail.com>
- <1fa5b220-4d21-b4cd-33bf-8a3ce3178063@c-s.fr>
- <CAMuHMdXwO1_wrrTi40UmZC4o6KjvP0LF38m45n0ZNA2pDb_7Qg@mail.gmail.com>
- <3a438dd8-49c3-ad39-e2a1-040e0ce67279@c-s.fr>
- <87efhsz7xz.fsf@concordia.ellerman.id.au>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <fd687f6c-0846-07da-328d-dd01bb2d0fdb@c-s.fr>
-Date: Thu, 31 May 2018 07:57:48 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        id S1753899AbeEaGA4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:00:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52770 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbeEaGAx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 02:00:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8C0076050D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
+Subject: Re: [PATCH] drm/bridge/synopsys: dw-hdmi: fix dw_hdmi_setup_rx_sense
+To: Neil Armstrong <narmstrong@baylibre.com>, a.hajda@samsung.com,
+        jernej.skrabec@siol.net
+Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1527673438-20643-1-git-send-email-narmstrong@baylibre.com>
+From: Archit Taneja <architt@codeaurora.org>
+Message-ID: <db0013e7-dbde-13ca-b9af-178f4b3cfff6@codeaurora.org>
+Date: Thu, 31 May 2018 11:30:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <87efhsz7xz.fsf@concordia.ellerman.id.au>
+In-Reply-To: <1527673438-20643-1-git-send-email-narmstrong@baylibre.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-Le 31/05/2018 à 07:54, Michael Ellerman a écrit :
-> Christophe LEROY <christophe.leroy@c-s.fr> writes:
->> Le 29/05/2018 à 11:05, Geert Uytterhoeven a écrit :
->>> Hi Christophe,
->>> On Tue, May 29, 2018 at 10:56 AM, Christophe LEROY
->>> <christophe.leroy@c-s.fr> wrote:
->>>> Le 29/05/2018 à 09:47, Geert Uytterhoeven a écrit :
->>>>> On Tue, May 29, 2018 at 8:03 AM, Christophe Leroy
->>>>>> --- a/arch/powerpc/kernel/nvram_64.c
->>>>>> +++ b/arch/powerpc/kernel/nvram_64.c
->>>>>> @@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char
->>>>>> *name, int sig,
->>>>>>            new_part->index = free_part->index;
->>>>>>            new_part->header.signature = sig;
->>>>>>            new_part->header.length = size;
->>>>>> -       strncpy(new_part->header.name, name, 12);
->>>>>> +       memcpy(new_part->header.name, name, strnlen(name,
->>>>>> sizeof(new_part->header.name)));
->>>>>
->>>>>
->>>>> The comment for nvram_header.lgnth says:
->>>>>
->>>>>            /* Terminating null required only for names < 12 chars. */
->>>>>
->>>>> This will not terminate the string with a zero (the struct is
->>>>> allocated with kmalloc).
->>>>> So the original code is correct, the new one isn't.
->>>>
->>>> Right, then I have to first zeroize the destination.
->>>
->>> Using kzalloc() instead of kmalloc() will do.
->>>
->>> Still, papering around these warnings seems to obscure things, IMHO.
->>> And it increases code size, as you had to add a call to strnlen().
+On Wednesday 30 May 2018 03:13 PM, Neil Armstrong wrote:
+> The dw_hdmi_setup_rx_sense exported function should not use struct device
+> to recover the dw-hdmi context using drvdata, but take struct dw_hdmi
+> directly like other exported functions.
 > 
-> 
-> The right fix is to not try and mirror the on-device structure in the
-> kernel struct. We should just use a proper NULL terminated string, which
-> would avoid the need to explicitly do strncmp(.., .., 12) in the code
-> and be less bug prone in general.
-> 
-> The only place where we should need to worry about the 12 byte buffer is
-> in nvram_write_header().
-> 
-> Anyway that's a bigger change, so I'll take this for now with kzalloc().
+> This caused a regression using Meson DRM on S905X since v4.17-rc1 :
 
-Thanks. You take it as is and add the kzalloc() or you expect a v3 from 
-me with the kzalloc()
+Reviewed-by: Archit Taneja <architt@codeaurora.org>
 
-Christophe
+> 
+> Internal error: Oops: 96000007 [#1] PREEMPT SMP
+> [...]
+> CPU: 0 PID: 124 Comm: irq/32-dw_hdmi_ Not tainted 4.17.0-rc7 #2
+> Hardware name: Libre Technology CC (DT)
+> [...]
+> pc : osq_lock+0x54/0x188
+> lr : __mutex_lock.isra.0+0x74/0x530
+> [...]
+> Process irq/32-dw_hdmi_ (pid: 124, stack limit = 0x00000000adf418cb)
+> Call trace:
+>    osq_lock+0x54/0x188
+>    __mutex_lock_slowpath+0x10/0x18
+>    mutex_lock+0x30/0x38
+>    __dw_hdmi_setup_rx_sense+0x28/0x98
+>    dw_hdmi_setup_rx_sense+0x10/0x18
+>    dw_hdmi_top_thread_irq+0x2c/0x50
+>    irq_thread_fn+0x28/0x68
+>    irq_thread+0x10c/0x1a0
+>    kthread+0x128/0x130
+>    ret_from_fork+0x10/0x18
+>   Code: 34000964 d00050a2 51000484 9135c042 (f864d844)
+>   ---[ end trace 945641e1fbbc07da ]---
+>   note: irq/32-dw_hdmi_[124] exited with preempt_count 1
+>   genirq: exiting task "irq/32-dw_hdmi_" (124) is an active IRQ thread (irq 32)
+> 
+> Fixes: eea034af90c6 ("drm/bridge/synopsys: dw-hdmi: don't clobber drvdata")
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Tested-by: Koen Kooi <koen@dominion.thruhere.net>
+> ---
+>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 15 ++++-----------
+>   drivers/gpu/drm/meson/meson_dw_hdmi.c     |  2 +-
+>   include/drm/bridge/dw_hdmi.h              |  2 +-
+>   3 files changed, 6 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> index ec8d000..3c136f2b 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -2077,7 +2077,7 @@ static irqreturn_t dw_hdmi_hardirq(int irq, void *dev_id)
+>   	return ret;
+>   }
+>   
+> -void __dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
+> +void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
+>   {
+>   	mutex_lock(&hdmi->mutex);
+>   
+> @@ -2103,13 +2103,6 @@ void __dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
+>   	}
+>   	mutex_unlock(&hdmi->mutex);
+>   }
+> -
+> -void dw_hdmi_setup_rx_sense(struct device *dev, bool hpd, bool rx_sense)
+> -{
+> -	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
+> -
+> -	__dw_hdmi_setup_rx_sense(hdmi, hpd, rx_sense);
+> -}
+>   EXPORT_SYMBOL_GPL(dw_hdmi_setup_rx_sense);
+>   
+>   static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+> @@ -2145,9 +2138,9 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+>   	 */
+>   	if (intr_stat &
+>   	    (HDMI_IH_PHY_STAT0_RX_SENSE | HDMI_IH_PHY_STAT0_HPD)) {
+> -		__dw_hdmi_setup_rx_sense(hdmi,
+> -					 phy_stat & HDMI_PHY_HPD,
+> -					 phy_stat & HDMI_PHY_RX_SENSE);
+> +		dw_hdmi_setup_rx_sense(hdmi,
+> +				       phy_stat & HDMI_PHY_HPD,
+> +				       phy_stat & HDMI_PHY_RX_SENSE);
+>   
+>   		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0)
+>   			cec_notifier_set_phys_addr(hdmi->cec_notifier,
+> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> index a393095..c9ad456 100644
+> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+> @@ -529,7 +529,7 @@ static irqreturn_t dw_hdmi_top_thread_irq(int irq, void *dev_id)
+>   		if (stat & HDMITX_TOP_INTR_HPD_RISE)
+>   			hpd_connected = true;
+>   
+> -		dw_hdmi_setup_rx_sense(dw_hdmi->dev, hpd_connected,
+> +		dw_hdmi_setup_rx_sense(dw_hdmi->hdmi, hpd_connected,
+>   				       hpd_connected);
+>   
+>   		drm_helper_hpd_irq_event(dw_hdmi->encoder.dev);
+> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+> index dd2a8cf..ccb5aa8 100644
+> --- a/include/drm/bridge/dw_hdmi.h
+> +++ b/include/drm/bridge/dw_hdmi.h
+> @@ -151,7 +151,7 @@ struct dw_hdmi *dw_hdmi_bind(struct platform_device *pdev,
+>   			     struct drm_encoder *encoder,
+>   			     const struct dw_hdmi_plat_data *plat_data);
+>   
+> -void dw_hdmi_setup_rx_sense(struct device *dev, bool hpd, bool rx_sense);
+> +void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense);
+>   
+>   void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
+>   void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
+> 
