@@ -1,98 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932724AbeEaD1P (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 23:27:15 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:45218 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932637AbeEaD1M (ORCPT
+        id S932731AbeEaD2g (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 23:28:36 -0400
+Received: from regular1.263xmail.com ([211.150.99.130]:58856 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932637AbeEaD2e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 23:27:12 -0400
-X-Google-Smtp-Source: ADUXVKLivLM6/7kVbgeoHKMo8IraxXHJPNWnv+RlhyD45DGdPWfQ3DzLr7IDpaXuDxslCzpl8XMkSA==
-Date: Wed, 30 May 2018 22:27:09 -0500
-From: Rob Herring <robh@kernel.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
-        ulf.hansson@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        collinsd@codeaurora.org
-Subject: Re: [PATCH v2 1/6] soc: qcom: rpmpd: Add a powerdomain driver to
- model corners
-Message-ID: <20180531032709.GA13554@rob-hp-laptop>
-References: <20180525100121.28214-1-rnayak@codeaurora.org>
- <20180525100121.28214-2-rnayak@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525100121.28214-2-rnayak@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 30 May 2018 23:28:34 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: djw@t-chip.com.cn
+X-FST-TO: linux-rockchip@lists.infradead.org
+X-SENDER-IP: 183.57.25.242
+X-LOGIN-NAME: djw@t-chip.com.cn
+X-UNIQUE-TAG: <56470a8d3e2f819420024ad18e7ef67c>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: djw@t-chip.com.cn
+To: linux-rockchip@lists.infradead.org
+Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>,
+        Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/5] gpio: syscon: allow fetching syscon from parent node
+Date: Thu, 31 May 2018 11:27:49 +0800
+Message-Id: <1527737273-8387-2-git-send-email-djw@t-chip.com.cn>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
+References: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 03:31:16PM +0530, Rajendra Nayak wrote:
-> The powerdomains for corners just pass the performance state set by the
-> consumers to the RPM (Remote Power manager) which then takes care
-> of setting the appropriate voltage on the corresponding rails to
-> meet the performance needs.
-> 
-> We add all powerdomain data needed on msm8996 here. This driver can easily
-> be extended by adding data for other qualcomm SoCs as well.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  .../devicetree/bindings/power/qcom,rpmpd.txt  |  55 ++++
->  drivers/soc/qcom/Kconfig                      |   9 +
->  drivers/soc/qcom/Makefile                     |   1 +
->  drivers/soc/qcom/rpmpd.c                      | 299 ++++++++++++++++++
->  4 files changed, 364 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmpd.txt
->  create mode 100644 drivers/soc/qcom/rpmpd.c
-> 
-> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-> new file mode 100644
-> index 000000000000..68f620a2af0d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-> @@ -0,0 +1,55 @@
-> +Qualcomm RPM Powerdomains
-> +
-> +* For RPM powerdomains, we communicate a performance state to RPM
-> +which then translates it into a corresponding voltage on a rail
-> +
-> +Required Properties:
-> + - compatible: Should be one of the following
-> +	* qcom,msm8996-rpmpd: RPM Powerdomain for the msm8996 family of SoC
-> + - power-domain-cells: number of cells in power domain specifier
-> +	must be 1.
-> + - operating-points-v2: Phandle to the OPP table for the power-domain.
-> +	Refer to Documentation/devicetree/bindings/power/power_domain.txt
-> +	and Documentation/devicetree/bindings/opp/qcom-opp.txt for more details
-> +
-> +Example:
-> +
-> +	rpmpd: power-controller {
-> +		compatible = "qcom,msm8996-rpmpd";
-> +		#power-domain-cells = <1>;
-> +		operating-points-v2 = <&rpmpd_opp_table>,
-> +				      <&rpmpd_opp_table>,
-> +				      <&rpmpd_opp_table>,
-> +				      <&rpmpd_opp_table>,
-> +				      <&rpmpd_opp_table>,
-> +				      <&rpmpd_opp_table>,
-> +				      <&rpmpd_opp_table>;
-> +	};
-> +
-> +	rpmpd_opp_table: opp-table {
-> +		compatible = "operating-points-v2-qcom-level", "operating-points-v2";
-> +
-> +		rpmpd_opp1: opp@1 {
+From: Heiko Stuebner <heiko@sntech.de>
 
-unit-address without reg property is not valid.
+Syscon nodes can be a simple-mfd and the syscon-users then be declared
+as children of this node. That way the parent-child structure can be
+better represented for devices that are fully embedded in the syscon.
 
-> +			qcom,level = <1>;
+Therefore allow getting the syscon from the parent if neither
+a special compatible nor a gpio,syscon-dev property is defined.
 
-Is this the only property? If so, I don't see the point in trying to use 
-operating-points-v2 here.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Levin Du <djw@t-chip.com.cn>
+---
 
-Rob
+Changes in v3: None
+Changes in v2: None
+Changes in v1:
+- New: allow fetching syscon from parent node in gpio-syscon driver
+
+ drivers/gpio/gpio-syscon.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 537cec7..7325b86 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -205,6 +205,8 @@ static int syscon_gpio_probe(struct platform_device *pdev)
+ 	} else {
+ 		priv->syscon =
+ 			syscon_regmap_lookup_by_phandle(np, "gpio,syscon-dev");
++		if (IS_ERR(priv->syscon) && np->parent)
++			priv->syscon = syscon_node_to_regmap(np->parent);
+ 		if (IS_ERR(priv->syscon))
+ 			return PTR_ERR(priv->syscon);
+ 
+-- 
+2.7.4
