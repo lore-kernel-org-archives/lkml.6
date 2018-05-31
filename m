@@ -1,134 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753986AbeEaFEC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 01:04:02 -0400
-Received: from regular1.263xmail.com ([211.150.99.140]:57272 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753971AbeEaFD5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 01:03:57 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: djw@t-chip.com.cn
-X-FST-TO: linux-rockchip@lists.infradead.org
-X-SENDER-IP: 59.33.104.149
-X-LOGIN-NAME: djw@t-chip.com.cn
-X-UNIQUE-TAG: <d21fbeeb14c6f52a04f6042a908ecdbc>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 7
-From: djw@t-chip.com.cn
-To: linux-rockchip@lists.infradead.org
-Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>,
-        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-        David Wu <david.wu@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
-        William Wu <william.wu@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Joseph Chen <chenjh@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Rocky Hao <rocky.hao@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 5/5] arm64: dts: rockchip: Add sdmmc UHS support for roc-rk3328-cc
-Date: Thu, 31 May 2018 13:03:21 +0800
-Message-Id: <1527743001-29656-1-git-send-email-djw@t-chip.com.cn>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
-References: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
+        id S1753967AbeEaFDr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 01:03:47 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52211 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753896AbeEaFDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 01:03:41 -0400
+From: Dongjiu Geng <gengdongjiu@huawei.com>
+To: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
+        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <james.morse@arm.com>, <gengdongjiu@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>
+Subject: [PATCH v1 1/2] arm64: KVM: export the capability to set guest SError syndrome
+Date: Thu, 31 May 2018 21:08:58 +0800
+Message-ID: <1527772139-19665-2-git-send-email-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1527772139-19665-1-git-send-email-gengdongjiu@huawei.com>
+References: <1527772139-19665-1-git-send-email-gengdongjiu@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.143.28.90]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Levin Du <djw@t-chip.com.cn>
+For the arm64 RAS Extension, user space can inject a virtual-SError
+with specified ESR. So user space needs to know whether KVM support
+to inject such SError, this interface adds this query for this capability.
 
-In roc-rk3328-cc board, the signal voltage of sdmmc is supplied by
-the vcc_sdio regulator, which is a mux between 1.8V and 3.3V,
-controlled by a special output only gpio pin labeled
-"gpiomut_pmuio_iout", corresponding bit 1 of the syscon GRF_SOC_CON10.
+KVM will check whether system support RAS Extension, if supported, KVM
+returns true to user space, otherwise returns false.
 
-This special pin can now be reference as <&gpio_mute 0>, thanks
-to the gpio-syscon driver, which makes writing regulator-gpio possible.
-
-If the signal voltage changes, the io domain needs to change
-correspondingly.
-
-To use this feature, the following options are required in kernel config:
- - CONFIG_GPIO_SYSCON=y
- - CONFIG_POWER_AVS=y
- - CONFIG_ROCKCHIP_IODOMAIN=y
-
-Signed-off-by: Levin Du <djw@t-chip.com.cn>
-
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+Reviewed-by: James Morse <james.morse@arm.com>
 ---
+ Documentation/virtual/kvm/api.txt | 11 +++++++++++
+ arch/arm64/kvm/reset.c            |  3 +++
+ include/uapi/linux/kvm.h          |  1 +
+ 3 files changed, 15 insertions(+)
 
-Changes in v3:
-- Use <&gpio_mute 0> instead of <&gpio_mute 1> to refer to the GPIO_MUTE pin.
-
-Changes in v2:
-- Rename gpio_syscon10 to gpio_mute in rk3328-roc-cc.dts
-
-Changes in v1:
-- Split into small patches
-- Sort dts properties in sdmmc node
-
- arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-index b983abd..25c1111 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-@@ -41,6 +41,19 @@
- 		vin-supply = <&vcc_io>;
- 	};
- 
-+	vcc_sdio: sdmmcio-regulator {
-+		compatible = "regulator-gpio";
-+		gpios = <&gpio_mute 0 GPIO_ACTIVE_HIGH>;
-+		states = <1800000 0x1
-+			  3300000 0x0>;
-+		regulator-name = "vcc_sdio";
-+		regulator-type = "voltage";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		vin-supply = <&vcc_sys>;
-+	};
+diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+index 758bf40..fdac969 100644
+--- a/Documentation/virtual/kvm/api.txt
++++ b/Documentation/virtual/kvm/api.txt
+@@ -4603,3 +4603,14 @@ Architectures: s390
+ This capability indicates that kvm will implement the interfaces to handle
+ reset, migration and nested KVM for branch prediction blocking. The stfle
+ facility 82 should not be provided to the guest without this capability.
 +
- 	vcc_host1_5v: vcc_otg_5v: vcc-host1-5v-regulator {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
-@@ -213,7 +226,7 @@
- 
- 	vccio1-supply = <&vcc_io>;
- 	vccio2-supply = <&vcc18_emmc>;
--	vccio3-supply = <&vcc_io>;
-+	vccio3-supply = <&vcc_sdio>;
- 	vccio4-supply = <&vcc_18>;
- 	vccio5-supply = <&vcc_io>;
- 	vccio6-supply = <&vcc_io>;
-@@ -242,7 +255,12 @@
- 	max-frequency = <150000000>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdmmc0_clk &sdmmc0_cmd &sdmmc0_dectn &sdmmc0_bus4>;
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	vmmc-supply = <&vcc_sd>;
-+	vqmmc-supply = <&vcc_sdio>;
- 	status = "okay";
- };
- 
-@@ -277,3 +295,7 @@
- &usb_host0_ohci {
- 	status = "okay";
- };
++8.14 KVM_CAP_ARM_SET_SERROR_ESR
 +
-+&gpio_mute {
-+	status = "okay";
-+};
++Architectures: arm, arm64
++
++This capability indicates that userspace can specify the syndrome value reported
++to the guest OS when guest takes a virtual SError interrupt exception.
++If KVM has this capability, userspace can only specify the ISS field for the ESR
++syndrome, it can not specify the EC field which is not under control by KVM.
++If this virtual SError is taken to EL1 using AArch64, this value will be reported
++in ISS filed of ESR_EL1.
+diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+index 3256b92..38c8a64 100644
+--- a/arch/arm64/kvm/reset.c
++++ b/arch/arm64/kvm/reset.c
+@@ -77,6 +77,9 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_ARM_PMU_V3:
+ 		r = kvm_arm_support_pmu_v3();
+ 		break;
++	case KVM_CAP_ARM_INJECT_SERROR_ESR:
++		r = cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
++		break;
+ 	case KVM_CAP_SET_GUEST_DEBUG:
+ 	case KVM_CAP_VCPU_ATTRIBUTES:
+ 		r = 1;
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index b02c41e..e88f976 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -948,6 +948,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_S390_BPB 152
+ #define KVM_CAP_GET_MSR_FEATURES 153
+ #define KVM_CAP_HYPERV_EVENTFD 154
++#define KVM_CAP_ARM_INJECT_SERROR_ESR 155
+ 
+ #ifdef KVM_CAP_IRQ_ROUTING
+ 
 -- 
 2.7.4
