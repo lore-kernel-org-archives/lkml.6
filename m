@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751238AbeEaWRE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:17:04 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:37578 "EHLO
+        id S1751444AbeEaWRw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 18:17:52 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:37506 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeEaWQm (ORCPT
+        with ESMTP id S1750872AbeEaWQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 18:16:42 -0400
+        Thu, 31 May 2018 18:16:41 -0400
 From: Stefan Agner <stefan@agner.ch>
 To: boris.brezillon@bootlin.com, dwmw2@infradead.org,
         computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
@@ -18,9 +18,9 @@ Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
         stefan@agner.ch, linux-mtd@lists.infradead.org,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/6] ARM: dts: tegra: enable NAND flash on Colibri T20
-Date: Fri,  1 Jun 2018 00:16:37 +0200
-Message-Id: <20180531221637.6017-7-stefan@agner.ch>
+Subject: [PATCH v3 2/6] mtd: rawnand: add an option to specify NAND chip as a boot device
+Date: Fri,  1 Jun 2018 00:16:33 +0200
+Message-Id: <20180531221637.6017-3-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180531221637.6017-1-stefan@agner.ch>
 References: <20180531221637.6017-1-stefan@agner.ch>
@@ -43,42 +43,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <dev@lynxeye.de>
+Allow to define a NAND chip as a boot device. This can be helpful
+for the selection of the ECC algorithm and strength in case the boot
+ROM supports only a subset of controller provided options.
 
-This enables the on-module ONFI conformant NAND flash.
-
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/tegra20-colibri-512.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/mtd/nand.txt | 4 ++++
+ drivers/mtd/nand/raw/nand_base.c               | 3 +++
+ include/linux/mtd/rawnand.h                    | 6 ++++++
+ 3 files changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-index 5c202b3e3bb1..5a80ee4557db 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-@@ -462,6 +462,22 @@
- 		};
- 	};
+diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
+index 8bb11d809429..8daf81b9748c 100644
+--- a/Documentation/devicetree/bindings/mtd/nand.txt
++++ b/Documentation/devicetree/bindings/mtd/nand.txt
+@@ -43,6 +43,10 @@ Optional NAND chip properties:
+ 		     This is particularly useful when only the in-band area is
+ 		     used by the upper layers, and you want to make your NAND
+ 		     as reliable as possible.
++- nand-is-boot-medium: Whether the NAND chip is a boot medium. Drivers might use
++		       this information to select ECC algorithms supported by
++		       the boot ROM or similar restrictions.
++
+ - nand-rb: shall contain the native Ready/Busy ids.
  
-+	nand@70008000 {
-+		status = "okay";
+ The ECC strength and ECC step size properties define the correction capability
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 9eb5678dd6d0..c8fb7c9855e2 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -5826,6 +5826,9 @@ static int nand_dt_init(struct nand_chip *chip)
+ 	if (of_get_nand_bus_width(dn) == 16)
+ 		chip->options |= NAND_BUSWIDTH_16;
+ 
++	if (of_property_read_bool(dn, "nand-is-boot-medium"))
++		chip->options |= NAND_IS_BOOT_MEDIUM;
 +
-+		nand-chip@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			nand-bus-width = <8>;
-+			nand-on-flash-bbt;
-+			nand-ecc-algo = "bch";
-+			nand-is-boot-medium;
-+			nand-ecc-maximize;
-+			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-+		};
-+	};
+ 	if (of_get_nand_on_flash_bbt(dn))
+ 		chip->bbt_options |= NAND_BBT_USE_FLASH;
+ 
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 6a82da8c44ce..8e54fcf2fa94 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -212,6 +212,12 @@ enum nand_ecc_algo {
+  */
+ #define NAND_WAIT_TCCS		0x00200000
+ 
++/*
++ * Whether the NAND chip is a boot medium. Drivers might use this information
++ * to select ECC algorithms supported by the boot ROM or similar restrictions.
++ */
++#define NAND_IS_BOOT_MEDIUM	0x00400000
 +
- 	usb@c5004000 {
- 		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+ /* Options set by nand scan */
+ /* Nand scan has allocated controller struct */
+ #define NAND_CONTROLLER_ALLOC	0x80000000
 -- 
 2.17.0
