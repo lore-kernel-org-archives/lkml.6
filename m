@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751086AbeEaWQq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:16:46 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:37478 "EHLO
+        id S1751000AbeEaWQn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 18:16:43 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:37450 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750871AbeEaWQk (ORCPT
+        with ESMTP id S1750869AbeEaWQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 May 2018 18:16:40 -0400
 From: Stefan Agner <stefan@agner.ch>
@@ -18,12 +18,10 @@ Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
         stefan@agner.ch, linux-mtd@lists.infradead.org,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/6] mtd: rawnand: add Reed-Solomon error correction algorithm
-Date: Fri,  1 Jun 2018 00:16:32 +0200
-Message-Id: <20180531221637.6017-2-stefan@agner.ch>
+Subject: [PATCH v3 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
+Date: Fri,  1 Jun 2018 00:16:31 +0200
+Message-Id: <20180531221637.6017-1-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180531221637.6017-1-stefan@agner.ch>
-References: <20180531221637.6017-1-stefan@agner.ch>
 X-Spamd-Result: default: False [-2.10 / 15.00];
          TO_MATCH_ENVRCPT_ALL(0.00)[];
          RCPT_COUNT_TWELVE(0.00)[23];
@@ -43,37 +41,69 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
+This third revision is again a rather major overhaul. The driver
+is now able to select a sensible ECC strenght automatically.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/mtd/nand/raw/nand_base.c | 1 +
- include/linux/mtd/rawnand.h      | 1 +
- 2 files changed, 2 insertions(+)
+Review of the timing code uncovered few issues. Fixing them lead to
+a tighter timing which lead to a performance increase of about 35%.
+The in kernel speed test measures 11770/15058 KiB/s write/read speed.
 
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index f28c3a555861..9eb5678dd6d0 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5744,6 +5744,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
- static const char * const nand_ecc_algos[] = {
- 	[NAND_ECC_HAMMING]	= "hamming",
- 	[NAND_ECC_BCH]		= "bch",
-+	[NAND_ECC_RS]		= "rs",
- };
- 
- static int of_get_nand_ecc_algo(struct device_node *np)
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 5dad59b31244..6a82da8c44ce 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -114,6 +114,7 @@ enum nand_ecc_algo {
- 	NAND_ECC_UNKNOWN,
- 	NAND_ECC_HAMMING,
- 	NAND_ECC_BCH,
-+	NAND_ECC_RS,
- };
- 
- /*
+Still open is the OOB layout discrepancy issue:
+When using HW BCH support, the location of the ECC bytes changes
+depending on whether extra OOB bytes (tag data) are transmitted or
+not... Writing/Reading should always be with tag enabled or always
+without. I am not sure how to solve this correctly, maybe disallow
+using OOB data with HW ECC completely? Or just leave as is?
+
+--
+Stefan
+
+Changes since v1:
+- Split controller and NAND chip structure
+- Add BCH support
+- Allow to select algorithm and strength using device tree
+- Improve HW ECC error reporting and use DEC_STATUS_BUF only
+- Use SPDX license identifier
+- Use per algorithm mtd_ooblayout_ops
+- Use setup_data_interface callback for NAND timing configuration
+
+Changes since v2:
+- Set clock rate using assigned-clocks
+- Use BIT() macro
+- Fix and improve timing calculation
+- Improve ECC error handling
+- Store OOB layout for tag area in Tegra chip structure
+- Update/fix bindings
+- Use more specific variable names (replace "value")
+- Introduce nand-is-boot-medium
+- Choose sensible ECC strenght automatically
+- Use wait_for_completion_timeout
+- Print register dump on completion timeout
+- Unify tegra_nand_(read|write)_page in tegra_nand_page_xfer
+
+Lucas Stach (2):
+  ARM: dts: tegra: add Tegra20 NAND flash controller node
+  ARM: dts: tegra: enable NAND flash on Colibri T20
+
+Stefan Agner (4):
+  mtd: rawnand: add Reed-Solomon error correction algorithm
+  mtd: rawnand: add an option to specify NAND chip as a boot device
+  mtd: rawnand: tegra: add devicetree binding
+  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
+
+ .../devicetree/bindings/mtd/nand.txt          |    4 +
+ .../bindings/mtd/nvidia-tegra20-nand.txt      |   64 +
+ MAINTAINERS                                   |    7 +
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   16 +
+ arch/arm/boot/dts/tegra20.dtsi                |   15 +
+ drivers/mtd/nand/raw/Kconfig                  |    6 +
+ drivers/mtd/nand/raw/Makefile                 |    1 +
+ drivers/mtd/nand/raw/nand_base.c              |    4 +
+ drivers/mtd/nand/raw/tegra_nand.c             | 1143 +++++++++++++++++
+ include/linux/mtd/rawnand.h                   |    7 +
+ 10 files changed, 1267 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+ create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+
 -- 
 2.17.0
