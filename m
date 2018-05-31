@@ -1,413 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754883AbeEaLbC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:31:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754455AbeEaL3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:29:49 -0400
-From: Jeff Layton <jlayton@kernel.org>
-To: viro@ZenIV.linux.org.uk
-Cc: willy@infradead.org, andres@anarazel.de, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cmaiolino@redhat.com
-Subject: [PATCH v2 1/5] vfs: push __sync_blockdev calls down into sync_fs routines
-Date: Thu, 31 May 2018 07:29:41 -0400
-Message-Id: <20180531112945.8629-2-jlayton@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180531112945.8629-1-jlayton@kernel.org>
-References: <20180531112945.8629-1-jlayton@kernel.org>
+        id S1754715AbeEaLeh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:34:37 -0400
+Received: from mail-db5eur01on0132.outbound.protection.outlook.com ([104.47.2.132]:24647
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754522AbeEaLef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:34:35 -0400
+Subject: Re: general protection fault in requeue_rx_msgs
+To: syzbot <syzbot+554266c04a41d1f9754d@syzkaller.appspotmail.com>,
+        davem@davemloft.net, ebiggers@google.com, edumazet@google.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tom@quantonium.net,
+        viro@ZenIV.linux.org.uk
+References: <0000000000000482ce056d7c1436@google.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <215d6d32-0131-a1dd-33c4-23866f399d0d@virtuozzo.com>
+Date: Thu, 31 May 2018 14:34:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <0000000000000482ce056d7c1436@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: AM6PR0402CA0023.eurprd04.prod.outlook.com
+ (2603:10a6:209::36) To DB6PR0801MB1334.eurprd08.prod.outlook.com
+ (2603:10a6:4:a::28)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1334;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1334;3:DZ7ZQCKzt12s8TnD5XkfRx8NXZbx6OpgN0xzzclq6r9X0CiqRp2KSosSpKz/pvh4NbDI55BvCA4nPabMV4xm7+7W0It+m5Llzcy0sPsKkH4YY41mZN8PemhlwE8TDKGkGIaiVaP29jp/10CV+Pd8Cu3chq1zn4YUqMU/UoFdq1LJB4XmTvC08uj57kcm/qEEpOGQwMvKqb+6QLitpXkMDjyd5S3ab6keoTHNpdWnh+NHF1ESLUJj/BznDq/RgKkb;25:ss1UBASI2flG2gZVrfwS7nBLisfbuG7uM7p3QITbaP+iruETfCgeH5eeyqrml4qCduCJAwOpxD+PHtBjNBCQVawLPIhkX7JPZeRoobEN/6ZHjCq/vjq9vyzBjXpNpeiHN4Opz3pxkkEbnobEXhBCz193yU6jynmRgfUpeRUxLFWMFh7RmRo/9nMpaRTaxim5kgflwUta4Le+YCAUloH2tlRiT13DyUUakuum8dUbp6jUBI62fal3F0fEJQRlcsZOWhWhvCdy8jv7UeXlMt8gpjCEF7i7ccDbNAe0Whf1XsZv7n5Zv6Yg1vqe9gsFLUMtqy19nHIArTA51jEr+lyXBw==;31:Bfh4f4Q4aZo6QZ4yI9ENWDxqS3WfkmeoEMGtnR1yPZiH7FKMI+NsWL/iZKruM31Cb+8UXtEo6M7Mf5FA7Qv+T76/rl1sEKFP2n7Wmw507mWsNwdwot6tp5IJDXLrKHYF9oCE7H2macq7t8tMP6WXZyaYcMvRQCqdc4LrmPJpoC1DUGsHq1sqUkaOpbJWbmN9TjhZGpNuU7zrSaOwS1x+7M0mJwDD2wyvJuYtPJDWE9Q=
+X-MS-TrafficTypeDiagnostic: DB6PR0801MB1334:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1334;20:A5aLhzvHa7wtX5TeJVXItVUgTcmVXTvUZvFgYNYLFPq+QdNlP3GxWgnneQGHnXjC4m4wNMRxIYg6c0VJTYuMzwGh+E/L3EHKa1Ln0huYoxDZfR9iOcD/WQJX2sSSCCEDcc139RKF97sUTabmkcsdoinWyoTE/5s125JxMN3HdfXLl47AFVfTdhVDfVav7UWZCCg+/AYY2O7R12+gdFWWuwgiIMsD964ebeBuwkLGPqmCX/+oTVRnJl6QK5Hx9iOj7D0FX6c8FXFMYMyWK1oOCbdluRL/0JsI7qUwX1mdqMMpMhgzNPAcaDzItMWITvQ3LljP24AgBsTo/peIrno3bxoH4gGSkSle+hceblKVo557tHqiaq+YtWK0LuCn34hBOPH5A780mbFCpL6eKfBizcwKV1OXZ3AhTbbkJPauA5YkVn1oMJCv1gcNo4bB+9oxUzI2LF5e6T6H+4s8wVJTs/XRcZSvUjllFKctLcbzKJJYM6exDq/NG7kj7CJfhk4C;4:ZvsPUzRdLZC7kRfpLNpxqIXfAWoGVmYUeUnTgx/w3IX6ZP0pBYa/6n9FZQXyNCNP/KkuX5gATB4q73xqiiJTjWAiYVCys2eF9NQ/yJVCuv2y2/S+WGi6sFNGqg2bTBuaqP9YHl5a/4oyU6NscB3jAXQMLWfEcMnH95c0ByeBJiLPUNnZZD78zK3bPNSGpn/8Yj0pcvqWWb1/8PO1IRQ9Y1C5w8eZJEw03a6v2lqV2HiH6GACQBr4AkHNBb6S6h7yZY63GTAcq8VhjrZG5XaN1w==
+X-Microsoft-Antispam-PRVS: <DB6PR0801MB1334D7BEE5FD2D05A0A14BAECD630@DB6PR0801MB1334.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:DB6PR0801MB1334;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0801MB1334;
+X-Forefront-PRVS: 06891E23FB
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(396003)(39380400002)(39850400004)(346002)(366004)(376002)(51234002)(199004)(189003)(3846002)(2616005)(65806001)(5660300001)(478600001)(11346002)(6116002)(65956001)(66066001)(6486002)(65826007)(6666003)(229853002)(956004)(64126003)(105586002)(53936002)(476003)(6246003)(97736004)(31686004)(47776003)(6306002)(25786009)(305945005)(77096007)(8676002)(81156014)(316002)(81166006)(8936002)(2486003)(23676004)(52146003)(52116002)(76176011)(59450400001)(26005)(106356001)(386003)(53546011)(2906002)(68736007)(58126008)(7736002)(486006)(16576012)(2870700001)(55236004)(446003)(45080400002)(50466002)(186003)(31696002)(86362001)(966005)(16526019)(36756003)(575784001)(99710200001);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0801MB1334;H:[172.16.25.5];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjZQUjA4MDFNQjEzMzQ7MjM6MWJWdkxoVGorS29POXBzaTZSNngzWWY3?=
+ =?utf-8?B?TWlSSGY2bG9uUlJ6YW4yS0VjY0NpN1IyVzBmc041aDJHMHdzanNoTEVJTkQ2?=
+ =?utf-8?B?MUlVRGVEanluS1o3Q3pBUHcyNjErVnZLZU9IeUozZW5ySzcyMjFaQWZNL2I4?=
+ =?utf-8?B?Z1JFLzRWdVVWWUpBMEsyR0l4dzFyVDY5T0dwWXhKeHpVUmI4RHN3bnFlS0pY?=
+ =?utf-8?B?SjVyc0NQaXRqc1RmZElONm9LbFN0TTNxYkRkcDN6c3o3N0R1WDFZQitJVjVU?=
+ =?utf-8?B?eExsYzk1MnRSY0V5Ulh4WVBHNEVZSXBOTUFLTHJQYWVHQWc3a0R0UUZWS2hH?=
+ =?utf-8?B?TzZva1NaL1ZPV1dSZlNIRmE5dHJja3RQclRvZVRQVmh3T3NGK2VvZjhnNXpt?=
+ =?utf-8?B?ZHlxbUUyb2U3K2ZpRW00RUVQb2Nwcko4empONlNpYmxhUU80aC9tU0RwdEZ3?=
+ =?utf-8?B?WERXSFE0cTBxOUI5cUlmbWh0YStpVld6TmtHUDVXaStxbUZOZnZJRWV1Q0hX?=
+ =?utf-8?B?MU9PTWVVQm5UYUMvdEtSVEZOK3BybWxTOS9IN21sSDAxWHB4ajA4QUNVSEdV?=
+ =?utf-8?B?Mkd3bnVHWDFoVTEycUl5YzBsRzNLZm9HcUJTTlVOaTdVVUdhdE5KZEhuK2Uz?=
+ =?utf-8?B?bWVHR0xVY0pxQk9VVHJNZ0xXdU41TUhQekpZcnBPVGVWK1lKc0VURjRReVpL?=
+ =?utf-8?B?aHkwRFQxSUpIVmxmbEdPOFdTK1kyMWlnZnY3YW9ZNnMwZTNFVVFrb2JwRU9t?=
+ =?utf-8?B?RnBXQlYrbHlhT010R2VZbEE2VVI3M21YcmhGNEFraDE5YXZJOVJ2eDZSM3hy?=
+ =?utf-8?B?THZYZFcyUHJ6bnAzSkpROXVHanp3LzBXR2VDcmhaaElhTTJBekNJNHBZU2ZH?=
+ =?utf-8?B?TG9ndFpiam9obk9KWlZDZWhyWjhtRFVaa1RMeER2dzhVQW00eENPdVdhOG9m?=
+ =?utf-8?B?OVIrR2pwQ0EyMmppUlg4S2c5RDkrbmMrc0lERDlnU1dHa2lhU0Z1U1o0U0Qz?=
+ =?utf-8?B?a3R5c0o2UDhhUUFXem9jaE03R2NLZVd4UFY0d0pKczdmcXNPNkc1VmJmak52?=
+ =?utf-8?B?bUJYbW5KOU8xVGRCbWxaemJBMnF5ZGlxcU5BRklCQ1hPTkp3NGwvSDRlemVR?=
+ =?utf-8?B?OXg0UUhVTmN4emx1eUsvaEVDUlMvVGE4cndpZTBtRTNhU0VQdWdhcFVmOGtG?=
+ =?utf-8?B?d1FUS1FzWm53UUlOZCtZQi9TWW05em9RZVFGZWxQMnh3MGQ5K3llTEdWM29I?=
+ =?utf-8?B?eDQ1a0ZyRWxIb0w0ZnFZc0FySC9sYThGNjdzZHJxWFM1Y0xiV1lRdkFtN2I2?=
+ =?utf-8?B?TlZKaERreFNVcmY1dkd2K0xwemNHSUJuck00Q3plaENuUENEK3VQWExyZUdW?=
+ =?utf-8?B?d3RVMm5mazRVRDdBT3MxOXVrZEtsanlJOTNoeis2d0VqLzVMOUQ5M2dpUmsr?=
+ =?utf-8?B?RGFpVkJFdWt0OFV5VnJnb0NoaVV6TmJzMWUzRDhLaERCdjdUbnN3dlBWZzJp?=
+ =?utf-8?B?MFErMTREckZDbXFlWGd4ekFmeEw0bjJocmVTRXJwNVU1L0E4bHpTNGZCZm1P?=
+ =?utf-8?B?WjNNUHVKc2FiVXhXS3RJbXZQVEgya2tJS0VJQk9VdGdHMHRZc2NIdE81QW1Q?=
+ =?utf-8?B?UEpkUzVQZ3p6RDVqTHZmVEZPbmVXY2U1MVNvejFGdEVPbEJoRFNNK3ZpeWRp?=
+ =?utf-8?B?b2hzT203STJ3WUg3aEVsaXRubnhZa0J6R2Ruby8zT1lqd20rQnJsL3o2STlt?=
+ =?utf-8?B?YnNiemlwcExwOHdZMlBnZHpVN3YxUVpXRzNDalhiRUxzME5CYWgrVjRheVhP?=
+ =?utf-8?B?QXZIa1AzSTRmTXl3UjJGSjhJQm8zdGRzVGpOZ2lxdGJrVVpPQVpvMmZJM1BV?=
+ =?utf-8?B?QWhGemFQWm1tazMvTXFlN0tEYzNZemovQXc0UGppQkxFMkh0VGtDWmZOZ3Fq?=
+ =?utf-8?B?dUVpNHdBNFBQTzlua3diN3RrS2dBbThXbURWK2RrVTZLWXYrWVpjUG1MZnQ0?=
+ =?utf-8?B?QU1IR2tUSzM3K29OUjgvMnZHeW1CMnUvS3BIQlYyWmI0NEVCMWcvaFprZDE1?=
+ =?utf-8?B?MmEyZTJOeHprblN3dkxqWUYwZ09BVjVPa014WlY0YlRiWVB0SDVkbDFydHJJ?=
+ =?utf-8?Q?u+VdgyXVhyreBW2cGz8E5/T68=3D?=
+X-Microsoft-Antispam-Message-Info: T+M+exH5pAOTvF8CP4R7ibZQn1ZzcrCDrU4oDhZxIO6eKHfaodrGj7ReGZ+Ijl+1mzW6fHlx7H6a3lWD8CZhZNf/imh7op/IDOyWaRElMf4w9PeAxNUosMaqTK8/Dguozm2CVNSMHUi+ta2rLTJCSZqzKGhYL0dkNuj7RPjB4i9a/X8p6rpuCNcj8JkTAu2y
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1334;6:2am/+r/qsYCief4LX4xBD1v1h69iRbesQJ0vQT71NrJ3tw72ZVTKV0fbJVwAdgh/HPReHP8KDHvPhbCS9gek2K7MWpidIYKUlT0gUMafi/jIzqDpcczXVPsjwIXLakEFy4zWD6628AG76z1+GwlmcTwc+l/jcGnLVJ1TotBH8V4jQvnInO1D3eJ+2ZOo1uiOvLgWvJa8vt+0QgbPto+1XIeXlDtJAeAcXhVmfF0Zrwbcpua8Dv6UeEiaXx5eto4syQwvy2Rsb+MQJ3LFlofpD86VacHkzqYuJ501eL1cqu8mNtl5En9bQKyrY9mus7yUweal1xdJPl4UKL3Ljjf9Hpe5gMTl1V4AnNYd3Nn5AF0SupTlakUJ7soSpbkKmhCSyY9p0Qs9c65XZYJdpkqyArV6h/5UPFNrwScVUzNTAGSgsZ/+/QV+Hz+fBdieyk0RTVCHlnwTn6j/ppvXRTQWqw==;5:/Lxb38aoGwM8xL3mlOIjcIL0tLiFoTP6w6tr1RNh4UTzQmPWicUYNiDaXk3dSPN8LQQPjCtTahyNFdZ40WERM8o0Walst/E+CwCX/fDXtkOZgfUHkXR/MkWkq0bR82uJv4Vwjlp6lsw41BsPunNVwnDzkTjLZ8T0LylQrpDYl4k=;24:fWYrawDOaIDApoWBsKpxD5CTkqn/AkJYUkjfut3een2ezeAsMpqaQmZqurKcoNrWww5WlPdSuiaMCgiURpmtt0ZclKZxZTxbnM2lBGNDtT4=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1334;7:2HClSc+3zv554/acC60VdBhVmM7pWWiNuHUu7ercux9PSMozW/iceyYDlG+AtZ8uCy5DQpxZo7PKKIhjCjwkmpvy7NkrJNPZnuMAX4olW/KVjYdtb307jPP4nEn7QglClQIxQdupGwKrtAXKVTZJ5FCdJge2MFdSXIlG0AWUvwxKi/8Ao7R4rEOzvoqWD8K7DXEepKZ1HENezwsKJGPdK7lgLEyGGTcwDFaaRYLda9aInxfeqgSlp60qwoB5s2Z2;20:tUVI57cG7Cc1uwFP9j0PTufjfq9OQhilYWrBBpC+iQgjpEd7ck4CPNDzJSJTXoHWMojl29Oe1iBGPSSmSoipxm7MSJqH5gUparsnuAT+qdTmxxs5QT2JEbwKeeVMpCVdJaqpnS5+bOaXfLrhbrfLt5bYaMpHSFzBp6/zAwcb874=
+X-MS-Office365-Filtering-Correlation-Id: 5b00ccec-93e5-4b8a-93ce-08d5c6ea7a60
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2018 11:34:31.4014 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b00ccec-93e5-4b8a-93ce-08d5c6ea7a60
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1334
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Layton <jlayton@redhat.com>
+On 31.05.2018 11:16, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    0044cdeb7313 Merge branch 'for-linus' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15aeff0f800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=968b0b23c7854c0b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=554266c04a41d1f9754d
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=131a208f800000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+554266c04a41d1f9754d@syzkaller.appspotmail.com
+> 
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 0 PID: 4788 Comm: kworker/u4:3 Not tainted 4.17.0-rc7+ #74
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Workqueue: kstrp strp_work
+> RIP: 0010:__skb_unlink include/linux/skbuff.h:1844 [inline]
+> RIP: 0010:__skb_dequeue include/linux/skbuff.h:1861 [inline]
+> RIP: 0010:requeue_rx_msgs+0x14d/0x620 net/kcm/kcmsock.c:226
+> RSP: 0018:ffff8801aa97f0b8 EFLAGS: 00010202
+> RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffffffff86d54ed3
+> RDX: 0000000000000001 RSI: ffffffff86d531e2 RDI: 0000000000000008
+> RBP: ffff8801aa97f1b8 R08: ffff8801aaa8e3c0 R09: ffffed0035f0a0e8
+> R10: ffffed0035f0a0e8 R11: ffff8801af850743 R12: ffff8801d4407000
+> R13: ffffed003552fe22 R14: 0000000000000000 R15: ffff8801a6bb06c0
+> FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fba7c5099a0 CR3: 00000001af6f6000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  unreserve_rx_kcm+0x471/0x520 net/kcm/kcmsock.c:334
+>  kcm_rcv_strparser+0x109/0x8d0 net/kcm/kcmsock.c:375
+>  __strp_recv+0x34b/0x2130 net/strparser/strparser.c:328
+>  strp_recv+0xcf/0x110 net/strparser/strparser.c:362
+>  tcp_read_sock+0x2aa/0x810 net/ipv4/tcp.c:1652
+>  strp_read_sock+0x1a1/0x2d0 net/strparser/strparser.c:385
+>  do_strp_work net/strparser/strparser.c:440 [inline]
+>  strp_work+0xcd/0x120 net/strparser/strparser.c:449
+>  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+>  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+>  kthread+0x345/0x410 kernel/kthread.c:240
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+> Code: 80 3c 1a 00 0f 85 70 04 00 00 48 8d 78 08 4d 8b 74 24 08 49 c7 04 24 00 00 00 00 49 c7 44 24 08 00 00 00 00 48 89 fa 48 c1 ea 03 <80> 3c 1a 00 0f 85 a7 04 00 00 4c 89 f2 4c 89 70 08 48 c1 ea 03
+> RIP: __skb_unlink include/linux/skbuff.h:1844 [inline] RSP: ffff8801aa97f0b8
+> RIP: __skb_dequeue include/linux/skbuff.h:1861 [inline] RSP: ffff8801aa97f0b8
+> RIP: requeue_rx_msgs+0x14d/0x620 net/kcm/kcmsock.c:226 RSP: ffff8801aa97f0b8
+> ---[ end trace e4c0e45094907eaa ]---
 
-Currently, we always call __sync_blockdev after sync_fs, though very
-few filesystems actually need it these days.
+This looks like the same as syzbot+5f1a04e374a635efc426@syzkaller.appspotmail.com:
+"WARNING in kcm_exit_net (3)". This may confirm the theory. It looks like after async
+pernet_operations the race window became bigger, and now the work has more chances
+to have no a time to complete.
 
-Note that many older filesystems still rely on flushing out the bd_inode
-cache to ensure that it's safely written to the backing store, so when
-sync_fs is not defined, we do still call __sync_blockdev to support
-them.
+I'm not close to this code. Tom, could you please to say, whether kcm_done_work()
+can be called for in-kernel kcm sockets (created via kcm_clone())?
 
-Export __sync_blockdev and push the calls to __sync_blockdev down into
-the sync_fs routines. Push those calls down into the filesystem
-->sync_fs routines that actually need it, rather than calling it
-unconditionally.
+Also, is there a possibility to create !kernel socket in kcm_clone()? I forgot
+the reasons, why we can't do that in some places.
 
-This also means that we need to return the error from the ->sync_fs op
-to the caller as well, so add a vfs_sync_fs helper to encapsulate these
-details.
-
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
----
- fs/affs/super.c     |  2 +-
- fs/block_dev.c      |  1 +
- fs/ext2/super.c     |  2 +-
- fs/ext4/super.c     |  9 +++++----
- fs/f2fs/super.c     | 15 +++++++++------
- fs/gfs2/super.c     |  4 +++-
- fs/hfs/super.c      |  2 +-
- fs/internal.h       |  7 -------
- fs/jfs/super.c      |  3 +--
- fs/nilfs2/super.c   |  5 +++--
- fs/ocfs2/super.c    |  2 +-
- fs/quota/dquot.c    |  9 +++------
- fs/reiserfs/super.c |  2 +-
- fs/sync.c           | 21 ++++++++++++++++-----
- fs/sysv/inode.c     |  3 +--
- include/linux/fs.h  |  8 ++++++++
- 16 files changed, 55 insertions(+), 40 deletions(-)
-
-diff --git a/fs/affs/super.c b/fs/affs/super.c
-index e602619aed9d..b76af8e3c87d 100644
---- a/fs/affs/super.c
-+++ b/fs/affs/super.c
-@@ -58,7 +58,7 @@ static int
- affs_sync_fs(struct super_block *sb, int wait)
- {
- 	affs_commit_super(sb, wait);
--	return 0;
-+	return __sync_blockdev(sb->s_bdev, wait);
- }
- 
- static void flush_superblock(struct work_struct *work)
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 7ec920e27065..8f1d13a3f02b 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -447,6 +447,7 @@ int __sync_blockdev(struct block_device *bdev, int wait)
- 		return filemap_flush(bdev->bd_inode->i_mapping);
- 	return filemap_write_and_wait(bdev->bd_inode->i_mapping);
- }
-+EXPORT_SYMBOL(__sync_blockdev);
- 
- /*
-  * Write out and wait upon all the dirty data associated with a block
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index de1694512f1f..fd8536bc13da 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -1280,7 +1280,7 @@ static int ext2_sync_fs(struct super_block *sb, int wait)
- 	}
- 	spin_unlock(&sbi->s_lock);
- 	ext2_sync_super(sb, es, wait);
--	return 0;
-+	return __sync_blockdev(sb->s_bdev, wait);
- }
- 
- static int ext2_freeze(struct super_block *sb)
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index eb104e8476f0..ac2ffdbf54e6 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4857,13 +4857,13 @@ int ext4_force_commit(struct super_block *sb)
- 
- static int ext4_sync_fs(struct super_block *sb, int wait)
- {
--	int ret = 0;
-+	int ret = 0, ret2;
- 	tid_t target;
- 	bool needs_barrier = false;
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 
- 	if (unlikely(ext4_forced_shutdown(sbi)))
--		return 0;
-+		goto out;
- 
- 	trace_ext4_sync_fs(sb, wait);
- 	flush_workqueue(sbi->rsv_conversion_wq);
-@@ -4896,8 +4896,9 @@ static int ext4_sync_fs(struct super_block *sb, int wait)
- 		if (!ret)
- 			ret = err;
- 	}
--
--	return ret;
-+out:
-+	ret2 = __sync_blockdev(sb->s_bdev, wait);
-+	return ret ? ret : ret2;
- }
- 
- /*
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 42d564c5ccd0..70fb16aac0bd 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1058,15 +1058,17 @@ static void f2fs_put_super(struct super_block *sb)
- int f2fs_sync_fs(struct super_block *sb, int sync)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
--	int err = 0;
-+	int err = 0, err2;
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
--		return 0;
-+		goto out;
- 
- 	trace_f2fs_sync_fs(sb, sync);
- 
--	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
--		return -EAGAIN;
-+	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING))) {
-+		err = -EAGAIN;
-+		goto out;
-+	}
- 
- 	if (sync) {
- 		struct cp_control cpc;
-@@ -1078,8 +1080,9 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
- 		mutex_unlock(&sbi->gc_mutex);
- 	}
- 	f2fs_trace_ios(NULL, 1);
--
--	return err;
-+out:
-+	err2 = __sync_blockdev(sb->s_bdev, sync);
-+	return err ? err : err2;
- }
- 
- static int f2fs_freeze(struct super_block *sb)
-diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
-index cf5c7f3080d2..884dd8b7d7b3 100644
---- a/fs/gfs2/super.c
-+++ b/fs/gfs2/super.c
-@@ -951,13 +951,15 @@ static void gfs2_put_super(struct super_block *sb)
- 
- static int gfs2_sync_fs(struct super_block *sb, int wait)
- {
-+	int bderr;
- 	struct gfs2_sbd *sdp = sb->s_fs_info;
- 
- 	gfs2_quota_sync(sb, -1);
- 	if (wait)
- 		gfs2_log_flush(sdp, NULL, GFS2_LOG_HEAD_FLUSH_NORMAL |
- 			       GFS2_LFC_SYNC_FS);
--	return sdp->sd_log_error;
-+	bderr = __sync_blockdev(sb->s_bdev, wait);
-+	return sdp->sd_log_error ? sdp->sd_log_error : bderr;
- }
- 
- void gfs2_freeze_func(struct work_struct *work)
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index 173876782f73..9cb410ebab7c 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -33,7 +33,7 @@ MODULE_LICENSE("GPL");
- static int hfs_sync_fs(struct super_block *sb, int wait)
- {
- 	hfs_mdb_commit(sb);
--	return 0;
-+	return __sync_blockdev(sb->s_bdev, wait);
- }
- 
- /*
-diff --git a/fs/internal.h b/fs/internal.h
-index e08972db0303..148b74293dfe 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -24,17 +24,10 @@ struct shrink_control;
- #ifdef CONFIG_BLOCK
- extern void __init bdev_cache_init(void);
- 
--extern int __sync_blockdev(struct block_device *bdev, int wait);
--
- #else
- static inline void bdev_cache_init(void)
- {
- }
--
--static inline int __sync_blockdev(struct block_device *bdev, int wait)
--{
--	return 0;
--}
- #endif
- 
- /*
-diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-index 1b9264fd54b6..c4b99ad53f9c 100644
---- a/fs/jfs/super.c
-+++ b/fs/jfs/super.c
-@@ -717,8 +717,7 @@ static int jfs_sync_fs(struct super_block *sb, int wait)
- 		jfs_flush_journal(log, wait);
- 		jfs_syncpt(log, 0);
- 	}
--
--	return 0;
-+	return __sync_blockdev(sb->s_bdev, wait);
- }
- 
- static int jfs_show_options(struct seq_file *seq, struct dentry *root)
-diff --git a/fs/nilfs2/super.c b/fs/nilfs2/super.c
-index 6ffeca84d7c3..280a28b62d13 100644
---- a/fs/nilfs2/super.c
-+++ b/fs/nilfs2/super.c
-@@ -495,7 +495,7 @@ static int nilfs_sync_fs(struct super_block *sb, int wait)
- {
- 	struct the_nilfs *nilfs = sb->s_fs_info;
- 	struct nilfs_super_block **sbp;
--	int err = 0;
-+	int err = 0, bderr;
- 
- 	/* This function is called when super block should be written back */
- 	if (wait)
-@@ -514,7 +514,8 @@ static int nilfs_sync_fs(struct super_block *sb, int wait)
- 	if (!err)
- 		err = nilfs_flush_device(nilfs);
- 
--	return err;
-+	bderr = __sync_blockdev(sb->s_bdev, wait);
-+	return err ? err : bderr;
- }
- 
- int nilfs_attach_checkpoint(struct super_block *sb, __u64 cno, int curr_mnt,
-diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-index 3415e0b09398..07a1a297c2ed 100644
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -429,7 +429,7 @@ static int ocfs2_sync_fs(struct super_block *sb, int wait)
- 			jbd2_log_wait_commit(osb->journal->j_journal,
- 					     target);
- 	}
--	return 0;
-+	return __sync_blockdev(sb->s_bdev, wait);
- }
- 
- static int ocfs2_need_system_inode(struct ocfs2_super *osb, int ino)
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index d88231e3b2be..92e695385875 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -686,9 +686,7 @@ int dquot_quota_sync(struct super_block *sb, int type)
- 	/* This is not very clever (and fast) but currently I don't know about
- 	 * any other simple way of getting quota data to disk and we must get
- 	 * them there for userspace to be visible... */
--	if (sb->s_op->sync_fs)
--		sb->s_op->sync_fs(sb, 1);
--	sync_blockdev(sb->s_bdev);
-+	vfs_sync_fs(sb, 1);
- 
- 	/*
- 	 * Now when everything is written we can discard the pagecache so
-@@ -2245,9 +2243,8 @@ int dquot_disable(struct super_block *sb, int type, unsigned int flags)
- 
- 	/* Sync the superblock so that buffers with quota data are written to
- 	 * disk (and so userspace sees correct data afterwards). */
--	if (sb->s_op->sync_fs)
--		sb->s_op->sync_fs(sb, 1);
--	sync_blockdev(sb->s_bdev);
-+	vfs_sync_fs(sb, 1);
-+
- 	/* Now the quota files are just ordinary files and we can set the
- 	 * inode flags back. Moreover we discard the pagecache so that
- 	 * userspace sees the writes we did bypassing the pagecache. We
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 1fc934d24459..b3a390eab9b7 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -78,7 +78,7 @@ static int reiserfs_sync_fs(struct super_block *s, int wait)
- 		if (!journal_end_sync(&th))
- 			reiserfs_flush_old_commits(s);
- 	reiserfs_write_unlock(s);
--	return 0;
-+	return __sync_blockdev(s->s_bdev, wait);
- }
- 
- static void flush_old_commits(struct work_struct *work)
-diff --git a/fs/sync.c b/fs/sync.c
-index a863cd2490ce..5fc211d16a00 100644
---- a/fs/sync.c
-+++ b/fs/sync.c
-@@ -21,6 +21,18 @@
- #define VALID_FLAGS (SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE| \
- 			SYNC_FILE_RANGE_WAIT_AFTER)
- 
-+/*
-+ * Many legacy filesystems don't have a sync_fs op. For them, we just flush
-+ * the block device (if there is one).
-+ */
-+int vfs_sync_fs(struct super_block *sb, int wait)
-+{
-+	if (sb->s_op->sync_fs)
-+		return sb->s_op->sync_fs(sb, wait);
-+	return __sync_blockdev(sb->s_bdev, wait);
-+}
-+EXPORT_SYMBOL(vfs_sync_fs);
-+
- /*
-  * Do the filesystem syncing work. For simple filesystems
-  * writeback_inodes_sb(sb) just dirties buffers with inodes so we have to
-@@ -35,9 +47,7 @@ static int __sync_filesystem(struct super_block *sb, int wait)
- 	else
- 		writeback_inodes_sb(sb, WB_REASON_SYNC);
- 
--	if (sb->s_op->sync_fs)
--		sb->s_op->sync_fs(sb, wait);
--	return __sync_blockdev(sb->s_bdev, wait);
-+	return vfs_sync_fs(sb, wait);
- }
- 
- /*
-@@ -78,8 +88,9 @@ static void sync_fs_one_sb(struct super_block *sb, void *arg)
- {
- 	int wait = arg ? 1 : 0;
- 
--	if (!sb_rdonly(sb) && sb->s_op->sync_fs)
--		sb->s_op->sync_fs(sb, wait);
-+	if (sb_rdonly(sb))
-+		return;
-+	vfs_sync_fs(sb, wait);
- }
- 
- static void fdatawrite_one_bdev(struct block_device *bdev, void *arg)
-diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
-index bec9f79adb25..2232cf97840b 100644
---- a/fs/sysv/inode.c
-+++ b/fs/sysv/inode.c
-@@ -53,8 +53,7 @@ static int sysv_sync_fs(struct super_block *sb, int wait)
- 	}
- 
- 	mutex_unlock(&sbi->s_lock);
--
--	return 0;
-+	return __sync_blockdev(sb->s_bdev, wait);
- }
- 
- static int sysv_remount(struct super_block *sb, int *flags, char *data)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6bccf323c01e..eee017c5a821 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2441,6 +2441,7 @@ extern void bd_forget(struct inode *inode);
- extern void bdput(struct block_device *);
- extern void invalidate_bdev(struct block_device *);
- extern void iterate_bdevs(void (*)(struct block_device *, void *), void *);
-+extern int __sync_blockdev(struct block_device *bdev, int wait);
- extern int sync_blockdev(struct block_device *bdev);
- extern void kill_bdev(struct block_device *);
- extern struct super_block *freeze_bdev(struct block_device *);
-@@ -2461,6 +2462,11 @@ static inline int sync_blockdev(struct block_device *bdev) { return 0; }
- static inline void kill_bdev(struct block_device *bdev) {}
- static inline void invalidate_bdev(struct block_device *bdev) {}
- 
-+static inline int __sync_blockdev(struct block_device *bdev, int wait)
-+{
-+	return 0;
-+}
-+
- static inline struct super_block *freeze_bdev(struct block_device *sb)
- {
- 	return NULL;
-@@ -2485,9 +2491,11 @@ static inline bool sb_is_blkdev_sb(struct super_block *sb)
- 	return false;
- }
- #endif
-+int vfs_sync_fs(struct super_block *sb, int wait);
- extern int sync_filesystem(struct super_block *);
- extern const struct file_operations def_blk_fops;
- extern const struct file_operations def_chr_fops;
-+
- #ifdef CONFIG_BLOCK
- extern int ioctl_by_bdev(struct block_device *, unsigned, unsigned long);
- extern int blkdev_ioctl(struct block_device *, fmode_t, unsigned, unsigned long);
--- 
-2.17.0
+Thanks,
+Kirill
