@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754872AbeEaLZJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:25:09 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8232 "EHLO huawei.com"
+        id S1755123AbeEaLZP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:25:15 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8229 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754765AbeEaLWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754760AbeEaLWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 May 2018 07:22:43 -0400
 From: Yisheng Xie <xieyisheng1@huawei.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <andy.shevchenko@gmail.com>, Yisheng Xie <xieyisheng1@huawei.com>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v2 09/21] clk: use match_string() helper
-Date: Thu, 31 May 2018 19:11:14 +0800
-Message-ID: <1527765086-19873-10-git-send-email-xieyisheng1@huawei.com>
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>
+Subject: [PATCH v2 10/21] cpufreq: intel_pstate: use match_string() helper
+Date: Thu, 31 May 2018 19:11:15 +0800
+Message-ID: <1527765086-19873-11-git-send-email-xieyisheng1@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 In-Reply-To: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
 References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
@@ -28,42 +29,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 match_string() returns the index of an array for a matching string,
 which can be used instead of open coded variant.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Len Brown <lenb@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
 v2:
- - leave second parameter on the first line  - per Andy
+ - add Reviewed-by tag.
 
- drivers/clk/clk.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/cpufreq/intel_pstate.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7af555f..d01bdda 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2171,7 +2171,6 @@ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent)
- bool clk_has_parent(struct clk *clk, struct clk *parent)
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index 17e566af..d701e26 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -645,21 +645,18 @@ static ssize_t store_energy_performance_preference(
  {
- 	struct clk_core *core, *parent_core;
--	unsigned int i;
+ 	struct cpudata *cpu_data = all_cpu_data[policy->cpu];
+ 	char str_preference[21];
+-	int ret, i = 0;
++	int ret;
  
- 	/* NULL clocks should be nops, so return success if either is NULL. */
- 	if (!clk || !parent)
-@@ -2184,11 +2183,8 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
- 	if (core->parent == parent_core)
- 		return true;
+ 	ret = sscanf(buf, "%20s", str_preference);
+ 	if (ret != 1)
+ 		return -EINVAL;
  
--	for (i = 0; i < core->num_parents; i++)
--		if (strcmp(core->parent_names[i], parent_core->name) == 0)
--			return true;
--
--	return false;
-+	return match_string(core->parent_names, core->num_parents,
-+			    parent_core->name) >= 0;
+-	while (energy_perf_strings[i] != NULL) {
+-		if (!strcmp(str_preference, energy_perf_strings[i])) {
+-			intel_pstate_set_energy_pref_index(cpu_data, i);
+-			return count;
+-		}
+-		++i;
+-	}
++	ret = match_string(energy_perf_strings, -1, str_preference);
++	if (ret < 0)
++		return ret;
+ 
+-	return -EINVAL;
++	intel_pstate_set_energy_pref_index(cpu_data, ret);
++	return count;
  }
- EXPORT_SYMBOL_GPL(clk_has_parent);
  
+ static ssize_t show_energy_performance_preference(
 -- 
 1.7.12.4
