@@ -1,470 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755891AbeEaRv5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 13:51:57 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:43656 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755809AbeEaRvz (ORCPT
+        id S1755986AbeEaRxE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 13:53:04 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:41665 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755960AbeEaRw5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 13:51:55 -0400
-X-Google-Smtp-Source: ADUXVKInTYid585f/x4kVOKgR0kAo8lWQRZ+B7zSMP5Xl+SeSSAyUF0i4UOQldm7SVc/GaZKG6MRBg==
-Date: Thu, 31 May 2018 10:51:53 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Joel Fernandes <joelaf@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Erick Reyes <erickreyes@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, shuah <shuah@kernel.org>,
-        rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Todd Kjos <tkjos@google.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v8 5/8] tracepoint: Make rcuidle tracepoint callers use
- SRCU
-Message-ID: <20180531175153.GA129415@joelaf.mtv.corp.google.com>
-References: <20180530000500.257225-1-joel@joelfernandes.org>
- <20180530000500.257225-6-joel@joelfernandes.org>
- <214539705.3633.1527749441133.JavaMail.zimbra@efficios.com>
+        Thu, 31 May 2018 13:52:57 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jann Horn <jannh@google.com>, Serge Hallyn <serge.hallyn@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski <luto@amacapital.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <152286911105.615669.14053871624892399807.stgit@buzz>
+        <ba7b704f-1fc4-a08d-e7cf-2766160bd419@oracle.com>
+        <87h8oqhagl.fsf@xmission.com>
+        <112c7cac-1982-3a2e-ffc0-878bc5ae4bb6@yandex-team.ru>
+        <e1402871-77a5-6a0f-a75c-ccad77b93f49@oracle.com>
+        <778ab3d0-b6bc-fdb5-669a-40222e5020d4@yandex-team.ru>
+        <e3a1076d-cfd7-a034-dd08-2d74fbf751f3@oracle.com>
+        <3e2c285a-1bf8-f71d-1b74-4d6465c29a54@yandex-team.ru>
+        <3bdd6b27-0a46-5802-8671-07268cecc1c7@oracle.com>
+Date: Thu, 31 May 2018 12:52:49 -0500
+In-Reply-To: <3bdd6b27-0a46-5802-8671-07268cecc1c7@oracle.com> (Nagarathnam
+        Muthusamy's message of "Thu, 31 May 2018 10:41:20 -0700")
+Message-ID: <87efhremq6.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <214539705.3633.1527749441133.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1fORks-0007ta-IY;;;mid=<87efhremq6.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/D508xSPKGvYRw+Qq6+gQs8EY0qnLs6hk=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 450 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 3.4 (0.8%), b_tie_ro: 2.3 (0.5%), parse: 1.67 (0.4%),
+        extract_message_metadata: 30 (6.7%), get_uri_detail_list: 8 (1.7%),
+        tests_pri_-1000: 13 (2.9%), tests_pri_-950: 1.62 (0.4%), tests_pri_-900: 1.27
+        (0.3%), tests_pri_-400: 38 (8.5%), check_bayes: 37 (8.2%), b_tokenize: 15
+        (3.4%), b_tok_get_all: 12 (2.6%), b_comp_prob: 4.0 (0.9%), b_tok_touch_all:
+        3.4 (0.8%), b_finish: 0.69 (0.2%), tests_pri_0: 352 (78.2%),
+        check_dkim_signature: 0.65 (0.1%), check_dkim_adsp: 3.7 (0.8%),
+        tests_pri_500: 3.8 (0.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH RFC v5] pidns: introduce syscall translate_pid
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 02:50:41AM -0400, Mathieu Desnoyers wrote:
-> ----- On May 30, 2018, at 2:04 AM, Joel Fernandes joelaf@google.com wrote:
-> 
-> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > 
-> > In recent tests with IRQ on/off tracepoints, a large performance
-> > overhead ~10% is noticed when running hackbench. This is root caused to
-> > calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
-> > tracepoint code. Following a long discussion on the list [1] about this,
-> > we concluded that srcu is a better alternative for use during rcu idle.
-> > Although it does involve extra barriers, its lighter than the sched-rcu
-> > version which has to do additional RCU calls to notify RCU idle about
-> > entry into RCU sections.
-> > 
-> > In this patch, we change the underlying implementation of the
-> > trace_*_rcuidle API to use SRCU. This has shown to improve performance
-> > alot for the high frequency irq enable/disable tracepoints.
-> > 
-> > Test: Tested idle and preempt/irq tracepoints.
-> > 
-> > Here are some performance numbers:
-> > 
-> > With a run of the following 30 times on a single core x86 Qemu instance
-> > with 1GB memory:
-> > hackbench -g 4 -f 2 -l 3000
-> > 
-> > Completion times in seconds. CONFIG_PROVE_LOCKING=y.
-> > 
-> > No patches (without this series)
-> > Mean: 3.048
-> > Median: 3.025
-> > Std Dev: 0.064
-> > 
-> > With Lockdep using irq tracepoints with RCU implementation:
-> > Mean: 3.451   (-11.66 %)
-> > Median: 3.447 (-12.22%)
-> > Std Dev: 0.049
-> > 
-> > With Lockdep using irq tracepoints with SRCU implementation (this series):
-> > Mean: 3.020   (I would consider the improvement against the "without
-> >	       this series" case as just noise).
-> > Median: 3.013
-> > Std Dev: 0.033
-> > 
-> > [1] https://patchwork.kernel.org/patch/10344297/
-> > 
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > ---
-> > include/linux/tracepoint.h | 48 +++++++++++++++++++++++++++++++-------
-> > kernel/tracepoint.c        | 15 +++++++++++-
-> > 2 files changed, 54 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> > index c94f466d57ef..880794207921 100644
-> > --- a/include/linux/tracepoint.h
-> > +++ b/include/linux/tracepoint.h
-> > @@ -15,6 +15,7 @@
-> >  */
-> > 
-> > #include <linux/smp.h>
-> > +#include <linux/srcu.h>
-> > #include <linux/errno.h>
-> > #include <linux/types.h>
-> > #include <linux/cpumask.h>
-> > @@ -33,6 +34,8 @@ struct trace_eval_map {
-> > 
-> > #define TRACEPOINT_DEFAULT_PRIO	10
-> > 
-> > +extern struct srcu_struct tracepoint_srcu;
-> > +
-> > extern int
-> > tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
-> > extern int
-> > @@ -75,10 +78,15 @@ int unregister_tracepoint_module_notifier(struct
-> > notifier_block *nb)
-> >  * probe unregistration and the end of module exit to make sure there is no
-> >  * caller executing a probe when it is freed.
-> >  */
-> > +#ifdef CONFIG_TRACEPOINTS
-> > static inline void tracepoint_synchronize_unregister(void)
-> > {
-> > +	synchronize_srcu(&tracepoint_srcu);
-> > 	synchronize_sched();
-> > }
-> > +#else
-> > +static inline void tracepoint_synchronize_unregister(void) { }
-> 
-> In order to add some consistency to the style in this header file,
-> this empty function should look like:
-> 
-> static inline void tracepoint_synchronize_unregister(void)
-> { }
-> 
-> (with newline before "{")
+Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com> writes:
 
-Ok, I changed it to the style you're proposing.
+> On 05/15/2018 10:36 AM, Konstantin Khlebnikov wrote:
+>>
+>>
+>> On 15.05.2018 20:19, Nagarathnam Muthusamy wrote:
+>>>
+>>>
+>>> On 04/24/2018 10:36 PM, Konstantin Khlebnikov wrote:
+>>>> On 23.04.2018 20:37, Nagarathnam Muthusamy wrote:
+>>>>>
+>>>>>
+>>>>> On 04/05/2018 12:02 AM, Konstantin Khlebnikov wrote:
+>>>>>> On 05.04.2018 01:29, Eric W. Biederman wrote:
+>>>>>>> Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com> writes:
+>>>>>>>
+>>>>>>>> On 04/04/2018 12:11 PM, Konstantin Khlebnikov wrote:
+>>>>>>>>> Each process have different pids, one for each pid namespace
+>>>>>>>>> it belongs.
+>>>>>>>>> When interaction happens within single pid-ns translation
+>>>>>>>>> isn't required.
+>>>>>>>>> More complicated scenarios needs special handling.
+>>>>>>>>>
+>>>>>>>>> For example:
+>>>>>>>>> - reading pid-files or logs written inside container with pid
+>>>>>>>>> namespace
+>>>>>>>>> - attaching with ptrace to tasks from different pid namespace
+>>>>>>>>> - passing pids across pid namespaces in any kind of API
+>>>>>>>>>
+>>>>>>>>> Currently there are several interfaces that could be used here:
+>>>>>>>>>
+>>>>>>>>> Pid namespaces are identified by inode number of
+>>>>>>>>> /proc/[pid]/ns/pid.
+>>>>>>>
+>>>>>>> Using the inode number in interfaces is not an
+>>>>>>> option. Especially not
+>>>>>>> withou referencing the device number for the filesystem as well.
+>>>>>>
+>>>>>> This is supposed to be single-instance fs,
+>>>>>> not part of proc but referenced but its magic "symlinks".
+>>>>>>
+>>>>>> Device numbers are not mentioned in "man namespaces".
+>>>>>>
+>>>>>>>
+>>>>>>>>> Pids for nested Pid namespaces are shown in file
+>>>>>>>>> /proc/[pid]/status.
+>>>>>>>>> In some cases conversion pid -> vpid could be easily done
+>>>>>>>>> using this
+>>>>>>>>> information, but backward translation requires scanning all tasks.
+>>>>>>>>>
+>>>>>>>>> Unix socket automatically translates pid attached to
+>>>>>>>>> SCM_CREDENTIALS.
+>>>>>>>>> This requires CAP_SYS_ADMIN for sending arbitrary pids and
+>>>>>>>>> entering
+>>>>>>>>> into pid namespace, this expose process and could be insecure.
+>>>>>>>>>
+>>>>>>>>> This patch adds new syscall for converting pids between pid
+>>>>>>>>> namespaces:
+>>>>>>>>>
+>>>>>>>>> pid_t translate_pid(pid_t pid, int source_type, int source,
+>>>>>>>>>                                  int target_type, int target);
+>>>>>>>>>
+>>>>>>>>> @source_type and @target_type defines type of following arguments:
+>>>>>>>>>
+>>>>>>>>> TRANSLATE_PID_CURRENT_PIDNS  - current pid namespace,
+>>>>>>>>> argument is unused
+>>>>>>>>> TRANSLATE_PID_TASK_PIDNS     - task pid-ns, argument is task pid
+>>>>>>>>
+>>>>>>>> I believe using pid to represent the namespace has been already
+>>>>>>>> discussed in V1 of this patch in
+>>>>>>>> https://lkml.org/lkml/2015/9/22/1087
+>>>>>>>> after which we moved on to fd based version of this interface.
+>>>>>>>
+>>>>>>> Or in short why is the case of pids important?
+>>>>>>>
+>>>>>>> You Konstantin you almost said why they were important in your
+>>>>>>> message
+>>>>>>> saying you were going to send this one.  However you don't
+>>>>>>> explain in
+>>>>>>> your description why you want to identify pid namespaces by pid.
+>>>>>>>
+>>>>>>
+>>>>>> Open of /proc/[pid]/ns/pid requires same permissions as ptrace,
+>>>>>> pid based variant doesn't have such restrictions.
+>>>>>
+>>>>> Can you provide more information on usecase requiring PID
+>>>>> translation but not used for tracing related purposes?
+>>>>
+>>>> Any introspection for [nested] containers. It's easier to work
+>>>> when you have all information when you don't have any.
+>>>> For example our CMS https://github.com/yandex/porto allows to
+>>>> start nested sub-container (or even deeper) by request from any
+>>>> container and have to tell back which pid task is have. And it
+>>>> could translate any pid inside into accessible by client and vice
+>>>> versa.
+>>>>
+>>>
+>>> I still dont get the exact reason why PID based approach to
+>>> identify the namespace during pid translation process is absolutely
+>>> required compared to fd based approach. 
+>>
+>> As I told open(/proc/%d/ns/pid) have security restrictions - same
+>> uid/CAP_SYS_PTRACE/whatever
+>> Pidns-fd holds pid-namespace and without restrictions could be abused.
+>> Pid based API is racy but always available without any restrictions.
+>>
+>>
+>>> From your version of TranslatePid in
+>>>
+>>> https://github.com/yandex/porto/blob/0d7e6e7e1830dcd0038a057b2ab9964cec5b8fab/src/util/unix.cpp 
+>>>
+>>>
+>>> I see that you are going through the trouble of forking a process
+>>> and sending SMC_CREDENTIALS for pid translation. Even your existing
+>>> API could be extremely simplified if translate_pid based on file
+>>> descriptors make it to the gate and I believe from the last
+>>> discussion it was almost there
+>>> https://patchwork.kernel.org/patch/10305439/
+>>>
+>>>
+>>>>> On a side note, can we have the types TRANSLATE_PID_CURRENT_PIDNS
+>>>>> and TRANSLATE_PID_FD_PIDNS integrated first and then possibly
+>>>>> extend the interface to include TRANSLATE_PID_TASK_PIDNS in
+>>>>> future?
+>>>>
+>>>> I don't see reason for this separation.
+>>>> Pids and pid namespaces are part of the API for a long time.
+>>>
+>>> If you are talking about the translate_pid API proposed, I believe
+>>> the V4 proposed under https://patchwork.kernel.org/patch/10003935/
+>>> had only fd based API before a mix of PID and fd based is proposed
+>>> in V5. Again, I was just wondering if we can get the FD based
+>>> approach in first and then extend the API to include PID based
+>>> approach later as fd based approach could provide a lot of
+>>> immediate benefits?
+>>>
+>>> Thanks,
+>>> Nagarathnam.
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>> Nagarathnam.
+>>>>>> Most pid-based syscalls are racy in some cases but they are
+>>>>>> here for decades and everybody knowns how to deal with it.
+>>>>>> So, I've decided to merge both worlds in one interface which
+>>>>>> clearly tells what to expect.
+>>>>>
+>>>
+>
+> Ping? Any additional comments on this patch?
 
-> > +#endif
-> > 
-> > #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
-> > extern int syscall_regfunc(void);
-> > @@ -129,18 +137,38 @@ extern void syscall_unregfunc(void);
-> >  * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
-> >  * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
-> >  */
-> > -#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
-> > +#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
-> > 	do {								\
-> > 		struct tracepoint_func *it_func_ptr;			\
-> > 		void *it_func;						\
-> > 		void *__data;						\
-> > +		int __maybe_unused idx = 0;				\
-> > 									\
-> > 		if (!(cond))						\
-> > 			return;						\
-> > -		if (rcucheck)						\
-> > -			rcu_irq_enter_irqson();				\
-> > -		rcu_read_lock_sched_notrace();				\
-> > -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
-> > +									\
-> > +		/*							\
-> > +		 * For rcuidle callers, use srcu since sched-rcu	\
-> > +		 * doesn't work from the idle path.			\
-> > +		 */							\
-> > +		if (rcuidle) {						\
-> > +			if (in_nmi()) {					\
-> > +				WARN_ON_ONCE(1);			\
-> > +				return; /* no srcu from nmi */		\
-> 
-> I find it odd to have a "return" in a macro that consists of a
-> do { } while (0). I'm tempted to replace "return" by "break" here,
-> to break the macro do/while (0) loop.
+I have totally lost the thread.  Let me see if I can find enough of the
+thread to see what is going on.
 
-"return;" is also used from "if (!(cond))" above so I prefer be consistent
-and just use return than break as done above, but please let me know if you
-still object.
+The whole let's use pids instead of fds was a major distraction.
 
-> > +			}						\
-> > +									\
-> > +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-> > +			it_func_ptr =					\
-> > +				srcu_dereference_notrace((tp)->funcs,	\
-> > +						&tracepoint_srcu);	\
-> > +			/* To keep it consistent with !rcuidle path */	\
-> > +			preempt_disable_notrace();			\
-> > +		} else {						\
-> > +			rcu_read_lock_sched_notrace();			\
-> > +			it_func_ptr =					\
-> > +				rcu_dereference_sched((tp)->funcs);	\
-> > +		}							\
-> > +									\
-> > 		if (it_func_ptr) {					\
-> > 			do {						\
-> > 				it_func = (it_func_ptr)->func;		\
-> > @@ -148,9 +176,13 @@ extern void syscall_unregfunc(void);
-> > 				((void(*)(proto))(it_func))(args);	\
-> > 			} while ((++it_func_ptr)->func);		\
-> > 		}							\
-> > -		rcu_read_unlock_sched_notrace();			\
-> > -		if (rcucheck)						\
-> > -			rcu_irq_exit_irqson();				\
-> > +									\
-> > +		if (rcuidle) {						\
-> > +			preempt_enable_notrace();			\
-> > +			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
-> > +		} else {						\
-> > +			rcu_read_unlock_sched_notrace();		\
-> > +		}							\
-> > 	} while (0)
-> > 
-> > #ifndef MODULE
-> > diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-> > index 1e37da2e0c25..54157792f5ab 100644
-> > --- a/kernel/tracepoint.c
-> > +++ b/kernel/tracepoint.c
-> > @@ -31,6 +31,9 @@
-> > extern struct tracepoint * const __start___tracepoints_ptrs[];
-> > extern struct tracepoint * const __stop___tracepoints_ptrs[];
-> > 
-> > +DEFINE_SRCU(tracepoint_srcu);
-> > +EXPORT_SYMBOL_GPL(tracepoint_srcu);
-> > +
-> > /* Set to 1 to enable tracepoint debug output */
-> > static const int tracepoint_debug;
-> > 
-> > @@ -67,16 +70,26 @@ static inline void *allocate_probes(int count)
-> > 	return p == NULL ? NULL : p->probes;
-> > }
-> > 
-> > -static void rcu_free_old_probes(struct rcu_head *head)
-> > +static void srcu_free_old_probes(struct rcu_head *head)
-> > {
-> > 	kfree(container_of(head, struct tp_probes, rcu));
-> > }
-> > 
-> > +static void rcu_free_old_probes(struct rcu_head *head)
-> > +{
-> > +	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
-> > +}
-> > +
-> > static inline void release_probes(struct tracepoint_func *old)
-> > {
-> > 	if (old) {
-> > 		struct tp_probes *tp_probes = container_of(old,
-> > 			struct tp_probes, probes[0]);
-> > +		/*
-> > +		 * Tracepoint probes are protected by both sched RCU and SRCU,
-> > +		 * by calling the SRCU callback in the sched RCU callback we
-> > +		 * cover both cases. So lets chain the SRCU and RCU callbacks.
-> 
-> lets -> let's
-> 
-> But I would use a different wording for that sentence that does not include
-> "let's" which is short for "let us", e.g.
-> 
-> "Chain the SRCU and sched RCU callbacks to wait for both grace periods."
-
-Fixed, thanks.
-
-> With the comments above taken care of, please add my:
-> 
-> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-
-Will do, and thanks for the review!
-
-Below is the updated patch.
-
- - Joel
-
----8<-----------------------
-
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Date: Thu, 26 Apr 2018 20:44:07 -0700
-Subject: [PATCH v8.1] tracepoint: Make rcuidle tracepoint callers use SRCU
-
-In recent tests with IRQ on/off tracepoints, a large performance
-overhead ~10% is noticed when running hackbench. This is root caused to
-calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
-tracepoint code. Following a long discussion on the list [1] about this,
-we concluded that srcu is a better alternative for use during rcu idle.
-Although it does involve extra barriers, its lighter than the sched-rcu
-version which has to do additional RCU calls to notify RCU idle about
-entry into RCU sections.
-
-In this patch, we change the underlying implementation of the
-trace_*_rcuidle API to use SRCU. This has shown to improve performance
-alot for the high frequency irq enable/disable tracepoints.
-
-Test: Tested idle and preempt/irq tracepoints.
-
-Here are some performance numbers:
-
-With a run of the following 30 times on a single core x86 Qemu instance
-with 1GB memory:
-hackbench -g 4 -f 2 -l 3000
-
-Completion times in seconds. CONFIG_PROVE_LOCKING=y.
-
-No patches (without this series)
-Mean: 3.048
-Median: 3.025
-Std Dev: 0.064
-
-With Lockdep using irq tracepoints with RCU implementation:
-Mean: 3.451   (-11.66 %)
-Median: 3.447 (-12.22%)
-Std Dev: 0.049
-
-With Lockdep using irq tracepoints with SRCU implementation (this series):
-Mean: 3.020   (I would consider the improvement against the "without
-	       this series" case as just noise).
-Median: 3.013
-Std Dev: 0.033
-
-[1] https://patchwork.kernel.org/patch/10344297/
-
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- include/linux/tracepoint.h | 49 +++++++++++++++++++++++++++++++-------
- kernel/tracepoint.c        | 16 ++++++++++++-
- 2 files changed, 56 insertions(+), 9 deletions(-)
-
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index c94f466d57ef..9cf2882d2ef4 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -15,6 +15,7 @@
-  */
- 
- #include <linux/smp.h>
-+#include <linux/srcu.h>
- #include <linux/errno.h>
- #include <linux/types.h>
- #include <linux/cpumask.h>
-@@ -33,6 +34,8 @@ struct trace_eval_map {
- 
- #define TRACEPOINT_DEFAULT_PRIO	10
- 
-+extern struct srcu_struct tracepoint_srcu;
-+
- extern int
- tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
- extern int
-@@ -75,10 +78,16 @@ int unregister_tracepoint_module_notifier(struct notifier_block *nb)
-  * probe unregistration and the end of module exit to make sure there is no
-  * caller executing a probe when it is freed.
-  */
-+#ifdef CONFIG_TRACEPOINTS
- static inline void tracepoint_synchronize_unregister(void)
- {
-+	synchronize_srcu(&tracepoint_srcu);
- 	synchronize_sched();
- }
-+#else
-+static inline void tracepoint_synchronize_unregister(void)
-+{ }
-+#endif
- 
- #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
- extern int syscall_regfunc(void);
-@@ -129,18 +138,38 @@ extern void syscall_unregfunc(void);
-  * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
-  * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
-  */
--#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
-+#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
- 	do {								\
- 		struct tracepoint_func *it_func_ptr;			\
- 		void *it_func;						\
- 		void *__data;						\
-+		int __maybe_unused idx = 0;				\
- 									\
- 		if (!(cond))						\
- 			return;						\
--		if (rcucheck)						\
--			rcu_irq_enter_irqson();				\
--		rcu_read_lock_sched_notrace();				\
--		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
-+									\
-+		/*							\
-+		 * For rcuidle callers, use srcu since sched-rcu	\
-+		 * doesn't work from the idle path.			\
-+		 */							\
-+		if (rcuidle) {						\
-+			if (in_nmi()) {					\
-+				WARN_ON_ONCE(1);			\
-+				return; /* no srcu from nmi */		\
-+			}						\
-+									\
-+			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-+			it_func_ptr =					\
-+				srcu_dereference_notrace((tp)->funcs,	\
-+						&tracepoint_srcu);	\
-+			/* To keep it consistent with !rcuidle path */	\
-+			preempt_disable_notrace();			\
-+		} else {						\
-+			rcu_read_lock_sched_notrace();			\
-+			it_func_ptr =					\
-+				rcu_dereference_sched((tp)->funcs);	\
-+		}							\
-+									\
- 		if (it_func_ptr) {					\
- 			do {						\
- 				it_func = (it_func_ptr)->func;		\
-@@ -148,9 +177,13 @@ extern void syscall_unregfunc(void);
- 				((void(*)(proto))(it_func))(args);	\
- 			} while ((++it_func_ptr)->func);		\
- 		}							\
--		rcu_read_unlock_sched_notrace();			\
--		if (rcucheck)						\
--			rcu_irq_exit_irqson();				\
-+									\
-+		if (rcuidle) {						\
-+			preempt_enable_notrace();			\
-+			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
-+		} else {						\
-+			rcu_read_unlock_sched_notrace();		\
-+		}							\
- 	} while (0)
- 
- #ifndef MODULE
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 1e37da2e0c25..b2e3be589aff 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -31,6 +31,9 @@
- extern struct tracepoint * const __start___tracepoints_ptrs[];
- extern struct tracepoint * const __stop___tracepoints_ptrs[];
- 
-+DEFINE_SRCU(tracepoint_srcu);
-+EXPORT_SYMBOL_GPL(tracepoint_srcu);
-+
- /* Set to 1 to enable tracepoint debug output */
- static const int tracepoint_debug;
- 
-@@ -67,16 +70,27 @@ static inline void *allocate_probes(int count)
- 	return p == NULL ? NULL : p->probes;
- }
- 
--static void rcu_free_old_probes(struct rcu_head *head)
-+static void srcu_free_old_probes(struct rcu_head *head)
- {
- 	kfree(container_of(head, struct tp_probes, rcu));
- }
- 
-+static void rcu_free_old_probes(struct rcu_head *head)
-+{
-+	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
-+}
-+
- static inline void release_probes(struct tracepoint_func *old)
- {
- 	if (old) {
- 		struct tp_probes *tp_probes = container_of(old,
- 			struct tp_probes, probes[0]);
-+		/*
-+		 * Tracepoint probes are protected by both sched RCU and SRCU,
-+		 * by calling the SRCU callback in the sched RCU callback we
-+		 * cover both cases. So let us chain the SRCU and sched RCU
-+		 * callbacks to wait for both grace periods.
-+		 */
- 		call_rcu_sched(&tp_probes->rcu, rcu_free_old_probes);
- 	}
- }
--- 
-2.17.0.921.gf22659ad46-goog
+Eric
