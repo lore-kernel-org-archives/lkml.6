@@ -1,130 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754512AbeEaKkX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:40:23 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53791 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754346AbeEaKkU (ORCPT
+        id S1754374AbeEaKno (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:43:44 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41459 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754346AbeEaKnk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:40:20 -0400
-X-Google-Smtp-Source: ADUXVKI0LXoNla8Rzrr9sYzP6iw3IlWMakL1e9WMdGzN4cMsZps7zUoeP/eHRyk1r9IqDNMRsMQKrA==
-Date: Thu, 31 May 2018 12:40:14 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Agustin Vega-Frias <agustinv@codeaurora.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, coresight@lists.linaro.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Ahern <dsahern@gmail.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        He Kuang <hekuang@huawei.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kan Liang <kan.liang@linux.intel.com>, kim.phillips@arm.co,
-        Kim Phillips <kim.phillips@arm.com>,
-        Lakshman Annadorai <lakshmana@google.com>,
-        Leo Yan <leo.yan@linaro.org>, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>, Namhyung Kim <namhyung@kernel.org>,
-        netdev@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Simon Que <sque@chromium.org>, Stephane Eranian <eranian@google.com>,
-        Thomas Richter <tmricht@linux.ibm.com>, Tor Jeremiassen <tor@ti.com>,
-        Wang Nan <wangnan0@huawei.com>, Will Deacon <will.deacon@arm.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL 0/7] perf/urgent fixes
-Message-ID: <20180531104014.GA29957@gmail.com>
-References: <20180531103220.24684-1-acme@kernel.org>
+        Thu, 31 May 2018 06:43:40 -0400
+Date: Thu, 31 May 2018 03:43:28 -0700
+From: tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-d121109100bda84bbbb199dab97f9d56432ab235@git.kernel.org>
+Cc: acme@redhat.com, brueckner@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, tmricht@linux.ibm.com,
+        heiko.carstens@de.ibm.com, hpa@zytor.com, tglx@linutronix.de,
+        schwidefsky@de.ibm.com, mingo@kernel.org
+Reply-To: tglx@linutronix.de, mingo@kernel.org, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, hpa@zytor.com, tmricht@linux.ibm.com,
+        acme@redhat.com, linux-kernel@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com
+In-Reply-To: <20180528073657.11743-1-tmricht@linux.ibm.com>
+References: <20180528073657.11743-1-tmricht@linux.ibm.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf test: "Session topology" dumps core on s390
+Git-Commit-ID: d121109100bda84bbbb199dab97f9d56432ab235
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180531103220.24684-1-acme@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  d121109100bda84bbbb199dab97f9d56432ab235
+Gitweb:     https://git.kernel.org/tip/d121109100bda84bbbb199dab97f9d56432ab235
+Author:     Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate: Mon, 28 May 2018 09:36:57 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 30 May 2018 11:43:58 -0300
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+perf test: "Session topology" dumps core on s390
 
-> Hi Ingo,
-> 
-> 	Please consider pulling,
-> 
-> - Arnaldo
-> 
-> Test results at the end of this message, as usual.
-> 
-> The following changes since commit f3903c9161f0d636a7b0ff03841628928457e64c:
-> 
->   Merge tag 'perf-urgent-for-mingo-4.17-20180514' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent (2018-05-15 08:20:45 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.17-20180531
-> 
-> for you to fetch changes up to 18a7057420f8b67f15d17087bf5c0863db752c8b:
-> 
->   perf tools: Fix perf.data format description of NRCPUS header (2018-05-30 15:40:26 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/urgent fixes:
-> 
-> - Fix 'perf test Session topology' segfault on s390 (Thomas Richter)
-> 
-> - Fix NULL return handling in bpf__prepare_load() (YueHaibing)
-> 
-> - Fix indexing on Coresight ETM packet queue decoder (Mathieu Poirier)
-> 
-> - Fix perf.data format description of NRCPUS header (Arnaldo Carvalho de Melo)
-> 
-> - Update perf.data documentation section on cpu topology
-> 
-> - Handle uncore event aliases in small groups properly (Kan Liang)
-> 
-> - Add missing perf_sample.addr into python sample dictionary (Leo Yan)
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Arnaldo Carvalho de Melo (1):
->       perf tools: Fix perf.data format description of NRCPUS header
-> 
-> Kan Liang (1):
->       perf parse-events: Handle uncore event aliases in small groups properly
-> 
-> Leo Yan (1):
->       perf script python: Add addr into perf sample dict
-> 
-> Mathieu Poirier (1):
->       perf cs-etm: Fix indexing for decoder packet queue
-> 
-> Thomas Richter (2):
->       perf test: "Session topology" dumps core on s390
->       perf data: Update documentation section on cpu topology
-> 
-> YueHaibing (1):
->       perf bpf: Fix NULL return handling in bpf__prepare_load()
-> 
->  tools/perf/Documentation/perf.data-file-format.txt |  10 +-
->  tools/perf/tests/topology.c                        |  30 ++++-
->  tools/perf/util/bpf-loader.c                       |   6 +-
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c    |  12 +-
->  tools/perf/util/evsel.h                            |   1 +
->  tools/perf/util/parse-events.c                     | 130 ++++++++++++++++++++-
->  tools/perf/util/parse-events.h                     |   7 +-
->  tools/perf/util/parse-events.y                     |   8 +-
->  .../util/scripting-engines/trace-event-python.c    |   2 +
->  9 files changed, 185 insertions(+), 21 deletions(-)
+The "perf test Session topology" entry fails with core dump on s390. The root
+cause is a NULL pointer dereference in function check_cpu_topology() line 76
+(or line 82 without -v).
 
-Pulled, thanks a lot Arnaldo!
+The session->header.env.cpu variable is NULL because on s390 function
+process_cpu_topology() returns with error:
 
-	Ingo
+    socket_id number is too big.
+    You may need to upgrade the perf tool.
+
+and releases the env.cpu variable via zfree() and sets it to NULL.
+
+Here is the gdb output:
+(gdb) n
+76                      pr_debug("CPU %d, core %d, socket %d\n", i,
+(gdb) n
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00000000010f4d9e in check_cpu_topology (path=0x3ffffffd6c8
+	"/tmp/perf-test-J6CHMa", map=0x14a1740) at tests/topology.c:76
+76  pr_debug("CPU %d, core %d, socket %d\n", i,
+(gdb)
+
+Make sure the env.cpu variable is not used when its NULL.
+Test for NULL pointer and return TEST_SKIP if so.
+
+Output before:
+
+  [root@p23lp27 perf]# ./perf test -F 39
+  39: Session topology  :Segmentation fault (core dumped)
+  [root@p23lp27 perf]#
+
+Output after:
+
+  [root@p23lp27 perf]# ./perf test -vF 39
+  39: Session topology                                      :
+  --- start ---
+  templ file: /tmp/perf-test-Ajx59D
+  socket_id number is too big.You may need to upgrade the perf tool.
+  ---- end ----
+  Session topology: Skip
+  [root@p23lp27 perf]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180528073657.11743-1-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/topology.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/tests/topology.c b/tools/perf/tests/topology.c
+index 17cb1bb3448c..40e30a26b23c 100644
+--- a/tools/perf/tests/topology.c
++++ b/tools/perf/tests/topology.c
+@@ -70,6 +70,27 @@ static int check_cpu_topology(char *path, struct cpu_map *map)
+ 	session = perf_session__new(&data, false, NULL);
+ 	TEST_ASSERT_VAL("can't get session", session);
+ 
++	/* On platforms with large numbers of CPUs process_cpu_topology()
++	 * might issue an error while reading the perf.data file section
++	 * HEADER_CPU_TOPOLOGY and the cpu_topology_map pointed to by member
++	 * cpu is a NULL pointer.
++	 * Example: On s390
++	 *   CPU 0 is on core_id 0 and physical_package_id 6
++	 *   CPU 1 is on core_id 1 and physical_package_id 3
++	 *
++	 *   Core_id and physical_package_id are platform and architecture
++	 *   dependend and might have higher numbers than the CPU id.
++	 *   This actually depends on the configuration.
++	 *
++	 *  In this case process_cpu_topology() prints error message:
++	 *  "socket_id number is too big. You may need to upgrade the
++	 *  perf tool."
++	 *
++	 *  This is the reason why this test might be skipped.
++	 */
++	if (!session->header.env.cpu)
++		return TEST_SKIP;
++
+ 	for (i = 0; i < session->header.env.nr_cpus_avail; i++) {
+ 		if (!cpu_map__has(map, i))
+ 			continue;
+@@ -95,7 +116,7 @@ int test__session_topology(struct test *test __maybe_unused, int subtest __maybe
+ {
+ 	char path[PATH_MAX];
+ 	struct cpu_map *map;
+-	int ret = -1;
++	int ret = TEST_FAIL;
+ 
+ 	TEST_ASSERT_VAL("can't get templ file", !get_temp(path));
+ 
+@@ -110,12 +131,9 @@ int test__session_topology(struct test *test __maybe_unused, int subtest __maybe
+ 		goto free_path;
+ 	}
+ 
+-	if (check_cpu_topology(path, map))
+-		goto free_map;
+-	ret = 0;
+-
+-free_map:
++	ret = check_cpu_topology(path, map);
+ 	cpu_map__put(map);
++
+ free_path:
+ 	unlink(path);
+ 	return ret;
