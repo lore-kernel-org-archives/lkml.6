@@ -1,163 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932673AbeEaCTp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 22:19:45 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:19623 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932588AbeEaCTn (ORCPT
+        id S932654AbeEaCer (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 22:34:47 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:44275 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932602AbeEaCep (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 22:19:43 -0400
-X-UUID: fc9dc9ba9044449c8bebc658a5b8653a-20180531
-Message-ID: <1527733167.28160.1.camel@mhfsdcap03>
-Subject: Re: [PATCH] PCI: mediatek: Add system pm support for MT2712
-From: Honghui Zhang <honghui.zhang@mediatek.com>
-To: Ryder Lee <ryder.lee@mediatek.com>
-CC: <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
-        <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <hongkun.cao@mediatek.com>, <youlin.pei@mediatek.com>,
-        <yong.wu@mediatek.com>, <yt.shen@mediatek.com>,
-        <sean.wang@mediatek.com>, <xinping.qian@mediatek.com>
-Date: Thu, 31 May 2018 10:19:27 +0800
-In-Reply-To: <1527732336.9842.3.camel@mtkswgap22>
-References: <1527647736-19986-1-git-send-email-honghui.zhang@mediatek.com>
-         <1527732336.9842.3.camel@mtkswgap22>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 30 May 2018 22:34:45 -0400
+X-Google-Smtp-Source: ADUXVKJoHXEHjprmSx/hTPqGcsf4DqoIe9ECG0+w7f1RGD9T0SQfU3zAJofpqB0nu3Sgh7k+iafbndIJ4dM4xSr3Ez8=
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <20180530154110.GA22184@bombadil.infradead.org>
+References: <59623b15001e5a20ac32b1a393db88722be2e718.1527679621.git.baolin.wang@linaro.org>
+ <20180530120133.GC17450@bombadil.infradead.org> <CAMz4ku+fBt2uY6MbiMX1X-6jtjdpqp=DWNMrefOG4SsUHWN4kQ@mail.gmail.com>
+ <20180530151327.GA13951@bombadil.infradead.org> <20180530154110.GA22184@bombadil.infradead.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Thu, 31 May 2018 10:34:44 +0800
+Message-ID: <CAMz4kuLG7c9E98q_SwYT+wcKRjH3RHL9p85D1Ku+FAAvLL1T-Q@mail.gmail.com>
+Subject: Re: [PATCH] mm: dmapool: Check the dma pool name
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-31 at 10:05 +0800, Ryder Lee wrote:
-> On Wed, 2018-05-30 at 10:35 +0800, honghui.zhang@mediatek.com wrote:
-> > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> > 
-> > The MTCMOS of PCIe Host for MT2712 will be off when system suspend, and all
-> > the internel control register will be reset after system resume. The PCIe
-> > link should be re-established and the related control register values should
-> > be re-set after system resume.
-> > 
-> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> > CC: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> >  drivers/pci/host/pcie-mediatek.c | 82 ++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 82 insertions(+)
-> > 
-> > diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
-> > index dabf1086..60f98d92 100644
-> > --- a/drivers/pci/host/pcie-mediatek.c
-> > +++ b/drivers/pci/host/pcie-mediatek.c
-> > @@ -132,12 +132,14 @@ struct mtk_pcie_port;
-> >  /**
-> >   * struct mtk_pcie_soc - differentiate between host generations
-> >   * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-> > + * @pm_support: whether the host's MTCMOS will be off when suspend
-> >   * @ops: pointer to configuration access functions
-> >   * @startup: pointer to controller setting functions
-> >   * @setup_irq: pointer to initialize IRQ functions
-> >   */
-> >  struct mtk_pcie_soc {
-> >  	bool need_fix_class_id;
-> > +	bool pm_support;
-> >  	struct pci_ops *ops;
-> >  	int (*startup)(struct mtk_pcie_port *port);
-> >  	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
-> > @@ -1179,12 +1181,91 @@ static int mtk_pcie_probe(struct platform_device *pdev)
-> >  	return err;
-> >  }
-> >  
-> > +static int __maybe_unused mtk_pcie_suspend_noirq(struct device *dev)
-> > +{
-> > +	struct platform_device *pdev;
-> > +	struct mtk_pcie *pcie;
-> > +	struct mtk_pcie_port *port;
-> > +	const struct mtk_pcie_soc *soc;
-> > +
-> > +	pdev = to_platform_device(dev);
-> > +	pcie = platform_get_drvdata(pdev);
-> 
-> How about this -
-> struct mtk_pcie *pcie = dev_get_drvdata(dev);
+On 30 May 2018 at 23:41, Matthew Wilcox <willy@infradead.org> wrote:
+> On Wed, May 30, 2018 at 08:13:27AM -0700, Matthew Wilcox wrote:
+>> On Wed, May 30, 2018 at 08:14:09PM +0800, Baolin Wang wrote:
+>> > On 30 May 2018 at 20:01, Matthew Wilcox <willy@infradead.org> wrote:
+>> > > On Wed, May 30, 2018 at 07:28:43PM +0800, Baolin Wang wrote:
+>> > >> It will be crash if we pass one NULL name when creating one dma pool,
+>> > >> so we should check the passing name when copy it to dma pool.
+>> > >
+>> > > NAK.  Crashing is the appropriate thing to do.  Fix the caller to not
+>> > > pass NULL.
+>> > >
+>> > > If you permit NULL to be passed then you're inviting crashes or just
+>> > > bad reporting later when pool->name is printed.
+>> >
+>> > I think it just prints one NULL pool name. Sometimes the device
+>> > doesn't care the dma pool names, so I think we can make code more
+>> > solid to valid the passing parameters like other code does.
+>> > Or can we add check to return NULL when the passing name is NULL
+>> > instead of crashing the kernel? Thanks.
+>>
+>> No.  Fix your driver.
+>
+> Let me elaborate on this.  Kernel code is supposed to be "reasonable".
+> That means we don't check every argument to every function for sanity,
+> unless it's going to cause trouble later.  Crashing immediately with
+> a bogus argument is fine; you can see the problem and fix it immediately.
+> Returning NULL with a bad argument is actually worse; you won't know why
+> the function returned NULL (maybe we're out of memory?) and you'll have
+> a more complex debugging experience.
+>
+> Sometimes it makes sense to accept a NULL pointer and do something
+> reasonable, like kfree().  In this case, we can eliminate checks in all
+> the callers.  But we don't, in general, put sanity checks on arguments
+> without a good reason.
+>
+> Your reasons aren't good.  "The driver doesn't care" -- well, just pass
+> the driver's name, then.
 
-Yes, I forgot that, thanks very much for your reminder.
+Thanks for your explanation. OK, force the driver to pass a pool name.
+Sorry for noises.
 
-> 
-> > +	soc = pcie->soc;
-> > +	if (!soc->pm_support)
-> > +		return 0;
-> > +
-> > +	list_for_each_entry(port, &pcie->ports, list) {
-> > +		clk_disable_unprepare(port->ahb_ck);
-> > +		clk_disable_unprepare(port->sys_ck);
-> > +		phy_power_off(port->phy);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int __maybe_unused mtk_pcie_resume_noirq(struct device *dev)
-> > +{
-> > +	struct platform_device *pdev;
-> > +	struct mtk_pcie *pcie;
-> > +	struct mtk_pcie_port *port;
-> > +	const struct mtk_pcie_soc *soc;
-> > +	int ret;
-> > +
-> > +	pdev = to_platform_device(dev);
-> > +	pcie = platform_get_drvdata(pdev);
-> 
-> struct mtk_pcie *pcie = dev_get_drvdata(dev);
-
-thanks.
-
-> 
-> > +	soc = pcie->soc;
-> > +	if (!soc->pm_support)
-> > +		return 0;
-> > +
-> > +	list_for_each_entry(port, &pcie->ports, list) {
-> > +		ret = phy_power_on(port->phy);
-> > +		if (ret) {
-> > +			dev_err(dev, "could not power on phy\n");
-> > +			return ret;
-> > +		}
-> > +		ret = clk_prepare_enable(port->sys_ck);
-> > +		if (ret) {
-> > +			dev_err(dev, "enable sys clock error\n");
-> > +			phy_power_off(port->phy);
-> > +			return ret;
-> > +		}
-> > +
-> > +		ret = clk_prepare_enable(port->ahb_ck);
-> > +		if (ret) {
-> > +			dev_err(dev, "enable ahb clock error\n");
-> > +			phy_power_off(port->phy);
-> > +			clk_disable_unprepare(port->sys_ck);
-> > +			return ret;
-> > +		}
-> > +
-> > +		ret = soc->startup(port);
-> > +		if (ret) {
-> > +			dev_err(dev, "pcie linkup failed\n");
-> > +			phy_power_off(port->phy);
-> > +			clk_disable_unprepare(port->sys_ck);
-> > +			clk_disable_unprepare(port->ahb_ck);
-> > +			return ret;
-> > +		}
-> > +
-> > +		if (IS_ENABLED(CONFIG_PCI_MSI))
-> > +			mtk_pcie_enable_msi(port);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> 
-> 
-> 
+-- 
+Baolin.wang
+Best Regards
