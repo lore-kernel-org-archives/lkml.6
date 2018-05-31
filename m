@@ -1,97 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754014AbeEaHRZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 03:17:25 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42647 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753825AbeEaHRW (ORCPT
+        id S1754027AbeEaHSt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 03:18:49 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44637 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753946AbeEaHSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 03:17:22 -0400
-X-Google-Smtp-Source: ADUXVKK8ARk6UGXuzYeMhIFGA/qOxj4tcknylLvQE+21MogTPhJ9MfdblGKiWKSlyHs0B5iJqU5vQA==
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
-Date: Thu, 31 May 2018 10:17:17 +0300
-To: Rob Herring <robh@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-        mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180531071717.GG13528@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030129.GA16122@rob-hp-laptop>
+        Thu, 31 May 2018 03:18:47 -0400
+X-Google-Smtp-Source: ADUXVKKMT+CjwPRmUyyvt8r7dtc2iRiEuolpdHEgBHdSIhr2x83r8WSuCQ/9QfQBHa8c7NVvztXwBM88mpS0XDIiGdk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531030129.GA16122@rob-hp-laptop>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
+References: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 31 May 2018 10:18:46 +0300
+Message-ID: <CAHp75VdFZcNMMt6aRWicCozMJ+wfAyJ4ajegHCgNg2X-x_KN_A@mail.gmail.com>
+Subject: Re: [RFC 1/2] printk: Enable platform to provide a early boot clock
+To: Feng Tang <feng.tang@intel.com>
+Cc: Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        alek.du@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Rob,
+On Wed, May 30, 2018 at 12:20 PM, Feng Tang <feng.tang@intel.com> wrote:
+> Currently printk timestamp mostly come from the sched_clock which
+> depends on the clock setup, so there are many kernel logs started
+> with "[    0.000000]   " before the clock is calibrated.
+>
+> This patch will provide an debug option for specific platform to
+> provide a early boot time clock, so that we can have time info in
+> kernel log much earlier, which can show the time info for the early
+> kernel boot, and make boottime tuning/optimization easier (boot time
+> is critical for phone/tablet and embedded devices).
+>
+> Capable platform only need to setup the "boot_printk_clock_fn"
+> which could return time in nano seconds.
+>
+> Together with a TSC patch on x86 system, we have easily captured
+> some early boottime killer like unwind_init() which takes about
+> 300ms in boot phase.
 
-Thanks for the review!
+> +static u64 printk_clock(void)
+> +{
+> +       /* If platform provides early boot printk clock, then use it */
+> +       if (unlikely(system_state == SYSTEM_BOOTING && boot_printk_clock_fn))
+> +               return boot_printk_clock_fn();
+> +       else
+> +               return local_clock();
 
-On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
-> On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
-> > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> > + - interrupts		: The interrupt line the device is connected to.
-> > + - interrupt-controller	: Marks the device node as an interrupt controller.
-> 
-> What sub blocks have interrupts?
+'else' is redundant.
 
-The PMIC can generate interrupts from events which cause it to reset.
-Eg, irq from watchdog line change, power button pushes, reset request
-via register interface etc. I don't know any generic handling for these
-interrupts. In "normal" use-case this PMIC is powering the processor
-where driver is running and I do not see reasonable handling because
-power-reset is going to follow the irq.
-
-This IRQ might be relevant if use for PMIC is such that it is not
-powering the processor where the driver is runninng. Then the controlling
-processor can get the notification that chips powered by PMIC are
-resetting. But handling for this must be use-case specific, right? So in
-short - none of the current sub-devices use the IRQs - they are there
-for specific use-cases which some boards may implement. Any suggestions
-how to document the available interrupts? (power button line, sw reset
-etc). My current assumption has been that one who is interested in using
-these irqs should really also see the data-sheet for IRQs. But I admit
-that documenting available interrupts here would be helpful. I will just
-cook up some explanation and send it as a patch if no suggestions on how
-to document those.
-
-Patches 3/6 and 6/6 from the series were already applied to Mark's tree.
-So how should I send further patches? Should I still send the whole series
-(including already applied patches 3/6 and 6/6) or only the ones I change?
-
-> > +Example:
-> > +
-> > +	pmic: bd71837@4b {
-> 
-> Node names should be generic ideally. So "pmic@4b"
-
-I'll change that.
-
-> > +		clk: bd71837-32k-out {
-> 
-> clock-controller {
-
-And I'll change that too.
-
-> 
-> > +			compatible = "rohm,bd71837-clk";
-> > +			#clock-cells = <0>;
-> > +			clock-frequency = <32768>;
-> 
-> Can this be anything else?
-
-Not so that I know. Frequency is fixed. Is there a problem with this?
+> +}
 
 
-Br,
-	Matti Vaittinen
+-- 
+With Best Regards,
+Andy Shevchenko
