@@ -1,50 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754605AbeEaUbu convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 16:31:50 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37985 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754434AbeEaUbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 16:31:49 -0400
-Date: Thu, 31 May 2018 13:31:32 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CALCETrX3wXJM9=i1K_winBLygPHCJj2=Ebdsf_7y5xMo-kSrQw@mail.gmail.com>
-References: <1527789525-8857-1-git-send-email-chang.seok.bae@intel.com> <1527789525-8857-3-git-send-email-chang.seok.bae@intel.com> <CALCETrX3wXJM9=i1K_winBLygPHCJj2=Ebdsf_7y5xMo-kSrQw@mail.gmail.com>
+        id S1754615AbeEaUck (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 16:32:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50962 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754160AbeEaUce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 16:32:34 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH V2 02/15] x86/fsgsbase/64: Make ptrace read FS/GS base accurately
-To: Andy Lutomirski <luto@kernel.org>,
-        "Bae, Chang Seok" <chang.seok.bae@intel.com>
-CC: Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-From: hpa@zytor.com
-Message-ID: <7A65BD11-6A84-4CDF-9FF7-34303BABBDD1@zytor.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        afaerber@suse.de
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1527780180-15041-1-git-send-email-manivannan.sadhasivam@linaro.org>
+Cc: daniel.thompson@linaro.org, manivannanece23@gmail.com,
+        bdong@ucrobotics.com, liuwei@actions-semi.com,
+        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
+        hzhang@ucrobotics.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1527780180-15041-1-git-send-email-manivannan.sadhasivam@linaro.org>
+Message-ID: <152779875340.144038.4898809848995507014@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] MAINTAINERS: Add Actions Semi S900 clk entries
+Date: Thu, 31 May 2018 13:32:33 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VKX4eu006387
 
-On May 31, 2018 1:14:59 PM PDT, Andy Lutomirski <luto@kernel.org> wrote:
->On Thu, May 31, 2018 at 10:58 AM Chang S. Bae
-><chang.seok.bae@intel.com> wrote:
->>
->> From: Andy Lutomirski <luto@kernel.org>
->>
->> ptrace can read FS/GS base using the register access API
->> (PTRACE_PEEKUSER, etc) or PTRACE_ARCH_PRCTL.  Make both of these
->> mechanisms return the actual FS/GS base.
->>
->> This will improve debuggability by providing the correct information
->> to ptracer (GDB and etc).
->
->LGTM.
+Quoting Manivannan Sadhasivam (2018-05-31 08:23:00)
+> Add S900 clk entries under ARCH_ACTIONS
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
 
-LGTM?
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+
+Unless you wanted me to apply this?
