@@ -1,105 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753885AbeEaFhQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 01:37:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36918 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751885AbeEaFhO (ORCPT
+        id S1753929AbeEaFhi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 01:37:38 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36225 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753895AbeEaFhg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 01:37:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 59436602A7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=akhilpo@codeaurora.org
-From: Akhil P Oommen <akhilpo@codeaurora.org>
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jcrouse@codeaurora.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, cw00.choi@samsung.com,
-        linux-arm-msm@vger.kernel.org
-Subject: [RFC] PM / devfreq: Add support for alerts
-Date: Thu, 31 May 2018 11:06:59 +0530
-Message-Id: <1527745019-25155-1-git-send-email-akhilpo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 31 May 2018 01:37:36 -0400
+X-Google-Smtp-Source: ADUXVKKGHzxEmELQi21HXjoixXswZPhqoIssRnCjfMr607bRQE7YYskSKfa5JgqKV6tPUp+SVPWssQ==
+Subject: Re: [PATCH 1/8] xen/grant-table: Make set/clear page private code
+ shared
+To: Dongwon Kim <dongwon.kim@intel.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180525153331.31188-1-andr2000@gmail.com>
+ <20180525153331.31188-2-andr2000@gmail.com>
+ <20180530213416.GA3159@downor-Z87X-UD5H>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <3830bb6c-62e8-199a-aef3-59ccc0e59017@gmail.com>
+Date: Thu, 31 May 2018 08:37:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180530213416.GA3159@downor-Z87X-UD5H>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, DEVFREQ reevaluates the device state periodically and/or
-based on the OPP list changes. Private API has to be exposed to allow
-the device driver to alert/notify the governor to reevaluate when a new
-set of data is available. This makes the governor more coupled to a
-particular device driver. We can improve here by exposing a DEVFREQ API
-to allow the device drivers to send generic alerts to the governor.
-
-Signed-off-by: Akhil P Oommen <akhilpo@codeaurora.org>
----
- drivers/devfreq/devfreq.c  | 21 +++++++++++++++++++++
- drivers/devfreq/governor.h |  1 +
- include/linux/devfreq.h    |  5 +++++
- 3 files changed, 27 insertions(+)
-
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index fe2af6a..24a8046 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -1532,3 +1532,24 @@ void devm_devfreq_unregister_notifier(struct device *dev,
- 			       devm_devfreq_dev_match, devfreq));
- }
- EXPORT_SYMBOL(devm_devfreq_unregister_notifier);
-+
-+/**
-+ * devfreq_alert_governor() - Alert governor about an event
-+ * @devfreq:	The devfreq object.
-+ * @type:	Optional alert type.
-+ *
-+ * This function lets the device alert the governor about an event.
-+ * A governor may not implement or choose to completely ignore this alert.
-+ */
-+void devfreq_alert_governor(struct devfreq *devfreq, unsigned int type)
-+{
-+	/* Don't let someone change the governor until we are done here. */
-+	mutex_lock(&devfreq_list_lock);
-+
-+	if (devfreq)
-+		devfreq->governor->event_handler(devfreq,
-+				DEVFREQ_GOV_ALERT, &type);
-+
-+	mutex_unlock(&devfreq_list_lock);
-+}
-+EXPORT_SYMBOL(devfreq_alert_governor);
-diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
-index cfc50a6..e5da3442 100644
---- a/drivers/devfreq/governor.h
-+++ b/drivers/devfreq/governor.h
-@@ -24,6 +24,7 @@
- #define DEVFREQ_GOV_INTERVAL			0x3
- #define DEVFREQ_GOV_SUSPEND			0x4
- #define DEVFREQ_GOV_RESUME			0x5
-+#define DEVFREQ_GOV_ALERT			0x6
- 
- /**
-  * struct devfreq_governor - Devfreq policy governor
-diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-index 3aae5b3..740c228 100644
---- a/include/linux/devfreq.h
-+++ b/include/linux/devfreq.h
-@@ -193,6 +193,7 @@ extern struct devfreq *devm_devfreq_add_device(struct device *dev,
- 				  void *data);
- extern void devm_devfreq_remove_device(struct device *dev,
- 				  struct devfreq *devfreq);
-+extern void devfreq_alert_governor(struct devfreq *devfreq, unsigned int type);
- 
- /* Supposed to be called by PM callbacks */
- extern int devfreq_suspend_device(struct devfreq *devfreq);
-@@ -306,6 +307,10 @@ static inline void devm_devfreq_remove_device(struct device *dev,
- {
- }
- 
-+static void devfreq_alert_governor(struct devfreq *devfreq, unsigned int type)
-+{
-+}
-+
- static inline int devfreq_suspend_device(struct devfreq *devfreq)
- {
- 	return 0;
--- 
-1.9.1
+On 05/31/2018 12:34 AM, Dongwon Kim wrote:
+> On Fri, May 25, 2018 at 06:33:24PM +0300, Oleksandr Andrushchenko wrote:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>
+>> Make set/clear page private code shared and accessible to
+>> other kernel modules which can re-use these instead of open-coding.
+>>
+>> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> ---
+>>   drivers/xen/grant-table.c | 54 +++++++++++++++++++++++++--------------
+>>   include/xen/grant_table.h |  3 +++
+>>   2 files changed, 38 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
+>> index 27be107d6480..d7488226e1f2 100644
+>> --- a/drivers/xen/grant-table.c
+>> +++ b/drivers/xen/grant-table.c
+>> @@ -769,29 +769,18 @@ void gnttab_free_auto_xlat_frames(void)
+>>   }
+>>   EXPORT_SYMBOL_GPL(gnttab_free_auto_xlat_frames);
+>>   
+>> -/**
+>> - * gnttab_alloc_pages - alloc pages suitable for grant mapping into
+>> - * @nr_pages: number of pages to alloc
+>> - * @pages: returns the pages
+>> - */
+>> -int gnttab_alloc_pages(int nr_pages, struct page **pages)
+>> +int gnttab_pages_set_private(int nr_pages, struct page **pages)
+>>   {
+>>   	int i;
+>> -	int ret;
+>> -
+>> -	ret = alloc_xenballooned_pages(nr_pages, pages);
+>> -	if (ret < 0)
+>> -		return ret;
+>>   
+>>   	for (i = 0; i < nr_pages; i++) {
+>>   #if BITS_PER_LONG < 64
+>>   		struct xen_page_foreign *foreign;
+>>   
+>>   		foreign = kzalloc(sizeof(*foreign), GFP_KERNEL);
+>> -		if (!foreign) {
+>> -			gnttab_free_pages(nr_pages, pages);
+>> +		if (!foreign)
+> Don't we have to free previously allocated "foreign"(s) if it fails in the middle
+> (e.g. 0 < i && i < nr_pages - 1) before returning?
+gnttab_free_pages(nr_pages, pages); will take care of it when called from
+outside, see below. It can also handle partial allocations, so no problem
+here
+>>   			return -ENOMEM;
+>> -		}
+>> +
+>>   		set_page_private(pages[i], (unsigned long)foreign);
+>>   #endif
+>>   		SetPagePrivate(pages[i]);
+>> @@ -799,14 +788,30 @@ int gnttab_alloc_pages(int nr_pages, struct page **pages)
+>>   
+>>   	return 0;
+>>   }
+>> -EXPORT_SYMBOL(gnttab_alloc_pages);
+>> +EXPORT_SYMBOL(gnttab_pages_set_private);
+>>   
+>>   /**
+>> - * gnttab_free_pages - free pages allocated by gnttab_alloc_pages()
+>> - * @nr_pages; number of pages to free
+>> - * @pages: the pages
+>> + * gnttab_alloc_pages - alloc pages suitable for grant mapping into
+>> + * @nr_pages: number of pages to alloc
+>> + * @pages: returns the pages
+>>    */
+>> -void gnttab_free_pages(int nr_pages, struct page **pages)
+>> +int gnttab_alloc_pages(int nr_pages, struct page **pages)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = alloc_xenballooned_pages(nr_pages, pages);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	ret = gnttab_pages_set_private(nr_pages, pages);
+>> +	if (ret < 0)
+>> +		gnttab_free_pages(nr_pages, pages);
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL(gnttab_alloc_pages);
+>> +
+>> +void gnttab_pages_clear_private(int nr_pages, struct page **pages)
+>>   {
+>>   	int i;
+>>   
+>> @@ -818,6 +823,17 @@ void gnttab_free_pages(int nr_pages, struct page **pages)
+>>   			ClearPagePrivate(pages[i]);
+>>   		}
+>>   	}
+>> +}
+>> +EXPORT_SYMBOL(gnttab_pages_clear_private);
+>> +
+>> +/**
+>> + * gnttab_free_pages - free pages allocated by gnttab_alloc_pages()
+>> + * @nr_pages; number of pages to free
+>> + * @pages: the pages
+>> + */
+>> +void gnttab_free_pages(int nr_pages, struct page **pages)
+>> +{
+>> +	gnttab_pages_clear_private(nr_pages, pages);
+>>   	free_xenballooned_pages(nr_pages, pages);
+>>   }
+>>   EXPORT_SYMBOL(gnttab_free_pages);
+>> diff --git a/include/xen/grant_table.h b/include/xen/grant_table.h
+>> index 2e37741f6b8d..de03f2542bb7 100644
+>> --- a/include/xen/grant_table.h
+>> +++ b/include/xen/grant_table.h
+>> @@ -198,6 +198,9 @@ void gnttab_free_auto_xlat_frames(void);
+>>   int gnttab_alloc_pages(int nr_pages, struct page **pages);
+>>   void gnttab_free_pages(int nr_pages, struct page **pages);
+>>   
+>> +int gnttab_pages_set_private(int nr_pages, struct page **pages);
+>> +void gnttab_pages_clear_private(int nr_pages, struct page **pages);
+>> +
+>>   int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
+>>   		    struct gnttab_map_grant_ref *kmap_ops,
+>>   		    struct page **pages, unsigned int count);
+>> -- 
+>> 2.17.0
+>>
