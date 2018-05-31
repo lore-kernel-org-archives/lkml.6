@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754607AbeEaKcw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:32:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57018 "EHLO mail.kernel.org"
+        id S1754514AbeEaKdz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:33:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754471AbeEaKcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:32:45 -0400
+        id S1754584AbeEaKcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 06:32:51 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, netdev@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 3/7] perf bpf: Fix NULL return handling in bpf__prepare_load()
-Date: Thu, 31 May 2018 07:32:16 -0300
-Message-Id: <20180531103220.24684-4-acme@kernel.org>
+Subject: [PATCH 5/7] perf data: Update documentation section on cpu topology
+Date: Thu, 31 May 2018 07:32:18 -0300
+Message-Id: <20180531103220.24684-6-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180531103220.24684-1-acme@kernel.org>
 References: <20180531103220.24684-1-acme@kernel.org>
@@ -24,53 +25,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-bpf_object__open()/bpf_object__open_buffer can return error pointer or
-NULL, check the return values with IS_ERR_OR_NULL() in bpf__prepare_load
-and bpf__prepare_load_buffer
+Add an explanation of each cpu's core and socket identifier to the
+perf.data file format documentation.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: netdev@vger.kernel.org
-Link: https://lkml.kernel.org/n/tip-psf4xwc09n62al2cb9s33v9h@git.kernel.org
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180528074433.16652-1-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/bpf-loader.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/Documentation/perf.data-file-format.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
-index af7ad814b2c3..cee658733e2c 100644
---- a/tools/perf/util/bpf-loader.c
-+++ b/tools/perf/util/bpf-loader.c
-@@ -66,7 +66,7 @@ bpf__prepare_load_buffer(void *obj_buf, size_t obj_buf_sz, const char *name)
- 	}
+diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+index d00f0d51cab8..c57904a526ce 100644
+--- a/tools/perf/Documentation/perf.data-file-format.txt
++++ b/tools/perf/Documentation/perf.data-file-format.txt
+@@ -153,10 +153,18 @@ struct {
+ 	HEADER_CPU_TOPOLOGY = 13,
  
- 	obj = bpf_object__open_buffer(obj_buf, obj_buf_sz, name);
--	if (IS_ERR(obj)) {
-+	if (IS_ERR_OR_NULL(obj)) {
- 		pr_debug("bpf: failed to load buffer\n");
- 		return ERR_PTR(-EINVAL);
- 	}
-@@ -102,14 +102,14 @@ struct bpf_object *bpf__prepare_load(const char *filename, bool source)
- 			pr_debug("bpf: successfull builtin compilation\n");
- 		obj = bpf_object__open_buffer(obj_buf, obj_buf_sz, filename);
+ String lists defining the core and CPU threads topology.
++The string lists are followed by a variable length array
++which contains core_id and socket_id of each cpu.
++The number of entries can be determined by the size of the
++section minus the sizes of both string lists.
  
--		if (!IS_ERR(obj) && llvm_param.dump_obj)
-+		if (!IS_ERR_OR_NULL(obj) && llvm_param.dump_obj)
- 			llvm__dump_obj(filename, obj_buf, obj_buf_sz);
+ struct {
+        struct perf_header_string_list cores; /* Variable length */
+        struct perf_header_string_list threads; /* Variable length */
++       struct {
++	      uint32_t core_id;
++	      uint32_t socket_id;
++       } cpus[nr]; /* Variable length records */
+ };
  
- 		free(obj_buf);
- 	} else
- 		obj = bpf_object__open(filename);
- 
--	if (IS_ERR(obj)) {
-+	if (IS_ERR_OR_NULL(obj)) {
- 		pr_debug("bpf: failed to load %s\n", filename);
- 		return obj;
- 	}
+ Example:
 -- 
 2.14.3
