@@ -1,117 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755508AbeEaPf6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:35:58 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38849 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755369AbeEaPf4 (ORCPT
+        id S1755536AbeEaPge (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:36:34 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34781 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755421AbeEaPg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:35:56 -0400
-X-Google-Smtp-Source: ADUXVKIY8RLf3GwHauZWr4exq+THVnharkjgnlDu5ig+RowmgLcuEhVKC0IA5Kz3+CiDjZAu176wEg==
-Date: Thu, 31 May 2018 17:35:54 +0200
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: yamada.masahiro@socionext.com, Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        albert@sifive.com, michal.lkml@markovi.net
-Subject: Re: [PATCH] riscv: pass machine size to sparse
-Message-ID: <20180531153553.kex32gupopdq2nqh@ltop.local>
-References: <CAK7LNAT_dnO9Enr+Dg11YTux8JAV3K=k4r_5VP3moUCG8s5XHg@mail.gmail.com>
- <mhng-a4f5b769-8271-4b99-ae61-bbc49fa2286f@palmer-si-x1c4>
+        Thu, 31 May 2018 11:36:27 -0400
+X-Google-Smtp-Source: ADUXVKL4YOMAckFCPMnIa13BhfVBLamc3fR5Xqc04RHoG6LCMbyLZgdVjtqcsrfHPeRoOG05u4U9ZxN58CLUTIUrmtk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mhng-a4f5b769-8271-4b99-ae61-bbc49fa2286f@palmer-si-x1c4>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <1527599737-28408-1-git-send-email-suzuki.poulose@arm.com>
+References: <1527599737-28408-1-git-send-email-suzuki.poulose@arm.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Thu, 31 May 2018 09:36:25 -0600
+Message-ID: <CANLsYkxStH5R0_8WFF1oe=PCCFr4Ko+0J+Xhn-wzopFFDgrRCw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] coresight: tmc-etr Transparent buffer management
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>, coresight@lists.linaro.org,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 05:09:21AM -0700, Palmer Dabbelt wrote:
-> On Mon, 28 May 2018 23:14:20 PDT (-0700), yamada.masahiro@socionext.com wrote:
-> > 2018-05-29 15:11 GMT+09:00 Christoph Hellwig <hch@infradead.org>:
-> > > On Mon, May 28, 2018 at 06:35:05PM +0200, Luc Van Oostenryck wrote:
-> > > > By default, sparse assumes a 64bit machine when compiled on x86-64
-> > > > and 32bit when compiled on anything else.
-> > > > 
-> > > > This can of course create all sort of problems when this doesn't
-> > > > correspond to the target's machine size, like issuing false
-> > > > warnings like: 'shift too big (32) for type unsigned long' or
-> > > > is 64bit while sparse was compiled on a 32bit machine, or worse,
-> > > > to not emit legitimate warnings.
-> > > > 
-> > > > Fix this by passing the appropriate -m32/-m64 flag to sparse.
-> > > 
-> > > Can we please move this to the common Kbuild code using the
-> > > CONFIG_64BIT syombol?  This really should not need boiler plate in
-> > > every architecture.
-> > 
-> > 
-> > I agree.
-> > 
-> > Luc did so for -mbig/little-endian:
-> > https://patchwork.kernel.org/patch/10433957/
-> > 
-> > We should do likewise for -m32/64.
-> 
-> Sorry for being a bit slow here, but I like the idea of making the
-> 32/64-bit issue generic as it seems like it'll be necessary for
-> every port.
+On 29 May 2018 at 07:15, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> This series is split of the Coresight ETR perf support patches posted
+> here [0]. The CATU support and perf backend support will be posted as
+> separate series for better management and review of the patches.
+>
+> This series adds the support for TMC ETR Scatter-Gather mode to allow
+> using physical non-contiguous buffer for holding the trace data. It
+> also adds a layer to handle the buffer management in a transparent
+> manner, independent of the underlying mode used by the TMC ETR.
+> The layer chooses the ETR mode based on different parameters (size,
+> re-using a set of pages, presence of an SMMU etc.).
+>
+> Finally we add a sysfs parameter to tune the buffer size for ETR in
+> sysfs-mode.
+>
+> During the testing, we found out that if the TMC ETR is not properly
+> connected to the memory subsystem, the ETR could lock-up the system
+> while waiting for the "read" transactions to complete in scatter-gather
+> mode. So, we do not use the mode on a system unless it is safe to do
+> so. This is specified by a DT property "arm,scatter-gather".
+>
+> Applies on coreisght-next tree from Mathieu
+>
+> Changes since previous version [1]:
+>  - Rebased to Mathieu's coresight-next tree to resolve a conflict.
+>  - Added tags for DT changes from Rob and Mathieu
+>  - Split the SG mode backend support patch from the
+>    ETR-BUF patch.
+>  - Address other comments from Mathieu
+>
+> Changes since splitted series [0] :
+>  - Split the series in [0]
+>  - Address comments on v2
+>  - Rename DT property "scatter-gather" to "arm,scatter-gather"
+>  - Add ETM PID for Cortex-A35, use macros to make the listing easier
+>
+> [0] - http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/574875.html
+> [1] - http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/579135.html
+>
+> Suzuki K Poulose (12):
+>   coresight: ETM: Add support for Arm Cortex-A73 and Cortex-A35
+>   coresight: tmc: Hide trace buffer handling for file read
+>   coresight: tmc-etr: Do not clean trace buffer
+>   coresight: tmc-etr: Disallow perf mode
+>   coresight: Add helper for inserting synchronization packets
+>   dts: bindings: Restrict coresight tmc-etr scatter-gather mode
+>   dts: juno: Add scatter-gather support for all revisions
+>   coresight: Add generic TMC sg table framework
+>   coresight: Add support for TMC ETR SG unit
+>   coresight: tmc-etr: Add transparent buffer management
+>   coresight: tmc-etr buf: Add TMC scatter gather mode backend
+>   coresight: tmc: Add configuration support for trace buffer size
+>
+>  .../ABI/testing/sysfs-bus-coresight-devices-tmc    |    8 +
+>  .../devicetree/bindings/arm/coresight.txt          |    5 +-
+>  arch/arm64/boot/dts/arm/juno-base.dtsi             |    1 +
+>  drivers/hwtracing/coresight/coresight-etb10.c      |   12 +-
+>  drivers/hwtracing/coresight/coresight-etm4x.c      |   31 +-
+>  drivers/hwtracing/coresight/coresight-priv.h       |   10 +-
+>  drivers/hwtracing/coresight/coresight-tmc-etf.c    |   45 +-
+>  drivers/hwtracing/coresight/coresight-tmc-etr.c    | 1010 ++++++++++++++++++--
+>  drivers/hwtracing/coresight/coresight-tmc.c        |   83 +-
+>  drivers/hwtracing/coresight/coresight-tmc.h        |  110 ++-
+>  drivers/hwtracing/coresight/coresight.c            |    3 +-
+>  11 files changed, 1144 insertions(+), 174 deletions(-)
 
-Sure, Christophe asked it too.
-I've sent a new version doing it once and for all for all archs
-but I forgot to CC you:
-	https://lkml.org/lkml/2018/5/30/948
+Applied after correcting indentation problems and rectifying the
+kernel version and date in "sysfs-bus-coresight-devices-tmc".
 
-> Looking through the patch for big/little-endian I did
-> notice:
-> 
-> * RISC-V compilers set "__riscv_xlen" to the length of an X
-> (integer) register  in bits.
-> * RISC-V compilers define "__riscv", and it doesn't appear we inform
-> sparse  about that.
-> 
-> These two might not be that interesting, but we do already have some
-> cases where we're checking for __riscv_xlen in Linux.  I've yet to
-> successfully use sparse, but adding at least
-> 
->    CHECKFLAGS += -D__riscv
-> 
-> seems reasonable,
+Mathieu
 
-Sure (but I don't see a dependency in the kernel (yet)).
-
-> and possibly also some sort of
-> 
->    ifeq ($(CONFIG_ARCH_RV64I),y)
->            CHECKFLAGS += -D__riscv_xlen=64
->    else
->            CHECKFLAGS += -D__riscv_xlen=32
->    fi
-> 
-> might be necessary.
-
-Yes, this one is really needed.
-I'll send a patch for this one and __riscv.
-
-> We strive to follow the generic rules for
-> ABI-related stuff like __LP64__ but I don't think there's any
-> generic mapping for XLEN.  Similarly there's "__riscv_flen" and
-> "__riscv_float_abi_*", but those are less likely to be used by the
-> kernel so they're probably not worth worrying about for now.
-
-Yes, I agree.
-Note that sparse will define __LP64__ (and _LP64) when in -m64 mode.
-
-> There's also a bunch of other RISC-V macros, the only one of which
-> we're currently using is "__riscv_muldiv" (and that's in a manner
-> that's unlikely to trigger any sort of static analysis).  Between a
-> lack of Kconfig options and a glibc port we're essentially mandating
-> IMA right now, so these probably don't matter.
-
-Yes, I just saw. I think also it's better to leave it so for now.
-And if it becomes more used, then better to infer it from the compiler
-than harcoding it.
-
-Regards,
--- Luc
+>
+> --
+> 2.7.4
+>
