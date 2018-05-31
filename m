@@ -1,38 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754507AbeEaUZy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 16:25:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49662 "EHLO mail.kernel.org"
+        id S1754596AbeEaU0R (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 16:26:17 -0400
+Received: from vern.gendns.com ([206.190.152.46]:41415 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754184AbeEaUZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 16:25:52 -0400
-X-Google-Smtp-Source: ADUXVKK0cmoVgPQEcpDIrsygziPwMB0C/Qn5s63sk72d98Utt3TskR9657i0vWyEI3INmae6T//7zW/I4QA+tU9PILw=
-MIME-Version: 1.0
-References: <1527789525-8857-1-git-send-email-chang.seok.bae@intel.com> <1527789525-8857-7-git-send-email-chang.seok.bae@intel.com>
-In-Reply-To: <1527789525-8857-7-git-send-email-chang.seok.bae@intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 31 May 2018 13:25:39 -0700
-X-Gmail-Original-Message-ID: <CALCETrUL0sV3f4z=S0y-fwPE82pp8BTGDGkvi=MPHak8-zwBnQ@mail.gmail.com>
-Message-ID: <CALCETrUL0sV3f4z=S0y-fwPE82pp8BTGDGkvi=MPHak8-zwBnQ@mail.gmail.com>
-Subject: Re: [PATCH V2 06/15] taint: Add taint for insecure
-To: "Bae, Chang Seok" <chang.seok.bae@intel.com>
-Cc: Andrew Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1754522AbeEaU0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 16:26:14 -0400
+From: David Lechner <david@lechnology.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ARM: LEGO MINDSTORMS EV3 Bluetooth support
+Date: Thu, 31 May 2018 15:25:47 -0500
+Message-Id: <20180531202549.11255-1-david@lechnology.com>
+X-Mailer: git-send-email 2.17.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 10:58 AM Chang S. Bae <chang.seok.bae@intel.com> wrote:
->
-> When adding new feature support, patches need to be
-> incrementally applied and tested with temporal parameters.
-> For such testing (or root-only) purposes, the new flag
-> will serve to tag the kernel taint state properly.
+This series adds Bluetooth support to LEGO MINDSTORMS EV3.
 
-I'm okay with this, I guess, but I'm not at all convinced we need it.
+The pwm-clock depends on the common clock framework, so this requires the
+recent davinci common clock series to switch to the common clock framework
+before it will actually work.
+
+David Lechner (2):
+  ARM: dts: da850-lego-ev3: Add Bluetooth nodes
+  ARM: davinci_all_defconfig: Enable Bluetooth
+
+ arch/arm/boot/dts/da850-lego-ev3.dts   | 82 ++++++++++++++++++++++++++
+ arch/arm/configs/davinci_all_defconfig |  9 +++
+ 2 files changed, 91 insertions(+)
+
+-- 
+2.17.0
