@@ -1,263 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932706AbeEaDBk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 23:01:40 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:50142 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932633AbeEaDBg (ORCPT
+        id S932703AbeEaDEm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 23:04:42 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:34101 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932643AbeEaDEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 23:01:36 -0400
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-To: shuah@kernel.org, valentina.manea.m@gmail.com
-Cc: gregkh@linuxfoundation.org, mchehab+samsung@kernel.org,
-        davem@davemloft.net, akpm@linux-foundation.org,
-        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH] selftests: add test for USB over IP driver
-Date: Wed, 30 May 2018 21:00:57 -0600
-Message-Id: <20180531030057.32442-1-shuah@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        Wed, 30 May 2018 23:04:39 -0400
+X-Google-Smtp-Source: ADUXVKKd2ZcsyNLCU+iGqnkCu7PV/90pCxPF99sbMjQmGWOTClQ+wJ+JwPKOBBADHD05koCPm2i2HQ==
+Date: Wed, 30 May 2018 22:04:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v4 3/6] regulator: bd71837: Devicetree bindings for
+ BD71837 regulators
+Message-ID: <20180531030436.GB16122@rob-hp-laptop>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <318229ca7ffcceb090fc8d0c43f887decc3082f0.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <318229ca7ffcceb090fc8d0c43f887decc3082f0.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add test for USB over IP driver. This test runs several tests on a device
-specified in the -b <busid> argument and path to the usbip tools.
+On Wed, May 30, 2018 at 11:42:32AM +0300, Matti Vaittinen wrote:
+> Document devicetree bindings for ROHM BD71837 PMIC regulators.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  .../bindings/regulator/rohm,bd71837-regulator.txt  | 126 +++++++++++++++++++++
+>  1 file changed, 126 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+> new file mode 100644
+> index 000000000000..4edf3137d9f7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+> @@ -0,0 +1,126 @@
+> +ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bindings
+> +
+> +BD71837MWV is a programmable Power Management
+> +IC (PMIC) for powering single-core, dual-core, and
+> +quad-core SoC’s such as NXP-i.MX 8M. It is optimized
+> +for low BOM cost and compact solution footprint. It
+> +integrates 8 Buck regulators and 7 LDO’s to provide all
+> +the power rails required by the SoC and the commonly
+> +used peripherals.
 
-usbip_test.sh -b <busid> -p <usbip tools path>
+Why duplicate this from the core binding?
 
-e.g:
-cd tools/testing selftests/drivers/usb/usbip
-sudo ./usbip_test.sh -b 3-10.2 -p <yoursrctree>/tools/usb/usbip
+Otherwise,
 
-This test should be run as root and user should build usbip tools before
-running the test.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-The usbip test isn't included in the Kselftest run as it requires user to
-specify a device to run tests on.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
----
- MAINTAINERS                                        |   1 +
- .../selftests/drivers/usb/usbip/usbip_test.sh      | 198 +++++++++++++++++++++
- 2 files changed, 199 insertions(+)
- create mode 100755 tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ca4afd68530c..708b681a6fbd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14661,6 +14661,7 @@ S:	Maintained
- F:	Documentation/usb/usbip_protocol.txt
- F:	drivers/usb/usbip/
- F:	tools/usb/usbip/
-+F:	tools/testing/selftests/drivers/usb/usbip/
- 
- USB PEGASUS DRIVER
- M:	Petko Manolov <petkan@nucleusys.com>
-diff --git a/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh b/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
-new file mode 100755
-index 000000000000..1893d0f59ad7
---- /dev/null
-+++ b/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
-@@ -0,0 +1,198 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
-+usage() { echo "usbip_test.sh -b <busid> -p <usbip tools path>"; exit 1; }
-+
-+while getopts "h:b:p:" arg; do
-+    case "${arg}" in
-+	h)
-+	    usage
-+	    ;;
-+	b)
-+	    busid=${OPTARG}
-+	    ;;
-+	p)
-+	    tools_path=${OPTARG}
-+	    ;;
-+	*)
-+	    usage
-+	    ;;
-+    esac
-+done
-+shift $((OPTIND-1))
-+
-+if [ -z "${busid}" ]; then
-+	usage
-+fi
-+
-+echo "Running USB over IP Testing on $busid";
-+
-+test_end_msg="End of USB over IP Testing on $busid"
-+
-+if [ $UID != 0 ]; then
-+	echo "Please run usbip_test as root [SKIP]"
-+	echo $test_end_msg
-+	exit $ksft_skip
-+fi
-+
-+echo "Load usbip_host module"
-+if ! /sbin/modprobe -q -n usbip_host; then
-+	echo "usbip_test: module usbip_host is not found [SKIP]"
-+	echo $test_end_msg
-+	exit $ksft_skip
-+fi
-+
-+if /sbin/modprobe -q usbip_host; then
-+	/sbin/modprobe -q -r test_bitmap
-+	echo "usbip_test: module usbip_host is loaded [OK]"
-+else
-+	echo "usbip_test: module usbip_host failed to load [FAIL]"
-+	echo $test_end_msg
-+	exit 1
-+fi
-+
-+echo "Load vhci_hcd module"
-+if /sbin/modprobe -q vhci_hcd; then
-+	/sbin/modprobe -q -r test_bitmap
-+	echo "usbip_test: module vhci_hcd is loaded [OK]"
-+else
-+	echo "usbip_test: module vhci_hcd failed to load [FAIL]"
-+	echo $test_end_msg
-+	exit 1
-+fi
-+echo "=============================================================="
-+
-+cd $tools_path;
-+
-+if [ ! -f src/usbip ]; then
-+	echo "Please build usbip tools"
-+	echo $test_end_msg
-+	exit $ksft_skip
-+fi
-+
-+echo "Expect to see export-able devices";
-+src/usbip list -l;
-+echo "=============================================================="
-+
-+echo "Run lsusb to see all usb devices"
-+lsusb -t;
-+echo "=============================================================="
-+
-+src/usbipd -D;
-+
-+echo "Get exported devices from localhost - expect to see none";
-+src/usbip list -r localhost;
-+echo "=============================================================="
-+
-+echo "bind devices";
-+src/usbip bind -b $busid;
-+echo "=============================================================="
-+
-+echo "Run lsusb - bound devices should be under usbip_host control"
-+lsusb -t;
-+echo "=============================================================="
-+
-+echo "bind devices - expect already bound messages"
-+src/usbip bind -b $busid;
-+echo "=============================================================="
-+
-+echo "Get exported devices from localhost - expect to see exported devices";
-+src/usbip list -r localhost;
-+echo "=============================================================="
-+
-+echo "unbind devices";
-+src/usbip unbind -b $busid;
-+echo "=============================================================="
-+
-+echo "Run lsusb - bound devices should be rebound to original drivers"
-+lsusb -t;
-+echo "=============================================================="
-+
-+echo "unbind devices - expect no devices bound message";
-+src/usbip unbind -b $busid;
-+echo "=============================================================="
-+
-+echo "Get exported devices from localhost - expect to see none";
-+src/usbip list -r localhost;
-+echo "=============================================================="
-+
-+echo "List imported devices - expect to see none";
-+src/usbip port;
-+echo "=============================================================="
-+
-+echo "Import devices from localhost - should fail with no devices"
-+src/usbip attach -r localhost -b $busid;
-+echo "=============================================================="
-+
-+echo "bind devices";
-+src/usbip bind -b $busid;
-+echo "=============================================================="
-+
-+echo "List imported devices - expect to see exported devices";
-+src/usbip list -r localhost;
-+echo "=============================================================="
-+
-+echo "List imported devices - expect to see none";
-+src/usbip port;
-+echo "=============================================================="
-+
-+echo "Import devices from localhost - should work"
-+src/usbip attach -r localhost -b $busid;
-+echo "=============================================================="
-+
-+echo "List imported devices - expect to see imported devices";
-+src/usbip port;
-+echo "=============================================================="
-+
-+echo "Import devices from localhost - expect already imported messages"
-+src/usbip attach -r localhost -b $busid;
-+echo "=============================================================="
-+
-+echo "Un-import devices";
-+src/usbip detach -p 00;
-+src/usbip detach -p 01;
-+echo "=============================================================="
-+
-+echo "List imported devices - expect to see none";
-+src/usbip port;
-+echo "=============================================================="
-+
-+echo "Un-import devices - expect no devices to detach messages";
-+src/usbip detach -p 00;
-+src/usbip detach -p 01;
-+echo "=============================================================="
-+
-+echo "Detach invalid port tests - expect invalid port error message";
-+src/usbip detach -p 100;
-+echo "=============================================================="
-+
-+echo "Expect to see export-able devices";
-+src/usbip list -l;
-+echo "=============================================================="
-+
-+echo "Remove usbip_host module";
-+rmmod usbip_host;
-+
-+echo "Run lsusb - bound devices should be rebound to original drivers"
-+lsusb -t;
-+echo "=============================================================="
-+
-+echo "Run bind without usbip_host - expect fail"
-+src/usbip bind -b $busid;
-+echo "=============================================================="
-+
-+echo "Run lsusb - devices that failed to bind aren't bound to any driver"
-+lsusb -t;
-+echo "=============================================================="
-+
-+echo "modprobe usbip_host - does it work?"
-+/sbin/modprobe usbip_host
-+echo "Should see -busid- is not in match_busid table... skip! dmesg"
-+echo "=============================================================="
-+dmesg | grep "is not in match_busid table"
-+echo "=============================================================="
-+
-+echo $test_end_msg
--- 
-2.14.1
+> +
+> +Required properties:
+> + - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7"
+> +
+> +List of regulators provided by this controller. BD71837 regulators node
+> +should be sub node of the BD71837 MFD node. See BD71837 MFD bindings at
+> +Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> +Regulator nodes should be named to BUCK_<number> and LDO_<number>. The
+> +definition for each of these nodes is defined using the standard
+> +binding for regulators at
+> +Documentation/devicetree/bindings/regulator/regulator.txt.
+> +Note that if BD71837 starts at RUN state you probably want to use
+> +regulator-boot-on at least for BUCK6 and BUCK7 so that those are not
+> +disabled by driver at startup. LDO5 and LDO6 are supplied by those and
+> +if they are disabled at startup the voltage monitoring for LDO5/LDO6 will
+> +cause PMIC to reset.
+> +
+> +The valid names for regulator nodes are:
+> +BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, BUCK7, BUCK8
+> +LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7
+> +
+> +Optional properties:
+> +- Any optional property defined in bindings/regulator/regulator.txt
+> +
+> +Example:
+> +regulators {
+> +	buck1: BUCK1 {
+> +		regulator-name = "buck1";
+> +		regulator-min-microvolt = <700000>;
+> +		regulator-max-microvolt = <1300000>;
+> +		regulator-boot-on;
+> +		regulator-ramp-delay = <1250>;
+> +	};
+> +	buck2: BUCK2 {
+> +		regulator-name = "buck2";
+> +		regulator-min-microvolt = <700000>;
+> +		regulator-max-microvolt = <1300000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +		regulator-ramp-delay = <1250>;
+> +	};
+> +	buck3: BUCK3 {
+> +		regulator-name = "buck3";
+> +		regulator-min-microvolt = <700000>;
+> +		regulator-max-microvolt = <1300000>;
+> +		regulator-boot-on;
+> +	};
+> +	buck4: BUCK4 {
+> +		regulator-name = "buck4";
+> +		regulator-min-microvolt = <700000>;
+> +		regulator-max-microvolt = <1300000>;
+> +		regulator-boot-on;
+> +	};
+> +	buck5: BUCK5 {
+> +		regulator-name = "buck5";
+> +		regulator-min-microvolt = <700000>;
+> +		regulator-max-microvolt = <1350000>;
+> +		regulator-boot-on;
+> +	};
+> +	buck6: BUCK6 {
+> +		regulator-name = "buck6";
+> +		regulator-min-microvolt = <3000000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +	};
+> +	buck7: BUCK7 {
+> +		regulator-name = "buck7";
+> +		regulator-min-microvolt = <1605000>;
+> +		regulator-max-microvolt = <1995000>;
+> +		regulator-boot-on;
+> +	};
+> +	buck8: BUCK8 {
+> +		regulator-name = "buck8";
+> +		regulator-min-microvolt = <800000>;
+> +		regulator-max-microvolt = <1400000>;
+> +	};
+> +
+> +	ldo1: LDO1 {
+> +		regulator-name = "ldo1";
+> +		regulator-min-microvolt = <3000000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +	};
+> +	ldo2: LDO2 {
+> +		regulator-name = "ldo2";
+> +		regulator-min-microvolt = <900000>;
+> +		regulator-max-microvolt = <900000>;
+> +		regulator-boot-on;
+> +	};
+> +	ldo3: LDO3 {
+> +		regulator-name = "ldo3";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +	ldo4: LDO4 {
+> +		regulator-name = "ldo4";
+> +		regulator-min-microvolt = <900000>;
+> +		regulator-max-microvolt = <1800000>;
+> +	};
+> +	ldo5: LDO5 {
+> +		regulator-name = "ldo5";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +	ldo6: LDO6 {
+> +		regulator-name = "ldo6";
+> +		regulator-min-microvolt = <900000>;
+> +		regulator-max-microvolt = <1800000>;
+> +	};
+> +	ldo7_reg: LDO7 {
+> +		regulator-name = "ldo7";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +};
+> +
+> +
+> -- 
+> 2.14.3
+> 
