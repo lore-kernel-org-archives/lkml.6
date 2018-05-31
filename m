@@ -1,223 +1,355 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755986AbeEaRxE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 13:53:04 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:41665 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755960AbeEaRw5 (ORCPT
+        id S1755919AbeEaRyS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 13:54:18 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:35178 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755819AbeEaRyO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 13:52:57 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jann Horn <jannh@google.com>, Serge Hallyn <serge.hallyn@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski <luto@amacapital.net>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <152286911105.615669.14053871624892399807.stgit@buzz>
-        <ba7b704f-1fc4-a08d-e7cf-2766160bd419@oracle.com>
-        <87h8oqhagl.fsf@xmission.com>
-        <112c7cac-1982-3a2e-ffc0-878bc5ae4bb6@yandex-team.ru>
-        <e1402871-77a5-6a0f-a75c-ccad77b93f49@oracle.com>
-        <778ab3d0-b6bc-fdb5-669a-40222e5020d4@yandex-team.ru>
-        <e3a1076d-cfd7-a034-dd08-2d74fbf751f3@oracle.com>
-        <3e2c285a-1bf8-f71d-1b74-4d6465c29a54@yandex-team.ru>
-        <3bdd6b27-0a46-5802-8671-07268cecc1c7@oracle.com>
-Date: Thu, 31 May 2018 12:52:49 -0500
-In-Reply-To: <3bdd6b27-0a46-5802-8671-07268cecc1c7@oracle.com> (Nagarathnam
-        Muthusamy's message of "Thu, 31 May 2018 10:41:20 -0700")
-Message-ID: <87efhremq6.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 31 May 2018 13:54:14 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1fORks-0007ta-IY;;;mid=<87efhremq6.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/D508xSPKGvYRw+Qq6+gQs8EY0qnLs6hk=
-X-SA-Exim-Connect-IP: 97.119.124.205
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 450 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 3.4 (0.8%), b_tie_ro: 2.3 (0.5%), parse: 1.67 (0.4%),
-        extract_message_metadata: 30 (6.7%), get_uri_detail_list: 8 (1.7%),
-        tests_pri_-1000: 13 (2.9%), tests_pri_-950: 1.62 (0.4%), tests_pri_-900: 1.27
-        (0.3%), tests_pri_-400: 38 (8.5%), check_bayes: 37 (8.2%), b_tokenize: 15
-        (3.4%), b_tok_get_all: 12 (2.6%), b_comp_prob: 4.0 (0.9%), b_tok_touch_all:
-        3.4 (0.8%), b_finish: 0.69 (0.2%), tests_pri_0: 352 (78.2%),
-        check_dkim_signature: 0.65 (0.1%), check_dkim_adsp: 3.7 (0.8%),
-        tests_pri_500: 3.8 (0.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH RFC v5] pidns: introduce syscall translate_pid
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Date: Thu, 31 May 2018 19:54:08 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Miquel Raynal <miquel.raynal@bootlin.com>, boris.brezillon@bootlin.com,
+        robh+dt@kernel.org
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, mark.rutland@arm.com, thierry.reding@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
+        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+In-Reply-To: <20180528000422.7f18dc5f@xps13>
+References: <cover.1526990589.git.stefan@agner.ch>
+ <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+ <20180528000422.7f18dc5f@xps13>
+Message-ID: <047a9a5e72c8db52858a505865d4f720@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[25];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com> writes:
+Miquel, Boris,
 
-> On 05/15/2018 10:36 AM, Konstantin Khlebnikov wrote:
->>
->>
->> On 15.05.2018 20:19, Nagarathnam Muthusamy wrote:
->>>
->>>
->>> On 04/24/2018 10:36 PM, Konstantin Khlebnikov wrote:
->>>> On 23.04.2018 20:37, Nagarathnam Muthusamy wrote:
->>>>>
->>>>>
->>>>> On 04/05/2018 12:02 AM, Konstantin Khlebnikov wrote:
->>>>>> On 05.04.2018 01:29, Eric W. Biederman wrote:
->>>>>>> Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com> writes:
->>>>>>>
->>>>>>>> On 04/04/2018 12:11 PM, Konstantin Khlebnikov wrote:
->>>>>>>>> Each process have different pids, one for each pid namespace
->>>>>>>>> it belongs.
->>>>>>>>> When interaction happens within single pid-ns translation
->>>>>>>>> isn't required.
->>>>>>>>> More complicated scenarios needs special handling.
->>>>>>>>>
->>>>>>>>> For example:
->>>>>>>>> - reading pid-files or logs written inside container with pid
->>>>>>>>> namespace
->>>>>>>>> - attaching with ptrace to tasks from different pid namespace
->>>>>>>>> - passing pids across pid namespaces in any kind of API
->>>>>>>>>
->>>>>>>>> Currently there are several interfaces that could be used here:
->>>>>>>>>
->>>>>>>>> Pid namespaces are identified by inode number of
->>>>>>>>> /proc/[pid]/ns/pid.
->>>>>>>
->>>>>>> Using the inode number in interfaces is not an
->>>>>>> option. Especially not
->>>>>>> withou referencing the device number for the filesystem as well.
->>>>>>
->>>>>> This is supposed to be single-instance fs,
->>>>>> not part of proc but referenced but its magic "symlinks".
->>>>>>
->>>>>> Device numbers are not mentioned in "man namespaces".
->>>>>>
->>>>>>>
->>>>>>>>> Pids for nested Pid namespaces are shown in file
->>>>>>>>> /proc/[pid]/status.
->>>>>>>>> In some cases conversion pid -> vpid could be easily done
->>>>>>>>> using this
->>>>>>>>> information, but backward translation requires scanning all tasks.
->>>>>>>>>
->>>>>>>>> Unix socket automatically translates pid attached to
->>>>>>>>> SCM_CREDENTIALS.
->>>>>>>>> This requires CAP_SYS_ADMIN for sending arbitrary pids and
->>>>>>>>> entering
->>>>>>>>> into pid namespace, this expose process and could be insecure.
->>>>>>>>>
->>>>>>>>> This patch adds new syscall for converting pids between pid
->>>>>>>>> namespaces:
->>>>>>>>>
->>>>>>>>> pid_t translate_pid(pid_t pid, int source_type, int source,
->>>>>>>>>                                  int target_type, int target);
->>>>>>>>>
->>>>>>>>> @source_type and @target_type defines type of following arguments:
->>>>>>>>>
->>>>>>>>> TRANSLATE_PID_CURRENT_PIDNS  - current pid namespace,
->>>>>>>>> argument is unused
->>>>>>>>> TRANSLATE_PID_TASK_PIDNS     - task pid-ns, argument is task pid
->>>>>>>>
->>>>>>>> I believe using pid to represent the namespace has been already
->>>>>>>> discussed in V1 of this patch in
->>>>>>>> https://lkml.org/lkml/2015/9/22/1087
->>>>>>>> after which we moved on to fd based version of this interface.
->>>>>>>
->>>>>>> Or in short why is the case of pids important?
->>>>>>>
->>>>>>> You Konstantin you almost said why they were important in your
->>>>>>> message
->>>>>>> saying you were going to send this one.  However you don't
->>>>>>> explain in
->>>>>>> your description why you want to identify pid namespaces by pid.
->>>>>>>
->>>>>>
->>>>>> Open of /proc/[pid]/ns/pid requires same permissions as ptrace,
->>>>>> pid based variant doesn't have such restrictions.
->>>>>
->>>>> Can you provide more information on usecase requiring PID
->>>>> translation but not used for tracing related purposes?
->>>>
->>>> Any introspection for [nested] containers. It's easier to work
->>>> when you have all information when you don't have any.
->>>> For example our CMS https://github.com/yandex/porto allows to
->>>> start nested sub-container (or even deeper) by request from any
->>>> container and have to tell back which pid task is have. And it
->>>> could translate any pid inside into accessible by client and vice
->>>> versa.
->>>>
->>>
->>> I still dont get the exact reason why PID based approach to
->>> identify the namespace during pid translation process is absolutely
->>> required compared to fd based approach. 
->>
->> As I told open(/proc/%d/ns/pid) have security restrictions - same
->> uid/CAP_SYS_PTRACE/whatever
->> Pidns-fd holds pid-namespace and without restrictions could be abused.
->> Pid based API is racy but always available without any restrictions.
->>
->>
->>> From your version of TranslatePid in
->>>
->>> https://github.com/yandex/porto/blob/0d7e6e7e1830dcd0038a057b2ab9964cec5b8fab/src/util/unix.cpp 
->>>
->>>
->>> I see that you are going through the trouble of forking a process
->>> and sending SMC_CREDENTIALS for pid translation. Even your existing
->>> API could be extremely simplified if translate_pid based on file
->>> descriptors make it to the gate and I believe from the last
->>> discussion it was almost there
->>> https://patchwork.kernel.org/patch/10305439/
->>>
->>>
->>>>> On a side note, can we have the types TRANSLATE_PID_CURRENT_PIDNS
->>>>> and TRANSLATE_PID_FD_PIDNS integrated first and then possibly
->>>>> extend the interface to include TRANSLATE_PID_TASK_PIDNS in
->>>>> future?
->>>>
->>>> I don't see reason for this separation.
->>>> Pids and pid namespaces are part of the API for a long time.
->>>
->>> If you are talking about the translate_pid API proposed, I believe
->>> the V4 proposed under https://patchwork.kernel.org/patch/10003935/
->>> had only fd based API before a mix of PID and fd based is proposed
->>> in V5. Again, I was just wondering if we can get the FD based
->>> approach in first and then extend the API to include PID based
->>> approach later as fd based approach could provide a lot of
->>> immediate benefits?
->>>
->>> Thanks,
->>> Nagarathnam.
->>>>
->>>>>
->>>>> Thanks,
->>>>> Nagarathnam.
->>>>>> Most pid-based syscalls are racy in some cases but they are
->>>>>> here for decades and everybody knowns how to deal with it.
->>>>>> So, I've decided to merge both worlds in one interface which
->>>>>> clearly tells what to expect.
->>>>>
->>>
->
-> Ping? Any additional comments on this patch?
+[also adding Rob to to since it is DT related]
 
-I have totally lost the thread.  Let me see if I can find enough of the
-thread to see what is going on.
+On 28.05.2018 00:04, Miquel Raynal wrote:
+> Hi Stefan,
+> 
+> I just see your v2 while I'm sending my review on the driver, will
+> probably wait for v4 then ;)
+> 
+> Thanks for the work though!
+> Miquèl
+> 
+> On Tue, 22 May 2018 14:07:06 +0200, Stefan Agner <stefan@agner.ch>
+> wrote:
+> 
+>> Add support for the NAND flash controller found on NVIDIA
+>> Tegra 2 SoCs. This implementation does not make use of the
+>> command queue feature. Regular operations/data transfers are
+>> done in PIO mode. Page read/writes with hardware ECC make
+>> use of the DMA for data transfer.
+>>
+>> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+> 
+> [...]
+> 
 
-The whole let's use pids instead of fds was a major distraction.
+[...]
 
-Eric
+>> +
+>> +static int tegra_nand_probe(struct platform_device *pdev)
+>> +{
+>> +	struct reset_control *rst;
+>> +	struct tegra_nand *nand;
+> 
+> Would you mind having another name for the tegra_nand structure than
+> just 'nand'? I found it confusing as, following Boris comment, it won't
+> be a 'NAND device' structure but rather more a controller structure.
+> 
+>> +	struct nand_chip *chip;
+>> +	struct mtd_info *mtd;
+>> +	struct resource *res;
+>> +	unsigned long value;
+> 
+> s/value/reg/ ? or something more explicit?
+> 
+>> +	int irq, err = 0;
+>> +
+>> +	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
+>> +	if (!nand)
+>> +		return -ENOMEM;
+>> +
+>> +	nand->dev = &pdev->dev;
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	nand->regs = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(nand->regs))
+>> +		return PTR_ERR(nand->regs);
+>> +
+>> +	irq = platform_get_irq(pdev, 0);
+>> +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
+>> +			       dev_name(&pdev->dev), nand);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	rst = devm_reset_control_get(&pdev->dev, "nand");
+>> +	if (IS_ERR(rst))
+>> +		return PTR_ERR(rst);
+>> +
+>> +	nand->clk = devm_clk_get(&pdev->dev, "nand");
+>> +	if (IS_ERR(nand->clk))
+>> +		return PTR_ERR(nand->clk);
+>> +
+>> +	nand->wp_gpio = gpiod_get_optional(&pdev->dev, "wp-gpios",
+>> +					   GPIOD_OUT_HIGH);
+>> +	if (IS_ERR(nand->wp_gpio))
+>> +		return PTR_ERR(nand->wp_gpio);
+>> +
+>> +	err = clk_prepare_enable(nand->clk);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	reset_control_assert(rst);
+>> +	udelay(2);
+>> +	reset_control_deassert(rst);
+>> +
+>> +	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
+>> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
+>> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
+>> +	writel(NAND_CMD_STATUS, nand->regs + HWSTATUS_CMD);
+>> +	writel(value, nand->regs + HWSTATUS_MASK);
+>> +
+>> +	init_completion(&nand->command_complete);
+>> +	init_completion(&nand->dma_complete);
+>> +
+>> +	/* clear interrupts */
+>> +	value = readl(nand->regs + ISR);
+>> +	writel(value, nand->regs + ISR);
+>> +
+>> +	writel(DMA_CTRL_IS_DONE, nand->regs + DMA_CTRL);
+>> +
+>> +	/* enable interrupts */
+>> +	value = IER_UND | IER_OVR | IER_CMD_DONE | IER_ECC_ERR | IER_GIE;
+>> +	writel(value, nand->regs + IER);
+>> +
+>> +	/* reset config */
+>> +	writel(0, nand->regs + CFG);
+>> +
+>> +	chip = &nand->chip;
+>> +	mtd = nand_to_mtd(chip);
+>> +
+>> +	mtd->dev.parent = &pdev->dev;
+>> +	mtd->name = "tegra_nand";
+> 
+> I just figured it was undocumented (yet) but you could have a label
+> string property in your nand DT node that tells you the name of the
+> MTD device instead of something too generic like tegra_nand.
+> 
+
+Using label in the NAND chip subnode actually causes current U-Boot to
+delete (!!) the chip node and create partitions on the controller node.
+
+See:
+https://elixir.bootlin.com/u-boot/latest/source/common/fdt_support.c#L757
+
+The code essentially uses the property label to detect whether its a
+NAND chip or a partition...
+
+At least this is the case when using fdt_fixup_mtdparts and passing the
+controller compatible ("nvidia,tegra20-nand") in node_info, what our
+downstream U-Boot is currently doing. Maybe we should pass the
+compatible property of the NAND chip? But afaik, chips do not have a
+compatible necessarily.
+
+So using label in the chip node is currently a no-go for me.
+
+Will send out v3 soon.
+
+--
+Stefan
+
+
+>> +	mtd->owner = THIS_MODULE;
+>> +
+>> +	nand_set_flash_node(chip, pdev->dev.of_node);
+>> +	nand_set_controller_data(chip, nand);
+>> +
+>> +	chip->options = NAND_NO_SUBPAGE_WRITE;
+>> +	chip->exec_op = tegra_nand_exec_op;
+>> +	chip->select_chip = tegra_nand_select_chip;
+>> +	tegra_nand_setup_timing(nand, 0);
+> 
+> You really should implement ->setup_data_interface() and let the core
+> handle the timings issue entirely (mind that chipnr is not the NAND
+> chip id but more the CS id asserted for the pointed NAND chip).
+>  
+>> +
+>> +	err = nand_scan_ident(mtd, 1, NULL);
+>> +	if (err)
+>> +		goto err_disable_clk;
+>> +
+>> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+>> +		chip->bbt_options |= NAND_BBT_NO_OOB;
+>> +
+>> +	nand->data_buf = dmam_alloc_coherent(&pdev->dev, mtd->writesize,
+>> +					    &nand->data_dma, GFP_KERNEL);
+> 
+> Do you need these buffers before nand_scan_tail() or could you simply
+> use the ones allocated by the core right after?
+> 
+>> +	if (!nand->data_buf) {
+>> +		err = -ENOMEM;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	nand->oob_buf = dmam_alloc_coherent(&pdev->dev, mtd->oobsize,
+>> +					    &nand->oob_dma, GFP_KERNEL);
+>> +	if (!nand->oob_buf) {
+>> +		err = -ENOMEM;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	chip->ecc.mode = NAND_ECC_HW;
+>> +	chip->ecc.size = 512;
+>> +	chip->ecc.read_page = tegra_nand_read_page;
+>> +	chip->ecc.write_page = tegra_nand_write_page;
+>> +
+>> +	value = readl(nand->regs + CFG);
+>> +	value |= CFG_PIPE_EN | CFG_SKIP_SPARE | CFG_SKIP_SPARE_SIZE_4 |
+>> +		 CFG_TAG_BYTE_SIZE(mtd_ooblayout_count_freebytes(mtd) - 1);
+>> +
+>> +	if (chip->options & NAND_BUSWIDTH_16)
+>> +		value |= CFG_BUS_WIDTH_16;
+>> +
+>> +	switch (mtd->oobsize) {
+>> +	case 16:
+>> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_16_ops);
+>> +		chip->ecc.strength = 1;
+>> +		chip->ecc.bytes = 4;
+>> +		break;
+>> +	case 64:
+>> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_64_ops);
+>> +		chip->ecc.strength = 8;
+>> +		chip->ecc.bytes = 18;
+>> +		value |= CFG_ECC_SEL | CFG_TVAL_8;
+>> +		break;
+>> +	case 128:
+>> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_128_ops);
+>> +		chip->ecc.strength = 8;
+>> +		chip->ecc.bytes = 18;
+>> +		value |= CFG_ECC_SEL | CFG_TVAL_8;
+>> +		break;
+>> +	case 224:
+>> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_224_ops);
+>> +		chip->ecc.strength = 8;
+>> +		chip->ecc.bytes = 18;
+>> +		value |= CFG_ECC_SEL | CFG_TVAL_8;
+>> +		break;
+>> +	default:
+>> +		dev_err(&pdev->dev, "unhandled OOB size %d\n", mtd->oobsize);
+>> +		err = -ENODEV;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	switch (mtd->writesize) {
+>> +	case 256:
+>> +		value |= CFG_PS_256;
+>> +		break;
+>> +	case 512:
+>> +		value |= CFG_PS_512;
+>> +		break;
+>> +	case 1024:
+>> +		value |= CFG_PS_1024;
+>> +		break;
+>> +	case 2048:
+>> +		value |= CFG_PS_2048;
+>> +		break;
+>> +	case 4096:
+>> +		value |= CFG_PS_4096;
+>> +		break;
+>> +	default:
+>> +		dev_err(&pdev->dev, "unhandled writesize %d\n", mtd->writesize);
+>> +		err = -ENODEV;
+>> +		goto err_disable_clk;
+>> +	}
+>> +
+>> +	writel(value, nand->regs + CFG);
+>> +
+>> +	tegra_nand_setup_chiptiming(nand);
+>> +
+>> +	err = nand_scan_tail(mtd);
+>> +	if (err)
+>> +		goto err_disable_clk;
+>> +
+>> +	err = mtd_device_register(mtd, NULL, 0);
+>> +	if (err)
+>> +		goto err_cleanup_nand;
+>> +
+>> +	platform_set_drvdata(pdev, nand);
+>> +
+>> +	return 0;
+>> +
+>> +err_cleanup_nand:
+>> +	nand_cleanup(chip);
+>> +err_disable_clk:
+>> +	clk_disable_unprepare(nand->clk);
+>> +	return err;
+>> +}
+>> +
+>> +static int tegra_nand_remove(struct platform_device *pdev)
+>> +{
+>> +	struct tegra_nand *nand = platform_get_drvdata(pdev);
+>> +
+>> +	nand_release(nand_to_mtd(&nand->chip));
+>> +
+>> +	clk_disable_unprepare(nand->clk);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id tegra_nand_of_match[] = {
+>> +	{ .compatible = "nvidia,tegra20-nand" },
+>> +	{ /* sentinel */ }
+>> +};
+>> +
+>> +static struct platform_driver tegra_nand_driver = {
+>> +	.driver = {
+>> +		.name = "tegra-nand",
+>> +		.of_match_table = tegra_nand_of_match,
+>> +	},
+>> +	.probe = tegra_nand_probe,
+>> +	.remove = tegra_nand_remove,
+>> +};
+>> +module_platform_driver(tegra_nand_driver);
+>> +
+>> +MODULE_DESCRIPTION("NVIDIA Tegra NAND driver");
+>> +MODULE_AUTHOR("Thierry Reding <thierry.reding@nvidia.com>");
+>> +MODULE_AUTHOR("Lucas Stach <dev@lynxeye.de>");
+>> +MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
+>> +MODULE_LICENSE("GPL v2");
+>> +MODULE_DEVICE_TABLE(of, tegra_nand_of_match);
