@@ -1,265 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755727AbeEaQRW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:17:22 -0400
-Received: from mail.netline.ch ([148.251.143.178]:37404 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755654AbeEaQRN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:17:13 -0400
-From: =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>
-To: amd-gfx@lists.freedesktop.org
-Cc: Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm/amdgpu: Add documentation for PRIME related code
-Date: Thu, 31 May 2018 18:17:08 +0200
-Message-Id: <20180531161708.5894-3-michel@daenzer.net>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180531161708.5894-1-michel@daenzer.net>
-References: <20180531161708.5894-1-michel@daenzer.net>
+        id S932708AbeEaQSF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:18:05 -0400
+Received: from foss.arm.com ([217.140.101.70]:43190 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755574AbeEaQSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:18:02 -0400
+Subject: Re: [PATCH v2 00/12] coresight: tmc-etr Transparent buffer management
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>, coresight@lists.linaro.org,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+References: <1527599737-28408-1-git-send-email-suzuki.poulose@arm.com>
+ <CANLsYkxStH5R0_8WFF1oe=PCCFr4Ko+0J+Xhn-wzopFFDgrRCw@mail.gmail.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <7ddccf7d-9d83-fff3-98db-046da029963b@arm.com>
+Date: Thu, 31 May 2018 17:17:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANLsYkxStH5R0_8WFF1oe=PCCFr4Ko+0J+Xhn-wzopFFDgrRCw@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michel Dänzer <michel.daenzer@amd.com>
+On 31/05/18 16:36, Mathieu Poirier wrote:
+> On 29 May 2018 at 07:15, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
 
-Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
----
- Documentation/gpu/amdgpu.rst              |  14 +++
- drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c | 119 ++++++++++++++++++++++
- 2 files changed, 133 insertions(+)
+>> Suzuki K Poulose (12):
+>>    coresight: ETM: Add support for Arm Cortex-A73 and Cortex-A35
+>>    coresight: tmc: Hide trace buffer handling for file read
+>>    coresight: tmc-etr: Do not clean trace buffer
+>>    coresight: tmc-etr: Disallow perf mode
+>>    coresight: Add helper for inserting synchronization packets
+>>    dts: bindings: Restrict coresight tmc-etr scatter-gather mode
+>>    dts: juno: Add scatter-gather support for all revisions
+>>    coresight: Add generic TMC sg table framework
+>>    coresight: Add support for TMC ETR SG unit
+>>    coresight: tmc-etr: Add transparent buffer management
+>>    coresight: tmc-etr buf: Add TMC scatter gather mode backend
+>>    coresight: tmc: Add configuration support for trace buffer size
+>>
+>>   .../ABI/testing/sysfs-bus-coresight-devices-tmc    |    8 +
+>>   .../devicetree/bindings/arm/coresight.txt          |    5 +-
+>>   arch/arm64/boot/dts/arm/juno-base.dtsi             |    1 +
+>>   drivers/hwtracing/coresight/coresight-etb10.c      |   12 +-
+>>   drivers/hwtracing/coresight/coresight-etm4x.c      |   31 +-
+>>   drivers/hwtracing/coresight/coresight-priv.h       |   10 +-
+>>   drivers/hwtracing/coresight/coresight-tmc-etf.c    |   45 +-
+>>   drivers/hwtracing/coresight/coresight-tmc-etr.c    | 1010 ++++++++++++++++++--
+>>   drivers/hwtracing/coresight/coresight-tmc.c        |   83 +-
+>>   drivers/hwtracing/coresight/coresight-tmc.h        |  110 ++-
+>>   drivers/hwtracing/coresight/coresight.c            |    3 +-
+>>   11 files changed, 1144 insertions(+), 174 deletions(-)
+> 
+> Applied after correcting indentation problems and rectifying the
+> kernel version and date in "sysfs-bus-coresight-devices-tmc".
 
-diff --git a/Documentation/gpu/amdgpu.rst b/Documentation/gpu/amdgpu.rst
-index 41a14e4aa4ac..f557866f6788 100644
---- a/Documentation/gpu/amdgpu.rst
-+++ b/Documentation/gpu/amdgpu.rst
-@@ -4,3 +4,17 @@
- 
- The drm/amdgpu driver supports all AMD Radeon GPUs based on the Graphics Core
- Next (GCN) architecture.
-+
-+Core Driver Infrastructure
-+==========================
-+
-+This section covers core driver infrastructure.
-+
-+PRIME Buffer Sharing
-+--------------------
-+
-+.. kernel-doc:: drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
-+   :doc: PRIME Buffer Sharing
-+
-+.. kernel-doc:: drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
-+   :internal:
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
-index 4683626b065f..d1f05489595b 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
-@@ -23,6 +23,14 @@
-  *
-  * Authors: Alex Deucher
-  */
-+
-+/**
-+ * DOC: PRIME Buffer Sharing
-+ *
-+ * The following callback implementations are used for :ref:`sharing GEM buffer
-+ * objects between different devices via PRIME <prime_buffer_sharing>`.
-+ */
-+
- #include <drm/drmP.h>
- 
- #include "amdgpu.h"
-@@ -32,6 +40,14 @@
- 
- static const struct dma_buf_ops amdgpu_dmabuf_ops;
- 
-+/**
-+ * amdgpu_gem_prime_get_sg_table - &drm_driver.gem_prime_get_sg_table
-+ * implementation
-+ * @obj: GEM buffer object
-+ *
-+ * Returns:
-+ * A scatter/gather table for the pinned pages of the buffer object's memory.
-+ */
- struct sg_table *amdgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
- {
- 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
-@@ -40,6 +56,15 @@ struct sg_table *amdgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
- 	return drm_prime_pages_to_sg(bo->tbo.ttm->pages, npages);
- }
- 
-+/**
-+ * amdgpu_gem_prime_vmap - &dma_buf_ops.vmap implementation
-+ * @obj: GEM buffer object
-+ *
-+ * Sets up an in-kernel virtual mapping of the buffer object's memory.
-+ *
-+ * Returns:
-+ * The virtual address of the mapping or an error pointer.
-+ */
- void *amdgpu_gem_prime_vmap(struct drm_gem_object *obj)
- {
- 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
-@@ -53,6 +78,13 @@ void *amdgpu_gem_prime_vmap(struct drm_gem_object *obj)
- 	return bo->dma_buf_vmap.virtual;
- }
- 
-+/**
-+ * amdgpu_gem_prime_vunmap - &dma_buf_ops.vunmap implementation
-+ * @obj: GEM buffer object
-+ * @vaddr: virtual address (unused)
-+ *
-+ * Tears down the in-kernel virtual mapping of the buffer object's memory.
-+ */
- void amdgpu_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
- {
- 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
-@@ -60,6 +92,17 @@ void amdgpu_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
- 	ttm_bo_kunmap(&bo->dma_buf_vmap);
- }
- 
-+/**
-+ * amdgpu_gem_prime_mmap - &drm_driver.gem_prime_mmap implementation
-+ * @obj: GEM buffer object
-+ * @vma: virtual memory area
-+ *
-+ * Sets up a userspace mapping of the buffer object's memory in the given
-+ * virtual memory area.
-+ *
-+ * Returns:
-+ * 0 on success or negative error code.
-+ */
- int amdgpu_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
- {
- 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
-@@ -94,6 +137,19 @@ int amdgpu_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma
- 	return ret;
- }
- 
-+/**
-+ * amdgpu_gem_prime_import_sg_table - &drm_driver.gem_prime_import_sg_table
-+ * implementation
-+ * @dev: DRM device
-+ * @attach: DMA-buf attachment
-+ * @sg: Scatter/gather table
-+ *
-+ * Import shared DMA buffer memory exported by another device.
-+ *
-+ * Returns:
-+ * A new GEM buffer object of the given DRM device, representing the memory
-+ * described by the given DMA-buf attachment and scatter/gather table.
-+ */
- struct drm_gem_object *
- amdgpu_gem_prime_import_sg_table(struct drm_device *dev,
- 				 struct dma_buf_attachment *attach,
-@@ -132,6 +188,19 @@ amdgpu_gem_prime_import_sg_table(struct drm_device *dev,
- 	return ERR_PTR(ret);
- }
- 
-+/**
-+ * amdgpu_gem_map_attach - &dma_buf_ops.attach implementation
-+ * @dma_buf: shared DMA buffer
-+ * @target_dev: target device
-+ * @attach: DMA-buf attachment
-+ *
-+ * Makes sure that the shared DMA buffer can be accessed by the target device.
-+ * For now, simply pins it to the GTT domain, where it should be accessible by
-+ * all DMA devices.
-+ *
-+ * Returns:
-+ * 0 on success or negative error code.
-+ */
- static int amdgpu_gem_map_attach(struct dma_buf *dma_buf,
- 				 struct device *target_dev,
- 				 struct dma_buf_attachment *attach)
-@@ -181,6 +250,14 @@ static int amdgpu_gem_map_attach(struct dma_buf *dma_buf,
- 	return r;
- }
- 
-+/**
-+ * amdgpu_gem_map_detach - &dma_buf_ops.detach implementation
-+ * @dma_buf: shared DMA buffer
-+ * @attach: DMA-buf attachment
-+ *
-+ * This is called when a shared DMA buffer no longer needs to be accessible by
-+ * the other device. For now, simply unpins the buffer from GTT.
-+ */
- static void amdgpu_gem_map_detach(struct dma_buf *dma_buf,
- 				  struct dma_buf_attachment *attach)
- {
-@@ -202,6 +279,13 @@ static void amdgpu_gem_map_detach(struct dma_buf *dma_buf,
- 	drm_gem_map_detach(dma_buf, attach);
- }
- 
-+/**
-+ * amdgpu_gem_prime_res_obj - &drm_driver.gem_prime_res_obj implementation
-+ * @obj: GEM buffer object
-+ *
-+ * Returns:
-+ * The buffer object's reservation object.
-+ */
- struct reservation_object *amdgpu_gem_prime_res_obj(struct drm_gem_object *obj)
- {
- 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
-@@ -209,6 +293,18 @@ struct reservation_object *amdgpu_gem_prime_res_obj(struct drm_gem_object *obj)
- 	return bo->tbo.resv;
- }
- 
-+/**
-+ * amdgpu_gem_begin_cpu_access - &dma_buf_ops.begin_cpu_access implementation
-+ * @dma_buf: shared DMA buffer
-+ * @direction: direction of DMA transfer
-+ *
-+ * This is called before CPU access to the shared DMA buffer's memory. If it's
-+ * a read access, the buffer is moved to the GTT domain if possible, for optimal
-+ * CPU read performance.
-+ *
-+ * Returns:
-+ * 0 on success or negative error code.
-+ */
- static int amdgpu_gem_begin_cpu_access(struct dma_buf *dma_buf,
- 				       enum dma_data_direction direction)
- {
-@@ -253,6 +349,18 @@ static const struct dma_buf_ops amdgpu_dmabuf_ops = {
- 	.vunmap = drm_gem_dmabuf_vunmap,
- };
- 
-+/**
-+ * amdgpu_gem_prime_export - &drm_driver.gem_prime_export implementation
-+ * @dev: DRM device
-+ * @gobj: GEM buffer object
-+ * @flags: flags like DRM_CLOEXEC and DRM_RDWR
-+ *
-+ * The main work is done by the &drm_gem_prime_export helper, which in turn
-+ * uses &amdgpu_gem_prime_res_obj.
-+ *
-+ * Returns:
-+ * Shared DMA buffer representing the GEM buffer object from the given device.
-+ */
- struct dma_buf *amdgpu_gem_prime_export(struct drm_device *dev,
- 					struct drm_gem_object *gobj,
- 					int flags)
-@@ -273,6 +381,17 @@ struct dma_buf *amdgpu_gem_prime_export(struct drm_device *dev,
- 	return buf;
- }
- 
-+/**
-+ * amdgpu_gem_prime_import - &drm_driver.gem_prime_import implementation
-+ * @dev: DRM device
-+ * @dma_buf: Shared DMA buffer
-+ *
-+ * The main work is done by the &drm_gem_prime_import helper, which in turn
-+ * uses &amdgpu_gem_prime_import_sg_table.
-+ *
-+ * Returns:
-+ * GEM buffer object representing the shared DMA buffer for the given device.
-+ */
- struct drm_gem_object *amdgpu_gem_prime_import(struct drm_device *dev,
- 					    struct dma_buf *dma_buf)
- {
--- 
-2.17.0
+Mathieu,
+
+Thanks for the fixups.
+
+Suzuki
