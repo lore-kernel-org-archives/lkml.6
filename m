@@ -1,82 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753906AbeEaEmT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 00:42:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753772AbeEaEmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 00:42:17 -0400
-Date: Wed, 30 May 2018 23:42:16 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Rajat Jain <rajatja@google.com>
-Cc: linux-pci <linux-pci@vger.kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] PCI/AER: Decode Error Source Requester ID
-Message-ID: <20180531044216.GR39853@bhelgaas-glaptop.roam.corp.google.com>
-References: <152770259826.80701.7360032106128917833.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152770285586.80701.6545710900591672975.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <CACK8Z6Gs6Wt=qQ9PJJifZT7ZazK1yGtwNZRSTtvwek8iT8oW6w@mail.gmail.com>
+        id S1753919AbeEaEmj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 00:42:39 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37688 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751890AbeEaEmg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 00:42:36 -0400
+Subject: Re: [PATCH v5 5/7] ocxl: Expose the thread_id needed for wait on
+ POWER9
+To: "Alastair D'Silva" <alastair@au1.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        mikey@neuling.org, vaibhav@linux.vnet.ibm.com,
+        aneesh.kumar@linux.vnet.ibm.com, malat@debian.org,
+        felix@linux.vnet.ibm.com, pombredanne@nexb.com,
+        sukadev@linux.vnet.ibm.com, npiggin@gmail.com,
+        gregkh@linuxfoundation.org, arnd@arndb.de, fbarrat@linux.vnet.ibm.com,
+        corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
+References: <20180511061303.10728-1-alastair@au1.ibm.com>
+ <20180511061303.10728-6-alastair@au1.ibm.com>
+From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date: Thu, 31 May 2018 14:42:28 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACK8Z6Gs6Wt=qQ9PJJifZT7ZazK1yGtwNZRSTtvwek8iT8oW6w@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180511061303.10728-6-alastair@au1.ibm.com>
+Content-Language: en-AU
+X-TM-AS-GCONF: 00
+x-cbid: 18053104-0016-0000-0000-000001D63537
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053104-0017-0000-0000-00003228ABD1
+Message-Id: <fc2184c1-eb0f-0116-8565-b2eac4354379@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805310051
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 11:41:23AM -0700, Rajat Jain wrote:
-> On Wed, May 30, 2018 at 10:54 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+On 11/05/18 16:13, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
 > 
-> > From: Bjorn Helgaas <bhelgaas@google.com>
+> In order to successfully issue as_notify, an AFU needs to know the TID
+> to notify, which in turn means that this information should be
+> available in userspace so it can be communicated to the AFU.
 > 
-> > Decode the Requester ID from the AER Error Source Register into domain/
-> > bus/device/function format to match other logging.  In cases where the ID
-> > matches the device used for pci_err(), drop the extra ID completely so we
-> > don't print it twice.
-> 
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > ---
-> >   drivers/pci/pcie/aer/aerdrv_errprint.c |   18 +++++++++++-------
-> >   1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> > diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c
-> b/drivers/pci/pcie/aer/aerdrv_errprint.c
-> > index 21ca5e1b0ded..d7fde8368d81 100644
-> > --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
-> > +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
-> > @@ -163,17 +163,17 @@ void aer_print_error(struct pci_dev *dev, struct
-> aer_err_info *info)
-> >          int id = ((dev->bus->number << 8) | dev->devfn);
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 
-> >          if (!info->status) {
-> > -               pci_err(dev, "PCIe Bus Error: severity=%s,
-> type=Unaccessible, id=%04x(Unregistered Agent ID)\n",
-> > -                       aer_error_severity_string[info->severity], id);
-> > +               pci_err(dev, "PCIe Bus Error: severity=%s,
-> type=Inaccessible, (Unregistered Agent ID)\n",
-> > +                       aer_error_severity_string[info->severity]);
-> 
-> Does this code path indicate that a requester id was decoded to a device
-> that is not registered with the kernel? If so, shouldn't we log the bad
-> requester ID for better debugging, specifically since there is not going to
-> be any subsequent print about this ID (since we return from this function
-> in this case)?
+Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
 
-Previously we printed "id", which was constructed above from "dev":
+Comments below.
 
-  id = ((dev->bus->number << 8) | dev->devfn);
+> +#ifdef CONFIG_PPC64
+> +static long afu_ioctl_enable_p9_wait(struct ocxl_context *ctx,
+> +		struct ocxl_ioctl_p9_wait __user *uarg)
+> +{
+> +	struct ocxl_ioctl_p9_wait arg;
+> +
+> +	memset(&arg, 0, sizeof(arg));
+> +
+> +	if (cpu_has_feature(CPU_FTR_P9_TIDR)) {
+> +		enum ocxl_context_status status;
+> +
+> +		// Locks both status & tidr
+> +		mutex_lock(&ctx->status_mutex);
+> +		if (!ctx->tidr) {
+> +			if (set_thread_tidr(current))
+> +				return -ENOENT;
+> +
+> +			ctx->tidr = current->thread.tidr;
+> +		}
+> +
+> +		status = ctx->status;
+> +		mutex_unlock(&ctx->status_mutex);
+> +
+> +		if (status == ATTACHED) {
+> +			int rc;
+> +			struct link *link = ctx->afu->fn->link;
+> +
+> +			rc = ocxl_link_update_pe(link, ctx->pasid, ctx->tidr);
+> +			if (rc)
+> +				return rc;
+> +		}
+> +
+> +		arg.thread_id = ctx->tidr;
+> +	} else
+> +		return -ENOENT;
 
-so even if we print "id=%04x", it contains exactly the same
-information as the bus/device/function printed using "dev".
+I didn't pick this up before - please please please use braces on both 
+sides of the if here.
 
-So no, I don't think "Unregistered Agent ID" means a device not registered
-with the kernel.  At any rate, we do have a pci_dev for it.
+> +
+> +	if (copy_to_user(uarg, &arg, sizeof(arg)))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +#endif
 
-I *think* "info->status == 0" means PCI_ERR_COR_STATUS (or
-PCI_ERR_UNCOR_STATUS) was zero, i.e., we didn't find any error status
-bits set for this device.  I don't think "Unregistered Agent ID" is a
-very good description of this situation.
+> diff --git a/include/misc/ocxl.h b/include/misc/ocxl.h
+> index 51ccf76db293..9ff6ddc28e22 100644
+> --- a/include/misc/ocxl.h
+> +++ b/include/misc/ocxl.h
+> @@ -188,6 +188,15 @@ extern int ocxl_link_add_pe(void *link_handle, int pasid, u32 pidr, u32 tidr,
+>   		void (*xsl_err_cb)(void *data, u64 addr, u64 dsisr),
+>   		void *xsl_err_data);
+>   
+> +/**
+> + * Update values within a Process Element
+> + *
+> + * link_handle: the link handle associated with the process element
+> + * pasid: the PASID for the AFU context
+> + * tid: the new thread id for the process element
+> + */
+> +extern int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid);
 
-Bjorn
+My earlier comment about __u16 vs u16 applies for this declaration (and 
+the body declaration) as well
+
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
