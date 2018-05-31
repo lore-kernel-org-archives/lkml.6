@@ -1,75 +1,633 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753915AbeEaFyT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 01:54:19 -0400
-Received: from ozlabs.org ([203.11.71.1]:36829 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753772AbeEaFyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 01:54:18 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe LEROY <christophe.leroy@c-s.fr>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Geoff Levand <geoff@infradead.org>
-Subject: Re: [PATCH v2] powerpc/64: Fix build failure with GCC 8.1
-In-Reply-To: <3a438dd8-49c3-ad39-e2a1-040e0ce67279@c-s.fr>
-References: <f5f2de3e1a39613f7303bfdc0d2f2210d4c91910.1527573345.git.christophe.leroy@c-s.fr> <CAMuHMdVSKigQPUQH=BVc2fRSRmuEThLaf+V9ghMPDT9_m1C6BA@mail.gmail.com> <1fa5b220-4d21-b4cd-33bf-8a3ce3178063@c-s.fr> <CAMuHMdXwO1_wrrTi40UmZC4o6KjvP0LF38m45n0ZNA2pDb_7Qg@mail.gmail.com> <3a438dd8-49c3-ad39-e2a1-040e0ce67279@c-s.fr>
-Date: Thu, 31 May 2018 15:54:16 +1000
-Message-ID: <87efhsz7xz.fsf@concordia.ellerman.id.au>
+        id S1753945AbeEaFze (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 01:55:34 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:41260 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbeEaFzb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 01:55:31 -0400
+X-Google-Smtp-Source: ADUXVKLPS10dfOdpNPafFb598Hes7t9pyDUVHI74xCBoPug8WOFiyHhFRUewqbsepi6parOuFDbEJQ==
+Subject: Re: [PATCH 6/8] xen/gntdev: Implement dma-buf export functionality
+To: Dongwon Kim <dongwon.kim@intel.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180525153331.31188-1-andr2000@gmail.com>
+ <20180525153331.31188-7-andr2000@gmail.com>
+ <20180530231006.GA2929@downor-Z87X-UD5H>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <072fb651-52db-05bd-d110-ada904bcac3d@gmail.com>
+Date: Thu, 31 May 2018 08:55:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180530231006.GA2929@downor-Z87X-UD5H>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe LEROY <christophe.leroy@c-s.fr> writes:
-> Le 29/05/2018 à 11:05, Geert Uytterhoeven a écrit :
->> Hi Christophe,
->> On Tue, May 29, 2018 at 10:56 AM, Christophe LEROY
->> <christophe.leroy@c-s.fr> wrote:
->>> Le 29/05/2018 à 09:47, Geert Uytterhoeven a écrit :
->>>> On Tue, May 29, 2018 at 8:03 AM, Christophe Leroy
->>>>> --- a/arch/powerpc/kernel/nvram_64.c
->>>>> +++ b/arch/powerpc/kernel/nvram_64.c
->>>>> @@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char
->>>>> *name, int sig,
->>>>>           new_part->index = free_part->index;
->>>>>           new_part->header.signature = sig;
->>>>>           new_part->header.length = size;
->>>>> -       strncpy(new_part->header.name, name, 12);
->>>>> +       memcpy(new_part->header.name, name, strnlen(name,
->>>>> sizeof(new_part->header.name)));
->>>>
->>>>
->>>> The comment for nvram_header.lgnth says:
->>>>
->>>>           /* Terminating null required only for names < 12 chars. */
->>>>
->>>> This will not terminate the string with a zero (the struct is
->>>> allocated with kmalloc).
->>>> So the original code is correct, the new one isn't.
->>>
->>> Right, then I have to first zeroize the destination.
->> 
->> Using kzalloc() instead of kmalloc() will do.
->> 
->> Still, papering around these warnings seems to obscure things, IMHO.
->> And it increases code size, as you had to add a call to strnlen().
+On 05/31/2018 02:10 AM, Dongwon Kim wrote:
+> On Fri, May 25, 2018 at 06:33:29PM +0300, Oleksandr Andrushchenko wrote:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>
+>> 1. Create a dma-buf from grant references provided by the foreign
+>>     domain. By default dma-buf is backed by system memory pages, but
+>>     by providing GNTDEV_DMA_FLAG_XXX flags it can also be created
+>>     as a DMA write-combine/coherent buffer, e.g. allocated with
+>>     corresponding dma_alloc_xxx API.
+>>     Export the resulting buffer as a new dma-buf.
+>>
+>> 2. Implement waiting for the dma-buf to be released: block until the
+>>     dma-buf with the file descriptor provided is released.
+>>     If within the time-out provided the buffer is not released then
+>>     -ETIMEDOUT error is returned. If the buffer with the file descriptor
+>>     does not exist or has already been released, then -ENOENT is returned.
+>>     For valid file descriptors this must not be treated as error.
+>>
+>> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> ---
+>>   drivers/xen/gntdev.c | 478 ++++++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 476 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+>> index 9e450622af1a..52abc6cd5846 100644
+>> --- a/drivers/xen/gntdev.c
+>> +++ b/drivers/xen/gntdev.c
+>> @@ -4,6 +4,8 @@
+>>    * Device for accessing (in user-space) pages that have been granted by other
+>>    * domains.
+>>    *
+>> + * DMA buffer implementation is based on drivers/gpu/drm/drm_prime.c.
+>> + *
+>>    * Copyright (c) 2006-2007, D G Murray.
+>>    *           (c) 2009 Gerd Hoffmann <kraxel@redhat.com>
+>>    *           (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
+>> @@ -41,6 +43,9 @@
+>>   #ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>>   #include <linux/of_device.h>
+>>   #endif
+>> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
+>> +#include <linux/dma-buf.h>
+>> +#endif
+>>   
+>>   #include <xen/xen.h>
+>>   #include <xen/grant_table.h>
+>> @@ -81,6 +86,17 @@ struct gntdev_priv {
+>>   	/* Device for which DMA memory is allocated. */
+>>   	struct device *dma_dev;
+>>   #endif
+>> +
+>> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
+>> +	/* Private data of the hyper DMA buffers. */
+>> +
+>> +	/* List of exported DMA buffers. */
+>> +	struct list_head dmabuf_exp_list;
+>> +	/* List of wait objects. */
+>> +	struct list_head dmabuf_exp_wait_list;
+>> +	/* This is the lock which protects dma_buf_xxx lists. */
+>> +	struct mutex dmabuf_lock;
+>> +#endif
+>>   };
+>>   
+>>   struct unmap_notify {
+>> @@ -125,12 +141,38 @@ struct grant_map {
+>>   
+>>   #ifdef CONFIG_XEN_GNTDEV_DMABUF
+>>   struct xen_dmabuf {
+>> +	struct gntdev_priv *priv;
+>> +	struct dma_buf *dmabuf;
+>> +	struct list_head next;
+>> +	int fd;
+>> +
+>>   	union {
+>> +		struct {
+>> +			/* Exported buffers are reference counted. */
+>> +			struct kref refcount;
+>> +			struct grant_map *map;
+>> +		} exp;
+>>   		struct {
+>>   			/* Granted references of the imported buffer. */
+>>   			grant_ref_t *refs;
+>>   		} imp;
+>>   	} u;
+>> +
+>> +	/* Number of pages this buffer has. */
+>> +	int nr_pages;
+>> +	/* Pages of this buffer. */
+>> +	struct page **pages;
+>> +};
+>> +
+>> +struct xen_dmabuf_wait_obj {
+>> +	struct list_head next;
+>> +	struct xen_dmabuf *xen_dmabuf;
+>> +	struct completion completion;
+>> +};
+>> +
+>> +struct xen_dmabuf_attachment {
+>> +	struct sg_table *sgt;
+>> +	enum dma_data_direction dir;
+>>   };
+>>   #endif
+>>   
+>> @@ -320,6 +362,16 @@ static void gntdev_put_map(struct gntdev_priv *priv, struct grant_map *map)
+>>   	gntdev_free_map(map);
+>>   }
+>>   
+>> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
+>> +static void gntdev_remove_map(struct gntdev_priv *priv, struct grant_map *map)
+>> +{
+>> +	mutex_lock(&priv->lock);
+>> +	list_del(&map->next);
+>> +	gntdev_put_map(NULL /* already removed */, map);
+>> +	mutex_unlock(&priv->lock);
+>> +}
+>> +#endif
+>> +
+>>   /* ------------------------------------------------------------------ */
+>>   
+>>   static int find_grant_ptes(pte_t *pte, pgtable_t token,
+>> @@ -628,6 +680,12 @@ static int gntdev_open(struct inode *inode, struct file *flip)
+>>   	INIT_LIST_HEAD(&priv->freeable_maps);
+>>   	mutex_init(&priv->lock);
+>>   
+>> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
+>> +	mutex_init(&priv->dmabuf_lock);
+>> +	INIT_LIST_HEAD(&priv->dmabuf_exp_list);
+>> +	INIT_LIST_HEAD(&priv->dmabuf_exp_wait_list);
+>> +#endif
+>> +
+>>   	if (use_ptemod) {
+>>   		priv->mm = get_task_mm(current);
+>>   		if (!priv->mm) {
+>> @@ -1053,17 +1111,433 @@ static long gntdev_ioctl_grant_copy(struct gntdev_priv *priv, void __user *u)
+>>   /* DMA buffer export support.                                         */
+>>   /* ------------------------------------------------------------------ */
+>>   
+>> +/* ------------------------------------------------------------------ */
+>> +/* Implementation of wait for exported DMA buffer to be released.     */
+>> +/* ------------------------------------------------------------------ */
+>> +
+>> +static void dmabuf_exp_release(struct kref *kref);
+>> +
+>> +static struct xen_dmabuf_wait_obj *
+>> +dmabuf_exp_wait_obj_new(struct gntdev_priv *priv,
+>> +			struct xen_dmabuf *xen_dmabuf)
+>> +{
+>> +	struct xen_dmabuf_wait_obj *obj;
+>> +
+>> +	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
+>> +	if (!obj)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	init_completion(&obj->completion);
+>> +	obj->xen_dmabuf = xen_dmabuf;
+>> +
+>> +	mutex_lock(&priv->dmabuf_lock);
+>> +	list_add(&obj->next, &priv->dmabuf_exp_wait_list);
+>> +	/* Put our reference and wait for xen_dmabuf's release to fire. */
+>> +	kref_put(&xen_dmabuf->u.exp.refcount, dmabuf_exp_release);
+>> +	mutex_unlock(&priv->dmabuf_lock);
+>> +	return obj;
+>> +}
+>> +
+>> +static void dmabuf_exp_wait_obj_free(struct gntdev_priv *priv,
+>> +				     struct xen_dmabuf_wait_obj *obj)
+>> +{
+>> +	struct xen_dmabuf_wait_obj *cur_obj, *q;
+>> +
+>> +	mutex_lock(&priv->dmabuf_lock);
+>> +	list_for_each_entry_safe(cur_obj, q, &priv->dmabuf_exp_wait_list, next)
+>> +		if (cur_obj == obj) {
+>> +			list_del(&obj->next);
+>> +			kfree(obj);
+>> +			break;
+>> +		}
+>> +	mutex_unlock(&priv->dmabuf_lock);
+>> +}
+>> +
+>> +static int dmabuf_exp_wait_obj_wait(struct xen_dmabuf_wait_obj *obj,
+>> +				    u32 wait_to_ms)
+>> +{
+>> +	if (wait_for_completion_timeout(&obj->completion,
+>> +			msecs_to_jiffies(wait_to_ms)) <= 0)
+>> +		return -ETIMEDOUT;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void dmabuf_exp_wait_obj_signal(struct gntdev_priv *priv,
+>> +				       struct xen_dmabuf *xen_dmabuf)
+>> +{
+>> +	struct xen_dmabuf_wait_obj *obj, *q;
+>> +
+>> +	list_for_each_entry_safe(obj, q, &priv->dmabuf_exp_wait_list, next)
+>> +		if (obj->xen_dmabuf == xen_dmabuf) {
+>> +			pr_debug("Found xen_dmabuf in the wait list, wake\n");
+>> +			complete_all(&obj->completion);
+>> +		}
+>> +}
+>> +
+>> +static struct xen_dmabuf *
+>> +dmabuf_exp_wait_obj_get_by_fd(struct gntdev_priv *priv, int fd)
+>> +{
+>> +	struct xen_dmabuf *q, *xen_dmabuf, *ret = ERR_PTR(-ENOENT);
+>> +
+>> +	mutex_lock(&priv->dmabuf_lock);
+>> +	list_for_each_entry_safe(xen_dmabuf, q, &priv->dmabuf_exp_list, next)
+>> +		if (xen_dmabuf->fd == fd) {
+>> +			pr_debug("Found xen_dmabuf in the wait list\n");
+>> +			kref_get(&xen_dmabuf->u.exp.refcount);
+>> +			ret = xen_dmabuf;
+>> +			break;
+>> +		}
+>> +	mutex_unlock(&priv->dmabuf_lock);
+>> +	return ret;
+>> +}
+>> +
+>>   static int dmabuf_exp_wait_released(struct gntdev_priv *priv, int fd,
+>>   				    int wait_to_ms)
+>>   {
+>> -	return -ETIMEDOUT;
+>> +	struct xen_dmabuf *xen_dmabuf;
+>> +	struct xen_dmabuf_wait_obj *obj;
+>> +	int ret;
+>> +
+>> +	pr_debug("Will wait for dma-buf with fd %d\n", fd);
+>> +	/*
+>> +	 * Try to find the DMA buffer: if not found means that
+>> +	 * either the buffer has already been released or file descriptor
+>> +	 * provided is wrong.
+>> +	 */
+>> +	xen_dmabuf = dmabuf_exp_wait_obj_get_by_fd(priv, fd);
+>> +	if (IS_ERR(xen_dmabuf))
+>> +		return PTR_ERR(xen_dmabuf);
+>> +
+>> +	/*
+>> +	 * xen_dmabuf still exists and is reference count locked by us now,
+>> +	 * so prepare to wait: allocate wait object and add it to the wait list,
+>> +	 * so we can find it on release.
+>> +	 */
+>> +	obj = dmabuf_exp_wait_obj_new(priv, xen_dmabuf);
+>> +	if (IS_ERR(obj)) {
+>> +		pr_err("Failed to setup wait object, ret %ld\n", PTR_ERR(obj));
+>> +		return PTR_ERR(obj);
+>> +	}
+>> +
+>> +	ret = dmabuf_exp_wait_obj_wait(obj, wait_to_ms);
+>> +	dmabuf_exp_wait_obj_free(priv, obj);
+>> +	return ret;
+>> +}
+>> +
+>> +/* ------------------------------------------------------------------ */
+>> +/* DMA buffer export support.                                         */
+>> +/* ------------------------------------------------------------------ */
+>> +
+>> +static struct sg_table *
+>> +dmabuf_pages_to_sgt(struct page **pages, unsigned int nr_pages)
+>> +{
+>> +	struct sg_table *sgt;
+>> +	int ret;
+>> +
+>> +	sgt = kmalloc(sizeof(*sgt), GFP_KERNEL);
+>> +	if (!sgt) {
+>> +		ret = -ENOMEM;
+>> +		goto out;
+>> +	}
+>> +
+>> +	ret = sg_alloc_table_from_pages(sgt, pages, nr_pages, 0,
+>> +					nr_pages << PAGE_SHIFT,
+>> +					GFP_KERNEL);
+>> +	if (ret)
+>> +		goto out;
+>> +
+>> +	return sgt;
+>> +
+>> +out:
+>> +	kfree(sgt);
+>> +	return ERR_PTR(ret);
+>> +}
+>> +
+>> +static int dmabuf_exp_ops_attach(struct dma_buf *dma_buf,
+>> +				 struct device *target_dev,
+>> +				 struct dma_buf_attachment *attach)
+>> +{
+>> +	struct xen_dmabuf_attachment *xen_dmabuf_attach;
+>> +
+>> +	xen_dmabuf_attach = kzalloc(sizeof(*xen_dmabuf_attach), GFP_KERNEL);
+>> +	if (!xen_dmabuf_attach)
+>> +		return -ENOMEM;
+>> +
+>> +	xen_dmabuf_attach->dir = DMA_NONE;
+>> +	attach->priv = xen_dmabuf_attach;
+>> +	/* Might need to pin the pages of the buffer now. */
+>> +	return 0;
+>> +}
+>> +
+>> +static void dmabuf_exp_ops_detach(struct dma_buf *dma_buf,
+>> +				  struct dma_buf_attachment *attach)
+>> +{
+>> +	struct xen_dmabuf_attachment *xen_dmabuf_attach = attach->priv;
+>> +
+>> +	if (xen_dmabuf_attach) {
+>> +		struct sg_table *sgt = xen_dmabuf_attach->sgt;
+>> +
+>> +		if (sgt) {
+>> +			if (xen_dmabuf_attach->dir != DMA_NONE)
+>> +				dma_unmap_sg_attrs(attach->dev, sgt->sgl,
+>> +						   sgt->nents,
+>> +						   xen_dmabuf_attach->dir,
+>> +						   DMA_ATTR_SKIP_CPU_SYNC);
+>> +			sg_free_table(sgt);
+>> +		}
+>> +
+>> +		kfree(sgt);
+>> +		kfree(xen_dmabuf_attach);
+>> +		attach->priv = NULL;
+>> +	}
+>> +	/* Might need to unpin the pages of the buffer now. */
+>> +}
+>> +
+>> +static struct sg_table *
+>> +dmabuf_exp_ops_map_dma_buf(struct dma_buf_attachment *attach,
+>> +			   enum dma_data_direction dir)
+>> +{
+>> +	struct xen_dmabuf_attachment *xen_dmabuf_attach = attach->priv;
+>> +	struct xen_dmabuf *xen_dmabuf = attach->dmabuf->priv;
+>> +	struct sg_table *sgt;
+>> +
+>> +	pr_debug("Mapping %d pages for dev %p\n", xen_dmabuf->nr_pages,
+>> +		 attach->dev);
+>> +
+>> +	if (WARN_ON(dir == DMA_NONE || !xen_dmabuf_attach))
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	/* Return the cached mapping when possible. */
+>> +	if (xen_dmabuf_attach->dir == dir)
+>> +		return xen_dmabuf_attach->sgt;
+> may need to check xen_dmabuf_attach->sgt == NULL (i.e. first time mapping)?
+> Also, I am not sure if this mechanism of reusing previously generated sgt
+> for other mappings is universally ok for any use-cases... I don't know if
+> it is acceptable as per the specification.
+Well, I was not sure about this piece of code as well,
+so I'll probably allocate a new sgt each time and do not reuse it
+as now
+>> +
+>> +	/*
+>> +	 * Two mappings with different directions for the same attachment are
+>> +	 * not allowed.
+>> +	 */
+>> +	if (WARN_ON(xen_dmabuf_attach->dir != DMA_NONE))
+>> +		return ERR_PTR(-EBUSY);
+>> +
+>> +	sgt = dmabuf_pages_to_sgt(xen_dmabuf->pages, xen_dmabuf->nr_pages);
+>> +	if (!IS_ERR(sgt)) {
+>> +		if (!dma_map_sg_attrs(attach->dev, sgt->sgl, sgt->nents, dir,
+>> +				      DMA_ATTR_SKIP_CPU_SYNC)) {
+>> +			sg_free_table(sgt);
+>> +			kfree(sgt);
+>> +			sgt = ERR_PTR(-ENOMEM);
+>> +		} else {
+>> +			xen_dmabuf_attach->sgt = sgt;
+>> +			xen_dmabuf_attach->dir = dir;
+>> +		}
+>> +	}
+>> +	if (IS_ERR(sgt))
+>> +		pr_err("Failed to map sg table for dev %p\n", attach->dev);
+>> +	return sgt;
+>> +}
+>> +
+>> +static void dmabuf_exp_ops_unmap_dma_buf(struct dma_buf_attachment *attach,
+>> +					 struct sg_table *sgt,
+>> +					 enum dma_data_direction dir)
+>> +{
+>> +	/* Not implemented. The unmap is done at dmabuf_exp_ops_detach(). */
+> Not sure if it's ok to do nothing here because the spec says this function is
+> mandatory and it should unmap and "release" &sg_table associated with it.
+>
+> 	/**
+> 	 * @unmap_dma_buf:
+> 	 *
+> 	 * This is called by dma_buf_unmap_attachment() and should unmap and
+> 	 * release the &sg_table allocated in @map_dma_buf, and it is mandatory.
+> 	 * It should also unpin the backing storage if this is the last mapping
+> 	 * of the DMA buffer, it the exporter supports backing storage
+> 	 * migration.
+> 	 */
+Yes, as I say at the top of the file dma-buf handling is DRM PRIME
+based, so I have the workflow just like in there.
+Do you think we have to be more strict and rework this?
 
-
-The right fix is to not try and mirror the on-device structure in the
-kernel struct. We should just use a proper NULL terminated string, which
-would avoid the need to explicitly do strncmp(.., .., 12) in the code
-and be less bug prone in general.
-
-The only place where we should need to worry about the 12 byte buffer is
-in nvram_write_header().
-
-Anyway that's a bigger change, so I'll take this for now with kzalloc().
-
-cheers
+Daniel, what do you think?
+>> +}
+>> +
+>> +static void dmabuf_exp_release(struct kref *kref)
+>> +{
+>> +	struct xen_dmabuf *xen_dmabuf =
+>> +		container_of(kref, struct xen_dmabuf, u.exp.refcount);
+>> +
+>> +	dmabuf_exp_wait_obj_signal(xen_dmabuf->priv, xen_dmabuf);
+>> +	list_del(&xen_dmabuf->next);
+>> +	kfree(xen_dmabuf);
+>> +}
+>> +
+>> +static void dmabuf_exp_ops_release(struct dma_buf *dma_buf)
+>> +{
+>> +	struct xen_dmabuf *xen_dmabuf = dma_buf->priv;
+>> +	struct gntdev_priv *priv = xen_dmabuf->priv;
+>> +
+>> +	gntdev_remove_map(priv, xen_dmabuf->u.exp.map);
+>> +	mutex_lock(&priv->dmabuf_lock);
+>> +	kref_put(&xen_dmabuf->u.exp.refcount, dmabuf_exp_release);
+>> +	mutex_unlock(&priv->dmabuf_lock);
+>> +}
+>> +
+>> +static void *dmabuf_exp_ops_kmap_atomic(struct dma_buf *dma_buf,
+>> +					unsigned long page_num)
+>> +{
+>> +	/* Not implemented. */
+>> +	return NULL;
+>> +}
+>> +
+>> +static void dmabuf_exp_ops_kunmap_atomic(struct dma_buf *dma_buf,
+>> +					 unsigned long page_num, void *addr)
+>> +{
+>> +	/* Not implemented. */
+>> +}
+>> +
+>> +static void *dmabuf_exp_ops_kmap(struct dma_buf *dma_buf,
+>> +				 unsigned long page_num)
+>> +{
+>> +	/* Not implemented. */
+>> +	return NULL;
+>> +}
+>> +
+>> +static void dmabuf_exp_ops_kunmap(struct dma_buf *dma_buf,
+>> +				  unsigned long page_num, void *addr)
+>> +{
+>> +	/* Not implemented. */
+>> +}
+>> +
+>> +static int dmabuf_exp_ops_mmap(struct dma_buf *dma_buf,
+>> +			       struct vm_area_struct *vma)
+>> +{
+>> +	/* Not implemented. */
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct dma_buf_ops dmabuf_exp_ops =  {
+>> +	.attach = dmabuf_exp_ops_attach,
+>> +	.detach = dmabuf_exp_ops_detach,
+>> +	.map_dma_buf = dmabuf_exp_ops_map_dma_buf,
+>> +	.unmap_dma_buf = dmabuf_exp_ops_unmap_dma_buf,
+>> +	.release = dmabuf_exp_ops_release,
+>> +	.map = dmabuf_exp_ops_kmap,
+>> +	.map_atomic = dmabuf_exp_ops_kmap_atomic,
+>> +	.unmap = dmabuf_exp_ops_kunmap,
+>> +	.unmap_atomic = dmabuf_exp_ops_kunmap_atomic,
+>> +	.mmap = dmabuf_exp_ops_mmap,
+>> +};
+>> +
+>> +static int dmabuf_export(struct gntdev_priv *priv, struct grant_map *map,
+>> +			 int *fd)
+>> +{
+>> +	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
+>> +	struct xen_dmabuf *xen_dmabuf;
+>> +	int ret = 0;
+>> +
+>> +	xen_dmabuf = kzalloc(sizeof(*xen_dmabuf), GFP_KERNEL);
+>> +	if (!xen_dmabuf)
+>> +		return -ENOMEM;
+>> +
+>> +	kref_init(&xen_dmabuf->u.exp.refcount);
+>> +
+>> +	xen_dmabuf->priv = priv;
+>> +	xen_dmabuf->nr_pages = map->count;
+>> +	xen_dmabuf->pages = map->pages;
+>> +	xen_dmabuf->u.exp.map = map;
+>> +
+>> +	exp_info.exp_name = KBUILD_MODNAME;
+>> +	if (map->dma_dev->driver && map->dma_dev->driver->owner)
+>> +		exp_info.owner = map->dma_dev->driver->owner;
+>> +	else
+>> +		exp_info.owner = THIS_MODULE;
+>> +	exp_info.ops = &dmabuf_exp_ops;
+>> +	exp_info.size = map->count << PAGE_SHIFT;
+>> +	exp_info.flags = O_RDWR;
+>> +	exp_info.priv = xen_dmabuf;
+>> +
+>> +	xen_dmabuf->dmabuf = dma_buf_export(&exp_info);
+>> +	if (IS_ERR(xen_dmabuf->dmabuf)) {
+>> +		ret = PTR_ERR(xen_dmabuf->dmabuf);
+>> +		xen_dmabuf->dmabuf = NULL;
+>> +		goto fail;
+>> +	}
+>> +
+>> +	ret = dma_buf_fd(xen_dmabuf->dmabuf, O_CLOEXEC);
+>> +	if (ret < 0)
+>> +		goto fail;
+>> +
+>> +	xen_dmabuf->fd = ret;
+>> +	*fd = ret;
+>> +
+>> +	pr_debug("Exporting DMA buffer with fd %d\n", ret);
+>> +
+>> +	mutex_lock(&priv->dmabuf_lock);
+>> +	list_add(&xen_dmabuf->next, &priv->dmabuf_exp_list);
+>> +	mutex_unlock(&priv->dmabuf_lock);
+>> +	return 0;
+>> +
+>> +fail:
+>> +	if (xen_dmabuf->dmabuf)
+>> +		dma_buf_put(xen_dmabuf->dmabuf);
+>> +	kfree(xen_dmabuf);
+>> +	return ret;
+>> +}
+>> +
+>> +static struct grant_map *
+>> +dmabuf_exp_alloc_backing_storage(struct gntdev_priv *priv, int dmabuf_flags,
+>> +				 int count)
+>> +{
+>> +	struct grant_map *map;
+>> +
+>> +	if (unlikely(count <= 0))
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	if ((dmabuf_flags & GNTDEV_DMA_FLAG_WC) &&
+>> +	    (dmabuf_flags & GNTDEV_DMA_FLAG_COHERENT)) {
+>> +		pr_err("Wrong dma-buf flags: either WC or coherent, not both\n");
+>> +		return ERR_PTR(-EINVAL);
+>> +	}
+>> +
+>> +	map = gntdev_alloc_map(priv, count, dmabuf_flags);
+>> +	if (!map)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	if (unlikely(atomic_add_return(count, &pages_mapped) > limit)) {
+>> +		pr_err("can't map: over limit\n");
+>> +		gntdev_put_map(NULL, map);
+>> +		return ERR_PTR(-ENOMEM);
+>> +	}
+>> +	return map;
+>>   }
+> When and how would this allocation be freed? I don't see any ioctl for freeing up
+> shared pages.
+on xen_dmabuf.release callback which is refcounted
+>>   
+>>   static int dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
+>>   				int count, u32 domid, u32 *refs, u32 *fd)
+>>   {
+>> +	struct grant_map *map;
+>> +	int i, ret;
+>> +
+>>   	*fd = -1;
+>> -	return -EINVAL;
+>> +
+>> +	if (use_ptemod) {
+>> +		pr_err("Cannot provide dma-buf: use_ptemode %d\n",
+>> +		       use_ptemod);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	map = dmabuf_exp_alloc_backing_storage(priv, flags, count);
+>> +	if (IS_ERR(map))
+>> +		return PTR_ERR(map);
+>> +
+>> +	for (i = 0; i < count; i++) {
+>> +		map->grants[i].domid = domid;
+>> +		map->grants[i].ref = refs[i];
+>> +	}
+>> +
+>> +	mutex_lock(&priv->lock);
+>> +	gntdev_add_map(priv, map);
+>> +	mutex_unlock(&priv->lock);
+>> +
+>> +	map->flags |= GNTMAP_host_map;
+>> +#if defined(CONFIG_X86)
+>> +	map->flags |= GNTMAP_device_map;
+>> +#endif
+>> +
+>> +	ret = map_grant_pages(map);
+>> +	if (ret < 0)
+>> +		goto out;
+>> +
+>> +	ret = dmabuf_export(priv, map, fd);
+>> +	if (ret < 0)
+>> +		goto out;
+>> +
+>> +	return 0;
+>> +
+>> +out:
+>> +	gntdev_remove_map(priv, map);
+>> +	return ret;
+>>   }
+>>   
+>>   /* ------------------------------------------------------------------ */
+>> -- 
+>> 2.17.0
+>>
