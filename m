@@ -1,77 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754016AbeEaGqQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:46:16 -0400
-Received: from mga02.intel.com ([134.134.136.20]:58534 "EHLO mga02.intel.com"
+        id S1753953AbeEaGtz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:49:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50816 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753868AbeEaGqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:46:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
-   d="scan'208";a="204131565"
-Date: Thu, 31 May 2018 14:45:35 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Joel Fernandes <joelaf@google.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Erick Reyes <erickreyes@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>, linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Shuah Khan <shuah@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Glexiner <tglx@linutronix.de>, Todd Kjos <tkjos@google.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH] kselftests: fix ptr_ret.cocci warnings
-Message-ID: <20180531064535.GA53792@lkp-ib04>
-References: <20180530000500.257225-9-joel@joelfernandes.org>
+        id S1753825AbeEaGty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 02:49:54 -0400
+Date: Thu, 31 May 2018 08:49:51 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: ufo19890607 <ufo19890607@gmail.com>, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, yuzhoujian <yuzhoujian@didichuxing.com>
+Subject: Re: [PATCH v4] Print the memcg's name when system-wide OOM happened
+Message-ID: <20180531064951.GG15278@dhcp22.suse.cz>
+References: <1526870386-2439-1-git-send-email-ufo19890607@gmail.com>
+ <20180530134256.bbf7a8639571a3f8910b6a05@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180530000500.257225-9-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180530134256.bbf7a8639571a3f8910b6a05@linux-foundation.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <fengguang.wu@intel.com>
+On Wed 30-05-18 13:42:56, Andrew Morton wrote:
+> On Mon, 21 May 2018 03:39:46 +0100 ufo19890607 <ufo19890607@gmail.com> wrote:
+> 
+> > From: yuzhoujian <yuzhoujian@didichuxing.com>
+> > 
+> > The dump_header does not print the memcg's name when the system
+> > oom happened. So users cannot locate the certain container which
+> > contains the task that has been killed by the oom killer.
+> > 
+> > System oom report will print the memcg's name after this patch,
+> > so users can get the memcg's path from the oom report and check
+> > the certain container more quickly.
+> 
+> lkp-robot is reporting an oops.
+> 
+> > --- a/mm/oom_kill.c
+> > +++ b/mm/oom_kill.c
+> > @@ -433,6 +433,7 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
+> >  	if (is_memcg_oom(oc))
+> >  		mem_cgroup_print_oom_info(oc->memcg, p);
+> >  	else {
+> > +		mem_cgroup_print_oom_memcg_name(oc->memcg, p);
+> >  		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
+> >  		if (is_dump_unreclaim_slabs())
+> >  			dump_unreclaimable_slab();
+> 
+> static inline bool is_memcg_oom(struct oom_control *oc)
+> {
+> 	return oc->memcg != NULL;
+> }
+> 
+> So in the mem_cgroup_print_oom_memcg_name() call which this patch adds,
+> oc->memcg is known to be NULL.  How can this possibly work?  
 
-lib/test_atomic_sections.c:66:1-3: WARNING: PTR_ERR_OR_ZERO can be used
+This version is broken. The current version [1] seems to be doing the
+right thing in that regards AFAICS. It has some other issues though.
+Can we drop the current code from the mmotm tree and start over?
 
-
- Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-
-Generated by: scripts/coccinelle/api/ptr_ret.cocci
-
-Fixes: 3b0e47f0ade1 ("kselftests: Add tests for the preemptoff and irqsoff tracers")
-CC: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
----
-
- test_atomic_sections.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
---- a/lib/test_atomic_sections.c
-+++ b/lib/test_atomic_sections.c
-@@ -63,10 +63,7 @@ static int __init atomic_sect_init(void)
- 	snprintf(task_name, 50, "%s dis test", atomic_mode);
- 
- 	test_task = kthread_run((void*)atomic_sect_run, NULL, task_name);
--	if (IS_ERR(test_task))
--		return PTR_ERR(test_task);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(test_task);
- }
- 
- static void __exit atomic_sect_exit(void)
+[1] http://lkml.kernel.org/r/1527413551-5982-1-git-send-email-ufo19890607@gmail.com
+-- 
+Michal Hocko
+SUSE Labs
