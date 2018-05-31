@@ -1,158 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754208AbeEaTdQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 15:33:16 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:41214 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754067AbeEaTdM (ORCPT
+        id S1754195AbeEaThP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 15:37:15 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42984 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754067AbeEaThL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 15:33:12 -0400
-Subject: Re: [PATCH 0/8] xen: dma-buf support for grant device
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180525153331.31188-1-andr2000@gmail.com>
- <9687b6e5-808e-0c63-34c3-90e6fcbdfb2e@oracle.com>
- <bc6a2e2f-f650-86db-ac8c-1945a6183c06@gmail.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <42b9fd3b-11d7-bd56-4fe2-35d087caf123@oracle.com>
-Date: Thu, 31 May 2018 15:36:39 -0400
+        Thu, 31 May 2018 15:37:11 -0400
+X-Google-Smtp-Source: ADUXVKK53cSj0M91N+5bsuWFR6HKQxImtZ01d1hWTlXF4DjH+3MwGLXOWLrNLAeC3zwzMaQSGW+Wug==
+Subject: Re: [PATCH] clk: vc5: Fix div-by-0 when rounding a rate of zero
+To: Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <1527791036-11251-1-git-send-email-steve_longerbeam@mentor.com>
+ <1084deae-ca55-aba1-ec08-7e1d976de7b7@gmail.com>
+ <e6d84bd1-5ad9-1a01-1cdf-0356fea82c16@gmail.com>
+ <f7a05f4b-35c4-4900-24bd-44aab1c669cb@gmail.com>
+ <59591484-b76d-6764-73c3-637bb4e5178f@mentor.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <06fd7d17-5c31-4ac5-d923-276afee056b3@gmail.com>
+Date: Thu, 31 May 2018 21:37:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <bc6a2e2f-f650-86db-ac8c-1945a6183c06@gmail.com>
+In-Reply-To: <59591484-b76d-6764-73c3-637bb4e5178f@mentor.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8910 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1805310217
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/31/2018 01:51 AM, Oleksandr Andrushchenko wrote:
-> On 05/31/2018 04:46 AM, Boris Ostrovsky wrote:
->>
->>
->> On 05/25/2018 11:33 AM, Oleksandr Andrushchenko wrote:
->>
+On 05/31/2018 08:52 PM, Steve Longerbeam wrote:
+> 
+> 
+> On 05/31/2018 11:35 AM, Marek Vasut wrote:
+>> On 05/31/2018 08:32 PM, Steve Longerbeam wrote:
+>>> Hi Marek,
 >>>
->>> Oleksandr Andrushchenko (8):
->>>    xen/grant-table: Make set/clear page private code shared
->>>    xen/balloon: Move common memory reservation routines to a module
->>>    xen/grant-table: Allow allocating buffers suitable for DMA
->>>    xen/gntdev: Allow mappings for DMA buffers
->>>    xen/gntdev: Add initial support for dma-buf UAPI
->>>    xen/gntdev: Implement dma-buf export functionality
->>>    xen/gntdev: Implement dma-buf import functionality
->>>    xen/gntdev: Expose gntdev's dma-buf API for in-kernel use
 >>>
->>>   drivers/xen/Kconfig           |   23 +
->>>   drivers/xen/Makefile          |    1 +
->>>   drivers/xen/balloon.c         |   71 +--
->>>   drivers/xen/gntdev.c          | 1025
->>> ++++++++++++++++++++++++++++++++-
->>
->>
->> I think this calls for gntdev_dma.c.
-> I assume you mean as a separate file (part of gntdev driver)?
+>>> On 05/31/2018 11:25 AM, Marek Vasut wrote:
+>>>> On 05/31/2018 08:23 PM, Steve Longerbeam wrote:
+>>>>> Just return zero for a rounded rate if requested rate is zero.
+>>>>>
+>>>>> This was caught by CONFIG_UBSAN:
+>>>>>
+>>>>> [  192.266748] UBSAN: Undefined behaviour in
+>>>>> drivers/clk/clk-versaclock5.c:513:17
+>>>>> [  192.274050] division by zero
+>>>>> [  192.276976] CPU: 0 PID: 2579 Comm: vsp-unit-test-0 Tainted: G
+>>>>> B   WC      4.14.17-02752-g13fb96f #1
+>>>>> [  192.286378] Hardware name: Renesas Salvator-X board based on
+>>>>> r8a7795 ES2.0+ (DT)
+>>>>> [  192.293852] Call trace:
+>>>>> [  192.296343] [<ffff2000080900dc>] dump_backtrace+0x0/0x390
+>>>>> [  192.301807] [<ffff200008090480>] show_stack+0x14/0x1c
+>>>>> [  192.306920] [<ffff200008f66574>] dump_stack+0x134/0x1a8
+>>>>> [  192.312213] [<ffff2000087aaa30>] ubsan_epilogue+0x14/0x60
+>>>>> [  192.317677] [<ffff2000087ab4d0>]
+>>>>> __ubsan_handle_divrem_overflow+0x11c/0x170
+>>>>> [  192.324720] [<ffff200008852120>] vc5_fod_round_rate+0x68/0x148
+>>>>> [  192.330620] [<ffff20000884567c>] clk_calc_new_rates+0x238/0x3fc
+>>>>> [  192.336607] [<ffff2000088456e0>] clk_calc_new_rates+0x29c/0x3fc
+>>>>> [  192.342595] [<ffff2000088483ac>]
+>>>>> clk_core_set_rate_nolock+0x48/0x11c
+>>>>> [  192.349019] [<ffff2000088484b4>] clk_set_rate+0x34/0x4c
+>>>>> [  192.354307] [<ffff20000895e304>] rcar_du_pm_suspend+0x274/0x2f4
+>>>>> [  192.360297] [<ffff20000898feac>] platform_pm_suspend+0x78/0xb8
+>>>>> [  192.366198] [<ffff2000089a5604>] dpm_run_callback+0x584/0xa18
+>>>>> [  192.372010] [<ffff2000089a69e0>] __device_suspend+0x1a8/0x534
+>>>>> [  192.377822] [<ffff2000089adc48>] dpm_suspend+0x130/0xea0
+>>>>> [  192.383197] [<ffff2000089b0344>] dpm_suspend_start+0x130/0x138
+>>>>> [  192.389099] [<ffff20000817f584>]
+>>>>> suspend_devices_and_enter+0xf0/0x1778
+>>>>> [  192.395700] [<ffff200008183014>] pm_suspend+0x2408/0x245c
+>>>>> [  192.401162] [<ffff20000817c0a4>] state_store+0xf0/0x130
+>>>>> [  192.406451] [<ffff200008f6f19c>] kobj_attr_store+0x5c/0x6c
+>>>>> [  192.412002] [<ffff2000084f4c94>] sysfs_kf_write+0xe8/0xfc
+>>>>> [  192.417466] [<ffff2000084f30b0>] kernfs_fop_write+0x22c/0x2e4
+>>>>> [  192.423281] [<ffff2000083e46d4>] __vfs_write+0x104/0x34c
+>>>>> [  192.428656] [<ffff2000083e4cc4>] vfs_write+0x134/0x2d8
+>>>>> [  192.433857] [<ffff2000083e5150>] SyS_write+0xbc/0x12c
+>>>>> [  192.438967] Exception stack(0xffff8006cd1cfec0 to
+>>>>> 0xffff8006cd1d0000)
+>>>>> [  192.445480] fec0: 0000000000000001 000000001e303f00
+>>>>> 0000000000000004 0000ffff959a5000
+>>>>> [  192.453397] fee0: 0000000000000000 0000000155510004
+>>>>> 0000000000000003 000000000000006d
+>>>>> [  192.461314] ff00: 0000000000000040 0000000000000000
+>>>>> 0000ffffcc304800 0000000000000020
+>>>>> [  192.469230] ff20: 0000000000000000 0000000000000000
+>>>>> 0000000000000001 0000000000000008
+>>>>> [  192.477148] ff40: 00000000004eb3b8 0000ffff958bb840
+>>>>> 000000000000003d 0000000000000001
+>>>>> [  192.485065] ff60: 000000001e303f00 0000ffff959a1508
+>>>>> 0000000000000004 000000001e303f00
+>>>>> [  192.492982] ff80: 0000000000000004 00000000004d4c68
+>>>>> 0000000000000001 0000000000000000
+>>>>> [  192.500899] ffa0: 000000001e30d5c0 0000ffffcc304820
+>>>>> 0000ffff958bec64 0000ffffcc304820
+>>>>> [  192.508816] ffc0: 0000ffff95912898 0000000020000000
+>>>>> 0000000000000001 0000000000000040
+>>>>> [  192.516733] ffe0: 0000000000000000 0000000000000000
+>>>>> 0000000000000000 0000000000000000
+>>>>> [  192.524650] [<ffff200008083ef0>] el0_svc_naked+0x24/0x28
+>>>>>
+>>>>> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+>>>>> ---
+>>>>>    drivers/clk/clk-versaclock5.c | 4 ++++
+>>>>>    1 file changed, 4 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/clk/clk-versaclock5.c
+>>>>> b/drivers/clk/clk-versaclock5.c
+>>>>> index decffb3..113523d 100644
+>>>>> --- a/drivers/clk/clk-versaclock5.c
+>>>>> +++ b/drivers/clk/clk-versaclock5.c
+>>>>> @@ -509,6 +509,10 @@ static long vc5_fod_round_rate(struct clk_hw
+>>>>> *hw, unsigned long rate,
+>>>>>        u32 div_int;
+>>>>>        u64 div_frc;
+>>>>>    +    /* prevent div-by-0 */
+>>>>> +    if (rate == 0)
+>>>>> +        return 0;
+>>>>> +
+>>>>>        /* Determine integer part, which is 12 bit wide */
+>>>>>        div_int = f_in / rate;
+>>>>>        /*
+>>>>>
+>>>> Can this actually happen ?
+>>> We caught this using the Renesas 3.6.0 BSP release, when performing
+>>> a suspend of rcar-du driver. The rcar_du_pm_suspend() in 3.6.0 BSP is
+>>> modified
+>>> from mainline version, including calling clk_set_rate() on the crtc
+>>> clocks with a
+>>> rate of zero. So this is not actually reproducible (yet) in mainline.
+>> So it sets clock to 0 ?
+> 
+> Yep, see
+> 
+> https://kernel.googlesource.com/pub/scm/linux/kernel/git/horms/renesas-bsp/+/rcar-3.6.0/drivers/gpu/drm/rcar-du/rcar_du_drv.c#359
+> 
+> 
+>>   Anyway, this looks sane, although maybe the
+>> whole driver could use a once-over to see if there could be more of this.
+> 
+> Actually I do see more potential divide-by-zeros due to a passed rate
+> of zero, including vc5_pfd_round_rate() and vc5_pfd_set_rate().
+> 
+> I can resubmit this patch fixing all cases in clk-versaclock5.c if you
+> like (and probably remove the misleading backtrace in the commit
+> message since it is a Renesas 3.6.0 kernel backtrace not a mainline
+> backtrace).
+> 
+> Or perhaps just treat this as a heads-up, I'll leave it up to you.
 
+It'd be nice if you resubmitted it fixing all the cases.
 
-Yes, source only. The driver stays the same.
+>> Or should the clock framework even let us set clock to 0 Hz ?
+> 
+> That is a good question, it might make sense for the core clock framework
+> to not allow passing a rate of 0 on to the clock ops, and instead treat
+> it generically.
 
+Jupp
 
->> I only had a quick look over gntdev changes but they very much are
->> concentrated in dma-specific routines.
->>
-> I tried to do that, but there are some dependencies between the
-> gntdev.c and gntdev_dma.c,
-> so finally I decided to put it all together.
->> You essentially only share file_operations entry points with original
->> gntdev code, right?
->>
-> fops + mappings done by gntdev (struct grant_map) and I need to
-> release map on dma_buf .release
-> callback which makes some cross-dependencies between modules which
-> seemed to be not cute
-> (gntdev keeps its all structs and functions inside, so I cannot easily
-> access those w/o
-> helpers).
->
-> But I'll try one more time and move all DMA specific stuff into
-> gntdev_dma.c
-
-
-Yes, please try it. Maybe even have gntdev_common.c, gntdev_mem.c (??) 
-and gntdev_dma.c.
-
--boris
-
-
->> -boris
->>
-> Thank you,
-> Oleksandr
->>
->>>   drivers/xen/grant-table.c     |  176 +++++-
->>>   drivers/xen/mem-reservation.c |  134 +++++
->>>   include/uapi/xen/gntdev.h     |  106 ++++
->>>   include/xen/grant_dev.h       |   37 ++
->>>   include/xen/grant_table.h     |   28 +
->>>   include/xen/mem_reservation.h |   29 +
->>>   10 files changed, 1527 insertions(+), 103 deletions(-)
->>>   create mode 100644 drivers/xen/mem-reservation.c
->>>   create mode 100644 include/xen/grant_dev.h
->>>   create mode 100644 include/xen/mem_reservation.h
->>>
->
+-- 
+Best regards,
+Marek Vasut
