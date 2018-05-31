@@ -1,86 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755850AbeEaQzS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:55:18 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42653 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755829AbeEaQzN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:55:13 -0400
-X-Google-Smtp-Source: ADUXVKKBFfN96EClLwNKiSTdY9pPFrcVB8oXsHk1RQc6kxEx0j4B/zqIkU/aNzDxyCuXuO/JLhNs/w==
-Subject: Re: [PATCH v2 01/21] usb: phy: use match_string() helper
-To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
-Cc: andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
- <1527765086-19873-2-git-send-email-xieyisheng1@huawei.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <af7838f0-9cae-d526-b52f-15996cd8031c@cogentembedded.com>
-Date: Thu, 31 May 2018 19:55:10 +0300
+        id S1755868AbeEaQze (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:55:34 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43640 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755634AbeEaQzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:55:31 -0400
+Subject: Re: [PATCH v2 00/17] arm64 SSBD (aka Spectre-v4) mitigation
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, Mark Rutland <mark.rutland@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Julien Grall <julien.grall@arm.com>, Andy Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180529121121.24927-1-marc.zyngier@arm.com>
+ <20180531164133.6z6py7nl55ty473e@armageddon.cambridge.arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <b6111f31-b128-94f2-ae6b-03a906358c0b@arm.com>
+Date: Thu, 31 May 2018 17:55:27 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1527765086-19873-2-git-send-email-xieyisheng1@huawei.com>
+In-Reply-To: <20180531164133.6z6py7nl55ty473e@armageddon.cambridge.arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+Hi Catalin,
 
-On 05/31/2018 02:11 PM, Yisheng Xie wrote:
-
-> match_string() returns the index of an array for a matching string,
-> which can be used instead of open coded variant.
+On 31/05/18 17:41, Catalin Marinas wrote:
+> On Tue, May 29, 2018 at 01:11:04PM +0100, Marc Zyngier wrote:
+>> Marc Zyngier (17):
+>>   arm/arm64: smccc: Add SMCCC-specific return codes
+>>   arm64: Call ARCH_WORKAROUND_2 on transitions between EL0 and EL1
+>>   arm64: Add per-cpu infrastructure to call ARCH_WORKAROUND_2
+>>   arm64: Add ARCH_WORKAROUND_2 probing
+>>   arm64: Add 'ssbd' command-line option
+>>   arm64: ssbd: Add global mitigation state accessor
+>>   arm64: ssbd: Skip apply_ssbd if not using dynamic mitigation
+>>   arm64: ssbd: Restore mitigation status on CPU resume
+>>   arm64: ssbd: Introduce thread flag to control userspace mitigation
+>>   arm64: ssbd: Add prctl interface for per-thread mitigation
+>>   arm64: KVM: Add HYP per-cpu accessors
+>>   arm64: KVM: Add ARCH_WORKAROUND_2 support for guests
+>>   arm64: KVM: Handle guest's ARCH_WORKAROUND_2 requests
+>>   arm64: KVM: Add ARCH_WORKAROUND_2 discovery through
+>>     ARCH_FEATURES_FUNC_ID
 > 
-> Cc: linux-usb@vger.kernel.org
-> Cc: Felipe Balbi <balbi@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> ---
-> v2:
->  - donot rename err to ret  - per Andy
+> I queued the 14 patches above for 4.18.
 
-   Hm...
+I just realized that your for-next/core branch is based on
+4.17-rc4, which means arch/arm64/kernel/ssbd.c won't compile
+(it relies on some of the symbols introduced with the x86
+stuff in 4.17-rc7.
 
-> 
->  drivers/usb/phy/of.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/usb/phy/of.c b/drivers/usb/phy/of.c
-> index 1ab134f..9d74081 100644
-> --- a/drivers/usb/phy/of.c
-> +++ b/drivers/usb/phy/of.c
-> @@ -28,16 +28,16 @@
->  enum usb_phy_interface of_usb_get_phy_mode(struct device_node *np)
->  {
->  	const char *phy_type;
-> -	int err, i;
-> +	int err;
->  
->  	err = of_property_read_string(np, "phy_type", &phy_type);
->  	if (err < 0)
->  		return USBPHY_INTERFACE_MODE_UNKNOWN;
->  
-> -	for (i = 0; i < ARRAY_SIZE(usbphy_modes); i++)
-> -		if (!strcmp(phy_type, usbphy_modes[i]))
-> -			return i;
-> +	err = match_string(usbphy_modes, ARRAY_SIZE(usbphy_modes), phy_type);
-> +	if (err < 0)
+You can work around it by adding the following hack:
 
-   This is one of the few cases when 'err' is not the best name for such a
-variable. I'd prefer to see something like 'match' or even 'rc' or 'ret'... :-)
+>From 8a0dbe9fb468c03b3913d17af9dce7358f899ee3 Mon Sep 17 00:00:00 2001
+From: Marc Zyngier <marc.zyngier@arm.com>
+Date: Thu, 31 May 2018 17:54:11 +0100
+Subject: [PATCH] fixup! arm64: ssbd: Add prctl interface for per-thread
+ mitigation
 
-> +		return USBPHY_INTERFACE_MODE_UNKNOWN;
->  
-> -	return USBPHY_INTERFACE_MODE_UNKNOWN;
-> +	return err;
->  }
->  EXPORT_SYMBOL_GPL(of_usb_get_phy_mode);
-> 
+---
+ arch/arm64/kernel/ssbd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-MBR, Sergei
+diff --git a/arch/arm64/kernel/ssbd.c b/arch/arm64/kernel/ssbd.c
+index 07b12c034ec2..3432e5ef9f41 100644
+--- a/arch/arm64/kernel/ssbd.c
++++ b/arch/arm64/kernel/ssbd.c
+@@ -11,7 +11,9 @@
+ 
+ /*
+  * prctl interface for SSBD
++ * FIXME: Drop the below ifdefery once merged in 4.18.
+  */
++#ifdef PR_SPEC_STORE_BYPASS
+ static int ssbd_prctl_set(struct task_struct *task, unsigned long ctrl)
+ {
+ 	int state = arm64_get_ssbd_state();
+@@ -105,3 +107,4 @@ int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
+ 		return -ENODEV;
+ 	}
+ }
++#endif	/* PR_SPEC_STORE_BYPASS */
+-- 
+2.17.1
+
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
