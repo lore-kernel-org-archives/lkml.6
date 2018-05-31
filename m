@@ -1,53 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755504AbeEaPmL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:42:11 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33615 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755417AbeEaPmH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:42:07 -0400
-X-Google-Smtp-Source: ADUXVKK1yk5+vjEFM5t5+GFvMHbz3tat5+XZ/+99QCE9BTMP2Y9xnSD56gMyaDeiZxOfykQqNnfKUA==
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: Albert Ou <albert@sifive.com>, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: [PATCH] riscv: add riscv-specific predefines to CHECKFLAGS
-Date: Thu, 31 May 2018 17:42:01 +0200
-Message-Id: <20180531154201.48618-1-luc.vanoostenryck@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1755540AbeEaPmy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:42:54 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55550 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755417AbeEaPmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 11:42:50 -0400
+Subject: Re: [PATCH 4/8] scsi: libsas: trigger a new revalidation to discover
+ the device
+To: Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20180529022309.21071-1-yanaijie@huawei.com>
+ <20180529022309.21071-5-yanaijie@huawei.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <013c5c91-9792-7951-95ed-22daae2e2dbe@huawei.com>
+Date: Thu, 31 May 2018 16:42:29 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180529022309.21071-5-yanaijie@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RISC-V uses the macro __riscv_xlen, predefined by GCC, to
-make the distinction between 32 or 64 bit code.
+On 29/05/2018 03:23, Jason Yan wrote:
+> Now if a new device replaced a old device, the sas address will change.
+> We unregister the old device and discover the new device in one
+> revalidation process. But after we deferred the sas_port_delete(), the
+> sas port is not deleted when we registering the new port and device.
+> This will make the sysfs complain of creating duplicate filename.
+>
+> Fix this by doing the replacement in two steps. The first revalidation
+> only delete the old device and trigger a new revalidation. The second
+> revalidation discover the new device.
+>
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> CC: chenxiang <chenxiang66@hisilicon.com>
+> CC: John Garry <john.garry@huawei.com>
+> CC: Johannes Thumshirn <jthumshirn@suse.de>
+> CC: Ewan Milne <emilne@redhat.com>
+> CC: Christoph Hellwig <hch@lst.de>
+> CC: Tomas Henzl <thenzl@redhat.com>
+> CC: Dan Williams <dan.j.williams@intel.com>
+> CC: Hannes Reinecke <hare@suse.com>
+> ---
+>  drivers/scsi/libsas/sas_expander.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+> index 629c580d906b..25ad9ef54e6c 100644
+> --- a/drivers/scsi/libsas/sas_expander.c
+> +++ b/drivers/scsi/libsas/sas_expander.c
+> @@ -2013,6 +2013,8 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
+>  {
+>  	struct expander_device *ex = &dev->ex_dev;
+>  	struct ex_phy *phy = &ex->ex_phy[phy_id];
+> +	struct asd_sas_port *port = dev->port;
+> +	struct asd_sas_phy *sas_phy;
+>  	enum sas_device_type type = SAS_PHY_UNUSED;
+>  	u8 sas_addr[8];
+>  	int res;
+> @@ -2060,7 +2062,14 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
+>  		    SAS_ADDR(phy->attached_sas_addr));
+>  	sas_unregister_devs_sas_addr(dev, phy_id, last);
+>
+> -	return sas_discover_new(dev, phy_id);
+> +	/* force the next revalidation find this phy and bring it up */
+> +	phy->phy_change_count = -1;
+> +	ex->ex_change_count = -1;
+> +	sas_phy = container_of(port->phy_list.next, struct asd_sas_phy,
+> +			port_phy_el);
+> +	port->ha->notify_port_event(sas_phy, PORTE_BROADCAST_RCVD);
+> +
 
-However, sparse doesn't know anything about this macro
-which lead to wrong warnings and failures.
+This is less than ideal: that is, restarting another discovery with this 
+artifical broadcast event. We do something similar when re-enabling 
+revalidation.
 
-Fix this by adding a define of __riscv_xlen to CHECKFLAGS
-and add one for __riscv too.
+Can we do all the event processing synchronised to the original event?
 
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
----
- arch/riscv/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 76e958a54..6d4a5f6c3 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -71,6 +71,9 @@ KBUILD_CFLAGS_MODULE += $(call cc-option,-mno-relax)
- # architectures.  It's faster to have GCC emit only aligned accesses.
- KBUILD_CFLAGS += $(call cc-option,-mstrict-align)
- 
-+# arch specific predefines for sparse
-+CHECKFLAGS += -D__riscv -D__riscv_xlen=$(BITS)
-+
- head-y := arch/riscv/kernel/head.o
- 
- core-y += arch/riscv/kernel/ arch/riscv/mm/
--- 
-2.17.1
+> +	return 0;
+>  }
+>
+>  /**
+>
