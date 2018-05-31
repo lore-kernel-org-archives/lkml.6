@@ -1,68 +1,318 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755162AbeEaMbZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 08:31:25 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56365 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754820AbeEaMbX (ORCPT
+        id S1755143AbeEaMb7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 08:31:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53731 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754847AbeEaMb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 08:31:23 -0400
-From: Colin King <colin.king@canonical.com>
-To: Hannes Reinecke <hare@suse.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: aic7xxx: aic79xx: fix potential null pointer dereference on ahd
-Date: Thu, 31 May 2018 13:31:17 +0100
-Message-Id: <20180531123117.32118-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 31 May 2018 08:31:56 -0400
+Date: Thu, 31 May 2018 05:31:35 -0700
+From: tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-927b2deb067b8b4753fc09c7a42092f43fc0c1f6@git.kernel.org>
+Cc: torvalds@linux-foundation.org, peterz@infradead.org,
+        kan.liang@intel.com, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        kan.liang@intel.com, hpa@zytor.com, peterz@infradead.org,
+        torvalds@linux-foundation.org
+In-Reply-To: <1525371913-10597-4-git-send-email-kan.liang@intel.com>
+References: <1525371913-10597-4-git-send-email-kan.liang@intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf/x86/intel/uncore: Add new data structures for
+ free running counters
+Git-Commit-ID: 927b2deb067b8b4753fc09c7a42092f43fc0c1f6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit-ID:  927b2deb067b8b4753fc09c7a42092f43fc0c1f6
+Gitweb:     https://git.kernel.org/tip/927b2deb067b8b4753fc09c7a42092f43fc0c1f6
+Author:     Kan Liang <kan.liang@intel.com>
+AuthorDate: Thu, 3 May 2018 11:25:09 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 31 May 2018 12:36:28 +0200
 
-If AHD_DEBUG is enabled and ahd_platform_alloc fails then ahd is set
-to null and the debug printk dereferences ahd when passing it to
-ahd_name.  Fix this by moving the debug printk to before the call
-to ahd_platform_alloc where ahd is not null at that point.
+perf/x86/intel/uncore: Add new data structures for free running counters
 
-Detected by CoverityScan, CID#100296 ("Explicit null dereference")
+There are a number of free running counters introduced for uncore, which
+provide highly valuable information to a wide array of customers.
+For example, Skylake Server has IIO free running counters to collect
+Input/Output x BW/Utilization.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There is NO event available on the general purpose counters, that is
+exactly the same as the free running counters. The generic uncore code
+needs to be enhanced to support the new counters.
+
+In the uncore document, there is no event-code assigned to free running
+counters. Some events need to be defined to indicate the free running
+counters. The events are encoded as event-code + umask-code.
+
+The event-code for all free running counters is 0xff, which is the same
+as the fixed counters:
+
+- It has not been decided what code will be used for common events on
+  future platforms. 0xff is the only one which will definitely not be
+  used as any common event-code.
+- Cannot re-use current events on the general purpose counters. Because
+  there is NO event available, that is exactly the same as the free
+  running counters.
+- Even in the existing codes, the fixed counters for core, that have the
+  same event-code, may count different things. Hence, it should not
+  surprise the users if the free running counters that share the same
+  event-code also count different things.
+  Umask will be used to distinguish the counters.
+
+The umask-code is used to distinguish a fixed counter and a free running
+counter, and different types of free running counters.
+
+For fixed counters, the umask-code is 0x0X, where X indicates the index
+of the fixed counter, which starts from 0.
+
+ - Compatible with the old event encoding.
+
+ - Currently, there is only one fixed counter. There are still 15
+   reserved spaces for extension.
+
+For free running counters, the umask-code uses the rest of the space.
+It would follow the format of 0xXY:
+
+ - X stands for the type of free running counters, which starts from 1.
+
+ - Y stands for the index of free running counters of same type, which
+   starts from 0.
+
+- The free running counters do different thing. It can be categorized to
+  several types, according to the MSR location, bit width and
+  definition. E.g. there are three types of IIO free running counters on
+  Skylake server to monitor IO CLOCKS, BANDWIDTH and UTILIZATION  on
+  different ports. It makes it easy to locate the free running counter
+  of a specific type.
+
+- So far, there are at most 8 counters of each type.  There are still 8
+  reserved spaces for extension.
+
+Introducing a new index to indicate the free running counters. Only one
+index is enough for all free running counters. Because the free running
+counters are always active, and the event and free running counter are
+always 1:1 mapped, it does not need extra index to indicate the assigned
+counter.
+
+Introducing a new data structure to store free running counters related
+information for each type. It includes the number of counters, bit
+width, base address, offset between counters and offset between boxes.
+
+Introducing several inline helpers to check index for fixed counter and
+free running counter, validate free running counter event, and retrieve
+the free running counter information according to box and event.
+
+Signed-off-by: Kan Liang <kan.liang@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: acme@kernel.org
+Cc: eranian@google.com
+Link: http://lkml.kernel.org/r/1525371913-10597-4-git-send-email-kan.liang@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/scsi/aic7xxx/aic79xx_core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/events/intel/uncore.h | 123 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 122 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
-index 034f4eebb160..3efd4cdc40a0 100644
---- a/drivers/scsi/aic7xxx/aic79xx_core.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_core.c
-@@ -6112,10 +6112,6 @@ ahd_alloc(void *platform_arg, char *name)
- 	ahd->int_coalescing_stop_threshold =
- 	    AHD_INT_COALESCING_STOP_THRESHOLD_DEFAULT;
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index 414dc7e7c950..eb0265359019 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -12,8 +12,13 @@
  
--	if (ahd_platform_alloc(ahd, platform_arg) != 0) {
--		ahd_free(ahd);
--		ahd = NULL;
--	}
- #ifdef AHD_DEBUG
- 	if ((ahd_debug & AHD_SHOW_MEMORY) != 0) {
- 		printk("%s: scb size = 0x%x, hscb size = 0x%x\n",
-@@ -6123,6 +6119,10 @@ ahd_alloc(void *platform_arg, char *name)
- 		       (u_int)sizeof(struct hardware_scb));
- 	}
- #endif
-+	if (ahd_platform_alloc(ahd, platform_arg) != 0) {
-+		ahd_free(ahd);
-+		ahd = NULL;
-+	}
- 	return (ahd);
+ #define UNCORE_FIXED_EVENT		0xff
+ #define UNCORE_PMC_IDX_MAX_GENERIC	8
++#define UNCORE_PMC_IDX_MAX_FIXED	1
++#define UNCORE_PMC_IDX_MAX_FREERUNNING	1
+ #define UNCORE_PMC_IDX_FIXED		UNCORE_PMC_IDX_MAX_GENERIC
+-#define UNCORE_PMC_IDX_MAX		(UNCORE_PMC_IDX_FIXED + 1)
++#define UNCORE_PMC_IDX_FREERUNNING	(UNCORE_PMC_IDX_FIXED + \
++					UNCORE_PMC_IDX_MAX_FIXED)
++#define UNCORE_PMC_IDX_MAX		(UNCORE_PMC_IDX_FREERUNNING + \
++					UNCORE_PMC_IDX_MAX_FREERUNNING)
+ 
+ #define UNCORE_PCI_DEV_FULL_DATA(dev, func, type, idx)	\
+ 		((dev << 24) | (func << 16) | (type << 8) | idx)
+@@ -35,6 +40,7 @@ struct intel_uncore_ops;
+ struct intel_uncore_pmu;
+ struct intel_uncore_box;
+ struct uncore_event_desc;
++struct freerunning_counters;
+ 
+ struct intel_uncore_type {
+ 	const char *name;
+@@ -42,6 +48,7 @@ struct intel_uncore_type {
+ 	int num_boxes;
+ 	int perf_ctr_bits;
+ 	int fixed_ctr_bits;
++	int num_freerunning_types;
+ 	unsigned perf_ctr;
+ 	unsigned event_ctl;
+ 	unsigned event_mask;
+@@ -59,6 +66,7 @@ struct intel_uncore_type {
+ 	struct intel_uncore_pmu *pmus;
+ 	struct intel_uncore_ops *ops;
+ 	struct uncore_event_desc *event_descs;
++	struct freerunning_counters *freerunning;
+ 	const struct attribute_group *attr_groups[4];
+ 	struct pmu *pmu; /* for custom pmu ops */
+ };
+@@ -129,6 +137,14 @@ struct uncore_event_desc {
+ 	const char *config;
+ };
+ 
++struct freerunning_counters {
++	unsigned int counter_base;
++	unsigned int counter_offset;
++	unsigned int box_offset;
++	unsigned int num_counters;
++	unsigned int bits;
++};
++
+ struct pci2phy_map {
+ 	struct list_head list;
+ 	int segment;
+@@ -157,6 +173,16 @@ static ssize_t __uncore_##_var##_show(struct kobject *kobj,		\
+ static struct kobj_attribute format_attr_##_var =			\
+ 	__ATTR(_name, 0444, __uncore_##_var##_show, NULL)
+ 
++static inline bool uncore_pmc_fixed(int idx)
++{
++	return idx == UNCORE_PMC_IDX_FIXED;
++}
++
++static inline bool uncore_pmc_freerunning(int idx)
++{
++	return idx == UNCORE_PMC_IDX_FREERUNNING;
++}
++
+ static inline unsigned uncore_pci_box_ctl(struct intel_uncore_box *box)
+ {
+ 	return box->pmu->type->box_ctl;
+@@ -214,6 +240,60 @@ static inline unsigned uncore_msr_fixed_ctr(struct intel_uncore_box *box)
+ 	return box->pmu->type->fixed_ctr + uncore_msr_box_offset(box);
  }
  
--- 
-2.17.0
++
++/*
++ * In the uncore document, there is no event-code assigned to free running
++ * counters. Some events need to be defined to indicate the free running
++ * counters. The events are encoded as event-code + umask-code.
++ *
++ * The event-code for all free running counters is 0xff, which is the same as
++ * the fixed counters.
++ *
++ * The umask-code is used to distinguish a fixed counter and a free running
++ * counter, and different types of free running counters.
++ * - For fixed counters, the umask-code is 0x0X.
++ *   X indicates the index of the fixed counter, which starts from 0.
++ * - For free running counters, the umask-code uses the rest of the space.
++ *   It would bare the format of 0xXY.
++ *   X stands for the type of free running counters, which starts from 1.
++ *   Y stands for the index of free running counters of same type, which
++ *   starts from 0.
++ *
++ * For example, there are three types of IIO free running counters on Skylake
++ * server, IO CLOCKS counters, BANDWIDTH counters and UTILIZATION counters.
++ * The event-code for all the free running counters is 0xff.
++ * 'ioclk' is the first counter of IO CLOCKS. IO CLOCKS is the first type,
++ * which umask-code starts from 0x10.
++ * So 'ioclk' is encoded as event=0xff,umask=0x10
++ * 'bw_in_port2' is the third counter of BANDWIDTH counters. BANDWIDTH is
++ * the second type, which umask-code starts from 0x20.
++ * So 'bw_in_port2' is encoded as event=0xff,umask=0x22
++ */
++static inline unsigned int uncore_freerunning_idx(u64 config)
++{
++	return ((config >> 8) & 0xf);
++}
++
++#define UNCORE_FREERUNNING_UMASK_START		0x10
++
++static inline unsigned int uncore_freerunning_type(u64 config)
++{
++	return ((((config >> 8) - UNCORE_FREERUNNING_UMASK_START) >> 4) & 0xf);
++}
++
++static inline
++unsigned int uncore_freerunning_counter(struct intel_uncore_box *box,
++					struct perf_event *event)
++{
++	unsigned int type = uncore_freerunning_type(event->attr.config);
++	unsigned int idx = uncore_freerunning_idx(event->attr.config);
++	struct intel_uncore_pmu *pmu = box->pmu;
++
++	return pmu->type->freerunning[type].counter_base +
++	       pmu->type->freerunning[type].counter_offset * idx +
++	       pmu->type->freerunning[type].box_offset * pmu->pmu_idx;
++}
++
+ static inline
+ unsigned uncore_msr_event_ctl(struct intel_uncore_box *box, int idx)
+ {
+@@ -276,11 +356,52 @@ static inline int uncore_fixed_ctr_bits(struct intel_uncore_box *box)
+ 	return box->pmu->type->fixed_ctr_bits;
+ }
+ 
++static inline
++unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
++				     struct perf_event *event)
++{
++	unsigned int type = uncore_freerunning_type(event->attr.config);
++
++	return box->pmu->type->freerunning[type].bits;
++}
++
++static inline int uncore_num_freerunning(struct intel_uncore_box *box,
++					 struct perf_event *event)
++{
++	unsigned int type = uncore_freerunning_type(event->attr.config);
++
++	return box->pmu->type->freerunning[type].num_counters;
++}
++
++static inline int uncore_num_freerunning_types(struct intel_uncore_box *box,
++					       struct perf_event *event)
++{
++	return box->pmu->type->num_freerunning_types;
++}
++
++static inline bool check_valid_freerunning_event(struct intel_uncore_box *box,
++						 struct perf_event *event)
++{
++	unsigned int type = uncore_freerunning_type(event->attr.config);
++	unsigned int idx = uncore_freerunning_idx(event->attr.config);
++
++	return (type < uncore_num_freerunning_types(box, event)) &&
++	       (idx < uncore_num_freerunning(box, event));
++}
++
+ static inline int uncore_num_counters(struct intel_uncore_box *box)
+ {
+ 	return box->pmu->type->num_counters;
+ }
+ 
++static inline bool is_freerunning_event(struct perf_event *event)
++{
++	u64 cfg = event->attr.config;
++
++	return ((cfg & UNCORE_FIXED_EVENT) == UNCORE_FIXED_EVENT) &&
++	       (((cfg >> 8) & 0xff) >= UNCORE_FREERUNNING_UMASK_START);
++}
++
+ static inline void uncore_disable_box(struct intel_uncore_box *box)
+ {
+ 	if (box->pmu->type->ops->disable_box)
