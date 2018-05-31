@@ -1,266 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754654AbeEaLIG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:08:06 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35995 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754469AbeEaLID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:08:03 -0400
-From: Gao Xiang <gaoxiang25@huawei.com>
-To: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC: <miaoxie@huawei.com>, <yuchao0@huawei.com>, <sunqiuyang@huawei.com>,
-        <fangwei1@huawei.com>, <liguifu2@huawei.com>, <weidu.du@huawei.com>,
-        <chen.chun.yen@huawei.com>, <brooke.wangzhigang@hisilicon.com>,
-        <dongjinguang@huawei.com>, <gaoxiang25@huawei.com>
-Subject: [NOMERGE] [RFC PATCH 05/12] erofs: add inode operations
-Date: Thu, 31 May 2018 19:07:50 +0800
-Message-ID: <1527764870-22768-1-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+        id S1754699AbeEaLIY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:08:24 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51070 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754725AbeEaLGl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:06:41 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Brown <broonie@kernel.org>,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>,
+        kbuild test robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: codecs: PCM1789: include gpio/consumer.h" to the asoc tree
+In-Reply-To: <c99575a2-5172-b42e-dd18-6bc763fee361@infradead.org>
+Message-Id: <E1fOLPg-00020r-K9@debutante>
+Date: Thu, 31 May 2018 12:06:36 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds core functions to get, read an inode.
+The patch
 
-Signed-off-by: Miao Xie <miaoxie@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+   ASoC: codecs: PCM1789: include gpio/consumer.h
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 3217004ad97fdae6663e8e75c443d8e616cb7fd0 Mon Sep 17 00:00:00 2001
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 30 May 2018 23:53:45 +0200
+Subject: [PATCH] ASoC: codecs: PCM1789: include gpio/consumer.h
+
+When CONFIG_GPIOLIB is disabled, this codec fails to build
+because gpio/consumer.h is not included implicitly.
+
+sound/soc/codecs/pcm1789.c: In function 'pcm1789_common_init':
+sound/soc/codecs/pcm1789.c:247:19: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_gpio_request_one'? [-Werror=implicit-function-declaration]
+  pcm1789->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+                   ^~~~~~~~~~~~~~~~~~~~~~~
+
+Fixes: 4ae340d1be36 ("ASoC: codecs: Add support for PCM1789")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/erofs/inode.c | 222 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 222 insertions(+)
- create mode 100644 fs/erofs/inode.c
+ sound/soc/codecs/pcm1789.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-new file mode 100644
-index 0000000..94f8ce5
---- /dev/null
-+++ b/fs/erofs/inode.c
-@@ -0,0 +1,222 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * linux/fs/erofs/inode.c
-+ *
-+ * Copyright (C) 2017-2018 HUAWEI, Inc.
-+ *             http://www.huawei.com/
-+ * Created by Gao Xiang <gaoxiang25@huawei.com>
-+ *
-+ * This file is subject to the terms and conditions of the GNU General Public
-+ * License.  See the file COPYING in the main directory of the Linux
-+ * distribution for more details.
-+ */
-+#include "internal.h"
-+#include <linux/slab.h>
-+
-+/* no locking */
-+static int read_inode(struct inode *inode, void *data)
-+{
-+	struct erofs_vnode *vi = EROFS_V(inode);
-+	struct erofs_inode_v1 *v1 = data;
-+	unsigned advise = le16_to_cpu(v1->i_advise);
-+
-+	vi->data_mapping_mode = __inode_data_mapping(advise);
-+	BUG_ON(vi->data_mapping_mode >= EROFS_INODE_LAYOUT_MAX);
-+
-+	if (__inode_version(advise) == EROFS_INODE_V2) {
-+		struct erofs_inode_v2 *v2 = data;
-+
-+		vi->inode_isize = sizeof(struct erofs_inode_v2);
-+		vi->xattr_isize = ondisk_xattr_ibody_size(v2->i_xattr_icount);
-+
-+		vi->raw_blkaddr = le32_to_cpu(v2->i_u.raw_blkaddr);
-+		inode->i_mode = le16_to_cpu(v2->i_mode);
-+
-+		i_uid_write(inode, le32_to_cpu(v2->i_uid));
-+		i_gid_write(inode, le32_to_cpu(v2->i_gid));
-+		set_nlink(inode, le32_to_cpu(v2->i_nlink));
-+
-+		/* ns timestamp */
-+		inode->i_mtime.tv_sec = inode->i_ctime.tv_sec =
-+			le64_to_cpu(v2->i_ctime);
-+		inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec =
-+			le32_to_cpu(v2->i_ctime_nsec);
-+
-+		inode->i_size = le64_to_cpu(v2->i_size);
-+	} else {
-+		struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
-+
-+		vi->inode_isize = sizeof(struct erofs_inode_v1);
-+		vi->xattr_isize = ondisk_xattr_ibody_size(v1->i_xattr_icount);
-+
-+		vi->raw_blkaddr = le32_to_cpu(v1->i_u.raw_blkaddr);
-+		inode->i_mode = le16_to_cpu(v1->i_mode);
-+
-+		i_uid_write(inode, le16_to_cpu(v1->i_uid));
-+		i_gid_write(inode, le16_to_cpu(v1->i_gid));
-+		set_nlink(inode, le16_to_cpu(v1->i_nlink));
-+
-+		/* use build time */
-+		inode->i_mtime.tv_sec = inode->i_ctime.tv_sec =
-+			sbi->build_time;
-+		inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec =
-+			sbi->build_time_nsec;
-+
-+		inode->i_size = le32_to_cpu(v1->i_size);
-+	}
-+
-+	/* measure inode.i_blocks as the generic filesystem */
-+	inode->i_blocks = ((inode->i_size - 1) >> 9) + 1;
-+	return 0;
-+}
-+
-+/*
-+ * try_lock can be required since locking order is:
-+ *   file data(fs_inode)
-+ *        meta(bd_inode)
-+ * but the majority of the callers is "iget",
-+ * in that case we are pretty sure no deadlock since
-+ * no data operations exist. However I tend to
-+ * try_lock since it takes no much overhead and
-+ * will success immediately.
-+ */
-+int fill_inline_data(struct inode *inode, void *data, unsigned m_pofs)
-+{
-+	struct erofs_vnode *vi = EROFS_V(inode);
-+	int mode = vi->data_mapping_mode;
-+
-+	BUG_ON(mode >= EROFS_INODE_LAYOUT_MAX);
-+
-+	/* should be inode inline C */
-+	if (mode != EROFS_INODE_LAYOUT_INLINE)
-+		return 0;
-+
-+	/* fast symlink (following ext4) */
-+	if (S_ISLNK(inode->i_mode) && inode->i_size < PAGE_SIZE) {
-+		char *lnk = kmalloc(inode->i_size + 1, GFP_KERNEL);
-+
-+		if (unlikely(lnk == NULL))
-+			return -ENOMEM;
-+
-+		m_pofs += vi->inode_isize + vi->xattr_isize;
-+		BUG_ON(m_pofs + inode->i_size > PAGE_SIZE);
-+
-+		/* get in-page inline data */
-+		memcpy(lnk, data + m_pofs, inode->i_size);
-+		lnk[inode->i_size] = '\0';
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 2, 0))
-+		vi->i_link = lnk;
-+#else
-+		inode->i_link = lnk;
-+#endif
-+		set_inode_fast_symlink(inode);
-+	}
-+	return -EAGAIN;
-+}
-+
-+int fill_inode(struct inode *inode, int isdir)
-+{
-+	struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
-+	struct erofs_vnode *vi = EROFS_V(inode);
-+	struct page *page;
-+	void *data;
-+	int err;
-+	erofs_blk_t blkaddr;
-+	unsigned ofs;
-+
-+	blkaddr = erofs_blknr(iloc(sbi, vi->nid));
-+	ofs = erofs_blkoff(iloc(sbi, vi->nid));
-+
-+	debugln("%s, reading inode nid %llu at %u of blkaddr %u",
-+		__func__, vi->nid, ofs, blkaddr);
-+
-+	page = erofs_get_meta_page(inode->i_sb, blkaddr, isdir);
-+
-+	if (IS_ERR(page)) {
-+		errln("failed to get inode (nid: %llu) page, err %ld",
-+			vi->nid, PTR_ERR(page));
-+		return PTR_ERR(page);
-+	}
-+
-+	BUG_ON(!PageUptodate(page));
-+	data = page_address(page);
-+
-+	err = read_inode(inode, data + ofs);
-+	if (!err) {
-+		/* setup the new inode */
-+		if (S_ISREG(inode->i_mode)) {
-+			inode->i_fop = &generic_ro_fops;
-+		} else if (S_ISDIR(inode->i_mode)) {
-+			inode->i_op =
-+				&erofs_dir_iops;
-+			inode->i_fop = &erofs_dir_fops;
-+		} else if (S_ISLNK(inode->i_mode)) {
-+			/* by default, page_get_link is used for symlink */
-+			inode->i_op =
-+				&page_symlink_inode_operations;
-+			inode_nohighmem(inode);
-+		} else {
-+			err = -EIO;
-+			goto out_unlock;
-+		}
-+
-+		if (!is_inode_layout_compression(inode)) {
-+			inode->i_mapping->a_ops = &erofs_raw_access_aops;
-+
-+			/* fill to the last page if inline data is available */
-+			fill_inline_data(inode, data, ofs);
-+			goto out_unlock;
-+		}
-+
-+		/* for compression or unknown data mapping mode */
-+		err = -ENOTSUPP;
-+	}
-+
-+out_unlock:
-+	unlock_page(page);
-+	put_page(page);
-+	return err;
-+}
-+
-+struct inode *erofs_iget(struct super_block *sb,
-+	erofs_nid_t nid, bool isdir)
-+{
-+	struct inode *inode = iget_locked(sb, nid);
-+
-+	if (unlikely(inode == NULL))
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (inode->i_state & I_NEW) {
-+		int err;
-+		struct erofs_vnode *vi = EROFS_V(inode);
-+		vi->nid = nid;
-+
-+		err = fill_inode(inode, isdir);
-+		if (likely(!err))
-+			unlock_new_inode(inode);
-+		else {
-+			iget_failed(inode);
-+			inode = ERR_PTR(err);
-+		}
-+	}
-+	return inode;
-+}
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 2, 0))
-+#include <linux/namei.h>
-+
-+static void *erofs_follow_fast_link(struct dentry *dentry, struct nameidata *nd)
-+{
-+	struct erofs_vnode *vi = EROFS_V(d_inode(dentry));
-+
-+	nd_set_link(nd, (char *)vi->i_link);
-+	return NULL;
-+}
-+
-+const struct inode_operations simple_symlink_inode_operations = {
-+	.follow_link = erofs_follow_fast_link,
-+	.readlink = generic_readlink
-+};
-+#endif
-+
+diff --git a/sound/soc/codecs/pcm1789.c b/sound/soc/codecs/pcm1789.c
+index 507ac9412d6c..21f15219b3ad 100644
+--- a/sound/soc/codecs/pcm1789.c
++++ b/sound/soc/codecs/pcm1789.c
+@@ -3,7 +3,7 @@
+ // Copyright (C) 2018 Bootlin
+ // Mylène Josserand <mylene.josserand@bootlin.com>
+ 
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/workqueue.h>
+ 
 -- 
-1.9.1
+2.17.0
