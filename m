@@ -1,40 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754615AbeEaUck (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 16:32:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50962 "EHLO mail.kernel.org"
+        id S1754533AbeEaUeP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 16:34:15 -0400
+Received: from mga14.intel.com ([192.55.52.115]:65166 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754160AbeEaUce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 16:32:34 -0400
-Content-Type: text/plain; charset="utf-8"
+        id S1754121AbeEaUeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 16:34:12 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
+   d="scan'208";a="52428605"
+Date: Thu, 31 May 2018 14:34:10 -0600
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Dave Jiang <dave.jiang@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
+ boolean returns
+Message-ID: <20180531203410.GB28256@linux.intel.com>
+Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Dave Jiang <dave.jiang@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-3-ross.zwisler@linux.intel.com>
+ <20180529212510.GJ30110@magnolia>
+ <20180529220114.GA13948@linux.intel.com>
+ <20180531191332.GB7825@magnolia>
 MIME-Version: 1.0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        afaerber@suse.de
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1527780180-15041-1-git-send-email-manivannan.sadhasivam@linaro.org>
-Cc: daniel.thompson@linaro.org, manivannanece23@gmail.com,
-        bdong@ucrobotics.com, liuwei@actions-semi.com,
-        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
-        hzhang@ucrobotics.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1527780180-15041-1-git-send-email-manivannan.sadhasivam@linaro.org>
-Message-ID: <152779875340.144038.4898809848995507014@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] MAINTAINERS: Add Actions Semi S900 clk entries
-Date: Thu, 31 May 2018 13:32:33 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531191332.GB7825@magnolia>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VKX4eu006387
 
-Quoting Manivannan Sadhasivam (2018-05-31 08:23:00)
-> Add S900 clk entries under ARCH_ACTIONS
+On Thu, May 31, 2018 at 12:13:32PM -0700, Darrick J. Wong wrote:
+> On Tue, May 29, 2018 at 04:01:14PM -0600, Ross Zwisler wrote:
+> > On Tue, May 29, 2018 at 02:25:10PM -0700, Darrick J. Wong wrote:
+> > > On Tue, May 29, 2018 at 01:51:01PM -0600, Ross Zwisler wrote:
+> > > > From: Dave Jiang <dave.jiang@intel.com>
+> > > > 
+> > > > The function return values are confusing with the way the function is
+> > > > named. We expect a true or false return value but it actually returns
+> > > > 0/-errno.  This makes the code very confusing. Changing the return values
+> > > > to return a bool where if DAX is supported then return true and no DAX
+> > > > support returns false.
+> > > > 
+> > > > Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+> > > > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+> > > 
+> > > Looks ok, do you want me to pull the first two patches through the xfs
+> > > tree?
+> > > 
+> > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > 
+> > Thanks for the review.
+> > 
+> > I'm not sure what's best.  If you do that then Mike will need to have a DM
+> > branch for the rest of the series based on your stable commits, yea?
+> > 
+> > Mike what would you prefer?
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+> I /was/ about to say that I would pull in the first two patches, but now
+> I can't get xfs to mount with pmem at all, and have no way of testing
+> this...?
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-
-Unless you wanted me to apply this?
+I'm not sure what's up - I'll dig in and find out.
