@@ -1,176 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754026AbeEaHew (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 03:34:52 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:46406 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753996AbeEaHeq (ORCPT
+        id S1754042AbeEaHga (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 03:36:30 -0400
+Received: from mo-csw1114.securemx.jp ([210.130.202.156]:56626 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753846AbeEaHg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 03:34:46 -0400
-X-Google-Smtp-Source: ADUXVKJ9IXfNmzf/ivjMmeEaug5IbnxZdcc9a8BRpPN0+FPdDzNnjOgoh1tyU8NWL62G5ZgjTBpZlg==
+        Thu, 31 May 2018 03:36:26 -0400
+X-Iguazu-Qid: 2wGrJrlV9KH54BsbsT
+X-Iguazu-QSIG: v=1; s=0; t=1527752169; q=2wGrJrlV9KH54BsbsT; m=bhPbpMgbe+LeYDy/ByYH77a9/BKJPJJRN9BEHj16BZU=
+From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
+To: "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>
+Cc: <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        "'Davidlohr Bueso'" <dbueso@suse.de>,
+        "'Joe Lawrence'" <joe.lawrence@redhat.com>,
+        "'Andrea Arcangeli'" <aarcange@redhat.com>,
+        "'Manfred Spraul'" <manfred@colorfullife.com>,
+        "'Andrew Morton'" <akpm@linux-foundation.org>,
+        "'Linus Torvalds'" <torvalds@linux-foundation.org>
+References: <20180528100202.045206534@linuxfoundation.org> <20180528100203.357731085@linuxfoundation.org> <005601d3f888$37f266f0$a7d734d0$@toshiba.co.jp> <20180531063408.GA7744@kroah.com>
+In-Reply-To: <20180531063408.GA7744@kroah.com>
+Subject: RE: [PATCH 4.4 011/268] Revert "ipc/shm: Fix shmat mmap nil-page protection"
+Date: Thu, 31 May 2018 16:36:04 +0900
+X-TSB-HOP: ON
+Message-ID: <000001d3f8b2$07fc2ab0$17f48010$@toshiba.co.jp>
 MIME-Version: 1.0
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-14-stanimir.varbanov@linaro.org>
-In-Reply-To: <20180515075859.17217-14-stanimir.varbanov@linaro.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Thu, 31 May 2018 16:34:32 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5A=P_X1eVagw_wEvq+_9nDR5iVxFHxLk-fcSKA=SWCz1A@mail.gmail.com>
-Message-ID: <CAAFQd5A=P_X1eVagw_wEvq+_9nDR5iVxFHxLk-fcSKA=SWCz1A@mail.gmail.com>
-Subject: Re: [PATCH v2 13/29] venus: helpers: make a commmon function for power_enable
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIIWZ/WGnaRCO8XjPKf6QObGDbsxQGPOkphAztm2LEBjYCP2aOt725A
+Content-Language: ja
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stanimir,
+> -----Original Message-----
+> From: 'Greg Kroah-Hartman' [mailto:gregkh@linuxfoundation.org]
+..
+> Thanks for letting us know, but this was reported already.  See the
+> emails on lkml with the subject:
+> 	Subject: Re: [PATCH 4.16 000/272] 4.16.13-stable review
+> from Davidlohr Bueso
+> 	Message-ID: <20180528213039.yy2madue67njkmw5@linux-n805>
+> 
+> where he discusses that the LTP test is incorrect and that the kernel
+> change is correct and that LTP is going to be fixed because of this.
 
-On Tue, May 15, 2018 at 5:06 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Make common function which will enable power when enabling/disabling
-> clocks and also covers Venus 3xx/4xx versions.
->
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  drivers/media/platform/qcom/venus/helpers.c | 51 +++++++++++++++++++++++++++++
->  drivers/media/platform/qcom/venus/helpers.h |  2 ++
->  drivers/media/platform/qcom/venus/vdec.c    | 25 ++++----------
->  drivers/media/platform/qcom/venus/venc.c    | 25 ++++----------
->  4 files changed, 67 insertions(+), 36 deletions(-)
->
-> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-> index d9065cc8a7d3..2b21f6ed7502 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.c
-> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> @@ -13,6 +13,7 @@
->   *
->   */
->  #include <linux/clk.h>
-> +#include <linux/iopoll.h>
->  #include <linux/list.h>
->  #include <linux/mutex.h>
->  #include <linux/pm_runtime.h>
-> @@ -24,6 +25,7 @@
->  #include "core.h"
->  #include "helpers.h"
->  #include "hfi_helper.h"
-> +#include "hfi_venus_io.h"
->
->  struct intbuf {
->         struct list_head list;
-> @@ -781,3 +783,52 @@ void venus_helper_init_instance(struct venus_inst *inst)
->         }
->  }
->  EXPORT_SYMBOL_GPL(venus_helper_init_instance);
-> +
-> +int venus_helper_power_enable(struct venus_core *core, u32 session_type,
-> +                             bool enable)
-> +{
-> +       void __iomem *ctrl, *stat;
-> +       u32 val;
-> +       int ret;
-> +
-> +       if (!IS_V3(core) && !IS_V4(core))
-> +               return -EINVAL;
-> +
-> +       if (IS_V3(core)) {
-> +               if (session_type == VIDC_SESSION_TYPE_DEC)
-> +                       ctrl = core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL;
-> +               else
-> +                       ctrl = core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL;
-> +               if (enable)
-> +                       writel(0, ctrl);
-> +               else
-> +                       writel(1, ctrl);
+OK, thank you for the information!
 
-nit: The value written is just !enable, but no strong preference.
-
-> +
-> +               return 0;
-> +       }
-> +
-> +       if (session_type == VIDC_SESSION_TYPE_DEC) {
-> +               ctrl = core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
-> +               stat = core->base + WRAPPER_VCODEC0_MMCC_POWER_STATUS;
-> +       } else {
-> +               ctrl = core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL;
-> +               stat = core->base + WRAPPER_VCODEC1_MMCC_POWER_STATUS;
-> +       }
-> +
-> +       if (enable) {
-> +               writel(0, ctrl);
-> +
-> +               ret = readl_poll_timeout(stat, val, val & BIT(1), 1, 100);
-> +               if (ret)
-> +                       return ret;
-> +       } else {
-> +               writel(1, ctrl);
-> +
-> +               ret = readl_poll_timeout(stat, val, !(val & BIT(1)), 1, 100);
-> +               if (ret)
-> +                       return ret;
-> +       }
-
-nit: The if/else could be just folded into code like below, but no
-strong preference:
-
-writel(!enable, ctrl);
-ret = readl_poll_timeout(stat, val, !!(val & BIT(1)) == enable, 1, 100);
-if (ret)
-        return ret;
-
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(venus_helper_power_enable);
-> diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-> index 971392be5df5..0e64aa95624a 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.h
-> +++ b/drivers/media/platform/qcom/venus/helpers.h
-> @@ -43,4 +43,6 @@ int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
->  void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
->  void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned int idx);
->  void venus_helper_init_instance(struct venus_inst *inst);
-> +int venus_helper_power_enable(struct venus_core *core, u32 session_type,
-> +                             bool enable);
->  #endif
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index 3b38bd1241b0..2bd81de6328a 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -1123,26 +1123,21 @@ static int vdec_remove(struct platform_device *pdev)
->  static __maybe_unused int vdec_runtime_suspend(struct device *dev)
->  {
->         struct venus_core *core = dev_get_drvdata(dev);
-> +       int ret;
->
->         if (IS_V1(core))
->                 return 0;
->
-> -       if (IS_V3(core))
-> -               writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-> -       else if (IS_V4(core))
-> -               writel(0, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
-> +       ret = venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, true);
->
->         if (IS_V4(core))
->                 clk_disable_unprepare(core->core0_bus_clk);
->
->         clk_disable_unprepare(core->core0_clk);
->
-> -       if (IS_V3(core))
-> -               writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
-> -       else if (IS_V4(core))
-> -               writel(1, core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL);
-> +       ret |= venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, false);
-
-If both calls return different error codes, the value of ret would
-become garbage. (Same for rest of the patch.)
-
-Best regards,
-Tomasz
+Regards,
+Daniel
