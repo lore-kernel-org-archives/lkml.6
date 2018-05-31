@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755092AbeEaMc3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 08:32:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38091 "EHLO
+        id S1755141AbeEaMdA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 08:33:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56093 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754894AbeEaMcZ (ORCPT
+        with ESMTP id S1755039AbeEaMc4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 08:32:25 -0400
-Date: Thu, 31 May 2018 05:32:05 -0700
+        Thu, 31 May 2018 08:32:56 -0400
+Date: Thu, 31 May 2018 05:32:36 -0700
 From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-0e0162dfcd1fbe4c711ee86f24f966c318999603@git.kernel.org>
-Cc: hpa@zytor.com, torvalds@linux-foundation.org, kan.liang@intel.com,
-        mingo@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+Message-ID: <tip-0f519f0352e37e7d71bdce5559517c74a35f6e33@git.kernel.org>
+Cc: peterz@infradead.org, torvalds@linux-foundation.org, hpa@zytor.com,
+        tglx@linutronix.de, kan.liang@intel.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org
+Reply-To: torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@kernel.org, kan.liang@intel.com,
         linux-kernel@vger.kernel.org
-Reply-To: peterz@infradead.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        torvalds@linux-foundation.org, kan.liang@intel.com, hpa@zytor.com
-In-Reply-To: <1525371913-10597-5-git-send-email-kan.liang@intel.com>
-References: <1525371913-10597-5-git-send-email-kan.liang@intel.com>
+In-Reply-To: <1525371913-10597-6-git-send-email-kan.liang@intel.com>
+References: <1525371913-10597-6-git-send-email-kan.liang@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86/intel/uncore: Add infrastructure for free
- running counters
-Git-Commit-ID: 0e0162dfcd1fbe4c711ee86f24f966c318999603
+Subject: [tip:perf/core] perf/x86/intel/uncore: Support IIO free-running
+ counters on SKX
+Git-Commit-ID: 0f519f0352e37e7d71bdce5559517c74a35f6e33
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,174 +34,152 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0e0162dfcd1fbe4c711ee86f24f966c318999603
-Gitweb:     https://git.kernel.org/tip/0e0162dfcd1fbe4c711ee86f24f966c318999603
+Commit-ID:  0f519f0352e37e7d71bdce5559517c74a35f6e33
+Gitweb:     https://git.kernel.org/tip/0f519f0352e37e7d71bdce5559517c74a35f6e33
 Author:     Kan Liang <kan.liang@intel.com>
-AuthorDate: Thu, 3 May 2018 11:25:10 -0700
+AuthorDate: Thu, 3 May 2018 11:25:11 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Thu, 31 May 2018 12:36:28 +0200
 
-perf/x86/intel/uncore: Add infrastructure for free running counters
+perf/x86/intel/uncore: Support IIO free-running counters on SKX
 
-There are a number of free running counters introduced for uncore, which
-provide highly valuable information to a wide array of customers.
-However, the generic uncore code doesn't support them yet.
+As of Skylake Server, there are a number of free running counters in
+each IIO Box that collect counts of per-box IO clocks and per-port
+Input/Output x BW/Utilization.
 
-The free running counters will be specially handled based on their
-unique attributes:
+The free running counters cannot be part of the existing IIO BOX,
+because, quoting from Peter Zijlstra:
 
- - They are read-only. They cannot be enabled/disabled.
+  "This will result in some (probably) unexpected scheduling artifacts.
+   Probably the only way to really cure that is to have the free running
+   counters in their own PMU and not share with the GP counters of this
+   box."
 
- - The event and the counter are always 1:1 mapped. It doesn't need to
-   be assigned nor tracked by event_list.
+So let's add a new PMU for the free running counters, as suggested.
 
- - They are always active. It doesn't need to check the availability.
+The free-running counter is read-only and always active. Counting will
+be suspended only when the IIO Box is powered down.
 
- - They have different bit width.
+There are three types of IIO free-running counters on Skylake server, IO
+CLOCKS counter, BANDWIDTH counters and UTILIZATION counters.
+IO CLOCKS counter is a clock of IIO box.
+BANDWIDTH counters are to count inbound(PCIe->CPU)/outbound(CPU->PCIe)
+bandwidth.
+UTILIZATION counters are to count input/output utilization.
 
-Also, using inline helpers to replace the check for fixed counter and
-free running counter.
+The bit width of the free-running counters is 36-bits.
 
+Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Kan Liang <kan.liang@intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: acme@kernel.org
 Cc: eranian@google.com
-Link: http://lkml.kernel.org/r/1525371913-10597-5-git-send-email-kan.liang@intel.com
+Link: http://lkml.kernel.org/r/1525371913-10597-6-git-send-email-kan.liang@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/intel/uncore.c | 68 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 64 insertions(+), 4 deletions(-)
+ arch/x86/events/intel/uncore_snbep.c | 82 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 3b0f93eb3cc0..0a6f6973690b 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -203,7 +203,7 @@ static void uncore_assign_hw_event(struct intel_uncore_box *box,
- 	hwc->idx = idx;
- 	hwc->last_tag = ++box->tags[idx];
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 77076a102e34..87dc0263a2e1 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3522,6 +3522,87 @@ static struct intel_uncore_type skx_uncore_iio = {
+ 	.format_group		= &skx_uncore_iio_format_group,
+ };
  
--	if (hwc->idx == UNCORE_PMC_IDX_FIXED) {
-+	if (uncore_pmc_fixed(hwc->idx)) {
- 		hwc->event_base = uncore_fixed_ctr(box);
- 		hwc->config_base = uncore_fixed_ctl(box);
- 		return;
-@@ -218,7 +218,9 @@ void uncore_perf_event_update(struct intel_uncore_box *box, struct perf_event *e
- 	u64 prev_count, new_count, delta;
- 	int shift;
- 
--	if (event->hw.idx == UNCORE_PMC_IDX_FIXED)
-+	if (uncore_pmc_freerunning(event->hw.idx))
-+		shift = 64 - uncore_freerunning_bits(box, event);
-+	else if (uncore_pmc_fixed(event->hw.idx))
- 		shift = 64 - uncore_fixed_ctr_bits(box);
- 	else
- 		shift = 64 - uncore_perf_ctr_bits(box);
-@@ -454,10 +456,25 @@ static void uncore_pmu_event_start(struct perf_event *event, int flags)
- 	struct intel_uncore_box *box = uncore_event_to_box(event);
- 	int idx = event->hw.idx;
- 
--	if (WARN_ON_ONCE(!(event->hw.state & PERF_HES_STOPPED)))
-+	if (WARN_ON_ONCE(idx == -1 || idx >= UNCORE_PMC_IDX_MAX))
- 		return;
- 
--	if (WARN_ON_ONCE(idx == -1 || idx >= UNCORE_PMC_IDX_MAX))
-+	/*
-+	 * Free running counter is read-only and always active.
-+	 * Use the current counter value as start point.
-+	 * There is no overflow interrupt for free running counter.
-+	 * Use hrtimer to periodically poll the counter to avoid overflow.
-+	 */
-+	if (uncore_pmc_freerunning(event->hw.idx)) {
-+		list_add_tail(&event->active_entry, &box->active_list);
-+		local64_set(&event->hw.prev_count,
-+			    uncore_read_counter(box, event));
-+		if (box->n_active++ == 0)
-+			uncore_pmu_start_hrtimer(box);
-+		return;
-+	}
++enum perf_uncore_iio_freerunning_type_id {
++	SKX_IIO_MSR_IOCLK			= 0,
++	SKX_IIO_MSR_BW				= 1,
++	SKX_IIO_MSR_UTIL			= 2,
 +
-+	if (WARN_ON_ONCE(!(event->hw.state & PERF_HES_STOPPED)))
- 		return;
- 
- 	event->hw.state = 0;
-@@ -479,6 +496,15 @@ static void uncore_pmu_event_stop(struct perf_event *event, int flags)
- 	struct intel_uncore_box *box = uncore_event_to_box(event);
- 	struct hw_perf_event *hwc = &event->hw;
- 
-+	/* Cannot disable free running counter which is read-only */
-+	if (uncore_pmc_freerunning(hwc->idx)) {
-+		list_del(&event->active_entry);
-+		if (--box->n_active == 0)
-+			uncore_pmu_cancel_hrtimer(box);
-+		uncore_perf_event_update(box, event);
-+		return;
-+	}
++	SKX_IIO_FREERUNNING_TYPE_MAX,
++};
 +
- 	if (__test_and_clear_bit(hwc->idx, box->active_mask)) {
- 		uncore_disable_event(box, event);
- 		box->n_active--;
-@@ -512,6 +538,17 @@ static int uncore_pmu_event_add(struct perf_event *event, int flags)
- 	if (!box)
- 		return -ENODEV;
- 
-+	/*
-+	 * The free funning counter is assigned in event_init().
-+	 * The free running counter event and free running counter
-+	 * are 1:1 mapped. It doesn't need to be tracked in event_list.
-+	 */
-+	if (uncore_pmc_freerunning(hwc->idx)) {
-+		if (flags & PERF_EF_START)
-+			uncore_pmu_event_start(event, 0);
-+		return 0;
-+	}
 +
- 	ret = n = uncore_collect_events(box, event, false);
- 	if (ret < 0)
- 		return ret;
-@@ -570,6 +607,14 @@ static void uncore_pmu_event_del(struct perf_event *event, int flags)
- 
- 	uncore_pmu_event_stop(event, PERF_EF_UPDATE);
- 
-+	/*
-+	 * The event for free running counter is not tracked by event_list.
-+	 * It doesn't need to force event->hw.idx = -1 to reassign the counter.
-+	 * Because the event and the free running counter are 1:1 mapped.
-+	 */
-+	if (uncore_pmc_freerunning(event->hw.idx))
-+		return;
++static struct freerunning_counters skx_iio_freerunning[] = {
++	[SKX_IIO_MSR_IOCLK]	= { 0xa45, 0x1, 0x20, 1, 36 },
++	[SKX_IIO_MSR_BW]	= { 0xb00, 0x1, 0x10, 8, 36 },
++	[SKX_IIO_MSR_UTIL]	= { 0xb08, 0x1, 0x10, 8, 36 },
++};
 +
- 	for (i = 0; i < box->n_events; i++) {
- 		if (event == box->event_list[i]) {
- 			uncore_put_event_constraint(box, event);
-@@ -603,6 +648,10 @@ static int uncore_validate_group(struct intel_uncore_pmu *pmu,
- 	struct intel_uncore_box *fake_box;
- 	int ret = -EINVAL, n;
- 
-+	/* The free running counter is always active. */
-+	if (uncore_pmc_freerunning(event->hw.idx))
-+		return 0;
++static struct uncore_event_desc skx_uncore_iio_freerunning_events[] = {
++	/* Free-Running IO CLOCKS Counter */
++	INTEL_UNCORE_EVENT_DESC(ioclk,			"event=0xff,umask=0x10"),
++	/* Free-Running IIO BANDWIDTH Counters */
++	INTEL_UNCORE_EVENT_DESC(bw_in_port0,		"event=0xff,umask=0x20"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port0.scale,	"3.814697266e-6"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port0.unit,	"MiB"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port1,		"event=0xff,umask=0x21"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port1.scale,	"3.814697266e-6"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port1.unit,	"MiB"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port2,		"event=0xff,umask=0x22"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port2.scale,	"3.814697266e-6"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port2.unit,	"MiB"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port3,		"event=0xff,umask=0x23"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port3.scale,	"3.814697266e-6"),
++	INTEL_UNCORE_EVENT_DESC(bw_in_port3.unit,	"MiB"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port0,		"event=0xff,umask=0x24"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port0.scale,	"3.814697266e-6"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port0.unit,	"MiB"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port1,		"event=0xff,umask=0x25"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port1.scale,	"3.814697266e-6"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port1.unit,	"MiB"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port2,		"event=0xff,umask=0x26"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port2.scale,	"3.814697266e-6"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port2.unit,	"MiB"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port3,		"event=0xff,umask=0x27"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port3.scale,	"3.814697266e-6"),
++	INTEL_UNCORE_EVENT_DESC(bw_out_port3.unit,	"MiB"),
++	/* Free-running IIO UTILIZATION Counters */
++	INTEL_UNCORE_EVENT_DESC(util_in_port0,		"event=0xff,umask=0x30"),
++	INTEL_UNCORE_EVENT_DESC(util_out_port0,		"event=0xff,umask=0x31"),
++	INTEL_UNCORE_EVENT_DESC(util_in_port1,		"event=0xff,umask=0x32"),
++	INTEL_UNCORE_EVENT_DESC(util_out_port1,		"event=0xff,umask=0x33"),
++	INTEL_UNCORE_EVENT_DESC(util_in_port2,		"event=0xff,umask=0x34"),
++	INTEL_UNCORE_EVENT_DESC(util_out_port2,		"event=0xff,umask=0x35"),
++	INTEL_UNCORE_EVENT_DESC(util_in_port3,		"event=0xff,umask=0x36"),
++	INTEL_UNCORE_EVENT_DESC(util_out_port3,		"event=0xff,umask=0x37"),
++	{ /* end: all zeroes */ },
++};
 +
- 	fake_box = uncore_alloc_box(pmu->type, NUMA_NO_NODE);
- 	if (!fake_box)
- 		return -ENOMEM;
-@@ -690,6 +739,17 @@ static int uncore_pmu_event_init(struct perf_event *event)
- 
- 		/* fixed counters have event field hardcoded to zero */
- 		hwc->config = 0ULL;
-+	} else if (is_freerunning_event(event)) {
-+		if (!check_valid_freerunning_event(box, event))
-+			return -EINVAL;
-+		event->hw.idx = UNCORE_PMC_IDX_FREERUNNING;
-+		/*
-+		 * The free running counter event and free running counter
-+		 * are always 1:1 mapped.
-+		 * The free running counter is always active.
-+		 * Assign the free running counter here.
-+		 */
-+		event->hw.event_base = uncore_freerunning_counter(box, event);
- 	} else {
- 		hwc->config = event->attr.config &
- 			      (pmu->type->event_mask | ((u64)pmu->type->event_mask_ext << 32));
++static struct intel_uncore_ops skx_uncore_iio_freerunning_ops = {
++	.read_counter		= uncore_msr_read_counter,
++};
++
++static struct attribute *skx_uncore_iio_freerunning_formats_attr[] = {
++	&format_attr_event.attr,
++	&format_attr_umask.attr,
++	NULL,
++};
++
++static const struct attribute_group skx_uncore_iio_freerunning_format_group = {
++	.name = "format",
++	.attrs = skx_uncore_iio_freerunning_formats_attr,
++};
++
++static struct intel_uncore_type skx_uncore_iio_free_running = {
++	.name			= "iio_free_running",
++	.num_counters		= 17,
++	.num_boxes		= 6,
++	.num_freerunning_types	= SKX_IIO_FREERUNNING_TYPE_MAX,
++	.freerunning		= skx_iio_freerunning,
++	.ops			= &skx_uncore_iio_freerunning_ops,
++	.event_descs		= skx_uncore_iio_freerunning_events,
++	.format_group		= &skx_uncore_iio_freerunning_format_group,
++};
++
+ static struct attribute *skx_uncore_formats_attr[] = {
+ 	&format_attr_event.attr,
+ 	&format_attr_umask.attr,
+@@ -3595,6 +3676,7 @@ static struct intel_uncore_type *skx_msr_uncores[] = {
+ 	&skx_uncore_ubox,
+ 	&skx_uncore_chabox,
+ 	&skx_uncore_iio,
++	&skx_uncore_iio_free_running,
+ 	&skx_uncore_irp,
+ 	&skx_uncore_pcu,
+ 	NULL,
