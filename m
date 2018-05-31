@@ -1,46 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932733AbeEaDcr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 23:32:47 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38731 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932671AbeEaDcp (ORCPT
+        id S932709AbeEaDiV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 23:38:21 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:36048 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932653AbeEaDiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 23:32:45 -0400
-X-Google-Smtp-Source: ADUXVKK+aHESTFL3ML6yJUTaGzWR7mMl7N8E9CKvs1YJGKElWZ5+ZXTaZCbTQCmvipFP/1H/r7YzQQ==
-Date: Wed, 30 May 2018 22:32:42 -0500
+        Wed, 30 May 2018 23:38:17 -0400
+X-Google-Smtp-Source: ADUXVKJMH6nU9BcN9WpUappl3T1XUatMTw0XIMcJxDQ1P4BaNstLdzqkWQU1deJc+iFEo2ZJz3vd2g==
+Date: Wed, 30 May 2018 22:38:14 -0500
 From: Rob Herring <robh@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: gregkh@linuxfoundation.org, kramasub@codeaurora.org,
-        sdharia@quicinc.com, girishm@quicinc.com, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, bgoswami@codeaurora.org,
-        devicetree@vger.kernel.org, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 1/2] slimbus: ngd: dt-bindings: Add slim ngd dt
- bindings
-Message-ID: <20180531033242.GA24141@rob-hp-laptop>
-References: <20180525111547.18556-1-srinivas.kandagatla@linaro.org>
- <20180525111547.18556-2-srinivas.kandagatla@linaro.org>
+To: David Lechner <david@lechnology.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        Mark Rutland <mark.rutland@arm.com>, limor@ladyada.net,
+        Nitin Patil <nitin@mindsensors.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: Add vendor prefix for Adafruit
+Message-ID: <20180531033814.GA31055@rob-hp-laptop>
+References: <20180525193623.15533-1-david@lechnology.com>
+ <20180525193623.15533-3-david@lechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180525111547.18556-2-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20180525193623.15533-3-david@lechnology.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 12:15:46PM +0100, Srinivas Kandagatla wrote:
-> This patch adds bindings for Qualcomm SLIMBus NGD controller.
-> SLIMBus NGD controller is a light-weight driver responsible for
-> communicating with SLIMBus slaves directly over the bus using messaging
-> interface and communicating with master component residing on ADSP for
-> bandwidth and data-channel management
+On Fri, May 25, 2018 at 02:36:21PM -0500, David Lechner wrote:
+> This adds a device tree vendor prefix for Adafruit Industries, LLC.
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: David Lechner <david@lechnology.com>
 > ---
->  .../bindings/slimbus/slim-ngd-qcom-ctrl.txt        | 84 ++++++++++++++++++++++
->  1 file changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
