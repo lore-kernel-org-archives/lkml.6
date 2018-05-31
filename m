@@ -1,103 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932753AbeEaD2s (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 23:28:48 -0400
-Received: from regular1.263xmail.com ([211.150.99.130]:58855 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932643AbeEaD2f (ORCPT
+        id S932802AbeEaD3P (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 23:29:15 -0400
+Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:39883 "EHLO
+        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932637AbeEaD3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 23:28:35 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
-X-RL-SENDER: djw@t-chip.com.cn
-X-FST-TO: linux-rockchip@lists.infradead.org
-X-SENDER-IP: 183.57.25.242
-X-LOGIN-NAME: djw@t-chip.com.cn
-X-UNIQUE-TAG: <f0213d186c9730ad87148b44456da18f>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: djw@t-chip.com.cn
-To: linux-rockchip@lists.infradead.org
-Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>,
-        Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>,
-        Liang Chen <cl@rock-chips.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Wu <david.wu@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        William Wu <william.wu@rock-chips.com>,
-        Rocky Hao <rocky.hao@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Sugar Zhang <sugar.zhang@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Joseph Chen <chenjh@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v3 0/5] Add sdmmc UHS support to ROC-RK3328-CC board.
-Date: Thu, 31 May 2018 11:27:48 +0800
-Message-Id: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
-X-Mailer: git-send-email 2.7.4
+        Wed, 30 May 2018 23:29:13 -0400
+From: David Wang <davidwang@zhaoxin.com>
+To: <bp@alien8.de>, <tony.luck@intel.com>, <mingo@redhat.com>,
+        <tglx@linutronix.de>, <hpa@zytor.com>, <gregkh@linuxfoudation.org>,
+        <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-edac@vger.kernel.org>
+CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
+        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
+        <lukelin@viacpu.com>, <timguo@zhaoxin.com>,
+        David Wang <davidwang@zhaoxin.com>
+Subject: [PATCH] x86/mce: add CMCI support for Centaur CPUs
+Date: Thu, 31 May 2018 11:28:58 +0800
+Message-ID: <1527737338-4036-1-git-send-email-davidwang@zhaoxin.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.29.8.54]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx3.zhaoxin.com (10.29.252.165)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Levin Du <djw@t-chip.com.cn>
+Newer Centaur support CMCI mechanism, which is compatible with INTEL CMCI.
 
+Signed-off-by: David Wang <davidwang@zhaoxin.com>
+---
+ arch/x86/Kconfig                 | 12 ++++++++++++
+ arch/x86/kernel/cpu/mcheck/mce.c |  6 ++++++
+ 2 files changed, 18 insertions(+)
 
-Hi all, this is an attemp to add sdmmc UHS support to the
-ROC-RK3328-CC board.
-
-This patch series adds a new compatible `rockchip,rk3328-gpio-mute` to
-the gpio-syscon driver for the access of the GPIO_MUTE pin in rk3328.
-
-A new gpio controller named `gpio_mute` is defined in
-rk3328.dtsi and so that all rk3328 boards has access to it.
-
-The ROC-RK3328-CC board use the new gpio <&gpio_mute 0> in
-gpio-regulator to control the signal voltage of the sdmmc.
-It is essential for UHS support which requires 1.8V signal voltage.
-
-Many thanks to the Linux people!
-
-Changes in v3:
-- Change from general gpio-syscon to specific rk3328-gpio-mute
-- Use dedicated "rockchip,rk3328-gpio-mute" driver
-- Use <&gpio_mute 0> instead of <&gpio_mute 1> to refer to the GPIO_MUTE pin.
-
-Changes in v2:
-- Rename gpio_syscon10 to gpio_mute in doc
-- Rename gpio_syscon10 to gpio_mute in rk3328.dtsi
-- Rename gpio_syscon10 to gpio_mute in rk3328-roc-cc.dts
-
-Changes in v1:
-- New: allow fetching syscon from parent node in gpio-syscon driver
-- Refactured for general gpio-syscon usage for Rockchip SoCs.
-- Add doc rockchip,gpio-syscon.txt
-- Split from V0 and add to rk3328.dtsi for general use.
-- Split from V0.
-- Split into small patches
-- Sort dts properties in sdmmc node
-
-Heiko Stuebner (1):
-  gpio: syscon: allow fetching syscon from parent node
-
-Levin Du (4):
-  gpio: syscon: rockchip: add GPIO_MUTE support for rk3328
-  arm64: dts: rockchip: Add GPIO_MUTE pin support to rk3328
-  arm64: dts: rockchip: Add io-domain to roc-rk3328-cc
-  arm64: dts: rockchip: Add sdmmc UHS support for roc-rk3328-cc
-
- .../bindings/gpio/rockchip,rk3328-gpio-mute.txt    | 28 ++++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts     | 34 ++++++++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3328.dtsi           |  7 +++++
- drivers/gpio/gpio-syscon.c                         | 33 +++++++++++++++++++++
- 4 files changed, 102 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
-
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index dda87a3..1adff5f 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1130,6 +1130,18 @@ config X86_MCE_AMD
+ 	   Additional support for AMD specific MCE features such as
+ 	   the DRAM Error Threshold.
+ 
++config X86_MCE_CENTAUR
++	def_bool y
++	prompt "CENTAUR MCE features"
++	depends on CPU_SUP_CENTAUR && X86_MCE_INTEL
++	help
++	   Additional support for Centaur specific MCE features such as
++	   MCE broadcasting and CMCI support.
++	   New Centaur CPU support MCE broadcasting.
++	   New Centaur CPU support CMCI which is fully compliant with Intel CMCI.
++
++	   If unsure, say N here.
++
+ config X86_ANCIENT_MCE
+ 	bool "Support for old Pentium 5 / WinChip machine checks"
+ 	depends on X86_32 && X86_MCE
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index cd76380..2ebafc7 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1727,6 +1727,7 @@ static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
+ 	}
+ }
+ 
++#ifdef CONFIG_X86_MCE_CENTAUR
+ static void mce_centaur_feature_init(struct cpuinfo_x86 *c)
+ {
+ 	struct mca_config *cfg = &mca_cfg;
+@@ -1740,7 +1741,12 @@ static void mce_centaur_feature_init(struct cpuinfo_x86 *c)
+ 		if (cfg->monarch_timeout < 0)
+ 			cfg->monarch_timeout = USEC_PER_SEC;
+ 	}
++	mce_intel_feature_init(c);
++	mce_adjust_timer = cmci_intel_adjust_timer;
+ }
++#else
++static inline void mce_centaur_feature_init(struct cpuinfo_x86 *c) { }
++#endif
+ 
+ static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
+ {
 -- 
-2.7.4
+1.9.1
