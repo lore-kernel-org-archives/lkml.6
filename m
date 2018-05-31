@@ -1,287 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755501AbeEaOqI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:46:08 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35229 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755437AbeEaOpb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:45:31 -0400
-X-Google-Smtp-Source: ADUXVKJEhjrb+VZPZvwHexN9t1Xql3eBhU1NdAIHo/v+Bedl2hr3ZS2u9fhR8a4x8cg19fRtHirFKw==
-From: Paolo Valente <paolo.valente@linaro.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        sapienza.dav@gmail.com, 177992@studenti.unimore.it,
-        Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX/IMPROVEMENTS 2/4] block, bfq: remove slow-system class
-Date: Thu, 31 May 2018 16:45:06 +0200
-Message-Id: <20180531144508.3927-3-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180531144508.3927-1-paolo.valente@linaro.org>
-References: <20180531144508.3927-1-paolo.valente@linaro.org>
+        id S1755431AbeEaOro (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:47:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43686 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755042AbeEaOrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:47:43 -0400
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH RESEND] f2fs: let sync node IO interrupt async one
+Date: Thu, 31 May 2018 22:47:02 +0800
+Message-Id: <20180531144702.21377-1-chao@kernel.org>
+X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BFQ computes the duration of weight raising for interactive
-applications automatically, using some reference parameters. In
-particular, BFQ uses the best durations (see comments in the code for
-how these durations have been assessed) for two classes of systems:
-slow and fast ones. Examples of slow systems are old phones or systems
-using micro HDDs. Fast systems are all the remaining ones. Using these
-parameters, BFQ computes the actual duration of the weight raising,
-for the system at hand, as a function of the relative speed of the
-system w.r.t. the speed of a reference system, belonging to the same
-class of systems as the system at hand.
+From: Chao Yu <yuchao0@huawei.com>
 
-This slow vs fast differentiation proved to be useful in the past, but
-happens to have little meaning with current hardware. Even worse, it
-does cause problems in virtual systems, where the speed of the system
-can vary frequently, and so widely to just confuse the class-detection
-mechanism, and, as we have verified experimentally, to cause BFQ to
-compute non-sensical weight-raising durations.
+Although mixed sync/async IOs can have continuous LBA, as they have
+different IO priority, block IO scheduler will add them into different
+queues and commit them separately, result in splited IOs which causes
+wrose performance.
 
-This commit addresses this issue by removing the slow class and the
-class-detection mechanism.
+This patch gives high priority to synchronous IO of nodes, means that
+once synchronous flow starts, it can interrupt asynchronous writeback
+flow of system flusher, so more big IOs can be expected.
 
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- block/bfq-iosched.c | 137 ++++++++++++++++------------------------------------
- block/bfq-iosched.h |  14 ++----
- 2 files changed, 46 insertions(+), 105 deletions(-)
+ fs/f2fs/checkpoint.c |  2 ++
+ fs/f2fs/data.c       |  9 +++++----
+ fs/f2fs/f2fs.h       |  2 +-
+ fs/f2fs/file.c       |  2 ++
+ fs/f2fs/gc.c         |  7 +++++++
+ fs/f2fs/node.c       | 16 +++++++++++++---
+ fs/f2fs/super.c      |  3 ++-
+ 7 files changed, 32 insertions(+), 9 deletions(-)
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index f3703e7431aa..262c929e24ee 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -251,55 +251,43 @@ static struct kmem_cache *bfq_pool;
-  * When configured for computing the duration of the weight-raising
-  * for interactive queues automatically (see the comments at the
-  * beginning of this file), BFQ does it using the following formula:
-- * duration = (R / r) * T,
-- * where r is the peak rate of the device, and R
-- * and T are two reference parameters.	In particular,
-- * R is the peak rate of the reference device (see below), and
-- * T is a reference time: given the systems that are likely
-- * to be installed on the reference device according to its speed
-- * class, T is about the maximum time needed, under BFQ and
-- * while reading two files in parallel, to load typical large
-- * applications on these systems (see the comments on
-- * max_service_from_wr below, for more details on how T is
-- * obtained).  In practice, the slower/faster the device at hand is,
-- * the more/less it takes to load applications with respect to the
-+ * duration = (ref_rate / r) * ref_wr_duration,
-+ * where r is the peak rate of the device, and ref_rate and
-+ * ref_wr_duration are two reference parameters.  In particular,
-+ * ref_rate is the peak rate of the reference storage device (see
-+ * below), and ref_wr_duration is about the maximum time needed, with
-+ * BFQ and while reading two files in parallel, to load typical large
-+ * applications on the reference device (see the comments on
-+ * max_service_from_wr below, for more details on how ref_wr_duration
-+ * is obtained).  In practice, the slower/faster the device at hand
-+ * is, the more/less it takes to load applications with respect to the
-  * reference device.  Accordingly, the longer/shorter BFQ grants
-  * weight raising to interactive applications.
-  *
-- * BFQ uses four different reference pairs (R, T), depending on:
-- * . whether the device is rotational or non-rotational;
-- * . whether the device is slow, such as old or portable HDDs, as well as
-- *   SD cards, or fast, such as newer HDDs and SSDs.
-+ * BFQ uses two different reference pairs (ref_rate, ref_wr_duration),
-+ * depending on whether the device is rotational or non-rotational.
-  *
-- * The device's speed class is dynamically (re)detected in
-- * bfq_update_peak_rate() every time the estimated peak rate is updated.
-+ * In the following definitions, ref_rate[0] and ref_wr_duration[0]
-+ * are the reference values for a rotational device, whereas
-+ * ref_rate[1] and ref_wr_duration[1] are the reference values for a
-+ * non-rotational device. The reference rates are not the actual peak
-+ * rates of the devices used as a reference, but slightly lower
-+ * values. The reason for using slightly lower values is that the
-+ * peak-rate estimator tends to yield slightly lower values than the
-+ * actual peak rate (it can yield the actual peak rate only if there
-+ * is only one process doing I/O, and the process does sequential
-+ * I/O).
-  *
-- * In the following definitions, R_slow[0]/R_fast[0] and
-- * T_slow[0]/T_fast[0] are the reference values for a slow/fast
-- * rotational device, whereas R_slow[1]/R_fast[1] and
-- * T_slow[1]/T_fast[1] are the reference values for a slow/fast
-- * non-rotational device. Finally, device_speed_thresh are the
-- * thresholds used to switch between speed classes. The reference
-- * rates are not the actual peak rates of the devices used as a
-- * reference, but slightly lower values. The reason for using these
-- * slightly lower values is that the peak-rate estimator tends to
-- * yield slightly lower values than the actual peak rate (it can yield
-- * the actual peak rate only if there is only one process doing I/O,
-- * and the process does sequential I/O).
-- *
-- * Both the reference peak rates and the thresholds are measured in
-- * sectors/usec, left-shifted by BFQ_RATE_SHIFT.
-+ * The reference peak rates are measured in sectors/usec, left-shifted
-+ * by BFQ_RATE_SHIFT.
-  */
--static int R_slow[2] = {1000, 10700};
--static int R_fast[2] = {14000, 33000};
-+static int ref_rate[2] = {14000, 33000};
- /*
-- * To improve readability, a conversion function is used to initialize the
-- * following arrays, which entails that they can be initialized only in a
-- * function.
-+ * To improve readability, a conversion function is used to initialize
-+ * the following array, which entails that the array can be
-+ * initialized only in a function.
-  */
--static int T_slow[2];
--static int T_fast[2];
--static int device_speed_thresh[2];
-+static int ref_wr_duration[2];
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index c7ffa1e0e021..07e2f1514a21 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1079,7 +1079,9 @@ static int block_operations(struct f2fs_sb_info *sbi)
  
- /*
-  * BFQ uses the above-detailed, time-based weight-raising mechanism to
-@@ -938,7 +926,7 @@ static unsigned int bfq_wr_duration(struct bfq_data *bfqd)
- 	if (bfqd->bfq_wr_max_time > 0)
- 		return bfqd->bfq_wr_max_time;
+ 	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
+ 		up_write(&sbi->node_write);
++		atomic_inc(&sbi->wb_sync_req[NODE]);
+ 		err = f2fs_sync_node_pages(sbi, &wbc, false, FS_CP_NODE_IO);
++		atomic_dec(&sbi->wb_sync_req[NODE]);
+ 		if (err) {
+ 			up_write(&sbi->node_change);
+ 			f2fs_unlock_all(sbi);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a2e30c403ef2..8f931d699287 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1933,6 +1933,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	int ret = 0;
+ 	int done = 0;
+ 	struct pagevec pvec;
++	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
+ 	int nr_pages;
+ 	pgoff_t uninitialized_var(writeback_index);
+ 	pgoff_t index;
+@@ -1987,7 +1988,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 			bool submitted = false;
  
--	dur = bfqd->RT_prod;
-+	dur = bfqd->rate_dur_prod;
- 	do_div(dur, bfqd->peak_rate);
+ 			/* give a priority to WB_SYNC threads */
+-			if (atomic_read(&F2FS_M_SB(mapping)->wb_sync_req) &&
++			if (atomic_read(&sbi->wb_sync_req[DATA]) &&
+ 					wbc->sync_mode == WB_SYNC_NONE) {
+ 				done = 1;
+ 				break;
+@@ -2107,8 +2108,8 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
  
+ 	/* to avoid spliting IOs due to mixed WB_SYNC_ALL and WB_SYNC_NONE */
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
+-		atomic_inc(&sbi->wb_sync_req);
+-	else if (atomic_read(&sbi->wb_sync_req))
++		atomic_inc(&sbi->wb_sync_req[DATA]);
++	else if (atomic_read(&sbi->wb_sync_req[DATA]))
+ 		goto skip_write;
+ 
+ 	blk_start_plug(&plug);
+@@ -2116,7 +2117,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	blk_finish_plug(&plug);
+ 
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
+-		atomic_dec(&sbi->wb_sync_req);
++		atomic_dec(&sbi->wb_sync_req[DATA]);
  	/*
-@@ -2543,37 +2531,15 @@ static unsigned long bfq_calc_max_budget(struct bfq_data *bfqd)
- /*
-  * Update parameters related to throughput and responsiveness, as a
-  * function of the estimated peak rate. See comments on
-- * bfq_calc_max_budget(), and on T_slow and T_fast arrays.
-+ * bfq_calc_max_budget(), and on the ref_wr_duration array.
-  */
- static void update_thr_responsiveness_params(struct bfq_data *bfqd)
- {
--	int dev_type = blk_queue_nonrot(bfqd->queue);
--
--	if (bfqd->bfq_user_max_budget == 0)
-+	if (bfqd->bfq_user_max_budget == 0) {
- 		bfqd->bfq_max_budget =
- 			bfq_calc_max_budget(bfqd);
--
--	if (bfqd->device_speed == BFQ_BFQD_FAST &&
--	    bfqd->peak_rate < device_speed_thresh[dev_type]) {
--		bfqd->device_speed = BFQ_BFQD_SLOW;
--		bfqd->RT_prod = R_slow[dev_type] *
--			T_slow[dev_type];
--	} else if (bfqd->device_speed == BFQ_BFQD_SLOW &&
--		   bfqd->peak_rate > device_speed_thresh[dev_type]) {
--		bfqd->device_speed = BFQ_BFQD_FAST;
--		bfqd->RT_prod = R_fast[dev_type] *
--			T_fast[dev_type];
-+		bfq_log(bfqd, "new max_budget = %d", bfqd->bfq_max_budget);
+ 	 * if some pages were truncated, we cannot guarantee its mapping->host
+ 	 * to detect pending bios.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f167d01443fe..4c09e770a0a3 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1201,7 +1201,7 @@ struct f2fs_sb_info {
+ 	struct percpu_counter alloc_valid_block_count;
+ 
+ 	/* writeback control */
+-	atomic_t wb_sync_req;			/* count # of WB_SYNC threads */
++	atomic_t wb_sync_req[META];	/* count # of WB_SYNC threads */
+ 
+ 	/* valid inode count */
+ 	struct percpu_counter total_valid_inode_count;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 74c326442565..16fd50abbf40 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -274,7 +274,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 		goto out;
  	}
--
--	bfq_log(bfqd,
--"dev_type %s dev_speed_class = %s (%llu sects/sec), thresh %llu setcs/sec",
--		dev_type == 0 ? "ROT" : "NONROT",
--		bfqd->device_speed == BFQ_BFQD_FAST ? "FAST" : "SLOW",
--		bfqd->device_speed == BFQ_BFQD_FAST ?
--		(USEC_PER_SEC*(u64)R_fast[dev_type])>>BFQ_RATE_SHIFT :
--		(USEC_PER_SEC*(u64)R_slow[dev_type])>>BFQ_RATE_SHIFT,
--		(USEC_PER_SEC*(u64)device_speed_thresh[dev_type])>>
--		BFQ_RATE_SHIFT);
+ sync_nodes:
++	atomic_inc(&sbi->wb_sync_req[NODE]);
+ 	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic);
++	atomic_dec(&sbi->wb_sync_req[NODE]);
+ 	if (ret)
+ 		goto out;
+ 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 2a97ce7bc91d..9093be6e7a7d 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -473,12 +473,16 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
+ 	block_t start_addr;
+ 	int off;
+ 	int phase = 0;
++	bool fggc = (gc_type == FG_GC);
+ 
+ 	start_addr = START_BLOCK(sbi, segno);
+ 
+ next_step:
+ 	entry = sum;
+ 
++	if (fggc && phase == 2)
++		atomic_inc(&sbi->wb_sync_req[NODE]);
++
+ 	for (off = 0; off < sbi->blocks_per_seg; off++, entry++) {
+ 		nid_t nid = le32_to_cpu(entry->nid);
+ 		struct page *node_page;
+@@ -525,6 +529,9 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
+ 
+ 	if (++phase < 3)
+ 		goto next_step;
++
++	if (fggc)
++		atomic_dec(&sbi->wb_sync_req[NODE]);
  }
  
- static void bfq_reset_rate_computation(struct bfq_data *bfqd,
-@@ -5279,14 +5245,12 @@ static int bfq_init_queue(struct request_queue *q, struct elevator_type *e)
- 	bfqd->wr_busy_queues = 0;
+ /*
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 513f03d823b6..374bd123aa3e 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1596,21 +1596,28 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 	int step = 0;
+ 	int nwritten = 0;
+ 	int ret = 0;
+-	int nr_pages;
++	int nr_pages, done = 0;
  
- 	/*
--	 * Begin by assuming, optimistically, that the device is a
--	 * high-speed one, and that its peak rate is equal to 2/3 of
--	 * the highest reference rate.
-+	 * Begin by assuming, optimistically, that the device peak
-+	 * rate is equal to 2/3 of the highest reference rate.
- 	 */
--	bfqd->RT_prod = R_fast[blk_queue_nonrot(bfqd->queue)] *
--			T_fast[blk_queue_nonrot(bfqd->queue)];
--	bfqd->peak_rate = R_fast[blk_queue_nonrot(bfqd->queue)] * 2 / 3;
--	bfqd->device_speed = BFQ_BFQD_FAST;
-+	bfqd->rate_dur_prod = ref_rate[blk_queue_nonrot(bfqd->queue)] *
-+		ref_wr_duration[blk_queue_nonrot(bfqd->queue)];
-+	bfqd->peak_rate = ref_rate[blk_queue_nonrot(bfqd->queue)] * 2 / 3;
+ 	pagevec_init(&pvec);
  
- 	spin_lock_init(&bfqd->lock);
+ next_step:
+ 	index = 0;
  
-@@ -5593,8 +5557,8 @@ static int __init bfq_init(void)
- 	/*
- 	 * Times to load large popular applications for the typical
- 	 * systems installed on the reference devices (see the
--	 * comments before the definitions of the next two
--	 * arrays). Actually, we use slightly slower values, as the
-+	 * comments before the definition of the next
-+	 * array). Actually, we use slightly lower values, as the
- 	 * estimated peak rate tends to be smaller than the actual
- 	 * peak rate.  The reason for this last fact is that estimates
- 	 * are computed over much shorter time intervals than the long
-@@ -5603,25 +5567,8 @@ static int __init bfq_init(void)
- 	 * scheduler cannot rely on a peak-rate-evaluation workload to
- 	 * be run for a long time.
- 	 */
--	T_slow[0] = msecs_to_jiffies(3500); /* actually 4 sec */
--	T_slow[1] = msecs_to_jiffies(6000); /* actually 6.5 sec */
--	T_fast[0] = msecs_to_jiffies(7000); /* actually 8 sec */
--	T_fast[1] = msecs_to_jiffies(2500); /* actually 3 sec */
--
--	/*
--	 * Thresholds that determine the switch between speed classes
--	 * (see the comments before the definition of the array
--	 * device_speed_thresh). These thresholds are biased towards
--	 * transitions to the fast class. This is safer than the
--	 * opposite bias. In fact, a wrong transition to the slow
--	 * class results in short weight-raising periods, because the
--	 * speed of the device then tends to be higher that the
--	 * reference peak rate. On the opposite end, a wrong
--	 * transition to the fast class tends to increase
--	 * weight-raising periods, because of the opposite reason.
--	 */
--	device_speed_thresh[0] = (4 * R_slow[0]) / 3;
--	device_speed_thresh[1] = (4 * R_slow[1]) / 3;
-+	ref_wr_duration[0] = msecs_to_jiffies(7000); /* actually 8 sec */
-+	ref_wr_duration[1] = msecs_to_jiffies(2500); /* actually 3 sec */
+-	while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
+-				PAGECACHE_TAG_DIRTY))) {
++	while (!done && (nr_pages = pagevec_lookup_tag(&pvec,
++			NODE_MAPPING(sbi), &index, PAGECACHE_TAG_DIRTY))) {
+ 		int i;
  
- 	ret = elv_register(&iosched_bfq_mq);
- 	if (ret)
-diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-index ae2f3dadec44..b5678cc8cfa1 100644
---- a/block/bfq-iosched.h
-+++ b/block/bfq-iosched.h
-@@ -399,11 +399,6 @@ struct bfq_io_cq {
- 	struct bfq_ttime saved_ttime;
- };
+ 		for (i = 0; i < nr_pages; i++) {
+ 			struct page *page = pvec.pages[i];
+ 			bool submitted = false;
  
--enum bfq_device_speed {
--	BFQ_BFQD_FAST,
--	BFQ_BFQD_SLOW,
--};
--
- /**
-  * struct bfq_data - per-device data structure.
-  *
-@@ -611,12 +606,11 @@ struct bfq_data {
- 	/* Max service-rate for a soft real-time queue, in sectors/sec */
- 	unsigned int bfq_wr_max_softrt_rate;
- 	/*
--	 * Cached value of the product R*T, used for computing the
--	 * maximum duration of weight raising automatically.
-+	 * Cached value of the product ref_rate*ref_wr_duration, used
-+	 * for computing the maximum duration of weight raising
-+	 * automatically.
- 	 */
--	u64 RT_prod;
--	/* device-speed class for the low-latency heuristic */
--	enum bfq_device_speed device_speed;
-+	u64 rate_dur_prod;
++			/* give a priority to WB_SYNC threads */
++			if (atomic_read(&sbi->wb_sync_req[NODE]) &&
++					wbc->sync_mode == WB_SYNC_NONE) {
++				done = 1;
++				break;
++			}
++
+ 			/*
+ 			 * flushing sequence with step:
+ 			 * 0. indirect nodes
+@@ -1738,6 +1745,9 @@ static int f2fs_write_node_pages(struct address_space *mapping,
+ 	if (get_pages(sbi, F2FS_DIRTY_NODES) < nr_pages_to_skip(sbi, NODE))
+ 		goto skip_write;
  
- 	/* fallback dummy bfqq for extreme OOM conditions */
- 	struct bfq_queue oom_bfqq;
++	if (atomic_read(&sbi->wb_sync_req[NODE]))
++		goto skip_write;
++
+ 	trace_f2fs_writepages(mapping->host, wbc, NODE);
+ 
+ 	diff = nr_pages_to_write(sbi, NODE, wbc);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 25863cec143a..73d7d7e51a61 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2362,7 +2362,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < NR_COUNT_TYPE; i++)
+ 		atomic_set(&sbi->nr_pages[i], 0);
+ 
+-	atomic_set(&sbi->wb_sync_req, 0);
++	for (i = 0; i < META; i++)
++		atomic_set(&sbi->wb_sync_req[i], 0);
+ 
+ 	INIT_LIST_HEAD(&sbi->s_list);
+ 	mutex_init(&sbi->umount_mutex);
 -- 
-2.16.1
+2.16.2.17.g38e79b1fd
