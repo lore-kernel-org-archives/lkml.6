@@ -1,32 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755526AbeEaPqO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:46:14 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:40052 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755417AbeEaPqK (ORCPT
+        id S1755554AbeEaPqX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:46:23 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:44199 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755417AbeEaPqR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:46:10 -0400
-X-Google-Smtp-Source: ADUXVKKreM4LjY1cccazSRut9lhhnRww1C8X2PwAFRIuimZpv4XQaBLSRw7Z6ZM8OFlhCPRmntbgmg==
-Subject: Re: [PATCH] block: Add block level changes for inline encryption
-To: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>,
-        "ming.lei@redhat.com" <ming.lei@redhat.com>
-Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Manjunath M Bettegowda <Manjunath.MB@synopsys.com>,
-        Prabu Thangamuthu <Prabu.T@synopsys.com>,
-        Tejas Joglekar <Tejas.Joglekar@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>
-References: <d3624fab-e6fc-f14d-c780-db703c809068@synopsys.com>
- <77544032-b6ff-bc5e-9fec-666e66b2cc70@kernel.dk>
- <BD7FB879CC136E419544C8E2AE7B9C3020BD90@IN01WEMBXA.internal.synopsys.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <3fc7786c-af85-d047-047f-44d4eded6124@kernel.dk>
-Date: Thu, 31 May 2018 09:46:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 31 May 2018 11:46:17 -0400
+X-Google-Smtp-Source: ADUXVKLhSQOSrmchO2uhiHcMjjcWa2hxxdz0R2JwI2Gm6aeAYOlm9RQCNAUO2lttp6+cYlItku2ITA==
+Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
+To: Sinan Kaya <okaya@codeaurora.org>, Alex_Gagniuc@Dellteam.com,
+        bhelgaas@google.com
+Cc: Austin.Bolen@dell.com, Shyam.Iyer@dell.com, keith.busch@intel.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
+ <28004506-24f0-6d10-2d1e-074e0483d2f9@codeaurora.org>
+ <4e0611c872054e768daa96b302651db3@ausx13mps321.AMER.DELL.COM>
+ <f260078b-6918-7fd9-39d6-e9f300e4c048@codeaurora.org>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <3b8a895b-3080-7ddb-cbfd-5aa972e9bf65@gmail.com>
+Date: Thu, 31 May 2018 10:46:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <BD7FB879CC136E419544C8E2AE7B9C3020BD90@IN01WEMBXA.internal.synopsys.com>
+In-Reply-To: <f260078b-6918-7fd9-39d6-e9f300e4c048@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -34,24 +31,63 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/31/18 1:47 AM, Ladvine D Almeida wrote:
-> On Monday 28 May 2018 04:54 PM, Jens Axboe wrote:
->> On 5/28/18 7:43 AM, Ladvine D Almeida wrote:
->>> This patch introduces new variable under bio structure to
->>> facilitate inline encryption. This variable is used to
->>> associate I/O requests to crypto information.
->> Hard no on this, for two reasons:
+
+
+On 05/31/2018 10:38 AM, Sinan Kaya wrote:
+> On 5/31/2018 11:29 AM, Alex_Gagniuc@Dellteam.com wrote:
+>> On 5/31/2018 10:28 AM, Sinan Kaya wrote:
+>>> On 5/31/2018 11:05 AM, Alexandru Gagniuc wrote:
+>>>> +static void pcie_max_link_cap(struct pci_dev *dev, enum pci_bus_speed *speed,
+>>>> +				enum pcie_link_width *width)
+>>>> +{
+>>>> +	uint32_t lnkcap;
+>>>> +
+>>>> +	pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &lnkcap);
+>>>> +
+>>>> +	*speed = pcie_link_speed[lnkcap & PCI_EXP_LNKCAP_SLS];
+>>>> +	*width = (lnkcap & PCI_EXP_LNKCAP_MLW) >> PCI_EXP_LNKCAP_MLW_SHIFT;
+>>>> +}
+>>>> +
+>>>> +static void pcie_cur_link_sta(struct pci_dev *dev, enum pci_bus_speed *speed,
+>>>> +				enum pcie_link_width *width)
+>>>> +{
+>>>> +	uint16_t lnksta;
+>>>> +
+>>>> +	pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
+>>>> +	*speed = pcie_link_speed[lnksta & PCI_EXP_LNKSTA_CLS];
+>>>> +	*width = (lnksta & PCI_EXP_LNKSTA_NLW) >> PCI_EXP_LNKSTA_NLW_SHIFT;
+>>>> +}
+>>>> +
+>>>> +static const char *pcie_bus_speed_name(enum pci_bus_speed speed)
+>>>> +{
+>>>> +	switch (speed) {
+>>>> +	case PCIE_SPEED_2_5GT:
+>>>> +		return "2.5 GT/s";
+>>>> +	case PCIE_SPEED_5_0GT:
+>>>> +		return "5.0 GT/s";
+>>>> +	case PCIE_SPEED_8_0GT:
+>>>> +		return "8.0 GT/s";
+>>>> +	default:
+>>>> +		return "unknown";
+>>>> +	}
+>>>> +}
+>>>
+>>> I thought Bjorn added some functions to retrieve this now.
 >>
->> 1) Any additions to struct bio are scrutinized heavily and
->>    need strong justification.
+>> Hmm. I couldn't find them.
 > 
-> Thanks for sharing your feedback on the patch.
-> I am providing reference to an earlier article related to inline encryption support below:
-> https://lwn.net/Articles/717754/
+> https://lkml.org/lkml/2018/3/30/553
 
-Took a quick look, and this looks like a classic case of something
-that should just be a cloned bio. If you clone, you own the bi_private
-field, which is what you need.
+Oh, pcie_get_speed_cap()/pcie_get_width_cap() seems to handle the
+capability. Not seeing one for status and speed name.
 
--- 
-Jens Axboe
+> are you working on linux-next?
+
+v4.17-rc7
+
+>>
+>> Alex
+>>
+>>
+> 
+> 
