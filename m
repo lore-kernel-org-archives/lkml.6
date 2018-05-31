@@ -1,50 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751201AbeEaVLu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 17:11:50 -0400
-Received: from mga02.intel.com ([134.134.136.20]:46819 "EHLO mga02.intel.com"
+        id S1751232AbeEaVNM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 17:13:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750766AbeEaVLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 17:11:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,463,1520924400";
-   d="scan'208";a="55572418"
-From: "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To: Andy Lutomirski <luto@kernel.org>
-CC: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH V2 00/15] x86: Enable FSGSBASE instructions
-Thread-Topic: [PATCH V2 00/15] x86: Enable FSGSBASE instructions
-Thread-Index: AQHT+QkbMI0rMwAEAkyWFDH5cwIjEqRKsQgA//+jiQA=
-Date: Thu, 31 May 2018 21:11:44 +0000
-Message-ID: <C9BB696F3A938947B10DCAD29FAB8FFA66BBA483@CRSMSX101.amr.corp.intel.com>
-References: <1527789525-8857-1-git-send-email-chang.seok.bae@intel.com>
- <CALCETrVAW5wuABK63h8frMuW_-tT29ZWPH2fPMiffOWQn8Lp2g@mail.gmail.com>
-In-Reply-To: <CALCETrVAW5wuABK63h8frMuW_-tT29ZWPH2fPMiffOWQn8Lp2g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDJjNmJjNWMtMzAxMC00YzQ0LTgzZTMtOWFlZTcwMWE1ZGMzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJ4bGU3Q1FPZkROaVpGNnpFWU9RTldOYThXaVNhZ3h2ZTllSzVUaENkU1dUNG1JRlROWkx0NmpYam5cLzRcL1RMeHgifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [172.18.205.10]
-Content-Type: text/plain; charset="utf-8"
+        id S1750795AbeEaVNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 17:13:11 -0400
+Date: Thu, 31 May 2018 17:13:08 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Petr Mladek <pmladek@suse.com>, baijiaju1990@gmail.com,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: Can printk() sleep at runtime?
+Message-ID: <20180531171308.08474a70@vmware.local.home>
+In-Reply-To: <CAMuHMdWbwQ3GKovGGjMv+uWdJBoLYgXHAFj53qLcK1PjHg=0Gg@mail.gmail.com>
+References: <ba98332d-7013-f5cb-7d49-645ee6f49156@gmail.com>
+        <20180531100457.fncibp5cxdozvbjh@pathway.suse.cz>
+        <CA+55aFxasUXmLwb9Mj1j8WSJbmfO1oGkcsZ2hxxbkz_p1gkUfQ@mail.gmail.com>
+        <152777998940.144038.2717154952249020053@swboyd.mtv.corp.google.com>
+        <CAMuHMdWbwQ3GKovGGjMv+uWdJBoLYgXHAFj53qLcK1PjHg=0Gg@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4VLBrmc009946
 
-> 1. Can you try and generate a new version of patches 1-5 quickly?  I think it would be nice to get them merged this cycle.
+On Thu, 31 May 2018 18:42:48 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Okay, let me reply, first, what I can do now. Will do submit patches with revisions, (as soon as I can).
+> Hi Stephen,
+> 
+> On Thu, May 31, 2018 at 5:19 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Linus Torvalds (2018-05-31 07:32:10)  
+> >> On Thu, May 31, 2018 at 5:05 AM Petr Mladek <pmladek@suse.com> wrote:  
+> >> > Anyway, we need to fix or remove this format. vsprintf-like functions
+> >> > are called in any context and nobody expect that they might sleep.  
+> >>
+> >> Ack. I guess the argument is that "%pCr" is rare, and none of *those*
+> >> users may care, but I do think that doing things wrong as-is.
+> >>
+> >> It's too subtle to have to know you're in a particular locking context
+> >> when you use a particular %p modifier.  
+> >
+> > Agreed. Removing the format seems to be the best approach. It looks like
+> > only Geert has used it in the last few years and it hasn't been used
+> > much otherwise.  
+> 
+> Indeed, just 3 users (the broadcom one isn't mine):
+>     drivers/clk/renesas/renesas-cpg-mssr.c
+>     drivers/thermal/broadcom/bcm2835_thermal.c
+>     drivers/tty/serial/sh-sci.c
+> 
+> Alternatively, can we have a special version __clk_get_rate() that just
+> returns clk->core->rate?
+> Or would that be too inaccurate in the presence of CLK_GET_RATE_NOCACHE?
+> The function could still return 0 in case the flag is set.
+
+If it's only used in three locations, I think it would be better to
+simply remove it from vsprintf() and have the three callers call
+clk_get_rate() directly.
+
+-- Steve
