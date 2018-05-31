@@ -1,60 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755813AbeEaRL1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 13:11:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45372 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755556AbeEaRLY (ORCPT
+        id S1755838AbeEaRLb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 13:11:31 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:31427 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755687AbeEaRLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 May 2018 13:11:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5A31F60452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
-To: "Alex G." <mr.nuke.me@gmail.com>, Alex_Gagniuc@Dellteam.com,
-        bhelgaas@google.com
-Cc: Austin.Bolen@dell.com, Shyam.Iyer@dell.com, keith.busch@intel.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
- <28004506-24f0-6d10-2d1e-074e0483d2f9@codeaurora.org>
- <4e0611c872054e768daa96b302651db3@ausx13mps321.AMER.DELL.COM>
- <f260078b-6918-7fd9-39d6-e9f300e4c048@codeaurora.org>
- <3b8a895b-3080-7ddb-cbfd-5aa972e9bf65@gmail.com>
- <35563ce3-e235-096c-4b9b-5f3664d67d0f@codeaurora.org>
- <093b2789-39a1-db9e-5783-b0488b3c9ccd@gmail.com>
- <32d58835-2f35-0b80-38d0-b9ff603619dd@codeaurora.org>
- <54071f83-5d0d-04a0-d448-0c99ec0ffc4f@gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <29ad2bf5-b5af-35be-3bef-2d0652aa2e33@codeaurora.org>
-Date: Thu, 31 May 2018 13:11:21 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+From: Suman Anna <s-anna@ti.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH 5/5] rpmsg: char: Switch to SPDX license identifier
+Date: Thu, 31 May 2018 12:11:03 -0500
+Message-ID: <20180531171103.8703-6-s-anna@ti.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180531171103.8703-1-s-anna@ti.com>
+References: <20180531171103.8703-1-s-anna@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <54071f83-5d0d-04a0-d448-0c99ec0ffc4f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/31/2018 12:49 PM, Alex G. wrote:
->> 	bw_cap = pcie_bandwidth_capable(dev, &speed_cap, &width_cap);
->> 	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width, *parent*);
-> That's confusing. I'd expect _capable() and _available() to be
-> symmetrical. They either both look at one link only, or both go down to
-> the root port. Though it seems _capable() is link-local, and
-> _available() is down to root port.
-> 
+Use the appropriate SPDX license identifier in the rpmsg char driver
+source file and drop the previous boilerplate license text. The uapi
+header file already had the SPDX license identifier added as part of
+a mass update but the license text removal was deferred for later,
+and this patch drops the same.
 
-As you know, link speed is a qualification of two devices speed capability.
-Both speed and width parameters get negotiated by two devices during TS1 and TS2
-ordered set exchange. 
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/rpmsg/rpmsg_char.c | 10 +---------
+ include/uapi/linux/rpmsg.h |  9 ---------
+ 2 files changed, 1 insertion(+), 18 deletions(-)
 
-You need to see what your link partner can support in available function() vs.
-what this device can do in bandwidth() function.
-
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 1efdf9ff8679..76a4477c6364 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2016, Linaro Ltd.
+  * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
+@@ -7,15 +8,6 @@
+  *
+  * Based on rpmsg performance statistics driver by Michal Simek, which in turn
+  * was based on TI & Google OMX rpmsg driver.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ #include <linux/cdev.h>
+ #include <linux/device.h>
+diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
+index 225eb38705dc..e14c6dab4223 100644
+--- a/include/uapi/linux/rpmsg.h
++++ b/include/uapi/linux/rpmsg.h
+@@ -1,15 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ /*
+  * Copyright (c) 2016, Linaro Ltd.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef _UAPI_RPMSG_H_
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.17.0
