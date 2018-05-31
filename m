@@ -1,329 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754048AbeEaGuv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:50:51 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33943 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754020AbeEaGup (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:50:45 -0400
-X-Google-Smtp-Source: ADUXVKIGw2vU+BBAsqK9hsEMOG+tqVBOg305JYLDhpATtFgzqH7S3k+0a3CxpIIzYbyMGzZPBsiQlAmQ9aajfEjFujE=
+        id S1753980AbeEaGw3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:52:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51171 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753882AbeEaGw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 02:52:28 -0400
+Date: Thu, 31 May 2018 08:52:26 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: ufo19890607 <ufo19890607@gmail.com>
+Cc: akpm@linux-foundation.org, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] Refactor part of the oom report in dump_header
+Message-ID: <20180531065226.GA15659@dhcp22.suse.cz>
+References: <1527413551-5982-1-git-send-email-ufo19890607@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1527714464-8642-6-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1527714464-8642-1-git-send-email-eajames@linux.vnet.ibm.com> <1527714464-8642-6-git-send-email-eajames@linux.vnet.ibm.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 31 May 2018 09:50:44 +0300
-Message-ID: <CAHp75Vc40R3Mi+eAdhpv--C1WGCdBPGQSsXdJhxFmaxVueWUZg@mail.gmail.com>
-Subject: Re: [PATCH v8 5/7] i2c: fsi: Add transfer implementation
-To: Eddie James <eajames@linux.vnet.ibm.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527413551-5982-1-git-send-email-ufo19890607@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 12:07 AM, Eddie James
-<eajames@linux.vnet.ibm.com> wrote:
-> Execute I2C transfers from the FSI-attached I2C master. Use polling
-> instead of interrupts as we have no hardware IRQ over FSI.
->
-
-Few nitpicks, after addressing them (field definition is up to you though)
-
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-
-> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+On Sun 27-05-18 10:32:31, ufo19890607 wrote:
+> The dump_header does not print the memcg's name when the system
+> oom happened, so users cannot locate the certain container which
+> contains the task that has been killed by the oom killer.
+> 
+> I follow the advices of David Rientjes and Michal Hocko, and refactor
+> part of the oom report in a backwards compatible way. After this patch,
+> users can get the memcg's path from the oom report and check the certain
+> container more quickly.
+> 
+> Below is the part of the oom report in the dmesg
+> ...
+> [  142.158316] panic cpuset=/ mems_allowed=0-1
+> [  142.158983] CPU: 15 PID: 8682 Comm: panic Not tainted 4.17.0-rc6+ #13
+> [  142.159659] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
+> [  142.160342] Call Trace:
+> [  142.161037]  dump_stack+0x78/0xb3
+> [  142.161734]  dump_header+0x7d/0x334
+> [  142.162433]  oom_kill_process+0x228/0x490
+> [  142.163126]  ? oom_badness+0x2a/0x130
+> [  142.163821]  out_of_memory+0xf0/0x280
+> [  142.164532]  __alloc_pages_slowpath+0x711/0xa07
+> [  142.165241]  __alloc_pages_nodemask+0x23f/0x260
+> [  142.165947]  alloc_pages_vma+0x73/0x180
+> [  142.166665]  do_anonymous_page+0xed/0x4e0
+> [  142.167388]  __handle_mm_fault+0xbd2/0xe00
+> [  142.168114]  handle_mm_fault+0x116/0x250
+> [  142.168841]  __do_page_fault+0x233/0x4d0
+> [  142.169567]  do_page_fault+0x32/0x130
+> [  142.170303]  ? page_fault+0x8/0x30
+> [  142.171036]  page_fault+0x1e/0x30
+> [  142.171764] RIP: 0033:0x7f403000a860
+> [  142.172517] RSP: 002b:00007ffc9f745c28 EFLAGS: 00010206
+> [  142.173268] RAX: 00007f3f6fd7d000 RBX: 0000000000000000 RCX: 00007f3f7f5cd000
+> [  142.174040] RDX: 00007f3fafd7d000 RSI: 0000000000000000 RDI: 00007f3f6fd7d000
+> [  142.174806] RBP: 00007ffc9f745c50 R08: ffffffffffffffff R09: 0000000000000000
+> [  142.175623] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000400490
+> [  142.176542] R13: 00007ffc9f745d30 R14: 0000000000000000 R15: 0000000000000000
+> [  142.177709] oom-kill: constrain=CONSTRAINT_NONE nodemask=(null) origin_memcg= kill_memcg=/test/test1/test2 task=panic pid= 8622 uid=    0
+> ...
+> 
+> Changes since v5:
+> - add an array of const char for each constraint.
+> - replace all of the pr_cont with a single line print of the pr_info.
+> - put enum oom_constraint into the memcontrol.c file for printing oom constraint.
+> 
+> Changes since v4:
+> - rename the helper's name to mem_cgroup_print_oom_context.
+> - rename the mem_cgroup_print_oom_info to mem_cgroup_print_oom_meminfo.
+> - add the constrain info in the dump_header.
+> 
+> Changes since v3:
+> - rename the helper's name to mem_cgroup_print_oom_memcg_name.
+> - add the rcu lock held to the helper.
+> - remove the print info of memcg's name in mem_cgroup_print_oom_info.
+> 
+> Changes since v2:
+> - add the mem_cgroup_print_memcg_name helper to print the memcg's
+>   name which contains the task that will be killed by the oom-killer.
+> 
+> Changes since v1:
+> - replace adding mem_cgroup_print_oom_info with printing the memcg's
+>   name only.
+> 
+> Signed-off-by: ufo19890607 <ufo19890607@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-fsi.c | 196 ++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 194 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
-> index e5dd0f7..f24e4b9 100644
-> --- a/drivers/i2c/busses/i2c-fsi.c
-> +++ b/drivers/i2c/busses/i2c-fsi.c
-> @@ -149,6 +149,7 @@ struct fsi_i2c_port {
->         struct i2c_adapter      adapter;
->         struct fsi_i2c_master   *master;
->         u16                     port;
-> +       u16                     xfrd;
+>  include/linux/memcontrol.h | 29 +++++++++++++++++++++---
+>  mm/memcontrol.c            | 55 ++++++++++++++++++++++++++++++++--------------
+>  mm/oom_kill.c              | 12 +++-------
+>  3 files changed, 67 insertions(+), 29 deletions(-)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index d99b71bc2c66..1c7d5da1c827 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -62,6 +62,20 @@ struct mem_cgroup_reclaim_cookie {
+>  	unsigned int generation;
 >  };
->
->  static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
-> @@ -224,6 +225,100 @@ static int fsi_i2c_set_port(struct fsi_i2c_port *port)
->         return fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
->  }
->
-> +static int fsi_i2c_start(struct fsi_i2c_port *port, struct i2c_msg *msg,
-> +                        bool stop)
-> +{
-> +       struct fsi_i2c_master *i2c = port->master;
-> +       u32 cmd = I2C_CMD_WITH_START | I2C_CMD_WITH_ADDR;
+>  
+> +enum oom_constraint {
+> +	CONSTRAINT_NONE,
+> +	CONSTRAINT_CPUSET,
+> +	CONSTRAINT_MEMORY_POLICY,
+> +	CONSTRAINT_MEMCG,
+> +};
 > +
-> +       port->xfrd = 0;
+> +static const char * const oom_constraint_text[] = {
+> +	[CONSTRAINT_NONE] = "CONSTRAINT_NONE",
+> +	[CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
+> +	[CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
+> +	[CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
+> +};
 > +
-
-> +       if (msg->flags & I2C_M_RD)
-> +               cmd |= I2C_CMD_READ;
-
-(1)
-
+>  #ifdef CONFIG_MEMCG
+>  
+>  #define MEM_CGROUP_ID_SHIFT	16
+> @@ -464,8 +478,11 @@ void mem_cgroup_handle_over_high(void);
+>  
+>  unsigned long mem_cgroup_get_limit(struct mem_cgroup *memcg);
+>  
+> -void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
+> -				struct task_struct *p);
+> +void mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
+> +		struct task_struct *p, enum oom_constraint constraint,
+> +		nodemask_t *nodemask);
 > +
-> +       if (stop || msg->flags & I2C_M_STOP)
-> +               cmd |= I2C_CMD_WITH_STOP;
-> +
-
-> +       cmd |= FIELD_PREP(I2C_CMD_ADDR, msg->addr >> 1);
-
-(1) + this looks like:
-
- // #define I2C_CMD_ADDR           GENMASK(23, 17)
- // #define I2C_CMD_READ           BIT(16)
-
-#define I2C_CMD_8BIT_ADDR           GENMASK(23, 16)
-// or even drop I2C_CMD_READ completely
-
-   cmd |= FIELD_PREP(I2C_CMD_8BIT_ADDR, i2c_8bit_addr_from_msg(msg));
-
-> +       cmd |= FIELD_PREP(I2C_CMD_LEN, msg->len);
-> +
-> +       return fsi_i2c_write_reg(i2c->fsi, I2C_FSI_CMD, &cmd);
-> +}
-> +
-> +static int fsi_i2c_get_op_bytes(int op_bytes)
-> +{
-> +       /* fsi is limited to max 4 byte aligned ops */
-> +       if (op_bytes > 4)
-> +               return 4;
-> +       else if (op_bytes == 3)
-> +               return 2;
-> +       else
-> +               return op_bytes;
-
-If you have pattern like
-
-if {
- ...
- return;
-} else {
- ...
-}
-
-'else' is redundant.
-
-> +}
-
-Overall, I think rounddown_pow_of_two() makes sense here.
-Though it's your choice.
-
-> +
-> +static int fsi_i2c_write_fifo(struct fsi_i2c_port *port, struct i2c_msg *msg,
-> +                             u8 fifo_count)
-> +{
-> +       int write;
-> +       int rc;
-> +       struct fsi_i2c_master *i2c = port->master;
-> +       int bytes_to_write = i2c->fifo_size - fifo_count;
-> +       int bytes_remaining = msg->len - port->xfrd;
-> +
-> +       bytes_to_write = min(bytes_to_write, bytes_remaining);
-> +
-> +       while (bytes_to_write) {
-> +               write = fsi_i2c_get_op_bytes(bytes_to_write);
-> +
-> +               rc = fsi_device_write(i2c->fsi, I2C_FSI_FIFO,
-> +                                     &msg->buf[port->xfrd], write);
-> +               if (rc)
-> +                       return rc;
-> +
-> +               port->xfrd += write;
-> +               bytes_to_write -= write;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int fsi_i2c_read_fifo(struct fsi_i2c_port *port, struct i2c_msg *msg,
-> +                            u8 fifo_count)
-> +{
-> +       int read;
-> +       int rc;
-> +       struct fsi_i2c_master *i2c = port->master;
-> +       int bytes_to_read;
-> +       int xfr_remaining = msg->len - port->xfrd;
-> +       u32 dummy;
-> +
-> +       bytes_to_read = min_t(int, fifo_count, xfr_remaining);
-> +
-> +       while (bytes_to_read) {
-> +               read = fsi_i2c_get_op_bytes(bytes_to_read);
-> +
-> +               if (xfr_remaining) {
-> +                       rc = fsi_device_read(i2c->fsi, I2C_FSI_FIFO,
-> +                                            &msg->buf[port->xfrd], read);
-> +                       if (rc)
-> +                               return rc;
-> +
-> +                       port->xfrd += read;
-> +                       xfr_remaining -= read;
-> +               } else {
-> +                       /* no more buffer but data in fifo, need to clear it */
-> +                       rc = fsi_device_read(i2c->fsi, I2C_FSI_FIFO, &dummy,
-> +                                            read);
-> +                       if (rc)
-> +                               return rc;
-> +               }
-> +
-> +               bytes_to_read -= read;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static int fsi_i2c_reset_bus(struct fsi_i2c_master *i2c)
+> +void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg);
+>  
+>  static inline void mem_cgroup_oom_enable(void)
 >  {
->         int i, rc;
-> @@ -387,17 +482,114 @@ static int fsi_i2c_abort(struct fsi_i2c_port *port, u32 status)
->         return -ETIMEDOUT;
+> @@ -859,7 +876,13 @@ static inline unsigned long mem_cgroup_get_limit(struct mem_cgroup *memcg)
 >  }
->
-> +static int fsi_i2c_handle_status(struct fsi_i2c_port *port,
-> +                                struct i2c_msg *msg, u32 status)
+>  
+>  static inline void
+> -mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
+> +mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p,
+> +			enum oom_constraint constraint, nodemask_t *nodemask)
 > +{
-> +       int rc;
-> +       u8 fifo_count;
-> +
-> +       if (status & I2C_STAT_ERR) {
-> +               rc = fsi_i2c_abort(port, status);
-> +               if (rc)
-> +                       return rc;
-> +
-> +               if (status & I2C_STAT_INV_CMD)
-> +                       return -EINVAL;
-> +
-> +               if (status & (I2C_STAT_PARITY | I2C_STAT_BE_OVERRUN |
-> +                   I2C_STAT_BE_ACCESS))
-> +                       return -EPROTO;
-> +
-> +               if (status & I2C_STAT_NACK)
-> +                       return -ENXIO;
-> +
-> +               if (status & I2C_STAT_LOST_ARB)
-> +                       return -EAGAIN;
-> +
-> +               if (status & I2C_STAT_STOP_ERR)
-> +                       return -EBADMSG;
-> +
-> +               return -EIO;
-> +       }
-> +
-> +       if (status & I2C_STAT_DAT_REQ) {
-> +               fifo_count = FIELD_GET(I2C_STAT_FIFO_COUNT, status);
-> +
-> +               if (msg->flags & I2C_M_RD)
-> +                       return fsi_i2c_read_fifo(port, msg, fifo_count);
-
-> +               else
-> +                       return fsi_i2c_write_fifo(port, msg, fifo_count);
-
-Redundant 'else'
-
-> +       }
-> +
-> +       if (status & I2C_STAT_CMD_COMP) {
-> +               if (port->xfrd < msg->len)
-> +                       return -ENODATA;
-
-> +               else
-> +                       return msg->len;
-
-Ditto.
-
-> +       }
-> +
-> +       return 0;
 > +}
 > +
-> +static int fsi_i2c_wait(struct fsi_i2c_port *port, struct i2c_msg *msg,
-> +                       unsigned long timeout)
-> +{
-> +       u32 status = 0;
-> +       int rc;
-> +       unsigned long start = jiffies;
-> +
-> +       do {
-> +               rc = fsi_i2c_read_reg(port->master->fsi, I2C_FSI_STAT,
-> +                                     &status);
-> +               if (rc)
-> +                       return rc;
-> +
-> +               if (status & I2C_STAT_ANY_RESP) {
-> +                       rc = fsi_i2c_handle_status(port, msg, status);
-> +                       if (rc < 0)
-> +                               return rc;
-> +
-> +                       /* cmd complete and all data xfrd */
-> +                       if (rc == msg->len)
-> +                               return 0;
-> +
-> +                       /* need to xfr more data, but maybe don't need wait */
-> +                       continue;
-> +               }
-> +
-> +               usleep_range(I2C_CMD_SLEEP_MIN_US, I2C_CMD_SLEEP_MAX_US);
-> +       } while (time_after(start + timeout, jiffies));
-> +
-> +       return -ETIMEDOUT;
-> +}
-> +
->  static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->                         int num)
+> +static inline void
+> +mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
 >  {
-> -       int rc;
-> +       int i, rc;
-> +       unsigned long start_time;
->         struct fsi_i2c_port *port = adap->algo_data;
-> +       struct i2c_msg *msg;
->
->         rc = fsi_i2c_set_port(port);
->         if (rc)
->                 return rc;
->
-> -       return -EOPNOTSUPP;
-> +       for (i = 0; i < num; ++i) {
-
-i++
-
-> +               msg = msgs + i;
-> +               start_time = jiffies;
-> +
-> +               rc = fsi_i2c_start(port, msg, i == num - 1);
-> +               if (rc)
-> +                       return rc;
-> +
-> +               rc = fsi_i2c_wait(port, msg,
-> +                                 adap->timeout - (jiffies - start_time));
-> +               if (rc)
-> +                       return rc;
-> +       }
-> +
-> +       return 0;
 >  }
->
->  static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
-> --
-> 1.8.3.1
->
+>  
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 2bd3df3d101a..6c05fd3291e6 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1118,33 +1118,54 @@ static const char *const memcg1_stat_names[] = {
+>  };
+>  
+>  #define K(x) ((x) << (PAGE_SHIFT-10))
+> -/**
+> - * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
+> - * @memcg: The memory cgroup that went over limit
+> +/*
+> + * mem_cgroup_print_oom_context: Print OOM context information relevant to
+> + * memory controller, which includes allocation constraint, nodemask, origin
+> + * memcg that has reached its limit, kill memcg that contains the killed
+> + * process, killed process's command, pid and uid.
+> + * @memcg: The origin memory cgroup that went over limit
+>   * @p: Task that is going to be killed
+> + * @constraint: The allocation constraint
+> + * @nodemask: The allocation nodemask
+>   *
+>   * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
+>   * enabled
+>   */
+> -void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
+> +void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p,
+> +			enum oom_constraint constraint, nodemask_t *nodemask)
+>  {
+> -	struct mem_cgroup *iter;
+> -	unsigned int i;
+> +	static char origin_memcg_name[PATH_MAX], kill_memcg_name[PATH_MAX];
+> +	struct cgroup *origin_cgrp, *kill_cgrp;
+>  
+>  	rcu_read_lock();
+> -
+> -	if (p) {
+> -		pr_info("Task in ");
+> -		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
+> -		pr_cont(" killed as a result of limit of ");
+> -	} else {
+> -		pr_info("Memory limit reached of cgroup ");
+> +	if (memcg) {
+> +		origin_cgrp = memcg->css.cgroup;
+> +		cgroup_path(origin_cgrp, origin_memcg_name, PATH_MAX);
+>  	}
+> -
+> -	pr_cont_cgroup_path(memcg->css.cgroup);
+> -	pr_cont("\n");
+> -
+> +	kill_cgrp = task_cgroup(p, memory_cgrp_id);
+> +	cgroup_path(kill_cgrp, kill_memcg_name, PATH_MAX);
+> +
+> +	if (p)
+> +		pr_info("oom-kill: constrain=%s, nodemask=%*pbl, origin_memcg=%s, kill_memcg=%s, task=%s, pid=%5d, uid=%5d\n",
+> +			oom_constraint_text[constraint], nodemask_pr_args(nodemask),
+> +			origin_memcg_name, kill_memcg_name, p->comm, p->pid,
+> +			from_kuid(&init_user_ns, task_uid(p)));
+> +	else
+> +		pr_info("oom-kill: constrain=%s, nodemask=%*pbl, origin_memcg=%s, kill_memcg=%s\n",
+> +			oom_constraint_text[constraint], nodemask_pr_args(nodemask),
+> +			origin_memcg_name, kill_memcg_name);
+>  	rcu_read_unlock();
 
+Btw. this is buggy as well. origin_memcg_name will be the previous memcg
+oom killed memcg name in the follow up global oom killer context. You
+would need to *origin_memcg_name = 0 for !memcg case.
 
-
+Anyway, I guess we do not really have a strong case to justify the
+additional memory just to get rid of pr_cont which would be much
+simpler. Interleaving messages will be still possible but we would
+really need to see this happening to do something about that.
 -- 
-With Best Regards,
-Andy Shevchenko
+Michal Hocko
+SUSE Labs
