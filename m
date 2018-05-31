@@ -1,225 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754220AbeEaIzi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:55:38 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:1458 "EHLO pegase1.c-s.fr"
+        id S1754236AbeEaIz5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:55:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59656 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754071AbeEaIyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:54:54 -0400
-Message-Id: <798b787d74d94b5d29f1c0279bad157b6b5df7ec.1527755908.git.christophe.leroy@c-s.fr>
-In-Reply-To: <170bd2b5b5cb1e474599165e8f21f121225a2df9.1527755908.git.christophe.leroy@c-s.fr>
-References: <170bd2b5b5cb1e474599165e8f21f121225a2df9.1527755908.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 4.14 2/4] powerpc/mm/slice: create header files dedicated to slices
-To: stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Thu, 31 May 2018 08:54:52 +0000 (UTC)
+        id S1754040AbeEaIzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 04:55:35 -0400
+Date: Thu, 31 May 2018 10:55:32 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: David Miller <davem@davemloft.net>, qing.huang@oracle.com,
+        tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
+Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+Message-ID: <20180531085532.GK15278@dhcp22.suse.cz>
+References: <20180523232246.20445-1-qing.huang@oracle.com>
+ <20180525.102321.858995452200286788.davem@davemloft.net>
+ <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
+ <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
+ <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
+ <20180531065405.GH15278@dhcp22.suse.cz>
+ <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a3286f05bc5a5bc7fc73a9783ec89de78fcd07f8 ]
+On Thu 31-05-18 04:35:31, Eric Dumazet wrote:
+> 
+> 
+> On 05/31/2018 02:54 AM, Michal Hocko wrote:
+> > On Tue 29-05-18 23:49:59, Eric Dumazet wrote:
+> >>
+> >>
+> >> On 05/29/2018 11:44 PM, Eric Dumazet wrote:
+> >>
+> >>>
+> >>> And I will add this simple fix, this really should address your initial concern much better.
+> >>>
+> >>> @@ -99,6 +100,8 @@ static int mlx4_alloc_icm_pages(struct scatterlist *mem, int order,
+> >>>  {
+> >>>         struct page *page;
+> >>>  
+> >>> +       if (order)
+> >>> +               gfp_mask |= __GFP_NORETRY;
+> >>
+> >>     and also      gfp_mask &= ~__GFP_DIRECT_RECLAIM
+> > 
+> > JFTR the latter one makes __GFP_NORETRY pointless. Non sleeping allocations
+> > are not retrying.
+> 
+> Hi Michal
+> 
+> Since when this rule is applied ?
 
-In preparation for the following patch which will enhance 'slices'
-for supporting PPC32 in order to fix an issue on hugepages on 8xx,
-this patch takes out of page*.h all bits related to 'slices' and put
-them into newly created slice.h header files.
-While common parts go into asm/slice.h, subarch specific
-parts go into respective books3s/64/slice.c and nohash/64/slice.c
-'slices'
+Well, this has been the case since I remember. ~__GFP_DIRECT_RECLAIM
+resp. GFP_NOWAIT formerly meant that the allocation doesn't perform
+_any_ reclaim and therefore it never retries. Why would it? Any retry
+would just hope for a reclaim on behalf of somebody else. __GFP_NORETRY
+has always simply stopped retrying after one/few reclaim attempts.
+Implementation has changed here and there over time but in essence the
+semantic remained the same. Please have a look at the current
+documentation in gfp.h file and let me know if you would like some
+clarfications.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- arch/powerpc/include/asm/book3s/64/slice.h | 27 ++++++++++++++
- arch/powerpc/include/asm/nohash/64/slice.h | 12 ++++++
- arch/powerpc/include/asm/page.h            |  1 +
- arch/powerpc/include/asm/page_64.h         | 59 ------------------------------
- arch/powerpc/include/asm/slice.h           | 40 ++++++++++++++++++++
- 5 files changed, 80 insertions(+), 59 deletions(-)
- create mode 100644 arch/powerpc/include/asm/book3s/64/slice.h
- create mode 100644 arch/powerpc/include/asm/nohash/64/slice.h
- create mode 100644 arch/powerpc/include/asm/slice.h
+> These GFP flags change all the time, I suggest mm experts to cleanup existing call sites ?
 
-diff --git a/arch/powerpc/include/asm/book3s/64/slice.h b/arch/powerpc/include/asm/book3s/64/slice.h
-new file mode 100644
-index 000000000000..db0dedab65ee
---- /dev/null
-+++ b/arch/powerpc/include/asm/book3s/64/slice.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_POWERPC_BOOK3S_64_SLICE_H
-+#define _ASM_POWERPC_BOOK3S_64_SLICE_H
-+
-+#ifdef CONFIG_PPC_MM_SLICES
-+
-+#define SLICE_LOW_SHIFT		28
-+#define SLICE_LOW_TOP		(0x100000000ul)
-+#define SLICE_NUM_LOW		(SLICE_LOW_TOP >> SLICE_LOW_SHIFT)
-+#define GET_LOW_SLICE_INDEX(addr)	((addr) >> SLICE_LOW_SHIFT)
-+
-+#define SLICE_HIGH_SHIFT	40
-+#define SLICE_NUM_HIGH		(H_PGTABLE_RANGE >> SLICE_HIGH_SHIFT)
-+#define GET_HIGH_SLICE_INDEX(addr)	((addr) >> SLICE_HIGH_SHIFT)
-+
-+#else /* CONFIG_PPC_MM_SLICES */
-+
-+#define get_slice_psize(mm, addr)	((mm)->context.user_psize)
-+#define slice_set_user_psize(mm, psize)		\
-+do {						\
-+	(mm)->context.user_psize = (psize);	\
-+	(mm)->context.sllp = SLB_VSID_USER | mmu_psize_defs[(psize)].sllp; \
-+} while (0)
-+
-+#endif /* CONFIG_PPC_MM_SLICES */
-+
-+#endif /* _ASM_POWERPC_BOOK3S_64_SLICE_H */
-diff --git a/arch/powerpc/include/asm/nohash/64/slice.h b/arch/powerpc/include/asm/nohash/64/slice.h
-new file mode 100644
-index 000000000000..ad0d6e3cc1c5
---- /dev/null
-+++ b/arch/powerpc/include/asm/nohash/64/slice.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_POWERPC_NOHASH_64_SLICE_H
-+#define _ASM_POWERPC_NOHASH_64_SLICE_H
-+
-+#ifdef CONFIG_PPC_64K_PAGES
-+#define get_slice_psize(mm, addr)	MMU_PAGE_64K
-+#else /* CONFIG_PPC_64K_PAGES */
-+#define get_slice_psize(mm, addr)	MMU_PAGE_4K
-+#endif /* !CONFIG_PPC_64K_PAGES */
-+#define slice_set_user_psize(mm, psize)	do { BUG(); } while (0)
-+
-+#endif /* _ASM_POWERPC_NOHASH_64_SLICE_H */
-diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
-index 8da5d4c1cab2..d5f1c41b7dba 100644
---- a/arch/powerpc/include/asm/page.h
-+++ b/arch/powerpc/include/asm/page.h
-@@ -344,5 +344,6 @@ typedef struct page *pgtable_t;
- 
- #include <asm-generic/memory_model.h>
- #endif /* __ASSEMBLY__ */
-+#include <asm/slice.h>
- 
- #endif /* _ASM_POWERPC_PAGE_H */
-diff --git a/arch/powerpc/include/asm/page_64.h b/arch/powerpc/include/asm/page_64.h
-index c4d9654bd637..af04acdb873f 100644
---- a/arch/powerpc/include/asm/page_64.h
-+++ b/arch/powerpc/include/asm/page_64.h
-@@ -86,65 +86,6 @@ extern u64 ppc64_pft_size;
- 
- #endif /* __ASSEMBLY__ */
- 
--#ifdef CONFIG_PPC_MM_SLICES
--
--#define SLICE_LOW_SHIFT		28
--#define SLICE_HIGH_SHIFT	40
--
--#define SLICE_LOW_TOP		(0x100000000ul)
--#define SLICE_NUM_LOW		(SLICE_LOW_TOP >> SLICE_LOW_SHIFT)
--#define SLICE_NUM_HIGH		(H_PGTABLE_RANGE >> SLICE_HIGH_SHIFT)
--
--#define GET_LOW_SLICE_INDEX(addr)	((addr) >> SLICE_LOW_SHIFT)
--#define GET_HIGH_SLICE_INDEX(addr)	((addr) >> SLICE_HIGH_SHIFT)
--
--#ifndef __ASSEMBLY__
--struct mm_struct;
--
--extern unsigned long slice_get_unmapped_area(unsigned long addr,
--					     unsigned long len,
--					     unsigned long flags,
--					     unsigned int psize,
--					     int topdown);
--
--extern unsigned int get_slice_psize(struct mm_struct *mm,
--				    unsigned long addr);
--
--extern void slice_set_user_psize(struct mm_struct *mm, unsigned int psize);
--extern void slice_set_range_psize(struct mm_struct *mm, unsigned long start,
--				  unsigned long len, unsigned int psize);
--
--#endif /* __ASSEMBLY__ */
--#else
--#define slice_init()
--#ifdef CONFIG_PPC_STD_MMU_64
--#define get_slice_psize(mm, addr)	((mm)->context.user_psize)
--#define slice_set_user_psize(mm, psize)		\
--do {						\
--	(mm)->context.user_psize = (psize);	\
--	(mm)->context.sllp = SLB_VSID_USER | mmu_psize_defs[(psize)].sllp; \
--} while (0)
--#else /* CONFIG_PPC_STD_MMU_64 */
--#ifdef CONFIG_PPC_64K_PAGES
--#define get_slice_psize(mm, addr)	MMU_PAGE_64K
--#else /* CONFIG_PPC_64K_PAGES */
--#define get_slice_psize(mm, addr)	MMU_PAGE_4K
--#endif /* !CONFIG_PPC_64K_PAGES */
--#define slice_set_user_psize(mm, psize)	do { BUG(); } while(0)
--#endif /* !CONFIG_PPC_STD_MMU_64 */
--
--#define slice_set_range_psize(mm, start, len, psize)	\
--	slice_set_user_psize((mm), (psize))
--#endif /* CONFIG_PPC_MM_SLICES */
--
--#ifdef CONFIG_HUGETLB_PAGE
--
--#ifdef CONFIG_PPC_MM_SLICES
--#define HAVE_ARCH_HUGETLB_UNMAPPED_AREA
--#endif
--
--#endif /* !CONFIG_HUGETLB_PAGE */
--
- #define VM_DATA_DEFAULT_FLAGS \
- 	(is_32bit_task() ? \
- 	 VM_DATA_DEFAULT_FLAGS32 : VM_DATA_DEFAULT_FLAGS64)
-diff --git a/arch/powerpc/include/asm/slice.h b/arch/powerpc/include/asm/slice.h
-new file mode 100644
-index 000000000000..17c5a5d8c418
---- /dev/null
-+++ b/arch/powerpc/include/asm/slice.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_POWERPC_SLICE_H
-+#define _ASM_POWERPC_SLICE_H
-+
-+#ifdef CONFIG_PPC_BOOK3S_64
-+#include <asm/book3s/64/slice.h>
-+#else
-+#include <asm/nohash/64/slice.h>
-+#endif
-+
-+#ifdef CONFIG_PPC_MM_SLICES
-+
-+#ifdef CONFIG_HUGETLB_PAGE
-+#define HAVE_ARCH_HUGETLB_UNMAPPED_AREA
-+#endif
-+#define HAVE_ARCH_UNMAPPED_AREA
-+#define HAVE_ARCH_UNMAPPED_AREA_TOPDOWN
-+
-+#ifndef __ASSEMBLY__
-+
-+struct mm_struct;
-+
-+unsigned long slice_get_unmapped_area(unsigned long addr, unsigned long len,
-+				      unsigned long flags, unsigned int psize,
-+				      int topdown);
-+
-+unsigned int get_slice_psize(struct mm_struct *mm, unsigned long addr);
-+
-+void slice_set_user_psize(struct mm_struct *mm, unsigned int psize);
-+void slice_set_range_psize(struct mm_struct *mm, unsigned long start,
-+			   unsigned long len, unsigned int psize);
-+#endif /* __ASSEMBLY__ */
-+
-+#else /* CONFIG_PPC_MM_SLICES */
-+
-+#define slice_set_range_psize(mm, start, len, psize)	\
-+	slice_set_user_psize((mm), (psize))
-+#endif /* CONFIG_PPC_MM_SLICES */
-+
-+#endif /* _ASM_POWERPC_SLICE_H */
+Do you have any specific areas to look at?
+
+> I merely copied/pasted from alloc_skb_with_frags() :/
+
+I will have a look at it. Thanks!
 -- 
-2.13.3
+Michal Hocko
+SUSE Labs
