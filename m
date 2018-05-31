@@ -1,88 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754699AbeEaLIY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:08:24 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51070 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754725AbeEaLGl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:06:41 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Brown <broonie@kernel.org>,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>,
-        kbuild test robot <lkp@intel.com>, LKML <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: codecs: PCM1789: include gpio/consumer.h" to the asoc tree
-In-Reply-To: <c99575a2-5172-b42e-dd18-6bc763fee361@infradead.org>
-Message-Id: <E1fOLPg-00020r-K9@debutante>
-Date: Thu, 31 May 2018 12:06:36 +0100
+        id S1754802AbeEaLIg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:08:36 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8218 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754630AbeEaLIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:08:32 -0400
+From: Gao Xiang <gaoxiang25@huawei.com>
+To: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC: <miaoxie@huawei.com>, <yuchao0@huawei.com>, <sunqiuyang@huawei.com>,
+        <fangwei1@huawei.com>, <liguifu2@huawei.com>, <weidu.du@huawei.com>,
+        <chen.chun.yen@huawei.com>, <brooke.wangzhigang@hisilicon.com>,
+        <dongjinguang@huawei.com>, <gaoxiang25@huawei.com>
+Subject: [NOMERGE] [RFC PATCH 06/12] erofs: add directory operations
+Date: Thu, 31 May 2018 19:08:07 +0800
+Message-ID: <1527764887-22865-1-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+This adds functions for directory, mainly readdir.
 
-   ASoC: codecs: PCM1789: include gpio/consumer.h
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 3217004ad97fdae6663e8e75c443d8e616cb7fd0 Mon Sep 17 00:00:00 2001
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 30 May 2018 23:53:45 +0200
-Subject: [PATCH] ASoC: codecs: PCM1789: include gpio/consumer.h
-
-When CONFIG_GPIOLIB is disabled, this codec fails to build
-because gpio/consumer.h is not included implicitly.
-
-sound/soc/codecs/pcm1789.c: In function 'pcm1789_common_init':
-sound/soc/codecs/pcm1789.c:247:19: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_gpio_request_one'? [-Werror=implicit-function-declaration]
-  pcm1789->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-                   ^~~~~~~~~~~~~~~~~~~~~~~
-
-Fixes: 4ae340d1be36 ("ASoC: codecs: Add support for PCM1789")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Miao Xie <miaoxie@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- sound/soc/codecs/pcm1789.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/erofs/dir.c | 143 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 143 insertions(+)
+ create mode 100644 fs/erofs/dir.c
 
-diff --git a/sound/soc/codecs/pcm1789.c b/sound/soc/codecs/pcm1789.c
-index 507ac9412d6c..21f15219b3ad 100644
---- a/sound/soc/codecs/pcm1789.c
-+++ b/sound/soc/codecs/pcm1789.c
-@@ -3,7 +3,7 @@
- // Copyright (C) 2018 Bootlin
- // Mylène Josserand <mylene.josserand@bootlin.com>
- 
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- #include <linux/workqueue.h>
- 
+diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+new file mode 100644
+index 0000000..7d3448b
+--- /dev/null
++++ b/fs/erofs/dir.c
+@@ -0,0 +1,143 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * linux/fs/erofs/dir.c
++ *
++ * Copyright (C) 2017-2018 HUAWEI, Inc.
++ *             http://www.huawei.com/
++ * Created by Gao Xiang <gaoxiang25@huawei.com>
++ *
++ * This file is subject to the terms and conditions of the GNU General Public
++ * License.  See the file COPYING in the main directory of the Linux
++ * distribution for more details.
++ */
++#include "internal.h"
++
++const unsigned char erofs_filetype_table[EROFS_FT_MAX] = {
++	[EROFS_FT_UNKNOWN]	= DT_UNKNOWN,
++	[EROFS_FT_REG_FILE]	= DT_REG,
++	[EROFS_FT_DIR]		= DT_DIR,
++	[EROFS_FT_CHRDEV]	= DT_CHR,
++	[EROFS_FT_BLKDEV]	= DT_BLK,
++	[EROFS_FT_FIFO]		= DT_FIFO,
++	[EROFS_FT_SOCK]		= DT_SOCK,
++	[EROFS_FT_SYMLINK]	= DT_LNK,
++};
++
++static int erofs_fill_dentries(struct dir_context *ctx,
++	void *dentry_blk, unsigned *ofs,
++	unsigned nameoff, unsigned maxsize)
++{
++	struct erofs_dirent *de = dentry_blk;
++	const struct erofs_dirent *end = dentry_blk + nameoff;
++
++	de = dentry_blk + *ofs;
++	while (de < end) {
++		const char *de_name;
++		int de_namelen;
++		unsigned char d_type;
++#ifdef CONFIG_EROFS_FS_DEBUG
++		unsigned dbg_namelen;
++		unsigned char dbg_namebuf[EROFS_NAME_LEN];
++#endif
++
++		if (unlikely(de->file_type < EROFS_FT_MAX))
++			d_type = erofs_filetype_table[de->file_type];
++		else
++			d_type = DT_UNKNOWN;
++
++		de_name = (char *)dentry_blk + de->nameoff;
++
++		de_namelen = unlikely(de + 1 >= end) ?
++			/* last directory entry */
++			strnlen(de_name, maxsize - de->nameoff) :
++			de[1].nameoff - de->nameoff;
++
++		/* the corrupted directory found */
++		BUG_ON(de_namelen < 0);
++
++#ifdef CONFIG_EROFS_FS_DEBUG
++		dbg_namelen = min(EROFS_NAME_LEN - 1, de_namelen);
++		memcpy(dbg_namebuf, de_name, dbg_namelen);
++		dbg_namebuf[dbg_namelen] = '\0';
++
++		debugln("%s, found de_name %s de_len %d d_type %d", __func__,
++			dbg_namebuf, de_namelen, d_type);
++#endif
++
++		if (!dir_emit(ctx, de_name, de_namelen, de->nid, d_type))
++			/* stoped by some reason */
++			return 1;
++		++de;
++		*ofs += sizeof(struct erofs_dirent);
++	}
++	*ofs = maxsize;
++	return 0;
++}
++
++static int erofs_readdir(struct file *f, struct dir_context *ctx)
++{
++	struct inode *dir = file_inode(f);
++	struct address_space *mapping = dir->i_mapping;
++	const size_t dirsize = i_size_read(dir);
++	unsigned i = ctx->pos / EROFS_BLKSIZ;
++	unsigned ofs = ctx->pos % EROFS_BLKSIZ;
++	int err = 0;
++	bool initial = true;
++
++	while (ctx->pos < dirsize) {
++		struct page *dentry_page;
++		struct erofs_dirent *de;
++		unsigned nameoff, maxsize;
++
++		dentry_page = read_mapping_page(mapping, i, NULL);
++		if (IS_ERR(dentry_page))
++			continue;
++
++		lock_page(dentry_page);
++		de = (struct erofs_dirent *)kmap(dentry_page);
++
++		nameoff = de->nameoff;
++
++		if (unlikely(nameoff < sizeof(struct erofs_dirent) ||
++			nameoff >= PAGE_SIZE)) {
++			errln("%s, invalid de[0].nameoff %u",
++				__func__, nameoff);
++
++			err = -EIO;
++			goto skip_this;
++		}
++
++		maxsize = min_t(unsigned, dirsize - ctx->pos + ofs, PAGE_SIZE);
++
++		/* search dirents at the arbitrary position */
++		if (unlikely(initial)) {
++			initial = false;
++
++			ofs = roundup(ofs, sizeof(struct erofs_dirent));
++			if (unlikely(ofs >= nameoff))
++				goto skip_this;
++		}
++
++		err = erofs_fill_dentries(ctx, de, &ofs, nameoff, maxsize);
++skip_this:
++		kunmap(dentry_page);
++
++		unlock_page(dentry_page);
++		put_page(dentry_page);
++
++		ctx->pos = i * EROFS_BLKSIZ + ofs;
++
++		if (unlikely(err))
++			break;
++		++i;
++		ofs = 0;
++	}
++	return err < 0 ? err : 0;
++}
++
++const struct file_operations erofs_dir_fops = {
++	.llseek		= generic_file_llseek,
++	.read		= generic_read_dir,
++	.iterate	= erofs_readdir,
++};
++
 -- 
-2.17.0
+1.9.1
