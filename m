@@ -1,92 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754030AbeEaHnT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 03:43:19 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:5551 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753740AbeEaHnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 03:43:18 -0400
-From: "Zengtao (B)" <prime.zeng@hisilicon.com>
-To: Takashi Iwai <tiwai@suse.de>
-CC: "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [alsa-devel] Timeout issues in wait_for_avail function
-Thread-Topic: [alsa-devel] Timeout issues in wait_for_avail function
-Thread-Index: AQHT6qbW0DvOfS0K70aSvYL4PbK3FaRJizRA
-Date: Thu, 31 May 2018 07:43:10 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED0C91AA6C@DGGEMM506-MBS.china.huawei.com>
-References: <678F3D1BB717D949B966B68EAEB446ED0C8D7B4E@DGGEMM506-MBS.china.huawei.com>
- <s5h1sef96ua.wl-tiwai@suse.de>
-In-Reply-To: <s5h1sef96ua.wl-tiwai@suse.de>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.67.222.15]
-Content-Type: text/plain; charset="utf-8"
+        id S1754095AbeEaHnt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 03:43:49 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:48942 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754037AbeEaHnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 03:43:42 -0400
+From: Zhen Lei <thunder.leizhen@huawei.com>
+To: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>,
+        linux-mediatek <linux-mediatek@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+CC: Zhen Lei <thunder.leizhen@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, Libin <huawei.libin@huawei.com>,
+        Guozhu Li <liguozhu@hisilicon.com>, "Xinwei Hu" <huxinwei@huawei.com>
+Subject: [PATCH 1/7] iommu/dma: fix trival coding style mistake
+Date: Thu, 31 May 2018 15:42:43 +0800
+Message-ID: <1527752569-18020-2-git-send-email-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 1.9.5.msysgit.0
+In-Reply-To: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
+References: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.23.164]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4V7hkx9022025
 
-Hi Takashi:
+The static function iova_reserve_iommu_regions is only called by function
+iommu_dma_init_domain, and the 'if (!dev)' check in iommu_dma_init_domain
+affect it only, so we can safely move the check into it. I think it looks
+more natural.
 
-Thank you for your reply.
+In addition, the local variable 'ret' is only assigned in the branch of
+'if (region->type == IOMMU_RESV_MSI)', so the 'if (ret)' should also only
+take effect in the branch, add a brace to enclose it.
 
->-----Original Message-----
->From: Takashi Iwai [mailto:tiwai@suse.de]
->Sent: Sunday, May 13, 2018 6:40 PM
->To: Zengtao (B) <prime.zeng@hisilicon.com>
->Cc: perex@perex.cz; tiwai@suse.com; alsa-devel@alsa-project.org;
->linux-kernel@vger.kernel.org
->Subject: Re: [alsa-devel] Timeout issues in wait_for_avail function
->
->On Mon, 07 May 2018 12:49:34 +0200,
->Zengtao (B) wrote:
->>
->> Hi perex and tiwai:
->>
->> I have met a timeout case when capture audio from snd-usb-audio
->> device, when the host call the pcm_read and get into the wait_for_avail
->function.
->> The following happends
->> 1.  No available data for capture(maybe because of the late response
->> audio data by the uac device)
->
->Hrm, in the case of capture, the data must be available.
->If it's not the case, something is wrong.
->
->> 2.  The current thread falls into sleep state and no one wakes up it.
->> 3.  The current thread will sleep 10s(schedule_timeout(1000)) and then
->wakeup.
->>
->> I have two question about the wait_for_avail:
->> 1. The timeout value too long, is it a reasonable value?
->> 2. Is there any mechanism to wake up the thread if there is data from the
->hw.
->
->The scenario above shouldn't happen, so no need for discussion.
->Rather we should check why it's woken up even though no data is available.
->
+No functional changes.
 
-It really happens on my platform, and anyway 10 seconds timeout seems
-not a reasonable value. And I don't there is any guarantee that there must be avail
-data when we reach wait_for_avail, in fact, inside the wait_for_avail, there is branch
-when no data is available.
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/iommu/dma-iommu.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
->You can check the tracepoints to see the action of PCM stream, and confirm
->whether it's really no data, or it's just lost by some reason (or looks as if so).
->
-I trace the data flow, we reach the wait_for_avail function before the usb snd data arrives, 
-so we wait until 10 seconds timeout. 
-
->
->Takashi
-
-
-Regards
-Zengtao 
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index ddcbbdb..4e885f7 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -231,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device *dev,
+ 	LIST_HEAD(resv_regions);
+ 	int ret = 0;
+ 
++	if (!dev)
++		return 0;
++
+ 	if (dev_is_pci(dev))
+ 		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
+ 
+@@ -246,11 +249,12 @@ static int iova_reserve_iommu_regions(struct device *dev,
+ 		hi = iova_pfn(iovad, region->start + region->length - 1);
+ 		reserve_iova(iovad, lo, hi);
+ 
+-		if (region->type == IOMMU_RESV_MSI)
++		if (region->type == IOMMU_RESV_MSI) {
+ 			ret = cookie_init_hw_msi_region(cookie, region->start,
+ 					region->start + region->length);
+-		if (ret)
+-			break;
++			if (ret)
++				break;
++		}
+ 	}
+ 	iommu_put_resv_regions(dev, &resv_regions);
+ 
+@@ -308,8 +312,6 @@ int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+ 	}
+ 
+ 	init_iova_domain(iovad, 1UL << order, base_pfn);
+-	if (!dev)
+-		return 0;
+ 
+ 	return iova_reserve_iommu_regions(dev, domain);
+ }
+-- 
+1.8.3
