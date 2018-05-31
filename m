@@ -1,34 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750848AbeEaXN5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 19:13:57 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53106 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbeEaXN4 (ORCPT
+        id S1750821AbeEaXhT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 19:37:19 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39171 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750714AbeEaXhS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 19:13:56 -0400
-Date: Fri, 1 Jun 2018 00:13:55 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        Thu, 31 May 2018 19:37:18 -0400
+X-Google-Smtp-Source: ADUXVKL4HytjJ5fW/k5Q6eF69U3HoWwx0IBNbCcT4ON0rRAY6zxarhYnnhCYJVgIBGyIwiR0mPVv1Q==
+Date: Thu, 31 May 2018 16:37:10 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/32] VFS: Introduce the basic header for the new mount
- API's filesystem context [ver #8]
-Message-ID: <20180531231354.GM30522@ZenIV.linux.org.uk>
-References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
- <152720674345.9073.7664682296580266598.stgit@warthog.procyon.org.uk>
+Subject: Re: [PATCH] mm/shmem: Zero out unused vma fields in
+ shmem_pseudo_vma_init()
+In-Reply-To: <20180531155256.a5f557c9e620a6d7e85e4ca1@linux-foundation.org>
+Message-ID: <alpine.LSU.2.11.1805311635410.13735@eggly.anvils>
+References: <20180531135602.20321-1-kirill.shutemov@linux.intel.com> <20180531155256.a5f557c9e620a6d7e85e4ca1@linux-foundation.org>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152720674345.9073.7664682296580266598.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 01:05:43AM +0100, David Howells wrote:
-> +	void			*fs_private;	/* The filesystem's context */
-	...
-> +	void			*s_fs_info;	/* Proposed s_fs_info */
+On Thu, 31 May 2018, Andrew Morton wrote:
+> On Thu, 31 May 2018 16:56:02 +0300 "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
+> 
+> > shmem/tmpfs uses pseudo vma to allocate page with correct NUMA policy.
+> > 
+> > The pseudo vma doesn't have vm_page_prot set. We are going to encode
+> > encryption KeyID in vm_page_prot. Having garbage there causes problems.
+> > 
+> > Zero out all unused fields in the pseudo vma.
+> > 
+> 
+> So there are no known problems in the current mainline kernel?
 
-While we are at it, do we really need both in generic interface?
+Correct - if we limit ourselves to the area of the shmem pseudo-vma :)
+
+Hugh
