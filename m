@@ -1,74 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754251AbeEaJUV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:20:21 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:41974 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754093AbeEaJUT (ORCPT
+        id S1754234AbeEaJU5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:20:57 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37126 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754118AbeEaJUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:20:19 -0400
-X-Google-Smtp-Source: ADUXVKJRnf4rGYFRP2xHEP0LIrYFtU4mpW5QncyOhDoT+icsH66rr736GRNzrw/Vw/lAOrPS4R2S/Q==
+        Thu, 31 May 2018 05:20:52 -0400
+X-Google-Smtp-Source: ADUXVKL4q6Jo9gFscUEzipiuSHxvJT9UzL7Jxz+sqpLqiiSbiW+qNT+ddTHVW3UXK7xFuQt7Xc7K8A==
+Subject: Re: [PATCH] usb: chipidea: Fix ULPI on imx51
+To: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Peter Chen <peter.chen@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>, Chris Healy <cphealy@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+References: <20180530173414.6121-1-andrew.smirnov@gmail.com>
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Message-ID: <49e934d8-228a-35b1-8db2-0402422916fa@cogentembedded.com>
+Date: Thu, 31 May 2018 12:20:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-24-stanimir.varbanov@linaro.org>
-In-Reply-To: <20180515075859.17217-24-stanimir.varbanov@linaro.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Thu, 31 May 2018 18:20:04 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CGiB-7kQ8tWBw69cceu6+9mdhrW9ohHCfcVcWbJLbGfg@mail.gmail.com>
-Message-ID: <CAAFQd5CGiB-7kQ8tWBw69cceu6+9mdhrW9ohHCfcVcWbJLbGfg@mail.gmail.com>
-Subject: Re: [PATCH v2 23/29] venus: helpers: add a helper to return opb
- buffer sizes
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180530173414.6121-1-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 5:02 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Add a helper function to return current output picture buffer size.
-> OPB sizes can vary depending on the selected decoder output(s).
->
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  drivers/media/platform/qcom/venus/core.h    | 10 ++++++++++
->  drivers/media/platform/qcom/venus/helpers.c | 15 +++++++++++++++
->  drivers/media/platform/qcom/venus/helpers.h |  1 +
->  3 files changed, 26 insertions(+)
->
-> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> index 255292899204..4d6c05f156c4 100644
-> --- a/drivers/media/platform/qcom/venus/core.h
-> +++ b/drivers/media/platform/qcom/venus/core.h
-> @@ -234,6 +234,11 @@ struct venus_buffer {
->   * @num_output_bufs:   holds number of output buffers
->   * @input_buf_size     holds input buffer size
->   * @output_buf_size:   holds output buffer size
-> + * @output2_buf_size:  holds secondary decoder output buffer size
-> + * @dpb_buftype:       decoded picture buffer type
-> + * @dpb_fmt:           decodec picture buffre raw format
+> Workaround introduced for i.MX53 in be9cae2479f48 ("usb: chipidea:
+> imx: Fix ULPI on imx53") seems to be applicable in case of i.MX51 as
+> well. Running latest kernel on ZII RDU1 Board (imx51-zii-rdu1.dts)
+> exhibits a kernel frozen on PORTSC access and applying the workaround
+> resolves the issue.
 
-typo: s/decodec/decoded/ and s/buffre/buffer/
+Confirmed on 8.9'' RDU1
 
-> + * @opb_buftype:       output picture buffer type
-> + * @opb_fmt:           output picture buffer raw format
->   * @reconfig:  a flag raised by decoder when the stream resolution changed
->   * @reconfig_width:    holds the new width
->   * @reconfig_height:   holds the new height
-> @@ -282,6 +287,11 @@ struct venus_inst {
->         unsigned int num_output_bufs;
->         unsigned int input_buf_size;
->         unsigned int output_buf_size;
-> +       unsigned int output2_buf_size;
-> +       u32 dpb_buftype;
-> +       u32 dpb_fmt;
-
-These 2 don't seem to be used.
-
-Best regards,
-Tomasz
+Tested-By: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
