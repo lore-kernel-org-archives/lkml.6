@@ -1,174 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753989AbeEaFwD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 01:52:03 -0400
-Received: from mga11.intel.com ([192.55.52.93]:55268 "EHLO mga11.intel.com"
+        id S1753915AbeEaFyT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 01:54:19 -0400
+Received: from ozlabs.org ([203.11.71.1]:36829 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753796AbeEaFvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 01:51:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,462,1520924400";
-   d="scan'208";a="233383225"
-From: "Hean-Loong, Ong" <hean.loong.ong@intel.com>
-To: Rob Herring <robh+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
-        hean.loong.ong@intel.com, yves.vandervennet@intel.com,
-        chin.liang.see@intel.com, Ong@vger.kernel.org
-Subject: [PATCH 1/3] ARM:dt-bindings:display Intel FPGA Video and Image Processing Suite
-Date: Thu, 31 May 2018 13:50:49 +0800
-Message-Id: <1527745851-3339-2-git-send-email-hean.loong.ong@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527745851-3339-1-git-send-email-hean.loong.ong@intel.com>
-References: <1527745851-3339-1-git-send-email-hean.loong.ong@intel.com>
+        id S1753772AbeEaFyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 01:54:18 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Christophe LEROY <christophe.leroy@c-s.fr>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Geoff Levand <geoff@infradead.org>
+Subject: Re: [PATCH v2] powerpc/64: Fix build failure with GCC 8.1
+In-Reply-To: <3a438dd8-49c3-ad39-e2a1-040e0ce67279@c-s.fr>
+References: <f5f2de3e1a39613f7303bfdc0d2f2210d4c91910.1527573345.git.christophe.leroy@c-s.fr> <CAMuHMdVSKigQPUQH=BVc2fRSRmuEThLaf+V9ghMPDT9_m1C6BA@mail.gmail.com> <1fa5b220-4d21-b4cd-33bf-8a3ce3178063@c-s.fr> <CAMuHMdXwO1_wrrTi40UmZC4o6KjvP0LF38m45n0ZNA2pDb_7Qg@mail.gmail.com> <3a438dd8-49c3-ad39-e2a1-040e0ce67279@c-s.fr>
+Date: Thu, 31 May 2018 15:54:16 +1000
+Message-ID: <87efhsz7xz.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ong, Hean Loong <hean.loong.ong@intel.com>
+Christophe LEROY <christophe.leroy@c-s.fr> writes:
+> Le 29/05/2018 à 11:05, Geert Uytterhoeven a écrit :
+>> Hi Christophe,
+>> On Tue, May 29, 2018 at 10:56 AM, Christophe LEROY
+>> <christophe.leroy@c-s.fr> wrote:
+>>> Le 29/05/2018 à 09:47, Geert Uytterhoeven a écrit :
+>>>> On Tue, May 29, 2018 at 8:03 AM, Christophe Leroy
+>>>>> --- a/arch/powerpc/kernel/nvram_64.c
+>>>>> +++ b/arch/powerpc/kernel/nvram_64.c
+>>>>> @@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char
+>>>>> *name, int sig,
+>>>>>           new_part->index = free_part->index;
+>>>>>           new_part->header.signature = sig;
+>>>>>           new_part->header.length = size;
+>>>>> -       strncpy(new_part->header.name, name, 12);
+>>>>> +       memcpy(new_part->header.name, name, strnlen(name,
+>>>>> sizeof(new_part->header.name)));
+>>>>
+>>>>
+>>>> The comment for nvram_header.lgnth says:
+>>>>
+>>>>           /* Terminating null required only for names < 12 chars. */
+>>>>
+>>>> This will not terminate the string with a zero (the struct is
+>>>> allocated with kmalloc).
+>>>> So the original code is correct, the new one isn't.
+>>>
+>>> Right, then I have to first zeroize the destination.
+>> 
+>> Using kzalloc() instead of kmalloc() will do.
+>> 
+>> Still, papering around these warnings seems to obscure things, IMHO.
+>> And it increases code size, as you had to add a call to strnlen().
 
-Device tree binding for Intel FPGA Video and Image Processing Suite. The binding involved would be generated from the Altera (Intel) Qsys system. The bindings would set the max width, max height, buts per pixel and memory port width. The device tree binding only supports the Intel
-Arria10 devkit and its variants. Vendor name retained as altr.
 
-V8:
-*Add port to Display port decoder
+The right fix is to not try and mirror the on-device structure in the
+kernel struct. We should just use a proper NULL terminated string, which
+would avoid the need to explicitly do strncmp(.., .., 12) in the code
+and be less bug prone in general.
 
-V7:
-*Fix OF graph for better description
-*Add description for encoder
+The only place where we should need to worry about the 12 byte buffer is
+in nvram_write_header().
 
-V6:
-*Description have not describe DT device in general
+Anyway that's a bigger change, so I'll take this for now with kzalloc().
 
-V5:
-*remove bindings for bits per symbol as it has only one value which is 8
-
-V4:
-*fix properties that does not describe the values
-
-V3:
-*OF graph not in accordance to graph.txt
-
-V2:
-*Remove Linux driver description
-
-V1:
-*Missing vendor prefix
-
-Signed-off-by: Ong, Hean Loong <hean.loong.ong@intel.com>
----
- .../devicetree/bindings/display/altr,vip-fb2.txt   |   99 ++++++++++++++++++++
- 1 files changed, 99 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/altr,vip-fb2.txt
-
-diff --git a/Documentation/devicetree/bindings/display/altr,vip-fb2.txt b/Documentation/devicetree/bindings/display/altr,vip-fb2.txt
-new file mode 100644
-index 0000000..4092804
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/altr,vip-fb2.txt
-@@ -0,0 +1,99 @@
-+Intel Video and Image Processing(VIP) Frame Buffer II bindings
-+
-+Supported hardware: Intel FPGA SoC Arria10 and above with display port IP
-+
-+The Video Frame Buffer II in Video Image Processing (VIP) suite is an IP core
-+that interfaces between system memory and Avalon-ST video ports. The IP core
-+can be configured to support the memory reader (from memory to Avalon-ST)
-+and/or memory writer (from Avalon-ST to memory) interfaces.
-+
-+More information the FPGA video IP component can be acquired from
-+https://www.altera.com/content/dam/altera-www/global/en_US/pdfs\
-+/literature/ug/ug_vip.pdf
-+
-+DT-Bindings:
-+=============
-+Required properties:
-+----------------------------
-+- compatible: "altr,vip-frame-buffer-2.0"
-+- reg: Physical base address and length of the framebuffer controller's
-+	registers.
-+- altr,max-width: The maximum width of the framebuffer in pixels.
-+- altr,max-height: The maximum height of the framebuffer in pixels.
-+- altr,mem-port-width = the bus width of the avalon master port
-+	on the frame reader
-+
-+Optional sub-nodes:
-+- ports: The connection to the encoder
-+
-+Optional properties
-+----------------------------
-+- compatible: "altr, display-port"
-+- reg: Physical base address and length of the display port controller's
-+	registers
-+- clocks: required clock handles for specified pairs in clock name
-+- clock-names: required clock names. Contains:
-+	- aux_clk: auxiliary clock,
-+	- clk: 100 MHz output clock
-+	- xcvr_mgmt_clk: transceiver management clock
-+
-+Optional sub-nodes:
-+- ports: The connection to the controller
-+
-+Connections between the Frame Buffer II and other video IP cores in the system
-+are modelled using the OF graph DT bindings. The Frame Buffer II node has up
-+to two OF graph ports. When the memory writer interface is enabled, port 0
-+maps to the Avalon-ST Input (din) port. When the memory reader interface is
-+enabled, port 1 maps to the Avalon-ST Output (dout) port.
-+
-+The encoder is built into the FPGA HW design and therefore would not
-+be accessible from the DDR.
-+
-+		Port 0				Port1
-+---------------------------------------------------------
-+ARRIA10 AVALON_ST (DIN)		AVALON_ST (DOUT)
-+
-+Required Properties Example:
-+----------------------------
-+
-+framebuffer@100000280 {
-+		compatible = "altr,vip-frame-buffer-2.0";
-+		reg = <0x00000001 0x00000280 0x00000040>;
-+		altr,max-width = <1280>;
-+		altr,max-height = <720>;
-+		altr,mem-port-width = <128>;
-+
-+		ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+			port@1 {
-+				reg = <1>;
-+					fb_output: endpoint {
-+						remote-endpoint = <&dp_encoder_input>;
-+					};
-+			};
-+		};
-+};
-+
-+Optional Properties Example:
-+This is not required unless there are needs to customize
-+Display Port controller settings.
-+
-+displayport@100002000 {
-+		compatible = "altr, display-port";
-+		reg = <0x00000001 0x00002000 0x00000800>;
-+		clocks = <&dp_0_clk_16 &dp_0_clk_100 &dp_0_clk_100>;
-+		clock-names = "aux_clk", "clk", "xcvr_mgmt_clk";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <1>;
-+					dp_input: endpoint {
-+						remote-endpoint = <&dp_controller_input>;
-+					};
-+			};
-+};
--- 
-1.7.1
+cheers
