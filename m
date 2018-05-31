@@ -1,85 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755368AbeEaOUu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:20:50 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44088 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755274AbeEaOUs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:20:48 -0400
-X-Google-Smtp-Source: ADUXVKLK+G0osZXLn2hnqNmFvGIYjxygq6n1g/8nQ08BZXeAXfp+2S3LDHAkmkXd2Q7cO0bPQybhkQ==
-Subject: Re: linux-next: build failure after merge of the device-mapper tree
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Alasdair G Kergon <agk@redhat.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-References: <20180531142302.5f7b4302@canb.auug.org.au>
- <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
- <20180531121041.GB8456@redhat.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <6ad38822-0bb4-3099-69b0-7a8a36d79403@kernel.dk>
-Date: Thu, 31 May 2018 08:20:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1755416AbeEaOVY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:21:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755274AbeEaOVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:21:20 -0400
+X-Google-Smtp-Source: ADUXVKJXO7Y+gRj/j6k6z+bBK52b3VUDREV23Yyziy+TyklfsSUOPr9dtFj0nrBlc3OHE/ge9vxyzI0X140peqGNVT4=
 MIME-Version: 1.0
-In-Reply-To: <20180531121041.GB8456@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+ <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
+ <20180531005827.GA17203@rob-hp-laptop> <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 31 May 2018 09:20:57 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
+Message-ID: <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
+To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc: "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Brown <broonie@kernel.org>, Cristian.Birsan@microchip.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/31/18 6:10 AM, Mike Snitzer wrote:
-> On Thu, May 31 2018 at 12:35am -0400,
-> Jens Axboe <axboe@kernel.dk> wrote:
-> 
->> On May 30, 2018, at 10:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>
->>> Hi all,
->>>
->>> After merging the device-mapper tree, today's linux-next build (x86_64
->>> allmodconfig) failed like this:
->>>
->>> drivers/md/dm-writecache.c: In function 'writecache_dtr':
->>> drivers/md/dm-writecache.c:1799:3: error: implicit declaration of function 'bioset_free'; did you mean 'bvec_free'? [-Werror=implicit-function-declaration]
->>>   bioset_free(wc->bio_set);
->>>   ^~~~~~~~~~~
->>>   bvec_free
->>> drivers/md/dm-writecache.c: In function 'writecache_ctr':
->>> drivers/md/dm-writecache.c:1929:17: error: implicit declaration of function 'bioset_create'; did you mean 'bioset_exit'? [-Werror=implicit-function-declaration]
->>>   wc->bio_set = bioset_create(BIO_POOL_SIZE,
->>>                 ^~~~~~~~~~~~~
->>>                 bioset_exit
->>> drivers/md/dm-writecache.c:1929:15: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
->>>   wc->bio_set = bioset_create(BIO_POOL_SIZE,
->>>               ^
->>>
->>> Caused by commit
->>>
->>>  2105231db61b ("dm: add writecache target")
->>>
->>> interacting with commit
->>>
->>>  dad08527525f ("block: Drop bioset_create()")
->>>
->>> from the block tree.
->>>
->>> Can we please consider not immediately dropping APIs if at all
->>> possible. :-(
+On Thu, May 31, 2018 at 5:25 AM, Codrin Ciubotariu
+<codrin.ciubotariu@microchip.com> wrote:
+> On 31.05.2018 03:58, Rob Herring wrote:
 >>
->> I’ll drop the last patch, we can do that at the end of the merge window instead. 
+>> On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
+>>>
+>>> The I2S mux clock can be used to select the I2S input clock. The
+>>> available parents are the peripheral and the generated clocks.
+>>>
+>>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>>> ---
+>>>   .../devicetree/bindings/clock/at91-clock.txt       | 34
+>>> ++++++++++++++++++++++
+>>>   1 file changed, 34 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt
+>>> b/Documentation/devicetree/bindings/clock/at91-clock.txt
+>>> index 51c259a..1c46b3c 100644
+>>> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+>>> @@ -90,6 +90,8 @@ Required properties:
+>>>         "atmel,sama5d2-clk-audio-pll-pmc"
+>>>                 at91 audio pll output on AUDIOPLLCLK that feeds the PMC
+>>>                 and can be used by peripheral clock or generic clock
+>>> +       "atmel,sama5d2-clk-i2s-mux":
+>>> +               at91 I2S clock source selection
 >>
-> 
-> FYI, I've since updated dm-writecache to use the new APIs
+>>
+>> Is this boolean or takes some values. If latter, what are valid values?
+>
+>
+> This is the compatible string of the clock driver.
 
-Thanks Mike. I've rebased for-4.18/block to fold a bug fix for the
-bounce code, and drop the patch that gets rid of the old API. When
-we get to the end of the merge window, I'll push that last patch.
-That's much more sensible, how it should have been done from the
-get-go.
+Ah, now I remember. AT91 uses fine grained clock nodes in DT. Is there
+still a plan to fix this?
 
--- 
-Jens Axboe
+>>>     Required properties for SCKC node:
+>>>   - reg : defines the IO memory reserved for the SCKC.
+>>> @@ -507,3 +509,35 @@ For example:
+>>>                         atmel,clk-output-range = <0 83000000>;
+>>>                 };
+>>>         };
+>>> +
+>>> +Required properties for I2S mux clocks:
+>>> +- #size-cells : shall be 0 (reg is used to encode I2S bus id).
+>>> +- #address-cells : shall be 1 (reg is used to encode I2S bus id).
+>>> +- name: device tree node describing a specific mux clock.
+>>> +       * #clock-cells : from common clock binding; shall be set to 0.
+>>> +       * clocks : shall be the mux clock parent phandles; shall be 2
+>>> phandles:
+>>> +         peripheral and generated clock; the first phandle shall belong
+>>> to the
+>>> +         peripheral clock and the second one shall belong to the
+>>> generated
+>>> +         clock; "clock-indices" property can be user to specify
+>>> +         the correct order.
+>>> +       * reg: I2S bus id of the corresponding mux clock.
+>>> +         e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
+>>> +
+>>> +For example:
+>>> +       i2s_clkmux {
+>>
+>>
+>> What is this a child of?
+>
+>
+> It is a child of PMC node, since both parent clocks are generated by PMC.
+>
+>>
+>>> +               compatible = "atmel,sama5d2-clk-i2s-mux";
+>>> +               #address-cells = <1>;
+>>> +               #size-cells = <0>;
+>>
+>>
+>> How do you address this block? My guess is you don't because it is just
+>> part of some other block and you are just creating this node to
+>> instantiate a driver. Just make the node for the actual h/w block a
+>> clock provider and define the clock ids (0 and 1).
+>
+>
+> This block is not addressed, but its children are. The register we access in
+> this driver is not part of other block. It's a SFR register, accessed
+> through syscon and it has nothing to do with the I2S IP (see SAMA5D2 DS,
+> page 1256, fig. 44-1: I2SC Block Diagram) that is the consumer of this
+> clock. Adding a clock-id property in the I2S node would be just like v3 of
+> this series, with the difference that we use clock-id instead of alias id to
+> set the clock parent, which is not how you suggested back then.
+
+I wasn't suggesting a clock-id property, but a clock specifier (i.e.
+make #clock-cells 1).
+
+But AT91 clocks are all a mess, so I don't know what to tell you.
+
+Rob
