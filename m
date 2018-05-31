@@ -1,81 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754029AbeEaGeb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:34:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56134 "EHLO mail.kernel.org"
+        id S1754019AbeEaGf5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:35:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753760AbeEaGea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:34:30 -0400
-Date: Thu, 31 May 2018 08:34:08 +0200
-From: "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>
-To: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "'Davidlohr Bueso'" <dbueso@suse.de>,
-        "'Joe Lawrence'" <joe.lawrence@redhat.com>,
-        "'Andrea Arcangeli'" <aarcange@redhat.com>,
-        "'Manfred Spraul'" <manfred@colorfullife.com>,
-        "'Andrew Morton'" <akpm@linux-foundation.org>,
-        "'Linus Torvalds'" <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 4.4 011/268] Revert "ipc/shm: Fix shmat mmap nil-page
- protection"
-Message-ID: <20180531063408.GA7744@kroah.com>
-References: <20180528100202.045206534@linuxfoundation.org>
- <20180528100203.357731085@linuxfoundation.org>
- <005601d3f888$37f266f0$a7d734d0$@toshiba.co.jp>
+        id S1753760AbeEaGfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 02:35:52 -0400
+Date: Thu, 31 May 2018 08:35:30 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+Cc: valentina.manea.m@gmail.com, mchehab+samsung@kernel.org,
+        davem@davemloft.net, akpm@linux-foundation.org,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] selftests: add test for USB over IP driver
+Message-ID: <20180531063530.GB7744@kroah.com>
+References: <20180531030057.32442-1-shuah@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <005601d3f888$37f266f0$a7d734d0$@toshiba.co.jp>
+In-Reply-To: <20180531030057.32442-1-shuah@kernel.org>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 11:36:46AM +0900, Daniel Sangorrin wrote:
-> > -----Original Message-----
-> > From: stable-owner@vger.kernel.org [mailto:stable-owner@vger.kernel.org] On
-> > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Davidlohr Bueso <dave@stgolabs.net>
-> > 
-> > commit a73ab244f0dad8fffb3291b905f73e2d3eaa7c00 upstream.
-> > 
-> > Patch series "ipc/shm: shmat() fixes around nil-page".
+On Wed, May 30, 2018 at 09:00:57PM -0600, Shuah Khan (Samsung OSG) wrote:
+> Add test for USB over IP driver. This test runs several tests on a device
+> specified in the -b <busid> argument and path to the usbip tools.
 > 
-> Sorry for being a bit late (the pace is really fast here).
+> usbip_test.sh -b <busid> -p <usbip tools path>
 > 
-> I have found a regression from 4.4.133-rc1 to 4.4.134-rc1 using Fuego LTP wrapper.
+> e.g:
+> cd tools/testing selftests/drivers/usb/usbip
+> sudo ./usbip_test.sh -b 3-10.2 -p <yoursrctree>/tools/usb/usbip
 > 
-> 4.4.134-rc1
-> 	tst_test.c:982: INFO: Timeout per run is 0h 05m 00s
-> 	cve-2017-5669.c:62: INFO: Attempting to attach shared memory to null page
-> 	cve-2017-5669.c:74: INFO: Mapped shared memory to (nil)
-> 	cve-2017-5669.c:78: FAIL: We have mapped a VM address within the first 64Kb
-> 	cve-2017-5669.c:84: INFO: Touching shared memory to see if anything strange happens
+> This test should be run as root and user should build usbip tools before
+> running the test.
 > 
-> 4.4.133-rc1:
-> 	tst_test.c:982: INFO: Timeout per run is 0h 05m 00s
-> 	cve-2017-5669.c:62: INFO: Attempting to attach shared memory to null page
-> 	cve-2017-5669.c:67: PASS: shmat returned EINVAL
+> The usbip test isn't included in the Kselftest run as it requires user to
+> specify a device to run tests on.
 > 
-> The culprits should be one or both of the two last commits to ipc/shm (one of them a revert).
-> 
-> - ipc/shm: fix shmat() nil address after round-down when remapping
-> - Revert "ipc/shm: Fix shmat mmap nil-page protection"
-> 
-> I need to investigate the concrete reason, but for now I just wanted to report it.
+> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 
-Thanks for letting us know, but this was reported already.  See the
-emails on lkml with the subject:
-	Subject: Re: [PATCH 4.16 000/272] 4.16.13-stable review
-from Davidlohr Bueso
-	Message-ID: <20180528213039.yy2madue67njkmw5@linux-n805>
+If you want to take this through your tree, that's fine with me:
 
-where he discusses that the LTP test is incorrect and that the kernel
-change is correct and that LTP is going to be fixed because of this.
+	Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-thanks,
+Otherwise I will be glad to queue it up in mine, just let me know what
+is easier for you.
+
+Nice work, thanks.
 
 greg k-h
