@@ -1,127 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755528AbeEaP0h (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:26:37 -0400
-Received: from sonic301-27.consmr.mail.gq1.yahoo.com ([98.137.64.153]:38277
-        "EHLO sonic301-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755478AbeEaP0b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:26:31 -0400
-X-YMail-OSG: f_xppgwVM1m3ZuLXkLIngZRjWGIXHpL4PJqa4mabZbHb4m_Way6h6koGQp2zo0Z
- cK5AVzoaEbusj0STy.cT_OQlUf5ZyzVoKjSNGMa1qnVB.8zcu0GQtezVqAt8DqMgmY466Cuj5FI1
- 6Y_jH1hN9G1cG1OTAddnATLLcO7ZEgvCIwiVqHPogVJvm5I5vUTY_ytepXShwLumrM73R3nIUivw
- iBplVCgWzPr6mWbPZCi7FGBjtPU1OgaGU5.YkqH47WzlCF6AdSeyOmHd4weeG7E1EYnuND0lDo5d
- LSzNhKpWVLaukJJUETa17J_qKozePYvKzmMGnsfT0OBeidNSAyalwZ7ZgRMruTvKiJsfFhCTMA9C
- 165DJSkkq159z7hZC7e1zhf8pby1LcdC4G2yS6Ya84pLxhIlMBvvSkiBjtrONv6GM8jEGm2_2LqQ
- cADgc.WmMEBxJJkVnJmaq1rt_JQ4dDZKn5r21Qb3ypb7wTxpodrI39l.E2dF_.Dr1O79fuhXyiZw
- rKzUVT5zmfluWCnh8p.DmNfYqZlRaQTY7CbAviXZc9OafkQje3GoC3kvbL9yJmLUSySlr_LVtsO9
- 0AG1ABu59n02NzK1AARw5OPqlso6kycxKlFM5IKy5jaR.vglsDv26fBCHoSjJm8DQ76EwwhXzYZb
- inCW6XYFsQ40PDQnlvTax4zoai.7kTbXGJuLUdedPWV2zR_TVGBYofJSephXnZBRwwTHt18lhEPf
- VSSfZe26NwmjNAmrZs94mXSXtNcutg1nr0jl_tVh8
-Subject: Re: [PATCH 1/1] Fix memory leak in kernfs_security_xattr_set and
- kernfs_security_xattr_set
-To: CHANDAN VN <chandan.vn@samsung.com>, gregkh@linuxfoundation.org,
-        tj@kernel.org, bfields@fieldses.org, jlayton@kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Cc: cpgs@samsung.com, sireesha.t@samsung.com,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <CGME20180531092848epcas1p24b638ccd6da00f1e039bdb64de7e1a5b@epcas1p2.samsung.com>
- <1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <cae274dd-e9e5-39b1-8b7b-aec1b3e76fe9@schaufler-ca.com>
-Date: Thu, 31 May 2018 08:26:23 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1755467AbeEaP0q (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:26:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755478AbeEaP0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 11:26:38 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        alexandre.belloni@bootlin.com, alsa-devel@alsa-project.org,
+        boris.brezillon@bootlin.com, broonie@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nicolas.ferre@microchip.com, robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
+Cc: Cristian.Birsan@microchip.com
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+ <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
+Message-ID: <152778039660.144038.4743783065942615925@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v4 2/7] clk: at91: add I2S clock mux driver
+Date: Thu, 31 May 2018 08:26:36 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VFQm3s020029
 
-On 5/31/2018 2:28 AM, CHANDAN VN wrote:
-> From: "sireesha.t" <sireesha.t@samsung.com>
->
-> Leak is caused because smack_inode_getsecurity() is allocating memory
-> using kstrdup(). Though the security_release_secctx() is called, it
-> would not free the allocated memory. Calling security_release_secctx is
-> not relevant for this scenario as inode_getsecurity() does not provide a
-> "secctx".
->
-> Similar fix has been mainlined:
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/?id=57e7ba04d422c3d41c8426380303ec9b7533ded9
->
-> The fix is to replace the security_release_secctx() with a kfree()
->
-> Below is the KMEMLEAK dump:
-> unreferenced object 0xffffffc025e11c80 (size 64):
->   comm "systemd-tmpfile", pid 2452, jiffies 4294894464 (age 235587.492s)
->   hex dump (first 32 bytes):
->     53 79 73 74 65 6d 3a 3a 53 68 61 72 65 64 00 00  System::Shared..
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<ffffff80081be770>] __save_stack_trace+0x28/0x34
->     [<ffffff80081bedb8>] create_object+0x130/0x25c
->     [<ffffff80088c82f8>] kmemleak_alloc+0x30/0x5c
->     [<ffffff80081b3ef0>] __kmalloc_track_caller+0x1cc/0x2a8
->     [<ffffff800818673c>] kstrdup+0x3c/0x6c
->     [<ffffff80082d78b0>] smack_inode_getsecurity+0xcc/0xec
->     [<ffffff80082d78f4>] smack_inode_getsecctx+0x24/0x44
->     [<ffffff80082d5ea0>] security_inode_getsecctx+0x50/0x70
->     [<ffffff800823bbcc>] kernfs_security_xattr_set+0x74/0xe0
->     [<ffffff80081eafec>] __vfs_setxattr+0x74/0x90
->     [<ffffff80081eb088>] __vfs_setxattr_noperm+0x80/0x1ac
->     [<ffffff80081eb238>] vfs_setxattr+0x84/0xac
->     [<ffffff80081eb374>] setxattr+0x114/0x178
->     [<ffffff80081eb44c>] path_setxattr+0x74/0xb8
->     [<ffffff80081ebdcc>] SyS_lsetxattr+0x10/0x1c
->     [<ffffff800808310c>] __sys_trace_return+0x0/0x4
->
-> Signed-off-by: sireesha.t <sireesha.t@samsung.com>
-> Signed-off-by: CHANDAN VN <chandan.vn@samsung.com>
+Quoting Codrin Ciubotariu (2018-05-25 05:34:23)
+> This driver is a simple muxing driver that controls the
+> I2S's clock input by using syscon/regmap to change the parrent.
 
-Why not:
+s/parrent/parent/
 
- static int smack_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
- {
--	int len = 0;
--	len = smack_inode_getsecurity(inode, XATTR_SMACK_SUFFIX, ctx, true);
-+	int len = smack_inode_getsecurity(inode, XATTR_SMACK_SUFFIX, ctx, false);
- 
- 	if (len < 0)
- 		return len;
+> The available inputs can be Peripheral clock and Generated clock.
 
+Why capitalize peripheral and generated?
+
+> 
+> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 > ---
->  fs/kernfs/inode.c | 3 ++-
->  fs/nfsd/nfs4xdr.c | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-> index a343039..53befb8 100644
-> --- a/fs/kernfs/inode.c
-> +++ b/fs/kernfs/inode.c
-> @@ -369,7 +369,8 @@ static int kernfs_security_xattr_set(const struct xattr_handler *handler,
->  	mutex_unlock(&kernfs_mutex);
+> diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+> index 1254bf9..903f23c 100644
+> --- a/arch/arm/mach-at91/Kconfig
+> +++ b/arch/arm/mach-at91/Kconfig
+> @@ -27,6 +27,7 @@ config SOC_SAMA5D2
+>         select HAVE_AT91_H32MX
+>         select HAVE_AT91_GENERATED_CLK
+>         select HAVE_AT91_AUDIO_PLL
+> +       select HAVE_AT91_I2S_MUX_CLK
+>         select PINCTRL_AT91PIO4
+>         help
+>           Select this if ou are using one of Microchip's SAMA5D2 family SoC.
+> @@ -129,6 +130,9 @@ config HAVE_AT91_GENERATED_CLK
+>  config HAVE_AT91_AUDIO_PLL
+>         bool
 >  
->  	if (secdata)
-> -		security_release_secctx(secdata, secdata_len);
-> +		kfree(secdata);
+> +config HAVE_AT91_I2S_MUX_CLK
+> +       bool
 > +
->  	return error;
->  }
+>  config SOC_SAM_V4_V5
+>         bool
 >  
-> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> index aaa88c1..1e0dbe9 100644
-> --- a/fs/nfsd/nfs4xdr.c
-> +++ b/fs/nfsd/nfs4xdr.c
-> @@ -2911,7 +2911,7 @@ static int get_parent_attributes(struct svc_export *exp, struct kstat *stat)
->  out:
->  #ifdef CONFIG_NFSD_V4_SECURITY_LABEL
->  	if (context)
-> -		security_release_secctx(context, contextlen);
-> +		kfree(context);
->  #endif /* CONFIG_NFSD_V4_SECURITY_LABEL */
->  	kfree(acl);
->  	if (tempfh) {
+
+I guess this is OK.
+
+> diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+> index 082596f..facc169 100644
+> --- a/drivers/clk/at91/Makefile
+> +++ b/drivers/clk/at91/Makefile
+> @@ -13,3 +13,4 @@ obj-$(CONFIG_HAVE_AT91_USB_CLK)               += clk-usb.o
+>  obj-$(CONFIG_HAVE_AT91_SMD)            += clk-smd.o
+>  obj-$(CONFIG_HAVE_AT91_H32MX)          += clk-h32mx.o
+>  obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)  += clk-generated.o
+> +obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)    += clk-i2s-mux.o
+> diff --git a/drivers/clk/at91/clk-i2s-mux.c b/drivers/clk/at91/clk-i2s-mux.c
+> new file mode 100644
+> index 0000000..2d56ded
+> --- /dev/null
+> +++ b/drivers/clk/at91/clk-i2s-mux.c
+> @@ -0,0 +1,117 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + *  Copyright (C) 2018 Microchip Technology Inc,
+> + *                     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> + *
+> + *
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +
+> +#include <soc/at91/atmel-sfr.h>
+> +
+> +#define        I2S_BUS_NR      2
+> +
+> +struct clk_i2s_mux {
+> +       struct clk_hw hw;
+> +       struct regmap *regmap;
+> +       u32 bus_id;
+
+Can be a u8?
+
+> +};
+> +
+> +#define to_clk_i2s_mux(hw) container_of(hw, struct clk_i2s_mux, hw)
+> +
+> +static u8 clk_i2s_mux_get_parent(struct clk_hw *hw)
+> +{
+> +       struct clk_i2s_mux *mux = to_clk_i2s_mux(hw);
+> +       u32 val;
+> +
+> +       regmap_read(mux->regmap, AT91_SFR_I2SCLKSEL, &val);
+> +
+> +       return (val & BIT(mux->bus_id)) >> mux->bus_id;
+> +}
+> +
+> +static int clk_i2s_mux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +       struct clk_i2s_mux *mux = to_clk_i2s_mux(hw);
+> +
+> +       return regmap_update_bits(mux->regmap, AT91_SFR_I2SCLKSEL,
+> +                                 BIT(mux->bus_id), index << mux->bus_id);
+> +}
+> +
+> +const struct clk_ops clk_i2s_mux_ops = {
+
+static?
+
+> +       .get_parent = clk_i2s_mux_get_parent,
+> +       .set_parent = clk_i2s_mux_set_parent,
+> +       .determine_rate = __clk_mux_determine_rate,
+> +};
+> +
+> +static struct clk_hw * __init
+> +at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
+> +                         const char * const *parent_names,
+> +                         unsigned int num_parents, u32 bus_id)
+> +{
+> +       struct clk_init_data init = {};
+> +       struct clk_i2s_mux *i2s_ck;
+> +       int ret;
+> +
+> +       i2s_ck = kzalloc(sizeof(*i2s_ck), GFP_KERNEL);
+> +       if (!i2s_ck)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name = name;
+> +       init.ops = &clk_i2s_mux_ops;
+> +       init.parent_names = parent_names;
+> +       init.num_parents = num_parents;
+> +       init.flags = CLK_IGNORE_UNUSED;
+
+Really? Why?
+
+> +
+> +       i2s_ck->hw.init = &init;
+> +       i2s_ck->bus_id = bus_id;
+> +       i2s_ck->regmap = regmap;
+> +
+> +       ret = clk_hw_register(NULL, &i2s_ck->hw);
+> +       if (ret) {
+> +               kfree(i2s_ck);
+> +               return ERR_PTR(ret);
+> +       }
+> +
+> +       return &i2s_ck->hw;
+> +}
