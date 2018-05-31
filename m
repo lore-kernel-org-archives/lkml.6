@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755475AbeEaOpr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:45:47 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:56148 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755438AbeEaOpe (ORCPT
+        id S1755488AbeEaOqC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:46:02 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51116 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755441AbeEaOpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:45:34 -0400
-X-Google-Smtp-Source: ADUXVKKh0yA2jR36XpYJNzn2y3jOmuD/6wXIOAGdYlfFin1C4YOuH1bgH/g50tf4Y/61zxGiqN/tVg==
+        Thu, 31 May 2018 10:45:33 -0400
+X-Google-Smtp-Source: ADUXVKJr3RRMjVcpP96UvhVQweV5E32YbD/jjSm8+9Up7Tnfn/aFh/KVLP3diU5mQB85Cf8ipVo0kQ==
 From: Paolo Valente <paolo.valente@linaro.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -15,9 +15,9 @@ Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
         sapienza.dav@gmail.com, 177992@studenti.unimore.it,
         Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX/IMPROVEMENTS 4/4] block, bfq: prevent soft_rt_next_start from being stuck at infinity
-Date: Thu, 31 May 2018 16:45:08 +0200
-Message-Id: <20180531144508.3927-5-paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX/IMPROVEMENTS 3/4] block, bfq: increase weight-raising duration for interactive apps
+Date: Thu, 31 May 2018 16:45:07 +0200
+Message-Id: <20180531144508.3927-4-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180531144508.3927-1-paolo.valente@linaro.org>
 References: <20180531144508.3927-1-paolo.valente@linaro.org>
@@ -27,91 +27,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davide Sapienza <sapienza.dav@gmail.com>
 
-BFQ can deem a bfq_queue as soft real-time only if the queue
-- periodically becomes completely idle, i.e., empty and with
-  no still-outstanding I/O request;
-- after becoming idle, gets new I/O only after a special reference
-  time soft_rt_next_start.
+The maximum possible duration of the weight-raising period for
+interactive applications is limited to 13 seconds, as this is the time
+needed to load the largest application that we considered when tuning
+weight raising. Unfortunately, in such an evaluation, we did not
+consider the case of very slow virtual machines.
 
-In this respect, after commit "block, bfq: consider also past I/O in
-soft real-time detection", the value of soft_rt_next_start can never
-decrease. This causes a problem with the following special updating
-case for soft_rt_next_start: to prevent queues that are not completely
-idle to be wrongly detected as soft real-time (when they become
-non-empty again), soft_rt_next_start is temporarily set to infinity
-for empty queues with still outstanding I/O requests. But, if such an
-update is actually performed, then, because of the above commit,
-soft_rt_next_start will be stuck at infinity forever, and the queue
-will have no more chance to be considered soft real-time.
+For example, on a QEMU/KVM virtual machine
+- running in a slow PC;
+- with a virtual disk stacked on a slow low-end 5400rpm HDD;
+- serving a heavy I/O workload, such as the sequential reading of
+several files;
+mplayer takes 23 seconds to start, if constantly weight-raised.
 
-On slow systems, this problem does cause actual soft real-time
-applications to be occasionally not detected as such.
-
-This commit addresses this issue by eliminating the pushing of
-soft_rt_next_start to infinity, and by changing the way non-empty
-queues are prevented from being wrongly detected as soft
-real-time. Simply, a queue that becomes non-empty again can now be
-detected as soft real-time only if it has no outstanding I/O request.
+To address this issue, this commit conservatively sets the upper limit
+for weight-raising duration to 25 seconds.
 
 Signed-off-by: Davide Sapienza <sapienza.dav@gmail.com>
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- block/bfq-iosched.c | 29 ++---------------------------
- 1 file changed, 2 insertions(+), 27 deletions(-)
+ block/bfq-iosched.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
 diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 31ce089d54eb..37cadc643c56 100644
+index 262c929e24ee..31ce089d54eb 100644
 --- a/block/bfq-iosched.c
 +++ b/block/bfq-iosched.c
-@@ -1416,15 +1416,6 @@ static bool bfq_bfqq_update_budg_for_activation(struct bfq_data *bfqd,
- 	return wr_or_deserves_wr;
+@@ -930,22 +930,26 @@ static unsigned int bfq_wr_duration(struct bfq_data *bfqd)
+ 	do_div(dur, bfqd->peak_rate);
+ 
+ 	/*
+-	 * Limit duration between 3 and 13 seconds. Tests show that
+-	 * higher values than 13 seconds often yield the opposite of
+-	 * the desired result, i.e., worsen responsiveness by letting
+-	 * non-interactive and non-soft-real-time applications
+-	 * preserve weight raising for a too long time interval.
++	 * Limit duration between 3 and 25 seconds. The upper limit
++	 * has been conservatively set after the following worst case:
++	 * on a QEMU/KVM virtual machine
++	 * - running in a slow PC
++	 * - with a virtual disk stacked on a slow low-end 5400rpm HDD
++	 * - serving a heavy I/O workload, such as the sequential reading
++	 *   of several files
++	 * mplayer took 23 seconds to start, if constantly weight-raised.
++	 *
++	 * As for higher values than that accomodating the above bad
++	 * scenario, tests show that higher values would often yield
++	 * the opposite of the desired result, i.e., would worsen
++	 * responsiveness by allowing non-interactive applications to
++	 * preserve weight raising for too long.
+ 	 *
+ 	 * On the other end, lower values than 3 seconds make it
+ 	 * difficult for most interactive tasks to complete their jobs
+ 	 * before weight-raising finishes.
+ 	 */
+-	if (dur > msecs_to_jiffies(13000))
+-		dur = msecs_to_jiffies(13000);
+-	else if (dur < msecs_to_jiffies(3000))
+-		dur = msecs_to_jiffies(3000);
+-
+-	return dur;
++	return clamp_val(dur, msecs_to_jiffies(3000), msecs_to_jiffies(25000));
  }
  
--/*
-- * Return the farthest future time instant according to jiffies
-- * macros.
-- */
--static unsigned long bfq_greatest_from_now(void)
--{
--	return jiffies + MAX_JIFFY_OFFSET;
--}
--
- /*
-  * Return the farthest past time instant according to jiffies
-  * macros.
-@@ -1569,7 +1560,8 @@ static void bfq_bfqq_handle_idle_busy_switch(struct bfq_data *bfqd,
- 	in_burst = bfq_bfqq_in_large_burst(bfqq);
- 	soft_rt = bfqd->bfq_wr_max_softrt_rate > 0 &&
- 		!in_burst &&
--		time_is_before_jiffies(bfqq->soft_rt_next_start);
-+		time_is_before_jiffies(bfqq->soft_rt_next_start) &&
-+		bfqq->dispatched == 0;
- 	*interactive = !in_burst && idle_for_long_time;
- 	wr_or_deserves_wr = bfqd->low_latency &&
- 		(bfqq->wr_coeff > 1 ||
-@@ -3272,23 +3264,6 @@ void bfq_bfqq_expire(struct bfq_data *bfqd,
- 			bfqq->soft_rt_next_start =
- 				bfq_bfqq_softrt_next_start(bfqd, bfqq);
- 		else {
--			/*
--			 * The application is still waiting for the
--			 * completion of one or more requests:
--			 * prevent it from possibly being incorrectly
--			 * deemed as soft real-time by setting its
--			 * soft_rt_next_start to infinity. In fact,
--			 * without this assignment, the application
--			 * would be incorrectly deemed as soft
--			 * real-time if:
--			 * 1) it issued a new request before the
--			 *    completion of all its in-flight
--			 *    requests, and
--			 * 2) at that time, its soft_rt_next_start
--			 *    happened to be in the past.
--			 */
--			bfqq->soft_rt_next_start =
--				bfq_greatest_from_now();
- 			/*
- 			 * Schedule an update of soft_rt_next_start to when
- 			 * the task may be discovered to be isochronous.
+ /* switch back from soft real-time to interactive weight raising */
 -- 
 2.16.1
