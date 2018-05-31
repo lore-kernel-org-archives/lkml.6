@@ -1,127 +1,243 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754429AbeEaK1n (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:27:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:39118 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754250AbeEaK1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:27:41 -0400
-Date: Thu, 31 May 2018 11:27:36 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Alessio Balsini <alessio.balsini@santannapisa.it>
-Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
-Message-ID: <20180531102735.GM30654@e110439-lin>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
- <20180528101234.GA1293@localhost.localdomain>
- <CAKfTPtDCkzPMt6XrXRcURXm=53LABiwbFd3JMQkJDWpTprycRQ@mail.gmail.com>
- <20180528152243.GD1293@localhost.localdomain>
- <CAKfTPtAY26HZ00R02RuW2kvZLvZxHGvh-kbfrqv-hPumdknvWg@mail.gmail.com>
+        id S1754410AbeEaKa0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:30:26 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:55819 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754284AbeEaKaY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 06:30:24 -0400
+Subject: Re: [PATCH v2 1/7] PCI: endpoint: Add MSI-X interfaces
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <adouglas@cadence.com>, <jesper.nilsson@axis.com>
+References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
+ <1c07395b28f8b33ce370bd6f15bb1e7f2a95ba45.1526576613.git.gustavo.pimentel@synopsys.com>
+CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <9787b000-5f7e-a3fa-383d-4d3975fa220b@ti.com>
+Date: Thu, 31 May 2018 16:00:08 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtAY26HZ00R02RuW2kvZLvZxHGvh-kbfrqv-hPumdknvWg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1c07395b28f8b33ce370bd6f15bb1e7f2a95ba45.1526576613.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Hi Vincent, Juri,
 
-On 28-May 18:34, Vincent Guittot wrote:
-> On 28 May 2018 at 17:22, Juri Lelli <juri.lelli@redhat.com> wrote:
-> > On 28/05/18 16:57, Vincent Guittot wrote:
-> >> Hi Juri,
-> >>
-> >> On 28 May 2018 at 12:12, Juri Lelli <juri.lelli@redhat.com> wrote:
-> >> > Hi Vincent,
-> >> >
-> >> > On 25/05/18 15:12, Vincent Guittot wrote:
-> >> >> Now that we have both the dl class bandwidth requirement and the dl class
-> >> >> utilization, we can use the max of the 2 values when agregating the
-> >> >> utilization of the CPU.
-> >> >>
-> >> >> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> >> >> ---
-> >> >>  kernel/sched/sched.h | 6 +++++-
-> >> >>  1 file changed, 5 insertions(+), 1 deletion(-)
-> >> >>
-> >> >> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> >> >> index 4526ba6..0eb07a8 100644
-> >> >> --- a/kernel/sched/sched.h
-> >> >> +++ b/kernel/sched/sched.h
-> >> >> @@ -2194,7 +2194,11 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
-> >> >>  #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-> >> >>  static inline unsigned long cpu_util_dl(struct rq *rq)
-> >> >>  {
-> >> >> -     return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
-> >> >> +     unsigned long util = (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
-> >> >
-> >> > I'd be tempted to say the we actually want to cap to this one above
-> >> > instead of using the max (as you are proposing below) or the
-> >> > (theoretical) power reduction benefits of using DEADLINE for certain
-> >> > tasks might vanish.
-> >>
-> >> The problem that I'm facing is that the sched_entity bandwidth is
-> >> removed after the 0-lag time and the rq->dl.running_bw goes back to
-> >> zero but if the DL task has preempted a CFS task, the utilization of
-> >> the CFS task will be lower than reality and schedutil will set a lower
-> >> OPP whereas the CPU is always running.
+On Thursday 17 May 2018 10:39 PM, Gustavo Pimentel wrote:
+> Add PCI_EPC_IRQ_MSIX type.
+> 
+> Add MSI-X callbacks signatures to the ops structure.
+> 
+> Add sysfs interface for set/get MSI-X capability maximum number.
+> 
+> Change pci_epc_raise_irq() signature, namely the interrupt_num variable type
+> from u8 to u16 to accommodate 2048 maximum MSI-X interrupts.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 
-With UTIL_EST enabled I don't expect an OPP reduction below the
-expected utilization of a CFS task.
-
-IOW, when a periodic CFS task is preempted by a DL one, what we use
-for OPP selection once the DL task is over is still the estimated
-utilization for the CFS task itself. Thus, schedutil will eventually
-(since we have quite conservative down scaling thresholds) go down to
-the right OPP to serve that task.
-
-> >> The example with a RT task described in the cover letter can be
-> >> run with a DL task and will give similar results.
-
-In the cover letter you says:
-
-   A rt-app use case which creates an always running cfs thread and a
-   rt threads that wakes up periodically with both threads pinned on
-   same CPU, show lot of frequency switches of the CPU whereas the CPU
-   never goes idles during the test.
-
-I would say that's a quite specific corner case where your always
-running CFS task has never accumulated a util_est sample.
-
-Do we really have these cases in real systems?
-
-Otherwise, it seems to me that we are trying to solve quite specific
-corner cases by adding a not negligible level of "complexity".
-
-Moreover, I also have the impression that we can fix these
-use-cases by:
-
-  - improving the way we accumulate samples in util_est
-    i.e. by discarding preemption time
-
-  - maybe by improving the utilization aggregation in schedutil to
-    better understand DL requirements
-    i.e. a 10% utilization with a 100ms running time is way different
-    then the same utilization with a 1ms running time
-
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+> Change v1->v2:
+>  - Nothing changed, just to follow the patch set version.
+> 
+>  drivers/pci/endpoint/pci-ep-cfs.c   | 24 +++++++++++++++
+>  drivers/pci/endpoint/pci-epc-core.c | 59 ++++++++++++++++++++++++++++++++++++-
+>  include/linux/pci-epc.h             | 13 ++++++--
+>  include/linux/pci-epf.h             |  1 +
+>  4 files changed, 94 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
+> index 018ea34..d1288a0 100644
+> --- a/drivers/pci/endpoint/pci-ep-cfs.c
+> +++ b/drivers/pci/endpoint/pci-ep-cfs.c
+> @@ -286,6 +286,28 @@ static ssize_t pci_epf_msi_interrupts_show(struct config_item *item,
+>  		       to_pci_epf_group(item)->epf->msi_interrupts);
+>  }
+>  
+> +static ssize_t pci_epf_msix_interrupts_store(struct config_item *item,
+> +					     const char *page, size_t len)
+> +{
+> +	u16 val;
+> +	int ret;
+> +
+> +	ret = kstrtou16(page, 0, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	to_pci_epf_group(item)->epf->msix_interrupts = val;
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t pci_epf_msix_interrupts_show(struct config_item *item,
+> +					    char *page)
+> +{
+> +	return sprintf(page, "%d\n",
+> +		       to_pci_epf_group(item)->epf->msix_interrupts);
+> +}
+> +
+>  PCI_EPF_HEADER_R(vendorid)
+>  PCI_EPF_HEADER_W_u16(vendorid)
+>  
+> @@ -327,6 +349,7 @@ CONFIGFS_ATTR(pci_epf_, subsys_vendor_id);
+>  CONFIGFS_ATTR(pci_epf_, subsys_id);
+>  CONFIGFS_ATTR(pci_epf_, interrupt_pin);
+>  CONFIGFS_ATTR(pci_epf_, msi_interrupts);
+> +CONFIGFS_ATTR(pci_epf_, msix_interrupts);
+>  
+>  static struct configfs_attribute *pci_epf_attrs[] = {
+>  	&pci_epf_attr_vendorid,
+> @@ -340,6 +363,7 @@ static struct configfs_attribute *pci_epf_attrs[] = {
+>  	&pci_epf_attr_subsys_id,
+>  	&pci_epf_attr_interrupt_pin,
+>  	&pci_epf_attr_msi_interrupts,
+> +	&pci_epf_attr_msix_interrupts,
+>  	NULL,
+>  };
+>  
+> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+> index b0ee427..a23aa75 100644
+> --- a/drivers/pci/endpoint/pci-epc-core.c
+> +++ b/drivers/pci/endpoint/pci-epc-core.c
+> @@ -137,7 +137,7 @@ EXPORT_SYMBOL_GPL(pci_epc_start);
+>   * Invoke to raise an MSI or legacy interrupt
+>   */
+>  int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
+> -		      enum pci_epc_irq_type type, u8 interrupt_num)
+> +		      enum pci_epc_irq_type type, u16 interrupt_num)
+>  {
+>  	int ret;
+>  	unsigned long flags;
+> @@ -218,6 +218,63 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+>  EXPORT_SYMBOL_GPL(pci_epc_set_msi);
+>  
+>  /**
+> + * pci_epc_get_msix() - get the number of MSI-X interrupt numbers allocated
+> + * @epc: the EPC device to which MSI-X interrupts was requested
+> + * @func_no: the endpoint function number in the EPC device
+> + *
+> + * Invoke to get the number of MSI-X interrupts allocated by the RC
+> + */
+> +int pci_epc_get_msix(struct pci_epc *epc, u8 func_no)
+> +{
+> +	int interrupt;
+> +	unsigned long flags;
+> +
+> +	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
+> +		return 0;
+> +
+> +	if (!epc->ops->get_msix)
+> +		return 0;
+> +
+> +	spin_lock_irqsave(&epc->lock, flags);
+> +	interrupt = epc->ops->get_msix(epc, func_no);
+> +	spin_unlock_irqrestore(&epc->lock, flags);
+> +
+> +	if (interrupt < 0)
+> +		return 0;
+> +
+> +	return interrupt + 1;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_epc_get_msix);
+> +
+> +/**
+> + * pci_epc_set_msix() - set the number of MSI-X interrupt numbers required
+> + * @epc: the EPC device on which MSI-X has to be configured
+> + * @func_no: the endpoint function number in the EPC device
+> + * @interrupts: number of MSI-X interrupts required by the EPF
+> + *
+> + * Invoke to set the required number of MSI-X interrupts.
+> + */
+> +int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
+> +{
+> +	int ret;
+> +	unsigned long flags;
+> +
+> +	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
+> +	    interrupts < 1 || interrupts > 2048)
+> +		return -EINVAL;
+> +
+> +	if (!epc->ops->set_msix)
+> +		return 0;
+> +
+> +	spin_lock_irqsave(&epc->lock, flags);
+> +	ret = epc->ops->set_msix(epc, func_no, interrupts - 1);
+> +	spin_unlock_irqrestore(&epc->lock, flags);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_epc_set_msix);
+> +
+> +/**
+>   * pci_epc_unmap_addr() - unmap CPU address from PCI address
+>   * @epc: the EPC device on which address is allocated
+>   * @func_no: the endpoint function number in the EPC device
+> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+> index 243eaa5..c73abc2 100644
+> --- a/include/linux/pci-epc.h
+> +++ b/include/linux/pci-epc.h
+> @@ -17,6 +17,7 @@ enum pci_epc_irq_type {
+>  	PCI_EPC_IRQ_UNKNOWN,
+>  	PCI_EPC_IRQ_LEGACY,
+>  	PCI_EPC_IRQ_MSI,
+> +	PCI_EPC_IRQ_MSIX,
+>  };
+>  
+>  /**
+> @@ -30,6 +31,10 @@ enum pci_epc_irq_type {
+>   *	     capability register
+>   * @get_msi: ops to get the number of MSI interrupts allocated by the RC from
+>   *	     the MSI capability register
+> + * @set_msix: ops to set the requested number of MSI-X interrupts in the
+> + *	     MSI-X capability register
+> + * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
+> + *	     from the MSI-X capability register
+>   * @raise_irq: ops to raise a legacy or MSI interrupt
+>   * @start: ops to start the PCI link
+>   * @stop: ops to stop the PCI link
+> @@ -48,8 +53,10 @@ struct pci_epc_ops {
+>  			      phys_addr_t addr);
+>  	int	(*set_msi)(struct pci_epc *epc, u8 func_no, u8 interrupts);
+>  	int	(*get_msi)(struct pci_epc *epc, u8 func_no);
+> +	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
+> +	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
+>  	int	(*raise_irq)(struct pci_epc *epc, u8 func_no,
+> -			     enum pci_epc_irq_type type, u8 interrupt_num);
+> +			     enum pci_epc_irq_type type, u16 interrupt_num);
+>  	int	(*start)(struct pci_epc *epc);
+>  	void	(*stop)(struct pci_epc *epc);
+>  	struct module *owner;
+> @@ -144,8 +151,10 @@ void pci_epc_unmap_addr(struct pci_epc *epc, u8 func_no,
+>  			phys_addr_t phys_addr);
+>  int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts);
+>  int pci_epc_get_msi(struct pci_epc *epc, u8 func_no);
+> +int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts);
+> +int pci_epc_get_msix(struct pci_epc *epc, u8 func_no);
+>  int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
+> -		      enum pci_epc_irq_type type, u8 interrupt_num);
+> +		      enum pci_epc_irq_type type, u16 interrupt_num);
+>  int pci_epc_start(struct pci_epc *epc);
+>  void pci_epc_stop(struct pci_epc *epc);
+>  struct pci_epc *pci_epc_get(const char *epc_name);
+> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+> index f7d6f48..9bb1f31 100644
+> --- a/include/linux/pci-epf.h
+> +++ b/include/linux/pci-epf.h
+> @@ -119,6 +119,7 @@ struct pci_epf {
+>  	struct pci_epf_header	*header;
+>  	struct pci_epf_bar	bar[6];
+>  	u8			msi_interrupts;
+> +	u16			msix_interrupts;
+>  	u8			func_no;
+>  
+>  	struct pci_epc		*epc;
+> 
