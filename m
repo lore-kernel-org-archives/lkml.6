@@ -1,59 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751267AbeEaVKH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 17:10:07 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34458 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750737AbeEaVKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 17:10:02 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 1/5] rtc: test: remove useless proc info
-Date: Thu, 31 May 2018 23:09:55 +0200
-Message-Id: <20180531210959.2472-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.17.0
+        id S1751390AbeEaVKd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 17:10:33 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:40706 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeEaVK1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 17:10:27 -0400
+X-Google-Smtp-Source: ADUXVKLymDfo1IAXKK+cE56wvkPYONGiA6y0+j83BNLOlPWQGXy7lvI1JpKv+kTwOa9aB4aAVY6oJg==
+Date: Thu, 31 May 2018 14:10:25 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Rob Herring <robh@kernel.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 10/11] dt-bindings: misc: add bindings for throttler
+Message-ID: <20180531211025.GC88063@google.com>
+References: <20180525203043.249193-1-mka@chromium.org>
+ <20180525203043.249193-11-mka@chromium.org>
+ <20180531163159.GA4369@rob-hp-laptop>
+ <20180531183404.GB88063@google.com>
+ <CAL_JsqK_nFtuxhNbAn3yYueLKAxvwfnY=5M6zFdGrwwwPVrP5g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqK_nFtuxhNbAn3yYueLKAxvwfnY=5M6zFdGrwwwPVrP5g@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rtc proc callback is useless for two reasosn:
- - the test RTC is often not the first RTC so it will never be used
- - all the info is available in the name file of the RTC sys folder
+On Thu, May 31, 2018 at 03:04:18PM -0500, Rob Herring wrote:
+> On Thu, May 31, 2018 at 1:34 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> > Hi Rob,
+> >
+> > On Thu, May 31, 2018 at 11:31:59AM -0500, Rob Herring wrote:
+> >> On Fri, May 25, 2018 at 01:30:42PM -0700, Matthias Kaehlcke wrote:
+> >>
+> >> Commit msg?
+> >
+> > Will add some more info in the next revision.
+> >
+> >> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> >> > ---
+> >> >  .../devicetree/bindings/misc/throttler.txt    | 41 +++++++++++++++++++
+> >> >  1 file changed, 41 insertions(+)
+> >> >  create mode 100644 Documentation/devicetree/bindings/misc/throttler.txt
+> >> >
+> >> > diff --git a/Documentation/devicetree/bindings/misc/throttler.txt b/Documentation/devicetree/bindings/misc/throttler.txt
+> >> > new file mode 100644
+> >> > index 000000000000..92f13e94451a
+> >> > --- /dev/null
+> >> > +++ b/Documentation/devicetree/bindings/misc/throttler.txt
+> >> > @@ -0,0 +1,41 @@
+> >> > +Throttler driver
+> >> > +
+> >> > +The Throttler is used for non-thermal throttling of system components like
+> >> > +CPUs or devfreq devices.
+> >>
+> >> This all looks very Linux specific and not a h/w device. Perhaps you can
+> >> add hint properties to OPP tables as to what entries can be used for
+> >> throttling, but otherwise this doesn't belong in DT.
+> >
+> > My idea is to allow multiple throttlers, which might operate on
+> > different throttling devices or use different OPPs for the same
+> > device. To support this a simple boolean hint that the OPP can be used
+> > for throttling would not be sufficient.
+> >
+> > What should work is a property with an array of phandles of the
+> > throttlers that use a given OPP.
+> >
+> > AFAIK it is currently not possible to enumerate the devfreq devices in
+> > the system, so besides the info in the OPPs the throttler itself would
+> > still need a phandle to the devfreq device(s) it uses.
+> 
+> Why don't you fix that OS problem instead of working around it in DT?
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-test.c | 11 -----------
- 1 file changed, 11 deletions(-)
+I can try, though it's not exclusively in my hands, depends on what
+the devfreq maintainers think about it.
 
-diff --git a/drivers/rtc/rtc-test.c b/drivers/rtc/rtc-test.c
-index a0d1571c4af6..f0eb8e0c5055 100644
---- a/drivers/rtc/rtc-test.c
-+++ b/drivers/rtc/rtc-test.c
-@@ -40,23 +40,12 @@ static int test_rtc_set_mmss64(struct device *dev, time64_t secs)
- 	return 0;
- }
- 
--static int test_rtc_proc(struct device *dev, struct seq_file *seq)
--{
--	struct platform_device *plat_dev = to_platform_device(dev);
--
--	seq_printf(seq, "test\t\t: yes\n");
--	seq_printf(seq, "id\t\t: %d\n", plat_dev->id);
--
--	return 0;
--}
--
- static int test_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
- {
- 	return 0;
- }
- 
- static const struct rtc_class_ops test_rtc_ops = {
--	.proc = test_rtc_proc,
- 	.read_time = test_rtc_read_time,
- 	.read_alarm = test_rtc_read_alarm,
- 	.set_alarm = test_rtc_set_alarm,
--- 
-2.17.0
+> > I envision something like this:
+> >
+> > gpu_opp_table: opp-table2 {
+> >   compatible = "operating-points-v2";
+> >
+> >   opp00 {
+> >     opp-hz = /bits/ 64 <200000000>;
+> >     opp-microvolt = <800000>;
+> >   };
+> >   opp01 {
+> >     opp-hz = /bits/ 64 <297000000>;
+> >     opp-microvolt = <800000>;
+> >     opp-throttlers = <&cros_ec_throttler>;
+> >   };
+> >   ...
+> > };
+> >
+> > cros_ec_throttler: cros-ec-throttler {
+> >   compatible = "google,cros-ec-throttler";
+> 
+> Is this an actual h/w device?
+
+The Chrome OS Embedded Controller is a MCU that communicates with
+Linux over SPI or I2C. The low-level communication with the EC is
+handled by drivers/mfd/cros_ec* and then there are multiple drivers
+representing 'remote devices' on top of this (rtc-cros-ec.c,
+extcon-usbc-cros-ec.c, pwm-cros-ec.c, ...). cros_ec_throttler is a
+similar 'device' that responds to signals from the EC with frequency
+adjustments.
