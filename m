@@ -1,309 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754767AbeEaLGu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:06:50 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34924 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754681AbeEaLGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:06:45 -0400
-From: Gao Xiang <gaoxiang25@huawei.com>
-To: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC: <miaoxie@huawei.com>, <yuchao0@huawei.com>, <sunqiuyang@huawei.com>,
-        <fangwei1@huawei.com>, <liguifu2@huawei.com>, <weidu.du@huawei.com>,
-        <chen.chun.yen@huawei.com>, <brooke.wangzhigang@hisilicon.com>,
-        <dongjinguang@huawei.com>, <gaoxiang25@huawei.com>
-Subject: [NOMERGE] [RFC PATCH 01/12] erofs: add on-disk layout
-Date: Thu, 31 May 2018 19:06:30 +0800
-Message-ID: <1527764790-22311-1-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+        id S1754799AbeEaLHA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:07:00 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51416 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754681AbeEaLGx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:06:53 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "ARM: pxa, regulator: fix building ezx e680" to the regulator tree
+In-Reply-To: <20180530212514.346474-1-arnd@arndb.de>
+Message-Id: <E1fOLPp-00023H-9S@debutante>
+Date: Thu, 31 May 2018 12:06:45 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds the on-disk layout header file of erofs.
+The patch
 
-Note that the on-disk layout is still WIP, and some fields are
-reserved for the future use by design.
+   ARM: pxa, regulator: fix building ezx e680
 
-Any comments are welcome.
+has been applied to the regulator tree at
 
-Thanks-to: Li Guifu <liguifu2@huawei.com>
-Thanks-to: Sun Qiuyang <sunqiuyang@huawei.com>
-Signed-off-by: Miao Xie <miaoxie@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 2b6c00c157c5bf80417f6b814f1088da2dc588ee Mon Sep 17 00:00:00 2001
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 30 May 2018 23:24:58 +0200
+Subject: [PATCH] ARM: pxa, regulator: fix building ezx e680
+
+The reference to camera_supply_gpiod_table was added in the wrong function,
+as observed from this randconfig build failure:
+
+arch/arm/mach-pxa/ezx.c: In function 'e680_init':
+arch/arm/mach-pxa/ezx.c:905:26: error: 'camera_supply_gpiod_table' undeclared (first use in this function)
+  gpiod_add_lookup_table(&camera_supply_gpiod_table);
+
+Fixes: 6059577cb28d ("regulator: fixed: Convert to use GPIO descriptor only")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/erofs/erofs_fs.h | 258 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 258 insertions(+)
- create mode 100644 fs/erofs/erofs_fs.h
+ arch/arm/mach-pxa/ezx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
-new file mode 100644
-index 0000000..c08d982
---- /dev/null
-+++ b/fs/erofs/erofs_fs.h
-@@ -0,0 +1,258 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * linux/fs/erofs/erofs_fs.h
-+ *
-+ * Copyright (C) 2017-2018 HUAWEI, Inc.
-+ *             http://www.huawei.com/
-+ * Created by Gao Xiang <gaoxiang25@huawei.com>
-+ *
-+ * This file is subject to the terms and conditions of the GNU General Public
-+ * License.  See the file COPYING in the main directory of the Linux
-+ * distribution for more details.
-+ */
-+#ifndef __EROFS_FS_H
-+#define __EROFS_FS_H
-+
-+/* Enhanced(Extended) ROM File System */
-+#define EROFS_SUPER_MAGIC_V1    0xE0F5E1E2
-+#define EROFS_SUPER_OFFSET      1024
-+
-+struct erofs_super_block {
-+/*  0 */__le32 magic;           /* in the little endian */
-+/*  4 */__le32 checksum;        /* crc32c(super_block) */
-+/*  8 */__le32 features;
-+/* 12 */__u8 blkszbits;         /* support block_size == PAGE_SIZE only */
-+/* 13 */__u8 reserved;
-+
-+/* 14 */__le16 root_nid;
-+/* 16 */__le64 inos;            /* total valid ino # (== f_files - f_favail) */
-+
-+/* 24 */__le64 build_time;      /* inode v1 time derivation */
-+/* 32 */__le32 build_time_nsec;
-+/* 36 */__le32 blocks;          /* used for statfs */
-+/* 40 */__le32 meta_blkaddr;
-+/* 44 */__le32 xattr_blkaddr;
-+/* 48 */__u8 uuid[16];          /* 128-bit uuid for volume */
-+/* 64 */__u8 volume_name[16];   /* volume name */
-+
-+/* 80 */__u8 reserved2[48];     /* 128 bytes */
-+} __packed;
-+
-+#define __EROFS_BIT(_prefix, _cur, _pre)	enum {	\
-+	_prefix ## _cur ## _BIT = _prefix ## _pre ## _BIT + \
-+		_prefix ## _pre ## _BITS }
-+
-+/*
-+ * erofs inode data mapping:
-+ * 0 - inode plain without inline data A:
-+ * inode, [xattrs], ... | ... | no-holed data
-+ * 1 - inode VLE compression B:
-+ * inode, [xattrs], extents ... | ...
-+ * 2 - inode plain with inline data C:
-+ * inode, [xattrs], last_inline_data, ... | ... | no-holed data
-+ * 3~7 - reserved
-+ */
-+enum {
-+	EROFS_INODE_LAYOUT_PLAIN,
-+	EROFS_INODE_LAYOUT_COMPRESSION,
-+	EROFS_INODE_LAYOUT_INLINE,
-+	EROFS_INODE_LAYOUT_MAX
-+};
-+#define EROFS_I_VERSION_BITS            1
-+#define EROFS_I_DATA_MAPPING_BITS       3
-+
-+#define EROFS_I_VERSION_BIT             0
-+__EROFS_BIT(EROFS_I_, DATA_MAPPING, VERSION);
-+
-+struct erofs_inode_v1 {
-+/*  0 */__le16 i_advise;
-+
-+/* 1 header + n-1 * 4 bytes inline xattr to keep continuity */
-+/*  2 */__le16 i_xattr_icount;
-+/*  4 */__le16 i_mode;
-+/*  6 */__le16 i_nlink;
-+/*  8 */__le32 i_size;
-+/* 12 */__le32 i_reserved;
-+/* 16 */union {
-+		/* file total compressed blocks for data mapping 1 */
-+		__le32 compressed_blocks;
-+		__le32 raw_blkaddr;
-+
-+		/* for device files, used to indicate old/new device # */
-+		__le32 rdev;
-+	} i_u __packed;
-+/* 20 */__le32 i_ino;           /* only used for 32-bit stat compatibility */
-+/* 24 */__le16 i_uid;
-+/* 26 */__le16 i_gid;
-+/* 28 */__le32 i_checksum;
-+} __packed;
-+
-+/* 32 bytes inode */
-+#define EROFS_INODE_V1      0
-+/* 64 bytes inode */
-+#define EROFS_INODE_V2      1
-+
-+struct erofs_inode_v2 {
-+	__le16 i_advise;
-+
-+	/* 1 header + n-1 * 4 bytes inline xattr to keep continuity */
-+	__le16 i_xattr_icount;
-+	__le16 i_mode;
-+	__le16 i_reserved;      /* 8 bytes */
-+	__le64 i_size;          /* 16 bytes */
-+	union {
-+		/* file total compressed blocks for data mapping 1 */
-+		__le32 compressed_blocks;
-+		__le32 raw_blkaddr;
-+
-+		/* for device files, used to indicate old/new device # */
-+		__le32 rdev;
-+	} i_u __packed;
-+
-+	/* only used for 32-bit stat compatibility */
-+	__le32 i_ino;           /* 24 bytes */
-+
-+	__le32 i_uid;
-+	__le32 i_gid;
-+	__le64 i_ctime;         /* 32 bytes */
-+	__le32 i_ctime_nsec;
-+	__le32 i_nlink;
-+	__u8   i_reserved2[12];
-+	__le32 i_checksum;      /* 64 bytes */
-+} __packed;
-+
-+#define EROFS_MAX_SHARED_XATTRS         (128)
-+/* h_shared_count between 129 ... 255 are special # */
-+#define EROFS_SHARED_XATTR_EXTENT       (255)
-+
-+/*
-+ * inline xattrs (n == i_xattr_icount):
-+ * erofs_xattr_ibody_header(1) + (n - 1) * 4 bytes
-+ *          12 bytes           /                   \
-+ *                            /                     \
-+ *                           /-----------------------\
-+ *                           |  erofs_xattr_entries+ |
-+ *                           +-----------------------+
-+ * inline xattrs must starts in erofs_xattr_ibody_header,
-+ * for read-only fs, no need to introduce h_refcount
-+ */
-+struct erofs_xattr_ibody_header {
-+	__le32 h_checksum;
-+	__u8   h_shared_count;
-+	__u8   h_reserved[7];
-+	__le32 h_shared_xattrs[0];      /* shared xattr id array */
-+} __packed;
-+
-+/* Name indexes */
-+#define EROFS_XATTR_INDEX_USER              1
-+#define EROFS_XATTR_INDEX_POSIX_ACL_ACCESS  2
-+#define EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT 3
-+#define EROFS_XATTR_INDEX_TRUSTED           4
-+#define EROFS_XATTR_INDEX_LUSTRE            5
-+#define EROFS_XATTR_INDEX_SECURITY          6
-+#define EROFS_XATTR_INDEX_ADVISE            7
-+
-+/* xattr entry (for both inline & shared xattrs) */
-+struct erofs_xattr_entry {
-+	__u8   e_name_len;      /* length of name */
-+	__u8   e_name_index;    /* attribute name index */
-+	__le16 e_value_size;    /* size of attribute value */
-+	/* followed by e_name and e_value */
-+	char   e_name[0];       /* attribute name */
-+} __packed;
-+
-+#define ondisk_xattr_ibody_size(count)	({\
-+	u32 __count = le16_to_cpu(count); \
-+	((__count) == 0) ? 0 : \
-+	sizeof(struct erofs_xattr_ibody_header) + \
-+		sizeof(__u32) * ((__count) - 1); })
-+
-+#define EROFS_XATTR_ALIGN(size) round_up(size, sizeof(struct erofs_xattr_entry))
-+#define EROFS_XATTR_ENTRY_SIZE(entry) EROFS_XATTR_ALIGN( \
-+	sizeof(struct erofs_xattr_entry) + \
-+	(entry)->e_name_len + le16_to_cpu((entry)->e_value_size))
-+
-+/* have to be aligned with 8 bytes on disk */
-+struct erofs_extent_header {
-+	__le32 eh_checksum;
-+	__le32 eh_reserved[3];
-+} __packed;
-+
-+/*
-+ * EROFS Variable-sized Logical Extent cluster type:
-+ * 0 - uncompressed logical cluster
-+ * 1 - compressed logical cluster (for the head logical cluster)
-+ * 2 - compressed logical cluster (for the rest logical clusters)
-+ * For details:
-+ *   for the uncompressed logical cluster,
-+ *        di_advise = 0
-+ *        di_clusterofs =
-+ *           the uncompressed data offset of the cluster
-+ *        di_blkaddr = the blkaddr of the uncompressed cluster
-+ *   for the compressed head logical cluster,
-+ *        di_advise = 1
-+ *        di_clusterofs =
-+ *           the decompressed data offset of the cluster
-+ *        di_blkaddr = the blkaddr of the compressed cluster
-+ *   for the rest logical clusters,
-+ *        di_advise = 2
-+ *        di_clusterofs =
-+ *           the decompressed data offset in the head cluster
-+ *        di_u.delta[0] = pointing to the head cluster
-+ *        di_u.delta[1] = pointing to the tail cluster
-+ *                (di_advise could be 0, 1 or 2)
-+ */
-+#define EROFS_VLE_DI_CLUSTER_TYPE_BITS    2
-+#define EROFS_VLE_DI_CLUSTER_TYPE_BIT     0
-+
-+struct erofs_decompressed_index_vle {
-+	__le16 di_advise;
-+	/* where to decompress in the head cluster */
-+	__le16 di_clusterofs;
-+
-+	union {
-+		/* for the head cluster */
-+		__le32 blkaddr;
-+		/*
-+		 * for the rest clusters
-+		 * eg. for 4k page-sized cluster, maximum 4K*64k = 256M)
-+		 * [0] - pointing to the head cluster
-+		 * [1] - pointing to the tail cluster
-+		 */
-+		__le16 delta[2];
-+	} di_u __packed;		/* 8 bytes */
-+} __packed;
-+
-+#define EROFS_VLE_EXTENT_ALIGN(size) round_up(size, \
-+	sizeof(struct erofs_decompressed_index_vle))
-+
-+#define ondisk_extent_size(data_mapping_mode, count) \
-+	((data_mapping_mode) == EROFS_INODE_LAYOUT_COMPRESSION ? \
-+		(sizeof(struct erofs_extent_header) + \
-+		sizeof(__u32) * le32_to_cpu(count)) : 0)
-+
-+/* dirent sorts in alphabet order, thus we can do binary search */
-+struct erofs_dirent {
-+	__le64 nid;     /*  0, node number */
-+	__le16 nameoff; /*  8, start offset of file name */
-+	__u8 file_type; /* 10, file type */
-+	__u8 reserved;  /* 11, reserved */
-+} __packed;
-+
-+/* file types used in inode_info->flags */
-+enum {
-+	EROFS_FT_UNKNOWN,
-+	EROFS_FT_REG_FILE,
-+	EROFS_FT_DIR,
-+	EROFS_FT_CHRDEV,
-+	EROFS_FT_BLKDEV,
-+	EROFS_FT_FIFO,
-+	EROFS_FT_SOCK,
-+	EROFS_FT_SYMLINK,
-+	EROFS_FT_MAX
-+};
-+
-+#define EROFS_NAME_LEN      255
-+
-+#endif
-+
+diff --git a/arch/arm/mach-pxa/ezx.c b/arch/arm/mach-pxa/ezx.c
+index 2b4bd6d94855..4f33eea73f9a 100644
+--- a/arch/arm/mach-pxa/ezx.c
++++ b/arch/arm/mach-pxa/ezx.c
+@@ -902,7 +902,6 @@ static void __init e680_init(void)
+ 
+ 	pxa_set_keypad_info(&e680_keypad_platform_data);
+ 
+-	gpiod_add_lookup_table(&camera_supply_gpiod_table);
+ 	pwm_add_table(ezx_pwm_lookup, ARRAY_SIZE(ezx_pwm_lookup));
+ 	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
+ 	platform_add_devices(ARRAY_AND_SIZE(e680_devices));
+@@ -1132,6 +1131,7 @@ static void __init a910_init(void)
+ 	if (a910_camera_init() == 0)
+ 		pxa_set_camera_info(&a910_pxacamera_platform_data);
+ 
++	gpiod_add_lookup_table(&camera_supply_gpiod_table);
+ 	pwm_add_table(ezx_pwm_lookup, ARRAY_SIZE(ezx_pwm_lookup));
+ 	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
+ 	platform_add_devices(ARRAY_AND_SIZE(a910_devices));
 -- 
-1.9.1
+2.17.0
