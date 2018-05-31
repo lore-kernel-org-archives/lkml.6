@@ -1,210 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753972AbeEaGbo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:31:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55884 "EHLO mail.kernel.org"
+        id S1754019AbeEaGcR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:32:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48152 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753740AbeEaGbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:31:41 -0400
-Date: Thu, 31 May 2018 08:31:18 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Martin Liu <liumartin@google.com>, heikki.krogerus@linux.intel.com,
-        johan@kernel.org, andy.shevchenko@gmail.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        jenhaochen@google.com
-Subject: Re: [PATCH v4] driver core: hold dev's parent lock when needed
-Message-ID: <20180531063118.GA7554@kroah.com>
-References: <20180530163135.50081-1-liumartin@google.com>
- <Pine.LNX.4.44L0.1805301319430.1502-100000@iolanthe.rowland.org>
+        id S1753760AbeEaGcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 02:32:15 -0400
+Date: Thu, 31 May 2018 08:32:12 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [rfc patch] mm, oom: fix unnecessary killing of additional
+ processes
+Message-ID: <20180531063212.GF15278@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
+ <20180525072636.GE11881@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1805251227380.158701@chino.kir.corp.google.com>
+ <20180528081345.GD1517@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1805301357100.150424@chino.kir.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1805301319430.1502-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <alpine.DEB.2.21.1805301357100.150424@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 01:21:02PM -0400, Alan Stern wrote:
-> On Thu, 31 May 2018, Martin Liu wrote:
+On Wed 30-05-18 14:06:51, David Rientjes wrote:
+> On Mon, 28 May 2018, Michal Hocko wrote:
 > 
-> > SoC have internal I/O buses that can't be proved for devices. The
-> > devices on the buses can be accessed directly without additinal
-> > configuration required. This type of bus is represented as
-> > "simple-bus". In some platforms, we name "soc" with "simple-bus"
-> > attribute and many devices are hooked under it described in DT
-> > (device tree).
+> > > That's not sufficient since the oom reaper is also not able to oom reap if 
+> > > the mm has blockable mmu notifiers or all memory is shared filebacked 
+> > > memory, so it immediately sets MMF_OOM_SKIP and additional processes are 
+> > > oom killed.
 > > 
-> > In commit bf74ad5bc417 ("Hold the device's parent's lock during
-> > probe and remove") to solve USB subsystem lock sequence since
-> > USB device's characteristic. Thus "soc" needs to be locked
-> > whenever a device and driver's probing happen under "soc" bus.
-> > During this period, an async driver tries to probe a device which
-> > is under the "soc" bus would be blocked until previous driver
-> > finish the probing and release "soc" lock. And the next probing
-> > under the "soc" bus need to wait for async finish. Because of
-> > that, driver's async probe for init time improvement will be
-> > shadowed.
+> > Could you be more specific with a real world example where that is the
+> > case? I mean the full address space of non-reclaimable file backed
+> > memory where waiting some more would help? Blockable mmu notifiers are
+> > a PITA for sure. I wish we could have a better way to deal with them.
+> > Maybe we can tell them we are in the non-blockable context and have them
+> > release as much as possible. Still something that a random timeout
+> > wouldn't help I am afraid.
 > > 
-> > Since many devices don't have USB devices' characteristic, they
-> > actually don't need parent's lock. Thus, we introduce a lock flag
-> > in bus_type struct and driver core would lock the parent lock base
-> > on the flag. For USB, we set this flag in usb_bus_type to keep
-> > original lock behavior in driver core.
-> > 
-> > Async probe could have more benefit after this patch.
-> > 
-> > Signed-off-by: Martin Liu <liumartin@google.com>
-> > ---
-> > Changes in v4:
-> >  -fix comment and wording.
-> >  -follow the suggestion.
-> > 
-> > [v3]: https://lkml.org/lkml/2018/5/29/876
-> > [v2]: https://lkml.org/lkml/2018/5/29/108
-> > [v1]: https://lkml.org/lkml/2018/5/22/545
-> > 
-> >  drivers/base/bus.c        | 16 ++++++++--------
-> >  drivers/base/dd.c         |  8 ++++----
-> >  drivers/usb/core/driver.c |  1 +
-> >  include/linux/device.h    |  3 +++
-> >  4 files changed, 16 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-> > index ef6183306b40..8bfd27ec73d6 100644
-> > --- a/drivers/base/bus.c
-> > +++ b/drivers/base/bus.c
-> > @@ -184,10 +184,10 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
-> >  
-> >  	dev = bus_find_device_by_name(bus, NULL, buf);
-> >  	if (dev && dev->driver == drv) {
-> > -		if (dev->parent)	/* Needed for USB */
-> > +		if (dev->parent && dev->bus->need_parent_lock)
-> >  			device_lock(dev->parent);
-> >  		device_release_driver(dev);
-> > -		if (dev->parent)
-> > +		if (dev->parent && dev->bus->need_parent_lock)
-> >  			device_unlock(dev->parent);
-> >  		err = count;
-> >  	}
-> > @@ -211,12 +211,12 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
-> >  
-> >  	dev = bus_find_device_by_name(bus, NULL, buf);
-> >  	if (dev && dev->driver == NULL && driver_match_device(drv, dev)) {
-> > -		if (dev->parent)	/* Needed for USB */
-> > +		if (dev->parent && bus->need_parent_lock)
-> >  			device_lock(dev->parent);
-> >  		device_lock(dev);
-> >  		err = driver_probe_device(drv, dev);
-> >  		device_unlock(dev);
-> > -		if (dev->parent)
-> > +		if (dev->parent && bus->need_parent_lock)
-> >  			device_unlock(dev->parent);
-> >  
-> >  		if (err > 0) {
-> > @@ -735,10 +735,10 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
-> >  	int ret = 0;
-> >  
-> >  	if (!dev->driver) {
-> > -		if (dev->parent)	/* Needed for USB */
-> > +		if (dev->parent && dev->bus->need_parent_lock)
-> >  			device_lock(dev->parent);
-> >  		ret = device_attach(dev);
-> > -		if (dev->parent)
-> > +		if (dev->parent && dev->bus->need_parent_lock)
-> >  			device_unlock(dev->parent);
-> >  	}
-> >  	return ret < 0 ? ret : 0;
-> > @@ -770,10 +770,10 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
-> >  int device_reprobe(struct device *dev)
-> >  {
-> >  	if (dev->driver) {
-> > -		if (dev->parent)        /* Needed for USB */
-> > +		if (dev->parent && dev->bus->need_parent_lock)
-> >  			device_lock(dev->parent);
-> >  		device_release_driver(dev);
-> > -		if (dev->parent)
-> > +		if (dev->parent && dev->bus->need_parent_lock)
-> >  			device_unlock(dev->parent);
-> >  	}
-> >  	return bus_rescan_devices_helper(dev, NULL);
-> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> > index c9f54089429b..7c09f73b96f3 100644
-> > --- a/drivers/base/dd.c
-> > +++ b/drivers/base/dd.c
-> > @@ -817,13 +817,13 @@ static int __driver_attach(struct device *dev, void *data)
-> >  		return ret;
-> >  	} /* ret > 0 means positive match */
-> >  
-> > -	if (dev->parent)	/* Needed for USB */
-> > +	if (dev->parent && dev->bus->need_parent_lock)
-> >  		device_lock(dev->parent);
-> >  	device_lock(dev);
-> >  	if (!dev->driver)
-> >  		driver_probe_device(drv, dev);
-> >  	device_unlock(dev);
-> > -	if (dev->parent)
-> > +	if (dev->parent && dev->bus->need_parent_lock)
-> >  		device_unlock(dev->parent);
-> >  
-> >  	return 0;
-> > @@ -919,7 +919,7 @@ void device_release_driver_internal(struct device *dev,
-> >  				    struct device_driver *drv,
-> >  				    struct device *parent)
-> >  {
-> > -	if (parent)
-> > +	if (parent && dev->bus->need_parent_lock)
-> >  		device_lock(parent);
-> >  
-> >  	device_lock(dev);
-> > @@ -927,7 +927,7 @@ void device_release_driver_internal(struct device *dev,
-> >  		__device_release_driver(dev, parent);
-> >  
-> >  	device_unlock(dev);
-> > -	if (parent)
-> > +	if (parent && dev->bus->need_parent_lock)
-> >  		device_unlock(parent);
-> >  }
-> >  
-> > diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> > index 9792cedfc351..e76e95f62f76 100644
-> > --- a/drivers/usb/core/driver.c
-> > +++ b/drivers/usb/core/driver.c
-> > @@ -1922,4 +1922,5 @@ struct bus_type usb_bus_type = {
-> >  	.name =		"usb",
-> >  	.match =	usb_device_match,
-> >  	.uevent =	usb_uevent,
-> > +	.need_parent_lock =	true,
-> >  };
-> > diff --git a/include/linux/device.h b/include/linux/device.h
-> > index 477956990f5e..beca424395dd 100644
-> > --- a/include/linux/device.h
-> > +++ b/include/linux/device.h
-> > @@ -98,6 +98,8 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
-> >   * @lock_key:	Lock class key for use by the lock validator
-> >   * @force_dma:	Assume devices on this bus should be set up by dma_configure()
-> >   * 		even if DMA capability is not explicitly described by firmware.
-> > + * @need_parent_lock:	When probing or removing a device on this bus, the
-> > + *			device core should lock the device's parent.
-> >   *
-> >   * A bus is a channel between the processor and one or more devices. For the
-> >   * purposes of the device model, all devices are connected via a bus, even if
-> > @@ -138,6 +140,7 @@ struct bus_type {
-> >  	struct lock_class_key lock_key;
-> >  
-> >  	bool force_dma;
-> > +	bool need_parent_lock;
-> >  };
-> >  
-> >  extern int __must_check bus_register(struct bus_type *bus);
 > 
-> This looks okay to me.
-> 
-> Acked-by: Alan Stern <stern@rowland.harvard.edu>
-> 
-> Greg, any more comments?
+> It's not a random timeout, it's sufficiently long such that we don't oom 
+> kill several processes needlessly in the very rare case where oom livelock 
+> would actually prevent the original victim from exiting.  The oom reaper 
+> processing an mm, finding everything to be mlocked, and immediately 
+> MMF_OOM_SKIP is inappropriate.  This is rather trivial to reproduce for a 
+> large memory hogging process that mlocks all of its memory; we 
+> consistently see spurious and unnecessary oom kills simply because the oom 
+> reaper has set MMF_OOM_SKIP very early.
 
-Looks sane to me.  Martin, thanks for all of the changes.
+It takes quite some additional steps for admin to allow a large amount
+of mlocked memory and such an application should be really careful to
+not consume too much memory. So how come this is something you see that
+consistently? Is this some sort of bug or an unfortunate workload side
+effect? I am asking this because I really want to see how relevant this
+really is.
 
-greg k-h
+> This patch introduces a "give up" period such that the oom reaper is still 
+> allowed to do its good work but only gives up in the hope the victim can 
+> make forward progress at some substantial period of time in the future.  I 
+> would understand the objection if oom livelock where the victim cannot 
+> make forward progress were commonplace, but in the interest of not killing 
+> several processes needlessly every time a large mlocked process is 
+> targeted, I think it compels a waiting period.
+
+But the waiting periods just turn out to be a really poor design. There
+will be no good timeout to fit for everybody. We can do better and as
+long as this is the case the timeout based solution should be really
+rejected. It is a shortcut that doesn't really solve the underlying
+problem.
+
+> > Trying to reap a different oom victim when the current one is not making
+> > progress during the lock contention is certainly something that make
+> > sense. It has been proposed in the past and we just gave it up because
+> > it was more complex. Do you have any specific example when this would
+> > help to justify the additional complexity?
+> > 
+> 
+> I'm not sure how you're defining complexity, the patch adds ~30 lines of 
+> code and prevents processes from needlessly being oom killed when oom 
+> reaping is largely unsuccessful and before the victim finishes 
+> free_pgtables() and then also allows the oom reaper to operate on multiple 
+> mm's instead of processing one at a time.  Obviously if there is a delay 
+> before MMF_OOM_SKIP is set it requires that the oom reaper be able to 
+> process other mm's, otherwise we stall needlessly for 10s.  Operating on 
+> multiple mm's in a linked list while waiting for victims to exit during a 
+> timeout period is thus very much needed, it wouldn't make sense without 
+> it.
+
+It needs to keep track of the current retry state of the reaped victim
+and that is an additional complexity, isn't it? And I am asking how
+often do we have to handle that. Please note that the primary objective
+here is to unclutter a locked up situation. The oom reaper doesn't block
+the victim to go away on its own while we keep retrying. So a slow
+progress on the reaper side is not an issue IMIHO.
+
+> > > But also note that even if oom reaping is possible, in the presence of an 
+> > > antagonist that continues to allocate memory, that it is possible to oom 
+> > > kill additional victims unnecessarily if we aren't able to complete 
+> > > free_pgtables() in exit_mmap() of the original victim.
+> > 
+> > If there is unbound source of allocations then we are screwed no matter
+> > what. We just hope that the allocator will get noticed by the oom killer
+> > and it will be stopped.
+> > 
+> 
+> It's not unbounded, it's just an allocator that acts as an antagonist.  At 
+> the risk of being overly verbose, for system or memcg oom conditions: a 
+> large mlocked process is oom killed, other processes continue to 
+> allocate/charge, the oom reaper almost immediately grants MMF_OOM_SKIP 
+> without being able to free any memory, and the other important processes 
+> are needlessly oom killed before the original victim can reach 
+> exit_mmap().  This happens a _lot_.
+>
+> I'm open to hearing any other suggestions that you have other than waiting 
+> some time period before MMF_OOM_SKIP gets set to solve this problem.
+
+I've already offered one. Make mlocked pages reapable. This is something
+that has been on the todo list for quite some time. I just didn't have
+time to work on that. The priority was not at the top because most sane
+workloads simply do not mlock large portion of the memory. But if you
+can see that happening regularly then this should be the first thing to
+try. The main obstable to do so back then was the page_lock currently
+taken in the munlock path. I've discussed that with Hugh and he said
+that they are mainly for accounting purposes and mostly a relict from
+the past IIRC and this should be fixable and a general improvement as
+well.
+
+-- 
+Michal Hocko
+SUSE Labs
