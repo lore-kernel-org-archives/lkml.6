@@ -1,56 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750776AbeEaWFJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:05:09 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:34183 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750711AbeEaWFI (ORCPT
+        id S1750790AbeEaWOt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 18:14:49 -0400
+Received: from smtprelay0203.hostedemail.com ([216.40.44.203]:36429 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750711AbeEaWOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 18:05:08 -0400
-X-ME-Proxy: <xmx:knEQW4jdqG4-lDHPgjZ8Coo1uRlrBG5Ukl9a_BbhvLLSRihdOofb6Q>
-X-ME-Proxy: <xmx:knEQW-aTyGO8hQ_k3SWGCXbYMh0zjy2VuSBlORmLEu_l3xrtzpEZIQ>
-X-ME-Proxy: <xmx:knEQW-_okQKl8Xb90vmZzYzoE8vFmg77Re9nTXBs4d3yW0hsIkck5A>
-X-ME-Proxy: <xmx:knEQWyf5T8WKCx7U3NTK3cs2Q-9TwtbBH2A8LU3MPXUrijrdnpguzQ>
-X-ME-Proxy: <xmx:knEQW5krqQXhs-lGkSztDmeqevSR47_aFcvf-0A_7shApt5hR2gv3A>
-X-ME-Proxy: <xmx:k3EQW6gjj-phd8EXuDimTQ6pDEtvdOJGvIPcRMjCsdxxb1qYsp42Vg>
-X-ME-Sender: <xms:knEQW970YvpaZS1q7bjP5HJmueLq5ukEtBRNM2MDBai60JF9L08Org>
-Date: Thu, 31 May 2018 19:05:03 -0300
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-To: Ivan Ivanov <qmastery16@gmail.com>
-Cc: Josh Boyer <jwboyer@kernel.org>,
-        Sherry Hurwitz <sherry.hurwitz@amd.com>,
-        Linux Firmware <linux-firmware@kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Rudolf Marek <r.marek@assembler.cz>, suravee.suthikulpanit@amd.com
-Subject: Re: [PATCH 1/1] Update AMD cpu microcode for family 15h
-Message-ID: <20180531220503.2jqs3oiqsnw7ye2t@khazad-dum.debian.net>
-References: <1527213479-121361-1-git-send-email-sherry.hurwitz@amd.com>
- <CA+5PVA7aPRHk=kfxsmPi-qStKEnK_HJ=rTjvtQGO1QbnLb9qBw@mail.gmail.com>
- <CAAaskFAGRUU3APZbsY2w9hW9jbBJfeMbHt8ttg7vXHidp025=g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAaskFAGRUU3APZbsY2w9hW9jbBJfeMbHt8ttg7vXHidp025=g@mail.gmail.com>
-X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
- 0BD9 E811 39CB 4807
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Thu, 31 May 2018 18:14:47 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:541:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2914:3138:3139:3140:3141:3142:3352:3622:3867:3868:3872:4321:5007:7901:10004:10400:10848:11026:11473:11658:11914:12043:12296:12438:12740:12760:12895:13069:13255:13311:13357:13439:14659:14721:21080:21627:30046:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:37,LUA_SUMMARY:none
+X-HE-Tag: nest32_80de51d23775a
+X-Filterd-Recvd-Size: 1645
+Message-ID: <f6df017094f9ebaa13e552a11584d33971f04b0f.camel@perches.com>
+Subject: Re: [PATCH] staging: mt7621-spi: Fix Coding style issues reported
+ by checkpatch.pl.
+From: Joe Perches <joe@perches.com>
+To: Sankalp Negi <sankalpnegi2310@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        NeilBrown <neil@brown.name>
+Date: Thu, 31 May 2018 15:14:43 -0700
+In-Reply-To: <20180531185542.phhu2rkdoq2czkav@localhost>
+References: <20180531185542.phhu2rkdoq2czkav@localhost>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 May 2018, Ivan Ivanov wrote:
-> This is still not addressing the outdated 15h microcode version issue
-> that Rudolf Marek has pointed out. Also, we still hope to see an
-> updated microcode for 16h architecture as well - it has not received
-> any updates for two years already
+On Fri, 2018-06-01 at 00:25 +0530, Sankalp Negi wrote:
+> diff --git a/drivers/staging/mt7621-spi/spi-mt7621.c b/drivers/staging/mt7621-spi/spi-mt7621.c
+[]
+> @@ -164,9 +165,8 @@ static inline int mt7621_spi_wait_till_ready(struct spi_device *spi)
+>  		u32 status;
+>  
+>  		status = mt7621_spi_read(rs, MT7621_SPI_TRANS);
+> -		if ((status & SPITRANS_BUSY) == 0) {
+> +		if ((status & SPITRANS_BUSY) == 0)
+>  			return 0;
+> -		}
+>  		cpu_relax();
+>  		udelay(1);
+>  	}
 
-True, but now at least it won't regress old boxes anymore, so we can
-ship it in the stable branches of the distros with less restrictions.
+It might also be more readable to avoid a status temporary
+and use a direct compare instead:
 
-It would be really good to be able to actually mitigate spectre v2/v4 on
-most AMD systems, though.  And current experience shows this is only
-going to happen if we can have the required microcode update also going
-through the operating system update channels.
+	for (i = 0; i < RALINK_SPI_WAIT_MAX_LOOP; i++) {
+		if (!(mt7621_spi_read(rs, MT7621_SPI_TRANS) & SPITRANS_BUSY))
+			return 0;
+		cpu_relax();
+		udelay(1);
+	}
 
--- 
-  Henrique Holschuh
+	return -ETIMEDOUT;
+}
