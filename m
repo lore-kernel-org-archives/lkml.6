@@ -1,49 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755494AbeEaPRD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:17:03 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59786 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755134AbeEaPRA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:17:00 -0400
-Date: Thu, 31 May 2018 12:16:54 -0300
-From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-To: Joe Perches <joe@perches.com>
-Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org, mingo@redhat.com
-Subject: Re: [PATCH] ftrace: use non-archaic spelling of failes
-Message-ID: <20180531151653.GA3903@calabresa>
-References: <20180531121701.8972-1-cascardo@canonical.com>
- <993c7040bd1e5251abd70ff3aa7e3141f28b3505.camel@perches.com>
+        id S1755461AbeEaPTv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:19:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755134AbeEaPTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 11:19:50 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <993c7040bd1e5251abd70ff3aa7e3141f28b3505.camel@perches.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Petr Mladek <pmladek@suse.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CA+55aFxasUXmLwb9Mj1j8WSJbmfO1oGkcsZ2hxxbkz_p1gkUfQ@mail.gmail.com>
+Cc: baijiaju1990@gmail.com, Bjorn Helgaas <bhelgaas@google.com>,
+        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+References: <ba98332d-7013-f5cb-7d49-645ee6f49156@gmail.com>
+ <20180531100457.fncibp5cxdozvbjh@pathway.suse.cz>
+ <CA+55aFxasUXmLwb9Mj1j8WSJbmfO1oGkcsZ2hxxbkz_p1gkUfQ@mail.gmail.com>
+Message-ID: <152777998940.144038.2717154952249020053@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: Can printk() sleep at runtime?
+Date: Thu, 31 May 2018 08:19:49 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VFJveE019987
 
-On Thu, May 31, 2018 at 08:15:45AM -0700, Joe Perches wrote:
-> On Thu, 2018-05-31 at 09:17 -0300, Thadeu Lima de Souza Cascardo wrote:
-> > diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> []
-> > @@ -4788,7 +4788,7 @@ ftrace_set_addr(struct ftrace_ops *ops, unsigned long ip, int remove,
-> >   * @reset - non zero to reset all filters before applying this filter.
-> >   *
-> >   * Filters denote which functions should be enabled when tracing is enabled
-> > - * If @ip is NULL, it failes to update filter.
-> > + * If @ip is NULL, it fails to update filter.
-> >   */
-> >  int ftrace_set_filter_ip(struct ftrace_ops *ops, unsigned long ip,
-> >  			 int remove, int reset)
+Quoting Linus Torvalds (2018-05-31 07:32:10)
+> On Thu, May 31, 2018 at 5:05 AM Petr Mladek <pmladek@suse.com> wrote:
+> >
+> > Anyway, we need to fix or remove this format. vsprintf-like functions
+> > are called in any context and nobody expect that they might sleep.
 > 
-> Perhaps fix it treewide?
+> Ack. I guess the argument is that "%pCr" is rare, and none of *those*
+> users may care, but I do think that doing things wrong as-is.
 > 
-> $ git grep -w -i failes | wc -l
-> 8
+> It's too subtle to have to know you're in a particular locking context
+> when you use a particular %p modifier.
 > 
 
-I sent patches to the respective maintainers for all of these.
-
-Cascardo.
+Agreed. Removing the format seems to be the best approach. It looks like
+only Geert has used it in the last few years and it hasn't been used
+much otherwise.
