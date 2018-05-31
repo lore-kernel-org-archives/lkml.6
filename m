@@ -1,75 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755545AbeEaP2O (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:28:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36320 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755421AbeEaP2K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:28:10 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6664D60261
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>, bhelgaas@google.com
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        keith.busch@intel.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <28004506-24f0-6d10-2d1e-074e0483d2f9@codeaurora.org>
-Date: Thu, 31 May 2018 11:28:07 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932306AbeEaP37 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:29:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33668 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755400AbeEaP35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 11:29:57 -0400
+Date: Thu, 31 May 2018 17:29:50 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        guillaume.knispel@supersonicimagine.com,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 3/6] lib/bucket_locks: use kvmalloc_array()
+Message-ID: <20180531152950.GR15278@dhcp22.suse.cz>
+References: <20180524211135.27760-1-dave@stgolabs.net>
+ <20180524211135.27760-4-dave@stgolabs.net>
+ <CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com>
+ <20180529144317.GA20910@dhcp22.suse.cz>
+ <20180529145106.GV27180@dhcp22.suse.cz>
+ <CA+55aFxoC0+hKBQ_TmbXM_X60fnP8JKC3aVvGc=8bKh2oxL12g@mail.gmail.com>
+ <20180530074216.GZ27180@dhcp22.suse.cz>
+ <CA+55aFyu9HpoHcn0p6uaADOspTd2DKPYciAgHz+C6zwLBvVSJA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180531150535.9684-1-mr.nuke.me@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFyu9HpoHcn0p6uaADOspTd2DKPYciAgHz+C6zwLBvVSJA@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/31/2018 11:05 AM, Alexandru Gagniuc wrote:
-> +static void pcie_max_link_cap(struct pci_dev *dev, enum pci_bus_speed *speed,
-> +				enum pcie_link_width *width)
-> +{
-> +	uint32_t lnkcap;
-> +
-> +	pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &lnkcap);
-> +
-> +	*speed = pcie_link_speed[lnkcap & PCI_EXP_LNKCAP_SLS];
-> +	*width = (lnkcap & PCI_EXP_LNKCAP_MLW) >> PCI_EXP_LNKCAP_MLW_SHIFT;
-> +}
-> +
-> +static void pcie_cur_link_sta(struct pci_dev *dev, enum pci_bus_speed *speed,
-> +				enum pcie_link_width *width)
-> +{
-> +	uint16_t lnksta;
-> +
-> +	pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
-> +	*speed = pcie_link_speed[lnksta & PCI_EXP_LNKSTA_CLS];
-> +	*width = (lnksta & PCI_EXP_LNKSTA_NLW) >> PCI_EXP_LNKSTA_NLW_SHIFT;
-> +}
-> +
-> +static const char *pcie_bus_speed_name(enum pci_bus_speed speed)
-> +{
-> +	switch (speed) {
-> +	case PCIE_SPEED_2_5GT:
-> +		return "2.5 GT/s";
-> +	case PCIE_SPEED_5_0GT:
-> +		return "5.0 GT/s";
-> +	case PCIE_SPEED_8_0GT:
-> +		return "8.0 GT/s";
-> +	default:
-> +		return "unknown";
-> +	}
-> +}
+On Thu 31-05-18 10:01:51, Linus Torvalds wrote:
+> On Wed, May 30, 2018 at 2:42 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > That being sad, if you believe that silently fixing up a code like that
+> > is a good idea we can do the following of course:
+> 
+> Ack.
+> 
+> Except for:
+> 
+> > Linus argues that this just motivates people to do even
+> > more hacks like
+> >         if (gfp == GFP_KERNEL)
+> >                 kvmalloc
+> >         else
+> >                 kmalloc
+> >
+> > I haven't seen this happening but it is true that we can grow those in
+> > future.
+> 
+> This whole discussion came from the fact that YES, THIS IS ACTUALLY HAPPENING.
+> 
+> See lib/bucket_locks.c - it just uses gfpflags_allow_blocking()
+> instead of explicitly checking for GFP_KERNEL (probably because the
+> only two cases it actually deals with is GFP_ATOMIC and GFP_KERNEL).
 
-I thought Bjorn added some functions to retrieve this now.
+OK, I haven't noticed this one and will fix it up. So what about the
+following?
 
+>From abc6ac9a690060d5ceda79e747c78d24cc7f2951 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Wed, 30 May 2018 09:34:39 +0200
+Subject: [PATCH] mm: kvmalloc does not fallback to vmalloc for incompatible
+ gfp flags
+
+kvmalloc warned about incompatible gfp_mask to catch abusers (mostly
+GFP_NOFS) with an intention that this will motivate authors of the code
+to fix those. Linus argues that this just motivates people to do even
+more hacks like
+	if (gfp == GFP_KERNEL)
+		kvmalloc
+	else
+		kmalloc
+
+I haven't seen this happening much (bucket_lock special cases an atomic
+allocation) but it is true that we can grow those in future. Therefore
+Linus suggested to simply not fallback to vmalloc for incompatible gfp
+flags and rather stick with the kmalloc path.
+
+Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ lib/bucket_locks.c | 5 +----
+ mm/util.c          | 6 ++++--
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/lib/bucket_locks.c b/lib/bucket_locks.c
+index 266a97c5708b..ade3ce6c4af6 100644
+--- a/lib/bucket_locks.c
++++ b/lib/bucket_locks.c
+@@ -30,10 +30,7 @@ int alloc_bucket_spinlocks(spinlock_t **locks, unsigned int *locks_mask,
+ 	}
+ 
+ 	if (sizeof(spinlock_t) != 0) {
+-		if (gfpflags_allow_blocking(gfp))
+-			tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
+-		else
+-			tlocks = kmalloc_array(size, sizeof(spinlock_t), gfp);
++		tlocks = kvmalloc_array(size, sizeof(spinlock_t), gfp);
+ 		if (!tlocks)
+ 			return -ENOMEM;
+ 		for (i = 0; i < size; i++)
+diff --git a/mm/util.c b/mm/util.c
+index 45fc3169e7b0..c6586c146995 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -391,7 +391,8 @@ EXPORT_SYMBOL(vm_mmap);
+  * __GFP_RETRY_MAYFAIL is supported, and it should be used only if kmalloc is
+  * preferable to the vmalloc fallback, due to visible performance drawbacks.
+  *
+- * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm people.
++ * Please note that any use of gfp flags outside of GFP_KERNEL is careful to not
++ * fall back to vmalloc.
+  */
+ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+ {
+@@ -402,7 +403,8 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+ 	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
+ 	 * so the given set of flags has to be compatible.
+ 	 */
+-	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
++	if ((flags & GFP_KERNEL) != GFP_KERNEL)
++		return kmalloc_node(size, flags, node);
+ 
+ 	/*
+ 	 * We want to attempt a large physically contiguous block first because
+-- 
+2.17.0
 
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Michal Hocko
+SUSE Labs
