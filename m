@@ -1,68 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755319AbeEaNYE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:24:04 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36532 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755234AbeEaNXi (ORCPT
+        id S1755144AbeEaNZp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:25:45 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38092 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754820AbeEaNZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:23:38 -0400
-X-Google-Smtp-Source: ADUXVKJM6pOM2iUJpxXhChnM3VtO9YaMluuZW6FMvUhBp+zKosAHGoblFltZauy0jfPZeIuk5iLrcQ==
-From: Paolo Valente <paolo.valente@linaro.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        filippo.muzzini@outlook.it, Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX 3/3] block, bfq: remove the removal of 'next' rq in bfq_requests_merged
-Date: Thu, 31 May 2018 15:23:13 +0200
-Message-Id: <20180531132313.2986-4-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180531132313.2986-1-paolo.valente@linaro.org>
-References: <20180531132313.2986-1-paolo.valente@linaro.org>
+        Thu, 31 May 2018 09:25:43 -0400
+X-Google-Smtp-Source: ADUXVKLiPj6QDYM24E9n+nqrQybIJfmdqJXADjiCriV/gAm9lZ9HYyv5xtwR7BkmjKILX/EJ9Si+FQ==
+Date: Thu, 31 May 2018 15:25:38 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Roger Quadros <rogerq@ti.com>, balbi@kernel.org
+Cc: balbi@kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: dwc3: of_simple: don't call
+ pm_runtime_set_active()
+Message-ID: <20180531132538.GH3259@localhost>
+References: <1527518174-27860-1-git-send-email-rogerq@ti.com>
+ <1527518174-27860-2-git-send-email-rogerq@ti.com>
+ <20180528152030.GA3261@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180528152030.GA3261@localhost>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filippo Muzzini <filippo.muzzini@outlook.it>
+Hi Felipe,
 
-Since bfq_finish_request() is always called on the request 'next',
-after bfq_requests_merged() is finished, and bfq_finish_request()
-removes 'next' from its bfq_queue if needed, it isn't necessary to do
-such a removal in advance in bfq_merged_requests().
+On Mon, May 28, 2018 at 05:41:48PM +0200, Johan Hovold wrote:
+> On Mon, May 28, 2018 at 05:36:14PM +0300, Roger Quadros wrote:
+> > Don't call pm_runtime_set_active() as it will prevent the device
+> > from being activated in the next pm_runtime_get_sync() call.
+> > 
+> > Also call pm_runtime_get_sync() before of_platform_populate().
+> 
+> This paragraph describes what you do, but not why do it.
+> 
+> > Signed-off-by: Roger Quadros <rogerq@ti.com>
+> > ---
+> >  drivers/usb/dwc3/dwc3-of-simple.c | 7 +++----
+> >  1 file changed, 3 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+> > index e98d221..2cbb5c0 100644
+> > --- a/drivers/usb/dwc3/dwc3-of-simple.c
+> > +++ b/drivers/usb/dwc3/dwc3-of-simple.c
+> > @@ -121,6 +121,9 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+> >  	if (ret)
+> >  		goto err_resetc_assert;
+> >  
+> > +	pm_runtime_enable(dev);
+> > +	pm_runtime_get_sync(dev);
+> 
+> This breaks runtime pm as you now get a second round of clock enables
+> which are never balanced on runtime suspend (the clocks are first
+> enabled in dwc3_of_simple_clk_init() above and with your change again in
+> dwc3_of_simple_runtime_resume()).
+> 
+> On the other hand, we currently return from probe() with a positive RPM
+> count so perhaps the RPM callbacks can just be removed altogether (i.e.
+> unless some other entity drops that count at some point before
+> remove()).
+> 
+> >  	ret = of_platform_populate(np, NULL, NULL, dev);
+> >  	if (ret) {
+> >  		for (i = 0; i < simple->num_clocks; i++) {
+> > @@ -131,10 +134,6 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+> >  		goto err_resetc_assert;
+> >  	}
+> >  
+> > -	pm_runtime_set_active(dev);
+> > -	pm_runtime_enable(dev);
+> > -	pm_runtime_get_sync(dev);
+> > -
+> >  	return 0;
+> >  
+> >  err_resetc_assert:
+> 
+> Also note that there's currently a use-after-free in remove(), where
+> pm_runtime_put_sync() is called after the clocks have been put.
+> Something like the below (untested) patch should fix it.
 
-This commit removes such a useless 'next' removal.
+What about the use-after-free in remove? Shall I resubmit the fix below
+separately?
 
-Signed-off-by: Filippo Muzzini <filippo.muzzini@outlook.it>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
----
- block/bfq-iosched.c | 7 -------
- 1 file changed, 7 deletions(-)
+Thanks,
+Johan
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index df2a9633cf4a..f71a5846b629 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -1897,8 +1897,6 @@ static void bfq_request_merged(struct request_queue *q, struct request *req,
-  * exploits this hook to address the following issue: if 'next' has a
-  * fifo_time lower that rq, then the fifo_time of rq must be set to
-  * the value of 'next', to not forget the greater age of 'next'.
-- * Moreover 'next' may be in a bfq_queue, in this case it must be
-- * removed.
-  *
-  * NOTE: in this function we assume that rq is in a bfq_queue, basing
-  * on that rq is picked from the hash table q->elevator->hash, which,
-@@ -1932,11 +1930,6 @@ static void bfq_requests_merged(struct request_queue *q, struct request *rq,
- 	if (bfqq->next_rq == next)
- 		bfqq->next_rq = rq;
- 
--	if (!RB_EMPTY_NODE(&next->rb_node)) {
--		bfq_remove_request(q, next);
--		bfqg_stats_update_io_remove(bfqq_group(bfqq), next->cmd_flags);
--	}
--
- 	bfqg_stats_update_io_merged(bfqq_group(bfqq), next->cmd_flags);
- }
- 
--- 
-2.16.1
+> From 35c384c31010c344d403c26fc0a1dde0fd68ef4a Mon Sep 17 00:00:00 2001
+> From: Johan Hovold <johan@kernel.org>
+> Date: Mon, 28 May 2018 17:31:45 +0200
+> Subject: [PATCH] usb: dwc3: of-simple: fix use-after-free on remove
+> 
+> The clocks have already been explicitly disabled and put as part of
+> remove() so the runtime suspend callback must not be run when balancing
+> the runtime PM usage count before returning.
+> 
+> Fixes: 16adc674d0d6 ("usb: dwc3: add generic OF glue layer")
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+>  drivers/usb/dwc3/dwc3-of-simple.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+> index cb2ee96fd3e8..b9c869cd6585 100644
+> --- a/drivers/usb/dwc3/dwc3-of-simple.c
+> +++ b/drivers/usb/dwc3/dwc3-of-simple.c
+> @@ -165,8 +165,9 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
+>  
+>  	reset_control_put(simple->resets);
+>  
+> -	pm_runtime_put_sync(dev);
+> +	pm_runtime_put_noidle(dev);
+>  	pm_runtime_disable(dev);
+> +	pm_runtime_set_suspended(dev);
+>  
+>  	return 0;
+>  }
