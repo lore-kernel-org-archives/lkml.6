@@ -1,59 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754757AbeEaLet (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:34:49 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43713 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754522AbeEaLep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:34:45 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-nvme@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] nvmet: fix error return code in nvmet_file_ns_enable()
-Date: Thu, 31 May 2018 11:41:30 +0000
-Message-ID: <1527766890-72455-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        id S1754740AbeEaLga (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:36:30 -0400
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:39422 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754522AbeEaLgZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:36:25 -0400
+X-Google-Smtp-Source: ADUXVKLVBkjJy1SzpDLBwR6vZ7QLN4kvl2OuuVzpc6kaHH8N0Lt1t8HVUvS6QCMWi67K4klzbwtbIQ==
+Subject: Re: [PATCH -next] nvmet: fix error return code in
+ nvmet_file_ns_enable()
+To: Wei Yongjun <weiyongjun1@huawei.com>, Christoph Hellwig <hch@lst.de>
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <1527766890-72455-1-git-send-email-weiyongjun1@huawei.com>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <2e278301-9e7d-2c0e-d968-e77256ce82c3@grimberg.me>
+Date: Thu, 31 May 2018 14:36:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1527766890-72455-1-git-send-email-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix to return error code -ENOMEM from the memory alloc fail error
-handling case instead of 0, as done elsewhere in this function.
-
-Fixes: d5eff33ee6f8 ("nvmet: add simple file backed ns support")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/nvme/target/io-cmd-file.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
-index ca1ccf8..e9d6ce4 100644
---- a/drivers/nvme/target/io-cmd-file.c
-+++ b/drivers/nvme/target/io-cmd-file.c
-@@ -49,14 +49,18 @@ int nvmet_file_ns_enable(struct nvmet_ns *ns)
- 	ns->bvec_cache = kmem_cache_create("nvmet-bvec",
- 			NVMET_MAX_MPOOL_BVEC * sizeof(struct bio_vec),
- 			0, SLAB_HWCACHE_ALIGN, NULL);
--	if (!ns->bvec_cache)
-+	if (!ns->bvec_cache) {
-+		ret = -ENOMEM;
- 		goto err;
-+	}
- 
- 	ns->bvec_pool = mempool_create(NVMET_MIN_MPOOL_OBJ, mempool_alloc_slab,
- 			mempool_free_slab, ns->bvec_cache);
- 
--	if (!ns->bvec_pool)
-+	if (!ns->bvec_pool) {
-+		ret = -ENOMEM;
- 		goto err;
-+	}
- 
- 	return ret;
- err:
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
