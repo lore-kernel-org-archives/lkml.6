@@ -1,95 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932725AbeEaDKN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 23:10:13 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:44999 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932527AbeEaDKK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 23:10:10 -0400
-X-Google-Smtp-Source: ADUXVKKFZ/nbRAcQj0n6jNOxQOjiJeXcudhwhS8Afrdc2+3/9yDzrGXHv9mkopKUR6BH7mIsGo6e4A==
-Date: Wed, 30 May 2018 22:10:08 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc: Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?iso-8859-1?Q?Cl=E9ment?= Peron <clement.peron@devialet.com>
-Subject: Re: [PATCH v4 3/5] Documentation: DT: add i.MX EPIT timer binding
-Message-ID: <20180531031008.GA30302@rob-hp-laptop>
-References: <20180530120327.27681-1-peron.clem@gmail.com>
- <20180530120327.27681-4-peron.clem@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180530120327.27681-4-peron.clem@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S932690AbeEaDPS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 23:15:18 -0400
+Received: from [180.169.226.26] ([180.169.226.26]:60616 "EHLO mail.iauto.com"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932527AbeEaDPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 May 2018 23:15:15 -0400
+X-DSPAM-Result: Innocent
+X-DSPAM-Processed: Thu May 31 11:15:13 2018
+X-DSPAM-Confidence: 0.8525
+X-DSPAM-Probability: 0.0000
+X-DSPAM-Signature: 1,5b0f68c112001188614662
+X-Spam-Flag: NO
+X-Spam-Score: -2
+Content-Type: text/plain;
+        charset=gb2312
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH] ANDROID: binder: rename parameter to resolve name
+ collision.
+From: kuangrufan@iauto.com
+In-Reply-To: <CAHRSSEySzqTb-m5Rjv23PuUHi2q4OY485JJjFi1AeLiKL1KJQQ@mail.gmail.com>
+Date: Thu, 31 May 2018 11:15:12 +0800
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <67F0DCCC-BBC5-4B7B-9FC4-1BD83D247DAA@iauto.com>
+References: <20180530045814.49504-1-kuangrufan@iauto.com>
+ <CAHRSSEySzqTb-m5Rjv23PuUHi2q4OY485JJjFi1AeLiKL1KJQQ@mail.gmail.com>
+To: Todd Kjos <tkjos@google.com>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 02:03:25PM +0200, Cl閙ent P閞on wrote:
-> From: Cl閙ent Peron <clement.peron@devialet.com>
+> Why is this needed? These don't collide in the namespace:
+Sorry, I check it again, you’re right. my bad.
 
-"dt-bindings: timer: ..." is the preferred subject prefix.
+PS:
+I need to change the binder API between 32bit & 64bit dynamically.
+So I was trying to compile binder as a “.ko”. I compiled the 2
+files into the same kernel module, which causes problem.
 
+Best Regards,
+
+> 在 2018年5月30日，下午11:54，Todd Kjos <tkjos@google.com> 写道：
 > 
-> Add devicetree binding document for NXP's i.MX SoC specific
-> EPIT timer driver.
+> Why is this needed? These don't collide in the namespace:
 > 
-> Signed-off-by: Cl閙ent Peron <clement.peron@devialet.com>
+> /sys/module/binder/parameters/debug_mask
+> 
+> and
+> 
+> /sys/module/binder_alloc/parameters/debug_mask.
+> 
+> On Tue, May 29, 2018 at 9:58 PM <kuangrufan@iauto.com> wrote:
+> From: Kuang Rufan <kuangrufan@iauto.com>
+> 
+> both bind.c & binder_alloc.c define the same kernel parameter 'debug_mask',
+> rename the one in binder_alloc.c to 'alloc_debug_mask'.
+> 
+> Signed-off-by: Kuang Rufan <kuangrufan@iauto.com>
 > ---
->  .../devicetree/bindings/timer/fsl,imxepit.txt | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/fsl,imxepit.txt
+>  drivers/android/binder_alloc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/timer/fsl,imxepit.txt b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
-> new file mode 100644
-> index 000000000000..90112d58af10
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
-> @@ -0,0 +1,24 @@
-> +Binding for the i.MX EPIT timer
-> +
-> +This binding uses the common clock binding[1].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-
-No need to state this. Listing "clocks" tells us that.
-
-> +
-> +Required properties:
-> +- compatible: should be "fsl,imx31-epit"
-
-What about imx6q listed below?
-
-> +- reg: physical base address of the controller and length of memory mapped
-> +  region.
-> +- interrupts: Should contain EPIT controller interrupt
-> +- clocks: list of clock specifiers, must contain an entry for each required
-> +  entry in clock-names
-> +- clock-names : should include entries "ipg", "per"
-> +
-> +Example for i.MX6QDL:
-> +	epit1: epit@20d0000 {
-
-timer@...
-
-> +		compatible = "fsl,imx6q-epit", "fsl,imx31-epit";
-> +		reg = <0x020d0000 0x4000>;
-> +		interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&clks IMX6QDL_CLK_IPG_PER>,
-> +			<&clks IMX6QDL_CLK_EPIT1>;
-> +		clock-names = "ipg", "per";
-> +	};
+> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+> index 5a426c877dfb..3850dab493d4 100644
+> --- a/drivers/android/binder_alloc.c
+> +++ b/drivers/android/binder_alloc.c
+> @@ -42,7 +42,7 @@ enum {
+>  };
+>  static uint32_t binder_alloc_debug_mask;
+> 
+> -module_param_named(debug_mask, binder_alloc_debug_mask,
+> +module_param_named(alloc_debug_mask, binder_alloc_debug_mask,
+>                    uint, 0644);
+> 
+>  #define binder_alloc_debug(mask, x...) \
 > -- 
-> 2.17.0
+> 2.15.1 (Apple Git-101)
 > 
