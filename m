@@ -1,84 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932750AbeEaQua (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:50:30 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:39500 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932714AbeEaQu1 (ORCPT
+        id S932773AbeEaQvW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:51:22 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:39709 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932753AbeEaQvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:50:27 -0400
-X-Google-Smtp-Source: ADUXVKLU22FI19IJRKrLsrYGUV7lGcgyAGnROIdgCWFsbsKvfoJP+QAQcCwF4KQ9iFygUOUAekBZQQ==
-Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
-From: "Alex G." <mr.nuke.me@gmail.com>
-To: Sinan Kaya <okaya@codeaurora.org>, Alex_Gagniuc@Dellteam.com,
-        bhelgaas@google.com
-Cc: Austin.Bolen@dell.com, Shyam.Iyer@dell.com, keith.busch@intel.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
- <28004506-24f0-6d10-2d1e-074e0483d2f9@codeaurora.org>
- <4e0611c872054e768daa96b302651db3@ausx13mps321.AMER.DELL.COM>
- <f260078b-6918-7fd9-39d6-e9f300e4c048@codeaurora.org>
- <3b8a895b-3080-7ddb-cbfd-5aa972e9bf65@gmail.com>
- <35563ce3-e235-096c-4b9b-5f3664d67d0f@codeaurora.org>
- <093b2789-39a1-db9e-5783-b0488b3c9ccd@gmail.com>
- <32d58835-2f35-0b80-38d0-b9ff603619dd@codeaurora.org>
- <54071f83-5d0d-04a0-d448-0c99ec0ffc4f@gmail.com>
-Message-ID: <dbe16533-1878-13ed-709a-04b3a75fe477@gmail.com>
-Date: Thu, 31 May 2018 11:50:25 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <54071f83-5d0d-04a0-d448-0c99ec0ffc4f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 31 May 2018 12:51:20 -0400
+X-Google-Smtp-Source: ADUXVKJUUED91HHLKaBoqEod3MIXOSuH39JgNpLtgy0f0YDYAiWsQUP+gxsZICnOPieFXJsfCH75vA==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2] arm64: allwinner: a64-amarula-relic: Enable AP6330 WiFi support
+Date: Thu, 31 May 2018 22:21:09 +0530
+Message-Id: <20180531165109.8476-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Enable AP6330 WiFi/BT combo chip on Amarula A64-Relic board:
+- WiFi SDIO interface is connected to MMC1
+- WiFi WL-PMU-EN pin connected to gpio PL2: attach to mmc-pwrseq
+- WiFi WL-WAKE-AP pin connected to gpio PL3
+- 32kHz external oscillator gate clock from RTC
 
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v2:
+- Move external rtc clock nodes into main rtc node definition
+  of sun50i-a64.dtsi
 
-On 05/31/2018 11:49 AM, Alex G. wrote:
-> 
-> 
-> On 05/31/2018 11:13 AM, Sinan Kaya wrote:
->> On 5/31/2018 12:01 PM, Alex G. wrote:
->>>>       PCI: Add pcie_print_link_status() to log link speed and whether it's limited
->>> This one, I have, but it's not what I need. This looks at the available
->>> bandwidth from root port to endpoint, whereas I'm only interested in
->>> downtraining between endpoint and upstream port.
->>
->> I see what you are saying. 
->>
->> With a little bit of effort, you can reuse the same code.
->>
->> Here is an attempt.
->>
->> You can probably extend pcie_bandwidth_available() to put an optional parent bridge
->> device for your own use case and terminate the loop around here.
->>
->> https://elixir.bootlin.com/linux/v4.17-rc7/source/drivers/pci/pci.c#L5182
->>
->> Then, you can use the existing code to achieve what you are looking for via
->> pcie_print_link_status() by adding an optional parent parameter.
->>
->> 	bw_cap = pcie_bandwidth_capable(dev, &speed_cap, &width_cap);
->> 	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width, *parent*);
-> 
-> That's confusing.
+ .../dts/allwinner/sun50i-a64-amarula-relic.dts     | 31 ++++++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |  3 +++
+ 2 files changed, 34 insertions(+)
 
-"confusing" refers to the way the code currently works. It doesn't refer
-to your proposal.
-
-
-Alex
-
- I'd expect _capable() and _available() to be
-> symmetrical. They either both look at one link only, or both go down to
-> the root port. Though it seems _capable() is link-local, and
-> _available() is down to root port.
-> 
->>
->> If parent parameter is NULL, code can walk all the way to root as it is doing today.
->> If it is not, then will terminate the loop on the first iteration.
->>
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+index ce4a256ff086..eac4793c8502 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+@@ -21,12 +21,43 @@
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++	wifi_pwrseq: wifi-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		clocks = <&rtc 1>;
++		clock-names = "ext_clock";
++		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* WL-PMU-EN: PL2 */
++	};
+ };
+ 
+ &ehci0 {
+ 	status = "okay";
+ };
+ 
++&mmc1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc1_pins>;
++	vmmc-supply = <&reg_dcdc1>;
++	/*
++	 * Schematic shows both dldo4 and eldo1 connected for vcc-io-wifi, but
++	 * dldo4 connection shows DNP(Do Not Populate) and eldo1 connected with
++	 * 0Ohm register to vcc-io-wifi so eldo1 is used.
++	 */
++	vqmmc-supply = <&reg_eldo1>;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	bus-width = <4>;
++	non-removable;
++	status = "okay";
++
++	brcmf: wifi@1 {
++		reg = <1>;
++		compatible = "brcm,bcm4329-fmac";
++		interrupt-parent = <&r_pio>;
++		interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>;	/* WL-WAKE-AP: PL3 */
++		interrupt-names = "host-wake";
++	};
++};
++
+ &mmc2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc2_pins>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 1b2ef28c42bd..82516aec4153 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -634,6 +634,9 @@
+ 			reg = <0x01f00000 0x54>;
+ 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++			clock-output-names = "rtc-osc32k", "rtc-osc32k-out";
++			clocks = <&osc32k>;
++			#clock-cells = <1>;
+ 		};
+ 
+ 		r_intc: interrupt-controller@1f00c00 {
+-- 
+2.14.3
