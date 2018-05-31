@@ -1,118 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754230AbeEaJKB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:10:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:38326 "EHLO foss.arm.com"
+        id S1754261AbeEaJK2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:10:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60601 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754026AbeEaJJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:09:57 -0400
-Subject: Re: [PATCH v4 04/22] iommu/vt-d: add bind_pasid_table function
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>, Yi L <yi.l.liu@linux.intel.com>,
-        Auger Eric <eric.auger@redhat.com>
-References: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1523915351-54415-5-git-send-email-jacob.jun.pan@linux.intel.com>
- <20180417131047.0a9c310f@w520.home>
- <AM4PR0802MB2369F739C91B630CA99B3D3BA3B40@AM4PR0802MB2369.eurprd08.prod.outlook.com>
- <20180420164251.5245f822@jacob-builder> <20180529140915.1f174689@w520.home>
- <AADFC41AFE54684AB9EE6CBC0274A5D1911E59C4@SHSMSX101.ccr.corp.intel.com>
- <20180529211746.74f1dd23@w520.home>
- <AADFC41AFE54684AB9EE6CBC0274A5D1911E5F06@SHSMSX101.ccr.corp.intel.com>
- <a07a0a0a-ebdd-c81a-7ed6-cff19e6078d7@arm.com>
- <20180530125240.34e0e80c@jacob-builder>
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <1c1094e8-ecbb-7731-910c-59e4de1e5c70@arm.com>
-Date: Thu, 31 May 2018 10:09:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754093AbeEaJKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 05:10:25 -0400
+Date: Thu, 31 May 2018 11:10:22 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: David Miller <davem@davemloft.net>, qing.huang@oracle.com,
+        tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
+Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+Message-ID: <20180531091022.GL15278@dhcp22.suse.cz>
+References: <20180523232246.20445-1-qing.huang@oracle.com>
+ <20180525.102321.858995452200286788.davem@davemloft.net>
+ <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
+ <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
+ <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
+ <20180531065405.GH15278@dhcp22.suse.cz>
+ <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
+ <20180531085532.GK15278@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180530125240.34e0e80c@jacob-builder>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531085532.GK15278@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/05/18 20:52, Jacob Pan wrote:
->> However I think the model number should be added to
->> pasid_table_config. For one thing it gives us a simple sanity-check,
->> but it also tells which other fields are valid in pasid_table_config.
->> Arm-smmu-v3 needs at least two additional 8-bit fields describing the
->> PASID table format (number of levels and PASID0 behaviour), which are
->> written to device context tables when installing the PASID table
->> pointer.
->>
-> We had model number field in v2 of this patchset. My thought was that
-> since the config info is meant to be generic, we shouldn't include
-> model info. But I also think a simple sanity check can be useful,
-> would that be sufficient to address Alex's concern? Of course we still
-> need sysfs for more specific IOMMU features.
+On Thu 31-05-18 10:55:32, Michal Hocko wrote:
+> On Thu 31-05-18 04:35:31, Eric Dumazet wrote:
+[...]
+> > I merely copied/pasted from alloc_skb_with_frags() :/
 > 
-> Would this work?
-> enum pasid_table_model {
-> 	PASID_TABLE_FORMAT_HOST,
-> 	PASID_TABLE_FORMAT_ARM_1LVL,
-> 	PASID_TABLE_FORMAT_ARM_2LVL,
+> I will have a look at it. Thanks!
 
-I'd rather use a single PASID_TABLE_FORMAT_ARM, because "2LVL" may be
-further split into 2LVL_4k or 2LVL_64k leaf tables... I think it's best
-if I add an arch-specific field in pasid_table_config for that, and for
-the PASID0 configuration, when adding FORMAT_ARM in a future patch
+OK, so this is an example of an incremental development ;).
 
-> 	PASID_TABLE_FORMAT_AMD,
-> 	PASID_TABLE_FORMAT_INTEL,
-> };
-> 
-> /**
->  * PASID table data used to bind guest PASID table to the host IOMMU. This will
->  * enable guest managed first level page tables.
->  * @version: for future extensions and identification of the data format
->  * @bytes: size of this structure
->  * @model: PASID table format for different IOMMU models
->  * @base_ptr:	PASID table pointer
->  * @pasid_bits:	number of bits supported in the guest PASID table, must be less
->  *		or equal than the host supported PASID size.
->  */
-> struct pasid_table_config {
-> 	__u32 version;
-> #define PASID_TABLE_CFG_VERSION_1 1
-> 	__u32 bytes;
+__GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
+high order allocations") to prevent from OOM killer. Yet this was
+not enough because fb05e7a89f50 ("net: don't wait for order-3 page
+allocation") didn't want an excessive reclaim for non-costly orders
+so it made it completely NOWAIT while it preserved __GFP_NORETRY in
+place which is now redundant. Should I send a patch?
 
-"bytes" could be passed by VFIO as argument to bind_pasid_table, since
-it can deduce it from argsz
-
-Thanks,
-Jean
-
-> 	enum pasid_table_model model;
-> 	__u64 base_ptr;
-> 	__u8 pasid_bits;
-> };
-> 
-> 
-> 
->> Compatibility: new optional features are easy to add to a given model,
->> just add a new sysfs file. If in the future, the host describes a new
->> feature that is mandatory, or implements a different PASID table
->> format, how does it ensure that user understands it? Perhaps use a
->> new model number for this, e.g. "arm-smmu-v3-a=3", with similar
->> features. I think it would be the same if the host stops supporting a
->> feature for a given model, because they are ABI. But we can also
->> define default values from the start, for example "if ssid_bits file
->> isn't present, default value is 0 - PASID not supported"
->>
->> Thanks,
->> Jean
-> 
-> [Jacob Pan]
-> 
+-- 
+Michal Hocko
+SUSE Labs
