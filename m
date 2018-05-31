@@ -1,77 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754599AbeEaKgJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:36:09 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:40472 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754522AbeEaKfk (ORCPT
+        id S1754491AbeEaKgl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:36:41 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:36757 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754522AbeEaKge (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:35:40 -0400
-X-Google-Smtp-Source: ADUXVKI3kIIHSBezwhebusjnFB8D6CK74AZp1cORsly2vdP0XAwgXg4oeAZ2CNNf3sfJUY90r3esPQ==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: dmitry.torokhov@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, baolin.wang@linaro.org,
-        xiaotong.lu@spreadtrum.com
-Subject: [RESEND PATCH v4 1/2] dt-bindings: input: Add Add Spreadtrum SC27xx vibrator documentation
-Date: Thu, 31 May 2018 18:34:40 +0800
-Message-Id: <c315312e53fe50ab8da95bc00037a8f8b92f8d78.1527762429.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        Thu, 31 May 2018 06:36:34 -0400
+X-Google-Smtp-Source: ADUXVKJ0Dh8CkmJG7TRBltQxiSq9HgiLwcKKH12D7kzmomorL133JUn1WUMWBhCAu8KM7YCl1gqyjgcQRb7VzRt49hY=
+MIME-Version: 1.0
+In-Reply-To: <20180522213016.5496-1-jprvita@endlessm.com>
+References: <20180522213016.5496-1-jprvita@endlessm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 31 May 2018 13:36:33 +0300
+Message-ID: <CAHp75VcRitTO3rdy2m_uULvR9x5XWyShANJATnY4MXD+=JH3jg@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: asus-wmi: Fix NULL pointer dereference
+To: =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Cc: Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Linux Upstreaming Team <linux@endlessm.com>, red.f0xyz@gmail.com,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VAakUY001008
 
-From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+On Wed, May 23, 2018 at 12:30 AM, João Paulo Rechi Vita
+<jprvita@gmail.com> wrote:
+> Do not perform the rfkill cleanup routine when
+> (asus->driver->wlan_ctrl_by_user && ashs_present()) is true, since
+> nothing is registered with the rfkill subsystem in that case. Doing so
+> leads to the following kernel NULL pointer dereference:
+>
+>   BUG: unable to handle kernel NULL pointer dereference at           (null)
+>   IP: [<ffffffff816c7348>] __mutex_lock_slowpath+0x98/0x120
+>   PGD 1a3aa8067
+>   PUD 1a3b3d067
+>   PMD 0
+>
+>   Oops: 0002 [#1] PREEMPT SMP
+>   Modules linked in: bnep ccm binfmt_misc uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_core hid_a4tech videodev x86_pkg_temp_thermal intel_powerclamp coretemp ath3k btusb btrtl btintel bluetooth kvm_intel snd_hda_codec_hdmi kvm snd_hda_codec_realtek snd_hda_codec_generic irqbypass crc32c_intel arc4 i915 snd_hda_intel snd_hda_codec ath9k ath9k_common ath9k_hw ath i2c_algo_bit snd_hwdep mac80211 ghash_clmulni_intel snd_hda_core snd_pcm snd_timer cfg80211 ehci_pci xhci_pci drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm xhci_hcd ehci_hcd asus_nb_wmi(-) asus_wmi sparse_keymap r8169 rfkill mxm_wmi serio_raw snd mii mei_me lpc_ich i2c_i801 video soundcore mei i2c_smbus wmi i2c_core mfd_core
+>   CPU: 3 PID: 3275 Comm: modprobe Not tainted 4.9.34-gentoo #34
+>   Hardware name: ASUSTeK COMPUTER INC. K56CM/K56CM, BIOS K56CM.206 08/21/2012
+>   task: ffff8801a639ba00 task.stack: ffffc900014cc000
+>   RIP: 0010:[<ffffffff816c7348>]  [<ffffffff816c7348>] __mutex_lock_slowpath+0x98/0x120
+>   RSP: 0018:ffffc900014cfce0  EFLAGS: 00010282
+>   RAX: 0000000000000000 RBX: ffff8801a54315b0 RCX: 00000000c0000100
+>   RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff8801a54315b4
+>   RBP: ffffc900014cfd30 R08: 0000000000000000 R09: 0000000000000002
+>   R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801a54315b4
+>   R13: ffff8801a639ba00 R14: 00000000ffffffff R15: ffff8801a54315b8
+>   FS:  00007faa254fb700(0000) GS:ffff8801aef80000(0000) knlGS:0000000000000000
+>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>   CR2: 0000000000000000 CR3: 00000001a3b1b000 CR4: 00000000001406e0
+>   Stack:
+>    ffff8801a54315b8 0000000000000000 ffffffff814733ae ffffc900014cfd28
+>    ffffffff8146a28c ffff8801a54315b0 0000000000000000 ffff8801a54315b0
+>    ffff8801a66f3820 0000000000000000 ffffc900014cfd48 ffffffff816c73e7
+>   Call Trace:
+>    [<ffffffff814733ae>] ? acpi_ut_release_mutex+0x5d/0x61
+>    [<ffffffff8146a28c>] ? acpi_ns_get_node+0x49/0x52
+>    [<ffffffff816c73e7>] mutex_lock+0x17/0x30
+>    [<ffffffffa00a3bb4>] asus_rfkill_hotplug+0x24/0x1a0 [asus_wmi]
+>    [<ffffffffa00a4421>] asus_wmi_rfkill_exit+0x61/0x150 [asus_wmi]
+>    [<ffffffffa00a49f1>] asus_wmi_remove+0x61/0xb0 [asus_wmi]
+>    [<ffffffff814a5128>] platform_drv_remove+0x28/0x40
+>    [<ffffffff814a2901>] __device_release_driver+0xa1/0x160
+>    [<ffffffff814a29e3>] device_release_driver+0x23/0x30
+>    [<ffffffff814a1ffd>] bus_remove_device+0xfd/0x170
+>    [<ffffffff8149e5a9>] device_del+0x139/0x270
+>    [<ffffffff814a5028>] platform_device_del+0x28/0x90
+>    [<ffffffff814a50a2>] platform_device_unregister+0x12/0x30
+>    [<ffffffffa00a4209>] asus_wmi_unregister_driver+0x19/0x30 [asus_wmi]
+>    [<ffffffffa00da0ea>] asus_nb_wmi_exit+0x10/0xf26 [asus_nb_wmi]
+>    [<ffffffff8110c692>] SyS_delete_module+0x192/0x270
+>    [<ffffffff810022b2>] ? exit_to_usermode_loop+0x92/0xa0
+>    [<ffffffff816ca560>] entry_SYSCALL_64_fastpath+0x13/0x94
+>   Code: e8 5e 30 00 00 8b 03 83 f8 01 0f 84 93 00 00 00 48 8b 43 10 4c 8d 7b 08 48 89 63 10 41 be ff ff ff ff 4c 89 3c 24 48 89 44 24 08 <48> 89 20 4c 89 6c 24 10 eb 1d 4c 89 e7 49 c7 45 08 02 00 00 00
+>   RIP  [<ffffffff816c7348>] __mutex_lock_slowpath+0x98/0x120
+>    RSP <ffffc900014cfce0>
+>   CR2: 0000000000000000
+>   ---[ end trace 8d484233fa7cb512 ]---
+>   note: modprobe[3275] exited with preempt_count 2
+>
+> https://bugzilla.kernel.org/show_bug.cgi?id=196467
+>
 
-This patch adds the binding documentation for Spreadtrum SC27xx series
-vibrator device.
+Pushed to my review and testing queue with asap promotion to fixes, thanks!
 
-Signed-off-by: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes since v3:
- - Change compatible string to explicit Soc name.
- - Add parent MFD node.
+> Reported-by: red.f0xyz@gmail.com
+> Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+> ---
+>  drivers/platform/x86/asus-wmi.c | 23 +++++++++++++----------
+>  1 file changed, 13 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index ef87e78ca772..3d523ca64694 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -163,6 +163,16 @@ MODULE_LICENSE("GPL");
+>
+>  static const char * const ashs_ids[] = { "ATK4001", "ATK4002", NULL };
+>
+> +static bool ashs_present(void)
+> +{
+> +       int i = 0;
+> +       while (ashs_ids[i]) {
+> +               if (acpi_dev_found(ashs_ids[i++]))
+> +                       return true;
+> +       }
+> +       return false;
+> +}
+> +
+>  struct bios_args {
+>         u32 arg0;
+>         u32 arg1;
+> @@ -1025,6 +1035,9 @@ static int asus_new_rfkill(struct asus_wmi *asus,
+>
+>  static void asus_wmi_rfkill_exit(struct asus_wmi *asus)
+>  {
+> +       if (asus->driver->wlan_ctrl_by_user && ashs_present())
+> +               return;
+> +
+>         asus_unregister_rfkill_notifier(asus, "\\_SB.PCI0.P0P5");
+>         asus_unregister_rfkill_notifier(asus, "\\_SB.PCI0.P0P6");
+>         asus_unregister_rfkill_notifier(asus, "\\_SB.PCI0.P0P7");
+> @@ -2120,16 +2133,6 @@ static int asus_wmi_fan_init(struct asus_wmi *asus)
+>         return 0;
+>  }
+>
+> -static bool ashs_present(void)
+> -{
+> -       int i = 0;
+> -       while (ashs_ids[i]) {
+> -               if (acpi_dev_found(ashs_ids[i++]))
+> -                       return true;
+> -       }
+> -       return false;
+> -}
+> -
+>  /*
+>   * WMI Driver
+>   */
+> --
+> 2.17.0
+>
 
-Changes since v2:
- - No updates.
 
-Changes since v1:
-  - No updates.
----
- .../bindings/input/sprd,sc27xx-vibra.txt           |   23 ++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/sprd,sc27xx-vibra.txt
 
-diff --git a/Documentation/devicetree/bindings/input/sprd,sc27xx-vibra.txt b/Documentation/devicetree/bindings/input/sprd,sc27xx-vibra.txt
-new file mode 100644
-index 0000000..f2ec0d4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/sprd,sc27xx-vibra.txt
-@@ -0,0 +1,23 @@
-+Spreadtrum SC27xx PMIC Vibrator
-+
-+Required properties:
-+- compatible: should be "sprd,sc2731-vibrator".
-+- reg: address of vibrator control register.
-+
-+Example :
-+
-+	sc2731_pmic: pmic@0 {
-+		compatible = "sprd,sc2731";
-+		reg = <0>;
-+		spi-max-frequency = <26000000>;
-+		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vibrator@eb4 {
-+			compatible = "sprd,sc2731-vibrator";
-+			reg = <0xeb4>;
-+		};
-+	};
 -- 
-1.7.9.5
+With Best Regards,
+Andy Shevchenko
