@@ -1,116 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751390AbeEaVKd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 17:10:33 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:40706 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751135AbeEaVK1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 17:10:27 -0400
-X-Google-Smtp-Source: ADUXVKLymDfo1IAXKK+cE56wvkPYONGiA6y0+j83BNLOlPWQGXy7lvI1JpKv+kTwOa9aB4aAVY6oJg==
-Date: Thu, 31 May 2018 14:10:25 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Rob Herring <robh@kernel.org>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 10/11] dt-bindings: misc: add bindings for throttler
-Message-ID: <20180531211025.GC88063@google.com>
-References: <20180525203043.249193-1-mka@chromium.org>
- <20180525203043.249193-11-mka@chromium.org>
- <20180531163159.GA4369@rob-hp-laptop>
- <20180531183404.GB88063@google.com>
- <CAL_JsqK_nFtuxhNbAn3yYueLKAxvwfnY=5M6zFdGrwwwPVrP5g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqK_nFtuxhNbAn3yYueLKAxvwfnY=5M6zFdGrwwwPVrP5g@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751209AbeEaVKE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 17:10:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34460 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750756AbeEaVKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 17:10:02 -0400
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 2/5] rtc: test: allow registering many devices
+Date: Thu, 31 May 2018 23:09:56 +0200
+Message-Id: <20180531210959.2472-2-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180531210959.2472-1-alexandre.belloni@bootlin.com>
+References: <20180531210959.2472-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 03:04:18PM -0500, Rob Herring wrote:
-> On Thu, May 31, 2018 at 1:34 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> > Hi Rob,
-> >
-> > On Thu, May 31, 2018 at 11:31:59AM -0500, Rob Herring wrote:
-> >> On Fri, May 25, 2018 at 01:30:42PM -0700, Matthias Kaehlcke wrote:
-> >>
-> >> Commit msg?
-> >
-> > Will add some more info in the next revision.
-> >
-> >> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> >> > ---
-> >> >  .../devicetree/bindings/misc/throttler.txt    | 41 +++++++++++++++++++
-> >> >  1 file changed, 41 insertions(+)
-> >> >  create mode 100644 Documentation/devicetree/bindings/misc/throttler.txt
-> >> >
-> >> > diff --git a/Documentation/devicetree/bindings/misc/throttler.txt b/Documentation/devicetree/bindings/misc/throttler.txt
-> >> > new file mode 100644
-> >> > index 000000000000..92f13e94451a
-> >> > --- /dev/null
-> >> > +++ b/Documentation/devicetree/bindings/misc/throttler.txt
-> >> > @@ -0,0 +1,41 @@
-> >> > +Throttler driver
-> >> > +
-> >> > +The Throttler is used for non-thermal throttling of system components like
-> >> > +CPUs or devfreq devices.
-> >>
-> >> This all looks very Linux specific and not a h/w device. Perhaps you can
-> >> add hint properties to OPP tables as to what entries can be used for
-> >> throttling, but otherwise this doesn't belong in DT.
-> >
-> > My idea is to allow multiple throttlers, which might operate on
-> > different throttling devices or use different OPPs for the same
-> > device. To support this a simple boolean hint that the OPP can be used
-> > for throttling would not be sufficient.
-> >
-> > What should work is a property with an array of phandles of the
-> > throttlers that use a given OPP.
-> >
-> > AFAIK it is currently not possible to enumerate the devfreq devices in
-> > the system, so besides the info in the OPPs the throttler itself would
-> > still need a phandle to the devfreq device(s) it uses.
-> 
-> Why don't you fix that OS problem instead of working around it in DT?
+Use a loop to register RTC devices
 
-I can try, though it's not exclusively in my hands, depends on what
-the devfreq maintainers think about it.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-test.c | 48 +++++++++++++++++++++---------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-> > I envision something like this:
-> >
-> > gpu_opp_table: opp-table2 {
-> >   compatible = "operating-points-v2";
-> >
-> >   opp00 {
-> >     opp-hz = /bits/ 64 <200000000>;
-> >     opp-microvolt = <800000>;
-> >   };
-> >   opp01 {
-> >     opp-hz = /bits/ 64 <297000000>;
-> >     opp-microvolt = <800000>;
-> >     opp-throttlers = <&cros_ec_throttler>;
-> >   };
-> >   ...
-> > };
-> >
-> > cros_ec_throttler: cros-ec-throttler {
-> >   compatible = "google,cros-ec-throttler";
-> 
-> Is this an actual h/w device?
-
-The Chrome OS Embedded Controller is a MCU that communicates with
-Linux over SPI or I2C. The low-level communication with the EC is
-handled by drivers/mfd/cros_ec* and then there are multiple drivers
-representing 'remote devices' on top of this (rtc-cros-ec.c,
-extcon-usbc-cros-ec.c, pwm-cros-ec.c, ...). cros_ec_throttler is a
-similar 'device' that responds to signals from the EC with frequency
-adjustments.
+diff --git a/drivers/rtc/rtc-test.c b/drivers/rtc/rtc-test.c
+index f0eb8e0c5055..796c45dee661 100644
+--- a/drivers/rtc/rtc-test.c
++++ b/drivers/rtc/rtc-test.c
+@@ -13,7 +13,9 @@
+ #include <linux/rtc.h>
+ #include <linux/platform_device.h>
+ 
+-static struct platform_device *test0 = NULL, *test1 = NULL;
++#define MAX_RTC_TEST 3
++
++struct platform_device *pdev[MAX_RTC_TEST];
+ 
+ static int test_rtc_read_alarm(struct device *dev,
+ 	struct rtc_wkalrm *alrm)
+@@ -122,47 +124,45 @@ static struct platform_driver test_driver = {
+ 
+ static int __init test_init(void)
+ {
+-	int err;
++	int i, err;
+ 
+ 	if ((err = platform_driver_register(&test_driver)))
+ 		return err;
+ 
+-	if ((test0 = platform_device_alloc("rtc-test", 0)) == NULL) {
+-		err = -ENOMEM;
+-		goto exit_driver_unregister;
++	err = -ENOMEM;
++	for (i = 0; i < MAX_RTC_TEST; i++) {
++		pdev[i] = platform_device_alloc("rtc-test", i);
++		if (!pdev[i])
++			goto exit_free_mem;
+ 	}
+ 
+-	if ((test1 = platform_device_alloc("rtc-test", 1)) == NULL) {
+-		err = -ENOMEM;
+-		goto exit_put_test0;
++	for (i = 0; i < MAX_RTC_TEST; i++) {
++		err = platform_device_add(pdev[i]);
++		if (err)
++			goto exit_device_del;
+ 	}
+ 
+-	if ((err = platform_device_add(test0)))
+-		goto exit_put_test1;
+-
+-	if ((err = platform_device_add(test1)))
+-		goto exit_del_test0;
+-
+ 	return 0;
+ 
+-exit_del_test0:
+-	platform_device_del(test0);
++exit_device_del:
++	for (; i > 0; i--)
++		platform_device_del(pdev[i - 1]);
+ 
+-exit_put_test1:
+-	platform_device_put(test1);
++exit_free_mem:
++	for (i = 0; i < MAX_RTC_TEST; i++)
++		platform_device_put(pdev[i]);
+ 
+-exit_put_test0:
+-	platform_device_put(test0);
+-
+-exit_driver_unregister:
+ 	platform_driver_unregister(&test_driver);
+ 	return err;
+ }
+ 
+ static void __exit test_exit(void)
+ {
+-	platform_device_unregister(test0);
+-	platform_device_unregister(test1);
++	int i;
++
++	for (i = 0; i < MAX_RTC_TEST; i++)
++		platform_device_unregister(pdev[i]);
++
+ 	platform_driver_unregister(&test_driver);
+ }
+ 
+-- 
+2.17.0
