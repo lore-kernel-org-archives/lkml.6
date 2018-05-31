@@ -1,98 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754151AbeEaIQX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:16:23 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:42817 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754025AbeEaIQD (ORCPT
+        id S1754067AbeEaISA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:18:00 -0400
+Received: from mail-wr0-f178.google.com ([209.85.128.178]:33438 "EHLO
+        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753957AbeEaIR4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:16:03 -0400
-X-Google-Smtp-Source: ADUXVKJMxDnRSubXaGSdi+xjZdA1MCPWJflbUBIJ62Rk3C59Y1qVY2x7g1PQcqmcDj7hwdEhxru217i5v6pQY+/h0mQzQj0GanAV
+        Thu, 31 May 2018 04:17:56 -0400
+X-Google-Smtp-Source: ADUXVKIhXiE4f3W6PH5BHfokGvGk+Ai0quDZPHQtov1meHDGQA1BxwO47YxuWNi8KfJ6+sizKhkcYw==
+Subject: Re: [PATCH 1/3] nvme: provide a way to disable nvme mpath per
+ subsystem
+To: Johannes Thumshirn <jthumshirn@suse.de>,
+        Christoph Hellwig <hch@lst.de>, Keith Busch <keith.busch@intel.com>
+Cc: Hannes Reinecke <hare@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
+        James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>
+References: <20180525125322.15398-1-jthumshirn@suse.de>
+ <20180525125322.15398-2-jthumshirn@suse.de>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <795f42a6-a6c3-e42d-3215-71b36fb7a0d4@grimberg.me>
+Date: Thu, 31 May 2018 11:17:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Thu, 31 May 2018 01:16:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000482ce056d7c1436@google.com>
-Subject: general protection fault in requeue_rx_msgs
-From: syzbot <syzbot+554266c04a41d1f9754d@syzkaller.appspotmail.com>
-To: davem@davemloft.net, ebiggers@google.com, edumazet@google.com,
-        ktkhai@virtuozzo.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tom@quantonium.net, viro@ZenIV.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180525125322.15398-2-jthumshirn@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+> @@ -246,3 +246,27 @@ void nvme_mpath_remove_disk(struct nvme_ns_head *head)
+>   	blk_cleanup_queue(head->disk->queue);
+>   	put_disk(head->disk);
+>   }
+> +
+> +int nvme_mpath_change_personality(struct nvme_subsystem *subsys)
+> +{
+> +	struct nvme_ctrl *ctrl;
+> +	int ret = 0;
+> +
+> +restart:
+> +	mutex_lock(&subsys->lock);
+> +	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
+> +		if (!list_empty(&ctrl->namespaces)) {
+> +			mutex_unlock(&subsys->lock);
+> +			nvme_remove_namespaces(ctrl);
 
-HEAD commit:    0044cdeb7313 Merge branch 'for-linus' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15aeff0f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=968b0b23c7854c0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=554266c04a41d1f9754d
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=131a208f800000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+554266c04a41d1f9754d@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 4788 Comm: kworker/u4:3 Not tainted 4.17.0-rc7+ #74
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: kstrp strp_work
-RIP: 0010:__skb_unlink include/linux/skbuff.h:1844 [inline]
-RIP: 0010:__skb_dequeue include/linux/skbuff.h:1861 [inline]
-RIP: 0010:requeue_rx_msgs+0x14d/0x620 net/kcm/kcmsock.c:226
-RSP: 0018:ffff8801aa97f0b8 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffffffff86d54ed3
-RDX: 0000000000000001 RSI: ffffffff86d531e2 RDI: 0000000000000008
-RBP: ffff8801aa97f1b8 R08: ffff8801aaa8e3c0 R09: ffffed0035f0a0e8
-R10: ffffed0035f0a0e8 R11: ffff8801af850743 R12: ffff8801d4407000
-R13: ffffed003552fe22 R14: 0000000000000000 R15: ffff8801a6bb06c0
-FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fba7c5099a0 CR3: 00000001af6f6000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  unreserve_rx_kcm+0x471/0x520 net/kcm/kcmsock.c:334
-  kcm_rcv_strparser+0x109/0x8d0 net/kcm/kcmsock.c:375
-  __strp_recv+0x34b/0x2130 net/strparser/strparser.c:328
-  strp_recv+0xcf/0x110 net/strparser/strparser.c:362
-  tcp_read_sock+0x2aa/0x810 net/ipv4/tcp.c:1652
-  strp_read_sock+0x1a1/0x2d0 net/strparser/strparser.c:385
-  do_strp_work net/strparser/strparser.c:440 [inline]
-  strp_work+0xcd/0x120 net/strparser/strparser.c:449
-  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
-  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
-  kthread+0x345/0x410 kernel/kthread.c:240
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-Code: 80 3c 1a 00 0f 85 70 04 00 00 48 8d 78 08 4d 8b 74 24 08 49 c7 04 24  
-00 00 00 00 49 c7 44 24 08 00 00 00 00 48 89 fa 48 c1 ea 03 <80> 3c 1a 00  
-0f 85 a7 04 00 00 4c 89 f2 4c 89 70 08 48 c1 ea 03
-RIP: __skb_unlink include/linux/skbuff.h:1844 [inline] RSP: ffff8801aa97f0b8
-RIP: __skb_dequeue include/linux/skbuff.h:1861 [inline] RSP:  
-ffff8801aa97f0b8
-RIP: requeue_rx_msgs+0x14d/0x620 net/kcm/kcmsock.c:226 RSP: ffff8801aa97f0b8
----[ end trace e4c0e45094907eaa ]---
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+This looks completely broken. Any of these namespaces can have an
+active handle on it.
