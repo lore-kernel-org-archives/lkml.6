@@ -1,80 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754932AbeEaLv3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:51:29 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:34379 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754882AbeEaLvX (ORCPT
+        id S1754780AbeEaLx6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:53:58 -0400
+Received: from smtps.newmedia-net.de ([185.84.6.167]:43192 "EHLO
+        webmail.newmedia-net.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754674AbeEaLx4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:51:23 -0400
-X-Google-Smtp-Source: ADUXVKLHiAmnTHHPhvLUvx6HjwZe9ouyjcIPEsKtsopLAlwOBTwYMqxvanq7e/XaRVDN5M5MxX65zdEsqivB4OjueQE=
+        Thu, 31 May 2018 07:53:56 -0400
+Subject: Re: [PATCH 4.16 269/272] pinctrl: msm: Use dynamic GPIO numbering
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Timur Tabi <timur@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+References: <20180528100240.256525891@linuxfoundation.org>
+ <20180528100302.722883806@linuxfoundation.org>
+ <7c34ccef-2fa8-8b53-2677-29f6fbe71a04@dd-wrt.com>
+ <20180531114553.GB11598@kroah.com>
+From: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Message-ID: <d2ed4f7c-f97c-ba51-6f33-d329da69dbc6@dd-wrt.com>
+Date: Thu, 31 May 2018 13:53:52 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Originating-IP: [31.168.164.210]
-In-Reply-To: <20180529161248.fphjnceozoyxqy7v@verge.net.au>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
- <1527171551-21979-2-git-send-email-gilad@benyossef.com> <20180529161248.fphjnceozoyxqy7v@verge.net.au>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 31 May 2018 14:51:22 +0300
-Message-ID: <CAOtvUMfoyuaGac29WUYqvfRr1S7Fof3FgMZo_3K7EaozqbeT6Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] crypto: ccree: correct host regs offset
-To: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>, stable@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180531114553.GB11598@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 7:12 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Thu, May 24, 2018 at 03:19:06PM +0100, Gilad Ben-Yossef wrote:
->> The product signature and HW revision register have different offset on the
->> older HW revisions.
->> This fixes the problem of the driver failing sanity check on silicon
->> despite working on the FPGA emulation systems.
+
+
+Am 31.05.2018 um 13:45 schrieb Greg Kroah-Hartman:
+> On Thu, May 31, 2018 at 01:21:56PM +0200, Sebastian Gottschall wrote:
+>> Am 28.05.2018 um 12:05 schrieb Greg Kroah-Hartman:
+>>> 4.16-stable review patch.  If anyone has any objections, please let me know.
+>>>
+>>> ------------------
+>>>
+>>> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>>
+>>> [ Upstream commit a7aa75a2a7dba32594291a71c3704000a2fd7089 ]
+>>>
+>>> The base of the TLMM gpiochip should not be statically defined as 0, fix
+>>> this to not artificially restrict the existence of multiple pinctrl-msm
+>>> devices.
+>>>
+>>> Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
+>>> Reported-by: Timur Tabi <timur@codeaurora.org>
+>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>>> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> ---
+>>>    drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+>>> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+>>> @@ -818,7 +818,7 @@ static int msm_gpio_init(struct msm_pinc
+>>>    		return -EINVAL;
+>>>    	chip = &pctrl->chip;
+>>> -	chip->base = 0;
+>>> +	chip->base = -1;
+>>>    	chip->ngpio = ngpio;
+>>>    	chip->label = dev_name(pctrl->dev);
+>>>    	chip->parent = pctrl->dev;
+>> this patch creates a regression for me. on ipq8064 the systems gpios now
+>> start somewhere in the sky
 >>
->> Fixes: 27b3b22dd98c ("crypto: ccree - add support for older HW revs")
+>> new layout
+>>
+>> lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip373 -> ../../devices/platform/soc/1b700000.pci/pci0001:00/0001:00:00.0/0001:01:00.0/gpio/gpiochip373
+>> lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip408 -> ../../devices/platform/soc/1b500000.pci/pci0000:00/0000:00:00.0/0000:01:00.0/gpio/gpiochip408
+>> lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip443 ->
+>> ../../devices/platform/soc/800000.pinmux/gpio/gpiochip443
+>>
+>>
+>> before the patch
+>>
+>> lrwxrwxrwx    1 root     root             0 Jan  1  1970 gpiochip0 ->
+>> ../../devices/platform/soc/800000.pinmux/gpio/gpiochip0
+>> lrwxrwxrwx    1 root     root             0 May 31 13:13 gpiochip442 -> ../../devices/platform/soc/1b700000.pci/pci0001:00/0001:00:00.0/0001:01:00.0/gpio/gpiochip442
+>> lrwxrwxrwx    1 root     root             0 May 31 13:13 gpiochip477 -> ../../devices/platform/soc/1b500000.pci/pci0000:00/0000:00:00.0/0000:01:00.0/gpio/gpiochip477
+>>
+>>
+>> this broke my userspace gpio handling. i can override this, but still it
+>> doesnt look correct since there is a hole at the beginng likelly reserved by
+>> unused arm gpios
+> So does this mean that 4.17-rc is also broken for you?  If so, this
+> needs to be reverted there as well.
 >
-> Did the above introduce a regression that is fixed by this patch
-> or did it add a feature that only works with this patch?
+> Bjorn, any ideas?
 >
-
-Sort of in between - the first patch made more devices work but
-unreliability (it will sometime work, sometime doesn't).
-This one make it work reliably.
-
-> In the case of the latter I would drop the Fixes tag,
-> but I don't feel strongly about it.
+> thanks,
 >
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> greg k-h
+i checked initially 4.9 with latest patches and 4.14 and reverted this 
+line to get back to the old behaviour but a which view in the current 
+4.17 tree shows
+that the same patch has been included in 4.17. it was introduced in the 
+kernel mainline on 12.feb 2018
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/pinctrl/qcom/pinctrl-msm.c?h=v4.17-rc7&id=a7aa75a2a7dba32594291a71c3704000a2fd7089
 >
-> Minor not below not withstanding,
->
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-Thank you for the review and help :-)
-
-Gilad
-
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
