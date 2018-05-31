@@ -1,149 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753773AbeEaEXH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 00:23:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:34731 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751207AbeEaEXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 00:23:04 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 31 May 2018 14:23:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: linux-next: build failure after merge of the device-mapper tree
-Message-ID: <20180531142302.5f7b4302@canb.auug.org.au>
+        id S1753837AbeEaEaz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 00:30:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44922 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750949AbeEaEay (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 00:30:54 -0400
+Subject: Re: [PATCH v5 3/7] powerpc: use task_pid_nr() for TID allocation
+To: "Alastair D'Silva" <alastair@au1.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        mikey@neuling.org, vaibhav@linux.vnet.ibm.com,
+        aneesh.kumar@linux.vnet.ibm.com, malat@debian.org,
+        felix@linux.vnet.ibm.com, pombredanne@nexb.com,
+        sukadev@linux.vnet.ibm.com, npiggin@gmail.com,
+        gregkh@linuxfoundation.org, arnd@arndb.de, fbarrat@linux.vnet.ibm.com,
+        corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
+References: <20180511061303.10728-1-alastair@au1.ibm.com>
+ <20180511061303.10728-4-alastair@au1.ibm.com>
+From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date: Thu, 31 May 2018 14:29:57 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/E9yY+xHMizQK4H0o/i4mX_J"; protocol="application/pgp-signature"
+In-Reply-To: <20180511061303.10728-4-alastair@au1.ibm.com>
+Content-Language: en-AU
+X-TM-AS-GCONF: 00
+x-cbid: 18053104-0020-0000-0000-000002953380
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18053104-0021-0000-0000-000020E0AC16
+Message-Id: <65f643c0-6ac0-a88f-6822-c95d17c83a9f@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1805310049
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/E9yY+xHMizQK4H0o/i4mX_J
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 11/05/18 16:12, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> The current implementation of TID allocation, using a global IDR, may
+> result in an errant process starving the system of available TIDs.
+> Instead, use task_pid_nr(), as mentioned by the original author. The
+> scenario described which prevented it's use is not applicable, as
+> set_thread_tidr can only be called after the task struct has been
+> populated.
+> 
+> In the unlikely event that 2 threads share the TID and are waiting,
+> all potential outcomes have been determined safe.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 
-Hi all,
+Thanks for the clarifying comment. The diff is painful to read but I 
+think it makes sense :)
 
-After merging the device-mapper tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Reviewed-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
 
-drivers/md/dm-writecache.c: In function 'writecache_dtr':
-drivers/md/dm-writecache.c:1799:3: error: implicit declaration of function =
-'bioset_free'; did you mean 'bvec_free'? [-Werror=3Dimplicit-function-decla=
-ration]
-   bioset_free(wc->bio_set);
-   ^~~~~~~~~~~
-   bvec_free
-drivers/md/dm-writecache.c: In function 'writecache_ctr':
-drivers/md/dm-writecache.c:1929:17: error: implicit declaration of function=
- 'bioset_create'; did you mean 'bioset_exit'? [-Werror=3Dimplicit-function-=
-declaration]
-   wc->bio_set =3D bioset_create(BIO_POOL_SIZE,
-                 ^~~~~~~~~~~~~
-                 bioset_exit
-drivers/md/dm-writecache.c:1929:15: warning: assignment makes pointer from =
-integer without a cast [-Wint-conversion]
-   wc->bio_set =3D bioset_create(BIO_POOL_SIZE,
-               ^
-
-Caused by commit
-
-  2105231db61b ("dm: add writecache target")
-
-interacting with commit
-
-  dad08527525f ("block: Drop bioset_create()")
-
-from the block tree.
-
-Can we please consider not immediately dropping APIs if at all
-possible. :-(
-
-I have added the following merge fix patch (hopefully this is enough):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 31 May 2018 14:06:10 +1000
-Subject: [PATCH] dm: fixup for "block: Drop bioset_create()"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/md/dm-writecache.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-index 844c4fb2fcfc..b95f1f0e199d 100644
---- a/drivers/md/dm-writecache.c
-+++ b/drivers/md/dm-writecache.c
-@@ -211,7 +211,7 @@ struct dm_writecache {
- 	struct completion flush_completion;
- 	struct bio *flush_bio;
-=20
--	struct bio_set *bio_set;
-+	struct bio_set bio_set;
- 	mempool_t *copy_pool;
-=20
- 	struct dm_kcopyd_client *dm_kcopyd;
-@@ -1494,7 +1494,7 @@ static void __writecache_writeback_pmem(struct dm_wri=
-tecache *wc, struct writeba
-=20
- 		max_pages =3D e->wc_list_contiguous;
-=20
--		bio =3D bio_alloc_bioset(GFP_NOIO, max_pages, wc->bio_set);
-+		bio =3D bio_alloc_bioset(GFP_NOIO, max_pages, &wc->bio_set);
- 		wb =3D container_of(bio, struct writeback_struct, bio);
- 		wb->wc =3D wc;
- 		wb->bio.bi_end_io =3D writecache_writeback_endio;
-@@ -1795,8 +1795,7 @@ static void writecache_dtr(struct dm_target *ti)
- 	if (wc->flush_thread)
- 		kthread_stop(wc->flush_thread);
-=20
--	if (wc->bio_set)
--		bioset_free(wc->bio_set);
-+	bioset_exit(&wc->bio_set);
-=20
- 	mempool_destroy(wc->copy_pool);
-=20
-@@ -1926,11 +1925,10 @@ static int writecache_ctr(struct dm_target *ti, uns=
-igned argc, char **argv)
- 	}
-=20
- 	if (WC_MODE_PMEM(wc)) {
--		wc->bio_set =3D bioset_create(BIO_POOL_SIZE,
-+		r =3D bioset_init(&wc->bio_set, BIO_POOL_SIZE,
- 					    offsetof(struct writeback_struct, bio),
- 					    BIOSET_NEED_BVECS);
--		if (!wc->bio_set) {
--			r =3D -ENOMEM;
-+		if (r) {
- 			ti->error =3D "Could not allocate bio set";
- 			goto bad;
- 		}
---=20
-2.17.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/E9yY+xHMizQK4H0o/i4mX_J
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPeKYACgkQAVBC80lX
-0Gy7wwf/TnICOqQee8ZqT7bd0u7ZttT8GmGALvURYsXkoK20VqLi/kMW3FAk4pkB
-USc7/smHg8fPT/gUisjtqp58UV8TMz1Q+no/CPaat12+23v+zfQ9nEF083x/dEo6
-I+CLXnFn32xVN1iRRt000UxdCHACl3iG5sNr7g2sjglW/4hkmihVFhMDTxKcyBN5
-fluPiCrK2Trvei5u52QPCi9P7nWea92Eci9ryJMjRKHv4zAqSFqbsWT/Ugzr1IhV
-d/XjFUO3vWmTsSZw+yC3iiDn6lBn4TDId64Verwo9RAhZRyGh/8sjG8w5lt1R/yE
-3ZNWHL39b0ICota+2Wrph/TxSWFplw==
-=6mT+
------END PGP SIGNATURE-----
-
---Sig_/E9yY+xHMizQK4H0o/i4mX_J--
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
