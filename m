@@ -1,31 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753896AbeEaEt1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 00:49:27 -0400
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:51577 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750974AbeEaEtX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 00:49:23 -0400
-X-Google-Smtp-Source: ADUXVKLP78dBl1AmILcygm8Cdz6OMsOf5TJj7x7UKopL0vJMl24TEGTW0QOsfC6DFrXiBmIQDGwThA==
-Subject: Re: [PATCH -next] nvmet: fix a typo in nvmet_file_ns_enable()
-To: Wei Yongjun <weiyongjun1@huawei.com>, Christoph Hellwig <hch@lst.de>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <1527731758-142629-1-git-send-email-weiyongjun1@huawei.com>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <504b86d8-f4ff-316e-4db1-90b3cb1f9977@grimberg.me>
-Date: Thu, 31 May 2018 07:49:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753796AbeEaEyh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 00:54:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751381AbeEaEyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 00:54:35 -0400
+Date: Wed, 30 May 2018 23:54:34 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: linux-pci@vger.kernel.org, Oza Pawandeep <poza@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] PCI/AER: Decode Error Source Requester ID
+Message-ID: <20180531045434.GS39853@bhelgaas-glaptop.roam.corp.google.com>
+References: <152770259826.80701.7360032106128917833.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152770285586.80701.6545710900591672975.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20180530183241.GA20222@wunner.de>
 MIME-Version: 1.0
-In-Reply-To: <1527731758-142629-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530183241.GA20222@wunner.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.e>
+On Wed, May 30, 2018 at 08:32:41PM +0200, Lukas Wunner wrote:
+> On Wed, May 30, 2018 at 12:54:15PM -0500, Bjorn Helgaas wrote:
+> >  void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+> >  {
+> > -	pci_info(dev, "AER: %s%s error received: id=%04x\n",
+> > +	u8 bus = info->id >> 8;
+> > +	u8 devfn = info->id & 0xff;
+> > +
+> > +	pci_info(dev, "AER: %s%s error received: %04x:%02x:%02x.%d\n",
+> >  		info->multi_error_valid ? "Multiple " : "",
+> > -		aer_error_severity_string[info->severity], info->id);
+> > +		aer_error_severity_string[info->severity],
+> > +		pci_domain_nr(dev->bus), bus, devfn >> 3, devfn & 0x7);
+> 
+> I think PCI_SLOT(devfn), PCI_FUNC(devfn) is a bit more readable.
+
+I used those originally, but of course those definitions predate PCIe
+so they aren't clearly related to a Requester ID.
+
+I searched the PCIe spec for the specifics of the Requester ID
+composition.  It was surprisingly hard to find a clear statement.  The
+best I found was PCIe r4.0, sec 6.13, which says
+
+    Routing IDs, Requester IDs, and Completer IDs are 16-bit
+    identifiers traditionally composed of three fields: an 8-bit Bus
+    Number, a 5-bit Device Number, and a 3-bit Function Number.
+
+Even that isn't specific about where the fields are, 
+
+But it's probably not worth obsessing over this and PCI_SLOT() and
+PCI_FUNC() are definitely more readable, so I changed them.
