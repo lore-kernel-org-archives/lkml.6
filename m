@@ -1,60 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755330AbeEaOJd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:09:33 -0400
-Received: from a9-99.smtp-out.amazonses.com ([54.240.9.99]:43768 "EHLO
-        a9-99.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755093AbeEaOJc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:09:32 -0400
-Date: Thu, 31 May 2018 14:09:30 +0000
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-cc: Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, Mel Gorman <mgorman@techsingularity.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Can kfree() sleep at runtime?
-In-Reply-To: <30ecafd7-ed61-907b-f924-77fc37dcc753@gmail.com>
-Message-ID: <01000163b6883743-79e003fa-71c2-4e9d-aa4a-35fcd08bb0d8-000000@email.amazonses.com>
-References: <30ecafd7-ed61-907b-f924-77fc37dcc753@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1755389AbeEaOKC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:10:02 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:33702 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755287AbeEaOJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:09:59 -0400
+Subject: Re: [PATCH 2/8] scsi: libsas: check the lldd callback correctly
+To: Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20180529022309.21071-1-yanaijie@huawei.com>
+ <20180529022309.21071-3-yanaijie@huawei.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <a8427e3b-baaf-3044-6fb3-c9c9a4253417@huawei.com>
+Date: Thu, 31 May 2018 15:09:41 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.05.31-54.240.9.99
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+In-Reply-To: <20180529022309.21071-3-yanaijie@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018, Jia-Ju Bai wrote:
-
-> I write a static analysis tool (DSAC), and it finds that kfree() can sleep.
-
-That should not happen.
-
-> Here is the call path for kfree().
-> Please look at it *from the bottom up*.
+On 29/05/2018 03:23, Jason Yan wrote:
+> We are using lldd_port_deformed so we'd better check if lldd_port_deformed
+> is NULL.
 >
-> [FUNC] alloc_pages(GFP_KERNEL)
-> arch/x86/mm/pageattr.c, 756: alloc_pages in split_large_page
-> arch/x86/mm/pageattr.c, 1283: split_large_page in __change_page_attr
-> arch/x86/mm/pageattr.c, 1391: __change_page_attr in __change_page_attr_set_clr
-> arch/x86/mm/pageattr.c, 2014: __change_page_attr_set_clr in __set_pages_np
-> arch/x86/mm/pageattr.c, 2034: __set_pages_np in __kernel_map_pages
-> ./include/linux/mm.h, 2488: __kernel_map_pages in kernel_map_pages
-> mm/page_alloc.c, 1074: kernel_map_pages in free_pages_prepare
-
-mapping pages in the page allocator can cause allocations?? How did that
-get in there?
-
-> mm/page_alloc.c, 1264: free_pages_prepare in __free_pages_ok
-> mm/page_alloc.c, 4312: __free_pages_ok in __free_pages
-> mm/slub.c, 3914: __free_pages in kfree
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> CC: John Garry <john.garry@huawei.com>
+> CC: Johannes Thumshirn <jthumshirn@suse.de>
+> CC: Ewan Milne <emilne@redhat.com>
+> CC: Christoph Hellwig <hch@lst.de>
+> CC: Tomas Henzl <thenzl@redhat.com>
+> CC: Dan Williams <dan.j.williams@intel.com>
+> CC: Hannes Reinecke <hare@suse.com>
+> ---
+>  drivers/scsi/libsas/sas_discover.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> I always have an impression that kfree() never sleeps, so I feel confused
-> here.
+> diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
+> index a0fa7ef3a071..354f6db5bb66 100644
+> --- a/drivers/scsi/libsas/sas_discover.c
+> +++ b/drivers/scsi/libsas/sas_discover.c
+> @@ -260,7 +260,7 @@ static void sas_suspend_devices(struct work_struct *work)
+>  	 * phy_list is not being mutated
+>  	 */
+>  	list_for_each_entry(phy, &port->phy_list, port_phy_el) {
+> -		if (si->dft->lldd_port_formed)
+> +		if (si->dft->lldd_port_deformed)
 
-Correct.
+If you do make this change, then you can remove 
+hisi_sas_port_deformed(), as it is just a stub to avoid a jump to NULL 
+from above.
+
+>  			si->dft->lldd_port_deformed(phy);
+>  		phy->suspended = 1;
+>  		port->suspended = 1;
+>
