@@ -1,86 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755240AbeEaNWc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 09:22:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45476 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755006AbeEaNW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 09:22:29 -0400
-Subject: Re: [PATCH] cpuset: Enforce that a child's cpus must be a subset of
- the parent
-To: Zefan Li <lizefan@huawei.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <1527687991-1431-1-git-send-email-longman@redhat.com>
- <5B0F4F09.9050100@huawei.com> <5B0FAE72.1090204@huawei.com>
- <20180531082613.GF12180@hirez.programming.kicks-ass.net>
- <5B0FB58C.9030705@huawei.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <4dc718bc-4bd5-4998-853b-9c6ba67b89a0@redhat.com>
-Date: Thu, 31 May 2018 09:22:23 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1755124AbeEaNXI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 09:23:08 -0400
+Received: from imap.netup.ru ([77.72.80.14]:42439 "EHLO imap.netup.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754820AbeEaNXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 09:23:04 -0400
+X-DKIM: OpenDKIM Filter v2.6.8 imap.netup.ru 68ECFF86D19
+X-Google-Smtp-Source: ADUXVKKy+gnNZYjBK8rT/Cf2gGS58D7NDiS0GLnn+JAbila5yDBHJ5ykwcmAzDUBaO+X9TOc6O0r/1reFgaBoOTNUm8=
 MIME-Version: 1.0
-In-Reply-To: <5B0FB58C.9030705@huawei.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <004201d3f8bb$629d38c0$27d7aa40$@socionext.com>
+References: <20180516084111.28618-1-suzuki.katsuhiro@socionext.com>
+ <CAK3bHNW8=z2WH6xCijAP2XCX94iE5z-HwHRYNhbJwZvbOav10A@mail.gmail.com> <004201d3f8bb$629d38c0$27d7aa40$@socionext.com>
+From: Abylay Ospan <aospan@netup.ru>
+Date: Thu, 31 May 2018 09:22:39 -0400
+X-Gmail-Original-Message-ID: <CAK3bHNWTw72sMB-X6ChtakAKi2TmJ6K8ZJZdjMoiMpVqPPBMoA@mail.gmail.com>
+Message-ID: <CAK3bHNWTw72sMB-X6ChtakAKi2TmJ6K8ZJZdjMoiMpVqPPBMoA@mail.gmail.com>
+Subject: Re: [PATCH] media: helene: fix tuning frequency of satellite
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VDOZFx012369
 
-On 05/31/2018 04:42 AM, Zefan Li wrote:
-> On 2018/5/31 16:26, Peter Zijlstra wrote:
->> On Thu, May 31, 2018 at 04:12:34PM +0800, Zefan Li wrote:
->>> On 2018/5/31 9:25, Zefan Li wrote:
->>>> Hi Waiman,
->>>>
->>>> On 2018/5/30 21:46, Waiman Long wrote:
->>>>> It was found that the cpuset.cpus could contain CPUs that are not listed
->>>>> in their parent's cpu list as shown by the command sequence below:
->>>>>
->>>>>   # echo "+cpuset" >cgroup.subtree_control
->>>>>   # mkdir g1
->>>>>   # echo 0-5 >g1/cpuset.cpus
->>>>>   # mkdir g1/g11
->>>>>   # echo "+cpuset" > g1/cgroup.subtree_control
->>>>>   # echo 6-11 >g1/g11/cpuset.cpus
->>>>>   # grep -R . g1 | grep "\.cpus"
->>>>>   g1/cpuset.cpus:0-5
->>>>>   g1/cpuset.cpus.effective:0-5
->>>>>   g1/g11/cpuset.cpus:6-11
->>>>>   g1/g11/cpuset.cpus.effective:0-5
->>>>>
->>>>> As the intersection of g11's cpus and that of g1 is empty, the effective
->>>>> cpus of g11 is just that of g1. The check in update_cpumask() is now
->>>>> corrected to make sure that cpus in a child cpus must be a subset of
->>>>> its parent's cpus. The error "write error: Invalid argument" will now
->>>>> be reported in the above case.
->>>>>
->>>> We made the distinction between user-configured CPUs and effective CPUs
->>>> in commit 7e88291beefbb758, so actually it's not a bug.
->>>>
->>> I remember the original reason is to support restoration of the original
->>> cpu after cpu offline->online. We use user-configured CPUs to remember
->>> if the cpu should be restored in the cpuset after it's onlined.
->> AFAICT you can do that and still have the child a subset of the parent,
->> no?
->> .
-> Sure. IIRC this was suggested by Tejun as he had done something similar to devcgroup.
+ok, got it !
+
+2018-05-31 4:43 GMT-04:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> Hello Abylay,
 >
-OK, let wait until Tejun has time to chime in. For me, it just look
-weird to be able to do that.
+> I got a mistake in this patch.
+>
+> DTV_FREQUENCY for satellite delivery systems, the frequency is in 'kHz' not 'Hz',
+> so original code is correct. Sorry for confusing...
+>
+>
+> Regards,
+> --
+> Katsuhiro Suzuki
+>
+>
+>> -----Original Message-----
+>> From: Abylay Ospan <aospan@netup.ru>
+>> Sent: Wednesday, May 16, 2018 7:58 PM
+>> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
+>> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>; linux-media
+>> <linux-media@vger.kernel.org>; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
+>> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
+>> linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH] media: helene: fix tuning frequency of satellite
+>>
+>> True.
+>> I'm curious but how did it worked before ...
+>> Which hardware (dvb adapter) are you using ?
+>>
+>> 2018-05-16 4:41 GMT-04:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+>> > This patch fixes tuning frequency of satellite to kHz. That as same
+>> > as terrestrial one.
+>> >
+>> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+>> > ---
+>> >  drivers/media/dvb-frontends/helene.c | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/media/dvb-frontends/helene.c
+>> b/drivers/media/dvb-frontends/helene.c
+>> > index 04033f0c278b..0a4f312c4368 100644
+>> > --- a/drivers/media/dvb-frontends/helene.c
+>> > +++ b/drivers/media/dvb-frontends/helene.c
+>> > @@ -523,7 +523,7 @@ static int helene_set_params_s(struct dvb_frontend *fe)
+>> >         enum helene_tv_system_t tv_system;
+>> >         struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+>> >         struct helene_priv *priv = fe->tuner_priv;
+>> > -       int frequencykHz = p->frequency;
+>> > +       int frequencykHz = p->frequency / 1000;
+>> >         uint32_t frequency4kHz = 0;
+>> >         u32 symbol_rate = p->symbol_rate/1000;
+>> >
+>> > --
+>> > 2.17.0
+>> >
+>>
+>>
+>>
+>> --
+>> Abylay Ospan,
+>> NetUP Inc.
+>> http://www.netup.tv
+>
+>
 
-Another corner case that is not handled is when cpus_allowed is empty.
-In this case, it falls back to the parent's effective cpus. On the other
-hand, it can also be argued that an empty cpus_allowed is a transient
-state and a cpuset shouldn't have cpus undefined while creating children.
 
-Cheers,
-Longman
+
+-- 
+Abylay Ospan,
+NetUP Inc.
+http://www.netup.tv
