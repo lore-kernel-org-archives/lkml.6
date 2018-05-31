@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754195AbeEaIQ2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:16:28 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:41865 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754009AbeEaIQD (ORCPT
+        id S1754180AbeEaIQZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:16:25 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:35245 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754020AbeEaIQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 May 2018 04:16:03 -0400
-X-Google-Smtp-Source: ADUXVKI+nigVzo72ZvopWX6qcM+DBlUJIkltR/jlUcUQ7azY+D9UzO2HlQfNf/0neSslcES3JkLddhENWEFKC0Yq+wePo45uNyYT
+X-Google-Smtp-Source: ADUXVKIzbRprsE8SkxxTBVCwqk//IpvYdx0qt5MEHiKgpoD6BX27fYtgnNNZWQp0lHecrmQUiejWvG8PJkcSSNIC7Q9J3s0C3HlD
 MIME-Version: 1.0
 Date: Thu, 31 May 2018 01:16:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fdc15c056d7c13ae@google.com>
-Subject: general protection fault in skb_unlink
-From: syzbot <syzbot+278279efdd2730dd14bf@syzkaller.appspotmail.com>
+Message-ID: <00000000000000dca5056d7c1442@google.com>
+Subject: WARNING in kcm_exit_net (3)
+From: syzbot <syzbot+5f1a04e374a635efc426@syzkaller.appspotmail.com>
 To: davem@davemloft.net, ebiggers@google.com, edumazet@google.com,
         ktkhai@virtuozzo.com, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tklauser@distanz.ch, tom@quantonium.net, viro@ZenIV.linux.org.uk
+        tom@quantonium.net, viro@ZenIV.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -28,64 +28,57 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    0044cdeb7313 Merge branch 'for-linus' of git://git.kernel...
+HEAD commit:    d60d61f36b8f Merge branch 'for-linus' of git://git.kernel...
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=157e3d2f800000
+console output: https://syzkaller.appspot.com/x/log.txt?x=101bb52f800000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=968b0b23c7854c0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=278279efdd2730dd14bf
+dashboard link: https://syzkaller.appspot.com/bug?extid=5f1a04e374a635efc426
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16939b2f800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1046c54f800000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13b9ed2f800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+278279efdd2730dd14bf@syzkaller.appspotmail.com
+Reported-by: syzbot+5f1a04e374a635efc426@syzkaller.appspotmail.com
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 8484 Comm: syz-executor919 Not tainted 4.17.0-rc7+ #74
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+WARNING: CPU: 0 PID: 6 at net/kcm/kcmsock.c:2023 kcm_exit_net+0x392/0x3e0  
+net/kcm/kcmsock.c:2023
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 6 Comm: kworker/u4:0 Not tainted 4.17.0-rc7+ #75
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:__skb_unlink include/linux/skbuff.h:1844 [inline]
-RIP: 0010:skb_unlink+0xc1/0x160 net/core/skbuff.c:2921
-RSP: 0018:ffff8801d012f6f0 EFLAGS: 00010002
-RAX: 0000000000000286 RBX: ffff8801d6e073c0 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: 0000000000000004 RDI: 0000000000000008
-RBP: ffff8801d012f718 R08: ffffed0038bb3b6d R09: ffffed0038bb3b6c
-R10: ffffed0038bb3b6c R11: ffff8801c5d9db63 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff8801c5d9db60 R15: ffff8801d012fce0
-FS:  0000000000ab7880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020e5b000 CR3: 00000001c31fb000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Workqueue: netns cleanup_net
 Call Trace:
-  kcm_recvmsg+0x48d/0x590 net/kcm/kcmsock.c:1160
-  sock_recvmsg_nosec+0x8c/0xb0 net/socket.c:802
-  ___sys_recvmsg+0x2b6/0x680 net/socket.c:2279
-  __sys_recvmmsg+0x2f9/0xb80 net/socket.c:2391
-  do_sys_recvmmsg+0xe4/0x190 net/socket.c:2472
-  __do_sys_recvmmsg net/socket.c:2485 [inline]
-  __se_sys_recvmmsg net/socket.c:2481 [inline]
-  __x64_sys_recvmmsg+0xbe/0x150 net/socket.c:2481
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4417a9
-RSP: 002b:00007ffe27282838 EFLAGS: 00000206 ORIG_RAX: 000000000000012b
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004417a9
-RDX: 00000000040000f7 RSI: 00000000200002c0 RDI: 0000000000000006
-RBP: 0000000000000000 R08: 0000000020000200 R09: 00007ffe272829f8
-R10: 0000000000000060 R11: 0000000000000206 R12: 00000000000001f3
-R13: 000000000001f871 R14: 0000000000000000 R15: 0000000000000000
-Code: 00 00 00 49 8d 7d 08 4c 8b 63 08 48 ba 00 00 00 00 00 fc ff df 48 c7  
-43 08 00 00 00 00 48 89 f9 48 c7 03 00 00 00 00 48 c1 e9 03 <80> 3c 11 00  
-75 5b 4c 89 e1 4d 89 65 08 48 ba 00 00 00 00 00 fc
-RIP: __skb_unlink include/linux/skbuff.h:1844 [inline] RSP: ffff8801d012f6f0
-RIP: skb_unlink+0xc1/0x160 net/core/skbuff.c:2921 RSP: ffff8801d012f6f0
----[ end trace 7338a6b7e627a89e ]---
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:kcm_exit_net+0x392/0x3e0 net/kcm/kcmsock.c:2023
+RSP: 0018:ffff8801d9a97430 EFLAGS: 00010293
+RAX: ffff8801d9a88180 RBX: 1ffff1003b352e86 RCX: 1ffff1003b351135
+RDX: 0000000000000000 RSI: ffffffff86d56942 RDI: 0000000000000286
+RBP: ffff8801d9a974f8 R08: 1ffff1003b352e67 R09: ffffed003b5c46d2
+R10: 0000000000000003 R11: 0000000000000003 R12: 1ffff1003b352e8a
+R13: ffff8801d9a974d0 R14: ffff8801d96763d0 R15: ffff8801c51d0e00
+  ops_exit_list.isra.7+0xb0/0x160 net/core/net_namespace.c:152
+  cleanup_net+0x51d/0xb20 net/core/net_namespace.c:523
+  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
