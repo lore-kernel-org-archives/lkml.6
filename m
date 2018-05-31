@@ -1,74 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755008AbeEaLZu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:25:50 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:65041 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754690AbeEaLZo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:25:44 -0400
-Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
- node for MCAN
-To: Rob Herring <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <bcousson@baylibre.com>,
-        <tony@atomide.com>, <paul@pwsan.com>, <t-kristo@ti.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-6-faiz_abbas@ti.com>
- <20180531040638.GA26751@rob-hp-laptop>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <be0fd711-c44b-dbe2-648f-08aa88c7aec4@ti.com>
-Date: Thu, 31 May 2018 16:56:46 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755137AbeEaLZU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:25:20 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8231 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754764AbeEaLWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:22:43 -0400
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <andy.shevchenko@gmail.com>, Yisheng Xie <xieyisheng1@huawei.com>,
+        "David Airlie" <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        "Arvind Yadav" <arvind.yadav.cs@gmail.com>,
+        <dri-devel@lists.freedesktop.org>
+Subject: [PATCH v2 12/21] drm: i2c: ch7006: use match_string() helper
+Date: Thu, 31 May 2018 19:11:17 +0800
+Message-ID: <1527765086-19873-13-git-send-email-xieyisheng1@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+In-Reply-To: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180531040638.GA26751@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+match_string() returns the index of an array for a matching string,
+which can be used instead of open coded variant.
 
-On Thursday 31 May 2018 09:36 AM, Rob Herring wrote:
-> On Wed, May 30, 2018 at 07:41:32PM +0530, Faiz Abbas wrote:
->> The ti-sysc driver provides support for manipulating the idlemodes
->> and interconnect level resets.
->>
->> Add the generic interconnect target module node for MCAN to support
->> the same.
->>
->> CC: Tony Lindgren <tony@atomide.com>
->> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->> ---
->>  arch/arm/boot/dts/dra76x.dtsi | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
->> index bfc82636999c..57b8dc0fe719 100644
->> --- a/arch/arm/boot/dts/dra76x.dtsi
->> +++ b/arch/arm/boot/dts/dra76x.dtsi
->> @@ -11,6 +11,25 @@
->>  / {
->>  	compatible = "ti,dra762", "ti,dra7";
->>  
->> +	ocp {
->> +
->> +		target-module@0x42c00000 {
-> 
-> Build your dtb with W=1 and fix warnings you add (drop '0x').
+Cc: David Airlie <airlied@linux.ie>
+Cc: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: dri-devel@lists.freedesktop.org
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+---
+v2:
+ - handle err case before normal case.
 
-Sure, Will fix this.
-> 
-> This is a CAN bus controller? If so, then use 'can' for node name.
+ drivers/gpu/drm/i2c/ch7006_drv.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-Yes but I am using m_can along the lines of dcan in other boards (For
-example, see arch/arm/boot/dts/am33xx.dtsi:1046). Are you saying all CAN
-controllers should only be called can?
-
-Thanks,
-Faiz
+diff --git a/drivers/gpu/drm/i2c/ch7006_drv.c b/drivers/gpu/drm/i2c/ch7006_drv.c
+index 544a8a2..9eefdfe 100644
+--- a/drivers/gpu/drm/i2c/ch7006_drv.c
++++ b/drivers/gpu/drm/i2c/ch7006_drv.c
+@@ -464,16 +464,13 @@ static int ch7006_encoder_init(struct i2c_client *client,
+ 	priv->chip_version = ch7006_read(client, CH7006_VERSION_ID);
+ 
+ 	if (ch7006_tv_norm) {
+-		for (i = 0; i < NUM_TV_NORMS; i++) {
+-			if (!strcmp(ch7006_tv_norm_names[i], ch7006_tv_norm)) {
+-				priv->norm = i;
+-				break;
+-			}
+-		}
+-
+-		if (i == NUM_TV_NORMS)
++		i = match_string(ch7006_tv_norm_names,
++				 NUM_TV_NORMS, ch7006_tv_norm);
++		if (i < 0)
+ 			ch7006_err(client, "Invalid TV norm setting \"%s\".\n",
+ 				   ch7006_tv_norm);
++		else
++			priv->norm = i;
+ 	}
+ 
+ 	if (ch7006_scale >= 0 && ch7006_scale <= 2)
+-- 
+1.7.12.4
