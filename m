@@ -1,66 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754369AbeEaKL5 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:11:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56708 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754227AbeEaKL4 (ORCPT
+        id S1754382AbeEaKNd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:13:33 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:55128 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754207AbeEaKNa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:11:56 -0400
-Date: Thu, 31 May 2018 15:41:48 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/2] powerpc: Add support for function error injection
-To: Josef Bacik <jbacik@fb.com>, Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
-        <5ad23690185a90a887514d702ecb45783090d7c0.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
-        <87h8mozajv.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87h8mozajv.fsf@concordia.ellerman.id.au>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
+        Thu, 31 May 2018 06:13:30 -0400
+Subject: Re: [PATCH v2 3/6] clk: ti: dra7: Add clkctrl clock data for the mcan
+ clocks
+To: Rob Herring <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <bcousson@baylibre.com>,
+        <tony@atomide.com>, <paul@pwsan.com>, <t-kristo@ti.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-4-faiz_abbas@ti.com>
+ <20180531040350.GA25132@rob-hp-laptop>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <e7e3ade1-76b7-f216-ece5-bd64a55cede6@ti.com>
+Date: Thu, 31 May 2018 15:44:43 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18053110-0028-0000-0000-000002CB4DCF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18053110-0029-0000-0000-00002381BE9E
-Message-Id: <1527761352.z5jz8jg2d5.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-31_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=753 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1805310117
+In-Reply-To: <20180531040350.GA25132@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael Ellerman wrote:
-> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
->> ...
+Hi,
+
+On Thursday 31 May 2018 09:33 AM, Rob Herring wrote:
+> On Wed, May 30, 2018 at 07:41:30PM +0530, Faiz Abbas wrote:
+>> Add clkctrl data for the m_can clocks and register it within the
+...
+>>  
+>> diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
+>> index 5e1061b15aed..d7549c57cac3 100644
+>> --- a/include/dt-bindings/clock/dra7.h
+>> +++ b/include/dt-bindings/clock/dra7.h
+>> @@ -168,5 +168,6 @@
+>>  #define DRA7_COUNTER_32K_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
+>>  #define DRA7_UART10_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
+>>  #define DRA7_DCAN1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
+>> +#define DRA7_ADC_CLKCTRL	DRA7_CLKCTRL_INDEX(0xa0)
 > 
-> A change log is always nice even if it's short :)
-
-I tried, but really couldn't come up with anything more to write. I'll 
-try harder for v2 :)
-
+> ADC and mcan are the same thing?
 > 
->> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
->> ---
->>  arch/powerpc/Kconfig                       | 1 +
->>  arch/powerpc/include/asm/error-injection.h | 9 +++++++++
->>  arch/powerpc/include/asm/ptrace.h          | 5 +++++
->>  3 files changed, 15 insertions(+)
->>  create mode 100644 arch/powerpc/include/asm/error-injection.h
-> 
-> This looks fine to me, it's probably easiest if it goes in via tip along
-> with patch 1.
-> 
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 
-Thanks for the review. I'll base v2 on -tip
+The register to control MCAN clocks is called ADC_CLKCTRL, Yes.
 
-
-- Naveen
+Thanks,
+Faiz
