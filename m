@@ -1,97 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754762AbeEaLqS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:46:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754522AbeEaLqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:46:16 -0400
-Date: Thu, 31 May 2018 13:45:54 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Timur Tabi <timur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.16 269/272] pinctrl: msm: Use dynamic GPIO numbering
-Message-ID: <20180531114553.GB11598@kroah.com>
-References: <20180528100240.256525891@linuxfoundation.org>
- <20180528100302.722883806@linuxfoundation.org>
- <7c34ccef-2fa8-8b53-2677-29f6fbe71a04@dd-wrt.com>
+        id S1754794AbeEaLqf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:46:35 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:46970 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754522AbeEaLqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:46:34 -0400
+From: Wei Yongjun <weiyongjun1@huawei.com>
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>
+CC: Wei Yongjun <weiyongjun1@huawei.com>, <dm-devel@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] dm writecache: fix return value check in writecache_ctr()
+Date: Thu, 31 May 2018 11:53:15 +0000
+Message-ID: <1527767595-76082-1-git-send-email-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7c34ccef-2fa8-8b53-2677-29f6fbe71a04@dd-wrt.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 01:21:56PM +0200, Sebastian Gottschall wrote:
-> Am 28.05.2018 um 12:05 schrieb Greg Kroah-Hartman:
-> > 4.16-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > 
-> > [ Upstream commit a7aa75a2a7dba32594291a71c3704000a2fd7089 ]
-> > 
-> > The base of the TLMM gpiochip should not be statically defined as 0, fix
-> > this to not artificially restrict the existence of multiple pinctrl-msm
-> > devices.
-> > 
-> > Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
-> > Reported-by: Timur Tabi <timur@codeaurora.org>
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >   drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> > @@ -818,7 +818,7 @@ static int msm_gpio_init(struct msm_pinc
-> >   		return -EINVAL;
-> >   	chip = &pctrl->chip;
-> > -	chip->base = 0;
-> > +	chip->base = -1;
-> >   	chip->ngpio = ngpio;
-> >   	chip->label = dev_name(pctrl->dev);
-> >   	chip->parent = pctrl->dev;
-> 
-> this patch creates a regression for me. on ipq8064 the systems gpios now
-> start somewhere in the sky
-> 
-> new layout
-> 
-> lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip373 -> ../../devices/platform/soc/1b700000.pci/pci0001:00/0001:00:00.0/0001:01:00.0/gpio/gpiochip373
-> lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip408 -> ../../devices/platform/soc/1b500000.pci/pci0000:00/0000:00:00.0/0000:01:00.0/gpio/gpiochip408
-> lrwxrwxrwx    1 root     root             0 Jan  1 00:00 gpiochip443 ->
-> ../../devices/platform/soc/800000.pinmux/gpio/gpiochip443
-> 
-> 
-> before the patch
-> 
-> lrwxrwxrwx    1 root     root             0 Jan  1  1970 gpiochip0 ->
-> ../../devices/platform/soc/800000.pinmux/gpio/gpiochip0
-> lrwxrwxrwx    1 root     root             0 May 31 13:13 gpiochip442 -> ../../devices/platform/soc/1b700000.pci/pci0001:00/0001:00:00.0/0001:01:00.0/gpio/gpiochip442
-> lrwxrwxrwx    1 root     root             0 May 31 13:13 gpiochip477 -> ../../devices/platform/soc/1b500000.pci/pci0000:00/0000:00:00.0/0000:01:00.0/gpio/gpiochip477
-> 
-> 
-> this broke my userspace gpio handling. i can override this, but still it
-> doesnt look correct since there is a hole at the beginng likelly reserved by
-> unused arm gpios
+Function dm_io_client_create() and dm_kcopyd_client_create() return
+ERR_PTR() not NULL in case of error. The NULL test in the return value
+check should be replaced with IS_ERR()
 
-So does this mean that 4.17-rc is also broken for you?  If so, this
-needs to be reverted there as well.
+Fixes: 2105231db61b ("dm: add writecache target")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/md/dm-writecache.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Bjorn, any ideas?
-
-thanks,
-
-greg k-h
+diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+index 844c4fb..0b2b436 100644
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -1872,9 +1872,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	}
+ 
+ 	wc->dm_io = dm_io_client_create();
+-	if (!wc->dm_io) {
+-		r = -ENOMEM;
++	if (IS_ERR(wc->dm_io)) {
++		r = PTR_ERR(wc->dm_io);
+ 		ti->error = "Unable to allocate dm-io client";
++		wc->dm_io = NULL;
+ 		goto bad;
+ 	}
+ 
+@@ -2096,9 +2097,10 @@ static int writecache_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		}
+ 
+ 		wc->dm_kcopyd = dm_kcopyd_client_create(&dm_kcopyd_throttle);
+-		if (!wc->dm_kcopyd) {
+-			r = -ENOMEM;
++		if (IS_ERR(wc->dm_kcopyd)) {
++			r = PTR_ERR(wc->dm_kcopyd);
+ 			ti->error = "Unable to allocate dm-kcopyd client";
++			wc->dm_kcopyd = NULL;
+ 			goto bad;
+ 		}
