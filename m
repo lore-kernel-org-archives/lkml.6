@@ -1,93 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755554AbeEaPqX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 11:46:23 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:44199 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755417AbeEaPqR (ORCPT
+        id S1755568AbeEaPsh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 11:48:37 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:41812 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755417AbeEaPsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 11:46:17 -0400
-X-Google-Smtp-Source: ADUXVKLhSQOSrmchO2uhiHcMjjcWa2hxxdz0R2JwI2Gm6aeAYOlm9RQCNAUO2lttp6+cYlItku2ITA==
-Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
-To: Sinan Kaya <okaya@codeaurora.org>, Alex_Gagniuc@Dellteam.com,
-        bhelgaas@google.com
-Cc: Austin.Bolen@dell.com, Shyam.Iyer@dell.com, keith.busch@intel.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
- <28004506-24f0-6d10-2d1e-074e0483d2f9@codeaurora.org>
- <4e0611c872054e768daa96b302651db3@ausx13mps321.AMER.DELL.COM>
- <f260078b-6918-7fd9-39d6-e9f300e4c048@codeaurora.org>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <3b8a895b-3080-7ddb-cbfd-5aa972e9bf65@gmail.com>
-Date: Thu, 31 May 2018 10:46:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 31 May 2018 11:48:36 -0400
+X-Google-Smtp-Source: ADUXVKKMFV/DAhlV4/2Key8c6GTQG0uhYYoeOKsFnyZX5YgK4c2JsDneMzv48tEksnqG1hehhTxwmmQSpof1O1QfJAY=
 MIME-Version: 1.0
-In-Reply-To: <f260078b-6918-7fd9-39d6-e9f300e4c048@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <c390a53d148593016df96e880a35e64f42edcf91.1527726830.git.rgb@redhat.com>
+References: <c390a53d148593016df96e880a35e64f42edcf91.1527726830.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 31 May 2018 11:48:33 -0400
+Message-ID: <CAHC9VhQji1JrZ-QHMJ-965s+a5UJx-wRqpEdb84r=v+t1oH-qw@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak86 V1] audit: use audit_enabled as a boolean where convenient
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 31, 2018 at 11:13 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Most uses of audit_enabled don't care about the distinction between
+> AUDIT_ON and AUDIT_LOCKED, so using audit_enabled as a boolean makes
+> more sense and is easier to read. Most uses of audit_enabled treat it as
+> a boolean, so switch the remaining AUDIT_OFF usage to simply use
+> audit_enabled as a boolean where applicable.
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/86
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  drivers/tty/tty_audit.c      | 2 +-
+>  include/net/xfrm.h           | 2 +-
+>  kernel/audit.c               | 8 ++++----
+>  net/netfilter/xt_AUDIT.c     | 2 +-
+>  net/netlabel/netlabel_user.c | 2 +-
+>  5 files changed, 8 insertions(+), 8 deletions(-)
+
+I'm not sure I like this idea.  Yes, technically this change is
+functionally equivalent but I worry that this will increase the chance
+that non-audit folks will mistake audit_enabled as a true/false value
+when it is not.  It might work now, but I worry about some subtle
+problem in the future.
+
+If you are bothered by the comparison to 0 (magic numbers), you could
+move the AUDIT_OFF/AUDIT_ON/AUDIT_LOCKED definitions into
+include/linux/audit.h and convert the "audit_enabled == 0" to
+"audit_enabled == AUDIT_OFF".
+
+> diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
+> index e30aa6b..1e48051 100644
+> --- a/drivers/tty/tty_audit.c
+> +++ b/drivers/tty/tty_audit.c
+> @@ -92,7 +92,7 @@ static void tty_audit_buf_push(struct tty_audit_buf *buf)
+>  {
+>         if (buf->valid == 0)
+>                 return;
+> -       if (audit_enabled == 0) {
+> +       if (!audit_enabled) {
+>                 buf->valid = 0;
+>                 return;
+>         }
+> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+> index 7f2e31a..380542b 100644
+> --- a/include/net/xfrm.h
+> +++ b/include/net/xfrm.h
+> @@ -734,7 +734,7 @@ static inline struct audit_buffer *xfrm_audit_start(const char *op)
+>  {
+>         struct audit_buffer *audit_buf = NULL;
+>
+> -       if (audit_enabled == 0)
+> +       if (!audit_enabled)
+>                 return NULL;
+>         audit_buf = audit_log_start(audit_context(), GFP_ATOMIC,
+>                                     AUDIT_MAC_IPSEC_EVENT);
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index e7478cb..3a18e59 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -424,7 +424,7 @@ static int audit_do_config_change(char *function_name, u32 *to_change, u32 new)
+>         else
+>                 allow_changes = 1;
+>
+> -       if (audit_enabled != AUDIT_OFF) {
+> +       if (audit_enabled) {
+>                 rc = audit_log_config_change(function_name, new, old, allow_changes);
+>                 if (rc)
+>                         allow_changes = 0;
+> @@ -1097,7 +1097,7 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
+>  {
+>         struct audit_buffer *ab;
+>
+> -       if (audit_enabled == AUDIT_OFF)
+> +       if (!audit_enabled)
+>                 return;
+>         ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_FEATURE_CHANGE);
+>         if (!ab)
+> @@ -1270,7 +1270,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+>                                 err = auditd_set(req_pid,
+>                                                  NETLINK_CB(skb).portid,
+>                                                  sock_net(NETLINK_CB(skb).sk));
+> -                               if (audit_enabled != AUDIT_OFF)
+> +                               if (audit_enabled)
+>                                         audit_log_config_change("audit_pid",
+>                                                                 new_pid,
+>                                                                 auditd_pid,
+> @@ -1281,7 +1281,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+>                                 /* try to process any backlog */
+>                                 wake_up_interruptible(&kauditd_wait);
+>                         } else {
+> -                               if (audit_enabled != AUDIT_OFF)
+> +                               if (audit_enabled)
+>                                         audit_log_config_change("audit_pid",
+>                                                                 new_pid,
+>                                                                 auditd_pid, 1);
+> diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
+> index f368ee6..3921553 100644
+> --- a/net/netfilter/xt_AUDIT.c
+> +++ b/net/netfilter/xt_AUDIT.c
+> @@ -72,7 +72,7 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+>         struct audit_buffer *ab;
+>         int fam = -1;
+>
+> -       if (audit_enabled == 0)
+> +       if (!audit_enabled)
+>                 goto errout;
+>         ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
+>         if (ab == NULL)
+> diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
+> index 2f328af..e68fa9d 100644
+> --- a/net/netlabel/netlabel_user.c
+> +++ b/net/netlabel/netlabel_user.c
+> @@ -101,7 +101,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
+>         char *secctx;
+>         u32 secctx_len;
+>
+> -       if (audit_enabled == 0)
+> +       if (!audit_enabled)
+>                 return NULL;
+>
+>         audit_buf = audit_log_start(audit_context(), GFP_ATOMIC, type);
+> --
+> 1.8.3.1
+>
 
 
-On 05/31/2018 10:38 AM, Sinan Kaya wrote:
-> On 5/31/2018 11:29 AM, Alex_Gagniuc@Dellteam.com wrote:
->> On 5/31/2018 10:28 AM, Sinan Kaya wrote:
->>> On 5/31/2018 11:05 AM, Alexandru Gagniuc wrote:
->>>> +static void pcie_max_link_cap(struct pci_dev *dev, enum pci_bus_speed *speed,
->>>> +				enum pcie_link_width *width)
->>>> +{
->>>> +	uint32_t lnkcap;
->>>> +
->>>> +	pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &lnkcap);
->>>> +
->>>> +	*speed = pcie_link_speed[lnkcap & PCI_EXP_LNKCAP_SLS];
->>>> +	*width = (lnkcap & PCI_EXP_LNKCAP_MLW) >> PCI_EXP_LNKCAP_MLW_SHIFT;
->>>> +}
->>>> +
->>>> +static void pcie_cur_link_sta(struct pci_dev *dev, enum pci_bus_speed *speed,
->>>> +				enum pcie_link_width *width)
->>>> +{
->>>> +	uint16_t lnksta;
->>>> +
->>>> +	pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
->>>> +	*speed = pcie_link_speed[lnksta & PCI_EXP_LNKSTA_CLS];
->>>> +	*width = (lnksta & PCI_EXP_LNKSTA_NLW) >> PCI_EXP_LNKSTA_NLW_SHIFT;
->>>> +}
->>>> +
->>>> +static const char *pcie_bus_speed_name(enum pci_bus_speed speed)
->>>> +{
->>>> +	switch (speed) {
->>>> +	case PCIE_SPEED_2_5GT:
->>>> +		return "2.5 GT/s";
->>>> +	case PCIE_SPEED_5_0GT:
->>>> +		return "5.0 GT/s";
->>>> +	case PCIE_SPEED_8_0GT:
->>>> +		return "8.0 GT/s";
->>>> +	default:
->>>> +		return "unknown";
->>>> +	}
->>>> +}
->>>
->>> I thought Bjorn added some functions to retrieve this now.
->>
->> Hmm. I couldn't find them.
-> 
-> https://lkml.org/lkml/2018/3/30/553
 
-Oh, pcie_get_speed_cap()/pcie_get_width_cap() seems to handle the
-capability. Not seeing one for status and speed name.
-
-> are you working on linux-next?
-
-v4.17-rc7
-
->>
->> Alex
->>
->>
-> 
-> 
+-- 
+paul moore
+www.paul-moore.com
