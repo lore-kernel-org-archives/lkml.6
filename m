@@ -1,110 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751204AbeEaVIZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 17:08:25 -0400
-Received: from sonic301-28.consmr.mail.gq1.yahoo.com ([98.137.64.154]:39657
-        "EHLO sonic301-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750981AbeEaVIT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 17:08:19 -0400
-X-YMail-OSG: 4m5ehwsVM1nGy80gE4k.U3KM8.rYrkRXLUQcLWFO.VrVESmKF6Vy1FYOJqvEWcz
- VbDderKsyQXTFtUcguFXGEcXAIqqgTU185p.GFSGx2pgSHJQn5o8xgSVbAf2vHjymvB9C9zxUSWb
- 0RRVO.WBPVLHkpmimOJ0rA1rOsfvce_Y3P.V1kfLz4C2I0tusBxjZljspXl1.hpEVxsSev7ev0hF
- 5LYAuQcwrRmP7yfDbm4gsAEXU_40LTU5OzshQ7lmoSoXnK5LjcmB6Qy0dj9nuW7G4b0mF80kRsaP
- HE.wElxcxsETatluHpWy9t9OUvMjk90YWg8YCO4saSvCpbzBELviMFsS3iVpdgY2A4QRxvQFvTAI
- 2maEYhXBPjKMPEJFqQ5TTO37w97WDN0K85O.nEKyVsFxa_Ykw2.2LcLI0a5Qki4IRwkEXHI1bkid
- .rK2SFpg9XMcXnqT_iFPXvXY3XjqeIRgqX_eVkJ4uXPwLjMnAGJZNlXIPQBxAFglnZ5G4NdSu3I6
- VXvDOC2l9dzNWih5cSRXG17sbiOM_J9oCwf7cpCXiNeqy58ElJeKXBi8871WnYXDzWfUSyjRP9is
- XOfLYstXCYE2ZC_LdM_jDghGtO_4kGEf_W7rn.dmMtZoxvBhaYwUzDheFfngwLyG.1SzNfJi_yTq
- YwhCogwnAvFLb7gIT_T286fj87vJDC.mUx5boBeNsWtHLfG9vNy2cKpt9JPuKWsrGLWOXiiJE7V1
- EpVvBISBbBj3CrlFcTalDbTXPArUG70kz28aJ754d
-Subject: Re: [PATCH 1/1] Fix memory leak in kernfs_security_xattr_set and
- kernfs_security_xattr_set
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: CHANDAN VN <chandan.vn@samsung.com>, gregkh@linuxfoundation.org,
-        tj@kernel.org, bfields@fieldses.org, jlayton@kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        cpgs@samsung.com, sireesha.t@samsung.com,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <CGME20180531092848epcas1p24b638ccd6da00f1e039bdb64de7e1a5b@epcas1p2.samsung.com>
- <1527758911-18610-1-git-send-email-chandan.vn@samsung.com>
- <cae274dd-e9e5-39b1-8b7b-aec1b3e76fe9@schaufler-ca.com>
- <87po1ba6hv.fsf@xmission.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <9fb8de9d-3a9a-706b-50a9-11e768f72851@schaufler-ca.com>
-Date: Thu, 31 May 2018 14:08:14 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <87po1ba6hv.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1751346AbeEaVKK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 17:10:10 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34464 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750770AbeEaVKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 17:10:02 -0400
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4/5] rtc: test: emulate alarms using timers
+Date: Thu, 31 May 2018 23:09:58 +0200
+Message-Id: <20180531210959.2472-4-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180531210959.2472-1-alexandre.belloni@bootlin.com>
+References: <20180531210959.2472-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/31/2018 1:57 PM, Eric W. Biederman wrote:
-> Casey Schaufler <casey@schaufler-ca.com> writes:
->
->> On 5/31/2018 2:28 AM, CHANDAN VN wrote:
->>> From: "sireesha.t" <sireesha.t@samsung.com>
->>>
->>> Leak is caused because smack_inode_getsecurity() is allocating memory
->>> using kstrdup(). Though the security_release_secctx() is called, it
->>> would not free the allocated memory. Calling security_release_secctx is
->>> not relevant for this scenario as inode_getsecurity() does not provide a
->>> "secctx".
->>>
->>> Similar fix has been mainlined:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/?id=57e7ba04d422c3d41c8426380303ec9b7533ded9
->>>
->>> The fix is to replace the security_release_secctx() with a kfree()
->>>
->>> Below is the KMEMLEAK dump:
->>> unreferenced object 0xffffffc025e11c80 (size 64):
->>>   comm "systemd-tmpfile", pid 2452, jiffies 4294894464 (age 235587.492s)
->>>   hex dump (first 32 bytes):
->>>     53 79 73 74 65 6d 3a 3a 53 68 61 72 65 64 00 00  System::Shared..
->>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->>>   backtrace:
->>>     [<ffffff80081be770>] __save_stack_trace+0x28/0x34
->>>     [<ffffff80081bedb8>] create_object+0x130/0x25c
->>>     [<ffffff80088c82f8>] kmemleak_alloc+0x30/0x5c
->>>     [<ffffff80081b3ef0>] __kmalloc_track_caller+0x1cc/0x2a8
->>>     [<ffffff800818673c>] kstrdup+0x3c/0x6c
->>>     [<ffffff80082d78b0>] smack_inode_getsecurity+0xcc/0xec
->>>     [<ffffff80082d78f4>] smack_inode_getsecctx+0x24/0x44
->>>     [<ffffff80082d5ea0>] security_inode_getsecctx+0x50/0x70
->>>     [<ffffff800823bbcc>] kernfs_security_xattr_set+0x74/0xe0
->>>     [<ffffff80081eafec>] __vfs_setxattr+0x74/0x90
->>>     [<ffffff80081eb088>] __vfs_setxattr_noperm+0x80/0x1ac
->>>     [<ffffff80081eb238>] vfs_setxattr+0x84/0xac
->>>     [<ffffff80081eb374>] setxattr+0x114/0x178
->>>     [<ffffff80081eb44c>] path_setxattr+0x74/0xb8
->>>     [<ffffff80081ebdcc>] SyS_lsetxattr+0x10/0x1c
->>>     [<ffffff800808310c>] __sys_trace_return+0x0/0x4
->>>
->>> Signed-off-by: sireesha.t <sireesha.t@samsung.com>
->>> Signed-off-by: CHANDAN VN <chandan.vn@samsung.com>
->> Why not:
->>
->>  static int smack_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
->>  {
->> -	int len = 0;
->> -	len = smack_inode_getsecurity(inode, XATTR_SMACK_SUFFIX, ctx, true);
->> +	int len = smack_inode_getsecurity(inode, XATTR_SMACK_SUFFIX, ctx, false);
->>
-> The practical difference here is the true vs the false in the call
-> to smack_inode_getsecurity?
+Use timers to emulate alarms. Note that multiple alarms may happen if they
+are set more than 15 days after the current RTC time.
 
-That is correct. The author of smack_inode_getsecctx() has a SELinux
-background and appears to have missed that Smack is careful not to
-allocate memory and make copies of labels when it doesn't need to.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-test.c | 56 +++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 52 insertions(+), 4 deletions(-)
 
->
->>  	if (len < 0)
->>  		return len;
->>
-> Eric
->
+diff --git a/drivers/rtc/rtc-test.c b/drivers/rtc/rtc-test.c
+index 041150e53fd7..975f6cdda73f 100644
+--- a/drivers/rtc/rtc-test.c
++++ b/drivers/rtc/rtc-test.c
+@@ -18,19 +18,49 @@
+ struct rtc_test_data {
+ 	struct rtc_device *rtc;
+ 	time64_t offset;
++	struct timer_list alarm;
++	bool alarm_en;
+ };
+ 
+ struct platform_device *pdev[MAX_RTC_TEST];
+ 
+-static int test_rtc_read_alarm(struct device *dev,
+-	struct rtc_wkalrm *alrm)
++static int test_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ {
++	struct rtc_test_data *rtd = dev_get_drvdata(dev);
++	time64_t alarm;
++
++	alarm = (rtd->alarm.expires - jiffies) / HZ;
++	alarm += ktime_get_real_seconds() + rtd->offset;
++
++	rtc_time64_to_tm(alarm, &alrm->time);
++	alrm->enabled = rtd->alarm_en;
++
+ 	return 0;
+ }
+ 
+-static int test_rtc_set_alarm(struct device *dev,
+-	struct rtc_wkalrm *alrm)
++static int test_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ {
++	struct rtc_test_data *rtd = dev_get_drvdata(dev);
++	ktime_t timeout;
++	u64 expires;
++
++	timeout = rtc_tm_to_time64(&alrm->time) - ktime_get_real_seconds();
++	timeout -= rtd->offset;
++
++	del_timer(&rtd->alarm);
++
++	expires = jiffies + timeout * HZ;
++	if (expires > U32_MAX)
++		expires = U32_MAX;
++
++	pr_err("ABE: %s +%d %s\n", __FILE__, __LINE__, __func__);
++	rtd->alarm.expires = expires;
++
++	if (alrm->enabled)
++		add_timer(&rtd->alarm);
++
++	rtd->alarm_en = alrm->enabled;
++
+ 	return 0;
+ }
+ 
+@@ -54,6 +84,14 @@ static int test_rtc_set_mmss64(struct device *dev, time64_t secs)
+ 
+ static int test_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
+ {
++	struct rtc_test_data *rtd = dev_get_drvdata(dev);
++
++	rtd->alarm_en = enable;
++	if (enable)
++		add_timer(&rtd->alarm);
++	else
++		del_timer(&rtd->alarm);
++
+ 	return 0;
+ }
+ 
+@@ -65,6 +103,13 @@ static const struct rtc_class_ops test_rtc_ops = {
+ 	.alarm_irq_enable = test_rtc_alarm_irq_enable,
+ };
+ 
++static void test_rtc_alarm_handler(struct timer_list *t)
++{
++	struct rtc_test_data *rtd = from_timer(rtd, t, alarm);
++
++	rtc_update_irq(rtd->rtc, 1, RTC_AF | RTC_IRQF);
++}
++
+ static ssize_t test_irq_show(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+@@ -111,6 +156,9 @@ static int test_probe(struct platform_device *plat_dev)
+ 	if (IS_ERR(rtd->rtc))
+ 		return PTR_ERR(rtd->rtc);
+ 
++	timer_setup(&rtd->alarm, test_rtc_alarm_handler, 0);
++	rtd->alarm.expires = 0;
++
+ 	return 0;
+ }
+ 
+-- 
+2.17.0
