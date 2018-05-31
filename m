@@ -1,131 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754231AbeEaJTG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:19:06 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45894 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754093AbeEaJTD (ORCPT
+        id S1754251AbeEaJUV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:20:21 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:41974 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754093AbeEaJUT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:19:03 -0400
-X-Google-Smtp-Source: ADUXVKKlnuZTBeqntIT85yP7VYZq0EFiQ8N/bpAjoQbXsyperwPoVZqlDwLdgOrSXtxJA+lqM+uW+Q==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
-Cc: broonie@kernel.org, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, baolin.wang@linaro.org
-Subject: [PATCH] rtc: sprd: Add new RTC power down check method
-Date: Thu, 31 May 2018 17:18:08 +0800
-Message-Id: <ea3bed8a6cb9493a7b0162f144de8a5ee4f06777.1527757194.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        Thu, 31 May 2018 05:20:19 -0400
+X-Google-Smtp-Source: ADUXVKJRnf4rGYFRP2xHEP0LIrYFtU4mpW5QncyOhDoT+icsH66rr736GRNzrw/Vw/lAOrPS4R2S/Q==
+MIME-Version: 1.0
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org> <20180515075859.17217-24-stanimir.varbanov@linaro.org>
+In-Reply-To: <20180515075859.17217-24-stanimir.varbanov@linaro.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Thu, 31 May 2018 18:20:04 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CGiB-7kQ8tWBw69cceu6+9mdhrW9ohHCfcVcWbJLbGfg@mail.gmail.com>
+Message-ID: <CAAFQd5CGiB-7kQ8tWBw69cceu6+9mdhrW9ohHCfcVcWbJLbGfg@mail.gmail.com>
+Subject: Re: [PATCH v2 23/29] venus: helpers: add a helper to return opb
+ buffer sizes
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>, vgarodia@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should use the new method to check if RTC was powered down, which
-is more solid. Since we have introduced power control and power status
-registers, and we just check if the power status is the default value
-(0x96), if yes that means the RTC has been powered down. Meanwhile We
-can set the power control register to be one valid value to change
-the power status to indicate RTC device is valid now.
+On Tue, May 15, 2018 at 5:02 PM Stanimir Varbanov
+<stanimir.varbanov@linaro.org> wrote:
+>
+> Add a helper function to return current output picture buffer size.
+> OPB sizes can vary depending on the selected decoder output(s).
+>
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> ---
+>  drivers/media/platform/qcom/venus/core.h    | 10 ++++++++++
+>  drivers/media/platform/qcom/venus/helpers.c | 15 +++++++++++++++
+>  drivers/media/platform/qcom/venus/helpers.h |  1 +
+>  3 files changed, 26 insertions(+)
+>
+> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> index 255292899204..4d6c05f156c4 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -234,6 +234,11 @@ struct venus_buffer {
+>   * @num_output_bufs:   holds number of output buffers
+>   * @input_buf_size     holds input buffer size
+>   * @output_buf_size:   holds output buffer size
+> + * @output2_buf_size:  holds secondary decoder output buffer size
+> + * @dpb_buftype:       decoded picture buffer type
+> + * @dpb_fmt:           decodec picture buffre raw format
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/rtc/rtc-sc27xx.c |   47 +++++++++++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
+typo: s/decodec/decoded/ and s/buffre/buffer/
 
-diff --git a/drivers/rtc/rtc-sc27xx.c b/drivers/rtc/rtc-sc27xx.c
-index 6a3876e..deea5c3 100644
---- a/drivers/rtc/rtc-sc27xx.c
-+++ b/drivers/rtc/rtc-sc27xx.c
-@@ -35,6 +35,8 @@
- #define SPRD_RTC_DAY_ALM_VALUE		0x4c
- #define SPRD_RTC_SPG_VALUE		0x50
- #define SPRD_RTC_SPG_UPD		0x54
-+#define SPRD_RTC_PWR_CTRL		0x58
-+#define SPRD_RTC_PWR_STS		0x5c
- #define SPRD_RTC_SEC_AUXALM_UPD		0x60
- #define SPRD_RTC_MIN_AUXALM_UPD		0x64
- #define SPRD_RTC_HOUR_AUXALM_UPD	0x68
-@@ -86,7 +88,13 @@
- 
- /* SPG values definition for SPRD_RTC_SPG_UPD register */
- #define SPRD_RTC_POWEROFF_ALM_FLAG	BIT(8)
--#define SPRD_RTC_POWER_RESET_FLAG	BIT(9)
-+
-+/* power control/status definition */
-+#define SPRD_RTC_POWER_RESET_VALUE	0x96
-+#define SPRD_RTC_POWER_STS_CLEAR	GENMASK(7, 0)
-+#define SPRD_RTC_POWER_STS_SHIFT	8
-+#define SPRD_RTC_POWER_STS_VALID	\
-+	(~SPRD_RTC_POWER_RESET_VALUE << SPRD_RTC_POWER_STS_SHIFT)
- 
- /* timeout of synchronizing time and alarm registers (us) */
- #define SPRD_RTC_POLL_TIMEOUT		200000
-@@ -383,7 +391,6 @@ static int sprd_rtc_set_time(struct device *dev, struct rtc_time *tm)
- {
- 	struct sprd_rtc *rtc = dev_get_drvdata(dev);
- 	time64_t secs = rtc_tm_to_time64(tm);
--	u32 val;
- 	int ret;
- 
- 	ret = sprd_rtc_set_secs(rtc, SPRD_RTC_TIME, secs);
-@@ -391,27 +398,20 @@ static int sprd_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 		return ret;
- 
- 	if (!rtc->valid) {
--		/*
--		 * Set SPRD_RTC_POWER_RESET_FLAG to indicate now RTC has valid
--		 * time values.
--		 */
--		ret = regmap_update_bits(rtc->regmap,
--					 rtc->base + SPRD_RTC_SPG_UPD,
--					 SPRD_RTC_POWER_RESET_FLAG,
--					 SPRD_RTC_POWER_RESET_FLAG);
-+		/* Clear RTC power status firstly */
-+		ret = regmap_write(rtc->regmap, rtc->base + SPRD_RTC_PWR_CTRL,
-+				   SPRD_RTC_POWER_STS_CLEAR);
- 		if (ret)
- 			return ret;
- 
--		ret = regmap_read_poll_timeout(rtc->regmap,
--					       rtc->base + SPRD_RTC_INT_RAW_STS,
--					       val, (val & SPRD_RTC_SPG_UPD_EN),
--					       SPRD_RTC_POLL_DELAY_US,
--					       SPRD_RTC_POLL_TIMEOUT);
--		if (ret) {
--			dev_err(rtc->dev, "failed to update SPG value:%d\n",
--				ret);
-+		/*
-+		 * Set RTC power status to indicate now RTC has valid time
-+		 * values.
-+		 */
-+		ret = regmap_write(rtc->regmap, rtc->base + SPRD_RTC_PWR_CTRL,
-+				   SPRD_RTC_POWER_STS_VALID);
-+		if (ret)
- 			return ret;
--		}
- 
- 		rtc->valid = true;
- 	}
-@@ -562,15 +562,16 @@ static int sprd_rtc_check_power_down(struct sprd_rtc *rtc)
- 	u32 val;
- 	int ret;
- 
--	ret = regmap_read(rtc->regmap, rtc->base + SPRD_RTC_SPG_VALUE, &val);
-+	ret = regmap_read(rtc->regmap, rtc->base + SPRD_RTC_PWR_STS, &val);
- 	if (ret)
- 		return ret;
- 
- 	/*
--	 * If the SPRD_RTC_POWER_RESET_FLAG was not set, which means the RTC has
--	 * been powered down, so the RTC time values are invalid.
-+	 * If the RTC power status value is SPRD_RTC_POWER_RESET_VALUE, which
-+	 * means the RTC has been powered down, so the RTC time values are
-+	 * invalid.
- 	 */
--	rtc->valid = (val & SPRD_RTC_POWER_RESET_FLAG) ? true : false;
-+	rtc->valid = val == SPRD_RTC_POWER_RESET_VALUE ? false : true;
- 	return 0;
- }
- 
--- 
-1.7.9.5
+> + * @opb_buftype:       output picture buffer type
+> + * @opb_fmt:           output picture buffer raw format
+>   * @reconfig:  a flag raised by decoder when the stream resolution changed
+>   * @reconfig_width:    holds the new width
+>   * @reconfig_height:   holds the new height
+> @@ -282,6 +287,11 @@ struct venus_inst {
+>         unsigned int num_output_bufs;
+>         unsigned int input_buf_size;
+>         unsigned int output_buf_size;
+> +       unsigned int output2_buf_size;
+> +       u32 dpb_buftype;
+> +       u32 dpb_fmt;
+
+These 2 don't seem to be used.
+
+Best regards,
+Tomasz
