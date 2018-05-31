@@ -1,52 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755349AbeEaONs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:13:48 -0400
-Received: from ozlabs.org ([203.11.71.1]:42597 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755093AbeEaONq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:13:46 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Josef Bacik <jbacik@fb.com>, Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 2/2] powerpc: Add support for function error injection
-In-Reply-To: <1527761352.z5jz8jg2d5.naveen@linux.ibm.com>
-References: <cover.1527596631.git.naveen.n.rao@linux.vnet.ibm.com> <5ad23690185a90a887514d702ecb45783090d7c0.1527596631.git.naveen.n.rao@linux.vnet.ibm.com> <87h8mozajv.fsf@concordia.ellerman.id.au> <1527761352.z5jz8jg2d5.naveen@linux.ibm.com>
-Date: Fri, 01 Jun 2018 00:13:44 +1000
-Message-ID: <87zi0fyktj.fsf@concordia.ellerman.id.au>
+        id S1755376AbeEaOO5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:14:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51320 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755093AbeEaOO4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:14:56 -0400
+Date: Thu, 31 May 2018 07:14:52 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Christopher Lameter <cl@linux.com>
+Cc: Jia-Ju Bai <baijiaju1990@gmail.com>, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Can kfree() sleep at runtime?
+Message-ID: <20180531141452.GC30221@bombadil.infradead.org>
+References: <30ecafd7-ed61-907b-f924-77fc37dcc753@gmail.com>
+ <20180531140808.GA30221@bombadil.infradead.org>
+ <01000163b68a8026-56fb6a35-040b-4af9-8b73-eb3b4a41c595-000000@email.amazonses.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01000163b68a8026-56fb6a35-040b-4af9-8b73-eb3b4a41c595-000000@email.amazonses.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
+On Thu, May 31, 2018 at 02:12:00PM +0000, Christopher Lameter wrote:
+> On Thu, 31 May 2018, Matthew Wilcox wrote:
+> 
+> > On Thu, May 31, 2018 at 09:10:07PM +0800, Jia-Ju Bai wrote:
+> > > I write a static analysis tool (DSAC), and it finds that kfree() can sleep.
+> > >
+> > > Here is the call path for kfree().
+> > > Please look at it *from the bottom up*.
+> > >
+> > > [FUNC] alloc_pages(GFP_KERNEL)
+> > > arch/x86/mm/pageattr.c, 756: alloc_pages in split_large_page
+> > > arch/x86/mm/pageattr.c, 1283: split_large_page in __change_page_attr
+> >
+> > Here's your bug.  Coming from kfree(), we can't end up in the
+> > split_large_page() path.  __change_page_attr may be called in several
+> > different circumstances in which it would have to split a large page,
+> > but the path from kfree() is not one of them.
+> 
+> Freeing a page in the page allocator also was traditionally not sleeping.
+> That has changed?
 
-> Michael Ellerman wrote:
->> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
->>> ...
->> 
->> A change log is always nice even if it's short :)
->
-> I tried, but really couldn't come up with anything more to write. I'll 
-> try harder for v2 :)
-
-Yeah true.
-
-You could just say "All that's required is to define x and y and select
-the Kconfig symbol".
-
->> This looks fine to me, it's probably easiest if it goes in via tip along
->> with patch 1.
->> 
->> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
->
-> Thanks for the review. I'll base v2 on -tip
-
-I guess if it doesn't already apply to tip you should rebase it. You've
-probably missed 4.18 anyway.
-
-cheers
+No.  "Your bug" being "The bug in your static analysis tool".  It probably
+isn't following the data flow correctly (or deeply enough).
