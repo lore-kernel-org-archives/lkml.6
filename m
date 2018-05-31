@@ -1,69 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932635AbeEaAL7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 20:11:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42622 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932450AbeEaAL4 (ORCPT
+        id S932575AbeEaAXb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 20:23:31 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:33058 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932450AbeEaAX2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 20:11:56 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EA8956063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-Subject: Re: [PATCH v4 0/2] regulator: add QCOM RPMh regulator driver
-To: Mark Brown <broonie@kernel.org>
-Cc: lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rnayak@codeaurora.org, sboyd@kernel.org, dianders@chromium.org
-References: <cover.1527040878.git.collinsd@codeaurora.org>
- <20180530163343.GV6920@sirena.org.uk>
-From: David Collins <collinsd@codeaurora.org>
-Message-ID: <da40510b-443d-d8fd-7285-c6e7eff45dc6@codeaurora.org>
-Date: Wed, 30 May 2018 17:11:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        Wed, 30 May 2018 20:23:28 -0400
+X-Google-Smtp-Source: ADUXVKLLs/q5No1zATpywgTA32QfVwIIAVmD7LTdBvzfc9Yixbw/L4LYLKOpmMM0ZVJEH+vgVmn32Q==
+Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
+To: Stephen Boyd <sboyd@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Pramod Kumar <pramod.kumar@broadcom.com>
+References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+ <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
+ <152772366322.144038.12289577935853704907@swboyd.mtv.corp.google.com>
+From: Ray Jui <ray.jui@broadcom.com>
+Message-ID: <25bd1449-b0f6-aecb-b326-a00af1dc4e90@broadcom.com>
+Date: Wed, 30 May 2018 17:23:24 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180530163343.GV6920@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <152772366322.144038.12289577935853704907@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mark,
+Hi Stephen,
 
-On 05/30/2018 09:33 AM, Mark Brown wrote:
-> On Tue, May 22, 2018 at 07:43:16PM -0700, David Collins wrote:
->> This patch series adds a driver and device tree binding documentation for
->> PMIC regulator control via Resource Power Manager-hardened (RPMh) on some
->> Qualcomm Technologies, Inc. SoCs such as SDM845.  RPMh is a hardware block
-> 
-> So, this is a very big driver and obviously it being RPM based it
-> doesn't look like other regulators which is causing problems, especially
-> when coupled with the desire to implement a bunch of more exotic
-> features like the mode setting.  I think this review is going to go a
-> lot more smoothly if you split this up into a base driver with just
-> normal, standard stuff that doesn't add too many custom properties or
-> unusual ways of working and then a series of patches on top of that
-> adding things like the mode adjustment and interaction with other RPM
-> clients.
-> 
-> We've got other RPM based regulators in tree already so the baseline bit
-> shouldn't be too hard, that'll make the rest of the patches much smaller
-> and easier to review and mean that the bits that are simpler and easier
-> to cope with don't need to be reposted.
+On 5/30/2018 4:41 PM, Stephen Boyd wrote:
+> Subject is missing an 's' on stringray?
+>
 
-I'll split up the patches so that reviewing is easier.  For the base
-patch, would you prefer that I remove *all* mode support (handled by
-generic regulator framework DT properties) or only remove the special
-purpose drms mode handling support (i.e. qcom,regulator-drms-modes and
-qcom,drms-mode-max-microamps)?
+Yes, will fix this.
+
+
+> Quoting Ray Jui (2018-05-25 09:45:16)
+>> Update and add Stingray clock definitions and tables so they match the
+>> binding document and the latest ASIC datasheet
+>>
+>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> 
+> Otherwise it looks ok, but maybe Pramod should be the author?
+> 
+
+Will fix this for all commits in this series.
+
+I'll fix the above and send out v2.
 
 Thanks,
-David
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Ray
