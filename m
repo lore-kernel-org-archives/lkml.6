@@ -1,137 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751193AbeEaWrF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:47:05 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:54755 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750985AbeEaWrE (ORCPT
+        id S1751007AbeEaWur (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 18:50:47 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:37950 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbeEaWup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 18:47:04 -0400
-X-ME-Proxy: <xmx:Z3sQW1lk68rDg9YUrzBdtG5N_okjFZG0bHpELQI6mjQMdM24fuiPdQ>
-X-ME-Proxy: <xmx:Z3sQW85gbI8FJ3FWojnpXsanQTpkrrlodmC7P61YbMP-av1fsZGZMQ>
-X-ME-Proxy: <xmx:Z3sQW29BdauuwsumbBe7NEELzz-Ww8bSLhCtV-8vEa-MClqX1pt21g>
-X-ME-Proxy: <xmx:Z3sQW0jzdvJToeGdnGi3_kc5FYRJpwX9ctATRGkCQr5wigZywzxPgw>
-X-ME-Proxy: <xmx:Z3sQW87EevKgY9Hyg1LpVuoC8a3E7324RDHvNX-xruTYjjko-hkS4g>
-X-ME-Proxy: <xmx:Z3sQWxepo3MKd5h3--BxOnO9DoS2GYaAFuPVuNxzDskTu19JdpH8kw>
-X-ME-Sender: <xms:Z3sQW4P1B6xBf-n92RKCXB-TVgAOK5S6PlLepImTgnspIYwtnzZ3lw>
-Date: Fri, 1 Jun 2018 08:46:59 +1000
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 4/4] vsprintf: Add command line option
- debug_boot_weak_hash
-Message-ID: <20180531224659.GA1682@eros>
-References: <1527472002-11571-1-git-send-email-me@tobin.cc>
- <1527472002-11571-5-git-send-email-me@tobin.cc>
- <20180531173515.0252d579@vmware.local.home>
+        Thu, 31 May 2018 18:50:45 -0400
+X-Google-Smtp-Source: ADUXVKIXjnLu/nqc99HCTGA27uTWo4jwblKaFVQJaM33i1vHA4GRcCZ3kXyJlwNeyNrbqqD7QzWR+w==
+Date: Thu, 31 May 2018 15:50:36 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+cc: Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Josef Bacik <jbacik@fb.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/shmem: Zero out unused vma fields in
+ shmem_pseudo_vma_init()
+In-Reply-To: <20180531135602.20321-1-kirill.shutemov@linux.intel.com>
+Message-ID: <alpine.LSU.2.11.1805311522380.13187@eggly.anvils>
+References: <20180531135602.20321-1-kirill.shutemov@linux.intel.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531173515.0252d579@vmware.local.home>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 05:35:15PM -0400, Steven Rostedt wrote:
-> On Mon, 28 May 2018 11:46:42 +1000
-> "Tobin C. Harding" <me@tobin.cc> wrote:
+On Thu, 31 May 2018, Kirill A. Shutemov wrote:
+
+> shmem/tmpfs uses pseudo vma to allocate page with correct NUMA policy.
 > 
-> > Currently printing [hashed] pointers requires enough entropy to be
-> > available.  Early in the boot sequence this may not be the case
-> > resulting in a dummy string '(____ptrval____)' being printed.  This
-> > makes debugging the early boot sequence difficult.  We can relax the
-> > requirement to use cryptographically secure hashing during debugging.
-> > This enables debugging while keeping development/production kernel
-> > behaviour the same.
-> > 
-> > If new command line option debug_boot_weak_hash is enabled use
-> > cryptographically insecure hashing and hash pointer value immediately.
-> > 
+> The pseudo vma doesn't have vm_page_prot set. We are going to encode
+> encryption KeyID in vm_page_prot. Having garbage there causes problems.
 > 
-> I was able to play with this. It did start showing real pointers after
-> the early parameters are parsed. Hopefully we don't need anything
-> before that. But that is still much earlier than what we had before.
-
-Cool, thanks for testing.
-
-> > Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Randy Dunlap <rdunlap@infradead.org>
-> > Signed-off-by: Tobin C. Harding <me@tobin.cc>
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
-> >  lib/vsprintf.c                                  | 20 ++++++++++++++++++++
-> >  2 files changed, 29 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index f2040d46f095..8a86d895343e 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -753,6 +753,15 @@
-> >  
-> >  	debug		[KNL] Enable kernel debugging (events log level).
-> >  
-> > +	debug_boot_weak_hash
-> > +			[KNL] Enable printing pointers early in the boot
-> > +			sequence.  If enabled, we use a weak hash instead of
-> > +			siphash to hash pointers.  Use this option if you need
-> > +			to see pointer values during early boot (i.e you are
-> > +			seeing instances of '(___ptrval___)').
-> > +			Cryptographically insecure, please do not use on
-> > +			production kernels.
-> > +
-> >  	debug_locks_verbose=
-> >  			[KNL] verbose self-tests
-> >  			Format=<0|1>
-> > diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> > index 1545a8aa26a9..369623205e2c 100644
-> > --- a/lib/vsprintf.c
-> > +++ b/lib/vsprintf.c
-> > @@ -1670,6 +1670,20 @@ char *pointer_string(char *buf, char *end, const void *ptr,
-> >  }
-> >  
-> >  static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
-> > +
-> > +/* Make pointers available for printing early in the boot sequence. */
-> > +static int debug_boot_weak_hash __ro_after_init;
-> > +EXPORT_SYMBOL(debug_boot_weak_hash);
-> > +
-> > +static int __init debug_boot_weak_hash_enable(char *str)
-> > +{
-> > +	debug_boot_weak_hash = 1;
-> > +	pr_info("debug_boot_weak_hash enabled\n");
-> > +	return 0;
-> > +}
-> > +early_param("debug_boot_weak_hash", debug_boot_weak_hash_enable);
-> > +
-> > +static bool have_filled_random_ptr_key __read_mostly;
-> >  static siphash_key_t ptr_key __read_mostly;
-> >  
-> >  static void enable_ptr_key_workfn(struct work_struct *work)
-> > @@ -1721,6 +1735,12 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
-> >  	unsigned long hashval;
-> >  	const int default_width = 2 * sizeof(ptr);
-> >  
-> > +	/* When debugging early boot use non-cryptographically secure hash */
-> > +	if (unlikely(debug_boot_weak_hash)) {
+> Zero out all unused fields in the pseudo vma.
 > 
-> Perhaps we should make the debug_boot_weak_hash into a static key too.
-> That way, it's constant jump instead of a compare.
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Happy to do it but isn't that a bit of an over optimization, is printing
-ever that performance critical?
+I won't go so far as to say NAK, but personally I much prefer that we
+document what fields actually get used, by initializing only those,
+rather than having such a blanket memset.
 
-Of course, if on second thoughts you still think it's worth doing I'll
-code it up.
+And you say "We are going to ...": so this should really be part of
+some future patchset, shouldn't it?
 
-thanks,
-Tobin.
+My opinion might be in the minority: you remind me of a similar
+request from Josef some while ago, Cc'ing him.
+
+(I'm very ashamed, by the way, of shmem's pseudo-vma, I think it's
+horrid, and just reflects that shmem was an afterthought when NUMA
+mempolicies were designed.  Internally, we replaced alloc_pages_vma()
+throughout by alloc_pages_mpol(), which has no need for pseudo-vmas,
+and the advantage of dropping mmap_sem across the bulk of NUMA page
+migration. I shall be updating that work in coming months, and hope
+to upstream, but no promise from me on the timing - your need for
+vm_page_prot likely much sooner.)
+
+Hugh
+
+> ---
+>  mm/shmem.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 9d6c7e595415..693fb82b4b42 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1404,10 +1404,9 @@ static void shmem_pseudo_vma_init(struct vm_area_struct *vma,
+>  		struct shmem_inode_info *info, pgoff_t index)
+>  {
+>  	/* Create a pseudo vma that just contains the policy */
+> -	vma->vm_start = 0;
+> +	memset(vma, 0, sizeof(*vma));
+>  	/* Bias interleave by inode number to distribute better across nodes */
+>  	vma->vm_pgoff = index + info->vfs_inode.i_ino;
+> -	vma->vm_ops = NULL;
+>  	vma->vm_policy = mpol_shared_policy_lookup(&info->policy, index);
+>  }
+>  
+> -- 
+> 2.17.0
