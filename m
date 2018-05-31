@@ -1,65 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754366AbeEaJpQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:45:16 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39135 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754219AbeEaJpO (ORCPT
+        id S1754274AbeEaJuB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:50:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42468 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754092AbeEaJt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:45:14 -0400
-X-Google-Smtp-Source: ADUXVKKs9BpJt4pYHXvN8cEZt7rv686mi6Oq36uxHR/D5zUzycz2Jcx+G7pFrXvBOfgZAx+Dtc7CsA==
-Date: Thu, 31 May 2018 18:45:08 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: bhelgaas@google.com, pmladek@suse.com, sergey.senozhatsky@gmail.com,
-        rostedt@goodmis.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Greg KH <gregkh@linuxfoundation.org>, corbet@lwn.net,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: Can printk() sleep at runtime?
-Message-ID: <20180531094508.GC477@jagdpanzerIV>
-References: <ba98332d-7013-f5cb-7d49-645ee6f49156@gmail.com>
+        Thu, 31 May 2018 05:49:59 -0400
+Date: Thu, 31 May 2018 11:49:43 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v9 2/7] cpuset: Add new v2 cpuset.sched.domain_root flag
+Message-ID: <20180531094943.GG12180@hirez.programming.kicks-ass.net>
+References: <1527601294-3444-1-git-send-email-longman@redhat.com>
+ <1527601294-3444-3-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ba98332d-7013-f5cb-7d49-645ee6f49156@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1527601294-3444-3-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc-ing CLK people.
+On Tue, May 29, 2018 at 09:41:29AM -0400, Waiman Long wrote:
+> +  cpuset.sched.domain_root
+> +	A read-write single value file which exists on non-root
+> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
+> +	either "0" (off) or "1" (on).  This flag is set by the parent
+> +	and is not delegatable.
 
-On (05/31/18 17:08), Jia-Ju Bai wrote:
-> [FUNC] __might_sleep
-> kernel/locking/mutex.c: 747: __might_sleep in __mutex_lock_common
-> kernel/locking/mutex.c: 893: __mutex_lock_common in __mutex_lock
-> kernel/locking/mutex.c: 908: __mutex_lock in mutex_lock_nested
-> drivers/clk/clk.c, 123: mutex_lock_nested in clk_prepare_lock
-> drivers/clk/clk.c, 1369: clk_prepare_lock in clk_core_get_rate
-> drivers/clk/clk.c, 1393: clk_core_get_rate in clk_get_rate
-> lib/vsprintf.c, 1450: clk_get_rate in clock
-> lib/vsprintf.c, 1944: clock in pointer
-> lib/vsprintf.c, 2286: pointer in vsnprintf
-> lib/vsprintf.c, 2385: vsnprintf in vscnprintf
-> kernel/printk/printk.c, 1853: vscnprintf in vprintk_emit
-> kernel/printk/printk.c, 1947: vprintk_emit in vprintk_default
-> kernel/printk/printk_safe.c, 379: vprintk_default in vprintk_func
-> kernel/printk/printk.c, 1980: vprintk_func in printk
-> drivers/pci/pci.c, 5364: printk in pci_specified_resource_alignment
-> drivers/pci/pci.c, 5313: spin_lock in pci_specified_resource_alignment
-> 
-> In fact, I suspect that my report is false, because I always have an
-> impression that printk() cannot sleep.
-> But according to the call path, I cannot find where I make the mistake...
-> 
-> So could someone please help me to point the mistake?
+What does "is not delegatable" mean?
 
-I think you are right.
+I think you used to say "is owned by the parent", which is took to mean
+file ownership is that of the parent directory (..) and not of the
+current (,), which is slightly odd but works.
 
-number(buf, end, clk_get_rate(clk), spec) indeed locks the `prepare_lock'
-mutex from atomic context.
+So if you chown a cgroup to a user, that user will not be able to change
+the file of it's 'root' (will actually be the root in case of
+container), but it _can_ change this file for any sub-cgroups it
+creates, right?
 
-	-ss
+So in that respect the feature is delegatable, a container can create
+sub-partitions. It just cannot change it's 'root' partition, which is
+consistent with a real root.
+
+The only inconsistently left is then that the real root does not have
+the file at all, vs a container root having it, but not accessible.
