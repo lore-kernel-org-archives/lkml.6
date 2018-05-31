@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751444AbeEaWRw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:17:52 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:37506 "EHLO
+        id S1751399AbeEaWRs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 18:17:48 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:37530 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750872AbeEaWQl (ORCPT
+        with ESMTP id S1750880AbeEaWQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 May 2018 18:16:41 -0400
 From: Stefan Agner <stefan@agner.ch>
@@ -18,9 +18,9 @@ Cc: dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
         stefan@agner.ch, linux-mtd@lists.infradead.org,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/6] mtd: rawnand: add an option to specify NAND chip as a boot device
-Date: Fri,  1 Jun 2018 00:16:33 +0200
-Message-Id: <20180531221637.6017-3-stefan@agner.ch>
+Subject: [PATCH v3 3/6] mtd: rawnand: tegra: add devicetree binding
+Date: Fri,  1 Jun 2018 00:16:34 +0200
+Message-Id: <20180531221637.6017-4-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180531221637.6017-1-stefan@agner.ch>
 References: <20180531221637.6017-1-stefan@agner.ch>
@@ -43,62 +43,85 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow to define a NAND chip as a boot device. This can be helpful
-for the selection of the ECC algorithm and strength in case the boot
-ROM supports only a subset of controller provided options.
+This adds the devicetree binding for the Tegra 2 NAND flash
+controller.
 
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- Documentation/devicetree/bindings/mtd/nand.txt | 4 ++++
- drivers/mtd/nand/raw/nand_base.c               | 3 +++
- include/linux/mtd/rawnand.h                    | 6 ++++++
- 3 files changed, 13 insertions(+)
+ .../bindings/mtd/nvidia-tegra20-nand.txt      | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
 
-diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
-index 8bb11d809429..8daf81b9748c 100644
---- a/Documentation/devicetree/bindings/mtd/nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/nand.txt
-@@ -43,6 +43,10 @@ Optional NAND chip properties:
- 		     This is particularly useful when only the in-band area is
- 		     used by the upper layers, and you want to make your NAND
- 		     as reliable as possible.
-+- nand-is-boot-medium: Whether the NAND chip is a boot medium. Drivers might use
-+		       this information to select ECC algorithms supported by
-+		       the boot ROM or similar restrictions.
+diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+new file mode 100644
+index 000000000000..5cd984ef046b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+@@ -0,0 +1,64 @@
++NVIDIA Tegra NAND Flash controller
 +
- - nand-rb: shall contain the native Ready/Busy ids.
- 
- The ECC strength and ECC step size properties define the correction capability
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 9eb5678dd6d0..c8fb7c9855e2 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5826,6 +5826,9 @@ static int nand_dt_init(struct nand_chip *chip)
- 	if (of_get_nand_bus_width(dn) == 16)
- 		chip->options |= NAND_BUSWIDTH_16;
- 
-+	if (of_property_read_bool(dn, "nand-is-boot-medium"))
-+		chip->options |= NAND_IS_BOOT_MEDIUM;
++Required properties:
++- compatible: Must be one of:
++  - "nvidia,tegra20-nand"
++- reg: MMIO address range
++- interrupts: interrupt output of the NFC controller
++- clocks: Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names: Must include the following entries:
++  - nand
++- resets: Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names: Must include the following entries:
++  - nand
 +
- 	if (of_get_nand_on_flash_bbt(dn))
- 		chip->bbt_options |= NAND_BBT_USE_FLASH;
- 
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 6a82da8c44ce..8e54fcf2fa94 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -212,6 +212,12 @@ enum nand_ecc_algo {
-  */
- #define NAND_WAIT_TCCS		0x00200000
- 
-+/*
-+ * Whether the NAND chip is a boot medium. Drivers might use this information
-+ * to select ECC algorithms supported by the boot ROM or similar restrictions.
-+ */
-+#define NAND_IS_BOOT_MEDIUM	0x00400000
++Optional children nodes:
++Individual NAND chips are children of the NAND controller node. Currently
++only one NAND chip supported.
 +
- /* Options set by nand scan */
- /* Nand scan has allocated controller struct */
- #define NAND_CONTROLLER_ALLOC	0x80000000
++Required children node properties:
++- reg: An integer ranging from 1 to 6 representing the CS line to use.
++
++Optional children node properties:
++- nand-ecc-mode: String, operation mode of the NAND ecc mode. Currently only
++		 "hw" is supported.
++- nand-ecc-algo: string, algorithm of NAND ECC.
++		 Supported values with "hw" ECC mode are: "rs", "bch".
++- nand-bus-width : See nand.txt
++- nand-on-flash-bbt: See nand.txt
++- nand-ecc-strength: integer representing the number of bits to correct
++		     per ECC step (always 512). Supported strength using HW ECC
++		     modes are:
++		     - RS: 4, 6, 8
++		     - BCH: 4, 8, 14, 16
++- nand-ecc-maximize: See nand.txt
++- nand-is-boot-medium: Makes sure only ECC strengths supported by the boot ROM
++		       are choosen.
++- wp-gpios: GPIO specifier for the write protect pin.
++
++Optional child node of NAND chip nodes:
++Partitions: see partition.txt
++
++  Example:
++	nand@70008000 {
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++
++		nand-chip@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			nand-bus-width = <8>;
++			nand-on-flash-bbt;
++			nand-ecc-algo = "bch";
++			nand-ecc-strength = <8>;
++			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
++		};
++	};
 -- 
 2.17.0
