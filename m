@@ -1,65 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755625AbeEaQZs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:25:48 -0400
-Received: from mail-it0-f42.google.com ([209.85.214.42]:36236 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755456AbeEaQZo (ORCPT
+        id S1755706AbeEaQ0D (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:26:03 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:45128 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755653AbeEaQZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:25:44 -0400
-X-Google-Smtp-Source: ADUXVKLBOrXWo2+MHl67BTF2DQrrJss+d6VkWkl0oxYvPodZNXjR22qVcup+Bf7nKWf823GpFmXfnG7XqvpK9n/FItQ=
+        Thu, 31 May 2018 12:25:58 -0400
+X-Google-Smtp-Source: ADUXVKLMmGZvq4OJOxODfHfOquMNwjFOKHMhf5qvb+Z26fp2IAb8+brmtmat3bLa2AmX0VPf4hdK4g==
+Date: Thu, 31 May 2018 11:25:56 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Pramod Kumar <pramod.kumar@broadcom.com>
+Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
+Message-ID: <20180531162556.GA955@rob-hp-laptop>
+References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+ <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <4b9c4b84704ba4d1a89bd0408e76e68e5554d078.camel@ndufresne.ca>
-References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
- <4b9c4b84704ba4d1a89bd0408e76e68e5554d078.camel@ndufresne.ca>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Thu, 31 May 2018 21:55:43 +0530
-Message-ID: <CAMty3ZCV0LgDK0vFtN2HvLVZ4W26mvn4xEr0wby1TaYyhbFZsw@mail.gmail.com>
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-To: Nicolas Dufresne <nicolas@ndufresne.ca>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Discussion of the development of and with GStreamer
-        <gstreamer-devel@lists.freedesktop.org>,
-        linux-media@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4VGPseD023835
 
-On Thu, May 31, 2018 at 9:40 PM, Nicolas Dufresne <nicolas@ndufresne.ca> wrote:
-> Le jeudi 31 mai 2018 à 20:39 +0530, Jagan Teki a écrit :
->> Hi All,
->>
->> I'm trying to verify MIPI-CSI2 OV5640 camera on i.MX6 platform with
->> Mainline Linux.
->>
->> I've followed these[1] instructions to configure MC links and pads
->> based on the probing details from dmesg and trying to capture
->> ipu1_ic_prpenc capture (/dev/video1) but it's not working.
->>
->> Can anyone help me to verify whether I configured all the details
->> properly if not please suggest.
->>
->> I'm pasting full log here, so-that anyone can comment in line and dt
->> changes are at [2]
->
-> Be aware that because all of the provided GStreamer logs lines are
-> truncated, I won't be able to comment on the issue.
+On Fri, May 25, 2018 at 09:45:16AM -0700, Ray Jui wrote:
+> Update and add Stingray clock definitions and tables so they match the
+> binding document and the latest ASIC datasheet
+> 
+> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> ---
+>  drivers/clk/bcm/clk-sr.c           | 135 ++++++++++++++++++++++++++++++++-----
+>  include/dt-bindings/clock/bcm-sr.h |  24 +++++--
 
-Sorry for the confusion, here is the gst log [3] and dmesg + media-ctl [4]
+This goes in the 1st patch.
 
-[3] https://paste.ubuntu.com/p/NpG8ynb8nQ/
-[4] https://paste.ubuntu.com/p/VGX3sYdvVW/
-
-Jagan.
-
--- 
-Jagan Teki
-Senior Linux Kernel Engineer | Amarula Solutions
-U-Boot, Linux | Upstream Maintainer
-Hyderabad, India.
+>  2 files changed, 137 insertions(+), 22 deletions(-)
