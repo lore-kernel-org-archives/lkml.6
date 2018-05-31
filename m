@@ -1,63 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755391AbeEaOVE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:21:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56960 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755274AbeEaOVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:21:02 -0400
-Date: Thu, 31 May 2018 16:21:00 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: drop in_nmi check from
- printk_safe_flush_on_panic()
-Message-ID: <20180531142100.bwseualfb2qrxwjb@pathway.suse.cz>
-References: <20180530070350.10131-1-sergey.senozhatsky@gmail.com>
- <20180530072419.jqoohtcvenlnym6h@pathway.suse.cz>
- <20180530075105.GA12230@jagdpanzerIV>
- <20180530084801.i5mzqhlw2w5o2eod@pathway.suse.cz>
- <20180530095504.GD12230@jagdpanzerIV>
- <20180530100037.GE12230@jagdpanzerIV>
+        id S1755348AbeEaOWe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:22:34 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54787 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755264AbeEaOWb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 10:22:31 -0400
+X-Google-Smtp-Source: ADUXVKLjJwOXZt+QgIhj3U8HTsHuf7x9qMxdL+tN2rBHXI29usjmclC0QGP5388PwvFWavGPRtWbtQ==
+Subject: Re: linux-next: build failure after merge of the device-mapper tree
+From: Jens Axboe <axboe@kernel.dk>
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Alasdair G Kergon <agk@redhat.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+References: <20180531142302.5f7b4302@canb.auug.org.au>
+ <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
+ <20180531121041.GB8456@redhat.com>
+ <6ad38822-0bb4-3099-69b0-7a8a36d79403@kernel.dk>
+Message-ID: <9ed288cd-0e85-1cb6-7be0-d9d76c7af66d@kernel.dk>
+Date: Thu, 31 May 2018 08:22:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180530100037.GE12230@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <6ad38822-0bb4-3099-69b0-7a8a36d79403@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-05-30 19:00:37, Sergey Senozhatsky wrote:
-> On (05/30/18 18:55), Sergey Senozhatsky wrote:
-> > The thing is, we, in fact, already invoke panic() in printk_safe mode.
-> > Sometimes.
-> > 
-> > Namely,
-> > 
-> >   nmi_panic() -> panic()
-> > 
-> > is invoked while we are in printk_nmi(), so all printk()-s go
-> > to the per-CPU buffers. So, at least to some extent, panic()
-> > in printk_safe context is not something never seen before. Just
-> > saying.
+On 5/31/18 8:20 AM, Jens Axboe wrote:
+> On 5/31/18 6:10 AM, Mike Snitzer wrote:
+>> On Thu, May 31 2018 at 12:35am -0400,
+>> Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>>> On May 30, 2018, at 10:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>>
+>>>> Hi all,
+>>>>
+>>>> After merging the device-mapper tree, today's linux-next build (x86_64
+>>>> allmodconfig) failed like this:
+>>>>
+>>>> drivers/md/dm-writecache.c: In function 'writecache_dtr':
+>>>> drivers/md/dm-writecache.c:1799:3: error: implicit declaration of function 'bioset_free'; did you mean 'bvec_free'? [-Werror=implicit-function-declaration]
+>>>>   bioset_free(wc->bio_set);
+>>>>   ^~~~~~~~~~~
+>>>>   bvec_free
+>>>> drivers/md/dm-writecache.c: In function 'writecache_ctr':
+>>>> drivers/md/dm-writecache.c:1929:17: error: implicit declaration of function 'bioset_create'; did you mean 'bioset_exit'? [-Werror=implicit-function-declaration]
+>>>>   wc->bio_set = bioset_create(BIO_POOL_SIZE,
+>>>>                 ^~~~~~~~~~~~~
+>>>>                 bioset_exit
+>>>> drivers/md/dm-writecache.c:1929:15: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+>>>>   wc->bio_set = bioset_create(BIO_POOL_SIZE,
+>>>>               ^
+>>>>
+>>>> Caused by commit
+>>>>
+>>>>  2105231db61b ("dm: add writecache target")
+>>>>
+>>>> interacting with commit
+>>>>
+>>>>  dad08527525f ("block: Drop bioset_create()")
+>>>>
+>>>> from the block tree.
+>>>>
+>>>> Can we please consider not immediately dropping APIs if at all
+>>>> possible. :-(
+>>>
+>>> I’ll drop the last patch, we can do that at the end of the merge window instead. 
+>>>
+>>
+>> FYI, I've since updated dm-writecache to use the new APIs
 > 
-> Well, we have a PRINTK_NMI_DEFERRED_CONTEXT_MASK mode for
-> printk_nmi(). May be we can [if need be] come up with the same trick
-> for printk_safe_panic() mode. If logbuf spin_lock is unlocked, then
-> we use the main logbuf, if it is locked, we redirect printk to per-CPU
-> buffers and then flush it via printk_safe_flush_on_panic(), which will
-> re-init (unlock) the logbuf.
+> Thanks Mike. I've rebased for-4.18/block to fold a bug fix for the
+> bounce code, and drop the patch that gets rid of the old API. When
+> we get to the end of the merge window, I'll push that last patch.
+> That's much more sensible, how it should have been done from the
+> get-go.
 
-All these checks are racy. Now, I believe that it might really prevent
-a deadlock in some situations but it might also cause loosing messages
-in other situations (never flushed buffer). I am sorry but I am still
-unable to decide if it is worth the risk.
+Actually, maybe I should roll them back, since you both fixed that
+up AND based on my tree - which is of course totally fine, but
+now I'm thinking the rebase will do more harm than good in this
+case.
 
-I would want to keep it as is until anyone comes with a more detailed
-analyze or until we get some bug reports.
-
-Best Regards,
-Petr
+-- 
+Jens Axboe
