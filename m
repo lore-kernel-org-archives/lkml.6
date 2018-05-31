@@ -1,58 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754132AbeEaTPu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 15:15:50 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:46656 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754071AbeEaTPq (ORCPT
+        id S1754109AbeEaTT6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 15:19:58 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48472 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754030AbeEaTT5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 15:15:46 -0400
-X-Google-Smtp-Source: ADUXVKIpqNNnvyMCBcryT1taM0Czjn5i+4kA9L+41+4SRCxSfZF7nssGtmB9/0k3Zs77i6Mjc5GYS1IBuaqrWH3M7cI=
+        Thu, 31 May 2018 15:19:57 -0400
+Date: Thu, 31 May 2018 20:19:55 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 20/32] vfs: Make close() unmount the attached mount if so
+ flagged [ver #8]
+Message-ID: <20180531191955.GG30522@ZenIV.linux.org.uk>
+References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
+ <152720685405.9073.17445116582570028610.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <1527791294-21600-1-git-send-email-melnichenko@ispras.ru>
-References: <1527791294-21600-1-git-send-email-melnichenko@ispras.ru>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 31 May 2018 22:15:45 +0300
-Message-ID: <CAHp75VdAWzAB1K3bGEAgM28ZZFYa-92JqERy=jKd1Fc_738eBg@mail.gmail.com>
-Subject: Re: [PATCH] aic94xx: set error code on an error path in aic94xx_init
-To: Peter Melnichenko <melnichenko@ispras.ru>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ldv-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152720685405.9073.17445116582570028610.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 9:28 PM, Peter Melnichenko
-<melnichenko@ispras.ru> wrote:
-> When sas_domain_attach_transport returns NULL, aic94xx_init
-> frees acquired resources but returns err equal to 0, as
-> assigned by a previous statement.
->
-> The patch sets err to -ENOMEM before jumping to the error label.
+On Fri, May 25, 2018 at 01:07:34AM +0100, David Howells wrote:
+> +	if (unlikely(file->f_mode & FMODE_NEED_UNMOUNT))
+> +		__detach_mounts(dentry);
+> +
 
-Wouldn't be better to fix a callee to return proper error code and...
+This is completely wrong.  First of all, you want to dissolve the mount tree
+on file->f_path.mount, not every tree rooted at dentry equal to file->f_path.dentry.
+This is easily done - it would be a simple call of drop_collected_mounts(mnt)
+if not for one detail.  You want it to happen only if the sucker isn't attached
+anywhere by that point.  IOW,
+        namespace_lock();
+        lock_mount_hash();
+	if (!real_mount(mnt)->mnt_ns)
+		umount_tree(real_mount(mnt), UMOUNT_SYNC);
+        unlock_mount_hash();
+        namespace_unlock();
+and that's it.  You don't need that magical mystery turd in move_mount() later
+in the series and all the infrastructure you grow for it.
 
->         aic94xx_transport_template =
->                 sas_domain_attach_transport(&aic94xx_transport_functions);
-> -       if (!aic94xx_transport_template)
-> +       if (!aic94xx_transport_template) {
-> +               err = -ENOMEM;
->                 goto out_destroy_caches;
-> +       }
+FWIW, I would've suggested this
+ void drop_collected_mounts(struct vfsmount *mnt)
+ {
+ 	namespace_lock();
+ 	lock_mount_hash();
++	if (!real_mount(mnt)->mnt_ns)
++		umount_tree(real_mount(mnt), UMOUNT_SYNC);
+-	umount_tree(real_mount(mnt), UMOUNT_SYNC);
+ 	unlock_mount_hash();
+ 	namespace_unlock();
+ }
 
-this becomes
+and in __fput()
+	if (unlikely(file->f_mode & FMODE_NEED_UNMOUNT))
+		drop_collected_mounts(mnt);
 
-err = _attach_();
-if (err < 0)
- goto ;
-_template = err;
-
-?
-
--- 
-With Best Regards,
-Andy Shevchenko
+All there is to it, AFAICS...
