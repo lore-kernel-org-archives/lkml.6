@@ -1,109 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755664AbeEaQs1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:48:27 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:45934 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755506AbeEaQsX (ORCPT
+        id S1755746AbeEaQt2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:49:28 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:38729 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755696AbeEaQtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:48:23 -0400
-X-Google-Smtp-Source: ADUXVKIRrB+SVG3K3l1u8Td8qu0LPSHSG4hDkG2gnEEa4EIYkkaxAQYvGea1x0zsPU9bA6TlAgGXOQ==
-Date: Thu, 31 May 2018 11:48:20 -0500
-From: Rob Herring <robh@kernel.org>
-To: Srinath Mannam <srinath.mannam@broadcom.com>
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-Subject: Re: [PATCH 1/3] dt-bindings: thermal: Add binding document for SR
- thermal
-Message-ID: <20180531164820.GA23074@rob-hp-laptop>
-References: <1527486084-4636-1-git-send-email-srinath.mannam@broadcom.com>
- <1527486084-4636-2-git-send-email-srinath.mannam@broadcom.com>
+        Thu, 31 May 2018 12:49:25 -0400
+X-Google-Smtp-Source: ADUXVKKEK4BluPoPK5TFgBDsB2E/lxKdSrWs6iCiu7Qtgm/xivp/t5zJk5jqVjaJXVODdn7cdRzrDQ==
+Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
+To: Sinan Kaya <okaya@codeaurora.org>, Alex_Gagniuc@Dellteam.com,
+        bhelgaas@google.com
+Cc: Austin.Bolen@dell.com, Shyam.Iyer@dell.com, keith.busch@intel.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
+ <28004506-24f0-6d10-2d1e-074e0483d2f9@codeaurora.org>
+ <4e0611c872054e768daa96b302651db3@ausx13mps321.AMER.DELL.COM>
+ <f260078b-6918-7fd9-39d6-e9f300e4c048@codeaurora.org>
+ <3b8a895b-3080-7ddb-cbfd-5aa972e9bf65@gmail.com>
+ <35563ce3-e235-096c-4b9b-5f3664d67d0f@codeaurora.org>
+ <093b2789-39a1-db9e-5783-b0488b3c9ccd@gmail.com>
+ <32d58835-2f35-0b80-38d0-b9ff603619dd@codeaurora.org>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <54071f83-5d0d-04a0-d448-0c99ec0ffc4f@gmail.com>
+Date: Thu, 31 May 2018 11:49:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527486084-4636-2-git-send-email-srinath.mannam@broadcom.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <32d58835-2f35-0b80-38d0-b9ff603619dd@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 11:11:22AM +0530, Srinath Mannam wrote:
-> From: Pramod Kumar <pramod.kumar@broadcom.com>
+
+
+On 05/31/2018 11:13 AM, Sinan Kaya wrote:
+> On 5/31/2018 12:01 PM, Alex G. wrote:
+>>>       PCI: Add pcie_print_link_status() to log link speed and whether it's limited
+>> This one, I have, but it's not what I need. This looks at the available
+>> bandwidth from root port to endpoint, whereas I'm only interested in
+>> downtraining between endpoint and upstream port.
 > 
-> Add binding document for supported thermal implementation
-> in Stingray.
+> I see what you are saying. 
 > 
-> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-> Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> ---
->  .../bindings/thermal/brcm,sr-thermal.txt           | 45 ++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+> With a little bit of effort, you can reuse the same code.
 > 
-> diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-> new file mode 100644
-> index 0000000..33f9e11
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-> @@ -0,0 +1,45 @@
-> +* Broadcom Stingray Thermal
-> +
-> +This binding describes thermal sensors that is part of Stingray SoCs.
-> +
-> +Required properties:
-> +- compatible : Must be "brcm,sr-thermal"
-> +- reg : memory where tmon data will be available.
+> Here is an attempt.
+> 
+> You can probably extend pcie_bandwidth_available() to put an optional parent bridge
+> device for your own use case and terminate the loop around here.
+> 
+> https://elixir.bootlin.com/linux/v4.17-rc7/source/drivers/pci/pci.c#L5182
+> 
+> Then, you can use the existing code to achieve what you are looking for via
+> pcie_print_link_status() by adding an optional parent parameter.
+> 
+> 	bw_cap = pcie_bandwidth_capable(dev, &speed_cap, &width_cap);
+> 	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width, *parent*);
 
-What type of memory is this?
+That's confusing. I'd expect _capable() and _available() to be
+symmetrical. They either both look at one link only, or both go down to
+the root port. Though it seems _capable() is link-local, and
+_available() is down to root port.
 
-> +
-> +Example:
-> +	tmons {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		tmon_ihost0: thermal@8f100000 {
-> +			compatible = "brcm,sr-thermal";
-> +			reg = <0x8f100000 0x4>;
-> +		};
-
-Convince me that you need a node per register. This can all be 
-accomplished with a single node and either a single reg entry or a 
-series of reg entries.
-
-> +
-> +		tmon_ihost1: thermal@8f100004 {
-> +			compatible = "brcm,sr-thermal";
-> +			reg = <0x8f100004 0x4>;
-> +		};
-> +
-> +		tmon_ihost2: thermal@8f100008 {
-> +			compatible = "brcm,sr-thermal";
-> +			reg = <0x8f100008 0x4>;
-> +		};
-> +
-> +		tmon_ihost3: thermal@8f10000c {
-> +			compatible = "brcm,sr-thermal";
-> +			reg = <0x8f10000c 0x4>;
-> +		};
-> +
-> +		tmon_crmu: thermal@8f100010 {
-> +			compatible = "brcm,sr-thermal";
-> +			reg = <0x8f100010 0x4>;
-> +		};
-> +
-> +		tmon_nitro: thermal@8f100014 {
-> +			compatible = "brcm,sr-thermal";
-> +			reg = <0x8f100014 0x4>;
-> +		};
-> +	};
-> -- 
-> 2.7.4
+> 
+> If parent parameter is NULL, code can walk all the way to root as it is doing today.
+> If it is not, then will terminate the loop on the first iteration.
 > 
