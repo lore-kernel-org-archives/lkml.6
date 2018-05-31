@@ -1,170 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755747AbeEaQzF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:55:05 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43600 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755793AbeEaQzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:55:00 -0400
-Subject: Re: [PATCH v5 07/10] sched/irq: add irq utilization tracking
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <1527253951-22709-8-git-send-email-vincent.guittot@linaro.org>
- <72473e6f-8ade-8e26-3282-276fcae4c4c7@arm.com>
- <CAKfTPtC8c9sP7TjefZPN2SFuNVGS7Q12WBj3BBYEbJFzxVN-2A@mail.gmail.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <fba5a810-3c3b-dc8b-15fb-8078a591ec2b@arm.com>
-Date: Thu, 31 May 2018 18:54:56 +0200
+        id S1755850AbeEaQzS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:55:18 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42653 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755829AbeEaQzN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:55:13 -0400
+X-Google-Smtp-Source: ADUXVKKBFfN96EClLwNKiSTdY9pPFrcVB8oXsHk1RQc6kxEx0j4B/zqIkU/aNzDxyCuXuO/JLhNs/w==
+Subject: Re: [PATCH v2 01/21] usb: phy: use match_string() helper
+To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
+Cc: andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+ <1527765086-19873-2-git-send-email-xieyisheng1@huawei.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <af7838f0-9cae-d526-b52f-15996cd8031c@cogentembedded.com>
+Date: Thu, 31 May 2018 19:55:10 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtC8c9sP7TjefZPN2SFuNVGS7Q12WBj3BBYEbJFzxVN-2A@mail.gmail.com>
+In-Reply-To: <1527765086-19873-2-git-send-email-xieyisheng1@huawei.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/30/2018 08:45 PM, Vincent Guittot wrote:
-> Hi Dietmar,
+Hello!
+
+On 05/31/2018 02:11 PM, Yisheng Xie wrote:
+
+> match_string() returns the index of an array for a matching string,
+> which can be used instead of open coded variant.
 > 
-> On 30 May 2018 at 17:55, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->> On 05/25/2018 03:12 PM, Vincent Guittot wrote:
+> Cc: linux-usb@vger.kernel.org
+> Cc: Felipe Balbi <balbi@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+> v2:
+>  - donot rename err to ret  - per Andy
 
-[...]
+   Hm...
 
->>> +        */
->>> +       ret = ___update_load_sum(rq->clock - running, rq->cpu,
->>> &rq->avg_irq,
->>> +                               0,
->>> +                               0,
->>> +                               0);
->>> +       ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
->>> +                               1,
->>> +                               1,
->>> +                               1);
+> 
+>  drivers/usb/phy/of.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/usb/phy/of.c b/drivers/usb/phy/of.c
+> index 1ab134f..9d74081 100644
+> --- a/drivers/usb/phy/of.c
+> +++ b/drivers/usb/phy/of.c
+> @@ -28,16 +28,16 @@
+>  enum usb_phy_interface of_usb_get_phy_mode(struct device_node *np)
+>  {
+>  	const char *phy_type;
+> -	int err, i;
+> +	int err;
+>  
+>  	err = of_property_read_string(np, "phy_type", &phy_type);
+>  	if (err < 0)
+>  		return USBPHY_INTERFACE_MODE_UNKNOWN;
+>  
+> -	for (i = 0; i < ARRAY_SIZE(usbphy_modes); i++)
+> -		if (!strcmp(phy_type, usbphy_modes[i]))
+> -			return i;
+> +	err = match_string(usbphy_modes, ARRAY_SIZE(usbphy_modes), phy_type);
+> +	if (err < 0)
 
-Can you not change the function parameter list to the usual
-(u64 now, struct rq *rq, int running)?
+   This is one of the few cases when 'err' is not the best name for such a
+variable. I'd prefer to see something like 'match' or even 'rc' or 'ret'... :-)
 
-Something like this (only compile and boot tested):
+> +		return USBPHY_INTERFACE_MODE_UNKNOWN;
+>  
+> -	return USBPHY_INTERFACE_MODE_UNKNOWN;
+> +	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(of_usb_get_phy_mode);
+> 
 
--- >8 --
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 9894bc7af37e..26ffd585cab8 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -177,8 +177,22 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
-        rq->clock_task += delta;
- 
- #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
--       if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
--               update_irq_load_avg(rq, irq_delta + steal);
-+       if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY)) {
-+               /*
-+                * We know the time that has been used by interrupt since last
-+                * update but we don't when. Let be pessimistic and assume that
-+                * interrupt has happened just before the update. This is not
-+                * so far from reality because interrupt will most probably
-+                * wake up task and trig an update of rq clock during which the
-+                * metric si updated.
-+                * We start to decay with normal context time and then we add
-+                * the interrupt context time.
-+                * We can safely remove running from rq->clock because
-+                * rq->clock += delta with delta >= running
-+                */
-+               update_irq_load_avg(rq_clock(rq) - (irq_delta + steal), rq, 0);
-+               update_irq_load_avg(rq_clock(rq), rq, 1);
-+       }
- #endif
- }
- 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1bb3379c4b71..a245f853c271 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7363,7 +7363,7 @@ static void update_blocked_averages(int cpu)
-        }
-        update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
-        update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
--       update_irq_load_avg(rq, 0);
-+       update_irq_load_avg(rq_clock(rq), rq, 0);
-        /* Don't need periodic decay once load/util_avg are null */
-        if (others_rqs_have_blocked(rq))
-                done = false;
-@@ -7434,7 +7434,7 @@ static inline void update_blocked_averages(int cpu)
-        update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
-        update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
-        update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
--       update_irq_load_avg(rq, 0);
-+       update_irq_load_avg(rq_clock(rq), rq, 0);
- #ifdef CONFIG_NO_HZ_COMMON
-        rq->last_blocked_load_update_tick = jiffies;
-        if (!cfs_rq_has_blocked(cfs_rq) && !others_rqs_have_blocked(rq))
-diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index d2e4f2186b13..ae01bb18e28c 100644
---- a/kernel/sched/pelt.c
-+++ b/kernel/sched/pelt.c
-@@ -365,31 +365,15 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
-  *
-  */
- 
--int update_irq_load_avg(struct rq *rq, u64 running)
-+int update_irq_load_avg(u64 now, struct rq *rq, int running)
- {
--       int ret = 0;
--       /*
--        * We know the time that has been used by interrupt since last update
--        * but we don't when. Let be pessimistic and assume that interrupt has
--        * happened just before the update. This is not so far from reality
--        * because interrupt will most probably wake up task and trig an update
--        * of rq clock during which the metric si updated.
--        * We start to decay with normal context time and then we add the
--        * interrupt context time.
--        * We can safely remove running from rq->clock because
--        * rq->clock += delta with delta >= running
--        */
--       ret = ___update_load_sum(rq->clock - running, rq->cpu, &rq->avg_irq,
--                               0,
--                               0,
--                               0);
--       ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
--                               1,
--                               1,
--                               1);
--
--       if (ret)
-+       if (___update_load_sum(now, rq->cpu, &rq->avg_irq,
-+                               running,
-+                               running,
-+                               running)) {
-                ___update_load_avg(&rq->avg_irq, 1, 1);
-+               return 1;
-+       }
- 
--       return ret;
-+       return 0;
- }
-diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-index 0ce9a5a5877a..ebc57301a9a8 100644
---- a/kernel/sched/pelt.h
-+++ b/kernel/sched/pelt.h
-@@ -5,7 +5,7 @@ int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_e
- int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
- int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
- int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
--int update_irq_load_avg(struct rq *rq, u64 running);
-+int update_irq_load_avg(u64 now, struct rq *rq, int running);
- 
- /*
-  * When a task is dequeued, its estimated utilization should not be update if
+MBR, Sergei
