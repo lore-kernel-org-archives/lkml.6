@@ -1,92 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753967AbeEaFDr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 01:03:47 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52211 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753896AbeEaFDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 01:03:41 -0400
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-To: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
-        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <james.morse@arm.com>, <gengdongjiu@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>
-Subject: [PATCH v1 1/2] arm64: KVM: export the capability to set guest SError syndrome
-Date: Thu, 31 May 2018 21:08:58 +0800
-Message-ID: <1527772139-19665-2-git-send-email-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527772139-19665-1-git-send-email-gengdongjiu@huawei.com>
-References: <1527772139-19665-1-git-send-email-gengdongjiu@huawei.com>
+        id S1753836AbeEaFDJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 01:03:09 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43682 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750974AbeEaFDI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 01:03:08 -0400
+X-Google-Smtp-Source: ADUXVKIdU3I4xybiF/Wi5jk0cV0473gWmXj/CyviAmSfh6hpyToFdQQ0P7YIhMbl2LhlB5yjQzV3bQ==
+Date: Thu, 31 May 2018 14:03:02 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Hugh Dickins <hughd@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Huang, Ying" <ying.huang@intel.com>, Jan Kara <jack@suse.cz>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: fix the NULL mapping case in __isolate_lru_page()
+Message-ID: <20180531050302.GA24220@rodete-desktop-imager.corp.google.com>
+References: <alpine.LSU.2.11.1805302014001.12558@eggly.anvils>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.143.28.90]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.11.1805302014001.12558@eggly.anvils>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the arm64 RAS Extension, user space can inject a virtual-SError
-with specified ESR. So user space needs to know whether KVM support
-to inject such SError, this interface adds this query for this capability.
+On Wed, May 30, 2018 at 08:23:16PM -0700, Hugh Dickins wrote:
+> George Boole would have noticed a slight error in 4.16 commit 69d763fc6d3a
+> ("mm: pin address_space before dereferencing it while isolating an LRU page").
+> Fix it, to match both the comment above it, and the original behaviour.
+> 
+> Although anonymous pages are not marked PageDirty at first, we have an
+> old habit of calling SetPageDirty when a page is removed from swap cache:
+> so there's a category of ex-swap pages that are easily migratable, but
+> were inadvertently excluded from compaction's async migration in 4.16.
+> 
+> Fixes: 69d763fc6d3a ("mm: pin address_space before dereferencing it while isolating an LRU page")
+> Signed-off-by: Hugh Dickins <hughd@google.com>
+Acked-by: Minchan Kim <minchan@kernel.org>
 
-KVM will check whether system support RAS Extension, if supported, KVM
-returns true to user space, otherwise returns false.
-
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-Reviewed-by: James Morse <james.morse@arm.com>
----
- Documentation/virtual/kvm/api.txt | 11 +++++++++++
- arch/arm64/kvm/reset.c            |  3 +++
- include/uapi/linux/kvm.h          |  1 +
- 3 files changed, 15 insertions(+)
-
-diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-index 758bf40..fdac969 100644
---- a/Documentation/virtual/kvm/api.txt
-+++ b/Documentation/virtual/kvm/api.txt
-@@ -4603,3 +4603,14 @@ Architectures: s390
- This capability indicates that kvm will implement the interfaces to handle
- reset, migration and nested KVM for branch prediction blocking. The stfle
- facility 82 should not be provided to the guest without this capability.
-+
-+8.14 KVM_CAP_ARM_SET_SERROR_ESR
-+
-+Architectures: arm, arm64
-+
-+This capability indicates that userspace can specify the syndrome value reported
-+to the guest OS when guest takes a virtual SError interrupt exception.
-+If KVM has this capability, userspace can only specify the ISS field for the ESR
-+syndrome, it can not specify the EC field which is not under control by KVM.
-+If this virtual SError is taken to EL1 using AArch64, this value will be reported
-+in ISS filed of ESR_EL1.
-diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index 3256b92..38c8a64 100644
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -77,6 +77,9 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_ARM_PMU_V3:
- 		r = kvm_arm_support_pmu_v3();
- 		break;
-+	case KVM_CAP_ARM_INJECT_SERROR_ESR:
-+		r = cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
-+		break;
- 	case KVM_CAP_SET_GUEST_DEBUG:
- 	case KVM_CAP_VCPU_ATTRIBUTES:
- 		r = 1;
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index b02c41e..e88f976 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -948,6 +948,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_S390_BPB 152
- #define KVM_CAP_GET_MSR_FEATURES 153
- #define KVM_CAP_HYPERV_EVENTFD 154
-+#define KVM_CAP_ARM_INJECT_SERROR_ESR 155
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
--- 
-2.7.4
+Thanks, Hugh.
