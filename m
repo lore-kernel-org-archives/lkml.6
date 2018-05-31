@@ -1,313 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932674AbeEaAhI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 20:37:08 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:46197 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932605AbeEaAgm (ORCPT
+        id S932620AbeEaAi4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 20:38:56 -0400
+Received: from icp-osb-irony-out2.external.iinet.net.au ([203.59.1.155]:41948
+        "EHLO icp-osb-irony-out2.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932525AbeEaAix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 20:36:42 -0400
-X-Google-Smtp-Source: ADUXVKJZDhkcUGfvDm19ULFArnqfhT1PfSBOGqmDNuDuoeBgVKR1aIlawsMkSatMmQTG+OmCsKE+UQ==
-From: Ray Jui <ray.jui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pramod Kumar <pramod.kumar@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH v2 2/3] clk: bcm: Update and add Stingray clock entries
-Date: Wed, 30 May 2018 17:36:19 -0700
-Message-Id: <1527726980-11723-3-git-send-email-ray.jui@broadcom.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1527726980-11723-1-git-send-email-ray.jui@broadcom.com>
-References: <1527726980-11723-1-git-send-email-ray.jui@broadcom.com>
+        Wed, 30 May 2018 20:38:53 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2CvAADJQw9b/zXSMGcNTxoBAQEBAQIBA?=
+ =?us-ascii?q?QEBCAEBAQGDGYENbTqDd5UtAQEBBn8pdRqVNSqETQKCPjgUAQIBAQEBAQECgQi?=
+ =?us-ascii?q?FNAEBAQECASMVQRALDQsCAiYCAlcGDQYCAQGDHgKBcgUXpQ9tghwahD6DbYFjB?=
+ =?us-ascii?q?YEKiDmBB4EPJII0NYJ6hHmCVAKHI5FCCAGFbIJXhheIA4UPiXGIeoFzMxoIKAi?=
+ =?us-ascii?q?Cfh+CARcRaQEBh12FUF2PcwEB?=
+X-IPAS-Result: =?us-ascii?q?A2CvAADJQw9b/zXSMGcNTxoBAQEBAQIBAQEBCAEBAQGDGYE?=
+ =?us-ascii?q?NbTqDd5UtAQEBBn8pdRqVNSqETQKCPjgUAQIBAQEBAQECgQiFNAEBAQECASMVQ?=
+ =?us-ascii?q?RALDQsCAiYCAlcGDQYCAQGDHgKBcgUXpQ9tghwahD6DbYFjBYEKiDmBB4EPJII?=
+ =?us-ascii?q?0NYJ6hHmCVAKHI5FCCAGFbIJXhheIA4UPiXGIeoFzMxoIKAiCfh+CARcRaQEBh?=
+ =?us-ascii?q?12FUF2PcwEB?=
+X-IronPort-AV: E=Sophos;i="5.49,461,1520870400";
+   d="scan'208";a="114396597"
+Subject: Re: [RFC PATCH] m68k: set dma and coherent masks for Macintosh SONIC
+ based ethernet
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Finn Thain <fthain@telegraphics.com.au>,
+        Christoph Hellwig <hch@lst.de>, Michael Schmitz <schmitzmic@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, Joshua Thompson <funaho@jurai.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1527378785-13326-1-git-send-email-linux@roeck-us.net>
+ <alpine.LNX.2.21.1805271212480.9@nippy.intranet>
+ <55c1c33b-4a34-bd72-57de-577ce8d95e0b@gmail.com>
+ <alpine.LNX.2.21.1805271547090.9@nippy.intranet>
+ <2ffd0de6-e8d6-6449-7c05-cbbfd8a99a97@gmail.com>
+ <alpine.LNX.2.21.1805281521420.10@nippy.intranet>
+ <CAMuHMdWXnP96p9swox6FXg2-2doeNGK+G9eQyZ-td+xWGSKKoQ@mail.gmail.com>
+ <10880132-7686-78f6-7f9f-3fc29c3e554a@linux-m68k.org>
+ <CAMuHMdUzp-Bqc0s7SsKFKuiiC8Eb9dk3uUcynjVApg=UQ6g-yQ@mail.gmail.com>
+From: Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <016dfee5-5fca-548e-32df-f2e4ab8a5e41@linux-m68k.org>
+Date: Thu, 31 May 2018 10:38:48 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUzp-Bqc0s7SsKFKuiiC8Eb9dk3uUcynjVApg=UQ6g-yQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+Hi Geert,
 
-Update and add Stingray clock definitions and tables so they match the
-binding document and the latest ASIC datasheet
+On 31/05/18 05:55, Geert Uytterhoeven wrote:
+> On Wed, May 30, 2018 at 2:28 AM, Greg Ungerer <gerg@linux-m68k.org> wrote:
+>> On 28/05/18 20:15, Geert Uytterhoeven wrote:
+>>> On Mon, May 28, 2018 at 7:26 AM, Finn Thain <fthain@telegraphics.com.au>
+>>> wrote:
+>>>> On Mon, 28 May 2018, Michael Schmitz wrote:
+>>>>> Am 27.05.2018 um 17:49 schrieb Finn Thain:
+>>>>>> On Sun, 27 May 2018, Michael Schmitz wrote:
+>>>>>>> That should have fixed the warning already ...
+>>>>>>
+>>>>>> It's still not fixed (hence my "acked-by" for Geunter's patch).
+>>>>>
+>>>>> Odd - does link order still matter even though the
+>>>>> arch_setup_dev_archdata() function from the core platform code is
+>>>>> declared as a weak symbol?
+>>>>>
+>>>>> I'll see what I can find out on elgar ...
+>>>>
+>>>> Any one of the numerous patches/rfcs/suggestions that I sent will avoid
+>>>> the WARN splat.
+>>>>
+>>>> When I said "it's still not fixed", what I meant to say was, "it's still
+>>>> not fixed in mainline and no proposed fix was accepted to the best of my
+>>>> knowledge".
+>>>
+>>> Indeed.
+>>>
+>>> Do we have a consensus on the way forward? The merge window for
+>>> v4.18 will open soon.
+>>
+>> For whatever it is worth I thought Finn's patch was the best approach
+>> (https://lkml.org/lkml/2018/5/17/333, "m68k: Set default dma mask for
+>> platform device").
+> 
+> FTR: done.
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- drivers/clk/bcm/clk-sr.c           | 135 ++++++++++++++++++++++++++++++++-----
- include/dt-bindings/clock/bcm-sr.h |  24 +++++--
- 2 files changed, 137 insertions(+), 22 deletions(-)
+Feel free to add my acked by if you like:
 
-diff --git a/drivers/clk/bcm/clk-sr.c b/drivers/clk/bcm/clk-sr.c
-index adc74f4..7b9efc0 100644
---- a/drivers/clk/bcm/clk-sr.c
-+++ b/drivers/clk/bcm/clk-sr.c
-@@ -56,8 +56,8 @@ static const struct iproc_pll_ctrl sr_genpll0 = {
- };
- 
- static const struct iproc_clk_ctrl sr_genpll0_clk[] = {
--	[BCM_SR_GENPLL0_SATA_CLK] = {
--		.channel = BCM_SR_GENPLL0_SATA_CLK,
-+	[BCM_SR_GENPLL0_125M_CLK] = {
-+		.channel = BCM_SR_GENPLL0_125M_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
- 		.mdiv = REG_VAL(0x18, 0, 9),
-@@ -102,6 +102,65 @@ static int sr_genpll0_clk_init(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct iproc_pll_ctrl sr_genpll2 = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
-+		IPROC_CLK_PLL_NEEDS_SW_CFG,
-+	.aon = AON_VAL(0x0, 1, 13, 12),
-+	.reset = RESET_VAL(0x0, 12, 11),
-+	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
-+	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
-+	.ndiv_int = REG_VAL(0x10, 20, 10),
-+	.ndiv_frac = REG_VAL(0x10, 0, 20),
-+	.pdiv = REG_VAL(0x14, 0, 4),
-+	.status = REG_VAL(0x30, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl sr_genpll2_clk[] = {
-+	[BCM_SR_GENPLL2_NIC_CLK] = {
-+		.channel = BCM_SR_GENPLL2_NIC_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+		.mdiv = REG_VAL(0x18, 0, 9),
-+	},
-+	[BCM_SR_GENPLL2_TS_500_CLK] = {
-+		.channel = BCM_SR_GENPLL2_TS_500_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 13),
-+		.mdiv = REG_VAL(0x18, 10, 9),
-+	},
-+	[BCM_SR_GENPLL2_125_NITRO_CLK] = {
-+		.channel = BCM_SR_GENPLL2_125_NITRO_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 8, 2, 14),
-+		.mdiv = REG_VAL(0x18, 20, 9),
-+	},
-+	[BCM_SR_GENPLL2_CHIMP_CLK] = {
-+		.channel = BCM_SR_GENPLL2_CHIMP_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 9, 3, 15),
-+		.mdiv = REG_VAL(0x1c, 0, 9),
-+	},
-+	[BCM_SR_GENPLL2_NIC_FLASH_CLK] = {
-+		.channel = BCM_SR_GENPLL2_NIC_FLASH_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 10, 4, 16),
-+		.mdiv = REG_VAL(0x1c, 10, 9),
-+	},
-+	[BCM_SR_GENPLL2_FS4_CLK] = {
-+		.channel = BCM_SR_GENPLL2_FS4_CLK,
-+		.enable = ENABLE_VAL(0x4, 11, 5, 17),
-+		.mdiv = REG_VAL(0x1c, 20, 9),
-+	},
-+};
-+
-+static int sr_genpll2_clk_init(struct platform_device *pdev)
-+{
-+	iproc_pll_clk_setup(pdev->dev.of_node,
-+			    &sr_genpll2, NULL, 0, sr_genpll2_clk,
-+			    ARRAY_SIZE(sr_genpll2_clk));
-+	return 0;
-+}
-+
- static const struct iproc_pll_ctrl sr_genpll3 = {
- 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
- 		IPROC_CLK_PLL_NEEDS_SW_CFG,
-@@ -157,6 +216,30 @@ static const struct iproc_clk_ctrl sr_genpll4_clk[] = {
- 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
- 		.mdiv = REG_VAL(0x18, 0, 9),
- 	},
-+	[BCM_SR_GENPLL4_TPIU_PLL_CLK] = {
-+		.channel = BCM_SR_GENPLL4_TPIU_PLL_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 13),
-+		.mdiv = REG_VAL(0x18, 10, 9),
-+	},
-+	[BCM_SR_GENPLL4_NOC_CLK] = {
-+		.channel = BCM_SR_GENPLL4_NOC_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 8, 2, 14),
-+		.mdiv = REG_VAL(0x18, 20, 9),
-+	},
-+	[BCM_SR_GENPLL4_CHCLK_FS4_CLK] = {
-+		.channel = BCM_SR_GENPLL4_CHCLK_FS4_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 9, 3, 15),
-+		.mdiv = REG_VAL(0x1c, 0, 9),
-+	},
-+	[BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK] = {
-+		.channel = BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 10, 4, 16),
-+		.mdiv = REG_VAL(0x1c, 10, 9),
-+	},
- };
- 
- static int sr_genpll4_clk_init(struct platform_device *pdev)
-@@ -181,18 +264,21 @@ static const struct iproc_pll_ctrl sr_genpll5 = {
- };
- 
- static const struct iproc_clk_ctrl sr_genpll5_clk[] = {
--	[BCM_SR_GENPLL5_FS_CLK] = {
--		.channel = BCM_SR_GENPLL5_FS_CLK,
--		.flags = IPROC_CLK_AON,
-+	[BCM_SR_GENPLL5_FS4_HF_CLK] = {
-+		.channel = BCM_SR_GENPLL5_FS4_HF_CLK,
- 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
- 		.mdiv = REG_VAL(0x18, 0, 9),
- 	},
--	[BCM_SR_GENPLL5_SPU_CLK] = {
--		.channel = BCM_SR_GENPLL5_SPU_CLK,
--		.flags = IPROC_CLK_AON,
--		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+	[BCM_SR_GENPLL5_CRYPTO_AE_CLK] = {
-+		.channel = BCM_SR_GENPLL5_CRYPTO_AE_CLK,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 12),
- 		.mdiv = REG_VAL(0x18, 10, 9),
- 	},
-+	[BCM_SR_GENPLL5_RAID_AE_CLK] = {
-+		.channel = BCM_SR_GENPLL5_RAID_AE_CLK,
-+		.enable = ENABLE_VAL(0x4, 8, 2, 14),
-+		.mdiv = REG_VAL(0x18, 20, 9),
-+	},
- };
- 
- static int sr_genpll5_clk_init(struct platform_device *pdev)
-@@ -214,24 +300,30 @@ static const struct iproc_pll_ctrl sr_lcpll0 = {
- };
- 
- static const struct iproc_clk_ctrl sr_lcpll0_clk[] = {
--	[BCM_SR_LCPLL0_SATA_REF_CLK] = {
--		.channel = BCM_SR_LCPLL0_SATA_REF_CLK,
-+	[BCM_SR_LCPLL0_SATA_REFP_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_REFP_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x0, 7, 1, 13),
- 		.mdiv = REG_VAL(0x14, 0, 9),
- 	},
--	[BCM_SR_LCPLL0_USB_REF_CLK] = {
--		.channel = BCM_SR_LCPLL0_USB_REF_CLK,
-+	[BCM_SR_LCPLL0_SATA_REFN_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_REFN_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x0, 8, 2, 14),
- 		.mdiv = REG_VAL(0x14, 10, 9),
- 	},
--	[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
--		.channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
-+	[BCM_SR_LCPLL0_SATA_350_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_350_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x0, 9, 3, 15),
- 		.mdiv = REG_VAL(0x14, 20, 9),
- 	},
-+	[BCM_SR_LCPLL0_SATA_500_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_500_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 10, 4, 16),
-+		.mdiv = REG_VAL(0x18, 0, 9),
-+	},
- };
- 
- static int sr_lcpll0_clk_init(struct platform_device *pdev)
-@@ -259,6 +351,18 @@ static const struct iproc_clk_ctrl sr_lcpll1_clk[] = {
- 		.enable = ENABLE_VAL(0x0, 7, 1, 13),
- 		.mdiv = REG_VAL(0x14, 0, 9),
- 	},
-+	[BCM_SR_LCPLL1_USB_REF_CLK] = {
-+		.channel = BCM_SR_LCPLL1_USB_REF_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 8, 2, 14),
-+		.mdiv = REG_VAL(0x14, 10, 9),
-+	},
-+	[BCM_SR_LCPLL1_CRMU_TS_CLK] = {
-+		.channel = BCM_SR_LCPLL1_CRMU_TS_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 9, 3, 15),
-+		.mdiv = REG_VAL(0x14, 20, 9),
-+	},
- };
- 
- static int sr_lcpll1_clk_init(struct platform_device *pdev)
-@@ -298,6 +402,7 @@ static int sr_lcpll_pcie_clk_init(struct platform_device *pdev)
- 
- static const struct of_device_id sr_clk_dt_ids[] = {
- 	{ .compatible = "brcm,sr-genpll0", .data = sr_genpll0_clk_init },
-+	{ .compatible = "brcm,sr-genpll2", .data = sr_genpll2_clk_init },
- 	{ .compatible = "brcm,sr-genpll4", .data = sr_genpll4_clk_init },
- 	{ .compatible = "brcm,sr-genpll5", .data = sr_genpll5_clk_init },
- 	{ .compatible = "brcm,sr-lcpll0", .data = sr_lcpll0_clk_init },
-diff --git a/include/dt-bindings/clock/bcm-sr.h b/include/dt-bindings/clock/bcm-sr.h
-index cff6c6f..419011b 100644
---- a/include/dt-bindings/clock/bcm-sr.h
-+++ b/include/dt-bindings/clock/bcm-sr.h
-@@ -35,7 +35,7 @@
- 
- /* GENPLL 0 clock channel ID SCR HSLS FS PCIE */
- #define BCM_SR_GENPLL0			0
--#define BCM_SR_GENPLL0_SATA_CLK		1
-+#define BCM_SR_GENPLL0_125M_CLK		1
- #define BCM_SR_GENPLL0_SCR_CLK		2
- #define BCM_SR_GENPLL0_250M_CLK		3
- #define BCM_SR_GENPLL0_PCIE_AXI_CLK	4
-@@ -50,9 +50,11 @@
- /* GENPLL 2 clock channel ID NITRO MHB*/
- #define BCM_SR_GENPLL2			0
- #define BCM_SR_GENPLL2_NIC_CLK		1
--#define BCM_SR_GENPLL2_250_NITRO_CLK	2
-+#define BCM_SR_GENPLL2_TS_500_CLK	2
- #define BCM_SR_GENPLL2_125_NITRO_CLK	3
- #define BCM_SR_GENPLL2_CHIMP_CLK	4
-+#define BCM_SR_GENPLL2_NIC_FLASH_CLK	5
-+#define BCM_SR_GENPLL2_FS4_CLK		6
- 
- /* GENPLL 3 HSLS clock channel ID */
- #define BCM_SR_GENPLL3			0
-@@ -62,11 +64,16 @@
- /* GENPLL 4 SCR clock channel ID */
- #define BCM_SR_GENPLL4			0
- #define BCM_SR_GENPLL4_CCN_CLK		1
-+#define BCM_SR_GENPLL4_TPIU_PLL_CLK	2
-+#define BCM_SR_GENPLL4_NOC_CLK		3
-+#define BCM_SR_GENPLL4_CHCLK_FS4_CLK	4
-+#define BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK	5
- 
- /* GENPLL 5 FS4 clock channel ID */
- #define BCM_SR_GENPLL5			0
--#define BCM_SR_GENPLL5_FS_CLK		1
--#define BCM_SR_GENPLL5_SPU_CLK		2
-+#define BCM_SR_GENPLL5_FS4_HF_CLK	1
-+#define BCM_SR_GENPLL5_CRYPTO_AE_CLK	2
-+#define BCM_SR_GENPLL5_RAID_AE_CLK	3
- 
- /* GENPLL 6 NITRO clock channel ID */
- #define BCM_SR_GENPLL6			0
-@@ -74,13 +81,16 @@
- 
- /* LCPLL0  clock channel ID */
- #define BCM_SR_LCPLL0			0
--#define BCM_SR_LCPLL0_SATA_REF_CLK	1
--#define BCM_SR_LCPLL0_USB_REF_CLK	2
--#define BCM_SR_LCPLL0_SATA_REFPN_CLK	3
-+#define BCM_SR_LCPLL0_SATA_REFP_CLK	1
-+#define BCM_SR_LCPLL0_SATA_REFN_CLK	2
-+#define BCM_SR_LCPLL0_SATA_350_CLK	3
-+#define BCM_SR_LCPLL0_SATA_500_CLK	4
- 
- /* LCPLL1  clock channel ID */
- #define BCM_SR_LCPLL1			0
- #define BCM_SR_LCPLL1_WAN_CLK		1
-+#define BCM_SR_LCPLL1_USB_REF_CLK	2
-+#define BCM_SR_LCPLL1_CRMU_TS_CLK	3
- 
- /* LCPLL PCIE  clock channel ID */
- #define BCM_SR_LCPLL_PCIE		0
--- 
-2.1.4
+Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+
+Regards
+Greg
+
+
+>> We seem to be hitting quite a few places (within m68k) that otherwise
+>> need individual fixes. There is no immediate need to revert existing
+>> changes that have already been applied if we use this now either
+>> (like my FEC fix, commit f61e64310b75 "m68k: set dma and coherent
+>> masks for platform FEC ethernets").
+> 
+> Indeed.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
