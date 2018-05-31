@@ -1,51 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753934AbeEaFWl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 01:22:41 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45792 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751660AbeEaFWh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 01:22:37 -0400
-X-Google-Smtp-Source: ADUXVKLjGDHTdFtXpJzWZCu8UbRT4zyiTq9DqsGzDRmdne4y6+efFsw8zYsi5dfH9iWni70Yf+niTQ==
-Date: Thu, 31 May 2018 10:52:34 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: arm@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>,
+        id S1753952AbeEaFXc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 01:23:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41824 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751037AbeEaFXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 01:23:31 -0400
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "To"
+From: NeilBrown <neilb@suse.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/15] arm: dts: exynos: Add missing cooling device
- properties for CPUs
-Message-ID: <20180531052234.tp6pw45ftsf3g2el@vireshk-i7>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
- <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
- <CAJKOXPcyV=fdRu7oLXHMimSFR9ktJ23uBriswTStkEkAMbTaNw@mail.gmail.com>
- <20180530043806.ksen4xyh3x3x4fqn@vireshk-i7>
- <CAJKOXPftrzwLMSDeTBBxG-nvpsriBuPEwQAViTcE3DYRYsnzmg@mail.gmail.com>
+Date: Thu, 31 May 2018 15:23:22 +1000
+Subject: [PATCH 1/4 v2] NFS: slight optimization for walking list for delegations
+In-Reply-To: <20180430111741.561df374@gandalf.local.home>
+References: <152506256513.7246.13171564155614823841.stgit@noble> <152506269054.7246.3941740801391514623.stgit@noble> <20180430111741.561df374@gandalf.local.home>
+Message-ID: <871sdsv1o5.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPftrzwLMSDeTBBxG-nvpsriBuPEwQAViTcE3DYRYsnzmg@mail.gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30-05-18, 14:32, Krzysztof Kozlowski wrote:
-> OK, I see the possibility although it is still far away from use
-> cases. You cannot hotplug booting CPU (CPU0) on Exynos kernels. It
-> never worked. Strictly speaking - offlining will work. But bringing it
-> online will likely hang the system.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-True and I used the following out of tree patch for a long time for my
-dual A15 exynos to make hotplug work.
 
-https://git.linaro.org/people/vireshk/backup/linux.git/commit/?h=bkp/exynos/hotplug&id=aab8a906a70b8f1fb15a4b7bd2ee27e6dcabf79d
+There are 3 places where we walk the list of delegations
+for an nfs_client.
+In each case there are two nested loops, one for nfs_servers
+and one for nfs_delegations.
 
--- 
-viresh
+When we find an interesting delegation we try to get an active
+reference to the server.  If that fails, it is pointless to
+continue to look at the other delegation for the server as
+we will never be able to get an active reference.
+So instead of continuing in the inner loop, break out
+and continue in the outer loop.
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
+
+This time with a Signed-off-by - sorry.
+I took the opportunity to follow Steven's suggestion
+of adding a comment to the new 'break' statements.
+
+Thanks,
+NeilBrown
+
+ fs/nfs/delegation.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
+index 1819d0d0ba4b..b9cd3864335b 100644
+=2D-- a/fs/nfs/delegation.c
++++ b/fs/nfs/delegation.c
+@@ -495,7 +495,7 @@ int nfs_client_return_marked_delegations(struct nfs_cli=
+ent *clp)
+ 			if (!nfs_delegation_need_return(delegation))
+ 				continue;
+ 			if (!nfs_sb_active(server->super))
+=2D				continue;
++				break; /* continue in outer loop */
+ 			inode =3D nfs_delegation_grab_inode(delegation);
+ 			if (inode =3D=3D NULL) {
+ 				rcu_read_unlock();
+@@ -887,7 +887,7 @@ void nfs_delegation_reap_unclaimed(struct nfs_client *c=
+lp)
+ 						&delegation->flags) =3D=3D 0)
+ 				continue;
+ 			if (!nfs_sb_active(server->super))
+=2D				continue;
++				break; /* continue in outer loop */
+ 			inode =3D nfs_delegation_grab_inode(delegation);
+ 			if (inode =3D=3D NULL) {
+ 				rcu_read_unlock();
+@@ -995,7 +995,7 @@ void nfs_reap_expired_delegations(struct nfs_client *cl=
+p)
+ 						&delegation->flags) =3D=3D 0)
+ 				continue;
+ 			if (!nfs_sb_active(server->super))
+=2D				continue;
++				break; /* continue in outer loop */
+ 			inode =3D nfs_delegation_grab_inode(delegation);
+ 			if (inode =3D=3D NULL) {
+ 				rcu_read_unlock();
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsPhsoACgkQOeye3VZi
+gblvRQ//Tu/cVIQx08FqyB/9ThWlSIIh2qwKl2YArYslc8alme8E0Mre4fjI/MA5
+/E0r/4r9bU0/hKJfgOy8KlOr4WZjxjV1XAxugYOjhcNzPo+DABkSvxDD+UUGRIVk
+a7ZLaAqu2gdkAB/oDraV+UCOalOSapzzJhPlUmpTTk8E6AKUI+kwmUyRz1ND66yI
+rmhPT+17k1m/Qxf7pQCT5vK04ePj1xNdVdtprM0mCM582jd/fq8FvvKYCWu2oOPI
+9n0O12d/i93loSyC/KgRg4prC7W9w3MO1Ieauke05tzEAwXSCkM2VNkjNByAGPJT
+CIKRlC6x3euM1gq/0u5JSks8smCTu2Hy4YElXXNQPwIC57zOMdfLXGopl7iQ2/Ps
+XtEfb8053LY+FlksZ+RT/disuCbSKZPu00gLVFZifYXwM5YwEqbAtYtWdVYG2SNE
+JeAQH94DqIgG2LwHybnVB2sKnfgqk87Y3i7jMm1/Iih4fGBlmEAqrQ0QOtb00g7c
+Aq3b4g1uEaRS47WOs3guTrYugPX6OPZIPR48qv71zIErYjjiG5S3wRxfUaq/d2of
+PjOSK5rF9yO7ARQ4jwdasriKrTN/fSAQxHY7XGOjrhLeyaas5UJLLCy5bkoDpmAh
+SbJQ4VbcZejO8/SrWpW0HRdIm3+wH2r4/lZ2m4O518lhpoi/8DM=
+=7MYm
+-----END PGP SIGNATURE-----
+--=-=-=--
