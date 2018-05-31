@@ -1,122 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755910AbeEaRYX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 13:24:23 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35608 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755787AbeEaRYV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 13:24:21 -0400
-X-Google-Smtp-Source: ADUXVKKKllaIBXGvPHJlDYQ7Y7uLvApImuAfPRa/8QREnt83toe4TpUXXBHBWvis69xFzUWhSrv6HA==
-Subject: Re: [PATCH v2 1/2] ARM: debug: Add Iproc UART3 debug addresses
-To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>, Laura Abbott <labbott@redhat.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
-References: <20180530131956.13972-1-peron.clem@gmail.com>
- <93c2d07a-9344-ed39-261e-11084067a3fa@broadcom.com>
- <CAJiuCcek9KU6QWsAAxVCLUaf1v97uR6FcLOfY=A1LGCMTmjHjg@mail.gmail.com>
-From: Ray Jui <ray.jui@broadcom.com>
-Message-ID: <41bbf801-f060-2056-4015-b4d05c6831bb@broadcom.com>
-Date: Thu, 31 May 2018 10:24:16 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1755915AbeEaRZG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 13:25:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:44052 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755721AbeEaRZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 13:25:04 -0400
+Subject: Re: [PATCH 1/2] dma-coherent: Add one parameter to save available
+ coherent memory
+To: Baolin Wang <baolin.wang@linaro.org>, hch@lst.de,
+        m.szyprowski@samsung.com
+Cc: gregkh@linuxfoundation.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, arnd@arndb.de, broonie@kernel.org
+References: <c5765cf69bf222757463ba2653ac760b42b785e6.1527745258.git.baolin.wang@linaro.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <1d02b2e1-dd1c-af2a-e980-29aef4aa0c00@arm.com>
+Date: Thu, 31 May 2018 18:25:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAJiuCcek9KU6QWsAAxVCLUaf1v97uR6FcLOfY=A1LGCMTmjHjg@mail.gmail.com>
+In-Reply-To: <c5765cf69bf222757463ba2653ac760b42b785e6.1527745258.git.baolin.wang@linaro.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 5/31/2018 1:22 AM, Clément Péron wrote:
-> Hi Rai,
+On 31/05/18 06:55, Baolin Wang wrote:
+> It is incorrect to use mem->size to valid if there are enough coherent
+> memory to allocate in __dma_alloc_from_coherent(), since some devices
+> may mark some occupied coherent memory by dma_mark_declared_memory_occupied().
 > 
-> On Wed, 30 May 2018 at 19:25, Ray Jui <ray.jui@broadcom.com> wrote:
->>
->> Hi Clément,
->>
->> Correct me if I'm wrong, but I thought the trend is to move to use
->> earlycon that can be activated from kernel command line for early print
->> before the serial driver is loaded.
->>
->> Have you tried earlcon?
-> No, only tested this method.
-> 
-> Thanks,
-> Clement
-> 
+> So we can introduce one 'avail' parameter to save the available device
+> coherent memory, to valid if we have enough coherent memory for the device
+> to allocate.
 
-If I remember it correctly, I think the trend is to use earlycon. There 
-are obvious shortcomings by making this configuration compile time based.
+We already have dma_mem->size stored for other reasons, so there's 
+little harm in using it for a rough sanity check to short-circuit the 
+odd allocation which cannot possibly succeed, but adding machinery 
+purely for the sake an ever-so-slightly more accurate, but still far 
+from exhaustive, check doesn't really seem worth it.
 
->>
->> Thanks,
->>
->> Ray
->>
->> On 5/30/2018 6:19 AM, Clément Péron wrote:
->>> From: Clément Peron <clement.peron@devialet.com>
->>>
->>> Broadcom Iproc SoCs typically use the UART3 for
->>> debug/console, provide a known good location for that.
->>>
->>> Signed-off-by: Clément Peron <clement.peron@devialet.com>
->>> ---
->>>
->>>    arch/arm/Kconfig.debug | 12 +++++++++++-
->>>    1 file changed, 11 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
->>> index 199ebc1c4538..4ea9d5793b91 100644
->>> --- a/arch/arm/Kconfig.debug
->>> +++ b/arch/arm/Kconfig.debug
->>> @@ -207,6 +207,14 @@ choice
->>>                depends on ARCH_BCM_HR2
->>>                select DEBUG_UART_8250
->>>
->>> +     config DEBUG_BCM_IPROC_UART3
->>> +             bool "Kernel low-level debugging on BCM IPROC UART3"
->>> +             depends on ARCH_BCM_CYGNUS
->>> +             select DEBUG_UART_8250
->>> +             help
->>> +               Say Y here if you want the debug print routines to direct
->>> +               their output to the third serial port on these devices.
->>> +
->>>        config DEBUG_BCM_KONA_UART
->>>                bool "Kernel low-level debugging messages via BCM KONA UART"
->>>                depends on ARCH_BCM_MOBILE
->>> @@ -1557,6 +1565,7 @@ config DEBUG_UART_PHYS
->>>        default 0x18000400 if DEBUG_BCM_HR2
->>>        default 0x18010000 if DEBUG_SIRFATLAS7_UART0
->>>        default 0x18020000 if DEBUG_SIRFATLAS7_UART1
->>> +     default 0x18023000 if DEBUG_BCM_IPROC_UART3
->>>        default 0x1c090000 if DEBUG_VEXPRESS_UART0_RS1
->>>        default 0x20001000 if DEBUG_HIP01_UART
->>>        default 0x20060000 if DEBUG_RK29_UART0
->>> @@ -1676,6 +1685,7 @@ config DEBUG_UART_VIRT
->>>        default 0xf1002000 if DEBUG_MT8127_UART0
->>>        default 0xf1006000 if DEBUG_MT6589_UART0
->>>        default 0xf1009000 if DEBUG_MT8135_UART3
->>> +     default 0xf1023000 if DEBUG_BCM_IPROC_UART3
->>>        default 0xf11f1000 if DEBUG_VERSATILE
->>>        default 0xf1600000 if DEBUG_INTEGRATOR
->>>        default 0xf1c28000 if DEBUG_SUNXI_UART0
->>> @@ -1791,7 +1801,7 @@ config DEBUG_UART_8250_WORD
->>>                DEBUG_KEYSTONE_UART0 || DEBUG_KEYSTONE_UART1 || \
->>>                DEBUG_ALPINE_UART0 || \
->>>                DEBUG_DAVINCI_DMx_UART0 || DEBUG_DAVINCI_DA8XX_UART1 || \
->>> -             DEBUG_DAVINCI_DA8XX_UART2 || \
->>> +             DEBUG_DAVINCI_DA8XX_UART2 || DEBUG_BCM_IPROC_UART3 || \
->>>                DEBUG_BCM_KONA_UART || DEBUG_RK32_UART2
->>>
->>>    config DEBUG_UART_8250_PALMCHIP
->>>
+Even if size <= dma_mem->avail there's still no guarantee that the 
+allocation will actually succeed, so what benefit does the explicit 
+accounting provide?
+
+Robin.
+
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+>   drivers/base/dma-coherent.c |   11 +++++++++--
+>   1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/base/dma-coherent.c b/drivers/base/dma-coherent.c
+> index 597d408..ce19832 100644
+> --- a/drivers/base/dma-coherent.c
+> +++ b/drivers/base/dma-coherent.c
+> @@ -18,6 +18,7 @@ struct dma_coherent_mem {
+>   	unsigned long	*bitmap;
+>   	spinlock_t	spinlock;
+>   	bool		use_dev_dma_pfn_offset;
+> +	int		avail;
+>   };
+>   
+>   static struct dma_coherent_mem *dma_coherent_default_memory __ro_after_init;
+> @@ -73,6 +74,7 @@ static int dma_init_coherent_memory(
+>   	dma_mem->device_base = device_addr;
+>   	dma_mem->pfn_base = PFN_DOWN(phys_addr);
+>   	dma_mem->size = pages;
+> +	dma_mem->avail = pages;
+>   	dma_mem->flags = flags;
+>   	spin_lock_init(&dma_mem->spinlock);
+>   
+> @@ -141,6 +143,7 @@ void *dma_mark_declared_memory_occupied(struct device *dev,
+>   					dma_addr_t device_addr, size_t size)
+>   {
+>   	struct dma_coherent_mem *mem = dev->dma_mem;
+> +	int order = get_order(size);
+>   	unsigned long flags;
+>   	int pos, err;
+>   
+> @@ -151,7 +154,9 @@ void *dma_mark_declared_memory_occupied(struct device *dev,
+>   
+>   	spin_lock_irqsave(&mem->spinlock, flags);
+>   	pos = PFN_DOWN(device_addr - dma_get_device_base(dev, mem));
+> -	err = bitmap_allocate_region(mem->bitmap, pos, get_order(size));
+> +	err = bitmap_allocate_region(mem->bitmap, pos, order);
+> +	if (!err)
+> +		mem->avail -= 1 << order;
+>   	spin_unlock_irqrestore(&mem->spinlock, flags);
+>   
+>   	if (err != 0)
+> @@ -170,7 +175,7 @@ static void *__dma_alloc_from_coherent(struct dma_coherent_mem *mem,
+>   
+>   	spin_lock_irqsave(&mem->spinlock, flags);
+>   
+> -	if (unlikely(size > (mem->size << PAGE_SHIFT)))
+> +	if (unlikely(size > (mem->avail << PAGE_SHIFT)))
+>   		goto err;
+>   
+>   	pageno = bitmap_find_free_region(mem->bitmap, mem->size, order);
+> @@ -182,6 +187,7 @@ static void *__dma_alloc_from_coherent(struct dma_coherent_mem *mem,
+>   	 */
+>   	*dma_handle = mem->device_base + (pageno << PAGE_SHIFT);
+>   	ret = mem->virt_base + (pageno << PAGE_SHIFT);
+> +	mem->avail -= 1 << order;
+>   	spin_unlock_irqrestore(&mem->spinlock, flags);
+>   	memset(ret, 0, size);
+>   	return ret;
+> @@ -244,6 +250,7 @@ static int __dma_release_from_coherent(struct dma_coherent_mem *mem,
+>   
+>   		spin_lock_irqsave(&mem->spinlock, flags);
+>   		bitmap_release_region(mem->bitmap, page, order);
+> +		mem->avail += 1 << order;
+>   		spin_unlock_irqrestore(&mem->spinlock, flags);
+>   		return 1;
+>   	}
+> 
