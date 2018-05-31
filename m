@@ -1,64 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754027AbeEaHSt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 03:18:49 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44637 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753946AbeEaHSr (ORCPT
+        id S1753976AbeEaHVw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 03:21:52 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:41690 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753846AbeEaHVt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 03:18:47 -0400
-X-Google-Smtp-Source: ADUXVKKMT+CjwPRmUyyvt8r7dtc2iRiEuolpdHEgBHdSIhr2x83r8WSuCQ/9QfQBHa8c7NVvztXwBM88mpS0XDIiGdk=
+        Thu, 31 May 2018 03:21:49 -0400
+X-Google-Smtp-Source: ADUXVKKHu+6NNZKCDjhXqy2u9pfC5ze2wJbTXxZ39QzBWZbLTTVlBygQMx32n9v6mQpJdfoLfPSobg==
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
+Date: Thu, 31 May 2018 10:21:45 +0300
+To: Rob Herring <robh@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v4 3/6] regulator: bd71837: Devicetree bindings for
+ BD71837 regulators
+Message-ID: <20180531072145.GH13528@localhost.localdomain>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <318229ca7ffcceb090fc8d0c43f887decc3082f0.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180531030436.GB16122@rob-hp-laptop>
 MIME-Version: 1.0
-In-Reply-To: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
-References: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 31 May 2018 10:18:46 +0300
-Message-ID: <CAHp75VdFZcNMMt6aRWicCozMJ+wfAyJ4ajegHCgNg2X-x_KN_A@mail.gmail.com>
-Subject: Re: [RFC 1/2] printk: Enable platform to provide a early boot clock
-To: Feng Tang <feng.tang@intel.com>
-Cc: Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        alek.du@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180531030436.GB16122@rob-hp-laptop>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 12:20 PM, Feng Tang <feng.tang@intel.com> wrote:
-> Currently printk timestamp mostly come from the sched_clock which
-> depends on the clock setup, so there are many kernel logs started
-> with "[    0.000000]   " before the clock is calibrated.
->
-> This patch will provide an debug option for specific platform to
-> provide a early boot time clock, so that we can have time info in
-> kernel log much earlier, which can show the time info for the early
-> kernel boot, and make boottime tuning/optimization easier (boot time
-> is critical for phone/tablet and embedded devices).
->
-> Capable platform only need to setup the "boot_printk_clock_fn"
-> which could return time in nano seconds.
->
-> Together with a TSC patch on x86 system, we have easily captured
-> some early boottime killer like unwind_init() which takes about
-> 300ms in boot phase.
+On Wed, May 30, 2018 at 10:04:36PM -0500, Rob Herring wrote:
+> On Wed, May 30, 2018 at 11:42:32AM +0300, Matti Vaittinen wrote:
+> > Document devicetree bindings for ROHM BD71837 PMIC regulators.
+> > +ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bindings
+> > +
+> > +BD71837MWV is a programmable Power Management
+> > +IC (PMIC) for powering single-core, dual-core, and
+> > +quad-core SoC’s such as NXP-i.MX 8M. It is optimized
+> > +for low BOM cost and compact solution footprint. It
+> > +integrates 8 Buck regulators and 7 LDO’s to provide all
+> > +the power rails required by the SoC and the commonly
+> > +used peripherals.
+> 
+> Why duplicate this from the core binding?
 
-> +static u64 printk_clock(void)
-> +{
-> +       /* If platform provides early boot printk clock, then use it */
-> +       if (unlikely(system_state == SYSTEM_BOOTING && boot_printk_clock_fn))
-> +               return boot_printk_clock_fn();
-> +       else
-> +               return local_clock();
+I can remove this. I just thought it is nice to see what this chip is
+doing even without opening the MFD binding doc. Just same question as in
+the other patch - how should I deliver the change? This was already
+applied to Mark's tree - should I do new patch on top of the Mark's tree
+- or do patch against tree which does not yet contain this change? If I
+  do it on top of Mark's tree then Mark should apply it, right? If I do
+ it against some other three, thene there will be merge conflict with
+ Mark, right?
 
-'else' is redundant.
+> 
+> Otherwise,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-> +}
+Thanks!
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+Br,
+    Matti Vaittinen
