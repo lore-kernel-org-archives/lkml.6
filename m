@@ -1,65 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755418AbeEaOm6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:42:58 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:33060 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755042AbeEaOmz (ORCPT
+        id S1755462AbeEaOpf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:45:35 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40474 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755117AbeEaOpa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:42:55 -0400
-Subject: Re: [PATCH] selftests: add test for USB over IP driver
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: valentina.manea.m@gmail.com, mchehab+samsung@kernel.org,
-        davem@davemloft.net, akpm@linux-foundation.org,
-        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <20180531030057.32442-1-shuah@kernel.org>
- <20180531063530.GB7744@kroah.com>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <52c33b15-0bc3-83ab-1e9c-bef7a0cbf791@kernel.org>
-Date: Thu, 31 May 2018 08:42:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180531063530.GB7744@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 31 May 2018 10:45:30 -0400
+X-Google-Smtp-Source: ADUXVKKTuk/x387Qoht06FeYPoXa2cJ7X8CS5TY0yPCPkkIsEf7k5Om0Vguu/GbsssO9h4wMQNk85w==
+From: Paolo Valente <paolo.valente@linaro.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org,
+        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
+        sapienza.dav@gmail.com, 177992@studenti.unimore.it,
+        Paolo Valente <paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX/IMPROVEMENTS 1/4] block, bfq: add description of weight-raising heuristics
+Date: Thu, 31 May 2018 16:45:05 +0200
+Message-Id: <20180531144508.3927-2-paolo.valente@linaro.org>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180531144508.3927-1-paolo.valente@linaro.org>
+References: <20180531144508.3927-1-paolo.valente@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/31/2018 12:35 AM, Greg KH wrote:
-> On Wed, May 30, 2018 at 09:00:57PM -0600, Shuah Khan (Samsung OSG) wrote:
->> Add test for USB over IP driver. This test runs several tests on a device
->> specified in the -b <busid> argument and path to the usbip tools.
->>
->> usbip_test.sh -b <busid> -p <usbip tools path>
->>
->> e.g:
->> cd tools/testing selftests/drivers/usb/usbip
->> sudo ./usbip_test.sh -b 3-10.2 -p <yoursrctree>/tools/usb/usbip
->>
->> This test should be run as root and user should build usbip tools before
->> running the test.
->>
->> The usbip test isn't included in the Kselftest run as it requires user to
->> specify a device to run tests on.
->>
->> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-> 
-> If you want to take this through your tree, that's fine with me:
-> 
-> 	Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> Otherwise I will be glad to queue it up in mine, just let me know what
-> is easier for you.
-> 
-> Nice work, thanks.
+A description of how weight raising works is missing in BFQ
+sources. In addition, the code for handling weight raising is
+scattered across a few functions. This makes it rather hard to
+understand the mechanism and its rationale. This commits adds such a
+description at the beginning of the main source file.
 
-Thanks. Please take this through your tree sticking to the current flow
-of patches for this driver.
+Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+---
+ block/bfq-iosched.c | 80 +++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 56 insertions(+), 24 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index f71a5846b629..f3703e7431aa 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -49,9 +49,39 @@
+  *
+  * In particular, to provide these low-latency guarantees, BFQ
+  * explicitly privileges the I/O of two classes of time-sensitive
+- * applications: interactive and soft real-time. This feature enables
+- * BFQ to provide applications in these classes with a very low
+- * latency. Finally, BFQ also features additional heuristics for
++ * applications: interactive and soft real-time. In more detail, BFQ
++ * behaves this way if the low_latency parameter is set (default
++ * configuration). This feature enables BFQ to provide applications in
++ * these classes with a very low latency.
++ *
++ * To implement this feature, BFQ constantly tries to detect whether
++ * the I/O requests in a bfq_queue come from an interactive or a soft
++ * real-time application. For brevity, in these cases, the queue is
++ * said to be interactive or soft real-time. In both cases, BFQ
++ * privileges the service of the queue, over that of non-interactive
++ * and non-soft-real-time queues. This privileging is performed,
++ * mainly, by raising the weight of the queue. So, for brevity, we
++ * call just weight-raising periods the time periods during which a
++ * queue is privileged, because deemed interactive or soft real-time.
++ *
++ * The detection of soft real-time queues/applications is described in
++ * detail in the comments on the function
++ * bfq_bfqq_softrt_next_start. On the other hand, the detection of an
++ * interactive queue works as follows: a queue is deemed interactive
++ * if it is constantly non empty only for a limited time interval,
++ * after which it does become empty. The queue may be deemed
++ * interactive again (for a limited time), if it restarts being
++ * constantly non empty, provided that this happens only after the
++ * queue has remained empty for a given minimum idle time.
++ *
++ * By default, BFQ computes automatically the above maximum time
++ * interval, i.e., the time interval after which a constantly
++ * non-empty queue stops being deemed interactive. Since a queue is
++ * weight-raised while it is deemed interactive, this maximum time
++ * interval happens to coincide with the (maximum) duration of the
++ * weight-raising for interactive queues.
++ *
++ * Finally, BFQ also features additional heuristics for
+  * preserving both a low latency and a high throughput on NCQ-capable,
+  * rotational or flash-based devices, and to get the job done quickly
+  * for applications consisting in many I/O-bound processes.
+@@ -61,14 +91,14 @@
+  * all low-latency heuristics for that device, by setting low_latency
+  * to 0.
+  *
+- * BFQ is described in [1], where also a reference to the initial, more
+- * theoretical paper on BFQ can be found. The interested reader can find
+- * in the latter paper full details on the main algorithm, as well as
+- * formulas of the guarantees and formal proofs of all the properties.
+- * With respect to the version of BFQ presented in these papers, this
+- * implementation adds a few more heuristics, such as the one that
+- * guarantees a low latency to soft real-time applications, and a
+- * hierarchical extension based on H-WF2Q+.
++ * BFQ is described in [1], where also a reference to the initial,
++ * more theoretical paper on BFQ can be found. The interested reader
++ * can find in the latter paper full details on the main algorithm, as
++ * well as formulas of the guarantees and formal proofs of all the
++ * properties.  With respect to the version of BFQ presented in these
++ * papers, this implementation adds a few more heuristics, such as the
++ * ones that guarantee a low latency to interactive and soft real-time
++ * applications, and a hierarchical extension based on H-WF2Q+.
+  *
+  * B-WF2Q+ is based on WF2Q+, which is described in [2], together with
+  * H-WF2Q+, while the augmented tree used here to implement B-WF2Q+
+@@ -218,21 +248,23 @@ static struct kmem_cache *bfq_pool;
+ #define BFQ_RATE_SHIFT		16
+ 
+ /*
+- * By default, BFQ computes the duration of the weight raising for
+- * interactive applications automatically, using the following formula:
+- * duration = (R / r) * T, where r is the peak rate of the device, and
+- * R and T are two reference parameters.
+- * In particular, R is the peak rate of the reference device (see
+- * below), and T is a reference time: given the systems that are
+- * likely to be installed on the reference device according to its
+- * speed class, T is about the maximum time needed, under BFQ and
++ * When configured for computing the duration of the weight-raising
++ * for interactive queues automatically (see the comments at the
++ * beginning of this file), BFQ does it using the following formula:
++ * duration = (R / r) * T,
++ * where r is the peak rate of the device, and R
++ * and T are two reference parameters.	In particular,
++ * R is the peak rate of the reference device (see below), and
++ * T is a reference time: given the systems that are likely
++ * to be installed on the reference device according to its speed
++ * class, T is about the maximum time needed, under BFQ and
+  * while reading two files in parallel, to load typical large
+  * applications on these systems (see the comments on
+- * max_service_from_wr below, for more details on how T is obtained).
+- * In practice, the slower/faster the device at hand is, the more/less
+- * it takes to load applications with respect to the reference device.
+- * Accordingly, the longer/shorter BFQ grants weight raising to
+- * interactive applications.
++ * max_service_from_wr below, for more details on how T is
++ * obtained).  In practice, the slower/faster the device at hand is,
++ * the more/less it takes to load applications with respect to the
++ * reference device.  Accordingly, the longer/shorter BFQ grants
++ * weight raising to interactive applications.
+  *
+  * BFQ uses four different reference pairs (R, T), depending on:
+  * . whether the device is rotational or non-rotational;
+-- 
+2.16.1
