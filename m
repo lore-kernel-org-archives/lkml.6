@@ -1,84 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754127AbeEaIvR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:51:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59386 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754040AbeEaIvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:51:13 -0400
-Date: Thu, 31 May 2018 10:51:09 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] memcg: force charge kmem counter too
-Message-ID: <20180531085109.GJ15278@dhcp22.suse.cz>
-References: <20180525185501.82098-1-shakeelb@google.com>
- <20180526185144.xvh7ejlyelzvqwdb@esperanza>
- <CALvZod5yTxcuB_Aao-a0ChNEnwyBJk9UPvEQ80s9tZFBQ0cxpw@mail.gmail.com>
- <20180528091110.GG1517@dhcp22.suse.cz>
- <CALvZod6x5iRmcJ6pYKS+jwJd855jnwmVcPK9tnKbuJ9Hfppa-A@mail.gmail.com>
- <20180529083153.GR27180@dhcp22.suse.cz>
- <CALvZod67qzq+hQLms4Wut5LNVBjBcEQPpMp9zxF6NE5k+7CLOw@mail.gmail.com>
- <20180531060133.GA31477@rodete-desktop-imager.corp.google.com>
- <20180531065642.GI15278@dhcp22.suse.cz>
- <20180531082317.GA52285@rodete-desktop-imager.corp.google.com>
+        id S1754202AbeEaIwx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:52:53 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:45065 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754053AbeEaIws (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 04:52:48 -0400
+X-Google-Smtp-Source: ADUXVKLz330afP16/cpNR1LY6E5/3MPQfRHduh1j+zz6Sb686rrwmEGsIJXAFllk2sQ1rQSOc7+9/w==
+Date: Thu, 31 May 2018 10:52:42 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Pavel Machek <pavel@ucw.cz>, Marcel Holtmann <marcel@holtmann.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/8] gnss: add new GNSS subsystem
+Message-ID: <20180531085242.GE3259@localhost>
+References: <20180530103242.20773-1-johan@kernel.org>
+ <20180530143822.lvtwjvbqe7gvbvgq@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180531082317.GA52285@rodete-desktop-imager.corp.google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180530143822.lvtwjvbqe7gvbvgq@localhost>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 31-05-18 17:23:17, Minchan Kim wrote:
-> On Thu, May 31, 2018 at 08:56:42AM +0200, Michal Hocko wrote:
-> > On Thu 31-05-18 15:01:33, Minchan Kim wrote:
-> > > On Wed, May 30, 2018 at 11:14:33AM -0700, Shakeel Butt wrote:
-> > > > On Tue, May 29, 2018 at 1:31 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> > > > > On Mon 28-05-18 10:23:07, Shakeel Butt wrote:
-> > > > >> On Mon, May 28, 2018 at 2:11 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> > > > >> Though is there a precedence where the broken feature is not fixed
-> > > > >> because an alternative is available?
-> > > > >
-> > > > > Well, I can see how breaking GFP_NOFAIL semantic is problematic, on the
-> > > > > other hand we keep saying that kmem accounting in v1 is hard usable and
-> > > > > strongly discourage people from using it. Sure we can add the code which
-> > > > > handles _this_ particular case but that wouldn't make the whole thing
-> > > > > more usable I strongly suspect. Maybe I am wrong and you can provide
-> > > > > some specific examples. Is GFP_NOFAIL that common to matter?
-> > > > >
-> > > > > In any case we should balance between the code maintainability here.
-> > > > > Adding more cruft into the allocator path is not free.
-> > > > >
-> > > > 
-> > > > We do not use kmem limits internally and this is something I found
-> > > > through code inspection. If this patch is increasing the cost of code
-> > > > maintainability I am fine with dropping it but at least there should a
-> > > > comment saying that kmem limits are broken and no need fix.
-> > >  
-> > > I agree.
-> > > 
-> > > Even, I didn't know kmem is strongly discouraged until now. Then,
-> > > why is it enabled by default on cgroup v1?
-> > 
-> > You have to set a non-zero limit to make it active IIRC. The code is
+On Wed, May 30, 2018 at 07:38:22AM -0700, Richard Cochran wrote:
+> On Wed, May 30, 2018 at 12:32:34PM +0200, Johan Hovold wrote:
+> > Another possible extension is to add generic 1PPS support.
 > 
-> Maybe, no. I didn't set anything. IOW, it was a default without any setting
-> and I hit this as you can remember.
-> http://lkml.kernel.org/r/<20180418022912.248417-1-minchan@kernel.org>
-> We don't need to allocate memory for stuff even maintainers discourage.
+> There are two possibilities to consider.
+> 
+> 1. If the PPS causes an interrupt, then it should hook into the PPS
+>    subsystem.
 
-Well, you can disable the whole kmem accounting by cgroup.memory=nokmem
-kernel parameter. I wasn't very happy when we removed the config option
-which would have put all the tracking aside even when no limit is set
-but the argument was that the ifdefery was growing into an
-unmaintainable mess and I have to agree with that. So here we are...
--- 
-Michal Hocko
-SUSE Labs
+Registering a PPS child device is what I had in mind for this.
+
+> 2. If the PPS is a HW signal routed for example to the input pin of a
+>    MAC based PTP Hardware Clock (PHC), then it would make sense to
+>    model the GNSS device as a PHC as well.  This PHC would be readable
+>    but not writable, and more importantly it would offer an output
+>    signal.  Then user space could use the existing interfaces to
+>    dial the PPS signal from one device the another.
+
+Ok.
+
+> (Come to think of it, modeling the GNSS as PHC would also give you the
+> interface for #1 as well.)
+
+Thanks
+Johan
