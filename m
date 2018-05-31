@@ -1,82 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754712AbeEaLR1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:17:27 -0400
-Received: from ozlabs.org ([203.11.71.1]:40849 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754598AbeEaLRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:17:24 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe LEROY <christophe.leroy@c-s.fr>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Geoff Levand <geoff@infradead.org>
-Subject: Re: [PATCH v2] powerpc/64: Fix build failure with GCC 8.1
-In-Reply-To: <fd687f6c-0846-07da-328d-dd01bb2d0fdb@c-s.fr>
-References: <f5f2de3e1a39613f7303bfdc0d2f2210d4c91910.1527573345.git.christophe.leroy@c-s.fr> <CAMuHMdVSKigQPUQH=BVc2fRSRmuEThLaf+V9ghMPDT9_m1C6BA@mail.gmail.com> <1fa5b220-4d21-b4cd-33bf-8a3ce3178063@c-s.fr> <CAMuHMdXwO1_wrrTi40UmZC4o6KjvP0LF38m45n0ZNA2pDb_7Qg@mail.gmail.com> <3a438dd8-49c3-ad39-e2a1-040e0ce67279@c-s.fr> <87efhsz7xz.fsf@concordia.ellerman.id.au> <fd687f6c-0846-07da-328d-dd01bb2d0fdb@c-s.fr>
-Date: Thu, 31 May 2018 21:17:20 +1000
-Message-ID: <878t80yszj.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+        id S1754655AbeEaLQi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:16:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56196 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754441AbeEaLQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:16:32 -0400
+From: Hans de Goede <hdegoede@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "Richard W . M . Jones" <rjones@redhat.com>,
+        Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
+Subject: [PATCH] libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk
+Date: Thu, 31 May 2018 13:16:29 +0200
+Message-Id: <20180531111629.13394-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe LEROY <christophe.leroy@c-s.fr> writes:
-> Le 31/05/2018 à 07:54, Michael Ellerman a écrit :
->> Christophe LEROY <christophe.leroy@c-s.fr> writes:
->>> Le 29/05/2018 à 11:05, Geert Uytterhoeven a écrit :
->>>> Hi Christophe,
->>>> On Tue, May 29, 2018 at 10:56 AM, Christophe LEROY
->>>> <christophe.leroy@c-s.fr> wrote:
->>>>> Le 29/05/2018 à 09:47, Geert Uytterhoeven a écrit :
->>>>>> On Tue, May 29, 2018 at 8:03 AM, Christophe Leroy
->>>>>>> --- a/arch/powerpc/kernel/nvram_64.c
->>>>>>> +++ b/arch/powerpc/kernel/nvram_64.c
->>>>>>> @@ -1039,7 +1039,7 @@ loff_t __init nvram_create_partition(const char
->>>>>>> *name, int sig,
->>>>>>>            new_part->index = free_part->index;
->>>>>>>            new_part->header.signature = sig;
->>>>>>>            new_part->header.length = size;
->>>>>>> -       strncpy(new_part->header.name, name, 12);
->>>>>>> +       memcpy(new_part->header.name, name, strnlen(name,
->>>>>>> sizeof(new_part->header.name)));
->>>>>>
->>>>>>
->>>>>> The comment for nvram_header.lgnth says:
->>>>>>
->>>>>>            /* Terminating null required only for names < 12 chars. */
->>>>>>
->>>>>> This will not terminate the string with a zero (the struct is
->>>>>> allocated with kmalloc).
->>>>>> So the original code is correct, the new one isn't.
->>>>>
->>>>> Right, then I have to first zeroize the destination.
->>>>
->>>> Using kzalloc() instead of kmalloc() will do.
->>>>
->>>> Still, papering around these warnings seems to obscure things, IMHO.
->>>> And it increases code size, as you had to add a call to strnlen().
->> 
->> 
->> The right fix is to not try and mirror the on-device structure in the
->> kernel struct. We should just use a proper NULL terminated string, which
->> would avoid the need to explicitly do strncmp(.., .., 12) in the code
->> and be less bug prone in general.
->> 
->> The only place where we should need to worry about the 12 byte buffer is
->> in nvram_write_header().
->> 
->> Anyway that's a bigger change, so I'll take this for now with kzalloc().
->
-> Thanks. You take it as is and add the kzalloc() or you expect a v3 from 
-> me with the kzalloc()
+Commit 184add2ca23c ("libata: Apply NOLPM quirk for SanDisk
+SD7UB3Q*G1001 SSDs") disabled LPM for SanDisk SD7UB3Q*G1001 SSDs.
 
-Sorry that wasn't clear was it. I'll add the kzalloc().
+This has lead to several reports of users of that SSD where LPM
+was working fine and who know have a significantly increased idle
+power consumption on their laptops.
 
-cheers
+Likely there is another problem on the T450s from the original
+reporter which gets exposed by the uncore reaching deeper sleep
+states (higher PC-states) due to LPM being enabled. The problem as
+reported, a hardfreeze about once a day, already did not sound like
+it would be caused by LPM and the reports of the SSD working fine
+confirm this. The original reporter is ok with dropping the quirk.
+
+A X250 user has reported the same hard freeze problem and for him
+the problem went away after unrelated updates, I suspect some GPU
+driver stack changes fixed things.
+
+TL;DR: The original reporters problem were triggered by LPM but not
+an LPM issue, so drop the quirk for the SSD in question.
+
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1583207
+Cc: stable@vger.kernel.org
+Cc: Richard W.M. Jones <rjones@redhat.com>
+Cc: Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
+Reported-by: Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/ata/libata-core.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 68596bd4cf06..6e400ff2b5db 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4552,9 +4552,6 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+ 	/* This specific Samsung model/firmware-rev does not handle LPM well */
+ 	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
+ 
+-	/* Sandisk devices which are known to not handle LPM well */
+-	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
+-
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+-- 
+2.17.0
