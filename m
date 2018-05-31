@@ -1,95 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754209AbeEaInL convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:43:11 -0400
-Received: from mx.socionext.com ([202.248.49.38]:51131 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754184AbeEaInH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 04:43:07 -0400
-From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To: "'Abylay Ospan'" <aospan@netup.ru>,
-        =?utf-8?B?U3V6dWtpLCBLYXRzdWhpcm8v6Yi05pyoIOWLneWNmg==?=
-        <suzuki.katsuhiro@socionext.com>
-Cc: "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        "linux-media" <linux-media@vger.kernel.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20180516084111.28618-1-suzuki.katsuhiro@socionext.com> <CAK3bHNW8=z2WH6xCijAP2XCX94iE5z-HwHRYNhbJwZvbOav10A@mail.gmail.com>
-In-Reply-To: <CAK3bHNW8=z2WH6xCijAP2XCX94iE5z-HwHRYNhbJwZvbOav10A@mail.gmail.com>
-Subject: Re: [PATCH] media: helene: fix tuning frequency of satellite
-Date: Thu, 31 May 2018 17:43:01 +0900
-Message-ID: <004201d3f8bb$629d38c0$27d7aa40$@socionext.com>
+        id S1754131AbeEaIqQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:46:16 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54495 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754040AbeEaIqM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 04:46:12 -0400
+X-Google-Smtp-Source: ADUXVKIkEvVselM8ZR31ea3uvAYT7GZ4oQoPn16YND5pvZNARM+a6doF7vz5I5PQxRofwqHaKp4hnw==
+Date: Thu, 31 May 2018 10:46:07 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        viresh.kumar@linaro.org, valentin.schneider@arm.com
+Subject: Re: [PATCH v5 03/10] cpufreq/schedutil: add rt utilization tracking
+Message-ID: <20180531084607.GB17937@localhost.localdomain>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-4-git-send-email-vincent.guittot@linaro.org>
+ <20180530164601.GC2174@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHT7PGl7tKKohr1DUO9vcZ/b7rAcKQxmM6AgBgC1aA=
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530164601.GC2174@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Abylay,
-
-I got a mistake in this patch.
-
-DTV_FREQUENCY for satellite delivery systems, the frequency is in 'kHz' not 'Hz',
-so original code is correct. Sorry for confusing...
-
-
-Regards,
---
-Katsuhiro Suzuki
-
-
-> -----Original Message-----
-> From: Abylay Ospan <aospan@netup.ru>
-> Sent: Wednesday, May 16, 2018 7:58 PM
-> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>; linux-media
-> <linux-media@vger.kernel.org>; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
-> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] media: helene: fix tuning frequency of satellite
+On 30/05/18 17:46, Quentin Perret wrote:
+> Hi Vincent,
 > 
-> True.
-> I'm curious but how did it worked before ...
-> Which hardware (dvb adapter) are you using ?
-> 
-> 2018-05-16 4:41 GMT-04:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> > This patch fixes tuning frequency of satellite to kHz. That as same
-> > as terrestrial one.
-> >
-> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> On Friday 25 May 2018 at 15:12:24 (+0200), Vincent Guittot wrote:
+> > Add both cfs and rt utilization when selecting an OPP for cfs tasks as rt
+> > can preempt and steal cfs's running time.
+> > 
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 > > ---
-> >  drivers/media/dvb-frontends/helene.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/dvb-frontends/helene.c
-> b/drivers/media/dvb-frontends/helene.c
-> > index 04033f0c278b..0a4f312c4368 100644
-> > --- a/drivers/media/dvb-frontends/helene.c
-> > +++ b/drivers/media/dvb-frontends/helene.c
-> > @@ -523,7 +523,7 @@ static int helene_set_params_s(struct dvb_frontend *fe)
-> >         enum helene_tv_system_t tv_system;
-> >         struct dtv_frontend_properties *p = &fe->dtv_property_cache;
-> >         struct helene_priv *priv = fe->tuner_priv;
-> > -       int frequencykHz = p->frequency;
-> > +       int frequencykHz = p->frequency / 1000;
-> >         uint32_t frequency4kHz = 0;
-> >         u32 symbol_rate = p->symbol_rate/1000;
-> >
-> > --
-> > 2.17.0
-> >
+> >  kernel/sched/cpufreq_schedutil.c | 14 +++++++++++---
+> >  1 file changed, 11 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> > index 28592b6..a84b5a5 100644
+> > --- a/kernel/sched/cpufreq_schedutil.c
+> > +++ b/kernel/sched/cpufreq_schedutil.c
+> > @@ -56,6 +56,7 @@ struct sugov_cpu {
+> >  	/* The fields below are only needed when sharing a policy: */
+> >  	unsigned long		util_cfs;
+> >  	unsigned long		util_dl;
+> > +	unsigned long		util_rt;
+> >  	unsigned long		max;
+> >  
+> >  	/* The field below is for single-CPU policies only: */
+> > @@ -178,14 +179,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+> >  	sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
+> >  	sg_cpu->util_cfs = cpu_util_cfs(rq);
+> >  	sg_cpu->util_dl  = cpu_util_dl(rq);
+> > +	sg_cpu->util_rt  = cpu_util_rt(rq);
+> >  }
+> >  
+> >  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+> >  {
+> >  	struct rq *rq = cpu_rq(sg_cpu->cpu);
+> > +	unsigned long util;
+> >  
+> > -	if (rq->rt.rt_nr_running)
+> > -		return sg_cpu->max;
+> > +	if (rq->rt.rt_nr_running) {
+> > +		util = sg_cpu->max;
 > 
+> So I understand why we want to got to max freq when a RT task is running,
+> but I think there are use cases where we might want to be more conservative
+> and use the util_avg of the RT rq instead. The first use case is
+> battery-powered devices where going to max isn't really affordable from
+> an energy standpoint. Android, for example, has been using a RT
+> utilization signal to select OPPs for quite a while now, because going
+> to max blindly is _very_ expensive.
 > 
-> 
-> --
-> Abylay Ospan,
-> NetUP Inc.
-> http://www.netup.tv
+> And the second use-case is thermal pressure. On some modern CPUs, going to
+> max freq can lead to stringent thermal capping very quickly, at the
+> point where your CPUs might not have enough capacity to serve your tasks
+> properly. And that can ultimately hurt the very RT tasks you originally
+> tried to run fast. In these systems, in the long term, you'd be better off
+> not asking for more than what you really need ...
+
+Proposed the same at last LPC. Peter NAKed it (since RT is all about
+meeting deadlines, and when using FIFO/RR we don't really know how fast
+the CPU should go to meet them, so go to max is the only safe decision).
+
+> So what about having a sched_feature to select between going to max and
+> using the RT util_avg ? Obviously the default should keep the current
+> behaviour.
+
+Peter, would SCHED_FEAT make a difference? :)
+
+Or Patrick's utilization capping applied to RT..
