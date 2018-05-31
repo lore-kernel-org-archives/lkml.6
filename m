@@ -1,67 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755652AbeEaQCU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:02:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38890 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755634AbeEaQCP (ORCPT
+        id S1755581AbeEaQEQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:04:16 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41129 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755527AbeEaQEM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:02:15 -0400
-Date: Thu, 31 May 2018 17:02:06 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
-        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 16/21] ASoC: max98088: use match_string() helper
-Message-ID: <20180531160206.GE13319@sirena.org.uk>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
- <1527765086-19873-17-git-send-email-xieyisheng1@huawei.com>
- <20180531114921.GD13319@sirena.org.uk>
- <8009e494-9ba0-bff3-e900-37f8923886a0@huawei.com>
+        Thu, 31 May 2018 12:04:12 -0400
+X-Google-Smtp-Source: ADUXVKI9BodLaaUXZLpF1uCbmehrRP9lOXdqhGEim7hF53fPuGZigj6dyna1aT9GULf8V5+sfs1rBQ==
+Date: Thu, 31 May 2018 21:34:03 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: afaerber@suse.de
+Cc: linus.walleij@linaro.org, sboyd@kernel.org, liuwei@actions-semi.com,
+        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: [PULL REQUEST] arm: Actions DT for v4.18
+Message-ID: <20180531160403.GA16640@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="AsxXAMtlQ5JHofzM"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8009e494-9ba0-bff3-e900-37f8923886a0@huawei.com>
-X-Cookie: I've read SEVEN MILLION books!!
-User-Agent: Mutt/1.9.5 (2018-04-13)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andreas,
 
---AsxXAMtlQ5JHofzM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Here is the pull request for Devicetree and Maintainer changes for the Actions
+platform as suggested by Linus Walleij. Relevant drivers are already applied
+by the respective subsystem maintainers.
 
-On Thu, May 31, 2018 at 08:25:39PM +0800, Yisheng Xie wrote:
+Please pull it in!
 
-> Anyway, Here is the cover letter of v1 and I have add v2's cover letter to you:
->   https://lkml.org/lkml/2018/5/21/303
+PS: I haven't added the SPS patches since it is not yet reviewed by you.
 
-> Each patch in this patchset is a separate one, for what this patchset want to do
-> is use match_string() helper for echo subsystem.
+Thanks,
+Mani
 
-For something like this it's generally easier to not send everything as
-one big series - it avoids any confusion about dependencies and there's
-no actual relationship between the patches.  Instead just sending each
-subsystem as a series or perhaps even just a bunch of separate patches
-should make things smoother.
+The following changes since commit ee7ffc878fdedd82831df81af6ec334daff9decb:
 
---AsxXAMtlQ5JHofzM
-Content-Type: application/pgp-signature; name="signature.asc"
+  Add linux-next specific files for 20180530 (2018-05-30 21:42:04 +1000)
 
------BEGIN PGP SIGNATURE-----
+are available in the git repository at:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsQHH0ACgkQJNaLcl1U
-h9ATxwf/cfSRfTKeyj24thB7iAGirKwmtfR5w42ZeMDl76thS0CTw/StQYGuUgTj
-NTtpwb4GlvYRVN1k4pYScbie2kf76MVLw/gsAkctuwYbOGuD6MR7bRqv/mkEBdlK
-1S0DW6iqmNLZ5e3lW1xnQAl1czz3fCeY6dD1XojeYKkAZKNuVLFFuF5t8If/YWZi
-T1zOT1ExDHHfkAaPRo2SuEDTDpPXKenkfLu6vbw5qNnV0lkBGLDNfHMw4Qw3f4t0
-G4hQNiHEUD8VYruFLQ/fzQs8y2+fVx8mnm06x4ZFC3X5bd0lWTxBVDKa0wmR7tmE
-fmX6fLq8NEoTw7ZBOdnrZrHXRf6rRg==
-=G6H8
------END PGP SIGNATURE-----
+  git://git.linaro.org/people/manivannan.sadhasivam/linux.git s900-for-next
 
---AsxXAMtlQ5JHofzM--
+for you to fetch changes up to b2a2e190e41c92e10aec8440c4207efc8abd0643:
+
+  MAINTAINERS: Add Actions Semi S900 clk entries (2018-05-31 15:17:34 +0530)
+
+----------------------------------------------------------------
+Manivannan Sadhasivam (8):
+      arm64: dts: actions: Add S900 clock management unit nodes
+      arm64: dts: actions: Source CMU clock for UART5
+      arm64: dts: actions: Add pinctrl node for S900
+      arm64: actions: Enable PINCTRL in platforms Kconfig
+      MAINTAINERS: Add reviewer for ACTIONS platforms
+      arm64: dts: actions: Add gpio properties to pinctrl node for S900
+      arm64: dts: actions: Add gpio line names to Bubblegum-96 board
+      MAINTAINERS: Add Actions Semi S900 clk entries
+
+ MAINTAINERS                                       |   3 +
+ arch/arm64/Kconfig.platforms                      |   1 +
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 183 +++++++++++++++++++++-
+ arch/arm64/boot/dts/actions/s900.dtsi             |  29 ++++
+ 4 files changed, 209 insertions(+), 7 deletions(-)
