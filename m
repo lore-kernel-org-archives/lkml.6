@@ -1,79 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755699AbeEaQik (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 12:38:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52284 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755562AbeEaQii (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 12:38:38 -0400
-Date: Thu, 31 May 2018 18:38:26 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Waiman Long <longman@redhat.com>, Zefan Li <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] cpuset: Enforce that a child's cpus must be a subset of
- the parent
-Message-ID: <20180531163826.GO12180@hirez.programming.kicks-ass.net>
-References: <1527687991-1431-1-git-send-email-longman@redhat.com>
- <5B0F4F09.9050100@huawei.com>
- <5B0FAE72.1090204@huawei.com>
- <20180531082613.GF12180@hirez.programming.kicks-ass.net>
- <5B0FB58C.9030705@huawei.com>
- <4dc718bc-4bd5-4998-853b-9c6ba67b89a0@redhat.com>
- <20180531155807.GU1351649@devbig577.frc2.facebook.com>
- <20180531161645.GN12180@hirez.programming.kicks-ass.net>
- <20180531161942.GW1351649@devbig577.frc2.facebook.com>
+        id S1755788AbeEaQjW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 12:39:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37286 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755772AbeEaQjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 12:39:19 -0400
+Date: Thu, 31 May 2018 12:38:11 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>
+Subject: Re: [RFC PATCH ghak86 V1] audit: use audit_enabled as a boolean
+ where convenient
+Message-ID: <20180531163811.7m7c3q75duqkicl4@madcap2.tricolour.ca>
+References: <c390a53d148593016df96e880a35e64f42edcf91.1527726830.git.rgb@redhat.com>
+ <CAHC9VhQji1JrZ-QHMJ-965s+a5UJx-wRqpEdb84r=v+t1oH-qw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180531161942.GW1351649@devbig577.frc2.facebook.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAHC9VhQji1JrZ-QHMJ-965s+a5UJx-wRqpEdb84r=v+t1oH-qw@mail.gmail.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 09:19:42AM -0700, Tejun Heo wrote:
-> Hello,
+On 2018-05-31 11:48, Paul Moore wrote:
+> On Thu, May 31, 2018 at 11:13 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Most uses of audit_enabled don't care about the distinction between
+> > AUDIT_ON and AUDIT_LOCKED, so using audit_enabled as a boolean makes
+> > more sense and is easier to read. Most uses of audit_enabled treat it as
+> > a boolean, so switch the remaining AUDIT_OFF usage to simply use
+> > audit_enabled as a boolean where applicable.
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/86
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  drivers/tty/tty_audit.c      | 2 +-
+> >  include/net/xfrm.h           | 2 +-
+> >  kernel/audit.c               | 8 ++++----
+> >  net/netfilter/xt_AUDIT.c     | 2 +-
+> >  net/netlabel/netlabel_user.c | 2 +-
+> >  5 files changed, 8 insertions(+), 8 deletions(-)
 > 
-> On Thu, May 31, 2018 at 06:16:45PM +0200, Peter Zijlstra wrote:
-> > > So, let's please stay away from it even if that means a bit of
-> > > overhead in terms of interface.
-> > 
-> > Urgh, that again :/
+> I'm not sure I like this idea.  Yes, technically this change is
+> functionally equivalent but I worry that this will increase the chance
+> that non-audit folks will mistake audit_enabled as a true/false value
+> when it is not.  It might work now, but I worry about some subtle
+> problem in the future.
+
+Would you prefer a patch to change the majority (18) of uses of
+audit_enabled to be of the form "audit_enabled == AUDIT_OFF" (or
+"audit_enabled != AUDIT_OFF")?
+
+I prefer the approach in this patch because it makes the code smaller
+and significantly easier to read, but either way, I'd like all uses to
+be consistent so that it is easier to read all the code similarly.
+
+> If you are bothered by the comparison to 0 (magic numbers), you could
+> move the AUDIT_OFF/AUDIT_ON/AUDIT_LOCKED definitions into
+> include/linux/audit.h and convert the "audit_enabled == 0" to
+> "audit_enabled == AUDIT_OFF".
+
+I'd be fine doing that if you really dislike this patch's approach.
+
+> > diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
+> > index e30aa6b..1e48051 100644
+> > --- a/drivers/tty/tty_audit.c
+> > +++ b/drivers/tty/tty_audit.c
+> > @@ -92,7 +92,7 @@ static void tty_audit_buf_push(struct tty_audit_buf *buf)
+> >  {
+> >         if (buf->valid == 0)
+> >                 return;
+> > -       if (audit_enabled == 0) {
+> > +       if (!audit_enabled) {
+> >                 buf->valid = 0;
+> >                 return;
+> >         }
+> > diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+> > index 7f2e31a..380542b 100644
+> > --- a/include/net/xfrm.h
+> > +++ b/include/net/xfrm.h
+> > @@ -734,7 +734,7 @@ static inline struct audit_buffer *xfrm_audit_start(const char *op)
+> >  {
+> >         struct audit_buffer *audit_buf = NULL;
+> >
+> > -       if (audit_enabled == 0)
+> > +       if (!audit_enabled)
+> >                 return NULL;
+> >         audit_buf = audit_log_start(audit_context(), GFP_ATOMIC,
+> >                                     AUDIT_MAC_IPSEC_EVENT);
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index e7478cb..3a18e59 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -424,7 +424,7 @@ static int audit_do_config_change(char *function_name, u32 *to_change, u32 new)
+> >         else
+> >                 allow_changes = 1;
+> >
+> > -       if (audit_enabled != AUDIT_OFF) {
+> > +       if (audit_enabled) {
+> >                 rc = audit_log_config_change(function_name, new, old, allow_changes);
+> >                 if (rc)
+> >                         allow_changes = 0;
+> > @@ -1097,7 +1097,7 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
+> >  {
+> >         struct audit_buffer *ab;
+> >
+> > -       if (audit_enabled == AUDIT_OFF)
+> > +       if (!audit_enabled)
+> >                 return;
+> >         ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_FEATURE_CHANGE);
+> >         if (!ab)
+> > @@ -1270,7 +1270,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+> >                                 err = auditd_set(req_pid,
+> >                                                  NETLINK_CB(skb).portid,
+> >                                                  sock_net(NETLINK_CB(skb).sk));
+> > -                               if (audit_enabled != AUDIT_OFF)
+> > +                               if (audit_enabled)
+> >                                         audit_log_config_change("audit_pid",
+> >                                                                 new_pid,
+> >                                                                 auditd_pid,
+> > @@ -1281,7 +1281,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+> >                                 /* try to process any backlog */
+> >                                 wake_up_interruptible(&kauditd_wait);
+> >                         } else {
+> > -                               if (audit_enabled != AUDIT_OFF)
+> > +                               if (audit_enabled)
+> >                                         audit_log_config_change("audit_pid",
+> >                                                                 new_pid,
+> >                                                                 auditd_pid, 1);
+> > diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
+> > index f368ee6..3921553 100644
+> > --- a/net/netfilter/xt_AUDIT.c
+> > +++ b/net/netfilter/xt_AUDIT.c
+> > @@ -72,7 +72,7 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+> >         struct audit_buffer *ab;
+> >         int fam = -1;
+> >
+> > -       if (audit_enabled == 0)
+> > +       if (!audit_enabled)
+> >                 goto errout;
+> >         ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
+> >         if (ab == NULL)
+> > diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
+> > index 2f328af..e68fa9d 100644
+> > --- a/net/netlabel/netlabel_user.c
+> > +++ b/net/netlabel/netlabel_user.c
+> > @@ -101,7 +101,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
+> >         char *secctx;
+> >         u32 secctx_len;
+> >
+> > -       if (audit_enabled == 0)
+> > +       if (!audit_enabled)
+> >                 return NULL;
+> >
+> >         audit_buf = audit_log_start(audit_context(), GFP_ATOMIC, type);
+> > --
+> > 1.8.3.1
+> >
 > 
-> Yeah, well, it's pretty important.
 > 
-> > I'm still not convinced by your arguments though. The root container can
-> > access all the sub-groups anyway and can grub around in them to take
-> > away resources if it really wants to.
 > 
-> That's really messy and if you delegated away a subtree, you can't
-> walk the subtree in a race free way, not easily anyway.
+> -- 
+> paul moore
+> www.paul-moore.com
 
-Messy perhaps, but taking away resources you gave out earlier isn't
-particularly nice either way around.
+- RGB
 
-Not sure the races matter, if you win, the delegate can't undo it, if
-you loose, you try again until you win.
-
-It's not like cgroup stuff gets changed often, so a conflict causing you
-to loose should be very rare indeed.
-
-> > For cpuset in particular randomly restricting on the ancestor level can
-> > create an unrecoverable trainwreck inside a container. Affinities are
-> > not recoverable. Once a runnable task ends up with an empty set, its
-> > affinities are reset and the smaller (empty) set is lost.
-> 
-> Yeah, for cpuset, it's messier, but it isn't different from hotunplug
-> scenario, right?  I think the best we can do there is putting ancestor
-> operation on an equal footing as hotplug ops.
-
-Right, but hotplug is exceedingly rare, while I get the impression you
-think it is perfectly fine to recind on your resource grants.
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
