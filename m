@@ -1,27 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754662AbeEaKpj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:45:39 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36053 "EHLO
+        id S1754682AbeEaKq0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:46:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48299 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754471AbeEaKpf (ORCPT
+        with ESMTP id S1754562AbeEaKqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:45:35 -0400
-Date: Thu, 31 May 2018 03:45:04 -0700
-From: tip-bot for Thomas Richter <tipbot@zytor.com>
-Message-ID: <tip-0c711138fa61188aa379210e9e08ac76838dea03@git.kernel.org>
-Cc: hpa@zytor.com, acme@redhat.com, brueckner@linux.vnet.ibm.com,
-        tglx@linutronix.de, tmricht@linux.ibm.com, heiko.carstens@de.ibm.com,
-        schwidefsky@de.ibm.com, linux-kernel@vger.kernel.org, mingo@kernel.org
-Reply-To: tmricht@linux.ibm.com, tglx@linutronix.de, heiko.carstens@de.ibm.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, schwidefsky@de.ibm.com,
-        hpa@zytor.com, brueckner@linux.vnet.ibm.com, acme@redhat.com
-In-Reply-To: <20180528074433.16652-1-tmricht@linux.ibm.com>
-References: <20180528074433.16652-1-tmricht@linux.ibm.com>
+        Thu, 31 May 2018 06:46:23 -0400
+Date: Thu, 31 May 2018 03:46:06 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-j7o92acm2vnxjv70y4o3swoc@git.kernel.org>
+Cc: kim.phillips@arm.com, dsahern@gmail.com, wangnan0@huawei.com,
+        tmricht@linux.ibm.com, lakshmana@google.com, mingo@kernel.org,
+        namhyung@kernel.org, eranian@google.com, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, sque@chromium.org, jolsa@kernel.org,
+        brueckner@linux.vnet.ibm.com, acme@redhat.com, hekuang@huawei.com,
+        yao.jin@linux.intel.com, ak@linux.intel.com, hpa@zytor.com,
+        tglx@linutronix.de
+Reply-To: dsahern@gmail.com, kim.phillips@arm.com, tmricht@linux.ibm.com,
+        lakshmana@google.com, wangnan0@huawei.com, eranian@google.com,
+        mingo@kernel.org, namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, sque@chromium.org, jolsa@kernel.org,
+        brueckner@linux.vnet.ibm.com, acme@redhat.com, hekuang@huawei.com,
+        yao.jin@linux.intel.com, ak@linux.intel.com, hpa@zytor.com,
+        tglx@linutronix.de
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf data: Update documentation section on cpu
- topology
-Git-Commit-ID: 0c711138fa61188aa379210e9e08ac76838dea03
+Subject: [tip:perf/urgent] perf tools: Fix perf.data format description of
+ NRCPUS header
+Git-Commit-ID: 18a7057420f8b67f15d17087bf5c0863db752c8b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,48 +40,50 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0c711138fa61188aa379210e9e08ac76838dea03
-Gitweb:     https://git.kernel.org/tip/0c711138fa61188aa379210e9e08ac76838dea03
-Author:     Thomas Richter <tmricht@linux.ibm.com>
-AuthorDate: Mon, 28 May 2018 09:44:33 +0200
+Commit-ID:  18a7057420f8b67f15d17087bf5c0863db752c8b
+Gitweb:     https://git.kernel.org/tip/18a7057420f8b67f15d17087bf5c0863db752c8b
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 25 May 2018 16:37:36 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 30 May 2018 15:39:13 -0300
+CommitDate: Wed, 30 May 2018 15:40:26 -0300
 
-perf data: Update documentation section on cpu topology
+perf tools: Fix perf.data format description of NRCPUS header
 
-Add an explanation of each cpu's core and socket identifier to the
-perf.data file format documentation.
+In the perf.data HEADER_CPUDESC feadure header we store first the number
+of available CPUs in the system, then the number of CPUs at the time of
+writing the header, not the other way around.
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Reported-by: Thomas-Mich Richter <tmricht@linux.ibm.com>
+Acked-by: Andi Kleen <ak@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: He Kuang <hekuang@huawei.com>
 Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180528074433.16652-1-tmricht@linux.ibm.com
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kim Phillips <kim.phillips@arm.com>
+Cc: Lakshman Annadorai <lakshmana@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Simon Que <sque@chromium.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-j7o92acm2vnxjv70y4o3swoc@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf.data-file-format.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/perf/Documentation/perf.data-file-format.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-index d00f0d51cab8..c57904a526ce 100644
+index c57904a526ce..dfb218feaad9 100644
 --- a/tools/perf/Documentation/perf.data-file-format.txt
 +++ b/tools/perf/Documentation/perf.data-file-format.txt
-@@ -153,10 +153,18 @@ struct {
- 	HEADER_CPU_TOPOLOGY = 13,
+@@ -111,8 +111,8 @@ A perf_header_string with the CPU architecture (uname -m)
+ A structure defining the number of CPUs.
  
- String lists defining the core and CPU threads topology.
-+The string lists are followed by a variable length array
-+which contains core_id and socket_id of each cpu.
-+The number of entries can be determined by the size of the
-+section minus the sizes of both string lists.
- 
- struct {
-        struct perf_header_string_list cores; /* Variable length */
-        struct perf_header_string_list threads; /* Variable length */
-+       struct {
-+	      uint32_t core_id;
-+	      uint32_t socket_id;
-+       } cpus[nr]; /* Variable length records */
+ struct nr_cpus {
+-       uint32_t nr_cpus_online;
+        uint32_t nr_cpus_available; /* CPUs not yet onlined */
++       uint32_t nr_cpus_online;
  };
  
- Example:
+ 	HEADER_CPUDESC = 8,
