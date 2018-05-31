@@ -1,113 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754769AbeEaLmd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 07:42:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43565 "EHLO mx2.suse.de"
+        id S1754741AbeEaLpB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 07:45:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754522AbeEaLma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 07:42:30 -0400
-Date: Thu, 31 May 2018 13:42:28 +0200
-From: Jan Kara <jack@suse.cz>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        tj@kernel.org, david@fromorbit.com, linux-block@vger.kernel.org
-Subject: Re: general protection fault in wb_workfn (2)
-Message-ID: <20180531114228.6zx27xxurmz27pke@quack2.suse.cz>
-References: <000000000000cbd959056d1851ca@google.com>
- <0c7c5dea-7312-8a59-9d1b-5467f69719bf@I-love.SAKURA.ne.jp>
- <20180528133503.awomzj6djozbo5bv@quack2.suse.cz>
- <2dda7a11-3f6b-bdba-a68a-7c0694806cc4@I-love.SAKURA.ne.jp>
+        id S1754628AbeEaLpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 07:45:00 -0400
+Date: Thu, 31 May 2018 13:44:37 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
+        Quytelda Kahja <quytelda@tamalin.org>, devel@driverdev.osuosl.org
+Subject: Re: [PATCH v2 03/21] Staging: gdm724x: use match_string() helper
+Message-ID: <20180531114437.GA11598@kroah.com>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+ <1527765086-19873-4-git-send-email-xieyisheng1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2dda7a11-3f6b-bdba-a68a-7c0694806cc4@I-love.SAKURA.ne.jp>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <1527765086-19873-4-git-send-email-xieyisheng1@huawei.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 31-05-18 01:00:08, Tetsuo Handa wrote:
-> So, we have no idea what is happening...
-> Then, what about starting from temporary debug printk() patch shown below?
+On Thu, May 31, 2018 at 07:11:08PM +0800, Yisheng Xie wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used instead of open coded variant.
 > 
-> >From 4f70f72ad3c9ae6ce1678024ef740aca4958e5b0 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Wed, 30 May 2018 09:57:10 +0900
-> Subject: [PATCH] bdi: Add temporary config for debugging wb_workfn() versus
->  bdi_unregister() race bug.
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Quytelda Kahja <quytelda@tamalin.org>
+> Cc: devel@driverdev.osuosl.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+> v2:
+>  - const DRIVER_STRING instead  - per Andy
 > 
-> syzbot is hitting NULL pointer dereference at wb_workfn() [1]. But due to
-> limitations that syzbot cannot find reproducer for this bug (frequency is
-> once or twice per a day) nor we can't capture vmcore in the environment
-> which syzbot is using, for now we need to rely on printk() debugging.
+>  drivers/staging/gdm724x/gdm_tty.c | 18 +++++-------------
+>  1 file changed, 5 insertions(+), 13 deletions(-)
 > 
-> [1] https://syzkaller.appspot.com/bug?id=e0818ccb7e46190b3f1038b0c794299208ed4206
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-
-Hum a bit ugly solution but if others are fine with this, I can live with
-it for a while as well. Or would it be possible for syzkaller to just test
-some git tree where this patch is included? Then we would not even have to
-have the extra config option...
-
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 471d863..b4dd078 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1934,6 +1934,37 @@ void wb_workfn(struct work_struct *work)
->  						struct bdi_writeback, dwork);
->  	long pages_written;
+> diff --git a/drivers/staging/gdm724x/gdm_tty.c b/drivers/staging/gdm724x/gdm_tty.c
+> index 3cdebb8..397ecaa 100644
+> --- a/drivers/staging/gdm724x/gdm_tty.c
+> +++ b/drivers/staging/gdm724x/gdm_tty.c
+> @@ -43,7 +43,7 @@
+>  static struct gdm *gdm_table[TTY_MAX_COUNT][GDM_TTY_MINOR];
+>  static DEFINE_MUTEX(gdm_table_lock);
 >  
-> +#ifdef CONFIG_BLK_DEBUG_WB_WORKFN_RACE
-> +	if (!wb->bdi->dev) {
-> +		pr_warn("WARNING: %s: device is NULL\n", __func__);
-> +		pr_warn("wb->state=%lx\n", wb->state);
-> +		pr_warn("list_empty(&wb->work_list)=%u\n",
-> +			list_empty(&wb->work_list));
-> +		if (!wb->bdi)
-
-This is not possible when we dereferences wb->bdi above...
-
-> +			pr_warn("wb->bdi == NULL\n");
-> +		else {
-> +			pr_warn("list_empty(&wb->bdi->bdi_list)=%u\n",
-> +				list_empty(&wb->bdi->bdi_list));
-> +			pr_warn("wb->bdi->wb.state=%lx\n", wb->bdi->wb.state);
-> +		}
-
-It would be also good to print whether wb == wb->bdi->wb (i.e. it is the
-default writeback structure or one for some cgroup) and also
-wb->bdi->wb.state.
-
-								Honza
-
-> +		if (!wb->congested)
-> +			pr_warn("wb->congested == NULL\n");
-> +#ifdef CONFIG_CGROUP_WRITEBACK
-> +		else if (!wb->congested->__bdi)
-> +			pr_warn("wb->congested->__bdi == NULL\n");
-> +		else {
-> +			pr_warn("(wb->congested->__bdi == wb->bdi)=%u\n",
-> +				wb->congested->__bdi == wb->bdi);
-> +			pr_warn("list_empty(&wb->congested->__bdi->bdi_list)=%u\n",
-> +				list_empty(&wb->congested->__bdi->bdi_list));
-> +			pr_warn("wb->congested->__bdi->wb.state=%lx\n",
-> +				wb->congested->__bdi->wb.state);
-> +		}
-> +#endif
-> +		/* Will halt shortly due to NULL pointer dereference... */
-> +	}
-> +#endif
-> +
->  	set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
->  	current->flags |= PF_SWAPWRITE;
+> -static char *DRIVER_STRING[TTY_MAX_COUNT] = {"GCTATC", "GCTDM"};
+> +static const char *DRIVER_STRING[TTY_MAX_COUNT] = {"GCTATC", "GCTDM"};
+>  static char *DEVICE_STRING[TTY_MAX_COUNT] = {"GCT-ATC", "GCT-DM"};
 >  
-> -- 
-> 1.8.3.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  static void gdm_port_destruct(struct tty_port *port)
+> @@ -65,22 +65,14 @@ static int gdm_tty_install(struct tty_driver *driver, struct tty_struct *tty)
+>  {
+>  	struct gdm *gdm = NULL;
+>  	int ret;
+> -	int i;
+> -	int j;
+> -
+> -	j = GDM_TTY_MINOR;
+> -	for (i = 0; i < TTY_MAX_COUNT; i++) {
+> -		if (!strcmp(tty->driver->driver_name, DRIVER_STRING[i])) {
+> -			j = tty->index;
+> -			break;
+> -		}
+> -	}
+>  
+> -	if (j == GDM_TTY_MINOR)
+> +	ret = match_string(DRIVER_STRING, TTY_MAX_COUNT,
+> +			   tty->driver->driver_name);
+> +	if (ret < 0 || tty->index == GDM_TTY_MINOR)
+>  		return -ENODEV;
+
+Very odd rewrite here.  Why call this function if you think the initial
+parameters are not correct?  Are you sure about your test for
+tty->index?
+
+This should be cleaned up more please.
+
+thanks,
+
+greg k-h
