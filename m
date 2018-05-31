@@ -1,57 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755918AbeEaSPt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 14:15:49 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:45539 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755824AbeEaSPo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 14:15:44 -0400
-X-Google-Smtp-Source: ADUXVKK47KiJJ5xPRK70L4ZtnQKw5IgfNaPNSdpdyXm8gkVytYn+ni3oeTcTfuFLAVpuCg36mnWEcUWaBa7g6PXZgrM=
+        id S1755946AbeEaSSA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 14:18:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40042 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755848AbeEaSR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 14:17:59 -0400
+Date: Thu, 31 May 2018 14:17:57 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Sagi Grimberg <sagi@grimberg.me>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
+        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
+        James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>, axboe@kernel.dk
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+Message-ID: <20180531181757.GB11848@redhat.com>
+References: <20180525125322.15398-1-jthumshirn@suse.de>
+ <20180525130535.GA24239@lst.de>
+ <20180525135813.GB9591@redhat.com>
+ <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
+ <20180530220206.GA7037@redhat.com>
+ <20180531163311.GA30954@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <ea92b4fb-a1c9-a961-b67e-7834e351d6e1@infradead.org>
-References: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
- <CAHp75VdFZcNMMt6aRWicCozMJ+wfAyJ4ajegHCgNg2X-x_KN_A@mail.gmail.com> <ea92b4fb-a1c9-a961-b67e-7834e351d6e1@infradead.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 31 May 2018 21:15:43 +0300
-Message-ID: <CAHp75VfcyyFeBnEdDbARk2VdxRT55qWdBJu_XWK5gGRHm5LTGg@mail.gmail.com>
-Subject: Re: [RFC 1/2] printk: Enable platform to provide a early boot clock
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Feng Tang <feng.tang@intel.com>, Petr Mladek <pmladek@suse.com>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        alek.du@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531163311.GA30954@lst.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 8:22 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 05/31/2018 12:18 AM, Andy Shevchenko wrote:
->> On Wed, May 30, 2018 at 12:20 PM, Feng Tang <feng.tang@intel.com> wrote:
+On Thu, May 31 2018 at 12:33pm -0400,
+Christoph Hellwig <hch@lst.de> wrote:
 
->>> +static u64 printk_clock(void)
->>> +{
->>> +       /* If platform provides early boot printk clock, then use it */
->>> +       if (unlikely(system_state == SYSTEM_BOOTING && boot_printk_clock_fn))
->>> +               return boot_printk_clock_fn();
->>> +       else
->>> +               return local_clock();
->>
->> 'else' is redundant.
->
-> So it is.  Is this a style comment?
-> This shouldn't matter to a smart compiler, should it?
+> On Wed, May 30, 2018 at 06:02:06PM -0400, Mike Snitzer wrote:
+> > Because once nvme_core.multipath=N is set: native NVMe multipath is then
+> > not accessible from the same host.  The goal of this patchset is to give
+> > users choice.  But not limit them to _only_ using dm-multipath if they
+> > just have some legacy needs.
+> 
+> Choise by itself really isn't an argument.  We need a really good
+> use case for all the complexity, and so far none has been presented.
 
-In this particular case it doesn't matter, in more complex cases this
-will increase an indentation level which becomes a hardly readable
-code.
+OK, but its choice that is governed by higher level requirements that _I_
+personally don't have.  They are large datacenter deployments like
+Hannes eluded to [1] where there is heavy automation and/or layered
+products that are developed around dm-multipath (via libraries to access
+multipath-tools provided info, etc).
 
->>> +}
+So trying to pin me down on _why_ users elect to make this choice (or
+that there is such annoying inertia behind their choice) really isn't
+fair TBH.  They exist.  Please just accept that.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Now another hypothetical usecase I thought of today, that really drives
+home _why_ it useful to have this fine-grained 'mpath_personality'
+flexibility is: admin containers.  (not saying people or companies
+currently, or plan to, do this but they very easily could...):
+1) container A is tasked with managing some dedicated NVMe technology
+   that absolutely needs native NVMe multipath.
+2) container B is tasked with offering some canned layered product that
+   was developed ontop of dm-multipath with its own multipath-tools
+   oriented APIs, etc. And it is to manage some other NVMe technology on
+   the same host as container A.
+
+So, containers with conflicting requirements running on the same host.
+
+Now you can say: sorry don't do that.  But that really isn't a valid
+counter.
+
+Point is it really is meaningful to offer this 'mpath_personality'
+switch.  I'm obviously hopeful for it to not be heavily used BUT not
+providing the ability for native NVMe multipath and dm-multipath to
+coexist on the same Linux host really isn't viable in the near-term.
+
+Mike
+
+[1] https://lkml.org/lkml/2018/5/29/95
