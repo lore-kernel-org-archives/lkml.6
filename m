@@ -1,78 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754163AbeEaT0N (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 15:26:13 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48646 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754089AbeEaT0J (ORCPT
+        id S1754180AbeEaT2o (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 15:28:44 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:33638 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754067AbeEaT2n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 15:26:09 -0400
-Date: Thu, 31 May 2018 20:26:08 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        Thu, 31 May 2018 15:28:43 -0400
+Date: Thu, 31 May 2018 15:28:41 -0400 (EDT)
+Message-Id: <20180531.152841.1420970245080020907.davem@davemloft.net>
+To: kvalo@codeaurora.org
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 20/32] vfs: Make close() unmount the attached mount if so
- flagged [ver #8]
-Message-ID: <20180531192608.GH30522@ZenIV.linux.org.uk>
-References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
- <152720685405.9073.17445116582570028610.stgit@warthog.procyon.org.uk>
- <20180531191955.GG30522@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531191955.GG30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Subject: Re: pull-request: wireless-drivers 2018-05-30
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <87vab52po0.fsf@kamboji.qca.qualcomm.com>
+References: <87vab52po0.fsf@kamboji.qca.qualcomm.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 08:19:55PM +0100, Al Viro wrote:
-> On Fri, May 25, 2018 at 01:07:34AM +0100, David Howells wrote:
-> > +	if (unlikely(file->f_mode & FMODE_NEED_UNMOUNT))
-> > +		__detach_mounts(dentry);
-> > +
-> 
-> This is completely wrong.  First of all, you want to dissolve the mount tree
-> on file->f_path.mount, not every tree rooted at dentry equal to file->f_path.dentry.
-> This is easily done - it would be a simple call of drop_collected_mounts(mnt)
-> if not for one detail.  You want it to happen only if the sucker isn't attached
-> anywhere by that point.  IOW,
->         namespace_lock();
->         lock_mount_hash();
-> 	if (!real_mount(mnt)->mnt_ns)
-> 		umount_tree(real_mount(mnt), UMOUNT_SYNC);
->         unlock_mount_hash();
->         namespace_unlock();
-> and that's it.  You don't need that magical mystery turd in move_mount() later
-> in the series and all the infrastructure you grow for it.
-> 
-> FWIW, I would've suggested this
->  void drop_collected_mounts(struct vfsmount *mnt)
->  {
->  	namespace_lock();
->  	lock_mount_hash();
-> +	if (!real_mount(mnt)->mnt_ns)
-> +		umount_tree(real_mount(mnt), UMOUNT_SYNC);
-> -	umount_tree(real_mount(mnt), UMOUNT_SYNC);
->  	unlock_mount_hash();
->  	namespace_unlock();
->  }
-> 
-> and in __fput()
-> 	if (unlikely(file->f_mode & FMODE_NEED_UNMOUNT))
-> 		drop_collected_mounts(mnt);
-> 
-> All there is to it, AFAICS...
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 30 May 2018 17:17:51 +0300
 
-... and that eliminates #27 and #28 entirely, with #31 becoming simpler -
-no move_mount_lookup(), no dfd_ref, the check in do_move_mount() becomes
-+       if (!mnt_has_parent(old) && old->mnt_ns) {
-+               /* We need to allow open(O_PATH|O_CLONE_MOUNT) or fsmount()
-+                * followed by move_mount(), but mustn't allow "/" to be moved.
-+                */
-+                goto out1;
-+       }
-and I wouldn't be surprised if move_mount_old()/move_mount() split turns out
-to be not needed at all, seeing that the whole "clear FMODE_NEED_UNMOUNT
-on success" part goes away.
+> I now this is late but hopefully this pull request can make it to net
+> tree and to the final 4.17 release still. But if not, please let me know
+> and I'll pull this to wireless-drivers-next instead.
+> 
+> More info in the signed tag below, and please let me know if there are
+> any problems.
+
+Pulled, thanks Kalle.
