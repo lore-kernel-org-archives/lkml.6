@@ -1,97 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932671AbeEaBIv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 30 May 2018 21:08:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37592 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932561AbeEaBIr (ORCPT
+        id S932673AbeEaBMX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 30 May 2018 21:12:23 -0400
+Received: from smtp-proxy004.phy.lolipop.jp ([157.7.104.45]:49763 "EHLO
+        smtp-proxy004.phy.lolipop.jp" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932563AbeEaBMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 May 2018 21:08:47 -0400
+        Wed, 30 May 2018 21:12:21 -0400
+Subject: Re: [PATCH] ALSA: unhide snd_soc_new_compress() declaration
+To: Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-kernel@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>
+References: <20180530220628.1613824-1-arnd@arndb.de>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Message-ID: <583985db-c99c-9b22-ab00-186d5d5cfa67@sakamocchi.jp>
+Date: Thu, 31 May 2018 10:12:19 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180530220628.1613824-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Wed, 30 May 2018 21:08:42 -0400
-From: okaya@codeaurora.org
-To: Don Brace <don.brace@microsemi.com>
-Cc: Ryan Finnie <ryan@finnie.org>, linux-pci@vger.kernel.org,
-        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "esc.storagedev" <esc.storagedev@microsemi.com>,
-        "open list:HEWLETT-PACKARD SMART ARRAY RAID DRIVER (hpsa)"
-        <linux-scsi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 2/2] scsi: hpsa: drop shutdown callback
-In-Reply-To: <af772e6434e645f4a42d22821442a3bd@microsemi.com>
-References: <1527542471-10316-1-git-send-email-okaya@codeaurora.org>
- <1527542471-10316-2-git-send-email-okaya@codeaurora.org>
- <51bb7b82-c4a1-435c-7668-639db96d76e1@finnie.org>
- <af772e6434e645f4a42d22821442a3bd@microsemi.com>
-Message-ID: <3ebb873ea4658275e7fa89c01cd8bfe1@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-30 15:25, Don Brace wrote:
->> -----Original Message-----
->> From: Ryan Finnie [mailto:ryan@finnie.org]
->> Sent: Tuesday, May 29, 2018 8:50 PM
->> To: Sinan Kaya <okaya@codeaurora.org>; linux-pci@vger.kernel.org;
->> timur@codeaurora.org
->> Cc: linux-arm-msm@vger.kernel.org; 
->> linux-arm-kernel@lists.infradead.org;
->> stable@vger.kernel.org; Don Brace <don.brace@microsemi.com>; James 
->> E.J.
->> Bottomley <jejb@linux.vnet.ibm.com>; Martin K. Petersen
->> <martin.petersen@oracle.com>; esc.storagedev
->> <esc.storagedev@microsemi.com>; open list:HEWLETT-PACKARD SMART ARRAY
->> RAID DRIVER (hpsa) <linux-scsi@vger.kernel.org>; open list <linux-
->> kernel@vger.kernel.org>
->> Subject: Re: [PATCH V3 2/2] scsi: hpsa: drop shutdown callback
->> 
->> EXTERNAL EMAIL
->> 
->> 
->> On 05/28/2018 02:21 PM, Sinan Kaya wrote:
->> > 'Commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
->> > shutdown")' has been added to kernel to shutdown pending PCIe port
->> > service interrupts during reboot so that a newly started kexec kernel
->> > wouldn't observe pending interrupts.
->> >
->> > pcie_port_device_remove() is disabling the root port and switches by
->> > calling pci_disable_device() after all PCIe service drivers are shutdown.
->> >
->> > This has been found to cause crashes on HP DL360 Gen9 machines during
->> > reboot due to hpsa driver not clearing the bus master bit during the
->> > shutdown procedure by calling pci_disable_device().
->> >
->> > Drop the shutdown API and do an orderly clean up by using the remove.
->> >
->> > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=199779
->> > Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
->> > Cc: stable@vger.kernel.org
->> > Reported-by: Ryan Finnie <ryan@finnie.org>
->> 
->> Tested successfully on DL360 Gen9 and DL380 Gen9.
->> 
->> Tested-by: Ryan Finnie <ryan@finnie.org>
+Hi,
+
+On May 31 2018 07:06, Arnd Bergmann wrote:
+> My randconfig build setup came across a new build failure today:
 > 
-> The shutdown path issues a cache flush to the controller.
-> Without this flush, you will see "Dirty Cache" messages at POST.
-> It is best to keep the shutdown path.
+> sound/soc/soc-topology.c: In function 'soc_tplg_dai_create':
+> sound/soc/soc-topology.c:1758:27: error: 'snd_soc_new_compress' undeclared (first use in this function); did you mean 'snd_soc_compr_ops'?
+>     dai_drv->compress_new = snd_soc_new_compress;
 > 
+> Simply making that prototype visible again fixes the build failure
+> for me, though I'm not exactly sure why we don't get a link
+> error now.
+> 
+> The reference to snd_soc_new_compress() was added a few weeks
+> ago and seems to have caused the problem.
+> 
+> Fixes: 5db6aab6f36f ("ASoC: topology: Add support for compressed PCMs")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   include/sound/soc.h | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/include/sound/soc.h b/include/sound/soc.h
+> index 600a7ebd10c0..8e073865bde3 100644
+> --- a/include/sound/soc.h
+> +++ b/include/sound/soc.h
+> @@ -460,9 +460,7 @@ struct snd_soc_component *snd_soc_lookup_component(struct device *dev,
+>   						   const char *driver_name);
+>   
+>   int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num);
+> -#ifdef CONFIG_SND_SOC_COMPRESS
+>   int snd_soc_new_compress(struct snd_soc_pcm_runtime *rtd, int num);
+> -#endif
+>   
+>   void snd_soc_disconnect_sync(struct device *dev);
 
-I have seen that shutdown() is also called from remove().
+This bug was fixed by a commit 0b014d72ebae ('ASoC: fix 0-day warnings
+with snd_soc_new_compress()')[1][2] in Mark's tree. It applies an 
+different solution to add an alternative inline function.
 
-remove() is supposed to do a safe cleanup too. If it is leaving the hw 
-in inconsistent state even though it is c lling shutdown , it is yet 
-another bug.
+A small nitpicking; please add 'ASoC' prefix when posting patches to
+ALSA SoC part, instead of 'ALSA'.
 
-> Thanks,
-> Don Brace
-> ESC - Smart Storage
-> Microsemi Corporation
+[1] [alsa-devel] [PATCH] ASoC: fix 0-day warnings with 
+snd_soc_new_compress()
+http://mailman.alsa-project.org/pipermail/alsa-devel/2018-May/136620.html
+[2] ASoC: fix 0-day warnings with snd_soc_new_compress()
+https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?h=for-4.18&id=0b014d72ebae14c0c6ab3fb36a442fda91e1a1b3
+
+
+Thanks
+
+Takashi Sakamoto
