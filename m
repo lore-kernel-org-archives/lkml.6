@@ -1,190 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755457AbeEaO11 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 10:27:27 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45447 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755317AbeEaO1Z (ORCPT
+        id S1755472AbeEaO1i (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 10:27:38 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:51418 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1755459AbeEaO1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 10:27:25 -0400
-X-Google-Smtp-Source: ADUXVKK71pxFGuyL21xLII9B1/NvxJUf/CQxBLZSn1r7ZmFMRMfylliXxqxsqQGVvhbn3UTP9c1MRA==
-Subject: Re: [PATCH 1/2] hwmon: (asus_atk0110) Replace deprecated device
- register call
-To: Bastian Germann <bastiangermann@fishpost.de>,
-        Luca Tettamanti <kronos.it@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180531140136.13969-1-bastiangermann@fishpost.de>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <f885fcb0-d9f3-7702-13ad-5af2913131f0@roeck-us.net>
-Date: Thu, 31 May 2018 07:27:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 31 May 2018 10:27:34 -0400
+Date: Thu, 31 May 2018 10:27:33 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        <andrea.parri@amarulasolutions.com>, Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nick Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+        Roman Pen <roman.penyaev@profitbricks.com>
+Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
+In-Reply-To: <20180530231441.GO7063@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1805311008460.1607-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20180531140136.13969-1-bastiangermann@fishpost.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bastian,
+On Wed, 30 May 2018, Paul E. McKenney wrote:
 
-On 05/31/2018 07:01 AM, Bastian Germann wrote:
-> Make the asus_atk0110 driver use hwmon_device_register_with_groups instead
-> of the deprecated hwmon_device_register.
-> Construct the expected attribute_group array from the sensor list which
-> contains all needed attributes.
+> On Wed, May 30, 2018 at 05:01:01PM -0500, Linus Torvalds wrote:
+> > On Wed, May 30, 2018 at 2:08 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+> > >
+> > > Indeed.  The very first line Linus quoted in his first reply to me
+> > > (elided above) was:
+> > >
+> > >         Putting this into herd would be extremely difficult, if not impossible,
+> > >         because it involves analyzing code that was not executed.
+> > >
+> > > It should be clear from this that I was talking about herd.  Not gcc or
+> > > real hardware.
+> > 
+> > So what does herd actually work on? The source code or the executable,
+> > or a trace?
 > 
-> Signed-off-by: Bastian Germann <bastiangermann@fishpost.de>
-> ---
->   drivers/hwmon/asus_atk0110.c | 71 +++++++++++++++++++++++++++++-------
->   1 file changed, 58 insertions(+), 13 deletions(-)
+> The source code, that is, the source code of the litmus test.
+> There are definitions for the various Linux operations, partly within
+> the herd tool and partly in the linux.def file in tools/memory-model.
+> The problem we are having is nailing down control dependencies and
+> compiler optimizations.  The bit about limiting control dependencies
+> through the end of "if" statement itself works well in a great many cases,
+> but this clearly is not one of them.
 > 
-> diff --git a/drivers/hwmon/asus_atk0110.c b/drivers/hwmon/asus_atk0110.c
-> index 975c43d446f8..8a35fb27ff50 100644
-> --- a/drivers/hwmon/asus_atk0110.c
-> +++ b/drivers/hwmon/asus_atk0110.c
-> @@ -125,6 +125,7 @@ struct atk_data {
->   	int temperature_count;
->   	int fan_count;
->   	struct list_head sensor_list;
-> +	const struct attribute_group **attr_groups;
->   
->   	struct {
->   		struct dentry *root;
-> @@ -1242,27 +1243,67 @@ static void atk_free_sensors(struct atk_data *data)
->   	}
->   }
->   
-> +static int atk_init_attribute_groups(struct atk_data *data)
-> +{
-> +	struct atk_sensor_data *s;
-> +	struct attribute **attrs;
-> +	struct attribute_group *group;
-> +	const struct attribute_group **groups;
-> +	int i = 0;
-> +	int len = (data->voltage_count + data->temperature_count
-> +			+ data->fan_count) * 4 + 1;
-> +
-> +	attrs = kcalloc(len, sizeof(struct attribute *), GFP_KERNEL);
-
-Please use devm_kcalloc().
-
-> +	if (!attrs)
-> +		return -ENOMEM;
-> +
-> +	list_for_each_entry(s, &data->sensor_list, list) {
-> +		attrs[i++] = &s->input_attr.attr;
-> +		attrs[i++] = &s->label_attr.attr;
-> +		attrs[i++] = &s->limit1_attr.attr;
-> +		attrs[i++] = &s->limit2_attr.attr;
-> +	}
-> +	attrs[i] = NULL;
-> +
-> +	group = kzalloc(sizeof(*group), GFP_KERNEL);
-
-devm_kzalloc()
-
-> +	if (!group)
-> +		goto cleanup;
-> +	group->attrs = attrs;
-> +
-> +	groups = kcalloc(2, sizeof(struct attribute_group *), GFP_KERNEL);
-
-devm_kcalloc()
-
-> +	if (!groups) {
-> +		kfree(group);
-> +		goto cleanup;
-> +	}
-> +	groups[0] = group;
-> +	groups[1] = NULL;
-
-kcalloc() clears the allocated memory, so this is unnecessary. However,
-I would suggest to make group and groups part of struct atk_sensor_data.
-The size is static, and the fields will always be needed, so dynamic
-allocation doesn't buy anything except overhead.
-
-> +	data->attr_groups = groups;
-> + > +	return 0;
-> +cleanup:
-> +	kfree(attrs);
-
-then you won't need the kfree() calls.
-
-The same should be done with the existing calls of kzalloc(),
-but that should be a separate patch.
-
-> +	return -ENOMEM;
-> +}
-> +
-> +static void atk_free_attribute_groups(struct atk_data *data)
-> +{
-> +	kfree(data->attr_groups[0]->attrs);
-> +	kfree(data->attr_groups[0]);
-> +	kfree(data->attr_groups);
-> +}
-> +
->   static int atk_register_hwmon(struct atk_data *data)
->   {
->   	struct device *dev = &data->acpi_dev->dev;
-> -	int err;
->   
->   	dev_dbg(dev, "registering hwmon device\n");
-> -	data->hwmon_dev = hwmon_device_register(dev);
-> +	data->hwmon_dev = hwmon_device_register_with_groups(dev, "atk0110",
-> +							    data,
-> +							    data->attr_groups);
->   	if (IS_ERR(data->hwmon_dev))
->   		return PTR_ERR(data->hwmon_dev);
->   
-> -	dev_dbg(dev, "populating sysfs directory\n");
-> -	err = atk_create_files(data);
-> -	if (err)
-> -		goto remove;
-> -
->   	return 0;
-> -remove:
-> -	/* Cleanup the registered files */
-> -	atk_remove_files(data);
-> -	hwmon_device_unregister(data->hwmon_dev);
-> -	return err;
->   }
->   
->   static int atk_probe_if(struct atk_data *data)
-> @@ -1397,6 +1438,9 @@ static int atk_add(struct acpi_device *device)
->   		goto out;
->   	}
->   
-> +	err = atk_init_attribute_groups(data);
-> +	if (err)
-> +		goto out;
->   	err = atk_register_hwmon(data);
->   	if (err)
->   		goto cleanup;
-> @@ -1407,6 +1451,7 @@ static int atk_add(struct acpi_device *device)
->   	return 0;
->   cleanup:
->   	atk_free_sensors(data);
-> +	atk_free_attribute_groups(data);
->   out:
->   	if (data->disable_ec)
->   		atk_ec_ctl(data, 0);
-> @@ -1423,9 +1468,9 @@ static int atk_remove(struct acpi_device *device)
->   
->   	atk_debugfs_cleanup(data);
->   
-> -	atk_remove_files(data);
-
-You should also remove the no longer needed functions as well as the
-name attribute.
-
->   	atk_free_sensors(data);
->   	hwmon_device_unregister(data->hwmon_dev);
-> +	atk_free_attribute_groups(data);
->   
->   	if (data->disable_ec) {
->   		if (atk_ec_ctl(data, 0))
+> > I found the herd paper, but I'm on the road helping my daughter in
+> > college move, and I don't have the background to skim the paper
+> > quickly and come up with the obvious answer, so I'l just ask.
 > 
+> It is not a short learning curve.
+> 
+> > Because I really think that from our memory model standpoint, we
+> > really do have the rule that
+> > 
+> >    load -> cond -> store
+> > 
+> > is ordered - even if the store address and store data is in no way
+> > dependent on the load. The only thing that matters is that there's a
+> > conditional that is dependent on the load in between the load and the
+> > store.
+
+This is true for all the architectures supported by the Linux kernel.  
+However, in the future it might not always hold.  I can imagine that
+CPU designers would want to include an optimization that checks a
+conditional branch to see if it skips over only the following
+instruction (and the following instruction can't affect the flow of
+control); in that situation, they might decide there doesn't need to be
+a control dependency to future stores.  Such an optimization would not
+violate the C11 memory model.
+
+Of course, this is purely theoretical.  And if anybody does decide to
+try doing that, the memory-model people might scream at them so hard
+they change their minds.  :-)
+
+...
+
+> > But I don't know what level 'herd' works on. If it doesn't see
+> > compiler barriers (eg our own "barrier()" macro that literally is just
+> > that), only sees the generated code, then it really has no other
+> > information than what he compiler _happened_ to do - it doesn't know
+> > if the compiler did the store after the conditional because it *had*
+> > to do so, or whether it was just a random instruction scheduling
+> > decision.
+> 
+> The 'herd' tool works on litmus-test source, and has almost no idea of
+> what compilers get up to.  In this particular case, it would be better
+> off being even more ignorant of what compilers get up to.  ;-)
+
+In more detail, herd analyzes the source code and constructs a set of
+all possible candidate executions.  herd then checks each execution to
+see if it violates the rules of the memory model as expressed in the
+.bell and .cat files.  If any of the non-violating executions satisfies
+the litmus test's final "exists" condition, herd reports that the test
+is allowed.
+
+The point here is that when herd checks any one particular execution, 
+it pays attention _only_ to the statements which are part of that 
+execution.  Statements belonging to an untaken "if" branch are ignored 
+completely.  That's why I think it would be difficult to make herd do 
+exactly what we want in this case.
+
+Alan
