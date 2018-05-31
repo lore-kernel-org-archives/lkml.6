@@ -1,61 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754376AbeEaJwZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 05:52:25 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:13589 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754356AbeEaJwW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 05:52:22 -0400
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisNN1FzaY"
-X-RZG-CLASS-ID: mo00
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v2 0/8] gnss: add new GNSS subsystem
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20180531085242.GE3259@localhost>
-Date: Thu, 31 May 2018 11:52:18 +0200
-Cc: Richard Cochran <richardcochran@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
-        Pavel Machek <pavel@ucw.cz>, Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Message-Id: <943C21CA-EEC6-45E2-997E-A6E1FA0549EB@goldelico.com>
-References: <20180530103242.20773-1-johan@kernel.org> <20180530143822.lvtwjvbqe7gvbvgq@localhost> <20180531085242.GE3259@localhost>
-To: Johan Hovold <johan@kernel.org>
-X-Mailer: Apple Mail (2.3124)
+        id S1754277AbeEaJzK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 05:55:10 -0400
+Received: from ozlabs.org ([203.11.71.1]:59433 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754092AbeEaJzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 05:55:08 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH 0/8] Remove unneccessary included headers
+In-Reply-To: <cover.1527697995.git.christophe.leroy@c-s.fr>
+References: <cover.1527697995.git.christophe.leroy@c-s.fr>
+Date: Thu, 31 May 2018 19:55:03 +1000
+Message-ID: <87bmcwywso.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4V9r6GO000605
 
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-> Am 31.05.2018 um 10:52 schrieb Johan Hovold <johan@kernel.org>:
-> 
-> On Wed, May 30, 2018 at 07:38:22AM -0700, Richard Cochran wrote:
->> On Wed, May 30, 2018 at 12:32:34PM +0200, Johan Hovold wrote:
->>> Another possible extension is to add generic 1PPS support.
->> 
->> There are two possibilities to consider.
->> 
->> 1. If the PPS causes an interrupt, then it should hook into the PPS
->>   subsystem.
-> 
-> Registering a PPS child device is what I had in mind for this.
+> The purpose of this serie is to limit the number of includes to
+> only the necessary ones in order to reduce the number of files
+> recompiled everytime a header file is modified.
+>
+> This is the start of the work, please provide feedback if any so
+> that I don't go in the wrong direction.
 
-This seems to be duplicating functionality that is already solved by
+Thanks for starting on this.
 
-https://elixir.bootlin.com/linux/v4.17-rc7/source/Documentation/devicetree/bindings/pps/pps-gpio.txt
+There's a few build errors, summary below.
 
-and
+  http://kisskb.ellerman.id.au/kisskb/head/14031/
 
-https://elixir.bootlin.com/linux/v4.17-rc7/source/drivers/pps/clients/pps-gpio.c
+cheers
 
-Or what is bad with just using that?
+arch/powerpc/kernel/machine_kexec.c:140:26: error: 'KDUMP_KERNELBASE' undeclared (first use in this function):
+  corenet32_smp_defconfig powerpc
+  corenet32_smp_defconfig powerpc-5.3
+  g5_defconfig powerpc
+  g5_defconfig powerpc-5.3
+  gamecube_defconfig powerpc
+  gamecube_defconfig powerpc-5.3
+  maple_defconfig powerpc
+  maple_defconfig powerpc-5.3
+  mpc85xx_defconfig powerpc
+  mpc85xx_defconfig powerpc-5.3
+  mpc85xx_smp_defconfig powerpc
+  mpc85xx_smp_defconfig powerpc-5.3
+  mpc86xx_defconfig powerpc
+  mpc86xx_defconfig powerpc-5.3
+  powernv_defconfig+NO_NUMA ppc64le
+  powernv_defconfig+NO_PERF ppc64le
+  powernv_defconfig+NO_RADIX ppc64le
+  powernv_defconfig+STRICT_RWX ppc64le
+  powernv_defconfig+THIN ppc64le
+  powerpc-randconfig powerpc-5.3
+  ppc64e_defconfig+KEXEC powerpc
+  ppc64e_defconfig+KEXEC powerpc-5.3
+  ps3_defconfig powerpc
+  ps3_defconfig powerpc-5.3
+  pseries_defconfig powerpc
+  pseries_defconfig powerpc-5.3
+  pseries_defconfig+NO_MEMORY_HOTPLUG powerpc
+  pseries_defconfig+NO_MEMORY_HOTPLUG powerpc-5.3
+  pseries_defconfig+NO_MEMORY_HOTREMOVE powerpc
+  pseries_defconfig+NO_SPLPAR powerpc
+  pseries_defconfig+NO_SPLPAR powerpc-5.3
+  pseries_le_defconfig ppc64le
+  pseries_le_defconfig+NO_NUMA ppc64le
+  pseries_le_defconfig+NO_SPLPAR ppc64le
+  skiroot_defconfig ppc64le
+  wii_defconfig powerpc
+  wii_defconfig powerpc-5.3
 
-BR,
-Nikolaus
+arch/powerpc/include/asm/cputable.h:146:23: error: implicit declaration of function 'ASM_CONST' [-Werror=implicit-function-declaration]:
+  amigaone_defconfig powerpc-5.3
+  corenet_basic_defconfig powerpc-5.3
+  holly_defconfig powerpc-5.3
+  mpc85xx_basic_defconfig powerpc-5.3
+  pmac32_defconfig powerpc-5.3
+  pmac32_defconfig+KVM powerpc-5.3
+  pmac32_defconfig+kexec powerpc-5.3
+
+arch/powerpc/include/asm/cputable.h:538:6: error: enumerator value for 'CPU_FTRS_POSSIBLE' is not an integer constant:
+  44x/akebono_defconfig powerpc
+  44x/akebono_defconfig powerpc-5.3
+  44x/currituck_defconfig powerpc
+  44x/currituck_defconfig powerpc-5.3
+  amigaone_defconfig powerpc
+  amigaone_defconfig powerpc-5.3
+  chrp32_defconfig powerpc
+  chrp32_defconfig powerpc-5.3
+  corenet_basic_defconfig powerpc
+  corenet_basic_defconfig powerpc-5.3
+  holly_defconfig powerpc
+  holly_defconfig powerpc-5.3
+  mpc85xx_basic_defconfig powerpc
+  mpc85xx_basic_defconfig powerpc-5.3
+  pmac32_defconfig powerpc
+  pmac32_defconfig powerpc-5.3
+  pmac32_defconfig+KVM powerpc
+  pmac32_defconfig+KVM powerpc-5.3
+  pmac32_defconfig+SMP powerpc
+  pmac32_defconfig+SMP powerpc-5.3
+  pmac32_defconfig+kexec powerpc
+  pmac32_defconfig+kexec powerpc-5.3
+  ppc6xx_defconfig powerpc
+  ppc6xx_defconfig powerpc-5.3
+
+arch/powerpc/include/asm/cputable.h:614:6: error: enumerator value for 'CPU_FTRS_ALWAYS' is not an integer constant:
+  44x/akebono_defconfig powerpc
+  44x/akebono_defconfig powerpc-5.3
+  44x/currituck_defconfig powerpc
+  44x/currituck_defconfig powerpc-5.3
+  amigaone_defconfig powerpc
+  amigaone_defconfig powerpc-5.3
+  chrp32_defconfig powerpc
+  chrp32_defconfig powerpc-5.3
+  corenet_basic_defconfig powerpc
+  corenet_basic_defconfig powerpc-5.3
+  holly_defconfig powerpc
+  holly_defconfig powerpc-5.3
+  mpc85xx_basic_defconfig powerpc
+  mpc85xx_basic_defconfig powerpc-5.3
+  pmac32_defconfig powerpc
+  pmac32_defconfig powerpc-5.3
+  pmac32_defconfig+KVM powerpc
+  pmac32_defconfig+KVM powerpc-5.3
+  pmac32_defconfig+SMP powerpc
+  pmac32_defconfig+SMP powerpc-5.3
+  pmac32_defconfig+kexec powerpc
+  pmac32_defconfig+kexec powerpc-5.3
+  ppc6xx_defconfig powerpc
+  ppc6xx_defconfig powerpc-5.3
+
+arch/powerpc/include/asm/cputable.h:505:6: error: implicit declaration of function 'ASM_CONST' [-Werror=implicit-function-declaration]:
+  amigaone_defconfig powerpc
+  chrp32_defconfig powerpc
+  corenet_basic_defconfig powerpc
+  holly_defconfig powerpc
+  mpc85xx_basic_defconfig powerpc
+  pmac32_defconfig powerpc
+  pmac32_defconfig+KVM powerpc
+  pmac32_defconfig+SMP powerpc
+  pmac32_defconfig+kexec powerpc
+  ppc6xx_defconfig powerpc
+
+arch/powerpc/kernel/machine_kexec.c:155:22: error: 'KDUMP_KERNELBASE' undeclared (first use in this function):
+  44x/fsp2_defconfig powerpc-5.3
+
+arch/powerpc/include/asm/cputable.h:158:32: error: implicit declaration of function 'ASM_CONST' [-Werror=implicit-function-declaration]:
+  44x/akebono_defconfig powerpc-5.3
+  44x/currituck_defconfig powerpc-5.3
+  chrp32_defconfig powerpc-5.3
+  pmac32_defconfig+SMP powerpc-5.3
+  ppc6xx_defconfig powerpc-5.3
+
+arch/powerpc/include/asm/cputable.h:515:6: error: implicit declaration of function 'ASM_CONST' [-Werror=implicit-function-declaration]:
+  44x/akebono_defconfig powerpc
+  44x/currituck_defconfig powerpc
