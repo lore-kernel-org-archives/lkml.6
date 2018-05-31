@@ -1,64 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754479AbeEaKib (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 06:38:31 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60116 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754311AbeEaKi2 (ORCPT
+        id S1754512AbeEaKkX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 06:40:23 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53791 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754346AbeEaKkU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 06:38:28 -0400
-Date: Thu, 31 May 2018 11:38:23 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Collins <collinsd@codeaurora.org>
-Cc: lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rnayak@codeaurora.org, sboyd@kernel.org, dianders@chromium.org
-Subject: Re: [PATCH v4 0/2] regulator: add QCOM RPMh regulator driver
-Message-ID: <20180531103823.GB13319@sirena.org.uk>
-References: <cover.1527040878.git.collinsd@codeaurora.org>
- <20180530163343.GV6920@sirena.org.uk>
- <da40510b-443d-d8fd-7285-c6e7eff45dc6@codeaurora.org>
+        Thu, 31 May 2018 06:40:20 -0400
+X-Google-Smtp-Source: ADUXVKI0LXoNla8Rzrr9sYzP6iw3IlWMakL1e9WMdGzN4cMsZps7zUoeP/eHRyk1r9IqDNMRsMQKrA==
+Date: Thu, 31 May 2018 12:40:14 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Agustin Vega-Frias <agustinv@codeaurora.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, coresight@lists.linaro.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Ahern <dsahern@gmail.com>,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        He Kuang <hekuang@huawei.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kan Liang <kan.liang@linux.intel.com>, kim.phillips@arm.co,
+        Kim Phillips <kim.phillips@arm.com>,
+        Lakshman Annadorai <lakshmana@google.com>,
+        Leo Yan <leo.yan@linaro.org>, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>, Namhyung Kim <namhyung@kernel.org>,
+        netdev@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Simon Que <sque@chromium.org>, Stephane Eranian <eranian@google.com>,
+        Thomas Richter <tmricht@linux.ibm.com>, Tor Jeremiassen <tor@ti.com>,
+        Wang Nan <wangnan0@huawei.com>, Will Deacon <will.deacon@arm.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [GIT PULL 0/7] perf/urgent fixes
+Message-ID: <20180531104014.GA29957@gmail.com>
+References: <20180531103220.24684-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <da40510b-443d-d8fd-7285-c6e7eff45dc6@codeaurora.org>
-X-Cookie: I've read SEVEN MILLION books!!
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180531103220.24684-1-acme@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---5/uDoXvLw7AC5HRs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-On Wed, May 30, 2018 at 05:11:54PM -0700, David Collins wrote:
+> Hi Ingo,
+> 
+> 	Please consider pulling,
+> 
+> - Arnaldo
+> 
+> Test results at the end of this message, as usual.
+> 
+> The following changes since commit f3903c9161f0d636a7b0ff03841628928457e64c:
+> 
+>   Merge tag 'perf-urgent-for-mingo-4.17-20180514' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent (2018-05-15 08:20:45 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.17-20180531
+> 
+> for you to fetch changes up to 18a7057420f8b67f15d17087bf5c0863db752c8b:
+> 
+>   perf tools: Fix perf.data format description of NRCPUS header (2018-05-30 15:40:26 -0300)
+> 
+> ----------------------------------------------------------------
+> perf/urgent fixes:
+> 
+> - Fix 'perf test Session topology' segfault on s390 (Thomas Richter)
+> 
+> - Fix NULL return handling in bpf__prepare_load() (YueHaibing)
+> 
+> - Fix indexing on Coresight ETM packet queue decoder (Mathieu Poirier)
+> 
+> - Fix perf.data format description of NRCPUS header (Arnaldo Carvalho de Melo)
+> 
+> - Update perf.data documentation section on cpu topology
+> 
+> - Handle uncore event aliases in small groups properly (Kan Liang)
+> 
+> - Add missing perf_sample.addr into python sample dictionary (Leo Yan)
+> 
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> ----------------------------------------------------------------
+> Arnaldo Carvalho de Melo (1):
+>       perf tools: Fix perf.data format description of NRCPUS header
+> 
+> Kan Liang (1):
+>       perf parse-events: Handle uncore event aliases in small groups properly
+> 
+> Leo Yan (1):
+>       perf script python: Add addr into perf sample dict
+> 
+> Mathieu Poirier (1):
+>       perf cs-etm: Fix indexing for decoder packet queue
+> 
+> Thomas Richter (2):
+>       perf test: "Session topology" dumps core on s390
+>       perf data: Update documentation section on cpu topology
+> 
+> YueHaibing (1):
+>       perf bpf: Fix NULL return handling in bpf__prepare_load()
+> 
+>  tools/perf/Documentation/perf.data-file-format.txt |  10 +-
+>  tools/perf/tests/topology.c                        |  30 ++++-
+>  tools/perf/util/bpf-loader.c                       |   6 +-
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c    |  12 +-
+>  tools/perf/util/evsel.h                            |   1 +
+>  tools/perf/util/parse-events.c                     | 130 ++++++++++++++++++++-
+>  tools/perf/util/parse-events.h                     |   7 +-
+>  tools/perf/util/parse-events.y                     |   8 +-
+>  .../util/scripting-engines/trace-event-python.c    |   2 +
+>  9 files changed, 185 insertions(+), 21 deletions(-)
 
-> I'll split up the patches so that reviewing is easier.  For the base
-> patch, would you prefer that I remove *all* mode support (handled by
-> generic regulator framework DT properties) or only remove the special
-> purpose drms mode handling support (i.e. qcom,regulator-drms-modes and
-> qcom,drms-mode-max-microamps)?
+Pulled, thanks a lot Arnaldo!
 
-Standard operations should be fine, just weird custom stuff that's been
-causing issues.
-
---5/uDoXvLw7AC5HRs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsP0J4ACgkQJNaLcl1U
-h9AWvAf9GFN3V7LQ1QpDCLbT6jGBM8FSyg1Lf4Hc7HIvUz7egioAF4pjj3yR8sWN
-gCwoW2jcKJcwd4Cb8PjhIWJ8hfcbmvhG5VZy3tc3nxV3vZJXfH1SxFSeUKWBnYkn
-mDkcsZP65XA7tCTpM//MnuUQdK3mr4KNEHpUMqAo6a+/bxF7nVIcGnGZN/KypAjb
-/93fFofC9gfHWO7BkhxECxfT8hgd/9GtJf+liR+nkn7/vH/Pduy1kIJGC+idFAJU
-AzUwd3dInLEdy+FYv89VZM3XeS1mIae1wod7RuXxFhZp6SGc8+EAA53htmU+tIK1
-76MHf6I5YMwzVh7Ue4GEK5nAsQL0dw==
-=BoBR
------END PGP SIGNATURE-----
-
---5/uDoXvLw7AC5HRs--
+	Ingo
