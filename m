@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751209AbeEaVKE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 17:10:04 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34460 "EHLO mail.bootlin.com"
+        id S1751425AbeEaVLC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 17:11:02 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34466 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750756AbeEaVKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 17:10:02 -0400
+        id S1750795AbeEaVKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 17:10:03 -0400
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: linux-rtc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/5] rtc: test: allow registering many devices
-Date: Thu, 31 May 2018 23:09:56 +0200
-Message-Id: <20180531210959.2472-2-alexandre.belloni@bootlin.com>
+Subject: [PATCH 5/5] rtc: test: remove irq sysfs file
+Date: Thu, 31 May 2018 23:09:59 +0200
+Message-Id: <20180531210959.2472-5-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180531210959.2472-1-alexandre.belloni@bootlin.com>
 References: <20180531210959.2472-1-alexandre.belloni@bootlin.com>
@@ -20,96 +20,72 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a loop to register RTC devices
+Now that alarms are emulated, remove the irq sysfs file that could be used
+to send alarms.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-test.c | 48 +++++++++++++++++++++---------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ drivers/rtc/rtc-test.c | 39 ---------------------------------------
+ 1 file changed, 39 deletions(-)
 
 diff --git a/drivers/rtc/rtc-test.c b/drivers/rtc/rtc-test.c
-index f0eb8e0c5055..796c45dee661 100644
+index 975f6cdda73f..fbcec4a2e3c9 100644
 --- a/drivers/rtc/rtc-test.c
 +++ b/drivers/rtc/rtc-test.c
-@@ -13,7 +13,9 @@
- #include <linux/rtc.h>
- #include <linux/platform_device.h>
+@@ -110,37 +110,6 @@ static void test_rtc_alarm_handler(struct timer_list *t)
+ 	rtc_update_irq(rtd->rtc, 1, RTC_AF | RTC_IRQF);
+ }
  
--static struct platform_device *test0 = NULL, *test1 = NULL;
-+#define MAX_RTC_TEST 3
-+
-+struct platform_device *pdev[MAX_RTC_TEST];
- 
- static int test_rtc_read_alarm(struct device *dev,
- 	struct rtc_wkalrm *alrm)
-@@ -122,47 +124,45 @@ static struct platform_driver test_driver = {
- 
- static int __init test_init(void)
+-static ssize_t test_irq_show(struct device *dev,
+-				struct device_attribute *attr, char *buf)
+-{
+-	return sprintf(buf, "%d\n", 42);
+-}
+-static ssize_t test_irq_store(struct device *dev,
+-				struct device_attribute *attr,
+-				const char *buf, size_t count)
+-{
+-	int retval;
+-	struct rtc_device *rtc = dev_get_drvdata(dev);
+-
+-	retval = count;
+-	if (strncmp(buf, "tick", 4) == 0 && rtc->pie_enabled)
+-		rtc_update_irq(rtc, 1, RTC_PF | RTC_IRQF);
+-	else if (strncmp(buf, "alarm", 5) == 0) {
+-		struct rtc_wkalrm alrm;
+-		int err = rtc_read_alarm(rtc, &alrm);
+-
+-		if (!err && alrm.enabled)
+-			rtc_update_irq(rtc, 1, RTC_AF | RTC_IRQF);
+-
+-	} else if (strncmp(buf, "update", 6) == 0 && rtc->uie_rtctimer.enabled)
+-		rtc_update_irq(rtc, 1, RTC_UF | RTC_IRQF);
+-	else
+-		retval = -EINVAL;
+-
+-	return retval;
+-}
+-static DEVICE_ATTR(irq, S_IRUGO | S_IWUSR, test_irq_show, test_irq_store);
+-
+ static int test_probe(struct platform_device *plat_dev)
  {
--	int err;
-+	int i, err;
- 
- 	if ((err = platform_driver_register(&test_driver)))
- 		return err;
- 
--	if ((test0 = platform_device_alloc("rtc-test", 0)) == NULL) {
--		err = -ENOMEM;
--		goto exit_driver_unregister;
-+	err = -ENOMEM;
-+	for (i = 0; i < MAX_RTC_TEST; i++) {
-+		pdev[i] = platform_device_alloc("rtc-test", i);
-+		if (!pdev[i])
-+			goto exit_free_mem;
- 	}
- 
--	if ((test1 = platform_device_alloc("rtc-test", 1)) == NULL) {
--		err = -ENOMEM;
--		goto exit_put_test0;
-+	for (i = 0; i < MAX_RTC_TEST; i++) {
-+		err = platform_device_add(pdev[i]);
-+		if (err)
-+			goto exit_device_del;
- 	}
- 
--	if ((err = platform_device_add(test0)))
--		goto exit_put_test1;
--
--	if ((err = platform_device_add(test1)))
--		goto exit_del_test0;
--
+ 	struct rtc_test_data *rtd;
+@@ -162,16 +131,8 @@ static int test_probe(struct platform_device *plat_dev)
  	return 0;
+ }
  
--exit_del_test0:
--	platform_device_del(test0);
-+exit_device_del:
-+	for (; i > 0; i--)
-+		platform_device_del(pdev[i - 1]);
- 
--exit_put_test1:
--	platform_device_put(test1);
-+exit_free_mem:
-+	for (i = 0; i < MAX_RTC_TEST; i++)
-+		platform_device_put(pdev[i]);
- 
--exit_put_test0:
--	platform_device_put(test0);
+-static int test_remove(struct platform_device *plat_dev)
+-{
+-	device_remove_file(&plat_dev->dev, &dev_attr_irq);
 -
--exit_driver_unregister:
- 	platform_driver_unregister(&test_driver);
- 	return err;
- }
- 
- static void __exit test_exit(void)
- {
--	platform_device_unregister(test0);
--	platform_device_unregister(test1);
-+	int i;
-+
-+	for (i = 0; i < MAX_RTC_TEST; i++)
-+		platform_device_unregister(pdev[i]);
-+
- 	platform_driver_unregister(&test_driver);
- }
- 
+-	return 0;
+-}
+-
+ static struct platform_driver test_driver = {
+ 	.probe	= test_probe,
+-	.remove = test_remove,
+ 	.driver = {
+ 		.name = "rtc-test",
+ 	},
 -- 
 2.17.0
