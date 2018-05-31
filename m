@@ -1,111 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751354AbeEaWv6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 18:51:58 -0400
-Received: from mga14.intel.com ([192.55.52.115]:6569 "EHLO mga14.intel.com"
+        id S1751301AbeEaWv4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 18:51:56 -0400
+Received: from mga14.intel.com ([192.55.52.115]:6566 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751200AbeEaWvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 18:51:53 -0400
+        id S1750880AbeEaWvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 18:51:52 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
-   d="scan'208";a="233413424"
+   d="scan'208";a="233413420"
 From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 To: lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
         mgorman@techsingularity.net
 Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         juri.lelli@redhat.com, viresh.kumar@linaro.org,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [RFC/RFT] [PATCH v3 2/4] cpufreq: intel_pstate: HWP boost performance on IO wakeup
-Date: Thu, 31 May 2018 15:51:41 -0700
-Message-Id: <20180531225143.34270-3-srinivas.pandruvada@linux.intel.com>
+Subject: [RFC/RFT] [PATCH v3 0/4] Intel_pstate: HWP Dynamic performance boost
+Date: Thu, 31 May 2018 15:51:39 -0700
+Message-Id: <20180531225143.34270-1-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180531225143.34270-1-srinivas.pandruvada@linux.intel.com>
-References: <20180531225143.34270-1-srinivas.pandruvada@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change uses SCHED_CPUFREQ_IOWAIT flag to boost HWP performance.
-Since SCHED_CPUFREQ_IOWAIT flag is set frequently, we don't start
-boosting steps unless we see two consecutive flags in two ticks. This
-avoids boosting due to IO because of regular system activities.
+v3
+- Removed atomic bit operation as suggested.
+- Added description of contention with user space.
+- Removed hwp cache, boost utililty function patch and merged with util callback
+  patch. This way any value set is used somewhere.
 
-To avoid synchronization issues, the actual processing of the flag is
-done on the local CPU callback.
+Waiting for test results from Mel Gorman, who is the original reporter.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/cpufreq/intel_pstate.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+v2
+This is a much simpler version than the previous one and only consider IO
+boost, using the existing mechanism. There is no change in this series
+beyond intel_pstate driver.
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 80bf61ae4b1f..2a14756d958e 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -223,6 +223,8 @@ struct global_params {
-  *			operation
-  * @hwp_req_cached:	Cached value of the last HWP Request MSR
-  * @hwp_cap_cached:	Cached value of the last HWP Capabilities MSR
-+ * @last_io_update:	Last time when IO wake flag was set
-+ * @sched_flags:	Store scheduler flags for possible cross CPU update
-  * @hwp_boost_min:	Last HWP boosted min performance
-  *
-  * This structure stores per CPU instance data for all CPUs.
-@@ -258,6 +260,8 @@ struct cpudata {
- 	s16 epp_saved;
- 	u64 hwp_req_cached;
- 	u64 hwp_cap_cached;
-+	u64 last_io_update;
-+	unsigned int sched_flags;
- 	int hwp_boost_min;
- };
- 
-@@ -1460,9 +1464,44 @@ static inline void intel_pstate_hwp_boost_down(struct cpudata *cpu)
- 	cpu->last_update = cpu->sample.time;
- }
- 
-+static inline void intel_pstate_update_util_hwp_local(struct cpudata *cpu,
-+						      u64 time)
-+{
-+	cpu->sample.time = time;
-+
-+	if (cpu->sched_flags & SCHED_CPUFREQ_IOWAIT) {
-+		bool do_io = false;
-+
-+		cpu->sched_flags = 0;
-+		/*
-+		 * Set iowait_boost flag and update time. Since IO WAIT flag
-+		 * is set all the time, we can't just conclude that there is
-+		 * some IO bound activity is scheduled on this CPU with just
-+		 * one occurrence. If we receive at least two in two
-+		 * consecutive ticks, then we treat as boost candidate.
-+		 */
-+		if (time_before64(time, cpu->last_io_update + 2 * TICK_NSEC))
-+			do_io = true;
-+
-+		cpu->last_io_update = time;
-+
-+		if (do_io)
-+			intel_pstate_hwp_boost_up(cpu);
-+
-+	} else {
-+		intel_pstate_hwp_boost_down(cpu);
-+	}
-+}
-+
- static inline void intel_pstate_update_util_hwp(struct update_util_data *data,
- 						u64 time, unsigned int flags)
- {
-+	struct cpudata *cpu = container_of(data, struct cpudata, update_util);
-+
-+	cpu->sched_flags |= flags;
-+
-+	if (smp_processor_id() == cpu->cpu)
-+		intel_pstate_update_util_hwp_local(cpu, time);
- }
- 
- static inline void intel_pstate_calc_avg_perf(struct cpudata *cpu)
+Once PeterZ finishes his work on frequency invariant, I will revisit
+thread migration optimization in HWP mode.
+
+Other changes:
+- Gradual boost instead of single step as suggested by PeterZ.
+- Cross CPU synchronization concerns identified by Rafael.
+- Split the patch for HWP MSR value caching as suggested by PeterZ.
+
+Not changed as suggested:
+There is no architecture way to identify platform with Per-core
+P-states, so still have to enable feature based on CPU model.
+
+-----------
+v1
+
+This series tries to address some concern in performance particularly with IO
+workloads (Reported by Mel Gorman), when HWP is using intel_pstate powersave
+policy.
+
+Background
+HWP performance can be controlled by user space using sysfs interface for
+max/min frequency limits and energy performance preference settings. Based on
+workload characteristics these can be adjusted from user space. These limits
+are not changed dynamically by kernel based on workload.
+
+By default HWP defaults to energy performance preference value of 0x80 on
+majority of platforms(Scale is 0-255, 0 is max performance and 255 is min).
+This value offers best performance/watt and for majority of server workloads
+performance doesn't suffer. Also users always have option to use performance
+policy of intel_pstate, to get best performance. But user tend to run with
+out of box configuration, which is powersave policy on most of the distros.
+
+In some case it is possible to dynamically adjust performance, for example,
+when a CPU is woken up due to IO completion or thread migrate to a new CPU. In
+this case HWP algorithm will take some time to build utilization and ramp up
+P-states. So this may results in lower performance for some IO workloads and
+workloads which tend to migrate. The idea of this patch series is to
+temporarily boost performance dynamically in these cases. This is only
+applicable only when user is using powersave policy, not in performance policy.
+
+Results on a Skylake server:
+
+Benchmark                       Improvement %
+----------------------------------------------------------------------
+dbench                          50.36
+thread IO bench (tiobench)      10.35
+File IO                         9.81
+sqlite                          15.76
+X264 -104 cores                 9.75
+
+Spec Power                      (Negligible impact 7382 Vs. 7378)
+Idle Power                      No change observed
+-----------------------------------------------------------------------
+
+HWP brings in best performace/watt at EPP=0x80. Since we are boosting
+EPP here to 0, the performance/watt drops upto 10%. So there is a power
+penalty of these changes.
+
+Also Mel Gorman provided test results on a prior patchset, which shows
+benifits of this series.
+
+Srinivas Pandruvada (4):
+  cpufreq: intel_pstate: Add HWP boost utility and sched util hooks
+  cpufreq: intel_pstate: HWP boost performance on IO wakeup
+  cpufreq: intel_pstate: New sysfs entry to control HWP boost
+  cpufreq: intel_pstate: enable boost for SKX
+
+ drivers/cpufreq/intel_pstate.c | 177 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 173 insertions(+), 4 deletions(-)
+
 -- 
 2.13.6
