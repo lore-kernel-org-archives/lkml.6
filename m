@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754180AbeEaIQZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 04:16:25 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:35245 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754020AbeEaIQD (ORCPT
+        id S1754151AbeEaIQX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 04:16:23 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:42817 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754025AbeEaIQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 May 2018 04:16:03 -0400
-X-Google-Smtp-Source: ADUXVKIzbRprsE8SkxxTBVCwqk//IpvYdx0qt5MEHiKgpoD6BX27fYtgnNNZWQp0lHecrmQUiejWvG8PJkcSSNIC7Q9J3s0C3HlD
+X-Google-Smtp-Source: ADUXVKJMxDnRSubXaGSdi+xjZdA1MCPWJflbUBIJ62Rk3C59Y1qVY2x7g1PQcqmcDj7hwdEhxru217i5v6pQY+/h0mQzQj0GanAV
 MIME-Version: 1.0
 Date: Thu, 31 May 2018 01:16:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000000dca5056d7c1442@google.com>
-Subject: WARNING in kcm_exit_net (3)
-From: syzbot <syzbot+5f1a04e374a635efc426@syzkaller.appspotmail.com>
+Message-ID: <0000000000000482ce056d7c1436@google.com>
+Subject: general protection fault in requeue_rx_msgs
+From: syzbot <syzbot+554266c04a41d1f9754d@syzkaller.appspotmail.com>
 To: davem@davemloft.net, ebiggers@google.com, edumazet@google.com,
         ktkhai@virtuozzo.com, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
@@ -28,57 +28,62 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    d60d61f36b8f Merge branch 'for-linus' of git://git.kernel...
+HEAD commit:    0044cdeb7313 Merge branch 'for-linus' of git://git.kernel...
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=101bb52f800000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15aeff0f800000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=968b0b23c7854c0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=5f1a04e374a635efc426
+dashboard link: https://syzkaller.appspot.com/bug?extid=554266c04a41d1f9754d
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13b9ed2f800000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=131a208f800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5f1a04e374a635efc426@syzkaller.appspotmail.com
+Reported-by: syzbot+554266c04a41d1f9754d@syzkaller.appspotmail.com
 
-IPVS: ftp: loaded support on port[0] = 21
-IPVS: ftp: loaded support on port[0] = 21
-IPVS: ftp: loaded support on port[0] = 21
-IPVS: ftp: loaded support on port[0] = 21
-IPVS: ftp: loaded support on port[0] = 21
-WARNING: CPU: 0 PID: 6 at net/kcm/kcmsock.c:2023 kcm_exit_net+0x392/0x3e0  
-net/kcm/kcmsock.c:2023
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 6 Comm: kworker/u4:0 Not tainted 4.17.0-rc7+ #75
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4788 Comm: kworker/u4:3 Not tainted 4.17.0-rc7+ #74
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: netns cleanup_net
+Workqueue: kstrp strp_work
+RIP: 0010:__skb_unlink include/linux/skbuff.h:1844 [inline]
+RIP: 0010:__skb_dequeue include/linux/skbuff.h:1861 [inline]
+RIP: 0010:requeue_rx_msgs+0x14d/0x620 net/kcm/kcmsock.c:226
+RSP: 0018:ffff8801aa97f0b8 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffffffff86d54ed3
+RDX: 0000000000000001 RSI: ffffffff86d531e2 RDI: 0000000000000008
+RBP: ffff8801aa97f1b8 R08: ffff8801aaa8e3c0 R09: ffffed0035f0a0e8
+R10: ffffed0035f0a0e8 R11: ffff8801af850743 R12: ffff8801d4407000
+R13: ffffed003552fe22 R14: 0000000000000000 R15: ffff8801a6bb06c0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fba7c5099a0 CR3: 00000001af6f6000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:kcm_exit_net+0x392/0x3e0 net/kcm/kcmsock.c:2023
-RSP: 0018:ffff8801d9a97430 EFLAGS: 00010293
-RAX: ffff8801d9a88180 RBX: 1ffff1003b352e86 RCX: 1ffff1003b351135
-RDX: 0000000000000000 RSI: ffffffff86d56942 RDI: 0000000000000286
-RBP: ffff8801d9a974f8 R08: 1ffff1003b352e67 R09: ffffed003b5c46d2
-R10: 0000000000000003 R11: 0000000000000003 R12: 1ffff1003b352e8a
-R13: ffff8801d9a974d0 R14: ffff8801d96763d0 R15: ffff8801c51d0e00
-  ops_exit_list.isra.7+0xb0/0x160 net/core/net_namespace.c:152
-  cleanup_net+0x51d/0xb20 net/core/net_namespace.c:523
+  unreserve_rx_kcm+0x471/0x520 net/kcm/kcmsock.c:334
+  kcm_rcv_strparser+0x109/0x8d0 net/kcm/kcmsock.c:375
+  __strp_recv+0x34b/0x2130 net/strparser/strparser.c:328
+  strp_recv+0xcf/0x110 net/strparser/strparser.c:362
+  tcp_read_sock+0x2aa/0x810 net/ipv4/tcp.c:1652
+  strp_read_sock+0x1a1/0x2d0 net/strparser/strparser.c:385
+  do_strp_work net/strparser/strparser.c:440 [inline]
+  strp_work+0xcd/0x120 net/strparser/strparser.c:449
   process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
   worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
   kthread+0x345/0x410 kernel/kthread.c:240
   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Code: 80 3c 1a 00 0f 85 70 04 00 00 48 8d 78 08 4d 8b 74 24 08 49 c7 04 24  
+00 00 00 00 49 c7 44 24 08 00 00 00 00 48 89 fa 48 c1 ea 03 <80> 3c 1a 00  
+0f 85 a7 04 00 00 4c 89 f2 4c 89 70 08 48 c1 ea 03
+RIP: __skb_unlink include/linux/skbuff.h:1844 [inline] RSP: ffff8801aa97f0b8
+RIP: __skb_dequeue include/linux/skbuff.h:1861 [inline] RSP:  
+ffff8801aa97f0b8
+RIP: requeue_rx_msgs+0x14d/0x620 net/kcm/kcmsock.c:226 RSP: ffff8801aa97f0b8
+---[ end trace e4c0e45094907eaa ]---
 
 
 ---
