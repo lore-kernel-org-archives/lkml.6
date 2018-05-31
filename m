@@ -1,67 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753957AbeEaGBm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 02:01:42 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:41115 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbeEaGBj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 02:01:39 -0400
-X-Google-Smtp-Source: ADUXVKKP7qFOwdeGTq8CgYvVb5rJ2hBCx4SXstMynQ1gnebh7L+bHbh0phJXO5XoqWugTXIj+jv+Ww==
-Date: Thu, 31 May 2018 15:01:33 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Shakeel Butt <shakeelb@google.com>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] memcg: force charge kmem counter too
-Message-ID: <20180531060133.GA31477@rodete-desktop-imager.corp.google.com>
-References: <20180525185501.82098-1-shakeelb@google.com>
- <20180526185144.xvh7ejlyelzvqwdb@esperanza>
- <CALvZod5yTxcuB_Aao-a0ChNEnwyBJk9UPvEQ80s9tZFBQ0cxpw@mail.gmail.com>
- <20180528091110.GG1517@dhcp22.suse.cz>
- <CALvZod6x5iRmcJ6pYKS+jwJd855jnwmVcPK9tnKbuJ9Hfppa-A@mail.gmail.com>
- <20180529083153.GR27180@dhcp22.suse.cz>
- <CALvZod67qzq+hQLms4Wut5LNVBjBcEQPpMp9zxF6NE5k+7CLOw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod67qzq+hQLms4Wut5LNVBjBcEQPpMp9zxF6NE5k+7CLOw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1753999AbeEaGCG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 02:02:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:31759 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751037AbeEaGCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 02:02:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,462,1520924400";
+   d="scan'208";a="60036401"
+From: "Hean-Loong, Ong" <hean.loong.ong@intel.com>
+To: Rob Herring <robh+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        hean.loong.ong@intel.com, yves.vandervennet@intel.com,
+        chin.liang.see@intel.com, Ong@vger.kernel.org
+Subject: [PATCHv8 0/3] Intel FPGA Video and Image Processing Suite
+Date: Thu, 31 May 2018 14:01:51 +0800
+Message-Id: <1527746514-3861-1-git-send-email-hean.loong.ong@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 11:14:33AM -0700, Shakeel Butt wrote:
-> On Tue, May 29, 2018 at 1:31 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> > On Mon 28-05-18 10:23:07, Shakeel Butt wrote:
-> >> On Mon, May 28, 2018 at 2:11 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> >> Though is there a precedence where the broken feature is not fixed
-> >> because an alternative is available?
-> >
-> > Well, I can see how breaking GFP_NOFAIL semantic is problematic, on the
-> > other hand we keep saying that kmem accounting in v1 is hard usable and
-> > strongly discourage people from using it. Sure we can add the code which
-> > handles _this_ particular case but that wouldn't make the whole thing
-> > more usable I strongly suspect. Maybe I am wrong and you can provide
-> > some specific examples. Is GFP_NOFAIL that common to matter?
-> >
-> > In any case we should balance between the code maintainability here.
-> > Adding more cruft into the allocator path is not free.
-> >
-> 
-> We do not use kmem limits internally and this is something I found
-> through code inspection. If this patch is increasing the cost of code
-> maintainability I am fine with dropping it but at least there should a
-> comment saying that kmem limits are broken and no need fix.
- 
-I agree.
+From: Ong, Hean Loong <hean.loong.ong@intel.com>
 
-Even, I didn't know kmem is strongly discouraged until now. Then,
-why is it enabled by default on cgroup v1?
+The FPGA FrameBuffer Soft IP could be seen  as the GPU and the DRM driver patch here is allocating memory for information to be streamed from the ARM/Linux to the display port.
+Basically the driver just wraps the information such as the pixels to be drawn by the FPGA FrameBuffer 2.
 
-Let's turn if off with comment "It's broken so do not use/fix. Instead,
-please move to cgroup v2".
+The piece of hardware in discussion is the SoC FPGA where Linux runs on the ARM chip and the FGPA is driven by its NIOS soft core with its own proprietary firmware.
+
+For example the application from the ARM Linux would have to write information on the /dev/fb0 with the information stored in the SDRAM to be fetched by the FPGA framebuffer IP and displayed on the Display Port Monitor.
+
+Ong Hean Loong (3):
+  ARM:dt-bindings:display Intel FPGA Video and Image Processing Suite
+  ARM:socfpga-defconfig Intel FPGA Video and Image Processing Suite
+  ARM:drm ivip Intel FPGA Video and Image Processing Suite
+
+ .../devicetree/bindings/display/altr,vip-fb2.txt   |  112 +++++++++++
+ arch/arm/configs/socfpga_defconfig                 |    5 +
+ drivers/gpu/drm/Kconfig                            |    2 +
+ drivers/gpu/drm/Makefile                           |    1 +
+ drivers/gpu/drm/ivip/Kconfig                       |   14 ++
+ drivers/gpu/drm/ivip/Makefile                      |    9 +
+ drivers/gpu/drm/ivip/intel_vip_conn.c              |   96 ++++++++++
+ drivers/gpu/drm/ivip/intel_vip_core.c              |  162 ++++++++++++++++
+ drivers/gpu/drm/ivip/intel_vip_drv.h               |   52 ++++++
+ drivers/gpu/drm/ivip/intel_vip_of.c                |  193 ++++++++++++++++++++
+ 10 files changed, 646 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/altr,vip-fb2.txt
+ create mode 100644 drivers/gpu/drm/ivip/Kconfig
+ create mode 100644 drivers/gpu/drm/ivip/Makefile
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_conn.c
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_core.c
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_drv.h
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_of.c
