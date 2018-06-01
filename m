@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752826AbeFAOdU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:33:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52922 "EHLO mail.kernel.org"
+        id S1752873AbeFAOdZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:33:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752618AbeFAOdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:33:15 -0400
+        id S1752828AbeFAOdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:33:21 -0400
 From: Frederic Weisbecker <frederic@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>,
@@ -26,9 +26,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 11/12] perf/breakpoint: Pass new breakpoint type to modify_breakpoint_slot()
-Date: Fri,  1 Jun 2018 16:32:04 +0200
-Message-Id: <1527863526-32677-12-git-send-email-frederic@kernel.org>
+Subject: [PATCH 12/12] perf/breakpoint: Clean up and consolidate modify_user_hw_breakpoint_check()
+Date: Fri,  1 Jun 2018 16:32:05 +0200
+Message-Id: <1527863526-32677-13-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527863526-32677-1-git-send-email-frederic@kernel.org>
 References: <1527863526-32677-1-git-send-email-frederic@kernel.org>
@@ -36,17 +36,11 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We soon won't be able to rely on bp->attr anymore to get the new
-type of the modifying breakpoint because the new attributes are going
-to be copied only once we successfully modified the breakpoint slot.
+Remove the dance around old and new attributes. Just don't modify the
+previous breakpoint at all until we have verified everything.
 
-This will fix the current misdesigned layout where the new attr are
-copied to the modifying breakpoint before we actually know if the
-modification will be validated.
-
-In order to prepare for that, allow modify_breakpoint_slot() to take
-the new breakpoint type.
-
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Original-patch-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -69,52 +63,76 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Joel Fernandes <joel.opensrc@gmail.com>
 ---
- kernel/events/hw_breakpoint.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/events/hw_breakpoint.c | 46 ++++++++++++++++++++++++-------------------
+ 1 file changed, 26 insertions(+), 20 deletions(-)
 
 diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index e7bc8d0..7138770 100644
+index 7138770..b3814fc 100644
 --- a/kernel/events/hw_breakpoint.c
 +++ b/kernel/events/hw_breakpoint.c
-@@ -345,13 +345,13 @@ void release_bp_slot(struct perf_event *bp)
- 	mutex_unlock(&nr_bp_mutex);
+@@ -461,37 +461,43 @@ register_user_hw_breakpoint(struct perf_event_attr *attr,
  }
+ EXPORT_SYMBOL_GPL(register_user_hw_breakpoint);
  
--static int __modify_bp_slot(struct perf_event *bp, u64 old_type)
-+static int __modify_bp_slot(struct perf_event *bp, u64 old_type, u64 new_type)
++static void hw_breakpoint_copy_attr(struct perf_event_attr *to,
++				    struct perf_event_attr *from)
++{
++	to->bp_addr = from->bp_addr;
++	to->bp_type = from->bp_type;
++	to->bp_len  = from->bp_len;
++	to->disabled = from->disabled;
++}
++
+ int
+ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
+ 			        bool check)
  {
- 	int err;
- 
- 	__release_bp_slot(bp, old_type);
- 
--	err = __reserve_bp_slot(bp, bp->attr.bp_type);
-+	err = __reserve_bp_slot(bp, new_type);
- 	if (err) {
- 		/*
- 		 * Reserve the old_type slot back in case
-@@ -367,12 +367,12 @@ static int __modify_bp_slot(struct perf_event *bp, u64 old_type)
- 	return err;
- }
- 
--static int modify_bp_slot(struct perf_event *bp, u64 old_type)
-+static int modify_bp_slot(struct perf_event *bp, u64 old_type, u64 new_type)
- {
- 	int ret;
- 
- 	mutex_lock(&nr_bp_mutex);
--	ret = __modify_bp_slot(bp, old_type);
-+	ret = __modify_bp_slot(bp, old_type, new_type);
- 	mutex_unlock(&nr_bp_mutex);
- 	return ret;
- }
-@@ -481,7 +481,7 @@ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *a
+-	u64 old_addr = bp->attr.bp_addr;
+-	u64 old_len  = bp->attr.bp_len;
+-	int old_type = bp->attr.bp_type;
+-	bool modify  = attr->bp_type != old_type;
+ 	struct arch_hw_breakpoint hw;
+-	int err = 0;
+-
+-	bp->attr.bp_addr = attr->bp_addr;
+-	bp->attr.bp_type = attr->bp_type;
+-	bp->attr.bp_len  = attr->bp_len;
+-
+-	if (check && memcmp(&bp->attr, attr, sizeof(*attr)))
+-		return -EINVAL;
++	int err;
  
  	err = hw_breakpoint_parse(bp, attr, &hw);
- 	if (!err && modify)
--		err = modify_bp_slot(bp, old_type);
-+		err = modify_bp_slot(bp, old_type, bp->attr.bp_type);
+-	if (!err && modify)
+-		err = modify_bp_slot(bp, old_type, bp->attr.bp_type);
+-
+-	if (err) {
+-		bp->attr.bp_addr = old_addr;
+-		bp->attr.bp_type = old_type;
+-		bp->attr.bp_len  = old_len;
++	if (err)
+ 		return err;
++
++	if (check) {
++		struct perf_event_attr old_attr;
++
++		old_attr = bp->attr;
++		hw_breakpoint_copy_attr(&old_attr, attr);
++		if (memcmp(&old_attr, attr, sizeof(*attr)))
++			return -EINVAL;
++	}
++
++	if (bp->attr.bp_type != attr->bp_type) {
++		err = modify_bp_slot(bp, bp->attr.bp_type, attr->bp_type);
++		if (err)
++			return err;
+ 	}
  
- 	if (err) {
- 		bp->attr.bp_addr = old_addr;
++	hw_breakpoint_copy_attr(&bp->attr, attr);
+ 	bp->hw.info = hw;
+-	bp->attr.disabled = attr->disabled;
+ 
+ 	return 0;
+ }
 -- 
 2.7.4
