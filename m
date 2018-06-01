@@ -1,99 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751082AbeFAHSn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 03:18:43 -0400
-Received: from out3-6.antispamcloud.com ([185.201.18.6]:36398 "EHLO
-        out3-6.antispamcloud.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750796AbeFAHSj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 03:18:39 -0400
-Subject: Re: [PATCH] clk-si544: Properly round requested frequency to nearest
- match
-To: Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>
-References: <1527775435-5017-1-git-send-email-mike.looijmans@topic.nl>
- <152778087117.144038.3582001993053198941@swboyd.mtv.corp.google.com>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Organization: TOPIC
-Message-ID: <9eaa65c3-f8e0-1302-5f49-8691c244476d@topic.nl>
-Date: Fri, 1 Jun 2018 07:05:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1750996AbeFAHVl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 03:21:41 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36075 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750796AbeFAHVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 03:21:38 -0400
+Subject: Re: [PATCH v1 2/2] arm64: handle NOTIFY_SEI notification by the APEI
+ driver
+To: James Morse <james.morse@arm.com>, Mark Rutland <mark.rutland@arm.com>
+CC: <catalin.marinas@arm.com>, <will.deacon@arm.com>, <rjw@rjwysocki.net>,
+        <lenb@kernel.org>, <tony.luck@intel.com>, <bp@alien8.de>,
+        <robert.moore@intel.com>, <erik.schmauss@intel.com>,
+        <dave.martin@arm.com>, <ard.biesheuvel@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>
+References: <1527770506-8076-1-git-send-email-gengdongjiu@huawei.com>
+ <1527770506-8076-3-git-send-email-gengdongjiu@huawei.com>
+ <20180531110115.uglmicy3nzwfoyx3@lakrids.cambridge.arm.com>
+ <71afa669-e3c5-979e-da5b-1d9cb7056fd6@arm.com>
+From: gengdongjiu <gengdongjiu@huawei.com>
+Message-ID: <f000549e-bd9c-323d-bcf9-04c2df029670@huawei.com>
+Date: Fri, 1 Jun 2018 15:21:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <152778087117.144038.3582001993053198941@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: nl
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [192.168.80.121]
-X-EXCLAIMER-MD-CONFIG: 9833cda7-5b21-4d34-9a38-8d025ddc3664
-X-EXCLAIMER-MD-BIFURCATION-INSTANCE: 0
-X-Originating-IP: 37.74.225.131
-X-AntiSpamCloud-Domain: topic.nl
-X-AntiSpamCloud-Username: 37.74.225.128/28
-Authentication-Results: antispamcloud.com; auth=pass smtp.auth=37.74.225.128/28@topic.nl
-X-AntiSpamCloud-Outgoing-Class: ham
-X-AntiSpamCloud-Outgoing-Evidence: Combined (0.01)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5r9cX7d0E0pSmrYiMJvJ0Yd602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvOySBiUVAo7M+WU0lEyRRks5TYi2bf0F0JzgUQ/o6tR7CH2xp8BLc2xfyGUReD7IRgMuo
- PNmBu5wVqhAQ6VH7FR5vB8Ty6g+FyzfFbzv9RE4O7uDjV/sFUXQr+CDrNQuIHisenvNkIa5eS4fe
- f1Y2alRBpc/AiUjjK788fU1YN0ZFVLG/25onNpwa+ByvFZCukbioU1e16IxUJLZ20ReX1bSp7pY0
- L5pp3fDuFSg2SYy1PLhBThvdgyPN49yzDQzRHZ1ADIXb0X8MOc3DMDrpJuIVflRGywoBz+5hbQ/s
- FhsyiS4woUF3QYRfv0lM+BhCsIrOlnL/a7KjnP5Hd6yMsCbRznB9DlkKm0lqN1vc7spph6jSHIe4
- VXxtDnjvWUcv7bCquybs+d6GQBTweXSeZTet88+TKwCVbxP7bG35YtS/A1aO0ASgODHLSquIn2D3
- FxUS9itywBHw11Tnbe8A27oXcX+Q8IPcDAV+XJAqOPGsIrv3F28sfojuZI3S+Bdc3hPcpGyeyPXK
- NTABBN67jV7JvFCbAD7w3FUirQwmJIqD2OUMeHyTpNN0eXybX/w7/zx9n66RP1VFiaFDjn9cDcHZ
- szXM9E0rSZ6DYSZ9sVWyzkrDpoKksaEmuaV+tvWccjBPMweEfXdRqRZp93SkMI76Gew4jH22624b
- XqDj0nE6rZP91y05kcM4rUQDMJLwZevhZeWkyT5O19IxDu/Usp9PvhkSot3yX0Uz6/z7iRxNUfeU
- gb1nUNrY+0gXqtBMoHySCtPKGxZweDwDkCxc/cEfujaNYeNuUhiQ95d9cuRjKB5tUZrCDc4lRQd8
- Udft2JqB1Pg2DwMyBXjvFZ3riYfrjuU3A3io6xJmD59iFVkbCTX3JKFeiQgrXHKzO43hOtbJmRbX
- Xxp17+3XmYsZ9cANN0fnQvHVcIPRLyVf8IQO8AUy9furwzjHps/+CPPDQ1/5Sm5eelhAONyCNjuY
- 9ynMp/dVTyLMh7dk8LXAwYzo2WzVz5mV8lzCe6PnAUlYyg==
-X-Report-Abuse-To: spam@quarantine2.antispamcloud.com
+In-Reply-To: <71afa669-e3c5-979e-da5b-1d9cb7056fd6@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.68.147]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-﻿On 31-05-18 17:34, Stephen Boyd wrote:
-> Quoting Mike Looijmans (2018-05-31 07:03:55)
->> The si544 driver had a rounding problem that using the result of clk_round_rate
->> may set the clock to yet another rate, for example:
->> clk_round_rate(195000000) = 194999999
->> clk_round_rate(194999999) = 194999998
->>
->> Clients would expect that after clk_set_rate(clk, freq2=clk_round_rate(clk, freq)) the
->> chip will be running at exactly freq2.
->>
->> The problem was in the calculation of the feedback divider, it was always rounded
->> down instead of to the nearest possible VCO value.
->>
->> After this change, the following holds true for any supported frequency:
->> actual_freq = clk_round_rate(clk, freq);
->> clk_set_rate(clk, actual_freq);
->> clk_round_rate(clk, actual_freq) == actual_freq && clk_get_rate(clk) == actual_freq
->>
->> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Hi Mark, James,
+   Thanks the review.
+
+On 2018/6/1 0:51, James Morse wrote:
+> Hi Mark, Dongjiu Geng,
 > 
-> Any fixes tag? I can slap
+> On 31/05/18 12:01, Mark Rutland wrote:
+>> In do_serror() we already handle nmi_{enter,exit}(), so there's no need
+>> for that here.
 > 
-> Fixes: 953cc3e81170 ("clk: Add driver for the si544 clock generator chip")
+> Even better: nmi_enter() has a BUG_ON(in_nmi()).
+
+There are two places call the arm64_is_fatal_ras_serror():
+1. do_serror()
+2. kvm_handle_guest_serror()
+
+Yes, the do_serror() already handle nmi_{enter,exit}(), so the arm64_is_fatal_ras_serror() does not need to handle it again.
+For the kvm_handle_guest_serror(), it does not handle the nmi_{enter,exit}(), so should we add nmi_{enter,exit}() in  kvm_handle_guest_serror() before calling arm64_is_fatal_ras_serror()?
+
+For the NOTIFY_SEA, I do not know why handle_guest_sea() does not handle the nmi_{enter,exit}(). James, does we miss it in handle_guest_sea()?
+
 > 
-> on to the patch here.
 > 
+>> TBH, I don't understand why do_sea() does that conditionally today.
+>> Unless there's some constraint I'm missing, 
+> 
+> APEI uses a different fixmap entry and locks when in_nmi(). This was because we
+> may interrupt the irq-masked region in APEI that was using the regular memory.
+> (e.g. the 'polled' notification, or something backed by an interrupt.) But,
+> Borislav has spotted other things in here that are broken[0]. I'm working on
+> rolling all that into 'v5' of the in_nmi() rework stuff.
+> 
+> We currently get away with this on arm because 'SEA' is the only NMI-like thing,
+> and it occurs synchronously. The problem cases are all also cases where the
+> kernel text is corrupt, which we can't possibly hope to handle.
+> 
+> For NOTIFY_SDEI and NOTIFY_SEI this is the wrong pattern as these are
+> asynchronous. do_serror() has already done most of the work for NOTIFY_SEI, but
+> we need to use the estatus queue in APEI, which is currently x86 only.
+I think this patch can based on you 'v5' of the in_nmi() rework stuff
 
-I think that would be good, yes. Slap it on.
+> 
+> 
+>> I think it would make more
+>> sense to do that regardless of whether the interrupted context had
+>> interrupts enabled. James -- does that make sense to you?
+>>
+>> If you update the prior patch with a stub for !CONFIG_ACPI_APEI_SEI, you
+>> can simplify all of the above additions down to:
+>>
+>> 	if (!ghes_notify_sei())
+>> 		return;
+>>
+>> ... which would look a lot nicer.
+> 
+> The code that calls ghes_notify_sei() may need calling by KVM too, but its
+> default action to an 'unclaimed' SError will be different.
+> Because of the race between memory_failure() and return-to-userspace, we may
+> need to kick the irq work queue (if we can), as we return from do_serror(). [1]
+> and [2] provide an example for NOTIFY_SEA. SDEI does this by returning to the
+> kernel through the IRQ handler, (which handles the KVM case too).
+I can kick the IRQ work queue as you do for the NOTIFY_SEA and NOTIFY_SDEI.
 
+> 
+> 
+> I think this series is unsafe until we can use the estatus queue in APEI. Its
+> also missing the handling for an SError interrupting a KVM guest.
 
-Kind regards,
+how about this series is based on your patches that uses the estatus queue in APEI to make it safe?
 
-Mike Looijmans
-System Expert
+when an SError interrupting a KVM guest, it will trap to hypervisor, hypervisor will call
+below software stack to handle it:
+kvm_handle_guest_serror()->arm64_is_fatal_ras_serror()->ghes_notify_sei()
 
-TOPIC Products
-Materiaalweg 4, NL-5681 RJ Best
-Postbus 440, NL-5680 AK Best
-Telefoon: +31 (0) 499 33 69 79
-E-mail: mike.looijmans@topicproducts.com
-Website: www.topicproducts.com
+so it already handles the case that an SError interrupting a KVM guest.
 
-Please consider the environment before printing this e-mail
+> 
+> 
+> Thanks,
+> 
+> James
+> 
+> [0] https://www.spinics.net/lists/arm-kernel/msg653332.html
+> [1] https://www.spinics.net/lists/arm-kernel/msg649237.html
+> [2] https://www.spinics.net/lists/arm-kernel/msg649239.html
+> 
+> .
+> 
