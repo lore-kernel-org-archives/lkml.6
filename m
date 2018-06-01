@@ -1,48 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752256AbeFAOi5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:38:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42312 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751584AbeFAOiz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:38:55 -0400
-Date: Fri, 01 Jun 2018 07:38:42 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180601220832.73ad5b84@canb.auug.org.au>
-References: <20180601213639.74f49e51@canb.auug.org.au> <CAHp75VeULdbi3_V8JPffYCocmGtjC3QPdE-yPz5eDrkpONeE-A@mail.gmail.com> <20180601220832.73ad5b84@canb.auug.org.au>
+        id S1751948AbeFAOle (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:41:34 -0400
+Received: from foss.arm.com ([217.140.101.70]:52982 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751378AbeFAOld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:41:33 -0400
+Subject: Re: [PATCHv2 11/19] arm64: don't reload GPRs after apply_ssbd
+To: Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, catalin.marinas@arm.com
+References: <20180601112441.37810-1-mark.rutland@arm.com>
+ <20180601112441.37810-12-mark.rutland@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <57f6f0ca-8256-d642-fd59-034b989dc5c8@arm.com>
+Date: Fri, 1 Jun 2018 15:41:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86 tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Haruka Kawajiri <yukx00@gmail.com>
-From: dvhart@infradead.org
-Message-ID: <7EC66A28-4E57-4B3C-A5AC-4D7D9CAF727E@infradead.org>
+In-Reply-To: <20180601112441.37810-12-mark.rutland@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51Ed2UU007839
 
+On 01/06/18 12:24, Mark Rutland wrote:
+> Now that all of the syscall logic works on the saved pt_regs, apply_ssbd
+> can safely corrupt x0-x3 in the entry paths, and we no longer need to
+> restore them. So let's remotve the logic doing so.
 
+remove*
 
-On June 1, 2018 5:08:32 AM PDT, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->Hi Andy,
->
->On Fri, 1 Jun 2018 14:40:35 +0300 Andy Shevchenko
-><andy.shevchenko@gmail.com> wrote:
->>
->> Oops. What is the proposed fix for that? It seems we can't rebase
->> published branches.
->
->It's unfixable without a rebase, so you could instead consider it an
->opportunity to improve your processes for the future. :-)
+> 
+> With that logic gone, we can fold the branch target into the macro, so
+> that callers need not deal with this. GAS provides \@, which provides a
+> unique value per macro invocation, which we can use to create a unique
+> label.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
 
-Stephen, are the tests you use available publicly?
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
+	M.
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Jazz is not dead. It just smells funny...
