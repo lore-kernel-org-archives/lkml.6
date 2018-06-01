@@ -1,76 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751553AbeFAAsj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 20:48:39 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34383 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751193AbeFAAsd (ORCPT
+        id S1751005AbeFAAyc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 20:54:32 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:44779 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750729AbeFAAya (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 20:48:33 -0400
-X-Google-Smtp-Source: ADUXVKLxXydCGXlZ0jeHSf4oOy3mKF6NIQr28zEcpcLqTucKlqRApvLQ8LFcAUyi0/NZ/ITev7BGpplRxXRqUKx96U8=
+        Thu, 31 May 2018 20:54:30 -0400
+X-Google-Smtp-Source: ADUXVKLGIZD3BkTsghG1Npk0WAGwwtP5ZWWgGlxlH2H5RRYMpGQEk2s6Ro1GhNYh5JcBBK4dQEX0Dn3Fu+10juKwfGQ=
 MIME-Version: 1.0
-In-Reply-To: <20180531171834.e16fc59550d24437a12c612b@linux-foundation.org>
-References: <20180530001204.183758-1-shakeelb@google.com> <20180531171834.e16fc59550d24437a12c612b@linux-foundation.org>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Thu, 31 May 2018 17:48:31 -0700
-Message-ID: <CALvZod69UOuEzsDZ1V-f5Nc5Ou=7qSvmxsyucBioZc1MunRHUw@mail.gmail.com>
-Subject: Re: [PATCH v3] mm: fix race between kmem_cache destroy, create and deactivate
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Greg Thelen <gthelen@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20180601004233.37822-1-keescook@chromium.org>
+In-Reply-To: <20180601004233.37822-1-keescook@chromium.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 31 May 2018 19:54:18 -0500
+Message-ID: <CA+55aFzjt27tDoxU=iVo7N3cR_nVSRm5+nvTZg=+t2A4k_yNwA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] Provide saturating helpers for allocation
+To: Kees Cook <keescook@chromium.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 5:18 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Tue, 29 May 2018 17:12:04 -0700 Shakeel Butt <shakeelb@google.com> wrote:
+On Thu, May 31, 2018 at 7:43 PM Kees Cook <keescook@chromium.org> wrote:
 >
->> The memcg kmem cache creation and deactivation (SLUB only) is
->> asynchronous. If a root kmem cache is destroyed whose memcg cache is in
->> the process of creation or deactivation, the kernel may crash.
->>
->> Example of one such crash:
->>       general protection fault: 0000 [#1] SMP PTI
->>       CPU: 1 PID: 1721 Comm: kworker/14:1 Not tainted 4.17.0-smp
->>       ...
->>       Workqueue: memcg_kmem_cache kmemcg_deactivate_workfn
->>       RIP: 0010:has_cpu_slab
->>       ...
->>       Call Trace:
->>       ? on_each_cpu_cond
->>       __kmem_cache_shrink
->>       kmemcg_cache_deact_after_rcu
->>       kmemcg_deactivate_workfn
->>       process_one_work
->>       worker_thread
->>       kthread
->>       ret_from_fork+0x35/0x40
->>
->> To fix this race, on root kmem cache destruction, mark the cache as
->> dying and flush the workqueue used for memcg kmem cache creation and
->> deactivation.
->>
->> Signed-off-by: Shakeel Butt <shakeelb@google.com>
->> ---
->> Changelog since v2:
->> - Instead of refcount, flush the workqueue
->
-> This one-liner doesn't appear to fully describe the difference between
-> v2 and v3, which is rather large:
->
+> So, while nothing does:
+>     kmalloc_array(a, b, ...) -> kmalloc(array_size(a, b), ...)
+> the treewide changes DO perform changes like this:
+>     kmalloc(a * b, ...) -> kmalloc(array_size(a, b), ...)
 
-Sorry about that, I should have explained more. The reason the diff
-between v2 and v3 is large is because v3 is the complete rewrite. So,
-the diff is the revert of v2 and then v3 patch. If you drop all the
-previous versions and just keep v3, it will be smaller.
+Ugh. I really really still absolutely despise this.
 
-thanks,
-Shakeel
+Why can't you just have a separate set of coccinelle scripts that do
+the simple and clean cases?
+
+So *before* doing any array_size() conversions, just do
+
+    kzalloc(a*b, ...) -> kcalloc(a, b, ...)
+    kmalloc(a*b,..) -> kmalloc_array(a,b, ...)
+
+and the obvious variations on that (devm_xyz() has all the same helpers).
+
+Only after doing the ones that don't have the nice obvious helpers, do
+the remaining ones with array_size(), ie
+
+    *alloc(a*b, ..) -> *alloc(array_size(a,b), ...)
+
+because that really makes for much less legible code.
+
+Hmm?
+
+            Linus
