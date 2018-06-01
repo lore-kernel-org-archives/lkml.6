@@ -1,52 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751948AbeFAOle (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:41:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:52982 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751378AbeFAOld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:41:33 -0400
-Subject: Re: [PATCHv2 11/19] arm64: don't reload GPRs after apply_ssbd
-To: Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, catalin.marinas@arm.com
-References: <20180601112441.37810-1-mark.rutland@arm.com>
- <20180601112441.37810-12-mark.rutland@arm.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <57f6f0ca-8256-d642-fd59-034b989dc5c8@arm.com>
-Date: Fri, 1 Jun 2018 15:41:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1752070AbeFAOn5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:43:57 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34613 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbeFAOnx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:43:53 -0400
+X-Google-Smtp-Source: ADUXVKI4m5byMi+6keVX4iCyUqPRiaD1hkBfiHGHRQ/7XyaW+r6RvG9PIV2oBOpO72pxjtxE1I+hVQ==
+From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To: axboe@fb.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        javier@cnexlabs.com, igor.j.konopko@intel.com,
+        marcin.dziegielewski@intel.com,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [GIT PULL v3 00/10] lightnvm updates for 4.18
+Date: Fri,  1 Jun 2018 16:41:04 +0200
+Message-Id: <20180601144114.17490-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <20180601112441.37810-12-mark.rutland@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/06/18 12:24, Mark Rutland wrote:
-> Now that all of the syscall logic works on the saved pt_regs, apply_ssbd
-> can safely corrupt x0-x3 in the entry paths, and we no longer need to
-> restore them. So let's remotve the logic doing so.
+Hi Jens,
 
-remove*
+Please pick up the following patches.
 
-> 
-> With that logic gone, we can fold the branch target into the macro, so
-> that callers need not deal with this. GAS provides \@, which provides a
-> unique value per macro invocation, which we can use to create a unique
-> label.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
+Changes since v2:
 
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+ Rebased write error recovery patch on top of latest
+ for-4.18/block
 
-	M.
+ Added (missed the first round)
+  lightnvm: pblk: only try to recover lines with written smeta
+  lightnvm: pblk: kick writer on new flush points
+  lightnvm: pblk: take bitmap alloc. out of critical section
+
+Changes since v1:
+
+ Removed
+  lightnvm: pblk: sync RB and RL states during GC
+  lightnvm: error handling when whole line is bad
+  lightnvm: pblk: handle case when mw_cunits equals to 0
+
+ Added
+  lightnvm: pblk: remove unnecessary bio_get/put
+
+Thanks!
+
+Hans Holmberg (5):
+  lightnvm: pblk: rework write error recovery path
+  lightnvm: pblk: garbage collect lines with failed writes
+  lightnvm: pblk: fix smeta write error path
+  lightnvm: pblk: only try to recover lines with written smeta
+  lightnvm: pblk: kick writer on new flush points
+
+Igor Konopko (2):
+  lightnvm: proper error handling for pblk_bio_add_pages
+  lightnvm: fix partial read error path
+
+Javier González (2):
+  lightnvm: pblk: remove unnecessary bio_get/put
+  lightnvm: pblk: take bitmap alloc. out of critical section
+
+Marcin Dziegielewski (1):
+  lightnvm: pblk: add possibility to set write buffer size manually
+
+ drivers/lightnvm/pblk-cache.c    |  10 +-
+ drivers/lightnvm/pblk-core.c     | 157 +++++++++++++++-------
+ drivers/lightnvm/pblk-gc.c       | 102 ++++++++------
+ drivers/lightnvm/pblk-init.c     |  62 ++++++---
+ drivers/lightnvm/pblk-rb.c       |  43 +-----
+ drivers/lightnvm/pblk-read.c     |  69 +++++-----
+ drivers/lightnvm/pblk-recovery.c | 121 +++--------------
+ drivers/lightnvm/pblk-rl.c       |  29 +++-
+ drivers/lightnvm/pblk-sysfs.c    |  15 ++-
+ drivers/lightnvm/pblk-write.c    | 281 +++++++++++++++++++++++++--------------
+ drivers/lightnvm/pblk.h          |  37 ++++--
+ 11 files changed, 524 insertions(+), 402 deletions(-)
+
 -- 
-Jazz is not dead. It just smells funny...
+2.11.0
