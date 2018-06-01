@@ -1,73 +1,251 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752369AbeFAO3l (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:29:41 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46358 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751598AbeFAO3j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:29:39 -0400
-X-Google-Smtp-Source: ADUXVKJ7tFPFXNPrRL7xURHuxFCyurzo7glfUbbAyMbmv4sSjZ9CAvL/ZWLWqs/8oL9bD/eQRGpLm3P/rOAykqWdx0A=
+        id S1752217AbeFAOaJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:30:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55988 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751465AbeFAOaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:30:06 -0400
+Date: Fri, 1 Jun 2018 08:30:00 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v2 2/3] PCI: Allow specifying devices using a base bus
+ and path of devfns
+Message-ID: <20180601083000.62d10d14@t450s.home>
+In-Reply-To: <20180531235010.5279-3-logang@deltatee.com>
+References: <20180531235010.5279-1-logang@deltatee.com>
+        <20180531235010.5279-3-logang@deltatee.com>
 MIME-Version: 1.0
-In-Reply-To: <494c2768-4ac8-7282-80dd-122add15b2bb@daenzer.net>
-References: <20180531161708.5894-1-michel@daenzer.net> <20180531161708.5894-3-michel@daenzer.net>
- <CADnq5_O5-m_=xqszq41eOAVaLTytHUHmtDaSc1MeEorZML6T5g@mail.gmail.com>
- <b458561f-b4e5-58bb-eee0-e3451312ae41@daenzer.net> <CADnq5_M-kS58ScgOBVQG7Mxxepae9b9gqUdMdFgaPaaxQ4NkjQ@mail.gmail.com>
- <494c2768-4ac8-7282-80dd-122add15b2bb@daenzer.net>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 1 Jun 2018 10:29:37 -0400
-Message-ID: <CADnq5_McUDsTS3DkHWT-xriEm9AZ=zkfZKZ3r0Uxu64bCU1m=Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] drm/amdgpu: Add documentation for PRIME related code
-To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>
-Cc: Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
-        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51ETnkb007734
 
-On Fri, Jun 1, 2018 at 9:56 AM, Michel Dänzer <michel@daenzer.net> wrote:
-> On 2018-06-01 03:44 PM, Alex Deucher wrote:
->> On Fri, Jun 1, 2018 at 9:40 AM, Michel Dänzer <michel@daenzer.net> wrote:
->>> On 2018-06-01 02:58 PM, Alex Deucher wrote:
->>>> On Thu, May 31, 2018 at 12:17 PM, Michel Dänzer <michel@daenzer.net> wrote:
->>>>> From: Michel Dänzer <michel.daenzer@amd.com>
->>>>>
->>>>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
->>>>
->>>> Series is:
->>>> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
->>>
->>> Thanks. Is it okay to merge all of these via the amdgpu tree, or should
->>> I wait for an ack from Jon and/or core DRM maintainers for that?
->>
->> GPU documentation usually goes through the drm trees.  You might want
->> to push patch 1 (drm_mm.rst fix) via drm_misc, but the rest are can go
->> in via the amdgpu tree since they are amdgpu specific.
->
-> I'd prefer merging all three patches together, since without patch 1,
-> patch 3 generates the warning below while generating documentation, and
-> the reference to the PRIME Buffer Sharing section doesn't work.
->
-> .../linux/Documentation/gpu/amdgpu.rst:2: WARNING: undefined label:
-> prime_buffer_sharing (if the link has no caption the label must precede
-> a section header)
+On Thu, 31 May 2018 17:50:09 -0600
+Logan Gunthorpe <logang@deltatee.com> wrote:
 
+> When specifying PCI devices on the kernel command line using a
+> BDF, the bus numbers can change when adding or replacing a device,
+> changing motherboard firmware, or applying kernel parameters like
+> pci=assign-buses. When this happens, it is usually undesirable to
+> apply whatever command line tweak to the wrong device.
+> 
+> Therefore, it is useful to be able to specify devices with a base
+> bus number and the path of devfns needed to get to it. (Similar to
+> the "device scope" structure in the Intel VT-d spec, Section 8.3.1.)
+> 
+> Thus, we add an option to specify devices in the following format:
+> 
+> path:[<domain>:]<bus>:<slot>.<func>/<slot>.<func>[/ ...]
+> 
+> The path can be any segment within the PCI hierarchy of any length and
+> determined through the use of 'lspci -t'. When specified this way, it is
+> less likely that a renumbered bus will result in a valid device specification
+> and the tweak won't be applied to the wrong device.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Reviewed-by: Stephen Bates <sbates@raithlin.com>
+> Acked-by: Christian König <christian.koenig@amd.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  12 ++-
+>  drivers/pci/pci.c                               | 101 +++++++++++++++++++++++-
+>  2 files changed, 107 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index e58cc671ff92..bc51b316f485 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2989,9 +2989,10 @@
+>  
+>  				Some options herein operate on a specific device
+>  				or a set of devices (<pci_dev>). These are
+> -				specified in one of two formats:
+> +				specified in one of three formats:
+>  
+>  				[<domain>:]<bus>:<slot>.<func>
+> +				path:[<domain>:]<bus>:<slot>.<func>/<slot>.<func>[/ ...]
+>  				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
+>  
+>  				Note: the first format specifies a PCI
+> @@ -2999,9 +3000,12 @@
+>  				if new hardware is inserted, if motherboard
+>  				firmware changes, or due to changes caused
+>  				by other kernel parameters. The second format
+> -				selects devices using IDs from the
+> -				configuration space which may match multiple
+> -				devices in the system.
+> +				specifies a path from a device through
+> +				a path of multiple slot/function addresses
+> +				(this is more robust against renumbering
+> +				issues). The third format selects devices using
+> +				IDs from the configuration space which may match
+> +				multiple devices in the system.
+>  
+>  		earlydump	[X86] dump PCI config space before the kernel
+>  			        changes anything
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 85fec5e2640b..39f11bd0ee03 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -184,22 +184,111 @@ EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
+>  #endif
+>  
+>  /**
+> + * pci_dev_str_match_path - test if a path string matches a device
+> + * @dev:    the PCI device to test
+> + * @p:      string to match the device against
+> + * @endptr: pointer to the string after the match
+> + *
+> + * Test if a string (typically from a kernel parameter) formated as a
+> + * path of slot/function addresses matches a PCI device. The string must
+> + * be of the form:
+> + *
+> + *   [<domain>:]<bus>:<slot>.<func>/<slot>.<func>[/ ...]
+> + *
+> + * A path for a device can be obtained using 'lspci -t'. Using a path
+> + * is more robust against renumbering of devices than using only
+> + * a single bus, slot and function address.
+> + *
+> + * Returns 1 if the string matches the device, 0 if it does not and
+> + * a negative error code if it fails to parse the string.
+> + */
+> +static int pci_dev_str_match_path(struct pci_dev *dev, const char *path,
+> +				  const char **endptr)
+> +{
+> +	int ret;
+> +	int seg, bus, slot, func;
+> +	char *wpath, *p;
+> +	char end;
+> +
+> +	*endptr = strchrnul(path, ';');
+> +
+> +	wpath = kmemdup_nul(path, *endptr - path, GFP_KERNEL);
+> +	if (!wpath)
+> +		return -ENOMEM;
+> +
+> +	while (1) {
+> +		p = strrchr(wpath, '/');
+> +		if (!p)
+> +			break;
+> +		ret = sscanf(p, "/%x.%x%c", &slot, &func, &end);
+> +		if (ret != 2) {
+> +			ret = -EINVAL;
+> +			goto free_and_exit;
+> +		}
+> +
+> +		if (dev->devfn != PCI_DEVFN(slot, func)) {
+> +			ret = 0;
+> +			goto free_and_exit;
+> +		}
+> +
+> +		/*
+> +		 * Note: we don't need to get a reference to the upstream
+> +		 * bridge because we hold a reference to the top level
+> +		 * device which should hold a reference to the bridge,
+> +		 * and so on.
+> +		 */
+> +		dev = pci_upstream_bridge(dev);
+> +		if (!dev) {
+> +			ret = 0;
+> +			goto free_and_exit;
+> +		}
+> +
+> +		*p = 0;
+> +	}
+> +
+> +	ret = sscanf(wpath, "%x:%x:%x.%x%c", &seg, &bus, &slot,
+> +		     &func, &end);
+> +	if (ret != 4) {
+> +		seg = 0;
+> +		ret = sscanf(wpath, "%x:%x.%x%c", &bus, &slot, &func, &end);
+> +		if (ret != 3) {
+> +			ret = -EINVAL;
+> +			goto free_and_exit;
+> +		}
+> +	}
+> +
+> +	ret = (seg == pci_domain_nr(dev->bus) &&
+> +	       bus == dev->bus->number &&
+> +	       dev->devfn == PCI_DEVFN(slot, func));
+> +
+> +free_and_exit:
+> +	kfree(wpath);
+> +	return ret;
+> +}
 
-That's fine.  I'll take them all through the amdgpu tree.
+Cool, I'm glad this worked.  I note though that there's really not much
+difference between:
+
+[domain:]bus:slot.fn
+
+and
+
+[domain:]bus:slot.fn[/slot.fn[/slot.fn[/...]]]
+
+IOW, what's defined here as the "path:" specification doesn't require
+that we start at a root bus device, it can really specify a path
+starting anywhere, including the target device directly.  So can we
+simply extend domain:bus:slot.fn to support paths without a separate
+identifier?  Thanks,
 
 Alex
 
->
->
-> --
-> Earthling Michel Dänzer               |               http://www.amd.com
-> Libre software enthusiast             |             Mesa and X developer
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+> +
+> +/**
+>   * pci_dev_str_match - test if a string matches a device
+>   * @dev:    the PCI device to test
+>   * @p:      string to match the device against
+>   * @endptr: pointer to the string after the match
+>   *
+>   * Test if a string (typically from a kernel parameter) matches a
+> - * specified. The string may be of one of two forms formats:
+> + * specified. The string may be of one of three formats:
+>   *
+>   *   [<domain>:]<bus>:<slot>.<func>
+> + *   path:[<domain>:]<bus>:<slot>.<func>/<slot>.<func>[/ ...]
+>   *   pci:<vendor>:<device>[:<subvendor>:<subdevice>]
+>   *
+>   * The first format specifies a PCI bus/slot/function address which
+>   * may change if new hardware is inserted, if motherboard firmware changes,
+>   * or due to changes caused in kernel parameters.
+>   *
+> - * The second format matches devices using IDs in the configuration
+> + * The second format specifies a PCI bus/slot/function root address and
+> + * a path of slot/function addresses to the specific device from the root.
+> + * The path for a device can be determined through the use of 'lspci -t'.
+> + * This format is more robust against renumbering issues than the first format.
+> +
+> + * The third format matches devices using IDs in the configuration
+>   * space which may match multiple devices in the system. A value of 0
+>   * for any field will match all devices.
+>   *
+> @@ -236,7 +325,15 @@ static int pci_dev_str_match(struct pci_dev *dev, const char *p,
+>  		    (!subsystem_device ||
+>  			    subsystem_device == dev->subsystem_device))
+>  			goto found;
+> +	} else if (strncmp(p, "path:", 5) == 0) {
+> +		/* PCI Root Bus and a path of Slot,Function IDs */
+> +		p += 5;
+>  
+> +		ret = pci_dev_str_match_path(dev, p, &p);
+> +		if (ret < 0)
+> +			return ret;
+> +		else if (ret)
+> +			goto found;
+>  	} else {
+>  		/* PCI Bus,Slot,Function ids are specified */
+>  		ret = sscanf(p, "%x:%x:%x.%x%n", &seg, &bus, &slot,
