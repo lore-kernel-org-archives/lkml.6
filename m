@@ -1,55 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752793AbeFANHL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:07:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48840 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752376AbeFANFO (ORCPT
+        id S1751912AbeFANHd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:07:33 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33258 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752369AbeFANFN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:05:14 -0400
-From: Colin King <colin.king@canonical.com>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: ACPI: make function acpi_cpufreq_fast_switch static
-Date: Fri,  1 Jun 2018 14:05:12 +0100
-Message-Id: <20180601130512.30857-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 1 Jun 2018 09:05:13 -0400
+X-Google-Smtp-Source: ADUXVKIBhUqJVB/a1ZuSzQGF9yg9YdhVgh9BRzupEyCFvPSwAjtX+ESreyd5T3niKtt9H5CnHjOcQQ==
+From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To: axboe@fb.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        javier@cnexlabs.com, igor.j.konopko@intel.com,
+        marcin.dziegielewski@intel.com,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [GIT PULL 15/18] lightnvm: proper error handling for pblk_bio_add_pages
+Date: Fri,  1 Jun 2018 15:04:29 +0200
+Message-Id: <20180601130432.30866-16-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180601130432.30866-1-mb@lightnvm.io>
+References: <20180601130432.30866-1-mb@lightnvm.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Igor Konopko <igor.j.konopko@intel.com>
 
-The function acpi_cpufreq_fast_switch is local to the source and does
-not need to be in global scope, so make it static.
+Currently in case of error caused by bio_pc_add_page in
+pblk_bio_add_pages two issues occur when calling from
+pblk_rb_read_to_bio(). First one is in pblk_bio_free_pages, since we
+are trying to free pages not allocated from our mempool. Second one
+is the warn from dma_pool_free, that we are trying to free NULL
+pointer dma.
 
-Cleans up sparse warning:
-drivers/cpufreq/acpi-cpufreq.c:468:14: warning: symbol
-'acpi_cpufreq_fast_switch' was not declared. Should it be static?
+This commit fix both issues.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
+Signed-off-by: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/cpufreq/acpi-cpufreq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/lightnvm/pblk-core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
-index 9449657d72f0..32ba4bc972e7 100644
---- a/drivers/cpufreq/acpi-cpufreq.c
-+++ b/drivers/cpufreq/acpi-cpufreq.c
-@@ -465,8 +465,8 @@ static int acpi_cpufreq_target(struct cpufreq_policy *policy,
- 	return result;
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index e43093e27084..a20b41c355c5 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -278,7 +278,9 @@ void pblk_free_rqd(struct pblk *pblk, struct nvm_rq *rqd, int type)
+ 		return;
+ 	}
+ 
+-	nvm_dev_dma_free(dev->parent, rqd->meta_list, rqd->dma_meta_list);
++	if (rqd->meta_list)
++		nvm_dev_dma_free(dev->parent, rqd->meta_list,
++				rqd->dma_meta_list);
+ 	mempool_free(rqd, pool);
  }
  
--unsigned int acpi_cpufreq_fast_switch(struct cpufreq_policy *policy,
--				      unsigned int target_freq)
-+static unsigned int acpi_cpufreq_fast_switch(struct cpufreq_policy *policy,
-+					     unsigned int target_freq)
- {
- 	struct acpi_cpufreq_data *data = policy->driver_data;
- 	struct acpi_processor_performance *perf;
+@@ -316,7 +318,7 @@ int pblk_bio_add_pages(struct pblk *pblk, struct bio *bio, gfp_t flags,
+ 
+ 	return 0;
+ err:
+-	pblk_bio_free_pages(pblk, bio, 0, i - 1);
++	pblk_bio_free_pages(pblk, bio, (bio->bi_vcnt - i), i);
+ 	return -1;
+ }
+ 
 -- 
-2.17.0
+2.11.0
