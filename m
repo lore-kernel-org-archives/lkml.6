@@ -1,116 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753106AbeFAP0w (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:26:52 -0400
-Received: from ozlabs.org ([203.11.71.1]:32897 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753070AbeFAP0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:26:49 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Sat, 2 Jun 2018 01:26:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: dvhart@infradead.org
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Haruka Kawajiri <yukx00@gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86
- tree
-Message-ID: <20180602012646.2a0801e8@canb.auug.org.au>
-In-Reply-To: <7EC66A28-4E57-4B3C-A5AC-4D7D9CAF727E@infradead.org>
-References: <20180601213639.74f49e51@canb.auug.org.au>
-        <CAHp75VeULdbi3_V8JPffYCocmGtjC3QPdE-yPz5eDrkpONeE-A@mail.gmail.com>
-        <20180601220832.73ad5b84@canb.auug.org.au>
-        <7EC66A28-4E57-4B3C-A5AC-4D7D9CAF727E@infradead.org>
+        id S1753029AbeFAP2M (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:28:12 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:44532 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751780AbeFAP2H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:28:07 -0400
+X-Google-Smtp-Source: ADUXVKJ8QglhZa2krHTzWUSE10EhatOrRBtzrOw442dGDzLvqZ9DHSEuxkSkvmRg2wnGHG2wHM27xDNRPMvgE1jw4g4=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0Zba2XOrRkS9AVC+4/Xhe+m"; protocol="application/pgp-signature"
+In-Reply-To: <20180601151905.yilldc6vbachfw4k@pathway.suse.cz>
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+ <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+ <20180601114738.kdoggkha2yosjgbv@pathway.suse.cz> <20180601151905.yilldc6vbachfw4k@pathway.suse.cz>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Jun 2018 17:28:06 +0200
+X-Google-Sender-Auth: Xdlh3-YqFEqGlbeDSSaCnKtFotQ
+Message-ID: <CAMuHMdX6ACCiEs=EEbQV3=Ah7BZT1RJ1G0kZKeYKi_KzWoKZgQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk
+ format %pCr
+To: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0Zba2XOrRkS9AVC+4/Xhe+m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Petr,
 
-Hi,
-
-On Fri, 01 Jun 2018 07:38:42 -0700 dvhart@infradead.org wrote:
+On Fri, Jun 1, 2018 at 5:19 PM, Petr Mladek <pmladek@suse.com> wrote:
+> On Fri 2018-06-01 13:47:38, Petr Mladek wrote:
+>> On Fri 2018-06-01 06:00:47, Linus Torvalds wrote:
+>> > On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
+>> > <geert+renesas@glider.be> wrote:
+>> > >
+>> > > This patch series:
+>> > >   - Changes all existing users of "%pCr" to print the result of
+>> > >     clk_get_rate() directly, which is safe as they all do this in task
+>> > >     context only,
+>> > >   - Removes support for the "%pCr" printk format.
+>> >
+>> > Looks good to me.
+>> >
+>> > What tree will this go through? The normal printk one? Just checking
+>> > that this doesn't end up falling through the cracks because nobody
+>> > knows who would take it...
+>>
+>> I will take it via printk.git. There already is bunch of vsprintf
+>> changes for-4.18.
 >
-> Stephen, are the tests you use available publicly?
+> It is in printk.git, branch for-4.18-vsprintf-pcr-removal now.
 
-I use the script below when I am fetching trees.  You don't want the
-"gitk" invocation if you are doing this automatically, of course.  The
-script just takes a commit range.
+Thank you.
 
---=20
-Cheers,
-Stephen Rothwell
+> Also I have added Cc: stable@vger.kernel.org into the commit messages.
 
--------------------------------------------------------------
-#!/bin/bash
+I can confirm all stable version references ("v4.x+") match.
 
-if [ "$#" -lt 1 ]; then
-	printf "Usage: %s <commit range>\n", "$0" 1>&2
-	exit 1
-fi
+Gr{oetje,eeting}s,
 
-commits=3D$(git rev-list --no-merges "$@")
-if [ -z "$commits" ]; then
-	printf "No commits\n"
-	exit 0
-fi
+                        Geert
 
-for c in $commits; do
-	ae=3D$(git log -1 --format=3D'%ae' "$c")
-	aE=3D$(git log -1 --format=3D'%aE' "$c")
-	an=3D$(git log -1 --format=3D'%an' "$c")
-	aN=3D$(git log -1 --format=3D'%aN' "$c")
-	ce=3D$(git log -1 --format=3D'%ce' "$c")
-	cE=3D$(git log -1 --format=3D'%cE' "$c")
-	cn=3D$(git log -1 --format=3D'%cn' "$c")
-	cN=3D$(git log -1 --format=3D'%cN' "$c")
-	sob=3D$(git log -1 --format=3D'%b' "$c" | grep -i '^[[:space:]]*Signed-off=
--by:')
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-	am=3Dfalse
-	cm=3Dfalse
-	grep -i -q "<$ae>" <<<"$sob" ||
-		grep -i -q "<$aE>" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$an[[:space:]]*<" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$aN[[:space:]]*<" <<<"$sob" ||
-		am=3Dtrue
-	grep -i -q "<$ce>" <<<"$sob" ||
-		grep -i -q "<$cE>" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$cn[[:space:]]*<" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$cN[[:space:]]*<" <<<"$sob" ||
-		cm=3Dtrue
-
-	if "$am" || "$cm"; then
-		printf "Commit %s\n" "$c"
-		"$am" && printf "\tauthor SOB missing\n"
-		"$cm" && printf "\tcommitter SOB missing\n"
-		printf "%s %s\n%s\n" "$ae" "$ce" "$sob"
-	fi
-done
-
-exec gitk "$@"
--------------------------------------------------------------
-
---Sig_/0Zba2XOrRkS9AVC+4/Xhe+m
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsRZbYACgkQAVBC80lX
-0GwbDgf9HChXLyNZQY6Jwx+r5Lx3BQsWOzJLRNeGX9bq4G5QD6aoL9ZyJFyZbdcX
-0MeW16lx+CS3c8m7GZJVWWg7cOokgLyPjSph4oGx2zQGwSsSDmgBBx1nD1LKN+XS
-eC6AaozLS56SnEwu6t9SA7O93Y04ZvA49CzE/FuRMNImiG+LaXGbv4C/uAWzbIIS
-0+COuGt8CIk/vhraN7GweMPoUUYaeFG10c70kEO/4fNAfqgMOOukcceh883253rC
-s6toRacXswJJcNL1Xi999iGck7i98xjEvNV4kZ5HLN2/AyKoChAo4ApYK/0UDoOy
-g7DhC8JLVywRwUkpX/PZEmhKuRDwAQ==
-=Ttut
------END PGP SIGNATURE-----
-
---Sig_/0Zba2XOrRkS9AVC+4/Xhe+m--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
