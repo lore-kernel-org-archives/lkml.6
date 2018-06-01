@@ -1,150 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751048AbeFAVlU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 17:41:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43778 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750750AbeFAVlQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 17:41:16 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EF1B46044B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-Subject: Re: [PATCH v4 1/2] regulator: dt-bindings: add QCOM RPMh regulator
- bindings
-To: Mark Brown <broonie@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <cover.1527040878.git.collinsd@codeaurora.org>
- <6d03576cf90f06afb1194301cb41fc31704def1d.1527040878.git.collinsd@codeaurora.org>
- <CAD=FV=VH0bTxPOmRr+jUyV0cGNQHLcwQTV9L-t0bxZOqD8FnHA@mail.gmail.com>
- <20180530103720.GH6920@sirena.org.uk>
- <CAD=FV=WTTKXwPchuWRh-RNTc8=X8Xo28oTqk=3wW4+SiTHhxuA@mail.gmail.com>
- <20180530155044.GR6920@sirena.org.uk>
- <CAD=FV=WVUmvPPd5BxXv9Sa_2CRPrrjQvYFyqroY-3fRr4f0Bzg@mail.gmail.com>
- <20180530162007.GU6920@sirena.org.uk>
- <CAD=FV=WL9enzYCoSx0fT_ny40ciLJU-hhS9joJ6nySXvWPqAxQ@mail.gmail.com>
- <75088820-f20d-32ac-780a-5e7dacdf20ff@codeaurora.org>
- <20180531114816.GC13319@sirena.org.uk>
-From: David Collins <collinsd@codeaurora.org>
-Message-ID: <949e1a0c-11d6-1423-caae-834649bd11d0@codeaurora.org>
-Date: Fri, 1 Jun 2018 14:41:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        id S1751329AbeFAVnX convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 17:43:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750750AbeFAVnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 17:43:21 -0400
+Date: Fri, 1 Jun 2018 17:43:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: kernel test robot <xiaolong.ye@intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org
+Subject: Re: [lkp-robot] [tracing/x86]  1c758a2202:
+ aim9.disk_rr.ops_per_sec -12.0% regression
+Message-ID: <20180601174319.52646440@vmware.local.home>
+In-Reply-To: <20180528113419.GE9904@yexl-desktop>
+References: <20180528113419.GE9904@yexl-desktop>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180531114816.GC13319@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mark,
+On Mon, 28 May 2018 19:34:19 +0800
+kernel test robot <xiaolong.ye@intel.com> wrote:
 
-On 05/31/2018 04:48 AM, Mark Brown wrote:
-> On Wed, May 30, 2018 at 04:39:10PM -0700, David Collins wrote:
->> The DRMS modes to use and max allowed current per mode need to be
->> specified at the board level in device tree instead of hard-coded per
->> regulator type in the driver.  There are at least two use cases driving
->> this need: LDOs shared between RPMh client processors and SMPSes requiring
->> PWM mode in certain circumstances.
+> Greeting,
 > 
-> Is there really no way to improve the RPM firmware?
-
-This aggregation takes place in a discrete hardware block, not in a
-general purpose processor.  Theoretically, future chips could have
-redesigned VRM hardware; however, there is no plan to make such a change.
-
-
->> Consider the case of a regulator with physical 10 mA LPM max current. Say
->> that modem and application processors each have a load on the regulator
->> that draws 9 mA. If they each respect the 10 mA limit, then they'd each
->> vote for LPM. The VRM block in RPMh hardware will aggregate these requests
+> FYI, we noticed a -12.0% regression of aim9.disk_rr.ops_per_sec due to commit:
 > 
-> This is, of course, why the regulator API aggregates this stuff based on
-> the current not based on having every individual user select a mode.
 > 
->> together using a max function which will result in the regulator being set
->> to LPM, even though the total load is 18 mA (which would require high
->> power mode (HPM)). To get around this corner case, a LPM max current of 1
->> uA can be used for all LDO supplies that have non-application processor
->> consumers. Thus, any non-zero regulator_set_load() current request will
->> result in setting the regulator to HPM (which is always safe).
+> commit: 1c758a2202a6b4624d0703013a2c6cfa6e7455aa ("tracing/x86: Update syscall trace events to handle new prefixed syscall func names")
+
+How can this commit cause a run time regression. It changes code
+in an __init call (that gets removed after boot)??
+
+-- Steve
+ 
+
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 > 
-> That's obviously just never going to work well, the best you can do here
-> is just pretend that the other components are always operating at full
-> power (which I assume all the other components are doing too...) or not
-> try to use load based mode switching in the first place.
-
-I will remove the DT-based mode and max load current mapping support.  In
-its place, I'll implement hard coded LPM current limits for LDOs of 10 mA
-or 30 mA (depending upon subtype) like is done in other regulator drivers.
-
-If we actually encounter an issue caused by the APPS processor and another
-RPMh client both voting for LPM when HPM is needed for the combination,
-then we can disable load-based mode control for the affected regulator in
-DT and configure its initial mode as HPM.
-
-
->> The second situation that needs board-level DRMS mode and current limit
->> specification is SMPS regulator AUTO mode to PWM (HPM) mode switching.
->> SMPS regulators should theoretically always be able to operate in AUTO
->> mode as it switches automatically between PWM mode (which can provide the
->> maximum current) and PFM mode (which supports lower current but has higher
->> efficiency). However, there may be board/system issues that require
->> switching to PWM mode for certain use cases as it has better load
->> regulation (i.e. no PFM ripple for lower loads) and supports more
->> aggressive load current steps (i.e. greater A/ns).
+> in testcase: aim9
+> on test machine: 144 threads Intel(R) Xeon(R) CPU E7-8890 v3 @ 2.50GHz with 512G memory
+> with following parameters:
 > 
->> If a Linux consumer requires the ability to force a given SMPS regulator
->> from AUTO mode into PWM mode and that SMPS is shared by other Linux
->> consumers (which may be the case, but at least must be guaranteed to work
->> architecturally), then regulator_set_load() is the only option since it
->> provides aggregation, where as regulator_set_mode() does not.
+> 	testtime: 300s
+> 	test: disk_rr
+> 	cpufreq_governor: performance
 > 
-> That's obviously broken though, what you're describing is just clearly
-> nothing to do with load so trying to configure it using load is just
-> going to lead to problems later on.  Honestly it sounds like you just
-> want to force the regulator into forced PWM mode all the time, otherwise
-> you need to look into implementing support for describing the thing
-> you're actually trying to do and add a mechanism for per consumer mode
-> configuration.
+> test-description: Suite IX is the "AIM Independent Resource Benchmark:" the famous synthetic benchmark.
+> test-url: https://sourceforge.net/projects/aimbench/files/aim-suite9/
 > 
-> This has been a frequent pattern with these RPM drivers, trying to find
-> some way to shoehorn something that happens to work right now into the
-> code.  That's going to make things fragile and hard to maintain, we need
-> code that does the thing it's saying it does so that it's easier to
-> understand and work with - getting things running isn't enough, they
-> need to be clear.
-
-I agree that using regulator_set_load() to handle SMPS AUTO mode to PWM
-mode switching is hacky.  Since there is no natural way to pick SMPS modes
-based on load current, I will remove the functionality completely.  In its
-place, we can configure the SMPSes to have an initial mode of AUTO.  If a
-use case requiring PWM mode arises, then the consumer driver responsible
-for it can call regulator_set_mode() to switch between AUTO and PWM modes
-explicitly.
-
-Since regulator_set_mode() does not support aggregation currently, this
-technique would work only if there is exactly one consumer per regulator
-that needs explicit mode control.  Should we hit a situation that needs
-multiple consumers to have such mode control, then we could simply default
-the SMPS to PWM mode.
-
-I'll also start looking into per-consumer mode configuration and
-regulator_set_mode() aggregation within the regulator framework.  I think
-that we should be able to function without it for now; however, it would
-be good to have going forward.
-
-Take care,
-David
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> Details are as below:
+> -------------------------------------------------------------------------------------------------->  
+> =========================================================================================
+> compiler/cpufreq_governor/kconfig/rootfs/tbox_group/test/testcase/testtime:
+>   gcc-7/performance/x86_64-rhel-7.2/debian-x86_64-2016-08-31.cgz/lkp-hsx04/disk_rr/aim9/300s
+> 
+> commit: 
+>   1cdae042fc ("tracing: Add missing forward declaration")
+>   1c758a2202 ("tracing/x86: Update syscall trace events to handle new prefixed syscall func names")
+> 
+> 1cdae042fc63dd98 1c758a2202a6b4624d0703013a 
+> ---------------- -------------------------- 
+>          %stddev     %change         %stddev
+>              \          |                \  
+>     633310           -12.0%     557268        aim9.disk_rr.ops_per_sec
+>     244.24            +2.2%     249.57        aim9.time.system_time
+>      55.76            -9.6%      50.43        aim9.time.user_time
+>       8135 ± 39%     +73.2%      14091 ± 33%  numa-meminfo.node0.Shmem
+>       1328           -11.9%       1171        pmeter.performance_per_watt
+>     450606 ±  3%      -9.5%     407878 ±  5%  meminfo.Committed_AS
+>     406.75 ±173%    +300.1%       1627        meminfo.Mlocked
+>      20124 ±  4%      +8.4%      21819 ±  6%  softirqs.NET_RX
+>    8237636 ±  6%     -15.4%    6965294 ±  2%  softirqs.RCU
+>       2033 ± 39%     +73.0%       3518 ± 33%  numa-vmstat.node0.nr_shmem
+>      21.25 ±173%    +378.8%     101.75 ± 27%  numa-vmstat.node2.nr_mlock
+>      21.25 ±173%    +378.8%     101.75 ± 27%  numa-vmstat.node3.nr_mlock
+>  9.408e+08 ±  6%     +53.3%  1.442e+09 ± 20%  perf-stat.dTLB-load-misses
+>      47.39 ± 17%     -10.4       36.99 ±  8%  perf-stat.iTLB-load-miss-rate%
+>       1279 ± 27%     +63.4%       2089 ± 21%  perf-stat.instructions-per-iTLB-miss
+>      46.73 ±  5%      -5.4       41.33 ±  5%  perf-stat.node-store-miss-rate%
+>      19240            +1.2%      19474        proc-vmstat.nr_indirectly_reclaimable
+>      18868            +4.0%      19628        proc-vmstat.nr_slab_reclaimable
+>   48395423           -11.8%   42700849        proc-vmstat.numa_hit
+>   48314997           -11.8%   42620296        proc-vmstat.numa_local
+>    3153408           -12.0%    2775642        proc-vmstat.pgactivate
+>   48365477           -11.8%   42678780        proc-vmstat.pgfree
+>       3060           +38.9%       4250        slabinfo.ftrace_event_field.active_objs
+>       3060           +38.9%       4250        slabinfo.ftrace_event_field.num_objs
+>       2748 ±  3%      -8.9%       2502 ±  3%  slabinfo.sighand_cache.active_objs
+>       2763 ±  3%      -8.9%       2517 ±  3%  slabinfo.sighand_cache.num_objs
+>       4125 ±  4%     -10.3%       3700 ±  2%  slabinfo.signal_cache.active_objs
+>       4125 ±  4%     -10.3%       3700 ±  2%  slabinfo.signal_cache.num_objs
+>       1104           +57.3%       1736        slabinfo.trace_event_file.active_objs
+>       1104           +57.3%       1736        slabinfo.trace_event_file.num_objs
+>       0.78 ±  4%      -0.1        0.67 ±  5%  perf-profile.calltrace.cycles-pp.rcu_process_callbacks.__softirqentry_text_start.irq_exit.smp_apic_timer_interrupt.apic_timer_interrupt
+>       2.10 ±  2%      -0.1        2.00        perf-profile.calltrace.cycles-pp.tick_sched_timer.__hrtimer_run_queues.hrtimer_interrupt.smp_apic_timer_interrupt.apic_timer_interrupt
+>       1.89            -0.1        1.79        perf-profile.calltrace.cycles-pp.tick_sched_handle.tick_sched_timer.__hrtimer_run_queues.hrtimer_interrupt.smp_apic_timer_interrupt
+>       1.71 ±  2%      -0.1        1.60        perf-profile.calltrace.cycles-pp.update_process_times.tick_sched_handle.tick_sched_timer.__hrtimer_run_queues.hrtimer_interrupt
+>       0.53 ± 12%      -0.1        0.44 ±  4%  perf-profile.children.cycles-pp._raw_spin_lock_irqsave
+>       0.17 ±  7%      -0.0        0.15 ±  4%  perf-profile.children.cycles-pp.leave_mm
+>       0.09 ±  8%      -0.0        0.08 ± 11%  perf-profile.children.cycles-pp.cpu_load_update_active
+>       0.17 ±  8%      +0.0        0.19 ±  4%  perf-profile.children.cycles-pp.irq_work_needs_cpu
+>       0.43 ± 14%      -0.1        0.38 ±  3%  perf-profile.self.cycles-pp._raw_spin_lock_irqsave
+>       0.17 ±  7%      -0.0        0.15 ±  4%  perf-profile.self.cycles-pp.leave_mm
+>       0.30            +0.0        0.32 ±  2%  perf-profile.self.cycles-pp.get_next_timer_interrupt
+>       0.17 ±  8%      +0.0        0.19 ±  4%  perf-profile.self.cycles-pp.irq_work_needs_cpu
+>       0.06 ±  9%      +0.0        0.08 ± 15%  perf-profile.self.cycles-pp.sched_clock
+>       4358 ± 15%     +25.0%       5446 ±  7%  sched_debug.cfs_rq:/.exec_clock.avg
+>      24231 ±  7%     +12.3%      27202 ±  3%  sched_debug.cfs_rq:/.exec_clock.stddev
+>      23637 ± 17%     +33.3%      31501 ± 14%  sched_debug.cfs_rq:/.load.avg
+>      73299 ±  9%     +19.8%      87807 ±  8%  sched_debug.cfs_rq:/.load.stddev
+>      35584 ±  7%     +13.2%      40294 ±  5%  sched_debug.cfs_rq:/.min_vruntime.stddev
+>       0.09 ± 10%     +27.8%       0.12 ± 15%  sched_debug.cfs_rq:/.nr_running.avg
+>      17.10 ± 18%     +36.5%      23.33 ± 18%  sched_debug.cfs_rq:/.runnable_load_avg.avg
+>      63.20 ± 10%     +18.9%      75.11 ±  7%  sched_debug.cfs_rq:/.runnable_load_avg.stddev
+>      23618 ± 17%     +33.3%      31477 ± 14%  sched_debug.cfs_rq:/.runnable_weight.avg
+>      73217 ±  9%     +19.9%      87751 ±  8%  sched_debug.cfs_rq:/.runnable_weight.stddev
+>      35584 ±  7%     +13.2%      40294 ±  5%  sched_debug.cfs_rq:/.spread0.stddev
+>      95.02 ±  9%     +14.5%     108.82 ±  7%  sched_debug.cfs_rq:/.util_avg.avg
+>      19.44 ±  9%     +23.0%      23.91 ± 10%  sched_debug.cfs_rq:/.util_est_enqueued.avg
+>     323.02 ±  3%      -6.4%     302.21 ±  4%  sched_debug.cpu.ttwu_local.avg
+> 
+> 
+>                                                                                 
+>                               aim9.disk_rr.ops_per_sec                          
+>                                                                                 
+>   650000 +-+----------------------------------------------------------------+   
+>   640000 +-+                  .+..                                          |   
+>          |    .+.+..+..+..+..+    +..       .+..          .+..       .+..+..|   
+>   630000 +-++.                       +..+..+    +..+..+.+.    +..+..+       |   
+>   620000 +-+                                                                |   
+>          |                                                                  |   
+>   610000 +-+                                                                |   
+>   600000 +-+                                                                |   
+>   590000 +-+                                                                |   
+>          |                                                                  |   
+>   580000 +-+                                                                |   
+>   570000 +-+                                                                |   
+>          O     O O     O  O  O O        O  O                     O          |   
+>   560000 +-+O       O             O  O       O  O  O  O O  O  O     O O     |   
+>   550000 +-+----------------------------------------------------------------+   
+>                                                                                 
+>                                                                                                                                                                 
+>                                aim9.time.user_time                              
+>                                                                                 
+>   57 +-+--------------------------------------------------------------------+   
+>      |                      .+..+..     .+.           .+..                 .|   
+>   56 +-+  .+..+..  .+..+..+.       +..+.   +..  .+..+.    +..  .+..  .+..+. |   
+>   55 +-++.       +.                           +.             +.    +.       |   
+>      |                                                                      |   
+>   54 +-+                                                                    |   
+>      |                                                                      |   
+>   53 +-+                                                                    |   
+>      |                                                                      |   
+>   52 +-+                              O                                     |   
+>   51 +-+                                                                    |   
+>      |     O  O           O     O  O     O                O     O     O     |   
+>   50 O-+O        O           O                O     O  O     O     O        |   
+>      |              O  O                   O     O                          |   
+>   49 +-+--------------------------------------------------------------------+   
+>                                                                                 
+>                                                                                                                                                                 
+>                                aim9.time.system_time                            
+>                                                                                 
+>   251 +-+-------------------------------------------------------------------+   
+>       |              O  O                   O     O                         |   
+>   250 O-+O        O          O                 O     O  O    O     O        |   
+>   249 +-+   O  O          O     O  O     O                 O    O     O     |   
+>       |                                                                     |   
+>   248 +-+                             O                                     |   
+>       |                                                                     |   
+>   247 +-+                                                                   |   
+>       |                                                                     |   
+>   246 +-+                                                                   |   
+>   245 +-+                                                                   |   
+>       | .+..     .+..                         .+..          .+..  .+..      |   
+>   244 +-+   +..+.    +..+.+..     .+..+..+..+.    +..+..+..+    +.    +..+..|   
+>       |                      +..+.                                          |   
+>   243 +-+-------------------------------------------------------------------+   
+>                                                                                 
+>                                                                                 
+>                                                                                 
+> [*] bisect-good sample
+> [O] bisect-bad  sample
+> 
+> 
+> Disclaimer:
+> Results have been estimated based on internal Intel analysis and are provided
+> for informational purposes only. Any difference in system hardware or software
+> design or configuration may affect actual performance.
+> 
+> 
+> Thanks,
+> Xiaolong
