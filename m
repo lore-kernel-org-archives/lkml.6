@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752722AbeFAOdJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:33:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52680 "EHLO mail.kernel.org"
+        id S1752364AbeFAOdP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:33:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752618AbeFAOcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:32:55 -0400
+        id S1752618AbeFAOdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:33:10 -0400
 From: Frederic Weisbecker <frederic@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>,
@@ -26,9 +26,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 07/12] sh: Remove "struct arch_hw_breakpoint::name" unused field
-Date: Fri,  1 Jun 2018 16:32:00 +0200
-Message-Id: <1527863526-32677-8-git-send-email-frederic@kernel.org>
+Subject: [PATCH 10/12] perf/breakpoint: Remove default hw_breakpoint_arch_parse()
+Date: Fri,  1 Jun 2018 16:32:03 +0200
+Message-Id: <1527863526-32677-11-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527863526-32677-1-git-send-email-frederic@kernel.org>
 References: <1527863526-32677-1-git-send-email-frederic@kernel.org>
@@ -36,7 +36,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This field seem to be unused, perhaps a leftover from old code...
+All architectures have implemented it, we can now remove the poor weak
+version.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
@@ -60,39 +61,114 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Joel Fernandes <joel.opensrc@gmail.com>
 ---
- arch/sh/include/asm/hw_breakpoint.h | 1 -
- arch/sh/kernel/hw_breakpoint.c      | 7 -------
- 2 files changed, 8 deletions(-)
+ arch/arm/include/asm/hw_breakpoint.h     |  1 -
+ arch/arm64/include/asm/hw_breakpoint.h   |  1 -
+ arch/powerpc/include/asm/hw_breakpoint.h |  1 -
+ arch/sh/include/asm/hw_breakpoint.h      |  1 -
+ arch/x86/include/asm/hw_breakpoint.h     |  1 -
+ arch/xtensa/include/asm/hw_breakpoint.h  |  1 -
+ kernel/events/hw_breakpoint.c            | 17 -----------------
+ 7 files changed, 23 deletions(-)
 
+diff --git a/arch/arm/include/asm/hw_breakpoint.h b/arch/arm/include/asm/hw_breakpoint.h
+index 1e02925..ac54c06 100644
+--- a/arch/arm/include/asm/hw_breakpoint.h
++++ b/arch/arm/include/asm/hw_breakpoint.h
+@@ -122,7 +122,6 @@ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ extern int hw_breakpoint_arch_parse(struct perf_event *bp,
+ 				    const struct perf_event_attr *attr,
+ 				    struct arch_hw_breakpoint *hw);
+-#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 					   unsigned long val, void *data);
+ 
+diff --git a/arch/arm64/include/asm/hw_breakpoint.h b/arch/arm64/include/asm/hw_breakpoint.h
+index bf9c305..6a53e59 100644
+--- a/arch/arm64/include/asm/hw_breakpoint.h
++++ b/arch/arm64/include/asm/hw_breakpoint.h
+@@ -129,7 +129,6 @@ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ extern int hw_breakpoint_arch_parse(struct perf_event *bp,
+ 				    const struct perf_event_attr *attr,
+ 				    struct arch_hw_breakpoint *hw);
+-#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 					   unsigned long val, void *data);
+ 
+diff --git a/arch/powerpc/include/asm/hw_breakpoint.h b/arch/powerpc/include/asm/hw_breakpoint.h
+index 38ae180..27d6e3c 100644
+--- a/arch/powerpc/include/asm/hw_breakpoint.h
++++ b/arch/powerpc/include/asm/hw_breakpoint.h
+@@ -65,7 +65,6 @@ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ extern int hw_breakpoint_arch_parse(struct perf_event *bp,
+ 				    const struct perf_event_attr *attr,
+ 				    struct arch_hw_breakpoint *hw);
+-#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 						unsigned long val, void *data);
+ int arch_install_hw_breakpoint(struct perf_event *bp);
 diff --git a/arch/sh/include/asm/hw_breakpoint.h b/arch/sh/include/asm/hw_breakpoint.h
-index 8a88ed0..dae622d 100644
+index 867edcc..199d17b 100644
 --- a/arch/sh/include/asm/hw_breakpoint.h
 +++ b/arch/sh/include/asm/hw_breakpoint.h
-@@ -10,7 +10,6 @@
- #include <linux/types.h>
+@@ -58,7 +58,6 @@ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ extern int hw_breakpoint_arch_parse(struct perf_event *bp,
+ 				    const struct perf_event_attr *attr,
+ 				    struct arch_hw_breakpoint *hw);
+-#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 					   unsigned long val, void *data);
  
- struct arch_hw_breakpoint {
--	char		*name; /* Contains name of the symbol to set bkpt */
- 	unsigned long	address;
- 	u16		len;
- 	u16		type;
-diff --git a/arch/sh/kernel/hw_breakpoint.c b/arch/sh/kernel/hw_breakpoint.c
-index 713699b..3594773 100644
---- a/arch/sh/kernel/hw_breakpoint.c
-+++ b/arch/sh/kernel/hw_breakpoint.c
-@@ -248,13 +248,6 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
- 	}
+diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
+index 6c88e8e2..a1f0e90 100644
+--- a/arch/x86/include/asm/hw_breakpoint.h
++++ b/arch/x86/include/asm/hw_breakpoint.h
+@@ -57,7 +57,6 @@ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ extern int hw_breakpoint_arch_parse(struct perf_event *bp,
+ 				    const struct perf_event_attr *attr,
+ 				    struct arch_hw_breakpoint *hw);
+-#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
+ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 					   unsigned long val, void *data);
  
- 	/*
--	 * For kernel-addresses, either the address or symbol name can be
--	 * specified.
--	 */
--	if (info->name)
--		info->address = (unsigned long)kallsyms_lookup_name(info->name);
+diff --git a/arch/xtensa/include/asm/hw_breakpoint.h b/arch/xtensa/include/asm/hw_breakpoint.h
+index f347c21..9f119c1 100644
+--- a/arch/xtensa/include/asm/hw_breakpoint.h
++++ b/arch/xtensa/include/asm/hw_breakpoint.h
+@@ -40,7 +40,6 @@ int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+ int hw_breakpoint_arch_parse(struct perf_event *bp,
+ 			     const struct perf_event_attr *attr,
+ 			     struct arch_hw_breakpoint *hw);
+-#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
+ int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 				    unsigned long val, void *data);
+ 
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 89fe94c..e7bc8d0 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -400,23 +400,6 @@ int dbg_release_bp_slot(struct perf_event *bp)
+ 	return 0;
+ }
+ 
+-#ifndef hw_breakpoint_arch_parse
+-int hw_breakpoint_arch_parse(struct perf_event *bp,
+-			     const struct perf_event_attr *attr,
+-			     struct arch_hw_breakpoint *hw)
+-{
+-	int err;
 -
--	/*
- 	 * Check that the low-order bits of the address are appropriate
- 	 * for the alignment implied by len.
- 	 */
+-	err = arch_validate_hwbkpt_settings(bp);
+-	if (err)
+-		return err;
+-
+-	*hw = bp->hw.info;
+-
+-	return 0;
+-}
+-#endif
+-
+ static int hw_breakpoint_parse(struct perf_event *bp,
+ 			       const struct perf_event_attr *attr,
+ 			       struct arch_hw_breakpoint *hw)
 -- 
 2.7.4
