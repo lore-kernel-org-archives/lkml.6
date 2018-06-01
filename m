@@ -1,90 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751070AbeFABWH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 21:22:07 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8245 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750793AbeFABWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 21:22:05 -0400
-Subject: Re: [PATCH 8/8] scsi: libsas: support SATA phy link rate unmatch the
- pathway
-To: John Garry <john.garry@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20180529022309.21071-1-yanaijie@huawei.com>
- <20180529022309.21071-9-yanaijie@huawei.com>
- <ed533ab2-018d-0bda-568f-0034dac1e332@huawei.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        chenqilin <chenqilin2@huawei.com>, Ewan Milne <emilne@redhat.com>,
-        Tomas Henzl <thenzl@redhat.com>
-From: Jason Yan <yanaijie@huawei.com>
-Message-ID: <5B109FA8.9010402@huawei.com>
-Date: Fri, 1 Jun 2018 09:21:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+        id S1751203AbeFABWY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 21:22:24 -0400
+Received: from mail-pl0-f41.google.com ([209.85.160.41]:39203 "EHLO
+        mail-pl0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750718AbeFABWW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 21:22:22 -0400
+X-Google-Smtp-Source: ADUXVKJPOHeA4+ygIVnDreaenhrKK89ZsiBGYLGYJFj+xNO0uG6eGC7pRZhO+STZQVI0W0qOvTXaXg==
+Subject: Re: Can kfree() sleep at runtime?
+To: Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc: penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <30ecafd7-ed61-907b-f924-77fc37dcc753@gmail.com>
+ <20180531140808.GA30221@bombadil.infradead.org>
+ <01000163b68a8026-56fb6a35-040b-4af9-8b73-eb3b4a41c595-000000@email.amazonses.com>
+ <20180531141452.GC30221@bombadil.infradead.org>
+ <01000163b69b6b62-6c5ac940-d6c1-419a-9dc9-697908020c53-000000@email.amazonses.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <066df211-4d1e-787b-b89d-31b8827ea7a5@gmail.com>
+Date: Fri, 1 Jun 2018 09:22:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <ed533ab2-018d-0bda-568f-0034dac1e332@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <01000163b69b6b62-6c5ac940-d6c1-419a-9dc9-697908020c53-000000@email.amazonses.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.96.203]
-X-CFilter-Loop: Reflected
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2018/6/1 0:05, John Garry wrote:
-> On 29/05/2018 03:23, Jason Yan wrote:
->> If a SATA disk attached to a expander phy and it's linkrate is greater
->> than the expander host phy's linkrate, the disk will failed to discover.
->> The topology is like below:
->>
->>    +----------+           +----------+
->>    |          |           |          |
->>    |          |-- 3.0 G --|          |-- 6.0 G -- SAS  disk
->>    |          |           |          |
->>    |          |-- 3.0 G --|          |-- 6.0 G -- SAS  disk
->>    |initiator |           |          |
->>    | device   |-- 3.0 G --| Expander |-- 6.0 G -- SAS  disk
->>    |          |           |          |
->>    |          |-- 3.0 G --|          |-- 6.0 G -- SATA disk  -->failed
->> to connect
->>    |          |           |          |
->>    |          |           |          |-- 6.0 G -- SATA disk  -->failed
->> to connect
->>    |          |           |          |
->>    +----------+           +----------+
->>
->> And when we check the sas protocal spec, this scenario is described as
->> this:
->>
->> 7.13 Rate matching
->> ......
->> If an expander phy attached to a SATA phy is using a physical link rate
->> greater than the maximum connection rate supported by the pathway from
->> an STP initiator port, a management application client should use the
->> SMP PHY CONTROL function (see 10.4.3.10) to set the PROGRAMMED MAXIMUM
->> PHYSICAL LINK RATE field of the expander phy to the maximum connection
->> rate supported by the pathway from that STP initiator port.
->>
->> In order to support this scenario, checking the SATA disk's linkrate
->> to see if it is greater than any phy's linkrate it may pass through.
->> Remember the minimum linkrate of the pathway and set the SATA phy
->> linkrate to it using the SMP PHY CONTROL function.
+On 2018/5/31 22:30, Christopher Lameter wrote:
+> On Thu, 31 May 2018, Matthew Wilcox wrote:
 >
-> As we (re)discover the tree, can we keep track of the min pathway to the
-> root PHY dynamically (per expander), and then take action for any SATA
-> devices attached which have a negotiated linkrate greater (than the
-> expanders min pathway)? This would be an alternate to your approach of
-> finishing discovery and then checking the min pathway as a whole new step.
+>>> Freeing a page in the page allocator also was traditionally not sleeping.
+>>> That has changed?
+>> No.  "Your bug" being "The bug in your static analysis tool".  It probably
+>> isn't following the data flow correctly (or deeply enough).
+> Well ok this is not going to trigger for kfree(), this is x86 specific and
+> requires CONFIG_DEBUG_PAGEALLOC and a free of a page in a huge page.
 >
+> Ok that is a very contorted situation but how would a static checker deal
+> with that?
 
-Seems better, I will have a try to see if it works. Thanks.
+I admit that my tool does not follow the data flow well, and I need to 
+improve it.
+In this case of kfree(), I want know how the data flow leads to my mistake.
 
->
-> .
->
+
+Best wishes,
+Jia-Ju Bai
