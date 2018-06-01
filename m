@@ -1,169 +1,418 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753014AbeFAPSK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:18:10 -0400
-Received: from alln-iport-6.cisco.com ([173.37.142.93]:8745 "EHLO
-        alln-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752776AbeFAPSJ (ORCPT
+        id S1753039AbeFAPSs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:18:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49080 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751926AbeFAPSp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:18:09 -0400
-X-IronPort-AV: E=Sophos;i="5.49,467,1520899200";
-   d="scan'208";a="122955600"
-From: Christian Hansen <chansen3@cisco.com>
-To: linux-kernel@vger.kernel.org
-Cc: xe-linux-external@cisco.com, Christian Hansen <chansen3@cisco.com>
-Subject: [PATCH] tools: adding support for idle page tracking to tool
-Date: Fri,  1 Jun 2018 11:18:06 -0400
-Message-Id: <20180601151806.43388-1-chansen3@cisco.com>
-X-Mailer: git-send-email 2.10.3.dirty
-X-Auto-Response-Suppress: DR, OOF, AutoReply
+        Fri, 1 Jun 2018 11:18:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7E77360646
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+Subject: Re: [RFC PATCH 2/5] remoteproc: q6v5: Extract common resource
+ handling
+To: Sricharan R <sricharan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>, Rohit kumar <rohitkr@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+ <20180523052054.19025-3-bjorn.andersson@linaro.org>
+ <8c2acd62-0f3b-9167-b028-1f5149bd7937@codeaurora.org>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <5a1ecc9e-34e8-63be-3502-5d2927fbc97c@codeaurora.org>
+Date: Fri, 1 Jun 2018 20:48:37 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <8c2acd62-0f3b-9167-b028-1f5149bd7937@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding a -i flag which will use the kernels's idle
-page tracking to mark pages idle.  As the tool already
-prints the idle flag if set, subsequent runs will show
-which pages have been accessed since last run.
+Hi Sricharan,
 
-Signed-off-by: Christian Hansen <chansen3@cisco.com>
----
- tools/vm/page-types.c | 47 ++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 46 insertions(+), 1 deletion(-)
+On 06/01/2018 11:46 AM, Sricharan R wrote:
+> Hi Bjorn,
+>    Thanks for this much needed consolidation.
+> 
+> On 5/23/2018 10:50 AM, Bjorn Andersson wrote:
+>> Shared between all Hexagon V5 based remoteprocs is the handling of the 5
+>> interrupts and the SMP2P stop request, so break this out into a separate
+>> function in order to allow these drivers to be cleaned up.
+>>
+>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> ---
+>>   drivers/remoteproc/Kconfig     |   5 +
+>>   drivers/remoteproc/Makefile    |   1 +
+>>   drivers/remoteproc/qcom_q6v5.c | 243 +++++++++++++++++++++++++++++++++
+>>   drivers/remoteproc/qcom_q6v5.h |  46 +++++++
+>>   4 files changed, 295 insertions(+)
+>>   create mode 100644 drivers/remoteproc/qcom_q6v5.c
+>>   create mode 100644 drivers/remoteproc/qcom_q6v5.h
+>>
+>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>> index cd1c168fd188..63b79ea91a21 100644
+>> --- a/drivers/remoteproc/Kconfig
+>> +++ b/drivers/remoteproc/Kconfig
+>> @@ -102,6 +102,11 @@ config QCOM_ADSP_PIL
+>>   config QCOM_RPROC_COMMON
+>>   	tristate
+>>   
+>> +config QCOM_Q6V5_COMMON
+>> +	tristate
+>> +	depends on ARCH_QCOM
+>> +	depends on QCOM_SMEM
+>> +
+>>   config QCOM_Q6V5_PIL
+>>   	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
+>>   	depends on OF && ARCH_QCOM
+>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>> index 02627ede8d4a..5dd0249cf76a 100644
+>> --- a/drivers/remoteproc/Makefile
+>> +++ b/drivers/remoteproc/Makefile
+>> @@ -16,6 +16,7 @@ obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
+>>   obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
+>>   obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
+>>   obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
+>> +obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
+>>   obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
+>>   obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
+>>   obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
+>> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+>> new file mode 100644
+>> index 000000000000..9076537a1671
+>> --- /dev/null
+>> +++ b/drivers/remoteproc/qcom_q6v5.c
+>> @@ -0,0 +1,243 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Qualcomm Peripheral Image Loader for Q6V5 WCSS
+>> + *
+> 
+>    Probably just Q6V5, QCSS not needed.
+> 
+>> + * Copyright (C) 2016-2018 Linaro Ltd.
+>> + * Copyright (C) 2014 Sony Mobile Communications AB
+>> + * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+>> + */
+>> +#include <linux/kernel.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/soc/qcom/smem.h>
+>> +#include <linux/soc/qcom/smem_state.h>
+>> +#include <linux/remoteproc.h>
+>> +#include "qcom_q6v5.h"
+>> +
+>> +/**
+>> + * qcom_q6v5_prepare() - reinitialize the qcom_q6v5 context before start
+>> + * @q6v5:	reference to qcom_q6v5 context to be reinitialized
+>> + *
+>> + * Return: 0 on success, negative errno on failure
+>> + */
+>> +int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
+>> +{
+>> +	reinit_completion(&q6v5->start_done);
+>> +	reinit_completion(&q6v5->stop_done);
+>> +
+>> +	q6v5->running = true;
+>> +	q6v5->handover_issued = false;
+>> +
+>> +	enable_irq(q6v5->handover_irq);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * qcom_q6v5_unprepare() - unprepare the qcom_q6v5 context after stop
+>> + * @q6v5:	reference to qcom_q6v5 context to be unprepared
+>> + *
+>> + * Return: 0 on success, 1 if handover hasn't yet been called
+>> + */
+>> +int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
+>> +{
+>> +	disable_irq(q6v5->handover_irq);
+>> +
+>> +	return !q6v5->handover_issued;
+>> +}
+>> +
+>> +static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
+>> +{
+>> +	struct qcom_q6v5 *q6v5 = data;
+>> +	size_t len;
+>> +	char *msg;
+>> +
+>> +	/* Sometimes the stop triggers a watchdog rather than a stop-ack */
+>> +	if (!q6v5->running) {
+>> +		complete(&q6v5->stop_done);
+>> +		return IRQ_HANDLED;
+>> +	}
+>> +
+> 
+>     Does this change the behavior for adsp pil, which was unconditionally
+>     doing a rproc_report_crash before, but now checks for the running flag
+>     or probably this is the correct sequence ?
+> 
+>> +	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
+>> +	if (!IS_ERR(msg) && len > 0 && msg[0])
+>> +		dev_err(q6v5->dev, "watchdog received: %s\n", msg);
+>> +	else
+>> +		dev_err(q6v5->dev, "watchdog without message\n");
+>> +
+>> +	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
+>> +
+> 
+>     Should be rproc_report_crash(q6v5->rproc, RPROC_WATCHDOG);
+> 
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
+>> +{
+>> +	struct qcom_q6v5 *q6v5 = data;
+>> +	size_t len;
+>> +	char *msg;
+>> +
+>> +	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
+>> +	if (!IS_ERR(msg) && len > 0 && msg[0])
+>> +		dev_err(q6v5->dev, "fatal error received: %s\n", msg);
+>> +	else
+>> +		dev_err(q6v5->dev, "fatal error without message\n");
+>> +
+>> +	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static irqreturn_t q6v5_ready_interrupt(int irq, void *data)
+>> +{
+>> +	struct qcom_q6v5 *q6v5 = data;
+>> +
+>> +	complete(&q6v5->start_done);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+> 
+>    For adsp, previously start_done completion was done as a part of
+>    handover interrupt, now its done in ready. Does it mean that the
+>    entries in DT should be changed etc ?
 
-diff --git a/tools/vm/page-types.c b/tools/vm/page-types.c
-index a8783f4..1a4f70d 100644
---- a/tools/vm/page-types.c
-+++ b/tools/vm/page-types.c
-@@ -77,6 +77,8 @@
- #define PROC_KPAGEFLAGS		"/proc/kpageflags"
- #define PROC_KPAGECGROUP	"/proc/kpagecgroup"
- 
-+#define SYS_KERNEL_MM_PAGE_IDLE "/sys/kernel/mm/page_idle/bitmap"
-+
- /* [32-] kernel hacking assistances */
- #define KPF_RESERVED		32
- #define KPF_MLOCKED		33
-@@ -167,6 +169,7 @@ static const char * const debugfs_known_mountpoints[] = {
- 
- static int		opt_raw;	/* for kernel developers */
- static int		opt_list;	/* list pages (in ranges) */
-+static int		opt_mark_idle;	/* set accessed bit */
- static int		opt_no_summary;	/* don't show summary */
- static pid_t		opt_pid;	/* process to walk */
- const char		*opt_file;	/* file or directory path */
-@@ -194,6 +197,7 @@ static int		page_size;
- static int		pagemap_fd;
- static int		kpageflags_fd;
- static int		kpagecgroup_fd = -1;
-+static int		page_idle_fd = -1;
- 
- static int		opt_hwpoison;
- static int		opt_unpoison;
-@@ -566,6 +570,30 @@ static int unpoison_page(unsigned long offset)
- 	return 0;
- }
- 
-+static int mark_page_idle(unsigned long offset)
-+{
-+	static unsigned long off;
-+	static uint64_t buf;
-+	int len;
-+
-+	if ((offset / 64 == off / 64) || buf == 0) {
-+		buf |= 1UL << (offset % 64);
-+		off = offset;
-+		return 0;
-+	}
-+
-+	len = pwrite(page_idle_fd, &buf, 8, 8 * (off / 64));
-+	if (len < 0) {
-+		perror("mark page idle");
-+		return len;
-+	}
-+
-+	buf = 1UL << (offset % 64);
-+	off = offset;
-+
-+	return 0;
-+}
-+
- /*
-  * page frame walker
-  */
-@@ -613,6 +641,9 @@ static void add_page(unsigned long voffset, unsigned long offset,
- 	if (opt_unpoison)
- 		unpoison_page(offset);
- 
-+	if (opt_mark_idle)
-+		mark_page_idle(offset);
-+
- 	if (opt_list == 1)
- 		show_page_range(voffset, offset, 1, flags, cgroup);
- 	else if (opt_list == 2)
-@@ -755,6 +786,9 @@ static void walk_addr_ranges(void)
- 		else
- 			walk_task(opt_offset[i], opt_size[i]);
- 
-+	if (opt_mark_idle)
-+		mark_page_idle(0);
-+
- 	close(kpageflags_fd);
- }
- 
-@@ -785,6 +819,7 @@ static void usage(void)
- "            -c|--cgroup  path|@inode   Walk pages within memory cgroup\n"
- "            -p|--pid     pid           Walk process address space\n"
- "            -f|--file    filename      Walk file address space\n"
-+"            -i|--mark-idle             Mark pages idle\n"
- "            -l|--list                  Show page details in ranges\n"
- "            -L|--list-each             Show page details one by one\n"
- "            -C|--list-cgroup           Show cgroup inode for pages\n"
-@@ -1189,6 +1224,7 @@ static const struct option opts[] = {
- 	{ "bits"      , 1, NULL, 'b' },
- 	{ "cgroup"    , 1, NULL, 'c' },
- 	{ "describe"  , 1, NULL, 'd' },
-+	{ "mark-idle" , 0, NULL, 'i' },
- 	{ "list"      , 0, NULL, 'l' },
- 	{ "list-each" , 0, NULL, 'L' },
- 	{ "list-cgroup", 0, NULL, 'C' },
-@@ -1207,7 +1243,7 @@ int main(int argc, char *argv[])
- 	page_size = getpagesize();
- 
- 	while ((c = getopt_long(argc, argv,
--				"rp:f:a:b:d:c:ClLNXxF:h", opts, NULL)) != -1) {
-+				"rp:f:a:b:d:c:CilLNXxF:h", opts, NULL)) != -1) {
- 		switch (c) {
- 		case 'r':
- 			opt_raw = 1;
-@@ -1233,6 +1269,9 @@ int main(int argc, char *argv[])
- 		case 'd':
- 			describe_flags(optarg);
- 			exit(0);
-+		case 'i':
-+			opt_mark_idle = 1;
-+			break;
- 		case 'l':
- 			opt_list = 1;
- 			break;
-@@ -1268,6 +1307,9 @@ int main(int argc, char *argv[])
- 	if (opt_cgroup || opt_list_cgroup)
- 		kpagecgroup_fd = checked_open(PROC_KPAGECGROUP, O_RDONLY);
- 
-+	if (opt_mark_idle && opt_file)
-+		page_idle_fd = checked_open(SYS_KERNEL_MM_PAGE_IDLE, O_RDWR);
-+
- 	if (opt_list && opt_pid)
- 		printf("voffset\t");
- 	if (opt_list && opt_file)
-@@ -1295,5 +1337,8 @@ int main(int argc, char *argv[])
- 
- 	show_summary();
- 
-+	if (page_idle_fd >= 0)
-+		close(page_idle_fd);
-+
- 	return 0;
- }
+ready interrupt has always been a part dt entry however a corresponding
+interrupt handler was never registered. The trigger condition for
+the handover interrupt in the remote processor seem to vary across SoCs
+but we can always rely on the ready interrupt to declare the rproc
+device is running.
+
+>> +
+>> +/**
+>> + * qcom_q6v5_wait_for_start() - wait for remote processor start signal
+>> + * @q6v5:	reference to qcom_q6v5 context
+>> + * @timeout:	timeout to wait for the event, in jiffies
+>> + *
+>> + * qcom_q6v5_unprepare() should not be called when this function fails.
+>> + *
+>> + * Return: 0 on success, -ETIMEDOUT on timeout
+>> + */
+>> +int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = wait_for_completion_timeout(&q6v5->start_done, timeout);
+>> +	if (!ret)
+>> +		disable_irq(q6v5->handover_irq);
+>> +
+>> +	return !ret ? -ETIMEDOUT : 0;
+>> +}
+>> +
+>> +static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
+>> +{
+>> +	struct qcom_q6v5 *q6v5 = data;
+>> +
+>> +	if (q6v5->handover)
+>> +		q6v5->handover(q6v5);
+>> +
+>> +	q6v5->handover_issued = true;
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static irqreturn_t q6v5_stop_interrupt(int irq, void *data)
+>> +{
+>> +	struct qcom_q6v5 *q6v5 = data;
+>> +
+>> +	complete(&q6v5->stop_done);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +/**
+>> + * qcom_q6v5_request_stop() - request the remote processor to stop
+>> + * @q6v5:	reference to qcom_q6v5 context
+>> + *
+>> + * Return: 0 on success, negative errno on failure
+>> + */
+>> +int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
+>> +{
+>> +	int ret;
+>> +
+>> +	q6v5->running = false;
+>> +
+>> +	qcom_smem_state_update_bits(q6v5->state,
+>> +				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
+>> +
+>> +	ret = wait_for_completion_timeout(&q6v5->stop_done, 5 * HZ);
+>> +
+>> +	qcom_smem_state_update_bits(q6v5->state, BIT(q6v5->stop_bit), 0);
+>> +
+>> +	return ret == 0 ? -ETIMEDOUT : 0;
+>> +}
+>> +
+>> +/**
+>> + * qcom_q6v5_init() - initializer of the q6v5 common struct
+>> + * @q6v5:	handle to be initialized
+>> + * @pdev:	platform_device reference for acquiring resources
+>> + * @rproc:	associated remoteproc instance
+>> + * @crash_reason: SMEM id for crash reason string, or 0 if none
+>> + * @handover:	function to be called when proxy resources should be released
+>> + *
+>> + * Return: 0 on success, negative errno on failure
+>> + */
+>> +int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>> +		   struct rproc *rproc, int crash_reason,
+>> +		   void (*handover)(struct qcom_q6v5 *q6v5))
+>> +{
+>> +	int ret;
+>> +
+>> +	q6v5->rproc = rproc;
+>> +	q6v5->dev = &pdev->dev;
+>> +	q6v5->crash_reason = crash_reason;
+>> +	q6v5->handover = handover;
+>> +
+>> +	init_completion(&q6v5->start_done);
+>> +	init_completion(&q6v5->stop_done);
+>> +
+>> +	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
+>> +	ret = devm_request_threaded_irq(&pdev->dev, q6v5->wdog_irq,
+>> +					NULL, q6v5_wdog_interrupt,
+>> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+>> +					"q6v5 wdog", q6v5);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "failed to acquire wdog IRQ\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
+>> +	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
+>> +					NULL, q6v5_fatal_interrupt,
+>> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+>> +					"q6v5 fatal", q6v5);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "failed to acquire fatal IRQ\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
+>> +	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
+>> +					NULL, q6v5_ready_interrupt,
+>> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+>> +					"q6v5 ready", q6v5);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "failed to acquire ready IRQ\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
+>> +	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
+>> +					NULL, q6v5_handover_interrupt,
+>> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+>> +					"q6v5 handover", q6v5);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "failed to acquire handover IRQ\n");
+>> +		return ret;
+>> +	}
+>> +	disable_irq(q6v5->handover_irq);
+>> +
+>> +	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
+>> +	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
+>> +					NULL, q6v5_stop_interrupt,
+>> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+>> +					"q6v5 stop", q6v5);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "failed to acquire stop-ack IRQ\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	q6v5->state = qcom_smem_state_get(&pdev->dev, "stop", &q6v5->stop_bit);
+>> +	if (IS_ERR(q6v5->state)) {
+>> +		dev_err(&pdev->dev, "failed to acquire stop state\n");
+>> +		return PTR_ERR(q6v5->state);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+>> new file mode 100644
+>> index 000000000000..7ac92c1e0f49
+>> --- /dev/null
+>> +++ b/drivers/remoteproc/qcom_q6v5.h
+>> @@ -0,0 +1,46 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +
+>> +#ifndef __QCOM_Q6V5_H__
+>> +#define __QCOM_Q6V5_H__
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/completion.h>
+>> +
+>> +struct rproc;
+>> +struct qcom_smem_state;
+>> +
+>> +struct qcom_q6v5 {
+>> +	struct device *dev;
+>> +	struct rproc *rproc;
+>> +
+>> +	struct qcom_smem_state *state;
+>> +	unsigned stop_bit;
+>> +
+>> +	int wdog_irq;
+>> +	int fatal_irq;
+>> +	int ready_irq;
+>> +	int handover_irq;
+>> +	int stop_irq;
+>> +
+>> +	bool handover_issued;
+>> +
+>> +	struct completion start_done;
+>> +	struct completion stop_done;
+>> +
+>> +	int crash_reason;
+>> +
+>> +	bool running;
+>> +
+>> +	void (*handover)(struct qcom_q6v5 *q6v5);
+>> +};
+>> +
+>> +int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>> +		   struct rproc *rproc, int crash_reason,
+>> +		   void (*handover)(struct qcom_q6v5 *q6v5));
+>> +
+>> +int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
+>> +int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
+>> +int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5);
+>> +int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
+>> +
+>> +#endif
+>>
+> 
+> Regards,
+>   Sricharan
+> 
+
 -- 
-2.10.3.dirty
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
