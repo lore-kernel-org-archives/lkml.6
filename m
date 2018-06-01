@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753510AbeFAU0p (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 16:26:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53032 "EHLO
+        id S1753599AbeFAU05 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 16:26:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53164 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752572AbeFAU0h (ORCPT
+        with ESMTP id S1752572AbeFAU0r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 16:26:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 281B8605A4
+        Fri, 1 Jun 2018 16:26:47 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F4E9605BD
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
 From: Vikash Garodia <vgarodia@codeaurora.org>
@@ -18,45 +18,91 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, vgarodia@codeaurora.org,
         acourbot@chromium.org
-Subject: [PATCH v2 0/5] Venus updates - PIL 
-Date: Sat,  2 Jun 2018 01:56:03 +0530
-Message-Id: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+Subject: [PATCH v2 1/5] media: venus: add a routine to reset ARM9
+Date: Sat,  2 Jun 2018 01:56:04 +0530
+Message-Id: <1527884768-22392-2-git-send-email-vgarodia@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Add a new routine to reset the ARM9 and brings it
+out of reset. This is in preparation to add PIL
+functionality in venus driver.
 
-Here is v2 with following comments addressed:
+Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+---
+ drivers/media/platform/qcom/venus/firmware.c     | 26 ++++++++++++++++++++++++
+ drivers/media/platform/qcom/venus/hfi_venus_io.h |  5 +++++
+ 2 files changed, 31 insertions(+)
 
-* drop 1/4 patch from v1 and use relevant api to load
-  firmware without PAS.
-* add some details on ARM9 role in video hardware.
-* abstract scm calls to set hardware state.
-* remove setting aperture range for firmware and vcodec
-  context banks.
-* add misc code review comments related to return
-  handling, unwanted cast, etc.
-
-Comments are welcome!
-
-Vikash Garodia (5):
-  media: venus: add a routine to reset ARM9
-  media: venus: add a routine to set venus state
-  venus: add check to make scm calls
-  media: venus: add no TZ boot and shutdown routine
-  venus: register separate driver for firmware device
-
- .../devicetree/bindings/media/qcom,venus.txt       |   8 +-
- drivers/media/platform/qcom/venus/core.c           |  58 +++++-
- drivers/media/platform/qcom/venus/core.h           |  10 +
- drivers/media/platform/qcom/venus/firmware.c       | 217 ++++++++++++++++++---
- drivers/media/platform/qcom/venus/firmware.h       |  12 +-
- drivers/media/platform/qcom/venus/hfi_venus.c      |  13 +-
- drivers/media/platform/qcom/venus/hfi_venus_io.h   |   5 +
- 7 files changed, 275 insertions(+), 48 deletions(-)
-
+diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+index 521d4b3..7d89b5a 100644
+--- a/drivers/media/platform/qcom/venus/firmware.c
++++ b/drivers/media/platform/qcom/venus/firmware.c
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/device.h>
+ #include <linux/firmware.h>
++#include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+@@ -22,11 +23,36 @@
+ #include <linux/sizes.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+ 
++#include "core.h"
+ #include "firmware.h"
++#include "hfi_venus_io.h"
+ 
+ #define VENUS_PAS_ID			9
+ #define VENUS_FW_MEM_SIZE		(6 * SZ_1M)
+ 
++static void venus_reset_hw(struct venus_core *core)
++{
++	void __iomem *reg_base = core->base;
++
++	writel(0, reg_base + WRAPPER_FW_START_ADDR);
++	writel(VENUS_FW_MEM_SIZE, reg_base + WRAPPER_FW_END_ADDR);
++	writel(0, reg_base + WRAPPER_CPA_START_ADDR);
++	writel(VENUS_FW_MEM_SIZE, reg_base + WRAPPER_CPA_END_ADDR);
++	writel(0x0, reg_base + WRAPPER_CPU_CGC_DIS);
++	writel(0x0, reg_base + WRAPPER_CPU_CLOCK_CONFIG);
++
++	/* Make sure all register writes are committed. */
++	mb();
++
++	/*
++	 * Need to wait 10 cycles of internal clocks before bringing ARM9
++	 * out of reset.
++	 */
++	udelay(1);
++
++	/* Bring Arm9 out of reset */
++	writel_relaxed(0, reg_base + WRAPPER_A9SS_SW_RESET);
++}
+ int venus_boot(struct device *dev, const char *fwname)
+ {
+ 	const struct firmware *mdt;
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus_io.h b/drivers/media/platform/qcom/venus/hfi_venus_io.h
+index 76f4793..39afa5d 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus_io.h
++++ b/drivers/media/platform/qcom/venus/hfi_venus_io.h
+@@ -109,6 +109,11 @@
+ #define WRAPPER_CPU_CGC_DIS			(WRAPPER_BASE + 0x2010)
+ #define WRAPPER_CPU_STATUS			(WRAPPER_BASE + 0x2014)
+ #define WRAPPER_SW_RESET			(WRAPPER_BASE + 0x3000)
++#define WRAPPER_CPA_START_ADDR		(WRAPPER_BASE + 0x1020)
++#define WRAPPER_CPA_END_ADDR		(WRAPPER_BASE + 0x1024)
++#define WRAPPER_FW_START_ADDR		(WRAPPER_BASE + 0x1028)
++#define WRAPPER_FW_END_ADDR			(WRAPPER_BASE + 0x102C)
++#define WRAPPER_A9SS_SW_RESET		(WRAPPER_BASE + 0x3000)
+ 
+ /* Venus 4xx */
+ #define WRAPPER_VCODEC0_MMCC_POWER_STATUS	(WRAPPER_BASE + 0x90)
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
