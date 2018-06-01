@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751876AbeFAErF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 00:47:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34223 "EHLO mx2.suse.de"
+        id S1751900AbeFAErc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 00:47:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34217 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751792AbeFAErB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 00:47:01 -0400
+        id S1750961AbeFAEqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 00:46:54 -0400
 From: NeilBrown <neilb@suse.com>
 To: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>
 Date: Fri, 01 Jun 2018 14:44:09 +1000
-Subject: [PATCH 18/18] rhashtable: add rhashtable_walk_delay_rehash()
+Subject: [PATCH 17/18] rhashtable: rename rht_for_each*continue as *from.
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <152782824995.30340.13986786072491794873.stgit@noble>
+Message-ID: <152782824992.30340.13679240743690463593.stgit@noble>
 In-Reply-To: <152782754287.30340.4395718227884933670.stgit@noble>
 References: <152782754287.30340.4395718227884933670.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -22,192 +22,207 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function allows an rhashtable walk to complete
-without any restarts as long as it progresses reasonably
-quickly.
-Any current rehash is waited for, then a counter is incremented
-to stop any further rehash from happening until the 100%
-occupancy mark is reached.
-This particularly ensures that restarts won't happen due to
-the hash table shrinking as shrinking is delayed indefinitely.
+The pattern set by list.h is that for_each..continue()
+iterators start at the next entry after the given one,
+while for_each..next() iterators start at the given
+entry.
+
+The rht_for_each*continue() iterates are documented as though the
+start at the 'next' entry, but actually start at the given entry,
+and they are used expecting that behaviour.
+So fix the documentation and change the names to *from for consistency
+with list.h
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- include/linux/rhashtable-types.h |    3 ++
- include/linux/rhashtable.h       |   14 ++++++++--
- lib/rhashtable.c                 |   54 +++++++++++++++++++++++++++++++++++++-
- 3 files changed, 67 insertions(+), 4 deletions(-)
+ .clang-format              |    8 ++++----
+ include/linux/rhashtable.h |   38 +++++++++++++++++++-------------------
+ lib/rhashtable.c           |    4 ++--
+ 3 files changed, 25 insertions(+), 25 deletions(-)
 
-diff --git a/include/linux/rhashtable-types.h b/include/linux/rhashtable-types.h
-index c08c3bcfb5ad..43de8d10638e 100644
---- a/include/linux/rhashtable-types.h
-+++ b/include/linux/rhashtable-types.h
-@@ -76,6 +76,7 @@ struct rhashtable_params {
-  * @max_elems: Maximum number of elements in table
-  * @p: Configuration parameters
-  * @rhlist: True if this is an rhltable
-+ * @rehash_delayers: number of walkers asking for rehash to be delayed.
-  * @run_work: Deferred worker to expand/shrink asynchronously
-  * @mutex: Mutex to protect current/future table swapping
-  * @lock: Spin lock to protect walker list
-@@ -90,6 +91,7 @@ struct rhashtable {
- 	unsigned int			max_elems;
- 	struct rhashtable_params	p;
- 	bool				rhlist;
-+	atomic_t			rehash_delayers;
- 	struct work_struct		run_work;
- 	struct mutex                    mutex;
- 	spinlock_t			lock;
-@@ -134,6 +136,7 @@ struct rhashtable_iter {
- 	unsigned int skip;
- 	bool p_is_unsafe;
- 	bool end_of_table;
-+	bool delay_rehash;
- };
- 
- int rhashtable_init(struct rhashtable *ht,
+diff --git a/.clang-format b/.clang-format
+index faffc0d5af4e..53a5188df01a 100644
+--- a/.clang-format
++++ b/.clang-format
+@@ -332,14 +332,14 @@ ForEachMacros:
+   - 'rhl_for_each_entry_rcu'
+   - 'rhl_for_each_rcu'
+   - 'rht_for_each'
+-  - 'rht_for_each_continue'
++  - 'rht_for_each_from'
+   - 'rht_for_each_entry'
+-  - 'rht_for_each_entry_continue'
++  - 'rht_for_each_entry_from'
+   - 'rht_for_each_entry_rcu'
+-  - 'rht_for_each_entry_rcu_continue'
++  - 'rht_for_each_entry_rcu_from'
+   - 'rht_for_each_entry_safe'
+   - 'rht_for_each_rcu'
+-  - 'rht_for_each_rcu_continue'
++  - 'rht_for_each_rcu_from'
+   - '__rq_for_each_bio'
+   - 'rq_for_each_segment'
+   - 'scsi_for_each_prot_sg'
 diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index e148f72d4a89..42b5d037ad2e 100644
+index f58cb62dce05..e148f72d4a89 100644
 --- a/include/linux/rhashtable.h
 +++ b/include/linux/rhashtable.h
-@@ -233,7 +233,8 @@ static inline bool __rht_grow_above_75(const struct rhashtable *ht,
- 				       unsigned int nelems)
- {
- 	return nelems > (tbl->size / 4 * 3) &&
--	       (!ht->p.max_size || tbl->size < ht->p.max_size);
-+	       (!ht->p.max_size || tbl->size < ht->p.max_size) &&
-+		atomic_read(&ht->rehash_delayers) == 0;
- }
- /**
-  * rht_grow_above_75 - returns true if nelems > 0.75 * table-size
-@@ -263,7 +264,8 @@ static inline bool __rht_shrink_below_30(const struct rhashtable *ht,
- {
- 	/* Shrink table beneath 30% load */
- 	return nelems < (tbl->size * 3 / 10) &&
--	       tbl->size > ht->p.min_size;
-+	       tbl->size > ht->p.min_size &&
-+	       atomic_read(&ht->rehash_delayers) == 0;
- }
- /**
-  * rht_shrink_below_30 - returns true if nelems < 0.3 * table-size
-@@ -285,9 +287,14 @@ static inline bool rht_shrink_below_30(const struct rhashtable *ht,
- 	return __rht_shrink_below_30(ht, tbl, nelems);
+@@ -418,13 +418,13 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
  }
  
-+/**
-+ * rht_grow_above_100 - returns true if nelems > table-size
-+ * @ht:		hash table
-+ * @tbl:	current table
-+ */
- static inline bool __rht_grow_above_100(const struct rhashtable *ht,
- 					const struct bucket_table *tbl,
--					unsigned int nelems)
-+					const unsigned int nelems)
- {
- 	return nelems > tbl->size &&
- 		(!ht->p.max_size || tbl->size < ht->p.max_size);
-@@ -357,6 +364,7 @@ void *rhashtable_insert_slow(struct rhashtable *ht, const void *key,
- void rhashtable_walk_enter(struct rhashtable *ht,
- 			   struct rhashtable_iter *iter);
- void rhashtable_walk_exit(struct rhashtable_iter *iter);
-+void rhashtable_walk_delay_rehash(struct rhashtable_iter *iter);
- int rhashtable_walk_start_check(struct rhashtable_iter *iter) __acquires(RCU);
+ /**
+- * rht_for_each_continue - continue iterating over hash chain
++ * rht_for_each_from - iterate over hash chain from given head
+  * @pos:	the &struct rhash_head to use as a loop cursor.
+- * @head:	the previous &struct rhash_head to continue from
++ * @head:	the &struct rhash_head to start from
+  * @tbl:	the &struct bucket_table
+  * @hash:	the hash value / bucket index
+  */
+-#define rht_for_each_continue(pos, head, tbl, hash) \
++#define rht_for_each_from(pos, head, tbl, hash) \
+ 	for (pos = rht_dereference_bucket(head, tbl, hash); \
+ 	     !rht_is_a_nulls(pos); \
+ 	     pos = rht_dereference_bucket((pos)->next, tbl, hash))
+@@ -436,18 +436,18 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
+  * @hash:	the hash value / bucket index
+  */
+ #define rht_for_each(pos, tbl, hash) \
+-	rht_for_each_continue(pos, rht_ptr(*rht_bucket(tbl, hash)), tbl, hash)
++	rht_for_each_from(pos, rht_ptr(*rht_bucket(tbl, hash)), tbl, hash)
  
- static inline void rhashtable_walk_start(struct rhashtable_iter *iter)
+ /**
+- * rht_for_each_entry_continue - continue iterating over hash chain
++ * rht_for_each_entry_from - iterate over hash chain from given head
+  * @tpos:	the type * to use as a loop cursor.
+  * @pos:	the &struct rhash_head to use as a loop cursor.
+- * @head:	the previous &struct rhash_head to continue from
++ * @head:	the &struct rhash_head to start from
+  * @tbl:	the &struct bucket_table
+  * @hash:	the hash value / bucket index
+  * @member:	name of the &struct rhash_head within the hashable struct.
+  */
+-#define rht_for_each_entry_continue(tpos, pos, head, tbl, hash, member)	\
++#define rht_for_each_entry_from(tpos, pos, head, tbl, hash, member)	\
+ 	for (pos = rht_dereference_bucket(head, tbl, hash);		\
+ 	     (!rht_is_a_nulls(pos)) && rht_entry(tpos, pos, member);	\
+ 	     pos = rht_dereference_bucket((pos)->next, tbl, hash))
+@@ -461,7 +461,7 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
+  * @member:	name of the &struct rhash_head within the hashable struct.
+  */
+ #define rht_for_each_entry(tpos, pos, tbl, hash, member)		\
+-	rht_for_each_entry_continue(tpos, pos, rht_ptr(*rht_bucket(tbl, hash)), \
++	rht_for_each_entry_from(tpos, pos, rht_ptr(*rht_bucket(tbl, hash)), \
+ 				    tbl, hash, member)
+ 
+ /**
+@@ -487,9 +487,9 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
+ 		       rht_dereference_bucket(pos->next, tbl, hash) : NULL)
+ 
+ /**
+- * rht_for_each_rcu_continue - continue iterating over rcu hash chain
++ * rht_for_each_rcu_from - iterate over rcu hash chain from given head
+  * @pos:	the &struct rhash_head to use as a loop cursor.
+- * @head:	the previous &struct rhash_head to continue from
++ * @head:	the &struct rhash_head to start from
+  * @tbl:	the &struct bucket_table
+  * @hash:	the hash value / bucket index
+  *
+@@ -497,7 +497,7 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
+  * the _rcu mutation primitives such as rhashtable_insert() as long as the
+  * traversal is guarded by rcu_read_lock().
+  */
+-#define rht_for_each_rcu_continue(pos, head, tbl, hash)			\
++#define rht_for_each_rcu_from(pos, head, tbl, hash)			\
+ 	for (({barrier(); }),						\
+ 		pos = rht_ptr(rht_dereference_bucket_rcu(head, tbl, hash)); \
+ 	     !rht_is_a_nulls(pos);					\
+@@ -521,10 +521,10 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
+ 	     pos = rcu_dereference_raw(pos->next))
+ 
+ /**
+- * rht_for_each_entry_rcu_continue - continue iterating over rcu hash chain
++ * rht_for_each_entry_rcu_from - iterated over rcu hash chain from given head
+  * @tpos:	the type * to use as a loop cursor.
+  * @pos:	the &struct rhash_head to use as a loop cursor.
+- * @head:	the previous &struct rhash_head to continue from
++ * @head:	the &struct rhash_head to start from
+  * @tbl:	the &struct bucket_table
+  * @hash:	the hash value / bucket index
+  * @member:	name of the &struct rhash_head within the hashable struct.
+@@ -533,7 +533,7 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
+  * the _rcu mutation primitives such as rhashtable_insert() as long as the
+  * traversal is guarded by rcu_read_lock().
+  */
+-#define rht_for_each_entry_rcu_continue(tpos, pos, head, tbl, hash, member) \
++#define rht_for_each_entry_rcu_from(tpos, pos, head, tbl, hash, member) \
+ 	for (({barrier(); }),						    \
+ 	     pos = rht_dereference_bucket_rcu(head, tbl, hash);		    \
+ 	     (!rht_is_a_nulls(pos)) && rht_entry(tpos, pos, member);	    \
+@@ -552,7 +552,7 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
+  * traversal is guarded by rcu_read_lock().
+  */
+ #define rht_for_each_entry_rcu(tpos, pos, tbl, hash, member)		   \
+-	rht_for_each_entry_rcu_continue(tpos, pos,			   \
++	rht_for_each_entry_rcu_from(tpos, pos,			   \
+ 					rht_ptr(*rht_bucket(tbl, hash)),   \
+ 					tbl, hash, member)
+ 
+@@ -609,7 +609,7 @@ static inline struct rhash_head *__rhashtable_lookup(
+ 	hash = rht_key_hashfn(ht, tbl, key, params);
+ 	head = rht_bucket(tbl, hash);
+ 	do {
+-		rht_for_each_rcu_continue(he, *head, tbl, hash) {
++		rht_for_each_rcu_from(he, *head, tbl, hash) {
+ 			if (params.obj_cmpfn ?
+ 			    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
+ 			    rhashtable_compare(&arg, rht_obj(ht, he)))
+@@ -744,7 +744,7 @@ static inline void *__rhashtable_insert_fast(
+ 	}
+ 
+ 
+-	rht_for_each_continue(head, rht_ptr(*headp), tbl, hash) {
++	rht_for_each_from(head, rht_ptr(*headp), tbl, hash) {
+ 		struct rhlist_head *plist;
+ 		struct rhlist_head *list;
+ 
+@@ -1027,7 +1027,7 @@ static inline int __rhashtable_remove_fast_one(
+ 	lock = pprev;
+ 	rht_lock(lock);
+ 
+-	rht_for_each_continue(he, rht_ptr(*pprev), tbl, hash) {
++	rht_for_each_from(he, rht_ptr(*pprev), tbl, hash) {
+ 		struct rhlist_head *list;
+ 
+ 		list = container_of(he, struct rhlist_head, rhead);
+@@ -1189,7 +1189,7 @@ static inline int __rhashtable_replace_fast(
+ 	lock = pprev;
+ 	rht_lock(lock);
+ 
+-	rht_for_each_continue(he, rht_ptr(*pprev), tbl, hash) {
++	rht_for_each_from(he, rht_ptr(*pprev), tbl, hash) {
+ 		if (he != obj_old) {
+ 			pprev = &he->next;
+ 			continue;
 diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 84288142ddf6..aa1e7be8fc5b 100644
+index 1b9820787cd5..84288142ddf6 100644
 --- a/lib/rhashtable.c
 +++ b/lib/rhashtable.c
-@@ -436,8 +436,16 @@ static void rht_deferred_worker(struct work_struct *work)
- 	tbl = rhashtable_last_table(ht, tbl);
+@@ -232,7 +232,7 @@ static int rhashtable_rehash_one(struct rhashtable *ht,
  
- 	nelems = check_nelems(ht);
-+	if (atomic_read(&ht->rehash_delayers) &&
-+	    tbl == ht->tbl &&
-+	    !__rht_grow_above_100(ht, tbl, nelems))
-+		goto out;
+ 	err = -ENOENT;
  
--	if (__rht_grow_above_75(ht, tbl, nelems)) {
-+	/* Need to test both _75 and _100 and _75 always
-+	 * says "no need to grow" if ->rehash_delayers
-+	 */
-+	if (__rht_grow_above_75(ht, tbl, nelems) ||
-+	    __rht_grow_above_100(ht, tbl, nelems)) {
- 		unsigned int size = roundup_pow_of_two(nelems * 4 / 3);
+-	rht_for_each_continue(entry, rht_ptr(*pprev), old_tbl, old_hash) {
++	rht_for_each_from(entry, rht_ptr(*pprev), old_tbl, old_hash) {
+ 		err = 0;
+ 		next = rht_dereference_bucket(entry->next, old_tbl, old_hash);
  
- 		if (ht->p.max_size && size > ht->p.max_size)
-@@ -453,6 +461,7 @@ static void rht_deferred_worker(struct work_struct *work)
- 	if (!err)
- 		err = rhashtable_rehash_table(ht);
+@@ -527,7 +527,7 @@ static void *rhashtable_lookup_one(struct rhashtable *ht,
+ 	int elasticity;
  
-+out:
- 	mutex_unlock(&ht->mutex);
- 
- 	if (err)
-@@ -711,6 +720,7 @@ void rhashtable_walk_enter(struct rhashtable *ht, struct rhashtable_iter *iter)
- 	iter->slot = 0;
- 	iter->skip = 0;
- 	iter->end_of_table = 0;
-+	iter->delay_rehash = false;
- 
- 	spin_lock(&ht->lock);
- 	iter->walker.tbl =
-@@ -732,9 +742,50 @@ void rhashtable_walk_exit(struct rhashtable_iter *iter)
- 	if (iter->walker.tbl)
- 		list_del(&iter->walker.list);
- 	spin_unlock(&iter->ht->lock);
-+	if (iter->delay_rehash &&
-+	    atomic_dec_and_test(&iter->ht->rehash_delayers))
-+		schedule_work(&iter->ht->run_work);
- }
- EXPORT_SYMBOL_GPL(rhashtable_walk_exit);
- 
-+/**
-+ * rhashtable_walk_delay_rehash - ask for rehash to be delayed
-+ * @iter:	Hash table Iterator
-+ *
-+ * If a rehash happens during a table walk, the walk can
-+ * see duplicate entries and need to restart.
-+ * If the walk calls this function immediately after
-+ * rhashtable_walk_enter(), the chance of this happening is
-+ * substantially reduced.  It waits for any
-+ * current rehash to complete, then temporarily disables
-+ * shinking and blocks and growth of the table until it
-+ * reaches 100% occupancy, rather than the normal 70%.
-+ *
-+ * This function can be useful when walking a table to
-+ * produce a debugfs file.  It should probably *not* be
-+ * used when the file is access by an unprivileged process
-+ * as that could conceivably result in a minor denial for service.
-+ */
-+void rhashtable_walk_delay_rehash(struct rhashtable_iter *iter)
-+{
-+	if (!iter->delay_rehash) {
-+		struct rhashtable *ht = iter->ht;
-+
-+		atomic_inc(&ht->rehash_delayers);
-+		iter->delay_rehash = true;
-+		/* make sure any schedule rehash has finished */
-+		flush_work(&ht->run_work);
-+		mutex_lock(&ht->mutex);
-+		/* Make double-sure there is only one table */
-+		while (rhashtable_rehash_table(ht) == -EAGAIN)
-+			;
-+		mutex_unlock(&ht->mutex);
-+		/* Need to swallow any -EAGAIN */
-+		rhashtable_walk_start(iter);
-+		rhashtable_walk_stop(iter);
-+	}
-+}
-+
- /**
-  * rhashtable_walk_start_check - Start a hash table walk
-  * @iter:	Hash table iterator
-@@ -1113,6 +1164,7 @@ int rhashtable_init(struct rhashtable *ht,
- 			bucket_table_free(tbl);
- 			return -ENOMEM;
- 		}
-+	atomic_set(&ht->rehash_delayers, 0);
- 
- 	RCU_INIT_POINTER(ht->tbl, tbl);
+ 	elasticity = RHT_ELASTICITY;
+-	rht_for_each_continue(head, rht_ptr(*pprev), tbl, hash) {
++	rht_for_each_from(head, rht_ptr(*pprev), tbl, hash) {
+ 		struct rhlist_head *list;
+ 		struct rhlist_head *plist;
  
