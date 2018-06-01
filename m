@@ -1,119 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750964AbeFABwU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 21:52:20 -0400
-Received: from ozlabs.org ([203.11.71.1]:40135 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750757AbeFABwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 21:52:18 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 1 Jun 2018 11:52:14 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Message-ID: <20180601115214.25f6e1b9@canb.auug.org.au>
+        id S1751131AbeFABw6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 21:52:58 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:55874 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750726AbeFABw5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 21:52:57 -0400
+Date: Fri, 1 Jun 2018 02:52:55 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 20/32] vfs: Make close() unmount the attached mount if so
+ flagged [ver #8]
+Message-ID: <20180601015255.GP30522@ZenIV.linux.org.uk>
+References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
+ <152720685405.9073.17445116582570028610.stgit@warthog.procyon.org.uk>
+ <20180531191955.GG30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=MtyrY4w.OwqIM_m+9rpcib"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531191955.GG30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/=MtyrY4w.OwqIM_m+9rpcib
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 31, 2018 at 08:19:55PM +0100, Al Viro wrote:
+> On Fri, May 25, 2018 at 01:07:34AM +0100, David Howells wrote:
+> > +	if (unlikely(file->f_mode & FMODE_NEED_UNMOUNT))
+> > +		__detach_mounts(dentry);
+> > +
+> 
+> This is completely wrong.  First of all, you want to dissolve the mount tree
+> on file->f_path.mount, not every tree rooted at dentry equal to file->f_path.dentry.
+> This is easily done - it would be a simple call of drop_collected_mounts(mnt)
+> if not for one detail.  You want it to happen only if the sucker isn't attached
+> anywhere by that point.  IOW,
+>         namespace_lock();
+>         lock_mount_hash();
+> 	if (!real_mount(mnt)->mnt_ns)
+> 		umount_tree(real_mount(mnt), UMOUNT_SYNC);
+>         unlock_mount_hash();
+>         namespace_unlock();
+> and that's it.  You don't need that magical mystery turd in move_mount() later
+> in the series and all the infrastructure you grow for it.
+> 
+> FWIW, I would've suggested this
+>  void drop_collected_mounts(struct vfsmount *mnt)
+>  {
+>  	namespace_lock();
+>  	lock_mount_hash();
+> +	if (!real_mount(mnt)->mnt_ns)
+> +		umount_tree(real_mount(mnt), UMOUNT_SYNC);
+> -	umount_tree(real_mount(mnt), UMOUNT_SYNC);
+>  	unlock_mount_hash();
+>  	namespace_unlock();
+>  }
+> 
+> and in __fput()
+> 	if (unlikely(file->f_mode & FMODE_NEED_UNMOUNT))
+> 		drop_collected_mounts(mnt);
+> 
+> All there is to it, AFAICS...
 
-Hi Al,
+... except that it should be a separate primitive - drop_collected_mounts() is
+used put_mnt_ns(), where the root definitely has non-NULL ->mnt_ns.
 
-Today's linux-next merge of the vfs tree got a conflict in:
+Another thing: the same issue (misuse of __detach_mounts()) exists in cleanup
+path of do_o_path().  What's more, doing it there is pointless - if
+do_dentry_open() has set FMODE_NEED_UNMOUNT, it either succeeds or calls fput()
+itself.  Either way, the caller should *not* do the cleanups done by fput().
 
-  fs/afs/fsclient.c
+Another thing: copy_mount_for_o_path() is bogus.  Horrible calling conventions
+aside, what the hell is that lock_mount() for?  In do_loopback() we lock the
+*mountpoint*; here the source gets locked, for no visible reason.  What we
+should do is something like this:
 
-between commit:
+1) common helper -
 
-  684b0f68cf1c ("afs: Fix AFSFetchStatus decoder to provide OpenAFS compati=
-bility")
+static struct mount *__do_loopback(struct path *from, bool recurse)
+{
+        struct mount *mnt = ERR_PTR(-EINVAL), *f = real_mount(from->mnt); 
 
-from Linus' tree and commit:
+        if (IS_MNT_UNBINDABLE(f))
+                return mnt;
 
-  c875c76a061d ("afs: Fix a Sparse warning in xdr_decode_AFSFetchStatus()")
+        if (!check_mnt(f) && from->dentry->d_op != &ns_dentry_operations)
+                return mnt;
 
-from the vfs tree.
+        if (!recurse && has_locked_children(f, from->dentry))
+                return mnt;
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+        if (recurse)
+                mnt = copy_tree(f, from->dentry, CL_COPY_MNT_NS_FILE);
+        else
+                mnt = clone_mnt(f, from->dentry, 0);
+        if (!IS_ERR(mnt))
+		mnt->mnt.mnt_flags &= ~MNT_LOCKED;
+	return mnt;
+}
 
---=20
-Cheers,
-Stephen Rothwell
+2) in do_loopback() we are left with
 
-diff --cc fs/afs/fsclient.c
-index b273e1d60478,b695d9e16c65..000000000000
---- a/fs/afs/fsclient.c
-+++ b/fs/afs/fsclient.c
-@@@ -138,37 -137,14 +138,31 @@@ static int xdr_decode_AFSFetchStatus(st
-  	u64 data_version, size;
-  	u32 type, abort_code;
-  	u8 flags =3D 0;
-- 	int ret;
--=20
-- 	if (vnode)
-- 		write_seqlock(&vnode->cb_lock);
- =20
- +	abort_code =3D ntohl(xdr->abort_code);
- +
-  	if (xdr->if_version !=3D htonl(AFS_FSTATUS_VERSION)) {
- +		if (xdr->if_version =3D=3D htonl(0) &&
- +		    abort_code !=3D 0 &&
- +		    inline_error) {
- +			/* The OpenAFS fileserver has a bug in FS.InlineBulkStatus
- +			 * whereby it doesn't set the interface version in the error
- +			 * case.
- +			 */
- +			status->abort_code =3D abort_code;
-- 			ret =3D 0;
-- 			goto out;
-++			return 0;
- +		}
- +
-  		pr_warn("Unknown AFSFetchStatus version %u\n", ntohl(xdr->if_version));
-  		goto bad;
-  	}
- =20
- +	if (abort_code !=3D 0 && inline_error) {
- +		status->abort_code =3D abort_code;
-- 		ret =3D 0;
-- 		goto out;
-++		return 0;
- +	}
- +
-  	type =3D ntohl(xdr->type);
- -	abort_code =3D ntohl(xdr->abort_code);
-  	switch (type) {
-  	case AFS_FTYPE_FILE:
-  	case AFS_FTYPE_DIR:
+static int do_loopback(struct path *path, const char *old_name,
+                                int recurse)
+{
+        struct path old_path;
+        struct mount *mnt, *parent;
+        struct mountpoint *mp;
+        int err;
+        if (!old_name || !*old_name)
+                return -EINVAL;
+        err = kern_path(old_name, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, &old_path);
+        if (err)
+                return err;
 
---Sig_/=MtyrY4w.OwqIM_m+9rpcib
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+        err = -EINVAL;
+        if (mnt_ns_loop(old_path.dentry))
+                goto out;
 
------BEGIN PGP SIGNATURE-----
+        mp = lock_mount(path);
+        if (IS_ERR(mp)) {
+		err = PTR_ERR(mp);
+                goto out;
+	}
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQps4ACgkQAVBC80lX
-0Gxsgwf/YfgQXbBQ6SIGH2KiUWRnbLgP6eYxVtt2clNSuZj+4oCgEhgD0W92GNvT
-Ll6QCbGVd60/+sOj0RYpQkcNwe5fftSQLZOQ8BPco+jjsIFRUisIvRdFIGXGvZGZ
-X3OiUNXuiDA4NwKaVzqEJ8n7uE6bmscYVRcEXys+WkVbBznoeSxvcNIYO2KQt+tg
-QkCvCmCGaNflly6BNkEYI1IOiYcI6VJVgmsT/XLiM5RA5tyM81BikdKTlBZDOAdS
-Nj6UZ1L95BHbahvPEuxMVcifb1EYIx/miEMb3MoCKIqGPIgkRi3a4Itv9QD/8/5W
-gKVxaLUhNX9GT6kCeTrJQWI+XHTA5A==
-=gTN7
------END PGP SIGNATURE-----
+        parent = real_mount(path->mnt);
+        if (!check_mnt(parent))
+                goto out2;
 
---Sig_/=MtyrY4w.OwqIM_m+9rpcib--
+	mnt = __do_loopback(&old_path, recurse);
+        if (IS_ERR(mnt)) {
+                err = PTR_ERR(mnt);
+                goto out2;
+        }
+
+        err = graft_tree(mnt, parent, mp);
+        if (err) {
+                lock_mount_hash();
+                umount_tree(mnt, UMOUNT_SYNC);
+                unlock_mount_hash();
+        }
+out2:
+        unlock_mount(mp);
+out:
+        path_put(&old_path);
+        return err;
+}
+
+3) copy_mount_for_o_path() with saner calling conventions:
+
+int copy_mount_for_o_path(struct path *path, bool recurse)
+{
+        struct mount *mnt = __do_loopback(path, recurse);
+        if (IS_ERR(mnt)) {
+		path_put(path);
+                return PTR_ERR(mnt);
+	}
+	mntput(path->mnt);
+        path->mnt = &mnt->mnt;
+        return 0;
+}
+
+4) in do_o_path():
+static int do_o_path(struct nameidata *nd, unsigned flags, struct file *file)
+{
+        struct path path;
+        int error = path_lookupat(nd, flags, &path);
+        if (error)
+                return error;
+
+        if (file->f_flags & O_CLONE_MOUNT) {
+                error = copy_mount_for_o_path(&path,
+				!(file->f_flags & O_NON_RECURSIVE));
+                if (error < 0)
+                        return error;
+        }
+
+        audit_inode(nd->name, path.dentry, 0);
+        error = vfs_open(&path, file, current_cred());
+        path_put(&path);
+        return error;
+}
