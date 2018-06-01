@@ -1,582 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeFAMzu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 08:55:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37656 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751858AbeFAMxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 08:53:45 -0400
-From: Hans de Goede <hdegoede@redhat.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>, dmitry.torokhov@gmail.com,
-        mfuzzey@parkeon.com, Kalle Valo <kvalo@codeaurora.org>,
-        Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>, nbroeking@me.com,
-        bjorn.andersson@linaro.org, Torsten Duwe <duwe@suse.de>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/5] efi: Add embedded peripheral firmware support
-Date: Fri,  1 Jun 2018 14:53:27 +0200
-Message-Id: <20180601125330.25054-3-hdegoede@redhat.com>
-In-Reply-To: <20180601125330.25054-1-hdegoede@redhat.com>
-References: <20180601125330.25054-1-hdegoede@redhat.com>
+        id S1752022AbeFAM6S (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 08:58:18 -0400
+Received: from mout.gmx.net ([212.227.17.20]:53355 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751769AbeFAM6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 08:58:14 -0400
+Message-ID: <1527857873.4674.11.camel@gmx.de>
+Subject: 4.13..4.14 scheduling overhead regression (bisected  -
+ b956575bed91)
+From: Mike Galbraith <efault@gmx.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>
+Date: Fri, 01 Jun 2018 14:57:53 +0200
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:CmEd7hiqSMttT9g4c2/skHR8ETbOmNOGEvjZhVQPwrs9wswL678
+ QqsCeN6PAp+euYhH6rxXjgL8cromM8dhXQiYiByDkyqSeBbGMZwIIvO670MRKkr1rELvfos
+ aaPsEgnC8VuB0unYiLpvqdBtcROfTWbedjaT9G/gmNqThR+muevW22GhsCL9gV69txJNnXT
+ r3w4HeGl4XimLn5T66MMw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:mVY4zRNzHJI=:G5iucbFKQ5SFs7ouv3WXe7
+ SV5nudJkV2sU+9CAszAEYLg2vw17v+BNMSG1x5ixTcP0RGQlOB7PXD/o7IAnWXqHZqth+TGcq
+ l4qMGEwj83wXVlXES7Mwt513nzNyE2y9VdQAC6Neb0MZEWJt6RJYDViVXiScRDRw47DK69ScY
+ rCAirNOgrC1eTt3pIbTJ6fvR32ptxsL+Mpo7QrPLTlzMpd5FEFR5Afc6Y6mVnzg8O9OzfIe5I
+ +qdstlB4pluwEi/p7xFNF9TThrE10F65kcbHNqVLjsZD6yOlUEbfQJFcTi9JwViZzq1I1o9mR
+ SE0b6Jm4QVRMIMjJM5F+CDihKdNFyu6PzbcxGVWYoJLsJIVC2LujVlLWScJ9xLxxqhlPsBoDQ
+ ARIJ+9oHPr/PhzYlWaCVDW0Vi/utDREcBswxQTHUcdqUdEtfJoSfdse5b4p6vrqGY3JqFJgdQ
+ aIRxFRHpcS8q+ZHjflMQioSr/fn3Ht2qkQkti7am93d/XrtSj3fXg6JG+K4YPsroKWUSk9jv8
+ lZ/vdNn0KdK42b/R+xvgnunQvwfVYncSVqYAqVM2Xw2rzhjeLZFunT1NeqYFX5lwKksZK2YK5
+ dEcwDIgNK/SbGWE+hhn/RQklB8EQPLEGwfLsFEl20ik2HHLTAAMUVUTL99CSUrw3HnzF4qSSy
+ 6W80m1WYElG1UBlyX3DJS9fXEL0oulZ4/z8K4gNNlSG5JNqU9NsapZmb8dA7MBigJw1p5KqKW
+ Z7v1hehdz4Oegi9MpBoJ+TsbbN1Utvs5to1FWPc+DH/ZCSubOApsgx5So+6MLM/I8fvZSouN2
+ 5EiuINk
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like with PCI options ROMs, which we save in the setup_efi_pci*
-functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM itself
-sometimes may contain data which is useful/necessary for peripheral drivers
-to have access to.
+Greetings,
 
-Specifically the EFI code may contain an embedded copy of firmware which
-needs to be (re)loaded into the peripheral. Normally such firmware would be
-part of linux-firmware, but in some cases this is not feasible, for 2
-reasons:
+While dusting off regression testing trees, I noticed a substantial
+pipe-test dent at 4.14, and bisected it to b956575bed91.  Log below.
 
-1) The firmware is customized for a specific use-case of the chipset / use
-with a specific hardware model, so we cannot have a single firmware file
-for the chipset. E.g. touchscreen controller firmwares are compiled
-specifically for the hardware model they are used with, as they are
-calibrated for a specific model digitizer.
+skew_tick=1 audit=0 nodelayacct cgroup_disable=memory nopti nospectre_v2 nospec_store_bypass_disable
+gov performance
+taskset 0xc pipe-test 1
 
-2) Despite repeated attempts we have failed to get permission to
-redistribute the firmware. This is especially a problem with customized
-firmwares, these get created by the chip vendor for a specific ODM and the
-copyright may partially belong with the ODM, so the chip vendor cannot
-give a blanket permission to distribute these.
+4.4.134         2.125751 usecs/loop -- avg 2.138286 935.3 KHz
+4.5.7           2.111431 usecs/loop -- avg 2.141415 934.0 KHz
+4.6.7           2.060672 usecs/loop -- avg 2.059993 970.9 KHz
+4.7.10          2.086366 usecs/loop -- avg 2.090943 956.5 KHz
+4.8.17          2.008318 usecs/loop -- avg 2.005780 997.1 KHz + ~2.00-ish   1.000
+4.9.104         1.989143 usecs/loop -- avg 2.010945 994.6 KHz
+4.10.17         2.010789 usecs/loop -- avg 2.006868 996.6 KHz
+4.11.12         2.032123 usecs/loop -- avg 2.037766 981.5 KHz - ~2.04-ish   1.015   1.000
+4.12.14         2.055745 usecs/loop -- avg 2.065894 968.1 KHz
+4.13.16         2.024978 usecs/loop -- avg 2.045250 977.9 KHz
+4.14.47         2.234518 usecs/loop -- avg 2.227716 897.8 KHz -- >2.22      1.110   1.093   1.000
+4.15.18         2.287815 usecs/loop -- avg 2.295858 871.1 KHz --- >2.28     1.144   1.126   1.030
+4.16.13         2.286036 usecs/loop -- avg 2.279057 877.6 KHz
+4.17.0.g88a8676 2.288231 usecs/loop -- avg 2.288917 873.8 KHz
 
-This commit adds support for finding peripheral firmware embedded in the
-EFI code and making this available to peripheral drivers through the
-standard firmware loading mechanism.
+b956575bed91ecfb136a8300742ecbbf451471ab is the first bad commit
+commit b956575bed91ecfb136a8300742ecbbf451471ab
+Author: Andy Lutomirski <luto@kernel.org>
+Date:   Mon Oct 9 09:50:49 2017 -0700
 
-Note we check the EFI_BOOT_SERVICES_CODE for embedded firmware near the end
-of start_kernel(), just before calling rest_init(), this is on purpose
-because the typical EFI_BOOT_SERVICES_CODE memory-segment is too large for
-early_memremap(), so the check must be done after mm_init(). This relies
-on EFI_BOOT_SERVICES_CODE not being free-ed until efi_free_boot_services()
-is called, which means that this will only work on x86 for now.
-
-Reported-by: Dave Olsthoorn <dave@bewaar.me>
-Suggested-by: Peter Jones <pjones@redhat.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v6:
--Rework code to remove casts from if (prefix == mem) comparison
--Use SHA256 hashes instead of crc32 sums
--Add new READING_FIRMWARE_EFI_EMBEDDED read_file_id and use it
--Call security_kernel_read_file(NULL, READING_FIRMWARE_EFI_EMBEDDED)
- to check if this is allowed before looking at EFI embedded fw
--Document why we are not using the PI Firmware Volume protocol
-
-Changes in v5:
--Rename the EFI_BOOT_SERVICES flag to EFI_PRESERVE_BS_REGIONS
-
-Changes in v4:
--Drop note in docs about EFI_FIRMWARE_VOLUME_PROTOCOL, it is not part of
- UEFI proper, so the EFI maintainers don't want us referring people to it
--Use new EFI_BOOT_SERVICES flag
--Put the new fw_get_efi_embedded_fw() function in its own fallback_efi.c
- file which only gets built when EFI_EMBEDDED_FIRMWARE is selected
--Define an empty stub for fw_get_efi_embedded_fw() in fallback.h hwen
- EFI_EMBEDDED_FIRMWARE is not selected, to avoid the need for #ifdefs
- in firmware_loader/main.c
--Properly call security_kernel_post_read_file() on the firmware returned
- by efi_get_embedded_fw() to make sure that we are allowed to use it
-
-Changes in v3:
--Fix the docs using "efi-embedded-fw" as property name instead of
- "efi-embedded-firmware"
-
-Changes in v2:
--Rebased on driver-core/driver-core-next
--Add documentation describing the EFI embedded firmware mechanism to:
- Documentation/driver-api/firmware/request_firmware.rst
--Add a new EFI_EMBEDDED_FIRMWARE Kconfig bool and only build the embedded
- fw support if this is set. This is an invisible option which should be
- selected by drivers which need this
--Remove the efi_embedded_fw_desc and dmi_system_id-s for known devices
- from the efi-embedded-fw code, instead drivers using this are expected to
- export a dmi_system_id array, with each entries' driver_data pointing to a
- efi_embedded_fw_desc struct and register this with the efi-embedded-fw code
--Use kmemdup to make a copy instead of efi_mem_reserve()-ing the firmware,
- this avoids us messing with the EFI memmap and avoids the need to make
- changes to efi_mem_desc_lookup()
--Make the firmware-loader code only fallback to efi_get_embedded_fw() if the
- passed in device has the "efi-embedded-firmware" device-property bool set
--Skip usermodehelper fallback when "efi-embedded-firmware" device-property
- is set
----
- .../driver-api/firmware/request_firmware.rst  |  76 +++++++++
- drivers/base/firmware_loader/Makefile         |   1 +
- drivers/base/firmware_loader/fallback.h       |  12 ++
- drivers/base/firmware_loader/fallback_efi.c   |  56 +++++++
- drivers/base/firmware_loader/main.c           |   2 +
- drivers/firmware/efi/Kconfig                  |   3 +
- drivers/firmware/efi/Makefile                 |   1 +
- drivers/firmware/efi/embedded-firmware.c      | 148 ++++++++++++++++++
- include/linux/efi.h                           |   6 +
- include/linux/efi_embedded_fw.h               |  25 +++
- include/linux/fs.h                            |   1 +
- init/main.c                                   |   3 +
- 12 files changed, 334 insertions(+)
- create mode 100644 drivers/base/firmware_loader/fallback_efi.c
- create mode 100644 drivers/firmware/efi/embedded-firmware.c
- create mode 100644 include/linux/efi_embedded_fw.h
-
-diff --git a/Documentation/driver-api/firmware/request_firmware.rst b/Documentation/driver-api/firmware/request_firmware.rst
-index f62bdcbfed5b..66ab91f3357d 100644
---- a/Documentation/driver-api/firmware/request_firmware.rst
-+++ b/Documentation/driver-api/firmware/request_firmware.rst
-@@ -73,3 +73,79 @@ If something went wrong request_firmware() returns non-zero and fw_entry
- is set to NULL. Once your driver is done with processing the firmware it
- can call call release_firmware(fw_entry) to release the firmware image
- and any related resource.
-+
-+EFI embedded firmware support
-+=============================
-+
-+On some devices the system's EFI code / ROM may contain an embedded copy
-+of firmware for some of the system's integrated peripheral devices and
-+the peripheral's Linux device-driver needs to access this firmware.
-+
-+A device driver which needs this can describe the firmware it needs
-+using an efi_embedded_fw_desc struct:
-+
-+.. kernel-doc:: include/linux/efi_embedded_fw.h
-+   :functions: efi_embedded_fw_desc
-+
-+The EFI embedded-fw code works by scanning all EFI_BOOT_SERVICES_CODE memory
-+segments for an eight byte sequence matching prefix, if the prefix is found it
-+then does a crc32 over length bytes and if that matches makes a copy of length
-+bytes and adds that to its list with found firmwares.
-+
-+To avoid doing this somewhat expensive scan on all systems, dmi matching is
-+used. Drivers are expected to export a dmi_system_id array, with each entries'
-+driver_data pointing to an efi_embedded_fw_desc.
-+
-+To register this array with the efi-embedded-fw code, a driver needs to:
-+
-+1. Always be builtin to the kernel or store the dmi_system_id array in a
-+   separate object file which always gets builtin.
-+
-+2. Add an extern declaration for the dmi_system_id array to
-+   include/linux/efi_embedded_fw.h.
-+
-+3. Add the dmi_system_id array to the embedded_fw_table in
-+   drivers/firmware/efi/embedded-firmware.c wrapped in a #ifdef testing that
-+   the driver is being builtin.
-+
-+4. Add "select EFI_EMBEDDED_FIRMWARE if EFI_STUB" to its Kconfig entry.
-+
-+The request_firmware() function will always first try to load firmware with
-+the specified name directly from the disk, so the EFI embedded-fw can always
-+be overridden by placing a file under /lib/firmare.
-+
-+To make request_firmware() fallback to trying EFI embedded firmwares after this,
-+the driver must set a boolean "efi-embedded-firmware" device-property on the
-+device before passing it to request_firmware(). Note that this disables the
-+usual usermodehelper fallback, so you may want to only set this on systems
-+which match your dmi_system_id array.
-+
-+Once the device-property is set, the driver can use the regular
-+request_firmware() function to get the firmware, using the name filled in
-+in the efi_embedded_fw_desc.
-+
-+Note that:
-+
-+1. The code scanning for EFI embbedded-firmware runs near the end
-+   of start_kernel(), just before calling rest_init(). For normal drivers and
-+   subsystems using subsys_initcall() to register themselves this does not
-+   matter. This means that code running earlier cannot use EFI
-+   embbedded-firmware.
-+
-+2. ATM the EFI embedded-fw code assumes that firmwares always start at an offset
-+   which is a multiple of 8 bytes, if this is not true for your case send in
-+   a patch to fix this.
-+
-+3. ATM the EFI embedded-fw code only works on x86 because other archs free
-+   EFI_BOOT_SERVICES_CODE before the EFI embedded-fw code gets a chance to
-+   scan it.
-+
-+4. The current brute-force scanning of EFI_BOOT_SERVICES_CODE is an ad-hoc
-+   brute-force solution. There has been discussion to use the PI spec's
-+   Firmware Volume protocol. This has been rejected because the FV Protocol
-+   relies on *internal* interfaces of PI spec, and:
-+   1. The The PI spec does not define firmware at all
-+   2. The internal interfaces of PI Spec does not guarantee any backward
-+      compatibility. Any implementation details in FV may be subject to change,
-+      and may vary system to system. Supporting the FV Protocol would be
-+      difficult as it is purposely ambiguous.
-diff --git a/drivers/base/firmware_loader/Makefile b/drivers/base/firmware_loader/Makefile
-index a97eeb0be1d8..365a040995d3 100644
---- a/drivers/base/firmware_loader/Makefile
-+++ b/drivers/base/firmware_loader/Makefile
-@@ -5,3 +5,4 @@ obj-y			:= fallback_table.o
- obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
- firmware_class-objs := main.o
- firmware_class-$(CONFIG_FW_LOADER_USER_HELPER) += fallback.o
-+firmware_class-$(CONFIG_EFI_EMBEDDED_FIRMWARE) += fallback_efi.o
-diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
-index 21063503e4ea..5103283873d5 100644
---- a/drivers/base/firmware_loader/fallback.h
-+++ b/drivers/base/firmware_loader/fallback.h
-@@ -66,4 +66,16 @@ static inline void unregister_sysfs_loader(void)
- }
- #endif /* CONFIG_FW_LOADER_USER_HELPER */
- 
-+#ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
-+int fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv,
-+			   enum fw_opt *opt_flags, int ret);
-+#else
-+static inline int fw_get_efi_embedded_fw(struct device *dev,
-+					 struct fw_priv *fw_priv,
-+					 enum fw_opt *opt_flags, int ret)
-+{
-+	return ret;
-+}
-+#endif /* CONFIG_EFI_EMBEDDED_FIRMWARE */
-+
- #endif /* __FIRMWARE_FALLBACK_H */
-diff --git a/drivers/base/firmware_loader/fallback_efi.c b/drivers/base/firmware_loader/fallback_efi.c
-new file mode 100644
-index 000000000000..641598b8f746
---- /dev/null
-+++ b/drivers/base/firmware_loader/fallback_efi.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/efi_embedded_fw.h>
-+#include <linux/property.h>
-+#include <linux/security.h>
-+#include <linux/vmalloc.h>
-+
-+#include "fallback.h"
-+#include "firmware.h"
-+
-+int fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv,
-+			   enum fw_opt *opt_flags, int ret)
-+{
-+	size_t size, max = INT_MAX;
-+	bool free_on_err = true;
-+	int rc;
-+
-+	if (!dev)
-+		return ret;
-+
-+	if (!device_property_read_bool(dev, "efi-embedded-firmware"))
-+		return ret;
-+
-+	*opt_flags |= FW_OPT_NO_WARN | FW_OPT_NOCACHE | FW_OPT_NOFALLBACK;
-+
-+	rc = security_kernel_read_file(NULL, READING_FIRMWARE_EFI_EMBEDDED);
-+	if (rc)
-+		return rc;
-+
-+	/* Already populated data member means we're loading into a buffer */
-+	if (fw_priv->data) {
-+		max = fw_priv->allocated_size;
-+		free_on_err = false;
-+	}
-+
-+	rc = efi_get_embedded_fw(fw_priv->fw_name, &fw_priv->data, &size, max);
-+	if (rc) {
-+		dev_warn(dev, "Firmware %s not in EFI\n", fw_priv->fw_name);
-+		return ret;
-+	}
-+
-+	rc = security_kernel_post_read_file(NULL, fw_priv->data, size,
-+					    READING_FIRMWARE_EFI_EMBEDDED);
-+	if (rc) {
-+		if (free_on_err) {
-+			vfree(fw_priv->data);
-+			fw_priv->data = NULL;
-+		}
-+		return rc;
-+	}
-+
-+	dev_dbg(dev, "using efi-embedded fw %s\n", fw_priv->fw_name);
-+	fw_priv->size = size;
-+	fw_state_done(fw_priv);
-+	return 0;
-+}
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index 0943e7065e0e..9dab6efa057c 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -576,6 +576,8 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
- 		goto out;
- 
- 	ret = fw_get_filesystem_firmware(device, fw->priv);
-+	if (ret)
-+		ret = fw_get_efi_embedded_fw(device, fw->priv, &opt_flags, ret);
- 	if (ret) {
- 		if (!(opt_flags & FW_OPT_NO_WARN))
- 			dev_warn(device,
-diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-index 3098410abad8..faefeff7fb34 100644
---- a/drivers/firmware/efi/Kconfig
-+++ b/drivers/firmware/efi/Kconfig
-@@ -164,6 +164,9 @@ config RESET_ATTACK_MITIGATION
- 	  have been evicted, since otherwise it will trigger even on clean
- 	  reboots.
- 
-+config EFI_EMBEDDED_FIRMWARE
-+	bool
-+
- endmenu
- 
- config UEFI_CPER
-diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-index cb805374f4bc..dde12cea8aac 100644
---- a/drivers/firmware/efi/Makefile
-+++ b/drivers/firmware/efi/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_EFI_BOOTLOADER_CONTROL)	+= efibc.o
- obj-$(CONFIG_EFI_TEST)			+= test/
- obj-$(CONFIG_EFI_DEV_PATH_PARSER)	+= dev-path-parser.o
- obj-$(CONFIG_APPLE_PROPERTIES)		+= apple-properties.o
-+obj-$(CONFIG_EFI_EMBEDDED_FIRMWARE)	+= embedded-firmware.o
- 
- arm-obj-$(CONFIG_EFI)			:= arm-init.o arm-runtime.o
- obj-$(CONFIG_ARM)			+= $(arm-obj-y)
-diff --git a/drivers/firmware/efi/embedded-firmware.c b/drivers/firmware/efi/embedded-firmware.c
-new file mode 100644
-index 000000000000..244465a162c5
---- /dev/null
-+++ b/drivers/firmware/efi/embedded-firmware.c
-@@ -0,0 +1,148 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Support for extracting embedded firmware for peripherals from EFI code,
-+ *
-+ * Copyright (c) 2018 Hans de Goede <hdegoede@redhat.com>
-+ */
-+
-+#include <crypto/sha.h>
-+#include <linux/dmi.h>
-+#include <linux/efi.h>
-+#include <linux/efi_embedded_fw.h>
-+#include <linux/io.h>
-+#include <linux/types.h>
-+#include <linux/vmalloc.h>
-+
-+struct embedded_fw {
-+	struct list_head list;
-+	const char *name;
-+	void *data;
-+	size_t length;
-+};
-+
-+static LIST_HEAD(found_fw_list);
-+
-+static const struct dmi_system_id * const embedded_fw_table[] = {
-+	NULL
-+};
-+
-+/*
-+ * Note the efi_check_for_embedded_firmwares() code currently makes the
-+ * following 2 assumptions. This may needs to be revisited if embedded firmware
-+ * is found where this is not true:
-+ * 1) The firmware is only found in EFI_BOOT_SERVICES_CODE memory segments
-+ * 2) The firmware always starts at an offset which is a multiple of 8 bytes
-+ */
-+static int __init efi_check_md_for_embedded_firmware(
-+	efi_memory_desc_t *md, const struct efi_embedded_fw_desc *desc)
-+{
-+	const u64 prefix = *((u64 *)desc->prefix);
-+	struct sha256_state sctx;
-+	struct embedded_fw *fw;
-+	u8 sha256[32];
-+	u64 i, size;
-+	void *map;
-+
-+	size = md->num_pages << EFI_PAGE_SHIFT;
-+	map = memremap(md->phys_addr, size, MEMREMAP_WB);
-+	if (!map) {
-+		pr_err("Error mapping EFI mem at %#llx\n", md->phys_addr);
-+		return -ENOMEM;
-+	}
-+
-+	size -= desc->length;
-+	for (i = 0; i < size; i += 8) {
-+		u64 *mem = map + i;
-+
-+		if (*mem != prefix)
-+			continue;
-+
-+		sha256_init_direct(&sctx);
-+		sha256_update_direct(&sctx, map + i, desc->length);
-+		sha256_final_direct(&sctx, sha256);
-+		if (memcmp(sha256, desc->sha256, 32) == 0)
-+			break;
-+	}
-+	if (i >= size) {
-+		memunmap(map);
-+		return -ENOENT;
-+	}
-+
-+	pr_info("Found EFI embedded fw '%s'\n", desc->name);
-+
-+	fw = kmalloc(sizeof(*fw), GFP_KERNEL);
-+	if (!fw) {
-+		memunmap(map);
-+		return -ENOMEM;
-+	}
-+
-+	fw->data = kmemdup(map + i, desc->length, GFP_KERNEL);
-+	memunmap(map);
-+	if (!fw->data) {
-+		kfree(fw);
-+		return -ENOMEM;
-+	}
-+
-+	fw->name = desc->name;
-+	fw->length = desc->length;
-+	list_add(&fw->list, &found_fw_list);
-+
-+	return 0;
-+}
-+
-+void __init efi_check_for_embedded_firmwares(void)
-+{
-+	const struct efi_embedded_fw_desc *fw_desc;
-+	const struct dmi_system_id *dmi_id;
-+	efi_memory_desc_t *md;
-+	int i, r;
-+
-+	for (i = 0; embedded_fw_table[i]; i++) {
-+		dmi_id = dmi_first_match(embedded_fw_table[i]);
-+		if (!dmi_id)
-+			continue;
-+
-+		fw_desc = dmi_id->driver_data;
-+		for_each_efi_memory_desc(md) {
-+			if (md->type != EFI_BOOT_SERVICES_CODE)
-+				continue;
-+
-+			r = efi_check_md_for_embedded_firmware(md, fw_desc);
-+			if (r == 0)
-+				break;
-+		}
-+	}
-+}
-+
-+int efi_get_embedded_fw(const char *name, void **data, size_t *size,
-+			size_t msize)
-+{
-+	struct embedded_fw *iter, *fw = NULL;
-+	void *buf = *data;
-+
-+	list_for_each_entry(iter, &found_fw_list, list) {
-+		if (strcmp(name, iter->name) == 0) {
-+			fw = iter;
-+			break;
-+		}
-+	}
-+
-+	if (!fw)
-+		return -ENOENT;
-+
-+	if (msize && msize < fw->length)
-+		return -EFBIG;
-+
-+	if (!buf) {
-+		buf = vmalloc(fw->length);
-+		if (!buf)
-+			return -ENOMEM;
-+	}
-+
-+	memcpy(buf, fw->data, fw->length);
-+	*size = fw->length;
-+	*data = buf;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(efi_get_embedded_fw);
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index d72358e892e7..657c98598bc2 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1575,6 +1575,12 @@ static inline void
- efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg) { }
- #endif
- 
-+#ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
-+void efi_check_for_embedded_firmwares(void);
-+#else
-+static inline void efi_check_for_embedded_firmwares(void) { }
-+#endif
-+
- void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
- 
- /*
-diff --git a/include/linux/efi_embedded_fw.h b/include/linux/efi_embedded_fw.h
-new file mode 100644
-index 000000000000..6c8b04246fc3
---- /dev/null
-+++ b/include/linux/efi_embedded_fw.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_EFI_EMBEDDED_FW_H
-+#define _LINUX_EFI_EMBEDDED_FW_H
-+
-+#include <linux/mod_devicetable.h>
-+
-+/**
-+ * struct efi_embedded_fw_desc - This struct is used by the EFI embedded-fw
-+ *                               code to search for embedded firmwares.
-+ *
-+ * @name:   Name to register the firmware with if found
-+ * @prefix: First 8 bytes of the firmware
-+ * @length: Length of the firmware in bytes including prefix
-+ * @sha256: SHA256 of the firmware
-+ */
-+struct efi_embedded_fw_desc {
-+	const char *name;
-+	u8 prefix[8];
-+	u32 length;
-+	u8 sha256[32];
-+};
-+
-+int efi_get_embedded_fw(const char *name, void **dat, size_t *sz, size_t msize);
-+
-+#endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 760d8da1b6c7..ebae9656d3bf 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2810,6 +2810,7 @@ extern int do_pipe_flags(int *, int);
- 	id(UNKNOWN, unknown)		\
- 	id(FIRMWARE, firmware)		\
- 	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
-+	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
- 	id(MODULE, kernel-module)		\
- 	id(KEXEC_IMAGE, kexec-image)		\
- 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
-diff --git a/init/main.c b/init/main.c
-index 3b4ada11ed52..98183aca5017 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -730,6 +730,9 @@ asmlinkage __visible void __init start_kernel(void)
- 	arch_post_acpi_subsys_init();
- 	sfi_init_late();
- 
-+	if (efi_enabled(EFI_PRESERVE_BS_REGIONS))
-+		efi_check_for_embedded_firmwares();
-+
- 	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
- 		efi_free_boot_services();
- 	}
--- 
-2.17.0
+    x86/mm: Flush more aggressively in lazy TLB mode
+    
+git bisect start
+# good: [569dbb88e80deb68974ef6fdd6a13edb9d686261] Linux 4.13
+git bisect good 569dbb88e80deb68974ef6fdd6a13edb9d686261
+# bad: [57a3ca7835962109d94533465a75e8c716b26845] Linux 4.14.47
+git bisect bad 57a3ca7835962109d94533465a75e8c716b26845
+# good: [fbf4432ff71b7a25bef993a5312906946d27f446] Merge branch 'akpm' (patches from Andrew)
+git bisect good fbf4432ff71b7a25bef993a5312906946d27f446
+# bad: [3fefc31843cfe2b5f072efe11ed9ccaf6a7a5092] Merge tag 'pm-final-4.14' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+git bisect bad 3fefc31843cfe2b5f072efe11ed9ccaf6a7a5092
+# good: [8d93c7a4315711ea0f7a95ca353a89c4ed0763fb] Merge tag 'pci-v4.14-fixes-1' of git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci
+git bisect good 8d93c7a4315711ea0f7a95ca353a89c4ed0763fb
+# good: [0f380715e51f5ff418cfccb4cd0d4fe4c48c3241] Merge tag 'sound-4.14-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+git bisect good 0f380715e51f5ff418cfccb4cd0d4fe4c48c3241
+# bad: [e5f468b3f23313994c5e6c356135f9b0d76bcb94] Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
+git bisect bad e5f468b3f23313994c5e6c356135f9b0d76bcb94
+# good: [3d7882769b5dc929690f96e0c318c29b97f51018] Merge tag 'devprop-4.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+git bisect good 3d7882769b5dc929690f96e0c318c29b97f51018
+# bad: [ae7df8f985f1b0445366ae6f6324cd08a218526e] Merge tag 'char-misc-4.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
+git bisect bad ae7df8f985f1b0445366ae6f6324cd08a218526e
+# good: [be1f16ba35d97aff4d85c0daba0a02da51b7c83c] Merge branch '4.14-fixes' of git://git.linux-mips.org/pub/scm/ralf/upstream-linus
+git bisect good be1f16ba35d97aff4d85c0daba0a02da51b7c83c
+# good: [a339b351304d5e6b02c7cf8eed895d181e64bce0] Merge branch 'sched-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+git bisect good a339b351304d5e6b02c7cf8eed895d181e64bce0
+# bad: [7a23c5abb930cefcef85df6dc0c8fb3e8961980c] Merge tag 'dmaengine-fix-4.14-rc5' of git://git.infradead.org/users/vkoul/slave-dma
+git bisect bad 7a23c5abb930cefcef85df6dc0c8fb3e8961980c
+# good: [ab7ff471aa5db670197070760f022622793da7e5] x86/hyperv: Fix hypercalls with extended CPU ranges for TLB flushing
+git bisect good ab7ff471aa5db670197070760f022622793da7e5
+# bad: [1f161f67a272cc4f29f27934dd3f74cb657eb5c4] x86/microcode: Do the family check first
+git bisect bad 1f161f67a272cc4f29f27934dd3f74cb657eb5c4
+# good: [cc6afe2240298049585e86b1ade85efc8a7f225d] x86/apic: Silence "FW_BUG TSC_DEADLINE disabled due to Errata" on hypervisors
+git bisect good cc6afe2240298049585e86b1ade85efc8a7f225d
+# bad: [b956575bed91ecfb136a8300742ecbbf451471ab] x86/mm: Flush more aggressively in lazy TLB mode
+git bisect bad b956575bed91ecfb136a8300742ecbbf451471ab
+# good: [616dd5872e52493863b0202632703eebd51243dc] x86/apic: Update TSC_DEADLINE quirk with additional SKX stepping
+git bisect good 616dd5872e52493863b0202632703eebd51243dc
+# first bad commit: [b956575bed91ecfb136a8300742ecbbf451471ab] x86/mm: Flush more aggressively in lazy TLB mode
