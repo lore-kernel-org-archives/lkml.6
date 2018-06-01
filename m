@@ -1,169 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751666AbeFAK0U (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 06:26:20 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38580 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751559AbeFAK0O (ORCPT
+        id S1751537AbeFAKag (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 06:30:36 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:31426 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751293AbeFAKae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 06:26:14 -0400
-Date: Fri, 1 Jun 2018 12:26:12 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] gnss: add new GNSS subsystem
-Message-ID: <20180601102612.GC31639@amd>
-References: <20180601082259.17563-1-johan@kernel.org>
- <20180601093311.GA31639@amd>
- <20180601094959.GA13775@localhost>
+        Fri, 1 Jun 2018 06:30:34 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w51AUQo6010553
+X-Nifty-SrcIP: [209.85.213.45]
+X-Google-Smtp-Source: ADUXVKJp5FHSdFGSQrUz47wXIvxUQS1t2Q868lUxCgKv4UOKAxzQf2rbbvRR5rYA8oiwmIBWbsHF4pQb43886Fu63wk=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UPT3ojh+0CqEDtpF"
-Content-Disposition: inline
-In-Reply-To: <20180601094959.GA13775@localhost>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAK8P3a0SSJCK36JWxMuTWX1vCF4y7Rys8QL=_nz6syPsR_+c=w@mail.gmail.com>
+References: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAK7LNATmbiigNnPmfwOgMHqxyTOJ0H4ROMAfHZKqRxYN+W-=1w@mail.gmail.com>
+ <CAK7LNAT0S-4qq1T3q25H0BGsJSUpTsgV_+TGKBiPW-MUKyqzsQ@mail.gmail.com> <CAK8P3a0SSJCK36JWxMuTWX1vCF4y7Rys8QL=_nz6syPsR_+c=w@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 1 Jun 2018 19:29:44 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATn-1zkbVwaSEzKATioGUF0w7-yTNndzDONMfe9QOTnAg@mail.gmail.com>
+Message-ID: <CAK7LNATn-1zkbVwaSEzKATioGUF0w7-yTNndzDONMfe9QOTnAg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/31] kconfig: move compiler capability tests to Kconfig
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>, Nicholas Piggin <npiggin@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-06-01 17:31 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+> On Wed, May 30, 2018 at 2:38 AM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> 2018-05-28 21:23 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>>> 2018-05-28 18:21 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+>
+>>
+>> I pushed this series to the for-next branch.
+>> Unless a significant problem is reported,
+>> I'd like to merge this series in the upcoming MW.
+>> At least, I need to keep it in linux-next for a while.
+>>
+>> Your comments and tags are still appreciated.
+>> I will add tags (or replace patches if necessary) later,
+>> but I want this series tested in linux-next
+>> to expose to more developers' eyes.
+>>
+>> It passed my local test.  O-day bot did not report anything so far.
+>
+> I found a problem when using ccache, resulting in this output while building
+> scripts/kconfig:
+>
+> $  make V=1 O=obj-tmp/ CC="ccache gcc" defconfig
+> make[1]: Entering directory '/git/arm-soc'
+> make -C /home/arnd/arm-soc/obj-tmp KBUILD_SRC=/git/arm-soc \
+> -f /git/arm-soc/Makefile defconfig
+> make[2]: Entering directory '/git/arm-soc/obj-tmp'
+> make -f ../scripts/Makefile.build obj=scripts/basic
+>   gcc -Wp,-MD,scripts/basic/.fixdep.d -Iscripts/basic -Wall
+> -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
+> -std=gnu89  -o scripts/basic/fixdep ../scripts/basic/fixdep.c
+> rm -f .tmp_quiet_recordmcount
+> ln -fsn .. source
+> /bin/bash ../scripts/mkmakefile \
+>     .. . 4 17
+> make -f ../scripts/Makefile.build obj=scripts/kconfig defconfig
+>   gcc -Wp,-MD,scripts/kconfig/.conf.o.d -Iscripts/kconfig -Wall
+> -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
+> -std=gnu89 -c -o scripts/kconfig/conf.o ../scripts/kconfig/conf.c
+>   bison -oscripts/kconfig/zconf.tab.c -t -l ../scripts/kconfig/zconf.y
+>   flex -oscripts/kconfig/zconf.lex.c -L ../scripts/kconfig/zconf.l
+>   gcc -Wp,-MD,scripts/kconfig/.zconf.tab.o.d -Iscripts/kconfig -Wall
+> -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
+> -std=gnu89  -I../scripts/kconfig -c -o scripts/kconfig/zconf.tab.o
+> scripts/kconfig/zconf.tab.c
+>   gcc  -o scripts/kconfig/conf scripts/kconfig/conf.o
+> scripts/kconfig/zconf.tab.o
+> scripts/kconfig/conf  --defconfig=arch/arm/configs/multi_v7_defconfig Kconfig
+> ccache: invalid option -- 'r'
+> Usage:
+>     ccache [options]
+>     ccache compiler [compiler options]
+>     compiler [compiler options]          (via symbolic link)
+>
+> Options:
+>     -c, --cleanup         delete old files and recalculate size counters
+>                           (normally not needed as this is done automatically)
+>     -C, --clear           clear the cache completely (except configuration)
+>     -F, --max-files=N     set maximum number of files in cache to N (use 0 for
+>                           no limit)
+>     -M, --max-size=SIZE   set maximum size of cache to SIZE (use 0 for no
+>                           limit); available suffixes: k, M, G, T (decimal) and
+>                           Ki, Mi, Gi, Ti (binary); default suffix: G
+>     -o, --set-config=K=V  set configuration key K to value V
+>     -p, --print-config    print current configuration options
+>     -s, --show-stats      show statistics summary
+>     -z, --zero-stats      zero statistics counters
+>
+>     -h, --help            print this help text
+>     -V, --version         print version and copyright information
+>
+> See also <https://ccache.samba.org>.
+> #
+> # configuration written to .config
+> #
+> make[2]: Leaving directory '/git/arm-soc/obj-tmp'
+> make[1]: Leaving directory '/git/arm-soc'
+>
+> It appears to just keep going after this output, but clearly something is wrong.
+> I bisected it to bde197706614 ("gcc-plugins: test plugin support in Kconfig
+> and clean up Makefile").
 
---UPT3ojh+0CqEDtpF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri 2018-06-01 11:49:59, Johan Hovold wrote:
-> On Fri, Jun 01, 2018 at 11:33:11AM +0200, Pavel Machek wrote:
-> > Hi!
-> >=20
-> > > This series adds a new subsystem for GNSS receivers (e.g. GPS
-> > > receivers).
-> > >=20
-> > > While GNSS receivers are typically accessed using a UART interface th=
-ey
-> > > often also support other I/O interfaces such as I2C, SPI and USB, whi=
-le
-> > > yet other devices use iomem or even some form of remote-processor
-> > > messaging (rpmsg).
-> > >=20
-> > > The new GNSS subsystem abstracts the underlying interface and provide=
-s a
-> > > new "gnss" class type, which exposes a character-device interface (e.=
-g.
-> > > /dev/gnss0) to user space. This allows GNSS receivers to have a
-> > > representation in the Linux device model, something which is important
-> > > not least for power management purposes and which also allows for easy
-> > > detection and identification of GNSS devices.
-> > >=20
-> > > Note that the character-device interface provides raw access to whate=
-ver
-> > > protocol the receiver is (currently) using, such as NMEA 0183, UBX or
-> > > SiRF Binary. These protocols are expected to be continued to be handl=
-ed
-> > > by user space for the time being, even if some hybrid solutions are a=
-lso
-> > > conceivable (e.g. to have kernel drivers issue management commands).
-> >=20
-> > So.. while you did good work on serial power management, this is
-> > grossly misnamed. There's nothing GNSS specific in the code, and you
-> > are not presenting consistent interface to the userland.
-> >=20
-> > This is _not_ GNSS subsystem. This is serial power management
-> > subsystem, or something like that. GPS/GNSS subsystem will need to be
-> > built on top of this.
->=20
-> I thought we had this discussion already.
+Thanks for the report!
 
-I don't remember useful discussion.
 
-> This series adds an abstraction for GNSS receivers so that they can be
-> detected by userspace without resorting to probing hacks. That is GNSS
-> specific.
->=20
-> Furthermore, (since v2) we export a GNSS receiver type, which allows
-> further protocol detection hacks to be dropped, something which is also
-> GNSS specific.
+In the original scripts/Makefile.gcc-plugins,
+the parameters to scripts/gcc-plugin.sh were quoted by "..."
 
-So you have serial line + pm + protocol type. Nothing GNSS specific
-really, it would be useful to (for example) say this is modem with AT
-commands. Or this is QMI modem.
+I need to keep quoting.
+https://patchwork.kernel.org/patch/10442941/
 
-> The two drivers and library added are for GNSS devices and their
-> specific power management needs, while a random serial-connected device
-> may need to manage power differently. Also GNSS specific.
+Hmm, too much quoting is messy.
+It works though...
 
-Or maybe it will need to manager power in the same way. How would the
-AT modem be different?
 
-> Finally, the GNSS subsystem is clearly not serial (as in UART) specific
-> and works just as fine with I2C, SPI, USB, iomem, rproc or whatever
-> interface the GNSS uses.
 
-Ok, true. It is "we pass tty-like data across". Again, it would be
-useful for AT commands, too, and yes, they go over serials and usbs
-and more, too.=20
 
-> > This will never handle devices like Nokia N900, where GPS is connected
-> > over netlink.
->=20
-> Marcel already suggested adding a ugnss interface, which would allow
-> feeding GNSS data through the generic GNSS interface from user space for
-> use cases where it's not (yet) feasible to implement a kernel
-> driver.
 
-Yes, and ugnss would be at wrong layer for N900. First, lets take a
-look at N900 gps driver:
-https://github.com/postmarketOS/gps-nokia-n900
-
-Got it? I'll eventually like to see it in the kernel, but your "GNSS"
-subsystem is unsuitable for it, as it does not talk well-known
-protocol.
-
-I'd like to see "datapipe" devices (what you currently call GNSS) and
-"gps" devices, which would have common interface to the userland.
-
-N900 would not have any datapipe devices, but would have /dev/gps0
-exposing common GPS interface.
-
-Droid4 would have /dev/datapipe0 (usb, AT protocol), /dev/datapipe1
-(usb, QMI protocol), /dev/datapipe2 (gsmtty over serial, custom AT
-protocol), /dev/datapipe3 (gsmtty over serial, NMEA wrapped in AT
-protocol) (and more, it is complex hardware). And if we really wanted,
-we'd have /dev/gps0, too, exposing common GPS interface.
-
-Your devices would have /dev/datapipe0 with sirf or ublox or nmea
-protocol. In we really wanted, we'd have /dev/gps0, too, again,
-exposing common GPS interface.
-
-I believe we really want to use your code for AT commands, too. And we
-really should keep GNSS/GPS names for future layer that actually
-provides single interface for userland.
-
-Best regards,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---UPT3ojh+0CqEDtpF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsRH0QACgkQMOfwapXb+vLpJACfX3PKHkTbEnqnKW8n2K9OBw5j
-rqoAoLyZnYQV1o+iTZatpq92jFsoMSua
-=wDg9
------END PGP SIGNATURE-----
-
---UPT3ojh+0CqEDtpF--
+-- 
+Best Regards
+Masahiro Yamada
