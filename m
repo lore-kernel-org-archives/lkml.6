@@ -1,138 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751343AbeFAGN6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 02:13:58 -0400
-Received: from ozlabs.org ([203.11.71.1]:52843 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751258AbeFAGNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 02:13:55 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 1 Jun 2018 16:13:52 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoffer Dall <cdall@cs.columbia.edu>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Message-ID: <20180601161352.41bf6b29@canb.auug.org.au>
+        id S1751412AbeFAGOS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 02:14:18 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:39599 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751129AbeFAGOM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 02:14:12 -0400
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+CC: Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -mm -V3 00/21] mm, THP, swap: Swapout/swapin THP in one
+ piece
+Thread-Topic: [PATCH -mm -V3 00/21] mm, THP, swap: Swapout/swapin THP in one
+ piece
+Thread-Index: AQHT+W9Zk1CZPrlPcUakNJ2zIzYTnA==
+Date: Fri, 1 Jun 2018 06:11:16 +0000
+Message-ID: <20180601061116.GA4813@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180523082625.6897-1-ying.huang@intel.com>
+In-Reply-To: <20180523082625.6897-1-ying.huang@intel.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <1D0CB96370BFC843A021E2C684759B6B@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/W+ytlMMLdh4opml_HzIlcML"; protocol="application/pgp-signature"
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/W+ytlMMLdh4opml_HzIlcML
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 23, 2018 at 04:26:04PM +0800, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
+> 
+> Hi, Andrew, could you help me to check whether the overall design is
+> reasonable?
+> 
+> Hi, Hugh, Shaohua, Minchan and Rik, could you help me to review the
+> swap part of the patchset?  Especially [02/21], [03/21], [04/21],
+> [05/21], [06/21], [07/21], [08/21], [09/21], [10/21], [11/21],
+> [12/21], [20/21].
+> 
+> Hi, Andrea and Kirill, could you help me to review the THP part of the
+> patchset?  Especially [01/21], [07/21], [09/21], [11/21], [13/21],
+> [15/21], [16/21], [17/21], [18/21], [19/21], [20/21], [21/21].
+> 
+> Hi, Johannes and Michal, could you help me to review the cgroup part
+> of the patchset?  Especially [14/21].
+> 
+> And for all, Any comment is welcome!
 
-Hi all,
+Hi Ying Huang,
+I've read through this series and find no issue.
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+It seems that thp swapout never happens if swap devices are backed by
+rotation storages.  I guess that's because this feature depends on swap
+cluster searching algorithm which only supports non-rotational storages.
 
-  arch/arm64/include/asm/cpufeature.h
+I think that this limitation is OK because non-rotational storage is
+better for swap device (most future users will use it). But I think
+it's better to document the limitation somewhere because swap cluster
+is in-kernel thing and we can't assume that end users know about it.
 
-between commits:
+Thanks,
+Naoya Horiguchi
 
-  a43ae4dfe56a ("arm64: Add 'ssbd' command-line option")
-  c32e1736ca03 ("arm64: ssbd: Add global mitigation state accessor")
-  647d0519b53f ("arm64: ssbd: Restore mitigation status on CPU resume")
-
-from the arm64 tree and commit:
-
-  31dc52b3c8fa ("arm64/sve: Move read_zcr_features() out of cpufeature.h")
-
-from the kvm-arm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/include/asm/cpufeature.h
-index 55bc1f073bfb,0a6b7133195e..000000000000
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@@ -510,55 -508,6 +508,28 @@@ static inline bool system_supports_sve(
-  		cpus_have_const_cap(ARM64_SVE);
-  }
- =20
-- /*
--  * Read the pseudo-ZCR used by cpufeatures to identify the supported SVE
--  * vector length.
--  *
--  * Use only if SVE is present.
--  * This function clobbers the SVE vector length.
--  */
-- static inline u64 read_zcr_features(void)
-- {
-- 	u64 zcr;
-- 	unsigned int vq_max;
--=20
-- 	/*
-- 	 * Set the maximum possible VL, and write zeroes to all other
-- 	 * bits to see if they stick.
-- 	 */
-- 	sve_kernel_enable(NULL);
-- 	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL1);
--=20
-- 	zcr =3D read_sysreg_s(SYS_ZCR_EL1);
-- 	zcr &=3D ~(u64)ZCR_ELx_LEN_MASK; /* find sticky 1s outside LEN field */
-- 	vq_max =3D sve_vq_from_vl(sve_get_vl());
-- 	zcr |=3D vq_max - 1; /* set LEN field to maximum effective value */
--=20
-- 	return zcr;
-- }
--=20
- +#define ARM64_SSBD_UNKNOWN		-1
- +#define ARM64_SSBD_FORCE_DISABLE	0
- +#define ARM64_SSBD_KERNEL		1
- +#define ARM64_SSBD_FORCE_ENABLE		2
- +#define ARM64_SSBD_MITIGATED		3
- +
- +static inline int arm64_get_ssbd_state(void)
- +{
- +#ifdef CONFIG_ARM64_SSBD
- +	extern int ssbd_state;
- +	return ssbd_state;
- +#else
- +	return ARM64_SSBD_UNKNOWN;
- +#endif
- +}
- +
- +#ifdef CONFIG_ARM64_SSBD
- +void arm64_set_ssbd_mitigation(bool state);
- +#else
- +static inline void arm64_set_ssbd_mitigation(bool state) {}
- +#endif
- +
-  #endif /* __ASSEMBLY__ */
- =20
-  #endif
-
---Sig_/W+ytlMMLdh4opml_HzIlcML
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQ5CAACgkQAVBC80lX
-0GxfWAf9HnXSnCS5eXlPQAySvloaSqSxdCSPdxw9KZSUi9SauyvNTaiERIJPNbkh
-R0IvQoraU/c/+SVqptxuN8Mtp5IZzezLqZRe1zmGK+6r31cUpI1T9DNa3fzALFis
-UuZBrSM63acQh/5zRT9jWrKDT5QpOiMyMhoUnXJHrgAd9i4k/zAkCoK1shrDK3Gc
-jnY15ep2EU7BLEa5AczOLivDX0MrWRQLslHmoXe129cEUYYbwC/MMl65IcLgS0C+
-MCDZLwHqUUf+61REp30JSghytFgowMJqPSEJVaU1C361WNO3Px16BNMfU0xmqAbT
-vsvjBmNNu/Pfc86njzIVbDBHgacl+Q==
-=0O1t
------END PGP SIGNATURE-----
-
---Sig_/W+ytlMMLdh4opml_HzIlcML--
+> 
+> This patchset is based on the 2018-05-18 head of mmotm/master.
+> 
+> This is the final step of THP (Transparent Huge Page) swap
+> optimization.  After the first and second step, the splitting huge
+> page is delayed from almost the first step of swapout to after swapout
+> has been finished.  In this step, we avoid splitting THP for swapout
+> and swapout/swapin the THP in one piece.
+> 
+> We tested the patchset with vm-scalability benchmark swap-w-seq test
+> case, with 16 processes.  The test case forks 16 processes.  Each
+> process allocates large anonymous memory range, and writes it from
+> begin to end for 8 rounds.  The first round will swapout, while the
+> remaining rounds will swapin and swapout.  The test is done on a Xeon
+> E5 v3 system, the swap device used is a RAM simulated PMEM (persistent
+> memory) device.  The test result is as follow,
+> 
+>             base                  optimized
+> ---------------- -------------------------- 
+>          %stddev     %change         %stddev
+>              \          |                \  
+>    1417897 ±  2%    +992.8%   15494673        vm-scalability.throughput
+>    1020489 ±  4%   +1091.2%   12156349        vmstat.swap.si
+>    1255093 ±  3%    +940.3%   13056114        vmstat.swap.so
+>    1259769 ±  7%   +1818.3%   24166779        meminfo.AnonHugePages
+>   28021761           -10.7%   25018848 ±  2%  meminfo.AnonPages
+>   64080064 ±  4%     -95.6%    2787565 ± 33%  interrupts.CAL:Function_call_interrupts
+>      13.91 ±  5%     -13.8        0.10 ± 27%  perf-profile.children.cycles-pp.native_queued_spin_lock_slowpath
+> 
+> Where, the score of benchmark (bytes written per second) improved
+> 992.8%.  The swapout/swapin throughput improved 1008% (from about
+> 2.17GB/s to 24.04GB/s).  The performance difference is huge.  In base
+> kernel, for the first round of writing, the THP is swapout and split,
+> so in the remaining rounds, there is only normal page swapin and
+> swapout.  While in optimized kernel, the THP is kept after first
+> swapout, so THP swapin and swapout is used in the remaining rounds.
+> This shows the key benefit to swapout/swapin THP in one piece, the THP
+> will be kept instead of being split.  meminfo information verified
+> this, in base kernel only 4.5% of anonymous page are THP during the
+> test, while in optimized kernel, that is 96.6%.  The TLB flushing IPI
+> (represented as interrupts.CAL:Function_call_interrupts) reduced
+> 95.6%, while cycles for spinlock reduced from 13.9% to 0.1%.  These
+> are performance benefit of THP swapout/swapin too.
+> 
+> Below is the description for all steps of THP swap optimization.
+> 
+> Recently, the performance of the storage devices improved so fast that
+> we cannot saturate the disk bandwidth with single logical CPU when do
+> page swapping even on a high-end server machine.  Because the
+> performance of the storage device improved faster than that of single
+> logical CPU.  And it seems that the trend will not change in the near
+> future.  On the other hand, the THP becomes more and more popular
+> because of increased memory size.  So it becomes necessary to optimize
+> THP swap performance.
+> 
+> The advantages to swapout/swapin a THP in one piece include:
+> 
+> - Batch various swap operations for the THP.  Many operations need to
+>   be done once per THP instead of per normal page, for example,
+>   allocating/freeing the swap space, writing/reading the swap space,
+>   flushing TLB, page fault, etc.  This will improve the performance of
+>   the THP swap greatly.
+> 
+> - The THP swap space read/write will be large sequential IO (2M on
+>   x86_64).  It is particularly helpful for the swapin, which are
+>   usually 4k random IO.  This will improve the performance of the THP
+>   swap too.
+> 
+> - It will help the memory fragmentation, especially when the THP is
+>   heavily used by the applications.  The THP order pages will be free
+>   up after THP swapout.
+> 
+> - It will improve the THP utilization on the system with the swap
+>   turned on.  Because the speed for khugepaged to collapse the normal
+>   pages into the THP is quite slow.  After the THP is split during the
+>   swapout, it will take quite long time for the normal pages to
+>   collapse back into the THP after being swapin.  The high THP
+>   utilization helps the efficiency of the page based memory management
+>   too.
+> 
+> There are some concerns regarding THP swapin, mainly because possible
+> enlarged read/write IO size (for swapout/swapin) may put more overhead
+> on the storage device.  To deal with that, the THP swapin is turned on
+> only when necessary.  A new sysfs interface:
+> /sys/kernel/mm/transparent_hugepage/swapin_enabled is added to
+> configure it.  It uses "always/never/madvise" logic, to be turned on
+> globally, turned off globally, or turned on only for VMA with
+> MADV_HUGEPAGE, etc.
+> GE, etc.
+> 
+> Changelog
+> ---------
+> 
+> v3:
+> 
+> - Rebased on 5/18 HEAD of mmotm/master
+> 
+> - Fixed a build bug, Thanks 0-Day!
+> 
+> v2:
+> 
+> - Fixed several build bugs, Thanks 0-Day!
+> 
+> - Improved documentation as suggested by Randy Dunlap.
+> 
+> - Fixed several bugs in reading huge swap cluster
+> 
