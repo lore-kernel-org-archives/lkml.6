@@ -1,120 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753125AbeFAS15 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 14:27:57 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52326 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752268AbeFAS1y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 14:27:54 -0400
-X-Google-Smtp-Source: ADUXVKIae8mBKyxNOV3OjsFFbzBb/s1wigD8ioIa4J+JaZLQTabsowpfAZ31D3kn2EXGKNlBpBh+SA==
-Date: Fri, 1 Jun 2018 20:27:50 +0200
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        =?iso-8859-1?Q?Cl=E9ment?= VUCHENER <clement.vuchener@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>
-Subject: Re: [PATCH] HID: steam: use hid_device.driver_data instead of
- hid_set_drvdata()
-Message-ID: <20180601182750.GA23501@casa>
-References: <20180522201006.14003-1-rodrigorivascosta@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180522201006.14003-1-rodrigorivascosta@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1753265AbeFAS3e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 14:29:34 -0400
+Received: from mx1.ucr.edu ([138.23.248.2]:36805 "EHLO mx1.ucr.edu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752268AbeFAS3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 14:29:32 -0400
+IronPort-PHdr: =?us-ascii?q?9a23=3ApNxBVhGqhmlaEpiqirdRc51GYnF86YWxBRYc798d?=
+ =?us-ascii?q?s5kLTJ7zoM+wAkXT6L1XgUPTWs2DsrQY07eQ6/iocFdDyK7JiGoFfp1IWk1Nou?=
+ =?us-ascii?q?QttCtkPvS4D1bmJuXhdS0wEZcKflZk+3amLRodQ56mNBXdrXKo8DEdBAj0OxZr?=
+ =?us-ascii?q?KeTpAI7SiNm82/yv95HJbAhEmDqwbaluIBmqsA7cqtQYjYx+J6gr1xDHuGFIe+?=
+ =?us-ascii?q?NYxWNpIVKcgRPx7dqu8ZBg7ipdpesv+9ZPXqvmcas4S6dYDCk9PGAu+MLrrxjD?=
+ =?us-ascii?q?QhCR6XYaT24bjwBHAwnB7BH9Q5fxri73vfdz1SWGIcH7S60/VC+85Kl3VhDnlC?=
+ =?us-ascii?q?YHNyY48G7JjMxwkLlbqw+lqxBm3oLYfJ2ZOP94c6jAf90VWHBBU95RWSJfH42y?=
+ =?us-ascii?q?YYgBAe0aMOpEs4XwvUcCoAGiCQWwAu7k1z9GhmXx3a0/y+ktHwHH3Q0gH90UsX?=
+ =?us-ascii?q?TYsMn5OakJXOCo0KbI1y/PYO1L1jfg5oTDbxcsoPGNXLJwa8XRyFUjGx/Lg1iL?=
+ =?us-ascii?q?tIzqIymV2v4TvGeG8uptTOSigHMkpQFpujWj2Nsgh43Tio8Wyl3I7zh1zYIrKd?=
+ =?us-ascii?q?GiVkJ3fcKoHINNuyybM4Z6WN0uTm9otSog1LELuIS3cSoFxZkh2hXRceaIc5KS?=
+ =?us-ascii?q?7RLmTOuRJDB4i297d7+nnBay9FSgyvX7VsmpzFZGtipFncfItnAKzxHT79KISv?=
+ =?us-ascii?q?p5/ku4wTaP2Rzf5vhKIUwqiabXN4QtwrE3lpoUvkTDGjH5lF/qg6+Rc0Uo4umo?=
+ =?us-ascii?q?6+L5bbX6vpKQKZN4hwXkPqktmsGzG/k0PwwQU2SB5+iwyKHv8VX8QLpQj/02lq?=
+ =?us-ascii?q?fZsIrdJcQevqO4Aw5U0oY55Ba+EzuqzNoVkGIaLF1ZYhKLlZbmNEzTIPzgF/ew?=
+ =?us-ascii?q?n0yskCt3x/DBJrDhBpTNLn7ekLbuZLp96FBTyBA1zd9B45JZEa8BIP3tVU/rrt?=
+ =?us-ascii?q?DYDQE2Mxayw+n5DNVxzIQeWXiAAvzRDKSHk1iF/O1nGe6BaIIR8GL/LOIiz67k?=
+ =?us-ascii?q?nGM0ghkaZ6b/mdMWb3W9A9xiIl6Fejzog9EcASIEuRc4QOX2iVqEFzlJaDL6W6?=
+ =?us-ascii?q?M6+yF+C4+8C4rHbp6ijabH3yqhGJBSIGdcBQOiC3DtIs+VSfcFaXrKeed8mSZC?=
+ =?us-ascii?q?WLS8Acd1xAOuvQ6ik+FPM+HOvCAUqMSwh5BO++TPmERqpnRPBMOH3jTIFjkskw?=
+ =?us-ascii?q?=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2C1AADUjxFbhsjAVdFcGgEBAQEBAgEBA?=
+ =?us-ascii?q?QEIAQEBAYVMjFqMCIJuk1eBeAEKLIRAggchNRcBAgEBAQEBAQIBEwEBAQgLCwg?=
+ =?us-ascii?q?oL4I1JAGCfFIpbAEFASIBEoMiggGbODyMcTOHVwEHHkSBaAkBCIYBgixUgT+BD?=
+ =?us-ascii?q?4JYinwCgSMBAQGLbItZAQYBAQECgS2NNIdihTABK5BHAgQCCQIFDyGBIQGCCHK?=
+ =?us-ascii?q?Ba4Emgi6OQE98jm4BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2C1AADUjxFbhsjAVdFcGgEBAQEBAgEBAQEIAQEBAYVMjFq?=
+ =?us-ascii?q?MCIJuk1eBeAEKLIRAggchNRcBAgEBAQEBAQIBEwEBAQgLCwgoL4I1JAGCfFIpb?=
+ =?us-ascii?q?AEFASIBEoMiggGbODyMcTOHVwEHHkSBaAkBCIYBgixUgT+BD4JYinwCgSMBAQG?=
+ =?us-ascii?q?LbItZAQYBAQECgS2NNIdihTABK5BHAgQCCQIFDyGBIQGCCHKBa4Emgi6OQE98j?=
+ =?us-ascii?q?m4BAQ?=
+X-IronPort-AV: E=Sophos;i="5.49,467,1520924400";
+   d="scan'208";a="959951326"
+X-Google-Smtp-Source: ADUXVKJeCxjQM3YIMf6VCA4SycWNUwhl263aWYLzUXa8I2fx6MgpIq9jHnmNvbVl9Chl5IQX84lNTg==
+From: "yzhai003@ucr.edu" <yzhai003@ucr.edu>
+To: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Cc: yzhai003@ucr.edu, csong@cs.ucr.edu, zhiyunq@cs.ucr.edu
+Subject: [PATCH] iommu/amd: Argument page_size could be uninitialized
+Date: Fri,  1 Jun 2018 11:30:14 -0700
+Message-Id: <1527877815-11132-1-git-send-email-yzhai003@ucr.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, all!
+Argument "page_size" passing to function "fetch_pte" could be
+uninitialized if the function returns NULL
 
-Could you check my previous patch to see if it makes any sense?
-My machine currently crashes without it, but I'm not sure why. If you
-think it is worth it I can try and bisect it.
+The caller "iommu_unmap_page" checks the return value but the page_size is
+used outside the if block.
 
-Regards
---
-Rodrigo Rivas Costa.
+Signed-off-by: yzhai003@ucr.edu <yzhai003@ucr.edu>
+---
+ drivers/iommu/amd_iommu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-On Tue, May 22, 2018 at 10:10:06PM +0200, Rodrigo Rivas Costa wrote:
-> When creating the low-level hidraw device, the reference to steam_device
-> was stored using hid_set_drvdata(). But this value is not guaranteed to
-> be kept when set before calling probe. If this pointer is reset, it
-> crashes when opening the emulated hidraw device.
-> 
-> It looks like hid_set_drvdata() is for users "avobe" this hid_device,
-> while hid_device.driver_data it for users "below" this one.
-> 
-> In this case, we are creating a virtual hidraw device, so we must use
-> hid_device.driver_data.
-> 
-> Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-> ---
-> 
-> This patch is to be applied over hid/for-4.18/hid-steam. Is this the
-> proper way to signal it?
-> 
-> I don't know exactly when the problem started. I am pretty sure that it
-> worked with 4.16.2, but it failed with 4.16.9. Or maybe it is caused by
-> upgrading the firmware of the controller, although the protocol seems
-> identical.
-> 
->  drivers/hid/hid-steam.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-> index cb86cc834201..0422ec2b13d2 100644
-> --- a/drivers/hid/hid-steam.c
-> +++ b/drivers/hid/hid-steam.c
-> @@ -573,7 +573,7 @@ static bool steam_is_valve_interface(struct hid_device *hdev)
->  
->  static int steam_client_ll_parse(struct hid_device *hdev)
->  {
-> -	struct steam_device *steam = hid_get_drvdata(hdev);
-> +	struct steam_device *steam = hdev->driver_data;
->  
->  	return hid_parse_report(hdev, steam->hdev->dev_rdesc,
->  			steam->hdev->dev_rsize);
-> @@ -590,7 +590,7 @@ static void steam_client_ll_stop(struct hid_device *hdev)
->  
->  static int steam_client_ll_open(struct hid_device *hdev)
->  {
-> -	struct steam_device *steam = hid_get_drvdata(hdev);
-> +	struct steam_device *steam = hdev->driver_data;
->  	int ret;
->  
->  	ret = hid_hw_open(steam->hdev);
-> @@ -605,7 +605,7 @@ static int steam_client_ll_open(struct hid_device *hdev)
->  
->  static void steam_client_ll_close(struct hid_device *hdev)
->  {
-> -	struct steam_device *steam = hid_get_drvdata(hdev);
-> +	struct steam_device *steam = hdev->driver_data;
->  
->  	mutex_lock(&steam->mutex);
->  	steam->client_opened = false;
-> @@ -623,7 +623,7 @@ static int steam_client_ll_raw_request(struct hid_device *hdev,
->  				size_t count, unsigned char report_type,
->  				int reqtype)
->  {
-> -	struct steam_device *steam = hid_get_drvdata(hdev);
-> +	struct steam_device *steam = hdev->driver_data;
->  
->  	return hid_hw_raw_request(steam->hdev, reportnum, buf, count,
->  			report_type, reqtype);
-> @@ -710,7 +710,7 @@ static int steam_probe(struct hid_device *hdev,
->  		ret = PTR_ERR(steam->client_hdev);
->  		goto client_hdev_fail;
->  	}
-> -	hid_set_drvdata(steam->client_hdev, steam);
-> +	steam->client_hdev->driver_data = steam;
->  
->  	/*
->  	 * With the real steam controller interface, do not connect hidraw.
-> -- 
-> 2.17.0
-> 
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 8fb8c73..7c15eaf 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -1398,6 +1398,8 @@ static u64 *fetch_pte(struct protection_domain *domain,
+ 	int level;
+ 	u64 *pte;
+ 
++	*page_size = 0;
++
+ 	if (address > PM_LEVEL_SIZE(domain->mode))
+ 		return NULL;
+ 
+-- 
+2.7.4
