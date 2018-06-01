@@ -1,71 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751745AbeFAKwL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 06:52:11 -0400
-Received: from mga03.intel.com ([134.134.136.65]:17417 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751350AbeFAKwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 06:52:02 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,465,1520924400";
-   d="scan'208";a="233779874"
-Date: Fri, 1 Jun 2018 18:52:14 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
-Subject: Re: [virtio-dev] [PATCH] virtio: update the comments for transport
- features
-Message-ID: <20180601105214.GA9250@debian>
-References: <20180601102217.21628-1-tiwei.bie@intel.com>
- <20180601124552.6a188454.cohuck@redhat.com>
+        id S1751702AbeFAKwF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 06:52:05 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53841 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeFAKwB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 06:52:01 -0400
+X-Google-Smtp-Source: ADUXVKIc8PhWPQE+e4y32TO4UlfLZnKPxFhtSLBMSGyP5GodcKCiz2wgCSdUDraW4nmSCap374PdUawkIxbBrbQlZt0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180601124552.6a188454.cohuck@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180520222558.7053-7-kent.overstreet@gmail.com>
+References: <20180520222558.7053-1-kent.overstreet@gmail.com> <20180520222558.7053-7-kent.overstreet@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 1 Jun 2018 12:51:59 +0200
+X-Google-Sender-Auth: oD1A0A1G2f5TmEhgKUuLHMh_8us
+Message-ID: <CAK8P3a2mO1OaZOtB97-GtP4gDcmqgL1SMdwT7HJLdFrUutK4ZA@mail.gmail.com>
+Subject: Re: [PATCH 06/12] md: convert to bioset_init()/mempool_init()
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        colyli@suse.de, Mike Snitzer <snitzer@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>, Chris Mason <clm@fb.com>,
+        bacik@fb.com, linux-xfs <linux-xfs@vger.kernel.org>,
+        drbd-dev@lists.linbit.com, linux-btrfs <linux-btrfs@vger.kernel.org>,
+        "open list:SOFTWARE RAID (Multiple Disks) SUPPORT"
+        <linux-raid@vger.kernel.org>,
+        NeilBrown <neilb@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 12:45:52PM +0200, Cornelia Huck wrote:
-> On Fri,  1 Jun 2018 18:22:17 +0800
-> Tiwei Bie <tiwei.bie@intel.com> wrote:
-> 
-> > Suggested-by: Michael S. Tsirkin <mst@redhat.com>
-> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > ---
-> > This patch is generated on top of below patch:
-> > https://lists.oasis-open.org/archives/virtio-dev/201805/msg00212.html
-> > 
-> >  include/uapi/linux/virtio_config.h | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> > index b7c1f4e7d59e..479affd903e9 100644
-> > --- a/include/uapi/linux/virtio_config.h
-> > +++ b/include/uapi/linux/virtio_config.h
-> > @@ -45,9 +45,12 @@
-> >  /* We've given up on this device. */
-> >  #define VIRTIO_CONFIG_S_FAILED		0x80
-> >  
-> > -/* Some virtio feature bits (currently bits 28 through 32) are reserved for the
-> > - * transport being used (eg. virtio_ring), the rest are per-device feature
-> > - * bits. */
-> > +/*
-> > + * Some virtio feature bits (currently bits VIRTIO_TRANSPORT_F_START
-> > + * through VIRTIO_TRANSPORT_F_END) are reserved for the transport being
-> 
-> It will always be bits up to VIRTIO_TRANSPORT_F_END, no? So you can drop
-> the "currently"?
-> 
-> Or reword as "Virtio feature bits VIRTIO_TRANSPORT_F_START through
-> VIRTIO_TRANSPORT_F_END are reserved..."?
+On Mon, May 21, 2018 at 12:25 AM, Kent Overstreet
+<kent.overstreet@gmail.com> wrote:
 
-I will do it. Thanks for the suggestion!
+> @@ -510,7 +510,10 @@ static void mddev_delayed_delete(struct work_struct *ws);
+>
+>  static void mddev_put(struct mddev *mddev)
+>  {
+> -       struct bio_set *bs = NULL, *sync_bs = NULL;
+> +       struct bio_set bs, sync_bs;
+> +
+> +       memset(&bs, 0, sizeof(bs));
+> +       memset(&sync_bs, 0, sizeof(sync_bs));
+>
+>         if (!atomic_dec_and_lock(&mddev->active, &all_mddevs_lock))
+>                 return;
+> @@ -521,8 +524,8 @@ static void mddev_put(struct mddev *mddev)
+>                 list_del_init(&mddev->all_mddevs);
+>                 bs = mddev->bio_set;
+>                 sync_bs = mddev->sync_set;
+> -               mddev->bio_set = NULL;
+> -               mddev->sync_set = NULL;
+> +               memset(&mddev->bio_set, 0, sizeof(mddev->bio_set));
+> +               memset(&mddev->sync_set, 0, sizeof(mddev->sync_set));
+>                 if (mddev->gendisk) {
+>                         /* We did a probe so need to clean up.  Call
+>                          * queue_work inside the spinlock so that
+> @@ -535,10 +538,8 @@ static void mddev_put(struct mddev *mddev)
+>                         kfree(mddev);
+>         }
+>         spin_unlock(&all_mddevs_lock);
+> -       if (bs)
+> -               bioset_free(bs);
+> -       if (sync_bs)
+> -               bioset_free(sync_bs);
+> +       bioset_exit(&bs);
+> +       bioset_exit(&sync_bs);
+>  }
 
-Best regards,
-Tiwei Bie
+This has triggered a new warning in randconfig builds for me, on 32-bit:
+
+drivers/md/md.c: In function 'mddev_put':
+drivers/md/md.c:564:1: error: the frame size of 1096 bytes is larger
+than 1024 bytes [-Werror=frame-larger-than=]
+
+and on 64-bit:
+
+drivers/md/md.c: In function 'mddev_put':
+drivers/md/md.c:564:1: error: the frame size of 2112 bytes is larger
+than 2048 bytes [-Werror=frame-larger-than=]
+
+The size of bio_set is a bit configuration dependent, but it looks like this is
+a bit too big to put on the stack either way, epsecially when you traverse
+a list and copy two of them with assignments for each loop in 'bs =
+mddev->bio_set'.
+
+A related problem is that calling bioset_exit on a copy of the bio_set
+might not do the right thing. The function is defined as
+
+void bioset_exit(struct bio_set *bs)
+{
+        if (bs->rescue_workqueue)
+                destroy_workqueue(bs->rescue_workqueue);
+        bs->rescue_workqueue = NULL;
+
+        mempool_exit(&bs->bio_pool);
+        mempool_exit(&bs->bvec_pool);
+
+        bioset_integrity_free(bs);
+        if (bs->bio_slab)
+                bio_put_slab(bs);
+        bs->bio_slab = NULL;
+}
+
+So it calls a couple of functions (detroy_workqueue, mempool_exit,
+bioset_integrity_free, bio_put_slab), each of which might rely on
+a the structure being the same one that was originally allocated.
+If the structure contains any kind of linked list entry, passing a copy
+into the list management functions would guarantee corruption.
+
+I could not come up with an obvious fix, but maybe it's possible
+to change mddev_put() to do call bioset_exit() before the
+structure gets freed? Something like the (completely untested
+and probably wrong somewhere) patch below
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 411f60d591d1..3bf54591ddcd 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -531,11 +531,6 @@ static void mddev_delayed_delete(struct work_struct *ws);
+
+ static void mddev_put(struct mddev *mddev)
+ {
+-       struct bio_set bs, sync_bs;
+-
+-       memset(&bs, 0, sizeof(bs));
+-       memset(&sync_bs, 0, sizeof(sync_bs));
+-
+        if (!atomic_dec_and_lock(&mddev->active, &all_mddevs_lock))
+                return;
+        if (!mddev->raid_disks && list_empty(&mddev->disks) &&
+@@ -543,10 +538,14 @@ static void mddev_put(struct mddev *mddev)
+                /* Array is not configured at all, and not held active,
+                 * so destroy it */
+                list_del_init(&mddev->all_mddevs);
+-               bs = mddev->bio_set;
+-               sync_bs = mddev->sync_set;
++               spin_unlock(&all_mddevs_lock);
++
++               bioset_exit(&mddev->bio_set);
+                memset(&mddev->bio_set, 0, sizeof(mddev->bio_set));
++
++               bioset_exit(&mddev->sync_set);
+                memset(&mddev->sync_set, 0, sizeof(mddev->sync_set));
++
+                if (mddev->gendisk) {
+                        /* We did a probe so need to clean up.  Call
+                         * queue_work inside the spinlock so that
+@@ -557,10 +556,9 @@ static void mddev_put(struct mddev *mddev)
+                        queue_work(md_misc_wq, &mddev->del_work);
+                } else
+                        kfree(mddev);
++       } else {
++               spin_unlock(&all_mddevs_lock);
+        }
+-       spin_unlock(&all_mddevs_lock);
+-       bioset_exit(&bs);
+-       bioset_exit(&sync_bs);
+ }
+
+ static void md_safemode_timeout(struct timer_list *t);
