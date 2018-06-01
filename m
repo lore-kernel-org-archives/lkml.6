@@ -1,55 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751085AbeFAJ4x (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:56:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46382 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750766AbeFAJ4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:56:52 -0400
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH] perf tools: Fix hist_entry__tui_annotate declaration for !HAVE_SLANG_SUPPORT
-Date: Fri,  1 Jun 2018 11:56:48 +0200
-Message-Id: <20180601095648.20737-1-jolsa@kernel.org>
+        id S1750929AbeFAKCw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 06:02:52 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39202 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750766AbeFAKCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 06:02:49 -0400
+Subject: Re: [PATCH 4/8] scsi: libsas: trigger a new revalidation to discover
+ the device
+To: Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20180529022309.21071-1-yanaijie@huawei.com>
+ <20180529022309.21071-5-yanaijie@huawei.com>
+ <013c5c91-9792-7951-95ed-22daae2e2dbe@huawei.com>
+ <5B109A79.6060907@huawei.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <6b030b96-9733-f6b5-e8af-d1d488c52fb4@huawei.com>
+Date: Fri, 1 Jun 2018 11:02:28 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5B109A79.6060907@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The compilation is broken if there's no slang support:
+On 01/06/2018 01:59, Jason Yan wrote:
+>
+>
+> On 2018/5/31 23:42, John Garry wrote:
+>> On 29/05/2018 03:23, Jason Yan wrote:
+>>> Now if a new device replaced a old device, the sas address will change.
+>>> We unregister the old device and discover the new device in one
+>>> revalidation process. But after we deferred the sas_port_delete(), the
+>>> sas port is not deleted when we registering the new port and device.
+>>> This will make the sysfs complain of creating duplicate filename.
+>>>
+>>> Fix this by doing the replacement in two steps. The first revalidation
+>>> only delete the old device and trigger a new revalidation. The second
+>>> revalidation discover the new device.
+>>>
+>>> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+>>> CC: chenxiang <chenxiang66@hisilicon.com>
+>>> CC: John Garry <john.garry@huawei.com>
+>>> CC: Johannes Thumshirn <jthumshirn@suse.de>
+>>> CC: Ewan Milne <emilne@redhat.com>
+>>> CC: Christoph Hellwig <hch@lst.de>
+>>> CC: Tomas Henzl <thenzl@redhat.com>
+>>> CC: Dan Williams <dan.j.williams@intel.com>
+>>> CC: Hannes Reinecke <hare@suse.com>
+>>> ---
+>>>  drivers/scsi/libsas/sas_expander.c | 11 ++++++++++-
+>>>  1 file changed, 10 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/scsi/libsas/sas_expander.c
+>>> b/drivers/scsi/libsas/sas_expander.c
+>>> index 629c580d906b..25ad9ef54e6c 100644
+>>> --- a/drivers/scsi/libsas/sas_expander.c
+>>> +++ b/drivers/scsi/libsas/sas_expander.c
+>>> @@ -2013,6 +2013,8 @@ static int sas_rediscover_dev(struct
+>>> domain_device *dev, int phy_id, bool last)
+>>>  {
+>>>      struct expander_device *ex = &dev->ex_dev;
+>>>      struct ex_phy *phy = &ex->ex_phy[phy_id];
+>>> +    struct asd_sas_port *port = dev->port;
+>>> +    struct asd_sas_phy *sas_phy;
+>>>      enum sas_device_type type = SAS_PHY_UNUSED;
+>>>      u8 sas_addr[8];
+>>>      int res;
+>>> @@ -2060,7 +2062,14 @@ static int sas_rediscover_dev(struct
+>>> domain_device *dev, int phy_id, bool last)
+>>>              SAS_ADDR(phy->attached_sas_addr));
+>>>      sas_unregister_devs_sas_addr(dev, phy_id, last);
+>>>
+>>> -    return sas_discover_new(dev, phy_id);
+>>> +    /* force the next revalidation find this phy and bring it up */
+>>> +    phy->phy_change_count = -1;
+>>> +    ex->ex_change_count = -1;
+>>> +    sas_phy = container_of(port->phy_list.next, struct asd_sas_phy,
+>>> +            port_phy_el);
+>>> +    port->ha->notify_port_event(sas_phy, PORTE_BROADCAST_RCVD);
+>>> +
+>>
+>> This is less than ideal: that is, restarting another discovery with this
+>> artifical broadcast event. We do something similar when re-enabling
+>> revalidation.
+>>
+>
+> That will back to what we have discussed before. The sas port
+> adding/removing is delayed outside the disco_mutex. we can only do the
+> adding or removing once inside the disco_mutex.
+>
+>> Can we do all the event processing synchronised to the original event?
+>>
+>
+> Actually bcast is a very special event, and what we do in revalidation
+> at one time is scanning all phy changes, which may include many bcast
+> events(especially before our first patchset), and the next
+> revalidations may have nothing to do.
+>
+> So "do all the event processing synchronised to the original event" is
+> impossible actually. Maybe if the bcast can indicate which device
+> originated it, we will achieve this goal.
 
-  builtin-annotate.c: In function ‘hists__find_annotations’:
-  builtin-annotate.c:344:10: error: too many arguments to function ‘hist_entry__tui_annotate’
-      key = hist_entry__tui_annotate(he, evsel, NULL, &ann->opts);
+I mean that since libsas does disocovery/revalidation for all expander 
+PHYS for a single event, than all discovery/revalidation should be 
+synchronised with that same event. I don't mean that for a given 
+expander PHY which originated a broadcast event, the 
+revalidation/discovery for that PHY should be synchronised with that 
+same event. Like you said, I don't think it's possible.
 
-Adding the missing argument to hist_entry__tui_annotate function.
+On another point, one of the reasons to synchronise event processing was 
+so events are not lost and are processed in order. In principle, by 
+chaining these bcast events we lose that, since other PHY events may be 
+queued before we queue the new artificial bcast events.
 
-Fixes: 464fb4fd6af7 ("perf hists browser: Pass annotation_options from tool to browser")
-Link: http://lkml.kernel.org/n/tip-vgf5a8wk0eyayo7omvutwhqo@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/hist.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> But if you mean we shall do this device removing and rediscovering in
+> one revalidation if it is not a "flutter", I think we can wrap a new
+> function for sas_revalidate_domain(), such as:
+>
+>
+> while (need_to_revalidate_again)
+>     need_to_revalidate_again = sas_revalidate_domain()
+>
+> In this way the sas_port adding/removing is packed in one loop, we won't
+> have the annoyance of "duplicate filename" warning. What do you
+> think?
 
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 256292b18bb8..9b1a68a685d4 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -446,7 +446,8 @@ static inline int map_symbol__tui_annotate(struct map_symbol *ms __maybe_unused,
- 
- static inline int hist_entry__tui_annotate(struct hist_entry *he __maybe_unused,
- 					   struct perf_evsel *evsel __maybe_unused,
--					   struct hist_browser_timer *hbt __maybe_unused)
-+					   struct hist_browser_timer *hbt __maybe_unused,
-+					   struct annotation_options *annotation_opts)
- {
- 	return 0;
- }
--- 
-2.13.6
+Something like that, where all the discovery/revalidation and related 
+device + port processing is done before we complete the revalidation 
+event processing. A single revalidation event may defer do device+port 
+processing multiple times.
+
+>
+>>> +    return 0;
+>>>  }
+>>>
+>>>  /**
+>>>
+>>
+>>
+>>
+>> .
+>>
+>
+>
+> .
+>
