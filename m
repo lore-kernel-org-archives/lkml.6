@@ -1,59 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750968AbeFAIiV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:38:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750724AbeFAIiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:38:17 -0400
-Date: Fri, 1 Jun 2018 10:37:54 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: James Simmons <jsimmons@infradead.org>
-Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
-        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>,
-        Amir Shehata <amir.shehata@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH v2 08/25] staging: lustre: libcfs: NUMA support
-Message-ID: <20180601083754.GE19242@kroah.com>
-References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
- <1527603725-30560-9-git-send-email-jsimmons@infradead.org>
+        id S1751338AbeFAIim (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:38:42 -0400
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:34110 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750974AbeFAIii (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 04:38:38 -0400
+Subject: Re: [PATCH v7 3/6] mfd: cros-ec: Increase maximum mkbp event size
+To: Neil Armstrong <narmstrong@baylibre.com>, airlied@linux.ie,
+        hans.verkuil@cisco.com, lee.jones@linaro.org, olof@lixom.net,
+        seanpaul@google.com
+Cc: sadolfsson@google.com, felixe@google.com, bleung@google.com,
+        darekm@google.com, marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        eballetbo@gmail.com, Stefan Adolfsson <sadolfsson@chromium.org>
+References: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
+ <1527841154-24832-4-git-send-email-narmstrong@baylibre.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <f6005be9-bd87-e741-8a61-f91c95a0ab88@xs4all.nl>
+Date: Fri, 1 Jun 2018 10:38:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527603725-30560-9-git-send-email-jsimmons@infradead.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1527841154-24832-4-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfIpAKm3wS13twgFLoHbBxwwRwbhNhDO0a/Lvk3fcG7+/+SG4Pi81tfB8+89wBQwq+7Udw0afLt9Sdy7n8s4qM6PPJ9If4Tad4XliykU9wLo5W73gPvLb
+ kW58I6WY3dw4fIKV9XYQq4o2IhIcCnGIZs9raEX7SMc1YXAUXJz1M/gzNojyHA/l3Q7pyWPJFpSDUmRC7kfqNxeQZ6xAXJfwVFRqEWWlozt0x9eXSFSQv9dp
+ cEz6t4SubNeZhT/2VQVOs6wgKO0ujRP4Ci8vkdcTQQV29+PwynAJu1v5/3HKmTsqZ6lnsKiyNmt7OkOodIallvTbHSffZ44OrC2ExFyOVlqeKPl/H9KBP3AH
+ +EAn9FBww/dUzOzJ0ha9yZhML3vB8Vsp2gldiy8WUT6gWFBY4QD8pVrgnSykLBdu597xO6mNT+GfQHs1LuMeL+OkgZOR1jwsgTpGq/57z7vw085QlgKU9ILP
+ KWm4W5NhxiANHkiAqAERHxCjfPhxR441wkVL9iRVvQalBNX6CBWtXvoqc2O30brS7agOptGq+hul023C5ZBRrSYGL5g3WPPHt5vJ3Bzm6TRkuMgSh2xrvjiP
+ zRxJ/n+Xmj9QvCsVx60n1OnaQRWaA0Ey3ceXSMQQGRedqQD9aub5EUWmlowQzCXbkbCPZ7q3SlR3RnX6GDkak6UptPUH6aOMaQBJQVOcGMCSqLyL3QHqbTB2
+ HjI9cauc+DZVcYzCZngKMMewjpPRLtqcZklW+MjSwFByiTI5D5/SA6KuFrfDJyVMG2Q3fZbscoA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:21:48AM -0400, James Simmons wrote:
-> From: Amir Shehata <amir.shehata@intel.com>
+On 06/01/2018 10:19 AM, Neil Armstrong wrote:
+> Having a 16 byte mkbp event size makes it possible to send CEC
+> messages from the EC to the AP directly inside the mkbp event
+> instead of first doing a notification and then a read.
 > 
-> This patch adds NUMA node support.
+> Signed-off-by: Stefan Adolfsson <sadolfsson@chromium.org>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-Really?  It looks like you just added an empty data structure pointer
-that doesn't really do anything at all.
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Where are you reading the host memory NUMA information from?
+Regards,
 
-And why would a filesystem care about this type of thing?  Are you
-going to now mirror what the scheduler does with regards to NUMA
-topology issues?  How are you going to handle things when the topology
-changes?  What systems did you test this on?  What performance
-improvements were seen?  What downsides are there with all of this?
+	Hans
 
-I need a whole lot more information here...
-
-> NUMA node information is stored
-> in the CPT table. A NUMA node mask is maintained for the entire
-> table as well as for each CPT to track the NUMA nodes related to
-> each of the CPTs. Add new function cfs_cpt_of_node() which returns
-> the CPT of a particular NUMA node.
-
-This doesn't really seem to match up with the code changes from what I
-can tell...
-
-thanks,
-
-greg k-h
+> ---
+>  drivers/platform/chrome/cros_ec_proto.c | 40 +++++++++++++++++++++++++--------
+>  include/linux/mfd/cros_ec.h             |  2 +-
+>  include/linux/mfd/cros_ec_commands.h    | 19 ++++++++++++++++
+>  3 files changed, 51 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+> index e7bbdf9..c4f6c44 100644
+> --- a/drivers/platform/chrome/cros_ec_proto.c
+> +++ b/drivers/platform/chrome/cros_ec_proto.c
+> @@ -504,10 +504,31 @@ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
+>  }
+>  EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
+>  
+> +static int get_next_event_xfer(struct cros_ec_device *ec_dev,
+> +			       struct cros_ec_command *msg,
+> +			       int version, uint32_t size)
+> +{
+> +	int ret;
+> +
+> +	msg->version = version;
+> +	msg->command = EC_CMD_GET_NEXT_EVENT;
+> +	msg->insize = size;
+> +	msg->outsize = 0;
+> +
+> +	ret = cros_ec_cmd_xfer(ec_dev, msg);
+> +	if (ret > 0) {
+> +		ec_dev->event_size = ret - 1;
+> +		memcpy(&ec_dev->event_data, msg->data, ec_dev->event_size);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static int get_next_event(struct cros_ec_device *ec_dev)
+>  {
+>  	u8 buffer[sizeof(struct cros_ec_command) + sizeof(ec_dev->event_data)];
+>  	struct cros_ec_command *msg = (struct cros_ec_command *)&buffer;
+> +	static int cmd_version = 1;
+>  	int ret;
+>  
+>  	if (ec_dev->suspended) {
+> @@ -515,18 +536,19 @@ static int get_next_event(struct cros_ec_device *ec_dev)
+>  		return -EHOSTDOWN;
+>  	}
+>  
+> -	msg->version = 0;
+> -	msg->command = EC_CMD_GET_NEXT_EVENT;
+> -	msg->insize = sizeof(ec_dev->event_data);
+> -	msg->outsize = 0;
+> +	if (cmd_version == 1) {
+> +		ret = get_next_event_xfer(ec_dev, msg, cmd_version,
+> +				sizeof(struct ec_response_get_next_event_v1));
+> +		if (ret < 0 || msg->result != EC_RES_INVALID_VERSION)
+> +			return ret;
+>  
+> -	ret = cros_ec_cmd_xfer(ec_dev, msg);
+> -	if (ret > 0) {
+> -		ec_dev->event_size = ret - 1;
+> -		memcpy(&ec_dev->event_data, msg->data,
+> -		       sizeof(ec_dev->event_data));
+> +		/* Fallback to version 0 for future send attempts */
+> +		cmd_version = 0;
+>  	}
+>  
+> +	ret = get_next_event_xfer(ec_dev, msg, cmd_version,
+> +				  sizeof(struct ec_response_get_next_event));
+> +
+>  	return ret;
+>  }
+>  
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+> index f36125e..32caef3 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -147,7 +147,7 @@ struct cros_ec_device {
+>  	bool mkbp_event_supported;
+>  	struct blocking_notifier_head event_notifier;
+>  
+> -	struct ec_response_get_next_event event_data;
+> +	struct ec_response_get_next_event_v1 event_data;
+>  	int event_size;
+>  	u32 host_event_wake_mask;
+>  };
+> diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+> index f2edd99..cc0768e 100644
+> --- a/include/linux/mfd/cros_ec_commands.h
+> +++ b/include/linux/mfd/cros_ec_commands.h
+> @@ -2093,12 +2093,31 @@ union ec_response_get_next_data {
+>  	uint32_t   sysrq;
+>  } __packed;
+>  
+> +union ec_response_get_next_data_v1 {
+> +	uint8_t   key_matrix[16];
+> +
+> +	/* Unaligned */
+> +	uint32_t  host_event;
+> +
+> +	uint32_t   buttons;
+> +	uint32_t   switches;
+> +	uint32_t   sysrq;
+> +	uint32_t   cec_events;
+> +	uint8_t    cec_message[16];
+> +} __packed;
+> +
+>  struct ec_response_get_next_event {
+>  	uint8_t event_type;
+>  	/* Followed by event data if any */
+>  	union ec_response_get_next_data data;
+>  } __packed;
+>  
+> +struct ec_response_get_next_event_v1 {
+> +	uint8_t event_type;
+> +	/* Followed by event data if any */
+> +	union ec_response_get_next_data_v1 data;
+> +} __packed;
+> +
+>  /* Bit indices for buttons and switches.*/
+>  /* Buttons */
+>  #define EC_MKBP_POWER_BUTTON	0
+> 
