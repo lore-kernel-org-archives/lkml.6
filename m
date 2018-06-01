@@ -1,72 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751008AbeFABTI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 21:19:08 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:40182 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750790AbeFABTH (ORCPT
+        id S1750795AbeFABUp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 21:20:45 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36119 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750711AbeFABUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 21:19:07 -0400
-X-Google-Smtp-Source: ADUXVKLTHMH2PzM626ZV+wBkIra6PWpELq3plaUJ9E8nuHgbXUx6CKPchjPzMKDHcRuYI5LIZVKg8Q==
-Subject: Re: Can kfree() sleep at runtime?
-To: Christopher Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, Mel Gorman <mgorman@techsingularity.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <30ecafd7-ed61-907b-f924-77fc37dcc753@gmail.com>
- <01000163b6883743-79e003fa-71c2-4e9d-aa4a-35fcd08bb0d8-000000@email.amazonses.com>
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <3b65993d-9e96-4354-8761-ae1f87c5ae20@gmail.com>
-Date: Fri, 1 Jun 2018 09:18:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 31 May 2018 21:20:30 -0400
+X-Google-Smtp-Source: ADUXVKKY1hw7U+Rj4jtQgZ5Ey7wFk1Sb0d5sL9lcP76iv4fr8xK81WOHskK7nU0j+hNFtDrBJK8GAw==
+Subject: Re: [PATCH 1/2] power: supply: sbs-battery: don't assume
+ MANUFACTURER_DATA formats
+To: Brian Norris <briannorris@chromium.org>,
+        Sebastian Reichel <sre@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        Alexandru Stan <amstan@chromium.org>,
+        Doug Anderson <dianders@chromium.org>
+References: <20180601003252.42810-1-briannorris@chromium.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <0b2a6fde-4b5a-bccb-d6bf-18a1feac7632@roeck-us.net>
+Date: Thu, 31 May 2018 18:20:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <01000163b6883743-79e003fa-71c2-4e9d-aa4a-35fcd08bb0d8-000000@email.amazonses.com>
+In-Reply-To: <20180601003252.42810-1-briannorris@chromium.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Brian,
 
+On 05/31/2018 05:32 PM, Brian Norris wrote:
+> This driver was originally submitted for the TI BQ20Z75 battery IC
+> (commit a7640bfa10c5 ("power_supply: Add driver for TI BQ20Z75 gas gauge
+> IC")) and later renamed to express generic SBS support. While it's
+> mostly true that this driver implemented a standard SBS command set, it
+> takes liberties with the REG_MANUFACTURER_DATA register. This register
+> is specified in the SBS spec, but it doesn't make any mention of what
+> its actual contents are.
+> 
+> We've sort of noticed this optionality previously, with commit
+> 17c6d3979e5b ("sbs-battery: make writes to ManufacturerAccess
+> optional"), where we found that some batteries NAK writes to this
+> register.
+> 
+> What this really means is that so far, we've just been lucky that most
+> batteries have either been compatible with the TI chip, or else at least
+> haven't reported highly-unexpected values.
+> 
+> For instance, one battery I have here seems to report either 0x0000 or
+> 0x0100 to the MANUFACTURER_ACCESS_STATUS command -- while this seems to
+> match either Wake Up (bits[11:8] = 0000b) or Normal Discharge
+> (bits[11:8] = 0001b) status for the TI part [1], they don't seem to
+> actually correspond to real states (for instance, I never see 0101b =
+> Charge, even when charging).
+> 
+> On other batteries, I'm getting apparently random data in return, which
+> means that occasionally, we interpret this as "battery not present" or
+> "battery is not healthy".
+> 
+> All in all, it seems to be a really bad idea to make assumptions about
+> REG_MANUFACTURER_DATA, unless we already know what battery we're using.
+> Therefore, this patch reimplements the "present" and "health" checks to
+> the following on most SBS batteries:
+> 
+> 1. HEALTH: report "unknown" -- I couldn't find a standard SBS command
+>     that gives us much useful here
+> 2. PRESENT: just send a REG_STATUS command; if it succeeds, then the
+>     battery is present
+> 
+> Also, we stop sending MANUFACTURER_ACCESS_SLEEP to non-TI parts. I have
+> no proof that this is useful and supported.
+> 
+> If someone explicitly provided a 'ti,bq20z75' compatible property, then
+> we retain the existing TI command behaviors.
+> 
+> [1] http://www.ti.com/lit/er/sluu265a/sluu265a.pdf
+> 
 
-On 2018/5/31 22:09, Christopher Lameter wrote:
-> On Thu, 31 May 2018, Jia-Ju Bai wrote:
->
->> I write a static analysis tool (DSAC), and it finds that kfree() can sleep.
-> That should not happen.
->
->> Here is the call path for kfree().
->> Please look at it *from the bottom up*.
->>
->> [FUNC] alloc_pages(GFP_KERNEL)
->> arch/x86/mm/pageattr.c, 756: alloc_pages in split_large_page
->> arch/x86/mm/pageattr.c, 1283: split_large_page in __change_page_attr
->> arch/x86/mm/pageattr.c, 1391: __change_page_attr in __change_page_attr_set_clr
->> arch/x86/mm/pageattr.c, 2014: __change_page_attr_set_clr in __set_pages_np
->> arch/x86/mm/pageattr.c, 2034: __set_pages_np in __kernel_map_pages
->> ./include/linux/mm.h, 2488: __kernel_map_pages in kernel_map_pages
->> mm/page_alloc.c, 1074: kernel_map_pages in free_pages_prepare
-> mapping pages in the page allocator can cause allocations?? How did that
-> get in there?
+Excellent idea. Couple of comments below.
 
-Thanks for reply :)
-I am also confused about it.
+Thanks,
+Guenter
 
-I get in here according to the definition of free_pages_prepare():
-1022. static bool free_pages_prepare(...) {
-              ...
-1072.    arch_free_page(page, order);
-1073.    kernel_poison_pages(page, 1 << order, 0);
-1074.    kernel_map_pages(page, 1 << order, 0); // *Here*
-1075.    kasan_free_pages(page, order);
-1076.
-1077.    return true;
-1078. }
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+>   drivers/power/supply/sbs-battery.c | 61 +++++++++++++++++++++++++-----
+>   1 file changed, 52 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
+> index 83d7b4115857..e15d0ca4729d 100644
+> --- a/drivers/power/supply/sbs-battery.c
+> +++ b/drivers/power/supply/sbs-battery.c
+> @@ -23,6 +23,7 @@
+>   #include <linux/kernel.h>
+>   #include <linux/module.h>
+>   #include <linux/of.h>
+> +#include <linux/of_device.h>
+>   #include <linux/power/sbs-battery.h>
+>   #include <linux/power_supply.h>
+>   #include <linux/slab.h>
+> @@ -84,8 +85,9 @@ static const struct chip_data {
+>   	int min_value;
+>   	int max_value;
+>   } sbs_data[] = {
+> +	/* Manuf. data isn't directly useful as a POWER_SUPPLY_PROP */
+>   	[REG_MANUFACTURER_DATA] =
+> -		SBS_DATA(POWER_SUPPLY_PROP_PRESENT, 0x00, 0, 65535),
+> +		SBS_DATA(-1, 0x00, 0, 65535),
 
+I don't think this change is necessary. For example, POWER_SUPPLY_PROP_SERIAL_NUMBER
+is also not directly accessed, yet the REG_SERIAL_NUMBER array entry includes
+POWER_SUPPLY_PROP_SERIAL_NUMBER.
 
-Best wishes,
-Jia-Ju Bai
+>   	[REG_TEMPERATURE] =
+>   		SBS_DATA(POWER_SUPPLY_PROP_TEMP, 0x08, 0, 65535),
+>   	[REG_VOLTAGE] =
+> @@ -156,6 +158,9 @@ static enum power_supply_property sbs_properties[] = {
+>   	POWER_SUPPLY_PROP_MODEL_NAME
+>   };
+>   
+> +/* Supports special manufacturer commands from TI BQ20Z75 IC. */
+> +#define SBS_FLAGS_TI_BQ20Z75		BIT(0)
+> +
+>   struct sbs_info {
+>   	struct i2c_client		*client;
+>   	struct power_supply		*power_supply;
+> @@ -168,6 +173,7 @@ struct sbs_info {
+>   	u32				poll_retry_count;
+>   	struct delayed_work		work;
+>   	struct mutex			mode_lock;
+> +	u32				flags;
+>   };
+>   
+>   static char model_name[I2C_SMBUS_BLOCK_MAX + 1];
+> @@ -315,6 +321,31 @@ static int sbs_status_correct(struct i2c_client *client, int *intval)
+>   static int sbs_get_battery_presence_and_health(
+>   	struct i2c_client *client, enum power_supply_property psp,
+>   	union power_supply_propval *val)
+> +{
+> +	int ret;
+> +
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_PRESENT:
+> +		/* Dummy command; if it succeeds, battery is present. */
+> +		ret = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
+> +		if (ret < 0)
+> +			val->intval = 0; /* battery disconnected */
+
+I don't know the relevance, but the original code returns the error
+in this situation.
+
+> +		else
+> +			val->intval = 1; /* battery present */
+> +		return 0;
+> +	case POWER_SUPPLY_PROP_HEALTH:
+> +		/* SBS spec doesn't have a general health command. */
+> +		val->intval = POWER_SUPPLY_HEALTH_UNKNOWN;
+> +		return 0;
+> +	default:
+> +		dev_err(&client->dev, "unexpected prop %d\n", psp);
+> +		return -EINVAL;
+
+Personally I would prefer if/else here, for the simple reason that the default case
+will never be executed and just wastes a bit of code space.
+
+> +	}
+> +}
+> +
+> +static int sbs_get_ti_battery_presence_and_health(
+> +	struct i2c_client *client, enum power_supply_property psp,
+> +	union power_supply_propval *val)
+>   {
+>   	s32 ret;
+>   
+> @@ -600,7 +631,12 @@ static int sbs_get_property(struct power_supply *psy,
+>   	switch (psp) {
+>   	case POWER_SUPPLY_PROP_PRESENT:
+>   	case POWER_SUPPLY_PROP_HEALTH:
+> -		ret = sbs_get_battery_presence_and_health(client, psp, val);
+> +		if (client->flags & SBS_FLAGS_TI_BQ20Z75)
+> +			ret = sbs_get_ti_battery_presence_and_health(client,
+> +								     psp, val);
+> +		else
+> +			ret = sbs_get_battery_presence_and_health(client, psp,
+> +								  val);
+>   		if (psp == POWER_SUPPLY_PROP_PRESENT)
+>   			return 0;
+>   		break;
+> @@ -806,6 +842,7 @@ static int sbs_probe(struct i2c_client *client,
+>   	if (!chip)
+>   		return -ENOMEM;
+>   
+> +	chip->flags = (u32)(uintptr_t)of_device_get_match_data(&client->dev);
+>   	chip->client = client;
+>   	chip->enable_detection = false;
+>   	psy_cfg.of_node = client->dev.of_node;
+> @@ -915,12 +952,15 @@ static int sbs_suspend(struct device *dev)
+>   	if (chip->poll_time > 0)
+>   		cancel_delayed_work_sync(&chip->work);
+>   
+> -	/*
+> -	 * Write to manufacturer access with sleep command.
+> -	 * Support is manufacturer dependend, so ignore errors.
+> -	 */
+> -	sbs_write_word_data(client, sbs_data[REG_MANUFACTURER_DATA].addr,
+> -		MANUFACTURER_ACCESS_SLEEP);
+> +	if (chip->flags & SBS_FLAGS_TI_BQ20Z75) {
+> +		/*
+> +		 * Write to manufacturer access with sleep command.
+> +		 * Support is manufacturer dependent, so ignore errors.
+> +		 */
+> +		sbs_write_word_data(client,
+> +				    sbs_data[REG_MANUFACTURER_DATA].addr,
+> +				    MANUFACTURER_ACCESS_SLEEP);
+> +	}
+>   
+>   	return 0;
+>   }
+> @@ -941,7 +981,10 @@ MODULE_DEVICE_TABLE(i2c, sbs_id);
+>   
+>   static const struct of_device_id sbs_dt_ids[] = {
+>   	{ .compatible = "sbs,sbs-battery" },
+> -	{ .compatible = "ti,bq20z75" },
+> +	{
+> +		.compatible = "ti,bq20z75",
+> +		.data = (void *)SBS_FLAGS_TI_BQ20Z75,
+> +	},
+>   	{ }
+>   };
+>   MODULE_DEVICE_TABLE(of, sbs_dt_ids);
+> 
