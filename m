@@ -1,77 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeFALaG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:30:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54956 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751714AbeFAL3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:29:51 -0400
-From: Michal Kubecek <mkubecek@suse.cz>
-Date: Fri, 1 Jun 2018 12:34:41 +0200
-Subject: [PATCH net] ipv6: omit traffic class when calculating flow hash
-To: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Tom Herbert <tom@herbertland.com>, David Ahern <dsahern@gmail.com>
-Message-Id: <20180601112948.93BE7A0C48@unicorn.suse.cz>
+        id S1752065AbeFALa7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:30:59 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:58832 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbeFALaw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 07:30:52 -0400
+X-IronPort-AV: E=Sophos;i="5.49,465,1520899200";
+   d="scan'208";a="734817710"
+From: Filippo Sironi <sironi@amazon.de>
+To: sironi@amazon.de, tony.luck@intel.com, bp@alien8.de,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/MCE: Get microcode revision from cpu_info instead of boot_cpu_data
+Date: Fri,  1 Jun 2018 13:30:26 +0200
+Message-Id: <1527852626-7258-1-git-send-email-sironi@amazon.de>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the code paths calculating flow hash for IPv6 use flowlabel member
-of struct flowi6 which, despite its name, encodes both flow label and
-traffic class. If traffic class changes within a TCP connection (as e.g.
-ssh does), ECMP route can switch between path. It's also incosistent with
-other code paths where ip6_flowlabel() (returning only flow label) is used
-to feed the key.
+Commit fa94d0c6e0f3 ("x86/MCE: Save microcode revision in machine check
+records") extended MCE entries to report the microcode revision taken
+from boot_cpu_data. Unfortunately, boot_cpu_data isn't updated on late
+microcode loading, thus making MCE entries slightly incorrect.
+Use cpu_info instead, which is updated on late microcode loading.
 
-Use only flow label everywhere, including one place where hash key is set
-using ip6_flowinfo().
-
-Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
-Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+Fixes: fa94d0c6e0f3 ("x86/MCE: Save microcode revision in machine check records")
+Signed-off-by: Filippo Sironi <sironi@amazon.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: linux-edac@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
- net/core/flow_dissector.c | 3 ++-
- net/ipv6/route.c          | 5 +++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
-index d29f09bc5ff9..441d3db76e8e 100644
---- a/net/core/flow_dissector.c
-+++ b/net/core/flow_dissector.c
-@@ -1334,7 +1334,8 @@ __u32 __get_hash_from_flowi6(const struct flowi6 *fl6, struct flow_keys *keys)
- 	keys->ports.src = fl6->fl6_sport;
- 	keys->ports.dst = fl6->fl6_dport;
- 	keys->keyid.keyid = fl6->fl6_gre_key;
--	keys->tags.flow_label = (__force u32)fl6->flowlabel;
-+	keys->tags.flow_label = (__force u32)(fl6->flowlabel &
-+					      IPV6_FLOWLABEL_MASK);
- 	keys->basic.ip_proto = fl6->flowi6_proto;
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 42cf2880d0ed..4be323f9b390 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -134,7 +134,7 @@ void mce_setup(struct mce *m)
+ 	if (this_cpu_has(X86_FEATURE_INTEL_PPIN))
+ 		rdmsrl(MSR_PPIN, m->ppin);
  
- 	return flow_hash_from_keys(keys);
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index f4d61736c41a..fcbacf1677f8 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -1868,7 +1868,7 @@ static void ip6_multipath_l3_keys(const struct sk_buff *skb,
- 	} else {
- 		keys->addrs.v6addrs.src = key_iph->saddr;
- 		keys->addrs.v6addrs.dst = key_iph->daddr;
--		keys->tags.flow_label = ip6_flowinfo(key_iph);
-+		keys->tags.flow_label = ip6_flowlabel(key_iph);
- 		keys->basic.ip_proto = key_iph->nexthdr;
- 	}
+-	m->microcode = boot_cpu_data.microcode;
++	m->microcode = cpu_data(m->extcpu).microcode;
  }
-@@ -1889,7 +1889,8 @@ u32 rt6_multipath_hash(const struct net *net, const struct flowi6 *fl6,
- 		} else {
- 			hash_keys.addrs.v6addrs.src = fl6->saddr;
- 			hash_keys.addrs.v6addrs.dst = fl6->daddr;
--			hash_keys.tags.flow_label = (__force u32)fl6->flowlabel;
-+			hash_keys.tags.flow_label = (__force u32)(fl6->flowlabel &
-+								  IPV6_FLOWLABEL_MASK);
- 			hash_keys.basic.ip_proto = fl6->flowi6_proto;
- 		}
- 		break;
+ 
+ DEFINE_PER_CPU(struct mce, injectm);
 -- 
-2.17.1
+2.7.4
