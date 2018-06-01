@@ -1,79 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753369AbeFATBc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 15:01:32 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44271 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752704AbeFATB2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 15:01:28 -0400
-X-Google-Smtp-Source: ADUXVKLi9rzLuJvg9xKC19/3gWIBOdG3TTxhPt0k9C+5cUcAceLiluME6taXl4dLXre9VYRhVtv/aIJcnxzf7SZ+BK8=
+        id S1753483AbeFATCm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 15:02:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38796 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753036AbeFATCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 15:02:39 -0400
+X-Google-Smtp-Source: ADUXVKKks0PKf6+4dS0/+ZQxSX6VV9SoaeMhY1NE3Z80WBbD0Fx0Q6V5LMarbgVUR68vHOiIzKdUXwRqGV8eetdnAq4=
 MIME-Version: 1.0
-In-Reply-To: <04ea0685-0141-b12c-06f6-f246a318bfe4@amd.com>
-References: <20180523185538.GA975@jordon-HP-15-Notebook-PC>
- <CAFqt6zZq_GN2gjv-noP4RsOV74xCBGQjgHYadCOgaETv0wu9_g@mail.gmail.com> <04ea0685-0141-b12c-06f6-f246a318bfe4@amd.com>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Sat, 2 Jun 2018 00:31:26 +0530
-Message-ID: <CAFqt6zafU0JxPU+cSB=mHZWuPDQnLgLk4cgAo2Gnbs1XUbTqgQ@mail.gmail.com>
-Subject: Re: [PATCH] gpu: drm: ttm: Adding new return type vm_fault_t
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Hongbo.He@amd.com, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+In-Reply-To: <a354f3d1-051d-8b68-e6b3-ce7a739c10c9@broadcom.com>
+References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+ <1527266717-8406-3-git-send-email-ray.jui@broadcom.com> <20180531162556.GA955@rob-hp-laptop>
+ <a354f3d1-051d-8b68-e6b3-ce7a739c10c9@broadcom.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 1 Jun 2018 14:02:17 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+YX01CwCycqeu5mxTUiWtnG3HKPJP5mvJO2OHcPF6v6g@mail.gmail.com>
+Message-ID: <CAL_Jsq+YX01CwCycqeu5mxTUiWtnG3HKPJP5mvJO2OHcPF6v6g@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
+        <bcm-kernel-feedback-list@broadcom.com>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        Pramod Kumar <pramod.kumar@broadcom.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51J2eee027032
 
-On Fri, Jun 1, 2018 at 5:18 PM, Christian König
-<christian.koenig@amd.com> wrote:
-> Am 31.05.2018 um 07:07 schrieb Souptick Joarder:
+On Fri, Jun 1, 2018 at 12:56 PM, Ray Jui <ray.jui@broadcom.com> wrote:
+> Hi Rob,
+>
+> On 5/31/2018 9:25 AM, Rob Herring wrote:
 >>
->> On Thu, May 24, 2018 at 12:25 AM, Souptick Joarder <jrdr.linux@gmail.com>
->> wrote:
+>> On Fri, May 25, 2018 at 09:45:16AM -0700, Ray Jui wrote:
 >>>
->>> Use new return type vm_fault_t for fault handler. For
->>> now, this is just documenting that the function returns
->>> a VM_FAULT value rather than an errno. Once all instances
->>> are converted, vm_fault_t will become a distinct type.
+>>> Update and add Stingray clock definitions and tables so they match the
+>>> binding document and the latest ASIC datasheet
 >>>
->>> Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->>>
->>> Previously vm_insert_{mixed,pfn} returns err which driver
->>> mapped into VM_FAULT_* type. The new function
->>> vmf_insert_{mixed,pfn} will replace this inefficiency by
->>> returning VM_FAULT_* type.
->>>
->>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 >>> ---
->>>   drivers/gpu/drm/ttm/ttm_bo_vm.c | 45
->>> ++++++++++++++++++++---------------------
->>>   1 file changed, 22 insertions(+), 23 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c
->>> b/drivers/gpu/drm/ttm/ttm_bo_vm.c
->>> index 8eba95b..2d13f03 100644
->>> --- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
->>> +++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
->>> @@ -43,10 +43,11 @@
->>>
->>>   #define TTM_BO_VM_NUM_PREFAULT 16
->>>
->>> -static int ttm_bo_vm_fault_idle(struct ttm_buffer_object *bo,
->>> +static vm_fault_t ttm_bo_vm_fault_idle(struct ttm_buffer_object *bo,
->>>                                  struct vm_fault *vmf)
->>>   {
->>> -       int ret = 0;
->>> +       int err = 0;
->>> +       vm_fault_t ret = 0;
+>>>   drivers/clk/bcm/clk-sr.c           | 135
+>>> ++++++++++++++++++++++++++++++++-----
+>>>   include/dt-bindings/clock/bcm-sr.h |  24 +++++--
+>>
+>>
+>> This goes in the 1st patch.
 >
 >
-> Please keep reverse xmas tree order for variable declarations.
->
-> Except for that it looks good to me,
-> Christian.
->
+> Please help to confirm. You want 1st patch and 2nd patch to be combined into
+> a single patch?
 
-Sure, I will send v2. We would like to get this patch in
-queue for 4.18.
+No. include/dt-bindings/* is part of the DT binding, so it goes with
+patch 1. The driver in patch 2.
+
+Rob
