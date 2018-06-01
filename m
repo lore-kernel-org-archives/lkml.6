@@ -1,63 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752751AbeFAPqv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:46:51 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:35024 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751777AbeFAPqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:46:46 -0400
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20180531235010.5279-1-logang@deltatee.com>
- <20180531235010.5279-3-logang@deltatee.com>
- <CAHp75Vc4yxeM+jz2biMBoWB-h_dG1_Qx91VCP+f1mhvvgPVPxQ@mail.gmail.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <be1bdb61-325a-1848-9724-55dc6e3fb983@deltatee.com>
-Date: Fri, 1 Jun 2018 09:46:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75Vc4yxeM+jz2biMBoWB-h_dG1_Qx91VCP+f1mhvvgPVPxQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 2/3] PCI: Allow specifying devices using a base bus and
- path of devfns
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1752875AbeFAPq5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:46:57 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54642 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751777AbeFAPqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:46:53 -0400
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>,
+        Rob Herring <robh@kernel.org>, Yixun Lan <yixun.lan@amlogic.com>
+Subject: [GIT PULL] irqchip updates for 4.18
+Date: Fri,  1 Jun 2018 16:46:32 +0100
+Message-Id: <20180601154632.24581-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thomas,
 
+This is the (quite small, for once) set of irqchip updates for
+4.18. On the menu, bunch of cleanups and new feature for the stm32
+irqchip, and sSupport for the Meson-AXG GPIO irqchip.
 
-On 01/06/18 04:41 AM, Andy Shevchenko wrote:
->> -                               specified in one of two formats:
->> +                               specified in one of three formats:
-> 
-> ...in one of the following formats:
-> 
-> in the first place and don't fix it each time you add/remove one?
+Please pull,
 
-Sure, I'll make the change in v3.
+	M.
 
-Thanks,
+The following changes since commit 48bda43eabb8d086204f543cf8bbad696b8c6391:
 
-Logan
+  softirq/s390: Move default mutators of overwritten softirq mask to s390 (2018-05-14 11:25:28 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git tags/irqchip-4.18
+
+for you to fetch changes up to 6a88c221acbaaa0460d190f99093ab8114f23c09:
+
+  ARM: dts: stm32: Add exti support to stm32mp157 pinctrl (2018-05-24 12:38:23 +0100)
+
+----------------------------------------------------------------
+irqchip updates for 4.18
+
+- Support for Meson-AXG GPIO irqchip
+- Large stm32 irqchip rework (suspend/resume, hierarchical domains)
+
+----------------------------------------------------------------
+Ludovic Barre (10):
+      irqchip/stm32: Checkpatch fix
+      irqchip/stm32: Add falling pending register support
+      irqchip/stm32: Add suspend support
+      irqchip/stm32: Add host and driver data structures
+      irqchip/stm32: Prepare common functions
+      irqchip/stm32: Add stm32mp1 support with hierarchy domain
+      irqchip/stm32: Add suspend/resume support for hierarchy domain
+      pinctrl/stm32: Add irq_eoi for stm32gpio irqchip
+      ARM: dts: stm32: Add exti support for stm32mp157c
+      ARM: dts: stm32: Add exti support to stm32mp157 pinctrl
+
+Radoslaw Pietrzyk (1):
+      irqchip/stm32: Optimizes and cleans up stm32-exti irq_domain
+
+Yixun Lan (3):
+      dt-bindings: interrupt-controller: Fix the double quotes
+      dt-bindings: interrupt-controller: New binding for Meson-AXG SoC
+      irqchip/meson-gpio: Add support for Meson-AXG SoCs
+
+ .../amlogic,meson-gpio-intc.txt                    |  11 +-
+ .../interrupt-controller/st,stm32-exti.txt         |   3 +
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi          |   4 +
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |   7 +
+ drivers/irqchip/irq-meson-gpio.c                   |   5 +
+ drivers/irqchip/irq-stm32-exti.c                   | 683 ++++++++++++++++++---
+ drivers/pinctrl/stm32/pinctrl-stm32.c              |  13 +-
+ 7 files changed, 623 insertions(+), 103 deletions(-)
