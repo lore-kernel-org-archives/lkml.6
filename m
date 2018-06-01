@@ -1,39 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753205AbeFAQKV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:10:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49754 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752998AbeFAQKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:10:17 -0400
-Date: Fri, 1 Jun 2018 18:09:54 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Hugo Lefeuvre <hle@owl.eu.com>
-Cc: kernelnewbies@kernelnewbies.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: pi433: add rw semaphore fixing concurrency
- issues
-Message-ID: <20180601160954.GA4895@kroah.com>
-References: <20180601125037.GA2339@hle-laptop.local>
+        id S1753148AbeFAQKH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:10:07 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:58042 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752308AbeFAQKD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:10:03 -0400
+Date: Sat, 2 Jun 2018 00:09:44 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        tgraf@suug.ch, manfred@colorfullife.com, mhocko@kernel.org,
+        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 1/5] lib/rhashtable: convert param sanitations to WARN_ON
+Message-ID: <20180601160944.ji2gsp3pyunlj476@gondor.apana.org.au>
+References: <20180601160125.30031-1-dave@stgolabs.net>
+ <20180601160125.30031-2-dave@stgolabs.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180601125037.GA2339@hle-laptop.local>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180601160125.30031-2-dave@stgolabs.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 08:50:37AM -0400, Hugo Lefeuvre wrote:
-> Add a rw semaphore fixing potential NULL pointer dereferences in the
-> pi433 driver.
+On Fri, Jun 01, 2018 at 09:01:21AM -0700, Davidlohr Bueso wrote:
+> For the purpose of making rhashtable_init() unable to fail,
+> we can replace the returning -EINVAL with WARN_ONs whenever
+> the caller passes bogus parameters during initialization.
+> 
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> ---
+>  lib/rhashtable.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+> index 9427b5766134..05a4b1b8b8ce 100644
+> --- a/lib/rhashtable.c
+> +++ b/lib/rhashtable.c
+> @@ -1024,12 +1024,11 @@ int rhashtable_init(struct rhashtable *ht,
+>  
+>  	size = HASH_DEFAULT_SIZE;
+>  
+> -	if ((!params->key_len && !params->obj_hashfn) ||
+> -	    (params->obj_hashfn && !params->obj_cmpfn))
+> -		return -EINVAL;
+> +	WARN_ON((!params->key_len && !params->obj_hashfn) ||
+> +		(params->obj_hashfn && !params->obj_cmpfn));
+>  
+> -	if (params->nulls_base && params->nulls_base < (1U << RHT_BASE_SHIFT))
+> -		return -EINVAL;
+> +	WARN_ON(params->nulls_base &&
+> +		params->nulls_base < (1U << RHT_BASE_SHIFT));
 
-Unless you can measure the performance difference, do not use a rw
-semaphore, just use a normal mutex please.  Odds are it will be faster
-in the end and take up less space.
+I still don't like this.
 
-So please test, or if you can't test, just use a mutex.
+Yes for your use-case you will never crash and a WARN_ON is fine.
+However, rhashtable is used in all sorts of contexts and returning
+an error makes sense for quite a number of them.
 
-thanks,
+So if you really want just add the WARN_ON to your own code:
 
-greg k-h
+	err = rhashtable_init(...)
+	WARN_ON(err);
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
