@@ -1,123 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751057AbeFAXAe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 19:00:34 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53709 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750812AbeFAXAc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 19:00:32 -0400
-X-Google-Smtp-Source: ADUXVKLFTqqRMvG7qHfOhsxRtgLlElR5mD9dsbl6px/yREYJWr7fpfmlrlB4uSu+4v9tuGlHtnAcvg==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: robh+dt@kernel.org, frowand.list@gmail.com
-Cc: linux-arm-msm@vger.kernel.org, bgoswami@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] of: platform: stop accessing invalid dev in of_platform_device_destroy
-Date: Fri,  1 Jun 2018 23:58:22 +0100
-Message-Id: <20180601225822.23439-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        id S1751289AbeFAXBE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 19:01:04 -0400
+Received: from mga06.intel.com ([134.134.136.31]:35319 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750940AbeFAXBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 19:01:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,467,1520924400";
+   d="scan'208";a="44633288"
+Date: Fri, 1 Jun 2018 16:01:00 -0700
+From: Andi Kleen <ak@linux.intel.com>
+To: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2]: perf record: enable arbitrary event names thru name=
+ modifier
+Message-ID: <20180601230100.GN30764@tassilo.jf.intel.com>
+References: <23f72f9b-c513-ecd4-d375-c5cf2eb30197@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <23f72f9b-c513-ecd4-d375-c5cf2eb30197@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Immediately after the platform_device_unregister() the device will be cleaned up.
-Accessing the freed pointer immediately after that will crash the system.
+On Thu, May 31, 2018 at 05:08:12PM +0300, Alexey Budankov wrote:
+> 
+> Enable complex event names containing [.:=,] symbols to be encoded into Perf 
+> trace using name= modifier e.g. like this:
+> 
+> perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',\
+> 		period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex
+> 
+> Below is how it looks like in the report output. Please note explicit escaped 
+> quoting at cmdline string in the header so that thestring can be directly reused
+> for another collection in shell:
 
-Found this bug when kernel is built with CONFIG_PAGE_POISONING and testing
-loading/unloading audio drivers in a loop on Qcom platforms.
+Patch looks good, but new syntax also needs to be documented in some manpage
+(e.g. perf list)
 
-Fix this by removing accessing the dev pointer.
-Below is the carsh trace:
-
-Unable to handle kernel paging request at virtual address 6b6b6b6b6b6c03
-Mem abort info:
-  ESR = 0x96000021
-  Exception class = DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-Data abort info:
-  ISV = 0, ISS = 0x00000021
-  CM = 0, WnR = 0
-[006b6b6b6b6b6c03] address between user and kernel address ranges
-Internal error: Oops: 96000021 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 2 PID: 1784 Comm: sh Tainted: G        W         4.17.0-rc7-02230-ge3a63a7ef641-dirty #204
-Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-pstate: 80000005 (Nzcv daif -PAN -UAO)
-pc : clear_bit+0x18/0x2c
-lr : of_platform_device_destroy+0x64/0xb8
-sp : ffff00000c9c3930
-x29: ffff00000c9c3930 x28: ffff80003d39b200
-x27: ffff000008bb1000 x26: 0000000000000040
-x25: 0000000000000124 x24: ffff80003a9a3080
-x23: 0000000000000060 x22: ffff00000939f518
-x21: ffff80003aa79e98 x20: ffff80003aa3dae0
-x19: ffff80003aa3c890 x18: ffff800009feb794
-x17: 0000000000000000 x16: 0000000000000000
-x15: ffff800009feb790 x14: 0000000000000000
-x13: ffff80003a058778 x12: ffff80003a058728
-x11: ffff80003a058750 x10: 0000000000000000
-x9 : 0000000000000006 x8 : ffff80003a825988
-x7 : bbbbbbbbbbbbbbbb x6 : 0000000000000001
-x5 : 0000000000000000 x4 : 0000000000000001
-x3 : 0000000000000008 x2 : 0000000000000001
-x1 : 6b6b6b6b6b6b6c03 x0 : 0000000000000000
-Process sh (pid: 1784, stack limit = 0x        (ptrval))
-Call trace:
- clear_bit+0x18/0x2c
- q6afe_remove+0x20/0x38
- apr_device_remove+0x30/0x70
- device_release_driver_internal+0x170/0x208
- device_release_driver+0x14/0x20
- bus_remove_device+0xcc/0x150
- device_del+0x10c/0x310
- device_unregister+0x1c/0x70
- apr_remove_device+0xc/0x18
- device_for_each_child+0x50/0x80
- apr_remove+0x18/0x20
- rpmsg_dev_remove+0x38/0x68
- device_release_driver_internal+0x170/0x208
- device_release_driver+0x14/0x20
- bus_remove_device+0xcc/0x150
- device_del+0x10c/0x310
- device_unregister+0x1c/0x70
- qcom_smd_remove_device+0xc/0x18
- device_for_each_child+0x50/0x80
- qcom_smd_unregister_edge+0x3c/0x70
- smd_subdev_remove+0x18/0x28
- rproc_stop+0x48/0xd8
- rproc_shutdown+0x60/0xe8
- state_store+0xbc/0xf8
- dev_attr_store+0x18/0x28
- sysfs_kf_write+0x3c/0x50
- kernfs_fop_write+0x118/0x1e0
- __vfs_write+0x18/0x110
- vfs_write+0xa4/0x1a8
- ksys_write+0x48/0xb0
- sys_write+0xc/0x18
- el0_svc_naked+0x30/0x34
-Code: d2800022 8b400c21 f9800031 9ac32043 (c85f7c22)
----[ end trace 32020935775616a2 ]---
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/of/platform.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index c00d81dfac0b..78c32b93c0e7 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -544,8 +544,6 @@ int of_platform_device_destroy(struct device *dev, void *data)
- 		amba_device_unregister(to_amba_device(dev));
- #endif
- 
--	of_node_clear_flag(dev->of_node, OF_POPULATED);
--	of_node_clear_flag(dev->of_node, OF_POPULATED_BUS);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(of_platform_device_destroy);
--- 
-2.16.2
+-Andi
