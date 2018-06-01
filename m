@@ -1,99 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750881AbeFAJuJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:50:09 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44314 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeFAJuH (ORCPT
+        id S1750919AbeFAJx2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 05:53:28 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:40992 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750740AbeFAJxY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:50:07 -0400
-X-Google-Smtp-Source: ADUXVKKMjKFUzc8l4yio6rwdqAqr5ZKnQZUm8KBY0z+pfhmF27IcgtISwFGW16DTTT02YItavYq5FQ==
-Date: Fri, 1 Jun 2018 11:49:59 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] gnss: add new GNSS subsystem
-Message-ID: <20180601094959.GA13775@localhost>
-References: <20180601082259.17563-1-johan@kernel.org>
- <20180601093311.GA31639@amd>
+        Fri, 1 Jun 2018 05:53:24 -0400
+Date: Fri, 1 Jun 2018 12:53:22 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Philipp Zabel <pza@pengutronix.de>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Discussion of the development of and with GStreamer
+        <gstreamer-devel@lists.freedesktop.org>,
+        linux-media@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
+Message-ID: <20180601095322.hdxcpmj4tfonaq4g@valkosipuli.retiisi.org.uk>
+References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
+ <20180531190659.xdp4q2cjro33aihq@pengutronix.de>
+ <CAMty3ZCeR3uEx8oy18-Ur7ma7pciKUf_myDk6_SpWvxc6DvygQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180601093311.GA31639@amd>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAMty3ZCeR3uEx8oy18-Ur7ma7pciKUf_myDk6_SpWvxc6DvygQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 11:33:11AM +0200, Pavel Machek wrote:
-> Hi!
+On Fri, Jun 01, 2018 at 10:49:56AM +0530, Jagan Teki wrote:
+> Hi Philipp,
 > 
-> > This series adds a new subsystem for GNSS receivers (e.g. GPS
-> > receivers).
-> > 
-> > While GNSS receivers are typically accessed using a UART interface they
-> > often also support other I/O interfaces such as I2C, SPI and USB, while
-> > yet other devices use iomem or even some form of remote-processor
-> > messaging (rpmsg).
-> > 
-> > The new GNSS subsystem abstracts the underlying interface and provides a
-> > new "gnss" class type, which exposes a character-device interface (e.g.
-> > /dev/gnss0) to user space. This allows GNSS receivers to have a
-> > representation in the Linux device model, something which is important
-> > not least for power management purposes and which also allows for easy
-> > detection and identification of GNSS devices.
-> > 
-> > Note that the character-device interface provides raw access to whatever
-> > protocol the receiver is (currently) using, such as NMEA 0183, UBX or
-> > SiRF Binary. These protocols are expected to be continued to be handled
-> > by user space for the time being, even if some hybrid solutions are also
-> > conceivable (e.g. to have kernel drivers issue management commands).
+> On Fri, Jun 1, 2018 at 12:36 AM, Philipp Zabel <pza@pengutronix.de> wrote:
+> > Hi Jagan,
+> >
+> > On Thu, May 31, 2018 at 08:39:20PM +0530, Jagan Teki wrote:
+> >> Hi All,
+> >>
+> >> I'm trying to verify MIPI-CSI2 OV5640 camera on i.MX6 platform with
+> >> Mainline Linux.
+> >>
+> >> I've followed these[1] instructions to configure MC links and pads
+> >> based on the probing details from dmesg and trying to capture
+> >> ipu1_ic_prpenc capture (/dev/video1) but it's not working.
+> >>
+> >> Can anyone help me to verify whether I configured all the details
+> >> properly if not please suggest.
+> >>
+> >> I'm pasting full log here, so-that anyone can comment in line and dt
+> >> changes are at [2]
+> >>
+> >> Log:
+> >> -----
+> > [...]
+> >> # media-ctl -l "'ov5640 2-003c':0 -> 'imx6-mipi-csi2':0[1]"
+> >> # media-ctl -l "'imx6-mipi-csi2':2 -> 'ipu1_csi1':0[1]"
+> >> # media-ctl -l "'ipu1_csi1':1 -> 'ipu1_ic_prp':0[1]"
+> >> # media-ctl -l "'ipu1_ic_prp':1 -> 'ipu1_ic_prpenc':0[1]"
+> >> # media-ctl -l "'ipu1_ic_prpenc':1 -> 'ipu1_ic_prpenc capture':0[1]"
+> >
+> > Here you configure a pipeline that ends at ipu1 prpenc capture ...
+> >
+> >> # med# media-ctl -p
+> > [...]
+> >> - entity 18: ipu1_ic_prpenc capture (1 pad, 1 link)
+> >>              type Node subtype V4L flags 0
+> >>              device node name /dev/video0
+> >
+> > ... which is /dev/video0 ...
+> >
+> > [...]
+> >> - entity 27: ipu1_ic_prpvf capture (1 pad, 1 link)
+> >>              type Node subtype V4L flags 0
+> >>              device node name /dev/video1
+> >
+> > ... not /dev/video1 ...
 > 
-> So.. while you did good work on serial power management, this is
-> grossly misnamed. There's nothing GNSS specific in the code, and you
-> are not presenting consistent interface to the userland.
+> True, thanks for pointing it.
 > 
-> This is _not_ GNSS subsystem. This is serial power management
-> subsystem, or something like that. GPS/GNSS subsystem will need to be
-> built on top of this.
-
-I thought we had this discussion already.
-
-This series adds an abstraction for GNSS receivers so that they can be
-detected by userspace without resorting to probing hacks. That is GNSS
-specific.
-
-Furthermore, (since v2) we export a GNSS receiver type, which allows
-further protocol detection hacks to be dropped, something which is also
-GNSS specific.
-
-The two drivers and library added are for GNSS devices and their
-specific power management needs, while a random serial-connected device
-may need to manage power differently. Also GNSS specific.
-
-Finally, the GNSS subsystem is clearly not serial (as in UART) specific
-and works just as fine with I2C, SPI, USB, iomem, rproc or whatever
-interface the GNSS uses.
-
-> This will never handle devices like Nokia N900, where GPS is connected
-> over netlink.
-
-Marcel already suggested adding a ugnss interface, which would allow
-feeding GNSS data through the generic GNSS interface from user space for
-use cases where it's not (yet) feasible to implement a kernel driver.
-
-> > Another possible extension is to add generic 1PPS support.
+> I actually tried even on video0 which I forgot to post the log [4].
+> Now I understand I'm trying for wrong device to capture look like
+> video0 which is ipu1 prepenc firing kernel oops. I'm trying to debug
+> this and let me know if have any suggestion to look into.
 > 
-> And there's nothing GNSS specific in the patches.
+> [   56.800074] imx6-mipi-csi2: LP-11 timeout, phy_state = 0x000002b0
+> [   57.369660] ipu1_ic_prpenc: EOF timeout
+> [   57.849692] ipu1_ic_prpenc: wait last EOF timeout
+> [   57.855703] ipu1_ic_prpenc: pipeline start failed with -110
 
-I disagree.
+I don't have the hardware but this looks like the host cannot detect the
+LP-11 state on the sensor (both wires high?). Some sensors cannot do this
+without starting streaming at the same time. I'd expect the same if there
+are problems in lane configuration etc.
 
-Johan
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
