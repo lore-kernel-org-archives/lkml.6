@@ -1,108 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751836AbeFALlV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:41:21 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:40216 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeFALlS (ORCPT
+        id S1751869AbeFALln (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:41:43 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:35141 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeFALll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:41:18 -0400
-X-Google-Smtp-Source: ADUXVKIeJC6cM7ekgX4hlKjDizx9+Nr37E37kUBsFZz+3y/3eOV9tv9bfMrUnVUJYa0wl70jHIdP0OChGr1et/IPcYc=
+        Fri, 1 Jun 2018 07:41:41 -0400
+X-Google-Smtp-Source: ADUXVKLHvWpj2LpfalcAbWvXKSSMgMAuvSpIypGBLnf1RusrxYS3xGumlC62/83/d+/4JKP4rbmd6g==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, andr2000@gmail.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v2 0/9] xen: dma-buf support for grant device
+Date: Fri,  1 Jun 2018 14:41:23 +0300
+Message-Id: <20180601114132.22596-1-andr2000@gmail.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <20180601095322.hdxcpmj4tfonaq4g@valkosipuli.retiisi.org.uk>
-References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
- <20180531190659.xdp4q2cjro33aihq@pengutronix.de> <CAMty3ZCeR3uEx8oy18-Ur7ma7pciKUf_myDk6_SpWvxc6DvygQ@mail.gmail.com>
- <20180601095322.hdxcpmj4tfonaq4g@valkosipuli.retiisi.org.uk>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Fri, 1 Jun 2018 17:11:16 +0530
-Message-ID: <CAMty3ZBCrrj=GJzGWR8tp5e2ZEAgADFT9OQ_THAALOW_Bay1LA@mail.gmail.com>
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Philipp Zabel <pza@pengutronix.de>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Discussion of the development of and with GStreamer
-        <gstreamer-devel@lists.freedesktop.org>,
-        linux-media@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 3:23 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> On Fri, Jun 01, 2018 at 10:49:56AM +0530, Jagan Teki wrote:
->> Hi Philipp,
->>
->> On Fri, Jun 1, 2018 at 12:36 AM, Philipp Zabel <pza@pengutronix.de> wrote:
->> > Hi Jagan,
->> >
->> > On Thu, May 31, 2018 at 08:39:20PM +0530, Jagan Teki wrote:
->> >> Hi All,
->> >>
->> >> I'm trying to verify MIPI-CSI2 OV5640 camera on i.MX6 platform with
->> >> Mainline Linux.
->> >>
->> >> I've followed these[1] instructions to configure MC links and pads
->> >> based on the probing details from dmesg and trying to capture
->> >> ipu1_ic_prpenc capture (/dev/video1) but it's not working.
->> >>
->> >> Can anyone help me to verify whether I configured all the details
->> >> properly if not please suggest.
->> >>
->> >> I'm pasting full log here, so-that anyone can comment in line and dt
->> >> changes are at [2]
->> >>
->> >> Log:
->> >> -----
->> > [...]
->> >> # media-ctl -l "'ov5640 2-003c':0 -> 'imx6-mipi-csi2':0[1]"
->> >> # media-ctl -l "'imx6-mipi-csi2':2 -> 'ipu1_csi1':0[1]"
->> >> # media-ctl -l "'ipu1_csi1':1 -> 'ipu1_ic_prp':0[1]"
->> >> # media-ctl -l "'ipu1_ic_prp':1 -> 'ipu1_ic_prpenc':0[1]"
->> >> # media-ctl -l "'ipu1_ic_prpenc':1 -> 'ipu1_ic_prpenc capture':0[1]"
->> >
->> > Here you configure a pipeline that ends at ipu1 prpenc capture ...
->> >
->> >> # med# media-ctl -p
->> > [...]
->> >> - entity 18: ipu1_ic_prpenc capture (1 pad, 1 link)
->> >>              type Node subtype V4L flags 0
->> >>              device node name /dev/video0
->> >
->> > ... which is /dev/video0 ...
->> >
->> > [...]
->> >> - entity 27: ipu1_ic_prpvf capture (1 pad, 1 link)
->> >>              type Node subtype V4L flags 0
->> >>              device node name /dev/video1
->> >
->> > ... not /dev/video1 ...
->>
->> True, thanks for pointing it.
->>
->> I actually tried even on video0 which I forgot to post the log [4].
->> Now I understand I'm trying for wrong device to capture look like
->> video0 which is ipu1 prepenc firing kernel oops. I'm trying to debug
->> this and let me know if have any suggestion to look into.
->>
->> [   56.800074] imx6-mipi-csi2: LP-11 timeout, phy_state = 0x000002b0
->> [   57.369660] ipu1_ic_prpenc: EOF timeout
->> [   57.849692] ipu1_ic_prpenc: wait last EOF timeout
->> [   57.855703] ipu1_ic_prpenc: pipeline start failed with -110
->
-> I don't have the hardware but this looks like the host cannot detect the
-> LP-11 state on the sensor (both wires high?). Some sensors cannot do this
-> without starting streaming at the same time. I'd expect the same if there
-> are problems in lane configuration etc.
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-You mean the lane configurations in hardware? but this sensor is
-working with imx kernel. what do you mean by wires here? lanes.
+This work is in response to my previous attempt to introduce Xen/DRM
+zero-copy driver [1] to enable Linux dma-buf API [2] for Xen based
+frontends/backends. There is also an existing hyper_dmabuf approach
+available [3] which, if reworked to utilize the proposed solution,
+can greatly benefit as well.
 
-Jagan.
+RFC for this series was published and discussed [9], comments addressed.
+
+The original rationale behind this work was to enable zero-copying
+use-cases while working with Xen para-virtual display driver [4]:
+when using Xen PV DRM frontend driver then on backend side one will
+need to do copying of display buffers' contents (filled by the
+frontend's user-space) into buffers allocated at the backend side.
+Taking into account the size of display buffers and frames per
+second it may result in unneeded huge data bus occupation and
+performance loss.
+
+The helper driver [4] allows implementing zero-copying use-cases
+when using Xen para-virtualized frontend display driver by implementing
+a DRM/KMS helper driver running on backend's side.
+It utilizes PRIME buffers API (implemented on top of Linux dma-buf)
+to share frontend's buffers with physical device drivers on
+backend's side:
+
+ - a dumb buffer created on backend's side can be shared
+   with the Xen PV frontend driver, so it directly writes
+   into backend's domain memory (into the buffer exported from
+   DRM/KMS driver of a physical display device)
+ - a dumb buffer allocated by the frontend can be imported
+   into physical device DRM/KMS driver, thus allowing to
+   achieve no copying as well
+
+Finally, it was discussed and decided ([1], [5]) that it is worth
+implementing such use-cases via extension of the existing Xen gntdev
+driver instead of introducing new DRM specific driver.
+Please note, that the support of dma-buf is Linux only,
+as dma-buf is a Linux only thing.
+
+Now to the proposed solution. The changes  to the existing Xen drivers
+in the Linux kernel fall into 2 categories:
+1. DMA-able memory buffer allocation and increasing/decreasing memory
+   reservation of the pages of such a buffer.
+   This is required if we are about to share dma-buf with the hardware
+   that does require those to be allocated with dma_alloc_xxx API.
+   (It is still possible to allocate a dma-buf from any system memory,
+   e.g. system pages).
+2. Extension of the gntdev driver to enable it to import/export dma-buf’s.
+
+The first five patches are in preparation for Xen dma-buf support,
+but I consider those usable regardless of the dma-buf use-case,
+e.g. other frontend/backend kernel modules may also benefit from these
+for better code reuse:
+    0001-xen-grant-table-Export-gnttab_-alloc-free-_pages-as-.patch
+    0002-xen-grant-table-Make-set-clear-page-private-code-sha.patch
+    0003-xen-balloon-Share-common-memory-reservation-routines.patch
+    0004-xen-grant-table-Allow-allocating-buffers-suitable-fo.patch
+    0005-xen-gntdev-Allow-mappings-for-DMA-buffers.patch
+
+The next three patches are Xen implementation of dma-buf as part of
+the grant device:
+    0006-xen-gntdev-Add-initial-support-for-dma-buf-UAPI.patch
+    0007-xen-gntdev-Implement-dma-buf-export-functionality.patch
+    0008-xen-gntdev-Implement-dma-buf-import-functionality.patch
+
+The last patch makes it possible for in-kernel use of Xen dma-buf API:
+    0009-xen-gntdev-Expose-gntdev-s-dma-buf-API-for-in-kernel.patch
+
+The corresponding libxengnttab changes are available at [6].
+
+All the above was tested with display backend [7] and its accompanying
+helper library [8] on Renesas ARM64 based board.
+Basic balloon tests on x86.
+
+*To all the communities*: I would like to ask you to review the proposed
+solution and give feedback on it, so I can improve and send final
+patches for review (this is still work in progress, but enough to start
+discussing the implementation).
+
+Thank you in advance,
+Oleksandr Andrushchenko
+
+[1] https://lists.freedesktop.org/archives/dri-devel/2018-April/173163.html
+[2] https://elixir.bootlin.com/linux/v4.17-rc5/source/Documentation/driver-api/dma-buf.rst
+[3] https://lists.xenproject.org/archives/html/xen-devel/2018-02/msg01202.html
+[4] https://cgit.freedesktop.org/drm/drm-misc/tree/drivers/gpu/drm/xen
+[5] https://patchwork.kernel.org/patch/10279681/
+[6] https://github.com/andr2000/xen/tree/xen_dma_buf_v1
+[7] https://github.com/andr2000/displ_be/tree/xen_dma_buf_v1
+[8] https://github.com/andr2000/libxenbe/tree/xen_dma_buf_v1
+[9] https://lkml.org/lkml/2018/5/17/215
+
+Changes since v1:
+*****************
+- Define GNTDEV_DMA_FLAG_XXX starting from bit 0
+- Rename mem_reservation.h to mem-reservation.h
+- Remove usless comments
+- Change licenses from GPLv2 OR MIT to GPLv2 only
+- Make xenmem_reservation_va_mapping_{update|clear} inline
+- Change EXPORT_SYMBOL to EXPORT_SYMBOL_GPL for new functions
+- Make gnttab_dma_{alloc|free}_pages to request frames array
+  be allocated outside
+- Fixe gnttab_dma_alloc_pages fail path (added xenmem_reservation_increase)
+- Move most of dma-buf from gntdev.c to gntdev-dmabuf.c
+- Add required dependencies to Kconfig
+- Rework "#ifdef CONFIG_XEN_XXX" for if/else
+- Export gnttab_{alloc|free}_pages as GPL symbols (patch 1)
+
+Oleksandr Andrushchenko (9):
+  xen/grant-table: Export gnttab_{alloc|free}_pages as GPL
+  xen/grant-table: Make set/clear page private code shared
+  xen/balloon: Share common memory reservation routines
+  xen/grant-table: Allow allocating buffers suitable for DMA
+  xen/gntdev: Allow mappings for DMA buffers
+  xen/gntdev: Add initial support for dma-buf UAPI
+  xen/gntdev: Implement dma-buf export functionality
+  xen/gntdev: Implement dma-buf import functionality
+  xen/gntdev: Expose gntdev's dma-buf API for in-kernel use
+
+ drivers/xen/Kconfig           |  23 ++
+ drivers/xen/Makefile          |   2 +
+ drivers/xen/balloon.c         |  71 +---
+ drivers/xen/gntdev-dmabuf.c   | 707 ++++++++++++++++++++++++++++++++++
+ drivers/xen/gntdev-dmabuf.h   |  48 +++
+ drivers/xen/gntdev.c          | 387 ++++++++++++++++++-
+ drivers/xen/grant-table.c     | 165 +++++++-
+ drivers/xen/mem-reservation.c | 120 ++++++
+ include/uapi/xen/gntdev.h     | 106 +++++
+ include/xen/grant_dev.h       |  37 ++
+ include/xen/grant_table.h     |  21 +
+ include/xen/mem-reservation.h |  65 ++++
+ 12 files changed, 1647 insertions(+), 105 deletions(-)
+ create mode 100644 drivers/xen/gntdev-dmabuf.c
+ create mode 100644 drivers/xen/gntdev-dmabuf.h
+ create mode 100644 drivers/xen/mem-reservation.c
+ create mode 100644 include/xen/grant_dev.h
+ create mode 100644 include/xen/mem-reservation.h
 
 -- 
-Jagan Teki
-Senior Linux Kernel Engineer | Amarula Solutions
-U-Boot, Linux | Upstream Maintainer
-Hyderabad, India.
+2.17.0
