@@ -1,86 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751232AbeFAEBH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 00:01:07 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:42537 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750715AbeFAEBE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 00:01:04 -0400
-X-Google-Smtp-Source: ADUXVKLlbBGmNrdmSTQ/Jj5xWYG3ZXS6yk+79hMaf0KFhkI+BnmaHMzPxVCb3qLx3guelrxayY5nU8/stxC0KGA/rF8=
-MIME-Version: 1.0
-In-Reply-To: <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com>
-References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
- <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
- <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com> <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 31 May 2018 21:01:01 -0700
-X-Google-Sender-Auth: lfKIg0RioMXD7Ksz1cSPDvYL5V4
-Message-ID: <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
-Subject: Re: linux-next: build warnings after merge of the kbuild tree
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751000AbeFAECl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 00:02:41 -0400
+Received: from mga01.intel.com ([192.55.52.88]:20594 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750758AbeFAECk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 00:02:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
+   d="scan'208";a="55649408"
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: mst@redhat.com, bhelgaas@google.com, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        linux-pci@vger.kernel.org
+Cc: dan.daly@intel.com, mark.d.rustad@intel.com,
+        alexander.h.duyck@intel.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com
+Subject: [PATCH v3] virtio_pci: support enabling VFs
+Date: Fri,  1 Jun 2018 12:02:39 +0800
+Message-Id: <20180601040239.1151-1-tiwei.bie@intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 6:56 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2018-05-31 12:53 GMT+09:00 Kees Cook <keescook@chromium.org>:
->> On Wed, May 30, 2018 at 6:26 PM, Kees Cook <keescook@chromium.org> wrote:
->>> On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
->>> <yamada.masahiro@socionext.com> wrote:
->>>> Hi.
->>>> (+CC Kees)
->>>>
->>>> 2018-05-31 7:40 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
->>>>> Hi Masahiro,
->>>>>
->>>>> After merging the kbuild tree, today's linux-next build (x86_64
->>>>> allmodconfig) produced these warnings:
->>>>>
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev7':
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-than=]
->>>>>  }
->>>>>  ^
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev3':
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warning: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-than=]
->>>>>  }
->>>>>  ^
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_cal_txiqlo_nphy':
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warning: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-than=]
->>>>>  }
->>>>>  ^
->>>>>
->>>>> I have no idea what caused these warnings to appear ... nothing in those
->>>>> functions looks too bad.
->>>>
->>>>
->>>> This has been triggered by the following commit:
->>>>
->>>>
->>>> commit 0e461945f3504e09b8ecf947b6398adce1287a28
->>>> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>> Date:   Mon May 28 18:22:07 2018 +0900
->>>>
->>>>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
->>>>
->>>>
->>>>
->>>> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
->>>> for COMPILE_TEST, which is now enabled.
+There is a new feature bit allocated in virtio spec to
+support SR-IOV (Single Root I/O Virtualization):
 
-For the moment, can you add "depends on !COMPILE_TEST" to
-CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL in your tree and I'll continue
-to figure out what's happening?
+https://github.com/oasis-tcs/virtio-spec/issues/11
 
-Thanks!
+This patch enables the support for this feature bit in
+virtio driver.
 
--Kees
+Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+---
+v3:
+- Drop the acks;
 
+v2:
+- Disable VFs when unbinding the driver (Alex, MST);
+- Don't use pci_sriov_configure_simple (Alex);
+
+ drivers/virtio/virtio_pci_common.c | 30 ++++++++++++++++++++++++++++++
+ drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
+ include/uapi/linux/virtio_config.h |  7 ++++++-
+ 3 files changed, 50 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+index 48d4d1cf1cb6..1d4467b2dc31 100644
+--- a/drivers/virtio/virtio_pci_common.c
++++ b/drivers/virtio/virtio_pci_common.c
+@@ -577,6 +577,8 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+ 	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+ 	struct device *dev = get_device(&vp_dev->vdev.dev);
+ 
++	pci_disable_sriov(pci_dev);
++
+ 	unregister_virtio_device(&vp_dev->vdev);
+ 
+ 	if (vp_dev->ioaddr)
+@@ -588,6 +590,33 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+ 	put_device(dev);
+ }
+ 
++static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
++{
++	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
++	struct virtio_device *vdev = &vp_dev->vdev;
++	int ret;
++
++	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
++		return -EBUSY;
++
++	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
++		return -EINVAL;
++
++	if (pci_vfs_assigned(pci_dev))
++		return -EPERM;
++
++	if (num_vfs == 0) {
++		pci_disable_sriov(pci_dev);
++		return 0;
++	}
++
++	ret = pci_enable_sriov(pci_dev, num_vfs);
++	if (ret < 0)
++		return ret;
++
++	return num_vfs;
++}
++
+ static struct pci_driver virtio_pci_driver = {
+ 	.name		= "virtio-pci",
+ 	.id_table	= virtio_pci_id_table,
+@@ -596,6 +625,7 @@ static struct pci_driver virtio_pci_driver = {
+ #ifdef CONFIG_PM_SLEEP
+ 	.driver.pm	= &virtio_pci_pm_ops,
+ #endif
++	.sriov_configure = virtio_pci_sriov_configure,
+ };
+ 
+ module_pci_driver(virtio_pci_driver);
+diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
+index 2555d80f6eec..07571daccfec 100644
+--- a/drivers/virtio/virtio_pci_modern.c
++++ b/drivers/virtio/virtio_pci_modern.c
+@@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
+ 	return features;
+ }
+ 
++static void vp_transport_features(struct virtio_device *vdev, u64 features)
++{
++	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
++	struct pci_dev *pci_dev = vp_dev->pci_dev;
++
++	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
++			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
++		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
++}
++
+ /* virtio config->finalize_features() implementation */
+ static int vp_finalize_features(struct virtio_device *vdev)
+ {
+ 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
++	u64 features = vdev->features;
+ 
+ 	/* Give virtio_ring a chance to accept features. */
+ 	vring_transport_features(vdev);
+ 
++	/* Give virtio_pci a chance to accept features. */
++	vp_transport_features(vdev, features);
++
+ 	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
+ 		dev_err(&vdev->dev, "virtio: device uses modern interface "
+ 			"but does not have VIRTIO_F_VERSION_1\n");
+diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+index 308e2096291f..b7c1f4e7d59e 100644
+--- a/include/uapi/linux/virtio_config.h
++++ b/include/uapi/linux/virtio_config.h
+@@ -49,7 +49,7 @@
+  * transport being used (eg. virtio_ring), the rest are per-device feature
+  * bits. */
+ #define VIRTIO_TRANSPORT_F_START	28
+-#define VIRTIO_TRANSPORT_F_END		34
++#define VIRTIO_TRANSPORT_F_END		38
+ 
+ #ifndef VIRTIO_CONFIG_NO_LEGACY
+ /* Do we get callbacks when the ring is completely used, even if we've
+@@ -71,4 +71,9 @@
+  * this is for compatibility with legacy systems.
+  */
+ #define VIRTIO_F_IOMMU_PLATFORM		33
++
++/*
++ * Does the device support Single Root I/O Virtualization?
++ */
++#define VIRTIO_F_SR_IOV			37
+ #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
 -- 
-Kees Cook
-Pixel Security
+2.17.0
