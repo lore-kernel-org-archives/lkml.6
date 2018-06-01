@@ -1,47 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751508AbeFAKtE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 06:49:04 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:57762 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeFAKtB (ORCPT
+        id S1751613AbeFAKtP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 06:49:15 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:41828 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751518AbeFAKtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 06:49:01 -0400
-Date: Fri, 1 Jun 2018 18:48:56 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: NeilBrown <neilb@suse.com>
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/18] rhashtable: split rhashtable.h
-Message-ID: <20180601104856.zdawjbtejcpr22aa@gondor.apana.org.au>
-References: <152782754287.30340.4395718227884933670.stgit@noble>
- <152782824932.30340.8068908844678938422.stgit@noble>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152782824932.30340.8068908844678938422.stgit@noble>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 1 Jun 2018 06:49:10 -0400
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: linux-snps-arc@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Cupertino Miranda <Cupertino.Miranda@synopsys.com>,
+        Claudiu Zissulescu <Claudiu.Zissulescu@synopsys.com>
+Subject: [PATCH] ARC: Explicitly specify OUTPUT_FORMAT in the linker script
+Date: Fri,  1 Jun 2018 13:49:04 +0300
+Message-Id: <20180601104904.48481-1-abrodkin@synopsys.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 02:44:09PM +1000, NeilBrown wrote:
-> Due to the use of rhashtables in net namespaces,
-> rhashtable.h is included in lots of the kernel,
-> so a small changes can required a large recompilation.
-> This makes development painful.
-> 
-> This patch splits out rhashtable-types.h which just includes
-> the major type declarations, and does not include (non-trivial)
-> inline code.  rhashtable.h is no longer included by anything
-> in the include/ directory.
-> Common include files only include rhashtable-types.h so a large
-> recompilation is only triggered when that changes.
-> 
-> Signed-off-by: NeilBrown <neilb@suse.com>
+It might be a good idea to explicitly specify BFD format
+depending on -EB/-EL option passed to the linker and not rely on
+default behavior as we have now.
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Description of the OUTPUT_FORMAT command is available here:
+https://sourceware.org/binutils/docs/ld/Format-Commands.html#Format-Commands
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Cupertino Miranda <cmiranda@synopsys.com>
+Cc: Claudiu Zissulescu <claziss@synopsys.com>
+---
+ arch/arc/kernel/vmlinux.lds.S | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arc/kernel/vmlinux.lds.S b/arch/arc/kernel/vmlinux.lds.S
+index f35ed578e007..0a1affc56d76 100644
+--- a/arch/arc/kernel/vmlinux.lds.S
++++ b/arch/arc/kernel/vmlinux.lds.S
+@@ -11,6 +11,7 @@
+ #include <asm/page.h>
+ #include <asm/thread_info.h>
+ 
++OUTPUT_FORMAT("elf32-littlearc", "elf32-bigarc", "elf32-littlearc")
+ OUTPUT_ARCH(arc)
+ ENTRY(res_service)
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.16.2
