@@ -1,167 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753410AbeFATZK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 15:25:10 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34014 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753120AbeFATZI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 15:25:08 -0400
-X-Google-Smtp-Source: ADUXVKLRf7PsNyuQlgTv6/lqZmu3tM4pZCK0DQwxu9MmAWTDgDBvYqeeHA1MCkF8iMTgNneXRopgzA==
-Date: Sat, 2 Jun 2018 00:57:24 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: christian.koenig@amd.com, airlied@linux.ie, willy@infradead.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] gpu: drm: ttm: Adding new return type vm_fault_t
-Message-ID: <20180601192724.GA2001@jordon-HP-15-Notebook-PC>
+        id S1753555AbeFATZu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 15:25:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49560 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752783AbeFATZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 15:25:47 -0400
+Date: Fri, 1 Jun 2018 21:25:45 +0200
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>, kexec@lists.infradead.org,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC PATCH v4 7/8] ima: based on policy prevent loading firmware
+ (pre-allocated buffer)
+Message-ID: <20180601192545.GR4511@wotan.suse.de>
+References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1527616920-5415-8-git-send-email-zohar@linux.vnet.ibm.com>
+ <20180601191545.GP4511@wotan.suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180601191545.GP4511@wotan.suse.de>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+On Fri, Jun 01, 2018 at 09:15:45PM +0200, Luis R. Rodriguez wrote:
+> On Tue, May 29, 2018 at 02:01:59PM -0400, Mimi Zohar wrote:
+> > Some systems are memory constrained but they need to load very large
+> > firmwares.  The firmware subsystem allows drivers to request this
+> > firmware be loaded from the filesystem, but this requires that the
+> > entire firmware be loaded into kernel memory first before it's provided
+> > to the driver.  This can lead to a situation where we map the firmware
+> > twice, once to load the firmware into kernel memory and once to copy the
+> > firmware into the final resting place.
+> > 
+> > To resolve this problem, commit a098ecd2fa7d ("firmware: support loading
+> > into a pre-allocated buffer") introduced request_firmware_into_buf() API
+> > that allows drivers to request firmware be loaded directly into a
+> > pre-allocated buffer.  The QCOM_MDT_LOADER calls dma_alloc_coherent() to
+> > allocate this buffer.  According to Documentation/DMA-API.txt,
+> > 
+> >      Consistent memory is memory for which a write by either the
+> >      device or the processor can immediately be read by the processor
+> >      or device without having to worry about caching effects.  (You
+> >      may however need to make sure to flush the processor's write
+> >      buffers before telling devices to read that memory.)
+> > 
+> > Devices using pre-allocated DMA memory run the risk of the firmware
+> > being accessible by the device prior to the kernel's firmware signature
+> > verification has completed.
+> 
+> Indeed. And since its DMA memory we have *no idea* what can happen in
+> terms of consumption of this firmware from hardware, when it would start
+> consuming it in particular.
+> 
+> If the device has its own hardware firmware verification mechanism this is
+> completely obscure to us, but it may however suffice certain security policies.
+> 
+> The problem here lies in the conflicting security policies of the kernel wanting
+> to not give away firmware until its complete and the current inability to enable
+> us to have platforms suggest they trust hardware won't do something stupid.
+> This becomes an issue since the semantics of the firmware API preallocated
+> buffer do not require currently allow the kernel to inform LSMs of the fact
+> that a buffer is DMA memory or not, and a way for certain platforms then
+> to say that such use is fine for specific devices.
+> 
+> Given a pointer can we determine if a piece of memory is DMA or not?
 
-Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+FWIW
 
-Previously vm_insert_{mixed,pfn} returns err which driver
-mapped into VM_FAULT_* type. The new function
-vmf_insert_{mixed,pfn} will replace this inefficiency by
-returning VM_FAULT_* type.
+Vlastimil suggests page_zone() or virt_to_page() may be able to.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
-v2: Address christian's comment. Put reverse
-    xmas tree order for variable declarations.
+  Luis
 
- drivers/gpu/drm/ttm/ttm_bo_vm.c | 45 ++++++++++++++++++++---------------------
- 1 file changed, 22 insertions(+), 23 deletions(-)
+> Seems
+> hacky to use such inferences if we had them anyway... but worth asking...
+> 
+> I would suggest we augment the prealloc buffer firmware API to pass a
+> flags argument which helps describe the preallocated buffer, and for now
+> allow us to enable callers to describe if the buffer is kernel memory or
+> DMA memory, and then have the LSMs decide based on this information as well.
+> The qualcomm driver would change to use the DMA flag, and IMA would in turn
+> deny such uses. Once and if platforms want to trust the DMA flag they can
+> later add infrastructure for specifying this somehow.
+> 
+> > Loading firmware already calls the security_kernel_read_file LSM hook.
+> > With an IMA policy requiring signed firmware, this patch prevents
+> > loading firmware into a pre-allocated buffer.
+> > 
+> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > Cc: Luis R. Rodriguez <mcgrof@suse.com>
+> > Cc: David Howells <dhowells@redhat.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Serge E. Hallyn <serge@hallyn.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > ---
+> >  security/integrity/ima/ima_main.c | 26 +++++++++++++++++---------
+> >  1 file changed, 17 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > index 4a87f78098c8..3dae605a1604 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -419,6 +419,15 @@ void ima_post_path_mknod(struct dentry *dentry)
+> >  		iint->flags |= IMA_NEW_FILE;
+> >  }
+> >  
+> > +static int read_idmap[READING_MAX_ID] = {
+> > +	[READING_FIRMWARE] = FIRMWARE_CHECK,
+> > +	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+> > +	[READING_MODULE] = MODULE_CHECK,
+> > +	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+> > +	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
+> > +	[READING_POLICY] = POLICY_CHECK
+> > +};
+> > +
+> >  /**
+> >   * ima_read_file - pre-measure/appraise hook decision based on policy
+> >   * @file: pointer to the file to be measured/appraised/audit
+> > @@ -442,18 +451,17 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+> >  		}
+> >  		return 0;	/* We rely on module signature checking */
+> >  	}
+> > +
+> > +	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
+> > +		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
+> > +		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
+> > +			pr_err("Prevent device from accessing firmware prior to verifying the firmware signature.\n");
+> > +			return -EACCES;
+> > +		}
+> > +	}
+> >  	return 0;
+> >  }
+> >  
+> > -static int read_idmap[READING_MAX_ID] = {
+> > -	[READING_FIRMWARE] = FIRMWARE_CHECK,
+> > -	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+> > -	[READING_MODULE] = MODULE_CHECK,
+> > -	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+> > -	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
+> > -	[READING_POLICY] = POLICY_CHECK
+> > -};
+> > -
+> >  /**
+> >   * ima_post_read_file - in memory collect/appraise/audit measurement
+> >   * @file: pointer to the file to be measured/appraised/audit
+> > -- 
+> > 2.7.5
+> > 
+> > 
+> 
+> -- 
+> Do not panic
+> 
 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-index 8eba95b..9de8b4f 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-@@ -43,10 +43,11 @@
- 
- #define TTM_BO_VM_NUM_PREFAULT 16
- 
--static int ttm_bo_vm_fault_idle(struct ttm_buffer_object *bo,
-+static vm_fault_t ttm_bo_vm_fault_idle(struct ttm_buffer_object *bo,
- 				struct vm_fault *vmf)
- {
--	int ret = 0;
-+	vm_fault_t ret = 0;
-+	int err = 0;
- 
- 	if (likely(!bo->moving))
- 		goto out_unlock;
-@@ -77,9 +78,9 @@ static int ttm_bo_vm_fault_idle(struct ttm_buffer_object *bo,
- 	/*
- 	 * Ordinary wait.
- 	 */
--	ret = dma_fence_wait(bo->moving, true);
--	if (unlikely(ret != 0)) {
--		ret = (ret != -ERESTARTSYS) ? VM_FAULT_SIGBUS :
-+	err = dma_fence_wait(bo->moving, true);
-+	if (unlikely(err != 0)) {
-+		ret = (err != -ERESTARTSYS) ? VM_FAULT_SIGBUS :
- 			VM_FAULT_NOPAGE;
- 		goto out_unlock;
- 	}
-@@ -104,7 +105,7 @@ static unsigned long ttm_bo_io_mem_pfn(struct ttm_buffer_object *bo,
- 		+ page_offset;
- }
- 
--static int ttm_bo_vm_fault(struct vm_fault *vmf)
-+static vm_fault_t ttm_bo_vm_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct ttm_buffer_object *bo = (struct ttm_buffer_object *)
-@@ -115,8 +116,9 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
- 	unsigned long pfn;
- 	struct ttm_tt *ttm = NULL;
- 	struct page *page;
--	int ret;
-+	int err;
- 	int i;
-+	vm_fault_t ret = VM_FAULT_NOPAGE;
- 	unsigned long address = vmf->address;
- 	struct ttm_mem_type_manager *man =
- 		&bdev->man[bo->mem.mem_type];
-@@ -128,9 +130,9 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
- 	 * for reserve, and if it fails, retry the fault after waiting
- 	 * for the buffer to become unreserved.
- 	 */
--	ret = ttm_bo_reserve(bo, true, true, NULL);
--	if (unlikely(ret != 0)) {
--		if (ret != -EBUSY)
-+	err = ttm_bo_reserve(bo, true, true, NULL);
-+	if (unlikely(err != 0)) {
-+		if (err != -EBUSY)
- 			return VM_FAULT_NOPAGE;
- 
- 		if (vmf->flags & FAULT_FLAG_ALLOW_RETRY) {
-@@ -162,8 +164,8 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
- 	}
- 
- 	if (bdev->driver->fault_reserve_notify) {
--		ret = bdev->driver->fault_reserve_notify(bo);
--		switch (ret) {
-+		err = bdev->driver->fault_reserve_notify(bo);
-+		switch (err) {
- 		case 0:
- 			break;
- 		case -EBUSY:
-@@ -191,13 +193,13 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
- 		goto out_unlock;
- 	}
- 
--	ret = ttm_mem_io_lock(man, true);
--	if (unlikely(ret != 0)) {
-+	err = ttm_mem_io_lock(man, true);
-+	if (unlikely(err != 0)) {
- 		ret = VM_FAULT_NOPAGE;
- 		goto out_unlock;
- 	}
--	ret = ttm_mem_io_reserve_vm(bo);
--	if (unlikely(ret != 0)) {
-+	err = ttm_mem_io_reserve_vm(bo);
-+	if (unlikely(err != 0)) {
- 		ret = VM_FAULT_SIGBUS;
- 		goto out_io_unlock;
- 	}
-@@ -265,23 +267,20 @@ static int ttm_bo_vm_fault(struct vm_fault *vmf)
- 		}
- 
- 		if (vma->vm_flags & VM_MIXEDMAP)
--			ret = vm_insert_mixed(&cvma, address,
-+			ret = vmf_insert_mixed(&cvma, address,
- 					__pfn_to_pfn_t(pfn, PFN_DEV));
- 		else
--			ret = vm_insert_pfn(&cvma, address, pfn);
-+			ret = vmf_insert_pfn(&cvma, address, pfn);
- 
- 		/*
- 		 * Somebody beat us to this PTE or prefaulting to
- 		 * an already populated PTE, or prefaulting error.
- 		 */
- 
--		if (unlikely((ret == -EBUSY) || (ret != 0 && i > 0)))
-+		if (unlikely((ret == VM_FAULT_NOPAGE && i > 0)))
- 			break;
--		else if (unlikely(ret != 0)) {
--			ret =
--			    (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
-+		else if (unlikely(ret & VM_FAULT_ERROR))
- 			goto out_io_unlock;
--		}
- 
- 		address += PAGE_SIZE;
- 		if (unlikely(++page_offset >= page_last))
 -- 
-1.9.1
+Do not panic
