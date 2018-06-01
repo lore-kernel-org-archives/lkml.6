@@ -1,98 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752658AbeFAMzI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 08:55:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51322 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752036AbeFAMxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 08:53:55 -0400
-From: Hans de Goede <hdegoede@redhat.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>, dmitry.torokhov@gmail.com,
-        mfuzzey@parkeon.com, Kalle Valo <kvalo@codeaurora.org>,
-        Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>, nbroeking@me.com,
-        bjorn.andersson@linaro.org, Torsten Duwe <duwe@suse.de>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 5/5] platform/x86: touchscreen_dmi: Add info for the Chuwi Vi8 Plus tablet
-Date: Fri,  1 Jun 2018 14:53:30 +0200
-Message-Id: <20180601125330.25054-6-hdegoede@redhat.com>
-In-Reply-To: <20180601125330.25054-1-hdegoede@redhat.com>
-References: <20180601125330.25054-1-hdegoede@redhat.com>
+        id S1752478AbeFAMyT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 08:54:19 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53036 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752167AbeFAMyL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 08:54:11 -0400
+X-Google-Smtp-Source: ADUXVKKvC+/RRUwnL/2NhEAZeRGbMiOfaWtCBctsMlnJq9SUgAGdElB2qlSCVPWphiCq8TAZxuwI+A==
+From: osalvador@techadventures.net
+To: akpm@linux-foundation.org
+Cc: mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH 1/4] mm/memory_hotplug: Make add_memory_resource use __try_online_node
+Date: Fri,  1 Jun 2018 14:53:18 +0200
+Message-Id: <20180601125321.30652-2-osalvador@techadventures.net>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180601125321.30652-1-osalvador@techadventures.net>
+References: <20180601125321.30652-1-osalvador@techadventures.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add touchscreen info for the Chuwi Vi8 Plus tablet. This tablet uses a
-Chipone ICN8505 touchscreen controller, with the firmware used by the
-touchscreen embedded in the EFI firmware.
+From: Oscar Salvador <osalvador@suse.de>
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v6:
--Switch from crc sums to SHA256 hashes for the firmware hash
----
- drivers/platform/x86/touchscreen_dmi.c | 28 ++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+add_memory_resource() contains code to allocate a new node in case
+it is necessary.
+Since try_online_node() also hast some code for this purpose,
+let us make use of that and remove duplicate code.
 
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-index 8eb88bfcacbe..99eb73bbd1a0 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
-+++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -359,6 +359,25 @@ static const struct ts_dmi_data onda_v891w_v1_data = {
- 	.properties	= onda_v891w_v1_props,
- };
+This introduces __try_online_node(), which is called by add_memory_resource()
+and try_online_node().
+__try_online_node() has two new parameters, start_addr of the node,
+and if the node should be onlined and registered right away.
+This is always wanted if we are calling from do_cpu_up(), but not
+when we are calling from memhotplug code.
+Nothing changes from the point of view of the users of try_online_node(),
+since try_online_node passes start_addr=0 and online_node=true to
+__try_online_node().
+
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ mm/memory_hotplug.c | 61 +++++++++++++++++++++++++++++------------------------
+ 1 file changed, 34 insertions(+), 27 deletions(-)
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 7deb49f69e27..29a5fc89bdb1 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1034,8 +1034,10 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
+ 	return pgdat;
+ }
  
-+static const struct property_entry efi_embedded_fw_props[] = {
-+	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
-+	{ }
-+};
+-static void rollback_node_hotadd(int nid, pg_data_t *pgdat)
++static void rollback_node_hotadd(int nid)
+ {
++	pg_data_t *pgdat = NODE_DATA(nid);
 +
-+static const struct ts_dmi_data chuwi_vi8_plus_data = {
-+	.embedded_fw = {
-+		.name	= "chipone/icn8505-HAMP0002.fw",
-+		.prefix = { 0xb0, 0x07, 0x00, 0x00, 0xe4, 0x07, 0x00, 0x00 },
-+		.length	= 35012,
-+		.sha256	= { 0x93, 0xe5, 0x49, 0xe0, 0xb6, 0xa2, 0xb4, 0xb3,
-+			    0x88, 0x96, 0x34, 0x97, 0x5e, 0xa8, 0x13, 0x78,
-+			    0x72, 0x98, 0xb8, 0x29, 0xeb, 0x5c, 0xa7, 0xf1,
-+			    0x25, 0x13, 0x43, 0xf4, 0x30, 0x7c, 0xfc, 0x7c },
-+	},
-+	.acpi_name	= "CHPN0001:00",
-+	.properties	= efi_embedded_fw_props,
-+};
-+
- const struct dmi_system_id touchscreen_dmi_table[] = {
- 	{
- 		/* CUBE iwork8 Air */
-@@ -587,6 +606,15 @@ const struct dmi_system_id touchscreen_dmi_table[] = {
- 			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "ONDA.W89EBBN08"),
- 		},
- 	},
-+	{
-+		/* Chuwi Vi8 Plus (CWI506) */
-+		.driver_data = (void *)&chuwi_vi8_plus_data,
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "D2D3_Vi8A1"),
-+			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+		},
-+	},
- 	{ },
- };
+ 	arch_refresh_nodedata(nid, NULL);
+ 	free_percpu(pgdat->per_cpu_nodestats);
+ 	arch_free_nodedata(pgdat);
+@@ -1046,28 +1048,43 @@ static void rollback_node_hotadd(int nid, pg_data_t *pgdat)
+ /**
+  * try_online_node - online a node if offlined
+  * @nid: the node ID
+- *
++ * @start: start addr of the node
++ * @set_node_online: Whether we want to online the node
+  * called by cpu_up() to online a node without onlined memory.
+  */
+-int try_online_node(int nid)
++static int __try_online_node(int nid, u64 start, bool set_node_online)
+ {
+-	pg_data_t	*pgdat;
+-	int	ret;
++	pg_data_t *pgdat;
++	int ret = 1;
  
+ 	if (node_online(nid))
+ 		return 0;
+ 
+-	mem_hotplug_begin();
+-	pgdat = hotadd_new_pgdat(nid, 0);
++	pgdat = hotadd_new_pgdat(nid, start);
+ 	if (!pgdat) {
+ 		pr_err("Cannot online node %d due to NULL pgdat\n", nid);
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	node_set_online(nid);
+-	ret = register_one_node(nid);
+-	BUG_ON(ret);
++
++	if (set_node_online) {
++		node_set_online(nid);
++		ret = register_one_node(nid);
++		BUG_ON(ret);
++	}
+ out:
++	return ret;
++}
++
++/*
++ * Users of this function always want to online/register the node
++ */
++int try_online_node(int nid)
++{
++	int ret;
++
++	mem_hotplug_begin();
++	ret =  __try_online_node (nid, 0, true);
+ 	mem_hotplug_done();
+ 	return ret;
+ }
+@@ -1099,8 +1116,6 @@ static int online_memory_block(struct memory_block *mem, void *arg)
+ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+ {
+ 	u64 start, size;
+-	pg_data_t *pgdat = NULL;
+-	bool new_pgdat;
+ 	bool new_node;
+ 	int ret;
+ 
+@@ -1111,11 +1126,6 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+ 	if (ret)
+ 		return ret;
+ 
+-	{	/* Stupid hack to suppress address-never-null warning */
+-		void *p = NODE_DATA(nid);
+-		new_pgdat = !p;
+-	}
+-
+ 	mem_hotplug_begin();
+ 
+ 	/*
+@@ -1126,17 +1136,14 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+ 	 */
+ 	memblock_add_node(start, size, nid);
+ 
+-	new_node = !node_online(nid);
+-	if (new_node) {
+-		pgdat = hotadd_new_pgdat(nid, start);
+-		ret = -ENOMEM;
+-		if (!pgdat)
+-			goto error;
+-	}
++	ret = __try_online_node (nid, start, false);
++	new_node = !!(ret > 0);
++	if (ret < 0)
++		goto error;
++
+ 
+ 	/* call arch's memory hotadd */
+ 	ret = arch_add_memory(nid, start, size, NULL, true);
+-
+ 	if (ret < 0)
+ 		goto error;
+ 
+@@ -1180,8 +1187,8 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+ 
+ error:
+ 	/* rollback pgdat allocation and others */
+-	if (new_pgdat && pgdat)
+-		rollback_node_hotadd(nid, pgdat);
++	if (new_node)
++		rollback_node_hotadd(nid);
+ 	memblock_remove(start, size);
+ 
+ out:
 -- 
-2.17.0
+2.13.6
