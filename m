@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751441AbeFAIT2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:19:28 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35443 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbeFAITX (ORCPT
+        id S1751566AbeFAIUR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:20:17 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35947 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751297AbeFAIT1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:19:23 -0400
-X-Google-Smtp-Source: ADUXVKJlar0Z0l2jN9+1sTR/smq3iSyAg3UnAcHJoYaiwszioHbmOEYgkN5999dWEU27PJa+ZHB7Qg==
+        Fri, 1 Jun 2018 04:19:27 -0400
+X-Google-Smtp-Source: ADUXVKIG34S5m5V0AhPlvOCPDXUX3SRl/AnF/KWYIkXZE6CXJco01t/cplQcM1HNee5Xn0Rk+07ksw==
 From: Neil Armstrong <narmstrong@baylibre.com>
 To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
         olof@lixom.net, seanpaul@google.com
@@ -16,105 +16,143 @@ Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
         marcheu@chromium.org, fparent@baylibre.com,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        eballetbo@gmail.com
-Subject: [PATCH v7 0/6] Add ChromeOS EC CEC Support
-Date: Fri,  1 Jun 2018 10:19:08 +0200
-Message-Id: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
+        eballetbo@gmail.com, Stefan Adolfsson <sadolfsson@chromium.org>
+Subject: [PATCH v7 3/6] mfd: cros-ec: Increase maximum mkbp event size
+Date: Fri,  1 Jun 2018 10:19:11 +0200
+Message-Id: <1527841154-24832-4-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
+References: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Having a 16 byte mkbp event size makes it possible to send CEC
+messages from the EC to the AP directly inside the mkbp event
+instead of first doing a notification and then a read.
 
-The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
-through it's Embedded Controller, to enable the Linux CEC Core to communicate
-with it and get the CEC Physical Address from the correct HDMI Connector, the
-following must be added/changed:
-- Add the CEC sub-device registration in the ChromeOS EC MFD Driver
-- Add the CEC related commands and events definitions into the EC MFD driver
-- Add a way to get a CEC notifier with it's (optional) connector name
-- Add the CEC notifier to the i915 HDMI driver
-- Add the proper ChromeOS EC CEC Driver
+Signed-off-by: Stefan Adolfsson <sadolfsson@chromium.org>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+ drivers/platform/chrome/cros_ec_proto.c | 40 +++++++++++++++++++++++++--------
+ include/linux/mfd/cros_ec.h             |  2 +-
+ include/linux/mfd/cros_ec_commands.h    | 19 ++++++++++++++++
+ 3 files changed, 51 insertions(+), 10 deletions(-)
 
-The CEC notifier with the connector name is the tricky point, since even on
-Device-Tree platforms, there is no way to distinguish between multiple HDMI
-connectors from the same DRM driver. The solution I implemented is pretty
-simple and only adds an optional connector name to eventually distinguish
-an HDMI connector notifier from another if they share the same device.
-
-Feel free to comment this patchset !
-
-Changes since v6:
-- Added stable identifier comment in intel_display.h
-- Renamed to cec_notifier in intel_hdmi.c/intel_drv.h
-- Added Acked-by/Reviewed-By tags
-
-Changes since v5:
- - Small fixups on include/linux/mfd/cros_ec_commands.h
- - Fixed on cros-ec-cec driver accordingly
- - Added Reviewed-By tags
-
-Changes since v4:
- - Split patch 3 to move the mkbp event size change into a separate patch
-
-Changes since v3 (incorrectly reported as v2):
- - Renamed "Chrome OS" to "ChromeOS"
- - Updated cros_ec_commands.h new structs definitions to kernel doc format
- - Added Reviewed-By tags
-
-Changes since v2:
- - Add i915 port_identifier() and use this stable name as cec_notifier conn name
- - Fixed and cleaned up the CEC commands and events handling
- - Rebased the CEC sub-device registration on top of Enric's serie
- - Fixed comments typo on cec driver
- - Protected the DMI match only with PCI and DMI Kconfigs
-
-Changes since v1:
- - Added cec_notifier_put to intel_hdmi
- - Fixed all small reported issues on the EC CEC driver
- - Moved the cec_notifier_get out of the #if .. #else .. #endif
-
-Changes since RFC:
- - Moved CEC sub-device registration after CEC commands and events definitions patch
- - Removed get_notifier_get_byname
- - Added CEC_CORE select into i915 Kconfig
- - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
- - Fixed CEC core return type on error
- - Moved to cros-ec-cec media platform directory
- - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
- - Fix Logical Address setup
- - Added comment about HW support
- - Removed memset of msg structures
-
-Neil Armstrong (6):
-  media: cec-notifier: Get notifier by device and connector name
-  drm/i915: hdmi: add CEC notifier to intel_hdmi
-  mfd: cros-ec: Increase maximum mkbp event size
-  mfd: cros-ec: Introduce CEC commands and events definitions.
-  mfd: cros_ec_dev: Add CEC sub-device registration
-  media: platform: Add ChromeOS EC CEC driver
-
- drivers/gpu/drm/i915/Kconfig                     |   1 +
- drivers/gpu/drm/i915/intel_display.h             |  24 ++
- drivers/gpu/drm/i915/intel_drv.h                 |   2 +
- drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
- drivers/media/cec/cec-notifier.c                 |  11 +-
- drivers/media/platform/Kconfig                   |  11 +
- drivers/media/platform/Makefile                  |   2 +
- drivers/media/platform/cros-ec-cec/Makefile      |   1 +
- drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
- drivers/mfd/cros_ec_dev.c                        |  16 ++
- drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
- include/linux/mfd/cros_ec.h                      |   2 +-
- include/linux/mfd/cros_ec_commands.h             | 100 +++++++
- include/media/cec-notifier.h                     |  27 +-
- 14 files changed, 581 insertions(+), 16 deletions(-)
- create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
- create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
-
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index e7bbdf9..c4f6c44 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -504,10 +504,31 @@ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
+ }
+ EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
+ 
++static int get_next_event_xfer(struct cros_ec_device *ec_dev,
++			       struct cros_ec_command *msg,
++			       int version, uint32_t size)
++{
++	int ret;
++
++	msg->version = version;
++	msg->command = EC_CMD_GET_NEXT_EVENT;
++	msg->insize = size;
++	msg->outsize = 0;
++
++	ret = cros_ec_cmd_xfer(ec_dev, msg);
++	if (ret > 0) {
++		ec_dev->event_size = ret - 1;
++		memcpy(&ec_dev->event_data, msg->data, ec_dev->event_size);
++	}
++
++	return ret;
++}
++
+ static int get_next_event(struct cros_ec_device *ec_dev)
+ {
+ 	u8 buffer[sizeof(struct cros_ec_command) + sizeof(ec_dev->event_data)];
+ 	struct cros_ec_command *msg = (struct cros_ec_command *)&buffer;
++	static int cmd_version = 1;
+ 	int ret;
+ 
+ 	if (ec_dev->suspended) {
+@@ -515,18 +536,19 @@ static int get_next_event(struct cros_ec_device *ec_dev)
+ 		return -EHOSTDOWN;
+ 	}
+ 
+-	msg->version = 0;
+-	msg->command = EC_CMD_GET_NEXT_EVENT;
+-	msg->insize = sizeof(ec_dev->event_data);
+-	msg->outsize = 0;
++	if (cmd_version == 1) {
++		ret = get_next_event_xfer(ec_dev, msg, cmd_version,
++				sizeof(struct ec_response_get_next_event_v1));
++		if (ret < 0 || msg->result != EC_RES_INVALID_VERSION)
++			return ret;
+ 
+-	ret = cros_ec_cmd_xfer(ec_dev, msg);
+-	if (ret > 0) {
+-		ec_dev->event_size = ret - 1;
+-		memcpy(&ec_dev->event_data, msg->data,
+-		       sizeof(ec_dev->event_data));
++		/* Fallback to version 0 for future send attempts */
++		cmd_version = 0;
+ 	}
+ 
++	ret = get_next_event_xfer(ec_dev, msg, cmd_version,
++				  sizeof(struct ec_response_get_next_event));
++
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index f36125e..32caef3 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -147,7 +147,7 @@ struct cros_ec_device {
+ 	bool mkbp_event_supported;
+ 	struct blocking_notifier_head event_notifier;
+ 
+-	struct ec_response_get_next_event event_data;
++	struct ec_response_get_next_event_v1 event_data;
+ 	int event_size;
+ 	u32 host_event_wake_mask;
+ };
+diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+index f2edd99..cc0768e 100644
+--- a/include/linux/mfd/cros_ec_commands.h
++++ b/include/linux/mfd/cros_ec_commands.h
+@@ -2093,12 +2093,31 @@ union ec_response_get_next_data {
+ 	uint32_t   sysrq;
+ } __packed;
+ 
++union ec_response_get_next_data_v1 {
++	uint8_t   key_matrix[16];
++
++	/* Unaligned */
++	uint32_t  host_event;
++
++	uint32_t   buttons;
++	uint32_t   switches;
++	uint32_t   sysrq;
++	uint32_t   cec_events;
++	uint8_t    cec_message[16];
++} __packed;
++
+ struct ec_response_get_next_event {
+ 	uint8_t event_type;
+ 	/* Followed by event data if any */
+ 	union ec_response_get_next_data data;
+ } __packed;
+ 
++struct ec_response_get_next_event_v1 {
++	uint8_t event_type;
++	/* Followed by event data if any */
++	union ec_response_get_next_data_v1 data;
++} __packed;
++
+ /* Bit indices for buttons and switches.*/
+ /* Buttons */
+ #define EC_MKBP_POWER_BUTTON	0
 -- 
 2.7.4
