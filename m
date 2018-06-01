@@ -1,83 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753105AbeFAPwU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:52:20 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:10100 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752157AbeFAPta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:49:30 -0400
-Message-Id: <98274e41dd699bcdc3f82f6bd5d1f4016a2a0812.1527868006.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1527868006.git.christophe.leroy@c-s.fr>
-References: <cover.1527868006.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH v2 02/14] powerpc: remove unneeded inclusions of
- cpu_has_feature.h
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Fri,  1 Jun 2018 15:49:29 +0000 (UTC)
+        id S1753200AbeFAPwk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:52:40 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36772 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752019AbeFAPwg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:52:36 -0400
+X-Google-Smtp-Source: ADUXVKKYr7RUoUjZIe6G6r+WMA3ykb34NayS3YZI7I+0/OWk0tje5+WC2kpkDWSNgVfmxVuPfFHkww==
+Date: Fri, 1 Jun 2018 08:52:35 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: peterz@infradead.org, mingo@kernel.org, rostedt@goodmis.org,
+        tglx@linutronix.de, raistlin@linux.it, linux-kernel@vger.kernel.org,
+        juri.lelli@gmail.com, bristot@redhat.com, kernel-team@lge.com,
+        kernel-team@android.com
+Subject: Re: [RESEND, v3, 2/2] sched/deadline: Initialize cp->elements[].cpu
+ to an invalid value
+Message-ID: <20180601155235.GA66123@joelaf.mtv.corp.google.com>
+References: <1515392081-32320-2-git-send-email-byungchul.park@lge.com>
+ <20180601061255.GA189147@joelaf.mtv.corp.google.com>
+ <20180601061841.GA191514@joelaf.mtv.corp.google.com>
+ <b61c30fe-bc16-0f12-7a20-46a89f7cea55@lge.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b61c30fe-bc16-0f12-7a20-46a89f7cea55@lge.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Files not using cpu_has_feature() don't need cpu_has_feature.h
+On Fri, Jun 01, 2018 at 04:10:56PM +0900, Byungchul Park wrote:
+> > On Thu, May 31, 2018 at 11:12:55PM -0700, Joel Fernandes wrote:
+> > > On Mon, Jan 08, 2018 at 03:14:41PM +0900, byungchul park wrote:
+> > > > Currently, migrating tasks to cpu0 unconditionally happens when the
+> > > > heap is empty, since cp->elements[].cpu was initialized to 0(=cpu0).
+> > > > We have to distinguish between the empty case and cpu0 to avoid the
+> > > > unnecessary migrations. Therefore, it has to return an invalid value
+> > > > e.i. -1 in that case.
+> > > > 
+> > > > Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> > > > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > > > Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+> > > > ---
+> > > >   kernel/sched/cpudeadline.c | 10 +++++++++-
+> > > >   1 file changed, 9 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
+> > > > index 9f02035..bcf903f 100644
+> > > > --- a/kernel/sched/cpudeadline.c
+> > > > +++ b/kernel/sched/cpudeadline.c
+> > > > @@ -138,6 +138,12 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
+> > > >   		int best_cpu = cpudl_maximum_cpu(cp);
+> > > >   		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
+> > > > +		/*
+> > > > +		 * The heap tree is empty for now, just return.
+> > > > +		 */
+> > > > +		if (best_cpu == -1)
+> > > > +			return 0;
+> > > > +
+> > > >   		if (cpumask_test_cpu(best_cpu, &p->cpus_allowed) &&
+> > > >   		    dl_time_before(dl_se->deadline, cpudl_maximum_dl(cp))) {
+> > > >   			if (later_mask)
+> > > > @@ -265,8 +271,10 @@ int cpudl_init(struct cpudl *cp)
+> > > >   		return -ENOMEM;
+> > > >   	}
+> > > > -	for_each_possible_cpu(i)
+> > > > +	for_each_possible_cpu(i) {
+> > > > +		cp->elements[i].cpu = -1;
+> > > >   		cp->elements[i].idx = IDX_INVALID;
+> > > 
+> > > Shouldn't you also set cp->elements[cpu].cpu to -1 in cpudl_clear (when you
+> > > set cp->elements[cpu].cpu to IDX_INVALID there)?
+> > 
+> > I messed up my words, I meant : "when setting cp->elements[cpu].idx to
+> > IDX_INVALID there". Which means I need to call it a day :-)
+> 
+> Ah.. I agree with you. It might be a problem when removing the last
+> element.. Then I think the following change should also be applied
+> additionally. Right?
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/cacheflush.h | 1 -
- arch/powerpc/include/asm/cputime.h    | 1 -
- arch/powerpc/include/asm/dbell.h      | 1 -
- arch/powerpc/kernel/vdso.c            | 1 -
- 4 files changed, 4 deletions(-)
+Yes.
 
-diff --git a/arch/powerpc/include/asm/cacheflush.h b/arch/powerpc/include/asm/cacheflush.h
-index 11843e37d9cf..cfe3a98349c4 100644
---- a/arch/powerpc/include/asm/cacheflush.h
-+++ b/arch/powerpc/include/asm/cacheflush.h
-@@ -11,7 +11,6 @@
+> ---
+> diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
+> index 8d9562d..44d4c88 100644
+> --- a/kernel/sched/cpudeadline.c
+> +++ b/kernel/sched/cpudeadline.c
+> @@ -172,12 +172,14 @@ void cpudl_clear(struct cpudl *cp, int cpu)
+>         } else {
+>                 new_cpu = cp->elements[cp->size - 1].cpu;
+>                 cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
+> -               cp->elements[old_idx].cpu = new_cpu;
+> +               cp->elements[old_idx].cpu = (new_cpu == cpu) ? -1 : new_cpu;
+>                 cp->size--;
+> -               cp->elements[new_cpu].idx = old_idx;
+>                 cp->elements[cpu].idx = IDX_INVALID;
+> -               cpudl_heapify(cp, old_idx);
+> 
+> +               if (new_cpu != cpu) {
+> +                       cp->elements[new_cpu].idx = old_idx;
+> +                       cpudl_heapify(cp, old_idx);
+> +               }
+>                 cpumask_set_cpu(cpu, cp->free_cpus);
+
+This looks a bit confusing. How about the following? (untested)
+
+thanks,
+
+ - Joel
+
+---8<-----------------------
+
+diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
+index 50316455ea66..741a97e58c05 100644
+--- a/kernel/sched/cpudeadline.c
++++ b/kernel/sched/cpudeadline.c
+@@ -129,6 +129,10 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
+ 	} else {
+ 		int best_cpu = cpudl_maximum(cp);
  
- #include <linux/mm.h>
- #include <asm/cputable.h>
--#include <asm/cpu_has_feature.h>
++		/* The max-heap is empty, just return. */
++		if (best_cpu == -1)
++			return 0;
++
+ 		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
  
- /*
-  * No cache flushing is required when address mappings are changed,
-diff --git a/arch/powerpc/include/asm/cputime.h b/arch/powerpc/include/asm/cputime.h
-index 99b541865d8d..d78fee0cdbf0 100644
---- a/arch/powerpc/include/asm/cputime.h
-+++ b/arch/powerpc/include/asm/cputime.h
-@@ -23,7 +23,6 @@
- #include <asm/div64.h>
- #include <asm/time.h>
- #include <asm/param.h>
--#include <asm/cpu_has_feature.h>
+ 		if (cpumask_test_cpu(best_cpu, &p->cpus_allowed) &&
+@@ -167,6 +171,12 @@ void cpudl_clear(struct cpudl *cp, int cpu)
+ 		 * This could happen if a rq_offline_dl is
+ 		 * called for a CPU without -dl tasks running.
+ 		 */
++	} else if (cp->size == 1) {
++		/* Only one element in max-heap, clear it */
++		cp->elements[0].cpu = -1;
++		cp->elements[cpu].idx = IDX_INVALID;
++		cp->size--;
++		cpumask_set_cpu(cpu, cp->free_cpus);
+ 	} else {
+ 		new_cpu = cp->elements[cp->size - 1].cpu;
+ 		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
+@@ -262,6 +272,9 @@ int cpudl_init(struct cpudl *cp)
+ 	for_each_possible_cpu(i)
+ 		cp->elements[i].idx = IDX_INVALID;
  
- typedef u64 __nocast cputime_t;
- typedef u64 __nocast cputime64_t;
-diff --git a/arch/powerpc/include/asm/dbell.h b/arch/powerpc/include/asm/dbell.h
-index 9f2ae0d25e15..998c42ff1caa 100644
---- a/arch/powerpc/include/asm/dbell.h
-+++ b/arch/powerpc/include/asm/dbell.h
-@@ -16,7 +16,6 @@
- #include <linux/threads.h>
++	/* Mark heap as initially empty */
++	cp->elements[0].cpu = -1;
++
+ 	return 0;
+ }
  
- #include <asm/ppc-opcode.h>
--#include <asm/cpu_has_feature.h>
- 
- #define PPC_DBELL_MSG_BRDCAST	(0x04000000)
- #define PPC_DBELL_TYPE(x)	(((x) & 0xf) << (63-36))
-diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
-index b44ec104a5a1..63b4e4485b00 100644
---- a/arch/powerpc/kernel/vdso.c
-+++ b/arch/powerpc/kernel/vdso.c
-@@ -22,7 +22,6 @@
- #include <linux/security.h>
- #include <linux/memblock.h>
- 
--#include <asm/cpu_has_feature.h>
- #include <asm/pgtable.h>
- #include <asm/processor.h>
- #include <asm/mmu.h>
--- 
-2.13.3
