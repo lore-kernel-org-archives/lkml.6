@@ -1,143 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750931AbeFACYX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 22:24:23 -0400
-Received: from ipmailnode02.adl6.internode.on.net ([150.101.137.148]:22594
-        "EHLO ipmailnode02.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750715AbeFACYV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 22:24:21 -0400
-Date: Fri, 1 Jun 2018 12:24:18 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
- boolean returns
-Message-ID: <20180601022418.GR10363@dastard>
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-3-ross.zwisler@linux.intel.com>
- <20180529212510.GJ30110@magnolia>
- <20180529220114.GA13948@linux.intel.com>
- <20180531191332.GB7825@magnolia>
- <20180601012657.GQ10363@dastard>
- <CAPcyv4g6dv9sG9dR-iY+aEfSi2r3ey1dXGbX-nexKsN72t0QMw@mail.gmail.com>
+        id S1750913AbeFACaE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 22:30:04 -0400
+Received: from mga03.intel.com ([134.134.136.65]:62411 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750726AbeFACaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 22:30:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
+   d="scan'208";a="43805074"
+Date: Fri, 1 Jun 2018 10:30:14 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "Daly, Dan" <dan.daly@intel.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Liang, Cunming" <cunming.liang@intel.com>,
+        "Wang, Zhihong" <zhihong.wang@intel.com>
+Subject: Re: [PATCH] virtio_pci: support enabling VFs
+Message-ID: <20180601023014.GA31226@debian>
+References: <20180530085521.26583-1-tiwei.bie@intel.com>
+ <20180530192010-mutt-send-email-mst@kernel.org>
+ <414C18B1-30FA-4AC0-B47D-F0FBF9832737@intel.com>
+ <1527699273.29907.2.camel@intel.com>
+ <5063D90B-7955-4F1E-85A2-D8AFD661ACB7@intel.com>
+ <20180531032049.GB15516@debian>
+ <CAKgT0Ud1QmotAXGOi1ORA79rYLFzofDZWPiJtPj=MBg4zxiSdw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4g6dv9sG9dR-iY+aEfSi2r3ey1dXGbX-nexKsN72t0QMw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAKgT0Ud1QmotAXGOi1ORA79rYLFzofDZWPiJtPj=MBg4zxiSdw@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 06:57:33PM -0700, Dan Williams wrote:
-> On Thu, May 31, 2018 at 6:26 PM, Dave Chinner <david@fromorbit.com> wrote:
-> > On Thu, May 31, 2018 at 12:13:32PM -0700, Darrick J. Wong wrote:
-> >> On Tue, May 29, 2018 at 04:01:14PM -0600, Ross Zwisler wrote:
-> >> > On Tue, May 29, 2018 at 02:25:10PM -0700, Darrick J. Wong wrote:
-> >> > > On Tue, May 29, 2018 at 01:51:01PM -0600, Ross Zwisler wrote:
-> >> > > > From: Dave Jiang <dave.jiang@intel.com>
-> >> > > >
-> >> > > > The function return values are confusing with the way the function is
-> >> > > > named. We expect a true or false return value but it actually returns
-> >> > > > 0/-errno.  This makes the code very confusing. Changing the return values
-> >> > > > to return a bool where if DAX is supported then return true and no DAX
-> >> > > > support returns false.
-> >> > > >
-> >> > > > Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> >> > > > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> >> > >
-> >> > > Looks ok, do you want me to pull the first two patches through the xfs
-> >> > > tree?
-> >> > >
-> >> > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> >> >
-> >> > Thanks for the review.
-> >> >
-> >> > I'm not sure what's best.  If you do that then Mike will need to have a DM
-> >> > branch for the rest of the series based on your stable commits, yea?
-> >> >
-> >> > Mike what would you prefer?
+On Thu, May 31, 2018 at 07:27:43AM -0700, Alexander Duyck wrote:
+> On Wed, May 30, 2018 at 8:20 PM, Tiwei Bie <tiwei.bie@intel.com> wrote:
+> > On Thu, May 31, 2018 at 01:11:37AM +0800, Rustad, Mark D wrote:
+> >> On May 30, 2018, at 9:54 AM, Duyck, Alexander H
+> >> <alexander.h.duyck@intel.com> wrote:
 > >>
-> >> I /was/ about to say that I would pull in the first two patches, but now
-> >> I can't get xfs to mount with pmem at all, and have no way of testing
-> >> this...?
+> >> > On Wed, 2018-05-30 at 09:44 -0700, Rustad, Mark D wrote:
+> >> > > On May 30, 2018, at 9:22 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> >> > >
+> >> > > > > +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int
+> >> > > > > num_vfs)
+> >> > > > > +{
+> >> > > > > +     struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+> >> > > > > +     struct virtio_device *vdev = &vp_dev->vdev;
+> >> > > > > +     int (*sriov_configure)(struct pci_dev *pci_dev, int num_vfs);
+> >> > > > > +
+> >> > > > > +     if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
+> >> > > > > +             return -EBUSY;
+> >> > > > > +
+> >> > > > > +     if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
+> >> > > > > +             return -EINVAL;
+> >> > > > > +
+> >> > > > > +     sriov_configure = pci_sriov_configure_simple;
+> >> > > > > +     if (sriov_configure == NULL)
+> >> > > > > +             return -ENOENT;
+> >> > > >
+> >> > > > BTW what is all this trickery in aid of?
+> >> > >
+> >> > > When SR-IOV support is not compiled into the kernel,
+> >> > > pci_sriov_configure_simple is #defined as NULL. This allows it to compile
+> >> > > in that case, even though there is utterly no way for it to be called in
+> >> > > that case. It is an alternative to #ifs in the code.
+> >> >
+> >> > Why even have the call though? I would wrap all of this in an #ifdef
+> >> > and strip it out since you couldn't support SR-IOV if it isn't present
+> >> > in the kernel anyway.
+> >>
+> >> I am inclined to agree. In this case, the presence of #ifdefs I think would
+> >> be clearer. As written, someone will want to get rid of the pointer only to
+> >> create a build problem when SR-IOV is not configured.
 > >
-> > I have similar problems, too, but:
+> > In my opinion, maybe it would be better to make
+> > pci_sriov_configure_simple() always available
+> > just like other sriov functions.
 > >
-> > $ ndctl list
-> > [
-> >   {
-> >     "dev":"namespace1.0",
-> >     "mode":"raw",
-> >     "size":8589934592,
-> >     "sector_size":512,
-> >     "blockdev":"pmem1"
-> >   },
-> >   {
-> >     "dev":"namespace0.0",
-> >     "mode":"raw",
-> >     "size":8589934592,
-> >     "sector_size":512,
-> >     "blockdev":"pmem0"
-> >   }
-> > ]
-> > $ sudo ndctl create-namespace -f -e namespace0.0 --mode=fsdax
-> >   Error: operation failed, region0 fsdax mode not available
+> > Based on the comments in the original patch:
 > >
-> > failed to reconfigure namespace: Invalid argument
-> > $
+> > https://patchwork.kernel.org/patch/10353197/
+> > """
+> > +/* this is expected to be used as a function pointer, just define as NULL */
+> > +#define pci_sriov_configure_simple NULL
+> > """
 > >
-> > I can't make head or tail of what is going wrong here - how am I
-> > supposed to debug this and get it working again?
+> > This function could be defined as NULL just because
+> > it was expected to be used as a function pointer.
+> > But actually it could be called directly as a
+> > function, just like this case.
 > >
-> > FWIW, XFS+DAX used to just work on this setup (I hadn't even
-> > installed ndctl until this morning!) but after changing the kernel
-> > it no longer works. That would make it a regression, yes?
+> > So I prefer to make this function always available
+> > just like other sriov functions.
+> >
+> > Best regards,
+> > Tiwei Bie
 > 
-> This commit caused the behavior change:
+> The fact that you are having to add additional code kind of implies
+> that maybe this doesn't fall into the pci_sriov_configure_simple case
+> anymore. The PF itself is defining what the VF can and can't do via
+> the feature flags you are testing for.
+
+I think you're right about pci_sriov_configure_simple
+isn't designed for this case. I dropped the use of
+pci_sriov_configure_simple in v2. Thanks!
+
 > 
->     569d0365f571 dax: require 'struct page' by default for filesystem dax
+> For example how is the bit of code below valid if the kernel itself
+> doesn't support SR-IOV:
+> +static void vp_transport_features(struct virtio_device *vdev, u64 features)
+> +{
+> +       struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> +       struct pci_dev *pci_dev = vp_dev->pci_dev;
+> +
+> +       if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
+> +                       pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
+> +               __virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
+> +}
+> +
 > 
-> The justification is in that patch, but the short summary is we killed
-> off "pageless" dax because it had so many incomplete holes and
-> surprise behaviors. It needed to die on the path to making dax not
-> experimental, i.e. to close safety holes, and be feature complete for
-> all the ways userspace expects to use mappings (direct-io, fork,
-> poison handling, etc).
+> It really seems like we should be wrapping these functions at the very
+> minimum so that they don't imply you have SR-IOV support when it isn't
+> supported in the kernel.
+
+I think it's OK to accept this feature bit in this case.
+The IOV support not enabled in kernel just means there is
+no way for users to use SR-IOV. But it doesn't mean that
+the virtio driver doesn't understand *this feature bit*.
+Even if the IOV support is enabled in kernel, there is
+still no way for virtio driver to know whether users will
+enable VFs or not. Accepting this feature is to tell the
+device the virtio driver understands this feature (i.e.
+this is not an incompatible virtio driver). And it's not
+to tell the device whether users will enable VFs or not,
+or how many VFs will be enabled.
+
 > 
-> I suspect your kernel does not have CONFIG_ZONE_DEVICE enabled which
-> has the following dependencies:
-> 
->         depends on MEMORY_HOTPLUG
->         depends on MEMORY_HOTREMOVE
->         depends on SPARSEMEM_VMEMMAP
+> Also it seems like we should be disabling the VFs if the driver is
+> unbound from this interface. We need to add logic to disable SR-IOV if
+> the driver is removed. What we don't want to do is leave VFs allocated
+> and then have the potential for us to unbind/rebind the driver as the
+> new driver may change the negotiated features.
 
-Filesystem DAX now has a dependency on memory hotplug?
+Right. Thanks!
 
-Fmeh. No wonder I never enabled CONFIG_ZONE_DEVICE. It's described in
-menuconfig as "Device memory (pmem, HMM, etc...) hotplug support".
-This isn't for hotplug support - it required for basic DAX
-functionality. I've never enabled memory hotplug in any of my test
-kernel configs, because the VMs I run the kernels on don't ever get
-memory hotplugged....
+FYI, here is v2:
+https://lists.oasis-open.org/archives/virtio-dev/201805/msg00206.html
 
-OK, works now I've found the magic config incantantions to turn
-everything I now need on.
-
-Can we get this rationalised to a single top level config
-option in the filesystems menu "Enable Filesystem DAX" that turns
-on every knob that is required?
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Best regards,
+Tiwei Bie
