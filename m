@@ -1,52 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753000AbeFARR4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 13:17:56 -0400
-Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.132]:34161 "EHLO
-        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752028AbeFARRy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 13:17:54 -0400
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBi5Qpz9LpBMKaNaHMpOKE="
-X-RZG-CLASS-ID: mo05
+        id S1752636AbeFARYF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 13:24:05 -0400
+Received: from foss.arm.com ([217.140.101.70]:56186 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751502AbeFARYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 13:24:04 -0400
+Date: Fri, 1 Jun 2018 18:23:59 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        viresh.kumar@linaro.org, valentin.schneider@arm.com
+Subject: Re: [PATCH v5 03/10] cpufreq/schedutil: add rt utilization tracking
+Message-ID: <20180601172359.GN30654@e110439-lin>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-4-git-send-email-vincent.guittot@linaro.org>
+ <20180530164601.GC2174@e108498-lin.cambridge.arm.com>
+ <20180531084607.GB17937@localhost.localdomain>
+ <20180601162357.GT12180@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v3 0/8] gnss: add new GNSS subsystem
-From: "H. Nikolaus Schaller" <hns@computer.org>
-In-Reply-To: <20180601162645.GA30792@amd>
-Date: Fri, 1 Jun 2018 18:37:36 +0200
-Cc: Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <3A356534-FEB0-4E0D-A8C8-922EEF1E0926@computer.org>
-References: <20180601082259.17563-1-johan@kernel.org> <20180601093311.GA31639@amd> <20180601094959.GA13775@localhost> <20180601102612.GC31639@amd> <20180601122217.GB13775@localhost> <20180601162645.GA30792@amd>
-To: Pavel Machek <pavel@ucw.cz>
-X-Mailer: Apple Mail (2.3124)
+Content-Disposition: inline
+In-Reply-To: <20180601162357.GT12180@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
-
-> Am 01.06.2018 um 18:26 schrieb Pavel Machek <pavel@ucw.cz>:
+On 01-Jun 18:23, Peter Zijlstra wrote:
+> On Thu, May 31, 2018 at 10:46:07AM +0200, Juri Lelli wrote:
+> > On 30/05/18 17:46, Quentin Perret wrote:
 > 
-> NMEA would not be my first choice, really. I'd propose something very
-> similar to existing /dev/input/eventX, but with wider data types.
+> > > So I understand why we want to got to max freq when a RT task is running,
+> > > but I think there are use cases where we might want to be more conservative
+> > > and use the util_avg of the RT rq instead. The first use case is
+> > > battery-powered devices where going to max isn't really affordable from
+> > > an energy standpoint. Android, for example, has been using a RT
+> > > utilization signal to select OPPs for quite a while now, because going
+> > > to max blindly is _very_ expensive.
+> > > 
+> > > And the second use-case is thermal pressure. On some modern CPUs, going to
+> > > max freq can lead to stringent thermal capping very quickly, at the
+> > > point where your CPUs might not have enough capacity to serve your tasks
+> > > properly. And that can ultimately hurt the very RT tasks you originally
+> > > tried to run fast. In these systems, in the long term, you'd be better off
+> > > not asking for more than what you really need ...
+> > 
+> > Proposed the same at last LPC. Peter NAKed it (since RT is all about
+> > meeting deadlines, and when using FIFO/RR we don't really know how fast
+> > the CPU should go to meet them, so go to max is the only safe decision).
+> > 
+> > > So what about having a sched_feature to select between going to max and
+> > > using the RT util_avg ? Obviously the default should keep the current
+> > > behaviour.
+> > 
+> > Peter, would SCHED_FEAT make a difference? :)
+> 
+> Hurmph...
+> 
+> > Or Patrick's utilization capping applied to RT..
+> 
+> There might be something there, IIRC that tracks the max potential
+> utilization for the running tasks. So at that point we can set a
+> frequency to minimize idle time.
 
-Since even Rome wasn't built in a day, my first choice is NMEA, but I am
-open to anything on higher level to come second.
+Or we can do the opposite: we go to max by default (as it is now) and
+if you think that some RT tasks don't need the full speed, you can
+apply a util_max to them.
 
-What about iio?
+That way, when a RT task is running alone on a CPU, we can run it
+only at a custom max freq which is known to be ok according to your
+latency requirements.
 
-It is quite flexible and extensible and GNSS coordinates are a not very
-different from accelerometer, gyroscope or compass data as all of them
-describe the position and orientation, maybe speed of the device these
-things are built into (at least for mobile devices).
+If instead it's running with other CFS tasks, we add already the CFS
+utilization, which will result into a speedup of the RT task to give
+back the CPU to CFS.
 
---hns
+> It's not perfect, because while the clamping thing effectively sets a
+> per-task bandwidth, the max filter is wrong. Also there's no CBS to
+> enforce anything.
+
+Right, well... from user-space potentially if you carefully set the RT
+cpu's controller (both bandwidth and clamping) and keep track of the
+allocated bandwidth, you can still ensure that all your RT tasks will
+be able to run, according to their prio.
+
+> With RT servers we could aggregate the group bandwidth and limit from
+> that...
+
+What we certainly miss I think it's the EDF scheduler: it's not
+possible to run certain RT tasks before others irrespectively of they
+relative priority.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
