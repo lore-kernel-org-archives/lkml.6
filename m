@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeFANFP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:05:15 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35034 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752144AbeFANFC (ORCPT
+        id S1752293AbeFANFJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:05:09 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33228 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752156AbeFANFC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Jun 2018 09:05:02 -0400
-X-Google-Smtp-Source: ADUXVKIgZfuQVy+INo4B/tWqtMS+ukWxBkI6rmP2ewUV8eReW602sehtA1ZGf96kZsEOKlUNUSMr8w==
+X-Google-Smtp-Source: ADUXVKLL/tja+u2bCuFMQlEEpDP9PKicsC/l1hg9HR51IMvJnuGdrooediyknT7Yhc9LAA/vad9HOA==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -15,9 +15,9 @@ Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         marcin.dziegielewski@intel.com,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 07/18] lightnvm: pblk: remove unnecessary indirection
-Date: Fri,  1 Jun 2018 15:04:21 +0200
-Message-Id: <20180601130432.30866-8-mb@lightnvm.io>
+Subject: [GIT PULL 08/18] lightnvm: pblk: remove unnecessary argument
+Date: Fri,  1 Jun 2018 15:04:22 +0200
+Message-Id: <20180601130432.30866-9-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180601130432.30866-1-mb@lightnvm.io>
 References: <20180601130432.30866-1-mb@lightnvm.io>
@@ -30,47 +30,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Javier González <javier@javigon.com>
 
-Call nvm_submit_io directly and remove an unnecessary indirection on the
-read path.
+Remove unnecessary argument on pblk_line_free()
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-read.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+ drivers/lightnvm/pblk-core.c | 6 +++---
+ drivers/lightnvm/pblk-init.c | 2 +-
+ drivers/lightnvm/pblk.h      | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index b201fc486adb..a2e678de428f 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -102,16 +102,6 @@ static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
- #endif
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 0d4078805ecc..4b10122aec89 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1337,7 +1337,7 @@ static struct pblk_line *pblk_line_retry(struct pblk *pblk,
+ 	retry_line->emeta = line->emeta;
+ 	retry_line->meta_line = line->meta_line;
+ 
+-	pblk_line_free(pblk, line);
++	pblk_line_free(line);
+ 	l_mg->data_line = retry_line;
+ 	spin_unlock(&l_mg->free_lock);
+ 
+@@ -1562,7 +1562,7 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
+ 	return new;
  }
  
--static int pblk_submit_read_io(struct pblk *pblk, struct nvm_rq *rqd)
--{
--	int err;
--
--	err = pblk_submit_io(pblk, rqd);
--	if (err)
--		return NVM_IO_ERR;
--
--	return NVM_IO_OK;
--}
+-void pblk_line_free(struct pblk *pblk, struct pblk_line *line)
++void pblk_line_free(struct pblk_line *line)
+ {
+ 	kfree(line->map_bitmap);
+ 	kfree(line->invalid_bitmap);
+@@ -1584,7 +1584,7 @@ static void __pblk_line_put(struct pblk *pblk, struct pblk_line *line)
+ 	WARN_ON(line->state != PBLK_LINESTATE_GC);
+ 	line->state = PBLK_LINESTATE_FREE;
+ 	line->gc_group = PBLK_LINEGC_NONE;
+-	pblk_line_free(pblk, line);
++	pblk_line_free(line);
+ 	spin_unlock(&line->lock);
  
- static void pblk_read_check_seq(struct pblk *pblk, struct nvm_rq *rqd,
- 				sector_t blba)
-@@ -485,9 +475,9 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 		rqd->bio = int_bio;
- 		r_ctx->private = bio;
+ 	atomic_dec(&gc->pipeline_gc);
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 8f8c9abd14fc..b52855f9336b 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -509,7 +509,7 @@ static void pblk_lines_free(struct pblk *pblk)
+ 	for (i = 0; i < l_mg->nr_lines; i++) {
+ 		line = &pblk->lines[i];
  
--		ret = pblk_submit_read_io(pblk, rqd);
--		if (ret) {
-+		if (pblk_submit_io(pblk, rqd)) {
- 			pr_err("pblk: read IO submission failed\n");
-+			ret = NVM_IO_ERR;
- 			if (int_bio)
- 				bio_put(int_bio);
- 			goto fail_end_io;
+-		pblk_line_free(pblk, line);
++		pblk_line_free(line);
+ 		pblk_line_meta_free(line);
+ 	}
+ 	spin_unlock(&l_mg->free_lock);
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 9c682acfc5d1..dfbfe9e9a385 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -766,7 +766,7 @@ struct pblk_line *pblk_line_get_data(struct pblk *pblk);
+ struct pblk_line *pblk_line_get_erase(struct pblk *pblk);
+ int pblk_line_erase(struct pblk *pblk, struct pblk_line *line);
+ int pblk_line_is_full(struct pblk_line *line);
+-void pblk_line_free(struct pblk *pblk, struct pblk_line *line);
++void pblk_line_free(struct pblk_line *line);
+ void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line);
+ void pblk_line_close(struct pblk *pblk, struct pblk_line *line);
+ void pblk_line_close_ws(struct work_struct *work);
 -- 
 2.11.0
