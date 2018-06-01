@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752927AbeFAQCJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:02:09 -0400
-Received: from smtp2.provo.novell.com ([137.65.250.81]:60807 "EHLO
+        id S1753191AbeFAQCm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:02:42 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:37200 "EHLO
         smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752660AbeFAQCE (ORCPT
+        with ESMTP id S1751693AbeFAQCN (ORCPT
         <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Fri, 1 Jun 2018 12:02:04 -0400
+        Fri, 1 Jun 2018 12:02:13 -0400
 From: Davidlohr Bueso <dave@stgolabs.net>
 To: akpm@linux-foundation.org, torvalds@linux-foundation.org
 Cc: tgraf@suug.ch, herbert@gondor.apana.org.au, manfred@colorfullife.com,
         mhocko@kernel.org, guillaume.knispel@supersonicimagine.com,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dave@stgolabs.net>, Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 1/5] lib/rhashtable: convert param sanitations to WARN_ON
-Date: Fri,  1 Jun 2018 09:01:21 -0700
-Message-Id: <20180601160125.30031-2-dave@stgolabs.net>
+Subject: [PATCH 5/5] lib/test_rhashtable: rhashtable_init() can no longer fail
+Date: Fri,  1 Jun 2018 09:01:25 -0700
+Message-Id: <20180601160125.30031-6-dave@stgolabs.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180601160125.30031-1-dave@stgolabs.net>
 References: <20180601160125.30031-1-dave@stgolabs.net>
@@ -23,35 +23,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the purpose of making rhashtable_init() unable to fail,
-we can replace the returning -EINVAL with WARN_ONs whenever
-the caller passes bogus parameters during initialization.
+Update the test module as such.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- lib/rhashtable.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ lib/test_rhashtable.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 9427b5766134..05a4b1b8b8ce 100644
---- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -1024,12 +1024,11 @@ int rhashtable_init(struct rhashtable *ht,
+diff --git a/lib/test_rhashtable.c b/lib/test_rhashtable.c
+index f4000c137dbe..a894eb0407f0 100644
+--- a/lib/test_rhashtable.c
++++ b/lib/test_rhashtable.c
+@@ -182,11 +182,7 @@ static void test_bucket_stats(struct rhashtable *ht, unsigned int entries)
+ 	struct rhashtable_iter hti;
+ 	struct rhash_head *pos;
  
- 	size = HASH_DEFAULT_SIZE;
+-	err = rhashtable_walk_init(ht, &hti, GFP_KERNEL);
+-	if (err) {
+-		pr_warn("Test failed: allocation error");
+-		return;
+-	}
++	rhashtable_walk_init(ht, &hti, GFP_KERNEL);
  
--	if ((!params->key_len && !params->obj_hashfn) ||
--	    (params->obj_hashfn && !params->obj_cmpfn))
--		return -EINVAL;
-+	WARN_ON((!params->key_len && !params->obj_hashfn) ||
-+		(params->obj_hashfn && !params->obj_cmpfn));
+ 	rhashtable_walk_start(&hti);
  
--	if (params->nulls_base && params->nulls_base < (1U << RHT_BASE_SHIFT))
--		return -EINVAL;
-+	WARN_ON(params->nulls_base &&
-+		params->nulls_base < (1U << RHT_BASE_SHIFT));
- 
- 	memset(ht, 0, sizeof(*ht));
- 	mutex_init(&ht->mutex);
 -- 
 2.16.3
