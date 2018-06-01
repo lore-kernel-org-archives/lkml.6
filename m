@@ -1,155 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753420AbeFAUAr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 16:00:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43554 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753088AbeFAUAp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 16:00:45 -0400
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit"
- actions
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-audit@redhat.com
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com>
- <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
- <35894dae-c9c6-aa65-da99-c0283d459878@linux.vnet.ibm.com>
- <CAHC9VhSnubpfY6=RF9ZHQS0js18xor2nF=REfd=ZKTxV-wabiA@mail.gmail.com>
- <85a2ad4d-6406-ad64-f440-7ab8289ceb2e@linux.vnet.ibm.com>
- <20180530233413.xz5bs3zb4jwmddpi@madcap2.tricolour.ca>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Fri, 1 Jun 2018 16:00:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1753372AbeFAUEO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 16:04:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48458 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753080AbeFAUEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 16:04:12 -0400
+X-Google-Smtp-Source: ADUXVKJTziHuGVkUImjtRCa9kvbV3hLJ8l/dEDPD8dCsjHLDgvMS5+oidCgL3O2AFeOEqAWeVzljUoywLFi8V5x0Lag=
 MIME-Version: 1.0
-In-Reply-To: <20180530233413.xz5bs3zb4jwmddpi@madcap2.tricolour.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18060120-0020-0000-0000-00000E121E34
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009111; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01040925; UDB=6.00532885; IPR=6.00820055;
- MB=3.00021416; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-01 20:00:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060120-0021-0000-0000-000061B4461C
-Message-Id: <89c5f9c1-cdc4-6d2c-c187-04e94c2b8e75@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-01_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806010231
+References: <20180601082811.4c0d33ba@imladris.surriel.com> <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
+ <1527877328.7898.80.camel@surriel.com> <1527878882.4448.11.camel@gmx.de> <1527882207.7898.86.camel@surriel.com>
+In-Reply-To: <1527882207.7898.86.camel@surriel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Fri, 1 Jun 2018 13:03:57 -0700
+X-Gmail-Original-Message-ID: <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
+Message-ID: <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
+Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
+To: riel@surriel.com
+Cc: Mike Galbraith <efault@gmx.de>, Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, songliubraving@fb.com,
+        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/30/2018 07:34 PM, Richard Guy Briggs wrote:
-> On 2018-05-30 17:38, Stefan Berger wrote:
->> On 05/30/2018 05:22 PM, Paul Moore wrote:
->>> On Wed, May 30, 2018 at 9:08 AM, Stefan Berger
->>> <stefanb@linux.vnet.ibm.com> wrote:
->>>> On 05/30/2018 08:49 AM, Richard Guy Briggs wrote:
->>>>> On 2018-05-24 16:11, Stefan Berger wrote:
->>>>>> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
->>>>>> the IMA "audit" policy action.  This patch defines
->>>>>> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
->>>>>>
->>>>>> With this change we now call integrity_audit_msg_common() to get
->>>>>> common integrity auditing fields. This now produces the following
->>>>>> record when parsing an IMA policy rule:
->>>>>>
->>>>>> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure \
->>>>>>      fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
->>>>>>      subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->>>>>>      op=policy_update cause=parse_rule comm="echo" exe="/usr/bin/echo" \
->>>>>>      tty=tty2 res=1
->>>>>>
->>>>>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
->>>>>> ---
->>>>>>     include/uapi/linux/audit.h          | 3 ++-
->>>>>>     security/integrity/ima/ima_policy.c | 5 +++--
->>>>>>     2 files changed, 5 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
->>>>>> index 4e61a9e05132..776e0abd35cf 100644
->>>>>> --- a/include/uapi/linux/audit.h
->>>>>> +++ b/include/uapi/linux/audit.h
->>>>>> @@ -146,7 +146,8 @@
->>>>>>     #define AUDIT_INTEGRITY_STATUS            1802 /* Integrity enable
->>>>>> status */
->>>>>>     #define AUDIT_INTEGRITY_HASH      1803 /* Integrity HASH type */
->>>>>>     #define AUDIT_INTEGRITY_PCR       1804 /* PCR invalidation msgs */
->>>>>> -#define AUDIT_INTEGRITY_RULE       1805 /* policy rule */
->>>>>> +#define AUDIT_INTEGRITY_RULE       1805 /* IMA "audit" action policy
->>>>>> msgs  */
->>>>>> +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
->>>>>>       #define AUDIT_KERNEL                2000    /* Asynchronous audit
->>>>>> record. NOT A REQUEST. */
->>>>>>     diff --git a/security/integrity/ima/ima_policy.c
->>>>>> b/security/integrity/ima/ima_policy.c
->>>>>> index 3aed25a7178a..a8ae47a386b4 100644
->>>>>> --- a/security/integrity/ima/ima_policy.c
->>>>>> +++ b/security/integrity/ima/ima_policy.c
->>>>>> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct
->>>>>> ima_rule_entry *entry)
->>>>>>           int result = 0;
->>>>>>           ab = integrity_audit_log_start(NULL, GFP_KERNEL,
->>>>>> -                                      AUDIT_INTEGRITY_RULE);
->>>>>> +                                      AUDIT_INTEGRITY_POLICY_RULE);
->>>>> Is it possible to connect this record to a syscall by replacing the
->>>>> first parameter (NULL) by current->context?
->>> We're likely going to need to "associate" this record (audit speak for
->>> making the first parameter non-NULL) with others for the audit
->>> container ID work.  If you do it now, Richard's patches will likely
->>> get a few lines smaller and that will surely make him a bit happier :)
->> Richard is also introducing a local context that we can then create and use
->> instead of the NULL. Can we not use that then?
-> That is for records for which there is no syscall or user associated.
+On Fri, Jun 1, 2018 at 12:43 PM Rik van Riel <riel@surriel.com> wrote:
 >
-> In fact there is another recent change that would be better to use than
-> current->audit_context, which is the function audit_context().
-> See commit cdfb6b3 ("audit: use inline function to get audit context").
+> On Fri, 2018-06-01 at 20:48 +0200, Mike Galbraith wrote:
+> > On Fri, 2018-06-01 at 14:22 -0400, Rik van Riel wrote:
+> > > On Fri, 2018-06-01 at 08:11 -0700, Andy Lutomirski wrote:
+> > > > On Fri, Jun 1, 2018 at 5:28 AM Rik van Riel <riel@surriel.com>
+> > > > wrote:
+> > > > >
+> > > > > Song noticed switch_mm_irqs_off taking a lot of CPU time in
+> > > > > recent
+> > > > > kernels,using 2.4% of a 48 CPU system during a netperf to
+> > > > > localhost
+> > > > > run.
+> > > > > Digging into the profile, we noticed that cpumask_clear_cpu and
+> > > > > cpumask_set_cpu together take about half of the CPU time taken
+> > > > > by
+> > > > > switch_mm_irqs_off.
+> > > > >
+> > > > > However, the CPUs running netperf end up switching back and
+> > > > > forth
+> > > > > between netperf and the idle task, which does not require
+> > > > > changes
+> > > > > to the mm_cpumask. Furthermore, the init_mm cpumask ends up
+> > > > > being
+> > > > > the most heavily contended one in the system.`
+> > > > >
+> > > > > Skipping cpumask_clear_cpu and cpumask_set_cpu for init_mm
+> > > > > (mostly the idle task) reduced CPU use of switch_mm_irqs_off
+> > > > > from 2.4% of the CPU to 1.9% of the CPU, with the following
+> > > > > netperf commandline:
+> > > >
+> > > > I'm conceptually fine with this change.  Does
+> > > > mm_cpumask(&init_mm)
+> > > > end
+> > > > up in a deterministic state?
+> > >
+> > > Given that we do not touch mm_cpumask(&init_mm)
+> > > any more, and that bitmask never appears to be
+> > > used for things like tlb shootdowns (kernel TLB
+> > > shootdowns simply go to everybody), I suspect
+> > > it ends up in whatever state it is initialized
+> > > to on startup.
+> > >
+> > > I had not looked into this much, because it does
+> > > not appear to be used for anything.
+> > >
+> > > > Mike, depending on exactly what's going on with your benchmark,
+> > > > this
+> > > > might help recover a bit of your performance, too.
+> > >
+> > > It will be interesting to know how this change
+> > > impacts others.
+> >
+> > previous pipe-test number
+> > 4.13.16         2.024978 usecs/loop -- avg 2.045250 977.9 KHz
+> > 4.14.47         2.234518 usecs/loop -- avg 2.227716 897.8 KHz
+> > 4.15.18         2.287815 usecs/loop -- avg 2.295858 871.1 KHz
+> > 4.16.13         2.286036 usecs/loop -- avg 2.279057 877.6 KHz
+> > 4.17.0.g88a8676 2.288231 usecs/loop -- avg 2.288917 873.8 KHz
+> >
+> > new numbers
+> > 4.17.0.g0512e01 2.268629 usecs/loop -- avg 2.269493 881.3 KHz
+> > 4.17.0.g0512e01 2.035401 usecs/loop -- avg 2.038341 981.2 KHz +andy
+> > 4.17.0.g0512e01 2.238701 usecs/loop -- avg 2.231828 896.1 KHz
+> > -andy+rik
+> >
+> > There might be something there with your change Rik, but it's small
+> > enough to be wary of variance.  Andy's "invert the return of
+> > tlb_defer_switch_to_init_mm()" is OTOH pretty clear.
 >
->> Steven seems to say: "We don't want to add syscall records to everything.
->> That messes up schemas and existing code. The integrity events are 1 record
->> in size and should stay that way. This saves disk space and improves
->> readability."
->>
->>>> We would have to fix current->context in this case since it is NULL. We get
->>>> to this location by root cat'ing a policy or writing a policy filename into
->>>> /sys/kernel/security/ima/policy.
->>> Perhaps I'm missing something, but current in this case should point
->>> to the process which is writing to the policy file, yes?
->> Yes, but current->context is NULL for some reason.
-> Is it always this way?  If it isn't, which it should not be, we should
-> find out why.  Well, we should find out why this is NULL anyways, since
-> it shouldn't be.
-
-When someone writes a policy for IMA into securityfs, it's always NULL. 
-There's another location where IMA uses the current->audit_context, and 
-that's here:
-
-https://elixir.bootlin.com/linux/latest/source/security/integrity/ima/ima_api.c#L323
-
-At this location we sometimes see a (background) process with an 
-audit_context but in the majority of cases it's current->audit_context 
-is NULL. Starting a process as root or also non-root user, with the 
-appropriate IMA audit policy rules set, we always see a NULL 
-audit_context here.
-
-
+> If inverting the return value of that function helps
+> some systems, chances are the other value might help
+> other systems.
 >
-> - RGB
+> That makes you wonder whether it might make sense
+> to always switch to lazy TLB mode, and only call
+> switch_mm at TLB flush time, regardless of whether
+> the CPU supports PCID...
 >
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
->
+
+Mike, you never did say: do you have PCID on your CPU?  Also, what is
+your workload doing to cause so many switches back and forth between
+init_mm and a task.
+
+The point of the optimization is that switching to init_mm() should be
+fairly fast on a PCID system, whereas an IPI to do the deferred flush
+is very expensive regardless of PCID.  I wonder if we could do
+something fancy where we stay on the task mm for short idles but
+switch to init_mm before going deeply idle.  We'd also want to switch
+to init_mm when we go idle due to migrating the previously running
+task, I think.
+
+Previously, it was hard to make any decisions based on the target idle
+state because the idle code chose its target state so late in the
+idling process that the CPU was halfway shut down already.  But I
+think this is fixed now.
+
+--Andy
