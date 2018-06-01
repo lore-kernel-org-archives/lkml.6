@@ -1,73 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753649AbeFAQ5s (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:57:48 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40993 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753197AbeFAQxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:53:55 -0400
-From: Salil Mehta <salil.mehta@huawei.com>
-To: <davem@davemloft.net>
-CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
-Subject: [PATCH net-next 07/11] net: hns3: Fix for phy not link up problem after resetting
-Date: Fri, 1 Jun 2018 17:52:07 +0100
-Message-ID: <20180601165211.46372-8-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180601165211.46372-1-salil.mehta@huawei.com>
-References: <20180601165211.46372-1-salil.mehta@huawei.com>
+        id S1753337AbeFAQ7V (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:59:21 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:58112 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752888AbeFAQ7S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:59:18 -0400
+Date: Sat, 2 Jun 2018 00:59:03 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        tgraf@suug.ch, manfred@colorfullife.com, mhocko@kernel.org,
+        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 1/5] lib/rhashtable: convert param sanitations to WARN_ON
+Message-ID: <20180601165903.bd3jonbv2jrfcevi@gondor.apana.org.au>
+References: <20180601160125.30031-1-dave@stgolabs.net>
+ <20180601160125.30031-2-dave@stgolabs.net>
+ <20180601160944.ji2gsp3pyunlj476@gondor.apana.org.au>
+ <20180601165347.kvruerdm3gu57ifv@linux-r8p5>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.234]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601165347.kvruerdm3gu57ifv@linux-r8p5>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+On Fri, Jun 01, 2018 at 09:53:47AM -0700, Davidlohr Bueso wrote:
+>
+> Curious, are these users setting up the param structure dynamically
+> or something that they can pass along bogus values?
+> 
+> If that's the case then yes, I definitely agree.
 
-When resetting, phy_state_machine may be accessing the phy through
-firmware if the phy is not stopped or disconnected, which will
-cause firemware timeout problem because the firmware is busy
-processing the reset request.
+It's just a quality of implementation issue.  This is a generic API.
+Sure for early-boot users like yours it makes sense to just WARN_ON
+rather than deal with the messy hash table allocation failure.
 
-This patch fixes it by disabling the phy when resetting.
+But for a driver author writing some kernel module it isn't nice
+to WARN_ON and then crash on a NULL-pointer dereference when we
+can cleanly fail the table init.
 
-Fixes: b940aeae0ed6 ("net: hns3: never send command queue message to IMP when reset")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index fb44b1e..58fef5e 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3761,9 +3761,6 @@ static int hclge_ae_start(struct hnae3_handle *handle)
- 	/* reset tqp stats */
- 	hclge_reset_tqp_stats(handle);
- 
--	if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state))
--		return 0;
--
- 	ret = hclge_mac_start_phy(hdev);
- 	if (ret)
- 		return ret;
-@@ -3781,8 +3778,10 @@ static void hclge_ae_stop(struct hnae3_handle *handle)
- 	cancel_work_sync(&hdev->service_task);
- 	clear_bit(HCLGE_STATE_SERVICE_SCHED, &hdev->state);
- 
--	if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state))
-+	if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state)) {
-+		hclge_mac_stop_phy(hdev);
- 		return;
-+	}
- 
- 	for (i = 0; i < vport->alloc_tqps; i++)
- 		hclge_tqp_enable(hdev, i, 0, false);
+Cheers,
 -- 
-2.7.4
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
