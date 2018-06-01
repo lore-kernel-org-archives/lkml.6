@@ -1,80 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753159AbeFAQQA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:16:00 -0400
-Received: from forwardcorp1j.cmail.yandex.net ([5.255.227.105]:50123 "EHLO
-        forwardcorp1j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751777AbeFAQP5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:15:57 -0400
-Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: Re: [PATCH RFC v5] pidns: introduce syscall translate_pid
-To: NAGARATHNAM MUTHUSAMY <nagarathnam.muthusamy@oracle.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>, Serge Hallyn <serge.hallyn@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski <luto@amacapital.net>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <152286911105.615669.14053871624892399807.stgit@buzz>
- <ba7b704f-1fc4-a08d-e7cf-2766160bd419@oracle.com>
- <87h8oqhagl.fsf@xmission.com>
- <112c7cac-1982-3a2e-ffc0-878bc5ae4bb6@yandex-team.ru>
- <e1402871-77a5-6a0f-a75c-ccad77b93f49@oracle.com>
- <778ab3d0-b6bc-fdb5-669a-40222e5020d4@yandex-team.ru>
- <e3a1076d-cfd7-a034-dd08-2d74fbf751f3@oracle.com>
- <3e2c285a-1bf8-f71d-1b74-4d6465c29a54@yandex-team.ru>
- <3bdd6b27-0a46-5802-8671-07268cecc1c7@oracle.com>
- <87po1bd7ky.fsf@xmission.com>
- <CALYGNiPyjJQ2dZHtF+Ug5TFjEcK2O9anLDDDG0JftXtykPAoEg@mail.gmail.com>
- <2cc8a788-56ec-8e30-be04-d5d0e0791f90@oracle.com>
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <32de22ed-3f0e-c947-803f-1e427cf84d2e@yandex-team.ru>
-Date: Fri, 1 Jun 2018 19:15:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753222AbeFAQRE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:17:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33100 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751932AbeFAQRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:17:01 -0400
+Date: Fri, 1 Jun 2018 18:16:58 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        gregkh@linuxfoundation.org, mingo@kernel.org,
+        james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH v2 10/17] signal: make has_pending_signals() return bool
+Message-ID: <20180601161657.GD1058@redhat.com>
+References: <20180601132239.4421-1-christian@brauner.io>
+ <20180601132239.4421-11-christian@brauner.io>
 MIME-Version: 1.0
-In-Reply-To: <2cc8a788-56ec-8e30-be04-d5d0e0791f90@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601132239.4421-11-christian@brauner.io>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01.06.2018 18:55, NAGARATHNAM MUTHUSAMY wrote:
-> 
-> 
-> On 5/31/2018 11:58 PM, Konstantin Khlebnikov wrote:
->> On Thu, May 31, 2018 at 9:05 PM, Eric W. Biederman
->> <ebiederm@xmission.com> wrote:
->>> Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com> writes:
->>>
->>>> Ping? Any additional comments on this patch?
->>> Konstantin's v5 no.
->>>
->>>    I am uncomfortable with unnecessary flexibility.  I don't want to
->>>    encourage the increased usage of pids to identify namespaces.  I saw
->>>    no arguments in favor of pids to identify namespaces from Konstantin.
->>>
->>> Your v4 updated to reflect Andrew Morton's concerns in the changelog
->>> yes.
->> Ok, whatever. If I the only blocker then let it be v4 design.
-> 
-> Thanks! I will resend the V4 patch with a plain text man page for translate_pid.
+On 06/01, Christian Brauner wrote:
+>
+> has_pending_signals() already behaves like a boolean function. Let's
+> actually declare it as such too.
 
-Syscall integration have changed since then.
-I've prepared v6 patch with v4 design and updated comment.
+But this patch does more.
 
-> 
-> Thanks,
-> Nagarathnam.
->>
->>> Eric
->>> -- 
->>> To unsubscribe from this list: send the line "unsubscribe linux-api" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> -	case 4: ready  = signal->sig[3] &~ blocked->sig[3];
+> -		ready |= signal->sig[2] &~ blocked->sig[2];
+> -		ready |= signal->sig[1] &~ blocked->sig[1];
+> -		ready |= signal->sig[0] &~ blocked->sig[0];
+> +	case 4:
+> +		ready = signal->sig[3] & ~blocked->sig[3];
+> +		ready |= signal->sig[2] & ~blocked->sig[2];
+> +		ready |= signal->sig[1] & ~blocked->sig[1];
+> +		ready |= signal->sig[0] & ~blocked->sig[0];
+>  		break;
+
+Again, personally I do not care at all. But why do you think the code looks
+better after re-formatting? This is subjective, but to me it does not.
+
+In particular, note the extra space before "=" removed by this patch. I guess
+it was added on purpose, and to me
+
+	ready  = signal->sig[3] &~ blocked->sig[3];
+	ready |= signal->sig[2] &~ blocked->sig[2];
+
+actually looks better thab
+
+	ready = signal->sig[3] &~ blocked->sig[3];
+	ready |= signal->sig[2] &~ blocked->sig[2];
+
+after your patch.
+
+Oleg.
