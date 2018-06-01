@@ -1,57 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753234AbeFAR4f (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 13:56:35 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:34272 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751792AbeFAR4c (ORCPT
+        id S1753251AbeFAR5B (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 13:57:01 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37332 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752252AbeFAR46 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 13:56:32 -0400
-X-Google-Smtp-Source: ADUXVKICCTrmCCTYkqSFgAitg8cfirG8Cn4A25PLqgE3FTb0xZcgpbDd1XFAjGAJLYf1L6skQhPb1w==
-Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
- <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
- <20180531162556.GA955@rob-hp-laptop>
-From: Ray Jui <ray.jui@broadcom.com>
-Message-ID: <a354f3d1-051d-8b68-e6b3-ce7a739c10c9@broadcom.com>
-Date: Fri, 1 Jun 2018 10:56:27 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 1 Jun 2018 13:56:58 -0400
+X-Google-Smtp-Source: ADUXVKKJzAsIsxsNm1zBOKzjHz2GvU522V283QAIu99JnLopBAEhWkcOGKnIdn+TDQhW7kqGNEbV//He+VpVZeZvwV0=
 MIME-Version: 1.0
-In-Reply-To: <20180531162556.GA955@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Reply-To: sedat.dilek@gmail.com
+In-Reply-To: <CA+icZUVkajCqc0Opg3EB8Jg915Nu4mCjgmU54twLeBrq3hHvgg@mail.gmail.com>
+References: <CA+icZUVkajCqc0Opg3EB8Jg915Nu4mCjgmU54twLeBrq3hHvgg@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Fri, 1 Jun 2018 19:56:57 +0200
+Message-ID: <CA+icZUVsB48bgcm2bY_eN5iShCw4=T+=9k4E1ZFjkZWOrKpzHQ@mail.gmail.com>
+Subject: Re: module: x86/modules: Skipping invalid relocation target, existing
+ value is nonzero for type 1
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Fri, Jun 1, 2018 at 6:01 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> Hi,
+>
+> can someone tell me what this exactly means?
+>
+> What is the root cause for this?
+> GNU binutils/ld?
+> Compiler?
+> Curently I test with clang-7.
+> VirtualBox and compiler incompatible?
+>
+> Steps to reproduce the failure...
+>
+> root# modprobe -v vboxdrv
+> insmod /lib/modules/4.14.47-1-iniza-llvmlinux/updates/dkms/vboxdrv.ko
+> modprobe: ERROR: could not insert 'vboxdrv': Exec format error
+>
+> root# dmesg | tail -1
+> [13437.021825] module: x86/modules: Skipping invalid relocation
+> target, existing value is nonzero for type 1, loc ffffffffc1453360,
+> val ffffffffc142f8a2
+>
+> Tanks in advance.
+>
 
-On 5/31/2018 9:25 AM, Rob Herring wrote:
-> On Fri, May 25, 2018 at 09:45:16AM -0700, Ray Jui wrote:
->> Update and add Stingray clock definitions and tables so they match the
->> binding document and the latest ASIC datasheet
->>
->> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
->> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
->> ---
->>   drivers/clk/bcm/clk-sr.c           | 135 ++++++++++++++++++++++++++++++++-----
->>   include/dt-bindings/clock/bcm-sr.h |  24 +++++--
-> 
-> This goes in the 1st patch.
+Looks like DKMS kernel-modules were built with gcc-7, unsure how to
+force usage of clang-7.
 
-Please help to confirm. You want 1st patch and 2nd patch to be combined 
-into a single patch?
-
-Thanks.
-
-> 
->>   2 files changed, 137 insertions(+), 22 deletions(-)
+- sed@ -
