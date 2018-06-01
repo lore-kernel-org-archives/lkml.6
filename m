@@ -1,121 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751293AbeFAFmb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 01:42:31 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44709 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750931AbeFAFm1 (ORCPT
+        id S1751200AbeFAGCt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 02:02:49 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:42919 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750821AbeFAGCr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 01:42:27 -0400
-X-Google-Smtp-Source: ADUXVKKtSeY7OmfvWgDscJ0w8y7KTMmkhIMQdl6v3Hmyhk7IqWSaO2r6ZGXDqtUb5IVfMd4bjn6bVQ==
-Subject: Re: [PATCH 0/8] xen: dma-buf support for grant device
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com
-References: <20180525153331.31188-1-andr2000@gmail.com>
- <9687b6e5-808e-0c63-34c3-90e6fcbdfb2e@oracle.com>
- <bc6a2e2f-f650-86db-ac8c-1945a6183c06@gmail.com>
- <d0f55179-8edd-d0b9-d335-735c5012659c@gmail.com>
- <00c0eabc-3a5e-5335-5a7e-2cebce5387c9@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <fa050c85-f236-2f70-414b-80c095d825cb@gmail.com>
-Date: Fri, 1 Jun 2018 08:42:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 1 Jun 2018 02:02:47 -0400
+X-Google-Smtp-Source: ADUXVKKG9sxgLCQqu1Q8jTF8ZjscrIUGHuj1Hnveo5G44BwBtXJjsgz8IDnofK+dM2vodOuCLZlJ4w==
+Date: Thu, 31 May 2018 23:02:43 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org,
+        rostedt@goodmis.org, tglx@linutronix.de, raistlin@linux.it,
+        linux-kernel@vger.kernel.org, juri.lelli@gmail.com, bristot@redhat.com,
+        kernel-team@lge.com
+Subject: Re: [RESEND PATCH v3 1/2] sched/deadline: Add cpudl_maximum_dl() for
+ clean-up
+Message-ID: <20180601060243.GA184458@joelaf.mtv.corp.google.com>
+References: <1515392081-32320-1-git-send-email-byungchul.park@lge.com>
+ <20180111090716.GV6176@hirez.programming.kicks-ass.net>
+ <20180509063322.GA29160@X58A-UD3R>
+ <536cd801-03e5-a1de-605b-a6ed0f95b4a9@lge.com>
+ <6617f569-6c2f-509c-328e-fad3db73f5df@lge.com>
 MIME-Version: 1.0
-In-Reply-To: <00c0eabc-3a5e-5335-5a7e-2cebce5387c9@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6617f569-6c2f-509c-328e-fad3db73f5df@lge.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/31/2018 11:25 PM, Boris Ostrovsky wrote:
-> On 05/31/2018 10:41 AM, Oleksandr Andrushchenko wrote:
->> On 05/31/2018 08:51 AM, Oleksandr Andrushchenko wrote:
->>> On 05/31/2018 04:46 AM, Boris Ostrovsky wrote:
->>>>
->>>> On 05/25/2018 11:33 AM, Oleksandr Andrushchenko wrote:
->>>>
->>>>> Oleksandr Andrushchenko (8):
->>>>>     xen/grant-table: Make set/clear page private code shared
->>>>>     xen/balloon: Move common memory reservation routines to a module
->>>>>     xen/grant-table: Allow allocating buffers suitable for DMA
->>>>>     xen/gntdev: Allow mappings for DMA buffers
->>>>>     xen/gntdev: Add initial support for dma-buf UAPI
->>>>>     xen/gntdev: Implement dma-buf export functionality
->>>>>     xen/gntdev: Implement dma-buf import functionality
->>>>>     xen/gntdev: Expose gntdev's dma-buf API for in-kernel use
->>>>>
->>>>>    drivers/xen/Kconfig           |   23 +
->>>>>    drivers/xen/Makefile          |    1 +
->>>>>    drivers/xen/balloon.c         |   71 +--
->>>>>    drivers/xen/gntdev.c          | 1025
->>>>> ++++++++++++++++++++++++++++++++-
->>>>
->>>> I think this calls for gntdev_dma.c.
->>> I assume you mean as a separate file (part of gntdev driver)?
->>>> I only had a quick look over gntdev changes but they very much are
->>>> concentrated in dma-specific routines.
->>>>
->>> I tried to do that, but there are some dependencies between the
->>> gntdev.c and gntdev_dma.c,
->>> so finally I decided to put it all together.
->>>> You essentially only share file_operations entry points with
->>>> original gntdev code, right?
->>>>
->>> fops + mappings done by gntdev (struct grant_map) and I need to
->>> release map on dma_buf .release
->>> callback which makes some cross-dependencies between modules which
->>> seemed to be not cute
->>> (gntdev keeps its all structs and functions inside, so I cannot
->>> easily access those w/o
->>> helpers).
->>>
->>> But I'll try one more time and move all DMA specific stuff into
->>> gntdev_dma.c
->> Could you please take a quick look at the way I re-structured the
->> sources here [1]?
->> If this is what you meant.
->
-> I looked at final gntdev.c code and I think at least one of the chunks
-> there ("DMA buffer export support. ") can also be moved out. It still
-> have a bit too many ifdefs but it looks better to my eye than jamming
-> everything into a single file (and I think more code can be moved out,
-> but we can talk about it when you post the patches so that we can see
-> context).
-Sure, will send v2 after I re-check all the patches
-and run some smoke tests again
->
-> BTW, I believe it won't build with !CONFIG_XEN_GNTDEV_DMABUF ---
-> gntdev_remove_map() is defined under this option and is referenced later
-> without it.
-Will check, thank you
->
-> -boris
->
->
->> Thank you,
->> Oleksandr
->>>> -boris
->>>>
->>> Thank you,
->>> Oleksandr
->>>>>    drivers/xen/grant-table.c     |  176 +++++-
->>>>>    drivers/xen/mem-reservation.c |  134 +++++
->>>>>    include/uapi/xen/gntdev.h     |  106 ++++
->>>>>    include/xen/grant_dev.h       |   37 ++
->>>>>    include/xen/grant_table.h     |   28 +
->>>>>    include/xen/mem_reservation.h |   29 +
->>>>>    10 files changed, 1527 insertions(+), 103 deletions(-)
->>>>>    create mode 100644 drivers/xen/mem-reservation.c
->>>>>    create mode 100644 include/xen/grant_dev.h
->>>>>    create mode 100644 include/xen/mem_reservation.h
->>>>>
->> [1]
->> https://github.com/andr2000/linux/commits/xen_tip_linux_next_xen_dma_buf_v2
+On Fri, Jun 01, 2018 at 12:07:48PM +0900, Byungchul Park wrote:
+> 
+> 
+> On 2018-05-25 14:13, Byungchul Park wrote:
+> > 
+> > 
+> > On 2018-05-09 15:33, Byungchul Park wrote:
+> > > On Thu, Jan 11, 2018 at 10:07:16AM +0100, Peter Zijlstra wrote:
+> > > > 
+> > > > 
+> > > > Sorry for the huge delay on this, but I'll have to postpone further.
+> > > > Still busy with meltdown/spectre stuff.
+> > > 
+> > > Please consider this. Even though it's not a big bug, anyway leading
+> > > mis-behavior in certain situaions.
+> > 
+> > Could you see this patches, it's been too long since the start tho?
+> 
+> Please, any opinion.
+
+Just my opinion: this patch [1] is just a cosmetic change. I would argue that
+there's no readability improvement by wrapping up elements[0].dl. Infact I
+even feel that the elements[0].cpu should directly be accessed since both
+.cpu and .dl for the 0th element are directly accessed only from one place
+(cpudl_find) and only one time, and explicitly accessing index 0 makes it
+more clear that this is the root of the max-heap.
+
+IOW I don't see any benefit in hiding it behind a wrapper which hides the
+fact that we're accessing the root of the max heap, but I don't terribly hate
+this patch and I'm Ok if maintainers and other reviewers think its worth it.
+
+thanks,
+
+ - Joel
+
+[1] https://patchwork.kernel.org/patch/10149099/
