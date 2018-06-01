@@ -1,67 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753147AbeFAPWB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:22:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42748 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752107AbeFAPV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:21:57 -0400
-Date: Fri, 1 Jun 2018 17:21:55 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH] perf tools: Fix hist_entry__tui_annotate declaration for
- !HAVE_SLANG_SUPPORT
-Message-ID: <20180601152155.GA1602@krava>
-References: <20180601095648.20737-1-jolsa@kernel.org>
- <20180601131957.GC12795@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180601131957.GC12795@kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1753160AbeFAPWE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:22:04 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54662 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752981AbeFAPVd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:21:33 -0400
+X-Google-Smtp-Source: ADUXVKLtDZuwFTZDLG18mzvp+J7Wy4Ods1bccpmgyIRL2tzBAVaKG1XcJ53XSr6gN62kwResCgIctA==
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: Albert Ou <albert@sifive.com>, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
+Date: Fri,  1 Jun 2018 17:21:23 +0200
+Message-Id: <20180601152123.47256-4-luc.vanoostenryck@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180601152123.47256-1-luc.vanoostenryck@gmail.com>
+References: <20180601152123.47256-1-luc.vanoostenryck@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 10:19:57AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Jun 01, 2018 at 11:56:48AM +0200, Jiri Olsa escreveu:
-> > The compilation is broken if there's no slang support:
-> > 
-> >   builtin-annotate.c: In function ‘hists__find_annotations’:
-> >   builtin-annotate.c:344:10: error: too many arguments to function ‘hist_entry__tui_annotate’
-> >       key = hist_entry__tui_annotate(he, evsel, NULL, &ann->opts);
-> > 
-> > Adding the missing argument to hist_entry__tui_annotate function.
-> 
-> Thanks, I think I have this fixed locally.
-> 
-> - Arnaldo
->  
-> > Fixes: 464fb4fd6af7 ("perf hists browser: Pass annotation_options from tool to browser")
-> > Link: http://lkml.kernel.org/n/tip-vgf5a8wk0eyayo7omvutwhqo@git.kernel.org
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  tools/perf/util/hist.h | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-> > index 256292b18bb8..9b1a68a685d4 100644
-> > --- a/tools/perf/util/hist.h
-> > +++ b/tools/perf/util/hist.h
-> > @@ -446,7 +446,8 @@ static inline int map_symbol__tui_annotate(struct map_symbol *ms __maybe_unused,
-> >  
-> >  static inline int hist_entry__tui_annotate(struct hist_entry *he __maybe_unused,
-> >  					   struct perf_evsel *evsel __maybe_unused,
-> > -					   struct hist_browser_timer *hbt __maybe_unused)
-> > +					   struct hist_browser_timer *hbt __maybe_unused,
-> > +					   struct annotation_options *annotation_opts)
+__copy_user() is a function, written in assembly, used to copy
+memory between kernel & user space. As such its to & from args
+may both take a user pointer or a kernel pointer.
 
-good, because I sent you wrong one.. without __maybe_unused ;-) sry
+However the prototype for this function declare these two args
+as 'void __user *', which is no more & no less correct than
+declaring them as 'void *'. In fact theer is no possible correct
+annotation for such a function.
 
-jirka
+The problem is worked around here by declaring these args as
+unsigned long and casting them to the right type in each of
+two callers raw_copy_{to,from}_user() as some kind of cast would
+be needed anyway.
+
+Note: another solution, maybe cleaner but slightly more complex,
+      would be to declare two version of __copy_user,
+      either in the asm file or via an alias, each having already
+      the correct typing for raw_copy_{to,from}_user().
+
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+---
+ arch/riscv/include/asm/uaccess.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+index 14b0b22fb..c7a6a4a4a 100644
+--- a/arch/riscv/include/asm/uaccess.h
++++ b/arch/riscv/include/asm/uaccess.h
+@@ -392,19 +392,19 @@ do {								\
+ })
+ 
+ 
+-extern unsigned long __must_check __copy_user(void __user *to,
+-	const void __user *from, unsigned long n);
++extern unsigned long __must_check __copy_user(unsigned long to,
++	const unsigned long from, unsigned long n);
+ 
+ static inline unsigned long
+ raw_copy_from_user(void *to, const void __user *from, unsigned long n)
+ {
+-	return __copy_user(to, from, n);
++	return __copy_user((unsigned long)to, (unsigned long)from, n);
+ }
+ 
+ static inline unsigned long
+ raw_copy_to_user(void __user *to, const void *from, unsigned long n)
+ {
+-	return __copy_user(to, from, n);
++	return __copy_user((unsigned long)to, (unsigned long)from, n);
+ }
+ 
+ extern long strncpy_from_user(char *dest, const char __user *src, long count);
+-- 
+2.17.1
