@@ -1,79 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeFAMYX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 08:24:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50178 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751792AbeFAMYS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 08:24:18 -0400
-Date: Fri, 1 Jun 2018 14:24:10 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Pankaj Gupta <pagupta@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, linux-mm@kvack.org,
-        kwolf@redhat.com, haozhong.zhang@intel.com, jack@suse.cz,
-        xiaoguangrong.eric@gmail.com, riel@surriel.com,
-        niteshnarayanlal@hotmail.com, david@redhat.com, ross.zwisler@intel.com,
-        lcapitulino@redhat.com, hch@infradead.org, mst@redhat.com,
-        stefanha@redhat.com, marcel@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, nilal@redhat.com
-Subject: Re: [Qemu-devel] [RFC v2 0/2] kvm "fake DAX" device flushing
-Message-ID: <20180601142410.5c986f13@redhat.com>
-In-Reply-To: <20180425112415.12327-1-pagupta@redhat.com>
-References: <20180425112415.12327-1-pagupta@redhat.com>
+        id S1751934AbeFAMZ3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 08:25:29 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38085 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750790AbeFAMZZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 08:25:25 -0400
+X-Google-Smtp-Source: ADUXVKI3/epnZholzzaDudiLZtoBFFoCfAPPHLWQXnbs6Bwp9gOOkwn4TvJggRqZQWHrH9MxYOe84Q==
+Reply-To: nicolas.dichtel@6wind.com
+Subject: Re: [PATCH net] ipv6: omit traffic class when calculating flow hash
+References: <20180601112948.93BE7A0C48@unicorn.suse.cz>
+To: Michal Kubecek <mkubecek@suse.cz>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tom Herbert <tom@herbertland.com>, David Ahern <dsahern@gmail.com>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Organization: 6WIND
+Message-ID: <d6083b5b-1f8c-7a43-9186-391f905cf8c8@6wind.com>
+Date: Fri, 1 Jun 2018 14:25:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180601112948.93BE7A0C48@unicorn.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Apr 2018 16:54:12 +0530
-Pankaj Gupta <pagupta@redhat.com> wrote:
+Le 01/06/2018 à 12:34, Michal Kubecek a écrit :
+> Some of the code paths calculating flow hash for IPv6 use flowlabel member
+> of struct flowi6 which, despite its name, encodes both flow label and
+> traffic class. If traffic class changes within a TCP connection (as e.g.
+> ssh does), ECMP route can switch between path. It's also incosistent with
+nit: s/incosistent/inconsistent
 
-[...]
-> - Qemu virtio-pmem device
->   It exposes a persistent memory range to KVM guest which 
->   at host side is file backed memory and works as persistent 
->   memory device. In addition to this it provides virtio 
->   device handling of flushing interface. KVM guest performs
->   Qemu side asynchronous sync using this interface.
-a random high level question,
-Have you considered using a separate (from memory itself)
-virtio device as controller for exposing some memory, async flushing.
-And then just slaving pc-dimm devices to it with notification/ACPI
-code suppressed so that guest won't touch them?
-
-That way it might be more scale-able, you consume only 1 PCI slot
-for controller vs multiple for virtio-pmem devices.
-
-
-> Changes from previous RFC[1]:
+> other code paths where ip6_flowlabel() (returning only flow label) is used
+> to feed the key.
 > 
-> - Reuse existing 'pmem' code for registering persistent 
->   memory and other operations instead of creating an entirely 
->   new block driver.
-> - Use VIRTIO driver to register memory information with 
->   nvdimm_bus and create region_type accordingly. 
-> - Call VIRTIO flush from existing pmem driver.
+> Use only flow label everywhere, including one place where hash key is set
+> using ip6_flowinfo().
 > 
-> Details of project idea for 'fake DAX' flushing interface is 
-> shared [2] & [3].
-> 
-> Pankaj Gupta (2):
->    Add virtio-pmem guest driver
->    pmem: device flush over VIRTIO
-> 
-> [1] https://marc.info/?l=linux-mm&m=150782346802290&w=2
-> [2] https://www.spinics.net/lists/kvm/msg149761.html
-> [3] https://www.spinics.net/lists/kvm/msg153095.html  
-> 
->  drivers/nvdimm/region_devs.c     |    7 ++
->  drivers/virtio/Kconfig           |   12 +++
->  drivers/virtio/Makefile          |    1 
->  drivers/virtio/virtio_pmem.c     |  118 +++++++++++++++++++++++++++++++++++++++
->  include/linux/libnvdimm.h        |    4 +
->  include/uapi/linux/virtio_ids.h  |    1 
->  include/uapi/linux/virtio_pmem.h |   58 +++++++++++++++++++
->  7 files changed, 201 insertions(+)
-> 
+> Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
+> Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
+> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+Acked-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
