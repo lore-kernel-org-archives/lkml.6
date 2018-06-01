@@ -1,327 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753467AbeFAQy1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:54:27 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8684 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753273AbeFAQyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:54:20 -0400
-From: Salil Mehta <salil.mehta@huawei.com>
-To: <davem@davemloft.net>
-CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Xi Wang <wangxi11@huawei.com>
-Subject: [PATCH net-next 11/11] net: hns3: Optimize the VF's process of updating multicast MAC
-Date: Fri, 1 Jun 2018 17:52:11 +0100
-Message-ID: <20180601165211.46372-12-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180601165211.46372-1-salil.mehta@huawei.com>
-References: <20180601165211.46372-1-salil.mehta@huawei.com>
+        id S1753494AbeFAQyl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:54:41 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:58094 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753175AbeFAQyf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:54:35 -0400
+Date: Sat, 2 Jun 2018 00:54:28 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: NeilBrown <neilb@suse.com>
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/18] rhashtable: clean up dereference of ->future_tbl.
+Message-ID: <20180601165428.gtefyay2dlus754p@gondor.apana.org.au>
+References: <152782754287.30340.4395718227884933670.stgit@noble>
+ <152782824957.30340.14092720576731091742.stgit@noble>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.234]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152782824957.30340.14092720576731091742.stgit@noble>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xi Wang <wangxi11@huawei.com>
+On Fri, Jun 01, 2018 at 02:44:09PM +1000, NeilBrown wrote:
+> Using rht_dereference_bucket() to dereference
+> ->future_tbl looks like a type error, and could be confusing.
+> Using rht_dereference_rcu() to test a pointer for NULL
+> adds an unnecessary barrier - rcu_access_pointer() is preferred
+> for NULL tests when no lock is held.
+> 
+> This uses 3 different ways to access ->future_tbl.
+> - if we know the mutex is held, use rht_dereference()
+> - if we don't hold the mutex, and are only testing for NULL,
+>   use rcu_access_pointer()
+> - otherwise (using RCU protection for true dereference),
+>   use rht_dereference_rcu().
+> 
+> Note that this includes a simplification of the call to
+> rhashtable_last_table() - we don't do an extra dereference
+> before the call any more.
+> 
+> Signed-off-by: NeilBrown <neilb@suse.com>
 
-In the update flow of the new PF driver, if a multicast address is in mta
-table, the VF deletion action will not take effect.
-
-This patch adds the VF adaptation according to the new flow of PF'driver.
-
-Signed-off-by: Xi Wang <wangxi11@huawei.com>
-Reviewed-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h    |   2 +
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c |  58 +++++++++-
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 128 ++++++++++++++++++++-
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h  |   4 +
- 4 files changed, 187 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h b/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h
-index 519e2bd..be9dc08 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h
-@@ -47,6 +47,8 @@ enum hclge_mbx_mac_vlan_subcode {
- 	HCLGE_MBX_MAC_VLAN_MC_ADD,		/* add new MC mac addr */
- 	HCLGE_MBX_MAC_VLAN_MC_REMOVE,		/* remove MC mac addr */
- 	HCLGE_MBX_MAC_VLAN_MC_FUNC_MTA_ENABLE,	/* config func MTA enable */
-+	HCLGE_MBX_MAC_VLAN_MTA_TYPE_READ,	/* read func MTA type */
-+	HCLGE_MBX_MAC_VLAN_MTA_STATUS_UPDATE,	/* update MTA status */
- };
- 
- /* below are per-VF vlan cfg subcodes */
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-index d299805..7541cb9 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-@@ -231,12 +231,51 @@ static int hclge_set_vf_uc_mac_addr(struct hclge_vport *vport,
- 	return 0;
- }
- 
-+static int hclge_set_vf_mc_mta_status(struct hclge_vport *vport,
-+				      u8 *msg, u8 idx, bool is_end)
-+{
-+#define HCLGE_MTA_STATUS_MSG_SIZE 13
-+#define HCLGE_MTA_STATUS_MSG_BITS \
-+				(HCLGE_MTA_STATUS_MSG_SIZE * BITS_PER_BYTE)
-+#define HCLGE_MTA_STATUS_MSG_END_BITS \
-+				(HCLGE_MTA_TBL_SIZE % HCLGE_MTA_STATUS_MSG_BITS)
-+	unsigned long status[BITS_TO_LONGS(HCLGE_MTA_STATUS_MSG_BITS)];
-+	u16 tbl_cnt;
-+	u16 tbl_idx;
-+	u8 msg_ofs;
-+	u8 msg_bit;
-+
-+	tbl_cnt = is_end ? HCLGE_MTA_STATUS_MSG_END_BITS :
-+			HCLGE_MTA_STATUS_MSG_BITS;
-+
-+	/* set msg field */
-+	msg_ofs = 0;
-+	msg_bit = 0;
-+	memset(status, 0, sizeof(status));
-+	for (tbl_idx = 0; tbl_idx < tbl_cnt; tbl_idx++) {
-+		if (msg[msg_ofs] & BIT(msg_bit))
-+			set_bit(tbl_idx, status);
-+
-+		msg_bit++;
-+		if (msg_bit == BITS_PER_BYTE) {
-+			msg_bit = 0;
-+			msg_ofs++;
-+		}
-+	}
-+
-+	return hclge_update_mta_status_common(vport,
-+					status, idx * HCLGE_MTA_STATUS_MSG_BITS,
-+					tbl_cnt, is_end);
-+}
-+
- static int hclge_set_vf_mc_mac_addr(struct hclge_vport *vport,
- 				    struct hclge_mbx_vf_to_pf_cmd *mbx_req,
- 				    bool gen_resp)
- {
- 	const u8 *mac_addr = (const u8 *)(&mbx_req->msg[2]);
- 	struct hclge_dev *hdev = vport->back;
-+	u8 resp_len = 0;
-+	u8 resp_data;
- 	int status;
- 
- 	if (mbx_req->msg[1] == HCLGE_MBX_MAC_VLAN_MC_ADD) {
-@@ -248,6 +287,22 @@ static int hclge_set_vf_mc_mac_addr(struct hclge_vport *vport,
- 		bool enable = mbx_req->msg[2];
- 
- 		status = hclge_cfg_func_mta_filter(hdev, func_id, enable);
-+	} else if (mbx_req->msg[1] == HCLGE_MBX_MAC_VLAN_MTA_TYPE_READ) {
-+		resp_data = hdev->mta_mac_sel_type;
-+		resp_len = sizeof(u8);
-+		gen_resp = true;
-+		status = 0;
-+	} else if (mbx_req->msg[1] == HCLGE_MBX_MAC_VLAN_MTA_STATUS_UPDATE) {
-+		/* mta status update msg format
-+		 * msg[2.6 : 2.0]  msg index
-+		 * msg[2.7]        msg is end
-+		 * msg[15 : 3]     mta status bits[103 : 0]
-+		 */
-+		bool is_end = (mbx_req->msg[2] & 0x80) ? true : false;
-+
-+		status = hclge_set_vf_mc_mta_status(vport, &mbx_req->msg[3],
-+						    mbx_req->msg[2] & 0x7F,
-+						    is_end);
- 	} else {
- 		dev_err(&hdev->pdev->dev,
- 			"failed to set mcast mac addr, unknown subcode %d\n",
-@@ -256,7 +311,8 @@ static int hclge_set_vf_mc_mac_addr(struct hclge_vport *vport,
- 	}
- 
- 	if (gen_resp)
--		hclge_gen_resp_to_vf(vport, mbx_req, status, NULL, 0);
-+		hclge_gen_resp_to_vf(vport, mbx_req, status,
-+				     &resp_data, resp_len);
- 
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 5d28052..dd8e8e6 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -739,6 +739,126 @@ static int hclgevf_cfg_func_mta_filter(struct hnae3_handle *handle, bool en)
- 				    msg, 1, false, NULL, 0);
- }
- 
-+static int hclgevf_cfg_func_mta_type(struct hclgevf_dev *hdev)
-+{
-+	u8 resp_msg = HCLGEVF_MTA_TYPE_SEL_MAX;
-+	int ret;
-+
-+	ret = hclgevf_send_mbx_msg(hdev, HCLGE_MBX_SET_MULTICAST,
-+				   HCLGE_MBX_MAC_VLAN_MTA_TYPE_READ,
-+				   NULL, 0, true, &resp_msg, sizeof(u8));
-+
-+	if (ret) {
-+		dev_err(&hdev->pdev->dev,
-+			"Read mta type fail, ret=%d.\n", ret);
-+		return ret;
-+	}
-+
-+	if (resp_msg > HCLGEVF_MTA_TYPE_SEL_MAX) {
-+		dev_err(&hdev->pdev->dev,
-+			"Read mta type invalid, resp=%d.\n", resp_msg);
-+		return -EINVAL;
-+	}
-+
-+	hdev->mta_mac_sel_type = resp_msg;
-+
-+	return 0;
-+}
-+
-+static u16 hclgevf_get_mac_addr_to_mta_index(struct hclgevf_dev *hdev,
-+					     const u8 *addr)
-+{
-+	u32 rsh = HCLGEVF_MTA_TYPE_SEL_MAX - hdev->mta_mac_sel_type;
-+	u16 high_val = addr[1] | (addr[0] << 8);
-+
-+	return (high_val >> rsh) & 0xfff;
-+}
-+
-+static int hclgevf_do_update_mta_status(struct hclgevf_dev *hdev,
-+					unsigned long *status)
-+{
-+#define HCLGEVF_MTA_STATUS_MSG_SIZE 13
-+#define HCLGEVF_MTA_STATUS_MSG_BITS \
-+			(HCLGEVF_MTA_STATUS_MSG_SIZE * BITS_PER_BYTE)
-+#define HCLGEVF_MTA_STATUS_MSG_END_BITS \
-+			(HCLGEVF_MTA_TBL_SIZE % HCLGEVF_MTA_STATUS_MSG_BITS)
-+	u16 tbl_cnt;
-+	u16 tbl_idx;
-+	u8 msg_cnt;
-+	u8 msg_idx;
-+	int ret;
-+
-+	msg_cnt = DIV_ROUND_UP(HCLGEVF_MTA_TBL_SIZE,
-+			       HCLGEVF_MTA_STATUS_MSG_BITS);
-+	tbl_idx = 0;
-+	msg_idx = 0;
-+	while (msg_cnt--) {
-+		u8 msg[HCLGEVF_MTA_STATUS_MSG_SIZE + 1];
-+		u8 *p = &msg[1];
-+		u8 msg_ofs;
-+		u8 msg_bit;
-+
-+		memset(msg, 0, sizeof(msg));
-+
-+		/* set index field */
-+		msg[0] = 0x7F & msg_idx;
-+
-+		/* set end flag field */
-+		if (msg_cnt == 0) {
-+			msg[0] |= 0x80;
-+			tbl_cnt = HCLGEVF_MTA_STATUS_MSG_END_BITS;
-+		} else {
-+			tbl_cnt = HCLGEVF_MTA_STATUS_MSG_BITS;
-+		}
-+
-+		/* set status field */
-+		msg_ofs = 0;
-+		msg_bit = 0;
-+		while (tbl_cnt--) {
-+			if (test_bit(tbl_idx, status))
-+				p[msg_ofs] |= BIT(msg_bit);
-+
-+			tbl_idx++;
-+
-+			msg_bit++;
-+			if (msg_bit == BITS_PER_BYTE) {
-+				msg_bit = 0;
-+				msg_ofs++;
-+			}
-+		}
-+
-+		ret = hclgevf_send_mbx_msg(hdev, HCLGE_MBX_SET_MULTICAST,
-+					   HCLGE_MBX_MAC_VLAN_MTA_STATUS_UPDATE,
-+					   msg, sizeof(msg), false, NULL, 0);
-+		if (ret)
-+			break;
-+
-+		msg_idx++;
-+	}
-+
-+	return ret;
-+}
-+
-+static int hclgevf_update_mta_status(struct hnae3_handle *handle)
-+{
-+	unsigned long mta_status[BITS_TO_LONGS(HCLGEVF_MTA_TBL_SIZE)];
-+	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
-+	struct net_device *netdev = hdev->nic.kinfo.netdev;
-+	struct netdev_hw_addr *ha;
-+	u16 tbl_idx;
-+
-+	/* clear status */
-+	memset(mta_status, 0, sizeof(mta_status));
-+
-+	/* update status from mc addr list */
-+	netdev_for_each_mc_addr(ha, netdev) {
-+		tbl_idx = hclgevf_get_mac_addr_to_mta_index(hdev, ha->addr);
-+		set_bit(tbl_idx, mta_status);
-+	}
-+
-+	return hclgevf_do_update_mta_status(hdev, mta_status);
-+}
-+
- static void hclgevf_get_mac_addr(struct hnae3_handle *handle, u8 *p)
- {
- 	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
-@@ -1669,12 +1789,11 @@ static int hclgevf_init_hdev(struct hclgevf_dev *hdev)
- 		goto err_config;
- 	}
- 
--	/* Initialize VF's MTA */
--	hdev->accept_mta_mc = true;
--	ret = hclgevf_cfg_func_mta_filter(&hdev->nic, hdev->accept_mta_mc);
-+	/* Initialize mta type for this VF */
-+	ret = hclgevf_cfg_func_mta_type(hdev);
- 	if (ret) {
- 		dev_err(&hdev->pdev->dev,
--			"failed(%d) to set mta filter mode\n", ret);
-+			"failed(%d) to initialize MTA type\n", ret);
- 		goto err_config;
- 	}
- 
-@@ -1829,6 +1948,7 @@ static const struct hnae3_ae_ops hclgevf_ops = {
- 	.rm_uc_addr = hclgevf_rm_uc_addr,
- 	.add_mc_addr = hclgevf_add_mc_addr,
- 	.rm_mc_addr = hclgevf_rm_mc_addr,
-+	.update_mta_status = hclgevf_update_mta_status,
- 	.get_stats = hclgevf_get_stats,
- 	.update_stats = hclgevf_update_stats,
- 	.get_strings = hclgevf_get_strings,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-index 9763e74..0656e8e 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-@@ -48,6 +48,9 @@
- #define HCLGEVF_RSS_CFG_TBL_NUM \
- 	(HCLGEVF_RSS_IND_TBL_SIZE / HCLGEVF_RSS_CFG_TBL_SIZE)
- 
-+#define HCLGEVF_MTA_TBL_SIZE		4096
-+#define HCLGEVF_MTA_TYPE_SEL_MAX	4
-+
- /* states of hclgevf device & tasks */
- enum hclgevf_states {
- 	/* device states */
-@@ -152,6 +155,7 @@ struct hclgevf_dev {
- 	int *vector_irq;
- 
- 	bool accept_mta_mc; /* whether to accept mta filter multicast */
-+	u8 mta_mac_sel_type;
- 	bool mbx_event_pending;
- 	struct hclgevf_mbx_resp_status mbx_resp; /* mailbox response */
- 	struct hclgevf_mbx_arq_ring arq; /* mailbox async rx queue */
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
 -- 
-2.7.4
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
