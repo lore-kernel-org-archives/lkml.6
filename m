@@ -1,67 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753131AbeFAPtt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:49:49 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:26527 "EHLO pegase1.c-s.fr"
+        id S1752522AbeFAPui (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:50:38 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:11409 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753070AbeFAPtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:49:45 -0400
-Message-Id: <1f4802c0f52922faf143ad16ee5e6361c9e0cbab.1527868006.git.christophe.leroy@c-s.fr>
+        id S1752262AbeFAPtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:49:55 -0400
+Message-Id: <fb1c89257279bfa937dab630c9c3cebb3f909293.1527868006.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1527868006.git.christophe.leroy@c-s.fr>
 References: <cover.1527868006.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH v2 09/14] powerpc/book3s: Remove PPC_PIN_SIZE
+Subject: [RFC PATCH v2 14/14] powerpc: Split synch.h in two parts
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Fri,  1 Jun 2018 15:49:43 +0000 (UTC)
+Date: Fri,  1 Jun 2018 15:49:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PPC_PIN_SIZE is specific to the 44x and is defined in mmu.h
+move feature-fixups related stuff from synch.h to synch-ftr.h
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/book3s/32/pgtable.h | 5 -----
- arch/powerpc/include/asm/nohash/32/pgtable.h | 2 +-
- 2 files changed, 1 insertion(+), 6 deletions(-)
+ arch/powerpc/include/asm/atomic.h                 |  1 +
+ arch/powerpc/include/asm/barrier.h                |  1 +
+ arch/powerpc/include/asm/bitops.h                 |  1 +
+ arch/powerpc/include/asm/cmpxchg.h                |  1 +
+ arch/powerpc/include/asm/spinlock.h               |  1 +
+ arch/powerpc/include/asm/{synch.h => synch-ftr.h} | 22 +++--------------
+ arch/powerpc/include/asm/synch.h                  | 30 -----------------------
+ arch/powerpc/lib/feature-fixups-test.S            |  1 +
+ 8 files changed, 9 insertions(+), 49 deletions(-)
+ copy arch/powerpc/include/asm/{synch.h => synch-ftr.h} (66%)
 
-diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index 231699ef6ebe..b3a538dc227a 100644
---- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -84,17 +84,12 @@
-  * of RAM.  -- Cort
-  */
- #define VMALLOC_OFFSET (0x1000000) /* 16M */
--#ifdef PPC_PIN_SIZE
--#define VMALLOC_START (((_ALIGN((long)high_memory, PPC_PIN_SIZE) + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
--#else
- #define VMALLOC_START ((((long)high_memory + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
--#endif
- #define VMALLOC_END	ioremap_bot
+diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
+index cbdb0b7e60a3..49a929ec5435 100644
+--- a/arch/powerpc/include/asm/atomic.h
++++ b/arch/powerpc/include/asm/atomic.h
+@@ -11,6 +11,7 @@
+ #include <asm/cmpxchg.h>
+ #include <asm/barrier.h>
+ #include <asm/asm-405.h>
++#include <asm/synch-ftr.h>
  
- #ifndef __ASSEMBLY__
- #include <linux/sched.h>
- #include <linux/threads.h>
--#include <asm/io.h>			/* For sub-arch specific PPC_PIN_SIZE */
+ #define ATOMIC_INIT(i)		{ (i) }
  
- extern unsigned long ioremap_bot;
+diff --git a/arch/powerpc/include/asm/barrier.h b/arch/powerpc/include/asm/barrier.h
+index 117d09df869f..6a2da24a2219 100644
+--- a/arch/powerpc/include/asm/barrier.h
++++ b/arch/powerpc/include/asm/barrier.h
+@@ -6,6 +6,7 @@
+ #define _ASM_POWERPC_BARRIER_H
  
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 62e48ecb9dcc..b2d0f3d0b097 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -8,7 +8,7 @@
- #ifndef __ASSEMBLY__
- #include <linux/sched.h>
- #include <linux/threads.h>
--#include <asm/io.h>			/* For sub-arch specific PPC_PIN_SIZE */
-+#include <asm/mmu.h>			/* For sub-arch specific PPC_PIN_SIZE */
+ #include <asm/asm-const.h>
++#include <asm/synch-ftr.h>
+ 
+ /*
+  * Memory barrier.
+diff --git a/arch/powerpc/include/asm/bitops.h b/arch/powerpc/include/asm/bitops.h
+index ff71566dadee..b8bf2f5b75ce 100644
+--- a/arch/powerpc/include/asm/bitops.h
++++ b/arch/powerpc/include/asm/bitops.h
+@@ -44,6 +44,7 @@
+ 
+ #include <linux/compiler.h>
+ #include <asm/asm-compat.h>
++#include <asm/synch-ftr.h>
+ #include <asm/synch.h>
  #include <asm/asm-405.h>
  
- extern unsigned long ioremap_bot;
+diff --git a/arch/powerpc/include/asm/cmpxchg.h b/arch/powerpc/include/asm/cmpxchg.h
+index 27183871eb3b..d94a67a1a574 100644
+--- a/arch/powerpc/include/asm/cmpxchg.h
++++ b/arch/powerpc/include/asm/cmpxchg.h
+@@ -4,6 +4,7 @@
+ 
+ #ifdef __KERNEL__
+ #include <linux/compiler.h>
++#include <asm/synch-ftr.h>
+ #include <asm/synch.h>
+ #include <linux/bug.h>
+ #include <asm/asm-405.h>
+diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/asm/spinlock.h
+index 685c72310f5d..182f950a4c5d 100644
+--- a/arch/powerpc/include/asm/spinlock.h
++++ b/arch/powerpc/include/asm/spinlock.h
+@@ -24,6 +24,7 @@
+ #include <asm/paca.h>
+ #include <asm/hvcall.h>
+ #endif
++#include <asm/synch-ftr.h>
+ #include <asm/synch.h>
+ #include <asm/ppc-opcode.h>
+ #include <asm/asm-405.h>
+diff --git a/arch/powerpc/include/asm/synch.h b/arch/powerpc/include/asm/synch-ftr.h
+similarity index 66%
+copy from arch/powerpc/include/asm/synch.h
+copy to arch/powerpc/include/asm/synch-ftr.h
+index aca70fb43147..f86c536bd351 100644
+--- a/arch/powerpc/include/asm/synch.h
++++ b/arch/powerpc/include/asm/synch-ftr.h
+@@ -1,27 +1,11 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _ASM_POWERPC_SYNCH_H 
+-#define _ASM_POWERPC_SYNCH_H 
++#ifndef _ASM_POWERPC_SYNCH_FTR_H
++#define _ASM_POWERPC_SYNCH_FTR_H
+ #ifdef __KERNEL__
+ 
+ #include <asm/feature-fixups.h>
+ #include <asm/asm-const.h>
+ 
+-#ifndef __ASSEMBLY__
+-extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
+-extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
+-			     void *fixup_end);
+-
+-static inline void eieio(void)
+-{
+-	__asm__ __volatile__ ("eieio" : : : "memory");
+-}
+-
+-static inline void isync(void)
+-{
+-	__asm__ __volatile__ ("isync" : : : "memory");
+-}
+-#endif /* __ASSEMBLY__ */
+-
+ #if defined(__powerpc64__)
+ #    define LWSYNC	lwsync
+ #elif defined(CONFIG_E500)
+@@ -50,4 +34,4 @@ static inline void isync(void)
+ #endif
+ 
+ #endif /* __KERNEL__ */
+-#endif	/* _ASM_POWERPC_SYNCH_H */
++#endif	/* _ASM_POWERPC_SYNCH_FTR_H */
+diff --git a/arch/powerpc/include/asm/synch.h b/arch/powerpc/include/asm/synch.h
+index aca70fb43147..48b23168ea9e 100644
+--- a/arch/powerpc/include/asm/synch.h
++++ b/arch/powerpc/include/asm/synch.h
+@@ -3,9 +3,6 @@
+ #define _ASM_POWERPC_SYNCH_H 
+ #ifdef __KERNEL__
+ 
+-#include <asm/feature-fixups.h>
+-#include <asm/asm-const.h>
+-
+ #ifndef __ASSEMBLY__
+ extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
+ extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
+@@ -22,32 +19,5 @@ static inline void isync(void)
+ }
+ #endif /* __ASSEMBLY__ */
+ 
+-#if defined(__powerpc64__)
+-#    define LWSYNC	lwsync
+-#elif defined(CONFIG_E500)
+-#    define LWSYNC					\
+-	START_LWSYNC_SECTION(96);			\
+-	sync;						\
+-	MAKE_LWSYNC_SECTION_ENTRY(96, __lwsync_fixup);
+-#else
+-#    define LWSYNC	sync
+-#endif
+-
+-#ifdef CONFIG_SMP
+-#define __PPC_ACQUIRE_BARRIER				\
+-	START_LWSYNC_SECTION(97);			\
+-	isync;						\
+-	MAKE_LWSYNC_SECTION_ENTRY(97, __lwsync_fixup);
+-#define PPC_ACQUIRE_BARRIER	 "\n" stringify_in_c(__PPC_ACQUIRE_BARRIER)
+-#define PPC_RELEASE_BARRIER	 stringify_in_c(LWSYNC) "\n"
+-#define PPC_ATOMIC_ENTRY_BARRIER "\n" stringify_in_c(sync) "\n"
+-#define PPC_ATOMIC_EXIT_BARRIER	 "\n" stringify_in_c(sync) "\n"
+-#else
+-#define PPC_ACQUIRE_BARRIER
+-#define PPC_RELEASE_BARRIER
+-#define PPC_ATOMIC_ENTRY_BARRIER
+-#define PPC_ATOMIC_EXIT_BARRIER
+-#endif
+-
+ #endif /* __KERNEL__ */
+ #endif	/* _ASM_POWERPC_SYNCH_H */
+diff --git a/arch/powerpc/lib/feature-fixups-test.S b/arch/powerpc/lib/feature-fixups-test.S
+index ee7c5fd5fc64..8c781b2e467b 100644
+--- a/arch/powerpc/lib/feature-fixups-test.S
++++ b/arch/powerpc/lib/feature-fixups-test.S
+@@ -10,6 +10,7 @@
+ 
+ #include <asm/feature-fixups.h>
+ #include <asm/ppc_asm.h>
++#include <asm/synch-ftr.h>
+ #include <asm/synch.h>
+ #include <asm/asm-compat.h>
+ 
 -- 
 2.13.3
