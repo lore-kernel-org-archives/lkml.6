@@ -1,104 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751652AbeFAJcu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:32:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38842 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751337AbeFAJcp (ORCPT
+        id S1751758AbeFAJdX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 05:33:23 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36597 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbeFAJdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:32:45 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C0FF6021C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-Date: Fri, 1 Jun 2018 15:02:35 +0530
-From: Sahitya Tummala <stummala@codeaurora.org>
-To: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Cc: vinmenon@codeaurora.org, stummala@codeaurora.org
-Subject: deadlock during writeback when using f2fs filesystem
-Message-ID: <20180601093235.GA12489@codeaurora.org>
+        Fri, 1 Jun 2018 05:33:16 -0400
+Date: Fri, 1 Jun 2018 11:33:11 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 0/8] gnss: add new GNSS subsystem
+Message-ID: <20180601093311.GA31639@amd>
+References: <20180601082259.17563-1-johan@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180601082259.17563-1-johan@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-We are observing a deadlock scenario during FS writeback under low-memory
-condition with F2FS filesystem.
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Here is the callstack of this scenario -
+Hi!
 
-shrink_inactive_list()
-shrink_node_memcg.isra.74()
-shrink_node()
-shrink_zones(inline)
-do_try_to_free_pages(inline)
-try_to_free_pages()
-__perform_reclaim(inline)
-__alloc_pages_direct_reclaim(inline)
-__alloc_pages_slowpath(inline)
-no_zone()
-__alloc_pages(inline)
-__alloc_pages_node(inline)
-alloc_pages_node(inline)
-__page_cache_alloc(inline)
-pagecache_get_page()
-find_or_create_page(inline)
-grab_cache_page(inline)
-f2fs_grab_cache_page(inline)
-__get_node_page.part.32()
-__get_node_page(inline)
-get_node_page()
-update_inode_page()
-f2fs_write_inode()
-write_inode(inline)
-__writeback_single_inode()
-writeback_sb_inodes()
-__writeback_inodes_wb()
-wb_writeback()
-wb_do_writeback(inline)
-wb_workfn()
+> This series adds a new subsystem for GNSS receivers (e.g. GPS
+> receivers).
+>=20
+> While GNSS receivers are typically accessed using a UART interface they
+> often also support other I/O interfaces such as I2C, SPI and USB, while
+> yet other devices use iomem or even some form of remote-processor
+> messaging (rpmsg).
+>=20
+> The new GNSS subsystem abstracts the underlying interface and provides a
+> new "gnss" class type, which exposes a character-device interface (e.g.
+> /dev/gnss0) to user space. This allows GNSS receivers to have a
+> representation in the Linux device model, something which is important
+> not least for power management purposes and which also allows for easy
+> detection and identification of GNSS devices.
+>=20
+> Note that the character-device interface provides raw access to whatever
+> protocol the receiver is (currently) using, such as NMEA 0183, UBX or
+> SiRF Binary. These protocols are expected to be continued to be handled
+> by user space for the time being, even if some hybrid solutions are also
+> conceivable (e.g. to have kernel drivers issue management commands).
 
-The writeback thread is entering into the direct reclaim path due to low-memory and is
-getting stuck in shrink_inactive_list(), as shrink_inactive_list() is inturn waiting for
-writeback to happen for the dirty pages present in the inactive list.
+So.. while you did good work on serial power management, this is
+grossly misnamed. There's nothing GNSS specific in the code, and you
+are not presenting consistent interface to the userland.
 
-Do you think we can use GFP_NOWAIT for node mapping gfp_mask so that we can avoid direct
-reclaim path in the writeback context? As we may now see allocation failures with this flag,
-do you see any risk or issue in using it w.r.t F2FS FS and writeback?
-Appreciate your suggestions on this.
+This is _not_ GNSS subsystem. This is serial power management
+subsystem, or something like that. GPS/GNSS subsystem will need to be
+built on top of this.
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 89c838b..d3daf3b 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -316,7 +316,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- make_now:
-        if (ino == F2FS_NODE_INO(sbi)) {
-                inode->i_mapping->a_ops = &f2fs_node_aops;
--               mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-+               mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_NODE_MAPPING);
-        } else if (ino == F2FS_META_INO(sbi)) {
-                inode->i_mapping->a_ops = &f2fs_meta_aops;
-                mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 58aecb6..bb985cd 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -47,6 +47,7 @@
- /* This flag is used by node and meta inodes, and by recovery */
- #define GFP_F2FS_ZERO          (GFP_NOFS | __GFP_ZERO)
- #define GFP_F2FS_HIGH_ZERO     (GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
-+#define GFP_F2FS_NODE_MAPPING  (GFP_NOWAIT | __GFP_IO | __GFP_ZERO)
+This will never handle devices like Nokia N900, where GPS is connected
+over netlink.
 
-Thanks,
-Sahitya.
--- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+> Another possible extension is to add generic 1PPS support.
+
+And there's nothing GNSS specific in the patches.
+
+Best regards,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsREtcACgkQMOfwapXb+vLGZQCfXV8ML69UM59a7/UJ8YKGzNBp
+3C8Aniq+RbMLh3WlvmdTTjzU8spc54ps
+=tkXS
+-----END PGP SIGNATURE-----
+
+--GvXjxJ+pjyke8COw--
