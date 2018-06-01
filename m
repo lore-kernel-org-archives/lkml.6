@@ -1,124 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751637AbeFAJh0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:37:26 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:39816 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750790AbeFAJhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:37:23 -0400
-Date: Fri, 1 Jun 2018 11:37:35 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: David Wang <davidwang@zhaoxin.com>
-Cc: tony.luck@intel.com, mingo@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, gregkh@linuxfoudation.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        brucechang@via-alliance.com, cooperyan@zhaoxin.com,
-        qiyuanwang@zhaoxin.com, benjaminpan@viatech.com, lukelin@viacpu.com,
-        timguo@zhaoxin.com
-Subject: Re: [PATCH] x86/mce: add CMCI support for Centaur CPUs
-Message-ID: <20180601093735.GG17783@nazgul.tnic>
-References: <1527737338-4036-1-git-send-email-davidwang@zhaoxin.com>
+        id S1751751AbeFAJhp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 05:37:45 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:40306 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750770AbeFAJhn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 05:37:43 -0400
+X-Google-Smtp-Source: ADUXVKJ8E7nKwj61FF81/2e8D4Vz+259hjdN2ONNCpZpef4cgQtssAkcqWOSvlBOncupqHomBLtcDA==
+Date: Fri, 1 Jun 2018 18:37:38 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Maninder Singh <maninder1.s@samsung.com>, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+        a.sahrawat@samsung.com, pankaj.m@samsung.com, v.narang@samsung.com
+Subject: Re: [PATCH 2/2] printk: make sure to print log on console.
+Message-ID: <20180601093738.GC1841@jagdpanzerIV>
+References: <CGME20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e@epcas5p2.samsung.com>
+ <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
+ <20180531105215.GF477@jagdpanzerIV>
+ <20180531122112.bfeqtmwpl2qc67a5@pathway.suse.cz>
+ <20180601044050.GA5687@jagdpanzerIV>
+ <20180601085356.kncuat7epkbtythv@pathway.suse.cz>
+ <20180601090942.ek3j4bpbhschljrw@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527737338-4036-1-git-send-email-davidwang@zhaoxin.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180601090942.ek3j4bpbhschljrw@pathway.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 11:28:58AM +0800, David Wang wrote:
-> Newer Centaur support CMCI mechanism, which is compatible with INTEL CMCI.
+On (06/01/18 11:09), Petr Mladek wrote:
+> > [...]
+> > 
+> > > So I'd say that most likely the following scenarios can suffer:
+> > > 
+> > > - NMI comes in, sets loglevel to X, printk-s some data, restores the
+> > >   loglevel back to Y
+> > > - IRQ comes in [like sysrq, etc] comes in and does the same thing
+> > > - software exception comes in and does the same thing [e.g. bust_spinlocks()
+> > >   at arch/s390/mm/fault.c]
 > 
-> Signed-off-by: David Wang <davidwang@zhaoxin.com>
-> ---
->  arch/x86/Kconfig                 | 12 ++++++++++++
->  arch/x86/kernel/cpu/mcheck/mce.c |  6 ++++++
->  2 files changed, 18 insertions(+)
+> I forgot to say that it was a great point and analyze.
+
+Thanks :)
+
+> > My view is:
+> > 
+> > The race with another printk() (console_lock owner) is much more
+> > likely than a race between two CPUs manipulating console_loglevel.
+> > 
+> > The proposed patch seems to be in the right direction. It is supposed
+> > to fix the most likely scenario. We could block it and request full
+> > solution but I wonder if it is worth it.
+> > 
+> > I am personally fine with this partial solution for now. We could
+> > always make it better if people meet the other scenarios.
 > 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index dda87a3..1adff5f 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1130,6 +1130,18 @@ config X86_MCE_AMD
->  	   Additional support for AMD specific MCE features such as
->  	   the DRAM Error Threshold.
->  
-> +config X86_MCE_CENTAUR
-> +	def_bool y
-> +	prompt "CENTAUR MCE features"
-> +	depends on CPU_SUP_CENTAUR && X86_MCE_INTEL
-> +	help
-> +	   Additional support for Centaur specific MCE features such as
-> +	   MCE broadcasting and CMCI support.
-> +	   New Centaur CPU support MCE broadcasting.
-> +	   New Centaur CPU support CMCI which is fully compliant with Intel CMCI.
-> +
-> +	   If unsure, say N here.
-> +
->  config X86_ANCIENT_MCE
->  	bool "Support for old Pentium 5 / WinChip machine checks"
->  	depends on X86_32 && X86_MCE
-> diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-> index cd76380..2ebafc7 100644
-> --- a/arch/x86/kernel/cpu/mcheck/mce.c
-> +++ b/arch/x86/kernel/cpu/mcheck/mce.c
-> @@ -1727,6 +1727,7 @@ static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
->  	}
->  }
->  
-> +#ifdef CONFIG_X86_MCE_CENTAUR
->  static void mce_centaur_feature_init(struct cpuinfo_x86 *c)
->  {
->  	struct mca_config *cfg = &mca_cfg;
-> @@ -1740,7 +1741,12 @@ static void mce_centaur_feature_init(struct cpuinfo_x86 *c)
->  		if (cfg->monarch_timeout < 0)
->  			cfg->monarch_timeout = USEC_PER_SEC;
->  	}
-> +	mce_intel_feature_init(c);
-> +	mce_adjust_timer = cmci_intel_adjust_timer;
+> I am still fine with the partial solution. Well, I will think
+> more about it before approving any patch.
 
-So far so good but above says "New Centaur CPU[s]" but you're calling
-mce_intel_feature_init() unconditionally here, for *all* centaur CPUs.
-Ditto for setting the CMCI handler.
+Same here. I don't mind the patch and can agree with this partial
+solution [may be we are missing more cases?]. Probably will need
+a little bit more time.
 
-Also mce_intel_feature_init() does more things than init CMCI so I think
-you wanna limit that to only intel_init_cmci(). IOW, something like the
-hunk below.
-
-And frankly I'm not crazy about adding centaur code to mce_intel.c but
-since it is copying functionality, I think we should copy the sw support
-in the kernel too instead of adding a mce_centaur.c duplicate. For now
-at least...
-
-Thx.
-
----
-diff --git a/arch/x86/kernel/cpu/mcheck/mce_intel.c b/arch/x86/kernel/cpu/mcheck/mce_intel.c
-index d05be307d081..77d8a9b996a6 100644
---- a/arch/x86/kernel/cpu/mcheck/mce_intel.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_intel.c
-@@ -506,8 +506,15 @@ static void intel_ppin_init(struct cpuinfo_x86 *c)
- 
- void mce_intel_feature_init(struct cpuinfo_x86 *c)
- {
--	intel_init_thermal(c);
- 	intel_init_cmci();
-+
-+	/*
-+	 * Some Centaur variants support CMCI.
-+	 */
-+	if (c->x86_vendor == X86_VENDOR_CENTAUR)
-+		return;
-+
-+	intel_init_thermal(c);
- 	intel_init_lmce();
- 	intel_ppin_init(c);
- }
-
--- 
-Regards/Gruss,
-    Boris.
-
-ECO tip #101: Trim your mails when you reply.
---
+	-ss
