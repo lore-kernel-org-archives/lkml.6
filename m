@@ -1,77 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750842AbeFAUf2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 16:35:28 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:51490 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750724AbeFAUf1 (ORCPT
+        id S1750903AbeFAUje (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 16:39:34 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33122 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeFAUjc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 16:35:27 -0400
-Message-ID: <1527885324.7898.88.camel@surriel.com>
-Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
-From: Rik van Riel <riel@surriel.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Mike Galbraith <efault@gmx.de>, LKML <linux-kernel@vger.kernel.org>,
-        songliubraving@fb.com, kernel-team <kernel-team@fb.com>,
-        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        X86 ML <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Date: Fri, 01 Jun 2018 16:35:24 -0400
-In-Reply-To: <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
-References: <20180601082811.4c0d33ba@imladris.surriel.com>
-         <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
-         <1527877328.7898.80.camel@surriel.com> <1527878882.4448.11.camel@gmx.de>
-         <1527882207.7898.86.camel@surriel.com>
-         <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-GtiTV3AwJIHP4jCNxLU9"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Fri, 1 Jun 2018 16:39:32 -0400
+X-Google-Smtp-Source: ADUXVKLi4hbkA0HS5vdKiUlVqQX3/P5gbE9WusAM1bVu+bPOfRcb8wIw8KqY1m1aVydF0wCrLzF6RA==
+Date: Fri, 1 Jun 2018 14:39:28 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, sudeep.holla@arm.com,
+        robh@kernel.org, mark.rutland@arm.com, frowand.list@gmail.com,
+        matt.sealey@arm.com, charles.garcia-tobin@arm.com, john.horley@arm.com,
+        mike.leach@linaro.org, coresight@lists.linaro.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 7/8] dts: coresight: Define new bindings for
+ direction of data flow
+Message-ID: <20180601203928.GD9838@xps15>
+References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
+ <1527858967-16047-8-git-send-email-suzuki.poulose@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527858967-16047-8-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 01, 2018 at 02:16:06PM +0100, Suzuki K Poulose wrote:
+> So far we have relied on an undocumented property "slave-mode",
+> to indicate if the given port is input or not. Since we are
+> redefining the coresight bindings, define new property for the
+> "direction" of data flow for a given connection endpoint in the
+> device.
+> 
+> Each endpoint must define the following property.
+> 
+>  - "direction" : 0 => Port is input
+> 		 1 => Port is output
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  drivers/hwtracing/coresight/of_coresight.c | 20 ++++++++++++++++----
 
---=-GtiTV3AwJIHP4jCNxLU9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+You haven't documented the binding in bindings/arm/coresight.txt the same way
+you did with "coresight,hwid".  I'm guessing you simply forgot to do a "git add"
+on the file when preparing the patchset.
 
-On Fri, 2018-06-01 at 13:03 -0700, Andy Lutomirski wrote:
-> Mike, you never did say: do you have PCID on your CPU?  Also, what is
-> your workload doing to cause so many switches back and forth between
-> init_mm and a task.
->=20
-> The point of the optimization is that switching to init_mm() should
-> be
-> fairly fast on a PCID system, whereas an IPI to do the deferred flush
-> is very expensive regardless of PCID.=20
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
+> index 99d7a9c..63c1668 100644
+> --- a/drivers/hwtracing/coresight/of_coresight.c
+> +++ b/drivers/hwtracing/coresight/of_coresight.c
+> @@ -52,7 +52,19 @@ of_coresight_get_endpoint_device(struct device_node *endpoint)
+>  			       endpoint, of_dev_node_match);
+>  }
+>  
+> -static void of_coresight_get_ports(const struct device_node *node,
+> +static bool of_coresight_ep_is_input(struct device *dev, struct device_node *ep_node)
 
-While I am sure that bit is true, Song and I
-observed about 4x as much CPU use in the atomic
-operations in cpumask_clear_cpu and cpumask_set_cpu
-(inside switch_mm_irqs_off) as we saw CPU used
-in the %cr3 reload itself.
+I suggested of_coresight_endpoint_get_port_id() in my review of 6/8.  I'm good
+with either "ep" or "endpoint", as long as the names are consistent.
 
-Given how expensive those cpumask updates are,
-lazy TLB mode might always be worth it, especially
-on larger systems.
-
---=20
-All Rights Reversed.
---=-GtiTV3AwJIHP4jCNxLU9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsRrgwACgkQznnekoTE
-3oPnRQf/ZjcriO3NRg9VYf7kzBxHbWxIB7AHs5cI44GdNJXmHQjgyZK94TXMrc3B
-5IS24tcTR02uszMkNYLppAeRzPNyH989PC6qc2zUUALC2rgZo/XNnRl/zvqUKYwP
-R2oSxsxByxGHH0uPnf16kEwQaOpR5EkM6NOvao3OMbG6FzWpz2jgcul8iuEFl+R2
-aUnhiBYwJ7vxfarla/xWAlA7tK9rU92HleYxmmz/+YT+CUbFjZVlKdAXKvq0ckKp
-nOtN18cldhgqwSwdGjP0EqSh3ogNam91EWmCSNJFjXXgC/3hI2k5GnQuLtU/7Um3
-dEUDpIqoutqo/UJUUcszZfBVRlaxNA==
-=5PkX
------END PGP SIGNATURE-----
-
---=-GtiTV3AwJIHP4jCNxLU9--
+> +{
+> +	u32 dir;
+> +
+> +	if (!of_property_read_u32(ep_node, "direction", &dir))
+> +		return dir == 0;
+> +
+> +	dev_warn_once(dev, "Missing mandatory \"direction\" property!\n");
+> +	return of_property_read_bool(ep_node, "slave-mode");
+> +}
+> +
+> +static void of_coresight_get_ports(struct device *dev,
+> +				   const struct device_node *node,
+>  				   int *nr_inport, int *nr_outport)
+>  {
+>  	struct device_node *ep = NULL;
+> @@ -63,7 +75,7 @@ static void of_coresight_get_ports(const struct device_node *node,
+>  		if (!ep)
+>  			break;
+>  
+> -		if (of_property_read_bool(ep, "slave-mode"))
+> +		if (of_coresight_ep_is_input(dev, ep))
+>  			in++;
+>  		else
+>  			out++;
+> @@ -149,7 +161,7 @@ of_get_coresight_platform_data(struct device *dev,
+>  	pdata->name = dev_name(dev);
+>  
+>  	/* Get the number of input and output port for this component */
+> -	of_coresight_get_ports(node, &pdata->nr_inport, &pdata->nr_outport);
+> +	of_coresight_get_ports(dev, node, &pdata->nr_inport, &pdata->nr_outport);
+>  
+>  	if (pdata->nr_outport) {
+>  		ret = of_coresight_alloc_memory(dev, pdata);
+> @@ -168,7 +180,7 @@ of_get_coresight_platform_data(struct device *dev,
+>  			 * No need to deal with input ports, processing for as
+>  			 * processing for output ports will deal with them.
+>  			 */
+> -			if (of_find_property(ep, "slave-mode", NULL))
+> +			if (of_coresight_ep_is_input(dev, ep))
+>  				continue;
+>  
+>  			outport = of_graph_ep_coresight_get_port_id(dev, ep);
+> -- 
+> 2.7.4
+> 
