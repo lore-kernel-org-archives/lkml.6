@@ -1,51 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751289AbeFAXBE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 19:01:04 -0400
-Received: from mga06.intel.com ([134.134.136.31]:35319 "EHLO mga06.intel.com"
+        id S1750987AbeFAXMI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 19:12:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750940AbeFAXBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 19:01:01 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,467,1520924400";
-   d="scan'208";a="44633288"
-Date: Fri, 1 Jun 2018 16:01:00 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2]: perf record: enable arbitrary event names thru name=
- modifier
-Message-ID: <20180601230100.GN30764@tassilo.jf.intel.com>
-References: <23f72f9b-c513-ecd4-d375-c5cf2eb30197@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23f72f9b-c513-ecd4-d375-c5cf2eb30197@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1750736AbeFAXMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 19:12:05 -0400
+Date: Sat, 2 Jun 2018 08:12:01 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Josef Bacik <jbacik@fb.com>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Ingo Molnar <mingo@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 1/2] error-injection: Simplify arch specific helpers
+Message-Id: <20180602081201.7fa34675839a53822b5d795f@kernel.org>
+In-Reply-To: <1527761241.kc7z6i13ny.naveen@linux.ibm.com>
+References: <cover.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
+        <8f4883f08feaf6e040255015af2da7bbc7741e41.1527596631.git.naveen.n.rao@linux.vnet.ibm.com>
+        <20180530174156.cb1799687fb834f26fe570a9@kernel.org>
+        <1527761241.kc7z6i13ny.naveen@linux.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 05:08:12PM +0300, Alexey Budankov wrote:
-> 
-> Enable complex event names containing [.:=,] symbols to be encoded into Perf 
-> trace using name= modifier e.g. like this:
-> 
-> perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',\
-> 		period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex
-> 
-> Below is how it looks like in the report output. Please note explicit escaped 
-> quoting at cmdline string in the header so that thestring can be directly reused
-> for another collection in shell:
+On Thu, 31 May 2018 15:39:03 +0530
+"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
 
-Patch looks good, but new syntax also needs to be documented in some manpage
-(e.g. perf list)
+> Masami Hiramatsu wrote:
+> > On Tue, 29 May 2018 18:06:02 +0530
+> > "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+> > 
+> >> We already have an arch-independent way to set the instruction pointer
+> >> with instruction_pointer_set(). Using this allows us to get rid of the
+> >> need for override_function_with_return() that each architecture has to
+> >> implement.
+> >> 
+> >> Furthermore, just_return_func() only has to encode arch-specific
+> >> assembly instructions to return from a function. Introduce a macro
+> >> ARCH_FUNC_RET to provide the arch-specific instruction and move over
+> >> just_return_func() to generic code.
+> >> 
+> >> With these changes, architectures that already support kprobes, only
+> >> just need to ensure they provide regs_set_return_value(), GET_IP() (for
+> >> instruction_pointer_set()), and ARCH_FUNC_RET to support error
+> >> injection.
+> > 
+> > Nice! the code basically good to me. Just one comment, ARCH_FUNC_RET sounds
+> > like a function. Maybe ARCH_RETURN_INSTRUCTION will be better name, isn't it? :)
+> 
+> Sure -- I thought of writing ARCH_FUNCTION_RETURN, but felt that was too 
+> verbose. How about ARCH_FUNC_RET_INST?
 
--Andi
+It is OK if we can recognize it is an instruction.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
