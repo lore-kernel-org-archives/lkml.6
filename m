@@ -1,77 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751297AbeFAKVb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 06:21:31 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48730 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750831AbeFAKVa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 06:21:30 -0400
-Date: Fri, 1 Jun 2018 11:21:22 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Daniel Mack <zonque@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH 01/19 v3] regulator: fixed: Convert to use GPIO
- descriptor only
-Message-ID: <20180601102122.GA8677@sirena.org.uk>
-References: <20180514080640.12515-1-linus.walleij@linaro.org>
- <20180514080640.12515-2-linus.walleij@linaro.org>
- <20180601093511.GA11734@ulmo>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
-Content-Disposition: inline
-In-Reply-To: <20180601093511.GA11734@ulmo>
-X-Cookie: OS/2 must die!
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1751478AbeFAKW2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 06:22:28 -0400
+Received: from mga17.intel.com ([192.55.52.151]:34496 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750871AbeFAKW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 06:22:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,465,1520924400";
+   d="scan'208";a="60926958"
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
+Subject: [PATCH] virtio: update the comments for transport features
+Date: Fri,  1 Jun 2018 18:22:17 +0800
+Message-Id: <20180601102217.21628-1-tiwei.bie@intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Suggested-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+---
+This patch is generated on top of below patch:
+https://lists.oasis-open.org/archives/virtio-dev/201805/msg00212.html
 
---bp/iNruPH9dso1Pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+ include/uapi/linux/virtio_config.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-On Fri, Jun 01, 2018 at 11:35:11AM +0200, Thierry Reding wrote:
-
-> >  	cfg.ena_gpio_invert = !config->enable_high;
-
-> Change this line to:
-
-> 	cfg.ena_gpio_invert = false;
-
-> fixes the regression and is pretty much the implementation of my above
-> suggestion to ignore enable-active-high, though we may eventually want
-> to get rid of ena_gpio_invert altogether, provided that everyone has
-> moved over to GPIO descriptors.
-
-Please send a patch, I can't apply the above :(
-
---bp/iNruPH9dso1Pn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsRHh8ACgkQJNaLcl1U
-h9BcIAf/QVTELfKIuHu25/byjgRxQvS63mkX7wuUnOLje4hf+xwXI5rzhjWuMRo3
-aEcBDbU580LLBuzBzaP857w0vUy5NvvLlqQFxH/rYQXoDPyH6vjx4TSuSDbyiluq
-Ql9wp/7MDevHTL8ZR9AyuSu0x3S5z2Gfsc7jaGT8qkEJiYiLG4Lt/DbYqYBl7rAi
-SMfEelxCNTb37YuEF1O7Pu5jIbqcVmzCNszCdDsqeRxsDStmjeJQYwMJjmhawSal
-7FUXl/ntJ1wJFk+EHvp82kfGCLTsOMEs7rEYk1W6JizAAUpLlBDUCKu8HpUx6xOl
-++QtllxtiAUz1bgY+If+3KxiFClHrQ==
-=YYTp
------END PGP SIGNATURE-----
-
---bp/iNruPH9dso1Pn--
+diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+index b7c1f4e7d59e..479affd903e9 100644
+--- a/include/uapi/linux/virtio_config.h
++++ b/include/uapi/linux/virtio_config.h
+@@ -45,9 +45,12 @@
+ /* We've given up on this device. */
+ #define VIRTIO_CONFIG_S_FAILED		0x80
+ 
+-/* Some virtio feature bits (currently bits 28 through 32) are reserved for the
+- * transport being used (eg. virtio_ring), the rest are per-device feature
+- * bits. */
++/*
++ * Some virtio feature bits (currently bits VIRTIO_TRANSPORT_F_START
++ * through VIRTIO_TRANSPORT_F_END) are reserved for the transport being
++ * used (e.g. virtio_ring, virtio_pci etc.), the rest are per-device
++ * feature bits.
++ */
+ #define VIRTIO_TRANSPORT_F_START	28
+ #define VIRTIO_TRANSPORT_F_END		38
+ 
+-- 
+2.17.0
