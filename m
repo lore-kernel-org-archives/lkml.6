@@ -1,42 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751699AbeFALkj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:40:39 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:46544 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751012AbeFALkg (ORCPT
+        id S1751836AbeFALlV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:41:21 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:40216 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeFALlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:40:36 -0400
-X-Google-Smtp-Source: ADUXVKIY6uwOQQ6Cg1i+8bjpHxKyBVdPjSJhOjLGRxK5aYk/TgAzut8bvGvK5A+dW/NPwpt1TUbD1u634t1jOZgPwlc=
+        Fri, 1 Jun 2018 07:41:18 -0400
+X-Google-Smtp-Source: ADUXVKIeJC6cM7ekgX4hlKjDizx9+Nr37E37kUBsFZz+3y/3eOV9tv9bfMrUnVUJYa0wl70jHIdP0OChGr1et/IPcYc=
 MIME-Version: 1.0
-In-Reply-To: <20180601213639.74f49e51@canb.auug.org.au>
-References: <20180601213639.74f49e51@canb.auug.org.au>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 1 Jun 2018 14:40:35 +0300
-Message-ID: <CAHp75VeULdbi3_V8JPffYCocmGtjC3QPdE-yPz5eDrkpONeE-A@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86 tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Darren Hart <dvhart@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Haruka Kawajiri <yukx00@gmail.com>
+In-Reply-To: <20180601095322.hdxcpmj4tfonaq4g@valkosipuli.retiisi.org.uk>
+References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
+ <20180531190659.xdp4q2cjro33aihq@pengutronix.de> <CAMty3ZCeR3uEx8oy18-Ur7ma7pciKUf_myDk6_SpWvxc6DvygQ@mail.gmail.com>
+ <20180601095322.hdxcpmj4tfonaq4g@valkosipuli.retiisi.org.uk>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Fri, 1 Jun 2018 17:11:16 +0530
+Message-ID: <CAMty3ZBCrrj=GJzGWR8tp5e2ZEAgADFT9OQ_THAALOW_Bay1LA@mail.gmail.com>
+Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Philipp Zabel <pza@pengutronix.de>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Discussion of the development of and with GStreamer
+        <gstreamer-devel@lists.freedesktop.org>,
+        linux-media@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 2:36 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+On Fri, Jun 1, 2018 at 3:23 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+> On Fri, Jun 01, 2018 at 10:49:56AM +0530, Jagan Teki wrote:
+>> Hi Philipp,
+>>
+>> On Fri, Jun 1, 2018 at 12:36 AM, Philipp Zabel <pza@pengutronix.de> wrote:
+>> > Hi Jagan,
+>> >
+>> > On Thu, May 31, 2018 at 08:39:20PM +0530, Jagan Teki wrote:
+>> >> Hi All,
+>> >>
+>> >> I'm trying to verify MIPI-CSI2 OV5640 camera on i.MX6 platform with
+>> >> Mainline Linux.
+>> >>
+>> >> I've followed these[1] instructions to configure MC links and pads
+>> >> based on the probing details from dmesg and trying to capture
+>> >> ipu1_ic_prpenc capture (/dev/video1) but it's not working.
+>> >>
+>> >> Can anyone help me to verify whether I configured all the details
+>> >> properly if not please suggest.
+>> >>
+>> >> I'm pasting full log here, so-that anyone can comment in line and dt
+>> >> changes are at [2]
+>> >>
+>> >> Log:
+>> >> -----
+>> > [...]
+>> >> # media-ctl -l "'ov5640 2-003c':0 -> 'imx6-mipi-csi2':0[1]"
+>> >> # media-ctl -l "'imx6-mipi-csi2':2 -> 'ipu1_csi1':0[1]"
+>> >> # media-ctl -l "'ipu1_csi1':1 -> 'ipu1_ic_prp':0[1]"
+>> >> # media-ctl -l "'ipu1_ic_prp':1 -> 'ipu1_ic_prpenc':0[1]"
+>> >> # media-ctl -l "'ipu1_ic_prpenc':1 -> 'ipu1_ic_prpenc capture':0[1]"
+>> >
+>> > Here you configure a pipeline that ends at ipu1 prpenc capture ...
+>> >
+>> >> # med# media-ctl -p
+>> > [...]
+>> >> - entity 18: ipu1_ic_prpenc capture (1 pad, 1 link)
+>> >>              type Node subtype V4L flags 0
+>> >>              device node name /dev/video0
+>> >
+>> > ... which is /dev/video0 ...
+>> >
+>> > [...]
+>> >> - entity 27: ipu1_ic_prpvf capture (1 pad, 1 link)
+>> >>              type Node subtype V4L flags 0
+>> >>              device node name /dev/video1
+>> >
+>> > ... not /dev/video1 ...
+>>
+>> True, thanks for pointing it.
+>>
+>> I actually tried even on video0 which I forgot to post the log [4].
+>> Now I understand I'm trying for wrong device to capture look like
+>> video0 which is ipu1 prepenc firing kernel oops. I'm trying to debug
+>> this and let me know if have any suggestion to look into.
+>>
+>> [   56.800074] imx6-mipi-csi2: LP-11 timeout, phy_state = 0x000002b0
+>> [   57.369660] ipu1_ic_prpenc: EOF timeout
+>> [   57.849692] ipu1_ic_prpenc: wait last EOF timeout
+>> [   57.855703] ipu1_ic_prpenc: pipeline start failed with -110
 >
-> Commit
->
->   bba074f926d1 ("platform/x86: silead_dmi: Add entry for Chuwi Hi8 S806_206 tablet touchscreen")
->
-> is missing a Signed-off-by from its author.
+> I don't have the hardware but this looks like the host cannot detect the
+> LP-11 state on the sensor (both wires high?). Some sensors cannot do this
+> without starting streaming at the same time. I'd expect the same if there
+> are problems in lane configuration etc.
 
-Oops. What is the proposed fix for that? It seems we can't rebase
-published branches.
+You mean the lane configurations in hardware? but this sensor is
+working with imx kernel. what do you mean by wires here? lanes.
+
+Jagan.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Jagan Teki
+Senior Linux Kernel Engineer | Amarula Solutions
+U-Boot, Linux | Upstream Maintainer
+Hyderabad, India.
