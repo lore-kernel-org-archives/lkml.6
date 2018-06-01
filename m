@@ -1,47 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750999AbeFABzF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 21:55:05 -0400
-Received: from mga06.intel.com ([134.134.136.31]:13358 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750770AbeFABzC (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 21:55:02 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
-   d="scan'208";a="46400786"
-Date: Thu, 31 May 2018 18:55:01 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Jin Yao <yao.jin@linux.intel.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v2 0/3] perf script python: Add more PMU fields
-Message-ID: <20180601015501.GI30764@tassilo.jf.intel.com>
-References: <1527843663-32288-1-git-send-email-yao.jin@linux.intel.com>
+        id S1751230AbeFABzX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 21:55:23 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:58777 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751168AbeFABzW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 21:55:22 -0400
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: hoeun.ryu@lge.com
+X-Original-SENDERIP: 10.159.138.109
+X-Original-MAILFROM: hoeun.ryu@lge.com
+From: "Hoeun Ryu" <hoeun.ryu@lge.com>
+To: "'Petr Mladek'" <pmladek@suse.com>,
+        "'Sergey Senozhatsky'" <sergey.senozhatsky.work@gmail.com>
+Cc: "'Hoeun Ryu'" <hoeun.ryu@lge.com.com>,
+        "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
+        "'Steven Rostedt'" <rostedt@goodmis.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1527562331-25880-1-git-send-email-hoeun.ryu@lge.com.com> <20180529121315.GE438@jagdpanzerIV> <20180530083204.m2yvmm7mc6owvpdk@pathway.suse.cz>
+In-Reply-To: <20180530083204.m2yvmm7mc6owvpdk@pathway.suse.cz>
+Subject: RE: [PATCH]  printk: make printk_safe_flush safe in NMI context by skipping flushing
+Date: Fri, 1 Jun 2018 10:55:20 +0900
+Message-ID: <045e01d3f94b$98b330a0$ca1991e0$@lge.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527843663-32288-1-git-send-email-yao.jin@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQHGl8zEcapaZebFXoFDB4TGV4TnLwIHjkX5AdFhGqOkRp7l4A==
+Content-Language: ko
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 05:01:00PM +0800, Jin Yao wrote:
-> When doing pmu sampling and then running a script with
-> perf script -s script.py, the process_event function gets
-> dictionary with some fields from the perf ring buffer
-> (like ip, sym, callchain etc).
+I appreciate the detailed correction.
+I will reflect the corrections in the next patch.
+plus, the explanation in the code will be fixed.
+
+> -----Original Message-----
+> From: Petr Mladek [mailto:pmladek@suse.com]
+> Sent: Wednesday, May 30, 2018 5:32 PM
+> To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+> Cc: Hoeun Ryu <hoeun.ryu@lge.com.com>; Sergey Senozhatsky
+> <sergey.senozhatsky@gmail.com>; Steven Rostedt <rostedt@goodmis.org>;
+> Hoeun Ryu <hoeun.ryu@lge.com>; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] printk: make printk_safe_flush safe in NMI context by
+> skipping flushing
 > 
-> But we miss quite a few fields we report now, for example,
-> LBRs,data source,weight,transaction,iregs,uregs,and etc.
+> On Tue 2018-05-29 21:13:15, Sergey Senozhatsky wrote:
+> > On (05/29/18 11:51), Hoeun Ryu wrote:
+> > >  Make printk_safe_flush() safe in NMI context.
+> > > nmi_trigger_cpumask_backtrace() can be called in NMI context. For
+> example the
+> > > function is called in watchdog_overflow_callback() if the flag of
+> hardlockup
+> > > backtrace (sysctl_hardlockup_all_cpu_backtrace) is true and
+> > > watchdog_overflow_callback() function is called in NMI context on some
+> > > architectures.
+> > >  Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace()
+> eventually tries
+> > > to lock logbuf_lock in vprintk_emit() but the logbuf_lock can be
+> already locked in
+> > > preempted contexts (task or irq in this case) or by other CPUs and it
+> may cause
 > 
-> This patch adds these fields for perf script python.
-
-Patches look good to me.
-
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-
--Andi
+> The sentence "logbuf_lock can be already locked in preempted contexts"
+> does not
+> make much sense. It is a spin lock. It means that both interrupts and
+> preemption are disabled.
+> 
+> I would change it to something like:
+> 
+> "Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace() eventually
+> tries
+> to lock logbuf_lock in vprintk_emit() that might be already be part
+> of a soft- or hard-lockup on another CPU."
+> 
+> 
+> > > deadlocks.
+> > >  By making printk_safe_flush() safe in NMI context, the backtrace
+> triggering CPU
+> > > just skips flushing if the lock is not avaiable in NMI context. The
+> messages in
+> > > per-cpu nmi buffer of the backtrace triggering CPU can be lost if the
+> CPU is in
+> > > hard lockup (because irq is disabled here) but if panic() is not
+> called. The
+> > > flushing can be delayed by the next irq work in normal cases.
+> 
+> I somehow miss there a motivation why the current state is better than
+> the previous. It looks like we exchange the risk of a deadlock with
+> a risk of loosing the messages.
+> 
+> I see it the following way:
+> 
+> "This patch prevents a deadlock in printk_safe_flush() in NMI
+> context. It makes sure that we continue and eventually call
+> printk_safe_flush_on_panic() from panic() that has better
+> chances to succeed.
+> 
+> There is a risk that logbuf_lock was not part of a soft- or
+> dead-lockup and we might just loose the messages. But then there is a high
+> chance that irq_work will get called and the messages will get flushed
+> the normal way."
+> 
+> 
+> > Any chance we can add more info to the commit message? E.g. backtraces
+> > which would describe "how" is this possible (like the one I posted in
+> > another email). Just to make it more clear.
+> 
+> I agree that a backtrace would be helpful. But it is not a must to
+> have from my point of view.
+> 
+> The patch itself looks good to me.
+> 
+> Best Regards,
+> Petr
