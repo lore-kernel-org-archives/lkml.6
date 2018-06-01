@@ -1,71 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeFAImU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:42:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44186 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750934AbeFAImR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:42:17 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOQ4uxjbZEyqNPwE8m0QmCU7OG831r4Lpg+M1RWCOxDrsgErnA@mail.gmail.com>
-References: <CAOQ4uxjbZEyqNPwE8m0QmCU7OG831r4Lpg+M1RWCOxDrsgErnA@mail.gmail.com> <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk> <152720691829.9073.10564431140980997005.stgit@warthog.procyon.org.uk>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-afs@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org
-Subject: Re: [PATCH 30/32] vfs: Allow cloning of a mount tree with open(O_PATH|O_CLONE_MOUNT) [ver #8]
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7263.1527842535.1@warthog.procyon.org.uk>
-Date: Fri, 01 Jun 2018 09:42:15 +0100
-Message-ID: <7264.1527842535@warthog.procyon.org.uk>
+        id S1751469AbeFAImn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:42:43 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:31600 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750807AbeFAImj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 04:42:39 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180601084237epoutp040117d55900a8fb2cc101d12a9d6a4e8e~z-LX67NDt0259502595epoutp04F
+X-AuditID: b6c32a4a-abdff70000001139-52-5b1106fc3178
+Mime-Version: 1.0
+Subject: Re: [PATCH 2/2] printk: make sure to print log on console.
+Reply-To: v.narang@samsung.com
+From: Vaneet Narang <v.narang@samsung.com>
+To: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+CC: Maninder Singh <maninder1.s@samsung.com>,
+        "sergey.senozhatsky@gmail.com" <sergey.senozhatsky@gmail.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
+        PANKAJ MISHRA <pankaj.m@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20180601044050.GA5687@jagdpanzerIV>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20180601084236epcms5p5063cd250524f105a334d8d553302ab51@epcms5p5>
+Date: Fri, 01 Jun 2018 14:12:36 +0530
+X-CMS-MailID: 20180601084236epcms5p5063cd250524f105a334d8d553302ab51
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnk+LIzCtJLcpLzFFi42LZdlhTXfcPm2C0wa6TMhYXd6daXN41h83i
+        8Pw2Fot7b7YyWfx//JXVYl/HAyaLRxMmMVms/fyY3YHDY+esu+weLftusXv0bVnF6LF+y1UW
+        j8+b5AJYo1JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0y
+        c4BOUVIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKkUbGhrpGRqY6xkZAWnTWCsjU6CShNSM
+        EzsfMhbM4q+4f/Q4awNjE08XIyeHhICJROOdg8xdjFwcQgK7GSV2LfnE2MXIwcErICjxd4cw
+        SI2wgLPEss4/7CC2kICcxPEbuxkh4joSJ+atAStnE9CS+NgSDhIWEYiROHqulRnEZhZYzSTx
+        pssKYhWvxIz2pywQtrTE9uVbwcZwChhKLHyyDyouKnFz9Vt2GPv9sfmMELaIROu9s8wQtqDE
+        g5+7oeIyEt+/9rOCnCAhUC7RudkV5BMJgQ5Gid7DG5kgaswlzp+cD9bLK+Ar0bp3HVgvi4Cq
+        xIP+72wQvS4S7YfKIE6Wl9j+dg4zSJhZQFNi/S59iDCfRO/vJ0wwn+yYB2MrSZw7uJMNwpaQ
+        eNI5E+pKD4kbjRfZIAG7n0li4cnLLBMY5WchwnYWkm2zELYtYGRexSiZWlCcm55abFpglJda
+        rlecmFtcmpeul5yfu4kRnAi1vHYwLjvnc4hRgINRiYdX4wt/tBBrYllxZe4hRgkOZiUR3ill
+        QCHelMTKqtSi/Pii0pzU4kOMpkBvT2SWEk3OBybpvJJ4Q1MjMzMDSwNTYwszQyVx3h/XBaKF
+        BNITS1KzU1MLUotg+pg4OKUaGPd+fjA10zS9Lr39AOM2g8r3B4OCJgQwfFRdUsQiuver3I8V
+        fr93Tz0/nUffZWGXpesHB46TDxKbKtjM1u9vD3o57VP5+rprEzcfm/32yq+itzYWBkeW9vi8
+        07o4sTrqW88dM3kuP+c5x3KmqIuzclQpmb4p8M0WX+9h9fiE9cOvKs4Fjx+nBCuxFGckGmox
+        FxUnAgDyaeH3mgMAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e
+References: <20180601044050.GA5687@jagdpanzerIV>
+        <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
+        <20180531105215.GF477@jagdpanzerIV>
+        <20180531122112.bfeqtmwpl2qc67a5@pathway.suse.cz>
+        <CGME20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e@epcms5p5>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amir Goldstein <amir73il@gmail.com> wrote:
+Hi Sergey,
 
-> Reject O_NON_RECURSIVE without O_CLONE_MOUNT?
+>> but the problem is real.
+>
+>Yep, could be. But not exactly the way it is described in the commit
+>messages and the patch does not fully address the problem.
+>
+>The patch assumes that all those events happen sequentially. While
+>in reality they can happen in parallel on different CPUs.
+>
+>Example:
+>
+> CPU0     CPU1
+>
+> set console verbose
+>
+> dump_backtrace()
+> {
+>  // for (;;)  print frames
+>  printk("%pS\n", frame0);
+>  printk("%pS\n", frame1);
+>  printk("%pS\n", frame2);
+>  printk("%pS\n", frame3);
+>  ...    console_loglevel = CONSOLE_LOGLEVEL_SILENT;
+>  printk("%pS\n", frame12);
+>  printk("%pS\n", frame13);
+> }
+>
 
-Yes, I should add that.
+This is not printk issue, its printk usage issue. User need to handle this part using some protection.
 
-> I am not sure what are the consequences of opening O_PATH with old kernel
-> and getting an open file, can't think of anything bad.
-> Can the same be claimed for O_PATH|O_CLONE_MOUNT?
+What we highlighted is issue related to printk, Where usage is correct 
+but still printk can miss some logs due to printk design of asynchronous printing.
 
-Yes, actually, there can be consequences.  Some files have side effects.
-Think open("/dev/foobar", O_PATH).
 
-> Wouldn't it be better to apply the O_TMPFILE kludge to the new
-> open flag, so that apps can check if O_CLONE_MOUNT feature is supported
-> by kernel?
+>Part of backtrace or the entire backtrace will be missed, because
+>we read the global console_loglevel. The problem is still there.
+>
+>> The console handling is asynchronous even without the kthread.
+>> The current console_lock owner is responsible for handling messages
+>> also from other CPUs.
+>
+>A nitpick: that's another thing to improve in the commit message, because
+>   I don't see that console_silent() race in the upstream kernel. We even
+>   don't have any users of console_silent() function. The only thing that
+>   ever sets console_loglevel to CONSOLE_LOGLEVEL_SILENT is
+>   kernel/debug/kdb/kdb_io.c
+>
 
-Ugh.  The problem is that the O_TMPFILE kludge can't be done because O_PATH
-currently just masks off any bits it's not interested in rather than giving an
-error.
+Issue is not related to console_silent() user, Issue is with dynamic console log level handling.
+Which can be done using dmesg as well.
+For example:
+dmesg -n 7 
+"Run some scenario to capture all the kernel logs"
+dmesg -n 1
 
-Even the O_TMPFILE kludge doesn't protect you against someone having set
-random unassigned bits when testing on a kernel that didn't support it.
+I may end up not getting all the logs if my console flush is slow & 
+dmesg -n 1 got excuted before flush .
 
-And this bit:
 
-	/*
-	 * Clear out all open flags we don't know about so that we don't report
-	 * them in fcntl(F_GETFD) or similar interfaces.
-	 */
-	flags &= VALID_OPEN_FLAGS;
-
-is just plain wrong.  Effectively, it allows userspace to set random reserved
-bits without consequences.  It should give an error instead.
-
-Probably we should really replace open() and openat() both before we can
-allocate any further open flags.
-
-</grumble>
-
-David
+Thanks & Regards,
+Vaneet Narang
