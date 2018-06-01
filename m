@@ -1,52 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751989AbeFANbU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:31:20 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49201 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeFANbT (ORCPT
+        id S1752027AbeFANbd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:31:33 -0400
+Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:53580 "EHLO
+        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeFANbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:31:19 -0400
-From: Colin King <colin.king@canonical.com>
-To: Alessandro Rubini <rubini@gnudd.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/fmc: make struct fmc_dbgfs_sdb_dump static
-Date: Fri,  1 Jun 2018 14:31:17 +0100
-Message-Id: <20180601133117.6511-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 1 Jun 2018 09:31:32 -0400
+From: Nicholas Mc Guire <hofrat@opentech.at>
+To: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH] media: atmel-isi: move of_node_put() to cover success branch as well
+Date: Fri,  1 Jun 2018 13:30:14 +0000
+Message-Id: <1527859814-30410-1-git-send-email-hofrat@opentech.at>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-The structure fmc_dbgfs_sdb_dump is local to the source and does not
-need to be in global scope, so make it static.
+The of_node_put() was only covering the error branch but missed the 
+success branch so the refcount for ep which 
+of_graph_get_remote_port_parent() incremented on success would was
+not being decremented.
 
-Cleans up sparse warning:
-drivers/fmc/fmc-debug.c:143:30: warning: symbol 'fmc_dbgfs_sdb_dump'
-was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
 ---
- drivers/fmc/fmc-debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/fmc/fmc-debug.c b/drivers/fmc/fmc-debug.c
-index 32930722770c..c96b928f0112 100644
---- a/drivers/fmc/fmc-debug.c
-+++ b/drivers/fmc/fmc-debug.c
-@@ -140,7 +140,7 @@ static int fmc_sdb_dump_open(struct inode *inode, struct file *file)
- }
+This patch is on top of: "media: atmel-isi: drop unnecessary while loop"
+
+Patch was compile tested with: x86_64_defconfig + CONFIG_MEDIA_SUPPORT=y
+MEDIA_CAMERA_SUPPORT=y, CONFIG_MEDIA_CONTROLLER=y, V4L_PLATFORM_DRIVERS=y
+OF=y, CONFIG_COMPILE_TEST=y, CONFIG_VIDEO_ATMEL_ISI=y
+
+Compile testing atmel-isi.c shows some sparse warnings. Seems to be due to
+sizeof operator being applied to a union (not related to the function being
+changed though).
+
+Patch is against 4.17-rc7 (localversion-next is next-20180531)
+
+ drivers/media/platform/atmel/atmel-isi.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
+index 85fc7b9..e8db4df 100644
+--- a/drivers/media/platform/atmel/atmel-isi.c
++++ b/drivers/media/platform/atmel/atmel-isi.c
+@@ -1111,10 +1111,9 @@ static int isi_graph_parse(struct atmel_isi *isi, struct device_node *node)
+ 		return -EINVAL;
  
+ 	remote = of_graph_get_remote_port_parent(ep);
+-	if (!remote) {
+-		of_node_put(ep);
++	of_node_put(ep);
++	if (!remote)
+ 		return -EINVAL;
+-	}
  
--const struct file_operations fmc_dbgfs_sdb_dump = {
-+static const struct file_operations fmc_dbgfs_sdb_dump = {
- 	.owner = THIS_MODULE,
- 	.open  = fmc_sdb_dump_open,
- 	.read = seq_read,
+ 	/* Remote node to connect */
+ 	isi->entity.node = remote;
 -- 
-2.17.0
+2.1.4
