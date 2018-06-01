@@ -1,153 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751341AbeFAWNi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 18:13:38 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:51636 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750968AbeFAWNg (ORCPT
+        id S1751282AbeFAWPx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 18:15:53 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39250 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750916AbeFAWPv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 18:13:36 -0400
-Date: Fri, 1 Jun 2018 18:13:27 -0400
-From: Rik van Riel <riel@surriel.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Mike Galbraith <efault@gmx.de>, LKML <linux-kernel@vger.kernel.org>,
-        songliubraving@fb.com, kernel-team <kernel-team@fb.com>,
-        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        X86 ML <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
-Message-ID: <20180601181327.367f0fe3@imladris.surriel.com>
-In-Reply-To: <CALCETrWMouz7VzYgwC=Ys3-C2O7ZVCn4FNwesH1np4c9iG1g_A@mail.gmail.com>
-References: <20180601082811.4c0d33ba@imladris.surriel.com>
-        <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
-        <1527877328.7898.80.camel@surriel.com>
-        <1527878882.4448.11.camel@gmx.de>
-        <1527882207.7898.86.camel@surriel.com>
-        <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
-        <1527885324.7898.88.camel@surriel.com>
-        <CALCETrWMouz7VzYgwC=Ys3-C2O7ZVCn4FNwesH1np4c9iG1g_A@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 1 Jun 2018 18:15:51 -0400
+X-Google-Smtp-Source: ADUXVKJRso6ErK2PlhGejY/F6HXtDUZR/yEWvoNM7EPuOoIjZo05K4ieoGsnwTIqXuqXeVBnldH/PsFJUnfmpbun7hc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180531163811.7m7c3q75duqkicl4@madcap2.tricolour.ca>
+References: <c390a53d148593016df96e880a35e64f42edcf91.1527726830.git.rgb@redhat.com>
+ <CAHC9VhQji1JrZ-QHMJ-965s+a5UJx-wRqpEdb84r=v+t1oH-qw@mail.gmail.com> <20180531163811.7m7c3q75duqkicl4@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 1 Jun 2018 18:15:49 -0400
+Message-ID: <CAHC9VhTABDT0FKb=vY4G06aY9Ky+NctArCRo8-iUQF6=eWKy1g@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak86 V1] audit: use audit_enabled as a boolean where convenient
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Jun 2018 14:21:58 -0700
-Andy Lutomirski <luto@kernel.org> wrote:
+On Thu, May 31, 2018 at 12:38 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-05-31 11:48, Paul Moore wrote:
+>> On Thu, May 31, 2018 at 11:13 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+>> > Most uses of audit_enabled don't care about the distinction between
+>> > AUDIT_ON and AUDIT_LOCKED, so using audit_enabled as a boolean makes
+>> > more sense and is easier to read. Most uses of audit_enabled treat it as
+>> > a boolean, so switch the remaining AUDIT_OFF usage to simply use
+>> > audit_enabled as a boolean where applicable.
+>> >
+>> > See: https://github.com/linux-audit/audit-kernel/issues/86
+>> >
+>> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>> > ---
+>> >  drivers/tty/tty_audit.c      | 2 +-
+>> >  include/net/xfrm.h           | 2 +-
+>> >  kernel/audit.c               | 8 ++++----
+>> >  net/netfilter/xt_AUDIT.c     | 2 +-
+>> >  net/netlabel/netlabel_user.c | 2 +-
+>> >  5 files changed, 8 insertions(+), 8 deletions(-)
+>>
+>> I'm not sure I like this idea.  Yes, technically this change is
+>> functionally equivalent but I worry that this will increase the chance
+>> that non-audit folks will mistake audit_enabled as a true/false value
+>> when it is not.  It might work now, but I worry about some subtle
+>> problem in the future.
+>
+> Would you prefer a patch to change the majority (18) of uses of
+> audit_enabled to be of the form "audit_enabled == AUDIT_OFF" (or
+> "audit_enabled != AUDIT_OFF")?
+>
+> I prefer the approach in this patch because it makes the code smaller
+> and significantly easier to read, but either way, I'd like all uses to
+> be consistent so that it is easier to read all the code similarly.
+>
+>> If you are bothered by the comparison to 0 (magic numbers), you could
+>> move the AUDIT_OFF/AUDIT_ON/AUDIT_LOCKED definitions into
+>> include/linux/audit.h and convert the "audit_enabled == 0" to
+>> "audit_enabled == AUDIT_OFF".
+>
+> I'd be fine doing that if you really dislike this patch's approach.
 
-> Hmm.  I wonder if there's a more clever data structure than a bitmap
-> that we could be using here.  Each CPU only ever needs to be in one
-> mm's cpumask, and each cpu only ever changes its own state in the
-> bitmask.  And writes are much less common than reads for most
-> workloads.
+Like I said, I'm don't really care for the boolean-like approach of
+this first patch.
 
-It would be easy enough to add an mm_struct pointer to the
-per-cpu tlbstate struct, and iterate over those.
-
-However, that would be an orthogonal change to optimizing
-lazy TLB mode. 
-
-Does the (untested) patch below make sense as a potential
-improvement to the lazy TLB heuristic?
-
----8<---
-Subject: x86,tlb: workload dependent per CPU lazy TLB switch
-
-Lazy TLB mode is a tradeoff between flushing the TLB and touching
-the mm_cpumask(&init_mm) at context switch time, versus potentially
-incurring a remote TLB flush IPI while in lazy TLB mode.
-
-Whether this pays off is likely to be workload dependent more than
-anything else. However, the current heuristic keys off hardware type.
-
-This patch changes the lazy TLB mode heuristic to a dynamic, per-CPU
-decision, dependent on whether we recently received a remote TLB
-shootdown while in lazy TLB mode.
-
-This is a very simple heuristic. When a CPU receives a remote TLB
-shootdown IPI while in lazy TLB mode, a counter in the same cache
-line is set to 16. Every time we skip lazy TLB mode, the counter
-is decremented.
-
-While the counter is zero (no recent TLB flush IPIs), allow lazy TLB mode.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
----
- arch/x86/include/asm/tlbflush.h | 32 ++++++++++++++++----------------
- arch/x86/mm/tlb.c               |  4 ++++
- 2 files changed, 20 insertions(+), 16 deletions(-)
-
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 6690cd3fc8b1..f06a934e317d 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -148,22 +148,6 @@ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
- #define __flush_tlb_one_user(addr) __native_flush_tlb_one_user(addr)
- #endif
- 
--static inline bool tlb_defer_switch_to_init_mm(void)
--{
--	/*
--	 * If we have PCID, then switching to init_mm is reasonably
--	 * fast.  If we don't have PCID, then switching to init_mm is
--	 * quite slow, so we try to defer it in the hopes that we can
--	 * avoid it entirely.  The latter approach runs the risk of
--	 * receiving otherwise unnecessary IPIs.
--	 *
--	 * This choice is just a heuristic.  The tlb code can handle this
--	 * function returning true or false regardless of whether we have
--	 * PCID.
--	 */
--	return !static_cpu_has(X86_FEATURE_PCID);
--}
--
- struct tlb_context {
- 	u64 ctx_id;
- 	u64 tlb_gen;
-@@ -179,6 +163,7 @@ struct tlb_state {
- 	struct mm_struct *loaded_mm;
- 	u16 loaded_mm_asid;
- 	u16 next_asid;
-+	u16 flushed_while_lazy;
- 	/* last user mm's ctx id */
- 	u64 last_ctx_id;
- 
-@@ -246,6 +231,21 @@ struct tlb_state {
- };
- DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
- 
-+static inline bool tlb_defer_switch_to_init_mm(void)
-+{
-+	/*
-+	 * If the CPU recently received a TLB flush IPI while in lazy
-+	 * TLB mode, do a straight switch to the idle task, and skip
-+	 * lazy TLB mode for now.
-+	 */
-+	if (this_cpu_read(cpu_tlbstate.flushed_while_lazy)) {
-+		this_cpu_dec(cpu_tlbstate.flushed_while_lazy);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
- /* Initialize cr4 shadow for this CPU. */
- static inline void cr4_init_shadow(void)
- {
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index e055d1a06699..d8b0b7b236f3 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -454,7 +454,11 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
- 		 * paging-structure cache to avoid speculatively reading
- 		 * garbage into our TLB.  Since switching to init_mm is barely
- 		 * slower than a minimal flush, just switch to init_mm.
-+		 *
-+		 * Skip lazy TLB mode for the next 16 context switches,
-+		 * in case more TLB flush IPIs are coming.
- 		 */
-+		this_cpu_write(cpu_tlbstate.flushed_while_lazy, 16);
- 		switch_mm_irqs_off(NULL, &init_mm, NULL);
- 		return;
- 	}
+-- 
+paul moore
+www.paul-moore.com
