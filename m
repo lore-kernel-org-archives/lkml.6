@@ -1,108 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeFANrf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:47:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47036 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751852AbeFANrV (ORCPT
+        id S1751910AbeFANs7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:48:59 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49556 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751301AbeFANs6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:47:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7EE8660249
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH V4] scsi: hpsa: drop shutdown callback
-To: linux-pci@vger.kernel.org, ryan@finnie.org, timur@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        stable@vger.kernel.org, Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "open list:HEWLETT-PACKARD SMART ARRAY RAID DRIVER (hpsa)"
-        <esc.storagedev@microsemi.com>,
-        "open list:HEWLETT-PACKARD SMART ARRAY RAID DRIVER (hpsa)"
-        <linux-scsi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1527860768-11367-1-git-send-email-okaya@codeaurora.org>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <9516f507-9c3e-cce0-5557-c5c17388f404@codeaurora.org>
-Date: Fri, 1 Jun 2018 09:47:17 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 1 Jun 2018 09:48:58 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mailbox: PCC: make struct pcc_mbox_driver static
+Date: Fri,  1 Jun 2018 14:48:56 +0100
+Message-Id: <20180601134856.13322-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <1527860768-11367-1-git-send-email-okaya@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/1/2018 9:46 AM, Sinan Kaya wrote:
-> 'Commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
-> shutdown")' has been added to kernel to shutdown pending PCIe port
-> service interrupts during reboot so that a newly started kexec kernel
-> wouldn't observe pending interrupts.
-> 
-> pcie_port_device_remove() is disabling the root port and switches by
-> calling pci_disable_device() after all PCIe service drivers are shutdown.
-> 
-> This has been found to cause crashes on HP DL360 Gen9 machines during
-> reboot due to hpsa driver not clearing the bus master bit during the
-> shutdown procedure by calling pci_disable_device().
-> 
-> Disable device as part of the shutdown sequence.
+From: Colin Ian King <colin.king@canonical.com>
 
-Forgot to change the commit title. Apologies for that. The rest of the
-patch should work. Waiting for tested-bys.
+The structure pcc_mbox_driver is local to the source and does not
+need to be in global scope, so make it static.
 
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=199779
-> Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
-> Cc: stable@vger.kernel.org
-> Reported-by: Ryan Finnie <ryan@finnie.org>
-> ---
->  drivers/scsi/hpsa.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-> index 3a9eca1..b92f86a 100644
-> --- a/drivers/scsi/hpsa.c
-> +++ b/drivers/scsi/hpsa.c
-> @@ -8869,7 +8869,7 @@ static void hpsa_disable_rld_caching(struct ctlr_info *h)
->  	kfree(options);
->  }
->  
-> -static void hpsa_shutdown(struct pci_dev *pdev)
-> +static void __hpsa_shutdown(struct pci_dev *pdev)
->  {
->  	struct ctlr_info *h;
->  
-> @@ -8884,6 +8884,12 @@ static void hpsa_shutdown(struct pci_dev *pdev)
->  	hpsa_disable_interrupt_mode(h);		/* pci_init 2 */
->  }
->  
-> +static void hpsa_shutdown(struct pci_dev *pdev)
-> +{
-> +	__hpsa_shutdown(pdev);
-> +	pci_disable_device(pdev);
-> +}
-> +
->  static void hpsa_free_device_info(struct ctlr_info *h)
->  {
->  	int i;
-> @@ -8927,7 +8933,7 @@ static void hpsa_remove_one(struct pci_dev *pdev)
->  		scsi_remove_host(h->scsi_host);		/* init_one 8 */
->  	/* includes hpsa_free_irqs - init_one 4 */
->  	/* includes hpsa_disable_interrupt_mode - pci_init 2 */
-> -	hpsa_shutdown(pdev);
-> +	__hpsa_shutdown(pdev);
->  
->  	hpsa_free_device_info(h);		/* scan */
->  
-> 
+Cleans up sparse warning:
+drivers/mailbox/pcc.c:576:24: warning: symbol 'pcc_mbox_driver' was
+not declared. Should it be static?
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mailbox/pcc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index fc3c237daef2..26976554372b 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -573,7 +573,7 @@ static int pcc_mbox_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-struct platform_driver pcc_mbox_driver = {
++static struct platform_driver pcc_mbox_driver = {
+ 	.probe = pcc_mbox_probe,
+ 	.driver = {
+ 		.name = "PCCT",
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.17.0
