@@ -1,184 +1,267 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753530AbeFAUVc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 16:21:32 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39623 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752964AbeFAUV3 (ORCPT
+        id S1753336AbeFAU0l (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 16:26:41 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39617 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752360AbeFAU0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 16:21:29 -0400
-X-Google-Smtp-Source: ADUXVKL6p1vJIvYIdc9y0KcJ5qVpbyEkyPVtNPDdtODVgLHoDUrIqEgMu1X5QBZbnfD+zfXOY85JPKrnwXeEncbPplY=
+        Fri, 1 Jun 2018 16:26:36 -0400
+X-Google-Smtp-Source: ADUXVKIgo6GTA3XuMJ4ADXJK7HKFixuooQP4E9hw7crvlXZNOZKfrqkNCPMK5LuPTwb55Z9KayZQLw==
+Date: Fri, 1 Jun 2018 14:26:32 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, sudeep.holla@arm.com,
+        robh@kernel.org, mark.rutland@arm.com, frowand.list@gmail.com,
+        matt.sealey@arm.com, charles.garcia-tobin@arm.com, john.horley@arm.com,
+        mike.leach@linaro.org, coresight@lists.linaro.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 6/8] dts: coresight: Clean up the device tree graph
+ bindings
+Message-ID: <20180601202632.GC9838@xps15>
+References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
+ <1527858967-16047-7-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <CAHC9VhRTzB5+swKg7TaT00nMOmoTMoBCxRvBuwB5dRahntokQw@mail.gmail.com>
-References: <20180524201105.3179904-1-stefanb@linux.vnet.ibm.com>
- <20180524201105.3179904-9-stefanb@linux.vnet.ibm.com> <20180530124920.g5agxm75x4i6pw6n@madcap2.tricolour.ca>
- <35894dae-c9c6-aa65-da99-c0283d459878@linux.vnet.ibm.com> <CAHC9VhSnubpfY6=RF9ZHQS0js18xor2nF=REfd=ZKTxV-wabiA@mail.gmail.com>
- <85a2ad4d-6406-ad64-f440-7ab8289ceb2e@linux.vnet.ibm.com> <20180530233413.xz5bs3zb4jwmddpi@madcap2.tricolour.ca>
- <89c5f9c1-cdc4-6d2c-c187-04e94c2b8e75@linux.vnet.ibm.com> <CAHC9VhRTzB5+swKg7TaT00nMOmoTMoBCxRvBuwB5dRahntokQw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 1 Jun 2018 16:21:27 -0400
-Message-ID: <CAHC9VhTpiNMThXxAgaYsafmz-36NZvtpZr9bvttbnHthFiLtNw@mail.gmail.com>
-Subject: Re: [PATCH 8/8] ima: Differentiate auditing policy rules from "audit" actions
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-audit@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527858967-16047-7-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 4:13 PM, Paul Moore <paul@paul-moore.com> wrote:
-> On Fri, Jun 1, 2018 at 4:00 PM, Stefan Berger
-> <stefanb@linux.vnet.ibm.com> wrote:
->> On 05/30/2018 07:34 PM, Richard Guy Briggs wrote:
->>>
->>> On 2018-05-30 17:38, Stefan Berger wrote:
->>>>
->>>> On 05/30/2018 05:22 PM, Paul Moore wrote:
->>>>>
->>>>> On Wed, May 30, 2018 at 9:08 AM, Stefan Berger
->>>>> <stefanb@linux.vnet.ibm.com> wrote:
->>>>>>
->>>>>> On 05/30/2018 08:49 AM, Richard Guy Briggs wrote:
->>>>>>>
->>>>>>> On 2018-05-24 16:11, Stefan Berger wrote:
->>>>>>>>
->>>>>>>> The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
->>>>>>>> the IMA "audit" policy action.  This patch defines
->>>>>>>> AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
->>>>>>>>
->>>>>>>> With this change we now call integrity_audit_msg_common() to get
->>>>>>>> common integrity auditing fields. This now produces the following
->>>>>>>> record when parsing an IMA policy rule:
->>>>>>>>
->>>>>>>> type=UNKNOWN[1806] msg=audit(1527004216.690:311): action=dont_measure
->>>>>>>> \
->>>>>>>>      fsmagic=0x9fa0 pid=1613 uid=0 auid=0 ses=2 \
->>>>>>>>      subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 \
->>>>>>>>      op=policy_update cause=parse_rule comm="echo"
->>>>>>>> exe="/usr/bin/echo" \
->>>>>>>>      tty=tty2 res=1
->>>>>>>>
->>>>>>>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
->>>>>>>> ---
->>>>>>>>     include/uapi/linux/audit.h          | 3 ++-
->>>>>>>>     security/integrity/ima/ima_policy.c | 5 +++--
->>>>>>>>     2 files changed, 5 insertions(+), 3 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
->>>>>>>> index 4e61a9e05132..776e0abd35cf 100644
->>>>>>>> --- a/include/uapi/linux/audit.h
->>>>>>>> +++ b/include/uapi/linux/audit.h
->>>>>>>> @@ -146,7 +146,8 @@
->>>>>>>>     #define AUDIT_INTEGRITY_STATUS            1802 /* Integrity
->>>>>>>> enable
->>>>>>>> status */
->>>>>>>>     #define AUDIT_INTEGRITY_HASH      1803 /* Integrity HASH type */
->>>>>>>>     #define AUDIT_INTEGRITY_PCR       1804 /* PCR invalidation msgs
->>>>>>>> */
->>>>>>>> -#define AUDIT_INTEGRITY_RULE       1805 /* policy rule */
->>>>>>>> +#define AUDIT_INTEGRITY_RULE       1805 /* IMA "audit" action policy
->>>>>>>> msgs  */
->>>>>>>> +#define AUDIT_INTEGRITY_POLICY_RULE 1806 /* IMA policy rules */
->>>>>>>>       #define AUDIT_KERNEL                2000    /* Asynchronous
->>>>>>>> audit
->>>>>>>> record. NOT A REQUEST. */
->>>>>>>>     diff --git a/security/integrity/ima/ima_policy.c
->>>>>>>> b/security/integrity/ima/ima_policy.c
->>>>>>>> index 3aed25a7178a..a8ae47a386b4 100644
->>>>>>>> --- a/security/integrity/ima/ima_policy.c
->>>>>>>> +++ b/security/integrity/ima/ima_policy.c
->>>>>>>> @@ -634,7 +634,7 @@ static int ima_parse_rule(char *rule, struct
->>>>>>>> ima_rule_entry *entry)
->>>>>>>>           int result = 0;
->>>>>>>>           ab = integrity_audit_log_start(NULL, GFP_KERNEL,
->>>>>>>> -                                      AUDIT_INTEGRITY_RULE);
->>>>>>>> +                                      AUDIT_INTEGRITY_POLICY_RULE);
->>>>>>>
->>>>>>> Is it possible to connect this record to a syscall by replacing the
->>>>>>> first parameter (NULL) by current->context?
->>>>>
->>>>> We're likely going to need to "associate" this record (audit speak for
->>>>> making the first parameter non-NULL) with others for the audit
->>>>> container ID work.  If you do it now, Richard's patches will likely
->>>>> get a few lines smaller and that will surely make him a bit happier :)
->>>>
->>>> Richard is also introducing a local context that we can then create and
->>>> use
->>>> instead of the NULL. Can we not use that then?
->>>
->>> That is for records for which there is no syscall or user associated.
->>>
->>> In fact there is another recent change that would be better to use than
->>> current->audit_context, which is the function audit_context().
->>> See commit cdfb6b3 ("audit: use inline function to get audit context").
->>>
->>>> Steven seems to say: "We don't want to add syscall records to everything.
->>>> That messes up schemas and existing code. The integrity events are 1
->>>> record
->>>> in size and should stay that way. This saves disk space and improves
->>>> readability."
->>>>
->>>>>> We would have to fix current->context in this case since it is NULL. We
->>>>>> get
->>>>>> to this location by root cat'ing a policy or writing a policy filename
->>>>>> into
->>>>>> /sys/kernel/security/ima/policy.
->>>>>
->>>>> Perhaps I'm missing something, but current in this case should point
->>>>> to the process which is writing to the policy file, yes?
->>>>
->>>> Yes, but current->context is NULL for some reason.
->>>
->>> Is it always this way?  If it isn't, which it should not be, we should
->>> find out why.  Well, we should find out why this is NULL anyways, since
->>> it shouldn't be.
->>
->>
->> When someone writes a policy for IMA into securityfs, it's always NULL.
->> There's another location where IMA uses the current->audit_context, and
->> that's here:
->>
->> https://elixir.bootlin.com/linux/latest/source/security/integrity/ima/ima_api.c#L323
->>
->> At this location we sometimes see a (background) process with an
->> audit_context but in the majority of cases it's current->audit_context is
->> NULL. Starting a process as root or also non-root user, with the appropriate
->> IMA audit policy rules set, we always see a NULL audit_context here.
->
-> What does your audit configuration look like?
->
-> Depending on your configuration a NULL audit_context can be expected,
-> see audit_dummy_context().  I believe the default Fedora audit config
-> will leave you with a NULL audit_context for all processes.  I also
-> believe that unless you explicitly set "audit=1" on the kernel command
-> line the init/systemd process will have a NULL audit_context (there
-> was actually a range of kernels where even setting "audit=1" wouldn't
-> be sufficient due to a bug we fixed a little while ago).
->
-> Look at the audit_alloc() function, it is called when a new process is
-> fork'd and is responsible for allocating a new audit_context.  If the
-> currently loaded audit config dictates that auditing is to be disabled
-> for this new process (state == AUDIT_DISABLED) then an audit_context
-> is not allocated and current->context remains NULL.
+On Fri, Jun 01, 2018 at 02:16:05PM +0100, Suzuki K Poulose wrote:
+> The coresight drivers relied on default bindings for graph
+> in DT, while reusing the "reg" field of the "ports" to indicate
+> the actual hardware port number for the connections. However,
+> with the rules getting stricter w.r.t to the address mismatch
+> with the label, it is no longer possible to use the port address
+> field for the hardware port number. Hence, we add an explicit
+> property to denote the hardware port number, "coresight,hwid"
+> which must be specified for each "endpoint".
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  .../devicetree/bindings/arm/coresight.txt          | 26 +++++++++---
+>  drivers/hwtracing/coresight/of_coresight.c         | 46 ++++++++++++++++------
+>  2 files changed, 54 insertions(+), 18 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
+> index bd36e40..385581a 100644
+> --- a/Documentation/devicetree/bindings/arm/coresight.txt
+> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
+> @@ -104,7 +104,11 @@ properties to uniquely identify the connection details.
+>  	"slave-mode"
+>  
+>   * Hardware Port number at the component:
+> -     -  The hardware port number is assumed to be the address of the "port" component.
+> +   - (Obsolete) The hardware port number is assumed to be the address of the "port" component.
+> +   - Each "endpoint" must define the hardware port of the local end of the
+> +     connection using the following property:
+> +	"coresight,hwid" - 32bit integer, hardware port number at the local end.
+> +
+>  
+>  
+>  Example:
+> @@ -120,6 +124,7 @@ Example:
+>  			etb_in_port: endpoint@0 {
+>  				slave-mode;
+>  				remote-endpoint = <&replicator_out_port0>;
+> +				coresight,hwid = <0>;
+>  			};
+>  		};
+>  	};
+> @@ -134,6 +139,7 @@ Example:
+>  			tpiu_in_port: endpoint@0 {
+>  				slave-mode;
+>  				remote-endpoint = <&replicator_out_port1>;
+> +				coresight,hwid = <0>;
+>  			};
+>  		};
+>  	};
+> @@ -154,6 +160,7 @@ Example:
+>  				reg = <0>;
+>  				replicator_out_port0: endpoint {
+>  					remote-endpoint = <&etb_in_port>;
+> +					coresight,hwid = <0>;
+>  				};
+>  			};
+>  
+> @@ -161,15 +168,17 @@ Example:
+>  				reg = <1>;
+>  				replicator_out_port1: endpoint {
+>  					remote-endpoint = <&tpiu_in_port>;
+> +					coresight,hwid = <1>;
+>  				};
+>  			};
+>  
+>  			/* replicator input port */
+>  			port@2 {
+> -				reg = <0>;
+> +				reg = <1>;
+>  				replicator_in_port0: endpoint {
+>  					slave-mode;
+>  					remote-endpoint = <&funnel_out_port0>;
+> +					coresight,hwid = <0>;
+>  				};
+>  			};
+>  		};
+> @@ -191,31 +200,35 @@ Example:
+>  				funnel_out_port0: endpoint {
+>  					remote-endpoint =
+>  							<&replicator_in_port0>;
+> +					coresight,hwid = <0>;
+>  				};
+>  			};
+>  
+>  			/* funnel input ports */
+>  			port@1 {
+> -				reg = <0>;
+> +				reg = <1>;
+>  				funnel_in_port0: endpoint {
+>  					slave-mode;
+>  					remote-endpoint = <&ptm0_out_port>;
+> +					coresight,hwid = <0>;
+>  				};
+>  			};
+>  
+>  			port@2 {
+> -				reg = <1>;
+> +				reg = <2>;
+>  				funnel_in_port1: endpoint {
+>  					slave-mode;
+>  					remote-endpoint = <&ptm1_out_port>;
+> +					coresight,hwid = <1>;
+>  				};
+>  			};
+>  
+>  			port@3 {
+> -				reg = <2>;
+> +				reg = <3>;
+>  				funnel_in_port2: endpoint {
+>  					slave-mode;
+>  					remote-endpoint = <&etm0_out_port>;
+> +					coresight,hwid = <2>;
+>  				};
+>  			};
+>  
+> @@ -233,6 +246,7 @@ Example:
+>  		port {
+>  			ptm0_out_port: endpoint {
+>  				remote-endpoint = <&funnel_in_port0>;
+> +				coresight,hwid = <0>;
+>  			};
+>  		};
+>  	};
+> @@ -247,6 +261,7 @@ Example:
+>  		port {
+>  			ptm1_out_port: endpoint {
+>  				remote-endpoint = <&funnel_in_port1>;
+> +				coresight,hwid = <0>;
+>  			};
+>  		};
+>  	};
+> @@ -263,6 +278,7 @@ Example:
+>  		port {
+>  			stm_out_port: endpoint {
+>  				remote-endpoint = <&main_funnel_in_port2>;
+> +				coresight,hwid = <0>;
+>  			};
+>  		};
+>  	};
+> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
+> index a3f3416..99d7a9c 100644
+> --- a/drivers/hwtracing/coresight/of_coresight.c
+> +++ b/drivers/hwtracing/coresight/of_coresight.c
+> @@ -105,14 +105,37 @@ int of_coresight_get_cpu(const struct device_node *node)
+>  }
+>  EXPORT_SYMBOL_GPL(of_coresight_get_cpu);
+>  
+> +/*
+> + * of_graph_ep_coresight_get_port_id : Get the hardware port number for the
+> + * given endpoint device node. Prefer the explicit "coresight,hwid" property
+> + * over the endpoint register id (obsolete bindings).
+> + */
+> +static int of_graph_ep_coresight_get_port_id(struct device *dev,
+> +					     struct device_node *ep_node)
 
-I should also add that a NULL current->context is not necessarily a
-problem, assuming that it is the proper result of the loaded audit
-configuration.  If current->context is NULL then the audit records
-that are generated by that process will not be accompanied/associated
-with a matching SYSCALL record ... which is okay since the
-configuration explicitly blocked the creation of the SYSCALL record.
-If current->context is non-NULL, then the audit records will be
-associated with the matching SYSCALL record because that is the Right
-Thing To Do.
 
-While the exact details are still TBD, I expect there to be slight
-changes to how this is all implemented in the upcoming audit container
-ID work.  The impact on the IMA code should be minimal/nothing if you
-are already passing current->context back into the audit subsystem.
+static int of_coresight_endpoint_get_port_id(struct device *dev,
+					     struct device_node *ep_node)
 
--- 
-paul moore
-www.paul-moore.com
+I think that makes more sense since this function is only visible in this file.
+
+> +{
+> +	struct of_endpoint ep;
+> +	int rc, port_id;
+> +
+> +
+> +	if (!of_property_read_u32(ep_node, "coresight,hwid", &port_id))
+> +		return port_id;
+> +
+> +	rc = of_graph_parse_endpoint(ep_node, &ep);
+> +	if (rc)
+> +		return rc;
+> +	dev_warn_once(dev,
+> +		      "ep%d: Mandatory \"coresight,hwid\" property missing."
+> +		      " DT uses obsolete coresight bindings\n", ep.port);
+> +	return ep.port;
+> +}
+> +
+>  struct coresight_platform_data *
+>  of_get_coresight_platform_data(struct device *dev,
+>  			       const struct device_node *node)
+>  {
+> -	int ret = 0;
+> +	int ret = 0, outport, inport;
+>  	struct coresight_platform_data *pdata;
+>  	struct coresight_connection *conn;
+> -	struct of_endpoint endpoint, rendpoint;
+>  	struct device *rdev;
+>  	struct device_node *ep = NULL;
+>  	struct device_node *rparent = NULL;
+> @@ -148,14 +171,10 @@ of_get_coresight_platform_data(struct device *dev,
+>  			if (of_find_property(ep, "slave-mode", NULL))
+>  				continue;
+>  
+> -			/* Get a handle on the local endpoint */
+> -			ret = of_graph_parse_endpoint(ep, &endpoint);
+> -
+> -			if (ret)
+> +			outport = of_graph_ep_coresight_get_port_id(dev, ep);
+> +			if (outport < 0)
+>  				continue;
+> -
+> -			/* The local out port number */
+> -			conn->outport = endpoint.port;
+> +			conn->outport = outport;
+>  
+>  			/*
+>  			 * Get a handle on the remote endpoint and the device
+> @@ -168,15 +187,16 @@ of_get_coresight_platform_data(struct device *dev,
+>  			if (!rparent)
+>  				continue;
+>  
+> -			if (of_graph_parse_endpoint(rep, &rendpoint))
+> -				continue;
+> -
+>  			rdev = of_coresight_get_endpoint_device(rparent);
+>  			if (!rdev)
+>  				return ERR_PTR(-EPROBE_DEFER);
+>  
+> +			inport = of_graph_ep_coresight_get_port_id(rdev, rep);
+> +			if (inport < 0)
+> +				continue;
+> +
+>  			conn->child_name = dev_name(rdev);
+> -			conn->child_port = rendpoint.port;
+> +			conn->child_port = inport;
+>  			conn++;
+>  		} while (ep);
+>  	}
+> -- 
+> 2.7.4
+> 
