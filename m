@@ -1,251 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751958AbeFAEsa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 00:48:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34124 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751605AbeFAEqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 00:46:14 -0400
-From: NeilBrown <neilb@suse.com>
-To: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 01 Jun 2018 14:44:09 +1000
-Subject: [PATCH 11/18] rhashtable: further improve stability of
- rhashtable_walk
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <152782824968.30340.10516788311375582727.stgit@noble>
-In-Reply-To: <152782754287.30340.4395718227884933670.stgit@noble>
-References: <152782754287.30340.4395718227884933670.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
+        id S1751537AbeFAEvn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 00:51:43 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57886 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750881AbeFAEvm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 00:51:42 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Message-ID: <888102f0-fd22-459d-b090-a1bd8a00cb2b@default>
+Date: Thu, 31 May 2018 21:51:05 -0700 (PDT)
+From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To: <linux-kernel@vger.kernel.org>
+Cc: <mingo@redhat.com>, <tglx@linutronix.de>,
+        Srinivas REDDY Eeda <srinivas.eeda@oracle.com>, <bp@alien8.de>,
+        <hpa@zytor.com>
+Subject: [PATCH] x86/microcode/intel: Fix memleak in save_microcode_patch
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8910 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=724
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806010053
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w514plMD006339
 
-If the sequence:
-   obj = rhashtable_walk_next(iter);
-   rhashtable_walk_stop(iter);
-   rhashtable_remove_fast(ht, &obj->head, params);
-   rhashtable_walk_start(iter);
+Free useless ucode_patch entry when it's replaced.
 
- races with another thread inserting or removing
- an object on the same hash chain, a subsequent
- rhashtable_walk_next() is not guaranteed to get the "next"
- object. It is possible that an object could be
- repeated, or missed.
-
- This can be made more reliable by keeping the objects in a hash chain
- sorted by memory address.  A subsequent rhashtable_walk_next()
- call can reliably find the correct position in the list, and thus
- find the 'next' object.
-
- It is not possible to take this approach with an rhltable as keeping
- the hash chain in order is not so easy.  When the first object with a
- given key is removed, it is replaced in the chain with the next
- object with the same key, and the address of that object may not be
- correctly ordered.
- I have not yet found any way to achieve the same stability
- with rhltables, that doesn't have a major impact on lookup
- or insert.  No code currently in Linux would benefit from
- such extra stability.
-
- With this patch:
- - a new object is always inserted after the last object with a
-   smaller address, or at the start.  This preserves the property,
-   important when allowing objects to be removed and re-added, that
-   an object is never inserted *after* a position that it previously
-   held in the list.
- - when rhashtable_walk_start() is called, it records that 'p' is not
-   'safe', meaning that it cannot be dereferenced.  The revalidation
-   that was previously done here is moved to rhashtable_walk_next()
- - when rhashtable_walk_next() is called while p is not NULL and not
-   safe, it walks the chain looking for the first object with an
-   address greater than p and returns that.  If there is none, it moves
-   to the next hash chain.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
 ---
- include/linux/rhashtable-types.h |    1 
- include/linux/rhashtable.h       |   10 ++++-
- lib/rhashtable.c                 |   82 +++++++++++++++++++++++++-------------
- 3 files changed, 62 insertions(+), 31 deletions(-)
+ arch/x86/kernel/cpu/microcode/intel.c |   10 +++++++++-
+ 1 files changed, 9 insertions(+), 1 deletions(-)
 
-diff --git a/include/linux/rhashtable-types.h b/include/linux/rhashtable-types.h
-index 763d613ce2c2..bc3e84547ba7 100644
---- a/include/linux/rhashtable-types.h
-+++ b/include/linux/rhashtable-types.h
-@@ -126,6 +126,7 @@ struct rhashtable_iter {
- 	struct rhashtable_walker walker;
- 	unsigned int slot;
- 	unsigned int skip;
-+	bool p_is_unsafe;
- 	bool end_of_table;
- };
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index 1c2cfa0..461e315 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -150,6 +150,12 @@ static bool microcode_matches(struct microcode_header_intel *mc_header,
+ 	return false;
+ }
  
-diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index 4e2fc97667e0..c612d2446d90 100644
---- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -627,7 +627,12 @@ static inline void *__rhashtable_insert_fast(
- 		    (params.obj_cmpfn ?
- 		     params.obj_cmpfn(&arg, rht_obj(ht, head)) :
- 		     rhashtable_compare(&arg, rht_obj(ht, head)))) {
--			pprev = &head->next;
-+			if (rhlist) {
-+				pprev = &head->next;
-+			} else {
-+				if (head < obj)
-+					headp = &head->next;
-+			}
- 			continue;
- 		}
- 
-@@ -1123,7 +1128,8 @@ static inline int rhashtable_walk_init(struct rhashtable *ht,
-  * Note that if you restart a walk after rhashtable_walk_stop you
-  * may see the same object twice.  Also, you may miss objects if
-  * there are removals in between rhashtable_walk_stop and the next
-- * call to rhashtable_walk_start.
-+ * call to rhashtable_walk_start.  Note that this is different to
-+ * rhashtable_walk_enter() which misses objects.
-  *
-  * For a completely stable walk you should construct your own data
-  * structure outside the hash table.
-diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 120382b0bad0..5ab0f4825271 100644
---- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -230,6 +230,7 @@ static int rhashtable_rehash_one(struct rhashtable *ht, unsigned int old_hash)
- 	struct bucket_table *old_tbl = rht_dereference(ht->tbl, ht);
- 	struct bucket_table *new_tbl = rhashtable_last_table(ht, old_tbl);
- 	struct rhash_head __rcu **pprev = rht_bucket_var(old_tbl, old_hash);
-+	struct rhash_head __rcu **inspos;
- 	int err = -EAGAIN;
- 	struct rhash_head *head, *next, *entry;
- 	spinlock_t *new_bucket_lock;
-@@ -258,12 +259,15 @@ static int rhashtable_rehash_one(struct rhashtable *ht, unsigned int old_hash)
- 	new_bucket_lock = rht_bucket_lock(new_tbl, new_hash);
- 
- 	spin_lock_nested(new_bucket_lock, SINGLE_DEPTH_NESTING);
--	head = rht_dereference_bucket(new_tbl->buckets[new_hash],
--				      new_tbl, new_hash);
--
-+	inspos = &new_tbl->buckets[new_hash];
-+	head = rht_dereference_bucket(*inspos, new_tbl, new_hash);
-+	while (!rht_is_a_nulls(head) && head < entry) {
-+		inspos = &head->next;
-+		head = rht_dereference_bucket(*inspos, new_tbl, new_hash);
-+	}
- 	RCU_INIT_POINTER(entry->next, head);
- 
--	rcu_assign_pointer(new_tbl->buckets[new_hash], entry);
-+	rcu_assign_pointer(*inspos, entry);
- 	spin_unlock(new_bucket_lock);
- 
- 	rcu_assign_pointer(*pprev, next);
-@@ -559,6 +563,10 @@ static struct bucket_table *rhashtable_insert_one(struct rhashtable *ht,
- 		return ERR_PTR(-ENOMEM);
- 
- 	head = rht_dereference_bucket(*pprev, tbl, hash);
-+	while (!ht->rhlist && !rht_is_a_nulls(head) && head < obj) {
-+		pprev = &head->next;
-+		head = rht_dereference_bucket(*pprev, tbl, hash);
-+	}
- 
- 	RCU_INIT_POINTER(obj->next, head);
- 	if (ht->rhlist) {
-@@ -653,10 +661,10 @@ EXPORT_SYMBOL_GPL(rhashtable_insert_slow);
-  *
-  * This function prepares a hash table walk.
-  *
-- * Note that if you restart a walk after rhashtable_walk_stop you
-- * may see the same object twice.  Also, you may miss objects if
-- * there are removals in between rhashtable_walk_stop and the next
-- * call to rhashtable_walk_start.
-+ * A walk is guaranteed to return every object that was in
-+ * the table before this call, and is still in the table when
-+ * rhashtable_walk_next() returns NULL.  Duplicates can be
-+ * seen, but only if there is a rehash event during the walk.
-  *
-  * For a completely stable walk you should construct your own data
-  * structure outside the hash table.
-@@ -740,19 +748,10 @@ int rhashtable_walk_start_check(struct rhashtable_iter *iter)
- 
- 	if (iter->p && !rhlist) {
- 		/*
--		 * We need to validate that 'p' is still in the table, and
--		 * if so, update 'skip'
-+		 * 'p' will be revalidated when rhashtable_walk_next()
-+		 * is called.
- 		 */
--		struct rhash_head *p;
--		int skip = 0;
--		rht_for_each_rcu(p, iter->walker.tbl, iter->slot) {
--			skip++;
--			if (p == iter->p) {
--				iter->skip = skip;
--				goto found;
--			}
--		}
--		iter->p = NULL;
-+		iter->p_is_unsafe = true;
- 	} else if (iter->p && rhlist) {
- 		/* Need to validate that 'list' is still in the table, and
- 		 * if so, update 'skip' and 'p'.
-@@ -869,15 +868,39 @@ void *rhashtable_walk_next(struct rhashtable_iter *iter)
- 	bool rhlist = ht->rhlist;
- 
- 	if (p) {
--		if (!rhlist || !(list = rcu_dereference(list->next))) {
--			p = rcu_dereference(p->next);
--			list = container_of(p, struct rhlist_head, rhead);
--		}
--		if (!rht_is_a_nulls(p)) {
--			iter->skip++;
--			iter->p = p;
--			iter->list = list;
--			return rht_obj(ht, rhlist ? &list->rhead : p);
-+		if (!rhlist && iter->p_is_unsafe) {
-+			/*
-+			 * First time next() was called after start().
-+			 * Need to find location of 'p' in the list.
-+			 */
-+			struct rhash_head *p;
++static void memfree_patch(struct ucode_patch *p)
++{
++	kfree(p->data);
++	kfree(p);
++}
 +
-+			iter->skip = 0;
-+			rht_for_each_rcu(p, iter->walker.tbl, iter->slot) {
-+				iter->skip++;
-+				if (p <= iter->p)
-+					continue;
-+
-+				/* p is the next object after iter->p */
-+				iter->p = p;
-+				iter->p_is_unsafe = false;
-+				return rht_obj(ht, p);
-+			}
-+			/* There is no "next" object in the list, move
-+			 * to next hash chain.
-+			 */
-+		} else {
-+			if (!rhlist || !(list = rcu_dereference(list->next))) {
-+				p = rcu_dereference(p->next);
-+				list = container_of(p, struct rhlist_head,
-+						    rhead);
-+			}
-+			if (!rht_is_a_nulls(p)) {
-+				iter->skip++;
-+				iter->p = p;
-+				iter->list = list;
-+				return rht_obj(ht, rhlist ? &list->rhead : p);
+ static struct ucode_patch *memdup_patch(void *data, unsigned int size)
+ {
+ 	struct ucode_patch *p;
+@@ -190,8 +196,10 @@ static void save_microcode_patch(void *data, unsigned int size)
+ 			p = memdup_patch(data, size);
+ 			if (!p)
+ 				pr_err("Error allocating buffer %p\n", data);
+-			else
++			else {
+ 				list_replace(&iter->plist, &p->plist);
++				memfree_patch(iter);
 +			}
  		}
- 
- 		/* At the end of this slot, switch to next one and then find
-@@ -887,6 +910,7 @@ void *rhashtable_walk_next(struct rhashtable_iter *iter)
- 		iter->slot++;
  	}
  
-+	iter->p_is_unsafe = false;
- 	return __rhashtable_walk_find_next(iter);
- }
- EXPORT_SYMBOL_GPL(rhashtable_walk_next);
+-- 
+1.7.1
