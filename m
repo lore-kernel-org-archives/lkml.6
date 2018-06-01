@@ -1,76 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752735AbeFANYe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:24:34 -0400
-Received: from 61.239-255-62.static.virginmediabusiness.co.uk ([62.255.239.61]:57763
-        "EHLO office.gblabs.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751863AbeFANY3 (ORCPT
+        id S1752752AbeFANYr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:24:47 -0400
+Received: from gateway21.websitewelcome.com ([192.185.46.113]:13923 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751918AbeFANYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:24:29 -0400
-X-Footer: Z2JsYWJzLmNvLnVr
-Subject: Re: mlock() confusing 1 half of system RAM limit
-To: Michal Hocko <mhocko@kernel.org>
-Cc: linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <c43ad840-dcab-b86f-bf15-ffb26b66d37b@gblabs.co.uk>
- <20180601114425.GA15686@dhcp22.suse.cz>
- <3e33edd7-89dd-1c09-77df-a2ae23c208f1@gblabs.co.uk>
- <20180601130524.GB15278@dhcp22.suse.cz>
-From: Alex Richman <alex.r@gblabs.co.uk>
-Message-ID: <1ae5c450-1ffe-cf15-e878-b40f30c0acc3@gblabs.co.uk>
-Date: Fri, 1 Jun 2018 14:24:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 1 Jun 2018 09:24:10 -0400
+X-Authority-Reason: nr=8
+Date: Fri, 1 Jun 2018 08:24:08 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Igor Mitsyanko <imitsyanko@quantenna.com>,
+        Avinash Patil <avinashp@quantenna.com>,
+        Sergey Matyukevich <smatyukevich@quantenna.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] qtnfmac: fix NULL pointer dereference
+Message-ID: <20180601132408.GA2572@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180601130524.GB15278@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.46.223
+X-Source-L: No
+X-Exim-ID: 1fOk2K-000ga3-UG
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.46.223]:59888
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ah, that's it.  Increased the limit on the mount and it works fine now.
+In case *vif* is NULL at 655: if (!vif), the execution path jumps to
+label out, where *vif* is dereferenced at 679:
 
-Thanks!
-- Alex.
+if (vif->sta_state == QTNF_STA_CONNECTING)
 
-On 01/06/18 14:05, Michal Hocko wrote:
-> On Fri 01-06-18 13:26:59, Alex Richman wrote:
->> I am using a shm MAP_SHARED, along these lines:
->>> shm_fd = shm_open(handle, (O_RDWR | O_CREAT), (S_IRWXU | S_IRWXG |
->> S_IRWXO));
->>> ftruncate(shm_fd, channel->sled_size)
->>> channel->sled = mmap(NULL, channel->sled_size, (PROT_READ | PROT_WRITE),
->>> (MAP_SHARED | MAP_NORESERVE), shm_fd, 0);
->>> mlock(channel->sled, channel->sled_size) /* Fails with ENOMEM. */
->> But shmmax is unlimited on my box:
->> # sysctl -a | grep shm
->> kernel.shm_next_id = -1
->> kernel.shm_rmid_forced = 0
->> kernel.shmall = 18446744073692774399
->> kernel.shmmax = 18446744073692774399
->> kernel.shmmni = 4096
->>
->> Any ideas?
-> shm_open uses tmpfs/shmem under the cover and that has the internal
-> limit as explained above.
+Fix this by immediately returning when *vif* is NULL instead of
+jumping to label out.
 
+Addresses-Coverity-ID: 1469567 ("Dereference after null check")
+Fixes: 480daa9cb62c ("qtnfmac: fix invalid STA state on EAPOL failure")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/wireless/quantenna/qtnfmac/cfg80211.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+index 220e2b7..ae0ca80 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
+@@ -654,8 +654,7 @@ qtnf_disconnect(struct wiphy *wiphy, struct net_device *dev,
+ 	vif = qtnf_mac_get_base_vif(mac);
+ 	if (!vif) {
+ 		pr_err("MAC%u: primary VIF is not configured\n", mac->macid);
+-		ret = -EFAULT;
+-		goto out;
++		return -EFAULT;
+ 	}
+ 
+ 	if (vif->wdev.iftype != NL80211_IFTYPE_STATION) {
 -- 
-Alex Richman
-alex.r@gblabs.co.uk
-Engineering
-GB Labs
-2 Orpheus House,
-Calleva park,
-Reading
-RG7 8TA
-Tel:+44 (0)118 455 5000
-www.gblabs.com
-
-
-
-The information contained in this message and any attachment may be proprietary, confidential and privileged.
-If the reader of this message is not the intended recipient, or an employee or agent responsible for delivering
-this message to the intended recipient, you are hereby notified that any dissemination, distribution or copying
-of this communication is strictly prohibited. If you received this communication in error, please contact me immediately,
-and delete the communication (including attachments, if applicable) from any computer or network system.
+2.7.4
