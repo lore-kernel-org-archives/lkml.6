@@ -1,109 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752198AbeFAO30 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:29:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751706AbeFAO3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:29:24 -0400
-X-Google-Smtp-Source: ADUXVKJ/js5HIuwnc0CN5wPZp+XemHd8axsvu2r8pKqCWrKpV63CWo8ORk5UBFfVbjG0eXVGuP2ggXEZSNr/CQRh4Io=
+        id S1752369AbeFAO3l (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:29:41 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46358 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751598AbeFAO3j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:29:39 -0400
+X-Google-Smtp-Source: ADUXVKJ7tFPFXNPrRL7xURHuxFCyurzo7glfUbbAyMbmv4sSjZ9CAvL/ZWLWqs/8oL9bD/eQRGpLm3P/rOAykqWdx0A=
 MIME-Version: 1.0
-In-Reply-To: <CABe79T7=LK=PgaftQeCRE8kmMMztFBNeJ4cdnZhv8ULDO=6+Jw@mail.gmail.com>
-References: <1527486084-4636-1-git-send-email-srinath.mannam@broadcom.com>
- <1527486084-4636-2-git-send-email-srinath.mannam@broadcom.com>
- <20180531164820.GA23074@rob-hp-laptop> <CABe79T7=LK=PgaftQeCRE8kmMMztFBNeJ4cdnZhv8ULDO=6+Jw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 1 Jun 2018 09:29:02 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJsGouQjWAu01fR4LpwanKbSj1d_CvyPXyMBe2vVBHqdw@mail.gmail.com>
-Message-ID: <CAL_JsqJsGouQjWAu01fR4LpwanKbSj1d_CvyPXyMBe2vVBHqdw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: thermal: Add binding document for SR thermal
-To: Srinath Mannam <srinath.mannam@broadcom.com>
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Pramod Kumar <pramod.kumar@broadcom.com>
+In-Reply-To: <494c2768-4ac8-7282-80dd-122add15b2bb@daenzer.net>
+References: <20180531161708.5894-1-michel@daenzer.net> <20180531161708.5894-3-michel@daenzer.net>
+ <CADnq5_O5-m_=xqszq41eOAVaLTytHUHmtDaSc1MeEorZML6T5g@mail.gmail.com>
+ <b458561f-b4e5-58bb-eee0-e3451312ae41@daenzer.net> <CADnq5_M-kS58ScgOBVQG7Mxxepae9b9gqUdMdFgaPaaxQ4NkjQ@mail.gmail.com>
+ <494c2768-4ac8-7282-80dd-122add15b2bb@daenzer.net>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 1 Jun 2018 10:29:37 -0400
+Message-ID: <CADnq5_McUDsTS3DkHWT-xriEm9AZ=zkfZKZ3r0Uxu64bCU1m=Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] drm/amdgpu: Add documentation for PRIME related code
+To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>
+Cc: Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
+        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51ETnkb007734
 
-On Fri, Jun 1, 2018 at 3:51 AM, Srinath Mannam
-<srinath.mannam@broadcom.com> wrote:
-> Hi Rob Herring,
+On Fri, Jun 1, 2018 at 9:56 AM, Michel Dänzer <michel@daenzer.net> wrote:
+> On 2018-06-01 03:44 PM, Alex Deucher wrote:
+>> On Fri, Jun 1, 2018 at 9:40 AM, Michel Dänzer <michel@daenzer.net> wrote:
+>>> On 2018-06-01 02:58 PM, Alex Deucher wrote:
+>>>> On Thu, May 31, 2018 at 12:17 PM, Michel Dänzer <michel@daenzer.net> wrote:
+>>>>> From: Michel Dänzer <michel.daenzer@amd.com>
+>>>>>
+>>>>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+>>>>
+>>>> Series is:
+>>>> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+>>>
+>>> Thanks. Is it okay to merge all of these via the amdgpu tree, or should
+>>> I wait for an ack from Jon and/or core DRM maintainers for that?
+>>
+>> GPU documentation usually goes through the drm trees.  You might want
+>> to push patch 1 (drm_mm.rst fix) via drm_misc, but the rest are can go
+>> in via the amdgpu tree since they are amdgpu specific.
 >
-> Thank you for the review.
-> Please find my answers inline..
+> I'd prefer merging all three patches together, since without patch 1,
+> patch 3 generates the warning below while generating documentation, and
+> the reference to the PRIME Buffer Sharing section doesn't work.
 >
-> On Thu, May 31, 2018 at 10:18 PM, Rob Herring <robh@kernel.org> wrote:
->> On Mon, May 28, 2018 at 11:11:22AM +0530, Srinath Mannam wrote:
->>> From: Pramod Kumar <pramod.kumar@broadcom.com>
->>>
->>> Add binding document for supported thermal implementation
->>> in Stingray.
->>>
->>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
->>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->>> Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
->>> ---
->>>  .../bindings/thermal/brcm,sr-thermal.txt           | 45 ++++++++++++++++++++++
->>>  1 file changed, 45 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>> new file mode 100644
->>> index 0000000..33f9e11
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>> @@ -0,0 +1,45 @@
->>> +* Broadcom Stingray Thermal
->>> +
->>> +This binding describes thermal sensors that is part of Stingray SoCs.
->>> +
->>> +Required properties:
->>> +- compatible : Must be "brcm,sr-thermal"
->>> +- reg : memory where tmon data will be available.
->>
->> What type of memory is this?
-> This is shared memory(cache-able) which is shared between two micro controllers.
+> .../linux/Documentation/gpu/amdgpu.rst:2: WARNING: undefined label:
+> prime_buffer_sharing (if the link has no caption the label must precede
+> a section header)
 
-What else is in this shared memory? You should probably be
-representing that as a whole somewhere in DT.
 
-> One micro controller update temperature of all thermal zones in this
-> shared memory.
-> thermal driver running on another micro controller monitors
-> temperature data of all thermal zones.
->>
->>> +
->>> +Example:
->>> +     tmons {
->>> +             compatible = "simple-bus";
->>> +             #address-cells = <1>;
->>> +             #size-cells = <1>;
->>> +             ranges;
->>> +
->>> +             tmon_ihost0: thermal@8f100000 {
->>> +                     compatible = "brcm,sr-thermal";
->>> +                     reg = <0x8f100000 0x4>;
->>> +             };
->>
->> Convince me that you need a node per register. This can all be
->> accomplished with a single node and either a single reg entry or a
->> series of reg entries.
->>
-> In our system we have 6 different thermal zones. each node belongs to
-> one thermal zone.
-> thermal driver detects each node as separate thermal zone and monitors
-> separately.
-> register entry is only 4byte memory which contains the temperature
-> value of respective thermal zone.
-> Based on requirement we can increase or decrease the number thermal
-> zones need to monitor.
+That's fine.  I'll take them all through the amdgpu tree.
 
-Still, all this can be accomplished with a single node. Having a node
-per register in DT doesn't scale.
+Alex
 
-Rob
+>
+>
+> --
+> Earthling Michel Dänzer               |               http://www.amd.com
+> Libre software enthusiast             |             Mesa and X developer
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
