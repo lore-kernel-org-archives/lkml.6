@@ -1,163 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750913AbeFACaE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 22:30:04 -0400
-Received: from mga03.intel.com ([134.134.136.65]:62411 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750726AbeFACaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 22:30:01 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
-   d="scan'208";a="43805074"
-Date: Fri, 1 Jun 2018 10:30:14 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "Daly, Dan" <dan.daly@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Liang, Cunming" <cunming.liang@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>
-Subject: Re: [PATCH] virtio_pci: support enabling VFs
-Message-ID: <20180601023014.GA31226@debian>
-References: <20180530085521.26583-1-tiwei.bie@intel.com>
- <20180530192010-mutt-send-email-mst@kernel.org>
- <414C18B1-30FA-4AC0-B47D-F0FBF9832737@intel.com>
- <1527699273.29907.2.camel@intel.com>
- <5063D90B-7955-4F1E-85A2-D8AFD661ACB7@intel.com>
- <20180531032049.GB15516@debian>
- <CAKgT0Ud1QmotAXGOi1ORA79rYLFzofDZWPiJtPj=MBg4zxiSdw@mail.gmail.com>
+        id S1750866AbeFACld (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 22:41:33 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:50804 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750728AbeFAClb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 22:41:31 -0400
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
+        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
+        James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>, axboe@kernel.dk
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20180525125322.15398-1-jthumshirn@suse.de>
+        <20180525130535.GA24239@lst.de> <20180525135813.GB9591@redhat.com>
+        <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
+        <20180530220206.GA7037@redhat.com> <20180531163311.GA30954@lst.de>
+        <20180531181757.GB11848@redhat.com>
+Date: Thu, 31 May 2018 22:40:41 -0400
+In-Reply-To: <20180531181757.GB11848@redhat.com> (Mike Snitzer's message of
+        "Thu, 31 May 2018 14:17:57 -0400")
+Message-ID: <yq17enjut3q.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKgT0Ud1QmotAXGOi1ORA79rYLFzofDZWPiJtPj=MBg4zxiSdw@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8910 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806010026
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 07:27:43AM -0700, Alexander Duyck wrote:
-> On Wed, May 30, 2018 at 8:20 PM, Tiwei Bie <tiwei.bie@intel.com> wrote:
-> > On Thu, May 31, 2018 at 01:11:37AM +0800, Rustad, Mark D wrote:
-> >> On May 30, 2018, at 9:54 AM, Duyck, Alexander H
-> >> <alexander.h.duyck@intel.com> wrote:
-> >>
-> >> > On Wed, 2018-05-30 at 09:44 -0700, Rustad, Mark D wrote:
-> >> > > On May 30, 2018, at 9:22 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> >> > >
-> >> > > > > +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int
-> >> > > > > num_vfs)
-> >> > > > > +{
-> >> > > > > +     struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> >> > > > > +     struct virtio_device *vdev = &vp_dev->vdev;
-> >> > > > > +     int (*sriov_configure)(struct pci_dev *pci_dev, int num_vfs);
-> >> > > > > +
-> >> > > > > +     if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
-> >> > > > > +             return -EBUSY;
-> >> > > > > +
-> >> > > > > +     if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
-> >> > > > > +             return -EINVAL;
-> >> > > > > +
-> >> > > > > +     sriov_configure = pci_sriov_configure_simple;
-> >> > > > > +     if (sriov_configure == NULL)
-> >> > > > > +             return -ENOENT;
-> >> > > >
-> >> > > > BTW what is all this trickery in aid of?
-> >> > >
-> >> > > When SR-IOV support is not compiled into the kernel,
-> >> > > pci_sriov_configure_simple is #defined as NULL. This allows it to compile
-> >> > > in that case, even though there is utterly no way for it to be called in
-> >> > > that case. It is an alternative to #ifs in the code.
-> >> >
-> >> > Why even have the call though? I would wrap all of this in an #ifdef
-> >> > and strip it out since you couldn't support SR-IOV if it isn't present
-> >> > in the kernel anyway.
-> >>
-> >> I am inclined to agree. In this case, the presence of #ifdefs I think would
-> >> be clearer. As written, someone will want to get rid of the pointer only to
-> >> create a build problem when SR-IOV is not configured.
-> >
-> > In my opinion, maybe it would be better to make
-> > pci_sriov_configure_simple() always available
-> > just like other sriov functions.
-> >
-> > Based on the comments in the original patch:
-> >
-> > https://patchwork.kernel.org/patch/10353197/
-> > """
-> > +/* this is expected to be used as a function pointer, just define as NULL */
-> > +#define pci_sriov_configure_simple NULL
-> > """
-> >
-> > This function could be defined as NULL just because
-> > it was expected to be used as a function pointer.
-> > But actually it could be called directly as a
-> > function, just like this case.
-> >
-> > So I prefer to make this function always available
-> > just like other sriov functions.
-> >
-> > Best regards,
-> > Tiwei Bie
-> 
-> The fact that you are having to add additional code kind of implies
-> that maybe this doesn't fall into the pci_sriov_configure_simple case
-> anymore. The PF itself is defining what the VF can and can't do via
-> the feature flags you are testing for.
 
-I think you're right about pci_sriov_configure_simple
-isn't designed for this case. I dropped the use of
-pci_sriov_configure_simple in v2. Thanks!
+Mike,
 
-> 
-> For example how is the bit of code below valid if the kernel itself
-> doesn't support SR-IOV:
-> +static void vp_transport_features(struct virtio_device *vdev, u64 features)
-> +{
-> +       struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> +       struct pci_dev *pci_dev = vp_dev->pci_dev;
-> +
-> +       if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
-> +                       pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
-> +               __virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
-> +}
-> +
-> 
-> It really seems like we should be wrapping these functions at the very
-> minimum so that they don't imply you have SR-IOV support when it isn't
-> supported in the kernel.
+> 1) container A is tasked with managing some dedicated NVMe technology
+> that absolutely needs native NVMe multipath.
 
-I think it's OK to accept this feature bit in this case.
-The IOV support not enabled in kernel just means there is
-no way for users to use SR-IOV. But it doesn't mean that
-the virtio driver doesn't understand *this feature bit*.
-Even if the IOV support is enabled in kernel, there is
-still no way for virtio driver to know whether users will
-enable VFs or not. Accepting this feature is to tell the
-device the virtio driver understands this feature (i.e.
-this is not an incompatible virtio driver). And it's not
-to tell the device whether users will enable VFs or not,
-or how many VFs will be enabled.
+> 2) container B is tasked with offering some canned layered product
+> that was developed ontop of dm-multipath with its own multipath-tools
+> oriented APIs, etc. And it is to manage some other NVMe technology on
+> the same host as container A.
 
-> 
-> Also it seems like we should be disabling the VFs if the driver is
-> unbound from this interface. We need to add logic to disable SR-IOV if
-> the driver is removed. What we don't want to do is leave VFs allocated
-> and then have the potential for us to unbind/rebind the driver as the
-> new driver may change the negotiated features.
+This assumes there is something to manage. And that the administrative
+model currently employed by DM multipath will be easily applicable to
+ANA devices. I don't believe that's the case. The configuration happens
+on the storage side, not on the host.
 
-Right. Thanks!
+With ALUA (and the proprietary implementations that predated the spec),
+it was very fuzzy whether it was the host or the target that owned
+responsibility for this or that. Part of the reason was that ALUA was
+deliberately vague to accommodate everybody's existing, non-standards
+compliant multipath storage implementations.
 
-FYI, here is v2:
-https://lists.oasis-open.org/archives/virtio-dev/201805/msg00206.html
+With ANA the heavy burden falls entirely on the storage. Most of the
+things you would currently configure in multipath.conf have no meaning
+in the context of ANA. Things that are currently the domain of
+dm-multipath or multipathd are inextricably living either in the storage
+device or in the NVMe ANA "device handler". And I think you are
+significantly underestimating the effort required to expose that
+information up the stack and to make use of it. That's not just a
+multipath personality toggle switch.
 
-Best regards,
-Tiwei Bie
+If you want to make multipath -ll show something meaningful for ANA
+devices, then by all means go ahead. I don't have any problem with
+that. But I don't think the burden of allowing multipathd/DM to inject
+themselves into the path transition state machine has any benefit
+whatsoever to the user. It's only complicating things and therefore we'd
+be doing people a disservice rather than a favor.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
