@@ -1,78 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753207AbeFAS4c (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 14:56:32 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:45048 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbeFAS4b (ORCPT
+        id S1753292AbeFAS65 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 14:58:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33226 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752572AbeFAS6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 14:56:31 -0400
-Message-ID: <1527879389.7898.84.camel@surriel.com>
-Subject: Re: 4.13..4.14 scheduling overhead regression (bisected  -
- b956575bed91)
-From: Rik van Riel <riel@surriel.com>
-To: Peter Zijlstra <peterz@infradead.org>, Mike Galbraith <efault@gmx.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>
-Date: Fri, 01 Jun 2018 14:56:29 -0400
-In-Reply-To: <20180601132055.GT12198@hirez.programming.kicks-ass.net>
-References: <1527857873.4674.11.camel@gmx.de>
-         <20180601132055.GT12198@hirez.programming.kicks-ass.net>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-ib3fbF7sKiIwG+QUOToN"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Fri, 1 Jun 2018 14:58:54 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1FFB960251
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH V2] PCI: move early dump functionality from x86 arch into
+ the common code
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, timur@codeaurora.org,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Petr Tesarik <ptesarik@suse.cz>, Ram Pai <linuxram@us.ibm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Christoffer Dall <cdall@linaro.org>, Jonathan Corbet <corbet@lwn.net>,
+        "maintainer:X86 ARCHITECTURE 32-BIT AND 64-BIT" <x86@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, David Rientjes <rientjes@google.com>,
+        Thymo van Beers <thymovanbeers@gmail.com>,
+        Borislav Petkov <bp@suse.de>, Tom Lendacky <thomas.lendacky@amd.com>,
+        Marc Zyngier <marc.zyngier@arm.com>, linux-arm-msm@vger.kernel.org,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org, Juergen Gross <jgross@suse.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+References: <1527878854-21419-1-git-send-email-okaya@codeaurora.org>
+ <20180601185310.GA175802@bhelgaas-glaptop.roam.corp.google.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <dac3d600-86c4-456a-046b-f2229a8c19d7@codeaurora.org>
+Date: Fri, 1 Jun 2018 14:58:48 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180601185310.GA175802@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 6/1/2018 2:53 PM, Bjorn Helgaas wrote:
+>> +	pci_info(pdev, "pci 0000:%02x:%02x.%d config space:\n",
+>> +		 pdev->bus->number, PCI_SLOT(pdev->devfn),
+>> +		 PCI_FUNC(pdev->devfn));
+> I'm still missing something -- why go to the trouble of pdev->bus->number,
+> PCI_SLOT(), etc?  Isn't the output going to look like this?
+> 
+>   pci 0000:00:00.0: pci 0000:00:00.0 config space:
+> 
+> In other words, wouldn't the following be enough?
+> 
+>   pci_info(pdev, "config space:\n");
+> 
 
---=-ib3fbF7sKiIwG+QUOToN
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+You are right. The origin print function was pr_info. We don't need that
+stuff anymore. 
 
-On Fri, 2018-06-01 at 15:20 +0200, Peter Zijlstra wrote:
-> On Fri, Jun 01, 2018 at 02:57:53PM +0200, Mike Galbraith wrote:
-> > b956575bed91ecfb136a8300742ecbbf451471ab is the first bad commit
-> > commit b956575bed91ecfb136a8300742ecbbf451471ab
-> > Author: Andy Lutomirski <luto@kernel.org>
-> > Date:   Mon Oct 9 09:50:49 2017 -0700
-> >=20
-> >     x86/mm: Flush more aggressively in lazy TLB mode
->=20
-> Oh boy... Maybe we should start looking at that optimization Andy
-> mentioned.
->=20
-> IIRC all page freeing does indeed go through tlb_remove_page(), it
-> shouldn't be too hard to make that work.
-
-Page freeing does. However, page table freeing
-does not, and might need to be done in a different
-way.
-
-I wonder how expensive/effective it would be to free
-page tables with RCU, and have the RCU code flush the
-TLB if it notices the ctx_id is wrong?
-
-Also, I need to go find Andy's optimization, and
-see how it works :)
-
---=20
-All Rights Reversed.
---=-ib3fbF7sKiIwG+QUOToN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsRlt0ACgkQznnekoTE
-3oOcxggAukRp10h7m2BYQNVEleXsqhmQGT+TzLluK21kjfVqUoRfvrEChQP327v6
-D2Adxy1siRPPUNI6v3LymUXHhrtgV0Xy3A11oNvMRFNI1R2C9+1u/ULLH3coWvdS
-1DSsEQbU08SFAH9cY+dCR+dQkVyN65iZuNCModupSI21cyJgYk5yHtsDzpLgrgKF
-/OSE92cMS0PQppCarnNIqEhPP9ptFI0tcUDBz4DKF+YNU//yJayEeCDVN1Idn4kM
-rvTXNqQQ2JjPbsdfWqQWclLHR0q5rAxwV/cQkqY+1pVhc7X16/Yvjo0G9KyoXQmc
-rZ+iAeMbehSH1SwPbtr998TV8UtOcQ==
-=vOa3
------END PGP SIGNATURE-----
-
---=-ib3fbF7sKiIwG+QUOToN--
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
