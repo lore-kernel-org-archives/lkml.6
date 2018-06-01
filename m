@@ -1,213 +1,292 @@
-Return-Path: <linux-efi-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3570355-1527872193-2-10648696681699264514
+Return-Path: <linux-fsdevel-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3474461-1527866804-2-12370875908020925156
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-efi-owner@vger.kernel.org
+X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527872193; b=ZyXvjqA68IH+JHpOACIOfyP/hswbz+kdmQqFMqhOgwhUrV7oRA
-    SAE7F/hEeZuX20zF2aWU+Ww/y7bGoPV/Az4gn1PBs09Ge/c5Dqs5br6WFcVQxa6q
-    rSGkJqrJXowKRfftM4qu4Or5WD61E1Kf52HT//ZdgoZ21f5/B0TfGsiWmvnElrC7
-    soutSPnSEsMsou9Pf36RRzAvWZc+LQaMgt72B2CWRXb8EMRtmh6KYFAP4+RjB4hs
-    zbhC6ClZkYF9D7sVO2HnapSGnE0VLw8qcIF61UQYAfSbaEhS1km38O8b0m0bcdvW
-    yM8Nr2NtDpsy9kzIC4HbrnZnWYTO5J9rRD1A==
+    1527866804; b=fzzQXnZ0cDs8fcDw0IZQa3z5hpDAhMApgfulGHqFSsC7yjQnaq
+    p91ewgpmr5dT/nsJoAcvxFo/C6UUtPCIC92me/C66nmIXKEm4Qnd9FLPWSAj+1C1
+    hREws/fII0HMXUmIjgp4Gu+biERamRgtek7iHMdHDc44ODWfBRhgV0s74OJKmYlo
+    izzLP9Nbh0Jp/bpfNQpp6VYxCASmnRp0WF9SBinjoiF4imVPyQKnYK6cEVlXXeaW
+    8mUGAzqzhFhMAB/U1MzhZ9a+oxssiz42HmNoBRUGES1e+PSIbhYHaQNP68pvX0DJ
+    ClBoNej18KeEFqawyjxvjkuRhQvPdDf2+lMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1527872193; bh=
-    C2D5GvjcC7V4FORbwxZ69U4sLMhcRajdQiFRlMfP7No=; b=ECa6qpgwMMlfq/J0
-    pJnoK4UQxhagX1LM9b9zwTpSx+x8H/viMHu84osZFPGu9+00V9d37zq1mVqaK1pF
-    nJiyBxALIrOYco4QU6So75/zIMuqnlPYM0Qq2IB2j8ppy7fjeCgDpuZ0CkamnJfb
-    iad8bj8YJxGT29YMpdrvupQqt0wklnpmhCB6E3p6v8XaPvxXS1lxzyR3IYdBMzSt
-    hINA9sRyqc9wDxEC26W+camG8JlqoTKJB0X/39CIkdm0YYwfV9/+A4e3aKJpfOV9
-    KIZGDxZq9BZFylZ7jxN4QMlZJIM+Y+ZFXJkod0UQqY98GvXxn3uxNAy/VlxtEQuu
-    eZhcsA==
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1527866804; bh=Qt0hNmjAsUlatBnP4nqMCHtP2qQB2M
+    MysPBzwnlEakg=; b=Ot6/H7impTrXroHomTQ4750fqQmlFH1l8Gvlq0lOhVKyQ9
+    oUEwpG/CebEFdTRMe8LECy3hhvJVM7ebUlvInm8pIgmwg2eHnhvFevJW52Te9RY0
+    AENqliFLVfWmFJpFAwWbrQl2yWtFUYLAX4iylzg0zqYBe+Tb8omdeGTFrvZM9Nhf
+    22FN4IpCzvV2YwS48R1sBuJ/5+RQT/FR1hE44oIlQCnUwZofj9Hw745yFwDAGgZU
+    pAACZt8CPVnKcQ3OEeQswoDrrJeI9HI/q74IKJ01unjnvoNtIuijS83HO4P4+6/l
+    dODVbMfMEj6h1/k/FGUJH0kU5jASvYbJ3Idiu8aA==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=google.com header.i=@google.com header.b=E6Qrpvol
-    header.a=rsa-sha256 header.s=20161025 x-bits=2048;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
+    dkim=invalid (public key: not available, 0-bit  key sha256)
+    header.d=szeredi.hu header.i=@szeredi.hu header.b=Jk0fauEj
+    header.a=-sha256 header.s=google x-bits=0;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=szeredi.hu;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=BMT9VOQf;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=TLI30o+T;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=google.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=40 state=0
+    header.domain=szeredi.hu header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=google.com header.i=@google.com header.b=E6Qrpvol
-      header.a=rsa-sha256 header.s=20161025 x-bits=2048;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
+    dkim=invalid (public key: not available, 0-bit  key sha256)
+      header.d=szeredi.hu header.i=@szeredi.hu header.b=Jk0fauEj
+      header.a=-sha256 header.s=google x-bits=0;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=szeredi.hu;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=BMT9VOQf;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=TLI30o+T;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=google.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=40 state=0
+      header.domain=szeredi.hu header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCF8BXPDCjU7ptTG3E+Vrpu6QFCSGN8gybFfd2ipZhiTcuqd/Kq1jEDCMESI3MHdQzMiUgYQFQQl8htUDWzuldBX0Q3/UAThtpn/FGCU9448bFxxskYm
-    FrAKeZPBFuj0m6yOX+xIqOurX5RsLJF1HBxsxSu+nYuPZMKUidECvF6YFZNJW+ZEadHXCnfF8VZ3KehPmDVuE6X2xISwzpjHHHNj7NdFLrdqviNujWdwoZLl
+X-CM-Envelope: MS4wfII9IzP8MTByBjCWUxR/RU/Z1bJzYlpKew6560E+ADxyHSnwvEjq9e+jOeOnRHXkxWM6jkNiTp/9+VevolEVDv51t6Jl2cZbypjke4y9xZ6BuRHHI6mr
+    ryaIyiEtN4Wc9ji085kNBnfa2ZzMM1XMcML+alrjHJP1rmk8HFr9nsP4+Fbl4vg+1FBYmjxheqPpY9SFgSuDKQKAPDxpQ/3wRt/I/xxlw5V4KAtvrqxBRJuF
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=7mUfYlMuFuIA:10
-    a=D19gQVrFAAAA:8 a=NEAV23lmAAAA:8 a=Twlkf-z8AAAA:8 a=1XWaLZrsAAAA:8
-    a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8 a=oGMlB6cnAAAA:8 a=20KFwNOVAAAA:8
-    a=VwQbUJbxAAAA:8 a=sApZseF_516eCH-e1ggA:9 a=x8gzFH9gYPwA:10
-    a=W4TVW4IDbPiebHqcZpNg:22 a=-74SuR6ZdpOK_LpdRCUo:22 a=xmb-EsYY8bH0VWELuYED:22
-    a=NdAtdrkLVvyUPsUoGJp4:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=7mUfYlMuFuIA:10
+    a=VwQbUJbxAAAA:8 a=VcIgcaG0cDTAu_lxaYwA:9 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753427AbeFAQ4c (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 1 Jun 2018 12:56:32 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42498 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753199AbeFAQ4E (ORCPT
-        <rfc822;linux-efi@vger.kernel.org>); Fri, 1 Jun 2018 12:56:04 -0400
-X-Google-Smtp-Source: ADUXVKLilYrOPo4CaRibHDM5lRCQXyWid6uLBXI8vO+9RXGzowpXb0F1Zy8EkanAXi2HqcvFjBo5cw==
-From: Nick Desaulniers <ndesaulniers@google.com>
-To: akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
-        aryabinin@virtuozzo.com, akataria@vmware.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org,
-        hpa@zytor.com, jan.kiszka@siemens.com,
-        jarkko.sakkinen@linux.intel.com, jgross@suse.com,
-        jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
-        mingo@redhat.com, mjg59@google.com, mka@chromium.org,
-        ndesaulniers@google.com, pombredanne@nexb.com, rostedt@goodmis.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, tweek@google.com
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org
-Subject: [PATCH 3/3] x86: paravirt: make native_save_fl extern inline
-Date: Fri,  1 Jun 2018 09:55:50 -0700
-Message-Id: <20180601165550.90053-4-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
-In-Reply-To: <20180601165550.90053-1-ndesaulniers@google.com>
-References: <20180601165550.90053-1-ndesaulniers@google.com>
-Sender: linux-efi-owner@vger.kernel.org
-X-Mailing-List: linux-efi@vger.kernel.org
+        id S1752992AbeFAP0c (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 1 Jun 2018 11:26:32 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43313 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752970AbeFAP0a (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:26:30 -0400
+X-Google-Smtp-Source: ADUXVKKLYfbLtU/FTT6bdF5Zrd2uEvKaXHyB5xDRDLlgJBZpZRF6P28jOOjhpqL1kSc0C4TT5tjZ0w==
+Date: Fri, 1 Jun 2018 17:26:25 +0200
+From: Miklos Szeredi <miklos@szeredi.hu>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: Re: [GIT PULL] overlayfs update for 4.18
+Message-ID: <20180601152625.GD23785@veci.piliscsaba.redhat.com>
+References: <20180529132148.GC23785@veci.piliscsaba.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529132148.GC23785@veci.piliscsaba.redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+Sender: linux-fsdevel-owner@vger.kernel.org
+X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-native_save_fl() is marked static inline, but by using it as
-a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
+On Tue, May 29, 2018 at 03:21:48PM +0200, Miklos Szeredi wrote:
+> Hi Al,
+> 
+> I'm sending this pull request to you instead of Linus, because a bigger than
+> usual chunk involves the VFS.
+> 
+> Please pull from:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git for-viro
+> 
+> This update contains the following:
+> 
+>  - Deal with vfs_mkdir() not instantiating dentry.
+> 
+>  - Stack file operations.  This solves the ro/rw file descriptor inconsistency,
+>    weirdness with ioctl, as well as removing a bunch of overlay specific hacks
+>    from the VFS.
+> 
+>  - Allow metadata-only copy-up when data is unchanged.
+> 
+>  - Various cleanups in VFS and overlayfs.
 
-paravirt's use of native_save_fl() also requires that no GPRs other than
-%rax are clobbered.
+Updated tree pushed to same place.
 
-Compilers have different heuristics which they use to emit stack guard
-code, the emittance of which can break paravirt's callee saved assumption
-by clobbering %rcx.
+Incremental patch against previous pull and posted patchset.
 
-Marking a function definition extern inline means that if this version
-cannot be inlined, then the out-of-line version will be preferred. By
-having the out-of-line version be implemented in assembly, it cannot be
-instrumented with a stack protector, which might violate custom calling
-conventions that code like paravirt rely on.
-
-The semantics of extern inline has changed since gnu89. This means that
-folks using GCC versions >= 5.1 may see symbol redefinition errors at
-link time for subdirs that override KBUILD_CFLAGS (making the C standard
-used implicit) regardless of this patch. This has been cleaned up
-earlier in the patch set, but is left as a note in the commit message
-for future travelers.
-
-Reports:
-https://lkml.org/lkml/2018/5/7/534
-https://github.com/ClangBuiltLinux/linux/issues/16
-
-Discussion:
-https://bugs.llvm.org/show_bug.cgi?id=37512
-https://lkml.org/lkml/2018/5/24/1371
-
-Thanks to the many folks that participated in the discussion.
-
-Debugged-by: Alistair Strachan <astrachan@google.com>
-Debugged-by: Matthias Kaehlcke <mka@chromium.org>
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Suggested-by: Tom Stellar <tstellar@redhat.com>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+Thanks,
+Miklos
 ---
- arch/x86/include/asm/irqflags.h |  2 +-
- arch/x86/kernel/Makefile        |  1 +
- arch/x86/kernel/irqflags.S      | 26 ++++++++++++++++++++++++++
- 3 files changed, 28 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/kernel/irqflags.S
 
-diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
-index 89f08955fff7..c4fc17220df9 100644
---- a/arch/x86/include/asm/irqflags.h
-+++ b/arch/x86/include/asm/irqflags.h
-@@ -13,7 +13,7 @@
-  * Interrupt control:
-  */
+diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
+index 0a8e3c4543d1..79be4a77ca08 100644
+--- a/Documentation/filesystems/overlayfs.txt
++++ b/Documentation/filesystems/overlayfs.txt
+@@ -280,7 +280,7 @@ parameter metacopy=on/off. Lastly, there is also a per mount option
+ metacopy=on/off to enable/disable this feature per mount.
  
--static inline unsigned long native_save_fl(void)
-+extern inline unsigned long native_save_fl(void)
+ Do not use metacopy=on with untrusted upper/lower directories. Otherwise
+-it is possible that an attacker can create a handcrafted file with
++it is possible that an attacker can create an handcrafted file with
+ appropriate REDIRECT and METACOPY xattrs, and gain access to file on lower
+ pointed by REDIRECT. This should not be possible on local system as setting
+ "trusted." xattrs will require CAP_SYS_ADMIN. But it should be possible
+@@ -318,7 +318,7 @@ does not support NFS export, lower filesystem does not have a valid UUID or
+ if the upper filesystem does not support extended attributes.
+ 
+ For "metadata only copy up" feature there is no verification mechanism at
+-mount time. So if same upper is mounted with different set of lower, mount
++mount time. So if same upper is mouted with different set of lower, mount
+ probably will succeed but expect the unexpected later on. So don't do it.
+ 
+ It is quite a common practice to copy overlay layers to a different
+diff --git a/fs/overlayfs/Kconfig b/fs/overlayfs/Kconfig
+index 08b04d9fd6e6..e0a090eca65e 100644
+--- a/fs/overlayfs/Kconfig
++++ b/fs/overlayfs/Kconfig
+@@ -11,7 +11,7 @@ config OVERLAY_FS
+ 	  For more information see Documentation/filesystems/overlayfs.txt
+ 
+ config OVERLAY_FS_REDIRECT_DIR
+-	bool "Overlayfs: turn on redirect directory feature by default"
++	bool "Overlayfs: turn on redirect dir feature by default"
+ 	depends on OVERLAY_FS
+ 	help
+ 	  If this config option is enabled then overlay filesystems will use
+@@ -46,7 +46,7 @@ config OVERLAY_FS_INDEX
+ 	depends on OVERLAY_FS
+ 	help
+ 	  If this config option is enabled then overlay filesystems will use
+-	  the index directory to map lower inodes to upper inodes by default.
++	  the inodes index dir to map lower inodes to upper inodes by default.
+ 	  In this case it is still possible to turn off index globally with the
+ 	  "index=off" module option or on a filesystem instance basis with the
+ 	  "index=off" mount option.
+@@ -67,7 +67,7 @@ config OVERLAY_FS_NFS_EXPORT
+ 	depends on !OVERLAY_FS_METACOPY
+ 	help
+ 	  If this config option is enabled then overlay filesystems will use
+-	  the index directory to decode overlay NFS file handles by default.
++	  the inodes index dir to decode overlay NFS file handles by default.
+ 	  In this case, it is still possible to turn off NFS export support
+ 	  globally with the "nfs_export=off" module option or on a filesystem
+ 	  instance basis with the "nfs_export=off" mount option.
+@@ -133,7 +133,7 @@ config OVERLAY_FS_METACOPY
+ 	help
+ 	  If this config option is enabled then overlay filesystems will
+ 	  copy up only metadata where appropriate and data copy up will
+-	  happen when a file is opened for WRITE operation. It is still
++	  happen when a file is opended for WRITE operation. It is still
+ 	  possible to turn off this feature globally with the "metacopy=off"
+ 	  module option or on a filesystem instance basis with the
+ 	  "metacopy=off" mount option.
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index 296037afecdb..bdadedf73e51 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -27,7 +27,7 @@
+ 
+ static int ovl_ccup_set(const char *buf, const struct kernel_param *param)
  {
- 	unsigned long flags;
+-	pr_warn("overlayfs: \"check_copy_up\" module option is obsolete\n");
++	WARN(1, "overlayfs: \"check_copy_up\" module option is obsolete\n");
+ 	return 0;
+ }
  
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e70..8824d01c0c35 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -61,6 +61,7 @@ obj-y			+= alternative.o i8253.o hw_breakpoint.o
- obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
- obj-y			+= pci-iommu_table.o
- obj-y			+= resource.o
-+obj-y			+= irqflags.o
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index ec350d4d921c..7063e0f588cc 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -116,35 +116,35 @@ int ovl_cleanup_and_whiteout(struct dentry *workdir, struct inode *dir,
+ 	goto out;
+ }
  
- obj-y				+= process.o
- obj-y				+= fpu/
-diff --git a/arch/x86/kernel/irqflags.S b/arch/x86/kernel/irqflags.S
-new file mode 100644
-index 000000000000..937bd08c3f79
---- /dev/null
-+++ b/arch/x86/kernel/irqflags.S
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+-static int ovl_mkdir_real(struct inode *dir, struct dentry **newdentry,
+-			  umode_t mode)
++static struct dentry *ovl_mkdir_real(struct inode *dir, struct dentry *dentry,
++				     umode_t mode)
+ {
+ 	int err;
+-	struct dentry *d, *dentry = *newdentry;
+ 
+ 	err = ovl_do_mkdir(dir, dentry, mode);
+-	if (err)
+-		return err;
+-
+-	if (likely(!d_unhashed(dentry)))
+-		return 0;
++	if (err) {
++		dput(dentry);
++		return ERR_PTR(err);
++	}
+ 
+ 	/*
+ 	 * vfs_mkdir() may succeed and leave the dentry passed
+ 	 * to it unhashed and negative. If that happens, try to
+ 	 * lookup a new hashed and positive dentry.
+ 	 */
+-	d = lookup_one_len(dentry->d_name.name, dentry->d_parent,
+-			   dentry->d_name.len);
+-	if (IS_ERR(d)) {
+-		pr_warn("overlayfs: failed lookup after mkdir (%pd2, err=%i).\n",
+-			dentry, err);
+-		return PTR_ERR(d);
++	if (unlikely(d_unhashed(dentry))) {
++		struct dentry *d;
 +
-+#include <asm/asm.h>
-+#include <asm/export.h>
-+#include <linux/linkage.h>
-+
-+/*
-+ * unsigned long native_save_fl(void)
-+ */
-+ENTRY(native_save_fl)
-+	pushf
-+	pop %_ASM_AX
-+	ret
-+ENDPROC(native_save_fl)
-+EXPORT_SYMBOL(native_save_fl)
-+
-+/*
-+ * void native_restore_fl(unsigned long flags)
-+ * %rdi: flags
-+ */
-+ENTRY(native_restore_fl)
-+	push %_ASM_DI
-+	popf
-+	ret
-+ENDPROC(native_restore_fl)
-+EXPORT_SYMBOL(native_restore_fl)
--- 
-2.17.0.921.gf22659ad46-goog
-
++		d = lookup_one_len(dentry->d_name.name, dentry->d_parent,
++				   dentry->d_name.len);
++		if (IS_ERR(d)) {
++			pr_warn("overlayfs: failed lookup after mkdir (%pd2, err=%i).\n",
++				dentry, err);
++		}
++		dput(dentry);
++		dentry = d;
+ 	}
+-	dput(dentry);
+-	*newdentry = d;
+-
+-	return 0;
++	return dentry;
+ }
+ 
+ struct dentry *ovl_create_real(struct inode *dir, struct dentry *newdentry,
+@@ -169,8 +169,7 @@ struct dentry *ovl_create_real(struct inode *dir, struct dentry *newdentry,
+ 
+ 		case S_IFDIR:
+ 			/* mkdir is special... */
+-			err =  ovl_mkdir_real(dir, &newdentry, attr->mode);
+-			break;
++			return ovl_mkdir_real(dir, newdentry, attr->mode);
+ 
+ 		case S_IFCHR:
+ 		case S_IFBLK:
+@@ -193,7 +192,7 @@ struct dentry *ovl_create_real(struct inode *dir, struct dentry *newdentry,
+ 		 * Not quite sure if non-instantiated dentry is legal or not.
+ 		 * VFS doesn't seem to care so check and warn here.
+ 		 */
+-		err = -EIO;
++		err = -ENOENT;
+ 	}
+ out:
+ 	if (err) {
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index ca7c3461e424..31f32fc1004b 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -128,7 +128,7 @@ static int ovl_open(struct inode *inode, struct file *file)
+ 	/* No longer need these flags, so don't pass them on to underlying fs */
+ 	file->f_flags &= ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);
+ 
+-	realfile = ovl_open_realfile(file, ovl_inode_realdata(inode));
++	realfile = ovl_open_realfile(file, ovl_inode_real(file_inode(file)));
+ 	if (IS_ERR(realfile))
+ 		return PTR_ERR(realfile);
+ 
