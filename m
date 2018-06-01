@@ -1,117 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751369AbeFAB5h (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 21:57:37 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:44830 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751194AbeFAB5e (ORCPT
+        id S1751082AbeFAB73 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 21:59:29 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39577 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750770AbeFAB7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 21:57:34 -0400
-X-Google-Smtp-Source: ADUXVKJyU5wdKy/7L9B2ZRUCN3TDKwx6Iwddn1qgYOPr7JwyfjBqZ30HD19v2ZG6dytvCEIKAO6LKdxaS1cIp2AQKtY=
-MIME-Version: 1.0
-In-Reply-To: <20180601012657.GQ10363@dastard>
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-3-ross.zwisler@linux.intel.com> <20180529212510.GJ30110@magnolia>
- <20180529220114.GA13948@linux.intel.com> <20180531191332.GB7825@magnolia> <20180601012657.GQ10363@dastard>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Thu, 31 May 2018 18:57:33 -0700
-Message-ID: <CAPcyv4g6dv9sG9dR-iY+aEfSi2r3ey1dXGbX-nexKsN72t0QMw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
- boolean returns
-To: Dave Chinner <david@fromorbit.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 31 May 2018 21:59:25 -0400
+X-Google-Smtp-Source: ADUXVKKC1djBcDudnMFcLivLxARMvpcMaa69ZdRWxTSMhxQuZEiFAcpV3xu1pLXhJtOdXAi9nK8MDw==
+From: Steve Longerbeam <slongerbeam@gmail.com>
+X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
+To: Marek Vasut <marek.vasut@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Steve Longerbeam <steve_longerbeam@mentor.com>
+Subject: [PATCH] clk: vc5: Avoid divide by zero when rounding or setting rates
+Date: Thu, 31 May 2018 18:59:17 -0700
+Message-Id: <1527818357-8154-1-git-send-email-steve_longerbeam@mentor.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 6:26 PM, Dave Chinner <david@fromorbit.com> wrote:
-> On Thu, May 31, 2018 at 12:13:32PM -0700, Darrick J. Wong wrote:
->> On Tue, May 29, 2018 at 04:01:14PM -0600, Ross Zwisler wrote:
->> > On Tue, May 29, 2018 at 02:25:10PM -0700, Darrick J. Wong wrote:
->> > > On Tue, May 29, 2018 at 01:51:01PM -0600, Ross Zwisler wrote:
->> > > > From: Dave Jiang <dave.jiang@intel.com>
->> > > >
->> > > > The function return values are confusing with the way the function is
->> > > > named. We expect a true or false return value but it actually returns
->> > > > 0/-errno.  This makes the code very confusing. Changing the return values
->> > > > to return a bool where if DAX is supported then return true and no DAX
->> > > > support returns false.
->> > > >
->> > > > Signed-off-by: Dave Jiang <dave.jiang@intel.com>
->> > > > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
->> > >
->> > > Looks ok, do you want me to pull the first two patches through the xfs
->> > > tree?
->> > >
->> > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
->> >
->> > Thanks for the review.
->> >
->> > I'm not sure what's best.  If you do that then Mike will need to have a DM
->> > branch for the rest of the series based on your stable commits, yea?
->> >
->> > Mike what would you prefer?
->>
->> I /was/ about to say that I would pull in the first two patches, but now
->> I can't get xfs to mount with pmem at all, and have no way of testing
->> this...?
->
-> I have similar problems, too, but:
->
-> $ ndctl list
-> [
->   {
->     "dev":"namespace1.0",
->     "mode":"raw",
->     "size":8589934592,
->     "sector_size":512,
->     "blockdev":"pmem1"
->   },
->   {
->     "dev":"namespace0.0",
->     "mode":"raw",
->     "size":8589934592,
->     "sector_size":512,
->     "blockdev":"pmem0"
->   }
-> ]
-> $ sudo ndctl create-namespace -f -e namespace0.0 --mode=fsdax
->   Error: operation failed, region0 fsdax mode not available
->
-> failed to reconfigure namespace: Invalid argument
-> $
->
-> I can't make head or tail of what is going wrong here - how am I
-> supposed to debug this and get it working again?
->
-> FWIW, XFS+DAX used to just work on this setup (I hadn't even
-> installed ndctl until this morning!) but after changing the kernel
-> it no longer works. That would make it a regression, yes?
+Add checks in the .round_rate and .set_rate ops for zero requested
+rate or zero parent rate. If either are zero in .round_rate, just
+return zero. If either are zero in .set_rate, return -EINVAL.
 
-This commit caused the behavior change:
+Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+---
+ drivers/clk/clk-versaclock5.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-    569d0365f571 dax: require 'struct page' by default for filesystem dax
-
-The justification is in that patch, but the short summary is we killed
-off "pageless" dax because it had so many incomplete holes and
-surprise behaviors. It needed to die on the path to making dax not
-experimental, i.e. to close safety holes, and be feature complete for
-all the ways userspace expects to use mappings (direct-io, fork,
-poison handling, etc).
-
-I suspect your kernel does not have CONFIG_ZONE_DEVICE enabled which
-has the following dependencies:
-
-        depends on MEMORY_HOTPLUG
-        depends on MEMORY_HOTREMOVE
-        depends on SPARSEMEM_VMEMMAP
-
-I've created a task to go improve ndctl's error reporting for
-troubleshooting this failure.
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index decffb3..5524e5d 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -304,6 +304,9 @@ static int vc5_dbl_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		container_of(hw, struct vc5_driver_data, clk_mul);
+ 	u32 mask;
+ 
++	if (parent_rate == 0 || rate == 0)
++		return -EINVAL;
++
+ 	if ((parent_rate * 2) == rate)
+ 		mask = VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ;
+ 	else
+@@ -349,6 +352,10 @@ static long vc5_pfd_round_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	unsigned long idiv;
+ 
++	/* avoid division by zero */
++	if (*parent_rate == 0 || rate == 0)
++		return 0;
++
+ 	/* PLL cannot operate with input clock above 50 MHz. */
+ 	if (rate > 50000000)
+ 		return -EINVAL;
+@@ -372,6 +379,10 @@ static int vc5_pfd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long idiv;
+ 	u8 div;
+ 
++	/* avoid division by zero */
++	if (parent_rate == 0 || rate == 0)
++		return -EINVAL;
++
+ 	/* CLKIN within range of PLL input, feed directly to PLL. */
+ 	if (parent_rate <= 50000000) {
+ 		regmap_update_bits(vc5->regmap, VC5_VCO_CTRL_AND_PREDIV,
+@@ -429,6 +440,10 @@ static long vc5_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 div_int;
+ 	u64 div_frc;
+ 
++	/* avoid division by zero */
++	if (*parent_rate == 0 || rate == 0)
++		return 0;
++
+ 	if (rate < VC5_PLL_VCO_MIN)
+ 		rate = VC5_PLL_VCO_MIN;
+ 	if (rate > VC5_PLL_VCO_MAX)
+@@ -457,6 +472,9 @@ static int vc5_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct vc5_driver_data *vc5 = hwdata->vc5;
+ 	u8 fb[5];
+ 
++	if (parent_rate == 0 || rate == 0)
++		return -EINVAL;
++
+ 	fb[0] = hwdata->div_int >> 4;
+ 	fb[1] = hwdata->div_int << 4;
+ 	fb[2] = hwdata->div_frc >> 16;
+@@ -509,6 +527,10 @@ static long vc5_fod_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 div_int;
+ 	u64 div_frc;
+ 
++	/* avoid division by zero */
++	if (*parent_rate == 0 || rate == 0)
++		return 0;
++
+ 	/* Determine integer part, which is 12 bit wide */
+ 	div_int = f_in / rate;
+ 	/*
+@@ -546,6 +568,9 @@ static int vc5_fod_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		0
+ 	};
+ 
++	if (parent_rate == 0 || rate == 0)
++		return -EINVAL;
++
+ 	regmap_bulk_write(vc5->regmap, VC5_OUT_DIV_FRAC(hwdata->num, 0),
+ 			  data, 14);
+ 
+-- 
+2.7.4
