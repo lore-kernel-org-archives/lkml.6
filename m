@@ -1,50 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752779AbeFANGW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:06:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47660 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752642AbeFANF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:05:27 -0400
-Date: Fri, 1 Jun 2018 15:05:24 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Alex Richman <alex.r@gblabs.co.uk>
-Cc: linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: mlock() confusing 1 half of system RAM limit
-Message-ID: <20180601130524.GB15278@dhcp22.suse.cz>
-References: <c43ad840-dcab-b86f-bf15-ffb26b66d37b@gblabs.co.uk>
- <20180601114425.GA15686@dhcp22.suse.cz>
- <3e33edd7-89dd-1c09-77df-a2ae23c208f1@gblabs.co.uk>
+        id S1752510AbeFANGz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:06:55 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36056 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752511AbeFANFS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 09:05:18 -0400
+X-Google-Smtp-Source: ADUXVKLb/elB6Ebk0wW6xGc4wHHq0ZSXC9jIyyFyPKFrU2HFBuvvDIJvQGCsoZUcdZmphayBBCMkvw==
+From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To: axboe@fb.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        javier@cnexlabs.com, igor.j.konopko@intel.com,
+        marcin.dziegielewski@intel.com,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [GIT PULL 18/18] lightnvm: pblk: remove unnecessary bio_get/put
+Date: Fri,  1 Jun 2018 15:04:32 +0200
+Message-Id: <20180601130432.30866-19-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180601130432.30866-1-mb@lightnvm.io>
+References: <20180601130432.30866-1-mb@lightnvm.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3e33edd7-89dd-1c09-77df-a2ae23c208f1@gblabs.co.uk>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 01-06-18 13:26:59, Alex Richman wrote:
-> I am using a shm MAP_SHARED, along these lines:
-> > shm_fd = shm_open(handle, (O_RDWR | O_CREAT), (S_IRWXU | S_IRWXG |
-> S_IRWXO));
-> > ftruncate(shm_fd, channel->sled_size)
-> > channel->sled = mmap(NULL, channel->sled_size, (PROT_READ | PROT_WRITE),
-> > (MAP_SHARED | MAP_NORESERVE), shm_fd, 0);
-> > mlock(channel->sled, channel->sled_size) /* Fails with ENOMEM. */
-> 
-> But shmmax is unlimited on my box:
-> # sysctl -a | grep shm
-> kernel.shm_next_id = -1
-> kernel.shm_rmid_forced = 0
-> kernel.shmall = 18446744073692774399
-> kernel.shmmax = 18446744073692774399
-> kernel.shmmni = 4096
-> 
-> Any ideas?
+From: Javier González <javier@javigon.com>
 
-shm_open uses tmpfs/shmem under the cover and that has the internal
-limit as explained above.
+In the read path, pblk gets a reference to the incoming bio and puts it
+after ending the bio. Though this behavior is correct, it is unnecessary
+since pblk is the one putting the bio, therefore, it cannot disappear
+underneath it.
+
+Removing this reference, allows to clean up rqd->bio and avoids pointer
+bouncing for the different read paths. Now, the incoming bio always
+resides in the read context and pblk's internal bios (if any) reside in
+rqd->bio.
+
+Signed-off-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/lightnvm/pblk-read.c | 65 +++++++++++++++++++-------------------------
+ 1 file changed, 28 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index fa7b60f852d9..38360de23d4e 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -39,10 +39,10 @@ static int pblk_read_from_cache(struct pblk *pblk, struct bio *bio,
+ }
+ 
+ static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
+-				 sector_t blba, unsigned long *read_bitmap)
++				 struct bio *bio, sector_t blba,
++				 unsigned long *read_bitmap)
+ {
+ 	struct pblk_sec_meta *meta_list = rqd->meta_list;
+-	struct bio *bio = rqd->bio;
+ 	struct ppa_addr ppas[PBLK_MAX_REQ_ADDRS];
+ 	int nr_secs = rqd->nr_ppas;
+ 	bool advanced_bio = false;
+@@ -189,7 +189,6 @@ static void pblk_end_user_read(struct bio *bio)
+ 	WARN_ONCE(bio->bi_status, "pblk: corrupted read bio\n");
+ #endif
+ 	bio_endio(bio);
+-	bio_put(bio);
+ }
+ 
+ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+@@ -197,23 +196,18 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct pblk_g_ctx *r_ctx = nvm_rq_to_pdu(rqd);
+-	struct bio *bio = rqd->bio;
++	struct bio *int_bio = rqd->bio;
+ 	unsigned long start_time = r_ctx->start_time;
+ 
+ 	generic_end_io_acct(dev->q, READ, &pblk->disk->part0, start_time);
+ 
+ 	if (rqd->error)
+ 		pblk_log_read_err(pblk, rqd);
+-#ifdef CONFIG_NVM_DEBUG
+-	else
+-		WARN_ONCE(bio->bi_status, "pblk: corrupted read error\n");
+-#endif
+ 
+ 	pblk_read_check_seq(pblk, rqd, r_ctx->lba);
+ 
+-	bio_put(bio);
+-	if (r_ctx->private)
+-		pblk_end_user_read((struct bio *)r_ctx->private);
++	if (int_bio)
++		bio_put(int_bio);
+ 
+ 	if (put_line)
+ 		pblk_read_put_rqd_kref(pblk, rqd);
+@@ -230,16 +224,19 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+ static void pblk_end_io_read(struct nvm_rq *rqd)
+ {
+ 	struct pblk *pblk = rqd->private;
++	struct pblk_g_ctx *r_ctx = nvm_rq_to_pdu(rqd);
++	struct bio *bio = (struct bio *)r_ctx->private;
+ 
++	pblk_end_user_read(bio);
+ 	__pblk_end_io_read(pblk, rqd, true);
+ }
+ 
+-static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+-				 unsigned int bio_init_idx,
+-				 unsigned long *read_bitmap)
++static int pblk_partial_read(struct pblk *pblk, struct nvm_rq *rqd,
++			     struct bio *orig_bio, unsigned int bio_init_idx,
++			     unsigned long *read_bitmap)
+ {
+-	struct bio *new_bio, *bio = rqd->bio;
+ 	struct pblk_sec_meta *meta_list = rqd->meta_list;
++	struct bio *new_bio;
+ 	struct bio_vec src_bv, dst_bv;
+ 	void *ppa_ptr = NULL;
+ 	void *src_p, *dst_p;
+@@ -256,11 +253,11 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+ 	new_bio = bio_alloc(GFP_KERNEL, nr_holes);
+ 
+ 	if (pblk_bio_add_pages(pblk, new_bio, GFP_KERNEL, nr_holes))
+-		goto err_add_pages;
++		goto fail_add_pages;
+ 
+ 	if (nr_holes != new_bio->bi_vcnt) {
+ 		pr_err("pblk: malformed bio\n");
+-		goto err;
++		goto fail;
+ 	}
+ 
+ 	for (i = 0; i < nr_secs; i++)
+@@ -283,7 +280,7 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+ 	if (ret) {
+ 		bio_put(rqd->bio);
+ 		pr_err("pblk: sync read IO submission failed\n");
+-		goto err;
++		goto fail;
+ 	}
+ 
+ 	if (rqd->error) {
+@@ -319,7 +316,7 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+ 		meta_list[hole].lba = lba_list_media[i];
+ 
+ 		src_bv = new_bio->bi_io_vec[i++];
+-		dst_bv = bio->bi_io_vec[bio_init_idx + hole];
++		dst_bv = orig_bio->bi_io_vec[bio_init_idx + hole];
+ 
+ 		src_p = kmap_atomic(src_bv.bv_page);
+ 		dst_p = kmap_atomic(dst_bv.bv_page);
+@@ -338,28 +335,26 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+ 
+ 	bio_put(new_bio);
+ 
+-	/* Complete the original bio and associated request */
+-	bio_endio(bio);
+-	rqd->bio = bio;
++	/* restore original request */
++	rqd->bio = NULL;
+ 	rqd->nr_ppas = nr_secs;
+ 
+ 	__pblk_end_io_read(pblk, rqd, false);
+-	return NVM_IO_OK;
++	return NVM_IO_DONE;
+ 
+-err:
++fail:
+ 	/* Free allocated pages in new bio */
+ 	pblk_bio_free_pages(pblk, new_bio, 0, new_bio->bi_vcnt);
+-err_add_pages:
++fail_add_pages:
+ 	pr_err("pblk: failed to perform partial read\n");
+ 	__pblk_end_io_read(pblk, rqd, false);
+ 	return NVM_IO_ERR;
+ }
+ 
+-static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd,
++static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd, struct bio *bio,
+ 			 sector_t lba, unsigned long *read_bitmap)
+ {
+ 	struct pblk_sec_meta *meta_list = rqd->meta_list;
+-	struct bio *bio = rqd->bio;
+ 	struct ppa_addr ppa;
+ 
+ 	pblk_lookup_l2p_seq(pblk, &ppa, lba, 1);
+@@ -423,14 +418,15 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 	rqd = pblk_alloc_rqd(pblk, PBLK_READ);
+ 
+ 	rqd->opcode = NVM_OP_PREAD;
+-	rqd->bio = bio;
+ 	rqd->nr_ppas = nr_secs;
++	rqd->bio = NULL; /* cloned bio if needed */
+ 	rqd->private = pblk;
+ 	rqd->end_io = pblk_end_io_read;
+ 
+ 	r_ctx = nvm_rq_to_pdu(rqd);
+ 	r_ctx->start_time = jiffies;
+ 	r_ctx->lba = blba;
++	r_ctx->private = bio; /* original bio */
+ 
+ 	/* Save the index for this bio's start. This is needed in case
+ 	 * we need to fill a partial read.
+@@ -448,17 +444,15 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 		rqd->ppa_list = rqd->meta_list + pblk_dma_meta_size;
+ 		rqd->dma_ppa_list = rqd->dma_meta_list + pblk_dma_meta_size;
+ 
+-		pblk_read_ppalist_rq(pblk, rqd, blba, &read_bitmap);
++		pblk_read_ppalist_rq(pblk, rqd, bio, blba, &read_bitmap);
+ 	} else {
+-		pblk_read_rq(pblk, rqd, blba, &read_bitmap);
++		pblk_read_rq(pblk, rqd, bio, blba, &read_bitmap);
+ 	}
+ 
+-	bio_get(bio);
+ 	if (bitmap_full(&read_bitmap, nr_secs)) {
+-		bio_endio(bio);
+ 		atomic_inc(&pblk->inflight_io);
+ 		__pblk_end_io_read(pblk, rqd, false);
+-		return NVM_IO_OK;
++		return NVM_IO_DONE;
+ 	}
+ 
+ 	/* All sectors are to be read from the device */
+@@ -473,13 +467,10 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 		}
+ 
+ 		rqd->bio = int_bio;
+-		r_ctx->private = bio;
+ 
+ 		if (pblk_submit_io(pblk, rqd)) {
+ 			pr_err("pblk: read IO submission failed\n");
+ 			ret = NVM_IO_ERR;
+-			if (int_bio)
+-				bio_put(int_bio);
+ 			goto fail_end_io;
+ 		}
+ 
+@@ -489,7 +480,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 	/* The read bio request could be partially filled by the write buffer,
+ 	 * but there are some holes that need to be read from the drive.
+ 	 */
+-	return pblk_partial_read_bio(pblk, rqd, bio_init_idx, &read_bitmap);
++	return pblk_partial_read(pblk, rqd, bio, bio_init_idx, &read_bitmap);
+ 
+ fail_rqd_free:
+ 	pblk_free_rqd(pblk, rqd, PBLK_READ);
 -- 
-Michal Hocko
-SUSE Labs
+2.11.0
