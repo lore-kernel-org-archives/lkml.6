@@ -1,75 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750990AbeFAGsD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 02:48:03 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:51587 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750750AbeFAGsB (ORCPT
+        id S1751214AbeFAGup (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 02:50:45 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:28531 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750903AbeFAGum (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 02:48:01 -0400
-Subject: Re: [PATCH v2 3/6] clk: ti: dra7: Add clkctrl clock data for the mcan
- clocks
-To: Tero Kristo <t-kristo@ti.com>, Rob Herring <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <bcousson@baylibre.com>,
-        <tony@atomide.com>, <paul@pwsan.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-4-faiz_abbas@ti.com>
- <20180531040350.GA25132@rob-hp-laptop>
- <e7e3ade1-76b7-f216-ece5-bd64a55cede6@ti.com>
- <678ef467-a235-91db-8bae-f249ad98eac8@ti.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <d7532c7a-d2ae-5cbf-cfd0-c347b975ed6b@ti.com>
-Date: Fri, 1 Jun 2018 12:18:37 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 1 Jun 2018 02:50:42 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="40641734"
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: [PATCH] x86/vector: Fix the args of vector_alloc tracepoint
+Date: Fri, 1 Jun 2018 14:50:31 +0800
+Message-ID: <20180601065031.21872-1-douly.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
 MIME-Version: 1.0
-In-Reply-To: <678ef467-a235-91db-8bae-f249ad98eac8@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: BA92248AE92A.A2E36
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The vector_alloc tracepont reversed the reserved and ret aggs, that made
+the trace print wrong. Exchange them.
 
-On Thursday 31 May 2018 06:59 PM, Tero Kristo wrote:
-> On 31/05/18 13:14, Faiz Abbas wrote:
->> Hi,
->>
->> On Thursday 31 May 2018 09:33 AM, Rob Herring wrote:
->>> On Wed, May 30, 2018 at 07:41:30PM +0530, Faiz Abbas wrote:
->>>> Add clkctrl data for the m_can clocks and register it within the
->> ...
->>>>   diff --git a/include/dt-bindings/clock/dra7.h
->>>> b/include/dt-bindings/clock/dra7.h
->>>> index 5e1061b15aed..d7549c57cac3 100644
->>>> --- a/include/dt-bindings/clock/dra7.h
->>>> +++ b/include/dt-bindings/clock/dra7.h
->>>> @@ -168,5 +168,6 @@
->>>>   #define DRA7_COUNTER_32K_CLKCTRL    DRA7_CLKCTRL_INDEX(0x50)
->>>>   #define DRA7_UART10_CLKCTRL    DRA7_CLKCTRL_INDEX(0x80)
->>>>   #define DRA7_DCAN1_CLKCTRL    DRA7_CLKCTRL_INDEX(0x88)
->>>> +#define DRA7_ADC_CLKCTRL    DRA7_CLKCTRL_INDEX(0xa0)
->>>
->>> ADC and mcan are the same thing?
->>>
->>
->> The register to control MCAN clocks is called ADC_CLKCTRL, Yes.
-> 
-> Is there any reason for this or is that just a documentation bug?
-> 
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+---
+ arch/x86/include/asm/trace/irq_vectors.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks like they meant to have an ADC in dra74 or dra72 but decided
-against it and then many years later used the same registers for MCAN
-instead. You can see ADC_CLKCTRL exists in dra72 TRM but is explicitly
-disabled.
-
-http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf pg:1524
-
-
-Thanks,
-Faiz
+diff --git a/arch/x86/include/asm/trace/irq_vectors.h b/arch/x86/include/asm/trace/irq_vectors.h
+index 22647a642e98..0af81b590a0c 100644
+--- a/arch/x86/include/asm/trace/irq_vectors.h
++++ b/arch/x86/include/asm/trace/irq_vectors.h
+@@ -236,7 +236,7 @@ TRACE_EVENT(vector_alloc,
+ 	TP_PROTO(unsigned int irq, unsigned int vector, bool reserved,
+ 		 int ret),
+ 
+-	TP_ARGS(irq, vector, ret, reserved),
++	TP_ARGS(irq, vector, reserved, ret),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	unsigned int,	irq		)
+-- 
+2.14.3
