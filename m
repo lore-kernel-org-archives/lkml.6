@@ -1,150 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751336AbeFAVLo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 17:11:44 -0400
-Received: from mga06.intel.com ([134.134.136.31]:64585 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750726AbeFAVLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 17:11:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,467,1520924400";
-   d="scan'208";a="52817641"
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com
-Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V6 27/38] x86/intel_rdt: Add utilities to test pseudo-locked region possibility
-Date: Fri,  1 Jun 2018 06:09:20 -0700
-Message-Id: <59b96030bd839dbc474bbac217f9879e45579e52.1527847599.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <3a7d6cc8dee86c3fbcc3bd8988b4dc80b44582fa.1527593971.git.reinette.chatre@intel.com>
-References: <3a7d6cc8dee86c3fbcc3bd8988b4dc80b44582fa.1527593971.git.reinette.chatre@intel.com>
+        id S1751000AbeFAVQh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 17:16:37 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:45653 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750726AbeFAVQe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 17:16:34 -0400
+X-Google-Smtp-Source: ADUXVKKt36qP0fq+nnzT+k16b8+/zQNCcxiUKiYa1aga26IxGZwyvrhnrmig8WGdara6wtmCl/GH2wql8RpfipAccl8=
+MIME-Version: 1.0
+In-Reply-To: <20180601204604.GB1144@redhat.com>
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-4-ross.zwisler@linux.intel.com> <20180601201924.GA1144@redhat.com>
+ <20180601204604.GB1144@redhat.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Fri, 1 Jun 2018 14:16:33 -0700
+Message-ID: <CAPcyv4j2Mi6p4xQ+m7dqcEpAF4aCEk3pEU8zAwGdnNJ8pVquVw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] dm: fix test for DAX device support
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A pseudo-locked region does not have a class of service associated with
-it and thus not tracked in the array of control values maintained as
-part of the domain. Even so, when the user provides a new bitmask for
-another resource group it needs to be checked for interference with
-existing pseudo-locked regions.
+On Fri, Jun 1, 2018 at 1:46 PM, Mike Snitzer <snitzer@redhat.com> wrote:
+> On Fri, Jun 01 2018 at  4:19P -0400,
+> Mike Snitzer <snitzer@redhat.com> wrote:
+>
+>> On Tue, May 29 2018 at  3:51P -0400,
+>> Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+>>
+>> > Currently device_supports_dax() just checks to see if the QUEUE_FLAG_DAX
+>> > flag is set on the device's request queue to decide whether or not the
+>> > device supports filesystem DAX.  This is insufficient because there are
+>> > devices like PMEM namespaces in raw mode which have QUEUE_FLAG_DAX set but
+>> > which don't actually support DAX.
+>>
+>> Isn't that a PMEM bug then?
+>>
+>> What is the point of setting QUEUE_FLAG_DAX if it cannot be trusted?
+>>
+>> > This means that you could create a dm-linear device, for example, where the
+>> > first part of the dm-linear device was a PMEM namespace in fsdax mode and
+>> > the second part was a PMEM namespace in raw mode.  Both DM and the
+>> > filesystem you put on that dm-linear device would think the whole device
+>> > supports DAX, which would lead to bad behavior once your raw PMEM namespace
+>> > part using DAX needed struct page for something.
+>>
+>> The PMEM namespace in raw mode shouldn't be setting QUEUE_FLAG_DAX, if
+>> it didn't then the stacked-up linear DM wouldn't
+>>
+>> > Fix this by using bdev_dax_supported() like filesystems do at mount time.
+>> > This checks for raw mode and also performs other tests like checking to
+>> > make sure the dax_direct_access() path works.
+>>
+>> Sorry "This" does those things where?
+>
+> I see you meant bdev_dax_supported() does these additional checks.
+>
+> My previous question stands though.  Why is QUEUE_FLAG_DAX getting set
+> if the device hasn't already passed these checks?  Shouldn't setting
+> QUEUE_FLAG_DAX on request_queue depend on bdev_dax_supported() passing?
+>
+> But looking at the drivers that do set QUEUE_FLAG_DAX: they
+> don't have the bdev readily available.  Anyway, just strikes me as
+> bizarre that a driver can set QUEUE_FLAG_DAX without having to have
+> ensured bdev_dax_supported() passes (even if not programatically, but
+> that the developer has verified the hooks, et al exist).
+>
+> But I'll give up on this line of questioning..
+>
+> My dilemma now is: how do I take these changes without first rebasing
+> linux-dm.git ontop of Darrick's xfs tree?
+>
+> I probably should've reviewed faster and been the one to take the entire
+> set (with appropriate acks obviously).
 
-Additionally only one pseudo-locked region can be created in any cache
-hierarchy.
-
-Introduce two utilities in support of above scenarios: (1) a utility
-that can be used to test if a given capacity bitmask overlaps with any
-pseudo-locked regions associated with a particular cache instance, (2) a
-utility that can be used to test if a pseudo-locked region exists within
-a particular cache hierarchy.
-
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
-V6: Fix the broken test for a pseudo-locked region in the cache hierarchy.
-
- arch/x86/kernel/cpu/intel_rdt.h             |  2 +
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 74 +++++++++++++++++++++++++++++
- 2 files changed, 76 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 12b006178d3a..119645c83e27 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -503,6 +503,8 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
- int rdtgroup_tasks_assigned(struct rdtgroup *r);
- int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
- int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
-+bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm);
-+bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d);
- struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
- int update_domains(struct rdt_resource *r, int closid);
- void closid_free(int closid);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index ce8243c87877..b145a7386b10 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -299,3 +299,77 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
- 	pseudo_lock_free(rdtgrp);
- 	return 0;
- }
-+
-+/**
-+ * rdtgroup_cbm_overlaps_pseudo_locked - Test if CBM or portion is pseudo-locked
-+ * @d: RDT domain
-+ * @_cbm: CBM to test
-+ *
-+ * @d represents a cache instance and @_cbm a capacity bitmask that is
-+ * considered for it. Determine if @_cbm overlaps with any existing
-+ * pseudo-locked region on @d.
-+ *
-+ * Return: true if @_cbm overlaps with pseudo-locked region on @d, false
-+ * otherwise.
-+ */
-+bool rdtgroup_cbm_overlaps_pseudo_locked(struct rdt_domain *d, u32 _cbm)
-+{
-+	unsigned long *cbm = (unsigned long *)&_cbm;
-+	unsigned long *cbm_b;
-+	unsigned int cbm_len;
-+
-+	if (d->plr) {
-+		cbm_len = d->plr->r->cache.cbm_len;
-+		cbm_b = (unsigned long *)&d->plr->cbm;
-+		if (bitmap_intersects(cbm, cbm_b, cbm_len))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+/**
-+ * rdtgroup_pseudo_locked_in_hierarchy - Pseudo-locked region in cache hierarchy
-+ * @d: RDT domain under test
-+ *
-+ * The setup of a pseudo-locked region affects all cache instances within
-+ * the hierarchy of the region. It is thus essential to know if any
-+ * pseudo-locked regions exist within a cache hierarchy to prevent any
-+ * attempts to create new pseudo-locked regions in the same hierarchy.
-+ *
-+ * Return: true if a pseudo-locked region exists in the hierarchy of @d or
-+ *         if it is not possible to test due to memory allocation issue,
-+ *         false otherwise.
-+ */
-+bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d)
-+{
-+	cpumask_var_t cpu_with_psl;
-+	struct rdt_resource *r;
-+	struct rdt_domain *d_i;
-+	bool ret = false;
-+
-+	if (!zalloc_cpumask_var(&cpu_with_psl, GFP_KERNEL))
-+		return true;
-+
-+	/*
-+	 * First determine which cpus have pseudo-locked regions
-+	 * associated with them.
-+	 */
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		list_for_each_entry(d_i, &r->domains, list) {
-+			if (d_i->plr)
-+				cpumask_or(cpu_with_psl, cpu_with_psl,
-+					   &d_i->cpu_mask);
-+		}
-+	}
-+
-+	/*
-+	 * Next test if new pseudo-locked region would intersect with
-+	 * existing region.
-+	 */
-+	if (cpumask_intersects(&d->cpu_mask, cpu_with_psl))
-+		ret = true;
-+
-+	free_cpumask_var(cpu_with_psl);
-+	return ret;
-+}
--- 
-2.13.6
+I'd say just make a topic branch on top of xfs and merge it... with
+Darrick's permission of course. It might also mean you should wait for
+the xfs pull request to go to Linus first during the window.
