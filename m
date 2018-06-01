@@ -1,104 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751889AbeFALxm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:53:42 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:46602 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751775AbeFALxj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:53:39 -0400
-X-Google-Smtp-Source: ADUXVKIOjwVX6kKF3zcDWj2JTa+CNd71EIyrspzvqLnXfTb1k1gzsMbZQh7vYw/jXGeEz+cl1pZQeQ==
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Tom Herbert <tom@quantonium.net>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] mm: kvmalloc does not fallback to vmalloc for incompatible gfp flags
-Date: Fri,  1 Jun 2018 13:53:29 +0200
-Message-Id: <20180601115329.27807-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.17.0
+        id S1751740AbeFAL5r (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:57:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60307 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751092AbeFAL5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 07:57:45 -0400
+Date: Fri, 1 Jun 2018 14:01:03 +0200
+From: Giovanni Gherdovich <ggherdovich@suse.cz>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
+        mgorman@techsingularity.net, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+        viresh.kumar@linaro.org
+Subject: Re: [RFC/RFT] [PATCH v3 4/4] cpufreq: intel_pstate: enable boost for
+ SKX
+Message-ID: <20180601120103.olsxfhj6b5d5tahz@linux-h043>
+References: <20180531225143.34270-1-srinivas.pandruvada@linux.intel.com>
+ <20180531225143.34270-5-srinivas.pandruvada@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531225143.34270-5-srinivas.pandruvada@linux.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On Thu, May 31, 2018 at 03:51:43PM -0700, Srinivas Pandruvada wrote:
+> Enable HWP boost on Skylake server platform.
+> 
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+>  drivers/cpufreq/intel_pstate.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> index 254e30a6c1e0..75c5a95bc0ac 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -1794,6 +1794,11 @@ static const struct x86_cpu_id intel_pstate_cpu_ee_disable_ids[] = {
+>  	{}
+>  };
+>  
+> +static const struct x86_cpu_id intel_pstate_hwp_boost_ids[] __initconst = {
+> +	ICPU(INTEL_FAM6_SKYLAKE_X, core_funcs),
+> +	{}
+> +};
+> +
+>  static int intel_pstate_init_cpu(unsigned int cpunum)
+>  {
+>  	struct cpudata *cpu;
+> @@ -1824,6 +1829,10 @@ static int intel_pstate_init_cpu(unsigned int cpunum)
+>  			intel_pstate_disable_ee(cpunum);
+>  
+>  		intel_pstate_hwp_enable(cpu);
+> +
+> +		id = x86_match_cpu(intel_pstate_hwp_boost_ids);
+> +		if (id)
+> +			hwp_boost = true;
+>  	}
+>  
+>  	intel_pstate_get_cpu_pstates(cpu);
+> -- 
+> 2.13.6
+> 
+> 
 
-kvmalloc warned about incompatible gfp_mask to catch abusers (mostly
-GFP_NOFS) with an intention that this will motivate authors of the code
-to fix those. Linus argues that this just motivates people to do even
-more hacks like
-	if (gfp == GFP_KERNEL)
-		kvmalloc
-	else
-		kmalloc
+I have a Skylake server, HWP capable, but it doesn't trigger this bit; I had
+to do "echo 1 > /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost".
 
-I haven't seen this happening much (Linus pointed to bucket_lock special
-cases an atomic allocation but my git foo hasn't found much more) but
-it is true that we can grow those in future. Therefore Linus suggested
-to simply not fallback to vmalloc for incompatible gfp flags and rather
-stick with the kmalloc path.
+Just out of curiosity, do you see reasons for leaving some SKL out of the
+default setting? Or maybe I'm missing something.
 
-Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
+/proc/cpuinfo says that the model name is "Intel(R) Xeon(R) CPU E3-1240 v5";
+the outputs of `cpuid -1` and `cpuid -1 --raw` are in this pastebin:
+http://paste.opensuse.org/view/raw/34255499
 
-Hi Andrew,
-for more context. Linus has pointed out [1] that our (well mine)
-insisting on GFP_KERNEL compatible gfp flags for kvmalloc* can actually
-lead to a worse code because people will work around the restriction.
-So this patch allows kvmalloc to be more permissive and silently skip
-vmalloc path for incompatible gfp flags. This will not help my original
-plan to enforce people to think about GFP_NOFS usage more deeply but
-I can live with that obviously...
 
-alloc_bucket_spinlocks is the only place I could find which special
-cases kvmalloc based on the gfp mask.
-
-[1] http://lkml.kernel.org/r/CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com
-
- lib/bucket_locks.c | 5 +----
- mm/util.c          | 6 ++++--
- 2 files changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/lib/bucket_locks.c b/lib/bucket_locks.c
-index 266a97c5708b..ade3ce6c4af6 100644
---- a/lib/bucket_locks.c
-+++ b/lib/bucket_locks.c
-@@ -30,10 +30,7 @@ int alloc_bucket_spinlocks(spinlock_t **locks, unsigned int *locks_mask,
- 	}
- 
- 	if (sizeof(spinlock_t) != 0) {
--		if (gfpflags_allow_blocking(gfp))
--			tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
--		else
--			tlocks = kmalloc_array(size, sizeof(spinlock_t), gfp);
-+		tlocks = kvmalloc_array(size, sizeof(spinlock_t), gfp);
- 		if (!tlocks)
- 			return -ENOMEM;
- 		for (i = 0; i < size; i++)
-diff --git a/mm/util.c b/mm/util.c
-index 45fc3169e7b0..c6586c146995 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -391,7 +391,8 @@ EXPORT_SYMBOL(vm_mmap);
-  * __GFP_RETRY_MAYFAIL is supported, and it should be used only if kmalloc is
-  * preferable to the vmalloc fallback, due to visible performance drawbacks.
-  *
-- * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm people.
-+ * Please note that any use of gfp flags outside of GFP_KERNEL is careful to not
-+ * fall back to vmalloc.
-  */
- void *kvmalloc_node(size_t size, gfp_t flags, int node)
- {
-@@ -402,7 +403,8 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
- 	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
- 	 * so the given set of flags has to be compatible.
- 	 */
--	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
-+	if ((flags & GFP_KERNEL) != GFP_KERNEL)
-+		return kmalloc_node(size, flags, node);
- 
- 	/*
- 	 * We want to attempt a large physically contiguous block first because
--- 
-2.17.0
+Giovanni Gherdovich
+SUSE Labs
