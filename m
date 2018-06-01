@@ -1,69 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751129AbeFAIgV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:36:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58178 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750740AbeFAIgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:36:14 -0400
-Date: Fri, 1 Jun 2018 10:36:11 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2]: perf record: enable arbitrary event names thru name=
- modifier
-Message-ID: <20180601083611.GB2986@krava>
-References: <23f72f9b-c513-ecd4-d375-c5cf2eb30197@linux.intel.com>
+        id S1751352AbeFAIgk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:36:40 -0400
+Received: from mga18.intel.com ([134.134.136.126]:29787 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751170AbeFAIgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 04:36:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,465,1520924400";
+   d="scan'208";a="53951544"
+Subject: Re: [PATCH v2 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
+To: Prabu Thangamuthu <Prabu.T@synopsys.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Cc: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>
+References: <705D14B1C7978B40A723277C067CEDE2010A9B769C@IN01WEMBXB.internal.synopsys.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <a823deb3-4f94-fa55-fc56-c838a7ab9deb@intel.com>
+Date: Fri, 1 Jun 2018 11:35:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23f72f9b-c513-ecd4-d375-c5cf2eb30197@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <705D14B1C7978B40A723277C067CEDE2010A9B769C@IN01WEMBXB.internal.synopsys.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 05:08:12PM +0300, Alexey Budankov wrote:
-> 
-> Enable complex event names containing [.:=,] symbols to be encoded into Perf 
-> trace using name= modifier e.g. like this:
-> 
-> perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',\
-> 		period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex
-> 
-> Below is how it looks like in the report output. Please note explicit escaped 
-> quoting at cmdline string in the header so that thestring can be directly reused
-> for another collection in shell:
-> 
-> perf report --header
-> 
-> # ========
-> ...
-> # cmdline : /root/abudanko/kernel/tip/tools/perf/perf record -v -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex 
-> # event : name = OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM, , type = 4, size = 112, config = 0x100003c, { sample_period, sample_freq } = 3500000, sample_type = IP|TID|TIME, disabled = 1, inh
-> ...
-> # ========
-> #
-> #
-> # Total Lost Samples: 0
-> #
-> # Samples: 24K of event 'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM'
-> # Event count (approx.): 86492000000
-> #
-> # Overhead  Command  Shared Object     Symbol                                        
-> # ........  .......  ................  ..............................................
-> #
->     14.75%  futex    [kernel.vmlinux]  [k] __entry_trampoline_start
-> ...
-> 
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Hi
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+This patch is still corrupt.  Your mail program is converting it to
+quoted-printable - try saving and applying it yourself.  I suggest you learn
+to use git send-mail.
 
-thanks,
-jirka
+On 30/05/18 18:07, Prabu Thangamuthu wrote:
+> 
+> Synopsys has DWC MSHC controller on HPAS-DX platform connected using PCIe
+> interface with SD card slot and eMMC device slots. This patch is to
+> enable SD cards connected on this platform. As Clock generation logic
+> is implemented using MMCM module of HAPS-DX platform, we have separate
+> functions to control the MMCM to generate required clocks with respect
+> to speed mode.
+> 
+> Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
+> ---
+> V2 - Removed sdhci-pci-dwc-mshc.h and moved into sdhci-pci-dwc-mshc.c
+> Fixed coding style issue.
+> Removed sdhci_snps_set_power and new approach to support eMMC device
+> voltages will be submitted after completeing validations.
+> V1 - Initial Patch.
+> 
+> MAINTAINERS | 7 +++
+> drivers/mmc/host/Makefile | 3 +-
+> drivers/mmc/host/sdhci-pci-core.c | 1 +
+> drivers/mmc/host/sdhci-pci-dwc-mshc.c | 88 +++++++++++++++++++++++++++++++++++
+> drivers/mmc/host/sdhci-pci.h | 3 ++
+> 5 files changed, 101 insertions(+), 1 deletion(-)
+> create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4863175..aba98b6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12684,6 +12684,13 @@ S: Maintained
+> F: drivers/mmc/host/sdhci*
+> F: include/linux/mmc/sdhci*
+> 
+> +SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
+> +M: Prabu Thangamuthu <prabu.t@synopsys.com>
+> +M: Manjunath M B <manjumb@synopsys.com>
+> +L: linux-mmc@vger.kernel.org
+> +S: Maintained
+> +F: drivers/mmc/host/sdhci-pci-dwc-mshc.c
+> +
+> SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
+> M: Ben Dooks <ben-linux@fluff.org>
+> M: Jaehoon Chung <jh80.chung@samsung.com>
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index 85dc132..20490f3 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -11,7 +11,8 @@ obj-$(CONFIG_MMC_MXC) += mxcmmc.o
+> obj-$(CONFIG_MMC_MXS) += mxs-mmc.o
+> obj-$(CONFIG_MMC_SDHCI) += sdhci.o
+> obj-$(CONFIG_MMC_SDHCI_PCI) += sdhci-pci.o
+> -sdhci-pci-y += sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o
+> +sdhci-pci-y += sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o \
+> + sdhci-pci-dwc-mshc.o
+> obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI)) += sdhci-pci-data.o
+> obj-$(CONFIG_MMC_SDHCI_ACPI) += sdhci-acpi.o
+> obj-$(CONFIG_MMC_SDHCI_PXAV3) += sdhci-pxav3.o
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+> index 77dd352..ca1d4f7 100644
+> --- a/drivers/mmc/host/sdhci-pci-core.c
+> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> @@ -1511,6 +1511,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
+> SDHCI_PCI_DEVICE(O2, SEABIRD0, o2),
+> SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
+> SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
+> + SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC, snps),
+> SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
+> /* Generic SD host controller */
+> {PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
+> diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.c b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+> new file mode 100644
+> index 0000000..0706055
+> --- /dev/null
+> +++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+> @@ -0,0 +1,88 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * SDHCI driver for Synopsys DWC_MSHC controller
+> + *
+> + * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
+> + *
+> + * Authors:
+> + * Prabu Thangamuthu <prabu.t@synopsys.com>
+> + * Manjunath M B <manjumb@synopsys.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+
+Do not put license text when using SPDX identifiers
+
+> + */
+> +
+> +#include "sdhci.h"
+> +#include "sdhci-pci.h"
+> +
+> +#define SDHCI_VENDOR_PTR_R 0xE8
+> +
+> +/* Synopsys vendor specific registers */
+> +#define SDHC_GPIO_OUT 0x34
+> +#define SDHC_AT_CTRL_R 0x40
+> +#define SDHC_SW_TUNE_EN 0x00000010
+> +
+> +/* MMCM DRP */
+> +#define SDHC_MMCM_DIV_REG 0x1020
+> +#define DIV_REG_100_MHZ 0x1145
+> +#define DIV_REG_200_MHZ 0x1083
+> +#define SDHC_MMCM_CLKFBOUT 0x1024
+> +#define CLKFBOUT_100_MHZ 0x0000
+> +#define CLKFBOUT_200_MHZ 0x0080
+> +#define SDHC_CCLK_MMCM_RST 0x00000001
+> +
+> +static void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int clock)
+> +{
+> + u16 clk;
+> + u32 reg, vendor_ptr;
+> +
+> + vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
+> +
+> + /* Disable software managed rx tuning */
+> + reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
+> + reg &= ~SDHC_SW_TUNE_EN;
+> + sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
+> +
+> + if (clock <= 52000000) {
+> + sdhci_set_clock(host, clock);
+> + } else {
+> + /* Assert reset to MMCM */
+> + reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
+> + reg |= SDHC_CCLK_MMCM_RST;
+> + sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
+> +
+> + /* Configure MMCM */
+> + if (clock == 100000000) {
+> + sdhci_writel(host, DIV_REG_100_MHZ, SDHC_MMCM_DIV_REG);
+> + sdhci_writel(host, CLKFBOUT_100_MHZ,
+> + SDHC_MMCM_CLKFBOUT);
+> + } else {
+> + sdhci_writel(host, DIV_REG_200_MHZ, SDHC_MMCM_DIV_REG);
+> + sdhci_writel(host, CLKFBOUT_200_MHZ,
+> + SDHC_MMCM_CLKFBOUT);
+> + }
+> +
+> + /* De-assert reset to MMCM */
+> + reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
+> + reg &= ~SDHC_CCLK_MMCM_RST;
+> + sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
+> +
+> + /* Enable clock */
+> + clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
+> + SDHCI_CLOCK_CARD_EN;
+> + sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+> + }
+> +}
+> +
+> +static const struct sdhci_ops sdhci_snps_ops = {
+> + .set_clock = sdhci_snps_set_clock,
+> + .enable_dma = sdhci_pci_enable_dma,
+> + .set_bus_width = sdhci_set_bus_width,
+> + .reset = sdhci_reset,
+> + .set_uhs_signaling = sdhci_set_uhs_signaling,
+> +};
+> +
+> +const struct sdhci_pci_fixes sdhci_snps = {
+> + .ops = &sdhci_snps_ops,
+> +};
+> diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
+> index db9cb54..60131b8 100644
+> --- a/drivers/mmc/host/sdhci-pci.h
+> +++ b/drivers/mmc/host/sdhci-pci.h
+> @@ -59,6 +59,8 @@
+> #define PCI_VENDOR_ID_ARASAN 0x16e6
+> #define PCI_DEVICE_ID_ARASAN_PHY_EMMC 0x0670
+> 
+> +#define PCI_DEVICE_ID_SYNOPSYS_DWC_MSHC 0xc202
+> +
+> /*
+> * PCI device class and mask
+> */
+> @@ -182,5 +184,6 @@ static inline void *sdhci_pci_priv(struct sdhci_pci_slot *slot)
+> #endif
+> 
+> extern const struct sdhci_pci_fixes sdhci_arasan;
+> +extern const struct sdhci_pci_fixes sdhci_snps;
+> 
+> #endif /* __SDHCI_PCI_H */
+> 
