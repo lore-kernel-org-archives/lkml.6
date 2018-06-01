@@ -1,209 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751313AbeFAW2e (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 18:28:34 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34388 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750964AbeFAW2c (ORCPT
+        id S1751385AbeFAWgE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 18:36:04 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:41184 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750943AbeFAWgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 18:28:32 -0400
-X-Google-Smtp-Source: ADUXVKLciJD1Apds9nMZDfb2r/E1EjOnIkhlr7Lf53yP8VJ1gIkzrlKigNUj5ln01qqJrjGqe/L3WuCEtM6t/iUXquk=
+        Fri, 1 Jun 2018 18:36:01 -0400
+X-Google-Smtp-Source: ADUXVKLUxYgCiT5z+sxP3xawklegy3Pyp9ajmkyNpGAW7Hj0Uu3H8PL9lYlOB+g0FhnIBdRRWKUk6Q==
+Date: Fri, 1 Jun 2018 18:35:57 -0400
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Mike Snitzer <snitzer@redhat.com>,
+        Shaohua Li <shli@fb.com>, linux-kernel@vger.kernel.org,
+        Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [bisect BUG] dm-crypt percpu counter warnings and invalid kernel
+ paging request at virtual address
+Message-ID: <20180601223557.GA25942@kmo-pixel>
+References: <CAJKOXPfSbsu0RGTUFfb+t_uOvQQxa0uDn-nsG+1uuKAq56nVXA@mail.gmail.com>
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <1527780226.3427.20.camel@linux.vnet.ibm.com>
-References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
- <1527616920-5415-9-git-send-email-zohar@linux.vnet.ibm.com>
- <CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com>
- <1527635645.3534.39.camel@linux.vnet.ibm.com> <CAHC9VhQQX-JAnV-6jEOsug-6siyO9mrNa=rYK9Whg-MYcfHxgA@mail.gmail.com>
- <1527780226.3427.20.camel@linux.vnet.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 1 Jun 2018 18:28:30 -0400
-Message-ID: <CAHC9VhSjeruk_EM3DZ0fu8aq8_qbhD9BtfhtJ0Ery8mOMu2wrw@mail.gmail.com>
-Subject: Re: [PATCH v4a 8/8] module: replace the existing LSM hook in init_module
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Kees Cook <keescook@chromium.org>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>, kexec@lists.infradead.org,
-        Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPfSbsu0RGTUFfb+t_uOvQQxa0uDn-nsG+1uuKAq56nVXA@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 11:23 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> Both the init_module and finit_module syscalls call either directly
-> or indirectly the security_kernel_read_file LSM hook.  This patch
-> replaces the direct call in init_module with a call to the new
-> security_kernel_load_data hook and makes the corresponding changes
-> in SELinux, LoadPin, and IMA.
->
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Jeff Vander Stoep <jeffv@google.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: Kees Cook <keescook@chromium.org>
->
+On Fri, Jun 01, 2018 at 02:55:15PM +0200, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Todays linux-next 20180601 fails during dm-crypt tests on Exynos5422
+> (ARMv7, Cortex-A7+A15) using crypto HW block from SoC (s5p-aes).
+> 
+> The test which fails:
+> https://github.com/krzk/tools/blob/master/tests/s5p-sss-cryptsetup.sh
+> 
+> Effect:
+> 
+> [  149.867394] ------------[ cut here ]------------
+> [  149.870631] WARNING: CPU: 5 PID: 492 at
+> ../drivers/md/dm-crypt.c:2225 crypt_dtr+0x1c0/0x1c4 [dm_crypt]
+> [  149.880078] Modules linked in: dm_crypt s5p_jpeg exynos_gsc s5p_mfc
+> v4l2_mem2mem v4l2_common videobuf2_dma_contig videobuf2_memops
+> videobuf2_v4l2 videobuf2_common videodev media
+> [  149.895908] CPU: 5 PID: 492 Comm: cryptsetup Tainted: G        W
+>      4.17.0-rc4-00159-gae4c15db96d2 #36
+> [  149.905328] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> [  149.911398] [<c011291c>] (unwind_backtrace) from [<c010ece8>]
+> (show_stack+0x10/0x14)
+> [  149.919111] [<c010ece8>] (show_stack) from [<c0a32190>]
+> (dump_stack+0x98/0xc4)
+> [  149.926307] [<c0a32190>] (dump_stack) from [<c0126fa0>] (__warn+0x10c/0x124)
+> [  149.933310] [<c0126fa0>] (__warn) from [<c01270d0>]
+> (warn_slowpath_null+0x40/0x48)
+> [  149.940862] [<c01270d0>] (warn_slowpath_null) from [<bf28e15c>]
+> (crypt_dtr+0x1c0/0x1c4 [dm_crypt])
+> [  149.949803] [<bf28e15c>] (crypt_dtr [dm_crypt]) from [<c06f34b8>]
+> (dm_table_destroy+0x5c/0xf8)
+> [  149.958360] [<c06f34b8>] (dm_table_destroy) from [<c06f0cb0>]
+> (__dm_destroy+0x158/0x1b4)
+> [  149.966414] [<c06f0cb0>] (__dm_destroy) from [<c06f7988>]
+> (dev_remove+0xd4/0x104)
+> [  149.973861] [<c06f7988>] (dev_remove) from [<c06f80b4>]
+> (ctl_ioctl+0x2e4/0x660)
+> [  149.981144] [<c06f80b4>] (ctl_ioctl) from [<c029fcc0>]
+> (do_vfs_ioctl+0xb0/0x9e8)
+> [  149.988508] [<c029fcc0>] (do_vfs_ioctl) from [<c02a062c>]
+> (ksys_ioctl+0x34/0x5c)
+> [  149.995874] [<c02a062c>] (ksys_ioctl) from [<c0101000>]
+> (ret_fast_syscall+0x0/0x28)
+> [  150.061101] ---[ end trace 3e3bc2b7df1963aa ]---
+> 
+> [  150.065594] Unable to handle kernel paging request at virtual
+> address 2e02f000
+> [  150.383043] [<c0483edc>] (percpu_counter_add_batch) from
+> [<bf28e378>] (crypt_page_free+0x34/0x3c [dm_crypt])
+> [  150.392838] [<bf28e378>] (crypt_page_free [dm_crypt]) from
+> [<c0229b18>] (mempool_exit+0x24/0x60)
+> [  150.401584] [<c0229b18>] (mempool_exit) from [<bf28e028>]
+> (crypt_dtr+0x8c/0x1c4 [dm_crypt])
+> [  150.409903] [<bf28e028>] (crypt_dtr [dm_crypt]) from [<c06f34b8>]
+> (dm_table_destroy+0x5c/0xf8)
+> [  150.418477] [<c06f34b8>] (dm_table_destroy) from [<c06f0cb0>]
+> (__dm_destroy+0x158/0x1b4)
+> [  150.426533] [<c06f0cb0>] (__dm_destroy) from [<c06f7988>]
+> (dev_remove+0xd4/0x104)
+> [  150.433982] [<c06f7988>] (dev_remove) from [<c06f80b4>]
+> (ctl_ioctl+0x2e4/0x660)
+> [  150.441264] [<c06f80b4>] (ctl_ioctl) from [<c029fcc0>]
+> (do_vfs_ioctl+0xb0/0x9e8)
+> [  150.448628] [<c029fcc0>] (do_vfs_ioctl) from [<c02a062c>]
+> (ksys_ioctl+0x34/0x5c)
+> [  150.455994] [<c02a062c>] (ksys_ioctl) from [<c0101000>]
+> (ret_fast_syscall+0x0/0x28)
+> 
 > ---
-> Changelog:
-> - For SELinux, have both the security_kernel_read_file and
-> security_kernel_load_data LSM hooks call selinux_kernel_read_file().
-> - LoadPin: replace existing init_module LSM hook support with
-> new security_kernel_load_data hook.
->
->  kernel/module.c                   |  2 +-
->  security/integrity/ima/ima_main.c | 24 ++++++++++--------------
->  security/loadpin/loadpin.c        | 15 +++++++++++++++
->  security/selinux/hooks.c          | 15 +++++++++++++++
->  4 files changed, 41 insertions(+), 15 deletions(-)
+> 
+> Full log is here:
+> https://krzk.eu/#/builders/1/builds/2117/steps/18/logs/serial0
+> 
+> Bisect could not work reliably because a lot of commits from Kent
+> Overstreet just do not compile. Really, non-buildable stuff should not
+> be committed...
 
-As mentioned in the previous iteration, I have no strong opinion on
-the question of the LSM hooks, but the SELinux bits look okay to me.
+Sorry, I do compile test stuff but sometimes I screw up...
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+I'll work on getting a test set up.
 
-> diff --git a/kernel/module.c b/kernel/module.c
-> index ce8066b88178..b97c642b5b4d 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -2879,7 +2879,7 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
->         if (info->len < sizeof(*(info->hdr)))
->                 return -ENOEXEC;
->
-> -       err = security_kernel_read_file(NULL, READING_MODULE);
-> +       err = security_kernel_load_data(LOADING_MODULE);
->         if (err)
->                 return err;
->
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 5a7696152982..cd33a2eff496 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -438,17 +438,6 @@ static int read_idmap[READING_MAX_ID] = {
->   */
->  int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
->  {
-> -       bool sig_enforce = is_module_sig_enforced();
-> -
-> -       if (!file && read_id == READING_MODULE) {
-> -               if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
-> -                   (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-> -                       pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
-> -                       return -EACCES; /* INTEGRITY_UNKNOWN */
-> -               }
-> -               return 0;       /* We rely on module signature checking */
-> -       }
-> -
->         if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
->                 if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
->                     (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-> @@ -487,9 +476,6 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
->                 return 0;
->         }
->
-> -       if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
-> -               return 0;
-> -
->         /* permit signed certs */
->         if (!file && read_id == READING_X509_CERTIFICATE)
->                 return 0;
-> @@ -518,6 +504,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
->   */
->  int ima_load_data(enum kernel_load_data_id id)
->  {
-> +       bool sig_enforce;
-> +
->         if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
->                 return 0;
->
-> @@ -533,6 +521,14 @@ int ima_load_data(enum kernel_load_data_id id)
->                         pr_err("Prevent firmware sysfs fallback loading.\n");
->                         return -EACCES; /* INTEGRITY_UNKNOWN */
->                 }
-> +               break;
-> +       case LOADING_MODULE:
-> +               sig_enforce = is_module_sig_enforced();
-> +
-> +               if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
-> +                       pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
-> +                       return -EACCES; /* INTEGRITY_UNKNOWN */
-> +               }
->         default:
->                 break;
->         }
-> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-> index 5fa191252c8f..a9c07bfbc338 100644
-> --- a/security/loadpin/loadpin.c
-> +++ b/security/loadpin/loadpin.c
-> @@ -173,9 +173,24 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
->         return 0;
->  }
->
-> +static int loadpin_load_data(enum kernel_load_data_id id)
-> +{
-> +       int rc = 0;
-> +
-> +       switch (id) {
-> +       case LOADING_MODULE:
-> +               rc = loadpin_read_file(NULL, READING_MODULE);
-> +       default:
-> +               break;
-> +       }
-> +
-> +       return rc;
-> +}
-> +
->  static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
->         LSM_HOOK_INIT(sb_free_security, loadpin_sb_free_security),
->         LSM_HOOK_INIT(kernel_read_file, loadpin_read_file),
-> +       LSM_HOOK_INIT(kernel_load_data, loadpin_load_data),
->  };
->
->  void __init loadpin_add_hooks(void)
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 02ebd1585eaf..475aed9ee2c7 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4059,6 +4059,20 @@ static int selinux_kernel_read_file(struct file *file,
->         return rc;
->  }
->
-> +static int selinux_kernel_load_data(enum kernel_load_data_id id)
-> +{
-> +       int rc = 0;
-> +
-> +       switch (id) {
-> +       case LOADING_MODULE:
-> +               rc = selinux_kernel_module_from_file(NULL);
-> +       default:
-> +               break;
-> +       }
-> +
-> +       return rc;
-> +}
-> +
->  static int selinux_task_setpgid(struct task_struct *p, pid_t pgid)
->  {
->         return avc_has_perm(&selinux_state,
-> @@ -6950,6 +6964,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
->         LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
->         LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
->         LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
-> +       LSM_HOOK_INIT(kernel_load_data, selinux_kernel_load_data),
->         LSM_HOOK_INIT(kernel_read_file, selinux_kernel_read_file),
->         LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
->         LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
-> --
-> 2.7.5
->
-
-
-
--- 
-paul moore
-www.paul-moore.com
+> Anyway bisect points around convert to bioset_init()/mempool_init().
+> 
+> Bisect log:
+> git bisect start
+> # good: [ecb37ce9baac653cc09e2b631393dde3df82979f] bcache: Move couple
+> of functions to sysfs.c
+> git bisect good ecb37ce9baac653cc09e2b631393dde3df82979f
+> # bad: [ae4c15db96d22776fe188b5271a226f81e85e872] dm: add writecache target
+> git bisect bad ae4c15db96d22776fe188b5271a226f81e85e872
+> # good: [b7405176b58aa475354f3c0d2ca1c560e9354288] Merge branch
+> 'nvme-4.18-2' of git://git.infradead.org/nvme into for-4.18/block
+> git bisect good b7405176b58aa475354f3c0d2ca1c560e9354288
+> # skip: [b906bbb6997785d9ea0bd3f5585537afa6257c43] lightnvm: convert
+> to bioset_init()/mempool_init()
+> git bisect skip b906bbb6997785d9ea0bd3f5585537afa6257c43
+> # skip: [0892fac8719f062f98116ee883230a004a9fce1e] drbd: convert to
+> bioset_init()/mempool_init()
+> git bisect skip 0892fac8719f062f98116ee883230a004a9fce1e
+> # bad: [04c4950d5b373ba712d928592e05e73510785bca] block: fixup
+> bioset_integrity_create() call
+> git bisect bad 04c4950d5b373ba712d928592e05e73510785bca
+> # skip: [64c4bc4de79fec06bb46d9827e7c4df67a025590] pktcdvd: convert to
+> bioset_init()/mempool_init()
+> git bisect skip 64c4bc4de79fec06bb46d9827e7c4df67a025590
+> # skip: [8ac9f7c1fd1d342e82ddf078425423b050652ba0] btrfs: convert to
+> bioset_init()/mempool_init()
+> git bisect skip 8ac9f7c1fd1d342e82ddf078425423b050652ba0
+> # skip: [d19936a26658a7a53edd5619d631ee2c2c3151a2] bcache: convert to
+> bioset_init()/mempool_init()
+> git bisect skip d19936a26658a7a53edd5619d631ee2c2c3151a2
+> # skip: [52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b] fs: convert
+> block_dev.c to bioset_init()
+> git bisect skip 52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b
+> # skip: [338aa96d5661048b3c0cafc6d91876025603cacf] block: convert
+> bounce, q->bio_split to bioset_init()/mempool_init()
+> git bisect skip 338aa96d5661048b3c0cafc6d91876025603cacf
+> # good: [2ab74cd29622c48e9852d85618081c061b6ac6d9] blk-throttle: fix
+> potential NULL pointer dereference in throtl_select_dispatch
+> git bisect good 2ab74cd29622c48e9852d85618081c061b6ac6d9
+> # good: [0b6bad7d669ef2abd3b9e1f8cee1fbd448abbc5c] blk-throttle:
+> return proper bool type to caller instead of 0/1
+> git bisect good 0b6bad7d669ef2abd3b9e1f8cee1fbd448abbc5c
+> # skip: [6f1c819c219f7841079f0f43ab62727a55b0d849] dm: convert to
+> bioset_init()/mempool_init()
+> git bisect skip 6f1c819c219f7841079f0f43ab62727a55b0d849
+> # skip: [a47a28b74a5c7c27bf621276b85ad6c124651236] target: convert to
+> bioset_init()/mempool_init()
+> git bisect skip a47a28b74a5c7c27bf621276b85ad6c124651236
+> # skip: [afeee514ce7f4cab605beedd03be71ebaf0c5fc8] md: convert to
+> bioset_init()/mempool_init()
+> git bisect skip afeee514ce7f4cab605beedd03be71ebaf0c5fc8
+> # skip: [e292d7bc63c8f2adb3dfda27910e805f1b6557f9] xfs: convert to
+> bioset_init()/mempool_init()
+> git bisect skip e292d7bc63c8f2adb3dfda27910e805f1b6557f9
+> # skip: [dad08527525f9a8ac9c7f278864c65f94bc5e9b3] block: Drop bioset_create()
+> git bisect skip dad08527525f9a8ac9c7f278864c65f94bc5e9b3
+> # only skipped commits left to test
+> # possible first bad commit:
+> [04c4950d5b373ba712d928592e05e73510785bca] block: fixup
+> bioset_integrity_create() call
+> # possible first bad commit:
+> [dad08527525f9a8ac9c7f278864c65f94bc5e9b3] block: Drop bioset_create()
+> # possible first bad commit:
+> [e292d7bc63c8f2adb3dfda27910e805f1b6557f9] xfs: convert to
+> bioset_init()/mempool_init()
+> # possible first bad commit:
+> [8ac9f7c1fd1d342e82ddf078425423b050652ba0] btrfs: convert to
+> bioset_init()/mempool_init()
+> # possible first bad commit:
+> [52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b] fs: convert block_dev.c to
+> bioset_init()
+> # possible first bad commit:
+> [a47a28b74a5c7c27bf621276b85ad6c124651236] target: convert to
+> bioset_init()/mempool_init()
+> # possible first bad commit:
+> [6f1c819c219f7841079f0f43ab62727a55b0d849] dm: convert to
+> bioset_init()/mempool_init()
+> # possible first bad commit:
+> [afeee514ce7f4cab605beedd03be71ebaf0c5fc8] md: convert to
+> bioset_init()/mempool_init()
+> # possible first bad commit:
+> [d19936a26658a7a53edd5619d631ee2c2c3151a2] bcache: convert to
+> bioset_init()/mempool_init()
+> # possible first bad commit:
+> [b906bbb6997785d9ea0bd3f5585537afa6257c43] lightnvm: convert to
+> bioset_init()/mempool_init()
+> # possible first bad commit:
+> [64c4bc4de79fec06bb46d9827e7c4df67a025590] pktcdvd: convert to
+> bioset_init()/mempool_init()
+> # possible first bad commit:
+> [0892fac8719f062f98116ee883230a004a9fce1e] drbd: convert to
+> bioset_init()/mempool_init()
+> # possible first bad commit:
+> [338aa96d5661048b3c0cafc6d91876025603cacf] block: convert bounce,
+> q->bio_split to bioset_init()/mempool_init()
+> 
+> Best regards,
+> Krzysztof
