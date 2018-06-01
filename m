@@ -1,74 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753148AbeFAQKH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:10:07 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:58042 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752308AbeFAQKD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:10:03 -0400
-Date: Sat, 2 Jun 2018 00:09:44 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        tgraf@suug.ch, manfred@colorfullife.com, mhocko@kernel.org,
-        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 1/5] lib/rhashtable: convert param sanitations to WARN_ON
-Message-ID: <20180601160944.ji2gsp3pyunlj476@gondor.apana.org.au>
-References: <20180601160125.30031-1-dave@stgolabs.net>
- <20180601160125.30031-2-dave@stgolabs.net>
+        id S1753227AbeFAQKj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:10:39 -0400
+Received: from mga18.intel.com ([134.134.136.126]:12177 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752282AbeFAQKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:10:38 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,467,1520924400";
+   d="scan'208";a="59588705"
+Date: Sat, 2 Jun 2018 00:12:13 +0800
+From: Feng Tang <feng.tang@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, Petr Mladek <pmladek@suse.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>, linux-kernel@vger.kernel.org,
+        alek.du@intel.com, pasha.tatashin@oracle.com, arjan@linux.intel.com
+Subject: Re: [RFC 2/2] x86, tsc: Enable clock for ealry printk timestamp
+Message-ID: <20180601161213.tm44nhrhwfxa2767@shbuild888>
+References: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
+ <1527672059-6225-2-git-send-email-feng.tang@intel.com>
+ <20180531135542.4j7w7bxsw43ydx3j@pathway.suse.cz>
+ <20180531155210.GL12180@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180601160125.30031-2-dave@stgolabs.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180531155210.GL12180@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 09:01:21AM -0700, Davidlohr Bueso wrote:
-> For the purpose of making rhashtable_init() unable to fail,
-> we can replace the returning -EINVAL with WARN_ONs whenever
-> the caller passes bogus parameters during initialization.
+Hi Peter and Petr,
+
+Thanks for your suggestions, will try to find a cleaner and less hacky way,
+and it may take some time as dealing with all kinds of TSC is tricky :)
+
+- Feng
+
+On Thu, May 31, 2018 at 05:52:10PM +0200, Peter Zijlstra wrote:
+> On Thu, May 31, 2018 at 03:55:42PM +0200, Petr Mladek wrote:
+> > I wonder if we could get some cleaner integration into the timer and
+> > printk code.
 > 
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-> ---
->  lib/rhashtable.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+> Yes, these patches are particularly horrific..
 > 
-> diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-> index 9427b5766134..05a4b1b8b8ce 100644
-> --- a/lib/rhashtable.c
-> +++ b/lib/rhashtable.c
-> @@ -1024,12 +1024,11 @@ int rhashtable_init(struct rhashtable *ht,
->  
->  	size = HASH_DEFAULT_SIZE;
->  
-> -	if ((!params->key_len && !params->obj_hashfn) ||
-> -	    (params->obj_hashfn && !params->obj_cmpfn))
-> -		return -EINVAL;
-> +	WARN_ON((!params->key_len && !params->obj_hashfn) ||
-> +		(params->obj_hashfn && !params->obj_cmpfn));
->  
-> -	if (params->nulls_base && params->nulls_base < (1U << RHT_BASE_SHIFT))
-> -		return -EINVAL;
-> +	WARN_ON(params->nulls_base &&
-> +		params->nulls_base < (1U << RHT_BASE_SHIFT));
-
-I still don't like this.
-
-Yes for your use-case you will never crash and a WARN_ON is fine.
-However, rhashtable is used in all sorts of contexts and returning
-an error makes sense for quite a number of them.
-
-So if you really want just add the WARN_ON to your own code:
-
-	err = rhashtable_init(...)
-	WARN_ON(err);
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> There were some earlier patches by Pavel Tatashin, which attempted do
+> get things running earlier.
+> 
+>   http://lkml.kernel.org/r/20180209211143.16215-1-pasha.tatashin@oracle.com
+> 
+> I'm not entirely happy with that, but I never did get around to
+> reviewing that last version :-( In particuarly, now that you made me
+> look, I dislike his patch 6 almost as much as these patches.
+> 
+> The idea was to get regular sched_clock() running earlier, not to botch
+> some early_sched_clock() into it.
+> 
+> Basically run calibrate_tsc() earlier (like _waaay_ earlier, it doesn't
+> rely on anything other than CPUID) and if you have a recent part (with
+> exception of SKX) you'll get a usable tsc rate (and TSC_RELIABLE) and
+> things will work.
+> 
+> If you have a dodgy part (sorry SKX), you'll just have to live with
+> sched_clock starting late(r).
+> 
+> Do not cobble things on the side, try and get the normal things running
+> earlier.
