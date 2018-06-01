@@ -1,137 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751037AbeFAHaa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 03:30:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42825 "EHLO mail.bootlin.com"
+        id S1751355AbeFAHbo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 03:31:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33910 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750796AbeFAHa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 03:30:28 -0400
-Date: Fri, 1 Jun 2018 09:30:25 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, benjamin.lindqvist@endian.se,
-        pgaikwad@nvidia.com, dev@lynxeye.de, mirza.krak@gmail.com,
-        richard@nod.at, pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org,
-        krzk@kernel.org, jonathanh@nvidia.com, devicetree@vger.kernel.org,
-        linux-mtd@lists.infradead.org, marcel@ziswiler.com,
-        miquel.raynal@bootlin.com, linux-tegra@vger.kernel.org,
-        digetx@gmail.com
-Subject: Re: [PATCH v3 3/6] mtd: rawnand: tegra: add devicetree binding
-Message-ID: <20180601093025.2817ff30@bbrezillon>
-In-Reply-To: <20180531221637.6017-4-stefan@agner.ch>
-References: <20180531221637.6017-1-stefan@agner.ch>
-        <20180531221637.6017-4-stefan@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751031AbeFAHbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 03:31:40 -0400
+Date: Fri, 1 Jun 2018 09:31:37 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Qing Huang <qing.huang@oracle.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        David Miller <davem@davemloft.net>, tariqt@mellanox.com,
+        haakon.bugge@oracle.com, yanjun.zhu@oracle.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gi-oh.kim@profitbricks.com,
+        "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+Message-ID: <20180601073137.GV15278@dhcp22.suse.cz>
+References: <20180523232246.20445-1-qing.huang@oracle.com>
+ <20180525.102321.858995452200286788.davem@davemloft.net>
+ <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
+ <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
+ <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
+ <20180531065405.GH15278@dhcp22.suse.cz>
+ <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
+ <20180531085532.GK15278@dhcp22.suse.cz>
+ <20180531091022.GL15278@dhcp22.suse.cz>
+ <7d8f52e1-aa16-d20c-a9a8-35ad88c0b1ab@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7d8f52e1-aa16-d20c-a9a8-35ad88c0b1ab@oracle.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  1 Jun 2018 00:16:34 +0200
-Stefan Agner <stefan@agner.ch> wrote:
-
-> This adds the devicetree binding for the Tegra 2 NAND flash
-> controller.
+On Thu 31-05-18 19:04:46, Qing Huang wrote:
 > 
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  .../bindings/mtd/nvidia-tegra20-nand.txt      | 64 +++++++++++++++++++
->  1 file changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-> new file mode 100644
-> index 000000000000..5cd984ef046b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-> @@ -0,0 +1,64 @@
-> +NVIDIA Tegra NAND Flash controller
-> +
-> +Required properties:
-> +- compatible: Must be one of:
-> +  - "nvidia,tegra20-nand"
+> On 5/31/2018 2:10 AM, Michal Hocko wrote:
+> > On Thu 31-05-18 10:55:32, Michal Hocko wrote:
+> > > On Thu 31-05-18 04:35:31, Eric Dumazet wrote:
+> > [...]
+> > > > I merely copied/pasted from alloc_skb_with_frags() :/
+> > > I will have a look at it. Thanks!
+> > OK, so this is an example of an incremental development ;).
+> > 
+> > __GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
+> > high order allocations") to prevent from OOM killer. Yet this was
+> > not enough because fb05e7a89f50 ("net: don't wait for order-3 page
+> > allocation") didn't want an excessive reclaim for non-costly orders
+> > so it made it completely NOWAIT while it preserved __GFP_NORETRY in
+> > place which is now redundant. Should I send a patch?
+> > 
+> 
+> Just curious, how about GFP_ATOMIC flag? Would it work in a similar fashion?
+> We experimented
+> with it a bit in the past but it seemed to cause other issue in our tests.
+> :-)
 
-As discussed previously, I prefer "nvidia,tegra20-nand-controller" or
-"nvidia,tegra20-nfc".
+GFP_ATOMIC is a non-sleeping (aka no reclaim) context with an access to
+memory reserves. So the risk is that you deplete those reserves and
+cause issues to other subsystems which need them as well.
 
-> +- reg: MMIO address range
-> +- interrupts: interrupt output of the NFC controller
-> +- clocks: Must contain an entry for each entry in clock-names.
-> +  See ../clocks/clock-bindings.txt for details.
-> +- clock-names: Must include the following entries:
-> +  - nand
-> +- resets: Must contain an entry for each entry in reset-names.
-> +  See ../reset/reset.txt for details.
-> +- reset-names: Must include the following entries:
-> +  - nand
-> +
-> +Optional children nodes:
-> +Individual NAND chips are children of the NAND controller node. Currently
-> +only one NAND chip supported.
-> +
-> +Required children node properties:
-> +- reg: An integer ranging from 1 to 6 representing the CS line to use.
-> +
-> +Optional children node properties:
-> +- nand-ecc-mode: String, operation mode of the NAND ecc mode. Currently only
-> +		 "hw" is supported.
-> +- nand-ecc-algo: string, algorithm of NAND ECC.
-> +		 Supported values with "hw" ECC mode are: "rs", "bch".
-> +- nand-bus-width : See nand.txt
-> +- nand-on-flash-bbt: See nand.txt
-> +- nand-ecc-strength: integer representing the number of bits to correct
-> +		     per ECC step (always 512). Supported strength using HW ECC
-> +		     modes are:
-> +		     - RS: 4, 6, 8
-> +		     - BCH: 4, 8, 14, 16
-> +- nand-ecc-maximize: See nand.txt
-> +- nand-is-boot-medium: Makes sure only ECC strengths supported by the boot ROM
-> +		       are choosen.
-> +- wp-gpios: GPIO specifier for the write protect pin.
-> +
-> +Optional child node of NAND chip nodes:
-> +Partitions: see partition.txt
-> +
-> +  Example:
-> +	nand@70008000 {
+> By the way, we didn't encounter any OOM killer events. It seemed that the
+> mlx4_alloc_icm() triggered slowpath.
+> We still had about 2GB free memory while it was highly fragmented.
 
-	nand-controller@70008000 {
+The compaction was able to make a reasonable forward progress for you.
+But considering mlx4_alloc_icm is called with GFP_KERNEL resp. GFP_HIGHUSER
+then the OOM killer is clearly possible as long as the order is lower
+than 4.
 
-> +		compatible = "nvidia,tegra20-nand";
+>  #0 [ffff8801f308b380] remove_migration_pte at ffffffff811f0e0b
+>  #1 [ffff8801f308b3e0] rmap_walk_file at ffffffff811cb890
+>  #2 [ffff8801f308b440] rmap_walk at ffffffff811cbaf2
+>  #3 [ffff8801f308b450] remove_migration_ptes at ffffffff811f0db0
+>  #4 [ffff8801f308b490] __unmap_and_move at ffffffff811f2ea6
+>  #5 [ffff8801f308b4e0] unmap_and_move at ffffffff811f2fc5
+>  #6 [ffff8801f308b540] migrate_pages at ffffffff811f3219
+>  #7 [ffff8801f308b5c0] compact_zone at ffffffff811b707e
+>  #8 [ffff8801f308b650] compact_zone_order at ffffffff811b735d
+>  #9 [ffff8801f308b6e0] try_to_compact_pages at ffffffff811b7485
+> #10 [ffff8801f308b770] __alloc_pages_direct_compact at ffffffff81195f96
+> #11 [ffff8801f308b7b0] __alloc_pages_slowpath at ffffffff811978a1
+> #12 [ffff8801f308b890] __alloc_pages_nodemask at ffffffff81197ec1
+> #13 [ffff8801f308b970] alloc_pages_current at ffffffff811e261f
+> #14 [ffff8801f308b9e0] mlx4_alloc_icm at ffffffffa01f39b2 [mlx4_core]
+> 
+> Thanks!
 
-		compatible = "nvidia,tegra20-nand-controller";
-
-or
-
-		compatible = "nvidia,tegra20-nfc";
-
-> +		reg = <0x70008000 0x100>;
-> +		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-> +		clock-names = "nand";
-> +		resets = <&tegra_car 13>;
-> +		reset-names = "nand";
-> +
-> +		nand-chip@0 {
-
-		nand@0 {
-
-> +			reg = <0>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			nand-bus-width = <8>;
-> +			nand-on-flash-bbt;
-> +			nand-ecc-algo = "bch";
-> +			nand-ecc-strength = <8>;
-> +			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-> +		};
-> +	};
-
-With this addressed,
-
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+-- 
+Michal Hocko
+SUSE Labs
