@@ -1,112 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751357AbeFAWFh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 18:05:37 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:54258 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeFAWFd (ORCPT
+        id S1751263AbeFAWIG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 18:08:06 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:2811 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbeFAWIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 18:05:33 -0400
-Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>,
-        David Miller <davem@davemloft.net>, tariqt@mellanox.com,
-        haakon.bugge@oracle.com, yanjun.zhu@oracle.com, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gi-oh.kim@profitbricks.com,
-        "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-References: <20180523232246.20445-1-qing.huang@oracle.com>
- <20180525.102321.858995452200286788.davem@davemloft.net>
- <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
- <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
- <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
- <20180531065405.GH15278@dhcp22.suse.cz>
- <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
- <20180531085532.GK15278@dhcp22.suse.cz>
- <20180531091022.GL15278@dhcp22.suse.cz>
- <7d8f52e1-aa16-d20c-a9a8-35ad88c0b1ab@oracle.com>
- <20180601073137.GV15278@dhcp22.suse.cz>
-From: Qing Huang <qing.huang@oracle.com>
-Message-ID: <f0bfa913-1837-6c5d-6e77-2a188fd094e1@oracle.com>
-Date: Fri, 1 Jun 2018 15:05:26 -0700
+        Fri, 1 Jun 2018 18:08:05 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 01 Jun 2018 15:08:04 -0700
+Subject: Re: [PATCH v2 1/2] power: supply: sbs-battery: don't assume
+ MANUFACTURER_DATA formats
+To: Brian Norris <briannorris@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>
+CC: Sebastian Reichel <sre@kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Alexandru Stan <amstan@chromium.org>,
+        "Doug Anderson" <dianders@chromium.org>
+References: <20180601172400.50737-1-briannorris@chromium.org>
+ <20180601173434.GA22509@roeck-us.net>
+ <20180601183126.GA72050@rodete-desktop-imager.corp.google.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <10b558c4-9734-061f-c6ed-5b1288d1f23f@nvidia.com>
+Date: Fri, 1 Jun 2018 18:08:01 -0400
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180601073137.GV15278@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180601183126.GA72050@rodete-desktop-imager.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8911 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=797
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806010250
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 6/1/2018 12:31 AM, Michal Hocko wrote:
-> On Thu 31-05-18 19:04:46, Qing Huang wrote:
->>
->> On 5/31/2018 2:10 AM, Michal Hocko wrote:
->>> On Thu 31-05-18 10:55:32, Michal Hocko wrote:
->>>> On Thu 31-05-18 04:35:31, Eric Dumazet wrote:
->>> [...]
->>>>> I merely copied/pasted from alloc_skb_with_frags() :/
->>>> I will have a look at it. Thanks!
->>> OK, so this is an example of an incremental development ;).
+On 6/1/2018 2:31 PM, Brian Norris wrote:
+> Hi,
+> 
+> On Fri, Jun 01, 2018 at 10:34:34AM -0700, Guenter Roeck wrote:
+>> On Fri, Jun 01, 2018 at 10:23:59AM -0700, Brian Norris wrote:
+>>>  drivers/power/supply/sbs-battery.c | 54 +++++++++++++++++++++++++-----
+>>>  1 file changed, 46 insertions(+), 8 deletions(-)
 >>>
->>> __GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
->>> high order allocations") to prevent from OOM killer. Yet this was
->>> not enough because fb05e7a89f50 ("net: don't wait for order-3 page
->>> allocation") didn't want an excessive reclaim for non-costly orders
->>> so it made it completely NOWAIT while it preserved __GFP_NORETRY in
->>> place which is now redundant. Should I send a patch?
->>>
->> Just curious, how about GFP_ATOMIC flag? Would it work in a similar fashion?
->> We experimented
->> with it a bit in the past but it seemed to cause other issue in our tests.
->> :-)
-> GFP_ATOMIC is a non-sleeping (aka no reclaim) context with an access to
-> memory reserves. So the risk is that you deplete those reserves and
-> cause issues to other subsystems which need them as well.
->
->> By the way, we didn't encounter any OOM killer events. It seemed that the
->> mlx4_alloc_icm() triggered slowpath.
->> We still had about 2GB free memory while it was highly fragmented.
-> The compaction was able to make a reasonable forward progress for you.
-> But considering mlx4_alloc_icm is called with GFP_KERNEL resp. GFP_HIGHUSER
-> then the OOM killer is clearly possible as long as the order is lower
-> than 4.
-
-The allocation was 256KB so the order was much higher than 4. The 
-compaction seemed to be the root
-cause for our problem. It took too long to finish its work while putting 
-mlx4_alloc_icm to sleep in a heavily
-fragmented memory situation . Will NORETRY flag avoid the compaction ops 
-and fail the 256KB allocation
-immediately so mlx4_alloc_icm can enter adjustable lower order 
-allocation code path quickly?
-
-Thanks.
-
->
->>   #0 [ffff8801f308b380] remove_migration_pte at ffffffff811f0e0b
->>   #1 [ffff8801f308b3e0] rmap_walk_file at ffffffff811cb890
->>   #2 [ffff8801f308b440] rmap_walk at ffffffff811cbaf2
->>   #3 [ffff8801f308b450] remove_migration_ptes at ffffffff811f0db0
->>   #4 [ffff8801f308b490] __unmap_and_move at ffffffff811f2ea6
->>   #5 [ffff8801f308b4e0] unmap_and_move at ffffffff811f2fc5
->>   #6 [ffff8801f308b540] migrate_pages at ffffffff811f3219
->>   #7 [ffff8801f308b5c0] compact_zone at ffffffff811b707e
->>   #8 [ffff8801f308b650] compact_zone_order at ffffffff811b735d
->>   #9 [ffff8801f308b6e0] try_to_compact_pages at ffffffff811b7485
->> #10 [ffff8801f308b770] __alloc_pages_direct_compact at ffffffff81195f96
->> #11 [ffff8801f308b7b0] __alloc_pages_slowpath at ffffffff811978a1
->> #12 [ffff8801f308b890] __alloc_pages_nodemask at ffffffff81197ec1
->> #13 [ffff8801f308b970] alloc_pages_current at ffffffff811e261f
->> #14 [ffff8801f308b9e0] mlx4_alloc_icm at ffffffffa01f39b2 [mlx4_core]
+>>> diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
+>>> index 83d7b4115857..8dea63464a3f 100644
+>>> --- a/drivers/power/supply/sbs-battery.c
+>>> +++ b/drivers/power/supply/sbs-battery.c
+> ...
+> 
+>>> @@ -315,6 +320,27 @@ static int sbs_status_correct(struct i2c_client *client, int *intval)
+>>>  static int sbs_get_battery_presence_and_health(
+>>>  	struct i2c_client *client, enum power_supply_property psp,
+>>>  	union power_supply_propval *val)
+>>> +{
+>>> +	int ret;
+>>> +
+>>> +	if (psp == POWER_SUPPLY_PROP_PRESENT) {
+>>> +		/* Dummy command; if it succeeds, battery is present. */
+>>> +		ret = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
+>>> +		if (ret < 0)
+>>> +			val->intval = 0; /* battery disconnected */
+>>> +		else
+>>> +			val->intval = 1; /* battery present */
+>>> +		return 0;
+>>> +	} else { /* POWER_SUPPLY_PROP_HEALTH */
 >>
->> Thanks!
+>> Static analyzers may complain that else after return is unnecessary.
+> 
+> I noticed (checkpatch complains) but decided I didn't care. It would be
+> worse to promote the 'else' to top-level (things would look asymmetric).
+> I suppose I could pull the 'return 0' out, but I'm not sure that would
+> make the code any better.
+
+I generally prefer to make checkpatch happy, so I would vote to move the
+return outside of the if blocks as a minimal way of making it happy. In
+general though,
+
+Acked-by: Rhyland Klein <rklein@nvidia.com>
+
+> 
+>> Other than that
+>>
+>> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+>>
+>>> +		/* SBS spec doesn't have a general health command. */
+>>> +		val->intval = POWER_SUPPLY_HEALTH_UNKNOWN;
+>>> +		return 0;
+>>> +	}
+>>> +}
+>>> +
+> 
+> Brian
+> 
+
+
+-- 
+nvpublic
