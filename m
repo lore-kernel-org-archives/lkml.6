@@ -1,69 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753027AbeFAQKB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:10:01 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35294 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752333AbeFAQJ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:09:58 -0400
-X-Google-Smtp-Source: ADUXVKIRjWUvrhPBdPeTTJuwnk/YzPky8IhpDrNtrAScEZrhENca7lfSuktzctNVXffndU0dDy576Q==
-From: Ivan Bornyakov <brnkv.i1@gmail.com>
-To: mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ivan Bornyakov <brnkv.i1@gmail.com>
-Subject: [PATCH] media: stv090x: fix if-else order
-Date: Fri,  1 Jun 2018 19:12:21 +0300
-Message-Id: <20180601161221.24807-1-brnkv.i1@gmail.com>
-X-Mailer: git-send-email 2.16.4
+        id S1753205AbeFAQKV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:10:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752998AbeFAQKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:10:17 -0400
+Date: Fri, 1 Jun 2018 18:09:54 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Hugo Lefeuvre <hle@owl.eu.com>
+Cc: kernelnewbies@kernelnewbies.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: pi433: add rw semaphore fixing concurrency
+ issues
+Message-ID: <20180601160954.GA4895@kroah.com>
+References: <20180601125037.GA2339@hle-laptop.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601125037.GA2339@hle-laptop.local>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is this code:
+On Fri, Jun 01, 2018 at 08:50:37AM -0400, Hugo Lefeuvre wrote:
+> Add a rw semaphore fixing potential NULL pointer dereferences in the
+> pi433 driver.
 
-	if (v >= 0x20) {
-		...
-	} else if (v < 0x20) {
-		...
-	} else if (v > 0x30) {
-		/* this branch is impossible */
-	}
+Unless you can measure the performance difference, do not use a rw
+semaphore, just use a normal mutex please.  Odds are it will be faster
+in the end and take up less space.
 
-It would be sensibly for last branch to be on the top.
+So please test, or if you can't test, just use a mutex.
 
-Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
----
- drivers/media/dvb-frontends/stv090x.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+thanks,
 
-diff --git a/drivers/media/dvb-frontends/stv090x.c b/drivers/media/dvb-frontends/stv090x.c
-index 9133f65d4623..d70eb311ebaf 100644
---- a/drivers/media/dvb-frontends/stv090x.c
-+++ b/drivers/media/dvb-frontends/stv090x.c
-@@ -4841,7 +4841,11 @@ static int stv090x_setup(struct dvb_frontend *fe)
- 	}
- 
- 	state->internal->dev_ver = stv090x_read_reg(state, STV090x_MID);
--	if (state->internal->dev_ver >= 0x20) {
-+	if (state->internal->dev_ver > 0x30) {
-+		/* we shouldn't bail out from here */
-+		dprintk(FE_ERROR, 1, "INFO: Cut: 0x%02x probably incomplete support!",
-+			state->internal->dev_ver);
-+	} else if (state->internal->dev_ver >= 0x20) {
- 		if (stv090x_write_reg(state, STV090x_TSGENERAL, 0x0c) < 0)
- 			goto err;
- 
-@@ -4857,10 +4861,6 @@ static int stv090x_setup(struct dvb_frontend *fe)
- 			state->internal->dev_ver);
- 
- 		goto err;
--	} else if (state->internal->dev_ver > 0x30) {
--		/* we shouldn't bail out from here */
--		dprintk(FE_ERROR, 1, "INFO: Cut: 0x%02x probably incomplete support!",
--			state->internal->dev_ver);
- 	}
- 
- 	/* ADC1 range */
--- 
-2.16.4
+greg k-h
