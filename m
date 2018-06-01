@@ -1,69 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751572AbeFAKbt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 06:31:49 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38777 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750827AbeFAKbq (ORCPT
+        id S1751476AbeFAKjy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 06:39:54 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:45281 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeFAKjv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 06:31:46 -0400
-Date: Fri, 1 Jun 2018 12:31:44 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>
-Cc: rostedt@goodmis.org, torvalds@linux-foundation.org, joel@jms.id.au,
-        me@tobin.cc, corbet@lwn.net
-Subject: ptrval hiding -- first kernel messages look rather "interesting"
-Message-ID: <20180601103144.GD31639@amd>
+        Fri, 1 Jun 2018 06:39:51 -0400
+X-Google-Smtp-Source: ADUXVKKvnhaNvo//FT6VSrKIV/JvMu3J0dW/mghJ9byNeup9ljUDvv7O6Tg2HflU7eMTLevuV6zC9El83jQBu06xC6w=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="TybLhxa8M7aNoW+V"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180531235010.5279-2-logang@deltatee.com>
+References: <20180531235010.5279-1-logang@deltatee.com> <20180531235010.5279-2-logang@deltatee.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 1 Jun 2018 13:39:49 +0300
+Message-ID: <CAHp75VcQwDGqND8v1RTo4+6Hyf9G5_2w9x9aiVONwKXsTKgJ1Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] PCI: Make specifying PCI devices in kernel
+ parameters reusable
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51Ae7Fo024984
 
+On Fri, Jun 1, 2018 at 2:50 AM, Logan Gunthorpe <logang@deltatee.com> wrote:
+> Separate out the code to match a PCI device with a string (typically
+> originating from a kernel parameter) from the
+> pci_specified_resource_alignment() function into its own helper
+> function.
+>
+> While we are at it, this change fixes the kernel style of the function
+> (fixing a number of long lines and extra parentheses).
+>
+> Additionally, make the analogous change to the kernel parameter
+> documentation: Separating the description of how to specify a PCI device
+> into it's own section at the head of the pci= parameter.
+>
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Reviewed-by: Stephen Bates <sbates@raithlin.com>
+> Acked-by: Christian König <christian.koenig@amd.com>
 
---TybLhxa8M7aNoW+V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry for maybe being late here.
 
-Hi!
+> -       pci=option[,option...]  [PCI] various PCI subsystem options:
+> +       pci=option[,option...]  [PCI] various PCI subsystem options.
+> +
+> +                               Some options herein operate on a specific device
+> +                               or a set of devices (<pci_dev>). These are
+> +                               specified in one of two formats:
 
-v4.17 on n900:
+I would rather to add
 
-[    0.000000] Virtual kernel memory layout:
-[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
-[    0.000000]     fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
-[    0.000000]     vmalloc : 0xd0000000 - 0xff800000   ( 760 MB)
-[    0.000000]     lowmem  : 0xc0000000 - 0xcff00000   ( 255 MB)
-[    0.000000]     pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
-[    0.000000]     modules : 0xbf000000 - 0xbfe00000   (  14 MB)
-[    0.000000]       .text : 0x(ptrval) - 0x(ptrval)   (8160 kB)
-[    0.000000]       .init : 0x(ptrval) - 0x(ptrval)   (1024 kB)
-[    0.000000]       .data : 0x(ptrval) - 0x(ptrval)   ( 309 kB)
-[    0.000000]        .bss : 0x(ptrval) - 0x(ptrval)   ( 333 kB)
-[    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+ <pci_dev>
 
-I mean -- security is nice, but perhaps we should adjust the messages
-so this does not look like we are making fun of the user?
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+here in the same way as done for options.
+It would be easy for people to find a referenced paragraph.
 
---TybLhxa8M7aNoW+V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> +
+> +                               [<domain>:]<bus>:<slot>.<func>
+> +                               pci:<vendor>:<device>[:<subvendor>:<subdevice>]
+> +
+> +                               Note: the first format specifies a PCI
+> +                               bus/slot/function address which may change
+> +                               if new hardware is inserted, if motherboard
+> +                               firmware changes, or due to changes caused
+> +                               by other kernel parameters. The second format
+> +                               selects devices using IDs from the
+> +                               configuration space which may match multiple
+> +                               devices in the system.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> +static int pci_dev_str_match(struct pci_dev *dev, const char *p,
+> +                            const char **endptr)
 
-iEYEARECAAYFAlsRIJAACgkQMOfwapXb+vKtWACfbp72oHOgSrxEOyuyVRBt2gcP
-D+gAoJjRbuSNurOKg/EhXrCMv21EREG5
-=kF4q
------END PGP SIGNATURE-----
+This change I hope has no functional alteration, so, can be split to a
+separate patch.
 
---TybLhxa8M7aNoW+V--
+-- 
+With Best Regards,
+Andy Shevchenko
