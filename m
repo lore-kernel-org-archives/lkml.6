@@ -1,87 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753690AbeFATTx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 15:19:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52240 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753420AbeFATTo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 15:19:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5A01960249
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-Subject: Re: [PATCH v2 5/6] soc: qcom: rpmh powerdomain driver
-To: Rajendra Nayak <rnayak@codeaurora.org>, viresh.kumar@linaro.org,
-        sboyd@kernel.org, andy.gross@linaro.org, ulf.hansson@linaro.org
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
-References: <20180525100121.28214-1-rnayak@codeaurora.org>
- <20180525100121.28214-6-rnayak@codeaurora.org>
- <215deee5-6472-d587-9a90-f7158162ed82@codeaurora.org>
- <6817acaf-9a68-5cd5-4dd0-ebe12a9aa057@codeaurora.org>
-From: David Collins <collinsd@codeaurora.org>
-Message-ID: <6075eeb8-ffb4-e7af-03a8-deed0444cb8c@codeaurora.org>
-Date: Fri, 1 Jun 2018 12:19:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        id S1753609AbeFATUm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 15:20:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753299AbeFATUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 15:20:39 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <6817acaf-9a68-5cd5-4dd0-ebe12a9aa057@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from
+ __of_clk_get()
+Date: Fri, 01 Jun 2018 12:20:38 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51JL9rf027195
 
-Hello Rajendra,
-
-On 06/01/2018 01:48 AM, Rajendra Nayak wrote:
-> On 05/26/2018 06:38 AM, David Collins wrote:
->>
->>> +	[1] = &sdm845_mx,
->>> +	[2] = &sdm845_mx_ao,
->>> +	[3] = &sdm845_cx,
->>> +	[4] = &sdm845_cx_ao,
->>> +	[5] = &sdm845_lmx,
->>> +	[6] = &sdm845_lcx,
->>> +	[7] = &sdm845_gfx,
->>> +	[8] = &sdm845_mss,
->>> +};
->>> +
->>> +static const struct rpmhpd_desc sdm845_desc = {
->>> +	.rpmhpds = sdm845_rpmhpds,
->>> +	.num_pds = ARRAY_SIZE(sdm845_rpmhpds),
->>> +};
->>> +
->>> +static const struct of_device_id rpmhpd_match_table[] = {
->>> +	{ .compatible = "qcom,sdm845-rpmhpd", .data = &sdm845_desc },
->>> +	{ }
->>> +};
->>> +MODULE_DEVICE_TABLE(of, rpmhpd_match_table);
->>> +
->>> +static int rpmhpd_send_corner(struct rpmhpd *pd, int state, unsigned int corner)
->>> +{
->>> +	struct tcs_cmd cmd = {
->>> +		.addr = pd->addr,
->>> +		.data = corner,
->>> +	};
->>> +
->>> +	return rpmh_write(pd->dev, state, &cmd, 1);
->> This can be optimized by calling rpmh_write_async() whenever the corner
->> being sent is smaller than the last value sent.  That way, no time is
->> wasted waiting for an ACK when decreasing voltage.  Would you mind adding
->> the necessary check and previous request caching for this?
+Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
+> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
+> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
+> counting number of phandles in a property").
 > 
-> is it safe to assume all sleep votes can be sent as async always? and only
-> active votes could be sync/async depending on the last value sent?
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Commit bd69f73f2c81eed9 is in v3.9.
 
-Yes, rpmh_write_async() can always be used for RPMH_SLEEP_STATE and
-RPMH_WAKE_ONLY_STATE.  The rpmh_write() vs rpmh_write_async() distinction
-only matters for RPMH_ACTIVE_ONLY_STATE.
-
-Take care,
-David
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Did you send this to Russell's patch tracker? Otherwise I can pick it up
+to clk-next.
