@@ -1,46 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751838AbeFAOMy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:12:54 -0400
-Received: from ms.lwn.net ([45.79.88.28]:35318 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751741AbeFAOMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:12:51 -0400
-Date: Fri, 1 Jun 2018 08:12:48 -0600
-From: Jonathan Corbet <corbet@lwn.net>
-To: Michel =?UTF-8?B?RMOkbnplcg==?= <michel@daenzer.net>
-Cc: Alex Deucher <alexdeucher@gmail.com>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm/amdgpu: Add documentation for PRIME related
- code
-Message-ID: <20180601081248.7b65edb2@lwn.net>
-In-Reply-To: <b458561f-b4e5-58bb-eee0-e3451312ae41@daenzer.net>
-References: <20180531161708.5894-1-michel@daenzer.net>
-        <20180531161708.5894-3-michel@daenzer.net>
-        <CADnq5_O5-m_=xqszq41eOAVaLTytHUHmtDaSc1MeEorZML6T5g@mail.gmail.com>
-        <b458561f-b4e5-58bb-eee0-e3451312ae41@daenzer.net>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1751692AbeFAOQP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:16:15 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46191 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751068AbeFAOQK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:16:10 -0400
+X-Google-Smtp-Source: ADUXVKJhzWLvyu1TCTnxi9kml1Gsq42mQy+BpBBd5erKDR92P10DnsyxrsHvmzXMlEu9K8WSCFiychRhBVUHlvww/Aw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
+References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Fri, 1 Jun 2018 16:16:09 +0200
+Message-ID: <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
+ non-confident touches
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
+        Jason Gerecke <killertofu@gmail.com>,
+        Dennis Kempin <denniskempin@google.com>,
+        Andrew de los Reyes <adlr@google.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Jun 2018 15:40:44 +0200
-Michel Dänzer <michel@daenzer.net> wrote:
+On Fri, Aug 11, 2017 at 2:44 AM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> According to Microsoft specification [1] for Precision Touchpads (and
+> Touchscreens) the devices use "confidence" reports to signal accidental
+> touches, or contacts that are "too large to be a finger". Instead of
+> simply marking contact inactive in this case (which causes issues if
+> contact was originally proper and we lost confidence in it later, as
+> this results in accidental clicks, drags, etc), let's report such
+> contacts as MT_TOOL_PALM and let userspace decide what to do.
+> Additionally, let's report contact size for such touches as maximum
+> allowed for major/minor, which should help userspace that is not yet
+> aware of MT_TOOL_PALM to still perform palm rejection.
+>
+> An additional complication, is that some firmwares do not report
+> non-confident touches as active. To cope with this we delay release of
+> such contact (i.e. if contact was active we first report it as still
+> active MT+TOOL_PALM and then synthesize the release event in a separate
+> frame).
 
-> Thanks. Is it okay to merge all of these via the amdgpu tree, or should
-> I wait for an ack from Jon and/or core DRM maintainers for that?
+I am not sure I agree with this part. The spec says that "Once a
+device has determined that a contact is unintentional, it should clear
+the confidence bit for that contact report and all subsequent
+reports."
+So in theory the spec says that if a touch has been detected as a
+palm, the flow of events should not stop (tested on the PTP of the
+Dell XPS 9360).
 
-I've been assuming they would go through a DRM tree, no need to wait for
-me.
+However, I interpret a firmware that send (confidence 1, tip switch 1)
+and then (confidence 0, tip switch 0) a simple release, and the
+confidence bit should not be relayed.
 
-Thanks,
+Do you have any precise example of reports where you need that feature?
 
-jon
+Cheers,
+Benjamin
+
+>
+> [1] https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/touchpad-windows-precision-touchpad-collection
+>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/hid/hid-multitouch.c | 86 +++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 77 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> index 440b999304a5..c28defe50a10 100644
+> --- a/drivers/hid/hid-multitouch.c
+> +++ b/drivers/hid/hid-multitouch.c
+> @@ -114,6 +114,8 @@ struct mt_device {
+>         struct timer_list release_timer;        /* to release sticky fingers */
+>         struct mt_fields *fields;       /* temporary placeholder for storing the
+>                                            multitouch fields */
+> +       unsigned long *pending_palm_slots; /* slots where we reported palm
+> +                                               and need to release */
+>         unsigned long mt_io_flags;      /* mt flags (MT_IO_FLAGS_*) */
+>         int cc_index;   /* contact count field index in the report */
+>         int cc_value_index;     /* contact count value index in the field */
+> @@ -543,8 +545,12 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+>                 case HID_DG_CONFIDENCE:
+>                         if ((cls->name == MT_CLS_WIN_8 ||
+>                                 cls->name == MT_CLS_WIN_8_DUAL) &&
+> -                               field->application == HID_DG_TOUCHPAD)
+> +                           field->application == HID_DG_TOUCHPAD) {
+>                                 cls->quirks |= MT_QUIRK_CONFIDENCE;
+> +                               input_set_abs_params(hi->input,
+> +                                       ABS_MT_TOOL_TYPE,
+> +                                       MT_TOOL_FINGER, MT_TOOL_PALM, 0, 0);
+> +                       }
+>                         mt_store_field(usage, td, hi);
+>                         return 1;
+>                 case HID_DG_TIPSWITCH:
+> @@ -657,6 +663,7 @@ static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
+>
+>         if (td->curvalid || (td->mtclass.quirks & MT_QUIRK_ALWAYS_VALID)) {
+>                 int active;
+> +               int tool;
+>                 int slotnum = mt_compute_slot(td, input);
+>                 struct mt_slot *s = &td->curdata;
+>                 struct input_mt *mt = input->mt;
+> @@ -671,24 +678,56 @@ static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
+>                                 return;
+>                 }
+>
+> +               active = s->touch_state || s->inrange_state;
+> +
+>                 if (!(td->mtclass.quirks & MT_QUIRK_CONFIDENCE))
+>                         s->confidence_state = 1;
+> -               active = (s->touch_state || s->inrange_state) &&
+> -                                                       s->confidence_state;
+> +
+> +               if (likely(s->confidence_state)) {
+> +                       tool = MT_TOOL_FINGER;
+> +               } else {
+> +                       tool = MT_TOOL_PALM;
+> +                       if (!active &&
+> +                           input_mt_is_active(&mt->slots[slotnum])) {
+> +                               /*
+> +                                * The non-confidence was reported for
+> +                                * previously valid contact that is also no
+> +                                * longer valid. We can't simply report
+> +                                * lift-off as userspace will not be aware
+> +                                * of non-confidence, so we need to split
+> +                                * it into 2 events: active MT_TOOL_PALM
+> +                                * and a separate liftoff.
+> +                                */
+> +                               active = true;
+> +                               set_bit(slotnum, td->pending_palm_slots);
+> +                       }
+> +               }
+>
+>                 input_mt_slot(input, slotnum);
+> -               input_mt_report_slot_state(input, MT_TOOL_FINGER, active);
+> +               input_mt_report_slot_state(input, tool, active);
+>                 if (active) {
+>                         /* this finger is in proximity of the sensor */
+>                         int wide = (s->w > s->h);
+>                         int major = max(s->w, s->h);
+>                         int minor = min(s->w, s->h);
+>
+> -                       /*
+> -                        * divided by two to match visual scale of touch
+> -                        * for devices with this quirk
+> -                        */
+> -                       if (td->mtclass.quirks & MT_QUIRK_TOUCH_SIZE_SCALING) {
+> +                       if (unlikely(!s->confidence_state)) {
+> +                               /*
+> +                                * When reporting palm, set contact to maximum
+> +                                * size to help userspace that does not
+> +                                * recognize MT_TOOL_PALM to reject contacts
+> +                                * that are too large.
+> +                                */
+> +                               major = input_abs_get_max(input,
+> +                                                         ABS_MT_TOUCH_MAJOR);
+> +                               minor = input_abs_get_max(input,
+> +                                                         ABS_MT_TOUCH_MINOR);
+> +                       } else if (td->mtclass.quirks &
+> +                                       MT_QUIRK_TOUCH_SIZE_SCALING) {
+> +                               /*
+> +                                * divided by two to match visual scale of touch
+> +                                * for devices with this quirk
+> +                                */
+>                                 major = major >> 1;
+>                                 minor = minor >> 1;
+>                         }
+> @@ -711,6 +750,25 @@ static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
+>         td->num_received++;
+>  }
+>
+> +static void mt_release_pending_palms(struct mt_device *td,
+> +                                    struct input_dev *input)
+> +{
+> +       int slotnum;
+> +       bool need_sync = false;
+> +
+> +       for_each_set_bit(slotnum, td->pending_palm_slots, td->maxcontacts) {
+> +               clear_bit(slotnum, td->pending_palm_slots);
+> +
+> +               input_mt_slot(input, slotnum);
+> +               input_mt_report_slot_state(input, MT_TOOL_PALM, false);
+> +
+> +               need_sync = true;
+> +       }
+> +
+> +       if (need_sync)
+> +               input_sync(input);
+> +}
+> +
+>  /*
+>   * this function is called when a whole packet has been received and processed,
+>   * so that it can decide what to send to the input layer.
+> @@ -719,6 +777,9 @@ static void mt_sync_frame(struct mt_device *td, struct input_dev *input)
+>  {
+>         input_mt_sync_frame(input);
+>         input_sync(input);
+> +
+> +       mt_release_pending_palms(td, input);
+> +
+>         td->num_received = 0;
+>         if (test_bit(MT_IO_FLAGS_ACTIVE_SLOTS, &td->mt_io_flags))
+>                 set_bit(MT_IO_FLAGS_PENDING_SLOTS, &td->mt_io_flags);
+> @@ -903,6 +964,13 @@ static int mt_touch_input_configured(struct hid_device *hdev,
+>         if (td->is_buttonpad)
+>                 __set_bit(INPUT_PROP_BUTTONPAD, input->propbit);
+>
+> +       td->pending_palm_slots = devm_kcalloc(&hi->input->dev,
+> +                                             BITS_TO_LONGS(td->maxcontacts),
+> +                                             sizeof(long),
+> +                                             GFP_KERNEL);
+> +       if (!td->pending_palm_slots)
+> +               return -ENOMEM;
+> +
+>         ret = input_mt_init_slots(input, td->maxcontacts, td->mt_flags);
+>         if (ret)
+>                 return ret;
+> --
+> 2.14.0.434.g98096fd7a8-goog
+>
