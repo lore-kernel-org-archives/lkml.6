@@ -1,65 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751203AbeFAJW4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:22:56 -0400
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:53430 "EHLO
-        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1750758AbeFAJWy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:22:54 -0400
-From: Nicholas Mc Guire <hofrat@opentech.at>
-To: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@opentech.at>
-Subject: [PATCH] media: adv7604: simplify of_node_put()
-Date: Fri,  1 Jun 2018 09:21:32 +0000
-Message-Id: <1527844892-30309-1-git-send-email-hofrat@opentech.at>
-X-Mailer: git-send-email 2.1.4
+        id S1751209AbeFAJYp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 05:24:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58118 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750740AbeFAJYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 05:24:43 -0400
+Date: Fri, 1 Jun 2018 10:24:41 +0100
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu
+Subject: Re: [PATCH] fuse: fix NULL dereference when new_inode() fails
+Message-ID: <20180601092441.GA8687@stefanha-x1.localdomain>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+Content-Disposition: inline
+In-Reply-To: <20180524202004.7813-1-stefanha@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the of_node_put() is unconditional here there is no need to have it
-twice.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@opentech.at>
----
+--UugvWAfsgieZRqgk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Problem located by experimental coccinelle script
+Ping?
 
-Not sure if such a change makes this much more readable - it is a trivial
-simplification of the code though. Pleas let me know if such micro
-refactoring makes sense or not.
+Archive link in case I broke email threading:
+https://marc.info/?l=linux-fsdevel&m=152719324102009&w=2
 
-Patch was compile tested with: x86_64_defconfig + GPIOLIB=y,
-Multimedia support=y, CONFIG_MEDIA_DIGITAL_TV_SUPPORT=y,
-CONFIG_MEDIA_CAMERA_SUPPORT=y CONFIG_VIDEO_V4L2_SUBDEV_API=y,
-CONFIG_VIDEO_ADV7604=y
+Stefan
 
-Patch is against 4.17-rc5 (localversion-next is -next-20180529)
+--UugvWAfsgieZRqgk
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/media/i2c/adv7604.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index cac2081..cc8eac3 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -3108,12 +3108,9 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
- 		return -EINVAL;
- 
- 	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(endpoint), &bus_cfg);
--	if (ret) {
--		of_node_put(endpoint);
--		return ret;
--	}
--
- 	of_node_put(endpoint);
-+	if (ret)
-+		return ret;
- 
- 	if (!of_property_read_u32(np, "default-input", &v))
- 		state->pdata.default_input = v;
--- 
-2.1.4
+iQEcBAEBAgAGBQJbERDZAAoJEJykq7OBq3PIkEYH/0OByjUIii5cCcTwTAZXv70R
+l5hoUAILS8ao0BWMwE1DrNrc94+s0zAvEzctFMBR9c1eU/rcGqpYLsA/tT6PBUz3
+HUgXf/V/k31dGb/JnN6BZE/3Ff+MBuxZBPgcdiItIfYRZWEQg8tZ+et0YXxmO0Rv
+KgnPH6ljdYJgR8P3B8ScFhVx54X0wjHPZWH+OZveUdjD9TKyH4REMx0bfoxJAexV
+7/GUUvJGxzZFB2UA9Y9dtu+8y55mFxNeuKK3g7K7Yy2U8z/mYc8fZ+muFE69zYMx
+bh25ppm5tjJGEGhmFIhkj5ALfaJ9wl0VomFXQib1tk6klhKz+HcPnIpaORmzzVE=
+=fikI
+-----END PGP SIGNATURE-----
+
+--UugvWAfsgieZRqgk--
