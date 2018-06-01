@@ -1,70 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752712AbeFAQO1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:14:27 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6522 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751777AbeFAQOZ (ORCPT
+        id S1752950AbeFAQOs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:14:48 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:40550 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752731AbeFAQOp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:14:25 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 01 Jun 2018 09:14:28 -0700
-Subject: Re: [PATCH 2/2] dt-bindings: power: sbs-battery: re-document
- "ti,bq20z75"
-To: Brian Norris <briannorris@chromium.org>,
-        Sebastian Reichel <sre@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Alexandru Stan <amstan@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Doug Anderson <dianders@chromium.org>
-References: <20180601003252.42810-1-briannorris@chromium.org>
- <20180601003252.42810-2-briannorris@chromium.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <22411469-af79-604f-c56a-1680359b1629@nvidia.com>
-Date: Fri, 1 Jun 2018 12:14:04 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 1 Jun 2018 12:14:45 -0400
+X-Google-Smtp-Source: ADUXVKLpHs66IhjaGF0oOafTizKyHiwftUoLCFuypKZu8K0gZX3tMeLDGZ8NVZUQ6QjgttXRUwiz5w==
+Date: Fri, 1 Jun 2018 10:14:41 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, sudeep.holla@arm.com,
+        robh@kernel.org, mark.rutland@arm.com, frowand.list@gmail.com,
+        matt.sealey@arm.com, charles.garcia-tobin@arm.com, john.horley@arm.com,
+        mike.leach@linaro.org, coresight@lists.linaro.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH 1/8] dts: binding: coresight: Document graph bindings
+Message-ID: <20180601161441.GA9838@xps15>
+References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
+ <1527858967-16047-2-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180601003252.42810-2-briannorris@chromium.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527858967-16047-2-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/31/2018 8:32 PM, Brian Norris wrote:
-> This compatible property was documented before the driver was renamed to
-> "SBS" (see commit e57f1b68c406 ("devicetree-bindings: Propagate
-> bq20z75->sbs rename to dt bindings")). The driver has continued to
-> support this property as an alternative to "sbs,sbs-battery", and
-> because we've noticed there are some lingering TI specifics (in the
-> manufacturer-specific portion of the SBS spec), we'd like to start using
-> this property again to differentiate.
+On Fri, Jun 01, 2018 at 02:16:00PM +0100, Suzuki K Poulose wrote:
+> Before we updat the bindings, document the current graph bindings
+
+s/updat/update
+
+> and usage of additional properties.
 > 
-> Cc: Rhyland Klein <rklein@nvidia.com>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 > ---
->  .../devicetree/bindings/power/supply/sbs_sbs-battery.txt        | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../devicetree/bindings/arm/coresight.txt          | 28 ++++++++++++++++++----
+>  1 file changed, 24 insertions(+), 4 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-> index c40e8926facf..a7a9c3366f82 100644
-> --- a/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-> +++ b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-> @@ -2,7 +2,7 @@ SBS sbs-battery
->  ~~~~~~~~~~
+> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
+> index 15ac8e8..bd36e40 100644
+> --- a/Documentation/devicetree/bindings/arm/coresight.txt
+> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
+> @@ -52,9 +52,7 @@ its hardware characteristcs.
+>  	  clocks the core of that coresight component. The latter clock
+>  	  is optional.
 >  
->  Required properties :
-> - - compatible : "sbs,sbs-battery"
-> + - compatible : "sbs,sbs-battery" or "ti,bq20z75"
+> -	* port or ports: The representation of the component's port
+> -	  layout using the generic DT graph presentation found in
+> -	  "bindings/graph.txt".
+> +	* port or ports: see "Graph bindings for Coresight" below
 >  
->  Optional properties :
->   - sbs,i2c-retry-count : The number of times to retry i2c transactions on i2c
+>  * Additional required properties for System Trace Macrocells (STM):
+>  	* reg: along with the physical base address and length of the register
+> @@ -71,7 +69,7 @@ its hardware characteristcs.
+>  	  AMBA markee):
+>  		- "arm,coresight-replicator"
+>  
+> -	* port or ports: same as above.
+> +	* port or ports: see "Graph bindings for Coresight" below.
+>  
+>  * Optional properties for ETM/PTMs:
+>  
+> @@ -86,6 +84,28 @@ its hardware characteristcs.
+>  	* arm,buffer-size: size of contiguous buffer space for TMC ETR
+>  	 (embedded trace router)
+>  
+> +Graph bindings for Coresight
+> +-------------------------------
+> +
+> +Coresight components are interconnected to create a data path for the flow of
+> +trace data generated from the "sources" to their collection points "sink". Each
+
+Over 80 characters.
+
+> +coresight component must describe the "input" and "output" connections.
+> +The connections must be described via generic DT graph bindings as described
+> +by the "bindings/graph.txt", where each "port" along with an "endpoint" component
+
+Same here.
+
+> +represents a hardware port and the connection.
+> +
+> +Since it is possible to have multiple connections for any coresight component with
+
+And here.
+
+> +a specific direction of data flow, each connection must define the following
+> +properties to uniquely identify the connection details.
+> +
+> + * Direction of the data flow w.r.t the component :
+> +   Each input port must have the following property defined at the "endpoint"
+> +   for the port.
+> +	"slave-mode"
+> +
+> + * Hardware Port number at the component:
+> +     -  The hardware port number is assumed to be the address of the "port" component.
+
+And here.
+
+Moveover this patches doesn't apply to my next tree. 
+
+> +
+>  
+>  Example:
+>  
+> -- 
+> 2.7.4
 > 
-
-Acked-by: Rhyland Klein <rklein@nvidia.com>
-
--- 
-nvpublic
