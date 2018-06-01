@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752720AbeFANFk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:05:40 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:37956 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752502AbeFANFQ (ORCPT
+        id S1752746AbeFANFo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:05:44 -0400
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:37233 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752448AbeFANFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:05:16 -0400
-X-Google-Smtp-Source: ADUXVKI/kGLSBzhHWlkf/VwClIMOyqiJojJUYZwlYVUnriyolBU8RtUlXSYjPvkKgFsJxgKfFpYK3g==
+        Fri, 1 Jun 2018 09:05:15 -0400
+X-Google-Smtp-Source: ADUXVKLXsuqO0322ZoT0y8ofANCEI5yV/dQCyzLqWEu23nXkf8fGT8qqrWLvuPa3PRW8IC7CvmjI+Q==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         javier@cnexlabs.com, igor.j.konopko@intel.com,
         marcin.dziegielewski@intel.com,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 17/18] lightnvm: pblk: add possibility to set write buffer size manually
-Date: Fri,  1 Jun 2018 15:04:31 +0200
-Message-Id: <20180601130432.30866-18-mb@lightnvm.io>
+Subject: [GIT PULL 16/18] lightnvm: fix partial read error path
+Date: Fri,  1 Jun 2018 15:04:30 +0200
+Message-Id: <20180601130432.30866-17-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180601130432.30866-1-mb@lightnvm.io>
 References: <20180601130432.30866-1-mb@lightnvm.io>
@@ -27,52 +27,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
+From: Igor Konopko <igor.j.konopko@intel.com>
 
-In some cases, users can want set write buffer size manually, e.g. to
-adjust it to specific workload. This patch provides the possibility
-to set write buffer size via module parameter feature.
+When error occurs during bio_add_page on partial read path, pblk
+tries to free pages twice.
 
-Signed-off-by: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
 Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
+Signed-off-by: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-init.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/lightnvm/pblk-read.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index d65d2f972ccf..c890493e0e49 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -20,6 +20,11 @@
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index a2e678de428f..fa7b60f852d9 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -256,7 +256,7 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+ 	new_bio = bio_alloc(GFP_KERNEL, nr_holes);
  
- #include "pblk.h"
+ 	if (pblk_bio_add_pages(pblk, new_bio, GFP_KERNEL, nr_holes))
+-		goto err;
++		goto err_add_pages;
  
-+unsigned int write_buffer_size;
-+
-+module_param(write_buffer_size, uint, 0644);
-+MODULE_PARM_DESC(write_buffer_size, "number of entries in a write buffer");
-+
- static struct kmem_cache *pblk_ws_cache, *pblk_rec_cache, *pblk_g_rq_cache,
- 				*pblk_w_rq_cache;
- static DECLARE_RWSEM(pblk_lock);
-@@ -172,10 +177,15 @@ static int pblk_rwb_init(struct pblk *pblk)
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
- 	struct pblk_rb_entry *entries;
--	unsigned long nr_entries;
-+	unsigned long nr_entries, buffer_size;
- 	unsigned int power_size, power_seg_sz;
+ 	if (nr_holes != new_bio->bi_vcnt) {
+ 		pr_err("pblk: malformed bio\n");
+@@ -347,10 +347,10 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+ 	return NVM_IO_OK;
  
--	nr_entries = pblk_rb_calculate_size(pblk->pgs_in_buffer);
-+	if (write_buffer_size && (write_buffer_size > pblk->pgs_in_buffer))
-+		buffer_size = write_buffer_size;
-+	else
-+		buffer_size = pblk->pgs_in_buffer;
-+
-+	nr_entries = pblk_rb_calculate_size(buffer_size);
- 
- 	entries = vzalloc(nr_entries * sizeof(struct pblk_rb_entry));
- 	if (!entries)
+ err:
+-	pr_err("pblk: failed to perform partial read\n");
+-
+ 	/* Free allocated pages in new bio */
+-	pblk_bio_free_pages(pblk, bio, 0, new_bio->bi_vcnt);
++	pblk_bio_free_pages(pblk, new_bio, 0, new_bio->bi_vcnt);
++err_add_pages:
++	pr_err("pblk: failed to perform partial read\n");
+ 	__pblk_end_io_read(pblk, rqd, false);
+ 	return NVM_IO_ERR;
+ }
 -- 
 2.11.0
