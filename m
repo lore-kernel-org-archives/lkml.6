@@ -1,97 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751782AbeFALeo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:34:44 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:41970 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751687AbeFALel (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:34:41 -0400
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: linux-snps-arc@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Subject: [PATCH v2] ARC: Explicitly add -mmedium-calls to CFLAGS
-Date: Fri,  1 Jun 2018 14:34:33 +0300
-Message-Id: <20180601113433.27119-1-abrodkin@synopsys.com>
-X-Mailer: git-send-email 2.16.2
+        id S1751722AbeFALgn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:36:43 -0400
+Received: from ozlabs.org ([203.11.71.1]:37801 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750790AbeFALgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 07:36:42 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 1 Jun 2018 21:36:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Haruka Kawajiri <yukx00@gmail.com>
+Subject: linux-next: Signed-off-by missing for commit in the drivers-x86
+ tree
+Message-ID: <20180601213639.74f49e51@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/pI65d33I1.Qw.zG9FR/PSYn"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC built for arc*-*-linux has "-mmedium-calls" implicitly enabled by default
-thus we don't see any problems during Linux kernel compilation.
------------------------------>8------------------------
-arc-linux-gcc -mcpu=arc700 -Q --help=target | grep calls
-  -mlong-calls                          [disabled]
-  -mmedium-calls                        [enabled]
------------------------------>8------------------------
+--Sig_/pI65d33I1.Qw.zG9FR/PSYn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-But if we try to use so-called Elf32 toolchain with GCC configured for
-arc*-*-elf* then we'd see the following failure:
------------------------------>8------------------------
-init/do_mounts.o: In function 'init_rootfs':
-do_mounts.c:(.init.text+0x108): relocation truncated to fit: R_ARC_S21W_PCREL
-against symbol 'unregister_filesystem' defined in .text section in fs/filesystems.o
+Hi all,
 
-arc-elf32-ld: final link failed: Symbol needs debug section which does not exist
-make: *** [vmlinux] Error 1
------------------------------>8------------------------
+Commit
 
-That happens because neither "-mmedium-calls" nor "-mlong-calls" are enabled in
-Elf32 GCC:
------------------------------>8------------------------
-arc-elf32-gcc -mcpu=arc700 -Q --help=target | grep calls
-  -mlong-calls                          [disabled]
-  -mmedium-calls                        [disabled]
------------------------------>8------------------------
+  bba074f926d1 ("platform/x86: silead_dmi: Add entry for Chuwi Hi8 S806_206=
+ tablet touchscreen")
 
-Now to make it possible to use Elf32 toolchain for building Linux kernel
-we're explicitly add "-mmedium-calls" to CFLAGS.
+is missing a Signed-off-by from its author.
 
-And since we add "-mmedium-calls" to the global CFLAGS there's no point in
-having per-file copies thus removing them.
+--=20
+Cheers,
+Stephen Rothwell
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
----
+--Sig_/pI65d33I1.Qw.zG9FR/PSYn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Changes v1 -> v2:
+-----BEGIN PGP SIGNATURE-----
 
- - Removed per-file mentions of "-mmedium-calls"
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsRL8cACgkQAVBC80lX
+0GwdxQf+POnkkwzFMbVudyMG9B7aD/vudIOfSgiIj6IUlVAn5PrvJv1Jb0FpdiKq
+nFPo56yOvJCy4osiXdKdDgs1CkJ41Uy1HuPnnqEfYNyMUdjpfY4dMrnt9Si88POq
+f2GUnmKlVHMe3jvvdMPJkGe/6PzTPQ+qFvOhTnXu+Rq3JoyUwxLM7g8nIH5Xvurk
+LMVkAD9oxu2znC/PzPtE+fvIYf8ptE/G5gvIVzL7NVLXmEyfuYyk9TXODuBZZPu6
+YTKTtPQkgLZ1SCO2ktJUOtQxv04MU04hQslCoouNTNXDGpQpQlOMAvNkDy/ZWif6
+tnVgyEGIX9L1bP2VL02f5zOALXTsEA==
+=blwO
+-----END PGP SIGNATURE-----
 
- arch/arc/Makefile | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
-
-diff --git a/arch/arc/Makefile b/arch/arc/Makefile
-index d37f49d6a27f..6c1b20dd76ad 100644
---- a/arch/arc/Makefile
-+++ b/arch/arc/Makefile
-@@ -16,7 +16,7 @@ endif
- 
- KBUILD_DEFCONFIG := nsim_700_defconfig
- 
--cflags-y	+= -fno-common -pipe -fno-builtin -D__linux__
-+cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
- cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
- cflags-$(CONFIG_ISA_ARCV2)	+= -mcpu=archs
- 
-@@ -140,16 +140,3 @@ dtbs: scripts
- 
- archclean:
- 	$(Q)$(MAKE) $(clean)=$(boot)
--
--# Hacks to enable final link due to absence of link-time branch relexation
--# and gcc choosing optimal(shorter) branches at -O3
--#
--# vineetg Feb 2010: -mlong-calls switched off for overall kernel build
--# However lib/decompress_inflate.o (.init.text) calls
--# zlib_inflate_workspacesize (.text) causing relocation errors.
--# Thus forcing all exten calls in this file to be long calls
--export CFLAGS_decompress_inflate.o = -mmedium-calls
--export CFLAGS_initramfs.o = -mmedium-calls
--ifdef CONFIG_SMP
--export CFLAGS_core.o = -mmedium-calls
--endif
--- 
-2.16.2
+--Sig_/pI65d33I1.Qw.zG9FR/PSYn--
