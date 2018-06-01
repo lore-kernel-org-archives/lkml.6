@@ -1,180 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751211AbeFADrH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 23:47:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46060 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750758AbeFADrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 23:47:02 -0400
-Date: Fri, 1 Jun 2018 06:47:01 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: bhelgaas@google.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        linux-pci@vger.kernel.org, dan.daly@intel.com, mark.d.rustad@intel.com,
-        alexander.h.duyck@intel.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com
-Subject: Re: [PATCH v2] virtio_pci: support enabling VFs
-Message-ID: <20180601063224-mutt-send-email-mst@kernel.org>
-References: <20180601020921.30957-1-tiwei.bie@intel.com>
+        id S1750919AbeFAD7v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 23:59:51 -0400
+Received: from ozlabs.org ([203.11.71.1]:51477 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750728AbeFAD7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 23:59:49 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 1 Jun 2018 13:59:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Message-ID: <20180601135943.66b90890@canb.auug.org.au>
+In-Reply-To: <20180531073855.29c23fce@canb.auug.org.au>
+References: <20180529132548.7f71c2ff@canb.auug.org.au>
+        <20180531073855.29c23fce@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180601020921.30957-1-tiwei.bie@intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/n.9LVszNWzS7qnUZXUD2hgH"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 10:09:21AM +0800, Tiwei Bie wrote:
-> There is a new feature bit allocated in virtio spec to
-> support SR-IOV (Single Root I/O Virtualization):
-> 
-> https://github.com/oasis-tcs/virtio-spec/issues/11
-> 
-> This patch enables the support for this feature bit in
-> virtio driver.
-> 
-> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
+--Sig_/n.9LVszNWzS7qnUZXUD2hgH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Generally you aren't supposed to carry forward acks
-when you make major changes.
+Hi all,
 
-In this case I'm fine with the patch, so never mind.
+On Thu, 31 May 2018 07:38:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Tue, 29 May 2018 13:25:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > After merging the net-next tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpfil=
+ter_umh.o' is incompatible with i386:x86-64 output
+> >=20
+> > Caused by commit
+> >=20
+> >   d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+> >=20
+> > In my builds, the host is PowerPC 64 LE ...
+> >=20
+> > I have reverted that commit along with
+> >=20
+> >   61a552eb487f ("bpfilter: fix build dependency")
+> >   13405468f49d ("bpfilter: don't pass O_CREAT when opening console for =
+debug")
+> >=20
+> > for today. =20
+>=20
+> I am still getting this failure (well, at least yesterday I did).
 
-> v2:
-> - Disable VFs when unbinding the driver (Alex, MST);
-> - Don't use pci_sriov_configure_simple (Alex);
-> 
->  drivers/virtio/virtio_pci_common.c | 30 ++++++++++++++++++++++++++++++
->  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
->  include/uapi/linux/virtio_config.h |  7 ++++++-
->  3 files changed, 50 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> index 48d4d1cf1cb6..1d4467b2dc31 100644
-> --- a/drivers/virtio/virtio_pci_common.c
-> +++ b/drivers/virtio/virtio_pci_common.c
-> @@ -577,6 +577,8 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
->  	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
->  	struct device *dev = get_device(&vp_dev->vdev.dev);
->  
-> +	pci_disable_sriov(pci_dev);
-> +
->  	unregister_virtio_device(&vp_dev->vdev);
->  
->  	if (vp_dev->ioaddr)
-> @@ -588,6 +590,33 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
->  	put_device(dev);
->  }
->  
-> +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
-> +{
-> +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> +	struct virtio_device *vdev = &vp_dev->vdev;
-> +	int ret;
-> +
-> +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
-> +		return -EBUSY;
-> +
-> +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
-> +		return -EINVAL;
-> +
-> +	if (pci_vfs_assigned(pci_dev))
-> +		return -EPERM;
-
-Not a comment on this patch - existing code has the
-same race - but generally
-
-1. this seems racy since assigning vfs does not seem
-   to take device lock
-2. does this work correctly for kvm at all?
-   pci_set_dev_assigned seems to be only called by xen.
-
-Can you look at addressing this pls?
+Still happened today.  My guess is that bpfilter_umh needs to be built
+with the kernel compiler (not the host compiler - since ir is meant to
+run on the some machine as the kernel, right?) but will require the
+kernel architecture libc etc
 
 
-> +
-> +	if (num_vfs == 0) {
-> +		pci_disable_sriov(pci_dev);
-> +		return 0;
-> +	}
-> +
-> +	ret = pci_enable_sriov(pci_dev, num_vfs);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return num_vfs;
-> +}
-> +
->  static struct pci_driver virtio_pci_driver = {
->  	.name		= "virtio-pci",
->  	.id_table	= virtio_pci_id_table,
-> @@ -596,6 +625,7 @@ static struct pci_driver virtio_pci_driver = {
->  #ifdef CONFIG_PM_SLEEP
->  	.driver.pm	= &virtio_pci_pm_ops,
->  #endif
-> +	.sriov_configure = virtio_pci_sriov_configure,
->  };
->  
->  module_pci_driver(virtio_pci_driver);
-> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-> index 2555d80f6eec..07571daccfec 100644
-> --- a/drivers/virtio/virtio_pci_modern.c
-> +++ b/drivers/virtio/virtio_pci_modern.c
-> @@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
->  	return features;
->  }
->  
-> +static void vp_transport_features(struct virtio_device *vdev, u64 features)
-> +{
-> +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> +	struct pci_dev *pci_dev = vp_dev->pci_dev;
-> +
-> +	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
-> +			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
-> +		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
-> +}
-> +
->  /* virtio config->finalize_features() implementation */
->  static int vp_finalize_features(struct virtio_device *vdev)
->  {
->  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> +	u64 features = vdev->features;
->  
->  	/* Give virtio_ring a chance to accept features. */
->  	vring_transport_features(vdev);
->  
-> +	/* Give virtio_pci a chance to accept features. */
-> +	vp_transport_features(vdev, features);
-> +
->  	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
->  		dev_err(&vdev->dev, "virtio: device uses modern interface "
->  			"but does not have VIRTIO_F_VERSION_1\n");
-> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> index 308e2096291f..b7c1f4e7d59e 100644
-> --- a/include/uapi/linux/virtio_config.h
-> +++ b/include/uapi/linux/virtio_config.h
-> @@ -49,7 +49,7 @@
->   * transport being used (eg. virtio_ring), the rest are per-device feature
->   * bits. */
->  #define VIRTIO_TRANSPORT_F_START	28
-> -#define VIRTIO_TRANSPORT_F_END		34
-> +#define VIRTIO_TRANSPORT_F_END		38
->  
->  #ifndef VIRTIO_CONFIG_NO_LEGACY
->  /* Do we get callbacks when the ring is completely used, even if we've
-> @@ -71,4 +71,9 @@
->   * this is for compatibility with legacy systems.
->   */
->  #define VIRTIO_F_IOMMU_PLATFORM		33
-> +
-> +/*
-> + * Does the device support Single Root I/O Virtualization?
-> + */
-> +#define VIRTIO_F_SR_IOV			37
->  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
-> -- 
-> 2.17.0
+I replaced the reverts above with the following:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 1 Jun 2018 13:33:28 +1000
+Subject: [PATCH] net: bpfilter: mark as BROKEN for now
+
+This does not build in a cross compile environment
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/bpfilter/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/bpfilter/Kconfig b/net/bpfilter/Kconfig
+index a948b072c28f..ea4be72fdf6e 100644
+--- a/net/bpfilter/Kconfig
++++ b/net/bpfilter/Kconfig
+@@ -2,6 +2,7 @@ menuconfig BPFILTER
+ 	bool "BPF based packet filtering framework (BPFILTER)"
+ 	default n
+ 	depends on NET && BPF && INET
++	depends on BROKEN
+ 	help
+ 	  This builds experimental bpfilter framework that is aiming to
+ 	  provide netfilter compatible functionality via BPF
+--=20
+2.17.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/n.9LVszNWzS7qnUZXUD2hgH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQxK8ACgkQAVBC80lX
+0GwCHggAmx8CYmzcPprLmFQPnIWfgChZPxX3eYn/uNyzLGh37itxI78MsrzwIZ2x
+vV4/Y+pEYeQHy8TLComcACQnP8cvgA4stM4/uTk0fgKVp5CO/D/IHr+tdlkeju/J
+M6NQS7jpsCeXfCzZ131BN4+QTKM09NN5OfzmJxhNmW0upNr0Fm3ErxFv2ElgEY1b
+YJwNWcae9+2v0/5P3D4py7JiFgmx2th62DTLxBaOXxRDGARxCH5hE22Wy5LkrGtE
+RgJTcbV1csMinGj7quKxxqHcja04XVDzT1PPjpjd4zsmsCY1FdQP4P+R0pa2HLat
+QIdHpIbtpb7u41WFy9tHCB2JT6/e/w==
+=JYZW
+-----END PGP SIGNATURE-----
+
+--Sig_/n.9LVszNWzS7qnUZXUD2hgH--
