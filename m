@@ -1,59 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751796AbeFAKtj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 06:49:39 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:25597 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751625AbeFAKtV (ORCPT
+        id S1751818AbeFAKtq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 06:49:46 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:37943 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbeFAKtm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 06:49:21 -0400
-X-UUID: 068806cfd9c94912979c38b79f5886e3-20180601
-Message-ID: <1527850145.28160.6.camel@mhfsdcap03>
-Subject: Re: [PATCH v3] PCI: mediatek: Add system pm support for MT2712
-From: Honghui Zhang <honghui.zhang@mediatek.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Arnd Bergmann <arnd.bergmann@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Bjorn Helgaas" <bhelgaas@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support"
-        <linux-mediatek@lists.infradead.org>,
-        <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>, <yingjoe.chen@mediatek.com>,
-        Eddie Huang <eddie.huang@mediatek.com>, <ryder.lee@mediatek.com>,
-        <hongkun.cao@mediatek.com>, <youlin.pei@mediatek.com>,
-        <yong.wu@mediatek.com>, <yt.shen@mediatek.com>,
-        <sean.wang@mediatek.com>, <xinping.qian@mediatek.com>
-Date: Fri, 1 Jun 2018 18:49:05 +0800
-In-Reply-To: <CAHp75VeBTmC=3nJ-t+OO9bp0mzJuTYsGBwi8fokT16bu2nE9RA@mail.gmail.com>
-References: <1527822270-30280-1-git-send-email-honghui.zhang@mediatek.com>
-         <CAHp75VeBTmC=3nJ-t+OO9bp0mzJuTYsGBwi8fokT16bu2nE9RA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Fri, 1 Jun 2018 06:49:42 -0400
+X-Google-Smtp-Source: ADUXVKL6x3JmyW8DnJYKKlYxh0DXIQ8PhGApdWVFm9b2SuiuW/6kiRS+zIQic7ZtL/pwBnatSaQJq7At2Ul8NogYb4I=
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <20180601103144.GD31639@amd>
+References: <20180601103144.GD31639@amd>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 1 Jun 2018 13:49:41 +0300
+Message-ID: <CAHp75VcaVieUTRurTA-XL1G1Nc3dqjM0kXANd2bugq51UPCNWQ@mail.gmail.com>
+Subject: Re: ptrval hiding -- first kernel messages look rather "interesting"
+To: Pavel Machek <pavel@ucw.cz>
+Cc: kernel list <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joel Stanley <joel@jms.id.au>, "Tobin C. Harding" <me@tobin.cc>,
+        Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-01 at 13:17 +0300, Andy Shevchenko wrote:
-> On Fri, Jun 1, 2018 at 6:04 AM,  <honghui.zhang@mediatek.com> wrote:
-> > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> 
-> > +#ifdef CONFIG_PM_SLEEP
-> > +static int mtk_pcie_suspend_noirq(struct device *dev)
-> 
-> __maybe_unused
-> 
+On Fri, Jun 1, 2018 at 1:31 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> Hi!
+>
+> v4.17 on n900:
+>
+> [    0.000000] Virtual kernel memory layout:
+> [    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+> [    0.000000]     fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
+> [    0.000000]     vmalloc : 0xd0000000 - 0xff800000   ( 760 MB)
+> [    0.000000]     lowmem  : 0xc0000000 - 0xcff00000   ( 255 MB)
+> [    0.000000]     pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
+> [    0.000000]     modules : 0xbf000000 - 0xbfe00000   (  14 MB)
+> [    0.000000]       .text : 0x(ptrval) - 0x(ptrval)   (8160 kB)
+> [    0.000000]       .init : 0x(ptrval) - 0x(ptrval)   (1024 kB)
+> [    0.000000]       .data : 0x(ptrval) - 0x(ptrval)   ( 309 kB)
+> [    0.000000]        .bss : 0x(ptrval) - 0x(ptrval)   ( 333 kB)
+> [    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+>
+> I mean -- security is nice, but perhaps we should adjust the messages
+> so this does not look like we are making fun of the user?
 
-Hi, Andy, thanks for your review.
-Bjorn had point this out that at:
-https://www.spinics.net/lists/arm-kernel/msg656774.html
+Colleague of mine (perhaps you even know him) wrote recently a small
+patch that improves kernel by 400% by removing ptr_to_id() completely.
 
-So __maybe_unused is not really needed.
+Okay, joking is joking, but it was a proposal to have some command
+line option to enforce no-hash pointers.
+I would rather enable it when one of the existing option is present
+(like 'debug'), though it might alter the output in user space or
+something else.
+So, I have no strong opinion here.
 
-thanks
+-- 
+With Best Regards,
+Andy Shevchenko
