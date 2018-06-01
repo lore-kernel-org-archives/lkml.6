@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752662AbeFAOoX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:44:23 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33634 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752525AbeFAOoI (ORCPT
+        id S1752413AbeFAOoE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:44:04 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:46109 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbeFAOn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:44:08 -0400
-X-Google-Smtp-Source: ADUXVKKvIvG07wl4fjLxkIHkdQDvT1bJ6USOe00VTRjzoTkghxJRcT5uKACOE8G13Oh67y4j2BZqpA==
+        Fri, 1 Jun 2018 10:43:57 -0400
+X-Google-Smtp-Source: ADUXVKK991VVhOr+f+OyiUNZXcnTR1X2cHVs9+wH05JpHtGgq0F6HGMilIibRGE3SDOWqVXYfdDOxA==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         javier@cnexlabs.com, igor.j.konopko@intel.com,
         marcin.dziegielewski@intel.com,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 10/10] lightnvm: pblk: take bitmap alloc. out of critical section
-Date: Fri,  1 Jun 2018 16:41:14 +0200
-Message-Id: <20180601144114.17490-11-mb@lightnvm.io>
+Subject: [GIT PULL 02/10] lightnvm: pblk: garbage collect lines with failed writes
+Date: Fri,  1 Jun 2018 16:41:06 +0200
+Message-Id: <20180601144114.17490-3-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180601144114.17490-1-mb@lightnvm.io>
 References: <20180601144114.17490-1-mb@lightnvm.io>
@@ -28,203 +28,585 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier González <javier@javigon.com>
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-pblk allocates line bitmaps within the line lock unnecessarily. In order
-to take pressure out of the fast patch, allocate line bitmaps outside
-of this lock and refactor accordingly.
+Write failures should not happen under normal circumstances,
+so in order to bring the chunk back into a known state as soon
+as possible, evacuate all the valid data out of the line and let the
+fw judge if the block can be written to in the next reset cycle.
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
+Do this by introducing a new gc list for lines with failed writes,
+and ensure that the rate limiter allocates a small portion of
+the write bandwidth to get the job done.
+
+The lba list is saved in memory for use during gc as we
+cannot gurantee that the emeta data is readable if a write
+error occurred.
+
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Reviewed-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-core.c | 97 +++++++++++++++++++++++++-------------------
- 1 file changed, 56 insertions(+), 41 deletions(-)
+ drivers/lightnvm/pblk-core.c  |  45 ++++++++++++++++++-
+ drivers/lightnvm/pblk-gc.c    | 102 +++++++++++++++++++++++++++---------------
+ drivers/lightnvm/pblk-init.c  |  46 ++++++++++++-------
+ drivers/lightnvm/pblk-rl.c    |  29 ++++++++++--
+ drivers/lightnvm/pblk-sysfs.c |  15 ++++++-
+ drivers/lightnvm/pblk-write.c |   2 +
+ drivers/lightnvm/pblk.h       |  25 +++++++++--
+ 7 files changed, 200 insertions(+), 64 deletions(-)
 
 diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index a5750534efed..ed9cc977c8b3 100644
+index 56e3934712f9..e81a70cf9e9b 100644
 --- a/drivers/lightnvm/pblk-core.c
 +++ b/drivers/lightnvm/pblk-core.c
-@@ -1067,6 +1067,25 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
- 	return 1;
- }
+@@ -373,7 +373,13 @@ struct list_head *pblk_line_gc_list(struct pblk *pblk, struct pblk_line *line)
  
-+static int pblk_line_alloc_bitmaps(struct pblk *pblk, struct pblk_line *line)
-+{
-+	struct pblk_line_meta *lm = &pblk->lm;
+ 	lockdep_assert_held(&line->lock);
+ 
+-	if (!vsc) {
++	if (line->w_err_gc->has_write_err) {
++		if (line->gc_group != PBLK_LINEGC_WERR) {
++			line->gc_group = PBLK_LINEGC_WERR;
++			move_list = &l_mg->gc_werr_list;
++			pblk_rl_werr_line_in(&pblk->rl);
++		}
++	} else if (!vsc) {
+ 		if (line->gc_group != PBLK_LINEGC_FULL) {
+ 			line->gc_group = PBLK_LINEGC_FULL;
+ 			move_list = &l_mg->gc_full_list;
+@@ -1589,8 +1595,13 @@ static void __pblk_line_put(struct pblk *pblk, struct pblk_line *line)
+ 	line->state = PBLK_LINESTATE_FREE;
+ 	line->gc_group = PBLK_LINEGC_NONE;
+ 	pblk_line_free(line);
 +
-+	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
-+	if (!line->map_bitmap)
-+		return -ENOMEM;
-+
-+	/* will be initialized using bb info from map_bitmap */
-+	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_KERNEL);
-+	if (!line->invalid_bitmap) {
-+		kfree(line->map_bitmap);
-+		line->map_bitmap = NULL;
-+		return -ENOMEM;
++	if (line->w_err_gc->has_write_err) {
++		pblk_rl_werr_line_out(&pblk->rl);
++		line->w_err_gc->has_write_err = 0;
 +	}
 +
-+	return 0;
+ 	spin_unlock(&line->lock);
+-
+ 	atomic_dec(&gc->pipeline_gc);
+ 
+ 	spin_lock(&l_mg->free_lock);
+@@ -1753,11 +1764,34 @@ void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line)
+ 
+ 	spin_lock(&l_mg->close_lock);
+ 	spin_lock(&line->lock);
++
++	/* Update the in-memory start address for emeta, in case it has
++	 * shifted due to write errors
++	 */
++	if (line->emeta_ssec != line->cur_sec)
++		line->emeta_ssec = line->cur_sec;
++
+ 	list_add_tail(&line->list, &l_mg->emeta_list);
+ 	spin_unlock(&line->lock);
+ 	spin_unlock(&l_mg->close_lock);
+ 
+ 	pblk_line_should_sync_meta(pblk);
++
++
 +}
 +
- /* For now lines are always assumed full lines. Thus, smeta former and current
-  * lun bitmaps are omitted.
-  */
-@@ -1171,18 +1190,7 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
++static void pblk_save_lba_list(struct pblk *pblk, struct pblk_line *line)
++{
++	struct pblk_line_meta *lm = &pblk->lm;
++	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
++	unsigned int lba_list_size = lm->emeta_len[2];
++	struct pblk_w_err_gc *w_err_gc = line->w_err_gc;
++	struct pblk_emeta *emeta = line->emeta;
++
++	w_err_gc->lba_list = pblk_malloc(lba_list_size,
++					 l_mg->emeta_alloc_type, GFP_KERNEL);
++	memcpy(w_err_gc->lba_list, emeta_to_lbas(pblk, emeta->buf),
++				lba_list_size);
+ }
+ 
+ void pblk_line_close_ws(struct work_struct *work)
+@@ -1766,6 +1800,13 @@ void pblk_line_close_ws(struct work_struct *work)
+ 									ws);
+ 	struct pblk *pblk = line_ws->pblk;
+ 	struct pblk_line *line = line_ws->line;
++	struct pblk_w_err_gc *w_err_gc = line->w_err_gc;
++
++	/* Write errors makes the emeta start address stored in smeta invalid,
++	 * so keep a copy of the lba list until we've gc'd the line
++	 */
++	if (w_err_gc->has_write_err)
++		pblk_save_lba_list(pblk, line);
+ 
+ 	pblk_line_close(pblk, line);
+ 	mempool_free(line_ws, &pblk->gen_ws_pool);
+diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
+index b0cc277bf972..df88f1bdd921 100644
+--- a/drivers/lightnvm/pblk-gc.c
++++ b/drivers/lightnvm/pblk-gc.c
+@@ -129,6 +129,53 @@ static void pblk_gc_line_ws(struct work_struct *work)
+ 	kfree(gc_rq_ws);
+ }
+ 
++static __le64 *get_lba_list_from_emeta(struct pblk *pblk,
++				       struct pblk_line *line)
++{
++	struct line_emeta *emeta_buf;
++	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
++	struct pblk_line_meta *lm = &pblk->lm;
++	unsigned int lba_list_size = lm->emeta_len[2];
++	__le64 *lba_list;
++	int ret;
++
++	emeta_buf = pblk_malloc(lm->emeta_len[0],
++				l_mg->emeta_alloc_type, GFP_KERNEL);
++	if (!emeta_buf)
++		return NULL;
++
++	ret = pblk_line_read_emeta(pblk, line, emeta_buf);
++	if (ret) {
++		pr_err("pblk: line %d read emeta failed (%d)\n",
++				line->id, ret);
++		pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
++		return NULL;
++	}
++
++	/* If this read fails, it means that emeta is corrupted.
++	 * For now, leave the line untouched.
++	 * TODO: Implement a recovery routine that scans and moves
++	 * all sectors on the line.
++	 */
++
++	ret = pblk_recov_check_emeta(pblk, emeta_buf);
++	if (ret) {
++		pr_err("pblk: inconsistent emeta (line %d)\n",
++				line->id);
++		pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
++		return NULL;
++	}
++
++	lba_list = pblk_malloc(lba_list_size,
++			       l_mg->emeta_alloc_type, GFP_KERNEL);
++	if (lba_list)
++		memcpy(lba_list, emeta_to_lbas(pblk, emeta_buf), lba_list_size);
++
++	pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
++
++	return lba_list;
++}
++
+ static void pblk_gc_line_prepare_ws(struct work_struct *work)
  {
+ 	struct pblk_line_ws *line_ws = container_of(work, struct pblk_line_ws,
+@@ -138,46 +185,26 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
  	struct pblk_line_meta *lm = &pblk->lm;
- 	int blk_in_line = atomic_read(&line->blk_in_line);
--	int blk_to_erase, ret;
--
--	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_ATOMIC);
--	if (!line->map_bitmap)
--		return -ENOMEM;
--
--	/* will be initialized using bb info from map_bitmap */
--	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_ATOMIC);
--	if (!line->invalid_bitmap) {
--		ret = -ENOMEM;
--		goto fail_free_map_bitmap;
+ 	struct pblk_gc *gc = &pblk->gc;
+-	struct line_emeta *emeta_buf;
+ 	struct pblk_line_ws *gc_rq_ws;
+ 	struct pblk_gc_rq *gc_rq;
+ 	__le64 *lba_list;
+ 	unsigned long *invalid_bitmap;
+ 	int sec_left, nr_secs, bit;
+-	int ret;
+ 
+ 	invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_KERNEL);
+ 	if (!invalid_bitmap)
+ 		goto fail_free_ws;
+ 
+-	emeta_buf = pblk_malloc(lm->emeta_len[0], l_mg->emeta_alloc_type,
+-								GFP_KERNEL);
+-	if (!emeta_buf) {
+-		pr_err("pblk: cannot use GC emeta\n");
+-		goto fail_free_bitmap;
 -	}
-+	int blk_to_erase;
- 
- 	/* Bad blocks do not need to be erased */
- 	bitmap_copy(line->erase_bitmap, line->blk_bitmap, lm->blk_per_line);
-@@ -1200,15 +1208,15 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+-
+-	ret = pblk_line_read_emeta(pblk, line, emeta_buf);
+-	if (ret) {
+-		pr_err("pblk: line %d read emeta failed (%d)\n", line->id, ret);
+-		goto fail_free_emeta;
+-	}
+-
+-	/* If this read fails, it means that emeta is corrupted. For now, leave
+-	 * the line untouched. TODO: Implement a recovery routine that scans and
+-	 * moves all sectors on the line.
+-	 */
+-
+-	ret = pblk_recov_check_emeta(pblk, emeta_buf);
+-	if (ret) {
+-		pr_err("pblk: inconsistent emeta (line %d)\n", line->id);
+-		goto fail_free_emeta;
+-	}
+-
+-	lba_list = emeta_to_lbas(pblk, emeta_buf);
+-	if (!lba_list) {
+-		pr_err("pblk: could not interpret emeta (line %d)\n", line->id);
+-		goto fail_free_emeta;
++	if (line->w_err_gc->has_write_err) {
++		lba_list = line->w_err_gc->lba_list;
++		line->w_err_gc->lba_list = NULL;
++	} else {
++		lba_list = get_lba_list_from_emeta(pblk, line);
++		if (!lba_list) {
++			pr_err("pblk: could not interpret emeta (line %d)\n",
++					line->id);
++			goto fail_free_ws;
++		}
  	}
  
- 	if (blk_in_line < lm->min_blk_line) {
--		ret = -EAGAIN;
--		goto fail_free_invalid_bitmap;
-+		spin_unlock(&line->lock);
-+		return -EAGAIN;
+ 	spin_lock(&line->lock);
+@@ -187,14 +214,14 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ 
+ 	if (sec_left < 0) {
+ 		pr_err("pblk: corrupted GC line (%d)\n", line->id);
+-		goto fail_free_emeta;
++		goto fail_free_lba_list;
  	}
  
- 	if (line->state != PBLK_LINESTATE_FREE) {
- 		WARN(1, "pblk: corrupted line %d, state %d\n",
- 							line->id, line->state);
--		ret = -EINTR;
--		goto fail_free_invalid_bitmap;
-+		spin_unlock(&line->lock);
-+		return -EINTR;
- 	}
+ 	bit = -1;
+ next_rq:
+ 	gc_rq = kmalloc(sizeof(struct pblk_gc_rq), GFP_KERNEL);
+ 	if (!gc_rq)
+-		goto fail_free_emeta;
++		goto fail_free_lba_list;
  
- 	line->state = PBLK_LINESTATE_OPEN;
-@@ -1222,16 +1230,6 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
- 	kref_init(&line->ref);
+ 	nr_secs = 0;
+ 	do {
+@@ -240,7 +267,7 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ 		goto next_rq;
+ 
+ out:
+-	pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
++	pblk_mfree(lba_list, l_mg->emeta_alloc_type);
+ 	kfree(line_ws);
+ 	kfree(invalid_bitmap);
+ 
+@@ -251,9 +278,8 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ 
+ fail_free_gc_rq:
+ 	kfree(gc_rq);
+-fail_free_emeta:
+-	pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
+-fail_free_bitmap:
++fail_free_lba_list:
++	pblk_mfree(lba_list, l_mg->emeta_alloc_type);
+ 	kfree(invalid_bitmap);
+ fail_free_ws:
+ 	kfree(line_ws);
+@@ -349,12 +375,14 @@ static struct pblk_line *pblk_gc_get_victim_line(struct pblk *pblk,
+ static bool pblk_gc_should_run(struct pblk_gc *gc, struct pblk_rl *rl)
+ {
+ 	unsigned int nr_blocks_free, nr_blocks_need;
++	unsigned int werr_lines = atomic_read(&rl->werr_lines);
+ 
+ 	nr_blocks_need = pblk_rl_high_thrs(rl);
+ 	nr_blocks_free = pblk_rl_nr_free_blks(rl);
+ 
+ 	/* This is not critical, no need to take lock here */
+-	return ((gc->gc_active) && (nr_blocks_need > nr_blocks_free));
++	return ((werr_lines > 0) ||
++		((gc->gc_active) && (nr_blocks_need > nr_blocks_free)));
+ }
+ 
+ void pblk_gc_free_full_lines(struct pblk *pblk)
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 2a3302f7e853..783887b891b7 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -493,11 +493,17 @@ static void pblk_line_mg_free(struct pblk *pblk)
+ 	}
+ }
+ 
+-static void pblk_line_meta_free(struct pblk_line *line)
++static void pblk_line_meta_free(struct pblk_line_mgmt *l_mg,
++				struct pblk_line *line)
+ {
++	struct pblk_w_err_gc *w_err_gc = line->w_err_gc;
++
+ 	kfree(line->blk_bitmap);
+ 	kfree(line->erase_bitmap);
+ 	kfree(line->chks);
++
++	pblk_mfree(w_err_gc->lba_list, l_mg->emeta_alloc_type);
++	kfree(w_err_gc);
+ }
+ 
+ static void pblk_lines_free(struct pblk *pblk)
+@@ -511,7 +517,7 @@ static void pblk_lines_free(struct pblk *pblk)
+ 		line = &pblk->lines[i];
+ 
+ 		pblk_line_free(line);
+-		pblk_line_meta_free(line);
++		pblk_line_meta_free(l_mg, line);
+ 	}
+ 	spin_unlock(&l_mg->free_lock);
+ 
+@@ -813,20 +819,28 @@ static int pblk_alloc_line_meta(struct pblk *pblk, struct pblk_line *line)
+ 		return -ENOMEM;
+ 
+ 	line->erase_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
+-	if (!line->erase_bitmap) {
+-		kfree(line->blk_bitmap);
+-		return -ENOMEM;
+-	}
++	if (!line->erase_bitmap)
++		goto free_blk_bitmap;
++
+ 
+ 	line->chks = kmalloc(lm->blk_per_line * sizeof(struct nvm_chk_meta),
+ 								GFP_KERNEL);
+-	if (!line->chks) {
+-		kfree(line->erase_bitmap);
+-		kfree(line->blk_bitmap);
+-		return -ENOMEM;
+-	}
++	if (!line->chks)
++		goto free_erase_bitmap;
++
++	line->w_err_gc = kzalloc(sizeof(struct pblk_w_err_gc), GFP_KERNEL);
++	if (!line->w_err_gc)
++		goto free_chks;
  
  	return 0;
--
--fail_free_invalid_bitmap:
--	spin_unlock(&line->lock);
--	kfree(line->invalid_bitmap);
--	line->invalid_bitmap = NULL;
--fail_free_map_bitmap:
--	kfree(line->map_bitmap);
--	line->map_bitmap = NULL;
--
--	return ret;
- }
- 
- int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
-@@ -1251,13 +1249,16 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
- 	}
- 	spin_unlock(&l_mg->free_lock);
- 
--	pblk_rl_free_lines_dec(&pblk->rl, line, true);
-+	ret = pblk_line_alloc_bitmaps(pblk, line);
-+	if (ret)
-+		return ret;
- 
- 	if (!pblk_line_init_bb(pblk, line, 0)) {
- 		list_add(&line->list, &l_mg->free_list);
- 		return -EINTR;
- 	}
- 
-+	pblk_rl_free_lines_dec(&pblk->rl, line, true);
- 	return 0;
- }
- 
-@@ -1269,6 +1270,24 @@ void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
- 	line->emeta = NULL;
- }
- 
-+static void pblk_line_reinit(struct pblk_line *line)
-+{
-+	*line->vsc = cpu_to_le32(EMPTY_ENTRY);
 +
-+	line->map_bitmap = NULL;
-+	line->invalid_bitmap = NULL;
-+	line->smeta = NULL;
-+	line->emeta = NULL;
++free_chks:
++	kfree(line->chks);
++free_erase_bitmap:
++	kfree(line->erase_bitmap);
++free_blk_bitmap:
++	kfree(line->blk_bitmap);
++	return -ENOMEM;
+ }
+ 
+ static int pblk_line_mg_init(struct pblk *pblk)
+@@ -851,12 +865,14 @@ static int pblk_line_mg_init(struct pblk *pblk)
+ 	INIT_LIST_HEAD(&l_mg->gc_mid_list);
+ 	INIT_LIST_HEAD(&l_mg->gc_low_list);
+ 	INIT_LIST_HEAD(&l_mg->gc_empty_list);
++	INIT_LIST_HEAD(&l_mg->gc_werr_list);
+ 
+ 	INIT_LIST_HEAD(&l_mg->emeta_list);
+ 
+-	l_mg->gc_lists[0] = &l_mg->gc_high_list;
+-	l_mg->gc_lists[1] = &l_mg->gc_mid_list;
+-	l_mg->gc_lists[2] = &l_mg->gc_low_list;
++	l_mg->gc_lists[0] = &l_mg->gc_werr_list;
++	l_mg->gc_lists[1] = &l_mg->gc_high_list;
++	l_mg->gc_lists[2] = &l_mg->gc_mid_list;
++	l_mg->gc_lists[3] = &l_mg->gc_low_list;
+ 
+ 	spin_lock_init(&l_mg->free_lock);
+ 	spin_lock_init(&l_mg->close_lock);
+@@ -1063,7 +1079,7 @@ static int pblk_lines_init(struct pblk *pblk)
+ 
+ fail_free_lines:
+ 	while (--i >= 0)
+-		pblk_line_meta_free(&pblk->lines[i]);
++		pblk_line_meta_free(l_mg, &pblk->lines[i]);
+ 	kfree(pblk->lines);
+ fail_free_chunk_meta:
+ 	kfree(chunk_meta);
+diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
+index 883a7113b19d..6a0616a6fcaf 100644
+--- a/drivers/lightnvm/pblk-rl.c
++++ b/drivers/lightnvm/pblk-rl.c
+@@ -73,6 +73,16 @@ void pblk_rl_user_in(struct pblk_rl *rl, int nr_entries)
+ 	pblk_rl_kick_u_timer(rl);
+ }
+ 
++void pblk_rl_werr_line_in(struct pblk_rl *rl)
++{
++	atomic_inc(&rl->werr_lines);
 +}
 +
-+void pblk_line_free(struct pblk_line *line)
++void pblk_rl_werr_line_out(struct pblk_rl *rl)
 +{
-+	kfree(line->map_bitmap);
-+	kfree(line->invalid_bitmap);
-+
-+	pblk_line_reinit(line);
++	atomic_dec(&rl->werr_lines);
 +}
 +
- struct pblk_line *pblk_line_get(struct pblk *pblk)
+ void pblk_rl_gc_in(struct pblk_rl *rl, int nr_entries)
  {
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
-@@ -1335,11 +1354,14 @@ static struct pblk_line *pblk_line_retry(struct pblk *pblk,
- 		return NULL;
+ 	atomic_add(nr_entries, &rl->rb_gc_cnt);
+@@ -99,11 +109,21 @@ static void __pblk_rl_update_rates(struct pblk_rl *rl,
+ {
+ 	struct pblk *pblk = container_of(rl, struct pblk, rl);
+ 	int max = rl->rb_budget;
++	int werr_gc_needed = atomic_read(&rl->werr_lines);
+ 
+ 	if (free_blocks >= rl->high) {
+-		rl->rb_user_max = max;
+-		rl->rb_gc_max = 0;
+-		rl->rb_state = PBLK_RL_HIGH;
++		if (werr_gc_needed) {
++			/* Allocate a small budget for recovering
++			 * lines with write errors
++			 */
++			rl->rb_gc_max = 1 << rl->rb_windows_pw;
++			rl->rb_user_max = max - rl->rb_gc_max;
++			rl->rb_state = PBLK_RL_WERR;
++		} else {
++			rl->rb_user_max = max;
++			rl->rb_gc_max = 0;
++			rl->rb_state = PBLK_RL_OFF;
++		}
+ 	} else if (free_blocks < rl->high) {
+ 		int shift = rl->high_pw - rl->rb_windows_pw;
+ 		int user_windows = free_blocks >> shift;
+@@ -124,7 +144,7 @@ static void __pblk_rl_update_rates(struct pblk_rl *rl,
+ 		rl->rb_state = PBLK_RL_LOW;
  	}
  
-+	retry_line->map_bitmap = line->map_bitmap;
-+	retry_line->invalid_bitmap = line->invalid_bitmap;
- 	retry_line->smeta = line->smeta;
- 	retry_line->emeta = line->emeta;
- 	retry_line->meta_line = line->meta_line;
+-	if (rl->rb_state == (PBLK_RL_MID | PBLK_RL_LOW))
++	if (rl->rb_state != PBLK_RL_OFF)
+ 		pblk_gc_should_start(pblk);
+ 	else
+ 		pblk_gc_should_stop(pblk);
+@@ -221,6 +241,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+ 	atomic_set(&rl->rb_user_cnt, 0);
+ 	atomic_set(&rl->rb_gc_cnt, 0);
+ 	atomic_set(&rl->rb_space, -1);
++	atomic_set(&rl->werr_lines, 0);
  
--	pblk_line_free(line);
-+	pblk_line_reinit(line);
+ 	timer_setup(&rl->u_timer, pblk_rl_u_timer, 0);
+ 
+diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
+index e61909af23a5..88a0a7c407aa 100644
+--- a/drivers/lightnvm/pblk-sysfs.c
++++ b/drivers/lightnvm/pblk-sysfs.c
+@@ -173,6 +173,8 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+ 	int free_line_cnt = 0, closed_line_cnt = 0, emeta_line_cnt = 0;
+ 	int d_line_cnt = 0, l_line_cnt = 0;
+ 	int gc_full = 0, gc_high = 0, gc_mid = 0, gc_low = 0, gc_empty = 0;
++	int gc_werr = 0;
 +
- 	l_mg->data_line = retry_line;
- 	spin_unlock(&l_mg->free_lock);
- 
-@@ -1392,6 +1414,9 @@ struct pblk_line *pblk_line_get_first_data(struct pblk *pblk)
+ 	int bad = 0, cor = 0;
+ 	int msecs = 0, cur_sec = 0, vsc = 0, sec_in_line = 0;
+ 	int map_weight = 0, meta_weight = 0;
+@@ -237,6 +239,15 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+ 		gc_empty++;
  	}
- 	spin_unlock(&l_mg->free_lock);
  
-+	if (pblk_line_alloc_bitmaps(pblk, line))
-+		return NULL;
++	list_for_each_entry(line, &l_mg->gc_werr_list, list) {
++		if (line->type == PBLK_LINETYPE_DATA)
++			d_line_cnt++;
++		else if (line->type == PBLK_LINETYPE_LOG)
++			l_line_cnt++;
++		closed_line_cnt++;
++		gc_werr++;
++	}
 +
- 	if (pblk_line_erase(pblk, line)) {
- 		line = pblk_line_retry(pblk, line);
- 		if (!line)
-@@ -1536,6 +1561,9 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
- 		goto retry_erase;
+ 	list_for_each_entry(line, &l_mg->bad_list, list)
+ 		bad++;
+ 	list_for_each_entry(line, &l_mg->corrupt_list, list)
+@@ -275,8 +286,8 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+ 					l_mg->nr_lines);
+ 
+ 	sz += snprintf(page + sz, PAGE_SIZE - sz,
+-		"GC: full:%d, high:%d, mid:%d, low:%d, empty:%d, queue:%d\n",
+-			gc_full, gc_high, gc_mid, gc_low, gc_empty,
++		"GC: full:%d, high:%d, mid:%d, low:%d, empty:%d, werr: %d, queue:%d\n",
++			gc_full, gc_high, gc_mid, gc_low, gc_empty, gc_werr,
+ 			atomic_read(&pblk->gc.read_inflight_gc));
+ 
+ 	sz += snprintf(page + sz, PAGE_SIZE - sz,
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index 7f9491bc64b5..f353e52941f5 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -136,6 +136,7 @@ static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
+ 		}
  	}
  
-+	if (pblk_line_alloc_bitmaps(pblk, new))
-+		return NULL;
-+
- retry_setup:
- 	if (!pblk_line_init_metadata(pblk, new, cur)) {
- 		new = pblk_line_retry(pblk, new);
-@@ -1575,19 +1603,6 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
- 	return new;
++	line->w_err_gc->has_write_err = 1;
+ 	spin_unlock(&line->lock);
  }
  
--void pblk_line_free(struct pblk_line *line)
--{
--	kfree(line->map_bitmap);
--	kfree(line->invalid_bitmap);
--
--	*line->vsc = cpu_to_le32(EMPTY_ENTRY);
--
--	line->map_bitmap = NULL;
--	line->invalid_bitmap = NULL;
--	line->smeta = NULL;
--	line->emeta = NULL;
--}
--
- static void __pblk_line_put(struct pblk *pblk, struct pblk_line *line)
- {
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+@@ -279,6 +280,7 @@ static void pblk_end_io_write_meta(struct nvm_rq *rqd)
+ 	if (rqd->error) {
+ 		pblk_log_write_err(pblk, rqd);
+ 		pr_err("pblk: metadata I/O failed. Line %d\n", line->id);
++		line->w_err_gc->has_write_err = 1;
+ 	}
+ 
+ 	sync = atomic_add_return(rqd->nr_ppas, &emeta->sync);
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 043a851a8e6c..725bc1bfa849 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -89,12 +89,14 @@ struct pblk_sec_meta {
+ /* The number of GC lists and the rate-limiter states go together. This way the
+  * rate-limiter can dictate how much GC is needed based on resource utilization.
+  */
+-#define PBLK_GC_NR_LISTS 3
++#define PBLK_GC_NR_LISTS 4
+ 
+ enum {
+-	PBLK_RL_HIGH = 1,
+-	PBLK_RL_MID = 2,
+-	PBLK_RL_LOW = 3,
++	PBLK_RL_OFF = 0,
++	PBLK_RL_WERR = 1,
++	PBLK_RL_HIGH = 2,
++	PBLK_RL_MID = 3,
++	PBLK_RL_LOW = 4
+ };
+ 
+ #define pblk_dma_meta_size (sizeof(struct pblk_sec_meta) * PBLK_MAX_REQ_ADDRS)
+@@ -278,6 +280,8 @@ struct pblk_rl {
+ 	int rb_user_active;
+ 	int rb_gc_active;
+ 
++	atomic_t werr_lines;	/* Number of write error lines that needs gc */
++
+ 	struct timer_list u_timer;
+ 
+ 	unsigned long long nr_secs;
+@@ -311,6 +315,7 @@ enum {
+ 	PBLK_LINEGC_MID = 23,
+ 	PBLK_LINEGC_HIGH = 24,
+ 	PBLK_LINEGC_FULL = 25,
++	PBLK_LINEGC_WERR = 26
+ };
+ 
+ #define PBLK_MAGIC 0x70626c6b /*pblk*/
+@@ -412,6 +417,11 @@ struct pblk_smeta {
+ 	struct line_smeta *buf;		/* smeta buffer in persistent format */
+ };
+ 
++struct pblk_w_err_gc {
++	int has_write_err;
++	__le64 *lba_list;
++};
++
+ struct pblk_line {
+ 	struct pblk *pblk;
+ 	unsigned int id;		/* Line number corresponds to the
+@@ -457,6 +467,8 @@ struct pblk_line {
+ 
+ 	struct kref ref;		/* Write buffer L2P references */
+ 
++	struct pblk_w_err_gc *w_err_gc;	/* Write error gc recovery metadata */
++
+ 	spinlock_t lock;		/* Necessary for invalid_bitmap only */
+ };
+ 
+@@ -488,6 +500,8 @@ struct pblk_line_mgmt {
+ 	struct list_head gc_mid_list;	/* Full lines ready to GC, mid isc */
+ 	struct list_head gc_low_list;	/* Full lines ready to GC, low isc */
+ 
++	struct list_head gc_werr_list;  /* Write err recovery list */
++
+ 	struct list_head gc_full_list;	/* Full lines ready to GC, no valid */
+ 	struct list_head gc_empty_list;	/* Full lines close, all valid */
+ 
+@@ -890,6 +904,9 @@ void pblk_rl_free_lines_dec(struct pblk_rl *rl, struct pblk_line *line,
+ 			    bool used);
+ int pblk_rl_is_limit(struct pblk_rl *rl);
+ 
++void pblk_rl_werr_line_in(struct pblk_rl *rl);
++void pblk_rl_werr_line_out(struct pblk_rl *rl);
++
+ /*
+  * pblk sysfs
+  */
 -- 
 2.11.0
