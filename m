@@ -1,238 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752986AbeFAOfP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:35:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752233AbeFAOce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:32:34 -0400
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Joel Fernandes <joel.opensrc@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Rich Felker <dalias@libc.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 03/12] x86: Implement hw_breakpoint_arch_parse()
-Date: Fri,  1 Jun 2018 16:31:56 +0200
-Message-Id: <1527863526-32677-4-git-send-email-frederic@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527863526-32677-1-git-send-email-frederic@kernel.org>
-References: <1527863526-32677-1-git-send-email-frederic@kernel.org>
+        id S1752096AbeFAOh4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:37:56 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:37554 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751512AbeFAOhy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:37:54 -0400
+X-Google-Smtp-Source: ADUXVKJjWBOVr/LfMZ3HdAcH2nBVCKQYBz/oTxsWCWyUmm1NR7fvRVCzTRbG0jgLrPComcmaX4dTMkqUsGe2UB2cpPE=
+MIME-Version: 1.0
+In-Reply-To: <20180517201207.GA478@linaro.org>
+References: <1526541403-16380-1-git-send-email-vincent.guittot@linaro.org>
+ <20180517090530.GO12217@hirez.programming.kicks-ass.net> <20180517093206.GP12235@hirez.programming.kicks-ass.net>
+ <20180517201207.GA478@linaro.org>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 1 Jun 2018 16:37:32 +0200
+Message-ID: <CAKfTPtDXdo16gTPUf8RwXDuESTdn09c2W7J0YCCYjCxg8uuh6A@mail.gmail.com>
+Subject: Re: [PATCH v2] sched/rt: fix call to cpufreq_update_util
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Mike Galbraith <efault@gmx.de>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        "# v4 . 16+" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51Ec2IL007834
 
-Migrate to the new API in order to remove arch_validate_hwbkpt_settings()
-that clumsily mixes up architecture validation and commit.
+Hi Peter,
 
-Original-patch-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Joel Fernandes <joel.opensrc@gmail.com>
----
- arch/x86/include/asm/hw_breakpoint.h |  6 +++-
- arch/x86/kernel/hw_breakpoint.c      | 60 ++++++++++++++++++------------------
- 2 files changed, 35 insertions(+), 31 deletions(-)
+On 17 May 2018 at 22:12, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+> Le Thursday 17 May 2018 à 11:32:06 (+0200), Peter Zijlstra a écrit :
+>> On Thu, May 17, 2018 at 11:05:30AM +0200, Peter Zijlstra wrote:
+>> > Hurm.. I think this is also wrong. See how dequeue_rt_stack() is also
+>> > called from the enqueue path. Also, nothing calls cpufreq_update_util()
+>> > on the throttle path now.
+>
+> Yes I missed the point that rt_entities were dequeued then re-enqueued when
+> a task was either enqueued or dequeued.
+>
+> That's also means that enqueue_top_rt_rq() is always called when a task is
+> enqueued or dequeued and also when groups are throttled or unthrottled
+> In fact, the only point where it's not called, is when root rt_rq is
+> throttled. So I have prepared the patch below which call cpufreq_update util
+> in enqueue_top_rt_rq() and also when we throttle the root rt_rq.
+> According to the tests I have done , it seems to work for enqueue/dequeue and
+> throttle/unthrottle use cases.
+>
+> I have re-used your rt_rq_is_runnable() which takes into account rt_queued
 
-diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
-index 7892459..6c88e8e2 100644
---- a/arch/x86/include/asm/hw_breakpoint.h
-+++ b/arch/x86/include/asm/hw_breakpoint.h
-@@ -49,11 +49,15 @@ static inline int hw_breakpoint_slots(int type)
- 	return HBP_NUM;
- }
- 
-+struct perf_event_attr;
- struct perf_event;
- struct pmu;
- 
- extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
--extern int arch_validate_hwbkpt_settings(struct perf_event *bp);
-+extern int hw_breakpoint_arch_parse(struct perf_event *bp,
-+				    const struct perf_event_attr *attr,
-+				    struct arch_hw_breakpoint *hw);
-+#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
- extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
- 					   unsigned long val, void *data);
- 
-diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
-index c433791..34a5c17 100644
---- a/arch/x86/kernel/hw_breakpoint.c
-+++ b/arch/x86/kernel/hw_breakpoint.c
-@@ -239,19 +239,20 @@ int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
- 	return (va >= TASK_SIZE_MAX) || ((va + len - 1) >= TASK_SIZE_MAX);
- }
- 
--static int arch_build_bp_info(struct perf_event *bp)
-+static int arch_build_bp_info(struct perf_event *bp,
-+			      const struct perf_event_attr *attr,
-+			      struct arch_hw_breakpoint *hw)
- {
--	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
--
--	info->address = bp->attr.bp_addr;
-+	hw->address = attr->bp_addr;
-+	hw->mask = 0;
- 
- 	/* Type */
--	switch (bp->attr.bp_type) {
-+	switch (attr->bp_type) {
- 	case HW_BREAKPOINT_W:
--		info->type = X86_BREAKPOINT_WRITE;
-+		hw->type = X86_BREAKPOINT_WRITE;
- 		break;
- 	case HW_BREAKPOINT_W | HW_BREAKPOINT_R:
--		info->type = X86_BREAKPOINT_RW;
-+		hw->type = X86_BREAKPOINT_RW;
- 		break;
- 	case HW_BREAKPOINT_X:
- 		/*
-@@ -259,23 +260,23 @@ static int arch_build_bp_info(struct perf_event *bp)
- 		 * acceptable for kprobes.  On non-kprobes kernels, we don't
- 		 * allow kernel breakpoints at all.
- 		 */
--		if (bp->attr.bp_addr >= TASK_SIZE_MAX) {
-+		if (attr->bp_addr >= TASK_SIZE_MAX) {
- #ifdef CONFIG_KPROBES
--			if (within_kprobe_blacklist(bp->attr.bp_addr))
-+			if (within_kprobe_blacklist(attr->bp_addr))
- 				return -EINVAL;
- #else
- 			return -EINVAL;
- #endif
- 		}
- 
--		info->type = X86_BREAKPOINT_EXECUTE;
-+		hw->type = X86_BREAKPOINT_EXECUTE;
- 		/*
- 		 * x86 inst breakpoints need to have a specific undefined len.
- 		 * But we still need to check userspace is not trying to setup
- 		 * an unsupported length, to get a range breakpoint for example.
- 		 */
--		if (bp->attr.bp_len == sizeof(long)) {
--			info->len = X86_BREAKPOINT_LEN_X;
-+		if (attr->bp_len == sizeof(long)) {
-+			hw->len = X86_BREAKPOINT_LEN_X;
- 			return 0;
- 		}
- 	default:
-@@ -283,28 +284,26 @@ static int arch_build_bp_info(struct perf_event *bp)
- 	}
- 
- 	/* Len */
--	info->mask = 0;
--
--	switch (bp->attr.bp_len) {
-+	switch (attr->bp_len) {
- 	case HW_BREAKPOINT_LEN_1:
--		info->len = X86_BREAKPOINT_LEN_1;
-+		hw->len = X86_BREAKPOINT_LEN_1;
- 		break;
- 	case HW_BREAKPOINT_LEN_2:
--		info->len = X86_BREAKPOINT_LEN_2;
-+		hw->len = X86_BREAKPOINT_LEN_2;
- 		break;
- 	case HW_BREAKPOINT_LEN_4:
--		info->len = X86_BREAKPOINT_LEN_4;
-+		hw->len = X86_BREAKPOINT_LEN_4;
- 		break;
- #ifdef CONFIG_X86_64
- 	case HW_BREAKPOINT_LEN_8:
--		info->len = X86_BREAKPOINT_LEN_8;
-+		hw->len = X86_BREAKPOINT_LEN_8;
- 		break;
- #endif
- 	default:
- 		/* AMD range breakpoint */
--		if (!is_power_of_2(bp->attr.bp_len))
-+		if (!is_power_of_2(attr->bp_len))
- 			return -EINVAL;
--		if (bp->attr.bp_addr & (bp->attr.bp_len - 1))
-+		if (attr->bp_addr & (attr->bp_len - 1))
- 			return -EINVAL;
- 
- 		if (!boot_cpu_has(X86_FEATURE_BPEXT))
-@@ -317,8 +316,8 @@ static int arch_build_bp_info(struct perf_event *bp)
- 		 * breakpoints, then we'll have to check for kprobe-blacklisted
- 		 * addresses anywhere in the range.
- 		 */
--		info->mask = bp->attr.bp_len - 1;
--		info->len = X86_BREAKPOINT_LEN_1;
-+		hw->mask = attr->bp_len - 1;
-+		hw->len = X86_BREAKPOINT_LEN_1;
- 	}
- 
- 	return 0;
-@@ -327,22 +326,23 @@ static int arch_build_bp_info(struct perf_event *bp)
- /*
-  * Validate the arch-specific HW Breakpoint register settings
-  */
--int arch_validate_hwbkpt_settings(struct perf_event *bp)
-+int hw_breakpoint_arch_parse(struct perf_event *bp,
-+			     const struct perf_event_attr *attr,
-+			     struct arch_hw_breakpoint *hw)
- {
--	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
- 	unsigned int align;
- 	int ret;
- 
- 
--	ret = arch_build_bp_info(bp);
-+	ret = arch_build_bp_info(bp, attr, hw);
- 	if (ret)
- 		return ret;
- 
--	switch (info->len) {
-+	switch (hw->len) {
- 	case X86_BREAKPOINT_LEN_1:
- 		align = 0;
--		if (info->mask)
--			align = info->mask;
-+		if (hw->mask)
-+			align = hw->mask;
- 		break;
- 	case X86_BREAKPOINT_LEN_2:
- 		align = 1;
-@@ -363,7 +363,7 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
- 	 * Check that the low-order bits of the address are appropriate
- 	 * for the alignment implied by len.
- 	 */
--	if (info->address & align)
-+	if (hw->address & align)
- 		return -EINVAL;
- 
- 	return 0;
--- 
-2.7.4
+What is the status for this problem ?
+
+The patch below conflict with
+b29bbbbff0d6 ('sched/cpufreq: always consider blocked FAIR utilization')
+that has been merged in tip/sched/core
+
+Do you want me to rebase it  ?
+
+Regards,
+Vincent
+
+>
+> ---
+>  kernel/sched/cpufreq_schedutil.c |  2 +-
+>  kernel/sched/rt.c                | 16 ++++++++++------
+>  kernel/sched/sched.h             |  5 +++++
+>  3 files changed, 16 insertions(+), 7 deletions(-)
+>
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index e13df95..1751f96 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -185,7 +185,7 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>         struct rq *rq = cpu_rq(sg_cpu->cpu);
+>         unsigned long util;
+>
+> -       if (rq->rt.rt_nr_running) {
+> +       if (rt_rq_is_runnable(&rq->rt)) {
+>                 util = sg_cpu->max;
+>         } else {
+>                 util = sg_cpu->util_dl;
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 7aef6b4..d6b9517 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -508,8 +508,11 @@ static void sched_rt_rq_dequeue(struct rt_rq *rt_rq)
+>
+>         rt_se = rt_rq->tg->rt_se[cpu];
+>
+> -       if (!rt_se)
+> +       if (!rt_se) {
+>                 dequeue_top_rt_rq(rt_rq);
+> +               /* Kick cpufreq (see the comment in kernel/sched/sched.h). */
+> +               cpufreq_update_util(rq_of_rt_rq(rt_rq), 0);
+> +       }
+>         else if (on_rt_rq(rt_se))
+>                 dequeue_rt_entity(rt_se, 0);
+>  }
+> @@ -1001,8 +1004,6 @@ dequeue_top_rt_rq(struct rt_rq *rt_rq)
+>         sub_nr_running(rq, rt_rq->rt_nr_running);
+>         rt_rq->rt_queued = 0;
+>
+> -       /* Kick cpufreq (see the comment in kernel/sched/sched.h). */
+> -       cpufreq_update_util(rq, 0);
+>  }
+>
+>  static void
+> @@ -1014,11 +1015,14 @@ enqueue_top_rt_rq(struct rt_rq *rt_rq)
+>
+>         if (rt_rq->rt_queued)
+>                 return;
+> -       if (rt_rq_throttled(rt_rq) || !rt_rq->rt_nr_running)
+> +
+> +       if (rt_rq_throttled(rt_rq))
+>                 return;
+>
+> -       add_nr_running(rq, rt_rq->rt_nr_running);
+> -       rt_rq->rt_queued = 1;
+> +       if (rt_rq->rt_nr_running) {
+> +               add_nr_running(rq, rt_rq->rt_nr_running);
+> +               rt_rq->rt_queued = 1;
+> +       }
+>
+>         /* Kick cpufreq (see the comment in kernel/sched/sched.h). */
+>         cpufreq_update_util(rq, 0);
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index c9895d3..bbebcfe 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -609,6 +609,11 @@ struct rt_rq {
+>  #endif
+>  };
+>
+> +static inline bool rt_rq_is_runnable(struct rt_rq *rt_rq)
+> +{
+> +       return rt_rq->rt_queued && rt_rq->rt_nr_running;
+> +}
+> +
+>  /* Deadline class' related fields in a runqueue */
+>  struct dl_rq {
+>         /* runqueue is an rbtree, ordered by deadline */
+> --
+> 2.7.4
+>
+>
+>
+>
+>
+>> >
+>> > And talking about throttle; I think we wanted to check rt_queued in that
+>> > case.
+>>
+>> Bah, clearly you also want to update on unthrottle.. but I think there's
+>> more buggered wrt throtteling.
+>
+>
+>
+>
