@@ -1,65 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753198AbeFARDj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 13:03:39 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:43931 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752687AbeFARDh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 13:03:37 -0400
-X-Google-Smtp-Source: ADUXVKJUgLLHNa/tY3Ju8m3PEfLdLw/Cq+5M91+UMPwlLZA10J3nQY9KrGv4izZgyPfaBxLsImsexmXgU+qnNWIE8Dg=
+        id S1753298AbeFARDu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 13:03:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752687AbeFARDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 13:03:44 -0400
+X-Google-Smtp-Source: ADUXVKLAKVn1Cgs4WkaXLHPflbohMaTdY3hEkqRzaEp6CYXvghtoZv8GBxnmzRQgANgvHg0b2+y12FB5vpYj8n3zDGs=
 MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <1d1b5ffb-4786-6b7a-fbf3-84b79080ccff@infradead.org>
-References: <20180529132148.GC23785@veci.piliscsaba.redhat.com>
- <20180601152625.GD23785@veci.piliscsaba.redhat.com> <1d1b5ffb-4786-6b7a-fbf3-84b79080ccff@infradead.org>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 1 Jun 2018 19:03:36 +0200
-Message-ID: <CAJfpegvON3nNumNhSbG2nozkMPuPGNX4m3HPpk6Cdj0skYna4g@mail.gmail.com>
-Subject: Re: [GIT PULL] overlayfs update for 4.18
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>
+In-Reply-To: <0d08ba26-77f2-6c42-8fb1-214aaf6085e9@t-chip.com.cn>
+References: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
+ <1527737273-8387-3-git-send-email-djw@t-chip.com.cn> <CAL_JsqJK4vrmLBeN_ZeGCXAyqshshL16B0KN_+8uvt+=-O9TEw@mail.gmail.com>
+ <0d08ba26-77f2-6c42-8fb1-214aaf6085e9@t-chip.com.cn>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Fri, 1 Jun 2018 12:03:22 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKSy4q5dfVfXbRMLa7koTWufpAt3yNdE-9mwyJ-VzVQRQ@mail.gmail.com>
+Message-ID: <CAL_JsqKSy4q5dfVfXbRMLa7koTWufpAt3yNdE-9mwyJ-VzVQRQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] gpio: syscon: rockchip: add GPIO_MUTE support for rk3328
+To: Levin <djw@t-chip.com.cn>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>,
+        devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 6:18 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 06/01/2018 08:26 AM, Miklos Szeredi wrote:
->> On Tue, May 29, 2018 at 03:21:48PM +0200, Miklos Szeredi wrote:
->>> Hi Al,
->>>
->>> I'm sending this pull request to you instead of Linus, because a bigger than
->>> usual chunk involves the VFS.
->>>
->>> Please pull from:
->>>
->>>   git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git for-viro
->>>
->>> This update contains the following:
+On Thu, May 31, 2018 at 9:05 PM, Levin <djw@t-chip.com.cn> wrote:
+> Hi Rob,
 >
 >
->> ---
+> On 2018-05-31 10:45 PM, Rob Herring wrote:
 >>
->> diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
->> index 0a8e3c4543d1..79be4a77ca08 100644
->> --- a/Documentation/filesystems/overlayfs.txt
->> +++ b/Documentation/filesystems/overlayfs.txt
->> @@ -280,7 +280,7 @@ parameter metacopy=on/off. Lastly, there is also a per mount option
->>  metacopy=on/off to enable/disable this feature per mount.
+>> On Wed, May 30, 2018 at 10:27 PM,  <djw@t-chip.com.cn> wrote:
+>>>
+>>> From: Levin Du <djw@t-chip.com.cn>
+>>>
+>>> In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec
+>>> mute control, can also be used for general purpose. It is manipulated by
+>>> the GRF_SOC_CON10 register.
+>>>
+>>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+>>>
+>>> ---
+>>>
+>>> Changes in v3:
+>>> - Change from general gpio-syscon to specific rk3328-gpio-mute
+>>>
+>>> Changes in v2:
+>>> - Rename gpio_syscon10 to gpio_mute in doc
+>>>
+>>> Changes in v1:
+>>> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+>>> - Add doc rockchip,gpio-syscon.txt
+>>>
+>>>   .../bindings/gpio/rockchip,rk3328-gpio-mute.txt    | 28
+>>> +++++++++++++++++++
+>>>   drivers/gpio/gpio-syscon.c                         | 31
+>>> ++++++++++++++++++++++
+>>>   2 files changed, 59 insertions(+)
+>>>   create mode 100644
+>>> Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+>>> b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+>>> new file mode 100644
+>>> index 0000000..10bc632
+>>> --- /dev/null
+>>> +++
+>>> b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+>>> @@ -0,0 +1,28 @@
+>>> +Rockchip RK3328 GPIO controller dedicated for the GPIO_MUTE pin.
+>>> +
+>>> +In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec
+>>> mute
+>>> +control, can also be used for general purpose. It is manipulated by the
+>>> +GRF_SOC_CON10 register.
+>>> +
+>>> +Required properties:
+>>> +- compatible: Should contain "rockchip,rk3328-gpio-mute".
+>>> +- gpio-controller: Marks the device node as a gpio controller.
+>>> +- #gpio-cells: Should be 2. The first cell is the pin number and
+>>> +  the second cell is used to specify the gpio polarity:
+>>> +    0 = Active high,
+>>> +    1 = Active low.
+>>> +
+>>> +Example:
+>>> +
+>>> +       grf: syscon@ff100000 {
+>>> +               compatible = "rockchip,rk3328-grf", "syscon",
+>>> "simple-mfd";
+>>> +
+>>> +               gpio_mute: gpio-mute {
 >>
->>  Do not use metacopy=on with untrusted upper/lower directories. Otherwise
->> -it is possible that an attacker can create a handcrafted file with
->> +it is possible that an attacker can create an handcrafted file with
+>> Node names should be generic:
+>>
+>> gpio {
+>>
+>> This also means you can't add another GPIO node in the future and
+>> you'll have to live with "rockchip,rk3328-gpio-mute" covering more
+>> than 1 GPIO if you do need to add more GPIOs.
 >
-> bad change:
->                                        create a handcrafted
 >
-> Wait. Is this patch -R (reversed)?
+> As the first line describes, this GPIO controller is dedicated for the
+> GPIO_MUTE pin.
+> There's only one GPIO pin in the GRF_SOC_CON10 register. Therefore the
+> gpio_mute
+> name is proper IMHO.
 
-Oops, yes, reversed diff.
+It's how many GPIOs in the GRF, not this register. What I'm saying is
+when you come along later to add another GPIO in the GRF, you had
+better just add it to this same node. I'm not going to accept another
+GPIO controller node within the GRF. You have the cells to support
+more than 1, so it would only be a driver change. The compatible
+string would then not be ideally named at that point. But compatible
+strings are just unique identifiers, so it doesn't really matter what
+the string is.
 
-Thanks,
-Miklos
+I'm being told both "this is the only GPIO" and "the GRF has too many
+different functions for us to tell you what they all are". So which is
+it?
+
+Rob
