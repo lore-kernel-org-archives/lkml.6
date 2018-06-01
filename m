@@ -1,207 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752581AbeFANSo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:18:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51892 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751961AbeFANRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:17:01 -0400
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: mathieu.poirier@linaro.org, sudeep.holla@arm.com, robh@kernel.org,
-        mark.rutland@arm.com, frowand.list@gmail.com, matt.sealey@arm.com,
-        charles.garcia-tobin@arm.com, john.horley@arm.com,
-        mike.leach@linaro.org, coresight@lists.linaro.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [RFC PATCH 4/8] coresight: platform: Cleanup coresight connection handling
-Date: Fri,  1 Jun 2018 14:16:03 +0100
-Message-Id: <1527858967-16047-5-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
-References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
+        id S1752628AbeFANTD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:19:03 -0400
+Received: from mga02.intel.com ([134.134.136.20]:61793 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752124AbeFANTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 09:19:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,467,1520924400";
+   d="scan'208";a="53998592"
+Subject: Re: [PATCH V1 1/3] scsi: ufs: set the device reference clock setting
+To: sayali <sayalil@codeaurora.org>, subhashj@codeaurora.org,
+        cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, asutoshd@codeaurora.org,
+        evgreen@chromium.org
+Cc: linux-scsi@vger.kernel.org,
+        "'open list'" <linux-kernel@vger.kernel.org>
+References: <1527849774-7623-1-git-send-email-sayalil@codeaurora.org>
+ <1527849774-7623-2-git-send-email-sayalil@codeaurora.org>
+ <a103a853-5818-ba1b-8971-853e35162832@intel.com>
+ <001201d3f9aa$20146380$603d2a80$@codeaurora.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <0e3f63f5-c912-c7fe-7528-b1290a9a2b05@intel.com>
+Date: Fri, 1 Jun 2018 16:17:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <001201d3f9aa$20146380$603d2a80$@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The platform code parses the component connections and populates
-a platform-description of the output connections in arrays of fields
-(which is never freed). This is later copied in the coresight_register
-to a newly allocated area, represented by coresight_connection(s).
+On 01/06/18 16:11, sayali wrote:
+> Hi Adrain,
+> 
+> Updated my comments inline. Please check.
+> 
+> Thanks,
+> Sayali
+> -----Original Message-----
+> From: Adrian Hunter [mailto:adrian.hunter@intel.com] 
+> Sent: Friday, June 01, 2018 5:59 PM
+> To: Sayali Lokhande <sayalil@codeaurora.org>; subhashj@codeaurora.org; cang@codeaurora.org; vivek.gautam@codeaurora.org; rnayak@codeaurora.org; vinholikatti@gmail.com; jejb@linux.vnet.ibm.com; martin.petersen@oracle.com; asutoshd@codeaurora.org; evgreen@chromium.org
+> Cc: linux-scsi@vger.kernel.org; open list <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH V1 1/3] scsi: ufs: set the device reference clock setting
+> 
+> On 01/06/18 13:42, Sayali Lokhande wrote:
+>> From: Subhash Jadavani <subhashj@codeaurora.org>
+>>
+>> UFS host supplies the reference clock to UFS device and UFS device 
+>> specification allows host to provide one of the 4 frequencies (19.2 
+>> MHz,
+>> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the 
+>> device reference clock frequency setting in the device based on what 
+>> frequency it is supplying to UFS device.
+>>
+>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+>> [cang@codeaurora.org: Resolved trivial merge conflicts]
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+>> ---
+>>  drivers/scsi/ufs/ufs.h    |  9 +++++++
+>>  drivers/scsi/ufs/ufshcd.c | 62 
+>> +++++++++++++++++++++++++++++++++++++++++++++++
+>>  drivers/scsi/ufs/ufshcd.h |  1 +
+>>  3 files changed, 72 insertions(+)
+>>
+>> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h index 
+>> 14e5bf7..e15deb0 100644
+>> --- a/drivers/scsi/ufs/ufs.h
+>> +++ b/drivers/scsi/ufs/ufs.h
+>> @@ -378,6 +378,15 @@ enum query_opcode {
+>>  	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+>>  };
+>>  
+>> +/* bRefClkFreq attribute values */
+>> +enum ref_clk_freq {
+>> +	REF_CLK_FREQ_19_2_MHZ	= 0x0,
+>> +	REF_CLK_FREQ_26_MHZ	= 0x1,
+>> +	REF_CLK_FREQ_38_4_MHZ	= 0x2,
+>> +	REF_CLK_FREQ_52_MHZ	= 0x3,
+>> +	REF_CLK_FREQ_MAX	= REF_CLK_FREQ_52_MHZ,
+>> +};
+>> +
+>>  /* Query response result code */
+>>  enum {
+>>  	QUERY_RESULT_SUCCESS                    = 0x00,
+>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c 
+>> index c5b1bf1..3669bc4 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -6297,6 +6297,63 @@ static void ufshcd_def_desc_sizes(struct 
+>> ufs_hba *hba)  }
+>>  
+>>  /**
+>> + * ufshcd_set_dev_ref_clk - set the device bRefClkFreq
+>> + * @hba: per-adapter instance
+>> + * @ref_clk_freq: refrerence clock frequency to be set
+>> + *
+>> + * Read the current value of the bRefClkFreq attribute from device 
+>> +and update it
+>> + * if host is supplying different reference clock frequency than one 
+>> +mentioned
+>> + * in bRefClkFreq attribute.
+>> + *
+>> + * Returns zero on success, non-zero error value on failure.
+>> + */
+>> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba, u32 
+>> +ref_clk_freq) {
+>> +	int err = 0;
+>> +	int ref_clk = -1;
+>> +	static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
+>> +						     "38.4 MHz", "52 MHz"};
+>> +
+>> +	hba->dev_ref_clk_freq = ref_clk_freq;
+>> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+>> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
+>> +
+>> +	if (err) {
+>> +		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
+>> +			 __func__, err);
+>> +		goto out;
+>> +	}
+>> +
+>> +	if ((ref_clk < 0) || (ref_clk > REF_CLK_FREQ_52_MHZ)) {
+> 
+> If you used u32 ref_clk then you wouldn't have to check < 0, also you should use REF_CLK_FREQ_MAX not REF_CLK_FREQ_52_MHZ, but really why is this check needed anyway?
+> [Sayali] Here ref_clk is defined as integer with value -1. We are then reading bRefClkFreq attribute from device into ref_clk and hence the sanity check is required before we update/write bRefClkFreq attribute.
 
-This patch cleans up the code dealing with connections by making
-use of the "coresight_connection" structure right at the platform
-code and lets the generic driver simply re-use information provided
-by the platform.
+But why sanity check a value that is going to be overwritten?
 
-Thus making it reader friendly as well as avoiding the wastage of
-unused memory.
-
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/hwtracing/coresight/coresight.c    | 21 +---------------
- drivers/hwtracing/coresight/of_coresight.c | 40 +++++++++++-------------------
- include/linux/coresight.h                  |  9 ++-----
- 3 files changed, 17 insertions(+), 53 deletions(-)
-
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index 389c4ba..3b3756e 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -961,13 +961,11 @@ postcore_initcall(coresight_init);
- 
- struct coresight_device *coresight_register(struct coresight_desc *desc)
- {
--	int i;
- 	int ret;
- 	int link_subtype;
- 	int nr_refcnts = 1;
- 	atomic_t *refcnts = NULL;
- 	struct coresight_device *csdev;
--	struct coresight_connection *conns = NULL;
- 
- 	csdev = kzalloc(sizeof(*csdev), GFP_KERNEL);
- 	if (!csdev) {
-@@ -996,22 +994,7 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
- 	csdev->nr_inport = desc->pdata->nr_inport;
- 	csdev->nr_outport = desc->pdata->nr_outport;
- 
--	/* Initialise connections if there is at least one outport */
--	if (csdev->nr_outport) {
--		conns = kcalloc(csdev->nr_outport, sizeof(*conns), GFP_KERNEL);
--		if (!conns) {
--			ret = -ENOMEM;
--			goto err_kzalloc_conns;
--		}
--
--		for (i = 0; i < csdev->nr_outport; i++) {
--			conns[i].outport = desc->pdata->outports[i];
--			conns[i].child_name = desc->pdata->child_names[i];
--			conns[i].child_port = desc->pdata->child_ports[i];
--		}
--	}
--
--	csdev->conns = conns;
-+	csdev->conns = desc->pdata->conns;
- 
- 	csdev->type = desc->type;
- 	csdev->subtype = desc->subtype;
-@@ -1039,8 +1022,6 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
- 	return csdev;
- 
- err_device_register:
--	kfree(conns);
--err_kzalloc_conns:
- 	kfree(refcnts);
- err_kzalloc_refcnts:
- 	kfree(csdev);
-diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-index e0deab0..a3f3416 100644
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -77,26 +77,13 @@ static void of_coresight_get_ports(const struct device_node *node,
- static int of_coresight_alloc_memory(struct device *dev,
- 			struct coresight_platform_data *pdata)
- {
--	/* List of output port on this component */
--	pdata->outports = devm_kzalloc(dev, pdata->nr_outport *
--				       sizeof(*pdata->outports),
--				       GFP_KERNEL);
--	if (!pdata->outports)
--		return -ENOMEM;
--
--	/* Children connected to this component via @outports */
--	pdata->child_names = devm_kzalloc(dev, pdata->nr_outport *
--					  sizeof(*pdata->child_names),
--					  GFP_KERNEL);
--	if (!pdata->child_names)
--		return -ENOMEM;
--
--	/* Port number on the child this component is connected to */
--	pdata->child_ports = devm_kzalloc(dev, pdata->nr_outport *
--					  sizeof(*pdata->child_ports),
--					  GFP_KERNEL);
--	if (!pdata->child_ports)
--		return -ENOMEM;
-+	if (pdata->nr_outport) {
-+		pdata->conns = devm_kzalloc(dev, pdata->nr_outport *
-+					    sizeof(*pdata->conns),
-+					    GFP_KERNEL);
-+		if (!pdata->conns)
-+			return -ENOMEM;
-+	}
- 
- 	return 0;
- }
-@@ -122,8 +109,9 @@ struct coresight_platform_data *
- of_get_coresight_platform_data(struct device *dev,
- 			       const struct device_node *node)
- {
--	int i = 0, ret = 0;
-+	int ret = 0;
- 	struct coresight_platform_data *pdata;
-+	struct coresight_connection *conn;
- 	struct of_endpoint endpoint, rendpoint;
- 	struct device *rdev;
- 	struct device_node *ep = NULL;
-@@ -145,6 +133,7 @@ of_get_coresight_platform_data(struct device *dev,
- 		if (ret)
- 			return ERR_PTR(ret);
- 
-+		conn = pdata->conns;
- 		/* Iterate through each port to discover topology */
- 		do {
- 			/* Get a handle on a port */
-@@ -166,7 +155,7 @@ of_get_coresight_platform_data(struct device *dev,
- 				continue;
- 
- 			/* The local out port number */
--			pdata->outports[i] = endpoint.port;
-+			conn->outport = endpoint.port;
- 
- 			/*
- 			 * Get a handle on the remote endpoint and the device
-@@ -186,10 +175,9 @@ of_get_coresight_platform_data(struct device *dev,
- 			if (!rdev)
- 				return ERR_PTR(-EPROBE_DEFER);
- 
--			pdata->child_names[i] = dev_name(rdev);
--			pdata->child_ports[i] = rendpoint.port;
--
--			i++;
-+			conn->child_name = dev_name(rdev);
-+			conn->child_port = rendpoint.port;
-+			conn++;
- 		} while (ep);
- 	}
- 
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 32aaa1c..c2363bb 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -89,20 +89,15 @@ struct coresight_dev_subtype {
-  * @cpu:	the CPU a source belongs to. Only applicable for ETM/PTMs.
-  * @name:	name of the component as shown under sysfs.
-  * @nr_inport:	number of input ports for this component.
-- * @outports:	list of remote endpoint port number.
-- * @child_names:name of all child components connected to this device.
-- * @child_ports:child component port number the current component is
--		connected  to.
-  * @nr_outport:	number of output ports for this component.
-+ * @conns:	Array of nr_outport connections from this component
-  */
- struct coresight_platform_data {
- 	int cpu;
- 	const char *name;
- 	int nr_inport;
--	int *outports;
--	const char **child_names;
--	int *child_ports;
- 	int nr_outport;
-+	struct coresight_connection *conns;
- };
- 
- /**
--- 
-2.7.4
+> 
+>> +		dev_err(hba->dev, "%s: invalid ref_clk setting = %d\n",
+>> +			 __func__, ref_clk);
+>> +		err = -EINVAL;
+>> +		goto out;
+>> +	}
+>> +
+>> +	if (ref_clk == hba->dev_ref_clk_freq)
+>> +		goto out; /* nothing to update */
+>> +
+>> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+>> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
+>> +			&hba->dev_ref_clk_freq);
+>> +
+>> +	if (err)
+>> +		dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
+>> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
+>> +	else
+>> +		/*
+>> +		 * It is good to print this out here to debug any later failures
+>> +		 * related to gear switch.
+>> +		 */
+>> +		dev_info(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
+>> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
+> 
+> Why not make this dev_dbg and print always even when there is no update.
+> [Sayali] Agreed. Will update in next patchsets.
+> 
+>> +
+>> +out:
+>> +	return err;
+>> +}
+>> +
+>> +/**
+>>   * ufshcd_probe_hba - probe hba to detect device and initialize
+>>   * @hba: per-adapter instance
+>>   *
+>> @@ -6361,6 +6418,11 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>>  			"%s: Failed getting max supported power mode\n",
+>>  			__func__);
+>>  	} else {
+>> +		/*
+>> +		 * Set the right value to bRefClkFreq before attempting to
+>> +		 * switch to HS gears.
+>> +		 */
+>> +		ufshcd_set_dev_ref_clk(hba, REF_CLK_FREQ_19_2_MHZ);
+>>  		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+>>  		if (ret) {
+>>  			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n", 
+>> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h 
+>> index 8110dcd..b026ad8 100644
+>> --- a/drivers/scsi/ufs/ufshcd.h
+>> +++ b/drivers/scsi/ufs/ufshcd.h
+>> @@ -548,6 +548,7 @@ struct ufs_hba {
+>>  	void *priv;
+>>  	unsigned int irq;
+>>  	bool is_irq_enabled;
+>> +	u32 dev_ref_clk_freq;
+>>  
+>>  	/* Interrupt aggregation support is broken */
+>>  	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+>>
+> 
+> 
+> 
