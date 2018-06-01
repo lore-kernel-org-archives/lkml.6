@@ -1,52 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751209AbeFAJYp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:24:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58118 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750740AbeFAJYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:24:43 -0400
-Date: Fri, 1 Jun 2018 10:24:41 +0100
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu
-Subject: Re: [PATCH] fuse: fix NULL dereference when new_inode() fails
-Message-ID: <20180601092441.GA8687@stefanha-x1.localdomain>
+        id S1751354AbeFAJZU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 05:25:20 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45688 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750740AbeFAJZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 05:25:18 -0400
+Date: Fri, 1 Jun 2018 11:25:06 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, pgaikwad@nvidia.com,
+        dev@lynxeye.de, mirza.krak@gmail.com, benjamin.lindqvist@endian.se,
+        pdeschrijver@nvidia.com, miquel.raynal@bootlin.com,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org, jonathanh@nvidia.com,
+        marek.vasut@gmail.com, thierry.reding@gmail.com,
+        linux-mtd@lists.infradead.org, krzk@kernel.org, richard@nod.at,
+        linux-tegra@vger.kernel.org, digetx@gmail.com,
+        computersforpeace@gmail.com, dwmw2@infradead.org, marcel@ziswiler.com
+Subject: Re: [PATCH v3 1/6] mtd: rawnand: add Reed-Solomon error correction
+ algorithm
+Message-ID: <20180601112506.2157e8b0@bbrezillon>
+In-Reply-To: <20180601092600.03c14f53@bbrezillon>
+References: <20180531221637.6017-1-stefan@agner.ch>
+        <20180531221637.6017-2-stefan@agner.ch>
+        <20180601092600.03c14f53@bbrezillon>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
-Content-Disposition: inline
-In-Reply-To: <20180524202004.7813-1-stefanha@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 1 Jun 2018 09:26:00 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
---UugvWAfsgieZRqgk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Fri,  1 Jun 2018 00:16:32 +0200
+> Stefan Agner <stefan@agner.ch> wrote:
+> 
+> > Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
+> > 
+> > Signed-off-by: Stefan Agner <stefan@agner.ch>  
+> 
+> Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> 
+> > ---
+> >  drivers/mtd/nand/raw/nand_base.c | 1 +
+> >  include/linux/mtd/rawnand.h      | 1 +
 
-Ping?
+Hm, you forgot to update Documentation/devicetree/bindings/mtd/nand.txt.
 
-Archive link in case I broke email threading:
-https://marc.info/?l=linux-fsdevel&m=152719324102009&w=2
-
-Stefan
-
---UugvWAfsgieZRqgk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAEBAgAGBQJbERDZAAoJEJykq7OBq3PIkEYH/0OByjUIii5cCcTwTAZXv70R
-l5hoUAILS8ao0BWMwE1DrNrc94+s0zAvEzctFMBR9c1eU/rcGqpYLsA/tT6PBUz3
-HUgXf/V/k31dGb/JnN6BZE/3Ff+MBuxZBPgcdiItIfYRZWEQg8tZ+et0YXxmO0Rv
-KgnPH6ljdYJgR8P3B8ScFhVx54X0wjHPZWH+OZveUdjD9TKyH4REMx0bfoxJAexV
-7/GUUvJGxzZFB2UA9Y9dtu+8y55mFxNeuKK3g7K7Yy2U8z/mYc8fZ+muFE69zYMx
-bh25ppm5tjJGEGhmFIhkj5ALfaJ9wl0VomFXQib1tk6klhKz+HcPnIpaORmzzVE=
-=fikI
------END PGP SIGNATURE-----
-
---UugvWAfsgieZRqgk--
+> >  2 files changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> > index f28c3a555861..9eb5678dd6d0 100644
+> > --- a/drivers/mtd/nand/raw/nand_base.c
+> > +++ b/drivers/mtd/nand/raw/nand_base.c
+> > @@ -5744,6 +5744,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
+> >  static const char * const nand_ecc_algos[] = {
+> >  	[NAND_ECC_HAMMING]	= "hamming",
+> >  	[NAND_ECC_BCH]		= "bch",
+> > +	[NAND_ECC_RS]		= "rs",
+> >  };
+> >  
+> >  static int of_get_nand_ecc_algo(struct device_node *np)
+> > diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+> > index 5dad59b31244..6a82da8c44ce 100644
+> > --- a/include/linux/mtd/rawnand.h
+> > +++ b/include/linux/mtd/rawnand.h
+> > @@ -114,6 +114,7 @@ enum nand_ecc_algo {
+> >  	NAND_ECC_UNKNOWN,
+> >  	NAND_ECC_HAMMING,
+> >  	NAND_ECC_BCH,
+> > +	NAND_ECC_RS,
+> >  };
+> >  
+> >  /*  
+> 
+> 
+> ______________________________________________________
+> Linux MTD discussion mailing list
+> http://lists.infradead.org/mailman/listinfo/linux-mtd/
