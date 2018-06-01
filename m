@@ -1,157 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751474AbeFAIJh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:09:37 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:40176 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751131AbeFAIJ0 (ORCPT
+        id S1750913AbeFAIMj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:12:39 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:33392 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750796AbeFAIM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:09:26 -0400
-X-Google-Smtp-Source: ADUXVKKZu9BZgNI6apOgzhdfMNDnLl+VgbtwK7NZLWh3BOHRCcOVKnwyI/baMMWKVQjg9c1fbOpi4A==
-From: Jun Yao <yaojun8558363@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        greg@kroah.com
-Subject: [PATCH 4/4] arm64/mm: migrate swapper_pg_dir and tramp_pg_dir
-Date: Fri,  1 Jun 2018 16:09:18 +0800
-Message-Id: <20180601080918.11918-1-yaojun8558363@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 1 Jun 2018 04:12:26 -0400
+X-Google-Smtp-Source: ADUXVKJX/uWMJBAZjKzgS3pzw/K4nqs438b/KP5KRX9FHdWa0ZaabNlJ4v2SC7tP/5+/B0d7mjQSxEpIQ+knR+pUEeQ=
+MIME-Version: 1.0
+In-Reply-To: <CAOtvUMeBCH+23c3FDWncMwPPe5N=7yjRKzhyLmFXrYazgGbcJw@mail.gmail.com>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-6-git-send-email-gilad@benyossef.com> <20180529161936.prhp4oikzamr6u3n@verge.net.au>
+ <CAOtvUMeBCH+23c3FDWncMwPPe5N=7yjRKzhyLmFXrYazgGbcJw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Jun 2018 10:12:24 +0200
+X-Google-Sender-Auth: DT01bD8UY6f8CjP0U9d8J8ZOFJ4
+Message-ID: <CAMuHMdUX874g6pAz-Ze-yA3S+6aOhzUkfGN9wmQUhy-y0f7dMw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: r8a7795: add ccree binding
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Migrate swapper_pg_dir and tramp_pg_dir. And their virtual addresses
-do not correlate with kernel's address.
+Hi Gilad,
 
-Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
----
- arch/arm64/mm/mmu.c | 70 +++++++++++++++++++++++++++------------------
- 1 file changed, 42 insertions(+), 28 deletions(-)
+On Thu, May 31, 2018 at 1:55 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Tue, May 29, 2018 at 7:19 PM, Simon Horman <horms@verge.net.au> wrote:
+>> On Thu, May 24, 2018 at 03:19:10PM +0100, Gilad Ben-Yossef wrote:
+>>> Add bindings for CryptoCell instance in the SoC.
+>>>
+>>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>>
+>> In so far as I can review the details of this (which is not much) this
+>> looks fine to me. I am, however, a little unclear in when it should be
+>> accepted.
+>
+> Since Herbert Xu ACKed the driver changes, I would say the only gating
+> commit is Geert's CR clock patch.
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 26ba3e70a91c..5baae59479d8 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -57,6 +57,9 @@ EXPORT_SYMBOL(kimage_voffset);
- 
- phys_addr_t __pa_swapper_pg_dir;
- pgd_t *new_swapper_pg_dir = swapper_pg_dir;
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+pgd_t *new_tramp_pg_dir;
-+#endif
- 
- /*
-  * Empty_zero_page is a special page that is used for zero-initialized data
-@@ -80,19 +83,14 @@ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- }
- EXPORT_SYMBOL(phys_mem_access_prot);
- 
--static phys_addr_t __init early_pgtable_alloc(void)
-+static void __init clear_page_phys(phys_addr_t phys)
- {
--	phys_addr_t phys;
--	void *ptr;
--
--	phys = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
--
- 	/*
- 	 * The FIX_{PGD,PUD,PMD} slots may be in active use, but the FIX_PTE
- 	 * slot will be free, so we can (ab)use the FIX_PTE slot to initialise
- 	 * any level of table.
- 	 */
--	ptr = pte_set_fixmap(phys);
-+	void *ptr = pte_set_fixmap(phys);
- 
- 	memset(ptr, 0, PAGE_SIZE);
- 
-@@ -101,6 +99,14 @@ static phys_addr_t __init early_pgtable_alloc(void)
- 	 * table walker
- 	 */
- 	pte_clear_fixmap();
-+}
-+
-+static phys_addr_t __init early_pgtable_alloc(void)
-+{
-+	phys_addr_t phys;
-+
-+	phys = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
-+	clear_page_phys(phys);
- 
- 	return phys;
- }
-@@ -554,6 +560,10 @@ static int __init map_entry_trampoline(void)
- 	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
- 			     prot, pgd_pgtable_alloc, 0);
- 
-+	memcpy(new_tramp_pg_dir, tramp_pg_dir, PGD_SIZE);
-+	memblock_free(__pa_symbol(tramp_pg_dir),
-+		__pa_symbol(swapper_pg_dir) - __pa_symbol(tramp_pg_dir));
-+
- 	/* Map both the text and data into the kernel page table */
- 	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
- 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
-@@ -631,36 +641,40 @@ static void __init map_kernel(pgd_t *pgdp)
-  */
- void __init paging_init(void)
- {
--	phys_addr_t pgd_phys = early_pgtable_alloc();
--	pgd_t *pgdp = pgd_set_fixmap(pgd_phys);
-+	phys_addr_t pgd_phys;
-+	pgd_t *pgdp;
-+
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+	phys_addr_t mem_size;
-+	phys_addr_t p;
- 
--	__pa_swapper_pg_dir = __pa_symbol(swapper_pg_dir);
-+	mem_size = __pa_symbol(swapper_pg_dir) + PAGE_SIZE
-+				- __pa_symbol(tramp_pg_dir);
-+	pgd_phys = memblock_alloc(mem_size, PAGE_SIZE);
-+
-+	for (p = pgd_phys; p < pgd_phys + mem_size; p += PAGE_SIZE)
-+		clear_page_phys(p);
-+
-+	new_tramp_pg_dir = __va(pgd_phys);
-+	__pa_swapper_pg_dir = pgd_phys + PAGE_SIZE;
-+#else
-+	pgd_phys = early_pgtable_alloc();
-+	__pa_swapper_pg_dir = pgd_phys;
-+#endif
-+	new_swapper_pg_dir = __va(__pa_swapper_pg_dir);
-+
-+	pgdp = pgd_set_fixmap(__pa_swapper_pg_dir);
- 
- 	map_kernel(pgdp);
- 	map_mem(pgdp);
- 
--	/*
--	 * We want to reuse the original swapper_pg_dir so we don't have to
--	 * communicate the new address to non-coherent secondaries in
--	 * secondary_entry, and so cpu_switch_mm can generate the address with
--	 * adrp+add rather than a load from some global variable.
--	 *
--	 * To do this we need to go via a temporary pgd.
--	 */
--	cpu_replace_ttbr1(pgd_phys);
--	memcpy(swapper_pg_dir, pgdp, PGD_SIZE);
- 	cpu_replace_ttbr1(__pa_swapper_pg_dir);
-+	init_mm.pgd = new_swapper_pg_dir;
- 
- 	pgd_clear_fixmap();
--	memblock_free(pgd_phys, PAGE_SIZE);
- 
--	/*
--	 * We only reuse the PGD from the swapper_pg_dir, not the pud + pmd
--	 * allocated with it.
--	 */
--	memblock_free(__pa_symbol(swapper_pg_dir) + PAGE_SIZE,
--		      __pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir)
--		      - PAGE_SIZE);
-+	memblock_free(__pa_symbol(swapper_pg_dir),
-+		__pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir));
- }
- 
- /*
+These are queued for v4.19.
+
+> If that one is in, than I would say this one should go in as well.
+
+As the device node now has a power-domains property, the genpd code will
+try to attach it to the CPG/MSSR PM Domain, which is a clock domain.
+In the absence of the clock patch, the device's module clock cannot be
+found, and dev_pm_domain_attach() and thus platform_drv_probe() will fail,
+before calling the device driver's .probe() function.
+
+So there is no longer a dependency on the clock patch, and the DT patch can
+go in in parallel (although I prefer its subject to be changed
+s/binding/device device/).
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
