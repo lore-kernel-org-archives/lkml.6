@@ -1,43 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751877AbeFAJah (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:30:37 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48962 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751710AbeFAJ3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:29:44 -0400
-Date: Fri, 1 Jun 2018 10:29:33 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: peterz@infradead.org, rjw@rjwysocki.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: mingo@redhat.com, dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org, tkjos@google.com,
-        joelaf@google.com, smuckle@google.com, adharmap@quicinc.com,
-        skannan@quicinc.com, pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 00/10] Energy Aware Scheduling
-Message-ID: <20180601092933.GA3082@e108498-lin.cambridge.arm.com>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521142505.6522-1-quentin.perret@arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+        id S1751783AbeFAJ3q (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 05:29:46 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:48952 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751625AbeFAJ3I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 05:29:08 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] thermal: bcm2835: Stop using printk format %pCr
+Date: Fri,  1 Jun 2018 11:28:20 +0200
+Message-Id: <1527845302-12159-3-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+called in atomic context.
 
-The main new feature of this patch-set is the Energy Model framework we
-discussed at OSPM. The core of it and the APIs are all implemented in
-patch 03/10, so this is really where I was hoping to get some feedback.
-Is the overall idea of this framework reasonable ? What do you think
-about the interfaces ? Is the new config option acceptable ? And also,
-is there any way I can make reviewing this patch easier ?
+Replace it by printing the variable that already holds the clock rate.
+Note that calling clk_get_rate() is safe here, as the code runs in task
+context.
 
-Thanks!
-Quentin
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/thermal/broadcom/bcm2835_thermal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+index a4d6a0e2e9938190..23ad4f9f21438e45 100644
+--- a/drivers/thermal/broadcom/bcm2835_thermal.c
++++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+@@ -213,8 +213,8 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 	rate = clk_get_rate(data->clk);
+ 	if ((rate < 1920000) || (rate > 5000000))
+ 		dev_warn(&pdev->dev,
+-			 "Clock %pCn running at %pCr Hz is outside of the recommended range: 1.92 to 5MHz\n",
+-			 data->clk, data->clk);
++			 "Clock %pCn running at %lu Hz is outside of the recommended range: 1.92 to 5MHz\n",
++			 data->clk, rate);
+ 
+ 	/* register of thermal sensor and get info from DT */
+ 	tz = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
+-- 
+2.7.4
