@@ -1,103 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750973AbeFABjR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 21:39:17 -0400
-Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:35417 "EHLO
-        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750715AbeFABjQ (ORCPT
+        id S1750807AbeFABmO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 21:42:14 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:57120 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750711AbeFABmN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 21:39:16 -0400
-Date: Fri, 1 Jun 2018 11:26:57 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Toshi Kani <toshi.kani@hpe.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Dave Jiang <dave.jiang@intel.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
- boolean returns
-Message-ID: <20180601012657.GQ10363@dastard>
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-3-ross.zwisler@linux.intel.com>
- <20180529212510.GJ30110@magnolia>
- <20180529220114.GA13948@linux.intel.com>
- <20180531191332.GB7825@magnolia>
+        Thu, 31 May 2018 21:42:13 -0400
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.220.135
+X-Original-MAILFROM: byungchul.park@lge.com
+Subject: Re: [RFC] rcu: Check the range of jiffies_till_xxx_fqs on setting
+ them
+To: paulmck@linux.vnet.ibm.com
+Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com, joel@joelfernandes.org
+References: <1527578616-5595-1-git-send-email-byungchul.park@lge.com>
+ <20180529120155.GC3803@linux.vnet.ibm.com>
+ <07271222-2e1d-2dc8-1648-4c53d710a092@lge.com>
+ <3d2d8dec-445a-da31-dbe0-34b2331523ed@lge.com>
+ <20180531111742.GQ7063@linux.vnet.ibm.com>
+From: Byungchul Park <byungchul.park@lge.com>
+Message-ID: <7054f182-2648-983d-3602-e69ea36f90f6@lge.com>
+Date: Fri, 1 Jun 2018 10:42:10 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531191332.GB7825@magnolia>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180531111742.GQ7063@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 12:13:32PM -0700, Darrick J. Wong wrote:
-> On Tue, May 29, 2018 at 04:01:14PM -0600, Ross Zwisler wrote:
-> > On Tue, May 29, 2018 at 02:25:10PM -0700, Darrick J. Wong wrote:
-> > > On Tue, May 29, 2018 at 01:51:01PM -0600, Ross Zwisler wrote:
-> > > > From: Dave Jiang <dave.jiang@intel.com>
-> > > > 
-> > > > The function return values are confusing with the way the function is
-> > > > named. We expect a true or false return value but it actually returns
-> > > > 0/-errno.  This makes the code very confusing. Changing the return values
-> > > > to return a bool where if DAX is supported then return true and no DAX
-> > > > support returns false.
-> > > > 
-> > > > Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> > > > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> > > 
-> > > Looks ok, do you want me to pull the first two patches through the xfs
-> > > tree?
-> > > 
-> > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > 
-> > Thanks for the review.
-> > 
-> > I'm not sure what's best.  If you do that then Mike will need to have a DM
-> > branch for the rest of the series based on your stable commits, yea?
-> > 
-> > Mike what would you prefer?
+
+
+On 2018-05-31 20:17, Paul E. McKenney wrote:
+> On Thu, May 31, 2018 at 11:51:40AM +0900, Byungchul Park wrote:
+>> On 2018-05-31 11:18, Byungchul Park wrote:
+>>> On 2018-05-29 21:01, Paul E. McKenney wrote:
+>>>
+>>>> One approach would be to embed the kernel_params_ops structure inside
+>>>> another structure containing the limits, then just have two structures.
+>>>> Perhaps something like this already exists?  I don't see it right off,
+>>>> but then again, I am not exactly an expert on module_param.
+>>>>
+>>>> Thoughts?
+>>>
+>>> Unfortunately, I couldn't find it. There might be no way to verify
+>>> range of a variable except the way I did. Could you give your opinion
+>>> about whether I should go on it?
+>>
+>> Like..
 > 
-> I /was/ about to say that I would pull in the first two patches, but now
-> I can't get xfs to mount with pmem at all, and have no way of testing
-> this...?
+> This looks reasonable to me.  Although you could make something that took
+> ranges, that would be more code than what you have below, so what you
 
-I have similar problems, too, but:
+Exactly.
 
-$ ndctl list
-[
-  {
-    "dev":"namespace1.0",
-    "mode":"raw",
-    "size":8589934592,
-    "sector_size":512,
-    "blockdev":"pmem1"
-  },
-  {
-    "dev":"namespace0.0",
-    "mode":"raw",
-    "size":8589934592,
-    "sector_size":512,
-    "blockdev":"pmem0"
-  }
-]
-$ sudo ndctl create-namespace -f -e namespace0.0 --mode=fsdax
-  Error: operation failed, region0 fsdax mode not available
+> have below is good.  Could you please resend as a patch with Signed-off-by
+> and commit log?
 
-failed to reconfigure namespace: Invalid argument
-$
+Sure, I will. Thanks a lot Paul.
 
-I can't make head or tail of what is going wrong here - how am I
-supposed to debug this and get it working again?
-
-FWIW, XFS+DAX used to just work on this setup (I hadn't even
-installed ndctl until this morning!) but after changing the kernel
-it no longer works. That would make it a regression, yes?
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Byungchul
