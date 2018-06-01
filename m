@@ -1,99 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750919AbeFAE7m (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 00:59:42 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51600 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750760AbeFAE7l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 00:59:41 -0400
-Date: Fri, 1 Jun 2018 10:24:33 +0530
-From: Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To: Balbir Singh <bsingharora@gmail.com>
-Cc: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Stewart Smith <stewart@linux.vnet.ibm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
-        <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH] cpuidle:powernv: Make the snooze timeout dynamic.
-Reply-To: ego@linux.vnet.ibm.com
-References: <1527768909-32637-1-git-send-email-ego@linux.vnet.ibm.com>
- <CAKTCnz=WhC_vamKPZruEqc04WKpD5ZqZm0zTcCtagRHib6OZPw@mail.gmail.com>
+        id S1751007AbeFAFFH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 01:05:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37091 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750750AbeFAFFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 01:05:04 -0400
+Subject: Re: [PATCH v2 19/21] bcache: use match_string() helper
+To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
+Cc: andy.shevchenko@gmail.com, Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+ <1527765086-19873-20-git-send-email-xieyisheng1@huawei.com>
+ <f8dea584-a7b1-a894-d4b6-d573fdb4da3d@suse.de>
+ <36b9f53d-66bd-076e-7c2e-045ca2fd4406@huawei.com>
+From: Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <160f89c8-e14f-4c68-571c-71df7a5e445e@suse.de>
+Date: Fri, 1 Jun 2018 13:04:52 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKTCnz=WhC_vamKPZruEqc04WKpD5ZqZm0zTcCtagRHib6OZPw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18060104-0008-0000-0000-0000030FCFBF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009106; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000264; SDB=6.01040623; UDB=6.00532705; IPR=6.00819753;
- MB=3.00021404; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-01 04:54:39
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060104-0009-0000-0000-0000396D9FF3
-Message-Id: <20180601045433.GA17425@in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-01_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806010054
+In-Reply-To: <36b9f53d-66bd-076e-7c2e-045ca2fd4406@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balbir,
-
-Thanks for reviewing the patch!
-
-On Fri, Jun 01, 2018 at 12:51:05AM +1000, Balbir Singh wrote:
-> On Thu, May 31, 2018 at 10:15 PM, Gautham R. Shenoy
-
-[..snip..]
-> >
-> > +static u64 get_snooze_timeout(struct cpuidle_device *dev,
-> > +                             struct cpuidle_driver *drv,
-> > +                             int index)
-> > +{
-> > +       int i;
-> > +
-> > +       if (unlikely(!snooze_timeout_en))
-> > +               return default_snooze_timeout;
-> > +
-> > +       for (i = index + 1; i < drv->state_count; i++) {
-> > +               struct cpuidle_state *s = &drv->states[i];
-> > +               struct cpuidle_state_usage *su = &dev->states_usage[i];
-> > +
-> > +               if (s->disabled || su->disable)
-> > +                       continue;
-> > +
-> > +               return s->target_residency * tb_ticks_per_usec;
+On 2018/6/1 12:32 PM, Yisheng Xie wrote:
+> Hi Coly,
 > 
-> Can we ensure this is not prone to overflow?
-
-s->target_residency is an "unsigned int" so can take a maximum value
-of UINT_MAX. tb_ticks_per_usec is an "unsigned long" with a value in
-the range of 100-1000. The return value is a u64. The product of
-s->target_residency and tb_ticks_per_usec should be contained in u64.
-
-Is there a potential case of overflow that I am missing ?
-
+> On 2018/6/1 11:45, Coly Li wrote:
+>> On 2018/5/31 7:11 PM, Yisheng Xie wrote:
+>>> match_string() returns the index of an array for a matching string,
+>>> which can be used instead of open coded variant.
+>>>
+>>> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+>>> Cc: linux-bcache@vger.kernel.org 
+>>> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+>>
+>> Hi Yishenng,
+>>
+>> Andy Shevchenko <andriy.shevchenko@linux.intel.com> submitted a patch to
+>> replace the whole bch_read_string_list() with __sysfs_match_string().
+>> And this patch is applied in Jens' block tree, will go into mainline
+>> kernel in v4.18.
+>>
+>> If you search bcache mailing list, you may find a patch named with
+>> "bcache: Replace bch_read_string_list() by __sysfs_match_string()".
+>>
+>> That means this patch will conflict with existing changes.
 > 
-> Otherwise looks good
+> Get it, and thanks for this information.
 > 
-> Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+> Sorry Andy, for doing this once more.
+> 
+Hi Yisheng,
 
---
-Thanks and Regards
-gautham.
+Thank you for the effort, hope to see more bcache patches from you :-)
+
+Coly Li
