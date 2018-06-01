@@ -1,181 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752040AbeFAMxs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 08:53:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54032 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751769AbeFAMxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 08:53:41 -0400
-From: Hans de Goede <hdegoede@redhat.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>, dmitry.torokhov@gmail.com,
-        mfuzzey@parkeon.com, Kalle Valo <kvalo@codeaurora.org>,
-        Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>, nbroeking@me.com,
-        bjorn.andersson@linaro.org, Torsten Duwe <duwe@suse.de>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 1/5] efi: Export boot-services code and data as debugfs-blobs
-Date: Fri,  1 Jun 2018 14:53:26 +0200
-Message-Id: <20180601125330.25054-2-hdegoede@redhat.com>
-In-Reply-To: <20180601125330.25054-1-hdegoede@redhat.com>
-References: <20180601125330.25054-1-hdegoede@redhat.com>
+        id S1752190AbeFAMx4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 08:53:56 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52957 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751991AbeFAMxr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 08:53:47 -0400
+X-Google-Smtp-Source: ADUXVKLTI727WVVVrweHdXKFOiVfHMajKElUYnLqUYARQnzmdwEfqPIQryrnYAZ+LQESuFaCEVhDGw==
+From: osalvador@techadventures.net
+To: akpm@linux-foundation.org
+Cc: mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH 0/4] Small cleanup for memoryhotplug
+Date: Fri,  1 Jun 2018 14:53:17 +0200
+Message-Id: <20180601125321.30652-1-osalvador@techadventures.net>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes it is useful to be able to dump the efi boot-services code and
-data. This commit adds these as debugfs-blobs to /sys/kernel/debug/efi,
-but only if efi=debug is passed on the kernel-commandline as this requires
-not freeing those memory-regions, which costs 20+ MB of RAM.
+From: Oscar Salvador <osalvador@suse.de>
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v5:
--Rename the EFI_BOOT_SERVICES flag to EFI_PRESERVE_BS_REGIONS
 
-Changes in v4:
--Add new EFI_BOOT_SERVICES flag and use it to determine if the boot-services
- memory segments are available (and thus if it makes sense to register the
- debugfs bits for them)
+Hi,
 
-Changes in v2:
--Do not call pr_err on debugfs call failures
----
- arch/x86/platform/efi/efi.c    |  1 +
- arch/x86/platform/efi/quirks.c |  4 +++
- drivers/firmware/efi/efi.c     | 53 ++++++++++++++++++++++++++++++++++
- include/linux/efi.h            |  1 +
- 4 files changed, 59 insertions(+)
+I wanted to give it a try and do a small cleanup in the memhotplug's code.
+A lot more could be done, but I wanted to start somewhere.
+I tried to unify/remove duplicated code.
 
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index 9061babfbc83..82bbbbf0836d 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -208,6 +208,7 @@ int __init efi_memblock_x86_reserve_range(void)
- 	     efi.memmap.desc_version);
- 
- 	memblock_reserve(pmap, efi.memmap.nr_map * efi.memmap.desc_size);
-+	set_bit(EFI_PRESERVE_BS_REGIONS, &efi.flags);
- 
- 	return 0;
- }
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 36c1f8b9f7e0..16bdb9e3b343 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -376,6 +376,10 @@ void __init efi_free_boot_services(void)
- 	int num_entries = 0;
- 	void *new, *new_md;
- 
-+	/* Keep all regions for /sys/kernel/debug/efi */
-+	if (efi_enabled(EFI_DBG))
-+		return;
-+
- 	for_each_efi_memory_desc(md) {
- 		unsigned long long start = md->phys_addr;
- 		unsigned long long size = md->num_pages << EFI_PAGE_SHIFT;
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 232f4915223b..1590e4d6a857 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -18,6 +18,7 @@
- #include <linux/kobject.h>
- #include <linux/module.h>
- #include <linux/init.h>
-+#include <linux/debugfs.h>
- #include <linux/device.h>
- #include <linux/efi.h>
- #include <linux/of.h>
-@@ -325,6 +326,55 @@ static __init int efivar_ssdt_load(void)
- static inline int efivar_ssdt_load(void) { return 0; }
- #endif
- 
-+#ifdef CONFIG_DEBUG_FS
-+
-+#define EFI_DEBUGFS_MAX_BLOBS 32
-+
-+static struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
-+
-+static void __init efi_debugfs_init(void)
-+{
-+	struct dentry *efi_debugfs;
-+	efi_memory_desc_t *md;
-+	char name[32];
-+	int type_count[EFI_BOOT_SERVICES_DATA + 1] = {};
-+	int i = 0;
-+
-+	efi_debugfs = debugfs_create_dir("efi", NULL);
-+	if (IS_ERR_OR_NULL(efi_debugfs))
-+		return;
-+
-+	for_each_efi_memory_desc(md) {
-+		switch (md->type) {
-+		case EFI_BOOT_SERVICES_CODE:
-+			snprintf(name, sizeof(name), "boot_services_code%d",
-+				 type_count[md->type]++);
-+			break;
-+		case EFI_BOOT_SERVICES_DATA:
-+			snprintf(name, sizeof(name), "boot_services_data%d",
-+				 type_count[md->type]++);
-+			break;
-+		default:
-+			continue;
-+		}
-+
-+		debugfs_blob[i].size = md->num_pages << EFI_PAGE_SHIFT;
-+		debugfs_blob[i].data = memremap(md->phys_addr,
-+						debugfs_blob[i].size,
-+						MEMREMAP_WB);
-+		if (!debugfs_blob[i].data)
-+			continue;
-+
-+		debugfs_create_blob(name, 0400, efi_debugfs, &debugfs_blob[i]);
-+		i++;
-+		if (i == EFI_DEBUGFS_MAX_BLOBS)
-+			break;
-+	}
-+}
-+#else
-+static inline void efi_debugfs_init(void) {}
-+#endif
-+
- /*
-  * We register the efi subsystem with the firmware subsystem and the
-  * efivars subsystem with the efi subsystem, if the system was booted with
-@@ -369,6 +419,9 @@ static int __init efisubsys_init(void)
- 		goto err_remove_group;
- 	}
- 
-+	if (efi_enabled(EFI_DBG) && efi_enabled(EFI_PRESERVE_BS_REGIONS))
-+		efi_debugfs_init();
-+
- 	return 0;
- 
- err_remove_group:
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 56add823f190..d72358e892e7 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1144,6 +1144,7 @@ extern int __init efi_setup_pcdp_console(char *);
- #define EFI_DBG			8	/* Print additional debug info at runtime */
- #define EFI_NX_PE_DATA		9	/* Can runtime data regions be mapped non-executable? */
- #define EFI_MEM_ATTR		10	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
-+#define EFI_PRESERVE_BS_REGIONS	11	/* Are EFI boot-services memory segments available? */
- 
- #ifdef CONFIG_EFI
- /*
+The following is what this patchset does:
+
+1) add_memory_resource() has code to allocate a node in case it was offline.
+   Since try_online_node has some code for that as well, I just made add_memory_resource() to
+   use that so we can remove duplicated code..
+   This is better explained in patch 1/4.
+
+2) register_mem_sect_under_node() will be called only from link_mem_sections()
+
+3) Get rid of link_mem_sections() in favour of walk_memory_range() with a callback to
+   register_mem_sect_under_node()
+
+4) Drop unnecessary checks from register_mem_sect_under_node()
+
+
+I have done some tests and I could not see anything broken because of 
+this patchset.
+
+Oscar Salvador (4):
+  mm/memory_hotplug: Make add_memory_resource use __try_online_node
+  mm/memory_hotplug: Call register_mem_sect_under_node
+  mm/memory_hotplug: Get rid of link_mem_sections
+  mm/memory_hotplug: Drop unnecessary checks from
+    register_mem_sect_under_node
+
+ drivers/base/memory.c |   2 -
+ drivers/base/node.c   |  52 +++++---------------------
+ include/linux/node.h  |  21 +++++------
+ mm/memory_hotplug.c   | 101 ++++++++++++++++++++++++++------------------------
+ 4 files changed, 71 insertions(+), 105 deletions(-)
+
 -- 
-2.17.0
+2.13.6
