@@ -1,69 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751625AbeFAEwU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 00:52:20 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:26586 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeFAEwQ (ORCPT
+        id S1751753AbeFAEwc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 00:52:32 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46746 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751444AbeFAEwS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 00:52:16 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w514pT3d024922
-X-Nifty-SrcIP: [125.199.20.195]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Kees Cook <keescook@chromium.org>, Emese Revfy <re.emese@gmail.com>,
-        linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] gcc-plugins: disable GCC_PLUGIN_STRUCTLEAK_BYREF_ALL for COMPILE_TEST
-Date: Fri,  1 Jun 2018 13:51:23 +0900
-Message-Id: <1527828683-4518-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 1 Jun 2018 00:52:18 -0400
+X-Google-Smtp-Source: ADUXVKLcFiq4cSg6DW87YyEOZcjndbSZcOHCF0OAvJptv+SkOfMUe50Mk/orb1sUdxflcc7C/BTNAg==
+Date: Thu, 31 May 2018 21:52:15 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] softirq: reorder trace_softirqs_on to prevent lockdep
+ splat
+Message-ID: <20180601045215.GA168630@joelaf.mtv.corp.google.com>
+References: <20180502014439.87828-1-joelaf@google.com>
+ <20180507142117.35310ff2@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507142117.35310ff2@gandalf.local.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have enabled GCC_PLUGINS for COMPILE_TEST, but allmodconfig now
-produces new warnings.
+On Mon, May 07, 2018 at 02:21:17PM -0400, Steven Rostedt wrote:
+> Peter, Ingo or Thomas,
+> 
+> Can you queue this up? Or would you prefer that I take it?
 
-  CC [M]  drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.o
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function ‘wlc_phy_workarounds_nphy_rev7’:
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warning: the frame size of 3128 bytes is larger than 2048 bytes [-Wframe-larger-than=]
- }
- ^
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function ‘wlc_phy_workarounds_nphy_rev3’:
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warning: the frame size of 2800 bytes is larger than 2048 bytes [-Wframe-larger-than=]
- }
- ^
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function ‘wlc_phy_cal_txiqlo_nphy’:
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warning: the frame size of 2488 bytes is larger than 2048 bytes [-Wframe-larger-than=]
- }
- ^
+This patch is a bug fix, could it be queued for v4.17 -rc cycle or for
+linux-next?
 
-It looks like GCC_PLUGIN_STRUCTLEAK_BYREF_ALL is causing this.
-Add "depends on !COMPILE_TEST" to not dirturb the compile test.
+I have also included it below again:
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Suggested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+thanks,
+
+ - Joel
+
+---8<-----------------------
+
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Date: Tue, 1 May 2018 18:44:39 -0700
+Subject: [PATCH] softirq: reorder trace_softirqs_on to prevent lockdep splat
+
+I'm able to reproduce a lockdep splat with config options:
+CONFIG_PROVE_LOCKING=y,
+CONFIG_DEBUG_LOCK_ALLOC=y and
+CONFIG_PREEMPTIRQ_EVENTS=y
+
+$ echo 1 > /d/tracing/events/preemptirq/preempt_enable/enable
+
+[   26.112609] DEBUG_LOCKS_WARN_ON(current->softirqs_enabled)
+[   26.112636] WARNING: CPU: 0 PID: 118 at kernel/locking/lockdep.c:3854
+[...]
+[   26.144229] Call Trace:
+[   26.144926]  <IRQ>
+[   26.145506]  lock_acquire+0x55/0x1b0
+[   26.146499]  ? __do_softirq+0x46f/0x4d9
+[   26.147571]  ? __do_softirq+0x46f/0x4d9
+[   26.148646]  trace_preempt_on+0x8f/0x240
+[   26.149744]  ? trace_preempt_on+0x4d/0x240
+[   26.150862]  ? __do_softirq+0x46f/0x4d9
+[   26.151930]  preempt_count_sub+0x18a/0x1a0
+[   26.152985]  __do_softirq+0x46f/0x4d9
+[   26.153937]  irq_exit+0x68/0xe0
+[   26.154755]  smp_apic_timer_interrupt+0x271/0x280
+[   26.156056]  apic_timer_interrupt+0xf/0x20
+[   26.157105]  </IRQ>
+
+The issue was this:
+
+preempt_count = 1 << SOFTIRQ_SHIFT
+
+	__local_bh_enable(cnt = 1 << SOFTIRQ_SHIFT) {
+		if (softirq_count() == (cnt && SOFTIRQ_MASK)) {
+			trace_softirqs_on() {
+				current->softirqs_enabled = 1;
+			}
+		}
+		preempt_count_sub(cnt) {
+			trace_preempt_on() {
+				tracepoint() {
+					rcu_read_lock_sched() {
+						// jumps into lockdep
+
+Where preempt_count still has softirqs disabled, but
+current->softirqs_enabled is true, and we get a splat.
+
+Cc: stable@vger.kernel.org
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: d59158162e032 ("tracing: Add support for preempt and irq enable/disable events")
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
+ kernel/softirq.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
- arch/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/Kconfig b/arch/Kconfig
-index e9475d0..e5ff804 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -489,6 +489,7 @@ config GCC_PLUGIN_STRUCTLEAK
- config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
- 	bool "Force initialize all struct type variables passed by reference"
- 	depends on GCC_PLUGIN_STRUCTLEAK
-+	depends on !COMPILE_TEST
- 	help
- 	  Zero initialize any struct type local variable that may be passed by
- 	  reference without having been initialized.
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 177de3640c78..8a040bcaa033 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -139,9 +139,13 @@ static void __local_bh_enable(unsigned int cnt)
+ {
+ 	lockdep_assert_irqs_disabled();
+ 
++	if (preempt_count() == cnt)
++		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
++
+ 	if (softirq_count() == (cnt & SOFTIRQ_MASK))
+ 		trace_softirqs_on(_RET_IP_);
+-	preempt_count_sub(cnt);
++
++	__preempt_count_sub(cnt);
+ }
+ 
+ /*
 -- 
-2.7.4
+2.17.0.921.gf22659ad46-goog
