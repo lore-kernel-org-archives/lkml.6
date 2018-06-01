@@ -1,71 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753053AbeFARHX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 13:07:23 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:45034 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751584AbeFARHT (ORCPT
+        id S1753023AbeFARJZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 13:09:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55590 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751584AbeFARJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 13:07:19 -0400
-X-Google-Smtp-Source: ADUXVKKViu9wyHez61wu1UbtIrD6P8hPoeTlgldWSM16iuTGmeN9Ly92kb7R/HJayLRprG9oI40QNg==
-Date: Fri, 1 Jun 2018 10:07:17 -0700
-From: "'tj@kernel.org'" <tj@kernel.org>
-To: "Hatayama, Daisuke" <d.hatayama@jp.fujitsu.com>
-Cc: "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
-        "Okajima, Toshiyuki" <toshi.okajima@jp.fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "'ebiederm@aristanetworks.com'" <ebiederm@aristanetworks.com>
-Subject: Re: [RESEND PATCH v2] kernfs: fix dentry unexpected skip
-Message-ID: <20180601170717.GY1351649@devbig577.frc2.facebook.com>
-References: <33710E6CAA200E4583255F4FB666C4E21B63D491@G01JPEXMBYT03>
- <20180529162627.GH1351649@devbig577.frc2.facebook.com>
- <33710E6CAA200E4583255F4FB666C4E21B65779C@G01JPEXMBYT03>
+        Fri, 1 Jun 2018 13:09:23 -0400
+Date: Fri, 1 Jun 2018 18:08:47 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, alsa-devel@alsa-project.org,
+        Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+        linux-kernel@vger.kernel.org,
+        Chintan Patel <chintan.m.patel@intel.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: Re: [alsa-devel] [PATCH v2 1/3] ASoC: topology: Improve backwards
+ compatibility with v4 topology files
+Message-ID: <20180601170847.GC8677@sirena.org.uk>
+References: <1527191363-21021-1-git-send-email-linux@roeck-us.net>
+ <20180601102506.GB8677@sirena.org.uk>
+ <0015aace-fe32-9707-d3c9-0dea6f5fc48c@roeck-us.net>
+ <8452aca6-0ae4-9fe1-c8cd-9f84e34f509f@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
 Content-Disposition: inline
-In-Reply-To: <33710E6CAA200E4583255F4FB666C4E21B65779C@G01JPEXMBYT03>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <8452aca6-0ae4-9fe1-c8cd-9f84e34f509f@linux.intel.com>
+X-Cookie: OS/2 must die!
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On Fri, Jun 01, 2018 at 09:25:32AM +0000, Hatayama, Daisuke wrote:
-> kernfs_dir_pos() checks if a kernfs_node object given as one of its
-> arguments is still active and if so returns it, or returns a
-> kernfs_node object that is most equal (possibly smaller and larger) to
-> the given object.
+--oJ71EGRlYNjSvfq7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sometimes they're duplicate operations tho, which is exactly the bug
-the posted patch is trying to fix.  What I'm suggesting is instead of
-leaving both instances and skipping one conditionally, put them in one
-place and trigger only when necessary.  The sequence of operations
-would be exactly the same.  The only difference is how the code is
-organized.
+On Fri, Jun 01, 2018 at 10:19:58AM -0500, Pierre-Louis Bossart wrote:
 
-> kernfs_dir_next_pos() returns a kernfs_node object that is next to the
-> object given by kernfs_dir_pos().
-> 
-> Two functions does different things and both need to skip inactive
-> nodes. I don't think it natural to remove the skip only from
-> kernfs_dir_pos().
-> 
-> OTOH, throughout getdents(), there is no case that the kernfs_node
-> object given to kernfs_dir_pos() is used afterwards in the
-> processing. So, is it enough to provide kernfs_dir_next_pos() only?
-> Then, the skip code is now not duplicated.
-> 
-> The patch below is my thought. How do you think?
-> 
-> But note that this patch has some bug so that system boot get hang
-> without detecting root filesystem disk :) I'm debugging this now.
+> I wanted to ack this patch but the Intel validation folks asked for a cou=
+ple
+> of days to finish their tests on a variety of Chromebooks (e.g. Lars) and
+> double-check which models used the v4 topology. There is an internal thre=
+ad
+> on all this which remains active. I don't think the feedback will be dela=
+yed
+> beyond early next week.
 
-I haven't looked into the code that closely but given that we had
-cases where both skippings were fine and not, the condition is likely
-gonna be a bit tricker?
+OK, I'm expecting the merge window to open over the weekend so I think
+I'm just going to apply now so we it's in -next when that happens. =20
 
-Thanks.
+--oJ71EGRlYNjSvfq7
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-tejun
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsRfZ4ACgkQJNaLcl1U
+h9DtcQf+MLxA1Y7K9CWrSgFsWQtI23eljjg88XksXgCBs/1EEiyYXLmu7dVRLg+k
+5jxgxM98qG7M94RxNycoGLTa/IreTk5RdOBwLR/x7Y7G1/TYTbhqu7Bas0i0fAGv
+oVdi45AKtB8ummzQ180IVoeObPo+dMoBKLnTp4hRYumFwG8/BCOZo3ekj6yjXJak
+Ki66YWqsOp0DozBHl0Ezirne38FK27CtiJE0ze6iqR/7tX2MqExzfX+2AYfPlwLY
+zwRJS1T3rnZkrrQ0lpKmphaFH6nqZVvWGjXaS90me5pQdsubukm5Gtxu0dmDAko+
+Zn0+hBNs15Zdz0mb2teeUD/vuNpoHQ==
+=huYi
+-----END PGP SIGNATURE-----
+
+--oJ71EGRlYNjSvfq7--
