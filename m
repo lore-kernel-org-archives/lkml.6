@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752643AbeFAPqm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:46:42 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:35002 "EHLO ale.deltatee.com"
+        id S1752751AbeFAPqv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:46:51 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:35024 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751777AbeFAPqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:46:38 -0400
+        id S1751777AbeFAPqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:46:46 -0400
 To: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org,
@@ -23,23 +23,23 @@ Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
 References: <20180531235010.5279-1-logang@deltatee.com>
- <20180531235010.5279-2-logang@deltatee.com>
- <CAHp75VcQwDGqND8v1RTo4+6Hyf9G5_2w9x9aiVONwKXsTKgJ1Q@mail.gmail.com>
+ <20180531235010.5279-3-logang@deltatee.com>
+ <CAHp75Vc4yxeM+jz2biMBoWB-h_dG1_Qx91VCP+f1mhvvgPVPxQ@mail.gmail.com>
 From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <806279a8-1faa-7b86-f761-15eb95b10887@deltatee.com>
-Date: Fri, 1 Jun 2018 09:46:05 -0600
+Message-ID: <be1bdb61-325a-1848-9724-55dc6e3fb983@deltatee.com>
+Date: Fri, 1 Jun 2018 09:46:31 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VcQwDGqND8v1RTo4+6Hyf9G5_2w9x9aiVONwKXsTKgJ1Q@mail.gmail.com>
+In-Reply-To: <CAHp75Vc4yxeM+jz2biMBoWB-h_dG1_Qx91VCP+f1mhvvgPVPxQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-SA-Exim-Connect-IP: 172.16.1.162
 X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com
 X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 1/3] PCI: Make specifying PCI devices in kernel
- parameters reusable
+Subject: Re: [PATCH v2 2/3] PCI: Allow specifying devices using a base bus and
+ path of devfns
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,43 +48,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 01/06/18 04:39 AM, Andy Shevchenko wrote:
->> -       pci=option[,option...]  [PCI] various PCI subsystem options:
->> +       pci=option[,option...]  [PCI] various PCI subsystem options.
->> +
->> +                               Some options herein operate on a specific device
->> +                               or a set of devices (<pci_dev>). These are
->> +                               specified in one of two formats:
+On 01/06/18 04:41 AM, Andy Shevchenko wrote:
+>> -                               specified in one of two formats:
+>> +                               specified in one of three formats:
 > 
-> I would rather to add
+> ...in one of the following formats:
 > 
->  <pci_dev>
-> 
-> here in the same way as done for options.
-> It would be easy for people to find a referenced paragraph.
+> in the first place and don't fix it each time you add/remove one?
 
-Sorry, I don't understand what you are asking. Can you be more specific?
+Sure, I'll make the change in v3.
 
->> +
->> +                               [<domain>:]<bus>:<slot>.<func>
->> +                               pci:<vendor>:<device>[:<subvendor>:<subdevice>]
->> +
->> +                               Note: the first format specifies a PCI
->> +                               bus/slot/function address which may change
->> +                               if new hardware is inserted, if motherboard
->> +                               firmware changes, or due to changes caused
->> +                               by other kernel parameters. The second format
->> +                               selects devices using IDs from the
->> +                               configuration space which may match multiple
->> +                               devices in the system.
-> 
->> +static int pci_dev_str_match(struct pci_dev *dev, const char *p,
->> +                            const char **endptr)
-> 
-> This change I hope has no functional alteration, so, can be split to a
-> separate patch.
-
-That's all this patch does... Or do you want be to separate out
-documentation from implementation? That just seems a bit excessive to me.
+Thanks,
 
 Logan
