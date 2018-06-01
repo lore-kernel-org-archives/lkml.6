@@ -1,79 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752752AbeFANYr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:24:47 -0400
-Received: from gateway21.websitewelcome.com ([192.185.46.113]:13923 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751918AbeFANYK (ORCPT
+        id S1752758AbeFANZH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:25:07 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36987 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752275AbeFANXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:24:10 -0400
-X-Authority-Reason: nr=8
-Date: Fri, 1 Jun 2018 08:24:08 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Igor Mitsyanko <imitsyanko@quantenna.com>,
-        Avinash Patil <avinashp@quantenna.com>,
-        Sergey Matyukevich <smatyukevich@quantenna.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] qtnfmac: fix NULL pointer dereference
-Message-ID: <20180601132408.GA2572@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.46.223
-X-Source-L: No
-X-Exim-ID: 1fOk2K-000ga3-UG
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.46.223]:59888
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Fri, 1 Jun 2018 09:23:04 -0400
+X-Google-Smtp-Source: ADUXVKKQGbPsWSkWTeBISDPe8+tmzTDe4zr8TwWdRiE9/ICova0C1Ict92ECv4cIqiffHKBx5Bj7Pg==
+From: Christian Brauner <christian@brauner.io>
+To: linux-kernel@vger.kernel.org
+Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
+        james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, oleg@redhat.com,
+        Christian Brauner <christian@brauner.io>
+Subject: [PATCH v2 12/17] signal: make unhandled_signal() return bool
+Date: Fri,  1 Jun 2018 15:22:34 +0200
+Message-Id: <20180601132239.4421-13-christian@brauner.io>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180601132239.4421-1-christian@brauner.io>
+References: <20180601132239.4421-1-christian@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case *vif* is NULL at 655: if (!vif), the execution path jumps to
-label out, where *vif* is dereferenced at 679:
+unhandled_signal() already behaves like a boolean function. Let's actually
+declare it as such too.
+All callers treat it as such too.
 
-if (vif->sta_state == QTNF_STA_CONNECTING)
-
-Fix this by immediately returning when *vif* is NULL instead of
-jumping to label out.
-
-Addresses-Coverity-ID: 1469567 ("Dereference after null check")
-Fixes: 480daa9cb62c ("qtnfmac: fix invalid STA state on EAPOL failure")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
- drivers/net/wireless/quantenna/qtnfmac/cfg80211.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+v1->v2:
+* unchanged
+v0->v1:
+* patch added
+---
+ include/linux/signal.h |  2 +-
+ kernel/signal.c        | 11 +++++++----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
-index 220e2b7..ae0ca80 100644
---- a/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
-+++ b/drivers/net/wireless/quantenna/qtnfmac/cfg80211.c
-@@ -654,8 +654,7 @@ qtnf_disconnect(struct wiphy *wiphy, struct net_device *dev,
- 	vif = qtnf_mac_get_base_vif(mac);
- 	if (!vif) {
- 		pr_err("MAC%u: primary VIF is not configured\n", mac->macid);
--		ret = -EFAULT;
--		goto out;
-+		return -EFAULT;
- 	}
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index a9bc7e1b077e..1145d7061ed9 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -284,7 +284,7 @@ static inline void disallow_signal(int sig)
  
- 	if (vif->wdev.iftype != NL80211_IFTYPE_STATION) {
+ extern struct kmem_cache *sighand_cachep;
+ 
+-int unhandled_signal(struct task_struct *tsk, int sig);
++extern bool unhandled_signal(struct task_struct *tsk, int sig);
+ 
+ /*
+  * In POSIX a signal is sent either to a specific thread (Linux task)
+diff --git a/kernel/signal.c b/kernel/signal.c
+index d5a3b1ef775e..a41af5a7749f 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -508,13 +508,16 @@ flush_signal_handlers(struct task_struct *t, int force_default)
+ 	}
+ }
+ 
+-int unhandled_signal(struct task_struct *tsk, int sig)
++bool unhandled_signal(struct task_struct *tsk, int sig)
+ {
+-	void __user *handler = tsk->sighand->action[sig-1].sa.sa_handler;
++	void __user *handler = tsk->sighand->action[sig - 1].sa.sa_handler;
++
+ 	if (is_global_init(tsk))
+-		return 1;
++		return true;
++
+ 	if (handler != SIG_IGN && handler != SIG_DFL)
+-		return 0;
++		return false;
++
+ 	/* if ptraced, let the tracer determine */
+ 	return !tsk->ptrace;
+ }
 -- 
-2.7.4
+2.17.0
