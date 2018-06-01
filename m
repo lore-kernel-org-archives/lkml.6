@@ -1,87 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751000AbeFAVQh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 17:16:37 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:45653 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750726AbeFAVQe (ORCPT
+        id S1750943AbeFAVVZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 17:21:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37086 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750724AbeFAVVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 17:16:34 -0400
-X-Google-Smtp-Source: ADUXVKKt36qP0fq+nnzT+k16b8+/zQNCcxiUKiYa1aga26IxGZwyvrhnrmig8WGdara6wtmCl/GH2wql8RpfipAccl8=
+        Fri, 1 Jun 2018 17:21:22 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E625C6044B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date: Fri, 1 Jun 2018 15:21:17 -0600
+From: Jordan Crouse <jcrouse@codeaurora.org>
+To: Vikash Garodia <vgarodia@codeaurora.org>
+Cc: hverkuil@xs4all.nl, mchehab@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        bjorn.andersson@linaro.org, stanimir.varbanov@linaro.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, acourbot@chromium.org
+Subject: Re: [PATCH v2 2/5] media: venus: add a routine to set venus state
+Message-ID: <20180601212117.GD11565@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: Vikash Garodia <vgarodia@codeaurora.org>,
+        hverkuil@xs4all.nl, mchehab@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        bjorn.andersson@linaro.org, stanimir.varbanov@linaro.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, acourbot@chromium.org
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+ <1527884768-22392-3-git-send-email-vgarodia@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180601204604.GB1144@redhat.com>
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-4-ross.zwisler@linux.intel.com> <20180601201924.GA1144@redhat.com>
- <20180601204604.GB1144@redhat.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Fri, 1 Jun 2018 14:16:33 -0700
-Message-ID: <CAPcyv4j2Mi6p4xQ+m7dqcEpAF4aCEk3pEU8zAwGdnNJ8pVquVw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] dm: fix test for DAX device support
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527884768-22392-3-git-send-email-vgarodia@codeaurora.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 1:46 PM, Mike Snitzer <snitzer@redhat.com> wrote:
-> On Fri, Jun 01 2018 at  4:19P -0400,
-> Mike Snitzer <snitzer@redhat.com> wrote:
->
->> On Tue, May 29 2018 at  3:51P -0400,
->> Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
->>
->> > Currently device_supports_dax() just checks to see if the QUEUE_FLAG_DAX
->> > flag is set on the device's request queue to decide whether or not the
->> > device supports filesystem DAX.  This is insufficient because there are
->> > devices like PMEM namespaces in raw mode which have QUEUE_FLAG_DAX set but
->> > which don't actually support DAX.
->>
->> Isn't that a PMEM bug then?
->>
->> What is the point of setting QUEUE_FLAG_DAX if it cannot be trusted?
->>
->> > This means that you could create a dm-linear device, for example, where the
->> > first part of the dm-linear device was a PMEM namespace in fsdax mode and
->> > the second part was a PMEM namespace in raw mode.  Both DM and the
->> > filesystem you put on that dm-linear device would think the whole device
->> > supports DAX, which would lead to bad behavior once your raw PMEM namespace
->> > part using DAX needed struct page for something.
->>
->> The PMEM namespace in raw mode shouldn't be setting QUEUE_FLAG_DAX, if
->> it didn't then the stacked-up linear DM wouldn't
->>
->> > Fix this by using bdev_dax_supported() like filesystems do at mount time.
->> > This checks for raw mode and also performs other tests like checking to
->> > make sure the dax_direct_access() path works.
->>
->> Sorry "This" does those things where?
->
-> I see you meant bdev_dax_supported() does these additional checks.
->
-> My previous question stands though.  Why is QUEUE_FLAG_DAX getting set
-> if the device hasn't already passed these checks?  Shouldn't setting
-> QUEUE_FLAG_DAX on request_queue depend on bdev_dax_supported() passing?
->
-> But looking at the drivers that do set QUEUE_FLAG_DAX: they
-> don't have the bdev readily available.  Anyway, just strikes me as
-> bizarre that a driver can set QUEUE_FLAG_DAX without having to have
-> ensured bdev_dax_supported() passes (even if not programatically, but
-> that the developer has verified the hooks, et al exist).
->
-> But I'll give up on this line of questioning..
->
-> My dilemma now is: how do I take these changes without first rebasing
-> linux-dm.git ontop of Darrick's xfs tree?
->
-> I probably should've reviewed faster and been the one to take the entire
-> set (with appropriate acks obviously).
+On Sat, Jun 02, 2018 at 01:56:05AM +0530, Vikash Garodia wrote:
+> Add a new routine which abstracts the TZ call to
+> set the video hardware state.
+> 
+> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/core.h      |  5 +++++
+>  drivers/media/platform/qcom/venus/firmware.c  | 28 +++++++++++++++++++++++++++
+>  drivers/media/platform/qcom/venus/firmware.h  |  1 +
+>  drivers/media/platform/qcom/venus/hfi_venus.c | 13 ++++---------
+>  4 files changed, 38 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> index 85e66e2..e7bfb63 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -35,6 +35,11 @@ struct reg_val {
+>  	u32 value;
+>  };
+>  
+> +enum tzbsp_video_state {
+> +	TZBSP_VIDEO_SUSPEND = 0,
+> +	TZBSP_VIDEO_RESUME
 
-I'd say just make a topic branch on top of xfs and merge it... with
-Darrick's permission of course. It might also mean you should wait for
-the xfs pull request to go to Linus first during the window.
+You should put a comma after the last item to reduce future patch sizes.
+
+> +};
+> +
+>  struct venus_resources {
+>  	u64 dma_mask;
+>  	const struct freq_tbl *freq_tbl;
+> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+> index 7d89b5a..b4664ed 100644
+> --- a/drivers/media/platform/qcom/venus/firmware.c
+> +++ b/drivers/media/platform/qcom/venus/firmware.c
+> @@ -53,6 +53,34 @@ static void venus_reset_hw(struct venus_core *core)
+>  	/* Bring Arm9 out of reset */
+>  	writel_relaxed(0, reg_base + WRAPPER_A9SS_SW_RESET);
+>  }
+> +
+> +int venus_set_hw_state(enum tzbsp_video_state state, struct venus_core *core)
+> +{
+> +	int ret;
+> +	struct device *dev = core->dev;
+
+If you get rid of the log message as you should, you don't need this.
+
+> +	void __iomem *reg_base = core->base;
+> +
+> +	switch (state) {
+> +	case TZBSP_VIDEO_SUSPEND:
+> +		if (qcom_scm_is_available())
+> +			ret = qcom_scm_set_remote_state(TZBSP_VIDEO_SUSPEND, 0);
+> +		else
+> +			writel_relaxed(1, reg_base + WRAPPER_A9SS_SW_RESET);
+
+You can just use core->base here and not bother making a local variable for it.
+
+> +		break;
+> +	case TZBSP_VIDEO_RESUME:
+> +		if (qcom_scm_is_available())
+> +			ret = qcom_scm_set_remote_state(TZBSP_VIDEO_RESUME, 0);
+> +		else
+> +			venus_reset_hw(core);
+> +		break;
+> +	default:
+> +		dev_err(dev, "invalid state\n");
+
+state is a enum - you are highly unlikely to be calling it in your own code with
+a random value.  It is smart to have the default, but you don't need the log
+message - that is just wasted space in the binary.
+
+> +		break;
+> +	}
+
+There are three paths in the switch statement that could end up with 'ret' being
+uninitialized here.  Set it to 0 when you declare it.
+
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(venus_set_hw_state);
+> +
+>  int venus_boot(struct device *dev, const char *fwname)
+>  {
+>  	const struct firmware *mdt;
+> diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
+> index 428efb5..1336729 100644
+> --- a/drivers/media/platform/qcom/venus/firmware.h
+> +++ b/drivers/media/platform/qcom/venus/firmware.h
+> @@ -18,5 +18,6 @@
+>  
+>  int venus_boot(struct device *dev, const char *fwname);
+>  int venus_shutdown(struct device *dev);
+> +int venus_set_hw_state(enum tzbsp_video_state, struct venus_core *core);
+>  
+>  #endif
+> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+> index f61d34b..797a9f5 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/kernel.h>
+> -#include <linux/qcom_scm.h>
+>  #include <linux/slab.h>
+>  
+>  #include "core.h"
+> @@ -27,6 +26,7 @@
+>  #include "hfi_msgs.h"
+>  #include "hfi_venus.h"
+>  #include "hfi_venus_io.h"
+> +#include "firmware.h"
+>  
+>  #define HFI_MASK_QHDR_TX_TYPE		0xff000000
+>  #define HFI_MASK_QHDR_RX_TYPE		0x00ff0000
+> @@ -55,11 +55,6 @@
+>  #define IFACEQ_VAR_LARGE_PKT_SIZE	512
+>  #define IFACEQ_VAR_HUGE_PKT_SIZE	(1024 * 12)
+>  
+> -enum tzbsp_video_state {
+> -	TZBSP_VIDEO_STATE_SUSPEND = 0,
+> -	TZBSP_VIDEO_STATE_RESUME
+> -};
+> -
+>  struct hfi_queue_table_header {
+>  	u32 version;
+>  	u32 size;
+> @@ -574,7 +569,7 @@ static int venus_power_off(struct venus_hfi_device *hdev)
+>  	if (!hdev->power_enabled)
+>  		return 0;
+>  
+> -	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
+> +	ret = venus_set_hw_state(TZBSP_VIDEO_SUSPEND, hdev->core);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -594,7 +589,7 @@ static int venus_power_on(struct venus_hfi_device *hdev)
+>  	if (hdev->power_enabled)
+>  		return 0;
+>  
+> -	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_RESUME, 0);
+> +	ret = venus_set_hw_state(TZBSP_VIDEO_RESUME, hdev->core);
+>  	if (ret)
+>  		goto err;
+>  
+> @@ -607,7 +602,7 @@ static int venus_power_on(struct venus_hfi_device *hdev)
+>  	return 0;
+>  
+>  err_suspend:
+> -	qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
+> +	venus_set_hw_state(TZBSP_VIDEO_SUSPEND, hdev->core);
+>  err:
+>  	hdev->power_enabled = false;
+>  	return ret;
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
