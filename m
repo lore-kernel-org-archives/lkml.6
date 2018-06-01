@@ -1,215 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeFANes (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:34:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37542 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751755AbeFANeo (ORCPT
+        id S1752111AbeFANel (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:34:41 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:47026 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751346AbeFANeh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:34:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D3D8660249
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From: "sayali" <sayalil@codeaurora.org>
-To: "'Adrian Hunter'" <adrian.hunter@intel.com>, <subhashj@codeaurora.org>,
-        <cang@codeaurora.org>, <vivek.gautam@codeaurora.org>,
-        <rnayak@codeaurora.org>, <vinholikatti@gmail.com>,
-        <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <asutoshd@codeaurora.org>, <evgreen@chromium.org>
-Cc: <linux-scsi@vger.kernel.org>,
-        "'open list'" <linux-kernel@vger.kernel.org>
-References: <1527849774-7623-1-git-send-email-sayalil@codeaurora.org> <1527849774-7623-2-git-send-email-sayalil@codeaurora.org> <a103a853-5818-ba1b-8971-853e35162832@intel.com> <001201d3f9aa$20146380$603d2a80$@codeaurora.org> <0e3f63f5-c912-c7fe-7528-b1290a9a2b05@intel.com>
-In-Reply-To: <0e3f63f5-c912-c7fe-7528-b1290a9a2b05@intel.com>
-Subject: RE: [PATCH V1 1/3] scsi: ufs: set the device reference clock setting
-Date: Fri, 1 Jun 2018 19:04:33 +0530
-Message-ID: <001501d3f9ad$4be0f9d0$e3a2ed70$@codeaurora.org>
+        Fri, 1 Jun 2018 09:34:37 -0400
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKGja9h2+sAa9B7VDYjBpPLWNjYigKV7YTZAxm7W6ACj4PNiQGcWDcDopdhGTA=
-Content-Language: en-us
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Fri, 01 Jun 2018 15:34:33 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, pgaikwad@nvidia.com,
+        dev@lynxeye.de, mirza.krak@gmail.com, benjamin.lindqvist@endian.se,
+        pdeschrijver@nvidia.com, miquel.raynal@bootlin.com,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org, jonathanh@nvidia.com,
+        marek.vasut@gmail.com, thierry.reding@gmail.com,
+        linux-mtd@lists.infradead.org, krzk@kernel.org, richard@nod.at,
+        linux-tegra@vger.kernel.org, digetx@gmail.com,
+        computersforpeace@gmail.com, dwmw2@infradead.org, marcel@ziswiler.com
+Subject: Re: [PATCH v3 1/6] mtd: rawnand: add Reed-Solomon error correction
+ algorithm
+In-Reply-To: <20180601112506.2157e8b0@bbrezillon>
+References: <20180531221637.6017-1-stefan@agner.ch>
+ <20180531221637.6017-2-stefan@agner.ch> <20180601092600.03c14f53@bbrezillon>
+ <20180601112506.2157e8b0@bbrezillon>
+Message-ID: <18ce3100aabf42059dbd514fb8c93e84@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[22];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51DZ8E4004041
 
------Original Message-----
-From: Adrian Hunter [mailto:adrian.hunter@intel.com] 
-Sent: Friday, June 01, 2018 6:48 PM
-To: sayali <sayalil@codeaurora.org>; subhashj@codeaurora.org; cang@codeaurora.org; vivek.gautam@codeaurora.org; rnayak@codeaurora.org; vinholikatti@gmail.com; jejb@linux.vnet.ibm.com; martin.petersen@oracle.com; asutoshd@codeaurora.org; evgreen@chromium.org
-Cc: linux-scsi@vger.kernel.org; 'open list' <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V1 1/3] scsi: ufs: set the device reference clock setting
+On 01.06.2018 11:25, Boris Brezillon wrote:
+> On Fri, 1 Jun 2018 09:26:00 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> 
+>> On Fri,  1 Jun 2018 00:16:32 +0200
+>> Stefan Agner <stefan@agner.ch> wrote:
+>>
+>> > Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
+>> >
+>> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>
+>> Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+>>
+>> > ---
+>> >  drivers/mtd/nand/raw/nand_base.c | 1 +
+>> >  include/linux/mtd/rawnand.h      | 1 +
+> 
+> Hm, you forgot to update Documentation/devicetree/bindings/mtd/nand.txt.
+> 
 
-On 01/06/18 16:11, sayali wrote:
-> Hi Adrain,
-> 
-> Updated my comments inline. Please check.
-> 
-> Thanks,
-> Sayali
-> -----Original Message-----
-> From: Adrian Hunter [mailto:adrian.hunter@intel.com]
-> Sent: Friday, June 01, 2018 5:59 PM
-> To: Sayali Lokhande <sayalil@codeaurora.org>; subhashj@codeaurora.org; 
-> cang@codeaurora.org; vivek.gautam@codeaurora.org; 
-> rnayak@codeaurora.org; vinholikatti@gmail.com; 
-> jejb@linux.vnet.ibm.com; martin.petersen@oracle.com; 
-> asutoshd@codeaurora.org; evgreen@chromium.org
-> Cc: linux-scsi@vger.kernel.org; open list 
-> <linux-kernel@vger.kernel.org>
-> Subject: Re: [PATCH V1 1/3] scsi: ufs: set the device reference clock 
-> setting
-> 
-> On 01/06/18 13:42, Sayali Lokhande wrote:
->> From: Subhash Jadavani <subhashj@codeaurora.org>
->>
->> UFS host supplies the reference clock to UFS device and UFS device 
->> specification allows host to provide one of the 4 frequencies (19.2 
->> MHz,
->> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the 
->> device reference clock frequency setting in the device based on what 
->> frequency it is supplying to UFS device.
->>
->> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->> [cang@codeaurora.org: Resolved trivial merge conflicts]
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
->> ---
->>  drivers/scsi/ufs/ufs.h    |  9 +++++++
->>  drivers/scsi/ufs/ufshcd.c | 62
->> +++++++++++++++++++++++++++++++++++++++++++++++
->>  drivers/scsi/ufs/ufshcd.h |  1 +
->>  3 files changed, 72 insertions(+)
->>
->> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h index
->> 14e5bf7..e15deb0 100644
->> --- a/drivers/scsi/ufs/ufs.h
->> +++ b/drivers/scsi/ufs/ufs.h
->> @@ -378,6 +378,15 @@ enum query_opcode {
->>  	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
->>  };
->>  
->> +/* bRefClkFreq attribute values */
->> +enum ref_clk_freq {
->> +	REF_CLK_FREQ_19_2_MHZ	= 0x0,
->> +	REF_CLK_FREQ_26_MHZ	= 0x1,
->> +	REF_CLK_FREQ_38_4_MHZ	= 0x2,
->> +	REF_CLK_FREQ_52_MHZ	= 0x3,
->> +	REF_CLK_FREQ_MAX	= REF_CLK_FREQ_52_MHZ,
->> +};
->> +
->>  /* Query response result code */
->>  enum {
->>  	QUERY_RESULT_SUCCESS                    = 0x00,
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c 
->> index c5b1bf1..3669bc4 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -6297,6 +6297,63 @@ static void ufshcd_def_desc_sizes(struct 
->> ufs_hba *hba)  }
->>  
->>  /**
->> + * ufshcd_set_dev_ref_clk - set the device bRefClkFreq
->> + * @hba: per-adapter instance
->> + * @ref_clk_freq: refrerence clock frequency to be set
->> + *
->> + * Read the current value of the bRefClkFreq attribute from device 
->> +and update it
->> + * if host is supplying different reference clock frequency than one 
->> +mentioned
->> + * in bRefClkFreq attribute.
->> + *
->> + * Returns zero on success, non-zero error value on failure.
->> + */
->> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba, u32
->> +ref_clk_freq) {
->> +	int err = 0;
->> +	int ref_clk = -1;
->> +	static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
->> +						     "38.4 MHz", "52 MHz"};
->> +
->> +	hba->dev_ref_clk_freq = ref_clk_freq;
->> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
->> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
->> +
->> +	if (err) {
->> +		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
->> +			 __func__, err);
->> +		goto out;
->> +	}
->> +
->> +	if ((ref_clk < 0) || (ref_clk > REF_CLK_FREQ_52_MHZ)) {
-> 
-> If you used u32 ref_clk then you wouldn't have to check < 0, also you should use REF_CLK_FREQ_MAX not REF_CLK_FREQ_52_MHZ, but really why is this check needed anyway?
-> [Sayali] Here ref_clk is defined as integer with value -1. We are then reading bRefClkFreq attribute from device into ref_clk and hence the sanity check is required before we update/write bRefClkFreq attribute.
+Yeah I was not sure about that. Currently it says:
 
-But why sanity check a value that is going to be overwritten?
-[Sayali] Agreed. I need not check the ref_clk(which is the current setting), but still I should add check for new setting " ref_clk_freq" that is passed and going to be written (like  ref_clk_freq < REF_CLK_FREQ_MAX). Will update in next patchset.
+- nand-ecc-algo: string, algorithm of NAND ECC.                         
+                                                                   
+                 Supported values are: "hamming", "bch".
 
-> 
->> +		dev_err(hba->dev, "%s: invalid ref_clk setting = %d\n",
->> +			 __func__, ref_clk);
->> +		err = -EINVAL;
->> +		goto out;
->> +	}
->> +
->> +	if (ref_clk == hba->dev_ref_clk_freq)
->> +		goto out; /* nothing to update */
->> +
->> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
->> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
->> +			&hba->dev_ref_clk_freq);
->> +
->> +	if (err)
->> +		dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
->> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
->> +	else
->> +		/*
->> +		 * It is good to print this out here to debug any later failures
->> +		 * related to gear switch.
->> +		 */
->> +		dev_info(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
->> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
-> 
-> Why not make this dev_dbg and print always even when there is no update.
-> [Sayali] Agreed. Will update in next patchsets.
-> 
->> +
->> +out:
->> +	return err;
->> +}
->> +
->> +/**
->>   * ufshcd_probe_hba - probe hba to detect device and initialize
->>   * @hba: per-adapter instance
->>   *
->> @@ -6361,6 +6418,11 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
->>  			"%s: Failed getting max supported power mode\n",
->>  			__func__);
->>  	} else {
->> +		/*
->> +		 * Set the right value to bRefClkFreq before attempting to
->> +		 * switch to HS gears.
->> +		 */
->> +		ufshcd_set_dev_ref_clk(hba, REF_CLK_FREQ_19_2_MHZ);
->>  		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
->>  		if (ret) {
->>  			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n", 
->> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h 
->> index 8110dcd..b026ad8 100644
->> --- a/drivers/scsi/ufs/ufshcd.h
->> +++ b/drivers/scsi/ufs/ufshcd.h
->> @@ -548,6 +548,7 @@ struct ufs_hba {
->>  	void *priv;
->>  	unsigned int irq;
->>  	bool is_irq_enabled;
->> +	u32 dev_ref_clk_freq;
->>  
->>  	/* Interrupt aggregation support is broken */
->>  	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+Is supported meant by software ECC here? I feel "supported" is a rather
+strong word since it is clearly controller dependent whether it is
+actually supported...
+
+--
+Stefan
+
+>> >  2 files changed, 2 insertions(+)
+>> >
+>> > diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+>> > index f28c3a555861..9eb5678dd6d0 100644
+>> > --- a/drivers/mtd/nand/raw/nand_base.c
+>> > +++ b/drivers/mtd/nand/raw/nand_base.c
+>> > @@ -5744,6 +5744,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
+>> >  static const char * const nand_ecc_algos[] = {
+>> >  	[NAND_ECC_HAMMING]	= "hamming",
+>> >  	[NAND_ECC_BCH]		= "bch",
+>> > +	[NAND_ECC_RS]		= "rs",
+>> >  };
+>> >
+>> >  static int of_get_nand_ecc_algo(struct device_node *np)
+>> > diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+>> > index 5dad59b31244..6a82da8c44ce 100644
+>> > --- a/include/linux/mtd/rawnand.h
+>> > +++ b/include/linux/mtd/rawnand.h
+>> > @@ -114,6 +114,7 @@ enum nand_ecc_algo {
+>> >  	NAND_ECC_UNKNOWN,
+>> >  	NAND_ECC_HAMMING,
+>> >  	NAND_ECC_BCH,
+>> > +	NAND_ECC_RS,
+>> >  };
+>> >
+>> >  /*
 >>
-> 
-> 
-> 
+>>
+>> ______________________________________________________
+>> Linux MTD discussion mailing list
+>> http://lists.infradead.org/mailman/listinfo/linux-mtd/
