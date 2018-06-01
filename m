@@ -1,94 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752000AbeFANqT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:46:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45412 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751293AbeFANqP (ORCPT
+        id S1752077AbeFANrX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:47:23 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34575 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751454AbeFANrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:46:15 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6B4160249
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: linux-pci@vger.kernel.org, ryan@finnie.org, timur@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, stable@vger.kernel.org,
-        Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        esc.storagedev@microsemi.com (open list:HEWLETT-PACKARD SMART ARRAY
-        RAID DRIVER (hpsa)),
-        linux-scsi@vger.kernel.org (open list:HEWLETT-PACKARD SMART ARRAY RAID
-        DRIVER (hpsa)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V4] scsi: hpsa: drop shutdown callback
-Date: Fri,  1 Jun 2018 09:46:08 -0400
-Message-Id: <1527860768-11367-1-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 1 Jun 2018 09:47:20 -0400
+X-Google-Smtp-Source: ADUXVKIkIRPZShHEWt+ooZXCUhvksL5nm+yvT7UCK67tvjxL7KNj5CGYl9EtbswhL4uTQnODpwi83g==
+Subject: Re: [PATCH] lightnvm: pblk: remove unnecessary bio_get/put
+To: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
+References: <1527854506-8708-1-git-send-email-javier@cnexlabs.com>
+ <1527854506-8708-2-git-send-email-javier@cnexlabs.com>
+ <f1579a62-0e85-b58d-ca33-a9635dd0ebaa@lightnvm.io>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <162341d7-83b1-6bb3-9e00-f7bbc14f99f0@kernel.dk>
+Date: Fri, 1 Jun 2018 07:47:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <f1579a62-0e85-b58d-ca33-a9635dd0ebaa@lightnvm.io>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'Commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
-shutdown")' has been added to kernel to shutdown pending PCIe port
-service interrupts during reboot so that a newly started kexec kernel
-wouldn't observe pending interrupts.
+On 6/1/18 6:05 AM, Matias Bjørling wrote:
+> On 06/01/2018 02:01 PM, Javier González wrote:
+>> In the read path, pblk gets a reference to the incoming bio and puts it
+>> after ending the bio. Though this behavior is correct, it is unnecessary
+>> since pblk is the one putting the bio, therefore, it cannot disappear
+>> underneath it.
+>>
+>> Removing this reference, allows to clean up rqd->bio and avoids pointer
+>> bouncing for the different read paths. Now, the incoming bio always
+>> resides in the read context and pblk's internal bios (if any) reside in
+>> rqd->bio.
+>>
+>> Signed-off-by: Javier González <javier@cnexlabs.com>
+>> ---
+>>   drivers/lightnvm/pblk-read.c | 65 +++++++++++++++++++-------------------------
+>>   1 file changed, 28 insertions(+), 37 deletions(-)
+>>
+>> diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+>> index fa7b60f852d9..38360de23d4e 100644
+>> --- a/drivers/lightnvm/pblk-read.c
+>> +++ b/drivers/lightnvm/pblk-read.c
+>> @@ -39,10 +39,10 @@ static int pblk_read_from_cache(struct pblk *pblk, struct bio *bio,
+>>   }
+>>   
+>>   static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
+>> -				 sector_t blba, unsigned long *read_bitmap)
+>> +				 struct bio *bio, sector_t blba,
+>> +				 unsigned long *read_bitmap)
+>>   {
+>>   	struct pblk_sec_meta *meta_list = rqd->meta_list;
+>> -	struct bio *bio = rqd->bio;
+>>   	struct ppa_addr ppas[PBLK_MAX_REQ_ADDRS];
+>>   	int nr_secs = rqd->nr_ppas;
+>>   	bool advanced_bio = false;
+>> @@ -189,7 +189,6 @@ static void pblk_end_user_read(struct bio *bio)
+>>   	WARN_ONCE(bio->bi_status, "pblk: corrupted read bio\n");
+>>   #endif
+>>   	bio_endio(bio);
+>> -	bio_put(bio);
+>>   }
+>>   
+>>   static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+>> @@ -197,23 +196,18 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+>>   {
+>>   	struct nvm_tgt_dev *dev = pblk->dev;
+>>   	struct pblk_g_ctx *r_ctx = nvm_rq_to_pdu(rqd);
+>> -	struct bio *bio = rqd->bio;
+>> +	struct bio *int_bio = rqd->bio;
+>>   	unsigned long start_time = r_ctx->start_time;
+>>   
+>>   	generic_end_io_acct(dev->q, READ, &pblk->disk->part0, start_time);
+>>   
+>>   	if (rqd->error)
+>>   		pblk_log_read_err(pblk, rqd);
+>> -#ifdef CONFIG_NVM_DEBUG
+>> -	else
+>> -		WARN_ONCE(bio->bi_status, "pblk: corrupted read error\n");
+>> -#endif
+>>   
+>>   	pblk_read_check_seq(pblk, rqd, r_ctx->lba);
+>>   
+>> -	bio_put(bio);
+>> -	if (r_ctx->private)
+>> -		pblk_end_user_read((struct bio *)r_ctx->private);
+>> +	if (int_bio)
+>> +		bio_put(int_bio);
+>>   
+>>   	if (put_line)
+>>   		pblk_read_put_rqd_kref(pblk, rqd);
+>> @@ -230,16 +224,19 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+>>   static void pblk_end_io_read(struct nvm_rq *rqd)
+>>   {
+>>   	struct pblk *pblk = rqd->private;
+>> +	struct pblk_g_ctx *r_ctx = nvm_rq_to_pdu(rqd);
+>> +	struct bio *bio = (struct bio *)r_ctx->private;
+>>   
+>> +	pblk_end_user_read(bio);
+>>   	__pblk_end_io_read(pblk, rqd, true);
+>>   }
+>>   
+>> -static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+>> -				 unsigned int bio_init_idx,
+>> -				 unsigned long *read_bitmap)
+>> +static int pblk_partial_read(struct pblk *pblk, struct nvm_rq *rqd,
+>> +			     struct bio *orig_bio, unsigned int bio_init_idx,
+>> +			     unsigned long *read_bitmap)
+>>   {
+>> -	struct bio *new_bio, *bio = rqd->bio;
+>>   	struct pblk_sec_meta *meta_list = rqd->meta_list;
+>> +	struct bio *new_bio;
+>>   	struct bio_vec src_bv, dst_bv;
+>>   	void *ppa_ptr = NULL;
+>>   	void *src_p, *dst_p;
+>> @@ -256,11 +253,11 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+>>   	new_bio = bio_alloc(GFP_KERNEL, nr_holes);
+>>   
+>>   	if (pblk_bio_add_pages(pblk, new_bio, GFP_KERNEL, nr_holes))
+>> -		goto err_add_pages;
+>> +		goto fail_add_pages;
+>>   
+>>   	if (nr_holes != new_bio->bi_vcnt) {
+>>   		pr_err("pblk: malformed bio\n");
+>> -		goto err;
+>> +		goto fail;
+>>   	}
+>>   
+>>   	for (i = 0; i < nr_secs; i++)
+>> @@ -283,7 +280,7 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+>>   	if (ret) {
+>>   		bio_put(rqd->bio);
+>>   		pr_err("pblk: sync read IO submission failed\n");
+>> -		goto err;
+>> +		goto fail;
+>>   	}
+>>   
+>>   	if (rqd->error) {
+>> @@ -319,7 +316,7 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+>>   		meta_list[hole].lba = lba_list_media[i];
+>>   
+>>   		src_bv = new_bio->bi_io_vec[i++];
+>> -		dst_bv = bio->bi_io_vec[bio_init_idx + hole];
+>> +		dst_bv = orig_bio->bi_io_vec[bio_init_idx + hole];
+>>   
+>>   		src_p = kmap_atomic(src_bv.bv_page);
+>>   		dst_p = kmap_atomic(dst_bv.bv_page);
+>> @@ -338,28 +335,26 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+>>   
+>>   	bio_put(new_bio);
+>>   
+>> -	/* Complete the original bio and associated request */
+>> -	bio_endio(bio);
+>> -	rqd->bio = bio;
+>> +	/* restore original request */
+>> +	rqd->bio = NULL;
+>>   	rqd->nr_ppas = nr_secs;
+>>   
+>>   	__pblk_end_io_read(pblk, rqd, false);
+>> -	return NVM_IO_OK;
+>> +	return NVM_IO_DONE;
+>>   
+>> -err:
+>> +fail:
+>>   	/* Free allocated pages in new bio */
+>>   	pblk_bio_free_pages(pblk, new_bio, 0, new_bio->bi_vcnt);
+>> -err_add_pages:
+>> +fail_add_pages:
+>>   	pr_err("pblk: failed to perform partial read\n");
+>>   	__pblk_end_io_read(pblk, rqd, false);
+>>   	return NVM_IO_ERR;
+>>   }
+>>   
+>> -static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd,
+>> +static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd, struct bio *bio,
+>>   			 sector_t lba, unsigned long *read_bitmap)
+>>   {
+>>   	struct pblk_sec_meta *meta_list = rqd->meta_list;
+>> -	struct bio *bio = rqd->bio;
+>>   	struct ppa_addr ppa;
+>>   
+>>   	pblk_lookup_l2p_seq(pblk, &ppa, lba, 1);
+>> @@ -423,14 +418,15 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+>>   	rqd = pblk_alloc_rqd(pblk, PBLK_READ);
+>>   
+>>   	rqd->opcode = NVM_OP_PREAD;
+>> -	rqd->bio = bio;
+>>   	rqd->nr_ppas = nr_secs;
+>> +	rqd->bio = NULL; /* cloned bio if needed */
+>>   	rqd->private = pblk;
+>>   	rqd->end_io = pblk_end_io_read;
+>>   
+>>   	r_ctx = nvm_rq_to_pdu(rqd);
+>>   	r_ctx->start_time = jiffies;
+>>   	r_ctx->lba = blba;
+>> +	r_ctx->private = bio; /* original bio */
+>>   
+>>   	/* Save the index for this bio's start. This is needed in case
+>>   	 * we need to fill a partial read.
+>> @@ -448,17 +444,15 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+>>   		rqd->ppa_list = rqd->meta_list + pblk_dma_meta_size;
+>>   		rqd->dma_ppa_list = rqd->dma_meta_list + pblk_dma_meta_size;
+>>   
+>> -		pblk_read_ppalist_rq(pblk, rqd, blba, &read_bitmap);
+>> +		pblk_read_ppalist_rq(pblk, rqd, bio, blba, &read_bitmap);
+>>   	} else {
+>> -		pblk_read_rq(pblk, rqd, blba, &read_bitmap);
+>> +		pblk_read_rq(pblk, rqd, bio, blba, &read_bitmap);
+>>   	}
+>>   
+>> -	bio_get(bio);
+>>   	if (bitmap_full(&read_bitmap, nr_secs)) {
+>> -		bio_endio(bio);
+>>   		atomic_inc(&pblk->inflight_io);
+>>   		__pblk_end_io_read(pblk, rqd, false);
+>> -		return NVM_IO_OK;
+>> +		return NVM_IO_DONE;
+>>   	}
+>>   
+>>   	/* All sectors are to be read from the device */
+>> @@ -473,13 +467,10 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+>>   		}
+>>   
+>>   		rqd->bio = int_bio;
+>> -		r_ctx->private = bio;
+>>   
+>>   		if (pblk_submit_io(pblk, rqd)) {
+>>   			pr_err("pblk: read IO submission failed\n");
+>>   			ret = NVM_IO_ERR;
+>> -			if (int_bio)
+>> -				bio_put(int_bio);
+>>   			goto fail_end_io;
+>>   		}
+>>   
+>> @@ -489,7 +480,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+>>   	/* The read bio request could be partially filled by the write buffer,
+>>   	 * but there are some holes that need to be read from the drive.
+>>   	 */
+>> -	return pblk_partial_read_bio(pblk, rqd, bio_init_idx, &read_bitmap);
+>> +	return pblk_partial_read(pblk, rqd, bio, bio_init_idx, &read_bitmap);
+>>   
+>>   fail_rqd_free:
+>>   	pblk_free_rqd(pblk, rqd, PBLK_READ);
+>>
+> 
+> Hi Jens,
+> 
+> Would you please pick this up as well?
 
-pcie_port_device_remove() is disabling the root port and switches by
-calling pci_disable_device() after all PCIe service drivers are shutdown.
+Please just make it part of your updated series, it doesn't apply
+to what I currently have.
 
-This has been found to cause crashes on HP DL360 Gen9 machines during
-reboot due to hpsa driver not clearing the bus master bit during the
-shutdown procedure by calling pci_disable_device().
-
-Disable device as part of the shutdown sequence.
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199779
-Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
-Cc: stable@vger.kernel.org
-Reported-by: Ryan Finnie <ryan@finnie.org>
----
- drivers/scsi/hpsa.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 3a9eca1..b92f86a 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -8869,7 +8869,7 @@ static void hpsa_disable_rld_caching(struct ctlr_info *h)
- 	kfree(options);
- }
- 
--static void hpsa_shutdown(struct pci_dev *pdev)
-+static void __hpsa_shutdown(struct pci_dev *pdev)
- {
- 	struct ctlr_info *h;
- 
-@@ -8884,6 +8884,12 @@ static void hpsa_shutdown(struct pci_dev *pdev)
- 	hpsa_disable_interrupt_mode(h);		/* pci_init 2 */
- }
- 
-+static void hpsa_shutdown(struct pci_dev *pdev)
-+{
-+	__hpsa_shutdown(pdev);
-+	pci_disable_device(pdev);
-+}
-+
- static void hpsa_free_device_info(struct ctlr_info *h)
- {
- 	int i;
-@@ -8927,7 +8933,7 @@ static void hpsa_remove_one(struct pci_dev *pdev)
- 		scsi_remove_host(h->scsi_host);		/* init_one 8 */
- 	/* includes hpsa_free_irqs - init_one 4 */
- 	/* includes hpsa_disable_interrupt_mode - pci_init 2 */
--	hpsa_shutdown(pdev);
-+	__hpsa_shutdown(pdev);
- 
- 	hpsa_free_device_info(h);		/* scan */
- 
 -- 
-2.7.4
+Jens Axboe
