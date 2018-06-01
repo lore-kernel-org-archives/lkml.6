@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752715AbeFANIe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:08:34 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37019 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbeFANEv (ORCPT
+        id S1752626AbeFANIu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:08:50 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33192 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751929AbeFANEu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:04:51 -0400
-X-Google-Smtp-Source: ADUXVKKzJZIBT+WEQ4QBoIG0YCzzL4B1AQDlthVvHc/41+yGvux999oRRceSv5g5fW9pdGwP8mj1iA==
+        Fri, 1 Jun 2018 09:04:50 -0400
+X-Google-Smtp-Source: ADUXVKKOeQ1wDILumlDLIHCmdTV9AZZh1X9tLvaqFUVBC6kZVNuGPfcU6ZqrwiageC9IefdT+DUFDw==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -15,9 +15,9 @@ Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         marcin.dziegielewski@intel.com,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 05/18] lightnvm: pblk: warn in case of corrupted write buffer
-Date: Fri,  1 Jun 2018 15:04:19 +0200
-Message-Id: <20180601130432.30866-6-mb@lightnvm.io>
+Subject: [GIT PULL 04/18] lightnvn: pblk: improve error msg on corrupted LBAs
+Date: Fri,  1 Jun 2018 15:04:18 +0200
+Message-Id: <20180601130432.30866-5-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180601130432.30866-1-mb@lightnvm.io>
 References: <20180601130432.30866-1-mb@lightnvm.io>
@@ -30,34 +30,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Javier González <javier@javigon.com>
 
-When cleaning up buffer entries as we wrap up, their state should be
-"completed". If any of the entries is in "submitted" state, it means
-that something bad has happened. Trigger a warning immediately instead of
-waiting for the state flag to eventually be updated, thus hiding the
-issue.
+In the event of a mismatch between the read LBA and the metadata pointer
+reported by the device, improve the error message to be able to detect
+the offending physical address (PPA) mapped to the corrupted LBA.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-rb.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/lightnvm/pblk-read.c | 42 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 32 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-index 52fdd85dbc97..58946ffebe81 100644
---- a/drivers/lightnvm/pblk-rb.c
-+++ b/drivers/lightnvm/pblk-rb.c
-@@ -142,10 +142,9 @@ static void clean_wctx(struct pblk_w_ctx *w_ctx)
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index 1f699c09e0ea..b201fc486adb 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -113,10 +113,11 @@ static int pblk_submit_read_io(struct pblk *pblk, struct nvm_rq *rqd)
+ 	return NVM_IO_OK;
+ }
+ 
+-static void pblk_read_check_seq(struct pblk *pblk, void *meta_list,
+-				sector_t blba, int nr_lbas)
++static void pblk_read_check_seq(struct pblk *pblk, struct nvm_rq *rqd,
++				sector_t blba)
  {
- 	int flags;
+-	struct pblk_sec_meta *meta_lba_list = meta_list;
++	struct pblk_sec_meta *meta_lba_list = rqd->meta_list;
++	int nr_lbas = rqd->nr_ppas;
+ 	int i;
  
--try:
- 	flags = READ_ONCE(w_ctx->flags);
--	if (!(flags & PBLK_SUBMITTED_ENTRY))
--		goto try;
-+	WARN_ONCE(!(flags & PBLK_SUBMITTED_ENTRY),
-+			"pblk: overwriting unsubmitted data\n");
+ 	for (i = 0; i < nr_lbas; i++) {
+@@ -125,17 +126,27 @@ static void pblk_read_check_seq(struct pblk *pblk, void *meta_list,
+ 		if (lba == ADDR_EMPTY)
+ 			continue;
  
- 	/* Release flags on context. Protect from writes and reads */
- 	smp_store_release(&w_ctx->flags, PBLK_WRITABLE_ENTRY);
+-		WARN(lba != blba + i, "pblk: corrupted read LBA\n");
++		if (lba != blba + i) {
++#ifdef CONFIG_NVM_DEBUG
++			struct ppa_addr *p;
++
++			p = (nr_lbas == 1) ? &rqd->ppa_list[i] : &rqd->ppa_addr;
++			print_ppa(&pblk->dev->geo, p, "seq", i);
++#endif
++			pr_err("pblk: corrupted read LBA (%llu/%llu)\n",
++							lba, (u64)blba + i);
++			WARN_ON(1);
++		}
+ 	}
+ }
+ 
+ /*
+  * There can be holes in the lba list.
+  */
+-static void pblk_read_check_rand(struct pblk *pblk, void *meta_list,
+-				u64 *lba_list, int nr_lbas)
++static void pblk_read_check_rand(struct pblk *pblk, struct nvm_rq *rqd,
++				 u64 *lba_list, int nr_lbas)
+ {
+-	struct pblk_sec_meta *meta_lba_list = meta_list;
++	struct pblk_sec_meta *meta_lba_list = rqd->meta_list;
+ 	int i, j;
+ 
+ 	for (i = 0, j = 0; i < nr_lbas; i++) {
+@@ -145,14 +156,25 @@ static void pblk_read_check_rand(struct pblk *pblk, void *meta_list,
+ 		if (lba == ADDR_EMPTY)
+ 			continue;
+ 
+-		meta_lba = le64_to_cpu(meta_lba_list[j++].lba);
++		meta_lba = le64_to_cpu(meta_lba_list[j].lba);
+ 
+ 		if (lba != meta_lba) {
++#ifdef CONFIG_NVM_DEBUG
++			struct ppa_addr *p;
++			int nr_ppas = rqd->nr_ppas;
++
++			p = (nr_ppas == 1) ? &rqd->ppa_list[j] : &rqd->ppa_addr;
++			print_ppa(&pblk->dev->geo, p, "seq", j);
++#endif
+ 			pr_err("pblk: corrupted read LBA (%llu/%llu)\n",
+ 								lba, meta_lba);
+ 			WARN_ON(1);
+ 		}
++
++		j++;
+ 	}
++
++	WARN_ONCE(j != rqd->nr_ppas, "pblk: corrupted random request\n");
+ }
+ 
+ static void pblk_read_put_rqd_kref(struct pblk *pblk, struct nvm_rq *rqd)
+@@ -197,7 +219,7 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+ 		WARN_ONCE(bio->bi_status, "pblk: corrupted read error\n");
+ #endif
+ 
+-	pblk_read_check_seq(pblk, rqd->meta_list, r_ctx->lba, rqd->nr_ppas);
++	pblk_read_check_seq(pblk, rqd, r_ctx->lba);
+ 
+ 	bio_put(bio);
+ 	if (r_ctx->private)
+@@ -610,7 +632,7 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
+ 		goto err_free_bio;
+ 	}
+ 
+-	pblk_read_check_rand(pblk, rqd.meta_list, gc_rq->lba_list, rqd.nr_ppas);
++	pblk_read_check_rand(pblk, &rqd, gc_rq->lba_list, gc_rq->nr_secs);
+ 
+ 	atomic_dec(&pblk->inflight_io);
+ 
 -- 
 2.11.0
