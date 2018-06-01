@@ -1,17 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751900AbeFAErc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 00:47:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34217 "EHLO mx2.suse.de"
+        id S1751958AbeFAEsa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 00:48:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34124 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750961AbeFAEqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 00:46:54 -0400
+        id S1751605AbeFAEqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 00:46:14 -0400
 From: NeilBrown <neilb@suse.com>
 To: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>
 Date: Fri, 01 Jun 2018 14:44:09 +1000
-Subject: [PATCH 17/18] rhashtable: rename rht_for_each*continue as *from.
+Subject: [PATCH 11/18] rhashtable: further improve stability of
+ rhashtable_walk
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <152782824992.30340.13679240743690463593.stgit@noble>
+Message-ID: <152782824968.30340.10516788311375582727.stgit@noble>
 In-Reply-To: <152782754287.30340.4395718227884933670.stgit@noble>
 References: <152782754287.30340.4395718227884933670.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -22,207 +23,229 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pattern set by list.h is that for_each..continue()
-iterators start at the next entry after the given one,
-while for_each..next() iterators start at the given
-entry.
+If the sequence:
+   obj = rhashtable_walk_next(iter);
+   rhashtable_walk_stop(iter);
+   rhashtable_remove_fast(ht, &obj->head, params);
+   rhashtable_walk_start(iter);
 
-The rht_for_each*continue() iterates are documented as though the
-start at the 'next' entry, but actually start at the given entry,
-and they are used expecting that behaviour.
-So fix the documentation and change the names to *from for consistency
-with list.h
+ races with another thread inserting or removing
+ an object on the same hash chain, a subsequent
+ rhashtable_walk_next() is not guaranteed to get the "next"
+ object. It is possible that an object could be
+ repeated, or missed.
+
+ This can be made more reliable by keeping the objects in a hash chain
+ sorted by memory address.  A subsequent rhashtable_walk_next()
+ call can reliably find the correct position in the list, and thus
+ find the 'next' object.
+
+ It is not possible to take this approach with an rhltable as keeping
+ the hash chain in order is not so easy.  When the first object with a
+ given key is removed, it is replaced in the chain with the next
+ object with the same key, and the address of that object may not be
+ correctly ordered.
+ I have not yet found any way to achieve the same stability
+ with rhltables, that doesn't have a major impact on lookup
+ or insert.  No code currently in Linux would benefit from
+ such extra stability.
+
+ With this patch:
+ - a new object is always inserted after the last object with a
+   smaller address, or at the start.  This preserves the property,
+   important when allowing objects to be removed and re-added, that
+   an object is never inserted *after* a position that it previously
+   held in the list.
+ - when rhashtable_walk_start() is called, it records that 'p' is not
+   'safe', meaning that it cannot be dereferenced.  The revalidation
+   that was previously done here is moved to rhashtable_walk_next()
+ - when rhashtable_walk_next() is called while p is not NULL and not
+   safe, it walks the chain looking for the first object with an
+   address greater than p and returns that.  If there is none, it moves
+   to the next hash chain.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- .clang-format              |    8 ++++----
- include/linux/rhashtable.h |   38 +++++++++++++++++++-------------------
- lib/rhashtable.c           |    4 ++--
- 3 files changed, 25 insertions(+), 25 deletions(-)
+ include/linux/rhashtable-types.h |    1 
+ include/linux/rhashtable.h       |   10 ++++-
+ lib/rhashtable.c                 |   82 +++++++++++++++++++++++++-------------
+ 3 files changed, 62 insertions(+), 31 deletions(-)
 
-diff --git a/.clang-format b/.clang-format
-index faffc0d5af4e..53a5188df01a 100644
---- a/.clang-format
-+++ b/.clang-format
-@@ -332,14 +332,14 @@ ForEachMacros:
-   - 'rhl_for_each_entry_rcu'
-   - 'rhl_for_each_rcu'
-   - 'rht_for_each'
--  - 'rht_for_each_continue'
-+  - 'rht_for_each_from'
-   - 'rht_for_each_entry'
--  - 'rht_for_each_entry_continue'
-+  - 'rht_for_each_entry_from'
-   - 'rht_for_each_entry_rcu'
--  - 'rht_for_each_entry_rcu_continue'
-+  - 'rht_for_each_entry_rcu_from'
-   - 'rht_for_each_entry_safe'
-   - 'rht_for_each_rcu'
--  - 'rht_for_each_rcu_continue'
-+  - 'rht_for_each_rcu_from'
-   - '__rq_for_each_bio'
-   - 'rq_for_each_segment'
-   - 'scsi_for_each_prot_sg'
+diff --git a/include/linux/rhashtable-types.h b/include/linux/rhashtable-types.h
+index 763d613ce2c2..bc3e84547ba7 100644
+--- a/include/linux/rhashtable-types.h
++++ b/include/linux/rhashtable-types.h
+@@ -126,6 +126,7 @@ struct rhashtable_iter {
+ 	struct rhashtable_walker walker;
+ 	unsigned int slot;
+ 	unsigned int skip;
++	bool p_is_unsafe;
+ 	bool end_of_table;
+ };
+ 
 diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index f58cb62dce05..e148f72d4a89 100644
+index 4e2fc97667e0..c612d2446d90 100644
 --- a/include/linux/rhashtable.h
 +++ b/include/linux/rhashtable.h
-@@ -418,13 +418,13 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
- }
- 
- /**
-- * rht_for_each_continue - continue iterating over hash chain
-+ * rht_for_each_from - iterate over hash chain from given head
-  * @pos:	the &struct rhash_head to use as a loop cursor.
-- * @head:	the previous &struct rhash_head to continue from
-+ * @head:	the &struct rhash_head to start from
-  * @tbl:	the &struct bucket_table
-  * @hash:	the hash value / bucket index
-  */
--#define rht_for_each_continue(pos, head, tbl, hash) \
-+#define rht_for_each_from(pos, head, tbl, hash) \
- 	for (pos = rht_dereference_bucket(head, tbl, hash); \
- 	     !rht_is_a_nulls(pos); \
- 	     pos = rht_dereference_bucket((pos)->next, tbl, hash))
-@@ -436,18 +436,18 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
-  * @hash:	the hash value / bucket index
-  */
- #define rht_for_each(pos, tbl, hash) \
--	rht_for_each_continue(pos, rht_ptr(*rht_bucket(tbl, hash)), tbl, hash)
-+	rht_for_each_from(pos, rht_ptr(*rht_bucket(tbl, hash)), tbl, hash)
- 
- /**
-- * rht_for_each_entry_continue - continue iterating over hash chain
-+ * rht_for_each_entry_from - iterate over hash chain from given head
-  * @tpos:	the type * to use as a loop cursor.
-  * @pos:	the &struct rhash_head to use as a loop cursor.
-- * @head:	the previous &struct rhash_head to continue from
-+ * @head:	the &struct rhash_head to start from
-  * @tbl:	the &struct bucket_table
-  * @hash:	the hash value / bucket index
-  * @member:	name of the &struct rhash_head within the hashable struct.
-  */
--#define rht_for_each_entry_continue(tpos, pos, head, tbl, hash, member)	\
-+#define rht_for_each_entry_from(tpos, pos, head, tbl, hash, member)	\
- 	for (pos = rht_dereference_bucket(head, tbl, hash);		\
- 	     (!rht_is_a_nulls(pos)) && rht_entry(tpos, pos, member);	\
- 	     pos = rht_dereference_bucket((pos)->next, tbl, hash))
-@@ -461,7 +461,7 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
-  * @member:	name of the &struct rhash_head within the hashable struct.
-  */
- #define rht_for_each_entry(tpos, pos, tbl, hash, member)		\
--	rht_for_each_entry_continue(tpos, pos, rht_ptr(*rht_bucket(tbl, hash)), \
-+	rht_for_each_entry_from(tpos, pos, rht_ptr(*rht_bucket(tbl, hash)), \
- 				    tbl, hash, member)
- 
- /**
-@@ -487,9 +487,9 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
- 		       rht_dereference_bucket(pos->next, tbl, hash) : NULL)
- 
- /**
-- * rht_for_each_rcu_continue - continue iterating over rcu hash chain
-+ * rht_for_each_rcu_from - iterate over rcu hash chain from given head
-  * @pos:	the &struct rhash_head to use as a loop cursor.
-- * @head:	the previous &struct rhash_head to continue from
-+ * @head:	the &struct rhash_head to start from
-  * @tbl:	the &struct bucket_table
-  * @hash:	the hash value / bucket index
-  *
-@@ -497,7 +497,7 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
-  * the _rcu mutation primitives such as rhashtable_insert() as long as the
-  * traversal is guarded by rcu_read_lock().
-  */
--#define rht_for_each_rcu_continue(pos, head, tbl, hash)			\
-+#define rht_for_each_rcu_from(pos, head, tbl, hash)			\
- 	for (({barrier(); }),						\
- 		pos = rht_ptr(rht_dereference_bucket_rcu(head, tbl, hash)); \
- 	     !rht_is_a_nulls(pos);					\
-@@ -521,10 +521,10 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
- 	     pos = rcu_dereference_raw(pos->next))
- 
- /**
-- * rht_for_each_entry_rcu_continue - continue iterating over rcu hash chain
-+ * rht_for_each_entry_rcu_from - iterated over rcu hash chain from given head
-  * @tpos:	the type * to use as a loop cursor.
-  * @pos:	the &struct rhash_head to use as a loop cursor.
-- * @head:	the previous &struct rhash_head to continue from
-+ * @head:	the &struct rhash_head to start from
-  * @tbl:	the &struct bucket_table
-  * @hash:	the hash value / bucket index
-  * @member:	name of the &struct rhash_head within the hashable struct.
-@@ -533,7 +533,7 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
-  * the _rcu mutation primitives such as rhashtable_insert() as long as the
-  * traversal is guarded by rcu_read_lock().
-  */
--#define rht_for_each_entry_rcu_continue(tpos, pos, head, tbl, hash, member) \
-+#define rht_for_each_entry_rcu_from(tpos, pos, head, tbl, hash, member) \
- 	for (({barrier(); }),						    \
- 	     pos = rht_dereference_bucket_rcu(head, tbl, hash);		    \
- 	     (!rht_is_a_nulls(pos)) && rht_entry(tpos, pos, member);	    \
-@@ -552,7 +552,7 @@ static inline struct rhash_head __rcu **rht_bucket_insert(
-  * traversal is guarded by rcu_read_lock().
-  */
- #define rht_for_each_entry_rcu(tpos, pos, tbl, hash, member)		   \
--	rht_for_each_entry_rcu_continue(tpos, pos,			   \
-+	rht_for_each_entry_rcu_from(tpos, pos,			   \
- 					rht_ptr(*rht_bucket(tbl, hash)),   \
- 					tbl, hash, member)
- 
-@@ -609,7 +609,7 @@ static inline struct rhash_head *__rhashtable_lookup(
- 	hash = rht_key_hashfn(ht, tbl, key, params);
- 	head = rht_bucket(tbl, hash);
- 	do {
--		rht_for_each_rcu_continue(he, *head, tbl, hash) {
-+		rht_for_each_rcu_from(he, *head, tbl, hash) {
- 			if (params.obj_cmpfn ?
- 			    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
- 			    rhashtable_compare(&arg, rht_obj(ht, he)))
-@@ -744,7 +744,7 @@ static inline void *__rhashtable_insert_fast(
- 	}
- 
- 
--	rht_for_each_continue(head, rht_ptr(*headp), tbl, hash) {
-+	rht_for_each_from(head, rht_ptr(*headp), tbl, hash) {
- 		struct rhlist_head *plist;
- 		struct rhlist_head *list;
- 
-@@ -1027,7 +1027,7 @@ static inline int __rhashtable_remove_fast_one(
- 	lock = pprev;
- 	rht_lock(lock);
- 
--	rht_for_each_continue(he, rht_ptr(*pprev), tbl, hash) {
-+	rht_for_each_from(he, rht_ptr(*pprev), tbl, hash) {
- 		struct rhlist_head *list;
- 
- 		list = container_of(he, struct rhlist_head, rhead);
-@@ -1189,7 +1189,7 @@ static inline int __rhashtable_replace_fast(
- 	lock = pprev;
- 	rht_lock(lock);
- 
--	rht_for_each_continue(he, rht_ptr(*pprev), tbl, hash) {
-+	rht_for_each_from(he, rht_ptr(*pprev), tbl, hash) {
- 		if (he != obj_old) {
- 			pprev = &he->next;
+@@ -627,7 +627,12 @@ static inline void *__rhashtable_insert_fast(
+ 		    (params.obj_cmpfn ?
+ 		     params.obj_cmpfn(&arg, rht_obj(ht, head)) :
+ 		     rhashtable_compare(&arg, rht_obj(ht, head)))) {
+-			pprev = &head->next;
++			if (rhlist) {
++				pprev = &head->next;
++			} else {
++				if (head < obj)
++					headp = &head->next;
++			}
  			continue;
+ 		}
+ 
+@@ -1123,7 +1128,8 @@ static inline int rhashtable_walk_init(struct rhashtable *ht,
+  * Note that if you restart a walk after rhashtable_walk_stop you
+  * may see the same object twice.  Also, you may miss objects if
+  * there are removals in between rhashtable_walk_stop and the next
+- * call to rhashtable_walk_start.
++ * call to rhashtable_walk_start.  Note that this is different to
++ * rhashtable_walk_enter() which misses objects.
+  *
+  * For a completely stable walk you should construct your own data
+  * structure outside the hash table.
 diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 1b9820787cd5..84288142ddf6 100644
+index 120382b0bad0..5ab0f4825271 100644
 --- a/lib/rhashtable.c
 +++ b/lib/rhashtable.c
-@@ -232,7 +232,7 @@ static int rhashtable_rehash_one(struct rhashtable *ht,
+@@ -230,6 +230,7 @@ static int rhashtable_rehash_one(struct rhashtable *ht, unsigned int old_hash)
+ 	struct bucket_table *old_tbl = rht_dereference(ht->tbl, ht);
+ 	struct bucket_table *new_tbl = rhashtable_last_table(ht, old_tbl);
+ 	struct rhash_head __rcu **pprev = rht_bucket_var(old_tbl, old_hash);
++	struct rhash_head __rcu **inspos;
+ 	int err = -EAGAIN;
+ 	struct rhash_head *head, *next, *entry;
+ 	spinlock_t *new_bucket_lock;
+@@ -258,12 +259,15 @@ static int rhashtable_rehash_one(struct rhashtable *ht, unsigned int old_hash)
+ 	new_bucket_lock = rht_bucket_lock(new_tbl, new_hash);
  
- 	err = -ENOENT;
+ 	spin_lock_nested(new_bucket_lock, SINGLE_DEPTH_NESTING);
+-	head = rht_dereference_bucket(new_tbl->buckets[new_hash],
+-				      new_tbl, new_hash);
+-
++	inspos = &new_tbl->buckets[new_hash];
++	head = rht_dereference_bucket(*inspos, new_tbl, new_hash);
++	while (!rht_is_a_nulls(head) && head < entry) {
++		inspos = &head->next;
++		head = rht_dereference_bucket(*inspos, new_tbl, new_hash);
++	}
+ 	RCU_INIT_POINTER(entry->next, head);
  
--	rht_for_each_continue(entry, rht_ptr(*pprev), old_tbl, old_hash) {
-+	rht_for_each_from(entry, rht_ptr(*pprev), old_tbl, old_hash) {
- 		err = 0;
- 		next = rht_dereference_bucket(entry->next, old_tbl, old_hash);
+-	rcu_assign_pointer(new_tbl->buckets[new_hash], entry);
++	rcu_assign_pointer(*inspos, entry);
+ 	spin_unlock(new_bucket_lock);
  
-@@ -527,7 +527,7 @@ static void *rhashtable_lookup_one(struct rhashtable *ht,
- 	int elasticity;
+ 	rcu_assign_pointer(*pprev, next);
+@@ -559,6 +563,10 @@ static struct bucket_table *rhashtable_insert_one(struct rhashtable *ht,
+ 		return ERR_PTR(-ENOMEM);
  
- 	elasticity = RHT_ELASTICITY;
--	rht_for_each_continue(head, rht_ptr(*pprev), tbl, hash) {
-+	rht_for_each_from(head, rht_ptr(*pprev), tbl, hash) {
- 		struct rhlist_head *list;
- 		struct rhlist_head *plist;
+ 	head = rht_dereference_bucket(*pprev, tbl, hash);
++	while (!ht->rhlist && !rht_is_a_nulls(head) && head < obj) {
++		pprev = &head->next;
++		head = rht_dereference_bucket(*pprev, tbl, hash);
++	}
  
+ 	RCU_INIT_POINTER(obj->next, head);
+ 	if (ht->rhlist) {
+@@ -653,10 +661,10 @@ EXPORT_SYMBOL_GPL(rhashtable_insert_slow);
+  *
+  * This function prepares a hash table walk.
+  *
+- * Note that if you restart a walk after rhashtable_walk_stop you
+- * may see the same object twice.  Also, you may miss objects if
+- * there are removals in between rhashtable_walk_stop and the next
+- * call to rhashtable_walk_start.
++ * A walk is guaranteed to return every object that was in
++ * the table before this call, and is still in the table when
++ * rhashtable_walk_next() returns NULL.  Duplicates can be
++ * seen, but only if there is a rehash event during the walk.
+  *
+  * For a completely stable walk you should construct your own data
+  * structure outside the hash table.
+@@ -740,19 +748,10 @@ int rhashtable_walk_start_check(struct rhashtable_iter *iter)
+ 
+ 	if (iter->p && !rhlist) {
+ 		/*
+-		 * We need to validate that 'p' is still in the table, and
+-		 * if so, update 'skip'
++		 * 'p' will be revalidated when rhashtable_walk_next()
++		 * is called.
+ 		 */
+-		struct rhash_head *p;
+-		int skip = 0;
+-		rht_for_each_rcu(p, iter->walker.tbl, iter->slot) {
+-			skip++;
+-			if (p == iter->p) {
+-				iter->skip = skip;
+-				goto found;
+-			}
+-		}
+-		iter->p = NULL;
++		iter->p_is_unsafe = true;
+ 	} else if (iter->p && rhlist) {
+ 		/* Need to validate that 'list' is still in the table, and
+ 		 * if so, update 'skip' and 'p'.
+@@ -869,15 +868,39 @@ void *rhashtable_walk_next(struct rhashtable_iter *iter)
+ 	bool rhlist = ht->rhlist;
+ 
+ 	if (p) {
+-		if (!rhlist || !(list = rcu_dereference(list->next))) {
+-			p = rcu_dereference(p->next);
+-			list = container_of(p, struct rhlist_head, rhead);
+-		}
+-		if (!rht_is_a_nulls(p)) {
+-			iter->skip++;
+-			iter->p = p;
+-			iter->list = list;
+-			return rht_obj(ht, rhlist ? &list->rhead : p);
++		if (!rhlist && iter->p_is_unsafe) {
++			/*
++			 * First time next() was called after start().
++			 * Need to find location of 'p' in the list.
++			 */
++			struct rhash_head *p;
++
++			iter->skip = 0;
++			rht_for_each_rcu(p, iter->walker.tbl, iter->slot) {
++				iter->skip++;
++				if (p <= iter->p)
++					continue;
++
++				/* p is the next object after iter->p */
++				iter->p = p;
++				iter->p_is_unsafe = false;
++				return rht_obj(ht, p);
++			}
++			/* There is no "next" object in the list, move
++			 * to next hash chain.
++			 */
++		} else {
++			if (!rhlist || !(list = rcu_dereference(list->next))) {
++				p = rcu_dereference(p->next);
++				list = container_of(p, struct rhlist_head,
++						    rhead);
++			}
++			if (!rht_is_a_nulls(p)) {
++				iter->skip++;
++				iter->p = p;
++				iter->list = list;
++				return rht_obj(ht, rhlist ? &list->rhead : p);
++			}
+ 		}
+ 
+ 		/* At the end of this slot, switch to next one and then find
+@@ -887,6 +910,7 @@ void *rhashtable_walk_next(struct rhashtable_iter *iter)
+ 		iter->slot++;
+ 	}
+ 
++	iter->p_is_unsafe = false;
+ 	return __rhashtable_walk_find_next(iter);
+ }
+ EXPORT_SYMBOL_GPL(rhashtable_walk_next);
