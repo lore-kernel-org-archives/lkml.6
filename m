@@ -1,5 +1,5 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3918127-1527890121-2-2558317582667103973
+X-Cyrus-Session-Id: sloti22d1t05-3846313-1527885998-2-2387882695195972978
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: plain='us-ascii'
@@ -8,23 +8,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527890121; b=fVJ5QSPOPby+cGTvXlI5Mes/DH1szBE9ZjkczDGDt/n7mbyW4+
-    oQMhJKaLa1Re7AgPSFgmKVLRA4CuR5socFZ183TaF0e5WjSuNlHGhhka/h0AuFck
-    kan6g3r1VQOEwKfT4r5vCiEKOIIn7/J2kDgmiVGPaS2p/CO+ZE/6P1SmBjeRPSeH
-    dxvwhTK5jPEt02/99m2q0QTILTqgUcy6P0Q9ZzQ4cFyazIyzNgokXpXYtelr9pta
-    vFVly5g2+zrSLAk7lsm2lOJrV5WJ6ShOt6XBLloAcT3ohoeGPdUuVuaKttTcPhjw
-    MT3DBVQ8xK9ZVvmbOW5PjH6jyl1fr5KeBANQ==
+    1527885998; b=KQdyVDShAJ01Oi5Z84D5a4S2JTPMtfOVaZB5v9IWbmBr0FkwCN
+    ihA40ma7BjCulrEnL1CyegzBcE5924VspuQiJK3sc+Zjkj8tWPOg5IH+QwczuW77
+    UOfCmJEd9pbIQpiC5M+VF8g/LKX8GokJg5F25AIxpuU2SIZ4pjXSzipt8Zd3xHLW
+    hl3hUsJpu+OWXO+7ydlVn2iNZVfwJxvxxqi4tWSrB6+H6HUHerG+94LzZY9RQcEU
+    MKKBKML7+k0KUZpBBlExxcSsiAKn13Lm27c29GT4Zh+9tskE09MBf3/DukiXw8pk
+    BFzD7O+zv7dmNBkKT6nKb4RPbR0zpZ8PoefA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527890121; bh=J5JmQZQEp8nvpGBtg1RREVL6ptz+ll
-    SScNAFdm7BeX0=; b=FyUE+3+49Ztpr07JPBRTdCEFTv2mMx+hD6vixyqQBJcUIz
-    GR50zs67/qJ7tnJBzlmJmN2Ns6lmr7+QMkT0maPBmfmtbeQPcckT44/08iBoqKNd
-    JSEch7HGZZE/AIY7XLHSrd1SEpxt+8A3H75NMbf9LM8bnVL6LB3gnUiH3UHnQSLG
-    k/WrbNyTWyjzgJvu/k/KqOQq9B0SzxXrgYHMXKVyMJUNrPpVs8Exitwcq3cbdBPv
-    YcK6STPsQOxKt/0kDK04mvE8D3L0jdC+whUU8k68IWzNtfDKIg42vGergy1BwfGq
-    LLaTjoyqWtdr0tTLte9BQS8F96OiHGEbp2tWPvKg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1527885998; bh=Xz7BIrydaqioJfjLc6Fj88cQ93h3sN
+    ZpMIkiuhsf6ao=; b=EvB/ZCvMDgeWquAo0lxgjXUg+kR/9fafxLmEwg8ARaLWKm
+    uPVZ8i5ivgtYdZL8KyaVB91QIMXNxbtOohrTygcP2MtGyOaBbFrZXTBci7W4mLDk
+    QkoZTZMRxjQUPec3LUkaVBPHE2vtWWEM4/t50AnvihbZxgSkDWJjXo/6II+XqE0W
+    1upQa9tJQkwVepZ3juWhYDVxiN5uRlUbQphrMXSMS0gVezAytaeWUqW0B0qne3wT
+    Q2afqP+zgyGLQl/8h6RLd60sbC9S9fiVRC8Skm6JrYrlGzYXEqYBeFAWbBHB5w84
+    TBPrjX5/3XesEb/eF8FWlSi+cvsqTLatYmSXj8lA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -52,131 +52,90 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMIxBTWZAQHC3rgePCHp/EF1yRxumd8/6zPuEJJps/e0hvdu3lkLtixDnyRBySq6gUI9xq0Dj3yTrDAL1RkMmTzROdX6uh+kHoJXkHgUm+RfKUoIOC63
-    VCiGQfi4hZNpxnDVkYcMyB7fSlLutdrS4IenBNyy7PokvD8lSlObENeur/kTk3xly2PMJxEmbkZf7CgUCi1sG3lOYGyvPVAqx4Iv0qKTAKtGN1K1BNyDgZsh
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEbWwyK4/CHwhIcvAKKTnlalIrPJs8DaVl9ona7V14X5ahswvnx1tfs7yRy6cVhZ2QTYN2fAEwGgKz54NO/eQsEnVEe3Jrz47LuOPjSexVVIuJjfSzOC
+    Z++xfKmIe9k/m3s90srwlvxfv8Fujuzt1Zm3lKlC3qWw2Jlg3i14IuhTHD0VgEn+ZGcOO83CkEMJg3UeCF3ln75+HeS49Mopo60I0tBHiJq0nM2m0JHHXWuH
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=7mUfYlMuFuIA:10
-    a=QyXUC8HyAAAA:8 a=BeIGCghU1cLLYBFD-VUA:9 a=CjuIK1q_8ugA:10
+    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=6fRSesKdBoVJWA_5YRIA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751052AbeFAVzQ (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 1 Jun 2018 17:55:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55064 "EHLO mx1.redhat.com"
+        id S1750917AbeFAUqZ (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 1 Jun 2018 16:46:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53188 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750934AbeFAVzP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jun 2018 17:55:15 -0400
-Date: Fri, 1 Jun 2018 17:55:13 -0400
+        id S1750724AbeFAUqX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 Jun 2018 16:46:23 -0400
+Date: Fri, 1 Jun 2018 16:46:04 -0400
 From: Mike Snitzer <snitzer@redhat.com>
 To: Ross Zwisler <ross.zwisler@linux.intel.com>
 Cc: Toshi Kani <toshi.kani@hpe.com>, dm-devel@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] dm: prevent DAX mounts if not supported
-Message-ID: <20180601215513.GA18712@redhat.com>
+Subject: Re: [PATCH v2 3/7] dm: fix test for DAX device support
+Message-ID: <20180601204604.GB1144@redhat.com>
 References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-5-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-4-ross.zwisler@linux.intel.com>
+ <20180601201924.GA1144@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529195106.14268-5-ross.zwisler@linux.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180601201924.GA1144@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 29 2018 at  3:51pm -0400,
-Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+On Fri, Jun 01 2018 at  4:19P -0400,
+Mike Snitzer <snitzer@redhat.com> wrote:
 
-> Currently the code in dm_dax_direct_access() only checks whether the target
-> type has a direct_access() operation defined, not whether the underlying
-> block devices all support DAX.  This latter property can be seen by looking
-> at whether we set the QUEUE_FLAG_DAX request queue flag when creating the
-> DM device.
-
-Wait... I thought DAX support was all or nothing?
-
-> This is problematic if we have, for example, a dm-linear device made up of
-> a PMEM namespace in fsdax mode followed by a ramdisk from BRD.
-> QUEUE_FLAG_DAX won't be set on the dm-linear device's request queue, but
-> we have a working direct_access() entry point and the first member of the
-> dm-linear set *does* support DAX.
-
-If you don't have a uniformly capable device then it is very dangerous
-to advertise that the entire device has a certain capability.  That
-completely bit me in the past with discard (because for every IO I
-wasn't then checking if the destination device supported discards).
-
-It is all well and good that you're adding that check here.  But what I
-don't like is how you're saying QUEUE_FLAG_DAX implies direct_access()
-operation exists.. yet for raw PMEM namespaces we just discussed how
-that is a lie.
-
-SO this type of change showcases how the QUEUE_FLAG_DAX doesn't _really_
-imply direct_access() exists.
-
-> This allows the user to create a filesystem on the dm-linear device, and
-> then mount it with DAX.  The filesystem's bdev_dax_supported() test will
-> pass because it'll operate on the first member of the dm-linear device,
-> which happens to be a fsdax PMEM namespace.
+> On Tue, May 29 2018 at  3:51P -0400,
+> Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
 > 
-> All DAX I/O will then fail to that dm-linear device because the lack of
-> QUEUE_FLAG_DAX prevents fs_dax_get_by_bdev() from working.  This means that
-> the struct dax_device isn't ever set in the filesystem, so
-> dax_direct_access() will always return -EOPNOTSUPP.
-
-Now you've lost me... these past 2 paragraphs.  Why can a user mount it
-is DAX mode?  Because bdev_dax_supported() only accesses the first
-portion (which happens to have DAX capabilities?)
-
-Isn't this exactly why you should be checking for QUEUE_FLAG_DAX in the
-caller (bdev_dax_supported)?  Why not use bdev_get_queue() and verify
-QUEUE_FLAG_DAX is set in there?
-
-> By failing out of dm_dax_direct_access() if QUEUE_FLAG_DAX isn't set we let
-> the filesystem know we don't support DAX at mount time.  The filesystem
-> will then silently fall back and remove the dax mount option, causing it to
-> work properly.
-
-This shouldn't be needed.  Again, QUEUE_FLAG_DAX wasn't set.. so don't
-allow code to falsely try operations that should've been gated by the
-fact it wasn't set.
-
-SO Nack on this patch.. until/unless I'm corrected ;)
-
-Thanks,
-Mike
-
-
-> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Fixes: commit 545ed20e6df6 ("dm: add infrastructure for DAX support")
-> ---
->  drivers/md/dm.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+> > Currently device_supports_dax() just checks to see if the QUEUE_FLAG_DAX
+> > flag is set on the device's request queue to decide whether or not the
+> > device supports filesystem DAX.  This is insufficient because there are
+> > devices like PMEM namespaces in raw mode which have QUEUE_FLAG_DAX set but
+> > which don't actually support DAX.
 > 
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 0a7b0107ca78..9728433362d1 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -1050,14 +1050,13 @@ static long dm_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+> Isn't that a PMEM bug then?
+> 
+> What is the point of setting QUEUE_FLAG_DAX if it cannot be trusted?
 >  
->  	if (!ti)
->  		goto out;
-> -	if (!ti->type->direct_access)
-> +	if (!blk_queue_dax(md->queue))
->  		goto out;
->  	len = max_io_len(sector, ti) / PAGE_SECTORS;
->  	if (len < 1)
->  		goto out;
->  	nr_pages = min(len, nr_pages);
-> -	if (ti->type->direct_access)
-> -		ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
-> +	ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
->  
->   out:
->  	dm_put_live_table(md, srcu_idx);
-> -- 
-> 2.14.3
+> > This means that you could create a dm-linear device, for example, where the
+> > first part of the dm-linear device was a PMEM namespace in fsdax mode and
+> > the second part was a PMEM namespace in raw mode.  Both DM and the
+> > filesystem you put on that dm-linear device would think the whole device
+> > supports DAX, which would lead to bad behavior once your raw PMEM namespace
+> > part using DAX needed struct page for something.
 > 
+> The PMEM namespace in raw mode shouldn't be setting QUEUE_FLAG_DAX, if
+> it didn't then the stacked-up linear DM wouldn't 
+> 
+> > Fix this by using bdev_dax_supported() like filesystems do at mount time.
+> > This checks for raw mode and also performs other tests like checking to
+> > make sure the dax_direct_access() path works.
+> 
+> Sorry "This" does those things where?
+
+I see you meant bdev_dax_supported() does these additional checks.
+
+My previous question stands though.  Why is QUEUE_FLAG_DAX getting set
+if the device hasn't already passed these checks?  Shouldn't setting
+QUEUE_FLAG_DAX on request_queue depend on bdev_dax_supported() passing?
+
+But looking at the drivers that do set QUEUE_FLAG_DAX: they
+don't have the bdev readily available.  Anyway, just strikes me as
+bizarre that a driver can set QUEUE_FLAG_DAX without having to have
+ensured bdev_dax_supported() passes (even if not programatically, but
+that the developer has verified the hooks, et al exist).
+
+But I'll give up on this line of questioning..
+
+My dilemma now is: how do I take these changes without first rebasing
+linux-dm.git ontop of Darrick's xfs tree?
+
+I probably should've reviewed faster and been the one to take the entire
+set (with appropriate acks obviously).
