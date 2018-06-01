@@ -1,81 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751902AbeFAPBr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:01:47 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:43618 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751780AbeFAPBm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:01:42 -0400
-X-Google-Smtp-Source: ADUXVKI26PSQUaitHgNiel9kvljudeCTKVZMFJSbhn2oseIOVXNqb/Ik4JdRfcHJzaU5cWJ88A6nRg==
-From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To: bhelgaas@google.com
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        keith.busch@intel.com, okaya@codeaurora.org,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] PCI: Check for PCIe downtraining conditions
-Date: Fri,  1 Jun 2018 10:01:24 -0500
-Message-Id: <20180601150129.10486-1-mr.nuke.me@gmail.com>
-X-Mailer: git-send-email 2.14.3
+        id S1752690AbeFAPCW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:02:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46156 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751378AbeFAPCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:02:21 -0400
+Date: Fri, 1 Jun 2018 17:02:19 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
+        peterz@infradead.org, oleg@redhat.com, viro@zeniv.linux.org.uk,
+        mingo@kernel.org, paulmck@linux.vnet.ibm.com, keescook@chromium.org,
+        riel@redhat.com, tglx@linutronix.de, kirill.shutemov@linux.intel.com,
+        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
+        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
+        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] exit: Make unlikely case in mm_update_next_owner()
+ more scalable
+Message-ID: <20180601150219.GG15278@dhcp22.suse.cz>
+References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
+ <20180426130700.GP17484@dhcp22.suse.cz>
+ <877enj9uwf.fsf@xmission.com>
+ <20180601135725.GE15278@dhcp22.suse.cz>
+ <87a7sey3ud.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a7sey3ud.fsf@xmission.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCIe downtraining happens when both the device and PCIe port are
-capable of a larger bus width or higher speed than negotiated.
-Downtraining might be indicative of other problems in the system, and
-identifying this from userspace is neither intuitive, nor straigh
-forward.
+On Fri 01-06-18 09:32:42, Eric W. Biederman wrote:
+> Michal Hocko <mhocko@kernel.org> writes:
+[...]
+> > Group leader exiting early without tearing down the whole thread
+> > group should be quite rare as well. No question that somebody might do
+> > that on purpose though...
+> 
+> The group leader exiting early is a completely legitimate and reasonable
+> thing to do, even if it is rare.
 
-The easiest way to detect this is with pcie_print_link_status(),
-since the bottleneck is usually the link that is downtrained. It's not
-a perfect solution, but it works extremely well in most cases.
+I am not saying it isn't legitimate. But the most common case is the
+main thread waiting for its threads or calling exit which would tear the
+whole group down. Is there any easy way to achieve this other than tkill
+to group leader? Calling exit(3) from the leader performs group exit
+IIRC.
 
-Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
----
- drivers/pci/probe.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index ac91b6fd0bcd..e8e158046cab 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2146,6 +2146,25 @@ static struct pci_dev *pci_scan_device(struct pci_bus *bus, int devfn)
- 	return dev;
- }
- 
-+static void pcie_check_upstream_link(struct pci_dev *dev)
-+{
-+
-+	if (!pci_is_pcie(dev))
-+		return;
-+
-+	/* Look from the device up to avoid downstream ports with no devices. */
-+	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ENDPOINT) &&
-+	    (pci_pcie_type(dev) != PCI_EXP_TYPE_LEG_END) &&
-+	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM))
-+		return;
-+
-+	/* Multi-function PCIe share the same link/status. */
-+	if (PCI_FUNC(dev->devfn) != 0)
-+		return;
-+
-+	pcie_print_link_status(dev);
-+}
-+
- static void pci_init_capabilities(struct pci_dev *dev)
- {
- 	/* Enhanced Allocation */
-@@ -2181,6 +2200,9 @@ static void pci_init_capabilities(struct pci_dev *dev)
- 	/* Advanced Error Reporting */
- 	pci_aer_init(dev);
- 
-+	/* Check link and detect downtrain errors */
-+	pcie_check_upstream_link(dev);
-+
- 	if (pci_probe_reset_function(dev) == 0)
- 		dev->reset_fn = 1;
- }
+I am not arguing this is non-issue. And it certainly is a problem once
+somebody wants to be nasty... I was more interested how often this
+really happens for sane workloads.
 -- 
-2.14.3
+Michal Hocko
+SUSE Labs
