@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752089AbeFAL3R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:29:17 -0400
-Received: from foss.arm.com ([217.140.101.70]:50306 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751599AbeFALZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:25:03 -0400
+        id S1752044AbeFAL3x (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:29:53 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50276 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751092AbeFALYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 07:24:55 -0400
 From: Mark Rutland <mark.rutland@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         will.deacon@arm.com, catalin.marinas@arm.com
-Cc: Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCHv2 07/19] arm64: remove sigreturn wrappers
-Date: Fri,  1 Jun 2018 12:24:29 +0100
-Message-Id: <20180601112441.37810-8-mark.rutland@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, James Morse <james.morse@arm.com>
+Subject: [PATCHv2 02/19] arm64: move SCTLR_EL{1,2} assertions to <asm/sysreg.h>
+Date: Fri,  1 Jun 2018 12:24:24 +0100
+Message-Id: <20180601112441.37810-3-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180601112441.37810-1-mark.rutland@arm.com>
 References: <20180601112441.37810-1-mark.rutland@arm.com>
@@ -20,166 +20,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The arm64 sigreturn* syscall handlers are non-standard. Rather than
-taking a number of user parameters in registers as per the AAPCS,
-they expect the pt_regs as their sole argument.
+Currently we assert that the SCTLR_EL{1,2}_{SET,CLEAR} bits are
+self-consistent with an assertion in config_sctlr_el1(). This is a bit
+unusual, since config_sctlr_el1() doesn't make use of these definitions,
+and is far away from the definitions themselves.
 
-To make this work, we override the syscall definitions to invoke
-wrappers written in assembly, which mov the SP into x0, and branch to
-their respective C functions.
+We can use the CPP #error directive to have equivalent assertions in
+<asm/sysreg.h>, next to the definitions of the set/clear bits, which is
+a bit clearer and simpler.
 
-On other architectures (such as x86), the sigreturn* functions take no
-argument and instead use current_pt_regs() to acquire the user
-registers. This requires less boilerplate code, and allows for other
-features such as interposing C code in this path.
-
-This patch takes the same approach for arm64.
+The preprocessor handles literals differently than regular C, e.g. ~0 is
+equivalent to ~(intmax_t)0 rather than ~(int)0. Therefore, instead of ~0
+we use 0xffffffff, which is unambiguous.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Tentatively-reviewed-by: Dave Martin <dave.martin@arm.com>
+Reviewed-by: Dave Martin <dave.martin@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: James Morse <james.morse@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/unistd32.h |  4 ++--
- arch/arm64/kernel/entry.S         |  8 --------
- arch/arm64/kernel/entry32.S       | 10 ----------
- arch/arm64/kernel/signal.c        |  3 ++-
- arch/arm64/kernel/signal32.c      |  6 ++++--
- arch/arm64/kernel/sys.c           |  3 +--
- arch/arm64/kernel/sys32.c         |  4 ++--
- 7 files changed, 11 insertions(+), 27 deletions(-)
+ arch/arm64/include/asm/sysreg.h | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index ef292160748c..ab95554b1734 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -260,7 +260,7 @@ __SYSCALL(117, sys_ni_syscall)
- #define __NR_fsync 118
- __SYSCALL(__NR_fsync, sys_fsync)
- #define __NR_sigreturn 119
--__SYSCALL(__NR_sigreturn, compat_sys_sigreturn_wrapper)
-+__SYSCALL(__NR_sigreturn, compat_sys_sigreturn)
- #define __NR_clone 120
- __SYSCALL(__NR_clone, sys_clone)
- #define __NR_setdomainname 121
-@@ -368,7 +368,7 @@ __SYSCALL(__NR_getresgid, sys_getresgid16)
- #define __NR_prctl 172
- __SYSCALL(__NR_prctl, sys_prctl)
- #define __NR_rt_sigreturn 173
--__SYSCALL(__NR_rt_sigreturn, compat_sys_rt_sigreturn_wrapper)
-+__SYSCALL(__NR_rt_sigreturn, compat_sys_rt_sigreturn)
- #define __NR_rt_sigaction 174
- __SYSCALL(__NR_rt_sigaction, compat_sys_rt_sigaction)
- #define __NR_rt_sigprocmask 175
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 28ad8799406f..62f2876f9c63 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -1138,14 +1138,6 @@ __entry_tramp_data_start:
- #endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index 6171178075dc..bd1d1194a5e7 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -452,9 +452,9 @@
+ 			 SCTLR_ELx_SA     | SCTLR_ELx_I    | SCTLR_ELx_WXN | \
+ 			 ENDIAN_CLEAR_EL2 | SCTLR_EL2_RES0)
  
- /*
-- * Special system call wrappers.
-- */
--ENTRY(sys_rt_sigreturn_wrapper)
--	mov	x0, sp
--	b	sys_rt_sigreturn
--ENDPROC(sys_rt_sigreturn_wrapper)
+-/* Check all the bits are accounted for */
+-#define SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != ~0)
 -
--/*
-  * Register switch for AArch64. The callee-saved registers need to be saved
-  * and restored. On entry:
-  *   x0 = previous task_struct (must be preserved across the switch)
-diff --git a/arch/arm64/kernel/entry32.S b/arch/arm64/kernel/entry32.S
-index f332d5d1f6b4..f9461696dde4 100644
---- a/arch/arm64/kernel/entry32.S
-+++ b/arch/arm64/kernel/entry32.S
-@@ -30,16 +30,6 @@
-  * System call wrappers for the AArch32 compatibility layer.
-  */
++#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xffffffff
++#error "Inconsistent SCTLR_EL2 set/clear bits"
++#endif
  
--ENTRY(compat_sys_sigreturn_wrapper)
--	mov	x0, sp
--	b	compat_sys_sigreturn
--ENDPROC(compat_sys_sigreturn_wrapper)
+ /* SCTLR_EL1 specific flags. */
+ #define SCTLR_EL1_UCI		(1 << 26)
+@@ -492,8 +492,9 @@
+ 			 SCTLR_EL1_UMA | SCTLR_ELx_WXN     | ENDIAN_CLEAR_EL1 |\
+ 			 SCTLR_EL1_RES0)
+ 
+-/* Check all the bits are accounted for */
+-#define SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != ~0)
++#if (SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != 0xffffffff
++#error "Inconsistent SCTLR_EL1 set/clear bits"
++#endif
+ 
+ /* id_aa64isar0 */
+ #define ID_AA64ISAR0_TS_SHIFT		52
+@@ -732,9 +733,6 @@ static inline void config_sctlr_el1(u32 clear, u32 set)
+ {
+ 	u32 val;
+ 
+-	SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS;
+-	SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS;
 -
--ENTRY(compat_sys_rt_sigreturn_wrapper)
--	mov	x0, sp
--	b	compat_sys_rt_sigreturn
--ENDPROC(compat_sys_rt_sigreturn_wrapper)
--
- ENTRY(compat_sys_statfs64_wrapper)
- 	mov	w3, #84
- 	cmp	w1, #88
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 8e624fec4707..caa7a68cf2d2 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -538,8 +538,9 @@ static int restore_sigframe(struct pt_regs *regs,
- 	return err;
- }
- 
--asmlinkage long sys_rt_sigreturn(struct pt_regs *regs)
-+asmlinkage long sys_rt_sigreturn(void)
- {
-+	struct pt_regs *regs = current_pt_regs();
- 	struct rt_sigframe __user *frame;
- 
- 	/* Always make any pending restarted system calls return -EINTR */
-diff --git a/arch/arm64/kernel/signal32.c b/arch/arm64/kernel/signal32.c
-index 77b91f478995..cb10588a7cb2 100644
---- a/arch/arm64/kernel/signal32.c
-+++ b/arch/arm64/kernel/signal32.c
-@@ -282,8 +282,9 @@ static int compat_restore_sigframe(struct pt_regs *regs,
- 	return err;
- }
- 
--asmlinkage int compat_sys_sigreturn(struct pt_regs *regs)
-+asmlinkage int compat_sys_sigreturn(void)
- {
-+	struct pt_regs *regs = current_pt_regs();
- 	struct compat_sigframe __user *frame;
- 
- 	/* Always make any pending restarted system calls return -EINTR */
-@@ -312,8 +313,9 @@ asmlinkage int compat_sys_sigreturn(struct pt_regs *regs)
- 	return 0;
- }
- 
--asmlinkage int compat_sys_rt_sigreturn(struct pt_regs *regs)
-+asmlinkage int compat_sys_rt_sigreturn(void)
- {
-+	struct pt_regs *regs = current_pt_regs();
- 	struct compat_rt_sigframe __user *frame;
- 
- 	/* Always make any pending restarted system calls return -EINTR */
-diff --git a/arch/arm64/kernel/sys.c b/arch/arm64/kernel/sys.c
-index 72981bae10eb..31045f3fed92 100644
---- a/arch/arm64/kernel/sys.c
-+++ b/arch/arm64/kernel/sys.c
-@@ -48,8 +48,7 @@ SYSCALL_DEFINE1(arm64_personality, unsigned int, personality)
- /*
-  * Wrappers to pass the pt_regs argument.
-  */
--asmlinkage long sys_rt_sigreturn_wrapper(void);
--#define sys_rt_sigreturn	sys_rt_sigreturn_wrapper
-+asmlinkage long sys_rt_sigreturn(void);
- #define sys_personality		sys_arm64_personality
- 
- #undef __SYSCALL
-diff --git a/arch/arm64/kernel/sys32.c b/arch/arm64/kernel/sys32.c
-index a40b1343b819..1ef103c95410 100644
---- a/arch/arm64/kernel/sys32.c
-+++ b/arch/arm64/kernel/sys32.c
-@@ -25,8 +25,8 @@
- #include <linux/compiler.h>
- #include <linux/syscalls.h>
- 
--asmlinkage long compat_sys_sigreturn_wrapper(void);
--asmlinkage long compat_sys_rt_sigreturn_wrapper(void);
-+asmlinkage long compat_sys_sigreturn(void);
-+asmlinkage long compat_sys_rt_sigreturn(void);
- asmlinkage long compat_sys_statfs64_wrapper(void);
- asmlinkage long compat_sys_fstatfs64_wrapper(void);
- asmlinkage long compat_sys_pread64_wrapper(void);
+ 	val = read_sysreg(sctlr_el1);
+ 	val &= ~clear;
+ 	val |= set;
 -- 
 2.11.0
