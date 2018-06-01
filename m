@@ -1,48 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752011AbeFANoV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:44:21 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37387 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbeFANoR (ORCPT
+        id S1751733AbeFANpg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:45:36 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:41944 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeFANpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:44:17 -0400
-X-Google-Smtp-Source: ADUXVKIl7TsiGt7p8zcSR/UPesXPG/1WS8hsrD5gke7CoLIWvk3HfATQAjiqnrLSvZB+n708sYDyuaG1SvTbBU6clgA=
+        Fri, 1 Jun 2018 09:45:33 -0400
+X-Google-Smtp-Source: ADUXVKIZ5MxIQQRG+mqloR5ZeVDYRwV5wDK13+SXB7VIumuJ+YRDnnlyh27SxiGLk1TGkaEgeReRuQ==
+Date: Fri, 1 Jun 2018 07:45:29 -0600
+From: Jens Axboe <axboe@kernel.dk>
+To: Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        javier@cnexlabs.com, igor.j.konopko@intel.com,
+        marcin.dziegielewski@intel.com
+Subject: Re: [GIT PULL v2 00/18] lightnvm updates for 4.18
+Message-ID: <20180601134527.GA21226@kernel.dk>
+References: <20180601130432.30866-1-mb@lightnvm.io>
 MIME-Version: 1.0
-In-Reply-To: <b458561f-b4e5-58bb-eee0-e3451312ae41@daenzer.net>
-References: <20180531161708.5894-1-michel@daenzer.net> <20180531161708.5894-3-michel@daenzer.net>
- <CADnq5_O5-m_=xqszq41eOAVaLTytHUHmtDaSc1MeEorZML6T5g@mail.gmail.com> <b458561f-b4e5-58bb-eee0-e3451312ae41@daenzer.net>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 1 Jun 2018 09:44:15 -0400
-Message-ID: <CADnq5_M-kS58ScgOBVQG7Mxxepae9b9gqUdMdFgaPaaxQ4NkjQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] drm/amdgpu: Add documentation for PRIME related code
-To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>
-Cc: Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
-        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180601130432.30866-1-mb@lightnvm.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51DiPbM004081
 
-On Fri, Jun 1, 2018 at 9:40 AM, Michel Dänzer <michel@daenzer.net> wrote:
-> On 2018-06-01 02:58 PM, Alex Deucher wrote:
->> On Thu, May 31, 2018 at 12:17 PM, Michel Dänzer <michel@daenzer.net> wrote:
->>> From: Michel Dänzer <michel.daenzer@amd.com>
->>>
->>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
->>
->> Series is:
->> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
->
-> Thanks. Is it okay to merge all of these via the amdgpu tree, or should
-> I wait for an ack from Jon and/or core DRM maintainers for that?
+On Fri, Jun 01 2018, Matias Bj�rling wrote:
+> Hi Jens,
+> 
+> Please pick up the following patches.
+> 
+>  - Hans reworked the write error recovery path in pblk.
+>  - Igor added extra error handling for lines, and fixed a bug in the
+>    pblk ringbuffer during GC.
+>  - Javier refactored the pblk code a bit, added extra error
+>    handling, and added checks to verify that data returned from drive
+>    is appropriate.
+>  - Marcin added some extra logic to manage the write buffer. Now
+>    MW_CUNITS can be zero and the size of write buffer can be changed
+>    at module load time.
 
-GPU documentation usually goes through the drm trees.  You might want
-to push patch 1 (drm_mm.rst fix) via drm_misc, but the rest are can go
-in via the amdgpu tree since they are amdgpu specific.
+I applied 1-11, 12 fails:
 
-Alex
+checking file drivers/lightnvm/pblk-init.c
+checking file drivers/lightnvm/pblk-rb.c
+checking file drivers/lightnvm/pblk-recovery.c
+Reversed (or previously applied) patch detected!  Assume -R? [n] ^C
+
+I will push out what I have, please resend the rest of the series
+against for-4.18/block.
+
+BTW, you had several "lightnvn" typos in the subject line, I've fixed
+those up. Didn't check the remainder.
+
+-- 
+Jens Axboe
