@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753736AbeFAU12 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 16:27:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54886 "EHLO
+        id S1753792AbeFAU1z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 16:27:55 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53338 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753658AbeFAU1K (ORCPT
+        with ESMTP id S1753532AbeFAU0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 16:27:10 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4DB85607E7
+        Fri, 1 Jun 2018 16:26:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD68660646
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
 From: Vikash Garodia <vgarodia@codeaurora.org>
@@ -18,9 +18,9 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, vgarodia@codeaurora.org,
         acourbot@chromium.org
-Subject: [PATCH v2 5/5] venus: register separate driver for firmware device
-Date: Sat,  2 Jun 2018 01:56:08 +0530
-Message-Id: <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
+Subject: [PATCH v2 2/5] media: venus: add a routine to set venus state
+Date: Sat,  2 Jun 2018 01:56:05 +0530
+Message-Id: <1527884768-22392-3-git-send-email-vgarodia@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
 References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
@@ -28,185 +28,142 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A separate child device is added for video firmware.
-This is needed to
-[1] configure the firmware context bank with the desired SID.
-[2] ensure that the iova for firmware region is from 0x0.
+Add a new routine which abstracts the TZ call to
+set the video hardware state.
 
 Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
 ---
- .../devicetree/bindings/media/qcom,venus.txt       |  8 +++-
- drivers/media/platform/qcom/venus/core.c           | 48 +++++++++++++++++++---
- drivers/media/platform/qcom/venus/firmware.c       | 20 ++++++++-
- drivers/media/platform/qcom/venus/firmware.h       |  2 +
- 4 files changed, 71 insertions(+), 7 deletions(-)
+ drivers/media/platform/qcom/venus/core.h      |  5 +++++
+ drivers/media/platform/qcom/venus/firmware.c  | 28 +++++++++++++++++++++++++++
+ drivers/media/platform/qcom/venus/firmware.h  |  1 +
+ drivers/media/platform/qcom/venus/hfi_venus.c | 13 ++++---------
+ 4 files changed, 38 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
-index 00d0d1b..701cbe8 100644
---- a/Documentation/devicetree/bindings/media/qcom,venus.txt
-+++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
-@@ -53,7 +53,7 @@
- 
- * Subnodes
- The Venus video-codec node must contain two subnodes representing
--video-decoder and video-encoder.
-+video-decoder and video-encoder, one optional firmware subnode.
- 
- Every of video-encoder or video-decoder subnode should have:
- 
-@@ -79,6 +79,8 @@ Every of video-encoder or video-decoder subnode should have:
- 		    power domain which is responsible for collapsing
- 		    and restoring power to the subcore.
- 
-+The firmware sub node must contain the iommus specifiers for ARM9.
-+
- * An Example
- 	video-codec@1d00000 {
- 		compatible = "qcom,msm8916-venus";
-@@ -105,4 +107,8 @@ Every of video-encoder or video-decoder subnode should have:
- 			clock-names = "core";
- 			power-domains = <&mmcc VENUS_CORE1_GDSC>;
- 		};
-+		venus-firmware {
-+			compatible = "qcom,venus-firmware-no-tz";
-+			iommus = <&apps_smmu 0x10b2 0x0>;
-+		}
- 	};
-diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-index 101612b..5cfb3c2 100644
---- a/drivers/media/platform/qcom/venus/core.c
-+++ b/drivers/media/platform/qcom/venus/core.c
-@@ -179,6 +179,19 @@ static u32 to_v4l2_codec_type(u32 codec)
- 	}
- }
- 
-+static int store_firmware_dev(struct device *dev, void *data)
-+{
-+	struct venus_core *core = data;
-+
-+	if (!core)
-+		return -EINVAL;
-+
-+	if (of_device_is_compatible(dev->of_node, "qcom,venus-firmware-no-tz"))
-+		core->fw.dev = dev;
-+
-+	return 0;
-+}
-+
- static int venus_enumerate_codecs(struct venus_core *core, u32 type)
- {
- 	const struct hfi_inst_ops dummy_ops = {};
-@@ -279,6 +292,13 @@ static int venus_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_runtime_disable;
- 
-+	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-+	if (ret)
-+		goto err_runtime_disable;
-+
-+	/* Attempt to store firmware device */
-+	device_for_each_child(dev, core, store_firmware_dev);
-+
- 	ret = venus_boot(core);
- 	if (ret)
- 		goto err_runtime_disable;
-@@ -303,10 +323,6 @@ static int venus_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_core_deinit;
- 
--	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
--	if (ret)
--		goto err_dev_unregister;
--
- 	ret = pm_runtime_put_sync(dev);
- 	if (ret)
- 		goto err_dev_unregister;
-@@ -483,7 +499,29 @@ static __maybe_unused int venus_runtime_resume(struct device *dev)
- 		.pm = &venus_pm_ops,
- 	},
+diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+index 85e66e2..e7bfb63 100644
+--- a/drivers/media/platform/qcom/venus/core.h
++++ b/drivers/media/platform/qcom/venus/core.h
+@@ -35,6 +35,11 @@ struct reg_val {
+ 	u32 value;
  };
--module_platform_driver(qcom_venus_driver);
-+
-+static int __init venus_init(void)
-+{
-+	int ret;
-+
-+	ret = platform_driver_register(&qcom_video_firmware_driver);
-+	if (ret)
-+		return ret;
-+
-+	ret = platform_driver_register(&qcom_venus_driver);
-+	if (ret)
-+		platform_driver_unregister(&qcom_video_firmware_driver);
-+
-+	return ret;
-+}
-+module_init(venus_init);
-+
-+static void __exit venus_exit(void)
-+{
-+	platform_driver_unregister(&qcom_venus_driver);
-+	platform_driver_unregister(&qcom_video_firmware_driver);
-+}
-+module_exit(venus_exit);
  
- MODULE_ALIAS("platform:qcom-venus");
- MODULE_DESCRIPTION("Qualcomm Venus video encoder and decoder driver");
++enum tzbsp_video_state {
++	TZBSP_VIDEO_SUSPEND = 0,
++	TZBSP_VIDEO_RESUME
++};
++
+ struct venus_resources {
+ 	u64 dma_mask;
+ 	const struct freq_tbl *freq_tbl;
 diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-index 058d544..ed29d10 100644
+index 7d89b5a..b4664ed 100644
 --- a/drivers/media/platform/qcom/venus/firmware.c
 +++ b/drivers/media/platform/qcom/venus/firmware.c
-@@ -12,6 +12,7 @@
-  *
-  */
- 
-+#include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/device.h>
- #include <linux/firmware.h>
-@@ -124,7 +125,7 @@ static int venus_load_fw(struct device *dev, const char *fwname,
- 	}
- 	if (qcom_scm_is_available())
- 		ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va,
--				*mem_phys, *mem_size);
-+				*mem_phys, *mem_size, NULL);
- 	else
- 		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
- 				mem_va, *mem_phys, *mem_size, NULL);
-@@ -243,3 +244,20 @@ int venus_shutdown(struct venus_core *core)
- 
- 	return ret;
+@@ -53,6 +53,34 @@ static void venus_reset_hw(struct venus_core *core)
+ 	/* Bring Arm9 out of reset */
+ 	writel_relaxed(0, reg_base + WRAPPER_A9SS_SW_RESET);
  }
 +
-+static const struct of_device_id firmware_dt_match[] = {
-+	{ .compatible = "qcom,venus-firmware-no-tz" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, firmware_dt_match);
++int venus_set_hw_state(enum tzbsp_video_state state, struct venus_core *core)
++{
++	int ret;
++	struct device *dev = core->dev;
++	void __iomem *reg_base = core->base;
 +
-+struct platform_driver qcom_video_firmware_driver = {
-+	.driver = {
-+			.name = "qcom-video-firmware",
-+			.of_match_table = firmware_dt_match,
-+	},
-+};
++	switch (state) {
++	case TZBSP_VIDEO_SUSPEND:
++		if (qcom_scm_is_available())
++			ret = qcom_scm_set_remote_state(TZBSP_VIDEO_SUSPEND, 0);
++		else
++			writel_relaxed(1, reg_base + WRAPPER_A9SS_SW_RESET);
++		break;
++	case TZBSP_VIDEO_RESUME:
++		if (qcom_scm_is_available())
++			ret = qcom_scm_set_remote_state(TZBSP_VIDEO_RESUME, 0);
++		else
++			venus_reset_hw(core);
++		break;
++	default:
++		dev_err(dev, "invalid state\n");
++		break;
++	}
++	return ret;
++}
++EXPORT_SYMBOL_GPL(venus_set_hw_state);
 +
-+MODULE_ALIAS("platform:qcom-video-firmware");
-+MODULE_DESCRIPTION("Qualcomm Venus firmware driver");
-+MODULE_LICENSE("GPL v2");
+ int venus_boot(struct device *dev, const char *fwname)
+ {
+ 	const struct firmware *mdt;
 diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
-index 67fdd89..23c0409 100644
+index 428efb5..1336729 100644
 --- a/drivers/media/platform/qcom/venus/firmware.h
 +++ b/drivers/media/platform/qcom/venus/firmware.h
-@@ -21,6 +21,8 @@
+@@ -18,5 +18,6 @@
  
- struct device;
+ int venus_boot(struct device *dev, const char *fwname);
+ int venus_shutdown(struct device *dev);
++int venus_set_hw_state(enum tzbsp_video_state, struct venus_core *core);
  
-+extern struct platform_driver qcom_video_firmware_driver;
-+
- int venus_boot(struct venus_core *core);
- int venus_shutdown(struct venus_core *core);
- int venus_set_hw_state(enum tzbsp_video_state, struct venus_core *core);
+ #endif
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+index f61d34b..797a9f5 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus.c
++++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+@@ -19,7 +19,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/iopoll.h>
+ #include <linux/kernel.h>
+-#include <linux/qcom_scm.h>
+ #include <linux/slab.h>
+ 
+ #include "core.h"
+@@ -27,6 +26,7 @@
+ #include "hfi_msgs.h"
+ #include "hfi_venus.h"
+ #include "hfi_venus_io.h"
++#include "firmware.h"
+ 
+ #define HFI_MASK_QHDR_TX_TYPE		0xff000000
+ #define HFI_MASK_QHDR_RX_TYPE		0x00ff0000
+@@ -55,11 +55,6 @@
+ #define IFACEQ_VAR_LARGE_PKT_SIZE	512
+ #define IFACEQ_VAR_HUGE_PKT_SIZE	(1024 * 12)
+ 
+-enum tzbsp_video_state {
+-	TZBSP_VIDEO_STATE_SUSPEND = 0,
+-	TZBSP_VIDEO_STATE_RESUME
+-};
+-
+ struct hfi_queue_table_header {
+ 	u32 version;
+ 	u32 size;
+@@ -574,7 +569,7 @@ static int venus_power_off(struct venus_hfi_device *hdev)
+ 	if (!hdev->power_enabled)
+ 		return 0;
+ 
+-	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
++	ret = venus_set_hw_state(TZBSP_VIDEO_SUSPEND, hdev->core);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -594,7 +589,7 @@ static int venus_power_on(struct venus_hfi_device *hdev)
+ 	if (hdev->power_enabled)
+ 		return 0;
+ 
+-	ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_RESUME, 0);
++	ret = venus_set_hw_state(TZBSP_VIDEO_RESUME, hdev->core);
+ 	if (ret)
+ 		goto err;
+ 
+@@ -607,7 +602,7 @@ static int venus_power_on(struct venus_hfi_device *hdev)
+ 	return 0;
+ 
+ err_suspend:
+-	qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
++	venus_set_hw_state(TZBSP_VIDEO_SUSPEND, hdev->core);
+ err:
+ 	hdev->power_enabled = false;
+ 	return ret;
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
