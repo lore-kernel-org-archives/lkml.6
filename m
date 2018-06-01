@@ -1,101 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750919AbeFAJx2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:53:28 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:40992 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750740AbeFAJxY (ORCPT
+        id S1751357AbeFAJyI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 05:54:08 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:42661 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751168AbeFAJyF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:53:24 -0400
-Date: Fri, 1 Jun 2018 12:53:22 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Philipp Zabel <pza@pengutronix.de>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Discussion of the development of and with GStreamer
-        <gstreamer-devel@lists.freedesktop.org>,
-        linux-media@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-Message-ID: <20180601095322.hdxcpmj4tfonaq4g@valkosipuli.retiisi.org.uk>
-References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
- <20180531190659.xdp4q2cjro33aihq@pengutronix.de>
- <CAMty3ZCeR3uEx8oy18-Ur7ma7pciKUf_myDk6_SpWvxc6DvygQ@mail.gmail.com>
+        Fri, 1 Jun 2018 05:54:05 -0400
+X-Google-Smtp-Source: ADUXVKLyI7QHY5gag6heT/vDycG0ayi15eUPmYuT1T9x4zEfXaDiXwJKf3XCIyCatzFOM+k4Q1rBA1kDt9FD/7Guvbo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZCeR3uEx8oy18-Ur7ma7pciKUf_myDk6_SpWvxc6DvygQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180531225700.721-2-bastiangermann@fishpost.de>
+References: <f885fcb0-d9f3-7702-13ad-5af2913131f0@roeck-us.net>
+ <20180531225700.721-1-bastiangermann@fishpost.de> <20180531225700.721-2-bastiangermann@fishpost.de>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 1 Jun 2018 12:54:04 +0300
+Message-ID: <CAHp75VcZqpQ7qM2aBzSsqa+xYOdevZkWy=h+u8=nhdP2foyH4g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] hwmon: (asus_atk0110) Make use of device managed memory
+To: Bastian Germann <bastiangermann@fishpost.de>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+        Luca Tettamanti <kronos.it@gmail.com>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 10:49:56AM +0530, Jagan Teki wrote:
-> Hi Philipp,
-> 
-> On Fri, Jun 1, 2018 at 12:36 AM, Philipp Zabel <pza@pengutronix.de> wrote:
-> > Hi Jagan,
-> >
-> > On Thu, May 31, 2018 at 08:39:20PM +0530, Jagan Teki wrote:
-> >> Hi All,
-> >>
-> >> I'm trying to verify MIPI-CSI2 OV5640 camera on i.MX6 platform with
-> >> Mainline Linux.
-> >>
-> >> I've followed these[1] instructions to configure MC links and pads
-> >> based on the probing details from dmesg and trying to capture
-> >> ipu1_ic_prpenc capture (/dev/video1) but it's not working.
-> >>
-> >> Can anyone help me to verify whether I configured all the details
-> >> properly if not please suggest.
-> >>
-> >> I'm pasting full log here, so-that anyone can comment in line and dt
-> >> changes are at [2]
-> >>
-> >> Log:
-> >> -----
-> > [...]
-> >> # media-ctl -l "'ov5640 2-003c':0 -> 'imx6-mipi-csi2':0[1]"
-> >> # media-ctl -l "'imx6-mipi-csi2':2 -> 'ipu1_csi1':0[1]"
-> >> # media-ctl -l "'ipu1_csi1':1 -> 'ipu1_ic_prp':0[1]"
-> >> # media-ctl -l "'ipu1_ic_prp':1 -> 'ipu1_ic_prpenc':0[1]"
-> >> # media-ctl -l "'ipu1_ic_prpenc':1 -> 'ipu1_ic_prpenc capture':0[1]"
-> >
-> > Here you configure a pipeline that ends at ipu1 prpenc capture ...
-> >
-> >> # med# media-ctl -p
-> > [...]
-> >> - entity 18: ipu1_ic_prpenc capture (1 pad, 1 link)
-> >>              type Node subtype V4L flags 0
-> >>              device node name /dev/video0
-> >
-> > ... which is /dev/video0 ...
-> >
-> > [...]
-> >> - entity 27: ipu1_ic_prpvf capture (1 pad, 1 link)
-> >>              type Node subtype V4L flags 0
-> >>              device node name /dev/video1
-> >
-> > ... not /dev/video1 ...
-> 
-> True, thanks for pointing it.
-> 
-> I actually tried even on video0 which I forgot to post the log [4].
-> Now I understand I'm trying for wrong device to capture look like
-> video0 which is ipu1 prepenc firing kernel oops. I'm trying to debug
-> this and let me know if have any suggestion to look into.
-> 
-> [   56.800074] imx6-mipi-csi2: LP-11 timeout, phy_state = 0x000002b0
-> [   57.369660] ipu1_ic_prpenc: EOF timeout
-> [   57.849692] ipu1_ic_prpenc: wait last EOF timeout
-> [   57.855703] ipu1_ic_prpenc: pipeline start failed with -110
+On Fri, Jun 1, 2018 at 1:57 AM, Bastian Germann
+<bastiangermann@fishpost.de> wrote:
+> Use devm_* variants of kstrdup and kzalloc. Get rid of the kfree cleanups.
 
-I don't have the hardware but this looks like the host cannot detect the
-LP-11 state on the sensor (both wires high?). Some sensors cannot do this
-without starting streaming at the same time. I'd expect the same if there
-are problems in lane configuration etc.
+>  static int atk_debugfs_ggrp_open(struct inode *inode, struct file *file)
+>  {
+>         struct atk_data *data = inode->i_private;
+> +       struct device *dev = &data->acpi_dev->dev;
+>         char *buf = NULL;
+>         union acpi_object *ret;
+>         u8 cls;
+> @@ -748,7 +748,7 @@ static int atk_debugfs_ggrp_open(struct inode *inode, struct file *file)
+>                 id = &pack->package.elements[0];
+>                 if (id->integer.value == data->debugfs.id) {
+>                         /* Print the package */
+> -                       buf = kzalloc(512, GFP_KERNEL);
+> +                       buf = devm_kzalloc(dev, 512, GFP_KERNEL);
+>                         if (!buf) {
+>                                 ACPI_FREE(ret);
+>                                 return -ENOMEM;
+
+Looking to the function name, it feels like you are creating a memory
+leak and devm_ is inappropriate here.
+
+> @@ -776,16 +776,9 @@ static ssize_t atk_debugfs_ggrp_read(struct file *file, char __user *buf,
+>         return simple_read_from_buffer(buf, count, pos, str, len);
+>  }
+>
+> -static int atk_debugfs_ggrp_release(struct inode *inode, struct file *file)
+> -{
+> -       kfree(file->private_data);
+> -       return 0;
+> -}
+> -
+>  static const struct file_operations atk_debugfs_ggrp_fops = {
+>         .read           = atk_debugfs_ggrp_read,
+>         .open           = atk_debugfs_ggrp_open,
+> -       .release        = atk_debugfs_ggrp_release,
+>         .llseek         = no_llseek,
+>  };
+
+So do these.
+
+Also the question of time to leave of the objects used for debugfs
+communication. Please double check that it's not affected by the
+change.
+
+Otherwise looks good.
 
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+With Best Regards,
+Andy Shevchenko
