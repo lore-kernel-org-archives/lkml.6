@@ -1,74 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753387AbeFAScA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 14:32:00 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:34803 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752333AbeFASb4 (ORCPT
+        id S1753274AbeFASdu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 14:33:50 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39508 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752268AbeFASdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 14:31:56 -0400
-X-Google-Smtp-Source: ADUXVKK9JSALd+1+SEDY8zFuGqdA+dzmDxk9TZNOHEhYnhnMoQ5cQ7YGNe+FPih3JAx5xOa6hBdFIA==
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: noamr@beyondsecurity.com, Cong Wang <xiyou.wangcong@gmail.com>,
-        Sean Hefty <sean.hefty@intel.com>, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Subject: [PATCH] infiniband: fix a possible use-after-free bug
-Date: Fri,  1 Jun 2018 11:31:44 -0700
-Message-Id: <20180601183144.17374-1-xiyou.wangcong@gmail.com>
-X-Mailer: git-send-email 2.9.4
+        Fri, 1 Jun 2018 14:33:47 -0400
+X-Google-Smtp-Source: ADUXVKKZfgHJ0d+BI+hvGCQiyE92y2+RlGQ/RxIPvM7j3gbiK987Ham4RQMSjEh4ZpfE++EMZj7XoA==
+Date: Fri, 1 Jun 2018 11:33:43 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] bitmap: Add bitmap_alloc(), bitmap_zalloc() and
+ bitmap_free()
+Message-ID: <20180601183343.GA222005@dtor-ws>
+References: <20180601083120.40352-1-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601083120.40352-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ucma_process_join() will free the new allocated "mc" struct,
-if there is any error after that, especially the copy_to_user().
+Hi Andy,
 
-But in parallel, ucma_leave_multicast() could find this "mc"
-through idr_find() before ucma_process_join() frees it, since it
-is already published.
+On Fri, Jun 01, 2018 at 11:31:18AM +0300, Andy Shevchenko wrote:
+> A lot of code become ugly because of open coding allocations for bitmaps.
+> 
+> Introduce three helpers to allow users be more clear of intention
+> and keep their code neat.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-So "mc" could be used in ucma_leave_multicast() after it is been
-allocated and freed in ucma_process_join(), since we don't refcnt
-it.
+This looks nice and I like how it simplifies drivers. How do we merge
+this? 
 
-Fix this by separating "publish" from ID allocation, so that we
-can get an ID first and publish it later after copy_to_user().
+> ---
+>  include/linux/bitmap.h | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+> index 1ee46f492267..845822425393 100644
+> --- a/include/linux/bitmap.h
+> +++ b/include/linux/bitmap.h
+> @@ -6,6 +6,7 @@
+>  
+>  #include <linux/types.h>
+>  #include <linux/bitops.h>
+> +#include <linux/slab.h>
+>  #include <linux/string.h>
+>  #include <linux/kernel.h>
+>  
+> @@ -104,6 +105,21 @@
+>   * contain all bit positions from 0 to 'bits' - 1.
+>   */
+>  
+> +static inline unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
+> +{
+> +	return kmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long), flags);
+> +}
+> +
+> +static inline unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags)
+> +{
+> +	return kcalloc(BITS_TO_LONGS(nbits), sizeof(unsigned long), flags);
 
-Fixes c8f6a362bf3e ("RDMA/cma: Add multicast communication support")
-Reported-by: Noam Rathaus <noamr@beyondsecurity.com>
-Cc: Sean Hefty <sean.hefty@intel.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-rdma@vger.kernel.org
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
----
- drivers/infiniband/core/ucma.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+	retrun bitmap_alloc(nbits, flags | __GFP_ZERO);
 
-diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
-index eab43b17e9cf..ec8fb289621f 100644
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -235,7 +235,7 @@ static struct ucma_multicast* ucma_alloc_multicast(struct ucma_context *ctx)
- 		return NULL;
- 
- 	mutex_lock(&mut);
--	mc->id = idr_alloc(&multicast_idr, mc, 0, 0, GFP_KERNEL);
-+	mc->id = idr_alloc(&multicast_idr, NULL, 0, 0, GFP_KERNEL);
- 	mutex_unlock(&mut);
- 	if (mc->id < 0)
- 		goto error;
-@@ -1421,6 +1421,10 @@ static ssize_t ucma_process_join(struct ucma_file *file,
- 		goto err3;
- 	}
- 
-+	mutex_lock(&mut);
-+	idr_replace(&multicast_idr, mc, mc->id);
-+	mutex_unlock(&mut);
-+
- 	mutex_unlock(&file->mut);
- 	ucma_put_ctx(ctx);
- 	return 0;
+?
+
+> +}
+> +
+> +static inline void bitmap_free(const unsigned long *bitmap)
+> +{
+> +	kfree(bitmap);
+> +}
+> +
+>  /*
+>   * lib/bitmap.c provides these functions:
+>   */
+> -- 
+> 2.17.0
+> 
+
+Thanks.
+
 -- 
-2.13.0
+Dmitry
