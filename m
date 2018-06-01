@@ -1,93 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751812AbeFAMgS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 08:36:18 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34441 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751327AbeFAMgQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 08:36:16 -0400
-X-Google-Smtp-Source: ADUXVKLO1OPfQ82zr5GSPvd9qlcmR9nvjDF9w/HVpC/ui2KQHh1hcev19DedJQffS8dvCc43i00+Xg==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [GIT PULL 00/20] lightnvm updates for 4.18
-From: Jens Axboe <axboe@kernel.dk>
-X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <068976f7-38eb-1960-c62b-814ce75ab3e2@lightnvm.io>
-Date: Fri, 1 Jun 2018 06:36:12 -0600
-Cc: axboe@fb.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@cnexlabs.com>,
-        "Konopko, Igor J" <igor.j.konopko@intel.com>,
-        Marcin Dziegielewski <marcin.dziegielewski@intel.com>
-Message-Id: <2B2C5081-DB3F-4328-B861-92362EE1EF7F@kernel.dk>
-References: <20180528085841.26684-1-mb@lightnvm.io> <068976f7-38eb-1960-c62b-814ce75ab3e2@lightnvm.io>
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+        id S1751890AbeFAMiu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 08:38:50 -0400
+Received: from foss.arm.com ([217.140.101.70]:51312 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751301AbeFAMis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 08:38:48 -0400
+Subject: Re: [PATCH 1/4] arm64/mm: pass swapper_pg_dir as an argument to
+ __enable_mmu()
+To: Jun Yao <yaojun8558363@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, greg@kroah.com
+References: <20180601080833.11762-1-yaojun8558363@gmail.com>
+From: James Morse <james.morse@arm.com>
+Message-ID: <9e62fa1e-5322-7818-a6b9-da07d8e397da@arm.com>
+Date: Fri, 1 Jun 2018 13:35:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180601080833.11762-1-yaojun8558363@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51CaMjJ032459
 
-On Jun 1, 2018, at 4:45 AM, Matias Bjørling <mb@lightnvm.io> wrote:
-> 
->> On 05/28/2018 10:58 AM, Matias Bjørling wrote:
->> Hi Jens,
->> Please pick up the following patches.
->>  - Hans reworked the write error recovery path in pblk.
->>  - Igor added extra error handling for lines, and fixed a bug in the
->>    pblk ringbuffer during GC.
->>  - Javier refactored the pblk code a bit, added extra error
->>    handling, and added checks to verify that data returned from drive
->>    is appropriate.
->>  - Marcin added some extra logic to manage the write buffer. Now
->>    MW_CUNITS can be zero and the size of write buffer can be changed
->>    at module load time.
->> Thanks,
->> Matias
->> Hans Holmberg (3):
->>   lightnvm: pblk: rework write error recovery path
->>   lightnvm: pblk: garbage collect lines with failed writes
->>   lightnvm: pblk: fix smeta write error path
->> Igor Konopko (4):
->>   lightnvm: proper error handling for pblk_bio_add_pages
->>   lightnvm: error handling when whole line is bad
->>   lightnvm: fix partial read error path
->>   lightnvm: pblk: sync RB and RL states during GC
->> Javier González (11):
->>   lightnvm: pblk: fail gracefully on line alloc. failure
->>   lightnvm: pblk: recheck for bad lines at runtime
->>   lightnvm: pblk: check read lba on gc path
->>   lightnvn: pblk: improve error msg on corrupted LBAs
->>   lightnvm: pblk: warn in case of corrupted write buffer
->>   lightnvm: pblk: return NVM_ error on failed submission
->>   lightnvm: pblk: remove unnecessary indirection
->>   lightnvm: pblk: remove unnecessary argument
->>   lightnvm: pblk: check for chunk size before allocating it
->>   lightnvn: pass flag on graceful teardown to targets
->>   lightnvm: pblk: remove dead function
->> Marcin Dziegielewski (2):
->>   lightnvm: pblk: handle case when mw_cunits equals to 0
->>   lightnvm: pblk: add possibility to set write buffer size manually
->>  drivers/lightnvm/core.c          |  10 +-
->>  drivers/lightnvm/pblk-core.c     | 149 +++++++++++++++------
->>  drivers/lightnvm/pblk-gc.c       | 112 ++++++++++------
->>  drivers/lightnvm/pblk-init.c     | 112 +++++++++++-----
->>  drivers/lightnvm/pblk-map.c      |  33 +++--
->>  drivers/lightnvm/pblk-rb.c       |  51 +------
->>  drivers/lightnvm/pblk-read.c     |  83 +++++++++---
->>  drivers/lightnvm/pblk-recovery.c |  91 -------------
->>  drivers/lightnvm/pblk-rl.c       |  29 +++-
->>  drivers/lightnvm/pblk-sysfs.c    |  15 ++-
->>  drivers/lightnvm/pblk-write.c    | 281 +++++++++++++++++++++++++--------------
->>  drivers/lightnvm/pblk.h          |  43 +++---
->>  drivers/nvme/host/lightnvm.c     |   1 -
->>  include/linux/lightnvm.h         |   2 +-
->>  14 files changed, 604 insertions(+), 408 deletions(-)
-> 
-> Hi Jens,
-> 
-> Javier had some comments to 16, 18, and 20. The rest is ready to go. Would you like me to resend the patches?
+Hi Jun Yao,
 
-Yes please. 
+On 01/06/18 09:08, Jun Yao wrote:
+> Introduce __pa_swapper_pg_dir to save physical address of
+> swapper_pg_dir. And pass it as an argument to __enable_mmu().
+
+
+> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> index b0853069702f..e3bb44b4b6c6 100644
+> --- a/arch/arm64/kernel/head.S
+> +++ b/arch/arm64/kernel/head.S
+> @@ -706,6 +706,8 @@ secondary_startup:
+>  	 * Common entry point for secondary CPUs.
+>  	 */
+>  	bl	__cpu_setup			// initialise processor
+> +	adrp    x25, idmap_pg_dir
+> +	ldr_l   x26, __pa_swapper_pg_dir
+>  	bl	__enable_mmu
+>  	ldr	x8, =__secondary_switched
+>  	br	x8
+
+'__pa_swapper_pg_dir' here is read with the MMU off, but you write it with the
+MMU on. To make this safe, you need to clean this value to the 'PoC' each time
+you write it, so that secondaries here will read the new value.
+
+Please put __pa_swapper_pg_dir in the mmuoff.data.read section, this ensures
+hibernate will re-clean this value to the PoC once it has restored the memory.
+
+
+> @@ -761,10 +763,8 @@ ENTRY(__enable_mmu)
+>  	cmp	x2, #ID_AA64MMFR0_TGRAN_SUPPORTED
+>  	b.ne	__no_granule_support
+>  	update_early_cpu_boot_status 0, x1, x2
+> -	adrp	x1, idmap_pg_dir
+> -	adrp	x2, swapper_pg_dir
+> -	phys_to_ttbr x3, x1
+> -	phys_to_ttbr x4, x2
+> +	phys_to_ttbr x3, x25
+> +	phys_to_ttbr x4, x26
+>  	msr	ttbr0_el1, x3			// load TTBR0
+>  	msr	ttbr1_el1, x4			// load TTBR1
+>  	isb
+
+__enable_mmu() is now taking arguments in x25 and x26. Please update the comment
+above it that describes the 'x0' argument.
+
+Why do you pass the idmap ttbr value in too? Its always the same.
+
+
+> @@ -823,6 +823,8 @@ __primary_switch:
+>  	mrs	x20, sctlr_el1			// preserve old SCTLR_EL1 value
+>  #endif
+>  
+> +	adrp    x25, idmap_pg_dir
+> +	adrp    x26, swapper_pg_dir
+>  	bl	__enable_mmu
+>  #ifdef CONFIG_RELOCATABLE
+>  	bl	__relocate_kernel
+
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 2dbb2c9f1ec1..41eee333f91a 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -55,6 +55,8 @@ u64 idmap_ptrs_per_pgd = PTRS_PER_PGD;
+>  u64 kimage_voffset __ro_after_init;
+>  EXPORT_SYMBOL(kimage_voffset);
+>  
+> +phys_addr_t __pa_swapper_pg_dir;
+
+See the definition of 'secondary_holding_pen_release' for an example of how to
+put this in the mmuoff.data.read section.
+
+
+> +
+>  /*
+>   * Empty_zero_page is a special page that is used for zero-initialized data
+>   * and COW.
+> @@ -631,6 +633,8 @@ void __init paging_init(void)
+>  	phys_addr_t pgd_phys = early_pgtable_alloc();
+>  	pgd_t *pgdp = pgd_set_fixmap(pgd_phys);
+>  
+> +	__pa_swapper_pg_dir = __pa_symbol(swapper_pg_dir);
+
+This write needs to be cleaned to the PoC, see write_pen_release() for an example.
+
+
+>  	map_kernel(pgdp);
+>  	map_mem(pgdp);
+>  
+
+
+Thanks,
+
+James
