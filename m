@@ -1,98 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751329AbeFAIyC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:54:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51721 "EHLO mx2.suse.de"
+        id S1750941AbeFAI7K (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:59:10 -0400
+Received: from ozlabs.org ([203.11.71.1]:49699 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750739AbeFAIx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:53:58 -0400
-Date: Fri, 1 Jun 2018 10:53:56 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Maninder Singh <maninder1.s@samsung.com>, sergey.senozhatsky@gmail.com,
-        rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        a.sahrawat@samsung.com, pankaj.m@samsung.com, v.narang@samsung.com
-Subject: Re: [PATCH 2/2] printk: make sure to print log on console.
-Message-ID: <20180601085356.kncuat7epkbtythv@pathway.suse.cz>
-References: <CGME20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e@epcas5p2.samsung.com>
- <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
- <20180531105215.GF477@jagdpanzerIV>
- <20180531122112.bfeqtmwpl2qc67a5@pathway.suse.cz>
- <20180601044050.GA5687@jagdpanzerIV>
+        id S1750724AbeFAI7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 04:59:06 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 1 Jun 2018 18:58:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>
+Subject: linux-next: manual merge of the nvdimm tree with the xfs tree
+Message-ID: <20180601185846.1c5b7d0a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180601044050.GA5687@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/nO66g8gdPLsiZHK6IX858ml"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-06-01 13:40:50, Sergey Senozhatsky wrote:
-> On (05/31/18 14:21), Petr Mladek wrote:
-> > > 
-> > > Upstream printk has no printing kthread. And we also run
-> > > printk()->console_unlock() with disabled preemption.
-> > 
-> > Yes, the comment was wrong
-> 
-> Yes, that was the only thing I meant.
-> I really didn't have any time to look at the patch yesterday, just
-> commented on the most obvious thing.
+--Sig_/nO66g8gdPLsiZHK6IX858ml
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fair enough.
+Hi Dan,
 
-> > but the problem is real.
-> 
-> Yep, could be. But not exactly the way it is described in the commit
-> messages and the patch does not fully address the problem.
-> 
-> The patch assumes that all those events happen sequentially. While
-> in reality they can happen in parallel on different CPUs.
-> 
-> Example:
-> 
-> 	CPU0					CPU1
-> 
-> 	set console verbose
-> 
-> 	dump_backtrace()
-> 	{
-> 		// for (;;)  print frames
-> 		printk("%pS\n", frame0);
-> 		printk("%pS\n", frame1);
-> 		printk("%pS\n", frame2);
-> 		printk("%pS\n", frame3);
-> 		...				console_loglevel = CONSOLE_LOGLEVEL_SILENT;
-> 		printk("%pS\n", frame12);
-> 		printk("%pS\n", frame13);
-> 	}
-> 
-> Part of backtrace or the entire backtrace will be missed, because
-> we read the global console_loglevel. The problem is still there.
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-[...]
+  drivers/dax/super.c
 
-> So I'd say that most likely the following scenarios can suffer:
-> 
-> - NMI comes in, sets loglevel to X, printk-s some data, restores the
->   loglevel back to Y
-> - IRQ comes in [like sysrq, etc] comes in and does the same thing
-> - software exception comes in and does the same thing [e.g. bust_spinlocks()
->   at arch/s390/mm/fault.c]
+between commits:
 
+  ba23cba9b3bd ("fs: allow per-device dax status checking for filesystems")
+  80660f20252d ("dax: change bdev_dax_supported() to support boolean return=
+s")
 
-My view is:
+from the xfs tree and commit:
 
-The race with another printk() (console_lock owner) is much more
-likely than a race between two CPUs manipulating console_loglevel.
+  e76384884344 ("mm: introduce MEMORY_DEVICE_FS_DAX and CONFIG_DEV_PAGEMAP_=
+OPS")
 
-The proposed patch seems to be in the right direction. It is supposed
-to fix the most likely scenario. We could block it and request full
-solution but I wonder if it is worth it.
+from the nvdimm tree.
 
-I am personally fine with this partial solution for now. We could
-always make it better if people meet the other scenarios.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-Best Regards,
-Petr
+--=20
+Cheers,
+Stephen Rothwell
+diff --cc drivers/dax/super.c
+index 1d7bd96511f0,88672b6f6252..000000000000
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@@ -80,11 -80,13 +80,12 @@@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev)
+   * This is a library function for filesystems to check if the block device
+   * can be mounted with dax option.
+   *
+ - * Return: negative errno if unsupported, 0 if supported.
+ + * Return: true if supported, false if unsupported
+   */
+ -int __bdev_dax_supported(struct super_block *sb, int blocksize)
+ +bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+  {
+ -	struct block_device *bdev =3D sb->s_bdev;
+  	struct dax_device *dax_dev;
++ 	bool dax_enabled =3D false;
+  	pgoff_t pgoff;
+  	int err, id;
+  	void *kaddr;
+@@@ -134,15 -135,22 +135,22 @@@
+  		 * on being able to do (page_address(pfn_to_page())).
+  		 */
+  		WARN_ON(IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API));
++ 		dax_enabled =3D true;
+  	} else if (pfn_t_devmap(pfn)) {
+- 		/* pass */;
+- 	} else {
++ 		struct dev_pagemap *pgmap;
++=20
++ 		pgmap =3D get_dev_pagemap(pfn_t_to_pfn(pfn), NULL);
++ 		if (pgmap && pgmap->type =3D=3D MEMORY_DEVICE_FS_DAX)
++ 			dax_enabled =3D true;
++ 		put_dev_pagemap(pgmap);
++ 	}
++=20
++ 	if (!dax_enabled) {
+ -		pr_debug("VFS (%s): error: dax support not enabled\n",
+ -				sb->s_id);
+ +		pr_debug("%s: error: dax support not enabled\n",
+ +				bdevname(bdev, buf));
+- 		return false;
++ 		return -EOPNOTSUPP;
+  	}
+-=20
+- 	return true;
++ 	return 0;
+  }
+  EXPORT_SYMBOL_GPL(__bdev_dax_supported);
+  #endif
+
+--Sig_/nO66g8gdPLsiZHK6IX858ml
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsRCsYACgkQAVBC80lX
+0GyFOAf2K+fI2g6HeikpCglpE1Sy2lLveEtJwmDWERcgWp2uTChs2ayL2EM/lsEy
+IYtX0eF5hHP+w2M3T3vPtxFR4unKa8ushPRBOkv4enZB1LxbUq4WmRBOGuBBJ9sg
+4EnxdyikLdQ0Ko7++qdtTEsiQ9HoPAvmArmeEH2ixDsDkSsB7vddaqoUtSTZwoQA
+WdgaW6CdZGUhRwxV60aiJlC+43V9LGSljEqdTyK3u8nh4xkLlOSqiMhPnzsGcfih
+aYXP8wj0XXYlQmIdcKDQ5vrOUtdw6aMejtAVVGXmGlFty55ez4aEtXQON+5x29gZ
+vue3ERWlIfRrup6E5xNuzO1eUd43
+=jYhb
+-----END PGP SIGNATURE-----
+
+--Sig_/nO66g8gdPLsiZHK6IX858ml--
