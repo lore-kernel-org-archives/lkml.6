@@ -1,52 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753357AbeFAPw7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:52:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34376 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752663AbeFAPw5 (ORCPT
+        id S1753114AbeFAPxe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:53:34 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:54925 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752810AbeFAPxc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:52:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C5C460769
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Igor Mitsyanko <imitsyanko@quantenna.com>,
-        Avinash Patil <avinashp@quantenna.com>,
-        Sergey Matyukevich <smatyukevich@quantenna.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] qtnfmac: fix NULL pointer dereference
-References: <20180601132408.GA2572@embeddedor.com>
-Date: Fri, 01 Jun 2018 18:52:51 +0300
-In-Reply-To: <20180601132408.GA2572@embeddedor.com> (Gustavo A. R. Silva's
-        message of "Fri, 1 Jun 2018 08:24:08 -0500")
-Message-ID: <87muwezep8.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Fri, 1 Jun 2018 11:53:32 -0400
+X-Google-Smtp-Source: ADUXVKLtZbkJQ7D50bmQD79KCJSB2Xi5sxqKfeWYIPgEWAATcMBDCfbp+P3jYpBCJBsAQb3nuv5dfDN/UJmYPG3RE60=
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180529221625.33541-1-thgarnie@google.com> <20180529221625.33541-19-thgarnie@google.com>
+ <cfd5f012-4ce2-639b-9ff0-4ad627805fd4@oracle.com>
+In-Reply-To: <cfd5f012-4ce2-639b-9ff0-4ad627805fd4@oracle.com>
+From: Thomas Garnier <thgarnie@google.com>
+Date: Fri, 1 Jun 2018 08:53:21 -0700
+Message-ID: <CAJcbSZEAo2G_nAwdPVYWr5WxKUEb5HnfzUjewzQo+p1jpfPDMw@mail.gmail.com>
+Subject: Re: [PATCH v4 18/27] xen: Adapt assembly for PIE support
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Juergen Gross <jgross@suse.com>, Greg KH <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> writes:
+On Fri, Jun 1, 2018 at 8:40 AM Boris Ostrovsky
+<boris.ostrovsky@oracle.com> wrote:
+>
+> On 05/29/2018 06:15 PM, Thomas Garnier wrote:
+> > diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
+> > index ca2d3b2bf2af..82ba89ba8bb3 100644
+> > --- a/arch/x86/xen/xen-pvh.S
+> > +++ b/arch/x86/xen/xen-pvh.S
+> > @@ -114,8 +114,8 @@ ENTRY(pvh_start_xen)
+> >       call xen_prepare_pvh
+> >
+> >       /* startup_64 expects boot_params in %rsi. */
+> > -     mov $_pa(pvh_bootparams), %rsi
+> > -     mov $_pa(startup_64), %rax
+> > +     movabs $_pa(pvh_bootparams), %rsi
+> > +     movabs $_pa(startup_64), %rax
+> >       jmp *%rax
+> >
+> >  #else /* CONFIG_X86_64 */
+> > @@ -161,10 +161,15 @@ END(pvh_start_xen)
+> >
+> >       .section ".init.data","aw"
+> >       .balign 8
+> > +     /*
+> > +      * Use a quad for _pa(gdt_start) because PIE does not understand a
+> > +      * long is enough. The resulting value will still be in the lower long
+> > +      * part.
+> > +      */
+> >  gdt:
+> >       .word gdt_end - gdt_start
+> > -     .long _pa(gdt_start)
+> > -     .word 0
+> > +     .quad _pa(gdt_start)
+>
+>
+> With this becoming .quad 32-bit compilation fails:
+>
+> /data/root/linux/arch/x86/xen/xen-pvh.S: Assembler messages:
+> /data/root/linux/arch/x86/xen/xen-pvh.S:147: Error: cannot represent
+> relocation type BFD_RELOC_64
 
-> In case *vif* is NULL at 655: if (!vif), the execution path jumps to
-> label out, where *vif* is dereferenced at 679:
->
-> if (vif->sta_state == QTNF_STA_CONNECTING)
->
-> Fix this by immediately returning when *vif* is NULL instead of
-> jumping to label out.
->
-> Addresses-Coverity-ID: 1469567 ("Dereference after null check")
-> Fixes: 480daa9cb62c ("qtnfmac: fix invalid STA state on EAPOL failure")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Thanks, I will look to fix this in the next patch set and run a full
+32-bit build.
 
-As commit 480daa9cb62c was recently applied to wireless-drivers-next
-I'll queue this to 4.18.
+>
+>
+> -boris
+>
+>
+> > +     .balign 8
+> >  gdt_start:
+> >       .quad 0x0000000000000000            /* NULL descriptor */
+> >  #ifdef CONFIG_X86_64
+>
+
 
 -- 
-Kalle Valo
+Thomas
