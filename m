@@ -1,75 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751282AbeFAWPx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 18:15:53 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:39250 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750916AbeFAWPv (ORCPT
+        id S1751394AbeFAWQH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 18:16:07 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38608 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751352AbeFAWQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 18:15:51 -0400
-X-Google-Smtp-Source: ADUXVKJRso6ErK2PlhGejY/F6HXtDUZR/yEWvoNM7EPuOoIjZo05K4ieoGsnwTIqXuqXeVBnldH/PsFJUnfmpbun7hc=
+        Fri, 1 Jun 2018 18:16:03 -0400
+X-Google-Smtp-Source: ADUXVKJ3H0LbrJvY0Kj35v/6evIeeX9XoDxn99BYTwNUIM2AM8hEgtVM/mmnPCu3ZnxwSGMNBhKs+w==
+Subject: Re: [PATCH v2 1/5] media: venus: add a routine to reset ARM9
+To: Vikash Garodia <vgarodia@codeaurora.org>, hverkuil@xs4all.nl,
+        mchehab@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        stanimir.varbanov@linaro.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, acourbot@chromium.org
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+ <1527884768-22392-2-git-send-email-vgarodia@codeaurora.org>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <894ab678-bc1d-da04-b552-d53301bd3980@linaro.org>
+Date: Sat, 2 Jun 2018 01:15:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180531163811.7m7c3q75duqkicl4@madcap2.tricolour.ca>
-References: <c390a53d148593016df96e880a35e64f42edcf91.1527726830.git.rgb@redhat.com>
- <CAHC9VhQji1JrZ-QHMJ-965s+a5UJx-wRqpEdb84r=v+t1oH-qw@mail.gmail.com> <20180531163811.7m7c3q75duqkicl4@madcap2.tricolour.ca>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 1 Jun 2018 18:15:49 -0400
-Message-ID: <CAHC9VhTABDT0FKb=vY4G06aY9Ky+NctArCRo8-iUQF6=eWKy1g@mail.gmail.com>
-Subject: Re: [RFC PATCH ghak86 V1] audit: use audit_enabled as a boolean where convenient
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1527884768-22392-2-git-send-email-vgarodia@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 12:38 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2018-05-31 11:48, Paul Moore wrote:
->> On Thu, May 31, 2018 at 11:13 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
->> > Most uses of audit_enabled don't care about the distinction between
->> > AUDIT_ON and AUDIT_LOCKED, so using audit_enabled as a boolean makes
->> > more sense and is easier to read. Most uses of audit_enabled treat it as
->> > a boolean, so switch the remaining AUDIT_OFF usage to simply use
->> > audit_enabled as a boolean where applicable.
->> >
->> > See: https://github.com/linux-audit/audit-kernel/issues/86
->> >
->> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
->> > ---
->> >  drivers/tty/tty_audit.c      | 2 +-
->> >  include/net/xfrm.h           | 2 +-
->> >  kernel/audit.c               | 8 ++++----
->> >  net/netfilter/xt_AUDIT.c     | 2 +-
->> >  net/netlabel/netlabel_user.c | 2 +-
->> >  5 files changed, 8 insertions(+), 8 deletions(-)
->>
->> I'm not sure I like this idea.  Yes, technically this change is
->> functionally equivalent but I worry that this will increase the chance
->> that non-audit folks will mistake audit_enabled as a true/false value
->> when it is not.  It might work now, but I worry about some subtle
->> problem in the future.
->
-> Would you prefer a patch to change the majority (18) of uses of
-> audit_enabled to be of the form "audit_enabled == AUDIT_OFF" (or
-> "audit_enabled != AUDIT_OFF")?
->
-> I prefer the approach in this patch because it makes the code smaller
-> and significantly easier to read, but either way, I'd like all uses to
-> be consistent so that it is easier to read all the code similarly.
->
->> If you are bothered by the comparison to 0 (magic numbers), you could
->> move the AUDIT_OFF/AUDIT_ON/AUDIT_LOCKED definitions into
->> include/linux/audit.h and convert the "audit_enabled == 0" to
->> "audit_enabled == AUDIT_OFF".
->
-> I'd be fine doing that if you really dislike this patch's approach.
+Hi Vikash,
 
-Like I said, I'm don't really care for the boolean-like approach of
-this first patch.
+On  1.06.2018 23:26, Vikash Garodia wrote:
+> Add a new routine to reset the ARM9 and brings it
+> out of reset. This is in preparation to add PIL
+> functionality in venus driver.
 
--- 
-paul moore
-www.paul-moore.com
+please squash this patch with 4/5. I don't see a reason to add a 
+function which is not used. Shouldn't this produce gcc warnings?
+
+> 
+> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> ---
+>   drivers/media/platform/qcom/venus/firmware.c     | 26 ++++++++++++++++++++++++
+>   drivers/media/platform/qcom/venus/hfi_venus_io.h |  5 +++++
+>   2 files changed, 31 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+> index 521d4b3..7d89b5a 100644
+> --- a/drivers/media/platform/qcom/venus/firmware.c
+> +++ b/drivers/media/platform/qcom/venus/firmware.c
+> @@ -14,6 +14,7 @@
+>   
+>   #include <linux/device.h>
+>   #include <linux/firmware.h>
+> +#include <linux/delay.h>
+>   #include <linux/kernel.h>
+>   #include <linux/io.h>
+>   #include <linux/of.h>
+> @@ -22,11 +23,36 @@
+>   #include <linux/sizes.h>
+>   #include <linux/soc/qcom/mdt_loader.h>
+>   
+> +#include "core.h"
+>   #include "firmware.h"
+> +#include "hfi_venus_io.h"
+>   
+>   #define VENUS_PAS_ID			9
+>   #define VENUS_FW_MEM_SIZE		(6 * SZ_1M)
+>   
+> +static void venus_reset_hw(struct venus_core *core)
+
+can we rename this to venus_reset_cpu? reset_hw sounds like we reset 
+vcodec IPs, so I think we can be more exact here.
+
+> +{
+> +	void __iomem *reg_base = core->base;
+
+just 'base', please.
+
+> +
+> +	writel(0, reg_base + WRAPPER_FW_START_ADDR);
+> +	writel(VENUS_FW_MEM_SIZE, reg_base + WRAPPER_FW_END_ADDR);
+> +	writel(0, reg_base + WRAPPER_CPA_START_ADDR);
+> +	writel(VENUS_FW_MEM_SIZE, reg_base + WRAPPER_CPA_END_ADDR);
+> +	writel(0x0, reg_base + WRAPPER_CPU_CGC_DIS);
+> +	writel(0x0, reg_base + WRAPPER_CPU_CLOCK_CONFIG);
+> +
+> +	/* Make sure all register writes are committed. */
+> +	mb();
+
+the comment says "register writes" hence shouldn't this be wmb? Also if 
+we are going to have explicit memory barrier why not use writel_relaxed?
+
+> +
+> +	/*
+> +	 * Need to wait 10 cycles of internal clocks before bringing ARM9
+
+Do we know what is the minimum frequency of the internal ARM9 clocks? 
+I.e does 1us is enough for all venus versions.
+
+> +	 * out of reset.
+> +	 */
+> +	udelay(1);
+> +
+> +	/* Bring Arm9 out of reset */
+
+ARM9
+
+> +	writel_relaxed(0, reg_base + WRAPPER_A9SS_SW_RESET);
+
+in my opinion we should have a wmb here too
+
+regards,
+Stan
