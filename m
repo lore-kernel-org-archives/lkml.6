@@ -1,110 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750934AbeFACEg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 22:04:36 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:60164 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbeFACEc (ORCPT
+        id S1751317AbeFACE6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 22:04:58 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:36742 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751053AbeFACE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 22:04:32 -0400
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-From: Byungchul Park <byungchul.park@lge.com>
-To: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com
-Cc: linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        joel@joelfernandes.org
-Subject: [PATCH] rcu: Check the range of jiffies_till_{first,next}_fqs when setting them
-Date: Fri,  1 Jun 2018 11:03:09 +0900
-Message-Id: <1527818589-13476-1-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 31 May 2018 22:04:56 -0400
+Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+To: Michal Hocko <mhocko@kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Cc: David Miller <davem@davemloft.net>, tariqt@mellanox.com,
+        haakon.bugge@oracle.com, yanjun.zhu@oracle.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gi-oh.kim@profitbricks.com,
+        "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+References: <20180523232246.20445-1-qing.huang@oracle.com>
+ <20180525.102321.858995452200286788.davem@davemloft.net>
+ <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
+ <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
+ <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
+ <20180531065405.GH15278@dhcp22.suse.cz>
+ <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
+ <20180531085532.GK15278@dhcp22.suse.cz>
+ <20180531091022.GL15278@dhcp22.suse.cz>
+From: Qing Huang <qing.huang@oracle.com>
+Message-ID: <7d8f52e1-aa16-d20c-a9a8-35ad88c0b1ab@oracle.com>
+Date: Thu, 31 May 2018 19:04:46 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180531091022.GL15278@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8910 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=821
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806010019
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the range of jiffies_till_{first,next}_fqs are checked and
-adjusted on and on in the loop of rcu_gp_kthread on runtime.
 
-However, it's enough to check them only when setting them, not every
-time in the loop. So make them handled on a setting time via sysfs.
 
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
----
- kernel/rcu/tree.c | 45 ++++++++++++++++++++++++++++++++-------------
- 1 file changed, 32 insertions(+), 13 deletions(-)
+On 5/31/2018 2:10 AM, Michal Hocko wrote:
+> On Thu 31-05-18 10:55:32, Michal Hocko wrote:
+>> On Thu 31-05-18 04:35:31, Eric Dumazet wrote:
+> [...]
+>>> I merely copied/pasted from alloc_skb_with_frags() :/
+>> I will have a look at it. Thanks!
+> OK, so this is an example of an incremental development ;).
+>
+> __GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
+> high order allocations") to prevent from OOM killer. Yet this was
+> not enough because fb05e7a89f50 ("net: don't wait for order-3 page
+> allocation") didn't want an excessive reclaim for non-costly orders
+> so it made it completely NOWAIT while it preserved __GFP_NORETRY in
+> place which is now redundant. Should I send a patch?
+>
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 4e96761..eb54d7d 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -518,8 +518,38 @@ void rcu_all_qs(void)
- static ulong jiffies_till_next_fqs = ULONG_MAX;
- static bool rcu_kick_kthreads;
- 
--module_param(jiffies_till_first_fqs, ulong, 0644);
--module_param(jiffies_till_next_fqs, ulong, 0644);
-+static int param_set_first_fqs_jiffies(const char *val, const struct kernel_param *kp)
-+{
-+	ulong j;
-+	int ret = kstrtoul(val, 0, &j);
-+
-+	if (!ret)
-+		WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : j);
-+	return ret;
-+}
-+
-+static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param *kp)
-+{
-+	ulong j;
-+	int ret = kstrtoul(val, 0, &j);
-+
-+	if (!ret)
-+		WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : (j ?: 1));
-+	return ret;
-+}
-+
-+static struct kernel_param_ops first_fqs_jiffies_ops = {
-+	.set = param_set_first_fqs_jiffies,
-+	.get = param_get_ulong,
-+};
-+
-+static struct kernel_param_ops next_fqs_jiffies_ops = {
-+	.set = param_set_next_fqs_jiffies,
-+	.get = param_get_ulong,
-+};
-+
-+module_param_cb(jiffies_till_first_fqs, &first_fqs_jiffies_ops, &jiffies_till_first_fqs, 0644);
-+module_param_cb(jiffies_till_next_fqs, &next_fqs_jiffies_ops, &jiffies_till_next_fqs, 0644);
- module_param(rcu_kick_kthreads, bool, 0644);
- 
- /*
-@@ -2129,10 +2159,6 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 		/* Handle quiescent-state forcing. */
- 		first_gp_fqs = true;
- 		j = jiffies_till_first_fqs;
--		if (j > HZ) {
--			j = HZ;
--			jiffies_till_first_fqs = HZ;
--		}
- 		ret = 0;
- 		for (;;) {
- 			if (!ret) {
-@@ -2167,13 +2193,6 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 				WRITE_ONCE(rsp->gp_activity, jiffies);
- 				ret = 0; /* Force full wait till next FQS. */
- 				j = jiffies_till_next_fqs;
--				if (j > HZ) {
--					j = HZ;
--					jiffies_till_next_fqs = HZ;
--				} else if (j < 1) {
--					j = 1;
--					jiffies_till_next_fqs = 1;
--				}
- 			} else {
- 				/* Deal with stray signal. */
- 				cond_resched_tasks_rcu_qs();
--- 
-1.9.1
+Just curious, how about GFP_ATOMIC flag? Would it work in a similar 
+fashion? We experimented
+with it a bit in the past but it seemed to cause other issue in our 
+tests. :-)
+
+By the way, we didn't encounter any OOM killer events. It seemed that 
+the mlx4_alloc_icm() triggered slowpath.
+We still had about 2GB free memory while it was highly fragmented.
+
+  #0 [ffff8801f308b380] remove_migration_pte at ffffffff811f0e0b
+  #1 [ffff8801f308b3e0] rmap_walk_file at ffffffff811cb890
+  #2 [ffff8801f308b440] rmap_walk at ffffffff811cbaf2
+  #3 [ffff8801f308b450] remove_migration_ptes at ffffffff811f0db0
+  #4 [ffff8801f308b490] __unmap_and_move at ffffffff811f2ea6
+  #5 [ffff8801f308b4e0] unmap_and_move at ffffffff811f2fc5
+  #6 [ffff8801f308b540] migrate_pages at ffffffff811f3219
+  #7 [ffff8801f308b5c0] compact_zone at ffffffff811b707e
+  #8 [ffff8801f308b650] compact_zone_order at ffffffff811b735d
+  #9 [ffff8801f308b6e0] try_to_compact_pages at ffffffff811b7485
+#10 [ffff8801f308b770] __alloc_pages_direct_compact at ffffffff81195f96
+#11 [ffff8801f308b7b0] __alloc_pages_slowpath at ffffffff811978a1
+#12 [ffff8801f308b890] __alloc_pages_nodemask at ffffffff81197ec1
+#13 [ffff8801f308b970] alloc_pages_current at ffffffff811e261f
+#14 [ffff8801f308b9e0] mlx4_alloc_icm at ffffffffa01f39b2 [mlx4_core]
+
+Thanks!
