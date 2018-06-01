@@ -1,37 +1,32 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3675997-1527878104-2-10032700961212842891
+X-Cyrus-Session-Id: sloti22d1t05-4036657-1527895206-5-15796372750569346505
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: 
+X-Attached: signature.asc
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527878103; b=RMTXO7invvrj+yzeAQj4BdPTIzqNBXijxFEi24l3Jk8qyTQihD
-    zSSivBBle1Yl9HxWI4rp9kwoo7wmRPnscrrY1UBVyI/jpOq9QchE8e5dzEFSAtSK
-    zEuidWhHy/j5CJNas3u6fqsEM5pH3btM6Ks3G0zhKBJ5ba5+aFR9snV18uFCI+vv
-    CWBl2A29UP8ZYdtAUQK5bJCVOKQ7ph16HZ22qggNwlaxbQKL0ASFvrUhZUfwABAL
-    1LOYiB+2IGRV7aVh++L0SuhQNSVACAVkx+P4yO5pBttQem+N0+HH+xLQE0L3Zj10
-    kRrFFV7Hwuhqv2hNVQWBxzs6ed3oy/Jdth6Q==
+    1527895206; b=OxxajTnqvmAv52TrunzNTltkxOEDd44UsJZS5j3QzTvwqZoeW8
+    dHH8EBB3sJpIVRHvTZjArcqKyEu5kjmt7sh7EspyGsQ6kUbUUsQ8YQpJezToZg4j
+    X3FZPRzT7tHXkBD3i0PYmKdtQB+nuM9dhZZ+A91kpWmEBbcUKTsokFAa/u/sw+Wr
+    e0ZeTcAv9qidhAL4P8hEQiG3SPlnFlUXVvL5WZ1dA2v8Sc1tomVOJ2OA2WV5HRL2
+    6hLLECLQ0R/ugHEnb7ySPeHePttwD2CK3HZaqajM34MP1sp36sXoWNzhTqgyLDcA
+    s1Lp/2qNkS6gkLplXYDMYsgPs7QGRSkOZWSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
-    t=1527878103; bh=L8gCKlnWU1kxr2FGqlWOgnzM9JDJa/vBtXlY6KrSjF8=; b=
-    jYwmFtBzSbQsbGXYXWpvWpuKOi5WxJ6hJvR3FGK/116Pm8FGzgmvWm+92xR7SnCK
-    ahWP1cLDDUtisOXgZ1M2v7RYqvc3u+zfJem5OimYhYnAiQNWkhCQKCKjns5VAQeB
-    yWzxR4Pt6jeuVJQdG8yWnIu21VcamTSIFLnnV+bSA27PUs7ZZZ7aD77BFjwocWz9
-    39ifdXsw9L2WyaI1CrSGYsV/xFAmqFF2diPApI/LetNkzIJOzuZGOXtaVkpdLGu4
-    LinrkwoyR0wFS78T9eTMDbannCML0selsDnMaW7HJZRSe+SNMjpP95my/HaSamic
-    UyGOXV5VdwlSznkE6lBn9g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=cray.com header.i=@cray.com header.b=xKhhnxTq
-    header.a=rsa-sha256 header.s=cray1024 x-bits=1024;
-    dkim=pass (1024-bit rsa key sha256) header.d=crayinc.onmicrosoft.com
-    header.i=@crayinc.onmicrosoft.com header.b=uXFLOf8Y
-    header.a=rsa-sha256 header.s=selector1-cray-com x-bits=1024;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=cray.com;
+    messagingengine.com; h=from:to:date:cc:subject:in-reply-to
+    :references:message-id:mime-version:content-type:sender:list-id;
+    s=fm2; t=1527895206; bh=viyqcXhZ13uYAb9dJR3odtJsZygUiCoJ2/wmVIX
+    waEs=; b=RLzDKovB3W4P1SJRoaQXu09AiuSx5aFMBfo/kFXLVL725YsIVq83o3P
+    zYxXbp3zJYdYFscBiSgUnBjbBP+BZKwcGLdtfT3jJzfFmwsE2Rzefe0BIHg+uGwk
+    hLqeaHIxbEAFRtpfZFg5DyOKogU5oa7r6tL8OQintf3AOuaNHl/L7YLadUsvnSP/
+    XK8p6fdL0v1X8EkRRZ4j8EKAS+wyXhGm3gAz9RenNrT/iCQUoXO6w0mA/Ytk+A1r
+    zOyYTJfPoeZp+afDDeFJr5izDrRH73TsKhkTrLX746rvG2Bwym9BDIiRK9fVBBE9
+    Cq7otYsJzXfvl09NJD3ruMcTseF6O6A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -40,17 +35,12 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=cray.com header.result=pass header_is_org_domain=yes;
+    header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=cray.com header.i=@cray.com header.b=xKhhnxTq
-      header.a=rsa-sha256 header.s=cray1024 x-bits=1024;
-    dkim=pass (1024-bit rsa key sha256) header.d=crayinc.onmicrosoft.com
-      header.i=@crayinc.onmicrosoft.com header.b=uXFLOf8Y
-      header.a=rsa-sha256 header.s=selector1-cray-com x-bits=1024;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=cray.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -59,120 +49,109 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=cray.com header.result=pass header_is_org_domain=yes;
+      header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCpnHJZJcxYFQZJATCL3Z7D68T/5Vx758OZlvfdjZyfN0NKUNnw0IRIUKVhhoahdkUgRSwVpz0hcJTKfmOlzRzFjvyKGCc1j2r8TwDjTNbG5GHbGs5ep
-    RpCRfmwz1rMCVQu4zWq0PBzB6CafBDg4Vr7ZnrGCWWQOiaUuNzT2pTPIrxWr05kUzmcqu53uyl3K8PgmWSIZI92n3gvVwp/ygMkjrmNa2t5jCbU58BDfRv/h
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=zrw9J8CsoM0A:10 a=l6nqK_Vz5-EA:10
-    a=s3cSYYZoVzsA:10 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10 a=7mUfYlMuFuIA:10
-    a=uLCC7SJ24JkA:10 a=RPJ6JBhKAAAA:8 a=JfrnYn6hAAAA:8 a=sK_hXKufAAAA:8
-    a=agPvhSWLAAAA:8 a=gIQWn0-tklEFjY0qfs8A:9 a=CjuIK1q_8ugA:10
-    a=fa_un-3J20JGBB2Tu-mn:22 a=1CNFftbPRP8L7MoqJWF3:22 a=yWjlxG-dkHreuWcaj4iL:22
-    a=OFV2l2Cw3rRTRwl-yjV4:22
+X-CM-Envelope: MS4wfPW9M++h4KrxvIxz34FWYeNz+XbAvte5/P+u3NzUoCenJP2qMCY12gAjalDK/VuXczm0VUKkMRGhhaCqtybniLJasTQ1rfDKT+e7cX+6gaP8Yt8XjUrr
+    qPO3QZoY0i7Ox7+y4CTUyYUme+UMu1DmzpVKsGcYIAwhSGu66UIaxin60qkR66R+UzEMMp+aiNOqpIC7azsQdGo24RCy4XNTlrI8MQ9f7dmmx5TZBgp8pdgt
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=1oJP67jkp3AA:10 a=7mUfYlMuFuIA:10
+    a=ZZnuYtJkoWoA:10 a=pRq-apYgK8S3EMxT_psA:9 a=3EPvW9MMHeNLPmOCN-IA:9
+    a=ONNS8QRKHyMA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753399AbeFASfB (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 1 Jun 2018 14:35:01 -0400
-Received: from esa2.cray.iphmx.com ([68.232.143.164]:36363 "EHLO
-        esa2.cray.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752485AbeFASfA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jun 2018 14:35:00 -0400
-X-IronPort-AV: E=Sophos;i="5.49,467,1520899200";
-   d="scan'208";a="19856552"
-X-Cray-OBMMKR: 1433258124 19856552
-From: Doug Oucharek <doucharek@cray.com>
-To: Andreas Dilger <adilger@dilger.ca>
-CC: Christoph Hellwig <hch@infradead.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        id S1750916AbeFAXT4 (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 1 Jun 2018 19:19:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34543 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750736AbeFAXTz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 Jun 2018 19:19:55 -0400
+From: NeilBrown <neilb@suse.com>
+To: Doug Oucharek <doucharek@cray.com>,
+        Andreas Dilger <adilger@dilger.ca>
+Date: Sat, 02 Jun 2018 09:19:40 +1000
+Cc: "devel\@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Oleg Drokin <oleg.drokin@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Oleg Drokin <oleg.drokin@intel.com>,
-        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
+        Christoph Hellwig <hch@infradead.org>,
+        "selinux\@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
         fsdevel <linux-fsdevel@vger.kernel.org>,
         lustre-devel <lustre-devel@lists.lustre.org>
-Subject: Re: [lustre-devel] [PATCH] staging: lustre: delete the filesystem
- from the tree.
-Thread-Topic: [lustre-devel] [PATCH] staging: lustre: delete the filesystem
- from the tree.
-Thread-Index: AQHT+Yiv7eImo1VupUGq8tXFCLjNwqRLR/6AgABvXoCAAAFgAA==
-Date: Fri, 1 Jun 2018 18:25:24 +0000
-Message-ID: <29ACF5A8-7608-46BB-8191-E3FEB77D0F24@cray.com>
-References: <20180601091133.GA27521@kroah.com>
- <20180601114151.GA25225@infradead.org>
- <E5BF8501-35EB-4DDF-ADBE-6016CF31A502@dilger.ca>
-In-Reply-To: <E5BF8501-35EB-4DDF-ADBE-6016CF31A502@dilger.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [136.162.66.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR11MB1527;7:c7TRMQu//INnm1XvLUBfxpjNjUcY0Y5g+tx/yL6bRL5kVKa9weTTN4eeONExbpUqVS520jnPIPsvwdiBSB90dL1c+B5zCzz19MJXC36PuUFVpgKZzwinXy71nlbOMEcp3Zm7ZyJEUjgw+rsrN6V2GGnSocOaLwmcUmyyyEpdcB/3s0n9HKjcqssfrHDG50zAoZdtbrKBsMvuY5+rHmhU+JLHX62UZztzL5f49nqLoJ+WH+3wJJyCIsCRw6019HDR
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY4PR11MB1527;
-x-ms-traffictypediagnostic: CY4PR11MB1527:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=doucharek@cray.com;
-x-microsoft-antispam-prvs: <CY4PR11MB1527FBED65C92E4DF8DE1F39D4620@CY4PR11MB1527.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:CY4PR11MB1527;BCL:0;PCL:0;RULEID:;SRVR:CY4PR11MB1527;
-x-forefront-prvs: 0690E5FF22
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(396003)(346002)(366004)(39380400002)(376002)(189003)(199004)(446003)(86362001)(486006)(6246003)(66066001)(6306002)(6512007)(2906002)(11346002)(105586002)(7736002)(6436002)(14454004)(53936002)(59450400001)(54906003)(83716003)(6486002)(25786009)(2616005)(966005)(478600001)(476003)(229853002)(36756003)(4326008)(316002)(8676002)(81166006)(6916009)(3846002)(81156014)(186003)(8936002)(26005)(33656002)(3660700001)(5660300001)(2900100001)(102836004)(53546011)(6506007)(99286004)(305945005)(3280700002)(68736007)(82746002)(106356001)(97736004)(6116002)(5250100002)(76176011)(13693001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR11MB1527;H:CY4PR11MB2022.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: QNbIKhmtIhsg2da6NAKIAuEsyPGS45NxiEDP65REd76pX56Ghl85wwpJokQhuFB0QUSQ2Rks7up/J7fS/Z2mUXvDuj46iqn0YOiaSqSHNFIEJcFFnIBxXczrEN6ymYdG9f0aoqXO2frqPtWwWtIwZnSLDgDucrApCea9iwd6Y5vhRDCUtqCB2BVU58Rpvo/6
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <93BD660D583FFA4E862C95BF636E5772@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [lustre-devel] [PATCH] staging: lustre: delete the filesystem from the tree.
+In-Reply-To: <29ACF5A8-7608-46BB-8191-E3FEB77D0F24@cray.com>
+References: <20180601091133.GA27521@kroah.com> <20180601114151.GA25225@infradead.org> <E5BF8501-35EB-4DDF-ADBE-6016CF31A502@dilger.ca> <29ACF5A8-7608-46BB-8191-E3FEB77D0F24@cray.com>
+Message-ID: <87h8mmrt6b.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 72cb586c-7e7e-4abc-f0e5-08d5c7ed0a8f
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72cb586c-7e7e-4abc-f0e5-08d5c7ed0a8f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jun 2018 18:25:24.0394
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e7b8488a-c0cd-4614-aae1-996bfabec247
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1527
-X-OriginatorOrg: cray.com
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Would it makes sense to land LNet and LNDs on their own first?  Get the net=
-working house in order first before layering on the file system?
+--=-=-=
+Content-Type: text/plain
 
-Doug
+On Fri, Jun 01 2018, Doug Oucharek wrote:
 
-> On Jun 1, 2018, at 11:20 AM, Andreas Dilger <adilger@dilger.ca> wrote:
->=20
-> On Jun 1, 2018, at 7:41 AM, Christoph Hellwig <hch@infradead.org> wrote:
->>=20
->> Thanks,
->>=20
->> all that churn without much visible progress to a mergeable codebase
->> was really ennoying.
->>=20
->> I'd recommend if people want to merge lustre they start with a managable
->> subset first, e.g. the fs client code with simple IP-only networking.
->=20
-> Adding or removing the IB networking makes basically no difference to the
-> code size.  This would also make the client much less useful, since a lar=
-ge
-> number of sites use Lustre with IB networks.
->=20
-> Cheers, Andreas
->=20
->=20
->=20
->=20
->=20
-> _______________________________________________
-> lustre-devel mailing list
-> lustre-devel@lists.lustre.org
-> http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org
+> Would it makes sense to land LNet and LNDs on their own first?  Get
+> the networking house in order first before layering on the file
+> system?
+
+I'd like to turn that question on it's head:
+  Do we need LNet and LNDs?  What value do they provide?
+(this is a genuine question, not being sarcastic).
+
+It is a while since I tried to understand LNet, and then it was a
+fairly superficial look, but I think it is an abstraction layer
+that provides packet-based send/receive with some numa-awareness
+and routing functionality.  It sits over sockets (TCP) and IB and
+provides a uniform interface.
+
+That is almost a description of the xprt layer in sunrpc.  sunrpc
+doesn't have routing, but it does have some numa awareness (for the
+server side at least) and it definitely provides packet-based
+send/receive over various transports - tcp, udp, local (unix domain),
+and IB.
+So: can we use sunrpc/xprt in place of LNet?  How much would we need to
+enhance sunrpc/xprt for this to work?  What hooks would be needed to
+implement the routing as a separate layer.
+
+If LNet is, in some way, much better than sunrpc, then can we share that
+superior functionality with our NFS friends by adding it to sunrpc?
+
+Maybe the answer to this is "no", but I think LNet would be hard to sell
+without a clear statement of why that was the answer.
+
+One reason that I would like to see lustre stay in drivers/staging (so I
+do not support Greg's patch) is that this sort of transition of Lustre
+to using an improved sunrpc/xprt would be much easier if both were in
+the same tree.  Certainly it would be easier for a larger community to
+be participating in the work.
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsR1IwACgkQOeye3VZi
+gbmuWxAAmeiHWBGFeXsoL5nX2bx2Vw0CRQKDJIa8bLndEDRpjMxjisBXCuQ3vcTk
+eTdKbk5c0LNZ5TwKtn/sPLIGQRCleq+6yCW/8TKb98q95BxoAEudJAW8ra2oxRUQ
+qDxfGKr/ytQkkDswxITsxYGNb1JThX0ajvS0DHzlwzzlrMgA7Ebwj9PJqRsCks8C
+QDfLN4q+wee5DMbpYlfkEcZsbUl2FS6igq92W4+QO0HhdTatpV0+17gXKLHey5pL
+os/PF7oD2rX8AXvu03GCjVp56jzxIUKiXZrAT1woSxqW/q4a/1v6o1PlgCQjaal0
+ehVso1dZB2ZaU+VCI+x68sK+Fi3Kb3zPahhS43ot2zmZAypzMWhB2DYuPvby+r5J
+HbDbx1gun+tAMqahv8Bhd755NbskKqif30GXDqj16cPXJIN4NEM3Eb+1b+C6YCkN
+5gQWAy1i2/PXyeMVUpt+fp98JN30mAVtdaeCmsn6V7mYDw3riAcbIFFs0jrij6aZ
+hMqDwySAksuad4+cJpE6K7WnYk4Af7ffa5jSPU4+nbdPZR3ogOqzqqmQKn928JuZ
+Ihp2Xu7RXddZ/+2lr5AOP9qe09K8T8iF7cB2aG/SZgHdwQJuaNPr4FISTyP5UjLc
+oR/pGNb6su9yRph6NBMjS0SgOb67LmMWCA1447RrbAHLM01d+hA=
+=VwDY
+-----END PGP SIGNATURE-----
+--=-=-=--
