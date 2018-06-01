@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751476AbeFAKjy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 06:39:54 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:45281 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750827AbeFAKjv (ORCPT
+        id S1751591AbeFAKlZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 06:41:25 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:43755 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeFAKlW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 06:39:51 -0400
-X-Google-Smtp-Source: ADUXVKKvnhaNvo//FT6VSrKIV/JvMu3J0dW/mghJ9byNeup9ljUDvv7O6Tg2HflU7eMTLevuV6zC9El83jQBu06xC6w=
+        Fri, 1 Jun 2018 06:41:22 -0400
+X-Google-Smtp-Source: ADUXVKIsq1Xbm2XRRCcSX/TC2GDjmkU9TQvAeA0qJPJTr1WYNIPtNVXtOC3SmZM6OUYEqIx6cu8b+F5NAMeyQgOOuio=
 MIME-Version: 1.0
-In-Reply-To: <20180531235010.5279-2-logang@deltatee.com>
-References: <20180531235010.5279-1-logang@deltatee.com> <20180531235010.5279-2-logang@deltatee.com>
+In-Reply-To: <20180531235010.5279-3-logang@deltatee.com>
+References: <20180531235010.5279-1-logang@deltatee.com> <20180531235010.5279-3-logang@deltatee.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 1 Jun 2018 13:39:49 +0300
-Message-ID: <CAHp75VcQwDGqND8v1RTo4+6Hyf9G5_2w9x9aiVONwKXsTKgJ1Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] PCI: Make specifying PCI devices in kernel
- parameters reusable
+Date: Fri, 1 Jun 2018 13:41:20 +0300
+Message-ID: <CAHp75Vc4yxeM+jz2biMBoWB-h_dG1_Qx91VCP+f1mhvvgPVPxQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] PCI: Allow specifying devices using a base bus and
+ path of devfns
 To: Logan Gunthorpe <logang@deltatee.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org,
@@ -37,59 +37,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51Ae7Fo024984
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51AfUaP024988
 
 On Fri, Jun 1, 2018 at 2:50 AM, Logan Gunthorpe <logang@deltatee.com> wrote:
-> Separate out the code to match a PCI device with a string (typically
-> originating from a kernel parameter) from the
-> pci_specified_resource_alignment() function into its own helper
-> function.
+> When specifying PCI devices on the kernel command line using a
+> BDF, the bus numbers can change when adding or replacing a device,
+> changing motherboard firmware, or applying kernel parameters like
+> pci=assign-buses. When this happens, it is usually undesirable to
+> apply whatever command line tweak to the wrong device.
 >
-> While we are at it, this change fixes the kernel style of the function
-> (fixing a number of long lines and extra parentheses).
+> Therefore, it is useful to be able to specify devices with a base
+> bus number and the path of devfns needed to get to it. (Similar to
+> the "device scope" structure in the Intel VT-d spec, Section 8.3.1.)
 >
-> Additionally, make the analogous change to the kernel parameter
-> documentation: Separating the description of how to specify a PCI device
-> into it's own section at the head of the pci= parameter.
+> Thus, we add an option to specify devices in the following format:
+>
+> path:[<domain>:]<bus>:<slot>.<func>/<slot>.<func>[/ ...]
+>
+> The path can be any segment within the PCI hierarchy of any length and
+> determined through the use of 'lspci -t'. When specified this way, it is
+> less likely that a renumbered bus will result in a valid device specification
+> and the tweak won't be applied to the wrong device.
 >
 > Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 > Reviewed-by: Stephen Bates <sbates@raithlin.com>
 > Acked-by: Christian König <christian.koenig@amd.com>
 
-Sorry for maybe being late here.
+> -                               specified in one of two formats:
+> +                               specified in one of three formats:
 
-> -       pci=option[,option...]  [PCI] various PCI subsystem options:
-> +       pci=option[,option...]  [PCI] various PCI subsystem options.
-> +
-> +                               Some options herein operate on a specific device
-> +                               or a set of devices (<pci_dev>). These are
-> +                               specified in one of two formats:
+...in one of the following formats:
 
-I would rather to add
+in the first place and don't fix it each time you add/remove one?
 
- <pci_dev>
-
-here in the same way as done for options.
-It would be easy for people to find a referenced paragraph.
-
-> +
-> +                               [<domain>:]<bus>:<slot>.<func>
-> +                               pci:<vendor>:<device>[:<subvendor>:<subdevice>]
-> +
-> +                               Note: the first format specifies a PCI
-> +                               bus/slot/function address which may change
-> +                               if new hardware is inserted, if motherboard
-> +                               firmware changes, or due to changes caused
-> +                               by other kernel parameters. The second format
-> +                               selects devices using IDs from the
-> +                               configuration space which may match multiple
-> +                               devices in the system.
-
-> +static int pci_dev_str_match(struct pci_dev *dev, const char *p,
-> +                            const char **endptr)
-
-This change I hope has no functional alteration, so, can be split to a
-separate patch.
 
 -- 
 With Best Regards,
