@@ -1,70 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753258AbeFAQx5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:53:57 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8247 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751693AbeFAQxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:53:52 -0400
-From: Salil Mehta <salil.mehta@huawei.com>
-To: <davem@davemloft.net>
-CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
-Subject: [PATCH net-next 01/11] net: hns3: Disable vf vlan filter when vf vlan table is full
-Date: Fri, 1 Jun 2018 17:52:01 +0100
-Message-ID: <20180601165211.46372-2-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180601165211.46372-1-salil.mehta@huawei.com>
-References: <20180601165211.46372-1-salil.mehta@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.234]
-X-CFilter-Loop: Reflected
+        id S1753572AbeFAQ4J (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:56:09 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36384 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753535AbeFAQzz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:55:55 -0400
+X-Google-Smtp-Source: ADUXVKLnJxQDiLmLbnOCK0T+rrwm0EZdZiu8zBfwY4ki2+eASofC6Xok1+uKWug6xplLok56VHRaPQ==
+From: Nick Desaulniers <ndesaulniers@google.com>
+To: akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
+        aryabinin@virtuozzo.com, akataria@vmware.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org, hpa@zytor.com,
+        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
+        mingo@redhat.com, mjg59@google.com, mka@chromium.org,
+        ndesaulniers@google.com, pombredanne@nexb.com, rostedt@goodmis.org,
+        tglx@linutronix.de, thomas.lendacky@amd.com, tweek@google.com
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org
+Subject: [PATCH 0/3] extern inline native_save_fl for paravirt
+Date: Fri,  1 Jun 2018 09:55:47 -0700
+Message-Id: <20180601165550.90053-1-ndesaulniers@google.com>
+X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+paravirt depends on a custom calling convention (callee saved), but
+expects this from a static inline function that it then forces to be
+outlined. This is problematic because different compilers or flags can
+then add a stack guard that violates the calling conventions.
 
-This is only 128 entries for hardware's vf vlan table, when
-the vf table is full, the firmware will disable the vf vlan
-filter and return a resp_code of HCLGE_VF_VLAN_NO_ENTRY to
-driver.
+Uses extern inline with the out-of-line definition in assembly to
+prevent compilers from adding stack guards to the outlined version.
 
-This patch checks the if resp_code from firmware is
-HCLGE_VF_VLAN_NO_ENTRY, if yes, then print a warning and
-return ok to the caller.
+Other parts of the codebase overwrite KBUILD_CFLAGS, which is *extremely
+problematic* for extern inline, as the sematics are completely the
+opposite depending on what C standard is used.
+http://blahg.josefsipek.net/?p=529
 
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Nick Desaulniers (3):
+  efi: use -std=gnu89 for proper extern inline semantics
+  x86/build: use -std=gnu89 for proper extern inline semantics
+  x86: paravirt: make native_save_fl extern inline
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 6916685..4ca5318 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -4525,9 +4525,16 @@ static int hclge_set_vf_vlan_common(struct hclge_dev *hdev, int vfid,
- 	}
- 
- 	if (!is_kill) {
-+#define HCLGE_VF_VLAN_NO_ENTRY	2
- 		if (!req0->resp_code || req0->resp_code == 1)
- 			return 0;
- 
-+		if (req0->resp_code == HCLGE_VF_VLAN_NO_ENTRY) {
-+			dev_warn(&hdev->pdev->dev,
-+				 "vf vlan table is full, vf vlan filter is disabled\n");
-+			return 0;
-+		}
-+
- 		dev_err(&hdev->pdev->dev,
- 			"Add vf vlan filter fail, ret =%d.\n",
- 			req0->resp_code);
+ arch/x86/boot/compressed/Makefile     |  2 +-
+ arch/x86/include/asm/irqflags.h       |  2 +-
+ arch/x86/kernel/Makefile              |  1 +
+ arch/x86/kernel/irqflags.S            | 26 ++++++++++++++++++++++++++
+ drivers/firmware/efi/libstub/Makefile |  2 +-
+ 5 files changed, 30 insertions(+), 3 deletions(-)
+ create mode 100644 arch/x86/kernel/irqflags.S
+
 -- 
-2.7.4
+2.17.0.921.gf22659ad46-goog
