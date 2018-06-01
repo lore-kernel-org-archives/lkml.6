@@ -1,65 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752039AbeFANcc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:32:32 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:51546 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751068AbeFANcb (ORCPT
+        id S1751998AbeFANdw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:33:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35848 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751687AbeFANdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:32:31 -0400
-X-Google-Smtp-Source: ADUXVKKWAy+YuHHBFcqGDU+Guis1rYl4bp+ZlMdRsT2brznG7R4NpY0ZTZB/sey3mj9UdugZ6nbvbg==
-From: valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-To: Hugo Lefeuvre <hle@owl.eu.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernelnewbies@kernelnewbies.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: pi433: add rw semaphore fixing concurrency issues
-In-Reply-To: <20180601125037.GA2339@hle-laptop.local>
-References: <20180601125037.GA2339@hle-laptop.local>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1527859942_2795P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
+        Fri, 1 Jun 2018 09:33:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 50E4760224
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [RFC PATCH 0/5] Hexagon remoteproc spring cleaning
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+From: Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <9dd77f05-9ac4-55d1-5f79-03f40c9306f9@codeaurora.org>
+Date: Fri, 1 Jun 2018 19:03:43 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Fri, 01 Jun 2018 09:32:22 -0400
-Message-ID: <255415.1527859942@turing-police.cc.vt.edu>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1527859942_2795P
-Content-Type: text/plain; charset=us-ascii
+Thanks Bjorn for the cleanup.
 
-On Fri, 01 Jun 2018 08:50:37 -0400, Hugo Lefeuvre said:
+I validated PAS and Non- PAS ADSP PIL with the cleanup changes on SDM845.
 
-> @@ -805,9 +809,11 @@ pi433_read(struct file *filp, char __user *buf, size_t size, loff_t *f_pos)
->  	if (bytes_received > 0) {
->  		retval = copy_to_user(buf, device->rx_buffer, bytes_received);
->  		if (retval)
-> +			up_read(&instance->instance_sem);
->  			return -EFAULT;
->  	}
+Adding tag for ADSP PIL.
+
+Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+
+On 5/23/2018 10:50 AM, Bjorn Andersson wrote:
+> With the introduction of support for the non-MSA Hexagon WCSS driver from
+> Sricharan and the non-PAS ADSP driver from Rohit it makes sense to overhaul the
+> structure of the Qualcomm "Q6V5 drivers".
 >
-> +	up_read(&instance->instance_sem);
->  	return bytes_received;
->  }
+> The first patch is from Sricharan's series and included here for completeness.
+> The second patch introduces a set of helper functions, based on the current
+> state of the qcom_q6v5_pil driver. The third and forth patch migrates the PAS
+> and the MSA drivers over to using these helpers. Finally a (completely)
+> reworked version of Sricharan's WCSS remoteproc driver is introduced.
+>
+>
+> With this in place I suggest that we rename qcom_adsp_pil.c to qcom_q6v5_pas.c,
 
-This doesn't do what you think.
+I am making changes for non-PAS ADSP PIL by creating new file.
+In case you plan to rename qcom_adsp_pil.c to qcom_q6v5_pas, please 
+include that change with this.
+Also, let me know the filename which we should keep it for non-PAS ADSP 
+PIL driver.
+> qcom_q6v5_pil.c to qcom_q6v5_msa.c and depending on the details of the non-PAS
+> ADSP we could potentially combine that into a qcom_q6v5_pil.c - or we carry
+> them as separate files.
+I tried comparing qcom_q6v5_pil.c with non-PAS ADSP pil driver. I don't 
+think that we can combine
+them as there are good amount of code differences. However, we can take 
+a look into it once
+I post non-PAS ADSP PIL.
+>
+> Looking at the remaining non-essential parts of these drivers we have
+> memory-region handling and halt_axi handling. The prior is actively being
+> worked on and the latter should (if no better abstraction is presented) be
+> possible to just put in the new qcom_q6v5.c.
+>
 
---==_Exmh_1527859942_2795P
-Content-Type: application/pgp-signature
+Thanks,
+Rohit
 
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
-
-iQEVAwUBWxFK5Y0DS38y7CIcAQJkGgf+I0RaQz7bo2XqowH9nGKoLDp5iinEinuf
-RhirNWGqRvn8sjQ4jAKB1LKTdQ/XZW8JwMN7ddto5MDFhZS2IbdeY54YXQImgKxd
-S579JAY7xhcQS60ItudoxzxGUOMNfcuAiQ+H5rdQhFJIqUaELovNq5T6CNK4TTaD
-p9qgKN6uvX5zapzDmMf9V9Rw8BKr98lVy+dLvYU2LHeAe9d/06DFkIuKCHGDvT9G
-KBLMMA+yw41d3PDDf8r8galKoPCHCKP60h/7GsRjwtrzEzzTqPXiYaTTpxSNYdt+
-QtXJo1xWpD0YzKLFm6kCLqF151bc00qmJpqT2AetYrfnTZHjQE/oTg==
-=PovE
------END PGP SIGNATURE-----
-
---==_Exmh_1527859942_2795P--
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
