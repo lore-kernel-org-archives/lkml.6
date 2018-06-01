@@ -1,72 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751345AbeFAH0F (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 03:26:05 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42709 "EHLO mail.bootlin.com"
+        id S1751387AbeFAH0J (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 03:26:09 -0400
+Received: from mga09.intel.com ([134.134.136.24]:48218 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750913AbeFAH0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 03:26:03 -0400
-Date: Fri, 1 Jun 2018 09:26:00 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, benjamin.lindqvist@endian.se,
-        pgaikwad@nvidia.com, dev@lynxeye.de, mirza.krak@gmail.com,
-        richard@nod.at, pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org,
-        krzk@kernel.org, jonathanh@nvidia.com, devicetree@vger.kernel.org,
-        linux-mtd@lists.infradead.org, marcel@ziswiler.com,
-        miquel.raynal@bootlin.com, linux-tegra@vger.kernel.org,
-        digetx@gmail.com
-Subject: Re: [PATCH v3 1/6] mtd: rawnand: add Reed-Solomon error correction
- algorithm
-Message-ID: <20180601092600.03c14f53@bbrezillon>
-In-Reply-To: <20180531221637.6017-2-stefan@agner.ch>
-References: <20180531221637.6017-1-stefan@agner.ch>
-        <20180531221637.6017-2-stefan@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1750913AbeFAH0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 03:26:06 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,465,1520924400";
+   d="scan'208";a="43855683"
+Date: Fri, 1 Jun 2018 15:26:04 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: kernel test robot <xiaolong.ye@intel.com>
+Cc: Tejun Heo <tj@kernel.org>, lkp@01.org,
+        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@kernel.org>,
+        linux-mm@kvack.org
+Subject: Re: [LKP] [lkp-robot] [mm, memcontrol] 309fe96bfc:
+ vm-scalability.throughput +23.0% improvement
+Message-ID: <20180601072604.GB27302@intel.com>
+References: <20180528114019.GF9904@yexl-desktop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180528114019.GF9904@yexl-desktop>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  1 Jun 2018 00:16:32 +0200
-Stefan Agner <stefan@agner.ch> wrote:
-
-> Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
+On Mon, May 28, 2018 at 07:40:19PM +0800, kernel test robot wrote:
 > 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
-> ---
->  drivers/mtd/nand/raw/nand_base.c | 1 +
->  include/linux/mtd/rawnand.h      | 1 +
->  2 files changed, 2 insertions(+)
+> Greeting,
 > 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index f28c3a555861..9eb5678dd6d0 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -5744,6 +5744,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
->  static const char * const nand_ecc_algos[] = {
->  	[NAND_ECC_HAMMING]	= "hamming",
->  	[NAND_ECC_BCH]		= "bch",
-> +	[NAND_ECC_RS]		= "rs",
->  };
->  
->  static int of_get_nand_ecc_algo(struct device_node *np)
-> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index 5dad59b31244..6a82da8c44ce 100644
-> --- a/include/linux/mtd/rawnand.h
-> +++ b/include/linux/mtd/rawnand.h
-> @@ -114,6 +114,7 @@ enum nand_ecc_algo {
->  	NAND_ECC_UNKNOWN,
->  	NAND_ECC_HAMMING,
->  	NAND_ECC_BCH,
-> +	NAND_ECC_RS,
->  };
->  
->  /*
+> FYI, we noticed a +23.0% improvement of vm-scalability.throughput due to commit:
+> 
+> 
+> commit: 309fe96bfc0ae387f53612927a8f0dc3eb056efd ("mm, memcontrol: implement memory.swap.events")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> in testcase: vm-scalability
+> on test machine: 144 threads Intel(R) Xeon(R) CPU E7-8890 v3 @ 2.50GHz with 512G memory
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	size: 1T
+> 	test: lru-shm
+> 	cpufreq_governor: performance
+> 
+> test-description: The motivation behind this suite is to exercise functions and regions of the mm/ of the Linux kernel which are of interest to us.
+> test-url: https://git.kernel.org/cgit/linux/kernel/git/wfg/vm-scalability.git/
+> 
+
+With the patch I just sent out:
+"mem_cgroup: make sure moving_account, move_lock_task and stat_cpu in the
+same cacheline"
+
+Applying this commit on top doesn't yield 23% improvement any more, but
+a 6% performace drop...
+
+I found the culprit being the following one line introduced in this commit:
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index d90b0201a8c4..07ab974c0a49 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -6019,13 +6019,17 @@ int mem_cgroup_try_charge_swap(struct page *page, swp_entry_t entry)
+ 	if (!memcg)
+ 		return 0;
+ 
+-	if (!entry.val)
++	if (!entry.val) {
++		memcg_memory_event(memcg, MEMCG_SWAP_FAIL);
+ 		return 0;
++	}
+ 
+ 	memcg = mem_cgroup_id_get_online(memcg);
+ 
+If I remove that memcg_memory_event() call, performance will restore.
+
+It's beyond my understanding why this code path matters since there is
+no swap device setup in the test machine so I don't see how possible
+get_swap_page() could ever be called.
+
+Still investigating...
