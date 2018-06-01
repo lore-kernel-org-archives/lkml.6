@@ -1,137 +1,258 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753456AbeFASqg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 14:46:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752548AbeFASqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 14:46:32 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: devel@driverdev.osuosl.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 2/5] ncpfs: remove compat functionality
-Date: Fri,  1 Jun 2018 20:45:44 +0200
-Message-Id: <20180601184547.20213-3-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180601184547.20213-1-gregkh@linuxfoundation.org>
-References: <20180601184547.20213-1-gregkh@linuxfoundation.org>
+        id S1753588AbeFASr4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 14:47:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56302 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752572AbeFASrp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 14:47:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74C1D60251
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: linux-pci@vger.kernel.org, timur@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>, Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Christoffer Dall <cdall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Thymo van Beers <thymovanbeers@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Juergen Gross <jgross@suse.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@suse.de>,
+        Mikulas Patocka <mpatocka@redhat.com>, Petr Tesarik <ptesarik@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>, Ram Pai <linuxram@us.ibm.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V2] PCI: move early dump functionality from x86 arch into the common code
+Date: Fri,  1 Jun 2018 14:47:28 -0400
+Message-Id: <1527878854-21419-1-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that ncpfs is gone from the tree, no need to have the compatibility
-thunking layer around, it will not actually go anywhere :)
+Move early dump functionality into common code so that it is available for
+all archtiectures. No need to carry arch specific reads around as the read
+hooks are already initialized by the time pci_setup_device() is getting
+called during scan.
 
-So delete that logic from fs/compat.c, it is no longer needed.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- fs/compat.c | 72 +----------------------------------------------------
- 1 file changed, 1 insertion(+), 71 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  2 +-
+ arch/x86/include/asm/pci-direct.h               |  5 ---
+ arch/x86/kernel/setup.c                         |  5 ---
+ arch/x86/pci/common.c                           |  4 ---
+ arch/x86/pci/early.c                            | 44 -------------------------
+ drivers/pci/pci.c                               |  5 +++
+ drivers/pci/pci.h                               |  1 +
+ drivers/pci/probe.c                             | 21 ++++++++++++
+ 8 files changed, 28 insertions(+), 59 deletions(-)
 
-diff --git a/fs/compat.c b/fs/compat.c
-index 190b38b39d9e..4a0aaaf53217 100644
---- a/fs/compat.c
-+++ b/fs/compat.c
-@@ -16,79 +16,12 @@
-  */
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index e490902..e64f1d8 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2995,7 +2995,7 @@
+ 			See also Documentation/blockdev/paride.txt.
  
- #include <linux/compat.h>
--#include <linux/ncp_mount.h>
- #include <linux/nfs4_mount.h>
- #include <linux/syscalls.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- #include "internal.h"
+ 	pci=option[,option...]	[PCI] various PCI subsystem options:
+-		earlydump	[X86] dump PCI config space before the kernel
++		earlydump	dump PCI config space before the kernel
+ 				changes anything
+ 		off		[X86] don't probe for the PCI bus
+ 		bios		[X86-32] force use of PCI BIOS, don't access
+diff --git a/arch/x86/include/asm/pci-direct.h b/arch/x86/include/asm/pci-direct.h
+index e1084f7..e5e2129 100644
+--- a/arch/x86/include/asm/pci-direct.h
++++ b/arch/x86/include/asm/pci-direct.h
+@@ -14,9 +14,4 @@ extern void write_pci_config(u8 bus, u8 slot, u8 func, u8 offset, u32 val);
+ extern void write_pci_config_byte(u8 bus, u8 slot, u8 func, u8 offset, u8 val);
+ extern void write_pci_config_16(u8 bus, u8 slot, u8 func, u8 offset, u16 val);
  
--struct compat_ncp_mount_data {
--	compat_int_t version;
--	compat_uint_t ncp_fd;
--	__compat_uid_t mounted_uid;
--	compat_pid_t wdog_pid;
--	unsigned char mounted_vol[NCP_VOLNAME_LEN + 1];
--	compat_uint_t time_out;
--	compat_uint_t retry_count;
--	compat_uint_t flags;
--	__compat_uid_t uid;
--	__compat_gid_t gid;
--	compat_mode_t file_mode;
--	compat_mode_t dir_mode;
--};
+-extern int early_pci_allowed(void);
 -
--struct compat_ncp_mount_data_v4 {
--	compat_int_t version;
--	compat_ulong_t flags;
--	compat_ulong_t mounted_uid;
--	compat_long_t wdog_pid;
--	compat_uint_t ncp_fd;
--	compat_uint_t time_out;
--	compat_uint_t retry_count;
--	compat_ulong_t uid;
--	compat_ulong_t gid;
--	compat_ulong_t file_mode;
--	compat_ulong_t dir_mode;
--};
+-extern unsigned int pci_early_dump_regs;
+-extern void early_dump_pci_device(u8 bus, u8 slot, u8 func);
+-extern void early_dump_pci_devices(void);
+ #endif /* _ASM_X86_PCI_DIRECT_H */
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 2f86d88..480f250 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -991,11 +991,6 @@ void __init setup_arch(char **cmdline_p)
+ 		setup_clear_cpu_cap(X86_FEATURE_APIC);
+ 	}
+ 
+-#ifdef CONFIG_PCI
+-	if (pci_early_dump_regs)
+-		early_dump_pci_devices();
+-#endif
 -
--static void *do_ncp_super_data_conv(void *raw_data)
--{
--	int version = *(unsigned int *)raw_data;
--
--	if (version == 3) {
--		struct compat_ncp_mount_data *c_n = raw_data;
--		struct ncp_mount_data *n = raw_data;
--
--		n->dir_mode = c_n->dir_mode;
--		n->file_mode = c_n->file_mode;
--		n->gid = c_n->gid;
--		n->uid = c_n->uid;
--		memmove (n->mounted_vol, c_n->mounted_vol, (sizeof (c_n->mounted_vol) + 3 * sizeof (unsigned int)));
--		n->wdog_pid = c_n->wdog_pid;
--		n->mounted_uid = c_n->mounted_uid;
--	} else if (version == 4) {
--		struct compat_ncp_mount_data_v4 *c_n = raw_data;
--		struct ncp_mount_data_v4 *n = raw_data;
--
--		n->dir_mode = c_n->dir_mode;
--		n->file_mode = c_n->file_mode;
--		n->gid = c_n->gid;
--		n->uid = c_n->uid;
--		n->retry_count = c_n->retry_count;
--		n->time_out = c_n->time_out;
--		n->ncp_fd = c_n->ncp_fd;
--		n->wdog_pid = c_n->wdog_pid;
--		n->mounted_uid = c_n->mounted_uid;
--		n->flags = c_n->flags;
--	} else if (version != 5) {
+ 	e820__reserve_setup_data();
+ 	e820__finish_early_params();
+ 
+diff --git a/arch/x86/pci/common.c b/arch/x86/pci/common.c
+index 563049c..d4ec117 100644
+--- a/arch/x86/pci/common.c
++++ b/arch/x86/pci/common.c
+@@ -22,7 +22,6 @@
+ unsigned int pci_probe = PCI_PROBE_BIOS | PCI_PROBE_CONF1 | PCI_PROBE_CONF2 |
+ 				PCI_PROBE_MMCONF;
+ 
+-unsigned int pci_early_dump_regs;
+ static int pci_bf_sort;
+ int pci_routeirq;
+ int noioapicquirk;
+@@ -599,9 +598,6 @@ char *__init pcibios_setup(char *str)
+ 		pci_probe |= PCI_BIG_ROOT_WINDOW;
+ 		return NULL;
+ #endif
+-	} else if (!strcmp(str, "earlydump")) {
+-		pci_early_dump_regs = 1;
 -		return NULL;
--	}
+ 	} else if (!strcmp(str, "routeirq")) {
+ 		pci_routeirq = 1;
+ 		return NULL;
+diff --git a/arch/x86/pci/early.c b/arch/x86/pci/early.c
+index e5f753c..f5fc953 100644
+--- a/arch/x86/pci/early.c
++++ b/arch/x86/pci/early.c
+@@ -57,47 +57,3 @@ int early_pci_allowed(void)
+ 			PCI_PROBE_CONF1;
+ }
+ 
+-void early_dump_pci_device(u8 bus, u8 slot, u8 func)
+-{
+-	u32 value[256 / 4];
+-	int i;
 -
--	return raw_data;
+-	pr_info("pci 0000:%02x:%02x.%d config space:\n", bus, slot, func);
+-
+-	for (i = 0; i < 256; i += 4)
+-		value[i / 4] = read_pci_config(bus, slot, func, i);
+-
+-	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_OFFSET, 16, 1, value, 256, false);
 -}
 -
+-void early_dump_pci_devices(void)
+-{
+-	unsigned bus, slot, func;
 -
- struct compat_nfs_string {
- 	compat_uint_t len;
- 	compat_uptr_t data;
-@@ -154,7 +87,6 @@ static int do_nfs4_super_data_conv(void *raw_data)
+-	if (!early_pci_allowed())
+-		return;
+-
+-	for (bus = 0; bus < 256; bus++) {
+-		for (slot = 0; slot < 32; slot++) {
+-			for (func = 0; func < 8; func++) {
+-				u32 class;
+-				u8 type;
+-
+-				class = read_pci_config(bus, slot, func,
+-							PCI_CLASS_REVISION);
+-				if (class == 0xffffffff)
+-					continue;
+-
+-				early_dump_pci_device(bus, slot, func);
+-
+-				if (func == 0) {
+-					type = read_pci_config_byte(bus, slot,
+-								    func,
+-							       PCI_HEADER_TYPE);
+-					if (!(type & 0x80))
+-						break;
+-				}
+-			}
+-		}
+-	}
+-}
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 97acba7..04052dc 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -115,6 +115,9 @@ static bool pcie_ari_disabled;
+ /* If set, the PCIe ATS capability will not be used. */
+ static bool pcie_ats_disabled;
+ 
++/* If set, the PCI config space of each device is printed during boot. */
++bool pci_early_dump;
++
+ bool pci_ats_disabled(void)
+ {
+ 	return pcie_ats_disabled;
+@@ -5805,6 +5808,8 @@ static int __init pci_setup(char *str)
+ 				pcie_ats_disabled = true;
+ 			} else if (!strcmp(str, "noaer")) {
+ 				pci_no_aer();
++			} else if (!strcmp(str, "earlydump")) {
++				pci_early_dump = true;
+ 			} else if (!strncmp(str, "realloc=", 8)) {
+ 				pci_realloc_get_opt(str + 8);
+ 			} else if (!strncmp(str, "realloc", 7)) {
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index c358e7a0..c33265e 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -7,6 +7,7 @@
+ #define PCI_VSEC_ID_INTEL_TBT	0x1234	/* Thunderbolt */
+ 
+ extern const unsigned char pcie_link_speed[];
++extern bool pci_early_dump;
+ 
+ bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
+ 
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 56771f3..7490f78fa 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1545,6 +1545,25 @@ static int pci_intx_mask_broken(struct pci_dev *dev)
  	return 0;
  }
  
--#define NCPFS_NAME      "ncpfs"
- #define NFS4_NAME	"nfs4"
++static void early_dump_pci_device(struct pci_dev *pdev)
++{
++	u32 value[256 / 4];
++	int i;
++
++	if (!pci_early_dump)
++		return;
++
++	pci_info(pdev, "pci 0000:%02x:%02x.%d config space:\n",
++		 pdev->bus->number, PCI_SLOT(pdev->devfn),
++		 PCI_FUNC(pdev->devfn));
++
++	for (i = 0; i < 256; i += 4)
++		pci_read_config_dword(pdev, i, &value[i / 4]);
++
++	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_OFFSET, 16, 1, value,
++		       256, false);
++}
++
+ /**
+  * pci_setup_device - Fill in class and map information of a device
+  * @dev: the device structure to fill
+@@ -1594,6 +1613,8 @@ int pci_setup_device(struct pci_dev *dev)
+ 	pci_printk(KERN_DEBUG, dev, "[%04x:%04x] type %02x class %#08x\n",
+ 		   dev->vendor, dev->device, dev->hdr_type, dev->class);
  
- COMPAT_SYSCALL_DEFINE5(mount, const char __user *, dev_name,
-@@ -183,9 +115,7 @@ COMPAT_SYSCALL_DEFINE5(mount, const char __user *, dev_name,
- 		goto out2;
++	early_dump_pci_device(dev);
++
+ 	/* Need to have dev->class ready */
+ 	dev->cfg_size = pci_cfg_space_size(dev);
  
- 	if (kernel_type && options) {
--		if (!strcmp(kernel_type, NCPFS_NAME)) {
--			do_ncp_super_data_conv(options);
--		} else if (!strcmp(kernel_type, NFS4_NAME)) {
-+		if (!strcmp(kernel_type, NFS4_NAME)) {
- 			retval = -EINVAL;
- 			if (do_nfs4_super_data_conv(options))
- 				goto out3;
 -- 
-2.17.1
+2.7.4
