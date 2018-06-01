@@ -1,108 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753405AbeFATiz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 15:38:55 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:35439 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753150AbeFATil (ORCPT
+        id S1753269AbeFATnc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 15:43:32 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:45108 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752704AbeFATnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 15:38:41 -0400
-X-Google-Smtp-Source: ADUXVKJyVsyrAQaMq63Bxpzmdm7C3hDsI9QzRcminjtmvVdcwRnQdSRAi22O+cBSbAR6EgFu7VRvJg==
-Date: Fri, 1 Jun 2018 13:38:37 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, sudeep.holla@arm.com,
-        robh@kernel.org, mark.rutland@arm.com, frowand.list@gmail.com,
-        matt.sealey@arm.com, charles.garcia-tobin@arm.com, john.horley@arm.com,
-        mike.leach@linaro.org, coresight@lists.linaro.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH 2/8] coresight: Fix remote endpoint parsing
-Message-ID: <20180601193837.GB9838@xps15>
-References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
- <1527858967-16047-3-git-send-email-suzuki.poulose@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527858967-16047-3-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 1 Jun 2018 15:43:31 -0400
+Message-ID: <1527882207.7898.86.camel@surriel.com>
+Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
+From: Rik van Riel <riel@surriel.com>
+To: Mike Galbraith <efault@gmx.de>, Andy Lutomirski <luto@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, songliubraving@fb.com,
+        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Date: Fri, 01 Jun 2018 15:43:27 -0400
+In-Reply-To: <1527878882.4448.11.camel@gmx.de>
+References: <20180601082811.4c0d33ba@imladris.surriel.com>
+         <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
+         <1527877328.7898.80.camel@surriel.com> <1527878882.4448.11.camel@gmx.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-tG/UWhCWVHmIem3ZGXtD"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 02:16:01PM +0100, Suzuki K Poulose wrote:
-> When parsing the remote endpoint of an output port, we do :
->      rport = of_graph_get_remote_port(ep);
->      rparent = of_graph_get_remote_port_parent(ep);
-> 
-> and then parse the "remote_port" as if it was the remote endpoint,
-> which is wrong. The code worked fine because we used endpoint number
-> as the port number. Let us fix it and optimise a bit as:
-> 
->      remote_ep = of_graph_get_remote_endpoint(ep);
->      if (remote_ep)
->         remote_parent = of_graph_get_port_parent(remote_ep);
-> 
-> and then, parse the remote_ep for the port/endpoint details.
-> 
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  drivers/hwtracing/coresight/of_coresight.c | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-> index 7c37544..e0deab0 100644
-> --- a/drivers/hwtracing/coresight/of_coresight.c
-> +++ b/drivers/hwtracing/coresight/of_coresight.c
-> @@ -128,7 +128,7 @@ of_get_coresight_platform_data(struct device *dev,
->  	struct device *rdev;
->  	struct device_node *ep = NULL;
->  	struct device_node *rparent = NULL;
-> -	struct device_node *rport = NULL;
-> +	struct device_node *rep = NULL;
->  
->  	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
->  	if (!pdata)
-> @@ -169,16 +169,17 @@ of_get_coresight_platform_data(struct device *dev,
->  			pdata->outports[i] = endpoint.port;
->  
->  			/*
-> -			 * Get a handle on the remote port and parent
-> -			 * attached to it.
-> +			 * Get a handle on the remote endpoint and the device
-> +			 * it is attached to.
->  			 */
-> -			rparent = of_graph_get_remote_port_parent(ep);
-> -			rport = of_graph_get_remote_port(ep);
-> -
-> -			if (!rparent || !rport)
-> +			rep = of_graph_get_remote_endpoint(ep);
-> +			if (!rep)
-> +				continue;
-> +			rparent = of_graph_get_port_parent(rep);
-> +			if (!rparent)
->  				continue;
->  
-> -			if (of_graph_parse_endpoint(rport, &rendpoint))
-> +			if (of_graph_parse_endpoint(rep, &rendpoint))
->  				continue;
 
-You are correct and I'm out to lunch.
+--=-tG/UWhCWVHmIem3ZGXtD
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->  
->  			rdev = of_coresight_get_endpoint_device(rparent);
-> @@ -186,7 +187,7 @@ of_get_coresight_platform_data(struct device *dev,
->  				return ERR_PTR(-EPROBE_DEFER);
->  
->  			pdata->child_names[i] = dev_name(rdev);
-> -			pdata->child_ports[i] = rendpoint.id;
-> +			pdata->child_ports[i] = rendpoint.port;
+On Fri, 2018-06-01 at 20:48 +0200, Mike Galbraith wrote:
+> On Fri, 2018-06-01 at 14:22 -0400, Rik van Riel wrote:
+> > On Fri, 2018-06-01 at 08:11 -0700, Andy Lutomirski wrote:
+> > > On Fri, Jun 1, 2018 at 5:28 AM Rik van Riel <riel@surriel.com>
+> > > wrote:
+> > > >=20
+> > > > Song noticed switch_mm_irqs_off taking a lot of CPU time in
+> > > > recent
+> > > > kernels,using 2.4% of a 48 CPU system during a netperf to
+> > > > localhost
+> > > > run.
+> > > > Digging into the profile, we noticed that cpumask_clear_cpu and
+> > > > cpumask_set_cpu together take about half of the CPU time taken
+> > > > by
+> > > > switch_mm_irqs_off.
+> > > >=20
+> > > > However, the CPUs running netperf end up switching back and
+> > > > forth
+> > > > between netperf and the idle task, which does not require
+> > > > changes
+> > > > to the mm_cpumask. Furthermore, the init_mm cpumask ends up
+> > > > being
+> > > > the most heavily contended one in the system.`
+> > > >=20
+> > > > Skipping cpumask_clear_cpu and cpumask_set_cpu for init_mm
+> > > > (mostly the idle task) reduced CPU use of switch_mm_irqs_off
+> > > > from 2.4% of the CPU to 1.9% of the CPU, with the following
+> > > > netperf commandline:
+> > >=20
+> > > I'm conceptually fine with this change.  Does
+> > > mm_cpumask(&init_mm)
+> > > end
+> > > up in a deterministic state?
+> >=20
+> > Given that we do not touch mm_cpumask(&init_mm)
+> > any more, and that bitmask never appears to be
+> > used for things like tlb shootdowns (kernel TLB
+> > shootdowns simply go to everybody), I suspect
+> > it ends up in whatever state it is initialized
+> > to on startup.
+> >=20
+> > I had not looked into this much, because it does
+> > not appear to be used for anything.
+> >=20
+> > > Mike, depending on exactly what's going on with your benchmark,
+> > > this
+> > > might help recover a bit of your performance, too.
+> >=20
+> > It will be interesting to know how this change
+> > impacts others.
+>=20
+> previous pipe-test numbers
+> 4.13.16         2.024978 usecs/loop -- avg 2.045250 977.9 KHz
+> 4.14.47         2.234518 usecs/loop -- avg 2.227716 897.8 KHz
+> 4.15.18         2.287815 usecs/loop -- avg 2.295858 871.1 KHz
+> 4.16.13         2.286036 usecs/loop -- avg 2.279057 877.6 KHz
+> 4.17.0.g88a8676 2.288231 usecs/loop -- avg 2.288917 873.8 KHz
+>=20
+> new numbers
+> 4.17.0.g0512e01 2.268629 usecs/loop -- avg 2.269493 881.3 KHz
+> 4.17.0.g0512e01 2.035401 usecs/loop -- avg 2.038341 981.2 KHz +andy
+> 4.17.0.g0512e01 2.238701 usecs/loop -- avg 2.231828 896.1 KHz
+> -andy+rik
+>=20
+> There might be something there with your change Rik, but it's small
+> enough to be wary of variance.  Andy's "invert the return of
+> tlb_defer_switch_to_init_mm()" is OTOH pretty clear.
 
-You need to do a of_node_put() here for both rep and rparent.
+If inverting the return value of that function helps
+some systems, chances are the other value might help
+other systems.
 
->  
->  			i++;
->  		} while (ep);
-> -- 
-> 2.7.4
-> 
+That makes you wonder whether it might make sense
+to always switch to lazy TLB mode, and only call
+switch_mm at TLB flush time, regardless of whether
+the CPU supports PCID...
+
+--=20
+All Rights Reversed.
+--=-tG/UWhCWVHmIem3ZGXtD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsRod8ACgkQznnekoTE
+3oP1EQf/XuXPXE8my67vZzEP0gIrym48d6NH+c1FJ7ke42Ct0z2SSysfh78S3N+H
+itvjBJDxMJc6t6HNLxtklRRzUEe/mk1amtBjqdztfRWUUa35BQQRpv3CPM2DeB7l
+jTNrspt+nCm+9aup0T/jZpt51F+WXcnJRiYWGCRqr8cHQfN0kMxAWkfZEUfwq8Mi
+jwmBHneNbc+GmWgj/NDuXNm36o2riFAX9L2bp81Sh2k3omq/M/xZgiZFwv9uljCf
+oRNxHIOasYUIJrnjYMXGqueqzFo9rXy4iylu6cRmG+zVgClKOvCYeOtCachUkui8
+5LalQYqtJ9LJL4eN7x9I2wb2gSuA2w==
+=CrZ+
+-----END PGP SIGNATURE-----
+
+--=-tG/UWhCWVHmIem3ZGXtD--
