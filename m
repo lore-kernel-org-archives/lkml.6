@@ -1,201 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752674AbeFAMzY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 08:55:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752028AbeFAMzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 08:55:18 -0400
-X-Google-Smtp-Source: ADUXVKLIjegT4IXhCqK58VSFpRUezNWxAedB04tLw2Macj58n+bDKVZNjXtLyeWCt3/OWKuWMTZHa4YKIUHdtWIxdyU=
-MIME-Version: 1.0
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Fri, 1 Jun 2018 14:55:15 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPfSbsu0RGTUFfb+t_uOvQQxa0uDn-nsG+1uuKAq56nVXA@mail.gmail.com>
-Message-ID: <CAJKOXPfSbsu0RGTUFfb+t_uOvQQxa0uDn-nsG+1uuKAq56nVXA@mail.gmail.com>
-Subject: [bisect BUG] dm-crypt percpu counter warnings and invalid kernel
- paging request at virtual address
-To: Kent Overstreet <kent.overstreet@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Mike Snitzer <snitzer@redhat.com>,
-        Shaohua Li <shli@fb.com>, linux-kernel@vger.kernel.org,
-        Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752635AbeFAMyw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 08:54:52 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45217 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752353AbeFAMyN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 08:54:13 -0400
+X-Google-Smtp-Source: ADUXVKLHFIGy00QwBGtSG9uI74Chwx5rkCYS7lRVLc2TjujHbhPpMIqjN/XXMXYEXDS8mQZQ9VfD5Q==
+From: osalvador@techadventures.net
+To: akpm@linux-foundation.org
+Cc: mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH 3/4] mm/memory_hotplug: Get rid of link_mem_sections
+Date: Fri,  1 Jun 2018 14:53:20 +0200
+Message-Id: <20180601125321.30652-4-osalvador@techadventures.net>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180601125321.30652-1-osalvador@techadventures.net>
+References: <20180601125321.30652-1-osalvador@techadventures.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Oscar Salvador <osalvador@suse.de>
 
-Todays linux-next 20180601 fails during dm-crypt tests on Exynos5422
-(ARMv7, Cortex-A7+A15) using crypto HW block from SoC (s5p-aes).
+link_mem_sections() and walk_memory_range() share most of the code,
+so we can use walk_memory_range() with a callback to register_mem_sect_under_node()
+instead of using link_mem_sections().
 
-The test which fails:
-https://github.com/krzk/tools/blob/master/tests/s5p-sss-cryptsetup.sh
+To control whether the node id must be check, two new functions has been added:
 
-Effect:
+register_mem_sect_under_node_nocheck_node()
+and
+register_mem_sect_under_node_check_node()
 
-[  149.867394] ------------[ cut here ]------------
-[  149.870631] WARNING: CPU: 5 PID: 492 at
-../drivers/md/dm-crypt.c:2225 crypt_dtr+0x1c0/0x1c4 [dm_crypt]
-[  149.880078] Modules linked in: dm_crypt s5p_jpeg exynos_gsc s5p_mfc
-v4l2_mem2mem v4l2_common videobuf2_dma_contig videobuf2_memops
-videobuf2_v4l2 videobuf2_common videodev media
-[  149.895908] CPU: 5 PID: 492 Comm: cryptsetup Tainted: G        W
-     4.17.0-rc4-00159-gae4c15db96d2 #36
-[  149.905328] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[  149.911398] [<c011291c>] (unwind_backtrace) from [<c010ece8>]
-(show_stack+0x10/0x14)
-[  149.919111] [<c010ece8>] (show_stack) from [<c0a32190>]
-(dump_stack+0x98/0xc4)
-[  149.926307] [<c0a32190>] (dump_stack) from [<c0126fa0>] (__warn+0x10c/0x124)
-[  149.933310] [<c0126fa0>] (__warn) from [<c01270d0>]
-(warn_slowpath_null+0x40/0x48)
-[  149.940862] [<c01270d0>] (warn_slowpath_null) from [<bf28e15c>]
-(crypt_dtr+0x1c0/0x1c4 [dm_crypt])
-[  149.949803] [<bf28e15c>] (crypt_dtr [dm_crypt]) from [<c06f34b8>]
-(dm_table_destroy+0x5c/0xf8)
-[  149.958360] [<c06f34b8>] (dm_table_destroy) from [<c06f0cb0>]
-(__dm_destroy+0x158/0x1b4)
-[  149.966414] [<c06f0cb0>] (__dm_destroy) from [<c06f7988>]
-(dev_remove+0xd4/0x104)
-[  149.973861] [<c06f7988>] (dev_remove) from [<c06f80b4>]
-(ctl_ioctl+0x2e4/0x660)
-[  149.981144] [<c06f80b4>] (ctl_ioctl) from [<c029fcc0>]
-(do_vfs_ioctl+0xb0/0x9e8)
-[  149.988508] [<c029fcc0>] (do_vfs_ioctl) from [<c02a062c>]
-(ksys_ioctl+0x34/0x5c)
-[  149.995874] [<c02a062c>] (ksys_ioctl) from [<c0101000>]
-(ret_fast_syscall+0x0/0x28)
-[  150.061101] ---[ end trace 3e3bc2b7df1963aa ]---
+They both call register_mem_sect_under_node_check() with
+the parameter check_nid set to true or false.
 
-[  150.065594] Unable to handle kernel paging request at virtual
-address 2e02f000
-[  150.383043] [<c0483edc>] (percpu_counter_add_batch) from
-[<bf28e378>] (crypt_page_free+0x34/0x3c [dm_crypt])
-[  150.392838] [<bf28e378>] (crypt_page_free [dm_crypt]) from
-[<c0229b18>] (mempool_exit+0x24/0x60)
-[  150.401584] [<c0229b18>] (mempool_exit) from [<bf28e028>]
-(crypt_dtr+0x8c/0x1c4 [dm_crypt])
-[  150.409903] [<bf28e028>] (crypt_dtr [dm_crypt]) from [<c06f34b8>]
-(dm_table_destroy+0x5c/0xf8)
-[  150.418477] [<c06f34b8>] (dm_table_destroy) from [<c06f0cb0>]
-(__dm_destroy+0x158/0x1b4)
-[  150.426533] [<c06f0cb0>] (__dm_destroy) from [<c06f7988>]
-(dev_remove+0xd4/0x104)
-[  150.433982] [<c06f7988>] (dev_remove) from [<c06f80b4>]
-(ctl_ioctl+0x2e4/0x660)
-[  150.441264] [<c06f80b4>] (ctl_ioctl) from [<c029fcc0>]
-(do_vfs_ioctl+0xb0/0x9e8)
-[  150.448628] [<c029fcc0>] (do_vfs_ioctl) from [<c02a062c>]
-(ksys_ioctl+0x34/0x5c)
-[  150.455994] [<c02a062c>] (ksys_ioctl) from [<c0101000>]
-(ret_fast_syscall+0x0/0x28)
-
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
+ drivers/base/node.c  | 47 ++++++++++-------------------------------------
+ include/linux/node.h | 21 +++++++++------------
+ mm/memory_hotplug.c  |  8 ++++----
+ 3 files changed, 23 insertions(+), 53 deletions(-)
 
-Full log is here:
-https://krzk.eu/#/builders/1/builds/2117/steps/18/logs/serial0
-
-Bisect could not work reliably because a lot of commits from Kent
-Overstreet just do not compile. Really, non-buildable stuff should not
-be committed...
-
-Anyway bisect points around convert to bioset_init()/mempool_init().
-
-Bisect log:
-git bisect start
-# good: [ecb37ce9baac653cc09e2b631393dde3df82979f] bcache: Move couple
-of functions to sysfs.c
-git bisect good ecb37ce9baac653cc09e2b631393dde3df82979f
-# bad: [ae4c15db96d22776fe188b5271a226f81e85e872] dm: add writecache target
-git bisect bad ae4c15db96d22776fe188b5271a226f81e85e872
-# good: [b7405176b58aa475354f3c0d2ca1c560e9354288] Merge branch
-'nvme-4.18-2' of git://git.infradead.org/nvme into for-4.18/block
-git bisect good b7405176b58aa475354f3c0d2ca1c560e9354288
-# skip: [b906bbb6997785d9ea0bd3f5585537afa6257c43] lightnvm: convert
-to bioset_init()/mempool_init()
-git bisect skip b906bbb6997785d9ea0bd3f5585537afa6257c43
-# skip: [0892fac8719f062f98116ee883230a004a9fce1e] drbd: convert to
-bioset_init()/mempool_init()
-git bisect skip 0892fac8719f062f98116ee883230a004a9fce1e
-# bad: [04c4950d5b373ba712d928592e05e73510785bca] block: fixup
-bioset_integrity_create() call
-git bisect bad 04c4950d5b373ba712d928592e05e73510785bca
-# skip: [64c4bc4de79fec06bb46d9827e7c4df67a025590] pktcdvd: convert to
-bioset_init()/mempool_init()
-git bisect skip 64c4bc4de79fec06bb46d9827e7c4df67a025590
-# skip: [8ac9f7c1fd1d342e82ddf078425423b050652ba0] btrfs: convert to
-bioset_init()/mempool_init()
-git bisect skip 8ac9f7c1fd1d342e82ddf078425423b050652ba0
-# skip: [d19936a26658a7a53edd5619d631ee2c2c3151a2] bcache: convert to
-bioset_init()/mempool_init()
-git bisect skip d19936a26658a7a53edd5619d631ee2c2c3151a2
-# skip: [52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b] fs: convert
-block_dev.c to bioset_init()
-git bisect skip 52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b
-# skip: [338aa96d5661048b3c0cafc6d91876025603cacf] block: convert
-bounce, q->bio_split to bioset_init()/mempool_init()
-git bisect skip 338aa96d5661048b3c0cafc6d91876025603cacf
-# good: [2ab74cd29622c48e9852d85618081c061b6ac6d9] blk-throttle: fix
-potential NULL pointer dereference in throtl_select_dispatch
-git bisect good 2ab74cd29622c48e9852d85618081c061b6ac6d9
-# good: [0b6bad7d669ef2abd3b9e1f8cee1fbd448abbc5c] blk-throttle:
-return proper bool type to caller instead of 0/1
-git bisect good 0b6bad7d669ef2abd3b9e1f8cee1fbd448abbc5c
-# skip: [6f1c819c219f7841079f0f43ab62727a55b0d849] dm: convert to
-bioset_init()/mempool_init()
-git bisect skip 6f1c819c219f7841079f0f43ab62727a55b0d849
-# skip: [a47a28b74a5c7c27bf621276b85ad6c124651236] target: convert to
-bioset_init()/mempool_init()
-git bisect skip a47a28b74a5c7c27bf621276b85ad6c124651236
-# skip: [afeee514ce7f4cab605beedd03be71ebaf0c5fc8] md: convert to
-bioset_init()/mempool_init()
-git bisect skip afeee514ce7f4cab605beedd03be71ebaf0c5fc8
-# skip: [e292d7bc63c8f2adb3dfda27910e805f1b6557f9] xfs: convert to
-bioset_init()/mempool_init()
-git bisect skip e292d7bc63c8f2adb3dfda27910e805f1b6557f9
-# skip: [dad08527525f9a8ac9c7f278864c65f94bc5e9b3] block: Drop bioset_create()
-git bisect skip dad08527525f9a8ac9c7f278864c65f94bc5e9b3
-# only skipped commits left to test
-# possible first bad commit:
-[04c4950d5b373ba712d928592e05e73510785bca] block: fixup
-bioset_integrity_create() call
-# possible first bad commit:
-[dad08527525f9a8ac9c7f278864c65f94bc5e9b3] block: Drop bioset_create()
-# possible first bad commit:
-[e292d7bc63c8f2adb3dfda27910e805f1b6557f9] xfs: convert to
-bioset_init()/mempool_init()
-# possible first bad commit:
-[8ac9f7c1fd1d342e82ddf078425423b050652ba0] btrfs: convert to
-bioset_init()/mempool_init()
-# possible first bad commit:
-[52190f8abe7f2bf2b4e5f9760cbcc1427ca2136b] fs: convert block_dev.c to
-bioset_init()
-# possible first bad commit:
-[a47a28b74a5c7c27bf621276b85ad6c124651236] target: convert to
-bioset_init()/mempool_init()
-# possible first bad commit:
-[6f1c819c219f7841079f0f43ab62727a55b0d849] dm: convert to
-bioset_init()/mempool_init()
-# possible first bad commit:
-[afeee514ce7f4cab605beedd03be71ebaf0c5fc8] md: convert to
-bioset_init()/mempool_init()
-# possible first bad commit:
-[d19936a26658a7a53edd5619d631ee2c2c3151a2] bcache: convert to
-bioset_init()/mempool_init()
-# possible first bad commit:
-[b906bbb6997785d9ea0bd3f5585537afa6257c43] lightnvm: convert to
-bioset_init()/mempool_init()
-# possible first bad commit:
-[64c4bc4de79fec06bb46d9827e7c4df67a025590] pktcdvd: convert to
-bioset_init()/mempool_init()
-# possible first bad commit:
-[0892fac8719f062f98116ee883230a004a9fce1e] drbd: convert to
-bioset_init()/mempool_init()
-# possible first bad commit:
-[338aa96d5661048b3c0cafc6d91876025603cacf] block: convert bounce,
-q->bio_split to bioset_init()/mempool_init()
-
-Best regards,
-Krzysztof
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index a5e821d09656..248c712e8de5 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -398,6 +398,16 @@ static int __ref get_nid_for_pfn(unsigned long pfn)
+ 	return pfn_to_nid(pfn);
+ }
+ 
++int register_mem_sect_under_node_check_node(struct memory_block *mem_blk, void *nid)
++{
++	return register_mem_sect_under_node (mem_blk, *(int *)nid, true);
++}
++
++int register_mem_sect_under_node_nocheck_node(struct memory_block *mem_blk, void *nid)
++{
++	return register_mem_sect_under_node (mem_blk, *(int *)nid, false);
++}
++
+ /* register memory section under specified node if it spans that node */
+ int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
+ 				 bool check_nid)
+@@ -490,43 +500,6 @@ int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+ 	return 0;
+ }
+ 
+-int link_mem_sections(int nid, unsigned long start_pfn, unsigned long nr_pages,
+-		      bool check_nid)
+-{
+-	unsigned long end_pfn = start_pfn + nr_pages;
+-	unsigned long pfn;
+-	struct memory_block *mem_blk = NULL;
+-	int err = 0;
+-
+-	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+-		unsigned long section_nr = pfn_to_section_nr(pfn);
+-		struct mem_section *mem_sect;
+-		int ret;
+-
+-		if (!present_section_nr(section_nr))
+-			continue;
+-		mem_sect = __nr_to_section(section_nr);
+-
+-		/* same memblock ? */
+-		if (mem_blk)
+-			if ((section_nr >= mem_blk->start_section_nr) &&
+-			    (section_nr <= mem_blk->end_section_nr))
+-				continue;
+-
+-		mem_blk = find_memory_block_hinted(mem_sect, mem_blk);
+-
+-		ret = register_mem_sect_under_node(mem_blk, nid, check_nid);
+-		if (!err)
+-			err = ret;
+-
+-		/* discard ref obtained in find_memory_block() */
+-	}
+-
+-	if (mem_blk)
+-		kobject_put(&mem_blk->dev.kobj);
+-	return err;
+-}
+-
+ #ifdef CONFIG_HUGETLBFS
+ /*
+  * Handle per node hstate attribute [un]registration on transistions
+diff --git a/include/linux/node.h b/include/linux/node.h
+index 6d336e38d155..1158bea9be52 100644
+--- a/include/linux/node.h
++++ b/include/linux/node.h
+@@ -31,19 +31,11 @@ struct memory_block;
+ extern struct node *node_devices[];
+ typedef  void (*node_registration_func_t)(struct node *);
+ 
+-#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE) && defined(CONFIG_NUMA)
+-extern int link_mem_sections(int nid, unsigned long start_pfn,
+-			     unsigned long nr_pages, bool check_nid);
+-#else
+-static inline int link_mem_sections(int nid, unsigned long start_pfn,
+-				    unsigned long nr_pages, bool check_nid)
+-{
+-	return 0;
+-}
+-#endif
+-
+ extern void unregister_node(struct node *node);
+ #ifdef CONFIG_NUMA
++#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE)
++extern int register_mem_sect_under_node_check_node(struct memory_block *mem_blk, void *nid);
++#endif
+ /* Core of the node registration - only memory hotplug should use this */
+ extern int __register_one_node(int nid);
+ 
+@@ -54,12 +46,17 @@ static inline int register_one_node(int nid)
+ 
+ 	if (node_online(nid)) {
+ 		struct pglist_data *pgdat = NODE_DATA(nid);
++		unsigned long start = pgdat->node_start_pfn;
++		unsigned long size = pgdat->node_spanned_pages;
+ 
+ 		error = __register_one_node(nid);
+ 		if (error)
+ 			return error;
+ 		/* link memory sections under this node */
+-		error = link_mem_sections(nid, pgdat->node_start_pfn, pgdat->node_spanned_pages, true);
++#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE)
++		error = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
++					(void *)&nid, register_mem_sect_under_node_check_node);
++#endif
+ 	}
+ 
+ 	return error;
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index f84ef96175ab..ac21dc506b84 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -40,6 +40,8 @@
+ 
+ #include "internal.h"
+ 
++extern int register_mem_sect_under_node_nocheck_node(struct memory_block *mem_blk, void *nid);
++
+ /*
+  * online_page_callback contains pointer to current page onlining function.
+  * Initially it is generic_online_page(). If it is required it could be
+@@ -1118,7 +1120,6 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+ 	u64 start, size;
+ 	bool new_node;
+ 	int ret;
+-	unsigned long start_pfn, nr_pages;
+ 
+ 	start = res->start;
+ 	size = resource_size(res);
+@@ -1157,9 +1158,8 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+ 	}
+ 
+ 	/* link memory sections under this node.*/
+-	start_pfn = start >> PAGE_SHIFT;
+-	nr_pages = size >> PAGE_SHIFT;
+-	ret = link_mem_sections(nid, start_pfn, nr_pages, false);
++	ret = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
++				(void *)&nid, register_mem_sect_under_node_nocheck_node);
+ 	if (ret)
+ 		goto register_fail;
+ 
+-- 
+2.13.6
