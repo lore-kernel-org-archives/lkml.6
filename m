@@ -1,50 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752487AbeFAPJi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:09:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751422AbeFAPJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:09:34 -0400
-X-Google-Smtp-Source: ADUXVKJhphRX6/4NFwpmSIvnBdcYhDNUBSI3MuaiQzZpFSLU9K1aQChvUvsV6loDMYUcxX3VOrom7+qJCqJ1i3E4hkk=
+        id S1752732AbeFAPKY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:10:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44628 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751854AbeFAPKX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:10:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B775C605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v2] PCI: Check for PCIe downtraining conditions
+To: "Alex G." <mr.nuke.me@gmail.com>, bhelgaas@google.com
+Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
+        keith.busch@intel.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180601150129.10486-1-mr.nuke.me@gmail.com>
+ <35a67b5b-5f37-c779-64a3-eb5e21362e9c@codeaurora.org>
+ <c677b42a-f5f0-474e-c9ce-da05ced45b23@gmail.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <321c6d7d-b8e6-9b8d-91e5-a4f748acaa8e@codeaurora.org>
+Date: Fri, 1 Jun 2018 11:10:20 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <1527857873.4674.11.camel@gmx.de> <20180601132055.GT12198@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180601132055.GT12198@hirez.programming.kicks-ass.net>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 1 Jun 2018 08:09:20 -0700
-X-Gmail-Original-Message-ID: <CALCETrV-NFtUT8cyqxHKxyeKOpp95p80U1vMxPD-wj6vPDAeqg@mail.gmail.com>
-Message-ID: <CALCETrV-NFtUT8cyqxHKxyeKOpp95p80U1vMxPD-wj6vPDAeqg@mail.gmail.com>
-Subject: Re: 4.13..4.14 scheduling overhead regression (bisected - b956575bed91)
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>, LKML <linux-kernel@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c677b42a-f5f0-474e-c9ce-da05ced45b23@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 6:21 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Fri, Jun 01, 2018 at 02:57:53PM +0200, Mike Galbraith wrote:
-> > b956575bed91ecfb136a8300742ecbbf451471ab is the first bad commit
-> > commit b956575bed91ecfb136a8300742ecbbf451471ab
-> > Author: Andy Lutomirski <luto@kernel.org>
-> > Date:   Mon Oct 9 09:50:49 2017 -0700
-> >
-> >     x86/mm: Flush more aggressively in lazy TLB mode
->
-> Oh boy... Maybe we should start looking at that optimization Andy
-> mentioned.
+On 6/1/2018 11:06 AM, Alex G. wrote:
+> On 06/01/2018 10:03 AM, Sinan Kaya wrote:
+>> On 6/1/2018 11:01 AM, Alexandru Gagniuc wrote:
+>>> +	/* Multi-function PCIe share the same link/status. */
+>>> +	if (PCI_FUNC(dev->devfn) != 0)
+>>> +		return;
+>>
+>> How about virtual functions?
+> 
+> I have almost no clue about those. Is your concern that we might end up
+> printing more than our fair share of link statuses?
 
-Jolly.
+Yes, struct pci_dev also has a flag called is_virtfn that you should bail out
+here too. 
 
->
-> IIRC all page freeing does indeed go through tlb_remove_page(), it
-> shouldn't be too hard to make that work.
+> 
+> Alex
+> 
+> 
 
-Before we go too far down this rabbit hole, let's figure out what's
-actually going on.  Mike, does your system have PCID?  If it does,
-then my proposed optimization wouldn't do anything.
 
-Can you try inverting the return value of
-tlb_defer_switch_to_init_mm() and seeing if the result changes?
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
