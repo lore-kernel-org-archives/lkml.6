@@ -1,63 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751444AbeFAK7n (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 06:59:43 -0400
-Received: from mga14.intel.com ([192.55.52.115]:59343 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750795AbeFAK7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 06:59:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,465,1520924400";
-   d="scan'208";a="46488982"
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
-        cohuck@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
-Subject: [PATCH v2] virtio: update the comments for transport features
-Date: Fri,  1 Jun 2018 18:59:50 +0800
-Message-Id: <20180601105950.10632-1-tiwei.bie@intel.com>
-X-Mailer: git-send-email 2.17.0
+        id S1751635AbeFALBE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:01:04 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35163 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750790AbeFALA7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 07:00:59 -0400
+X-Google-Smtp-Source: ADUXVKLSA5KbFa6msp1BjwxdmSd6V0hW/87GwT4imRTeBGhuNiC4CkocFU30l3T0vvWtw84PXvwJt42H10d18SCJnaY=
+MIME-Version: 1.0
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 1 Jun 2018 06:00:47 -0500
+Message-ID: <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk
+ format %pCr
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: baijiaju1990@gmail.com, Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-clk@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The existing comments for transport features are out dated.
-So update them to address the latest changes in the spec.
+On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> This patch series:
+>   - Changes all existing users of "%pCr" to print the result of
+>     clk_get_rate() directly, which is safe as they all do this in task
+>     context only,
+>   - Removes support for the "%pCr" printk format.
 
-Suggested-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
----
-This patch is generated on top of below patch:
-https://lists.oasis-open.org/archives/virtio-dev/201805/msg00212.html
+Looks good to me.
 
-v2:
-- Improve the comments (Cornelia);
-- Improve the commit message;
+What tree will this go through? The normal printk one? Just checking
+that this doesn't end up falling through the cracks because nobody
+knows who would take it...
 
- include/uapi/linux/virtio_config.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-index b7c1f4e7d59e..449132c76b1c 100644
---- a/include/uapi/linux/virtio_config.h
-+++ b/include/uapi/linux/virtio_config.h
-@@ -45,9 +45,12 @@
- /* We've given up on this device. */
- #define VIRTIO_CONFIG_S_FAILED		0x80
- 
--/* Some virtio feature bits (currently bits 28 through 32) are reserved for the
-- * transport being used (eg. virtio_ring), the rest are per-device feature
-- * bits. */
-+/*
-+ * Virtio feature bits VIRTIO_TRANSPORT_F_START through
-+ * VIRTIO_TRANSPORT_F_END are reserved for the transport
-+ * being used (e.g. virtio_ring, virtio_pci etc.), the
-+ * rest are per-device feature bits.
-+ */
- #define VIRTIO_TRANSPORT_F_START	28
- #define VIRTIO_TRANSPORT_F_END		38
- 
--- 
-2.17.0
+               Linus
