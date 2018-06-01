@@ -1,37 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753544AbeFATKv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 15:10:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751801AbeFATKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 15:10:48 -0400
-Content-Type: text/plain; charset="utf-8"
+        id S1753449AbeFATQ5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 15:16:57 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:45392 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753135AbeFATQz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 15:16:55 -0400
+X-Google-Smtp-Source: ADUXVKKD4m0LKjQC/1jbBnUNaYaQ/inVh4GU/b3EDC1Ywp6din4vOPEZtjZ/1m+7J2YY3uiMBU2i6w==
+Date: Fri, 1 Jun 2018 12:16:52 -0700
+From: Tejun Heo <tj@kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
+        keescook@chromium.org, riel@redhat.com, tglx@linutronix.de,
+        kirill.shutemov@linux.intel.com, marcos.souza.org@gmail.com,
+        hoeun.ryu@gmail.com, pasha.tatashin@oracle.com, gs051095@gmail.com,
+        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, Balbir Singh <balbir@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [RFC][PATCH 1/2] memcg: Ensure every task that uses an mm is in
+ the same memory cgroup
+Message-ID: <20180601191652.GZ1351649@devbig577.frc2.facebook.com>
+References: <87wovu889o.fsf@xmission.com>
+ <20180524111002.GB20441@dhcp22.suse.cz>
+ <20180524141635.c99b7025a73a709e179f92a2@linux-foundation.org>
+ <20180530121721.GD27180@dhcp22.suse.cz>
+ <87wovjacrh.fsf@xmission.com>
+ <87wovj8e1d.fsf_-_@xmission.com>
+ <87y3fywodn.fsf_-_@xmission.com>
+ <87sh66wobu.fsf_-_@xmission.com>
+ <20180601165034.GX1351649@devbig577.frc2.facebook.com>
+ <87bmcuv0k0.fsf@xmission.com>
 MIME-Version: 1.0
-To: Anson Huang <Anson.Huang@nxp.com>, fabio.estevam@nxp.com,
-        kernel@pengutronix.de, mturquette@baylibre.com, shawnguo@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1526533248-21990-2-git-send-email-Anson.Huang@nxp.com>
-Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1526533248-21990-1-git-send-email-Anson.Huang@nxp.com>
- <1526533248-21990-2-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <152788024703.225090.10824571841764355947@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: imx6sl: correct ocram_podf clock type
-Date: Fri, 01 Jun 2018 12:10:47 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87bmcuv0k0.fsf@xmission.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51JB7oQ027097
 
-Quoting Anson Huang (2018-05-16 22:00:48)
-> IMX6SL_CLK_OCRAM_PODF is a busy divider, its name in
-> CCM_CDHIPR register of Reference Manual CCM chapter
-> is axi_podf_busy, correct its clock type.
+Hello,
+
+On Fri, Jun 01, 2018 at 01:11:59PM -0500, Eric W. Biederman wrote:
+> Widening the definition of a process sounds good.  The memory control
+> group code would still need a way to forbid these in cgroup v1 mode,
+> when someone uses the task file.
+
+Yeap, you're right.  We'll need memcg's can_attach rejecting for v1.
+
+> Using widening instead of denying should reduce the risk of introducing
+> a regression.
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
+> The only reason I support the crazy case in my earlier patch is so that
+> we can have this discussion and in case we do cause a regression with
+> this change the previous algorithmic cleanup won't have to be reverted
+> as well.
 
-Applied to clk-next
+Yeah, sure thing.
+
+Thanks a lot.
+
+-- 
+tejun
