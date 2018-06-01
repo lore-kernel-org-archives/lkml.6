@@ -1,71 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753023AbeFARJZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 13:09:25 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55590 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751584AbeFARJX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 13:09:23 -0400
-Date: Fri, 1 Jun 2018 18:08:47 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, alsa-devel@alsa-project.org,
-        Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
-        linux-kernel@vger.kernel.org,
-        Chintan Patel <chintan.m.patel@intel.com>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: Re: [alsa-devel] [PATCH v2 1/3] ASoC: topology: Improve backwards
- compatibility with v4 topology files
-Message-ID: <20180601170847.GC8677@sirena.org.uk>
-References: <1527191363-21021-1-git-send-email-linux@roeck-us.net>
- <20180601102506.GB8677@sirena.org.uk>
- <0015aace-fe32-9707-d3c9-0dea6f5fc48c@roeck-us.net>
- <8452aca6-0ae4-9fe1-c8cd-9f84e34f509f@linux.intel.com>
+        id S1752968AbeFARKi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 13:10:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48300 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751849AbeFARKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 13:10:36 -0400
+Date: Fri, 1 Jun 2018 10:10:28 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        tgraf@suug.ch, manfred@colorfullife.com, mhocko@kernel.org,
+        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 1/5] lib/rhashtable: convert param sanitations to WARN_ON
+Message-ID: <20180601171028.3rjlozqmuoofa3iy@linux-r8p5>
+References: <20180601160125.30031-1-dave@stgolabs.net>
+ <20180601160125.30031-2-dave@stgolabs.net>
+ <20180601160944.ji2gsp3pyunlj476@gondor.apana.org.au>
+ <20180601165347.kvruerdm3gu57ifv@linux-r8p5>
+ <20180601165903.bd3jonbv2jrfcevi@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <8452aca6-0ae4-9fe1-c8cd-9f84e34f509f@linux.intel.com>
-X-Cookie: OS/2 must die!
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180601165903.bd3jonbv2jrfcevi@gondor.apana.org.au>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 02 Jun 2018, Herbert Xu wrote:
 
---oJ71EGRlYNjSvfq7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>On Fri, Jun 01, 2018 at 09:53:47AM -0700, Davidlohr Bueso wrote:
+>>
+>> Curious, are these users setting up the param structure dynamically
+>> or something that they can pass along bogus values?
+>>
+>> If that's the case then yes, I definitely agree.
+>
+>It's just a quality of implementation issue.  This is a generic API.
+>Sure for early-boot users like yours it makes sense to just WARN_ON
+>rather than deal with the messy hash table allocation failure.
+>
+>But for a driver author writing some kernel module it isn't nice
+>to WARN_ON and then crash on a NULL-pointer dereference when we
+>can cleanly fail the table init.
 
-On Fri, Jun 01, 2018 at 10:19:58AM -0500, Pierre-Louis Bossart wrote:
+Fine, at least patch 2 applies without this one. So Andrew, if you
+consider taking this series please drop patch 1 and 5 (which no
+longer makes sense as rhashtable_init() won't be returning void
+in the future).
 
-> I wanted to ack this patch but the Intel validation folks asked for a cou=
-ple
-> of days to finish their tests on a variety of Chromebooks (e.g. Lars) and
-> double-check which models used the v4 topology. There is an internal thre=
-ad
-> on all this which remains active. I don't think the feedback will be dela=
-yed
-> beyond early next week.
+If you want me to resend (assuming other issues are not pointed out),
+I can do but I wanted to avoid spamming more the necessary.
 
-OK, I'm expecting the merge window to open over the weekend so I think
-I'm just going to apply now so we it's in -next when that happens. =20
-
---oJ71EGRlYNjSvfq7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsRfZ4ACgkQJNaLcl1U
-h9DtcQf+MLxA1Y7K9CWrSgFsWQtI23eljjg88XksXgCBs/1EEiyYXLmu7dVRLg+k
-5jxgxM98qG7M94RxNycoGLTa/IreTk5RdOBwLR/x7Y7G1/TYTbhqu7Bas0i0fAGv
-oVdi45AKtB8ummzQ180IVoeObPo+dMoBKLnTp4hRYumFwG8/BCOZo3ekj6yjXJak
-Ki66YWqsOp0DozBHl0Ezirne38FK27CtiJE0ze6iqR/7tX2MqExzfX+2AYfPlwLY
-zwRJS1T3rnZkrrQ0lpKmphaFH6nqZVvWGjXaS90me5pQdsubukm5Gtxu0dmDAko+
-Zn0+hBNs15Zdz0mb2teeUD/vuNpoHQ==
-=huYi
------END PGP SIGNATURE-----
-
---oJ71EGRlYNjSvfq7--
+Thanks,
+Davidlohr
