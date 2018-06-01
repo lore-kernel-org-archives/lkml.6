@@ -1,59 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753256AbeFASTf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 14:19:35 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:45813 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753150AbeFASTc (ORCPT
+        id S1753297AbeFASUc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 14:20:32 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35994 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbeFASU3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 14:19:32 -0400
-X-ME-Proxy: <xmx:NI4RW8uwvP_rJ4elRwK-sCN87oJR7PnuDtprD3d-YXPB_wfgobDaXw>
-X-ME-Proxy: <xmx:NI4RW5qemqMPRBRBM1a8FhQyqmAoy0s3qVyyIM5-cgNwLJBQd9VVrA>
-X-ME-Proxy: <xmx:NI4RW5ksJn2OvmK4efus4Vn1GJhgXGJxrs2iU5EdB6vLeamEpsQc4A>
-X-ME-Proxy: <xmx:NI4RW9zwJErFqYZUVYW6yn9OcWXP8NaKle9NOyr9Zh8pjZ5YbVqmxA>
-X-ME-Proxy: <xmx:NI4RWxkhiDJBPLd6G6Z--lxw3jmfpaAaqWA712rXJVAJqoEdbUoWug>
-X-ME-Proxy: <xmx:NI4RW3rtFNiJ1qNLAtSnayutgUG-AAwOfx6NlnA5W4C-6Z9ZbPpdSg>
-X-ME-Sender: <xms:NI4RW4a4kjgRhxZHKrDDGWevcn_t7k6Uf-bhhDS8hEMctjg81W68XA>
-Date: Fri, 1 Jun 2018 21:19:29 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: Michal Kubecek <mkubecek@suse.cz>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Tom Herbert <tom@herbertland.com>, David Ahern <dsahern@gmail.com>
-Subject: Re: [PATCH net] ipv6: omit traffic class when calculating flow hash
-Message-ID: <20180601181929.GA16452@splinter>
-References: <20180601112948.93BE7A0C48@unicorn.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180601112948.93BE7A0C48@unicorn.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 1 Jun 2018 14:20:29 -0400
+X-Google-Smtp-Source: ADUXVKJzJPe04wHbBY7VrMOXNl6WbfvkBmjoSzjWfeY7CxBk+s3UB/aAATSO+xzllW9IbJX9ITPSZg==
+From: Andreas Dilger <adilger@dilger.ca>
+Message-Id: <E5BF8501-35EB-4DDF-ADBE-6016CF31A502@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_E9FA591B-599E-43C3-BEEE-EAB3888D87CB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH] staging: lustre: delete the filesystem from the tree.
+Date: Fri, 1 Jun 2018 14:20:27 -0400
+In-Reply-To: <20180601114151.GA25225@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oleg Drokin <oleg.drokin@intel.com>,
+        Andreas Dilger <andreas.dilger@intel.com>,
+        James Simmons <jsimmons@infradead.org>,
+        lustre-devel <lustre-devel@lists.lustre.org>,
+        fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, selinux@tycho.nsa.gov
+To: Christoph Hellwig <hch@infradead.org>
+References: <20180601091133.GA27521@kroah.com>
+ <20180601114151.GA25225@infradead.org>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 12:34:41PM +0200, Michal Kubecek wrote:
-> Some of the code paths calculating flow hash for IPv6 use flowlabel member
-> of struct flowi6 which, despite its name, encodes both flow label and
-> traffic class. If traffic class changes within a TCP connection (as e.g.
-> ssh does), ECMP route can switch between path. It's also incosistent with
-> other code paths where ip6_flowlabel() (returning only flow label) is used
-> to feed the key.
+
+--Apple-Mail=_E9FA591B-599E-43C3-BEEE-EAB3888D87CB
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Jun 1, 2018, at 7:41 AM, Christoph Hellwig <hch@infradead.org> wrote:
 > 
-> Use only flow label everywhere, including one place where hash key is set
-> using ip6_flowinfo().
+> Thanks,
 > 
-> Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
-> Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+> all that churn without much visible progress to a mergeable codebase
+> was really ennoying.
+> 
+> I'd recommend if people want to merge lustre they start with a managable
+> subset first, e.g. the fs client code with simple IP-only networking.
 
-Hi Michal,
+Adding or removing the IB networking makes basically no difference to the
+code size.  This would also make the client much less useful, since a large
+number of sites use Lustre with IB networks.
 
-Please consider adding a test case to
-tools/testing/selftests/net/fib_tests.sh
+Cheers, Andreas
 
-Personally, I tested the patch by looping over different values of 'tos'
-for 'ip route get' and confirmed that the same nexthop is selected.
 
-Thanks!
+
+
+
+
+--Apple-Mail=_E9FA591B-599E-43C3-BEEE-EAB3888D87CB
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlsRjmwACgkQcqXauRfM
+H+BSaQ//YlKfRYCoaSC/AHdrPBNjFFX9kUo03fvLusPL3K534Y8SZcvAibkHj7Fz
+cJ3TxQdB1f80T03e79BK1PiW5YUlC7UPYvBTPo4NsUqcFqsDt4LE7fInA4bZ7Oi8
+hHWO444AZeIGkwDK+xzcHWn28t2qr0GGOncR55u1rO1GCcgf3shvpiFeX7tnEuGN
+92P29IwO5UGrxAulJgE2HULNqstBD1qVeUe3T8hw3OLqQdDkqmtTOKsZfma8Aoj0
+ESEjjXQ56g9RED0R0RDUSWcNTFZ+m9CPpaG54F7a5pb2eQotStvs6pw0mCMdzD65
+smWk8TfdUzNPLm0LHnQYIQe8OhIoRARSjSXSNTpLJNkw2B3aQcbGQ97VjAHg9pJQ
+Aw2vaTWxMw94W9atK1kP+8ZwJR3hUqVMoiWOAN1tXyo4MQh3VwdLaH8u9t2YTYrX
+LEPg+fHHRbIhjRg36hgLYHSPVsuZo6O8ux0nuMiXLq2txYMCe7TjUQz65n4KxUIb
+VbgSjy8G0vYgFIBTT0qLMdJ5NYT/AmtsanKTJ0dKmg7fRLYqA0YJ3pT9jRxoI1ac
+g52VkYmj5U51dv+6nu25kj55M6VfOQEnHATYN6SSMXlkfEzI+2jQIXJyYhqtjEgP
+P8/TxNdyaPXNMfjdvHD/Lxk/58VQUbWRRZxwCvjNFPeYiwbwylI=
+=o3XY
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_E9FA591B-599E-43C3-BEEE-EAB3888D87CB--
