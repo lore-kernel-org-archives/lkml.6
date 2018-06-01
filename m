@@ -1,63 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753092AbeFAPUC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:20:02 -0400
-Received: from mga07.intel.com ([134.134.136.100]:62288 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751465AbeFAPT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:19:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,467,1520924400";
-   d="scan'208";a="59571926"
-Subject: Re: [alsa-devel] [PATCH v2 1/3] ASoC: topology: Improve backwards
- compatibility with v4 topology files
-To: Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        Chintan Patel <chintan.m.patel@intel.com>,
-        Guenter Roeck <groeck@chromium.org>
-References: <1527191363-21021-1-git-send-email-linux@roeck-us.net>
- <20180601102506.GB8677@sirena.org.uk>
- <0015aace-fe32-9707-d3c9-0dea6f5fc48c@roeck-us.net>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <8452aca6-0ae4-9fe1-c8cd-9f84e34f509f@linux.intel.com>
-Date: Fri, 1 Jun 2018 10:19:58 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        id S1753119AbeFAPUQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:20:16 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:32807 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752467AbeFAPUO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:20:14 -0400
+X-Google-Smtp-Source: ADUXVKKBq6dCpgP/MEm/Fi8DfLb7ymQVySPR9tlx4PAs1Tt4YxY/tOEUQe0gZjqznzNQHAbQEoWi2dN1E9fWlYTYEUg=
 MIME-Version: 1.0
-In-Reply-To: <0015aace-fe32-9707-d3c9-0dea6f5fc48c@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAK7LNATdw+nTQ0O7jBUDTKHaL53ejZ=oTPocFOJ1brtDr-GB1Q@mail.gmail.com>
+References: <20180528153222.2037158-1-arnd@arndb.de> <20180530151736.nzpde2bgzn4koi7f@ast-mbp>
+ <CAK7LNATdw+nTQ0O7jBUDTKHaL53ejZ=oTPocFOJ1brtDr-GB1Q@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 1 Jun 2018 17:20:12 +0200
+X-Google-Sender-Auth: lqElk9B5a0dZRv8z2PwtwhBvTHM
+Message-ID: <CAK8P3a1MSsL1vhV7Y98wCnP6NzK+OhqYpkoNuRm2J5PkJEK8=g@mail.gmail.com>
+Subject: Re: [PATCH] [net-next, wrong] make BPFILTER_UMH depend on X86
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/1/18 8:17 AM, Guenter Roeck wrote:
-> On 06/01/2018 03:25 AM, Mark Brown wrote:
->> On Thu, May 24, 2018 at 12:49:21PM -0700, Guenter Roeck wrote:
->>> From: Guenter Roeck <groeck@chromium.org>
->>>
->>> Commit dc31e741db49 ("ASoC: topology: ABI - Add the types for BE
->>> DAI") introduced sound topology files version 5. Initially, this
->>> change made the topology code incompatible with v4 topology files.
->>
->> No review on these from anyone at Intel?
->>
-> 
-> The only actionable feedback I have seen is that the header file
-> changes should be in uapi, which is done in patches 2 and 3.
-> 
-> Other than that, there was a question if this is a Linux issue or
-> a Chromebook issue (it appears that only Chromebooks shipped with
-> v4 configuration files). I took that as rhetorical since upstream
-> kernels (at least v4.4 and v4.5) support topology v4 configuration
-> files, and it should not matter which products shipped using those.
+On Thu, May 31, 2018 at 3:42 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-05-31 0:17 GMT+09:00 Alexei Starovoitov <alexei.starovoitov@gmail.com>:
+>> On Mon, May 28, 2018 at 05:31:01PM +0200, Arnd Bergmann wrote:
 
-I wanted to ack this patch but the Intel validation folks asked for a 
-couple of days to finish their tests on a variety of Chromebooks (e.g. 
-Lars) and double-check which models used the v4 topology. There is an 
-internal thread on all this which remains active. I don't think the 
-feedback will be delayed beyond early next week.
+> Hmm.
+> For cross-compiling, we set 'ARCH' via the environment variable or the
+> command line.
+>
+> ARCH is not explicitly set, the top-level Makefile sets it to $(SUBARCH)
+>
+>
+> ARCH ?= $(SUBARCH)
+>
+>
+> Maybe, we can assume the native build if $(ARCH) and $(SUBARCH) are the same?
+>
+
+SUBARCH is also used with a special meaning for arch/um where we build
+with ARCH=um SUBARCH=x86, either on native (x86) or cross builds.
+
+
+So doing that would still work in most but not all cases.
+
+What is the reason for using HOSTCC rather than CC anyway? I think
+the correct way to do this would be to check if CC is able to link binaries
+and disallow the option if it's not.
+
+Don't we already do something like that for tools/testing/selftest which
+also needs to generate binaries with CC?
+
+       Arnd
