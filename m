@@ -1,108 +1,279 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752022AbeFAM6S (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 08:58:18 -0400
-Received: from mout.gmx.net ([212.227.17.20]:53355 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751769AbeFAM6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 08:58:14 -0400
-Message-ID: <1527857873.4674.11.camel@gmx.de>
-Subject: 4.13..4.14 scheduling overhead regression (bisected  -
- b956575bed91)
-From: Mike Galbraith <efault@gmx.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>
-Date: Fri, 01 Jun 2018 14:57:53 +0200
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:CmEd7hiqSMttT9g4c2/skHR8ETbOmNOGEvjZhVQPwrs9wswL678
- QqsCeN6PAp+euYhH6rxXjgL8cromM8dhXQiYiByDkyqSeBbGMZwIIvO670MRKkr1rELvfos
- aaPsEgnC8VuB0unYiLpvqdBtcROfTWbedjaT9G/gmNqThR+muevW22GhsCL9gV69txJNnXT
- r3w4HeGl4XimLn5T66MMw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:mVY4zRNzHJI=:G5iucbFKQ5SFs7ouv3WXe7
- SV5nudJkV2sU+9CAszAEYLg2vw17v+BNMSG1x5ixTcP0RGQlOB7PXD/o7IAnWXqHZqth+TGcq
- l4qMGEwj83wXVlXES7Mwt513nzNyE2y9VdQAC6Neb0MZEWJt6RJYDViVXiScRDRw47DK69ScY
- rCAirNOgrC1eTt3pIbTJ6fvR32ptxsL+Mpo7QrPLTlzMpd5FEFR5Afc6Y6mVnzg8O9OzfIe5I
- +qdstlB4pluwEi/p7xFNF9TThrE10F65kcbHNqVLjsZD6yOlUEbfQJFcTi9JwViZzq1I1o9mR
- SE0b6Jm4QVRMIMjJM5F+CDihKdNFyu6PzbcxGVWYoJLsJIVC2LujVlLWScJ9xLxxqhlPsBoDQ
- ARIJ+9oHPr/PhzYlWaCVDW0Vi/utDREcBswxQTHUcdqUdEtfJoSfdse5b4p6vrqGY3JqFJgdQ
- aIRxFRHpcS8q+ZHjflMQioSr/fn3Ht2qkQkti7am93d/XrtSj3fXg6JG+K4YPsroKWUSk9jv8
- lZ/vdNn0KdK42b/R+xvgnunQvwfVYncSVqYAqVM2Xw2rzhjeLZFunT1NeqYFX5lwKksZK2YK5
- dEcwDIgNK/SbGWE+hhn/RQklB8EQPLEGwfLsFEl20ik2HHLTAAMUVUTL99CSUrw3HnzF4qSSy
- 6W80m1WYElG1UBlyX3DJS9fXEL0oulZ4/z8K4gNNlSG5JNqU9NsapZmb8dA7MBigJw1p5KqKW
- Z7v1hehdz4Oegi9MpBoJ+TsbbN1Utvs5to1FWPc+DH/ZCSubOApsgx5So+6MLM/I8fvZSouN2
- 5EiuINk
+        id S1752051AbeFAM62 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 08:58:28 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:41885 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbeFAM6V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 08:58:21 -0400
+X-Google-Smtp-Source: ADUXVKLSUbnZ/EIa3S9LdarfdFb/oEiHNPyUI2LpEHh52PRxGru8jFlJplPMb8hM78yeUW+8aSBiPFwKy26SkBRLzRI=
+MIME-Version: 1.0
+In-Reply-To: <20180531161708.5894-3-michel@daenzer.net>
+References: <20180531161708.5894-1-michel@daenzer.net> <20180531161708.5894-3-michel@daenzer.net>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 1 Jun 2018 08:58:19 -0400
+Message-ID: <CADnq5_O5-m_=xqszq41eOAVaLTytHUHmtDaSc1MeEorZML6T5g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] drm/amdgpu: Add documentation for PRIME related code
+To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>
+Cc: amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51CwwPD003677
 
-Greetings,
+On Thu, May 31, 2018 at 12:17 PM, Michel Dänzer <michel@daenzer.net> wrote:
+> From: Michel Dänzer <michel.daenzer@amd.com>
+>
+> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
 
-While dusting off regression testing trees, I noticed a substantial
-pipe-test dent at 4.14, and bisected it to b956575bed91.  Log below.
+Series is:
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
 
-skew_tick=1 audit=0 nodelayacct cgroup_disable=memory nopti nospectre_v2 nospec_store_bypass_disable
-gov performance
-taskset 0xc pipe-test 1
-
-4.4.134         2.125751 usecs/loop -- avg 2.138286 935.3 KHz
-4.5.7           2.111431 usecs/loop -- avg 2.141415 934.0 KHz
-4.6.7           2.060672 usecs/loop -- avg 2.059993 970.9 KHz
-4.7.10          2.086366 usecs/loop -- avg 2.090943 956.5 KHz
-4.8.17          2.008318 usecs/loop -- avg 2.005780 997.1 KHz + ~2.00-ish   1.000
-4.9.104         1.989143 usecs/loop -- avg 2.010945 994.6 KHz
-4.10.17         2.010789 usecs/loop -- avg 2.006868 996.6 KHz
-4.11.12         2.032123 usecs/loop -- avg 2.037766 981.5 KHz - ~2.04-ish   1.015   1.000
-4.12.14         2.055745 usecs/loop -- avg 2.065894 968.1 KHz
-4.13.16         2.024978 usecs/loop -- avg 2.045250 977.9 KHz
-4.14.47         2.234518 usecs/loop -- avg 2.227716 897.8 KHz -- >2.22      1.110   1.093   1.000
-4.15.18         2.287815 usecs/loop -- avg 2.295858 871.1 KHz --- >2.28     1.144   1.126   1.030
-4.16.13         2.286036 usecs/loop -- avg 2.279057 877.6 KHz
-4.17.0.g88a8676 2.288231 usecs/loop -- avg 2.288917 873.8 KHz
-
-b956575bed91ecfb136a8300742ecbbf451471ab is the first bad commit
-commit b956575bed91ecfb136a8300742ecbbf451471ab
-Author: Andy Lutomirski <luto@kernel.org>
-Date:   Mon Oct 9 09:50:49 2017 -0700
-
-    x86/mm: Flush more aggressively in lazy TLB mode
-    
-git bisect start
-# good: [569dbb88e80deb68974ef6fdd6a13edb9d686261] Linux 4.13
-git bisect good 569dbb88e80deb68974ef6fdd6a13edb9d686261
-# bad: [57a3ca7835962109d94533465a75e8c716b26845] Linux 4.14.47
-git bisect bad 57a3ca7835962109d94533465a75e8c716b26845
-# good: [fbf4432ff71b7a25bef993a5312906946d27f446] Merge branch 'akpm' (patches from Andrew)
-git bisect good fbf4432ff71b7a25bef993a5312906946d27f446
-# bad: [3fefc31843cfe2b5f072efe11ed9ccaf6a7a5092] Merge tag 'pm-final-4.14' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-git bisect bad 3fefc31843cfe2b5f072efe11ed9ccaf6a7a5092
-# good: [8d93c7a4315711ea0f7a95ca353a89c4ed0763fb] Merge tag 'pci-v4.14-fixes-1' of git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci
-git bisect good 8d93c7a4315711ea0f7a95ca353a89c4ed0763fb
-# good: [0f380715e51f5ff418cfccb4cd0d4fe4c48c3241] Merge tag 'sound-4.14-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
-git bisect good 0f380715e51f5ff418cfccb4cd0d4fe4c48c3241
-# bad: [e5f468b3f23313994c5e6c356135f9b0d76bcb94] Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
-git bisect bad e5f468b3f23313994c5e6c356135f9b0d76bcb94
-# good: [3d7882769b5dc929690f96e0c318c29b97f51018] Merge tag 'devprop-4.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-git bisect good 3d7882769b5dc929690f96e0c318c29b97f51018
-# bad: [ae7df8f985f1b0445366ae6f6324cd08a218526e] Merge tag 'char-misc-4.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
-git bisect bad ae7df8f985f1b0445366ae6f6324cd08a218526e
-# good: [be1f16ba35d97aff4d85c0daba0a02da51b7c83c] Merge branch '4.14-fixes' of git://git.linux-mips.org/pub/scm/ralf/upstream-linus
-git bisect good be1f16ba35d97aff4d85c0daba0a02da51b7c83c
-# good: [a339b351304d5e6b02c7cf8eed895d181e64bce0] Merge branch 'sched-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-git bisect good a339b351304d5e6b02c7cf8eed895d181e64bce0
-# bad: [7a23c5abb930cefcef85df6dc0c8fb3e8961980c] Merge tag 'dmaengine-fix-4.14-rc5' of git://git.infradead.org/users/vkoul/slave-dma
-git bisect bad 7a23c5abb930cefcef85df6dc0c8fb3e8961980c
-# good: [ab7ff471aa5db670197070760f022622793da7e5] x86/hyperv: Fix hypercalls with extended CPU ranges for TLB flushing
-git bisect good ab7ff471aa5db670197070760f022622793da7e5
-# bad: [1f161f67a272cc4f29f27934dd3f74cb657eb5c4] x86/microcode: Do the family check first
-git bisect bad 1f161f67a272cc4f29f27934dd3f74cb657eb5c4
-# good: [cc6afe2240298049585e86b1ade85efc8a7f225d] x86/apic: Silence "FW_BUG TSC_DEADLINE disabled due to Errata" on hypervisors
-git bisect good cc6afe2240298049585e86b1ade85efc8a7f225d
-# bad: [b956575bed91ecfb136a8300742ecbbf451471ab] x86/mm: Flush more aggressively in lazy TLB mode
-git bisect bad b956575bed91ecfb136a8300742ecbbf451471ab
-# good: [616dd5872e52493863b0202632703eebd51243dc] x86/apic: Update TSC_DEADLINE quirk with additional SKX stepping
-git bisect good 616dd5872e52493863b0202632703eebd51243dc
-# first bad commit: [b956575bed91ecfb136a8300742ecbbf451471ab] x86/mm: Flush more aggressively in lazy TLB mode
+> ---
+>  Documentation/gpu/amdgpu.rst              |  14 +++
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c | 119 ++++++++++++++++++++++
+>  2 files changed, 133 insertions(+)
+>
+> diff --git a/Documentation/gpu/amdgpu.rst b/Documentation/gpu/amdgpu.rst
+> index 41a14e4aa4ac..f557866f6788 100644
+> --- a/Documentation/gpu/amdgpu.rst
+> +++ b/Documentation/gpu/amdgpu.rst
+> @@ -4,3 +4,17 @@
+>
+>  The drm/amdgpu driver supports all AMD Radeon GPUs based on the Graphics Core
+>  Next (GCN) architecture.
+> +
+> +Core Driver Infrastructure
+> +==========================
+> +
+> +This section covers core driver infrastructure.
+> +
+> +PRIME Buffer Sharing
+> +--------------------
+> +
+> +.. kernel-doc:: drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+> +   :doc: PRIME Buffer Sharing
+> +
+> +.. kernel-doc:: drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+> +   :internal:
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+> index 4683626b065f..d1f05489595b 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+> @@ -23,6 +23,14 @@
+>   *
+>   * Authors: Alex Deucher
+>   */
+> +
+> +/**
+> + * DOC: PRIME Buffer Sharing
+> + *
+> + * The following callback implementations are used for :ref:`sharing GEM buffer
+> + * objects between different devices via PRIME <prime_buffer_sharing>`.
+> + */
+> +
+>  #include <drm/drmP.h>
+>
+>  #include "amdgpu.h"
+> @@ -32,6 +40,14 @@
+>
+>  static const struct dma_buf_ops amdgpu_dmabuf_ops;
+>
+> +/**
+> + * amdgpu_gem_prime_get_sg_table - &drm_driver.gem_prime_get_sg_table
+> + * implementation
+> + * @obj: GEM buffer object
+> + *
+> + * Returns:
+> + * A scatter/gather table for the pinned pages of the buffer object's memory.
+> + */
+>  struct sg_table *amdgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
+>  {
+>         struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+> @@ -40,6 +56,15 @@ struct sg_table *amdgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
+>         return drm_prime_pages_to_sg(bo->tbo.ttm->pages, npages);
+>  }
+>
+> +/**
+> + * amdgpu_gem_prime_vmap - &dma_buf_ops.vmap implementation
+> + * @obj: GEM buffer object
+> + *
+> + * Sets up an in-kernel virtual mapping of the buffer object's memory.
+> + *
+> + * Returns:
+> + * The virtual address of the mapping or an error pointer.
+> + */
+>  void *amdgpu_gem_prime_vmap(struct drm_gem_object *obj)
+>  {
+>         struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+> @@ -53,6 +78,13 @@ void *amdgpu_gem_prime_vmap(struct drm_gem_object *obj)
+>         return bo->dma_buf_vmap.virtual;
+>  }
+>
+> +/**
+> + * amdgpu_gem_prime_vunmap - &dma_buf_ops.vunmap implementation
+> + * @obj: GEM buffer object
+> + * @vaddr: virtual address (unused)
+> + *
+> + * Tears down the in-kernel virtual mapping of the buffer object's memory.
+> + */
+>  void amdgpu_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
+>  {
+>         struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+> @@ -60,6 +92,17 @@ void amdgpu_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
+>         ttm_bo_kunmap(&bo->dma_buf_vmap);
+>  }
+>
+> +/**
+> + * amdgpu_gem_prime_mmap - &drm_driver.gem_prime_mmap implementation
+> + * @obj: GEM buffer object
+> + * @vma: virtual memory area
+> + *
+> + * Sets up a userspace mapping of the buffer object's memory in the given
+> + * virtual memory area.
+> + *
+> + * Returns:
+> + * 0 on success or negative error code.
+> + */
+>  int amdgpu_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+>  {
+>         struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+> @@ -94,6 +137,19 @@ int amdgpu_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma
+>         return ret;
+>  }
+>
+> +/**
+> + * amdgpu_gem_prime_import_sg_table - &drm_driver.gem_prime_import_sg_table
+> + * implementation
+> + * @dev: DRM device
+> + * @attach: DMA-buf attachment
+> + * @sg: Scatter/gather table
+> + *
+> + * Import shared DMA buffer memory exported by another device.
+> + *
+> + * Returns:
+> + * A new GEM buffer object of the given DRM device, representing the memory
+> + * described by the given DMA-buf attachment and scatter/gather table.
+> + */
+>  struct drm_gem_object *
+>  amdgpu_gem_prime_import_sg_table(struct drm_device *dev,
+>                                  struct dma_buf_attachment *attach,
+> @@ -132,6 +188,19 @@ amdgpu_gem_prime_import_sg_table(struct drm_device *dev,
+>         return ERR_PTR(ret);
+>  }
+>
+> +/**
+> + * amdgpu_gem_map_attach - &dma_buf_ops.attach implementation
+> + * @dma_buf: shared DMA buffer
+> + * @target_dev: target device
+> + * @attach: DMA-buf attachment
+> + *
+> + * Makes sure that the shared DMA buffer can be accessed by the target device.
+> + * For now, simply pins it to the GTT domain, where it should be accessible by
+> + * all DMA devices.
+> + *
+> + * Returns:
+> + * 0 on success or negative error code.
+> + */
+>  static int amdgpu_gem_map_attach(struct dma_buf *dma_buf,
+>                                  struct device *target_dev,
+>                                  struct dma_buf_attachment *attach)
+> @@ -181,6 +250,14 @@ static int amdgpu_gem_map_attach(struct dma_buf *dma_buf,
+>         return r;
+>  }
+>
+> +/**
+> + * amdgpu_gem_map_detach - &dma_buf_ops.detach implementation
+> + * @dma_buf: shared DMA buffer
+> + * @attach: DMA-buf attachment
+> + *
+> + * This is called when a shared DMA buffer no longer needs to be accessible by
+> + * the other device. For now, simply unpins the buffer from GTT.
+> + */
+>  static void amdgpu_gem_map_detach(struct dma_buf *dma_buf,
+>                                   struct dma_buf_attachment *attach)
+>  {
+> @@ -202,6 +279,13 @@ static void amdgpu_gem_map_detach(struct dma_buf *dma_buf,
+>         drm_gem_map_detach(dma_buf, attach);
+>  }
+>
+> +/**
+> + * amdgpu_gem_prime_res_obj - &drm_driver.gem_prime_res_obj implementation
+> + * @obj: GEM buffer object
+> + *
+> + * Returns:
+> + * The buffer object's reservation object.
+> + */
+>  struct reservation_object *amdgpu_gem_prime_res_obj(struct drm_gem_object *obj)
+>  {
+>         struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+> @@ -209,6 +293,18 @@ struct reservation_object *amdgpu_gem_prime_res_obj(struct drm_gem_object *obj)
+>         return bo->tbo.resv;
+>  }
+>
+> +/**
+> + * amdgpu_gem_begin_cpu_access - &dma_buf_ops.begin_cpu_access implementation
+> + * @dma_buf: shared DMA buffer
+> + * @direction: direction of DMA transfer
+> + *
+> + * This is called before CPU access to the shared DMA buffer's memory. If it's
+> + * a read access, the buffer is moved to the GTT domain if possible, for optimal
+> + * CPU read performance.
+> + *
+> + * Returns:
+> + * 0 on success or negative error code.
+> + */
+>  static int amdgpu_gem_begin_cpu_access(struct dma_buf *dma_buf,
+>                                        enum dma_data_direction direction)
+>  {
+> @@ -253,6 +349,18 @@ static const struct dma_buf_ops amdgpu_dmabuf_ops = {
+>         .vunmap = drm_gem_dmabuf_vunmap,
+>  };
+>
+> +/**
+> + * amdgpu_gem_prime_export - &drm_driver.gem_prime_export implementation
+> + * @dev: DRM device
+> + * @gobj: GEM buffer object
+> + * @flags: flags like DRM_CLOEXEC and DRM_RDWR
+> + *
+> + * The main work is done by the &drm_gem_prime_export helper, which in turn
+> + * uses &amdgpu_gem_prime_res_obj.
+> + *
+> + * Returns:
+> + * Shared DMA buffer representing the GEM buffer object from the given device.
+> + */
+>  struct dma_buf *amdgpu_gem_prime_export(struct drm_device *dev,
+>                                         struct drm_gem_object *gobj,
+>                                         int flags)
+> @@ -273,6 +381,17 @@ struct dma_buf *amdgpu_gem_prime_export(struct drm_device *dev,
+>         return buf;
+>  }
+>
+> +/**
+> + * amdgpu_gem_prime_import - &drm_driver.gem_prime_import implementation
+> + * @dev: DRM device
+> + * @dma_buf: Shared DMA buffer
+> + *
+> + * The main work is done by the &drm_gem_prime_import helper, which in turn
+> + * uses &amdgpu_gem_prime_import_sg_table.
+> + *
+> + * Returns:
+> + * GEM buffer object representing the shared DMA buffer for the given device.
+> + */
+>  struct drm_gem_object *amdgpu_gem_prime_import(struct drm_device *dev,
+>                                             struct dma_buf *dma_buf)
+>  {
+> --
+> 2.17.0
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
