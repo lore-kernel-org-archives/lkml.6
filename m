@@ -1,177 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeFAPt2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:49:28 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:38157 "EHLO pegase1.c-s.fr"
+        id S1753379AbeFAPvz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:51:55 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:9025 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751693AbeFAPt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:49:27 -0400
-Message-Id: <cover.1527868006.git.christophe.leroy@c-s.fr>
+        id S1752848AbeFAPtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:49:33 -0400
+Message-Id: <41ac484c9a02b95d167b246d79fba9032975b75f.1527868006.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1527868006.git.christophe.leroy@c-s.fr>
+References: <cover.1527868006.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH v2 00/14] Remove unneccessary included headers
+Subject: [RFC PATCH v2 03/14] powerpc/405: move PPC405_ERR77 in asm-405.h
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Fri,  1 Jun 2018 15:49:25 +0000 (UTC)
+Date: Fri,  1 Jun 2018 15:49:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this serie is to limit the number of includes to
-only the necessary ones in order to reduce the number of files
-recompiled everytime a header file is modified.
-
-This is the start of the work, please provide feedback if any so
-that I don't go in the wrong direction.
-
-Handled inclusion changes more carrefully after Michael feedback.
-
-Started splitting some headers in order to reduce their coverage.
-
-Christophe Leroy (14):
-  powerpc: remove kdump.h from page.h
-  powerpc: remove unneeded inclusions of cpu_has_feature.h
-  powerpc/405: move PPC405_ERR77 in asm-405.h
-  powerpc: move ASM_CONST and stringify_in_c() into asm-const.h
-  powerpc: clean the inclusion of stringify.h
-  powerpc: clean inclusions of asm/feature-fixups.h
-  powerpc: remove superflous inclusions of asm/fixmap.h
-  powerpc: declare set_breakpoint() static
-  powerpc/book3s: Remove PPC_PIN_SIZE
-  powerpc: fix includes in asm/processor.h
-  powerpc/nohash: fix hash related comments in pgtable.h
-  powerpc/44x: remove page.h from mmu-44x.h
-  powerpc: split reg.h in two parts
-  powerpc: Split synch.h in two parts
-
- arch/powerpc/crypto/md5-asm.S                     |  1 +
- arch/powerpc/crypto/sha1-powerpc-asm.S            |  1 +
- arch/powerpc/include/asm/asm-405.h                | 19 +++++++
- arch/powerpc/include/asm/asm-compat.h             | 26 +---------
- arch/powerpc/include/asm/asm-const.h              | 14 +++++
- arch/powerpc/include/asm/atomic.h                 |  2 +
- arch/powerpc/include/asm/barrier.h                |  3 ++
- arch/powerpc/include/asm/bitops.h                 |  2 +
- arch/powerpc/include/asm/book3s/32/pgtable.h      |  7 ---
- arch/powerpc/include/asm/book3s/64/hash.h         |  2 +
- arch/powerpc/include/asm/book3s/64/mmu-hash.h     |  2 +-
- arch/powerpc/include/asm/book3s/64/radix.h        |  2 +
- arch/powerpc/include/asm/cacheflush.h             |  1 -
- arch/powerpc/include/asm/cmpxchg.h                |  3 +-
- arch/powerpc/include/asm/code-patching.h          |  1 +
- arch/powerpc/include/asm/cputable.h               |  3 +-
- arch/powerpc/include/asm/cputime.h                |  1 -
- arch/powerpc/include/asm/dbell.h                  |  2 +-
- arch/powerpc/include/asm/dcr-native.h             |  1 +
- arch/powerpc/include/asm/debug.h                  |  1 -
- arch/powerpc/include/asm/dt_cpu_ftrs.h            |  2 -
- arch/powerpc/include/asm/exception-64s.h          |  2 +
- arch/powerpc/include/asm/feature-fixups.h         |  2 +
- arch/powerpc/include/asm/firmware.h               |  3 +-
- arch/powerpc/include/asm/fixmap.h                 |  2 -
- arch/powerpc/include/asm/futex.h                  |  2 +-
- arch/powerpc/include/asm/hw_breakpoint.h          |  1 +
- arch/powerpc/include/asm/iommu.h                  |  1 +
- arch/powerpc/include/asm/jump_label.h             |  2 +-
- arch/powerpc/include/asm/kvm_booke_hv_asm.h       |  2 +
- arch/powerpc/include/asm/mmu-44x.h                | 11 ++--
- arch/powerpc/include/asm/mmu.h                    |  3 +-
- arch/powerpc/include/asm/nohash/32/pgtable.h      |  7 +--
- arch/powerpc/include/asm/nohash/64/pgtable.h      | 19 ++-----
- arch/powerpc/include/asm/page.h                   |  3 +-
- arch/powerpc/include/asm/page_64.h                |  2 +
- arch/powerpc/include/asm/ppc-opcode.h             |  3 +-
- arch/powerpc/include/asm/ppc_asm.h                |  1 +
- arch/powerpc/include/asm/processor.h              |  5 +-
- arch/powerpc/include/asm/ptrace.h                 |  1 +
- arch/powerpc/include/asm/reg-ftr.h                | 63 +++++++++++++++++++++++
- arch/powerpc/include/asm/reg.h                    | 36 +------------
- arch/powerpc/include/asm/reg_a2.h                 |  2 +
- arch/powerpc/include/asm/reg_fsl_emb.h            |  2 +
- arch/powerpc/include/asm/spinlock.h               |  3 +-
- arch/powerpc/include/asm/{synch.h => synch-ftr.h} | 24 ++-------
- arch/powerpc/include/asm/synch.h                  | 30 -----------
- arch/powerpc/include/asm/thread_info.h            |  3 +-
- arch/powerpc/include/asm/uaccess.h                |  1 -
- arch/powerpc/kernel/cpu_setup_6xx.S               |  1 +
- arch/powerpc/kernel/crash.c                       |  1 -
- arch/powerpc/kernel/entry_32.S                    |  2 +
- arch/powerpc/kernel/entry_64.S                    |  3 ++
- arch/powerpc/kernel/exceptions-64e.S              |  1 +
- arch/powerpc/kernel/exceptions-64s.S              |  2 +
- arch/powerpc/kernel/fpu.S                         |  2 +
- arch/powerpc/kernel/head_32.S                     |  1 +
- arch/powerpc/kernel/head_40x.S                    |  1 +
- arch/powerpc/kernel/head_64.S                     |  2 +
- arch/powerpc/kernel/head_8xx.S                    |  1 -
- arch/powerpc/kernel/head_fsl_booke.S              |  1 +
- arch/powerpc/kernel/idle_6xx.S                    |  1 +
- arch/powerpc/kernel/idle_book3s.S                 |  3 ++
- arch/powerpc/kernel/idle_e500.S                   |  1 +
- arch/powerpc/kernel/idle_power4.S                 |  1 +
- arch/powerpc/kernel/kvm_emul.S                    |  1 +
- arch/powerpc/kernel/l2cr_6xx.S                    |  1 +
- arch/powerpc/kernel/machine_kexec.c               |  1 +
- arch/powerpc/kernel/misc_32.S                     |  1 +
- arch/powerpc/kernel/misc_64.S                     |  1 +
- arch/powerpc/kernel/paca.c                        |  1 +
- arch/powerpc/kernel/ppc_save_regs.S               |  1 +
- arch/powerpc/kernel/process.c                     | 14 ++---
- arch/powerpc/kernel/prom.c                        |  1 -
- arch/powerpc/kernel/prom_init.c                   |  1 -
- arch/powerpc/kernel/setup_32.c                    |  2 +
- arch/powerpc/kernel/setup_64.c                    |  1 +
- arch/powerpc/kernel/swsusp_32.S                   |  1 +
- arch/powerpc/kernel/swsusp_asm64.S                |  1 +
- arch/powerpc/kernel/tm.S                          |  2 +
- arch/powerpc/kernel/vdso.c                        |  1 -
- arch/powerpc/kernel/vector.S                      |  1 +
- arch/powerpc/kvm/book3s_64_slb.S                  |  3 ++
- arch/powerpc/kvm/book3s_64_vio_hv.c               |  1 +
- arch/powerpc/kvm/book3s_hv_interrupts.S           |  2 +
- arch/powerpc/kvm/book3s_hv_rmhandlers.S           |  3 ++
- arch/powerpc/kvm/book3s_interrupts.S              |  1 +
- arch/powerpc/kvm/book3s_rmhandlers.S              |  2 +
- arch/powerpc/kvm/book3s_segment.S                 |  4 ++
- arch/powerpc/lib/copypage_64.S                    |  1 +
- arch/powerpc/lib/copyuser_64.S                    |  2 +
- arch/powerpc/lib/feature-fixups-test.S            |  2 +
- arch/powerpc/lib/hweight_64.S                     |  1 +
- arch/powerpc/lib/ldstfp.S                         |  1 +
- arch/powerpc/lib/locks.c                          |  1 -
- arch/powerpc/lib/memcpy_64.S                      |  2 +
- arch/powerpc/lib/string.S                         |  1 +
- arch/powerpc/mm/dump_hashpagetable.c              |  1 -
- arch/powerpc/mm/hash_low_32.S                     |  1 +
- arch/powerpc/mm/hash_native_64.c                  |  1 +
- arch/powerpc/mm/slb_low.S                         |  1 +
- arch/powerpc/mm/tlb_low_64e.S                     |  1 +
- arch/powerpc/mm/tlb_nohash_low.S                  |  2 +
- arch/powerpc/net/bpf_jit32.h                      |  1 +
- arch/powerpc/net/bpf_jit_asm.S                    |  1 +
- arch/powerpc/net/bpf_jit_asm64.S                  |  1 +
- arch/powerpc/net/bpf_jit_comp.c                   |  1 +
- arch/powerpc/net/bpf_jit_comp64.c                 |  1 +
- arch/powerpc/perf/req-gen/_begin.h                |  2 +
- arch/powerpc/perf/req-gen/perf.h                  |  1 +
- arch/powerpc/platforms/cell/cbe_thermal.c         |  1 +
- arch/powerpc/platforms/cell/spufs/sputrace.h      |  1 +
- arch/powerpc/platforms/powermac/cache.S           |  1 +
- arch/powerpc/platforms/powermac/sleep.S           |  1 +
- arch/powerpc/platforms/powernv/opal-wrappers.S    |  2 +
- arch/powerpc/platforms/powernv/vas.h              |  1 +
- arch/powerpc/platforms/pseries/hvCall.S           |  1 +
- arch/powerpc/platforms/pseries/mobility.c         |  1 +
- arch/powerpc/platforms/pseries/setup.c            |  1 +
- arch/powerpc/purgatory/trampoline.S               | 10 +---
- arch/powerpc/sysdev/cpm_common.c                  |  1 -
- arch/powerpc/xmon/spr_access.S                    |  1 +
- 122 files changed, 259 insertions(+), 193 deletions(-)
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/asm-405.h           | 19 +++++++++++++++++++
+ arch/powerpc/include/asm/asm-compat.h        | 13 -------------
+ arch/powerpc/include/asm/atomic.h            |  1 +
+ arch/powerpc/include/asm/bitops.h            |  1 +
+ arch/powerpc/include/asm/book3s/32/pgtable.h |  2 --
+ arch/powerpc/include/asm/cmpxchg.h           |  1 +
+ arch/powerpc/include/asm/futex.h             |  1 +
+ arch/powerpc/include/asm/nohash/32/pgtable.h |  1 +
+ arch/powerpc/include/asm/spinlock.h          |  1 +
+ arch/powerpc/kernel/entry_32.S               |  1 +
+ arch/powerpc/kernel/head_40x.S               |  1 +
+ 11 files changed, 27 insertions(+), 15 deletions(-)
  create mode 100644 arch/powerpc/include/asm/asm-405.h
- create mode 100644 arch/powerpc/include/asm/asm-const.h
- create mode 100644 arch/powerpc/include/asm/reg-ftr.h
- copy arch/powerpc/include/asm/{synch.h => synch-ftr.h} (63%)
 
+diff --git a/arch/powerpc/include/asm/asm-405.h b/arch/powerpc/include/asm/asm-405.h
+new file mode 100644
+index 000000000000..7270d3ae7c8e
+--- /dev/null
++++ b/arch/powerpc/include/asm/asm-405.h
+@@ -0,0 +1,19 @@
++#ifndef _ASM_POWERPC_ASM_405_H
++#define _ASM_POWERPC_ASM_405_H
++
++#include <asm/asm-const.h>
++
++#ifdef __KERNEL__
++#ifdef CONFIG_IBM405_ERR77
++/* Erratum #77 on the 405 means we need a sync or dcbt before every
++ * stwcx.  The old ATOMIC_SYNC_FIX covered some but not all of this.
++ */
++#define PPC405_ERR77(ra,rb)	stringify_in_c(dcbt	ra, rb;)
++#define	PPC405_ERR77_SYNC	stringify_in_c(sync;)
++#else
++#define PPC405_ERR77(ra,rb)
++#define PPC405_ERR77_SYNC
++#endif
++#endif
++
++#endif /* _ASM_POWERPC_ASM_405_H */
+diff --git a/arch/powerpc/include/asm/asm-compat.h b/arch/powerpc/include/asm/asm-compat.h
+index 7f2a7702596c..d2cf3593e987 100644
+--- a/arch/powerpc/include/asm/asm-compat.h
++++ b/arch/powerpc/include/asm/asm-compat.h
+@@ -70,17 +70,4 @@
+ 
+ #endif
+ 
+-#ifdef __KERNEL__
+-#ifdef CONFIG_IBM405_ERR77
+-/* Erratum #77 on the 405 means we need a sync or dcbt before every
+- * stwcx.  The old ATOMIC_SYNC_FIX covered some but not all of this.
+- */
+-#define PPC405_ERR77(ra,rb)	stringify_in_c(dcbt	ra, rb;)
+-#define	PPC405_ERR77_SYNC	stringify_in_c(sync;)
+-#else
+-#define PPC405_ERR77(ra,rb)
+-#define PPC405_ERR77_SYNC
+-#endif
+-#endif
+-
+ #endif /* _ASM_POWERPC_ASM_COMPAT_H */
+diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
+index 682b3e6a1e21..cbdb0b7e60a3 100644
+--- a/arch/powerpc/include/asm/atomic.h
++++ b/arch/powerpc/include/asm/atomic.h
+@@ -10,6 +10,7 @@
+ #include <linux/types.h>
+ #include <asm/cmpxchg.h>
+ #include <asm/barrier.h>
++#include <asm/asm-405.h>
+ 
+ #define ATOMIC_INIT(i)		{ (i) }
+ 
+diff --git a/arch/powerpc/include/asm/bitops.h b/arch/powerpc/include/asm/bitops.h
+index b750ffef83c7..ff71566dadee 100644
+--- a/arch/powerpc/include/asm/bitops.h
++++ b/arch/powerpc/include/asm/bitops.h
+@@ -45,6 +45,7 @@
+ #include <linux/compiler.h>
+ #include <asm/asm-compat.h>
+ #include <asm/synch.h>
++#include <asm/asm-405.h>
+ 
+ /* PPC bit number conversion */
+ #define PPC_BITLSHIFT(be)	(BITS_PER_LONG - 1 - (be))
+diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
+index c615abdce119..231699ef6ebe 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
+@@ -164,7 +164,6 @@ static inline unsigned long pte_update(pte_t *p,
+ 1:	lwarx	%0,0,%3\n\
+ 	andc	%1,%0,%4\n\
+ 	or	%1,%1,%5\n"
+-	PPC405_ERR77(0,%3)
+ "	stwcx.	%1,0,%3\n\
+ 	bne-	1b"
+ 	: "=&r" (old), "=&r" (tmp), "=m" (*p)
+@@ -186,7 +185,6 @@ static inline unsigned long long pte_update(pte_t *p,
+ 	lwzx	%0,0,%3\n\
+ 	andc	%1,%L0,%5\n\
+ 	or	%1,%1,%6\n"
+-	PPC405_ERR77(0,%3)
+ "	stwcx.	%1,0,%4\n\
+ 	bne-	1b"
+ 	: "=&r" (old), "=&r" (tmp), "=m" (*p)
+diff --git a/arch/powerpc/include/asm/cmpxchg.h b/arch/powerpc/include/asm/cmpxchg.h
+index 9b001f1f6b32..67ec1073ac97 100644
+--- a/arch/powerpc/include/asm/cmpxchg.h
++++ b/arch/powerpc/include/asm/cmpxchg.h
+@@ -7,6 +7,7 @@
+ #include <asm/synch.h>
+ #include <asm/asm-compat.h>
+ #include <linux/bug.h>
++#include <asm/asm-405.h>
+ 
+ #ifdef __BIG_ENDIAN
+ #define BITOFF_CAL(size, off)	((sizeof(u32) - size - off) * BITS_PER_BYTE)
+diff --git a/arch/powerpc/include/asm/futex.h b/arch/powerpc/include/asm/futex.h
+index 1a944c18c539..76c8648d0fa8 100644
+--- a/arch/powerpc/include/asm/futex.h
++++ b/arch/powerpc/include/asm/futex.h
+@@ -9,6 +9,7 @@
+ #include <asm/errno.h>
+ #include <asm/synch.h>
+ #include <asm/asm-compat.h>
++#include <asm/asm-405.h>
+ 
+ #define __futex_atomic_op(insn, ret, oldval, uaddr, oparg) \
+   __asm__ __volatile ( \
+diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
+index 987a658b18e1..62e48ecb9dcc 100644
+--- a/arch/powerpc/include/asm/nohash/32/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
+@@ -9,6 +9,7 @@
+ #include <linux/sched.h>
+ #include <linux/threads.h>
+ #include <asm/io.h>			/* For sub-arch specific PPC_PIN_SIZE */
++#include <asm/asm-405.h>
+ 
+ extern unsigned long ioremap_bot;
+ 
+diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/asm/spinlock.h
+index 72dc4ddc2972..7ec38f4ee927 100644
+--- a/arch/powerpc/include/asm/spinlock.h
++++ b/arch/powerpc/include/asm/spinlock.h
+@@ -27,6 +27,7 @@
+ #include <asm/asm-compat.h>
+ #include <asm/synch.h>
+ #include <asm/ppc-opcode.h>
++#include <asm/asm-405.h>
+ 
+ #ifdef CONFIG_PPC64
+ /* use 0x800000yy when locked, where yy == CPU number */
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index eb8d01bae8c6..20315b948f21 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -33,6 +33,7 @@
+ #include <asm/unistd.h>
+ #include <asm/ptrace.h>
+ #include <asm/export.h>
++#include <asm/asm-405.h>
+ 
+ /*
+  * MSR_KERNEL is > 0x10000 on 4xx/Book-E since it include MSR_CE.
+diff --git a/arch/powerpc/kernel/head_40x.S b/arch/powerpc/kernel/head_40x.S
+index 41374a468d1c..b19d78410511 100644
+--- a/arch/powerpc/kernel/head_40x.S
++++ b/arch/powerpc/kernel/head_40x.S
+@@ -42,6 +42,7 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/ptrace.h>
+ #include <asm/export.h>
++#include <asm/asm-405.h>
+ 
+ /* As with the other PowerPC ports, it is expected that when code
+  * execution begins here, the following registers contain valid, yet
 -- 
 2.13.3
