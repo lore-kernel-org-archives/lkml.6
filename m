@@ -1,81 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752673AbeFAO0V (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:26:21 -0400
-Received: from muru.com ([72.249.23.125]:45672 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751902AbeFAO0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:26:17 -0400
-Date: Fri, 1 Jun 2018 07:26:13 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>, Rob Herring <robh@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, bcousson@baylibre.com, paul@pwsan.com
-Subject: Re: [PATCH v2 3/6] clk: ti: dra7: Add clkctrl clock data for the
- mcan clocks
-Message-ID: <20180601142613.GU5705@atomide.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-4-faiz_abbas@ti.com>
- <20180531040350.GA25132@rob-hp-laptop>
- <e7e3ade1-76b7-f216-ece5-bd64a55cede6@ti.com>
- <678ef467-a235-91db-8bae-f249ad98eac8@ti.com>
- <d7532c7a-d2ae-5cbf-cfd0-c347b975ed6b@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d7532c7a-d2ae-5cbf-cfd0-c347b975ed6b@ti.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1752141AbeFAOZ0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:25:26 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:42596 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751378AbeFAOZD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:25:03 -0400
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com
+Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v3 03/10] PCI: Update xxx_pcie_ep_raise_irq() and pci_epc_raise_irq() signatures
+Date: Fri,  1 Jun 2018 15:24:45 +0100
+Message-Id: <b4eba65e4ae7b8d15a5770a31d6a339de518cea7.1527862777.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+References: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
+References: <cover.1527862777.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Faiz Abbas <faiz_abbas@ti.com> [180601 06:49]:
-> Hi,
-> 
-> On Thursday 31 May 2018 06:59 PM, Tero Kristo wrote:
-> > On 31/05/18 13:14, Faiz Abbas wrote:
-> >> Hi,
-> >>
-> >> On Thursday 31 May 2018 09:33 AM, Rob Herring wrote:
-> >>> On Wed, May 30, 2018 at 07:41:30PM +0530, Faiz Abbas wrote:
-> >>>> Add clkctrl data for the m_can clocks and register it within the
-> >> ...
-> >>>>   diff --git a/include/dt-bindings/clock/dra7.h
-> >>>> b/include/dt-bindings/clock/dra7.h
-> >>>> index 5e1061b15aed..d7549c57cac3 100644
-> >>>> --- a/include/dt-bindings/clock/dra7.h
-> >>>> +++ b/include/dt-bindings/clock/dra7.h
-> >>>> @@ -168,5 +168,6 @@
-> >>>>   #define DRA7_COUNTER_32K_CLKCTRL    DRA7_CLKCTRL_INDEX(0x50)
-> >>>>   #define DRA7_UART10_CLKCTRL    DRA7_CLKCTRL_INDEX(0x80)
-> >>>>   #define DRA7_DCAN1_CLKCTRL    DRA7_CLKCTRL_INDEX(0x88)
-> >>>> +#define DRA7_ADC_CLKCTRL    DRA7_CLKCTRL_INDEX(0xa0)
-> >>>
-> >>> ADC and mcan are the same thing?
-> >>>
-> >>
-> >> The register to control MCAN clocks is called ADC_CLKCTRL, Yes.
-> > 
-> > Is there any reason for this or is that just a documentation bug?
-> > 
-> 
-> Looks like they meant to have an ADC in dra74 or dra72 but decided
-> against it and then many years later used the same registers for MCAN
-> instead. You can see ADC_CLKCTRL exists in dra72 TRM but is explicitly
-> disabled.
-> 
-> http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf pg:1524
+Change {cdns, dra7xx, artpec6}_pcie_ep_raise_irq() and pci_epc_raise_irq()
+signature, namely the interrupt_num variable type from u8 to u16 to
+accommodate 2048 maximum MSI-X interrupts.
 
-How about make add also something like to dra7.h:
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Alan Douglas <adouglas@cadence.com>
+---
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+Change v2->v3:
+ - Move into here the pci_epc_raise_irq() signature change from patch
+file #1.
+ - Move into here the {dra7xx, artpec6}_pcie_ep_raise_irq() signature
+changes from patch file #2.
 
-#define DRA7_MCAN_CLKCTRL DRA7_ADC_CLKCTRL
+ drivers/pci/cadence/pcie-cadence-ep.c | 3 ++-
+ drivers/pci/dwc/pci-dra7xx.c          | 2 +-
+ drivers/pci/dwc/pcie-artpec6.c        | 2 +-
+ drivers/pci/endpoint/pci-epc-core.c   | 8 ++++----
+ include/linux/pci-epc.h               | 6 +++---
+ 5 files changed, 11 insertions(+), 10 deletions(-)
 
-And you can add a comment to the dts file to avoid people
-getting confused with this constantly.
-
-Regards,
-
-Tony
+diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
+index 3d8283e..6b713ca 100644
+--- a/drivers/pci/cadence/pcie-cadence-ep.c
++++ b/drivers/pci/cadence/pcie-cadence-ep.c
+@@ -363,7 +363,8 @@ static int cdns_pcie_ep_send_msi_irq(struct cdns_pcie_ep *ep, u8 fn,
+ }
+ 
+ static int cdns_pcie_ep_raise_irq(struct pci_epc *epc, u8 fn,
+-				  enum pci_epc_irq_type type, u8 interrupt_num)
++				  enum pci_epc_irq_type type,
++				  u16 interrupt_num)
+ {
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+ 
+diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+index f688204..bdf948b 100644
+--- a/drivers/pci/dwc/pci-dra7xx.c
++++ b/drivers/pci/dwc/pci-dra7xx.c
+@@ -370,7 +370,7 @@ static void dra7xx_pcie_raise_msi_irq(struct dra7xx_pcie *dra7xx,
+ }
+ 
+ static int dra7xx_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+-				 enum pci_epc_irq_type type, u8 interrupt_num)
++				 enum pci_epc_irq_type type, u16 interrupt_num)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+ 	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
+diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-artpec6.c
+index 321b56c..9a2474b 100644
+--- a/drivers/pci/dwc/pcie-artpec6.c
++++ b/drivers/pci/dwc/pcie-artpec6.c
+@@ -428,7 +428,7 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
+ }
+ 
+ static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+-				  enum pci_epc_irq_type type, u8 interrupt_num)
++				  enum pci_epc_irq_type type, u16 interrupt_num)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+ 
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index 7d77bd0..c72e656 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -131,13 +131,13 @@ EXPORT_SYMBOL_GPL(pci_epc_start);
+  * pci_epc_raise_irq() - interrupt the host system
+  * @epc: the EPC device which has to interrupt the host
+  * @func_no: the endpoint function number in the EPC device
+- * @type: specify the type of interrupt; legacy or MSI
+- * @interrupt_num: the MSI interrupt number
++ * @type: specify the type of interrupt; legacy, MSI or MSI-X
++ * @interrupt_num: the MSI or MSI-X interrupt number
+  *
+- * Invoke to raise an MSI or legacy interrupt
++ * Invoke to raise an legacy, MSI or MSI-X interrupt
+  */
+ int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
+-		      enum pci_epc_irq_type type, u8 interrupt_num)
++		      enum pci_epc_irq_type type, u16 interrupt_num)
+ {
+ 	int ret;
+ 	unsigned long flags;
+diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+index 89f079f..bb2395b 100644
+--- a/include/linux/pci-epc.h
++++ b/include/linux/pci-epc.h
+@@ -35,7 +35,7 @@ enum pci_epc_irq_type {
+  *	     MSI-X capability register
+  * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
+  *	     from the MSI-X capability register
+- * @raise_irq: ops to raise a legacy or MSI interrupt
++ * @raise_irq: ops to raise a legacy, MSI or MSI-X interrupt
+  * @start: ops to start the PCI link
+  * @stop: ops to stop the PCI link
+  * @owner: the module owner containing the ops
+@@ -56,7 +56,7 @@ struct pci_epc_ops {
+ 	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
+ 	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
+ 	int	(*raise_irq)(struct pci_epc *epc, u8 func_no,
+-			     enum pci_epc_irq_type type, u8 interrupt_num);
++			     enum pci_epc_irq_type type, u16 interrupt_num);
+ 	int	(*start)(struct pci_epc *epc);
+ 	void	(*stop)(struct pci_epc *epc);
+ 	struct module *owner;
+@@ -154,7 +154,7 @@ int pci_epc_get_msi(struct pci_epc *epc, u8 func_no);
+ int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts);
+ int pci_epc_get_msix(struct pci_epc *epc, u8 func_no);
+ int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
+-		      enum pci_epc_irq_type type, u8 interrupt_num);
++		      enum pci_epc_irq_type type, u16 interrupt_num);
+ int pci_epc_start(struct pci_epc *epc);
+ void pci_epc_stop(struct pci_epc *epc);
+ struct pci_epc *pci_epc_get(const char *epc_name);
+-- 
+2.7.4
