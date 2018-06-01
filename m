@@ -1,98 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751758AbeFAJdX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:33:23 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36597 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751769AbeFAJdQ (ORCPT
+        id S1751871AbeFAJeO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 05:34:14 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39557 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751655AbeFAJeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:33:16 -0400
-Date: Fri, 1 Jun 2018 11:33:11 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] gnss: add new GNSS subsystem
-Message-ID: <20180601093311.GA31639@amd>
-References: <20180601082259.17563-1-johan@kernel.org>
+        Fri, 1 Jun 2018 05:34:08 -0400
+X-Google-Smtp-Source: ADUXVKISf3IbcsaQalo4iwapSljgdoxPqJxE2oGzJaLfG5MZcPYE+BMmISwoELy/jQLhUFE4UmqH8g==
+Date: Fri, 1 Jun 2018 18:34:02 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Vaneet Narang <v.narang@samsung.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Maninder Singh <maninder1.s@samsung.com>,
+        "sergey.senozhatsky@gmail.com" <sergey.senozhatsky@gmail.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
+        PANKAJ MISHRA <pankaj.m@samsung.com>
+Subject: Re: [PATCH 2/2] printk: make sure to print log on console.
+Message-ID: <20180601093402.GB1841@jagdpanzerIV>
+References: <20180601044050.GA5687@jagdpanzerIV>
+ <20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e~zs5h59tMh2250222502epcas5p2S@epcas5p2.samsung.com>
+ <20180531105215.GF477@jagdpanzerIV>
+ <20180531122112.bfeqtmwpl2qc67a5@pathway.suse.cz>
+ <CGME20180531102246epcas5p2f1cbc6ff217172e12e2f78bb88eb4a7e@epcms5p5>
+ <20180601084236epcms5p5063cd250524f105a334d8d553302ab51@epcms5p5>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180601082259.17563-1-johan@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180601084236epcms5p5063cd250524f105a334d8d553302ab51@epcms5p5>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---GvXjxJ+pjyke8COw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On (06/01/18 14:12), Vaneet Narang wrote:
+> > CPU0                            CPU1
+> >
+> > set console verbose
+> >
+> > dump_backtrace()
+> > {
+> >  // for (;;)  print frames
+> >  printk("%pS\n", frame0);
+> >  printk("%pS\n", frame1);
+> >  printk("%pS\n", frame2);
+> >  printk("%pS\n", frame3);
+> >  ...                            console_loglevel = CONSOLE_LOGLEVEL_SILENT;
+> >  printk("%pS\n", frame12);
+> >  printk("%pS\n", frame13);
+> > }
+> >
+> 
+> This is not printk issue, its printk usage issue. User need to handle this part using some protection.
+> 
+> What we highlighted is issue related to printk, Where usage is correct 
+> but still printk can miss some logs due to printk design of asynchronous printing.
 
-Hi!
+Yeah, I understand your example from the commit message. What I said was
+"the patch does not fully address the problem". One way or another we still
+can miss logs due to the very same problem: either console_loglevel
+manipulation on another CPU, or printk_safe(), etc. May be there other
+scenarios that are broken.
 
-> This series adds a new subsystem for GNSS receivers (e.g. GPS
-> receivers).
->=20
-> While GNSS receivers are typically accessed using a UART interface they
-> often also support other I/O interfaces such as I2C, SPI and USB, while
-> yet other devices use iomem or even some form of remote-processor
-> messaging (rpmsg).
->=20
-> The new GNSS subsystem abstracts the underlying interface and provides a
-> new "gnss" class type, which exposes a character-device interface (e.g.
-> /dev/gnss0) to user space. This allows GNSS receivers to have a
-> representation in the Linux device model, something which is important
-> not least for power management purposes and which also allows for easy
-> detection and identification of GNSS devices.
->=20
-> Note that the character-device interface provides raw access to whatever
-> protocol the receiver is (currently) using, such as NMEA 0183, UBX or
-> SiRF Binary. These protocols are expected to be continued to be handled
-> by user space for the time being, even if some hybrid solutions are also
-> conceivable (e.g. to have kernel drivers issue management commands).
+So if we are going to apply the patch [I don't have real objections, and
+Petr seems to be fine], then I'd probably ask for a better commit messages.
+Namely, I really want to document cases that are not addressed and are
+still known to be broken.
 
-So.. while you did good work on serial power management, this is
-grossly misnamed. There's nothing GNSS specific in the code, and you
-are not presenting consistent interface to the userland.
-
-This is _not_ GNSS subsystem. This is serial power management
-subsystem, or something like that. GPS/GNSS subsystem will need to be
-built on top of this.
-
-This will never handle devices like Nokia N900, where GPS is connected
-over netlink.
-
-> Another possible extension is to add generic 1PPS support.
-
-And there's nothing GNSS specific in the patches.
-
-Best regards,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---GvXjxJ+pjyke8COw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsREtcACgkQMOfwapXb+vLGZQCfXV8ML69UM59a7/UJ8YKGzNBp
-3C8Aniq+RbMLh3WlvmdTTjzU8spc54ps
-=tkXS
------END PGP SIGNATURE-----
-
---GvXjxJ+pjyke8COw--
+	-ss
