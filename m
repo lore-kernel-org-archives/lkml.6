@@ -1,62 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751593AbeFAOBo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:01:44 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33474 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbeFAOBm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:01:42 -0400
-X-Google-Smtp-Source: ADUXVKKdYH8PLPF25dVtDK6ArjLYSFPFr1xrvQHUXYQJcnrBDE8X0mNcU0ePlRwxVfhItHqoq042wQ==
-Subject: Re: [GIT PULL v2 00/18] lightnvm updates for 4.18
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        javier@cnexlabs.com, igor.j.konopko@intel.com,
-        marcin.dziegielewski@intel.com
-References: <20180601130432.30866-1-mb@lightnvm.io>
- <20180601134527.GA21226@kernel.dk>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <d1a0c3c1-9bb7-2dd0-ac4e-d520baebfe2c@lightnvm.io>
-Date: Fri, 1 Jun 2018 16:01:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1751423AbeFAOHI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:07:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60419 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750850AbeFAOHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:07:05 -0400
+Date: Fri, 1 Jun 2018 16:07:01 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
+        keescook@chromium.org, riel@redhat.com, tglx@linutronix.de,
+        kirill.shutemov@linux.intel.com, marcos.souza.org@gmail.com,
+        hoeun.ryu@gmail.com, pasha.tatashin@oracle.com, gs051095@gmail.com,
+        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, Balbir Singh <balbir@linux.vnet.ibm.com>,
+        Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 0/2] mm->owner to mm->memcg fixes
+Message-ID: <20180601140701.GF15278@dhcp22.suse.cz>
+References: <20180504162209.GB26573@redhat.com>
+ <871serfk77.fsf@xmission.com>
+ <87tvrncoyc.fsf_-_@xmission.com>
+ <20180510121418.GD5325@dhcp22.suse.cz>
+ <20180522125757.GL20020@dhcp22.suse.cz>
+ <87wovu889o.fsf@xmission.com>
+ <20180524111002.GB20441@dhcp22.suse.cz>
+ <20180524141635.c99b7025a73a709e179f92a2@linux-foundation.org>
+ <20180530121721.GD27180@dhcp22.suse.cz>
+ <87wovjacrh.fsf@xmission.com>
 MIME-Version: 1.0
-In-Reply-To: <20180601134527.GA21226@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wovjacrh.fsf@xmission.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/01/2018 03:45 PM, Jens Axboe wrote:
-> On Fri, Jun 01 2018, Matias Bjørling wrote:
->> Hi Jens,
->>
->> Please pick up the following patches.
->>
->>   - Hans reworked the write error recovery path in pblk.
->>   - Igor added extra error handling for lines, and fixed a bug in the
->>     pblk ringbuffer during GC.
->>   - Javier refactored the pblk code a bit, added extra error
->>     handling, and added checks to verify that data returned from drive
->>     is appropriate.
->>   - Marcin added some extra logic to manage the write buffer. Now
->>     MW_CUNITS can be zero and the size of write buffer can be changed
->>     at module load time.
+On Thu 31-05-18 13:41:38, Eric W. Biederman wrote:
+> Michal Hocko <mhocko@kernel.org> writes:
 > 
-> I applied 1-11, 12 fails:
+> > On Thu 24-05-18 14:16:35, Andrew Morton wrote:
+> >> On Thu, 24 May 2018 13:10:02 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+> >> 
+> >> > I would really prefer and appreciate a repost with all the fixes folded
+> >> > in.
+> >> 
+> >> [1/2]
+> >
+> > Thanks Andrew and sorry it took so long! This seems to be missing the
+> > fix for the issue I've mentioned in http://lkml.kernel.org/r/20180510121838.GE5325@dhcp22.suse.cz
+> > and Eric wanted to handle by http://lkml.kernel.org/r/87wovu889o.fsf@xmission.com.
+> > I do not think that this fix is really correct one though. I will
+> > comment in a reply to that email.
 > 
-> checking file drivers/lightnvm/pblk-init.c
-> checking file drivers/lightnvm/pblk-rb.c
-> checking file drivers/lightnvm/pblk-recovery.c
-> Reversed (or previously applied) patch detected!  Assume -R? [n] ^C
+> Agreed.  That was not a correct fix to the possible infinite loop in
+> get_mem_cgroup_from_mm.   Which in net leaves all of this broken and
+> not ready to be merged.
 > 
-> I will push out what I have, please resend the rest of the series
-> against for-4.18/block.
+> > In any case I really think this should better be reposted in one patch
+> > series and restart the discussion. I strongly suggest revisiting my
+> > previous attempt http://lkml.kernel.org/r/1436358472-29137-8-git-send-email-mhocko@kernel.org
+> > including the follow up discussion regarding the unfortunate CLONE_VM
+> > outside of thread group case and potential solution for that.
 > 
-> BTW, you had several "lightnvn" typos in the subject line, I've fixed
-> those up. Didn't check the remainder.
-> 
+> With my fix for get_mem_cgroup_from_mm falling flat that limits our
+> possible future directions:
+> - Make memory cgroups honest and require all tasks of an mm to be in the
+>   same memory cgroup.  [BEST]
 
-Thanks Jens. I'll fix it up.
+Agreed. This should be possible with the multi-pid migration support.
+Just do not allow to migrate if the set of pids doesn't contain all
+processes sharing the same mm. We can add a special MMF_ flag for mm
+that is generated by CLONE_VM without CLONE_THREAD to make the normal
+path fast.
+
+Or we can simply fail the migration for this odd cases and implement it
+only if somebody actually complains. The flag would be useful for other
+cases (e.g. in the oom path where we have to handle these tasks as well).
+
+[...]
+> >> -	/* We move charges only when we move a owner of the mm */
+> >> -	if (mm->owner == p) {
+> c>> +
+> >> +	/* We move charges except for creative uses of CLONE_VM */
+> >> +	if (mm->memcg == from) {
+> >
+> > I must be missing something here but how do you prevent those cases?
+> > AFAICS processes sharing the mm will simply allow to migrate.
+> 
+> The mm will only migrate once per set of tasks.  A task that does not
+> migrate with the mm will not have mm->memcg == from.  Which is all I was
+> referring to.  Perhaps I did not say that well.
+
+OK, I see now (I guess). I would probably just drop the comment. The
+code is much more clear when dealing with the memcg than a task...
+
+> >>  		VM_BUG_ON(mc.from);
+> >>  		VM_BUG_ON(mc.to);
+> >>  		VM_BUG_ON(mc.precharge);
+> >
+> > Other than that the patch makes sense to me.
+> 
+> I will take a bit and respin this.  Because of algorithmic bug-fix
+> nature of where this started I want to avoid depending on fixing the
+> semantics.  With my third option for fixing get_mem_cgroup_from_mm I see
+> how to do that now.  Then I will include a separate patch to fix the
+> semantics.  
+
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
