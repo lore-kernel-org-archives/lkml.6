@@ -1,51 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753337AbeFAQ7V (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:59:21 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:58112 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752888AbeFAQ7S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:59:18 -0400
-Date: Sat, 2 Jun 2018 00:59:03 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        tgraf@suug.ch, manfred@colorfullife.com, mhocko@kernel.org,
-        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 1/5] lib/rhashtable: convert param sanitations to WARN_ON
-Message-ID: <20180601165903.bd3jonbv2jrfcevi@gondor.apana.org.au>
-References: <20180601160125.30031-1-dave@stgolabs.net>
- <20180601160125.30031-2-dave@stgolabs.net>
- <20180601160944.ji2gsp3pyunlj476@gondor.apana.org.au>
- <20180601165347.kvruerdm3gu57ifv@linux-r8p5>
+        id S1753054AbeFARBP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 13:01:15 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46582 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752107AbeFARBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 13:01:14 -0400
+From: Salil Mehta <salil.mehta@huawei.com>
+To: <davem@davemloft.net>
+CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, Xi Wang <wangxi11@huawei.com>
+Subject: [PATCH net] net: hns: Fix the process of adding broadcast addresses to tcam
+Date: Fri, 1 Jun 2018 18:00:11 +0100
+Message-ID: <20180601170011.22700-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180601165347.kvruerdm3gu57ifv@linux-r8p5>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 09:53:47AM -0700, Davidlohr Bueso wrote:
->
-> Curious, are these users setting up the param structure dynamically
-> or something that they can pass along bogus values?
-> 
-> If that's the case then yes, I definitely agree.
+From: Xi Wang <wangxi11@huawei.com>
 
-It's just a quality of implementation issue.  This is a generic API.
-Sure for early-boot users like yours it makes sense to just WARN_ON
-rather than deal with the messy hash table allocation failure.
+If the multicast mask value in device tree is configured not all
+0xff, the broadcast mac will be lost from tcam table after the
+execution of command 'ifconfig up'. The address is appended by
+hns_ae_start, but will be clear later by hns_nic_set_rx_mode
+called in dev_open process.
 
-But for a driver author writing some kernel module it isn't nice
-to WARN_ON and then crash on a NULL-pointer dereference when we
-can cleanly fail the table init.
+This patch fixed it by not use the multicast mask when add a
+broadcast address.
 
-Cheers,
+Fixes: b5996f11ea54 ("net: add Hisilicon Network Subsystem basic ethernet support")
+Signed-off-by: Xi Wang <wangxi11@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c | 23 +++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+index e0bc79e..a09a071c 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+@@ -1648,6 +1648,15 @@ int hns_dsaf_rm_mac_addr(
+ 				      mac_entry->addr);
+ }
+ 
++static void hns_dsaf_setup_mc_mask(struct dsaf_device *dsaf_dev,
++						u8 port_num, u8 *mask, u8 *addr)
++{
++	if (MAC_IS_BROADCAST(addr))
++		memset(mask, 0xff, ETH_ALEN);
++	else
++		memcpy(mask, dsaf_dev->mac_cb[port_num]->mc_mask, ETH_ALEN);
++}
++
+ static void hns_dsaf_mc_mask_bit_clear(char *dst, const char *src)
+ {
+ 	u16 *a = (u16 *)dst;
+@@ -1676,7 +1685,6 @@ int hns_dsaf_add_mac_mc_port(struct dsaf_device *dsaf_dev,
+ 	struct dsaf_drv_tbl_tcam_key tmp_mac_key;
+ 	struct dsaf_tbl_tcam_data tcam_data;
+ 	u8 mc_addr[ETH_ALEN];
+-	u8 *mc_mask;
+ 	int mskid;
+ 
+ 	/*chechk mac addr */
+@@ -1687,9 +1695,12 @@ int hns_dsaf_add_mac_mc_port(struct dsaf_device *dsaf_dev,
+ 	}
+ 
+ 	ether_addr_copy(mc_addr, mac_entry->addr);
+-	mc_mask = dsaf_dev->mac_cb[mac_entry->in_port_num]->mc_mask;
+ 	if (!AE_IS_VER1(dsaf_dev->dsaf_ver)) {
++		u8 mc_mask[ETH_ALEN];
++
+ 		/* prepare for key data setting */
++		hns_dsaf_setup_mc_mask(dsaf_dev, mac_entry->in_port_num,
++			mc_mask, mac_entry->addr);
+ 		hns_dsaf_mc_mask_bit_clear(mc_addr, mc_mask);
+ 
+ 		/* config key mask */
+@@ -1844,7 +1855,6 @@ int hns_dsaf_del_mac_mc_port(struct dsaf_device *dsaf_dev,
+ 	struct dsaf_drv_tbl_tcam_key mask_key, tmp_mac_key;
+ 	struct dsaf_tbl_tcam_data *pmask_key = NULL;
+ 	u8 mc_addr[ETH_ALEN];
+-	u8 *mc_mask;
+ 
+ 	if (!(void *)mac_entry) {
+ 		dev_err(dsaf_dev->dev,
+@@ -1861,14 +1871,17 @@ int hns_dsaf_del_mac_mc_port(struct dsaf_device *dsaf_dev,
+ 
+ 	/* always mask vlan_id field */
+ 	ether_addr_copy(mc_addr, mac_entry->addr);
+-	mc_mask = dsaf_dev->mac_cb[mac_entry->in_port_num]->mc_mask;
+ 
+ 	if (!AE_IS_VER1(dsaf_dev->dsaf_ver)) {
++		u8 mc_mask[ETH_ALEN];
++
+ 		/* prepare for key data setting */
++		hns_dsaf_setup_mc_mask(dsaf_dev, mac_entry->in_port_num,
++			mc_mask, mac_entry->addr);
+ 		hns_dsaf_mc_mask_bit_clear(mc_addr, mc_mask);
+ 
+ 		/* config key mask */
+-		hns_dsaf_set_mac_key(dsaf_dev, &mask_key, 0x00, 0xff, mc_addr);
++		hns_dsaf_set_mac_key(dsaf_dev, &mask_key, 0x00, 0xff, mc_mask);
+ 
+ 		mask_key.high.val = le32_to_cpu(mask_key.high.val);
+ 		mask_key.low.val = le32_to_cpu(mask_key.low.val);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.7.4
