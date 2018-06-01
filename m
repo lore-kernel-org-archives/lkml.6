@@ -1,144 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751841AbeFALHa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:07:30 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:41884 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751417AbeFALHZ (ORCPT
+        id S1751885AbeFALHy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:07:54 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44297 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751346AbeFALHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:07:25 -0400
-Subject: Re: [PATCH v2 4/7] PCI: dwc: Rework MSI callbacks handler
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "adouglas@cadence.com" <adouglas@cadence.com>,
-        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
-CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
- <9558d4fcd6f888599e3b70133f1f242c7a6664ee.1526576613.git.gustavo.pimentel@synopsys.com>
- <ba3df388-9ec1-fe87-e575-0eddc5a565b7@ti.com>
-From: Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-Message-ID: <8e4a3cf2-51e2-58b8-3745-06dde8f8f7c1@synopsys.com>
-Date: Fri, 1 Jun 2018 12:05:35 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <ba3df388-9ec1-fe87-e575-0eddc5a565b7@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.25.102]
+        Fri, 1 Jun 2018 07:07:41 -0400
+X-Google-Smtp-Source: ADUXVKILto3W4taPrZ36f4geFBZIzazv62mYnVHxyIM++IlW5sIrVmcRz88oaBf67189K0/dUvahiA==
+From: Bastian Germann <bastiangermann@fishpost.de>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Bastian Germann <bastiangermann@fishpost.de>,
+        Luca Tettamanti <kronos.it@gmail.com>,
+        Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] hwmon: (asus_atk0110) Replace deprecated device register call
+Date: Fri,  1 Jun 2018 13:07:17 +0200
+Message-Id: <20180601110719.3281-1-bastiangermann@fishpost.de>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <CAHp75VcZqpQ7qM2aBzSsqa+xYOdevZkWy=h+u8=nhdP2foyH4g@mail.gmail.com>
+References: <CAHp75VcZqpQ7qM2aBzSsqa+xYOdevZkWy=h+u8=nhdP2foyH4g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/05/2018 11:54, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Thursday 17 May 2018 10:39 PM, Gustavo Pimentel wrote:
->> Remove duplicate defines located on pcie-designware.h file already
->> available on /include/uapi/linux/pci-regs.h file.
->>
->> Add pci_epc_set_msi() maximum 32 interrupts validation.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->> Change v1->v2:
->>  - Nothing changed, just to follow the patch set version.
->>
->>  drivers/pci/dwc/pcie-designware-ep.c | 49 ++++++++++++++++++++++++------------
->>  drivers/pci/dwc/pcie-designware.h    | 11 --------
->>  drivers/pci/endpoint/pci-epc-core.c  |  3 ++-
->>  3 files changed, 35 insertions(+), 28 deletions(-)
->>
->> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
->> index e5f2377..a4baa0d 100644
->> --- a/drivers/pci/dwc/pcie-designware-ep.c
->> +++ b/drivers/pci/dwc/pcie-designware-ep.c
->> @@ -246,29 +246,38 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
->>  
->>  static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no)
->>  {
->> -	int val;
->>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
->>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->> +	u32 val, reg;
->> +
->> +	if (!ep->msi_cap)
-> 
-> Ah, msi_cap is used here.
->> +		return 0;
-> 
-> return -EINVAL.
+Make the asus_atk0110 driver use hwmon_device_register_with_groups instead
+of the deprecated hwmon_device_register.
+Construct the expected attribute_group array from the sensor list which
+contains all needed attributes.
+Remove the manual sysfs file creation and deletion that are now taken care
+of by the (un)register calls via the attribute_group array.
 
-Another copy & paste issue :)
+Signed-off-by: Bastian Germann <bastiangermann@fishpost.de>
+---
+ drivers/hwmon/asus_atk0110.c | 75 ++++++++++++------------------------
+ 1 file changed, 25 insertions(+), 50 deletions(-)
 
->>  
->> -	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
->> -	if (!(val & MSI_CAP_MSI_EN_MASK))
->> +	reg = ep->msi_cap + PCI_MSI_FLAGS;
->> +	val = dw_pcie_readw_dbi(pci, reg);
->> +	if (!(val & PCI_MSI_FLAGS_ENABLE))
->>  		return -EINVAL;
->>  
->> -	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
->> +	val = (val & PCI_MSI_FLAGS_QSIZE) >> 4;
->> +
->>  	return val;
->>  }
->>  
->> -static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
->> +static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
->>  {
->> -	int val;
->>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
->>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->> +	u32 val, reg;
->>  
->> -	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
->> -	val &= ~MSI_CAP_MMC_MASK;
->> -	val |= (encode_int << MSI_CAP_MMC_SHIFT) & MSI_CAP_MMC_MASK;
->> +	if (!ep->msi_cap)
->> +		return 0;
-> 
-> return -EINVAL.
-
-Another copy & paste issue :)
-
->> +
->> +	reg = ep->msi_cap + PCI_MSI_FLAGS;
->> +	val = dw_pcie_readw_dbi(pci, reg);
->> +	val &= ~PCI_MSI_FLAGS_QMASK;
->> +	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
->>  	dw_pcie_dbi_ro_wr_en(pci);
->> -	dw_pcie_writew_dbi(pci, MSI_MESSAGE_CONTROL, val);
->> +	dw_pcie_writew_dbi(pci, reg, val);
->>  	dw_pcie_dbi_ro_wr_dis(pci);
->>  
->>  	return 0;
->> @@ -367,21 +376,29 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->>  	struct pci_epc *epc = ep->epc;
->>  	u16 msg_ctrl, msg_data;
->> -	u32 msg_addr_lower, msg_addr_upper;
->> +	u32 msg_addr_lower, msg_addr_upper, reg;
->>  	u64 msg_addr;
->>  	bool has_upper;
->>  	int ret;
->>  
->> +	if (!ep->msi_cap)
->> +		return 0;
-> 
-> return -EINVAL.
-
-Another copy & paste issue :)
-
-> 
-> Thanks
-> Kishon
-> 
+diff --git a/drivers/hwmon/asus_atk0110.c b/drivers/hwmon/asus_atk0110.c
+index 975c43d446f8..33748cc07acc 100644
+--- a/drivers/hwmon/asus_atk0110.c
++++ b/drivers/hwmon/asus_atk0110.c
+@@ -125,6 +125,8 @@ struct atk_data {
+ 	int temperature_count;
+ 	int fan_count;
+ 	struct list_head sensor_list;
++	struct attribute_group attr_group[2];
++	const struct attribute_group *attr_groups[2];
+ 
+ 	struct {
+ 		struct dentry *root;
+@@ -262,14 +264,6 @@ static ssize_t atk_limit2_show(struct device *dev,
+ 	return sprintf(buf, "%lld\n", value);
+ }
+ 
+-static ssize_t atk_name_show(struct device *dev,
+-				struct device_attribute *attr, char *buf)
+-{
+-	return sprintf(buf, "atk0110\n");
+-}
+-static struct device_attribute atk_name_attr =
+-		__ATTR(name, 0444, atk_name_show, NULL);
+-
+ static void atk_init_attribute(struct device_attribute *attr, char *name,
+ 		sysfs_show_func show)
+ {
+@@ -1193,42 +1187,30 @@ static int atk_enumerate_new_hwmon(struct atk_data *data)
+ 	return err;
+ }
+ 
+-static int atk_create_files(struct atk_data *data)
++static int atk_init_attribute_groups(struct atk_data *data)
+ {
++	struct device *dev = &data->acpi_dev->dev;
+ 	struct atk_sensor_data *s;
+-	int err;
++	struct attribute **attrs;
++	int i = 0;
++	int len = (data->voltage_count + data->temperature_count
++			+ data->fan_count) * 4 + 1;
++
++	attrs = devm_kcalloc(dev, len, sizeof(struct attribute *), GFP_KERNEL);
++	if (!attrs)
++		return -ENOMEM;
+ 
+ 	list_for_each_entry(s, &data->sensor_list, list) {
+-		err = device_create_file(data->hwmon_dev, &s->input_attr);
+-		if (err)
+-			return err;
+-		err = device_create_file(data->hwmon_dev, &s->label_attr);
+-		if (err)
+-			return err;
+-		err = device_create_file(data->hwmon_dev, &s->limit1_attr);
+-		if (err)
+-			return err;
+-		err = device_create_file(data->hwmon_dev, &s->limit2_attr);
+-		if (err)
+-			return err;
++		attrs[i++] = &s->input_attr.attr;
++		attrs[i++] = &s->label_attr.attr;
++		attrs[i++] = &s->limit1_attr.attr;
++		attrs[i++] = &s->limit2_attr.attr;
+ 	}
+ 
+-	err = device_create_file(data->hwmon_dev, &atk_name_attr);
++	data->attr_group[0].attrs = attrs;
++	data->attr_groups[0] = data->attr_group;
+ 
+-	return err;
+-}
+-
+-static void atk_remove_files(struct atk_data *data)
+-{
+-	struct atk_sensor_data *s;
+-
+-	list_for_each_entry(s, &data->sensor_list, list) {
+-		device_remove_file(data->hwmon_dev, &s->input_attr);
+-		device_remove_file(data->hwmon_dev, &s->label_attr);
+-		device_remove_file(data->hwmon_dev, &s->limit1_attr);
+-		device_remove_file(data->hwmon_dev, &s->limit2_attr);
+-	}
+-	device_remove_file(data->hwmon_dev, &atk_name_attr);
++	return 0;
+ }
+ 
+ static void atk_free_sensors(struct atk_data *data)
+@@ -1245,24 +1227,15 @@ static void atk_free_sensors(struct atk_data *data)
+ static int atk_register_hwmon(struct atk_data *data)
+ {
+ 	struct device *dev = &data->acpi_dev->dev;
+-	int err;
+ 
+ 	dev_dbg(dev, "registering hwmon device\n");
+-	data->hwmon_dev = hwmon_device_register(dev);
++	data->hwmon_dev = hwmon_device_register_with_groups(dev, "atk0110",
++							    data,
++							    data->attr_groups);
+ 	if (IS_ERR(data->hwmon_dev))
+ 		return PTR_ERR(data->hwmon_dev);
+ 
+-	dev_dbg(dev, "populating sysfs directory\n");
+-	err = atk_create_files(data);
+-	if (err)
+-		goto remove;
+-
+ 	return 0;
+-remove:
+-	/* Cleanup the registered files */
+-	atk_remove_files(data);
+-	hwmon_device_unregister(data->hwmon_dev);
+-	return err;
+ }
+ 
+ static int atk_probe_if(struct atk_data *data)
+@@ -1397,6 +1370,9 @@ static int atk_add(struct acpi_device *device)
+ 		goto out;
+ 	}
+ 
++	err = atk_init_attribute_groups(data);
++	if (err)
++		goto out;
+ 	err = atk_register_hwmon(data);
+ 	if (err)
+ 		goto cleanup;
+@@ -1423,7 +1399,6 @@ static int atk_remove(struct acpi_device *device)
+ 
+ 	atk_debugfs_cleanup(data);
+ 
+-	atk_remove_files(data);
+ 	atk_free_sensors(data);
+ 	hwmon_device_unregister(data->hwmon_dev);
+ 
+-- 
+2.17.1
