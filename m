@@ -1,163 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750981AbeFACJS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 22:09:18 -0400
-Received: from mga06.intel.com ([134.134.136.31]:13887 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750796AbeFACJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 22:09:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
-   d="scan'208";a="43801925"
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: mst@redhat.com, bhelgaas@google.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        linux-pci@vger.kernel.org
-Cc: dan.daly@intel.com, mark.d.rustad@intel.com,
-        alexander.h.duyck@intel.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com
-Subject: [PATCH v2] virtio_pci: support enabling VFs
-Date: Fri,  1 Jun 2018 10:09:21 +0800
-Message-Id: <20180601020921.30957-1-tiwei.bie@intel.com>
+        id S1750868AbeFACOi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 22:14:38 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40066 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750711AbeFACOg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 22:14:36 -0400
+X-Google-Smtp-Source: ADUXVKKH1tClCc2zZeN6lr60vKu2k6wcL/9fQ5kNgHX6w8pbVA90MesBjz7hbeURjDBrIDFivWqoLQ==
+From: Varsha Rao <rvarsha016@gmail.com>
+To: Nicholas Mc Guire <der.herr@hofr.at>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Varsha Rao <rvarsha016@gmail.com>
+Subject: [PATCH] net: wireless: brcmsmac: Remove unnecessary parentheses
+Date: Fri,  1 Jun 2018 07:44:12 +0530
+Message-Id: <20180601021413.4031-1-rvarsha016@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a new feature bit allocated in virtio spec to
-support SR-IOV (Single Root I/O Virtualization):
+This patch fixes the clang warning of extraneous parentheses, with the
+following coccinelle script.
 
-https://github.com/oasis-tcs/virtio-spec/issues/11
+@@
+identifier i;
+expression e;
+statement s;
+@@
+if (
+-(i == e)
++i == e
+ )
+s
 
-This patch enables the support for this feature bit in
-virtio driver.
-
-Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Suggested-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
 ---
-v2:
-- Disable VFs when unbinding the driver (Alex, MST);
-- Don't use pci_sriov_configure_simple (Alex);
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_cmn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/virtio/virtio_pci_common.c | 30 ++++++++++++++++++++++++++++++
- drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
- include/uapi/linux/virtio_config.h |  7 ++++++-
- 3 files changed, 50 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index 48d4d1cf1cb6..1d4467b2dc31 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -577,6 +577,8 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
- 	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
- 	struct device *dev = get_device(&vp_dev->vdev.dev);
- 
-+	pci_disable_sriov(pci_dev);
-+
- 	unregister_virtio_device(&vp_dev->vdev);
- 
- 	if (vp_dev->ioaddr)
-@@ -588,6 +590,33 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
- 	put_device(dev);
- }
- 
-+static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
-+{
-+	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-+	struct virtio_device *vdev = &vp_dev->vdev;
-+	int ret;
-+
-+	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
-+		return -EBUSY;
-+
-+	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
-+		return -EINVAL;
-+
-+	if (pci_vfs_assigned(pci_dev))
-+		return -EPERM;
-+
-+	if (num_vfs == 0) {
-+		pci_disable_sriov(pci_dev);
-+		return 0;
-+	}
-+
-+	ret = pci_enable_sriov(pci_dev, num_vfs);
-+	if (ret < 0)
-+		return ret;
-+
-+	return num_vfs;
-+}
-+
- static struct pci_driver virtio_pci_driver = {
- 	.name		= "virtio-pci",
- 	.id_table	= virtio_pci_id_table,
-@@ -596,6 +625,7 @@ static struct pci_driver virtio_pci_driver = {
- #ifdef CONFIG_PM_SLEEP
- 	.driver.pm	= &virtio_pci_pm_ops,
- #endif
-+	.sriov_configure = virtio_pci_sriov_configure,
- };
- 
- module_pci_driver(virtio_pci_driver);
-diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-index 2555d80f6eec..07571daccfec 100644
---- a/drivers/virtio/virtio_pci_modern.c
-+++ b/drivers/virtio/virtio_pci_modern.c
-@@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
- 	return features;
- }
- 
-+static void vp_transport_features(struct virtio_device *vdev, u64 features)
-+{
-+	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-+	struct pci_dev *pci_dev = vp_dev->pci_dev;
-+
-+	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
-+			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
-+		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
-+}
-+
- /* virtio config->finalize_features() implementation */
- static int vp_finalize_features(struct virtio_device *vdev)
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_cmn.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_cmn.c
+index 3a13d176b221..35e3b101e5cf 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_cmn.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_cmn.c
+@@ -159,7 +159,7 @@ u16 read_radio_reg(struct brcms_phy *pi, u16 addr)
  {
- 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-+	u64 features = vdev->features;
+ 	u16 data;
  
- 	/* Give virtio_ring a chance to accept features. */
- 	vring_transport_features(vdev);
+-	if ((addr == RADIO_IDCODE))
++	if (addr == RADIO_IDCODE)
+ 		return 0xffff;
  
-+	/* Give virtio_pci a chance to accept features. */
-+	vp_transport_features(vdev, features);
-+
- 	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
- 		dev_err(&vdev->dev, "virtio: device uses modern interface "
- 			"but does not have VIRTIO_F_VERSION_1\n");
-diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-index 308e2096291f..b7c1f4e7d59e 100644
---- a/include/uapi/linux/virtio_config.h
-+++ b/include/uapi/linux/virtio_config.h
-@@ -49,7 +49,7 @@
-  * transport being used (eg. virtio_ring), the rest are per-device feature
-  * bits. */
- #define VIRTIO_TRANSPORT_F_START	28
--#define VIRTIO_TRANSPORT_F_END		34
-+#define VIRTIO_TRANSPORT_F_END		38
- 
- #ifndef VIRTIO_CONFIG_NO_LEGACY
- /* Do we get callbacks when the ring is completely used, even if we've
-@@ -71,4 +71,9 @@
-  * this is for compatibility with legacy systems.
-  */
- #define VIRTIO_F_IOMMU_PLATFORM		33
-+
-+/*
-+ * Does the device support Single Root I/O Virtualization?
-+ */
-+#define VIRTIO_F_SR_IOV			37
- #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+ 	switch (pi->pubpi.phy_type) {
 -- 
 2.17.0
