@@ -1,101 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751086AbeFAD04 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 23:26:56 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:58638 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750728AbeFAD0x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 23:26:53 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w513Qbdg011629
-X-Nifty-SrcIP: [209.85.217.171]
-X-Google-Smtp-Source: ADUXVKJnurd7BKXq9Glub2ll5hHqCT2TGMhse17XdaCX2PDNZ8yrGwGzMjOqOReNDccz8xlIjDSlY6pu1F1ckHOhs1U=
+        id S1751057AbeFADqH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 23:46:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53891 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750715AbeFADqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 23:46:05 -0400
+Subject: Re: [PATCH v2 19/21] bcache: use match_string() helper
+To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
+Cc: andy.shevchenko@gmail.com, Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+ <1527765086-19873-20-git-send-email-xieyisheng1@huawei.com>
+From: Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
+ xsFNBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
+ qvZ2YWpidPjaIxHwu3u9tmLKqS+2vnP0k7PRHXBYbtZEMpy3kCzseNfdrNqwJ54A430BHf2S
+ GMVRVENiScsnh4SnaYjFVvB8SrlhTsgVEXEBBma5Ktgq9YSoy5miatWmZvHLFTQgFMabCz/P
+ j5/xzykrF6yHo0rHZtwzQzF8rriOplAFCECp/t05+OeHHxjSqSI0P/G79Ll+AJYLRRm9til/
+ K6yz/1hX5xMToIkYrshDJDrUc8DjEpISQQPhG19PzaUf3vFpmnSVYprcWfJWsa2wZyyjRFkf
+ J51S82WfclafNC6N7eRXedpRpG6udUAYOA1YdtlyQRZa84EJvMzW96iSL1Gf+ZGtRuM3k49H
+ 1wiWOjlANiJYSIWyzJjxAd/7Xtiy/s3PRKL9u9y25ftMLFa1IljiDG+mdY7LyAGfvdtIkanr
+ iBpX4gWXd7lNQFLDJMfShfu+CTMCdRzCAQ9hIHPmBeZDJxKq721CyBiGAhRxDN+TYiaG/UWT
+ 7IB7LL4zJrIe/xQ8HhRO+2NvT89o0LxEFKBGg39yjTMIrjbl2ZxY488+56UV4FclubrG+t16
+ r2KrandM7P5RjR+cuHhkKseim50Qsw0B+Eu33Hjry7YCihmGswARAQABzRhDb2x5IExpIDxj
+ b2x5bGlAc3VzZS5kZT7CwX8EEwEIACkFAlYX6ZACGyMFCQlmAYAHCwkIBwMCAQYVCAIJCgsE
+ FgIDAQIeAQIXgAAKCRDHOQeTa334/CncD/9B97EIjcDOm0TS164bpMlsbZWEm8GQnV6nVzm8
+ QsywPRM8S8nqkqX1atTYl/fTdJsasH8mgryUqL0eHBPs5RmJhDk3YgYsTrzbOjMdsdRwv24W
+ J5RXdulRag2XDPIhSP7rWsOSh66gljdAp8XQQZD0zFXi4IytoAuLtx8RMjzzKk1iP6uz8MIv
+ em7iFu6NYcHd3cmvSPo7CnBVaG0dZ6P2p2gS7ydSWOGsWkNh/XM4ojJaX1ZdCeFR0XLS76Gi
+ 6e01DoN2UsqZE/TQu1czYMMA1uM/Es6ZTYgobTrrnNB79ctqgtbBrjME5sOHLX40ccbBI3QB
+ Ta4opSp8VqUMXw/yd5ckLPocnkJBTVxuaOfRhpxr6gWeudrkMetMj+39yeklskP7up0JvAUG
+ 7/HjjqwWR7xAaZHmZORYsIxJ9ploBb8eSqHHx+7489ZDNLP+WCsAonpKTdJNAzGJClnLFxKS
+ DY4cOPs7o4IFBk6dVXJWMqyLGwmMQ51Pq6BID4epaAuuBAL6x7n7NrFPuS68Fn/VaxqMEld9
+ L2eCi4cv++1AJyMF3iQKT56I8BjHEuf0wo1tmZ3BgBT19xRsEl7YItixxtYQm66Pb4lSQQmE
+ Ep+uQNwaqPpeAU+vkDg/0Q+dhPTsvwx0OAI30HwhuzNA8OIfHBx7dJNm0b0fg5x0pg3LDM7B
+ TQRWF+kvARAA2T/tnJeA0RWkmgZrNPFvP7JnOU9gjmIQKMoGZ+9awew45pdmXb6y0Y0fEG59
+ EP9i9oBlFXOt6SZ2645V0sdi3wBRNEpX2CCddWhXRfcO0b6lgckIwyaK92dH1rzxMaZTYDL8
+ aQ9FNEK1U+XSBk8fYWnXowpf7oNPS6+jD0J/muPqrGkVsIAkh2iLg5B98yNTCV4ql1xSlMyf
+ xcseke9q6ojDxx9p38JjLusDlwF2+/rF42c+T6PRiYNjnBHPq6VLSlCRsnkLJwg8VHKiV2Qw
+ Yvxp4TwnK2kLqokOxBlriX45Odb2iP61uG2ZAPchDwfawWJ4G8+3EMplLH8bk0/DkpYcYz95
+ eGSGRSiIQ2kHmTI/KbpgXxFVMoheilUn4HzUP+T6TEeP6Zhm0aqwABJYa0T2ykJwpBlg6/Mx
+ vgIzdSheqx2hYACDu07WfhdvI6uK3i5Lq9DebUBcMMBcMc0TnXix7mYy+3hLXJzZ80pFx3My
+ 5FeJEN/r6/+xpuuZkH51aYOiacKVa2w2EHjhZcWfPhhEWOQ2oOCoCmv+HEmV9sf+fipEMfcB
+ 8GnJMOYAwrwHWfkPNZ5urUcRGAQYlQ0GWKju97LYE2cq5McpFG0CMvDyPoO1zAwjJz4g53EK
+ oH/eikd3L8OMDfEK4AOsUaPMTnNgt1+40zEFMrQs/dDMldUAEQEAAcLBZQQYAQgADwUCVhfp
+ LwIbDAUJCWYBgAAKCRDHOQeTa334/PtREACDN8W/pHeHyPW/mTt6MEe/GICG5YdlBW5ft7HY
+ Cf6rTz+uLZolGc5SYKuJJ0JC/L2Ifh3BWmwLIOxV868KB3oEfmGszBY+4n/icLyIEAkkthBb
+ 2V5sP5KgB3bOg7mSFBxfHi2pyO9K9d+Lr+UkORjCGyV33QFrcN+OQdPDactontnQglB7xm2K
+ phGWqxoqepHCqFIulZ3yKGhQhmdpyz0J19Ry6GkxPE85MG/NC98D5+4Yn/V3G+yZpbGsuFhE
+ CP26JvdXh1jNCUdU46pEjZwu0GXBIo6r1cb1v+swfYB86NeFUHWtvxamh8i6RBl1FLDhN6xb
+ r9f7M++xoADyzPQYQPQUxWK+iG6lz3qVVq5312z/is3fcdyESPNs09DMT43xCCBr9UOMq6dZ
+ IC9EsSeMYv4librfuSRqH4R0MuVbVWLJFg/Q7s+nbPb2YjhqIYr51hBDyXpzUDoIz43maIPk
+ UmCNKa43mNFktMrwU21J5lVXEwBuTY6JlHOAl0Fgo28X+eTa8fx2Uiz9OVgWe03ebJGIGowe
+ XTgqVWJMsKM1tmW+QFmgtczDGRYCZ6OQYpqt0SoTg1yx5MN4RzUtlLka2qLfPiOGUUN3qNJ5
+ nP+spvF+s+dHtLjjhy7AL86N01a6S0rwaClVVv0XTucvIntwccIx0CZfUKlfn5BWnB64Ig==
+Message-ID: <f8dea584-a7b1-a894-d4b6-d573fdb4da3d@suse.de>
+Date: Fri, 1 Jun 2018 11:45:55 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <51ac4a5f0466aeed3f223663d9c34d6345b2a1f2.1527244201.git.viresh.kumar@linaro.org>
-References: <cover.1527244200.git.viresh.kumar@linaro.org> <51ac4a5f0466aeed3f223663d9c34d6345b2a1f2.1527244201.git.viresh.kumar@linaro.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 1 Jun 2018 12:25:56 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATuDC4i1VoA6W7DmPDuiqOWix0SbWa2baOsfAi-Fk7vBw@mail.gmail.com>
-Message-ID: <CAK7LNATuDC4i1VoA6W7DmPDuiqOWix0SbWa2baOsfAi-Fk7vBw@mail.gmail.com>
-Subject: Re: [PATCH 05/15] arm: dts: uniphier: Add missing cooling device
- properties for CPUs
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: arm-soc <arm@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        DTML <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1527765086-19873-20-git-send-email-xieyisheng1@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-25 19:31 GMT+09:00 Viresh Kumar <viresh.kumar@linaro.org>:
-> The cooling device properties, like "#cooling-cells" and
-> "dynamic-power-coefficient", should either be present for all the CPUs
-> of a cluster or none. If these are present only for a subset of CPUs of
-> a cluster then things will start falling apart as soon as the CPUs are
-> brought online in a different order. For example, this will happen
-> because the operating system looks for such properties in the CPU node
-> it is trying to bring up, so that it can register a cooling device.
->
-> Add such missing properties.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+On 2018/5/31 7:11 PM, Yisheng Xie wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used instead of open coded variant.
+> 
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: linux-bcache@vger.kernel.org 
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 
+Hi Yishenng,
 
-Applied to linux-uniphier.
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> submitted a patch to
+replace the whole bch_read_string_list() with __sysfs_match_string().
+And this patch is applied in Jens' block tree, will go into mainline
+kernel in v4.18.
 
-I had already sent a PR for v4.18-rc1 before I received this patch.
-Please wait for v4.19-rc1.
+If you search bcache mailing list, you may find a patch named with
+"bcache: Replace bch_read_string_list() by __sysfs_match_string()".
+
+That means this patch will conflict with existing changes.
 
 Thanks.
 
+Coly Li
 
 > ---
->  arch/arm/boot/dts/uniphier-pxs2.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> index debcbd15c24b..40ed15465095 100644
-> --- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> +++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> @@ -36,6 +36,7 @@
->                         enable-method = "psci";
->                         next-level-cache = <&l2>;
->                         operating-points-v2 = <&cpu_opp>;
-> +                       #cooling-cells = <2>;
->                 };
->
->                 cpu2: cpu@2 {
-> @@ -46,6 +47,7 @@
->                         enable-method = "psci";
->                         next-level-cache = <&l2>;
->                         operating-points-v2 = <&cpu_opp>;
-> +                       #cooling-cells = <2>;
->                 };
->
->                 cpu3: cpu@3 {
-> @@ -56,6 +58,7 @@
->                         enable-method = "psci";
->                         next-level-cache = <&l2>;
->                         operating-points-v2 = <&cpu_opp>;
-> +                       #cooling-cells = <2>;
->                 };
->         };
->
-> --
-> 2.15.0.194.g9af6a3dea062
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+>  drivers/md/bcache/util.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+> index 74febd5..cd1f4fd 100644
+> --- a/drivers/md/bcache/util.c
+> +++ b/drivers/md/bcache/util.c
+> @@ -136,22 +136,17 @@ ssize_t bch_snprint_string_list(char *buf, size_t size, const char * const list[
+>  
+>  ssize_t bch_read_string_list(const char *buf, const char * const list[])
+>  {
+> -	size_t i;
+> +	ssize_t i;
+>  	char *s, *d = kstrndup(buf, PAGE_SIZE - 1, GFP_KERNEL);
+>  	if (!d)
+>  		return -ENOMEM;
+>  
+>  	s = strim(d);
+>  
+> -	for (i = 0; list[i]; i++)
+> -		if (!strcmp(list[i], s))
+> -			break;
+> +	i = match_string(list, -1, s);
+>  
+>  	kfree(d);
+>  
+> -	if (!list[i])
+> -		return -EINVAL;
+> -
+>  	return i;
+>  }
+>  
+> 
