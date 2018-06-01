@@ -1,240 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751795AbeFALUT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:20:19 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:41924 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751327AbeFALUP (ORCPT
+        id S1751824AbeFALVB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:21:01 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45766 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750790AbeFALU7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:20:15 -0400
-From: Prabu Thangamuthu <Prabu.T@synopsys.com>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-CC: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>
-Subject: Re: [PATCH v2 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc
- support
-Thread-Topic: [PATCH v2 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc
- support
-Thread-Index: AdP4J+f4+DeR4dadRlSsPnyMsPMRwA==
-Date: Fri, 1 Jun 2018 11:20:09 +0000
-Message-ID: <705D14B1C7978B40A723277C067CEDE2010A9B94BD@IN01WEMBXB.internal.synopsys.com>
-References: <705D14B1C7978B40A723277C067CEDE2010A9B769C@IN01WEMBXB.internal.synopsys.com>
- <a823deb3-4f94-fa55-fc56-c838a7ab9deb@intel.com>
-Accept-Language: en-US, en-IN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.12.239.235]
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 1 Jun 2018 07:20:59 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DCC6760261
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date: Fri, 1 Jun 2018 16:50:50 +0530
+From: Sahitya Tummala <stummala@codeaurora.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>, vinmenon@codeaurora.org
+Subject: Re: deadlock during writeback when using f2fs filesystem
+Message-ID: <20180601112050.GB12489@codeaurora.org>
+References: <20180601093235.GA12489@codeaurora.org>
+ <20180601102609.GZ15278@dhcp22.suse.cz>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601102609.GZ15278@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51BKPRO028610
 
-Hi Adrian,
+On Fri, Jun 01, 2018 at 12:26:09PM +0200, Michal Hocko wrote:
+> On Fri 01-06-18 15:02:35, Sahitya Tummala wrote:
+> > Hi,
+> > 
+> > We are observing a deadlock scenario during FS writeback under low-memory
+> > condition with F2FS filesystem.
+> > 
+> > Here is the callstack of this scenario -
+> > 
+> > shrink_inactive_list()
+> > shrink_node_memcg.isra.74()
+> > shrink_node()
+> > shrink_zones(inline)
+> > do_try_to_free_pages(inline)
+> > try_to_free_pages()
+> > __perform_reclaim(inline)
+> > __alloc_pages_direct_reclaim(inline)
+> > __alloc_pages_slowpath(inline)
+> > no_zone()
+> > __alloc_pages(inline)
+> > __alloc_pages_node(inline)
+> > alloc_pages_node(inline)
+> > __page_cache_alloc(inline)
+> > pagecache_get_page()
+> > find_or_create_page(inline)
+> > grab_cache_page(inline)
+> > f2fs_grab_cache_page(inline)
+> > __get_node_page.part.32()
+> > __get_node_page(inline)
+> > get_node_page()
+> > update_inode_page()
+> > f2fs_write_inode()
+> > write_inode(inline)
+> > __writeback_single_inode()
+> > writeback_sb_inodes()
+> > __writeback_inodes_wb()
+> > wb_writeback()
+> > wb_do_writeback(inline)
+> > wb_workfn()
+> > 
+> > The writeback thread is entering into the direct reclaim path due to low-memory and is
+> > getting stuck in shrink_inactive_list(), as shrink_inactive_list() is inturn waiting for
+> > writeback to happen for the dirty pages present in the inactive list.
+> 
+> shrink_page_list waits only for writeback pages when we are in the memcg
+> reclaim. The above seems to be the global reclaim though. Moreover
+> GFP_F2FS_ZERO is GFP_NOFS so we are not waiting for writeback pages at
+> all. Are you sure the above is really a deadlock?
+> 
 
-On 6/1/2018 2:06 PM, Adrian Hunter wrote:
-> Hi
->
-> This patch is still corrupt.  Your mail program is converting it to
-> quoted-printable - try saving and applying it yourself.  I suggest you learn
-> to use git send-mail.
-I was using Thunderbird (GUI) with configuration mentioned as per
-https://www.kernel.org/doc/html/v4.10/process/email-clients.html.
-Not sure what went wrong in my configuration. Sorry for that.
+Let me correct my statement. It could be more of a livelock scenario.
 
-I will re-send the patch with git send-mail.
+The direct reclaim path is not doing any writeback here, so the GFP_NOFS doesn't
+make any difference. In this case, the direct reclaim has to reclaim ~32 pages,
+which it picks up from the tail of the list. All of those tail pages are dirty
+and since direct reclaim path can't do any writeback, it just loops picking and
+skipping them.
 
-Thanks,
-Prabu
+> > Do you think we can use GFP_NOWAIT for node mapping gfp_mask so that we can avoid direct
+> > reclaim path in the writeback context? As we may now see allocation failures with this flag,
+> > do you see any risk or issue in using it w.r.t F2FS FS and writeback?
+> > Appreciate your suggestions on this.
+> > 
+> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > index 89c838b..d3daf3b 100644
+> > --- a/fs/f2fs/inode.c
+> > +++ b/fs/f2fs/inode.c
+> > @@ -316,7 +316,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+> >  make_now:
+> >         if (ino == F2FS_NODE_INO(sbi)) {
+> >                 inode->i_mapping->a_ops = &f2fs_node_aops;
+> > -               mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> > +               mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_NODE_MAPPING);
+> >         } else if (ino == F2FS_META_INO(sbi)) {
+> >                 inode->i_mapping->a_ops = &f2fs_meta_aops;
+> >                 mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> > diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> > index 58aecb6..bb985cd 100644
+> > --- a/include/linux/f2fs_fs.h
+> > +++ b/include/linux/f2fs_fs.h
+> > @@ -47,6 +47,7 @@
+> >  /* This flag is used by node and meta inodes, and by recovery */
+> >  #define GFP_F2FS_ZERO          (GFP_NOFS | __GFP_ZERO)
+> >  #define GFP_F2FS_HIGH_ZERO     (GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
+> > +#define GFP_F2FS_NODE_MAPPING  (GFP_NOWAIT | __GFP_IO | __GFP_ZERO)
+> > 
+> > Thanks,
+> > Sahitya.
+> > -- 
+> > --
+> > Sent by a consultant of the Qualcomm Innovation Center, Inc.
+> > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
 
-> On 30/05/18 18:07, Prabu Thangamuthu wrote:
->> Synopsys has DWC MSHC controller on HPAS-DX platform connected using PCIe
->> interface with SD card slot and eMMC device slots. This patch is to
->> enable SD cards connected on this platform. As Clock generation logic
->> is implemented using MMCM module of HAPS-DX platform, we have separate
->> functions to control the MMCM to generate required clocks with respect
->> to speed mode.
->>
->> Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
->> ---
->> V2 - Removed sdhci-pci-dwc-mshc.h and moved into sdhci-pci-dwc-mshc.c
->> Fixed coding style issue.
->> Removed sdhci_snps_set_power and new approach to support eMMC device
->> voltages will be submitted after completeing validations.
->> V1 - Initial Patch.
->>
->> MAINTAINERS | 7 +++
->> drivers/mmc/host/Makefile | 3 +-
->> drivers/mmc/host/sdhci-pci-core.c | 1 +
->> drivers/mmc/host/sdhci-pci-dwc-mshc.c | 88 +++++++++++++++++++++++++++++++++++
->> drivers/mmc/host/sdhci-pci.h | 3 ++
->> 5 files changed, 101 insertions(+), 1 deletion(-)
->> create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 4863175..aba98b6 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -12684,6 +12684,13 @@ S: Maintained
->> F: drivers/mmc/host/sdhci*
->> F: include/linux/mmc/sdhci*
->>
->> +SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
->> +M: Prabu Thangamuthu <prabu.t@synopsys.com>
->> +M: Manjunath M B <manjumb@synopsys.com>
->> +L: linux-mmc@vger.kernel.org
->> +S: Maintained
->> +F: drivers/mmc/host/sdhci-pci-dwc-mshc.c
->> +
->> SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
->> M: Ben Dooks <ben-linux@fluff.org>
->> M: Jaehoon Chung <jh80.chung@samsung.com>
->> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
->> index 85dc132..20490f3 100644
->> --- a/drivers/mmc/host/Makefile
->> +++ b/drivers/mmc/host/Makefile
->> @@ -11,7 +11,8 @@ obj-$(CONFIG_MMC_MXC) += mxcmmc.o
->> obj-$(CONFIG_MMC_MXS) += mxs-mmc.o
->> obj-$(CONFIG_MMC_SDHCI) += sdhci.o
->> obj-$(CONFIG_MMC_SDHCI_PCI) += sdhci-pci.o
->> -sdhci-pci-y += sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o
->> +sdhci-pci-y += sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o \
->> + sdhci-pci-dwc-mshc.o
->> obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI)) += sdhci-pci-data.o
->> obj-$(CONFIG_MMC_SDHCI_ACPI) += sdhci-acpi.o
->> obj-$(CONFIG_MMC_SDHCI_PXAV3) += sdhci-pxav3.o
->> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
->> index 77dd352..ca1d4f7 100644
->> --- a/drivers/mmc/host/sdhci-pci-core.c
->> +++ b/drivers/mmc/host/sdhci-pci-core.c
->> @@ -1511,6 +1511,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
->> SDHCI_PCI_DEVICE(O2, SEABIRD0, o2),
->> SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
->> SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
->> + SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC, snps),
->> SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
->> /* Generic SD host controller */
->> {PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
->> diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.c b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
->> new file mode 100644
->> index 0000000..0706055
->> --- /dev/null
->> +++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
->> @@ -0,0 +1,88 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * SDHCI driver for Synopsys DWC_MSHC controller
->> + *
->> + * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
->> + *
->> + * Authors:
->> + * Prabu Thangamuthu <prabu.t@synopsys.com>
->> + * Manjunath M B <manjumb@synopsys.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
-> Do not put license text when using SPDX identifiers
->
->> + */
->> +
->> +#include "sdhci.h"
->> +#include "sdhci-pci.h"
->> +
->> +#define SDHCI_VENDOR_PTR_R 0xE8
->> +
->> +/* Synopsys vendor specific registers */
->> +#define SDHC_GPIO_OUT 0x34
->> +#define SDHC_AT_CTRL_R 0x40
->> +#define SDHC_SW_TUNE_EN 0x00000010
->> +
->> +/* MMCM DRP */
->> +#define SDHC_MMCM_DIV_REG 0x1020
->> +#define DIV_REG_100_MHZ 0x1145
->> +#define DIV_REG_200_MHZ 0x1083
->> +#define SDHC_MMCM_CLKFBOUT 0x1024
->> +#define CLKFBOUT_100_MHZ 0x0000
->> +#define CLKFBOUT_200_MHZ 0x0080
->> +#define SDHC_CCLK_MMCM_RST 0x00000001
->> +
->> +static void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int clock)
->> +{
->> + u16 clk;
->> + u32 reg, vendor_ptr;
->> +
->> + vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
->> +
->> + /* Disable software managed rx tuning */
->> + reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
->> + reg &= ~SDHC_SW_TUNE_EN;
->> + sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
->> +
->> + if (clock <= 52000000) {
->> + sdhci_set_clock(host, clock);
->> + } else {
->> + /* Assert reset to MMCM */
->> + reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
->> + reg |= SDHC_CCLK_MMCM_RST;
->> + sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
->> +
->> + /* Configure MMCM */
->> + if (clock == 100000000) {
->> + sdhci_writel(host, DIV_REG_100_MHZ, SDHC_MMCM_DIV_REG);
->> + sdhci_writel(host, CLKFBOUT_100_MHZ,
->> + SDHC_MMCM_CLKFBOUT);
->> + } else {
->> + sdhci_writel(host, DIV_REG_200_MHZ, SDHC_MMCM_DIV_REG);
->> + sdhci_writel(host, CLKFBOUT_200_MHZ,
->> + SDHC_MMCM_CLKFBOUT);
->> + }
->> +
->> + /* De-assert reset to MMCM */
->> + reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
->> + reg &= ~SDHC_CCLK_MMCM_RST;
->> + sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
->> +
->> + /* Enable clock */
->> + clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
->> + SDHCI_CLOCK_CARD_EN;
->> + sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
->> + }
->> +}
->> +
->> +static const struct sdhci_ops sdhci_snps_ops = {
->> + .set_clock = sdhci_snps_set_clock,
->> + .enable_dma = sdhci_pci_enable_dma,
->> + .set_bus_width = sdhci_set_bus_width,
->> + .reset = sdhci_reset,
->> + .set_uhs_signaling = sdhci_set_uhs_signaling,
->> +};
->> +
->> +const struct sdhci_pci_fixes sdhci_snps = {
->> + .ops = &sdhci_snps_ops,
->> +};
->> diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
->> index db9cb54..60131b8 100644
->> --- a/drivers/mmc/host/sdhci-pci.h
->> +++ b/drivers/mmc/host/sdhci-pci.h
->> @@ -59,6 +59,8 @@
->> #define PCI_VENDOR_ID_ARASAN 0x16e6
->> #define PCI_DEVICE_ID_ARASAN_PHY_EMMC 0x0670
->>
->> +#define PCI_DEVICE_ID_SYNOPSYS_DWC_MSHC 0xc202
->> +
->> /*
->> * PCI device class and mask
->> */
->> @@ -182,5 +184,6 @@ static inline void *sdhci_pci_priv(struct sdhci_pci_slot *slot)
->> #endif
->>
->> extern const struct sdhci_pci_fixes sdhci_arasan;
->> +extern const struct sdhci_pci_fixes sdhci_snps;
->>
->> #endif /* __SDHCI_PCI_H */
->>
->
+-- 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
