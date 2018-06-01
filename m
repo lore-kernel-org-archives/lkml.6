@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751386AbeFAJGD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:06:03 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:43344 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750919AbeFAJFw (ORCPT
+        id S1751434AbeFAJGU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 05:06:20 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33343 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeFAJF7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:05:52 -0400
-X-Google-Smtp-Source: ADUXVKJAJJxQJKFSTC6OwK8fGSPtdlwz5bP3UoEHm71zQSZhzbwVfTqoWAtgCT+rM6WHlDbuUU+mDQ==
+        Fri, 1 Jun 2018 05:05:59 -0400
+X-Google-Smtp-Source: ADUXVKLVFDTBtvSlFiM7ZnxpqLLj9c3fdJHSDVmMKZmV6AhKEBmQg7pMJpQzYqcKDViKroS0RM0gFQ==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: ohad@wizery.com, bjorn.andersson@linaro.org, broonie@kernel.org
 Cc: baolin.wang@linaro.org, linux-spi@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] hwspinlock: Add devm_xxx() APIs to request/free hwlock
-Date: Fri,  1 Jun 2018 17:04:53 +0800
-Message-Id: <51d01c563a00774b4db87a01d5fdcdbc342b075c.1527843425.git.baolin.wang@linaro.org>
+Subject: [PATCH 4/4] spi: sprd: Change to use devm_hwspin_lock_request_specific()
+Date: Fri,  1 Jun 2018 17:04:55 +0800
+Message-Id: <7bfce450d511115159e38d860318c6bd2216808a.1527843425.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <1be6adeb558fada77de79a40cd5ef7dc2719c945.1527843425.git.baolin.wang@linaro.org>
 References: <1be6adeb558fada77de79a40cd5ef7dc2719c945.1527843425.git.baolin.wang@linaro.org>
@@ -24,177 +24,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces some devm_xxx() APIs to help to request or free
-the hwlocks, which will help to simplify the cleanup code for drivers
-requesting one hwlock, ensuring that the hwlock is automatically freed
-whenever the device is unbound.
+Change to use devm_hwspin_lock_request_specific() instead of
+freeing the hwlock explicitly when unbound the device.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/hwspinlock/hwspinlock_core.c |  110 ++++++++++++++++++++++++++++++++++
- include/linux/hwspinlock.h           |   22 +++++++
- 2 files changed, 132 insertions(+)
+ drivers/spi/spi-sprd-adi.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index 00bde06..6aa9ea1 100644
---- a/drivers/hwspinlock/hwspinlock_core.c
-+++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -743,6 +743,116 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
- }
- EXPORT_SYMBOL_GPL(hwspin_lock_free);
+diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
+index d8d5e2f..6fb5c0c 100644
+--- a/drivers/spi/spi-sprd-adi.c
++++ b/drivers/spi/spi-sprd-adi.c
+@@ -465,7 +465,7 @@ static int sprd_adi_probe(struct platform_device *pdev)
+ 		goto put_ctlr;
+ 	}
  
-+static int devm_hwspin_lock_match(struct device *dev, void *res, void *data)
-+{
-+	struct hwspinlock **hwlock = res;
-+
-+	if (WARN_ON(!hwlock || !*hwlock))
-+		return 0;
-+
-+	return *hwlock == data;
-+}
-+
-+static void devm_hwspin_lock_release(struct device *dev, void *res)
-+{
-+	hwspin_lock_free(*(struct hwspinlock **)res);
-+}
-+
-+/**
-+ * devm_hwspin_lock_free() - free a specific hwspinlock for a managed device
-+ * @dev: the device to free the specific hwspinlock
-+ * @hwlock: the specific hwspinlock to free
-+ *
-+ * This function mark @hwlock as free again.
-+ * Should only be called with an @hwlock that was retrieved from
-+ * an earlier call to omap_hwspin_lock_request{_specific}.
-+ *
-+ * Should be called from a process context (might sleep)
-+ *
-+ * Returns 0 on success, or an appropriate error code on failure
-+ */
-+int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock)
-+{
-+	int ret;
-+
-+	ret = devres_release(dev, devm_hwspin_lock_release,
-+			     devm_hwspin_lock_match, hwlock);
-+	WARN_ON(ret);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(devm_hwspin_lock_free);
-+
-+/**
-+ * devm_hwspin_lock_request() - request an hwspinlock for a managed device
-+ * @dev: the device to request an hwspinlock
-+ *
-+ * This function should be called by users of the hwspinlock device,
-+ * in order to dynamically assign them an unused hwspinlock.
-+ * Usually the user of this lock will then have to communicate the lock's id
-+ * to the remote core before it can be used for synchronization (to get the
-+ * id of a given hwlock, use hwspin_lock_get_id()).
-+ *
-+ * Should be called from a process context (might sleep)
-+ *
-+ * Returns the address of the assigned hwspinlock, or NULL on error
-+ */
-+struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
-+{
-+	struct hwspinlock **ptr, *hwlock;
-+
-+	ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	hwlock = hwspin_lock_request();
-+	if (!IS_ERR(hwlock)) {
-+		*ptr = hwlock;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
-+	}
-+
-+	return hwlock;
-+}
-+EXPORT_SYMBOL_GPL(devm_hwspin_lock_request);
-+
-+/**
-+ * devm_hwspin_lock_request_specific() - request for a specific hwspinlock for
-+ *					 a managed device
-+ * @dev: the device to request the specific hwspinlock
-+ * @id: index of the specific hwspinlock that is requested
-+ *
-+ * This function should be called by users of the hwspinlock module,
-+ * in order to assign them a specific hwspinlock.
-+ * Usually early board code will be calling this function in order to
-+ * reserve specific hwspinlock ids for predefined purposes.
-+ *
-+ * Should be called from a process context (might sleep)
-+ *
-+ * Returns the address of the assigned hwspinlock, or NULL on error
-+ */
-+struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
-+						     unsigned int id)
-+{
-+	struct hwspinlock **ptr, *hwlock;
-+
-+	ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	hwlock = hwspin_lock_request_specific(id);
-+	if (!IS_ERR(hwlock)) {
-+		*ptr = hwlock;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
-+	}
-+
-+	return hwlock;
-+}
-+EXPORT_SYMBOL_GPL(devm_hwspin_lock_request_specific);
-+
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("Hardware spinlock interface");
- MODULE_AUTHOR("Ohad Ben-Cohen <ohad@wizery.com>");
-diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
-index f165cc8..4f1f943 100644
---- a/include/linux/hwspinlock.h
-+++ b/include/linux/hwspinlock.h
-@@ -75,6 +75,10 @@ int __hwspin_lock_timeout(struct hwspinlock *, unsigned int, int,
- int __hwspin_trylock(struct hwspinlock *, int, unsigned long *);
- void __hwspin_unlock(struct hwspinlock *, int, unsigned long *);
- int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name);
-+int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock);
-+struct hwspinlock *devm_hwspin_lock_request(struct device *dev);
-+struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
-+						     unsigned int id);
+-	sadi->hwlock = hwspin_lock_request_specific(ret);
++	sadi->hwlock = devm_hwspin_lock_request_specific(&pdev->dev, ret);
+ 	if (!sadi->hwlock) {
+ 		ret = -ENXIO;
+ 		goto put_ctlr;
+@@ -483,7 +483,7 @@ static int sprd_adi_probe(struct platform_device *pdev)
+ 	ret = devm_spi_register_controller(&pdev->dev, ctlr);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register SPI controller\n");
+-		goto free_hwlock;
++		goto put_ctlr;
+ 	}
  
- #else /* !CONFIG_HWSPINLOCK */
+ 	sadi->restart_handler.notifier_call = sprd_adi_restart_handler;
+@@ -491,13 +491,11 @@ static int sprd_adi_probe(struct platform_device *pdev)
+ 	ret = register_restart_handler(&sadi->restart_handler);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "can not register restart handler\n");
+-		goto free_hwlock;
++		goto put_ctlr;
+ 	}
  
-@@ -140,6 +144,24 @@ int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name)
+ 	return 0;
+ 
+-free_hwlock:
+-	hwspin_lock_free(sadi->hwlock);
+ put_ctlr:
+ 	spi_controller_put(ctlr);
+ 	return ret;
+@@ -509,7 +507,6 @@ static int sprd_adi_remove(struct platform_device *pdev)
+ 	struct sprd_adi *sadi = spi_controller_get_devdata(ctlr);
+ 
+ 	unregister_restart_handler(&sadi->restart_handler);
+-	hwspin_lock_free(sadi->hwlock);
  	return 0;
  }
  
-+static inline
-+int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock)
-+{
-+	return 0;
-+}
-+
-+static inline struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
-+
-+static inline
-+struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
-+						     unsigned int id)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
-+
- #endif /* !CONFIG_HWSPINLOCK */
- 
- /**
 -- 
 1.7.9.5
