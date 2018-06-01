@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753046AbeFAQCR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:02:17 -0400
-Received: from smtp2.provo.novell.com ([137.65.250.81]:55185 "EHLO
+        id S1752927AbeFAQCJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:02:09 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:60807 "EHLO
         smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752990AbeFAQCM (ORCPT
+        with ESMTP id S1752660AbeFAQCE (ORCPT
         <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Fri, 1 Jun 2018 12:02:12 -0400
+        Fri, 1 Jun 2018 12:02:04 -0400
 From: Davidlohr Bueso <dave@stgolabs.net>
 To: akpm@linux-foundation.org, torvalds@linux-foundation.org
 Cc: tgraf@suug.ch, herbert@gondor.apana.org.au, manfred@colorfullife.com,
         mhocko@kernel.org, guillaume.knispel@supersonicimagine.com,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
         Davidlohr Bueso <dave@stgolabs.net>, Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 3/5] ipc: get rid of ids->tables_initialized hack
-Date: Fri,  1 Jun 2018 09:01:23 -0700
-Message-Id: <20180601160125.30031-4-dave@stgolabs.net>
+Subject: [PATCH 1/5] lib/rhashtable: convert param sanitations to WARN_ON
+Date: Fri,  1 Jun 2018 09:01:21 -0700
+Message-Id: <20180601160125.30031-2-dave@stgolabs.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180601160125.30031-1-dave@stgolabs.net>
 References: <20180601160125.30031-1-dave@stgolabs.net>
@@ -23,104 +23,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In sysvipc we have an ids->tables_initialized regarding the
-rhashtable, introduced in:
-
-    0cfb6aee70b (ipc: optimize semget/shmget/msgget for lots of keys).
-
-It's there, specifically, to prevent nil pointer dereferences,
-from using an uninitialized api. Considering how rhashtable_init()
-can fail (probably due to ENOMEM, if anything), this made the
-overall ipc initialization capable of failure as well. That alone
-is ugly, but fine, however I've spotted a few issues regarding the
-semantics of tables_initialized (however unlikely they may be):
-
-- There is inconsistency in what we return to userspace: ipc_addid()
-returns ENOSPC which is certainly _wrong_, while ipc_obtain_object_idr()
-returns EINVAL.
-
-- After we started using rhashtables, ipc_findkey() can return nil upon
-!tables_initialized, but the caller expects nil for when the ipc structure
-isn't found, and can therefore call into ipcget() callbacks.
-
-Now that rhashtable initialization cannot fail, we can properly
-get rid of the hack altogether.
+For the purpose of making rhashtable_init() unable to fail,
+we can replace the returning -EINVAL with WARN_ONs whenever
+the caller passes bogus parameters during initialization.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- include/linux/ipc_namespace.h |  1 -
- ipc/util.c                    | 23 ++++++++---------------
- 2 files changed, 8 insertions(+), 16 deletions(-)
+ lib/rhashtable.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.h
-index b5630c8eb2f3..37f3a4b7c637 100644
---- a/include/linux/ipc_namespace.h
-+++ b/include/linux/ipc_namespace.h
-@@ -16,7 +16,6 @@ struct user_namespace;
- struct ipc_ids {
- 	int in_use;
- 	unsigned short seq;
--	bool tables_initialized;
- 	struct rw_semaphore rwsem;
- 	struct idr ipcs_idr;
- 	int max_id;
-diff --git a/ipc/util.c b/ipc/util.c
-index 4e81182fa0ac..823e09e72c58 100644
---- a/ipc/util.c
-+++ b/ipc/util.c
-@@ -125,7 +125,6 @@ int ipc_init_ids(struct ipc_ids *ids)
- 	if (err)
- 		return err;
- 	idr_init(&ids->ipcs_idr);
--	ids->tables_initialized = true;
- 	ids->max_id = -1;
- #ifdef CONFIG_CHECKPOINT_RESTORE
- 	ids->next_id = -1;
-@@ -178,19 +177,16 @@ void __init ipc_init_proc_interface(const char *path, const char *header,
-  */
- static struct kern_ipc_perm *ipc_findkey(struct ipc_ids *ids, key_t key)
- {
--	struct kern_ipc_perm *ipcp = NULL;
-+	struct kern_ipc_perm *ipcp;
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 9427b5766134..05a4b1b8b8ce 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -1024,12 +1024,11 @@ int rhashtable_init(struct rhashtable *ht,
  
--	if (likely(ids->tables_initialized))
--		ipcp = rhashtable_lookup_fast(&ids->key_ht, &key,
-+	ipcp = rhashtable_lookup_fast(&ids->key_ht, &key,
- 					      ipc_kht_params);
-+	if (!ipcp)
-+		return NULL;
+ 	size = HASH_DEFAULT_SIZE;
  
--	if (ipcp) {
--		rcu_read_lock();
--		ipc_lock_object(ipcp);
--		return ipcp;
--	}
--
--	return NULL;
-+	rcu_read_lock();
-+	ipc_lock_object(ipcp);
-+	return ipcp;
- }
+-	if ((!params->key_len && !params->obj_hashfn) ||
+-	    (params->obj_hashfn && !params->obj_cmpfn))
+-		return -EINVAL;
++	WARN_ON((!params->key_len && !params->obj_hashfn) ||
++		(params->obj_hashfn && !params->obj_cmpfn));
  
- #ifdef CONFIG_CHECKPOINT_RESTORE
-@@ -255,7 +251,7 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
- 	if (limit > IPCMNI)
- 		limit = IPCMNI;
+-	if (params->nulls_base && params->nulls_base < (1U << RHT_BASE_SHIFT))
+-		return -EINVAL;
++	WARN_ON(params->nulls_base &&
++		params->nulls_base < (1U << RHT_BASE_SHIFT));
  
--	if (!ids->tables_initialized || ids->in_use >= limit)
-+	if (ids->in_use >= limit)
- 		return -ENOSPC;
- 
- 	idr_preload(GFP_KERNEL);
-@@ -566,9 +562,6 @@ struct kern_ipc_perm *ipc_obtain_object_idr(struct ipc_ids *ids, int id)
- 	struct kern_ipc_perm *out;
- 	int lid = ipcid_to_idx(id);
- 
--	if (unlikely(!ids->tables_initialized))
--		return ERR_PTR(-EINVAL);
--
- 	out = idr_find(&ids->ipcs_idr, lid);
- 	if (!out)
- 		return ERR_PTR(-EINVAL);
+ 	memset(ht, 0, sizeof(*ht));
+ 	mutex_init(&ht->mutex);
 -- 
 2.16.3
