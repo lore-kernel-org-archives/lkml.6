@@ -1,130 +1,329 @@
 Return-Path: <linux-efi-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti33d1t02-1381134-1528086460-2-9316361804781185299
+X-Cyrus-Session-Id: sloti22d1t05-3747897-1527879706-2-6204628818147341527
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-efi-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1528086460; b=Ha0zhwa15QRUJIzphCQIso7oPidnE8LyNbskvBtNV+HHwyScWQ
-    6tk6NrZBmS1gDO2dc7HoKfwr0XgraCyfiFgMaG9u3BOIR8cdshjlwuhyFX7L0ZTN
-    uQjxuUS7qWl88aqghLLoX94++x0WszRQdKFc9MuvGBan1OzoIpBn+CglSvfnqr4z
-    Ika74GwREd0b05Kbuc87OawOLKHLP7AwXVEje4zKtHjILDeIeGROt0Ek3efZE2Eq
-    bXN9Kk0lZJQNRhqgHcyxT3hNZfa/CIwHgZ16GCwHvZwfu+FgSCDnXV8OvcrT3SWN
-    WpMJjXyTqiyHD55N4od9YpLceroXshAb5a/A==
+    1527879704; b=HdEuLljM+OkFk29s7SUTOPmTd/dxxU3ghuBSHwkDgVl00LRcak
+    6kGxAZDrEQT4EdbddXfCBVvDfLqCnGbaiZma0qpCctSKiKh0yVzV7dibuSJuZV/K
+    n+y2yRFbLloUpDQV5mLAUZovgY/XA+wtv8ej6LRk+6+e4sGg4aSgTaM/O7BXCtOG
+    ynuwSkdRqVl6XP7xqORQYpNi/MZpuNn2lGScvwTz9KjW9mvIU/6TRt6vwYFv1i63
+    jp7PL5hDmHXoLVSRXmFa0lZHmPtWXW/rAtB6yttJHOjjPBYmeBcgMUHNuNXHpL31
+    sbHR5PUPk4ECnhaQN/JI570dYL2a6JKCqJ8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1528086460; bh=prvzgbE43c
-    bPxQHGkO9M3icxUKw/Au8CQ5dZ0Xd1KCA=; b=Q2vx26wlwUQuDqbLXS1ygm+k1f
-    5bxHLXo9wQNwvgy5Cskub1vbO9DeEJZUsit5+/VsW6Tl/ByuwQTn+pPxDj7r2mmO
-    cjU/osvJR6FqjUy6Wj9fHhrhPRKkGQ28E9Hb4hsaAKeL59G6fVplpDxrjiXhZtY+
-    mxBdxgN7tK5J83dgY/CWTuVlwFAtwxUjpgd51nghuZUQNonupND1uRkBZWrRF6hL
-    5C2KveWst0K+DNk++8uiqgQ2hJSpdrqFMviN4wEaQoASS5okXYfkOE7Lv0YoKjCS
-    hJTWRJGFy5qlUccRaSOEesPpt+3nv6FfKg/2fbXojFaxjDZQZuV2Cx1vO70g==
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1527879704; bh=czCp2ID3sAQzGnpTTApss/ECNlRACxyhWPv6Hp675D
+    8=; b=javk2TQ8+uwdf//TovmJt3mYzV2Lb2XAdkas8lJqiCzLnHcowVJZzMjEcX
+    gBaoE6ZaK9L3qPhylOEH9EKQK2WQu7TvohOS4AFT/jqCKoaOsArdQYXq93FYPI29
+    uK172aUUI1+mWPwLPfqRpn/cMr7nzdSm7piYDsnTxb9IQB9O1c310CJQXlS4eLQK
+    2otTOH8nfz5VkmA0/i/Sw4otnI7fZNqaHTJ+mvzWovZLcO9YpY4htoZAIPG32fl2
+    w1nH8Bra9hK2T2N5fiB3qiCMYL68NJfDCgCdSgUYlPUWmw4tkdorZmRCrzBCpoKY
+    F/tmHTzJPQQwnjx81y0Y6T69Jlsw==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=JP1xhtwk;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=JP1xhtwk;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=intel.com header.result=pass header_is_org_domain=yes;
+      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfC4CebMvJ2blJyD8TG8RapwrSY6Lf5ohf/gVUiXK/pfhWYi6J2cuVeZrN8cX296efchxsd2S2kPwfYhuiRbc04FF748bhplXvTWEmvxmtSwqfKNquLAG
-    ao3hl+3yOEqmkfXuTPPvMO2KlMLY8zBmvDPqoqpvvp9nXTfxdqpIEpm7qbHf2FP5FZbJW18WokbAai35JLpk/7EeLbrQkkozoCfKsNUQBbEK7OyLUxAYbf33
+X-CM-Envelope: MS4wfIulobpH4Jop345v0f3z3u3cpq6fzEjaKqY62qenKO+DXjrRBsXZOXOvNF3YfGNpgcFK/sRP/d/eCgPIhk+KMlx7PjFWalgxk9fpSRUa1fg/bacgV/48
+    NcT8a+6QY9edUR01tLbu8wKG3QkLq4BIxSLQPYvrPmsNvaeJ16BD3HVB9Wn8QrrDJuT6nR8CrCJjicP+ebn/hARK3hzlDfOt9rdDYVpe16E5RbJLwyD14B2x
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=EbVHfS3oRaoA:10 a=IkcTkHD0fZMA:10
-    a=7mUfYlMuFuIA:10 a=i3X5FwGiAAAA:8 a=VwQbUJbxAAAA:8 a=6NuTs-VdzuYA-gG_B68A:9
-    a=QEXdDO2ut3YA:10 a=ic4oXV6auKO-Q6VfiSZ6:22 a=mmqRlSCDY2ywfjPLJ4af:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=7mUfYlMuFuIA:10
+    a=KKAkSRfTAAAA:8 a=QyXUC8HyAAAA:8 a=i3X5FwGiAAAA:8 a=VwQbUJbxAAAA:8
+    a=iox4zFpeAAAA:8 a=7CQSdrXTAAAA:8 a=20KFwNOVAAAA:8 a=JfrnYn6hAAAA:8
+    a=CxaZg77CAAAA:8 a=pGLkceISAAAA:8 a=Vn2NC6AZvbqHtmMKENcA:9
+    a=2Pt-RURPoWg4a7qb:21 a=nAl-GzcA3ZbmmzTe:21 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=cvBusfyB2V15izCimMoJ:22 a=mmqRlSCDY2ywfjPLJ4af:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=HxQw6O0h_v37Y3_G5fB_:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751061AbeFDE1i (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 4 Jun 2018 00:27:38 -0400
-Received: from mga09.intel.com ([134.134.136.24]:57013 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750801AbeFDE1h (ORCPT <rfc822;linux-efi@vger.kernel.org>);
-        Mon, 4 Jun 2018 00:27:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,475,1520924400";
-   d="scan'208";a="64043693"
-From: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To: Naresh Bhat <naresh.bhat@linaro.org>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>
-Subject: RE: [PATCH V5 0/3] Use efi_rts_wq to invoke EFI Runtime Services
-Thread-Topic: [PATCH V5 0/3] Use efi_rts_wq to invoke EFI Runtime Services
-Thread-Index: AQHT9vOycW5QHpsqGkehQKqjrruTMqRMstgAgALXhEA=
-Date: Mon, 4 Jun 2018 04:27:34 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F3B6EABDF@ORSMSX114.amr.corp.intel.com>
-References: <1527560464-19466-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <CAFoFrHYcD7fGYaJzKwcPCtu+XyR+mh5ORDqmCpiBjLmEkDfwOQ@mail.gmail.com>
-In-Reply-To: <CAFoFrHYcD7fGYaJzKwcPCtu+XyR+mh5ORDqmCpiBjLmEkDfwOQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOGUyZmM2ZDQtMThiYy00ZmM2LTljOGMtOTg0ZDg5ZGUxZGE2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoidU5UXC9NOEJmbWxUN2krUTlmXC9YV1V2Qk5ORUdHNys0MGpCZ21zMkdYanhYeTkxc3hUNGt6VTZHeUM1TmE2NE5mIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1753253AbeFATBm (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 1 Jun 2018 15:01:42 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34995 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752704AbeFATBl (ORCPT
+        <rfc822;linux-efi@vger.kernel.org>); Fri, 1 Jun 2018 15:01:41 -0400
+X-Google-Smtp-Source: ADUXVKI+hXORPyH9bv9s+YkgAkSKGwg/pgAGyEQj5xI9LFGBFHsN2hfZsWv2jsqZlp9WrWsM/jqqK1z9d87CruZ6x9o=
 MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu_Wy2=8eC3U5Xuj_4CLsFmgQoeq34RPVaPOusvMA2i-7Q@mail.gmail.com>
+References: <1527560464-19466-1-git-send-email-sai.praneeth.prakhya@intel.com> <CAKv+Gu_Wy2=8eC3U5Xuj_4CLsFmgQoeq34RPVaPOusvMA2i-7Q@mail.gmail.com>
+From: Bhupesh Sharma <bhsharma@redhat.com>
+Date: Sat, 2 Jun 2018 00:31:38 +0530
+Message-ID: <CACi5LpOk6e+=Ly4r4WP+Mriq5ThAcnU2UJ8Eupz4gCTfeYB71A@mail.gmail.com>
+Subject: Re: [PATCH V5 0/3] Use efi_rts_wq to invoke EFI Runtime Services
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Naresh Bhat <naresh.bhat@linaro.org>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-efi-owner@vger.kernel.org
 X-Mailing-List: linux-efi@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-PiA+IFRlc3Rpbmc6DQo+ID4gLS0tLS0tLS0NCj4gPiBUZXN0ZWQgdXNpbmcgTFVWIChMaW51eCBV
-RUZJIFZhbGlkYXRpb24pIGZvciB4ODZfNjQsIHg4Nl8zMiBhbmQgYXJtNjQNCj4gPiAocWVtdSBv
-bmx5KS4gV2lsbCBhcHByZWNpYXRlIHRoZSBlZmZvcnQgaWYgc29tZW9uZSBjb3VsZCB0ZXN0IHRo
-ZQ0KPiA+IHBhdGNoZXMgb24gcmVhbCBBUk0vQVJNNjQgbWFjaGluZXMuDQo+ID4gTFVWOiBodHRw
-czovLzAxLm9yZy9saW51eC11ZWZpLXZhbGlkYXRpb24NCj4gDQo+IEkgaGF2ZSB0ZXN0ZWQgVjQg
-c2VyaWVzIG9uIFRodW5kZXJYMiBWYWwxIGFuZCBTYWJlciBwbGF0Zm9ybSBieSBpbnRlZ3JhdGlu
-ZyB0aGUNCj4gcGF0Y2hlcyB3aXRoIExVViBwcm9qZWN0Lg0KPiBJIHdpbGwgdGVzdCBWNSB2ZXJz
-aW9uIHNvb24gYW5kIGxldCB5b3Uga25vdyB0aGUgb3V0Y29tZS4NCg0KVGhhbmtzIGEgbG90ISBm
-b3IgdGFraW5nIHRpbWUgdG8gdGVzdCB0aGUgcGF0Y2ggc2V0LCBOYXJlc2guIFdpbGwgYmUgd2Fp
-dGluZyB0byBzZWUgdGhlIHJlc3VsdC4NCg0KUmVnYXJkcywNClNhaQ0K
+Hi Sai, Ard,
+
+On Tue, May 29, 2018 at 4:39 PM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On 29 May 2018 at 04:21, Sai Praneeth Prakhya
+> <sai.praneeth.prakhya@intel.com> wrote:
+>> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+>>
+>> Problem statement:
+>> ------------------
+>> Presently, efi_runtime_services() silently switch %cr3 from swapper_pgd
+>> to efi_pgd. As a consequence, kernel code that runs in efi_pgd (e.g.,
+>> perf code via an NMI) will have incorrect user space mappings[1]. This
+>> could lead to otherwise unexpected access errors and, worse, unauthorized
+>> access to firmware code and data.
+>>
+>> Detailed discussion of problem statement:
+>> -----------------------------------------
+>> As this switch is not propagated to other kernel subsystems; they will
+>> wrongly assume that swapper_pgd is still in use and it can lead to
+>> following issues:
+>>
+>> 1. If kernel code tries to access user space addresses while in efi_pgd,
+>> it could lead to unauthorized accesses to firmware code/data.
+>> (e.g: <__>/copy_from_user_nmi()).
+>> [This could also be disastrous if the frame pointer happens to point at
+>> MMIO in the EFI runtime mappings] - Mark Rutland.
+>>
+>> An example of a subsystem that could touch user space while in efi_pgd is
+>> perf. Assume that we are in efi_pgd, a user could use perf to profile
+>> some user data and depending on the address the user is trying to
+>> profile, two things could happen.
+>> 1. If the mappings are absent, perf fails to profile.
+>> 2. If efi_pgd does have mappings for the requested address (these
+>>   mappings are erroneous), perf profiles firmware code/data. If the
+>>   address is MMIO'ed, perf could have potentially changed some device state.
+>>
+>> The culprit in both the cases is, EFI subsystem swapping out pgd and not
+>> perf. Because, EFI subsystem has broken the *general assumption* that
+>> all other subsystems rely on - "user space might be valid and nobody has
+>> switched %cr3".
+>>
+>> Solutions:
+>> ----------
+>> There are two ways to fix this issue:
+>> 1. Educate about pgd change to *all* the subsystems that could
+>>    potentially access user space while in efi_pgd.
+>>   On x86, AFAIK, it could happen only when some one touches user space
+>>   from the back of an NMI (a quick audit on <__>/copy_from_user_nmi,
+>>   showed perf and oprofile). On arm, it could happen from multiple
+>>   places as arm runs efi_runtime_services() interrupts enabled (ARM folks,
+>>   please comment on this as I might be wrong); whereas x86 runs
+>>   efi_runtime_services() interrupts disabled.
+>>
+>>   I think, this solution isn't holistic because
+>>   a. Any other subsystem might well do the same, if not now, in future.
+>>   b. Also, this solution looks simpler on x86 but not true if it's the
+>>     same for arm (ARM folks, please comment on this as I might be wrong).
+>>   c. This solution looks like a work around rather than addressing the issue.
+>>
+>> 2. Running efi_runtime_services() in kthread context.
+>>   This makes sense because efi_pgd doesn't have user space and kthread
+>>   by definition means that user space is not valid. Any kernel code that
+>>   tries to touch user space while in kthread is buggy in itself. If so,
+>>   it should be an easy fix in the other subsystem. This also take us one
+>>   step closer to long awaiting proposal of Andy - Running EFI at CPL 3.
+>>
+>> What does this patch set do?
+>> ----------------------------
+>> Introduce efi_rts_wq (EFI runtime services work queue).
+>> When a user process requests the kernel to execute any efi_runtime_service(),
+>> kernel queues the work to efi_rts_wq, a kthread comes along, switches to
+>> efi_pgd and executes efi_runtime_service() in kthread context. IOW, this
+>> patch set adds support to the EFI subsystem to handle all calls to
+>> efi_runtime_services() using a work queue (which in turn uses kthread).
+>>
+>> How running efi_runtime_services() in kthread fixes above discussed issues?
+>> ---------------------------------------------------------------------------
+>> If we run efi_runtime_services() in kthread context and if perf
+>> checks for it, we could get both the above scenarios correct by perf
+>> aborting the profiling. Not only perf, but any subsystem that tries to
+>> touch user space should first check for kthread context and if so,
+>> should abort.
+>>
+>> Q. If we still need check for kthread context in other subsystems that
+>> access user space, what does this patch set fix?
+>> A. This patch set makes sure that EFI subsystem is not at fault.
+>> Without this patch set the blame is upon EFI subsystem, because it's the
+>> one that changed pgd and hasn't communicated this change to everyone and
+>> hence broke the general assumption. Running efi_runtime_services() in
+>> kthread means explicitly communicating that user space is invalid, now
+>> it's the responsibility of other subsystem to make sure that it's
+>> running in right context.
+>>
+>> Testing:
+>> --------
+>> Tested using LUV (Linux UEFI Validation) for x86_64, x86_32 and arm64
+>> (qemu only). Will appreciate the effort if someone could test the
+>> patches on real ARM/ARM64 machines.
+
+I would give the latest v5 a try on my ARM64 qualcomm board as well.
+WIll get back with the test results soon.
+
+Thanks,
+Bhupesh
+
+>> LUV: https://01.org/linux-uefi-validation
+>>
+>> Credits:
+>> --------
+>> Thanks to Ricardo, Dan, Miguel, Mark, Peter Z and Ard for reviews and
+>> suggestions. Thanks to Boris and Andy for making me think through/help
+>> on what I am addressing with this patch set.
+>>
+>> Please feel free to pour in your comments and concerns.
+>>
+>> Note:
+>> -----
+>> Patches are based on Linus's kernel v4.17-rc7
+>>
+>> [1] Backup: Detailing efi_pgd:
+>> ------------------------------
+>> efi_pgd has mappings for EFI Runtime Code/Data (on x86, plus EFI Boot time
+>> Code/Data) regions. Due to the nature of these mappings, they fall
+>> in user space address ranges and they are not the same as swapper.
+>>
+>> [On arm64, the EFI mappings are in the VA range usually used for user
+>> space. The two halves of the address space are managed by separate
+>> tables, TTBR0 and TTBR1. We always map the kernel in TTBR1, and we map
+>> user space or EFI runtime mappings in TTBR0.] - Mark Rutland
+>>
+>> Changes from V4 to V5:
+>> ----------------------
+>> 1. As suggested by Ard, don't use efi_rts_wq for non-blocking variants.
+>>   Non-blocking variants are supposed to not block and using workqueue
+>>   exactly does the opposite, hence refrain from using it.
+>> 2. Use non-blocking variants in efi_delete_dummy_variable(). Use of
+>>   blocking variants means that we have to call efi_delete_dummy_variable()
+>>   after efi_rts_wq has been created.
+>> 3. Remove in_atomic() check in set_variable<>() and query_variable_info<>().
+>>   Any caller wishing to use set_variable() and query_variable_info() in
+>>   atomic context should use their non-blocking variants.
+>>
+>> Changes from V3 to V4:
+>> ----------------------
+>> 1. As suggested by Peter, use completions instead of flush_work() as the
+>>   former is cheaper
+>> 2. Call efi_delete_dummy_variable() from efisubsys_init(). Sorry! Ard,
+>>   wasn't able to find a better alternative to keep this change local to
+>>   arch/x86.
+>>
+>> Changes from V2 to V3:
+>> ----------------------
+>> 1. Rewrite the cover letter to clearly state the problem. What we are
+>>   fixing and what we are not fixing.
+>> 2. Make efi_delete_dummy_variable() change local to x86.
+>> 3. Avoid using BUG(), instead, print error message and exit gracefully.
+>> 4. Move struct efi_runtime_work to runtime-wrappers.c file.
+>> 5. Give enum a name (efi_rts_ids) and use it in efi_runtime_work.
+>> 6. Add Naresh (maintainer of LUV for ARM) and Miguel to the CC list.
+>>
+>> Changes from V1 to V2:
+>> ----------------------
+>> 1. Remove unnecessary include of asm/efi.h file - Fixes build error on
+>>   ia64, reported by 0-day
+>> 2. Use enum to identify efi_runtime_services()
+>> 3. Use alloc_ordered_workqueue() to create efi_rts_wq as
+>>   create_workqueue() is scheduled for depreciation.
+>> 4. Make efi_call_rts() static, as it has no callers outside
+>>   runtime-wrappers.c
+>> 5. Use BUG(), when we are unable to queue work or unable to identify
+>>   requested efi_runtime_service() - Because these two situations should
+>>   *never* happen.
+>>
+>> Sai Praneeth (3):
+>>   x86/efi: Make efi_delete_dummy_variable() use
+>>     set_variable_nonblocking() instead of set_variable()
+>>   efi: Create efi_rts_wq and efi_queue_work() to invoke all
+>>     efi_runtime_services()
+>>   efi: Use efi_rts_wq to invoke EFI Runtime Services
+>>
+>
+> This version looks good to me, and works as expected on SynQuacer (arm64).
+>
+> Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>
+> I will give others the opportunity to review this code before queuing it though.
+>
+> Thanks,
+> Ard.
+>
+>
+>>  arch/x86/platform/efi/quirks.c          |  11 +-
+>>  drivers/firmware/efi/efi.c              |  14 ++
+>>  drivers/firmware/efi/runtime-wrappers.c | 218 +++++++++++++++++++++++++++++---
+>>  include/linux/efi.h                     |   3 +
+>>  4 files changed, 224 insertions(+), 22 deletions(-)
+>>
+>> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+>> Suggested-by: Andy Lutomirski <luto@kernel.org>
+>> Cc: Lee Chun-Yi <jlee@suse.com>
+>> Cc: Borislav Petkov <bp@alien8.de>
+>> Cc: Tony Luck <tony.luck@intel.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> Cc: Dave Hansen <dave.hansen@intel.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Bhupesh Sharma <bhsharma@redhat.com>
+>> Cc: Naresh Bhat <naresh.bhat@linaro.org>
+>> Cc: Ricardo Neri <ricardo.neri@intel.com>
+>> Cc: Peter Zijlstra <peterz@infradead.org>
+>> Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+>> Cc: Matt Fleming <matt@codeblueprint.co.uk>
+>> Cc: Dan Williams <dan.j.williams@intel.com>
+>> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+>>
+>> --
+>> 2.7.4
+>>
