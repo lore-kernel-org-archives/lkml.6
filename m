@@ -1,71 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752672AbeFAMmy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 08:42:54 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:38760 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752141AbeFAMkh (ORCPT
+        id S1752010AbeFAMso (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 08:48:44 -0400
+Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:53545 "EHLO
+        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1751910AbeFAMsl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 08:40:37 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
-        Ed Blake <ed.blake@sondrel.com>,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        Vignesh R <vigneshr@ti.com>,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
-        Aaron Sierra <asierra@xes-inc.com>,
-        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
-        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH 2/8] serial: 8250_dw: allow enable rs485 at boot time
-Date: Fri,  1 Jun 2018 14:40:15 +0200
-Message-Id: <20180601124021.102970-3-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
-References: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
+        Fri, 1 Jun 2018 08:48:41 -0400
+From: Nicholas Mc Guire <hofrat@opentech.at>
+To: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH] media: atmel-isi: drop unnecessary while loop
+Date: Fri,  1 Jun 2018 12:46:14 +0000
+Message-Id: <1527857174-24616-1-git-send-email-hofrat@opentech.at>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If "linux,rs485-enabled-at-boot-time" is specified need to setup 485
-in probe function.
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-Call uart_get_rs485_mode() to get rs485 configuration, then call
-rs485_config() callback directly to setup port as rs485.
+As there is no way this can loop it actually makes no sense to have
+a while(1){} around the body - all three possible paths end in a return
+statement. 
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: commit c1d82b895380 "[media] atmel-isi: move out of soc_camera to atmel"
 ---
- drivers/tty/serial/8250/8250_dw.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 45366e6e5411..0f8b4da03d4e 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -582,8 +582,11 @@ static int dw8250_probe(struct platform_device *pdev)
- 	if (data->uart_16550_compatible)
- 		p->handle_irq = NULL;
+The diff output is unfortunately not that readable - essentially only
+the outer while(1){ } was removed. 
+
+Patch was compile tested with: x86_64_defconfig + CONFIG_MEDIA_SUPPORT=y
+MEDIA_CAMERA_SUPPORT=y, CONFIG_MEDIA_CONTROLLER=y, V4L_PLATFORM_DRIVERS=y
+OF=y, CONFIG_COMPILE_TEST=y, CONFIG_VIDEO_ATMEL_ISI=y
+
+Compile testing atmel-isi.c shows some sparse warnings. Seems to be due to
+sizeof operator being applied to a union (not related to the function being
+changed though).
+
+Patch is against 4.17-rc7 (localversion-next is next-20180531)
+
+ drivers/media/platform/atmel/atmel-isi.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
+index e5be21a..85fc7b9 100644
+--- a/drivers/media/platform/atmel/atmel-isi.c
++++ b/drivers/media/platform/atmel/atmel-isi.c
+@@ -1106,23 +1106,21 @@ static int isi_graph_parse(struct atmel_isi *isi, struct device_node *node)
+ 	struct device_node *ep = NULL;
+ 	struct device_node *remote;
  
--	if (!data->skip_autocfg)
-+	if (!data->skip_autocfg) {
- 		dw8250_setup_port(p);
-+		uart_get_rs485_mode(dev, &p->rs485);
-+		dw8250_rs485_config(p, &p->rs485);
-+	}
+-	while (1) {
+-		ep = of_graph_get_next_endpoint(node, ep);
+-		if (!ep)
+-			return -EINVAL;
+-
+-		remote = of_graph_get_remote_port_parent(ep);
+-		if (!remote) {
+-			of_node_put(ep);
+-			return -EINVAL;
+-		}
++	ep = of_graph_get_next_endpoint(node, ep);
++	if (!ep)
++		return -EINVAL;
  
- 	/* If we have a valid fifosize, try hooking up DMA */
- 	if (p->fifosize) {
+-		/* Remote node to connect */
+-		isi->entity.node = remote;
+-		isi->entity.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
+-		isi->entity.asd.match.fwnode = of_fwnode_handle(remote);
+-		return 0;
++	remote = of_graph_get_remote_port_parent(ep);
++	if (!remote) {
++		of_node_put(ep);
++		return -EINVAL;
+ 	}
++
++	/* Remote node to connect */
++	isi->entity.node = remote;
++	isi->entity.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
++	isi->entity.asd.match.fwnode = of_fwnode_handle(remote);
++	return 0;
+ }
+ 
+ static int isi_graph_init(struct atmel_isi *isi)
 -- 
-2.17.0
+2.1.4
