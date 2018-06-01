@@ -1,172 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752976AbeFAPO4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:14:56 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55832 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752653AbeFAPOk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:14:40 -0400
-X-Google-Smtp-Source: ADUXVKIaWqloqvDBu6YjcSqJVOpIU5J46neMwtUek2ZHV/fxPe9DGHPXdNpgsbNeTTgmkZ7VXP4IMQ==
-From: Bastian Germann <bastiangermann@fishpost.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Bastian Germann <bastiangermann@fishpost.de>,
-        Luca Tettamanti <kronos.it@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        id S1752717AbeFAPRP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:17:15 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57742 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751465AbeFAPRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:17:13 -0400
+Date: Fri, 1 Jun 2018 17:17:01 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: arm@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] hwmon: (asus_atk0110) Make use of device managed memory
-Date: Fri,  1 Jun 2018 17:14:19 +0200
-Message-Id: <20180601151419.15820-3-bastiangermann@fishpost.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180601151419.15820-1-bastiangermann@fishpost.de>
-References: <8afcabf0-94c2-8068-5252-491494108a0c@roeck-us.net>
- <20180601151419.15820-1-bastiangermann@fishpost.de>
+Subject: Re: [PATCH 06/15] arm: dts: sun: Add missing cooling device
+ properties for CPUs
+Message-ID: <20180601151701.sshwfdbflic6mybv@flea>
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
+ <eded393f4b508a1f377f9af6859a3b82a6787e1c.1527244201.git.viresh.kumar@linaro.org>
+ <20180528084446.g24fphqqac2hi3rr@flea>
+ <20180528105734.bkplm7tfaqsurdrn@vireshk-i7>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kyrkd2ck7f6qrool"
+Content-Disposition: inline
+In-Reply-To: <20180528105734.bkplm7tfaqsurdrn@vireshk-i7>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_* variants of kstrdup and kzalloc. Get rid of kfree cleanups.
 
-Signed-off-by: Bastian Germann <bastiangermann@fishpost.de>
----
- drivers/hwmon/asus_atk0110.c | 44 +++++++-----------------------------
- 1 file changed, 8 insertions(+), 36 deletions(-)
+--kyrkd2ck7f6qrool
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/hwmon/asus_atk0110.c b/drivers/hwmon/asus_atk0110.c
-index 33748cc07acc..91af065d0e4d 100644
---- a/drivers/hwmon/asus_atk0110.c
-+++ b/drivers/hwmon/asus_atk0110.c
-@@ -190,7 +190,6 @@ static int atk_add(struct acpi_device *device);
- static int atk_remove(struct acpi_device *device);
- static void atk_print_sensor(struct atk_data *data, union acpi_object *obj);
- static int atk_read_value(struct atk_sensor_data *sensor, u64 *value);
--static void atk_free_sensors(struct atk_data *data);
- 
- static struct acpi_driver atk_driver = {
- 	.name	= ATK_HID,
-@@ -906,15 +905,13 @@ static int atk_add_sensor(struct atk_data *data, union acpi_object *obj)
- 	limit1 = atk_get_pack_member(data, obj, HWMON_PACK_LIMIT1);
- 	limit2 = atk_get_pack_member(data, obj, HWMON_PACK_LIMIT2);
- 
--	sensor = kzalloc(sizeof(*sensor), GFP_KERNEL);
-+	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
- 	if (!sensor)
- 		return -ENOMEM;
- 
--	sensor->acpi_name = kstrdup(name->string.pointer, GFP_KERNEL);
--	if (!sensor->acpi_name) {
--		err = -ENOMEM;
--		goto out;
--	}
-+	sensor->acpi_name = devm_kstrdup(dev, name->string.pointer, GFP_KERNEL);
-+	if (!sensor->acpi_name)
-+		return -ENOMEM;
- 
- 	INIT_LIST_HEAD(&sensor->list);
- 	sensor->type = type;
-@@ -955,9 +952,6 @@ static int atk_add_sensor(struct atk_data *data, union acpi_object *obj)
- 	(*num)++;
- 
- 	return 1;
--out:
--	kfree(sensor);
--	return err;
- }
- 
- static int atk_enumerate_old_hwmon(struct atk_data *data)
-@@ -998,8 +992,7 @@ static int atk_enumerate_old_hwmon(struct atk_data *data)
- 		dev_warn(dev, METHOD_OLD_ENUM_TMP ": ACPI exception: %s\n",
- 				acpi_format_exception(status));
- 
--		ret = -ENODEV;
--		goto cleanup;
-+		return -ENODEV;
- 	}
- 
- 	pack = buf.pointer;
-@@ -1020,8 +1013,7 @@ static int atk_enumerate_old_hwmon(struct atk_data *data)
- 		dev_warn(dev, METHOD_OLD_ENUM_FAN ": ACPI exception: %s\n",
- 				acpi_format_exception(status));
- 
--		ret = -ENODEV;
--		goto cleanup;
-+		return -ENODEV;
- 	}
- 
- 	pack = buf.pointer;
-@@ -1035,9 +1027,6 @@ static int atk_enumerate_old_hwmon(struct atk_data *data)
- 	ACPI_FREE(buf.pointer);
- 
- 	return count;
--cleanup:
--	atk_free_sensors(data);
--	return ret;
- }
- 
- static int atk_ec_present(struct atk_data *data)
-@@ -1213,17 +1202,6 @@ static int atk_init_attribute_groups(struct atk_data *data)
- 	return 0;
- }
- 
--static void atk_free_sensors(struct atk_data *data)
--{
--	struct list_head *head = &data->sensor_list;
--	struct atk_sensor_data *s, *tmp;
--
--	list_for_each_entry_safe(s, tmp, head, list) {
--		kfree(s->acpi_name);
--		kfree(s);
--	}
--}
--
- static int atk_register_hwmon(struct atk_data *data)
- {
- 	struct device *dev = &data->acpi_dev->dev;
-@@ -1323,7 +1301,7 @@ static int atk_add(struct acpi_device *device)
- 
- 	dev_dbg(&device->dev, "adding...\n");
- 
--	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	data = devm_kzalloc(&device->dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
-@@ -1375,18 +1353,15 @@ static int atk_add(struct acpi_device *device)
- 		goto out;
- 	err = atk_register_hwmon(data);
- 	if (err)
--		goto cleanup;
-+		goto out;
- 
- 	atk_debugfs_init(data);
- 
- 	device->driver_data = data;
- 	return 0;
--cleanup:
--	atk_free_sensors(data);
- out:
- 	if (data->disable_ec)
- 		atk_ec_ctl(data, 0);
--	kfree(data);
- 	return err;
- }
- 
-@@ -1399,7 +1374,6 @@ static int atk_remove(struct acpi_device *device)
- 
- 	atk_debugfs_cleanup(data);
- 
--	atk_free_sensors(data);
- 	hwmon_device_unregister(data->hwmon_dev);
- 
- 	if (data->disable_ec) {
-@@ -1407,8 +1381,6 @@ static int atk_remove(struct acpi_device *device)
- 			dev_err(&device->dev, "Failed to disable EC\n");
- 	}
- 
--	kfree(data);
--
- 	return 0;
- }
- 
--- 
-2.17.1
+Hi,
+
+On Mon, May 28, 2018 at 04:27:34PM +0530, Viresh Kumar wrote:
+> On 28-05-18, 10:44, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Fri, May 25, 2018 at 04:01:52PM +0530, Viresh Kumar wrote:
+> > > The cooling device properties, like "#cooling-cells" and
+> > > "dynamic-power-coefficient", should either be present for all the CPUs
+> > > of a cluster or none. If these are present only for a subset of CPUs =
+of
+> > > a cluster then things will start falling apart as soon as the CPUs are
+> > > brought online in a different order. For example, this will happen
+> > > because the operating system looks for such properties in the CPU node
+> > > it is trying to bring up, so that it can register a cooling device.
+> > >=20
+> > > Add such missing properties.
+> > >=20
+> > > Fix other missing properties (clocks, OPP, clock latency) as well to
+> > > make it all work.
+> > >=20
+> > > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> >=20
+> > The prefix should be sunxi and not sun, but it looks good to me
+> > otherwise.
+> >=20
+> > Let me know what your preferred merge method is.
+>=20
+> Please pick it up directly and send it as part of your pull request.
+> Do you want me to resend or can you fix the $subject ?
+
+I just tried to apply it, and it failed. We have usually two different
+PR for the H3 SoCs and the others. Could you split the H3 in a
+separate patch (and fix the subject in the process?)
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--kyrkd2ck7f6qrool
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsRY2wACgkQ0rTAlCFN
+r3SrDA/+LL4BAKeV5gwtJH+GbspXsxJ5OqCeswBd20Cuw8XFn89xR/6p+BrYVvZP
+24Hv2nd7mhVHW9DjtQ50Gugd6e2wiEk0FaxQPCPki3CViWwEqceWfKJvYzp9iLHT
+We5xrLzr0+WHuRN1ngC9RIO2M2FR6acEJEIPghb7MlQ1V+cgYjaADjTIm4HQa8Ox
+2fkrrrZZmxmICw+eaC1ZTbtVIL49dT0w+J5PtoMtuZwjyxXPUc51nmuHR2YD2JPF
+QNXFJh12MeDTx5kex6b8FYr2j4EWp/lyjUG0UU4/FYqgCqxjqD8FI6aFNsBy0wVV
+Nv8Hxt17jYOggl/m/e+bmntQGwl1u/V5v7TSJ3IOp6QqRuX8w1fGUs1d6PQ+6Dfh
+0Nj7YwmoypOcBygWR/h6gquDw+YIOceGeq65oVReRFIn8ExMSFY0zms/JyYUDl5u
+FjswzaJ3mR7n9ATlPvLdTIXHcNzbGLVRT8kjJdx/DGXSEoddCRdzGftlTt/+YXyD
+0uG2396xwafRM+8g0PZeotuPJRO7hFi/U0bZmxuYH+ZDbY53o/yybciaSdyDo82L
+AqZEAy59RKGk5/ZGuVn2am8GognKw8Akbn4YXBHtxmgKt3uIm/POW8V52tUHXzxT
+QQvkdbME7Im3IoY1yPVoGWjk3/U0OpTMjQO6oOC4an6XAgEWwmU=
+=6pOi
+-----END PGP SIGNATURE-----
+
+--kyrkd2ck7f6qrool--
