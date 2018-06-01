@@ -1,110 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750943AbeFABVG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 21:21:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41648 "EHLO mx1.redhat.com"
+        id S1751070AbeFABWH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 21:22:07 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8245 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750807AbeFABVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 21:21:04 -0400
-Date: Fri, 1 Jun 2018 04:21:03 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "Liang, Cunming" <cunming.liang@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>
-Subject: Re: [virtio-dev] [PATCH] virtio_pci: support enabling VFs
-Message-ID: <20180601042004-mutt-send-email-mst@kernel.org>
-References: <20180530085521.26583-1-tiwei.bie@intel.com>
- <D7004E41-C23D-48B7-94A4-ACBBA06B021D@intel.com>
- <20180530190819-mutt-send-email-mst@kernel.org>
- <20180531025502.GA15516@debian>
+        id S1750793AbeFABWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 21:22:05 -0400
+Subject: Re: [PATCH 8/8] scsi: libsas: support SATA phy link rate unmatch the
+ pathway
+To: John Garry <john.garry@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20180529022309.21071-1-yanaijie@huawei.com>
+ <20180529022309.21071-9-yanaijie@huawei.com>
+ <ed533ab2-018d-0bda-568f-0034dac1e332@huawei.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        chenqilin <chenqilin2@huawei.com>, Ewan Milne <emilne@redhat.com>,
+        Tomas Henzl <thenzl@redhat.com>
+From: Jason Yan <yanaijie@huawei.com>
+Message-ID: <5B109FA8.9010402@huawei.com>
+Date: Fri, 1 Jun 2018 09:21:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531025502.GA15516@debian>
+In-Reply-To: <ed533ab2-018d-0bda-568f-0034dac1e332@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.203]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 10:55:02AM +0800, Tiwei Bie wrote:
-> On Wed, May 30, 2018 at 07:09:37PM +0300, Michael S. Tsirkin wrote:
-> > On Wed, May 30, 2018 at 04:03:37PM +0000, Rustad, Mark D wrote:
-> > > On May 30, 2018, at 1:55 AM, Tiwei Bie <tiwei.bie@intel.com> wrote:
-> > > 
-> > > > There is a new feature bit allocated in virtio spec to
-> > > > support SR-IOV (Single Root I/O Virtualization):
-> > > > 
-> > > > https://github.com/oasis-tcs/virtio-spec/issues/11
-> > > > 
-> > > > This patch enables the support for this feature bit in
-> > > > virtio driver.
-> > > > 
-> > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > ---
-> > > > This patch depends on below proposal:
-> > > > https://lists.oasis-open.org/archives/virtio-dev/201805/msg00154.html
-> > > > 
-> > > > This patch depends on below patch:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/commit/?h=pci/virtualization&id=8effc395c2097e258fcedfc02ed4a66d45fb4238
-> > > > 
-> > > >  drivers/virtio/virtio_pci_common.c | 20 ++++++++++++++++++++
-> > > >  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
-> > > >  include/uapi/linux/virtio_config.h |  7 ++++++-
-> > > >  3 files changed, 40 insertions(+), 1 deletion(-)
-> > > > 
-> > > 
-> > > <snip>
-> > > 
-> > > > diff --git a/include/uapi/linux/virtio_config.h
-> > > > b/include/uapi/linux/virtio_config.h
-> > > > index 308e2096291f..b7c1f4e7d59e 100644
-> > > > --- a/include/uapi/linux/virtio_config.h
-> > > > +++ b/include/uapi/linux/virtio_config.h
-> > > > @@ -49,7 +49,7 @@
-> > > 
-> > > There is a value in the comment directly before this that should
-> > > be updated as well to be consistent with the new value for
-> > > VIRTIO_TRANSPORT_F_END below.
-> > 
-> > It hasn't been updated to 34 yet.
-> > I suggest a separate patch to replace the numbers with
-> > VIRTIO_TRANSPORT_F_START and VIRTIO_TRANSPORT_F_END
-> > in the comment.
-> > Maybe replace "e.g. virtio_ring" with "e.g. virtio_ring,
-> > virtio_pci etc." as well.
-> 
-> Good idea! Thanks for the suggestion! I'll do it.
-> 
-> Best regards,
-> Tiwei Bie
 
-Or just focus on the new feature, tweak start/end
-as a separate patch. Up to you, the important thing
-is to have a ready to roll patch before the merge
-window.
 
-> 
-> > 
-> > > >   * transport being used (eg. virtio_ring), the rest are per-device feature
-> > > >   * bits. */
-> > > >  #define VIRTIO_TRANSPORT_F_START	28
-> > > > -#define VIRTIO_TRANSPORT_F_END		34
-> > > > +#define VIRTIO_TRANSPORT_F_END		38
-> > > > 
-> > > >  #ifndef VIRTIO_CONFIG_NO_LEGACY
-> > > >  /* Do we get callbacks when the ring is completely used, even if we've
-> > > 
-> > > <snip>
-> > > 
-> > > --
-> > > Mark Rustad, Networking Division, Intel Corporation
-> > 
-> > 
+On 2018/6/1 0:05, John Garry wrote:
+> On 29/05/2018 03:23, Jason Yan wrote:
+>> If a SATA disk attached to a expander phy and it's linkrate is greater
+>> than the expander host phy's linkrate, the disk will failed to discover.
+>> The topology is like below:
+>>
+>>    +----------+           +----------+
+>>    |          |           |          |
+>>    |          |-- 3.0 G --|          |-- 6.0 G -- SAS  disk
+>>    |          |           |          |
+>>    |          |-- 3.0 G --|          |-- 6.0 G -- SAS  disk
+>>    |initiator |           |          |
+>>    | device   |-- 3.0 G --| Expander |-- 6.0 G -- SAS  disk
+>>    |          |           |          |
+>>    |          |-- 3.0 G --|          |-- 6.0 G -- SATA disk  -->failed
+>> to connect
+>>    |          |           |          |
+>>    |          |           |          |-- 6.0 G -- SATA disk  -->failed
+>> to connect
+>>    |          |           |          |
+>>    +----------+           +----------+
+>>
+>> And when we check the sas protocal spec, this scenario is described as
+>> this:
+>>
+>> 7.13 Rate matching
+>> ......
+>> If an expander phy attached to a SATA phy is using a physical link rate
+>> greater than the maximum connection rate supported by the pathway from
+>> an STP initiator port, a management application client should use the
+>> SMP PHY CONTROL function (see 10.4.3.10) to set the PROGRAMMED MAXIMUM
+>> PHYSICAL LINK RATE field of the expander phy to the maximum connection
+>> rate supported by the pathway from that STP initiator port.
+>>
+>> In order to support this scenario, checking the SATA disk's linkrate
+>> to see if it is greater than any phy's linkrate it may pass through.
+>> Remember the minimum linkrate of the pathway and set the SATA phy
+>> linkrate to it using the SMP PHY CONTROL function.
+>
+> As we (re)discover the tree, can we keep track of the min pathway to the
+> root PHY dynamically (per expander), and then take action for any SATA
+> devices attached which have a negotiated linkrate greater (than the
+> expanders min pathway)? This would be an alternate to your approach of
+> finishing discovery and then checking the min pathway as a whole new step.
+>
+
+Seems better, I will have a try to see if it works. Thanks.
+
+>
+> .
+>
