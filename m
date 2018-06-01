@@ -1,83 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753417AbeFAQz4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:55:56 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8626 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753199AbeFAQyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:54:01 -0400
-From: Salil Mehta <salil.mehta@huawei.com>
-To: <davem@davemloft.net>
-CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
-Subject: [PATCH net-next 04/11] net: hns3: Fix setting mac address error
-Date: Fri, 1 Jun 2018 17:52:04 +0100
-Message-ID: <20180601165211.46372-5-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180601165211.46372-1-salil.mehta@huawei.com>
-References: <20180601165211.46372-1-salil.mehta@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.234]
-X-CFilter-Loop: Reflected
+        id S1753556AbeFAQ4E (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:56:04 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35797 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753199AbeFAQz6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:55:58 -0400
+X-Google-Smtp-Source: ADUXVKLsLuudchKT9coQ+jCWZRdH2mEmPFH4ht90v3Mj7rwHxCciG/Ff2VBi1jIWkPWIi/PTmQp93A==
+From: Nick Desaulniers <ndesaulniers@google.com>
+To: akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
+        aryabinin@virtuozzo.com, akataria@vmware.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org, hpa@zytor.com,
+        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
+        mingo@redhat.com, mjg59@google.com, mka@chromium.org,
+        ndesaulniers@google.com, pombredanne@nexb.com, rostedt@goodmis.org,
+        tglx@linutronix.de, thomas.lendacky@amd.com, tweek@google.com
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org
+Subject: [PATCH 1/3] efi: use -std=gnu89 for proper extern inline semantics
+Date: Fri,  1 Jun 2018 09:55:48 -0700
+Message-Id: <20180601165550.90053-2-ndesaulniers@google.com>
+X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
+In-Reply-To: <20180601165550.90053-1-ndesaulniers@google.com>
+References: <20180601165550.90053-1-ndesaulniers@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+The top level Makefile explicitly sets the C standard used in the kernel
+to gnu89. By overriding KBUILD_CFLAGS, the C standard used for this
+subdir is now implicit based on compiler and compiler version. GCC
+changes this implicit default from gnu89 to gnu11 in v5.1.
 
-When doing function reset or insmod hns3 dirver after rmmod,
-the entries of mac vlan table are not cleared, which may cause
-init mac address failed. This patch fixes it by clearing the
-old mac address when doing function reset or rmmod hns3 driver.
+This implies that depending on compiler version, parts of the kernel are
+being linked together from object files that were compiled with
+different C standard compiler flags.
 
-Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+This is problematic for symbols declared as extern inline, as the
+semantics have switched since gnu89. See also:
+http://blahg.josefsipek.net/?p=529
+
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Suggested-by: Sedat Dilek <sedat.dilek@gmail.com>
+Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/firmware/efi/libstub/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index fe54564..235eea1 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -3007,6 +3007,15 @@ static void hns3_init_mac_addr(struct net_device *netdev, bool init)
- 
- }
- 
-+static void hns3_uninit_mac_addr(struct net_device *netdev)
-+{
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
-+	struct hnae3_handle *h = priv->ae_handle;
-+
-+	if (h->ae_algo->ops->rm_uc_addr)
-+		h->ae_algo->ops->rm_uc_addr(h, netdev->dev_addr);
-+}
-+
- static void hns3_nic_set_priv_ops(struct net_device *netdev)
- {
- 	struct hns3_nic_priv *priv = netdev_priv(netdev);
-@@ -3135,6 +3144,8 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
- 
- 	priv->ring_data = NULL;
- 
-+	hns3_uninit_mac_addr(netdev);
-+
- 	free_netdev(netdev);
- }
- 
-@@ -3451,6 +3462,8 @@ static int hns3_reset_notify_uninit_enet(struct hnae3_handle *handle)
- 
- 	priv->ring_data = NULL;
- 
-+	hns3_uninit_mac_addr(netdev);
-+
- 	return ret;
- }
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index a34e9290a699..97ca53ab2b69 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -7,7 +7,7 @@
+ #
+ cflags-$(CONFIG_X86_32)		:= -march=i386
+ cflags-$(CONFIG_X86_64)		:= -mcmodel=small
+-cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -O2 \
++cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -O2 -std=gnu89 \
+ 				   -fPIC -fno-strict-aliasing -mno-red-zone \
+ 				   -mno-mmx -mno-sse -fshort-wchar
  
 -- 
-2.7.4
+2.17.0.921.gf22659ad46-goog
