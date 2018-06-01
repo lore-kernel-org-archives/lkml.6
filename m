@@ -1,60 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751742AbeFAIZK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:25:10 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:46447 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751266AbeFAIZE (ORCPT
+        id S1751814AbeFAIZ1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:25:27 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33174 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751214AbeFAIX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:25:04 -0400
-X-Google-Smtp-Source: ADUXVKLOJ4lZA76zupw/Uk9QtcQDYioYMqi0Xxl1ucWd7kgUf3SlN2LkTnnxq1QsSjSikUc9HqeJVhKWj4plUQFiG40=
-MIME-Version: 1.0
-In-Reply-To: <1527807882.10176.11.camel@linux.intel.com>
-References: <CAHp75VfLqvjVPwhcsK4enhsvXSLggX9_pO9AozZT56DWDrkjPg@mail.gmail.com>
- <20180525011056.25132-1-david.e.box@linux.intel.com> <CAHp75VfgAS4mDbtnVSMCJcadra=mPEsSQ5jt153r-Fks6vis7A@mail.gmail.com>
- <1527807882.10176.11.camel@linux.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 1 Jun 2018 11:25:03 +0300
-Message-ID: <CAHp75Vdxz2h1N_bLQ4wxrYoo-kRAHQK=+36Db0BfK1QR4iwVPw@mail.gmail.com>
-Subject: Re: [PATCH V2] platform/x86: intel_pmc_core: Add CNP SLPS0 debug registers
-To: David Box <david.e.box@linux.intel.com>
-Cc: Andy Shevchenko <andy@infradead.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
-        Darren Hart <dvhart@infradead.org>, kyle.d.pelton@linux.intel.com,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 1 Jun 2018 04:23:26 -0400
+X-Google-Smtp-Source: ADUXVKJf0352wXvag0GPVH6zDG2offojF9Oz+mkeKnzM7+TM+NEVHu1Pkh8woqszWE+21yDmZtNtMA==
+From: Johan Hovold <johan@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Pavel Machek <pavel@ucw.cz>, Marcel Holtmann <marcel@holtmann.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH v3 2/8] dt-bindings: add generic gnss binding
+Date: Fri,  1 Jun 2018 10:22:53 +0200
+Message-Id: <20180601082259.17563-3-johan@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180601082259.17563-1-johan@kernel.org>
+References: <20180601082259.17563-1-johan@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 2:04 AM, David E. Box
-<david.e.box@linux.intel.com> wrote:
-> On Thu, 2018-05-31 at 21:38 +0300, Andy Shevchenko wrote:
->> On Fri, May 25, 2018 at 4:10 AM, David E. Box
->> <david.e.box@linux.intel.com> wrote:
+Describe generic properties for GNSS receivers.
 
->> > +struct slps0_dbg_map {
->> > +       const struct pmc_bit_map *slps0_dbg_sts;
->> > +       int size;
->> > +};
->>
->> Didn't pay attention to this earlier. Why do we have a separate size
->> member? What does it define?
->
-> It holds the size of the pmc_bit_map array, assigned as shown here:
->
-> +static const struct slps0_dbg_map cnp_slps0_dbg_maps[] = {
-> + {cnp_slps0_dbg0_map, ARRAY_SIZE(cnp_slps0_dbg0_map)},
-> + {cnp_slps0_dbg1_map, ARRAY_SIZE(cnp_slps0_dbg1_map)},
-> + {cnp_slps0_dbg2_map, ARRAY_SIZE(cnp_slps0_dbg2_map)},
-> +};
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ .../devicetree/bindings/gnss/gnss.txt         | 36 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gnss/gnss.txt
 
-I see.
-Please drop this and use a terminator instead like it's done for the
-rest map tables.
-
+diff --git a/Documentation/devicetree/bindings/gnss/gnss.txt b/Documentation/devicetree/bindings/gnss/gnss.txt
+new file mode 100644
+index 000000000000..f1e4a2ff47c5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gnss/gnss.txt
+@@ -0,0 +1,36 @@
++GNSS Receiver DT binding
++
++This documents the binding structure and common properties for GNSS receiver
++devices.
++
++A GNSS receiver node is a node named "gnss" and typically resides on a serial
++bus (e.g. UART, I2C or SPI).
++
++Please refer to the following documents for generic properties:
++
++	Documentation/devicetree/bindings/serial/slave-device.txt
++	Documentation/devicetree/bindings/spi/spi-bus.txt
++
++Required properties:
++
++- compatible	: A string reflecting the vendor and specific device the node
++		  represents
++
++Optional properties:
++- enable-gpios	: GPIO used to enable the device
++- timepulse-gpios	: Time pulse GPIO
++
++Example:
++
++serial@1234 {
++	compatible = "ns16550a";
++
++	gnss {
++		compatible = "u-blox,neo-8";
++
++		vcc-supply = <&gnss_reg>;
++		timepulse-gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
++
++		current-speed = <4800>;
++	};
++};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dc3df211c1a7..fa219e80a1f8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5965,6 +5965,7 @@ F:	include/uapi/linux/gigaset_dev.h
+ GNSS SUBSYSTEM
+ M:	Johan Hovold <johan@kernel.org>
+ S:	Maintained
++F:	Documentation/devicetree/bindings/gnss/
+ F:	drivers/gnss/
+ F:	include/linux/gnss.h
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
