@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751498AbeFAITj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:19:39 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:46341 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751431AbeFAIT2 (ORCPT
+        id S1751522AbeFAITm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:19:42 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37081 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbeFAITa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:19:28 -0400
-X-Google-Smtp-Source: ADUXVKINughysmpvDcKW52u+LP81a6f/CYhxeGn7rEh/KDH0UtXdTGqA8vY7vwIftoWzahVkOUOe1w==
+        Fri, 1 Jun 2018 04:19:30 -0400
+X-Google-Smtp-Source: ADUXVKI+0gebShQAOrAeeOimMuseGGkE4LfYPE5gz5jLWKWegqcqXWkt9zZN3rRUSqx7EXPWCRq0SA==
 From: Neil Armstrong <narmstrong@baylibre.com>
 To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
         olof@lixom.net, seanpaul@google.com
@@ -17,9 +17,9 @@ Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         eballetbo@gmail.com
-Subject: [PATCH v7 4/6] mfd: cros-ec: Introduce CEC commands and events definitions.
-Date: Fri,  1 Jun 2018 10:19:12 +0200
-Message-Id: <1527841154-24832-5-git-send-email-narmstrong@baylibre.com>
+Subject: [PATCH v7 5/6] mfd: cros_ec_dev: Add CEC sub-device registration
+Date: Fri,  1 Jun 2018 10:19:13 +0200
+Message-Id: <1527841154-24832-6-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
 References: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
@@ -27,121 +27,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The EC can expose a CEC bus, this patch adds the CEC related definitions
-needed by the cros-ec-cec driver.
+The EC can expose a CEC bus, thus add the cros-ec-cec MFD sub-device
+when the CEC feature bit is present.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- include/linux/mfd/cros_ec_commands.h | 81 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+ drivers/mfd/cros_ec_dev.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index cc0768e..fe33a81 100644
---- a/include/linux/mfd/cros_ec_commands.h
-+++ b/include/linux/mfd/cros_ec_commands.h
-@@ -804,6 +804,8 @@ enum ec_feature_code {
- 	EC_FEATURE_MOTION_SENSE_FIFO = 24,
- 	/* EC has RTC feature that can be controlled by host commands */
- 	EC_FEATURE_RTC = 27,
-+	/* EC supports CEC commands */
-+	EC_FEATURE_CEC = 35,
- };
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 1d6dc5c..272969e 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -383,6 +383,10 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
+ 	kfree(msg);
+ }
  
- #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
-@@ -2078,6 +2080,12 @@ enum ec_mkbp_event {
- 	/* EC sent a sysrq command */
- 	EC_MKBP_EVENT_SYSRQ = 6,
- 
-+	/* Notify the AP that something happened on CEC */
-+	EC_MKBP_EVENT_CEC_EVENT = 8,
-+
-+	/* Send an incoming CEC message to the AP */
-+	EC_MKBP_EVENT_CEC_MESSAGE = 9,
-+
- 	/* Number of MKBP events */
- 	EC_MKBP_EVENT_COUNT,
- };
-@@ -2850,6 +2858,79 @@ struct ec_params_reboot_ec {
- 
- /*****************************************************************************/
- /*
-+ * HDMI CEC commands
-+ *
-+ * These commands are for sending and receiving message via HDMI CEC
-+ */
-+#define EC_MAX_CEC_MSG_LEN 16
-+
-+/* CEC message from the AP to be written on the CEC bus */
-+#define EC_CMD_CEC_WRITE_MSG 0x00B8
-+
-+/**
-+ * struct ec_params_cec_write - Message to write to the CEC bus
-+ * @msg: message content to write to the CEC bus
-+ */
-+struct ec_params_cec_write {
-+	uint8_t msg[EC_MAX_CEC_MSG_LEN];
-+} __packed;
-+
-+/* Set various CEC parameters */
-+#define EC_CMD_CEC_SET 0x00BA
-+
-+/**
-+ * struct ec_params_cec_set - CEC parameters set
-+ * @cmd: parameter type, can be CEC_CMD_ENABLE or CEC_CMD_LOGICAL_ADDRESS
-+ * @val: in case cmd is CEC_CMD_ENABLE, this field can be 0 to disable CEC
-+ *	or 1 to enable CEC functionality, in case cmd is CEC_CMD_LOGICAL_ADDRESS,
-+ *	this field encodes the requested logical address between 0 and 15
-+ *	or 0xff to unregister
-+ */
-+struct ec_params_cec_set {
-+	uint8_t cmd; /* enum cec_command */
-+	uint8_t val;
-+} __packed;
-+
-+/* Read various CEC parameters */
-+#define EC_CMD_CEC_GET 0x00BB
-+
-+/**
-+ * struct ec_params_cec_get - CEC parameters get
-+ * @cmd: parameter type, can be CEC_CMD_ENABLE or CEC_CMD_LOGICAL_ADDRESS
-+ */
-+struct ec_params_cec_get {
-+	uint8_t cmd; /* enum cec_command */
-+} __packed;
-+
-+/**
-+ * struct ec_response_cec_get - CEC parameters get response
-+ * @val: in case cmd was CEC_CMD_ENABLE, this field will 0 if CEC is
-+ *	disabled or 1 if CEC functionality is enabled,
-+ *	in case cmd was CEC_CMD_LOGICAL_ADDRESS, this will encode the
-+ *	configured logical address between 0 and 15 or 0xff if unregistered
-+ */
-+struct ec_response_cec_get {
-+	uint8_t val;
-+} __packed;
-+
-+/* CEC parameters command */
-+enum ec_cec_command {
-+	/* CEC reading, writing and events enable */
-+	CEC_CMD_ENABLE,
-+	/* CEC logical address  */
-+	CEC_CMD_LOGICAL_ADDRESS,
++static const struct mfd_cell cros_ec_cec_cells[] = {
++	{ .name = "cros-ec-cec" }
 +};
 +
-+/* Events from CEC to AP */
-+enum mkbp_cec_event {
-+	/* Outgoing message was acknowledged by a follower */
-+	EC_MKBP_CEC_SEND_OK			= BIT(0),
-+	/* Outgoing message was not acknowledged */
-+	EC_MKBP_CEC_SEND_FAILED			= BIT(1),
-+};
+ static const struct mfd_cell cros_ec_rtc_cells[] = {
+ 	{ .name = "cros-ec-rtc" }
+ };
+@@ -426,6 +430,18 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
+ 		cros_ec_sensors_register(ec);
+ 
++	/* Check whether this EC instance has CEC host command support */
++	if (cros_ec_check_features(ec, EC_FEATURE_CEC)) {
++		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
++					 cros_ec_cec_cells,
++					 ARRAY_SIZE(cros_ec_cec_cells),
++					 NULL, 0, NULL);
++		if (retval)
++			dev_err(ec->dev,
++				"failed to add cros-ec-cec device: %d\n",
++				retval);
++	}
 +
-+/*****************************************************************************/
-+/*
-  * Special commands
-  *
-  * These do not follow the normal rules for commands.  See each command for
+ 	/* Check whether this EC instance has RTC host command support */
+ 	if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
+ 		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
 -- 
 2.7.4
