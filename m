@@ -1,196 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750861AbeFADCJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 23:02:09 -0400
-Received: from mga03.intel.com ([134.134.136.65]:63610 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750715AbeFADCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 23:02:07 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
-   d="scan'208";a="44413595"
-Date: Fri, 1 Jun 2018 11:02:21 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: stefanha@redhat.com, mst@redhat.com, bhelgaas@google.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        linux-pci@vger.kernel.org
-Cc: dan.daly@intel.com, mark.d.rustad@intel.com,
-        alexander.h.duyck@intel.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com
-Subject: Re: [PATCH v2] virtio_pci: support enabling VFs
-Message-ID: <20180601030221.GA31357@debian>
-References: <20180601020921.30957-1-tiwei.bie@intel.com>
+        id S1751052AbeFADEi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 23:04:38 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:49830 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750726AbeFADEg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 23:04:36 -0400
+X-UUID: e82afa92439c40cdab3d851045ee8e8b-20180601
+From: <honghui.zhang@mediatek.com>
+To: <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
+        <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <ryder.lee@mediatek.com>
+CC: <honghui.zhang@mediatek.com>, <hongkun.cao@mediatek.com>,
+        <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
+        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>,
+        <xinping.qian@mediatek.com>
+Subject: [PATCH v3] PCI: mediatek: Add system pm support for MT2712
+Date: Fri, 1 Jun 2018 11:04:30 +0800
+Message-ID: <1527822270-30280-1-git-send-email-honghui.zhang@mediatek.com>
+X-Mailer: git-send-email 2.6.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180601020921.30957-1-tiwei.bie@intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 10:09:21AM +0800, Tiwei Bie wrote:
-> There is a new feature bit allocated in virtio spec to
-> support SR-IOV (Single Root I/O Virtualization):
-> 
-> https://github.com/oasis-tcs/virtio-spec/issues/11
-> 
-> This patch enables the support for this feature bit in
-> virtio driver.
-> 
-> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-Hi Stefan,
+The MTCMOS of PCIe Host for MT2712 will be off when system suspend, and all
+the internal control register will be reset after system resume. The PCIe
+link should be re-established and the related control register values
+should be re-set after system resume.
 
-I'm sorry, I just noticed that I forgot to include you in
-the To/Cc list.
+Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+CC: Ryder Lee <ryder.lee@mediatek.com>
+---
+ drivers/pci/host/pcie-mediatek.c | 60 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-I carried your "Acked-by" for the previous version [1]
-to this version (v2). Because from my understanding, this
-is an ACK for this feature. And the change in this version
-isn't big. The 1st change is to disable VFs when unbinding
-the driver. And the 2nd one is to drop the use of
-pci_sriov_configure_simple. So I guess the "ACK" is still
-valid. Please let me know if I'm wrong. Thanks a lot!
-
-Hi Michael,
-
-I also carried your "Acked-by" for the previous version [2]
-to this one (v2). Please let me know if I'm wrong. Thanks
-a lot!
-
-[1] https://lists.oasis-open.org/archives/virtio-dev/201805/msg00182.html
-[2] https://lists.oasis-open.org/archives/virtio-dev/201805/msg00183.html
-
-Best regards,
-Tiwei Bie
-
-> ---
-> v2:
-> - Disable VFs when unbinding the driver (Alex, MST);
-> - Don't use pci_sriov_configure_simple (Alex);
-> 
->  drivers/virtio/virtio_pci_common.c | 30 ++++++++++++++++++++++++++++++
->  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
->  include/uapi/linux/virtio_config.h |  7 ++++++-
->  3 files changed, 50 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> index 48d4d1cf1cb6..1d4467b2dc31 100644
-> --- a/drivers/virtio/virtio_pci_common.c
-> +++ b/drivers/virtio/virtio_pci_common.c
-> @@ -577,6 +577,8 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
->  	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
->  	struct device *dev = get_device(&vp_dev->vdev.dev);
->  
-> +	pci_disable_sriov(pci_dev);
-> +
->  	unregister_virtio_device(&vp_dev->vdev);
->  
->  	if (vp_dev->ioaddr)
-> @@ -588,6 +590,33 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
->  	put_device(dev);
->  }
->  
-> +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
-> +{
-> +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> +	struct virtio_device *vdev = &vp_dev->vdev;
-> +	int ret;
-> +
-> +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
-> +		return -EBUSY;
-> +
-> +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
-> +		return -EINVAL;
-> +
-> +	if (pci_vfs_assigned(pci_dev))
-> +		return -EPERM;
-> +
-> +	if (num_vfs == 0) {
-> +		pci_disable_sriov(pci_dev);
-> +		return 0;
-> +	}
-> +
-> +	ret = pci_enable_sriov(pci_dev, num_vfs);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return num_vfs;
-> +}
-> +
->  static struct pci_driver virtio_pci_driver = {
->  	.name		= "virtio-pci",
->  	.id_table	= virtio_pci_id_table,
-> @@ -596,6 +625,7 @@ static struct pci_driver virtio_pci_driver = {
->  #ifdef CONFIG_PM_SLEEP
->  	.driver.pm	= &virtio_pci_pm_ops,
->  #endif
-> +	.sriov_configure = virtio_pci_sriov_configure,
->  };
->  
->  module_pci_driver(virtio_pci_driver);
-> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-> index 2555d80f6eec..07571daccfec 100644
-> --- a/drivers/virtio/virtio_pci_modern.c
-> +++ b/drivers/virtio/virtio_pci_modern.c
-> @@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
->  	return features;
->  }
->  
-> +static void vp_transport_features(struct virtio_device *vdev, u64 features)
-> +{
-> +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> +	struct pci_dev *pci_dev = vp_dev->pci_dev;
-> +
-> +	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
-> +			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
-> +		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
-> +}
-> +
->  /* virtio config->finalize_features() implementation */
->  static int vp_finalize_features(struct virtio_device *vdev)
->  {
->  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> +	u64 features = vdev->features;
->  
->  	/* Give virtio_ring a chance to accept features. */
->  	vring_transport_features(vdev);
->  
-> +	/* Give virtio_pci a chance to accept features. */
-> +	vp_transport_features(vdev, features);
-> +
->  	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
->  		dev_err(&vdev->dev, "virtio: device uses modern interface "
->  			"but does not have VIRTIO_F_VERSION_1\n");
-> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> index 308e2096291f..b7c1f4e7d59e 100644
-> --- a/include/uapi/linux/virtio_config.h
-> +++ b/include/uapi/linux/virtio_config.h
-> @@ -49,7 +49,7 @@
->   * transport being used (eg. virtio_ring), the rest are per-device feature
->   * bits. */
->  #define VIRTIO_TRANSPORT_F_START	28
-> -#define VIRTIO_TRANSPORT_F_END		34
-> +#define VIRTIO_TRANSPORT_F_END		38
->  
->  #ifndef VIRTIO_CONFIG_NO_LEGACY
->  /* Do we get callbacks when the ring is completely used, even if we've
-> @@ -71,4 +71,9 @@
->   * this is for compatibility with legacy systems.
->   */
->  #define VIRTIO_F_IOMMU_PLATFORM		33
-> +
-> +/*
-> + * Does the device support Single Root I/O Virtualization?
-> + */
-> +#define VIRTIO_F_SR_IOV			37
->  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
-> -- 
-> 2.17.0
-> 
+diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
+index dabf1086..5363cc7 100644
+--- a/drivers/pci/host/pcie-mediatek.c
++++ b/drivers/pci/host/pcie-mediatek.c
+@@ -132,12 +132,14 @@ struct mtk_pcie_port;
+ /**
+  * struct mtk_pcie_soc - differentiate between host generations
+  * @need_fix_class_id: whether this host's class ID needed to be fixed or not
++ * @pm_support: whether the host's MTCMOS will be off when suspend
+  * @ops: pointer to configuration access functions
+  * @startup: pointer to controller setting functions
+  * @setup_irq: pointer to initialize IRQ functions
+  */
+ struct mtk_pcie_soc {
+ 	bool need_fix_class_id;
++	bool pm_support;
+ 	struct pci_ops *ops;
+ 	int (*startup)(struct mtk_pcie_port *port);
+ 	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
+@@ -1179,12 +1181,69 @@ static int mtk_pcie_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int mtk_pcie_suspend_noirq(struct device *dev)
++{
++	struct mtk_pcie *pcie = dev_get_drvdata(dev);
++	const struct mtk_pcie_soc *soc = pcie->soc;
++	struct mtk_pcie_port *port;
++
++	if (!soc->pm_support)
++		return 0;
++
++	list_for_each_entry(port, &pcie->ports, list) {
++		clk_disable_unprepare(port->ahb_ck);
++		clk_disable_unprepare(port->sys_ck);
++		phy_power_off(port->phy);
++	}
++
++	return 0;
++}
++
++static int mtk_pcie_resume_noirq(struct device *dev)
++{
++	struct mtk_pcie *pcie = dev_get_drvdata(dev);
++	const struct mtk_pcie_soc *soc = pcie->soc;
++	struct mtk_pcie_port *port;
++	int ret;
++
++	if (!soc->pm_support)
++		return 0;
++
++	list_for_each_entry(port, &pcie->ports, list) {
++		phy_power_on(port->phy);
++		clk_prepare_enable(port->sys_ck);
++		clk_prepare_enable(port->ahb_ck);
++
++		ret = soc->startup(port);
++		if (ret) {
++			dev_err(dev, "Port%d link down\n", port->slot);
++			phy_power_off(port->phy);
++			clk_disable_unprepare(port->sys_ck);
++			clk_disable_unprepare(port->ahb_ck);
++			return ret;
++		}
++
++		if (IS_ENABLED(CONFIG_PCI_MSI))
++			mtk_pcie_enable_msi(port);
++	}
++
++	return 0;
++}
++#endif
++
++static const struct dev_pm_ops mtk_pcie_pm_ops = {
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_pcie_suspend_noirq,
++				      mtk_pcie_resume_noirq)
++};
++
+ static const struct mtk_pcie_soc mtk_pcie_soc_v1 = {
+ 	.ops = &mtk_pcie_ops,
+ 	.startup = mtk_pcie_startup_port,
+ };
+ 
+ static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
++	.pm_support = true,
+ 	.ops = &mtk_pcie_ops_v2,
+ 	.startup = mtk_pcie_startup_port_v2,
+ 	.setup_irq = mtk_pcie_setup_irq,
+@@ -1211,6 +1270,7 @@ static struct platform_driver mtk_pcie_driver = {
+ 		.name = "mtk-pcie",
+ 		.of_match_table = mtk_pcie_ids,
+ 		.suppress_bind_attrs = true,
++		.pm = &mtk_pcie_pm_ops,
+ 	},
+ };
+ builtin_platform_driver(mtk_pcie_driver);
+-- 
+2.6.4
