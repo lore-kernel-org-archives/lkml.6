@@ -1,64 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751157AbeFAATv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 20:19:51 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:41095 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750736AbeFAATt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 20:19:49 -0400
-X-Google-Smtp-Source: ADUXVKLz36xglxqT6MAQTvlPX70xZ2cfMsLFr6qjJKHxA3zehYgBMTCWoo1gfqXzd+jKvDgNbDBHx/V8sGenMMMKngk=
+        id S1750996AbeFAA2l (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 20:28:41 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8180 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750736AbeFAA2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 20:28:39 -0400
+Subject: Re: [PATCH 3/8] scsi: libsas: always unregister the old device if
+ going to discover new
+To: John Garry <john.garry@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20180529022309.21071-1-yanaijie@huawei.com>
+ <20180529022309.21071-4-yanaijie@huawei.com>
+ <8d3c7ee0-b76e-841f-b8e3-0346d22ae0b7@huawei.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+From: Jason Yan <yanaijie@huawei.com>
+Message-ID: <5B109320.8040104@huawei.com>
+Date: Fri, 1 Jun 2018 08:28:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.1.0
 MIME-Version: 1.0
-In-Reply-To: <20180601100922.56e98097@canb.auug.org.au>
-References: <20180601100922.56e98097@canb.auug.org.au>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 31 May 2018 19:19:27 -0500
-Message-ID: <CAH2r5mt9YaodzbsnnD1rr68xrr7BRQY9MWYpLzeRmk37Z-X68Q@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the cifs tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: CIFS <linux-cifs@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8d3c7ee0-b76e-841f-b8e3-0346d22ae0b7@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.203]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sorry about that - missing
 
-#ifdef CONFIG_CIFS_SMB311
-#endif
 
-around that.  It is fixed now and repushed to cifs-2.6.git for-next
-
-otherwise requires SMB311 to be enabled in the build
-
-On Thu, May 31, 2018 at 7:09 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+On 2018/5/31 23:09, John Garry wrote:
+> On 29/05/2018 03:23, Jason Yan wrote:
+>> If we went into sas_rediscover_dev() the attached_sas_addr was already
+>> insured not to be zero. So it's unnecessary to check if the
+>> attached_sas_addr is zero.
+>>
+>> And although if the sas address is not changed, we always have to
+>> unregister the old device when we are going to register a new one. We
+>> cannot just leave the device there and bring up the new.
+>>
+>> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+>> CC: chenxiang <chenxiang66@hisilicon.com>
+>> CC: John Garry <john.garry@huawei.com>
+>> CC: Johannes Thumshirn <jthumshirn@suse.de>
+>> CC: Ewan Milne <emilne@redhat.com>
+>> CC: Christoph Hellwig <hch@lst.de>
+>> CC: Tomas Henzl <thenzl@redhat.com>
+>> CC: Dan Williams <dan.j.williams@intel.com>
+>> CC: Hannes Reinecke <hare@suse.com>
+>> ---
+>>  drivers/scsi/libsas/sas_expander.c | 13 +++++--------
+>>  1 file changed, 5 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/scsi/libsas/sas_expander.c
+>> b/drivers/scsi/libsas/sas_expander.c
+>> index 8b7114348def..629c580d906b 100644
+>> --- a/drivers/scsi/libsas/sas_expander.c
+>> +++ b/drivers/scsi/libsas/sas_expander.c
+>> @@ -2054,14 +2054,11 @@ static int sas_rediscover_dev(struct
+>> domain_device *dev, int phy_id, bool last)
+>>          return res;
+>>      }
+>>
+>> -    /* delete the old link */
+>> -    if (SAS_ADDR(phy->attached_sas_addr) &&
+>> -        SAS_ADDR(sas_addr) != SAS_ADDR(phy->attached_sas_addr)) {
+>> -        SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
+>> -                SAS_ADDR(dev->sas_addr), phy_id,
+>> -                SAS_ADDR(phy->attached_sas_addr));
+>> -        sas_unregister_devs_sas_addr(dev, phy_id, last);
+>> -    }
 >
-> After merging the cifs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> The preceeding checks in code check for no device/comm fail or SATA
+> flutter.
 >
-> fs/cifs/connect.c: In function 'cifs_mount':
-> fs/cifs/connect.c:3967:10: error: 'struct cifs_tcon' has no member named 'posix_extensions'
->   if (tcon->posix_extensions)
->           ^~
->
-> Caused by commit
->
->   12a778233fc4 ("smb3: Add posix create context for smb3.11 posix mounts")
->
-> # CONFIG_CIFS_SMB311 is not set
->
-> I have used the cifs tree from next-20180531 for today.
->
-> --
-> Cheers,
-> Stephen Rothwell
+> If we're rediscovering the device and the SAS address has not changed,
+> then why previously still try to discover a new device? I'm guessing
+> sas_discover_new() had no affect in this case, since maybe since the PHY
+> was already discovered.
 
+When we went here, means it is not flutter, something must change,
+either the device type or the phy address. Then we call
+sas_discover_new(). And sas_discover_new() sure *have* effect in this
+case. Please check sas_discover_new() carefully.
 
+  But that would not make sense since you say "we
+> are going to register a new one". Or, if we are always going to register
+> a new one, how did we ensure we always unregistered the old device
+> previously (when SAS address did not change)?
+>
 
--- 
-Thanks,
+If SAS address did not change, the device type must changed, otherwise
+it will be a "flutter" and won't get here. So if the device type
+changed, do we have a reason to keep the device? I don't think so.
 
-Steve
+>> +    /* we always have to delete the old device when we went here */
+>> +    SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
+>> +            SAS_ADDR(dev->sas_addr), phy_id,
+>> +            SAS_ADDR(phy->attached_sas_addr));
+>> +    sas_unregister_devs_sas_addr(dev, phy_id, last);
+>>
+>>      return sas_discover_new(dev, phy_id);
+>>  }
+>>
+>
+>
+>
+> .
+>
