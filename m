@@ -1,113 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753468AbeFASei (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 14:34:38 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42830 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752485AbeFASed (ORCPT
+        id S1752963AbeFASng (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 14:43:36 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:44322 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751584AbeFASne (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 14:34:33 -0400
-X-Google-Smtp-Source: ADUXVKJvkdYvFy6oKDK+7GwXi5gIDgJsQKFlY5L7lWDGSDS/HI4bH+M0I/IdOOKpJlPThShDsTmfUw==
-Date: Fri, 1 Jun 2018 11:34:29 -0700
+        Fri, 1 Jun 2018 14:43:34 -0400
+X-Google-Smtp-Source: ADUXVKILxVz3Y2HZrQBW96lO9uZQBYf9Jn2utr5F9E+J1H+O6VsKxAPqReLd8Gawr3kC0WkjY38l3g==
+Date: Fri, 1 Jun 2018 11:43:30 -0700
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] Input: evdev - Switch to bitmap_zalloc()
-Message-ID: <20180601183429.GC222005@dtor-ws>
-References: <20180601083120.40352-1-andriy.shevchenko@linux.intel.com>
- <20180601083120.40352-3-andriy.shevchenko@linux.intel.com>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
+        Jason Gerecke <killertofu@gmail.com>,
+        Dennis Kempin <denniskempin@google.com>,
+        Andrew de los Reyes <adlr@google.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
+ non-confident touches
+Message-ID: <20180601184330.GD222005@dtor-ws>
+References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
+ <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180601083120.40352-3-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 11:31:20AM +0300, Andy Shevchenko wrote:
-> Switch to bitmap_zalloc() to show clearly what we are allocating.
-> Besides that it returns pointer of bitmap type instead of opaque void *.
+On Fri, Jun 01, 2018 at 04:16:09PM +0200, Benjamin Tissoires wrote:
+> On Fri, Aug 11, 2017 at 2:44 AM, Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> > According to Microsoft specification [1] for Precision Touchpads (and
+> > Touchscreens) the devices use "confidence" reports to signal accidental
+> > touches, or contacts that are "too large to be a finger". Instead of
+> > simply marking contact inactive in this case (which causes issues if
+> > contact was originally proper and we lost confidence in it later, as
+> > this results in accidental clicks, drags, etc), let's report such
+> > contacts as MT_TOOL_PALM and let userspace decide what to do.
+> > Additionally, let's report contact size for such touches as maximum
+> > allowed for major/minor, which should help userspace that is not yet
+> > aware of MT_TOOL_PALM to still perform palm rejection.
+> >
+> > An additional complication, is that some firmwares do not report
+> > non-confident touches as active. To cope with this we delay release of
+> > such contact (i.e. if contact was active we first report it as still
+> > active MT+TOOL_PALM and then synthesize the release event in a separate
+> > frame).
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> I am not sure I agree with this part. The spec says that "Once a
+> device has determined that a contact is unintentional, it should clear
+> the confidence bit for that contact report and all subsequent
+> reports."
+> So in theory the spec says that if a touch has been detected as a
+> palm, the flow of events should not stop (tested on the PTP of the
+> Dell XPS 9360).
+> 
+> However, I interpret a firmware that send (confidence 1, tip switch 1)
+> and then (confidence 0, tip switch 0) a simple release, and the
+> confidence bit should not be relayed.
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+This unfortunately leads to false clicks: you start with finger, so
+confidence is 1, then you transition the same touch to palm (use your
+thumb and "roll" your hand until heel of it comes into contact with the
+screen). The firmware reports "no-confidence" and "release" in the same
+report and userspace seeing release does not pay attention to confidence
+(i.e. it does exactly "simple release" logic) and this results in UI
+interpreting this as a click. With splitting no-confidence
+(MT_TOOL_PALM) and release event into separate frames we help userspace
+to recognize that the contact should be discarded.
 
-> ---
->  drivers/input/evdev.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-> index c81c79d01d93..3f87ef973bc7 100644
-> --- a/drivers/input/evdev.c
-> +++ b/drivers/input/evdev.c
-> @@ -481,7 +481,7 @@ static int evdev_release(struct inode *inode, struct file *file)
->  	evdev_detach_client(evdev, client);
->  
->  	for (i = 0; i < EV_CNT; ++i)
-> -		kfree(client->evmasks[i]);
-> +		bitmap_free(client->evmasks[i]);
->  
->  	kvfree(client);
->  
-> @@ -925,17 +925,15 @@ static int evdev_handle_get_val(struct evdev_client *client,
->  {
->  	int ret;
->  	unsigned long *mem;
-> -	size_t len;
->  
-> -	len = BITS_TO_LONGS(maxbit) * sizeof(unsigned long);
-> -	mem = kmalloc(len, GFP_KERNEL);
-> +	mem = bitmap_malloc(maxbit, GFP_KERNEL);
->  	if (!mem)
->  		return -ENOMEM;
->  
->  	spin_lock_irq(&dev->event_lock);
->  	spin_lock(&client->buffer_lock);
->  
-> -	memcpy(mem, bits, len);
-> +	bitmap_copy(mem, bits, maxbit);
->  
->  	spin_unlock(&dev->event_lock);
->  
-> @@ -947,7 +945,7 @@ static int evdev_handle_get_val(struct evdev_client *client,
->  	if (ret < 0)
->  		evdev_queue_syn_dropped(client);
->  
-> -	kfree(mem);
-> +	bitmap_free(mem);
->  
->  	return ret;
->  }
-> @@ -1003,13 +1001,13 @@ static int evdev_set_mask(struct evdev_client *client,
->  	if (!cnt)
->  		return 0;
->  
-> -	mask = kcalloc(sizeof(unsigned long), BITS_TO_LONGS(cnt), GFP_KERNEL);
-> +	mask = bitmap_zalloc(cnt, GFP_KERNEL);
->  	if (!mask)
->  		return -ENOMEM;
->  
->  	error = bits_from_user(mask, cnt - 1, codes_size, codes, compat);
->  	if (error < 0) {
-> -		kfree(mask);
-> +		bitmap_free(mask);
->  		return error;
->  	}
->  
-> @@ -1018,7 +1016,7 @@ static int evdev_set_mask(struct evdev_client *client,
->  	client->evmasks[type] = mask;
->  	spin_unlock_irqrestore(&client->buffer_lock, flags);
->  
-> -	kfree(oldmask);
-> +	bitmap_free(oldmask);
->  
->  	return 0;
->  }
-> -- 
-> 2.17.0
-> 
+> Do you have any precise example of reports where you need that feature?
+
+It was observed on Pixelbooks which use Wacom digitizers IIRC.
+
+Thanks.
 
 -- 
 Dmitry
