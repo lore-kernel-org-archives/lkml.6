@@ -1,42 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753427AbeFATWN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 15:22:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752783AbeFATWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 15:22:10 -0400
-Content-Type: text/plain; charset="utf-8"
+        id S1753554AbeFATWi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 15:22:38 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:42489 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752783AbeFATWf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 15:22:35 -0400
+X-Google-Smtp-Source: ADUXVKLqLiRabskyRud//X/lO/IwcZ/r8Pjo2zd9KLVP4GDnvDntFmDi9kN3S0oxMKBAh+Q+xWtcPcU4Hdj6UmLYCm4=
 MIME-Version: 1.0
-To: Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
+In-Reply-To: <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
+References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be> <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Jun 2018 21:22:33 +0200
+X-Google-Sender-Auth: chXuxcg1h0yNoP3NC5iNSrcGy6c
+Message-ID: <CAMuHMdUNXQDdv-CQs+KpaHJ8gGFjFrPRNXF3HPZNyTdQr+23Og@mail.gmail.com>
+Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from __of_clk_get()
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180524213735.12121-1-bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180524213735.12121-1-bjorn.andersson@linaro.org>
-Message-ID: <152788092933.225090.134215386081948476@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: qcom: gcc-msm8996: Disable halt check on UFS clocks
-Date: Fri, 01 Jun 2018 12:22:09 -0700
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51JMxeX027206
 
-Quoting Bjorn Andersson (2018-05-24 14:37:35)
-> The halt check of the UFS symbol clocks always fails, as such probing
-> UFS after clk_disable_unused always fails. This makes it impossible to
-> boot a system with the UFS phy or UFS HCD drivers compiled as modules.
-> 
-> Follow SDM845 and disable the halt check on these clocks.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+Hi Stephen,
 
-Applied to clk-next
+On Fri, Jun 1, 2018 at 9:20 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
+>> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
+>> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
+>> counting number of phandles in a property").
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> Commit bd69f73f2c81eed9 is in v3.9.
+>
+> Did you send this to Russell's patch tracker? Otherwise I can pick it up
+
+Not yet. The patch tracker is for reviewed patches, AFAIK.
+
+> to clk-next.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
