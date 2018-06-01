@@ -1,82 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752069AbeFAOMq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:12:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33104 "EHLO mx2.suse.de"
+        id S1751838AbeFAOMy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:12:54 -0400
+Received: from ms.lwn.net ([45.79.88.28]:35318 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751741AbeFAOMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:12:44 -0400
-Date: Fri, 1 Jun 2018 16:09:54 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Huang Ying <ying.huang@intel.com>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, "Theodore Ts'o" <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
-        Filipe Manana <fdmanana@gmail.com>
-Subject: Re: [RESEND PATCH V5 00/33] block: support multipage bvec
-Message-ID: <20180601140954.GY3539@suse.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Huang Ying <ying.huang@intel.com>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>
-References: <20180525034621.31147-1-ming.lei@redhat.com>
+        id S1751741AbeFAOMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:12:51 -0400
+Date: Fri, 1 Jun 2018 08:12:48 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Michel =?UTF-8?B?RMOkbnplcg==?= <michel@daenzer.net>
+Cc: Alex Deucher <alexdeucher@gmail.com>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 3/3] drm/amdgpu: Add documentation for PRIME related
+ code
+Message-ID: <20180601081248.7b65edb2@lwn.net>
+In-Reply-To: <b458561f-b4e5-58bb-eee0-e3451312ae41@daenzer.net>
+References: <20180531161708.5894-1-michel@daenzer.net>
+        <20180531161708.5894-3-michel@daenzer.net>
+        <CADnq5_O5-m_=xqszq41eOAVaLTytHUHmtDaSc1MeEorZML6T5g@mail.gmail.com>
+        <b458561f-b4e5-58bb-eee0-e3451312ae41@daenzer.net>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180525034621.31147-1-ming.lei@redhat.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25, 2018 at 11:45:48AM +0800, Ming Lei wrote:
->  fs/btrfs/check-integrity.c          |   6 +-
->  fs/btrfs/compression.c              |   8 +-
->  fs/btrfs/disk-io.c                  |   3 +-
->  fs/btrfs/extent_io.c                |  14 ++-
->  fs/btrfs/file-item.c                |   4 +-
->  fs/btrfs/inode.c                    |  12 ++-
->  fs/btrfs/raid56.c                   |   5 +-
+On Fri, 1 Jun 2018 15:40:44 +0200
+Michel Dänzer <michel@daenzer.net> wrote:
 
-For the btrfs bits,
-Acked-by: David Sterba <dsterba@suse.com>
+> Thanks. Is it okay to merge all of these via the amdgpu tree, or should
+> I wait for an ack from Jon and/or core DRM maintainers for that?
 
-but that's from the bio API user perspective only, I'll leave the design
-and implementation questions to others.
+I've been assuming they would go through a DRM tree, no need to wait for
+me.
 
-I've let the patchset through fstests, no problems. One thing that caught
-my eye was use of the 'struct bvec_iter_all' in random functions. As
-this structure is a compound of 2 others and is 40 bytes in size, I was
-curious how this increased stack consumption.
+Thanks,
 
-Measured with -fstack-usage before and after patch 22/33 "btrfs: conver to
-bio_for_each_page_all2"
-
--disk-io.c:btree_csum_one_bio                             48 static
-+disk-io.c:btree_csum_one_bio                             80 static
--extent_io.c:end_bio_extent_buffer_writepage              56 static
-+extent_io.c:end_bio_extent_buffer_writepage              80 static
--extent_io.c:end_bio_extent_readpage                      176 dynamic,bounded
-+extent_io.c:end_bio_extent_readpage                      240 dynamic,bounded
--extent_io.c:end_bio_extent_writepage                     56 static
-+extent_io.c:end_bio_extent_writepage                     120 static
--inode.c:btrfs_retry_endio                                96 dynamic,bounded
-+inode.c:btrfs_retry_endio                                144 dynamic,bounded
--inode.c:btrfs_retry_endio_nocsum                         72 dynamic,bounded
-+inode.c:btrfs_retry_endio_nocsum                         104 dynamic,bounded
--raid56.c:set_bio_pages_uptodate                          8 static
-+raid56.c:set_bio_pages_uptodate                          40 static
-
-It's not that bad, but still quite a lot just to iterate a list of bios. I
-think it's worth mentioning as it affects several other filesystems and
-should be possibly optimized in the future.
+jon
