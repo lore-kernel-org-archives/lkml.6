@@ -1,81 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753376AbeFASbf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 14:31:35 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:40894 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752857AbeFASbc (ORCPT
+        id S1753387AbeFAScA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 14:32:00 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:34803 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752333AbeFASb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 14:31:32 -0400
-X-Google-Smtp-Source: ADUXVKLd7FkFYN7AhwXMgwJ/SruhzlGoUQqc2713bSi4FTvdAAAOBkPiBvSUfO6Rn2mlix26XLPatg==
-Date: Fri, 1 Jun 2018 11:31:28 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>,
-        Alexandru Stan <amstan@chromium.org>,
-        Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 1/2] power: supply: sbs-battery: don't assume
- MANUFACTURER_DATA formats
-Message-ID: <20180601183126.GA72050@rodete-desktop-imager.corp.google.com>
-References: <20180601172400.50737-1-briannorris@chromium.org>
- <20180601173434.GA22509@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180601173434.GA22509@roeck-us.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 1 Jun 2018 14:31:56 -0400
+X-Google-Smtp-Source: ADUXVKK9JSALd+1+SEDY8zFuGqdA+dzmDxk9TZNOHEhYnhnMoQ5cQ7YGNe+FPih3JAx5xOa6hBdFIA==
+From: Cong Wang <xiyou.wangcong@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: noamr@beyondsecurity.com, Cong Wang <xiyou.wangcong@gmail.com>,
+        Sean Hefty <sean.hefty@intel.com>, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Subject: [PATCH] infiniband: fix a possible use-after-free bug
+Date: Fri,  1 Jun 2018 11:31:44 -0700
+Message-Id: <20180601183144.17374-1-xiyou.wangcong@gmail.com>
+X-Mailer: git-send-email 2.9.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+ucma_process_join() will free the new allocated "mc" struct,
+if there is any error after that, especially the copy_to_user().
 
-On Fri, Jun 01, 2018 at 10:34:34AM -0700, Guenter Roeck wrote:
-> On Fri, Jun 01, 2018 at 10:23:59AM -0700, Brian Norris wrote:
-> >  drivers/power/supply/sbs-battery.c | 54 +++++++++++++++++++++++++-----
-> >  1 file changed, 46 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
-> > index 83d7b4115857..8dea63464a3f 100644
-> > --- a/drivers/power/supply/sbs-battery.c
-> > +++ b/drivers/power/supply/sbs-battery.c
-...
+But in parallel, ucma_leave_multicast() could find this "mc"
+through idr_find() before ucma_process_join() frees it, since it
+is already published.
 
-> > @@ -315,6 +320,27 @@ static int sbs_status_correct(struct i2c_client *client, int *intval)
-> >  static int sbs_get_battery_presence_and_health(
-> >  	struct i2c_client *client, enum power_supply_property psp,
-> >  	union power_supply_propval *val)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (psp == POWER_SUPPLY_PROP_PRESENT) {
-> > +		/* Dummy command; if it succeeds, battery is present. */
-> > +		ret = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
-> > +		if (ret < 0)
-> > +			val->intval = 0; /* battery disconnected */
-> > +		else
-> > +			val->intval = 1; /* battery present */
-> > +		return 0;
-> > +	} else { /* POWER_SUPPLY_PROP_HEALTH */
-> 
-> Static analyzers may complain that else after return is unnecessary.
+So "mc" could be used in ucma_leave_multicast() after it is been
+allocated and freed in ucma_process_join(), since we don't refcnt
+it.
 
-I noticed (checkpatch complains) but decided I didn't care. It would be
-worse to promote the 'else' to top-level (things would look asymmetric).
-I suppose I could pull the 'return 0' out, but I'm not sure that would
-make the code any better.
+Fix this by separating "publish" from ID allocation, so that we
+can get an ID first and publish it later after copy_to_user().
 
-> Other than that
-> 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> > +		/* SBS spec doesn't have a general health command. */
-> > +		val->intval = POWER_SUPPLY_HEALTH_UNKNOWN;
-> > +		return 0;
-> > +	}
-> > +}
-> > +
+Fixes c8f6a362bf3e ("RDMA/cma: Add multicast communication support")
+Reported-by: Noam Rathaus <noamr@beyondsecurity.com>
+Cc: Sean Hefty <sean.hefty@intel.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-rdma@vger.kernel.org
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+---
+ drivers/infiniband/core/ucma.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Brian
+diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
+index eab43b17e9cf..ec8fb289621f 100644
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -235,7 +235,7 @@ static struct ucma_multicast* ucma_alloc_multicast(struct ucma_context *ctx)
+ 		return NULL;
+ 
+ 	mutex_lock(&mut);
+-	mc->id = idr_alloc(&multicast_idr, mc, 0, 0, GFP_KERNEL);
++	mc->id = idr_alloc(&multicast_idr, NULL, 0, 0, GFP_KERNEL);
+ 	mutex_unlock(&mut);
+ 	if (mc->id < 0)
+ 		goto error;
+@@ -1421,6 +1421,10 @@ static ssize_t ucma_process_join(struct ucma_file *file,
+ 		goto err3;
+ 	}
+ 
++	mutex_lock(&mut);
++	idr_replace(&multicast_idr, mc, mc->id);
++	mutex_unlock(&mut);
++
+ 	mutex_unlock(&file->mut);
+ 	ucma_put_ctx(ctx);
+ 	return 0;
+-- 
+2.13.0
