@@ -1,54 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751770AbeFALxV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:53:21 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:44262 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbeFALxT (ORCPT
+        id S1751889AbeFALxm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:53:42 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:46602 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751775AbeFALxj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:53:19 -0400
-Date: Thu, 31 May 2018 10:24:37 -0400
-From: Simon Horman <horms@verge.net.au>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: arm@kernel.org, biju.das@bp.renesas.com,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 13/15] arm: dts: r8a77xx: Add missing OPP properties
- for CPUs
-Message-ID: <20180531142433.ndnr7dn7nptkpb5k@verge.net.au>
-References: <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
- <c6254ebb1f177468db6b8ac560ffb5a4a0b864f0.1527655562.git.viresh.kumar@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6254ebb1f177468db6b8ac560ffb5a4a0b864f0.1527655562.git.viresh.kumar@linaro.org>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 1 Jun 2018 07:53:39 -0400
+X-Google-Smtp-Source: ADUXVKIOjwVX6kKF3zcDWj2JTa+CNd71EIyrspzvqLnXfTb1k1gzsMbZQh7vYw/jXGeEz+cl1pZQeQ==
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Tom Herbert <tom@quantonium.net>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Subject: [PATCH] mm: kvmalloc does not fallback to vmalloc for incompatible gfp flags
+Date: Fri,  1 Jun 2018 13:53:29 +0200
+Message-Id: <20180601115329.27807-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 10:16:58AM +0530, Viresh Kumar wrote:
-> The OPP properties, like "operating-points", should either be present
-> for all the CPUs of a cluster or none. If these are present only for a
-> subset of CPUs of a cluster then things will start falling apart as soon
-> as the CPUs are brought online in a different order. For example, this
-> will happen because the operating system looks for such properties in
-> the CPU node it is trying to bring up, so that it can create an OPP
-> table.
-> 
-> Add such missing properties.
-> 
-> Fix other missing properties (like, clock latency, voltage tolerance,
-> etc) as well to make it all work.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+From: Michal Hocko <mhocko@suse.com>
 
-This looks fine but I will wait to see if there are other reviews before
-applying.
+kvmalloc warned about incompatible gfp_mask to catch abusers (mostly
+GFP_NOFS) with an intention that this will motivate authors of the code
+to fix those. Linus argues that this just motivates people to do even
+more hacks like
+	if (gfp == GFP_KERNEL)
+		kvmalloc
+	else
+		kmalloc
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+I haven't seen this happening much (Linus pointed to bucket_lock special
+cases an atomic allocation but my git foo hasn't found much more) but
+it is true that we can grow those in future. Therefore Linus suggested
+to simply not fallback to vmalloc for incompatible gfp flags and rather
+stick with the kmalloc path.
+
+Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+
+Hi Andrew,
+for more context. Linus has pointed out [1] that our (well mine)
+insisting on GFP_KERNEL compatible gfp flags for kvmalloc* can actually
+lead to a worse code because people will work around the restriction.
+So this patch allows kvmalloc to be more permissive and silently skip
+vmalloc path for incompatible gfp flags. This will not help my original
+plan to enforce people to think about GFP_NOFS usage more deeply but
+I can live with that obviously...
+
+alloc_bucket_spinlocks is the only place I could find which special
+cases kvmalloc based on the gfp mask.
+
+[1] http://lkml.kernel.org/r/CA+55aFxvNCEBQsxfr=yL3jgxiC8M8wY2MHwVBH+T8qSWyP-WPg@mail.gmail.com
+
+ lib/bucket_locks.c | 5 +----
+ mm/util.c          | 6 ++++--
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/lib/bucket_locks.c b/lib/bucket_locks.c
+index 266a97c5708b..ade3ce6c4af6 100644
+--- a/lib/bucket_locks.c
++++ b/lib/bucket_locks.c
+@@ -30,10 +30,7 @@ int alloc_bucket_spinlocks(spinlock_t **locks, unsigned int *locks_mask,
+ 	}
+ 
+ 	if (sizeof(spinlock_t) != 0) {
+-		if (gfpflags_allow_blocking(gfp))
+-			tlocks = kvmalloc(size * sizeof(spinlock_t), gfp);
+-		else
+-			tlocks = kmalloc_array(size, sizeof(spinlock_t), gfp);
++		tlocks = kvmalloc_array(size, sizeof(spinlock_t), gfp);
+ 		if (!tlocks)
+ 			return -ENOMEM;
+ 		for (i = 0; i < size; i++)
+diff --git a/mm/util.c b/mm/util.c
+index 45fc3169e7b0..c6586c146995 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -391,7 +391,8 @@ EXPORT_SYMBOL(vm_mmap);
+  * __GFP_RETRY_MAYFAIL is supported, and it should be used only if kmalloc is
+  * preferable to the vmalloc fallback, due to visible performance drawbacks.
+  *
+- * Any use of gfp flags outside of GFP_KERNEL should be consulted with mm people.
++ * Please note that any use of gfp flags outside of GFP_KERNEL is careful to not
++ * fall back to vmalloc.
+  */
+ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+ {
+@@ -402,7 +403,8 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+ 	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
+ 	 * so the given set of flags has to be compatible.
+ 	 */
+-	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
++	if ((flags & GFP_KERNEL) != GFP_KERNEL)
++		return kmalloc_node(size, flags, node);
+ 
+ 	/*
+ 	 * We want to attempt a large physically contiguous block first because
+-- 
+2.17.0
