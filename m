@@ -1,98 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751263AbeFAWIG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 18:08:06 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:2811 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbeFAWIF (ORCPT
+        id S1751341AbeFAWNi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 18:13:38 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:51636 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750968AbeFAWNg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 18:08:05 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 01 Jun 2018 15:08:04 -0700
-Subject: Re: [PATCH v2 1/2] power: supply: sbs-battery: don't assume
- MANUFACTURER_DATA formats
-To: Brian Norris <briannorris@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>
-CC: Sebastian Reichel <sre@kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Alexandru Stan <amstan@chromium.org>,
-        "Doug Anderson" <dianders@chromium.org>
-References: <20180601172400.50737-1-briannorris@chromium.org>
- <20180601173434.GA22509@roeck-us.net>
- <20180601183126.GA72050@rodete-desktop-imager.corp.google.com>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <10b558c4-9734-061f-c6ed-5b1288d1f23f@nvidia.com>
-Date: Fri, 1 Jun 2018 18:08:01 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 1 Jun 2018 18:13:36 -0400
+Date: Fri, 1 Jun 2018 18:13:27 -0400
+From: Rik van Riel <riel@surriel.com>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Mike Galbraith <efault@gmx.de>, LKML <linux-kernel@vger.kernel.org>,
+        songliubraving@fb.com, kernel-team <kernel-team@fb.com>,
+        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        X86 ML <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
+Message-ID: <20180601181327.367f0fe3@imladris.surriel.com>
+In-Reply-To: <CALCETrWMouz7VzYgwC=Ys3-C2O7ZVCn4FNwesH1np4c9iG1g_A@mail.gmail.com>
+References: <20180601082811.4c0d33ba@imladris.surriel.com>
+        <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
+        <1527877328.7898.80.camel@surriel.com>
+        <1527878882.4448.11.camel@gmx.de>
+        <1527882207.7898.86.camel@surriel.com>
+        <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
+        <1527885324.7898.88.camel@surriel.com>
+        <CALCETrWMouz7VzYgwC=Ys3-C2O7ZVCn4FNwesH1np4c9iG1g_A@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180601183126.GA72050@rodete-desktop-imager.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/1/2018 2:31 PM, Brian Norris wrote:
-> Hi,
-> 
-> On Fri, Jun 01, 2018 at 10:34:34AM -0700, Guenter Roeck wrote:
->> On Fri, Jun 01, 2018 at 10:23:59AM -0700, Brian Norris wrote:
->>>  drivers/power/supply/sbs-battery.c | 54 +++++++++++++++++++++++++-----
->>>  1 file changed, 46 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
->>> index 83d7b4115857..8dea63464a3f 100644
->>> --- a/drivers/power/supply/sbs-battery.c
->>> +++ b/drivers/power/supply/sbs-battery.c
-> ...
-> 
->>> @@ -315,6 +320,27 @@ static int sbs_status_correct(struct i2c_client *client, int *intval)
->>>  static int sbs_get_battery_presence_and_health(
->>>  	struct i2c_client *client, enum power_supply_property psp,
->>>  	union power_supply_propval *val)
->>> +{
->>> +	int ret;
->>> +
->>> +	if (psp == POWER_SUPPLY_PROP_PRESENT) {
->>> +		/* Dummy command; if it succeeds, battery is present. */
->>> +		ret = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
->>> +		if (ret < 0)
->>> +			val->intval = 0; /* battery disconnected */
->>> +		else
->>> +			val->intval = 1; /* battery present */
->>> +		return 0;
->>> +	} else { /* POWER_SUPPLY_PROP_HEALTH */
->>
->> Static analyzers may complain that else after return is unnecessary.
-> 
-> I noticed (checkpatch complains) but decided I didn't care. It would be
-> worse to promote the 'else' to top-level (things would look asymmetric).
-> I suppose I could pull the 'return 0' out, but I'm not sure that would
-> make the code any better.
+On Fri, 1 Jun 2018 14:21:58 -0700
+Andy Lutomirski <luto@kernel.org> wrote:
 
-I generally prefer to make checkpatch happy, so I would vote to move the
-return outside of the if blocks as a minimal way of making it happy. In
-general though,
+> Hmm.  I wonder if there's a more clever data structure than a bitmap
+> that we could be using here.  Each CPU only ever needs to be in one
+> mm's cpumask, and each cpu only ever changes its own state in the
+> bitmask.  And writes are much less common than reads for most
+> workloads.
 
-Acked-by: Rhyland Klein <rklein@nvidia.com>
+It would be easy enough to add an mm_struct pointer to the
+per-cpu tlbstate struct, and iterate over those.
 
-> 
->> Other than that
->>
->> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->>
->>> +		/* SBS spec doesn't have a general health command. */
->>> +		val->intval = POWER_SUPPLY_HEALTH_UNKNOWN;
->>> +		return 0;
->>> +	}
->>> +}
->>> +
-> 
-> Brian
-> 
+However, that would be an orthogonal change to optimizing
+lazy TLB mode. 
 
+Does the (untested) patch below make sense as a potential
+improvement to the lazy TLB heuristic?
 
--- 
-nvpublic
+---8<---
+Subject: x86,tlb: workload dependent per CPU lazy TLB switch
+
+Lazy TLB mode is a tradeoff between flushing the TLB and touching
+the mm_cpumask(&init_mm) at context switch time, versus potentially
+incurring a remote TLB flush IPI while in lazy TLB mode.
+
+Whether this pays off is likely to be workload dependent more than
+anything else. However, the current heuristic keys off hardware type.
+
+This patch changes the lazy TLB mode heuristic to a dynamic, per-CPU
+decision, dependent on whether we recently received a remote TLB
+shootdown while in lazy TLB mode.
+
+This is a very simple heuristic. When a CPU receives a remote TLB
+shootdown IPI while in lazy TLB mode, a counter in the same cache
+line is set to 16. Every time we skip lazy TLB mode, the counter
+is decremented.
+
+While the counter is zero (no recent TLB flush IPIs), allow lazy TLB mode.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+---
+ arch/x86/include/asm/tlbflush.h | 32 ++++++++++++++++----------------
+ arch/x86/mm/tlb.c               |  4 ++++
+ 2 files changed, 20 insertions(+), 16 deletions(-)
+
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 6690cd3fc8b1..f06a934e317d 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -148,22 +148,6 @@ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
+ #define __flush_tlb_one_user(addr) __native_flush_tlb_one_user(addr)
+ #endif
+ 
+-static inline bool tlb_defer_switch_to_init_mm(void)
+-{
+-	/*
+-	 * If we have PCID, then switching to init_mm is reasonably
+-	 * fast.  If we don't have PCID, then switching to init_mm is
+-	 * quite slow, so we try to defer it in the hopes that we can
+-	 * avoid it entirely.  The latter approach runs the risk of
+-	 * receiving otherwise unnecessary IPIs.
+-	 *
+-	 * This choice is just a heuristic.  The tlb code can handle this
+-	 * function returning true or false regardless of whether we have
+-	 * PCID.
+-	 */
+-	return !static_cpu_has(X86_FEATURE_PCID);
+-}
+-
+ struct tlb_context {
+ 	u64 ctx_id;
+ 	u64 tlb_gen;
+@@ -179,6 +163,7 @@ struct tlb_state {
+ 	struct mm_struct *loaded_mm;
+ 	u16 loaded_mm_asid;
+ 	u16 next_asid;
++	u16 flushed_while_lazy;
+ 	/* last user mm's ctx id */
+ 	u64 last_ctx_id;
+ 
+@@ -246,6 +231,21 @@ struct tlb_state {
+ };
+ DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
+ 
++static inline bool tlb_defer_switch_to_init_mm(void)
++{
++	/*
++	 * If the CPU recently received a TLB flush IPI while in lazy
++	 * TLB mode, do a straight switch to the idle task, and skip
++	 * lazy TLB mode for now.
++	 */
++	if (this_cpu_read(cpu_tlbstate.flushed_while_lazy)) {
++		this_cpu_dec(cpu_tlbstate.flushed_while_lazy);
++		return false;
++	}
++
++	return true;
++}
++
+ /* Initialize cr4 shadow for this CPU. */
+ static inline void cr4_init_shadow(void)
+ {
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index e055d1a06699..d8b0b7b236f3 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -454,7 +454,11 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
+ 		 * paging-structure cache to avoid speculatively reading
+ 		 * garbage into our TLB.  Since switching to init_mm is barely
+ 		 * slower than a minimal flush, just switch to init_mm.
++		 *
++		 * Skip lazy TLB mode for the next 16 context switches,
++		 * in case more TLB flush IPIs are coming.
+ 		 */
++		this_cpu_write(cpu_tlbstate.flushed_while_lazy, 16);
+ 		switch_mm_irqs_off(NULL, &init_mm, NULL);
+ 		return;
+ 	}
