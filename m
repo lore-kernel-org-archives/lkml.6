@@ -1,23 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752811AbeFAPYE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:24:04 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:37554 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752036AbeFAPYB (ORCPT
+        id S1752996AbeFAPY4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:24:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54992 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752370AbeFAPYw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:24:01 -0400
-X-Google-Smtp-Source: ADUXVKISEHuqbmk8NWy9y9CAxfuErAwx2TExguqvDUk9Y5Yrmevr5TuGLd1OKp9WbbxWEJPjFTtbWxOHp1H4o6CZ7uM=
-MIME-Version: 1.0
-In-Reply-To: <53e4d6c3-ee19-fd04-4ba3-862d04558689@codeaurora.org>
-References: <1527654876-26716-1-git-send-email-okaya@codeaurora.org>
- <CAHp75Vc3YKAR1P_F0fwD+ueGub4gVUjP0=wv4Egf_fTSVkSUjw@mail.gmail.com> <53e4d6c3-ee19-fd04-4ba3-862d04558689@codeaurora.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 1 Jun 2018 18:24:00 +0300
-Message-ID: <CAHp75VdTyvQOqnSm67Uo5heP1otE98BbquM0TjSAorEzTgUwHQ@mail.gmail.com>
+        Fri, 1 Jun 2018 11:24:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B01AC60249
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 Subject: Re: [PATCH] PCI: move early dump functionality from x86 arch into the
  common code
-To: Sinan Kaya <okaya@codeaurora.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: linux-pci@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
         linux-arm-msm@vger.kernel.org,
         linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
@@ -44,37 +39,35 @@ Cc: linux-pci@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <1527654876-26716-1-git-send-email-okaya@codeaurora.org>
+ <CAHp75Vc3YKAR1P_F0fwD+ueGub4gVUjP0=wv4Egf_fTSVkSUjw@mail.gmail.com>
+ <53e4d6c3-ee19-fd04-4ba3-862d04558689@codeaurora.org>
+ <CAHp75VdTyvQOqnSm67Uo5heP1otE98BbquM0TjSAorEzTgUwHQ@mail.gmail.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <37da9c96-1444-29d0-f1a1-7250debc1a07@codeaurora.org>
+Date: Fri, 1 Jun 2018 11:24:45 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VdTyvQOqnSm67Uo5heP1otE98BbquM0TjSAorEzTgUwHQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 6:06 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
-> On 6/1/2018 11:02 AM, Andy Shevchenko wrote:
->> On Wed, May 30, 2018 at 7:34 AM, Sinan Kaya <okaya@codeaurora.org> wrote:
->>> Move early dump functionality into common code so that it is available for
->>> all archtiectures. No need to carry arch specific reads around as the read
->>> hooks are already initialized by the time pci_setup_device() is getting
->>> called during scan.
+On 6/1/2018 11:24 AM, Andy Shevchenko wrote:
+>> This was discussed here:
 >>
->>>  /* If set, the PCIe ATS capability will not be used. */
->>>  static bool pcie_ats_disabled;
->>>
->>> +bool pci_early_dump;
->>> +
->>
->> I didn't check above these, but maybe a good idea to add one line
->> comment what is this about?
->
-> This was discussed here:
->
-> https://www.spinics.net/lists/linux-pci/msg72859.html
+>> https://www.spinics.net/lists/linux-pci/msg72859.html
+> I understand what is it. What I'm pointing is the variable in the
+> source without any comment. In the context you have in diff previous
+> one has a comment.
 
-I understand what is it. What I'm pointing is the variable in the
-source without any comment. In the context you have in diff previous
-one has a comment.
-
+oh, ok. I can take care of that too.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
