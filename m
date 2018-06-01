@@ -1,68 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751844AbeFANad (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:30:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33448 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751342AbeFANab (ORCPT
+        id S1751989AbeFANbU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:31:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49201 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeFANbT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:30:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1613B60261
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
-To: "Alex G." <mr.nuke.me@gmail.com>, bhelgaas@google.com
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        keith.busch@intel.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
- <e137d5bf-b640-68ef-c07e-d872a9343548@codeaurora.org>
- <3e0ddec1-649b-3e97-65e5-073dd9d45a1c@gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <874b9b90-ae6a-ef88-ebd8-671f277443ab@codeaurora.org>
-Date: Fri, 1 Jun 2018 09:30:29 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 1 Jun 2018 09:31:19 -0400
+From: Colin King <colin.king@canonical.com>
+To: Alessandro Rubini <rubini@gnudd.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/fmc: make struct fmc_dbgfs_sdb_dump static
+Date: Fri,  1 Jun 2018 14:31:17 +0100
+Message-Id: <20180601133117.6511-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <3e0ddec1-649b-3e97-65e5-073dd9d45a1c@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/31/2018 5:44 PM, Alex G. wrote:
-> On 05/31/2018 10:30 AM, Sinan Kaya wrote:
->> On 5/31/2018 11:05 AM, Alexandru Gagniuc wrote:
->>> +	if (dev_cur_speed < max_link_speed)
->>> +		pci_warn(dev, "PCIe downtrain: link speed is %s (%s capable)",
->>> +			 pcie_bus_speed_name(dev_cur_speed),
->>> +			 pcie_bus_speed_name(max_link_speed));
->>> +
->>
->> Also this isn't quite correct. Target link speed is what the device tries to
->> train. A device can try to train to much lower speed than the maximum on purpose.
->>
->> It makes sense to print this if the speed that platform wants via target link
->> speed is different from what is actually established though.
-> 
-> After seeing Gen 3 devices that train above the speed in the target link
-> speed field, I talked to one the spec writers today. There is some
-> ambiguity with the target link speed field. In PCIe 4.0 they are
-> clarifying that to state that this field is "permitted to have no effect".
+From: Colin Ian King <colin.king@canonical.com>
 
-Good to know.
-Probably, some company screwed up implementing this register...
-All these flexible terminology in the spec is an indication of such a failure.
+The structure fmc_dbgfs_sdb_dump is local to the source and does not
+need to be in global scope, so make it static.
 
-> 
-> Alex
-> 
-> 
+Cleans up sparse warning:
+drivers/fmc/fmc-debug.c:143:30: warning: symbol 'fmc_dbgfs_sdb_dump'
+was not declared. Should it be static?
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/fmc/fmc-debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/fmc/fmc-debug.c b/drivers/fmc/fmc-debug.c
+index 32930722770c..c96b928f0112 100644
+--- a/drivers/fmc/fmc-debug.c
++++ b/drivers/fmc/fmc-debug.c
+@@ -140,7 +140,7 @@ static int fmc_sdb_dump_open(struct inode *inode, struct file *file)
+ }
+ 
+ 
+-const struct file_operations fmc_dbgfs_sdb_dump = {
++static const struct file_operations fmc_dbgfs_sdb_dump = {
+ 	.owner = THIS_MODULE,
+ 	.open  = fmc_sdb_dump_open,
+ 	.read = seq_read,
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.17.0
