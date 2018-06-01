@@ -1,105 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752942AbeFAQg3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:36:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60962 "EHLO mail.kernel.org"
+        id S1753032AbeFAQhh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:37:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752360AbeFAQg1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:36:27 -0400
+        id S1751777AbeFAQhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:37:34 -0400
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
+To: Eduardo Valentin <edubezval@gmail.com>, Eric Anholt <eric@anholt.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Zhang Rui <rui.zhang@intel.com>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1527574066-27237-1-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
-References: <1527574066-27237-1-git-send-email-anischal@codeaurora.org>
-Message-ID: <152787098620.144038.15158473245010154723@swboyd.mtv.corp.google.com>
+In-Reply-To: <1527845302-12159-2-git-send-email-geert+renesas@glider.be>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+ <1527845302-12159-2-git-send-email-geert+renesas@glider.be>
+Message-ID: <152787105335.144038.419639779875099925@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: qcom: Enable clocks which needs to be always on for
- SDM845
-Date: Fri, 01 Jun 2018 09:36:26 -0700
+Subject: Re: [PATCH 1/4] clk: renesas: cpg-mssr: Stop using printk format %pCr
+Date: Fri, 01 Jun 2018 09:37:33 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51Gcgso015859
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51GchLi015863
 
-Quoting Amit Nischal (2018-05-28 23:07:46)
-> There are certain clocks which needs to be always enabled for system
-> operation. Remove support for such clocks from the clock driver and
-> enable them explicitly gcc driver probe. Also fix the target name in
-> kernel configuration description for SDM845 gcc driver.
-
-This is why we have CLK_IS_CRITICAL.
-
+Quoting Geert Uytterhoeven (2018-06-01 02:28:19)
+> Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+> called in atomic context.
 > 
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> Replace it by open-coding the operation.  This is safe here, as the code
+> runs in task context.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index fc3edd1..79e9144 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -231,7 +231,7 @@ config SDM_GCC_845
->         select QCOM_GDSC
->         depends on COMMON_CLK_QCOM
->         help
-> -         Support for the global clock controller on msm8998 devices.
-> +         Support for the global clock controller on SDM845 devices.
->           Say Y if you want to use peripheral devices such as UART, SPI,
->           I2C, USB, UFS, SDDC, PCIe, etc.
-> 
 
-This can be its own patch.
-
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index e78e6f5..b40aafc 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -3433,9 +3327,16 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
->         regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
->         regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
-> 
-> -       /* Enable CPUSS clocks */
-> -       regmap_update_bits(regmap, 0x48190, BIT(0), 0x1);
-> -       regmap_update_bits(regmap, 0x52004, BIT(22), 0x1);
-> +       /* Enable clocks which are required to be always ON */
-> +       regmap_update_bits(regmap, 0xb004, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0xb008, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0xb00c, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0xb028, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0xb02c, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0xb030, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0x48190, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0x52004, BIT(22), BIT(22));
-> +       regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
-
-Let's do CLK_IS_CRITICAL flag instead. That has the added benefit of
-checking to make sure the halt bit toggles correctly so the clks are
-verified to be enabled.
-
-> 
->         return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
->  }
-> diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-> index aca6126..6330c3f 100644
-> --- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
-> +++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-> @@ -13,185 +13,178 @@
->  #define GCC_AGGRE_USB3_PRIM_AXI_CLK                            3
->  #define GCC_AGGRE_USB3_SEC_AXI_CLK                             4
->  #define GCC_BOOT_ROM_AHB_CLK                                   5
-> -#define GCC_CAMERA_AHB_CLK                                     6
-
-Don't do this. Things should only be added to here, not removed or
-reshuffled.
-
-> -#define GCC_CAMERA_AXI_CLK                                     7
-> -#define GCC_CAMERA_XO_CLK                                      8
-> -#define GCC_CE1_AHB_CLK                                                9
+Acked-by: Stephen Boyd <sboyd@kernel.org>
