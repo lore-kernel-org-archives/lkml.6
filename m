@@ -1,53 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752905AbeFAPLV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:11:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751422AbeFAPLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:11:20 -0400
-X-Google-Smtp-Source: ADUXVKKeTMlGmV4i9kDXuxFuRWZdVgjXLUvkuPwEAgqTRhNYKUMYWFfu5jWdGBagAGRSy4uJGvfirnzWrl64NbM9BAo=
+        id S1752845AbeFAPM3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:12:29 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:36076 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751936AbeFAPMZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:12:25 -0400
+X-Google-Smtp-Source: ADUXVKIVfRlO6Pv8kBB6um7YBaly3MYhmX3SyxUu58YOTGAlStH75wVK+gefoIipw1i9O6SW4OUq1DY5z1nXZzJwoJI=
 MIME-Version: 1.0
-References: <20180601082811.4c0d33ba@imladris.surriel.com>
-In-Reply-To: <20180601082811.4c0d33ba@imladris.surriel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 1 Jun 2018 08:11:06 -0700
-X-Gmail-Original-Message-ID: <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
-Message-ID: <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
-Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
-To: riel@surriel.com
-Cc: LKML <linux-kernel@vger.kernel.org>, songliubraving@fb.com,
-        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Mike Galbraith <efault@gmx.de>
+In-Reply-To: <20180601150129.10486-1-mr.nuke.me@gmail.com>
+References: <20180601150129.10486-1-mr.nuke.me@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 1 Jun 2018 18:12:24 +0300
+Message-ID: <CAHp75VfzqbXmoEKE791gCPzg9Sn+Anb9evzfuocbO+F2XJVomw@mail.gmail.com>
+Subject: Re: [PATCH v2] PCI: Check for PCIe downtraining conditions
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        Keith Busch <keith.busch@intel.com>, Sinan Kaya <okaya@codeaurora.org>,
+        linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 5:28 AM Rik van Riel <riel@surriel.com> wrote:
+On Fri, Jun 1, 2018 at 6:01 PM, Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
+> PCIe downtraining happens when both the device and PCIe port are
+> capable of a larger bus width or higher speed than negotiated.
+> Downtraining might be indicative of other problems in the system, and
+> identifying this from userspace is neither intuitive, nor straigh
+> forward.
 >
-> Song noticed switch_mm_irqs_off taking a lot of CPU time in recent
-> kernels,using 2.4% of a 48 CPU system during a netperf to localhost run.
-> Digging into the profile, we noticed that cpumask_clear_cpu and
-> cpumask_set_cpu together take about half of the CPU time taken by
-> switch_mm_irqs_off.
->
-> However, the CPUs running netperf end up switching back and forth
-> between netperf and the idle task, which does not require changes
-> to the mm_cpumask. Furthermore, the init_mm cpumask ends up being
-> the most heavily contended one in the system.`
->
-> Skipping cpumask_clear_cpu and cpumask_set_cpu for init_mm
-> (mostly the idle task) reduced CPU use of switch_mm_irqs_off
-> from 2.4% of the CPU to 1.9% of the CPU, with the following
-> netperf commandline:
+> The easiest way to detect this is with pcie_print_link_status(),
+> since the bottleneck is usually the link that is downtrained. It's not
+> a perfect solution, but it works extremely well in most cases.
 
-I'm conceptually fine with this change.  Does mm_cpumask(&init_mm) end
-up in a deterministic state?
+> +static void pcie_check_upstream_link(struct pci_dev *dev)
+> +{
 
-Mike, depending on exactly what's going on with your benchmark, this
-might help recover a bit of your performance, too.
+> +
 
---Andy
+This is redundant, but...
+
+> +       if (!pci_is_pcie(dev))
+> +               return;
+> +
+> +       /* Look from the device up to avoid downstream ports with no devices. */
+> +       if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ENDPOINT) &&
+> +           (pci_pcie_type(dev) != PCI_EXP_TYPE_LEG_END) &&
+> +           (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM))
+> +               return;
+
+...wouldn't be better
+
+int type = pci_pcie_type(dev);
+
+?
+
+But also possible, looking at existing code,
+
+static inline bool pci_is_pcie_type(dev, type)
+{
+  return pci_is_pcie(dev) ? pci_pcie_type(dev) == type : false;
+}
+
+-- 
+With Best Regards,
+Andy Shevchenko
