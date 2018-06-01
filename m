@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751688AbeFAIVS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:21:18 -0400
-Received: from mail-wr0-f173.google.com ([209.85.128.173]:45877 "EHLO
-        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751329AbeFAIT0 (ORCPT
+        id S1751718AbeFAIVW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:21:22 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43129 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751057AbeFAITY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:19:26 -0400
-X-Google-Smtp-Source: ADUXVKKNyrlcpwsobMhv3+a5cmGbIYwZqbBZ9KENzv+GsKLDbMs0vJyfIyYKIbH7tnVjVtQaZ6XsoA==
+        Fri, 1 Jun 2018 04:19:24 -0400
+X-Google-Smtp-Source: ADUXVKJm3CQ1m/hMslS9oDjtd23jO0z3PwWsLIOGmSoqhrbkDiV5TmKUbZHFOOkjBo/T+feGjdSG/A==
 From: Neil Armstrong <narmstrong@baylibre.com>
 To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
         olof@lixom.net, seanpaul@google.com
@@ -16,155 +16,149 @@ Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
         marcheu@chromium.org, fparent@baylibre.com,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        ville.syrjala@linux.intel.com, rodrigo.vivi@intel.com
-Subject: [PATCH v7 2/6] drm/i915: hdmi: add CEC notifier to intel_hdmi
-Date: Fri,  1 Jun 2018 10:19:10 +0200
-Message-Id: <1527841154-24832-3-git-send-email-narmstrong@baylibre.com>
+        eballetbo@gmail.com
+Subject: [PATCH v7 1/6] media: cec-notifier: Get notifier by device and connector name
+Date: Fri,  1 Jun 2018 10:19:09 +0200
+Message-Id: <1527841154-24832-2-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
 References: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchs adds the cec_notifier feature to the intel_hdmi part
-of the i915 DRM driver. It uses the HDMI DRM connector name to differentiate
-between each HDMI ports.
-The changes will allow the i915 HDMI code to notify EDID and HPD changes
-to an eventual CEC adapter.
+In non device-tree world, we can need to get the notifier by the driver
+name directly and eventually defer probe if not yet created.
+
+This patch adds a variant of the get function by using the device name
+instead and will not create a notifier if not yet created.
+
+But the i915 driver exposes at least 2 HDMI connectors, this patch also
+adds the possibility to add a connector name tied to the notifier device
+to form a tuple and associate different CEC controllers for each HDMI
+connectors.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 ---
- drivers/gpu/drm/i915/Kconfig         |  1 +
- drivers/gpu/drm/i915/intel_display.h | 24 ++++++++++++++++++++++++
- drivers/gpu/drm/i915/intel_drv.h     |  2 ++
- drivers/gpu/drm/i915/intel_hdmi.c    | 13 +++++++++++++
- 4 files changed, 40 insertions(+)
+ drivers/media/cec/cec-notifier.c | 11 ++++++++---
+ include/media/cec-notifier.h     | 27 ++++++++++++++++++++++++---
+ 2 files changed, 32 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-index dfd9588..2d65d56 100644
---- a/drivers/gpu/drm/i915/Kconfig
-+++ b/drivers/gpu/drm/i915/Kconfig
-@@ -23,6 +23,7 @@ config DRM_I915
- 	select SYNC_FILE
- 	select IOSF_MBI
- 	select CRC32
-+	select CEC_CORE if CEC_NOTIFIER
- 	help
- 	  Choose this option if you have a system that has "Intel Graphics
- 	  Media Accelerator" or "HD Graphics" integrated graphics,
-diff --git a/drivers/gpu/drm/i915/intel_display.h b/drivers/gpu/drm/i915/intel_display.h
-index 4e7418b..70a365f 100644
---- a/drivers/gpu/drm/i915/intel_display.h
-+++ b/drivers/gpu/drm/i915/intel_display.h
-@@ -126,6 +126,30 @@ enum port {
+diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
+index 16dffa0..dd2078b 100644
+--- a/drivers/media/cec/cec-notifier.c
++++ b/drivers/media/cec/cec-notifier.c
+@@ -21,6 +21,7 @@ struct cec_notifier {
+ 	struct list_head head;
+ 	struct kref kref;
+ 	struct device *dev;
++	const char *conn;
+ 	struct cec_adapter *cec_adap;
+ 	void (*callback)(struct cec_adapter *adap, u16 pa);
  
- #define port_name(p) ((p) + 'A')
+@@ -30,13 +31,14 @@ struct cec_notifier {
+ static LIST_HEAD(cec_notifiers);
+ static DEFINE_MUTEX(cec_notifiers_lock);
  
-+/*
-+ * Ports identifier referenced from other drivers.
-+ * Expected to remain stable over time
-+ */
-+static inline const char *port_identifier(enum port port)
-+{
-+	switch (port) {
-+	case PORT_A:
-+		return "Port A";
-+	case PORT_B:
-+		return "Port B";
-+	case PORT_C:
-+		return "Port C";
-+	case PORT_D:
-+		return "Port D";
-+	case PORT_E:
-+		return "Port E";
-+	case PORT_F:
-+		return "Port F";
-+	default:
-+		return "<invalid>";
-+	}
-+}
-+
- enum dpio_channel {
- 	DPIO_CH0,
- 	DPIO_CH1
-diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-index d436858..a4e188d 100644
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -39,6 +39,7 @@
- #include <drm/drm_dp_mst_helper.h>
- #include <drm/drm_rect.h>
- #include <drm/drm_atomic.h>
-+#include <media/cec-notifier.h>
+-struct cec_notifier *cec_notifier_get(struct device *dev)
++struct cec_notifier *cec_notifier_get_conn(struct device *dev, const char *conn)
+ {
+ 	struct cec_notifier *n;
+ 
+ 	mutex_lock(&cec_notifiers_lock);
+ 	list_for_each_entry(n, &cec_notifiers, head) {
+-		if (n->dev == dev) {
++		if (n->dev == dev &&
++		    (!conn || !strcmp(n->conn, conn))) {
+ 			kref_get(&n->kref);
+ 			mutex_unlock(&cec_notifiers_lock);
+ 			return n;
+@@ -46,6 +48,8 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+ 	if (!n)
+ 		goto unlock;
+ 	n->dev = dev;
++	if (conn)
++		n->conn = kstrdup(conn, GFP_KERNEL);
+ 	n->phys_addr = CEC_PHYS_ADDR_INVALID;
+ 	mutex_init(&n->lock);
+ 	kref_init(&n->kref);
+@@ -54,7 +58,7 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+ 	mutex_unlock(&cec_notifiers_lock);
+ 	return n;
+ }
+-EXPORT_SYMBOL_GPL(cec_notifier_get);
++EXPORT_SYMBOL_GPL(cec_notifier_get_conn);
+ 
+ static void cec_notifier_release(struct kref *kref)
+ {
+@@ -62,6 +66,7 @@ static void cec_notifier_release(struct kref *kref)
+ 		container_of(kref, struct cec_notifier, kref);
+ 
+ 	list_del(&n->head);
++	kfree(n->conn);
+ 	kfree(n);
+ }
+ 
+diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
+index cf0add7..814eeef 100644
+--- a/include/media/cec-notifier.h
++++ b/include/media/cec-notifier.h
+@@ -20,8 +20,10 @@ struct cec_notifier;
+ #if IS_REACHABLE(CONFIG_CEC_CORE) && IS_ENABLED(CONFIG_CEC_NOTIFIER)
  
  /**
-  * __wait_for - magic wait macro
-@@ -1001,6 +1002,7 @@ struct intel_hdmi {
- 	bool has_audio;
- 	bool rgb_quant_range_selectable;
- 	struct intel_connector *attached_connector;
-+	struct cec_notifier *cec_notifier;
- };
+- * cec_notifier_get - find or create a new cec_notifier for the given device.
++ * cec_notifier_get_conn - find or create a new cec_notifier for the given
++ * device and connector tuple.
+  * @dev: device that sends the events.
++ * @conn: the connector name from which the event occurs
+  *
+  * If a notifier for device @dev already exists, then increase the refcount
+  * and return that notifier.
+@@ -31,7 +33,8 @@ struct cec_notifier;
+  *
+  * Return NULL if the memory could not be allocated.
+  */
+-struct cec_notifier *cec_notifier_get(struct device *dev);
++struct cec_notifier *cec_notifier_get_conn(struct device *dev,
++					   const char *conn);
  
- struct intel_dp_mst_encoder;
-diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
-index 1baef4a..0bd7549 100644
---- a/drivers/gpu/drm/i915/intel_hdmi.c
-+++ b/drivers/gpu/drm/i915/intel_hdmi.c
-@@ -1868,6 +1868,8 @@ intel_hdmi_set_edid(struct drm_connector *connector)
- 		connected = true;
- 	}
+ /**
+  * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
+@@ -85,7 +88,8 @@ void cec_register_cec_notifier(struct cec_adapter *adap,
+ 			       struct cec_notifier *notifier);
  
-+	cec_notifier_set_phys_addr_from_edid(intel_hdmi->cec_notifier, edid);
-+
- 	return connected;
- }
- 
-@@ -1876,6 +1878,7 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
+ #else
+-static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++static inline struct cec_notifier *cec_notifier_get_conn(struct device *dev,
++							 const char *conn)
  {
- 	enum drm_connector_status status;
- 	struct drm_i915_private *dev_priv = to_i915(connector->dev);
-+	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(connector);
+ 	/* A non-NULL pointer is expected on success */
+ 	return (struct cec_notifier *)0xdeadfeed;
+@@ -121,6 +125,23 @@ static inline void cec_register_cec_notifier(struct cec_adapter *adap,
+ #endif
  
- 	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
- 		      connector->base.id, connector->name);
-@@ -1891,6 +1894,9 @@ intel_hdmi_detect(struct drm_connector *connector, bool force)
- 
- 	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
- 
-+	if (status != connector_status_connected)
-+		cec_notifier_phys_addr_invalidate(intel_hdmi->cec_notifier);
+ /**
++ * cec_notifier_get - find or create a new cec_notifier for the given device.
++ * @dev: device that sends the events.
++ *
++ * If a notifier for device @dev already exists, then increase the refcount
++ * and return that notifier.
++ *
++ * If it doesn't exist, then allocate a new notifier struct and return a
++ * pointer to that new struct.
++ *
++ * Return NULL if the memory could not be allocated.
++ */
++static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++{
++	return cec_notifier_get_conn(dev, NULL);
++}
 +
- 	return status;
- }
- 
-@@ -2031,6 +2037,8 @@ static void chv_hdmi_pre_enable(struct intel_encoder *encoder,
- 
- static void intel_hdmi_destroy(struct drm_connector *connector)
- {
-+	if (intel_attached_hdmi(connector)->cec_notifier)
-+		cec_notifier_put(intel_attached_hdmi(connector)->cec_notifier);
- 	kfree(to_intel_connector(connector)->detect_edid);
- 	drm_connector_cleanup(connector);
- 	kfree(connector);
-@@ -2358,6 +2366,11 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
- 		u32 temp = I915_READ(PEG_BAND_GAP_DATA);
- 		I915_WRITE(PEG_BAND_GAP_DATA, (temp & ~0xf) | 0xd);
- 	}
-+
-+	intel_hdmi->cec_notifier = cec_notifier_get_conn(dev->dev,
-+							 port_identifier(port));
-+	if (!intel_hdmi->cec_notifier)
-+		DRM_DEBUG_KMS("CEC notifier get failed\n");
- }
- 
- void intel_hdmi_init(struct drm_i915_private *dev_priv,
++/**
+  * cec_notifier_phys_addr_invalidate() - set the physical address to INVALID
+  *
+  * @n: the CEC notifier
 -- 
 2.7.4
