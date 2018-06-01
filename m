@@ -1,50 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752212AbeFAQAh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:00:37 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:8870 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751561AbeFAQAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:00:36 -0400
-Date: Fri, 1 Jun 2018 18:00:29 +0200
-From: Christian Brauner <christian@brauner.io>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-        gregkh@linuxfoundation.org, mingo@kernel.org,
-        james.morris@microsoft.com, keescook@chromium.org,
-        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH v2 03/17] signal: make may_ptrace_stop() return bool
-Message-ID: <20180601160029.GA13955@mailbox.org>
-References: <20180601132239.4421-1-christian@brauner.io>
- <20180601132239.4421-4-christian@brauner.io>
- <20180601155612.GB1058@redhat.com>
+        id S1752682AbeFAQCE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:02:04 -0400
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:44283 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752113AbeFAQCA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:02:00 -0400
+X-Google-Smtp-Source: ADUXVKKrVp5IC+aD8OiQhtSzCsDpmq90vM/0mi6ApmZnSWrQPEwJ3ToBPxwSR7AYz8jh5qxeew/81S2tu2yYKtjC/3E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180601155612.GB1058@redhat.com>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Fri, 1 Jun 2018 18:01:58 +0200
+Message-ID: <CA+icZUVkajCqc0Opg3EB8Jg915Nu4mCjgmU54twLeBrq3hHvgg@mail.gmail.com>
+Subject: module: x86/modules: Skipping invalid relocation target, existing
+ value is nonzero for type 1
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 05:56:12PM +0200, Oleg Nesterov wrote:
-> On 06/01, Christian Brauner wrote:
-> >
-> > may_ptrace_stop() already behaves like a boolean function. Let's actually
-> > declare it as such too.
-> 
-> OK. Then probably this patch should only make it return bool and do nothing else?
-> 
-> > -	if (unlikely(current->mm->core_state) &&
-> > -	    unlikely(current->mm == current->parent->mm))
-> > -		return 0;
-> > +	if (likely(!current->mm->core_state ||
-> > +		   current->mm != current->parent->mm))
-> > +		return false;
-> 
-> this is wrong.
+Hi,
 
-This was a suggestion by Al. I just took it over and may have messed it
-up while doing so. I'll remove this.
+can someone tell me what this exactly means?
 
-Christian
+What is the root cause for this?
+GNU binutils/ld?
+Compiler?
+Curently I test with clang-7.
+VirtualBox and compiler incompatible?
+
+Steps to reproduce the failure...
+
+root# modprobe -v vboxdrv
+insmod /lib/modules/4.14.47-1-iniza-llvmlinux/updates/dkms/vboxdrv.ko
+modprobe: ERROR: could not insert 'vboxdrv': Exec format error
+
+root# dmesg | tail -1
+[13437.021825] module: x86/modules: Skipping invalid relocation
+target, existing value is nonzero for type 1, loc ffffffffc1453360,
+val ffffffffc142f8a2
+
+Tanks in advance.
+
+Regards,
+- Sedat -
