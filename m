@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751912AbeFANHd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:07:33 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33258 "EHLO
+        id S1752819AbeFANHj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:07:39 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34297 "EHLO
         mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752369AbeFANFN (ORCPT
+        with ESMTP id S1752353AbeFANFM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:05:13 -0400
-X-Google-Smtp-Source: ADUXVKIBhUqJVB/a1ZuSzQGF9yg9YdhVgh9BRzupEyCFvPSwAjtX+ESreyd5T3niKtt9H5CnHjOcQQ==
+        Fri, 1 Jun 2018 09:05:12 -0400
+X-Google-Smtp-Source: ADUXVKIzu8+315jRrGNv8ryFguzpFWJ6gVuIVE8ZDJ6Vu1N16Yd0laKPGSkB+2nvJBLNJFEnYYiHXg==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         javier@cnexlabs.com, igor.j.konopko@intel.com,
         marcin.dziegielewski@intel.com,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 15/18] lightnvm: proper error handling for pblk_bio_add_pages
-Date: Fri,  1 Jun 2018 15:04:29 +0200
-Message-Id: <20180601130432.30866-16-mb@lightnvm.io>
+Subject: [GIT PULL 14/18] lightnvm: pblk: fix smeta write error path
+Date: Fri,  1 Jun 2018 15:04:28 +0200
+Message-Id: <20180601130432.30866-15-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180601130432.30866-1-mb@lightnvm.io>
 References: <20180601130432.30866-1-mb@lightnvm.io>
@@ -27,47 +28,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Igor Konopko <igor.j.konopko@intel.com>
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Currently in case of error caused by bio_pc_add_page in
-pblk_bio_add_pages two issues occur when calling from
-pblk_rb_read_to_bio(). First one is in pblk_bio_free_pages, since we
-are trying to free pages not allocated from our mempool. Second one
-is the warn from dma_pool_free, that we are trying to free NULL
-pointer dma.
+Smeta write errors were previously ignored. Skip these
+lines instead and throw them back on the free
+list, so the chunks will go through a reset cycle
+before we attempt to use the line again.
 
-This commit fix both issues.
-
-Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
-Signed-off-by: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Reviewed-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/lightnvm/pblk-core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index e43093e27084..a20b41c355c5 100644
+index 263da2e43567..e43093e27084 100644
 --- a/drivers/lightnvm/pblk-core.c
 +++ b/drivers/lightnvm/pblk-core.c
-@@ -278,7 +278,9 @@ void pblk_free_rqd(struct pblk *pblk, struct nvm_rq *rqd, int type)
- 		return;
+@@ -849,9 +849,10 @@ static int pblk_line_submit_smeta_io(struct pblk *pblk, struct pblk_line *line,
+ 	atomic_dec(&pblk->inflight_io);
+ 
+ 	if (rqd.error) {
+-		if (dir == PBLK_WRITE)
++		if (dir == PBLK_WRITE) {
+ 			pblk_log_write_err(pblk, &rqd);
+-		else if (dir == PBLK_READ)
++			ret = 1;
++		} else if (dir == PBLK_READ)
+ 			pblk_log_read_err(pblk, &rqd);
  	}
  
--	nvm_dev_dma_free(dev->parent, rqd->meta_list, rqd->dma_meta_list);
-+	if (rqd->meta_list)
-+		nvm_dev_dma_free(dev->parent, rqd->meta_list,
-+				rqd->dma_meta_list);
- 	mempool_free(rqd, pool);
- }
+@@ -1101,7 +1102,7 @@ static int pblk_line_init_bb(struct pblk *pblk, struct pblk_line *line,
  
-@@ -316,7 +318,7 @@ int pblk_bio_add_pages(struct pblk *pblk, struct bio *bio, gfp_t flags,
+ 	if (init && pblk_line_submit_smeta_io(pblk, line, off, PBLK_WRITE)) {
+ 		pr_debug("pblk: line smeta I/O failed. Retry\n");
+-		return 1;
++		return 0;
+ 	}
  
- 	return 0;
- err:
--	pblk_bio_free_pages(pblk, bio, 0, i - 1);
-+	pblk_bio_free_pages(pblk, bio, (bio->bi_vcnt - i), i);
- 	return -1;
- }
- 
+ 	bitmap_copy(line->invalid_bitmap, line->map_bitmap, lm->sec_per_line);
 -- 
 2.11.0
