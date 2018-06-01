@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753503AbeFAQzd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:55:33 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41043 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752783AbeFAQyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:54:07 -0400
+        id S1753417AbeFAQz4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:55:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8626 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753199AbeFAQyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:54:01 -0400
 From: Salil Mehta <salil.mehta@huawei.com>
 To: <davem@davemloft.net>
 CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Xi Wang <wangxi11@huawei.com>
-Subject: [PATCH net-next 10/11] net: hns3: Optimize the PF's process of updating multicast MAC
-Date: Fri, 1 Jun 2018 17:52:10 +0100
-Message-ID: <20180601165211.46372-11-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
+Subject: [PATCH net-next 04/11] net: hns3: Fix setting mac address error
+Date: Fri, 1 Jun 2018 17:52:04 +0100
+Message-ID: <20180601165211.46372-5-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180601165211.46372-1-salil.mehta@huawei.com>
 References: <20180601165211.46372-1-salil.mehta@huawei.com>
@@ -26,305 +26,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xi Wang <wangxi11@huawei.com>
+From: Jian Shen <shenjian15@huawei.com>
 
-In the current process, the multicast MAC is added to both MAC_VLAN
-table and MTA table, this will reduce the utilization of the resource.
+When doing function reset or insmod hns3 dirver after rmmod,
+the entries of mac vlan table are not cleared, which may cause
+init mac address failed. This patch fixes it by clearing the
+old mac address when doing function reset or rmmod hns3 driver.
 
-This patch improves the process of adding multicast MAC address, the
-new process starts using the MTA table to add multicast MAC after the
-MAC_VLAN table is full, and the MTA is disable if it is no longer used.
-
-Signed-off-by: Xi Wang <wangxi11@huawei.com>
-Reviewed-by: Jian Shen <shenjian15@huawei.com>
+Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   1 +
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |   6 +-
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 138 ++++++++++++++++++---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  12 +-
- 4 files changed, 136 insertions(+), 21 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index e8244a5..8acb1d1 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -353,6 +353,7 @@ struct hnae3_ae_ops {
- 			   const unsigned char *addr);
- 	int (*rm_mc_addr)(struct hnae3_handle *handle,
- 			  const unsigned char *addr);
-+	int (*update_mta_status)(struct hnae3_handle *handle);
- 
- 	void (*set_tso_stats)(struct hnae3_handle *handle, int enable);
- 	void (*update_stats)(struct hnae3_handle *handle,
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index e572804..f2b31d2 100644
+index fe54564..235eea1 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -423,9 +423,13 @@ static void hns3_nic_set_rx_mode(struct net_device *netdev)
- 	}
- 	if (__dev_uc_sync(netdev, hns3_nic_uc_sync, hns3_nic_uc_unsync))
- 		netdev_err(netdev, "sync uc address fail\n");
--	if (netdev->flags & IFF_MULTICAST)
-+	if (netdev->flags & IFF_MULTICAST) {
- 		if (__dev_mc_sync(netdev, hns3_nic_mc_sync, hns3_nic_mc_unsync))
- 			netdev_err(netdev, "sync mc address fail\n");
-+
-+		if (h->ae_algo->ops->update_mta_status)
-+			h->ae_algo->ops->update_mta_status(h);
-+	}
+@@ -3007,6 +3007,15 @@ static void hns3_init_mac_addr(struct net_device *netdev, bool init)
+ 
  }
  
- static int hns3_set_tso(struct sk_buff *skb, u32 *paylen,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 19e5689..2a80134 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2288,8 +2288,10 @@ static int hclge_mac_init(struct hclge_dev *hdev)
- 	struct net_device *netdev = handle->kinfo.netdev;
- 	struct hclge_mac *mac = &hdev->hw.mac;
- 	u8 mac_mask[ETH_ALEN] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-+	struct hclge_vport *vport;
- 	int mtu;
- 	int ret;
-+	int i;
- 
- 	ret = hclge_cfg_mac_speed_dup(hdev, hdev->hw.mac.speed, HCLGE_MAC_FULL);
- 	if (ret) {
-@@ -2301,7 +2303,6 @@ static int hclge_mac_init(struct hclge_dev *hdev)
- 	mac->link = 0;
- 
- 	/* Initialize the MTA table work mode */
--	hdev->accept_mta_mc	= true;
- 	hdev->enable_mta	= true;
- 	hdev->mta_mac_sel_type	= HCLGE_MAC_ADDR_47_36;
- 
-@@ -2314,11 +2315,17 @@ static int hclge_mac_init(struct hclge_dev *hdev)
- 		return ret;
- 	}
- 
--	ret = hclge_cfg_func_mta_filter(hdev, 0, hdev->accept_mta_mc);
--	if (ret) {
--		dev_err(&hdev->pdev->dev,
--			"set mta filter mode fail ret=%d\n", ret);
--		return ret;
-+	for (i = 0; i < hdev->num_alloc_vport; i++) {
-+		vport = &hdev->vport[i];
-+		vport->accept_mta_mc = false;
-+
-+		memset(vport->mta_shadow, 0, sizeof(vport->mta_shadow));
-+		ret = hclge_cfg_func_mta_filter(hdev, vport->vport_id, false);
-+		if (ret) {
-+			dev_err(&hdev->pdev->dev,
-+				"set mta filter mode fail ret=%d\n", ret);
-+			return ret;
-+		}
- 	}
- 
- 	ret = hclge_set_default_mac_vlan_mask(hdev, true, mac_mask);
-@@ -4005,9 +4012,88 @@ static int hclge_set_mta_table_item(struct hclge_vport *vport,
- 		return ret;
- 	}
- 
-+	if (enable)
-+		set_bit(idx, vport->mta_shadow);
-+	else
-+		clear_bit(idx, vport->mta_shadow);
-+
- 	return 0;
- }
- 
-+static int hclge_update_mta_status(struct hnae3_handle *handle)
++static void hns3_uninit_mac_addr(struct net_device *netdev)
 +{
-+	unsigned long mta_status[BITS_TO_LONGS(HCLGE_MTA_TBL_SIZE)];
-+	struct hclge_vport *vport = hclge_get_vport(handle);
-+	struct net_device *netdev = handle->kinfo.netdev;
-+	struct netdev_hw_addr *ha;
-+	u16 tbl_idx;
++	struct hns3_nic_priv *priv = netdev_priv(netdev);
++	struct hnae3_handle *h = priv->ae_handle;
 +
-+	memset(mta_status, 0, sizeof(mta_status));
-+
-+	/* update mta_status from mc addr list */
-+	netdev_for_each_mc_addr(ha, netdev) {
-+		tbl_idx = hclge_get_mac_addr_to_mta_index(vport, ha->addr);
-+		set_bit(tbl_idx, mta_status);
-+	}
-+
-+	return hclge_update_mta_status_common(vport, mta_status,
-+					0, HCLGE_MTA_TBL_SIZE, true);
++	if (h->ae_algo->ops->rm_uc_addr)
++		h->ae_algo->ops->rm_uc_addr(h, netdev->dev_addr);
 +}
 +
-+int hclge_update_mta_status_common(struct hclge_vport *vport,
-+				   unsigned long *status,
-+				   u16 idx,
-+				   u16 count,
-+				   bool update_filter)
-+{
-+	struct hclge_dev *hdev = vport->back;
-+	u16 update_max = idx + count;
-+	u16 check_max;
-+	int ret = 0;
-+	bool used;
-+	u16 i;
-+
-+	/* setup mta check range */
-+	if (update_filter) {
-+		i = 0;
-+		check_max = HCLGE_MTA_TBL_SIZE;
-+	} else {
-+		i = idx;
-+		check_max = update_max;
-+	}
-+
-+	used = false;
-+	/* check and update all mta item */
-+	for (; i < check_max; i++) {
-+		/* ignore unused item */
-+		if (!test_bit(i, vport->mta_shadow))
-+			continue;
-+
-+		/* if i in update range then update it */
-+		if (i >= idx && i < update_max)
-+			if (!test_bit(i - idx, status))
-+				hclge_set_mta_table_item(vport, i, false);
-+
-+		if (!used && test_bit(i, vport->mta_shadow))
-+			used = true;
-+	}
-+
-+	/* no longer use mta, disable it */
-+	if (vport->accept_mta_mc && update_filter && !used) {
-+		ret = hclge_cfg_func_mta_filter(hdev,
-+						vport->vport_id,
-+						false);
-+		if (ret)
-+			dev_err(&hdev->pdev->dev,
-+				"disable func mta filter fail ret=%d\n",
-+				ret);
-+		else
-+			vport->accept_mta_mc = false;
-+	}
-+
-+	return ret;
-+}
-+
- static int hclge_remove_mac_vlan_tbl(struct hclge_vport *vport,
- 				     struct hclge_mac_vlan_tbl_entry_cmd *req)
+ static void hns3_nic_set_priv_ops(struct net_device *netdev)
  {
-@@ -4275,9 +4361,25 @@ int hclge_add_mc_addr_common(struct hclge_vport *vport,
- 		status = hclge_add_mac_vlan_tbl(vport, &req, desc);
- 	}
+ 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+@@ -3135,6 +3144,8 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
  
--	/* Set MTA table for this MAC address */
--	tbl_idx = hclge_get_mac_addr_to_mta_index(vport, addr);
--	status = hclge_set_mta_table_item(vport, tbl_idx, true);
-+	/* If mc mac vlan table is full, use MTA table */
-+	if (status == -ENOSPC) {
-+		if (!vport->accept_mta_mc) {
-+			status = hclge_cfg_func_mta_filter(hdev,
-+							   vport->vport_id,
-+							   true);
-+			if (status) {
-+				dev_err(&hdev->pdev->dev,
-+					"set mta filter mode fail ret=%d\n",
-+					status);
-+				return status;
-+			}
-+			vport->accept_mta_mc = true;
-+		}
+ 	priv->ring_data = NULL;
+ 
++	hns3_uninit_mac_addr(netdev);
 +
-+		/* Set MTA table for this MAC address */
-+		tbl_idx = hclge_get_mac_addr_to_mta_index(vport, addr);
-+		status = hclge_set_mta_table_item(vport, tbl_idx, true);
-+	}
- 
- 	return status;
- }
-@@ -4297,7 +4399,6 @@ int hclge_rm_mc_addr_common(struct hclge_vport *vport,
- 	struct hclge_mac_vlan_tbl_entry_cmd req;
- 	enum hclge_cmd_status status;
- 	struct hclge_desc desc[3];
--	u16 tbl_idx;
- 
- 	/* mac addr check */
- 	if (!is_multicast_ether_addr(addr)) {
-@@ -4326,17 +4427,15 @@ int hclge_rm_mc_addr_common(struct hclge_vport *vport,
- 			status = hclge_add_mac_vlan_tbl(vport, &req, desc);
- 
- 	} else {
--		/* This mac addr do not exist, can't delete it */
--		dev_err(&hdev->pdev->dev,
--			"Rm multicast mac addr failed, ret = %d.\n",
--			status);
--		return -EIO;
-+		/* Maybe this mac address is in mta table, but it cannot be
-+		 * deleted here because an entry of mta represents an address
-+		 * range rather than a specific address. the delete action to
-+		 * all entries will take effect in update_mta_status called by
-+		 * hns3_nic_set_rx_mode.
-+		 */
-+		status = 0;
- 	}
- 
--	/* Set MTB table for this MAC address */
--	tbl_idx = hclge_get_mac_addr_to_mta_index(vport, addr);
--	status = hclge_set_mta_table_item(vport, tbl_idx, false);
--
- 	return status;
+ 	free_netdev(netdev);
  }
  
-@@ -6137,6 +6236,7 @@ static const struct hnae3_ae_ops hclge_ops = {
- 	.rm_uc_addr = hclge_rm_uc_addr,
- 	.add_mc_addr = hclge_add_mc_addr,
- 	.rm_mc_addr = hclge_rm_mc_addr,
-+	.update_mta_status = hclge_update_mta_status,
- 	.set_autoneg = hclge_set_autoneg,
- 	.get_autoneg = hclge_get_autoneg,
- 	.get_pauseparam = hclge_get_pauseparam,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 7fcabde..7488534 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -61,6 +61,8 @@
- #define HCLGE_RSS_TC_SIZE_6		64
- #define HCLGE_RSS_TC_SIZE_7		128
+@@ -3451,6 +3462,8 @@ static int hns3_reset_notify_uninit_enet(struct hnae3_handle *handle)
  
-+#define HCLGE_MTA_TBL_SIZE		4096
+ 	priv->ring_data = NULL;
+ 
++	hns3_uninit_mac_addr(netdev);
 +
- #define HCLGE_TQP_RESET_TRY_TIMES	10
+ 	return ret;
+ }
  
- #define HCLGE_PHY_PAGE_MDIX		0
-@@ -559,7 +561,6 @@ struct hclge_dev {
- 
- 	enum hclge_mta_dmac_sel_type mta_mac_sel_type;
- 	bool enable_mta; /* Mutilcast filter enable */
--	bool accept_mta_mc; /* Whether accept mta filter multicast */
- 
- 	struct hclge_vlan_type_cfg vlan_type_cfg;
- 
-@@ -620,6 +621,9 @@ struct hclge_vport {
- 	struct hclge_dev *back;  /* Back reference to associated dev */
- 	struct hnae3_handle nic;
- 	struct hnae3_handle roce;
-+
-+	bool accept_mta_mc; /* whether to accept mta filter multicast */
-+	unsigned long mta_shadow[BITS_TO_LONGS(HCLGE_MTA_TBL_SIZE)];
- };
- 
- void hclge_promisc_param_init(struct hclge_promisc_param *param, bool en_uc,
-@@ -637,6 +641,12 @@ int hclge_rm_mc_addr_common(struct hclge_vport *vport,
- int hclge_cfg_func_mta_filter(struct hclge_dev *hdev,
- 			      u8 func_id,
- 			      bool enable);
-+int hclge_update_mta_status_common(struct hclge_vport *vport,
-+				   unsigned long *status,
-+				   u16 idx,
-+				   u16 count,
-+				   bool update_filter);
-+
- struct hclge_vport *hclge_get_vport(struct hnae3_handle *handle);
- int hclge_bind_ring_with_vector(struct hclge_vport *vport,
- 				int vector_id, bool en,
 -- 
 2.7.4
