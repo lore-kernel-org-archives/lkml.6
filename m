@@ -1,18 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750913AbeFAAnJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 20:43:09 -0400
-Received: from mga02.intel.com ([134.134.136.20]:60487 "EHLO mga02.intel.com"
+        id S1751113AbeFAAnN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 20:43:13 -0400
+Received: from mga12.intel.com ([192.55.52.136]:47741 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750715AbeFAAnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 20:43:05 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1750771AbeFAAnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 20:43:09 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
-   d="scan'208";a="228989924"
+   d="scan'208";a="44390312"
 Date: Fri, 1 Jun 2018 08:42:27 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
+From: kbuild test robot <lkp@intel.com>
 To: honghui.zhang@mediatek.com
 Cc: kbuild-all@01.org, lorenzo.pieralisi@arm.com, marc.zyngier@arm.com,
         bhelgaas@google.com, matthias.bgg@gmail.com,
@@ -24,8 +25,8 @@ Cc: kbuild-all@01.org, lorenzo.pieralisi@arm.com, marc.zyngier@arm.com,
         hongkun.cao@mediatek.com, youlin.pei@mediatek.com,
         yong.wu@mediatek.com, yt.shen@mediatek.com, sean.wang@mediatek.com,
         xinping.qian@mediatek.com
-Subject: [RFC PATCH] PCI: mediatek: mtk_pcie_pm_ops can be static
-Message-ID: <20180601004227.GA98217@lkp-sb05>
+Subject: Re: [PATCH] PCI: mediatek: Add system pm support for MT2712
+Message-ID: <201806010727.GOthd5OK%fengguang.wu@intel.com>
 References: <1527647736-19986-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -39,23 +40,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Honghui,
 
-Fixes: 24dc21cd1e9d ("PCI: mediatek: Add system pm support for MT2712")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on pci/next]
+[also build test WARNING on next-20180531]
+[cannot apply to v4.17-rc7]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/honghui-zhang-mediatek-com/PCI-mediatek-Add-system-pm-support-for-MT2712/20180601-053217
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+   drivers/pci/host/pcie-mediatek.c:463:40: sparse: incorrect type in argument 1 (different address spaces) @@    expected void volatile *address @@    got void [novoid volatile *address @@
+   drivers/pci/host/pcie-mediatek.c:463:40:    expected void volatile *address
+   drivers/pci/host/pcie-mediatek.c:463:40:    got void [noderef] <asn:2>*
+   drivers/pci/host/pcie-mediatek.c:586:44: sparse: incorrect type in argument 1 (different address spaces) @@    expected void volatile *address @@    got void [novoid volatile *address @@
+   drivers/pci/host/pcie-mediatek.c:586:44:    expected void volatile *address
+   drivers/pci/host/pcie-mediatek.c:586:44:    got void [noderef] <asn:2>*
+>> drivers/pci/host/pcie-mediatek.c:1259:25: sparse: symbol 'mtk_pcie_pm_ops' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
 ---
- pcie-mediatek.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
-index e3b16b0..e01cc66 100644
---- a/drivers/pci/host/pcie-mediatek.c
-+++ b/drivers/pci/host/pcie-mediatek.c
-@@ -1256,7 +1256,7 @@ static int __maybe_unused mtk_pcie_resume_noirq(struct device *dev)
- 	return 0;
- }
- 
--const struct dev_pm_ops mtk_pcie_pm_ops = {
-+static const struct dev_pm_ops mtk_pcie_pm_ops = {
- 	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_pcie_suspend_noirq,
- 				      mtk_pcie_resume_noirq)
- };
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
