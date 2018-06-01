@@ -1,58 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751317AbeFAAdY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 20:33:24 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:45883 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbeFAAdK (ORCPT
+        id S1751361AbeFAAdh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 20:33:37 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:51613 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751031AbeFAAdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 20:33:10 -0400
-X-Google-Smtp-Source: ADUXVKJFipDAHqbpQeLXk8jJafJNAUnojuwXueIAvF9ZYK2xJ3vw8FFoQjCuV9AFjE4CNrqgJCuyOA==
-From: Brian Norris <briannorris@chromium.org>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        Alexandru Stan <amstan@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Doug Anderson <dianders@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 2/2] dt-bindings: power: sbs-battery: re-document "ti,bq20z75"
-Date: Thu, 31 May 2018 17:32:52 -0700
-Message-Id: <20180601003252.42810-2-briannorris@chromium.org>
-X-Mailer: git-send-email 2.17.0.921.gf22659ad46-goog
-In-Reply-To: <20180601003252.42810-1-briannorris@chromium.org>
-References: <20180601003252.42810-1-briannorris@chromium.org>
+        Thu, 31 May 2018 20:33:35 -0400
+X-ME-Proxy: <xmx:XpQQW_GEux3gGwZmM7hjz7yVKGq77Fws39jr9GK_due0sc84EqQVeg>
+X-ME-Proxy: <xmx:XpQQW4wfp-3G97IA7TbZiKgVGNyHEDG3YkjPgBhw0xY1hruw9gXcIg>
+X-ME-Proxy: <xmx:XpQQW46-Noyw7RwLqi4XndTmQWKXGjNu5Kvx4zhbIFswjAuUyWM3vA>
+X-ME-Proxy: <xmx:XpQQW98QsP2wyUr0LSMyj4fQ77eT7adEEIHQfPJikFl9Om-aDMUCRA>
+X-ME-Proxy: <xmx:XpQQW8ofs1KtZrPKqLLzZr5wpcbCMBLF9Z0dRxPKqy_ZZpJPsfzhAg>
+X-ME-Proxy: <xmx:XpQQW1mpnTpKgJNVn3kNSEGygf7YRPCOx27zeQOspf5t_mAT-4H_bg>
+X-ME-Sender: <xms:XpQQWzls2OmqRBrXbtxtFRML8dcgSLJ_37SUzrFJ4Lk5Ir6pbENeUQ>
+Message-ID: <c8013f0894299c6aedfbcd5e35f5fa33b858d915.camel@mendozajonas.com>
+Subject: Re: [PATCH net-next] net/ncsi: Avoid GFP_KERNEL in response handler
+From: Samuel Mendoza-Jonas <sam@mendozajonas.com>
+To: Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org
+Cc: "David S . Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org
+Date: Fri, 01 Jun 2018 10:33:27 +1000
+In-Reply-To: <69fcb143-00a2-2ddf-e2d4-c692b650f292@gmail.com>
+References: <20180531070254.28878-1-sam@mendozajonas.com>
+         <69fcb143-00a2-2ddf-e2d4-c692b650f292@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This compatible property was documented before the driver was renamed to
-"SBS" (see commit e57f1b68c406 ("devicetree-bindings: Propagate
-bq20z75->sbs rename to dt bindings")). The driver has continued to
-support this property as an alternative to "sbs,sbs-battery", and
-because we've noticed there are some lingering TI specifics (in the
-manufacturer-specific portion of the SBS spec), we'd like to start using
-this property again to differentiate.
+On Thu, 2018-05-31 at 04:50 -0400, Eric Dumazet wrote:
+> 
+> On 05/31/2018 03:02 AM, Samuel Mendoza-Jonas wrote:
+> > ncsi_rsp_handler_gc() allocates the filter arrays using GFP_KERNEL in
+> > softirq context, causing the below backtrace. This allocation is only a
+> > few dozen bytes during probing so allocate with GFP_ATOMIC instead.
+> > 
+> 
+> Hi Samuel
+> 
+> You forgot to add
+> 
+> Fixes: 062b3e1b6d4f ("net/ncsi: Refactor MAC, VLAN filters")
+> 
+> size = (rsp->uc_cnt + rsp->mc_cnt + rsp->mixed_cnt) * ETH_ALEN;
+> 
+> -> seems to be able to reach more than few dozen bytes...
 
-Cc: Rhyland Klein <rklein@nvidia.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- .../devicetree/bindings/power/supply/sbs_sbs-battery.txt        | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Eric,
 
-diff --git a/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-index c40e8926facf..a7a9c3366f82 100644
---- a/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-+++ b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-@@ -2,7 +2,7 @@ SBS sbs-battery
- ~~~~~~~~~~
- 
- Required properties :
-- - compatible : "sbs,sbs-battery"
-+ - compatible : "sbs,sbs-battery" or "ti,bq20z75"
- 
- Optional properties :
-  - sbs,i2c-retry-count : The number of times to retry i2c transactions on i2c
--- 
-2.17.0.921.gf22659ad46-goog
+The NCSI spec (at least in the v1.1.0 version I'm looking at) sets the
+total number of MAC address filters at 8, so we would be looking at a
+maximum of 8 * ETH_ALEN = 48 bytes.
+That said it shouldn't be too arduous to move the allocation to later in
+the probe/configure cycle so if needed we could do that.
+
+> 
+> Also, what prevents ncsi_rsp_handler_gc() to be called multiples times ?
+> 
+> nc->mac_filter.addrs & nc->vlan_filter.vids would be re-allocated and memory would leak.
+> 
+
+Good point, we should put a check there just in case to see if it's
+allocated. We should be safe though as ncsi_rsp_handler_gc() should only
+be called via ncsi_probe_channel() which only happens through
+ncsi_start_dev(), and addrs/vids is cleaned up in ncsi_remove_channel().
+Rogue packets shouldn't hit the ncsi_rsp_handler_gc() handler without an
+outstanding request.. but it probably is safer to check regardless.
+
+Regards,
+Sam
