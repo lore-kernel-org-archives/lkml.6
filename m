@@ -1,95 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752730AbeFAP0G (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:26:06 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:47450 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751780AbeFAP0F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:26:05 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        peterz@infradead.org, oleg@redhat.com, viro@zeniv.linux.org.uk,
-        mingo@kernel.org, paulmck@linux.vnet.ibm.com, keescook@chromium.org,
-        riel@redhat.com, tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
-        <20180426130700.GP17484@dhcp22.suse.cz> <877enj9uwf.fsf@xmission.com>
-        <20180601135725.GE15278@dhcp22.suse.cz> <87a7sey3ud.fsf@xmission.com>
-        <20180601150219.GG15278@dhcp22.suse.cz>
-Date: Fri, 01 Jun 2018 10:25:59 -0500
-In-Reply-To: <20180601150219.GG15278@dhcp22.suse.cz> (Michal Hocko's message
-        of "Fri, 1 Jun 2018 17:02:19 +0200")
-Message-ID: <87y3fyv88o.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S1753106AbeFAP0w (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:26:52 -0400
+Received: from ozlabs.org ([203.11.71.1]:32897 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753070AbeFAP0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:26:49 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Sat, 2 Jun 2018 01:26:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: dvhart@infradead.org
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Haruka Kawajiri <yukx00@gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86
+ tree
+Message-ID: <20180602012646.2a0801e8@canb.auug.org.au>
+In-Reply-To: <7EC66A28-4E57-4B3C-A5AC-4D7D9CAF727E@infradead.org>
+References: <20180601213639.74f49e51@canb.auug.org.au>
+        <CAHp75VeULdbi3_V8JPffYCocmGtjC3QPdE-yPz5eDrkpONeE-A@mail.gmail.com>
+        <20180601220832.73ad5b84@canb.auug.org.au>
+        <7EC66A28-4E57-4B3C-A5AC-4D7D9CAF727E@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fOlwJ-0006mZ-FX;;;mid=<87y3fyv88o.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/DCXvdLvE3MjPj0TAxC6VunwjNLAJSRIY=
-X-SA-Exim-Connect-IP: 97.119.124.205
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  0.7 XMSubLong Long Subject
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Michal Hocko <mhocko@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 503 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 3.0 (0.6%), b_tie_ro: 1.99 (0.4%), parse: 1.22 (0.2%),
-        extract_message_metadata: 4.4 (0.9%), get_uri_detail_list: 1.77 (0.4%),
-        tests_pri_-1000: 7 (1.3%), tests_pri_-950: 2.2 (0.4%), tests_pri_-900: 1.81
-        (0.4%), tests_pri_-400: 31 (6.2%), check_bayes: 29 (5.8%), b_tokenize: 11
-        (2.1%), b_tok_get_all: 8 (1.5%), b_comp_prob: 4.1 (0.8%), b_tok_touch_all:
-        2.8 (0.6%), b_finish: 0.90 (0.2%), tests_pri_0: 423 (84.1%),
-        check_dkim_signature: 0.87 (0.2%), check_dkim_adsp: 4.5 (0.9%),
-        tests_pri_500: 9 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 0/4] exit: Make unlikely case in mm_update_next_owner() more scalable
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/0Zba2XOrRkS9AVC+4/Xhe+m"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko <mhocko@kernel.org> writes:
+--Sig_/0Zba2XOrRkS9AVC+4/Xhe+m
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri 01-06-18 09:32:42, Eric W. Biederman wrote:
->> Michal Hocko <mhocko@kernel.org> writes:
-> [...]
->> > Group leader exiting early without tearing down the whole thread
->> > group should be quite rare as well. No question that somebody might do
->> > that on purpose though...
->> 
->> The group leader exiting early is a completely legitimate and reasonable
->> thing to do, even if it is rare.
+Hi,
+
+On Fri, 01 Jun 2018 07:38:42 -0700 dvhart@infradead.org wrote:
 >
-> I am not saying it isn't legitimate. But the most common case is the
-> main thread waiting for its threads or calling exit which would tear the
-> whole group down. Is there any easy way to achieve this other than tkill
-> to group leader? Calling exit(3) from the leader performs group exit
-> IIRC.
+> Stephen, are the tests you use available publicly?
 
-pthread_exit from the group leader.
+I use the script below when I am fetching trees.  You don't want the
+"gitk" invocation if you are doing this automatically, of course.  The
+script just takes a commit range.
 
-> I am not arguing this is non-issue. And it certainly is a problem once
-> somebody wants to be nasty... I was more interested how often this
-> really happens for sane workloads.
+--=20
+Cheers,
+Stephen Rothwell
 
-That is a fair question.  All I know for certain is that whatever Kirill
-Tkhai's workload was it was triggering this the slow path.
+-------------------------------------------------------------
+#!/bin/bash
 
-Eric
+if [ "$#" -lt 1 ]; then
+	printf "Usage: %s <commit range>\n", "$0" 1>&2
+	exit 1
+fi
+
+commits=3D$(git rev-list --no-merges "$@")
+if [ -z "$commits" ]; then
+	printf "No commits\n"
+	exit 0
+fi
+
+for c in $commits; do
+	ae=3D$(git log -1 --format=3D'%ae' "$c")
+	aE=3D$(git log -1 --format=3D'%aE' "$c")
+	an=3D$(git log -1 --format=3D'%an' "$c")
+	aN=3D$(git log -1 --format=3D'%aN' "$c")
+	ce=3D$(git log -1 --format=3D'%ce' "$c")
+	cE=3D$(git log -1 --format=3D'%cE' "$c")
+	cn=3D$(git log -1 --format=3D'%cn' "$c")
+	cN=3D$(git log -1 --format=3D'%cN' "$c")
+	sob=3D$(git log -1 --format=3D'%b' "$c" | grep -i '^[[:space:]]*Signed-off=
+-by:')
+
+	am=3Dfalse
+	cm=3Dfalse
+	grep -i -q "<$ae>" <<<"$sob" ||
+		grep -i -q "<$aE>" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$an[[:space:]]*<" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$aN[[:space:]]*<" <<<"$sob" ||
+		am=3Dtrue
+	grep -i -q "<$ce>" <<<"$sob" ||
+		grep -i -q "<$cE>" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$cn[[:space:]]*<" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$cN[[:space:]]*<" <<<"$sob" ||
+		cm=3Dtrue
+
+	if "$am" || "$cm"; then
+		printf "Commit %s\n" "$c"
+		"$am" && printf "\tauthor SOB missing\n"
+		"$cm" && printf "\tcommitter SOB missing\n"
+		printf "%s %s\n%s\n" "$ae" "$ce" "$sob"
+	fi
+done
+
+exec gitk "$@"
+-------------------------------------------------------------
+
+--Sig_/0Zba2XOrRkS9AVC+4/Xhe+m
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsRZbYACgkQAVBC80lX
+0GwbDgf9HChXLyNZQY6Jwx+r5Lx3BQsWOzJLRNeGX9bq4G5QD6aoL9ZyJFyZbdcX
+0MeW16lx+CS3c8m7GZJVWWg7cOokgLyPjSph4oGx2zQGwSsSDmgBBx1nD1LKN+XS
+eC6AaozLS56SnEwu6t9SA7O93Y04ZvA49CzE/FuRMNImiG+LaXGbv4C/uAWzbIIS
+0+COuGt8CIk/vhraN7GweMPoUUYaeFG10c70kEO/4fNAfqgMOOukcceh883253rC
+s6toRacXswJJcNL1Xi999iGck7i98xjEvNV4kZ5HLN2/AyKoChAo4ApYK/0UDoOy
+g7DhC8JLVywRwUkpX/PZEmhKuRDwAQ==
+=Ttut
+-----END PGP SIGNATURE-----
+
+--Sig_/0Zba2XOrRkS9AVC+4/Xhe+m--
