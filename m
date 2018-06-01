@@ -1,54 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750981AbeFAIgT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:36:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41198 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750737AbeFAIgN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:36:13 -0400
-Date: Fri, 1 Jun 2018 01:35:57 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Ming Lei <ming.lei@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
-        Filipe Manana <fdmanana@gmail.com>
-Subject: Re: [RESEND PATCH V5 00/33] block: support multipage bvec
-Message-ID: <20180601083557.GA30694@infradead.org>
-References: <20180525034621.31147-1-ming.lei@redhat.com>
- <20180525045306.GB8740@kmo-pixel>
- <8aa4276d-c0bc-3266-aa53-bf08a2e5ab5c@kernel.dk>
- <20180527072332.GA18240@ming.t460p>
- <cc266632-497c-6849-e291-4f042c8d987a@kernel.dk>
+        id S1751129AbeFAIgV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:36:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58178 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750740AbeFAIgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 04:36:14 -0400
+Date: Fri, 1 Jun 2018 10:36:11 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2]: perf record: enable arbitrary event names thru name=
+ modifier
+Message-ID: <20180601083611.GB2986@krava>
+References: <23f72f9b-c513-ecd4-d375-c5cf2eb30197@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cc266632-497c-6849-e291-4f042c8d987a@kernel.dk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <23f72f9b-c513-ecd4-d375-c5cf2eb30197@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 27, 2018 at 07:44:52PM -0600, Jens Axboe wrote:
-> Yes, we discussed exactly this, which is why I'm surprised you went
-> ahead with the same approach. I told you I don't like tree wide renames,
-> if they can be avoided. I'd rather suffer some pain wrt page vs segments
-> naming, and then later do a rename (if it bothers us) once the dust has
-> settled on the interesting part of the changes.
+On Thu, May 31, 2018 at 05:08:12PM +0300, Alexey Budankov wrote:
 > 
-> I'm very well away of our current naming and what it signifies.  With
-> #1, you are really splitting hairs, imho. Find a decent name for
-> multiple segment. Chunk?
+> Enable complex event names containing [.:=,] symbols to be encoded into Perf 
+> trace using name= modifier e.g. like this:
+> 
+> perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',\
+> 		period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex
+> 
+> Below is how it looks like in the report output. Please note explicit escaped 
+> quoting at cmdline string in the header so that thestring can be directly reused
+> for another collection in shell:
+> 
+> perf report --header
+> 
+> # ========
+> ...
+> # cmdline : /root/abudanko/kernel/tip/tools/perf/perf record -v -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex 
+> # event : name = OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM, , type = 4, size = 112, config = 0x100003c, { sample_period, sample_freq } = 3500000, sample_type = IP|TID|TIME, disabled = 1, inh
+> ...
+> # ========
+> #
+> #
+> # Total Lost Samples: 0
+> #
+> # Samples: 24K of event 'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM'
+> # Event count (approx.): 86492000000
+> #
+> # Overhead  Command  Shared Object     Symbol                                        
+> # ........  .......  ................  ..............................................
+> #
+>     14.75%  futex    [kernel.vmlinux]  [k] __entry_trampoline_start
+> ...
+> 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 
-vec?
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-bio_for_each_segment (page)
-bio_for_each_vec (whole bvec)
+thanks,
+jirka
