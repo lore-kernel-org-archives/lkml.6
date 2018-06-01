@@ -1,53 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752006AbeFANhW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:37:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49327 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751346AbeFANhT (ORCPT
+        id S1751895AbeFANkt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:40:49 -0400
+Received: from mail.netline.ch ([148.251.143.178]:60903 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751378AbeFANks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:37:19 -0400
-From: Colin King <colin.king@canonical.com>
-To: Clemens Ladisch <clemens@ladisch.de>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (k10temp) Make function get_raw_temp static
-Date: Fri,  1 Jun 2018 14:37:13 +0100
-Message-Id: <20180601133713.8817-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 1 Jun 2018 09:40:48 -0400
+Subject: Re: [PATCH 3/3] drm/amdgpu: Add documentation for PRIME related code
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
+        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        linux-doc@vger.kernel.org
+References: <20180531161708.5894-1-michel@daenzer.net>
+ <20180531161708.5894-3-michel@daenzer.net>
+ <CADnq5_O5-m_=xqszq41eOAVaLTytHUHmtDaSc1MeEorZML6T5g@mail.gmail.com>
+From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Message-ID: <b458561f-b4e5-58bb-eee0-e3451312ae41@daenzer.net>
+Date: Fri, 1 Jun 2018 15:40:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CADnq5_O5-m_=xqszq41eOAVaLTytHUHmtDaSc1MeEorZML6T5g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 2018-06-01 02:58 PM, Alex Deucher wrote:
+> On Thu, May 31, 2018 at 12:17 PM, Michel Dänzer <michel@daenzer.net> wrote:
+>> From: Michel Dänzer <michel.daenzer@amd.com>
+>>
+>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+> 
+> Series is:
+> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
 
-The function get_raw_temp is local to the source and does not need to
-be in global scope, so make it static.
+Thanks. Is it okay to merge all of these via the amdgpu tree, or should
+I wait for an ack from Jon and/or core DRM maintainers for that?
 
-Cleans up sparse warning:
-drivers/hwmon/k10temp.c:149:14: warning: symbol 'get_raw_temp' was not
-declared. Should it be static?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/hwmon/k10temp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index d3fae5a8e508..17c6460ae351 100644
---- a/drivers/hwmon/k10temp.c
-+++ b/drivers/hwmon/k10temp.c
-@@ -146,7 +146,7 @@ static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
- 		     F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
- }
- 
--unsigned int get_raw_temp(struct k10temp_data *data)
-+static unsigned int get_raw_temp(struct k10temp_data *data)
- {
- 	unsigned int temp;
- 	u32 regval;
 -- 
-2.17.0
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
