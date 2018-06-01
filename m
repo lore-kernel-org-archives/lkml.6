@@ -1,94 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750850AbeFACU7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 22:20:59 -0400
-Received: from mail-io0-f173.google.com ([209.85.223.173]:40404 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750724AbeFACUz (ORCPT
+        id S1750931AbeFACYX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 22:24:23 -0400
+Received: from ipmailnode02.adl6.internode.on.net ([150.101.137.148]:22594
+        "EHLO ipmailnode02.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750715AbeFACYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 22:20:55 -0400
-X-Google-Smtp-Source: ADUXVKKRcWIHEBC96ZP6HdAI63Vg2wEeElXFJEKha1mtaxLwG73dDyTmME8OPBtDhpRLAjgQWzZvkYsVfJ6CQbVb6gc=
+        Thu, 31 May 2018 22:24:21 -0400
+Date: Fri, 1 Jun 2018 12:24:18 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
+ boolean returns
+Message-ID: <20180601022418.GR10363@dastard>
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-3-ross.zwisler@linux.intel.com>
+ <20180529212510.GJ30110@magnolia>
+ <20180529220114.GA13948@linux.intel.com>
+ <20180531191332.GB7825@magnolia>
+ <20180601012657.GQ10363@dastard>
+ <CAPcyv4g6dv9sG9dR-iY+aEfSi2r3ey1dXGbX-nexKsN72t0QMw@mail.gmail.com>
 MIME-Version: 1.0
-X-Originating-IP: [202.83.97.154]
-From: Daniel J Blueman <daniel@quora.org>
-Date: Fri, 1 Jun 2018 10:20:53 +0800
-Message-ID: <CAMVG2svkh9AcLKg+A4M7+XuvdROcx4vOcZQwnTTwqLuBU-vaXw@mail.gmail.com>
-Subject: 4.14.44: BUG_ON(!list_empty(&sem->wait_list));
-To: Linux Kernel <linux-kernel@vger.kernel.org>,
-        linux-acpi@vger.kernel.org
-Cc: mario.limonciello@dell.com, jared.dominguez@dell.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4g6dv9sG9dR-iY+aEfSi2r3ey1dXGbX-nexKsN72t0QMw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Plugging in a USB-C power source on my Dell XPS 9550 trips an ACPI
-BUG_ON [1], reproducible with mainline 4.14.44, suggesting other
-threads are waiting for semaphore acquisition due to
-"BUG_ON(!list_empty(&sem->wait_list))".
+On Thu, May 31, 2018 at 06:57:33PM -0700, Dan Williams wrote:
+> On Thu, May 31, 2018 at 6:26 PM, Dave Chinner <david@fromorbit.com> wrote:
+> > On Thu, May 31, 2018 at 12:13:32PM -0700, Darrick J. Wong wrote:
+> >> On Tue, May 29, 2018 at 04:01:14PM -0600, Ross Zwisler wrote:
+> >> > On Tue, May 29, 2018 at 02:25:10PM -0700, Darrick J. Wong wrote:
+> >> > > On Tue, May 29, 2018 at 01:51:01PM -0600, Ross Zwisler wrote:
+> >> > > > From: Dave Jiang <dave.jiang@intel.com>
+> >> > > >
+> >> > > > The function return values are confusing with the way the function is
+> >> > > > named. We expect a true or false return value but it actually returns
+> >> > > > 0/-errno.  This makes the code very confusing. Changing the return values
+> >> > > > to return a bool where if DAX is supported then return true and no DAX
+> >> > > > support returns false.
+> >> > > >
+> >> > > > Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+> >> > > > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+> >> > >
+> >> > > Looks ok, do you want me to pull the first two patches through the xfs
+> >> > > tree?
+> >> > >
+> >> > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> >> >
+> >> > Thanks for the review.
+> >> >
+> >> > I'm not sure what's best.  If you do that then Mike will need to have a DM
+> >> > branch for the rest of the series based on your stable commits, yea?
+> >> >
+> >> > Mike what would you prefer?
+> >>
+> >> I /was/ about to say that I would pull in the first two patches, but now
+> >> I can't get xfs to mount with pmem at all, and have no way of testing
+> >> this...?
+> >
+> > I have similar problems, too, but:
+> >
+> > $ ndctl list
+> > [
+> >   {
+> >     "dev":"namespace1.0",
+> >     "mode":"raw",
+> >     "size":8589934592,
+> >     "sector_size":512,
+> >     "blockdev":"pmem1"
+> >   },
+> >   {
+> >     "dev":"namespace0.0",
+> >     "mode":"raw",
+> >     "size":8589934592,
+> >     "sector_size":512,
+> >     "blockdev":"pmem0"
+> >   }
+> > ]
+> > $ sudo ndctl create-namespace -f -e namespace0.0 --mode=fsdax
+> >   Error: operation failed, region0 fsdax mode not available
+> >
+> > failed to reconfigure namespace: Invalid argument
+> > $
+> >
+> > I can't make head or tail of what is going wrong here - how am I
+> > supposed to debug this and get it working again?
+> >
+> > FWIW, XFS+DAX used to just work on this setup (I hadn't even
+> > installed ndctl until this morning!) but after changing the kernel
+> > it no longer works. That would make it a regression, yes?
+> 
+> This commit caused the behavior change:
+> 
+>     569d0365f571 dax: require 'struct page' by default for filesystem dax
+> 
+> The justification is in that patch, but the short summary is we killed
+> off "pageless" dax because it had so many incomplete holes and
+> surprise behaviors. It needed to die on the path to making dax not
+> experimental, i.e. to close safety holes, and be feature complete for
+> all the ways userspace expects to use mappings (direct-io, fork,
+> poison handling, etc).
+> 
+> I suspect your kernel does not have CONFIG_ZONE_DEVICE enabled which
+> has the following dependencies:
+> 
+>         depends on MEMORY_HOTPLUG
+>         depends on MEMORY_HOTREMOVE
+>         depends on SPARSEMEM_VMEMMAP
 
-This is the current 1.7.0 BIOS with Ubuntu 18.04 userspace, plugging
-in an LG 27UD88 (also with the current firmware) monitor USB-C
-connection which apparently advertises 60W charging (x1,
-PowerDelivery, DisplayPort alternative mode, data). The same issues
-reproduce on a Dell Precision 5510 with Ubuntu 16.04, the shipped
-kernel and 4.14.44.
+Filesystem DAX now has a dependency on memory hotplug?
 
-I can enable ACPI debugging if useful? Perhaps ACPI_DB_MUTEX or other
-levels would be appropriate?
+Fmeh. No wonder I never enabled CONFIG_ZONE_DEVICE. It's described in
+menuconfig as "Device memory (pmem, HMM, etc...) hotplug support".
+This isn't for hotplug support - it required for basic DAX
+functionality. I've never enabled memory hotplug in any of my test
+kernel configs, because the VMs I run the kernels on don't ever get
+memory hotplugged....
 
-Thanks,
-  Daniel
+OK, works now I've found the magic config incantantions to turn
+everything I now need on.
 
--- [1]
+Can we get this rationalised to a single top level config
+option in the filesystems menu "Enable Filesystem DAX" that turns
+on every knob that is required?
 
-kernel BUG at /home/kernel/COD/linux/drivers/acpi/osl.c:1201
-invalid opcode: 0000 [#1] SMP PTI
-Modules linked in: [...]
-CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted 4.14.44-041444-generic
-#201805251612
-Hardware name: Dell Inc. XPS 15 9550/, BIOS 1.7.0 02/23/2018
-task: ffff9bc2ab6b9740 task.stack: ffffbOca80034000
-RIP: 0010:acpi_os_delete_semaphore+0x6d/0x70
-RSP: 0018:ffffbOca80037be8 EFLAGS: 00010283
-RAX: ffffbOca83f8fc40 RBX: ffff9bc238b5dbe0 RCX: 0000000000000000
-RDX: ffff9bc238b5dbe8 RSI: 0000000000000000 RDI: ffff9bc238b5dbe0
-RBP: ffff9bc2adlc0990 ROB: ffff9bc2bdc25f20 R09: ffff9bc29ee56300
-R10: ffffe03bd2796440 R11: ffff9bc2ad183fa0 R12: ffff9bc22f1321e0
-R13: 0000000000000001 R14: 0000000000000001 R15: ffff9bc22f132eb0
-FS: 00007fc03886f940(0000) GS:ffff9bc2bdc00000(0000) knlGS:0000000000000000
-CS: 0010 DS: 0000 ES: 0000 CRO: 0000000080050033
-CR2: 00007ffc645e70f8 CR3: 000000049e120001 CR4: 00000000003606f0
-Call Trace:
-acpi_ex_system_reset_event+0x3f/0x65
-acpi_ex_opcode_1A_OT_0R+0x70/0xfa
-acpi_ds_exec_end_op+0x15d/0x71b
-acpi_ps_parse_loop+0x929/0x9d6
-? acpi_ds_result_push+0x82/0x1d2
-acpi_ps_parse_aml+0x1a2/0x4af
-acpi_ps_execute_method+0x1ef/0x2ab
-acpi_ns_evaluate+0x2e4/0x41d
-acpi_evaluate_object+0x1cb/0x38e
-acpi_enter_sleep_state_prep+0xae/0x13a
-acpi_sleep_prepare.part.2+0x2e/0x40
-acpi_power_off_prepare+0xf/0x20
-[38871.1925361 kernel_power_off+0x42/0x70
-SYSC_reboot+0x12f/0x210
-? handle_mm_fault+0xea/0x1e0
-[38871.1925861 ? do_writev+0x5e/0xf0
-? do_writev+0x5e/0xf0
-do_syscall_64+0x6e/0x120
-entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x7fc03839b373
-RSP: 002b:00007ffc645e70f8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a9
-RAX: ffffffffffffffda RBX: 000000004321fedc RCX: 00007fc03839b373
-ROX: 000000004321fedc RSI: 0000000028121969 RDI: 00000000fee1dead
-RBP: 00007ffc645e7160 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000202 R12: 00007ffc645e7168
-R13: 0000000000000000 R14: 0000001b00000004 R15: 00007ffc645e7458
-Code: b8 00 04 00 00 48 c7 c1 c3 91 28 ab 48 c7 c2 20 91 28 ab be of
-04 00 00 bf 00 00 00 01 03 41 85 04 00 58 eb b0 b8 01 10 00 00 c3 <Of>
-Ob 90 Of if 44 00 00 80 3d 74 CO 97 01 00 41 54 55 53 Of 84
-RIP: acpi_os_delete_semaphore+0x6d/0x70 RSP: ffffb0ca80037be8
+Cheers,
+
+Dave.
 -- 
-Daniel J Blueman
+Dave Chinner
+david@fromorbit.com
