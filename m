@@ -1,66 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752680AbeFAQGB (ORCPT <rfc822;w@1wt.eu>);
+        id S1753236AbeFAQGr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:06:47 -0400
+Received: from foss.arm.com ([217.140.101.70]:55034 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752416AbeFAQGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Jun 2018 12:06:01 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54952 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751422AbeFAQGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:06:00 -0400
 From: Will Deacon <will.deacon@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: peterz@infradead.org, mingo@kernel.org,
         linux-arm-kernel@lists.infradead.org, yamada.masahiro@socionext.com,
         Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 0/9] Rewrite asm-generic/bitops/{atomic,lock}.h and use on arm64
-Date: Fri,  1 Jun 2018 17:06:20 +0100
-Message-Id: <1527869189-31512-1-git-send-email-will.deacon@arm.com>
+Subject: [PATCH v2 8/9] arm64: Replace our atomic/lock bitop implementations with asm-generic
+Date: Fri,  1 Jun 2018 17:06:28 +0100
+Message-Id: <1527869189-31512-9-git-send-email-will.deacon@arm.com>
 X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1527869189-31512-1-git-send-email-will.deacon@arm.com>
+References: <1527869189-31512-1-git-send-email-will.deacon@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+The asm-generic/bitops/{atomic,lock}.h implementations are built around
+the atomic-fetch ops, which we implement efficiently for both LSE and
+LL/SC systems. Use that instead of our hand-rolled, out-of-line bitops.S.
 
-This patch series has previously been posted in RFC form here:
-
-  RFCv1: https://www.spinics.net/lists/arm-kernel/msg634719.html
-  RFCv2: https://www.spinics.net/lists/arm-kernel/msg636875.html
-     v1: https://www.spinics.net/lists/arm-kernel/msg655262.html
-
-The only change since v1 is that some of the fetch ops are replaced
-by non-value-returning ops for some of the atomic bitops.
-
-Thanks,
-
-Will
-
---->8
-
-Will Deacon (9):
-  h8300: Don't include linux/kernel.h in asm/atomic.h
-  m68k: Don't use asm-generic/bitops/lock.h
-  asm-generic: Move some macros from linux/bitops.h to a new bits.h file
-  openrisc: Don't pull in all of linux/bitops.h in asm/cmpxchg.h
-  sh: Don't pull in all of linux/bitops.h in asm/cmpxchg-xchg.h
-  asm-generic/bitops/atomic.h: Rewrite using atomic_*
-  asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*
-  arm64: Replace our atomic/lock bitop implementations with asm-generic
-  arm64: bitops: Include <asm-generic/bitops/ext2-atomic-setbit.h>
-
- arch/arm64/include/asm/bitops.h     |  21 +---
- arch/arm64/lib/Makefile             |   2 +-
- arch/arm64/lib/bitops.S             |  76 ---------------
- arch/h8300/include/asm/atomic.h     |   4 +-
- arch/m68k/include/asm/bitops.h      |   6 +-
- arch/openrisc/include/asm/cmpxchg.h |   3 +-
- arch/sh/include/asm/cmpxchg-xchg.h  |   3 +-
- include/asm-generic/bitops/atomic.h | 188 +++++++-----------------------------
- include/asm-generic/bitops/lock.h   |  68 ++++++++++---
- include/linux/bitops.h              |  22 +----
- include/linux/bits.h                |  26 +++++
- 11 files changed, 131 insertions(+), 288 deletions(-)
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/include/asm/bitops.h | 14 ++------
+ arch/arm64/lib/Makefile         |  2 +-
+ arch/arm64/lib/bitops.S         | 76 -----------------------------------------
+ 3 files changed, 3 insertions(+), 89 deletions(-)
  delete mode 100644 arch/arm64/lib/bitops.S
- create mode 100644 include/linux/bits.h
 
+diff --git a/arch/arm64/include/asm/bitops.h b/arch/arm64/include/asm/bitops.h
+index 9c19594ce7cb..13501460be6b 100644
+--- a/arch/arm64/include/asm/bitops.h
++++ b/arch/arm64/include/asm/bitops.h
+@@ -17,22 +17,11 @@
+ #define __ASM_BITOPS_H
+ 
+ #include <linux/compiler.h>
+-#include <asm/barrier.h>
+ 
+ #ifndef _LINUX_BITOPS_H
+ #error only <linux/bitops.h> can be included directly
+ #endif
+ 
+-/*
+- * Little endian assembly atomic bitops.
+- */
+-extern void set_bit(int nr, volatile unsigned long *p);
+-extern void clear_bit(int nr, volatile unsigned long *p);
+-extern void change_bit(int nr, volatile unsigned long *p);
+-extern int test_and_set_bit(int nr, volatile unsigned long *p);
+-extern int test_and_clear_bit(int nr, volatile unsigned long *p);
+-extern int test_and_change_bit(int nr, volatile unsigned long *p);
+-
+ #include <asm-generic/bitops/builtin-__ffs.h>
+ #include <asm-generic/bitops/builtin-ffs.h>
+ #include <asm-generic/bitops/builtin-__fls.h>
+@@ -44,8 +33,9 @@ extern int test_and_change_bit(int nr, volatile unsigned long *p);
+ 
+ #include <asm-generic/bitops/sched.h>
+ #include <asm-generic/bitops/hweight.h>
+-#include <asm-generic/bitops/lock.h>
+ 
++#include <asm-generic/bitops/atomic.h>
++#include <asm-generic/bitops/lock.h>
+ #include <asm-generic/bitops/non-atomic.h>
+ #include <asm-generic/bitops/le.h>
+ 
+diff --git a/arch/arm64/lib/Makefile b/arch/arm64/lib/Makefile
+index 137710f4dac3..68755fd70dcf 100644
+--- a/arch/arm64/lib/Makefile
++++ b/arch/arm64/lib/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-lib-y		:= bitops.o clear_user.o delay.o copy_from_user.o	\
++lib-y		:= clear_user.o delay.o copy_from_user.o		\
+ 		   copy_to_user.o copy_in_user.o copy_page.o		\
+ 		   clear_page.o memchr.o memcpy.o memmove.o memset.o	\
+ 		   memcmp.o strcmp.o strncmp.o strlen.o strnlen.o	\
+diff --git a/arch/arm64/lib/bitops.S b/arch/arm64/lib/bitops.S
+deleted file mode 100644
+index 43ac736baa5b..000000000000
+--- a/arch/arm64/lib/bitops.S
++++ /dev/null
+@@ -1,76 +0,0 @@
+-/*
+- * Based on arch/arm/lib/bitops.h
+- *
+- * Copyright (C) 2013 ARM Ltd.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
+-
+-#include <linux/linkage.h>
+-#include <asm/assembler.h>
+-#include <asm/lse.h>
+-
+-/*
+- * x0: bits 5:0  bit offset
+- *     bits 31:6 word offset
+- * x1: address
+- */
+-	.macro	bitop, name, llsc, lse
+-ENTRY(	\name	)
+-	and	w3, w0, #63		// Get bit offset
+-	eor	w0, w0, w3		// Clear low bits
+-	mov	x2, #1
+-	add	x1, x1, x0, lsr #3	// Get word offset
+-alt_lse "	prfm	pstl1strm, [x1]",	"nop"
+-	lsl	x3, x2, x3		// Create mask
+-
+-alt_lse	"1:	ldxr	x2, [x1]",		"\lse	x3, [x1]"
+-alt_lse	"	\llsc	x2, x2, x3",		"nop"
+-alt_lse	"	stxr	w0, x2, [x1]",		"nop"
+-alt_lse	"	cbnz	w0, 1b",		"nop"
+-
+-	ret
+-ENDPROC(\name	)
+-	.endm
+-
+-	.macro	testop, name, llsc, lse
+-ENTRY(	\name	)
+-	and	w3, w0, #63		// Get bit offset
+-	eor	w0, w0, w3		// Clear low bits
+-	mov	x2, #1
+-	add	x1, x1, x0, lsr #3	// Get word offset
+-alt_lse "	prfm	pstl1strm, [x1]",	"nop"
+-	lsl	x4, x2, x3		// Create mask
+-
+-alt_lse	"1:	ldxr	x2, [x1]",		"\lse	x4, x2, [x1]"
+-	lsr	x0, x2, x3
+-alt_lse	"	\llsc	x2, x2, x4",		"nop"
+-alt_lse	"	stlxr	w5, x2, [x1]",		"nop"
+-alt_lse	"	cbnz	w5, 1b",		"nop"
+-alt_lse	"	dmb	ish",			"nop"
+-
+-	and	x0, x0, #1
+-	ret
+-ENDPROC(\name	)
+-	.endm
+-
+-/*
+- * Atomic bit operations.
+- */
+-	bitop	change_bit, eor, steor
+-	bitop	clear_bit, bic, stclr
+-	bitop	set_bit, orr, stset
+-
+-	testop	test_and_change_bit, eor, ldeoral
+-	testop	test_and_clear_bit, bic, ldclral
+-	testop	test_and_set_bit, orr, ldsetal
 -- 
 2.1.4
