@@ -1,178 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751793AbeFAMav (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 08:30:51 -0400
-Received: from mga12.intel.com ([192.55.52.136]:57458 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750790AbeFAMar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 08:30:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,465,1520924400";
-   d="scan'208";a="53990799"
-Subject: Re: [PATCH V1 1/3] scsi: ufs: set the device reference clock setting
-To: Sayali Lokhande <sayalil@codeaurora.org>, subhashj@codeaurora.org,
-        cang@codeaurora.org, vivek.gautam@codeaurora.org,
-        rnayak@codeaurora.org, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org
-Cc: linux-scsi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-References: <1527849774-7623-1-git-send-email-sayalil@codeaurora.org>
- <1527849774-7623-2-git-send-email-sayalil@codeaurora.org>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <a103a853-5818-ba1b-8971-853e35162832@intel.com>
-Date: Fri, 1 Jun 2018 15:29:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1527849774-7623-2-git-send-email-sayalil@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+        id S1751925AbeFAMcK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 08:32:10 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:54914 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751800AbeFAMcI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 08:32:08 -0400
+X-IronPort-AV: E=Sophos;i="5.49,465,1520899200";
+   d="scan'208";a="681272211"
+From: "Sironi, Filippo" <sironi@amazon.de>
+To: Borislav Petkov <bp@alien8.de>
+CC: "tony.luck@intel.com" <tony.luck@intel.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/MCE: Get microcode revision from cpu_info instead of
+ boot_cpu_data
+Thread-Topic: [PATCH] x86/MCE: Get microcode revision from cpu_info instead of
+ boot_cpu_data
+Thread-Index: AQHT+Zv+wHTY51FtbEioMg+BTihN/6RLUmeAgAADcwA=
+Date: Fri, 1 Jun 2018 12:32:02 +0000
+Message-ID: <56E0BDAC-816A-4F72-A4C6-2747F4A8AA67@amazon.de>
+References: <1527852626-7258-1-git-send-email-sironi@amazon.de>
+ <20180601121939.GA23298@nazgul.tnic>
+In-Reply-To: <20180601121939.GA23298@nazgul.tnic>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.166.110]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7B39A8A2B7449F48B175AFD2B118D309@amazon.com>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w51CWEx5032455
 
-On 01/06/18 13:42, Sayali Lokhande wrote:
-> From: Subhash Jadavani <subhashj@codeaurora.org>
+> On 1. Jun 2018, at 14:19, Borislav Petkov <bp@alien8.de> wrote:
 > 
-> UFS host supplies the reference clock to UFS device and UFS device
-> specification allows host to provide one of the 4 frequencies (19.2 MHz,
-> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
-> device reference clock frequency setting in the device based on what
-> frequency it is supplying to UFS device.
+> On Fri, Jun 01, 2018 at 01:30:26PM +0200, Filippo Sironi wrote:
+>> Commit fa94d0c6e0f3 ("x86/MCE: Save microcode revision in machine check
+>> records") extended MCE entries to report the microcode revision taken
+>> from boot_cpu_data. Unfortunately, boot_cpu_data isn't updated on late
+>> microcode loading,
 > 
-> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-> [cang@codeaurora.org: Resolved trivial merge conflicts]
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> ---
->  drivers/scsi/ufs/ufs.h    |  9 +++++++
->  drivers/scsi/ufs/ufshcd.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd.h |  1 +
->  3 files changed, 72 insertions(+)
+> Actually, I'd prefer if we fixed *that* instead by adding:
 > 
-> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-> index 14e5bf7..e15deb0 100644
-> --- a/drivers/scsi/ufs/ufs.h
-> +++ b/drivers/scsi/ufs/ufs.h
-> @@ -378,6 +378,15 @@ enum query_opcode {
->  	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
->  };
->  
-> +/* bRefClkFreq attribute values */
-> +enum ref_clk_freq {
-> +	REF_CLK_FREQ_19_2_MHZ	= 0x0,
-> +	REF_CLK_FREQ_26_MHZ	= 0x1,
-> +	REF_CLK_FREQ_38_4_MHZ	= 0x2,
-> +	REF_CLK_FREQ_52_MHZ	= 0x3,
-> +	REF_CLK_FREQ_MAX	= REF_CLK_FREQ_52_MHZ,
-> +};
-> +
->  /* Query response result code */
->  enum {
->  	QUERY_RESULT_SUCCESS                    = 0x00,
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index c5b1bf1..3669bc4 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -6297,6 +6297,63 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
->  }
->  
->  /**
-> + * ufshcd_set_dev_ref_clk - set the device bRefClkFreq
-> + * @hba: per-adapter instance
-> + * @ref_clk_freq: refrerence clock frequency to be set
-> + *
-> + * Read the current value of the bRefClkFreq attribute from device and update it
-> + * if host is supplying different reference clock frequency than one mentioned
-> + * in bRefClkFreq attribute.
-> + *
-> + * Returns zero on success, non-zero error value on failure.
-> + */
-> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba, u32 ref_clk_freq)
-> +{
-> +	int err = 0;
-> +	int ref_clk = -1;
-> +	static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
-> +						     "38.4 MHz", "52 MHz"};
-> +
-> +	hba->dev_ref_clk_freq = ref_clk_freq;
-> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
-> +
-> +	if (err) {
-> +		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
-> +			 __func__, err);
-> +		goto out;
-> +	}
-> +
-> +	if ((ref_clk < 0) || (ref_clk > REF_CLK_FREQ_52_MHZ)) {
-
-If you used u32 ref_clk then you wouldn't have to check < 0, also you should
-use REF_CLK_FREQ_MAX not REF_CLK_FREQ_52_MHZ, but really why is this check
-needed anyway?
-
-> +		dev_err(hba->dev, "%s: invalid ref_clk setting = %d\n",
-> +			 __func__, ref_clk);
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	if (ref_clk == hba->dev_ref_clk_freq)
-> +		goto out; /* nothing to update */
-> +
-> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
-> +			&hba->dev_ref_clk_freq);
-> +
-> +	if (err)
-> +		dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
-> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
-> +	else
-> +		/*
-> +		 * It is good to print this out here to debug any later failures
-> +		 * related to gear switch.
-> +		 */
-> +		dev_info(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
-> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
-
-Why not make this dev_dbg and print always even when there is no update.
-
-> +
-> +out:
-> +	return err;
-> +}
-> +
-> +/**
->   * ufshcd_probe_hba - probe hba to detect device and initialize
->   * @hba: per-adapter instance
->   *
-> @@ -6361,6 +6418,11 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
->  			"%s: Failed getting max supported power mode\n",
->  			__func__);
->  	} else {
-> +		/*
-> +		 * Set the right value to bRefClkFreq before attempting to
-> +		 * switch to HS gears.
-> +		 */
-> +		ufshcd_set_dev_ref_clk(hba, REF_CLK_FREQ_19_2_MHZ);
->  		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
->  		if (ret) {
->  			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index 8110dcd..b026ad8 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -548,6 +548,7 @@ struct ufs_hba {
->  	void *priv;
->  	unsigned int irq;
->  	bool is_irq_enabled;
-> +	u32 dev_ref_clk_freq;
->  
->  	/* Interrupt aggregation support is broken */
->  	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+> 	/* Update boot_cpu_data's revision too, if we're on the BSP: */
+> 	if (c->cpu_index == boot_cpu_data.cpu_index)
+> 		boot_cpu_data.microcode = <new rev>;
 > 
+> to the end of ->apply_microcode() functions so that boot_cpu_data has
+> the correct revision too, in case something else queries it.
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>    Boris.
+> 
+> ECO tip #101: Trim your mails when you reply.
+> --
+
+I've that patch in my tree already, I can post it.
+I'm still curious on why you'd prefer to use boot_cpu_data for all
+CPUs instead of using cpu_data(m->extcpu) though.
+
+Regards,
+Filippo
+
+
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
