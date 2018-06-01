@@ -1,77 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751394AbeFAIl3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:41:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750766AbeFAIlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:41:23 -0400
-Date: Fri, 1 Jun 2018 10:41:00 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: James Simmons <jsimmons@infradead.org>
-Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
-        Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>,
-        Amir Shehata <amir.shehata@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH v2 11/25] staging: lustre: libcfs: provide debugfs files
- for distance handling
-Message-ID: <20180601084100.GG19242@kroah.com>
-References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org>
- <1527603725-30560-12-git-send-email-jsimmons@infradead.org>
+        id S1751266AbeFAIl0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:41:26 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:46530 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750724AbeFAIlV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 04:41:21 -0400
+X-Google-Smtp-Source: ADUXVKIc9g/FNUVttrDe4cpaPTDoIT0bqd/K0me2+wDL5Q8HNg40V595LTwM9Dr12yvMIe26QYKsZw==
+Date: Fri, 1 Jun 2018 04:41:16 -0400
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, Jiri Olsa <jolsa@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Lawrence Brakmo <brakmo@fb.com>,
+        Andrey Ignatov <rdna@fb.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>
+Subject: Re: [PATCH bpf 1/2] bpf: fix alignment of netns_dev/netns_ino fields
+ in bpf_{map,prog}_info
+Message-ID: <20180601084114.xgvtg7nmihdavnnd@ast-mbp>
+References: <20180527112842.GA18204@asgard.redhat.com>
+ <20180530181857.GA6744@altlinux.org>
+ <20180601031210.GA30533@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527603725-30560-12-git-send-email-jsimmons@infradead.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180601031210.GA30533@altlinux.org>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:21:51AM -0400, James Simmons wrote:
-> From: Amir Shehata <amir.shehata@intel.com>
+On Fri, Jun 01, 2018 at 06:12:10AM +0300, Dmitry V. Levin wrote:
+> Hi,
 > 
-> On systems with large number of NUMA nodes and cores it is easy
-> to incorrectly configure their use with Lustre. Provide debugfs
-> files which can help track down any issues.
-> 
-> Signed-off-by: Amir Shehata <amir.shehata@intel.com>
-> Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-7734
-> Reviewed-on: http://review.whamcloud.com/18916
-> Reviewed-by: Olaf Weber <olaf@sgi.com>
-> Reviewed-by: Doug Oucharek <dougso@me.com>
-> Signed-off-by: James Simmons <jsimmons@infradead.org>
-> ---
-> Changelog:
-> 
-> v1) Initial patch
-> v2) Rebased patch. No code changes from original patch
-> 
->  drivers/staging/lustre/lnet/libcfs/module.c | 53 +++++++++++++++++++++++++++++
->  1 file changed, 53 insertions(+)
-> 
-> diff --git a/drivers/staging/lustre/lnet/libcfs/module.c b/drivers/staging/lustre/lnet/libcfs/module.c
-> index b438d456..d2dfc29 100644
-> --- a/drivers/staging/lustre/lnet/libcfs/module.c
-> +++ b/drivers/staging/lustre/lnet/libcfs/module.c
-> @@ -468,6 +468,53 @@ static int proc_cpt_table(struct ctl_table *table, int write,
->  				    __proc_cpt_table);
->  }
->  
-> +static int __proc_cpt_distance(void *data, int write,
-> +			       loff_t pos, void __user *buffer, int nob)
-> +{
-> +	char *buf = NULL;
-> +	int len = 4096;
-> +	int rc = 0;
-> +
-> +	if (write)
-> +		return -EPERM;
-> +
-> +	LASSERT(cfs_cpt_tab);
+> Looks like the ABI bug in bpf_map_info and bpf_prog info introduced
+> in 4.16 is going to slip into 4.17, causing extra pain to 32-bit
+> userspace.  I'm adding Linus to this thread in hope it might help
+> to get a fix applied before 4.17 is released.
 
-What is this assert really checking?  Why is it needed?
+The issue identified in patch 1 is valid.
+These two fields won't be properly accessible by 32-bit user space
+on 64-bit kernel.
+But the fix in patch 1 is wrong.
+The patch 2 is completely unnecessary.
+Everyone can also see that the patches are still marked as 'new' in patchworks
+meaning that we didn't process them.
+At the moment many networking folks are traveling to netconf
+and we only had a chance to discuss this set last night.
+We'll try to send a fix in coming days.
+But regardless whether 4.17 is realesed this sunday or not
+we're not going to rush wrong patch in without proper code review
+and discussion.
+That future patch either will land in 4.17 (if it's dealyed into next sunday)
+or it will be sent to stable.
 
-thanks,
+To speed up the situation next time please report the issue that you find
+to public netdev mailing list instead of using proprietary distro emails.
 
-greg k-h
+Thanks.
+
+> On Wed, May 30, 2018 at 09:18:58PM +0300, Dmitry V. Levin wrote:
+> > On Sun, May 27, 2018 at 01:28:42PM +0200, Eugene Syromiatnikov wrote:
+> > > Recent introduction of netns_dev/netns_ino to bpf_map_info/bpf_prog info
+> > > has broken compat, as offsets of these fields are different in 32-bit
+> > > and 64-bit ABIs.  One fix (other than implementing compat support in
+> > > syscall in order to handle this discrepancy) is to use __aligned_u64
+> > > instead of __u64 for these fields.
+> > > 
+> > > Reported-by: Dmitry V. Levin <ldv@altlinux.org>
+> > > Fixes: 52775b33bb507 ("bpf: offload: report device information about
+> > > offloaded maps")
+> > > Fixes: 675fc275a3a2d ("bpf: offload: report device information for
+> > > offloaded programs")
+> > > 
+> > > Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+> > 
+> > Reviewed-by: "Dmitry V. Levin" <ldv@altlinux.org>
+> > Cc: <stable@vger.kernel.org> # v4.16+
+> > 
+> > Thanks,
+> > 
+> > > ---
+> > >  include/uapi/linux/bpf.h       | 8 ++++----
+> > >  tools/include/uapi/linux/bpf.h | 8 ++++----
+> > >  2 files changed, 8 insertions(+), 8 deletions(-)
+> > > 
+> > > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > > index c5ec897..903010a 100644
+> > > --- a/include/uapi/linux/bpf.h
+> > > +++ b/include/uapi/linux/bpf.h
+> > > @@ -1017,8 +1017,8 @@ struct bpf_prog_info {
+> > >  	__aligned_u64 map_ids;
+> > >  	char name[BPF_OBJ_NAME_LEN];
+> > >  	__u32 ifindex;
+> > > -	__u64 netns_dev;
+> > > -	__u64 netns_ino;
+> > > +	__aligned_u64 netns_dev;
+> > > +	__aligned_u64 netns_ino;
+> > >  } __attribute__((aligned(8)));
+> > >  
+> > >  struct bpf_map_info {
+> > > @@ -1030,8 +1030,8 @@ struct bpf_map_info {
+> > >  	__u32 map_flags;
+> > >  	char  name[BPF_OBJ_NAME_LEN];
+> > >  	__u32 ifindex;
+> > > -	__u64 netns_dev;
+> > > -	__u64 netns_ino;
+> > > +	__aligned_u64 netns_dev;
+> > > +	__aligned_u64 netns_ino;
+> > >  } __attribute__((aligned(8)));
+> > >  
+> > >  /* User bpf_sock_addr struct to access socket fields and sockaddr struct passed
+> > > diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+> > > index c5ec897..903010a 100644
+> > > --- a/tools/include/uapi/linux/bpf.h
+> > > +++ b/tools/include/uapi/linux/bpf.h
+> > > @@ -1017,8 +1017,8 @@ struct bpf_prog_info {
+> > >  	__aligned_u64 map_ids;
+> > >  	char name[BPF_OBJ_NAME_LEN];
+> > >  	__u32 ifindex;
+> > > -	__u64 netns_dev;
+> > > -	__u64 netns_ino;
+> > > +	__aligned_u64 netns_dev;
+> > > +	__aligned_u64 netns_ino;
+> > >  } __attribute__((aligned(8)));
+> > >  
+> > >  struct bpf_map_info {
+> > > @@ -1030,8 +1030,8 @@ struct bpf_map_info {
+> > >  	__u32 map_flags;
+> > >  	char  name[BPF_OBJ_NAME_LEN];
+> > >  	__u32 ifindex;
+> > > -	__u64 netns_dev;
+> > > -	__u64 netns_ino;
+> > > +	__aligned_u64 netns_dev;
+> > > +	__aligned_u64 netns_ino;
+> > >  } __attribute__((aligned(8)));
+> > >  
+> > >  /* User bpf_sock_addr struct to access socket fields and sockaddr struct passed
+> 
+> 
+> -- 
+> ldv
