@@ -1,126 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751369AbeFAIwF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 04:52:05 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33971 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750736AbeFAIvs (ORCPT
+        id S1751399AbeFAIwx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 04:52:53 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42987 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbeFAIwt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 04:51:48 -0400
-X-Google-Smtp-Source: ADUXVKLpCgg9T9uX1bMOGO1me/MivCkQrvuSlDoz/lnkthWfem90LkrmgnUek029HQ75ChItHMb0q/n4pthszr5I41w=
+        Fri, 1 Jun 2018 04:52:49 -0400
+X-Google-Smtp-Source: ADUXVKKEg6mpemYKC5Khp3GYU/QPNfLe6I7yuUY/FdEk8rO1moqQQJR0S0s4yqpbkw8mEB9EIv/IxA==
+Date: Fri, 1 Jun 2018 04:52:45 -0400
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Message-ID: <20180601085243.3p33sctlpckcq7vl@ast-mbp>
+References: <20180529132548.7f71c2ff@canb.auug.org.au>
+ <20180531073855.29c23fce@canb.auug.org.au>
+ <20180601135943.66b90890@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180531164820.GA23074@rob-hp-laptop>
-References: <1527486084-4636-1-git-send-email-srinath.mannam@broadcom.com>
- <1527486084-4636-2-git-send-email-srinath.mannam@broadcom.com> <20180531164820.GA23074@rob-hp-laptop>
-From: Srinath Mannam <srinath.mannam@broadcom.com>
-Date: Fri, 1 Jun 2018 14:21:47 +0530
-Message-ID: <CABe79T7=LK=PgaftQeCRE8kmMMztFBNeJ4cdnZhv8ULDO=6+Jw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: thermal: Add binding document for SR thermal
-To: Rob Herring <robh@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601135943.66b90890@canb.auug.org.au>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob Herring,
+On Fri, Jun 01, 2018 at 01:59:43PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Thu, 31 May 2018 07:38:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Tue, 29 May 2018 13:25:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > After merging the net-next tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > > 
+> > > x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpfilter_umh.o' is incompatible with i386:x86-64 output
+> > > 
+> > > Caused by commit
+> > > 
+> > >   d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+> > > 
+> > > In my builds, the host is PowerPC 64 LE ...
+> > > 
+> > > I have reverted that commit along with
+> > > 
+> > >   61a552eb487f ("bpfilter: fix build dependency")
+> > >   13405468f49d ("bpfilter: don't pass O_CREAT when opening console for debug")
+> > > 
+> > > for today.  
+> > 
+> > I am still getting this failure (well, at least yesterday I did).
+> 
+> Still happened today.  My guess is that bpfilter_umh needs to be built
+> with the kernel compiler (not the host compiler - since ir is meant to
+> run on the some machine as the kernel, right?) but will require the
+> kernel architecture libc etc
+> 
+> 
+> I replaced the reverts above with the following:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 1 Jun 2018 13:33:28 +1000
+> Subject: [PATCH] net: bpfilter: mark as BROKEN for now
+> 
+> This does not build in a cross compile environment
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  net/bpfilter/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/net/bpfilter/Kconfig b/net/bpfilter/Kconfig
+> index a948b072c28f..ea4be72fdf6e 100644
+> --- a/net/bpfilter/Kconfig
+> +++ b/net/bpfilter/Kconfig
+> @@ -2,6 +2,7 @@ menuconfig BPFILTER
+>  	bool "BPF based packet filtering framework (BPFILTER)"
+>  	default n
+>  	depends on NET && BPF && INET
+> +	depends on BROKEN
 
-Thank you for the review.
-Please find my answers inline..
+yeah. that's another option.
+Sorry for delay. networking folks are traveling to netconf.
+The issue is being discussed here:
+https://patchwork.ozlabs.org/patch/921597/
 
-On Thu, May 31, 2018 at 10:18 PM, Rob Herring <robh@kernel.org> wrote:
-> On Mon, May 28, 2018 at 11:11:22AM +0530, Srinath Mannam wrote:
->> From: Pramod Kumar <pramod.kumar@broadcom.com>
->>
->> Add binding document for supported thermal implementation
->> in Stingray.
->>
->> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
->> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->> Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
->> ---
->>  .../bindings/thermal/brcm,sr-thermal.txt           | 45 ++++++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>
->> diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->> new file mode 100644
->> index 0000000..33f9e11
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->> @@ -0,0 +1,45 @@
->> +* Broadcom Stingray Thermal
->> +
->> +This binding describes thermal sensors that is part of Stingray SoCs.
->> +
->> +Required properties:
->> +- compatible : Must be "brcm,sr-thermal"
->> +- reg : memory where tmon data will be available.
->
-> What type of memory is this?
-This is shared memory(cache-able) which is shared between two micro controllers.
-One micro controller update temperature of all thermal zones in this
-shared memory.
-thermal driver running on another micro controller monitors
-temperature data of all thermal zones.
->
->> +
->> +Example:
->> +     tmons {
->> +             compatible = "simple-bus";
->> +             #address-cells = <1>;
->> +             #size-cells = <1>;
->> +             ranges;
->> +
->> +             tmon_ihost0: thermal@8f100000 {
->> +                     compatible = "brcm,sr-thermal";
->> +                     reg = <0x8f100000 0x4>;
->> +             };
->
-> Convince me that you need a node per register. This can all be
-> accomplished with a single node and either a single reg entry or a
-> series of reg entries.
->
-In our system we have 6 different thermal zones. each node belongs to
-one thermal zone.
-thermal driver detects each node as separate thermal zone and monitors
-separately.
-register entry is only 4byte memory which contains the temperature
-value of respective thermal zone.
-Based on requirement we can increase or decrease the number thermal
-zones need to monitor.
->> +
->> +             tmon_ihost1: thermal@8f100004 {
->> +                     compatible = "brcm,sr-thermal";
->> +                     reg = <0x8f100004 0x4>;
->> +             };
->> +
->> +             tmon_ihost2: thermal@8f100008 {
->> +                     compatible = "brcm,sr-thermal";
->> +                     reg = <0x8f100008 0x4>;
->> +             };
->> +
->> +             tmon_ihost3: thermal@8f10000c {
->> +                     compatible = "brcm,sr-thermal";
->> +                     reg = <0x8f10000c 0x4>;
->> +             };
->> +
->> +             tmon_crmu: thermal@8f100010 {
->> +                     compatible = "brcm,sr-thermal";
->> +                     reg = <0x8f100010 0x4>;
->> +             };
->> +
->> +             tmon_nitro: thermal@8f100014 {
->> +                     compatible = "brcm,sr-thermal";
->> +                     reg = <0x8f100014 0x4>;
->> +             };
->> +     };
->> --
->> 2.7.4
->>
+Currently we're thinking how to add a check that hostcc's arch
+is equal to cross-cc target arch and ideally equal to arch
+of the host where it will be run.
