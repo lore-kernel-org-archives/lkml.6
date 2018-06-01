@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752578AbeFAOcv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:32:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52558 "EHLO mail.kernel.org"
+        id S1752644AbeFAOc5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:32:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752522AbeFAOcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:32:45 -0400
+        id S1751555AbeFAOcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 10:32:50 -0400
 From: Frederic Weisbecker <frederic@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>,
@@ -26,9 +26,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 05/12] arm: Implement hw_breakpoint_arch_parse()
-Date: Fri,  1 Jun 2018 16:31:58 +0200
-Message-Id: <1527863526-32677-6-git-send-email-frederic@kernel.org>
+Subject: [PATCH 06/12] arm64: Implement hw_breakpoint_arch_parse()
+Date: Fri,  1 Jun 2018 16:31:59 +0200
+Message-Id: <1527863526-32677-7-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527863526-32677-1-git-send-email-frederic@kernel.org>
 References: <1527863526-32677-1-git-send-email-frederic@kernel.org>
@@ -39,6 +39,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Migrate to the new API in order to remove arch_validate_hwbkpt_settings()
 that clumsily mixes up architecture validation and commit.
 
+Acked-by: Will Deacon <will.deacon@arm.com>
 Acked-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
@@ -62,25 +63,24 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Joel Fernandes <joel.opensrc@gmail.com>
 ---
- arch/arm/include/asm/hw_breakpoint.h |  6 ++-
- arch/arm/kernel/hw_breakpoint.c      | 71 ++++++++++++++++++------------------
- 2 files changed, 41 insertions(+), 36 deletions(-)
+ arch/arm64/include/asm/hw_breakpoint.h |  6 ++-
+ arch/arm64/kernel/hw_breakpoint.c      | 79 +++++++++++++++++-----------------
+ 2 files changed, 45 insertions(+), 40 deletions(-)
 
-diff --git a/arch/arm/include/asm/hw_breakpoint.h b/arch/arm/include/asm/hw_breakpoint.h
-index d5a0f52..1e02925 100644
---- a/arch/arm/include/asm/hw_breakpoint.h
-+++ b/arch/arm/include/asm/hw_breakpoint.h
-@@ -111,6 +111,7 @@ static inline void decode_ctrl_reg(u32 reg,
- 	asm volatile("mcr p14, 0, %0, " #N "," #M ", " #OP2 : : "r" (VAL));\
- } while (0)
+diff --git a/arch/arm64/include/asm/hw_breakpoint.h b/arch/arm64/include/asm/hw_breakpoint.h
+index 9f4a3d4..bf9c305 100644
+--- a/arch/arm64/include/asm/hw_breakpoint.h
++++ b/arch/arm64/include/asm/hw_breakpoint.h
+@@ -119,13 +119,17 @@ static inline void decode_ctrl_reg(u32 reg,
  
-+struct perf_event_attr;
+ struct task_struct;
  struct notifier_block;
++struct perf_event_attr;
  struct perf_event;
  struct pmu;
-@@ -118,7 +119,10 @@ struct pmu;
+ 
  extern int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl,
- 				  int *gen_len, int *gen_type);
+ 				  int *gen_len, int *gen_type, int *offset);
  extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
 -extern int arch_validate_hwbkpt_settings(struct perf_event *bp);
 +extern int hw_breakpoint_arch_parse(struct perf_event *bp,
@@ -90,11 +90,11 @@ index d5a0f52..1e02925 100644
  extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
  					   unsigned long val, void *data);
  
-diff --git a/arch/arm/kernel/hw_breakpoint.c b/arch/arm/kernel/hw_breakpoint.c
-index 385dcf4..1d5fbf1 100644
---- a/arch/arm/kernel/hw_breakpoint.c
-+++ b/arch/arm/kernel/hw_breakpoint.c
-@@ -517,42 +517,42 @@ int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl,
+diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
+index 92c6973..6114660 100644
+--- a/arch/arm64/kernel/hw_breakpoint.c
++++ b/arch/arm64/kernel/hw_breakpoint.c
+@@ -421,53 +421,53 @@ int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl,
  /*
   * Construct an arch_hw_breakpoint from a perf_event.
   */
@@ -139,53 +139,81 @@ index 385dcf4..1d5fbf1 100644
 -		info->ctrl.len = ARM_BREAKPOINT_LEN_2;
 +		hw->ctrl.len = ARM_BREAKPOINT_LEN_2;
  		break;
+ 	case HW_BREAKPOINT_LEN_3:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_3;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_3;
+ 		break;
  	case HW_BREAKPOINT_LEN_4:
 -		info->ctrl.len = ARM_BREAKPOINT_LEN_4;
 +		hw->ctrl.len = ARM_BREAKPOINT_LEN_4;
  		break;
+ 	case HW_BREAKPOINT_LEN_5:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_5;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_5;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_6:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_6;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_6;
+ 		break;
+ 	case HW_BREAKPOINT_LEN_7:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_7;
++		hw->ctrl.len = ARM_BREAKPOINT_LEN_7;
+ 		break;
  	case HW_BREAKPOINT_LEN_8:
 -		info->ctrl.len = ARM_BREAKPOINT_LEN_8;
--		if ((info->ctrl.type != ARM_BREAKPOINT_EXECUTE)
 +		hw->ctrl.len = ARM_BREAKPOINT_LEN_8;
-+		if ((hw->ctrl.type != ARM_BREAKPOINT_EXECUTE)
- 			&& max_watchpoint_len >= 8)
- 			break;
+ 		break;
  	default:
-@@ -565,24 +565,24 @@ static int arch_build_bp_info(struct perf_event *bp)
- 	 * by the hardware and must be aligned to the appropriate number of
- 	 * bytes.
- 	 */
--	if (info->ctrl.type == ARM_BREAKPOINT_EXECUTE &&
--	    info->ctrl.len != ARM_BREAKPOINT_LEN_2 &&
--	    info->ctrl.len != ARM_BREAKPOINT_LEN_4)
-+	if (hw->ctrl.type == ARM_BREAKPOINT_EXECUTE &&
-+	    hw->ctrl.len != ARM_BREAKPOINT_LEN_2 &&
-+	    hw->ctrl.len != ARM_BREAKPOINT_LEN_4)
  		return -EINVAL;
+@@ -478,37 +478,37 @@ static int arch_build_bp_info(struct perf_event *bp)
+ 	 * AArch32 also requires breakpoints of length 2 for Thumb.
+ 	 * Watchpoints can be of length 1, 2, 4 or 8 bytes.
+ 	 */
+-	if (info->ctrl.type == ARM_BREAKPOINT_EXECUTE) {
++	if (hw->ctrl.type == ARM_BREAKPOINT_EXECUTE) {
+ 		if (is_compat_bp(bp)) {
+-			if (info->ctrl.len != ARM_BREAKPOINT_LEN_2 &&
+-			    info->ctrl.len != ARM_BREAKPOINT_LEN_4)
++			if (hw->ctrl.len != ARM_BREAKPOINT_LEN_2 &&
++			    hw->ctrl.len != ARM_BREAKPOINT_LEN_4)
+ 				return -EINVAL;
+-		} else if (info->ctrl.len != ARM_BREAKPOINT_LEN_4) {
++		} else if (hw->ctrl.len != ARM_BREAKPOINT_LEN_4) {
+ 			/*
+ 			 * FIXME: Some tools (I'm looking at you perf) assume
+ 			 *	  that breakpoints should be sizeof(long). This
+ 			 *	  is nonsense. For now, we fix up the parameter
+ 			 *	  but we should probably return -EINVAL instead.
+ 			 */
+-			info->ctrl.len = ARM_BREAKPOINT_LEN_4;
++			hw->ctrl.len = ARM_BREAKPOINT_LEN_4;
+ 		}
+ 	}
  
  	/* Address */
 -	info->address = bp->attr.bp_addr;
 +	hw->address = attr->bp_addr;
  
- 	/* Privilege */
--	info->ctrl.privilege = ARM_BREAKPOINT_USER;
+ 	/*
+ 	 * Privilege
+ 	 * Note that we disallow combined EL0/EL1 breakpoints because
+ 	 * that would complicate the stepping code.
+ 	 */
 -	if (arch_check_bp_in_kernelspace(info))
--		info->ctrl.privilege |= ARM_BREAKPOINT_PRIV;
-+	hw->ctrl.privilege = ARM_BREAKPOINT_USER;
+-		info->ctrl.privilege = AARCH64_BREAKPOINT_EL1;
 +	if (arch_check_bp_in_kernelspace(hw))
-+		hw->ctrl.privilege |= ARM_BREAKPOINT_PRIV;
++		hw->ctrl.privilege = AARCH64_BREAKPOINT_EL1;
+ 	else
+-		info->ctrl.privilege = AARCH64_BREAKPOINT_EL0;
++		hw->ctrl.privilege = AARCH64_BREAKPOINT_EL0;
  
  	/* Enabled? */
 -	info->ctrl.enabled = !bp->attr.disabled;
 +	hw->ctrl.enabled = !attr->disabled;
  
- 	/* Mismatch */
--	info->ctrl.mismatch = 0;
-+	hw->ctrl.mismatch = 0;
- 
  	return 0;
  }
-@@ -590,9 +590,10 @@ static int arch_build_bp_info(struct perf_event *bp)
+@@ -516,14 +516,15 @@ static int arch_build_bp_info(struct perf_event *bp)
  /*
   * Validate the arch-specific HW Breakpoint register settings.
   */
@@ -195,42 +223,51 @@ index 385dcf4..1d5fbf1 100644
 +			     struct arch_hw_breakpoint *hw)
  {
 -	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
- 	int ret = 0;
- 	u32 offset, alignment_mask = 0x3;
- 
-@@ -601,14 +602,14 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
- 		return -ENODEV;
+ 	int ret;
+ 	u64 alignment_mask, offset;
  
  	/* Build the arch_hw_breakpoint. */
 -	ret = arch_build_bp_info(bp);
 +	ret = arch_build_bp_info(bp, attr, hw);
  	if (ret)
- 		goto out;
+ 		return ret;
  
- 	/* Check address alignment. */
--	if (info->ctrl.len == ARM_BREAKPOINT_LEN_8)
-+	if (hw->ctrl.len == ARM_BREAKPOINT_LEN_8)
- 		alignment_mask = 0x7;
--	offset = info->address & alignment_mask;
-+	offset = hw->address & alignment_mask;
- 	switch (offset) {
- 	case 0:
- 		/* Aligned */
-@@ -616,19 +617,19 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
- 	case 1:
- 	case 2:
- 		/* Allow halfword watchpoints and breakpoints. */
--		if (info->ctrl.len == ARM_BREAKPOINT_LEN_2)
-+		if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
+@@ -537,42 +538,42 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
+ 	 * that here.
+ 	 */
+ 	if (is_compat_bp(bp)) {
+-		if (info->ctrl.len == ARM_BREAKPOINT_LEN_8)
++		if (hw->ctrl.len == ARM_BREAKPOINT_LEN_8)
+ 			alignment_mask = 0x7;
+ 		else
+ 			alignment_mask = 0x3;
+-		offset = info->address & alignment_mask;
++		offset = hw->address & alignment_mask;
+ 		switch (offset) {
+ 		case 0:
+ 			/* Aligned */
  			break;
- 	case 3:
- 		/* Allow single byte watchpoint. */
--		if (info->ctrl.len == ARM_BREAKPOINT_LEN_1)
-+		if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
- 			break;
- 	default:
- 		ret = -EINVAL;
- 		goto out;
+ 		case 1:
+ 			/* Allow single byte watchpoint. */
+-			if (info->ctrl.len == ARM_BREAKPOINT_LEN_1)
++			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
+ 				break;
+ 		case 2:
+ 			/* Allow halfword watchpoints and breakpoints. */
+-			if (info->ctrl.len == ARM_BREAKPOINT_LEN_2)
++			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
+ 				break;
+ 		default:
+ 			return -EINVAL;
+ 		}
+ 	} else {
+-		if (info->ctrl.type == ARM_BREAKPOINT_EXECUTE)
++		if (hw->ctrl.type == ARM_BREAKPOINT_EXECUTE)
+ 			alignment_mask = 0x3;
+ 		else
+ 			alignment_mask = 0x7;
+-		offset = info->address & alignment_mask;
++		offset = hw->address & alignment_mask;
  	}
  
 -	info->address &= ~alignment_mask;
@@ -238,27 +275,14 @@ index 385dcf4..1d5fbf1 100644
 +	hw->address &= ~alignment_mask;
 +	hw->ctrl.len <<= offset;
  
- 	if (is_default_overflow_handler(bp)) {
- 		/*
-@@ -639,7 +640,7 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
- 			return -EINVAL;
+ 	/*
+ 	 * Disallow per-task kernel breakpoints since these would
+ 	 * complicate the stepping code.
+ 	 */
+-	if (info->ctrl.privilege == AARCH64_BREAKPOINT_EL1 && bp->hw.target)
++	if (hw->ctrl.privilege == AARCH64_BREAKPOINT_EL1 && bp->hw.target)
+ 		return -EINVAL;
  
- 		/* We don't allow mismatch breakpoints in kernel space. */
--		if (arch_check_bp_in_kernelspace(info))
-+		if (arch_check_bp_in_kernelspace(hw))
- 			return -EPERM;
- 
- 		/*
-@@ -654,8 +655,8 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
- 		 * reports them.
- 		 */
- 		if (!debug_exception_updates_fsr() &&
--		    (info->ctrl.type == ARM_BREAKPOINT_LOAD ||
--		     info->ctrl.type == ARM_BREAKPOINT_STORE))
-+		    (hw->ctrl.type == ARM_BREAKPOINT_LOAD ||
-+		     hw->ctrl.type == ARM_BREAKPOINT_STORE))
- 			return -EINVAL;
- 	}
- 
+ 	return 0;
 -- 
 2.7.4
