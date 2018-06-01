@@ -1,64 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751507AbeFAJ2R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 05:28:17 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:50824 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751170AbeFAJ2M (ORCPT
+        id S1751558AbeFAJ2g (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 05:28:36 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:41539 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751293AbeFAJ2c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 05:28:12 -0400
-From: Richard Weinberger <richard@sigma-star.at>
-To: Gao Xiang <gaoxiang25@huawei.com>, LKML <linux-kernel@vger.kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, miaoxie@huawei.com,
-        yuchao0@huawei.com, sunqiuyang@huawei.com, fangwei1@huawei.com,
-        liguifu2@huawei.com, weidu.du@huawei.com, chen.chun.yen@huawei.com,
-        brooke.wangzhigang@hisilicon.com, dongjinguang@huawei.com
-Subject: Re: [NOMERGE] [RFC PATCH 00/12] erofs: introduce erofs file system
-Date: Fri, 01 Jun 2018 11:28:07 +0200
-Message-ID: <1670077.cnVahIradn@blindfold>
-In-Reply-To: <aae078b7-c364-106a-dd56-91abc945d7bb@huawei.com>
-References: <1527764767-22190-1-git-send-email-gaoxiang25@huawei.com> <CAFLxGvw5PXBLKuaaK5xipiwTOXohtdeenD0XQHgX6+r4rS=GqQ@mail.gmail.com> <aae078b7-c364-106a-dd56-91abc945d7bb@huawei.com>
+        Fri, 1 Jun 2018 05:28:32 -0400
+X-Google-Smtp-Source: ADUXVKLXE9GI8e8zoquWFD1eXAIfXlLFj8ez3wvnBRe2vLY6e2Kj/uVRx1m/JmHNuhuSg09F36ab6wvNrdQ7M+QqwEM=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [176.63.54.97]
+In-Reply-To: <20180601092441.GA8687@stefanha-x1.localdomain>
+References: <20180524202004.7813-1-stefanha@redhat.com> <20180601092441.GA8687@stefanha-x1.localdomain>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 1 Jun 2018 11:28:31 +0200
+Message-ID: <CAJfpegsWRY6be5vwtJycAc+GUvveEcdm7Zwvvx0upSA-dwCa9g@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix NULL dereference when new_inode() fails
+To: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 1. Juni 2018, 11:11:21 CEST schrieb Gao Xiang:
-> > In which sense is it extendable?
-> 
-> Actually, the meaning of an enhanced (means not just read-only, but with the scalable
-> on-disk layout, compression, or fs-verify in the future) read-only file system is emphasized.
+On Fri, Jun 1, 2018 at 11:24 AM, Stefan Hajnoczi <stefanha@redhat.com> wrote:
+> Ping?
+>
+> Archive link in case I broke email threading:
+> https://marc.info/?l=linux-fsdevel&m=152719324102009&w=2
 
-ah ok.
- 
-> We also think of other candidate full names, such as
-> Enhanced / Extented Read-only File System, all the names short for "erofs" are okay.
+Thanks for the patch.  Should already be fixed in:
 
-TBH, I read "erofs" as "error fs". ;-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
 
-> > How does it compare to existing read only filesystems, such as squashfs?
-> > 
-> 
-> You are quite right.
-> 
-> We are now focusing on improving our decompression subsystem and
-> these numbers will be successively added in the future non-RFC patches.
-> 
-> We haven't pay much attention on comparing squashfs and erofs
-> yet since we once tried to use squashfs on our products with
-> different block sizes several years ago, it behaves
-> unacceptable in the low free memory scenario besides its
-> performance.
-
-I'm interested in the comparison because I use squashfs often
-for embedded devices on top of ubiblock (raw nand).
-If there is something that can do better, I'm all for it.
-
-Thanks,
-//richard
-
--- 
-sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
-ATU66964118 - FN 374287y
+Miklos
