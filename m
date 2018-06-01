@@ -1,237 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751191AbeFAWEs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 18:04:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56202 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750916AbeFAWEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 18:04:45 -0400
-Date: Fri, 1 Jun 2018 18:04:43 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Toshi Kani <toshi.kani@hpe.com>, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] dm: remove DM_TYPE_DAX_BIO_BASED dm_queue_mode
-Message-ID: <20180601220443.GB18712@redhat.com>
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-6-ross.zwisler@linux.intel.com>
+        id S1751357AbeFAWFh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 18:05:37 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:54258 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750929AbeFAWFd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 18:05:33 -0400
+Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        David Miller <davem@davemloft.net>, tariqt@mellanox.com,
+        haakon.bugge@oracle.com, yanjun.zhu@oracle.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gi-oh.kim@profitbricks.com,
+        "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+References: <20180523232246.20445-1-qing.huang@oracle.com>
+ <20180525.102321.858995452200286788.davem@davemloft.net>
+ <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
+ <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
+ <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
+ <20180531065405.GH15278@dhcp22.suse.cz>
+ <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
+ <20180531085532.GK15278@dhcp22.suse.cz>
+ <20180531091022.GL15278@dhcp22.suse.cz>
+ <7d8f52e1-aa16-d20c-a9a8-35ad88c0b1ab@oracle.com>
+ <20180601073137.GV15278@dhcp22.suse.cz>
+From: Qing Huang <qing.huang@oracle.com>
+Message-ID: <f0bfa913-1837-6c5d-6e77-2a188fd094e1@oracle.com>
+Date: Fri, 1 Jun 2018 15:05:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529195106.14268-6-ross.zwisler@linux.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180601073137.GV15278@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8911 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=797
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806010250
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29 2018 at  3:51pm -0400,
-Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
 
-> The DM_TYPE_DAX_BIO_BASED dm_queue_mode was introduced to prevent DM
-> devices that could possibly support DAX from transitioning into DM devices
-> that cannot support DAX.
-> 
-> For example, the following transition will currently fail:
-> 
->  dm-linear: [fsdax pmem][fsdax pmem] => [fsdax pmem][fsdax raw]
-> 	      DM_TYPE_DAX_BIO_BASED       DM_TYPE_BIO_BASED
-> 
-> but these will both succeed:
-> 
->  dm-linear: [fsdax pmem][brd ramdisk] => [fsdax pmem][fsdax raw]
->  	      DM_TYPE_DAX_BIO_BASED        DM_TYPE_BIO_BASED
-> 
 
-I fail to see how this succeeds given
-drivers/md/dm-ioctl.c:is_valid_type() only allows transitions from:
+On 6/1/2018 12:31 AM, Michal Hocko wrote:
+> On Thu 31-05-18 19:04:46, Qing Huang wrote:
+>>
+>> On 5/31/2018 2:10 AM, Michal Hocko wrote:
+>>> On Thu 31-05-18 10:55:32, Michal Hocko wrote:
+>>>> On Thu 31-05-18 04:35:31, Eric Dumazet wrote:
+>>> [...]
+>>>>> I merely copied/pasted from alloc_skb_with_frags() :/
+>>>> I will have a look at it. Thanks!
+>>> OK, so this is an example of an incremental development ;).
+>>>
+>>> __GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
+>>> high order allocations") to prevent from OOM killer. Yet this was
+>>> not enough because fb05e7a89f50 ("net: don't wait for order-3 page
+>>> allocation") didn't want an excessive reclaim for non-costly orders
+>>> so it made it completely NOWAIT while it preserved __GFP_NORETRY in
+>>> place which is now redundant. Should I send a patch?
+>>>
+>> Just curious, how about GFP_ATOMIC flag? Would it work in a similar fashion?
+>> We experimented
+>> with it a bit in the past but it seemed to cause other issue in our tests.
+>> :-)
+> GFP_ATOMIC is a non-sleeping (aka no reclaim) context with an access to
+> memory reserves. So the risk is that you deplete those reserves and
+> cause issues to other subsystems which need them as well.
+>
+>> By the way, we didn't encounter any OOM killer events. It seemed that the
+>> mlx4_alloc_icm() triggered slowpath.
+>> We still had about 2GB free memory while it was highly fragmented.
+> The compaction was able to make a reasonable forward progress for you.
+> But considering mlx4_alloc_icm is called with GFP_KERNEL resp. GFP_HIGHUSER
+> then the OOM killer is clearly possible as long as the order is lower
+> than 4.
 
-DM_TYPE_BIO_BASED => DM_TYPE_DAX_BIO_BASED
+The allocation was 256KB so the order was much higher than 4. The 
+compaction seemed to be the root
+cause for our problem. It took too long to finish its work while putting 
+mlx4_alloc_icm to sleep in a heavily
+fragmented memory situation . Will NORETRY flag avoid the compaction ops 
+and fail the 256KB allocation
+immediately so mlx4_alloc_icm can enter adjustable lower order 
+allocation code path quickly?
 
->  dm-linear: [fsdax pmem][fsdax raw] => [fsdax pmem][fsdax pmem]
->  		DM_TYPE_BIO_BASED        DM_TYPE_DAX_BIO_BASED
-> 
-> This seems arbitrary, as really the choice on whether to use DAX happens at
-> filesystem mount time.  There's no guarantee that the in the first case
-> (double fsdax pmem) we were using the dax mount option with our file
-> system.
-> 
-> Instead, get rid of DM_TYPE_DAX_BIO_BASED and all the special casing around
-> it, and instead make the request queue's QUEUE_FLAG_DAX be our one source
-> of truth.  If this is set, we can use DAX, and if not, not.  We keep this
-> up to date in table_load() as the table changes.  As with regular block
-> devices the filesystem will then know at mount time whether DAX is a
-> supported mount option or not.
+Thanks.
 
-If you don't think you need this specialization that is fine.. but DM
-devices supporting suspending (as part of table reloads) so is there any
-risk that there will be inflight IO (say if someone did 'dmsetup suspend
---noflush').. and then upon reload the device type changed out from
-under us.. anyway, I don't have all the PMEM DAX stuff paged back into
-my head yet.
-
-But this just seems like we really shouldn't be allowing the
-transition from what was DM_TYPE_DAX_BIO_BASED back to DM_TYPE_BIO_BASED
-
-Mike
-
-> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> ---
->  drivers/md/dm-ioctl.c         | 16 ++++++----------
->  drivers/md/dm-table.c         | 25 ++++++++++---------------
->  drivers/md/dm.c               |  2 --
->  include/linux/device-mapper.h |  8 ++++++--
->  4 files changed, 22 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
-> index 5acf77de5945..d1f86d0bb2d0 100644
-> --- a/drivers/md/dm-ioctl.c
-> +++ b/drivers/md/dm-ioctl.c
-> @@ -1292,15 +1292,6 @@ static int populate_table(struct dm_table *table,
->  	return dm_table_complete(table);
->  }
->  
-> -static bool is_valid_type(enum dm_queue_mode cur, enum dm_queue_mode new)
-> -{
-> -	if (cur == new ||
-> -	    (cur == DM_TYPE_BIO_BASED && new == DM_TYPE_DAX_BIO_BASED))
-> -		return true;
-> -
-> -	return false;
-> -}
-> -
->  static int table_load(struct file *filp, struct dm_ioctl *param, size_t param_size)
->  {
->  	int r;
-> @@ -1343,12 +1334,17 @@ static int table_load(struct file *filp, struct dm_ioctl *param, size_t param_si
->  			DMWARN("unable to set up device queue for new table.");
->  			goto err_unlock_md_type;
->  		}
-> -	} else if (!is_valid_type(dm_get_md_type(md), dm_table_get_type(t))) {
-> +	} else if (dm_get_md_type(md) != dm_table_get_type(t)) {
->  		DMWARN("can't change device type after initial table load.");
->  		r = -EINVAL;
->  		goto err_unlock_md_type;
->  	}
->  
-> +	if (dm_table_supports_dax(t))
-> +		blk_queue_flag_set(QUEUE_FLAG_DAX, md->queue);
-> +	else
-> +		blk_queue_flag_clear(QUEUE_FLAG_DAX, md->queue);
-> +
->  	dm_unlock_md_type(md);
->  
->  	/* stage inactive table */
-> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-> index 5bb994b012ca..ea5c4a1e6f5b 100644
-> --- a/drivers/md/dm-table.c
-> +++ b/drivers/md/dm-table.c
-> @@ -866,7 +866,6 @@ EXPORT_SYMBOL(dm_consume_args);
->  static bool __table_type_bio_based(enum dm_queue_mode table_type)
->  {
->  	return (table_type == DM_TYPE_BIO_BASED ||
-> -		table_type == DM_TYPE_DAX_BIO_BASED ||
->  		table_type == DM_TYPE_NVME_BIO_BASED);
->  }
->  
-> @@ -888,7 +887,7 @@ static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
->  	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
->  }
->  
-> -static bool dm_table_supports_dax(struct dm_table *t)
-> +bool dm_table_supports_dax(struct dm_table *t)
->  {
->  	struct dm_target *ti;
->  	unsigned i;
-> @@ -907,6 +906,7 @@ static bool dm_table_supports_dax(struct dm_table *t)
->  
->  	return true;
->  }
-> +EXPORT_SYMBOL_GPL(dm_table_supports_dax);
->  
->  static bool dm_table_does_not_support_partial_completion(struct dm_table *t);
->  
-> @@ -944,7 +944,6 @@ static int dm_table_determine_type(struct dm_table *t)
->  			/* possibly upgrade to a variant of bio-based */
->  			goto verify_bio_based;
->  		}
-> -		BUG_ON(t->type == DM_TYPE_DAX_BIO_BASED);
->  		BUG_ON(t->type == DM_TYPE_NVME_BIO_BASED);
->  		goto verify_rq_based;
->  	}
-> @@ -981,18 +980,14 @@ static int dm_table_determine_type(struct dm_table *t)
->  verify_bio_based:
->  		/* We must use this table as bio-based */
->  		t->type = DM_TYPE_BIO_BASED;
-> -		if (dm_table_supports_dax(t) ||
-> -		    (list_empty(devices) && live_md_type == DM_TYPE_DAX_BIO_BASED)) {
-> -			t->type = DM_TYPE_DAX_BIO_BASED;
-> -		} else {
-> -			/* Check if upgrading to NVMe bio-based is valid or required */
-> -			tgt = dm_table_get_immutable_target(t);
-> -			if (tgt && !tgt->max_io_len && dm_table_does_not_support_partial_completion(t)) {
-> -				t->type = DM_TYPE_NVME_BIO_BASED;
-> -				goto verify_rq_based; /* must be stacked directly on NVMe (blk-mq) */
-> -			} else if (list_empty(devices) && live_md_type == DM_TYPE_NVME_BIO_BASED) {
-> -				t->type = DM_TYPE_NVME_BIO_BASED;
-> -			}
-> +
-> +		/* Check if upgrading to NVMe bio-based is valid or required */
-> +		tgt = dm_table_get_immutable_target(t);
-> +		if (tgt && !tgt->max_io_len && dm_table_does_not_support_partial_completion(t)) {
-> +			t->type = DM_TYPE_NVME_BIO_BASED;
-> +			goto verify_rq_based; /* must be stacked directly on NVMe (blk-mq) */
-> +		} else if (list_empty(devices) && live_md_type == DM_TYPE_NVME_BIO_BASED) {
-> +			t->type = DM_TYPE_NVME_BIO_BASED;
->  		}
->  		return 0;
->  	}
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 9728433362d1..0ce06fa292fd 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -2192,7 +2192,6 @@ int dm_setup_md_queue(struct mapped_device *md, struct dm_table *t)
->  		}
->  		break;
->  	case DM_TYPE_BIO_BASED:
-> -	case DM_TYPE_DAX_BIO_BASED:
->  		dm_init_normal_md_queue(md);
->  		blk_queue_make_request(md->queue, dm_make_request);
->  		break;
-> @@ -2910,7 +2909,6 @@ struct dm_md_mempools *dm_alloc_md_mempools(struct mapped_device *md, enum dm_qu
->  
->  	switch (type) {
->  	case DM_TYPE_BIO_BASED:
-> -	case DM_TYPE_DAX_BIO_BASED:
->  	case DM_TYPE_NVME_BIO_BASED:
->  		pool_size = max(dm_get_reserved_bio_based_ios(), min_pool_size);
->  		front_pad = roundup(per_io_data_size, __alignof__(struct dm_target_io)) + offsetof(struct dm_target_io, clone);
-> diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-> index 31fef7c34185..cbf3d7e7ed33 100644
-> --- a/include/linux/device-mapper.h
-> +++ b/include/linux/device-mapper.h
-> @@ -27,8 +27,7 @@ enum dm_queue_mode {
->  	DM_TYPE_BIO_BASED	 = 1,
->  	DM_TYPE_REQUEST_BASED	 = 2,
->  	DM_TYPE_MQ_REQUEST_BASED = 3,
-> -	DM_TYPE_DAX_BIO_BASED	 = 4,
-> -	DM_TYPE_NVME_BIO_BASED	 = 5,
-> +	DM_TYPE_NVME_BIO_BASED	 = 4,
->  };
->  
->  typedef enum { STATUSTYPE_INFO, STATUSTYPE_TABLE } status_type_t;
-> @@ -460,6 +459,11 @@ void dm_table_add_target_callbacks(struct dm_table *t, struct dm_target_callback
->   */
->  void dm_table_set_type(struct dm_table *t, enum dm_queue_mode type);
->  
-> +/*
-> + * Check to see if this target type and all table devices support DAX.
-> + */
-> +bool dm_table_supports_dax(struct dm_table *t);
-> +
->  /*
->   * Finally call this to make the table ready for use.
->   */
-> -- 
-> 2.14.3
-> 
+>
+>>   #0 [ffff8801f308b380] remove_migration_pte at ffffffff811f0e0b
+>>   #1 [ffff8801f308b3e0] rmap_walk_file at ffffffff811cb890
+>>   #2 [ffff8801f308b440] rmap_walk at ffffffff811cbaf2
+>>   #3 [ffff8801f308b450] remove_migration_ptes at ffffffff811f0db0
+>>   #4 [ffff8801f308b490] __unmap_and_move at ffffffff811f2ea6
+>>   #5 [ffff8801f308b4e0] unmap_and_move at ffffffff811f2fc5
+>>   #6 [ffff8801f308b540] migrate_pages at ffffffff811f3219
+>>   #7 [ffff8801f308b5c0] compact_zone at ffffffff811b707e
+>>   #8 [ffff8801f308b650] compact_zone_order at ffffffff811b735d
+>>   #9 [ffff8801f308b6e0] try_to_compact_pages at ffffffff811b7485
+>> #10 [ffff8801f308b770] __alloc_pages_direct_compact at ffffffff81195f96
+>> #11 [ffff8801f308b7b0] __alloc_pages_slowpath at ffffffff811978a1
+>> #12 [ffff8801f308b890] __alloc_pages_nodemask at ffffffff81197ec1
+>> #13 [ffff8801f308b970] alloc_pages_current at ffffffff811e261f
+>> #14 [ffff8801f308b9e0] mlx4_alloc_icm at ffffffffa01f39b2 [mlx4_core]
+>>
+>> Thanks!
