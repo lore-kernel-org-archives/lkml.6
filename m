@@ -1,96 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751603AbeFAKvP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 06:51:15 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33141 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbeFAKvK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 06:51:10 -0400
-X-Google-Smtp-Source: ADUXVKKfMFEcmiBlJ8Ewp1fDCbdl48Le7hbZYzy8uPfrYWOOAO0jzkuOogeID6eIO/CMwxxfh5OFFw==
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
-Date: Fri, 1 Jun 2018 13:51:05 +0300
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180601105105.GD5150@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030129.GA16122@rob-hp-laptop>
- <20180531071717.GG13528@localhost.localdomain>
- <20180531102315.GA5150@localhost.localdomain>
- <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
- <152777867392.144038.18188452389972834689@swboyd.mtv.corp.google.com>
+        id S1751745AbeFAKwL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 06:52:11 -0400
+Received: from mga03.intel.com ([134.134.136.65]:17417 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751350AbeFAKwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 06:52:02 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,465,1520924400";
+   d="scan'208";a="233779874"
+Date: Fri, 1 Jun 2018 18:52:14 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
+Subject: Re: [virtio-dev] [PATCH] virtio: update the comments for transport
+ features
+Message-ID: <20180601105214.GA9250@debian>
+References: <20180601102217.21628-1-tiwei.bie@intel.com>
+ <20180601124552.6a188454.cohuck@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <152777867392.144038.18188452389972834689@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180601124552.6a188454.cohuck@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 07:57:53AM -0700, Stephen Boyd wrote:
-> Quoting Rob Herring (2018-05-31 07:07:24)
-> > On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
-> > <mazziesaccount@gmail.com> wrote:
-> > > On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
-> > >> Hello Rob,
-> > >>
-> > >> Thanks for the review!
-> > >>
-> > >> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
-> > >> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
-> > >> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> > >> > > + - interrupts            : The interrupt line the device is connected to.
-> > >> > > + - interrupt-controller  : Marks the device node as an interrupt controller.
-> > >> >
-> > >> > What sub blocks have interrupts?
-> > >>
-> > >> The PMIC can generate interrupts from events which cause it to reset.
-> > >> Eg, irq from watchdog line change, power button pushes, reset request
-> > >> via register interface etc. I don't know any generic handling for these
-> > >> interrupts. In "normal" use-case this PMIC is powering the processor
-> > >> where driver is running and I do not see reasonable handling because
-> > >> power-reset is going to follow the irq.
-> > >>
-> > >
-> > > Oh, but when reading this I understand that the interrupt-controller
-> > > property should at least be optional.
-> > 
-> > I don't think it should. The h/w either has an interrupt controller or
-> > it doesn't. My concern is you added it but nothing uses it which tells
-> > me your binding is incomplete. I'd rather see complete bindings even
-> > if you don't have drivers. For example, as-is, there's not really any
-> > need for the clocks child node. You can just make the parent a clock
-> > provider. But we need a complete picture of the h/w to make that
-> > determination.
-> > 
+On Fri, Jun 01, 2018 at 12:45:52PM +0200, Cornelia Huck wrote:
+> On Fri,  1 Jun 2018 18:22:17 +0800
+> Tiwei Bie <tiwei.bie@intel.com> wrote:
 > 
-> I don't see a reason to have the clk subnode either.
+> > Suggested-by: Michael S. Tsirkin <mst@redhat.com>
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> > This patch is generated on top of below patch:
+> > https://lists.oasis-open.org/archives/virtio-dev/201805/msg00212.html
+> > 
+> >  include/uapi/linux/virtio_config.h | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> > index b7c1f4e7d59e..479affd903e9 100644
+> > --- a/include/uapi/linux/virtio_config.h
+> > +++ b/include/uapi/linux/virtio_config.h
+> > @@ -45,9 +45,12 @@
+> >  /* We've given up on this device. */
+> >  #define VIRTIO_CONFIG_S_FAILED		0x80
+> >  
+> > -/* Some virtio feature bits (currently bits 28 through 32) are reserved for the
+> > - * transport being used (eg. virtio_ring), the rest are per-device feature
+> > - * bits. */
+> > +/*
+> > + * Some virtio feature bits (currently bits VIRTIO_TRANSPORT_F_START
+> > + * through VIRTIO_TRANSPORT_F_END) are reserved for the transport being
+> 
+> It will always be bits up to VIRTIO_TRANSPORT_F_END, no? So you can drop
+> the "currently"?
+> 
+> Or reword as "Virtio feature bits VIRTIO_TRANSPORT_F_START through
+> VIRTIO_TRANSPORT_F_END are reserved..."?
 
-After some pondering - do you mean I could:
-1. remove clk binfing document and clk node.
-2. add clock-output-names etc to pmic node (and describe them in pmic
-node binding document)
-3. use parent DT node in clk driver and do something like:
-	if (parent->of_node)
-		ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
-					     hw);
-4. remove the clkdev
+I will do it. Thanks for the suggestion!
 
-I will cook new set of patches with all suggested changes but it may be I don't
-get it ready for posting untill next week.
-
-Br,
-	Matti Vaittinen
+Best regards,
+Tiwei Bie
