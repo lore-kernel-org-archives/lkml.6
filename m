@@ -1,73 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753342AbeFAQyK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 12:54:10 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8627 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753273AbeFAQyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 12:54:06 -0400
-From: Salil Mehta <salil.mehta@huawei.com>
-To: <davem@davemloft.net>
-CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
-Subject: [PATCH net-next 05/11] net: hns3: Fix for service_task not running problem after resetting
-Date: Fri, 1 Jun 2018 17:52:05 +0100
-Message-ID: <20180601165211.46372-6-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180601165211.46372-1-salil.mehta@huawei.com>
-References: <20180601165211.46372-1-salil.mehta@huawei.com>
+        id S1753301AbeFAQyD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 12:54:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44096 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753206AbeFAQx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 12:53:57 -0400
+Date: Fri, 1 Jun 2018 09:53:47 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        tgraf@suug.ch, manfred@colorfullife.com, mhocko@kernel.org,
+        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 1/5] lib/rhashtable: convert param sanitations to WARN_ON
+Message-ID: <20180601165347.kvruerdm3gu57ifv@linux-r8p5>
+References: <20180601160125.30031-1-dave@stgolabs.net>
+ <20180601160125.30031-2-dave@stgolabs.net>
+ <20180601160944.ji2gsp3pyunlj476@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.234]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180601160944.ji2gsp3pyunlj476@gondor.apana.org.au>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+On Sat, 02 Jun 2018, Herbert Xu wrote:
 
-When hclge_ae_stop is called during resetting, it will cancel the
-service_task by calling cancel_work_sync, which may cause the
-service_task to exit without clearing HCLGE_STATE_SERVICE_SCHED
-bit. If this happens, the service_task will never run again.
+>On Fri, Jun 01, 2018 at 09:01:21AM -0700, Davidlohr Bueso wrote:
+>> For the purpose of making rhashtable_init() unable to fail,
+>> we can replace the returning -EINVAL with WARN_ONs whenever
+>> the caller passes bogus parameters during initialization.
+>>
+>> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+>> ---
+>>  lib/rhashtable.c | 9 ++++-----
+>>  1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+>> index 9427b5766134..05a4b1b8b8ce 100644
+>> --- a/lib/rhashtable.c
+>> +++ b/lib/rhashtable.c
+>> @@ -1024,12 +1024,11 @@ int rhashtable_init(struct rhashtable *ht,
+>>
+>>  	size = HASH_DEFAULT_SIZE;
+>>
+>> -	if ((!params->key_len && !params->obj_hashfn) ||
+>> -	    (params->obj_hashfn && !params->obj_cmpfn))
+>> -		return -EINVAL;
+>> +	WARN_ON((!params->key_len && !params->obj_hashfn) ||
+>> +		(params->obj_hashfn && !params->obj_cmpfn));
+>>
+>> -	if (params->nulls_base && params->nulls_base < (1U << RHT_BASE_SHIFT))
+>> -		return -EINVAL;
+>> +	WARN_ON(params->nulls_base &&
+>> +		params->nulls_base < (1U << RHT_BASE_SHIFT));
+>
+>I still don't like this.
+>
+>Yes for your use-case you will never crash and a WARN_ON is fine.
+>However, rhashtable is used in all sorts of contexts and returning
+>an error makes sense for quite a number of them.
 
-This patch fixes this problem by clearing it after calling
-cancel_work_sync in hclge_ae_stop.
+Curious, are these users setting up the param structure dynamically
+or something that they can pass along bogus values?
 
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 1 +
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 18027bc..746987f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3748,6 +3748,7 @@ static void hclge_ae_stop(struct hnae3_handle *handle)
- 
- 	del_timer_sync(&hdev->service_timer);
- 	cancel_work_sync(&hdev->service_task);
-+	clear_bit(HCLGE_STATE_SERVICE_SCHED, &hdev->state);
- 
- 	if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state))
- 		return;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index e28e0db..5d28052 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1337,6 +1337,7 @@ static void hclgevf_ae_stop(struct hnae3_handle *handle)
- 	hclgevf_reset_tqp_stats(handle);
- 	del_timer_sync(&hdev->service_timer);
- 	cancel_work_sync(&hdev->service_task);
-+	clear_bit(HCLGEVF_STATE_SERVICE_SCHED, &hdev->state);
- 	hclgevf_update_link_status(hdev, 0);
- }
- 
--- 
-2.7.4
+If that's the case then yes, I definitely agree.
