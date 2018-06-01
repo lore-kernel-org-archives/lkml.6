@@ -1,134 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750943AbeFAWzw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 18:55:52 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:42844 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750726AbeFAWzu (ORCPT
+        id S1751057AbeFAXAe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 19:00:34 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53709 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750812AbeFAXAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 18:55:50 -0400
-X-Google-Smtp-Source: ADUXVKIhXNCc49vJmmlQqwfwoVqiVhDXSLXK32fmUkntSHUPcfEu34/D5nbnCLzyZJp6qQmbhJ1cEw==
+        Fri, 1 Jun 2018 19:00:32 -0400
+X-Google-Smtp-Source: ADUXVKLFTqqRMvG7qHfOhsxRtgLlElR5mD9dsbl6px/yREYJWr7fpfmlrlB4uSu+4v9tuGlHtnAcvg==
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: broonie@kernel.org, alsa-devel@alsa-project.org
-Cc: linux-arm-msm@vger.kernel.org, lgirdwood@gmail.com,
-        bgoswami@codeaurora.org, tiwai@suse.com, perex@perex.cz,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rohkumar@qti.qualcomm.com,
+To: robh+dt@kernel.org, frowand.list@gmail.com
+Cc: linux-arm-msm@vger.kernel.org, bgoswami@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] ASoC: dapm: delete dapm_kcontrol_data paths entry before freeing
-Date: Fri,  1 Jun 2018 23:53:34 +0100
-Message-Id: <20180601225334.19064-1-srinivas.kandagatla@linaro.org>
+Subject: [PATCH] of: platform: stop accessing invalid dev in of_platform_device_destroy
+Date: Fri,  1 Jun 2018 23:58:22 +0100
+Message-Id: <20180601225822.23439-1-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dapm_kcontrol_data is freed as part of dapm_kcontrol_free(), leaving the
-paths list pointer dangling in the list.
+Immediately after the platform_device_unregister() the device will be cleaned up.
+Accessing the freed pointer immediately after that will crash the system.
 
-This leads to system crash when we try to unload and reload sound card.
-I hit this bug during ADSP crash/reboot test case on Dragon board DB410c.
+Found this bug when kernel is built with CONFIG_PAGE_POISONING and testing
+loading/unloading audio drivers in a loop on Qcom platforms.
 
-Below is the kernel BUG with SLAB Poisoning
+Fix this by removing accessing the dev pointer.
+Below is the carsh trace:
 
-=============================================================================
-BUG kmalloc-128 (Tainted: G        W        ): Poison overwritten
------------------------------------------------------------------------------
-
-Disabling lock debugging due to kernel taint
-INFO: 0xffff80003cf1c310-0xffff80003cf1c31f. First byte 0x10 instead of 0x6b
-INFO: Allocated in dapm_kcontrol_data_alloc.isra.37+0x34/0x2a8 age=6929 cpu=0 pid=50
- __slab_alloc.isra.24+0x24/0x38
- kmem_cache_alloc+0x190/0x1d8
- dapm_kcontrol_data_alloc.isra.37+0x34/0x2a8
- dapm_create_or_share_kcontrol+0x1d4/0x290
- snd_soc_dapm_new_widgets+0x410/0x568
- snd_soc_register_card+0xa58/0xcd0
- apq8016_sbc_bind+0x31c/0x458
- try_to_bring_up_master+0x204/0x2e8
- component_add+0x94/0x178
- q6pcm_routing_probe+0x38/0x48
- platform_drv_probe+0x58/0xb8
- driver_probe_device+0x324/0x478
- __device_attach_driver+0xa8/0x160
- bus_for_each_drv+0x48/0x98
- __device_attach+0xc0/0x158
- device_initial_probe+0x10/0x18
-INFO: Freed in dapm_kcontrol_free+0x40/0x50 age=3135 cpu=1 pid=1792
- kfree+0x1bc/0x1d0
- dapm_kcontrol_free+0x40/0x50
- snd_ctl_free_one+0x20/0x38
- snd_ctl_remove+0xf0/0x108
- snd_ctl_dev_free+0x3c/0x70
- __snd_device_free+0x50/0x88
- snd_device_free_all+0x2c/0x50
- release_card_device+0x1c/0x78
- device_release+0x34/0x98
- kobject_put+0x90/0x1f0
- put_device+0x14/0x20
- snd_card_free+0x54/0x70
- snd_soc_unregister_card+0x84/0x138
- snd_soc_unregister_component+0xa4/0xd0
- q6routing_dai_unbind+0x44/0x78
- component_unbind.isra.4+0x28/0x50
-INFO: Slab 0xffff7e0000f3c700 objects=25 used=0 fp=0xffff80003cf1fc80 flags=0xfffc00000008100
-INFO: Object 0x        (ptrval) @offset=768 fp=0x        (ptrval)
-
-Redzone         (ptrval): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-Redzone         (ptrval): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-Redzone         (ptrval): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-Redzone         (ptrval): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-Redzone         (ptrval): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-Redzone         (ptrval): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-Redzone         (ptrval): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-Redzone         (ptrval): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-Object         (ptrval): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-Object         (ptrval): 10 c3 f1 3c 00 80 ff ff 10 c3 f1 3c 00 80 ff ff  ...<.......<....
-Object         (ptrval): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-Object         (ptrval): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-Object         (ptrval): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-Object         (ptrval): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-Object         (ptrval): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-Object         (ptrval): 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b a5  kkkkkkkkkkkkkkk.
-Redzone         (ptrval): bb bb bb bb bb bb bb bb                          ........
-Padding         (ptrval): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
-Padding         (ptrval): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
-Padding         (ptrval): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
-Padding         (ptrval): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
-CPU: 1 PID: 1792 Comm: sh Tainted: G    B   W         4.17.0-rc7-02229-gb429ee402d16-dirty #202
+Unable to handle kernel paging request at virtual address 6b6b6b6b6b6c03
+Mem abort info:
+  ESR = 0x96000021
+  Exception class = DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+Data abort info:
+  ISV = 0, ISS = 0x00000021
+  CM = 0, WnR = 0
+[006b6b6b6b6b6c03] address between user and kernel address ranges
+Internal error: Oops: 96000021 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 2 PID: 1784 Comm: sh Tainted: G        W         4.17.0-rc7-02230-ge3a63a7ef641-dirty #204
 Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+pstate: 80000005 (Nzcv daif -PAN -UAO)
+pc : clear_bit+0x18/0x2c
+lr : of_platform_device_destroy+0x64/0xb8
+sp : ffff00000c9c3930
+x29: ffff00000c9c3930 x28: ffff80003d39b200
+x27: ffff000008bb1000 x26: 0000000000000040
+x25: 0000000000000124 x24: ffff80003a9a3080
+x23: 0000000000000060 x22: ffff00000939f518
+x21: ffff80003aa79e98 x20: ffff80003aa3dae0
+x19: ffff80003aa3c890 x18: ffff800009feb794
+x17: 0000000000000000 x16: 0000000000000000
+x15: ffff800009feb790 x14: 0000000000000000
+x13: ffff80003a058778 x12: ffff80003a058728
+x11: ffff80003a058750 x10: 0000000000000000
+x9 : 0000000000000006 x8 : ffff80003a825988
+x7 : bbbbbbbbbbbbbbbb x6 : 0000000000000001
+x5 : 0000000000000000 x4 : 0000000000000001
+x3 : 0000000000000008 x2 : 0000000000000001
+x1 : 6b6b6b6b6b6b6c03 x0 : 0000000000000000
+Process sh (pid: 1784, stack limit = 0x        (ptrval))
 Call trace:
- dump_backtrace+0x0/0x1b0
- show_stack+0x14/0x20
- dump_stack+0x9c/0xbc
- print_trailer+0x124/0x1d8
- check_bytes_and_report+0xe8/0x120
- check_object+0x24c/0x288
- __free_slab+0x9c/0x2f0
- discard_slab+0x60/0x88
- __slab_free+0x35c/0x3e8
- kfree+0x1bc/0x1d0
- snd_soc_dapm_free_widget+0xac/0xd0
- snd_soc_dapm_free+0x64/0xb8
- soc_remove_component+0x50/0x80
- soc_remove_dai_links+0x110/0x208
- snd_soc_unregister_card+0x9c/0x138
- snd_soc_unregister_component+0xa4/0xd0
- q6routing_dai_unbind+0x44/0x78
- component_unbind.isra.4+0x28/0x50
- component_unbind_all+0xc0/0xe8
- apq8016_sbc_unbind+0x50/0xa0
- take_down_master+0x24/0x48
- component_del+0x90/0x130
- q6afe_dai_dev_remove+0x40/0x68
- platform_drv_remove+0x24/0x50
- device_release_driver_internal+0x170/0x208
- device_release_driver+0x14/0x20
- bus_remove_device+0xcc/0x150
- device_del+0x10c/0x310
- platform_device_del.part.3+0x24/0x90
- platform_device_unregister+0x18/0x30
- of_platform_device_destroy+0x94/0x98
+ clear_bit+0x18/0x2c
  q6afe_remove+0x20/0x38
  apr_device_remove+0x30/0x70
  device_release_driver_internal+0x170/0x208
@@ -160,24 +98,26 @@ Call trace:
  ksys_write+0x48/0xb0
  sys_write+0xc/0x18
  el0_svc_naked+0x30/0x34
+Code: d2800022 8b400c21 f9800031 9ac32043 (c85f7c22)
+---[ end trace 32020935775616a2 ]---
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- sound/soc/soc-dapm.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/of/platform.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 1e9a36389667..36a39ba30226 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -433,6 +433,8 @@ static int dapm_kcontrol_data_alloc(struct snd_soc_dapm_widget *widget,
- static void dapm_kcontrol_free(struct snd_kcontrol *kctl)
- {
- 	struct dapm_kcontrol_data *data = snd_kcontrol_chip(kctl);
-+
-+	list_del(&data->paths);
- 	kfree(data->wlist);
- 	kfree(data);
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index c00d81dfac0b..78c32b93c0e7 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -544,8 +544,6 @@ int of_platform_device_destroy(struct device *dev, void *data)
+ 		amba_device_unregister(to_amba_device(dev));
+ #endif
+ 
+-	of_node_clear_flag(dev->of_node, OF_POPULATED);
+-	of_node_clear_flag(dev->of_node, OF_POPULATED_BUS);
+ 	return 0;
  }
+ EXPORT_SYMBOL_GPL(of_platform_device_destroy);
 -- 
 2.16.2
