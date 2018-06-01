@@ -1,64 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752075AbeFALoX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:44:23 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:36303 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751693AbeFALlm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:41:42 -0400
-X-Google-Smtp-Source: ADUXVKKQejw6CmdzFB4vPBitKleJKxZDiUXdcDzzNe0geJLYUQA23OXr3tXMMCbkcFaxCTrYmmR6kg==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, andr2000@gmail.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v2 1/9] xen/grant-table: Export gnttab_{alloc|free}_pages as GPL
-Date: Fri,  1 Jun 2018 14:41:24 +0300
-Message-Id: <20180601114132.22596-2-andr2000@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180601114132.22596-1-andr2000@gmail.com>
-References: <20180601114132.22596-1-andr2000@gmail.com>
+        id S1752209AbeFALob (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:44:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57605 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752025AbeFALo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 07:44:27 -0400
+Date: Fri, 1 Jun 2018 13:44:25 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Alex Richman <alex.r@gblabs.co.uk>
+Cc: linux-man@vger.kernel.org, linux-mm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: mlock() confusing 1 half of system RAM limit
+Message-ID: <20180601114425.GA15686@dhcp22.suse.cz>
+References: <c43ad840-dcab-b86f-bf15-ffb26b66d37b@gblabs.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c43ad840-dcab-b86f-bf15-ffb26b66d37b@gblabs.co.uk>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+On Fri 01-06-18 10:53:57, Alex Richman wrote:
+> Hi,
+> 
+> I'm seeing a 1/2 of system RAM limit when calling mlock().  mlock(2) says:
+> > ENOMEM (Linux 2.4 and earlier) the calling process tried to lock more than
+> half of RAM.
+> Which implies to me that the 1 half of system RAM limit should be only Linux
+> 2.4 and earlier, but I'm running linux 4.4.127 and still seeing the limit.
+> 
+> This is on a system with 66007168 KB total memory, locking 33794621440 bytes
+> works, locking 33795653632 bytes does not work.
 
-Only gnttab_{alloc|free}_pages are exported as EXPORT_SYMBOL
-while all the rest are exported as EXPORT_SYMBOL_GPL, thus
-effectively making it not possible for non-GPL driver modules
-to use grant table module. Export gnttab_{alloc|free}_pages as
-EXPORT_SYMBOL_GPL so all the exports are aligned.
-
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
----
- drivers/xen/grant-table.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
-index 27be107d6480..ba36ff3e4903 100644
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -799,7 +799,7 @@ int gnttab_alloc_pages(int nr_pages, struct page **pages)
- 
- 	return 0;
- }
--EXPORT_SYMBOL(gnttab_alloc_pages);
-+EXPORT_SYMBOL_GPL(gnttab_alloc_pages);
- 
- /**
-  * gnttab_free_pages - free pages allocated by gnttab_alloc_pages()
-@@ -820,7 +820,7 @@ void gnttab_free_pages(int nr_pages, struct page **pages)
- 	}
- 	free_xenballooned_pages(nr_pages, pages);
- }
--EXPORT_SYMBOL(gnttab_free_pages);
-+EXPORT_SYMBOL_GPL(gnttab_free_pages);
- 
- /* Handling of paged out grant targets (GNTST_eagain) */
- #define MAX_DELAY 256
+I assume you are doing mlock on MAP_SHARED resp. on mmap of shmem
+file. You are likely to hit the shmem limit. This is half of the
+available memory by default.
 -- 
-2.17.0
+Michal Hocko
+SUSE Labs
