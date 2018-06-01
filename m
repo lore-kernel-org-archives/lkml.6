@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeFANXV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:23:21 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55110 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752217AbeFANXN (ORCPT
+        id S1752517AbeFANXM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:23:12 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38678 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752217AbeFANXD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:23:13 -0400
-X-Google-Smtp-Source: ADUXVKL7bwI6ZfEsLgkJm1grJblSD0cGzc23a3sxE9cH8XVMxHfPoJuA00o/tx6oIjUX3n8vschufA==
+        Fri, 1 Jun 2018 09:23:03 -0400
+X-Google-Smtp-Source: ADUXVKLcFZRUNLE6F5sca83cnvzJWhd5akRUrXuVo5CNeOOQK5DewxG2/AQHClTS11Z53tk3n/RIWw==
 From: Christian Brauner <christian@brauner.io>
 To: linux-kernel@vger.kernel.org
 Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
@@ -15,9 +15,9 @@ Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
         peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, oleg@redhat.com,
         Christian Brauner <christian@brauner.io>
-Subject: [PATCH v2 17/17] signal: make get_signal() return bool
-Date: Fri,  1 Jun 2018 15:22:39 +0200
-Message-Id: <20180601132239.4421-18-christian@brauner.io>
+Subject: [PATCH v2 11/17] signal: make recalc_sigpending_tsk() return bool
+Date: Fri,  1 Jun 2018 15:22:33 +0200
+Message-Id: <20180601132239.4421-12-christian@brauner.io>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180601132239.4421-1-christian@brauner.io>
 References: <20180601132239.4421-1-christian@brauner.io>
@@ -25,8 +25,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-make get_signal() already behaves like a boolean function. Let's actually
-declare it as such too.
+recalc_sigpending_tsk() already behaves like a boolean function. Let's
+actually declare it as such too.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
@@ -35,44 +35,37 @@ v1->v2:
 v0->v1:
 * patch added
 ---
- include/linux/signal.h | 2 +-
- kernel/signal.c        | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ kernel/signal.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/signal.h b/include/linux/signal.h
-index 1145d7061ed9..97d5ff809716 100644
---- a/include/linux/signal.h
-+++ b/include/linux/signal.h
-@@ -262,7 +262,7 @@ extern void set_current_blocked(sigset_t *);
- extern void __set_current_blocked(const sigset_t *);
- extern int show_unhandled_signals;
- 
--extern int get_signal(struct ksignal *ksig);
-+extern bool get_signal(struct ksignal *ksig);
- extern void signal_setup_done(int failed, struct ksignal *ksig, int stepping);
- extern void exit_signals(struct task_struct *tsk);
- extern void kernel_sigaction(int, __sighandler_t);
 diff --git a/kernel/signal.c b/kernel/signal.c
-index d5f9472a0935..be5b85567ca4 100644
+index faf38b46d124..d5a3b1ef775e 100644
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -2305,7 +2305,7 @@ static int ptrace_signal(int signr, siginfo_t *info)
- 	return signr;
+@@ -141,20 +141,21 @@ static inline bool has_pending_signals(sigset_t *signal, sigset_t *blocked)
+ 
+ #define PENDING(p,b) has_pending_signals(&(p)->signal, (b))
+ 
+-static int recalc_sigpending_tsk(struct task_struct *t)
++static bool recalc_sigpending_tsk(struct task_struct *t)
+ {
+ 	if ((t->jobctl & JOBCTL_PENDING_MASK) ||
+ 	    PENDING(&t->pending, &t->blocked) ||
+ 	    PENDING(&t->signal->shared_pending, &t->blocked)) {
+ 		set_tsk_thread_flag(t, TIF_SIGPENDING);
+-		return 1;
++		return true;
+ 	}
++
+ 	/*
+ 	 * We must never clear the flag in another thread, or in current
+ 	 * when it's possible the current syscall is returning -ERESTART*.
+ 	 * So we don't clear it here, and only callers who know they should do.
+ 	 */
+-	return 0;
++	return false;
  }
  
--int get_signal(struct ksignal *ksig)
-+bool get_signal(struct ksignal *ksig)
- {
- 	struct sighand_struct *sighand = current->sighand;
- 	struct signal_struct *signal = current->signal;
-@@ -2315,7 +2315,7 @@ int get_signal(struct ksignal *ksig)
- 		task_work_run();
- 
- 	if (unlikely(uprobe_deny_signal()))
--		return 0;
-+		return false;
- 
- 	/*
- 	 * Do this once, we can't return to user-mode if freezing() == T.
+ /*
 -- 
 2.17.0
