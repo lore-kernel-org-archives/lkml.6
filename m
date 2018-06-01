@@ -1,53 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753280AbeFAP3C (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:29:02 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51702 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753179AbeFAP2j (ORCPT
+        id S1753209AbeFAPaH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:30:07 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:40987 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753307AbeFAP3i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:28:39 -0400
-From: Colin King <colin.king@canonical.com>
-To: "David S . Miller" <davem@davemloft.net>,
-        Igor Russkikh <igor.russkikh@aquantia.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: aquantia: make function aq_fw2x_get_mac_permanent static
-Date: Fri,  1 Jun 2018 16:28:34 +0100
-Message-Id: <20180601152834.17958-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 1 Jun 2018 11:29:38 -0400
+X-Google-Smtp-Source: ADUXVKKj9i357mz72w1KDbrbgy5N1PmS2LhRpVnIvaEOT1gPOgNR+uqrA130BbagNhpGGzspUUZznA==
+Subject: Re: [PATCH v2] PCI: Check for PCIe downtraining conditions
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        Keith Busch <keith.busch@intel.com>, Sinan Kaya <okaya@codeaurora.org>,
+        linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180601150129.10486-1-mr.nuke.me@gmail.com>
+ <CAHp75VfzqbXmoEKE791gCPzg9Sn+Anb9evzfuocbO+F2XJVomw@mail.gmail.com>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <6fabb0e8-0de8-ab74-94f3-8990033f9658@gmail.com>
+Date: Fri, 1 Jun 2018 10:29:36 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VfzqbXmoEKE791gCPzg9Sn+Anb9evzfuocbO+F2XJVomw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 06/01/2018 10:12 AM, Andy Shevchenko wrote:
+> On Fri, Jun 1, 2018 at 6:01 PM, Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
+>> PCIe downtraining happens when both the device and PCIe port are
+>> capable of a larger bus width or higher speed than negotiated.
+>> Downtraining might be indicative of other problems in the system, and
+>> identifying this from userspace is neither intuitive, nor straigh
+>> forward.
+>>
+>> The easiest way to detect this is with pcie_print_link_status(),
+>> since the bottleneck is usually the link that is downtrained. It's not
+>> a perfect solution, but it works extremely well in most cases.
+> 
+>> +static void pcie_check_upstream_link(struct pci_dev *dev)
+>> +{
+> 
+>> +
+> 
+> This is redundant, but...
 
-The function aq_fw2x_get_mac_permanent is local to the source and does
-not need to be in global scope, so make it static.
+Hmm. I thought it's not safe to call pci_pcie_type() on non-pcie devices.
 
-Cleans up sparse warning:
-warning: symbol 'aq_fw2x_get_mac_permanent' was not declared. Should it
-be static?
+I see the pci_is_pcie() check followed by pci_pcie_type() is not
+uncommon. I didn't think it would be an issue, as long as it's
+consistent with the rest of the code.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- .../net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c   | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> +       if (!pci_is_pcie(dev))
+>> +               return;
+>> +
+>> +       /* Look from the device up to avoid downstream ports with no devices. */
+>> +       if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ENDPOINT) &&
+>> +           (pci_pcie_type(dev) != PCI_EXP_TYPE_LEG_END) &&
+>> +           (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM))
+>> +               return;
+> 
+> ...wouldn't be better
+> 
+> int type = pci_pcie_type(dev);
+> 
+> ?
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c
-index 8cfce95c82fc..39cd3a27fe77 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils_fw2x.c
-@@ -107,7 +107,7 @@ static int aq_fw2x_update_link_status(struct aq_hw_s *self)
- 	return 0;
- }
- 
--int aq_fw2x_get_mac_permanent(struct aq_hw_s *self, u8 *mac)
-+static int aq_fw2x_get_mac_permanent(struct aq_hw_s *self, u8 *mac)
- {
- 	int err = 0;
- 	u32 h = 0U;
--- 
-2.17.0
+An extra local variable when the compiler knows how to optimize it out?
+To me, it doesn't seem like it would improve readability, but it would
+make the code longer.
+
+> But also possible, looking at existing code,
+> 
+> static inline bool pci_is_pcie_type(dev, type)
+> {
+>   return pci_is_pcie(dev) ? pci_pcie_type(dev) == type : false;
+> }
+
+	return pci_is_pcie(dev) && (pci_pcie_type(dev) == type);
+
+seems cleaner. Although this sort of cleanup is beyond the scope of this
+change.
+
+Thanks,
+Alex
