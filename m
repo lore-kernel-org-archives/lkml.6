@@ -1,173 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751803AbeFALKj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:10:39 -0400
-Received: from mail-db5eur01on0116.outbound.protection.outlook.com ([104.47.2.116]:49888
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751337AbeFALKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:10:33 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com;
-Subject: Re: WARNING in kcm_exit_net (3)
-To: syzbot <syzbot+5f1a04e374a635efc426@syzkaller.appspotmail.com>,
-        davem@davemloft.net, ebiggers@google.com, edumazet@google.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tom@quantonium.net,
-        viro@ZenIV.linux.org.uk
-References: <00000000000000dca5056d7c1442@google.com>
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <9f485659-6d6f-9047-b9ad-b0e4084be88d@virtuozzo.com>
-Date: Fri, 1 Jun 2018 14:10:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751685AbeFALMQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:12:16 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:51456 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751012AbeFALMO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 07:12:14 -0400
+Date: Fri, 1 Jun 2018 14:12:12 +0300
+From: "Dmitry V. Levin" <ldv@altlinux.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, Jiri Olsa <jolsa@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Lawrence Brakmo <brakmo@fb.com>,
+        Andrey Ignatov <rdna@fb.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>
+Subject: Re: [PATCH bpf 1/2] bpf: fix alignment of netns_dev/netns_ino fields
+ in bpf_{map,prog}_info
+Message-ID: <20180601111211.GA3423@altlinux.org>
+Mail-Followup-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Lawrence Brakmo <brakmo@fb.com>, Andrey Ignatov <rdna@fb.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>
+References: <20180527112842.GA18204@asgard.redhat.com>
+ <20180530181857.GA6744@altlinux.org>
+ <20180601031210.GA30533@altlinux.org>
+ <20180601084114.xgvtg7nmihdavnnd@ast-mbp>
 MIME-Version: 1.0
-In-Reply-To: <00000000000000dca5056d7c1442@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: AM6PR03CA0028.eurprd03.prod.outlook.com (2603:10a6:20b::41)
- To AM5PR0801MB1331.eurprd08.prod.outlook.com (2603:10a6:203:1f::9)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB1331;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1331;3:M7n4vjoQ60ev+YU6K5eY9qb2V74sztV6lHViq9a3yqZH/fgqxHtYnlLWHPlMEAazKQQG7EN5PE3x3lwWA7nj2cVnrx6wQ23gUpwqXS1jp88ZICNbhx6OZC9m4mbVVV/USdO71nJSfrBieE/1l0vzE0Rb7j+U1/mWNbRM8BTKJ6lDWcR8KxgzEAn5rlh1P7T9bIzyNYDv3xVFaEfBChX1gw0faPuZp4vJQR78xumCf91ncn7rhdRlwSYbkBTaCvuZ;25:kYfyhhrdnqhMoQH+V+S1MvnoMTGTScb56nS7f3a8kQoQDckWQ5qM16ym7P9gT/pUEQTDz2wJnzef2Lhkc0iRGShop1B+m30VGnnJZ6J+TxMgqHSiYlYKtzbLSc2iCXPNqorbICst/B8IlvOF8cVZekFJU9Z5D81C+X/OCqHc+7Lmnp+JtItkDYBRgeB1z0RGHqDUR4p+HL9E/wVrXS7wHlNVuYi3oPcA3Qc/NpOOF4d/sMfB1CaJtfwod/SLeSWGeQQW2olfyaZLdrsHVJrc2RthSyb9DK0XyWyFTuqfz9uUO6WCxAhQMSQo8tdpUMJTKbIYwOdIZoTOoqftDKQs9A==;31:8fhdU9gP2BoB5QqTjgVy/MNyN6xRsPhfAessWqOV1gqhMrujiL+6rjAgB24F+iUNAbTZvyimZpAsQLA/PCr/9/ns0ALECmUbShdNqCwojJdzlxVqrav5gjwV87HKSmM+/vk98qjVegRdwdShjBEqC56uGIDdfBZK3ojYWhDo/DsZQvwEG/Dw+tS/nBW6OXuTsROb+Ux1Q4fDfiyUuFqHkR3qWBYQU2cYL+j1kCG9T7k=
-X-MS-TrafficTypeDiagnostic: AM5PR0801MB1331:
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1331;20:Gc51+rYGuZPynpehE0MoVzHHRB06JoiwQwOA4gWb3+4wv9isLuWQhKRX7DzQYbaJEHBdhFg5U6Tp90yo7gI5vcHMchFr75t2npLGbRCGGG4IS0FFtdbbS04lH90tud+811u0xSUGB6eYWSvLekWEA2GaRuRhTOacdkLJtKpY6iGfjPr/EvtoyxJklsL/sOei8hA948IrkN6tCkk1hxeMLsuwg5FwoKm28coEImVoeCIH+38iplgCPMlls9Nj6EmINiMUB3Ia5G1PKLK05ksFcQTKx+/dH0Hgn0J78zYxi99J/8VIhku51WEuN0JVM49RmxXA9q4ARvdKUZiTKUSjtfMt7IBxzZmMEV3iJIZ0NL5GPvVjCt6k6azz8ewIuV4Mjg2v782OfmfiJPmJKq3uH2PtnWkeLrsURPEMB4FShM09FnNCi0Gd8sY/y+OuaZ5tPNXS2ZTyBKLtHAkh8hj6wHsZ/1cc9oCtfjhz5eAxNLOYs4mcLfZptGuXnXw4vxHp;4:ImEtOJYJAJNzOrX8SAVVJUw1dVcEm6Hqq5YAcgufObgJBEnClmL4dOF2OLfEUPzsnR0a4bU1JfHFud1ql+lNWUTOuZ6PclYVV70uxANuwhUm6U1ov5lNErU0tiT0jx2F0l6DHmdlyI9fViUA0zjCwbxrumYmIn6pjZCetn/EVYp280rMfiNpJg8v+K9W9UvuqboAnRjxkmUmU2VDQ+FyF1cqt97PN57XKvI+VRwzO9QuE1rXKrmFZAeQFsiYarVWeiJCk/5DvdTVPrWdCaB4XQ==
-X-Microsoft-Antispam-PRVS: <AM5PR0801MB1331DC70315A3D02304A065BCD620@AM5PR0801MB1331.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM5PR0801MB1331;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB1331;
-X-Forefront-PRVS: 0690E5FF22
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(346002)(39850400004)(39380400002)(366004)(396003)(376002)(51234002)(189003)(199004)(575784001)(31686004)(68736007)(65826007)(3846002)(65956001)(25786009)(6666003)(966005)(5660300001)(6116002)(7116003)(66066001)(65806001)(47776003)(23676004)(76176011)(81166006)(2486003)(8676002)(7736002)(8936002)(53936002)(52116002)(77096007)(186003)(52146003)(478600001)(26005)(305945005)(386003)(16526019)(81156014)(97736004)(956004)(31696002)(2616005)(446003)(476003)(486006)(11346002)(6306002)(36756003)(6246003)(53546011)(6486002)(55236004)(59450400001)(2906002)(50466002)(2870700001)(16576012)(316002)(86362001)(64126003)(106356001)(58126008)(105586002)(229853002)(99710200001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0801MB1331;H:[172.16.25.5];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA4MDFNQjEzMzE7MjM6dFRUSndzV2o2aXBJL1VQdCtiTlNvR211?=
- =?utf-8?B?ZXFEdjNFWjRIU1gxVXFJSmYwcVp6NDg3dmd1dXBOQWoyN0ZlYTRCcEVUcFpp?=
- =?utf-8?B?b0lkM3ovSHQ4YWZKSEJQVXUrYTR4TFU0WENVTDQ1S2dNSzU5RDJEQ0NNNHc3?=
- =?utf-8?B?RVF5dHQ4TFpGSDhYWTBWUVlycVZqZk5CWkx4ejRTZjFOTkYzSlJPQjJLSXY3?=
- =?utf-8?B?OWRNRVRXYVd0MmZWQmFmMXl1OERiWnRwSDhQZlM4bWpZUnkybFdGWDBZNTdK?=
- =?utf-8?B?dWZTK0ZQSVhNeWdTTVV2UWRLWTJsaTY2MnRXZGhiWlpKNkZWdEVHZzgwWWc4?=
- =?utf-8?B?aXN6RHFydDBJNUJZTk1VNFRRMktNWnlqQ1A5b0l0UHJjUTk3QnRTZmI4WnZD?=
- =?utf-8?B?c09WZ2d5UWw5UThaK0xJOWtPQjY3OEZ5c2IxT25oRE44N2pkN1JQZzZWaVhk?=
- =?utf-8?B?N0g2T3NIOHRFZ0Q1WVhoT1NJWHZVTHJINGN3dVdzRzc2ZDc1bEgvZDdGTk1N?=
- =?utf-8?B?aXNzdkJscjhWVVdZcm5KaFk1M0NMajd6b3phNnR4MFVqQ1FENjlmRGRiM0VO?=
- =?utf-8?B?eU92cGR3SW1RSlhiaElvNHJBTHBZZys1cXg4Y2FJYWk4NnUxdzV0b0FYTVJx?=
- =?utf-8?B?SlRKbkdMM0hpU2dTMGljUlZnUW1LaFNoeEdGNjAzMzRNNnVKSGgrbkh4cTFB?=
- =?utf-8?B?S21oMzl5ZmE5c2I4RVF0aXFra3cyRkZhUld1QTBLRmU2MFZFcVFVZXlUWi9i?=
- =?utf-8?B?MnpoSWNRRkJRNGlpbTd4b2NzNlRBN3hnMEc3cE1EU09BaHNOY2psWEhtY29u?=
- =?utf-8?B?Z2tDcUo0NnE5VFFzaW05U2NkU0Q2VzU0c1MyQkgxalRSUGlPVEdtZzZ2aXkw?=
- =?utf-8?B?R2dCc3RoU21jQXpDNE96L215dURDRGtOR2ZyK2NUQVE2UHRqazVvNHVZMmVU?=
- =?utf-8?B?SU1hUW1BdFF4bTVlUVRRdkFTeS9wOW5JejdVZ1g4Qnk0azU1eThJS0ZQdGsy?=
- =?utf-8?B?dGN6a2hEbWFWdGJKRk5leDdEZlBvejNzOWNXV1V1NkVVaHVQWmdmSjdXdU1C?=
- =?utf-8?B?b1RvWW9FdFAyVVNqSFRjc0pHbzVwRWZOTUJOUFRNREliMWFTaHFtZHc4RHNz?=
- =?utf-8?B?VHAvVUhySXNwUzNWV0lybnduUGZiSXBiREcyRFp3bnBQVmVVZmorTklSTHRl?=
- =?utf-8?B?UUFKa3N1TC9HWnNrRmF4YUlsOTFyem9ObURvNDA5QzZYanM4TW16VWkxTXR3?=
- =?utf-8?B?R1RQN3hpN09kSnF1TThXOU5SdmErUGNwREtzUElCVmRvZ1F3WWRJWFp6QkdN?=
- =?utf-8?B?MUNENXo4U2gyN3d3OXlnbkw2L1FTb3hPY1ExRldUbEhnV3o2VDJrQVhRR3d4?=
- =?utf-8?B?eEp1RWNPQXZ4bjVqSkdQN2J1Y3djVHJxZk8zaGM0NjBLQ00vbWpoWlAzSjBp?=
- =?utf-8?B?SkVHTkhpU0lBcGpSODVJS3dZN2d4Rmt1amFOaHdWaUxmaXpqYWdIbWFGajhi?=
- =?utf-8?B?WmJsQmtMR1RkTFo1MklCUktKYjI5dHU4bllvTE5TNm1wNDRLRkJaZ0pNZklB?=
- =?utf-8?B?Z1paQ1kwTC9uM05yZHlPK3pqdmZ1U3c0TWFvK1lNU1h4K2xYVUlTZmpPamla?=
- =?utf-8?B?eDh4UlpkK2grak55NWlZNFQvdjZ3ZHcwbk0wcnR1UkEzVFBpcUwrd1EyTGdr?=
- =?utf-8?B?WDMrN2pFbGlVcWlhbWJzVTVYNG5sNW93dUYwWEZiRGRKeWcvbFhOSFY5REo2?=
- =?utf-8?B?cnRlcy9VZm5sR3djQ0RwaFJGdkxpTjZ1WXdMWHUyUHVQTUszaGNTMmE4bHRK?=
- =?utf-8?B?YW5EUkRNaTQ2Rm5jWU9wZFJXRm1KaTVDWHJ0eU43VW55R0pJbFo2SGhkemxF?=
- =?utf-8?B?ZUwzK2NOSEl0L0QzWkRGcytXQjNiSGFST2NBeXU0eitNcktHbjQvdFhmVWpX?=
- =?utf-8?B?U1pHci90UEpEM1JWZmdLbkZOUi9zeStaRmx1QmlwRUM1aER3NXBDZzRGeTli?=
- =?utf-8?B?SDFveWx1azdIM0V0SnNxQVRLVFp0QWRBQ2pyTG45SDFwN0NiZE15ZUZJUFV5?=
- =?utf-8?B?RlV0YlNINmIxYk95R0RZN3pFQlVFRmxDSWYxSDg1cWU5bXVmRTNkS3A5d0hw?=
- =?utf-8?B?MXpSQT09?=
-X-Microsoft-Antispam-Message-Info: tPYrmKWDmPaltqGeUPOUACGrG5UBrP6FiKFPZUe9TJgIKJdRkkStH5YfdipDK7lkabgOI3yiY9JkJIyS5/DmKpir/XdM9IST/azr/aa+zb5hA3BbUH60KBnCsqgJOTApZN2JMj1YGaTQuh8vF1tewh0JKXd7uD0Fv9W2OxGd03uJIu8LZ5yACkCUzkLquwfM
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1331;6:XLJsNH9o8EoTDVxS3NZaoJPfD11jwMPvIzeVDV/sJ1TLDLNCEOxmdPKIHFZ7X3hdnWVICixPRdtfwDpqvgwlceozscfSH5qyUUTmQCxSBbUd8ZztrmiLOIet/ijetswf4jVsFOLK0kBZEPkrK9ObRTqKYnQ3v9BFFYEZT3UaIBpOT5UdrqUiiS304qpHyJTZ1fKLLA2QLsAY5uLIMrjh3Qf0dKPmVWsnfmJIj5TNK52qbgRdH99iKX8eNQu9zkNmKl3ak6l4XOsLLlBGvoY0HiOVRyoF2sndzPRP/t/fJVbhPVUhV367ZUNOlduTtnnwQyCYY5/tfQZ1jB/eFNHGM14+KBRMcuWaq+Yzf0wAIfJvzcKYYCSoWpcgSmoE5MPSI9y/5JTQyqeMxxWZEsfKOGuo/HQi7EynVSzwKJlGF81nMDahip3sIrz0oHQciGq3R7cvlNiGnx1bL5Wg+iWa8g==;5:yjJwUufOOKo7Nijd9sqPqPIqpkN+jitmpPNYTMwVHhZHvzA0jmEMXFzMpNsr2FU/lYEB+a7dVmIeiJBephjbRzDOsGRKSnN6bMpicZo/cWluSJ5GGNeWXv59gt8WLun1KCtl9rS8UmSyrSIxJ+dunnlg6imkt5gNusRuVk3ywCw=;24:lFJv7ND8V3okP5uMjS4KMvEqPrW+5Nxenp2uSf+uN5E0LDz6ES+wDNsEtMIhKYjzbncni6e82mbS+DNc8drWc5u4QttHNR0SOL2LGREAaB8=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1331;7:r6fi6Ks2s0c2V4R5FTWbKHCd87I1Ka6sHsrOdzk2L8y+1C2Y1inUynH/5C62+XojMqu/tvnFTdlfyumJFqhoz5SvkC2g6GJjWJp7fv/i3yU0UhwKhnqh5OXT78dMZ7I0lGxtYtZgvieG9t4MdKL2kDSSWBzf4wSU+rcG9yA+KPNBzTJxI2R2xOaDHaYBBP+4jo7QlCfDTqg8GBMJxMjNJctjaLIjaippepKo8r9Xpoo/Whilb2+liiJTQiLVo/mj;20:hM5Cp/HIgh2jjtQWRfCGxaMUUmKqn6UNYGabEqUb/tuNZnW10/i9neshpUqNIZvrLPeFnze7wlTl9nHDGC/gJdr7A41mNfGf3mXJ9QrTy/rx/WJktUeTtpG/jMU7Z4aVRCmanpK+pNSvLmVLqOefYLol9BDyW6KNafGfY6/iHGY=
-X-MS-Office365-Filtering-Correlation-Id: 095aea17-6283-41b2-11ab-08d5c7b04970
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2018 11:10:29.7733 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 095aea17-6283-41b2-11ab-08d5c7b04970
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB1331
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
+Content-Disposition: inline
+In-Reply-To: <20180601084114.xgvtg7nmihdavnnd@ast-mbp>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31.05.2018 11:16, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    d60d61f36b8f Merge branch 'for-linus' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=101bb52f800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=968b0b23c7854c0b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5f1a04e374a635efc426
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13b9ed2f800000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+5f1a04e374a635efc426@syzkaller.appspotmail.com
-> 
-> IPVS: ftp: loaded support on port[0] = 21
-> IPVS: ftp: loaded support on port[0] = 21
-> IPVS: ftp: loaded support on port[0] = 21
-> IPVS: ftp: loaded support on port[0] = 21
-> IPVS: ftp: loaded support on port[0] = 21
-> WARNING: CPU: 0 PID: 6 at net/kcm/kcmsock.c:2023 kcm_exit_net+0x392/0x3e0 net/kcm/kcmsock.c:2023
-> Kernel panic - not syncing: panic_on_warn set ...
-> 
-> CPU: 0 PID: 6 Comm: kworker/u4:0 Not tainted 4.17.0-rc7+ #75
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Workqueue: netns cleanup_net
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  panic+0x22f/0x4de kernel/panic.c:184
->  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
->  report_bug+0x252/0x2d0 lib/bug.c:186
->  fixup_bug arch/x86/kernel/traps.c:178 [inline]
->  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
->  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
->  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-> RIP: 0010:kcm_exit_net+0x392/0x3e0 net/kcm/kcmsock.c:2023
-> RSP: 0018:ffff8801d9a97430 EFLAGS: 00010293
-> RAX: ffff8801d9a88180 RBX: 1ffff1003b352e86 RCX: 1ffff1003b351135
-> RDX: 0000000000000000 RSI: ffffffff86d56942 RDI: 0000000000000286
-> RBP: ffff8801d9a974f8 R08: 1ffff1003b352e67 R09: ffffed003b5c46d2
-> R10: 0000000000000003 R11: 0000000000000003 R12: 1ffff1003b352e8a
-> R13: ffff8801d9a974d0 R14: ffff8801d96763d0 R15: ffff8801c51d0e00
->  ops_exit_list.isra.7+0xb0/0x160 net/core/net_namespace.c:152
->  cleanup_net+0x51d/0xb20 net/core/net_namespace.c:523
->  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
->  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
->  kthread+0x345/0x410 kernel/kthread.c:240
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
 
-How about this?
+--qDbXVdCdHGoSgWSk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[PATCH]kcm: Fix use-after-free caused by clonned sockets
+On Fri, Jun 01, 2018 at 04:41:16AM -0400, Alexei Starovoitov wrote:
+> On Fri, Jun 01, 2018 at 06:12:10AM +0300, Dmitry V. Levin wrote:
+> > Hi,
+> >=20
+> > Looks like the ABI bug in bpf_map_info and bpf_prog info introduced
+> > in 4.16 is going to slip into 4.17, causing extra pain to 32-bit
+> > userspace.  I'm adding Linus to this thread in hope it might help
+> > to get a fix applied before 4.17 is released.
+>=20
+> The issue identified in patch 1 is valid.
+> These two fields won't be properly accessible by 32-bit user space
+> on 64-bit kernel.
 
-kcm_clone() creates kernel socket, which does not take net counter.
-Thus, the net may die before the socket is completely destructed,
-i.e. kcm_exit_net() is executed before kcm_done().
+Yes, and currently there is no way to build a 32-bit userspace that would
+work properly both with 32-bit and 64-bit kernels.
 
-Reported-by: syzbot+5f1a04e374a635efc426@syzkaller.appspotmail.com
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
----
-diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
-index d67734c99027..84b7d5c6fec8 100644
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -1671,7 +1671,7 @@ static struct file *kcm_clone(struct socket *osock)
- 	__module_get(newsock->ops->owner);
- 
- 	newsk = sk_alloc(sock_net(osock->sk), PF_KCM, GFP_KERNEL,
--			 &kcm_proto, true);
-+			 &kcm_proto, false);
- 	if (!newsk) {
- 		sock_release(newsock);
- 		return ERR_PTR(-ENOMEM);
+> But the fix in patch 1 is wrong.
+
+Please elaborate.
+
+> The patch 2 is completely unnecessary.
+
+The patch 2 doesn't have to be backported to 4.16, but if it was
+implemented in 4.16, there would be no bug to discuss.  That is,
+the patch 2 is a good policy that would help to avoid this class of bugs
+in the future.
+
+Alexei, looks like your Acked-by on the buggy commit
+52775b33bb5072fbc07b02c0cf4fe8da1f7ee7cd affects your judgement.
+If this is the case, please refer patch 2 to other people who are less bias=
+ed.
+
+> Everyone can also see that the patches are still marked as 'new' in patch=
+works
+> meaning that we didn't process them.
+> At the moment many networking folks are traveling to netconf
+> and we only had a chance to discuss this set last night.
+> We'll try to send a fix in coming days.
+> But regardless whether 4.17 is realesed this sunday or not
+> we're not going to rush wrong patch in without proper code review
+> and discussion.
+> That future patch either will land in 4.17 (if it's dealyed into next sun=
+day)
+> or it will be sent to stable.
+
+Note that the fix was submitted to netdev on 2018-05-27.
+One week is surely enough to make this bug fixed, isn't it?
+
+> To speed up the situation next time please report the issue that you find
+> to public netdev mailing list instead of using proprietary distro emails.
+
+Please explain to me and to the public what do you mean by making this
+statement.
+
+I do believe strace developers are free to discuss among themselves
+using whatever means of communication they find appropriate.
+
+I do believe the issue was properly reported to netdev, see
+https://lkml.kernel.org/r/20180527112835.GA9118@asgard.redhat.com
+https://lkml.kernel.org/r/20180527112842.GA18204@asgard.redhat.com
+
+I'd like to use this opportunity to thank Eugene for submitting the fix
+the same day the issue was identified as a kernel bug.
+
+Alexei, please do not exclude my email address from this discussion.
+Thanks.
+
+> > On Wed, May 30, 2018 at 09:18:58PM +0300, Dmitry V. Levin wrote:
+> > > On Sun, May 27, 2018 at 01:28:42PM +0200, Eugene Syromiatnikov wrote:
+> > > > Recent introduction of netns_dev/netns_ino to bpf_map_info/bpf_prog=
+ info
+> > > > has broken compat, as offsets of these fields are different in 32-b=
+it
+> > > > and 64-bit ABIs.  One fix (other than implementing compat support in
+> > > > syscall in order to handle this discrepancy) is to use __aligned_u64
+> > > > instead of __u64 for these fields.
+> > > >=20
+> > > > Reported-by: Dmitry V. Levin <ldv@altlinux.org>
+> > > > Fixes: 52775b33bb507 ("bpf: offload: report device information about
+> > > > offloaded maps")
+> > > > Fixes: 675fc275a3a2d ("bpf: offload: report device information for
+> > > > offloaded programs")
+> > > >=20
+> > > > Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+> > >=20
+> > > Reviewed-by: "Dmitry V. Levin" <ldv@altlinux.org>
+> > > Cc: <stable@vger.kernel.org> # v4.16+
+> > >=20
+> > > Thanks,
+> > >=20
+> > > > ---
+> > > >  include/uapi/linux/bpf.h       | 8 ++++----
+> > > >  tools/include/uapi/linux/bpf.h | 8 ++++----
+> > > >  2 files changed, 8 insertions(+), 8 deletions(-)
+> > > >=20
+> > > > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > > > index c5ec897..903010a 100644
+> > > > --- a/include/uapi/linux/bpf.h
+> > > > +++ b/include/uapi/linux/bpf.h
+> > > > @@ -1017,8 +1017,8 @@ struct bpf_prog_info {
+> > > >  	__aligned_u64 map_ids;
+> > > >  	char name[BPF_OBJ_NAME_LEN];
+> > > >  	__u32 ifindex;
+> > > > -	__u64 netns_dev;
+> > > > -	__u64 netns_ino;
+> > > > +	__aligned_u64 netns_dev;
+> > > > +	__aligned_u64 netns_ino;
+> > > >  } __attribute__((aligned(8)));
+> > > > =20
+> > > >  struct bpf_map_info {
+> > > > @@ -1030,8 +1030,8 @@ struct bpf_map_info {
+> > > >  	__u32 map_flags;
+> > > >  	char  name[BPF_OBJ_NAME_LEN];
+> > > >  	__u32 ifindex;
+> > > > -	__u64 netns_dev;
+> > > > -	__u64 netns_ino;
+> > > > +	__aligned_u64 netns_dev;
+> > > > +	__aligned_u64 netns_ino;
+> > > >  } __attribute__((aligned(8)));
+> > > > =20
+> > > >  /* User bpf_sock_addr struct to access socket fields and sockaddr =
+struct passed
+> > > > diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/li=
+nux/bpf.h
+> > > > index c5ec897..903010a 100644
+> > > > --- a/tools/include/uapi/linux/bpf.h
+> > > > +++ b/tools/include/uapi/linux/bpf.h
+> > > > @@ -1017,8 +1017,8 @@ struct bpf_prog_info {
+> > > >  	__aligned_u64 map_ids;
+> > > >  	char name[BPF_OBJ_NAME_LEN];
+> > > >  	__u32 ifindex;
+> > > > -	__u64 netns_dev;
+> > > > -	__u64 netns_ino;
+> > > > +	__aligned_u64 netns_dev;
+> > > > +	__aligned_u64 netns_ino;
+> > > >  } __attribute__((aligned(8)));
+> > > > =20
+> > > >  struct bpf_map_info {
+> > > > @@ -1030,8 +1030,8 @@ struct bpf_map_info {
+> > > >  	__u32 map_flags;
+> > > >  	char  name[BPF_OBJ_NAME_LEN];
+> > > >  	__u32 ifindex;
+> > > > -	__u64 netns_dev;
+> > > > -	__u64 netns_ino;
+> > > > +	__aligned_u64 netns_dev;
+> > > > +	__aligned_u64 netns_ino;
+> > > >  } __attribute__((aligned(8)));
+> > > > =20
+> > > >  /* User bpf_sock_addr struct to access socket fields and sockaddr =
+struct passed
+
+
+--=20
+ldv
+
+--qDbXVdCdHGoSgWSk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJbESoLAAoJEAVFT+BVnCUI2OMQAKomu2JjWOFKk06BMDvz7FTq
+ZDNltEBjY/ZyHN5vZRXOyRscPPbVinNVpkYp7TRhsM974EX6ZXe+q6K3hogxGuvx
+6ZZ+0gz0CUab5GhAMb0T8jREcy2mgxRoV66XQRrTz0LGBwMENRO1OQo8jChjWExC
+EO94Uct9UqD4CsPz8EnK3dNuN28GsXqNgqyRcnkJ5DPoObfbIVzBhfraVsar4B8n
+aKdXSfy1c8kaDegTIyIJgHrAz+IJg0DYn8rfVrUXPAX6tgOpcRAnrjIn0LNPh00+
+Cq8JCm2wkBluYfV1va31HCwILJq4xl0UzpDMbl623PC9v705h/qLK/VDOrLhZYep
+TMwXqFNkzLPB4TUustTtcE/1QjrHRXoDIOT3all2yKSvXIsKCEWr9G8VtxxHkY0u
+WYonFtEHlGCCpuhygKfPGZD1np+JSmEOeuXQTQm3oo+FL0aElnWvjTU8MLdyyScU
+PVPsN1MCkgTix3yF5nPAQz1DA2sLAuhfT3WsBH62gvL0ahzbQzrTI6gb00rQIcY3
+HyjVV3O820s/BzED9Uzj69lfK4ma4ihF4CJEcrN3V7hAA2pA6KEzrNHB1/QARlAy
+I1tjhuBR0aRZLzIKmAELuV7pwHBQsJhVFGbKCIGdQXVRPUjZymYg3273OYf1LU3v
+sSTSs6sicSY1KXZPbPZa
+=bwqt
+-----END PGP SIGNATURE-----
+
+--qDbXVdCdHGoSgWSk--
