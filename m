@@ -1,111 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752973AbeFAOeO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:34:14 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:40156 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752691AbeFAOdG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752956AbeFAOeK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:34:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52788 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752690AbeFAOdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Jun 2018 10:33:06 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        peterz@infradead.org, oleg@redhat.com, viro@zeniv.linux.org.uk,
-        mingo@kernel.org, paulmck@linux.vnet.ibm.com, keescook@chromium.org,
-        riel@redhat.com, tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
-        <20180426130700.GP17484@dhcp22.suse.cz> <877enj9uwf.fsf@xmission.com>
-        <20180601135725.GE15278@dhcp22.suse.cz>
-Date: Fri, 01 Jun 2018 09:32:42 -0500
-In-Reply-To: <20180601135725.GE15278@dhcp22.suse.cz> (Michal Hocko's message
-        of "Fri, 1 Jun 2018 15:57:25 +0200")
-Message-ID: <87a7sey3ud.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fOl6l-0007xK-8w;;;mid=<87a7sey3ud.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1975ZT+vYGh4y1VMRXuQeJYUtsLELeAhr0=
-X-SA-Exim-Connect-IP: 97.119.124.205
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Michal Hocko <mhocko@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 15027 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.1 (0.0%), b_tie_ro: 2.2 (0.0%), parse: 1.18 (0.0%),
-        extract_message_metadata: 4.7 (0.0%), get_uri_detail_list: 2.4 (0.0%),
-        tests_pri_-1000: 4.5 (0.0%), tests_pri_-950: 1.64 (0.0%), tests_pri_-900:
-        1.44 (0.0%), tests_pri_-400: 30 (0.2%), check_bayes: 29 (0.2%), b_tokenize:
-        12 (0.1%), b_tok_get_all: 8 (0.1%), b_comp_prob: 3.7 (0.0%), b_tok_touch_all:
-        2.8 (0.0%), b_finish: 0.57 (0.0%), tests_pri_0: 243 (1.6%),
-        check_dkim_signature: 0.69 (0.0%), check_dkim_adsp: 3.2 (0.0%),
-        tests_pri_500: 14725 (98.0%), poll_dns_idle: 14716 (97.9%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [PATCH 0/4] exit: Make unlikely case in mm_update_next_owner() more scalable
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Joel Fernandes <joel.opensrc@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, Rich Felker <dalias@libc.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 09/12] xtensa: Implement hw_breakpoint_arch_parse()
+Date: Fri,  1 Jun 2018 16:32:02 +0200
+Message-Id: <1527863526-32677-10-git-send-email-frederic@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1527863526-32677-1-git-send-email-frederic@kernel.org>
+References: <1527863526-32677-1-git-send-email-frederic@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko <mhocko@kernel.org> writes:
+Migrate to the new API in order to remove arch_validate_hwbkpt_settings()
+that clumsily mixes up architecture validation and commit
 
-> On Thu 31-05-18 20:07:28, Eric W. Biederman wrote:
->> Michal Hocko <mhocko@kernel.org> writes:
->> 
->> > On Thu 26-04-18 14:00:19, Kirill Tkhai wrote:
->> >> This function searches for a new mm owner in children and siblings,
->> >> and then iterates over all processes in the system in unlikely case.
->> >> Despite the case is unlikely, its probability growths with the number
->> >> of processes in the system. The time, spent on iterations, also growths.
->> >> I regulary observe mm_update_next_owner() in crash dumps (not related
->> >> to this function) of the nodes with many processes (20K+), so it looks
->> >> like it's not so unlikely case.
->> >
->> > Did you manage to find the pattern that forces mm_update_next_owner to
->> > slow paths? This really shouldn't trigger very often. If we can fallback
->> > easily then I suspect that we should be better off reconsidering
->> > mm->owner and try to come up with something more clever. I've had a
->> > patch to remove owner few years back. It needed some work to finish but
->> > maybe that would be a better than try to make non-scalable thing suck
->> > less.
->> 
->> Reading through the code I just found a trivial pattern that triggers
->> this.  Create a multi-threaded process.  Have the thread group leader
->> (the first thread) exit.
->
-> Hmm, I thought that we try to iterate over threads in the same thread
-> group first. But we are not doing that. Anyway just CLONE_VM without
-> CLONE_THREAD would achieve the same pathological path but that should be
-> rare.
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Chris Zankel <chris@zankel.net>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Joel Fernandes <joel.opensrc@gmail.com>
+---
+ arch/xtensa/include/asm/hw_breakpoint.h |  6 +++++-
+ arch/xtensa/kernel/hw_breakpoint.c      | 33 ++++++++++++---------------------
+ 2 files changed, 17 insertions(+), 22 deletions(-)
 
-Yes, if the child exited.   The code searches the children and siblings
-but the parents of the process that exited.
-
-> Group leader exiting early without tearing down the whole thread
-> group should be quite rare as well. No question that somebody might do
-> that on purpose though...
-
-The group leader exiting early is a completely legitimate and reasonable
-thing to do, even if it is rare.
-
-I think all it would take is one program like that in a work-load for
-the performance to descend into something unpleasant.
-
-Eric
+diff --git a/arch/xtensa/include/asm/hw_breakpoint.h b/arch/xtensa/include/asm/hw_breakpoint.h
+index 2525bf6..f347c21 100644
+--- a/arch/xtensa/include/asm/hw_breakpoint.h
++++ b/arch/xtensa/include/asm/hw_breakpoint.h
+@@ -30,13 +30,17 @@ struct arch_hw_breakpoint {
+ 	u16 type;
+ };
+ 
++struct perf_event_attr;
+ struct perf_event;
+ struct pt_regs;
+ struct task_struct;
+ 
+ int hw_breakpoint_slots(int type);
+ int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+-int arch_validate_hwbkpt_settings(struct perf_event *bp);
++int hw_breakpoint_arch_parse(struct perf_event *bp,
++			     const struct perf_event_attr *attr,
++			     struct arch_hw_breakpoint *hw);
++#define hw_breakpoint_arch_parse hw_breakpoint_arch_parse
+ int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 				    unsigned long val, void *data);
+ 
+diff --git a/arch/xtensa/kernel/hw_breakpoint.c b/arch/xtensa/kernel/hw_breakpoint.c
+index 6e34c38..c2e387c 100644
+--- a/arch/xtensa/kernel/hw_breakpoint.c
++++ b/arch/xtensa/kernel/hw_breakpoint.c
+@@ -47,50 +47,41 @@ int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw)
+ /*
+  * Construct an arch_hw_breakpoint from a perf_event.
+  */
+-static int arch_build_bp_info(struct perf_event *bp)
++int hw_breakpoint_arch_parse(struct perf_event *bp,
++			     const struct perf_event_attr *attr,
++			     struct arch_hw_breakpoint *hw)
+ {
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+-
+ 	/* Type */
+-	switch (bp->attr.bp_type) {
++	switch (attr->bp_type) {
+ 	case HW_BREAKPOINT_X:
+-		info->type = XTENSA_BREAKPOINT_EXECUTE;
++		hw->type = XTENSA_BREAKPOINT_EXECUTE;
+ 		break;
+ 	case HW_BREAKPOINT_R:
+-		info->type = XTENSA_BREAKPOINT_LOAD;
++		hw->type = XTENSA_BREAKPOINT_LOAD;
+ 		break;
+ 	case HW_BREAKPOINT_W:
+-		info->type = XTENSA_BREAKPOINT_STORE;
++		hw->type = XTENSA_BREAKPOINT_STORE;
+ 		break;
+ 	case HW_BREAKPOINT_RW:
+-		info->type = XTENSA_BREAKPOINT_LOAD | XTENSA_BREAKPOINT_STORE;
++		hw->type = XTENSA_BREAKPOINT_LOAD | XTENSA_BREAKPOINT_STORE;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
+ 	/* Len */
+-	info->len = bp->attr.bp_len;
+-	if (info->len < 1 || info->len > 64 || !is_power_of_2(info->len))
++	hw->len = attr->bp_len;
++	if (hw->len < 1 || hw->len > 64 || !is_power_of_2(hw->len))
+ 		return -EINVAL;
+ 
+ 	/* Address */
+-	info->address = bp->attr.bp_addr;
+-	if (info->address & (info->len - 1))
++	hw->address = attr->bp_addr;
++	if (hw->address & (hw->len - 1))
+ 		return -EINVAL;
+ 
+ 	return 0;
+ }
+ 
+-int arch_validate_hwbkpt_settings(struct perf_event *bp)
+-{
+-	int ret;
+-
+-	/* Build the arch_hw_breakpoint. */
+-	ret = arch_build_bp_info(bp);
+-	return ret;
+-}
+-
+ int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 				    unsigned long val, void *data)
+ {
+-- 
+2.7.4
