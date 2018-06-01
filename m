@@ -1,164 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751000AbeFAECl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 00:02:41 -0400
-Received: from mga01.intel.com ([192.55.52.88]:20594 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750758AbeFAECk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 00:02:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,464,1520924400";
-   d="scan'208";a="55649408"
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: mst@redhat.com, bhelgaas@google.com, stefanha@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        linux-pci@vger.kernel.org
-Cc: dan.daly@intel.com, mark.d.rustad@intel.com,
-        alexander.h.duyck@intel.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com
-Subject: [PATCH v3] virtio_pci: support enabling VFs
-Date: Fri,  1 Jun 2018 12:02:39 +0800
-Message-Id: <20180601040239.1151-1-tiwei.bie@intel.com>
-X-Mailer: git-send-email 2.17.0
+        id S1751297AbeFAEC5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 00:02:57 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:36028 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751129AbeFAECy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 00:02:54 -0400
+X-Google-Smtp-Source: ADUXVKLf79f6yl0EKucQEB45pfenuQbewtJ8QufLvGfFVQ1WBKheTR38HwIzBLhX+zfjyZCfjmzTSHn6aJXLh8d4iws=
+MIME-Version: 1.0
+In-Reply-To: <20180601022418.GR10363@dastard>
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-3-ross.zwisler@linux.intel.com> <20180529212510.GJ30110@magnolia>
+ <20180529220114.GA13948@linux.intel.com> <20180531191332.GB7825@magnolia>
+ <20180601012657.GQ10363@dastard> <CAPcyv4g6dv9sG9dR-iY+aEfSi2r3ey1dXGbX-nexKsN72t0QMw@mail.gmail.com>
+ <20180601022418.GR10363@dastard>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Thu, 31 May 2018 21:02:52 -0700
+Message-ID: <CAPcyv4iXTsxmQgjoLs2E_8QrLHrFOV_58T7UYf0zPJuB2744qQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
+ boolean returns
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a new feature bit allocated in virtio spec to
-support SR-IOV (Single Root I/O Virtualization):
+On Thu, May 31, 2018 at 7:24 PM, Dave Chinner <david@fromorbit.com> wrote:
+> On Thu, May 31, 2018 at 06:57:33PM -0700, Dan Williams wrote:
+>> On Thu, May 31, 2018 at 6:26 PM, Dave Chinner <david@fromorbit.com> wrote:
+>> > On Thu, May 31, 2018 at 12:13:32PM -0700, Darrick J. Wong wrote:
+>> >> On Tue, May 29, 2018 at 04:01:14PM -0600, Ross Zwisler wrote:
+>> >> > On Tue, May 29, 2018 at 02:25:10PM -0700, Darrick J. Wong wrote:
+>> >> > > On Tue, May 29, 2018 at 01:51:01PM -0600, Ross Zwisler wrote:
+>> >> > > > From: Dave Jiang <dave.jiang@intel.com>
+>> >> > > >
+>> >> > > > The function return values are confusing with the way the function is
+>> >> > > > named. We expect a true or false return value but it actually returns
+>> >> > > > 0/-errno.  This makes the code very confusing. Changing the return values
+>> >> > > > to return a bool where if DAX is supported then return true and no DAX
+>> >> > > > support returns false.
+>> >> > > >
+>> >> > > > Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+>> >> > > > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+>> >> > >
+>> >> > > Looks ok, do you want me to pull the first two patches through the xfs
+>> >> > > tree?
+>> >> > >
+>> >> > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+>> >> >
+>> >> > Thanks for the review.
+>> >> >
+>> >> > I'm not sure what's best.  If you do that then Mike will need to have a DM
+>> >> > branch for the rest of the series based on your stable commits, yea?
+>> >> >
+>> >> > Mike what would you prefer?
+>> >>
+>> >> I /was/ about to say that I would pull in the first two patches, but now
+>> >> I can't get xfs to mount with pmem at all, and have no way of testing
+>> >> this...?
+>> >
+>> > I have similar problems, too, but:
+>> >
+>> > $ ndctl list
+>> > [
+>> >   {
+>> >     "dev":"namespace1.0",
+>> >     "mode":"raw",
+>> >     "size":8589934592,
+>> >     "sector_size":512,
+>> >     "blockdev":"pmem1"
+>> >   },
+>> >   {
+>> >     "dev":"namespace0.0",
+>> >     "mode":"raw",
+>> >     "size":8589934592,
+>> >     "sector_size":512,
+>> >     "blockdev":"pmem0"
+>> >   }
+>> > ]
+>> > $ sudo ndctl create-namespace -f -e namespace0.0 --mode=fsdax
+>> >   Error: operation failed, region0 fsdax mode not available
+>> >
+>> > failed to reconfigure namespace: Invalid argument
+>> > $
+>> >
+>> > I can't make head or tail of what is going wrong here - how am I
+>> > supposed to debug this and get it working again?
+>> >
+>> > FWIW, XFS+DAX used to just work on this setup (I hadn't even
+>> > installed ndctl until this morning!) but after changing the kernel
+>> > it no longer works. That would make it a regression, yes?
+>>
+>> This commit caused the behavior change:
+>>
+>>     569d0365f571 dax: require 'struct page' by default for filesystem dax
+>>
+>> The justification is in that patch, but the short summary is we killed
+>> off "pageless" dax because it had so many incomplete holes and
+>> surprise behaviors. It needed to die on the path to making dax not
+>> experimental, i.e. to close safety holes, and be feature complete for
+>> all the ways userspace expects to use mappings (direct-io, fork,
+>> poison handling, etc).
+>>
+>> I suspect your kernel does not have CONFIG_ZONE_DEVICE enabled which
+>> has the following dependencies:
+>>
+>>         depends on MEMORY_HOTPLUG
+>>         depends on MEMORY_HOTREMOVE
+>>         depends on SPARSEMEM_VMEMMAP
+>
+> Filesystem DAX now has a dependency on memory hotplug?
+>
+> Fmeh. No wonder I never enabled CONFIG_ZONE_DEVICE. It's described in
+> menuconfig as "Device memory (pmem, HMM, etc...) hotplug support".
+> This isn't for hotplug support - it required for basic DAX
+> functionality. I've never enabled memory hotplug in any of my test
+> kernel configs, because the VMs I run the kernels on don't ever get
+> memory hotplugged....
+>
+> OK, works now I've found the magic config incantantions to turn
+> everything I now need on.
+>
+> Can we get this rationalised to a single top level config
+> option in the filesystems menu "Enable Filesystem DAX" that turns
+> on every knob that is required?
 
-https://github.com/oasis-tcs/virtio-spec/issues/11
-
-This patch enables the support for this feature bit in
-virtio driver.
-
-Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
----
-v3:
-- Drop the acks;
-
-v2:
-- Disable VFs when unbinding the driver (Alex, MST);
-- Don't use pci_sriov_configure_simple (Alex);
-
- drivers/virtio/virtio_pci_common.c | 30 ++++++++++++++++++++++++++++++
- drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
- include/uapi/linux/virtio_config.h |  7 ++++++-
- 3 files changed, 50 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index 48d4d1cf1cb6..1d4467b2dc31 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -577,6 +577,8 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
- 	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
- 	struct device *dev = get_device(&vp_dev->vdev.dev);
- 
-+	pci_disable_sriov(pci_dev);
-+
- 	unregister_virtio_device(&vp_dev->vdev);
- 
- 	if (vp_dev->ioaddr)
-@@ -588,6 +590,33 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
- 	put_device(dev);
- }
- 
-+static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
-+{
-+	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-+	struct virtio_device *vdev = &vp_dev->vdev;
-+	int ret;
-+
-+	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
-+		return -EBUSY;
-+
-+	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
-+		return -EINVAL;
-+
-+	if (pci_vfs_assigned(pci_dev))
-+		return -EPERM;
-+
-+	if (num_vfs == 0) {
-+		pci_disable_sriov(pci_dev);
-+		return 0;
-+	}
-+
-+	ret = pci_enable_sriov(pci_dev, num_vfs);
-+	if (ret < 0)
-+		return ret;
-+
-+	return num_vfs;
-+}
-+
- static struct pci_driver virtio_pci_driver = {
- 	.name		= "virtio-pci",
- 	.id_table	= virtio_pci_id_table,
-@@ -596,6 +625,7 @@ static struct pci_driver virtio_pci_driver = {
- #ifdef CONFIG_PM_SLEEP
- 	.driver.pm	= &virtio_pci_pm_ops,
- #endif
-+	.sriov_configure = virtio_pci_sriov_configure,
- };
- 
- module_pci_driver(virtio_pci_driver);
-diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-index 2555d80f6eec..07571daccfec 100644
---- a/drivers/virtio/virtio_pci_modern.c
-+++ b/drivers/virtio/virtio_pci_modern.c
-@@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
- 	return features;
- }
- 
-+static void vp_transport_features(struct virtio_device *vdev, u64 features)
-+{
-+	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-+	struct pci_dev *pci_dev = vp_dev->pci_dev;
-+
-+	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
-+			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
-+		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
-+}
-+
- /* virtio config->finalize_features() implementation */
- static int vp_finalize_features(struct virtio_device *vdev)
- {
- 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-+	u64 features = vdev->features;
- 
- 	/* Give virtio_ring a chance to accept features. */
- 	vring_transport_features(vdev);
- 
-+	/* Give virtio_pci a chance to accept features. */
-+	vp_transport_features(vdev, features);
-+
- 	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
- 		dev_err(&vdev->dev, "virtio: device uses modern interface "
- 			"but does not have VIRTIO_F_VERSION_1\n");
-diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-index 308e2096291f..b7c1f4e7d59e 100644
---- a/include/uapi/linux/virtio_config.h
-+++ b/include/uapi/linux/virtio_config.h
-@@ -49,7 +49,7 @@
-  * transport being used (eg. virtio_ring), the rest are per-device feature
-  * bits. */
- #define VIRTIO_TRANSPORT_F_START	28
--#define VIRTIO_TRANSPORT_F_END		34
-+#define VIRTIO_TRANSPORT_F_END		38
- 
- #ifndef VIRTIO_CONFIG_NO_LEGACY
- /* Do we get callbacks when the ring is completely used, even if we've
-@@ -71,4 +71,9 @@
-  * this is for compatibility with legacy systems.
-  */
- #define VIRTIO_F_IOMMU_PLATFORM		33
-+
-+/*
-+ * Does the device support Single Root I/O Virtualization?
-+ */
-+#define VIRTIO_F_SR_IOV			37
- #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
--- 
-2.17.0
+That sounds good to me. Will do.
