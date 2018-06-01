@@ -1,85 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeFAL3x (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:29:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50276 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751092AbeFALYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:24:55 -0400
-From: Mark Rutland <mark.rutland@arm.com>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, catalin.marinas@arm.com
-Cc: Mark Rutland <mark.rutland@arm.com>, James Morse <james.morse@arm.com>
-Subject: [PATCHv2 02/19] arm64: move SCTLR_EL{1,2} assertions to <asm/sysreg.h>
-Date: Fri,  1 Jun 2018 12:24:24 +0100
-Message-Id: <20180601112441.37810-3-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180601112441.37810-1-mark.rutland@arm.com>
-References: <20180601112441.37810-1-mark.rutland@arm.com>
+        id S1752187AbeFALaG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:30:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54956 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751714AbeFAL3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 07:29:51 -0400
+From: Michal Kubecek <mkubecek@suse.cz>
+Date: Fri, 1 Jun 2018 12:34:41 +0200
+Subject: [PATCH net] ipv6: omit traffic class when calculating flow hash
+To: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Tom Herbert <tom@herbertland.com>, David Ahern <dsahern@gmail.com>
+Message-Id: <20180601112948.93BE7A0C48@unicorn.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we assert that the SCTLR_EL{1,2}_{SET,CLEAR} bits are
-self-consistent with an assertion in config_sctlr_el1(). This is a bit
-unusual, since config_sctlr_el1() doesn't make use of these definitions,
-and is far away from the definitions themselves.
+Some of the code paths calculating flow hash for IPv6 use flowlabel member
+of struct flowi6 which, despite its name, encodes both flow label and
+traffic class. If traffic class changes within a TCP connection (as e.g.
+ssh does), ECMP route can switch between path. It's also incosistent with
+other code paths where ip6_flowlabel() (returning only flow label) is used
+to feed the key.
 
-We can use the CPP #error directive to have equivalent assertions in
-<asm/sysreg.h>, next to the definitions of the set/clear bits, which is
-a bit clearer and simpler.
+Use only flow label everywhere, including one place where hash key is set
+using ip6_flowinfo().
 
-The preprocessor handles literals differently than regular C, e.g. ~0 is
-equivalent to ~(intmax_t)0 rather than ~(int)0. Therefore, instead of ~0
-we use 0xffffffff, which is unambiguous.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
+Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
+Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- arch/arm64/include/asm/sysreg.h | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ net/core/flow_dissector.c | 3 ++-
+ net/ipv6/route.c          | 5 +++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-index 6171178075dc..bd1d1194a5e7 100644
---- a/arch/arm64/include/asm/sysreg.h
-+++ b/arch/arm64/include/asm/sysreg.h
-@@ -452,9 +452,9 @@
- 			 SCTLR_ELx_SA     | SCTLR_ELx_I    | SCTLR_ELx_WXN | \
- 			 ENDIAN_CLEAR_EL2 | SCTLR_EL2_RES0)
+diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+index d29f09bc5ff9..441d3db76e8e 100644
+--- a/net/core/flow_dissector.c
++++ b/net/core/flow_dissector.c
+@@ -1334,7 +1334,8 @@ __u32 __get_hash_from_flowi6(const struct flowi6 *fl6, struct flow_keys *keys)
+ 	keys->ports.src = fl6->fl6_sport;
+ 	keys->ports.dst = fl6->fl6_dport;
+ 	keys->keyid.keyid = fl6->fl6_gre_key;
+-	keys->tags.flow_label = (__force u32)fl6->flowlabel;
++	keys->tags.flow_label = (__force u32)(fl6->flowlabel &
++					      IPV6_FLOWLABEL_MASK);
+ 	keys->basic.ip_proto = fl6->flowi6_proto;
  
--/* Check all the bits are accounted for */
--#define SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != ~0)
--
-+#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xffffffff
-+#error "Inconsistent SCTLR_EL2 set/clear bits"
-+#endif
- 
- /* SCTLR_EL1 specific flags. */
- #define SCTLR_EL1_UCI		(1 << 26)
-@@ -492,8 +492,9 @@
- 			 SCTLR_EL1_UMA | SCTLR_ELx_WXN     | ENDIAN_CLEAR_EL1 |\
- 			 SCTLR_EL1_RES0)
- 
--/* Check all the bits are accounted for */
--#define SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != ~0)
-+#if (SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != 0xffffffff
-+#error "Inconsistent SCTLR_EL1 set/clear bits"
-+#endif
- 
- /* id_aa64isar0 */
- #define ID_AA64ISAR0_TS_SHIFT		52
-@@ -732,9 +733,6 @@ static inline void config_sctlr_el1(u32 clear, u32 set)
- {
- 	u32 val;
- 
--	SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS;
--	SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS;
--
- 	val = read_sysreg(sctlr_el1);
- 	val &= ~clear;
- 	val |= set;
+ 	return flow_hash_from_keys(keys);
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index f4d61736c41a..fcbacf1677f8 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -1868,7 +1868,7 @@ static void ip6_multipath_l3_keys(const struct sk_buff *skb,
+ 	} else {
+ 		keys->addrs.v6addrs.src = key_iph->saddr;
+ 		keys->addrs.v6addrs.dst = key_iph->daddr;
+-		keys->tags.flow_label = ip6_flowinfo(key_iph);
++		keys->tags.flow_label = ip6_flowlabel(key_iph);
+ 		keys->basic.ip_proto = key_iph->nexthdr;
+ 	}
+ }
+@@ -1889,7 +1889,8 @@ u32 rt6_multipath_hash(const struct net *net, const struct flowi6 *fl6,
+ 		} else {
+ 			hash_keys.addrs.v6addrs.src = fl6->saddr;
+ 			hash_keys.addrs.v6addrs.dst = fl6->daddr;
+-			hash_keys.tags.flow_label = (__force u32)fl6->flowlabel;
++			hash_keys.tags.flow_label = (__force u32)(fl6->flowlabel &
++								  IPV6_FLOWLABEL_MASK);
+ 			hash_keys.basic.ip_proto = fl6->flowi6_proto;
+ 		}
+ 		break;
 -- 
-2.11.0
+2.17.1
