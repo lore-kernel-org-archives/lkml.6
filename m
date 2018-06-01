@@ -1,114 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752111AbeFANel (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 09:34:41 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:47026 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751346AbeFANeh (ORCPT
+        id S1752231AbeFANfo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 09:35:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38016 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751910AbeFANfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 09:34:37 -0400
+        Fri, 1 Jun 2018 09:35:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8374A60249
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [RFC PATCH 3/5] remoteproc: qcom: adsp: Use common q6v5 helpers
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+ <20180523052054.19025-4-bjorn.andersson@linaro.org>
+From: Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <101bb9f7-b571-ef00-e957-a83fb80e1536@codeaurora.org>
+Date: Fri, 1 Jun 2018 19:05:37 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180523052054.19025-4-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Fri, 01 Jun 2018 15:34:33 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, pgaikwad@nvidia.com,
-        dev@lynxeye.de, mirza.krak@gmail.com, benjamin.lindqvist@endian.se,
-        pdeschrijver@nvidia.com, miquel.raynal@bootlin.com,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org, jonathanh@nvidia.com,
-        marek.vasut@gmail.com, thierry.reding@gmail.com,
-        linux-mtd@lists.infradead.org, krzk@kernel.org, richard@nod.at,
-        linux-tegra@vger.kernel.org, digetx@gmail.com,
-        computersforpeace@gmail.com, dwmw2@infradead.org, marcel@ziswiler.com
-Subject: Re: [PATCH v3 1/6] mtd: rawnand: add Reed-Solomon error correction
- algorithm
-In-Reply-To: <20180601112506.2157e8b0@bbrezillon>
-References: <20180531221637.6017-1-stefan@agner.ch>
- <20180531221637.6017-2-stefan@agner.ch> <20180601092600.03c14f53@bbrezillon>
- <20180601112506.2157e8b0@bbrezillon>
-Message-ID: <18ce3100aabf42059dbd514fb8c93e84@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[22];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01.06.2018 11:25, Boris Brezillon wrote:
-> On Fri, 1 Jun 2018 09:26:00 +0200
-> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> 
->> On Fri,  1 Jun 2018 00:16:32 +0200
->> Stefan Agner <stefan@agner.ch> wrote:
->>
->> > Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
->> >
->> > Signed-off-by: Stefan Agner <stefan@agner.ch>
->>
->> Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
->>
->> > ---
->> >  drivers/mtd/nand/raw/nand_base.c | 1 +
->> >  include/linux/mtd/rawnand.h      | 1 +
-> 
-> Hm, you forgot to update Documentation/devicetree/bindings/mtd/nand.txt.
-> 
+Hi Bjorn,
 
-Yeah I was not sure about that. Currently it says:
+Reviewed and validated PAS and non-PAS ADSP PIL on sdm845 with the changes.
 
-- nand-ecc-algo: string, algorithm of NAND ECC.                         
-                                                                   
-                 Supported values are: "hamming", "bch".
+Adding tag.
 
-Is supported meant by software ECC here? I feel "supported" is a rather
-strong word since it is clearly controller dependent whether it is
-actually supported...
 
---
-Stefan
+On 5/23/2018 10:50 AM, Bjorn Andersson wrote:
+> Migrate the Hexagon V5 PAS (ADSP) driver to using the newly extracted
+> helper functions. The use of the handover callback does introduce latent
+> disabling of proxy resources. But apart from this there should be no
+> change in functionality.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+> ---
+>   drivers/remoteproc/Kconfig         |   1 +
+>   drivers/remoteproc/qcom_adsp_pil.c | 156 +++++------------------------
+>   2 files changed, 28 insertions(+), 129 deletions(-)
+>
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 63b79ea91a21..d51d155cf8bd 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -93,6 +93,7 @@ config QCOM_ADSP_PIL
+>   	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>   	select MFD_SYSCON
+>   	select QCOM_MDT_LOADER
+>
 
->> >  2 files changed, 2 insertions(+)
->> >
->> > diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
->> > index f28c3a555861..9eb5678dd6d0 100644
->> > --- a/drivers/mtd/nand/raw/nand_base.c
->> > +++ b/drivers/mtd/nand/raw/nand_base.c
->> > @@ -5744,6 +5744,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
->> >  static const char * const nand_ecc_algos[] = {
->> >  	[NAND_ECC_HAMMING]	= "hamming",
->> >  	[NAND_ECC_BCH]		= "bch",
->> > +	[NAND_ECC_RS]		= "rs",
->> >  };
->> >
->> >  static int of_get_nand_ecc_algo(struct device_node *np)
->> > diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
->> > index 5dad59b31244..6a82da8c44ce 100644
->> > --- a/include/linux/mtd/rawnand.h
->> > +++ b/include/linux/mtd/rawnand.h
->> > @@ -114,6 +114,7 @@ enum nand_ecc_algo {
->> >  	NAND_ECC_UNKNOWN,
->> >  	NAND_ECC_HAMMING,
->> >  	NAND_ECC_BCH,
->> > +	NAND_ECC_RS,
->> >  };
->> >
->> >  /*
->>
->>
->> ______________________________________________________
->> Linux MTD discussion mailing list
->> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+Thanks,
+Rohit
+
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
