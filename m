@@ -1,86 +1,316 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751726AbeFALGr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 07:06:47 -0400
-Received: from sauhun.de ([88.99.104.3]:48100 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751342AbeFALGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 07:06:34 -0400
-Date: Fri, 1 Jun 2018 13:06:32 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PULL REQUEST] i2c for 4.17
-Message-ID: <20180601110628.n3sofix7uyqm6grj@ninjato>
+        id S1751819AbeFALHJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 07:07:09 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:41883 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751738AbeFALHE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 07:07:04 -0400
+Subject: Re: [PATCH v2 2/7] PCI: dwc: Add MSI-X callbacks handler
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
+CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
+ <24e9cdc20d57aaea0bcb62879824c57004df46c9.1526576613.git.gustavo.pimentel@synopsys.com>
+ <758acd51-a36a-ae68-2e28-5ce184707dda@ti.com>
+From: Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
+Message-ID: <0759e266-505f-41cc-5213-eabbff2512ad@synopsys.com>
+Date: Fri, 1 Jun 2018 12:05:13 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lo6spks4ncf7lp5u"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <758acd51-a36a-ae68-2e28-5ce184707dda@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.25.102]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 31/05/2018 11:49, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Thursday 17 May 2018 10:39 PM, Gustavo Pimentel wrote:
+>> Change pcie_raise_irq() signature, namely the interrupt_num variable type
+>> from u8 to u16 to accommodate 2048 maximum MSI-X interrupts.
+>>
+>> Add PCIe config space capability search function.
+>>
+>> Add sysfs set/get interface to allow the change of EP MSI-X maximum number.
+>>
+>> Add EP MSI-X callback for triggering interruptions.
+>>
+>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>> ---
+>> Change v1->v2:
+>>  - Nothing changed, just to follow the patch set version.
+>>
+>>  drivers/pci/dwc/pci-dra7xx.c           |   2 +-
+>>  drivers/pci/dwc/pcie-artpec6.c         |   2 +-
+>>  drivers/pci/dwc/pcie-designware-ep.c   | 146 ++++++++++++++++++++++++++++++++-
+>>  drivers/pci/dwc/pcie-designware-plat.c |   4 +-
+>>  drivers/pci/dwc/pcie-designware.h      |  14 +++-
+>>  5 files changed, 163 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+>> index f688204..bdf948b 100644
+>> --- a/drivers/pci/dwc/pci-dra7xx.c
+>> +++ b/drivers/pci/dwc/pci-dra7xx.c
+>> @@ -370,7 +370,7 @@ static void dra7xx_pcie_raise_msi_irq(struct dra7xx_pcie *dra7xx,
+>>  }
+>>  
+>>  static int dra7xx_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>> -				 enum pci_epc_irq_type type, u8 interrupt_num)
+>> +				 enum pci_epc_irq_type type, u16 interrupt_num)
+>>  {
+>>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>>  	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
+>> diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-artpec6.c
+>> index 321b56c..9a2474b 100644
+>> --- a/drivers/pci/dwc/pcie-artpec6.c
+>> +++ b/drivers/pci/dwc/pcie-artpec6.c
+>> @@ -428,7 +428,7 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
+>>  }
+>>  
+>>  static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>> -				  enum pci_epc_irq_type type, u8 interrupt_num)
+>> +				  enum pci_epc_irq_type type, u16 interrupt_num)
+>>  {
+>>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> 
+> I think you should change pci_epc_raise_irq (in previous patch) and the above
+> two changes in a separate patch. You can also include pcie-cadence-ep.c along
+> with that.
 
---lo6spks4ncf7lp5u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ok.
 
-Linus,
+>>  
+>> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+>> index 1eec441..e5f2377 100644
+>> --- a/drivers/pci/dwc/pcie-designware-ep.c
+>> +++ b/drivers/pci/dwc/pcie-designware-ep.c
+>> @@ -40,6 +40,39 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+>>  	__dw_pcie_ep_reset_bar(pci, bar, 0);
+>>  }
+>>  
+>> +u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+>> +			      u8 cap)
+>> +{
+>> +	u8 cap_id, next_cap_ptr;
+>> +	u16 reg;
+>> +
+>> +	reg = dw_pcie_readw_dbi(pci, cap_ptr);
+>> +	next_cap_ptr = (reg & 0xff00) >> 8;
+>> +	cap_id = (reg & 0x00ff);
+>> +
+>> +	if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
+>> +		return 0;
+>> +
+>> +	if (cap_id == cap)
+>> +		return cap_ptr;
+>> +
+>> +	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+>> +}
+>> +
+>> +u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
+>> +{
+>> +	u8 next_cap_ptr;
+>> +	u16 reg;
+>> +
+>> +	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
+>> +	next_cap_ptr = (reg & 0x00ff);
+>> +
+>> +	if (!next_cap_ptr)
+>> +		return 0;
+>> +
+>> +	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+>> +}
+>> +
+>>  static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no,
+>>  				   struct pci_epf_header *hdr)
+>>  {
+>> @@ -241,8 +274,47 @@ static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
+>>  	return 0;
+>>  }
+>>  
+>> +static int dw_pcie_ep_get_msix(struct pci_epc *epc, u8 func_no)
+>> +{
+>> +	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>> +	u32 val, reg;
+>> +
+>> +	if (!ep->msix_cap)
+>> +		return 0;
+> 
+> return -EINVAL?
 
-I2C has a documentation bugfix and a MAINTAINERS addition for you. It
-would be great to have that in 4.17 proper already.
+Definitely yes. Well spotted!
 
-Please pull.
+> 
+> or pci_epc_get_msix() will return 1.
+>> +
+>> +	reg = ep->msix_cap + PCI_MSIX_FLAGS;
+>> +	val = dw_pcie_readw_dbi(pci, reg);
+>> +	if (!(val & PCI_MSIX_FLAGS_ENABLE))
+>> +		return -EINVAL;
+>> +
+>> +	val &= PCI_MSIX_FLAGS_QSIZE;
+>> +
+>> +	return val;
+>> +}
+>> +
+>> +static int dw_pcie_ep_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
+>> +{
+>> +	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>> +	u32 val, reg;
+>> +
+>> +	if (!ep->msix_cap)
+>> +		return 0;
+> 
+> here too return -EINVAL.
 
-Thanks,
+A copy & paste bug :)
 
-   Wolfram
+>> +
+>> +	reg = ep->msix_cap + PCI_MSIX_FLAGS;
+>> +	val = dw_pcie_readw_dbi(pci, reg);
+>> +	val &= ~PCI_MSIX_FLAGS_QSIZE;
+>> +	val |= interrupts;
+>> +	dw_pcie_dbi_ro_wr_en(pci);
+>> +	dw_pcie_writew_dbi(pci, reg, val);
+>> +	dw_pcie_dbi_ro_wr_dis(pci);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int dw_pcie_ep_raise_irq(struct pci_epc *epc, u8 func_no,
+>> -				enum pci_epc_irq_type type, u8 interrupt_num)
+>> +				enum pci_epc_irq_type type, u16 interrupt_num)
+>>  {
+>>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>>  
+>> @@ -282,6 +354,8 @@ static const struct pci_epc_ops epc_ops = {
+>>  	.unmap_addr		= dw_pcie_ep_unmap_addr,
+>>  	.set_msi		= dw_pcie_ep_set_msi,
+>>  	.get_msi		= dw_pcie_ep_get_msi,
+>> +	.set_msix		= dw_pcie_ep_set_msix,
+>> +	.get_msix		= dw_pcie_ep_get_msix,
+>>  	.raise_irq		= dw_pcie_ep_raise_irq,
+>>  	.start			= dw_pcie_ep_start,
+>>  	.stop			= dw_pcie_ep_stop,
+>> @@ -322,6 +396,64 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+>>  	return 0;
+>>  }
+>>  
+>> +int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+>> +			     u16 interrupt_num)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>> +	struct pci_epc *epc = ep->epc;
+>> +	u16 tbl_offset, bir;
+>> +	u32 bar_addr_upper, bar_addr_lower;
+>> +	u32 msg_addr_upper, msg_addr_lower;
+>> +	u32 reg, msg_data, vec_ctrl;
+>> +	u64 tbl_addr, msg_addr, reg_u64;
+>> +	void __iomem *msix_tbl;
+>> +	int ret;
+>> +
+>> +	reg = ep->msix_cap + PCI_MSIX_TABLE;
+>> +	tbl_offset = dw_pcie_readl_dbi(pci, reg);
+>> +	bir = (tbl_offset & PCI_MSIX_TABLE_BIR);
+>> +	tbl_offset &= PCI_MSIX_TABLE_OFFSET;
+>> +	tbl_offset >>= 3;
+>> +
+>> +	reg = PCI_BASE_ADDRESS_0 + (4 * bir);
+>> +	bar_addr_lower = dw_pcie_readl_dbi(pci, reg);
+>> +	reg_u64 = (bar_addr_lower & PCI_BASE_ADDRESS_MEM_TYPE_MASK);
+>> +	if (reg_u64 == PCI_BASE_ADDRESS_MEM_TYPE_64)
+>> +		bar_addr_upper = dw_pcie_readl_dbi(pci, reg + 4);
+>> +	else
+>> +		bar_addr_upper = 0;
+> 
+> You can skip else if you can use something like below>
+> bar_addr_upper = 0
+> bar_addr_lower = dw_pcie_readl_dbi(pci, reg);
+> reg_u64 = (bar_addr_lower & PCI_BASE_ADDRESS_MEM_TYPE_MASK);
+> if (reg_u64 == PCI_BASE_ADDRESS_MEM_TYPE_64)
+> 	bar_addr_upper = dw_pcie_readl_dbi(pci, reg + 4);
 
+Sure.
 
-The following changes since commit 771c577c23bac90597c685971d7297ea00f99d11:
+>> +
+>> +	tbl_addr = ((u64) bar_addr_upper) << 32 | bar_addr_lower;
+>> +	tbl_addr += (tbl_offset + ((interrupt_num - 1) * PCI_MSIX_ENTRY_SIZE));
+>> +	tbl_addr &= PCI_BASE_ADDRESS_MEM_MASK;
+>> +
+>> +	msix_tbl = ioremap_nocache(ep->phys_base + tbl_addr, ep->addr_size);
+> 
+> Why do you want to ioremap the entire address region?
 
-  Linux 4.17-rc6 (2018-05-20 15:31:38 -0700)
+Hum, this was from my initial tests...
+I guess, I could limit it to the MSIX entry size (PCI_MSIX_ENTRY_SIZE).
 
-are available in the git repository at:
+>> +	if (!msix_tbl)
+>> +		return -EINVAL;
+>> +
+>> +	msg_addr_lower = readl(msix_tbl + PCI_MSIX_ENTRY_LOWER_ADDR);
+>> +	msg_addr_upper = readl(msix_tbl + PCI_MSIX_ENTRY_UPPER_ADDR);
+>> +	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
+>> +	msg_data = readl(msix_tbl + PCI_MSIX_ENTRY_DATA);
+>> +	vec_ctrl = readl(msix_tbl + PCI_MSIX_ENTRY_VECTOR_CTRL);
+>> +
+>> +	if (vec_ctrl & PCI_MSIX_ENTRY_CTRL_MASKBIT)
+>> +		return -EPERM;
+>> +
+>> +	iounmap(msix_tbl);
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+I noticed now this bug... The ioumap should be above the if.
 
-for you to fetch changes up to a0ccb6b54bdde16885ac99f49ee8031cf1c71abe:
-
-  i2c: ocores: update HDL sources URL (2018-05-29 20:14:32 +0200)
-
-----------------------------------------------------------------
-Federico Vaga (1):
-      i2c: ocores: update HDL sources URL
-
-George Cherian (1):
-      i2c: xlp9xx: Add MAINTAINERS entry
-
- Documentation/i2c/busses/i2c-ocores | 2 +-
- MAINTAINERS                         | 8 ++++++++
- drivers/i2c/busses/i2c-ocores.c     | 2 +-
- 3 files changed, 10 insertions(+), 2 deletions(-)
-
---lo6spks4ncf7lp5u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsRKLAACgkQFA3kzBSg
-KbY/PQ//Y87k/cw7bgFgIQJrcELiSuUnzLrSPtftOPePkGmn5llp8bzVqQqqJmrk
-rIxqAsFK9VXlDQwUPNcSTTGzsUeOwim2/IVv68+mEQm03+XM03RgZ1wpNdIXDrzK
-kxUTUqmanufCJJcrWomkdnrlwOzHfZIuJ7XiZBYz1rBJ0nqnf+bosQlyPDnBrPZb
-o8sNLA6Zj8K9iBFt1AOMn81MbHbMEGW5adjhNgHp6gmToH5Dgwn0lR2YVl/jqVGq
-YlPQqPAR9O3q6FAzf+mCMqOZbVOhrZiw/CP8qm6unl1QTlbNWLcBv+FL295CZrg6
-QCE8HLuE7snM9VZDdg1NG8yKJtCz9xW0lXVu9XQjMgyz4/XcVpKamMGG+w9S2ydK
-mi8KOMrBANd3k+GQ8TpIDUtaA5hTzVBvWVChSF+cG1ssfSo95NZj2In6NaVq4s0X
-xfpidmaoQ20puUrS4f6JdPKwu4HYTMbWJ3lrmgOBj/4asmmVQ2fWV+s0yH35qhzT
-qJGoyD6QE7seqBmDZM7k27o40mdIc8VmMJXwE5dnrxEvO30HYw3PiUlxbCsrqE47
-CqnWcuH3fhJawPwuBvPrni/DKKKh0R+q89OgcjmCfknbyo2Yv7ivBeE17R04qySa
-9S94mW1xRZ4fuAIL87AFQsHt5/+YpHRnT83YWeyEDk/7JSxOc8w=
-=HPz+
------END PGP SIGNATURE-----
-
---lo6spks4ncf7lp5u--
+>> +
+>> +	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msix_mem_phys, msg_addr,
+>> +				  epc->mem->page_size);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	writel(msg_data, ep->msix_mem);
+>> +
+>> +	dw_pcie_ep_unmap_addr(epc, func_no, ep->msix_mem_phys);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
+>>  {
+>>  	struct pci_epc *epc = ep->epc;
+>> @@ -329,6 +461,9 @@ void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
+>>  	pci_epc_mem_free_addr(epc, ep->msi_mem_phys, ep->msi_mem,
+>>  			      epc->mem->page_size);
+>>  
+>> +	pci_epc_mem_free_addr(epc, ep->msix_mem_phys, ep->msix_mem,
+>> +			      epc->mem->page_size);
+>> +
+>>  	pci_epc_mem_exit(epc);
+>>  }
+>>  
+>> @@ -410,6 +545,15 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>>  		dev_err(dev, "Failed to reserve memory for MSI\n");
+>>  		return -ENOMEM;
+>>  	}
+>> +	ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
+> 
+> msi_cap is not used anywhere else.
+> 
+> Thanks
+> Kishon
+> 
