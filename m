@@ -1,62 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753289AbeFAPur (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 11:50:47 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:41967 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752262AbeFAPul (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 11:50:41 -0400
-X-Google-Smtp-Source: ADUXVKLNnOt5PlRlTqVUJ7D/ZS5dgJsTe6xOE08h8uFYgkQ7I26dZtBBcJwuNCdNTqT07LxvCPTpYg==
-Subject: Re: [PATCH v2] PCI: Check for PCIe downtraining conditions
-To: Sinan Kaya <okaya@codeaurora.org>, bhelgaas@google.com
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        keith.busch@intel.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180601150129.10486-1-mr.nuke.me@gmail.com>
- <35a67b5b-5f37-c779-64a3-eb5e21362e9c@codeaurora.org>
- <c677b42a-f5f0-474e-c9ce-da05ced45b23@gmail.com>
- <321c6d7d-b8e6-9b8d-91e5-a4f748acaa8e@codeaurora.org>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <4ffb153a-c26e-8762-df86-9d84dc726fa4@gmail.com>
-Date: Fri, 1 Jun 2018 10:50:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <321c6d7d-b8e6-9b8d-91e5-a4f748acaa8e@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1753302AbeFAPvH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 11:51:07 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:32389 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753142AbeFAPtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 11:49:52 -0400
+Message-Id: <583e02f6096b413dc64450d6b9a9221fdfe997e9.1527868006.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1527868006.git.christophe.leroy@c-s.fr>
+References: <cover.1527868006.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH v2 12/14] powerpc/44x: remove page.h from mmu-44x.h
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Fri,  1 Jun 2018 15:49:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+mmu-44x.h doesn't need asm/page.h if PAGE_SHIFT are replaced by CONFIG_PPC_XX_PAGES
 
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/mmu-44x.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-On 06/01/2018 10:10 AM, Sinan Kaya wrote:
-> On 6/1/2018 11:06 AM, Alex G. wrote:
->> On 06/01/2018 10:03 AM, Sinan Kaya wrote:
->>> On 6/1/2018 11:01 AM, Alexandru Gagniuc wrote:
->>>> +	/* Multi-function PCIe share the same link/status. */
->>>> +	if (PCI_FUNC(dev->devfn) != 0)
->>>> +		return;
->>>
->>> How about virtual functions?
->>
->> I have almost no clue about those. Is your concern that we might end up
->> printing more than our fair share of link statuses?
-> 
-> Yes, struct pci_dev also has a flag called is_virtfn that you should bail out
-> here too. 
-
-Will be fixed in v3.
-
-Thanks,
-Alex
-
->>
->> Alex
->>
->>
-> 
-> 
+diff --git a/arch/powerpc/include/asm/mmu-44x.h b/arch/powerpc/include/asm/mmu-44x.h
+index 9bdbe1d1c9b9..b2b8274037ea 100644
+--- a/arch/powerpc/include/asm/mmu-44x.h
++++ b/arch/powerpc/include/asm/mmu-44x.h
+@@ -5,7 +5,7 @@
+  * PPC440 support
+  */
+ 
+-#include <asm/page.h>
++#include <asm/nohash/32/pgtable.h>
+ #include <asm/asm-const.h>
+ 
+ #define PPC44x_MMUCR_TID	0x000000ff
+@@ -125,19 +125,19 @@ typedef struct {
+ /* Size of the TLBs used for pinning in lowmem */
+ #define PPC_PIN_SIZE	(1 << 28)	/* 256M */
+ 
+-#if (PAGE_SHIFT == 12)
++#if defined(CONFIG_PPC_4K_PAGES)
+ #define PPC44x_TLBE_SIZE	PPC44x_TLB_4K
+ #define PPC47x_TLBE_SIZE	PPC47x_TLB0_4K
+ #define mmu_virtual_psize	MMU_PAGE_4K
+-#elif (PAGE_SHIFT == 14)
++#elif defined(CONFIG_PPC_16K_PAGES)
+ #define PPC44x_TLBE_SIZE	PPC44x_TLB_16K
+ #define PPC47x_TLBE_SIZE	PPC47x_TLB0_16K
+ #define mmu_virtual_psize	MMU_PAGE_16K
+-#elif (PAGE_SHIFT == 16)
++#elif defined(CONFIG_PPC_64K_PAGES)
+ #define PPC44x_TLBE_SIZE	PPC44x_TLB_64K
+ #define PPC47x_TLBE_SIZE	PPC47x_TLB0_64K
+ #define mmu_virtual_psize	MMU_PAGE_64K
+-#elif (PAGE_SHIFT == 18)
++#elif defined(CONFIG_PPC_256K_PAGES)
+ #define PPC44x_TLBE_SIZE	PPC44x_TLB_256K
+ #define mmu_virtual_psize	MMU_PAGE_256K
+ #else
+-- 
+2.13.3
