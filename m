@@ -1,75 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751361AbeFAAdh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 20:33:37 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:51613 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751031AbeFAAdf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 20:33:35 -0400
-X-ME-Proxy: <xmx:XpQQW_GEux3gGwZmM7hjz7yVKGq77Fws39jr9GK_due0sc84EqQVeg>
-X-ME-Proxy: <xmx:XpQQW4wfp-3G97IA7TbZiKgVGNyHEDG3YkjPgBhw0xY1hruw9gXcIg>
-X-ME-Proxy: <xmx:XpQQW46-Noyw7RwLqi4XndTmQWKXGjNu5Kvx4zhbIFswjAuUyWM3vA>
-X-ME-Proxy: <xmx:XpQQW98QsP2wyUr0LSMyj4fQ77eT7adEEIHQfPJikFl9Om-aDMUCRA>
-X-ME-Proxy: <xmx:XpQQW8ofs1KtZrPKqLLzZr5wpcbCMBLF9Z0dRxPKqy_ZZpJPsfzhAg>
-X-ME-Proxy: <xmx:XpQQW1mpnTpKgJNVn3kNSEGygf7YRPCOx27zeQOspf5t_mAT-4H_bg>
-X-ME-Sender: <xms:XpQQWzls2OmqRBrXbtxtFRML8dcgSLJ_37SUzrFJ4Lk5Ir6pbENeUQ>
-Message-ID: <c8013f0894299c6aedfbcd5e35f5fa33b858d915.camel@mendozajonas.com>
-Subject: Re: [PATCH net-next] net/ncsi: Avoid GFP_KERNEL in response handler
-From: Samuel Mendoza-Jonas <sam@mendozajonas.com>
-To: Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org
-Cc: "David S . Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org
-Date: Fri, 01 Jun 2018 10:33:27 +1000
-In-Reply-To: <69fcb143-00a2-2ddf-e2d4-c692b650f292@gmail.com>
-References: <20180531070254.28878-1-sam@mendozajonas.com>
-         <69fcb143-00a2-2ddf-e2d4-c692b650f292@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 
-Mime-Version: 1.0
+        id S1750974AbeFAAjj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 31 May 2018 20:39:39 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8181 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750736AbeFAAjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 May 2018 20:39:37 -0400
+Subject: Re: [PATCH v2 16/21] ASoC: max98088: use match_string() helper
+To: Mark Brown <broonie@kernel.org>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+ <1527765086-19873-17-git-send-email-xieyisheng1@huawei.com>
+ <20180531114921.GD13319@sirena.org.uk>
+ <8009e494-9ba0-bff3-e900-37f8923886a0@huawei.com>
+ <20180531160206.GE13319@sirena.org.uk>
+CC: <linux-kernel@vger.kernel.org>, <andy.shevchenko@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <e7c6d379-8413-9af8-9562-17085359b2c5@huawei.com>
+Date: Fri, 1 Jun 2018 08:38:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
+MIME-Version: 1.0
+In-Reply-To: <20180531160206.GE13319@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-31 at 04:50 -0400, Eric Dumazet wrote:
-> 
-> On 05/31/2018 03:02 AM, Samuel Mendoza-Jonas wrote:
-> > ncsi_rsp_handler_gc() allocates the filter arrays using GFP_KERNEL in
-> > softirq context, causing the below backtrace. This allocation is only a
-> > few dozen bytes during probing so allocate with GFP_ATOMIC instead.
-> > 
-> 
-> Hi Samuel
-> 
-> You forgot to add
-> 
-> Fixes: 062b3e1b6d4f ("net/ncsi: Refactor MAC, VLAN filters")
-> 
-> size = (rsp->uc_cnt + rsp->mc_cnt + rsp->mixed_cnt) * ETH_ALEN;
-> 
-> -> seems to be able to reach more than few dozen bytes...
+Hi Mark,
 
-Hi Eric,
-
-The NCSI spec (at least in the v1.1.0 version I'm looking at) sets the
-total number of MAC address filters at 8, so we would be looking at a
-maximum of 8 * ETH_ALEN = 48 bytes.
-That said it shouldn't be too arduous to move the allocation to later in
-the probe/configure cycle so if needed we could do that.
-
+On 2018/6/1 0:02, Mark Brown wrote:
+> On Thu, May 31, 2018 at 08:25:39PM +0800, Yisheng Xie wrote:
 > 
-> Also, what prevents ncsi_rsp_handler_gc() to be called multiples times ?
+>> Anyway, Here is the cover letter of v1 and I have add v2's cover letter to you:
+>>   https://lkml.org/lkml/2018/5/21/303
 > 
-> nc->mac_filter.addrs & nc->vlan_filter.vids would be re-allocated and memory would leak.
+>> Each patch in this patchset is a separate one, for what this patchset want to do
+>> is use match_string() helper for echo subsystem.
 > 
+> For something like this it's generally easier to not send everything as
+> one big series - it avoids any confusion about dependencies and there's
+> no actual relationship between the patches.  Instead just sending each
+> subsystem as a series or perhaps even just a bunch of separate patches
+> should make things smoother.
 
-Good point, we should put a check there just in case to see if it's
-allocated. We should be safe though as ncsi_rsp_handler_gc() should only
-be called via ncsi_probe_channel() which only happens through
-ncsi_start_dev(), and addrs/vids is cleaned up in ncsi_remove_channel().
-Rogue packets shouldn't hit the ncsi_rsp_handler_gc() handler without an
-outstanding request.. but it probably is safer to check regardless.
+Thanks, will take this suggestion maybe next time.
 
-Regards,
-Sam
+Thanks
+Yisheng
+> 
