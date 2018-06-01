@@ -1,308 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751802AbeFAKoi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 06:44:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50296 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751293AbeFAKof (ORCPT
+        id S1751552AbeFAKpv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 06:45:51 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36019 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750866AbeFAKpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 06:44:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1336A60261
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From: Sayali Lokhande <sayalil@codeaurora.org>
-To: subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org
-Cc: linux-scsi@vger.kernel.org, Sayali Lokhande <sayalil@codeaurora.org>,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V1 3/3] scsi: ufs: Add sysfs support for ufs provision
-Date: Fri,  1 Jun 2018 16:12:54 +0530
-Message-Id: <1527849774-7623-4-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1527849774-7623-1-git-send-email-sayalil@codeaurora.org>
-References: <1527849774-7623-1-git-send-email-sayalil@codeaurora.org>
+        Fri, 1 Jun 2018 06:45:47 -0400
+X-Google-Smtp-Source: ADUXVKK7dnsF9EVQ/SsuwRUGsmRwIKKnqp097Yv+aAWWVxM7VHMr2ECP3UDR58L4M30kWGnu2xHJVg==
+Subject: Re: [GIT PULL 00/20] lightnvm updates for 4.18
+To: axboe@fb.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>,
+        "Konopko, Igor J" <igor.j.konopko@intel.com>,
+        Marcin Dziegielewski <marcin.dziegielewski@intel.com>
+References: <20180528085841.26684-1-mb@lightnvm.io>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <068976f7-38eb-1960-c62b-814ce75ab3e2@lightnvm.io>
+Date: Fri, 1 Jun 2018 12:45:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180528085841.26684-1-mb@lightnvm.io>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add sysfs support to trigger ufs provisioning at runtime.
-Usage : echo <desc_buf> > /sys/bus/platform/drivers/*/
-	config_descriptor/ufs_provision
-To check provisioning status:
-cat /sys/bus/platform/drivers/*/config_descriptor/ufs_provision
-1- > Success (Reboot device to check updated provisioning)
+On 05/28/2018 10:58 AM, Matias Bjørling wrote:
+> Hi Jens,
+> 
+> Please pick up the following patches.
+> 
+>   - Hans reworked the write error recovery path in pblk.
+>   - Igor added extra error handling for lines, and fixed a bug in the
+>     pblk ringbuffer during GC.
+>   - Javier refactored the pblk code a bit, added extra error
+>     handling, and added checks to verify that data returned from drive
+>     is appropriate.
+>   - Marcin added some extra logic to manage the write buffer. Now
+>     MW_CUNITS can be zero and the size of write buffer can be changed
+>     at module load time.
+> 
+> Thanks,
+> Matias
+> 
+> Hans Holmberg (3):
+>    lightnvm: pblk: rework write error recovery path
+>    lightnvm: pblk: garbage collect lines with failed writes
+>    lightnvm: pblk: fix smeta write error path
+> 
+> Igor Konopko (4):
+>    lightnvm: proper error handling for pblk_bio_add_pages
+>    lightnvm: error handling when whole line is bad
+>    lightnvm: fix partial read error path
+>    lightnvm: pblk: sync RB and RL states during GC
+> 
+> Javier González (11):
+>    lightnvm: pblk: fail gracefully on line alloc. failure
+>    lightnvm: pblk: recheck for bad lines at runtime
+>    lightnvm: pblk: check read lba on gc path
+>    lightnvn: pblk: improve error msg on corrupted LBAs
+>    lightnvm: pblk: warn in case of corrupted write buffer
+>    lightnvm: pblk: return NVM_ error on failed submission
+>    lightnvm: pblk: remove unnecessary indirection
+>    lightnvm: pblk: remove unnecessary argument
+>    lightnvm: pblk: check for chunk size before allocating it
+>    lightnvn: pass flag on graceful teardown to targets
+>    lightnvm: pblk: remove dead function
+> 
+> Marcin Dziegielewski (2):
+>    lightnvm: pblk: handle case when mw_cunits equals to 0
+>    lightnvm: pblk: add possibility to set write buffer size manually
+> 
+>   drivers/lightnvm/core.c          |  10 +-
+>   drivers/lightnvm/pblk-core.c     | 149 +++++++++++++++------
+>   drivers/lightnvm/pblk-gc.c       | 112 ++++++++++------
+>   drivers/lightnvm/pblk-init.c     | 112 +++++++++++-----
+>   drivers/lightnvm/pblk-map.c      |  33 +++--
+>   drivers/lightnvm/pblk-rb.c       |  51 +------
+>   drivers/lightnvm/pblk-read.c     |  83 +++++++++---
+>   drivers/lightnvm/pblk-recovery.c |  91 -------------
+>   drivers/lightnvm/pblk-rl.c       |  29 +++-
+>   drivers/lightnvm/pblk-sysfs.c    |  15 ++-
+>   drivers/lightnvm/pblk-write.c    | 281 +++++++++++++++++++++++++--------------
+>   drivers/lightnvm/pblk.h          |  43 +++---
+>   drivers/nvme/host/lightnvm.c     |   1 -
+>   include/linux/lightnvm.h         |   2 +-
+>   14 files changed, 604 insertions(+), 408 deletions(-)
+> 
 
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
----
- Documentation/ABI/testing/sysfs-driver-ufs |  16 ++++
- drivers/scsi/ufs/ufs-sysfs.c               |  25 ++++++
- drivers/scsi/ufs/ufs.h                     |   2 +
- drivers/scsi/ufs/ufshcd.c                  | 128 +++++++++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd.h                  |   5 ++
- 5 files changed, 176 insertions(+)
+Hi Jens,
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-index 016724e..43419b5 100644
---- a/Documentation/ABI/testing/sysfs-driver-ufs
-+++ b/Documentation/ABI/testing/sysfs-driver-ufs
-@@ -883,3 +883,19 @@ Contact:	Subhash Jadavani <subhashj@codeaurora.org>
- Description:	This entry shows the target state of an UFS UIC link
- 		for the chosen system power management level.
- 		The file is read only.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/ufs_provision
-+Date:		February 2018
-+Contact:	Sayali Lokhande <sayalil@codeaurora.org>
-+Description:	This file shows the status of runtime ufs provisioning.
-+		This can be used to provision ufs device if bConfigDescrLock is 0.
-+		Configuration buffer needs to be written in space separated format
-+		specificied as:
-+		echo <bNumberLU> <bBootEnable> <bDescrAccessEn> <bInitPowerMode>
-+		<bHighPriorityLUN> <bSecureRemovalType> <bInitActiveICCLevel>
-+		<wPeriodicRTCUpdate> <bConfigDescrLock> <LUNum> <bLUEnable>
-+		<bBootLunID> <size_in_kb> <bDataReliability> <bLUWriteProtect>
-+		<bMemoryType> <bLogicalBlockSize> <bProvisioningType>
-+		<wContextCapabilities> > ufs_provision
-+		To check updated configuration check unit_descriptor and
-+		device_descriptor sysfs fields.
-diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-index 8d9332b..8b68813 100644
---- a/drivers/scsi/ufs/ufs-sysfs.c
-+++ b/drivers/scsi/ufs/ufs-sysfs.c
-@@ -252,6 +252,30 @@ static ssize_t ufs_sysfs_read_desc_param(struct ufs_hba *hba,
- 	return ret;
- }
- 
-+static ssize_t ufs_provision_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	return ufshcd_desc_config_show(dev, attr, buf);
-+}
-+
-+static ssize_t ufs_provision_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t count)
-+{
-+	return ufshcd_desc_config_store(dev, attr, buf, count);
-+}
-+
-+DEVICE_ATTR_RW(ufs_provision);
-+
-+static struct attribute *ufs_sysfs_config_descriptor[] = {
-+	&dev_attr_ufs_provision.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group ufs_sysfs_config_descriptor_group = {
-+	.name = "config_descriptor",
-+	.attrs = ufs_sysfs_config_descriptor,
-+};
-+
- #define UFS_DESC_PARAM(_name, _puname, _duname, _size)			\
- static ssize_t _name##_show(struct device *dev,				\
- 	struct device_attribute *attr, char *buf)			\
-@@ -713,6 +737,7 @@ static DEVICE_ATTR_RO(_name)
- static const struct attribute_group *ufs_sysfs_groups[] = {
- 	&ufs_sysfs_default_group,
- 	&ufs_sysfs_device_descriptor_group,
-+	&ufs_sysfs_config_descriptor_group,
- 	&ufs_sysfs_interconnect_descriptor_group,
- 	&ufs_sysfs_geometry_descriptor_group,
- 	&ufs_sysfs_health_descriptor_group,
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index 1f99904..0b497fc 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -427,6 +427,7 @@ enum {
- };
- 
- struct ufs_unit_desc {
-+	u8	   LUNum;
- 	u8     bLUEnable;              /* 1 for enabled LU */
- 	u8     bBootLunID;             /* 0 for using this LU for boot */
- 	u8     bLUWriteProtect;        /* 1 = power on WP, 2 = permanent WP */
-@@ -451,6 +452,7 @@ struct ufs_config_descr {
- 	u32    qVendorConfigCode;      /* Vendor specific configuration code */
- 	struct ufs_unit_desc unit[8];
- 	u8	lun_to_grow;
-+	u8 num_luns;
- };
- 
- /* Task management service response */
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 3fd29e0..122c119 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -1580,6 +1580,131 @@ void ufshcd_release(struct ufs_hba *hba)
- }
- EXPORT_SYMBOL_GPL(ufshcd_release);
- 
-+ssize_t ufshcd_desc_config_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "provision_enabled = %d\n",
-+		hba->provision_enabled);
-+}
-+
-+ssize_t ufshcd_desc_config_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t count)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+	struct ufs_config_descr *cfg = &hba->cfgs;
-+	char *strbuf;
-+	char *strbuf_copy;
-+	int desc_buf[count];
-+	int *pt;
-+	char *token;
-+	int i, ret;
-+	int value, commit = 0;
-+	int num_luns = 0;
-+	int KB_per_block = 4;
-+
-+	/* reserve one byte for null termination */
-+	strbuf = kmalloc(count + 1, GFP_KERNEL);
-+	if (!strbuf)
-+		return -ENOMEM;
-+
-+	strbuf_copy = strbuf;
-+	strlcpy(strbuf, buf, count + 1);
-+	memset(desc_buf, 0, count);
-+
-+	/* Just return if bConfigDescrLock is already set */
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &cfg->bConfigDescrLock);
-+	if (ret) {
-+		dev_err(hba->dev, "%s: Failed reading bConfigDescrLock %d, cannot re-provision device!\n",
-+			__func__, ret);
-+		hba->provision_enabled = 0;
-+		goto out;
-+	}
-+	if (cfg->bConfigDescrLock == 1) {
-+		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-+		__func__, cfg->bConfigDescrLock);
-+		hba->provision_enabled = 0;
-+		goto out;
-+	}
-+
-+	for (i = 0; i < count; i++) {
-+		token = strsep(&strbuf, " ");
-+		if (!token && i) {
-+			num_luns = desc_buf[i-1];
-+			dev_dbg(hba->dev, "%s: token %s, num_luns %d\n",
-+				__func__, token, num_luns);
-+			if (num_luns > 8) {
-+				dev_err(hba->dev, "%s: Invalid num_luns %d\n",
-+				__func__, num_luns);
-+				hba->provision_enabled = 0;
-+				goto out;
-+			}
-+			break;
-+		}
-+
-+		ret = kstrtoint(token, 0, &value);
-+		if (ret) {
-+			dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
-+				__func__, ret, token);
-+			break;
-+		}
-+		desc_buf[i] = value;
-+		dev_dbg(hba->dev, " desc_buf[%d] 0x%x", i, desc_buf[i]);
-+	}
-+
-+	/* Fill in the descriptors with parsed configuration data */
-+	pt = desc_buf;
-+	cfg->bNumberLU = *pt++;
-+	cfg->bBootEnable = *pt++;
-+	cfg->bDescrAccessEn = *pt++;
-+	cfg->bInitPowerMode = *pt++;
-+	cfg->bHighPriorityLUN = *pt++;
-+	cfg->bSecureRemovalType = *pt++;
-+	cfg->bInitActiveICCLevel = *pt++;
-+	cfg->wPeriodicRTCUpdate = *pt++;
-+	cfg->bConfigDescrLock = *pt++;
-+	dev_dbg(hba->dev, "%s: %u %u %u %u %u %u %u %u %u\n", __func__,
-+	cfg->bNumberLU, cfg->bBootEnable, cfg->bDescrAccessEn,
-+	cfg->bInitPowerMode, cfg->bHighPriorityLUN, cfg->bSecureRemovalType,
-+	cfg->bInitActiveICCLevel, cfg->wPeriodicRTCUpdate,
-+	cfg->bConfigDescrLock);
-+
-+	for (i = 0; i < num_luns; i++) {
-+		cfg->unit[i].LUNum = *pt++;
-+		cfg->unit[i].bLUEnable = *pt++;
-+		cfg->unit[i].bBootLunID = *pt++;
-+		/* dNumAllocUnits = size_in_kb/KB_per_block */
-+		cfg->unit[i].dNumAllocUnits = (u32)(*pt++ / KB_per_block);
-+		cfg->unit[i].bDataReliability = *pt++;
-+		cfg->unit[i].bLUWriteProtect = *pt++;
-+		cfg->unit[i].bMemoryType = *pt++;
-+		cfg->unit[i].bLogicalBlockSize = *pt++;
-+		cfg->unit[i].bProvisioningType = *pt++;
-+		cfg->unit[i].wContextCapabilities = *pt++;
-+	}
-+
-+	cfg->lun_to_grow = *pt++;
-+	commit = *pt++;
-+	cfg->num_luns = *pt;
-+	dev_dbg(hba->dev, "%s: lun_to_grow %u, commit %u num_luns %u\n",
-+		__func__, cfg->lun_to_grow, commit, cfg->num_luns);
-+	if (commit == 1) {
-+		ret = ufshcd_do_config_device(hba);
-+		if (!ret) {
-+			hba->provision_enabled = 1;
-+			dev_err(hba->dev,
-+			"%s: UFS Provisioning completed,num_luns %u, reboot now !\n",
-+			__func__, cfg->num_luns);
-+		}
-+	} else
-+		dev_err(hba->dev, "%s: Invalid commit %u\n", __func__, commit);
-+out:
-+	kfree(strbuf_copy);
-+	return count;
-+}
-+
- static ssize_t ufshcd_clkgate_delay_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
-@@ -6532,6 +6657,9 @@ static int ufshcd_do_config_device(struct ufs_hba *hba)
- 		pt = pt + 3; // Reserved fields set to 0
- 	}
- 
-+	for (i = 0; i < buff_len; i++)
-+		dev_dbg(hba->dev, " desc_buf[%d] 0x%x", i, desc_buf[i]);
-+
- 	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
- 		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
- 
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 982bfdf..1b8304f 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -651,6 +651,7 @@ struct ufs_hba {
- 	struct ufs_pwr_mode_info max_pwr_info;
- 
- 	struct ufs_clk_gating clk_gating;
-+	bool provision_enabled;
- 	/* Control to enable/disable host capabilities */
- 	u32 caps;
- 	/* Allow dynamic clk gating */
-@@ -867,6 +868,10 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
- 
- int ufshcd_hold(struct ufs_hba *hba, bool async);
- void ufshcd_release(struct ufs_hba *hba);
-+ssize_t ufshcd_desc_config_show(struct device *dev,
-+		struct device_attribute *attr, char *buf);
-+ssize_t ufshcd_desc_config_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t count);
- 
- int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
- 	int *desc_length);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Javier had some comments to 16, 18, and 20. The rest is ready to go. 
+Would you like me to resend the patches?
+
+Thank you!
