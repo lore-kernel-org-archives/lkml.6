@@ -1,99 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeFAOor (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 10:44:47 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34640 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752429AbeFAOoE (ORCPT
+        id S1752734AbeFAOoz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 10:44:55 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:40851 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752695AbeFAOov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 10:44:04 -0400
-X-Google-Smtp-Source: ADUXVKIQqg7Zvn08xEoMA3uM8T7fpdcID/ABFiPG5uEpG7Vd9Fz96xTU+wvcpmtsc14AbIgNMKc5UQ==
-From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To: axboe@fb.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        javier@cnexlabs.com, igor.j.konopko@intel.com,
-        marcin.dziegielewski@intel.com,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 08/10] lightnvm: pblk: only try to recover lines with written smeta
-Date: Fri,  1 Jun 2018 16:41:12 +0200
-Message-Id: <20180601144114.17490-9-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180601144114.17490-1-mb@lightnvm.io>
-References: <20180601144114.17490-1-mb@lightnvm.io>
+        Fri, 1 Jun 2018 10:44:51 -0400
+X-Google-Smtp-Source: ADUXVKLHlbnfVOzNGHk9/7U9q5hU4TpsqNWdjlwQ84NAyw1f2uyuIl7hCHEdfsAitky7y8b80C+p6A==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20180529181740.195362-1-evgreen@chromium.org> <MWHPR04MB11372C75BFC9416BAF5E81A19A630@MWHPR04MB1137.namprd04.prod.outlook.com>
+In-Reply-To: <MWHPR04MB11372C75BFC9416BAF5E81A19A630@MWHPR04MB1137.namprd04.prod.outlook.com>
+From: Evan Green <evgreen@chromium.org>
+Date: Fri, 1 Jun 2018 07:44:08 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4LoNiRtxgTA_ZPghZGEVOzu_GAwMgqhs-8NCYVgj_AVw@mail.gmail.com>
+Message-ID: <CAE=gft4LoNiRtxgTA_ZPghZGEVOzu_GAwMgqhs-8NCYVgj_AVw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Enable UFS provisioning via Linux
+To: Stanislav.Nijnikov@wdc.com
+Cc: Vinayak Holikatti <vinholikatti@gmail.com>, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>,
+        Alex.Lemberg@wdc.com, Avri.Altman@wdc.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Hi Stanislav. Thanks for taking a look. Responses below.
 
-When switching between different lun configurations, there is no
-guarantee that all lines that contain closed/open chunks have some
-valid data to recover.
+On Thu, May 31, 2018 at 3:04 AM Stanislav Nijnikov
+<Stanislav.Nijnikov@wdc.com> wrote:
+>
+> Hi Evan,
+> I have some generic notes:
+> - Why to create new sysfs entries for the configuration descriptor fields if they are just duplication of fields in the device and unit descriptors? And the sysfs representation of the device and unit descriptors is existing already.
 
-Check that the smeta chunk has been written to instead. Also
-skip bad lines (that does not have enough good chunks).
+Well, UFS describes them as different descriptors. I worry that if I
+add a bunch of clever logic to hide the config descriptor behind other
+descriptors, there might be trouble later if 1) there is a quirky
+device that doesn't reflect the values between descriptors quite the
+same way or at the same time, or 2) if a later UFS spec adds more
+configuration descriptor fields that don't exactly reflect into other
+non-config descriptors, the cleverness will look awkward.
 
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/lightnvm/pblk-recovery.c | 30 +++++++++++++++++++++---------
- 1 file changed, 21 insertions(+), 9 deletions(-)
+> - It would be nice to have some "packet" mode allowing to gather configuration changes and apply them at once, not one by one.
 
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 788dce87043e..598342833d0d 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -774,18 +774,30 @@ static void pblk_recov_wa_counters(struct pblk *pblk,
- }
- 
- static int pblk_line_was_written(struct pblk_line *line,
--			    struct pblk_line_meta *lm)
-+			    struct pblk *pblk)
- {
- 
--	int i;
--	int state_mask = NVM_CHK_ST_OFFLINE | NVM_CHK_ST_FREE;
-+	struct pblk_line_meta *lm = &pblk->lm;
-+	struct nvm_tgt_dev *dev = pblk->dev;
-+	struct nvm_geo *geo = &dev->geo;
-+	struct nvm_chk_meta *chunk;
-+	struct ppa_addr bppa;
-+	int smeta_blk;
- 
--	for (i = 0; i < lm->blk_per_line; i++) {
--		if (!(line->chks[i].state & state_mask))
--			return 1;
--	}
-+	if (line->state == PBLK_LINESTATE_BAD)
-+		return 0;
- 
--	return 0;
-+	smeta_blk = find_first_zero_bit(line->blk_bitmap, lm->blk_per_line);
-+	if (smeta_blk >= lm->blk_per_line)
-+		return 0;
-+
-+	bppa = pblk->luns[smeta_blk].bppa;
-+	chunk = &line->chks[pblk_ppa_to_pos(geo, bppa)];
-+
-+	if (chunk->state & NVM_CHK_ST_FREE)
-+		return 0;
-+
-+	return 1;
- }
- 
- struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
-@@ -824,7 +836,7 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 		line->lun_bitmap = ((void *)(smeta_buf)) +
- 						sizeof(struct line_smeta);
- 
--		if (!pblk_line_was_written(line, lm))
-+		if (!pblk_line_was_written(line, pblk))
- 			continue;
- 
- 		/* Lines that cannot be read are assumed as not written here */
--- 
-2.11.0
+That's definitely doable. Do you think it's needed? I suppose if there
+were a device that truly allowed you to do only a single write to the
+config descriptor, then the commit style would be needed. The two
+devices I've tested (Toshiba and Samsung) allow multiple writes to the
+config descriptor, which makes me lean towards not needing the
+batch-and-commit style, since if you get interrupted you can simply
+try again. I'm happy to do either, though.
+
+> - Why to put documentation update in the separate patches?
+Well, in case some piece of this turned out to be controversial, I
+wanted to allow for the option of taking these changes independently,
+without the concern of missing the documentation. I'm happy to squash
+all the documentation changes into one if that's preferred.
+
+-Evan
