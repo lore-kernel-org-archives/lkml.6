@@ -1,63 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751518AbeFBMfl (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 08:35:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751423AbeFBMfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 08:35:40 -0400
-Date: Sat, 2 Jun 2018 14:35:17 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1751552AbeFBMoZ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 08:44:25 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42412 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750831AbeFBMoU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 08:44:20 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E52C11A856A
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>
+Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Paul Turner <pjt@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc driver fixes for 4.17-rc8
-Message-ID: <20180602123517.GB15904@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Russell King <linux@arm.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Andrew Hunter <ahh@google.com>,
+        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 01/16] uapi headers: Provide types_32_64.h (v2)
+Date: Sat,  2 Jun 2018 08:43:53 -0400
+Message-Id: <20180602124408.8430-2-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
+References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 6da6c0db5316275015e8cc2959f12a17584aeb64:
+Provide helper macros for fields which represent pointers in
+kernel-userspace ABI. This facilitates handling of 32-bit
+user-space by 64-bit kernels by defining those fields as
+32-bit 0-padding and 32-bit integer on 32-bit architectures,
+which allows the kernel to treat those as 64-bit integers.
+The order of padding and 32-bit integer depends on the
+endianness.
 
-  Linux v4.17-rc3 (2018-04-29 14:17:42 -0700)
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Paul Turner <pjt@google.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Andrew Hunter <ahh@google.com>
+CC: Andy Lutomirski <luto@amacapital.net>
+CC: Andi Kleen <andi@firstfloor.org>
+CC: Dave Watson <davejwatson@fb.com>
+CC: Chris Lameter <cl@linux.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ben Maurer <bmaurer@fb.com>
+CC: Steven Rostedt <rostedt@goodmis.org>
+CC: Josh Triplett <josh@joshtriplett.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Russell King <linux@arm.linux.org.uk>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Michael Kerrisk <mtk.manpages@gmail.com>
+CC: Boqun Feng <boqun.feng@gmail.com>
+CC: linux-api@vger.kernel.org
 
-are available in the Git repository at:
+---
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/ tags/char-misc-4.17-rc8
+Changes since v1:
+- Public uapi headers use __u32 and __u64 rather than uint32_t and
+  uint64_t.
+---
+ include/uapi/linux/types_32_64.h | 50 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 include/uapi/linux/types_32_64.h
 
-for you to fetch changes up to 806e30873f0e74d9d41b0ef761bd4d3e55c7d510:
-
-  hwtracing: stm: fix build error on some arches (2018-05-26 08:49:24 +0200)
-
-----------------------------------------------------------------
-Char/Misc driver fixes for 4.17-rc8
-
-Here are 4 small bugfixes for some char/misc drivers.  Well, really 3
-fixes and one fix for one of those fixes due to problems found by 0-day.
-
-This resolves some reported issues with the hwtracing drivers, and a
-reported regression for the thunderbolt subsystem.  All of these have
-been in linux-next for a while now with no reported problems.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Alexander Shishkin (2):
-      stm class: Use vmalloc for the master map
-      intel_th: Use correct device when freeing buffers
-
-Greg Kroah-Hartman (1):
-      hwtracing: stm: fix build error on some arches
-
-Mika Westerberg (1):
-      thunderbolt: Handle NULL boot ACL entries properly
-
- drivers/hwtracing/intel_th/msu.c | 6 +++---
- drivers/hwtracing/stm/core.c     | 7 ++++---
- drivers/thunderbolt/icm.c        | 2 +-
- 3 files changed, 8 insertions(+), 7 deletions(-)
+diff --git a/include/uapi/linux/types_32_64.h b/include/uapi/linux/types_32_64.h
+new file mode 100644
+index 000000000000..0a87ace34a57
+--- /dev/null
++++ b/include/uapi/linux/types_32_64.h
+@@ -0,0 +1,50 @@
++/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_TYPES_32_64_H
++#define _UAPI_LINUX_TYPES_32_64_H
++
++/*
++ * linux/types_32_64.h
++ *
++ * Integer type declaration for pointers across 32-bit and 64-bit systems.
++ *
++ * Copyright (c) 2015-2018 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
++ */
++
++#ifdef __KERNEL__
++# include <linux/types.h>
++#else
++# include <stdint.h>
++#endif
++
++#include <asm/byteorder.h>
++
++#ifdef __BYTE_ORDER
++# if (__BYTE_ORDER == __BIG_ENDIAN)
++#  define LINUX_BYTE_ORDER_BIG_ENDIAN
++# else
++#  define LINUX_BYTE_ORDER_LITTLE_ENDIAN
++# endif
++#else
++# ifdef __BIG_ENDIAN
++#  define LINUX_BYTE_ORDER_BIG_ENDIAN
++# else
++#  define LINUX_BYTE_ORDER_LITTLE_ENDIAN
++# endif
++#endif
++
++#ifdef __LP64__
++# define LINUX_FIELD_u32_u64(field)			__u64 field
++# define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	field = (intptr_t)v
++#else
++# ifdef LINUX_BYTE_ORDER_BIG_ENDIAN
++#  define LINUX_FIELD_u32_u64(field)	__u32 field ## _padding, field
++#  define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	\
++	field ## _padding = 0, field = (intptr_t)v
++# else
++#  define LINUX_FIELD_u32_u64(field)	__u32 field, field ## _padding
++#  define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	\
++	field = (intptr_t)v, field ## _padding = 0
++# endif
++#endif
++
++#endif /* _UAPI_LINUX_TYPES_32_64_H */
+-- 
+2.11.0
