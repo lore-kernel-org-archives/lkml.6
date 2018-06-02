@@ -1,77 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751803AbeFBUjY (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 16:39:24 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:46766 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeFBUjW (ORCPT
+        id S1752016AbeFBVRz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 17:17:55 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:53420 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750886AbeFBVRy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 16:39:22 -0400
-X-Google-Smtp-Source: ADUXVKLohLAEn1tpV7AKjBIwJHO3VLxkplgrc5+7W8GX7izleOZ7OH1QrtVv6UEHPay0DzvHZwfBqEbmL+Kc/KV10WY=
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
-References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
- <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
- <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com>
- <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com> <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Sat, 2 Jun 2018 22:39:20 +0200
-X-Google-Sender-Auth: Kd6V6bZaVtIYEEdRtWLwBm8AmGo
-Message-ID: <CAK8P3a2h1WZ=Jg4MAHoyCt_YLNRCCBG-JRUfy2qZpQ6trRHesg@mail.gmail.com>
-Subject: Re: linux-next: build warnings after merge of the kbuild tree
-To: Kees Cook <keescook@chromium.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Sat, 2 Jun 2018 17:17:54 -0400
+Message-ID: <1527974271.3158.10.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 4.17-rc7
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Sat, 02 Jun 2018 14:17:51 -0700
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 6:01 AM, Kees Cook <keescook@chromium.org> wrote:
-> On Thu, May 31, 2018 at 6:56 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> 2018-05-31 12:53 GMT+09:00 Kees Cook <keescook@chromium.org>:
->>> On Wed, May 30, 2018 at 6:26 PM, Kees Cook <keescook@chromium.org> wrote:
->>>> On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
+Eve of merge window fix: The original code was so bogus as to be
+casting the wrong generic device to an rport and proceeding to take
+actions based on the bogus values it found.  Fortunately it seems the
+location that is dereferenced always exists, so the code hasn't oopsed
+yet, but it certainly annoys the memory checkers.
 
->>>>> This has been triggered by the following commit:
->>>>>
->>>>>
->>>>> commit 0e461945f3504e09b8ecf947b6398adce1287a28
->>>>> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>>> Date:   Mon May 28 18:22:07 2018 +0900
->>>>>
->>>>>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
->>>>>
->>>>>
->>>>>
->>>>> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
->>>>> for COMPILE_TEST, which is now enabled.
->
-> For the moment, can you add "depends on !COMPILE_TEST" to
-> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL in your tree and I'll continue
-> to figure out what's happening?
->
+The patch is available here:
 
-I ran into the same thing indepently and bisected it (which led me to
-arrive at this thread).
-One additional bit of information I have is that this happens with all
-versions of
-gcc-7 for me, but not gcc-6.3 or older.
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-Another finding was the particular instance I noticed:
+The short changelog is:
 
-fs/ext4/inode.c: In function 'ext4_inode_csum':
-fs/ext4/inode.c:83:1: warning: the frame size of 1688 bytes is larger
-than 500 bytes [-Wframe-larger-than=]
+Bart Van Assche (1):
+      scsi: scsi_transport_srp: Fix shost to rport translation
 
-comes from inlining the same function multiple times; ext4_inode_csum()
-repeatedly calls ext4_chksum(), which has a struct on the stack. Apparently
-this normally only takes up stack space only once, but when initializing it
-to zero, each instance takes an additional two CRYPTO_MINALIGN bytes
-of stack space (the size of the locally defined structure).
+And the diffstat:
 
+ drivers/scsi/scsi_transport_srp.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-       Arnd
+With full diff below.
+
+James
+
+---
+
+diff --git a/drivers/scsi/scsi_transport_srp.c b/drivers/scsi/scsi_transport_srp.c
+index 36f6190931bc..456ce9f19569 100644
+--- a/drivers/scsi/scsi_transport_srp.c
++++ b/drivers/scsi/scsi_transport_srp.c
+@@ -51,6 +51,8 @@ struct srp_internal {
+ 	struct transport_container rport_attr_cont;
+ };
+ 
++static int scsi_is_srp_rport(const struct device *dev);
++
+ #define to_srp_internal(tmpl) container_of(tmpl, struct srp_internal, t)
+ 
+ #define	dev_to_rport(d)	container_of(d, struct srp_rport, dev)
+@@ -60,9 +62,24 @@ static inline struct Scsi_Host *rport_to_shost(struct srp_rport *r)
+ 	return dev_to_shost(r->dev.parent);
+ }
+ 
++static int find_child_rport(struct device *dev, void *data)
++{
++	struct device **child = data;
++
++	if (scsi_is_srp_rport(dev)) {
++		WARN_ON_ONCE(*child);
++		*child = dev;
++	}
++	return 0;
++}
++
+ static inline struct srp_rport *shost_to_rport(struct Scsi_Host *shost)
+ {
+-	return transport_class_to_srp_rport(&shost->shost_gendev);
++	struct device *child = NULL;
++
++	WARN_ON_ONCE(device_for_each_child(&shost->shost_gendev, &child,
++					   find_child_rport) < 0);
++	return child ? dev_to_rport(child) : NULL;
+ }
+ 
+ /**
+@@ -600,7 +617,8 @@ enum blk_eh_timer_return srp_timed_out(struct scsi_cmnd *scmd)
+ 	struct srp_rport *rport = shost_to_rport(shost);
+ 
+ 	pr_debug("timeout for sdev %s\n", dev_name(&sdev->sdev_gendev));
+-	return rport->fast_io_fail_tmo < 0 && rport->dev_loss_tmo < 0 &&
++	return rport && rport->fast_io_fail_tmo < 0 &&
++		rport->dev_loss_tmo < 0 &&
+ 		i->f->reset_timer_if_blocked && scsi_device_blocked(sdev) ?
+ 		BLK_EH_RESET_TIMER : BLK_EH_NOT_HANDLED;
+ }
