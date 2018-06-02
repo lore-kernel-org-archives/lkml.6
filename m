@@ -1,53 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751507AbeFBUK3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 16:10:29 -0400
-Received: from mail-io0-f174.google.com ([209.85.223.174]:46999 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750831AbeFBUK2 (ORCPT
+        id S1751852AbeFBUL0 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 16:11:26 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:42860 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751724AbeFBULY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 16:10:28 -0400
-X-Google-Smtp-Source: ADUXVKLwXjM0oXPWX1GG8Vdhbt/7kqtp57AAmhxjIITsSf0/XwYPsNRlMcwdKk1aPO7Mj+Ppu0dadw==
-Subject: Re: dm-crypt: fix warning in shutdown path
-To: Mike Snitzer <snitzer@redhat.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>, dm-devel@redhat.com,
+        Sat, 2 Jun 2018 16:11:24 -0400
+X-Google-Smtp-Source: ADUXVKLblYLXPeYnhV1zEQ6skv0XVb+78WBbOI/auPVdtdqLleOy5I428ZBmfcGDQjurdURV3jzNRA==
+From: tomkpz@gmail.com
+X-Google-Original-From: tomKPZ@gmail.com
+To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20180602174504.1847-1-kent.overstreet@gmail.com>
- <974665e7-fa4a-230b-99d8-e773489cc6bc@kernel.dk>
- <20180602200723.GA23980@redhat.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <eeea0f12-45d4-d90c-e07e-3f02cdc9994f@kernel.dk>
-Date: Sat, 2 Jun 2018 14:10:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+Cc: tomKPZ <tomKPZ@gmail.com>
+Subject: [PATCH] exec: binfmt_misc: update reference to documentation
+Date: Sat,  2 Jun 2018 13:11:15 -0700
+Message-Id: <20180602201115.3426-1-tomKPZ@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20180602200723.GA23980@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/2/18 2:07 PM, Mike Snitzer wrote:
-> On Sat, Jun 02 2018 at  4:03pm -0400,
-> Jens Axboe <axboe@kernel.dk> wrote:
-> 
->> On 6/2/18 11:45 AM, Kent Overstreet wrote:
->>> The counter for the number of allocated pages includes pages in the
->>> mempool's reserve, so checking that the number of allocated pages is 0
->>> needs to happen after we exit the mempool.
->>
->> Looks good, but needs a fixes line. I'll add one.
-> 
-> Also needs the subject and header updated to reflect that it fixes the
-> crash (Krzysztof please verify):
-> 
-> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Mike Snitzer <snitzer@redhat.com>
+From: tomKPZ <tomKPZ@gmail.com>
 
-Indeed, I have added that. Thanks Mike.
+Documentation/binfmt_misc.txt was moved to
+Documentation/admin-guide/binfmt-misc.rst in 9d85025b.  This change
+updates a reference to the file.
+---
+ fs/binfmt_misc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index a41b48f82a70..5ad89b838c79 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -4,7 +4,8 @@
+  * Copyright (C) 1997 Richard Günther
+  *
+  * binfmt_misc detects binaries via a magic or filename extension and invokes
+- * a specified wrapper. See Documentation/binfmt_misc.txt for more details.
++ * a specified wrapper. See Documentation/admin-guide/binfmt-misc.rst for more
++ * details.
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 -- 
-Jens Axboe
+2.17.1
