@@ -1,50 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751991AbeFBStk (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 14:49:40 -0400
-Received: from mga03.intel.com ([134.134.136.65]:17541 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751342AbeFBSti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 14:49:38 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,470,1520924400";
-   d="scan'208";a="56035710"
-Date: Sat, 2 Jun 2018 21:49:33 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Mario.Limonciello@dell.com,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v1 2/2] PCI: shpchp: Fix AMD POGO identification
-Message-ID: <20180602184933.GU15419@lahna.fi.intel.com>
-References: <152791788214.257724.13044360353832574147.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152791813206.257724.14863139556803168986.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        id S1751937AbeFBTCa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 15:02:30 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35246 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751342AbeFBTC3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 15:02:29 -0400
+Date: Sat, 2 Jun 2018 21:02:27 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+Cc: rjw@rjwysocki.net, chenhong3@huawei.com, ravisadineni@google.com,
+        dtor@google.com, len.brown@intel.com, gregkh@linuxfoundation.org,
+        tbroch@google.com, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, rajatja@google.com, bleung@google.com
+Subject: Re: [PATCH] power: Print wakeup_count instead of event_count in the
+ sysfs attribute.
+Message-ID: <20180602190227.GA19946@amd>
+References: <20180602023215.176521-1-ravisadineni@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
 Content-Disposition: inline
-In-Reply-To: <152791813206.257724.14863139556803168986.stgit@bhelgaas-glaptop.roam.corp.google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180602023215.176521-1-ravisadineni@chromium.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 02, 2018 at 12:42:12AM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> The fix for an AMD POGO erratum related to SHPC incorrectly identified the
-> device.  The workaround should be applied only for AMD POGO devices, but it
-> was instead applied to:
-> 
->   - all AMD bridges, and
->   - all devices from any vendor with device ID 0x7458
 
-Good catch.
+--WIyZ46R2i8wDzkSu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+On Fri 2018-06-01 19:32:15, Ravi Chandra Sadineni wrote:
+> Currently we show event_count instead of wakeup_count as part of per
+> device wakeup_count sysfs attribute. Change it to wakeup_count to make
+> it more meaningful.
+>=20
+> Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--WIyZ46R2i8wDzkSu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsS6cMACgkQMOfwapXb+vIP7wCeL74QOuUejgN08PA+1PEuh8QP
+wVcAnAjb093p71AEH+d0wnEkpVLSAxzY
+=X4MI
+-----END PGP SIGNATURE-----
+
+--WIyZ46R2i8wDzkSu--
