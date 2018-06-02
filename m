@@ -1,109 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751635AbeFBUU2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 16:20:28 -0400
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:43843 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750831AbeFBUU1 (ORCPT
+        id S1751814AbeFBUdn (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 16:33:43 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:45437 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750831AbeFBUdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 16:20:27 -0400
-X-Google-Smtp-Source: ADUXVKJ7C/igzznqZrOb2J6c7ngSwtrdXLt2rHpdYkF4xnXERhPtwxWDCmMIgJ1OLCSOdBwbDTcyp3EYYIJ01cOf3/0=
+        Sat, 2 Jun 2018 16:33:41 -0400
+X-Google-Smtp-Source: ADUXVKJs75kCyhO+yrLOyf5EAVz3IZqMfkQ2H0mc1cPeUXaTeB7spTegKg/G47aCf1uJNzWZhC2fvA==
+Subject: Re: [PATCH net v2] ipv6: omit traffic class when calculating flow
+ hash
+To: Michal Kubecek <mkubecek@suse.cz>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Tom Herbert <tom@herbertland.com>, Ido Schimmel <idosch@idosch.org>
+References: <20180602080528.54B27A0C48@unicorn.suse.cz>
+From: David Ahern <dsahern@gmail.com>
+Message-ID: <0d6c6732-ee1b-3533-fc06-f97c9a87eb1a@gmail.com>
+Date: Sat, 2 Jun 2018 14:33:38 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Sun, 3 Jun 2018 06:20:24 +1000
-Message-ID: <CAPM=9tzfkqhc+OnvTM=mgREsaZAM98NrG9L1b1gPZzftDNLZUw@mail.gmail.com>
-Subject: [git pull] drm fixes for 4.17-rc8/final
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180602080528.54B27A0C48@unicorn.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 6/2/18 1:40 AM, Michal Kubecek wrote:
+> Some of the code paths calculating flow hash for IPv6 use flowlabel member
+> of struct flowi6 which, despite its name, encodes both flow label and
+> traffic class. If traffic class changes within a TCP connection (as e.g.
+> ssh does), ECMP route can switch between path. It's also incosistent with
+> other code paths where ip6_flowlabel() (returning only flow label) is used
+> to feed the key.
+> 
+> Use only flow label everywhere, including one place where hash key is set
+> using ip6_flowinfo().
+> 
+> Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
+> Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
+> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+> ---
+> v2: introduce and use an inline helper as suggested by David Ahern
+> 
+>  include/net/ipv6.h        | 5 +++++
+>  net/core/flow_dissector.c | 2 +-
+>  net/ipv6/route.c          | 4 ++--
+>  3 files changed, 8 insertions(+), 3 deletions(-)
+> 
 
-A few final fixes:
-
-i915:
-  - Fix for potential Spectre vector in the new query uAPI
-  - Fix NULL pointer deref (FDO #106559)
-  - DMI fix to hide LVDS for Radiant P845 (FDO #105468)
-amdgpu:
-  - suspend/resume DC regression fix
-  - underscan flicker fix on fiji
-  - gamma setting fix after dpms
-omap:
-  - fix oops regression
-core:
-  - fix PSR timing
-dw-hdmi:
-  - fix oops regression.
-
-Thanks,
-Dave.
-
-The following changes since commit b04e217704b7f879c6b91222b066983a44a7a09f:
-
-  Linux 4.17-rc7 (2018-05-27 13:01:47 -0700)
-
-are available in the Git repository at:
-
-  git://people.freedesktop.org/~airlied/linux tags/drm-fixes-for-v4.17-rc8
-
-for you to fetch changes up to 012cfaced00b7a9498227504c4d37a1c4619403d:
-
-  Merge branch 'drm-fixes-4.17' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes (2018-06-03
-06:13:57 +1000)
-
-----------------------------------------------------------------
-amdgpu, i915, omap, dw-hdmi fixes
-
-----------------------------------------------------------------
-Chris Wilson (3):
-      drm/i915/lvds: Move acpi lid notification registration to
-registration phase
-      drm/i915/query: Protect tainted function pointer lookup
-      drm/i915/query: nospec expects no more than an unsigned long
-
-Dave Airlie (5):
-      Merge tag 'drm-intel-fixes-2018-05-29' of
-git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
-      Merge tag 'drm-misc-fixes-2018-05-29' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-      Merge branch 'drm-fixes-4.17' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes
-      Merge tag 'drm-misc-fixes-2018-05-30' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-      Merge branch 'drm-fixes-4.17' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes
-
-David Francis (1):
-      drm/amd/display: Make atomic-check validate underscan changes
-
-Dhinakaran Pandiyan (1):
-      drm/psr: Fix missed entry in PSR setup time table.
-
-Leo (Sunpeng) Li (2):
-      drm/amd/display: Fix BUG_ON during CRTC atomic check update
-      drm/amd/display: Update color props when modeset is required
-
-Neil Armstrong (1):
-      drm/bridge/synopsys: dw-hdmi: fix dw_hdmi_setup_rx_sense
-
-Ondrej Zary (1):
-      drm/i915: Disable LVDS on Radiant P845
-
-Tomi Valkeinen (1):
-      drm/omap: fix NULL deref crash with SDI displays
-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 44 ++++++++++++-------
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c         | 15 ++-----
- drivers/gpu/drm/drm_dp_helper.c                   |  1 +
- drivers/gpu/drm/i915/i915_query.c                 | 15 +++++--
- drivers/gpu/drm/i915/intel_lvds.c                 | 51 ++++++++++++++++++-----
- drivers/gpu/drm/meson/meson_dw_hdmi.c             |  2 +-
- drivers/gpu/drm/omapdrm/dss/sdi.c                 |  5 ++-
- include/drm/bridge/dw_hdmi.h                      |  2 +-
- 8 files changed, 91 insertions(+), 44 deletions(-)
+Acked-by: David Ahern <dsahern@gmail.com>
