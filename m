@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751748AbeFBJEt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 05:04:49 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34069 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeFBJEm (ORCPT
+        id S1751840AbeFBJFB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 05:05:01 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46407 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeFBJEq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 05:04:42 -0400
-X-Google-Smtp-Source: ADUXVKIh+u3n0VZUdDQ10nzJRnnV7d7ccSgPJAoP+KvcyTUwez0yeFCrUIEHjTwPWolu2j3x2G2r8w==
+        Sat, 2 Jun 2018 05:04:46 -0400
+X-Google-Smtp-Source: ADUXVKJTKdE5GrPTPdcqe197PwWCqma/2ypJBkjldfn98SdrLwTbSqsNgijKSZig+dhTI9ywOk0Ghw==
 From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
 Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Subject: [PATCH v2 2/3] staging: rtlwifi: Fix "writen"->"written"
-Date: Sat,  2 Jun 2018 11:04:13 +0200
-Message-Id: <20180602090414.5208-2-sabin.rapan@gmail.com>
+Subject: [PATCH v2 3/3] staging: rtlwifi: Fix "Alwyas"->"Always"
+Date: Sat,  2 Jun 2018 11:04:14 +0200
+Message-Id: <20180602090414.5208-3-sabin.rapan@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180602090414.5208-1-sabin.rapan@gmail.com>
 References: <20180601060740.GA25648@kroah.com>
@@ -31,21 +31,21 @@ Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
 Changes in v2:
  - Added proper to and cc fields to the patch series.
 
- drivers/staging/rtlwifi/rtl8822be/fw.c | 2 +-
+ drivers/staging/rtlwifi/rtl8822be/sw.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtlwifi/rtl8822be/fw.c b/drivers/staging/rtlwifi/rtl8822be/fw.c
-index efec7281511c..a40396614814 100644
---- a/drivers/staging/rtlwifi/rtl8822be/fw.c
-+++ b/drivers/staging/rtlwifi/rtl8822be/fw.c
-@@ -82,7 +82,7 @@ static void _rtl8822be_fill_h2c_command(struct ieee80211_hw *hw, u8 element_id,
- 	}
- 
- 	while (!bwrite_success) {
--		/* 2. Find the last BOX number which has been writen. */
-+		/* 2. Find the last BOX number which has been written. */
- 		boxnum = rtlhal->last_hmeboxnum;
- 		switch (boxnum) {
- 		case 0:
+diff --git a/drivers/staging/rtlwifi/rtl8822be/sw.c b/drivers/staging/rtlwifi/rtl8822be/sw.c
+index 7825e85ed091..a2ab19fa94f2 100644
+--- a/drivers/staging/rtlwifi/rtl8822be/sw.c
++++ b/drivers/staging/rtlwifi/rtl8822be/sw.c
+@@ -43,7 +43,7 @@ static void rtl8822be_init_aspm_vars(struct ieee80211_hw *hw)
+ 	 * 0 - Disable ASPM,
+ 	 * 1 - Enable ASPM without Clock Req,
+ 	 * 2 - Enable ASPM with Clock Req,
+-	 * 3 - Alwyas Enable ASPM with Clock Req,
++	 * 3 - Always Enable ASPM with Clock Req,
+ 	 * 4 - Always Enable ASPM without Clock Req.
+ 	 * set default to RTL8822BE:3 RTL8822B:2
+ 	 *
 -- 
 2.17.0
