@@ -1,51 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751840AbeFBJFB (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 05:05:01 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46407 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751099AbeFBJEq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 05:04:46 -0400
-X-Google-Smtp-Source: ADUXVKJTKdE5GrPTPdcqe197PwWCqma/2ypJBkjldfn98SdrLwTbSqsNgijKSZig+dhTI9ywOk0Ghw==
-From: Sabin Mihai Rapan <sabin.rapan@gmail.com>
-To: gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Sabin Mihai Rapan <sabin.rapan@gmail.com>
-Subject: [PATCH v2 3/3] staging: rtlwifi: Fix "Alwyas"->"Always"
-Date: Sat,  2 Jun 2018 11:04:14 +0200
-Message-Id: <20180602090414.5208-3-sabin.rapan@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180602090414.5208-1-sabin.rapan@gmail.com>
-References: <20180601060740.GA25648@kroah.com>
- <20180602090414.5208-1-sabin.rapan@gmail.com>
+        id S1751400AbeFBJcF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 05:32:05 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:63568 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750869AbeFBJcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 05:32:04 -0400
+Date: Sat, 2 Jun 2018 11:31:58 +0200
+From: Christian Brauner <christian@brauner.io>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        gregkh@linuxfoundation.org, mingo@kernel.org,
+        james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH v2 16/17] signal: make security_task_kill() return bool
+Message-ID: <20180602093158.GA6095@mailbox.org>
+References: <20180601132239.4421-1-christian@brauner.io>
+ <20180601132239.4421-17-christian@brauner.io>
+ <20180601162625.GE1058@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180601162625.GE1058@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Trivial fix to spelling mistake in comment text.
+On Fri, Jun 01, 2018 at 06:26:25PM +0200, Oleg Nesterov wrote:
+> On 06/01, Christian Brauner wrote:
+> >
+> > security_task_kill() already behaves like a boolean function. Let's
+> > actually declare it as such too.
+> 
+> The subject/changelog is wrong, this patch changes sigkill_pending()
 
-Signed-off-by: Sabin Mihai Rapan <sabin.rapan@gmail.com>
----
-Changes in v2:
- - Added proper to and cc fields to the patch series.
+Ah yes, s/security_task_kill()/sigkill_pending()
 
- drivers/staging/rtlwifi/rtl8822be/sw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks!
+Christian
 
-diff --git a/drivers/staging/rtlwifi/rtl8822be/sw.c b/drivers/staging/rtlwifi/rtl8822be/sw.c
-index 7825e85ed091..a2ab19fa94f2 100644
---- a/drivers/staging/rtlwifi/rtl8822be/sw.c
-+++ b/drivers/staging/rtlwifi/rtl8822be/sw.c
-@@ -43,7 +43,7 @@ static void rtl8822be_init_aspm_vars(struct ieee80211_hw *hw)
- 	 * 0 - Disable ASPM,
- 	 * 1 - Enable ASPM without Clock Req,
- 	 * 2 - Enable ASPM with Clock Req,
--	 * 3 - Alwyas Enable ASPM with Clock Req,
-+	 * 3 - Always Enable ASPM with Clock Req,
- 	 * 4 - Always Enable ASPM without Clock Req.
- 	 * set default to RTL8822BE:3 RTL8822B:2
- 	 *
--- 
-2.17.0
+> 
+> > Signed-off-by: Christian Brauner <christian@brauner.io>
+> > ---
+> > v1->v2:
+> > * unchanged
+> > v0->v1:
+> > * patch added
+> > ---
+> >  kernel/signal.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/kernel/signal.c b/kernel/signal.c
+> > index 515fa59a0e9c..d5f9472a0935 100644
+> > --- a/kernel/signal.c
+> > +++ b/kernel/signal.c
+> > @@ -1922,10 +1922,10 @@ static inline bool may_ptrace_stop(void)
+> >   * Return non-zero if there is a SIGKILL that should be waking us up.
+> >   * Called with the siglock held.
+> >   */
+> > -static int sigkill_pending(struct task_struct *tsk)
+> > +static bool sigkill_pending(struct task_struct *tsk)
+> >  {
+> > -	return	sigismember(&tsk->pending.signal, SIGKILL) ||
+> > -		sigismember(&tsk->signal->shared_pending.signal, SIGKILL);
+> > +	return sigismember(&tsk->pending.signal, SIGKILL) ||
+> > +	       sigismember(&tsk->signal->shared_pending.signal, SIGKILL);
+> >  }
+> >  
+> >  /*
+> > -- 
+> > 2.17.0
+> > 
+> 
