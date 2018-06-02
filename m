@@ -1,120 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751499AbeFBBdd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 21:33:33 -0400
-Received: from ozlabs.org ([203.11.71.1]:40877 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750991AbeFBBdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 21:33:31 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Sat, 2 Jun 2018 11:33:12 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Jiang <dave.jiang@intel.com>
-Subject: Re: linux-next: manual merge of the nvdimm tree with the xfs tree
-Message-ID: <20180602113312.55667641@canb.auug.org.au>
-In-Reply-To: <20180602005948.GH7825@magnolia>
-References: <20180601185846.1c5b7d0a@canb.auug.org.au>
-        <20180602005948.GH7825@magnolia>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sr=3AYeLDjRXYPvJh5U_ts0"; protocol="application/pgp-signature"
+        id S1751567AbeFBBe0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 21:34:26 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57070 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbeFBBeU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 21:34:20 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 373236044B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+From: David Collins <collinsd@codeaurora.org>
+To: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: David Collins <collinsd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rnayak@codeaurora.org, sboyd@kernel.org,
+        dianders@chromium.org
+Subject: [PATCH v5 0/2] regulator: add QCOM RPMh regulator driver
+Date: Fri,  1 Jun 2018 18:34:04 -0700
+Message-Id: <cover.1527901471.git.collinsd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/sr=3AYeLDjRXYPvJh5U_ts0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch series adds a driver and device tree binding documentation for
+PMIC regulator control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc. SoCs such as SDM845.  RPMh is a hardware block
+which contains several accelerators which are used to manage various
+hardware resources that are shared between the processors of the SoC.  The
+final hardware state of a regulator is determined within RPMh by performing
+max aggregation of the requests made by all of the processors.
 
-Hi Darrick,
+The RPMh regulator driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.  It also depends upon
+three recent regulator changes: [3], [4], and [5].
 
-On Fri, 1 Jun 2018 17:59:48 -0700 "Darrick J. Wong" <darrick.wong@oracle.co=
-m> wrote:
->
-> > + 	if (!dax_enabled) {
-> >  -		pr_debug("VFS (%s): error: dax support not enabled\n",
-> >  -				sb->s_id);
-> >  +		pr_debug("%s: error: dax support not enabled\n",
-> >  +				bdevname(bdev, buf));
-> > - 		return false;
-> > + 		return -EOPNOTSUPP; =20
->=20
-> Hang on a sec, the changes in the xfs tree make this function return a
-> boolean (true for dax-is-supported, false for dax-not-supported), but
-> this change partially reverts the boolean return values.
+Changes since v4 [6]:
+ - Removed support for DT properties qcom,regulator-drms-modes and
+   qcom,drms-mode-max-microamps
+ - Specified fixed DRMS high power mode minimum limits for LDO type
+   regulators
+ - Removed DRMS support for SMPS and BOB type regulators
+ - Simplified voltage caching logic
 
-OK, weird, that is what I though I had done.  Thanks for pointing it
-out (I guess it was getting late :-().
+Changes since v3 [7]:
+ - Removed support for DT properties qcom,regulator-initial-microvolt
+   and qcom,headroom-microvolt
+ - Renamed DT property qcom,allowed-drms-modes to be
+   qcom,regulator-drms-modes
+ - Updated DT binding documentation to mention which common regulator
+   bindings can be used for qcom-rpmh-regulator devices
+ - Added voltage caching so that voltage requests are only sent to RPMh
+   after the regulator has been enabled at least once
+ - Changed 'voltage_selector' default value to be -ENOTRECOVERABLE to
+   interact with [5]
+ - Initialized 'enabled' to -EINVAL so that unused regulators are
+   disabled by regulator_late_cleanup()
+ - Removed rpmh_regulator_load_default_parameters() as it is no longer
+   needed
+ - Updated the mode usage description in qcom,rpmh-regulator.h
 
-> >   	}
-> > -=20
-> > - 	return true;
-> > + 	return 0; =20
->=20
-> The merge should retain the 'return false' above and the 'return true'
-> here... or possibly just return dax_enabled:
->=20
-> if (!dax_enabled) {
-> 	pr_debug(...);
-> 	pr_debug(...);
-> }
->=20
-> return dax_enabled;
+Changes since v2 [8]:
+ - Replaced '_' with '-' in device tree supply property names
+ - Renamed qcom_rpmh-regulator.c to be qcom-rpmh-regulator.c
+ - Updated various DT property names to use "microvolt" and "microamp"
+ - Moved allowed modes constraint specification out of the driver [4]
+ - Replaced rpmh_client with device pointer to match new RPMh API [1]
+ - Corrected drms mode threshold checking
+ - Initialized voltage_selector to -EINVAL when not specified in DT
+ - Added constants for PMIC regulator hardware modes
+ - Corrected type sign of mode mapping tables
+ - Made variable names for mode arrays plural
+ - Simplified Kconfig depends on
+ - Removed unnecessary constants and struct fields
+ - Added some descriptive comments
 
-OK, I have fixed up my merge resolution.  The end of that function will
-now look like this:
+Changes since v1 [9]:
+ - Addressed review feedback from Doug, Mark, and Stephen
+ - Replaced set_voltage()/get_voltage() callbacks with set_voltage_sel()/
+   get_voltage_sel()
+ - Added set_bypass()/get_bypass() callbacks for BOB pass-through mode
+   control
+ - Removed top-level PMIC data structures
+ - Removed initialization variables from structs and passed them as
+   function parameters
+ - Removed various comments and error messages
+ - Simplified mode handling
+ - Refactored per-PMIC rpmh-regulator data specification
+ - Simplified probe function
+ - Moved header into DT patch
+ - Removed redundant property listings from DT binding documentation
 
-	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED) && pfn_t_special(pfn)) {
-		/*
-		 * An arch that has enabled the pmem api should also
-		 * have its drivers support pfn_t_devmap()
-		 *
-		 * This is a developer warning and should not trigger in
-		 * production. dax_flush() will crash since it depends
-		 * on being able to do (page_address(pfn_to_page())).
-		 */
-		WARN_ON(IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API));
-		dax_enabled =3D true;
-	} else if (pfn_t_devmap(pfn)) {
-		struct dev_pagemap *pgmap;
+[1]: https://lkml.org/lkml/2018/5/9/729
+[2]: https://lkml.org/lkml/2018/4/10/714
+[3]: https://lkml.org/lkml/2018/4/18/556
+[4]: https://lkml.org/lkml/2018/5/11/696
+[5]: https://lkml.org/lkml/2018/5/15/1005
+[6]: https://lkml.org/lkml/2018/5/22/1168
+[7]: https://lkml.org/lkml/2018/5/11/701
+[8]: https://lkml.org/lkml/2018/4/13/687
+[9]: https://lkml.org/lkml/2018/3/16/1431
 
-		pgmap =3D get_dev_pagemap(pfn_t_to_pfn(pfn), NULL);
-		if (pgmap && pgmap->type =3D=3D MEMORY_DEVICE_FS_DAX)
-			dax_enabled =3D true;
-		put_dev_pagemap(pgmap);
-	}
+David Collins (2):
+  regulator: dt-bindings: add QCOM RPMh regulator bindings
+  regulator: add QCOM RPMh regulator driver
 
-	if (!dax_enabled)
-		pr_debug("%s: error: dax support not enabled\n",
-				bdevname(bdev, buf));
+ .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/qcom-rpmh-regulator.c            | 770 +++++++++++++++++++++
+ .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +
+ 5 files changed, 976 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+ create mode 100644 drivers/regulator/qcom-rpmh-regulator.c
+ create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
 
-	return dax_enabled;
-}
-EXPORT_SYMBOL_GPL(__bdev_dax_supported);
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/sr=3AYeLDjRXYPvJh5U_ts0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsR89gACgkQAVBC80lX
-0GyA2Qf/ZX3JXduaYkrCSj80K7ImW47ZFBitmDJVce5TMwTDCdYvkJvWRccKKYn/
-/UMxxAD6M2OhvrX/D1Z/x603r4gQo3vDED2GHYZodVDWnCeyy25Wy4BuZotYumop
-xWpN/QLBu4C+uy51WGaWOUDWQvPk48MisHjE9B2L5tVdNqmxwehen//RT3SH/ekh
-RTh08MGr2wbkhBHJ2+xUtLKfIZKXfdZpaxd9SHCZdd3VlB8OxXl7dDrAoI9RI0Ei
-LXj4u5f3fD0m6g6ouJjpFtfMliVOmUuLBlH5fflrzOE2x3ARKafbVfa/LpwGkXhU
-wYjTedmU9zxLsGPC5SnFhljoMTFRzw==
-=8N8b
------END PGP SIGNATURE-----
-
---Sig_/sr=3AYeLDjRXYPvJh5U_ts0--
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
