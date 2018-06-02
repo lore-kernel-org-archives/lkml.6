@@ -1,108 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751495AbeFBUOz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 16:14:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53990 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750740AbeFBUOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 16:14:54 -0400
-X-Google-Smtp-Source: ADUXVKJTXC1Sik6rM6EFloN1fFNaUTtbgyCkm0EwXVD1Y9zidjNQmIKwzR18CnZ67HilDcFsmu3o/AVttwf75Wxd02c=
+        id S1751635AbeFBUU2 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 16:20:28 -0400
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:43843 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750831AbeFBUU1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 16:20:27 -0400
+X-Google-Smtp-Source: ADUXVKJ7C/igzznqZrOb2J6c7ngSwtrdXLt2rHpdYkF4xnXERhPtwxWDCmMIgJ1OLCSOdBwbDTcyp3EYYIJ01cOf3/0=
 MIME-Version: 1.0
-References: <20180601082811.4c0d33ba@imladris.surriel.com> <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
- <1527877328.7898.80.camel@surriel.com> <1527878882.4448.11.camel@gmx.de>
- <1527882207.7898.86.camel@surriel.com> <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
- <1527885324.7898.88.camel@surriel.com> <CALCETrWMouz7VzYgwC=Ys3-C2O7ZVCn4FNwesH1np4c9iG1g_A@mail.gmail.com>
- <20180601181327.367f0fe3@imladris.surriel.com> <CALCETrXTLqcro4uu5f77EmeaDvNqGZNLpsk-w_BApRNmzvcz=Q@mail.gmail.com>
- <1527915842.7898.93.camel@surriel.com>
-In-Reply-To: <1527915842.7898.93.camel@surriel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Sat, 2 Jun 2018 13:14:40 -0700
-X-Gmail-Original-Message-ID: <CALCETrW5m3Y3CGnRZwDTMT9g-1an_LO6Fp_6FWOokydhN9BDLQ@mail.gmail.com>
-Message-ID: <CALCETrW5m3Y3CGnRZwDTMT9g-1an_LO6Fp_6FWOokydhN9BDLQ@mail.gmail.com>
-Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
-To: riel@surriel.com
-Cc: Andrew Lutomirski <luto@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        LKML <linux-kernel@vger.kernel.org>, songliubraving@fb.com,
-        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
+From: Dave Airlie <airlied@gmail.com>
+Date: Sun, 3 Jun 2018 06:20:24 +1000
+Message-ID: <CAPM=9tzfkqhc+OnvTM=mgREsaZAM98NrG9L1b1gPZzftDNLZUw@mail.gmail.com>
+Subject: [git pull] drm fixes for 4.17-rc8/final
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 10:04 PM Rik van Riel <riel@surriel.com> wrote:
->
-> On Fri, 2018-06-01 at 20:35 -0700, Andy Lutomirski wrote:
-> > On Fri, Jun 1, 2018 at 3:13 PM Rik van Riel <riel@surriel.com> wrote:
-> > >
-> > > On Fri, 1 Jun 2018 14:21:58 -0700
-> > > Andy Lutomirski <luto@kernel.org> wrote:
-> > >
-> > > > Hmm.  I wonder if there's a more clever data structure than a
-> > > > bitmap
-> > > > that we could be using here.  Each CPU only ever needs to be in
-> > > > one
-> > > > mm's cpumask, and each cpu only ever changes its own state in the
-> > > > bitmask.  And writes are much less common than reads for most
-> > > > workloads.
-> > >
-> > > It would be easy enough to add an mm_struct pointer to the
-> > > per-cpu tlbstate struct, and iterate over those.
-> > >
-> > > However, that would be an orthogonal change to optimizing
-> > > lazy TLB mode.
-> > >
-> > > Does the (untested) patch below make sense as a potential
-> > > improvement to the lazy TLB heuristic?
-> > >
-> > > ---8<---
-> > > Subject: x86,tlb: workload dependent per CPU lazy TLB switch
-> > >
-> > > Lazy TLB mode is a tradeoff between flushing the TLB and touching
-> > > the mm_cpumask(&init_mm) at context switch time, versus potentially
-> > > incurring a remote TLB flush IPI while in lazy TLB mode.
-> > >
-> > > Whether this pays off is likely to be workload dependent more than
-> > > anything else. However, the current heuristic keys off hardware
-> > > type.
-> > >
-> > > This patch changes the lazy TLB mode heuristic to a dynamic, per-
-> > > CPU
-> > > decision, dependent on whether we recently received a remote TLB
-> > > shootdown while in lazy TLB mode.
-> > >
-> > > This is a very simple heuristic. When a CPU receives a remote TLB
-> > > shootdown IPI while in lazy TLB mode, a counter in the same cache
-> > > line is set to 16. Every time we skip lazy TLB mode, the counter
-> > > is decremented.
-> > >
-> > > While the counter is zero (no recent TLB flush IPIs), allow lazy
-> > > TLB mode.
-> >
-> > Hmm, cute.  That's not a bad idea at all.  It would be nice to get
-> > some kind of real benchmark on both PCID and !PCID.  If nothing else,
-> > I would expect the threshold (16 in your patch) to want to be lower
-> > on
-> > PCID systems.
->
-> That depends on how well we manage to get rid of
-> the cpumask manipulation overhead. On the PCID
-> system we first found this issue, the atomic
-> accesses to the mm_cpumask took about 4x as much
-> CPU time as the TLB invalidation itself.
->
-> That kinda limits how much the cost of cheaper
-> TLB flushes actually help :)
->
-> I agree this code should get some testing.
->
+Hi Linus,
 
-Just to check: in the workload where you're seeing this problem, are
-you using an mm with many threads?  I would imagine that, if you only
-have one or two threads, the bit operations aren't so bad.
+A few final fixes:
 
-I wonder if just having a whole cacheline per node for the cpumask
-would solve the problem.  I don't love the idea of having every flush
-operation scan cpu_tlbstate for every single CPU -- we'll end up with
-nasty contention on the cpu_tlbstate cache lines on some workloads.
+i915:
+  - Fix for potential Spectre vector in the new query uAPI
+  - Fix NULL pointer deref (FDO #106559)
+  - DMI fix to hide LVDS for Radiant P845 (FDO #105468)
+amdgpu:
+  - suspend/resume DC regression fix
+  - underscan flicker fix on fiji
+  - gamma setting fix after dpms
+omap:
+  - fix oops regression
+core:
+  - fix PSR timing
+dw-hdmi:
+  - fix oops regression.
+
+Thanks,
+Dave.
+
+The following changes since commit b04e217704b7f879c6b91222b066983a44a7a09f:
+
+  Linux 4.17-rc7 (2018-05-27 13:01:47 -0700)
+
+are available in the Git repository at:
+
+  git://people.freedesktop.org/~airlied/linux tags/drm-fixes-for-v4.17-rc8
+
+for you to fetch changes up to 012cfaced00b7a9498227504c4d37a1c4619403d:
+
+  Merge branch 'drm-fixes-4.17' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes (2018-06-03
+06:13:57 +1000)
+
+----------------------------------------------------------------
+amdgpu, i915, omap, dw-hdmi fixes
+
+----------------------------------------------------------------
+Chris Wilson (3):
+      drm/i915/lvds: Move acpi lid notification registration to
+registration phase
+      drm/i915/query: Protect tainted function pointer lookup
+      drm/i915/query: nospec expects no more than an unsigned long
+
+Dave Airlie (5):
+      Merge tag 'drm-intel-fixes-2018-05-29' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+      Merge tag 'drm-misc-fixes-2018-05-29' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+      Merge branch 'drm-fixes-4.17' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+      Merge tag 'drm-misc-fixes-2018-05-30' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+      Merge branch 'drm-fixes-4.17' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+
+David Francis (1):
+      drm/amd/display: Make atomic-check validate underscan changes
+
+Dhinakaran Pandiyan (1):
+      drm/psr: Fix missed entry in PSR setup time table.
+
+Leo (Sunpeng) Li (2):
+      drm/amd/display: Fix BUG_ON during CRTC atomic check update
+      drm/amd/display: Update color props when modeset is required
+
+Neil Armstrong (1):
+      drm/bridge/synopsys: dw-hdmi: fix dw_hdmi_setup_rx_sense
+
+Ondrej Zary (1):
+      drm/i915: Disable LVDS on Radiant P845
+
+Tomi Valkeinen (1):
+      drm/omap: fix NULL deref crash with SDI displays
+
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 44 ++++++++++++-------
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c         | 15 ++-----
+ drivers/gpu/drm/drm_dp_helper.c                   |  1 +
+ drivers/gpu/drm/i915/i915_query.c                 | 15 +++++--
+ drivers/gpu/drm/i915/intel_lvds.c                 | 51 ++++++++++++++++++-----
+ drivers/gpu/drm/meson/meson_dw_hdmi.c             |  2 +-
+ drivers/gpu/drm/omapdrm/dss/sdi.c                 |  5 ++-
+ include/drm/bridge/dw_hdmi.h                      |  2 +-
+ 8 files changed, 91 insertions(+), 44 deletions(-)
