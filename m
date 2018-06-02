@@ -1,61 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751388AbeFBDkW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 23:40:22 -0400
-Received: from mout.gmx.net ([212.227.15.15]:55817 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750812AbeFBDkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 23:40:18 -0400
-Message-ID: <1527910776.7392.5.camel@gmx.de>
-Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
-From: Mike Galbraith <efault@gmx.de>
-To: Andy Lutomirski <luto@kernel.org>, riel@surriel.com
-Cc: LKML <linux-kernel@vger.kernel.org>, songliubraving@fb.com,
-        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Date: Sat, 02 Jun 2018 05:39:36 +0200
-In-Reply-To: <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
-References: <20180601082811.4c0d33ba@imladris.surriel.com>
-         <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
-         <1527877328.7898.80.camel@surriel.com> <1527878882.4448.11.camel@gmx.de>
-         <1527882207.7898.86.camel@surriel.com>
-         <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:rSHDma5L+XgHiVf+eJaN/Q3gmHNe4yjivmXRwVENcWwGdPQaePs
- jMW+DLIf4xmHE/1tjrszKljhOIUzDOmDFTR8ntyzBC8M3QRel+d6tx9GM8Uic79XOt8/ogo
- GGutsn3wcUnEOnSrmPtmJsJ8Iy1thJpliuKriu9NfUZLPH31ooHC9J/eZJVDJhbABCXM6Z+
- mcsdXxF9kazm0/snKW6PQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ubiB59eW3Kg=:7uk0aE51ifNxiFmmx9ASR+
- rf5s88hrN9U4oEcbsMw9xg7m6NupkbRLesc7JMuiq2kBYBPcbFAeMLTUSCrUvuh/SAZ2s36GP
- 8aaeGFmHevBw7zBZ0u+l9bXDHhbWAYGxxp7yUyHIbDJL3iQdAQaDWnycg1WYgTqwOt8OiqBz7
- e6nen0oqoa2T9cGIr0dugv1vpgYs4Dmu/kqQZ41A+cVfr2HB9WoECujBi92ksVb0XSHReA1wz
- KnqVNb8yfo1lJ6QGP6B/IwC8FxDfeSI7MXyb4pw7K4mG/BjW0BxTn7GKde+mQI4G22LA3w01D
- coO7MUHgj6HNJ9h53RmflhwwU3h9DSuLbjR/V3YS9CjDA0IIrmACCn828c0gOczLeLm3j2aX3
- lRBmipEKW2/n6LBD2HMH65VywVXfQ1nO/Q81+AgPxTg0yYVZgxfL3p7mAHiEcQUDJbJbZ4mK9
- 6iuuDcY82fd+lnhcw+6PuifKutL8XS/jB9qzaRXCaR83jekZd+z7ThHnQ0V7Ne7FSH69do+Z6
- vAoQ+nGs0RrxOppycb4bNmcXq0D+sc7N4/UD6eVS9XUiMi7i4TretCfCuktf5zYX/ZWqsvAtp
- /RcfeSwQum6NJogesFbetTiFY/81Lq//fSs9GnW1kO6nXXnfAFyU5mGiiD3e8pMx7t1yYCGWJ
- +1A/WxRu5muvGTMy3mxlmAjZzK4nbFaSQbk4XNj++BIp/GUMO5gWtZG9BjV7qh8V+8Q8acbd4
- DT7jRKynnn7mKkvxx7EtqxGKgdEhXnuss1hXn4788PmVStI6fzShgsIPDDrx3nurjUGC2r5rQ
- 5E1yS33
+        id S1751223AbeFBDnB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 23:43:01 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:34934 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750812AbeFBDnA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 23:43:00 -0400
+Date: Sat, 2 Jun 2018 04:42:56 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: David Howells <dhowells@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH 30/32] vfs: Allow cloning of a mount tree with
+ open(O_PATH|O_CLONE_MOUNT) [ver #8]
+Message-ID: <20180602034255.GV30522@ZenIV.linux.org.uk>
+References: <20180601063928.GS30522@ZenIV.linux.org.uk>
+ <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
+ <152720691829.9073.10564431140980997005.stgit@warthog.procyon.org.uk>
+ <20180601062654.GA32397@infradead.org>
+ <7067.1527841663@warthog.procyon.org.uk>
+ <20180602030913.GU30522@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180602030913.GU30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-01 at 13:03 -0700, Andy Lutomirski wrote:
+On Sat, Jun 02, 2018 at 04:09:14AM +0100, Al Viro wrote:
+> On Fri, Jun 01, 2018 at 09:27:43AM +0100, David Howells wrote:
+> > Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> > 
+> > > > Instead of overloading this on open having a specific syscalls just
+> > > > seems like a much saner idea.
+> > > 
+> > > It's not just mount API; these can be used independently of that.
+> > > Think of the uses where you pass those to ...at() and you'll see
+> > > a bunch of applications of that thing.
+> > 
+> > I kind of agree with Christoph on this point.  Yes, you can use the resultant
+> > fd for other things, but that doesn't mean it has to be obtained initially
+> > through open() or openat() rather than, say, a new pick_mount() syscall.
+> > 
+> > Further, having more parameters available gives us the opportunity to change
+> > the settings on any mounts we create at the point of creation.
 > 
-> Mike, you never did say: do you have PCID on your CPU?
+> open_subtree(int dirfd, const char *pathname, int flags), then?  How would
+> flags be interpreted?  What I see mapping at that thing is
+> 	* equivalent of O_PATH open
+> 	* clone subtree, O_PATH open root
+> 	* clone one mount, O_PATH open root
+> and apparently you want to add (orthogonal to that)
+> 	* make shared/slave/private/unbindable
+> 	* ditto with recursion?
+> 	* same for nodev/nosuid/noexec/noatime/nodiratime/relatime/ro/?
+> as well as usual AT_... flags (empty path, follow)
+> 
+> Choose the encoding...
 
-Yes.
+_If_ I'm interpreting that correctly, that should be something like a bitmap
+of attributes to modify + values to set for each.  Let's see -
+	propagation	1 + 2 bits
+	nodev		1 + 1
+	noexec		1 + 1
+	nosuid		1 + 1
+	ro		1 + 1
+	atime		1 + 3
+That's 15 bits.  On top of that, we have 1 bit for "clone or original"
+and 1 bit for "recursive or single-mount".  As well as AT_EMPTY_PATH,
+and AT_NO_AUTOMOUNT (inconvenient, since these are fixed bits).  In
+principle, that does fit into int, with some space to spare...
 
->   Also, what is
-> your workload doing to cause so many switches back and forth between
-> init_mm and a task.
-
-pipe-test measures pipe round trip, does nearly nothing but schedule.  
-
-	-Mike
+Is that what you have in mind?
