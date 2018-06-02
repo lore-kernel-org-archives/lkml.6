@@ -1,183 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeFBTaF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 15:30:05 -0400
-Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:27050 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751503AbeFBTaE (ORCPT
+        id S1752070AbeFBTcS (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 15:32:18 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36121 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751503AbeFBTcP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 15:30:04 -0400
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sat, 02 Jun 2018 21:30:01 +0200
-X-ME-IP: 90.55.202.35
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v8] ASoC: pxa: switch to new ac97 bus support
-Date: Sat,  2 Jun 2018 21:29:30 +0200
-Message-Id: <20180602192930.17846-1-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
+        Sat, 2 Jun 2018 15:32:15 -0400
+X-Google-Smtp-Source: ADUXVKKKY6Pp4mjV8bpVQG3EaIDa04M3u7vSWmknjkeqRr8UdI/sAZ1yzmiyjKoXfRWN/CPdBsV1bA==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Amit Kucheria <amit.kucheria@linaro.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [PATCH v2] thermal: qcom: tsens: Allow number of sensors to come from DT
+Date: Sat,  2 Jun 2018 12:32:11 -0700
+Message-Id: <20180602193211.25731-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to the new ac97 bus support in sound/ac97 instead of the legacy
-snd_ac97 one.
+For platforms that has multiple copies of the TSENS hardware block it's
+convenient to specify the number of sensors per block in DeviceTree.
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org> [binding]
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-Since v7: added a NULL pointer check
-          v7 was in https://patchwork.kernel.org/patch/9951919/
----
- sound/arm/Kconfig           |  1 -
- sound/soc/pxa/Kconfig       |  5 ++---
- sound/soc/pxa/pxa2xx-ac97.c | 48 +++++++++++++++++++++++----------------------
- 3 files changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/sound/arm/Kconfig b/sound/arm/Kconfig
-index 65171f6657a2..f1f25704fe52 100644
---- a/sound/arm/Kconfig
-+++ b/sound/arm/Kconfig
-@@ -36,7 +36,6 @@ endif	# SND_ARM
+Changes since v1:
+- Added comment as suggested by Amit
+- Picked up Amit and Rob's R-b
+
+ .../devicetree/bindings/thermal/qcom-tsens.txt      |  1 +
+ drivers/thermal/qcom/tsens.c                        | 13 ++++++++++---
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+index 292ed89d900b..06195e8f35e2 100644
+--- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
++++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+@@ -8,6 +8,7 @@ Required properties:
  
- config SND_PXA2XX_LIB
- 	tristate
--	select SND_AC97_CODEC if SND_PXA2XX_LIB_AC97
- 	select SND_DMAENGINE_PCM
+ - reg: Address range of the thermal registers
+ - #thermal-sensor-cells : Should be 1. See ./thermal.txt for a description.
++- #qcom,sensors: Number of sensors in tsens block
+ - Refer to Documentation/devicetree/bindings/nvmem/nvmem.txt to know how to specify
+ nvmem cells
  
- config SND_PXA2XX_LIB_AC97
-diff --git a/sound/soc/pxa/Kconfig b/sound/soc/pxa/Kconfig
-index 484ab3c2ad67..1a0b55beb282 100644
---- a/sound/soc/pxa/Kconfig
-+++ b/sound/soc/pxa/Kconfig
-@@ -20,13 +20,12 @@ config SND_MMP_SOC
+diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+index 3f9fe6aa51cc..b212bebcfc36 100644
+--- a/drivers/thermal/qcom/tsens.c
++++ b/drivers/thermal/qcom/tsens.c
+@@ -116,6 +116,7 @@ static int tsens_probe(struct platform_device *pdev)
+ 	struct tsens_device *tmdev;
+ 	const struct tsens_data *data;
+ 	const struct of_device_id *id;
++	u32 num_sensors;
  
- config SND_PXA2XX_AC97
- 	tristate
--	select SND_AC97_CODEC
+ 	if (pdev->dev.of_node)
+ 		dev = &pdev->dev;
+@@ -130,18 +131,24 @@ static int tsens_probe(struct platform_device *pdev)
+ 	else
+ 		data = &data_8960;
  
- config SND_PXA2XX_SOC_AC97
- 	tristate
--	select AC97_BUS
-+	select AC97_BUS_NEW
- 	select SND_PXA2XX_LIB_AC97
--	select SND_SOC_AC97_BUS
-+	select SND_SOC_AC97_BUS_NEW
- 
- config SND_PXA2XX_SOC_I2S
- 	tristate
-diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
-index 1b41c0f2a8fb..91ead9cbbb9d 100644
---- a/sound/soc/pxa/pxa2xx-ac97.c
-+++ b/sound/soc/pxa/pxa2xx-ac97.c
-@@ -17,6 +17,7 @@
- #include <linux/dmaengine.h>
- #include <linux/dma/pxa-dma.h>
- 
-+#include <sound/ac97/controller.h>
- #include <sound/core.h>
- #include <sound/ac97_codec.h>
- #include <sound/soc.h>
-@@ -27,43 +28,35 @@
- #include <mach/regs-ac97.h>
- #include <mach/audio.h>
- 
--static void pxa2xx_ac97_warm_reset(struct snd_ac97 *ac97)
-+static void pxa2xx_ac97_warm_reset(struct ac97_controller *adrv)
- {
- 	pxa2xx_ac97_try_warm_reset();
- 
- 	pxa2xx_ac97_finish_reset();
- }
- 
--static void pxa2xx_ac97_cold_reset(struct snd_ac97 *ac97)
-+static void pxa2xx_ac97_cold_reset(struct ac97_controller *adrv)
- {
- 	pxa2xx_ac97_try_cold_reset();
- 
- 	pxa2xx_ac97_finish_reset();
- }
- 
--static unsigned short pxa2xx_ac97_legacy_read(struct snd_ac97 *ac97,
--					      unsigned short reg)
-+static int pxa2xx_ac97_read_actrl(struct ac97_controller *adrv, int slot,
-+				  unsigned short reg)
- {
--	int ret;
--
--	ret = pxa2xx_ac97_read(ac97->num, reg);
--	if (ret < 0)
--		return 0;
--	else
--		return (unsigned short)(ret & 0xffff);
-+	return pxa2xx_ac97_read(slot, reg);
- }
- 
--static void pxa2xx_ac97_legacy_write(struct snd_ac97 *ac97,
--				     unsigned short reg, unsigned short val)
-+static int pxa2xx_ac97_write_actrl(struct ac97_controller *adrv, int slot,
-+				   unsigned short reg, unsigned short val)
- {
--	int ret;
--
--	ret = pxa2xx_ac97_write(ac97->num, reg, val);
-+	return pxa2xx_ac97_write(slot, reg, val);
- }
- 
--static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
--	.read	= pxa2xx_ac97_legacy_read,
--	.write	= pxa2xx_ac97_legacy_write,
-+static struct ac97_controller_ops pxa2xx_ac97_ops = {
-+	.read	= pxa2xx_ac97_read_actrl,
-+	.write	= pxa2xx_ac97_write_actrl,
- 	.warm_reset	= pxa2xx_ac97_warm_reset,
- 	.reset	= pxa2xx_ac97_cold_reset,
- };
-@@ -219,6 +212,9 @@ static const struct snd_soc_component_driver pxa_ac97_component = {
- static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
- {
- 	int ret;
-+	struct ac97_controller *ctrl;
-+	pxa2xx_audio_ops_t *pdata = pdev->dev.platform_data;
-+	void **codecs_pdata;
- 
- 	if (pdev->id != -1) {
- 		dev_err(&pdev->dev, "PXA2xx has only one AC97 port.\n");
-@@ -231,10 +227,14 @@ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
- 		return ret;
+-	if (data->num_sensors <= 0) {
++	num_sensors = data->num_sensors;
++
++	/* Override driver provided num_sensors, if specified in DT */
++	if (np)
++		of_property_read_u32(np, "#qcom,sensors", &num_sensors);
++
++	if (num_sensors <= 0) {
+ 		dev_err(dev, "invalid number of sensors\n");
+ 		return -EINVAL;
  	}
  
--	ret = snd_soc_set_ac97_ops(&pxa2xx_ac97_ops);
--	if (ret != 0)
--		return ret;
-+	codecs_pdata = pdata ? pdata->codecs_pdata : NULL;
-+	ctrl = snd_ac97_controller_register(&pxa2xx_ac97_ops, &pdev->dev,
-+					    AC97_SLOTS_AVAILABLE_ALL,
-+					    codecs_pdata);
-+	if (IS_ERR(ctrl))
-+		return PTR_ERR(ctrl);
+ 	tmdev = devm_kzalloc(dev, sizeof(*tmdev) +
+-			     data->num_sensors * sizeof(*s), GFP_KERNEL);
++			     num_sensors * sizeof(*s), GFP_KERNEL);
+ 	if (!tmdev)
+ 		return -ENOMEM;
  
-+	platform_set_drvdata(pdev, ctrl);
- 	/* Punt most of the init to the SoC probe; we may need the machine
- 	 * driver to do interesting things with the clocking to get us up
- 	 * and running.
-@@ -245,8 +245,10 @@ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
- 
- static int pxa2xx_ac97_dev_remove(struct platform_device *pdev)
- {
-+	struct ac97_controller *ctrl = platform_get_drvdata(pdev);
-+
- 	snd_soc_unregister_component(&pdev->dev);
--	snd_soc_set_ac97_ops(NULL);
-+	snd_ac97_controller_unregister(ctrl);
- 	pxa2xx_ac97_hw_remove(pdev);
- 	return 0;
- }
+ 	tmdev->dev = dev;
+-	tmdev->num_sensors = data->num_sensors;
++	tmdev->num_sensors = num_sensors;
+ 	tmdev->ops = data->ops;
+ 	for (i = 0;  i < tmdev->num_sensors; i++) {
+ 		if (data->hw_ids)
 -- 
-2.11.0
+2.17.0
