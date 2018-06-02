@@ -1,317 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752013AbeFBTOX (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 15:14:23 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:42328 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751342AbeFBTOV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 15:14:21 -0400
-X-Google-Smtp-Source: ADUXVKLTYlMeW9p+d5kn5Gl7eV/B+5CB4bG90KWbNELcIrU19IyJQoRtAOS5xGagTpNnKWzMFRT/DFQu6ApzJLy4x+k=
+        id S1752017AbeFBT3F (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 15:29:05 -0400
+Received: from mga11.intel.com ([192.55.52.93]:12328 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751503AbeFBT3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 15:29:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,470,1520924400";
+   d="scan'208";a="45934400"
+Subject: [PATCH] libnvdimm, e820: Register all pmem resources
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org
+Date: Sat, 02 Jun 2018 12:19:07 -0700
+Message-ID: <152796714712.17931.6164610183818441048.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-References: <20180531144949.24995-1-tycho@tycho.ws> <20180531144949.24995-5-tycho@tycho.ws>
-In-Reply-To: <20180531144949.24995-5-tycho@tycho.ws>
-From: Alban Crequy <alban.crequy@gmail.com>
-Date: Sat, 2 Jun 2018 21:14:09 +0200
-Message-ID: <CAMXgnP7cggXh0M403gqWALm0=Cq0JHJiDoE-q++BbL2hCZHX-g@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] seccomp: add support for passing fds via USER_NOTIF
-To: tycho@tycho.ws
-Cc: linux-kernel@vger.kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, christian.brauner@ubuntu.com,
-        tyhicks@canonical.com, Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        me@tobin.cc
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018 at 16:52, Tycho Andersen <tycho@tycho.ws> wrote:
->
-> The idea here is that the userspace handler should be able to pass an fd
-> back to the trapped task, for example so it can be returned from socket().
->
-> I've proposed one API here, but I'm open to other options. In particular,
-> this only lets you return an fd from a syscall, which may not be enough in
-> all cases. For example, if an fd is written to an output parameter instead
-> of returned, the current API can't handle this. Another case is that
-> netlink takes as input fds sometimes (IFLA_NET_NS_FD, e.g.). If netlink
-> ever decides to install an fd and output it, we wouldn't be able to handle
-> this either.
->
-> Still, the vast majority of interesting cases are covered by this API, so
-> perhaps it is Enough.
->
-> I've left it as a separate commit for two reasons:
->   * It illustrates the way in which we would grow struct seccomp_notif and
->     struct seccomp_notif_resp without using netlink
->   * It shows just how little code is needed to accomplish this :)
->
-> v2: new in v2
-> v3: no changes
->
-> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> CC: Kees Cook <keescook@chromium.org>
-> CC: Andy Lutomirski <luto@amacapital.net>
-> CC: Oleg Nesterov <oleg@redhat.com>
-> CC: Eric W. Biederman <ebiederm@xmission.com>
-> CC: "Serge E. Hallyn" <serge@hallyn.com>
-> CC: Christian Brauner <christian.brauner@ubuntu.com>
-> CC: Tyler Hicks <tyhicks@canonical.com>
-> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
-> ---
->  include/uapi/linux/seccomp.h                  |   2 +
->  kernel/seccomp.c                              |  49 +++++++-
->  tools/testing/selftests/seccomp/seccomp_bpf.c | 112 ++++++++++++++++++
->  3 files changed, 161 insertions(+), 2 deletions(-)
->
-> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-> index 8160e6cad528..3124427219cb 100644
-> --- a/include/uapi/linux/seccomp.h
-> +++ b/include/uapi/linux/seccomp.h
-> @@ -71,6 +71,8 @@ struct seccomp_notif_resp {
->         __u64 id;
->         __s32 error;
->         __s64 val;
-> +       __u8 return_fd;
-> +       __u32 fd;
->  };
->
->  #endif /* _UAPI_LINUX_SECCOMP_H */
-> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> index 6dc99c65c2f4..2ee958b3efde 100644
-> --- a/kernel/seccomp.c
-> +++ b/kernel/seccomp.c
-> @@ -77,6 +77,8 @@ struct seccomp_knotif {
->         /* The return values, only valid when in SECCOMP_NOTIFY_REPLIED */
->         int error;
->         long val;
-> +       struct file *file;
-> +       unsigned int flags;
->
->         /* Signals when this has entered SECCOMP_NOTIFY_REPLIED */
->         struct completion ready;
-> @@ -780,10 +782,32 @@ static void seccomp_do_user_notification(int this_syscall,
->                         goto remove_list;
->         }
->
-> -       ret = n.val;
-> -       err = n.error;
-> +       if (n.file) {
-> +               int fd;
-> +
-> +               fd = get_unused_fd_flags(n.flags);
-> +               if (fd < 0) {
-> +                       err = fd;
-> +                       ret = -1;
-> +                       goto remove_list;
-> +               }
-> +
-> +               ret = fd;
-> +               err = 0;
-> +
-> +               fd_install(fd, n.file);
-> +               /* Don't fput, since fd has a reference now */
-> +               n.file = NULL;
+There is currently a mismatch between the resources that will trigger
+the e820_pmem driver to register/load and the resources that will
+actually be surfaced as pmem ranges. register_e820_pmem() uses
+walk_iomem_res_desc() which includes children and siblings. In contrast,
+e820_pmem_probe() only considers top level resources. For example the
+following resource tree results in the driver being loaded, but no
+resources being registered:
 
-Do we want the cgroup classid and netprio to be applied here, before
-the fd_install? I am looking at similar code in net/core/scm.c
-scm_detach_fds():
-                sock = sock_from_file(fp[i], &err);
-                if (sock) {
-                        sock_update_netprioidx(&sock->sk->sk_cgrp_data);
-                        sock_update_classid(&sock->sk->sk_cgrp_data);
-                }
+    398000000000-39bfffffffff : PCI Bus 0000:ae
+      39be00000000-39bf07ffffff : PCI Bus 0000:af
+        39be00000000-39beffffffff : 0000:af:00.0
+          39be10000000-39beffffffff : Persistent Memory (legacy)
 
-The listener process might live in a different cgroup with a different
-classid & netprio, so it might not be applied as the app might expect.
+Fix this up to allow definitions of "legacy" pmem ranges anywhere in
+system-physical address space. Not that it is a recommended or safe to
+define a pmem range in PCI space, but it is useful for debug /
+experimentation, and the restriction on being a top-level resource was
+arbitrary.
 
-Also, should we update the struct sock_cgroup_data of the socket, in
-order to make the BPF helper function bpf_skb_under_cgroup() work wrt
-the cgroup of the target process instead of the listener process? I am
-looking at cgroup_sk_alloc(). I don't know what's the correct
-behaviour we want here.
+Cc: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ drivers/nvdimm/e820.c |   41 ++++++++++++++++++++++-------------------
+ kernel/resource.c     |    1 +
+ 2 files changed, 23 insertions(+), 19 deletions(-)
 
-> +       } else {
-> +               ret = n.val;
-> +               err = n.error;
-> +       }
-> +
->
->  remove_list:
-> +       if (n.file)
-> +               fput(n.file);
-> +
->         list_del(&n.list);
->  out:
->         mutex_unlock(&match->notify_lock);
-> @@ -1598,6 +1622,27 @@ static ssize_t seccomp_notify_write(struct file *file, const char __user *buf,
->         knotif->state = SECCOMP_NOTIFY_REPLIED;
->         knotif->error = resp.error;
->         knotif->val = resp.val;
-> +
-> +       if (resp.return_fd) {
-> +               struct fd fd;
-> +
-> +               /*
-> +                * This is a little hokey: we need a real fget() (i.e. not
-> +                * __fget_light(), which is what fdget does), but we also need
-> +                * the flags from strcut fd. So, we get it, put it, and get it
-> +                * again for real.
-> +                */
-> +               fd = fdget(resp.fd);
-> +               knotif->flags = fd.flags;
-> +               fdput(fd);
-> +
-> +               knotif->file = fget(resp.fd);
-> +               if (!knotif->file) {
-> +                       ret = -EBADF;
-> +                       goto out;
-
-Should the "knotif->state = SECCOMP_NOTIFY_REPLIED" and other changes
-be done after the error case here? In case of bad fd, it seems to
-return -EBADF the first time and -EINVAL the next time because the
-state would have been changed to SECCOMP_NOTIFY_REPLIED already.
-
-> +               }
-> +       }
-> +
->         complete(&knotif->ready);
->  out:
->         mutex_unlock(&filter->notify_lock);
-> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> index 07984f7bd601..b9a4f676566d 100644
-> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> @@ -167,6 +167,8 @@ struct seccomp_notif_resp {
->         __u64 id;
->         __s32 error;
->         __s64 val;
-> +       __u8 return_fd;
-> +       __u32 fd;
->  };
->  #endif
->
-> @@ -3176,6 +3178,116 @@ TEST(get_user_notification_ptrace)
->         close(listener);
->  }
->
-> +TEST(user_notification_pass_fd)
-> +{
-> +       pid_t pid;
-> +       int status, listener;
-> +       int sk_pair[2];
-> +       char c;
-> +       struct seccomp_notif req = {};
-> +       struct seccomp_notif_resp resp = {};
-> +       long ret;
-> +
-> +       ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +
-> +       if (pid == 0) {
-> +               int fd;
-> +               char buf[16];
-> +
-> +               EXPECT_EQ(user_trap_syscall(__NR_getpid, 0), 0);
-> +
-> +               /* Signal we're ready and have installed the filter. */
-> +               EXPECT_EQ(write(sk_pair[1], "J", 1), 1);
-> +
-> +               EXPECT_EQ(read(sk_pair[1], &c, 1), 1);
-> +               EXPECT_EQ(c, 'H');
-> +               close(sk_pair[1]);
-> +
-> +               /* An fd from getpid(). Let the games begin. */
-> +               fd = syscall(__NR_getpid);
-> +               EXPECT_GT(fd, 0);
-> +               EXPECT_EQ(read(fd, buf, sizeof(buf)), 12);
-> +               close(fd);
-> +
-> +               exit(strcmp("hello world", buf));
-> +       }
-> +
-> +       EXPECT_EQ(read(sk_pair[0], &c, 1), 1);
-> +       EXPECT_EQ(c, 'J');
-> +
-> +       EXPECT_EQ(ptrace(PTRACE_ATTACH, pid), 0);
-> +       EXPECT_EQ(waitpid(pid, NULL, 0), pid);
-> +       listener = ptrace(PTRACE_SECCOMP_GET_LISTENER, pid, 0);
-> +       EXPECT_GE(listener, 0);
-> +       EXPECT_EQ(ptrace(PTRACE_DETACH, pid, NULL, 0), 0);
-> +
-> +       /* Now signal we are done installing so it can do a getpid */
-> +       EXPECT_EQ(write(sk_pair[0], "H", 1), 1);
-> +       close(sk_pair[0]);
-> +
-> +       /* Make a new socket pair so we can send half across */
-> +       EXPECT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
-> +
-> +       ret = read_notif(listener, &req);
-> +       EXPECT_EQ(ret, sizeof(req));
-> +       EXPECT_EQ(errno, 0);
-> +
-> +       resp.id = req.id;
-> +       resp.return_fd = 1;
-> +       resp.fd = sk_pair[1];
-> +       EXPECT_EQ(write(listener, &resp, sizeof(resp)), sizeof(resp));
-> +       close(sk_pair[1]);
-> +
-> +       EXPECT_EQ(write(sk_pair[0], "hello world\0", 12), 12);
-> +       close(sk_pair[0]);
-> +
-> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
-> +       EXPECT_EQ(true, WIFEXITED(status));
-> +       EXPECT_EQ(0, WEXITSTATUS(status));
-> +       close(listener);
-> +}
-> +
-> +TEST(user_notification_struct_size_mismatch)
-> +{
-> +       pid_t pid;
-> +       long ret;
-> +       int status, listener, len;
-> +       struct seccomp_notif req;
-> +       struct seccomp_notif_resp resp;
-> +
-> +       listener = user_trap_syscall(__NR_getpid,
-> +                                    SECCOMP_FILTER_FLAG_GET_LISTENER);
-> +       EXPECT_GE(listener, 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +
-> +       if (pid == 0) {
-> +               ret = syscall(__NR_getpid);
-> +               exit(ret != USER_NOTIF_MAGIC);
-> +       }
-> +
-> +       EXPECT_EQ(read(listener, &req, sizeof(req)), sizeof(req));
-> +
-> +       resp.id = req.id;
-> +       resp.error = 0;
-> +       resp.val = USER_NOTIF_MAGIC;
-> +
-> +       /*
-> +        * Only write a partial structure: this is what was available before we
-> +        * had fd support.
-> +        */
-> +       len = offsetof(struct seccomp_notif_resp, val) + sizeof(resp.val);
-> +       EXPECT_EQ(write(listener, &resp, len), len);
-> +
-> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
-> +       EXPECT_EQ(true, WIFEXITED(status));
-> +       EXPECT_EQ(0, WEXITSTATUS(status));
-> +}
-> +
->  /*
->   * TODO:
->   * - add microbenchmarks
-> --
-> 2.17.0
->
+diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
+index 6f9a6ffd7cde..521eaf53a52a 100644
+--- a/drivers/nvdimm/e820.c
++++ b/drivers/nvdimm/e820.c
+@@ -38,12 +38,27 @@ static int e820_range_to_nid(resource_size_t addr)
+ }
+ #endif
+ 
++static int e820_register_one(struct resource *res, void *data)
++{
++	struct nd_region_desc ndr_desc;
++	struct nvdimm_bus *nvdimm_bus = data;
++
++	memset(&ndr_desc, 0, sizeof(ndr_desc));
++	ndr_desc.res = res;
++	ndr_desc.attr_groups = e820_pmem_region_attribute_groups;
++	ndr_desc.numa_node = e820_range_to_nid(res->start);
++	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
++	if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
++		return -ENXIO;
++	return 0;
++}
++
+ static int e820_pmem_probe(struct platform_device *pdev)
+ {
+ 	static struct nvdimm_bus_descriptor nd_desc;
+ 	struct device *dev = &pdev->dev;
+ 	struct nvdimm_bus *nvdimm_bus;
+-	struct resource *p;
++	int rc = -ENXIO;
+ 
+ 	nd_desc.attr_groups = e820_pmem_attribute_groups;
+ 	nd_desc.provider_name = "e820";
+@@ -53,27 +68,15 @@ static int e820_pmem_probe(struct platform_device *pdev)
+ 		goto err;
+ 	platform_set_drvdata(pdev, nvdimm_bus);
+ 
+-	for (p = iomem_resource.child; p ; p = p->sibling) {
+-		struct nd_region_desc ndr_desc;
+-
+-		if (p->desc != IORES_DESC_PERSISTENT_MEMORY_LEGACY)
+-			continue;
+-
+-		memset(&ndr_desc, 0, sizeof(ndr_desc));
+-		ndr_desc.res = p;
+-		ndr_desc.attr_groups = e820_pmem_region_attribute_groups;
+-		ndr_desc.numa_node = e820_range_to_nid(p->start);
+-		set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
+-		if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
+-			goto err;
+-	}
+-
++	rc = walk_iomem_res_desc(IORES_DESC_PERSISTENT_MEMORY_LEGACY,
++			IORESOURCE_MEM, 0, -1, nvdimm_bus, e820_register_one);
++	if (rc)
++		goto err;
+ 	return 0;
+-
+- err:
++err:
+ 	nvdimm_bus_unregister(nvdimm_bus);
+ 	dev_err(dev, "failed to register legacy persistent memory ranges\n");
+-	return -ENXIO;
++	return rc;
+ }
+ 
+ static struct platform_driver e820_pmem_driver = {
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 2af6c03858b9..b85f59e8a4b8 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -448,6 +448,7 @@ int walk_iomem_res_desc(unsigned long desc, unsigned long flags, u64 start,
+ 
+ 	return __walk_iomem_res_desc(&res, desc, false, arg, func);
+ }
++EXPORT_SYMBOL_GPL(walk_iomem_res_desc);
+ 
+ /*
+  * This function calls the @func callback against all memory ranges of type
