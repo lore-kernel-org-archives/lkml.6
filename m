@@ -1,56 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751833AbeFBRpq (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 13:45:46 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:44510 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751469AbeFBRpp (ORCPT
+        id S1751737AbeFBRuE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 13:50:04 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:46792 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750740AbeFBRuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 13:45:45 -0400
-X-Google-Smtp-Source: ADUXVKJUe6JBmPWGq4ungX6LNZSriqJK2MRHWzwISxyDEyKVRPkmb3ylmr4sHpMydLcInHz9WKVNOQ==
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: axboe@kernel.dk, dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        snitzer@redhat.com
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH] dm-crypt: fix warning in shutdown path
-Date: Sat,  2 Jun 2018 13:45:04 -0400
-Message-Id: <20180602174504.1847-1-kent.overstreet@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 2 Jun 2018 13:50:02 -0400
+Date: Sat, 2 Jun 2018 18:49:58 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: David Howells <dhowells@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH 30/32] vfs: Allow cloning of a mount tree with
+ open(O_PATH|O_CLONE_MOUNT) [ver #8]
+Message-ID: <20180602174957.GX30522@ZenIV.linux.org.uk>
+References: <20180602040434.GW30522@ZenIV.linux.org.uk>
+ <20180601063928.GS30522@ZenIV.linux.org.uk>
+ <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
+ <152720691829.9073.10564431140980997005.stgit@warthog.procyon.org.uk>
+ <20180601062654.GA32397@infradead.org>
+ <7067.1527841663@warthog.procyon.org.uk>
+ <20180602030913.GU30522@ZenIV.linux.org.uk>
+ <20180602034255.GV30522@ZenIV.linux.org.uk>
+ <21804.1527954321@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <21804.1527954321@warthog.procyon.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The counter for the number of allocated pages includes pages in the
-mempool's reserve, so checking that the number of allocated pages is 0
-needs to happen after we exit the mempool.
+On Sat, Jun 02, 2018 at 04:45:21PM +0100, David Howells wrote:
+> Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> 
+> > TBH, I would probably prefer separate mount_setattr(2) for that kind
+> > of work, with something like
+> > 	int mount_setattr(int dirfd, const char *path, int flags, int attr)
+> > *not* opening any files.
+> > flags:
+> > 	AT_EMPTY_PATH, AT_NO_AUTOMOUNT, AT_RECURSIVE
+> 
+> I would call these MOUNT_SETATTR_* rather than AT_*.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
----
- drivers/md/dm-crypt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Why?  AT_EMPTY_PATH/AT_NO_AUTOMOUNT are common with other ...at()
+syscalls; AT_RECURSIVE - maybe, but it's still more like AT_...
+namespace fodder, IMO.
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index eaf6b279ac..9a000aa955 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -2221,14 +2221,14 @@ static void crypt_dtr(struct dm_target *ti)
- 
- 	bioset_exit(&cc->bs);
- 
--	if (mempool_initialized(&cc->page_pool))
--		WARN_ON(percpu_counter_sum(&cc->n_allocated_pages) != 0);
--	percpu_counter_destroy(&cc->n_allocated_pages);
--
- 	mempool_exit(&cc->page_pool);
- 	mempool_exit(&cc->req_pool);
- 	mempool_exit(&cc->tag_pool);
- 
-+	if (cc->n_allocated_pages.counters)
-+		WARN_ON(percpu_counter_sum(&cc->n_allocated_pages) != 0);
-+	percpu_counter_destroy(&cc->n_allocated_pages);
-+
- 	if (cc->iv_gen_ops && cc->iv_gen_ops->dtr)
- 		cc->iv_gen_ops->dtr(cc);
- 
--- 
-2.17.1
+> > attr:
+> > 	MOUNT_SETATTR_DEV		(1<<0)
+> > 	MOUNT_SETATTR_NODEV		(1<<0)|(1<<1)
+> > 	MOUNT_SETATTR_EXEC		(1<<2)
+> > 	MOUNT_SETATTR_NOEXEC		(1<<2)|(1<<3)
+> > 	MOUNT_SETATTR_SUID		(1<<4)
+> > 	MOUNT_SETATTR_NOSUID		(1<<4)|(1<<5)
+> > 	MOUNT_SETATTR_RW		(1<<6)
+> > 	MOUNT_SETATTR_RO		(1<<6)|(1<<7)
+> > 	MOUNT_SETATTR_RELATIME		(1<<8)
+> > 	MOUNT_SETATTR_NOATIME		(1<<8)|(1<<9)
+> > 	MOUNT_SETATTR_NODIRATIME	(1<<8)|(2<<9)
+> > 	MOUNT_SETATTR_STRICTATIME	(1<<8)|(3<<9)
+> > 	MOUNT_SETATTR_PRIVATE		(1<<11)
+> > 	MOUNT_SETATTR_SHARED		(1<<11)|(1<<12)
+> > 	MOUNT_SETATTR_SLAVE		(1<<11)|(2<<12)
+> > 	MOUNT_SETATTR_UNBINDABLE	(1<<11)|(3<<12)
+> 
+> So, I like this generally, some notes though:
+> 
+> I wonder if this should be two separate parameters, a mask and the settings?
+> I'm not sure that's worth it since some of the mask bits would cover multiple
+> settings.
+
+Nah, better put those bits in the same word, as in above.  Here bits 0, 2, 4, 6,
+8 and 11 tell which attributes are to be modified, with values to set living
+in bits 1, 3, 5, 7, 9--10 and 12--13.  Look at the constants above..
+
+> Also, should NODIRATIME be separate from the other *ATIME flags?  I do also
+> like treating some of these settings as enumerations rather than a set of
+> bits.
+
+Huh?  That's precisely what I'm doing there: bit 8 is "want to change atime
+settings", bits 9 and 10 hold a 4-element enumeration (rel/no/nodir/strict).
+Similar for propagation settings (bit 11 indicates that we want to set those,
+bits 12 and 13 - 4-element enum)...
+
+> I would make the prototype:
+> 
+> 	int mount_setattr(int dirfd, const char *path,
+> 			  unsigned int flags, unsigned int attr,
+> 			  void *reserved5);
+> 
+> Further, do we want to say you can either change the propagation type *or*
+> reconfigure the mountpoint restrictions, but not both at the same time?
+
+Why?  MOUNT_SETATTR_PRIVATE | MOUNT_NOATIME | MOUNT_SUID, i.e. 00101100010000,
+i.e. 0xb10 for "turn nosuid off, switch atime polcy to noatime, change propagation
+to private, leave everything else as-is"...
+
+And for fsck sake, what's that "void *reserved5" for?
+
+> > With either openat() used as in this series, or explicit
+> > 	int open_tree(int dirfd, const char *path, int flags)
+> 
+> Maybe open_mount(), grab_mount() or pick_mount()?
+> 
+> I wonder if fsopen()/fspick() should be create_fs()/open_fs()...
+> 
+> > returning a descriptor, with flags being
+> > 	AT_EMPTY_PATH, AT_NO_AUTOMOUNT, AT_RECURSIVE, AT_CLONE
+> > with AT_RECURSIVE without AT_CLONE being an error.
+> 
+> You also need an O_CLOEXEC equivalent.
+
+Point.
+
+> I would make it:
+> 
+> 	OPEN_TREE_CLOEXEC		0x00000001
+
+Why not O_CLOEXEC, as with epoll_create()/timerfd_create()/etc.?
+
+> 	OPEN_TREE_EMPTY_PATH		0x00000002
+> 	OPEN_TREE_FOLLOW_SYMLINK	0x00000004
+> 	OPEN_TREE_NO_AUTOMOUNT		0x00000008
+
+Why?  How are those different from normal AT_EMPTY_PATH/AT_NO_AUTOMOUNT?
+
+> 	OPEN_TREE_CLONE			0x00000010
+> 	OPEN_TREE_RECURSIVE		0x00000020
+> 
+> adding the follow-symlinks so that you don't grab a symlink target by
+> accident.  (Can you actually mount on top of a symlink?)
+
+You can't - mount(2) uses LOOKUP_FOLLOW for mountpoint (well, user_path(),
+actually).
+
+> > Hell, might even add AT_UMOUNT for "open root and detach, to be dissolved on
+> > close", incompatible with AT_CLONE.
+> 
+> Cute.  Guess you could do:
+> 
+> 	fd = open_mount(..., OPEN_TREE_DETACH);
+> 	mount_setattr(fd, "",
+> 		      MOUNT_SETATTR_EMPTY_PATH,
+> 		      MOUNT_SETATTR_NOSUID, NULL);
+> 	move_mount(fd, "", ...);
