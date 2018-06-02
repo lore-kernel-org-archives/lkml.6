@@ -1,132 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeFBT3F (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 15:29:05 -0400
-Received: from mga11.intel.com ([192.55.52.93]:12328 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751503AbeFBT3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 15:29:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,470,1520924400";
-   d="scan'208";a="45934400"
-Subject: [PATCH] libnvdimm, e820: Register all pmem resources
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org
-Date: Sat, 02 Jun 2018 12:19:07 -0700
-Message-ID: <152796714712.17931.6164610183818441048.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1752044AbeFBTaF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 15:30:05 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:27050 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751503AbeFBTaE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 15:30:04 -0400
+X-ME-Helo: belgarion.home
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Sat, 02 Jun 2018 21:30:01 +0200
+X-ME-IP: 90.55.202.35
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v8] ASoC: pxa: switch to new ac97 bus support
+Date: Sat,  2 Jun 2018 21:29:30 +0200
+Message-Id: <20180602192930.17846-1-robert.jarzmik@free.fr>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is currently a mismatch between the resources that will trigger
-the e820_pmem driver to register/load and the resources that will
-actually be surfaced as pmem ranges. register_e820_pmem() uses
-walk_iomem_res_desc() which includes children and siblings. In contrast,
-e820_pmem_probe() only considers top level resources. For example the
-following resource tree results in the driver being loaded, but no
-resources being registered:
+Switch to the new ac97 bus support in sound/ac97 instead of the legacy
+snd_ac97 one.
 
-    398000000000-39bfffffffff : PCI Bus 0000:ae
-      39be00000000-39bf07ffffff : PCI Bus 0000:af
-        39be00000000-39beffffffff : 0000:af:00.0
-          39be10000000-39beffffffff : Persistent Memory (legacy)
-
-Fix this up to allow definitions of "legacy" pmem ranges anywhere in
-system-physical address space. Not that it is a recommended or safe to
-define a pmem range in PCI space, but it is useful for debug /
-experimentation, and the restriction on being a top-level resource was
-arbitrary.
-
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 ---
- drivers/nvdimm/e820.c |   41 ++++++++++++++++++++++-------------------
- kernel/resource.c     |    1 +
- 2 files changed, 23 insertions(+), 19 deletions(-)
+Since v7: added a NULL pointer check
+          v7 was in https://patchwork.kernel.org/patch/9951919/
+---
+ sound/arm/Kconfig           |  1 -
+ sound/soc/pxa/Kconfig       |  5 ++---
+ sound/soc/pxa/pxa2xx-ac97.c | 48 +++++++++++++++++++++++----------------------
+ 3 files changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
-index 6f9a6ffd7cde..521eaf53a52a 100644
---- a/drivers/nvdimm/e820.c
-+++ b/drivers/nvdimm/e820.c
-@@ -38,12 +38,27 @@ static int e820_range_to_nid(resource_size_t addr)
- }
- #endif
+diff --git a/sound/arm/Kconfig b/sound/arm/Kconfig
+index 65171f6657a2..f1f25704fe52 100644
+--- a/sound/arm/Kconfig
++++ b/sound/arm/Kconfig
+@@ -36,7 +36,6 @@ endif	# SND_ARM
  
-+static int e820_register_one(struct resource *res, void *data)
-+{
-+	struct nd_region_desc ndr_desc;
-+	struct nvdimm_bus *nvdimm_bus = data;
-+
-+	memset(&ndr_desc, 0, sizeof(ndr_desc));
-+	ndr_desc.res = res;
-+	ndr_desc.attr_groups = e820_pmem_region_attribute_groups;
-+	ndr_desc.numa_node = e820_range_to_nid(res->start);
-+	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
-+	if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
-+		return -ENXIO;
-+	return 0;
-+}
-+
- static int e820_pmem_probe(struct platform_device *pdev)
+ config SND_PXA2XX_LIB
+ 	tristate
+-	select SND_AC97_CODEC if SND_PXA2XX_LIB_AC97
+ 	select SND_DMAENGINE_PCM
+ 
+ config SND_PXA2XX_LIB_AC97
+diff --git a/sound/soc/pxa/Kconfig b/sound/soc/pxa/Kconfig
+index 484ab3c2ad67..1a0b55beb282 100644
+--- a/sound/soc/pxa/Kconfig
++++ b/sound/soc/pxa/Kconfig
+@@ -20,13 +20,12 @@ config SND_MMP_SOC
+ 
+ config SND_PXA2XX_AC97
+ 	tristate
+-	select SND_AC97_CODEC
+ 
+ config SND_PXA2XX_SOC_AC97
+ 	tristate
+-	select AC97_BUS
++	select AC97_BUS_NEW
+ 	select SND_PXA2XX_LIB_AC97
+-	select SND_SOC_AC97_BUS
++	select SND_SOC_AC97_BUS_NEW
+ 
+ config SND_PXA2XX_SOC_I2S
+ 	tristate
+diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
+index 1b41c0f2a8fb..91ead9cbbb9d 100644
+--- a/sound/soc/pxa/pxa2xx-ac97.c
++++ b/sound/soc/pxa/pxa2xx-ac97.c
+@@ -17,6 +17,7 @@
+ #include <linux/dmaengine.h>
+ #include <linux/dma/pxa-dma.h>
+ 
++#include <sound/ac97/controller.h>
+ #include <sound/core.h>
+ #include <sound/ac97_codec.h>
+ #include <sound/soc.h>
+@@ -27,43 +28,35 @@
+ #include <mach/regs-ac97.h>
+ #include <mach/audio.h>
+ 
+-static void pxa2xx_ac97_warm_reset(struct snd_ac97 *ac97)
++static void pxa2xx_ac97_warm_reset(struct ac97_controller *adrv)
  {
- 	static struct nvdimm_bus_descriptor nd_desc;
- 	struct device *dev = &pdev->dev;
- 	struct nvdimm_bus *nvdimm_bus;
--	struct resource *p;
-+	int rc = -ENXIO;
+ 	pxa2xx_ac97_try_warm_reset();
  
- 	nd_desc.attr_groups = e820_pmem_attribute_groups;
- 	nd_desc.provider_name = "e820";
-@@ -53,27 +68,15 @@ static int e820_pmem_probe(struct platform_device *pdev)
- 		goto err;
- 	platform_set_drvdata(pdev, nvdimm_bus);
+ 	pxa2xx_ac97_finish_reset();
+ }
  
--	for (p = iomem_resource.child; p ; p = p->sibling) {
--		struct nd_region_desc ndr_desc;
+-static void pxa2xx_ac97_cold_reset(struct snd_ac97 *ac97)
++static void pxa2xx_ac97_cold_reset(struct ac97_controller *adrv)
+ {
+ 	pxa2xx_ac97_try_cold_reset();
+ 
+ 	pxa2xx_ac97_finish_reset();
+ }
+ 
+-static unsigned short pxa2xx_ac97_legacy_read(struct snd_ac97 *ac97,
+-					      unsigned short reg)
++static int pxa2xx_ac97_read_actrl(struct ac97_controller *adrv, int slot,
++				  unsigned short reg)
+ {
+-	int ret;
 -
--		if (p->desc != IORES_DESC_PERSISTENT_MEMORY_LEGACY)
--			continue;
+-	ret = pxa2xx_ac97_read(ac97->num, reg);
+-	if (ret < 0)
+-		return 0;
+-	else
+-		return (unsigned short)(ret & 0xffff);
++	return pxa2xx_ac97_read(slot, reg);
+ }
+ 
+-static void pxa2xx_ac97_legacy_write(struct snd_ac97 *ac97,
+-				     unsigned short reg, unsigned short val)
++static int pxa2xx_ac97_write_actrl(struct ac97_controller *adrv, int slot,
++				   unsigned short reg, unsigned short val)
+ {
+-	int ret;
 -
--		memset(&ndr_desc, 0, sizeof(ndr_desc));
--		ndr_desc.res = p;
--		ndr_desc.attr_groups = e820_pmem_region_attribute_groups;
--		ndr_desc.numa_node = e820_range_to_nid(p->start);
--		set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
--		if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
--			goto err;
--	}
--
-+	rc = walk_iomem_res_desc(IORES_DESC_PERSISTENT_MEMORY_LEGACY,
-+			IORESOURCE_MEM, 0, -1, nvdimm_bus, e820_register_one);
-+	if (rc)
-+		goto err;
+-	ret = pxa2xx_ac97_write(ac97->num, reg, val);
++	return pxa2xx_ac97_write(slot, reg, val);
+ }
+ 
+-static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
+-	.read	= pxa2xx_ac97_legacy_read,
+-	.write	= pxa2xx_ac97_legacy_write,
++static struct ac97_controller_ops pxa2xx_ac97_ops = {
++	.read	= pxa2xx_ac97_read_actrl,
++	.write	= pxa2xx_ac97_write_actrl,
+ 	.warm_reset	= pxa2xx_ac97_warm_reset,
+ 	.reset	= pxa2xx_ac97_cold_reset,
+ };
+@@ -219,6 +212,9 @@ static const struct snd_soc_component_driver pxa_ac97_component = {
+ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
+ {
+ 	int ret;
++	struct ac97_controller *ctrl;
++	pxa2xx_audio_ops_t *pdata = pdev->dev.platform_data;
++	void **codecs_pdata;
+ 
+ 	if (pdev->id != -1) {
+ 		dev_err(&pdev->dev, "PXA2xx has only one AC97 port.\n");
+@@ -231,10 +227,14 @@ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = snd_soc_set_ac97_ops(&pxa2xx_ac97_ops);
+-	if (ret != 0)
+-		return ret;
++	codecs_pdata = pdata ? pdata->codecs_pdata : NULL;
++	ctrl = snd_ac97_controller_register(&pxa2xx_ac97_ops, &pdev->dev,
++					    AC97_SLOTS_AVAILABLE_ALL,
++					    codecs_pdata);
++	if (IS_ERR(ctrl))
++		return PTR_ERR(ctrl);
+ 
++	platform_set_drvdata(pdev, ctrl);
+ 	/* Punt most of the init to the SoC probe; we may need the machine
+ 	 * driver to do interesting things with the clocking to get us up
+ 	 * and running.
+@@ -245,8 +245,10 @@ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
+ 
+ static int pxa2xx_ac97_dev_remove(struct platform_device *pdev)
+ {
++	struct ac97_controller *ctrl = platform_get_drvdata(pdev);
++
+ 	snd_soc_unregister_component(&pdev->dev);
+-	snd_soc_set_ac97_ops(NULL);
++	snd_ac97_controller_unregister(ctrl);
+ 	pxa2xx_ac97_hw_remove(pdev);
  	return 0;
--
-- err:
-+err:
- 	nvdimm_bus_unregister(nvdimm_bus);
- 	dev_err(dev, "failed to register legacy persistent memory ranges\n");
--	return -ENXIO;
-+	return rc;
  }
- 
- static struct platform_driver e820_pmem_driver = {
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 2af6c03858b9..b85f59e8a4b8 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -448,6 +448,7 @@ int walk_iomem_res_desc(unsigned long desc, unsigned long flags, u64 start,
- 
- 	return __walk_iomem_res_desc(&res, desc, false, arg, func);
- }
-+EXPORT_SYMBOL_GPL(walk_iomem_res_desc);
- 
- /*
-  * This function calls the @func callback against all memory ranges of type
+-- 
+2.11.0
