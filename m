@@ -1,117 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751982AbeFBKMs (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 06:12:48 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54058 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751558AbeFBKMY (ORCPT
+        id S1751691AbeFBKhN (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 06:37:13 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38650 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbeFBKhG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 06:12:24 -0400
-X-Google-Smtp-Source: ADUXVKKYDEoFPLVRl8ac4Fmd2vee8kmnelwqQ1kLOD/UEzpg9nMTl7vaFGZmh09PoVUAcGv6gw0R+A==
-From: Marek Vasut <marek.vasut@gmail.com>
-X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+        Sat, 2 Jun 2018 06:37:06 -0400
+X-Google-Smtp-Source: ADUXVKKeEVOx/JU7HB4tLGwdfuRY8AneqjG7E/qTolyok+khkf09qQgiHBes3KTadLOS/WIv4nv2cg==
+From: Christian Brauner <christian@brauner.io>
 To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 08/10] mfd: da9063: Register RTC only on DA9063L
-Date: Sat,  2 Jun 2018 12:11:53 +0200
-Message-Id: <20180602101155.26375-8-marek.vasut+renesas@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
+        james.morris@microsoft.com, keescook@chromium.org,
+        peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, oleg@redhat.com,
+        Christian Brauner <christian@brauner.io>
+Subject: [PATCH v3 01/17] signal: make force_sigsegv() void
+Date: Sat,  2 Jun 2018 12:36:37 +0200
+Message-Id: <20180602103653.18181-2-christian@brauner.io>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180602103653.18181-1-christian@brauner.io>
+References: <20180602103653.18181-1-christian@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DA9063L does not contain RTC block, unlike the full DA9063.
-Split the RTC block into separate mfd cell and register it only
-on DA9063.
+force_sigsegv() returned 0 unconditionally so it doesn't make sense to have
+it return at all. In addition, there are no callers that check
+force_sigsegv()'s return value.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
-V2: No change
-V3: Rework of mfd: da9063: Disallow RTC on DA9063L
+v2->v3:
+* unchanged
+v1->v2:
+* unchanged
+v0->v1:
+* unchanged
 ---
- drivers/mfd/da9063-core.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+ include/linux/sched/signal.h | 2 +-
+ kernel/signal.c              | 7 ++-----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index eebca3442cf3..b05910c797af 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -76,7 +76,7 @@ static struct resource da9063_hwmon_resources[] = {
- };
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 113d1ad1ced7..e138ac16c650 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -314,7 +314,7 @@ int force_sig_pkuerr(void __user *addr, u32 pkey);
+ int force_sig_ptrace_errno_trap(int errno, void __user *addr);
  
+ extern int send_sig_info(int, struct siginfo *, struct task_struct *);
+-extern int force_sigsegv(int, struct task_struct *);
++extern void force_sigsegv(int sig, struct task_struct *p);
+ extern int force_sig_info(int, struct siginfo *, struct task_struct *);
+ extern int __kill_pgrp_info(int sig, struct siginfo *info, struct pid *pgrp);
+ extern int kill_pid_info(int sig, struct siginfo *info, struct pid *pid);
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 9c33163a6165..c756008d589e 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1468,8 +1468,7 @@ send_sig(int sig, struct task_struct *p, int priv)
+ 	return send_sig_info(sig, __si_special(priv), p);
+ }
  
--static const struct mfd_cell da9063_devs[] = {
-+static const struct mfd_cell da9063_common_devs[] = {
- 	{
- 		.name		= DA9063_DRVNAME_REGULATORS,
- 		.num_resources	= ARRAY_SIZE(da9063_regulators_resources),
-@@ -100,15 +100,19 @@ static const struct mfd_cell da9063_devs[] = {
- 		.resources	= da9063_onkey_resources,
- 		.of_compatible = "dlg,da9063-onkey",
- 	},
-+	{
-+		.name		= DA9063_DRVNAME_VIBRATION,
-+	},
-+};
-+
-+/* Only present on DA9063 , not on DA9063L */
-+static const struct mfd_cell da9063_devs[] = {
- 	{
- 		.name		= DA9063_DRVNAME_RTC,
- 		.num_resources	= ARRAY_SIZE(da9063_rtc_resources),
- 		.resources	= da9063_rtc_resources,
- 		.of_compatible	= "dlg,da9063-rtc",
- 	},
--	{
--		.name		= DA9063_DRVNAME_VIBRATION,
--	},
- };
- 
- static int da9063_clear_fault_log(struct da9063 *da9063)
-@@ -225,16 +229,28 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- 
- 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
- 
--	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
--			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
--			      NULL);
-+	ret = mfd_add_devices(da9063->dev, -1, da9063_common_devs,
-+			      ARRAY_SIZE(da9063_common_devs),
-+			      NULL, da9063->irq_base, NULL);
- 	if (ret) {
- 		dev_err(da9063->dev, "Cannot add MFD cells\n");
- 		goto err_irq_exit;
+-void
+-force_sig(int sig, struct task_struct *p)
++void force_sig(int sig, struct task_struct *p)
+ {
+ 	force_sig_info(sig, SEND_SIG_PRIV, p);
+ }
+@@ -1480,8 +1479,7 @@ force_sig(int sig, struct task_struct *p)
+  * the problem was already a SIGSEGV, we'll want to
+  * make sure we don't even try to deliver the signal..
+  */
+-int
+-force_sigsegv(int sig, struct task_struct *p)
++void force_sigsegv(int sig, struct task_struct *p)
+ {
+ 	if (sig == SIGSEGV) {
+ 		unsigned long flags;
+@@ -1490,7 +1488,6 @@ force_sigsegv(int sig, struct task_struct *p)
+ 		spin_unlock_irqrestore(&p->sighand->siglock, flags);
  	}
+ 	force_sig(SIGSEGV, p);
+-	return 0;
+ }
  
-+	if (da9063->type == PMIC_TYPE_DA9063) {
-+		ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
-+				      ARRAY_SIZE(da9063_devs),
-+				      NULL, da9063->irq_base, NULL);
-+		if (ret) {
-+			dev_err(da9063->dev, "Cannot add MFD cells\n");
-+			goto err_mfd_cleanup;
-+		}
-+	}
-+
- 	return ret;
- 
-+err_mfd_cleanup:
-+	mfd_remove_devices(da9063->dev);
- err_irq_exit:
- 	da9063_irq_exit(da9063);
- 	return ret;
+ int force_sig_fault(int sig, int code, void __user *addr
 -- 
-2.16.2
+2.17.0
