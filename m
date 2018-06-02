@@ -1,164 +1,281 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751474AbeFBA4h (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 20:56:37 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:42646 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751338AbeFBA4W (ORCPT
+        id S1751783AbeFBA5P (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 20:57:15 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:46016 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751267AbeFBA4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 20:56:22 -0400
-X-Google-Smtp-Source: ADUXVKLkbu1v814Ui8E7Wn5Pxt4U1J0MZl6GrL+HtgoAh8awIoVV2MMUeGi23Z/YjtTAS9qRtllYbw==
-From: Ray Jui <ray.jui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pramod Kumar <pramod.kumar@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH v3 1/3] dt-bindings: clk: Update Stingray binding doc
-Date: Fri,  1 Jun 2018 17:56:06 -0700
-Message-Id: <1527900968-12017-2-git-send-email-ray.jui@broadcom.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
-References: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
+        Fri, 1 Jun 2018 20:56:36 -0400
+X-Google-Smtp-Source: ADUXVKIsgmTeYAijv69eY6U/xCPeB+S0HkoGFuKA//g9a7w1HOXRAMjAtYaOfORAw8m8bGDlY5ZM2g==
+Subject: Re: INFO: task hung in blk_queue_enter
+From: Jens Axboe <axboe@kernel.dk>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Bart.VanAssche@wdc.com, dvyukov@google.com,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        jthumshirn@suse.de, alan.christopher.jenkins@gmail.com,
+        syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com,
+        martin.petersen@oracle.com, dan.j.williams@intel.com, hch@lst.de,
+        oleksandr@natalenko.name, martin@lichtvoll.de, hare@suse.com,
+        syzkaller-bugs@googlegroups.com, ross.zwisler@linux.intel.com,
+        keith.busch@intel.com, linux-ext4@vger.kernel.org
+References: <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
+ <43327033306c3dd2f7c3717d64ce22415b6f3451.camel@wdc.com>
+ <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com>
+ <6db16aa3a7c56b6dcca2d10b4e100a780c740081.camel@wdc.com>
+ <201805220652.BFH82351.SMQFFOJOtFOVLH@I-love.SAKURA.ne.jp>
+ <201805222020.FEJ82897.OFtJMFHOVLQOSF@I-love.SAKURA.ne.jp>
+ <25708e84-6f35-04c3-a2e4-6854f0ed9e78@I-love.SAKURA.ne.jp>
+ <dc9862c7-ec16-8b11-04e4-422b435d41ef@kernel.dk>
+ <20180601234946.GA655@ming.t460p>
+ <95c419d8-7f19-f9c0-a53f-3d381fe93176@kernel.dk>
+Message-ID: <ed1b74b2-4446-a2f1-5196-86478bb3694a@kernel.dk>
+Date: Fri, 1 Jun 2018 18:56:31 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <95c419d8-7f19-f9c0-a53f-3d381fe93176@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+On 6/1/18 6:49 PM, Jens Axboe wrote:
+> On 6/1/18 5:49 PM, Ming Lei wrote:
+>> On Fri, Jun 01, 2018 at 11:52:45AM -0600, Jens Axboe wrote:
+>>> On 6/1/18 4:10 AM, Tetsuo Handa wrote:
+>>>> Tetsuo Handa wrote:
+>>>>> Since sum of percpu_count did not change after percpu_ref_kill(), this is
+>>>>> not a race condition while folding percpu counter values into atomic counter
+>>>>> value. That is, for some reason, someone who is responsible for calling
+>>>>> percpu_ref_put(&q->q_usage_counter) (presumably via blk_queue_exit()) is
+>>>>> unable to call percpu_ref_put().
+>>>>> But I don't know how to find someone who is failing to call percpu_ref_put()...
+>>>>
+>>>> I found the someone. It was already there in the backtrace...
+>>>>
+>>>> ----------------------------------------
+>>>> [   62.065852] a.out           D    0  4414   4337 0x00000000
+>>>> [   62.067677] Call Trace:
+>>>> [   62.068545]  __schedule+0x40b/0x860
+>>>> [   62.069726]  schedule+0x31/0x80
+>>>> [   62.070796]  schedule_timeout+0x1c1/0x3c0
+>>>> [   62.072159]  ? __next_timer_interrupt+0xd0/0xd0
+>>>> [   62.073670]  blk_queue_enter+0x218/0x520
+>>>> [   62.074985]  ? remove_wait_queue+0x70/0x70
+>>>> [   62.076361]  generic_make_request+0x3d/0x540
+>>>> [   62.077785]  ? __bio_clone_fast+0x6b/0x80
+>>>> [   62.079147]  ? bio_clone_fast+0x2c/0x70
+>>>> [   62.080456]  blk_queue_split+0x29b/0x560
+>>>> [   62.081772]  ? blk_queue_split+0x29b/0x560
+>>>> [   62.083162]  blk_mq_make_request+0x7c/0x430
+>>>> [   62.084562]  generic_make_request+0x276/0x540
+>>>> [   62.086034]  submit_bio+0x6e/0x140
+>>>> [   62.087185]  ? submit_bio+0x6e/0x140
+>>>> [   62.088384]  ? guard_bio_eod+0x9d/0x1d0
+>>>> [   62.089681]  do_mpage_readpage+0x328/0x730
+>>>> [   62.091045]  ? __add_to_page_cache_locked+0x12e/0x1a0
+>>>> [   62.092726]  mpage_readpages+0x120/0x190
+>>>> [   62.094034]  ? check_disk_change+0x70/0x70
+>>>> [   62.095454]  ? check_disk_change+0x70/0x70
+>>>> [   62.096849]  ? alloc_pages_current+0x65/0xd0
+>>>> [   62.098277]  blkdev_readpages+0x18/0x20
+>>>> [   62.099568]  __do_page_cache_readahead+0x298/0x360
+>>>> [   62.101157]  ondemand_readahead+0x1f6/0x490
+>>>> [   62.102546]  ? ondemand_readahead+0x1f6/0x490
+>>>> [   62.103995]  page_cache_sync_readahead+0x29/0x40
+>>>> [   62.105539]  generic_file_read_iter+0x7d0/0x9d0
+>>>> [   62.107067]  ? futex_wait+0x221/0x240
+>>>> [   62.108303]  ? trace_hardirqs_on+0xd/0x10
+>>>> [   62.109654]  blkdev_read_iter+0x30/0x40
+>>>> [   62.110954]  generic_file_splice_read+0xc5/0x140
+>>>> [   62.112538]  do_splice_to+0x74/0x90
+>>>> [   62.113726]  splice_direct_to_actor+0xa4/0x1f0
+>>>> [   62.115209]  ? generic_pipe_buf_nosteal+0x10/0x10
+>>>> [   62.116773]  do_splice_direct+0x8a/0xb0
+>>>> [   62.118056]  do_sendfile+0x1aa/0x390
+>>>> [   62.119255]  __x64_sys_sendfile64+0x4e/0xc0
+>>>> [   62.120666]  do_syscall_64+0x6e/0x210
+>>>> [   62.121909]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>>> ----------------------------------------
+>>>>
+>>>> The someone is blk_queue_split() from blk_mq_make_request() who depends on an
+>>>> assumption that blk_queue_enter() from recursively called generic_make_request()
+>>>> does not get blocked due to percpu_ref_tryget_live(&q->q_usage_counter) failure.
+>>>>
+>>>> ----------------------------------------
+>>>> generic_make_request(struct bio *bio) {
+>>>>   if (blk_queue_enter(q, flags) < 0) { /* <= percpu_ref_tryget_live() succeeds. */
+>>>>     if (!blk_queue_dying(q) && (bio->bi_opf & REQ_NOWAIT))
+>>>>       bio_wouldblock_error(bio);
+>>>>     else
+>>>>       bio_io_error(bio);
+>>>>     return ret;
+>>>>   }
+>>>> (...snipped...)
+>>>>   ret = q->make_request_fn(q, bio);
+>>>> (...snipped...)
+>>>>   if (q)
+>>>>     blk_queue_exit(q);
+>>>> }
+>>>> ----------------------------------------
+>>>>
+>>>> where q->make_request_fn == blk_mq_make_request which does
+>>>>
+>>>> ----------------------------------------
+>>>> blk_mq_make_request(struct request_queue *q, struct bio *bio) {
+>>>>    blk_queue_split(q, &bio);
+>>>> }
+>>>>
+>>>> blk_queue_split(struct request_queue *q, struct bio **bio) {
+>>>>   generic_make_request(*bio); /* <= percpu_ref_tryget_live() fails and waits until atomic_read(&q->mq_freeze_depth) becomes 0. */
+>>>> }
+>>>> ----------------------------------------
+>>>>
+>>>> and meanwhile atomic_inc_return(&q->mq_freeze_depth) and
+>>>> percpu_ref_kill() are called by	blk_freeze_queue_start()...
+>>>>
+>>>> Now, it is up to you about how to fix this race problem.
+>>>
+>>> Ahh, nicely spotted! One idea would be the one below. For this case,
+>>> we're recursing, so we can either do a non-block queue enter, or we
+>>> can just do a live enter.
+>>>
+>>> diff --git a/block/blk-core.c b/block/blk-core.c
+>>> index 85909b431eb0..7de12e0dcc3d 100644
+>>> --- a/block/blk-core.c
+>>> +++ b/block/blk-core.c
+>>> @@ -2392,7 +2392,9 @@ blk_qc_t generic_make_request(struct bio *bio)
+>>>  
+>>>  	if (bio->bi_opf & REQ_NOWAIT)
+>>>  		flags = BLK_MQ_REQ_NOWAIT;
+>>> -	if (blk_queue_enter(q, flags) < 0) {
+>>> +	if (bio->bi_opf & REQ_QUEUE_ENTERED)
+>>> +		blk_queue_enter_live(q);
+>>> +	else if (blk_queue_enter(q, flags) < 0) {
+>>>  		if (!blk_queue_dying(q) && (bio->bi_opf & REQ_NOWAIT))
+>>>  			bio_wouldblock_error(bio);
+>>>  		else
+>>> diff --git a/block/blk-merge.c b/block/blk-merge.c
+>>> index 782940c65d8a..e1063e8f7eda 100644
+>>> --- a/block/blk-merge.c
+>>> +++ b/block/blk-merge.c
+>>> @@ -210,6 +210,16 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
+>>>  		/* there isn't chance to merge the splitted bio */
+>>>  		split->bi_opf |= REQ_NOMERGE;
+>>>  
+>>> +		/*
+>>> +		 * Since we're recursing into make_request here, ensure
+>>> +		 * that we mark this bio as already having entered the queue.
+>>> +		 * If not, and the queue is going away, we can get stuck
+>>> +		 * forever on waiting for the queue reference to drop. But
+>>> +		 * that will never happen, as we're already holding a
+>>> +		 * reference to it.
+>>> +		 */
+>>> +		(*bio)->bi_opf |= REQ_QUEUE_ENTERED;
+>>> +
+>>>  		bio_chain(split, *bio);
+>>>  		trace_block_split(q, split, (*bio)->bi_iter.bi_sector);
+>>>  		generic_make_request(*bio);
+>>> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+>>> index 17b18b91ebac..a6bc789b83e7 100644
+>>> --- a/include/linux/blk_types.h
+>>> +++ b/include/linux/blk_types.h
+>>> @@ -282,6 +282,8 @@ enum req_flag_bits {
+>>>  	/* command specific flags for REQ_OP_WRITE_ZEROES: */
+>>>  	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
+>>>  
+>>> +	__REQ_QUEUE_ENTERED,	/* queue already entered for this request */
+>>> +
+>>>  	/* for driver use */
+>>>  	__REQ_DRV,
+>>>  
+>>> @@ -302,9 +304,8 @@ enum req_flag_bits {
+>>>  #define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
+>>>  #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
+>>>  #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
+>>> -
+>>>  #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
+>>> -
+>>> +#define REQ_QUEUE_ENTERED	(1ULL << __REQ_QUEUE_ENTERED)
+>>>  #define REQ_DRV			(1ULL << __REQ_DRV)
+>>>  
+>>>  #define REQ_FAILFAST_MASK \
+>>
+>> bio clone inherits .bi_opf, so this way may not work for cloned bio.
+>>
+>> Given most of bio_split() is run in .make_request_fn(), holding the
+>> queue ref may not be needed in case of bio splitting, so another
+>> candidate fix might be to introduce one extra parameter of
+>> 'need_queue_ref' to generic_make_request().
+> 
+> I did consider that, but that's pretty silly for a corner case and you'd
+> have to change a crap ton of calls to it. I think it'd be cleaner to
+> clear the bit when we need to, potentially even adding a debug check to
+> blk_queue_enter_live() that complains if the ref was not already
+> elevated. Though that would be expensive, compared to the percpu inc
+> now. Not saying the bit is necessarily the best way forward, but I do
+> like it a LOT more than adding an argument to generic_make_request.
+> 
+> It should have been a bio flag to begin with, that better captures the
+> scope and also avoids clones inheriting anything they shouldn't. It's
+> also not applicable to a request.
 
-Update Stingray clock binding document to add additional clock entries
-with names matching the latest ASIC datasheet. Also modify a few existing
-entries to make their naming more consistent with the rest of the entries
+A little too much inheritance from the previous patch, better version
+below.
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- .../bindings/clock/brcm,iproc-clocks.txt           | 26 ++++++++++++----------
- include/dt-bindings/clock/bcm-sr.h                 | 24 ++++++++++++++------
- 2 files changed, 31 insertions(+), 19 deletions(-)
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 85909b431eb0..71cb228d7374 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -2392,7 +2392,9 @@ blk_qc_t generic_make_request(struct bio *bio)
+ 
+ 	if (bio->bi_opf & REQ_NOWAIT)
+ 		flags = BLK_MQ_REQ_NOWAIT;
+-	if (blk_queue_enter(q, flags) < 0) {
++	if (bio_flagged(bio, BIO_QUEUE_ENTERED))
++		blk_queue_enter_live(q);
++	else if (blk_queue_enter(q, flags) < 0) {
+ 		if (!blk_queue_dying(q) && (bio->bi_opf & REQ_NOWAIT))
+ 			bio_wouldblock_error(bio);
+ 		else
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 782940c65d8a..481dc02668f9 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -210,6 +210,16 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
+ 		/* there isn't chance to merge the splitted bio */
+ 		split->bi_opf |= REQ_NOMERGE;
+ 
++		/*
++		 * Since we're recursing into make_request here, ensure
++		 * that we mark this bio as already having entered the queue.
++		 * If not, and the queue is going away, we can get stuck
++		 * forever on waiting for the queue reference to drop. But
++		 * that will never happen, as we're already holding a
++		 * reference to it.
++		 */
++		bio_set_flag(*bio, BIO_QUEUE_ENTERED);
++
+ 		bio_chain(split, *bio);
+ 		trace_block_split(q, split, (*bio)->bi_iter.bi_sector);
+ 		generic_make_request(*bio);
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 17b18b91ebac..1602bf4ab4cd 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -186,6 +186,8 @@ struct bio {
+ 				 * throttling rules. Don't do it again. */
+ #define BIO_TRACE_COMPLETION 10	/* bio_endio() should trace the final completion
+ 				 * of this bio. */
++#define BIO_QUEUE_ENTERED 11	/* can use blk_queue_enter_live() */
++
+ /* See BVEC_POOL_OFFSET below before adding new flags */
+ 
+ /*
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index f8e4a93..ab730ea 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -276,36 +276,38 @@ These clock IDs are defined in:
-     clk_ts_500_ref	genpll2		2	BCM_SR_GENPLL2_TS_500_REF_CLK
-     clk_125_nitro	genpll2		3	BCM_SR_GENPLL2_125_NITRO_CLK
-     clk_chimp		genpll2		4	BCM_SR_GENPLL2_CHIMP_CLK
--    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH
-+    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH_CLK
-+    clk_fs		genpll2		6	BCM_SR_GENPLL2_FS_CLK
- 
-     genpll3		crystal		0	BCM_SR_GENPLL3
-     clk_hsls		genpll3		1	BCM_SR_GENPLL3_HSLS_CLK
-     clk_sdio		genpll3		2	BCM_SR_GENPLL3_SDIO_CLK
- 
-     genpll4		crystal		0	BCM_SR_GENPLL4
--    ccn			genpll4		1	BCM_SR_GENPLL4_CCN_CLK
-+    clk_ccn		genpll4		1	BCM_SR_GENPLL4_CCN_CLK
-     clk_tpiu_pll	genpll4		2	BCM_SR_GENPLL4_TPIU_PLL_CLK
--    noc_clk		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
-+    clk_noc		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
-     clk_chclk_fs4	genpll4		4	BCM_SR_GENPLL4_CHCLK_FS4_CLK
-     clk_bridge_fscpu	genpll4		5	BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK
- 
--
-     genpll5		crystal		0	BCM_SR_GENPLL5
--    fs4_hf_clk		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
--    crypto_ae_clk	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
--    raid_ae_clk		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
-+    clk_fs4_hf		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
-+    clk_crypto_ae	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
-+    clk_raid_ae		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
- 
-     genpll6		crystal		0	BCM_SR_GENPLL6
--    48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
-+    clk_48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
- 
-     lcpll0		crystal		0	BCM_SR_LCPLL0
-     clk_sata_refp 	lcpll0		1	BCM_SR_LCPLL0_SATA_REFP_CLK
-     clk_sata_refn	lcpll0		2	BCM_SR_LCPLL0_SATA_REFN_CLK
--    clk_usb_ref		lcpll0		3	BCM_SR_LCPLL0_USB_REF_CLK
--    sata_refpn		lcpll0		3	BCM_SR_LCPLL0_SATA_REFPN_CLK
-+    clk_sata_350	lcpll0		3	BCM_SR_LCPLL0_SATA_350_CLK
-+    clk_sata_500	lcpll0		4	BCM_SR_LCPLL0_SATA_500_CLK
- 
-     lcpll1		crystal		0	BCM_SR_LCPLL1
--    wan 		lcpll1		1	BCM_SR_LCPLL0_WAN_CLK
-+    clk_wan		lcpll1		1	BCM_SR_LCPLL1_WAN_CLK
-+    clk_usb_ref		lcpll1		2	BCM_SR_LCPLL1_USB_REF_CLK
-+    clk_crmu_ts		lcpll1		3	BCM_SR_LCPLL1_CRMU_TS_CLK
- 
-     lcpll_pcie		crystal		0	BCM_SR_LCPLL_PCIE
--    pcie_phy_ref 	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
-+    clk_pcie_phy_ref	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
-diff --git a/include/dt-bindings/clock/bcm-sr.h b/include/dt-bindings/clock/bcm-sr.h
-index cff6c6f..419011b 100644
---- a/include/dt-bindings/clock/bcm-sr.h
-+++ b/include/dt-bindings/clock/bcm-sr.h
-@@ -35,7 +35,7 @@
- 
- /* GENPLL 0 clock channel ID SCR HSLS FS PCIE */
- #define BCM_SR_GENPLL0			0
--#define BCM_SR_GENPLL0_SATA_CLK		1
-+#define BCM_SR_GENPLL0_125M_CLK		1
- #define BCM_SR_GENPLL0_SCR_CLK		2
- #define BCM_SR_GENPLL0_250M_CLK		3
- #define BCM_SR_GENPLL0_PCIE_AXI_CLK	4
-@@ -50,9 +50,11 @@
- /* GENPLL 2 clock channel ID NITRO MHB*/
- #define BCM_SR_GENPLL2			0
- #define BCM_SR_GENPLL2_NIC_CLK		1
--#define BCM_SR_GENPLL2_250_NITRO_CLK	2
-+#define BCM_SR_GENPLL2_TS_500_CLK	2
- #define BCM_SR_GENPLL2_125_NITRO_CLK	3
- #define BCM_SR_GENPLL2_CHIMP_CLK	4
-+#define BCM_SR_GENPLL2_NIC_FLASH_CLK	5
-+#define BCM_SR_GENPLL2_FS4_CLK		6
- 
- /* GENPLL 3 HSLS clock channel ID */
- #define BCM_SR_GENPLL3			0
-@@ -62,11 +64,16 @@
- /* GENPLL 4 SCR clock channel ID */
- #define BCM_SR_GENPLL4			0
- #define BCM_SR_GENPLL4_CCN_CLK		1
-+#define BCM_SR_GENPLL4_TPIU_PLL_CLK	2
-+#define BCM_SR_GENPLL4_NOC_CLK		3
-+#define BCM_SR_GENPLL4_CHCLK_FS4_CLK	4
-+#define BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK	5
- 
- /* GENPLL 5 FS4 clock channel ID */
- #define BCM_SR_GENPLL5			0
--#define BCM_SR_GENPLL5_FS_CLK		1
--#define BCM_SR_GENPLL5_SPU_CLK		2
-+#define BCM_SR_GENPLL5_FS4_HF_CLK	1
-+#define BCM_SR_GENPLL5_CRYPTO_AE_CLK	2
-+#define BCM_SR_GENPLL5_RAID_AE_CLK	3
- 
- /* GENPLL 6 NITRO clock channel ID */
- #define BCM_SR_GENPLL6			0
-@@ -74,13 +81,16 @@
- 
- /* LCPLL0  clock channel ID */
- #define BCM_SR_LCPLL0			0
--#define BCM_SR_LCPLL0_SATA_REF_CLK	1
--#define BCM_SR_LCPLL0_USB_REF_CLK	2
--#define BCM_SR_LCPLL0_SATA_REFPN_CLK	3
-+#define BCM_SR_LCPLL0_SATA_REFP_CLK	1
-+#define BCM_SR_LCPLL0_SATA_REFN_CLK	2
-+#define BCM_SR_LCPLL0_SATA_350_CLK	3
-+#define BCM_SR_LCPLL0_SATA_500_CLK	4
- 
- /* LCPLL1  clock channel ID */
- #define BCM_SR_LCPLL1			0
- #define BCM_SR_LCPLL1_WAN_CLK		1
-+#define BCM_SR_LCPLL1_USB_REF_CLK	2
-+#define BCM_SR_LCPLL1_CRMU_TS_CLK	3
- 
- /* LCPLL PCIE  clock channel ID */
- #define BCM_SR_LCPLL_PCIE		0
 -- 
-2.1.4
+Jens Axboe
