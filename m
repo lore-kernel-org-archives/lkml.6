@@ -1,53 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751671AbeFBJjg (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 05:39:36 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:45951 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751297AbeFBJjc (ORCPT
+        id S1751772AbeFBJlr (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 05:41:47 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:46166 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750881AbeFBJlo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 05:39:32 -0400
-X-ME-Proxy: <xmx:02USW8CeVr7xH0_9RPhUo6_GSaFccf9XL8ju35bXC6FysUSCvNpTDQ>
-X-ME-Proxy: <xmx:02USW0GxQBbsl9hDMQwYbHFlA7KcuPqUr-VBEECDpQy_rwti9DszcQ>
-X-ME-Proxy: <xmx:02USWzfbWMZAvmTQwHEhIPqU0rwkQeHLvBX9PuY25pN8zxSjCEu7bw>
-X-ME-Proxy: <xmx:02USW6yU5AmbNr-NoX10wcNCCLCvo9bfwDSzKRWBedA8Kc8pOUsNYA>
-X-ME-Proxy: <xmx:02USWyfL_uz3nZO625SMKm514efmwdPDS2DKpMfWPMBnzj9ytgsxgw>
-X-ME-Proxy: <xmx:02USW2LEz0DUAVF4jtYakAzIpRM_hzZF2EB1VMcMk0AURMC3xG7BkA>
-X-ME-Sender: <xms:02USW2rbOgM4peAuhJP81l1eRCrilodXGEm3Q5fk0GNq1JcWMgEFuw>
-Date: Sat, 2 Jun 2018 12:39:28 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: Michal Kubecek <mkubecek@suse.cz>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Tom Herbert <tom@herbertland.com>, David Ahern <dsahern@gmail.com>
-Subject: Re: [PATCH net v2] ipv6: omit traffic class when calculating flow
- hash
-Message-ID: <20180602093928.GA28635@splinter>
-References: <20180602080528.54B27A0C48@unicorn.suse.cz>
+        Sat, 2 Jun 2018 05:41:44 -0400
+X-Google-Smtp-Source: ADUXVKJG0vuGH/Ml0/LZpSq1uuK4MuZAPszQ384yY/SLzcfUDE9St4uI7fHovrfn/wNKcxARzw28G/GnJy3zHXobO68=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180602080528.54B27A0C48@unicorn.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <152791486506.225090.5983323218999937025@swboyd.mtv.corp.google.com>
+References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
+ <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
+ <CAMuHMdUNXQDdv-CQs+KpaHJ8gGFjFrPRNXF3HPZNyTdQr+23Og@mail.gmail.com> <152791486506.225090.5983323218999937025@swboyd.mtv.corp.google.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sat, 2 Jun 2018 11:41:43 +0200
+X-Google-Sender-Auth: C_NeN8F7aWiXv8FUMXIeeipTl14
+Message-ID: <CAMuHMdVEGpYCjycdoYkaMjnPQ9dL33yPAm0EUoTtEZxkaup7XA@mail.gmail.com>
+Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from __of_clk_get()
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 02, 2018 at 09:40:34AM +0200, Michal Kubecek wrote:
-> Some of the code paths calculating flow hash for IPv6 use flowlabel member
-> of struct flowi6 which, despite its name, encodes both flow label and
-> traffic class. If traffic class changes within a TCP connection (as e.g.
-> ssh does), ECMP route can switch between path. It's also incosistent with
-> other code paths where ip6_flowlabel() (returning only flow label) is used
-> to feed the key.
-> 
-> Use only flow label everywhere, including one place where hash key is set
-> using ip6_flowinfo().
-> 
-> Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
-> Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+Hi Stephen,
 
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
-Tested-by: Ido Schimmel <idosch@mellanox.com>
+On Sat, Jun 2, 2018 at 6:47 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2018-06-01 12:22:33)
+>> On Fri, Jun 1, 2018 at 9:20 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+>> > Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
+>> >> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
+>> >> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
+>> >> counting number of phandles in a property").
+>> >>
+>> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> >> ---
+>> >> Commit bd69f73f2c81eed9 is in v3.9.
+>> >
+>> > Did you send this to Russell's patch tracker? Otherwise I can pick it up
+>>
+>> Not yet. The patch tracker is for reviewed patches, AFAIK.
+>>
+>> > to clk-next.
+>>
+>> Thanks!
+>>
+>
+> Ok. If you need my reviewed-by to add it to the tracker feel free to
+> have:
+>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+
+Thanks, but it's much easier if you would take it, and I can avoid looking
+up again how to submit it properly to the patch tracker.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
