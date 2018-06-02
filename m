@@ -1,40 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751482AbeFBAtR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 20:49:17 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39757 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751386AbeFBAtP (ORCPT
+        id S1751522AbeFBAuY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 20:50:24 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:38116 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750916AbeFBAuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 20:49:15 -0400
-X-Google-Smtp-Source: ADUXVKLsUEU8x7X8AoproKo7TFezKRACCuMkJgziaxX7nZDcyk7TmVy5bMwinJnI39KMBUAGQzzWBQ==
-Subject: Re: INFO: task hung in blk_queue_enter
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Bart.VanAssche@wdc.com, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        jthumshirn@suse.de, alan.christopher.jenkins@gmail.com,
-        syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com,
-        martin.petersen@oracle.com, dan.j.williams@intel.com, hch@lst.de,
-        oleksandr@natalenko.name, martin@lichtvoll.de, hare@suse.com,
-        syzkaller-bugs@googlegroups.com, ross.zwisler@linux.intel.com,
-        keith.busch@intel.com, linux-ext4@vger.kernel.org
-References: <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
- <43327033306c3dd2f7c3717d64ce22415b6f3451.camel@wdc.com>
- <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com>
- <6db16aa3a7c56b6dcca2d10b4e100a780c740081.camel@wdc.com>
- <201805220652.BFH82351.SMQFFOJOtFOVLH@I-love.SAKURA.ne.jp>
- <201805222020.FEJ82897.OFtJMFHOVLQOSF@I-love.SAKURA.ne.jp>
- <25708e84-6f35-04c3-a2e4-6854f0ed9e78@I-love.SAKURA.ne.jp>
- <dc9862c7-ec16-8b11-04e4-422b435d41ef@kernel.dk>
- <20180601234946.GA655@ming.t460p>
+        Fri, 1 Jun 2018 20:50:21 -0400
+X-Google-Smtp-Source: ADUXVKIGK/o1nYQQp/P5uZCUzLEI1ZPAJdIKoKIoabLBq4LnqThiMNOG6Wtou0Gd8S1cok+QTzh79A==
+Subject: Re: [bisect BUG] dm-crypt percpu counter warnings and invalid kernel
+ paging request at virtual address
+To: Kent Overstreet <kent.overstreet@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@fb.com>,
+        linux-kernel@vger.kernel.org, Alasdair Kergon <agk@redhat.com>,
+        dm-devel@redhat.com,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>
+References: <CAJKOXPfSbsu0RGTUFfb+t_uOvQQxa0uDn-nsG+1uuKAq56nVXA@mail.gmail.com>
+ <20180601223557.GA25942@kmo-pixel>
 From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <95c419d8-7f19-f9c0-a53f-3d381fe93176@kernel.dk>
-Date: Fri, 1 Jun 2018 18:49:10 -0600
+Message-ID: <220a69e1-f1ed-a878-3ab7-de4cea1239fa@kernel.dk>
+Date: Fri, 1 Jun 2018 18:50:13 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180601234946.GA655@ming.t460p>
+In-Reply-To: <20180601223557.GA25942@kmo-pixel>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -42,235 +33,89 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/1/18 5:49 PM, Ming Lei wrote:
-> On Fri, Jun 01, 2018 at 11:52:45AM -0600, Jens Axboe wrote:
->> On 6/1/18 4:10 AM, Tetsuo Handa wrote:
->>> Tetsuo Handa wrote:
->>>> Since sum of percpu_count did not change after percpu_ref_kill(), this is
->>>> not a race condition while folding percpu counter values into atomic counter
->>>> value. That is, for some reason, someone who is responsible for calling
->>>> percpu_ref_put(&q->q_usage_counter) (presumably via blk_queue_exit()) is
->>>> unable to call percpu_ref_put().
->>>> But I don't know how to find someone who is failing to call percpu_ref_put()...
->>>
->>> I found the someone. It was already there in the backtrace...
->>>
->>> ----------------------------------------
->>> [   62.065852] a.out           D    0  4414   4337 0x00000000
->>> [   62.067677] Call Trace:
->>> [   62.068545]  __schedule+0x40b/0x860
->>> [   62.069726]  schedule+0x31/0x80
->>> [   62.070796]  schedule_timeout+0x1c1/0x3c0
->>> [   62.072159]  ? __next_timer_interrupt+0xd0/0xd0
->>> [   62.073670]  blk_queue_enter+0x218/0x520
->>> [   62.074985]  ? remove_wait_queue+0x70/0x70
->>> [   62.076361]  generic_make_request+0x3d/0x540
->>> [   62.077785]  ? __bio_clone_fast+0x6b/0x80
->>> [   62.079147]  ? bio_clone_fast+0x2c/0x70
->>> [   62.080456]  blk_queue_split+0x29b/0x560
->>> [   62.081772]  ? blk_queue_split+0x29b/0x560
->>> [   62.083162]  blk_mq_make_request+0x7c/0x430
->>> [   62.084562]  generic_make_request+0x276/0x540
->>> [   62.086034]  submit_bio+0x6e/0x140
->>> [   62.087185]  ? submit_bio+0x6e/0x140
->>> [   62.088384]  ? guard_bio_eod+0x9d/0x1d0
->>> [   62.089681]  do_mpage_readpage+0x328/0x730
->>> [   62.091045]  ? __add_to_page_cache_locked+0x12e/0x1a0
->>> [   62.092726]  mpage_readpages+0x120/0x190
->>> [   62.094034]  ? check_disk_change+0x70/0x70
->>> [   62.095454]  ? check_disk_change+0x70/0x70
->>> [   62.096849]  ? alloc_pages_current+0x65/0xd0
->>> [   62.098277]  blkdev_readpages+0x18/0x20
->>> [   62.099568]  __do_page_cache_readahead+0x298/0x360
->>> [   62.101157]  ondemand_readahead+0x1f6/0x490
->>> [   62.102546]  ? ondemand_readahead+0x1f6/0x490
->>> [   62.103995]  page_cache_sync_readahead+0x29/0x40
->>> [   62.105539]  generic_file_read_iter+0x7d0/0x9d0
->>> [   62.107067]  ? futex_wait+0x221/0x240
->>> [   62.108303]  ? trace_hardirqs_on+0xd/0x10
->>> [   62.109654]  blkdev_read_iter+0x30/0x40
->>> [   62.110954]  generic_file_splice_read+0xc5/0x140
->>> [   62.112538]  do_splice_to+0x74/0x90
->>> [   62.113726]  splice_direct_to_actor+0xa4/0x1f0
->>> [   62.115209]  ? generic_pipe_buf_nosteal+0x10/0x10
->>> [   62.116773]  do_splice_direct+0x8a/0xb0
->>> [   62.118056]  do_sendfile+0x1aa/0x390
->>> [   62.119255]  __x64_sys_sendfile64+0x4e/0xc0
->>> [   62.120666]  do_syscall_64+0x6e/0x210
->>> [   62.121909]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>> ----------------------------------------
->>>
->>> The someone is blk_queue_split() from blk_mq_make_request() who depends on an
->>> assumption that blk_queue_enter() from recursively called generic_make_request()
->>> does not get blocked due to percpu_ref_tryget_live(&q->q_usage_counter) failure.
->>>
->>> ----------------------------------------
->>> generic_make_request(struct bio *bio) {
->>>   if (blk_queue_enter(q, flags) < 0) { /* <= percpu_ref_tryget_live() succeeds. */
->>>     if (!blk_queue_dying(q) && (bio->bi_opf & REQ_NOWAIT))
->>>       bio_wouldblock_error(bio);
->>>     else
->>>       bio_io_error(bio);
->>>     return ret;
->>>   }
->>> (...snipped...)
->>>   ret = q->make_request_fn(q, bio);
->>> (...snipped...)
->>>   if (q)
->>>     blk_queue_exit(q);
->>> }
->>> ----------------------------------------
->>>
->>> where q->make_request_fn == blk_mq_make_request which does
->>>
->>> ----------------------------------------
->>> blk_mq_make_request(struct request_queue *q, struct bio *bio) {
->>>    blk_queue_split(q, &bio);
->>> }
->>>
->>> blk_queue_split(struct request_queue *q, struct bio **bio) {
->>>   generic_make_request(*bio); /* <= percpu_ref_tryget_live() fails and waits until atomic_read(&q->mq_freeze_depth) becomes 0. */
->>> }
->>> ----------------------------------------
->>>
->>> and meanwhile atomic_inc_return(&q->mq_freeze_depth) and
->>> percpu_ref_kill() are called by	blk_freeze_queue_start()...
->>>
->>> Now, it is up to you about how to fix this race problem.
+On 6/1/18 4:35 PM, Kent Overstreet wrote:
+> On Fri, Jun 01, 2018 at 02:55:15PM +0200, Krzysztof Kozlowski wrote:
+>> Hi,
 >>
->> Ahh, nicely spotted! One idea would be the one below. For this case,
->> we're recursing, so we can either do a non-block queue enter, or we
->> can just do a live enter.
+>> Todays linux-next 20180601 fails during dm-crypt tests on Exynos5422
+>> (ARMv7, Cortex-A7+A15) using crypto HW block from SoC (s5p-aes).
 >>
->> diff --git a/block/blk-core.c b/block/blk-core.c
->> index 85909b431eb0..7de12e0dcc3d 100644
->> --- a/block/blk-core.c
->> +++ b/block/blk-core.c
->> @@ -2392,7 +2392,9 @@ blk_qc_t generic_make_request(struct bio *bio)
->>  
->>  	if (bio->bi_opf & REQ_NOWAIT)
->>  		flags = BLK_MQ_REQ_NOWAIT;
->> -	if (blk_queue_enter(q, flags) < 0) {
->> +	if (bio->bi_opf & REQ_QUEUE_ENTERED)
->> +		blk_queue_enter_live(q);
->> +	else if (blk_queue_enter(q, flags) < 0) {
->>  		if (!blk_queue_dying(q) && (bio->bi_opf & REQ_NOWAIT))
->>  			bio_wouldblock_error(bio);
->>  		else
->> diff --git a/block/blk-merge.c b/block/blk-merge.c
->> index 782940c65d8a..e1063e8f7eda 100644
->> --- a/block/blk-merge.c
->> +++ b/block/blk-merge.c
->> @@ -210,6 +210,16 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
->>  		/* there isn't chance to merge the splitted bio */
->>  		split->bi_opf |= REQ_NOMERGE;
->>  
->> +		/*
->> +		 * Since we're recursing into make_request here, ensure
->> +		 * that we mark this bio as already having entered the queue.
->> +		 * If not, and the queue is going away, we can get stuck
->> +		 * forever on waiting for the queue reference to drop. But
->> +		 * that will never happen, as we're already holding a
->> +		 * reference to it.
->> +		 */
->> +		(*bio)->bi_opf |= REQ_QUEUE_ENTERED;
->> +
->>  		bio_chain(split, *bio);
->>  		trace_block_split(q, split, (*bio)->bi_iter.bi_sector);
->>  		generic_make_request(*bio);
->> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
->> index 17b18b91ebac..a6bc789b83e7 100644
->> --- a/include/linux/blk_types.h
->> +++ b/include/linux/blk_types.h
->> @@ -282,6 +282,8 @@ enum req_flag_bits {
->>  	/* command specific flags for REQ_OP_WRITE_ZEROES: */
->>  	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
->>  
->> +	__REQ_QUEUE_ENTERED,	/* queue already entered for this request */
->> +
->>  	/* for driver use */
->>  	__REQ_DRV,
->>  
->> @@ -302,9 +304,8 @@ enum req_flag_bits {
->>  #define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
->>  #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
->>  #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
->> -
->>  #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
->> -
->> +#define REQ_QUEUE_ENTERED	(1ULL << __REQ_QUEUE_ENTERED)
->>  #define REQ_DRV			(1ULL << __REQ_DRV)
->>  
->>  #define REQ_FAILFAST_MASK \
+>> The test which fails:
+>> https://github.com/krzk/tools/blob/master/tests/s5p-sss-cryptsetup.sh
+>>
+>> Effect:
+>>
+>> [  149.867394] ------------[ cut here ]------------
+>> [  149.870631] WARNING: CPU: 5 PID: 492 at
+>> ../drivers/md/dm-crypt.c:2225 crypt_dtr+0x1c0/0x1c4 [dm_crypt]
+>> [  149.880078] Modules linked in: dm_crypt s5p_jpeg exynos_gsc s5p_mfc
+>> v4l2_mem2mem v4l2_common videobuf2_dma_contig videobuf2_memops
+>> videobuf2_v4l2 videobuf2_common videodev media
+>> [  149.895908] CPU: 5 PID: 492 Comm: cryptsetup Tainted: G        W
+>>      4.17.0-rc4-00159-gae4c15db96d2 #36
+>> [  149.905328] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+>> [  149.911398] [<c011291c>] (unwind_backtrace) from [<c010ece8>]
+>> (show_stack+0x10/0x14)
+>> [  149.919111] [<c010ece8>] (show_stack) from [<c0a32190>]
+>> (dump_stack+0x98/0xc4)
+>> [  149.926307] [<c0a32190>] (dump_stack) from [<c0126fa0>] (__warn+0x10c/0x124)
+>> [  149.933310] [<c0126fa0>] (__warn) from [<c01270d0>]
+>> (warn_slowpath_null+0x40/0x48)
+>> [  149.940862] [<c01270d0>] (warn_slowpath_null) from [<bf28e15c>]
+>> (crypt_dtr+0x1c0/0x1c4 [dm_crypt])
+>> [  149.949803] [<bf28e15c>] (crypt_dtr [dm_crypt]) from [<c06f34b8>]
+>> (dm_table_destroy+0x5c/0xf8)
+>> [  149.958360] [<c06f34b8>] (dm_table_destroy) from [<c06f0cb0>]
+>> (__dm_destroy+0x158/0x1b4)
+>> [  149.966414] [<c06f0cb0>] (__dm_destroy) from [<c06f7988>]
+>> (dev_remove+0xd4/0x104)
+>> [  149.973861] [<c06f7988>] (dev_remove) from [<c06f80b4>]
+>> (ctl_ioctl+0x2e4/0x660)
+>> [  149.981144] [<c06f80b4>] (ctl_ioctl) from [<c029fcc0>]
+>> (do_vfs_ioctl+0xb0/0x9e8)
+>> [  149.988508] [<c029fcc0>] (do_vfs_ioctl) from [<c02a062c>]
+>> (ksys_ioctl+0x34/0x5c)
+>> [  149.995874] [<c02a062c>] (ksys_ioctl) from [<c0101000>]
+>> (ret_fast_syscall+0x0/0x28)
+>> [  150.061101] ---[ end trace 3e3bc2b7df1963aa ]---
+>>
+>> [  150.065594] Unable to handle kernel paging request at virtual
+>> address 2e02f000
+>> [  150.383043] [<c0483edc>] (percpu_counter_add_batch) from
+>> [<bf28e378>] (crypt_page_free+0x34/0x3c [dm_crypt])
+>> [  150.392838] [<bf28e378>] (crypt_page_free [dm_crypt]) from
+>> [<c0229b18>] (mempool_exit+0x24/0x60)
+>> [  150.401584] [<c0229b18>] (mempool_exit) from [<bf28e028>]
+>> (crypt_dtr+0x8c/0x1c4 [dm_crypt])
+>> [  150.409903] [<bf28e028>] (crypt_dtr [dm_crypt]) from [<c06f34b8>]
+>> (dm_table_destroy+0x5c/0xf8)
+>> [  150.418477] [<c06f34b8>] (dm_table_destroy) from [<c06f0cb0>]
+>> (__dm_destroy+0x158/0x1b4)
+>> [  150.426533] [<c06f0cb0>] (__dm_destroy) from [<c06f7988>]
+>> (dev_remove+0xd4/0x104)
+>> [  150.433982] [<c06f7988>] (dev_remove) from [<c06f80b4>]
+>> (ctl_ioctl+0x2e4/0x660)
+>> [  150.441264] [<c06f80b4>] (ctl_ioctl) from [<c029fcc0>]
+>> (do_vfs_ioctl+0xb0/0x9e8)
+>> [  150.448628] [<c029fcc0>] (do_vfs_ioctl) from [<c02a062c>]
+>> (ksys_ioctl+0x34/0x5c)
+>> [  150.455994] [<c02a062c>] (ksys_ioctl) from [<c0101000>]
+>> (ret_fast_syscall+0x0/0x28)
+>>
+>> ---
+>>
+>> Full log is here:
+>> https://krzk.eu/#/builders/1/builds/2117/steps/18/logs/serial0
+>>
+>> Bisect could not work reliably because a lot of commits from Kent
+>> Overstreet just do not compile. Really, non-buildable stuff should not
+>> be committed...
 > 
-> bio clone inherits .bi_opf, so this way may not work for cloned bio.
+> Sorry, I do compile test stuff but sometimes I screw up...
 > 
-> Given most of bio_split() is run in .make_request_fn(), holding the
-> queue ref may not be needed in case of bio splitting, so another
-> candidate fix might be to introduce one extra parameter of
-> 'need_queue_ref' to generic_make_request().
+> I'll work on getting a test set up.
 
-I did consider that, but that's pretty silly for a corner case and you'd
-have to change a crap ton of calls to it. I think it'd be cleaner to
-clear the bit when we need to, potentially even adding a debug check to
-blk_queue_enter_live() that complains if the ref was not already
-elevated. Though that would be expensive, compared to the percpu inc
-now. Not saying the bit is necessarily the best way forward, but I do
-like it a LOT more than adding an argument to generic_make_request.
-
-It should have been a bio flag to begin with, that better captures the
-scope and also avoids clones inheriting anything they shouldn't. It's
-also not applicable to a request.
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 85909b431eb0..8f1063f50863 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2392,7 +2392,9 @@ blk_qc_t generic_make_request(struct bio *bio)
- 
- 	if (bio->bi_opf & REQ_NOWAIT)
- 		flags = BLK_MQ_REQ_NOWAIT;
--	if (blk_queue_enter(q, flags) < 0) {
-+	if (bio->bi_flags & BIO_QUEUE_ENTERED)
-+		blk_queue_enter_live(q);
-+	else if (blk_queue_enter(q, flags) < 0) {
- 		if (!blk_queue_dying(q) && (bio->bi_opf & REQ_NOWAIT))
- 			bio_wouldblock_error(bio);
- 		else
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 782940c65d8a..9ee9474e579c 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -210,6 +210,16 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
- 		/* there isn't chance to merge the splitted bio */
- 		split->bi_opf |= REQ_NOMERGE;
- 
-+		/*
-+		 * Since we're recursing into make_request here, ensure
-+		 * that we mark this bio as already having entered the queue.
-+		 * If not, and the queue is going away, we can get stuck
-+		 * forever on waiting for the queue reference to drop. But
-+		 * that will never happen, as we're already holding a
-+		 * reference to it.
-+		 */
-+		(*bio)->bi_flags |= BIO_QUEUE_ENTERED;
-+
- 		bio_chain(split, *bio);
- 		trace_block_split(q, split, (*bio)->bi_iter.bi_sector);
- 		generic_make_request(*bio);
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 17b18b91ebac..4687d7c99076 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -186,6 +186,8 @@ struct bio {
- 				 * throttling rules. Don't do it again. */
- #define BIO_TRACE_COMPLETION 10	/* bio_endio() should trace the final completion
- 				 * of this bio. */
-+#define BIO_QUEUE_ENTERED 11	/* can use blk_queue_enter_live() */
-+
- /* See BVEC_POOL_OFFSET below before adding new flags */
- 
- /*
+Nevermind that for now, do you have a fix for the issue reported?
 
 -- 
 Jens Axboe
