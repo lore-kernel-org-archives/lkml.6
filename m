@@ -1,51 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751547AbeFBGpX (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 02:45:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54568 "EHLO mail.kernel.org"
+        id S1751103AbeFBG7Q (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 02:59:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750903AbeFBGpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 02:45:21 -0400
-Content-Type: text/plain; charset="utf-8"
+        id S1750750AbeFBG7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 02:59:14 -0400
+Date: Sat, 2 Jun 2018 08:58:51 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: sboyd@kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Eric Anholt <eric@anholt.net>, David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH] clk: Return void from debug_init op
+Message-ID: <20180602065851.GB32552@kroah.com>
+References: <20180602050643.87253-1-sboyd@kernel.org>
 MIME-Version: 1.0
-To: Nishanth Menon <nm@ti.com>, Rafael Wysocki <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <8a352fd8787cefcb19c25ca1390301f874797b9c.1527674939.git.viresh.kumar@linaro.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, linux-kernel@vger.kernel.org
-References: <8a352fd8787cefcb19c25ca1390301f874797b9c.1527674939.git.viresh.kumar@linaro.org>
-Message-ID: <152792192058.225090.13082340679675758540@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] OPP: Allow same OPP table to be used for multiple genpd
-Date: Fri, 01 Jun 2018 23:45:20 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180602050643.87253-1-sboyd@kernel.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w526jVIt004131
 
-Quoting Viresh Kumar (2018-05-30 03:09:02)
-> The OPP binding says:
+On Fri, Jun 01, 2018 at 10:06:43PM -0700, sboyd@kernel.org wrote:
+> From: Stephen Boyd <sboyd@kernel.org>
 > 
->         Property: operating-points-v2
+> We only have two users of the debug_init hook, and we recently stopped
+> caring about the return value from that op. Finish that off by changing
+> the clk_op to return void instead of int because it doesn't matter if
+> debugfs fails or not.
 > 
->         ...
-> 
->         This can contain more than one phandle for power domain
->         providers that provide multiple power domains. That is, one
->         phandle for each power domain. If only one phandle is available,
->         then the same OPP table will be used for all power domains
->         provided by the power domain provider.
-> 
-> But the OPP core isn't allowing the same OPP table to be used for
-> multiple domains. Update dev_pm_opp_of_add_table_indexed() to allow
-> that.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Tested-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
+> Cc: Eric Anholt <eric@anholt.net>
+> Cc: David Lechner <david@lechnology.com>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
