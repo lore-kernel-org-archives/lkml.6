@@ -1,164 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751837AbeFBVdR (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 17:33:17 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:38168 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750886AbeFBVdP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 17:33:15 -0400
-X-Google-Smtp-Source: ADUXVKLUvEkFDgFrXHRmuJO23trcPT9F8mqfg9z3pf/cC6/qiLnI3PhzKXH88C/H1+yu9fXn1EPESA==
-Date: Sat, 2 Jun 2018 14:33:12 -0700
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Rui Zhang <rui.zhang@intel.com>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] Thermal SoC management updates for v4.18-rc1 #1
-Message-ID: <20180602213310.GA30328@localhost.localdomain>
+        id S1751989AbeFBVfS (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 17:35:18 -0400
+Received: from www.zeus03.de ([194.117.254.33]:48762 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751436AbeFBVfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 17:35:16 -0400
+X-UD-Smtp-Session: l3s3148p1@65zQea9tpqwgAwDPW+NQAAId4P/+oMhl
+Date: Sat, 2 Jun 2018 23:35:13 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Juergen Fitschen <me@jue.yt>
+Cc: Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2,3/3] i2c: at91: added slave mode support
+Message-ID: <20180602213513.qv45gaq2kogagju3@katana>
+References: <c9b749fca8e684aa47ead9a5d9e68751326f63cb.1510247114.git.me@jue.yt>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="63zfksmmzk62fyot"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <c9b749fca8e684aa47ead9a5d9e68751326f63cb.1510247114.git.me@jue.yt>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Rui,
 
-Please pull the changes for thermal-soc for coming v4.18-rc1.
-Changelog:
-- imx thermal driver now supports i.MX7 thermal sensor
-- exynos thermal driver dropped support for exynos 5440
-- rcar_thermal now supports r8a77995
-- rcar_gen3_thermal now supports r8a77965
-- qcom-spmi-temp-alarm now supports GEN2 PMIC peripherals
-- uniphier thermal now supports UniPhier PXs3
-- mediatek thermal now supports MT7622 SoC
-- considerable refactoring of exynos driver
-- Fixes all over the place on different drivers.
+--63zfksmmzk62fyot
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Additional KernelCI Testing:
-Full Boot Summary: https://kernelci.org/boot/all/job/evalenti/branch/for-kernelci/kernel/v4.17-rc3-359-g6d7c70d1cd65/
-Full Build Summary: https://kernelci.org/build/evalenti/branch/for-kernelci/kernel/v4.17-rc3-359-g6d7c70d1cd65/
+On Thu, Nov 09, 2017 at 06:22:29PM +0100, Juergen Fitschen wrote:
+> Slave mode driver is based on the concept of i2c-designware driver.
+>=20
+> Signed-off-by: Juergen Fitschen <me@jue.yt>
 
-BR,
+I lost the original mail where Ludovic said:
 
-Eduardo
+"I tested it quickly on a sama5d2 xplained board: I used an i2c-gpio
+master and the eeprom driver. It works pretty well. I tried to increase
+the size of the eeprom by adding:
++ { "slave-24c64", 65536 / 8 },"
 
-The following changes since commit 701e39d05119229b92ecca4add7b7ed2193622c3:
+That won't work. The comment at the beginning of the file says:
 
-  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (2018-05-06 05:46:29 -1000)
+ * ... It is prepared to simulate bigger EEPROMs with an internal 16 bit
+ * pointer, yet implementation is deferred until the need actually arises.
 
-are available in the git repository at:
+So,  no EEPROMs > 256 byte for now.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal linus
+BTW maybe I asked already and forgot: is this IP core capable of being
+master and slave on the same bus?
 
-for you to fetch changes up to 6d7c70d1cd6526dc79e3d3b3faae1c40c1681168:
 
-  thermal: qcom: tsens: Allow number of sensors to come from DT (2018-06-01 15:09:15 -0700)
+--63zfksmmzk62fyot
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-Anson Huang (1):
-      thermal: imx: add i.MX7 thermal sensor support
+-----BEGIN PGP SIGNATURE-----
 
-Bartlomiej Zolnierkiewicz (28):
-      thermal: exynos: remove unused "type" field from struct exynos_tmu_platform_data
-      thermal: exynos: remove parsing of samsung, tmu_default_temp_offset property
-      thermal: exynos: remove parsing of samsung, tmu_[first, second]_point_trim properties
-      thermal: exynos: remove parsing of samsung, tmu_noise_cancel_mode property
-      thermal: exynos: remove parsing of samsung, tmu[_min, _max]_efuse_value properties
-      thermal: exynos: remove parsing of samsung, tmu_reference_voltage property
-      thermal: exynos: remove parsing of samsung,tmu_gain property
-      thermal: exynos: remove parsing of samsung, tmu_cal_type property
-      thermal: exynos: remove separate exynos_tmu.h header file
-      thermal: exynos: fix setting rising_threshold for Exynos5433
-      thermal: exynos: always check for trips points existence
-      thermal: exynos: always check for critical trip points existence
-      thermal: exynos: check STATUS register in exynos_tmu_initialize()
-      thermal: exynos: use sanitize_temp_error() in exynos7_tmu_initialize()
-      thermal: exynos: fix trips limit checking in get_th_reg()
-      thermal: exynos: remove threshold_code checking from exynos4210_tmu_initialize()
-      thermal: exynos: make ->tmu_initialize method void
-      thermal: exynos: clear IRQs later in exynos4412_tmu_initialize()
-      thermal: exynos: move IRQs clearing to exynos_tmu_initialize()
-      thermal: exynos: add exynos*_tmu_set_[trip,hyst]() helpers
-      thermal: exynos: do not use trips structure directly in ->tmu_initialize
-      thermal: exynos: set trips in ascending order in exynos7_tmu_initialize()
-      thermal: exynos: move trips setting to exynos_tmu_initialize()
-      thermal: exynos: check return values of ->get_trip_[temp, hyst] methods
-      thermal: exynos: cleanup code for enabling threshold interrupts
-      thermal: exynos: remove unused defines for Exynos5433
-      thermal: exynos: remove trip reporting to user-space
-      thermal: ti-soc-thermal: fix incorrect entry in omap5430_adc_to_temp[]
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsTDYcACgkQFA3kzBSg
+KbaTyxAAnRbYK+fUJpqqsPELVgFhv+jt6NY/e+YeWCiZza5s1mfYxeSBtCdzctIt
+PRN1KaMNbo8FvtNQ0q8JgBSVaE8YTr1iEWPiAkxtw85KblbuNXTp+1emfaubF4wd
+GHOTeIwm0WrpsHVv/OVl5SEnks3HMnijUwVv6hnEHypNOXqm/UzNsEfnXuzoIblx
+R96mnmfJjRjFOUNY3Jb60A9YrKRKWDmwKUlCmET4Yeu4fRVXsamEkS/j6+aCXwAU
+TAWit/2MZXZZVXndMtGapki0V8mbY86qMzk/v+mVu8Kq9KMKL2ika2pipOKpGNbT
+48gCSYRiwIkfqvFEPdoxVZU8fRb9wehF+SEVVi8eoMrxh7bhq3uANvhBx0W4HGTn
+VsDvgpetWZYtm5GYtsK2e726e7L9SgZOEo53ogtuuSttD/rjWwivn3jdDUbLYCnG
+wAePQ4FM6uHnDOMFqrBbdOoK3qLdvzS1hCfS8NiypK9kXweHdZMFB0TtZUZIi57G
+KJfubOHdrYVEwZd9RhPNzuPBULIsSvQaog82omBzljXa0c1p3RidS6BQxC5SdUPF
+9Nk63WtSuR37DMAmZOc6ewnsWfZ/lSwsN34kiVnpC4ByAfum60sisNU4broqgqIi
+DysspsJtZHXYAIjgHX9AAZD4/ZfGGT/ZdIoXMAOv3b9QcXZrAxI=
+=Pud/
+-----END PGP SIGNATURE-----
 
-Bjorn Andersson (1):
-      thermal: qcom: tsens: Allow number of sensors to come from DT
-
-David Collins (1):
-      thermal: qcom-spmi-temp-alarm: add support for GEN2 PMIC peripherals
-
-Ezequiel Garcia (1):
-      thermal: tegra: Nuke clk_{readl,writel} helpers
-
-Fabio Estevam (1):
-      thermal: imx: Switch to SPDX identifier
-
-Hien Dang (1):
-      thermal: rcar_gen3_thermal: Update calculation formula due to HW evaluation
-
-Krzysztof Kozlowski (2):
-      thermal: samsung: Remove support for Exynos5440
-      thermal: exynos: Reduce severity of too early temperature read
-
-Kunihiko Hayashi (2):
-      dt-bindings: thermal: uniphier: add a compatible string for PXs3
-      thermal: uniphier: add UniPhier PXs3 support
-
-Maciej Purski (1):
-      thermal: exynos: Read soc_type from match data
-
-Marek Szyprowski (2):
-      thermal: exynos: Reading temperature makes sense only when TMU is turned on
-      thermal: exynos: Propagate error value from tmu_read()
-
-Niklas Söderlund (3):
-      thermal: rcar_gen3_thermal: update max temperature clamp
-      dt-bindings: thermal: rcar-gen3-thermal: add r8a77965
-      thermal: rcar_gen3_thermal: add r8a77965 support
-
-Ryder Lee (1):
-      thermal: mediatek: use of_device_get_match_data()
-
-Sean Wang (2):
-      dt-bindings: thermal: add binding for MT7622 SoC
-      thermal: mediatek: add support for MT7622 SoC
-
-Yoshihiro Kaneko (2):
-      dt-bindings: thermal: rcar-thermal: add R8A77995 support
-      thermal: rcar_thermal: add r8a77995 support
-
-srplinux2008 (1):
-      thermal: tegra: soctherm: add const to struct thermal_cooling_device_ops
-
- .../devicetree/bindings/thermal/exynos-thermal.txt |  14 +-
- .../devicetree/bindings/thermal/imx-thermal.txt    |   9 +-
- .../bindings/thermal/mediatek-thermal.txt          |   1 +
- .../devicetree/bindings/thermal/qcom-tsens.txt     |   1 +
- .../bindings/thermal/rcar-gen3-thermal.txt         |   3 +-
- .../devicetree/bindings/thermal/rcar-thermal.txt   |   7 +-
- .../bindings/thermal/uniphier-thermal.txt          |   1 +
- drivers/thermal/imx_thermal.c                      | 306 +++++--
- drivers/thermal/mtk_thermal.c                      |  40 +-
- drivers/thermal/qcom-spmi-temp-alarm.c             |  92 +-
- drivers/thermal/qcom/tsens.c                       |  12 +-
- drivers/thermal/rcar_gen3_thermal.c                |  17 +-
- drivers/thermal/rcar_thermal.c                     | 158 +++-
- drivers/thermal/samsung/exynos_tmu.c               | 971 ++++++++-------------
- drivers/thermal/samsung/exynos_tmu.h               |  75 --
- drivers/thermal/tegra/soctherm.c                   |  31 +-
- .../thermal/ti-soc-thermal/omap5-thermal-data.c    |   2 +-
- drivers/thermal/uniphier_thermal.c                 |   4 +
- 18 files changed, 861 insertions(+), 883 deletions(-)
- delete mode 100644 drivers/thermal/samsung/exynos_tmu.h
+--63zfksmmzk62fyot--
