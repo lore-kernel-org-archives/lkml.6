@@ -1,73 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751772AbeFBJlr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 05:41:47 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:46166 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750881AbeFBJlo (ORCPT
+        id S1751459AbeFBJvE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 05:51:04 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:54743 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750881AbeFBJvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 05:41:44 -0400
-X-Google-Smtp-Source: ADUXVKJG0vuGH/Ml0/LZpSq1uuK4MuZAPszQ384yY/SLzcfUDE9St4uI7fHovrfn/wNKcxARzw28G/GnJy3zHXobO68=
+        Sat, 2 Jun 2018 05:51:01 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w529op46015592
+X-Nifty-SrcIP: [209.85.217.169]
+X-Google-Smtp-Source: ADUXVKKbS+YSfnCNugCbLUSvczEkhkKFtojAjTHSS6mbgQ4Ubm0bno+QnazRo1nV14SxZlMidabpFD45Yiz5oGM/cPM=
 MIME-Version: 1.0
-In-Reply-To: <152791486506.225090.5983323218999937025@swboyd.mtv.corp.google.com>
-References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
- <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
- <CAMuHMdUNXQDdv-CQs+KpaHJ8gGFjFrPRNXF3HPZNyTdQr+23Og@mail.gmail.com> <152791486506.225090.5983323218999937025@swboyd.mtv.corp.google.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sat, 2 Jun 2018 11:41:43 +0200
-X-Google-Sender-Auth: C_NeN8F7aWiXv8FUMXIeeipTl14
-Message-ID: <CAMuHMdVEGpYCjycdoYkaMjnPQ9dL33yPAm0EUoTtEZxkaup7XA@mail.gmail.com>
-Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from __of_clk_get()
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+In-Reply-To: <20180530090946.1635-2-suzuki.katsuhiro@socionext.com>
+References: <20180530090946.1635-1-suzuki.katsuhiro@socionext.com> <20180530090946.1635-2-suzuki.katsuhiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 2 Jun 2018 18:50:10 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT3qOrH5PgidVKk73PeL97-VuySnkzSBDWUWqoD8ZwuyQ@mail.gmail.com>
+Message-ID: <CAK7LNAT3qOrH5PgidVKk73PeL97-VuySnkzSBDWUWqoD8ZwuyQ@mail.gmail.com>
+Subject: Re: [PATCH 1/8] media: uniphier: add DT bindings documentation for
+ UniPhier HSC
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-media@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
-
-On Sat, Jun 2, 2018 at 6:47 AM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2018-06-01 12:22:33)
->> On Fri, Jun 1, 2018 at 9:20 PM, Stephen Boyd <sboyd@kernel.org> wrote:
->> > Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
->> >> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
->> >> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
->> >> counting number of phandles in a property").
->> >>
->> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> >> ---
->> >> Commit bd69f73f2c81eed9 is in v3.9.
->> >
->> > Did you send this to Russell's patch tracker? Otherwise I can pick it up
->>
->> Not yet. The patch tracker is for reviewed patches, AFAIK.
->>
->> > to clk-next.
->>
->> Thanks!
->>
+2018-05-30 18:09 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> This patch adds DT binding documentation for UniPhier HSC which is
+> MPEG2-TS input/output and demux subsystem.
 >
-> Ok. If you need my reviewed-by to add it to the tracker feel free to
-> have:
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> ---
+>  .../bindings/media/uniphier,hsc.txt           | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/uniphier,hsc.txt
 >
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> diff --git a/Documentation/devicetree/bindings/media/uniphier,hsc.txt b/Documentation/devicetree/bindings/media/uniphier,hsc.txt
+> new file mode 100644
+> index 000000000000..4242483b2ecc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/uniphier,hsc.txt
+> @@ -0,0 +1,38 @@
+> +Socionext UniPhier HSC (High-speed Stream Controller)
+> +
+> +The Socionext UniPhier HSC subsystem consists of MPEG2-TS input/output and
+> +demultiplexer cores in the same register space.
+> +
+> +This interface is support TS serial signals (clock, valid, sync, data) from
+> +external demodulators.
+> +
+> +Required properties:
+> +- compatible      : should be one of the following:
+> +                   "socionext,uniphier-ld11-hsc"
+> +                   "socionext,uniphier-ld20-hsc"
+> +- reg             : offset and length of the register set for the device.
+> +- interrupts      : should contain DMA and TSI error interrupt.
+> +- pinctrl-names   : should be "default".
+> +- pinctrl-0       : defined TS serial signal pins for external demodulators.
+> +- clock-names     : should include following entries:
 
-Thanks, but it's much easier if you would take it, and I can avoid looking
-up again how to submit it properly to the patch tracker.
 
-Gr{oetje,eeting}s,
+"the following entries:"
 
-                        Geert
+
+
+> +                    "hsc", "stdmac"
+> +- clocks          : a list of phandle, should contain an entry for each
+> +                    entry in clock-names.
+> +- reset-names     : should include following entries:
+
+
+Ditto.
+
+
+
+> +                    "hsc", "stdmac"
+> +- resets          : a list of phandle, should contain an entry for each
+> +                    entry in reset-names.
+> +
+> +Example:
+> +       hsc {
+> +               compatible = "socionext,uniphier-ld20-hsc";
+> +               reg = <0x5c000000 0x100000>;
+> +               interrupts = <0 100 4>, <0 101 4>;
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&pinctrl_hscin2_s>,
+> +                           <&pinctrl_hscin3_s>;
+> +               clock-names = "stdmac", "hsc";
+> +               clocks = <&sys_clk 8>, <&sys_clk 9>;
+> +               reset-names = "stdmac", "hsc";
+> +               resets = <&sys_rst 8>, <&sys_rst 9>;
+> +       };
+> --
+> 2.17.0
+>
+
+
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best Regards
+Masahiro Yamada
