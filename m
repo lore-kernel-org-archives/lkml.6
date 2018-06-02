@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752039AbeFBKhm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 06:37:42 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55339 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751756AbeFBKhR (ORCPT
+        id S1752156AbeFBKh5 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 06:37:57 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39873 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751502AbeFBKhL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 06:37:17 -0400
-X-Google-Smtp-Source: ADUXVKLdosXxxCwdtq/cp0Rh++FcO65q1etGG74FdTzwWF6Yer9IViihg/rvdvs5wsr+xXUD8WxsZg==
+        Sat, 2 Jun 2018 06:37:11 -0400
+X-Google-Smtp-Source: ADUXVKKnA66jyt8rH8j23Vm7c3qWki3NKe3JhtTX1rhVfVuQn61WUMCs6YBUH/l4+xRUnZw0eKgErA==
 From: Christian Brauner <christian@brauner.io>
 To: linux-kernel@vger.kernel.org
 Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
@@ -15,9 +15,9 @@ Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
         peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, oleg@redhat.com,
         Christian Brauner <christian@brauner.io>
-Subject: [PATCH v3 08/17] signal: make sig_task_ignored() return bool
-Date: Sat,  2 Jun 2018 12:36:44 +0200
-Message-Id: <20180602103653.18181-9-christian@brauner.io>
+Subject: [PATCH v3 04/17] signal: make do_sigpending() void
+Date: Sat,  2 Jun 2018 12:36:40 +0200
+Message-Id: <20180602103653.18181-5-christian@brauner.io>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180602103653.18181-1-christian@brauner.io>
 References: <20180602103653.18181-1-christian@brauner.io>
@@ -25,42 +25,120 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sig_task_ignored() already behaves like a boolean function. Let's actually
-declare it as such too.
+do_sigpending() returned 0 unconditionally so it doesn't make sense to have
+it return at all. This allows us to simplify a bunch of syscall callers.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
+Acked-by: Al Viro <viro@zeniv.linux.org.uk>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 ---
 v2->v3:
-* unchanged
+* added Oleg's Acked-by
 v1->v2:
 * unchanged
 v0->v1:
-* patch added
+* unchanged
 ---
- kernel/signal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/signal.c | 41 ++++++++++++++++++++---------------------
+ 1 file changed, 20 insertions(+), 21 deletions(-)
 
 diff --git a/kernel/signal.c b/kernel/signal.c
-index 13061f388042..ff2ea82e376b 100644
+index 1848959a3b72..e17ae40ee6bd 100644
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -72,7 +72,7 @@ static inline bool sig_handler_ignored(void __user *handler, int sig)
- 	       (handler == SIG_DFL && sig_kernel_ignore(sig));
+@@ -2767,7 +2767,7 @@ COMPAT_SYSCALL_DEFINE4(rt_sigprocmask, int, how, compat_sigset_t __user *, nset,
  }
+ #endif
  
--static int sig_task_ignored(struct task_struct *t, int sig, bool force)
-+static bool sig_task_ignored(struct task_struct *t, int sig, bool force)
+-static int do_sigpending(sigset_t *set)
++static void do_sigpending(sigset_t *set)
  {
- 	void __user *handler;
+ 	spin_lock_irq(&current->sighand->siglock);
+ 	sigorsets(set, &current->pending.signal,
+@@ -2776,7 +2776,6 @@ static int do_sigpending(sigset_t *set)
  
-@@ -80,7 +80,7 @@ static int sig_task_ignored(struct task_struct *t, int sig, bool force)
- 
- 	if (unlikely(t->signal->flags & SIGNAL_UNKILLABLE) &&
- 	    handler == SIG_DFL && !(force && sig_kernel_only(sig)))
--		return 1;
-+		return true;
- 
- 	return sig_handler_ignored(handler, sig);
+ 	/* Outside the lock because only this thread touches it.  */
+ 	sigandsets(set, &current->blocked, set);
+-	return 0;
  }
+ 
+ /**
+@@ -2788,15 +2787,16 @@ static int do_sigpending(sigset_t *set)
+ SYSCALL_DEFINE2(rt_sigpending, sigset_t __user *, uset, size_t, sigsetsize)
+ {
+ 	sigset_t set;
+-	int err;
+ 
+ 	if (sigsetsize > sizeof(*uset))
+ 		return -EINVAL;
+ 
+-	err = do_sigpending(&set);
+-	if (!err && copy_to_user(uset, &set, sigsetsize))
+-		err = -EFAULT;
+-	return err;
++	do_sigpending(&set);
++
++	if (copy_to_user(uset, &set, sigsetsize))
++		return -EFAULT;
++
++	return 0;
+ }
+ 
+ #ifdef CONFIG_COMPAT
+@@ -2804,15 +2804,13 @@ COMPAT_SYSCALL_DEFINE2(rt_sigpending, compat_sigset_t __user *, uset,
+ 		compat_size_t, sigsetsize)
+ {
+ 	sigset_t set;
+-	int err;
+ 
+ 	if (sigsetsize > sizeof(*uset))
+ 		return -EINVAL;
+ 
+-	err = do_sigpending(&set);
+-	if (!err)
+-		err = put_compat_sigset(uset, &set, sigsetsize);
+-	return err;
++	do_sigpending(&set);
++
++	return put_compat_sigset(uset, &set, sigsetsize);
+ }
+ #endif
+ 
+@@ -3647,25 +3645,26 @@ int __compat_save_altstack(compat_stack_t __user *uss, unsigned long sp)
+ SYSCALL_DEFINE1(sigpending, old_sigset_t __user *, uset)
+ {
+ 	sigset_t set;
+-	int err;
+ 
+ 	if (sizeof(old_sigset_t) > sizeof(*uset))
+ 		return -EINVAL;
+ 
+-	err = do_sigpending(&set);
+-	if (!err && copy_to_user(uset, &set, sizeof(old_sigset_t)))
+-		err = -EFAULT;
+-	return err;
++	do_sigpending(&set);
++
++	if (copy_to_user(uset, &set, sizeof(old_sigset_t)))
++		return -EFAULT;
++
++	return 0;
+ }
+ 
+ #ifdef CONFIG_COMPAT
+ COMPAT_SYSCALL_DEFINE1(sigpending, compat_old_sigset_t __user *, set32)
+ {
+ 	sigset_t set;
+-	int err = do_sigpending(&set);
+-	if (!err)
+-		err = put_user(set.sig[0], set32);
+-	return err;
++
++	do_sigpending(&set);
++
++	return put_user(set.sig[0], set32);
+ }
+ #endif
+ 
 -- 
 2.17.0
