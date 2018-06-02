@@ -1,257 +1,354 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeFBBe3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 21:34:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57132 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750998AbeFBBeV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 21:34:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C91F160224
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-From: David Collins <collinsd@codeaurora.org>
-To: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: David Collins <collinsd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rnayak@codeaurora.org, sboyd@kernel.org,
-        dianders@chromium.org
-Subject: [PATCH v5 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
-Date: Fri,  1 Jun 2018 18:34:05 -0700
-Message-Id: <af7152133afd7bbf9ad207905ec4e8d5cbe4e718.1527901471.git.collinsd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1527901471.git.collinsd@codeaurora.org>
-References: <cover.1527901471.git.collinsd@codeaurora.org>
-In-Reply-To: <cover.1527901471.git.collinsd@codeaurora.org>
-References: <cover.1527901471.git.collinsd@codeaurora.org>
+        id S1751183AbeFBBr1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 21:47:27 -0400
+Received: from mga09.intel.com ([134.134.136.24]:49711 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750812AbeFBBrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 21:47:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,467,1520924400";
+   d="scan'208";a="61116749"
+Message-ID: <1527904043.22001.49.camel@linux.intel.com>
+Subject: Re: [PATCH V2] platform/x86: intel_pmc_core: Add CNP SLPS0 debug
+ registers
+From: "David E. Box" <david.e.box@linux.intel.com>
+Reply-To: david.e.box@linux.intel.com
+To: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+Cc: andy@infradead.org, vishwanath.somayaji@intel.com,
+        dvhart@infradead.org, kyle.d.pelton@linux.intel.com,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 01 Jun 2018 18:47:23 -0700
+In-Reply-To: <20180530113329.GA24455@raj-desk2.iind.intel.com>
+References: <CAHp75VfLqvjVPwhcsK4enhsvXSLggX9_pO9AozZT56DWDrkjPg@mail.gmail.com>
+         <20180525011056.25132-1-david.e.box@linux.intel.com>
+         <20180528070032.GA6321@raj-desk2.iind.intel.com>
+         <1527677592.5247.24.camel@linux.intel.com>
+         <20180530113329.GA24455@raj-desk2.iind.intel.com>
+Organization: David E. Box
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.3 (3.26.3-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce bindings for RPMh regulator devices found on some
-Qualcomm Technlogies, Inc. SoCs.  These devices allow a given
-processor within the SoC to make PMIC regulator requests which
-are aggregated within the RPMh hardware block along with requests
-from other processors in the SoC to determine the final PMIC
-regulator hardware state.
+On Wed, 2018-05-30 at 17:03 +0530, Rajneesh Bhardwaj wrote:
+> On Wed, May 30, 2018 at 03:53:12AM -0700, David E. Box wrote:
+> 
+> Hi Dave,
+> 
+> > Hi Rajneesh,
+> > 
+> > On Mon, 2018-05-28 at 12:30 +0530, Rajneesh Bhardwaj wrote:
+> > > On Thu, May 24, 2018 at 06:10:56PM -0700, David E. Box wrote:
+> > > 
+> > > Thanks for sending this, Dave. Few comments below.
+> > > 
+> > > > Adds debugfs access to registers in the Cannon Point PCH PMC
+> > > > that
+> > > > are
+> > > 
+> > > Please use Cannonlake PCH.
+> > > 
+> > > > useful for debugging #SLP_S0 signal assertion and other low
+> > > > power
+> > > > related
+> > > 
+> > > assertion failures and other low power debug.
+> > > 
+> > > > activities. Device pm states are latched in these registers
+> > > > whenever the
+> > > > package enters C10 and can be read from slp_s0_debug_status.
+> > > > The pm
+> > > > states may also be latched by writing 1 to slp_s0_dbg_latch
+> > > > which
+> > > > will
+> > > > immediately capture the current state on the next read of
+> > > > slp_s0_debug_status. Also while in intel_pmc_core.h clean up
+> > > > spacing.
+> > > > 
+> > > 
+> > > Initially, unless the latch bit is not set the debugfs file does
+> > > not
+> > > show
+> > > any information as expected but once you write Y to latch file,
+> > > the
+> > > debugfs
+> > > file continues to show blockers even though you write N back
+> > > there or
+> > > unload
+> > > - reload the driver. Please fix this.
+> > 
+> > See comments below
+> > 
+> > > 
+> > > > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> > > > ---
+> > > > 
+> > > > V2:
+> > > > 	Per Andy Shevchenko:
+> > > > 	- Clear latch bit after use
+> > > > 	- Pass pmc_dev as parameter
+> > > > 	- Use DEFINE_SHOW_ATTRIBUTE macro
+> > > > 
+> > > >  drivers/platform/x86/intel_pmc_core.c | 112
+> > > > ++++++++++++++++++++++++++++++++++
+> > > >  drivers/platform/x86/intel_pmc_core.h |  27 +++++---
+> > > >  2 files changed, 132 insertions(+), 7 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/platform/x86/intel_pmc_core.c
+> > > > b/drivers/platform/x86/intel_pmc_core.c
+> > > > index 43bbe74..ed40999 100644
+> > > > --- a/drivers/platform/x86/intel_pmc_core.c
+> > > > +++ b/drivers/platform/x86/intel_pmc_core.c
+> > > > @@ -196,9 +196,64 @@ static const struct pmc_bit_map
+> > > > cnp_pfear_map[] = {
+> > > >  	{}
+> > > >  };
+> > > >  
+> > > > +static const struct pmc_bit_map cnp_slps0_dbg0_map[] = {
+> > > > +	{"AUDIO_D3",		BIT(0)},
+> > > > +	{"OTG_D3",		BIT(1)},
+> > > > +	{"XHCI_D3",		BIT(2)},
+> > > > +	{"LPIO_D3",		BIT(3)},
+> > > > +	{"SDX_D3",		BIT(4)},
+> > > > +	{"SATA_D3",		BIT(5)},
+> > > > +	{"UFS0_D3",		BIT(6)},
+> > > > +	{"UFS1_D3",		BIT(7)},
+> > > > +	{"EMMC_D3",		BIT(8)},
+> > > > +};
+> > > > +
+> > > > +static const struct pmc_bit_map cnp_slps0_dbg1_map[] = {
+> > > > +	{"SDIO_PLL_OFF",	BIT(0)},
+> > > > +	{"USB2_PLL_OFF",	BIT(1)},
+> > > > +	{"AUDIO_PLL_OFF",	BIT(2)},
+> > > > +	{"OC_PLL_OFF",		BIT(3)},
+> > > 
+> > > Please rename to ISCLK_OC as it is the preferred nomenclature for
+> > > debug.
+> > 
+> > Okay
+> > 
+> > > 
+> > > > +	{"MAIN_PLL_OFF",	BIT(4)},
+> > > 
+> > > Ditto, please use ISCLK_MAIN.
+> > > 
+> > > > +	{"XOSC_OFF",		BIT(5)},
+> > > > +	{"LPC_CLKS_GATED",	BIT(6)},
+> > > > +	{"PCIE_CLKREQS_IDLE",	BIT(7)},
+> > > > +	{"AUDIO_ROSC_OFF",	BIT(8)},
+> > > > +	{"HPET_XOSC_CLK_REQ",	BIT(9)},
+> > > > +	{"PMC_ROSC_SLOW_CLK",	BIT(10)},
+> > > > +	{"AON2_ROSC_GATED",	BIT(11)},
+> > > > +	{"CLKACKS_DEASSERTED",	BIT(12)},
+> > > > +};
+> > > > +
+> > > > +static const struct pmc_bit_map cnp_slps0_dbg2_map[] = {
+> > > > +	{"MPHY_CORE_GATED",	BIT(0)},
+> > > > +	{"CSME_GATED",		BIT(1)},
+> > > > +	{"USB2_SUS_GATED",	BIT(2)},
+> > > > +	{"DYN_FLEX_IO_IDLE",	BIT(3)},
+> > > > +	{"GBE_NO_LINK",		BIT(4)},
+> > > > +	{"THERM_SEN_DISABLED",	BIT(5)},
+> > > > +	{"PCIE_LOW_POWER",	BIT(6)},
+> > > > +	{"ISH_VNNAON_REQ_ACT",	BIT(7)},
+> > > > +	{"ISH_VNN_REQ_ACT",	BIT(8)},
+> > > > +	{"CNV_VNNAON_REQ_ACT",	BIT(9)},
+> > > > +	{"CNV_VNN_REQ_ACT",	BIT(10)},
+> > > > +	{"NPK_VNNON_REQ_ACT",	BIT(11)},
+> > > > +	{"PMSYNC_STATE_IDLE",	BIT(12)},
+> > > > +	{"ALST_GT_THRES",	BIT(13)},
+> > > > +	{"PMC_ARC_PG_READY",	BIT(14)},
+> > > > +};
+> > > > +
+> > > > +static const struct slps0_dbg_map cnp_slps0_dbg_maps[] = {
+> > > > +	{cnp_slps0_dbg0_map, ARRAY_SIZE(cnp_slps0_dbg0_map)},
+> > > > +	{cnp_slps0_dbg1_map, ARRAY_SIZE(cnp_slps0_dbg1_map)},
+> > > > +	{cnp_slps0_dbg2_map, ARRAY_SIZE(cnp_slps0_dbg2_map)},
+> > > > +};
+> > > > +
+> > > >  static const struct pmc_reg_map cnp_reg_map = {
+> > > >  	.pfear_sts = cnp_pfear_map,
+> > > >  	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
+> > > > +	.slps0_dbg_maps = cnp_slps0_dbg_maps,
+> > > > +	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
+> > > > +	.slps0_dbg_num = ARRAY_SIZE(cnp_slps0_dbg_maps),
+> > > >  	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
+> > > >  	.regmap_length = CNP_PMC_MMIO_REG_LEN,
+> > > >  	.ppfear0_offset = CNP_PMC_HOST_PPFEAR0A,
+> > > > @@ -252,6 +307,8 @@ static int
+> > > > pmc_core_check_read_lock_bit(void)
+> > > >  }
+> > > >  
+> > > >  #if IS_ENABLED(CONFIG_DEBUG_FS)
+> > > > +static bool slps0_dbg_latch;
+> > > > +
+> > > >  static void pmc_core_display_map(struct seq_file *s, int
+> > > > index,
+> > > >  				 u8 pf_reg, const struct
+> > > > pmc_bit_map *pf_map)
+> > > >  {
+> > > > @@ -481,6 +538,52 @@ static const struct file_operations
+> > > > pmc_core_ltr_ignore_ops = {
+> > > >  	.release        = single_release,
+> > > >  };
+> > > >  
+> > > > +static void pmc_core_slps0_dbg_latch(struct pmc_dev *pmcdev,
+> > > > bool
+> > > > reset)
+> > > > +{
+> > > > +	const struct pmc_reg_map *map = pmcdev->map;
+> > > > +	u32 fd;
+> > > > +
+> > > > +	mutex_lock(&pmcdev->lock);
+> > > > +
+> > > > +	if (!reset && !slps0_dbg_latch)
+> > > > +		goto out_unlock;
+> > > > +
+> > > > +	fd = pmc_core_reg_read(pmcdev, map->slps0_dbg_offset);
+> > > > +	reset ? (fd &= ~CNP_PMC_LATCH_SLPS0_EVENTS) :
+> > > > +		(fd |= CNP_PMC_LATCH_SLPS0_EVENTS);
+> > > > +	pmc_core_reg_write(pmcdev, map->slps0_dbg_offset, fd);
+> > > > +
+> > > > +	slps0_dbg_latch = 0;
+> > > > +
+> > > > +out_unlock:
+> > > > +	mutex_unlock(&pmcdev->lock);
+> > > > +}
+> > > > +
+> > > > +static int pmc_core_slps0_dbg_show(struct seq_file *s, void
+> > > > *unused)
+> > > > +{
+> > > > +	struct pmc_dev *pmcdev = s ? s->private : &pmc;
+> > > > +	const struct slps0_dbg_map *maps = pmcdev->map-
+> > > > > slps0_dbg_maps;
+> > > > 
+> > > > +	int num_slps0_dbg_regs = pmcdev->map->slps0_dbg_num;
+> > > > +	int i, offset;
+> > > > +	u32 data;
+> > > > +
+> > > > +	pmc_core_slps0_dbg_latch(pmcdev, false);
+> > > > +	offset = pmcdev->map->slps0_dbg_offset;
+> > > > +	while (num_slps0_dbg_regs--) {
+> > > > +		data = pmc_core_reg_read(pmcdev, offset);
+> > > > +		offset += 4;
+> > > > +		for (i = 0; i < maps->size; i++)
+> > > > +			seq_printf(s, "SLP_S0_DBG: %-
+> > > > 32s\tState:
+> > > > %s\n",
+> > > > +				   maps-
+> > > > >slps0_dbg_sts[i].name,
+> > > > +				   data & maps-
+> > > > > slps0_dbg_sts[i].bit_mask ?
+> > > > 
+> > > > +				   "Yes" : "No");
+> > > 
+> > > In current form, it looks pretty similar to
+> > > pch_ip_power_gating_status
+> > > output. Since it helps in debug, please use Blocks_slp_s0:
+> > > instead of
+> > > State: 
+> > > 
+> > 
+> > That may not be true. What blocks or doesn't can be configured by
+> > the
+> > OEM.
+> 
+> IIUC, The IPs exposed by these registers are the ones that the PMC
+> always looks at
+> before making a decision to assert SLP_S0#. I dont think they can be
+> changed
+> by OEMs in determining the S0ix flows.
 
-Signed-off-by: David Collins <collinsd@codeaurora.org>
----
- .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++++++++++++++++++
- .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +++++
- 2 files changed, 196 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
- create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
+I confirmed with the architect that the logic operates independently of
+other BIOS settings OEMs can make to ignore these same IPs. Reporting
+an IP as blocking on a system where the IP is being ignored would be
+confusing. The reported state the IP is in remains correct and that is
+what this shows.
 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-new file mode 100644
-index 0000000..7ef2dbe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-@@ -0,0 +1,160 @@
-+Qualcomm Technologies, Inc. RPMh Regulators
-+
-+rpmh-regulator devices support PMIC regulator management via the Voltage
-+Regulator Manager (VRM) and Oscillator Buffer (XOB) RPMh accelerators.  The APPS
-+processor communicates with these hardware blocks via a Resource State
-+Coordinator (RSC) using command packets.  The VRM allows changing three
-+parameters for a given regulator: enable state, output voltage, and operating
-+mode.  The XOB allows changing only a single parameter for a given regulator:
-+its enable state.  Despite its name, the XOB is capable of controlling the
-+enable state of any PMIC peripheral.  It is used for clock buffers, low-voltage
-+switches, and LDO/SMPS regulators which have a fixed voltage and mode.
-+
-+=======================
-+Required Node Structure
-+=======================
-+
-+RPMh regulators must be described in two levels of device nodes.  The first
-+level describes the PMIC containing the regulators and must reside within an
-+RPMh device node.  The second level describes each regulator within the PMIC
-+which is to be used on the board.  Each of these regulators maps to a single
-+RPMh resource.
-+
-+The names used for regulator nodes must match those supported by a given PMIC.
-+Supported regulator node names:
-+	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
-+	PMI8998:	bob
-+	PM8005:		smps1 - smps4
-+
-+========================
-+First Level Nodes - PMIC
-+========================
-+
-+- compatible
-+	Usage:      required
-+	Value type: <string>
-+	Definition: Must be one of: "qcom,pm8998-rpmh-regulators",
-+		    "qcom,pmi8998-rpmh-regulators" or
-+		    "qcom,pm8005-rpmh-regulators".
-+
-+- qcom,pmic-id
-+	Usage:      required
-+	Value type: <string>
-+	Definition: RPMh resource name suffix used for the regulators found on
-+		    this PMIC.  Typical values: "a", "b", "c", "d", "e", "f".
-+
-+- vdd-s1-supply
-+- vdd-s2-supply
-+- vdd-s3-supply
-+- vdd-s4-supply
-+	Usage:      optional (PM8998 and PM8005 only)
-+	Value type: <phandle>
-+	Definition: phandle of the parent supply regulator of one or more of the
-+		    regulators for this PMIC.
-+
-+- vdd-s5-supply
-+- vdd-s6-supply
-+- vdd-s7-supply
-+- vdd-s8-supply
-+- vdd-s9-supply
-+- vdd-s10-supply
-+- vdd-s11-supply
-+- vdd-s12-supply
-+- vdd-s13-supply
-+- vdd-l1-l27-supply
-+- vdd-l2-l8-l17-supply
-+- vdd-l3-l11-supply
-+- vdd-l4-l5-supply
-+- vdd-l6-supply
-+- vdd-l7-l12-l14-l15-supply
-+- vdd-l9-supply
-+- vdd-l10-l23-l25-supply
-+- vdd-l13-l19-l21-supply
-+- vdd-l16-l28-supply
-+- vdd-l18-l22-supply
-+- vdd-l20-l24-supply
-+- vdd-l26-supply
-+- vin-lvs-1-2-supply
-+	Usage:      optional (PM8998 only)
-+	Value type: <phandle>
-+	Definition: phandle of the parent supply regulator of one or more of the
-+		    regulators for this PMIC.
-+
-+- vdd-bob-supply
-+	Usage:      optional (PMI8998 only)
-+	Value type: <phandle>
-+	Definition: BOB regulator parent supply phandle
-+
-+===============================
-+Second Level Nodes - Regulators
-+===============================
-+
-+- qcom,always-wait-for-ack
-+	Usage:      optional
-+	Value type: <empty>
-+	Definition: Boolean flag which indicates that the application processor
-+		    must wait for an ACK or a NACK from RPMh for every request
-+		    sent for this regulator including those which are for a
-+		    strictly lower power state.
-+
-+Other properties defined in Documentation/devicetree/bindings/regulator.txt
-+may also be used.  regulator-initial-mode and regulator-allowed-modes may be
-+specified for VRM regulators using mode values from
-+include/dt-bindings/regulator/qcom,rpmh-regulator.h.  regulator-allow-bypass
-+may be specified for BOB type regulators managed via VRM.
-+regulator-allow-set-load may be specified for LDO type regulators managed via
-+VRM.
-+
-+========
-+Examples
-+========
-+
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+
-+&apps_rsc {
-+	pm8998-rpmh-regulators {
-+		compatible = "qcom,pm8998-rpmh-regulators";
-+		qcom,pmic-id = "a";
-+
-+		vdd-l7-l12-l14-l15-supply = <&pm8998_s5>;
-+
-+		smps2 {
-+			regulator-min-microvolt = <1100000>;
-+			regulator-max-microvolt = <1100000>;
-+		};
-+
-+		pm8998_s5: smps5 {
-+			regulator-min-microvolt = <1904000>;
-+			regulator-max-microvolt = <2040000>;
-+		};
-+
-+		ldo7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allowed-modes =
-+				<RPMH_REGULATOR_MODE_LPM
-+				 RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+		};
-+
-+		lvs1 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+	};
-+
-+	pmi8998-rpmh-regulators {
-+		compatible = "qcom,pmi8998-rpmh-regulators";
-+		qcom,pmic-id = "b";
-+
-+		bob {
-+			regulator-min-microvolt = <3312000>;
-+			regulator-max-microvolt = <3600000>;
-+			regulator-allowed-modes =
-+				<RPMH_REGULATOR_MODE_AUTO
-+				 RPMH_REGULATOR_MODE_HPM>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-+		};
-+	};
-+};
-diff --git a/include/dt-bindings/regulator/qcom,rpmh-regulator.h b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
-new file mode 100644
-index 0000000..86713dc
---- /dev/null
-+++ b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
-+
-+#ifndef __QCOM_RPMH_REGULATOR_H
-+#define __QCOM_RPMH_REGULATOR_H
-+
-+/*
-+ * These mode constants may be used to specify modes for various RPMh regulator
-+ * device tree properties (e.g. regulator-initial-mode).  Each type of regulator
-+ * supports a subset of the possible modes.
-+ *
-+ * %RPMH_REGULATOR_MODE_RET:	Retention mode in which only an extremely small
-+ *				load current is allowed.  This mode is supported
-+ *				by LDO and SMPS type regulators.
-+ * %RPMH_REGULATOR_MODE_LPM:	Low power mode in which a small load current is
-+ *				allowed.  This mode corresponds to PFM for SMPS
-+ *				and BOB type regulators.  This mode is supported
-+ *				by LDO, HFSMPS, BOB, and PMIC4 FTSMPS type
-+ *				regulators.
-+ * %RPMH_REGULATOR_MODE_AUTO:	Auto mode in which the regulator hardware
-+ *				automatically switches between LPM and HPM based
-+ *				upon the real-time load current.  This mode is
-+ *				supported by HFSMPS, BOB, and PMIC4 FTSMPS type
-+ *				regulators.
-+ * %RPMH_REGULATOR_MODE_HPM:	High power mode in which the full rated current
-+ *				of the regulator is allowed.  This mode
-+ *				corresponds to PWM for SMPS and BOB type
-+ *				regulators.  This mode is supported by all types
-+ *				of regulators.
-+ */
-+#define RPMH_REGULATOR_MODE_RET		0
-+#define RPMH_REGULATOR_MODE_LPM		1
-+#define RPMH_REGULATOR_MODE_AUTO	2
-+#define RPMH_REGULATOR_MODE_HPM		3
-+
-+#endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> > 
+> > > > +		maps++;
+> > > > +	}
+> > > > +	pmc_core_slps0_dbg_latch(pmcdev, true);
+> > > > +	return 0;
+> > > > +}
+> > > > +DEFINE_SHOW_ATTRIBUTE(pmc_core_slps0_dbg);
+> > > 
+> > > When the latch bit is not set, can we format the output of this
+> > > attribute
+> > > stating clearly whether the current blockers are "live" or the
+> > > "last
+> > > captured at PC10 entry" ?
+> > 
+> > There is no "live". It's always the last captured state which is
+> > why
+> > the status doesn't update the way you expect above. With V2 the
+> > latch
+> > is automatically reset after every read.
+> > 
+> > When the latch isn't set, any updates would indeed be from PC10
+> > transitions, but you can't be sure this isn't the last forced latch
+> > state unless you monitor PC10 residency and assume that the values
+> > were
+> > updated when the count changes. Even with the latch, if there's a
+> > PC10
+> > transition that occurs after the bit is written but before the
+> > registers are read, the values may be from that transition, not the
+> > latch.
+> 
+> 
+> All default values are printed as "No". Here, we can rather print a
+> message
+> that unless latch is set or Package enters c10 (which is unlikely
+> unless
+> the display is off) the debugfs would not show any blockers.
+> 
+> In the current form this patch prints the output when we read the
+> first time
+> before setting the latch.
+> 
+> SLP_S0_DBG: AUDIO_D3                            State: No
+> SLP_S0_DBG: OTG_D3                              State: No
+> ---- xxx ---- snip ---- xxx ----
+> 
+> Once the latch bit is set the SLP_S0_DBG_X registers show proper
+> values but
+> after explicitely setting latch as "N", the stale values are
+> printed. 
+> The
+> system on which i tested never enters PC10 so once the latch is
+> unset, the
+> values should be shown as default i.e. NO but that is not always
+> correct as
+> you mentioned above. 
+> 
+> 
+> IMO, a better approch would be to set/unset the latch internally when
+> the
+> user does a read on SLP_S0_DEBUG_X registers rather than exposing a
+> seperate
+> debugfs file because a write of 0 to the latch bit has no effect but
+> it is a
+> requirement for the next read.
+
+If the latch file is used, the code will already reset it automatically
+by writing 0 after each read. Writing "N" is not necessary unless you
+wrote "Y" and changed your mind. The reset does not set the values to
+all "No". The registers, once updated the first time, always hold the
+last saved state. 
+
+If the latch file is not used the registers will only update whenever
+the system enters PC10. This works on my system that does enter PC10.
+
+What you suggest would limit the read to forcibly latched values only.
+The greatest value of this file IMHO is in being able to see system
+state after it enters PC10, a state you cannot guarantee the system
+will be in if you only forcibly latch the state with the latch file.
+
+David
