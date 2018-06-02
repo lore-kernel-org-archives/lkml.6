@@ -1,55 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751211AbeFAX4R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 19:56:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58410 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750927AbeFAX4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 19:56:15 -0400
-Date: Sat, 2 Jun 2018 07:55:54 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
-        Filipe Manana <fdmanana@gmail.com>
-Subject: Re: [RESEND PATCH V5 00/33] block: support multipage bvec
-Message-ID: <20180601235553.GB655@ming.t460p>
-References: <20180525034621.31147-1-ming.lei@redhat.com>
- <20180525045306.GB8740@kmo-pixel>
- <8aa4276d-c0bc-3266-aa53-bf08a2e5ab5c@kernel.dk>
- <20180527072332.GA18240@ming.t460p>
- <cc266632-497c-6849-e291-4f042c8d987a@kernel.dk>
- <20180528023042.GC26790@ming.t460p>
- <20180601084302.GB30694@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180601084302.GB30694@infradead.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1751266AbeFBAFx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 20:05:53 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:38213 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbeFBAFu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 20:05:50 -0400
+X-Google-Smtp-Source: ADUXVKLjErJqwTkTNqeTmLmwvvaf1MSCkm17VP1ewezBZyJIizVqa3dCElSp8sgy4IqDb3jHa/sNNw==
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: robh+dt@kernel.org, frowand.list@gmail.com
+Cc: linux-arm-msm@vger.kernel.org, bgoswami@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2] of: platform: stop accessing invalid dev in of_platform_device_destroy
+Date: Sat,  2 Jun 2018 01:03:43 +0100
+Message-Id: <20180602000343.20045-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 01:43:02AM -0700, Christoph Hellwig wrote:
-> On Mon, May 28, 2018 at 10:30:43AM +0800, Ming Lei wrote:
-> > I hate the conversion too, but looks it can't be avoided since
-> > bio_for_each_segment_all() has to be changed.
-> 
-> I guess you mean what is currently bio_for_each_page_all in your
-> tree which now takes a bvec_iter_all agument?  We could just
-> try to hide the bia variable initially under an unlike to be used
-> name, and then slowly move to the proper bio_for_each_page_all
-> API unhiding it with the rename.
+Immediately after the platform_device_unregister() the device will be cleaned up.
+Accessing the freed pointer immediately after that will crash the system.
 
-I tried that way at the beginning, it will cause gcc warning, since
-the variable will be defined in the middle of one function, and even
-worse it might break nested iterator case.
+Found this bug when kernel is built with CONFIG_PAGE_POISONING and testing
+loading/unloading audio drivers in a loop on Qcom platforms.
 
-Thanks,
-Ming
+Fix this by removing accessing the dev pointer.
+Below is the carsh trace:
+
+Unable to handle kernel paging request at virtual address 6b6b6b6b6b6c03
+Mem abort info:
+  ESR = 0x96000021
+  Exception class = DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+Data abort info:
+  ISV = 0, ISS = 0x00000021
+  CM = 0, WnR = 0
+[006b6b6b6b6b6c03] address between user and kernel address ranges
+Internal error: Oops: 96000021 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 2 PID: 1784 Comm: sh Tainted: G        W         4.17.0-rc7-02230-ge3a63a7ef641-dirty #204
+Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+pstate: 80000005 (Nzcv daif -PAN -UAO)
+pc : clear_bit+0x18/0x2c
+lr : of_platform_device_destroy+0x64/0xb8
+sp : ffff00000c9c3930
+x29: ffff00000c9c3930 x28: ffff80003d39b200
+x27: ffff000008bb1000 x26: 0000000000000040
+x25: 0000000000000124 x24: ffff80003a9a3080
+x23: 0000000000000060 x22: ffff00000939f518
+x21: ffff80003aa79e98 x20: ffff80003aa3dae0
+x19: ffff80003aa3c890 x18: ffff800009feb794
+x17: 0000000000000000 x16: 0000000000000000
+x15: ffff800009feb790 x14: 0000000000000000
+x13: ffff80003a058778 x12: ffff80003a058728
+x11: ffff80003a058750 x10: 0000000000000000
+x9 : 0000000000000006 x8 : ffff80003a825988
+x7 : bbbbbbbbbbbbbbbb x6 : 0000000000000001
+x5 : 0000000000000000 x4 : 0000000000000001
+x3 : 0000000000000008 x2 : 0000000000000001
+x1 : 6b6b6b6b6b6b6c03 x0 : 0000000000000000
+Process sh (pid: 1784, stack limit = 0x        (ptrval))
+Call trace:
+ clear_bit+0x18/0x2c
+ q6afe_remove+0x20/0x38
+ apr_device_remove+0x30/0x70
+ device_release_driver_internal+0x170/0x208
+ device_release_driver+0x14/0x20
+ bus_remove_device+0xcc/0x150
+ device_del+0x10c/0x310
+ device_unregister+0x1c/0x70
+ apr_remove_device+0xc/0x18
+ device_for_each_child+0x50/0x80
+ apr_remove+0x18/0x20
+ rpmsg_dev_remove+0x38/0x68
+ device_release_driver_internal+0x170/0x208
+ device_release_driver+0x14/0x20
+ bus_remove_device+0xcc/0x150
+ device_del+0x10c/0x310
+ device_unregister+0x1c/0x70
+ qcom_smd_remove_device+0xc/0x18
+ device_for_each_child+0x50/0x80
+ qcom_smd_unregister_edge+0x3c/0x70
+ smd_subdev_remove+0x18/0x28
+ rproc_stop+0x48/0xd8
+ rproc_shutdown+0x60/0xe8
+ state_store+0xbc/0xf8
+ dev_attr_store+0x18/0x28
+ sysfs_kf_write+0x3c/0x50
+ kernfs_fop_write+0x118/0x1e0
+ __vfs_write+0x18/0x110
+ vfs_write+0xa4/0x1a8
+ ksys_write+0x48/0xb0
+ sys_write+0xc/0x18
+ el0_svc_naked+0x30/0x34
+Code: d2800022 8b400c21 f9800031 9ac32043 (c85f7c22)
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+Changes since v1:
+- fixed issue while reprobing.
+
+ drivers/of/platform.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index c00d81dfac0b..84c5c899187b 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -529,10 +529,13 @@ arch_initcall_sync(of_platform_default_populate_init);
+ 
+ int of_platform_device_destroy(struct device *dev, void *data)
+ {
++	struct device_node *np;
++
+ 	/* Do not touch devices not populated from the device tree */
+ 	if (!dev->of_node || !of_node_check_flag(dev->of_node, OF_POPULATED))
+ 		return 0;
+ 
++	np = dev->of_node;
+ 	/* Recurse for any nodes that were treated as busses */
+ 	if (of_node_check_flag(dev->of_node, OF_POPULATED_BUS))
+ 		device_for_each_child(dev, NULL, of_platform_device_destroy);
+@@ -544,8 +547,8 @@ int of_platform_device_destroy(struct device *dev, void *data)
+ 		amba_device_unregister(to_amba_device(dev));
+ #endif
+ 
+-	of_node_clear_flag(dev->of_node, OF_POPULATED);
+-	of_node_clear_flag(dev->of_node, OF_POPULATED_BUS);
++	of_node_clear_flag(np, OF_POPULATED);
++	of_node_clear_flag(np, OF_POPULATED_BUS);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(of_platform_device_destroy);
+-- 
+2.16.2
