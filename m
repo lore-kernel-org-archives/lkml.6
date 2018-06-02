@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751792AbeFBKMe (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 06:12:34 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46926 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751376AbeFBKMU (ORCPT
+        id S1751912AbeFBKMn (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 06:12:43 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39119 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751538AbeFBKMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 06:12:20 -0400
-X-Google-Smtp-Source: ADUXVKK7OY9oYncLkY7zGs2cDn4LNawQL0ZQM9y+DpD2QT6+aiBk65ZacO1mJVIzgwD5y6R/7AeJjg==
+        Sat, 2 Jun 2018 06:12:22 -0400
+X-Google-Smtp-Source: ADUXVKJ8pZtmXZVM8a2lbubw55XTaBx3gFRlRBQP8Hot6X1ZPNQfxcgW9VGuId/7daZE09SJmXSfNw==
 From: Marek Vasut <marek.vasut@gmail.com>
 X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
 To: linux-kernel@vger.kernel.org
@@ -17,9 +17,9 @@ Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 04/10] mfd: da9063: Replace model with type
-Date: Sat,  2 Jun 2018 12:11:49 +0200
-Message-Id: <20180602101155.26375-4-marek.vasut+renesas@gmail.com>
+Subject: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
+Date: Sat,  2 Jun 2018 12:11:51 +0200
+Message-Id: <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
 References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
@@ -27,11 +27,9 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The model number stored in the struct da9063 is the same for all
-variants of the da9063 since it is the chip ID, which is always
-the same. Replace that with a separate identifier instead, which
-allows us to discern the DA9063 variants by setting the type
-based on either DT match or otherwise.
+While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
+block, the DA9063L does not have an RTC. Add custom regmap for DA9063L to
+prevent access into that register block.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -40,114 +38,120 @@ Cc: Mark Brown <broonie@kernel.org>
 Cc: Steve Twiss <stwiss.opensource@diasemi.com>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-V2: Drop useless cast of id->driver_data
-V3: Fix kernel 0day error , s/dev_model/type/
+V3: New patch
 ---
- drivers/mfd/da9063-core.c            | 1 -
- drivers/mfd/da9063-i2c.c             | 5 +++--
- drivers/regulator/da9063-regulator.c | 6 +++---
- include/linux/mfd/da9063/core.h      | 6 +++++-
- 4 files changed, 11 insertions(+), 7 deletions(-)
+ drivers/mfd/da9063-i2c.c | 91 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 91 insertions(+)
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index fb122316c421..eebca3442cf3 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -215,7 +215,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- 		return -ENODEV;
- 	}
- 
--	da9063->model = model;
- 	da9063->variant_code = variant_code;
- 
- 	ret = da9063_irq_init(da9063);
 diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index 7f84030c8d53..048ce55ebc5b 100644
+index 048ce55ebc5b..f0d92a37df6b 100644
 --- a/drivers/mfd/da9063-i2c.c
 +++ b/drivers/mfd/da9063-i2c.c
-@@ -236,7 +236,7 @@ static const struct of_device_id da9063_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, da9063_dt_ids);
- static int da9063_i2c_probe(struct i2c_client *i2c,
--	const struct i2c_device_id *id)
-+			    const struct i2c_device_id *id)
- {
- 	struct da9063 *da9063;
- 	int ret;
-@@ -248,6 +248,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
- 	i2c_set_clientdata(i2c, da9063);
- 	da9063->dev = &i2c->dev;
- 	da9063->chip_irq = i2c->irq;
-+	da9063->type = id->driver_data;
- 
- 	if (da9063->variant_code == PMIC_DA9063_AD) {
- 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
-@@ -280,7 +281,7 @@ static int da9063_i2c_remove(struct i2c_client *i2c)
- }
- 
- static const struct i2c_device_id da9063_i2c_id[] = {
--	{ "da9063", PMIC_CHIP_ID_DA9063 },
-+	{ "da9063", PMIC_TYPE_DA9063 },
- 	{},
- };
- MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
-diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index 87c884ae0064..eeb0d431dda1 100644
---- a/drivers/regulator/da9063-regulator.c
-+++ b/drivers/regulator/da9063-regulator.c
-@@ -98,7 +98,7 @@ struct da9063_regulator_info {
- struct da9063_dev_model {
- 	const struct da9063_regulator_info	*regulator_info;
- 	unsigned				n_regulators;
--	unsigned				dev_model;
-+	enum da9063_type			type;
+@@ -208,6 +208,93 @@ static const struct regmap_access_table da9063_bb_volatile_table = {
+ 	.n_yes_ranges = ARRAY_SIZE(da9063_bb_volatile_ranges),
  };
  
- /* Single regulator settings */
-@@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
- 	{
- 		.regulator_info = da9063_regulator_info,
- 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
--		.dev_model = PMIC_CHIP_ID_DA9063,
-+		.type = PMIC_TYPE_DA9063,
- 	},
- 	{ }
- };
-@@ -741,7 +741,7 @@ static int da9063_regulator_probe(struct platform_device *pdev)
- 
- 	/* Find regulators set for particular device model */
- 	for (model = regulators_models; model->regulator_info; model++) {
--		if (model->dev_model == da9063->model)
-+		if (model->type == da9063->type)
- 			break;
- 	}
- 	if (!model->regulator_info) {
-diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index 664f650d0086..eb234582dcb2 100644
---- a/include/linux/mfd/da9063/core.h
-+++ b/include/linux/mfd/da9063/core.h
-@@ -31,6 +31,10 @@
- 
- #define PMIC_CHIP_ID_DA9063		0x61
- 
-+enum da9063_type {
-+	PMIC_TYPE_DA9063 = 0,
++static const struct regmap_range da9063l_bb_readable_ranges[] = {
++	{
++		.range_min = DA9063_REG_PAGE_CON,
++		.range_max = DA9063_REG_MON_A10_RES,
++	}, {
++		.range_min = DA9063_REG_SEQ,
++		.range_max = DA9063_REG_ID_32_31,
++	}, {
++		.range_min = DA9063_REG_SEQ_A,
++		.range_max = DA9063_REG_AUTO3_LOW,
++	}, {
++		.range_min = DA9063_REG_T_OFFSET,
++		.range_max = DA9063_BB_REG_GP_ID_19,
++	}, {
++		.range_min = DA9063_REG_CHIP_ID,
++		.range_max = DA9063_REG_CHIP_VARIANT,
++	},
 +};
 +
- enum da9063_variant_codes {
- 	PMIC_DA9063_AD = 0x3,
- 	PMIC_DA9063_BB = 0x5,
-@@ -76,7 +80,7 @@ enum da9063_irqs {
- struct da9063 {
- 	/* Device */
- 	struct device	*dev;
--	unsigned short	model;
-+	enum da9063_type type;
- 	unsigned char	variant_code;
- 	unsigned int	flags;
- 
++static const struct regmap_range da9063l_bb_writeable_ranges[] = {
++	{
++		.range_min = DA9063_REG_PAGE_CON,
++		.range_max = DA9063_REG_PAGE_CON,
++	}, {
++		.range_min = DA9063_REG_FAULT_LOG,
++		.range_max = DA9063_REG_VSYS_MON,
++	}, {
++		.range_min = DA9063_REG_SEQ,
++		.range_max = DA9063_REG_ID_32_31,
++	}, {
++		.range_min = DA9063_REG_SEQ_A,
++		.range_max = DA9063_REG_AUTO3_LOW,
++	}, {
++		.range_min = DA9063_REG_CONFIG_I,
++		.range_max = DA9063_BB_REG_MON_REG_4,
++	}, {
++		.range_min = DA9063_BB_REG_GP_ID_0,
++		.range_max = DA9063_BB_REG_GP_ID_19,
++	},
++};
++
++static const struct regmap_range da9063l_bb_volatile_ranges[] = {
++	{
++		.range_min = DA9063_REG_PAGE_CON,
++		.range_max = DA9063_REG_EVENT_D,
++	}, {
++		.range_min = DA9063_REG_CONTROL_A,
++		.range_max = DA9063_REG_CONTROL_B,
++	}, {
++		.range_min = DA9063_REG_CONTROL_E,
++		.range_max = DA9063_REG_CONTROL_F,
++	}, {
++		.range_min = DA9063_REG_BCORE2_CONT,
++		.range_max = DA9063_REG_LDO11_CONT,
++	}, {
++		.range_min = DA9063_REG_DVC_1,
++		.range_max = DA9063_REG_ADC_MAN,
++	}, {
++		.range_min = DA9063_REG_ADC_RES_L,
++		.range_max = DA9063_REG_MON_A10_RES,
++	}, {
++		.range_min = DA9063_REG_SEQ,
++		.range_max = DA9063_REG_SEQ,
++	}, {
++		.range_min = DA9063_REG_EN_32K,
++		.range_max = DA9063_REG_EN_32K,
++	}, {
++		.range_min = DA9063_BB_REG_MON_REG_5,
++		.range_max = DA9063_BB_REG_MON_REG_6,
++	},
++};
++
++static const struct regmap_access_table da9063l_bb_readable_table = {
++	.yes_ranges = da9063l_bb_readable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_readable_ranges),
++};
++
++static const struct regmap_access_table da9063l_bb_writeable_table = {
++	.yes_ranges = da9063l_bb_writeable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_writeable_ranges),
++};
++
++static const struct regmap_access_table da9063l_bb_volatile_table = {
++	.yes_ranges = da9063l_bb_volatile_ranges,
++	.n_yes_ranges = ARRAY_SIZE(da9063l_bb_volatile_ranges),
++};
++
+ static const struct regmap_range_cfg da9063_range_cfg[] = {
+ 	{
+ 		.range_min = DA9063_REG_PAGE_CON,
+@@ -254,6 +341,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+ 		da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
+ 		da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
++	} else if (da9063->type == PMIC_TYPE_DA9063L) {
++		da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
++		da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
++		da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
+ 	} else {
+ 		da9063_regmap_config.rd_table = &da9063_bb_readable_table;
+ 		da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
 -- 
 2.16.2
