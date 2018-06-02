@@ -1,99 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751936AbeFBPAh (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 11:00:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42582 "EHLO mail.kernel.org"
+        id S1751424AbeFBPFT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 11:05:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37340 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751611AbeFBO7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 10:59:44 -0400
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 2/4] tools headers: Synchronize prctl.h ABI header
-Date: Sat,  2 Jun 2018 11:59:25 -0300
-Message-Id: <20180602145927.23307-3-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180602145927.23307-1-acme@kernel.org>
-References: <20180602145927.23307-1-acme@kernel.org>
+        id S1750831AbeFBPFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 11:05:18 -0400
+Date: Sat, 2 Jun 2018 09:05:15 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Amadeusz =?UTF-8?B?U8WCYXdpxYRza2k=?= <amade@asmblr.net>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
+Subject: Re: bisected 4.17-rc - BUG: Bad page state in process
+ qemu-system-x86  pfn:7178f3
+Message-ID: <20180602090515.4a401db5@w520.home>
+In-Reply-To: <20180602115624.55c727a9@milkyway.zone>
+References: <20180602115624.55c727a9@milkyway.zone>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Sat, 2 Jun 2018 11:56:24 +0200
+Amadeusz Sławiński <amade@asmblr.net> wrote:
 
-To pick up changes from:
+> Hey,
+> 
+> so I've been getting system instability problems after shutting down
+> virtual machine with GPU pass-through in 4.17-rc series and I finally
+> got around to bisecting it.
+> 
+> Seems to be caused by 356e88ebe4473a3663cf3d14727ce293a4526d34
+> and problem seems to be gone after reverting it.
 
-  $ git log --oneline -2 -i include/uapi/linux/prctl.h
-  356e4bfff2c5 prctl: Add force disable speculation
-  b617cfc85816 prctl: Add speculation control prctls
+Thanks for bisecting this, seems that we're hitting some sort of
+unbalanced page state, suggesting we're not skipping the pfn mappings
+on unmap.  As this was introduced in v4.17-rc, which is about to close,
+I think our only option is to revert it for now.  I'll post that
+shortly.  Thanks,
 
-  $ tools/perf/trace/beauty/prctl_option.sh > before.c
-  $ cp include/uapi/linux/prctl.h tools/include/uapi/linux/prctl.h
-  $ tools/perf/trace/beauty/prctl_option.sh > after.c
-  $ diff -u before.c after.c
-  --- before.c	2018-06-01 10:39:53.834073962 -0300
-  +++ after.c	2018-06-01 10:42:11.307985394 -0300
-  @@ -35,6 +35,8 @@
-          [42] = "GET_THP_DISABLE",
-          [45] = "SET_FP_MODE",
-          [46] = "GET_FP_MODE",
-  +       [52] = "GET_SPECULATION_CTRL",
-  +       [53] = "SET_SPECULATION_CTRL",
-   };
-   static const char *prctl_set_mm_options[] = {
- 	  [1] = "START_CODE",
-  $
+Alex
 
-This will be used by 'perf trace' to show these strings when beautifying
-the prctl syscall args. At some point we'll be able to say something
-like:
-
-	'perf trace --all-cpus -e prctl(option=*SPEC*)'
-
-To filter by arg by name.
-
-  This silences this warning when building tools/perf:
-
-    Warning: Kernel ABI header at 'tools/include/uapi/linux/prctl.h' differs from latest version at 'include/uapi/linux/prctl.h'
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-zztsptwhc264r8wg44tqh5gp@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/include/uapi/linux/prctl.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/tools/include/uapi/linux/prctl.h b/tools/include/uapi/linux/prctl.h
-index af5f8c2df87a..db9f15f5db04 100644
---- a/tools/include/uapi/linux/prctl.h
-+++ b/tools/include/uapi/linux/prctl.h
-@@ -207,4 +207,16 @@ struct prctl_mm_map {
- # define PR_SVE_VL_LEN_MASK		0xffff
- # define PR_SVE_VL_INHERIT		(1 << 17) /* inherit across exec */
- 
-+/* Per task speculation control */
-+#define PR_GET_SPECULATION_CTRL		52
-+#define PR_SET_SPECULATION_CTRL		53
-+/* Speculation control variants */
-+# define PR_SPEC_STORE_BYPASS		0
-+/* Return and control values for PR_SET/GET_SPECULATION_CTRL */
-+# define PR_SPEC_NOT_AFFECTED		0
-+# define PR_SPEC_PRCTL			(1UL << 0)
-+# define PR_SPEC_ENABLE			(1UL << 1)
-+# define PR_SPEC_DISABLE		(1UL << 2)
-+# define PR_SPEC_FORCE_DISABLE		(1UL << 3)
-+
- #endif /* _LINUX_PRCTL_H */
--- 
-2.14.3
+> trce from /varlog/messages:
+> 
+> Jun  1 22:47:23 milkyway kernel: BUG: Bad page state in process qemu-system-x86  pfn:7178f3
+> Jun  1 22:47:23 milkyway kernel: page:fffffbfddc5e3cc0 count:0 mapcount:1 mapping:0000000000000000 index:0x1
+> Jun  1 22:47:23 milkyway kernel: flags: 0x200000000000000()
+> Jun  1 22:47:23 milkyway kernel: raw: 0200000000000000 0000000000000000 0000000000000001 0000000000000000
+> Jun  1 22:47:23 milkyway kernel: raw: dead000000000100 dead000000000200 0000000000000000 0000000000000000
+> Jun  1 22:47:23 milkyway kernel: page dumped because: nonzero mapcount
+> Jun  1 22:47:23 milkyway kernel: Modules linked in: x86_pkg_temp_thermal coretemp crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc aesni_intel eeepc_wmi asus_wmi wmi_bmof aes_x86_64 crypto_simd cryptd wmi glue_helper
+> Jun  1 22:47:23 milkyway kernel: CPU: 4 PID: 4303 Comm: qemu-system-x86 Not tainted 4.16.0+ #26
+> Jun  1 22:47:23 milkyway kernel: Hardware name: ASUS All Series/SABERTOOTH Z97 MARK 2, BIOS 3503 04/18/2018
+> Jun  1 22:47:23 milkyway kernel: Call Trace:
+> Jun  1 22:47:23 milkyway kernel:  dump_stack+0x46/0x5b
+> Jun  1 22:47:23 milkyway kernel:  bad_page+0xbf/0x120
+> Jun  1 22:47:23 milkyway kernel:  free_pcppages_bulk+0x434/0x500
+> Jun  1 22:47:23 milkyway kernel:  free_unref_page+0x33/0x40
+> Jun  1 22:47:23 milkyway kernel:  dma_free_pagelist+0x27/0x40
+> Jun  1 22:47:23 milkyway kernel:  intel_iommu_unmap+0x114/0x150
+> Jun  1 22:47:23 milkyway kernel:  __iommu_unmap+0xe4/0x130
+> Jun  1 22:47:23 milkyway kernel:  vfio_unmap_unpin+0x13f/0x330
+> Jun  1 22:47:23 milkyway kernel:  vfio_remove_dma+0x12/0x40
+> Jun  1 22:47:23 milkyway kernel:  vfio_iommu_unmap_unpin_all+0x16/0x30
+> Jun  1 22:47:23 milkyway kernel:  vfio_iommu_type1_detach_group+0x2b3/0x2c0
+> Jun  1 22:47:23 milkyway kernel:  __vfio_group_unset_container+0x4d/0x180
+> Jun  1 22:47:23 milkyway kernel:  vfio_group_put_external_user+0x9/0x20
+> Jun  1 22:47:23 milkyway kernel:  kvm_vfio_group_put_external_user+0x1d/0x30
+> Jun  1 22:47:23 milkyway kernel:  kvm_vfio_destroy+0x4a/0xc0
+> Jun  1 22:47:23 milkyway kernel:  kvm_put_kvm+0x1a1/0x290
+> Jun  1 22:47:23 milkyway kernel:  kvm_vm_release+0x18/0x20
+> Jun  1 22:47:23 milkyway kernel:  __fput+0xcd/0x1f0
+> Jun  1 22:47:23 milkyway kernel:  task_work_run+0x8d/0xb0
+> Jun  1 22:47:23 milkyway kernel:  do_exit+0x2d9/0xbe0
+> Jun  1 22:47:23 milkyway kernel:  ? hrtimer_init+0x10/0x10
+> Jun  1 22:47:23 milkyway kernel:  do_group_exit+0x31/0xb0
+> Jun  1 22:47:23 milkyway kernel:  get_signal+0x12d/0x570
+> Jun  1 22:47:23 milkyway kernel:  do_signal+0x3e/0x5d0
+> Jun  1 22:47:23 milkyway kernel:  exit_to_usermode_loop+0x46/0x80
+> Jun  1 22:47:23 milkyway kernel:  do_syscall_64+0xe0/0xf0
+> Jun  1 22:47:23 milkyway kernel:  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+> Jun  1 22:47:23 milkyway kernel: RIP: 0033:0x7e7c7512750f
+> Jun  1 22:47:23 milkyway kernel: RSP: 002b:00007e77df3f29d0 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+> Jun  1 22:47:23 milkyway kernel: RAX: fffffffffffffdfc RBX: 0000000000000189 RCX: 00007e7c7512750f
+> Jun  1 22:47:23 milkyway kernel: RDX: 0000000000000000 RSI: 0000000000000189 RDI: 000057066f99c0a8
+> Jun  1 22:47:23 milkyway kernel: RBP: 0000000000000000 R08: 0000000000000000 R09: 00000000ffffffff
+> Jun  1 22:47:23 milkyway kernel: R10: 00007e77df3f2a80 R11: 0000000000000246 R12: 00007e77df3f2a80
+> Jun  1 22:47:23 milkyway kernel: R13: 000057066f99c0a8 R14: 00007e77df3f2a80 R15: 00007fff7e253a30
+> Jun  1 22:47:23 milkyway kernel: Disabling lock debugging due to kernel taint
+> 
+> 
+> 
+> git bisect log
+> 
+> git bisect start
+> # good: [0adb32858b0bddf4ada5f364a84ed60b196dbcda] Linux 4.16
+> git bisect good 0adb32858b0bddf4ada5f364a84ed60b196dbcda
+> # bad: [60cc43fc888428bb2f18f08997432d426a243338] Linux 4.17-rc1
+> git bisect bad 60cc43fc888428bb2f18f08997432d426a243338
+> # good: [ac9053d2dcb9e8c3fa35ce458dfca8fddc141680] Merge tag 'usb-4.17-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb
+> git bisect good ac9053d2dcb9e8c3fa35ce458dfca8fddc141680
+> # good: [38c23685b273cfb4ccf31a199feccce3bdcb5d83] Merge tag 'armsoc-drivers' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
+> git bisect good 38c23685b273cfb4ccf31a199feccce3bdcb5d83
+> # bad: [fbe173e3ffbd897b5a859020d714c0eaf4af2a1a] Merge tag 'rtc-4.17' of git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux
+> git bisect bad fbe173e3ffbd897b5a859020d714c0eaf4af2a1a
+> # bad: [299f89d53e61c0b17479cc7d6f3b5382d5e83f28] Merge tag 'leaks-4.17-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tobin/leaks
+> git bisect bad 299f89d53e61c0b17479cc7d6f3b5382d5e83f28
+> # good: [28da7be5ebc096ada5e6bc526c623bdd8c47800a] Merge tag 'mailbox-v4.17' of git://git.linaro.org/landing-teams/working/fujitsu/integration
+> git bisect good 28da7be5ebc096ada5e6bc526c623bdd8c47800a
+> # good: [19fd08b85bc7e0502b55cd726f466df82ee7e777] Merge tag 'for-linus-unmerged' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma
+> git bisect good 19fd08b85bc7e0502b55cd726f466df82ee7e777
+> # good: [14d8d776aeda8e367a9354b6cb6a0696671630c9] Merge branch 'lorenzo/pci/endpoint'
+> git bisect good 14d8d776aeda8e367a9354b6cb6a0696671630c9
+> # bad: [f605ba97fb80522656c7dce9825a908f1e765b57] Merge tag 'vfio-v4.17-rc1' of git://github.com/awilliam/linux-vfio
+> git bisect bad f605ba97fb80522656c7dce9825a908f1e765b57
+> # good: [d2f48c5d7fd791104f3227d8e6b55fca892eb2ba] Merge branch 'lorenzo/pci/xgene'
+> git bisect good d2f48c5d7fd791104f3227d8e6b55fca892eb2ba
+> # good: [dc32bb678e103afbcfa4d814489af0566307f528] vhost: add vsock compat ioctl
+> git bisect good dc32bb678e103afbcfa4d814489af0566307f528
+> # bad: [da9147140fe3de5a3a3fe5fe7f69739d4f39bea1] MAINTAINERS: vfio/platform: Update sub-maintainer
+> git bisect bad da9147140fe3de5a3a3fe5fe7f69739d4f39bea1
+> # bad: [356e88ebe4473a3663cf3d14727ce293a4526d34] vfio/type1: Improve memory pinning process for raw PFN mapping
+> git bisect bad 356e88ebe4473a3663cf3d14727ce293a4526d34
+> # good: [c9f89c3f87cfc026d88c08054710902dd52a7772] vfio-mdev/samples: change RDI interrupt condition
+> git bisect good c9f89c3f87cfc026d88c08054710902dd52a7772
+> # first bad commit: [356e88ebe4473a3663cf3d14727ce293a4526d34] vfio/type1: Improve memory pinning process for raw PFN mapping
+> 
+> 
+> Cheers,
+> Amadeusz
