@@ -1,51 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751214AbeFBLT5 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 07:19:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47182 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeFBLT4 (ORCPT
+        id S1751439AbeFBLk7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 07:40:59 -0400
+Received: from mail.parknet.co.jp ([210.171.160.6]:46939 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750892AbeFBLk5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 07:19:56 -0400
-Date: Sat, 2 Jun 2018 04:19:40 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: =?utf-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
-Cc: akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
-Subject: Re: [PATCH v7 1/2] Add an array of const char and enum
- oom_constraint in memcontrol.h
-Message-ID: <20180602111940.GA31754@bombadil.infradead.org>
-References: <CAHCio2hrYo6f35cT69+xa5BwUXpwYXXm76GppUBB2WTrKonaFQ@mail.gmail.com>
+        Sat, 2 Jun 2018 07:40:57 -0400
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: PROBLEM: [kernel BUG at fs/fat/inode.c:162] when writing to a broken VFAT
+References: <CAE5jQCdGVxnmDYhdEfLpMfeZRNQk19TAX=u9MFmobZ1RFx3z4A@mail.gmail.com>
+Date: Sat, 02 Jun 2018 20:19:28 +0900
+In-Reply-To: <CAE5jQCdGVxnmDYhdEfLpMfeZRNQk19TAX=u9MFmobZ1RFx3z4A@mail.gmail.com>
+        (Anatoly Trosinenko's message of "Fri, 1 Jun 2018 12:45:14 +0300")
+Message-ID: <874lilcu67.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHCio2hrYo6f35cT69+xa5BwUXpwYXXm76GppUBB2WTrKonaFQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 02, 2018 at 07:06:44PM +0800, 禹舟键 wrote:
-> From: yuzhoujian <yuzhoujian@didichuxing.com>
-> 
-> This patch will make some preparation for the follow-up patch: Refactor
-> part of the oom report in dump_header. It puts enum oom_constraint in
-> memcontrol.h and adds an array of const char for each constraint.
+Anatoly Trosinenko <anatoly.trosinenko@gmail.com> writes:
 
-This patch is whitespace damaged.  See the instructions for using git
-send-email with gmail: https://git-scm.com/docs/git-send-email
+> Description:
+>
+> Writing to some file on a broken VFAT partition causes kernel bug
 
-> +static const char * const oom_constraint_text[] = {
-> + [CONSTRAINT_NONE] = "CONSTRAINT_NONE",
-> + [CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
-> + [CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
-> + [CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
-> +};
-> +
+Thanks. This patch should fix this issue.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-Um, isn't this going to put the strings in every file which includes
-memcontrol.h?
+
+[PATCH] fat: Use fat_fs_error() instead of BUG_ON() in __fat_get_block()
+
+If file size and FAT cluster chain is not matched (corrupted image),
+we can hit BUG_ON(!phys) in __fat_get_block().
+
+So, use fat_fs_error() instead.
+
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+---
+
+ fs/fat/inode.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff -puN fs/fat/inode.c~vfat-dont-bugon fs/fat/inode.c
+--- linux/fs/fat/inode.c~vfat-dont-bugon	2018-06-02 20:15:04.441920069 +0900
++++ linux-hirofumi/fs/fat/inode.c	2018-06-02 20:15:04.442920067 +0900
+@@ -158,8 +158,13 @@ static inline int __fat_get_block(struct
+ 	err = fat_bmap(inode, iblock, &phys, &mapped_blocks, create, false);
+ 	if (err)
+ 		return err;
++	if (!phys) {
++		fat_fs_error(sb,
++			     "invalid FAT chain (i_pos %lld, last_block %ld)",
++			     MSDOS_I(inode)->i_pos, last_block);
++		return -EIO;
++	}
+ 
+-	BUG_ON(!phys);
+ 	BUG_ON(*max_blocks != mapped_blocks);
+ 	set_buffer_new(bh_result);
+ 	map_bh(bh_result, sb, phys);
+_
