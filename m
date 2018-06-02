@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751967AbeFBKhf (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 06:37:35 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54857 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751707AbeFBKhO (ORCPT
+        id S1752203AbeFBKjQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 06:39:16 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33640 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751479AbeFBKhb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 06:37:14 -0400
-X-Google-Smtp-Source: ADUXVKK1jM+IFlU65VN8pxx4OHFZIEbt5EKEACFZC2G4ZBvcuSSo62F7Rx27xaGu2TgYWBNx0iFR9w==
+        Sat, 2 Jun 2018 06:37:31 -0400
+X-Google-Smtp-Source: ADUXVKJNnFy0/bI5l1R4Or+mdqccx9SZOlRSm0Hp5snJ2xrzvNvvJ2hIezlyo83ZN0idnEe+CFl8UQ==
 From: Christian Brauner <christian@brauner.io>
 To: linux-kernel@vger.kernel.org
 Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
@@ -15,9 +15,9 @@ Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
         peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, oleg@redhat.com,
         Christian Brauner <christian@brauner.io>
-Subject: [PATCH v3 06/17] signal: make kill_ok_by_cred() return bool
-Date: Sat,  2 Jun 2018 12:36:42 +0200
-Message-Id: <20180602103653.18181-7-christian@brauner.io>
+Subject: [PATCH v3 17/17] signal: make get_signal() return bool
+Date: Sat,  2 Jun 2018 12:36:53 +0200
+Message-Id: <20180602103653.18181-18-christian@brauner.io>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180602103653.18181-1-christian@brauner.io>
 References: <20180602103653.18181-1-christian@brauner.io>
@@ -25,7 +25,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kill_ok_by_cred() already behaves like a boolean function. Let's actually
+make get_signal() already behaves like a boolean function. Let's actually
 declare it as such too.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
@@ -35,42 +35,46 @@ v2->v3:
 v1->v2:
 * unchanged
 v0->v1:
-* unchanged
+* patch added
 ---
- kernel/signal.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ include/linux/signal.h | 2 +-
+ kernel/signal.c        | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index 1145d7061ed9..97d5ff809716 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -262,7 +262,7 @@ extern void set_current_blocked(sigset_t *);
+ extern void __set_current_blocked(const sigset_t *);
+ extern int show_unhandled_signals;
+ 
+-extern int get_signal(struct ksignal *ksig);
++extern bool get_signal(struct ksignal *ksig);
+ extern void signal_setup_done(int failed, struct ksignal *ksig, int stepping);
+ extern void exit_signals(struct task_struct *tsk);
+ extern void kernel_sigaction(int, __sighandler_t);
 diff --git a/kernel/signal.c b/kernel/signal.c
-index 21508900805b..dd239a8d7d2c 100644
+index 8d57a64abe52..47d0e3a9b166 100644
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -717,21 +717,16 @@ static inline bool si_fromuser(const struct siginfo *info)
- /*
-  * called with RCU read lock from check_kill_permission()
-  */
--static int kill_ok_by_cred(struct task_struct *t)
-+static bool kill_ok_by_cred(struct task_struct *t)
- {
- 	const struct cred *cred = current_cred();
- 	const struct cred *tcred = __task_cred(t);
- 
--	if (uid_eq(cred->euid, tcred->suid) ||
--	    uid_eq(cred->euid, tcred->uid)  ||
--	    uid_eq(cred->uid,  tcred->suid) ||
--	    uid_eq(cred->uid,  tcred->uid))
--		return 1;
--
--	if (ns_capable(tcred->user_ns, CAP_KILL))
--		return 1;
--
--	return 0;
-+	return uid_eq(cred->euid, tcred->suid) ||
-+	       uid_eq(cred->euid, tcred->uid) ||
-+	       uid_eq(cred->uid, tcred->suid) ||
-+	       uid_eq(cred->uid, tcred->uid) ||
-+	       ns_capable(tcred->user_ns, CAP_KILL);
+@@ -2301,7 +2301,7 @@ static int ptrace_signal(int signr, siginfo_t *info)
+ 	return signr;
  }
  
- /*
+-int get_signal(struct ksignal *ksig)
++bool get_signal(struct ksignal *ksig)
+ {
+ 	struct sighand_struct *sighand = current->sighand;
+ 	struct signal_struct *signal = current->signal;
+@@ -2311,7 +2311,7 @@ int get_signal(struct ksignal *ksig)
+ 		task_work_run();
+ 
+ 	if (unlikely(uprobe_deny_signal()))
+-		return 0;
++		return false;
+ 
+ 	/*
+ 	 * Do this once, we can't return to user-mode if freezing() == T.
 -- 
 2.17.0
