@@ -1,29 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751780AbeFBMCo (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 08:02:44 -0400
-Received: from mail-wr0-f180.google.com ([209.85.128.180]:41921 "EHLO
-        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751562AbeFBMCn (ORCPT
+        id S1751393AbeFBMEd (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 08:04:33 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:20381 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750740AbeFBMEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 08:02:43 -0400
-X-Google-Smtp-Source: ADUXVKKUSB3aXLPvXHV2xQYeXI+cAlPjD5gxYjO85UM4hb1jhlSNpzlT9/rJOl4Kqwh4jzYlWo1tjA==
-Date: Sat, 2 Jun 2018 15:02:38 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Christian Brauner <christian@brauner.io>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 12/17] signal: make unhandled_signal() return bool
-Message-ID: <20180602120238.GA11282@avx2>
+        Sat, 2 Jun 2018 08:04:32 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w52C4TQR012494
+X-Nifty-SrcIP: [209.85.217.174]
+X-Google-Smtp-Source: ADUXVKLHfDJGtPDr7FbDtUAvuIv3u/RAxCv9p2jNlnk0R6DObuOInxz2bLDbiMTA7KSu0DreRYdRBE4qTWH0Fpi/KzQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180530090946.1635-9-suzuki.katsuhiro@socionext.com>
+References: <20180530090946.1635-1-suzuki.katsuhiro@socionext.com> <20180530090946.1635-9-suzuki.katsuhiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 2 Jun 2018 21:03:48 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARx0Em0P9BWfTGjroGkyELeHo3T-YcWWDAwdsGePXuS0Q@mail.gmail.com>
+Message-ID: <CAK7LNARx0Em0P9BWfTGjroGkyELeHo3T-YcWWDAwdsGePXuS0Q@mail.gmail.com>
+Subject: Re: [PATCH 8/8] media: uniphier: add LD20 adapter driver for ISDB
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-media@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -int unhandled_signal(struct task_struct *tsk, int sig)
-> +bool unhandled_signal(struct task_struct *tsk, int sig)
+2018-05-30 18:09 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> This patch adds UniPhier LD20 DVB adapter driver for ISDB-S/T
+> that equipments SONY SUT-PJ series using CXD2858 tuner and Socionext
+> MN884434 demodulator.
+>
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> ---
+>  drivers/media/platform/uniphier/Kconfig       |  10 +
+>  drivers/media/platform/uniphier/Makefile      |   1 +
+>  .../platform/uniphier/ld20-mn884434-helene.c  | 274 ++++++++++++++++++
+>  3 files changed, 285 insertions(+)
+>  create mode 100644 drivers/media/platform/uniphier/ld20-mn884434-helene.c
+>
 
-This most likely makes code generation worse on embedded arhcs
-which will '& 0xFF" internally.
+
+> +
+> +static const struct of_device_id uniphier_hsc_adapter_of_match[] = {
+> +       {
+> +               .compatible = "socionext,uniphier-ld20-mn884434-helene",
+> +               .data = &ld20_mn884434_helene_spec,
+> +       },
+> +       {},
+> +};
+> +MODULE_DEVICE_TABLE(of, uniphier_hsc_adapter_of_match);
+> +
+> +static struct platform_driver uniphier_hsc_adapter_driver = {
+> +       .driver = {
+> +               .name = "uniphier-ld20-isdb",
+> +               .of_match_table = of_match_ptr(uniphier_hsc_adapter_of_match),
+> +       },
+> +       .probe  = uniphier_adapter_probe,
+> +       .remove = uniphier_adapter_remove,
+> +};
+> +module_platform_driver(uniphier_hsc_adapter_driver);
+> +
+> +MODULE_AUTHOR("Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>");
+> +MODULE_DESCRIPTION("UniPhier LD20 adapter driver for ISDB.");
+> +MODULE_LICENSE("GPL v2");
+
+
+This is weird.
+
+>From drivers/media/platform/uniphier/Makefile,
+obviously you link all the objects into the single module, uniphier-dvb.ko
+
+
+It contains zero, one, or two sets of MODULE_* depending on CONFIG options.
+
+
+ - Zero MODULE_LICENSE / MODULE_AUTHOR / MODULE_DESCRIPTION
+   if CONFIG_DVB_UNIPHIER_LD11_ISDB=n &&
+      CONFIG_DVB_UNIPHIER_LD20_ISDB=n
+
+
+ - Two sets of MODULE_LICENSE / MODULE_AUTHOR / MODULE_DESCRIPTION
+   if CONFIG_DVB_UNIPHIER_LD11_ISDB=y &&
+      CONFIG_DVB_UNIPHIER_LD20_ISDB=y
+
+
+
+What you can do is:
+
+ - Split the module into core, ld11, ld20
+
+    or
+
+ - Move the module tags and entry to hsc-core.c
+   and leave only the data arrays in ld11, ld20.
+
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
