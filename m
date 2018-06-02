@@ -1,63 +1,317 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751937AbeFBTCa (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 15:02:30 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35246 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751342AbeFBTC3 (ORCPT
+        id S1752013AbeFBTOX (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 15:14:23 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42328 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751342AbeFBTOV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 15:02:29 -0400
-Date: Sat, 2 Jun 2018 21:02:27 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Ravi Chandra Sadineni <ravisadineni@chromium.org>
-Cc: rjw@rjwysocki.net, chenhong3@huawei.com, ravisadineni@google.com,
-        dtor@google.com, len.brown@intel.com, gregkh@linuxfoundation.org,
-        tbroch@google.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, rajatja@google.com, bleung@google.com
-Subject: Re: [PATCH] power: Print wakeup_count instead of event_count in the
- sysfs attribute.
-Message-ID: <20180602190227.GA19946@amd>
-References: <20180602023215.176521-1-ravisadineni@chromium.org>
+        Sat, 2 Jun 2018 15:14:21 -0400
+X-Google-Smtp-Source: ADUXVKLTYlMeW9p+d5kn5Gl7eV/B+5CB4bG90KWbNELcIrU19IyJQoRtAOS5xGagTpNnKWzMFRT/DFQu6ApzJLy4x+k=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
-Content-Disposition: inline
-In-Reply-To: <20180602023215.176521-1-ravisadineni@chromium.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180531144949.24995-1-tycho@tycho.ws> <20180531144949.24995-5-tycho@tycho.ws>
+In-Reply-To: <20180531144949.24995-5-tycho@tycho.ws>
+From: Alban Crequy <alban.crequy@gmail.com>
+Date: Sat, 2 Jun 2018 21:14:09 +0200
+Message-ID: <CAMXgnP7cggXh0M403gqWALm0=Cq0JHJiDoE-q++BbL2hCZHX-g@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] seccomp: add support for passing fds via USER_NOTIF
+To: tycho@tycho.ws
+Cc: linux-kernel@vger.kernel.org,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>, Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, christian.brauner@ubuntu.com,
+        tyhicks@canonical.com, Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        me@tobin.cc
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 31 May 2018 at 16:52, Tycho Andersen <tycho@tycho.ws> wrote:
+>
+> The idea here is that the userspace handler should be able to pass an fd
+> back to the trapped task, for example so it can be returned from socket().
+>
+> I've proposed one API here, but I'm open to other options. In particular,
+> this only lets you return an fd from a syscall, which may not be enough in
+> all cases. For example, if an fd is written to an output parameter instead
+> of returned, the current API can't handle this. Another case is that
+> netlink takes as input fds sometimes (IFLA_NET_NS_FD, e.g.). If netlink
+> ever decides to install an fd and output it, we wouldn't be able to handle
+> this either.
+>
+> Still, the vast majority of interesting cases are covered by this API, so
+> perhaps it is Enough.
+>
+> I've left it as a separate commit for two reasons:
+>   * It illustrates the way in which we would grow struct seccomp_notif and
+>     struct seccomp_notif_resp without using netlink
+>   * It shows just how little code is needed to accomplish this :)
+>
+> v2: new in v2
+> v3: no changes
+>
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: Kees Cook <keescook@chromium.org>
+> CC: Andy Lutomirski <luto@amacapital.net>
+> CC: Oleg Nesterov <oleg@redhat.com>
+> CC: Eric W. Biederman <ebiederm@xmission.com>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
+> CC: Christian Brauner <christian.brauner@ubuntu.com>
+> CC: Tyler Hicks <tyhicks@canonical.com>
+> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> ---
+>  include/uapi/linux/seccomp.h                  |   2 +
+>  kernel/seccomp.c                              |  49 +++++++-
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 112 ++++++++++++++++++
+>  3 files changed, 161 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+> index 8160e6cad528..3124427219cb 100644
+> --- a/include/uapi/linux/seccomp.h
+> +++ b/include/uapi/linux/seccomp.h
+> @@ -71,6 +71,8 @@ struct seccomp_notif_resp {
+>         __u64 id;
+>         __s32 error;
+>         __s64 val;
+> +       __u8 return_fd;
+> +       __u32 fd;
+>  };
+>
+>  #endif /* _UAPI_LINUX_SECCOMP_H */
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index 6dc99c65c2f4..2ee958b3efde 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -77,6 +77,8 @@ struct seccomp_knotif {
+>         /* The return values, only valid when in SECCOMP_NOTIFY_REPLIED */
+>         int error;
+>         long val;
+> +       struct file *file;
+> +       unsigned int flags;
+>
+>         /* Signals when this has entered SECCOMP_NOTIFY_REPLIED */
+>         struct completion ready;
+> @@ -780,10 +782,32 @@ static void seccomp_do_user_notification(int this_syscall,
+>                         goto remove_list;
+>         }
+>
+> -       ret = n.val;
+> -       err = n.error;
+> +       if (n.file) {
+> +               int fd;
+> +
+> +               fd = get_unused_fd_flags(n.flags);
+> +               if (fd < 0) {
+> +                       err = fd;
+> +                       ret = -1;
+> +                       goto remove_list;
+> +               }
+> +
+> +               ret = fd;
+> +               err = 0;
+> +
+> +               fd_install(fd, n.file);
+> +               /* Don't fput, since fd has a reference now */
+> +               n.file = NULL;
 
---WIyZ46R2i8wDzkSu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Do we want the cgroup classid and netprio to be applied here, before
+the fd_install? I am looking at similar code in net/core/scm.c
+scm_detach_fds():
+                sock = sock_from_file(fp[i], &err);
+                if (sock) {
+                        sock_update_netprioidx(&sock->sk->sk_cgrp_data);
+                        sock_update_classid(&sock->sk->sk_cgrp_data);
+                }
 
-On Fri 2018-06-01 19:32:15, Ravi Chandra Sadineni wrote:
-> Currently we show event_count instead of wakeup_count as part of per
-> device wakeup_count sysfs attribute. Change it to wakeup_count to make
-> it more meaningful.
->=20
-> Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+The listener process might live in a different cgroup with a different
+classid & netprio, so it might not be applied as the app might expect.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Also, should we update the struct sock_cgroup_data of the socket, in
+order to make the BPF helper function bpf_skb_under_cgroup() work wrt
+the cgroup of the target process instead of the listener process? I am
+looking at cgroup_sk_alloc(). I don't know what's the correct
+behaviour we want here.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> +       } else {
+> +               ret = n.val;
+> +               err = n.error;
+> +       }
+> +
+>
+>  remove_list:
+> +       if (n.file)
+> +               fput(n.file);
+> +
+>         list_del(&n.list);
+>  out:
+>         mutex_unlock(&match->notify_lock);
+> @@ -1598,6 +1622,27 @@ static ssize_t seccomp_notify_write(struct file *file, const char __user *buf,
+>         knotif->state = SECCOMP_NOTIFY_REPLIED;
+>         knotif->error = resp.error;
+>         knotif->val = resp.val;
+> +
+> +       if (resp.return_fd) {
+> +               struct fd fd;
+> +
+> +               /*
+> +                * This is a little hokey: we need a real fget() (i.e. not
+> +                * __fget_light(), which is what fdget does), but we also need
+> +                * the flags from strcut fd. So, we get it, put it, and get it
+> +                * again for real.
+> +                */
+> +               fd = fdget(resp.fd);
+> +               knotif->flags = fd.flags;
+> +               fdput(fd);
+> +
+> +               knotif->file = fget(resp.fd);
+> +               if (!knotif->file) {
+> +                       ret = -EBADF;
+> +                       goto out;
 
---WIyZ46R2i8wDzkSu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Should the "knotif->state = SECCOMP_NOTIFY_REPLIED" and other changes
+be done after the error case here? In case of bad fd, it seems to
+return -EBADF the first time and -EINVAL the next time because the
+state would have been changed to SECCOMP_NOTIFY_REPLIED already.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsS6cMACgkQMOfwapXb+vIP7wCeL74QOuUejgN08PA+1PEuh8QP
-wVcAnAjb093p71AEH+d0wnEkpVLSAxzY
-=X4MI
------END PGP SIGNATURE-----
-
---WIyZ46R2i8wDzkSu--
+> +               }
+> +       }
+> +
+>         complete(&knotif->ready);
+>  out:
+>         mutex_unlock(&filter->notify_lock);
+> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> index 07984f7bd601..b9a4f676566d 100644
+> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
+> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> @@ -167,6 +167,8 @@ struct seccomp_notif_resp {
+>         __u64 id;
+>         __s32 error;
+>         __s64 val;
+> +       __u8 return_fd;
+> +       __u32 fd;
+>  };
+>  #endif
+>
+> @@ -3176,6 +3178,116 @@ TEST(get_user_notification_ptrace)
+>         close(listener);
+>  }
+>
+> +TEST(user_notification_pass_fd)
+> +{
+> +       pid_t pid;
+> +       int status, listener;
+> +       int sk_pair[2];
+> +       char c;
+> +       struct seccomp_notif req = {};
+> +       struct seccomp_notif_resp resp = {};
+> +       long ret;
+> +
+> +       ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
+> +
+> +       pid = fork();
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid == 0) {
+> +               int fd;
+> +               char buf[16];
+> +
+> +               EXPECT_EQ(user_trap_syscall(__NR_getpid, 0), 0);
+> +
+> +               /* Signal we're ready and have installed the filter. */
+> +               EXPECT_EQ(write(sk_pair[1], "J", 1), 1);
+> +
+> +               EXPECT_EQ(read(sk_pair[1], &c, 1), 1);
+> +               EXPECT_EQ(c, 'H');
+> +               close(sk_pair[1]);
+> +
+> +               /* An fd from getpid(). Let the games begin. */
+> +               fd = syscall(__NR_getpid);
+> +               EXPECT_GT(fd, 0);
+> +               EXPECT_EQ(read(fd, buf, sizeof(buf)), 12);
+> +               close(fd);
+> +
+> +               exit(strcmp("hello world", buf));
+> +       }
+> +
+> +       EXPECT_EQ(read(sk_pair[0], &c, 1), 1);
+> +       EXPECT_EQ(c, 'J');
+> +
+> +       EXPECT_EQ(ptrace(PTRACE_ATTACH, pid), 0);
+> +       EXPECT_EQ(waitpid(pid, NULL, 0), pid);
+> +       listener = ptrace(PTRACE_SECCOMP_GET_LISTENER, pid, 0);
+> +       EXPECT_GE(listener, 0);
+> +       EXPECT_EQ(ptrace(PTRACE_DETACH, pid, NULL, 0), 0);
+> +
+> +       /* Now signal we are done installing so it can do a getpid */
+> +       EXPECT_EQ(write(sk_pair[0], "H", 1), 1);
+> +       close(sk_pair[0]);
+> +
+> +       /* Make a new socket pair so we can send half across */
+> +       EXPECT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
+> +
+> +       ret = read_notif(listener, &req);
+> +       EXPECT_EQ(ret, sizeof(req));
+> +       EXPECT_EQ(errno, 0);
+> +
+> +       resp.id = req.id;
+> +       resp.return_fd = 1;
+> +       resp.fd = sk_pair[1];
+> +       EXPECT_EQ(write(listener, &resp, sizeof(resp)), sizeof(resp));
+> +       close(sk_pair[1]);
+> +
+> +       EXPECT_EQ(write(sk_pair[0], "hello world\0", 12), 12);
+> +       close(sk_pair[0]);
+> +
+> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
+> +       EXPECT_EQ(true, WIFEXITED(status));
+> +       EXPECT_EQ(0, WEXITSTATUS(status));
+> +       close(listener);
+> +}
+> +
+> +TEST(user_notification_struct_size_mismatch)
+> +{
+> +       pid_t pid;
+> +       long ret;
+> +       int status, listener, len;
+> +       struct seccomp_notif req;
+> +       struct seccomp_notif_resp resp;
+> +
+> +       listener = user_trap_syscall(__NR_getpid,
+> +                                    SECCOMP_FILTER_FLAG_GET_LISTENER);
+> +       EXPECT_GE(listener, 0);
+> +
+> +       pid = fork();
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid == 0) {
+> +               ret = syscall(__NR_getpid);
+> +               exit(ret != USER_NOTIF_MAGIC);
+> +       }
+> +
+> +       EXPECT_EQ(read(listener, &req, sizeof(req)), sizeof(req));
+> +
+> +       resp.id = req.id;
+> +       resp.error = 0;
+> +       resp.val = USER_NOTIF_MAGIC;
+> +
+> +       /*
+> +        * Only write a partial structure: this is what was available before we
+> +        * had fd support.
+> +        */
+> +       len = offsetof(struct seccomp_notif_resp, val) + sizeof(resp.val);
+> +       EXPECT_EQ(write(listener, &resp, len), len);
+> +
+> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
+> +       EXPECT_EQ(true, WIFEXITED(status));
+> +       EXPECT_EQ(0, WEXITSTATUS(status));
+> +}
+> +
+>  /*
+>   * TODO:
+>   * - add microbenchmarks
+> --
+> 2.17.0
+>
