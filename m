@@ -1,84 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751295AbeFBHkw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 03:40:52 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:29236 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750877AbeFBHkt (ORCPT
+        id S1751250AbeFBHyF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 03:54:05 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33248 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750812AbeFBHyA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 03:40:49 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w527eR7a008447
-X-Nifty-SrcIP: [209.85.213.48]
-X-Google-Smtp-Source: ADUXVKLkLRkAqBUmeHI85u5yAnaA9A7NIu5xeg8xwBc1A+64ILFB4m8XHKfNzjdHhBN6dQIR/jR+G1XkuDgDiCoVzy4=
+        Sat, 2 Jun 2018 03:54:00 -0400
+Date: Sat, 2 Jun 2018 10:52:56 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: David Lechner <david@lechnology.com>
+Cc: Sekhar Nori <nsekhar@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] clk: davinci: cfgchip: testing the wrong variable
+Message-ID: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
 MIME-Version: 1.0
-In-Reply-To: <20180531041835.GA15842@flashbox>
-References: <20180531041835.GA15842@flashbox>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sat, 2 Jun 2018 16:39:46 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARjg0Hh+3KcyXx0F4ieFzVwaoDJrk+3YA3xHAKT+vD8fQ@mail.gmail.com>
-Message-ID: <CAK7LNARjg0Hh+3KcyXx0F4ieFzVwaoDJrk+3YA3xHAKT+vD8fQ@mail.gmail.com>
-Subject: Re: Kconfig warnings with GCC 8.1.0
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8911 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=912
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806020091
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w527fDBQ007804
 
-Hi.
+There is a copy and paste bug here.  We should be testing "usb1" instead
+of "usb0".
 
+Fixes: 58e1e2d2cd89 ("clk: davinci: cfgchip: Add TI DA8XX USB PHY clocks")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-2018-05-31 13:18 GMT+09:00 Nathan Chancellor <natechancellor@gmail.com>:
-> Hi everyone,
->
-> My apologies if this has already been reported in some capacity, I
-> searched the mailing list and patchwork but I didn't see anything.
-
-
-I think you are the first reporter.
-
-
-> With GCC 8.1.0, I am starting to see the following warnings from
-> Kconfig:
->
->   CC    scripts/kconfig/zconf.tab.c
->   LEX     scripts/kconfig/zconf.lex.c
->   HOSTCC  scripts/kconfig/zconf.tab.o
-> In file included from scripts/kconfig/zconf.tab.c:2496:
-> scripts/kconfig/confdata.c: In function ‘conf_write’:
-> scripts/kconfig/confdata.c:748:22: warning: ‘%s’ directive writing likely 7 or more bytes into a region of size between 1 and 4097 [-Wformat-overflow=]
->   sprintf(newname, "%s%s", dirname, basename);
->                       ^~
-> scripts/kconfig/confdata.c:748:19: note: assuming directive output of 7 bytes
->   sprintf(newname, "%s%s", dirname, basename);
->                    ^~~~~~
-> scripts/kconfig/confdata.c:748:2: note: ‘sprintf’ output 1 or more bytes (assuming 4104) into a destination of size 4097
->   sprintf(newname, "%s%s", dirname, basename);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> scripts/kconfig/confdata.c:751:23: warning: ‘.tmpconfig.’ directive writing 11 bytes into a region of size between 1 and 4097 [-Wformat-overflow=]
->    sprintf(tmpname, "%s.tmpconfig.%d", dirname, (int)getpid());
->                        ^~~~~~~~~~~
-> scripts/kconfig/confdata.c:751:3: note: ‘sprintf’ output between 13 and 4119 bytes into a destination of size 4097
->    sprintf(tmpname, "%s.tmpconfig.%d", dirname, (int)getpid());
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   HOSTCC  scripts/kconfig/conf.o
->   HOSTLD  scripts/kconfig/conf
->
-> I am not sure if this is a false positive or not, otherwise I would have
-> sent a patch. I tested on the latest linux-next with Masahiro's for-next
-> branch, currently at commit 57282f7da50c ("Merge branch 'kconfig' into
-> for-next").
-
-
-I think these are legitimate warnings.
-
-A patch is welcome.
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+index c971111d2601..20a120aa147e 100644
+--- a/drivers/clk/davinci/da8xx-cfgchip.c
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -672,7 +672,7 @@ static int of_da8xx_usb_phy_clk_init(struct device *dev, struct regmap *regmap)
+ 
+ 	usb1 = da8xx_cfgchip_register_usb1_clk48(dev, regmap);
+ 	if (IS_ERR(usb1)) {
+-		if (PTR_ERR(usb0) == -EPROBE_DEFER)
++		if (PTR_ERR(usb1) == -EPROBE_DEFER)
+ 			return -EPROBE_DEFER;
+ 
+ 		dev_warn(dev, "Failed to register usb1_clk48 (%ld)\n",
