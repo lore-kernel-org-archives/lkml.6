@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752089AbeFBMqm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 08:46:42 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42754 "EHLO
+        id S1751835AbeFBMqv (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 08:46:51 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42512 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751654AbeFBMoc (ORCPT
+        with ESMTP id S1750740AbeFBMoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 08:44:32 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com D13C21A8626
+        Sat, 2 Jun 2018 08:44:23 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E170A1A8599
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -28,11 +28,10 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kselftest@vger.kernel.org
-Subject: [RFC PATCH for 4.18 11/16] selftests: lib.mk: Introduce OVERRIDE_TARGETS
-Date: Sat,  2 Jun 2018 08:44:03 -0400
-Message-Id: <20180602124408.8430-12-mathieu.desnoyers@efficios.com>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 03/16] arm: Add restartable sequences support
+Date: Sat,  2 Jun 2018 08:43:55 -0400
+Message-Id: <20180602124408.8430-4-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
 References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
@@ -40,12 +39,13 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce OVERRIDE_TARGETS to allow tests to express dependencies on
-header files and .so, which require to override the selftests lib.mk
-targets.
+Call the rseq_handle_notify_resume() function on return to
+userspace if TIF_NOTIFY_RESUME thread flag is set.
+
+Perform fixup on the pre-signal frame when a signal is delivered on top
+of a restartable sequence critical section.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
 CC: Russell King <linux@arm.linux.org.uk>
 CC: Catalin Marinas <catalin.marinas@arm.com>
 CC: Will Deacon <will.deacon@arm.com>
@@ -58,7 +58,6 @@ CC: Andi Kleen <andi@firstfloor.org>
 CC: Dave Watson <davejwatson@fb.com>
 CC: Chris Lameter <cl@linux.com>
 CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
 CC: Ben Maurer <bmaurer@fb.com>
 CC: Steven Rostedt <rostedt@goodmis.org>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -66,32 +65,48 @@ CC: Josh Triplett <josh@joshtriplett.org>
 CC: Linus Torvalds <torvalds@linux-foundation.org>
 CC: Andrew Morton <akpm@linux-foundation.org>
 CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-kselftest@vger.kernel.org
 CC: linux-api@vger.kernel.org
 ---
- tools/testing/selftests/lib.mk | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/Kconfig         | 1 +
+ arch/arm/kernel/signal.c | 7 +++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index c1b1a4dc6a96..ceb6c7c48547 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -106,6 +106,9 @@ COMPILE.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
- LINK.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
- endif
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a7f8e7f4b88f..4f5c386631d4 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -91,6 +91,7 @@ config ARM
+ 	select HAVE_PERF_USER_STACK_DUMP
+ 	select HAVE_RCU_TABLE_FREE if (SMP && ARM_LPAE)
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
++	select HAVE_RSEQ
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_UID16
+ 	select HAVE_VIRT_CPU_ACCOUNTING_GEN
+diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+index bd8810d4acb3..5879ab3f53c1 100644
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -541,6 +541,12 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
+ 	int ret;
  
-+# Selftest makefiles can override those targets by setting
-+# OVERRIDE_TARGETS = 1.
-+ifeq ($(OVERRIDE_TARGETS),)
- $(OUTPUT)/%:%.c
- 	$(LINK.c) $^ $(LDLIBS) -o $@
- 
-@@ -114,5 +117,6 @@ $(OUTPUT)/%.o:%.S
- 
- $(OUTPUT)/%:%.S
- 	$(LINK.S) $^ $(LDLIBS) -o $@
-+endif
- 
- .PHONY: run_tests all clean install emit_tests
+ 	/*
++	 * Increment event counter and perform fixup for the pre-signal
++	 * frame.
++	 */
++	rseq_signal_deliver(regs);
++
++	/*
+ 	 * Set up the stack frame
+ 	 */
+ 	if (ksig->ka.sa.sa_flags & SA_SIGINFO)
+@@ -660,6 +666,7 @@ do_work_pending(struct pt_regs *regs, unsigned int thread_flags, int syscall)
+ 			} else {
+ 				clear_thread_flag(TIF_NOTIFY_RESUME);
+ 				tracehook_notify_resume(regs);
++				rseq_handle_notify_resume(regs);
+ 			}
+ 		}
+ 		local_irq_disable();
 -- 
 2.11.0
