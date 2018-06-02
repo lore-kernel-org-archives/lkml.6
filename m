@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751745AbeFBMoj (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 08:44:39 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42584 "EHLO
+        id S1751795AbeFBMon (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 08:44:43 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42606 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751444AbeFBMoZ (ORCPT
+        with ESMTP id S1751559AbeFBMo0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 08:44:25 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 02F4E1A85B8
+        Sat, 2 Jun 2018 08:44:26 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 1AAD01A85C8
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -29,9 +29,9 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 05/16] arm: Wire up restartable sequences system call
-Date: Sat,  2 Jun 2018 08:43:57 -0400
-Message-Id: <20180602124408.8430-6-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 06/16] x86: Add support for restartable sequences (v2)
+Date: Sat,  2 Jun 2018 08:43:58 -0400
+Message-Id: <20180602124408.8430-7-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
 References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
@@ -39,18 +39,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wire up the rseq system call on 32-bit ARM.
+Call the rseq_handle_notify_resume() function on return to userspace if
+TIF_NOTIFY_RESUME thread flag is set.
 
-This provides an ABI improving the speed of a user-space getcpu
-operation on ARM by skipping the getcpu system call on the fast path, as
-well as improving the speed of user-space operations on per-cpu data
-compared to using load-linked/store-conditional.
+Perform fixup on the pre-signal frame when a signal is delivered on top
+of a restartable sequence critical section.
+
+Check that system calls are not invoked from within rseq critical
+sections by invoking rseq_signal() from syscall_return_slowpath().
+With CONFIG_DEBUG_RSEQ, such behavior results in termination of the
+process with SIGSEGV.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 CC: Russell King <linux@arm.linux.org.uk>
 CC: Catalin Marinas <catalin.marinas@arm.com>
 CC: Will Deacon <will.deacon@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
 CC: Paul Turner <pjt@google.com>
 CC: Andrew Hunter <ahh@google.com>
 CC: Peter Zijlstra <peterz@infradead.org>
@@ -59,6 +63,7 @@ CC: Andi Kleen <andi@firstfloor.org>
 CC: Dave Watson <davejwatson@fb.com>
 CC: Chris Lameter <cl@linux.com>
 CC: Ingo Molnar <mingo@redhat.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
 CC: Ben Maurer <bmaurer@fb.com>
 CC: Steven Rostedt <rostedt@goodmis.org>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -67,18 +72,66 @@ CC: Linus Torvalds <torvalds@linux-foundation.org>
 CC: Andrew Morton <akpm@linux-foundation.org>
 CC: Boqun Feng <boqun.feng@gmail.com>
 CC: linux-api@vger.kernel.org
----
- arch/arm/tools/syscall.tbl | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 0bb0e9c6376c..fbc74b5fa3ed 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -412,3 +412,4 @@
- 395	common	pkey_alloc		sys_pkey_alloc
- 396	common	pkey_free		sys_pkey_free
- 397	common	statx			sys_statx
-+398	common	rseq			sys_rseq
+---
+
+Changes since v1:
+- Call rseq_signal() when returning from a system call.
+---
+ arch/x86/Kconfig         | 1 +
+ arch/x86/entry/common.c  | 3 +++
+ arch/x86/kernel/signal.c | 6 ++++++
+ 3 files changed, 10 insertions(+)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c07f492b871a..62e00a1a7cf7 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -180,6 +180,7 @@ config X86
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RELIABLE_STACKTRACE		if X86_64 && UNWINDER_FRAME_POINTER && STACK_VALIDATION
+ 	select HAVE_STACK_VALIDATION		if X86_64
++	select HAVE_RSEQ
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_UNSTABLE_SCHED_CLOCK
+ 	select HAVE_USER_RETURN_NOTIFIER
+diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+index fbf6a6c3fd2d..92190879b228 100644
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -164,6 +164,7 @@ static void exit_to_usermode_loop(struct pt_regs *regs, u32 cached_flags)
+ 		if (cached_flags & _TIF_NOTIFY_RESUME) {
+ 			clear_thread_flag(TIF_NOTIFY_RESUME);
+ 			tracehook_notify_resume(regs);
++			rseq_handle_notify_resume(regs);
+ 		}
+ 
+ 		if (cached_flags & _TIF_USER_RETURN_NOTIFY)
+@@ -254,6 +255,8 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
+ 	    WARN(irqs_disabled(), "syscall %ld left IRQs disabled", regs->orig_ax))
+ 		local_irq_enable();
+ 
++	rseq_syscall(regs);
++
+ 	/*
+ 	 * First do one-time work.  If these work items are enabled, we
+ 	 * want to run them exactly once per syscall exit with IRQs on.
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index da270b95fe4d..445ca11ff863 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -688,6 +688,12 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 	sigset_t *set = sigmask_to_save();
+ 	compat_sigset_t *cset = (compat_sigset_t *) set;
+ 
++	/*
++	 * Increment event counter and perform fixup for the pre-signal
++	 * frame.
++	 */
++	rseq_signal_deliver(regs);
++
+ 	/* Set up the stack frame */
+ 	if (is_ia32_frame(ksig)) {
+ 		if (ksig->ka.sa.sa_flags & SA_SIGINFO)
 -- 
 2.11.0
